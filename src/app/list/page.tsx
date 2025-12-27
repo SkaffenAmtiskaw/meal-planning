@@ -1,1 +1,1 @@
-export default () => "I am the list page";
+export default () => 'I am the list page';

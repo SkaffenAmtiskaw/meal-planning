@@ -1,0 +1,10 @@
+{
+	"files": {
+		"includes": ["src/**/*"]
+	},
+	"javascript": {
+		"formatter": {
+			"quoteStyle": "single"
+		}
+	}
+}

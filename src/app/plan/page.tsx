@@ -1,1 +1,1 @@
-export default () => "I am the planning page";
+export default () => 'I am the planning page';

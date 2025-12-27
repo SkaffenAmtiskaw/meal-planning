@@ -1,1 +1,1 @@
-export default () => "I am a recipe page!";
+export default () => 'I am a recipe page!';

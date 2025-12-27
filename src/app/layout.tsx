@@ -1,15 +1,15 @@
-import "@mantine/core/styles.css";
+import '@mantine/core/styles.css';
 import {
 	ColorSchemeScript,
 	MantineProvider,
 	mantineHtmlProps,
-} from "@mantine/core";
-import React from "react";
-import { theme } from "../../theme";
+} from '@mantine/core';
+import React from 'react';
+import { theme } from '../../theme';
 
 export const metadata = {
-	title: "Mantine Next.js template",
-	description: "I am using Mantine with Next.js!",
+	title: 'Mantine Next.js template',
+	description: 'I am using Mantine with Next.js!',
 };
 
 export default function RootLayout({ children }: { children: any }) {
