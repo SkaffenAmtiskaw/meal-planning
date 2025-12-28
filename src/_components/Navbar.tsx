@@ -1,8 +1,27 @@
-import { NavLink } from '@mantine/core';
+'use client';
 
-export const Navbar = () => (
-	<>
-		<NavLink href="/list" label="Saved Recipes" />
-		<NavLink href="/plan" label="Meal Planning" />
-	</>
-);
+import { NavLink } from '@mantine/core';
+import { IconBook, IconCalendarWeek } from '@tabler/icons-react';
+
+import { useSelectedLayoutSegment } from 'next/navigation';
+
+export const Navbar = () => {
+	const segment = useSelectedLayoutSegment();
+
+	return (
+		<>
+			<NavLink
+				active={segment === 'planner'}
+				href="/planner"
+				label="Planner"
+				leftSection={<IconCalendarWeek />}
+			/>
+			<NavLink
+				active={segment === 'recipes'}
+				href="/recipes"
+				label="Recipes"
+				leftSection={<IconBook />}
+			/>
+		</>
+	);
+};
