@@ -5,7 +5,7 @@ import {
 	mantineHtmlProps,
 } from '@mantine/core';
 import React from 'react';
-import { theme } from '../../theme';
+import { theme } from '@/_theme';
 
 export const metadata = {
 	title: 'Mantine Next.js template',
