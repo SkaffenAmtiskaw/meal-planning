@@ -1,1 +1,1 @@
-export default () => 'I am the recipes page';
+export default async () => <>'I AM THE RECIPES PAGE';</>;

@@ -4,10 +4,13 @@ import { AppShell, Burger } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 
 import { Navbar } from '@/_components';
+import { useOneTap } from '@/_hooks';
 
 import { HEADER_HEIGHT } from './_constants';
 
 const Layout = ({ children }: LayoutProps<'/'>) => {
+	useOneTap();
+
 	const [opened, { toggle }] = useDisclosure();
 
 	return (

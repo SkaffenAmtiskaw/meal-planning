@@ -4,12 +4,11 @@ import {
 	MantineProvider,
 	mantineHtmlProps,
 } from '@mantine/core';
-import React from 'react';
+
 import { theme } from '@/_theme';
 
 export const metadata = {
-	title: 'Mantine Next.js template',
-	description: 'I am using Mantine with Next.js!',
+	title: 'Meal Planer',
 };
 
 export default function RootLayout({ children }: { children: any }) {
