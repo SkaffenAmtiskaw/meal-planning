@@ -2,16 +2,16 @@
 
 import { AppShell, Burger } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
+import { useParams } from 'next/navigation';
 
 import { Navbar } from '@/_components';
-import { useOneTap } from '@/_hooks';
 
 import { HEADER_HEIGHT } from './_constants';
 
-const Layout = ({ children }: LayoutProps<'/'>) => {
-	useOneTap();
-
+const Layout = ({ children }: LayoutProps<'/[planner]'>) => {
 	const [opened, { toggle }] = useDisclosure();
+
+	const { planner } = useParams();
 
 	return (
 		<AppShell
@@ -31,7 +31,7 @@ const Layout = ({ children }: LayoutProps<'/'>) => {
 				<Burger opened={opened} onClick={toggle} />
 			</AppShell.Header>
 			<AppShell.Navbar>
-				<Navbar />
+				<Navbar id={planner as string} />
 			</AppShell.Navbar>
 			<AppShell.Main>{children}</AppShell.Main>
 		</AppShell>

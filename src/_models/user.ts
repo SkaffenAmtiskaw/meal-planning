@@ -5,16 +5,21 @@ import { z } from 'zod';
 import { zObjectId } from './_utils/zObjectId';
 
 export const zUserInterface = z.object({
-	meals: z.array(zObjectId),
+	email: z.string(),
+	planner: z.array(zObjectId),
 });
 
 export type UserInterface = z.infer<typeof zUserInterface>;
 
 const userSchema = new Schema<UserInterface>({
-	meals: [
+	email: {
+		type: String,
+		unique: true,
+	},
+	planner: [
 		{
 			type: SchemaTypes.ObjectId,
-			ref: 'Meals',
+			ref: 'Planner',
 			required: true,
 		},
 	],

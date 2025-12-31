@@ -23,14 +23,14 @@ const zMealInterface = z.object({
 	dishes: z.array(zDishInterface),
 });
 
-export const zPlanInterface = z.object({
+export const zDayInterface = z.object({
 	date: z.iso.date(),
 	meals: z.array(zMealInterface).optional(),
 });
 
-export type PlanInterface = z.infer<typeof zPlanInterface>;
+export type DayInterface = z.infer<typeof zDayInterface>;
 
-export const planSchema = new Schema<PlanInterface>({
+export const daySchema = new Schema<DayInterface>({
 	date: { type: String, required: true },
 	meals: [
 		{
