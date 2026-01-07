@@ -2,11 +2,11 @@ type SuccessResult<T> = [T];
 
 type ErrorResult = [undefined, Error];
 
-export const catchify = <T>(
-	callback: () => T,
-): SuccessResult<T> | ErrorResult => {
+export const catchify = async <T>(
+	callback: () => Promise<T>,
+): Promise<SuccessResult<T> | ErrorResult> => {
 	try {
-		return [callback()];
+		return [await callback()];
 	} catch (e) {
 		return [undefined, e as Error];
 	}

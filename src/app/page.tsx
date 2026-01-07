@@ -3,7 +3,7 @@ import { Button, Center, Stack, Typography } from '@mantine/core';
 import { headers } from 'next/headers';
 import { redirect } from 'next/navigation';
 
-import { createUser } from '@/_actions';
+import { addUser } from '@/_actions';
 import { SignIn } from '@/_components';
 import { User } from '@/_models';
 import { auth } from '@/auth';
@@ -46,7 +46,7 @@ const Page = async () => {
 	const handleCreateUser = async () => {
 		'use server';
 
-		const user = await createUser(session.user.email);
+		const user = await addUser(session.user.email);
 
 		redirect(`${user.planner[0]._id}/calendar`);
 	};

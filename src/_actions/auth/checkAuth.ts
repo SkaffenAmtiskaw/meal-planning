@@ -1,21 +1,15 @@
 import { Types } from 'mongoose';
 
-import { headers } from 'next/headers';
-import { User } from '@/_models';
-import { auth } from '@/auth';
+import { catchify } from '@/_utils/catchify';
+
+import { getUser } from '../getUser';
 
 export const checkAuth = async (id: string) => {
 	if (!Types.ObjectId.isValid(id)) return false;
 
-	const session = await auth.api.getSession({
-		headers: await headers(),
-	});
+	const [user, error] = await catchify(getUser);
 
-	if (!session) return false;
-
-	const user = await User.findOne({ email: session.user.email }).exec();
-
-	if (!user) return false;
+	if (error || !user) return false;
 
 	return user.planner.some((planner) => planner.equals(id));
 };

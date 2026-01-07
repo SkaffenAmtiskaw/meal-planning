@@ -4,6 +4,7 @@ import { z } from 'zod';
 import { zObjectId } from '../_utils/zObjectId';
 
 export const zRecipeInterface = z.object({
+	_id: zObjectId,
 	ingredients: z.array(z.string()),
 	instructions: z.array(z.string()),
 	name: z.string(),
@@ -34,6 +35,7 @@ export const zRecipeInterface = z.object({
 export type RecipeInterface = z.infer<typeof zRecipeInterface>;
 
 export const recipeSchema = new Schema<RecipeInterface>({
+	_id: SchemaTypes.ObjectId,
 	ingredients: { type: [String], required: true },
 	instructions: { type: [String], required: true },
 	name: { type: String, required: true },

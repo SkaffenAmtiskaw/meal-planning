@@ -10,5 +10,5 @@ export const useOneTap = () => {
 		if (!session.data && !session.isPending) {
 			void client.oneTap();
 		}
-	}, [session.data, session.isPending]);
+	}, [session]);
 };

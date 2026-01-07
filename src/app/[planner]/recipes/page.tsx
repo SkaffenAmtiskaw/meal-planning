@@ -1,10 +1,16 @@
-import { ActionIcon, Affix } from '@mantine/core';
+import { Container, Group } from '@mantine/core';
 
 import { checkAuth } from '@/_actions/auth';
 import { Planner } from '@/_models';
 
-const RecipesPage = async ({ params }: PageProps<'/[planner]/recipes'>) => {
+import { AddItemDropdown, Modal, ModalContent } from './_components';
+
+const RecipesPage = async ({
+	params,
+	searchParams,
+}: PageProps<'/[planner]/recipes'>) => {
 	const { planner: id } = await params;
+	const { item, status, type } = await searchParams;
 
 	const authorized = await checkAuth(id);
 
@@ -18,9 +24,22 @@ const RecipesPage = async ({ params }: PageProps<'/[planner]/recipes'>) => {
 
 	return (
 		<>
-			<Affix bottom={20} right={20}>
-				<ActionIcon size="xl"></ActionIcon>
-			</Affix>
+			<Modal opened={!!status && !!type}>
+				<ModalContent
+					item={item as string | undefined}
+					planner={id}
+					status={status as string | undefined}
+					type={type as string | undefined}
+				/>
+			</Modal>
+			<Container py={8}>
+				<Group justify="flex-end">
+					<AddItemDropdown />
+				</Group>
+				{planner.saved?.map((item) => (
+					<div key={item._id.toString()}>{item.name}</div>
+				))}
+			</Container>
 		</>
 	);
 };

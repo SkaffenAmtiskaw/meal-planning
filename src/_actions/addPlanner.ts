@@ -2,7 +2,7 @@
 
 import { Planner } from '@/_models';
 
-export const createPlanner = async () => {
+export const addPlanner = async () => {
 	return await Planner.create({
 		calendar: [],
 		saved: [],

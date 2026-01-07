@@ -3,17 +3,19 @@ import { describe, expect, test } from 'vitest';
 import { catchify } from './catchify';
 
 describe('catchify', () => {
-	test('it should return an array with the value if the callback is successful', () => {
-		const test = () => 'foo';
+	test('it should return an array with the value if the callback is successful', async () => {
+		const test = () =>
+			new Promise((resolve) => setTimeout(() => resolve('foo'), 100));
 
-		expect(catchify(test)).toEqual(['foo']);
+		expect(await catchify(test)).toEqual(['foo']);
 	});
 
-	test('it should return an array with the error if the callback is unsuccessful', () => {
-		const test = () => {
-			throw new Error('boom');
-		};
+	test('it should return an array with the error if the callback is unsuccessful', async () => {
+		const test = () =>
+			new Promise((_resolve, reject) =>
+				setTimeout(() => reject(new Error('boom')), 100),
+			);
 
-		expect(catchify(test)).toEqual([undefined, new Error('boom')]);
+		expect(await catchify(test)).toEqual([undefined, new Error('boom')]);
 	});
 });
