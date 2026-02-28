@@ -11,6 +11,6 @@ export const addUser = async (email: string, plannerId?: Types.ObjectId) => {
 
 	return await User.create({
 		email,
-		planner: [id],
+		planners: [id],
 	});
 };

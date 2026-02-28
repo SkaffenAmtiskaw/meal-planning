@@ -10,7 +10,7 @@ export const AddItemDropdown = () => {
 	const pathname = usePathname();
 
 	const createURL = (type: 'bookmark' | 'recipe') =>
-		`${pathname}?${new URLSearchParams({ status: 'create', type }).toString()}`;
+		`${pathname}?${new URLSearchParams({ status: 'add', type }).toString()}`;
 
 	return (
 		<Menu>

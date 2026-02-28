@@ -8,22 +8,33 @@ import { recipeSchema, zRecipeInterface } from './recipe';
 import { tagSchema, zTagInterface } from './tag';
 
 export const zPlannerInterface = z.object({
-	calendar: z.array(zDayInterface).optional(),
-	saved: z.array(z.union([zBookmarkInterface, zRecipeInterface])).optional(),
-	tags: z.array(zTagInterface).optional(),
+	calendar: z.array(zDayInterface),
+	saved: z.array(z.union([zBookmarkInterface, zRecipeInterface])),
+	tags: z.array(zTagInterface),
 });
 
 type PlannerInterface = z.infer<typeof zPlannerInterface>;
 
 const plannerSchema = new Schema<PlannerInterface>({
-	calendar: [daySchema],
+	calendar: [
+		{
+			type: daySchema,
+			required: true,
+		},
+	],
 	saved: [
 		{
 			type: SchemaTypes.Union,
 			of: [bookmarkSchema, recipeSchema],
+			required: true,
 		},
 	],
-	tags: [tagSchema],
+	tags: [
+		{
+			type: tagSchema,
+			required: true,
+		},
+	],
 });
 
 export const Planner: Model<PlannerInterface> =

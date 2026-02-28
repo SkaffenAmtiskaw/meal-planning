@@ -20,10 +20,9 @@ const Page = async () => {
 		headers: await headers(),
 	});
 
-	// TODO: Fix the Sign In button(???)
 	if (!session) {
 		return (
-			<Center h="100vw" w="100vh">
+			<Center h="100%" w="100%">
 				<Stack bg="var(--mantine-color-blue-light)" p={24} align="center">
 					<Typography>
 						<p>In order to use the meal planner, you must sign in.</p>
@@ -39,7 +38,7 @@ const Page = async () => {
 	const user = await User.findOne({ email: session.user.email }).exec();
 
 	if (user) {
-		redirect(`${user.planner[0]._id}/calendar`);
+		redirect(`${user.planners[0]}/calendar`);
 	}
 
 	// TODO: Error handling
@@ -48,7 +47,7 @@ const Page = async () => {
 
 		const user = await addUser(session.user.email);
 
-		redirect(`${user.planner[0]._id}/calendar`);
+		redirect(`${user.planners[0]._id}/calendar`);
 	};
 
 	return (

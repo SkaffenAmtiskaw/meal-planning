@@ -6,7 +6,7 @@ import { zObjectId } from './_utils/zObjectId';
 
 export const zUserInterface = z.object({
 	email: z.string(),
-	planner: z.array(zObjectId),
+	planners: z.array(zObjectId),
 });
 
 export type UserInterface = z.infer<typeof zUserInterface>;
@@ -16,7 +16,7 @@ const userSchema = new Schema<UserInterface>({
 		type: String,
 		unique: true,
 	},
-	planner: [
+	planners: [
 		{
 			type: SchemaTypes.ObjectId,
 			ref: 'Planner',

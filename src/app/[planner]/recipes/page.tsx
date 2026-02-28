@@ -1,16 +1,28 @@
 import { Container, Group } from '@mantine/core';
 
-import { checkAuth } from '@/_actions/auth';
-import { Planner } from '@/_models';
+import { z } from 'zod';
 
-import { AddItemDropdown, Modal, ModalContent } from './_components';
+import { checkAuth } from '@/_actions/auth';
+import { Planner, zObjectId } from '@/_models';
+
+import { AddItemDropdown, Modal } from './_components';
+
+const zParams = z.object({
+	planner: zObjectId,
+});
+
+const zSearchParams = z.object({
+	item: zObjectId.optional(),
+	status: z.union([z.literal('add'), z.literal('edit')]).optional(),
+	type: z.union([z.literal('bookmark'), z.literal('recipe')]).optional(),
+});
 
 const RecipesPage = async ({
 	params,
 	searchParams,
 }: PageProps<'/[planner]/recipes'>) => {
-	const { planner: id } = await params;
-	const { item, status, type } = await searchParams;
+	const { planner: id } = zParams.parse(await params);
+	const { item, status, type } = zSearchParams.parse(await searchParams);
 
 	const authorized = await checkAuth(id);
 
@@ -24,14 +36,7 @@ const RecipesPage = async ({
 
 	return (
 		<>
-			<Modal opened={!!status && !!type}>
-				<ModalContent
-					item={item as string | undefined}
-					planner={id}
-					status={status as string | undefined}
-					type={type as string | undefined}
-				/>
-			</Modal>
+			<Modal item={item} planner={id} status={status} type={type} />
 			<Container py={8}>
 				<Group justify="flex-end">
 					<AddItemDropdown />
