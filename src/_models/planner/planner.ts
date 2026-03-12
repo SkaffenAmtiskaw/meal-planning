@@ -13,7 +13,7 @@ export const zPlannerInterface = z.object({
 	tags: z.array(zTagInterface),
 });
 
-type PlannerInterface = z.infer<typeof zPlannerInterface>;
+export type PlannerInterface = z.infer<typeof zPlannerInterface>;
 
 const plannerSchema = new Schema<PlannerInterface>({
 	calendar: [

@@ -1,7 +1,7 @@
 import { Schema, SchemaTypes } from 'mongoose';
-
 import { z } from 'zod';
-import { zObjectId } from '../_utils/zObjectId';
+
+import { zObjectId } from '@/_models';
 
 export const zRecipeInterface = z.object({
 	_id: zObjectId,
@@ -11,25 +11,25 @@ export const zRecipeInterface = z.object({
 	notes: z.string().optional(),
 	servings: z.number().optional(),
 	source: z
-		.union([
-			z.string(),
-			z.object({
-				name: z.string(),
-				url: z.url(),
-			}),
-		])
+		.object({
+			name: z.string(),
+			url: z.url().optional(),
+		})
 		.optional(),
 	storage: z.string().optional(),
 	tags: z.array(zObjectId).optional(),
 	time: z
-		.union([
-			z.number(),
-			z.object({
-				prep: z.number(),
-				cook: z.number(),
-			}),
-		])
+		.object({
+			prep: z.string().optional(),
+			cook: z.string().optional(),
+			total: z.string().optional(),
+			actual: z.string().optional(),
+		})
 		.optional(),
+});
+
+export const zRecipeFormSchema = zRecipeInterface.omit({ _id: true }).extend({
+	plannerId: z.string(),
 });
 
 export type RecipeInterface = z.infer<typeof zRecipeInterface>;

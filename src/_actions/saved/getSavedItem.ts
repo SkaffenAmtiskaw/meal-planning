@@ -2,7 +2,7 @@
 
 import type { Types } from 'mongoose';
 
-import { getPlanner } from './getPlanner';
+import { getPlanner } from '../planner/getPlanner';
 
 export const getSavedItem = async (
 	plannerId: Types.ObjectId,

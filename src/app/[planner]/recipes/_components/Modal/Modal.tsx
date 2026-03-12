@@ -1,6 +1,7 @@
-import type { Types } from 'mongoose';
+import type { HydratedDocument, Types } from 'mongoose';
 
 import { getSavedItem } from '@/_actions';
+import type { PlannerInterface } from '@/_models/planner';
 import type { BookmarkInterface } from '@/_models/planner/bookmark';
 import type { RecipeInterface } from '@/_models/planner/recipe';
 
@@ -8,8 +9,10 @@ import { BookmarkForm } from './BookmarkForm';
 import { ModalWrapper } from './ModalWrapper';
 import { RecipeForm } from './RecipeForm';
 
+type Planner = HydratedDocument<PlannerInterface>;
+
 type Props = {
-	planner: Types.ObjectId;
+	planner: Planner;
 	item?: Types.ObjectId;
 	status?: 'add' | 'edit';
 	type?: 'bookmark' | 'recipe';
@@ -18,45 +21,42 @@ type Props = {
 const CONTENT_TYPES = {
 	add: {
 		bookmark: {
-			getForm: () => <BookmarkForm />,
+			getForm: (planner: Planner) => <BookmarkForm planner={planner} />,
 			getHeader: () => 'Add New Bookmark',
 		},
 		recipe: {
-			getForm: () => <RecipeForm />,
+			getForm: (planner: Planner) => <RecipeForm planner={planner} />,
 			getHeader: () => 'Add New Recipe',
 		},
 	},
 	edit: {
 		bookmark: {
-			getForm: (bookmark: BookmarkInterface) => (
-				<BookmarkForm item={bookmark} />
+			getForm: (planner: Planner, bookmark: BookmarkInterface) => (
+				<BookmarkForm item={bookmark} planner={planner} />
 			),
 			getHeader: ({ name }: BookmarkInterface) => `Update ${name}`,
 		},
 		recipe: {
-			getForm: (recipe: RecipeInterface) => <RecipeForm item={recipe} />,
+			getForm: (planner: Planner, recipe: RecipeInterface) => (
+				<RecipeForm item={recipe} planner={planner} />
+			),
 			getHeader: ({ name }: RecipeInterface) => `Update ${name}`,
 		},
 	},
 };
 
-export const Modal = async ({
-	item: itemId,
-	planner: plannerId,
-	status,
-	type,
-}: Props) => {
+export const Modal = async ({ item: itemId, planner, status, type }: Props) => {
 	if (!status || !type) return null;
 
 	if (status === 'edit' && itemId) {
-		const item = await getSavedItem(plannerId, itemId);
+		const item = await getSavedItem(planner._id, itemId);
 		if (!item) return null;
 
 		if (type === 'bookmark') {
 			const { getForm, getHeader } = CONTENT_TYPES.edit.bookmark;
 			return (
 				<ModalWrapper opened title={getHeader(item as BookmarkInterface)}>
-					{getForm(item as BookmarkInterface)}
+					{getForm(planner, item as BookmarkInterface)}
 				</ModalWrapper>
 			);
 		}
@@ -65,7 +65,7 @@ export const Modal = async ({
 			const { getForm, getHeader } = CONTENT_TYPES.edit.recipe;
 			return (
 				<ModalWrapper opened title={getHeader(item as RecipeInterface)}>
-					{getForm(item as RecipeInterface)}
+					{getForm(planner, item as RecipeInterface)}
 				</ModalWrapper>
 			);
 		}
@@ -76,7 +76,7 @@ export const Modal = async ({
 
 		return (
 			<ModalWrapper opened title={getHeader()}>
-				{getForm()}
+				{getForm(planner)}
 			</ModalWrapper>
 		);
 	}

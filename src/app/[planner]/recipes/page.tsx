@@ -2,7 +2,7 @@ import { Container, Group } from '@mantine/core';
 
 import { z } from 'zod';
 
-import { checkAuth } from '@/_actions/auth';
+import { checkAuth, getPlanner } from '@/_actions';
 import { Planner, zObjectId } from '@/_models';
 
 import { AddItemDropdown, Modal } from './_components';
@@ -29,14 +29,11 @@ const RecipesPage = async ({
 	// TODO: Maybe error handling might be preferable
 	if (!authorized) throw new Error('fuck off');
 
-	const planner = await Planner.findById(id);
-
-	// TODO: Error handling is magical.
-	if (!planner) return null;
+	const planner = await getPlanner(id);
 
 	return (
 		<>
-			<Modal item={item} planner={id} status={status} type={type} />
+			<Modal item={item} planner={planner} status={status} type={type} />
 			<Container py={8}>
 				<Group justify="flex-end">
 					<AddItemDropdown />
