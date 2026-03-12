@@ -1,7 +1,7 @@
-import { Button, Center, Stack, Typography } from '@mantine/core';
-
 import { headers } from 'next/headers';
 import { redirect } from 'next/navigation';
+
+import { Button, Center, Stack, Typography } from '@mantine/core';
 
 import { addUser } from '@/_actions';
 import { SignIn } from '@/_components';

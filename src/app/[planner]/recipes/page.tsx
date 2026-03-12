@@ -3,7 +3,7 @@ import { Container, Group } from '@mantine/core';
 import { z } from 'zod';
 
 import { checkAuth, getPlanner } from '@/_actions';
-import { Planner, zObjectId } from '@/_models';
+import { zObjectId } from '@/_models';
 
 import { AddItemDropdown, Modal } from './_components';
 

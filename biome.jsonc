@@ -6,5 +6,40 @@
 		"formatter": {
 			"quoteStyle": "single"
 		}
+	},
+	"assist": {
+		"actions": {
+			"source": {
+				"organizeImports": {
+					"level": "on",
+					"options": {
+						"groups": [
+							"server-only",
+							":BLANK_LINE:",
+							{
+								"type": false,
+								"source": ["next", "next/**", "react", "react-dom"]
+							},
+							":BLANK_LINE:",
+							{
+								"type": false,
+								"source": ["node:*"]
+							},
+							":BLANK_LINE:",
+							{
+								"type": false,
+								"source": ["@*/**", "!@/**"]
+							},
+							":BLANK_LINE:",
+							":PACKAGE:",
+							":BLANK_LINE:",
+							":ALIAS:",
+							":BLANK_LINE:",
+							":PATH:"
+						]
+					}
+				}
+			}
+		}
 	}
 }

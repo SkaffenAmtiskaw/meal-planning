@@ -1,9 +1,9 @@
 'use client';
 
+import { usePathname, useRouter } from 'next/navigation';
+
 import { Button, Menu } from '@mantine/core';
 import { IconBookmark, IconBowlSpoon, IconPlus } from '@tabler/icons-react';
-
-import { usePathname, useRouter } from 'next/navigation';
 
 export const AddItemDropdown = () => {
 	const router = useRouter();

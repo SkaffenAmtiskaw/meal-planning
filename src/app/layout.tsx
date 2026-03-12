@@ -1,4 +1,7 @@
+import type { ReactNode } from 'react';
+
 import '@mantine/core/styles.css';
+
 import {
 	ColorSchemeScript,
 	MantineProvider,
@@ -12,7 +15,7 @@ export const metadata = {
 	title: 'Meal Planer',
 };
 
-export default function RootLayout({ children }: { children: any }) {
+export default function RootLayout({ children }: { children: ReactNode }) {
 	return (
 		<html lang="en" {...mantineHtmlProps}>
 			<head>

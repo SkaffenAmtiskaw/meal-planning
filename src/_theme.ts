@@ -1,7 +1,8 @@
 'use client';
 
-import { createTheme, NavLink } from '@mantine/core';
 import Link from 'next/link';
+
+import { createTheme, NavLink } from '@mantine/core';
 
 export const theme = createTheme({
 	components: {

@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect } from 'react';
+
 import { client } from '@/_utils/auth';
 
 export const useOneTap = () => {

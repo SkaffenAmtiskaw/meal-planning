@@ -1,9 +1,9 @@
 'use client';
 
+import { useSelectedLayoutSegment } from 'next/navigation';
+
 import { NavLink } from '@mantine/core';
 import { IconBook, IconCalendarWeek } from '@tabler/icons-react';
-
-import { useSelectedLayoutSegment } from 'next/navigation';
 
 export const Navbar = ({ id }: { id: string }) => {
 	const segment = useSelectedLayoutSegment();

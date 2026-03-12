@@ -1,8 +1,9 @@
 'use client';
 
+import { useParams } from 'next/navigation';
+
 import { AppShell, Burger } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
-import { useParams } from 'next/navigation';
 
 import { Navbar } from '@/_components';
 

@@ -1,6 +1,7 @@
 import { Schema, SchemaTypes } from 'mongoose';
 import { z } from 'zod';
-import { zObjectId } from '../_utils/zObjectId';
+
+import { zObjectId } from '@/_models';
 
 const zDishInterface = z.object({
 	name: z.string(),
