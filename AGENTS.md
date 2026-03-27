@@ -80,9 +80,3 @@ pnpm test     # Run Vitest
 - Components use Mantine primitives; avoid custom CSS where possible
 - Zod schemas are co-located with their Mongoose models
 - Biome enforces formatting and import order; runs automatically on commit via Lefthook
-
-## Known WIP / TODOs
-
-- Calendar page (`/[planner]/calendar`) is not yet implemented
-- Planner invite/sharing feature is planned but not started
-- Test coverage is minimal (only `catchify` has tests)
