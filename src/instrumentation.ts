@@ -1,6 +1,7 @@
 import mongoose from 'mongoose';
 
+import { env } from './env';
+
 export const register = () => {
-	// biome-ignore lint/style/noNonNullAssertion: mandatory environment variable
-	mongoose.connect(process.env.DB_URL!);
+	mongoose.connect(env.DB_URL);
 };

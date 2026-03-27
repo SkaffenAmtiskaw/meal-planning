@@ -58,7 +58,9 @@ All models have corresponding Zod schemas for runtime validation.
 3. First login: create User doc, redirect to planner
 4. Returning user: redirect to existing planner
 
-Environment variables needed: `BETTER_AUTH_SECRET`, `BETTER_AUTH_URL`, `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`, `MONGODB_URI`.
+Environment variables needed: `BETTER_AUTH_SECRET`, `BETTER_AUTH_URL`, `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`, `DB_URL`, `NEXT_PUBLIC_GOOGLE_CLIENT_ID`.
+
+All env vars are declared and validated at startup via `@t3-oss/env-nextjs` in `src/env.ts`. Import `env` from there instead of accessing `process.env` directly — this provides Zod validation and eliminates non-null assertions.
 
 ## Error Handling
 
