@@ -1,4 +1,3 @@
-/* v8 ignore start */
 'use client';
 
 import { useState } from 'react';
@@ -38,6 +37,7 @@ export const TagCombobox = ({
 	const theme = useMantineTheme();
 	const [availableTags, setAvailableTags] = useState<TagOption[]>(initialTags);
 	const [search, setSearch] = useState('');
+	const [createError, setCreateError] = useState<string | null>(null);
 
 	const getPillStyle = (color: string) => {
 		const bg = theme.colors[color]?.[5] ?? color;
@@ -69,11 +69,16 @@ export const TagCombobox = ({
 
 	const handleCreate = async () => {
 		const name = search.trim();
-		const newTag = await addTag(plannerId, name);
-		setAvailableTags((prev) => [...prev, newTag]);
-		onChange([...value, newTag._id]);
-		setSearch('');
-		combobox.closeDropdown();
+		try {
+			const newTag = await addTag(plannerId, name);
+			setAvailableTags((prev) => [...prev, newTag]);
+			onChange([...value, newTag._id]);
+			setSearch('');
+			combobox.closeDropdown();
+			setCreateError(null);
+		} catch {
+			setCreateError('Failed to create tag');
+		}
 	};
 
 	const handleRemove = (tagId: string) => {
@@ -92,61 +97,70 @@ export const TagCombobox = ({
 	));
 
 	return (
-		<Combobox
-			store={combobox}
-			onOptionSubmit={(val) => {
-				if (val === '__create__') {
-					handleCreate();
-				} else {
-					handleSelect(val);
-				}
-			}}
-		>
-			<Combobox.DropdownTarget>
-				<PillsInput label={label} onClick={() => combobox.openDropdown()}>
-					<Pill.Group>
-						{pills}
-						<PillsInput.Field
-							value={search}
-							placeholder="Search or create tags"
-							onChange={(e) => {
-								setSearch(e.currentTarget.value);
-								combobox.openDropdown();
-								combobox.updateSelectedOptionIndex();
-							}}
-							onFocus={() => combobox.openDropdown()}
-							onBlur={() => combobox.closeDropdown()}
-							onKeyDown={(e) => {
-								if (
-									e.key === 'Backspace' &&
-									search.length === 0 &&
-									value.length > 0
-								) {
-									onChange(value.slice(0, -1));
-								}
-							}}
-						/>
-					</Pill.Group>
-				</PillsInput>
-			</Combobox.DropdownTarget>
+		<>
+			<Combobox
+				store={combobox}
+				onOptionSubmit={(val) => {
+					if (val === '__create__') {
+						handleCreate();
+					} else {
+						handleSelect(val);
+					}
+				}}
+			>
+				<Combobox.DropdownTarget>
+					<PillsInput label={label} onClick={() => combobox.openDropdown()}>
+						<Pill.Group>
+							{pills}
+							<PillsInput.Field
+								value={search}
+								placeholder="Search or create tags"
+								onChange={(e) => {
+									setSearch(e.currentTarget.value);
+									combobox.openDropdown();
+									combobox.updateSelectedOptionIndex();
+								}}
+								onFocus={() => combobox.openDropdown()}
+								onBlur={() => combobox.closeDropdown()}
+								onKeyDown={(e) => {
+									if (
+										e.key === 'Backspace' &&
+										search.length === 0 &&
+										value.length > 0
+									) {
+										onChange(value.slice(0, -1));
+									}
+								}}
+							/>
+						</Pill.Group>
+					</PillsInput>
+				</Combobox.DropdownTarget>
 
-			<Combobox.Dropdown>
-				<Combobox.Options>
-					{showCreate && (
-						<Combobox.Option value="__create__">
-							+ Create &ldquo;{search.trim()}&rdquo;
-						</Combobox.Option>
-					)}
-					{filteredOptions.length > 0
-						? filteredOptions.map((tag) => (
-								<Combobox.Option key={tag._id} value={tag._id}>
-									{tag.name}
-								</Combobox.Option>
-							))
-						: !showCreate && <Combobox.Empty>No tags found</Combobox.Empty>}
-				</Combobox.Options>
-			</Combobox.Dropdown>
-		</Combobox>
+				<Combobox.Dropdown>
+					<Combobox.Options>
+						{showCreate && (
+							<Combobox.Option value="__create__">
+								+ Create &ldquo;{search.trim()}&rdquo;
+							</Combobox.Option>
+						)}
+						{filteredOptions.length > 0
+							? filteredOptions.map((tag) => (
+									<Combobox.Option key={tag._id} value={tag._id}>
+										{tag.name}
+									</Combobox.Option>
+								))
+							: !showCreate && <Combobox.Empty>No tags found</Combobox.Empty>}
+					</Combobox.Options>
+				</Combobox.Dropdown>
+			</Combobox>
+			{createError && (
+				<span
+					data-testid="tag-create-error"
+					style={{ color: 'red', fontSize: 12 }}
+				>
+					{createError}
+				</span>
+			)}
+		</>
 	);
 };
-/* v8 ignore stop */
