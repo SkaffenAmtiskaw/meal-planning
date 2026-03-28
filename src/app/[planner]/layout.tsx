@@ -1,42 +1,27 @@
-'use client';
+import { notFound, redirect } from 'next/navigation';
 
-import { useParams } from 'next/navigation';
+import { z } from 'zod';
 
-import { AppShell, Burger } from '@mantine/core';
-import { useDisclosure } from '@mantine/hooks';
+import { checkAuth } from '@/_actions';
+import { zObjectId } from '@/_models';
 
-import { Navbar } from '@/_components';
+import { PlannerWrapper } from './_components/PlannerWrapper';
 
-import { HEADER_HEIGHT } from './_constants';
+const zParams = z.object({
+	planner: zObjectId,
+});
 
-const Layout = ({ children }: LayoutProps<'/[planner]'>) => {
-	const [opened, { toggle }] = useDisclosure();
+const Layout = async ({ children, params }: LayoutProps<'/[planner]'>) => {
+	const { planner: id } = zParams.parse(await params);
 
-	const { planner } = useParams();
+	const result = await checkAuth(id);
 
-	return (
-		<AppShell
-			header={{
-				height: HEADER_HEIGHT,
-			}}
-			navbar={{
-				breakpoint: 'sm',
-				collapsed: {
-					mobile: !opened,
-					desktop: !opened,
-				},
-				width: 300,
-			}}
-		>
-			<AppShell.Header>
-				<Burger opened={opened} onClick={toggle} />
-			</AppShell.Header>
-			<AppShell.Navbar>
-				<Navbar id={planner as string} />
-			</AppShell.Navbar>
-			<AppShell.Main>{children}</AppShell.Main>
-		</AppShell>
-	);
+	if (result.type === 'unauthenticated') redirect('/');
+	if (result.type === 'unauthorized') notFound();
+	if (result.type === 'error') throw result.error;
+
+	// TODO: Add suspense so the layout will still load while the auth is being checked
+	return <PlannerWrapper>{children}</PlannerWrapper>;
 };
 
 export default Layout;

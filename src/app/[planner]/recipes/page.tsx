@@ -2,7 +2,7 @@ import { Container, Group } from '@mantine/core';
 
 import { z } from 'zod';
 
-import { checkAuth, getPlanner } from '@/_actions';
+import { getPlanner } from '@/_actions';
 import { zObjectId } from '@/_models';
 
 import { AddItemDropdown, Modal } from './_components';
@@ -23,11 +23,6 @@ const RecipesPage = async ({
 }: PageProps<'/[planner]/recipes'>) => {
 	const { planner: id } = zParams.parse(await params);
 	const { item, status, type } = zSearchParams.parse(await searchParams);
-
-	const authorized = await checkAuth(id);
-
-	// TODO: Maybe error handling might be preferable
-	if (!authorized) throw new Error('fuck off');
 
 	const planner = await getPlanner(id);
 

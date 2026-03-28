@@ -16,29 +16,42 @@ describe('check auth', () => {
 		vi.resetAllMocks();
 	});
 
-	test('should return false if there is an error getting the user', async () => {
-		vi.mocked(catchify).mockResolvedValue([undefined, new Error('foo')]);
+	test('should return unauthenticated if the error is No Valid Session', async () => {
+		vi.mocked(catchify).mockResolvedValue([
+			undefined,
+			new Error('No Valid Session'),
+		]);
 
-		expect(await checkAuth(mockPlannerId)).toBe(false);
+		expect(await checkAuth(mockPlannerId)).toEqual({ type: 'unauthenticated' });
 	});
 
-	test('should return false if there is no user', async () => {
+	test('should return error if there is a non-auth error getting the user', async () => {
+		const dbError = new Error('DB connection timeout');
+		vi.mocked(catchify).mockResolvedValue([undefined, dbError]);
+
+		expect(await checkAuth(mockPlannerId)).toEqual({
+			type: 'error',
+			error: dbError,
+		});
+	});
+
+	test('should return unauthenticated if there is no user', async () => {
 		vi.mocked(getUser).mockResolvedValue(null);
 
-		expect(await checkAuth(mockPlannerId)).toBe(false);
+		expect(await checkAuth(mockPlannerId)).toEqual({ type: 'unauthenticated' });
 	});
 
-	test('should return false if the user does not have access to the planner', async () => {
+	test('should return unauthorized if the user does not have access to the planner', async () => {
 		const otherPlannerId = new Types.ObjectId();
 		vi.mocked(getUser).mockResolvedValue({
 			email: 'test@example.com',
 			planners: [otherPlannerId],
 		} as unknown as Awaited<ReturnType<typeof getUser>>);
 
-		expect(await checkAuth(mockPlannerId)).toBe(false);
+		expect(await checkAuth(mockPlannerId)).toEqual({ type: 'unauthorized' });
 	});
 
-	test('should return true if the user does have access to the planner', async () => {
+	test('should return authorized if the user does have access to the planner', async () => {
 		const authorizedPlannerId = new Types.ObjectId();
 
 		vi.mocked(getUser).mockResolvedValue({
@@ -46,6 +59,8 @@ describe('check auth', () => {
 			planners: [authorizedPlannerId],
 		} as unknown as Awaited<ReturnType<typeof getUser>>);
 
-		expect(await checkAuth(authorizedPlannerId)).toBe(true);
+		expect(await checkAuth(authorizedPlannerId)).toEqual({
+			type: 'authorized',
+		});
 	});
 });

@@ -9,10 +9,8 @@ vi.mock('@/_models', async () => {
 	return { zObjectId };
 });
 
-const mockCheckAuth = vi.fn();
 const mockGetPlanner = vi.fn();
 vi.mock('@/_actions', () => ({
-	checkAuth: (...args: unknown[]) => mockCheckAuth(...args),
 	getPlanner: (...args: unknown[]) => mockGetPlanner(...args),
 }));
 
@@ -53,15 +51,8 @@ describe('recipes page', () => {
 		vi.resetAllMocks();
 	});
 
-	test('throws when user is not authorized', async () => {
-		mockCheckAuth.mockResolvedValue(false);
-
-		await expect(RecipesPage({ params, searchParams })).rejects.toThrow();
-	});
-
 	test('passes planner data to Modal', async () => {
 		const planner = makePlanner();
-		mockCheckAuth.mockResolvedValue(true);
 		mockGetPlanner.mockResolvedValue(planner);
 
 		render(await RecipesPage({ params, searchParams }));
@@ -73,7 +64,6 @@ describe('recipes page', () => {
 
 	test('passes search params to Modal', async () => {
 		const planner = makePlanner();
-		mockCheckAuth.mockResolvedValue(true);
 		mockGetPlanner.mockResolvedValue(planner);
 
 		const searchParamsWithQuery = Promise.resolve({
@@ -100,7 +90,6 @@ describe('recipes page', () => {
 				name: "Ursula's Sea Witch Soup",
 			},
 		];
-		mockCheckAuth.mockResolvedValue(true);
 		mockGetPlanner.mockResolvedValue(makePlanner(saved));
 
 		render(await RecipesPage({ params, searchParams }));

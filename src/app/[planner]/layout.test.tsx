@@ -1,52 +1,78 @@
 import { render, screen } from '@testing-library/react';
 
-import { describe, expect, test, vi } from 'vitest';
+import { afterEach, describe, expect, test, vi } from 'vitest';
 
 import Layout from './layout';
 
-vi.mock('next/navigation', () => ({
-	useParams: () => ({ planner: 'maleficent-planner-id' }),
-}));
-
-vi.mock('@mantine/core', () => {
-	const AppShell = ({ children }: { children: React.ReactNode }) => (
-		<>{children}</>
-	);
-	AppShell.Header = ({ children }: { children: React.ReactNode }) => (
-		<>{children}</>
-	);
-	AppShell.Navbar = ({ children }: { children: React.ReactNode }) => (
-		<>{children}</>
-	);
-	AppShell.Main = ({ children }: { children: React.ReactNode }) => (
-		<>{children}</>
-	);
-	return { AppShell, Burger: () => null };
+vi.mock('@/_models', async () => {
+	const { zObjectId } = await import('@/_models/_utils/zObjectId');
+	return { zObjectId };
 });
 
-vi.mock('@mantine/hooks', () => ({
-	useDisclosure: () => [false, { toggle: vi.fn() }],
+const mockCheckAuth = vi.fn();
+vi.mock('@/_actions', () => ({
+	checkAuth: (...args: unknown[]) => mockCheckAuth(...args),
 }));
 
-const mockNavbar = vi.fn<(props: { id: string }) => null>(() => null);
-vi.mock('@/_components', () => ({
-	Navbar: (props: { id: string }) => mockNavbar(props),
+const mockRedirect = vi.fn();
+const mockNotFound = vi.fn();
+vi.mock('next/navigation', () => ({
+	redirect: (...args: unknown[]) => mockRedirect(...args),
+	notFound: () => mockNotFound(),
 }));
 
-const params = Promise.resolve({ planner: 'maleficent-planner-id' });
+vi.mock('./_components/PlannerWrapper', () => ({
+	PlannerWrapper: ({ children }: { children: React.ReactNode }) => (
+		<>{children}</>
+	),
+}));
+
+const plannerId = '507f1f77bcf86cd799439011';
+const params = Promise.resolve({ planner: plannerId });
 
 describe('planner layout', () => {
-	test('passes planner id from params to Navbar', () => {
-		render(<Layout params={params}>{'Maleficent Meals'}</Layout>);
+	afterEach(() => {
+		vi.resetAllMocks();
+	});
 
-		expect(mockNavbar).toHaveBeenCalledWith(
-			expect.objectContaining({ id: 'maleficent-planner-id' }),
+	test('redirects to / when unauthenticated', async () => {
+		mockCheckAuth.mockResolvedValue({ type: 'unauthenticated' });
+
+		await Layout({ children: null, params });
+
+		expect(mockRedirect).toHaveBeenCalledWith('/');
+	});
+
+	test('calls notFound when unauthorized', async () => {
+		mockCheckAuth.mockResolvedValue({ type: 'unauthorized' });
+
+		await Layout({ children: null, params });
+
+		expect(mockNotFound).toHaveBeenCalled();
+	});
+
+	test('throws when there is a system error', async () => {
+		const dbError = new Error('DB connection timeout');
+		mockCheckAuth.mockResolvedValue({ type: 'error', error: dbError });
+
+		await expect(Layout({ children: null, params })).rejects.toThrow(
+			'DB connection timeout',
 		);
 	});
 
-	test('renders children', () => {
-		render(<Layout params={params}>{"Ursula's Menu"}</Layout>);
+	test('renders children when authorized', async () => {
+		mockCheckAuth.mockResolvedValue({ type: 'authorized' });
+
+		render(await Layout({ children: "Ursula's Menu", params }));
 
 		expect(screen.getByText("Ursula's Menu")).toBeDefined();
+	});
+
+	test('passes planner id to checkAuth', async () => {
+		mockCheckAuth.mockResolvedValue({ type: 'authorized' });
+
+		await Layout({ children: null, params });
+
+		expect(mockCheckAuth).toHaveBeenCalledWith(plannerId);
 	});
 });

@@ -12,6 +12,7 @@ Feedback
 
 Dead Code
 - all code reviews should include a check for dead code
+- check TODO comments in staged files and assess whether they have been addressed - if so suggest removing it - the user MUST confirm it can be removed
 
 Unit Testing
 - changed & added files should have 100% unit test coverage
