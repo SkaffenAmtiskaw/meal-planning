@@ -4,3 +4,6 @@ pre-commit:
       run: pnpm biome check --write --no-errors-on-unmatched {staged_files}
       stage_fixed: true
       glob: "*.{js,jsx,ts,tsx,json}"
+    test-coverage:
+      run: pnpm vitest run --coverage --reporter=dot --passWithNoTests --related {staged_files}
+      glob: "src/**/*.{ts,tsx}"

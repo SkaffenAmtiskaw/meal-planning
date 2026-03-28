@@ -86,6 +86,8 @@ pnpm test     # Run Vitest
 
 ## Coverage
 
+**100% unit test coverage is required.** All source files must have 100% line, function, branch, and statement coverage. `pnpm test:coverage` enforces this via thresholds and will fail the build if coverage drops. Lefthook also runs coverage on pre-commit whenever `src/` files are staged.
+
 - To temporarily exclude a file from v8 coverage, wrap its entire content with `/* v8 ignore start */` and `/* v8 ignore stop */`. Do **not** use `/* v8 ignore file */` — it is not reliably supported across Node versions.
 - The `coverage.exclude` array in `vitest.config.ts` is for **permanent** exclusions only (e.g. config files, route handlers that can never contain testable logic). Do not add files to it as a temporary workaround while a refactor is pending.
 
