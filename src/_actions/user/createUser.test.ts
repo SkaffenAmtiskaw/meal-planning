@@ -42,9 +42,14 @@ describe('create user', () => {
 		expect(redirect).toHaveBeenCalledWith(`${plannerId}/calendar`);
 	});
 
-	test('propagates errors thrown by addUser', async () => {
+	test('returns an error object when addUser fails', async () => {
 		vi.mocked(addUser).mockRejectedValue(new Error('DB error'));
 
-		await expect(createUser('ariel@sea.com')).rejects.toThrow('DB error');
+		const result = await createUser('ariel@sea.com');
+
+		expect(result).toEqual({
+			error: 'Failed to create planner. Please try again.',
+		});
+		expect(redirect).not.toHaveBeenCalled();
 	});
 });

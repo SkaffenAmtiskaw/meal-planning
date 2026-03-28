@@ -31,6 +31,7 @@ const Page = async () => {
 		redirect(`${user.planners[0]}/calendar`);
 	}
 
+	// TODO: This needs to be centered in the page.
 	return <CreatePlannerPrompt email={session.user.email} />;
 };
 
