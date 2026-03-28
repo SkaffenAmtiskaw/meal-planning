@@ -5,7 +5,7 @@ import { z } from 'zod';
 import { getPlanner } from '@/_actions';
 import { zObjectId } from '@/_models';
 
-import { AddItemDropdown, Modal } from './_components';
+import { AddItemDropdown, Modal, SavedList } from './_components';
 
 const zParams = z.object({
 	planner: zObjectId,
@@ -33,9 +33,7 @@ const RecipesPage = async ({
 				<Group justify="flex-end">
 					<AddItemDropdown />
 				</Group>
-				{planner.saved?.map((item) => (
-					<div key={`${item._id}`}>{item.name}</div>
-				))}
+				<SavedList items={planner.saved} plannerId={id} />
 			</Container>
 		</>
 	);

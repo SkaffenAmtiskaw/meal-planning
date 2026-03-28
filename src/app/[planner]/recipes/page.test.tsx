@@ -1,4 +1,4 @@
-import { render, screen } from '@testing-library/react';
+import { render } from '@testing-library/react';
 
 import { afterEach, describe, expect, test, vi } from 'vitest';
 
@@ -21,10 +21,18 @@ type ModalProps = {
 	type?: string;
 };
 
+type SavedListProps = {
+	items: unknown[];
+	plannerId: string;
+};
+
 const mockModal = vi.fn<(props: ModalProps) => null>(() => null);
+const mockSavedList = vi.fn<(props: SavedListProps) => null>(() => null);
+
 vi.mock('./_components', () => ({
 	Modal: (props: ModalProps) => mockModal(props),
 	AddItemDropdown: () => null,
+	SavedList: (props: SavedListProps) => mockSavedList(props),
 }));
 
 vi.mock('@mantine/core', () => ({
@@ -79,22 +87,20 @@ describe('recipes page', () => {
 		);
 	});
 
-	test('renders saved item names', async () => {
+	test('passes saved items and plannerId to SavedList', async () => {
 		const saved = [
 			{
 				_id: { toString: () => '507f1f77bcf86cd799439012' },
 				name: "Maleficent's Dragon Roast",
 			},
-			{
-				_id: { toString: () => '507f1f77bcf86cd799439013' },
-				name: "Ursula's Sea Witch Soup",
-			},
 		];
-		mockGetPlanner.mockResolvedValue(makePlanner(saved));
+		const planner = makePlanner(saved);
+		mockGetPlanner.mockResolvedValue(planner);
 
 		render(await RecipesPage({ params, searchParams }));
 
-		expect(screen.getByText("Maleficent's Dragon Roast")).toBeDefined();
-		expect(screen.getByText("Ursula's Sea Witch Soup")).toBeDefined();
+		expect(mockSavedList).toHaveBeenCalledWith(
+			expect.objectContaining({ items: planner.saved, plannerId }),
+		);
 	});
 });

@@ -3,3 +3,4 @@
 - add a keep awake option on mobile
 - allow user to add/edit notes and add/edit tags
 - add a button for editing the recipe (disabled until edit functionality added)
+- recipe list already renders links to this page — links will be broken until this page is created; completing this page is a prerequisite for the recipe list link task to be considered done

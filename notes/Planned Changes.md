@@ -9,6 +9,7 @@
 - delete bookmark
 
 # Medium Priority
+- recipe list style updates
 - tag management - edit/delete
 - add non-Google sign-in path
 - allow user to change their email

@@ -1,4 +1,0 @@
-- convert recipe display to Mantine list - consider cards in mobile view
-- each line should be a link to the [[Recipe Page|recipe page]] - if they are not yet ready update the recipe page note to indicate that links needs to work before the task is complete
-- each recipe should have a button to edit and delete the recipe (disabled until that functionality is complete)
-- bookmarks should open the link in a new tab - and also have an edit/delete button
