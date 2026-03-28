@@ -1,4 +1,3 @@
-/* v8 ignore start */
 'use client';
 
 import { usePathname, useRouter } from 'next/navigation';
@@ -18,6 +17,7 @@ import { useForm } from '@mantine/form';
 
 import { zodResolver } from 'mantine-form-zod-resolver';
 
+import { addRecipe } from '@/_actions/saved/addRecipe';
 import type { TagOption } from '@/_components';
 import { StringArrayInput, TagCombobox } from '@/_components';
 import type { RecipeInterface } from '@/_models/planner/recipe.types';
@@ -48,8 +48,20 @@ export const RecipeForm = ({ item, plannerId, tags }: Props) => {
 		validate: zodResolver(zRecipeFormSchema),
 	});
 
+	// TODO: implement editRecipe for edit flow
+	const handleSubmit = form.onSubmit(async (values) => {
+		await addRecipe({
+			...values,
+			ingredients,
+			instructions,
+			tags: selectedTags,
+			plannerId,
+		});
+		router.push(pathname);
+	});
+
 	return (
-		<form>
+		<form onSubmit={handleSubmit} data-testid="recipe-form">
 			<input
 				style={{ display: 'none' }}
 				name="plannerId"
@@ -165,4 +177,3 @@ export const RecipeForm = ({ item, plannerId, tags }: Props) => {
 		</form>
 	);
 };
-/* v8 ignore stop */
