@@ -1,65 +1,107 @@
+import { Types } from 'mongoose';
 import { afterEach, describe, expect, test, vi } from 'vitest';
 
-import { zRecipeFormSchema } from '@/_models/planner/recipe';
+import { checkAuth } from '@/_actions/auth/checkAuth';
+import { Planner } from '@/_models';
 
 import { addRecipe } from './addRecipe';
 
-vi.mock('@/_models/planner/recipe', () => ({
-	zRecipeFormSchema: { parse: vi.fn() },
+vi.mock('@/_actions/auth/checkAuth', () => ({
+	checkAuth: vi.fn(),
 }));
 
-describe('add recipe', () => {
+vi.mock('@/_models', () => ({
+	Planner: {
+		findById: vi.fn(),
+	},
+}));
+
+const plannerId = new Types.ObjectId().toString();
+
+const validData = {
+	plannerId,
+	name: 'Croissant',
+	ingredients: ['2 cups flour', '1 stick butter'],
+	instructions: ['Mix ingredients', 'Bake at 400°F'],
+};
+
+describe('addRecipe', () => {
 	afterEach(() => {
 		vi.resetAllMocks();
 	});
 
-	const buildFormData = (fields: Record<string, string>) => {
-		const formData = new FormData();
-		for (const [key, value] of Object.entries(fields)) {
-			formData.append(key, value);
-		}
-		return formData;
+	const makeRecipeId = () => new Types.ObjectId();
+
+	const makePlanner = (pushedRecipeId = makeRecipeId()) => {
+		const saved: { _id: Types.ObjectId; name: string }[] = [];
+		const origPush = saved.push.bind(saved);
+		vi.spyOn(saved, 'push').mockImplementation((item: unknown) => {
+			return origPush({ ...(item as object), _id: pushedRecipeId } as {
+				_id: Types.ObjectId;
+				name: string;
+			});
+		});
+		return { saved, save: vi.fn().mockResolvedValue(undefined) };
 	};
 
-	const validFields = {
-		plannerId: 'planner-123',
-		name: "Ursula's Sea Witch Stew",
-		ingredients: 'tentacle, seaweed, black ink',
-		instructions: 'Boil, stir, and cackle',
-	};
-
-	test('parses form data with the recipe schema', async () => {
-		const mockRecipe = { ...validFields };
-		vi.mocked(zRecipeFormSchema.parse).mockReturnValue(mockRecipe as never);
-
-		await addRecipe(buildFormData(validFields));
-
-		expect(zRecipeFormSchema.parse).toHaveBeenCalledWith(
-			expect.objectContaining({ name: "Ursula's Sea Witch Stew" }),
-		);
+	test('throws ZodError on invalid input', async () => {
+		await expect(addRecipe({})).rejects.toThrow();
 	});
 
-	test('throws when form data fails schema validation', async () => {
-		vi.mocked(zRecipeFormSchema.parse).mockImplementation(() => {
-			throw new Error('Validation failed');
+	test('throws ZodError when ingredients is missing', async () => {
+		await expect(
+			addRecipe({ ...validData, ingredients: undefined }),
+		).rejects.toThrow();
+	});
+
+	test('throws Unauthorized when session is missing', async () => {
+		vi.mocked(checkAuth).mockResolvedValue({ type: 'unauthenticated' });
+
+		await expect(addRecipe(validData)).rejects.toThrow('Unauthorized');
+		expect(Planner.findById).not.toHaveBeenCalled();
+	});
+
+	test('throws Unauthorized when user does not own the planner', async () => {
+		vi.mocked(checkAuth).mockResolvedValue({ type: 'unauthorized' });
+
+		await expect(addRecipe(validData)).rejects.toThrow('Unauthorized');
+	});
+
+	test('throws Planner not found when planner does not exist', async () => {
+		vi.mocked(checkAuth).mockResolvedValue({ type: 'authorized' });
+		vi.mocked(Planner.findById).mockResolvedValue(null);
+
+		await expect(addRecipe(validData)).rejects.toThrow('Planner not found');
+	});
+
+	test('persists the recipe and returns _id and name', async () => {
+		const recipeId = makeRecipeId();
+		const planner = makePlanner(recipeId);
+		vi.mocked(checkAuth).mockResolvedValue({ type: 'authorized' });
+		vi.mocked(Planner.findById).mockResolvedValue(planner as never);
+
+		const result = await addRecipe(validData);
+
+		expect(planner.save).toHaveBeenCalledOnce();
+		expect(result).toEqual({ _id: recipeId.toString(), name: 'Croissant' });
+	});
+
+	test('accepts optional fields', async () => {
+		const recipeId = makeRecipeId();
+		const planner = makePlanner(recipeId);
+		vi.mocked(checkAuth).mockResolvedValue({ type: 'authorized' });
+		vi.mocked(Planner.findById).mockResolvedValue(planner as never);
+
+		const result = await addRecipe({
+			...validData,
+			notes: 'Best served warm',
+			storage: 'Room temp up to 2 days',
+			servings: 12,
+			source: { name: 'Bakery Blog', url: 'https://example.com' },
+			time: { prep: '30m', cook: '20m', total: '50m', actual: '55m' },
+			tags: [new Types.ObjectId().toString()],
 		});
 
-		await expect(addRecipe(buildFormData({}))).rejects.toThrow(
-			'Validation failed',
-		);
-	});
-
-	// --- Planned work (not yet implemented) ---
-
-	test.skip('saves the validated recipe to the planner in the database', async () => {
-		// TODO: assert that the recipe document is created and linked to the planner
-	});
-
-	test.skip('returns the newly created recipe on success', async () => {
-		// TODO: assert the action returns the persisted recipe (id + fields)
-	});
-
-	test.skip("throws when the planner does not exist or the user doesn't have access", async () => {
-		// TODO: assert auth/ownership is checked before writing
+		expect(result.name).toBe('Croissant');
 	});
 });
