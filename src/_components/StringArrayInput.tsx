@@ -1,4 +1,3 @@
-/* v8 ignore start */
 'use client';
 
 import {
@@ -69,4 +68,3 @@ export const StringArrayInput = ({
 		</Stack>
 	);
 };
-/* v8 ignore stop */
