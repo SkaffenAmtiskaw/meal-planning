@@ -95,3 +95,10 @@ pnpm test     # Run Vitest
 ## Rules
 - Before a task is done, you MUST successfully run `pnpm lint`
 - Work left intentionally unfinished should be indicated with a `TODO` comment
+
+## Notes
+- the `notes/` directory contains an obsidian vault
+- all `.md` files in it use Obsidian-flavored Markdown
+- when planning work - check the notes directory to see if any plans exist
+- planned work in notes are considered to be minimum requirements for a feature to be considered complete - they will not always have every detail
+- often planned work will need to be broken further out
