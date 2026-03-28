@@ -33,12 +33,14 @@ vi.mock('./RecipeForm', () => ({
 	RecipeForm: () => <div data-testid="recipe-form" />,
 }));
 
-const makePlanner = () =>
+const makePlanner = (
+	tags: { _id: Types.ObjectId; name: string; color: string }[] = [],
+) =>
 	({
 		_id: new Types.ObjectId(),
 		saved: [],
 		calendar: [],
-		tags: [],
+		tags,
 	}) as Parameters<typeof Modal>[0]['planner'];
 
 describe('modal', () => {
@@ -108,6 +110,21 @@ describe('modal', () => {
 	test('renders add recipe modal with correct title', async () => {
 		render(
 			await Modal({ planner: makePlanner(), status: 'add', type: 'recipe' }),
+		);
+
+		expect(mockModalWrapper).toHaveBeenCalledWith(
+			expect.objectContaining({ title: 'Add New Recipe' }),
+		);
+	});
+
+	test('serializes planner tags when rendering recipe modal', async () => {
+		const tagId = new Types.ObjectId();
+		const plannerWithTags = makePlanner([
+			{ _id: tagId, name: 'Spicy', color: 'red' },
+		]);
+
+		render(
+			await Modal({ planner: plannerWithTags, status: 'add', type: 'recipe' }),
 		);
 
 		expect(mockModalWrapper).toHaveBeenCalledWith(

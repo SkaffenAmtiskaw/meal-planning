@@ -1,16 +1,8 @@
 import { Schema, SchemaTypes } from 'mongoose';
-import { z } from 'zod';
 
-import { zObjectId } from '@/_models/_utils/zObjectId';
+import type { BookmarkInterface } from './bookmark.types';
 
-export const zBookmarkInterface = z.object({
-	_id: zObjectId,
-	name: z.string(),
-	url: z.url(),
-	tags: z.array(zObjectId),
-});
-
-export type BookmarkInterface = z.infer<typeof zBookmarkInterface>;
+export * from './bookmark.types';
 
 export const bookmarkSchema = new Schema<BookmarkInterface>({
 	_id: SchemaTypes.ObjectId,

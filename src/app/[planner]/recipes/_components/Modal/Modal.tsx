@@ -11,6 +11,13 @@ import { RecipeForm } from './RecipeForm';
 
 type Planner = HydratedDocument<PlannerInterface>;
 
+const serializeTags = (planner: Planner) =>
+	planner.tags.map((t) => ({
+		_id: t._id.toString(),
+		name: t.name,
+		color: t.color,
+	}));
+
 type Props = {
 	planner: Planner;
 	item?: Types.ObjectId;
@@ -25,7 +32,12 @@ const CONTENT_TYPES = {
 			getHeader: () => 'Add New Bookmark',
 		},
 		recipe: {
-			getForm: (planner: Planner) => <RecipeForm planner={planner} />,
+			getForm: (planner: Planner) => (
+				<RecipeForm
+					plannerId={planner._id.toString()}
+					tags={serializeTags(planner)}
+				/>
+			),
 			getHeader: () => 'Add New Recipe',
 		},
 	},
@@ -38,7 +50,11 @@ const CONTENT_TYPES = {
 		},
 		recipe: {
 			getForm: (planner: Planner, recipe: RecipeInterface) => (
-				<RecipeForm item={recipe} planner={planner} />
+				<RecipeForm
+					item={recipe}
+					plannerId={planner._id.toString()}
+					tags={serializeTags(planner)}
+				/>
 			),
 			getHeader: ({ name }: RecipeInterface) => `Update ${name}`,
 		},
@@ -64,7 +80,11 @@ export const Modal = async ({ item: itemId, planner, status, type }: Props) => {
 		if (type === 'recipe') {
 			const { getForm, getHeader } = CONTENT_TYPES.edit.recipe;
 			return (
-				<ModalWrapper opened title={getHeader(item as RecipeInterface)}>
+				<ModalWrapper
+					opened
+					size="xl"
+					title={getHeader(item as RecipeInterface)}
+				>
 					{getForm(planner, item as RecipeInterface)}
 				</ModalWrapper>
 			);
@@ -75,7 +95,11 @@ export const Modal = async ({ item: itemId, planner, status, type }: Props) => {
 		const { getForm, getHeader } = CONTENT_TYPES.add[type];
 
 		return (
-			<ModalWrapper opened title={getHeader()}>
+			<ModalWrapper
+				opened
+				size={type === 'recipe' ? 'xl' : 'md'}
+				title={getHeader()}
+			>
 				{getForm(planner)}
 			</ModalWrapper>
 		);

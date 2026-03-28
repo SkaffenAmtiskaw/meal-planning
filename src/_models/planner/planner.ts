@@ -1,20 +1,14 @@
 import type { Model } from 'mongoose';
 import { model, models, Schema, SchemaTypes } from 'mongoose';
-import { z } from 'zod';
 
-import { bookmarkSchema, zBookmarkInterface } from '@/_models/planner/bookmark';
-import { daySchema, zDayInterface } from '@/_models/planner/day';
+import { bookmarkSchema } from '@/_models/planner/bookmark';
+import { daySchema } from '@/_models/planner/day';
 
-import { recipeSchema, zRecipeInterface } from './recipe';
-import { tagSchema, zTagInterface } from './tag';
+import type { PlannerInterface } from './planner.types';
+import { recipeSchema } from './recipe';
+import { tagSchema } from './tag';
 
-export const zPlannerInterface = z.object({
-	calendar: z.array(zDayInterface),
-	saved: z.array(z.union([zBookmarkInterface, zRecipeInterface])),
-	tags: z.array(zTagInterface),
-});
-
-export type PlannerInterface = z.infer<typeof zPlannerInterface>;
+export * from './planner.types';
 
 const plannerSchema = new Schema<PlannerInterface>({
 	calendar: [

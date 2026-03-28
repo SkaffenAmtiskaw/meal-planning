@@ -1,9 +1,9 @@
-import { Types } from 'mongoose';
+import type { Types } from 'mongoose';
 import { z } from 'zod';
 
-const isString = (v: unknown): v is string => typeof v === 'string';
+const objectIdRegex = /^[0-9a-fA-F]{24}$/;
 
 export const zObjectId = z.custom<Types.ObjectId>(
-	(value: unknown) => isString(value) && Types.ObjectId.isValid(value),
+	(value: unknown) => typeof value === 'string' && objectIdRegex.test(value),
 	{ message: 'ObjectId is invalid' },
 );

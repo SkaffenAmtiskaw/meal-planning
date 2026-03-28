@@ -1,15 +1,9 @@
 import type { Model } from 'mongoose';
 import { model, models, Schema, SchemaTypes } from 'mongoose';
-import { z } from 'zod';
 
-import { zObjectId } from './_utils/zObjectId';
+import type { UserInterface } from './user.types';
 
-export const zUserInterface = z.object({
-	email: z.string(),
-	planners: z.array(zObjectId),
-});
-
-export type UserInterface = z.infer<typeof zUserInterface>;
+export * from './user.types';
 
 const userSchema = new Schema<UserInterface>({
 	email: {
