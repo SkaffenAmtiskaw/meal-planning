@@ -99,6 +99,6 @@ pnpm test     # Run Vitest
 ## Notes
 - the `notes/` directory contains an obsidian vault
 - all `.md` files in it use Obsidian-flavored Markdown
-- when planning work - check the notes directory to see if any plans exist
+- when told to plan or build something - check the notes directory to see if any plans exist
 - planned work in notes are considered to be minimum requirements for a feature to be considered complete - they will not always have every detail
 - often planned work will need to be broken further out

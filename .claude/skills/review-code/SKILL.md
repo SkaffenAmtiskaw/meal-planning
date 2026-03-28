@@ -20,3 +20,4 @@ Unit Testing
 
 Summary
 - finish code reviews by giving the user a summary of the changes and any decisions made
+- if the planned changes were listed in the `notes/` directory update the relevant note(s) to indicate what has been completed - if a feature is fully done prompt the user and ask if the note should be removed

@@ -27,6 +27,11 @@ Mocking
 Selectors
 - add `data-testid` attributes to interactive elements in components so tests can select them with `screen.getByTestId(...)` — do not rely on text labels, which can change for copy/UX reasons
 
+Future Behavior
+- use `test.skip` to document behavior that is planned but not yet implemented
+- the test name should describe the intended future behavior clearly
+- include a comment inside explaining what needs to be built before the test can be enabled
+
 Shared Setup
 - anything that applies to ALL unit tests (as opposed to a specific module) belongs in `test/` at the project root
 - module-specific helpers or fixtures belong co-located with the tests that use them, not in `test/`
