@@ -82,3 +82,12 @@ pnpm test     # Run Vitest
 - Components use Mantine primitives; avoid custom CSS where possible
 - Zod schemas are co-located with their Mongoose models
 - Biome enforces formatting and import order; runs automatically on commit via Lefthook
+- Shared components, hooks and utilities are located at `src/_components`, `src/_hooks`, and `src/_utils` - ones that are only used in a single place should be in a directory co-located with the component that consumes them.
+
+## Coverage
+
+- To temporarily exclude a file from v8 coverage, wrap its entire content with `/* v8 ignore start */` and `/* v8 ignore stop */`. Do **not** use `/* v8 ignore file */` — it is not reliably supported across Node versions.
+- The `coverage.exclude` array in `vitest.config.ts` is for **permanent** exclusions only (e.g. config files, route handlers that can never contain testable logic). Do not add files to it as a temporary workaround while a refactor is pending.
+
+## Rules
+- Before a task is done, you MUST successfully run `pnpm lint`

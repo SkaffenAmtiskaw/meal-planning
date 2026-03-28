@@ -1,13 +1,43 @@
+import react from '@vitejs/plugin-react'
+import { resolve } from 'node:path'
 import { defineConfig } from 'vitest/config'
 
 export default defineConfig({
+  plugins: [react()],
+  resolve: {
+    alias: {
+      '@': resolve(__dirname, './src'),
+    },
+  },
   test: {
-    environment: 'node',
+    environment: 'jsdom',
+    setupFiles: ['./test/setup.ts'],
     coverage: {
       provider: 'v8',
       reporter: ['text', 'html', 'lcov'],
       include: ['src/**/*.{ts,tsx}'],
-      exclude: ['src/**/*.test.{ts,tsx}', 'src/**/*.spec.{ts,tsx}'],
+      // Excluded files should are either test files or files that should NEVER have logic - any logic should be
+      // pulled into separate testable modules.
+      exclude: [
+          // Mantine theme config
+          'src/_theme.ts',
+          // better-auth config
+          'src/auth.ts',
+          // env variable definitions
+          'src/env.ts',
+          // next.js instrumentation script
+          'src/instrumentation.ts',
+          // better-auth route handler
+          'src/app/api/auth/\\[...all\\]/route.ts',
+          // constants files - should NEVER contain code
+          'src/**/_constants.ts',
+          // barrel/index files - re-export only, should NEVER contain logic
+          'src/**/index.{ts,tsx}',
+          // type declaration files - no runtime code
+          'src/**/*.d.ts',
+          // test files
+          'src/**/*.test.{ts,tsx}'
+      ],
     },
   },
 })

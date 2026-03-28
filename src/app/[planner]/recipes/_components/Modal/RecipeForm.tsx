@@ -1,3 +1,4 @@
+/* v8 ignore start */
 import { Fieldset, Grid, NumberInput, TextInput } from '@mantine/core';
 import { useForm } from '@mantine/form';
 
@@ -94,3 +95,4 @@ export const RecipeForm = ({ item, planner }: Props) => {
 		</form>
 	);
 };
+/* v8 ignore stop */

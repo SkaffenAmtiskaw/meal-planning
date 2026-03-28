@@ -19,12 +19,14 @@ export const AddItemDropdown = () => {
 			</Menu.Target>
 			<Menu.Dropdown>
 				<Menu.Item
+					data-testid="add-bookmark"
 					leftSection={<IconBookmark />}
 					onClick={() => router.push(createURL('bookmark'))}
 				>
 					Bookmark
 				</Menu.Item>
 				<Menu.Item
+					data-testid="add-recipe"
 					leftSection={<IconBowlSpoon />}
 					onClick={() => router.push(createURL('recipe'))}
 				>

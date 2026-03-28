@@ -1,8 +1,7 @@
 import type { Types } from 'mongoose';
 
+import { getUser } from '@/_actions';
 import { catchify } from '@/_utils/catchify';
-
-import { getUser } from '../user/getUser';
 
 export const checkAuth = async (id: Types.ObjectId) => {
 	const [user, error] = await catchify(getUser);

@@ -1,3 +1,10 @@
+// TODO: Refactor this file into composable components in src/app/_components/.
+// The sign-in prompt, "no planner" prompt, and the overall auth/redirect logic
+// should each live in their own component so they can be unit tested in isolation.
+// Currently the entire page is one async server component with inline server actions,
+// making it untestable without significant mocking overhead.
+
+/* v8 ignore start */
 import { headers } from 'next/headers';
 import { redirect } from 'next/navigation';
 
@@ -63,3 +70,4 @@ const Page = async () => {
 };
 
 export default Page;
+/* v8 ignore stop */
