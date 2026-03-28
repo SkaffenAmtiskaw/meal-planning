@@ -1,5 +1,4 @@
 # High-Priority
-- update Next.js to fix security vulnerabilities
 - add [[Form Feedback|form feedback]] to add recipe
 - [[Recipe List Updates|recipe list updates]]
 - [[Recipe Page|view recipe page]]
