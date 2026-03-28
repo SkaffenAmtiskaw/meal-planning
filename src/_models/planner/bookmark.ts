@@ -1,7 +1,7 @@
 import { Schema, SchemaTypes } from 'mongoose';
 import { z } from 'zod';
 
-import { zObjectId } from '@/_models';
+import { zObjectId } from '@/_models/_utils/zObjectId';
 
 export const zBookmarkInterface = z.object({
 	_id: zObjectId,
