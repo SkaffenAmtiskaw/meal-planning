@@ -7,8 +7,14 @@ Clear Intent
 - make sure all changes are clearly related - if a code review seems to address multiple unrelated concerns consider splitting it into multiple commits
 
 Feedback
-- if multiple decisions need to be made, prompt me one by one for each
+- if multiple decisions need to be made, prompt user one by one
+
+Dead Code
+- all code reviews should include a check for dead code
 
 Unit Testing
-- changed & added files should have unit tests
+- changed & added files should have 100% unit test coverage
 - certain files are excluded from test coverage in the vitest.config.ts - these files should NEVER have logic added - logic should be extracted to testable modules
+
+Summary
+- finish code reviews by giving the user a summary of the changes and any decisions made
