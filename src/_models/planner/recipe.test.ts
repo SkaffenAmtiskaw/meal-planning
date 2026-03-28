@@ -125,4 +125,11 @@ describe('recipe schema', () => {
 	test('source URL validator rejects an invalid URL', () => {
 		expect(urlValidator('not-a-url')).toBe(false);
 	});
+
+	test('_id default generates a valid ObjectId', () => {
+		// biome-ignore lint/suspicious/noExplicitAny: accessing internal Mongoose schema definition
+		const defaultFn = (recipeSchema.obj._id as any)
+			.default as () => Types.ObjectId;
+		expect(Types.ObjectId.isValid(defaultFn())).toBe(true);
+	});
 });

@@ -23,6 +23,15 @@ import { StringArrayInput, TagCombobox } from '@/_components';
 import type { RecipeInterface } from '@/_models/planner/recipe.types';
 import { zRecipeFormSchema } from '@/_models/planner/recipe.types';
 
+// Resolver only validates fields Mantine manages; ingredients/instructions/tags
+// are controlled via useState and merged in handleSubmit.
+const zFormFields = zRecipeFormSchema.omit({
+	ingredients: true,
+	instructions: true,
+	tags: true,
+	plannerId: true,
+});
+
 type Props = {
 	plannerId: string;
 	item?: RecipeInterface;
@@ -45,7 +54,7 @@ export const RecipeForm = ({ item, plannerId, tags }: Props) => {
 
 	const form = useForm({
 		mode: 'uncontrolled',
-		validate: zod4Resolver(zRecipeFormSchema),
+		validate: zod4Resolver(zFormFields),
 	});
 
 	// TODO: implement editRecipe for edit flow

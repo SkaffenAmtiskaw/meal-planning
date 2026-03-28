@@ -7,7 +7,7 @@ import { describe, expect, test, vi } from 'vitest';
 // Mocking planner.ts prevents its body from executing in this test's context.
 vi.mock('./planner', () => ({}));
 
-import { zBookmarkInterface } from './bookmark';
+import { bookmarkSchema, zBookmarkInterface } from './bookmark';
 
 const bookmarkId = new Types.ObjectId().toString();
 const tagId = new Types.ObjectId().toString();
@@ -60,5 +60,14 @@ describe('bookmark interface', () => {
 		expect(
 			zBookmarkInterface.safeParse({ ...validBookmark, _id: 'bad-id' }).success,
 		).toBe(false);
+	});
+});
+
+describe('bookmark schema', () => {
+	test('_id default generates a valid ObjectId', () => {
+		// biome-ignore lint/suspicious/noExplicitAny: accessing internal Mongoose schema definition
+		const defaultFn = (bookmarkSchema.obj._id as any)
+			.default as () => Types.ObjectId;
+		expect(Types.ObjectId.isValid(defaultFn())).toBe(true);
 	});
 });

@@ -30,19 +30,10 @@ describe('addRecipe', () => {
 		vi.resetAllMocks();
 	});
 
-	const makeRecipeId = () => new Types.ObjectId();
-
-	const makePlanner = (pushedRecipeId = makeRecipeId()) => {
-		const saved: { _id: Types.ObjectId; name: string }[] = [];
-		const origPush = saved.push.bind(saved);
-		vi.spyOn(saved, 'push').mockImplementation((item: unknown) => {
-			return origPush({ ...(item as object), _id: pushedRecipeId } as {
-				_id: Types.ObjectId;
-				name: string;
-			});
-		});
-		return { saved, save: vi.fn().mockResolvedValue(undefined) };
-	};
+	const makePlanner = () => ({
+		saved: [] as unknown[],
+		save: vi.fn().mockResolvedValue(undefined),
+	});
 
 	test('throws ZodError on invalid input', async () => {
 		await expect(addRecipe({})).rejects.toThrow();
@@ -75,20 +66,19 @@ describe('addRecipe', () => {
 	});
 
 	test('persists the recipe and returns _id and name', async () => {
-		const recipeId = makeRecipeId();
-		const planner = makePlanner(recipeId);
+		const planner = makePlanner();
 		vi.mocked(checkAuth).mockResolvedValue({ type: 'authorized' });
 		vi.mocked(Planner.findById).mockResolvedValue(planner as never);
 
 		const result = await addRecipe(validData);
 
 		expect(planner.save).toHaveBeenCalledOnce();
-		expect(result).toEqual({ _id: recipeId.toString(), name: 'Croissant' });
+		expect(result.name).toBe('Croissant');
+		expect(result._id).toMatch(/^[0-9a-f]{24}$/);
 	});
 
 	test('accepts optional fields', async () => {
-		const recipeId = makeRecipeId();
-		const planner = makePlanner(recipeId);
+		const planner = makePlanner();
 		vi.mocked(checkAuth).mockResolvedValue({ type: 'authorized' });
 		vi.mocked(Planner.findById).mockResolvedValue(planner as never);
 

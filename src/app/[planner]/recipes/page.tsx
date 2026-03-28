@@ -34,7 +34,7 @@ const RecipesPage = async ({
 					<AddItemDropdown />
 				</Group>
 				{planner.saved?.map((item) => (
-					<div key={item._id.toString()}>{item.name}</div>
+					<div key={`${item._id}`}>{item.name}</div>
 				))}
 			</Container>
 		</>
