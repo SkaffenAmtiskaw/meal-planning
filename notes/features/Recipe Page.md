@@ -1,0 +1,5 @@
+- create a page for a specific recipe
+- ensure recipe reflows in mobile and desktop
+- add a keep awake option on mobile
+- allow user to add/edit notes and add/edit tags
+- add a button for editing the recipe (disabled until edit functionality added)

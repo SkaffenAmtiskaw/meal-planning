@@ -1,0 +1,6 @@
+- form validation errors should be clearly indicated to the user when they press submit - look up UX best practices to see if the button should be disabled until errors are fixed
+- when a user submits a form the submit button should disable and have a spinner indicating the form is submitting
+- if the form submission is successful, the button should turn green and and indicate form submission was successful - it should also display a countdown for auto-closing the modal
+- after a successful submit the modal should close at the end of the countdown
+- if the form submission was unsuccessful an alert should be displayed at the top of the page indicating it was unsuccessful - the form modal should not automatically close
+- the form modal should be a re-usable component so all forms can share the same feedback UX
