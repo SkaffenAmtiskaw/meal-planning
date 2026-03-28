@@ -49,7 +49,7 @@ vi.mock('@/_components', () => ({
 }));
 
 vi.mock('mantine-form-zod-resolver', () => ({
-	zodResolver: () => () => ({}),
+	zod4Resolver: () => () => ({}),
 }));
 
 vi.mock('@mantine/form', () => ({

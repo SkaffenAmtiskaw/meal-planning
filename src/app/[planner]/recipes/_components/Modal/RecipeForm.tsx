@@ -15,7 +15,7 @@ import {
 } from '@mantine/core';
 import { useForm } from '@mantine/form';
 
-import { zodResolver } from 'mantine-form-zod-resolver';
+import { zod4Resolver } from 'mantine-form-zod-resolver';
 
 import { addRecipe } from '@/_actions/saved/addRecipe';
 import type { TagOption } from '@/_components';
@@ -45,7 +45,7 @@ export const RecipeForm = ({ item, plannerId, tags }: Props) => {
 
 	const form = useForm({
 		mode: 'uncontrolled',
-		validate: zodResolver(zRecipeFormSchema),
+		validate: zod4Resolver(zRecipeFormSchema),
 	});
 
 	// TODO: implement editRecipe for edit flow
