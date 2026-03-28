@@ -83,6 +83,7 @@ pnpm test     # Run Vitest
 - Zod schemas are co-located with their Mongoose models
 - Biome enforces formatting and import order; runs automatically on commit via Lefthook
 - Shared components, hooks and utilities are located at `src/_components`, `src/_hooks`, and `src/_utils` - ones that are only used in a single place should be in a directory co-located with the component that consumes them.
+- Components receive data props and import server actions directly — do not pass pre-bound actions as props (e.g. prefer `email={email}` over `action={createUser.bind(null, email)}`).
 
 ## Coverage
 
@@ -93,3 +94,4 @@ pnpm test     # Run Vitest
 
 ## Rules
 - Before a task is done, you MUST successfully run `pnpm lint`
+- Work left intentionally unfinished should be indicated with a `TODO` comment

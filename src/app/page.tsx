@@ -1,19 +1,11 @@
-// TODO: Refactor this file into composable components in src/app/_components/.
-// The sign-in prompt, "no planner" prompt, and the overall auth/redirect logic
-// should each live in their own component so they can be unit tested in isolation.
-// Currently the entire page is one async server component with inline server actions,
-// making it untestable without significant mocking overhead.
-
-/* v8 ignore start */
 import { headers } from 'next/headers';
 import { redirect } from 'next/navigation';
 
-import { Button, Center, Stack, Typography } from '@mantine/core';
-
-import { addUser } from '@/_actions';
-import { SignIn } from '@/_components';
 import { User } from '@/_models';
 import { auth } from '@/auth';
+
+import { CreatePlannerPrompt } from './_components/CreatePlannerPrompt';
+import { SignInPrompt } from './_components/SignInPrompt';
 
 const Page = async () => {
 	/**
@@ -28,16 +20,7 @@ const Page = async () => {
 	});
 
 	if (!session) {
-		return (
-			<Center h="100%" w="100%">
-				<Stack bg="var(--mantine-color-blue-light)" p={24} align="center">
-					<Typography>
-						<p>In order to use the meal planner, you must sign in.</p>
-					</Typography>
-					<SignIn />
-				</Stack>
-			</Center>
-		);
+		return <SignInPrompt />;
 	}
 
 	// TODO: Handle invites here.
@@ -48,26 +31,7 @@ const Page = async () => {
 		redirect(`${user.planners[0]}/calendar`);
 	}
 
-	// TODO: Error handling
-	const handleCreateUser = async () => {
-		'use server';
-
-		const user = await addUser(session.user.email);
-
-		redirect(`${user.planners[0]._id}/calendar`);
-	};
-
-	return (
-		<Center h="100vw" w="100vh">
-			<Stack bg="var(--mantine-color-blue-light)" p={24} align="center">
-				<Typography>
-					<p>It looks like you have not created a meal plan yet.</p>
-				</Typography>
-				<Button onClick={handleCreateUser}>Get Started</Button>
-			</Stack>
-		</Center>
-	);
+	return <CreatePlannerPrompt email={session.user.email} />;
 };
 
 export default Page;
-/* v8 ignore stop */

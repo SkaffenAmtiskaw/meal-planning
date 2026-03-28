@@ -5,5 +5,5 @@ pre-commit:
       stage_fixed: true
       glob: "*.{js,jsx,ts,tsx,json}"
     test-coverage:
-      run: pnpm vitest run --coverage --reporter=dot --passWithNoTests --related {staged_files}
+      run: pnpm vitest run --coverage --reporter=dot
       glob: "src/**/*.{ts,tsx}"

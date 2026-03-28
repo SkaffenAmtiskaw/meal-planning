@@ -12,9 +12,13 @@ Data
 - when creating mock data - use obviously fake data if possible - Disney villains is a typical theme
 
 TSX Files
-- `.tsx` files should be concerned wtih presentation - logic should be handled elsewhere - if you need to write extensive tests for a .tsx file it is a design smell and should be flagged for the user
+- `.tsx` files should be concerned with presentation - logic should be handled elsewhere - if you need to write extensive tests for a .tsx file it is a design smell and should be flagged for the user
 - presentational JSX (layout, styling props, conditional class names) should not be tested — focus only on logic: data flowing to child components, routing behavior, and rendered output that depends on props or state
 - a good rule of thumb: if the test would only break when markup changes (not behavior), skip it
+
+Imports
+- all imports — including mocked modules — should be declared at the top of the file, not inside individual tests
+- do not use dynamic `await import(...)` inside a test body to access a mocked module; import it at the top level and use `vi.mocked()` to interact with it
 
 Mocking
 - all external dependencies should be mocked to isolate the module being tested
