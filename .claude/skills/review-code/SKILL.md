@@ -8,6 +8,7 @@ Clear Intent
 
 Feedback
 - if multiple decisions need to be made, prompt user one by one
+- if the user indicates a suggestion should be deferred til later add a TODO comment
 
 Dead Code
 - all code reviews should include a check for dead code
