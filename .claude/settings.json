@@ -1,8 +1,15 @@
 {
   "permissions": {
     "allow": [
+      "Bash(cat *)",
+      "Bash(find *)",
       "Bash(git diff *)",
+      "Bash(head *)",
       "Bash(ls *)",
+      "Bash(stat *)",
+      "Bash(tail *)",
+      "Bash(wc *)",
+      "Bash(which *)",
       "Bash(pnpm build*)",
       "Bash(pnpm lint*)",
       "Bash(pnpm test*)",
