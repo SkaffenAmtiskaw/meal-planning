@@ -30,7 +30,7 @@ The modal infrastructure for editing is already in place (URL params `?item={id}
 
 **Test file:** `src/_actions/saved/editRecipe.test.ts`
 
-### Step 2 — Wire `RecipeForm` to call `editRecipe` in edit mode + update tests
+### ✅ Step 2 — Wire `RecipeForm` to call `editRecipe` in edit mode + update tests
 
 **File:** `src/app/[planner]/recipes/_components/Modal/RecipeForm.tsx`
 

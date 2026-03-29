@@ -19,6 +19,7 @@ import { zod4Resolver } from 'mantine-form-zod-resolver';
 import { z } from 'zod';
 
 import { addRecipe } from '@/_actions/saved/addRecipe';
+import { editRecipe } from '@/_actions/saved/editRecipe';
 import type { TagOption } from '@/_components';
 import {
 	FormFeedbackAlert,
@@ -51,11 +52,13 @@ type Props = {
 	plannerId: string;
 	item?: RecipeInterface;
 	tags: TagOption[];
+	redirectTo?: string;
 };
 
-export const RecipeForm = ({ item, plannerId, tags }: Props) => {
+export const RecipeForm = ({ item, plannerId, tags, redirectTo }: Props) => {
 	const router = useRouter();
 	const pathname = usePathname();
+	const destination = redirectTo ?? pathname;
 
 	const [ingredients, setIngredients] = useState<string[]>(
 		item?.ingredients ?? [],
@@ -90,7 +93,6 @@ export const RecipeForm = ({ item, plannerId, tags }: Props) => {
 		},
 	});
 
-	// TODO: implement editRecipe for edit flow
 	const handleSubmit = form.onSubmit(
 		wrap(
 			async (values) => {
@@ -108,7 +110,7 @@ export const RecipeForm = ({ item, plannerId, tags }: Props) => {
 							}
 						: undefined;
 
-				return addRecipe({
+				const payload = {
 					...values,
 					source,
 					time,
@@ -116,9 +118,15 @@ export const RecipeForm = ({ item, plannerId, tags }: Props) => {
 					instructions,
 					tags: selectedTags,
 					plannerId,
-				});
+				};
+
+				if (item) {
+					return editRecipe({ ...payload, _id: String(item._id) });
+				}
+
+				return addRecipe(payload);
 			},
-			() => router.push(pathname),
+			() => router.push(destination),
 		),
 	);
 
@@ -230,7 +238,7 @@ export const RecipeForm = ({ item, plannerId, tags }: Props) => {
 				</Grid.Col>
 				<Grid.Col span={12}>
 					<Group justify="flex-end">
-						<Button variant="subtle" onClick={() => router.push(pathname)}>
+						<Button variant="subtle" onClick={() => router.push(destination)}>
 							Cancel
 						</Button>
 						<SubmitButton

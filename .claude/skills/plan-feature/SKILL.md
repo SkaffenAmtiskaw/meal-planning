@@ -15,6 +15,7 @@ description: plan a feature — trigger when asked to "plan [feature]", "create 
 # Planning
 - Break the feature into incremental steps, each small enough to verify independently
 - Write the plan into the relevant note, clearly marking which sections are Claude-generated vs user-generated
+- You MUST indicate points at which manual tests can be run
 - If updating an existing note, preserve existing user-generated content
 
 # Confirmation

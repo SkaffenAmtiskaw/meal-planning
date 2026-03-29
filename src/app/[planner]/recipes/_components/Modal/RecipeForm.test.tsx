@@ -3,6 +3,7 @@ import { act, fireEvent, render, screen } from '@testing-library/react';
 import { afterEach, describe, expect, test, vi } from 'vitest';
 
 import { addRecipe } from '@/_actions/saved/addRecipe';
+import { editRecipe } from '@/_actions/saved/editRecipe';
 
 import { RecipeForm } from './RecipeForm';
 
@@ -14,6 +15,10 @@ vi.mock('next/navigation', () => ({
 
 vi.mock('@/_actions/saved/addRecipe', () => ({
 	addRecipe: vi.fn(),
+}));
+
+vi.mock('@/_actions/saved/editRecipe', () => ({
+	editRecipe: vi.fn(),
 }));
 
 type FeedbackStatus = 'idle' | 'submitting' | 'success' | 'error';
@@ -440,5 +445,48 @@ describe('RecipeForm', () => {
 		});
 		render(<RecipeForm {...defaultProps} />);
 		expect(screen.getByTestId('form-feedback-alert')).toBeDefined();
+	});
+
+	test('calls editRecipe (not addRecipe) when item is provided', async () => {
+		vi.mocked(editRecipe).mockResolvedValue({
+			ok: true,
+			data: { _id: 'recipe-1', name: 'Croissant' },
+		});
+		const item = {
+			_id: 'recipe-1' as never,
+			name: 'Croissant',
+			ingredients: ['flour'],
+			instructions: ['mix'],
+		};
+		render(<RecipeForm {...defaultProps} item={item} />);
+		await act(async () => {
+			fireEvent.submit(screen.getByTestId('recipe-form'));
+		});
+		expect(editRecipe).toHaveBeenCalledWith(
+			expect.objectContaining({ plannerId: 'planner-1', _id: 'recipe-1' }),
+		);
+		expect(addRecipe).not.toHaveBeenCalled();
+	});
+
+	test('navigates to redirectTo after successful submission', async () => {
+		vi.mocked(addRecipe).mockResolvedValue({
+			ok: true,
+			data: { _id: 'new-id', name: 'Croissant' },
+		});
+		render(
+			<RecipeForm {...defaultProps} redirectTo="/planner-1/recipes/recipe-1" />,
+		);
+		await act(async () => {
+			fireEvent.submit(screen.getByTestId('recipe-form'));
+		});
+		expect(mockPush).toHaveBeenCalledWith('/planner-1/recipes/recipe-1');
+	});
+
+	test('Cancel navigates to redirectTo when provided', () => {
+		render(
+			<RecipeForm {...defaultProps} redirectTo="/planner-1/recipes/recipe-1" />,
+		);
+		fireEvent.click(screen.getByRole('button', { name: 'Cancel' }));
+		expect(mockPush).toHaveBeenCalledWith('/planner-1/recipes/recipe-1');
 	});
 });
