@@ -116,7 +116,7 @@ Best practice is to **keep the submit button enabled** and show field-level vali
 
 ---
 
-### Step 5 — Wire into delete flow
+### Step 5 — Wire into delete flow ✅
 
 **Goal:** Delete confirm modal surfaces errors and disables the button while in flight.
 

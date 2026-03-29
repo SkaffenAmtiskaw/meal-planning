@@ -4,6 +4,19 @@ import { describe, expect, test, vi } from 'vitest';
 
 import { DeleteConfirmModal } from './DeleteConfirmModal';
 
+vi.mock('@/_components', () => ({
+	FormFeedbackAlert: ({
+		status,
+		errorMessage,
+	}: {
+		status: string;
+		errorMessage?: string;
+	}) =>
+		status === 'error' ? (
+			<div data-testid="form-feedback-alert">{errorMessage}</div>
+		) : null,
+}));
+
 vi.mock('@mantine/core', () => ({
 	Modal: ({
 		children,
@@ -88,5 +101,20 @@ describe('DeleteConfirmModal', () => {
 			(screen.getByTestId('confirm-delete-button') as HTMLButtonElement)
 				.disabled,
 		).toBe(true);
+	});
+
+	test('shows error alert when errorMessage is provided', () => {
+		render(
+			<DeleteConfirmModal
+				{...defaultProps}
+				errorMessage="Something went wrong"
+			/>,
+		);
+		expect(screen.getByTestId('form-feedback-alert')).toBeDefined();
+	});
+
+	test('does not show error alert when errorMessage is undefined', () => {
+		render(<DeleteConfirmModal {...defaultProps} />);
+		expect(screen.queryByTestId('form-feedback-alert')).toBeNull();
 	});
 });

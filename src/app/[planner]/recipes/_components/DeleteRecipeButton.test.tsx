@@ -6,6 +6,8 @@ import { deleteRecipe } from '@/_actions/saved';
 
 import { DeleteRecipeButton } from './DeleteRecipeButton';
 
+type FeedbackStatus = 'idle' | 'submitting' | 'success' | 'error';
+
 const mockRefresh = vi.fn();
 
 vi.mock('next/navigation', () => ({
@@ -14,6 +16,23 @@ vi.mock('next/navigation', () => ({
 
 vi.mock('@/_actions/saved', () => ({
 	deleteRecipe: vi.fn(),
+}));
+
+const { mockUseFormFeedback } = vi.hoisted(() => {
+	const mockUseFormFeedback = vi.fn(() => ({
+		status: 'idle' as FeedbackStatus,
+		errorMessage: undefined as string | undefined,
+		wrap: (fn: () => Promise<void>, onSuccess: () => void) => async () => {
+			await fn();
+			onSuccess();
+		},
+		reset: vi.fn(),
+	}));
+	return { mockUseFormFeedback };
+});
+
+vi.mock('@/_hooks', () => ({
+	useFormFeedback: () => mockUseFormFeedback(),
 }));
 
 vi.mock('@mantine/core', () => ({
@@ -45,6 +64,7 @@ vi.mock('@tabler/icons-react', () => ({
 
 vi.mock('./DeleteConfirmModal', () => ({
 	DeleteConfirmModal: ({
+		errorMessage,
 		loading,
 		onClose,
 		onConfirm,
@@ -54,10 +74,12 @@ vi.mock('./DeleteConfirmModal', () => ({
 		onClose: () => void;
 		onConfirm: () => void;
 		loading: boolean;
+		errorMessage?: string;
 	}) =>
 		opened ? (
 			<div data-testid="delete-confirm-modal">
 				<span data-testid="modal-loading">{String(loading)}</span>
+				{errorMessage && <span data-testid="modal-error">{errorMessage}</span>}
 				<button data-testid="modal-cancel" onClick={onClose} type="button">
 					Cancel
 				</button>
@@ -71,7 +93,18 @@ vi.mock('./DeleteConfirmModal', () => ({
 const plannerId = '507f1f77bcf86cd799439011';
 const recipeId = '507f1f77bcf86cd799439012';
 
+const defaultFormFeedback = () => ({
+	status: 'idle' as FeedbackStatus,
+	errorMessage: undefined as string | undefined,
+	wrap: (fn: () => Promise<void>, onSuccess: () => void) => async () => {
+		await fn();
+		onSuccess();
+	},
+	reset: vi.fn(),
+});
+
 beforeEach(() => {
+	mockUseFormFeedback.mockImplementation(defaultFormFeedback);
 	vi.clearAllMocks();
 });
 
@@ -145,5 +178,29 @@ describe('DeleteRecipeButton', () => {
 		);
 		fireEvent.click(screen.getByTestId('delete-button'));
 		expect(screen.queryByTestId('delete-confirm-modal')).toBeNull();
+	});
+
+	test('passes loading=true to modal when status is submitting', () => {
+		mockUseFormFeedback.mockImplementation(() => ({
+			status: 'submitting' as FeedbackStatus,
+			errorMessage: undefined,
+			wrap: vi.fn(),
+			reset: vi.fn(),
+		}));
+		render(<DeleteRecipeButton plannerId={plannerId} recipeId={recipeId} />);
+		fireEvent.click(screen.getByTestId('delete-button'));
+		expect(screen.getByTestId('modal-loading').textContent).toBe('true');
+	});
+
+	test('passes errorMessage to modal when status is error', () => {
+		mockUseFormFeedback.mockImplementation(() => ({
+			status: 'error' as FeedbackStatus,
+			errorMessage: 'Delete failed',
+			wrap: vi.fn(),
+			reset: vi.fn(),
+		}));
+		render(<DeleteRecipeButton plannerId={plannerId} recipeId={recipeId} />);
+		fireEvent.click(screen.getByTestId('delete-button'));
+		expect(screen.getByTestId('modal-error').textContent).toBe('Delete failed');
 	});
 });

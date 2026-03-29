@@ -7,6 +7,7 @@ import { ActionIcon } from '@mantine/core';
 import { IconTrash } from '@tabler/icons-react';
 
 import { deleteRecipe } from '@/_actions/saved';
+import { useFormFeedback } from '@/_hooks';
 
 import { DeleteConfirmModal } from './DeleteConfirmModal';
 
@@ -19,15 +20,19 @@ type Props = {
 const DeleteRecipeButton = ({ disabled, plannerId, recipeId }: Props) => {
 	const router = useRouter();
 	const [opened, setOpened] = useState(false);
-	const [loading, setLoading] = useState(false);
+	const { status, errorMessage, wrap } = useFormFeedback({
+		successDuration: 0,
+	});
 
-	const handleConfirm = async () => {
-		setLoading(true);
-		await deleteRecipe({ plannerId, recipeId });
-		setLoading(false);
-		setOpened(false);
-		router.refresh();
-	};
+	const handleConfirm = wrap(
+		async () => {
+			await deleteRecipe({ plannerId, recipeId });
+		},
+		() => {
+			setOpened(false);
+			router.refresh();
+		},
+	);
 
 	return (
 		<>
@@ -41,7 +46,8 @@ const DeleteRecipeButton = ({ disabled, plannerId, recipeId }: Props) => {
 				<IconTrash size={16} />
 			</ActionIcon>
 			<DeleteConfirmModal
-				loading={loading}
+				errorMessage={errorMessage}
+				loading={status === 'submitting'}
 				onClose={() => setOpened(false)}
 				onConfirm={handleConfirm}
 				opened={opened}

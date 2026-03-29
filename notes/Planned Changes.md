@@ -2,12 +2,15 @@
 
 # High-Priority
 
-- add [[Form Feedback|form feedback]] to actions - add recipe & delete recipe
+- ~~add [[Form Feedback|form feedback]] to actions - add recipe & delete recipe~~
+- server action error handling — return error objects instead of throwing so Next.js dev overlay is not triggered for expected errors; requires updating all server action signatures and callers
 - [[Edit Recipe|edit recipes]]
 - add bookmark
 - edit bookmark
 - delete bookmark
 - add notes & tags to bookmarks
+- view tags inline in recipes page view
+- allow filtering & sorting in recipe list
 - calendar page
 - create meal plan
 - add email sign-in option
