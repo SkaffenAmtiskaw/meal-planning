@@ -13,6 +13,9 @@ Feedback
 - if multiple decisions need to be made, prompt user one by one
 - if the user indicates a suggestion should be deferred til later add a TODO comment
 
+Code Conventions
+- Refer to the code conventions in AGENTS.md and make sure all code changes follow them
+
 Dead Code
 - all code reviews should include a check for dead code
 - check TODO comments in staged files and assess whether they have been addressed - if so suggest removing it - the user MUST confirm it can be removed

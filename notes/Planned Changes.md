@@ -23,3 +23,4 @@
 - confirm if Biome recommended settings are turned on
 - theme colors
 	- tag colors should align with theme
+- audit code for client component surface area - move as much as possible to server components

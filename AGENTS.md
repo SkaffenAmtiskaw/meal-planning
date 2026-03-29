@@ -62,10 +62,6 @@ Environment variables needed: `BETTER_AUTH_SECRET`, `BETTER_AUTH_URL`, `GOOGLE_C
 
 All env vars are declared and validated at startup via `@t3-oss/env-nextjs` in `src/env.ts`. Import `env` from there instead of accessing `process.env` directly — this provides Zod validation and eliminates non-null assertions.
 
-## Error Handling
-
-Use the `catchify` utility (`src/_utils/catchify/`) for async operations. Returns `[value]` on success or `[undefined, error]` on failure — avoids try/catch boilerplate.
-
 ## Development Commands
 
 ```bash
@@ -86,6 +82,7 @@ pnpm test     # Run Vitest
 - Shared components, hooks and utilities are located at `src/_components`, `src/_hooks`, and `src/_utils` — ones that are only used in a single place should be in a directory co-located with the component that consumes them.
 - Components receive data props and import server actions directly — do not pass pre-bound actions as props (e.g. prefer `email={email}` over `action={createUser.bind(null, email)}`).
 - Minimize client components (`'use client'`). Keep pages and layout components as server components; only extract the smallest necessary interactive piece into a dedicated client component (e.g. a single button, not a whole list).
+- Use the `catchify` utility (`src/_utils/catchify/`) for async operations. Returns `[value]` on success or `[undefined, error]` on failure — avoids try/catch boilerplate.
 
 ## Coverage
 
@@ -95,10 +92,12 @@ pnpm test     # Run Vitest
 - The `coverage.exclude` array in `vitest.config.ts` is for **permanent** exclusions only (e.g. config files, route handlers that can never contain testable logic). Do not add files to it as a temporary workaround while a refactor is pending.
 
 ## Rules
+
 - Before a task is done, you MUST successfully run `pnpm lint`
 - Work left intentionally unfinished should be indicated with a `TODO` comment
 
 ## Notes
+
 - the `notes/` directory contains an obsidian vault
 - all `.md` files in it use Obsidian-flavored Markdown
 - when told to plan or build something - check the notes directory to see if any plans exist
