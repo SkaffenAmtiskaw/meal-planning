@@ -1,0 +1,2 @@
+- clicking on edit button in recipes list opens edit modal
+- form uses existing form feedback

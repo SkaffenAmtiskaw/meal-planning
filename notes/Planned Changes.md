@@ -1,11 +1,11 @@
 *Note: These should ALWAYS be planned and implemented individually. They are discrete units of work.*
 
 # High-Priority
-- add bookmark
-- edit bookmark
-- delete bookmark
-- add notes & tags to bookmarks
-- view tags inline in recipes page view
+- [[Add Bookmark|add bookmark]]
+- [[Edit Bookmark|edit bookmark]]
+- [[Delete Bookmark|delete bookmark]]
+- [[Add Tags & Notes to Bookmark|add notes & tags to bookmarks]]
+- [[Tags in Recipe List|display tags in recipe list]]
 - allow filtering & sorting in recipe list
 - add email sign-in option
 - add reset password flow

@@ -1,0 +1,2 @@
+- clicking on delete button in recipes list opens confirmation dialog
+- dialog uses existing feedback UX

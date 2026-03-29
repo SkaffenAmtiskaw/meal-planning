@@ -1,0 +1,3 @@
+- Update bookmark schema to have tags and notes
+- User can add tags and notes when creating bookmark
+- User can add/edit tags and note when editing bookmark
