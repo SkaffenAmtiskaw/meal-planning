@@ -173,7 +173,8 @@ describe('RecipeDetail', () => {
 		);
 		const link = screen.getByTestId('source-link') as HTMLAnchorElement;
 		expect(link.href).toBe('https://example.com/');
-		expect(link.textContent).toBe('Dark Cookbook');
+		expect(link.textContent).toBe('https://example.com');
+		expect(screen.getByTestId('source-name').textContent).toBe('Dark Cookbook');
 	});
 
 	test('renders source as plain text when no url', () => {
@@ -189,6 +190,7 @@ describe('RecipeDetail', () => {
 		expect(screen.getByTestId('source-name').textContent).toBe(
 			'Secret Grimoire',
 		);
+		expect(screen.queryByTestId('source-link')).toBeNull();
 	});
 
 	test('renders time fields when provided', () => {
@@ -270,7 +272,7 @@ describe('RecipeDetail', () => {
 			<RecipeDetail
 				{...defaultProps}
 				recipe={{ ...baseRecipe, tags: ['tag-1' as never] }}
-				tags={[{ _id: 'tag-1', name: 'Spicy', color: 'red' }]}
+				tags={[{ _id: 'tag-1' as never, name: 'Spicy', color: 'red' }]}
 			/>,
 		);
 		expect(screen.getByTestId('tags')).toBeDefined();
@@ -281,7 +283,7 @@ describe('RecipeDetail', () => {
 		render(
 			<RecipeDetail
 				{...defaultProps}
-				tags={[{ _id: 'tag-1', name: 'Spicy', color: 'red' }]}
+				tags={[{ _id: 'tag-1' as never, name: 'Spicy', color: 'red' }]}
 			/>,
 		);
 		expect(screen.queryByTestId('tags')).toBeNull();
@@ -295,7 +297,7 @@ describe('RecipeDetail', () => {
 			<RecipeDetail
 				{...defaultProps}
 				recipe={{ ...baseRecipe, tags: ['tag-1' as never] }}
-				tags={[{ _id: 'tag-1', name: 'Spicy', color: 'red' }]}
+				tags={[{ _id: 'tag-1' as never, name: 'Spicy', color: 'red' }]}
 			/>,
 		);
 		expect(screen.getByTestId('tags')).toBeDefined();
@@ -307,7 +309,7 @@ describe('RecipeDetail', () => {
 			<RecipeDetail
 				{...defaultProps}
 				recipe={{ ...baseRecipe, tags: ['tag-1' as never] }}
-				tags={[{ _id: 'tag-1', name: 'Mild', color: 'yellow' }]}
+				tags={[{ _id: 'tag-1' as never, name: 'Mild', color: 'yellow' }]}
 			/>,
 		);
 		expect(screen.getByText('Mild')).toBeDefined();
@@ -318,7 +320,7 @@ describe('RecipeDetail', () => {
 			<RecipeDetail
 				{...defaultProps}
 				recipe={{ ...baseRecipe, tags: ['unknown-id' as never] }}
-				tags={[{ _id: 'tag-1', name: 'Spicy', color: 'red' }]}
+				tags={[{ _id: 'tag-1' as never, name: 'Spicy', color: 'red' }]}
 			/>,
 		);
 		expect(screen.queryByTestId('tags')).toBeNull();

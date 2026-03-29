@@ -1,7 +1,8 @@
 ## Status
 
 - [x] Step 1: Basic recipe detail page ✅
-- [ ] Step 2: Responsive layout
+- [x] Bug fix: RecipeForm source/time fields crash on input ✅
+- [x] Step 2: Responsive layout ✅
 - [ ] Step 3: Keep-awake on mobile
 - [ ] Step 4: Inline notes editing
 - [ ] Step 5: Inline tags editing
@@ -19,6 +20,11 @@
   - `addRecipe.ts`: uses `insertIndex` pattern to read stable `_id` after save
   - `SavedList.tsx`: uses `next/link` for recipe navigation; `isBookmark` guard uses `!!url` not `'url' in item`
   - `page.tsx`: `JSON.parse(JSON.stringify(item))` converts Mongoose subdocument to plain object before passing to client component
+
+### Bug Fix — RecipeForm initialValues missing nested objects
+- `useForm` in `RecipeForm.tsx` has no `initialValues`, so `source` and `time` are `undefined` in form state
+- Mantine's `setPath` crashes with `Cannot set properties of undefined (setting 'name')` when the user types in `source.name` or any `time.*` field
+- Fix: add `initialValues` to `useForm` that includes `source: { name: '', url: '' }` and `time: { prep: '', cook: '', total: '', actual: '' }`, populated from `item` when editing
 
 ### Step 2 — Responsive Layout
 - Time fields: `SimpleGrid cols={{ base: 2, sm: 4 }}`

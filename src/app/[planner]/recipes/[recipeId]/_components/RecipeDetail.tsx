@@ -38,7 +38,7 @@ export const RecipeDetail = ({ recipe, tags }: Props) => {
 	};
 
 	return (
-		<Container data-testid="recipe-detail" size="sm" py={16}>
+		<Container data-testid="recipe-detail" size="md" py={16}>
 			<Stack gap="md">
 				<Group justify="space-between" align="flex-start">
 					<Title order={2}>{recipe.name}</Title>
@@ -52,18 +52,29 @@ export const RecipeDetail = ({ recipe, tags }: Props) => {
 						<Text fw={600} size="sm">
 							Source
 						</Text>
-						{recipe.source.url ? (
-							<Anchor
-								data-testid="source-link"
-								href={recipe.source.url}
-								rel="noopener noreferrer"
-								target="_blank"
-							>
-								{recipe.source.name}
-							</Anchor>
-						) : (
-							<Text data-testid="source-name">{recipe.source.name}</Text>
-						)}
+						<SimpleGrid cols={{ base: 1, sm: 2 }}>
+							<Stack gap={2}>
+								<Text size="xs" c="dimmed">
+									Name
+								</Text>
+								<Text data-testid="source-name">{recipe.source.name}</Text>
+							</Stack>
+							{recipe.source.url && (
+								<Stack gap={2}>
+									<Text size="xs" c="dimmed">
+										URL
+									</Text>
+									<Anchor
+										data-testid="source-link"
+										href={recipe.source.url}
+										rel="noopener noreferrer"
+										target="_blank"
+									>
+										{recipe.source.url}
+									</Anchor>
+								</Stack>
+							)}
+						</SimpleGrid>
 					</Stack>
 				)}
 
