@@ -41,11 +41,6 @@ vi.mock('@/_actions/saved', () => ({
 	deleteRecipe: vi.fn(),
 }));
 
-const mockUseMantineTheme = vi.fn(() => ({
-	colors: {} as Record<string, string[]>,
-}));
-const mockIsLightColor = vi.fn((_bg: string) => false);
-
 vi.mock('./KeepAwakeToggle', () => ({
 	KeepAwakeToggle: () => <div data-testid="keep-awake-toggle" />,
 }));
@@ -69,6 +64,28 @@ vi.mock('./InlineNotesEditor', () => ({
 	),
 }));
 
+vi.mock('./InlineTagsEditor', () => ({
+	InlineTagsEditor: ({
+		tagIds,
+		availableTags,
+		plannerId,
+		recipeId,
+	}: {
+		tagIds: string[];
+		availableTags: { _id: string }[];
+		plannerId: string;
+		recipeId: string;
+	}) => (
+		<div
+			data-testid="inline-tags-editor"
+			data-tag-ids={tagIds.join(',')}
+			data-available-tags-count={availableTags.length}
+			data-planner-id={plannerId}
+			data-recipe-id={recipeId}
+		/>
+	),
+}));
+
 vi.mock('@mantine/core', () => {
 	const Anchor = ({
 		children,
@@ -83,14 +100,6 @@ vi.mock('@mantine/core', () => {
 			{children}
 		</a>
 	);
-
-	const Badge = ({
-		children,
-		style,
-	}: {
-		children: React.ReactNode;
-		style?: React.CSSProperties;
-	}) => <span style={style}>{children}</span>;
 
 	const Button = ({
 		children,
@@ -163,18 +172,15 @@ vi.mock('@mantine/core', () => {
 
 	return {
 		Anchor,
-		Badge,
 		Button,
 		Container,
 		Group,
-		isLightColor: (bg: string) => mockIsLightColor(bg),
 		List,
 		ListItem,
 		SimpleGrid,
 		Stack,
 		Text,
 		Title,
-		useMantineTheme: () => mockUseMantineTheme(),
 	};
 });
 
@@ -194,8 +200,6 @@ const defaultProps = {
 describe('RecipeDetail', () => {
 	afterEach(() => {
 		vi.resetAllMocks();
-		mockUseMantineTheme.mockReturnValue({ colors: {} });
-		mockIsLightColor.mockReturnValue(false);
 	});
 	test('renders the recipe name', () => {
 		render(<RecipeDetail {...defaultProps} />);
@@ -381,10 +385,20 @@ describe('RecipeDetail', () => {
 		expect(screen.queryByTestId('time-prep')).toBeNull();
 		expect(screen.queryByTestId('servings')).toBeNull();
 		expect(screen.queryByTestId('storage')).toBeNull();
-		expect(screen.queryByTestId('tags')).toBeNull();
 	});
 
-	test('renders resolved tag pills', () => {
+	test('renders InlineTagsEditor', () => {
+		render(<RecipeDetail {...defaultProps} />);
+		expect(screen.getByTestId('inline-tags-editor')).toBeDefined();
+	});
+
+	test('passes empty tagIds when recipe has no tags', () => {
+		render(<RecipeDetail {...defaultProps} />);
+		const editor = screen.getByTestId('inline-tags-editor');
+		expect(editor.getAttribute('data-tag-ids')).toBe('');
+	});
+
+	test('passes recipe tag ids to InlineTagsEditor', () => {
 		render(
 			<RecipeDetail
 				{...defaultProps}
@@ -392,55 +406,30 @@ describe('RecipeDetail', () => {
 				tags={[{ _id: 'tag-1' as never, name: 'Spicy', color: 'red' }]}
 			/>,
 		);
-		expect(screen.getByTestId('tags')).toBeDefined();
-		expect(screen.getByText('Spicy')).toBeDefined();
+		expect(
+			screen.getByTestId('inline-tags-editor').getAttribute('data-tag-ids'),
+		).toBe('tag-1');
 	});
 
-	test('does not render tags section when recipe has no tags', () => {
+	test('passes available tags to InlineTagsEditor', () => {
 		render(
 			<RecipeDetail
 				{...defaultProps}
 				tags={[{ _id: 'tag-1' as never, name: 'Spicy', color: 'red' }]}
 			/>,
 		);
-		expect(screen.queryByTestId('tags')).toBeNull();
+		expect(
+			screen
+				.getByTestId('inline-tags-editor')
+				.getAttribute('data-available-tags-count'),
+		).toBe('1');
 	});
 
-	test('applies theme color when tag color exists in theme palette', () => {
-		mockUseMantineTheme.mockReturnValue({
-			colors: { red: ['', '', '', '', '', '#cc0000'] },
-		});
-		render(
-			<RecipeDetail
-				{...defaultProps}
-				recipe={{ ...baseRecipe, tags: ['tag-1' as never] }}
-				tags={[{ _id: 'tag-1' as never, name: 'Spicy', color: 'red' }]}
-			/>,
-		);
-		expect(screen.getByTestId('tags')).toBeDefined();
-	});
-
-	test('uses black text on light-colored tag pills', () => {
-		mockIsLightColor.mockReturnValue(true);
-		render(
-			<RecipeDetail
-				{...defaultProps}
-				recipe={{ ...baseRecipe, tags: ['tag-1' as never] }}
-				tags={[{ _id: 'tag-1' as never, name: 'Mild', color: 'yellow' }]}
-			/>,
-		);
-		expect(screen.getByText('Mild')).toBeDefined();
-	});
-
-	test('does not render tags section when tag ids do not match available tags', () => {
-		render(
-			<RecipeDetail
-				{...defaultProps}
-				recipe={{ ...baseRecipe, tags: ['unknown-id' as never] }}
-				tags={[{ _id: 'tag-1' as never, name: 'Spicy', color: 'red' }]}
-			/>,
-		);
-		expect(screen.queryByTestId('tags')).toBeNull();
+	test('passes plannerId and recipeId to InlineTagsEditor', () => {
+		render(<RecipeDetail {...defaultProps} />);
+		const editor = screen.getByTestId('inline-tags-editor');
+		expect(editor.getAttribute('data-planner-id')).toBe('planner-1');
+		expect(editor.getAttribute('data-recipe-id')).toBe('recipe-1');
 	});
 
 	test('does not render ingredients section when list is empty', () => {

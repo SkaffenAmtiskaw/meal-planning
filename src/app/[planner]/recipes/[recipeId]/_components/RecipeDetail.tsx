@@ -5,18 +5,15 @@ import { useState } from 'react';
 
 import {
 	Anchor,
-	Badge,
 	Button,
 	Container,
 	Group,
-	isLightColor,
 	List,
 	ListItem,
 	SimpleGrid,
 	Stack,
 	Text,
 	Title,
-	useMantineTheme,
 } from '@mantine/core';
 
 import { deleteRecipe } from '@/_actions/saved';
@@ -25,6 +22,7 @@ import type { TagInterface } from '@/_models/planner/tag.types';
 
 import { DeleteConfirmModal } from '../../_components/DeleteConfirmModal';
 import { InlineNotesEditor } from './InlineNotesEditor';
+import { InlineTagsEditor } from './InlineTagsEditor';
 import { KeepAwakeToggle } from './KeepAwakeToggle';
 
 type Props = {
@@ -34,7 +32,6 @@ type Props = {
 };
 
 export const RecipeDetail = ({ plannerId, recipe, tags }: Props) => {
-	const theme = useMantineTheme();
 	const router = useRouter();
 	const [modalOpened, setModalOpened] = useState(false);
 	const [deleting, setDeleting] = useState(false);
@@ -43,15 +40,6 @@ export const RecipeDetail = ({ plannerId, recipe, tags }: Props) => {
 		setDeleting(true);
 		await deleteRecipe({ plannerId, recipeId: String(recipe._id) });
 		router.push(`/${plannerId}/recipes`);
-	};
-
-	const recipeTags = (recipe.tags ?? [])
-		.map((id) => tags.find((t) => String(t._id) === String(id)))
-		.filter((t): t is TagInterface => t !== undefined);
-
-	const getPillStyle = (color: string) => {
-		const bg = theme.colors[color]?.[5] ?? color;
-		return { backgroundColor: bg, color: isLightColor(bg) ? '#000' : '#fff' };
 	};
 
 	return (
@@ -200,15 +188,12 @@ export const RecipeDetail = ({ plannerId, recipe, tags }: Props) => {
 						</Stack>
 					)}
 
-					{recipeTags.length > 0 && (
-						<Group gap="xs" data-testid="tags">
-							{recipeTags.map((tag) => (
-								<Badge key={String(tag._id)} style={getPillStyle(tag.color)}>
-									{tag.name}
-								</Badge>
-							))}
-						</Group>
-					)}
+					<InlineTagsEditor
+						availableTags={tags.map((t) => ({ ...t, _id: String(t._id) }))}
+						plannerId={plannerId}
+						recipeId={String(recipe._id)}
+						tagIds={(recipe.tags ?? []).map((id) => String(id))}
+					/>
 				</Stack>
 			</Container>
 			<DeleteConfirmModal

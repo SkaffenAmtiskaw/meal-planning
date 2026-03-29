@@ -5,7 +5,7 @@
 - [x] Step 2: Responsive layout ✅
 - [x] Step 3: Keep-awake on mobile ✅ (manual test confirmed)
 - [x] Step 4: Inline notes editing ✅
-- [ ] Step 5: Inline tags editing
+- [x] Step 5: Inline tags editing ✅
 
 ## Planned Work
 

@@ -1,0 +1,3 @@
+- when a user edits the recipe from the list the form should appear in the modal
+- when a user edits the recipe from the recipe page the form should not be in a modal - it should replace the page
+- inputs should match the position of the static page where possible
