@@ -19,6 +19,8 @@ import {
 import type { RecipeInterface } from '@/_models/planner/recipe.types';
 import type { TagInterface } from '@/_models/planner/tag.types';
 
+import { KeepAwakeToggle } from './KeepAwakeToggle';
+
 type Props = {
 	plannerId: string;
 	recipe: RecipeInterface;
@@ -42,9 +44,12 @@ export const RecipeDetail = ({ recipe, tags }: Props) => {
 			<Stack gap="md">
 				<Group justify="space-between" align="flex-start">
 					<Title order={2}>{recipe.name}</Title>
-					<Button data-testid="edit-button" disabled variant="default">
-						Edit
-					</Button>
+					<Group align="center" gap="sm">
+						<KeepAwakeToggle />
+						<Button data-testid="edit-button" disabled variant="default">
+							Edit
+						</Button>
+					</Group>
 				</Group>
 
 				{recipe.source && (

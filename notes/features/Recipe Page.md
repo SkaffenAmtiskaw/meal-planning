@@ -3,7 +3,7 @@
 - [x] Step 1: Basic recipe detail page ✅
 - [x] Bug fix: RecipeForm source/time fields crash on input ✅
 - [x] Step 2: Responsive layout ✅
-- [ ] Step 3: Keep-awake on mobile
+- [x] Step 3: Keep-awake on mobile ✅ (manual test confirmed)
 - [ ] Step 4: Inline notes editing
 - [ ] Step 5: Inline tags editing
 
@@ -31,10 +31,11 @@
 - Source fields: `SimpleGrid cols={{ base: 1, sm: 2 }}`
 - Main content: `Stack` with consistent spacing, `Container size="md"` to cap desktop width
 
-### Step 3 — Keep-Awake on Mobile
+### Step 3 — Keep-Awake
 - `KeepAwakeToggle` client component using `navigator.wakeLock.request('screen')`
 - Only renders when `'wakeLock' in navigator`
 - Mantine `Switch` labeled "Keep screen awake"
+- Visible on desktop too (wherever the browser supports the Wake Lock API) — intentional
 
 ### Step 4 — Inline Notes Editing
 - `updateRecipeNotes` server action

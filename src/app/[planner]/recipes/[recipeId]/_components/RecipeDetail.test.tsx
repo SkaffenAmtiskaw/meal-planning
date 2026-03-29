@@ -9,6 +9,10 @@ const mockUseMantineTheme = vi.fn(() => ({
 }));
 const mockIsLightColor = vi.fn((_bg: string) => false);
 
+vi.mock('./KeepAwakeToggle', () => ({
+	KeepAwakeToggle: () => <div data-testid="keep-awake-toggle" />,
+}));
+
 vi.mock('@mantine/core', () => {
 	const Anchor = ({
 		children,
@@ -145,6 +149,11 @@ describe('RecipeDetail', () => {
 		const btn = screen.getByTestId('edit-button') as HTMLButtonElement;
 		expect(btn).toBeDefined();
 		expect(btn.disabled).toBe(true);
+	});
+
+	test('renders the keep awake toggle', () => {
+		render(<RecipeDetail {...defaultProps} />);
+		expect(screen.getByTestId('keep-awake-toggle')).toBeDefined();
 	});
 
 	test('renders ingredients list', () => {
