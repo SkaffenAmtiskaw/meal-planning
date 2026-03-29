@@ -52,8 +52,8 @@ vi.mock('mantine-form-zod-resolver', () => ({
 	zod4Resolver: () => () => ({}),
 }));
 
-vi.mock('@mantine/form', () => ({
-	useForm: () => ({
+const { mockUseForm } = vi.hoisted(() => {
+	const mockUseForm = vi.fn(() => ({
 		onSubmit:
 			(handler: (values: Record<string, unknown>) => Promise<void>) =>
 			(e: React.FormEvent) => {
@@ -62,7 +62,12 @@ vi.mock('@mantine/form', () => ({
 			},
 		getInputProps: () => ({}),
 		key: (field: string) => field,
-	}),
+	}));
+	return { mockUseForm };
+});
+
+vi.mock('@mantine/form', () => ({
+	useForm: () => mockUseForm(),
 }));
 
 vi.mock('@mantine/core', () => {
@@ -201,6 +206,149 @@ describe('RecipeForm', () => {
 		render(<RecipeForm {...defaultProps} />);
 		fireEvent.click(screen.getByTestId('tag-combobox'));
 		// component re-renders without error
+	});
+
+	test('submits source as undefined when source name is empty', async () => {
+		vi.mocked(addRecipe).mockResolvedValue({ _id: 'id', name: 'x' });
+		mockUseForm.mockReturnValueOnce({
+			onSubmit:
+				(handler: (values: Record<string, unknown>) => Promise<void>) =>
+				(e: React.FormEvent) => {
+					e.preventDefault();
+					handler({ source: { name: '', url: '' } });
+				},
+			getInputProps: () => ({}),
+			key: (field: string) => field,
+		});
+		render(<RecipeForm {...defaultProps} />);
+		await act(async () => {
+			fireEvent.submit(screen.getByTestId('recipe-form'));
+		});
+		expect(addRecipe).toHaveBeenCalledWith(
+			expect.objectContaining({ source: undefined }),
+		);
+	});
+
+	test('submits source with name and no url when url is empty', async () => {
+		vi.mocked(addRecipe).mockResolvedValue({ _id: 'id', name: 'x' });
+		mockUseForm.mockReturnValueOnce({
+			onSubmit:
+				(handler: (values: Record<string, unknown>) => Promise<void>) =>
+				(e: React.FormEvent) => {
+					e.preventDefault();
+					handler({ source: { name: 'Book', url: '' } });
+				},
+			getInputProps: () => ({}),
+			key: (field: string) => field,
+		});
+		render(<RecipeForm {...defaultProps} />);
+		await act(async () => {
+			fireEvent.submit(screen.getByTestId('recipe-form'));
+		});
+		expect(addRecipe).toHaveBeenCalledWith(
+			expect.objectContaining({ source: { name: 'Book', url: undefined } }),
+		);
+	});
+
+	test('submits source with url when both fields are filled', async () => {
+		vi.mocked(addRecipe).mockResolvedValue({ _id: 'id', name: 'x' });
+		mockUseForm.mockReturnValueOnce({
+			onSubmit:
+				(handler: (values: Record<string, unknown>) => Promise<void>) =>
+				(e: React.FormEvent) => {
+					e.preventDefault();
+					handler({
+						source: { name: 'Bon Appétit', url: 'https://example.com' },
+					});
+				},
+			getInputProps: () => ({}),
+			key: (field: string) => field,
+		});
+		render(<RecipeForm {...defaultProps} />);
+		await act(async () => {
+			fireEvent.submit(screen.getByTestId('recipe-form'));
+		});
+		expect(addRecipe).toHaveBeenCalledWith(
+			expect.objectContaining({
+				source: { name: 'Bon Appétit', url: 'https://example.com' },
+			}),
+		);
+	});
+
+	test('submits time as undefined when all time fields are empty', async () => {
+		vi.mocked(addRecipe).mockResolvedValue({ _id: 'id', name: 'x' });
+		mockUseForm.mockReturnValueOnce({
+			onSubmit:
+				(handler: (values: Record<string, unknown>) => Promise<void>) =>
+				(e: React.FormEvent) => {
+					e.preventDefault();
+					handler({ time: { prep: '', cook: '', total: '', actual: '' } });
+				},
+			getInputProps: () => ({}),
+			key: (field: string) => field,
+		});
+		render(<RecipeForm {...defaultProps} />);
+		await act(async () => {
+			fireEvent.submit(screen.getByTestId('recipe-form'));
+		});
+		expect(addRecipe).toHaveBeenCalledWith(
+			expect.objectContaining({ time: undefined }),
+		);
+	});
+
+	test('submits time with only non-empty fields when some are filled', async () => {
+		vi.mocked(addRecipe).mockResolvedValue({ _id: 'id', name: 'x' });
+		mockUseForm.mockReturnValueOnce({
+			onSubmit:
+				(handler: (values: Record<string, unknown>) => Promise<void>) =>
+				(e: React.FormEvent) => {
+					e.preventDefault();
+					handler({
+						time: { prep: '10m', cook: '', total: '10m', actual: '' },
+					});
+				},
+			getInputProps: () => ({}),
+			key: (field: string) => field,
+		});
+		render(<RecipeForm {...defaultProps} />);
+		await act(async () => {
+			fireEvent.submit(screen.getByTestId('recipe-form'));
+		});
+		expect(addRecipe).toHaveBeenCalledWith(
+			expect.objectContaining({
+				time: { prep: '10m', cook: undefined, total: '10m', actual: undefined },
+			}),
+		);
+	});
+
+	test('submits time with cook only when prep and total are empty', async () => {
+		vi.mocked(addRecipe).mockResolvedValue({ _id: 'id', name: 'x' });
+		mockUseForm.mockReturnValueOnce({
+			onSubmit:
+				(handler: (values: Record<string, unknown>) => Promise<void>) =>
+				(e: React.FormEvent) => {
+					e.preventDefault();
+					handler({
+						time: { prep: '', cook: '30m', total: '', actual: '' },
+					});
+				},
+			getInputProps: () => ({}),
+			key: (field: string) => field,
+		});
+		render(<RecipeForm {...defaultProps} />);
+		await act(async () => {
+			fireEvent.submit(screen.getByTestId('recipe-form'));
+		});
+		expect(addRecipe).toHaveBeenCalledWith(
+			expect.objectContaining({
+				time: {
+					prep: undefined,
+					cook: '30m',
+					total: undefined,
+					actual: undefined,
+				},
+			}),
+		);
 	});
 
 	test('populates initial state from existing item', () => {

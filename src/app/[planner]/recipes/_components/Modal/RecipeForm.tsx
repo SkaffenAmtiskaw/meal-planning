@@ -55,12 +55,44 @@ export const RecipeForm = ({ item, plannerId, tags }: Props) => {
 	const form = useForm({
 		mode: 'uncontrolled',
 		validate: zod4Resolver(zFormFields),
+		initialValues: {
+			name: item?.name ?? '',
+			source: {
+				name: item?.source?.name ?? '',
+				url: item?.source?.url ?? '',
+			},
+			time: {
+				prep: item?.time?.prep ?? '',
+				cook: item?.time?.cook ?? '',
+				total: item?.time?.total ?? '',
+				actual: item?.time?.actual ?? '',
+			},
+			servings: item?.servings,
+			notes: item?.notes ?? '',
+			storage: item?.storage ?? '',
+		},
 	});
 
 	// TODO: implement editRecipe for edit flow
 	const handleSubmit = form.onSubmit(async (values) => {
+		const source = values.source?.name
+			? { name: values.source.name, url: values.source.url || undefined }
+			: undefined;
+
+		const time =
+			values.time && Object.values(values.time).some(Boolean)
+				? {
+						prep: values.time.prep || undefined,
+						cook: values.time.cook || undefined,
+						total: values.time.total || undefined,
+						actual: values.time.actual || undefined,
+					}
+				: undefined;
+
 		await addRecipe({
 			...values,
+			source,
+			time,
 			ingredients,
 			instructions,
 			tags: selectedTags,
