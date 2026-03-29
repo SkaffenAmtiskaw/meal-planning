@@ -64,10 +64,7 @@ describe('bookmark interface', () => {
 });
 
 describe('bookmark schema', () => {
-	test('_id default generates a valid ObjectId', () => {
-		// biome-ignore lint/suspicious/noExplicitAny: accessing internal Mongoose schema definition
-		const defaultFn = (bookmarkSchema.obj._id as any)
-			.default as () => Types.ObjectId;
-		expect(Types.ObjectId.isValid(defaultFn())).toBe(true);
+	test('_id is not explicitly defined (Mongoose auto-adds it)', () => {
+		expect((bookmarkSchema.obj as Record<string, unknown>)._id).toBeUndefined();
 	});
 });

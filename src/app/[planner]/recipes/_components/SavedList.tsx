@@ -1,3 +1,5 @@
+import Link from 'next/link';
+
 import { ActionIcon, Anchor, Group, List, ListItem } from '@mantine/core';
 import { IconPencil, IconTrash } from '@tabler/icons-react';
 
@@ -9,19 +11,21 @@ type Props = {
 	plannerId: string;
 };
 
+const isBookmark = (
+	item: RecipeInterface | BookmarkInterface,
+): item is BookmarkInterface => !!(item as BookmarkInterface).url;
+
 const SavedList = ({ items, plannerId }: Props) => (
 	<List listStyleType="none">
 		{items.map((item) => (
 			<ListItem key={`${item._id}`}>
 				<Group justify="space-between">
-					{'url' in item ? (
+					{isBookmark(item) ? (
 						<Anchor href={item.url} rel="noopener noreferrer" target="_blank">
 							{item.name}
 						</Anchor>
 					) : (
-						<Anchor href={`/${plannerId}/recipes/${item._id}`}>
-							{item.name}
-						</Anchor>
+						<Link href={`/${plannerId}/recipes/${item._id}`}>{item.name}</Link>
 					)}
 					<Group gap="xs">
 						<ActionIcon data-testid="edit-button" disabled variant="subtle">

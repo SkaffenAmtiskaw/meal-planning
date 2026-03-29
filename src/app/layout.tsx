@@ -2,11 +2,7 @@ import type { ReactNode } from 'react';
 
 import '@mantine/core/styles.css';
 
-import {
-	ColorSchemeScript,
-	MantineProvider,
-	mantineHtmlProps,
-} from '@mantine/core';
+import { MantineProvider, mantineHtmlProps } from '@mantine/core';
 
 import { OneTapSignInWrapper } from '@/_components';
 import { theme } from '@/_theme';
@@ -19,7 +15,6 @@ export default function RootLayout({ children }: { children: ReactNode }) {
 	return (
 		<html lang="en" {...mantineHtmlProps}>
 			<head>
-				<ColorSchemeScript />
 				<link rel="shortcut icon" href="/favicon.svg" />
 				<meta
 					name="viewport"
@@ -27,7 +22,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
 				/>
 			</head>
 			<body style={{ height: '100vh' }}>
-				<MantineProvider theme={theme}>
+				<MantineProvider defaultColorScheme="auto" theme={theme}>
 					<OneTapSignInWrapper>{children}</OneTapSignInWrapper>
 				</MantineProvider>
 			</body>

@@ -1,11 +1,12 @@
 ---
 name: plan-implementation
-description: plan implementation of feature
+description: plan implementation of a feature
 ---
 
 # Incremental Changes
-- when planning a large feature, the changes should be broken down into incremental changes
+- when planning a medium to large feature, the changes should be broken down into incremental changes
 - you SHOULD ask for user confirmation of work done before moving to the next step
+- you SHOULD NOT expand the scope past what the user requested - if scope is unclear prompt the user for clarification
 
 # Notes
 - planned features are often detailed in the `notes/` directory

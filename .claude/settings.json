@@ -1,7 +1,9 @@
 {
   "permissions": {
     "allow": [
+      "Bash(git diff *)",
       "Bash(ls *)",
+      "Bash(pnpm build*)",
       "Bash(pnpm lint*)",
       "Bash(pnpm test*)",
       "mcp__ide__getDiagnostics"

@@ -1,4 +1,4 @@
-import { Schema, SchemaTypes, Types } from 'mongoose';
+import { Schema, SchemaTypes } from 'mongoose';
 import { z } from 'zod';
 
 import type { RecipeInterface } from './recipe.types';
@@ -6,7 +6,6 @@ import type { RecipeInterface } from './recipe.types';
 export * from './recipe.types';
 
 export const recipeSchema = new Schema<RecipeInterface>({
-	_id: { type: SchemaTypes.ObjectId, default: () => new Types.ObjectId() },
 	ingredients: { type: [String], required: true },
 	instructions: { type: [String], required: true },
 	name: { type: String, required: true },

@@ -126,10 +126,7 @@ describe('recipe schema', () => {
 		expect(urlValidator('not-a-url')).toBe(false);
 	});
 
-	test('_id default generates a valid ObjectId', () => {
-		// biome-ignore lint/suspicious/noExplicitAny: accessing internal Mongoose schema definition
-		const defaultFn = (recipeSchema.obj._id as any)
-			.default as () => Types.ObjectId;
-		expect(Types.ObjectId.isValid(defaultFn())).toBe(true);
+	test('_id is not explicitly defined (Mongoose auto-adds it)', () => {
+		expect((recipeSchema.obj as Record<string, unknown>)._id).toBeUndefined();
 	});
 });

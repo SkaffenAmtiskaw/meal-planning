@@ -30,10 +30,15 @@ describe('addRecipe', () => {
 		vi.resetAllMocks();
 	});
 
-	const makePlanner = () => ({
-		saved: [] as unknown[],
-		save: vi.fn().mockResolvedValue(undefined),
-	});
+	const makePlanner = () => {
+		const saved: Array<Record<string, unknown>> = [];
+		const originalPush = Array.prototype.push.bind(saved);
+		saved.push = (...items: Record<string, unknown>[]) =>
+			originalPush(
+				...items.map((item) => ({ _id: new Types.ObjectId(), ...item })),
+			);
+		return { saved, save: vi.fn().mockResolvedValue(undefined) };
+	};
 
 	test('throws ZodError on invalid input', async () => {
 		await expect(addRecipe({})).rejects.toThrow();

@@ -7,7 +7,6 @@ import RootLayout, { metadata } from './layout';
 vi.mock('@mantine/core/styles.css', () => ({}));
 
 vi.mock('@mantine/core', () => ({
-	ColorSchemeScript: () => null,
 	MantineProvider: ({ children }: { children: React.ReactNode }) => (
 		<>{children}</>
 	),

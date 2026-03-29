@@ -18,9 +18,12 @@ export const addRecipe = async (
 	const planner = await Planner.findById(plannerId);
 	if (!planner) throw new Error('Planner not found');
 
-	const _id = new Types.ObjectId();
-	planner.saved.push({ ...recipeFields, _id } as unknown as RecipeInterface);
+	const insertIndex = planner.saved.length;
+	planner.saved.push({ ...recipeFields } as unknown as RecipeInterface);
 	await planner.save();
 
-	return { _id: _id.toString(), name: recipeFields.name };
+	return {
+		_id: String(planner.saved[insertIndex]._id),
+		name: recipeFields.name,
+	};
 };

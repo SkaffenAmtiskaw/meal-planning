@@ -29,6 +29,21 @@ describe('get saved item', () => {
 		expect(result).toBe(mockItem);
 	});
 
+	test('should find the item by string comparison when _id is an ObjectId instance', async () => {
+		const objectIdInstance = new Types.ObjectId(itemId.toString());
+		const mockItem = {
+			_id: objectIdInstance,
+			name: 'Maleficent Mushroom Soup',
+		};
+		vi.mocked(getPlanner).mockResolvedValue({
+			saved: [mockItem],
+		} as never);
+
+		const result = await getSavedItem(plannerId, itemId);
+
+		expect(result).toBe(mockItem);
+	});
+
 	test('should throw when the item is not found in the planner', async () => {
 		vi.mocked(getPlanner).mockResolvedValue({ saved: [] } as never);
 
