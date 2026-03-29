@@ -16,7 +16,39 @@ vi.mock('@/_actions/saved/addRecipe', () => ({
 	addRecipe: vi.fn(),
 }));
 
+type FeedbackStatus = 'idle' | 'submitting' | 'success' | 'error';
+
+const { mockUseFormFeedback } = vi.hoisted(() => {
+	const mockUseFormFeedback = vi.fn(() => ({
+		status: 'idle' as FeedbackStatus,
+		countdown: 0,
+		errorMessage: undefined as string | undefined,
+		wrap:
+			(fn: (...args: unknown[]) => Promise<void>, onSuccess: () => void) =>
+			async (...args: unknown[]) => {
+				await fn(...args);
+				onSuccess();
+			},
+		reset: vi.fn(),
+	}));
+	return { mockUseFormFeedback };
+});
+
+vi.mock('@/_hooks', () => ({
+	useFormFeedback: () => mockUseFormFeedback(),
+}));
+
 vi.mock('@/_components', () => ({
+	FormFeedbackAlert: ({
+		status,
+		errorMessage,
+	}: {
+		status: string;
+		errorMessage?: string;
+	}) =>
+		status === 'error' ? (
+			<div data-testid="form-feedback-alert">{errorMessage}</div>
+		) : null,
 	StringArrayInput: ({
 		label,
 		onChange,
@@ -30,6 +62,23 @@ vi.mock('@/_components', () => ({
 			onClick={() => onChange([`${label} item`])}
 		>
 			{label}
+		</button>
+	),
+	SubmitButton: ({
+		label,
+		status,
+		countdown,
+	}: {
+		label: string;
+		status: string;
+		countdown: number;
+	}) => (
+		<button
+			type={status === 'success' ? 'button' : 'submit'}
+			data-testid="submit-button"
+			disabled={status === 'submitting'}
+		>
+			{status === 'success' ? `Saved! Closing in ${countdown}…` : label}
 		</button>
 	),
 	TagCombobox: ({
@@ -361,5 +410,17 @@ describe('RecipeForm', () => {
 		};
 		render(<RecipeForm {...defaultProps} item={item} />);
 		expect(screen.getByRole('button', { name: 'Save' })).toBeDefined();
+	});
+
+	test('shows error alert when status is error', () => {
+		mockUseFormFeedback.mockReturnValueOnce({
+			status: 'error' as FeedbackStatus,
+			countdown: 0,
+			errorMessage: 'Something went wrong',
+			wrap: vi.fn(),
+			reset: vi.fn(),
+		});
+		render(<RecipeForm {...defaultProps} />);
+		expect(screen.getByTestId('form-feedback-alert')).toBeDefined();
 	});
 });

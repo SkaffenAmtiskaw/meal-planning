@@ -20,7 +20,13 @@ import { z } from 'zod';
 
 import { addRecipe } from '@/_actions/saved/addRecipe';
 import type { TagOption } from '@/_components';
-import { StringArrayInput, TagCombobox } from '@/_components';
+import {
+	FormFeedbackAlert,
+	StringArrayInput,
+	SubmitButton,
+	TagCombobox,
+} from '@/_components';
+import { useFormFeedback } from '@/_hooks';
 import type { RecipeInterface } from '@/_models/planner/recipe.types';
 import { zRecipeFormSchema } from '@/_models/planner/recipe.types';
 
@@ -61,6 +67,8 @@ export const RecipeForm = ({ item, plannerId, tags }: Props) => {
 		item?.tags?.map(String) ?? [],
 	);
 
+	const { status, countdown, errorMessage, wrap } = useFormFeedback();
+
 	const form = useForm({
 		mode: 'uncontrolled',
 		validate: zod4Resolver(zFormFields),
@@ -83,32 +91,36 @@ export const RecipeForm = ({ item, plannerId, tags }: Props) => {
 	});
 
 	// TODO: implement editRecipe for edit flow
-	const handleSubmit = form.onSubmit(async (values) => {
-		const source = values.source?.name
-			? { name: values.source.name, url: values.source.url || undefined }
-			: undefined;
+	const handleSubmit = form.onSubmit(
+		wrap(
+			async (values) => {
+				const source = values.source?.name
+					? { name: values.source.name, url: values.source.url || undefined }
+					: undefined;
 
-		const time =
-			values.time && Object.values(values.time).some(Boolean)
-				? {
-						prep: values.time.prep || undefined,
-						cook: values.time.cook || undefined,
-						total: values.time.total || undefined,
-						actual: values.time.actual || undefined,
-					}
-				: undefined;
+				const time =
+					values.time && Object.values(values.time).some(Boolean)
+						? {
+								prep: values.time.prep || undefined,
+								cook: values.time.cook || undefined,
+								total: values.time.total || undefined,
+								actual: values.time.actual || undefined,
+							}
+						: undefined;
 
-		await addRecipe({
-			...values,
-			source,
-			time,
-			ingredients,
-			instructions,
-			tags: selectedTags,
-			plannerId,
-		});
-		router.push(pathname);
-	});
+				await addRecipe({
+					...values,
+					source,
+					time,
+					ingredients,
+					instructions,
+					tags: selectedTags,
+					plannerId,
+				});
+			},
+			() => router.push(pathname),
+		),
+	);
 
 	return (
 		<form onSubmit={handleSubmit} data-testid="recipe-form">
@@ -118,6 +130,7 @@ export const RecipeForm = ({ item, plannerId, tags }: Props) => {
 				value={plannerId}
 				readOnly
 			/>
+			<FormFeedbackAlert status={status} errorMessage={errorMessage} />
 			<Grid>
 				<Grid.Col span={12}>
 					<TextInput
@@ -220,7 +233,11 @@ export const RecipeForm = ({ item, plannerId, tags }: Props) => {
 						<Button variant="subtle" onClick={() => router.push(pathname)}>
 							Cancel
 						</Button>
-						<Button type="submit">{item ? 'Save' : 'Add Recipe'}</Button>
+						<SubmitButton
+							status={status}
+							countdown={countdown}
+							label={item ? 'Save' : 'Add Recipe'}
+						/>
 					</Group>
 				</Grid.Col>
 			</Grid>

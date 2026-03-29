@@ -94,7 +94,7 @@ Best practice is to **keep the submit button enabled** and show field-level vali
 
 ---
 
-### Step 4 — Wire into `RecipeForm`
+### Step 4 — Wire into `RecipeForm` ✅
 
 **Goal:** Recipe add/edit form uses the shared feedback layer end-to-end.
 

@@ -21,7 +21,7 @@ export const SubmitButton = ({ status, countdown, label }: Props) => {
 
 	if (status === 'success') {
 		return (
-			<Button type="submit" color="green" disabled>
+			<Button type="button" color="green">
 				{`Saved! Closing in ${countdown}…`}
 			</Button>
 		);

@@ -38,13 +38,13 @@ describe('SubmitButton', () => {
 		expect(button.getAttribute('data-loading')).toBe('true');
 	});
 
-	test('renders green countdown text and is disabled in success state', () => {
+	test('renders green countdown text and is enabled in success state', () => {
 		render(
 			<SubmitButton status="success" countdown={3} label="Save Recipe" />,
 			{ wrapper },
 		);
 		const button = screen.getByRole('button', { name: 'Saved! Closing in 3…' });
 		expect(button).toBeDefined();
-		expect(button.hasAttribute('disabled')).toBe(true);
+		expect(button.hasAttribute('disabled')).toBe(false);
 	});
 });
