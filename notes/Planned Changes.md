@@ -7,15 +7,16 @@
 - edit recipes
 - add bookmark
 - edit bookmark
-- delete recipe
 - delete bookmark
 - calendar page
+- create meal plan
 
 # Medium Priority
+- user settings
 - add AI instruction to avoid use of `let` - refactor code that uses it unecessarily
 - investigate mongo/mongoose caching
 - recipe list style updates
-- tag management - edit/delete
+- tag management - edit/delete (should live under user settings)
 - allow user to change their email
 - allow users to invite other users to a shared planner
 

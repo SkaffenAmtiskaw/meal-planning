@@ -16,6 +16,7 @@ import {
 import { useForm } from '@mantine/form';
 
 import { zod4Resolver } from 'mantine-form-zod-resolver';
+import { z } from 'zod';
 
 import { addRecipe } from '@/_actions/saved/addRecipe';
 import type { TagOption } from '@/_components';
@@ -25,12 +26,20 @@ import { zRecipeFormSchema } from '@/_models/planner/recipe.types';
 
 // Resolver only validates fields Mantine manages; ingredients/instructions/tags
 // are controlled via useState and merged in handleSubmit.
-const zFormFields = zRecipeFormSchema.omit({
-	ingredients: true,
-	instructions: true,
-	tags: true,
-	plannerId: true,
-});
+// source.url uses z.string() (not z.url()) to allow empty strings — handleSubmit
+// converts empty strings to undefined before saving.
+const zFormFields = zRecipeFormSchema
+	.omit({
+		ingredients: true,
+		instructions: true,
+		tags: true,
+		plannerId: true,
+	})
+	.extend({
+		source: z
+			.object({ name: z.string(), url: z.string().optional() })
+			.optional(),
+	});
 
 type Props = {
 	plannerId: string;
