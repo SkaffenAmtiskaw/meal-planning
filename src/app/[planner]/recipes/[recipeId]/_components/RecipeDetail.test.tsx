@@ -6,6 +6,31 @@ import { deleteRecipe } from '@/_actions/saved';
 
 import { RecipeDetail } from './RecipeDetail';
 
+vi.mock('../../_components/DeleteConfirmModal', () => ({
+	DeleteConfirmModal: ({
+		loading,
+		onClose,
+		onConfirm,
+		opened,
+	}: {
+		opened: boolean;
+		onClose: () => void;
+		onConfirm: () => void;
+		loading: boolean;
+	}) =>
+		opened ? (
+			<div data-testid="delete-confirm-modal">
+				<span data-testid="modal-loading">{String(loading)}</span>
+				<button data-testid="modal-cancel" onClick={onClose} type="button">
+					Cancel
+				</button>
+				<button data-testid="modal-confirm" onClick={onConfirm} type="button">
+					Delete
+				</button>
+			</div>
+		) : null,
+}));
+
 const mockPush = vi.fn();
 
 vi.mock('next/navigation', () => ({
@@ -175,11 +200,26 @@ describe('RecipeDetail', () => {
 		expect(screen.getByTestId('delete-button')).toBeDefined();
 	});
 
-	test('clicking delete calls deleteRecipe and redirects to recipes list', async () => {
+	test('clicking delete button opens confirm modal', () => {
+		render(<RecipeDetail {...defaultProps} />);
+		fireEvent.click(screen.getByTestId('delete-button'));
+		expect(screen.getByTestId('delete-confirm-modal')).toBeDefined();
+	});
+
+	test('clicking cancel in modal closes it without calling deleteRecipe', () => {
+		render(<RecipeDetail {...defaultProps} />);
+		fireEvent.click(screen.getByTestId('delete-button'));
+		fireEvent.click(screen.getByTestId('modal-cancel'));
+		expect(screen.queryByTestId('delete-confirm-modal')).toBeNull();
+		expect(deleteRecipe).not.toHaveBeenCalled();
+	});
+
+	test('confirming delete calls deleteRecipe and redirects to recipes list', async () => {
 		vi.mocked(deleteRecipe).mockResolvedValueOnce(undefined);
 		render(<RecipeDetail {...defaultProps} />);
 
 		fireEvent.click(screen.getByTestId('delete-button'));
+		fireEvent.click(screen.getByTestId('modal-confirm'));
 
 		await waitFor(() => {
 			expect(deleteRecipe).toHaveBeenCalledWith({

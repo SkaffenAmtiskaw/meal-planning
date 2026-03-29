@@ -43,6 +43,31 @@ vi.mock('@tabler/icons-react', () => ({
 	IconTrash: () => null,
 }));
 
+vi.mock('./DeleteConfirmModal', () => ({
+	DeleteConfirmModal: ({
+		loading,
+		onClose,
+		onConfirm,
+		opened,
+	}: {
+		opened: boolean;
+		onClose: () => void;
+		onConfirm: () => void;
+		loading: boolean;
+	}) =>
+		opened ? (
+			<div data-testid="delete-confirm-modal">
+				<span data-testid="modal-loading">{String(loading)}</span>
+				<button data-testid="modal-cancel" onClick={onClose} type="button">
+					Cancel
+				</button>
+				<button data-testid="modal-confirm" onClick={onConfirm} type="button">
+					Delete
+				</button>
+			</div>
+		) : null,
+}));
+
 const plannerId = '507f1f77bcf86cd799439011';
 const recipeId = '507f1f77bcf86cd799439012';
 
@@ -72,11 +97,30 @@ describe('DeleteRecipeButton', () => {
 		).toBe(true);
 	});
 
-	test('clicking calls deleteRecipe and refreshes router', async () => {
+	test('modal is not shown initially', () => {
+		render(<DeleteRecipeButton plannerId={plannerId} recipeId={recipeId} />);
+		expect(screen.queryByTestId('delete-confirm-modal')).toBeNull();
+	});
+
+	test('clicking delete button opens modal', () => {
+		render(<DeleteRecipeButton plannerId={plannerId} recipeId={recipeId} />);
+		fireEvent.click(screen.getByTestId('delete-button'));
+		expect(screen.getByTestId('delete-confirm-modal')).toBeDefined();
+	});
+
+	test('clicking cancel in modal closes it without calling deleteRecipe', () => {
+		render(<DeleteRecipeButton plannerId={plannerId} recipeId={recipeId} />);
+		fireEvent.click(screen.getByTestId('delete-button'));
+		fireEvent.click(screen.getByTestId('modal-cancel'));
+		expect(screen.queryByTestId('delete-confirm-modal')).toBeNull();
+		expect(deleteRecipe).not.toHaveBeenCalled();
+	});
+
+	test('confirming in modal calls deleteRecipe and refreshes', async () => {
 		vi.mocked(deleteRecipe).mockResolvedValueOnce(undefined);
 		render(<DeleteRecipeButton plannerId={plannerId} recipeId={recipeId} />);
-
 		fireEvent.click(screen.getByTestId('delete-button'));
+		fireEvent.click(screen.getByTestId('modal-confirm'));
 
 		await waitFor(() => {
 			expect(deleteRecipe).toHaveBeenCalledWith({ plannerId, recipeId });
@@ -84,12 +128,22 @@ describe('DeleteRecipeButton', () => {
 		});
 	});
 
-	test('onClick is undefined when disabled', () => {
+	test('modal closes after confirmed delete', async () => {
+		vi.mocked(deleteRecipe).mockResolvedValueOnce(undefined);
+		render(<DeleteRecipeButton plannerId={plannerId} recipeId={recipeId} />);
+		fireEvent.click(screen.getByTestId('delete-button'));
+		fireEvent.click(screen.getByTestId('modal-confirm'));
+
+		await waitFor(() => {
+			expect(screen.queryByTestId('delete-confirm-modal')).toBeNull();
+		});
+	});
+
+	test('disabled button does not open modal', () => {
 		render(
 			<DeleteRecipeButton disabled plannerId={plannerId} recipeId={recipeId} />,
 		);
-		const button = screen.getByTestId('delete-button');
-		fireEvent.click(button);
-		expect(deleteRecipe).not.toHaveBeenCalled();
+		fireEvent.click(screen.getByTestId('delete-button'));
+		expect(screen.queryByTestId('delete-confirm-modal')).toBeNull();
 	});
 });
