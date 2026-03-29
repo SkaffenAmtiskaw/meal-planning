@@ -1,6 +1,6 @@
 ---
 name: implement-feature
-description: implement a planned feature incrementally — looks up the plan from notes, asks which step to start from, and works through each step with user confirmation
+description: implement a planned feature — trigger when asked to "implement [feature]", "build [feature]", "work on [feature]", "continue [feature]", "implement step N", or "do step N of [feature]" — looks up the plan from notes, asks which step to start from, and works through each step with user confirmation
 ---
 
 # Plan Lookup

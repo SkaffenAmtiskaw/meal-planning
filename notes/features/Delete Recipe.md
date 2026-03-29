@@ -1,8 +1,8 @@
 ## Status
 
 - [x] Step 1: `deleteRecipe` server action ✅
-- [ ] Step 2: Enable delete in `SavedList` (direct)
-- [ ] Step 3: Delete button on recipe detail page (direct)
+- [x] Step 2: Enable delete in `SavedList` (direct) ✅
+- [x] Step 3: Delete button on recipe detail page (direct) ✅
 - [ ] Step 4: `DeleteConfirmModal` wired into both surfaces
 
 ## Planned Work

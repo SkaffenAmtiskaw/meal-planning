@@ -1,6 +1,6 @@
 ---
 name: plan-feature
-description: plan a feature — discover existing notes, clarify scope, produce an incremental implementation plan, get user confirmation, then begin implementation
+description: plan a feature — trigger when asked to "plan [feature]", "create a plan for [feature]", "design [feature]", or "figure out how to build [feature]" — discovers existing notes, clarifies scope, produces an incremental implementation plan, gets user confirmation, then begins implementation
 ---
 
 # Discovery

@@ -1,5 +1,7 @@
 'use client';
 
+import { useRouter } from 'next/navigation';
+
 import {
 	Anchor,
 	Badge,
@@ -16,6 +18,7 @@ import {
 	useMantineTheme,
 } from '@mantine/core';
 
+import { deleteRecipe } from '@/_actions/saved';
 import type { RecipeInterface } from '@/_models/planner/recipe.types';
 import type { TagInterface } from '@/_models/planner/tag.types';
 
@@ -27,8 +30,14 @@ type Props = {
 	tags: TagInterface[];
 };
 
-export const RecipeDetail = ({ recipe, tags }: Props) => {
+export const RecipeDetail = ({ plannerId, recipe, tags }: Props) => {
 	const theme = useMantineTheme();
+	const router = useRouter();
+
+	const handleDelete = async () => {
+		await deleteRecipe({ plannerId, recipeId: String(recipe._id) });
+		router.push(`/${plannerId}/recipes`);
+	};
 
 	const recipeTags = (recipe.tags ?? [])
 		.map((id) => tags.find((t) => String(t._id) === String(id)))
@@ -48,6 +57,13 @@ export const RecipeDetail = ({ recipe, tags }: Props) => {
 						<KeepAwakeToggle />
 						<Button data-testid="edit-button" disabled variant="default">
 							Edit
+						</Button>
+						<Button
+							color="red"
+							data-testid="delete-button"
+							onClick={handleDelete}
+						>
+							Delete
 						</Button>
 					</Group>
 				</Group>

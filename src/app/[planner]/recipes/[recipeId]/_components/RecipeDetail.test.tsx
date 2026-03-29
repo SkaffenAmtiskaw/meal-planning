@@ -1,8 +1,20 @@
-import { render, screen } from '@testing-library/react';
+import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 
 import { afterEach, describe, expect, test, vi } from 'vitest';
 
+import { deleteRecipe } from '@/_actions/saved';
+
 import { RecipeDetail } from './RecipeDetail';
+
+const mockPush = vi.fn();
+
+vi.mock('next/navigation', () => ({
+	useRouter: () => ({ push: mockPush }),
+}));
+
+vi.mock('@/_actions/saved', () => ({
+	deleteRecipe: vi.fn(),
+}));
 
 const mockUseMantineTheme = vi.fn(() => ({
 	colors: {} as Record<string, string[]>,
@@ -39,13 +51,20 @@ vi.mock('@mantine/core', () => {
 	const Button = ({
 		children,
 		disabled,
+		onClick,
 		'data-testid': testId,
 	}: {
 		children: React.ReactNode;
 		disabled?: boolean;
+		onClick?: () => void;
 		'data-testid'?: string;
 	}) => (
-		<button type="button" data-testid={testId} disabled={disabled}>
+		<button
+			type="button"
+			data-testid={testId}
+			disabled={disabled}
+			onClick={onClick}
+		>
 			{children}
 		</button>
 	);
@@ -149,6 +168,26 @@ describe('RecipeDetail', () => {
 		const btn = screen.getByTestId('edit-button') as HTMLButtonElement;
 		expect(btn).toBeDefined();
 		expect(btn.disabled).toBe(true);
+	});
+
+	test('renders a delete button', () => {
+		render(<RecipeDetail {...defaultProps} />);
+		expect(screen.getByTestId('delete-button')).toBeDefined();
+	});
+
+	test('clicking delete calls deleteRecipe and redirects to recipes list', async () => {
+		vi.mocked(deleteRecipe).mockResolvedValueOnce(undefined);
+		render(<RecipeDetail {...defaultProps} />);
+
+		fireEvent.click(screen.getByTestId('delete-button'));
+
+		await waitFor(() => {
+			expect(deleteRecipe).toHaveBeenCalledWith({
+				plannerId: 'planner-1',
+				recipeId: 'recipe-1',
+			});
+			expect(mockPush).toHaveBeenCalledWith('/planner-1/recipes');
+		});
 	});
 
 	test('renders the keep awake toggle', () => {
