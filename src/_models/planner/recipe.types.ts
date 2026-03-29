@@ -6,7 +6,7 @@ export const zRecipeInterface = z.object({
 	_id: zObjectId,
 	ingredients: z.array(z.string()),
 	instructions: z.array(z.string()),
-	name: z.string(),
+	name: z.string().min(1, 'Name is required'),
 	notes: z.string().optional(),
 	servings: z.number().optional(),
 	source: z

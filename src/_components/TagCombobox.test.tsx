@@ -123,10 +123,21 @@ vi.mock('@mantine/core', () => {
 		},
 	);
 
+	const Text = ({
+		children,
+		'data-testid': testId,
+	}: {
+		children?: React.ReactNode;
+		'data-testid'?: string;
+		c?: string;
+		size?: string;
+	}) => <span data-testid={testId}>{children}</span>;
+
 	return {
 		Combobox,
 		PillsInput,
 		Pill,
+		Text,
 		useCombobox: ({
 			onDropdownClose,
 			onDropdownOpen,
@@ -273,7 +284,7 @@ describe('TagCombobox', () => {
 	test('creates a new tag and adds it to selection on __create__ submit', async () => {
 		const onChange = vi.fn();
 		const newTag = { _id: 'tag-3', name: 'Umami', color: 'green' };
-		vi.mocked(addTag).mockResolvedValue(newTag);
+		vi.mocked(addTag).mockResolvedValue({ ok: true, data: newTag });
 
 		render(<TagCombobox {...defaultProps} onChange={onChange} />);
 
@@ -288,8 +299,23 @@ describe('TagCombobox', () => {
 		expect(onChange).toHaveBeenCalledWith(['tag-3']);
 	});
 
-	test('shows error message when addTag fails', async () => {
-		vi.mocked(addTag).mockRejectedValue(new Error('Unauthorized'));
+	test('shows error message when addTag returns an error result', async () => {
+		vi.mocked(addTag).mockResolvedValue({ ok: false, error: 'Unauthorized' });
+
+		render(<TagCombobox {...defaultProps} />);
+
+		fireEvent.change(screen.getByTestId('tag-input'), {
+			target: { value: 'Fail' },
+		});
+		await act(async () => {
+			capturedOnOptionSubmit?.('__create__');
+		});
+
+		expect(screen.getByTestId('tag-create-error')).toBeDefined();
+	});
+
+	test('shows error message when addTag throws unexpectedly', async () => {
+		vi.mocked(addTag).mockRejectedValue(new Error('Network failure'));
 
 		render(<TagCombobox {...defaultProps} />);
 

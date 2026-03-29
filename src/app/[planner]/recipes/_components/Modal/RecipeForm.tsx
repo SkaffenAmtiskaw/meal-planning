@@ -108,7 +108,7 @@ export const RecipeForm = ({ item, plannerId, tags }: Props) => {
 							}
 						: undefined;
 
-				await addRecipe({
+				return addRecipe({
 					...values,
 					source,
 					time,

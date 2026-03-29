@@ -89,9 +89,16 @@ vi.mock('@mantine/core', () => ({
 		'data-testid'?: string;
 	}) => <div data-testid={testId}>{children}</div>,
 	Stack: ({ children }: { children: React.ReactNode }) => <div>{children}</div>,
-	Text: ({ children }: { children: React.ReactNode }) => (
-		<span>{children}</span>
-	),
+	Text: ({
+		children,
+		'data-testid': testId,
+	}: {
+		children: React.ReactNode;
+		'data-testid'?: string;
+		c?: string;
+		fw?: number;
+		size?: string;
+	}) => <span data-testid={testId}>{children}</span>,
 	isLightColor: (bg: string) => mockIsLightColor(bg),
 	useMantineTheme: () => mockUseMantineTheme(),
 }));
@@ -196,7 +203,10 @@ describe('InlineTagsEditor', () => {
 	});
 
 	test('save calls updateRecipeTags with correct args then refreshes', async () => {
-		vi.mocked(updateRecipeTags).mockResolvedValueOnce(undefined);
+		vi.mocked(updateRecipeTags).mockResolvedValueOnce({
+			ok: true,
+			data: undefined,
+		});
 		render(<InlineTagsEditor {...defaultProps} />);
 		fireEvent.click(screen.getByTestId('tags-edit-button'));
 		act(() => {
@@ -214,8 +224,11 @@ describe('InlineTagsEditor', () => {
 		});
 	});
 
-	test('save exits editing mode after completion', async () => {
-		vi.mocked(updateRecipeTags).mockResolvedValueOnce(undefined);
+	test('save exits editing mode after success', async () => {
+		vi.mocked(updateRecipeTags).mockResolvedValueOnce({
+			ok: true,
+			data: undefined,
+		});
 		render(<InlineTagsEditor {...defaultProps} />);
 		fireEvent.click(screen.getByTestId('tags-edit-button'));
 		fireEvent.click(screen.getByTestId('tags-save-button'));
@@ -223,6 +236,56 @@ describe('InlineTagsEditor', () => {
 		await waitFor(() => {
 			expect(screen.queryByTestId('tag-combobox')).toBeNull();
 		});
+	});
+
+	test('shows error message and stays in editing mode when save fails', async () => {
+		vi.mocked(updateRecipeTags).mockResolvedValueOnce({
+			ok: false,
+			error: 'Unauthorized',
+		});
+		render(<InlineTagsEditor {...defaultProps} />);
+		fireEvent.click(screen.getByTestId('tags-edit-button'));
+		fireEvent.click(screen.getByTestId('tags-save-button'));
+
+		await waitFor(() => {
+			expect(screen.getByTestId('save-error').textContent).toBe('Unauthorized');
+			expect(screen.getByTestId('tag-combobox')).toBeDefined();
+		});
+		expect(mockRefresh).not.toHaveBeenCalled();
+	});
+
+	test('cancel clears save error', async () => {
+		vi.mocked(updateRecipeTags).mockResolvedValueOnce({
+			ok: false,
+			error: 'Unauthorized',
+		});
+		render(<InlineTagsEditor {...defaultProps} />);
+		fireEvent.click(screen.getByTestId('tags-edit-button'));
+		fireEvent.click(screen.getByTestId('tags-save-button'));
+
+		await waitFor(() => {
+			expect(screen.getByTestId('save-error')).toBeDefined();
+		});
+
+		fireEvent.click(screen.getByTestId('tags-cancel-button'));
+		expect(screen.queryByTestId('save-error')).toBeNull();
+	});
+
+	test('shows generic error when updateRecipeTags throws unexpectedly', async () => {
+		vi.mocked(updateRecipeTags).mockRejectedValueOnce(
+			new Error('Network failure'),
+		);
+		render(<InlineTagsEditor {...defaultProps} />);
+		fireEvent.click(screen.getByTestId('tags-edit-button'));
+		fireEvent.click(screen.getByTestId('tags-save-button'));
+
+		await waitFor(() => {
+			expect(screen.getByTestId('save-error').textContent).toBe(
+				'An unexpected error occurred',
+			);
+			expect(screen.getByTestId('tag-combobox')).toBeDefined();
+		});
+		expect(mockRefresh).not.toHaveBeenCalled();
 	});
 
 	test('applies theme color to pill when color exists in palette', () => {

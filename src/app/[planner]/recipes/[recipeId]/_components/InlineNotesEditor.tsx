@@ -7,6 +7,7 @@ import { ActionIcon, Group, Stack, Text, Textarea } from '@mantine/core';
 import { IconCheck, IconPencil, IconX } from '@tabler/icons-react';
 
 import { updateRecipeNotes } from '@/_actions/saved';
+import { catchify } from '@/_utils/catchify';
 
 type Props = {
 	plannerId: string;
@@ -19,11 +20,23 @@ export const InlineNotesEditor = ({ plannerId, recipeId, notes }: Props) => {
 	const [editing, setEditing] = useState(false);
 	const [value, setValue] = useState(notes ?? '');
 	const [saving, setSaving] = useState(false);
+	const [saveError, setSaveError] = useState<string | null>(null);
 
 	const handleSave = async () => {
 		setSaving(true);
-		await updateRecipeNotes({ plannerId, recipeId, notes: value });
+		setSaveError(null);
+		const [result, error] = await catchify(() =>
+			updateRecipeNotes({ plannerId, recipeId, notes: value }),
+		);
 		setSaving(false);
+		if (error || !result) {
+			setSaveError('An unexpected error occurred');
+			return;
+		}
+		if (!result.ok) {
+			setSaveError(result.error);
+			return;
+		}
 		setEditing(false);
 		router.refresh();
 	};
@@ -31,6 +44,7 @@ export const InlineNotesEditor = ({ plannerId, recipeId, notes }: Props) => {
 	const handleCancel = () => {
 		setValue(notes ?? '');
 		setEditing(false);
+		setSaveError(null);
 	};
 
 	return (
@@ -72,6 +86,11 @@ export const InlineNotesEditor = ({ plannerId, recipeId, notes }: Props) => {
 					</>
 				)}
 			</Group>
+			{saveError && (
+				<Text c="red" data-testid="save-error" size="xs">
+					{saveError}
+				</Text>
+			)}
 			{editing ? (
 				<Textarea
 					autosize

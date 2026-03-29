@@ -14,7 +14,7 @@ Feedback
 - if the user indicates a suggestion should be deferred til later add a TODO comment
 
 Code Conventions
-- Refer to the code conventions in AGENTS.md and make sure all code changes follow them
+- You MUST refer to the code conventions in AGENTS.md and make sure all code changes follow them
 
 Dead Code
 - all code reviews should include a check for dead code

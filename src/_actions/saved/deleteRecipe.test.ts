@@ -50,43 +50,52 @@ describe('deleteRecipe', () => {
 		await expect(deleteRecipe({ plannerId })).rejects.toThrow();
 	});
 
-	test('throws Unauthorized when session is missing', async () => {
+	test('returns Unauthorized error when session is missing', async () => {
 		vi.mocked(checkAuth).mockResolvedValue({ type: 'unauthenticated' });
 
-		await expect(deleteRecipe(validData)).rejects.toThrow('Unauthorized');
+		const result = await deleteRecipe(validData);
+
+		expect(result).toEqual({ ok: false, error: 'Unauthorized' });
 		expect(Planner.findById).not.toHaveBeenCalled();
 	});
 
-	test('throws Unauthorized when user does not own the planner', async () => {
+	test('returns Unauthorized error when user does not own the planner', async () => {
 		vi.mocked(checkAuth).mockResolvedValue({ type: 'unauthorized' });
 
-		await expect(deleteRecipe(validData)).rejects.toThrow('Unauthorized');
+		const result = await deleteRecipe(validData);
+
+		expect(result).toEqual({ ok: false, error: 'Unauthorized' });
 	});
 
-	test('throws Planner not found when planner does not exist', async () => {
+	test('returns Planner not found error when planner does not exist', async () => {
 		vi.mocked(checkAuth).mockResolvedValue({ type: 'authorized' });
 		vi.mocked(Planner.findById).mockResolvedValue(null);
 
-		await expect(deleteRecipe(validData)).rejects.toThrow('Planner not found');
+		const result = await deleteRecipe(validData);
+
+		expect(result).toEqual({ ok: false, error: 'Planner not found' });
 	});
 
-	test('throws Recipe not found when recipeId is not in saved', async () => {
+	test('returns Recipe not found error when recipeId is not in saved', async () => {
 		const planner = makePlanner(false);
 		vi.mocked(checkAuth).mockResolvedValue({ type: 'authorized' });
 		vi.mocked(Planner.findById).mockResolvedValue(planner as never);
 
-		await expect(deleteRecipe(validData)).rejects.toThrow('Recipe not found');
+		const result = await deleteRecipe(validData);
+
+		expect(result).toEqual({ ok: false, error: 'Recipe not found' });
 		expect(planner.save).not.toHaveBeenCalled();
 	});
 
-	test('removes the recipe and saves the planner', async () => {
+	test('removes the recipe and returns ok', async () => {
 		const planner = makePlanner();
 		vi.mocked(checkAuth).mockResolvedValue({ type: 'authorized' });
 		vi.mocked(Planner.findById).mockResolvedValue(planner as never);
 
-		await deleteRecipe(validData);
+		const result = await deleteRecipe(validData);
 
 		expect(planner.saved).toHaveLength(0);
 		expect(planner.save).toHaveBeenCalledOnce();
+		expect(result).toEqual({ ok: true, data: undefined });
 	});
 });

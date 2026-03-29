@@ -49,26 +49,30 @@ describe('addTag', () => {
 		return { tags, save: vi.fn().mockResolvedValue(undefined) };
 	};
 
-	test('throws Unauthorized when session is missing', async () => {
+	test('returns Unauthorized error when session is missing', async () => {
 		vi.mocked(checkAuth).mockResolvedValue({ type: 'unauthenticated' });
 
-		await expect(addTag(plannerId, 'Spicy')).rejects.toThrow('Unauthorized');
+		const result = await addTag(plannerId, 'Spicy');
+
+		expect(result).toEqual({ ok: false, error: 'Unauthorized' });
 		expect(Planner.findById).not.toHaveBeenCalled();
 	});
 
-	test('throws Unauthorized when user does not own the planner', async () => {
+	test('returns Unauthorized error when user does not own the planner', async () => {
 		vi.mocked(checkAuth).mockResolvedValue({ type: 'unauthorized' });
 
-		await expect(addTag(plannerId, 'Spicy')).rejects.toThrow('Unauthorized');
+		const result = await addTag(plannerId, 'Spicy');
+
+		expect(result).toEqual({ ok: false, error: 'Unauthorized' });
 	});
 
-	test('throws Planner not found when planner does not exist', async () => {
+	test('returns Planner not found error when planner does not exist', async () => {
 		vi.mocked(checkAuth).mockResolvedValue({ type: 'authorized' });
 		vi.mocked(Planner.findById).mockResolvedValue(null);
 
-		await expect(addTag(plannerId, 'Spicy')).rejects.toThrow(
-			'Planner not found',
-		);
+		const result = await addTag(plannerId, 'Spicy');
+
+		expect(result).toEqual({ ok: false, error: 'Planner not found' });
 	});
 
 	test('assigns the first COLORS entry to the first tag', async () => {
@@ -80,9 +84,8 @@ describe('addTag', () => {
 		const result = await addTag(plannerId, 'Spicy');
 
 		expect(result).toEqual({
-			_id: tagId.toString(),
-			name: 'Spicy',
-			color: 'red',
+			ok: true,
+			data: { _id: tagId.toString(), name: 'Spicy', color: 'red' },
 		});
 	});
 
@@ -95,7 +98,8 @@ describe('addTag', () => {
 
 		const result = await addTag(plannerId, 'New');
 
-		expect(result.color).toBe('violet');
+		expect(result.ok).toBe(true);
+		if (result.ok) expect(result.data.color).toBe('violet');
 	});
 
 	test('saves the planner after adding the tag', async () => {

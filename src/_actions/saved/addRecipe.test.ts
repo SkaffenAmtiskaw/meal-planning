@@ -50,24 +50,34 @@ describe('addRecipe', () => {
 		).rejects.toThrow();
 	});
 
-	test('throws Unauthorized when session is missing', async () => {
+	test('throws ZodError when name is empty string', async () => {
+		await expect(addRecipe({ ...validData, name: '' })).rejects.toThrow();
+	});
+
+	test('returns Unauthorized error when session is missing', async () => {
 		vi.mocked(checkAuth).mockResolvedValue({ type: 'unauthenticated' });
 
-		await expect(addRecipe(validData)).rejects.toThrow('Unauthorized');
+		const result = await addRecipe(validData);
+
+		expect(result).toEqual({ ok: false, error: 'Unauthorized' });
 		expect(Planner.findById).not.toHaveBeenCalled();
 	});
 
-	test('throws Unauthorized when user does not own the planner', async () => {
+	test('returns Unauthorized error when user does not own the planner', async () => {
 		vi.mocked(checkAuth).mockResolvedValue({ type: 'unauthorized' });
 
-		await expect(addRecipe(validData)).rejects.toThrow('Unauthorized');
+		const result = await addRecipe(validData);
+
+		expect(result).toEqual({ ok: false, error: 'Unauthorized' });
 	});
 
-	test('throws Planner not found when planner does not exist', async () => {
+	test('returns Planner not found error when planner does not exist', async () => {
 		vi.mocked(checkAuth).mockResolvedValue({ type: 'authorized' });
 		vi.mocked(Planner.findById).mockResolvedValue(null);
 
-		await expect(addRecipe(validData)).rejects.toThrow('Planner not found');
+		const result = await addRecipe(validData);
+
+		expect(result).toEqual({ ok: false, error: 'Planner not found' });
 	});
 
 	test('persists the recipe and returns _id and name', async () => {
@@ -78,8 +88,11 @@ describe('addRecipe', () => {
 		const result = await addRecipe(validData);
 
 		expect(planner.save).toHaveBeenCalledOnce();
-		expect(result.name).toBe('Croissant');
-		expect(result._id).toMatch(/^[0-9a-f]{24}$/);
+		expect(result.ok).toBe(true);
+		if (result.ok) {
+			expect(result.data.name).toBe('Croissant');
+			expect(result.data._id).toMatch(/^[0-9a-f]{24}$/);
+		}
 	});
 
 	test('accepts optional fields', async () => {
@@ -97,6 +110,7 @@ describe('addRecipe', () => {
 			tags: [new Types.ObjectId().toString()],
 		});
 
-		expect(result.name).toBe('Croissant');
+		expect(result.ok).toBe(true);
+		if (result.ok) expect(result.data.name).toBe('Croissant');
 	});
 });

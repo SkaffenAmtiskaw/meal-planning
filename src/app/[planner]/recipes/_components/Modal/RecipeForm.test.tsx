@@ -213,8 +213,8 @@ describe('RecipeForm', () => {
 
 	test('submitting the form calls addRecipe with plannerId', async () => {
 		vi.mocked(addRecipe).mockResolvedValue({
-			_id: 'new-id',
-			name: 'Croissant',
+			ok: true,
+			data: { _id: 'new-id', name: 'Croissant' },
 		});
 
 		render(<RecipeForm {...defaultProps} />);
@@ -227,8 +227,8 @@ describe('RecipeForm', () => {
 
 	test('navigates away after successful submission', async () => {
 		vi.mocked(addRecipe).mockResolvedValue({
-			_id: 'new-id',
-			name: 'Croissant',
+			ok: true,
+			data: { _id: 'new-id', name: 'Croissant' },
 		});
 
 		render(<RecipeForm {...defaultProps} />);
@@ -258,7 +258,10 @@ describe('RecipeForm', () => {
 	});
 
 	test('submits source as undefined when source name is empty', async () => {
-		vi.mocked(addRecipe).mockResolvedValue({ _id: 'id', name: 'x' });
+		vi.mocked(addRecipe).mockResolvedValue({
+			ok: true,
+			data: { _id: 'id', name: 'x' },
+		});
 		mockUseForm.mockReturnValueOnce({
 			onSubmit:
 				(handler: (values: Record<string, unknown>) => Promise<void>) =>
@@ -279,7 +282,10 @@ describe('RecipeForm', () => {
 	});
 
 	test('submits source with name and no url when url is empty', async () => {
-		vi.mocked(addRecipe).mockResolvedValue({ _id: 'id', name: 'x' });
+		vi.mocked(addRecipe).mockResolvedValue({
+			ok: true,
+			data: { _id: 'id', name: 'x' },
+		});
 		mockUseForm.mockReturnValueOnce({
 			onSubmit:
 				(handler: (values: Record<string, unknown>) => Promise<void>) =>
@@ -300,7 +306,10 @@ describe('RecipeForm', () => {
 	});
 
 	test('submits source with url when both fields are filled', async () => {
-		vi.mocked(addRecipe).mockResolvedValue({ _id: 'id', name: 'x' });
+		vi.mocked(addRecipe).mockResolvedValue({
+			ok: true,
+			data: { _id: 'id', name: 'x' },
+		});
 		mockUseForm.mockReturnValueOnce({
 			onSubmit:
 				(handler: (values: Record<string, unknown>) => Promise<void>) =>
@@ -325,7 +334,10 @@ describe('RecipeForm', () => {
 	});
 
 	test('submits time as undefined when all time fields are empty', async () => {
-		vi.mocked(addRecipe).mockResolvedValue({ _id: 'id', name: 'x' });
+		vi.mocked(addRecipe).mockResolvedValue({
+			ok: true,
+			data: { _id: 'id', name: 'x' },
+		});
 		mockUseForm.mockReturnValueOnce({
 			onSubmit:
 				(handler: (values: Record<string, unknown>) => Promise<void>) =>
@@ -346,7 +358,10 @@ describe('RecipeForm', () => {
 	});
 
 	test('submits time with only non-empty fields when some are filled', async () => {
-		vi.mocked(addRecipe).mockResolvedValue({ _id: 'id', name: 'x' });
+		vi.mocked(addRecipe).mockResolvedValue({
+			ok: true,
+			data: { _id: 'id', name: 'x' },
+		});
 		mockUseForm.mockReturnValueOnce({
 			onSubmit:
 				(handler: (values: Record<string, unknown>) => Promise<void>) =>
@@ -371,7 +386,10 @@ describe('RecipeForm', () => {
 	});
 
 	test('submits time with cook only when prep and total are empty', async () => {
-		vi.mocked(addRecipe).mockResolvedValue({ _id: 'id', name: 'x' });
+		vi.mocked(addRecipe).mockResolvedValue({
+			ok: true,
+			data: { _id: 'id', name: 'x' },
+		});
 		mockUseForm.mockReturnValueOnce({
 			onSubmit:
 				(handler: (values: Record<string, unknown>) => Promise<void>) =>

@@ -16,6 +16,7 @@ import { IconCheck, IconPencil, IconX } from '@tabler/icons-react';
 
 import { updateRecipeTags } from '@/_actions/saved';
 import { TagCombobox, type TagOption } from '@/_components/TagCombobox';
+import { catchify } from '@/_utils/catchify';
 
 type Props = {
 	plannerId: string;
@@ -35,6 +36,7 @@ export const InlineTagsEditor = ({
 	const [editing, setEditing] = useState(false);
 	const [value, setValue] = useState(tagIds);
 	const [saving, setSaving] = useState(false);
+	const [saveError, setSaveError] = useState<string | null>(null);
 
 	const getPillStyle = (color: string) => {
 		const bg = theme.colors[color]?.[5] ?? color;
@@ -47,8 +49,19 @@ export const InlineTagsEditor = ({
 
 	const handleSave = async () => {
 		setSaving(true);
-		await updateRecipeTags({ plannerId, recipeId, tags: value });
+		setSaveError(null);
+		const [result, error] = await catchify(() =>
+			updateRecipeTags({ plannerId, recipeId, tags: value }),
+		);
 		setSaving(false);
+		if (error || !result) {
+			setSaveError('An unexpected error occurred');
+			return;
+		}
+		if (!result.ok) {
+			setSaveError(result.error);
+			return;
+		}
 		setEditing(false);
 		router.refresh();
 	};
@@ -56,6 +69,7 @@ export const InlineTagsEditor = ({
 	const handleCancel = () => {
 		setValue(tagIds);
 		setEditing(false);
+		setSaveError(null);
 	};
 
 	return (
@@ -97,6 +111,11 @@ export const InlineTagsEditor = ({
 					</>
 				)}
 			</Group>
+			{saveError && (
+				<Text c="red" data-testid="save-error" size="xs">
+					{saveError}
+				</Text>
+			)}
 			{editing ? (
 				<TagCombobox
 					plannerId={plannerId}

@@ -26,7 +26,7 @@ const DeleteRecipeButton = ({ disabled, plannerId, recipeId }: Props) => {
 
 	const handleConfirm = wrap(
 		async () => {
-			await deleteRecipe({ plannerId, recipeId });
+			return deleteRecipe({ plannerId, recipeId });
 		},
 		() => {
 			setOpened(false);

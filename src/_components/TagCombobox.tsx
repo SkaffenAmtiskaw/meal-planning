@@ -7,11 +7,13 @@ import {
 	isLightColor,
 	Pill,
 	PillsInput,
+	Text,
 	useCombobox,
 	useMantineTheme,
 } from '@mantine/core';
 
 import { addTag } from '@/_actions/planner/addTag';
+import { catchify } from '@/_utils/catchify';
 
 export interface TagOption {
 	_id: string;
@@ -69,16 +71,20 @@ export const TagCombobox = ({
 
 	const handleCreate = async () => {
 		const name = search.trim();
-		try {
-			const newTag = await addTag(plannerId, name);
-			setAvailableTags((prev) => [...prev, newTag]);
-			onChange([...value, newTag._id]);
-			setSearch('');
-			combobox.closeDropdown();
-			setCreateError(null);
-		} catch {
+		const [result, error] = await catchify(() => addTag(plannerId, name));
+		if (error || !result) {
 			setCreateError('Failed to create tag');
+			return;
 		}
+		if (!result.ok) {
+			setCreateError(result.error);
+			return;
+		}
+		setAvailableTags((prev) => [...prev, result.data]);
+		onChange([...value, result.data._id]);
+		setSearch('');
+		combobox.closeDropdown();
+		setCreateError(null);
 	};
 
 	const handleRemove = (tagId: string) => {
@@ -154,12 +160,9 @@ export const TagCombobox = ({
 				</Combobox.Dropdown>
 			</Combobox>
 			{createError && (
-				<span
-					data-testid="tag-create-error"
-					style={{ color: 'red', fontSize: 12 }}
-				>
+				<Text c="red" data-testid="tag-create-error" size="xs">
 					{createError}
-				</span>
+				</Text>
 			)}
 		</>
 	);

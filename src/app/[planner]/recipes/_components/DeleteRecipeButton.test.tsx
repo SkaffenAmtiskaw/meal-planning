@@ -150,7 +150,10 @@ describe('DeleteRecipeButton', () => {
 	});
 
 	test('confirming in modal calls deleteRecipe and refreshes', async () => {
-		vi.mocked(deleteRecipe).mockResolvedValueOnce(undefined);
+		vi.mocked(deleteRecipe).mockResolvedValueOnce({
+			ok: true,
+			data: undefined,
+		});
 		render(<DeleteRecipeButton plannerId={plannerId} recipeId={recipeId} />);
 		fireEvent.click(screen.getByTestId('delete-button'));
 		fireEvent.click(screen.getByTestId('modal-confirm'));
@@ -162,7 +165,10 @@ describe('DeleteRecipeButton', () => {
 	});
 
 	test('modal closes after confirmed delete', async () => {
-		vi.mocked(deleteRecipe).mockResolvedValueOnce(undefined);
+		vi.mocked(deleteRecipe).mockResolvedValueOnce({
+			ok: true,
+			data: undefined,
+		});
 		render(<DeleteRecipeButton plannerId={plannerId} recipeId={recipeId} />);
 		fireEvent.click(screen.getByTestId('delete-button'));
 		fireEvent.click(screen.getByTestId('modal-confirm'));

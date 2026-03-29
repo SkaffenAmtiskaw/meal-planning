@@ -45,6 +45,9 @@ vi.mock('@mantine/core', () => ({
 	}: {
 		children?: React.ReactNode;
 		'data-testid'?: string;
+		c?: string;
+		fw?: number;
+		size?: string;
 	}) => <span data-testid={testId}>{children}</span>,
 	Textarea: ({
 		onChange,
@@ -121,7 +124,10 @@ describe('InlineNotesEditor', () => {
 	});
 
 	test('save calls updateRecipeNotes with correct args then refreshes', async () => {
-		vi.mocked(updateRecipeNotes).mockResolvedValueOnce(undefined);
+		vi.mocked(updateRecipeNotes).mockResolvedValueOnce({
+			ok: true,
+			data: undefined,
+		});
 		render(<InlineNotesEditor {...defaultProps} />);
 		fireEvent.click(screen.getByTestId('notes-edit-button'));
 		fireEvent.change(screen.getByTestId('notes-textarea'), {
@@ -139,8 +145,11 @@ describe('InlineNotesEditor', () => {
 		});
 	});
 
-	test('save exits editing mode after completion', async () => {
-		vi.mocked(updateRecipeNotes).mockResolvedValueOnce(undefined);
+	test('save exits editing mode after success', async () => {
+		vi.mocked(updateRecipeNotes).mockResolvedValueOnce({
+			ok: true,
+			data: undefined,
+		});
 		render(<InlineNotesEditor {...defaultProps} />);
 		fireEvent.click(screen.getByTestId('notes-edit-button'));
 		fireEvent.click(screen.getByTestId('notes-save-button'));
@@ -148,6 +157,39 @@ describe('InlineNotesEditor', () => {
 		await waitFor(() => {
 			expect(screen.queryByTestId('notes-textarea')).toBeNull();
 		});
+	});
+
+	test('shows error message and stays in editing mode when save fails', async () => {
+		vi.mocked(updateRecipeNotes).mockResolvedValueOnce({
+			ok: false,
+			error: 'Unauthorized',
+		});
+		render(<InlineNotesEditor {...defaultProps} />);
+		fireEvent.click(screen.getByTestId('notes-edit-button'));
+		fireEvent.click(screen.getByTestId('notes-save-button'));
+
+		await waitFor(() => {
+			expect(screen.getByTestId('save-error').textContent).toBe('Unauthorized');
+			expect(screen.getByTestId('notes-textarea')).toBeDefined();
+		});
+		expect(mockRefresh).not.toHaveBeenCalled();
+	});
+
+	test('cancel clears save error', async () => {
+		vi.mocked(updateRecipeNotes).mockResolvedValueOnce({
+			ok: false,
+			error: 'Unauthorized',
+		});
+		render(<InlineNotesEditor {...defaultProps} />);
+		fireEvent.click(screen.getByTestId('notes-edit-button'));
+		fireEvent.click(screen.getByTestId('notes-save-button'));
+
+		await waitFor(() => {
+			expect(screen.getByTestId('save-error')).toBeDefined();
+		});
+
+		fireEvent.click(screen.getByTestId('notes-cancel-button'));
+		expect(screen.queryByTestId('save-error')).toBeNull();
 	});
 
 	test('cancel when notes is undefined resets value to empty string', () => {
@@ -158,6 +200,23 @@ describe('InlineNotesEditor', () => {
 		});
 		fireEvent.click(screen.getByTestId('notes-cancel-button'));
 		expect(screen.queryByTestId('notes-textarea')).toBeNull();
+	});
+
+	test('shows generic error when updateRecipeNotes throws unexpectedly', async () => {
+		vi.mocked(updateRecipeNotes).mockRejectedValueOnce(
+			new Error('Network failure'),
+		);
+		render(<InlineNotesEditor {...defaultProps} />);
+		fireEvent.click(screen.getByTestId('notes-edit-button'));
+		fireEvent.click(screen.getByTestId('notes-save-button'));
+
+		await waitFor(() => {
+			expect(screen.getByTestId('save-error').textContent).toBe(
+				'An unexpected error occurred',
+			);
+			expect(screen.getByTestId('notes-textarea')).toBeDefined();
+		});
+		expect(mockRefresh).not.toHaveBeenCalled();
 	});
 
 	test('textarea updates as user types', () => {

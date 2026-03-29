@@ -2,6 +2,8 @@
 
 import { useEffect, useRef, useState } from 'react';
 
+import type { ActionResult } from '@/_utils/actionResult';
+
 type Status = 'idle' | 'submitting' | 'success' | 'error';
 
 type Options = {
@@ -34,22 +36,29 @@ export const useFormFeedback = ({ successDuration = 3000 }: Options = {}) => {
 	};
 
 	const wrap =
-		<TArgs extends unknown[]>(
-			fn: (...args: TArgs) => Promise<void>,
-			onSuccess: () => void,
+		<TArgs extends unknown[], TData>(
+			fn: (...args: TArgs) => Promise<ActionResult<TData>>,
+			onSuccess: (data: TData) => void,
 		) =>
 		async (...args: TArgs): Promise<void> => {
 			setStatus('submitting');
 			setErrorMessage(undefined);
 
 			try {
-				await fn(...args);
+				const result = await fn(...args);
 
-				if (successDuration === 0) {
-					onSuccess();
+				if (!result.ok) {
+					setStatus('error');
+					setErrorMessage(result.error);
 					return;
 				}
 
+				if (successDuration === 0) {
+					onSuccess(result.data);
+					return;
+				}
+
+				const { data } = result;
 				const seconds = successDuration / 1000;
 				countdownRef.current = seconds;
 				setStatus('success');
@@ -61,7 +70,7 @@ export const useFormFeedback = ({ successDuration = 3000 }: Options = {}) => {
 					if (countdownRef.current <= 0) {
 						intervalRef.current = null;
 						clearInterval(id);
-						onSuccess();
+						onSuccess(data);
 					}
 				}, 1000);
 				intervalRef.current = id;

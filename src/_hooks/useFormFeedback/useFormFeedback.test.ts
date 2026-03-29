@@ -4,6 +4,9 @@ import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
 
 import { useFormFeedback } from './useFormFeedback';
 
+const ok = <T>(data: T) => ({ ok: true as const, data });
+const err = (error: string) => ({ ok: false as const, error });
+
 describe('useFormFeedback', () => {
 	beforeEach(() => {
 		vi.useFakeTimers();
@@ -25,7 +28,7 @@ describe('useFormFeedback', () => {
 	describe('wrap — success with countdown', () => {
 		test('transitions submitting → success and sets initial countdown', async () => {
 			const { result } = renderHook(() => useFormFeedback());
-			const fn = vi.fn().mockResolvedValue(undefined);
+			const fn = vi.fn().mockResolvedValue(ok(undefined));
 			const onSuccess = vi.fn();
 
 			await act(async () => {
@@ -39,7 +42,7 @@ describe('useFormFeedback', () => {
 
 		test('decrements countdown each second', async () => {
 			const { result } = renderHook(() => useFormFeedback());
-			const fn = vi.fn().mockResolvedValue(undefined);
+			const fn = vi.fn().mockResolvedValue(ok(undefined));
 
 			await act(async () => {
 				await result.current.wrap(fn, vi.fn())();
@@ -56,9 +59,9 @@ describe('useFormFeedback', () => {
 			expect(result.current.countdown).toBe(1);
 		});
 
-		test('calls onSuccess when countdown reaches 0', async () => {
+		test('calls onSuccess with data when countdown reaches 0', async () => {
 			const { result } = renderHook(() => useFormFeedback());
-			const fn = vi.fn().mockResolvedValue(undefined);
+			const fn = vi.fn().mockResolvedValue(ok('hello'));
 			const onSuccess = vi.fn();
 
 			await act(async () => {
@@ -70,15 +73,16 @@ describe('useFormFeedback', () => {
 			});
 
 			expect(onSuccess).toHaveBeenCalledOnce();
+			expect(onSuccess).toHaveBeenCalledWith('hello');
 		});
 	});
 
 	describe('wrap — successDuration: 0', () => {
-		test('calls onSuccess immediately without entering success state', async () => {
+		test('calls onSuccess immediately with data without entering success state', async () => {
 			const { result } = renderHook(() =>
 				useFormFeedback({ successDuration: 0 }),
 			);
-			const fn = vi.fn().mockResolvedValue(undefined);
+			const fn = vi.fn().mockResolvedValue(ok('hello'));
 			const onSuccess = vi.fn();
 
 			await act(async () => {
@@ -86,6 +90,7 @@ describe('useFormFeedback', () => {
 			});
 
 			expect(onSuccess).toHaveBeenCalledOnce();
+			expect(onSuccess).toHaveBeenCalledWith('hello');
 			expect(result.current.status).not.toBe('success');
 		});
 
@@ -93,7 +98,7 @@ describe('useFormFeedback', () => {
 			const { result } = renderHook(() =>
 				useFormFeedback({ successDuration: 0 }),
 			);
-			const fn = vi.fn().mockResolvedValue(undefined);
+			const fn = vi.fn().mockResolvedValue(ok(undefined));
 
 			await act(async () => {
 				await result.current.wrap(fn, vi.fn())();
@@ -107,7 +112,33 @@ describe('useFormFeedback', () => {
 		});
 	});
 
-	describe('wrap — error', () => {
+	describe('wrap — ActionResult error (ok: false)', () => {
+		test('transitions to error with the returned error message', async () => {
+			const { result } = renderHook(() => useFormFeedback());
+			const fn = vi.fn().mockResolvedValue(err('Unauthorized'));
+
+			await act(async () => {
+				await result.current.wrap(fn, vi.fn())();
+			});
+
+			expect(result.current.status).toBe('error');
+			expect(result.current.errorMessage).toBe('Unauthorized');
+		});
+
+		test('does not call onSuccess when result is not ok', async () => {
+			const { result } = renderHook(() => useFormFeedback());
+			const fn = vi.fn().mockResolvedValue(err('Not found'));
+			const onSuccess = vi.fn();
+
+			await act(async () => {
+				await result.current.wrap(fn, onSuccess)();
+			});
+
+			expect(onSuccess).not.toHaveBeenCalled();
+		});
+	});
+
+	describe('wrap — unexpected error (thrown)', () => {
 		test('transitions to error with Error message', async () => {
 			const { result } = renderHook(() => useFormFeedback());
 			const fn = vi.fn().mockRejectedValue(new Error('Network failure'));
@@ -166,7 +197,7 @@ describe('useFormFeedback', () => {
 
 		test('clears an active countdown interval and prevents onSuccess from being called', async () => {
 			const { result } = renderHook(() => useFormFeedback());
-			const fn = vi.fn().mockResolvedValue(undefined);
+			const fn = vi.fn().mockResolvedValue(ok(undefined));
 			const onSuccess = vi.fn();
 
 			await act(async () => {
@@ -189,7 +220,7 @@ describe('useFormFeedback', () => {
 	test('clears active interval on unmount', async () => {
 		const clearIntervalSpy = vi.spyOn(globalThis, 'clearInterval');
 		const { result, unmount } = renderHook(() => useFormFeedback());
-		const fn = vi.fn().mockResolvedValue(undefined);
+		const fn = vi.fn().mockResolvedValue(ok(undefined));
 
 		await act(async () => {
 			await result.current.wrap(fn, vi.fn())();

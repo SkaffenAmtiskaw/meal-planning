@@ -50,28 +50,32 @@ describe('updateRecipeNotes', () => {
 		await expect(updateRecipeNotes({ plannerId, recipeId })).rejects.toThrow();
 	});
 
-	test('throws Unauthorized when session is missing', async () => {
+	test('returns Unauthorized error when session is missing', async () => {
 		vi.mocked(checkAuth).mockResolvedValue({ type: 'unauthenticated' });
 
-		await expect(updateRecipeNotes(validData)).rejects.toThrow('Unauthorized');
+		const result = await updateRecipeNotes(validData);
+
+		expect(result).toEqual({ ok: false, error: 'Unauthorized' });
 		expect(Planner.collection.updateOne).not.toHaveBeenCalled();
 	});
 
-	test('throws Unauthorized when user does not own the planner', async () => {
+	test('returns Unauthorized error when user does not own the planner', async () => {
 		vi.mocked(checkAuth).mockResolvedValue({ type: 'unauthorized' });
 
-		await expect(updateRecipeNotes(validData)).rejects.toThrow('Unauthorized');
+		const result = await updateRecipeNotes(validData);
+
+		expect(result).toEqual({ ok: false, error: 'Unauthorized' });
 	});
 
-	test('throws Recipe not found when matchedCount is 0', async () => {
+	test('returns Recipe not found error when matchedCount is 0', async () => {
 		vi.mocked(checkAuth).mockResolvedValue({ type: 'authorized' });
 		vi.mocked(Planner.collection.updateOne).mockResolvedValue({
 			matchedCount: 0,
 		} as never);
 
-		await expect(updateRecipeNotes(validData)).rejects.toThrow(
-			'Recipe not found',
-		);
+		const result = await updateRecipeNotes(validData);
+
+		expect(result).toEqual({ ok: false, error: 'Recipe not found' });
 	});
 
 	test('uses $set when notes is non-empty', async () => {
@@ -123,7 +127,20 @@ describe('updateRecipeNotes', () => {
 			matchedCount: 0,
 		} as never);
 
-		await expect(updateRecipeNotes(validData)).rejects.toThrow();
+		const result = await updateRecipeNotes(validData);
+
+		expect(result).toEqual({ ok: false, error: 'Recipe not found' });
 		expect(revalidatePath).not.toHaveBeenCalled();
+	});
+
+	test('returns ok on success', async () => {
+		vi.mocked(checkAuth).mockResolvedValue({ type: 'authorized' });
+		vi.mocked(Planner.collection.updateOne).mockResolvedValue({
+			matchedCount: 1,
+		} as never);
+
+		const result = await updateRecipeNotes(validData);
+
+		expect(result).toEqual({ ok: true, data: undefined });
 	});
 });

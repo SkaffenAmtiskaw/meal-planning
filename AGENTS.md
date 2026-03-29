@@ -83,6 +83,8 @@ pnpm test     # Run Vitest
 - Components receive data props and import server actions directly — do not pass pre-bound actions as props (e.g. prefer `email={email}` over `action={createUser.bind(null, email)}`).
 - Minimize client components (`'use client'`). Keep pages and layout components as server components; only extract the smallest necessary interactive piece into a dedicated client component (e.g. a single button, not a whole list).
 - Use the `catchify` utility (`src/_utils/catchify/`) for async operations. Returns `[value]` on success or `[undefined, error]` on failure — avoids try/catch boilerplate.
+- File names mirror the casing of their primary export: PascalCase for React components and TypeScript types/interfaces (e.g. `FormFeedbackAlert.tsx`, `ActionResult.d.ts`), camelCase for functions and hooks (e.g. `catchify.ts`, `useFormFeedback.ts`).
+- Pure TypeScript type files with no runtime code use the `.d.ts` extension (e.g. `ActionResult.d.ts`). Files that mix Zod schemas with TypeScript interfaces use `.types.ts` (e.g. `recipe.types.ts`). `.d.ts` files are excluded from coverage requirements.
 
 ## Coverage
 
