@@ -4,7 +4,7 @@
 - [x] Bug fix: RecipeForm source/time fields crash on input ✅
 - [x] Step 2: Responsive layout ✅
 - [x] Step 3: Keep-awake on mobile ✅ (manual test confirmed)
-- [ ] Step 4: Inline notes editing
+- [x] Step 4: Inline notes editing ✅
 - [ ] Step 5: Inline tags editing
 
 ## Planned Work

@@ -24,6 +24,9 @@ Unit Testing
 - changed & added files should have 100% unit test coverage
 - certain files are excluded from test coverage in the vitest.config.ts - these files should NEVER have logic added - logic should be extracted to testable modules
 
+Update Notes
+- check if the changes made are listed in the `notes/Planed Changes.md` document - if so prompt the user to confirm whether it should be removed
+
 Summary
 - finish code reviews by giving the user a summary of the changes and any decisions made
 - if the planned changes were listed in the `notes/` directory update the relevant note(s) to indicate what has been completed - if a feature is fully done prompt the user and ask if the note should be removed

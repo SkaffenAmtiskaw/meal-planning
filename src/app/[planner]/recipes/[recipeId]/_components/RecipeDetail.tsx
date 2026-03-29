@@ -24,6 +24,7 @@ import type { RecipeInterface } from '@/_models/planner/recipe.types';
 import type { TagInterface } from '@/_models/planner/tag.types';
 
 import { DeleteConfirmModal } from '../../_components/DeleteConfirmModal';
+import { InlineNotesEditor } from './InlineNotesEditor';
 import { KeepAwakeToggle } from './KeepAwakeToggle';
 
 type Props = {
@@ -184,14 +185,11 @@ export const RecipeDetail = ({ plannerId, recipe, tags }: Props) => {
 						</Stack>
 					)}
 
-					{recipe.notes && (
-						<Stack gap={4}>
-							<Text fw={600} size="sm">
-								Notes
-							</Text>
-							<Text data-testid="notes">{recipe.notes}</Text>
-						</Stack>
-					)}
+					<InlineNotesEditor
+						notes={recipe.notes}
+						plannerId={plannerId}
+						recipeId={String(recipe._id)}
+					/>
 
 					{recipe.storage && (
 						<Stack gap={4}>

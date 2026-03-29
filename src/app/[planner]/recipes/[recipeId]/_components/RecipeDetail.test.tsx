@@ -50,6 +50,25 @@ vi.mock('./KeepAwakeToggle', () => ({
 	KeepAwakeToggle: () => <div data-testid="keep-awake-toggle" />,
 }));
 
+vi.mock('./InlineNotesEditor', () => ({
+	InlineNotesEditor: ({
+		notes,
+		plannerId,
+		recipeId,
+	}: {
+		notes?: string;
+		plannerId: string;
+		recipeId: string;
+	}) => (
+		<div
+			data-testid="inline-notes-editor"
+			data-notes={notes}
+			data-planner-id={plannerId}
+			data-recipe-id={recipeId}
+		/>
+	),
+}));
+
 vi.mock('@mantine/core', () => {
 	const Anchor = ({
 		children,
@@ -320,16 +339,27 @@ describe('RecipeDetail', () => {
 		expect(screen.getByTestId('servings').textContent).toBe('4');
 	});
 
-	test('renders notes when provided', () => {
+	test('renders inline notes editor with notes prop', () => {
 		render(
 			<RecipeDetail
 				{...defaultProps}
 				recipe={{ ...baseRecipe, notes: 'Best served at midnight' }}
 			/>,
 		);
-		expect(screen.getByTestId('notes').textContent).toBe(
-			'Best served at midnight',
-		);
+		const editor = screen.getByTestId('inline-notes-editor');
+		expect(editor.getAttribute('data-notes')).toBe('Best served at midnight');
+	});
+
+	test('renders inline notes editor without notes', () => {
+		render(<RecipeDetail {...defaultProps} />);
+		expect(screen.getByTestId('inline-notes-editor')).toBeDefined();
+	});
+
+	test('passes plannerId and recipeId to inline notes editor', () => {
+		render(<RecipeDetail {...defaultProps} />);
+		const editor = screen.getByTestId('inline-notes-editor');
+		expect(editor.getAttribute('data-planner-id')).toBe('planner-1');
+		expect(editor.getAttribute('data-recipe-id')).toBe('recipe-1');
 	});
 
 	test('renders storage when provided', () => {
@@ -350,7 +380,6 @@ describe('RecipeDetail', () => {
 		expect(screen.queryByTestId('source-name')).toBeNull();
 		expect(screen.queryByTestId('time-prep')).toBeNull();
 		expect(screen.queryByTestId('servings')).toBeNull();
-		expect(screen.queryByTestId('notes')).toBeNull();
 		expect(screen.queryByTestId('storage')).toBeNull();
 		expect(screen.queryByTestId('tags')).toBeNull();
 	});
