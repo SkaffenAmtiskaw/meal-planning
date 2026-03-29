@@ -72,7 +72,7 @@ Best practice is to **keep the submit button enabled** and show field-level vali
 
 ---
 
-### Step 3 — `FormFeedbackAlert` component
+### Step 3 — `FormFeedbackAlert` component ✅
 
 **Goal:** Reusable error alert to sit at the top of any form or modal.
 
