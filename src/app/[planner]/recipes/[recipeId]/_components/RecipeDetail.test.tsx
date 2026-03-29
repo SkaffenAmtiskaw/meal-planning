@@ -211,11 +211,17 @@ describe('RecipeDetail', () => {
 		expect(screen.getByTestId('recipe-detail')).toBeDefined();
 	});
 
-	test('renders a disabled edit button', () => {
+	test('renders an enabled edit button', () => {
 		render(<RecipeDetail {...defaultProps} />);
 		const btn = screen.getByTestId('edit-button') as HTMLButtonElement;
 		expect(btn).toBeDefined();
-		expect(btn.disabled).toBe(true);
+		expect(btn.disabled).toBe(false);
+	});
+
+	test('clicking edit button navigates to ?status=edit', () => {
+		render(<RecipeDetail {...defaultProps} />);
+		fireEvent.click(screen.getByTestId('edit-button'));
+		expect(mockPush).toHaveBeenCalledWith('?status=edit');
 	});
 
 	test('renders a delete button', () => {
@@ -238,7 +244,10 @@ describe('RecipeDetail', () => {
 	});
 
 	test('confirming delete calls deleteRecipe and redirects to recipes list', async () => {
-		vi.mocked(deleteRecipe).mockResolvedValueOnce(undefined);
+		vi.mocked(deleteRecipe).mockResolvedValueOnce({
+			ok: true,
+			data: undefined,
+		});
 		render(<RecipeDetail {...defaultProps} />);
 
 		fireEvent.click(screen.getByTestId('delete-button'));

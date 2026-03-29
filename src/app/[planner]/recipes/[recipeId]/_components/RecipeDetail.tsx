@@ -50,7 +50,11 @@ export const RecipeDetail = ({ plannerId, recipe, tags }: Props) => {
 						<Title order={2}>{recipe.name}</Title>
 						<Group align="center" gap="sm">
 							<KeepAwakeToggle />
-							<Button data-testid="edit-button" disabled variant="default">
+							<Button
+								data-testid="edit-button"
+								onClick={() => router.push('?status=edit')}
+								variant="default"
+							>
 								Edit
 							</Button>
 							<Button

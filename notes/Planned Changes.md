@@ -1,7 +1,6 @@
 *Note: These should ALWAYS be planned and implemented individually. They are discrete units of work.*
 
 # High-Priority
-- [[Edit Recipe|edit recipes]]
 - add bookmark
 - edit bookmark
 - delete bookmark
