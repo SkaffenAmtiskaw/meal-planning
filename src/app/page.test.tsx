@@ -31,7 +31,7 @@ vi.mock('@/_models', () => ({
 	},
 }));
 
-const mockCreatePlannerPrompt = vi.fn(() => null);
+const mockCreatePlannerPrompt = vi.fn((_props: unknown) => null);
 vi.mock('./_components/CreatePlannerPrompt', () => ({
 	CreatePlannerPrompt: (props: unknown) => mockCreatePlannerPrompt(props),
 }));

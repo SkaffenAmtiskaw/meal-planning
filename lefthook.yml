@@ -7,3 +7,9 @@ pre-commit:
     test-coverage:
       run: bash scripts/test-staged.sh {staged_files}
       glob: "src/**/*.{ts,tsx}"
+    typecheck:
+      run: bash scripts/typecheck-staged.sh {staged_files}
+      glob: "src/**/*.test.{ts,tsx}"
+    build:
+      run: pnpm build
+      glob: "src/**/*.{ts,tsx}"

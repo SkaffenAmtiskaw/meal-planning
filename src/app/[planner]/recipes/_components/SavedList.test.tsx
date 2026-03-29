@@ -46,14 +46,14 @@ vi.mock('@tabler/icons-react', () => ({
 const plannerId = '507f1f77bcf86cd799439011';
 
 const makeRecipe = (id: string, name: string) => ({
-	_id: { toString: () => id },
+	_id: id as never,
 	name,
 	ingredients: [],
 	instructions: [],
 });
 
 const makeBookmark = (id: string, name: string, url: string) => ({
-	_id: { toString: () => id },
+	_id: id as never,
 	name,
 	url,
 	tags: [],

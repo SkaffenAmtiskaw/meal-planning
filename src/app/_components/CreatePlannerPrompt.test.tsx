@@ -38,7 +38,7 @@ describe('create planner prompt', () => {
 	});
 
 	test('clicking the button calls createUser with the email', async () => {
-		vi.mocked(createUser).mockResolvedValue(undefined);
+		vi.mocked(createUser).mockResolvedValue(undefined as never);
 
 		render(<CreatePlannerPrompt email="ariel@sea.com" />);
 
@@ -67,7 +67,7 @@ describe('create planner prompt', () => {
 	});
 
 	test('does not display an error alert on success', async () => {
-		vi.mocked(createUser).mockResolvedValue(undefined);
+		vi.mocked(createUser).mockResolvedValue(undefined as never);
 
 		render(<CreatePlannerPrompt email="ariel@sea.com" />);
 

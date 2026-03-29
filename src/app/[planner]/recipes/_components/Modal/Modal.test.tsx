@@ -41,7 +41,7 @@ const makePlanner = (
 		saved: [],
 		calendar: [],
 		tags,
-	}) as Parameters<typeof Modal>[0]['planner'];
+	}) as unknown as Parameters<typeof Modal>[0]['planner'];
 
 describe('modal', () => {
 	afterEach(() => {

@@ -7,7 +7,7 @@ import { RecipeDetail } from './RecipeDetail';
 const mockUseMantineTheme = vi.fn(() => ({
 	colors: {} as Record<string, string[]>,
 }));
-const mockIsLightColor = vi.fn(() => false);
+const mockIsLightColor = vi.fn((_bg: string) => false);
 
 vi.mock('@mantine/core', () => {
 	const Anchor = ({

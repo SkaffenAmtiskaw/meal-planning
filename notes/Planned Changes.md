@@ -1,8 +1,7 @@
 *Note: These should ALWAYS be planned and implemented individually. They are discrete units of work.*
 
 # Dev Tooling
-- add a husky check that TS and the build passes
-- add automatic permission for find within the project to claude
+- add automatic permission for `find` within the project to claude
 
 # High-Priority
 - add non-Google sign-in path - one tap being deprecated?
