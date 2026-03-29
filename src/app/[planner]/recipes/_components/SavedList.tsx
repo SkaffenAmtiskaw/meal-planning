@@ -7,6 +7,7 @@ import type { BookmarkInterface } from '@/_models/planner/bookmark';
 import type { RecipeInterface } from '@/_models/planner/recipe';
 
 import { DeleteRecipeButton } from './DeleteRecipeButton';
+import { EditRecipeButton } from './EditRecipeButton';
 
 type Props = {
 	items: Array<RecipeInterface | BookmarkInterface>;
@@ -30,9 +31,15 @@ const SavedList = ({ items, plannerId }: Props) => (
 						<Link href={`/${plannerId}/recipes/${item._id}`}>{item.name}</Link>
 					)}
 					<Group gap="xs">
-						<ActionIcon data-testid="edit-button" disabled variant="subtle">
-							<IconPencil size={16} />
-						</ActionIcon>
+						{isBookmark(item) ? (
+							<ActionIcon data-testid="edit-button" disabled variant="subtle">
+								<IconPencil size={16} />
+							</ActionIcon>
+						) : (
+							<EditRecipeButton
+								href={`?item=${item._id}&status=edit&type=recipe`}
+							/>
+						)}
 						<DeleteRecipeButton
 							disabled={isBookmark(item)}
 							plannerId={plannerId}

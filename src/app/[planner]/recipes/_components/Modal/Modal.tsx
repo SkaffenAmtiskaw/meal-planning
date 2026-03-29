@@ -79,13 +79,10 @@ export const Modal = async ({ item: itemId, planner, status, type }: Props) => {
 
 		if (type === 'recipe') {
 			const { getForm, getHeader } = CONTENT_TYPES.edit.recipe;
+			const recipe = JSON.parse(JSON.stringify(item)) as RecipeInterface;
 			return (
-				<ModalWrapper
-					opened
-					size="xl"
-					title={getHeader(item as RecipeInterface)}
-				>
-					{getForm(planner, item as RecipeInterface)}
+				<ModalWrapper opened size="xl" title={getHeader(recipe)}>
+					{getForm(planner, recipe)}
 				</ModalWrapper>
 			);
 		}

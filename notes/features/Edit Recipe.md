@@ -42,7 +42,7 @@ The modal infrastructure for editing is already in place (URL params `?item={id}
 
 **Test file:** `src/app/[planner]/recipes/_components/Modal/RecipeForm.test.tsx`
 
-### Step 3 — Enable edit button in `SavedList` for recipes + update tests
+### ✅ Step 3 — Enable edit button in `SavedList` for recipes + update tests (EditRecipeButton extracted as client component)
 
 **File:** `src/app/[planner]/recipes/_components/SavedList.tsx`
 

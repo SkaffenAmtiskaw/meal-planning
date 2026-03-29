@@ -62,6 +62,14 @@ vi.mock('./DeleteRecipeButton', () => ({
 	),
 }));
 
+vi.mock('./EditRecipeButton', () => ({
+	EditRecipeButton: ({ href }: { href: string }) => (
+		<a data-testid="edit-button" href={href}>
+			edit
+		</a>
+	),
+}));
+
 const plannerId = '507f1f77bcf86cd799439011';
 
 const makeRecipe = (id: string, name: string) => ({
@@ -115,9 +123,24 @@ describe('SavedList', () => {
 		expect(link.getAttribute('target')).toBe('_blank');
 	});
 
-	test('edit button is disabled', () => {
+	test('edit button for recipe is a link to the edit modal URL', () => {
 		const recipe = makeRecipe('507f1f77bcf86cd799439012', "Gaston's Baguette");
 		render(<SavedList items={[recipe]} plannerId={plannerId} />);
+
+		const editButton = screen.getByTestId('edit-button');
+		expect(editButton.tagName).toBe('A');
+		expect(editButton.getAttribute('href')).toBe(
+			`?item=${recipe._id}&status=edit&type=recipe`,
+		);
+	});
+
+	test('edit button for bookmark is disabled', () => {
+		const bookmark = makeBookmark(
+			'507f1f77bcf86cd799439013',
+			"Ursula's Sea Witch Soup",
+			'https://example.com/soup',
+		);
+		render(<SavedList items={[bookmark]} plannerId={plannerId} />);
 
 		const editButton = screen.getByTestId('edit-button');
 		expect((editButton as HTMLButtonElement).disabled).toBe(true);
