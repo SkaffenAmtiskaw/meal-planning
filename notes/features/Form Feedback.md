@@ -46,7 +46,7 @@ Best practice is to **keep the submit button enabled** and show field-level vali
 
 ---
 
-### Step 2 — `SubmitButton` component
+### Step 2 — `SubmitButton` component ✅
 
 **Goal:** Reusable button that reflects all four submit states.
 
