@@ -1,6 +1,6 @@
 import { z } from 'zod';
 
-import { zObjectId } from './_utils/zObjectId';
+import { zObjectId } from './utils/zObjectId';
 
 export const zUserInterface = z.object({
 	email: z.string(),

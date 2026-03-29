@@ -82,7 +82,8 @@ pnpm test     # Run Vitest
 - Components use Mantine primitives; avoid custom CSS where possible
 - Zod schemas are co-located with their Mongoose models
 - Biome enforces formatting and import order; runs automatically on commit via Lefthook
-- Shared components, hooks and utilities are located at `src/_components`, `src/_hooks`, and `src/_utils` - ones that are only used in a single place should be in a directory co-located with the component that consumes them.
+- An underscore prefix (e.g. `_components`, `_utils`) means the directory is only consumed within its parent directory and its descendants — never from above. `src/_components` is used throughout `src/` but not outside it; a `_components` folder inside `src/app/[planner]/recipes/` would be used only within that route. A directory without an underscore prefix (e.g. `_models/utils/`) is consumed outside its parent directory.
+- Shared components, hooks and utilities are located at `src/_components`, `src/_hooks`, and `src/_utils` — ones that are only used in a single place should be in a directory co-located with the component that consumes them.
 - Components receive data props and import server actions directly — do not pass pre-bound actions as props (e.g. prefer `email={email}` over `action={createUser.bind(null, email)}`).
 
 ## Coverage

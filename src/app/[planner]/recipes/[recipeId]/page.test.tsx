@@ -5,8 +5,9 @@ import { afterEach, describe, expect, test, vi } from 'vitest';
 import RecipePage from './page';
 
 vi.mock('@/_models', async () => {
-	const { zObjectId } = await import('@/_models/_utils/zObjectId');
-	return { zObjectId };
+	const { zObjectId } = await import('@/_models/utils/zObjectId');
+	const { matchesId } = await import('@/_models/utils/matchesId');
+	return { zObjectId, matchesId };
 });
 
 const mockGetPlanner = vi.fn();
@@ -51,6 +52,7 @@ const makePlanner = (saved: unknown[] = []) => ({
 
 describe('RecipePage', () => {
 	const params = Promise.resolve({ planner: plannerId, recipeId });
+	const searchParams = Promise.resolve({});
 
 	afterEach(() => {
 		vi.resetAllMocks();
@@ -60,7 +62,7 @@ describe('RecipePage', () => {
 		const recipe = makeRecipe();
 		mockGetPlanner.mockResolvedValue(makePlanner([recipe]));
 
-		render(await RecipePage({ params }));
+		render(await RecipePage({ params, searchParams }));
 
 		expect(mockRecipeDetail).toHaveBeenCalledWith(
 			expect.objectContaining({
@@ -78,7 +80,7 @@ describe('RecipePage', () => {
 		};
 		mockGetPlanner.mockResolvedValue(planner);
 
-		render(await RecipePage({ params }));
+		render(await RecipePage({ params, searchParams }));
 
 		expect(mockRecipeDetail).toHaveBeenCalledWith(
 			expect.objectContaining({
@@ -90,7 +92,9 @@ describe('RecipePage', () => {
 	test('calls notFound when item is not in saved', async () => {
 		mockGetPlanner.mockResolvedValue(makePlanner([]));
 
-		await expect(RecipePage({ params })).rejects.toThrow('NEXT_NOT_FOUND');
+		await expect(RecipePage({ params, searchParams })).rejects.toThrow(
+			'NEXT_NOT_FOUND',
+		);
 		expect(mockNotFound).toHaveBeenCalled();
 	});
 
@@ -102,17 +106,23 @@ describe('RecipePage', () => {
 		};
 		mockGetPlanner.mockResolvedValue(makePlanner([bookmark]));
 
-		await expect(RecipePage({ params })).rejects.toThrow('NEXT_NOT_FOUND');
+		await expect(RecipePage({ params, searchParams })).rejects.toThrow(
+			'NEXT_NOT_FOUND',
+		);
 		expect(mockNotFound).toHaveBeenCalled();
 	});
 
 	test('throws ZodError for invalid planner ID', async () => {
 		const badParams = Promise.resolve({ planner: 'not-an-id', recipeId });
-		await expect(RecipePage({ params: badParams })).rejects.toThrow();
+		await expect(
+			RecipePage({ params: badParams, searchParams }),
+		).rejects.toThrow();
 	});
 
 	test('throws ZodError for invalid recipe ID', async () => {
 		const badParams = Promise.resolve({ planner: plannerId, recipeId: 'bad' });
-		await expect(RecipePage({ params: badParams })).rejects.toThrow();
+		await expect(
+			RecipePage({ params: badParams, searchParams }),
+		).rejects.toThrow();
 	});
 });

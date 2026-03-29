@@ -1,6 +1,6 @@
 import { z } from 'zod';
 
-import { zObjectId } from '../_utils/zObjectId';
+import { zObjectId } from '../utils/zObjectId';
 
 const zDishInterface = z.object({
 	name: z.string(),

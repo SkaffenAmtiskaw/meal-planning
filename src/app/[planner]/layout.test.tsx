@@ -5,7 +5,7 @@ import { afterEach, describe, expect, test, vi } from 'vitest';
 import Layout from './layout';
 
 vi.mock('@/_models', async () => {
-	const { zObjectId } = await import('@/_models/_utils/zObjectId');
+	const { zObjectId } = await import('@/_models/utils/zObjectId');
 	return { zObjectId };
 });
 

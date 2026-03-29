@@ -13,11 +13,12 @@ files_json=$(printf '"%s",' "$@")
 files_json="[${files_json%,}]"
 
 # Write a temp tsconfig that extends the main one but only roots the staged files
+# .next/types must be included so globally-declared types (PageProps, LayoutProps) are available
 cat > "$TSCONFIG" <<EOF
 {
   "extends": "./tsconfig.json",
   "files": $files_json,
-  "include": []
+  "include": [".next/types/**/*.ts"]
 }
 EOF
 

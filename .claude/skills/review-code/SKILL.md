@@ -6,6 +6,9 @@ description: considerations for code reviews
 Clear Intent
 - make sure all changes are clearly related - if a code review seems to address multiple unrelated concerns consider splitting it into multiple commits
 
+Completion
+- make sure the stated objectives are achieved - if scope is unclear prompt the user
+
 Feedback
 - if multiple decisions need to be made, prompt user one by one
 - if the user indicates a suggestion should be deferred til later add a TODO comment

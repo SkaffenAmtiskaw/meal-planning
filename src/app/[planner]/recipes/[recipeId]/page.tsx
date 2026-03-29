@@ -3,7 +3,7 @@ import { notFound } from 'next/navigation';
 import { z } from 'zod';
 
 import { getPlanner } from '@/_actions';
-import { zObjectId } from '@/_models';
+import { matchesId, zObjectId } from '@/_models';
 import type { BookmarkInterface } from '@/_models/planner/bookmark.types';
 import type { RecipeInterface } from '@/_models/planner/recipe.types';
 import type { TagInterface } from '@/_models/planner/tag.types';
@@ -22,7 +22,7 @@ const RecipePage = async ({
 
 	const planner = await getPlanner(plannerId);
 
-	const item = planner.saved.find((p) => String(p._id) === String(recipeId));
+	const item = planner.saved.find(matchesId(recipeId));
 
 	if (!item || !!(item as unknown as BookmarkInterface).url) {
 		notFound();

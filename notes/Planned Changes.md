@@ -9,10 +9,11 @@
 - edit bookmark
 - delete recipe
 - delete bookmark
+- calendar page
 
 # Medium Priority
 - add AI instruction to avoid use of `let` - refactor code that uses it unecessarily
-- add mongo/mongoose caching
+- investigate mongo/mongoose caching
 - recipe list style updates
 - tag management - edit/delete
 - allow user to change their email
