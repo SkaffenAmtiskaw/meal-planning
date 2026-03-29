@@ -8,13 +8,14 @@
 - add notes & tags to bookmarks
 - view tags inline in recipes page view
 - allow filtering & sorting in recipe list
-- calendar page
-- create meal plan
 - add email sign-in option
 - add reset password flow
+- calendar page
+- create meal plan
 
 # Medium Priority
 - update Google one-tap sign in
+- add Apple SSO
 - add passkey sign in
 - increase session length
 - redirect user to current page after signing in when session expired
