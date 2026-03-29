@@ -40,7 +40,26 @@ vi.mock('@mantine/core', () => ({
 
 vi.mock('@tabler/icons-react', () => ({
 	IconPencil: () => null,
-	IconTrash: () => null,
+}));
+
+vi.mock('./DeleteRecipeButton', () => ({
+	DeleteRecipeButton: ({
+		disabled,
+		plannerId,
+		recipeId,
+	}: {
+		disabled?: boolean;
+		plannerId: string;
+		recipeId: string;
+	}) => (
+		<button
+			data-plannerid={plannerId}
+			data-recipeid={recipeId}
+			data-testid="delete-button"
+			disabled={disabled}
+			type="button"
+		/>
+	),
 }));
 
 const plannerId = '507f1f77bcf86cd799439011';
@@ -96,25 +115,34 @@ describe('SavedList', () => {
 		expect(link.getAttribute('target')).toBe('_blank');
 	});
 
-	test('edit and delete buttons are present and disabled until edit/delete functionality is implemented', () => {
+	test('edit button is disabled', () => {
 		const recipe = makeRecipe('507f1f77bcf86cd799439012', "Gaston's Baguette");
 		render(<SavedList items={[recipe]} plannerId={plannerId} />);
 
 		const editButton = screen.getByTestId('edit-button');
-		expect(editButton).toBeDefined();
 		expect((editButton as HTMLButtonElement).disabled).toBe(true);
+	});
+
+	test('passes disabled=false to DeleteRecipeButton for recipes', () => {
+		const recipe = makeRecipe('507f1f77bcf86cd799439012', "Gaston's Baguette");
+		render(<SavedList items={[recipe]} plannerId={plannerId} />);
 
 		const deleteButton = screen.getByTestId('delete-button');
-		expect(deleteButton).toBeDefined();
+		expect((deleteButton as HTMLButtonElement).disabled).toBe(false);
+		expect(deleteButton.getAttribute('data-plannerid')).toBe(plannerId);
+		expect(deleteButton.getAttribute('data-recipeid')).toBe(recipe._id);
+	});
+
+	test('passes disabled=true to DeleteRecipeButton for bookmarks', () => {
+		const bookmark = makeBookmark(
+			'507f1f77bcf86cd799439013',
+			"Ursula's Sea Witch Soup",
+			'https://example.com/soup',
+		);
+		render(<SavedList items={[bookmark]} plannerId={plannerId} />);
+
+		const deleteButton = screen.getByTestId('delete-button');
 		expect((deleteButton as HTMLButtonElement).disabled).toBe(true);
-	});
-
-	test.skip('clicking edit opens edit modal for the item', () => {
-		// TODO: implement when edit recipe/bookmark functionality is added
-	});
-
-	test.skip('clicking delete removes the item from the list', () => {
-		// TODO: implement when delete recipe/bookmark functionality is added
 	});
 
 	test('renders multiple items', () => {

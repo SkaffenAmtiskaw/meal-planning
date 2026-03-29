@@ -1,10 +1,12 @@
 import Link from 'next/link';
 
 import { ActionIcon, Anchor, Group, List, ListItem } from '@mantine/core';
-import { IconPencil, IconTrash } from '@tabler/icons-react';
+import { IconPencil } from '@tabler/icons-react';
 
 import type { BookmarkInterface } from '@/_models/planner/bookmark';
 import type { RecipeInterface } from '@/_models/planner/recipe';
+
+import { DeleteRecipeButton } from './DeleteRecipeButton';
 
 type Props = {
 	items: Array<RecipeInterface | BookmarkInterface>;
@@ -31,14 +33,11 @@ const SavedList = ({ items, plannerId }: Props) => (
 						<ActionIcon data-testid="edit-button" disabled variant="subtle">
 							<IconPencil size={16} />
 						</ActionIcon>
-						<ActionIcon
-							color="red"
-							data-testid="delete-button"
-							disabled
-							variant="subtle"
-						>
-							<IconTrash size={16} />
-						</ActionIcon>
+						<DeleteRecipeButton
+							disabled={isBookmark(item)}
+							plannerId={plannerId}
+							recipeId={`${item._id}`}
+						/>
 					</Group>
 				</Group>
 			</ListItem>

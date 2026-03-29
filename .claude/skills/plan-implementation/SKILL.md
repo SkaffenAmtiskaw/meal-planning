@@ -6,6 +6,7 @@ description: plan implementation of a feature
 # Incremental Changes
 - when planning a medium to large feature, the changes should be broken down into incremental changes
 - you SHOULD ask for user confirmation of work done before moving to the next step
+- when pausing for manual testing, you MUST quote the exact manual test steps from the plan verbatim so the user knows what to verify
 - you SHOULD NOT expand the scope past what the user requested - if scope is unclear prompt the user for clarification
 
 # Notes
