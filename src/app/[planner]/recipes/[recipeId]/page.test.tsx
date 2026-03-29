@@ -33,6 +33,24 @@ vi.mock('./_components/RecipeDetail', () => ({
 	RecipeDetail: (props: RecipeDetailProps) => mockRecipeDetail(props),
 }));
 
+type RecipeFormProps = {
+	plannerId: string;
+	item: unknown;
+	tags: unknown[];
+	redirectTo?: string;
+};
+
+const mockRecipeForm = vi.fn<(props: RecipeFormProps) => null>(() => null);
+vi.mock('../_components/Modal/RecipeForm', () => ({
+	RecipeForm: (props: RecipeFormProps) => mockRecipeForm(props),
+}));
+
+vi.mock('@mantine/core', () => ({
+	Container: ({ children }: { children: React.ReactNode }) => (
+		<div>{children}</div>
+	),
+}));
+
 const plannerId = '507f1f77bcf86cd799439011';
 const recipeId = '507f1f77bcf86cd799439012';
 
@@ -124,5 +142,58 @@ describe('RecipePage', () => {
 		await expect(
 			RecipePage({ params: badParams, searchParams }),
 		).rejects.toThrow();
+	});
+
+	test('renders RecipeForm when status=edit', async () => {
+		const recipe = makeRecipe();
+		mockGetPlanner.mockResolvedValue(makePlanner([recipe]));
+
+		render(
+			await RecipePage({
+				params,
+				searchParams: Promise.resolve({ status: 'edit' }),
+			}),
+		);
+
+		expect(mockRecipeForm).toHaveBeenCalledWith(
+			expect.objectContaining({
+				plannerId,
+				item: expect.objectContaining({ name: "Maleficent's Dragon Roast" }),
+				redirectTo: `/${plannerId}/recipes/${recipeId}`,
+			}),
+		);
+		expect(mockRecipeDetail).not.toHaveBeenCalled();
+	});
+
+	test('renders RecipeDetail (not RecipeForm) when no status', async () => {
+		const recipe = makeRecipe();
+		mockGetPlanner.mockResolvedValue(makePlanner([recipe]));
+
+		render(await RecipePage({ params, searchParams }));
+
+		expect(mockRecipeDetail).toHaveBeenCalled();
+		expect(mockRecipeForm).not.toHaveBeenCalled();
+	});
+
+	test('passes tags to RecipeForm in edit mode', async () => {
+		const recipe = makeRecipe();
+		const planner = {
+			...makePlanner([recipe]),
+			tags: [{ _id: { toString: () => 'tag-1' }, name: 'Spicy', color: 'red' }],
+		};
+		mockGetPlanner.mockResolvedValue(planner);
+
+		render(
+			await RecipePage({
+				params,
+				searchParams: Promise.resolve({ status: 'edit' }),
+			}),
+		);
+
+		expect(mockRecipeForm).toHaveBeenCalledWith(
+			expect.objectContaining({
+				tags: [{ _id: 'tag-1', name: 'Spicy', color: 'red' }],
+			}),
+		);
 	});
 });

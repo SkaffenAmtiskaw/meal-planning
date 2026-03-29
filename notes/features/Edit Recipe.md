@@ -52,25 +52,24 @@ The modal infrastructure for editing is already in place (URL params `?item={id}
 
 **Test file:** `src/app/[planner]/recipes/_components/SavedList.test.tsx`
 
-### Step 4 — Create recipe edit page + tests
+### ✅ Step 4 — Add edit mode to recipe detail page via query param + tests
 
-**Files:**
-- `src/app/[planner]/recipes/[recipeId]/edit/page.tsx` (server component)
+**File:** `src/app/[planner]/recipes/[recipeId]/page.tsx`
 
 Page behavior:
-- Same data-fetching logic as `RecipePage` (validates params, calls `getPlanner`, finds recipe, 404 on bookmark)
-- Renders `RecipeForm` directly in a `Container size="md"` (no modal wrapper) with the same sizing as `RecipeDetail`
-- Passes `redirectTo={`/${plannerId}/recipes/${String(recipeId)}`}` so cancel and save both navigate back to the detail page
-- Success/error feedback is rendered inline by `FormFeedbackAlert` inside `RecipeForm` — visible on the page just like it is in the modal
+- Add `status` to the search params schema: `z.literal('edit').optional()`
+- When `status=edit`: render `RecipeForm` in a `Container size="md"` (no modal) with `redirectTo={`/${plannerId}/recipes/${recipeId}`}` so cancel and save navigate back to the detail view
+- When no status: render `RecipeDetail` as before (unchanged)
+- Serializes the item the same way as the existing detail path (`JSON.parse(JSON.stringify(item))`)
 
-**Test file:** `src/app/[planner]/recipes/[recipeId]/edit/page.test.tsx`
+**Test file:** `src/app/[planner]/recipes/[recipeId]/page.test.tsx`
 
 ### Step 5 — Enable edit button in `RecipeDetail` + update tests
 
 **File:** `src/app/[planner]/recipes/[recipeId]/_components/RecipeDetail.tsx`
 
-- Change edit button from `disabled` to navigate to `/${plannerId}/recipes/${String(recipe._id)}/edit`
-- Use `router.push` or `component={Link}` (already has `useRouter` imported)
+- Change edit button from `disabled` to navigate to `?status=edit` (adds query param to current page URL)
+- Use `router.push` (already has `useRouter` imported)
 
 **Test file:** `src/app/[planner]/recipes/[recipeId]/_components/RecipeDetail.test.tsx`
 
@@ -85,8 +84,8 @@ Page behavior:
 | `src/app/[planner]/recipes/_components/Modal/RecipeForm.test.tsx` | Update tests |
 | `src/app/[planner]/recipes/_components/SavedList.tsx` | Wire edit button for recipes |
 | `src/app/[planner]/recipes/_components/SavedList.test.tsx` | Update tests |
-| `src/app/[planner]/recipes/[recipeId]/edit/page.tsx` | New — edit page |
-| `src/app/[planner]/recipes/[recipeId]/edit/page.test.tsx` | New — unit tests |
+| `src/app/[planner]/recipes/[recipeId]/page.tsx` | Add `status=edit` param branch |
+| `src/app/[planner]/recipes/[recipeId]/page.test.tsx` | Update tests |
 | `src/app/[planner]/recipes/[recipeId]/_components/RecipeDetail.tsx` | Wire edit button |
 | `src/app/[planner]/recipes/[recipeId]/_components/RecipeDetail.test.tsx` | Update tests |
 
@@ -98,9 +97,9 @@ Page behavior:
 
 **After Step 3:** Clicking edit on a recipe row in the recipes list opens the edit modal pre-populated with recipe data
 
-**After Step 4:** Navigating to `/{planner}/recipes/{recipeId}/edit` shows the full-page form pre-populated
+**After Step 4:** Navigating to `/{planner}/recipes/{recipeId}?status=edit` shows the full-page form pre-populated
 
-**After Step 5:** Clicking Edit on the recipe detail page navigates to the edit page
+**After Step 5:** Clicking Edit on the recipe detail page navigates to `?status=edit`
 
 **Manual test prompts:**
 1. Go to the recipes list → click the pencil icon on a recipe → confirm the edit modal opens with the recipe's data pre-filled → change the name → save → confirm the list reflects the new name

@@ -24,6 +24,7 @@
 - allow user to have multiple planners (pre-requisite of inviting other users to shared planner)
 - allow users to invite other users to a shared planner
 - allow users to have access levels to a planner - (owner/admin, write, read)
+- add planner settings
 - tag management - edit/delete (should live under user settings)
 - recipe list style updates
 - add AI instruction to avoid use of `let` - refactor code that uses it unecessarily
@@ -37,5 +38,4 @@
 - toggle light/dark mode
 - confirm if Biome recommended settings are turned on
 - theme colors
-	- tag colors should align with theme
 - audit code for client component surface area - move as much as possible to server components
