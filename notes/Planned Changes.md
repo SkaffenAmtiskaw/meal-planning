@@ -27,6 +27,9 @@
 - recipe list style updates
 - add AI instruction to avoid use of `let` - refactor code that uses it unecessarily
 - investigate mongo/mongoose caching
+- add images to recipes
+- let user set avatar
+- a11y audit
 
 # Low Priority
 - toggle light/dark mode
