@@ -23,23 +23,6 @@ vi.mock('@mantine/core', () => ({
 			{children}
 		</a>
 	),
-	ActionIcon: ({
-		children,
-		disabled,
-		'data-testid': testId,
-	}: {
-		children: React.ReactNode;
-		disabled?: boolean;
-		'data-testid'?: string;
-	}) => (
-		<button data-testid={testId} disabled={disabled} type="button">
-			{children}
-		</button>
-	),
-}));
-
-vi.mock('@tabler/icons-react', () => ({
-	IconPencil: () => null,
 }));
 
 vi.mock('./DeleteRecipeButton', () => ({
@@ -134,7 +117,7 @@ describe('SavedList', () => {
 		);
 	});
 
-	test('edit button for bookmark is disabled', () => {
+	test('edit button for bookmark is a link to the edit modal URL', () => {
 		const bookmark = makeBookmark(
 			'507f1f77bcf86cd799439013',
 			"Ursula's Sea Witch Soup",
@@ -143,7 +126,9 @@ describe('SavedList', () => {
 		render(<SavedList items={[bookmark]} plannerId={plannerId} />);
 
 		const editButton = screen.getByTestId('edit-button');
-		expect((editButton as HTMLButtonElement).disabled).toBe(true);
+		expect(editButton.getAttribute('href')).toBe(
+			`?item=${bookmark._id}&status=edit&type=bookmark`,
+		);
 	});
 
 	test('passes disabled=false to DeleteRecipeButton for recipes', () => {

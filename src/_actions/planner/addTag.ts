@@ -4,7 +4,6 @@ import { Types } from 'mongoose';
 
 import { checkAuth } from '@/_actions/auth/checkAuth';
 import { Planner } from '@/_models';
-import type { TagInterface } from '@/_models/planner/tag';
 import type { ActionResult } from '@/_utils/actionResult';
 
 // TODO: Set a color scheme for tags
@@ -34,12 +33,16 @@ export const addTag = async (
 	if (!planner) return { ok: false, error: 'Planner not found' };
 
 	const color = COLORS[planner.tags.length % COLORS.length];
-	planner.tags.push({ name, color } as unknown as TagInterface);
-	await planner.save();
+	const tagId = new Types.ObjectId();
 
-	const tag = planner.tags[planner.tags.length - 1];
-	return {
-		ok: true,
-		data: { _id: tag._id.toString(), name: tag.name, color: tag.color },
+	const update: Record<string, unknown> = {
+		$push: { tags: { _id: tagId, name, color } },
 	};
+
+	await Planner.collection.updateOne(
+		{ _id: new Types.ObjectId(plannerId) },
+		update,
+	);
+
+	return { ok: true, data: { _id: tagId.toString(), name, color } };
 };

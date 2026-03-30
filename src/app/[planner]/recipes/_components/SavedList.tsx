@@ -1,7 +1,6 @@
 import Link from 'next/link';
 
-import { ActionIcon, Anchor, Group, List, ListItem } from '@mantine/core';
-import { IconPencil } from '@tabler/icons-react';
+import { Anchor, Group, List, ListItem } from '@mantine/core';
 
 import type { BookmarkInterface } from '@/_models/planner/bookmark';
 import type { RecipeInterface } from '@/_models/planner/recipe';
@@ -31,15 +30,9 @@ const SavedList = ({ items, plannerId }: Props) => (
 						<Link href={`/${plannerId}/recipes/${item._id}`}>{item.name}</Link>
 					)}
 					<Group gap="xs">
-						{isBookmark(item) ? (
-							<ActionIcon data-testid="edit-button" disabled variant="subtle">
-								<IconPencil size={16} />
-							</ActionIcon>
-						) : (
-							<EditRecipeButton
-								href={`?item=${item._id}&status=edit&type=recipe`}
-							/>
-						)}
+						<EditRecipeButton
+							href={`?item=${item._id}&status=edit&type=${isBookmark(item) ? 'bookmark' : 'recipe'}`}
+						/>
 						<DeleteRecipeButton
 							disabled={isBookmark(item)}
 							plannerId={plannerId}

@@ -79,9 +79,10 @@ export const Modal = async ({ item: itemId, planner, status, type }: Props) => {
 
 		if (type === 'bookmark') {
 			const { getForm, getHeader } = CONTENT_TYPES.edit.bookmark;
+			const bookmark = JSON.parse(JSON.stringify(item)) as BookmarkInterface;
 			return (
-				<ModalWrapper opened title={getHeader(item as BookmarkInterface)}>
-					{getForm(planner, item as BookmarkInterface)}
+				<ModalWrapper opened title={getHeader(bookmark)}>
+					{getForm(planner, bookmark)}
 				</ModalWrapper>
 			);
 		}

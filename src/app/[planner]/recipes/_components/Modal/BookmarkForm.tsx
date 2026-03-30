@@ -10,6 +10,7 @@ import { zod4Resolver } from 'mantine-form-zod-resolver';
 import { z } from 'zod';
 
 import { addBookmark } from '@/_actions/saved/addBookmark';
+import { editBookmark } from '@/_actions/saved/editBookmark';
 import type { TagOption } from '@/_components';
 import { FormFeedbackAlert, SubmitButton, TagCombobox } from '@/_components';
 import { useFormFeedback } from '@/_hooks';
@@ -47,12 +48,15 @@ export const BookmarkForm = ({ item, plannerId, tags }: Props) => {
 
 	const handleSubmit = form.onSubmit(
 		wrap(
-			async (values) =>
-				addBookmark({
-					...values,
-					tags: selectedTags,
-					plannerId,
-				}),
+			async (values) => {
+				const payload = { ...values, tags: selectedTags, plannerId };
+
+				if (item) {
+					return editBookmark({ ...payload, _id: String(item._id) });
+				}
+
+				return addBookmark(payload);
+			},
 			() => router.push(pathname),
 		),
 	);

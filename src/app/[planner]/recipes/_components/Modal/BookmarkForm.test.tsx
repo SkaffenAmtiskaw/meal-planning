@@ -3,6 +3,7 @@ import { act, fireEvent, render, screen } from '@testing-library/react';
 import { afterEach, describe, expect, test, vi } from 'vitest';
 
 import { addBookmark } from '@/_actions/saved/addBookmark';
+import { editBookmark } from '@/_actions/saved/editBookmark';
 
 import { BookmarkForm } from './BookmarkForm';
 
@@ -14,6 +15,10 @@ vi.mock('next/navigation', () => ({
 
 vi.mock('@/_actions/saved/addBookmark', () => ({
 	addBookmark: vi.fn(),
+}));
+
+vi.mock('@/_actions/saved/editBookmark', () => ({
+	editBookmark: vi.fn(),
 }));
 
 type FeedbackStatus = 'idle' | 'submitting' | 'success' | 'error';
@@ -231,5 +236,29 @@ describe('BookmarkForm', () => {
 		expect(addBookmark).toHaveBeenCalledWith(
 			expect.objectContaining({ tags: ['tag-1'] }),
 		);
+	});
+
+	test('calls editBookmark with _id when item is provided', async () => {
+		vi.mocked(editBookmark).mockResolvedValue({
+			ok: true,
+			data: { _id: 'bm-1', name: 'My Bookmark' },
+		});
+
+		const item = {
+			_id: 'bm-1' as never,
+			name: 'My Site',
+			url: 'https://example.com',
+			tags: [],
+		};
+
+		render(<BookmarkForm {...defaultProps} item={item} />);
+		await act(async () => {
+			fireEvent.submit(screen.getByTestId('bookmark-form'));
+		});
+
+		expect(editBookmark).toHaveBeenCalledWith(
+			expect.objectContaining({ _id: 'bm-1', plannerId: 'planner-1' }),
+		);
+		expect(addBookmark).not.toHaveBeenCalled();
 	});
 });
