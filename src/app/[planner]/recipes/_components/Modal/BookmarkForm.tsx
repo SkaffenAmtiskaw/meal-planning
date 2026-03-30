@@ -1,14 +1,96 @@
-/* v8 ignore start */
-import type { HydratedDocument } from 'mongoose';
+'use client';
 
-import type { PlannerInterface } from '@/_models/planner';
-import type { BookmarkInterface } from '@/_models/planner/bookmark';
+import { usePathname, useRouter } from 'next/navigation';
+import { useState } from 'react';
+
+import { Button, Group, Stack, TextInput } from '@mantine/core';
+import { useForm } from '@mantine/form';
+
+import { zod4Resolver } from 'mantine-form-zod-resolver';
+import { z } from 'zod';
+
+import { addBookmark } from '@/_actions/saved/addBookmark';
+import type { TagOption } from '@/_components';
+import { FormFeedbackAlert, SubmitButton, TagCombobox } from '@/_components';
+import { useFormFeedback } from '@/_hooks';
+import type { BookmarkInterface } from '@/_models/planner/bookmark.types';
+
+const zFormFields = z.object({
+	name: z.string().min(1, 'Name is required'),
+	url: z.url('URL is required'),
+});
 
 type Props = {
-	planner: HydratedDocument<PlannerInterface>;
+	plannerId: string;
+	tags: TagOption[];
 	item?: BookmarkInterface;
 };
 
-// biome-ignore lint/correctness/noUnusedFunctionParameters: TODO: WIP - This parameter should be used when the bookmark form is complete.
-export const BookmarkForm = ({ item }: Props) => 'I am a bookmark form';
-/* v8 ignore stop */
+export const BookmarkForm = ({ item, plannerId, tags }: Props) => {
+	const router = useRouter();
+	const pathname = usePathname();
+
+	const [selectedTags, setSelectedTags] = useState<string[]>(
+		item?.tags?.map(String) ?? [],
+	);
+
+	const { status, countdown, errorMessage, wrap } = useFormFeedback();
+
+	const form = useForm({
+		mode: 'uncontrolled',
+		validate: zod4Resolver(zFormFields),
+		initialValues: {
+			name: item?.name ?? '',
+			url: item?.url ?? '',
+		},
+	});
+
+	const handleSubmit = form.onSubmit(
+		wrap(
+			async (values) =>
+				addBookmark({
+					...values,
+					tags: selectedTags,
+					plannerId,
+				}),
+			() => router.push(pathname),
+		),
+	);
+
+	return (
+		<form onSubmit={handleSubmit} data-testid="bookmark-form">
+			<Stack>
+				<FormFeedbackAlert status={status} errorMessage={errorMessage} />
+				<TextInput
+					label="Name"
+					key={form.key('name')}
+					withAsterisk
+					{...form.getInputProps('name')}
+				/>
+				<TextInput
+					label="URL"
+					key={form.key('url')}
+					withAsterisk
+					{...form.getInputProps('url')}
+				/>
+				<TagCombobox
+					label="Tags"
+					plannerId={plannerId}
+					initialTags={tags}
+					value={selectedTags}
+					onChange={setSelectedTags}
+				/>
+				<Group justify="flex-end">
+					<Button variant="subtle" onClick={() => router.push(pathname)}>
+						Cancel
+					</Button>
+					<SubmitButton
+						status={status}
+						countdown={countdown}
+						label={item ? 'Save' : 'Add Bookmark'}
+					/>
+				</Group>
+			</Stack>
+		</form>
+	);
+};

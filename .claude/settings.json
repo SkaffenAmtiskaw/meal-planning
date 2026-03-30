@@ -4,8 +4,10 @@
       "Bash(cat *)",
       "Bash(find *)",
       "Bash(git diff *)",
+      "Bash(head *)",
       "Bash(ls *)",
       "Bash(pnpm build*)",
+      "Bash(pnpm coverage*)",
       "Bash(pnpm lint*)",
       "Bash(pnpm test*)",
       "mcp__ide__getDiagnostics"

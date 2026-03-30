@@ -1,3 +1,4 @@
+export * from './addBookmark';
 export * from './deleteRecipe';
 export * from './editRecipe';
 export * from './getSavedItem';

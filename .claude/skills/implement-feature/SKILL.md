@@ -18,3 +18,4 @@ description: implement a planned feature — trigger when asked to "implement [f
 # Final Audit
 - When a feature is complete, have a subagent run a check to ensure the changes made did not exceed the scope of the feature
 - Have a subagent check if this work affects other planned features and update their notes accordingly
+- Ask for user confirmation to remove the feature from the notes

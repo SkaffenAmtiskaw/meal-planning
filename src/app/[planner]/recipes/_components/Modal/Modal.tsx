@@ -28,7 +28,12 @@ type Props = {
 const CONTENT_TYPES = {
 	add: {
 		bookmark: {
-			getForm: (planner: Planner) => <BookmarkForm planner={planner} />,
+			getForm: (planner: Planner) => (
+				<BookmarkForm
+					plannerId={planner._id.toString()}
+					tags={serializeTags(planner)}
+				/>
+			),
 			getHeader: () => 'Add New Bookmark',
 		},
 		recipe: {
@@ -44,7 +49,11 @@ const CONTENT_TYPES = {
 	edit: {
 		bookmark: {
 			getForm: (planner: Planner, bookmark: BookmarkInterface) => (
-				<BookmarkForm item={bookmark} planner={planner} />
+				<BookmarkForm
+					item={bookmark}
+					plannerId={planner._id.toString()}
+					tags={serializeTags(planner)}
+				/>
 			),
 			getHeader: ({ name }: BookmarkInterface) => `Update ${name}`,
 		},
