@@ -11,7 +11,7 @@ description: implement a planned feature — trigger when asked to "implement [f
 # Incremental Execution
 - Work through one step at a time
 - After completing each step, ask the user for confirmation before moving to the next
-- When pausing for manual testing, you MUST quote the exact manual test steps from the plan verbatim
+- When pausing, if manual steps exist for the step, you MUST quote the exact manual test steps from the plan verbatim
 - Do NOT expand scope beyond the plan — if something unclear arises, prompt the user
 
 # Notes

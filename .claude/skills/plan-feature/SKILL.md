@@ -1,7 +1,13 @@
 ---
 name: plan-feature
+argument-hint: [feature]
 description: plan a feature — trigger when asked to "plan [feature]", "create a plan for [feature]", "design [feature]", or "figure out how to build [feature]" — discovers existing notes, clarifies scope, produces an incremental implementation plan, gets user confirmation, then begins implementation
 ---
+
+# When planning a feature:
+1. Check the `notes/` directory for any existing plans or guidance related to the feature
+2. Define the scope of the work
+3. Prompt the user to confirm the scope before proceeding
 
 # Discovery
 - Check the `notes/` directory for any existing plans or guidance related to the feature

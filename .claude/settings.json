@@ -15,5 +15,8 @@
       "Bash(pnpm test*)",
       "mcp__ide__getDiagnostics"
     ]
+  },
+  "enabledPlugins": {
+    "typescript-lsp@claude-plugins-official": true
   }
 }

@@ -6,13 +6,19 @@
 - [[Delete Bookmark|delete bookmark]]
 - [[Add Tags & Notes to Bookmark|add notes & tags to bookmarks]]
 - [[Tags in Recipe List|display tags in recipe list]]
-- allow filtering & sorting in recipe list
-- add email sign-in option
-- add reset password flow
-- calendar page
-- create meal plan
+- [[Filtering Recipe List|allow filtering in recipe list]]
+- [[Sign Out|add sign-out]]
+- [[Add Email Sign-In|add email sign-in option]]
+- [[Reset Password|add reset password flow]]
+- [[Add Meal Plan|add meal plan & render meals as events]]
+- edit meals
+- delete meals
+- move meals to different days (drag and drop) & reorder meals within days
+- [[Calendar Page Style Updates|calendar page updates]]
 
 # Medium Priority
+- batch delete meals
+- batch delete recipes/bookmarks
 - update Google one-tap sign in
 - add Apple SSO
 - add passkey sign in
@@ -26,13 +32,14 @@
 - add planner settings
 - tag management - edit/delete (should live under user settings)
 - recipe list style updates
-- add AI instruction to avoid use of `let` - refactor code that uses it unecessarily
+- add AI instruction to avoid use of `let` - refactor code that uses it unnecessarily
 - investigate mongo/mongoose caching
 - add images to recipes
 - let user set avatar
 - a11y audit
 
 # Low Priority
+- expandable card view in recipe list
 - create e2e tests
 - toggle light/dark mode
 - confirm if Biome recommended settings are turned on
