@@ -10,10 +10,11 @@ description: implement a planned feature — trigger when asked to "implement [f
 
 # Incremental Execution
 - Work through one step at a time
-- After completing each step, ask the user for confirmation before moving to the next
-- When pausing, if manual steps exist for the step, you MUST quote the exact manual test steps from the plan verbatim
-- Do NOT expand scope beyond the plan — if something unclear arises, prompt the user
+- When writing test files, test ONLY the file currently being written
+- When the step is complete, have a subagent run `pnpm coverage` to ensure 100% code coverage
+- After code coverage is confirmed, pause and ask the user for verification of the step - you MUST quote the exact manual test steps from the plan verbatim
+- If the user confirms the check passed, update the note to indicate the step is complete
 
-# Notes
-- After completing each step, update the note to indicate what has been done
-- At the end of the feature, check if this work affects other planned features and update their notes accordingly
+# Final Audit
+- When a feature is complete, have a subagent run a check to ensure the changes made did not exceed the scope of the feature
+- Have a subagent check if this work affects other planned features and update their notes accordingly
