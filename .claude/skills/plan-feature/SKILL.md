@@ -14,12 +14,16 @@ description: plan a feature — trigger when asked to "plan [feature]", "create 
 ## 2. Scope Definition
 - Define the scope of the story
 - If the scope of the requested feature is unclear, prompt the user for clarification before planning
-- Ask the user for confirmation of scope before proceeding
+- You MUST ask the user for confirmation of scope BEFORE proceeding further
 - Write the scope to the note
 
 ## 3. Defining Incremental Steps
-- Break the feature into small incremental steps that can be verified independently
-- Each step MUST have a plan for user verification - if necessary temporary console.logs can be added to verify data is correct
+- Break the feature into the smallest incremental steps that can be *verified by the user*
+- Running a unit test is not a user verification step - user verification must confirm the changes work as expected with real data
+- Each step MUST have a plan for user verification
+- If a step cannot be verified by the user then it is not useful as an independent step
+- In order to test incremental changes temporary console.logs can be added to verify data is correct
+
 
 ## 4. Plan Confirmation
 - Present the plan to the user and wait for EXPLICIT confirmation before proceeding
