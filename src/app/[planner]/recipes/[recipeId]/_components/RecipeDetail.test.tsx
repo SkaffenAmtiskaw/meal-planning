@@ -17,6 +17,8 @@ vi.mock('../../_components/DeleteConfirmModal', () => ({
 		onClose: () => void;
 		onConfirm: () => void;
 		loading: boolean;
+		title: string;
+		message: string;
 	}) =>
 		opened ? (
 			<div data-testid="delete-confirm-modal">

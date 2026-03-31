@@ -5,6 +5,7 @@ import { Anchor, Group, List, ListItem } from '@mantine/core';
 import type { BookmarkInterface } from '@/_models/planner/bookmark';
 import type { RecipeInterface } from '@/_models/planner/recipe';
 
+import { DeleteBookmarkButton } from './DeleteBookmarkButton';
 import { DeleteRecipeButton } from './DeleteRecipeButton';
 import { EditRecipeButton } from './EditRecipeButton';
 
@@ -33,11 +34,17 @@ const SavedList = ({ items, plannerId }: Props) => (
 						<EditRecipeButton
 							href={`?item=${item._id}&status=edit&type=${isBookmark(item) ? 'bookmark' : 'recipe'}`}
 						/>
-						<DeleteRecipeButton
-							disabled={isBookmark(item)}
-							plannerId={plannerId}
-							recipeId={`${item._id}`}
-						/>
+						{isBookmark(item) ? (
+							<DeleteBookmarkButton
+								bookmarkId={`${item._id}`}
+								plannerId={plannerId}
+							/>
+						) : (
+							<DeleteRecipeButton
+								plannerId={plannerId}
+								recipeId={`${item._id}`}
+							/>
+						)}
 					</Group>
 				</Group>
 			</ListItem>

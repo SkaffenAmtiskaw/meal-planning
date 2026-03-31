@@ -1,7 +1,6 @@
 *Note: These should ALWAYS be planned and implemented individually. They are discrete units of work.*
 
 # High-Priority
-- [[Delete Bookmark|delete bookmark]]
 - [[Add Tags & Notes to Bookmark|add notes & tags to bookmarks]]
 - [[Tags in Recipe List|display tags in recipe list]]
 - [[Filtering Recipe List|allow filtering in recipe list]]

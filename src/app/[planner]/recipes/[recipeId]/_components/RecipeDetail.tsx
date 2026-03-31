@@ -202,9 +202,11 @@ export const RecipeDetail = ({ plannerId, recipe, tags }: Props) => {
 			</Container>
 			<DeleteConfirmModal
 				loading={deleting}
+				message="Are you sure you want to delete this recipe? This cannot be undone."
 				onClose={() => setModalOpened(false)}
 				onConfirm={handleDelete}
 				opened={modalOpened}
+				title="Delete Recipe"
 			/>
 		</>
 	);

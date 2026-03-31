@@ -10,19 +10,21 @@ type Props = {
 	onConfirm: () => void;
 	loading: boolean;
 	errorMessage?: string;
+	title: string;
+	message: string;
 };
 
 export const DeleteConfirmModal = ({
 	errorMessage,
 	loading,
+	message,
 	onClose,
 	onConfirm,
 	opened,
+	title,
 }: Props) => (
-	<Modal onClose={onClose} opened={opened} title="Delete Recipe">
-		<Text>
-			Are you sure you want to delete this recipe? This cannot be undone.
-		</Text>
+	<Modal onClose={onClose} opened={opened} title={title}>
+		<Text>{message}</Text>
 		<FormFeedbackAlert
 			status={errorMessage ? 'error' : 'idle'}
 			errorMessage={errorMessage}

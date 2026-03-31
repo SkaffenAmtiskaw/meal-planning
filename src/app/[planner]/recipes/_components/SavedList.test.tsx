@@ -25,21 +25,35 @@ vi.mock('@mantine/core', () => ({
 	),
 }));
 
+vi.mock('./DeleteBookmarkButton', () => ({
+	DeleteBookmarkButton: ({
+		plannerId,
+		bookmarkId,
+	}: {
+		plannerId: string;
+		bookmarkId: string;
+	}) => (
+		<button
+			data-bookmarkid={bookmarkId}
+			data-plannerid={plannerId}
+			data-testid="delete-bookmark-button"
+			type="button"
+		/>
+	),
+}));
+
 vi.mock('./DeleteRecipeButton', () => ({
 	DeleteRecipeButton: ({
-		disabled,
 		plannerId,
 		recipeId,
 	}: {
-		disabled?: boolean;
 		plannerId: string;
 		recipeId: string;
 	}) => (
 		<button
 			data-plannerid={plannerId}
 			data-recipeid={recipeId}
-			data-testid="delete-button"
-			disabled={disabled}
+			data-testid="delete-recipe-button"
 			type="button"
 		/>
 	),
@@ -131,17 +145,16 @@ describe('SavedList', () => {
 		);
 	});
 
-	test('passes disabled=false to DeleteRecipeButton for recipes', () => {
+	test('renders DeleteRecipeButton for recipes', () => {
 		const recipe = makeRecipe('507f1f77bcf86cd799439012', "Gaston's Baguette");
 		render(<SavedList items={[recipe]} plannerId={plannerId} />);
 
-		const deleteButton = screen.getByTestId('delete-button');
-		expect((deleteButton as HTMLButtonElement).disabled).toBe(false);
+		const deleteButton = screen.getByTestId('delete-recipe-button');
 		expect(deleteButton.getAttribute('data-plannerid')).toBe(plannerId);
 		expect(deleteButton.getAttribute('data-recipeid')).toBe(recipe._id);
 	});
 
-	test('passes disabled=true to DeleteRecipeButton for bookmarks', () => {
+	test('renders DeleteBookmarkButton for bookmarks', () => {
 		const bookmark = makeBookmark(
 			'507f1f77bcf86cd799439013',
 			"Ursula's Sea Witch Soup",
@@ -149,8 +162,9 @@ describe('SavedList', () => {
 		);
 		render(<SavedList items={[bookmark]} plannerId={plannerId} />);
 
-		const deleteButton = screen.getByTestId('delete-button');
-		expect((deleteButton as HTMLButtonElement).disabled).toBe(true);
+		const deleteButton = screen.getByTestId('delete-bookmark-button');
+		expect(deleteButton.getAttribute('data-plannerid')).toBe(plannerId);
+		expect(deleteButton.getAttribute('data-bookmarkid')).toBe(bookmark._id);
 	});
 
 	test('renders multiple items', () => {

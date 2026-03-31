@@ -21,10 +21,18 @@ vi.mock('@mantine/core', () => ({
 	Modal: ({
 		children,
 		opened,
+		title,
 	}: {
 		children: React.ReactNode;
 		opened: boolean;
-	}) => (opened ? <div data-testid="modal">{children}</div> : null),
+		title: string;
+	}) =>
+		opened ? (
+			<div data-testid="modal">
+				<span data-testid="modal-title">{title}</span>
+				{children}
+			</div>
+		) : null,
 
 	Button: ({
 		children,
@@ -59,6 +67,8 @@ const defaultProps = {
 	onClose: vi.fn(),
 	onConfirm: vi.fn(),
 	loading: false,
+	title: 'Delete Item',
+	message: 'Are you sure? This cannot be undone.',
 };
 
 describe('DeleteConfirmModal', () => {
@@ -67,6 +77,22 @@ describe('DeleteConfirmModal', () => {
 		expect(screen.getByTestId('modal')).toBeDefined();
 		expect(screen.getByTestId('cancel-button')).toBeDefined();
 		expect(screen.getByTestId('confirm-delete-button')).toBeDefined();
+	});
+
+	test('renders title and message', () => {
+		render(
+			<DeleteConfirmModal
+				{...defaultProps}
+				title="Delete Bookmark"
+				message="Are you sure you want to delete this bookmark?"
+			/>,
+		);
+		expect(screen.getByTestId('modal-title').textContent).toBe(
+			'Delete Bookmark',
+		);
+		expect(
+			screen.getByText('Are you sure you want to delete this bookmark?'),
+		).toBeDefined();
 	});
 
 	test('does not render when not opened', () => {
