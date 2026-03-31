@@ -4,9 +4,8 @@ import { usePathname, useRouter } from 'next/navigation';
 import { useState } from 'react';
 
 import { Button, Group, Stack, Textarea, TextInput } from '@mantine/core';
-import { useForm } from '@mantine/form';
+import { schemaResolver, useForm } from '@mantine/form';
 
-import { zod4Resolver } from 'mantine-form-zod-resolver';
 import { z } from 'zod';
 
 import { addBookmark } from '@/_actions/saved/addBookmark';
@@ -40,7 +39,7 @@ export const BookmarkForm = ({ item, plannerId, tags }: Props) => {
 
 	const form = useForm({
 		mode: 'uncontrolled',
-		validate: zod4Resolver(zFormFields),
+		validate: schemaResolver(zFormFields),
 		initialValues: {
 			name: item?.name ?? '',
 			url: item?.url ?? '',

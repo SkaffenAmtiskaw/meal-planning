@@ -82,10 +82,6 @@ vi.mock('@/_components', () => ({
 	),
 }));
 
-vi.mock('mantine-form-zod-resolver', () => ({
-	zod4Resolver: () => () => ({}),
-}));
-
 const { mockUseForm } = vi.hoisted(() => {
 	const mockUseForm = vi.fn(() => ({
 		onSubmit:
@@ -105,6 +101,7 @@ const { mockUseForm } = vi.hoisted(() => {
 });
 
 vi.mock('@mantine/form', () => ({
+	schemaResolver: () => () => ({}),
 	useForm: () => mockUseForm(),
 }));
 

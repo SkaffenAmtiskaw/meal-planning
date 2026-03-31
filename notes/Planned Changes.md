@@ -1,7 +1,6 @@
 *Note: These should ALWAYS be planned and implemented individually. They are discrete units of work.*
 
 # High-Priority
-- update to Mantine v9
 - [[Filtering Recipe List|allow filtering in recipe list]]
 - [[Sign Out|add sign-out]]
 - [[Add Email Sign-In|add email sign-in option]]

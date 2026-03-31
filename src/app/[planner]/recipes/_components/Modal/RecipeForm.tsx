@@ -13,9 +13,8 @@ import {
 	Textarea,
 	TextInput,
 } from '@mantine/core';
-import { useForm } from '@mantine/form';
+import { schemaResolver, useForm } from '@mantine/form';
 
-import { zod4Resolver } from 'mantine-form-zod-resolver';
 import { z } from 'zod';
 
 import { addRecipe } from '@/_actions/saved/addRecipe';
@@ -74,7 +73,7 @@ export const RecipeForm = ({ item, plannerId, tags, redirectTo }: Props) => {
 
 	const form = useForm({
 		mode: 'uncontrolled',
-		validate: zod4Resolver(zFormFields),
+		validate: schemaResolver(zFormFields),
 		initialValues: {
 			name: item?.name ?? '',
 			source: {
