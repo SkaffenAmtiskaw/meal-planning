@@ -99,13 +99,13 @@ describe('editBookmark', () => {
 				_id: expect.any(Types.ObjectId),
 				'saved._id': expect.any(Types.ObjectId),
 			}),
-			{
-				$set: {
+			expect.objectContaining({
+				$set: expect.objectContaining({
 					'saved.$.name': 'Ursula Sea Spells',
 					'saved.$.url': 'https://undersea.example.com/spells',
 					'saved.$.tags': [expect.any(Types.ObjectId)],
-				},
-			},
+				}),
+			}),
 		);
 	});
 
@@ -121,6 +121,54 @@ describe('editBookmark', () => {
 			expect.anything(),
 			expect.objectContaining({
 				$set: expect.objectContaining({ 'saved.$.tags': [] }),
+			}),
+		);
+	});
+
+	test('$sets notes when notes is provided', async () => {
+		vi.mocked(checkAuth).mockResolvedValue({ type: 'authorized' });
+		vi.mocked(Planner.collection.updateOne).mockResolvedValue({
+			matchedCount: 1,
+		} as never);
+
+		await editBookmark({ ...validData, notes: 'Great source' });
+
+		expect(Planner.collection.updateOne).toHaveBeenCalledWith(
+			expect.anything(),
+			expect.objectContaining({
+				$set: expect.objectContaining({ 'saved.$.notes': 'Great source' }),
+			}),
+		);
+	});
+
+	test('$unsets notes when notes is absent', async () => {
+		vi.mocked(checkAuth).mockResolvedValue({ type: 'authorized' });
+		vi.mocked(Planner.collection.updateOne).mockResolvedValue({
+			matchedCount: 1,
+		} as never);
+
+		await editBookmark(validData);
+
+		expect(Planner.collection.updateOne).toHaveBeenCalledWith(
+			expect.anything(),
+			expect.objectContaining({
+				$unset: { 'saved.$.notes': '' },
+			}),
+		);
+	});
+
+	test('$unsets notes when notes is empty string', async () => {
+		vi.mocked(checkAuth).mockResolvedValue({ type: 'authorized' });
+		vi.mocked(Planner.collection.updateOne).mockResolvedValue({
+			matchedCount: 1,
+		} as never);
+
+		await editBookmark({ ...validData, notes: '' });
+
+		expect(Planner.collection.updateOne).toHaveBeenCalledWith(
+			expect.anything(),
+			expect.objectContaining({
+				$unset: { 'saved.$.notes': '' },
 			}),
 		);
 	});

@@ -3,7 +3,7 @@
 import { usePathname, useRouter } from 'next/navigation';
 import { useState } from 'react';
 
-import { Button, Group, Stack, TextInput } from '@mantine/core';
+import { Button, Group, Stack, Textarea, TextInput } from '@mantine/core';
 import { useForm } from '@mantine/form';
 
 import { zod4Resolver } from 'mantine-form-zod-resolver';
@@ -19,6 +19,7 @@ import type { BookmarkInterface } from '@/_models/planner/bookmark.types';
 const zFormFields = z.object({
 	name: z.string().min(1, 'Name is required'),
 	url: z.url('URL is required'),
+	notes: z.string().optional(),
 });
 
 type Props = {
@@ -43,6 +44,7 @@ export const BookmarkForm = ({ item, plannerId, tags }: Props) => {
 		initialValues: {
 			name: item?.name ?? '',
 			url: item?.url ?? '',
+			notes: item?.notes ?? '',
 		},
 	});
 
@@ -76,6 +78,11 @@ export const BookmarkForm = ({ item, plannerId, tags }: Props) => {
 					key={form.key('url')}
 					withAsterisk
 					{...form.getInputProps('url')}
+				/>
+				<Textarea
+					label="Notes"
+					key={form.key('notes')}
+					{...form.getInputProps('notes')}
 				/>
 				<TagCombobox
 					label="Tags"

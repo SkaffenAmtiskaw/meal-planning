@@ -92,7 +92,11 @@ const { mockUseForm } = vi.hoisted(() => {
 			(handler: (values: Record<string, unknown>) => Promise<void>) =>
 			(e: React.FormEvent) => {
 				e.preventDefault();
-				handler({ name: 'My Bookmark', url: 'https://example.com' });
+				handler({
+					name: 'My Bookmark',
+					url: 'https://example.com',
+					notes: 'Test note',
+				});
 			},
 		getInputProps: () => ({}),
 		key: (field: string) => field,
@@ -107,6 +111,10 @@ vi.mock('@mantine/form', () => ({
 vi.mock('@mantine/core', () => {
 	const TextInput = ({ label }: { label?: string }) => (
 		<input data-testid={`input-${label}`} />
+	);
+
+	const Textarea = ({ label }: { label?: string }) => (
+		<textarea data-testid={`textarea-${label}`} />
 	);
 
 	const Stack = ({ children }: { children: React.ReactNode }) => (
@@ -129,7 +137,7 @@ vi.mock('@mantine/core', () => {
 		</button>
 	);
 
-	return { TextInput, Stack, Group, Button };
+	return { TextInput, Textarea, Stack, Group, Button };
 });
 
 const defaultProps = {
@@ -145,6 +153,11 @@ describe('BookmarkForm', () => {
 	test('renders Add Bookmark submit button when no item', () => {
 		render(<BookmarkForm {...defaultProps} />);
 		expect(screen.getByRole('button', { name: 'Add Bookmark' })).toBeDefined();
+	});
+
+	test('renders notes textarea', () => {
+		render(<BookmarkForm {...defaultProps} />);
+		expect(screen.getByTestId('textarea-Notes')).toBeDefined();
 	});
 
 	test('renders Save submit button when item is provided', () => {
@@ -174,7 +187,7 @@ describe('BookmarkForm', () => {
 		fireEvent.submit(screen.getByTestId('bookmark-form'));
 
 		expect(addBookmark).toHaveBeenCalledWith(
-			expect.objectContaining({ plannerId: 'planner-1' }),
+			expect.objectContaining({ plannerId: 'planner-1', notes: 'Test note' }),
 		);
 	});
 
@@ -257,7 +270,11 @@ describe('BookmarkForm', () => {
 		});
 
 		expect(editBookmark).toHaveBeenCalledWith(
-			expect.objectContaining({ _id: 'bm-1', plannerId: 'planner-1' }),
+			expect.objectContaining({
+				_id: 'bm-1',
+				plannerId: 'planner-1',
+				notes: 'Test note',
+			}),
 		);
 		expect(addBookmark).not.toHaveBeenCalled();
 	});

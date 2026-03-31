@@ -7,6 +7,7 @@ export const zBookmarkInterface = z.object({
 	name: z.string().min(1, 'Name is required'),
 	url: z.url('URL is required'),
 	tags: z.array(zObjectId),
+	notes: z.string().optional(),
 });
 
 export const zBookmarkFormSchema = zBookmarkInterface

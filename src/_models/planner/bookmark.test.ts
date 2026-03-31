@@ -65,6 +65,19 @@ describe('bookmark interface', () => {
 			zBookmarkInterface.safeParse({ ...validBookmark, _id: 'bad-id' }).success,
 		).toBe(false);
 	});
+
+	test('accepts a bookmark with an optional notes field', () => {
+		expect(
+			zBookmarkInterface.safeParse({
+				...validBookmark,
+				notes: 'Great recipe source',
+			}).success,
+		).toBe(true);
+	});
+
+	test('accepts a bookmark without notes', () => {
+		expect(zBookmarkInterface.safeParse(validBookmark).success).toBe(true);
+	});
 });
 
 describe('bookmark schema', () => {
@@ -108,5 +121,16 @@ describe('zBookmarkFormSchema', () => {
 	test('rejects a missing plannerId', () => {
 		const { plannerId: _, ...rest } = validForm;
 		expect(zBookmarkFormSchema.safeParse(rest).success).toBe(false);
+	});
+
+	test('accepts an optional notes field', () => {
+		expect(
+			zBookmarkFormSchema.safeParse({ ...validForm, notes: 'Some notes' })
+				.success,
+		).toBe(true);
+	});
+
+	test('accepts form without notes', () => {
+		expect(zBookmarkFormSchema.safeParse(validForm).success).toBe(true);
 	});
 });

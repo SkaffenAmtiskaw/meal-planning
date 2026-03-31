@@ -1,7 +1,6 @@
 *Note: These should ALWAYS be planned and implemented individually. They are discrete units of work.*
 
 # High-Priority
-- [[Add Tags & Notes to Bookmark|add notes & tags to bookmarks]]
 - [[Tags in Recipe List|display tags in recipe list]]
 - [[Filtering Recipe List|allow filtering in recipe list]]
 - [[Sign Out|add sign-out]]
@@ -36,6 +35,7 @@
 - a11y audit
 
 # Low Priority
+- allow notes in recipe/bookmarks to render basic markdown - assess if other fields should too
 - expandable card view in recipe list
 - create e2e tests
 - toggle light/dark mode

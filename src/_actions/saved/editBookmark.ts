@@ -21,23 +21,30 @@ export const editBookmark = async (
 		name,
 		url,
 		tags,
+		notes,
 	} = zEditBookmarkSchema.parse(data);
 
 	const auth = await checkAuth(new Types.ObjectId(plannerId));
 	if (auth.type !== 'authorized') return { ok: false, error: 'Unauthorized' };
+
+	const $set: Record<string, unknown> = {
+		'saved.$.name': name,
+		'saved.$.url': url,
+		'saved.$.tags': tags.map((t) => new Types.ObjectId(String(t))),
+	};
+	const updateOp: Record<string, unknown> = { $set };
+	if (notes) {
+		$set['saved.$.notes'] = notes;
+	} else {
+		updateOp.$unset = { 'saved.$.notes': '' };
+	}
 
 	const result = await Planner.collection.updateOne(
 		{
 			_id: new Types.ObjectId(plannerId),
 			'saved._id': new Types.ObjectId(bookmarkId),
 		},
-		{
-			$set: {
-				'saved.$.name': name,
-				'saved.$.url': url,
-				'saved.$.tags': tags.map((t) => new Types.ObjectId(String(t))),
-			},
-		},
+		updateOp,
 	);
 
 	if (result.matchedCount === 0)

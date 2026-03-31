@@ -14,6 +14,7 @@ export const bookmarkSchema = new Schema<BookmarkInterface>(
 				ref: 'Tag',
 			},
 		],
+		notes: String,
 	},
 	{ strict: false },
 );
