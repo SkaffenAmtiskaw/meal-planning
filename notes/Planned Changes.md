@@ -1,16 +1,16 @@
 *Note: These should ALWAYS be planned and implemented individually. They are discrete units of work.*
 
 # High-Priority
-- [[Tags in Recipe List|display tags in recipe list]]
+- update to Mantine v9
 - [[Filtering Recipe List|allow filtering in recipe list]]
 - [[Sign Out|add sign-out]]
 - [[Add Email Sign-In|add email sign-in option]]
 - [[Reset Password|add reset password flow]]
+- render calendar
 - [[Add Meal Plan|add meal plan & render meals as events]]
 - edit meals
 - delete meals
 - move meals to different days (drag and drop) & reorder meals within days
-- [[Calendar Page Style Updates|calendar page updates]]
 
 # Medium Priority
 - batch delete meals
@@ -35,6 +35,7 @@
 - a11y audit
 
 # Low Priority
+- enable dependabot
 - allow notes in recipe/bookmarks to render basic markdown - assess if other fields should too
 - expandable card view in recipe list
 - create e2e tests

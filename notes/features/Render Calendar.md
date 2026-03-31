@@ -1,0 +1,1 @@
+Swap out full-calendar with [schedule-x](https://schedule-x.dev/docs/frameworks/react)

@@ -6,10 +6,18 @@ import { SavedList } from './SavedList';
 
 vi.mock('@mantine/core', () => ({
 	List: ({ children }: { children: React.ReactNode }) => <ul>{children}</ul>,
-	ListItem: ({ children }: { children: React.ReactNode }) => (
-		<li>{children}</li>
-	),
 	Group: ({ children }: { children: React.ReactNode }) => <>{children}</>,
+	Badge: ({
+		children,
+		color,
+	}: {
+		children: React.ReactNode;
+		color: string;
+	}) => (
+		<span data-color={color} data-testid="badge">
+			{children}
+		</span>
+	),
 	Anchor: ({
 		children,
 		href,
@@ -23,6 +31,16 @@ vi.mock('@mantine/core', () => ({
 			{children}
 		</a>
 	),
+}));
+
+vi.mock('@/_components', () => ({
+	FullWidthListItem: ({ children }: { children: React.ReactNode }) => (
+		<li>{children}</li>
+	),
+}));
+
+vi.mock('./SavedList.module.css', () => ({
+	default: { titleTags: 'titleTags' },
 }));
 
 vi.mock('./DeleteBookmarkButton', () => ({
@@ -69,11 +87,12 @@ vi.mock('./EditRecipeButton', () => ({
 
 const plannerId = '507f1f77bcf86cd799439011';
 
-const makeRecipe = (id: string, name: string) => ({
+const makeRecipe = (id: string, name: string, tagIds: string[] = []) => ({
 	_id: id as never,
 	name,
 	ingredients: [],
 	instructions: [],
+	tags: tagIds as never[],
 });
 
 const makeBookmark = (id: string, name: string, url: string) => ({
@@ -83,10 +102,16 @@ const makeBookmark = (id: string, name: string, url: string) => ({
 	tags: [],
 });
 
+const makeTag = (id: string, name: string, color: string) => ({
+	_id: id as never,
+	name,
+	color,
+});
+
 describe('SavedList', () => {
 	test('renders empty list without crashing', () => {
 		const { container } = render(
-			<SavedList items={[]} plannerId={plannerId} />,
+			<SavedList items={[]} plannerId={plannerId} tags={[]} />,
 		);
 		expect(container.querySelector('ul')).toBeDefined();
 	});
@@ -96,7 +121,7 @@ describe('SavedList', () => {
 			'507f1f77bcf86cd799439012',
 			"Maleficent's Dragon Roast",
 		);
-		render(<SavedList items={[recipe]} plannerId={plannerId} />);
+		render(<SavedList items={[recipe]} plannerId={plannerId} tags={[]} />);
 
 		const link = screen.getByRole('link', {
 			name: "Maleficent's Dragon Roast",
@@ -113,7 +138,7 @@ describe('SavedList', () => {
 			"Ursula's Sea Witch Soup",
 			'https://example.com/soup',
 		);
-		render(<SavedList items={[bookmark]} plannerId={plannerId} />);
+		render(<SavedList items={[bookmark]} plannerId={plannerId} tags={[]} />);
 
 		const link = screen.getByRole('link', { name: "Ursula's Sea Witch Soup" });
 		expect(link.getAttribute('href')).toBe('https://example.com/soup');
@@ -122,7 +147,7 @@ describe('SavedList', () => {
 
 	test('edit button for recipe is a link to the edit modal URL', () => {
 		const recipe = makeRecipe('507f1f77bcf86cd799439012', "Gaston's Baguette");
-		render(<SavedList items={[recipe]} plannerId={plannerId} />);
+		render(<SavedList items={[recipe]} plannerId={plannerId} tags={[]} />);
 
 		const editButton = screen.getByTestId('edit-button');
 		expect(editButton.tagName).toBe('A');
@@ -137,7 +162,7 @@ describe('SavedList', () => {
 			"Ursula's Sea Witch Soup",
 			'https://example.com/soup',
 		);
-		render(<SavedList items={[bookmark]} plannerId={plannerId} />);
+		render(<SavedList items={[bookmark]} plannerId={plannerId} tags={[]} />);
 
 		const editButton = screen.getByTestId('edit-button');
 		expect(editButton.getAttribute('href')).toBe(
@@ -147,7 +172,7 @@ describe('SavedList', () => {
 
 	test('renders DeleteRecipeButton for recipes', () => {
 		const recipe = makeRecipe('507f1f77bcf86cd799439012', "Gaston's Baguette");
-		render(<SavedList items={[recipe]} plannerId={plannerId} />);
+		render(<SavedList items={[recipe]} plannerId={plannerId} tags={[]} />);
 
 		const deleteButton = screen.getByTestId('delete-recipe-button');
 		expect(deleteButton.getAttribute('data-plannerid')).toBe(plannerId);
@@ -160,7 +185,7 @@ describe('SavedList', () => {
 			"Ursula's Sea Witch Soup",
 			'https://example.com/soup',
 		);
-		render(<SavedList items={[bookmark]} plannerId={plannerId} />);
+		render(<SavedList items={[bookmark]} plannerId={plannerId} tags={[]} />);
 
 		const deleteButton = screen.getByTestId('delete-bookmark-button');
 		expect(deleteButton.getAttribute('data-plannerid')).toBe(plannerId);
@@ -176,7 +201,7 @@ describe('SavedList', () => {
 				'https://example.com/soup',
 			),
 		];
-		render(<SavedList items={items} plannerId={plannerId} />);
+		render(<SavedList items={items} plannerId={plannerId} tags={[]} />);
 
 		expect(
 			screen.getByRole('link', { name: "Maleficent's Dragon Roast" }),
@@ -184,5 +209,56 @@ describe('SavedList', () => {
 		expect(
 			screen.getByRole('link', { name: "Ursula's Sea Witch Soup" }),
 		).toBeDefined();
+	});
+
+	test('renders badges for matching tags on a recipe', () => {
+		const tagId = '507f1f77bcf86cd799439020';
+		const tag = makeTag(tagId, 'Vegetarian', '#00aa00');
+		const recipe = makeRecipe('507f1f77bcf86cd799439012', 'Salad', [tagId]);
+		render(<SavedList items={[recipe]} plannerId={plannerId} tags={[tag]} />);
+
+		const badge = screen.getByTestId('badge');
+		expect(badge.textContent).toBe('Vegetarian');
+		expect(badge.getAttribute('data-color')).toBe('#00aa00');
+	});
+
+	test('renders no badges when item has no matching tags', () => {
+		const tag = makeTag('507f1f77bcf86cd799439020', 'Vegetarian', '#00aa00');
+		const recipe = makeRecipe('507f1f77bcf86cd799439012', 'Salad');
+		render(<SavedList items={[recipe]} plannerId={plannerId} tags={[tag]} />);
+
+		expect(screen.queryByTestId('badge')).toBeNull();
+	});
+
+	test('renders no badges when item tags is undefined', () => {
+		const tag = makeTag('507f1f77bcf86cd799439020', 'Vegetarian', '#00aa00');
+		const recipe = {
+			...makeRecipe('507f1f77bcf86cd799439012', 'Salad'),
+			tags: undefined,
+		};
+		render(
+			<SavedList
+				items={[recipe as never]}
+				plannerId={plannerId}
+				tags={[tag]}
+			/>,
+		);
+
+		expect(screen.queryByTestId('badge')).toBeNull();
+	});
+
+	test('renders multiple badges when item has multiple matching tags', () => {
+		const tag1 = makeTag('507f1f77bcf86cd799439020', 'Vegetarian', '#00aa00');
+		const tag2 = makeTag('507f1f77bcf86cd799439021', 'Quick', '#0000aa');
+		const recipe = makeRecipe('507f1f77bcf86cd799439012', 'Salad', [
+			'507f1f77bcf86cd799439020',
+			'507f1f77bcf86cd799439021',
+		]);
+		render(
+			<SavedList items={[recipe]} plannerId={plannerId} tags={[tag1, tag2]} />,
+		);
+
+		const badges = screen.getAllByTestId('badge');
+		expect(badges).toHaveLength(2);
 	});
 });

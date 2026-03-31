@@ -1,3 +1,0 @@
-- update the recipes page to right align edit and delete buttons
-- display tags inline after the recipe/bookmark title
-- in mobile switch tags to being display beneath the title

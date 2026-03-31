@@ -18,7 +18,7 @@ cat > "$TSCONFIG" <<EOF
 {
   "extends": "./tsconfig.json",
   "files": $files_json,
-  "include": [".next/types/**/*.ts"]
+  "include": [".next/types/**/*.ts", "src/**/*.d.ts"]
 }
 EOF
 
