@@ -1,0 +1,1 @@
+- investigate whether the week view can have the times removed and just render a grid - if not we'll need to implement a custom view - it should render meals with full details (maybe collapsible cards?)

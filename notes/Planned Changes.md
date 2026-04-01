@@ -1,17 +1,19 @@
 *Note: These should ALWAYS be planned and implemented individually. They are discrete units of work.*
 
 # High-Priority
-- [[Filtering Recipe List|allow filtering in recipe list]]
 - [[Sign Out|add sign-out]]
 - [[Add Email Sign-In|add email sign-in option]]
 - [[Reset Password|add reset password flow]]
-- render calendar
-- [[Add Meal Plan|add meal plan & render meals as events]]
+- [[Add Meal Plan]]
+- [[Render Meals in Month View|render meals in month view]]
+- [[Render Meals in Week View|render meals in week view]]
+- [[Render Meals in List View|render meals in list view]]
+- [[Render Meals in Month Agenda View (Mobile)|render (or verify) meals in month agenda view (mobile)]]
 - edit meals
 - delete meals
-- move meals to different days (drag and drop) & reorder meals within days
-
 # Medium Priority
+- [[Filtering Recipe List|allow filtering in recipe list]]
+- move meals to different days (drag and drop) & reorder meals within days
 - batch delete meals
 - batch delete recipes/bookmarks
 - update Google one-tap sign in

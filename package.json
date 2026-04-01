@@ -12,20 +12,24 @@
     "test:coverage": "vitest run --coverage src"
   },
   "dependencies": {
-    "@fullcalendar/core": "6.1.20",
-    "@fullcalendar/daygrid": "6.1.20",
-    "@fullcalendar/react": "6.1.20",
     "@mantine/core": "9.0.0",
     "@mantine/form": "9.0.0",
     "@mantine/hooks": "9.0.0",
+    "@preact/signals": "2.9.0",
+    "@schedule-x/calendar": "4.3.1",
+    "@schedule-x/events-service": "4.3.1",
+    "@schedule-x/react": "4.1.0",
+    "@schedule-x/theme-default": "4.3.1",
     "@t3-oss/env-nextjs": "0.13.11",
     "@tabler/icons-react": "3.36.0",
     "better-auth": "1.4.9",
     "mongoose": "9.0.2",
     "next": "16.2.1",
+    "preact": "10.29.0",
     "react": "19.2.4",
     "react-dom": "19.2.4",
     "react-screen-wake-lock": "3.1.1",
+    "temporal-polyfill": "0.3.2",
     "zod": "4.2.1"
   },
   "devDependencies": {
