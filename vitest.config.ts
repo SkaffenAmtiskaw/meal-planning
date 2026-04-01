@@ -20,7 +20,7 @@ export default defineConfig({
       // pulled into separate testable modules.
       exclude: [
           // Mantine theme config
-          'src/_theme.ts',
+          'src/_theme/*',
           // better-auth config
           'src/auth.ts',
           // env variable definitions

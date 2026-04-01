@@ -2,10 +2,10 @@
 
 import { useParams } from 'next/navigation';
 
-import { AppShell, Burger } from '@mantine/core';
+import { AppShell, Burger, Group } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 
-import { Navbar } from '@/_components';
+import { Navbar, UserMenu } from '@/_components';
 
 import { HEADER_HEIGHT } from '../_constants';
 
@@ -29,7 +29,10 @@ export const PlannerWrapper = ({ children }: { children: React.ReactNode }) => {
 			}}
 		>
 			<AppShell.Header>
-				<Burger opened={opened} onClick={toggle} />
+				<Group h="100%" justify="space-between" px="sm">
+					<Burger opened={opened} onClick={toggle} />
+					<UserMenu />
+				</Group>
 			</AppShell.Header>
 			<AppShell.Navbar>
 				<Navbar id={planner as string} />

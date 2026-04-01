@@ -21,7 +21,12 @@ vi.mock('@mantine/core', () => {
 	AppShell.Main = ({ children }: { children: React.ReactNode }) => (
 		<>{children}</>
 	);
-	return { AppShell, Burger: () => null };
+
+	return {
+		AppShell,
+		Burger: () => null,
+		Group: ({ children }: { children: React.ReactNode }) => <>{children}</>,
+	};
 });
 
 vi.mock('@mantine/hooks', () => ({
@@ -31,6 +36,12 @@ vi.mock('@mantine/hooks', () => ({
 const mockNavbar = vi.fn<(props: { id: string }) => null>(() => null);
 vi.mock('@/_components', () => ({
 	Navbar: (props: { id: string }) => mockNavbar(props),
+	UserMenu: () => (
+		<>
+			<div data-testid="user-avatar" />
+			<div data-testid="sign-out-button" />
+		</>
+	),
 }));
 
 describe('PlannerWrapper', () => {
@@ -46,5 +57,17 @@ describe('PlannerWrapper', () => {
 		render(<PlannerWrapper>{"Ursula's Menu"}</PlannerWrapper>);
 
 		expect(screen.getByText("Ursula's Menu")).toBeDefined();
+	});
+
+	test('renders user avatar', () => {
+		render(<PlannerWrapper>{'content'}</PlannerWrapper>);
+
+		expect(screen.getByTestId('user-avatar')).toBeDefined();
+	});
+
+	test('renders sign-out button', () => {
+		render(<PlannerWrapper>{'content'}</PlannerWrapper>);
+
+		expect(screen.getByTestId('sign-out-button')).toBeDefined();
 	});
 });

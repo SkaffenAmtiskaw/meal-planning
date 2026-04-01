@@ -1,7 +1,7 @@
 *Note: These should ALWAYS be planned and implemented individually. They are discrete units of work.*
 
 # High-Priority
-- [[Sign Out|add sign-out]]
+- [[fix session length|bug: fix session length]]
 - [[Add Email Sign-In|add email sign-in option]]
 - [[Reset Password|add reset password flow]]
 - [[Add Meal Plan]]
@@ -19,7 +19,7 @@
 - update Google one-tap sign in
 - add Apple SSO
 - add passkey sign in
-- increase session length
+
 - redirect user to current page after signing in when session expired
 - add user settings
 - allow user to change their email

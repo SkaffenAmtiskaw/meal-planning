@@ -1,2 +1,0 @@
-- add an avatar icon in the top right corner
-- the avatar should display a drop-down when clicked - for right now it should display a single option: "Log Out"
