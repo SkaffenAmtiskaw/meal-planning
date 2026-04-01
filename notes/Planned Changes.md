@@ -1,7 +1,6 @@
 *Note: These should ALWAYS be planned and implemented individually. They are discrete units of work.*
 
 # High-Priority
-- [[Add Email Sign-In|add email sign-in option]]
 - [[Reset Password|add reset password flow]]
 - [[Add Meal Plan]]
 - [[Render Meals in Month View|render meals in month view]]
@@ -11,6 +10,7 @@
 - edit meals
 - delete meals
 # Medium Priority
+- close account
 - [[Filtering Recipe List|allow filtering in recipe list]]
 - move meals to different days (drag and drop) & reorder meals within days
 - batch delete meals
@@ -18,8 +18,6 @@
 - update Google one-tap sign in
 - add Apple SSO
 - add passkey sign in
-
-- redirect user to current page after signing in when session expired
 - add user settings
 - allow user to change their email
 - allow user to have multiple planners (pre-requisite of inviting other users to shared planner)
@@ -43,3 +41,6 @@
 - confirm if Biome recommended settings are turned on
 - theme colors
 - audit code for client component surface area - move as much as possible to server components
+
+# Before Deploy
+- get a domain and add it to resend - Cloudflare Registrar

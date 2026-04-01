@@ -1,5 +1,0 @@
-- the app already uses mongodb - we can use it to wire up better-auth email sign-in
-- we need to verify emails - I plan to use Resend for this
-- after entering an email the user should be prompted to create/enter their password
-- if the user tries to create an account with an email that already has an account - it should have them enter their password
-	- if the user does not have a password (e.g. they previously signed up with a social sign-on) it should error for now - this will be addressed in [[Reset Password|reset password]]

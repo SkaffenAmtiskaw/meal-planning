@@ -6,17 +6,18 @@ A full-stack meal planning web app. Users sign in with Google, create meal plann
 
 ## Tech Stack
 
-| Layer | Technology |
-|---|---|
-| Framework | Next.js 16 (App Router) |
-| Language | TypeScript 5 (strict) |
-| UI | Mantine 8 + Tabler Icons |
-| Auth | Better-auth 1.4 (Google OAuth + one-tap) |
-| Database | MongoDB via Mongoose 9 |
-| Validation | Zod 4 |
-| Testing | Vitest |
-| Linting/Formatting | Biome 2 |
-| Package Manager | pnpm |
+| Layer              | Technology                                              |
+|--------------------|---------------------------------------------------------|
+| Framework          | Next.js 16 (App Router)                                 |
+| Language           | TypeScript 5 (strict)                                   |
+| UI                 | Mantine 8 + Tabler Icons                                |
+| Auth               | Better-auth 1.5 (Google OAuth + one-tap + email/password) |
+| Database           | MongoDB via Mongoose 9 + native MongoDB driver          |
+| Email              | Resend                                                  |
+| Validation         | Zod 4                                                   |
+| Testing            | Vitest                                                  |
+| Linting/Formatting | Biome 2                                                 |
+| Package Manager    | pnpm                                                    |
 
 ## Project Structure
 
@@ -31,12 +32,13 @@ src/
   _utils/         # Utilities (auth client, catchify error handler)
   app/            # Next.js app directory
     page.tsx                      # Home: auth check + onboarding
+    verify-email/page.tsx         # Email verification callback (redirects to home on success, shows resend form on error)
     [planner]/
       layout.tsx                  # AppShell with sidebar navbar
       calendar/page.tsx           # Calendar view (WIP)
       recipes/page.tsx            # Saved recipes & bookmarks
     api/auth/[...all]/route.ts    # Better-auth API handler
-  auth.ts         # Server-side Better-auth config
+  auth.ts         # Server-side Better-auth config (exports mongoClient)
   _theme.ts       # Mantine theme
 ```
 
@@ -53,12 +55,23 @@ All models have corresponding Zod schemas for runtime validation.
 
 ## Auth Flow
 
+Two sign-in methods are supported:
+
+**Google (OAuth + one-tap)**
 1. Google one-tap or OAuth via Better-auth
 2. Session checked on home page via `auth.api.getSession()`
 3. First login: create User doc, redirect to planner
 4. Returning user: redirect to existing planner
 
-Environment variables needed: `BETTER_AUTH_SECRET`, `BETTER_AUTH_URL`, `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`, `DB_URL`, `NEXT_PUBLIC_GOOGLE_CLIENT_ID`.
+**Email/password**
+1. User enters email → `checkEmailStatus` server action queries better-auth's `user`/`account` collections to determine state
+2. New user → create password → `client.signUp.email()` → verification email sent via Resend → user clicks link → auto sign-in → redirect to `/verify-email` → redirect to home
+3. Existing user with password → enter password → `client.signIn.email()` → redirect to planner
+4. Existing user (social only, no password) → error shown; password reset flow deferred to Reset Password feature
+
+Better-auth stores its own `user`, `account`, `session`, and `verification` collections in MongoDB (separate from the app's Mongoose `User` model). The native `MongoClient` is exported from `src/auth.ts` for direct DB queries.
+
+Environment variables needed: `BETTER_AUTH_SECRET`, `BETTER_AUTH_URL`, `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`, `DB_URL`, `NEXT_PUBLIC_GOOGLE_CLIENT_ID`, `RESEND_API_KEY`, `RESEND_FROM_EMAIL`.
 
 All env vars are declared and validated at startup via `@t3-oss/env-nextjs` in `src/env.ts`. Import `env` from there instead of accessing `process.env` directly — this provides Zod validation and eliminates non-null assertions.
 
