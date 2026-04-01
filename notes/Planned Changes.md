@@ -1,7 +1,6 @@
 *Note: These should ALWAYS be planned and implemented individually. They are discrete units of work.*
 
 # High-Priority
-- [[fix session length|bug: fix session length]]
 - [[Add Email Sign-In|add email sign-in option]]
 - [[Reset Password|add reset password flow]]
 - [[Add Meal Plan]]

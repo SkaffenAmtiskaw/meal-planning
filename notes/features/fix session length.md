@@ -1,1 +1,0 @@
-The `better-auth` doc says the default session length is 7 days, but I'm getting signed out after ~5 min. Investigate the discrepancy
