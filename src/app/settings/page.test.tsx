@@ -54,12 +54,17 @@ vi.mock('./_components/ChangeEmailForm', () => ({
 	),
 }));
 
+vi.mock('./_components/DeleteAccountForm', () => ({
+	DeleteAccountForm: () => <div data-testid="delete-account-form" />,
+}));
+
 const mockRedirect = vi.fn();
 vi.mock('next/navigation', () => ({
 	redirect: (...args: unknown[]) => mockRedirect(...args),
 }));
 
 vi.mock('@mantine/core', () => ({
+	Box: ({ children }: { children: React.ReactNode }) => <>{children}</>,
 	Container: ({ children }: { children: React.ReactNode }) => <>{children}</>,
 	Title: ({ children }: { children: React.ReactNode }) => <h1>{children}</h1>,
 	Text: ({
@@ -71,6 +76,7 @@ vi.mock('@mantine/core', () => ({
 	}) => <p {...props}>{children}</p>,
 	SimpleGrid: ({ children }: { children: React.ReactNode }) => <>{children}</>,
 	Stack: ({ children }: { children: React.ReactNode }) => <>{children}</>,
+	Divider: () => <hr />,
 }));
 
 const session = { user: { email: 'user@example.com' } };
@@ -144,5 +150,15 @@ describe('SettingsPage', () => {
 		render(await SettingsPage());
 
 		expect(screen.getByTestId('social-only-message')).toBeDefined();
+	});
+
+	test('renders delete account form in Danger Zone section', async () => {
+		mockGetSession.mockResolvedValueOnce(session);
+		mockCheckEmailStatus.mockResolvedValueOnce('has-password');
+		mockGetUser.mockResolvedValueOnce(null);
+
+		render(await SettingsPage());
+
+		expect(screen.getByTestId('delete-account-form')).toBeDefined();
 	});
 });

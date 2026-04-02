@@ -1,8 +1,8 @@
 *Note: These should ALWAYS be planned and implemented individually. They are discrete units of work.*
 
 # High-Priority
-- [[Delete Account|allow user delete account]]
-- fix the create new project page - make the box centered on the screen and don't let the screen scroll (like the sign-in page)
+- [[User Name|add user name]]
+- [[Create New Project Page|fix the create new project page]]
 - [[Add Meal Plan|add meal plan]]
 - [[Render Meals in Month View|render meals in month view]]
 - [[Render Meals in Week View|render meals in week view]]
@@ -10,6 +10,11 @@
 - [[Render Meals in Month Agenda View (Mobile)|render (or verify) meals in month agenda view (mobile)]]
 - edit meals
 - delete meals
+- add planner settings
+- [[Multiple Planners|allow user to have multiple planners (pre-requisite of inviting other users to shared planner)]]
+- allow user to delete a planner
+- allow users to have access levels to a planner - (owner/admin, write, read)
+- [[Shared Planners|allow users to invite other users to a shared planner]]
 # Medium Priority
 - [[Filtering Recipe List|allow filtering in recipe list]]
 - move meals to different days (drag and drop)
@@ -19,10 +24,6 @@
 - update Google one-tap sign in
 - add Apple SSO
 - add passkey sign in
-- allow user to have multiple planners (pre-requisite of inviting other users to shared planner)
-- allow users to invite other users to a shared planner
-- allow users to have access levels to a planner - (owner/admin, write, read)
-- add planner settings
 - tag management - edit/delete (should live under user settings)
 - recipe list style updates
 - add AI instruction to avoid use of `let` - refactor code that uses it unnecessarily

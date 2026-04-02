@@ -1,7 +1,15 @@
 import { headers } from 'next/headers';
 import { redirect } from 'next/navigation';
 
-import { Container, SimpleGrid, Stack, Text, Title } from '@mantine/core';
+import {
+	Box,
+	Container,
+	Divider,
+	SimpleGrid,
+	Stack,
+	Text,
+	Title,
+} from '@mantine/core';
 
 import { checkEmailStatus } from '@/_actions/auth';
 import { getUser } from '@/_actions/user';
@@ -9,6 +17,7 @@ import { auth } from '@/_auth';
 
 import { ChangeEmailForm } from './_components/ChangeEmailForm';
 import { ChangePasswordForm } from './_components/ChangePasswordForm';
+import { DeleteAccountForm } from './_components/DeleteAccountForm';
 
 const SettingsPage = async () => {
 	const session = await auth.api.getSession({ headers: await headers() });
@@ -50,6 +59,20 @@ const SettingsPage = async () => {
 					)}
 				</Stack>
 			</SimpleGrid>
+			<Divider mt="xl" />
+			<Box
+				mt="lg"
+				p="md"
+				style={{
+					border: '1px solid var(--mantine-color-red-6)',
+					borderRadius: 'var(--mantine-radius-md)',
+				}}
+			>
+				<Stack>
+					<Title order={3}>Danger Zone</Title>
+					<DeleteAccountForm />
+				</Stack>
+			</Box>
 		</Container>
 	);
 };
