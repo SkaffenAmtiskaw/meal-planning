@@ -14,6 +14,20 @@ vi.mock('@mantine/core', () => ({
 	MenuDropdown: ({ children }: { children: React.ReactNode }) => (
 		<>{children}</>
 	),
+	MenuItem: ({
+		children,
+		'data-testid': testId,
+		href,
+	}: {
+		children: React.ReactNode;
+		'data-testid'?: string;
+		href?: string;
+	}) => (
+		<a data-testid={testId} href={href}>
+			{children}
+		</a>
+	),
+	MenuDivider: () => <hr />,
 }));
 
 vi.mock('./SignOutButton', () => ({
@@ -29,5 +43,12 @@ describe('UserMenu', () => {
 	test('renders sign-out button', () => {
 		render(<UserMenu />);
 		expect(screen.getByTestId('sign-out-button')).toBeDefined();
+	});
+
+	test('renders settings link pointing to /settings', () => {
+		render(<UserMenu />);
+		const link = screen.getByTestId('settings-link');
+		expect(link).toBeDefined();
+		expect(link.getAttribute('href')).toBe('/settings');
 	});
 });

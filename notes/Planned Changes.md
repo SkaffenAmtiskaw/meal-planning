@@ -1,10 +1,9 @@
 *Note: These should ALWAYS be planned and implemented individually. They are discrete units of work.*
 
 # High-Priority
-- add user settings page
 - [[Reset Password|add reset password flow]]
 - allow user to change their email
-- delete account
+- allow user delete account
 - [[Add Meal Plan|add meal plan]]
 - [[Render Meals in Month View|render meals in month view]]
 - [[Render Meals in Week View|render meals in week view]]
@@ -31,6 +30,7 @@
 - investigate mongo/mongoose caching
 - add images to recipes
 - let user set avatar
+- e2e tests
 - a11y audit
 
 # Low Priority

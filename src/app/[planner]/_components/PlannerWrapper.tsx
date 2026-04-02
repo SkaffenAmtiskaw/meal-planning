@@ -2,12 +2,13 @@
 
 import { useParams } from 'next/navigation';
 
-import { AppShell, Burger, Group } from '@mantine/core';
+import { AppShell, AppShellMain, AppShellNavbar, Burger } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 
-import { Navbar, UserMenu } from '@/_components';
+import { Navbar } from '@/_components';
+import { Header } from '@/app/_components/Header';
 
-import { HEADER_HEIGHT } from '../_constants';
+import { HEADER_HEIGHT } from '../../_constants';
 
 export const PlannerWrapper = ({ children }: { children: React.ReactNode }) => {
 	const [opened, { toggle }] = useDisclosure();
@@ -28,16 +29,11 @@ export const PlannerWrapper = ({ children }: { children: React.ReactNode }) => {
 				width: 300,
 			}}
 		>
-			<AppShell.Header>
-				<Group h="100%" justify="space-between" px="sm">
-					<Burger opened={opened} onClick={toggle} />
-					<UserMenu />
-				</Group>
-			</AppShell.Header>
-			<AppShell.Navbar>
+			<Header leftSection={<Burger opened={opened} onClick={toggle} />} />
+			<AppShellNavbar>
 				<Navbar id={planner as string} />
-			</AppShell.Navbar>
-			<AppShell.Main>{children}</AppShell.Main>
+			</AppShellNavbar>
+			<AppShellMain>{children}</AppShellMain>
 		</AppShell>
 	);
 };

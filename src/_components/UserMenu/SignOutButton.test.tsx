@@ -22,15 +22,22 @@ vi.mock('@mantine/core', () => ({
 		children,
 		onClick,
 		'data-testid': testId,
+		leftSection,
 	}: {
 		children: React.ReactNode;
 		onClick?: () => void;
 		'data-testid'?: string;
+		leftSection?: React.ReactNode;
 	}) => (
 		<button data-testid={testId} onClick={onClick} type="button">
+			{leftSection}
 			{children}
 		</button>
 	),
+}));
+
+vi.mock('@tabler/icons-react', () => ({
+	IconLogout: () => <svg data-testid="logout-icon" />,
 }));
 
 describe('SignOutButton', () => {

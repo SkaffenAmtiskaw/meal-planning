@@ -1,0 +1,2 @@
+- The user needs to be able to reset their password on the user settings page - this should not require email verification - they should just re-enter their current password and enter the new one. **If the user has forgotten the current password, then trigger email verification**
+- The user needs to be able to reset their password via a forgot password link on the login page - this *should* require email verification.

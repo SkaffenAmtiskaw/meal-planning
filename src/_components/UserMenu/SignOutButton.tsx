@@ -3,6 +3,7 @@
 import { useRouter } from 'next/navigation';
 
 import { MenuItem } from '@mantine/core';
+import { IconLogout } from '@tabler/icons-react';
 
 import { client } from '@/_utils/auth';
 
@@ -15,7 +16,11 @@ const SignOutButton = () => {
 	};
 
 	return (
-		<MenuItem data-testid="sign-out-button" onClick={handleSignOut}>
+		<MenuItem
+			data-testid="sign-out-button"
+			leftSection={<IconLogout size={16} />}
+			onClick={handleSignOut}
+		>
 			Log Out
 		</MenuItem>
 	);
