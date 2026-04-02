@@ -2,8 +2,8 @@
 
 import { headers } from 'next/headers';
 
+import { auth } from '@/_auth';
 import { User } from '@/_models';
-import { auth } from '@/auth';
 
 export const getUser = async () => {
 	const session = await auth.api.getSession({

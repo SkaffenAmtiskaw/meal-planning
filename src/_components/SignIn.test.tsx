@@ -91,6 +91,7 @@ describe('sign in', () => {
 			expect(client.signIn.email).toHaveBeenCalledWith({
 				email: 'user@example.com',
 				password: 'mypassword',
+				callbackURL: '/',
 			});
 		});
 	});

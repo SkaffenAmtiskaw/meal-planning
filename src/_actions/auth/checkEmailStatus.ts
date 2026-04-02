@@ -1,6 +1,6 @@
 'use server';
 
-import { mongoClient } from '@/auth';
+import { mongoClient } from '@/_auth';
 
 export type EmailStatus = 'new' | 'has-password' | 'social-only';
 

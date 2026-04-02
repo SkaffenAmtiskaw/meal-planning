@@ -40,7 +40,11 @@ export const SignIn = () => {
 
 	const handleSignIn = async () => {
 		setError(null);
-		const result = await client.signIn.email({ email, password });
+		const result = await client.signIn.email({
+			email,
+			password,
+			callbackURL: '/',
+		});
 		if (result.error) {
 			setError(result.error.message ?? 'Invalid password. Please try again.');
 		}

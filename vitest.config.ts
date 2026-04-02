@@ -22,7 +22,7 @@ export default defineConfig({
           // Mantine theme config
           'src/_theme/*',
           // better-auth config
-          'src/auth.ts',
+          'src/_auth/auth.ts',
           // env variable definitions
           'src/env.ts',
           // next.js instrumentation script

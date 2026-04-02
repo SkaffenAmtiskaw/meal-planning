@@ -1,7 +1,7 @@
 import { afterEach, describe, expect, test, vi } from 'vitest';
 
+import { auth } from '@/_auth';
 import { User } from '@/_models';
-import { auth } from '@/auth';
 
 import { getUser } from './getUser';
 
@@ -9,7 +9,7 @@ vi.mock('next/headers', () => ({
 	headers: vi.fn().mockResolvedValue({}),
 }));
 
-vi.mock('@/auth', () => ({
+vi.mock('@/_auth', () => ({
 	auth: {
 		api: {
 			getSession: vi.fn(),

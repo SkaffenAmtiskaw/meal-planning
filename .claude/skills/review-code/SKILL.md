@@ -22,7 +22,7 @@ Dead Code
 
 Unit Testing
 - changed & added files should have 100% unit test coverage
-- certain files are excluded from test coverage in the vitest.config.ts - these files should NEVER have logic added - logic should be extracted to testable modules
+- certain files are excluded from test coverage in the vitest.config.ts - these files should NEVER have logic added - logic should be extracted to testable modules - check for logic that has been added and should be pulled out
 
 Update Notes
 - check if the changes made are listed in the `notes/Planed Changes.md` document - if so prompt the user to confirm whether it should be removed

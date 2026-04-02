@@ -1,8 +1,11 @@
 *Note: These should ALWAYS be planned and implemented individually. They are discrete units of work.*
 
 # High-Priority
+- add user settings page
 - [[Reset Password|add reset password flow]]
-- [[Add Meal Plan]]
+- allow user to change their email
+- delete account
+- [[Add Meal Plan|add meal plan]]
 - [[Render Meals in Month View|render meals in month view]]
 - [[Render Meals in Week View|render meals in week view]]
 - [[Render Meals in List View|render meals in list view]]
@@ -10,16 +13,14 @@
 - edit meals
 - delete meals
 # Medium Priority
-- close account
 - [[Filtering Recipe List|allow filtering in recipe list]]
-- move meals to different days (drag and drop) & reorder meals within days
+- move meals to different days (drag and drop)
+- reorder meals within days
 - batch delete meals
 - batch delete recipes/bookmarks
 - update Google one-tap sign in
 - add Apple SSO
 - add passkey sign in
-- add user settings
-- allow user to change their email
 - allow user to have multiple planners (pre-requisite of inviting other users to shared planner)
 - allow users to invite other users to a shared planner
 - allow users to have access levels to a planner - (owner/admin, write, read)
@@ -33,6 +34,7 @@
 - a11y audit
 
 # Low Priority
+- email formatting
 - enable dependabot
 - allow notes in recipe/bookmarks to render basic markdown - assess if other fields should too
 - expandable card view in recipe list
@@ -41,6 +43,3 @@
 - confirm if Biome recommended settings are turned on
 - theme colors
 - audit code for client component surface area - move as much as possible to server components
-
-# Before Deploy
-- get a domain and add it to resend - Cloudflare Registrar

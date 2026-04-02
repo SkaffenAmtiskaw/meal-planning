@@ -4,8 +4,8 @@ import { render, screen } from '@testing-library/react';
 
 import { afterEach, describe, expect, test, vi } from 'vitest';
 
+import { auth } from '@/_auth';
 import { User } from '@/_models';
-import { auth } from '@/auth';
 
 import Page from './page';
 
@@ -17,7 +17,7 @@ vi.mock('next/navigation', () => ({
 	redirect: vi.fn(),
 }));
 
-vi.mock('@/auth', () => ({
+vi.mock('@/_auth', () => ({
 	auth: {
 		api: {
 			getSession: vi.fn(),

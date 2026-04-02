@@ -1,8 +1,8 @@
 import { headers } from 'next/headers';
 import { redirect } from 'next/navigation';
 
+import { auth } from '@/_auth';
 import { User } from '@/_models';
-import { auth } from '@/auth';
 
 import { CreatePlannerPrompt } from './_components/CreatePlannerPrompt';
 import { SignInPrompt } from './_components/SignInPrompt';

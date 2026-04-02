@@ -5,7 +5,7 @@ import { checkEmailStatus } from './checkEmailStatus';
 const mockFindOne = vi.fn();
 const mockCollection = vi.fn(() => ({ findOne: mockFindOne }));
 
-vi.mock('@/auth', () => ({
+vi.mock('@/_auth', () => ({
 	mongoClient: {
 		db: vi.fn(() => ({ collection: mockCollection })),
 	},

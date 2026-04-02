@@ -1,2 +1,0 @@
-**Notes**
-- Account linking should be addressed here: if a user tries to sign in with email but only has a social sign-on (no password), they should be able to reset/set a password to link their accounts
