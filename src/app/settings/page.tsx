@@ -16,6 +16,7 @@ import { getUser } from '@/_actions/user';
 import { auth } from '@/_auth';
 
 import { ChangeEmailForm } from './_components/ChangeEmailForm';
+import { ChangeNameForm } from './_components/ChangeNameForm';
 import { ChangePasswordForm } from './_components/ChangePasswordForm';
 import { DeleteAccountForm } from './_components/DeleteAccountForm';
 
@@ -41,6 +42,10 @@ const SettingsPage = async () => {
 		<Container py={8}>
 			<Title>Settings</Title>
 			<SimpleGrid cols={{ base: 1, sm: 2 }} mt="lg">
+				<Stack>
+					<Title order={3}>Profile</Title>
+					<ChangeNameForm currentName={user?.name ?? 'New User'} />
+				</Stack>
 				<Stack>
 					<Title order={3}>Email</Title>
 					<ChangeEmailForm

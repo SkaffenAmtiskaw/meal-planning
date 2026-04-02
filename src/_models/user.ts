@@ -10,6 +10,10 @@ const userSchema = new Schema<UserInterface>({
 		type: String,
 		unique: true,
 	},
+	name: {
+		type: String,
+		default: 'New User',
+	},
 	planners: [
 		{
 			type: SchemaTypes.ObjectId,

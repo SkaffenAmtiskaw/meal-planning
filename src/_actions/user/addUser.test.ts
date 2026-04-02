@@ -22,6 +22,7 @@ const mockPlanner = { _id: mockPlannerId };
 
 const mockUser = {
 	email: 'cruella@deVil.com',
+	name: 'Cruella',
 	planners: [mockPlannerId],
 };
 
@@ -39,6 +40,7 @@ describe('add user', () => {
 		expect(addPlanner).toHaveBeenCalledOnce();
 		expect(User.create).toHaveBeenCalledWith({
 			email: 'cruella@deVil.com',
+			name: 'New User',
 			planners: [mockPlannerId],
 		});
 	});
@@ -52,8 +54,33 @@ describe('add user', () => {
 		expect(addPlanner).not.toHaveBeenCalled();
 		expect(User.create).toHaveBeenCalledWith({
 			email: 'cruella@deVil.com',
+			name: 'New User',
 			planners: [existingPlannerId],
 		});
+	});
+
+	test('should use the provided name when given', async () => {
+		vi.mocked(addPlanner).mockResolvedValue(mockPlanner as never);
+		vi.mocked(User.create).mockResolvedValue(mockUser as never);
+
+		await addUser('cruella@deVil.com', undefined, 'Cruella');
+
+		expect(User.create).toHaveBeenCalledWith({
+			email: 'cruella@deVil.com',
+			name: 'Cruella',
+			planners: [mockPlannerId],
+		});
+	});
+
+	test('should default name to "New User" when not provided', async () => {
+		vi.mocked(addPlanner).mockResolvedValue(mockPlanner as never);
+		vi.mocked(User.create).mockResolvedValue(mockUser as never);
+
+		await addUser('cruella@deVil.com');
+
+		expect(User.create).toHaveBeenCalledWith(
+			expect.objectContaining({ name: 'New User' }),
+		);
 	});
 
 	test('should return the created user', async () => {

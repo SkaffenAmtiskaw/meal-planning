@@ -31,7 +31,11 @@ const Page = async () => {
 		redirect(`${user.planners[0]}/calendar`);
 	}
 
-	const newUser = await addUser(session.user.email);
+	const newUser = await addUser(
+		session.user.email,
+		undefined,
+		session.user.name,
+	);
 	redirect(`${newUser.planners[0]}/calendar`);
 };
 

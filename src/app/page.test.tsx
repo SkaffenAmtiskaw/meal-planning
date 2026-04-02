@@ -43,7 +43,7 @@ vi.mock('./_components/SignInPrompt', () => ({
 }));
 
 const mockSession = {
-	user: { email: 'ariel@sea.com' },
+	user: { email: 'ariel@sea.com', name: 'Ariel' },
 };
 
 describe('page', () => {
@@ -81,7 +81,7 @@ describe('page', () => {
 
 		await expect(Page()).rejects.toThrow('NEXT_REDIRECT');
 
-		expect(addUser).toHaveBeenCalledWith('ariel@sea.com');
+		expect(addUser).toHaveBeenCalledWith('ariel@sea.com', undefined, 'Ariel');
 		expect(redirect).toHaveBeenCalledWith('new-planner-456/calendar');
 	});
 });

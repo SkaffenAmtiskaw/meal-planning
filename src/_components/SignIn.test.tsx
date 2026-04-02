@@ -145,7 +145,7 @@ describe('sign in', () => {
 		});
 	});
 
-	test('continue shows create password field for new user', async () => {
+	test('continue shows create password and name fields for new user', async () => {
 		vi.mocked(checkEmailStatus).mockResolvedValueOnce('new');
 
 		render(<SignIn />, { wrapper });
@@ -157,11 +157,47 @@ describe('sign in', () => {
 
 		await waitFor(() => {
 			expect(screen.getByTestId('sign-up-button')).toBeDefined();
+			expect(screen.getByTestId('name-input')).toBeDefined();
 			expect(screen.getByTestId('password-input')).toBeDefined();
 		});
 	});
 
-	test('sign up calls client.signUp.email and shows email-sent state', async () => {
+	test('sign up with a name passes the entered name', async () => {
+		vi.mocked(checkEmailStatus).mockResolvedValueOnce('new');
+		vi.mocked(client.signUp.email).mockResolvedValueOnce({
+			data: null,
+			error: null,
+		});
+
+		render(<SignIn />, { wrapper });
+
+		fireEvent.change(screen.getByTestId('email-input'), {
+			target: { value: 'new@example.com' },
+		});
+		fireEvent.click(screen.getByTestId('continue-button'));
+
+		await waitFor(() => screen.getByTestId('name-input'));
+
+		fireEvent.change(screen.getByTestId('name-input'), {
+			target: { value: 'Ariel' },
+		});
+		fireEvent.change(screen.getByTestId('password-input'), {
+			target: { value: 'newpassword' },
+		});
+		fireEvent.click(screen.getByTestId('sign-up-button'));
+
+		await waitFor(() => {
+			expect(client.signUp.email).toHaveBeenCalledWith({
+				email: 'new@example.com',
+				password: 'newpassword',
+				name: 'Ariel',
+				callbackURL: '/verify-email',
+			});
+			expect(screen.getByTestId('email-sent-alert')).toBeDefined();
+		});
+	});
+
+	test('sign up without a name defaults to "New User"', async () => {
 		vi.mocked(checkEmailStatus).mockResolvedValueOnce('new');
 		vi.mocked(client.signUp.email).mockResolvedValueOnce({
 			data: null,
@@ -186,11 +222,66 @@ describe('sign in', () => {
 			expect(client.signUp.email).toHaveBeenCalledWith({
 				email: 'new@example.com',
 				password: 'newpassword',
-				name: 'new@example.com',
+				name: 'New User',
 				callbackURL: '/verify-email',
 			});
-			expect(screen.getByTestId('email-sent-alert')).toBeDefined();
 		});
+	});
+
+	test('sign up with whitespace-only name defaults to "New User"', async () => {
+		vi.mocked(checkEmailStatus).mockResolvedValueOnce('new');
+		vi.mocked(client.signUp.email).mockResolvedValueOnce({
+			data: null,
+			error: null,
+		});
+
+		render(<SignIn />, { wrapper });
+
+		fireEvent.change(screen.getByTestId('email-input'), {
+			target: { value: 'new@example.com' },
+		});
+		fireEvent.click(screen.getByTestId('continue-button'));
+
+		await waitFor(() => screen.getByTestId('name-input'));
+
+		fireEvent.change(screen.getByTestId('name-input'), {
+			target: { value: '   ' },
+		});
+		fireEvent.change(screen.getByTestId('password-input'), {
+			target: { value: 'newpassword' },
+		});
+		fireEvent.click(screen.getByTestId('sign-up-button'));
+
+		await waitFor(() => {
+			expect(client.signUp.email).toHaveBeenCalledWith(
+				expect.objectContaining({ name: 'New User' }),
+			);
+		});
+	});
+
+	test('sign up with invalid name shows error and does not call signUp', async () => {
+		vi.mocked(checkEmailStatus).mockResolvedValueOnce('new');
+
+		render(<SignIn />, { wrapper });
+
+		fireEvent.change(screen.getByTestId('email-input'), {
+			target: { value: 'new@example.com' },
+		});
+		fireEvent.click(screen.getByTestId('continue-button'));
+
+		await waitFor(() => screen.getByTestId('name-input'));
+
+		fireEvent.change(screen.getByTestId('name-input'), {
+			target: { value: '$evil' },
+		});
+		fireEvent.click(screen.getByTestId('sign-up-button'));
+
+		await waitFor(() => {
+			expect(screen.getByTestId('error-alert').textContent).toContain(
+				'Contains invalid characters',
+			);
+		});
+		expect(client.signUp.email).not.toHaveBeenCalled();
 	});
 
 	test('sign up error shows error alert', async () => {

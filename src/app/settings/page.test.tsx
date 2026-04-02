@@ -54,6 +54,12 @@ vi.mock('./_components/ChangeEmailForm', () => ({
 	),
 }));
 
+vi.mock('./_components/ChangeNameForm', () => ({
+	ChangeNameForm: ({ currentName }: { currentName: string }) => (
+		<div data-testid="change-name-form" data-name={currentName} />
+	),
+}));
+
 vi.mock('./_components/DeleteAccountForm', () => ({
 	DeleteAccountForm: () => <div data-testid="delete-account-form" />,
 }));
@@ -89,6 +95,31 @@ describe('SettingsPage', () => {
 		await SettingsPage();
 
 		expect(mockRedirect).toHaveBeenCalledWith('/');
+	});
+
+	test('renders change name form with user name', async () => {
+		mockGetSession.mockResolvedValueOnce(session);
+		mockCheckEmailStatus.mockResolvedValueOnce('has-password');
+		mockGetUser.mockResolvedValueOnce({
+			name: 'Ariel',
+			pendingEmailChange: null,
+		});
+
+		render(await SettingsPage());
+
+		const form = screen.getByTestId('change-name-form');
+		expect(form.getAttribute('data-name')).toBe('Ariel');
+	});
+
+	test('renders change name form with "New User" when user is null', async () => {
+		mockGetSession.mockResolvedValueOnce(session);
+		mockCheckEmailStatus.mockResolvedValueOnce('has-password');
+		mockGetUser.mockResolvedValueOnce(null);
+
+		render(await SettingsPage());
+
+		const form = screen.getByTestId('change-name-form');
+		expect(form.getAttribute('data-name')).toBe('New User');
 	});
 
 	test('renders change email form with current email', async () => {

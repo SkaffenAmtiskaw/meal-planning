@@ -1,9 +1,12 @@
 import { z } from 'zod';
 
+import { zSafeString } from '@/_utils/zSafeString';
+
 import { zObjectId } from './utils/zObjectId';
 
 export const zUserInterface = z.object({
 	email: z.string(),
+	name: zSafeString().default('New User'),
 	planners: z.array(zObjectId),
 	pendingEmailChange: z
 		.object({

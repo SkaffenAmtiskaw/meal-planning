@@ -1,7 +1,8 @@
 *Note: These should ALWAYS be planned and implemented individually. They are discrete units of work.*
 
+**AI Instructions** - DO NOT delete this file. You may remove lines, but under no circumstances may you delete the file.
+
 # High-Priority
-- [[User Name|add user name]]
 - [[Add Meal Plan|add meal plan]]
 - [[Render Meals in Month View|render meals in month view]]
 - [[Render Meals in Week View|render meals in week view]]
@@ -14,6 +15,7 @@
 - allow user to delete a planner
 - [[Planner Access Levels|allow users to have access levels to a planner - (owner/admin, write, read)]]
 - [[Shared Planners|allow users to invite other users to a shared planner]]
+- string validation on inputs
 # Medium Priority
 - [[Filtering Recipe List|allow filtering in recipe list]]
 - move meals to different days (drag and drop)
@@ -44,4 +46,4 @@
 - audit code for client component surface area - move as much as possible to server components
 
 # Undecided
-[[Link SSO Login to Email|Link SSO to Email Login]]
+- [[Link SSO Login to Email|Link SSO to Email Login]]

@@ -15,6 +15,7 @@ import { IconBrandGoogleFilled } from '@tabler/icons-react';
 
 import { checkEmailStatus } from '@/_actions/auth';
 import { client } from '@/_utils/auth';
+import { zSafeString } from '@/_utils/zSafeString';
 
 type Step =
 	| { type: 'idle' }
@@ -27,6 +28,7 @@ type Step =
 export const SignIn = () => {
 	const [email, setEmail] = useState('');
 	const [password, setPassword] = useState('');
+	const [name, setName] = useState('');
 	const [step, setStep] = useState<Step>({ type: 'idle' });
 	const [error, setError] = useState<string | null>(null);
 
@@ -53,10 +55,18 @@ export const SignIn = () => {
 
 	const handleSignUp = async () => {
 		setError(null);
+		const trimmedName = name.trim();
+		if (trimmedName) {
+			const parsed = zSafeString().safeParse(trimmedName);
+			if (!parsed.success) {
+				setError(parsed.error.issues[0].message);
+				return;
+			}
+		}
 		const result = await client.signUp.email({
 			email,
 			password,
-			name: email,
+			name: trimmedName || 'New User',
 			callbackURL: '/verify-email',
 		});
 		if (result.error) {
@@ -77,6 +87,7 @@ export const SignIn = () => {
 	const resetToIdle = () => {
 		setStep({ type: 'idle' });
 		setPassword('');
+		setName('');
 		setError(null);
 	};
 
@@ -160,6 +171,13 @@ export const SignIn = () => {
 					>
 						Change email
 					</Button>
+					<TextInput
+						data-testid="name-input"
+						label="Your name"
+						placeholder="New User"
+						value={name}
+						onChange={(e) => setName(e.currentTarget.value)}
+					/>
 					<PasswordInput
 						data-testid="password-input"
 						label="Create a password"
