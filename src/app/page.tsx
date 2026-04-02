@@ -1,10 +1,10 @@
 import { headers } from 'next/headers';
 import { redirect } from 'next/navigation';
 
+import { addUser } from '@/_actions';
 import { auth } from '@/_auth';
 import { User } from '@/_models';
 
-import { CreatePlannerPrompt } from './_components/CreatePlannerPrompt';
 import { SignInPrompt } from './_components/SignInPrompt';
 
 const Page = async () => {
@@ -12,7 +12,7 @@ const Page = async () => {
 	 * 1. If the user is not signed in, make them sign in.
 	 * 2. If the user has a query param of "invite", add that meal plan to their user.
 	 * 3. If the user is signed in, check if they have an existing meal plan. If so, redirect them to /planner.
-	 * 4. If the user is signed in but does not have an existing meal plan, prompt them to create one.
+	 * 4. If the user is signed in but does not have an existing meal plan, create one and redirect.
 	 */
 
 	const session = await auth.api.getSession({
@@ -31,8 +31,8 @@ const Page = async () => {
 		redirect(`${user.planners[0]}/calendar`);
 	}
 
-	// TODO: This needs to be centered in the page.
-	return <CreatePlannerPrompt email={session.user.email} />;
+	const newUser = await addUser(session.user.email);
+	redirect(`${newUser.planners[0]}/calendar`);
 };
 
 export default Page;

@@ -2,7 +2,6 @@
 
 # High-Priority
 - [[User Name|add user name]]
-- [[Create New Project Page|fix the create new project page]]
 - [[Add Meal Plan|add meal plan]]
 - [[Render Meals in Month View|render meals in month view]]
 - [[Render Meals in Week View|render meals in week view]]
@@ -13,7 +12,7 @@
 - add planner settings
 - [[Multiple Planners|allow user to have multiple planners (pre-requisite of inviting other users to shared planner)]]
 - allow user to delete a planner
-- allow users to have access levels to a planner - (owner/admin, write, read)
+- [[Planner Access Levels|allow users to have access levels to a planner - (owner/admin, write, read)]]
 - [[Shared Planners|allow users to invite other users to a shared planner]]
 # Medium Priority
 - [[Filtering Recipe List|allow filtering in recipe list]]
@@ -43,3 +42,6 @@
 - confirm if Biome recommended settings are turned on
 - theme colors
 - audit code for client component surface area - move as much as possible to server components
+
+# Undecided
+[[Link SSO Login to Email|Link SSO to Email Login]]

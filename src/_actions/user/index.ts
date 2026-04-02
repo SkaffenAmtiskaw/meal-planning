@@ -1,5 +1,4 @@
 export * from './addUser';
-export * from './createUser';
 export * from './deleteAccount';
 export * from './getUser';
 export * from './requestEmailChange';

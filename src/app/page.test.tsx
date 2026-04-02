@@ -4,6 +4,7 @@ import { render, screen } from '@testing-library/react';
 
 import { afterEach, describe, expect, test, vi } from 'vitest';
 
+import { addUser } from '@/_actions';
 import { auth } from '@/_auth';
 import { User } from '@/_models';
 
@@ -14,7 +15,9 @@ vi.mock('next/headers', () => ({
 }));
 
 vi.mock('next/navigation', () => ({
-	redirect: vi.fn(),
+	redirect: vi.fn().mockImplementation(() => {
+		throw new Error('NEXT_REDIRECT');
+	}),
 }));
 
 vi.mock('@/_auth', () => ({
@@ -31,9 +34,8 @@ vi.mock('@/_models', () => ({
 	},
 }));
 
-const mockCreatePlannerPrompt = vi.fn((_props: unknown) => null);
-vi.mock('./_components/CreatePlannerPrompt', () => ({
-	CreatePlannerPrompt: (props: unknown) => mockCreatePlannerPrompt(props),
+vi.mock('@/_actions', () => ({
+	addUser: vi.fn(),
 }));
 
 vi.mock('./_components/SignInPrompt', () => ({
@@ -46,7 +48,7 @@ const mockSession = {
 
 describe('page', () => {
 	afterEach(() => {
-		vi.resetAllMocks();
+		vi.clearAllMocks();
 	});
 
 	test('renders sign in prompt when there is no session', async () => {
@@ -63,21 +65,23 @@ describe('page', () => {
 			exec: vi.fn().mockResolvedValue({ planners: ['planner-123'] }),
 		} as never);
 
-		await Page();
+		await expect(Page()).rejects.toThrow('NEXT_REDIRECT');
 
 		expect(redirect).toHaveBeenCalledWith('planner-123/calendar');
 	});
 
-	test('renders create planner prompt with email when user does not exist', async () => {
+	test('creates a new user and redirects when no user exists', async () => {
 		vi.mocked(auth.api.getSession).mockResolvedValue(mockSession as never);
 		vi.mocked(User.findOne).mockReturnValue({
 			exec: vi.fn().mockResolvedValue(null),
 		} as never);
+		vi.mocked(addUser).mockResolvedValue({
+			planners: ['new-planner-456'],
+		} as never);
 
-		render(await Page());
+		await expect(Page()).rejects.toThrow('NEXT_REDIRECT');
 
-		expect(mockCreatePlannerPrompt).toHaveBeenCalledWith(
-			expect.objectContaining({ email: 'ariel@sea.com' }),
-		);
+		expect(addUser).toHaveBeenCalledWith('ariel@sea.com');
+		expect(redirect).toHaveBeenCalledWith('new-planner-456/calendar');
 	});
 });
