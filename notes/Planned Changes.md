@@ -1,7 +1,6 @@
 *Note: These should ALWAYS be planned and implemented individually. They are discrete units of work.*
 
 # High-Priority
-- [[Reset Password|add reset password flow]]
 - allow user to change their email
 - allow user delete account
 - [[Add Meal Plan|add meal plan]]

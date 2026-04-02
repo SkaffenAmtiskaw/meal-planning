@@ -21,7 +21,8 @@ type Step =
 	| { type: 'new'; email: string }
 	| { type: 'has-password'; email: string }
 	| { type: 'social-only'; email: string }
-	| { type: 'email-sent'; email: string };
+	| { type: 'email-sent'; email: string }
+	| { type: 'forgot-password-sent'; email: string };
 
 export const SignIn = () => {
 	const [email, setEmail] = useState('');
@@ -65,6 +66,12 @@ export const SignIn = () => {
 		} else {
 			setStep({ type: 'email-sent', email });
 		}
+	};
+
+	const handleForgotPassword = async (email: string) => {
+		setError(null);
+		await client.requestPasswordReset({ email, redirectTo: '/reset-password' });
+		setStep({ type: 'forgot-password-sent', email });
 	};
 
 	const resetToIdle = () => {
@@ -129,6 +136,14 @@ export const SignIn = () => {
 					<Button data-testid="sign-in-button" onClick={handleSignIn}>
 						Sign In
 					</Button>
+					<Button
+						variant="subtle"
+						size="xs"
+						data-testid="forgot-password-button"
+						onClick={() => handleForgotPassword(step.email)}
+					>
+						Forgot password?
+					</Button>
 				</>
 			)}
 
@@ -177,12 +192,26 @@ export const SignIn = () => {
 						This email is linked to a Google account. Use Google sign-in or
 						reset your password.
 					</Alert>
+					<Button
+						variant="subtle"
+						size="xs"
+						data-testid="forgot-password-button"
+						onClick={() => handleForgotPassword(step.email)}
+					>
+						Forgot password?
+					</Button>
 				</>
 			)}
 
 			{step.type === 'email-sent' && (
 				<Alert color="green" data-testid="email-sent-alert">
 					Check your inbox — we sent a verification link to {step.email}.
+				</Alert>
+			)}
+
+			{step.type === 'forgot-password-sent' && (
+				<Alert color="green" data-testid="forgot-password-sent-alert">
+					Check your inbox — we sent a password reset link to {step.email}.
 				</Alert>
 			)}
 		</Stack>

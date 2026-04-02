@@ -21,6 +21,7 @@ vi.mock('@/_utils/auth', () => ({
 		signUp: {
 			email: vi.fn(),
 		},
+		requestPasswordReset: vi.fn(),
 	},
 }));
 
@@ -289,5 +290,89 @@ describe('sign in', () => {
 
 		expect(screen.getByTestId('email-input')).toBeDefined();
 		expect(screen.getByTestId('continue-button')).toBeDefined();
+	});
+
+	test('forgot password button shown in has-password step', async () => {
+		vi.mocked(checkEmailStatus).mockResolvedValueOnce('has-password');
+
+		render(<SignIn />, { wrapper });
+
+		fireEvent.change(screen.getByTestId('email-input'), {
+			target: { value: 'user@example.com' },
+		});
+		fireEvent.click(screen.getByTestId('continue-button'));
+
+		await waitFor(() => {
+			expect(screen.getByTestId('forgot-password-button')).toBeDefined();
+		});
+	});
+
+	test('clicking forgot password in has-password step sends reset email and shows confirmation', async () => {
+		vi.mocked(checkEmailStatus).mockResolvedValueOnce('has-password');
+		vi.mocked(client.requestPasswordReset).mockResolvedValueOnce({
+			data: null,
+			error: null,
+		});
+
+		render(<SignIn />, { wrapper });
+
+		fireEvent.change(screen.getByTestId('email-input'), {
+			target: { value: 'user@example.com' },
+		});
+		fireEvent.click(screen.getByTestId('continue-button'));
+
+		await waitFor(() => screen.getByTestId('forgot-password-button'));
+
+		fireEvent.click(screen.getByTestId('forgot-password-button'));
+
+		await waitFor(() => {
+			expect(client.requestPasswordReset).toHaveBeenCalledWith({
+				email: 'user@example.com',
+				redirectTo: '/reset-password',
+			});
+			expect(screen.getByTestId('forgot-password-sent-alert')).toBeDefined();
+		});
+	});
+
+	test('forgot password button shown in social-only step', async () => {
+		vi.mocked(checkEmailStatus).mockResolvedValueOnce('social-only');
+
+		render(<SignIn />, { wrapper });
+
+		fireEvent.change(screen.getByTestId('email-input'), {
+			target: { value: 'google@example.com' },
+		});
+		fireEvent.click(screen.getByTestId('continue-button'));
+
+		await waitFor(() => {
+			expect(screen.getByTestId('forgot-password-button')).toBeDefined();
+		});
+	});
+
+	test('clicking forgot password in social-only step sends reset email and shows confirmation', async () => {
+		vi.mocked(checkEmailStatus).mockResolvedValueOnce('social-only');
+		vi.mocked(client.requestPasswordReset).mockResolvedValueOnce({
+			data: null,
+			error: null,
+		});
+
+		render(<SignIn />, { wrapper });
+
+		fireEvent.change(screen.getByTestId('email-input'), {
+			target: { value: 'google@example.com' },
+		});
+		fireEvent.click(screen.getByTestId('continue-button'));
+
+		await waitFor(() => screen.getByTestId('forgot-password-button'));
+
+		fireEvent.click(screen.getByTestId('forgot-password-button'));
+
+		await waitFor(() => {
+			expect(client.requestPasswordReset).toHaveBeenCalledWith({
+				email: 'google@example.com',
+				redirectTo: '/reset-password',
+			});
+			expect(screen.getByTestId('forgot-password-sent-alert')).toBeDefined();
+		});
 	});
 });

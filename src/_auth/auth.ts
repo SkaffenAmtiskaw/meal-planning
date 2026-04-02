@@ -5,7 +5,7 @@ import { MongoClient } from 'mongodb';
 
 import { env } from '@/env';
 
-import { sendVerificationEmail } from './emails';
+import { sendResetPasswordEmail, sendVerificationEmail } from './emails';
 
 export const mongoClient = new MongoClient(env.DB_URL);
 
@@ -28,6 +28,7 @@ export const auth = betterAuth({
 	emailAndPassword: {
 		enabled: true,
 		requireEmailVerification: true,
+		sendResetPassword: sendResetPasswordEmail,
 	},
 	emailVerification: {
 		sendOnSignUp: true,
