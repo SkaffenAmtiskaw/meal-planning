@@ -1,8 +1,8 @@
 *Note: These should ALWAYS be planned and implemented individually. They are discrete units of work.*
 
 # High-Priority
-- allow user to change their email
-- allow user delete account
+- [[Delete Account|allow user delete account]]
+- fix the create new project page - make the box centered on the screen and don't let the screen scroll (like the sign-in page)
 - [[Add Meal Plan|add meal plan]]
 - [[Render Meals in Month View|render meals in month view]]
 - [[Render Meals in Week View|render meals in week view]]

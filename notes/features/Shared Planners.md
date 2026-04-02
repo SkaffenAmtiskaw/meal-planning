@@ -1,0 +1,1 @@
+As part of this story, we need to confirm what happens to shared planners when a user deletes their account

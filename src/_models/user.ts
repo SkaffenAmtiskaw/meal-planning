@@ -17,6 +17,11 @@ const userSchema = new Schema<UserInterface>({
 			required: true,
 		},
 	],
+	pendingEmailChange: {
+		email: { type: String },
+		token: { type: String },
+		expiresAt: { type: Date },
+	},
 });
 
 export const User: Model<UserInterface> =
