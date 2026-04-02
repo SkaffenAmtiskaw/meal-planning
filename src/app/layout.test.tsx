@@ -25,7 +25,7 @@ vi.mock('@/_theme', () => ({
 
 describe('root layout', () => {
 	test('has correct page title in metadata', () => {
-		expect(metadata.title).toBe('Meal Planer');
+		expect(metadata.title).toBe('Meal Meal Planner');
 	});
 
 	test('renders children', () => {
