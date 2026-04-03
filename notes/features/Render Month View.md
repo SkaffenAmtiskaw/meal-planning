@@ -1,0 +1,4 @@
+- the `schedule-x` grid cells need to have a minimum height - if there are no events (meals) they render only the number of the date
+- meals should be display in the month view as the title + description only - when the user clicks a meal it should bring up a modal with the details
+- if a description or title is too long display `...` - the user can see the full title/description when clicking the modal
+- when the user adds a new meal (in the current month) the calendar should update to display it

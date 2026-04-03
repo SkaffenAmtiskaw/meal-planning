@@ -1,0 +1,4 @@
+- we need to remove the schedule-x week view and create a custom view called "week" - the schedule-x week view displays events by time - meals don't have times on them
+- the view should have a column for each day in the week
+- each column should display the meals with all details listed (name, description, dish name - linking to source/recipe if one is provided)
+- users should be able to click a meal to pull up a modal with the full details (so they can view) notes on a dish

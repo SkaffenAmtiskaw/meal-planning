@@ -3,11 +3,12 @@
 **AI Instructions** - DO NOT delete this file. You may remove lines, but under no circumstances may you delete the file.
 
 # High-Priority
-- [[Add Meal Plan|add meal plan]]
-- [[Render Meals in Month View|render meals in month view]]
-- [[Render Meals in Week View|render meals in week view]]
-- [[Render Meals in List View|render meals in list view]]
-- [[Render Meals in Month Agenda View (Mobile)|render (or verify) meals in month agenda view (mobile)]]
+- [[Render Month View|render month view]]
+- [[Render Week View|render week view]]
+- [[Render List View|render list view]]
+- [[Render Month Agenda View (Mobile)|render (or verify) meals in month agenda view (mobile)]]
+- add meals by clicking month cell
+- add meals by clicking week day
 - edit meals
 - delete meals
 - add planner settings

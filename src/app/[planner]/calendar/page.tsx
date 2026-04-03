@@ -1,45 +1,24 @@
-'use client';
+import { z } from 'zod';
 
-import {
-	createViewList,
-	createViewMonthAgenda,
-	createViewMonthGrid,
-	createViewWeek,
-} from '@schedule-x/calendar';
-import { createEventsServicePlugin } from '@schedule-x/events-service';
-import { ScheduleXCalendar, useNextCalendarApp } from '@schedule-x/react';
-import 'temporal-polyfill/global';
-import '@schedule-x/theme-default/dist/index.css';
+import { getPlanner } from '@/_actions';
+import { zObjectId } from '@/_models';
 
-import { useState } from 'react';
+import { CalendarView } from './_components/CalendarView';
 
-/* v8 ignore start */
-const CalendarPage = () => {
-	const eventsService = useState(() => createEventsServicePlugin())[0];
+const zParams = z.object({
+	planner: zObjectId,
+});
 
-	const calendar = useNextCalendarApp({
-		views: [
-			createViewList(),
-			createViewWeek(),
-			createViewMonthGrid(),
-			createViewMonthAgenda(),
-		],
-		events: [],
-		plugins: [eventsService],
-		callbacks: {
-			onRender: () => {
-				// get all events
-				eventsService.getAll();
-			},
-		},
-	});
+const CalendarPage = async ({ params }: PageProps<'/[planner]/calendar'>) => {
+	const { planner: id } = zParams.parse(await params);
+	const planner = await getPlanner(id);
 
-	return (
-		<div>
-			<ScheduleXCalendar calendarApp={calendar} />
-		</div>
-	);
+	const savedItems = planner.saved.map((item) => ({
+		_id: String(item._id),
+		name: item.name,
+	}));
+
+	return <CalendarView plannerId={String(id)} savedItems={savedItems} />;
 };
 
 export default CalendarPage;
-/* v8 ignore stop */
