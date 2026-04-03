@@ -8,7 +8,7 @@ import { OneTapSignInWrapper } from '@/_components';
 import { theme } from '@/_theme';
 
 export const metadata = {
-	title: 'Meal Meal Planner',
+	title: 'Meal Planner',
 };
 
 export default function RootLayout({ children }: { children: ReactNode }) {
