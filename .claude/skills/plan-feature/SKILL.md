@@ -14,6 +14,7 @@ description: plan a feature — trigger when asked to "plan [feature]", "create 
 ## 2. Scope Definition
 - Define the scope of the story
 - If the scope of the requested feature is unclear, prompt the user for clarification before planning
+- If any unresolved choices are noted in the notes prompt the user for a decision - provide an opinion or pros/cons if appropriate
 - You MUST ask the user for confirmation of scope BEFORE proceeding further
 - Write the scope to the note
 

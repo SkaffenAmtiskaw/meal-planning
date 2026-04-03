@@ -14,6 +14,7 @@ import {
 import { IconBrandGoogleFilled } from '@tabler/icons-react';
 
 import { checkEmailStatus } from '@/_actions/auth';
+import { useAsyncButton } from '@/_hooks';
 import { client } from '@/_utils/auth';
 import { zSafeString } from '@/_utils/zSafeString';
 
@@ -30,65 +31,79 @@ export const SignIn = () => {
 	const [password, setPassword] = useState('');
 	const [name, setName] = useState('');
 	const [step, setStep] = useState<Step>({ type: 'idle' });
-	const [error, setError] = useState<string | null>(null);
+	const continueBtn = useAsyncButton();
+	const googleBtn = useAsyncButton();
+	const signInBtn = useAsyncButton();
+	const signUpBtn = useAsyncButton();
+	const forgotPasswordBtn = useAsyncButton();
 
-	const signInWithGoogle = async () =>
-		await client.signIn.social({ provider: 'google' });
-
-	const handleContinue = async () => {
-		setError(null);
-		const status = await checkEmailStatus(email);
-		setStep({ type: status, email });
-	};
-
-	const handleSignIn = async () => {
-		setError(null);
-		const result = await client.signIn.email({
-			email,
-			password,
-			callbackURL: '/',
+	const signInWithGoogle = () =>
+		googleBtn.run(async () => {
+			await client.signIn.social({ provider: 'google' });
 		});
-		if (result.error) {
-			setError(result.error.message ?? 'Invalid password. Please try again.');
-		}
-	};
 
-	const handleSignUp = async () => {
-		setError(null);
-		const trimmedName = name.trim();
-		if (trimmedName) {
-			const parsed = zSafeString().safeParse(trimmedName);
-			if (!parsed.success) {
-				setError(parsed.error.issues[0].message);
-				return;
+	const handleContinue = () =>
+		continueBtn.run(async () => {
+			const status = await checkEmailStatus(email);
+			setStep({ type: status, email });
+		});
+
+	const handleSignIn = () =>
+		signInBtn.run(async () => {
+			const result = await client.signIn.email({
+				email,
+				password,
+				callbackURL: '/',
+			});
+			if (result.error) {
+				throw new Error(
+					result.error.message ?? 'Invalid password. Please try again.',
+				);
 			}
-		}
-		const result = await client.signUp.email({
-			email,
-			password,
-			name: trimmedName || 'New User',
-			callbackURL: '/verify-email',
 		});
-		if (result.error) {
-			setError(
-				result.error.message ?? 'Could not create account. Please try again.',
-			);
-		} else {
-			setStep({ type: 'email-sent', email });
-		}
-	};
 
-	const handleForgotPassword = async (email: string) => {
-		setError(null);
-		await client.requestPasswordReset({ email, redirectTo: '/reset-password' });
-		setStep({ type: 'forgot-password-sent', email });
-	};
+	const handleSignUp = () =>
+		signUpBtn.run(async () => {
+			const trimmedName = name.trim();
+			if (trimmedName) {
+				const parsed = zSafeString().safeParse(trimmedName);
+				if (!parsed.success) {
+					throw new Error(parsed.error.issues[0].message);
+				}
+			}
+			const result = await client.signUp.email({
+				email,
+				password,
+				name: trimmedName || 'New User',
+				callbackURL: '/verify-email',
+			});
+			if (result.error) {
+				throw new Error(
+					result.error.message ?? 'Could not create account. Please try again.',
+				);
+			}
+			setStep({ type: 'email-sent', email });
+		});
+
+	const handleForgotPassword = (email: string) =>
+		forgotPasswordBtn.run(async () => {
+			const result = await client.requestPasswordReset({
+				email,
+				redirectTo: '/reset-password',
+			});
+			if (result.error) {
+				throw new Error(
+					result.error.message ??
+						'Could not send reset email. Please try again.',
+				);
+			}
+			setStep({ type: 'forgot-password-sent', email });
+		});
 
 	const resetToIdle = () => {
 		setStep({ type: 'idle' });
 		setPassword('');
 		setName('');
-		setError(null);
 	};
 
 	return (
@@ -96,6 +111,7 @@ export const SignIn = () => {
 			<Button
 				data-testid="google-sign-in-button"
 				leftSection={<IconBrandGoogleFilled />}
+				loading={googleBtn.loading}
 				onClick={signInWithGoogle}
 			>
 				Sign In with Google
@@ -113,7 +129,16 @@ export const SignIn = () => {
 						value={email}
 						onChange={(e) => setEmail(e.currentTarget.value)}
 					/>
-					<Button data-testid="continue-button" onClick={handleContinue}>
+					{continueBtn.error && (
+						<Alert color="red" data-testid="continue-error-alert">
+							{continueBtn.error}
+						</Alert>
+					)}
+					<Button
+						data-testid="continue-button"
+						loading={continueBtn.loading}
+						onClick={handleContinue}
+					>
 						Continue
 					</Button>
 				</>
@@ -139,18 +164,28 @@ export const SignIn = () => {
 						value={password}
 						onChange={(e) => setPassword(e.currentTarget.value)}
 					/>
-					{error && (
+					{signInBtn.error && (
 						<Alert color="red" data-testid="error-alert">
-							{error}
+							{signInBtn.error}
 						</Alert>
 					)}
-					<Button data-testid="sign-in-button" onClick={handleSignIn}>
+					<Button
+						data-testid="sign-in-button"
+						loading={signInBtn.loading}
+						onClick={handleSignIn}
+					>
 						Sign In
 					</Button>
+					{forgotPasswordBtn.error && (
+						<Alert color="red" data-testid="forgot-password-error-alert">
+							{forgotPasswordBtn.error}
+						</Alert>
+					)}
 					<Button
 						variant="subtle"
 						size="xs"
 						data-testid="forgot-password-button"
+						loading={forgotPasswordBtn.loading}
 						onClick={() => handleForgotPassword(step.email)}
 					>
 						Forgot password?
@@ -173,7 +208,7 @@ export const SignIn = () => {
 					</Button>
 					<TextInput
 						data-testid="name-input"
-						label="Your name"
+						label="User Name"
 						placeholder="New User"
 						value={name}
 						onChange={(e) => setName(e.currentTarget.value)}
@@ -185,12 +220,16 @@ export const SignIn = () => {
 						value={password}
 						onChange={(e) => setPassword(e.currentTarget.value)}
 					/>
-					{error && (
+					{signUpBtn.error && (
 						<Alert color="red" data-testid="error-alert">
-							{error}
+							{signUpBtn.error}
 						</Alert>
 					)}
-					<Button data-testid="sign-up-button" onClick={handleSignUp}>
+					<Button
+						data-testid="sign-up-button"
+						loading={signUpBtn.loading}
+						onClick={handleSignUp}
+					>
 						Create Account
 					</Button>
 				</>
@@ -210,10 +249,16 @@ export const SignIn = () => {
 						This email is linked to a Google account. Use Google sign-in or
 						reset your password.
 					</Alert>
+					{forgotPasswordBtn.error && (
+						<Alert color="red" data-testid="forgot-password-error-alert">
+							{forgotPasswordBtn.error}
+						</Alert>
+					)}
 					<Button
 						variant="subtle"
 						size="xs"
 						data-testid="forgot-password-button"
+						loading={forgotPasswordBtn.loading}
 						onClick={() => handleForgotPassword(step.email)}
 					>
 						Forgot password?
