@@ -3,6 +3,7 @@
 **AI Instructions** - DO NOT delete this file. You may remove lines, but under no circumstances may you delete the file.
 
 # High-Priority
+- [[Login Form Refinement|login refinement]]
 - [[Render Month View|render month view]]
 - [[Render Week View|render week view]]
 - [[Render List View|render list view]]
