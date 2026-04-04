@@ -2,6 +2,12 @@
 	"files": {
 		"includes": ["src/**/*"]
 	},
+	"linter": {
+		"enabled": true,
+		"rules": {
+			"recommended": true
+		}
+	},
 	"css": {
 		"linter": {
 			"enabled": true
@@ -12,6 +18,27 @@
 			"quoteStyle": "single"
 		}
 	},
+	"overrides": [
+		{
+			"includes": ["**/*.module.css"],
+			"linter": {
+				"rules": {
+					"correctness": {
+						/**
+						 *  biome correctly identifies :global and :local as valid CSS module pseudo-classes but the
+						 *  LSP (used by the IDE) does not
+						 */
+						"noUnknownPseudoClass": {
+							"level": "error",
+							"options": {
+								"ignore": ["global", "local"]
+							}
+						}
+					}
+				}
+			}
+		}
+	],
 	"assist": {
 		"actions": {
 			"source": {

@@ -9,6 +9,7 @@
       "Bash(pnpm biome *)",
       "Bash(pnpm build*)",
       "Bash(pnpm coverage*)",
+      "Bash(pnpm exec biome *)",
       "Bash(pnpm info*)",
       "Bash(pnpm lint*)",
       "Bash(pnpm test*)",

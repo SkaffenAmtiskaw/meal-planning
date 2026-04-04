@@ -286,7 +286,7 @@ describe('CalendarView', () => {
 			vi.mocked(useNextCalendarApp).mock.calls[0][0].callbacks ?? {};
 		const mockEvent = { id: 'meal-1', title: 'Breakfast', dishes: [] };
 		act(() => onEventClick?.(mockEvent as never, new MouseEvent('click')));
-		const { onClose } = mockMealDetailModal.mock.lastCall![0];
+		const { onClose } = mockMealDetailModal.mock.lastCall?.[0] || (() => {});
 		act(() => onClose());
 		expect(mockMealDetailModal).toHaveBeenLastCalledWith(
 			expect.objectContaining({ event: null }),

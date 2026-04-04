@@ -46,7 +46,6 @@
 ## Dev Tooling
 - enable dependabot
 - e2e tests
-- confirm if Biome recommended settings are turned on
 
 ## Misc
 - let user set avatar
