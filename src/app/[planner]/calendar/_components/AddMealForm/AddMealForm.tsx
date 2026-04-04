@@ -23,7 +23,7 @@ import { addMeal } from '@/_actions/planner/addMeal';
 import { FormFeedbackAlert, SubmitButton } from '@/_components';
 import { useFormFeedback } from '@/_hooks';
 
-import type { SerializedDay } from '../../_utils/toScheduleXEvents';
+import type { SavedItem, SerializedDay } from '../../_utils/toScheduleXEvents';
 
 type SourceType = 'none' | 'saved' | 'text';
 
@@ -52,8 +52,6 @@ const zFormFields = z.object({
 	mealName: z.string().min(1, 'Meal name is required'),
 	description: z.string().optional(),
 });
-
-export type SavedItem = { _id: string; name: string; url?: string };
 
 type Props = {
 	plannerId: string;

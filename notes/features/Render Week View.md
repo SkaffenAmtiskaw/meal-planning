@@ -20,15 +20,15 @@ Create `WeekView.tsx`. Render 7 columns (Sun–Sat) for `currentWeekStart`. Wire
 
 ✅ **Verify:** Switch to Week tab on desktop — 7 columns appear. Days with meals show them; empty days are empty.
 
-### Step 3 — Render dish source links inline in meal cards
-In `WeekView`, render dish names as clickable links directly in the card when the source is `{ url }` (external `<a>`) or `{ _id }` (internal `<Link>`). Dishes with a `{ ref }` source, an unresolved string source, or a `note` cannot be fully represented inline and will require the modal (Step 4).
+### ✅ Step 3 — Render dish source links inline in meal cards
+In `WeekView`, render dish names as clickable links directly in the card when the resolved source is `{ url }` (external Anchor) or `{ _id }` (internal Anchor/Link). String sources must be resolved via `savedItems` first (same logic as `toScheduleXEvents`). Dishes with a `{ ref }` source or an unresolvable string source render as plain text. A dish `note` has no bearing on link rendering — notes are simply not displayed inline (deferred to modal in Step 4).
 
-**Verify:** Dishes with a URL or recipe source show as clickable links in the week card without opening a modal. Dishes with a ref, plain string source, or notes are still plain text in the card.
+✅ **Verify:** Dishes with a URL or recipe source show as clickable links in the week card without opening a modal. Dishes with a ref or unresolvable string source are plain text.
 
 ### Step 4 — Add meal click → MealDetailModal
-Clicking a meal card in `WeekView` opens the existing `MealDetailModal`. A meal only needs to be clickable if it has at least one dish with a `{ ref }` source, an unresolved string source, or a `note`.
+Clicking a meal card in `WeekView` opens the existing `MealDetailModal`
 
-**Verify:** Click a meal with a ref/note dish → modal opens. Meals with only URL/recipe dishes are not clickable (all info already visible inline).
+**Verify:** Click a meal with a ref/note dish → modal opens.
 
 ### Step 5 — Week navigation (prev/next/today)
 Add prev/next/today controls. `currentWeekStart` becomes stateful in `CalendarView` (initialized from schedule-x selected date as today). Prev/next adds/subtracts 7 days; today resets to current week.
@@ -36,6 +36,7 @@ Add prev/next/today controls. `currentWeekStart` becomes stateful in `CalendarVi
 **Verify:** Prev/next shifts the week. Today resets to current week. Meals update correctly.
 
 ### Step 6 — Styling pass
-Match MonthGridEvent event card style. Ensure columns don't overflow at normal desktop width.
+- Match MonthGridEvent event card style. Ensure columns don't overflow at normal desktop width.
+- Add a horizontal divider between days
 
 **Verify:** Week events visually match month view events. Layout is clean.

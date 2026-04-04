@@ -1,5 +1,7 @@
 import 'temporal-polyfill/global';
 
+import { resolveDishSource } from './resolveDishSource';
+
 export type SerializedDish = {
 	name: string;
 	source?: string | { url: string } | { ref: string } | { _id: string };
@@ -27,11 +29,11 @@ export type MealEvent = {
 	dishes: SerializedDish[];
 };
 
-type SavedItemLookup = { _id: string; name: string; url?: string };
+export type SavedItem = { _id: string; name: string; url?: string };
 
 export const toScheduleXEvents = (
 	calendar: SerializedDay[],
-	savedItems: SavedItemLookup[] = [],
+	savedItems: SavedItem[] = [],
 ): MealEvent[] => {
 	const savedMap = new Map(savedItems.map((item) => [item._id, item]));
 	const events: MealEvent[] = [];
@@ -44,18 +46,7 @@ export const toScheduleXEvents = (
 				end: date,
 				title: meal.name,
 				description: meal.description,
-				dishes: meal.dishes.map((dish) => {
-					if (typeof dish.source === 'string') {
-						const saved = savedMap.get(dish.source);
-						if (saved) {
-							return {
-								...dish,
-								source: saved.url ? { url: saved.url } : { _id: saved._id },
-							};
-						}
-					}
-					return dish;
-				}),
+				dishes: meal.dishes.map((dish) => resolveDishSource(dish, savedMap)),
 			});
 		}
 	}

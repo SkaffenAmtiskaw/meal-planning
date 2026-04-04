@@ -13,7 +13,7 @@
 - edit meals
 - delete meals
 - default to week view on desktop - list view on mobile
-- style updates - remove left border from events
+- replace header entirely with Mantine components - make sure functionality is not lost
 ## Planner Settings
 - add planner settings
 - [[Multiple Planners|allow user to have multiple planners (pre-requisite of inviting other users to shared planner)]]
@@ -26,7 +26,7 @@
 ## Style Improvements
 - [[Theme Colors|theme colors]]
 - recipe list style updates
-- toggle light/dark mode
+- toggle light/dark mode - make sure schedule-x corresponds to it
 
 ## Sign In Improvements
 - update Google one-tap sign in - warning in console
