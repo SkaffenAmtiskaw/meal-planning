@@ -4,10 +4,9 @@ import { zObjectId } from '../utils/zObjectId';
 
 export const zDishFormInput = z.object({
 	name: z.string().min(1, 'Dish name is required'),
-	sourceType: z.enum(['none', 'saved', 'url']),
+	sourceType: z.enum(['none', 'saved', 'text']),
 	savedId: z.string().optional(),
-	urlName: z.string().optional(),
-	urlValue: z.string().optional(),
+	sourceText: z.string().optional(),
 	note: z.string().optional(),
 });
 
@@ -26,10 +25,8 @@ const zDishInterface = z.object({
 	source: z
 		.union([
 			z.string(),
-			z.object({
-				name: z.string(),
-				url: z.url(),
-			}),
+			z.object({ url: z.url() }),
+			z.object({ ref: z.string() }),
 			zObjectId,
 		])
 		.optional(),

@@ -170,7 +170,7 @@ describe('addMeal', () => {
 		);
 	});
 
-	test('maps url source type to name/url object', async () => {
+	test('maps text source type to url object when a URL is provided', async () => {
 		vi.mocked(checkAuth).mockResolvedValue({ type: 'authorized' });
 		vi.mocked(Planner.findById).mockResolvedValue(makePlanner() as never);
 		vi.mocked(Planner.collection.updateOne).mockResolvedValue({
@@ -182,9 +182,8 @@ describe('addMeal', () => {
 			dishes: [
 				{
 					name: 'Pasta',
-					sourceType: 'url',
-					urlName: 'My Blog',
-					urlValue: 'https://example.com',
+					sourceType: 'text',
+					sourceText: 'https://example.com',
 				},
 			],
 		});
@@ -196,7 +195,41 @@ describe('addMeal', () => {
 					'calendar.$.meals': expect.objectContaining({
 						dishes: [
 							expect.objectContaining({
-								source: { name: 'My Blog', url: 'https://example.com' },
+								source: { url: 'https://example.com' },
+							}),
+						],
+					}),
+				},
+			},
+		);
+	});
+
+	test('maps text source type to ref object when a plain string is provided', async () => {
+		vi.mocked(checkAuth).mockResolvedValue({ type: 'authorized' });
+		vi.mocked(Planner.findById).mockResolvedValue(makePlanner() as never);
+		vi.mocked(Planner.collection.updateOne).mockResolvedValue({
+			matchedCount: 1,
+		} as never);
+
+		await addMeal({
+			...validData,
+			dishes: [
+				{
+					name: 'Pasta',
+					sourceType: 'text',
+					sourceText: 'The Flavor Bible',
+				},
+			],
+		});
+
+		expect(Planner.collection.updateOne).toHaveBeenCalledWith(
+			expect.anything(),
+			{
+				$push: {
+					'calendar.$.meals': expect.objectContaining({
+						dishes: [
+							expect.objectContaining({
+								source: { ref: 'The Flavor Bible' },
 							}),
 						],
 					}),
@@ -250,7 +283,7 @@ describe('addMeal', () => {
 		);
 	});
 
-	test('sets source to undefined when url sourceType has no urlName', async () => {
+	test('sets source to undefined when text sourceType has no sourceText', async () => {
 		vi.mocked(checkAuth).mockResolvedValue({ type: 'authorized' });
 		vi.mocked(Planner.findById).mockResolvedValue(makePlanner() as never);
 		vi.mocked(Planner.collection.updateOne).mockResolvedValue({
@@ -259,7 +292,7 @@ describe('addMeal', () => {
 
 		await addMeal({
 			...validData,
-			dishes: [{ name: 'Pasta', sourceType: 'url' }],
+			dishes: [{ name: 'Pasta', sourceType: 'text' }],
 		});
 
 		expect(Planner.collection.updateOne).toHaveBeenCalledWith(
@@ -268,36 +301,6 @@ describe('addMeal', () => {
 				$push: {
 					'calendar.$.meals': expect.objectContaining({
 						dishes: [expect.objectContaining({ source: undefined })],
-					}),
-				},
-			},
-		);
-	});
-
-	test('omits url from source when urlValue is empty', async () => {
-		vi.mocked(checkAuth).mockResolvedValue({ type: 'authorized' });
-		vi.mocked(Planner.findById).mockResolvedValue(makePlanner() as never);
-		vi.mocked(Planner.collection.updateOne).mockResolvedValue({
-			matchedCount: 1,
-		} as never);
-
-		await addMeal({
-			...validData,
-			dishes: [
-				{ name: 'Pasta', sourceType: 'url', urlName: 'My Blog', urlValue: '' },
-			],
-		});
-
-		expect(Planner.collection.updateOne).toHaveBeenCalledWith(
-			expect.anything(),
-			{
-				$push: {
-					'calendar.$.meals': expect.objectContaining({
-						dishes: [
-							expect.objectContaining({
-								source: { name: 'My Blog', url: undefined },
-							}),
-						],
 					}),
 				},
 			},

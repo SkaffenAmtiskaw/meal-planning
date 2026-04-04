@@ -16,7 +16,8 @@ vi.mock('@/_actions', () => ({
 
 type CalendarViewProps = {
 	plannerId: string;
-	savedItems: { _id: string; name: string }[];
+	savedItems: { _id: string; name: string; url?: string }[];
+	calendar: unknown[];
 };
 
 const mockCalendarView = vi.fn<(props: CalendarViewProps) => null>(() => null);
@@ -31,10 +32,11 @@ const searchParams = Promise.resolve({});
 
 const makePlanner = (
 	saved: Array<{ _id: { toString: () => string }; name: string }> = [],
+	calendar: unknown[] = [],
 ) => ({
 	_id: { toString: () => plannerId },
 	saved,
-	calendar: [],
+	calendar,
 	tags: [],
 });
 
@@ -57,8 +59,48 @@ describe('CalendarPage', () => {
 		render(await CalendarPage({ params, searchParams }));
 		expect(mockCalendarView).toHaveBeenCalledWith(
 			expect.objectContaining({
-				savedItems: [{ _id: 'item-1', name: 'Pasta' }],
+				savedItems: [{ _id: 'item-1', name: 'Pasta', url: undefined }],
 			}),
+		);
+	});
+
+	test('includes url for bookmark saved items', async () => {
+		const saved = [
+			{
+				_id: { toString: () => 'bm-1' },
+				name: 'My Blog',
+				url: 'https://example.com',
+			},
+		];
+		mockGetPlanner.mockResolvedValue(makePlanner(saved));
+		render(await CalendarPage({ params, searchParams }));
+		expect(mockCalendarView).toHaveBeenCalledWith(
+			expect.objectContaining({
+				savedItems: [
+					{ _id: 'bm-1', name: 'My Blog', url: 'https://example.com' },
+				],
+			}),
+		);
+	});
+
+	test('passes serialized calendar to CalendarView', async () => {
+		const calendar = [{ date: '2024-01-15', meals: [] }];
+		mockGetPlanner.mockResolvedValue(makePlanner([], calendar));
+		render(await CalendarPage({ params, searchParams }));
+		expect(mockCalendarView).toHaveBeenCalledWith(
+			expect.objectContaining({ calendar }),
+		);
+	});
+
+	test('passes empty array when calendar is missing', async () => {
+		mockGetPlanner.mockResolvedValue({
+			_id: { toString: () => plannerId },
+			saved: [],
+			tags: [],
+		});
+		render(await CalendarPage({ params, searchParams }));
+		expect(mockCalendarView).toHaveBeenCalledWith(
+			expect.objectContaining({ calendar: [] }),
 		);
 	});
 });

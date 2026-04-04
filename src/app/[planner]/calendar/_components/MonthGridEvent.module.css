@@ -1,0 +1,25 @@
+.event {
+	padding: 2px 4px;
+	border-left: 3px solid var(--sx-color-primary);
+	background-color: var(--sx-color-primary-container);
+	border-radius: var(--sx-rounding-extra-small);
+	width: 100%;
+	overflow: hidden;
+}
+
+.title {
+	margin: 0;
+	font-weight: bold;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+.description {
+	margin: 0;
+	font-weight: normal;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	opacity: 0.8;
+}

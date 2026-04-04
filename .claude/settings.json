@@ -6,6 +6,7 @@
       "Bash(git diff *)",
       "Bash(head *)",
       "Bash(ls *)",
+      "Bash(pnpm biome *)",
       "Bash(pnpm build*)",
       "Bash(pnpm coverage*)",
       "Bash(pnpm info*)",

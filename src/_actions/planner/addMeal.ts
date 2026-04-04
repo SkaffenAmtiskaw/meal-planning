@@ -1,6 +1,7 @@
 'use server';
 
 import { Types } from 'mongoose';
+import { z } from 'zod';
 
 import { checkAuth } from '@/_actions/auth/checkAuth';
 import { Planner } from '@/_models';
@@ -23,8 +24,9 @@ export const addMeal = async (
 		let source: unknown;
 		if (dish.sourceType === 'saved' && dish.savedId) {
 			source = new Types.ObjectId(dish.savedId);
-		} else if (dish.sourceType === 'url' && dish.urlName) {
-			source = { name: dish.urlName, url: dish.urlValue || undefined };
+		} else if (dish.sourceType === 'text' && dish.sourceText) {
+			const isUrl = z.url().safeParse(dish.sourceText).success;
+			source = isUrl ? { url: dish.sourceText } : { ref: dish.sourceText };
 		}
 		return { name: dish.name, source, note: dish.note || undefined };
 	});

@@ -23,15 +23,16 @@ import { addMeal } from '@/_actions/planner/addMeal';
 import { FormFeedbackAlert, SubmitButton } from '@/_components';
 import { useFormFeedback } from '@/_hooks';
 
-type SourceType = 'none' | 'saved' | 'url';
+import type { SerializedDay } from '../_utils/toScheduleXEvents';
+
+type SourceType = 'none' | 'saved' | 'text';
 
 type DishState = {
 	id: string;
 	name: string;
 	sourceType: SourceType;
 	savedId: string;
-	urlName: string;
-	urlValue: string;
+	sourceText: string;
 	note: string;
 	noteExpanded: boolean;
 };
@@ -41,8 +42,7 @@ const makeDish = (): DishState => ({
 	name: '',
 	sourceType: 'none',
 	savedId: '',
-	urlName: '',
-	urlValue: '',
+	sourceText: '',
 	note: '',
 	noteExpanded: false,
 });
@@ -53,15 +53,21 @@ const zFormFields = z.object({
 	description: z.string().optional(),
 });
 
-export type SavedItem = { _id: string; name: string };
+export type SavedItem = { _id: string; name: string; url?: string };
 
 type Props = {
 	plannerId: string;
 	savedItems: SavedItem[];
 	onClose: () => void;
+	onMealAdded?: (calendar: SerializedDay[]) => void;
 };
 
-export const AddMealForm = ({ plannerId, savedItems, onClose }: Props) => {
+export const AddMealForm = ({
+	plannerId,
+	savedItems,
+	onClose,
+	onMealAdded,
+}: Props) => {
 	const [dishes, setDishes] = useState<DishState[]>([makeDish()]);
 
 	const { status, countdown, errorMessage, wrap } = useFormFeedback();
@@ -93,14 +99,12 @@ export const AddMealForm = ({ plannerId, savedItems, onClose }: Props) => {
 						name: d.name,
 						sourceType: d.sourceType,
 						savedId: d.savedId || undefined,
-						urlName: d.urlName || undefined,
-						urlValue: d.urlValue || undefined,
+						sourceText: d.sourceText || undefined,
 						note: d.note || undefined,
 					})),
 				}),
 			(data) => {
-				// TODO: remove this log once meals are rendered in the calendar view
-				console.log('Planner calendar:', data.calendar);
+				onMealAdded?.(data.calendar as SerializedDay[]);
 				onClose();
 			},
 		),
@@ -173,7 +177,7 @@ export const AddMealForm = ({ plannerId, savedItems, onClose }: Props) => {
 										data={[
 											{ label: 'None', value: 'none' },
 											{ label: 'Saved', value: 'saved' },
-											{ label: 'URL', value: 'url' },
+											{ label: 'Reference', value: 'text' },
 										]}
 									/>
 								</Stack>
@@ -194,30 +198,17 @@ export const AddMealForm = ({ plannerId, savedItems, onClose }: Props) => {
 									/>
 								)}
 
-								{dish.sourceType === 'url' && (
-									<Group grow>
-										<TextInput
-											label="Source name"
-											data-testid={`dish-url-name-${index}`}
-											value={dish.urlName}
-											onChange={(e) =>
-												updateDish(dish.id, {
-													urlName: e.currentTarget.value,
-												})
-											}
-										/>
-										<TextInput
-											label="URL"
-											type="url"
-											data-testid={`dish-url-value-${index}`}
-											value={dish.urlValue}
-											onChange={(e) =>
-												updateDish(dish.id, {
-													urlValue: e.currentTarget.value,
-												})
-											}
-										/>
-									</Group>
+								{dish.sourceType === 'text' && (
+									<TextInput
+										label="URL or reference"
+										data-testid={`dish-source-text-${index}`}
+										value={dish.sourceText}
+										onChange={(e) =>
+											updateDish(dish.id, {
+												sourceText: e.currentTarget.value,
+											})
+										}
+									/>
 								)}
 
 								<Button

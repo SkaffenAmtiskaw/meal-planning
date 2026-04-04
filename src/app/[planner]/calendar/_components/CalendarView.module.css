@@ -1,0 +1,10 @@
+.calendarWrapper :global(.sx__month-grid-day) {
+	min-height: 100px;
+}
+
+.calendarWrapper :global(.sx__month-grid-event) {
+	white-space: normal;
+	align-items: flex-start;
+	height: auto;
+	cursor: pointer;
+}

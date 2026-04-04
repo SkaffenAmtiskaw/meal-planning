@@ -25,7 +25,6 @@ description: plan a feature — trigger when asked to "plan [feature]", "create 
 - If a step cannot be verified by the user then it is not useful as an independent step
 - In order to test incremental changes temporary console.logs can be added to verify data is correct
 
-
 ## 4. Plan Confirmation
 - Present the plan to the user and wait for EXPLICIT confirmation before proceeding
 - Write the plan to the note

@@ -2,6 +2,11 @@
 	"files": {
 		"includes": ["src/**/*"]
 	},
+	"css": {
+		"linter": {
+			"enabled": true
+		}
+	},
 	"javascript": {
 		"formatter": {
 			"quoteStyle": "single"

@@ -11,45 +11,84 @@ import { ScheduleXCalendar, useNextCalendarApp } from '@schedule-x/react';
 import 'temporal-polyfill/global';
 import '@schedule-x/theme-default/dist/index.css';
 
-import { useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 
+import type { MealEvent, SerializedDay } from '../_utils/toScheduleXEvents';
+import { toScheduleXEvents } from '../_utils/toScheduleXEvents';
 import { AddMealButton } from './AddMealButton';
 import type { SavedItem } from './AddMealForm';
+import styles from './CalendarView.module.css';
+import { MealDetailModal } from './MealDetailModal';
+import { MonthGridEvent } from './MonthGridEvent';
 
 type Props = {
 	plannerId: string;
 	savedItems: SavedItem[];
+	calendar: SerializedDay[];
 };
 
-export const CalendarView = ({ plannerId, savedItems }: Props) => {
+export const CalendarView = ({ plannerId, savedItems, calendar }: Props) => {
 	const eventsService = useState(() => createEventsServicePlugin())[0];
+	const [initialEvents] = useState(() =>
+		toScheduleXEvents(calendar, savedItems),
+	);
+	const [clickedEvent, setClickedEvent] = useState<MealEvent | null>(null);
 
-	const AddMealButtonWithData = () => (
-		<AddMealButton plannerId={plannerId} savedItems={savedItems} />
+	const handleMealAdded = useCallback(
+		(newCalendar: SerializedDay[]) => {
+			eventsService.set(toScheduleXEvents(newCalendar, savedItems));
+		},
+		[eventsService, savedItems],
 	);
 
-	const calendar = useNextCalendarApp({
+	const AddMealButtonWithData = useCallback(
+		() => (
+			<AddMealButton
+				plannerId={plannerId}
+				savedItems={savedItems}
+				onMealAdded={handleMealAdded}
+			/>
+		),
+		[plannerId, savedItems, handleMealAdded],
+	);
+
+	const calendarApp = useNextCalendarApp({
 		views: [
 			createViewList(),
 			createViewWeek(),
 			createViewMonthGrid(),
 			createViewMonthAgenda(),
 		],
-		events: [],
+		events: initialEvents,
 		plugins: [eventsService],
 		callbacks: {
-			onRender: () => {
-				eventsService.getAll();
+			onEventClick: (event) => {
+				setClickedEvent(event as unknown as MealEvent);
 			},
 		},
 	});
 
+	const customComponents = useMemo(
+		() => ({
+			headerContentRightPrepend: AddMealButtonWithData,
+			monthGridEvent: MonthGridEvent,
+		}),
+		[AddMealButtonWithData],
+	);
+
 	return (
-		<div>
-			<ScheduleXCalendar
-				calendarApp={calendar}
-				customComponents={{ headerContentRightPrepend: AddMealButtonWithData }}
+		<>
+			<MealDetailModal
+				event={clickedEvent}
+				plannerId={plannerId}
+				onClose={() => setClickedEvent(null)}
 			/>
-		</div>
+			<div className={styles.calendarWrapper}>
+				<ScheduleXCalendar
+					calendarApp={calendarApp}
+					customComponents={customComponents}
+				/>
+			</div>
+		</>
 	);
 };

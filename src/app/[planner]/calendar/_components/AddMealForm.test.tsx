@@ -304,29 +304,28 @@ describe('AddMealForm', () => {
 	test('source type defaults to None with no extra inputs', () => {
 		render(<AddMealForm {...defaultProps} />);
 		expect(screen.queryByTestId('dish-saved-0')).toBeNull();
-		expect(screen.queryByTestId('dish-url-name-0')).toBeNull();
+		expect(screen.queryByTestId('dish-source-text-0')).toBeNull();
 	});
 
 	test('switching to Saved shows the saved combobox', () => {
 		render(<AddMealForm {...defaultProps} />);
 		clickSegment(0, 'saved');
 		expect(screen.getByTestId('dish-saved-0')).toBeDefined();
-		expect(screen.queryByTestId('dish-url-name-0')).toBeNull();
+		expect(screen.queryByTestId('dish-source-text-0')).toBeNull();
 	});
 
-	test('switching to URL shows the URL name and URL fields', () => {
+	test('switching to Reference shows the source text field', () => {
 		render(<AddMealForm {...defaultProps} />);
-		clickSegment(0, 'url');
-		expect(screen.getByTestId('dish-url-name-0')).toBeDefined();
-		expect(screen.getByTestId('dish-url-value-0')).toBeDefined();
+		clickSegment(0, 'text');
+		expect(screen.getByTestId('dish-source-text-0')).toBeDefined();
 		expect(screen.queryByTestId('dish-saved-0')).toBeNull();
 	});
 
 	test('switching back to None hides source inputs', () => {
 		render(<AddMealForm {...defaultProps} />);
-		clickSegment(0, 'url');
+		clickSegment(0, 'text');
 		clickSegment(0, 'none');
-		expect(screen.queryByTestId('dish-url-name-0')).toBeNull();
+		expect(screen.queryByTestId('dish-source-text-0')).toBeNull();
 		expect(screen.queryByTestId('dish-saved-0')).toBeNull();
 	});
 
@@ -391,25 +390,14 @@ describe('AddMealForm', () => {
 		expect(screen.getByTestId('dish-saved-0')).toBeDefined();
 	});
 
-	test('typing in URL name field updates urlName', () => {
+	test('typing in source text field updates sourceText', () => {
 		render(<AddMealForm {...defaultProps} />);
-		clickSegment(0, 'url');
-		fireEvent.change(screen.getByTestId('dish-url-name-0'), {
-			target: { value: 'My Recipe' },
-		});
-		expect(
-			(screen.getByTestId('dish-url-name-0') as HTMLInputElement).value,
-		).toBe('My Recipe');
-	});
-
-	test('typing in URL field updates urlValue', () => {
-		render(<AddMealForm {...defaultProps} />);
-		clickSegment(0, 'url');
-		fireEvent.change(screen.getByTestId('dish-url-value-0'), {
+		clickSegment(0, 'text');
+		fireEvent.change(screen.getByTestId('dish-source-text-0'), {
 			target: { value: 'https://example.com' },
 		});
 		expect(
-			(screen.getByTestId('dish-url-value-0') as HTMLInputElement).value,
+			(screen.getByTestId('dish-source-text-0') as HTMLInputElement).value,
 		).toBe('https://example.com');
 	});
 
@@ -463,22 +451,40 @@ describe('AddMealForm', () => {
 		);
 	});
 
-	test('calls onClose and logs calendar on successful submission', async () => {
+	test('calls onMealAdded with calendar and calls onClose on successful submission', async () => {
 		const onClose = vi.fn();
+		const onMealAdded = vi.fn();
 		const calendar = [{ date: '2024-06-15', meals: [] }];
 		vi.mocked(addMeal).mockResolvedValue({ ok: true, data: { calendar } });
-		const consoleSpy = vi
-			.spyOn(console, 'log')
-			.mockImplementation(() => undefined);
+
+		render(
+			<AddMealForm
+				{...defaultProps}
+				onClose={onClose}
+				onMealAdded={onMealAdded}
+			/>,
+		);
+		await act(async () => {
+			fireEvent.submit(screen.getByTestId('add-meal-form'));
+		});
+
+		expect(onMealAdded).toHaveBeenCalledWith(calendar);
+		expect(onClose).toHaveBeenCalledOnce();
+	});
+
+	test('does not throw when onMealAdded is not provided', async () => {
+		const onClose = vi.fn();
+		vi.mocked(addMeal).mockResolvedValue({
+			ok: true,
+			data: { calendar: [] },
+		});
 
 		render(<AddMealForm {...defaultProps} onClose={onClose} />);
 		await act(async () => {
 			fireEvent.submit(screen.getByTestId('add-meal-form'));
 		});
 
-		expect(consoleSpy).toHaveBeenCalledWith('Planner calendar:', calendar);
 		expect(onClose).toHaveBeenCalledOnce();
-		consoleSpy.mockRestore();
 	});
 
 	test('populates saved combobox with provided savedItems', () => {

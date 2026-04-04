@@ -1,6 +1,6 @@
 import { fireEvent, render, screen } from '@testing-library/react';
 
-import { describe, expect, test, vi } from 'vitest';
+import { afterEach, describe, expect, test, vi } from 'vitest';
 
 import { AddMealButton } from './AddMealButton';
 
@@ -35,15 +35,30 @@ vi.mock('@mantine/core', () => ({
 		) : null,
 }));
 
+const mockAddMealForm = vi.fn();
 vi.mock('./AddMealForm', () => ({
-	AddMealForm: ({ onClose }: { onClose?: () => void }) => (
-		<div data-testid="add-meal-form">
-			<button data-testid="form-close" type="button" onClick={onClose} />
-		</div>
-	),
+	AddMealForm: (props: {
+		onClose?: () => void;
+		onMealAdded?: (cal: unknown[]) => void;
+	}) => {
+		mockAddMealForm(props);
+		return (
+			<div data-testid="add-meal-form">
+				<button
+					data-testid="form-close"
+					type="button"
+					onClick={props.onClose}
+				/>
+			</div>
+		);
+	},
 }));
 
 describe('AddMealButton', () => {
+	afterEach(() => {
+		vi.resetAllMocks();
+	});
+
 	test('renders a button with the correct label', () => {
 		render(<AddMealButton />);
 		expect(screen.getByTestId('add-meal-button')).toBeDefined();
@@ -74,5 +89,14 @@ describe('AddMealButton', () => {
 		fireEvent.click(screen.getByTestId('add-meal-button'));
 		fireEvent.click(screen.getByTestId('form-close'));
 		expect(screen.queryByTestId('add-meal-form')).toBeNull();
+	});
+
+	test('passes onMealAdded to AddMealForm', () => {
+		const onMealAdded = vi.fn();
+		render(<AddMealButton onMealAdded={onMealAdded} />);
+		fireEvent.click(screen.getByTestId('add-meal-button'));
+		expect(mockAddMealForm).toHaveBeenCalledWith(
+			expect.objectContaining({ onMealAdded }),
+		);
 	});
 });
