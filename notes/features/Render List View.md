@@ -2,3 +2,4 @@
 - add an empty state if there are no meals in the current view
 - make sure the user has the ability to restrict the range of dates in the list
 - in the list view each meal should be rendered with the full details (maybe collapsible cards?)
+- the list is available on both desktop and mobile so it needs to be confirmed to work in both

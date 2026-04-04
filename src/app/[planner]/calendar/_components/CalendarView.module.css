@@ -8,3 +8,7 @@
 	height: auto;
 	cursor: pointer;
 }
+
+.calendarWrapper :global(.sx__view-selection) {
+	display: none;
+}

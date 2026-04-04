@@ -12,14 +12,15 @@
 - work through adding meals on mobile (get rid of the header button and add a FAB maybe?)
 - edit meals
 - delete meals
-- default to week on desktop - list on mobile
+- default to week view on desktop - list view on mobile
+- style updates - remove left border from events
 ## Planner Settings
 - add planner settings
 - [[Multiple Planners|allow user to have multiple planners (pre-requisite of inviting other users to shared planner)]]
 - allow user to delete a planner
 - [[Planner Access Levels|allow users to have access levels to a planner - (owner/admin, write, read)]]
 - [[Shared Planners|allow users to invite other users to a shared planner]]
-- string validation on inputs
+
 # Medium Priority
 ## Sign In Improvements
 - update Google one-tap sign in - warning in console
@@ -39,8 +40,10 @@
 - theme colors
 ## Misc
 - tag management - edit/delete (should live under user settings)
-- investigate mongo/mongoose caching - is next doing it already or do we need to implement it?
+- performance - investigate mongo/mongoose caching - is next doing it already or do we need to implement it?
 - a11y audit
+- security - string validation on inputs
+- audit app works fully in mobile
 
 # Low Priority
 ## Dev Tooling

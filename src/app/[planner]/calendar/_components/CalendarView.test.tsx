@@ -1,17 +1,21 @@
 import { MantineProvider } from '@mantine/core';
+import { useMediaQuery } from '@mantine/hooks';
 import { useNextCalendarApp } from '@schedule-x/react';
-import { act, render, screen } from '@testing-library/react';
+import { act, fireEvent, render, screen } from '@testing-library/react';
 
 import { afterEach, describe, expect, test, vi } from 'vitest';
 
 import { CalendarView } from './CalendarView';
 import { MonthGridEvent } from './MonthGridEvent';
 
+vi.mock('@mantine/hooks', () => ({
+	useMediaQuery: vi.fn(() => false),
+}));
+
 vi.mock('@schedule-x/calendar', () => ({
 	createViewList: vi.fn(),
 	createViewMonthAgenda: vi.fn(),
 	createViewMonthGrid: vi.fn(),
-	createViewWeek: vi.fn(),
 }));
 
 const mockSet = vi.fn();
@@ -23,10 +27,17 @@ vi.mock('@schedule-x/events-service', () => ({
 }));
 
 const mockScheduleXCalendar = vi.fn();
+const mockSetCurrentView = vi.fn();
+
 vi.mock('@schedule-x/react', () => ({
 	useNextCalendarApp: vi.fn((config) => {
 		config?.callbacks?.onRender?.();
-		return null;
+		return {
+			$app: {
+				calendarState: { setView: mockSetCurrentView },
+				datePickerState: { selectedDate: { value: '2024-01-01' } },
+			},
+		};
 	}),
 	ScheduleXCalendar: vi.fn((props) => {
 		mockScheduleXCalendar(props);
@@ -91,7 +102,7 @@ describe('CalendarView', () => {
 		vi.resetAllMocks();
 	});
 
-	test('renders the calendar', () => {
+	test('renders the schedule-x calendar by default', () => {
 		mockToScheduleXEvents.mockReturnValueOnce([]);
 		render(
 			<CalendarView plannerId="planner-1" savedItems={[]} calendar={[]} />,
@@ -100,13 +111,137 @@ describe('CalendarView', () => {
 		expect(screen.getByTestId('schedule-x-calendar')).toBeDefined();
 	});
 
-	test('renders AddMealButton in header via customComponents', () => {
+	test('renders view switcher inside schedule-x header on month view', () => {
+		mockToScheduleXEvents.mockReturnValueOnce([]);
+		render(
+			<CalendarView plannerId="planner-1" savedItems={[]} calendar={[]} />,
+			{ wrapper },
+		);
+		expect(screen.getByTestId('view-switcher')).toBeDefined();
+	});
+
+	test('renders AddMealButton alongside view switcher in schedule-x header', () => {
 		mockToScheduleXEvents.mockReturnValueOnce([]);
 		render(
 			<CalendarView plannerId="planner-1" savedItems={[]} calendar={[]} />,
 			{ wrapper },
 		);
 		expect(screen.getByTestId('add-meal-button')).toBeDefined();
+		expect(screen.getByTestId('view-switcher')).toBeDefined();
+	});
+
+	test('shows Month/Week/List options on desktop', () => {
+		mockToScheduleXEvents.mockReturnValueOnce([]);
+		vi.mocked(useMediaQuery).mockReturnValue(false);
+		render(
+			<CalendarView plannerId="planner-1" savedItems={[]} calendar={[]} />,
+			{ wrapper },
+		);
+		expect(screen.getByText('Month')).toBeDefined();
+		expect(screen.getByText('Week')).toBeDefined();
+		expect(screen.getByText('List')).toBeDefined();
+	});
+
+	test('shows Month/List options on mobile', () => {
+		mockToScheduleXEvents.mockReturnValueOnce([]);
+		vi.mocked(useMediaQuery).mockReturnValue(true);
+		render(
+			<CalendarView plannerId="planner-1" savedItems={[]} calendar={[]} />,
+			{ wrapper },
+		);
+		expect(screen.getByText('Month')).toBeDefined();
+		expect(screen.queryByText('Week')).toBeNull();
+		expect(screen.getByText('List')).toBeDefined();
+	});
+
+	test('shows week view header and placeholder when Week is selected', () => {
+		mockToScheduleXEvents.mockReturnValueOnce([]);
+		render(
+			<CalendarView plannerId="planner-1" savedItems={[]} calendar={[]} />,
+			{ wrapper },
+		);
+		fireEvent.click(screen.getByText('Week'));
+		expect(screen.getByTestId('week-view-placeholder')).toBeDefined();
+		expect(screen.getByTestId('week-view-header')).toBeDefined();
+		expect(screen.queryByTestId('schedule-x-calendar')).toBeNull();
+	});
+
+	test('view switcher is accessible in week view header', () => {
+		mockToScheduleXEvents.mockReturnValueOnce([]);
+		render(
+			<CalendarView plannerId="planner-1" savedItems={[]} calendar={[]} />,
+			{ wrapper },
+		);
+		fireEvent.click(screen.getByText('Week'));
+		expect(screen.getByTestId('view-switcher')).toBeDefined();
+	});
+
+	test('shows schedule-x calendar when switching back from week to month', () => {
+		mockToScheduleXEvents.mockReturnValueOnce([]);
+		render(
+			<CalendarView plannerId="planner-1" savedItems={[]} calendar={[]} />,
+			{ wrapper },
+		);
+		fireEvent.click(screen.getByText('Week'));
+		fireEvent.click(screen.getByText('Month'));
+		expect(screen.queryByTestId('week-view-placeholder')).toBeNull();
+		expect(screen.getByTestId('schedule-x-calendar')).toBeDefined();
+	});
+
+	test('handles missing calendarState gracefully', () => {
+		mockToScheduleXEvents.mockReturnValueOnce([]);
+		vi.mocked(useNextCalendarApp).mockReturnValueOnce({
+			$app: {},
+		} as unknown as ReturnType<typeof useNextCalendarApp>);
+		render(
+			<CalendarView plannerId="planner-1" savedItems={[]} calendar={[]} />,
+			{ wrapper },
+		);
+		expect(screen.getByTestId('schedule-x-calendar')).toBeDefined();
+	});
+
+	test('calls schedule-x setView when switching from month to list', () => {
+		mockToScheduleXEvents.mockReturnValueOnce([]);
+		render(
+			<CalendarView plannerId="planner-1" savedItems={[]} calendar={[]} />,
+			{ wrapper },
+		);
+		fireEvent.click(screen.getByText('List'));
+		expect(mockSetCurrentView).toHaveBeenCalledWith('list', '2024-01-01');
+	});
+
+	test('calls schedule-x setView with month-agenda on mobile', () => {
+		mockToScheduleXEvents.mockReturnValueOnce([]);
+		vi.mocked(useMediaQuery).mockReturnValue(true);
+		render(
+			<CalendarView plannerId="planner-1" savedItems={[]} calendar={[]} />,
+			{ wrapper },
+		);
+		expect(mockSetCurrentView).toHaveBeenCalledWith(
+			'month-agenda',
+			'2024-01-01',
+		);
+	});
+
+	test('falls back to month when switching to mobile while on week view', () => {
+		mockToScheduleXEvents.mockReturnValueOnce([]);
+		vi.mocked(useMediaQuery).mockReturnValue(false);
+		const { rerender } = render(
+			<MantineProvider>
+				<CalendarView plannerId="planner-1" savedItems={[]} calendar={[]} />
+			</MantineProvider>,
+		);
+		fireEvent.click(screen.getByText('Week'));
+		expect(screen.getByTestId('week-view-placeholder')).toBeDefined();
+
+		vi.mocked(useMediaQuery).mockReturnValue(true);
+		rerender(
+			<MantineProvider>
+				<CalendarView plannerId="planner-1" savedItems={[]} calendar={[]} />
+			</MantineProvider>,
+		);
+		expect(screen.queryByTestId('week-view-placeholder')).toBeNull();
+		expect(screen.getByTestId('schedule-x-calendar')).toBeDefined();
 	});
 
 	test('passes plannerId to AddMealButton', () => {
