@@ -14,6 +14,7 @@
 - edit meals
 - delete meals
 - default to week view on desktop - list view on mobile
+- styling fixes to calendar view
 ## Planner Settings
 - add planner settings
 - [[Multiple Planners|allow user to have multiple planners (pre-requisite of inviting other users to shared planner)]]

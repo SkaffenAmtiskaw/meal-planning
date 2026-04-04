@@ -8,7 +8,7 @@ export type SerializedDish = {
 	note?: string;
 };
 
-type SerializedMeal = {
+export type SerializedMeal = {
 	_id: string;
 	name: string;
 	description?: string;

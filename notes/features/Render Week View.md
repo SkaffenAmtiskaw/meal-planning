@@ -25,18 +25,18 @@ In `WeekView`, render dish names as clickable links directly in the card when th
 
 ✅ **Verify:** Dishes with a URL or recipe source show as clickable links in the week card without opening a modal. Dishes with a ref or unresolvable string source are plain text.
 
-### Step 4 — Add meal click → MealDetailModal
+### ✅ Step 4 — Add meal click → MealDetailModal
 Clicking a meal card in `WeekView` opens the existing `MealDetailModal`
 
-**Verify:** Click a meal with a ref/note dish → modal opens.
+✅ **Verify:** Click a meal with a ref/note dish → modal opens.
 
-### Step 5 — Week navigation (prev/next/today)
+### ✅ Step 5 — Week navigation (prev/next/today)
 Add prev/next/today controls. `currentWeekStart` becomes stateful in `CalendarView` (initialized from schedule-x selected date as today). Prev/next adds/subtracts 7 days; today resets to current week.
 
-**Verify:** Prev/next shifts the week. Today resets to current week. Meals update correctly.
+✅ **Verify:** Prev/next shifts the week. Today resets to current week. Meals update correctly.
 
-### Step 6 — Styling pass
+### ✅ Step 6 — Styling pass
 - Match MonthGridEvent event card style. Ensure columns don't overflow at normal desktop width.
 - Add a horizontal divider between days
 
-**Verify:** Week events visually match month view events. Layout is clean.
+✅ **Verify:** Week events visually match month view events. Layout is clean.

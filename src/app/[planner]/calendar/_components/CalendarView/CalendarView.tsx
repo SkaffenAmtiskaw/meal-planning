@@ -2,8 +2,9 @@
 
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
-import { Group, SegmentedControl } from '@mantine/core';
+import { ActionIcon, Button, Group, SegmentedControl } from '@mantine/core';
 import { useMediaQuery } from '@mantine/hooks';
+import { IconChevronLeft, IconChevronRight } from '@tabler/icons-react';
 
 import {
 	createViewList,
@@ -126,10 +127,25 @@ export const CalendarView = ({ plannerId, savedItems, calendar }: Props) => {
 		},
 	});
 
-	const currentWeekStart = getWeekStart(
-		(calendarApp as unknown as InternalCalendarApp)?.$app?.datePickerState
-			?.selectedDate.value as string | undefined,
+	const [currentWeekStart, setCurrentWeekStart] = useState(() =>
+		getWeekStart(
+			(calendarApp as unknown as InternalCalendarApp)?.$app?.datePickerState
+				?.selectedDate.value as string | undefined,
+		),
 	);
+
+	// TODO: week navigation will be moved into a dedicated header component (Replace Calendar Header)
+	const handlePrevWeek = useCallback(() => {
+		setCurrentWeekStart((w) => w.subtract({ days: 7 }));
+	}, []);
+
+	const handleNextWeek = useCallback(() => {
+		setCurrentWeekStart((w) => w.add({ days: 7 }));
+	}, []);
+
+	const handleToday = useCallback(() => {
+		setCurrentWeekStart(getWeekStart(undefined));
+	}, []);
 
 	// Sync our SegmentedControl with schedule-x's internal view state.
 	// schedule-x has no public API for this; we use the internal $app.
@@ -168,12 +184,39 @@ export const CalendarView = ({ plannerId, savedItems, calendar }: Props) => {
 			/>
 			{viewType === 'week' ? (
 				<>
-					<Group justify="flex-end" mb="sm" data-testid="week-view-header">
+					<Group justify="space-between" mb="sm" data-testid="week-view-header">
+						<Group gap="xs">
+							<ActionIcon
+								variant="subtle"
+								onClick={handlePrevWeek}
+								data-testid="week-prev"
+								aria-label="Previous week"
+							>
+								<IconChevronLeft size={16} />
+							</ActionIcon>
+							<Button
+								variant="subtle"
+								size="xs"
+								onClick={handleToday}
+								data-testid="week-today"
+							>
+								Today
+							</Button>
+							<ActionIcon
+								variant="subtle"
+								onClick={handleNextWeek}
+								data-testid="week-next"
+								aria-label="Next week"
+							>
+								<IconChevronRight size={16} />
+							</ActionIcon>
+						</Group>
 						<ViewSwitcher />
 					</Group>
 					<WeekView
 						calendar={calendar}
 						currentWeekStart={currentWeekStart}
+						onMealClick={setClickedEvent}
 						plannerId={plannerId}
 						savedItems={savedItems}
 					/>

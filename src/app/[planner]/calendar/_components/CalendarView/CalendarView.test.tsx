@@ -80,16 +80,40 @@ vi.mock('../MonthGridEvent/MonthGridEvent', () => ({
 	MonthGridEvent: vi.fn(() => null),
 }));
 
-const mockWeekStart = { _tag: 'week-start' };
+const mockPrevWeekStart = { _tag: 'prev-week' };
+const mockNextWeekStart = { _tag: 'next-week' };
+const mockWeekStart = {
+	_tag: 'week-start',
+	subtract: () => mockPrevWeekStart,
+	add: () => mockNextWeekStart,
+};
 vi.mock('../../_utils/getWeekStart', () => ({
 	getWeekStart: vi.fn(() => mockWeekStart),
 }));
 
 const mockWeekView = vi.fn();
 vi.mock('../WeekView/WeekView', () => ({
-	WeekView: (props: { calendar: unknown[]; currentWeekStart: unknown }) => {
+	WeekView: (props: {
+		calendar: unknown[];
+		currentWeekStart: unknown;
+		onMealClick?: (event: unknown) => void;
+	}) => {
 		mockWeekView(props);
-		return <div data-testid="week-view" />;
+		return (
+			<div data-testid="week-view">
+				<button
+					data-testid="week-meal-card"
+					type="button"
+					onClick={() =>
+						props.onMealClick?.({
+							id: 'meal-1',
+							title: 'Breakfast',
+							dishes: [],
+						})
+					}
+				/>
+			</div>
+		);
 	},
 }));
 
@@ -469,6 +493,34 @@ describe('CalendarView', () => {
 		);
 	});
 
+	test('passes onMealClick to WeekView', () => {
+		mockToScheduleXEvents.mockReturnValueOnce([]);
+		render(
+			<CalendarView plannerId="planner-1" savedItems={[]} calendar={[]} />,
+			{ wrapper },
+		);
+		fireEvent.click(screen.getByText('Week'));
+		expect(mockWeekView).toHaveBeenCalledWith(
+			expect.objectContaining({ onMealClick: expect.any(Function) }),
+		);
+	});
+
+	test('onMealClick from WeekView opens MealDetailModal with the meal event', () => {
+		mockToScheduleXEvents.mockReturnValueOnce([]);
+		render(
+			<CalendarView plannerId="planner-1" savedItems={[]} calendar={[]} />,
+			{ wrapper },
+		);
+		fireEvent.click(screen.getByText('Week'));
+		const mockEvent = { id: 'meal-1', title: 'Breakfast', dishes: [] };
+		act(() => {
+			fireEvent.click(screen.getByTestId('week-meal-card'));
+		});
+		expect(mockMealDetailModal).toHaveBeenLastCalledWith(
+			expect.objectContaining({ event: mockEvent }),
+		);
+	});
+
 	test('MealDetailModal onClose resets the clicked event to null', () => {
 		mockToScheduleXEvents.mockReturnValueOnce([]);
 		render(
@@ -483,6 +535,71 @@ describe('CalendarView', () => {
 		act(() => onClose());
 		expect(mockMealDetailModal).toHaveBeenLastCalledWith(
 			expect.objectContaining({ event: null }),
+		);
+	});
+
+	test('renders prev, today, and next navigation buttons in week view header', () => {
+		mockToScheduleXEvents.mockReturnValueOnce([]);
+		render(
+			<CalendarView plannerId="planner-1" savedItems={[]} calendar={[]} />,
+			{ wrapper },
+		);
+		fireEvent.click(screen.getByText('Week'));
+		expect(screen.getByTestId('week-prev')).toBeDefined();
+		expect(screen.getByTestId('week-today')).toBeDefined();
+		expect(screen.getByTestId('week-next')).toBeDefined();
+	});
+
+	test('clicking prev shifts currentWeekStart back 7 days', () => {
+		mockToScheduleXEvents.mockReturnValueOnce([]);
+		render(
+			<CalendarView plannerId="planner-1" savedItems={[]} calendar={[]} />,
+			{ wrapper },
+		);
+		fireEvent.click(screen.getByText('Week'));
+		act(() => {
+			fireEvent.click(screen.getByTestId('week-prev'));
+		});
+		expect(mockWeekView).toHaveBeenLastCalledWith(
+			expect.objectContaining({ currentWeekStart: mockPrevWeekStart }),
+		);
+	});
+
+	test('clicking next shifts currentWeekStart forward 7 days', () => {
+		mockToScheduleXEvents.mockReturnValueOnce([]);
+		render(
+			<CalendarView plannerId="planner-1" savedItems={[]} calendar={[]} />,
+			{ wrapper },
+		);
+		fireEvent.click(screen.getByText('Week'));
+		act(() => {
+			fireEvent.click(screen.getByTestId('week-next'));
+		});
+		expect(mockWeekView).toHaveBeenLastCalledWith(
+			expect.objectContaining({ currentWeekStart: mockNextWeekStart }),
+		);
+	});
+
+	test('clicking today resets currentWeekStart to current week', () => {
+		mockToScheduleXEvents.mockReturnValueOnce([]);
+		render(
+			<CalendarView plannerId="planner-1" savedItems={[]} calendar={[]} />,
+			{ wrapper },
+		);
+		fireEvent.click(screen.getByText('Week'));
+		// Navigate away first
+		act(() => {
+			fireEvent.click(screen.getByTestId('week-next'));
+		});
+		expect(mockWeekView).toHaveBeenLastCalledWith(
+			expect.objectContaining({ currentWeekStart: mockNextWeekStart }),
+		);
+		// Reset to today
+		act(() => {
+			fireEvent.click(screen.getByTestId('week-today'));
+		});
+		expect(mockWeekView).toHaveBeenLastCalledWith(
+			expect.objectContaining({ currentWeekStart: mockWeekStart }),
 		);
 	});
 

@@ -4,9 +4,24 @@ import { MantineProvider } from '@mantine/core';
 
 import { render, screen } from '@testing-library/react';
 
-import { describe, expect, test } from 'vitest';
+import { beforeEach, describe, expect, test, vi } from 'vitest';
 
 import { WeekView } from './WeekView';
+
+vi.mock('./WeekView.module.css', () => ({
+	default: {
+		grid: 'grid',
+		dayColumn: 'dayColumn',
+	},
+}));
+
+const mockWeekMealCard = vi.fn();
+vi.mock('./WeekMealCard', () => ({
+	WeekMealCard: (props: Record<string, unknown>) => {
+		mockWeekMealCard(props);
+		return <div data-testid="week-meal-card" />;
+	},
+}));
 
 // 2024-01-14 is a Sunday
 const weekStart = Temporal.PlainDate.from('2024-01-14');
@@ -18,11 +33,16 @@ const wrapper = ({ children }: { children: React.ReactNode }) => (
 const defaultProps = {
 	calendar: [] as { date: string; meals?: unknown[] }[],
 	currentWeekStart: weekStart,
+	onMealClick: vi.fn(),
 	plannerId: 'planner-1',
 	savedItems: [],
 } as Parameters<typeof WeekView>[0];
 
 describe('WeekView', () => {
+	beforeEach(() => {
+		vi.clearAllMocks();
+	});
+
 	test('renders 7 day columns', () => {
 		render(<WeekView {...defaultProps} />, { wrapper });
 		// Sun Jan 14 through Sat Jan 20
@@ -43,6 +63,11 @@ describe('WeekView', () => {
 		expect(screen.getByText('Sat 1/20')).toBeDefined();
 	});
 
+	test('renders the week-view container', () => {
+		render(<WeekView {...defaultProps} />, { wrapper });
+		expect(screen.getByTestId('week-view')).toBeDefined();
+	});
+
 	test('shows no meal cards when calendar is empty', () => {
 		render(<WeekView {...defaultProps} />, { wrapper });
 		expect(screen.queryAllByTestId('week-meal-card')).toHaveLength(0);
@@ -54,7 +79,7 @@ describe('WeekView', () => {
 		expect(screen.queryAllByTestId('week-meal-card')).toHaveLength(0);
 	});
 
-	test('shows meal card in the correct day column', () => {
+	test('renders a WeekMealCard in the correct day column', () => {
 		const calendar = [
 			{
 				date: '2024-01-15',
@@ -66,65 +91,7 @@ describe('WeekView', () => {
 		expect(col.querySelector('[data-testid="week-meal-card"]')).not.toBeNull();
 	});
 
-	test('shows meal name in card', () => {
-		const calendar = [
-			{
-				date: '2024-01-15',
-				meals: [{ _id: 'meal-1', name: 'Breakfast', dishes: [] }],
-			},
-		];
-		render(<WeekView {...defaultProps} calendar={calendar} />, { wrapper });
-		expect(screen.getByText('Breakfast')).toBeDefined();
-	});
-
-	test('shows meal description when present', () => {
-		const calendar = [
-			{
-				date: '2024-01-15',
-				meals: [
-					{
-						_id: 'meal-1',
-						name: 'Breakfast',
-						description: 'Morning fuel',
-						dishes: [],
-					},
-				],
-			},
-		];
-		render(<WeekView {...defaultProps} calendar={calendar} />, { wrapper });
-		expect(screen.getByText('Morning fuel')).toBeDefined();
-	});
-
-	test('does not render description element when absent', () => {
-		const calendar = [
-			{
-				date: '2024-01-15',
-				meals: [{ _id: 'meal-1', name: 'Breakfast', dishes: [] }],
-			},
-		];
-		render(<WeekView {...defaultProps} calendar={calendar} />, { wrapper });
-		expect(screen.queryByText('undefined')).toBeNull();
-	});
-
-	test('shows dish names in meal card', () => {
-		const calendar = [
-			{
-				date: '2024-01-15',
-				meals: [
-					{
-						_id: 'meal-1',
-						name: 'Breakfast',
-						dishes: [{ name: 'Eggs' }, { name: 'Toast' }],
-					},
-				],
-			},
-		];
-		render(<WeekView {...defaultProps} calendar={calendar} />, { wrapper });
-		expect(screen.getByText('Eggs')).toBeDefined();
-		expect(screen.getByText('Toast')).toBeDefined();
-	});
-
-	test('shows multiple meals for the same day', () => {
+	test('renders multiple WeekMealCards for the same day', () => {
 		const calendar = [
 			{
 				date: '2024-01-15',
@@ -138,7 +105,7 @@ describe('WeekView', () => {
 		expect(screen.getAllByTestId('week-meal-card')).toHaveLength(2);
 	});
 
-	test('shows meals across different days', () => {
+	test('renders WeekMealCards across different day columns', () => {
 		const calendar = [
 			{
 				date: '2024-01-14',
@@ -150,8 +117,16 @@ describe('WeekView', () => {
 			},
 		];
 		render(<WeekView {...defaultProps} calendar={calendar} />, { wrapper });
-		expect(screen.getByText('Sunday Brunch')).toBeDefined();
-		expect(screen.getByText('Saturday Dinner')).toBeDefined();
+		expect(
+			screen
+				.getByTestId('week-day-2024-01-14')
+				.querySelector('[data-testid="week-meal-card"]'),
+		).not.toBeNull();
+		expect(
+			screen
+				.getByTestId('week-day-2024-01-20')
+				.querySelector('[data-testid="week-meal-card"]'),
+		).not.toBeNull();
 	});
 
 	test('ignores calendar days outside the current week', () => {
@@ -166,122 +141,39 @@ describe('WeekView', () => {
 			},
 		];
 		render(<WeekView {...defaultProps} calendar={calendar} />, { wrapper });
-		expect(screen.queryByText('Last Week')).toBeNull();
-		expect(screen.queryByText('Next Week')).toBeNull();
+		expect(screen.queryAllByTestId('week-meal-card')).toHaveLength(0);
 	});
 
-	test('renders the week-view container', () => {
-		render(<WeekView {...defaultProps} />, { wrapper });
-		expect(screen.getByTestId('week-view')).toBeDefined();
+	test('passes meal, day, plannerId, and onMealClick to WeekMealCard', () => {
+		const onMealClick = vi.fn();
+		const meal = { _id: 'meal-1', name: 'Breakfast', dishes: [] };
+		const calendar = [{ date: '2024-01-15', meals: [meal] }];
+		render(
+			<WeekView
+				{...defaultProps}
+				calendar={calendar}
+				onMealClick={onMealClick}
+			/>,
+			{ wrapper },
+		);
+		expect(mockWeekMealCard).toHaveBeenCalledWith(
+			expect.objectContaining({
+				meal,
+				day: Temporal.PlainDate.from('2024-01-15'),
+				plannerId: 'planner-1',
+				onMealClick,
+			}),
+		);
 	});
 
-	test('dish with url source renders as external Anchor link', () => {
-		const calendar = [
-			{
-				date: '2024-01-15',
-				meals: [
-					{
-						_id: 'meal-1',
-						name: 'Lunch',
-						dishes: [{ name: 'Pasta', source: { url: 'https://example.com' } }],
-					},
-				],
-			},
-		];
-		render(<WeekView {...defaultProps} calendar={calendar} />, { wrapper });
-		const link = screen.getByRole('link', { name: 'Pasta' });
-		expect(link.getAttribute('href')).toBe('https://example.com');
-		expect(link.getAttribute('target')).toBe('_blank');
-	});
-
-	test('dish with _id source renders as internal Anchor link', () => {
-		const calendar = [
-			{
-				date: '2024-01-15',
-				meals: [
-					{
-						_id: 'meal-1',
-						name: 'Lunch',
-						dishes: [{ name: 'Carbonara', source: { _id: 'recipe-123' } }],
-					},
-				],
-			},
-		];
-		render(<WeekView {...defaultProps} calendar={calendar} />, { wrapper });
-		const link = screen.getByRole('link', { name: 'Carbonara' });
-		expect(link.getAttribute('href')).toBe('/planner-1/recipes/recipe-123');
-	});
-
-	test('dish with ref source renders as plain text', () => {
-		const calendar = [
-			{
-				date: '2024-01-15',
-				meals: [
-					{
-						_id: 'meal-1',
-						name: 'Lunch',
-						dishes: [
-							{ name: 'Roast Chicken', source: { ref: 'The Flavor Bible' } },
-						],
-					},
-				],
-			},
-		];
-		render(<WeekView {...defaultProps} calendar={calendar} />, { wrapper });
-		expect(screen.getByText('Roast Chicken')).toBeDefined();
-		expect(screen.queryByRole('link')).toBeNull();
-	});
-
-	test('dish with unresolvable string source renders as plain text', () => {
-		const calendar = [
-			{
-				date: '2024-01-15',
-				meals: [
-					{
-						_id: 'meal-1',
-						name: 'Lunch',
-						dishes: [{ name: 'Soup', source: 'unknown-id' }],
-					},
-				],
-			},
-		];
-		render(<WeekView {...defaultProps} calendar={calendar} />, { wrapper });
-		expect(screen.getByText('Soup')).toBeDefined();
-		expect(screen.queryByRole('link')).toBeNull();
-	});
-
-	test('dish with no source renders as plain text', () => {
-		const calendar = [
-			{
-				date: '2024-01-15',
-				meals: [
-					{
-						_id: 'meal-1',
-						name: 'Lunch',
-						dishes: [{ name: 'Salad' }],
-					},
-				],
-			},
-		];
-		render(<WeekView {...defaultProps} calendar={calendar} />, { wrapper });
-		expect(screen.getByText('Salad')).toBeDefined();
-		expect(screen.queryByRole('link')).toBeNull();
-	});
-
-	test('resolves bookmark string source to external link via savedItems', () => {
+	test('passes a savedMap built from savedItems to WeekMealCard', () => {
 		const savedItems = [
-			{ _id: 'saved-1', name: 'Tasty Recipe', url: 'https://tasty.co/recipe' },
+			{ _id: 'saved-1', name: 'Tasty Recipe', url: 'https://example.com' },
 		];
 		const calendar = [
 			{
 				date: '2024-01-15',
-				meals: [
-					{
-						_id: 'meal-1',
-						name: 'Lunch',
-						dishes: [{ name: 'Tasty Pasta', source: 'saved-1' }],
-					},
-				],
+				meals: [{ _id: 'meal-1', name: 'Lunch', dishes: [] }],
 			},
 		];
 		render(
@@ -292,64 +184,19 @@ describe('WeekView', () => {
 			/>,
 			{ wrapper },
 		);
-		const link = screen.getByRole('link', { name: 'Tasty Pasta' });
-		expect(link.getAttribute('href')).toBe('https://tasty.co/recipe');
-		expect(link.getAttribute('target')).toBe('_blank');
-	});
-
-	test('resolves saved recipe string source to internal link via savedItems', () => {
-		const savedItems = [{ _id: 'recipe-abc', name: 'Carbonara' }];
-		const calendar = [
-			{
-				date: '2024-01-15',
-				meals: [
-					{
-						_id: 'meal-1',
-						name: 'Dinner',
-						dishes: [{ name: 'Carbonara', source: 'recipe-abc' }],
-					},
-				],
-			},
-		];
-		render(
-			<WeekView
-				{...defaultProps}
-				calendar={calendar}
-				savedItems={savedItems}
-			/>,
-			{ wrapper },
+		expect(mockWeekMealCard).toHaveBeenCalledWith(
+			expect.objectContaining({
+				savedMap: new Map([
+					[
+						'saved-1',
+						{
+							_id: 'saved-1',
+							name: 'Tasty Recipe',
+							url: 'https://example.com',
+						},
+					],
+				]),
+			}),
 		);
-		const link = screen.getByRole('link', { name: 'Carbonara' });
-		expect(link.getAttribute('href')).toBe('/planner-1/recipes/recipe-abc');
-	});
-
-	test('dish with a note still renders as a link when source resolves', () => {
-		const savedItems = [
-			{ _id: 'saved-1', name: 'Some Recipe', url: 'https://example.com' },
-		];
-		const calendar = [
-			{
-				date: '2024-01-15',
-				meals: [
-					{
-						_id: 'meal-1',
-						name: 'Lunch',
-						dishes: [
-							{ name: 'Dish', source: 'saved-1', note: 'cook extra crispy' },
-						],
-					},
-				],
-			},
-		];
-		render(
-			<WeekView
-				{...defaultProps}
-				calendar={calendar}
-				savedItems={savedItems}
-			/>,
-			{ wrapper },
-		);
-		const link = screen.getByRole('link', { name: 'Dish' });
-		expect(link.getAttribute('href')).toBe('https://example.com');
 	});
 });
