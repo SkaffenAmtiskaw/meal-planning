@@ -1,6 +1,7 @@
 import { useSelectedLayoutSegment } from 'next/navigation';
 
 import { MantineProvider } from '@mantine/core';
+
 import { render, screen } from '@testing-library/react';
 
 import { afterEach, describe, expect, test, vi } from 'vitest';

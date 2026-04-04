@@ -54,6 +54,7 @@
 - let user set avatar
 - email formatting
 - audit code for client component surface area - move as much as possible to server components
+- add different import order sorting for `.test.ts(x)` - vitest and react/testing-library should be at the top
 
 # Undecided
 - [[Link SSO Login to Email|Link SSO to Email Login]]

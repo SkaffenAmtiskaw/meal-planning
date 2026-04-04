@@ -1,7 +1,7 @@
 import { describe, expect, test } from 'vitest';
 
-import type { SerializedDay } from './toScheduleXEvents';
 import { toScheduleXEvents } from './toScheduleXEvents';
+import type { SerializedDay } from './toScheduleXEvents';
 
 describe('toScheduleXEvents', () => {
 	test('returns empty array for empty calendar', () => {

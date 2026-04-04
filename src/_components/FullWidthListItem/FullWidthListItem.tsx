@@ -1,6 +1,6 @@
-import { ListItem } from '@mantine/core';
-
 import type { ComponentProps } from 'react';
+
+import { ListItem } from '@mantine/core';
 
 import classes from './FullWidthListItem.module.css';
 

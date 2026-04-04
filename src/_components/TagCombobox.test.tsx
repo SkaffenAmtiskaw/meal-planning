@@ -1,4 +1,5 @@
 import { isLightColor } from '@mantine/core';
+
 import { act, fireEvent, render, screen } from '@testing-library/react';
 
 import { afterEach, describe, expect, test, vi } from 'vitest';

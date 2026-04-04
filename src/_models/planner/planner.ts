@@ -1,10 +1,10 @@
 import type { Model } from 'mongoose';
 import { model, models, Schema, SchemaTypes } from 'mongoose';
 
+import type { PlannerInterface } from '@/_models/planner';
 import { bookmarkSchema } from '@/_models/planner/bookmark';
 import { daySchema } from '@/_models/planner/day';
 
-import type { PlannerInterface } from './planner.types';
 import { recipeSchema } from './recipe';
 import { tagSchema } from './tag';
 

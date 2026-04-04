@@ -1,11 +1,13 @@
 import type { ReactNode } from 'react';
 
-import '@mantine/core/styles.css';
-
 import { MantineProvider, mantineHtmlProps } from '@mantine/core';
 
 import { OneTapSignInWrapper } from '@/_components';
 import { theme } from '@/_theme';
+
+import '@mantine/core/styles.css';
+import '@schedule-x/theme-default/dist/index.css';
+import 'temporal-polyfill/global';
 
 export const metadata = {
 	title: 'Meal Planner',

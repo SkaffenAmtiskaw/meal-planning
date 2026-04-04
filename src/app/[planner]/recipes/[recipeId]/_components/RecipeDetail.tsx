@@ -20,10 +20,11 @@ import { deleteRecipe } from '@/_actions/saved';
 import type { RecipeInterface } from '@/_models/planner/recipe.types';
 import type { TagInterface } from '@/_models/planner/tag.types';
 
-import { DeleteConfirmModal } from '../../_components/DeleteConfirmModal';
 import { InlineNotesEditor } from './InlineNotesEditor';
 import { InlineTagsEditor } from './InlineTagsEditor';
 import { KeepAwakeToggle } from './KeepAwakeToggle';
+
+import { DeleteConfirmModal } from '../../_components/DeleteConfirmModal';
 
 type Props = {
 	plannerId: string;

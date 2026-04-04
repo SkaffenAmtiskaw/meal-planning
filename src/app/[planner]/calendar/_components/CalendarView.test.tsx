@@ -1,6 +1,8 @@
 import { MantineProvider } from '@mantine/core';
 import { useMediaQuery } from '@mantine/hooks';
+
 import { useNextCalendarApp } from '@schedule-x/react';
+
 import { act, fireEvent, render, screen } from '@testing-library/react';
 
 import { afterEach, describe, expect, test, vi } from 'vitest';

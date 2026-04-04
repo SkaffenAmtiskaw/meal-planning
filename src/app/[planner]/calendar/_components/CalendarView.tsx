@@ -1,5 +1,10 @@
 'use client';
 
+import { useCallback, useEffect, useMemo, useState } from 'react';
+
+import { Group, SegmentedControl } from '@mantine/core';
+import { useMediaQuery } from '@mantine/hooks';
+
 import {
 	createViewList,
 	createViewMonthAgenda,
@@ -7,21 +12,15 @@ import {
 } from '@schedule-x/calendar';
 import { createEventsServicePlugin } from '@schedule-x/events-service';
 import { ScheduleXCalendar, useNextCalendarApp } from '@schedule-x/react';
-import '@schedule-x/theme-default/dist/index.css';
-import 'temporal-polyfill/global';
 
-import { useCallback, useEffect, useMemo, useState } from 'react';
-
-import { Group, SegmentedControl } from '@mantine/core';
-import { useMediaQuery } from '@mantine/hooks';
+import { AddMealButton } from './AddMealButton';
+import { MealDetailModal } from './MealDetailModal';
+import { MonthGridEvent } from './MonthGridEvent';
+import type { SavedItem } from './AddMealForm';
+import styles from './CalendarView.module.css';
 
 import type { MealEvent, SerializedDay } from '../_utils/toScheduleXEvents';
 import { toScheduleXEvents } from '../_utils/toScheduleXEvents';
-import { AddMealButton } from './AddMealButton';
-import type { SavedItem } from './AddMealForm';
-import styles from './CalendarView.module.css';
-import { MealDetailModal } from './MealDetailModal';
-import { MonthGridEvent } from './MonthGridEvent';
 
 type Props = {
 	plannerId: string;
