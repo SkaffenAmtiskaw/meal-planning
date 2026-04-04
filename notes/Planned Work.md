@@ -7,13 +7,13 @@
 - [[Render Week View|render week view]]
 - [[Render List View|render list view]]
 - [[Render Month Agenda View (Mobile)|render (or verify) meals in month agenda view (mobile)]]
+- [[Replace Calendar Header|replace header]]
 - add meals by clicking month cell
 - add meals by clicking week day
 - work through adding meals on mobile (get rid of the header button and add a FAB maybe?)
 - edit meals
 - delete meals
 - default to week view on desktop - list view on mobile
-- replace header entirely with Mantine components - make sure functionality is not lost
 ## Planner Settings
 - add planner settings
 - [[Multiple Planners|allow user to have multiple planners (pre-requisite of inviting other users to shared planner)]]
