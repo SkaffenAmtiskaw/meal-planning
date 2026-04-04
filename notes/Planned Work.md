@@ -4,7 +4,6 @@
 
 # High-Priority
 ## Calendar Page
-- [[Render Week View|render week view]]
 - [[Render List View|render list view]]
 - [[Render Month Agenda View (Mobile)|render (or verify) meals in month agenda view (mobile)]]
 - [[Replace Calendar Header|replace header]]
@@ -15,6 +14,7 @@
 - delete meals
 - default to week view on desktop - list view on mobile
 - styling fixes to calendar view
+- reduce client components in calendar
 ## Planner Settings
 - add planner settings
 - [[Multiple Planners|allow user to have multiple planners (pre-requisite of inviting other users to shared planner)]]
