@@ -36,7 +36,7 @@ vi.mock('@mantine/core', () => ({
 }));
 
 const mockAddMealForm = vi.fn();
-vi.mock('./AddMealForm', () => ({
+vi.mock('../AddMealForm/AddMealForm', () => ({
 	AddMealForm: (props: {
 		onClose?: () => void;
 		onMealAdded?: (cal: unknown[]) => void;

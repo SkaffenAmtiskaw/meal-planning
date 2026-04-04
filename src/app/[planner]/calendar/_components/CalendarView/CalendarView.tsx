@@ -13,14 +13,14 @@ import {
 import { createEventsServicePlugin } from '@schedule-x/events-service';
 import { ScheduleXCalendar, useNextCalendarApp } from '@schedule-x/react';
 
-import { AddMealButton } from './AddMealButton';
-import { MealDetailModal } from './MealDetailModal';
-import { MonthGridEvent } from './MonthGridEvent';
-import type { SavedItem } from './AddMealForm';
 import styles from './CalendarView.module.css';
 
-import type { MealEvent, SerializedDay } from '../_utils/toScheduleXEvents';
-import { toScheduleXEvents } from '../_utils/toScheduleXEvents';
+import type { MealEvent, SerializedDay } from '../../_utils/toScheduleXEvents';
+import { toScheduleXEvents } from '../../_utils/toScheduleXEvents';
+import { AddMealButton } from '../AddMealButton/AddMealButton';
+import type { SavedItem } from '../AddMealForm/AddMealForm';
+import { MealDetailModal } from '../MealDetailModal/MealDetailModal';
+import { MonthGridEvent } from '../MonthGridEvent/MonthGridEvent';
 
 type Props = {
 	plannerId: string;

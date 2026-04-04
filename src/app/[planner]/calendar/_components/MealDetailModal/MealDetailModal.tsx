@@ -2,7 +2,7 @@ import Link from 'next/link';
 
 import { Modal, Stack, Text } from '@mantine/core';
 
-import type { MealEvent, SerializedDish } from '../_utils/toScheduleXEvents';
+import type { MealEvent, SerializedDish } from '../../_utils/toScheduleXEvents';
 
 type Props = {
 	event: MealEvent | null;

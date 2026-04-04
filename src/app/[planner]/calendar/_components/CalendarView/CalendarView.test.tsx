@@ -8,7 +8,8 @@ import { act, fireEvent, render, screen } from '@testing-library/react';
 import { afterEach, describe, expect, test, vi } from 'vitest';
 
 import { CalendarView } from './CalendarView';
-import { MonthGridEvent } from './MonthGridEvent';
+
+import { MonthGridEvent } from '../MonthGridEvent/MonthGridEvent';
 
 vi.mock('@mantine/hooks', () => ({
 	useMediaQuery: vi.fn(() => false),
@@ -56,7 +57,7 @@ vi.mock('@schedule-x/theme-default/dist/index.css', () => ({}));
 vi.mock('temporal-polyfill/global', () => ({}));
 
 const mockAddMealButton = vi.fn();
-vi.mock('./AddMealButton', () => ({
+vi.mock('../AddMealButton/AddMealButton', () => ({
 	AddMealButton: (props: {
 		plannerId?: string;
 		savedItems?: unknown[];
@@ -74,10 +75,12 @@ vi.mock('./AddMealButton', () => ({
 }));
 
 vi.mock('./CalendarView.module.css', () => ({ default: {} }));
-vi.mock('./MonthGridEvent', () => ({ MonthGridEvent: vi.fn(() => null) }));
+vi.mock('../MonthGridEvent/MonthGridEvent', () => ({
+	MonthGridEvent: vi.fn(() => null),
+}));
 
 const mockMealDetailModal = vi.fn();
-vi.mock('./MealDetailModal', () => ({
+vi.mock('../MealDetailModal/MealDetailModal', () => ({
 	MealDetailModal: (props: {
 		event: unknown;
 		plannerId: string;
@@ -89,7 +92,7 @@ vi.mock('./MealDetailModal', () => ({
 }));
 
 const mockToScheduleXEvents = vi.fn();
-vi.mock('../_utils/toScheduleXEvents', () => ({
+vi.mock('../../_utils/toScheduleXEvents', () => ({
 	toScheduleXEvents: (...args: unknown[]) => mockToScheduleXEvents(...args),
 }));
 

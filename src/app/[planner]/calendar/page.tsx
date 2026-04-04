@@ -3,7 +3,7 @@ import { z } from 'zod';
 import { getPlanner } from '@/_actions';
 import { zObjectId } from '@/_models';
 
-import { CalendarView } from './_components/CalendarView';
+import { CalendarView } from './_components/CalendarView/CalendarView';
 import type { SerializedDay } from './_utils/toScheduleXEvents';
 
 const zParams = z.object({

@@ -5,10 +5,9 @@ import { useState } from 'react';
 import { Button, Modal } from '@mantine/core';
 import { IconPlus } from '@tabler/icons-react';
 
-import { AddMealForm } from './AddMealForm';
-import type { SavedItem } from './AddMealForm';
-
-import type { SerializedDay } from '../_utils/toScheduleXEvents';
+import type { SerializedDay } from '../../_utils/toScheduleXEvents';
+import type { SavedItem } from '../AddMealForm/AddMealForm';
+import { AddMealForm } from '../AddMealForm/AddMealForm';
 
 type Props = {
 	plannerId?: string;

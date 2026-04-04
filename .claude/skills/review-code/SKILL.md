@@ -15,6 +15,7 @@ Feedback
 
 Code Conventions
 - You MUST refer to the code conventions in AGENTS.md and make sure all code changes follow them
+- Mantine components are preferred over custom styles - custom styles should only be used when explicitly requested by the uesr or when there is none available that suits the purpose
 
 Dead Code
 - all code reviews should include a check for dead code

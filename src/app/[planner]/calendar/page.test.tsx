@@ -22,7 +22,7 @@ type CalendarViewProps = {
 
 const mockCalendarView = vi.fn<(props: CalendarViewProps) => null>(() => null);
 
-vi.mock('./_components/CalendarView', () => ({
+vi.mock('./_components/CalendarView/CalendarView', () => ({
 	CalendarView: (props: CalendarViewProps) => mockCalendarView(props),
 }));
 
