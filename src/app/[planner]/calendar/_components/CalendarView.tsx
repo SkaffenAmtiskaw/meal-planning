@@ -134,10 +134,10 @@ export const CalendarView = ({ plannerId, savedItems, calendar }: Props) => {
 		);
 	}, [viewType, isMobile, calendarApp]);
 
-	// Fall back to 'month' if 'week' is active when switching to mobile.
+	// Fall back to 'list' if 'week' is active when switching to mobile.
 	useEffect(() => {
 		if (isMobile && viewType === 'week') {
-			setViewType('month');
+			setViewType('list');
 		}
 	}, [isMobile, viewType]);
 
