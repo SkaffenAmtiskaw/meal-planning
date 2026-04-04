@@ -15,12 +15,14 @@ import { ScheduleXCalendar, useNextCalendarApp } from '@schedule-x/react';
 
 import styles from './CalendarView.module.css';
 
+import { getWeekStart } from '../../_utils/getWeekStart';
 import type { MealEvent, SerializedDay } from '../../_utils/toScheduleXEvents';
 import { toScheduleXEvents } from '../../_utils/toScheduleXEvents';
 import { AddMealButton } from '../AddMealButton/AddMealButton';
 import type { SavedItem } from '../AddMealForm/AddMealForm';
 import { MealDetailModal } from '../MealDetailModal/MealDetailModal';
 import { MonthGridEvent } from '../MonthGridEvent/MonthGridEvent';
+import { WeekView } from '../WeekView/WeekView';
 
 type Props = {
 	plannerId: string;
@@ -121,6 +123,11 @@ export const CalendarView = ({ plannerId, savedItems, calendar }: Props) => {
 		},
 	});
 
+	const currentWeekStart = getWeekStart(
+		(calendarApp as unknown as InternalCalendarApp)?.$app?.datePickerState
+			?.selectedDate.value as string | undefined,
+	);
+
 	// Sync our SegmentedControl with schedule-x's internal view state.
 	// schedule-x has no public API for this; we use the internal $app.
 	useEffect(() => {
@@ -161,7 +168,7 @@ export const CalendarView = ({ plannerId, savedItems, calendar }: Props) => {
 					<Group justify="flex-end" mb="sm" data-testid="week-view-header">
 						<ViewSwitcher />
 					</Group>
-					<div data-testid="week-view-placeholder">Week view coming soon</div>
+					<WeekView calendar={calendar} currentWeekStart={currentWeekStart} />
 				</>
 			) : (
 				<div className={styles.calendarWrapper}>

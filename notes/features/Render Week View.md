@@ -15,22 +15,27 @@ Add view state to `CalendarView`. Use Mantine's `useMediaQuery` to detect mobile
 
 ✅ **Verify:** On desktop — see Month/Week/List tabs; Month and List work, Week shows placeholder. On mobile (resize browser) — see Month/List tabs; Month shows the agenda-style view.
 
-### Step 2 — Build WeekView with day columns and meal data
+### ✅ Step 2 — Build WeekView with day columns and meal data
 Create `WeekView.tsx`. Render 7 columns (Sun–Sat) for `currentWeekStart`. Wire meal data from `calendar` prop. Each column: day header + stacked meal cards (name, description, dish names).
 
-**Verify:** Switch to Week tab on desktop — 7 columns appear. Days with meals show them; empty days are empty.
+✅ **Verify:** Switch to Week tab on desktop — 7 columns appear. Days with meals show them; empty days are empty.
 
-### Step 3 — Add meal click → MealDetailModal
-Clicking a meal card in `WeekView` opens the existing `MealDetailModal`.
+### Step 3 — Render dish source links inline in meal cards
+In `WeekView`, render dish names as clickable links directly in the card when the source is `{ url }` (external `<a>`) or `{ _id }` (internal `<Link>`). Dishes with a `{ ref }` source, an unresolved string source, or a `note` cannot be fully represented inline and will require the modal (Step 4).
 
-**Verify:** Click a meal in the week view → modal opens with full dish details, notes, and source links.
+**Verify:** Dishes with a URL or recipe source show as clickable links in the week card without opening a modal. Dishes with a ref, plain string source, or notes are still plain text in the card.
 
-### Step 4 — Week navigation (prev/next/today)
-Add prev/next/today controls. Manage `currentWeekStart` state in `CalendarView`.
+### Step 4 — Add meal click → MealDetailModal
+Clicking a meal card in `WeekView` opens the existing `MealDetailModal`. A meal only needs to be clickable if it has at least one dish with a `{ ref }` source, an unresolved string source, or a `note`.
+
+**Verify:** Click a meal with a ref/note dish → modal opens. Meals with only URL/recipe dishes are not clickable (all info already visible inline).
+
+### Step 5 — Week navigation (prev/next/today)
+Add prev/next/today controls. `currentWeekStart` becomes stateful in `CalendarView` (initialized from schedule-x selected date as today). Prev/next adds/subtracts 7 days; today resets to current week.
 
 **Verify:** Prev/next shifts the week. Today resets to current week. Meals update correctly.
 
-### Step 5 — Styling pass
-Match MonthGridEvent event card style (colored left border, background). Ensure columns don't overflow at normal desktop width.
+### Step 6 — Styling pass
+Match MonthGridEvent event card style. Ensure columns don't overflow at normal desktop width.
 
 **Verify:** Week events visually match month view events. Layout is clean.

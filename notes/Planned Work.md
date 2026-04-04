@@ -22,6 +22,12 @@
 - [[Shared Planners|allow users to invite other users to a shared planner]]
 
 # Medium Priority
+
+## Style Improvements
+- [[Theme Colors|theme colors]]
+- recipe list style updates
+- toggle light/dark mode
+
 ## Sign In Improvements
 - update Google one-tap sign in - warning in console
 - add Apple SSO
@@ -34,10 +40,6 @@
 - move meals to different days (drag and drop)
 - reorder meals within days
 - add images to recipes
-## Style Improvements
-- recipe list style updates
-- toggle light/dark mode
-- theme colors
 ## Misc
 - tag management - edit/delete (should live under user settings)
 - performance - investigate mongo/mongoose caching - is next doing it already or do we need to implement it?
