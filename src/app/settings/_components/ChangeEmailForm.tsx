@@ -4,6 +4,7 @@ import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 
 import { Alert, Button, Group, Stack, Text, TextInput } from '@mantine/core';
+import { useDisclosure } from '@mantine/hooks';
 
 import { requestEmailChange } from '@/_actions/user';
 
@@ -22,7 +23,7 @@ export const ChangeEmailForm = ({
 	pendingEmailChange,
 }: Props) => {
 	const router = useRouter();
-	const [showForm, setShowForm] = useState(false);
+	const [showForm, formHandlers] = useDisclosure(false);
 	const [newEmail, setNewEmail] = useState('');
 	const [error, setError] = useState<string | null>(null);
 	const [successMessage, setSuccessMessage] = useState<string | null>(null);
@@ -48,7 +49,7 @@ export const ChangeEmailForm = ({
 			? `A verification email was sent to ${newEmail}. Any previous request has been cancelled.`
 			: `A verification email was sent to ${newEmail}.`;
 
-		setShowForm(false);
+		formHandlers.close();
 		setNewEmail('');
 		setSuccessMessage(message);
 		router.refresh();
@@ -74,7 +75,7 @@ export const ChangeEmailForm = ({
 					size="xs"
 					w="fit-content"
 					data-testid="change-email-button"
-					onClick={() => setShowForm(true)}
+					onClick={formHandlers.open}
 				>
 					Change email
 				</Button>
@@ -103,7 +104,7 @@ export const ChangeEmailForm = ({
 						<Button
 							variant="subtle"
 							data-testid="cancel-email-change-button"
-							onClick={() => setShowForm(false)}
+							onClick={formHandlers.close}
 						>
 							Cancel
 						</Button>

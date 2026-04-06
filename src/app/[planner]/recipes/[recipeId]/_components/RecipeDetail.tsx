@@ -15,6 +15,7 @@ import {
 	Text,
 	Title,
 } from '@mantine/core';
+import { useDisclosure } from '@mantine/hooks';
 
 import { deleteRecipe } from '@/_actions/saved';
 import type { RecipeInterface } from '@/_models/planner/recipe.types';
@@ -34,7 +35,7 @@ type Props = {
 
 export const RecipeDetail = ({ plannerId, recipe, tags }: Props) => {
 	const router = useRouter();
-	const [modalOpened, setModalOpened] = useState(false);
+	const [modalOpened, modalHandlers] = useDisclosure(false);
 	const [deleting, setDeleting] = useState(false);
 
 	const handleDelete = async () => {
@@ -61,7 +62,7 @@ export const RecipeDetail = ({ plannerId, recipe, tags }: Props) => {
 							<Button
 								color="red"
 								data-testid="delete-button"
-								onClick={() => setModalOpened(true)}
+								onClick={modalHandlers.open}
 							>
 								Delete
 							</Button>
@@ -204,7 +205,7 @@ export const RecipeDetail = ({ plannerId, recipe, tags }: Props) => {
 			<DeleteConfirmModal
 				loading={deleting}
 				message="Are you sure you want to delete this recipe? This cannot be undone."
-				onClose={() => setModalOpened(false)}
+				onClose={modalHandlers.close}
 				onConfirm={handleDelete}
 				opened={modalOpened}
 				title="Delete Recipe"

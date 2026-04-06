@@ -1,9 +1,9 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
-import { useState } from 'react';
 
 import { ActionIcon } from '@mantine/core';
+import { useDisclosure } from '@mantine/hooks';
 import { IconTrash } from '@tabler/icons-react';
 
 import { useFormFeedback } from '@/_hooks';
@@ -25,7 +25,7 @@ const DeleteItemButton = ({
 	'data-testid': testId = 'delete-button',
 }: Props) => {
 	const router = useRouter();
-	const [opened, setOpened] = useState(false);
+	const [opened, handlers] = useDisclosure(false);
 	const { status, errorMessage, wrap } = useFormFeedback({
 		successDuration: 0,
 	});
@@ -33,7 +33,7 @@ const DeleteItemButton = ({
 	const handleConfirm = wrap(
 		async () => onDelete(),
 		() => {
-			setOpened(false);
+			handlers.close();
 			router.refresh();
 		},
 	);
@@ -43,7 +43,7 @@ const DeleteItemButton = ({
 			<ActionIcon
 				color="red"
 				data-testid={testId}
-				onClick={() => setOpened(true)}
+				onClick={handlers.open}
 				variant="subtle"
 			>
 				<IconTrash size={16} />
@@ -52,7 +52,7 @@ const DeleteItemButton = ({
 				errorMessage={errorMessage}
 				loading={status === 'submitting'}
 				message={message}
-				onClose={() => setOpened(false)}
+				onClose={handlers.close}
 				onConfirm={handleConfirm}
 				opened={opened}
 				title={title}

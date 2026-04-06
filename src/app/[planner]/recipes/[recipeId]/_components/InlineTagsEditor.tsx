@@ -16,6 +16,7 @@ import { IconCheck, IconPencil, IconX } from '@tabler/icons-react';
 
 import { updateRecipeTags } from '@/_actions/saved';
 import { TagCombobox, type TagOption } from '@/_components/TagCombobox';
+import { useEditMode } from '@/_hooks/useEditMode';
 import { catchify } from '@/_utils/catchify';
 
 type Props = {
@@ -33,7 +34,7 @@ export const InlineTagsEditor = ({
 }: Props) => {
 	const router = useRouter();
 	const theme = useMantineTheme();
-	const [editing, setEditing] = useState(false);
+	const [editing, { enterEditing, exitEditing }] = useEditMode();
 	const [value, setValue] = useState(tagIds);
 	const [saving, setSaving] = useState(false);
 	const [saveError, setSaveError] = useState<string | null>(null);
@@ -62,13 +63,13 @@ export const InlineTagsEditor = ({
 			setSaveError(result.error);
 			return;
 		}
-		setEditing(false);
+		exitEditing();
 		router.refresh();
 	};
 
 	const handleCancel = () => {
 		setValue(tagIds);
-		setEditing(false);
+		exitEditing();
 		setSaveError(null);
 	};
 
@@ -81,7 +82,7 @@ export const InlineTagsEditor = ({
 				{!editing && (
 					<ActionIcon
 						data-testid="tags-edit-button"
-						onClick={() => setEditing(true)}
+						onClick={enterEditing}
 						size="xs"
 						variant="subtle"
 					>

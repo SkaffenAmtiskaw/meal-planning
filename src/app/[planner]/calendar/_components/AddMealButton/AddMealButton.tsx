@@ -1,8 +1,7 @@
 'use client';
 
-import { useState } from 'react';
-
 import { Button, Modal } from '@mantine/core';
+import { useDisclosure } from '@mantine/hooks';
 import { IconPlus } from '@tabler/icons-react';
 
 import type { SavedItem, SerializedDay } from '../../_utils/toScheduleXEvents';
@@ -19,27 +18,27 @@ export const AddMealButton = ({
 	savedItems = [],
 	onMealAdded,
 }: Props) => {
-	const [opened, setOpened] = useState(false);
+	const [opened, handlers] = useDisclosure(false);
 
 	return (
 		<>
 			<Button
 				data-testid="add-meal-button"
 				leftSection={<IconPlus />}
-				onClick={() => setOpened(true)}
+				onClick={handlers.open}
 			>
 				Add Meal
 			</Button>
 			<Modal
 				opened={opened}
-				onClose={() => setOpened(false)}
+				onClose={handlers.close}
 				title="Add Meal"
 				size="lg"
 			>
 				<AddMealForm
 					plannerId={plannerId}
 					savedItems={savedItems}
-					onClose={() => setOpened(false)}
+					onClose={handlers.close}
 					onMealAdded={onMealAdded}
 				/>
 			</Modal>
