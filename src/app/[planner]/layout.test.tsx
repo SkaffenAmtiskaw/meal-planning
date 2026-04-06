@@ -21,8 +21,8 @@ vi.mock('next/navigation', () => ({
 	notFound: () => mockNotFound(),
 }));
 
-vi.mock('./_components/PlannerWrapper', () => ({
-	PlannerWrapper: ({ children }: { children: React.ReactNode }) => (
+vi.mock('./_components', () => ({
+	PlannerLayout: ({ children }: { children: React.ReactNode }) => (
 		<>{children}</>
 	),
 }));

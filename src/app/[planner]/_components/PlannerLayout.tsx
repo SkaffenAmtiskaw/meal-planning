@@ -10,7 +10,7 @@ import { Header } from '@/app/_components/Header';
 
 import { HEADER_HEIGHT } from '../../_constants';
 
-export const PlannerWrapper = ({ children }: { children: React.ReactNode }) => {
+export const PlannerLayout = ({ children }: { children: React.ReactNode }) => {
 	const [opened, { toggle }] = useDisclosure();
 
 	const { planner } = useParams();

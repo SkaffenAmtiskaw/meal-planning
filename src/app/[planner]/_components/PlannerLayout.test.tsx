@@ -2,7 +2,7 @@ import { render, screen } from '@testing-library/react';
 
 import { describe, expect, test, vi } from 'vitest';
 
-import { PlannerWrapper } from './PlannerWrapper';
+import { PlannerLayout } from './PlannerLayout';
 
 vi.mock('next/navigation', () => ({
 	useParams: () => ({ planner: 'maleficent-planner-id' }),
@@ -37,7 +37,7 @@ vi.mock('@/app/_components/Header', () => ({
 
 describe('PlannerWrapper', () => {
 	test('passes planner id from params to Navbar', () => {
-		render(<PlannerWrapper>{'Maleficent Meals'}</PlannerWrapper>);
+		render(<PlannerLayout>{'Maleficent Meals'}</PlannerLayout>);
 
 		expect(mockNavbar).toHaveBeenCalledWith(
 			expect.objectContaining({ id: 'maleficent-planner-id' }),
@@ -45,13 +45,13 @@ describe('PlannerWrapper', () => {
 	});
 
 	test('renders children', () => {
-		render(<PlannerWrapper>{"Ursula's Menu"}</PlannerWrapper>);
+		render(<PlannerLayout>{"Ursula's Menu"}</PlannerLayout>);
 
 		expect(screen.getByText("Ursula's Menu")).toBeDefined();
 	});
 
 	test('passes Burger as leftSection to Header', () => {
-		render(<PlannerWrapper>{'content'}</PlannerWrapper>);
+		render(<PlannerLayout>{'content'}</PlannerLayout>);
 
 		expect(mockHeader).toHaveBeenCalledWith(
 			expect.objectContaining({ leftSection: expect.anything() }),
