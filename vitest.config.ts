@@ -10,6 +10,9 @@ export default defineConfig({
     },
   },
   test: {
+    alias: {
+        'server-only': new URL('./test/mocks/server-only.ts', import.meta.url).pathname,
+    },
     environment: 'jsdom',
     setupFiles: ['./test/setup.ts'],
     coverage: {
