@@ -7,7 +7,7 @@ import { z } from 'zod';
 import { checkAuth } from '@/_actions';
 import { zObjectId } from '@/_models';
 
-import { PlannerLayout } from './_components';
+import { PlannerLayout, PlannerProvider } from './_components';
 
 const zParams = z.object({
 	planner: zObjectId,
@@ -23,7 +23,11 @@ const Layout = async ({ children, params }: LayoutProps<'/[planner]'>) => {
 	if (result.type === 'error') throw result.error;
 
 	// TODO: Add suspense so the layout will still load while the auth is being checked
-	return <PlannerLayout>{children}</PlannerLayout>;
+	return (
+		<PlannerLayout>
+			<PlannerProvider id={String(id)}>{children}</PlannerProvider>
+		</PlannerLayout>
+	);
 };
 
 export default Layout;

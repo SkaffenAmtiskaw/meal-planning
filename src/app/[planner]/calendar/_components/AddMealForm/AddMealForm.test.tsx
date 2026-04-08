@@ -1,10 +1,20 @@
+import { Select } from '@mantine/core';
+
 import { act, fireEvent, render, screen } from '@testing-library/react';
 
-import { afterEach, describe, expect, test, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
 
 import { addMeal } from '@/_actions/planner/addMeal';
 
 import { AddMealForm } from './AddMealForm';
+
+import { usePlannerSavedItems } from '../../_hooks/usePlannerSavedItems';
+
+vi.mock('../../_hooks/usePlannerSavedItems', () => ({
+	usePlannerSavedItems: vi.fn(),
+}));
+
+const usePlannerSavedItemsMock = vi.mocked(usePlannerSavedItems);
 
 vi.mock('@/_actions/planner/addMeal', () => ({
 	addMeal: vi.fn(),
@@ -160,20 +170,22 @@ vi.mock('@mantine/core', () => {
 		</div>
 	);
 
-	const Select = ({
-		onChange,
-		'data-testid': testId,
-		value,
-	}: {
-		onChange?: (value: string | null) => void;
-		'data-testid'?: string;
-		value?: string | null;
-	}) => (
-		<select
-			data-testid={testId}
-			value={value ?? ''}
-			onChange={(e) => onChange?.(e.currentTarget.value || null)}
-		/>
+	const Select = vi.fn(
+		({
+			onChange,
+			'data-testid': testId,
+			value,
+		}: {
+			onChange?: (value: string | null) => void;
+			'data-testid'?: string;
+			value?: string | null;
+		}) => (
+			<select
+				data-testid={testId}
+				value={value ?? ''}
+				onChange={(e) => onChange?.(e.currentTarget.value || null)}
+			/>
+		),
 	);
 
 	const Stack = ({ children }: { children: React.ReactNode }) => (
@@ -198,7 +210,7 @@ vi.mock('@mantine/core', () => {
 		<textarea
 			data-testid={testId ?? `textarea-${label}`}
 			value={value ?? ''}
-			onChange={onChange}
+			onChange={onChange ?? (() => {})}
 		/>
 	);
 
@@ -219,7 +231,7 @@ vi.mock('@mantine/core', () => {
 			data-testid={testId ?? `input-${label}`}
 			type={type}
 			value={value ?? ''}
-			onChange={onChange}
+			onChange={onChange ?? (() => {})}
 		/>
 	);
 
@@ -237,9 +249,10 @@ vi.mock('@mantine/core', () => {
 	};
 });
 
+const SelectMock = vi.mocked(Select);
+
 const defaultProps = {
 	plannerId: 'planner-1',
-	savedItems: [],
 	onClose: vi.fn(),
 };
 
@@ -249,6 +262,10 @@ const clickSegment = (rowIndex: number, value: string) => {
 };
 
 describe('AddMealForm', () => {
+	beforeEach(() => {
+		usePlannerSavedItemsMock.mockReturnValue([]);
+	});
+
 	afterEach(() => {
 		vi.resetAllMocks();
 	});
@@ -370,9 +387,35 @@ describe('AddMealForm', () => {
 		);
 	});
 
+	test('renders a select with the saved items', () => {
+		const mockSavedItems = [
+			{ _id: '1', name: 'Pasta', url: '/pasta' },
+			{ _id: '2', name: 'Burger', url: '/burger' },
+		];
+
+		usePlannerSavedItemsMock.mockReturnValue(mockSavedItems);
+
+		render(<AddMealForm {...defaultProps} />);
+
+		clickSegment(0, 'saved');
+
+		expect(SelectMock).toHaveBeenCalledWith(
+			expect.objectContaining({
+				data: mockSavedItems.map((item) => ({
+					value: item._id,
+					label: item.name,
+				})),
+			}),
+			undefined,
+		);
+	});
+
 	test('selecting a saved item fires onChange with the id', () => {
-		const savedItems = [{ _id: '1', name: 'Pasta' }];
-		render(<AddMealForm {...defaultProps} savedItems={savedItems} />);
+		usePlannerSavedItemsMock.mockReturnValueOnce([
+			{ _id: '1', name: 'Pasta', url: '/pasta' },
+		]);
+
+		render(<AddMealForm {...defaultProps} />);
 		clickSegment(0, 'saved');
 		fireEvent.change(screen.getByTestId('dish-saved-0'), {
 			target: { value: '1' },
@@ -381,8 +424,11 @@ describe('AddMealForm', () => {
 	});
 
 	test('clearing a saved item fires onChange with null', () => {
-		const savedItems = [{ _id: '1', name: 'Pasta' }];
-		render(<AddMealForm {...defaultProps} savedItems={savedItems} />);
+		usePlannerSavedItemsMock.mockReturnValueOnce([
+			{ _id: '1', name: 'Pasta', url: '/pasta' },
+		]);
+
+		render(<AddMealForm {...defaultProps} />);
 		clickSegment(0, 'saved');
 		fireEvent.change(screen.getByTestId('dish-saved-0'), {
 			target: { value: '' },
@@ -488,11 +534,12 @@ describe('AddMealForm', () => {
 	});
 
 	test('populates saved combobox with provided savedItems', () => {
-		const savedItems = [
-			{ _id: '1', name: 'Pasta' },
-			{ _id: '2', name: 'Salad' },
-		];
-		render(<AddMealForm {...defaultProps} savedItems={savedItems} />);
+		usePlannerSavedItemsMock.mockReturnValueOnce([
+			{ _id: '1', name: 'Pasta', url: '/pasta' },
+			{ _id: '2', name: 'Salad', url: '/salad' },
+		]);
+
+		render(<AddMealForm {...defaultProps} />);
 		clickSegment(0, 'saved');
 		expect(screen.getByTestId('dish-saved-0')).toBeDefined();
 	});

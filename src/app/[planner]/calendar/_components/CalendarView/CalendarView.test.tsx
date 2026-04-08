@@ -5,12 +5,21 @@ import { useNextCalendarApp } from '@schedule-x/react';
 
 import { act, fireEvent, render, screen } from '@testing-library/react';
 
-import { afterEach, describe, expect, test, vi } from 'vitest';
+import type { Types } from 'mongoose';
+import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
+
+import { usePlannerContext } from '@/app/[planner]/_components';
 
 import { CalendarView } from './CalendarView';
 
 import { getWeekStart } from '../../_utils/getWeekStart';
 import { MonthGridEvent } from '../MonthGridEvent/MonthGridEvent';
+
+vi.mock('@/app/[planner]/_components', () => ({
+	usePlannerContext: vi.fn(),
+}));
+
+const usePlannerContextMock = vi.mocked(usePlannerContext);
 
 vi.mock('@mantine/hooks', () => ({
 	useMediaQuery: vi.fn(() => false),
@@ -138,37 +147,34 @@ const wrapper = ({ children }: { children: React.ReactNode }) => (
 	<MantineProvider>{children}</MantineProvider>
 );
 
-const savedItems = [{ _id: '1', name: 'Pasta' }];
-
 describe('CalendarView', () => {
+	beforeEach(() => {
+		usePlannerContextMock.mockReturnValue({
+			calendar: [],
+			saved: [],
+			tags: [],
+		});
+	});
+
 	afterEach(() => {
 		vi.resetAllMocks();
 	});
 
 	test('renders the schedule-x calendar by default', () => {
 		mockToScheduleXEvents.mockReturnValueOnce([]);
-		render(
-			<CalendarView plannerId="planner-1" savedItems={[]} calendar={[]} />,
-			{ wrapper },
-		);
+		render(<CalendarView plannerId="planner-1" />, { wrapper });
 		expect(screen.getByTestId('schedule-x-calendar')).toBeDefined();
 	});
 
 	test('renders view switcher inside schedule-x header on month view', () => {
 		mockToScheduleXEvents.mockReturnValueOnce([]);
-		render(
-			<CalendarView plannerId="planner-1" savedItems={[]} calendar={[]} />,
-			{ wrapper },
-		);
+		render(<CalendarView plannerId="planner-1" />, { wrapper });
 		expect(screen.getByTestId('view-switcher')).toBeDefined();
 	});
 
 	test('renders AddMealButton alongside view switcher in schedule-x header', () => {
 		mockToScheduleXEvents.mockReturnValueOnce([]);
-		render(
-			<CalendarView plannerId="planner-1" savedItems={[]} calendar={[]} />,
-			{ wrapper },
-		);
+		render(<CalendarView plannerId="planner-1" />, { wrapper });
 		expect(screen.getByTestId('add-meal-button')).toBeDefined();
 		expect(screen.getByTestId('view-switcher')).toBeDefined();
 	});
@@ -176,10 +182,7 @@ describe('CalendarView', () => {
 	test('shows Month/Week/List options on desktop', () => {
 		mockToScheduleXEvents.mockReturnValueOnce([]);
 		vi.mocked(useMediaQuery).mockReturnValue(false);
-		render(
-			<CalendarView plannerId="planner-1" savedItems={[]} calendar={[]} />,
-			{ wrapper },
-		);
+		render(<CalendarView plannerId="planner-1" />, { wrapper });
 		expect(screen.getByText('Month')).toBeDefined();
 		expect(screen.getByText('Week')).toBeDefined();
 		expect(screen.getByText('List')).toBeDefined();
@@ -188,10 +191,7 @@ describe('CalendarView', () => {
 	test('shows Month/List options on mobile', () => {
 		mockToScheduleXEvents.mockReturnValueOnce([]);
 		vi.mocked(useMediaQuery).mockReturnValue(true);
-		render(
-			<CalendarView plannerId="planner-1" savedItems={[]} calendar={[]} />,
-			{ wrapper },
-		);
+		render(<CalendarView plannerId="planner-1" />, { wrapper });
 		expect(screen.getByText('Month')).toBeDefined();
 		expect(screen.queryByText('Week')).toBeNull();
 		expect(screen.getByText('List')).toBeDefined();
@@ -199,10 +199,7 @@ describe('CalendarView', () => {
 
 	test('shows week view when Week is selected', () => {
 		mockToScheduleXEvents.mockReturnValueOnce([]);
-		render(
-			<CalendarView plannerId="planner-1" savedItems={[]} calendar={[]} />,
-			{ wrapper },
-		);
+		render(<CalendarView plannerId="planner-1" />, { wrapper });
 		fireEvent.click(screen.getByText('Week'));
 		expect(screen.getByTestId('week-view')).toBeDefined();
 		expect(screen.getByTestId('week-view-header')).toBeDefined();
@@ -211,15 +208,16 @@ describe('CalendarView', () => {
 
 	test('passes calendar to WeekView', () => {
 		const calendar = [{ date: '2024-01-14', meals: [] }];
+		usePlannerContextMock.mockReturnValue({
+			calendar,
+			saved: [],
+			tags: [],
+		});
+
 		mockToScheduleXEvents.mockReturnValueOnce([]);
-		render(
-			<CalendarView
-				plannerId="planner-1"
-				savedItems={[]}
-				calendar={calendar}
-			/>,
-			{ wrapper },
-		);
+		render(<CalendarView plannerId="planner-1" />, {
+			wrapper,
+		});
 		fireEvent.click(screen.getByText('Week'));
 		expect(mockWeekView).toHaveBeenCalledWith(
 			expect.objectContaining({ calendar }),
@@ -228,10 +226,7 @@ describe('CalendarView', () => {
 
 	test('passes currentWeekStart to WeekView', () => {
 		mockToScheduleXEvents.mockReturnValueOnce([]);
-		render(
-			<CalendarView plannerId="planner-1" savedItems={[]} calendar={[]} />,
-			{ wrapper },
-		);
+		render(<CalendarView plannerId="planner-1" />, { wrapper });
 		fireEvent.click(screen.getByText('Week'));
 		expect(mockWeekView).toHaveBeenCalledWith(
 			expect.objectContaining({ currentWeekStart: mockWeekStart }),
@@ -240,30 +235,21 @@ describe('CalendarView', () => {
 
 	test('derives currentWeekStart from schedule-x selected date', () => {
 		mockToScheduleXEvents.mockReturnValueOnce([]);
-		render(
-			<CalendarView plannerId="planner-1" savedItems={[]} calendar={[]} />,
-			{ wrapper },
-		);
+		render(<CalendarView plannerId="planner-1" />, { wrapper });
 		// calendarApp mock returns datePickerState.selectedDate.value = '2024-01-01'
 		expect(vi.mocked(getWeekStart)).toHaveBeenCalledWith('2024-01-01');
 	});
 
 	test('view switcher is accessible in week view header', () => {
 		mockToScheduleXEvents.mockReturnValueOnce([]);
-		render(
-			<CalendarView plannerId="planner-1" savedItems={[]} calendar={[]} />,
-			{ wrapper },
-		);
+		render(<CalendarView plannerId="planner-1" />, { wrapper });
 		fireEvent.click(screen.getByText('Week'));
 		expect(screen.getByTestId('view-switcher')).toBeDefined();
 	});
 
 	test('shows schedule-x calendar when switching back from week to month', () => {
 		mockToScheduleXEvents.mockReturnValueOnce([]);
-		render(
-			<CalendarView plannerId="planner-1" savedItems={[]} calendar={[]} />,
-			{ wrapper },
-		);
+		render(<CalendarView plannerId="planner-1" />, { wrapper });
 		fireEvent.click(screen.getByText('Week'));
 		fireEvent.click(screen.getByText('Month'));
 		expect(screen.queryByTestId('week-view')).toBeNull();
@@ -275,19 +261,13 @@ describe('CalendarView', () => {
 		vi.mocked(useNextCalendarApp).mockReturnValueOnce({
 			$app: {},
 		} as unknown as ReturnType<typeof useNextCalendarApp>);
-		render(
-			<CalendarView plannerId="planner-1" savedItems={[]} calendar={[]} />,
-			{ wrapper },
-		);
+		render(<CalendarView plannerId="planner-1" />, { wrapper });
 		expect(screen.getByTestId('schedule-x-calendar')).toBeDefined();
 	});
 
 	test('calls schedule-x setView when switching from month to list', () => {
 		mockToScheduleXEvents.mockReturnValueOnce([]);
-		render(
-			<CalendarView plannerId="planner-1" savedItems={[]} calendar={[]} />,
-			{ wrapper },
-		);
+		render(<CalendarView plannerId="planner-1" />, { wrapper });
 		fireEvent.click(screen.getByText('List'));
 		expect(mockSetCurrentView).toHaveBeenCalledWith('list', '2024-01-01');
 	});
@@ -295,10 +275,7 @@ describe('CalendarView', () => {
 	test('calls schedule-x setView with month-agenda on mobile', () => {
 		mockToScheduleXEvents.mockReturnValueOnce([]);
 		vi.mocked(useMediaQuery).mockReturnValue(true);
-		render(
-			<CalendarView plannerId="planner-1" savedItems={[]} calendar={[]} />,
-			{ wrapper },
-		);
+		render(<CalendarView plannerId="planner-1" />, { wrapper });
 		expect(mockSetCurrentView).toHaveBeenCalledWith(
 			'month-agenda',
 			'2024-01-01',
@@ -310,7 +287,7 @@ describe('CalendarView', () => {
 		vi.mocked(useMediaQuery).mockReturnValue(false);
 		const { rerender } = render(
 			<MantineProvider>
-				<CalendarView plannerId="planner-1" savedItems={[]} calendar={[]} />
+				<CalendarView plannerId="planner-1" />
 			</MantineProvider>,
 		);
 		fireEvent.click(screen.getByText('Week'));
@@ -319,7 +296,7 @@ describe('CalendarView', () => {
 		vi.mocked(useMediaQuery).mockReturnValue(true);
 		rerender(
 			<MantineProvider>
-				<CalendarView plannerId="planner-1" savedItems={[]} calendar={[]} />
+				<CalendarView plannerId="planner-1" />
 			</MantineProvider>,
 		);
 		expect(screen.queryByTestId('week-view')).toBeNull();
@@ -328,28 +305,10 @@ describe('CalendarView', () => {
 
 	test('passes plannerId to AddMealButton', () => {
 		mockToScheduleXEvents.mockReturnValueOnce([]);
-		render(
-			<CalendarView plannerId="planner-1" savedItems={[]} calendar={[]} />,
-			{ wrapper },
-		);
+		render(<CalendarView plannerId="planner-1" />, { wrapper });
 		expect(
 			screen.getByTestId('add-meal-button').getAttribute('data-planner-id'),
 		).toBe('planner-1');
-	});
-
-	test('passes savedItems to AddMealButton', () => {
-		mockToScheduleXEvents.mockReturnValueOnce([]);
-		render(
-			<CalendarView
-				plannerId="planner-1"
-				savedItems={savedItems}
-				calendar={[]}
-			/>,
-			{ wrapper },
-		);
-		expect(
-			screen.getByTestId('add-meal-button').getAttribute('data-saved-count'),
-		).toBe('1');
 	});
 
 	test('passes calendar and savedItems to toScheduleXEvents', () => {
@@ -359,19 +318,25 @@ describe('CalendarView', () => {
 				meals: [{ _id: 'meal-1', name: 'Breakfast', dishes: [] }],
 			},
 		];
-		const savedItems = [
-			{ _id: 'saved-1', name: 'Pasta', url: 'https://example.com' },
+		const saved = [
+			{
+				_id: 'saved-1' as unknown as Types.ObjectId,
+				name: 'Pasta',
+				url: 'https://example.com',
+				tags: [],
+			},
 		];
+
+		usePlannerContextMock.mockReturnValue({
+			calendar,
+			saved,
+			tags: [],
+		});
 		mockToScheduleXEvents.mockReturnValueOnce([]);
-		render(
-			<CalendarView
-				plannerId="planner-1"
-				savedItems={savedItems}
-				calendar={calendar}
-			/>,
-			{ wrapper },
-		);
-		expect(mockToScheduleXEvents).toHaveBeenCalledWith(calendar, savedItems);
+		render(<CalendarView plannerId="planner-1" />, { wrapper });
+		expect(mockToScheduleXEvents).toHaveBeenCalledWith(calendar, [
+			{ _id: 'saved-1', name: 'Pasta', url: 'https://example.com' },
+		]);
 	});
 
 	test('initializes calendar with events returned by toScheduleXEvents', () => {
@@ -385,20 +350,7 @@ describe('CalendarView', () => {
 			},
 		];
 		mockToScheduleXEvents.mockReturnValueOnce(mockEvents);
-		const calendar = [
-			{
-				date: '2024-01-15',
-				meals: [{ _id: 'meal-1', name: 'Breakfast', dishes: [] }],
-			},
-		];
-		render(
-			<CalendarView
-				plannerId="planner-1"
-				savedItems={[]}
-				calendar={calendar}
-			/>,
-			{ wrapper },
-		);
+		render(<CalendarView plannerId="planner-1" />, { wrapper });
 		expect(vi.mocked(useNextCalendarApp)).toHaveBeenCalledWith(
 			expect.objectContaining({ events: mockEvents }),
 		);
@@ -406,10 +358,7 @@ describe('CalendarView', () => {
 
 	test('initializes with empty events when toScheduleXEvents returns empty array', () => {
 		mockToScheduleXEvents.mockReturnValueOnce([]);
-		render(
-			<CalendarView plannerId="planner-1" savedItems={[]} calendar={[]} />,
-			{ wrapper },
-		);
+		render(<CalendarView plannerId="planner-1" />, { wrapper });
 		expect(vi.mocked(useNextCalendarApp)).toHaveBeenCalledWith(
 			expect.objectContaining({ events: [] }),
 		);
@@ -417,10 +366,7 @@ describe('CalendarView', () => {
 
 	test('passes MonthGridEvent as monthGridEvent custom component', () => {
 		mockToScheduleXEvents.mockReturnValueOnce([]);
-		render(
-			<CalendarView plannerId="planner-1" savedItems={[]} calendar={[]} />,
-			{ wrapper },
-		);
+		render(<CalendarView plannerId="planner-1" />, { wrapper });
 		expect(mockScheduleXCalendar).toHaveBeenCalledWith(
 			expect.objectContaining({
 				customComponents: expect.objectContaining({
@@ -432,10 +378,7 @@ describe('CalendarView', () => {
 
 	test('passes onMealAdded to AddMealButton', () => {
 		mockToScheduleXEvents.mockReturnValueOnce([]);
-		render(
-			<CalendarView plannerId="planner-1" savedItems={[]} calendar={[]} />,
-			{ wrapper },
-		);
+		render(<CalendarView plannerId="planner-1" />, { wrapper });
 		expect(mockAddMealButton).toHaveBeenCalledWith(
 			expect.objectContaining({ onMealAdded: expect.any(Function) }),
 		);
@@ -443,10 +386,7 @@ describe('CalendarView', () => {
 
 	test('renders MealDetailModal with null event initially', () => {
 		mockToScheduleXEvents.mockReturnValueOnce([]);
-		render(
-			<CalendarView plannerId="planner-1" savedItems={[]} calendar={[]} />,
-			{ wrapper },
-		);
+		render(<CalendarView plannerId="planner-1" />, { wrapper });
 		expect(mockMealDetailModal).toHaveBeenCalledWith(
 			expect.objectContaining({ event: null }),
 		);
@@ -454,10 +394,7 @@ describe('CalendarView', () => {
 
 	test('passes plannerId to MealDetailModal', () => {
 		mockToScheduleXEvents.mockReturnValueOnce([]);
-		render(
-			<CalendarView plannerId="planner-1" savedItems={[]} calendar={[]} />,
-			{ wrapper },
-		);
+		render(<CalendarView plannerId="planner-1" />, { wrapper });
 		expect(mockMealDetailModal).toHaveBeenCalledWith(
 			expect.objectContaining({ plannerId: 'planner-1' }),
 		);
@@ -465,10 +402,7 @@ describe('CalendarView', () => {
 
 	test('registers onEventClick in calendar callbacks', () => {
 		mockToScheduleXEvents.mockReturnValueOnce([]);
-		render(
-			<CalendarView plannerId="planner-1" savedItems={[]} calendar={[]} />,
-			{ wrapper },
-		);
+		render(<CalendarView plannerId="planner-1" />, { wrapper });
 		expect(vi.mocked(useNextCalendarApp)).toHaveBeenCalledWith(
 			expect.objectContaining({
 				callbacks: expect.objectContaining({
@@ -480,10 +414,7 @@ describe('CalendarView', () => {
 
 	test('onEventClick opens MealDetailModal with the clicked event', () => {
 		mockToScheduleXEvents.mockReturnValueOnce([]);
-		render(
-			<CalendarView plannerId="planner-1" savedItems={[]} calendar={[]} />,
-			{ wrapper },
-		);
+		render(<CalendarView plannerId="planner-1" />, { wrapper });
 		const { onEventClick } =
 			vi.mocked(useNextCalendarApp).mock.calls[0][0].callbacks ?? {};
 		const mockEvent = { id: 'meal-1', title: 'Breakfast', dishes: [] };
@@ -495,10 +426,7 @@ describe('CalendarView', () => {
 
 	test('passes onMealClick to WeekView', () => {
 		mockToScheduleXEvents.mockReturnValueOnce([]);
-		render(
-			<CalendarView plannerId="planner-1" savedItems={[]} calendar={[]} />,
-			{ wrapper },
-		);
+		render(<CalendarView plannerId="planner-1" />, { wrapper });
 		fireEvent.click(screen.getByText('Week'));
 		expect(mockWeekView).toHaveBeenCalledWith(
 			expect.objectContaining({ onMealClick: expect.any(Function) }),
@@ -507,10 +435,7 @@ describe('CalendarView', () => {
 
 	test('onMealClick from WeekView opens MealDetailModal with the meal event', () => {
 		mockToScheduleXEvents.mockReturnValueOnce([]);
-		render(
-			<CalendarView plannerId="planner-1" savedItems={[]} calendar={[]} />,
-			{ wrapper },
-		);
+		render(<CalendarView plannerId="planner-1" />, { wrapper });
 		fireEvent.click(screen.getByText('Week'));
 		const mockEvent = { id: 'meal-1', title: 'Breakfast', dishes: [] };
 		act(() => {
@@ -523,10 +448,7 @@ describe('CalendarView', () => {
 
 	test('MealDetailModal onClose resets the clicked event to null', () => {
 		mockToScheduleXEvents.mockReturnValueOnce([]);
-		render(
-			<CalendarView plannerId="planner-1" savedItems={[]} calendar={[]} />,
-			{ wrapper },
-		);
+		render(<CalendarView plannerId="planner-1" />, { wrapper });
 		const { onEventClick } =
 			vi.mocked(useNextCalendarApp).mock.calls[0][0].callbacks ?? {};
 		const mockEvent = { id: 'meal-1', title: 'Breakfast', dishes: [] };
@@ -540,10 +462,7 @@ describe('CalendarView', () => {
 
 	test('renders prev, today, and next navigation buttons in week view header', () => {
 		mockToScheduleXEvents.mockReturnValueOnce([]);
-		render(
-			<CalendarView plannerId="planner-1" savedItems={[]} calendar={[]} />,
-			{ wrapper },
-		);
+		render(<CalendarView plannerId="planner-1" />, { wrapper });
 		fireEvent.click(screen.getByText('Week'));
 		expect(screen.getByTestId('week-prev')).toBeDefined();
 		expect(screen.getByTestId('week-today')).toBeDefined();
@@ -552,10 +471,7 @@ describe('CalendarView', () => {
 
 	test('clicking prev shifts currentWeekStart back 7 days', () => {
 		mockToScheduleXEvents.mockReturnValueOnce([]);
-		render(
-			<CalendarView plannerId="planner-1" savedItems={[]} calendar={[]} />,
-			{ wrapper },
-		);
+		render(<CalendarView plannerId="planner-1" />, { wrapper });
 		fireEvent.click(screen.getByText('Week'));
 		act(() => {
 			fireEvent.click(screen.getByTestId('week-prev'));
@@ -567,10 +483,7 @@ describe('CalendarView', () => {
 
 	test('clicking next shifts currentWeekStart forward 7 days', () => {
 		mockToScheduleXEvents.mockReturnValueOnce([]);
-		render(
-			<CalendarView plannerId="planner-1" savedItems={[]} calendar={[]} />,
-			{ wrapper },
-		);
+		render(<CalendarView plannerId="planner-1" />, { wrapper });
 		fireEvent.click(screen.getByText('Week'));
 		act(() => {
 			fireEvent.click(screen.getByTestId('week-next'));
@@ -582,10 +495,7 @@ describe('CalendarView', () => {
 
 	test('clicking today resets currentWeekStart to current week', () => {
 		mockToScheduleXEvents.mockReturnValueOnce([]);
-		render(
-			<CalendarView plannerId="planner-1" savedItems={[]} calendar={[]} />,
-			{ wrapper },
-		);
+		render(<CalendarView plannerId="planner-1" />, { wrapper });
 		fireEvent.click(screen.getByText('Week'));
 		// Navigate away first
 		act(() => {
@@ -605,10 +515,7 @@ describe('CalendarView', () => {
 
 	test('onMealAdded replaces all events via eventsService.set', () => {
 		mockToScheduleXEvents.mockReturnValueOnce([]); // initial render
-		render(
-			<CalendarView plannerId="planner-1" savedItems={[]} calendar={[]} />,
-			{ wrapper },
-		);
+		render(<CalendarView plannerId="planner-1" />, { wrapper });
 
 		const updatedEvents = [
 			{

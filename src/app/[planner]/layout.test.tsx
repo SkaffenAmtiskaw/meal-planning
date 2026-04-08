@@ -25,6 +25,9 @@ vi.mock('./_components', () => ({
 	PlannerLayout: ({ children }: { children: React.ReactNode }) => (
 		<>{children}</>
 	),
+	PlannerProvider: ({ children }: { children: React.ReactNode }) => (
+		<>{children}</>
+	),
 }));
 
 const plannerId = '507f1f77bcf86cd799439011';

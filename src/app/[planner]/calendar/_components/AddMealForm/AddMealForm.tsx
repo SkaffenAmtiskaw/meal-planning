@@ -23,7 +23,8 @@ import { addMeal } from '@/_actions/planner/addMeal';
 import { FormFeedbackAlert, SubmitButton } from '@/_components';
 import { useFormFeedback } from '@/_hooks';
 
-import type { SavedItem, SerializedDay } from '../../_utils/toScheduleXEvents';
+import { usePlannerSavedItems } from '../../_hooks/usePlannerSavedItems';
+import type { SerializedDay } from '../../_utils/toScheduleXEvents';
 
 type SourceType = 'none' | 'saved' | 'text';
 
@@ -55,17 +56,13 @@ const zFormFields = z.object({
 
 type Props = {
 	plannerId: string;
-	savedItems: SavedItem[];
 	onClose: () => void;
 	onMealAdded?: (calendar: SerializedDay[]) => void;
 };
 
-export const AddMealForm = ({
-	plannerId,
-	savedItems,
-	onClose,
-	onMealAdded,
-}: Props) => {
+export const AddMealForm = ({ plannerId, onClose, onMealAdded }: Props) => {
+	const savedItems = usePlannerSavedItems();
+
 	const [dishes, setDishes] = useState<DishState[]>([makeDish()]);
 
 	const { status, countdown, errorMessage, wrap } = useFormFeedback();

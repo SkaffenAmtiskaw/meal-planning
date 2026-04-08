@@ -14,7 +14,7 @@
 - delete meals
 - default to week view on desktop - list view on mobile
 - styling fixes to calendar view
-- reduce client components in calendar
+- [[Reduce Client Components in Calendar|reduce client components in calendar]]
 ## Planner Settings
 - add planner settings
 - [[Multiple Planners|allow user to have multiple planners (pre-requisite of inviting other users to shared planner)]]

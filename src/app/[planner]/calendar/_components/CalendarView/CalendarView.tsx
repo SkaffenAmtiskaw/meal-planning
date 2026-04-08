@@ -14,14 +14,13 @@ import {
 import { createEventsServicePlugin } from '@schedule-x/events-service';
 import { ScheduleXCalendar, useNextCalendarApp } from '@schedule-x/react';
 
+import { usePlannerContext } from '@/app/[planner]/_components';
+import { usePlannerSavedItems } from '@/app/[planner]/calendar/_hooks/usePlannerSavedItems';
+
 import styles from './CalendarView.module.css';
 
 import { getWeekStart } from '../../_utils/getWeekStart';
-import type {
-	MealEvent,
-	SavedItem,
-	SerializedDay,
-} from '../../_utils/toScheduleXEvents';
+import type { MealEvent, SerializedDay } from '../../_utils/toScheduleXEvents';
 import { toScheduleXEvents } from '../../_utils/toScheduleXEvents';
 import { AddMealButton } from '../AddMealButton/AddMealButton';
 import { MealDetailModal } from '../MealDetailModal/MealDetailModal';
@@ -30,8 +29,6 @@ import { WeekView } from '../WeekView/WeekView';
 
 type Props = {
 	plannerId: string;
-	savedItems: SavedItem[];
-	calendar: SerializedDay[];
 };
 
 export type ViewType = 'month' | 'week' | 'list';
@@ -66,7 +63,12 @@ type InternalCalendarApp = {
 	};
 };
 
-export const CalendarView = ({ plannerId, savedItems, calendar }: Props) => {
+export const CalendarView = ({ plannerId }: Props) => {
+	const planner = usePlannerContext();
+	const savedItems = usePlannerSavedItems();
+
+	const calendar = planner.calendar as SerializedDay[];
+
 	const isMobile = useMediaQuery('(max-width: 62em)');
 	const eventsService = useState(() => createEventsServicePlugin())[0];
 	const [initialEvents] = useState(() =>
@@ -83,14 +85,8 @@ export const CalendarView = ({ plannerId, savedItems, calendar }: Props) => {
 	);
 
 	const AddMealButtonWithData = useCallback(
-		() => (
-			<AddMealButton
-				plannerId={plannerId}
-				savedItems={savedItems}
-				onMealAdded={handleMealAdded}
-			/>
-		),
-		[plannerId, savedItems, handleMealAdded],
+		() => <AddMealButton plannerId={plannerId} onMealAdded={handleMealAdded} />,
+		[plannerId, handleMealAdded],
 	);
 
 	const ViewSwitcher = useCallback(

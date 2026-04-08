@@ -39,7 +39,9 @@ export default defineConfig({
           // type declaration files - no runtime code
           'src/**/*.d.ts',
           // test files
-          'src/**/*.test.{ts,tsx}'
+          'src/**/*.test.{ts,tsx}',
+          // test mocks
+          'test/mocks/**'
       ],
       thresholds: {
         lines: 100,
