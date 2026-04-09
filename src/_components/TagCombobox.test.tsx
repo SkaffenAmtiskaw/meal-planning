@@ -70,10 +70,17 @@ vi.mock('@mantine/core', () => {
 			label?: string;
 			onClick?: () => void;
 		}) => (
-			<button type="button" data-testid="pills-input" onClick={onClick}>
+			// biome-ignore lint/a11y/useSemanticElements: test mock — <button> would nest inside Pill's remove <button>
+			<div
+				data-testid="pills-input"
+				role="button"
+				tabIndex={0}
+				onClick={onClick}
+				onKeyDown={onClick}
+			>
 				{label && <span>{label}</span>}
 				{children}
-			</button>
+			</div>
 		),
 		{
 			Field: ({
