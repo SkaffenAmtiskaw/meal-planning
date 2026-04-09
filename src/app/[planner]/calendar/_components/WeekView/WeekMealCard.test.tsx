@@ -8,14 +8,6 @@ import { beforeEach, describe, expect, test, vi } from 'vitest';
 
 import { WeekMealCard } from './WeekMealCard';
 
-vi.mock('./WeekView.module.css', () => ({
-	default: {
-		card: 'card',
-		title: 'title',
-		description: 'description',
-	},
-}));
-
 const day = Temporal.PlainDate.from('2024-01-15');
 
 const wrapper = ({ children }: { children: React.ReactNode }) => (

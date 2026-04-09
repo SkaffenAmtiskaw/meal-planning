@@ -2,13 +2,9 @@ import { MantineProvider } from '@mantine/core';
 
 import { render, screen } from '@testing-library/react';
 
-import { describe, expect, test, vi } from 'vitest';
+import { describe, expect, test } from 'vitest';
 
 import { MonthGridEvent } from './MonthGridEvent';
-
-vi.mock('./MonthGridEvent.module.css', () => ({
-	default: { event: 'event', title: 'title', description: 'description' },
-}));
 
 const wrapper = ({ children }: { children: React.ReactNode }) => (
 	<MantineProvider>{children}</MantineProvider>

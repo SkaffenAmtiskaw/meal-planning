@@ -8,13 +8,6 @@ import { beforeEach, describe, expect, test, vi } from 'vitest';
 
 import { WeekView } from './WeekView';
 
-vi.mock('./WeekView.module.css', () => ({
-	default: {
-		grid: 'grid',
-		dayColumn: 'dayColumn',
-	},
-}));
-
 const mockWeekMealCard = vi.fn();
 vi.mock('./WeekMealCard', () => ({
 	WeekMealCard: (props: Record<string, unknown>) => {

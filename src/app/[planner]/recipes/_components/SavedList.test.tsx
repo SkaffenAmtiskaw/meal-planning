@@ -39,10 +39,6 @@ vi.mock('@/_components', () => ({
 	),
 }));
 
-vi.mock('./SavedList.module.css', () => ({
-	default: { titleTags: 'titleTags' },
-}));
-
 vi.mock('./DeleteBookmarkButton', () => ({
 	DeleteBookmarkButton: ({
 		plannerId,

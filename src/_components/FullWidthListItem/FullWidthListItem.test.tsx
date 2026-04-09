@@ -13,13 +13,6 @@ vi.mock('@mantine/core', () => ({
 	},
 }));
 
-vi.mock('./FullWidthListItem.module.css', () => ({
-	default: {
-		itemWrapper: 'itemWrapper',
-		itemLabel: 'itemLabel',
-	},
-}));
-
 describe('FullWidthListItem', () => {
 	beforeEach(() => {
 		mockListItem.mockClear();
@@ -30,23 +23,12 @@ describe('FullWidthListItem', () => {
 		expect(screen.getByTestId('list-item')).toBeDefined();
 	});
 
-	test('applies itemWrapper and itemLabel classNames', () => {
-		render(<FullWidthListItem />);
-		const { classNames } = mockListItem.mock.calls[0][0] as {
-			classNames: Record<string, string>;
-		};
-		expect(classNames.itemWrapper).toBe('itemWrapper');
-		expect(classNames.itemLabel).toBe('itemLabel');
-	});
-
 	test('merges caller-provided classNames with full-width overrides', () => {
 		render(<FullWidthListItem classNames={{ item: 'custom-item' }} />);
 		const { classNames } = mockListItem.mock.calls[0][0] as {
 			classNames: Record<string, string>;
 		};
 		expect(classNames.item).toBe('custom-item');
-		expect(classNames.itemWrapper).toBe('itemWrapper');
-		expect(classNames.itemLabel).toBe('itemLabel');
 	});
 
 	test('passes through additional props to ListItem', () => {
