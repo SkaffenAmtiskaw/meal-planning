@@ -36,6 +36,24 @@ describe('planner interface', () => {
 		).toBe(true);
 	});
 
+	test('accepts a planner with a name', () => {
+		expect(
+			zPlannerInterface.safeParse({
+				name: "Ursula's Planner",
+				calendar: [],
+				saved: [],
+				tags: [],
+			}).success,
+		).toBe(true);
+	});
+
+	test('accepts a planner without a name', () => {
+		expect(
+			zPlannerInterface.safeParse({ calendar: [], saved: [], tags: [] })
+				.success,
+		).toBe(true);
+	});
+
 	test('accepts a planner with a bookmark in saved', () => {
 		expect(
 			zPlannerInterface.safeParse({

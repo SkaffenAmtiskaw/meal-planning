@@ -654,6 +654,40 @@ export const PillsInput = Object.assign(
 	{ Field: PillsInputField },
 );
 
+// ─── Tabs ─────────────────────────────────────────────────────────────────────
+
+export const TabsList = vi.fn(({ children, 'data-testid': testId }: WithChildren) => (
+	<div role="tablist" data-testid={testId}>{children}</div>
+));
+
+export const TabsTab = vi.fn(
+	({
+		children,
+		value,
+		'data-testid': testId,
+	}: WithChildren & { value?: string }) => (
+		<button type="button" role="tab" data-value={value} data-testid={testId}>
+			{children}
+		</button>
+	),
+);
+
+export const TabsPanel = vi.fn(
+	({
+		children,
+		value,
+		'data-testid': testId,
+	}: WithChildren & { value?: string }) => (
+		<div role="tabpanel" data-value={value} data-testid={testId}>
+			{children}
+		</div>
+	),
+);
+
+export const Tabs = vi.fn(({ children, 'data-testid': testId }: WithChildren) => (
+	<div data-testid={testId}>{children}</div>
+));
+
 // ─── Provider ─────────────────────────────────────────────────────────────────
 
 export const MantineProvider = vi.fn(({ children }: { children?: React.ReactNode }) => (

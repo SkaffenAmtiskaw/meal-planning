@@ -15,13 +15,34 @@ describe('addPlanner', () => {
 		vi.resetAllMocks();
 	});
 
-	test('should create and return a new planner with empty arrays', async () => {
+	test('should create and return a new planner with empty arrays and no name', async () => {
 		const mockPlanner = { calendar: [], saved: [], tags: [] };
 		vi.mocked(Planner.create).mockResolvedValue(mockPlanner as never);
 
 		const result = await addPlanner();
 
 		expect(Planner.create).toHaveBeenCalledWith({
+			name: undefined,
+			calendar: [],
+			saved: [],
+			tags: [],
+		});
+		expect(result).toBe(mockPlanner);
+	});
+
+	test('should create a planner with a name when provided', async () => {
+		const mockPlanner = {
+			name: "Ursula's Planner",
+			calendar: [],
+			saved: [],
+			tags: [],
+		};
+		vi.mocked(Planner.create).mockResolvedValue(mockPlanner as never);
+
+		const result = await addPlanner("Ursula's Planner");
+
+		expect(Planner.create).toHaveBeenCalledWith({
+			name: "Ursula's Planner",
 			calendar: [],
 			saved: [],
 			tags: [],

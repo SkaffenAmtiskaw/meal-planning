@@ -16,7 +16,6 @@
 - styling fixes to calendar view
 - [[Reduce Client Components in Calendar|reduce client components in calendar]]
 ## Planner Settings
-- [[Add Planner Settings|add planner settings]]
 - [[Multiple Planners|allow user to have multiple planners (pre-requisite of inviting other users to shared planner)]]
 - allow user to delete a planner
 - [[Planner Access Levels|allow users to have access levels to a planner - (owner/admin, write, read)]]

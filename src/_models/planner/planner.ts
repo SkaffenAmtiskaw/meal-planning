@@ -11,6 +11,9 @@ import { tagSchema } from './tag';
 export * from './planner.types';
 
 const plannerSchema = new Schema<PlannerInterface>({
+	name: {
+		type: String,
+	},
 	calendar: [
 		{
 			type: daySchema,

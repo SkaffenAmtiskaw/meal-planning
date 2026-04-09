@@ -6,6 +6,7 @@ import { zRecipeInterface } from './recipe.types';
 import { zTagInterface } from './tag.types';
 
 export const zPlannerInterface = z.object({
+	name: z.string().optional(),
 	calendar: z.array(zDayInterface),
 	saved: z.array(z.union([zBookmarkInterface, zRecipeInterface])),
 	tags: z.array(zTagInterface),
