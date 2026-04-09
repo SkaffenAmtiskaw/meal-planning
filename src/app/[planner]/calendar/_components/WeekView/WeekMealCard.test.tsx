@@ -1,18 +1,14 @@
 import 'temporal-polyfill/global';
 
-import { MantineProvider } from '@mantine/core';
-
 import { fireEvent, render, screen } from '@testing-library/react';
 
 import { beforeEach, describe, expect, test, vi } from 'vitest';
 
 import { WeekMealCard } from './WeekMealCard';
 
-const day = Temporal.PlainDate.from('2024-01-15');
+vi.mock('@mantine/core', async () => await import('@mocks/@mantine/core'));
 
-const wrapper = ({ children }: { children: React.ReactNode }) => (
-	<MantineProvider>{children}</MantineProvider>
-);
+const day = Temporal.PlainDate.from('2024-01-15');
 
 const defaultProps = {
 	meal: { _id: 'meal-1', name: 'Lunch', dishes: [] },
@@ -28,7 +24,7 @@ describe('WeekMealCard', () => {
 	});
 
 	test('renders meal name', () => {
-		render(<WeekMealCard {...defaultProps} />, { wrapper });
+		render(<WeekMealCard {...defaultProps} />);
 		expect(screen.getByText('Lunch')).toBeDefined();
 	});
 
@@ -39,12 +35,12 @@ describe('WeekMealCard', () => {
 			description: 'A light meal',
 			dishes: [],
 		};
-		render(<WeekMealCard {...defaultProps} meal={meal} />, { wrapper });
+		render(<WeekMealCard {...defaultProps} meal={meal} />);
 		expect(screen.getByText('A light meal')).toBeDefined();
 	});
 
 	test('does not render description element when absent', () => {
-		render(<WeekMealCard {...defaultProps} />, { wrapper });
+		render(<WeekMealCard {...defaultProps} />);
 		expect(screen.queryByText('undefined')).toBeNull();
 	});
 
@@ -54,7 +50,7 @@ describe('WeekMealCard', () => {
 			name: 'Lunch',
 			dishes: [{ name: 'Soup' }, { name: 'Bread' }],
 		};
-		render(<WeekMealCard {...defaultProps} meal={meal} />, { wrapper });
+		render(<WeekMealCard {...defaultProps} meal={meal} />);
 		expect(screen.getByText('Soup')).toBeDefined();
 		expect(screen.getByText('Bread')).toBeDefined();
 	});
@@ -65,7 +61,7 @@ describe('WeekMealCard', () => {
 			name: 'Lunch',
 			dishes: [{ name: 'Pasta', source: { url: 'https://example.com' } }],
 		};
-		render(<WeekMealCard {...defaultProps} meal={meal} />, { wrapper });
+		render(<WeekMealCard {...defaultProps} meal={meal} />);
 		const link = screen.getByRole('link', { name: 'Pasta' });
 		expect(link.getAttribute('href')).toBe('https://example.com');
 		expect(link.getAttribute('target')).toBe('_blank');
@@ -77,7 +73,7 @@ describe('WeekMealCard', () => {
 			name: 'Lunch',
 			dishes: [{ name: 'Carbonara', source: { _id: 'recipe-123' } }],
 		};
-		render(<WeekMealCard {...defaultProps} meal={meal} />, { wrapper });
+		render(<WeekMealCard {...defaultProps} meal={meal} />);
 		const link = screen.getByRole('link', { name: 'Carbonara' });
 		expect(link.getAttribute('href')).toBe('/planner-1/recipes/recipe-123');
 	});
@@ -88,7 +84,7 @@ describe('WeekMealCard', () => {
 			name: 'Lunch',
 			dishes: [{ name: 'Roast Chicken', source: { ref: 'The Flavor Bible' } }],
 		};
-		render(<WeekMealCard {...defaultProps} meal={meal} />, { wrapper });
+		render(<WeekMealCard {...defaultProps} meal={meal} />);
 		expect(screen.getByText('Roast Chicken')).toBeDefined();
 		expect(screen.queryByRole('link')).toBeNull();
 	});
@@ -99,7 +95,7 @@ describe('WeekMealCard', () => {
 			name: 'Lunch',
 			dishes: [{ name: 'Soup', source: 'unknown-id' }],
 		};
-		render(<WeekMealCard {...defaultProps} meal={meal} />, { wrapper });
+		render(<WeekMealCard {...defaultProps} meal={meal} />);
 		expect(screen.getByText('Soup')).toBeDefined();
 		expect(screen.queryByRole('link')).toBeNull();
 	});
@@ -110,7 +106,7 @@ describe('WeekMealCard', () => {
 			name: 'Lunch',
 			dishes: [{ name: 'Salad' }],
 		};
-		render(<WeekMealCard {...defaultProps} meal={meal} />, { wrapper });
+		render(<WeekMealCard {...defaultProps} meal={meal} />);
 		expect(screen.getByText('Salad')).toBeDefined();
 		expect(screen.queryByRole('link')).toBeNull();
 	});
@@ -131,9 +127,7 @@ describe('WeekMealCard', () => {
 			name: 'Lunch',
 			dishes: [{ name: 'Tasty Pasta', source: 'saved-1' }],
 		};
-		render(<WeekMealCard {...defaultProps} meal={meal} savedMap={savedMap} />, {
-			wrapper,
-		});
+		render(<WeekMealCard {...defaultProps} meal={meal} savedMap={savedMap} />);
 		const link = screen.getByRole('link', { name: 'Tasty Pasta' });
 		expect(link.getAttribute('href')).toBe('https://tasty.co/recipe');
 		expect(link.getAttribute('target')).toBe('_blank');
@@ -148,9 +142,7 @@ describe('WeekMealCard', () => {
 			name: 'Dinner',
 			dishes: [{ name: 'Carbonara', source: 'recipe-abc' }],
 		};
-		render(<WeekMealCard {...defaultProps} meal={meal} savedMap={savedMap} />, {
-			wrapper,
-		});
+		render(<WeekMealCard {...defaultProps} meal={meal} savedMap={savedMap} />);
 		const link = screen.getByRole('link', { name: 'Carbonara' });
 		expect(link.getAttribute('href')).toBe('/planner-1/recipes/recipe-abc');
 	});
@@ -167,9 +159,7 @@ describe('WeekMealCard', () => {
 			name: 'Lunch',
 			dishes: [{ name: 'Dish', source: 'saved-1', note: 'cook extra crispy' }],
 		};
-		render(<WeekMealCard {...defaultProps} meal={meal} savedMap={savedMap} />, {
-			wrapper,
-		});
+		render(<WeekMealCard {...defaultProps} meal={meal} savedMap={savedMap} />);
 		const link = screen.getByRole('link', { name: 'Dish' });
 		expect(link.getAttribute('href')).toBe('https://example.com');
 	});
@@ -184,7 +174,6 @@ describe('WeekMealCard', () => {
 		};
 		render(
 			<WeekMealCard {...defaultProps} meal={meal} onMealClick={onMealClick} />,
-			{ wrapper },
 		);
 		fireEvent.click(screen.getByTestId('week-meal-card'));
 		expect(onMealClick).toHaveBeenCalledOnce();
@@ -218,7 +207,6 @@ describe('WeekMealCard', () => {
 				savedMap={savedMap}
 				onMealClick={onMealClick}
 			/>,
-			{ wrapper },
 		);
 		fireEvent.click(screen.getByTestId('week-meal-card'));
 		expect(onMealClick).toHaveBeenCalledWith(

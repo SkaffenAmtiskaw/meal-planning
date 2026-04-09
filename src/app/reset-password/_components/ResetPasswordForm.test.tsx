@@ -1,5 +1,3 @@
-import { MantineProvider } from '@mantine/core';
-
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 
 import { afterEach, describe, expect, test, vi } from 'vitest';
@@ -12,6 +10,8 @@ const { mockRouterPush } = vi.hoisted(() => ({
 	mockRouterPush: vi.fn(),
 }));
 
+vi.mock('@mantine/core', async () => await import('@mocks/@mantine/core'));
+
 vi.mock('next/navigation', () => ({
 	useRouter: () => ({ push: mockRouterPush }),
 }));
@@ -22,17 +22,13 @@ vi.mock('@/_utils/auth', () => ({
 	},
 }));
 
-const wrapper = ({ children }: { children: React.ReactNode }) => (
-	<MantineProvider>{children}</MantineProvider>
-);
-
 describe('ResetPasswordForm', () => {
 	afterEach(() => {
 		vi.resetAllMocks();
 	});
 
 	test('renders new password and confirm password inputs', () => {
-		render(<ResetPasswordForm token="abc123" />, { wrapper });
+		render(<ResetPasswordForm token="abc123" />);
 
 		expect(screen.getByTestId('new-password-input')).toBeDefined();
 		expect(screen.getByTestId('confirm-password-input')).toBeDefined();
@@ -40,7 +36,7 @@ describe('ResetPasswordForm', () => {
 	});
 
 	test('shows error when passwords do not match', async () => {
-		render(<ResetPasswordForm token="abc123" />, { wrapper });
+		render(<ResetPasswordForm token="abc123" />);
 
 		fireEvent.change(screen.getByTestId('new-password-input'), {
 			target: { value: 'password1' },
@@ -65,7 +61,7 @@ describe('ResetPasswordForm', () => {
 			error: null,
 		});
 
-		render(<ResetPasswordForm token="abc123" />, { wrapper });
+		render(<ResetPasswordForm token="abc123" />);
 
 		fireEvent.change(screen.getByTestId('new-password-input'), {
 			target: { value: 'newpassword' },
@@ -89,7 +85,7 @@ describe('ResetPasswordForm', () => {
 			error: null,
 		});
 
-		render(<ResetPasswordForm token="abc123" />, { wrapper });
+		render(<ResetPasswordForm token="abc123" />);
 
 		fireEvent.change(screen.getByTestId('new-password-input'), {
 			target: { value: 'newpassword' },
@@ -110,7 +106,7 @@ describe('ResetPasswordForm', () => {
 			error: { message: 'Token expired' },
 		});
 
-		render(<ResetPasswordForm token="abc123" />, { wrapper });
+		render(<ResetPasswordForm token="abc123" />);
 
 		fireEvent.change(screen.getByTestId('new-password-input'), {
 			target: { value: 'newpassword' },
@@ -133,7 +129,7 @@ describe('ResetPasswordForm', () => {
 			error: { message: undefined },
 		});
 
-		render(<ResetPasswordForm token="abc123" />, { wrapper });
+		render(<ResetPasswordForm token="abc123" />);
 
 		fireEvent.change(screen.getByTestId('new-password-input'), {
 			target: { value: 'newpassword' },
@@ -156,7 +152,7 @@ describe('ResetPasswordForm', () => {
 			error: { message: 'Token expired' },
 		});
 
-		render(<ResetPasswordForm token="abc123" />, { wrapper });
+		render(<ResetPasswordForm token="abc123" />);
 
 		fireEvent.change(screen.getByTestId('new-password-input'), {
 			target: { value: 'newpassword' },

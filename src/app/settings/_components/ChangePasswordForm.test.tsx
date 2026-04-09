@@ -1,5 +1,3 @@
-import { MantineProvider } from '@mantine/core';
-
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 
 import { afterEach, describe, expect, test, vi } from 'vitest';
@@ -8,6 +6,8 @@ import { client } from '@/_utils/auth';
 
 import { ChangePasswordForm } from './ChangePasswordForm';
 
+vi.mock('@mantine/core', async () => await import('@mocks/@mantine/core'));
+
 vi.mock('@/_utils/auth', () => ({
 	client: {
 		changePassword: vi.fn(),
@@ -15,17 +15,13 @@ vi.mock('@/_utils/auth', () => ({
 	},
 }));
 
-const wrapper = ({ children }: { children: React.ReactNode }) => (
-	<MantineProvider>{children}</MantineProvider>
-);
-
 describe('ChangePasswordForm', () => {
 	afterEach(() => {
 		vi.resetAllMocks();
 	});
 
 	test('renders current password, new password, and confirm inputs', () => {
-		render(<ChangePasswordForm email="user@example.com" />, { wrapper });
+		render(<ChangePasswordForm email="user@example.com" />);
 
 		expect(screen.getByTestId('current-password-input')).toBeDefined();
 		expect(screen.getByTestId('new-password-input')).toBeDefined();
@@ -35,7 +31,7 @@ describe('ChangePasswordForm', () => {
 	});
 
 	test('shows error when new passwords do not match', async () => {
-		render(<ChangePasswordForm email="user@example.com" />, { wrapper });
+		render(<ChangePasswordForm email="user@example.com" />);
 
 		fireEvent.change(screen.getByTestId('new-password-input'), {
 			target: { value: 'password1' },
@@ -60,7 +56,7 @@ describe('ChangePasswordForm', () => {
 			error: null,
 		});
 
-		render(<ChangePasswordForm email="user@example.com" />, { wrapper });
+		render(<ChangePasswordForm email="user@example.com" />);
 
 		fireEvent.change(screen.getByTestId('current-password-input'), {
 			target: { value: 'oldpassword' },
@@ -88,7 +84,7 @@ describe('ChangePasswordForm', () => {
 			error: null,
 		});
 
-		render(<ChangePasswordForm email="user@example.com" />, { wrapper });
+		render(<ChangePasswordForm email="user@example.com" />);
 
 		fireEvent.change(screen.getByTestId('new-password-input'), {
 			target: { value: 'newpassword' },
@@ -109,7 +105,7 @@ describe('ChangePasswordForm', () => {
 			error: { message: 'Incorrect password' },
 		});
 
-		render(<ChangePasswordForm email="user@example.com" />, { wrapper });
+		render(<ChangePasswordForm email="user@example.com" />);
 
 		fireEvent.change(screen.getByTestId('new-password-input'), {
 			target: { value: 'newpassword' },
@@ -132,7 +128,7 @@ describe('ChangePasswordForm', () => {
 			error: { message: undefined },
 		});
 
-		render(<ChangePasswordForm email="user@example.com" />, { wrapper });
+		render(<ChangePasswordForm email="user@example.com" />);
 
 		fireEvent.change(screen.getByTestId('new-password-input'), {
 			target: { value: 'newpassword' },
@@ -155,7 +151,7 @@ describe('ChangePasswordForm', () => {
 			error: null,
 		});
 
-		render(<ChangePasswordForm email="user@example.com" />, { wrapper });
+		render(<ChangePasswordForm email="user@example.com" />);
 
 		fireEvent.click(screen.getByTestId('forgot-password-button'));
 

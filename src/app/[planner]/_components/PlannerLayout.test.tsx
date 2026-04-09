@@ -8,16 +8,7 @@ vi.mock('next/navigation', () => ({
 	useParams: () => ({ planner: 'maleficent-planner-id' }),
 }));
 
-vi.mock('@mantine/core', () => ({
-	AppShell: ({ children }: { children: React.ReactNode }) => <>{children}</>,
-	AppShellNavbar: ({ children }: { children: React.ReactNode }) => (
-		<>{children}</>
-	),
-	AppShellMain: ({ children }: { children: React.ReactNode }) => (
-		<>{children}</>
-	),
-	Burger: () => <div data-testid="burger" />,
-}));
+vi.mock('@mantine/core', async () => await import('@mocks/@mantine/core'));
 
 vi.mock('@mantine/hooks', () => ({
 	useDisclosure: () => [false, { toggle: vi.fn() }],

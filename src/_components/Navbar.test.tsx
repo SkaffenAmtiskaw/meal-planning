@@ -1,20 +1,16 @@
 import { useSelectedLayoutSegment } from 'next/navigation';
 
-import { MantineProvider } from '@mantine/core';
-
 import { render, screen } from '@testing-library/react';
 
 import { afterEach, describe, expect, test, vi } from 'vitest';
 
 import { Navbar } from './Navbar';
 
+vi.mock('@mantine/core', async () => await import('@mocks/@mantine/core'));
+
 vi.mock('next/navigation', () => ({
 	useSelectedLayoutSegment: vi.fn(),
 }));
-
-const wrapper = ({ children }: { children: React.ReactNode }) => (
-	<MantineProvider>{children}</MantineProvider>
-);
 
 describe('navbar', () => {
 	afterEach(() => {
@@ -24,7 +20,7 @@ describe('navbar', () => {
 	test('renders calendar and recipes links', () => {
 		vi.mocked(useSelectedLayoutSegment).mockReturnValue(null);
 
-		render(<Navbar id="gaston-planner-1" />, { wrapper });
+		render(<Navbar id="gaston-planner-1" />);
 
 		expect(screen.getByText('Calendar')).toBeDefined();
 		expect(screen.getByText('Recipes')).toBeDefined();
@@ -33,7 +29,7 @@ describe('navbar', () => {
 	test('links point to correct paths using the given planner id', () => {
 		vi.mocked(useSelectedLayoutSegment).mockReturnValue(null);
 
-		render(<Navbar id="gaston-planner-1" />, { wrapper });
+		render(<Navbar id="gaston-planner-1" />);
 
 		expect(
 			screen.getByRole('link', { name: /calendar/i }).getAttribute('href'),
@@ -46,7 +42,7 @@ describe('navbar', () => {
 	test('calendar link is active when on the calendar segment', () => {
 		vi.mocked(useSelectedLayoutSegment).mockReturnValue('calendar');
 
-		render(<Navbar id="gaston-planner-1" />, { wrapper });
+		render(<Navbar id="gaston-planner-1" />);
 
 		expect(
 			screen
@@ -63,7 +59,7 @@ describe('navbar', () => {
 	test('recipes link is active when on the recipes segment', () => {
 		vi.mocked(useSelectedLayoutSegment).mockReturnValue('recipes');
 
-		render(<Navbar id="gaston-planner-1" />, { wrapper });
+		render(<Navbar id="gaston-planner-1" />);
 
 		expect(
 			screen

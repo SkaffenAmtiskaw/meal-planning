@@ -29,21 +29,7 @@ vi.mock('@/_hooks', () => ({
 	useFormFeedback: () => mockUseFormFeedback(),
 }));
 
-vi.mock('@mantine/core', () => ({
-	ActionIcon: ({
-		children,
-		onClick,
-		'data-testid': testId,
-	}: {
-		children: React.ReactNode;
-		onClick?: () => void;
-		'data-testid'?: string;
-	}) => (
-		<button data-testid={testId} onClick={onClick} type="button">
-			{children}
-		</button>
-	),
-}));
+vi.mock('@mantine/core', async () => await import('@mocks/@mantine/core'));
 
 vi.mock('@tabler/icons-react', () => ({
 	IconTrash: () => null,

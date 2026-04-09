@@ -121,65 +121,7 @@ vi.mock('@mantine/form', () => ({
 	useForm: () => mockUseForm(),
 }));
 
-vi.mock('@mantine/core', () => {
-	const TextInput = ({ label, name }: { label?: string; name?: string }) => (
-		<input data-testid={`input-${name ?? label}`} />
-	);
-
-	const Textarea = ({ label }: { label?: string }) => (
-		<textarea data-testid={`textarea-${label}`} />
-	);
-
-	const NumberInput = ({ label }: { label?: string }) => (
-		<input type="number" data-testid={`number-${label}`} />
-	);
-
-	const Fieldset = ({ children }: { children: React.ReactNode }) => (
-		<fieldset>{children}</fieldset>
-	);
-
-	const Grid = Object.assign(
-		({ children }: { children: React.ReactNode }) => <div>{children}</div>,
-		{
-			Col: ({ children }: { children: React.ReactNode }) => (
-				<div>{children}</div>
-			),
-		},
-	);
-
-	const SimpleGrid = ({ children }: { children: React.ReactNode }) => (
-		<div>{children}</div>
-	);
-
-	const Group = ({ children }: { children: React.ReactNode }) => (
-		<div>{children}</div>
-	);
-
-	const Button = ({
-		children,
-		onClick,
-		type,
-	}: {
-		children: React.ReactNode;
-		onClick?: () => void;
-		type?: 'button' | 'submit';
-	}) => (
-		<button type={type ?? 'button'} onClick={onClick}>
-			{children}
-		</button>
-	);
-
-	return {
-		TextInput,
-		Textarea,
-		NumberInput,
-		Fieldset,
-		Grid,
-		SimpleGrid,
-		Group,
-		Button,
-	};
-});
+vi.mock('@mantine/core', async () => await import('@mocks/@mantine/core'));
 
 const defaultProps = {
 	plannerId: 'planner-1',

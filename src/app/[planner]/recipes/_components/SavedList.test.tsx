@@ -4,34 +4,7 @@ import { describe, expect, test, vi } from 'vitest';
 
 import { SavedList } from './SavedList';
 
-vi.mock('@mantine/core', () => ({
-	List: ({ children }: { children: React.ReactNode }) => <ul>{children}</ul>,
-	Group: ({ children }: { children: React.ReactNode }) => <>{children}</>,
-	Badge: ({
-		children,
-		color,
-	}: {
-		children: React.ReactNode;
-		color: string;
-	}) => (
-		<span data-color={color} data-testid="badge">
-			{children}
-		</span>
-	),
-	Anchor: ({
-		children,
-		href,
-		target,
-	}: {
-		children: React.ReactNode;
-		href: string;
-		target?: string;
-	}) => (
-		<a href={href} target={target}>
-			{children}
-		</a>
-	),
-}));
+vi.mock('@mantine/core', async () => await import('@mocks/@mantine/core'));
 
 vi.mock('@/_components', () => ({
 	FullWidthListItem: ({ children }: { children: React.ReactNode }) => (

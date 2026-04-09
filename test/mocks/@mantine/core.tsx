@@ -50,9 +50,17 @@ export const Box = vi.fn(({ children, 'data-testid': testId }: WithChildren) => 
 	<div data-testid={testId}>{children}</div>
 ));
 
-export const Card = vi.fn(({ children, 'data-testid': testId }: WithChildren) => (
-	<div data-testid={testId}>{children}</div>
-));
+export const Card = vi.fn(
+	({
+		children,
+		onClick,
+		'data-testid': testId,
+	}: WithChildren & { onClick?: React.MouseEventHandler<HTMLDivElement> }) => (
+		<div data-testid={testId} onClick={onClick}>
+			{children}
+		</div>
+	),
+);
 
 export const Center = vi.fn(({ children, 'data-testid': testId }: WithChildren) => (
 	<div data-testid={testId}>{children}</div>
@@ -103,7 +111,7 @@ export const Text = vi.fn(
 		children,
 		'data-testid': testId,
 	}: WithChildren & { c?: string; size?: string; fw?: number; span?: boolean }) => (
-		<span data-testid={testId}>{children}</span>
+		<p data-testid={testId}>{children}</p>
 	),
 );
 
@@ -121,9 +129,16 @@ export const Anchor = vi.fn(
 	({
 		children,
 		href,
+		target,
+		onClick,
 		'data-testid': testId,
-	}: WithChildren & { href?: string; component?: string }) => (
-		<a data-testid={testId} href={href}>
+	}: WithChildren & {
+		href?: string;
+		target?: string;
+		onClick?: React.MouseEventHandler<HTMLAnchorElement | HTMLButtonElement>;
+		component?: unknown;
+	}) => (
+		<a data-testid={testId} href={href} target={target} onClick={onClick as React.MouseEventHandler<HTMLAnchorElement>}>
 			{children}
 		</a>
 	),
@@ -131,7 +146,7 @@ export const Anchor = vi.fn(
 
 export const Badge = vi.fn(
 	({ children, 'data-testid': testId, color }: WithChildren & { color?: string }) => (
-		<span data-testid={testId} data-color={color}>
+		<span data-testid={testId ?? 'badge'} data-color={color}>
 			{children}
 		</span>
 	),
@@ -163,18 +178,25 @@ export const ActionIcon = vi.fn(
 		children,
 		onClick,
 		disabled,
+		href,
 		'data-testid': testId,
 	}: {
 		children?: React.ReactNode;
 		onClick?: () => void;
 		disabled?: boolean;
+		href?: string;
 		'data-testid'?: string;
 		[key: string]: unknown;
-	}) => (
-		<button type="button" onClick={onClick} disabled={disabled} data-testid={testId}>
-			{children}
-		</button>
-	),
+	}) =>
+		href ? (
+			<a href={href} data-testid={testId}>
+				{children}
+			</a>
+		) : (
+			<button type="button" onClick={onClick} disabled={disabled} data-testid={testId}>
+				{children}
+			</button>
+		),
 );
 
 export const Burger = vi.fn(
@@ -202,19 +224,22 @@ export const Button = vi.fn(
 		onClick,
 		type,
 		disabled,
+		loading,
 		'data-testid': testId,
 	}: {
 		children?: React.ReactNode;
 		onClick?: () => void;
 		type?: 'button' | 'submit' | 'reset';
 		disabled?: boolean;
+		loading?: boolean;
 		'data-testid'?: string;
 		[key: string]: unknown;
 	}) => (
 		<button
 			type={type ?? 'button'}
 			onClick={onClick}
-			disabled={disabled}
+			disabled={disabled || loading}
+			data-loading={loading ? 'true' : undefined}
 			data-testid={testId}
 		>
 			{children}
@@ -347,6 +372,7 @@ export const TextInput = vi.fn(
 		label,
 		type,
 		name,
+		placeholder,
 		'data-testid': testId,
 	}: {
 		value?: string;
@@ -354,6 +380,7 @@ export const TextInput = vi.fn(
 		label?: string;
 		type?: string;
 		name?: string;
+		placeholder?: string;
 		'data-testid'?: string;
 		[key: string]: unknown;
 	}) => (
@@ -361,6 +388,7 @@ export const TextInput = vi.fn(
 			data-testid={testId ?? `input-${name ?? label}`}
 			type={type}
 			value={value ?? ''}
+			placeholder={placeholder}
 			onChange={onChange ?? (() => {})}
 		/>
 	),

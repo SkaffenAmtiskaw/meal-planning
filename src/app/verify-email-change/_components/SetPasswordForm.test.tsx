@@ -1,5 +1,3 @@
-import { MantineProvider } from '@mantine/core';
-
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 
 import { afterEach, describe, expect, test, vi } from 'vitest';
@@ -7,6 +5,8 @@ import { afterEach, describe, expect, test, vi } from 'vitest';
 import { SetPasswordForm } from './SetPasswordForm';
 
 const mockVerifyEmailChangeAndSetPassword = vi.fn();
+
+vi.mock('@mantine/core', async () => await import('@mocks/@mantine/core'));
 
 vi.mock('@/_actions/user', () => ({
 	verifyEmailChangeAndSetPassword: (token: string, password: string) =>
@@ -19,17 +19,13 @@ vi.mock('./SignInWithNewEmailButton', () => ({
 	),
 }));
 
-const wrapper = ({ children }: { children: React.ReactNode }) => (
-	<MantineProvider>{children}</MantineProvider>
-);
-
 describe('SetPasswordForm', () => {
 	afterEach(() => {
 		vi.resetAllMocks();
 	});
 
 	test('renders password inputs and submit button', () => {
-		render(<SetPasswordForm token="valid-token" />, { wrapper });
+		render(<SetPasswordForm token="valid-token" />);
 
 		expect(screen.getByTestId('password-input')).toBeDefined();
 		expect(screen.getByTestId('confirm-password-input')).toBeDefined();
@@ -37,7 +33,7 @@ describe('SetPasswordForm', () => {
 	});
 
 	test('shows error when passwords do not match', async () => {
-		render(<SetPasswordForm token="valid-token" />, { wrapper });
+		render(<SetPasswordForm token="valid-token" />);
 
 		fireEvent.change(screen.getByTestId('password-input'), {
 			target: { value: 'password123' },
@@ -61,7 +57,7 @@ describe('SetPasswordForm', () => {
 			ok: true,
 			data: undefined,
 		});
-		render(<SetPasswordForm token="valid-token" />, { wrapper });
+		render(<SetPasswordForm token="valid-token" />);
 
 		fireEvent.change(screen.getByTestId('password-input'), {
 			target: { value: 'password123' },
@@ -84,7 +80,7 @@ describe('SetPasswordForm', () => {
 			ok: true,
 			data: undefined,
 		});
-		render(<SetPasswordForm token="valid-token" />, { wrapper });
+		render(<SetPasswordForm token="valid-token" />);
 
 		fireEvent.change(screen.getByTestId('password-input'), {
 			target: { value: 'password123' },
@@ -105,7 +101,7 @@ describe('SetPasswordForm', () => {
 			ok: false,
 			error: 'This link is invalid or has expired.',
 		});
-		render(<SetPasswordForm token="valid-token" />, { wrapper });
+		render(<SetPasswordForm token="valid-token" />);
 
 		fireEvent.change(screen.getByTestId('password-input'), {
 			target: { value: 'password123' },

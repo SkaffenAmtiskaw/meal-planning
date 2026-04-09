@@ -1,3 +1,5 @@
+import { isLightColor, useMantineTheme } from '@mantine/core';
+
 import {
 	act,
 	fireEvent,
@@ -13,6 +15,8 @@ import { updateRecipeTags } from '@/_actions/saved';
 import { InlineTagsEditor } from './InlineTagsEditor';
 
 const mockRefresh = vi.fn();
+
+vi.mock('@mantine/core', async () => await import('@mocks/@mantine/core'));
 
 vi.mock('next/navigation', () => ({
 	useRouter: () => ({ refresh: mockRefresh }),
@@ -48,61 +52,6 @@ vi.mock('@/_components/TagCombobox', () => ({
 	},
 }));
 
-const mockUseMantineTheme = vi.fn(() => ({
-	colors: {} as Record<string, string[]>,
-}));
-const mockIsLightColor = vi.fn((_bg: string) => false);
-
-vi.mock('@mantine/core', () => ({
-	ActionIcon: ({
-		children,
-		disabled,
-		onClick,
-		'data-testid': testId,
-	}: {
-		children: React.ReactNode;
-		disabled?: boolean;
-		onClick?: () => void;
-		'data-testid'?: string;
-	}) => (
-		<button
-			type="button"
-			data-testid={testId}
-			disabled={disabled}
-			onClick={onClick}
-		>
-			{children}
-		</button>
-	),
-	Badge: ({
-		children,
-		style,
-	}: {
-		children: React.ReactNode;
-		style?: React.CSSProperties;
-	}) => <span style={style}>{children}</span>,
-	Group: ({
-		children,
-		'data-testid': testId,
-	}: {
-		children: React.ReactNode;
-		'data-testid'?: string;
-	}) => <div data-testid={testId}>{children}</div>,
-	Stack: ({ children }: { children: React.ReactNode }) => <div>{children}</div>,
-	Text: ({
-		children,
-		'data-testid': testId,
-	}: {
-		children: React.ReactNode;
-		'data-testid'?: string;
-		c?: string;
-		fw?: number;
-		size?: string;
-	}) => <span data-testid={testId}>{children}</span>,
-	isLightColor: (bg: string) => mockIsLightColor(bg),
-	useMantineTheme: () => mockUseMantineTheme(),
-}));
-
 vi.mock('@tabler/icons-react', () => ({
 	IconCheck: () => <span>check</span>,
 	IconPencil: () => <span>pencil</span>,
@@ -123,8 +72,8 @@ describe('InlineTagsEditor', () => {
 	afterEach(() => {
 		vi.resetAllMocks();
 		capturedOnChange = undefined;
-		mockUseMantineTheme.mockReturnValue({ colors: {} });
-		mockIsLightColor.mockReturnValue(false);
+		vi.mocked(useMantineTheme).mockReturnValue({ colors: {} } as never);
+		vi.mocked(isLightColor).mockReturnValue(false);
 	});
 
 	test('renders tag pills and edit button in read mode', () => {
@@ -289,9 +238,9 @@ describe('InlineTagsEditor', () => {
 	});
 
 	test('applies theme color to pill when color exists in palette', () => {
-		mockUseMantineTheme.mockReturnValue({
+		vi.mocked(useMantineTheme).mockReturnValue({
 			colors: { red: ['', '', '', '', '', '#cc0000'] },
-		});
+		} as never);
 		render(<InlineTagsEditor {...defaultProps} />);
 		expect(screen.getByText('Spicy')).toBeDefined();
 	});
@@ -308,7 +257,7 @@ describe('InlineTagsEditor', () => {
 	});
 
 	test('uses dark text on light-colored pills', () => {
-		mockIsLightColor.mockReturnValue(true);
+		vi.mocked(isLightColor).mockReturnValue(true);
 		render(<InlineTagsEditor {...defaultProps} />);
 		expect(screen.getByText('Spicy')).toBeDefined();
 	});

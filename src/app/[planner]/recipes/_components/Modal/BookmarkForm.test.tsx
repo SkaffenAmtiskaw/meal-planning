@@ -105,37 +105,7 @@ vi.mock('@mantine/form', () => ({
 	useForm: () => mockUseForm(),
 }));
 
-vi.mock('@mantine/core', () => {
-	const TextInput = ({ label }: { label?: string }) => (
-		<input data-testid={`input-${label}`} />
-	);
-
-	const Textarea = ({ label }: { label?: string }) => (
-		<textarea data-testid={`textarea-${label}`} />
-	);
-
-	const Stack = ({ children }: { children: React.ReactNode }) => (
-		<div>{children}</div>
-	);
-
-	const Group = ({ children }: { children: React.ReactNode }) => (
-		<div>{children}</div>
-	);
-
-	const Button = ({
-		children,
-		onClick,
-	}: {
-		children: React.ReactNode;
-		onClick?: () => void;
-	}) => (
-		<button type="button" onClick={onClick}>
-			{children}
-		</button>
-	);
-
-	return { TextInput, Textarea, Stack, Group, Button };
-});
+vi.mock('@mantine/core', async () => await import('@mocks/@mantine/core'));
 
 const defaultProps = {
 	plannerId: 'planner-1',

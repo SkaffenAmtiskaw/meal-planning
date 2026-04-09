@@ -6,12 +6,7 @@ import RootLayout, { metadata } from './layout';
 
 vi.mock('@mantine/core/styles.css', () => ({}));
 
-vi.mock('@mantine/core', () => ({
-	MantineProvider: ({ children }: { children: React.ReactNode }) => (
-		<>{children}</>
-	),
-	mantineHtmlProps: {},
-}));
+vi.mock('@mantine/core', async () => await import('@mocks/@mantine/core'));
 
 vi.mock('@/_components', () => ({
 	OneTapSignInWrapper: ({ children }: { children: React.ReactNode }) => (

@@ -8,11 +8,7 @@ vi.mock('@/_components', () => ({
 	SignIn: () => <button type="button">Sign In</button>,
 }));
 
-vi.mock('@mantine/core', () => ({
-	Center: ({ children }: { children: React.ReactNode }) => <>{children}</>,
-	Stack: ({ children }: { children: React.ReactNode }) => <>{children}</>,
-	Typography: ({ children }: { children: React.ReactNode }) => <>{children}</>,
-}));
+vi.mock('@mantine/core', async () => await import('@mocks/@mantine/core'));
 
 describe('sign in prompt', () => {
 	test('renders the sign in message', () => {

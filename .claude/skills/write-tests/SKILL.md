@@ -6,7 +6,7 @@ description: instructions for writing unit tests
 Unit tests serve as a document of developer intent in addition to helping prevent regressions. Tests should be designed with documentation, as well as coverage, in mind.
 
 Naming
-- camel case names should be changed to more human readable titles
+- camel case names should be changed to more human-readable titles
 
 Data
 - when creating mock data - use obviously fake data if possible - Disney villains is a typical theme
@@ -21,8 +21,11 @@ Imports
 - do not use dynamic `await import(...)` inside a test body to access a mocked module; import it at the top level and use `vi.mocked()` to interact with it
 
 Mocking
-- all external dependencies should be mocked to isolate the module being tested
-- too many mocks is a design smell - it should be flagged for the user to break the module up into smaller composable modules
+- external dependencies should USUALLY be mocked to isolate the module being tested
+- check the `test/mocks` directory to see if there are pre-existing mocks for the dependency in question
+- if the same mock is created in multiple test files a reusable mock should be created in `test/mocks`
+- external dependencies should not be mocked if the mock itself creates more complexity than allowing the dependency to be called
+- too many mocks is a design smell - the module should be decomposed into smaller submodules
 
 Selectors
 - add `data-testid` attributes to interactive elements in components so tests can select them with `screen.getByTestId(...)` — do not rely on text labels, which can change for copy/UX reasons

@@ -14,12 +14,7 @@ vi.mock('next/navigation', () => ({
 	redirect: (...args: unknown[]) => mockRedirect(...args),
 }));
 
-vi.mock('@mantine/core', () => ({
-	AppShell: ({ children }: { children: React.ReactNode }) => <>{children}</>,
-	AppShellMain: ({ children }: { children: React.ReactNode }) => (
-		<>{children}</>
-	),
-}));
+vi.mock('@mantine/core', async () => await import('@mocks/@mantine/core'));
 
 const mockHeader = vi.fn<
 	(props: { leftSection?: React.ReactNode }) => React.ReactNode

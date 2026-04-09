@@ -10,34 +10,7 @@ vi.mock('next/navigation', () => ({
 	usePathname: () => '/jafar-planner/recipes',
 }));
 
-vi.mock('@mantine/core', () => {
-	const Menu = ({ children }: { children: React.ReactNode }) => <>{children}</>;
-	Menu.Target = ({ children }: { children: React.ReactNode }) => (
-		<>{children}</>
-	);
-	Menu.Dropdown = ({ children }: { children: React.ReactNode }) => (
-		<>{children}</>
-	);
-	Menu.Item = ({
-		children,
-		onClick,
-		'data-testid': testId,
-	}: {
-		children: React.ReactNode;
-		onClick?: () => void;
-		'data-testid'?: string;
-	}) => (
-		<button type="button" data-testid={testId} onClick={onClick}>
-			{children}
-		</button>
-	);
-	return {
-		Menu,
-		Button: ({ children }: { children: React.ReactNode }) => (
-			<button type="button">{children}</button>
-		),
-	};
-});
+vi.mock('@mantine/core', async () => await import('@mocks/@mantine/core'));
 
 vi.mock('@tabler/icons-react', () => ({
 	IconPlus: () => null,

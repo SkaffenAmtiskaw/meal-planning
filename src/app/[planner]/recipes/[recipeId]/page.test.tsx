@@ -45,11 +45,7 @@ vi.mock('../_components/Modal/RecipeForm', () => ({
 	RecipeForm: (props: RecipeFormProps) => mockRecipeForm(props),
 }));
 
-vi.mock('@mantine/core', () => ({
-	Container: ({ children }: { children: React.ReactNode }) => (
-		<div>{children}</div>
-	),
-}));
+vi.mock('@mantine/core', async () => await import('@mocks/@mantine/core'));
 
 const plannerId = '507f1f77bcf86cd799439011';
 const recipeId = '507f1f77bcf86cd799439012';

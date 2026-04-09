@@ -1,12 +1,12 @@
 import 'temporal-polyfill/global';
 
-import { MantineProvider } from '@mantine/core';
-
 import { render, screen } from '@testing-library/react';
 
 import { beforeEach, describe, expect, test, vi } from 'vitest';
 
 import { WeekView } from './WeekView';
+
+vi.mock('@mantine/core', async () => await import('@mocks/@mantine/core'));
 
 const mockWeekMealCard = vi.fn();
 vi.mock('./WeekMealCard', () => ({
@@ -18,10 +18,6 @@ vi.mock('./WeekMealCard', () => ({
 
 // 2024-01-14 is a Sunday
 const weekStart = Temporal.PlainDate.from('2024-01-14');
-
-const wrapper = ({ children }: { children: React.ReactNode }) => (
-	<MantineProvider>{children}</MantineProvider>
-);
 
 const defaultProps = {
 	calendar: [] as { date: string; meals?: unknown[] }[],
@@ -37,7 +33,7 @@ describe('WeekView', () => {
 	});
 
 	test('renders 7 day columns', () => {
-		render(<WeekView {...defaultProps} />, { wrapper });
+		render(<WeekView {...defaultProps} />);
 		// Sun Jan 14 through Sat Jan 20
 		for (let i = 14; i <= 20; i++) {
 			const pad = String(i).padStart(2, '0');
@@ -46,7 +42,7 @@ describe('WeekView', () => {
 	});
 
 	test('renders correct day header labels', () => {
-		render(<WeekView {...defaultProps} />, { wrapper });
+		render(<WeekView {...defaultProps} />);
 		expect(screen.getByText('Sun 1/14')).toBeDefined();
 		expect(screen.getByText('Mon 1/15')).toBeDefined();
 		expect(screen.getByText('Tue 1/16')).toBeDefined();
@@ -57,18 +53,18 @@ describe('WeekView', () => {
 	});
 
 	test('renders the week-view container', () => {
-		render(<WeekView {...defaultProps} />, { wrapper });
+		render(<WeekView {...defaultProps} />);
 		expect(screen.getByTestId('week-view')).toBeDefined();
 	});
 
 	test('shows no meal cards when calendar is empty', () => {
-		render(<WeekView {...defaultProps} />, { wrapper });
+		render(<WeekView {...defaultProps} />);
 		expect(screen.queryAllByTestId('week-meal-card')).toHaveLength(0);
 	});
 
 	test('shows no meal cards for a day with an empty meals array', () => {
 		const calendar = [{ date: '2024-01-15', meals: [] }];
-		render(<WeekView {...defaultProps} calendar={calendar} />, { wrapper });
+		render(<WeekView {...defaultProps} calendar={calendar} />);
 		expect(screen.queryAllByTestId('week-meal-card')).toHaveLength(0);
 	});
 
@@ -79,7 +75,7 @@ describe('WeekView', () => {
 				meals: [{ _id: 'meal-1', name: 'Breakfast', dishes: [] }],
 			},
 		];
-		render(<WeekView {...defaultProps} calendar={calendar} />, { wrapper });
+		render(<WeekView {...defaultProps} calendar={calendar} />);
 		const col = screen.getByTestId('week-day-2024-01-15');
 		expect(col.querySelector('[data-testid="week-meal-card"]')).not.toBeNull();
 	});
@@ -94,7 +90,7 @@ describe('WeekView', () => {
 				],
 			},
 		];
-		render(<WeekView {...defaultProps} calendar={calendar} />, { wrapper });
+		render(<WeekView {...defaultProps} calendar={calendar} />);
 		expect(screen.getAllByTestId('week-meal-card')).toHaveLength(2);
 	});
 
@@ -109,7 +105,7 @@ describe('WeekView', () => {
 				meals: [{ _id: 'meal-2', name: 'Saturday Dinner', dishes: [] }],
 			},
 		];
-		render(<WeekView {...defaultProps} calendar={calendar} />, { wrapper });
+		render(<WeekView {...defaultProps} calendar={calendar} />);
 		expect(
 			screen
 				.getByTestId('week-day-2024-01-14')
@@ -133,7 +129,7 @@ describe('WeekView', () => {
 				meals: [{ _id: 'meal-2', name: 'Next Week', dishes: [] }],
 			},
 		];
-		render(<WeekView {...defaultProps} calendar={calendar} />, { wrapper });
+		render(<WeekView {...defaultProps} calendar={calendar} />);
 		expect(screen.queryAllByTestId('week-meal-card')).toHaveLength(0);
 	});
 
@@ -147,7 +143,6 @@ describe('WeekView', () => {
 				calendar={calendar}
 				onMealClick={onMealClick}
 			/>,
-			{ wrapper },
 		);
 		expect(mockWeekMealCard).toHaveBeenCalledWith(
 			expect.objectContaining({
@@ -175,7 +170,6 @@ describe('WeekView', () => {
 				calendar={calendar}
 				savedItems={savedItems}
 			/>,
-			{ wrapper },
 		);
 		expect(mockWeekMealCard).toHaveBeenCalledWith(
 			expect.objectContaining({

@@ -4,6 +4,8 @@ import { describe, expect, test, vi } from 'vitest';
 
 import { DeleteConfirmModal } from './DeleteConfirmModal';
 
+vi.mock('@mantine/core', async () => await import('@mocks/@mantine/core'));
+
 vi.mock('@/_components', () => ({
 	FormFeedbackAlert: ({
 		status,
@@ -15,51 +17,6 @@ vi.mock('@/_components', () => ({
 		status === 'error' ? (
 			<div data-testid="form-feedback-alert">{errorMessage}</div>
 		) : null,
-}));
-
-vi.mock('@mantine/core', () => ({
-	Modal: ({
-		children,
-		opened,
-		title,
-	}: {
-		children: React.ReactNode;
-		opened: boolean;
-		title: string;
-	}) =>
-		opened ? (
-			<div data-testid="modal">
-				<span data-testid="modal-title">{title}</span>
-				{children}
-			</div>
-		) : null,
-
-	Button: ({
-		children,
-		disabled,
-		loading,
-		onClick,
-		'data-testid': testId,
-	}: {
-		children: React.ReactNode;
-		disabled?: boolean;
-		loading?: boolean;
-		onClick?: () => void;
-		'data-testid'?: string;
-	}) => (
-		<button
-			data-testid={testId}
-			disabled={disabled ?? loading}
-			onClick={onClick}
-			type="button"
-		>
-			{children}
-		</button>
-	),
-
-	Group: ({ children }: { children: React.ReactNode }) => <div>{children}</div>,
-
-	Text: ({ children }: { children: React.ReactNode }) => <p>{children}</p>,
 }));
 
 const defaultProps = {
@@ -74,7 +31,7 @@ const defaultProps = {
 describe('DeleteConfirmModal', () => {
 	test('renders modal content when opened', () => {
 		render(<DeleteConfirmModal {...defaultProps} />);
-		expect(screen.getByTestId('modal')).toBeDefined();
+		expect(screen.getByRole('dialog')).toBeDefined();
 		expect(screen.getByTestId('cancel-button')).toBeDefined();
 		expect(screen.getByTestId('confirm-delete-button')).toBeDefined();
 	});
@@ -87,9 +44,7 @@ describe('DeleteConfirmModal', () => {
 				message="Are you sure you want to delete this bookmark?"
 			/>,
 		);
-		expect(screen.getByTestId('modal-title').textContent).toBe(
-			'Delete Bookmark',
-		);
+		expect(screen.getByText('Delete Bookmark')).toBeDefined();
 		expect(
 			screen.getByText('Are you sure you want to delete this bookmark?'),
 		).toBeDefined();
@@ -97,7 +52,7 @@ describe('DeleteConfirmModal', () => {
 
 	test('does not render when not opened', () => {
 		render(<DeleteConfirmModal {...defaultProps} opened={false} />);
-		expect(screen.queryByTestId('modal')).toBeNull();
+		expect(screen.queryByRole('dialog')).toBeNull();
 	});
 
 	test('clicking cancel calls onClose', () => {

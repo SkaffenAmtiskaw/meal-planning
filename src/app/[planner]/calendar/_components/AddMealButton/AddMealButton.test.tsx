@@ -4,36 +4,7 @@ import { afterEach, describe, expect, test, vi } from 'vitest';
 
 import { AddMealButton } from './AddMealButton';
 
-vi.mock('@mantine/core', () => ({
-	Button: ({
-		children,
-		onClick,
-		'data-testid': testId,
-	}: {
-		children: React.ReactNode;
-		onClick?: () => void;
-		'data-testid'?: string;
-	}) => (
-		<button data-testid={testId} onClick={onClick} type="button">
-			{children}
-		</button>
-	),
-	Modal: ({
-		opened,
-		onClose,
-		children,
-	}: {
-		opened: boolean;
-		onClose: () => void;
-		children: React.ReactNode;
-	}) =>
-		opened ? (
-			<div data-testid="modal">
-				<button data-testid="modal-close" type="button" onClick={onClose} />
-				{children}
-			</div>
-		) : null,
-}));
+vi.mock('@mantine/core', async () => await import('@mocks/@mantine/core'));
 
 const mockAddMealForm = vi.fn();
 vi.mock('../AddMealForm/AddMealForm', () => ({
@@ -67,7 +38,7 @@ describe('AddMealButton', () => {
 
 	test('modal is closed before clicking the button', () => {
 		render(<AddMealButton />);
-		expect(screen.queryByTestId('modal')).toBeNull();
+		expect(screen.queryByRole('dialog')).toBeNull();
 		expect(screen.queryByTestId('add-meal-form')).toBeNull();
 	});
 
@@ -80,8 +51,8 @@ describe('AddMealButton', () => {
 	test('modal onClose closes the modal', () => {
 		render(<AddMealButton />);
 		fireEvent.click(screen.getByTestId('add-meal-button'));
-		fireEvent.click(screen.getByTestId('modal-close'));
-		expect(screen.queryByTestId('add-meal-form')).toBeNull();
+		fireEvent.click(screen.getByRole('button', { name: /close/i }));
+		expect(screen.queryByRole('dialog')).toBeNull();
 	});
 
 	test('form onClose closes the modal', () => {

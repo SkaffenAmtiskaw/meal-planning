@@ -1,5 +1,3 @@
-import { MantineProvider } from '@mantine/core';
-
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 
 import { afterEach, describe, expect, test, vi } from 'vitest';
@@ -8,6 +6,8 @@ import { checkEmailStatus } from '@/_actions/auth';
 import { client } from '@/_utils/auth';
 
 import { SignIn } from './SignIn';
+
+vi.mock('@mantine/core', async () => await import('@mocks/@mantine/core'));
 
 vi.mock('@/_actions/auth', () => ({
 	checkEmailStatus: vi.fn(),
@@ -26,17 +26,13 @@ vi.mock('@/_utils/auth', () => ({
 	},
 }));
 
-const wrapper = ({ children }: { children: React.ReactNode }) => (
-	<MantineProvider>{children}</MantineProvider>
-);
-
 describe('sign in', () => {
 	afterEach(() => {
 		vi.resetAllMocks();
 	});
 
 	test('renders google sign in button and email input in idle state', () => {
-		render(<SignIn />, { wrapper });
+		render(<SignIn />);
 
 		expect(screen.getByTestId('google-sign-in-button')).toBeDefined();
 		expect(screen.getByTestId('email-input')).toBeDefined();
@@ -44,7 +40,7 @@ describe('sign in', () => {
 	});
 
 	test('clicking google button initiates google sign in', () => {
-		render(<SignIn />, { wrapper });
+		render(<SignIn />);
 
 		fireEvent.click(screen.getByTestId('google-sign-in-button'));
 
@@ -54,7 +50,7 @@ describe('sign in', () => {
 	test('continue shows error alert when checkEmailStatus throws', async () => {
 		vi.mocked(checkEmailStatus).mockRejectedValueOnce(new Error('DB failure'));
 
-		render(<SignIn />, { wrapper });
+		render(<SignIn />);
 
 		fireEvent.change(screen.getByTestId('email-input'), {
 			target: { value: 'user@example.com' },
@@ -71,7 +67,7 @@ describe('sign in', () => {
 	test('continue shows password field for existing user with password', async () => {
 		vi.mocked(checkEmailStatus).mockResolvedValueOnce('has-password');
 
-		render(<SignIn />, { wrapper });
+		render(<SignIn />);
 
 		fireEvent.change(screen.getByTestId('email-input'), {
 			target: { value: 'user@example.com' },
@@ -92,7 +88,7 @@ describe('sign in', () => {
 			error: null,
 		});
 
-		render(<SignIn />, { wrapper });
+		render(<SignIn />);
 
 		fireEvent.change(screen.getByTestId('email-input'), {
 			target: { value: 'user@example.com' },
@@ -122,7 +118,7 @@ describe('sign in', () => {
 			error: { message: 'Invalid password' },
 		});
 
-		render(<SignIn />, { wrapper });
+		render(<SignIn />);
 
 		fireEvent.change(screen.getByTestId('email-input'), {
 			target: { value: 'user@example.com' },
@@ -145,7 +141,7 @@ describe('sign in', () => {
 			error: { message: undefined },
 		});
 
-		render(<SignIn />, { wrapper });
+		render(<SignIn />);
 
 		fireEvent.change(screen.getByTestId('email-input'), {
 			target: { value: 'user@example.com' },
@@ -166,7 +162,7 @@ describe('sign in', () => {
 	test('continue shows create password and name fields for new user', async () => {
 		vi.mocked(checkEmailStatus).mockResolvedValueOnce('new');
 
-		render(<SignIn />, { wrapper });
+		render(<SignIn />);
 
 		fireEvent.change(screen.getByTestId('email-input'), {
 			target: { value: 'new@example.com' },
@@ -187,7 +183,7 @@ describe('sign in', () => {
 			error: null,
 		});
 
-		render(<SignIn />, { wrapper });
+		render(<SignIn />);
 
 		fireEvent.change(screen.getByTestId('email-input'), {
 			target: { value: 'new@example.com' },
@@ -222,7 +218,7 @@ describe('sign in', () => {
 			error: null,
 		});
 
-		render(<SignIn />, { wrapper });
+		render(<SignIn />);
 
 		fireEvent.change(screen.getByTestId('email-input'), {
 			target: { value: 'new@example.com' },
@@ -253,7 +249,7 @@ describe('sign in', () => {
 			error: null,
 		});
 
-		render(<SignIn />, { wrapper });
+		render(<SignIn />);
 
 		fireEvent.change(screen.getByTestId('email-input'), {
 			target: { value: 'new@example.com' },
@@ -280,7 +276,7 @@ describe('sign in', () => {
 	test('sign up with invalid name shows error and does not call signUp', async () => {
 		vi.mocked(checkEmailStatus).mockResolvedValueOnce('new');
 
-		render(<SignIn />, { wrapper });
+		render(<SignIn />);
 
 		fireEvent.change(screen.getByTestId('email-input'), {
 			target: { value: 'new@example.com' },
@@ -309,7 +305,7 @@ describe('sign in', () => {
 			error: { message: 'Email already in use' },
 		});
 
-		render(<SignIn />, { wrapper });
+		render(<SignIn />);
 
 		fireEvent.change(screen.getByTestId('email-input'), {
 			target: { value: 'new@example.com' },
@@ -332,7 +328,7 @@ describe('sign in', () => {
 			error: { message: undefined },
 		});
 
-		render(<SignIn />, { wrapper });
+		render(<SignIn />);
 
 		fireEvent.change(screen.getByTestId('email-input'), {
 			target: { value: 'new@example.com' },
@@ -353,7 +349,7 @@ describe('sign in', () => {
 	test('continue shows social-only alert for social-only user', async () => {
 		vi.mocked(checkEmailStatus).mockResolvedValueOnce('social-only');
 
-		render(<SignIn />, { wrapper });
+		render(<SignIn />);
 
 		fireEvent.change(screen.getByTestId('email-input'), {
 			target: { value: 'google@example.com' },
@@ -368,7 +364,7 @@ describe('sign in', () => {
 	test('change email button on social-only returns to idle state', async () => {
 		vi.mocked(checkEmailStatus).mockResolvedValueOnce('social-only');
 
-		render(<SignIn />, { wrapper });
+		render(<SignIn />);
 
 		fireEvent.change(screen.getByTestId('email-input'), {
 			target: { value: 'google@example.com' },
@@ -386,7 +382,7 @@ describe('sign in', () => {
 	test('change email button returns to idle state', async () => {
 		vi.mocked(checkEmailStatus).mockResolvedValueOnce('has-password');
 
-		render(<SignIn />, { wrapper });
+		render(<SignIn />);
 
 		fireEvent.change(screen.getByTestId('email-input'), {
 			target: { value: 'user@example.com' },
@@ -404,7 +400,7 @@ describe('sign in', () => {
 	test('forgot password button shown in has-password step', async () => {
 		vi.mocked(checkEmailStatus).mockResolvedValueOnce('has-password');
 
-		render(<SignIn />, { wrapper });
+		render(<SignIn />);
 
 		fireEvent.change(screen.getByTestId('email-input'), {
 			target: { value: 'user@example.com' },
@@ -423,7 +419,7 @@ describe('sign in', () => {
 			error: null,
 		});
 
-		render(<SignIn />, { wrapper });
+		render(<SignIn />);
 
 		fireEvent.change(screen.getByTestId('email-input'), {
 			target: { value: 'user@example.com' },
@@ -450,7 +446,7 @@ describe('sign in', () => {
 			error: { message: 'Reset failed' },
 		});
 
-		render(<SignIn />, { wrapper });
+		render(<SignIn />);
 
 		fireEvent.change(screen.getByTestId('email-input'), {
 			target: { value: 'user@example.com' },
@@ -475,7 +471,7 @@ describe('sign in', () => {
 			error: { message: undefined },
 		});
 
-		render(<SignIn />, { wrapper });
+		render(<SignIn />);
 
 		fireEvent.change(screen.getByTestId('email-input'), {
 			target: { value: 'user@example.com' },
@@ -496,7 +492,7 @@ describe('sign in', () => {
 	test('forgot password button shown in social-only step', async () => {
 		vi.mocked(checkEmailStatus).mockResolvedValueOnce('social-only');
 
-		render(<SignIn />, { wrapper });
+		render(<SignIn />);
 
 		fireEvent.change(screen.getByTestId('email-input'), {
 			target: { value: 'google@example.com' },
@@ -515,7 +511,7 @@ describe('sign in', () => {
 			error: { message: 'Reset failed' },
 		});
 
-		render(<SignIn />, { wrapper });
+		render(<SignIn />);
 
 		fireEvent.change(screen.getByTestId('email-input'), {
 			target: { value: 'google@example.com' },
@@ -540,7 +536,7 @@ describe('sign in', () => {
 			error: null,
 		});
 
-		render(<SignIn />, { wrapper });
+		render(<SignIn />);
 
 		fireEvent.change(screen.getByTestId('email-input'), {
 			target: { value: 'google@example.com' },

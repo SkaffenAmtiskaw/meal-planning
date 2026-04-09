@@ -1,5 +1,3 @@
-import { MantineProvider } from '@mantine/core';
-
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 
 import { afterEach, describe, expect, test, vi } from 'vitest';
@@ -9,6 +7,8 @@ import { ChangeNameForm } from './ChangeNameForm';
 const mockRefresh = vi.fn();
 const mockUpdateUserName = vi.fn();
 
+vi.mock('@mantine/core', async () => await import('@mocks/@mantine/core'));
+
 vi.mock('next/navigation', () => ({
 	useRouter: () => ({ refresh: mockRefresh }),
 }));
@@ -17,29 +17,25 @@ vi.mock('@/_actions/user', () => ({
 	updateUserName: (name: string) => mockUpdateUserName(name),
 }));
 
-const wrapper = ({ children }: { children: React.ReactNode }) => (
-	<MantineProvider>{children}</MantineProvider>
-);
-
 describe('ChangeNameForm', () => {
 	afterEach(() => {
 		vi.resetAllMocks();
 	});
 
 	test('displays current name', () => {
-		render(<ChangeNameForm currentName="Ariel" />, { wrapper });
+		render(<ChangeNameForm currentName="Ariel" />);
 
 		expect(screen.getByTestId('current-name').textContent).toBe('Ariel');
 	});
 
 	test('shows change name button', () => {
-		render(<ChangeNameForm currentName="Ariel" />, { wrapper });
+		render(<ChangeNameForm currentName="Ariel" />);
 
 		expect(screen.getByTestId('change-name-button')).toBeDefined();
 	});
 
 	test('shows form when change name button is clicked', () => {
-		render(<ChangeNameForm currentName="Ariel" />, { wrapper });
+		render(<ChangeNameForm currentName="Ariel" />);
 
 		fireEvent.click(screen.getByTestId('change-name-button'));
 
@@ -49,7 +45,7 @@ describe('ChangeNameForm', () => {
 	});
 
 	test('hides form when cancel is clicked', () => {
-		render(<ChangeNameForm currentName="Ariel" />, { wrapper });
+		render(<ChangeNameForm currentName="Ariel" />);
 
 		fireEvent.click(screen.getByTestId('change-name-button'));
 		fireEvent.click(screen.getByTestId('cancel-name-change-button'));
@@ -59,7 +55,7 @@ describe('ChangeNameForm', () => {
 	});
 
 	test('resets name input when cancel is clicked and form is reopened', () => {
-		render(<ChangeNameForm currentName="Ariel" />, { wrapper });
+		render(<ChangeNameForm currentName="Ariel" />);
 
 		fireEvent.click(screen.getByTestId('change-name-button'));
 		fireEvent.change(screen.getByTestId('new-name-input'), {
@@ -74,7 +70,7 @@ describe('ChangeNameForm', () => {
 	});
 
 	test('updates name input value', () => {
-		render(<ChangeNameForm currentName="Ariel" />, { wrapper });
+		render(<ChangeNameForm currentName="Ariel" />);
 
 		fireEvent.click(screen.getByTestId('change-name-button'));
 		fireEvent.change(screen.getByTestId('new-name-input'), {
@@ -88,7 +84,7 @@ describe('ChangeNameForm', () => {
 
 	test('calls updateUserName with new name on submit', async () => {
 		mockUpdateUserName.mockResolvedValueOnce({ ok: true, data: undefined });
-		render(<ChangeNameForm currentName="Ariel" />, { wrapper });
+		render(<ChangeNameForm currentName="Ariel" />);
 
 		fireEvent.click(screen.getByTestId('change-name-button'));
 		fireEvent.change(screen.getByTestId('new-name-input'), {
@@ -103,7 +99,7 @@ describe('ChangeNameForm', () => {
 
 	test('hides form and calls router.refresh on success', async () => {
 		mockUpdateUserName.mockResolvedValueOnce({ ok: true, data: undefined });
-		render(<ChangeNameForm currentName="Ariel" />, { wrapper });
+		render(<ChangeNameForm currentName="Ariel" />);
 
 		fireEvent.click(screen.getByTestId('change-name-button'));
 		fireEvent.click(screen.getByTestId('submit-name-change-button'));
@@ -119,7 +115,7 @@ describe('ChangeNameForm', () => {
 			ok: false,
 			error: 'Contains invalid characters',
 		});
-		render(<ChangeNameForm currentName="Ariel" />, { wrapper });
+		render(<ChangeNameForm currentName="Ariel" />);
 
 		fireEvent.click(screen.getByTestId('change-name-button'));
 		fireEvent.click(screen.getByTestId('submit-name-change-button'));
@@ -136,7 +132,7 @@ describe('ChangeNameForm', () => {
 			ok: false,
 			error: 'Some error',
 		});
-		render(<ChangeNameForm currentName="Ariel" />, { wrapper });
+		render(<ChangeNameForm currentName="Ariel" />);
 
 		fireEvent.click(screen.getByTestId('change-name-button'));
 		fireEvent.click(screen.getByTestId('submit-name-change-button'));

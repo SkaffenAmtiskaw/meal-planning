@@ -12,29 +12,7 @@ vi.mock('react-screen-wake-lock', () => ({
 	useWakeLock: (opts: unknown) => mockUseWakeLock(opts),
 }));
 
-vi.mock('@mantine/core', () => ({
-	Switch: ({
-		checked,
-		label,
-		onChange,
-		'data-testid': testId,
-	}: {
-		checked: boolean;
-		label: string;
-		onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
-		'data-testid'?: string;
-	}) => (
-		<label>
-			{label}
-			<input
-				type="checkbox"
-				data-testid={testId}
-				checked={checked}
-				onChange={onChange}
-			/>
-		</label>
-	),
-}));
+vi.mock('@mantine/core', async () => await import('@mocks/@mantine/core'));
 
 afterEach(() => {
 	vi.resetAllMocks();

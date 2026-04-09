@@ -69,21 +69,7 @@ vi.mock('next/navigation', () => ({
 	redirect: (...args: unknown[]) => mockRedirect(...args),
 }));
 
-vi.mock('@mantine/core', () => ({
-	Box: ({ children }: { children: React.ReactNode }) => <>{children}</>,
-	Container: ({ children }: { children: React.ReactNode }) => <>{children}</>,
-	Title: ({ children }: { children: React.ReactNode }) => <h1>{children}</h1>,
-	Text: ({
-		children,
-		...props
-	}: {
-		children: React.ReactNode;
-		[key: string]: unknown;
-	}) => <p {...props}>{children}</p>,
-	SimpleGrid: ({ children }: { children: React.ReactNode }) => <>{children}</>,
-	Stack: ({ children }: { children: React.ReactNode }) => <>{children}</>,
-	Divider: () => <hr />,
-}));
+vi.mock('@mantine/core', async () => await import('@mocks/@mantine/core'));
 
 const session = { user: { email: 'user@example.com' } };
 const futureDate = new Date(Date.now() + 1000 * 60 * 60 * 24);
