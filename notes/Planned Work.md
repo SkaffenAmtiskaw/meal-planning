@@ -20,7 +20,7 @@
 - styling fixes to calendar view
 - [[Reduce Client Components in Calendar|reduce client components in calendar]]
 ## Planner Settings
-- add planner settings
+- [[Add Planner Settings|add planner settings]]
 - [[Multiple Planners|allow user to have multiple planners (pre-requisite of inviting other users to shared planner)]]
 - allow user to delete a planner
 - [[Planner Access Levels|allow users to have access levels to a planner - (owner/admin, write, read)]]
@@ -45,6 +45,8 @@
 - move meals to different days (drag and drop)
 - reorder meals within days
 - add images to recipes
+- group ingredients when adding/editing a recipe
+- when adding/editing a recipe, make the instructions expand if you type more than a line
 ## Misc
 - tag management - edit/delete (should live under user settings)
 - performance - investigate mongo/mongoose caching - is next doing it already or do we need to implement it?
@@ -56,6 +58,7 @@
 ## Dev Tooling
 - enable dependabot
 - e2e tests
+- disable biome a11y checks on unit test mocks
 
 ## Misc
 - let user set avatar

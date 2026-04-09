@@ -1,5 +1,4 @@
-import { render, screen } from '@testing-library/react';
-
+import { renderToStaticMarkup } from 'react-dom/server';
 import { describe, expect, test, vi } from 'vitest';
 
 import RootLayout, { metadata } from './layout';
@@ -24,8 +23,10 @@ describe('root layout', () => {
 	});
 
 	test('renders children', () => {
-		render(<RootLayout>{"Ursula's Kitchen"}</RootLayout>);
+		const html = renderToStaticMarkup(
+			<RootLayout>{"Ursula's Kitchen"}</RootLayout>,
+		);
 
-		expect(screen.getByText("Ursula's Kitchen")).toBeDefined();
+		expect(html).toContain('Ursula&#x27;s Kitchen');
 	});
 });
