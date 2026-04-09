@@ -5,9 +5,10 @@ import { defineConfig } from 'vitest/config'
 export default defineConfig({
   plugins: [react()],
   resolve: {
-    alias: {
-      '@': resolve(__dirname, './src'),
-    },
+    alias: [
+      { find: '@/env', replacement: new URL('./test/mocks/env.ts', import.meta.url).pathname },
+      { find: '@', replacement: resolve(__dirname, './src') },
+    ],
   },
   test: {
     alias: {

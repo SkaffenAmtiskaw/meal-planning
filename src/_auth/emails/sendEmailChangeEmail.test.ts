@@ -2,23 +2,9 @@ import { describe, expect, test, vi } from 'vitest';
 
 import { sendEmailChangeEmail } from './sendEmailChangeEmail';
 
-const {
-	mockSend,
-	resendConstructor,
-	MOCK_RESEND_API_KEY,
-	MOCK_RESEND_FROM_EMAIL,
-} = vi.hoisted(() => ({
+const { mockSend, resendConstructor } = vi.hoisted(() => ({
 	mockSend: vi.fn(),
 	resendConstructor: vi.fn(),
-	MOCK_RESEND_API_KEY: 'mock-resend-api-key',
-	MOCK_RESEND_FROM_EMAIL: 'from@example.com',
-}));
-
-vi.mock('@/env', () => ({
-	env: {
-		RESEND_API_KEY: MOCK_RESEND_API_KEY,
-		RESEND_FROM_EMAIL: MOCK_RESEND_FROM_EMAIL,
-	},
 }));
 
 vi.mock('resend', () => ({
@@ -31,7 +17,7 @@ vi.mock('resend', () => ({
 
 describe('sendEmailChangeEmail', () => {
 	test('initializes Resend with the API key from env', () => {
-		expect(resendConstructor).toHaveBeenCalledWith(MOCK_RESEND_API_KEY);
+		expect(resendConstructor).toHaveBeenCalledWith('mock-resend-api-key');
 	});
 
 	test('sends email to the new address with the verification url', async () => {
@@ -42,7 +28,7 @@ describe('sendEmailChangeEmail', () => {
 
 		expect(mockSend).toHaveBeenCalledWith(
 			expect.objectContaining({
-				from: MOCK_RESEND_FROM_EMAIL,
+				from: 'from@example.com',
 				to: newEmail,
 				html: expect.stringContaining(url),
 			}),

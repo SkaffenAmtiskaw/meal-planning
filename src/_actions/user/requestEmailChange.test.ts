@@ -41,12 +41,6 @@ vi.mock('@/_auth/emails', () => ({
 	sendEmailChangeEmail: (opts: unknown) => mockSendEmailChangeEmail(opts),
 }));
 
-vi.mock('@/env', () => ({
-	env: {
-		BETTER_AUTH_URL: 'https://app.example.com',
-	},
-}));
-
 const mockSession = { user: { email: 'current@example.com' } };
 
 const makeMockUser = (
