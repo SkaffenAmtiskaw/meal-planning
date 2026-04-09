@@ -3,7 +3,6 @@
 **AI Instructions** - DO NOT delete this file. You may remove lines, but under no circumstances may you delete the file.
 
 # Cleanup
-- create @env mock
 - create reusable @tabler/icons mock
 
 # High-Priority

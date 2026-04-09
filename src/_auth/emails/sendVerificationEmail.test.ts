@@ -1,19 +1,10 @@
+import { mockSend, resendConstructor } from '@mocks/resend';
+
 import { describe, expect, test, vi } from 'vitest';
 
 import { sendVerificationEmail } from './sendVerificationEmail';
 
-const { mockSend, resendConstructor } = vi.hoisted(() => ({
-	mockSend: vi.fn(),
-	resendConstructor: vi.fn(),
-}));
-
-vi.mock('resend', () => ({
-	// biome-ignore lint/complexity/useArrowFunction: arrow functions cannot be used as constructors
-	Resend: vi.fn().mockImplementation(function (apiKey: string) {
-		resendConstructor(apiKey);
-		return { emails: { send: mockSend } };
-	}),
-}));
+vi.mock('resend', async () => await import('@mocks/resend'));
 
 describe('send verification email', () => {
 	test('initialize resend with the API key from environment variables', () => {
