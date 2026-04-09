@@ -13,6 +13,7 @@
       "Bash(pnpm info*)",
       "Bash(pnpm lint*)",
       "Bash(pnpm test*)",
+      "Bash(pnpm tsc --noEmit *)",
       "mcp__ide__getDiagnostics"
     ]
   },

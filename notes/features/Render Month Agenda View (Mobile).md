@@ -1,0 +1,1 @@
+The events in the month view show the date - which seems useless - they should render events similar to the week view (the dishes listed out and links provided, more details in a modal when you click on it)

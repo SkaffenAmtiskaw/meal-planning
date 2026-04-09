@@ -1,17 +1,14 @@
 'use client';
 
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 
-import { ActionIcon, Button, Group, SegmentedControl } from '@mantine/core';
 import { useMediaQuery } from '@mantine/hooks';
-import { IconChevronLeft, IconChevronRight } from '@tabler/icons-react';
 
 import {
 	createViewList,
 	createViewMonthAgenda,
 	createViewMonthGrid,
 } from '@schedule-x/calendar';
-import { createEventsServicePlugin } from '@schedule-x/events-service';
 import { ScheduleXCalendar, useNextCalendarApp } from '@schedule-x/react';
 
 import { usePlannerContext } from '@/app/[planner]/_components';
@@ -19,97 +16,39 @@ import { usePlannerSavedItems } from '@/app/[planner]/calendar/_hooks/usePlanner
 
 import styles from './CalendarView.module.css';
 
-import { getWeekStart } from '../../_utils/getWeekStart';
+import { useCalendarEvents } from '../../_hooks/useCalendarEvents';
+import { useScheduleXSync } from '../../_hooks/useScheduleXSync';
+import { useViewType } from '../../_hooks/useViewType';
+import { useWeekNavigation } from '../../_hooks/useWeekNavigation';
 import type { MealEvent, SerializedDay } from '../../_utils/toScheduleXEvents';
-import { toScheduleXEvents } from '../../_utils/toScheduleXEvents';
-import { AddMealButton } from '../AddMealButton/AddMealButton';
+import { CalendarHeader } from '../CalendarHeader/CalendarHeader';
 import { MealDetailModal } from '../MealDetailModal/MealDetailModal';
 import { MonthGridEvent } from '../MonthGridEvent/MonthGridEvent';
 import { WeekView } from '../WeekView/WeekView';
+import { WeekViewHeader } from '../WeekViewHeader/WeekViewHeader';
 
 type Props = {
 	plannerId: string;
 };
 
-export type ViewType = 'month' | 'week' | 'list';
-
-const DESKTOP_VIEWS: { label: string; value: ViewType }[] = [
-	{ label: 'Month', value: 'month' },
-	{ label: 'Week', value: 'week' },
-	{ label: 'List', value: 'list' },
-];
-
-const MOBILE_VIEWS: { label: string; value: ViewType }[] = [
-	{ label: 'Month', value: 'month' },
-	{ label: 'List', value: 'list' },
-];
-
-export const getScheduleXViewId = (
-	viewType: Exclude<ViewType, 'week'>,
-	isMobile: boolean,
-): string => {
-	if (viewType === 'list') return 'list';
-	return isMobile ? 'month-agenda' : 'month-grid';
-};
-
-type InternalCalendarApp = {
-	$app?: {
-		calendarState?: {
-			setView: (viewId: string, date: unknown) => void;
-		};
-		datePickerState?: {
-			selectedDate: { value: unknown };
-		};
-	};
+type ScheduleXCalendarApp = {
+	$app?: { datePickerState?: { selectedDate: { value: unknown } } };
 };
 
 export const CalendarView = ({ plannerId }: Props) => {
 	const planner = usePlannerContext();
 	const savedItems = usePlannerSavedItems();
-
 	const calendar = planner.calendar as SerializedDay[];
 
 	const isMobile = useMediaQuery('(max-width: 62em)');
-	const eventsService = useState(() => createEventsServicePlugin())[0];
-	const [initialEvents] = useState(() =>
-		toScheduleXEvents(calendar, savedItems),
+
+	const { eventsService, initialEvents, handleMealAdded } = useCalendarEvents(
+		calendar,
+		savedItems,
 	);
+	const { viewType, setViewType } = useViewType(isMobile);
+
 	const [clickedEvent, setClickedEvent] = useState<MealEvent | null>(null);
-	const [viewType, setViewType] = useState<ViewType>('month');
-
-	const handleMealAdded = useCallback(
-		(newCalendar: SerializedDay[]) => {
-			eventsService.set(toScheduleXEvents(newCalendar, savedItems));
-		},
-		[eventsService, savedItems],
-	);
-
-	const AddMealButtonWithData = useCallback(
-		() => <AddMealButton plannerId={plannerId} onMealAdded={handleMealAdded} />,
-		[plannerId, handleMealAdded],
-	);
-
-	const ViewSwitcher = useCallback(
-		() => (
-			<SegmentedControl
-				data-testid="view-switcher"
-				data={isMobile ? MOBILE_VIEWS : DESKTOP_VIEWS}
-				value={viewType}
-				onChange={(v) => setViewType(v as ViewType)}
-			/>
-		),
-		[isMobile, viewType],
-	);
-
-	const HeaderRight = useCallback(
-		() => (
-			<Group gap="xs">
-				<AddMealButtonWithData />
-				<ViewSwitcher />
-			</Group>
-		),
-		[AddMealButtonWithData, ViewSwitcher],
-	);
 
 	const calendarApp = useNextCalendarApp({
 		views: [createViewMonthGrid(), createViewMonthAgenda(), createViewList()],
@@ -123,45 +62,26 @@ export const CalendarView = ({ plannerId }: Props) => {
 		},
 	});
 
-	const [currentWeekStart, setCurrentWeekStart] = useState(() =>
-		getWeekStart(
-			(calendarApp as unknown as InternalCalendarApp)?.$app?.datePickerState
+	const { currentWeekStart, handlePrevWeek, handleNextWeek, handleToday } =
+		useWeekNavigation(
+			(calendarApp as unknown as ScheduleXCalendarApp)?.$app?.datePickerState
 				?.selectedDate.value as string | undefined,
-		),
-	);
-
-	// TODO: week navigation will be moved into a dedicated header component (Replace Calendar Header)
-	const handlePrevWeek = useCallback(() => {
-		setCurrentWeekStart((w) => w.subtract({ days: 7 }));
-	}, []);
-
-	const handleNextWeek = useCallback(() => {
-		setCurrentWeekStart((w) => w.add({ days: 7 }));
-	}, []);
-
-	const handleToday = useCallback(() => {
-		setCurrentWeekStart(getWeekStart(undefined));
-	}, []);
-
-	// Sync our SegmentedControl with schedule-x's internal view state.
-	// schedule-x has no public API for this; we use the internal $app.
-	useEffect(() => {
-		if (viewType === 'week') return;
-		const $app = (calendarApp as unknown as InternalCalendarApp)?.$app;
-		if (!$app?.calendarState) return;
-		const viewId = getScheduleXViewId(viewType, isMobile);
-		$app.calendarState.setView(
-			viewId,
-			$app.datePickerState?.selectedDate.value,
 		);
-	}, [viewType, isMobile, calendarApp]);
 
-	// Fall back to 'list' if 'week' is active when switching to mobile.
-	useEffect(() => {
-		if (isMobile && viewType === 'week') {
-			setViewType('list');
-		}
-	}, [isMobile, viewType]);
+	useScheduleXSync(calendarApp, viewType, isMobile);
+
+	const HeaderRight = useCallback(
+		() => (
+			<CalendarHeader
+				plannerId={plannerId}
+				onMealAdded={handleMealAdded}
+				viewType={viewType}
+				isMobile={isMobile}
+				onViewChange={setViewType}
+			/>
+		),
+		[plannerId, handleMealAdded, viewType, isMobile, setViewType],
+	);
 
 	const customComponents = useMemo(
 		() => ({
@@ -180,35 +100,14 @@ export const CalendarView = ({ plannerId }: Props) => {
 			/>
 			{viewType === 'week' ? (
 				<>
-					<Group justify="space-between" mb="sm" data-testid="week-view-header">
-						<Group gap="xs">
-							<ActionIcon
-								variant="subtle"
-								onClick={handlePrevWeek}
-								data-testid="week-prev"
-								aria-label="Previous week"
-							>
-								<IconChevronLeft size={16} />
-							</ActionIcon>
-							<Button
-								variant="subtle"
-								size="xs"
-								onClick={handleToday}
-								data-testid="week-today"
-							>
-								Today
-							</Button>
-							<ActionIcon
-								variant="subtle"
-								onClick={handleNextWeek}
-								data-testid="week-next"
-								aria-label="Next week"
-							>
-								<IconChevronRight size={16} />
-							</ActionIcon>
-						</Group>
-						<ViewSwitcher />
-					</Group>
+					<WeekViewHeader
+						onPrev={handlePrevWeek}
+						onNext={handleNextWeek}
+						onToday={handleToday}
+						viewType={viewType}
+						isMobile={isMobile}
+						onViewChange={setViewType}
+					/>
 					<WeekView
 						calendar={calendar}
 						currentWeekStart={currentWeekStart}

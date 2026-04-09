@@ -2,9 +2,6 @@
 
 **AI Instructions** - DO NOT delete this file. You may remove lines, but under no circumstances may you delete the file.
 
-# Cleanup
-- create reusable @tabler/icons mock
-
 # High-Priority
 ## Calendar Page
 - [[Render List View|render list view]]
