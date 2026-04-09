@@ -25,11 +25,15 @@ description: plan a feature — trigger when asked to "plan [feature]", "create 
 - If a step cannot be verified by the user then it is not useful as an independent step
 - In order to test incremental changes temporary console.logs can be added to verify data is correct
 
-## 4. Plan Confirmation
+## 4. Plan Specifics
+- Components should handle a SINGLE CONCERN.
+- If a component does more than one thing, it should be broken down into smaller subcomponents.
+
+## 5. Plan Confirmation
 - Present the plan to the user and wait for EXPLICIT confirmation before proceeding
 - Write the plan to the note
 - Do NOT begin implementation until the user confirms
 
-## 5. Implementation
+## 6. Implementation
 - Once confirmed, hand off to the implement flow starting from step 1
 - Follow all rules in the `/implement-feature` skill from that point forward
