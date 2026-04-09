@@ -1,21 +1,8 @@
 'use client';
 
-import { useState } from 'react';
-
-import {
-	Button,
-	Fieldset,
-	Group,
-	Input,
-	SegmentedControl,
-	Select,
-	Stack,
-	Text,
-	Textarea,
-	TextInput,
-} from '@mantine/core';
+import { Button, Group, Stack, Text, Textarea, TextInput } from '@mantine/core';
 import { schemaResolver, useForm } from '@mantine/form';
-import { IconPlus, IconTrash } from '@tabler/icons-react';
+import { IconPlus } from '@tabler/icons-react';
 
 import { z } from 'zod';
 
@@ -23,30 +10,10 @@ import { addMeal } from '@/_actions/planner/addMeal';
 import { FormFeedbackAlert, SubmitButton } from '@/_components';
 import { useFormFeedback } from '@/_hooks';
 
-import { usePlannerSavedItems } from '../../_hooks/usePlannerSavedItems';
+import { DishRow } from './DishRow';
+import { useDishes } from './useDishes';
+
 import type { SerializedDay } from '../../_utils/toScheduleXEvents';
-
-type SourceType = 'none' | 'saved' | 'text';
-
-type DishState = {
-	id: string;
-	name: string;
-	sourceType: SourceType;
-	savedId: string;
-	sourceText: string;
-	note: string;
-	noteExpanded: boolean;
-};
-
-const makeDish = (): DishState => ({
-	id: crypto.randomUUID(),
-	name: '',
-	sourceType: 'none',
-	savedId: '',
-	sourceText: '',
-	note: '',
-	noteExpanded: false,
-});
 
 const zFormFields = z.object({
 	date: z.string().min(1, 'Date is required'),
@@ -61,9 +28,7 @@ type Props = {
 };
 
 export const AddMealForm = ({ plannerId, onClose, onMealAdded }: Props) => {
-	const savedItems = usePlannerSavedItems();
-
-	const [dishes, setDishes] = useState<DishState[]>([makeDish()]);
+	const { dishes, addDish, removeDish, updateDish } = useDishes();
 
 	const { status, countdown, errorMessage, wrap } = useFormFeedback();
 
@@ -72,17 +37,6 @@ export const AddMealForm = ({ plannerId, onClose, onMealAdded }: Props) => {
 		validate: schemaResolver(zFormFields),
 		initialValues: { date: '', mealName: '', description: '' },
 	});
-
-	const updateDish = (id: string, patch: Partial<DishState>) => {
-		setDishes((prev) =>
-			prev.map((d) => (d.id === id ? { ...d, ...patch } : d)),
-		);
-	};
-
-	const addDish = () => setDishes((prev) => [...prev, makeDish()]);
-
-	const removeDish = (id: string) =>
-		setDishes((prev) => prev.filter((d) => d.id !== id));
 
 	const handleSubmit = form.onSubmit(
 		wrap(
@@ -136,103 +90,14 @@ export const AddMealForm = ({ plannerId, onClose, onMealAdded }: Props) => {
 						Dishes
 					</Text>
 					{dishes.map((dish, index) => (
-						<Fieldset key={dish.id} data-testid={`dish-row-${index}`}>
-							<Stack gap="xs">
-								<Group align="flex-end">
-									<TextInput
-										label="Dish name"
-										style={{ flex: 1 }}
-										data-testid={`dish-name-${index}`}
-										value={dish.name}
-										onChange={(e) =>
-											updateDish(dish.id, { name: e.currentTarget.value })
-										}
-									/>
-									{dishes.length > 1 && (
-										<Button
-											variant="subtle"
-											color="red"
-											size="compact-sm"
-											data-testid={`dish-remove-${index}`}
-											onClick={() => removeDish(dish.id)}
-										>
-											<IconTrash size={16} />
-										</Button>
-									)}
-								</Group>
-
-								<Stack gap={4}>
-									<Input.Label>Source</Input.Label>
-									<SegmentedControl
-										data-testid={`dish-source-type-${index}`}
-										value={dish.sourceType}
-										onChange={(value) =>
-											updateDish(dish.id, { sourceType: value as SourceType })
-										}
-										data={[
-											{ label: 'None', value: 'none' },
-											{ label: 'Saved', value: 'saved' },
-											{ label: 'Reference', value: 'text' },
-										]}
-									/>
-								</Stack>
-
-								{dish.sourceType === 'saved' && (
-									<Select
-										label="Saved recipe / bookmark"
-										data-testid={`dish-saved-${index}`}
-										searchable
-										data={savedItems.map((item) => ({
-											value: item._id,
-											label: item.name,
-										}))}
-										value={dish.savedId || null}
-										onChange={(value) =>
-											updateDish(dish.id, { savedId: value ?? '' })
-										}
-									/>
-								)}
-
-								{dish.sourceType === 'text' && (
-									<TextInput
-										label="URL or reference"
-										data-testid={`dish-source-text-${index}`}
-										value={dish.sourceText}
-										onChange={(e) =>
-											updateDish(dish.id, {
-												sourceText: e.currentTarget.value,
-											})
-										}
-									/>
-								)}
-
-								<Button
-									variant="subtle"
-									size="compact-xs"
-									mt="xs"
-									data-testid={`dish-note-toggle-${index}`}
-									onClick={() =>
-										updateDish(dish.id, {
-											noteExpanded: !dish.noteExpanded,
-											...(dish.noteExpanded && { note: '' }),
-										})
-									}
-								>
-									{dish.noteExpanded ? 'Remove note' : 'Add note'}
-								</Button>
-
-								{dish.noteExpanded && (
-									<Textarea
-										label="Note"
-										data-testid={`dish-note-${index}`}
-										value={dish.note}
-										onChange={(e) =>
-											updateDish(dish.id, { note: e.currentTarget.value })
-										}
-									/>
-								)}
-							</Stack>
-						</Fieldset>
+						<DishRow
+							key={dish.id}
+							dish={dish}
+							index={index}
+							showRemove={dishes.length > 1}
+							onUpdate={(patch) => updateDish(dish.id, patch)}
+							onRemove={() => removeDish(dish.id)}
+						/>
 					))}
 
 					<Button
