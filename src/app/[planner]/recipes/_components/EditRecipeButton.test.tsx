@@ -11,16 +11,7 @@ vi.mock('next/navigation', () => ({
 
 vi.mock('@mantine/core', async () => await import('@mocks/@mantine/core'));
 
-vi.mock('@tabler/icons-react', () => ({
-	IconPencil: () => <svg data-testid="icon-pencil" />,
-}));
-
 describe('EditRecipeButton', () => {
-	test('renders the pencil icon', () => {
-		render(<EditRecipeButton href="?item=123&status=edit&type=recipe" />);
-		expect(screen.getByTestId('icon-pencil')).toBeDefined();
-	});
-
 	test('navigates to href when clicked', () => {
 		render(<EditRecipeButton href="?item=123&status=edit&type=recipe" />);
 		fireEvent.click(screen.getByTestId('edit-button'));

@@ -52,12 +52,6 @@ vi.mock('@/_components/TagCombobox', () => ({
 	},
 }));
 
-vi.mock('@tabler/icons-react', () => ({
-	IconCheck: () => <span>check</span>,
-	IconPencil: () => <span>pencil</span>,
-	IconX: () => <span>x</span>,
-}));
-
 const defaultProps = {
 	plannerId: 'planner-1',
 	recipeId: 'recipe-1',

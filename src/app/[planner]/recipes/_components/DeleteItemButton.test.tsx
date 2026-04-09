@@ -31,10 +31,6 @@ vi.mock('@/_hooks', () => ({
 
 vi.mock('@mantine/core', async () => await import('@mocks/@mantine/core'));
 
-vi.mock('@tabler/icons-react', () => ({
-	IconTrash: () => null,
-}));
-
 vi.mock('./DeleteConfirmModal', () => ({
 	DeleteConfirmModal: ({
 		errorMessage,

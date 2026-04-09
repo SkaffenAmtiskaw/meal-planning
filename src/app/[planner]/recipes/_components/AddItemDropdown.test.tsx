@@ -12,12 +12,6 @@ vi.mock('next/navigation', () => ({
 
 vi.mock('@mantine/core', async () => await import('@mocks/@mantine/core'));
 
-vi.mock('@tabler/icons-react', () => ({
-	IconPlus: () => null,
-	IconBookmark: () => null,
-	IconBowlSpoon: () => null,
-}));
-
 describe('add item dropdown', () => {
 	test('clicking bookmark navigates to the add bookmark URL', () => {
 		render(<AddItemDropdown />);

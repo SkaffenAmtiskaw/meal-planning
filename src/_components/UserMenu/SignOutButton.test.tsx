@@ -19,10 +19,6 @@ vi.mock('@/_utils/auth', () => ({
 
 vi.mock('@mantine/core', async () => await import('@mocks/@mantine/core'));
 
-vi.mock('@tabler/icons-react', () => ({
-	IconLogout: () => <svg data-testid="logout-icon" />,
-}));
-
 describe('SignOutButton', () => {
 	test('renders sign-out button with label', () => {
 		render(<SignOutButton />);
