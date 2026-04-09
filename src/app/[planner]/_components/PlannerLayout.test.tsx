@@ -14,9 +14,8 @@ vi.mock('@mantine/hooks', () => ({
 	useDisclosure: () => [false, { toggle: vi.fn() }],
 }));
 
-const mockNavbar = vi.fn<(props: { id: string }) => null>(() => null);
-vi.mock('@/_components', () => ({
-	Navbar: (props: { id: string }) => mockNavbar(props),
+vi.mock('./useLastOpenedPlanner', () => ({
+	useLastOpenedPlanner: vi.fn(),
 }));
 
 const mockHeader = vi.fn<(props: { leftSection?: React.ReactNode }) => null>(
@@ -26,19 +25,21 @@ vi.mock('@/app/_components/Header', () => ({
 	Header: (props: { leftSection?: React.ReactNode }) => mockHeader(props),
 }));
 
-describe('PlannerWrapper', () => {
-	test('passes planner id from params to Navbar', () => {
-		render(<PlannerLayout>{'Maleficent Meals'}</PlannerLayout>);
-
-		expect(mockNavbar).toHaveBeenCalledWith(
-			expect.objectContaining({ id: 'maleficent-planner-id' }),
-		);
-	});
-
+describe('PlannerLayout', () => {
 	test('renders children', () => {
 		render(<PlannerLayout>{"Ursula's Menu"}</PlannerLayout>);
 
 		expect(screen.getByText("Ursula's Menu")).toBeDefined();
+	});
+
+	test('renders navbar prop', () => {
+		render(
+			<PlannerLayout navbar={<div data-testid="test-navbar" />}>
+				{'content'}
+			</PlannerLayout>,
+		);
+
+		expect(screen.getByTestId('test-navbar')).toBeDefined();
 	});
 
 	test('passes Burger as leftSection to Header', () => {

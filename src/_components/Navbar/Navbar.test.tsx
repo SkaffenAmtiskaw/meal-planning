@@ -12,7 +12,23 @@ vi.mock('next/navigation', () => ({
 	useSelectedLayoutSegment: vi.fn(),
 }));
 
-describe('navbar', () => {
+vi.mock('./PlannerSwitcher', () => ({
+	PlannerSwitcher: ({
+		currentId,
+		planners,
+	}: {
+		currentId: string;
+		planners: { id: string; name: string }[];
+	}) => (
+		<div
+			data-testid="planner-switcher"
+			data-current-id={currentId}
+			data-planner-count={planners.length}
+		/>
+	),
+}));
+
+describe('Navbar', () => {
 	afterEach(() => {
 		vi.resetAllMocks();
 	});
@@ -71,5 +87,24 @@ describe('navbar', () => {
 				.getByRole('link', { name: /calendar/i })
 				.getAttribute('data-active'),
 		).toBeFalsy();
+	});
+
+	test('does not render PlannerSwitcher when no planners given', () => {
+		vi.mocked(useSelectedLayoutSegment).mockReturnValue(null);
+
+		render(<Navbar id="gaston-planner-1" />);
+
+		expect(screen.queryByTestId('planner-switcher')).toBeNull();
+	});
+
+	test('renders PlannerSwitcher when planners are given', () => {
+		vi.mocked(useSelectedLayoutSegment).mockReturnValue(null);
+		const planners = [{ id: 'p1', name: 'Planner 1' }];
+
+		render(<Navbar id="p1" planners={planners} />);
+
+		const switcher = screen.getByTestId('planner-switcher');
+		expect(switcher.getAttribute('data-current-id')).toBe('p1');
+		expect(switcher.getAttribute('data-planner-count')).toBe('1');
 	});
 });

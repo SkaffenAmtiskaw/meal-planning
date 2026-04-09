@@ -9,6 +9,8 @@ import { zObjectId } from '@/_models';
 
 import { PlannerLayout, PlannerProvider } from './_components';
 
+import { NavbarServer } from './_components/NavbarServer';
+
 const zParams = z.object({
 	planner: zObjectId,
 });
@@ -24,7 +26,7 @@ const Layout = async ({ children, params }: LayoutProps<'/[planner]'>) => {
 
 	// TODO: Add suspense so the layout will still load while the auth is being checked
 	return (
-		<PlannerLayout>
+		<PlannerLayout navbar={<NavbarServer id={String(id)} />}>
 			<PlannerProvider id={String(id)}>{children}</PlannerProvider>
 		</PlannerLayout>
 	);

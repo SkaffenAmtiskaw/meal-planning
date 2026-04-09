@@ -21,6 +21,10 @@ vi.mock('next/navigation', () => ({
 	notFound: () => mockNotFound(),
 }));
 
+vi.mock('./_components/NavbarServer', () => ({
+	NavbarServer: () => null,
+}));
+
 vi.mock('./_components', () => ({
 	PlannerLayout: ({ children }: { children: React.ReactNode }) => (
 		<>{children}</>

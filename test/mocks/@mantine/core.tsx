@@ -152,6 +152,10 @@ export const Badge = vi.fn(
 	),
 );
 
+export const Affix = vi.fn(({ children, 'data-testid': testId }: WithChildren) => (
+	<div data-testid={testId}>{children}</div>
+));
+
 export const Divider = vi.fn(({ 'data-testid': testId }: WithTestId) => (
 	<hr data-testid={testId} />
 ));

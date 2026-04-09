@@ -5,15 +5,23 @@ import { useParams } from 'next/navigation';
 import { AppShell, AppShellMain, AppShellNavbar, Burger } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 
-import { Navbar } from '@/_components';
 import { Header } from '@/app/_components/Header';
+
+import { useLastOpenedPlanner } from './useLastOpenedPlanner';
 
 import { HEADER_HEIGHT } from '../../_constants';
 
-export const PlannerLayout = ({ children }: { children: React.ReactNode }) => {
+type Props = {
+	children: React.ReactNode;
+	navbar?: React.ReactNode;
+};
+
+export const PlannerLayout = ({ children, navbar }: Props) => {
 	const [opened, { toggle }] = useDisclosure();
 
 	const { planner } = useParams();
+
+	useLastOpenedPlanner(planner as string);
 
 	return (
 		<AppShell
@@ -30,9 +38,7 @@ export const PlannerLayout = ({ children }: { children: React.ReactNode }) => {
 			}}
 		>
 			<Header leftSection={<Burger opened={opened} onClick={toggle} />} />
-			<AppShellNavbar>
-				<Navbar id={planner as string} />
-			</AppShellNavbar>
+			<AppShellNavbar>{navbar}</AppShellNavbar>
 			<AppShellMain>{children}</AppShellMain>
 		</AppShell>
 	);
