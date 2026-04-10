@@ -22,7 +22,7 @@
 # Medium Priority
 
 ## Style Improvements
-- [[Theme Colors|theme colors]]
+- [[Theme Colors & Style Update|theme colors]]
 - recipe list style updates
 - toggle light/dark mode - make sure schedule-x corresponds to it
 

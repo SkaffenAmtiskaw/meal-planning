@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 100">
+  <circle cx="36" cy="50" r="26" fill="#FF6542"/>
+  <circle cx="50" cy="43" r="21" fill="#EFE7E9"/>
+  <text font-family="Georgia, 'Times New Roman', serif" font-size="52" font-weight="400" letter-spacing="-1" y="72" x="80">
+    <tspan fill="#1C3144">week</tspan><tspan fill="#44633F">night</tspan>
+  </text>
+</svg>

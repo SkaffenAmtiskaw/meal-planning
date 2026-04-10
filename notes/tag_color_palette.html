@@ -1,0 +1,161 @@
+
+<style>
+  body { font-family: var(--font-sans); }
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 10px; padding: 1rem 0; }
+  .row { display: flex; align-items: stretch; border-radius: var(--border-radius-md); overflow: hidden; border: 0.5px solid var(--color-border-tertiary); }
+  .swatch { width: 52px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; }
+  .pill-demo { font-size: 12px; font-weight: 500; padding: 3px 10px; border-radius: 20px; white-space: nowrap; }
+  .info { flex: 1; padding: 10px 12px; display: flex; flex-direction: column; justify-content: center; gap: 6px; background: var(--color-background-primary); }
+  .token { font-family: var(--font-mono); font-size: 11px; color: var(--color-text-secondary); }
+  .label { font-size: 13px; font-weight: 500; color: var(--color-text-primary); }
+  .hex-row { display: flex; gap: 12px; }
+  .hex-item { display: flex; flex-direction: column; gap: 1px; }
+  .hex-label { font-size: 10px; color: var(--color-text-tertiary); font-family: var(--font-mono); }
+  .hex-val { font-size: 11px; font-family: var(--font-mono); color: var(--color-text-secondary); }
+</style>
+
+<h2 class="sr-only">Tag colour palette — 10 colours with background, text, and border values for each</h2>
+
+<div class="grid">
+
+  <div class="row">
+    <div class="swatch" style="background:#FDEBD6;">
+      <span class="pill-demo" style="background:#FDEBD6; color:#7A3410;">Breakfast</span>
+    </div>
+    <div class="info">
+      <div class="label">Tangerine</div>
+      <div class="hex-row">
+        <div class="hex-item"><div class="hex-label">bg</div><div class="hex-val">#FDEBD6</div></div>
+        <div class="hex-item"><div class="hex-label">text</div><div class="hex-val">#7A3410</div></div>
+        <div class="hex-item"><div class="hex-label">border</div><div class="hex-val">#F5B47A</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="swatch" style="background:#FDE8E8;">
+      <span class="pill-demo" style="background:#FDE8E8; color:#7A1F1F;">Dinner</span>
+    </div>
+    <div class="info">
+      <div class="label">Rosewood</div>
+      <div class="hex-row">
+        <div class="hex-item"><div class="hex-label">bg</div><div class="hex-val">#FDE8E8</div></div>
+        <div class="hex-item"><div class="hex-label">text</div><div class="hex-val">#7A1F1F</div></div>
+        <div class="hex-item"><div class="hex-label">border</div><div class="hex-val">#F0A8A8</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="swatch" style="background:#FDF3D6;">
+      <span class="pill-demo" style="background:#FDF3D6; color:#6B4A0D;">Snack</span>
+    </div>
+    <div class="info">
+      <div class="label">Honey</div>
+      <div class="hex-row">
+        <div class="hex-item"><div class="hex-label">bg</div><div class="hex-val">#FDF3D6</div></div>
+        <div class="hex-item"><div class="hex-label">text</div><div class="hex-val">#6B4A0D</div></div>
+        <div class="hex-item"><div class="hex-label">border</div><div class="hex-val">#EAC96A</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="swatch" style="background:#E4F2E4;">
+      <span class="pill-demo" style="background:#E4F2E4; color:#1E4D1E;">Vegetarian</span>
+    </div>
+    <div class="info">
+      <div class="label">Fern</div>
+      <div class="hex-row">
+        <div class="hex-item"><div class="hex-label">bg</div><div class="hex-val">#E4F2E4</div></div>
+        <div class="hex-item"><div class="hex-label">text</div><div class="hex-val">#1E4D1E</div></div>
+        <div class="hex-item"><div class="hex-label">border</div><div class="hex-val">#87C287</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="swatch" style="background:#D6EDE8;">
+      <span class="pill-demo" style="background:#D6EDE8; color:#0E3D32;">Vegan</span>
+    </div>
+    <div class="info">
+      <div class="label">Seafoam</div>
+      <div class="hex-row">
+        <div class="hex-item"><div class="hex-label">bg</div><div class="hex-val">#D6EDE8</div></div>
+        <div class="hex-item"><div class="hex-label">text</div><div class="hex-val">#0E3D32</div></div>
+        <div class="hex-item"><div class="hex-label">border</div><div class="hex-val">#72C2AF</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="swatch" style="background:#D9E8F5;">
+      <span class="pill-demo" style="background:#D9E8F5; color:#0E2E4D;">Lunch</span>
+    </div>
+    <div class="info">
+      <div class="label">Steel</div>
+      <div class="hex-row">
+        <div class="hex-item"><div class="hex-label">bg</div><div class="hex-val">#D9E8F5</div></div>
+        <div class="hex-item"><div class="hex-label">text</div><div class="hex-val">#0E2E4D</div></div>
+        <div class="hex-item"><div class="hex-label">border</div><div class="hex-val">#7AAFD4</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="swatch" style="background:#E8E0F0;">
+      <span class="pill-demo" style="background:#E8E0F0; color:#3A1F6B;">Quick meal</span>
+    </div>
+    <div class="info">
+      <div class="label">Lavender</div>
+      <div class="hex-row">
+        <div class="hex-item"><div class="hex-label">bg</div><div class="hex-val">#E8E0F0</div></div>
+        <div class="hex-item"><div class="hex-label">text</div><div class="hex-val">#3A1F6B</div></div>
+        <div class="hex-item"><div class="hex-label">border</div><div class="hex-val">#B09DD4</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="swatch" style="background:#F0E0EE;">
+      <span class="pill-demo" style="background:#F0E0EE; color:#5C1A4A;">Dessert</span>
+    </div>
+    <div class="info">
+      <div class="label">Mauve</div>
+      <div class="hex-row">
+        <div class="hex-item"><div class="hex-label">bg</div><div class="hex-val">#F0E0EE</div></div>
+        <div class="hex-item"><div class="hex-label">text</div><div class="hex-val">#5C1A4A</div></div>
+        <div class="hex-item"><div class="hex-label">border</div><div class="hex-val">#CE8DC0</div></div>
+      </div>
+    </div>
+</div>
+
+  <div class="row">
+    <div class="swatch" style="background:#E8EDE0;">
+      <span class="pill-demo" style="background:#E8EDE0; color:#2E3D1A;">Salad</span>
+    </div>
+    <div class="info">
+      <div class="label">Sage mist</div>
+      <div class="hex-row">
+        <div class="hex-item"><div class="hex-label">bg</div><div class="hex-val">#E8EDE0</div></div>
+        <div class="hex-item"><div class="hex-label">text</div><div class="hex-val">#2E3D1A</div></div>
+        <div class="hex-item"><div class="hex-label">border</div><div class="hex-val">#A8BA8A</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="swatch" style="background:#E0E4ED;">
+      <span class="pill-demo" style="background:#E0E4ED; color:#1C2744;">Leftover</span>
+    </div>
+    <div class="info">
+      <div class="label">Slate</div>
+      <div class="hex-row">
+        <div class="hex-item"><div class="hex-label">bg</div><div class="hex-val">#E0E4ED</div></div>
+        <div class="hex-item"><div class="hex-label">text</div><div class="hex-val">#1C2744</div></div>
+        <div class="hex-item"><div class="hex-label">border</div><div class="hex-val">#8D99BE</div></div>
+      </div>
+    </div>
+  </div>
+
+</div>

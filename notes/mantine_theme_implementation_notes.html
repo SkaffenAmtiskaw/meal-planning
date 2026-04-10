@@ -1,0 +1,221 @@
+
+<style>
+  .doc { max-width: 720px; margin: 0 auto; padding: 1.5rem 0; font-family: var(--font-sans); color: var(--color-text-primary); }
+  .section { margin-bottom: 2rem; border: 0.5px solid var(--color-border-tertiary); border-radius: var(--border-radius-lg); overflow: hidden; }
+  .section-header { padding: 0.75rem 1.25rem; background: var(--color-background-secondary); border-bottom: 0.5px solid var(--color-border-tertiary); font-size: 13px; font-weight: 500; color: var(--color-text-secondary); letter-spacing: 0.04em; text-transform: uppercase; }
+  .section-body { padding: 1.25rem; }
+  pre { background: var(--color-background-secondary); border: 0.5px solid var(--color-border-tertiary); border-radius: var(--border-radius-md); padding: 1rem 1.25rem; font-family: var(--font-mono); font-size: 12.5px; line-height: 1.6; overflow-x: auto; margin: 0.75rem 0 0; white-space: pre; color: var(--color-text-primary); }
+  p { font-size: 14px; line-height: 1.7; margin: 0 0 0.75rem; color: var(--color-text-secondary); }
+  p:last-child { margin-bottom: 0; }
+  .note { font-size: 13px; line-height: 1.6; color: var(--color-text-secondary); background: var(--color-background-secondary); border-left: 2px solid var(--color-border-secondary); padding: 0.6rem 0.9rem; border-radius: 0 var(--border-radius-md) var(--border-radius-md) 0; margin-top: 0.75rem; }
+  .swatch-row { display: flex; gap: 8px; margin: 0.75rem 0 0; flex-wrap: wrap; }
+  .swatch { display: flex; align-items: center; gap: 8px; font-size: 12px; font-family: var(--font-mono); color: var(--color-text-secondary); }
+  .swatch-dot { width: 20px; height: 20px; border-radius: 4px; border: 0.5px solid var(--color-border-tertiary); flex-shrink: 0; }
+  h3 { font-size: 15px; font-weight: 500; margin: 0 0 0.5rem; }
+  .tag { display: inline-block; font-size: 11px; background: var(--color-background-info); color: var(--color-text-info); border-radius: 4px; padding: 2px 7px; margin-left: 6px; font-weight: 500; vertical-align: middle; }
+</style>
+
+<div class="doc">
+
+  <div class="section">
+    <div class="section-header">Colour palette</div>
+    <div class="section-body">
+      <p>These are the five hex values to register in your Mantine theme. Use the names below as token identifiers throughout the codebase.</p>
+      <div class="swatch-row">
+        <div class="swatch"><div class="swatch-dot" style="background:#1C3144;"></div>#1C3144 — navy</div>
+        <div class="swatch"><div class="swatch-dot" style="background:#44633F;"></div>#44633F — forest</div>
+        <div class="swatch"><div class="swatch-dot" style="background:#B1BA95;"></div>#B1BA95 — sage</div>
+        <div class="swatch"><div class="swatch-dot" style="background:#FF6542;"></div>#FF6542 — ember</div>
+        <div class="swatch"><div class="swatch-dot" style="background:#EFE7E9;"></div>#EFE7E9 — chalk</div>
+      </div>
+      <p style="margin-top:0.75rem;">Mantine requires a full 10-stop colour ramp for any custom primary colour. Generate ramps for <strong>navy</strong> and <strong>ember</strong> at <a href="https://mantine.dev/colors-generator/">mantine.dev/colors-generator</a> by pasting the hex. You only need to do this for the two colours you'll use as <code>primaryColor</code> candidates.</p>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-header">MantineProvider theme config</div>
+    <div class="section-body">
+      <p>Wire this into your root <code>MantineProvider</code>. Comments indicate which decisions affect which screens.</p>
+      <pre>const theme = createTheme({
+
+  // Typography — swap Inter in via Google Fonts or next/font
+  fontFamily: 'Inter, sans-serif',
+  fontFamilyMonospace: 'JetBrains Mono, monospace',
+
+  // Primary colour drives buttons, links, active states.
+  // Use 'ember' for a warm energetic feel, or 'navy' for subdued professional.
+  // Recommend: ember as primaryColor, navy as the shell colour (navbar/sidebar).
+  primaryColor: 'ember',
+  primaryShade: { light: 5, dark: 6 },
+
+  // Consistent rounding everywhere — md is a good default for a utility app
+  defaultRadius: 'md',
+
+  // Register your custom colour ramps (generated from mantine.dev/colors-generator)
+  colors: {
+    ember: [/* 10 stops from generator */],
+    navy:  [/* 10 stops from generator */],
+  },
+
+  // Shell/layout colours
+  // The AppShell header and navbar should use navy as their bg
+  components: {
+    AppShell: {
+      styles: {
+        header: { backgroundColor: '#1C3144' },
+        navbar: { backgroundColor: '#1C3144', borderRight: 'none' },
+      },
+    },
+
+    // Nav links in the sidebar — active state should use sage/ember, not the blue default
+    NavLink: {
+      styles: (theme) => ({
+        root: {
+          color: '#EFE7E9',               // chalk — readable on navy
+          '&[data-active]': {
+            backgroundColor: '#44633F',   // forest green active state
+            color: '#EFE7E9',
+          },
+          '&:hover': {
+            backgroundColor: 'rgba(255,255,255,0.08)',
+          },
+        },
+        label: { fontWeight: 500 },
+      }),
+    },
+
+    // Buttons — ember primary, consistent sizing
+    Button: {
+      defaultProps: { radius: 'md' },
+    },
+
+    // Inputs — slightly warmer border to match chalk palette
+    Input: {
+      styles: {
+        input: { backgroundColor: '#FFFFFF', borderColor: '#C8C0C3' },
+      },
+    },
+
+    // Tabs — used on the Settings page
+    Tabs: {
+      styles: (theme) => ({
+        tab: {
+          '&[data-active]': {
+            borderColor: '#FF6542',   // ember underline
+            color: '#1C3144',
+          },
+        },
+      }),
+    },
+
+    // Modal — used by Add Meal
+    Modal: {
+      defaultProps: { radius: 'md', overlayProps: { blur: 2 } },
+    },
+  },
+});</pre>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-header">Login page</div>
+    <div class="section-body">
+      <p>Currently: card floats on a white background with a light blue fill that doesn't match the palette. Changes needed:</p>
+      <ul style="font-size:14px; line-height:1.8; color:var(--color-text-secondary); padding-left:1.25rem; margin:0;">
+        <li>Replace the light blue card background with <code>#EFE7E9</code> (chalk), or make it white with a subtle <code>#1C3144</code> border.</li>
+        <li>Page background should be <code>#1C3144</code> (navy) — a centred white/chalk card on a dark background looks intentional and polished.</li>
+        <li>Add an app name or wordmark above the card — right now there's no branding at all on the login screen.</li>
+        <li>The "Sign In with Google" button is using a generic blue. If you're using a third-party component for this, leave it as-is (Google brand guidelines). Otherwise restyle to ember.</li>
+        <li>"Continue" button should be ember (<code>color="ember"</code> in Mantine) not the current default blue.</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-header">AppShell — navbar + header</div>
+    <div class="section-body">
+      <p>Currently: thin dark header, sidebar with a light blue active-state highlight. Changes:</p>
+      <ul style="font-size:14px; line-height:1.8; color:var(--color-text-secondary); padding-left:1.25rem; margin:0;">
+        <li>Set AppShell header and navbar background to <code>#1C3144</code> (navy) — the current dark is close but not the same as the palette.</li>
+        <li>Sidebar active state: replace the current light blue with <code>#44633F</code> (forest green) with chalk text — this is the biggest single visual improvement.</li>
+        <li>Sidebar text in inactive state: use <code>#EFE7E9</code> (chalk) at 80% opacity.</li>
+        <li>The app title "Test Planner" should be chalk/white, optionally with a small icon or logo to the left.</li>
+        <li>The user avatar icon (top right) should be chalk coloured to match.</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-header">Calendar view (schedule-x)</div>
+    <div class="section-body">
+      <p>Schedule-x uses its own CSS custom properties, separate from Mantine. You'll need to set these on the calendar's wrapper element. It also supports custom event components.</p>
+      <pre>/* Target the schedule-x root — wrap your calendar in a div with class="sx-cal-wrapper" */
+.sx-cal-wrapper {
+
+  /* Primary brand colour — used for today highlight, selected states */
+  --sx-color-primary: #FF6542;
+  --sx-color-primary-container: rgba(255, 101, 66, 0.12);
+
+  /* Surface colours */
+  --sx-color-surface: #FFFFFF;
+  --sx-color-surface-variant: #EFE7E9;  /* chalk for alternating rows etc */
+
+  /* Text */
+  --sx-color-on-surface: #1C3144;
+  --sx-color-on-surface-variant: #5A6A7A;
+
+  /* Grid lines */
+  --sx-color-outline: #DDD8DA;
+
+  /* Today cell */
+  --sx-color-today-bg: rgba(255, 101, 66, 0.08);
+}
+</pre>
+      <div class="note">
+        Check the schedule-x docs for the exact CSS variable names — they may differ slightly by version. The pattern above follows their v1 naming. Inspect the rendered calendar in devtools to confirm the variable names in use.
+      </div>
+      <p style="margin-top:0.75rem;">For the "today" date badge (currently purple), override it to ember. If schedule-x renders it as a hardcoded colour rather than a CSS var, you may need a targeted selector like <code>.sx__month-grid-day__header-date--today</code>.</p>
+      <p>The toolbar above the calendar (Today button, Month/Week/List segmented control, Date picker) is your own Mantine components, so those just inherit the theme. Make sure the segmented control uses <code>color="ember"</code>.</p>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-header">Add Meal modal</div>
+    <div class="section-body">
+      <p>Currently functional but plain. Small improvements:</p>
+      <ul style="font-size:14px; line-height:1.8; color:var(--color-text-secondary); padding-left:1.25rem; margin:0;">
+        <li>The inner "Dishes" card (bordered box) should have a <code>#EFE7E9</code> background to visually distinguish it from the modal surface.</li>
+        <li>The Source segmented control (None / Saved / Reference) should use <code>color="ember"</code>.</li>
+        <li>"Add dish" and "Add note" links should be ember coloured.</li>
+        <li>"Add Meal" primary button should be ember.</li>
+        <li>Required field asterisks are currently red — optionally change to ember to match.</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-header">Settings page</div>
+    <div class="section-body">
+      <p>This is the cleanest screen already. Minor tweaks:</p>
+      <ul style="font-size:14px; line-height:1.8; color:var(--color-text-secondary); padding-left:1.25rem; margin:0;">
+        <li>Tab underline (User Settings active state) should be ember, not the current blue — this is handled by the Tabs theme config above.</li>
+        <li>"Change name" and "Change email" links should be ember, not blue.</li>
+        <li>"Update password" button — ember.</li>
+        <li>"Forgot current password?" link — ember.</li>
+        <li>The Danger Zone box: the red border is appropriate here, keep it. The input inside it currently has no visible border — add one so it's clear it's interactive.</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-header">Font recommendation</div>
+    <div class="section-body">
+      <p>Inter is a safe, neutral choice that pairs well with this palette. For something with slightly more character that still reads well in a data-heavy UI, consider <strong>DM Sans</strong> — it has a friendlier feel that suits a meal planner without being informal.</p>
+      <p>Add via Google Fonts in your HTML head:</p>
+      <pre>&lt;link rel="preconnect" href="https://fonts.googleapis.com"&gt;
+&lt;link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet"&gt;</pre>
+      <p>Then set <code>fontFamily: 'Inter, sans-serif'</code> in the theme as shown above.</p>
+    </div>
+  </div>
+
+</div>
