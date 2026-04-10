@@ -1,0 +1,25 @@
+.google-sign-in-button {
+	/* biome-ignore lint/complexity/noImportantStyles: Override Mantine Button inline styles */
+	background-color: #ffffff !important;
+	/* biome-ignore lint/complexity/noImportantStyles: Override Mantine Button inline styles */
+	border: 1px solid #747775 !important;
+	/* biome-ignore lint/complexity/noImportantStyles: Override Mantine Button inline styles */
+	color: #1f1f1f !important;
+	/* biome-ignore lint/complexity/noImportantStyles: Override Mantine Button inline styles */
+	font-family: var(--font-roboto), "Roboto", sans-serif !important;
+	/* biome-ignore lint/complexity/noImportantStyles: Override Mantine Button inline styles */
+	font-weight: 500 !important;
+	/* biome-ignore lint/complexity/noImportantStyles: Override Mantine Button inline styles */
+	font-size: 14px !important;
+	/* biome-ignore lint/complexity/noImportantStyles: Override Mantine Button inline styles */
+	padding-left: 12px !important;
+	/* biome-ignore lint/complexity/noImportantStyles: Override Mantine Button inline styles */
+	padding-right: 12px !important;
+	/* biome-ignore lint/complexity/noImportantStyles: Override Mantine Button inline styles */
+	height: 40px !important;
+}
+
+.google-sign-in-button:hover {
+	/* biome-ignore lint/complexity/noImportantStyles: Override Mantine Button inline styles */
+	background-color: #f2f2f2 !important;
+}

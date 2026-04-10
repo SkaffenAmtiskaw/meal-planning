@@ -1,5 +1,6 @@
 export * from './FormFeedbackAlert';
 export * from './FullWidthListItem';
+export * from './GoogleLogoSVG';
 export * from './Navbar';
 export * from './OneTapSignInWrapper';
 export * from './SignIn';

@@ -43,7 +43,9 @@ export default defineConfig({
           // test files
           'src/**/*.test.{ts,tsx}',
           // test mocks
-          'test/mocks/**'
+          'test/mocks/**',
+          // SVG icons are purely presentational, no logic to test
+          'src/**/*SVG.tsx'
       ],
       thresholds: {
         lines: 100,

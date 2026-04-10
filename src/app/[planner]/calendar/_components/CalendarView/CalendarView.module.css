@@ -10,7 +10,9 @@
 }
 
 .calendarWrapper :global(.sx__month-grid-day__header-date--today) {
-	background-color: #1C3144 !important;
+	/* biome-ignore lint/complexity/noImportantStyles: Override Schedule-X calendar inline styles */
+	background-color: #1c3144 !important;
+	/* biome-ignore lint/complexity/noImportantStyles: Override Schedule-X calendar inline styles */
 	color: #ffffff !important;
 }
 

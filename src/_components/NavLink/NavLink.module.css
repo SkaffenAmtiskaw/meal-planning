@@ -1,9 +1,9 @@
 .navLink {
-	color: #44633F;
+	color: #44633f;
 }
 
 .navLink[data-active] {
-	background-color: #44633F;
+	background-color: #44633f;
 	color: #ffffff;
 }
 
@@ -17,5 +17,5 @@
 
 .plannerLabel {
 	font-weight: 600;
-	color: #1C3144;
+	color: #1c3144;
 }

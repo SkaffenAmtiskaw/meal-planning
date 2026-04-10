@@ -9,6 +9,7 @@ vi.mock('@mantine/core', async () => {
 	return {
 		...actual,
 		Image: ({ src, alt, ...props }: { src?: string; alt?: string }) => (
+			// biome-ignore lint/performance/noImgElement: this is a unit test who cares
 			<img src={src} alt={alt} data-testid={`image-${alt}`} {...props} />
 		),
 	};
