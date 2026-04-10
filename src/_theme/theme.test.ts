@@ -19,7 +19,6 @@ describe('theme', () => {
 	it('has component overrides configured', () => {
 		expect(theme.components).toBeDefined();
 		expect(theme.components).toHaveProperty('AppShell');
-		expect(theme.components).toHaveProperty('NavLink');
 		expect(theme.components).toHaveProperty('Button');
 	});
 

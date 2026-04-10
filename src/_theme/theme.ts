@@ -1,8 +1,6 @@
 'use client';
 
-import Link from 'next/link';
-
-import { createTheme, NavLink } from '@mantine/core';
+import { createTheme } from '@mantine/core';
 
 import { EMBER_RAMPS, NAVY_RAMPS } from './colors';
 
@@ -17,24 +15,6 @@ export const theme = createTheme({
 		navy: NAVY_RAMPS,
 	},
 	components: {
-		NavLink: NavLink.extend({
-			defaultProps: {
-				component: Link,
-			},
-			styles: () => ({
-				root: {
-					color: '#EFE7E9',
-					'&[data-active]': {
-						backgroundColor: '#44633F',
-						color: '#EFE7E9',
-					},
-					'&:hover': {
-						backgroundColor: 'rgba(255, 255, 255, 0.08)',
-					},
-				},
-				label: { fontWeight: 500 },
-			}),
-		}),
 		AppShell: {
 			styles: {
 				header: {
@@ -57,16 +37,6 @@ export const theme = createTheme({
 					borderColor: '#C8C0C3',
 				},
 			},
-		},
-		Tabs: {
-			styles: () => ({
-				tab: {
-					'&[data-active]': {
-						borderColor: '#FF6542',
-						color: '#1C3144',
-					},
-				},
-			}),
 		},
 		Modal: {
 			defaultProps: {

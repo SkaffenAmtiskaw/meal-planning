@@ -8,6 +8,25 @@ import { Navbar } from './Navbar';
 
 vi.mock('@mantine/core', async () => await import('@mocks/@mantine/core'));
 
+vi.mock('@/_components/NavLink', () => ({
+	NavLink: ({
+		label,
+		href,
+		active,
+		leftSection,
+	}: {
+		label: string;
+		href: string;
+		active?: boolean;
+		leftSection?: React.ReactNode;
+	}) => (
+		<a href={href} data-active={active ? 'true' : undefined}>
+			{leftSection}
+			{label}
+		</a>
+	),
+}));
+
 vi.mock('next/navigation', () => ({
 	useSelectedLayoutSegment: vi.fn(),
 }));

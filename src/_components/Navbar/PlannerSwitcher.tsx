@@ -1,6 +1,6 @@
 'use client';
 
-import { NavLink } from '@mantine/core';
+import { NavLink } from '@/_components/NavLink';
 
 type PlannerItem = { id: string; name: string };
 
