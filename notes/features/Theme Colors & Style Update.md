@@ -25,8 +25,6 @@ EFE7E9 - off-white
 
 # Assets
 
-These SVGs need some cleanup - the off white circle should be made transparent so it's an orange crescent no matter the background.
-
 We should make an option for displaying against a dark background where the navy changes to off-white instead
 ![[weeknight-favicon.svg]]
 
