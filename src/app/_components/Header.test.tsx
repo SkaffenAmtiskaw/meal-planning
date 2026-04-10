@@ -4,7 +4,15 @@ import { describe, expect, test, vi } from 'vitest';
 
 import { Header } from './Header';
 
-vi.mock('@mantine/core', async () => await import('@mocks/@mantine/core'));
+vi.mock('@mantine/core', async () => {
+	const actual = await import('@mocks/@mantine/core');
+	return {
+		...actual,
+		Image: ({ src, alt, ...props }: { src?: string; alt?: string }) => (
+			<img src={src} alt={alt} data-testid={`image-${alt}`} {...props} />
+		),
+	};
+});
 
 vi.mock('@/_components', () => ({
 	UserMenu: () => <div data-testid="user-menu" />,
