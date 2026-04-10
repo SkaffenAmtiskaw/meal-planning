@@ -11,12 +11,14 @@ import {
 	Text,
 	TextInput,
 } from '@mantine/core';
-import { IconBrandGoogleFilled } from '@tabler/icons-react';
 
 import { checkEmailStatus } from '@/_actions/auth';
 import { useAsyncButton } from '@/_hooks';
 import { client } from '@/_utils/auth';
 import { zSafeString } from '@/_utils/zSafeString';
+
+import { GoogleLogoSVG } from './GoogleLogoSVG';
+import './GoogleButton.css';
 
 type Step =
 	| { type: 'idle' }
@@ -110,11 +112,13 @@ export const SignIn = () => {
 		<Stack>
 			<Button
 				data-testid="google-sign-in-button"
-				leftSection={<IconBrandGoogleFilled />}
+				leftSection={<GoogleLogoSVG size={20} />}
 				loading={googleBtn.loading}
 				onClick={signInWithGoogle}
+				fullWidth
+				className="google-sign-in-button"
 			>
-				Sign In with Google
+				Sign in with Google
 			</Button>
 
 			<Divider label="or sign in with email" />
@@ -135,6 +139,7 @@ export const SignIn = () => {
 						</Alert>
 					)}
 					<Button
+						color="ember"
 						data-testid="continue-button"
 						loading={continueBtn.loading}
 						onClick={handleContinue}

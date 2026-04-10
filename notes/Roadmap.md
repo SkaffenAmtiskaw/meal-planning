@@ -3,6 +3,11 @@
 **AI Instructions** - DO NOT delete this file. You may remove lines, but under no circumstances may you delete the file.
 
 # High-Priority
+
+## Style Improvements
+- [[Theme Colors & Style Update|theme colors]]
+- recipe list style updates
+- [[style fixes|fixes]]
 ## Calendar Page
 - [[Render List View|render list view]]
 - [[Render Month Agenda View (Mobile)|render (or verify) meals in month agenda view (mobile)]]
@@ -20,10 +25,6 @@
 - allow user to delete a planner
 
 # Medium Priority
-
-## Style Improvements
-- [[Theme Colors & Style Update|theme colors]]
-- recipe list style updates
 
 ## Sign In Improvements
 - update Google one-tap sign in - warning in console

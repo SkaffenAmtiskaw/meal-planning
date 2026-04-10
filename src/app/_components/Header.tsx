@@ -1,4 +1,4 @@
-import { AppShellHeader, Group } from '@mantine/core';
+import { AppShellHeader, Group, Image } from '@mantine/core';
 
 import { UserMenu } from '@/_components';
 
@@ -9,7 +9,16 @@ interface Props {
 export const Header = ({ leftSection }: Props) => (
 	<AppShellHeader>
 		<Group h="100%" justify="space-between" px="sm">
-			{leftSection}
+			<Group gap="xs">
+				{leftSection}
+				<Image
+					src="/weeknight-header-dark.svg"
+					alt="weeknight"
+					w={140}
+					h={24}
+					fit="contain"
+				/>
+			</Group>
 			<UserMenu />
 		</Group>
 	</AppShellHeader>

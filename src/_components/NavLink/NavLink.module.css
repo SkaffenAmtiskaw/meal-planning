@@ -1,0 +1,21 @@
+.navLink {
+	color: #44633f;
+}
+
+.navLink[data-active] {
+	background-color: #44633f;
+	color: #ffffff;
+}
+
+.navLink:hover {
+	background-color: rgba(68, 99, 63, 0.12);
+}
+
+.navLinkLabel {
+	font-weight: 500;
+}
+
+.plannerLabel {
+	font-weight: 600;
+	color: #1c3144;
+}

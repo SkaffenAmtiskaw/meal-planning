@@ -28,6 +28,33 @@ type WithChildren = {
 
 type WithTestId = { 'data-testid'?: string };
 
+export const Image = vi.fn(
+	({
+		src,
+		alt,
+		w,
+		h,
+		fit,
+		'data-testid': testId,
+	}: {
+		src?: string;
+		alt?: string;
+		w?: number | string;
+		h?: number | string;
+		fit?: string;
+		'data-testid'?: string;
+	}) => (
+		<img
+			src={src}
+			alt={alt}
+			width={w}
+			height={h}
+			data-testid={testId}
+			style={{ objectFit: fit as React.CSSProperties['objectFit'] }}
+		/>
+	),
+);
+
 // ─── Layout / Container ───────────────────────────────────────────────────────
 
 export const AppShell = vi.fn(({ children, 'data-testid': testId }: WithChildren) => (
@@ -145,8 +172,19 @@ export const Anchor = vi.fn(
 );
 
 export const Badge = vi.fn(
-	({ children, 'data-testid': testId, color }: WithChildren & { color?: string }) => (
-		<span data-testid={testId ?? 'badge'} data-color={color}>
+	({
+		children,
+		'data-testid': testId,
+		color,
+		style,
+		className,
+	}: WithChildren & { color?: string; style?: React.CSSProperties; className?: string }) => (
+		<span
+			data-testid={testId ?? 'badge'}
+			data-color={color}
+			className={className}
+			style={style}
+		>
 			{children}
 		</span>
 	),

@@ -96,6 +96,7 @@ export const ChangePasswordForm = ({ email }: Props) => {
 				</Alert>
 			)}
 			<Button
+				color="ember"
 				data-testid="change-password-button"
 				onClick={handleChangePassword}
 			>

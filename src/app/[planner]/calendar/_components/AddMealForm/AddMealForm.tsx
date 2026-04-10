@@ -1,6 +1,14 @@
 'use client';
 
-import { Button, Group, Stack, Text, Textarea, TextInput } from '@mantine/core';
+import {
+	Button,
+	Card,
+	Group,
+	Stack,
+	Text,
+	Textarea,
+	TextInput,
+} from '@mantine/core';
 import { schemaResolver, useForm } from '@mantine/form';
 import { IconPlus } from '@tabler/icons-react';
 
@@ -9,6 +17,7 @@ import { z } from 'zod';
 import { addMeal } from '@/_actions/planner/addMeal';
 import { FormFeedbackAlert, SubmitButton } from '@/_components';
 import { useFormFeedback } from '@/_hooks';
+import { THEME_COLORS } from '@/_theme/colors';
 
 import { DishRow } from './DishRow';
 import { useDishes } from './useDishes';
@@ -85,30 +94,38 @@ export const AddMealForm = ({ plannerId, onClose, onMealAdded }: Props) => {
 					{...form.getInputProps('description')}
 				/>
 
-				<Stack gap="xs">
-					<Text fw={500} size="sm">
-						Dishes
-					</Text>
-					{dishes.map((dish, index) => (
-						<DishRow
-							key={dish.id}
-							dish={dish}
-							index={index}
-							showRemove={dishes.length > 1}
-							onUpdate={(patch) => updateDish(dish.id, patch)}
-							onRemove={() => removeDish(dish.id)}
-						/>
-					))}
+				<Card
+					style={{
+						backgroundColor: THEME_COLORS.sageLight,
+						borderLeft: `3px solid ${THEME_COLORS.sage}`,
+					}}
+					p="sm"
+				>
+					<Stack gap="xs">
+						<Text fw={500} size="sm">
+							Dishes
+						</Text>
+						{dishes.map((dish, index) => (
+							<DishRow
+								key={dish.id}
+								dish={dish}
+								index={index}
+								showRemove={dishes.length > 1}
+								onUpdate={(patch) => updateDish(dish.id, patch)}
+								onRemove={() => removeDish(dish.id)}
+							/>
+						))}
 
-					<Button
-						variant="subtle"
-						leftSection={<IconPlus size={14} />}
-						data-testid="add-dish-button"
-						onClick={addDish}
-					>
-						Add dish
-					</Button>
-				</Stack>
+						<Button
+							variant="subtle"
+							leftSection={<IconPlus size={14} />}
+							data-testid="add-dish-button"
+							onClick={addDish}
+						>
+							Add dish
+						</Button>
+					</Stack>
+				</Card>
 
 				<Group justify="flex-end">
 					<Button variant="subtle" onClick={onClose}>
