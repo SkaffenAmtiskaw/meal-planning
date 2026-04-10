@@ -145,8 +145,19 @@ export const Anchor = vi.fn(
 );
 
 export const Badge = vi.fn(
-	({ children, 'data-testid': testId, color }: WithChildren & { color?: string }) => (
-		<span data-testid={testId ?? 'badge'} data-color={color}>
+	({
+		children,
+		'data-testid': testId,
+		color,
+		style,
+		className,
+	}: WithChildren & { color?: string; style?: React.CSSProperties; className?: string }) => (
+		<span
+			data-testid={testId ?? 'badge'}
+			data-color={color}
+			className={className}
+			style={style}
+		>
 			{children}
 		</span>
 	),
