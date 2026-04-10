@@ -1,8 +1,8 @@
-'use client';
+"use client";
 
-import { Button } from '@mantine/core';
+import { Button } from "@mantine/core";
 
-type Status = 'idle' | 'submitting' | 'success' | 'error';
+type Status = "idle" | "submitting" | "success" | "error";
 
 interface Props {
 	status: Status;
@@ -11,15 +11,15 @@ interface Props {
 }
 
 export const SubmitButton = ({ status, countdown, label }: Props) => {
-	if (status === 'submitting') {
+	if (status === "submitting") {
 		return (
-			<Button type="submit" loading disabled>
+			<Button type="submit" color="ember" loading disabled>
 				{label}
 			</Button>
 		);
 	}
 
-	if (status === 'success') {
+	if (status === "success") {
 		return (
 			<Button type="button" color="green">
 				{`Saved! Closing in ${countdown}…`}
@@ -27,5 +27,9 @@ export const SubmitButton = ({ status, countdown, label }: Props) => {
 		);
 	}
 
-	return <Button type="submit">{label}</Button>;
+	return (
+		<Button type="submit" color="ember">
+			{label}
+		</Button>
+	);
 };

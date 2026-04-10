@@ -1,29 +1,28 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
+import { Alert, Button, PasswordInput, Stack } from "@mantine/core";
+import { useState } from "react";
 
-import { Alert, Button, PasswordInput, Stack } from '@mantine/core';
-
-import { client } from '@/_utils/auth';
+import { client } from "@/_utils/auth";
 
 type Props = {
 	email: string;
 };
 
-type State = { type: 'idle' } | { type: 'success' } | { type: 'forgot-sent' };
+type State = { type: "idle" } | { type: "success" } | { type: "forgot-sent" };
 
 export const ChangePasswordForm = ({ email }: Props) => {
-	const [currentPassword, setCurrentPassword] = useState('');
-	const [newPassword, setNewPassword] = useState('');
-	const [confirmPassword, setConfirmPassword] = useState('');
+	const [currentPassword, setCurrentPassword] = useState("");
+	const [newPassword, setNewPassword] = useState("");
+	const [confirmPassword, setConfirmPassword] = useState("");
 	const [error, setError] = useState<string | null>(null);
-	const [state, setState] = useState<State>({ type: 'idle' });
+	const [state, setState] = useState<State>({ type: "idle" });
 
 	const handleChangePassword = async () => {
 		setError(null);
 
 		if (newPassword !== confirmPassword) {
-			setError('Passwords do not match.');
+			setError("Passwords do not match.");
 			return;
 		}
 
@@ -35,23 +34,23 @@ export const ChangePasswordForm = ({ email }: Props) => {
 
 		if (result.error) {
 			setError(
-				result.error.message ?? 'Could not update password. Please try again.',
+				result.error.message ?? "Could not update password. Please try again.",
 			);
 		} else {
-			setState({ type: 'success' });
-			setCurrentPassword('');
-			setNewPassword('');
-			setConfirmPassword('');
+			setState({ type: "success" });
+			setCurrentPassword("");
+			setNewPassword("");
+			setConfirmPassword("");
 		}
 	};
 
 	const handleForgotPassword = async () => {
 		setError(null);
-		await client.requestPasswordReset({ email, redirectTo: '/reset-password' });
-		setState({ type: 'forgot-sent' });
+		await client.requestPasswordReset({ email, redirectTo: "/reset-password" });
+		setState({ type: "forgot-sent" });
 	};
 
-	if (state.type === 'success') {
+	if (state.type === "success") {
 		return (
 			<Alert color="green" data-testid="success-alert">
 				Password updated successfully.
@@ -59,7 +58,7 @@ export const ChangePasswordForm = ({ email }: Props) => {
 		);
 	}
 
-	if (state.type === 'forgot-sent') {
+	if (state.type === "forgot-sent") {
 		return (
 			<Alert color="green" data-testid="forgot-sent-alert">
 				Check your inbox — we sent a password reset link to {email}.
@@ -96,6 +95,7 @@ export const ChangePasswordForm = ({ email }: Props) => {
 				</Alert>
 			)}
 			<Button
+				color="ember"
 				data-testid="change-password-button"
 				onClick={handleChangePassword}
 			>

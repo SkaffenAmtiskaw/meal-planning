@@ -10,7 +10,7 @@
 }
 
 .calendarWrapper :global(.sx__month-grid-day__header-date--today) {
-	background-color: #ff6542 !important;
+	background-color: #1C3144 !important;
 	color: #ffffff !important;
 }
 

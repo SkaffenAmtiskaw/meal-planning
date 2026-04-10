@@ -1,16 +1,16 @@
-'use client';
+"use client";
 
-import Link from 'next/link';
+import { NavLink as MantineNavLink } from "@mantine/core";
+import Link from "next/link";
 
-import { NavLink as MantineNavLink } from '@mantine/core';
-
-import styles from './NavLink.module.css';
+import styles from "./NavLink.module.css";
 
 type Props = {
 	label: string;
 	active?: boolean;
 	href: string;
 	leftSection?: React.ReactNode;
+	labelClassName?: string;
 	onClick?: () => void;
 };
 
@@ -19,13 +19,14 @@ export const NavLink = ({
 	active,
 	href,
 	leftSection,
+	labelClassName,
 	onClick,
 }: Props) => (
 	<MantineNavLink
 		component={Link}
 		className={styles.navLink}
 		classNames={{
-			label: styles.navLinkLabel,
+			label: labelClassName ?? styles.navLinkLabel,
 		}}
 		active={active}
 		href={href}

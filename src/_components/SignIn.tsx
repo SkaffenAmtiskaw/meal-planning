@@ -1,6 +1,4 @@
-'use client';
-
-import { useState } from 'react';
+"use client";
 
 import {
 	Alert,
@@ -10,27 +8,28 @@ import {
 	Stack,
 	Text,
 	TextInput,
-} from '@mantine/core';
-import { IconBrandGoogleFilled } from '@tabler/icons-react';
+} from "@mantine/core";
+import { IconBrandGoogleFilled } from "@tabler/icons-react";
+import { useState } from "react";
 
-import { checkEmailStatus } from '@/_actions/auth';
-import { useAsyncButton } from '@/_hooks';
-import { client } from '@/_utils/auth';
-import { zSafeString } from '@/_utils/zSafeString';
+import { checkEmailStatus } from "@/_actions/auth";
+import { useAsyncButton } from "@/_hooks";
+import { client } from "@/_utils/auth";
+import { zSafeString } from "@/_utils/zSafeString";
 
 type Step =
-	| { type: 'idle' }
-	| { type: 'new'; email: string }
-	| { type: 'has-password'; email: string }
-	| { type: 'social-only'; email: string }
-	| { type: 'email-sent'; email: string }
-	| { type: 'forgot-password-sent'; email: string };
+	| { type: "idle" }
+	| { type: "new"; email: string }
+	| { type: "has-password"; email: string }
+	| { type: "social-only"; email: string }
+	| { type: "email-sent"; email: string }
+	| { type: "forgot-password-sent"; email: string };
 
 export const SignIn = () => {
-	const [email, setEmail] = useState('');
-	const [password, setPassword] = useState('');
-	const [name, setName] = useState('');
-	const [step, setStep] = useState<Step>({ type: 'idle' });
+	const [email, setEmail] = useState("");
+	const [password, setPassword] = useState("");
+	const [name, setName] = useState("");
+	const [step, setStep] = useState<Step>({ type: "idle" });
 	const continueBtn = useAsyncButton();
 	const googleBtn = useAsyncButton();
 	const signInBtn = useAsyncButton();
@@ -39,7 +38,7 @@ export const SignIn = () => {
 
 	const signInWithGoogle = () =>
 		googleBtn.run(async () => {
-			await client.signIn.social({ provider: 'google' });
+			await client.signIn.social({ provider: "google" });
 		});
 
 	const handleContinue = () =>
@@ -53,11 +52,11 @@ export const SignIn = () => {
 			const result = await client.signIn.email({
 				email,
 				password,
-				callbackURL: '/',
+				callbackURL: "/",
 			});
 			if (result.error) {
 				throw new Error(
-					result.error.message ?? 'Invalid password. Please try again.',
+					result.error.message ?? "Invalid password. Please try again.",
 				);
 			}
 		});
@@ -74,41 +73,42 @@ export const SignIn = () => {
 			const result = await client.signUp.email({
 				email,
 				password,
-				name: trimmedName || 'New User',
-				callbackURL: '/verify-email',
+				name: trimmedName || "New User",
+				callbackURL: "/verify-email",
 			});
 			if (result.error) {
 				throw new Error(
-					result.error.message ?? 'Could not create account. Please try again.',
+					result.error.message ?? "Could not create account. Please try again.",
 				);
 			}
-			setStep({ type: 'email-sent', email });
+			setStep({ type: "email-sent", email });
 		});
 
 	const handleForgotPassword = (email: string) =>
 		forgotPasswordBtn.run(async () => {
 			const result = await client.requestPasswordReset({
 				email,
-				redirectTo: '/reset-password',
+				redirectTo: "/reset-password",
 			});
 			if (result.error) {
 				throw new Error(
 					result.error.message ??
-						'Could not send reset email. Please try again.',
+						"Could not send reset email. Please try again.",
 				);
 			}
-			setStep({ type: 'forgot-password-sent', email });
+			setStep({ type: "forgot-password-sent", email });
 		});
 
 	const resetToIdle = () => {
-		setStep({ type: 'idle' });
-		setPassword('');
-		setName('');
+		setStep({ type: "idle" });
+		setPassword("");
+		setName("");
 	};
 
 	return (
 		<Stack>
 			<Button
+				color="ember"
 				data-testid="google-sign-in-button"
 				leftSection={<IconBrandGoogleFilled />}
 				loading={googleBtn.loading}
@@ -119,7 +119,7 @@ export const SignIn = () => {
 
 			<Divider label="or sign in with email" />
 
-			{step.type === 'idle' && (
+			{step.type === "idle" && (
 				<>
 					<TextInput
 						data-testid="email-input"
@@ -135,6 +135,7 @@ export const SignIn = () => {
 						</Alert>
 					)}
 					<Button
+						color="ember"
 						data-testid="continue-button"
 						loading={continueBtn.loading}
 						onClick={handleContinue}
@@ -144,7 +145,7 @@ export const SignIn = () => {
 				</>
 			)}
 
-			{step.type === 'has-password' && (
+			{step.type === "has-password" && (
 				<>
 					<Text size="sm" data-testid="email-display">
 						{step.email}
@@ -193,7 +194,7 @@ export const SignIn = () => {
 				</>
 			)}
 
-			{step.type === 'new' && (
+			{step.type === "new" && (
 				<>
 					<Text size="sm" data-testid="email-display">
 						{step.email}
@@ -235,7 +236,7 @@ export const SignIn = () => {
 				</>
 			)}
 
-			{step.type === 'social-only' && (
+			{step.type === "social-only" && (
 				<>
 					<Button
 						variant="subtle"
@@ -266,13 +267,13 @@ export const SignIn = () => {
 				</>
 			)}
 
-			{step.type === 'email-sent' && (
+			{step.type === "email-sent" && (
 				<Alert color="green" data-testid="email-sent-alert">
 					Check your inbox — we sent a verification link to {step.email}.
 				</Alert>
 			)}
 
-			{step.type === 'forgot-password-sent' && (
+			{step.type === "forgot-password-sent" && (
 				<Alert color="green" data-testid="forgot-password-sent-alert">
 					Check your inbox — we sent a password reset link to {step.email}.
 				</Alert>
