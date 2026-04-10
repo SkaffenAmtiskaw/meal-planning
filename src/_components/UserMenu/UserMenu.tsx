@@ -1,13 +1,12 @@
 import {
 	ActionIcon,
-	Avatar,
 	Menu,
 	MenuDivider,
 	MenuDropdown,
 	MenuItem,
 	MenuTarget,
 } from '@mantine/core';
-import { IconSettings } from '@tabler/icons-react';
+import { IconSettings, IconUser } from '@tabler/icons-react';
 
 import { THEME_COLORS } from '@/_theme/colors';
 
@@ -16,8 +15,8 @@ import { SignOutButton } from './SignOutButton';
 export const UserMenu = () => (
 	<Menu>
 		<MenuTarget>
-			<ActionIcon variant="transparent">
-				<Avatar data-testid="user-avatar" color={THEME_COLORS.chalk} />
+			<ActionIcon variant="transparent" data-testid="user-avatar">
+				<IconUser size={20} color={THEME_COLORS.chalk} />
 			</ActionIcon>
 		</MenuTarget>
 		<MenuDropdown>
