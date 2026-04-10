@@ -80,6 +80,6 @@ describe('planner layout', () => {
 
 		await Layout({ children: null, params });
 
-		expect(mockCheckAuth).toHaveBeenCalledWith(plannerId);
+		expect(mockCheckAuth).toHaveBeenCalledWith(plannerId, 'read');
 	});
 });

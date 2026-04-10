@@ -16,9 +16,16 @@ const userSchema = new Schema<UserInterface>({
 	},
 	planners: [
 		{
-			type: SchemaTypes.ObjectId,
-			ref: 'Planner',
-			required: true,
+			planner: {
+				type: SchemaTypes.ObjectId,
+				ref: 'Planner',
+				required: true,
+			},
+			accessLevel: {
+				type: String,
+				enum: ['owner', 'admin', 'write', 'read'],
+				required: true,
+			},
 		},
 	],
 	pendingEmailChange: {

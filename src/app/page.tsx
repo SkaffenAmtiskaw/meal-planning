@@ -32,8 +32,11 @@ const Page = async () => {
 		const lastPlannerId = cookieStore.get('lastOpenedPlanner')?.value;
 		const parsed = zObjectId.safeParse(lastPlannerId);
 		const validLast =
-			parsed.success && user.planners.some((p) => String(p) === lastPlannerId);
-		const plannerId = validLast ? lastPlannerId : String(user.planners[0]);
+			parsed.success &&
+			user.planners.some(({ planner }) => String(planner) === lastPlannerId);
+		const plannerId = validLast
+			? lastPlannerId
+			: String(user.planners[0].planner);
 		redirect(`${plannerId}/calendar`);
 	}
 
@@ -42,7 +45,7 @@ const Page = async () => {
 		undefined,
 		session.user.name,
 	);
-	redirect(`${newUser.planners[0]}/calendar`);
+	redirect(`${String(newUser.planners[0].planner)}/calendar`);
 };
 
 export default Page;

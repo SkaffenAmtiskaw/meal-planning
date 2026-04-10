@@ -60,7 +60,11 @@ describe('createPlanner', () => {
 		expect(addPlanner).toHaveBeenCalledWith('My Planner');
 		expect(User.collection.updateOne).toHaveBeenCalledWith(
 			{ _id: 'user-id-123' },
-			{ $push: { planners: 'planner-id-456' } },
+			{
+				$push: {
+					planners: { planner: 'planner-id-456', accessLevel: 'owner' },
+				},
+			},
 		);
 		expect(result).toEqual({ ok: true, data: undefined });
 	});

@@ -8,7 +8,9 @@ export const getPlanners = async () => {
 
 	if (!user) throw new Error('No user found');
 
-	const planners = await Planner.find({ _id: { $in: user.planners } });
+	const planners = await Planner.find({
+		_id: { $in: user.planners.map(({ planner }) => planner) },
+	});
 
 	const unnamed = planners.filter((p) => !p.name);
 

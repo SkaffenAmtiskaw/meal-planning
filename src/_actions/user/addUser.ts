@@ -10,11 +10,12 @@ export const addUser = async (
 	plannerId?: Types.ObjectId,
 	name?: string,
 ) => {
-	const id = plannerId ? plannerId : (await addPlanner())._id;
+	const isNewPlanner = !plannerId;
+	const id = isNewPlanner ? (await addPlanner())._id : plannerId;
 
 	return await User.create({
 		email,
 		name: name ?? 'New User',
-		planners: [id],
+		planners: [{ planner: id, accessLevel: isNewPlanner ? 'owner' : 'read' }],
 	});
 };

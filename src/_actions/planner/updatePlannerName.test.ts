@@ -1,12 +1,13 @@
+import { Types } from 'mongoose';
 import { afterEach, describe, expect, test, vi } from 'vitest';
 
 import { Planner } from '@/_models';
 
 import { updatePlannerName } from './updatePlannerName';
 
-const mockGetUser = vi.hoisted(() => vi.fn());
-vi.mock('@/_actions/user', () => ({
-	getUser: mockGetUser,
+const mockCheckAuth = vi.hoisted(() => vi.fn());
+vi.mock('@/_actions/auth/checkAuth', () => ({
+	checkAuth: mockCheckAuth,
 }));
 
 vi.mock('@/_models', () => ({
@@ -27,7 +28,6 @@ vi.mock('@/_models', () => ({
 }));
 
 const validId = '507f1f77bcf86cd799439011';
-const mockUser = { _id: 'user-id-123', planners: [validId] };
 
 describe('updatePlannerName', () => {
 	afterEach(() => {
@@ -53,7 +53,7 @@ describe('updatePlannerName', () => {
 	});
 
 	test('returns error when user is not authenticated', async () => {
-		mockGetUser.mockRejectedValue(new Error('No Valid Session'));
+		mockCheckAuth.mockResolvedValue({ type: 'unauthenticated' });
 
 		const result = await updatePlannerName(validId, 'New Name');
 
@@ -61,10 +61,17 @@ describe('updatePlannerName', () => {
 	});
 
 	test('returns error when planner does not belong to user', async () => {
-		const otherPlannerId = '507f1f77bcf86cd799439099';
-		mockGetUser.mockResolvedValue({
-			_id: 'user-id',
-			planners: [otherPlannerId],
+		mockCheckAuth.mockResolvedValue({ type: 'unauthorized' });
+
+		const result = await updatePlannerName(validId, 'New Name');
+
+		expect(result).toEqual({ ok: false, error: 'Not authorized.' });
+	});
+
+	test('returns error when there is an auth error', async () => {
+		mockCheckAuth.mockResolvedValue({
+			type: 'error',
+			error: new Error('DB error'),
 		});
 
 		const result = await updatePlannerName(validId, 'New Name');
@@ -73,11 +80,15 @@ describe('updatePlannerName', () => {
 	});
 
 	test('updates planner name when authorized', async () => {
-		mockGetUser.mockResolvedValue(mockUser);
+		mockCheckAuth.mockResolvedValue({ type: 'authorized' });
 		vi.mocked(Planner.collection.updateOne).mockResolvedValue({} as never);
 
 		const result = await updatePlannerName(validId, 'New Name');
 
+		expect(mockCheckAuth).toHaveBeenCalledWith(
+			expect.any(Types.ObjectId),
+			'admin',
+		);
 		expect(Planner.collection.updateOne).toHaveBeenCalledWith(
 			{ _id: expect.objectContaining({}) },
 			{ $set: { name: 'New Name' } },
@@ -86,7 +97,7 @@ describe('updatePlannerName', () => {
 	});
 
 	test('propagates error when DB update throws', async () => {
-		mockGetUser.mockResolvedValue(mockUser);
+		mockCheckAuth.mockResolvedValue({ type: 'authorized' });
 		vi.mocked(Planner.collection.updateOne).mockRejectedValue(
 			new Error('DB error'),
 		);

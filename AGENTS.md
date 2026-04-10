@@ -110,6 +110,7 @@ pnpm test     # Run Vitest
 
 - Before a task is done, you MUST successfully run `pnpm lint`
 - Work left intentionally unfinished should be indicated with a `TODO` comment
+- NEVER commit changes or invoke the commit-changes skill unless the user explicitly asks you to commit
 
 ## Notes
 

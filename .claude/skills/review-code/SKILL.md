@@ -5,6 +5,7 @@ description: considerations for code reviews
 
 Clear Intent
 - make sure all changes are clearly related - if a code review seems to address multiple unrelated concerns consider splitting it into multiple commits
+- As a general rule, if staged changes include note or skill updates it can safely be assumed these relate to discoveries made while implementing a feature. However, substantive changes to the app should be a separate commit.
 
 Completion
 - make sure the stated objectives are achieved - if scope is unclear prompt the user
@@ -14,6 +15,7 @@ Feedback
 - if the user indicates a suggestion should be deferred til later add a TODO comment
 
 Code Conventions
+- All modules must address a SINGLE CONCERN - if a module does too much it should be decomposed
 - You MUST refer to the code conventions in AGENTS.md and make sure all code changes follow them
 - Mantine components are preferred over custom styles - custom styles should only be used when explicitly requested by the uesr or when there is none available that suits the purpose
 

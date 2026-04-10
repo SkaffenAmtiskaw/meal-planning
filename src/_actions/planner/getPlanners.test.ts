@@ -23,7 +23,10 @@ const makePlanner = (overrides: { name?: string; id?: string } = {}) => ({
 	name: overrides.name,
 });
 
-const mockUser = { name: 'Ariel', planners: ['planner-1'] };
+const mockUser = {
+	name: 'Ariel',
+	planners: [{ planner: 'planner-1', accessLevel: 'owner' }],
+};
 
 describe('getPlanners', () => {
 	afterEach(() => {
@@ -44,7 +47,7 @@ describe('getPlanners', () => {
 		await getPlanners();
 
 		expect(Planner.find).toHaveBeenCalledWith({
-			_id: { $in: mockUser.planners },
+			_id: { $in: ['planner-1'] },
 		});
 	});
 

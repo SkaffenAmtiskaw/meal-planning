@@ -2,10 +2,9 @@
 
 import { Types } from 'mongoose';
 
-import { getUser } from '@/_actions/user';
+import { checkAuth } from '@/_actions/auth/checkAuth';
 import { Planner, zObjectId } from '@/_models';
 import type { ActionResult } from '@/_utils/actionResult';
-import { catchify } from '@/_utils/catchify';
 import { zSafeString } from '@/_utils/zSafeString';
 
 export const updatePlannerName = async (
@@ -19,11 +18,11 @@ export const updatePlannerName = async (
 	if (!parsedName.success)
 		return { ok: false, error: parsedName.error.issues[0].message };
 
-	const [user] = await catchify(getUser);
-	if (!user) return { ok: false, error: 'Not authenticated.' };
-
-	const authorized = user.planners.some((p) => String(p) === id);
-	if (!authorized) return { ok: false, error: 'Not authorized.' };
+	const auth = await checkAuth(new Types.ObjectId(id), 'admin');
+	if (auth.type === 'unauthenticated')
+		return { ok: false, error: 'Not authenticated.' };
+	if (auth.type !== 'authorized')
+		return { ok: false, error: 'Not authorized.' };
 
 	await Planner.collection.updateOne(
 		{ _id: new Types.ObjectId(id) },

@@ -41,7 +41,7 @@ describe('add user', () => {
 		expect(User.create).toHaveBeenCalledWith({
 			email: 'cruella@deVil.com',
 			name: 'New User',
-			planners: [mockPlannerId],
+			planners: [{ planner: mockPlannerId, accessLevel: 'owner' }],
 		});
 	});
 
@@ -55,7 +55,7 @@ describe('add user', () => {
 		expect(User.create).toHaveBeenCalledWith({
 			email: 'cruella@deVil.com',
 			name: 'New User',
-			planners: [existingPlannerId],
+			planners: [{ planner: existingPlannerId, accessLevel: 'read' }],
 		});
 	});
 
@@ -68,7 +68,7 @@ describe('add user', () => {
 		expect(User.create).toHaveBeenCalledWith({
 			email: 'cruella@deVil.com',
 			name: 'Cruella',
-			planners: [mockPlannerId],
+			planners: [{ planner: mockPlannerId, accessLevel: 'owner' }],
 		});
 	});
 

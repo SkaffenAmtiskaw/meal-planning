@@ -52,6 +52,7 @@ const mockSession = {
 };
 
 const plannerId = '507f1f77bcf86cd799439011';
+const membership = { planner: plannerId, accessLevel: 'owner' };
 
 describe('page', () => {
 	afterEach(() => {
@@ -69,7 +70,7 @@ describe('page', () => {
 	test('redirects to first planner when no last-opened cookie', async () => {
 		vi.mocked(auth.api.getSession).mockResolvedValue(mockSession as never);
 		vi.mocked(User.findOne).mockReturnValue({
-			exec: vi.fn().mockResolvedValue({ planners: [plannerId] }),
+			exec: vi.fn().mockResolvedValue({ planners: [membership] }),
 		} as never);
 		mockCookiesGet.mockReturnValue(undefined);
 
@@ -82,7 +83,12 @@ describe('page', () => {
 		const lastPlannerId = '507f1f77bcf86cd799439022';
 		vi.mocked(auth.api.getSession).mockResolvedValue(mockSession as never);
 		vi.mocked(User.findOne).mockReturnValue({
-			exec: vi.fn().mockResolvedValue({ planners: [plannerId, lastPlannerId] }),
+			exec: vi.fn().mockResolvedValue({
+				planners: [
+					membership,
+					{ planner: lastPlannerId, accessLevel: 'owner' },
+				],
+			}),
 		} as never);
 		mockCookiesGet.mockReturnValue({ value: lastPlannerId });
 		vi.mocked(zObjectId.safeParse).mockReturnValueOnce({
@@ -98,7 +104,7 @@ describe('page', () => {
 		const foreignPlannerId = '507f1f77bcf86cd799439099';
 		vi.mocked(auth.api.getSession).mockResolvedValue(mockSession as never);
 		vi.mocked(User.findOne).mockReturnValue({
-			exec: vi.fn().mockResolvedValue({ planners: [plannerId] }),
+			exec: vi.fn().mockResolvedValue({ planners: [membership] }),
 		} as never);
 		mockCookiesGet.mockReturnValue({ value: foreignPlannerId });
 		vi.mocked(zObjectId.safeParse).mockReturnValueOnce({
@@ -116,7 +122,7 @@ describe('page', () => {
 			exec: vi.fn().mockResolvedValue(null),
 		} as never);
 		vi.mocked(addUser).mockResolvedValue({
-			planners: ['new-planner-456'],
+			planners: [{ planner: 'new-planner-456', accessLevel: 'owner' }],
 		} as never);
 
 		await expect(Page()).rejects.toThrow('NEXT_REDIRECT');

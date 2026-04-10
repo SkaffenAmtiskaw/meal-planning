@@ -29,6 +29,8 @@ Your response MUST NOT exceed more than 300 tokens.
 
 After running tests, report it in a CONCISE structure. It MUST be under 300 tokens.
 
+ONLY report coverage of the targeted files. If tests touch an unrelated file (covered by its own test file) exclude it from the report and adjust the coverage summary.
+
 DO NOT add commentary. ONLY add details when tests FAIL. Details must be the MINIMUM to identify the point of failure.
 
 ```

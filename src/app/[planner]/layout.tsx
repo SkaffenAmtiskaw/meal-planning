@@ -18,7 +18,7 @@ const zParams = z.object({
 const Layout = async ({ children, params }: LayoutProps<'/[planner]'>) => {
 	const { planner: id } = zParams.parse(await params);
 
-	const result = await checkAuth(id);
+	const result = await checkAuth(id, 'read');
 
 	if (result.type === 'unauthenticated') redirect('/');
 	if (result.type === 'unauthorized') notFound();

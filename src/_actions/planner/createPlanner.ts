@@ -19,7 +19,7 @@ export const createPlanner = async (name: string): Promise<ActionResult> => {
 	const planner = await addPlanner(parsedName.data);
 
 	const update: Record<string, unknown> = {
-		$push: { planners: planner._id },
+		$push: { planners: { planner: planner._id, accessLevel: 'owner' } },
 	};
 
 	await User.collection.updateOne({ _id: user._id }, update);

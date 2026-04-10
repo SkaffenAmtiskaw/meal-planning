@@ -16,7 +16,6 @@
 - styling fixes to calendar view
 - [[Reduce Client Components in Calendar|reduce client components in calendar]]
 ## Planner Settings
-- [[Planner Access Levels|allow users to have access levels to a planner - (owner/admin, write, read)]]
 - [[Shared Planners|allow users to invite other users to a shared planner]]
 - allow user to delete a planner
 
@@ -32,6 +31,7 @@
 - add Apple SSO
 - add passkey sign in
 ## UX Improvements
+- take create planner pattern of button on top right in desktop - FAB in mobile and apply it throughout the app
 - [[Filtering Recipe List|allow filtering in recipe list]]
 - batch delete meals
 - batch delete recipes/bookmarks

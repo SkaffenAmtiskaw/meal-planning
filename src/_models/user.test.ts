@@ -9,6 +9,7 @@ vi.mock('mongoose', async (importOriginal) => {
 import { zUserInterface } from './user';
 
 const plannerId = new Types.ObjectId().toString();
+const membership = { planner: plannerId, accessLevel: 'owner' as const };
 
 describe('user interface', () => {
 	test('accepts a valid user with a name', () => {
@@ -16,7 +17,7 @@ describe('user interface', () => {
 			zUserInterface.safeParse({
 				email: 'gaston@villainslair.example.com',
 				name: 'Gaston',
-				planners: [plannerId],
+				planners: [membership],
 			}).success,
 		).toBe(true);
 	});
@@ -24,7 +25,7 @@ describe('user interface', () => {
 	test('defaults name to "New User" when omitted', () => {
 		const result = zUserInterface.safeParse({
 			email: 'gaston@villainslair.example.com',
-			planners: [plannerId],
+			planners: [membership],
 		});
 		expect(result.success).toBe(true);
 		if (result.success) {
@@ -37,7 +38,7 @@ describe('user interface', () => {
 			zUserInterface.safeParse({
 				email: 'gaston@villainslair.example.com',
 				name: '$evil',
-				planners: [plannerId],
+				planners: [membership],
 			}).success,
 		).toBe(false);
 	});
@@ -52,7 +53,7 @@ describe('user interface', () => {
 	});
 
 	test('rejects a user missing email', () => {
-		expect(zUserInterface.safeParse({ planners: [plannerId] }).success).toBe(
+		expect(zUserInterface.safeParse({ planners: [membership] }).success).toBe(
 			false,
 		);
 	});
@@ -64,11 +65,20 @@ describe('user interface', () => {
 		).toBe(false);
 	});
 
-	test('rejects a user with an invalid planner ObjectId', () => {
+	test('rejects a planner membership with an invalid planner ObjectId', () => {
 		expect(
 			zUserInterface.safeParse({
 				email: 'gaston@villainslair.example.com',
-				planners: ['bad-id'],
+				planners: [{ planner: 'bad-id', accessLevel: 'owner' }],
+			}).success,
+		).toBe(false);
+	});
+
+	test('rejects a planner membership with an invalid access level', () => {
+		expect(
+			zUserInterface.safeParse({
+				email: 'gaston@villainslair.example.com',
+				planners: [{ planner: plannerId, accessLevel: 'superuser' }],
 			}).success,
 		).toBe(false);
 	});
