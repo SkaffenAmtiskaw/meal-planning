@@ -5,6 +5,10 @@ import RootLayout, { metadata } from './layout';
 
 vi.mock('@mantine/core/styles.css', () => ({}));
 
+vi.mock('next/font/google', () => ({
+	Inter: () => ({ className: 'inter-class' }),
+}));
+
 vi.mock('@mantine/core', async () => await import('@mocks/@mantine/core'));
 
 vi.mock('@/_components', () => ({
