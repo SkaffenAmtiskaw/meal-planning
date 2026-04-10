@@ -21,6 +21,7 @@ export const NavLink = ({
 	leftSection,
 	labelClassName,
 	onClick,
+	...others
 }: Props) => (
 	<MantineNavLink
 		component={Link}
@@ -33,5 +34,6 @@ export const NavLink = ({
 		leftSection={leftSection}
 		onClick={onClick}
 		label={label}
+		{...others}
 	/>
 );
