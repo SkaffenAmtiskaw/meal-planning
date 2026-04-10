@@ -5,6 +5,7 @@ import { useParams } from 'next/navigation';
 import { AppShell, AppShellMain, AppShellNavbar, Burger } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 
+import { THEME_COLORS } from '@/_theme/colors';
 import { Header } from '@/app/_components/Header';
 
 import { useLastOpenedPlanner } from './useLastOpenedPlanner';
@@ -39,7 +40,7 @@ export const PlannerLayout = ({ children, navbar }: Props) => {
 		>
 			<Header
 				leftSection={
-					<Burger opened={opened} onClick={toggle} color="#EFE7E9" />
+					<Burger opened={opened} onClick={toggle} color={THEME_COLORS.chalk} />
 				}
 			/>
 			<AppShellNavbar>{navbar}</AppShellNavbar>
