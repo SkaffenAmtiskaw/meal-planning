@@ -143,3 +143,6 @@ dist
 
 # Obsidian Notes
 /notes/.obsidian/
+
+# Git worktrees
+.worktrees/
