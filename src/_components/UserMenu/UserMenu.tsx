@@ -15,7 +15,7 @@ export const UserMenu = () => (
 	<Menu>
 		<MenuTarget>
 			<ActionIcon variant="transparent">
-				<Avatar data-testid="user-avatar" />
+				<Avatar data-testid="user-avatar" color="#EFE7E9" />
 			</ActionIcon>
 		</MenuTarget>
 		<MenuDropdown>
@@ -23,7 +23,7 @@ export const UserMenu = () => (
 				component="a"
 				data-testid="settings-link"
 				href="/settings"
-				leftSection={<IconSettings size={16} />}
+				leftSection={<IconSettings size={16} color="#EFE7E9" />}
 			>
 				Settings
 			</MenuItem>

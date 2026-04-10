@@ -37,7 +37,11 @@ export const PlannerLayout = ({ children, navbar }: Props) => {
 				width: 300,
 			}}
 		>
-			<Header leftSection={<Burger opened={opened} onClick={toggle} />} />
+			<Header
+				leftSection={
+					<Burger opened={opened} onClick={toggle} color="#EFE7E9" />
+				}
+			/>
 			<AppShellNavbar>{navbar}</AppShellNavbar>
 			<AppShellMain>{children}</AppShellMain>
 		</AppShell>
