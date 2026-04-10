@@ -1,3 +1,19 @@
+.calendarWrapper {
+	--sx-color-primary: #ff6542;
+	--sx-color-primary-container: rgba(255, 101, 66, 0.12);
+	--sx-color-surface: #ffffff;
+	--sx-color-surface-variant: #efe7e9;
+	--sx-color-on-surface: #1c3144;
+	--sx-color-on-surface-variant: #5a6a7a;
+	--sx-color-outline: #ddd8da;
+	--sx-color-today-bg: rgba(255, 101, 66, 0.08);
+}
+
+.calendarWrapper :global(.sx__month-grid-day__header-date--today) {
+	background-color: #ff6542 !important;
+	color: #ffffff !important;
+}
+
 .calendarWrapper :global(.sx__month-grid-day) {
 	min-height: 100px;
 }
