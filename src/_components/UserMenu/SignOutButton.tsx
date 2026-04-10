@@ -19,7 +19,7 @@ const SignOutButton = () => {
 	return (
 		<MenuItem
 			data-testid="sign-out-button"
-			leftSection={<IconLogout size={16} color={THEME_COLORS.chalk} />}
+			leftSection={<IconLogout size={16} color={THEME_COLORS.navy} />}
 			onClick={handleSignOut}
 		>
 			Log Out

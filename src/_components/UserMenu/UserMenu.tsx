@@ -24,7 +24,7 @@ export const UserMenu = () => (
 				component="a"
 				data-testid="settings-link"
 				href="/settings"
-				leftSection={<IconSettings size={16} color={THEME_COLORS.chalk} />}
+				leftSection={<IconSettings size={16} color={THEME_COLORS.navy} />}
 			>
 				Settings
 			</MenuItem>
