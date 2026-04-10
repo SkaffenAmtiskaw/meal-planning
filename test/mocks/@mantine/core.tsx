@@ -28,6 +28,33 @@ type WithChildren = {
 
 type WithTestId = { 'data-testid'?: string };
 
+export const Image = vi.fn(
+	({
+		src,
+		alt,
+		w,
+		h,
+		fit,
+		'data-testid': testId,
+	}: {
+		src?: string;
+		alt?: string;
+		w?: number | string;
+		h?: number | string;
+		fit?: string;
+		'data-testid'?: string;
+	}) => (
+		<img
+			src={src}
+			alt={alt}
+			width={w}
+			height={h}
+			data-testid={testId}
+			style={{ objectFit: fit as React.CSSProperties['objectFit'] }}
+		/>
+	),
+);
+
 // ─── Layout / Container ───────────────────────────────────────────────────────
 
 export const AppShell = vi.fn(({ children, 'data-testid': testId }: WithChildren) => (
