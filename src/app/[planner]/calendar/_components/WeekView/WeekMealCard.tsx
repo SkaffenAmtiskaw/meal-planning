@@ -4,6 +4,8 @@ import Link from 'next/link';
 
 import { Anchor, Box, Card, Text } from '@mantine/core';
 
+import { getMealColor, TAG_COLORS } from '@/_theme/colors';
+
 import styles from './WeekView.module.css';
 
 import { resolveDishSource } from '../../_utils/resolveDishSource';
@@ -60,12 +62,19 @@ export const WeekMealCard = ({
 	const resolvedDishes = meal.dishes.map((dish) =>
 		resolveDishSource(dish, savedMap),
 	);
+	const tagColor = getMealColor(meal.name);
+	const { bg, text, border } = TAG_COLORS[tagColor];
 
 	return (
 		<Card
 			className={styles.card}
 			data-testid="week-meal-card"
 			p="xs"
+			style={{
+				backgroundColor: bg,
+				color: text,
+				border: `1px solid ${border}`,
+			}}
 			onClick={() =>
 				onMealClick({
 					id: meal._id,
@@ -77,17 +86,19 @@ export const WeekMealCard = ({
 				})
 			}
 		>
-			<Text className={styles.title} fw={700} size="sm">
+			<Text className={styles.title} fw={700} size="sm" style={{ color: text }}>
 				{meal.name}
 			</Text>
 			{meal.description && (
-				<Text className={styles.description} size="sm">
+				<Text className={styles.description} size="sm" style={{ color: text }}>
 					{meal.description}
 				</Text>
 			)}
 			{resolvedDishes.map((dish, dishIndex) => (
 				// biome-ignore lint/suspicious/noArrayIndexKey: dishes have no stable id
-				<Box key={dishIndex}>{getDishNode(dish, plannerId)}</Box>
+				<Box key={dishIndex} style={{ color: text }}>
+					{getDishNode(dish, plannerId)}
+				</Box>
 			))}
 		</Card>
 	);
