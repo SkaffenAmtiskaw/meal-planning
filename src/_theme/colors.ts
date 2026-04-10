@@ -32,9 +32,21 @@ export const THEME_COLORS = {
 	sage: '#B1BA95',
 	ember: '#FF6542',
 	chalk: '#EFE7E9',
+	sageLight: '#F2F3EE',
 } as const;
 
-export const EMBER_RAMPS = [
+export const EMBER_RAMPS: [
+	string,
+	string,
+	string,
+	string,
+	string,
+	string,
+	string,
+	string,
+	string,
+	string,
+] = [
 	'#FFF0EB',
 	'#FFE0D6',
 	'#FFD0BF',
@@ -47,7 +59,42 @@ export const EMBER_RAMPS = [
 	'#993A28',
 ];
 
-export const NAVY_RAMPS = [
+export const FOREST_RAMPS: [
+	string,
+	string,
+	string,
+	string,
+	string,
+	string,
+	string,
+	string,
+	string,
+	string,
+] = [
+	'#EFF3EF',
+	'#DFE7DF',
+	'#CFDBCE',
+	'#BFCEBE',
+	'#AFC2AE',
+	'#44633F',
+	'#3C5736',
+	'#344C2E',
+	'#2C4126',
+	'#24361E',
+];
+
+export const NAVY_RAMPS: [
+	string,
+	string,
+	string,
+	string,
+	string,
+	string,
+	string,
+	string,
+	string,
+	string,
+] = [
 	'#E8EBEE',
 	'#D1D7DD',
 	'#BAC3CC',

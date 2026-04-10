@@ -3,6 +3,10 @@ import { describe, expect, test, vi } from 'vitest';
 
 import RootLayout, { metadata } from './layout';
 
+vi.mock('next/font/google', () => ({
+	Inter: () => ({ className: 'mock-inter-class' }),
+}));
+
 vi.mock('@mantine/core/styles.css', () => ({}));
 
 vi.mock('next/font/google', () => ({

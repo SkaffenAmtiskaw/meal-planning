@@ -6,6 +6,28 @@ import { PlannerSwitcher } from './PlannerSwitcher';
 
 vi.mock('@mantine/core', async () => await import('@mocks/@mantine/core'));
 
+vi.mock('@/_components/NavLink', () => ({
+	NavLink: ({
+		label,
+		href,
+		active,
+		...props
+	}: {
+		label: string;
+		href: string;
+		active?: boolean;
+	}) => (
+		<a
+			href={href}
+			data-active={active ? 'true' : undefined}
+			data-testid={`navlink-${label.replace(/[^a-zA-Z0-9]/g, '-')}`}
+			{...props}
+		>
+			{label}
+		</a>
+	),
+}));
+
 const planners = [
 	{ id: '507f1f77bcf86cd799439011', name: "Ariel's Planner" },
 	{ id: '507f1f77bcf86cd799439022', name: "Eric's Planner" },
@@ -15,12 +37,8 @@ describe('PlannerSwitcher', () => {
 	test('renders a nav item for each planner', () => {
 		render(<PlannerSwitcher currentId={planners[0].id} planners={planners} />);
 
-		expect(
-			screen.getByTestId(`planner-switcher-item-${planners[0].id}`),
-		).toBeDefined();
-		expect(
-			screen.getByTestId(`planner-switcher-item-${planners[1].id}`),
-		).toBeDefined();
+		expect(screen.getByText("Ariel's Planner")).toBeDefined();
+		expect(screen.getByText("Eric's Planner")).toBeDefined();
 	});
 
 	test('marks current planner as active', () => {
@@ -28,13 +46,15 @@ describe('PlannerSwitcher', () => {
 
 		expect(
 			screen
-				.getByTestId(`planner-switcher-item-${planners[0].id}`)
-				.getAttribute('data-active'),
+				.getByText("Ariel's Planner")
+				.closest('a')
+				?.getAttribute('data-active'),
 		).toBeTruthy();
 		expect(
 			screen
-				.getByTestId(`planner-switcher-item-${planners[1].id}`)
-				.getAttribute('data-active'),
+				.getByText("Eric's Planner")
+				.closest('a')
+				?.getAttribute('data-active'),
 		).toBeFalsy();
 	});
 
@@ -42,9 +62,7 @@ describe('PlannerSwitcher', () => {
 		render(<PlannerSwitcher currentId={planners[0].id} planners={planners} />);
 
 		expect(
-			screen
-				.getByTestId(`planner-switcher-item-${planners[0].id}`)
-				.getAttribute('href'),
+			screen.getByText("Ariel's Planner").closest('a')?.getAttribute('href'),
 		).toBe(`/${planners[0].id}/calendar`);
 	});
 });

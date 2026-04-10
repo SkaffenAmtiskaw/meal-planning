@@ -18,6 +18,7 @@ export const AddMealButton = ({ plannerId = '', onMealAdded }: Props) => {
 	return (
 		<>
 			<Button
+				color="ember"
 				data-testid="add-meal-button"
 				leftSection={<IconPlus />}
 				onClick={handlers.open}

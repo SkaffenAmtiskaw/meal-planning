@@ -2,8 +2,10 @@
 
 import { useSelectedLayoutSegment } from 'next/navigation';
 
-import { Divider, NavLink } from '@mantine/core';
+import { Divider } from '@mantine/core';
 import { IconBook, IconCalendarWeek } from '@tabler/icons-react';
+
+import { NavLink } from '@/_components/NavLink';
 
 import { PlannerSwitcher } from './PlannerSwitcher';
 

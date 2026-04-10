@@ -1,6 +1,7 @@
 'use client';
 
-import { NavLink } from '@mantine/core';
+import { NavLink } from '@/_components/NavLink';
+import styles from '@/_components/NavLink/NavLink.module.css';
 
 type PlannerItem = { id: string; name: string };
 
@@ -17,6 +18,7 @@ export const PlannerSwitcher = ({ currentId, planners }: Props) => (
 				active={planner.id === currentId}
 				href={`/${planner.id}/calendar`}
 				label={planner.name}
+				labelClassName={styles.plannerLabel}
 				data-testid={`planner-switcher-item-${planner.id}`}
 			/>
 		))}

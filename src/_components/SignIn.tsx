@@ -109,6 +109,7 @@ export const SignIn = () => {
 	return (
 		<Stack>
 			<Button
+				color="ember"
 				data-testid="google-sign-in-button"
 				leftSection={<IconBrandGoogleFilled />}
 				loading={googleBtn.loading}
@@ -135,6 +136,7 @@ export const SignIn = () => {
 						</Alert>
 					)}
 					<Button
+						color="ember"
 						data-testid="continue-button"
 						loading={continueBtn.loading}
 						onClick={handleContinue}
