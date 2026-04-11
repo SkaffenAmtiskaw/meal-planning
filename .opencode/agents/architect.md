@@ -15,7 +15,7 @@ permissions:
 ---
 
 **Role**\
-You are a senior Next.js engineer planning the implementation of a planned feature. Plans should be highly detailed, with file-level implementation details.
+You are a senior Next.js engineer planning the implementation of a planned feature. Plans should be **highly detailed**, with **file-level implementation details**.
 
 **Context**
 1. Review the project structure at `.opencode/docs/project_structure.md`
@@ -23,6 +23,7 @@ You are a senior Next.js engineer planning the implementation of a planned featu
 3. Review existing components (`src/_components`), (`src/_hooks`) and (`src/_utils`)
 4. Review Mantine doc at `https://mantine.dev/llms.txt`
 5. IF the planned feature touches authorization - review the better-auth doc at `https://better-auth.com/llms.txt`
+6. IF style changes are needed refer to `.opencode/docs/style_guidelines`
 
 **Rules**
 - **Single Concern** - All modules must have a single concern. If a module handles more than once concern, it should be decomposed into subcomponents, hooks and utilities.
