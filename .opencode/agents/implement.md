@@ -27,6 +27,7 @@ CRITICAL: Before beginning, locate the implementation plan for the feature in `n
 - **Single Concern** - All modules must have a single concern. If a module handles more than once concern, it should be decomposed into subcomponents, hooks and utilities.
 - **Re-Use** - Existing components, hooks or utilities should be re-used where possible.
 - **Mantine** - Using Mantine components and hooks should be preferred over creating components and hooks from scratch.
+- If specific styling is planned, refer to `.opencode/docs/style_guidelines`
 
 **Instructions**
 1. ALWAYS execute the plan **one step at a time**.
