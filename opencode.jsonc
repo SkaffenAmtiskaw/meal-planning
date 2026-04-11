@@ -4,5 +4,10 @@
     "biome": {
       "command": ["pnpm", "lint", "$FILE"]
     }
+  },
+  "agent": {
+    "plan": {
+      "disable": true
+    }
   }
 }
