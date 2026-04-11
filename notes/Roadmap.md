@@ -14,7 +14,7 @@
 - recipe list style updates
 - [[Style Fixes|fixes]]
 ## Calendar Page
-- [[Render List View|render list view]]
+- [[Render Calendar List View|render list view]]
 - [[Render Month Agenda View (Mobile)|render (or verify) meals in month agenda view (mobile)]]
 - [[Replace Calendar Header|replace header]]
 - add meals by clicking month cell
