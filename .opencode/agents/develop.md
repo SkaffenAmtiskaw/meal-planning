@@ -1,6 +1,6 @@
 ---
 description: Develops modules with TDD
-color: '#caffbf'
+color: '#3bceac'
 mode: subagent
 model: opencode-go/minimax-m2.7
 temperature: 0.3
@@ -33,6 +33,8 @@ _Note: You MAY check if a mock for the module exists at `test/mocks/*` and if so
 _Except for `test/mocks/*`, DO NOT import from any path that was not listed in the dependency manifest. If you discover you need something that wasn't provided, STOP and report it._
 
 **TDD Process**
+Unit tests should be run using `pnpm test:agent [path/to/test/file]`
+
 Follow `red-green-refactor` **strictly**:
 
 1. Write a failing test for the first behavior in the spec
@@ -44,6 +46,7 @@ _DO NOT write implementation code before a failing test exists for it. DO NOT wr
 
 **Test Conventions**
 
+- Refer to `.opencode/docs/unit_tests.md` for project-specific unit test conventions
 - Use describe blocks named after the module
 - One test block per behavior
 - Use vi.fn() for all mocked dependencies

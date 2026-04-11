@@ -1,6 +1,6 @@
 ---
 description: Cleanup recently changed files
-color: '#9bf6ff'
+color: '#0ead69'
 mode: subagent
 model: opencode-go/minimax-m2.7
 temperature: 0.1

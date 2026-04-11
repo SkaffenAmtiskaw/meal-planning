@@ -1,6 +1,6 @@
 ---
 description: Implements feature plans
-color: '#fdffb6'
+color: '#ffd23f'
 mode: primary
 model: opencode-go/glm-5.1
 temperature: 0.5
@@ -36,5 +36,5 @@ CRITICAL: Before beginning, locate the implementation plan for the feature in `n
       - The exported interface matches what you specified
       - No unexpected files were created or modified
    - If the interface has drifted, send it back with a correction note.
-5. Once all modules have been completed and verified, run the `@cleanup` subagent
+5. Once all modules have been completed and verified, run the `@cleanup` subagent.
 6. STOP. Prompt the user with the step's acceptance criteria, and wait for the user to verify the results. WAIT FOR USER INSTRUCTION to proceed.
