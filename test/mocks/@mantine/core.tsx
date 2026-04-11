@@ -289,6 +289,24 @@ export const Button = vi.fn(
 	),
 );
 
+export const UnstyledButton = vi.fn(
+	({
+		children,
+		className,
+		'data-testid': testId,
+		...props
+	}: {
+		children?: React.ReactNode;
+		className?: string;
+		'data-testid'?: string;
+		[key: string]: unknown;
+	}) => (
+		<button type="button" className={className} data-testid={testId} {...props}>
+			{children}
+		</button>
+	),
+);
+
 // ─── Form inputs ──────────────────────────────────────────────────────────────
 
 export const NumberInput = vi.fn(
@@ -512,15 +530,29 @@ export const NavLink = vi.fn(
 		label,
 		href,
 		active,
+		rightSection,
+		classNames,
 		'data-testid': testId,
+		...props
 	}: WithChildren & {
 		label?: React.ReactNode;
 		href?: string;
 		active?: boolean;
 		component?: string;
+		rightSection?: React.ReactNode;
+		classNames?: Record<string, string>;
+		'data-testid'?: string;
+		[key: string]: unknown;
 	}) => (
-		<a href={href} data-active={active || undefined} data-testid={testId}>
-			{label}
+		<a
+			href={href}
+			data-active={active || undefined}
+			data-testid={testId}
+			className={classNames?.root}
+			{...props}
+		>
+			<span className={classNames?.label}>{label}</span>
+			<span className={classNames?.section}>{rightSection}</span>
 			{children}
 		</a>
 	),

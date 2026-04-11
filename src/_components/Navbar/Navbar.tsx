@@ -2,31 +2,25 @@
 
 import { useSelectedLayoutSegment } from 'next/navigation';
 
-import { Divider } from '@mantine/core';
 import { IconBook, IconCalendarWeek } from '@tabler/icons-react';
 
 import { NavLink } from '@/_components/NavLink';
 
-import { PlannerSwitcher } from './PlannerSwitcher';
+import { PlannerContextSection } from './PlannerContextSection';
 
 type PlannerItem = { id: string; name: string };
 
 type Props = {
 	id: string;
-	planners?: PlannerItem[];
+	planners: PlannerItem[];
 };
 
-export const Navbar = ({ id, planners = [] }: Props) => {
+export const Navbar = ({ id, planners }: Props) => {
 	const segment = useSelectedLayoutSegment();
 
 	return (
 		<>
-			{planners.length > 0 && (
-				<>
-					<PlannerSwitcher currentId={id} planners={planners} />
-					<Divider />
-				</>
-			)}
+			<PlannerContextSection currentId={id} planners={planners} />
 			<NavLink
 				active={segment === 'calendar'}
 				href={`/${id}/calendar`}

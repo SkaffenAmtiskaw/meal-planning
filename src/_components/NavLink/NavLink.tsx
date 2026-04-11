@@ -11,7 +11,6 @@ type Props = {
 	active?: boolean;
 	href: string;
 	leftSection?: React.ReactNode;
-	labelClassName?: string;
 	onClick?: () => void;
 };
 
@@ -20,15 +19,14 @@ export const NavLink = ({
 	active,
 	href,
 	leftSection,
-	labelClassName,
 	onClick,
 	...others
 }: Props) => (
 	<MantineNavLink
 		component={Link}
-		className={styles.navLink}
 		classNames={{
-			label: labelClassName ?? styles.navLinkLabel,
+			root: styles.navLink,
+			label: styles.navLinkLabel,
 		}}
 		active={active}
 		href={href}

@@ -1,0 +1,35 @@
+.trigger {
+	color: var(--mantine-color-navy-5) !important;
+	font-weight: 600;
+}
+
+.trigger:hover {
+	background-color: color-mix(
+		in srgb,
+		var(--mantine-color-forest-5) 12%,
+		transparent
+	) !important;
+}
+
+.plannerName {
+	color: var(--mantine-color-navy-5);
+	font-weight: 600;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+.chevron {
+	color: var(--mantine-color-forest-5);
+}
+
+.staticLabel {
+	color: var(--mantine-color-navy-5) !important;
+	font-weight: 600;
+	cursor: default;
+}
+
+.staticLabelText {
+	color: var(--mantine-color-navy-5);
+	font-weight: 600;
+}

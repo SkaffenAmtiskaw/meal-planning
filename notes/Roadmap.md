@@ -6,7 +6,6 @@
 # High-Priority
 
 ## Style Improvements
-- [[Navbar Refinements|navbar refinements]]
 - recipe list style updates
 - [[Style Fixes|fixes]]
 ## Calendar Page

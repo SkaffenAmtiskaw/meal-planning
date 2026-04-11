@@ -31,8 +31,8 @@ vi.mock('next/navigation', () => ({
 	useSelectedLayoutSegment: vi.fn(),
 }));
 
-vi.mock('./PlannerSwitcher', () => ({
-	PlannerSwitcher: ({
+vi.mock('./PlannerContextSection', () => ({
+	PlannerContextSection: ({
 		currentId,
 		planners,
 	}: {
@@ -40,7 +40,7 @@ vi.mock('./PlannerSwitcher', () => ({
 		planners: { id: string; name: string }[];
 	}) => (
 		<div
-			data-testid="planner-switcher"
+			data-testid="planner-context-section"
 			data-current-id={currentId}
 			data-planner-count={planners.length}
 		/>
@@ -54,8 +54,9 @@ describe('Navbar', () => {
 
 	test('renders calendar and recipes links', () => {
 		vi.mocked(useSelectedLayoutSegment).mockReturnValue(null);
+		const planners = [{ id: 'gaston-planner-1', name: 'Planner 1' }];
 
-		render(<Navbar id="gaston-planner-1" />);
+		render(<Navbar id="gaston-planner-1" planners={planners} />);
 
 		expect(screen.getByText('Calendar')).toBeDefined();
 		expect(screen.getByText('Recipes')).toBeDefined();
@@ -63,8 +64,9 @@ describe('Navbar', () => {
 
 	test('links point to correct paths using the given planner id', () => {
 		vi.mocked(useSelectedLayoutSegment).mockReturnValue(null);
+		const planners = [{ id: 'gaston-planner-1', name: 'Planner 1' }];
 
-		render(<Navbar id="gaston-planner-1" />);
+		render(<Navbar id="gaston-planner-1" planners={planners} />);
 
 		expect(
 			screen.getByRole('link', { name: /calendar/i }).getAttribute('href'),
@@ -76,8 +78,9 @@ describe('Navbar', () => {
 
 	test('calendar link is active when on the calendar segment', () => {
 		vi.mocked(useSelectedLayoutSegment).mockReturnValue('calendar');
+		const planners = [{ id: 'gaston-planner-1', name: 'Planner 1' }];
 
-		render(<Navbar id="gaston-planner-1" />);
+		render(<Navbar id="gaston-planner-1" planners={planners} />);
 
 		expect(
 			screen
@@ -93,8 +96,9 @@ describe('Navbar', () => {
 
 	test('recipes link is active when on the recipes segment', () => {
 		vi.mocked(useSelectedLayoutSegment).mockReturnValue('recipes');
+		const planners = [{ id: 'gaston-planner-1', name: 'Planner 1' }];
 
-		render(<Navbar id="gaston-planner-1" />);
+		render(<Navbar id="gaston-planner-1" planners={planners} />);
 
 		expect(
 			screen
@@ -108,22 +112,33 @@ describe('Navbar', () => {
 		).toBeFalsy();
 	});
 
-	test('does not render PlannerSwitcher when no planners given', () => {
-		vi.mocked(useSelectedLayoutSegment).mockReturnValue(null);
-
-		render(<Navbar id="gaston-planner-1" />);
-
-		expect(screen.queryByTestId('planner-switcher')).toBeNull();
-	});
-
-	test('renders PlannerSwitcher when planners are given', () => {
+	test('renders PlannerContextSection with correct props', () => {
 		vi.mocked(useSelectedLayoutSegment).mockReturnValue(null);
 		const planners = [{ id: 'p1', name: 'Planner 1' }];
 
 		render(<Navbar id="p1" planners={planners} />);
 
-		const switcher = screen.getByTestId('planner-switcher');
-		expect(switcher.getAttribute('data-current-id')).toBe('p1');
-		expect(switcher.getAttribute('data-planner-count')).toBe('1');
+		const contextSection = screen.getByTestId('planner-context-section');
+		expect(contextSection.getAttribute('data-current-id')).toBe('p1');
+		expect(contextSection.getAttribute('data-planner-count')).toBe('1');
+	});
+
+	test('PlannerContextSection is always rendered', () => {
+		vi.mocked(useSelectedLayoutSegment).mockReturnValue(null);
+		const planners = [{ id: 'any-id', name: 'Any Planner' }];
+
+		render(<Navbar id="any-id" planners={planners} />);
+
+		expect(screen.getByTestId('planner-context-section')).toBeDefined();
+	});
+
+	test('does not render Divider', () => {
+		vi.mocked(useSelectedLayoutSegment).mockReturnValue(null);
+		const planners = [{ id: 'any-id', name: 'Any Planner' }];
+
+		render(<Navbar id="any-id" planners={planners} />);
+
+		const dividers = document.querySelectorAll('[data-mantine-dividider]');
+		expect(dividers.length).toBe(0);
 	});
 });
