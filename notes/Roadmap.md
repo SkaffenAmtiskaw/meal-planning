@@ -1,10 +1,6 @@
 *Note: These should ALWAYS be planned and implemented individually. They are discrete units of work.*
 
 **AI Instructions** - DO NOT delete this file. You may remove lines, but under no circumstances may you delete the file.
-
-# Bugs
-- back button from `/settings` is broken
-
 # Refactors
 - should emails be moved from `_auth/`?
 

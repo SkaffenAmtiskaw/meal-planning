@@ -22,10 +22,10 @@ const Layout = async ({ children }: { children: React.ReactNode }) => {
 	const parsed = zObjectId.safeParse(lastPlannerId);
 	const plannerId =
 		parsed.success &&
-		planners.some((p) => String(p) === lastPlannerId) &&
+		planners.some((p) => String(p.planner) === lastPlannerId) &&
 		lastPlannerId
 			? lastPlannerId
-			: String(planners[0]);
+			: String(planners[0].planner);
 
 	return (
 		<AppShell header={{ height: HEADER_HEIGHT }}>
