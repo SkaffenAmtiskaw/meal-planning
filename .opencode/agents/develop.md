@@ -1,5 +1,6 @@
 ---
 description: Develops modules with TDD
+color: '#caffbf'
 mode: subagent
 model: opencode-go/minimax-m2.7
 temperature: 0.3

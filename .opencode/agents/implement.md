@@ -1,5 +1,6 @@
 ---
 description: Implements feature plans
+color: '#fdffb6'
 mode: primary
 model: opencode-go/glm-5.1
 temperature: 0.5

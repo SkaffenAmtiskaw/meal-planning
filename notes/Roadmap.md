@@ -46,8 +46,10 @@
 - add images to recipes
 - group ingredients when adding/editing a recipe
 - when adding/editing a recipe, make the instructions expand if you type more than a line
+- skip to content
+- keyboard shortcuts
 ## Misc
-- tag management - edit/delete (should live under user settings)
+- [[Tag Management|tag management - edit/delete]] (should live under planner settings)
 - performance - investigate mongo/mongoose caching - is next doing it already or do we need to implement it?
 - a11y audit
 - security - string validation on inputs
