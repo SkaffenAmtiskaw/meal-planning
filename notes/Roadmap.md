@@ -1,12 +1,9 @@
 *Note: These should ALWAYS be planned and implemented individually. They are discrete units of work.*
 
 **AI Instructions** - DO NOT delete this file. You may remove lines, but under no circumstances may you delete the file.
-# Refactors
-- should emails be moved from `_auth/`?
 # High-Priority
 
 ## Style Improvements
-- recipe list style updates
 - [[Style Fixes|fixes]]
 ## Calendar Page
 - [[Render Calendar List View|render list view]]
@@ -23,6 +20,8 @@
 ## Planner Settings
 - [[Shared Planners|allow users to invite other users to a shared planner]]
 - allow user to delete a planner
+# Refactors
+- [[Email Improvements|email improvements]]
 
 # Medium Priority
 

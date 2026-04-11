@@ -15,3 +15,4 @@
 
 # Recipes Page
 - Tags on recipe page (and recipe input) do not use tag colors
+- Recipe/bookmarks should have more space between them - add a divider as well
