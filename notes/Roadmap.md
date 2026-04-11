@@ -2,12 +2,15 @@
 
 **AI Instructions** - DO NOT delete this file. You may remove lines, but under no circumstances may you delete the file.
 
+# Bugs
+- back button from `/settings` is broken
+
 # High-Priority
 
 ## Style Improvements
 - [[Theme Colors & Style Update|theme colors]]
 - recipe list style updates
-- [[style fixes|fixes]]
+- [[Style Fixes|fixes]]
 ## Calendar Page
 - [[Render List View|render list view]]
 - [[Render Month Agenda View (Mobile)|render (or verify) meals in month agenda view (mobile)]]
