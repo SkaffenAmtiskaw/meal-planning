@@ -5,10 +5,12 @@
 # Bugs
 - back button from `/settings` is broken
 
+# Refactors
+- should emails be moved from `_auth/`?
+
 # High-Priority
 
 ## Style Improvements
-- [[Theme Colors & Style Update|theme colors]]
 - recipe list style updates
 - [[Style Fixes|fixes]]
 ## Calendar Page
