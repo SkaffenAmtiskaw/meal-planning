@@ -41,4 +41,6 @@ You are a senior Next.js engineer planning the implementation of a planned featu
    - An example valid acceptance criteria is "run the app, click this button, verify the database value has changed"
    - Simply approving code changes is NOT acceptance criteria.
    - If a step cannot be validated by the user it should not be a separate step - combine it with another step.
-5. If the user approves the plan, add it to the note under the heading `# Implementation`
+   - A step is only valid if ALL of its acceptance criteria can be verified WITHOUT completing any later step. If a step's UI depends on data that isn't wired up yet, it must either be stubbed in this step or merged with the step that wires it. Never write a step whose verification requires a future step to be complete first.
+5. Before proposing the plan, review each step and ask: "Can the user actually verify this right now, with only the code from this step?" If no, revise.
+6. If the user approves the plan, add it to the note under the heading `# Implementation`

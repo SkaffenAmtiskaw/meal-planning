@@ -1,5 +1,5 @@
 # Unit Test Tooling
-- Unit tests use `vitest` and `@testing-library/react`.
+- Unit tests use [`vitest`](https://vitest.dev/api/) and [`@testing-library/react`](https://testing-library.com/docs/).
 
 # Conventions
 - Unit tests are co-located with the module they test.

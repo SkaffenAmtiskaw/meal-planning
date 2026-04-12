@@ -2,9 +2,12 @@
 description: Implements feature plans
 color: '#ffd23f'
 mode: primary
-model: opencode-go/glm-5.1
+model: opencode-go/kimi-k2.5
 temperature: 0.4
 permissions:
+   edit:
+      "*": deny
+      "*.index.ts": allow
    webfetch:
       "*": ask
       "https://mantine.dev/llms.txt": allow
@@ -50,6 +53,7 @@ Repeat the following loop for each step in the plan, in order. Do not begin the 
    - **Interface spec** — the full TypeScript interface the module must satisfy (types, signatures, props)
    - **Dependency manifest** — every import the module needs, with either the real file path or a stub. Stubs are your responsibility, not the subagent's.
    - **Behavior spec** — what the module must do, as a list of behaviors (not implementation steps)
+   - **Test Skeleton** — the describe block, and it-block names
    - **Constraints** — what the module must not do; note if it is a React component, hook, or Next.js server component and any relevant conventions
 
 3. **Review results** — When `@develop` returns, verify:
