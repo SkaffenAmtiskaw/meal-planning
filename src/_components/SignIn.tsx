@@ -157,6 +157,7 @@ export const SignIn = () => {
 					<Button
 						variant="subtle"
 						size="xs"
+						c="forest"
 						onClick={resetToIdle}
 						data-testid="change-email-button"
 					>
@@ -175,6 +176,7 @@ export const SignIn = () => {
 						</Alert>
 					)}
 					<Button
+						variant="cta"
 						data-testid="sign-in-button"
 						loading={signInBtn.loading}
 						onClick={handleSignIn}
@@ -206,6 +208,7 @@ export const SignIn = () => {
 					<Button
 						variant="subtle"
 						size="xs"
+						c="forest"
 						onClick={resetToIdle}
 						data-testid="change-email-button"
 					>
@@ -231,6 +234,7 @@ export const SignIn = () => {
 						</Alert>
 					)}
 					<Button
+						variant="cta"
 						data-testid="sign-up-button"
 						loading={signUpBtn.loading}
 						onClick={handleSignUp}
@@ -245,6 +249,7 @@ export const SignIn = () => {
 					<Button
 						variant="subtle"
 						size="xs"
+						c="forest"
 						onClick={resetToIdle}
 						data-testid="change-email-button"
 					>

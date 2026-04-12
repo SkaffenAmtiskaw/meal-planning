@@ -1,9 +1,15 @@
 .navLink {
+	/* biome-ignore lint/complexity/noImportantStyles: Mantine NavLink applies high-specificity
+	   color via data attributes; forest green (forest-5) is required per theme.md nav rules */
 	color: var(--mantine-color-forest-5) !important;
 }
 
 .navLink[data-active] {
+	/* biome-ignore lint/complexity/noImportantStyles: Mantine NavLink applies high-specificity
+	   bg; forest green bg is required per theme.md active nav styling */
 	background-color: var(--mantine-color-forest-5) !important;
+	/* biome-ignore lint/complexity/noImportantStyles: Mantine NavLink applies high-specificity
+	   color; white text is required per theme.md active nav styling */
 	color: var(--mantine-color-white) !important;
 }
 
@@ -12,14 +18,16 @@
 		in srgb,
 		var(--mantine-color-forest-5) 12%,
 		transparent
+		/* biome-ignore lint/complexity/noImportantStyles: Mantine NavLink hover applies high-specificity
+	   bg; 12% forest tint is required per theme.md nav hover styling */
 	) !important;
 }
 
 .navLink[data-active]:hover {
+	/* biome-ignore lint/complexity/noImportantStyles: Mantine NavLink applies high-specificity
+	   bg; forest-6 is required per theme.md active nav hover styling */
 	background-color: var(--mantine-color-forest-6) !important;
+	/* biome-ignore lint/complexity/noImportantStyles: Mantine NavLink applies high-specificity
+	   color; white text is required per theme.md active nav hover styling */
 	color: var(--mantine-color-white) !important;
-}
-
-.navLinkLabel {
-	font-weight: 500;
 }

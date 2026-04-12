@@ -2,13 +2,17 @@ import { render, screen } from '@testing-library/react';
 
 import { describe, expect, test, vi } from 'vitest';
 
+import type { TagColor } from '@/_theme/colors';
+
 import { SavedList } from './SavedList';
 
 vi.mock('@mantine/core', async () => await import('@mocks/@mantine/core'));
 
 vi.mock('@/_components', () => ({
-	FullWidthListItem: ({ children }: { children: React.ReactNode }) => (
-		<li>{children}</li>
+	Tag: ({ children, color }: { children: React.ReactNode; color: string }) => (
+		<span data-testid="badge" data-color={color}>
+			{children}
+		</span>
 	),
 }));
 
@@ -71,7 +75,7 @@ const makeBookmark = (id: string, name: string, url: string) => ({
 	tags: [],
 });
 
-const makeTag = (id: string, name: string, color: string) => ({
+const makeTag = (id: string, name: string, color: TagColor) => ({
 	_id: id as never,
 	name,
 	color,
@@ -82,7 +86,7 @@ describe('SavedList', () => {
 		const { container } = render(
 			<SavedList items={[]} plannerId={plannerId} tags={[]} />,
 		);
-		expect(container.querySelector('ul')).toBeDefined();
+		expect(container.querySelector('div')).toBeDefined();
 	});
 
 	test('renders recipe name as internal link', () => {
@@ -182,17 +186,17 @@ describe('SavedList', () => {
 
 	test('renders badges for matching tags on a recipe', () => {
 		const tagId = '507f1f77bcf86cd799439020';
-		const tag = makeTag(tagId, 'Vegetarian', '#00aa00');
+		const tag = makeTag(tagId, 'Vegetarian', 'fern');
 		const recipe = makeRecipe('507f1f77bcf86cd799439012', 'Salad', [tagId]);
 		render(<SavedList items={[recipe]} plannerId={plannerId} tags={[tag]} />);
 
 		const badge = screen.getByTestId('badge');
 		expect(badge.textContent).toBe('Vegetarian');
-		expect(badge.getAttribute('data-color')).toBe('#00aa00');
+		expect(badge.getAttribute('data-color')).toBe('fern');
 	});
 
 	test('renders no badges when item has no matching tags', () => {
-		const tag = makeTag('507f1f77bcf86cd799439020', 'Vegetarian', '#00aa00');
+		const tag = makeTag('507f1f77bcf86cd799439020', 'Vegetarian', 'fern');
 		const recipe = makeRecipe('507f1f77bcf86cd799439012', 'Salad');
 		render(<SavedList items={[recipe]} plannerId={plannerId} tags={[tag]} />);
 
@@ -200,7 +204,7 @@ describe('SavedList', () => {
 	});
 
 	test('renders no badges when item tags is undefined', () => {
-		const tag = makeTag('507f1f77bcf86cd799439020', 'Vegetarian', '#00aa00');
+		const tag = makeTag('507f1f77bcf86cd799439020', 'Vegetarian', 'fern');
 		const recipe = {
 			...makeRecipe('507f1f77bcf86cd799439012', 'Salad'),
 			tags: undefined,
@@ -217,8 +221,8 @@ describe('SavedList', () => {
 	});
 
 	test('renders multiple badges when item has multiple matching tags', () => {
-		const tag1 = makeTag('507f1f77bcf86cd799439020', 'Vegetarian', '#00aa00');
-		const tag2 = makeTag('507f1f77bcf86cd799439021', 'Quick', '#0000aa');
+		const tag1 = makeTag('507f1f77bcf86cd799439020', 'Vegetarian', 'fern');
+		const tag2 = makeTag('507f1f77bcf86cd799439021', 'Quick', 'steel');
 		const recipe = makeRecipe('507f1f77bcf86cd799439012', 'Salad', [
 			'507f1f77bcf86cd799439020',
 			'507f1f77bcf86cd799439021',
@@ -229,5 +233,52 @@ describe('SavedList', () => {
 
 		const badges = screen.getAllByTestId('badge');
 		expect(badges).toHaveLength(2);
+	});
+
+	test('renders no divider when there is only one item', () => {
+		const recipe = makeRecipe(
+			'507f1f77bcf86cd799439012',
+			"Maleficent's Dragon Roast",
+		);
+		render(<SavedList items={[recipe]} plannerId={plannerId} tags={[]} />);
+
+		const dividers = screen.queryAllByRole('separator');
+		expect(dividers).toHaveLength(0);
+	});
+
+	test('renders a divider between items', () => {
+		const items = [
+			makeRecipe('507f1f77bcf86cd799439012', "Maleficent's Dragon Roast"),
+			makeRecipe('507f1f77bcf86cd799439013', "Ursula's Sea Witch Soup"),
+		];
+		render(<SavedList items={items} plannerId={plannerId} tags={[]} />);
+
+		const dividers = screen.getAllByRole('separator');
+		expect(dividers).toHaveLength(1);
+	});
+
+	test('renders dividers between each pair of items', () => {
+		const items = [
+			makeRecipe('507f1f77bcf86cd799439012', "Maleficent's Dragon Roast"),
+			makeRecipe('507f1f77bcf86cd799439013', "Ursula's Sea Witch Soup"),
+			makeRecipe('507f1f77bcf86cd799439014', "Gaston's Baguette"),
+		];
+		render(<SavedList items={items} plannerId={plannerId} tags={[]} />);
+
+		const dividers = screen.getAllByRole('separator');
+		expect(dividers).toHaveLength(2);
+	});
+
+	test('renders items inside a Stack container', () => {
+		const recipe = makeRecipe(
+			'507f1f77bcf86cd799439012',
+			"Maleficent's Dragon Roast",
+		);
+		const { container } = render(
+			<SavedList items={[recipe]} plannerId={plannerId} tags={[]} />,
+		);
+
+		const stackContainer = container.firstElementChild;
+		expect(stackContainer?.getAttribute('data-orientation')).toBe('vertical');
 	});
 });

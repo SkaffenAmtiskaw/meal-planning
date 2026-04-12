@@ -4,6 +4,7 @@ import {
 	EMBER_RAMPS,
 	getMealColor,
 	NAVY_RAMPS,
+	TAG_COLOR_NAMES,
 	TAG_COLORS,
 	THEME_COLORS,
 } from './colors';
@@ -56,6 +57,28 @@ describe('TAG_COLORS', () => {
 			expect(color.text).toMatch(/^#[0-9A-Fa-f]{6}$/);
 			expect(color.border).toMatch(/^#[0-9A-Fa-f]{6}$/);
 		}
+	});
+});
+
+describe('TAG_COLOR_NAMES', () => {
+	it('is exported and is an array', () => {
+		expect(Array.isArray(TAG_COLOR_NAMES)).toBe(true);
+	});
+
+	it('contains exactly 10 entries', () => {
+		expect(TAG_COLOR_NAMES).toHaveLength(10);
+	});
+
+	it('each entry is a key of TAG_COLORS', () => {
+		const tagColorKeys = Object.keys(TAG_COLORS);
+		for (const name of TAG_COLOR_NAMES) {
+			expect(tagColorKeys).toContain(name);
+		}
+	});
+
+	it('the first entry is tangerine and the last is slate', () => {
+		expect(TAG_COLOR_NAMES[0]).toBe('tangerine');
+		expect(TAG_COLOR_NAMES[9]).toBe('slate');
 	});
 });
 

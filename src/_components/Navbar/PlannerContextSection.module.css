@@ -1,4 +1,6 @@
 .trigger {
+	/* biome-ignore lint/complexity/noImportantStyles: Mantine UnstyledButton applies high-specificity
+	   color; navy (navy-5) is required per theme.md planner context styling */
 	color: var(--mantine-color-navy-5) !important;
 	font-weight: 600;
 }
@@ -8,6 +10,8 @@
 		in srgb,
 		var(--mantine-color-forest-5) 12%,
 		transparent
+		/* biome-ignore lint/complexity/noImportantStyles: Mantine UnstyledButton hover applies high-specificity
+	   bg; 12% forest tint is required per theme.md hover styling */
 	) !important;
 }
 
@@ -24,6 +28,8 @@
 }
 
 .staticLabel {
+	/* biome-ignore lint/complexity/noImportantStyles: Mantine UnstyledButton applies high-specificity
+	   color; navy (navy-5) is required per theme.md static label styling */
 	color: var(--mantine-color-navy-5) !important;
 	font-weight: 600;
 	cursor: default;

@@ -62,6 +62,7 @@ export const CreatePlannerForm = ({ opened, onClose }: Props) => {
 						Cancel
 					</Button>
 					<Button
+						variant="cta"
 						loading={loading}
 						data-testid="create-planner-button"
 						onClick={handleCreate}

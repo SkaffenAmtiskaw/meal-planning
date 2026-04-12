@@ -318,7 +318,7 @@ describe('RecipeDetail', () => {
 			<RecipeDetail
 				{...defaultProps}
 				recipe={{ ...baseRecipe, tags: ['tag-1' as never] }}
-				tags={[{ _id: 'tag-1' as never, name: 'Spicy', color: 'red' }]}
+				tags={[{ _id: 'tag-1' as never, name: 'Spicy', color: 'tangerine' }]}
 			/>,
 		);
 		expect(
@@ -330,7 +330,7 @@ describe('RecipeDetail', () => {
 		render(
 			<RecipeDetail
 				{...defaultProps}
-				tags={[{ _id: 'tag-1' as never, name: 'Spicy', color: 'red' }]}
+				tags={[{ _id: 'tag-1' as never, name: 'Spicy', color: 'tangerine' }]}
 			/>,
 		);
 		expect(

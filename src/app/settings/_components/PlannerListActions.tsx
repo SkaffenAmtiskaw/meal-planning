@@ -12,6 +12,7 @@ export const PlannerListActions = () => {
 	return (
 		<>
 			<Button
+				variant="cta"
 				visibleFrom="sm"
 				leftSection={<IconPlus size={16} />}
 				onClick={open}

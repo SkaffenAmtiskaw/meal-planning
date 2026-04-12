@@ -107,7 +107,7 @@ export const NAVY_RAMPS: [
 	'#101D29',
 ];
 
-const TAG_COLOR_NAMES = Object.keys(TAG_COLORS) as TagColor[];
+export const TAG_COLOR_NAMES = Object.keys(TAG_COLORS) as TagColor[];
 
 export function getMealColor(title: string): TagColor {
 	let hash = 0;

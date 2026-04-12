@@ -9,5 +9,11 @@
     "plan": {
       "disable": true
     }
+  },
+  "permission": {
+    "edit": {
+      "biome.json*": "ask",
+      "vitest.config.ts": "ask"
+    }
   }
 }

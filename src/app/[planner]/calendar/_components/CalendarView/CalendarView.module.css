@@ -10,9 +10,11 @@
 }
 
 .calendarWrapper :global(.sx__month-grid-day__header-date--today) {
-	/* biome-ignore lint/complexity/noImportantStyles: Override Schedule-X calendar inline styles */
+	/* biome-ignore lint/complexity/noImportantStyles: Schedule-X applies inline styles with high
+	   specificity; navy bg is required per theme.md today badge */
 	background-color: #1c3144 !important;
-	/* biome-ignore lint/complexity/noImportantStyles: Override Schedule-X calendar inline styles */
+	/* biome-ignore lint/complexity/noImportantStyles: Schedule-X applies inline styles with high
+	   specificity; white text is required per theme.md today badge */
 	color: #ffffff !important;
 }
 

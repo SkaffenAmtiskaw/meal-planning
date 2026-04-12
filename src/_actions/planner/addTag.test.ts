@@ -25,7 +25,7 @@ const makePlanner = (existingCount = 0) => ({
 	tags: Array.from({ length: existingCount }, (_, i) => ({
 		_id: new Types.ObjectId(),
 		name: `Tag ${i}`,
-		color: 'red',
+		color: 'tangerine',
 	})),
 });
 
@@ -60,7 +60,7 @@ describe('addTag', () => {
 		expect(result).toEqual({ ok: false, error: 'Planner not found' });
 	});
 
-	test('assigns the first COLORS entry to the first tag', async () => {
+	test('assigns the first TAG_COLOR_NAMES entry to the first tag', async () => {
 		vi.mocked(checkAuth).mockResolvedValue({ type: 'authorized' });
 		vi.mocked(Planner.findById).mockResolvedValue(makePlanner(0) as never);
 		vi.mocked(Planner.collection.updateOne).mockResolvedValue({} as never);
@@ -68,19 +68,19 @@ describe('addTag', () => {
 		const result = await addTag(plannerId, 'Spicy');
 
 		expect(result.ok).toBe(true);
-		if (result.ok) expect(result.data.color).toBe('red');
+		if (result.ok) expect(result.data.color).toBe('tangerine');
 	});
 
-	test('cycles through COLORS based on existing tag count', async () => {
+	test('cycles through TAG_COLOR_NAMES based on existing tag count', async () => {
 		vi.mocked(checkAuth).mockResolvedValue({ type: 'authorized' });
-		// 3 existing tags → 4th color = 'violet'
+		// 3 existing tags → 4th color = 'fern' (index 3)
 		vi.mocked(Planner.findById).mockResolvedValue(makePlanner(3) as never);
 		vi.mocked(Planner.collection.updateOne).mockResolvedValue({} as never);
 
 		const result = await addTag(plannerId, 'New');
 
 		expect(result.ok).toBe(true);
-		if (result.ok) expect(result.data.color).toBe('violet');
+		if (result.ok) expect(result.data.color).toBe('fern');
 	});
 
 	test('calls collection.updateOne with $push', async () => {
@@ -97,7 +97,7 @@ describe('addTag', () => {
 					tags: expect.objectContaining({
 						_id: expect.any(Types.ObjectId),
 						name: 'Quick',
-						color: 'red',
+						color: 'tangerine',
 					}),
 				},
 			},
@@ -114,7 +114,7 @@ describe('addTag', () => {
 		expect(result.ok).toBe(true);
 		if (result.ok) {
 			expect(result.data.name).toBe('Quick');
-			expect(result.data.color).toBe('red');
+			expect(result.data.color).toBe('tangerine');
 			expect(result.data._id).toMatch(/^[0-9a-f]{24}$/);
 		}
 	});

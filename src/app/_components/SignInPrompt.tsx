@@ -30,7 +30,7 @@ export const SignInPrompt = () => {
 					h={50}
 					fit="contain"
 				/>
-				<Text c="#1C3144" ta="center">
+				<Text ta="center">
 					In order to use the meal planner, you must sign in.
 				</Text>
 				<SignIn />

@@ -1,11 +1,12 @@
 import Link from 'next/link';
 
-import { Anchor, Badge, Group, List } from '@mantine/core';
+import { Anchor, Divider, Group, Stack } from '@mantine/core';
 
-import { FullWidthListItem } from '@/_components';
+import { Tag } from '@/_components';
 import type { BookmarkInterface } from '@/_models/planner/bookmark';
 import type { RecipeInterface } from '@/_models/planner/recipe';
 import type { TagInterface } from '@/_models/planner/tag.types';
+import type { TagColor } from '@/_theme/colors';
 
 import { DeleteBookmarkButton } from './DeleteBookmarkButton';
 import { DeleteRecipeButton } from './DeleteRecipeButton';
@@ -23,15 +24,16 @@ const isBookmark = (
 ): item is BookmarkInterface => !!(item as BookmarkInterface).url;
 
 const SavedList = ({ items, plannerId, tags }: Props) => (
-	<List listStyleType="none">
-		{items.map((item) => {
+	<Stack gap={0}>
+		{items.map((item, index) => {
 			const itemTags = (item.tags ?? [])
 				.map((id) => tags.find((t) => String(t._id) === String(id)))
 				.filter((t): t is TagInterface => t !== undefined);
 
 			return (
-				<FullWidthListItem key={`${item._id}`}>
-					<Group justify="space-between">
+				<div key={`${item._id}`}>
+					{index > 0 && <Divider />}
+					<Group justify="space-between" py="xs">
 						<div className={classes.titleTags}>
 							{isBookmark(item) ? (
 								<Anchor
@@ -49,9 +51,9 @@ const SavedList = ({ items, plannerId, tags }: Props) => (
 							{itemTags.length > 0 && (
 								<Group gap="xs">
 									{itemTags.map((tag) => (
-										<Badge key={`${tag._id}`} color={tag.color} variant="light">
+										<Tag key={`${tag._id}`} color={tag.color as TagColor}>
 											{tag.name}
-										</Badge>
+										</Tag>
 									))}
 								</Group>
 							)}
@@ -73,10 +75,10 @@ const SavedList = ({ items, plannerId, tags }: Props) => (
 							)}
 						</Group>
 					</Group>
-				</FullWidthListItem>
+				</div>
 			);
 		})}
-	</List>
+	</Stack>
 );
 
 export { SavedList };

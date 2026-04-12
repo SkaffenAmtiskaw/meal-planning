@@ -114,9 +114,13 @@ export const SimpleGrid = vi.fn(({ children, 'data-testid': testId }: WithChildr
 	<div data-testid={testId}>{children}</div>
 ));
 
-export const Stack = vi.fn(({ children, 'data-testid': testId }: WithChildren) => (
-	<div data-testid={testId}>{children}</div>
-));
+export const Stack = vi.fn(
+	({ children, 'data-testid': testId }: WithChildren & { 'data-orientation'?: string }) => (
+		<div data-orientation="vertical" data-testid={testId}>
+			{children}
+		</div>
+	),
+);
 
 // ─── Grid (compound) ─────────────────────────────────────────────────────────
 

@@ -39,7 +39,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
 				className={`${inter.className} ${roboto.variable}`}
 				style={{ height: '100vh' }}
 			>
-				<MantineProvider defaultColorScheme="auto" theme={theme}>
+				<MantineProvider defaultColorScheme="light" theme={theme}>
 					<OneTapSignInWrapper>{children}</OneTapSignInWrapper>
 				</MantineProvider>
 			</body>

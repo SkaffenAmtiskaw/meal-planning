@@ -8,3 +8,5 @@ export * from './StringArrayInput';
 export * from './SubmitButton';
 export * from './TagCombobox';
 export * from './UserMenu';
+
+export * from './Tag/Tag';
