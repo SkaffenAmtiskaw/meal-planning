@@ -3,8 +3,7 @@
 **AI Instructions** - DO NOT delete this file. You may remove lines, but under no circumstances may you delete the file.
 # High-Priority
 
-## Style Improvements
-- [[Style Fixes|fixes]]
+
 ## Calendar Page
 - evaluate schedule-x in light of DND moving to paid
 - [[Render Calendar List View|render list view]]
@@ -21,7 +20,8 @@
 ## Planner Settings
 - [[Shared Planners|allow users to invite other users to a shared planner]]
 - allow user to delete a planner
-# Refactors
+## Misc
+- [[Style Fixes|style fixes]]
 - [[Email Improvements|email improvements]]
 
 # Medium Priority
