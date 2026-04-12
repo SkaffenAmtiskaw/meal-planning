@@ -15,7 +15,9 @@ export const AddItemDropdown = () => {
 	return (
 		<Menu>
 			<Menu.Target>
-				<Button leftSection={<IconPlus />}>Add Item</Button>
+				<Button leftSection={<IconPlus />} variant="cta">
+					Add Item
+				</Button>
 			</Menu.Target>
 			<Menu.Dropdown>
 				<Menu.Item

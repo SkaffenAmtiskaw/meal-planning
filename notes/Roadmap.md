@@ -2,10 +2,7 @@
 
 **AI Instructions** - DO NOT delete this file. You may remove lines, but under no circumstances may you delete the file.
 # High-Priority
-
-
 ## Calendar Page
-- evaluate schedule-x in light of DND moving to paid
 - [[Render Calendar List View|render list view]]
 - [[Render Month Agenda View (Mobile)|render (or verify) meals in month agenda view (mobile)]]
 - [[Replace Calendar Header|replace header]]
@@ -36,8 +33,7 @@
 - batch delete meals
 - batch delete recipes/bookmarks
 - allow notes in recipe/bookmarks to render basic markdown - assess if other fields should too
-- move meals to different days (drag and drop)
-- reorder meals within days
+- [[Calendar DND|move meals to different days (drag and drop) & reorder meals within days]]
 - add images to recipes
 - group ingredients when adding/editing a recipe
 - when adding/editing a recipe, make the instructions expand if you type more than a line
