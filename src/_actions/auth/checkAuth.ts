@@ -5,7 +5,7 @@ import type { AccessLevel } from '@/_models/user';
 import { catchify } from '@/_utils/catchify';
 
 type AuthResult =
-	| { type: 'authorized' }
+	| { type: 'authorized'; accessLevel: AccessLevel }
 	| { type: 'unauthenticated' }
 	| { type: 'unauthorized' }
 	| { type: 'error'; error: Error };
@@ -40,5 +40,5 @@ export const checkAuth = async (
 		return { type: 'unauthorized' };
 	}
 
-	return { type: 'authorized' };
+	return { type: 'authorized', accessLevel: membership.accessLevel };
 };

@@ -25,8 +25,14 @@ const { mockUseFormFeedback } = vi.hoisted(() => {
 	return { mockUseFormFeedback };
 });
 
+const mockUseCanWrite = vi.fn();
+
 vi.mock('@/_hooks', () => ({
 	useFormFeedback: () => mockUseFormFeedback(),
+}));
+
+vi.mock('@/app/[planner]/_components', () => ({
+	useCanWrite: () => mockUseCanWrite(),
 }));
 
 vi.mock('@mantine/core', async () => await import('@mocks/@mantine/core'));
@@ -79,6 +85,7 @@ const defaultFormFeedback = () => ({
 
 beforeEach(() => {
 	mockUseFormFeedback.mockImplementation(defaultFormFeedback);
+	mockUseCanWrite.mockReturnValue(true);
 	vi.clearAllMocks();
 });
 
@@ -162,5 +169,17 @@ describe('DeleteItemButton', () => {
 		render(<DeleteItemButton {...defaultProps} />);
 		fireEvent.click(screen.getByTestId('delete-button'));
 		expect(screen.getByTestId('modal-error').textContent).toBe('Delete failed');
+	});
+
+	test('does not render when user has read-only access', () => {
+		mockUseCanWrite.mockReturnValue(false);
+		render(<DeleteItemButton {...defaultProps} />);
+		expect(screen.queryByTestId('delete-button')).toBeNull();
+	});
+
+	test('renders when user has write access', () => {
+		mockUseCanWrite.mockReturnValue(true);
+		render(<DeleteItemButton {...defaultProps} />);
+		expect(screen.getByTestId('delete-button')).toBeDefined();
 	});
 });

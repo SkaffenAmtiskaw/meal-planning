@@ -8,6 +8,7 @@ import { IconTrash } from '@tabler/icons-react';
 
 import { useFormFeedback } from '@/_hooks';
 import type { ActionResult } from '@/_utils/actionResult';
+import { useCanWrite } from '@/app/[planner]/_components';
 
 import { DeleteConfirmModal } from './DeleteConfirmModal';
 
@@ -29,6 +30,11 @@ const DeleteItemButton = ({
 	const { status, errorMessage, wrap } = useFormFeedback({
 		successDuration: 0,
 	});
+	const canWrite = useCanWrite();
+
+	if (!canWrite) {
+		return null;
+	}
 
 	const handleConfirm = wrap(
 		async () => onDelete(),

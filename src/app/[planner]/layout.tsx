@@ -27,7 +27,9 @@ const Layout = async ({ children, params }: LayoutProps<'/[planner]'>) => {
 	// TODO: Add suspense so the layout will still load while the auth is being checked
 	return (
 		<PlannerLayout navbar={<NavbarServer id={String(id)} />}>
-			<PlannerProvider id={String(id)}>{children}</PlannerProvider>
+			<PlannerProvider id={String(id)} accessLevel={result.accessLevel}>
+				{children}
+			</PlannerProvider>
 		</PlannerLayout>
 	);
 };

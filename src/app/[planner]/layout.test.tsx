@@ -2,20 +2,21 @@ import { render, screen } from '@testing-library/react';
 
 import { afterEach, describe, expect, test, vi } from 'vitest';
 
-import Layout from './layout';
+const { mockCheckAuth, mockRedirect, mockNotFound } = vi.hoisted(() => ({
+	mockCheckAuth: vi.fn(),
+	mockRedirect: vi.fn(),
+	mockNotFound: vi.fn(),
+}));
 
 vi.mock('@/_models', async () => {
 	const { zObjectId } = await import('@/_models/utils/zObjectId');
 	return { zObjectId };
 });
 
-const mockCheckAuth = vi.fn();
 vi.mock('@/_actions', () => ({
 	checkAuth: (...args: unknown[]) => mockCheckAuth(...args),
 }));
 
-const mockRedirect = vi.fn();
-const mockNotFound = vi.fn();
 vi.mock('next/navigation', () => ({
 	redirect: (...args: unknown[]) => mockRedirect(...args),
 	notFound: () => mockNotFound(),
@@ -25,21 +26,36 @@ vi.mock('./_components/NavbarServer', () => ({
 	NavbarServer: () => null,
 }));
 
-vi.mock('./_components', () => ({
-	PlannerLayout: ({ children }: { children: React.ReactNode }) => (
-		<>{children}</>
-	),
-	PlannerProvider: ({ children }: { children: React.ReactNode }) => (
-		<>{children}</>
-	),
-}));
+const plannerProviderCalls: unknown[] = [];
+vi.mock('./_components', () => {
+	const mp = vi.fn(
+		({
+			children,
+			...props
+		}: {
+			children: React.ReactNode;
+			accessLevel: string;
+		}) => {
+			plannerProviderCalls.push(props);
+			return <>{children}</>;
+		},
+	);
+	return {
+		PlannerLayout: ({ children }: { children: React.ReactNode }) => (
+			<>{children}</>
+		),
+		PlannerProvider: mp,
+	};
+});
+
+import Layout from './layout';
 
 const plannerId = '507f1f77bcf86cd799439011';
 const params = Promise.resolve({ planner: plannerId });
 
 describe('planner layout', () => {
 	afterEach(() => {
-		vi.resetAllMocks();
+		plannerProviderCalls.length = 0;
 	});
 
 	test('redirects to / when unauthenticated', async () => {
@@ -68,7 +84,10 @@ describe('planner layout', () => {
 	});
 
 	test('renders children when authorized', async () => {
-		mockCheckAuth.mockResolvedValue({ type: 'authorized' });
+		mockCheckAuth.mockResolvedValue({
+			type: 'authorized',
+			accessLevel: 'owner',
+		});
 
 		render(await Layout({ children: "Ursula's Menu", params }));
 
@@ -76,10 +95,26 @@ describe('planner layout', () => {
 	});
 
 	test('passes planner id to checkAuth', async () => {
-		mockCheckAuth.mockResolvedValue({ type: 'authorized' });
+		mockCheckAuth.mockResolvedValue({
+			type: 'authorized',
+			accessLevel: 'owner',
+		});
 
 		await Layout({ children: null, params });
 
 		expect(mockCheckAuth).toHaveBeenCalledWith(plannerId, 'read');
+	});
+
+	test('passes accessLevel to PlannerProvider when authorized', async () => {
+		mockCheckAuth.mockResolvedValue({
+			type: 'authorized',
+			accessLevel: 'owner',
+		});
+
+		render(await Layout({ children: null, params }));
+
+		expect(plannerProviderCalls).toContainEqual(
+			expect.objectContaining({ accessLevel: 'owner' }),
+		);
 	});
 });

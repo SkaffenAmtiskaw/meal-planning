@@ -4,6 +4,8 @@ import { Button, Modal } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import { IconPlus } from '@tabler/icons-react';
 
+import { useCanWrite } from '@/app/[planner]/_components';
+
 import type { SerializedDay } from '../../_utils/toScheduleXEvents';
 import { AddMealForm } from '../AddMealForm/AddMealForm';
 
@@ -13,7 +15,12 @@ type Props = {
 };
 
 export const AddMealButton = ({ plannerId = '', onMealAdded }: Props) => {
+	const canWrite = useCanWrite();
 	const [opened, handlers] = useDisclosure(false);
+
+	if (!canWrite) {
+		return null;
+	}
 
 	return (
 		<>

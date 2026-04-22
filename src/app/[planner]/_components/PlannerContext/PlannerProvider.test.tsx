@@ -13,6 +13,7 @@ vi.mock('@/_actions', () => ({
 }));
 
 const id = '507f1f77bcf86cd799439011';
+const accessLevel = 'owner' as const;
 
 const maleficentsPlanner = { calendar: [], saved: [], tags: [] };
 
@@ -24,7 +25,11 @@ describe('PlannerProvider', () => {
 	test('calls getPlannerClient with the provided id', async () => {
 		mockGetPlannerClient.mockResolvedValue(maleficentsPlanner);
 
-		render(<PlannerProvider id={id}>{null}</PlannerProvider>);
+		render(
+			<PlannerProvider id={id} accessLevel={accessLevel}>
+				{null}
+			</PlannerProvider>,
+		);
 
 		await waitFor(() => {
 			expect(mockGetPlannerClient).toHaveBeenCalledWith(id);
@@ -41,13 +46,13 @@ describe('PlannerProvider', () => {
 		};
 
 		render(
-			<PlannerProvider id={id}>
+			<PlannerProvider id={id} accessLevel={accessLevel}>
 				<ContextReader />
 			</PlannerProvider>,
 		);
 
 		await waitFor(() => {
-			expect(contextValue).toEqual(maleficentsPlanner);
+			expect(contextValue).toEqual({ ...maleficentsPlanner, accessLevel });
 		});
 	});
 
@@ -55,7 +60,7 @@ describe('PlannerProvider', () => {
 		mockGetPlannerClient.mockResolvedValue(maleficentsPlanner);
 
 		render(
-			<PlannerProvider id={id}>
+			<PlannerProvider id={id} accessLevel={accessLevel}>
 				<div>Maleficent's Kitchen</div>
 			</PlannerProvider>,
 		);
@@ -78,7 +83,11 @@ describe('PlannerProvider', () => {
 		});
 
 		try {
-			render(<PlannerProvider id={id}>{null}</PlannerProvider>);
+			render(
+				<PlannerProvider id={id} accessLevel={accessLevel}>
+					{null}
+				</PlannerProvider>,
+			);
 
 			await waitFor(() => {
 				expect(caughtError).toBe(error);
@@ -89,5 +98,26 @@ describe('PlannerProvider', () => {
 				process.on('unhandledRejection', fn);
 			}
 		}
+	});
+
+	test('includes accessLevel in context value', async () => {
+		mockGetPlannerClient.mockResolvedValue(maleficentsPlanner);
+
+		let contextValue: unknown;
+		const ContextReader = () => {
+			contextValue = useContext(PlannerContext);
+			return null;
+		};
+
+		render(
+			<PlannerProvider id={id} accessLevel={accessLevel}>
+				<ContextReader />
+			</PlannerProvider>,
+		);
+
+		await waitFor(() => {
+			const context = contextValue as { accessLevel: string };
+			expect(context.accessLevel).toBe(accessLevel);
+		});
 	});
 });

@@ -19,12 +19,17 @@ describe('usePlannerContext', () => {
 
 		const { result } = renderHook(() => usePlannerContext(), {
 			wrapper: ({ children }) => (
-				<PlannerProvider id={id}>{children}</PlannerProvider>
+				<PlannerProvider id={id} accessLevel="owner">
+					{children}
+				</PlannerProvider>
 			),
 		});
 
 		await waitFor(() => {
-			expect(result.current).toEqual(maleficentsPlanner);
+			expect(result.current).toEqual({
+				...maleficentsPlanner,
+				accessLevel: 'owner',
+			});
 		});
 	});
 });

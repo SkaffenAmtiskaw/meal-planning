@@ -1,6 +1,6 @@
 import { fireEvent, render, screen } from '@testing-library/react';
 
-import { afterEach, describe, expect, test, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
 
 import { AddMealButton } from './AddMealButton';
 
@@ -25,7 +25,19 @@ vi.mock('../AddMealForm/AddMealForm', () => ({
 	},
 }));
 
+const { mockUseCanWrite } = vi.hoisted(() => ({
+	mockUseCanWrite: vi.fn(),
+}));
+
+vi.mock('@/app/[planner]/_components', () => ({
+	useCanWrite: mockUseCanWrite,
+}));
+
 describe('AddMealButton', () => {
+	beforeEach(() => {
+		mockUseCanWrite.mockReturnValue(true);
+	});
+
 	afterEach(() => {
 		vi.resetAllMocks();
 	});
@@ -69,5 +81,17 @@ describe('AddMealButton', () => {
 		expect(mockAddMealForm).toHaveBeenCalledWith(
 			expect.objectContaining({ onMealAdded }),
 		);
+	});
+
+	test('does not render when user has read-only access', () => {
+		mockUseCanWrite.mockReturnValue(false);
+		render(<AddMealButton />);
+		expect(screen.queryByTestId('add-meal-button')).toBeNull();
+	});
+
+	test('renders when user has write access', () => {
+		mockUseCanWrite.mockReturnValue(true);
+		render(<AddMealButton />);
+		expect(screen.getByTestId('add-meal-button')).toBeDefined();
 	});
 });
