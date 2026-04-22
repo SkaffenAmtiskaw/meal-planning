@@ -8,10 +8,7 @@ permission:
    edit:
       "*": deny
       "*.index.ts": allow
-   webfetch:
-      "*": ask
-      "https://mantine.dev/llms.txt": allow
-      "https://better-auth.com/llms.txt": allow
+   webfetch: ask
 ---
 
 **Role**

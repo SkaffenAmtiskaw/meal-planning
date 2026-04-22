@@ -5,11 +5,8 @@ mode: primary
 model: opencode-go/kimi-k2.5
 temperature: 0.6
 permission:
-    webfetch:
-        "*": ask
-        "https://mantine.dev/llms.txt": allow
-        "https://better-auth.com/llms.txt": allow
-    edit:
+   webfetch: ask
+   edit:
       "*": deny
       "notes/**": allow
 ---

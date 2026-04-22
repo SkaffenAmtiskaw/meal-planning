@@ -8,10 +8,7 @@ permission:
   bash:
     "*": deny
     "pnpm test:agent *": allow
-  webfetch:
-    "https://vitest.dev*": allow
-    "https://testing-library.com*": allow
-    "https://mantine.dev/llms.txt": allow
+  webfetch: ask
 ---
 
 **Role**

@@ -62,3 +62,6 @@
 # Undecided
 - [[Link SSO Login to Email|Link SSO to Email Login]]
 - Allow user to change meal color in calendar
+
+# Blocked
+- [[Granular Webfetch Permissions|Update OpenCode agents webfetch permissions]]
