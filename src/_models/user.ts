@@ -5,7 +5,7 @@ import type { UserInterface } from './user.types';
 
 export * from './user.types';
 
-const userSchema = new Schema<UserInterface>({
+export const userSchema = new Schema<UserInterface>({
 	email: {
 		type: String,
 		unique: true,
@@ -34,6 +34,8 @@ const userSchema = new Schema<UserInterface>({
 		expiresAt: { type: Date },
 	},
 });
+
+userSchema.index({ 'planners.planner': 1 });
 
 export const User: Model<UserInterface> =
 	models.User || model<UserInterface>('User', userSchema);

@@ -6,7 +6,7 @@ vi.mock('mongoose', async (importOriginal) => {
 	return { ...actual, models: {}, model: vi.fn().mockReturnValue({}) };
 });
 
-import { zUserInterface } from './user';
+import { userSchema, zUserInterface } from './user';
 
 const plannerId = new Types.ObjectId().toString();
 const membership = { planner: plannerId, accessLevel: 'owner' as const };
@@ -81,5 +81,13 @@ describe('user interface', () => {
 				planners: [{ planner: plannerId, accessLevel: 'superuser' }],
 			}).success,
 		).toBe(false);
+	});
+
+	test('defines an index on planners.planner', () => {
+		const indexes = userSchema.indexes();
+		const plannerIndex = indexes.find(
+			([fields]) => fields['planners.planner'] === 1,
+		);
+		expect(plannerIndex).toBeDefined();
 	});
 });
