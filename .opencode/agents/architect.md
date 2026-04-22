@@ -4,7 +4,7 @@ color: '#ee4266'
 mode: primary
 model: opencode-go/kimi-k2.5
 temperature: 0.6
-permissions:
+permission:
     webfetch:
         "*": ask
         "https://mantine.dev/llms.txt": allow

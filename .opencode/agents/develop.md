@@ -4,7 +4,7 @@ color: '#3bceac'
 mode: subagent
 model: opencode-go/kimi-k2.5
 temperature: 0.3
-permissions:
+permission:
   bash:
     "*": deny
     "pnpm test:agent *": allow

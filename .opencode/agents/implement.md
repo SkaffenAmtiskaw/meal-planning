@@ -4,7 +4,7 @@ color: '#ffd23f'
 mode: primary
 model: opencode-go/kimi-k2.5
 temperature: 0.4
-permissions:
+permission:
    edit:
       "*": deny
       "*.index.ts": allow

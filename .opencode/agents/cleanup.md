@@ -4,7 +4,7 @@ color: '#0ead69'
 mode: subagent
 model: opencode-go/minimax-m2.7
 temperature: 0.1
-permissions:
+permission:
     bash:
       "*": deny
       "pnpm lint": allow
