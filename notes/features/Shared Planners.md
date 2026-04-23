@@ -1,5 +1,19 @@
 **This work must be planned out so each step can be verified.**
 
+## Status
+
+- ✅ **Step 1** (PlannerContext + Write Controls) - Committed
+- ✅ **Step 2** (PendingInvite Model) - Committed as `4aa9a5d`
+- ✅ **Step 3** (Member List UI) - **COMPLETE**
+  - ✅ `MemberList.tsx` component
+  - ✅ `getPlannerMembers.ts` server action
+  - ✅ `PlannerItem.tsx` with expandable Collapse
+  - ✅ All tests passing (983 tests)
+  - ✅ Build passing
+- ⏳ Steps 4-8: Not started
+
+## Requirements
+
 1. A user should invite a user (by email) from the planner settings page/modal.
 2. They should also be able to view a list of pending invites, and cancel them.
 3. Once accepted, the user should able to view a list of users on the planner, and change their permissions. _Note: There should be some sort of help text for the user indicating what permissions each access level gives a user. Maybe a tooltip?_

@@ -156,4 +156,67 @@ describe('getPlanners', () => {
 		};
 		expect(_typeCheck.accessLevel).toBe('owner');
 	});
+
+	test('should use default name fallback when planner name is undefined', async () => {
+		// Create a planner where the name property cannot be set, testing the nullish coalescing fallback on line 54
+		const plannerWithUndefinedName = {} as {
+			_id: string;
+			name: string | undefined;
+			calendar: unknown[];
+			saved: unknown[];
+			tags: unknown[];
+		};
+		Object.defineProperty(plannerWithUndefinedName, '_id', {
+			value: 'planner-1',
+			enumerable: true,
+		});
+		// Define name as a getter that always returns undefined - this simulates a scenario where
+		// the name cannot be set, forcing the nullish coalescing fallback on line 54 to execute
+		Object.defineProperty(plannerWithUndefinedName, 'name', {
+			get: () => undefined,
+			set: () => {
+				/* no-op: assignment is ignored, getter still returns undefined */
+			},
+			enumerable: true,
+			configurable: true,
+		});
+		Object.defineProperty(plannerWithUndefinedName, 'calendar', {
+			value: [],
+			enumerable: true,
+		});
+		Object.defineProperty(plannerWithUndefinedName, 'saved', {
+			value: [],
+			enumerable: true,
+		});
+		Object.defineProperty(plannerWithUndefinedName, 'tags', {
+			value: [],
+			enumerable: true,
+		});
+
+		vi.mocked(getUser).mockResolvedValueOnce(mockUser as never);
+		vi.mocked(Planner.find).mockResolvedValueOnce([
+			plannerWithUndefinedName,
+		] as never);
+		vi.mocked(Planner.collection.updateOne).mockResolvedValueOnce({} as never);
+
+		const result = await getPlanners();
+
+		expect(result[0].planner.name).toBe("Ariel's Planner");
+	});
+
+	test('should default to read access when accessLevel not found', async () => {
+		const mockUserWithMissingAccess = {
+			name: 'Ariel',
+			planners: [{ planner: 'different-planner-id', accessLevel: 'owner' }],
+		};
+		const planner = makePlanner({ id: 'planner-1', name: "Ariel's Planner" });
+		vi.mocked(getUser).mockResolvedValueOnce(
+			mockUserWithMissingAccess as never,
+		);
+		vi.mocked(Planner.find).mockResolvedValueOnce([planner] as never);
+
+		const result = await getPlanners();
+
+		expect(result[0].accessLevel).toBe('read');
+	});
 });

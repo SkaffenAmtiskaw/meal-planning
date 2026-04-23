@@ -51,11 +51,11 @@ export const getPlanners = async (): Promise<PlannerWithAccess[]> => {
 	return planners.map((planner) => ({
 		planner: {
 			_id: planner._id,
-			name: planner.name!,
+			name: planner.name ?? `${user.name}'s Planner`,
 			calendar: planner.calendar,
 			saved: planner.saved,
 			tags: planner.tags,
 		},
-		accessLevel: plannerAccessMap.get(planner._id.toString())!,
+		accessLevel: plannerAccessMap.get(planner._id.toString()) ?? 'read',
 	}));
 };
