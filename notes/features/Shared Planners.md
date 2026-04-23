@@ -11,7 +11,7 @@
   - ✅ All tests passing (983 tests)
   - ✅ Build passing
 - ✅ **Step 4** (Change User Access Level) - Commit `9c9db2af146bec8ea41d98379a1ed289400966b0`
-- ✅ **Step 5** (Remove Member from Planner) - Manual testing confirmed
+- ✅ **Step 5** (Remove Member from Planner) - Commit `636c3e5e7fb6f5dab5a9bbd0067fcd7d9f10ea82`
 - ⏳ Steps 6-8: Not started
 
 ## Requirements
@@ -202,12 +202,6 @@
 - Owner cannot remove themselves (must use transfer ownership)
 - Target user loses all access immediately upon removal
 
-**⚠️ CRITICAL - Before Proceeding:**
-The "Leave Planner" button exists in the UI (`PlannerItem.tsx`) but is NOT wired up to any functionality. BEFORE ANY OTHER WORK:
-1. Check git stash for any "leave planner" implementation code that needs to be unstashed
-2. If not in stash, this is a design oversight that needs to be addressed
-3. The `removePlannerMembership` utility was created anticipating this feature
-
 ---
 
 ## Step 6 — Invite User UI + Send Invites
@@ -257,7 +251,6 @@ The "Leave Planner" button exists in the UI (`PlannerItem.tsx`) but is NOT wired
 - Tokens expire after 7 days
 
 ---
-
 ## Step 7 — Accept/Decline Invites (In-App)
 
 **Implementation Details:**
@@ -302,9 +295,54 @@ The "Leave Planner" button exists in the UI (`PlannerItem.tsx`) but is NOT wired
 - Server action must verify invite is for the authenticated user
 - Cannot accept invite twice (should return success on duplicate)
 
+
 ---
 
-## Step 8 — New User Auto-Accept Flow
+## Step 8 — Wire Up Leave Planner Button
+
+**Implementation Details:**
+
+- **New File**: `src/_actions/planner/leavePlanner.ts`
+  - Validates: caller is authenticated
+  - Validates: caller is a member of the planner (not owner - owners must transfer ownership first)
+  - Calls `removePlannerMembership` utility to remove self from planner
+  - Returns success/error
+- **New File**: `src/app/settings/_components/useLeavePlanner.ts`
+  - Hook for leave planner state and operations
+  - Calls `leavePlanner` server action
+  - Handles success (refresh planner list, redirect if needed)
+  - Handles errors
+- **Modified**: `src/app/settings/_components/PlannerItem.tsx`
+  - Add `onClick` handler to Leave Planner button
+  - Show confirmation modal before leaving (use existing `DeleteConfirmModal` pattern)
+  - Disable/hide button for owners (show tooltip: "Owners must transfer ownership before leaving")
+
+**Acceptance Criteria:**
+1. Have a second user invited and accepted (from Steps 2-3)
+2. As owner, change their access to `read` or `write` (from Step 8)
+3. Log in as that user
+4. Go to Settings → Planner Settings
+5. **Verify**: See "Leave Planner" button in the planner panel
+6. Click "Leave Planner"
+7. **Verify**: Confirmation modal appears with warning message
+8. Confirm leaving
+9. **Verify**: User is redirected away from that planner
+10. **Verify**: Planner no longer appears in user's planner list
+11. Try to access the planner URL directly
+12. **Verify**: Get 404 (no access)
+13. Log in as owner
+14. **Verify**: The left member no longer appears in member list
+15. **Verify**: Owner sees tooltip on disabled "Leave Planner" button explaining they must transfer ownership first
+
+**Security Checklist:**
+- Server action must verify user is authenticated
+- Server action must verify user is actually a member of the planner
+- Owners cannot leave via this action (must use ownership transfer)
+- User should be redirected away from planner after leaving
+
+---
+
+## Step 9 — New User Auto-Accept Flow
 
 **Implementation Details:**
 
@@ -335,7 +373,7 @@ The "Leave Planner" button exists in the UI (`PlannerItem.tsx`) but is NOT wired
 
 ---
 
-## Step 9 — Ownership Transfer on Account Deletion
+## Step 10 — Ownership Transfer on Account Deletion
 
 **Implementation Details:**
 
@@ -378,9 +416,9 @@ The "Leave Planner" button exists in the UI (`PlannerItem.tsx`) but is NOT wired
 | Area | Files |
 |---|---|
 | Models | `src/_models/pending-invite.ts`, `src/_models/pending-invite.types.ts`, `src/_models/user.ts` (index) |
-| Server Actions | `src/_actions/planner/getPlannerMembers.ts`, `src/_actions/planner/updateMemberAccess.ts`, `src/_actions/planner/removeMember.ts`, `src/_actions/planner/inviteUser.ts`, `src/_actions/planner/cancelInvite.ts`, `src/_actions/planner/getPendingInvites.ts`, `src/_actions/planner/acceptInvite.ts`, `src/_actions/planner/declineInvite.ts`, `src/_actions/planner/getUserInvites.ts`, `src/_actions/planner/transferOwnership.ts`, `src/_actions/planner/acceptPendingInvites.ts`, `src/_actions/planner/getOwnedPlannersWithMembers.ts` |
+| Server Actions | `src/_actions/planner/getPlannerMembers.ts`, `src/_actions/planner/updateMemberAccess.ts`, `src/_actions/planner/removeMember.ts`, `src/_actions/planner/leavePlanner.ts`, `src/_actions/planner/inviteUser.ts`, `src/_actions/planner/cancelInvite.ts`, `src/_actions/planner/getPendingInvites.ts`, `src/_actions/planner/acceptInvite.ts`, `src/_actions/planner/declineInvite.ts`, `src/_actions/planner/getUserInvites.ts`, `src/_actions/planner/transferOwnership.ts`, `src/_actions/planner/acceptPendingInvites.ts`, `src/_actions/planner/getOwnedPlannersWithMembers.ts` |
 | Context | `src/app/[planner]/_components/PlannerContext/PlannerContext.ts`, `src/app/[planner]/_components/PlannerContext/PlannerProvider.tsx` |
-| Settings Components | `src/app/settings/_components/MemberList.tsx`, `src/app/settings/_components/useMemberList.ts`, `src/app/settings/_components/AccessLevelSelect.tsx`, `src/app/settings/_components/RemoveMemberButton.tsx`, `src/app/settings/_components/InviteForm.tsx`, `src/app/settings/_components/PendingInvitesList.tsx`, `src/app/settings/_components/InvitesSection.tsx`, `src/app/settings/_components/OwnershipTransferModal.tsx` |
+| Settings Components | `src/app/settings/_components/MemberList.tsx`, `src/app/settings/_components/useMemberList.ts`, `src/app/settings/_components/AccessLevelSelect.tsx`, `src/app/settings/_components/RemoveMemberButton.tsx`, `src/app/settings/_components/useLeavePlanner.ts`, `src/app/settings/_components/InviteForm.tsx`, `src/app/settings/_components/PendingInvitesList.tsx`, `src/app/settings/_components/InvitesSection.tsx`, `src/app/settings/_components/OwnershipTransferModal.tsx` |
 | Layout Components | `src/app/[planner]/layout.tsx`, `src/app/settings/_components/PlannerItem.tsx`, `src/app/settings/_components/PlannerList.tsx`, `src/_actions/planner/getPlanners.ts` |
 | Calendar/Recipe Controls | `src/app/[planner]/calendar/_components/AddMealButton/AddMealButton.tsx`, `src/app/[planner]/recipes/_components/AddItemDropdown.tsx`, `src/app/[planner]/recipes/_components/DeleteItemButton.tsx`, `src/app/[planner]/recipes/_components/EditRecipeButton.tsx` |
 | Header | `src/_components/UserMenu/UserMenu.tsx`, `src/_components/UserMenu/InviteBadge.tsx` |

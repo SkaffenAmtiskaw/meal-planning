@@ -8,6 +8,10 @@ permission:
   bash:
     "*": deny
     "pnpm test:agent *": allow
+  edit:
+     "*": deny
+     "src/**": allow
+     "test/**": allow
   webfetch: ask
 ---
 

@@ -31,7 +31,7 @@ Before beginning, locate the implementation plan for this feature in `notes/feat
 **Design Rules**
 - **Single Concern** — All modules must have a single concern. Decompose into subcomponents, hooks, and utilities where needed.
 - **Re-Use** — Existing components, hooks, or utilities should be re-used where possible.
-- **Component Library** — Mantine components and hooks are preferred over building from scratch.
+- **Mantine** — Mantine components and hooks are preferred over building from scratch.
 - If specific styling is planned, refer to `.opencode/docs/style_guidelines`.
 
 **Instructions**
