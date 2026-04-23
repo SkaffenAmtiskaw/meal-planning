@@ -4,7 +4,7 @@
 
 - ✅ **Step 1** (PlannerContext + Write Controls) - Committed
 - ✅ **Step 2** (PendingInvite Model) - Committed as `4aa9a5d`
-- ✅ **Step 3** (Member List UI) - **COMPLETE**
+- ✅ **Step 3** (Member List UI) - Commit `687a0a0c078c52eb92ba1bf92813aa6dd8b6de71`
   - ✅ `MemberList.tsx` component
   - ✅ `getPlannerMembers.ts` server action
   - ✅ `PlannerItem.tsx` with expandable Collapse
