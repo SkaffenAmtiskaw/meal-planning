@@ -1,9 +1,23 @@
 'use server';
 
+import type { Types } from 'mongoose';
+
 import { getUser } from '@/_actions/user';
 import { Planner } from '@/_models';
+import type { AccessLevel } from '@/_models/user';
 
-export const getPlanners = async () => {
+export type PlannerWithAccess = {
+	planner: {
+		_id: Types.ObjectId;
+		name: string;
+		calendar: unknown[];
+		saved: unknown[];
+		tags: unknown[];
+	};
+	accessLevel: AccessLevel;
+};
+
+export const getPlanners = async (): Promise<PlannerWithAccess[]> => {
 	const user = await getUser();
 
 	if (!user) throw new Error('No user found');
@@ -27,5 +41,21 @@ export const getPlanners = async () => {
 		p.name = `${user.name}'s Planner`;
 	}
 
-	return planners;
+	const plannerAccessMap = new Map(
+		user.planners.map(({ planner, accessLevel }) => [
+			planner.toString(),
+			accessLevel,
+		]),
+	);
+
+	return planners.map((planner) => ({
+		planner: {
+			_id: planner._id,
+			name: planner.name!,
+			calendar: planner.calendar,
+			saved: planner.saved,
+			tags: planner.tags,
+		},
+		accessLevel: plannerAccessMap.get(planner._id.toString())!,
+	}));
 };

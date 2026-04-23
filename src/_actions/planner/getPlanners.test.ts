@@ -2,8 +2,9 @@ import { afterEach, describe, expect, test, vi } from 'vitest';
 
 import { getUser } from '@/_actions/user';
 import { Planner } from '@/_models';
+import type { AccessLevel } from '@/_models/user';
 
-import { getPlanners } from './getPlanners';
+import { getPlanners, type PlannerWithAccess } from './getPlanners';
 
 vi.mock('@/_models', () => ({
 	Planner: {
@@ -21,6 +22,9 @@ vi.mock('@/_actions/user', () => ({
 const makePlanner = (overrides: { name?: string; id?: string } = {}) => ({
 	_id: overrides.id ?? 'planner-1',
 	name: overrides.name,
+	calendar: [],
+	saved: [],
+	tags: [],
 });
 
 const mockUser = {
@@ -59,7 +63,7 @@ describe('getPlanners', () => {
 		const result = await getPlanners();
 
 		expect(Planner.collection.updateOne).not.toHaveBeenCalled();
-		expect(result).toEqual([planner]);
+		expect(result).toEqual([{ planner, accessLevel: 'owner' }]);
 	});
 
 	test('seeds name via collection.updateOne for planners that have no name', async () => {
@@ -93,5 +97,63 @@ describe('getPlanners', () => {
 		);
 		expect(unnamed.name).toBe("Ariel's Planner");
 		expect(named.name).toBe("Ariel's Planner");
+	});
+
+	test('returns access level for each planner', async () => {
+		const planner = makePlanner({ name: "Ariel's Planner" });
+		vi.mocked(getUser).mockResolvedValueOnce(mockUser as never);
+		vi.mocked(Planner.find).mockResolvedValueOnce([planner] as never);
+
+		const result = await getPlanners();
+
+		expect(result).toEqual([{ planner, accessLevel: 'owner' }]);
+		expect(result[0]).toHaveProperty('accessLevel', 'owner');
+	});
+
+	test('returns different access levels for different planners', async () => {
+		const mockUserWithMultiplePlanners = {
+			name: 'Ariel',
+			planners: [
+				{ planner: 'planner-1', accessLevel: 'owner' },
+				{ planner: 'planner-2', accessLevel: 'write' },
+				{ planner: 'planner-3', accessLevel: 'read' },
+			],
+		};
+		const planner1 = makePlanner({ id: 'planner-1', name: 'Planner 1' });
+		const planner2 = makePlanner({ id: 'planner-2', name: 'Planner 2' });
+		const planner3 = makePlanner({ id: 'planner-3', name: 'Planner 3' });
+
+		vi.mocked(getUser).mockResolvedValueOnce(
+			mockUserWithMultiplePlanners as never,
+		);
+		vi.mocked(Planner.find).mockResolvedValueOnce([
+			planner1,
+			planner2,
+			planner3,
+		] as never);
+
+		const result = await getPlanners();
+
+		expect(result).toEqual([
+			{ planner: planner1, accessLevel: 'owner' },
+			{ planner: planner2, accessLevel: 'write' },
+			{ planner: planner3, accessLevel: 'read' },
+		]);
+	});
+
+	test('PlannerWithAccess type is exported', () => {
+		// This is a type test, it should compile
+		const mockId = {
+			_id: expect.anything(),
+			name: 'test',
+			calendar: [],
+			saved: [],
+			tags: [],
+		};
+		const _typeCheck: PlannerWithAccess = {
+			planner: mockId as PlannerWithAccess['planner'],
+			accessLevel: 'owner' as AccessLevel,
+		};
+		expect(_typeCheck.accessLevel).toBe('owner');
 	});
 });

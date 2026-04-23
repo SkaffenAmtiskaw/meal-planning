@@ -14,11 +14,12 @@ export const PlannerList = async () => {
 				<Title order={3}>Your Planners</Title>
 				<PlannerListActions />
 			</Group>
-			{planners.map((planner) => (
+			{planners.map(({ planner, accessLevel }) => (
 				<PlannerItem
 					key={String(planner._id)}
 					id={String(planner._id)}
 					name={planner.name ?? ''}
+					accessLevel={accessLevel}
 				/>
 			))}
 		</Stack>

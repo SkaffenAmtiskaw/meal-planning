@@ -25,7 +25,16 @@ describe('NavbarServer', () => {
 	test('passes current id and fetched planners to Navbar', async () => {
 		const plannerId = '507f1f77bcf86cd799439011';
 		mockGetPlanners.mockResolvedValue([
-			{ _id: plannerId, name: "Ariel's Planner" },
+			{
+				planner: {
+					_id: plannerId,
+					name: "Ariel's Planner",
+					calendar: [],
+					saved: [],
+					tags: [],
+				},
+				accessLevel: 'owner',
+			},
 		]);
 
 		render(await NavbarServer({ id: plannerId }));
@@ -40,7 +49,18 @@ describe('NavbarServer', () => {
 
 	test('defaults to empty string when planner name is undefined', async () => {
 		const plannerId = '507f1f77bcf86cd799439011';
-		mockGetPlanners.mockResolvedValue([{ _id: plannerId, name: undefined }]);
+		mockGetPlanners.mockResolvedValue([
+			{
+				planner: {
+					_id: plannerId,
+					name: undefined,
+					calendar: [],
+					saved: [],
+					tags: [],
+				},
+				accessLevel: 'owner',
+			},
+		]);
 
 		render(await NavbarServer({ id: plannerId }));
 

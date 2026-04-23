@@ -89,6 +89,28 @@ export const Card = vi.fn(
 	),
 );
 
+export const Collapse = vi.fn(
+	({ children, expanded, 'data-testid': testId }: WithChildren & { expanded?: boolean }) =>
+		expanded ? <div data-testid={testId}>{children}</div> : null,
+);
+
+// ─── Accordion (compound) ─────────────────────────────────────────────────────
+
+export const Accordion = Object.assign(
+	vi.fn(({ children }: WithChildren) => <div data-testid="accordion">{children}</div>),
+	{
+		Item: vi.fn(({ children, value }: WithChildren & { value?: string }) => (
+			<div data-testid="accordion-item" data-value={value}>{children}</div>
+		)),
+		Control: vi.fn(({ children }: WithChildren) => (
+			<button data-testid="accordion-control">{children}</button>
+		)),
+		Panel: vi.fn(({ children }: WithChildren) => (
+			<div data-testid="accordion-panel">{children}</div>
+		)),
+	}
+);
+
 export const Center = vi.fn(({ children, 'data-testid': testId }: WithChildren) => (
 	<div data-testid={testId}>{children}</div>
 ));
@@ -437,6 +459,7 @@ export const TextInput = vi.fn(
 		type,
 		name,
 		placeholder,
+		disabled,
 		'data-testid': testId,
 	}: {
 		value?: string;
@@ -445,6 +468,7 @@ export const TextInput = vi.fn(
 		type?: string;
 		name?: string;
 		placeholder?: string;
+		disabled?: boolean;
 		'data-testid'?: string;
 		[key: string]: unknown;
 	}) => (
@@ -453,6 +477,7 @@ export const TextInput = vi.fn(
 			type={type}
 			value={value ?? ''}
 			placeholder={placeholder}
+			disabled={disabled}
 			onChange={onChange ?? (() => {})}
 		/>
 	),

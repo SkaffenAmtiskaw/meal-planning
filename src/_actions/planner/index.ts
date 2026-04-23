@@ -4,5 +4,6 @@ export * from './addTag';
 export * from './createPlanner';
 export * from './getPlanner';
 export * from './getPlannerClient';
+export * from './getPlannerMembers';
 export * from './getPlanners';
 export * from './updatePlannerName';

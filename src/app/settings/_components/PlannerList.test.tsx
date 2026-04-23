@@ -15,8 +15,20 @@ vi.mock('@/_actions/planner', () => ({
 vi.mock('@mantine/core', async () => await import('@mocks/@mantine/core'));
 
 vi.mock('./PlannerItem', () => ({
-	PlannerItem: ({ id, name }: { id: string; name: string }) => (
-		<div data-testid={`planner-item-${id}`} data-name={name} />
+	PlannerItem: ({
+		id,
+		name,
+		accessLevel,
+	}: {
+		id: string;
+		name: string;
+		accessLevel: string;
+	}) => (
+		<div
+			data-testid={`planner-item-${id}`}
+			data-name={name}
+			data-access-level={accessLevel}
+		/>
 	),
 }));
 
@@ -27,8 +39,26 @@ vi.mock('./PlannerListActions', () => ({
 describe('PlannerList', () => {
 	test('renders a PlannerItem for each planner', async () => {
 		mockGetPlanners.mockResolvedValueOnce([
-			{ _id: 'p1', name: "Ariel's Planner" },
-			{ _id: 'p2', name: "Eric's Planner" },
+			{
+				planner: {
+					_id: 'p1',
+					name: "Ariel's Planner",
+					calendar: [],
+					saved: [],
+					tags: [],
+				},
+				accessLevel: 'owner',
+			},
+			{
+				planner: {
+					_id: 'p2',
+					name: "Eric's Planner",
+					calendar: [],
+					saved: [],
+					tags: [],
+				},
+				accessLevel: 'write',
+			},
 		]);
 
 		render(await PlannerList());
@@ -45,9 +75,18 @@ describe('PlannerList', () => {
 		expect(screen.getByTestId('planner-list-actions')).toBeDefined();
 	});
 
-	test('passes id and name to PlannerItem', async () => {
+	test('passes id, name, and accessLevel to PlannerItem', async () => {
 		mockGetPlanners.mockResolvedValueOnce([
-			{ _id: 'p1', name: "Ariel's Planner" },
+			{
+				planner: {
+					_id: 'p1',
+					name: "Ariel's Planner",
+					calendar: [],
+					saved: [],
+					tags: [],
+				},
+				accessLevel: 'owner',
+			},
 		]);
 
 		render(await PlannerList());
@@ -55,10 +94,18 @@ describe('PlannerList', () => {
 		expect(
 			screen.getByTestId('planner-item-p1').getAttribute('data-name'),
 		).toBe("Ariel's Planner");
+		expect(
+			screen.getByTestId('planner-item-p1').getAttribute('data-access-level'),
+		).toBe('owner');
 	});
 
 	test('uses empty string when planner name is null', async () => {
-		mockGetPlanners.mockResolvedValueOnce([{ _id: 'p1', name: null }]);
+		mockGetPlanners.mockResolvedValueOnce([
+			{
+				planner: { _id: 'p1', name: null, calendar: [], saved: [], tags: [] },
+				accessLevel: 'owner',
+			},
+		]);
 
 		render(await PlannerList());
 
