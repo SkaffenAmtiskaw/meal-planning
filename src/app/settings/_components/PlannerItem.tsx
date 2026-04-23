@@ -14,7 +14,7 @@ import {
 
 import type { AccessLevel } from '@/_models/user';
 
-import { MemberList } from './MemberList';
+import { MemberListContainer } from './MemberListContainer';
 import { useRenamePlanner } from './useRenamePlanner';
 
 import { getAccessLevelColor } from '../_utils/getAccessLevelColor';
@@ -101,7 +101,7 @@ export const PlannerItem = ({ id, name, accessLevel }: Props) => {
 							<Divider />
 
 							{/* MemberList section */}
-							<MemberList plannerId={id} />
+							<MemberListContainer plannerId={id} />
 
 							<Divider />
 

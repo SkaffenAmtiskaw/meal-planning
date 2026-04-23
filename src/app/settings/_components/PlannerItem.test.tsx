@@ -13,8 +13,8 @@ vi.mock('@mantine/core', async () => {
 	return actual;
 });
 
-vi.mock('./MemberList', () => ({
-	MemberList: ({ plannerId }: { plannerId: string }) => (
+vi.mock('./MemberListContainer', () => ({
+	MemberListContainer: ({ plannerId }: { plannerId: string }) => (
 		<div data-testid="member-list" data-planner-id={plannerId} />
 	),
 }));

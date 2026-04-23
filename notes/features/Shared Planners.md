@@ -10,8 +10,9 @@
   - ✅ `PlannerItem.tsx` with expandable Collapse
   - ✅ All tests passing (983 tests)
   - ✅ Build passing
-- **Step 5** (Changer User Access Level)
-- ⏳ Steps 5-8: Not started
+- ✅ **Step 4** (Change User Access Level) - Commit `9c9db2af146bec8ea41d98379a1ed289400966b0`
+- ✅ **Step 5** (Remove Member from Planner) - Manual testing confirmed
+- ⏳ Steps 6-8: Not started
 
 ## Requirements
 
@@ -191,15 +192,21 @@
 1. As owner, add test user to planner (via DB)
 2. In settings, click remove button on test user
 3. Confirm removal in modal
-4. **Verify**: User disappears from member list
-5. **Verify**: Test user gets 404 when navigating to planner URL
+4. ✅ **Verified**: User disappears from member list
+5. ✅ **Verified**: Test user gets 404 when navigating to planner URL
 6. Try to remove yourself (owner)
-7. **Verify**: Button is disabled or shows error
+7. ✅ **Verified**: Button is disabled or shows error (hidden for owner)
 
 **Security Checklist:**
 - Server action must verify caller is owner/admin
 - Owner cannot remove themselves (must use transfer ownership)
 - Target user loses all access immediately upon removal
+
+**⚠️ CRITICAL - Before Proceeding:**
+The "Leave Planner" button exists in the UI (`PlannerItem.tsx`) but is NOT wired up to any functionality. BEFORE ANY OTHER WORK:
+1. Check git stash for any "leave planner" implementation code that needs to be unstashed
+2. If not in stash, this is a design oversight that needs to be addressed
+3. The `removePlannerMembership` utility was created anticipating this feature
 
 ---
 
@@ -241,6 +248,7 @@
 8. **Verify**: Receive email with accept link
 9. Click Cancel on the invite
 10. **Verify**: Invite disappears from list
+11. **Re-test**: Delete a user from the planner to ensure the member list UI still works correctly with the invite system changes
 
 **Security Checklist:**
 - Server action must verify caller is owner/admin
