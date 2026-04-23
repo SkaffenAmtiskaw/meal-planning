@@ -4,17 +4,13 @@ import { Types } from 'mongoose';
 
 import { checkAuth } from '@/_actions/auth/checkAuth';
 import { User } from '@/_models';
-import type { AccessLevel } from '@/_models/user';
+import { serialize } from '@/_utils/serialize';
 
-export interface PlannerMember {
-	name: string;
-	email: string;
-	accessLevel: AccessLevel;
-}
+import type { PlannerMember } from './getPlannerMembers.types';
 
 export const getPlannerMembers = async (
 	plannerId: string | Types.ObjectId,
-): Promise<PlannerMember[] | { ok: false; error: string }> => {
+): Promise<{ members: PlannerMember[]; error?: string }> => {
 	// Convert string to ObjectId if needed
 	const objectId =
 		typeof plannerId === 'string' ? new Types.ObjectId(plannerId) : plannerId;
@@ -26,7 +22,7 @@ export const getPlannerMembers = async (
 		authResult.type === 'unauthenticated' ||
 		authResult.type === 'unauthorized'
 	) {
-		return { ok: false, error: 'Unauthorized' };
+		return serialize({ members: [], error: 'Unauthorized' });
 	}
 
 	if (authResult.type === 'error') {
@@ -52,5 +48,5 @@ export const getPlannerMembers = async (
 		};
 	});
 
-	return members;
+	return serialize({ members });
 };

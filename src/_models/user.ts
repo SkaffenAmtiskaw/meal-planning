@@ -8,6 +8,7 @@ export * from './user.types';
 export const userSchema = new Schema<UserInterface>({
 	email: {
 		type: String,
+		required: true,
 		unique: true,
 	},
 	name: {

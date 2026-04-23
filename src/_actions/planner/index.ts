@@ -5,5 +5,7 @@ export * from './createPlanner';
 export * from './getPlanner';
 export * from './getPlannerClient';
 export * from './getPlannerMembers';
+export * from './getPlannerMembers.types';
 export * from './getPlanners';
+export * from './updateMemberAccess';
 export * from './updatePlannerName';

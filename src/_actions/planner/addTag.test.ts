@@ -52,7 +52,10 @@ describe('addTag', () => {
 	});
 
 	test('returns Planner not found error when planner does not exist', async () => {
-		vi.mocked(checkAuth).mockResolvedValue({ type: 'authorized' });
+		vi.mocked(checkAuth).mockResolvedValue({
+			type: 'authorized',
+			accessLevel: 'write',
+		});
 		vi.mocked(Planner.findById).mockResolvedValue(null);
 
 		const result = await addTag(plannerId, 'Spicy');
@@ -61,7 +64,10 @@ describe('addTag', () => {
 	});
 
 	test('assigns the first TAG_COLOR_NAMES entry to the first tag', async () => {
-		vi.mocked(checkAuth).mockResolvedValue({ type: 'authorized' });
+		vi.mocked(checkAuth).mockResolvedValue({
+			type: 'authorized',
+			accessLevel: 'write',
+		});
 		vi.mocked(Planner.findById).mockResolvedValue(makePlanner(0) as never);
 		vi.mocked(Planner.collection.updateOne).mockResolvedValue({} as never);
 
@@ -72,7 +78,10 @@ describe('addTag', () => {
 	});
 
 	test('cycles through TAG_COLOR_NAMES based on existing tag count', async () => {
-		vi.mocked(checkAuth).mockResolvedValue({ type: 'authorized' });
+		vi.mocked(checkAuth).mockResolvedValue({
+			type: 'authorized',
+			accessLevel: 'write',
+		});
 		// 3 existing tags → 4th color = 'fern' (index 3)
 		vi.mocked(Planner.findById).mockResolvedValue(makePlanner(3) as never);
 		vi.mocked(Planner.collection.updateOne).mockResolvedValue({} as never);
@@ -84,7 +93,10 @@ describe('addTag', () => {
 	});
 
 	test('calls collection.updateOne with $push', async () => {
-		vi.mocked(checkAuth).mockResolvedValue({ type: 'authorized' });
+		vi.mocked(checkAuth).mockResolvedValue({
+			type: 'authorized',
+			accessLevel: 'write',
+		});
 		vi.mocked(Planner.findById).mockResolvedValue(makePlanner(0) as never);
 		vi.mocked(Planner.collection.updateOne).mockResolvedValue({} as never);
 
@@ -105,7 +117,10 @@ describe('addTag', () => {
 	});
 
 	test('returns _id, name, and color on success', async () => {
-		vi.mocked(checkAuth).mockResolvedValue({ type: 'authorized' });
+		vi.mocked(checkAuth).mockResolvedValue({
+			type: 'authorized',
+			accessLevel: 'write',
+		});
 		vi.mocked(Planner.findById).mockResolvedValue(makePlanner(0) as never);
 		vi.mocked(Planner.collection.updateOne).mockResolvedValue({} as never);
 

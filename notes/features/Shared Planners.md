@@ -10,7 +10,8 @@
   - ✅ `PlannerItem.tsx` with expandable Collapse
   - ✅ All tests passing (983 tests)
   - ✅ Build passing
-- ⏳ Steps 4-8: Not started
+- **Step 5** (Changer User Access Level)
+- ⏳ Steps 5-8: Not started
 
 ## Requirements
 

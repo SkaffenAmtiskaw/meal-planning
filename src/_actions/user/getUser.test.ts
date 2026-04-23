@@ -46,19 +46,23 @@ describe('get user', () => {
 	test('should return the user matching the session email', async () => {
 		vi.mocked(auth.api.getSession).mockResolvedValue(mockSession as never);
 		vi.mocked(User.findOne).mockReturnValue({
-			exec: vi.fn().mockResolvedValue(mockUser),
+			lean: vi.fn().mockReturnValue({
+				exec: vi.fn().mockResolvedValue(mockUser),
+			}),
 		} as never);
 
 		const result = await getUser();
 
 		expect(User.findOne).toHaveBeenCalledWith({ email: 'maleficent@evil.com' });
-		expect(result).toBe(mockUser);
+		expect(result).toEqual(mockUser);
 	});
 
 	test('should return null if no user exists for the session email', async () => {
 		vi.mocked(auth.api.getSession).mockResolvedValue(mockSession as never);
 		vi.mocked(User.findOne).mockReturnValue({
-			exec: vi.fn().mockResolvedValue(null),
+			lean: vi.fn().mockReturnValue({
+				exec: vi.fn().mockResolvedValue(null),
+			}),
 		} as never);
 
 		const result = await getUser();

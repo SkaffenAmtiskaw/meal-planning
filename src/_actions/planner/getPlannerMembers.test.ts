@@ -52,9 +52,11 @@ describe('getPlannerMembers', () => {
 		const result = await getPlannerMembers(objectId);
 
 		expect(checkAuth).toHaveBeenCalledWith(expect.anything(), 'admin');
-		expect(result).toEqual([
-			{ name: 'Alice', email: 'alice@example.com', accessLevel: 'owner' },
-		]);
+		expect(result).toEqual({
+			members: [
+				{ name: 'Alice', email: 'alice@example.com', accessLevel: 'owner' },
+			],
+		});
 	});
 
 	test('handles string planner ID in membership', async () => {
@@ -82,9 +84,11 @@ describe('getPlannerMembers', () => {
 
 		const result = await getPlannerMembers(plannerId);
 
-		expect(result).toEqual([
-			{ name: 'Alice', email: 'alice@example.com', accessLevel: 'admin' },
-		]);
+		expect(result).toEqual({
+			members: [
+				{ name: 'Alice', email: 'alice@example.com', accessLevel: 'admin' },
+			],
+		});
 	});
 
 	test('returns members for owner caller', async () => {
@@ -119,10 +123,12 @@ describe('getPlannerMembers', () => {
 
 		expect(checkAuth).toHaveBeenCalledWith(expect.anything(), 'admin');
 		expect(User.find).toHaveBeenCalledWith({ 'planners.planner': plannerId });
-		expect(result).toEqual([
-			{ name: 'Alice', email: 'alice@example.com', accessLevel: 'owner' },
-			{ name: 'Bob', email: 'bob@example.com', accessLevel: 'write' },
-		]);
+		expect(result).toEqual({
+			members: [
+				{ name: 'Alice', email: 'alice@example.com', accessLevel: 'owner' },
+				{ name: 'Bob', email: 'bob@example.com', accessLevel: 'write' },
+			],
+		});
 	});
 
 	test('returns members for admin caller', async () => {
@@ -151,9 +157,11 @@ describe('getPlannerMembers', () => {
 		const result = await getPlannerMembers(plannerId);
 
 		expect(checkAuth).toHaveBeenCalledWith(expect.anything(), 'admin');
-		expect(result).toEqual([
-			{ name: 'Alice', email: 'alice@example.com', accessLevel: 'owner' },
-		]);
+		expect(result).toEqual({
+			members: [
+				{ name: 'Alice', email: 'alice@example.com', accessLevel: 'owner' },
+			],
+		});
 	});
 
 	test('returns unauthorized for non-admin caller', async () => {
@@ -163,7 +171,7 @@ describe('getPlannerMembers', () => {
 
 		const result = await getPlannerMembers(plannerId);
 
-		expect(result).toEqual({ ok: false, error: 'Unauthorized' });
+		expect(result).toEqual({ members: [], error: 'Unauthorized' });
 	});
 
 	test('returns unauthorized for unauthenticated caller', async () => {
@@ -173,7 +181,7 @@ describe('getPlannerMembers', () => {
 
 		const result = await getPlannerMembers(plannerId);
 
-		expect(result).toEqual({ ok: false, error: 'Unauthorized' });
+		expect(result).toEqual({ members: [], error: 'Unauthorized' });
 	});
 
 	test('handles missing name and email with defaults', async () => {
@@ -206,9 +214,9 @@ describe('getPlannerMembers', () => {
 
 		const result = await getPlannerMembers(plannerId);
 
-		expect(result).toEqual([
-			{ name: 'New User', email: '', accessLevel: 'admin' },
-		]);
+		expect(result).toEqual({
+			members: [{ name: 'New User', email: '', accessLevel: 'admin' }],
+		});
 	});
 
 	test('defaults to read access when membership not found', async () => {
@@ -240,9 +248,11 @@ describe('getPlannerMembers', () => {
 
 		const result = await getPlannerMembers(plannerId);
 
-		expect(result).toEqual([
-			{ name: 'Charlie', email: 'charlie@example.com', accessLevel: 'read' },
-		]);
+		expect(result).toEqual({
+			members: [
+				{ name: 'Charlie', email: 'charlie@example.com', accessLevel: 'read' },
+			],
+		});
 	});
 
 	test('does not expose internal fields like _id', async () => {
@@ -278,14 +288,18 @@ describe('getPlannerMembers', () => {
 
 		const result = await getPlannerMembers(plannerId);
 
-		expect(result).toEqual([
-			{ name: 'Alice', email: 'alice@example.com', accessLevel: 'owner' },
-		]);
+		expect(result).toEqual({
+			members: [
+				{ name: 'Alice', email: 'alice@example.com', accessLevel: 'owner' },
+			],
+		});
 
 		// Ensure internal fields are not present
 		const member = (
-			result as { name: string; email: string; accessLevel: string }[]
-		)[0];
+			result as {
+				members: { name: string; email: string; accessLevel: string }[];
+			}
+		).members[0];
 		expect(member).not.toHaveProperty('_id');
 		expect(member).not.toHaveProperty('__v');
 	});

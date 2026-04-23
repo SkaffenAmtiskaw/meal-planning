@@ -75,7 +75,10 @@ describe('addMeal', () => {
 	});
 
 	test('returns Planner not found when planner does not exist', async () => {
-		vi.mocked(checkAuth).mockResolvedValue({ type: 'authorized' });
+		vi.mocked(checkAuth).mockResolvedValue({
+			type: 'authorized',
+			accessLevel: 'write',
+		});
 		vi.mocked(Planner.findById).mockResolvedValueOnce(null);
 
 		const result = await addMeal(validData);
@@ -84,7 +87,10 @@ describe('addMeal', () => {
 	});
 
 	test('pushes to existing day when date already in calendar', async () => {
-		vi.mocked(checkAuth).mockResolvedValue({ type: 'authorized' });
+		vi.mocked(checkAuth).mockResolvedValue({
+			type: 'authorized',
+			accessLevel: 'write',
+		});
 		vi.mocked(Planner.findById).mockResolvedValue(makePlanner() as never);
 		vi.mocked(Planner.collection.updateOne).mockResolvedValueOnce({
 			matchedCount: 1,
@@ -104,7 +110,10 @@ describe('addMeal', () => {
 	});
 
 	test('adds new day when date is not in calendar', async () => {
-		vi.mocked(checkAuth).mockResolvedValue({ type: 'authorized' });
+		vi.mocked(checkAuth).mockResolvedValue({
+			type: 'authorized',
+			accessLevel: 'write',
+		});
 		vi.mocked(Planner.findById).mockResolvedValue(makePlanner() as never);
 		vi.mocked(Planner.collection.updateOne).mockResolvedValueOnce({
 			matchedCount: 0,
@@ -130,7 +139,10 @@ describe('addMeal', () => {
 		const calendar = [
 			{ date: '2024-06-15', meals: [{ name: 'Lunch', dishes: [] }] },
 		];
-		vi.mocked(checkAuth).mockResolvedValue({ type: 'authorized' });
+		vi.mocked(checkAuth).mockResolvedValue({
+			type: 'authorized',
+			accessLevel: 'write',
+		});
 		vi.mocked(Planner.findById)
 			.mockResolvedValueOnce(makePlanner() as never)
 			.mockResolvedValueOnce({ calendar } as never);
@@ -145,7 +157,10 @@ describe('addMeal', () => {
 	});
 
 	test('maps saved source type to ObjectId', async () => {
-		vi.mocked(checkAuth).mockResolvedValue({ type: 'authorized' });
+		vi.mocked(checkAuth).mockResolvedValue({
+			type: 'authorized',
+			accessLevel: 'write',
+		});
 		vi.mocked(Planner.findById).mockResolvedValue(makePlanner() as never);
 		vi.mocked(Planner.collection.updateOne).mockResolvedValue({
 			matchedCount: 1,
@@ -171,7 +186,10 @@ describe('addMeal', () => {
 	});
 
 	test('maps text source type to url object when a URL is provided', async () => {
-		vi.mocked(checkAuth).mockResolvedValue({ type: 'authorized' });
+		vi.mocked(checkAuth).mockResolvedValue({
+			type: 'authorized',
+			accessLevel: 'write',
+		});
 		vi.mocked(Planner.findById).mockResolvedValue(makePlanner() as never);
 		vi.mocked(Planner.collection.updateOne).mockResolvedValue({
 			matchedCount: 1,
@@ -205,7 +223,10 @@ describe('addMeal', () => {
 	});
 
 	test('maps text source type to ref object when a plain string is provided', async () => {
-		vi.mocked(checkAuth).mockResolvedValue({ type: 'authorized' });
+		vi.mocked(checkAuth).mockResolvedValue({
+			type: 'authorized',
+			accessLevel: 'write',
+		});
 		vi.mocked(Planner.findById).mockResolvedValue(makePlanner() as never);
 		vi.mocked(Planner.collection.updateOne).mockResolvedValue({
 			matchedCount: 1,
@@ -239,7 +260,10 @@ describe('addMeal', () => {
 	});
 
 	test('sets source to undefined when sourceType is none', async () => {
-		vi.mocked(checkAuth).mockResolvedValue({ type: 'authorized' });
+		vi.mocked(checkAuth).mockResolvedValue({
+			type: 'authorized',
+			accessLevel: 'write',
+		});
 		vi.mocked(Planner.findById).mockResolvedValue(makePlanner() as never);
 		vi.mocked(Planner.collection.updateOne).mockResolvedValue({
 			matchedCount: 1,
@@ -260,7 +284,10 @@ describe('addMeal', () => {
 	});
 
 	test('sets source to undefined when saved sourceType has no savedId', async () => {
-		vi.mocked(checkAuth).mockResolvedValue({ type: 'authorized' });
+		vi.mocked(checkAuth).mockResolvedValue({
+			type: 'authorized',
+			accessLevel: 'write',
+		});
 		vi.mocked(Planner.findById).mockResolvedValue(makePlanner() as never);
 		vi.mocked(Planner.collection.updateOne).mockResolvedValue({
 			matchedCount: 1,
@@ -284,7 +311,10 @@ describe('addMeal', () => {
 	});
 
 	test('sets source to undefined when text sourceType has no sourceText', async () => {
-		vi.mocked(checkAuth).mockResolvedValue({ type: 'authorized' });
+		vi.mocked(checkAuth).mockResolvedValue({
+			type: 'authorized',
+			accessLevel: 'write',
+		});
 		vi.mocked(Planner.findById).mockResolvedValue(makePlanner() as never);
 		vi.mocked(Planner.collection.updateOne).mockResolvedValue({
 			matchedCount: 1,
@@ -308,7 +338,10 @@ describe('addMeal', () => {
 	});
 
 	test('includes description when provided', async () => {
-		vi.mocked(checkAuth).mockResolvedValue({ type: 'authorized' });
+		vi.mocked(checkAuth).mockResolvedValue({
+			type: 'authorized',
+			accessLevel: 'write',
+		});
 		vi.mocked(Planner.findById).mockResolvedValue(makePlanner() as never);
 		vi.mocked(Planner.collection.updateOne).mockResolvedValue({
 			matchedCount: 1,
@@ -329,7 +362,10 @@ describe('addMeal', () => {
 	});
 
 	test('omits description when not provided', async () => {
-		vi.mocked(checkAuth).mockResolvedValue({ type: 'authorized' });
+		vi.mocked(checkAuth).mockResolvedValue({
+			type: 'authorized',
+			accessLevel: 'write',
+		});
 		vi.mocked(Planner.findById).mockResolvedValue(makePlanner() as never);
 		vi.mocked(Planner.collection.updateOne).mockResolvedValue({
 			matchedCount: 1,
@@ -350,7 +386,10 @@ describe('addMeal', () => {
 	});
 
 	test('falls back to empty calendar when updated planner is null', async () => {
-		vi.mocked(checkAuth).mockResolvedValue({ type: 'authorized' });
+		vi.mocked(checkAuth).mockResolvedValue({
+			type: 'authorized',
+			accessLevel: 'write',
+		});
 		vi.mocked(Planner.findById)
 			.mockResolvedValueOnce(makePlanner() as never)
 			.mockResolvedValueOnce(null);

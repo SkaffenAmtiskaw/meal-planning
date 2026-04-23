@@ -1,6 +1,6 @@
 'use server';
 
-import type { Types } from 'mongoose';
+import { Types } from 'mongoose';
 
 import { getUser } from '@/_actions/user';
 import { Planner } from '@/_models';
@@ -17,13 +17,22 @@ export type PlannerWithAccess = {
 	accessLevel: AccessLevel;
 };
 
+type SerializedPlannerMembership = {
+	planner: string;
+	accessLevel: AccessLevel;
+};
+
 export const getPlanners = async (): Promise<PlannerWithAccess[]> => {
 	const user = await getUser();
 
 	if (!user) throw new Error('No user found');
 
 	const planners = await Planner.find({
-		_id: { $in: user.planners.map(({ planner }) => planner) },
+		_id: {
+			$in: (user.planners as unknown as SerializedPlannerMembership[]).map(
+				(p) => new Types.ObjectId(p.planner),
+			),
+		},
 	});
 
 	const unnamed = planners.filter((p) => !p.name);
@@ -42,9 +51,9 @@ export const getPlanners = async (): Promise<PlannerWithAccess[]> => {
 	}
 
 	const plannerAccessMap = new Map(
-		user.planners.map(({ planner, accessLevel }) => [
-			planner.toString(),
-			accessLevel,
+		(user.planners as unknown as SerializedPlannerMembership[]).map((p) => [
+			p.planner,
+			p.accessLevel,
 		]),
 	);
 
@@ -56,6 +65,7 @@ export const getPlanners = async (): Promise<PlannerWithAccess[]> => {
 			saved: planner.saved,
 			tags: planner.tags,
 		},
-		accessLevel: plannerAccessMap.get(planner._id.toString()) ?? 'read',
+		accessLevel: (plannerAccessMap.get(planner._id.toString()) ??
+			'read') as AccessLevel,
 	}));
 };

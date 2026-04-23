@@ -49,7 +49,7 @@ describe('check auth', () => {
 		const otherPlannerId = new Types.ObjectId();
 		vi.mocked(getUser).mockResolvedValue({
 			email: 'test@example.com',
-			planners: [{ planner: otherPlannerId, accessLevel: 'owner' }],
+			planners: [{ planner: otherPlannerId.toString(), accessLevel: 'owner' }],
 		} as unknown as Awaited<ReturnType<typeof getUser>>);
 
 		expect(await checkAuth(mockPlannerId, 'read')).toEqual({
@@ -62,7 +62,9 @@ describe('check auth', () => {
 
 		vi.mocked(getUser).mockResolvedValue({
 			email: 'test@example.com',
-			planners: [{ planner: authorizedPlannerId, accessLevel: 'read' }],
+			planners: [
+				{ planner: authorizedPlannerId.toString(), accessLevel: 'read' },
+			],
 		} as unknown as Awaited<ReturnType<typeof getUser>>);
 
 		expect(await checkAuth(authorizedPlannerId, 'read')).toEqual({
@@ -74,7 +76,7 @@ describe('check auth', () => {
 	test('should return unauthorized when access level is below required', async () => {
 		vi.mocked(getUser).mockResolvedValue({
 			email: 'test@example.com',
-			planners: [{ planner: mockPlannerId, accessLevel: 'read' }],
+			planners: [{ planner: mockPlannerId.toString(), accessLevel: 'read' }],
 		} as unknown as Awaited<ReturnType<typeof getUser>>);
 
 		expect(await checkAuth(mockPlannerId, 'write')).toEqual({
@@ -85,7 +87,7 @@ describe('check auth', () => {
 	test('should return authorized with actual accessLevel when access level meets required', async () => {
 		vi.mocked(getUser).mockResolvedValue({
 			email: 'test@example.com',
-			planners: [{ planner: mockPlannerId, accessLevel: 'write' }],
+			planners: [{ planner: mockPlannerId.toString(), accessLevel: 'write' }],
 		} as unknown as Awaited<ReturnType<typeof getUser>>);
 
 		expect(await checkAuth(mockPlannerId, 'write')).toEqual({
@@ -97,7 +99,7 @@ describe('check auth', () => {
 	test('should return authorized with actual accessLevel when owner accesses with admin required', async () => {
 		vi.mocked(getUser).mockResolvedValue({
 			email: 'test@example.com',
-			planners: [{ planner: mockPlannerId, accessLevel: 'owner' }],
+			planners: [{ planner: mockPlannerId.toString(), accessLevel: 'owner' }],
 		} as unknown as Awaited<ReturnType<typeof getUser>>);
 
 		expect(await checkAuth(mockPlannerId, 'admin')).toEqual({

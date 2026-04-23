@@ -412,6 +412,7 @@ export const Select = vi.fn(
 		value,
 		onChange,
 		'data-testid': testId,
+		data,
 	}: {
 		value?: string | null;
 		onChange?: (value: string | null) => void;
@@ -423,7 +424,17 @@ export const Select = vi.fn(
 			data-testid={testId}
 			value={value ?? ''}
 			onChange={(e) => onChange?.(e.currentTarget.value || null)}
-		/>
+		>
+			{(data ?? []).map((item) => {
+				const optionValue = typeof item === 'string' ? item : item.value;
+				const optionLabel = typeof item === 'string' ? item : item.label;
+				return (
+					<option key={optionValue} value={optionValue}>
+						{optionLabel}
+					</option>
+				);
+			})}
+		</select>
 	),
 );
 

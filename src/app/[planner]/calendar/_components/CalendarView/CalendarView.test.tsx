@@ -167,7 +167,8 @@ describe('CalendarView', () => {
 			calendar: [],
 			saved: [],
 			tags: [],
-		});
+			accessLevel: 'write',
+		} as never);
 		useCalendarEventsMock.mockReturnValue({
 			eventsService: { set: vi.fn() },
 			initialEvents: [],
@@ -236,7 +237,12 @@ describe('CalendarView', () => {
 
 	test('passes correct props to WeekView', () => {
 		const calendar = [{ date: '2024-01-14', meals: [] }];
-		usePlannerContextMock.mockReturnValue({ calendar, saved: [], tags: [] });
+		usePlannerContextMock.mockReturnValue({
+			calendar,
+			saved: [],
+			tags: [],
+			accessLevel: 'write',
+		} as never);
 		useViewTypeMock.mockReturnValue({
 			viewType: 'week',
 			setViewType: mockSetViewType,

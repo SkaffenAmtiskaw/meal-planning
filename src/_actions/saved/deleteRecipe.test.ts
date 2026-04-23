@@ -68,7 +68,10 @@ describe('deleteRecipe', () => {
 	});
 
 	test('returns Planner not found error when planner does not exist', async () => {
-		vi.mocked(checkAuth).mockResolvedValue({ type: 'authorized' });
+		vi.mocked(checkAuth).mockResolvedValue({
+			type: 'authorized',
+			accessLevel: 'write',
+		});
 		vi.mocked(Planner.findById).mockResolvedValue(null);
 
 		const result = await deleteRecipe(validData);
@@ -78,7 +81,10 @@ describe('deleteRecipe', () => {
 
 	test('returns Recipe not found error when recipeId is not in saved', async () => {
 		const planner = makePlanner(false);
-		vi.mocked(checkAuth).mockResolvedValue({ type: 'authorized' });
+		vi.mocked(checkAuth).mockResolvedValue({
+			type: 'authorized',
+			accessLevel: 'write',
+		});
 		vi.mocked(Planner.findById).mockResolvedValue(planner as never);
 
 		const result = await deleteRecipe(validData);
@@ -89,7 +95,10 @@ describe('deleteRecipe', () => {
 
 	test('removes the recipe and returns ok', async () => {
 		const planner = makePlanner();
-		vi.mocked(checkAuth).mockResolvedValue({ type: 'authorized' });
+		vi.mocked(checkAuth).mockResolvedValue({
+			type: 'authorized',
+			accessLevel: 'write',
+		});
 		vi.mocked(Planner.findById).mockResolvedValue(planner as never);
 
 		const result = await deleteRecipe(validData);

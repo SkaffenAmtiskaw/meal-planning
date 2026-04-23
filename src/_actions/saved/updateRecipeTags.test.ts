@@ -73,7 +73,10 @@ describe('updateRecipeTags', () => {
 	});
 
 	test('returns Recipe not found error when matchedCount is 0', async () => {
-		vi.mocked(checkAuth).mockResolvedValue({ type: 'authorized' });
+		vi.mocked(checkAuth).mockResolvedValue({
+			type: 'authorized',
+			accessLevel: 'write',
+		});
 		vi.mocked(Planner.collection.updateOne).mockResolvedValue({
 			matchedCount: 0,
 		} as never);
@@ -84,7 +87,10 @@ describe('updateRecipeTags', () => {
 	});
 
 	test('sets tags as ObjectIds on success', async () => {
-		vi.mocked(checkAuth).mockResolvedValue({ type: 'authorized' });
+		vi.mocked(checkAuth).mockResolvedValue({
+			type: 'authorized',
+			accessLevel: 'write',
+		});
 		vi.mocked(Planner.collection.updateOne).mockResolvedValue({
 			matchedCount: 1,
 		} as never);
@@ -98,7 +104,10 @@ describe('updateRecipeTags', () => {
 	});
 
 	test('sets empty tags array when tags is empty', async () => {
-		vi.mocked(checkAuth).mockResolvedValue({ type: 'authorized' });
+		vi.mocked(checkAuth).mockResolvedValue({
+			type: 'authorized',
+			accessLevel: 'write',
+		});
 		vi.mocked(Planner.collection.updateOne).mockResolvedValue({
 			matchedCount: 1,
 		} as never);
@@ -113,7 +122,10 @@ describe('updateRecipeTags', () => {
 
 	test('revalidates the recipe path on success', async () => {
 		const { revalidatePath } = await import('next/cache');
-		vi.mocked(checkAuth).mockResolvedValue({ type: 'authorized' });
+		vi.mocked(checkAuth).mockResolvedValue({
+			type: 'authorized',
+			accessLevel: 'write',
+		});
 		vi.mocked(Planner.collection.updateOne).mockResolvedValue({
 			matchedCount: 1,
 		} as never);
@@ -127,7 +139,10 @@ describe('updateRecipeTags', () => {
 
 	test('does not revalidate when recipe is not found', async () => {
 		const { revalidatePath } = await import('next/cache');
-		vi.mocked(checkAuth).mockResolvedValue({ type: 'authorized' });
+		vi.mocked(checkAuth).mockResolvedValue({
+			type: 'authorized',
+			accessLevel: 'write',
+		});
 		vi.mocked(Planner.collection.updateOne).mockResolvedValue({
 			matchedCount: 0,
 		} as never);
@@ -139,7 +154,10 @@ describe('updateRecipeTags', () => {
 	});
 
 	test('returns ok on success', async () => {
-		vi.mocked(checkAuth).mockResolvedValue({ type: 'authorized' });
+		vi.mocked(checkAuth).mockResolvedValue({
+			type: 'authorized',
+			accessLevel: 'write',
+		});
 		vi.mocked(Planner.collection.updateOne).mockResolvedValue({
 			matchedCount: 1,
 		} as never);

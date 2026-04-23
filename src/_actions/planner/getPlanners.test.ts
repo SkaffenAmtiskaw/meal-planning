@@ -20,7 +20,7 @@ vi.mock('@/_actions/user', () => ({
 }));
 
 const makePlanner = (overrides: { name?: string; id?: string } = {}) => ({
-	_id: overrides.id ?? 'planner-1',
+	_id: overrides.id ?? '507f1f77bcf86cd799439011',
 	name: overrides.name,
 	calendar: [],
 	saved: [],
@@ -29,7 +29,7 @@ const makePlanner = (overrides: { name?: string; id?: string } = {}) => ({
 
 const mockUser = {
 	name: 'Ariel',
-	planners: [{ planner: 'planner-1', accessLevel: 'owner' }],
+	planners: [{ planner: '507f1f77bcf86cd799439011', accessLevel: 'owner' }],
 };
 
 describe('getPlanners', () => {
@@ -51,7 +51,7 @@ describe('getPlanners', () => {
 		await getPlanners();
 
 		expect(Planner.find).toHaveBeenCalledWith({
-			_id: { $in: ['planner-1'] },
+			_id: { $in: [expect.any(Object)] },
 		});
 	});
 
@@ -75,15 +75,18 @@ describe('getPlanners', () => {
 		await getPlanners();
 
 		expect(Planner.collection.updateOne).toHaveBeenCalledWith(
-			{ _id: planner._id },
+			{ _id: '507f1f77bcf86cd799439011' },
 			{ $set: { name: "Ariel's Planner" } },
 		);
 		expect(planner.name).toBe("Ariel's Planner");
 	});
 
 	test('only seeds planners that have no name', async () => {
-		const named = makePlanner({ name: "Ariel's Planner", id: 'p1' });
-		const unnamed = makePlanner({ id: 'p2' });
+		const named = makePlanner({
+			name: "Ariel's Planner",
+			id: '507f1f77bcf86cd799439021',
+		});
+		const unnamed = makePlanner({ id: '507f1f77bcf86cd799439022' });
 		vi.mocked(getUser).mockResolvedValueOnce(mockUser as never);
 		vi.mocked(Planner.find).mockResolvedValueOnce([named, unnamed] as never);
 		vi.mocked(Planner.collection.updateOne).mockResolvedValueOnce({} as never);
@@ -92,7 +95,7 @@ describe('getPlanners', () => {
 
 		expect(Planner.collection.updateOne).toHaveBeenCalledTimes(1);
 		expect(Planner.collection.updateOne).toHaveBeenCalledWith(
-			{ _id: unnamed._id },
+			{ _id: '507f1f77bcf86cd799439022' },
 			{ $set: { name: "Ariel's Planner" } },
 		);
 		expect(unnamed.name).toBe("Ariel's Planner");
@@ -114,14 +117,23 @@ describe('getPlanners', () => {
 		const mockUserWithMultiplePlanners = {
 			name: 'Ariel',
 			planners: [
-				{ planner: 'planner-1', accessLevel: 'owner' },
-				{ planner: 'planner-2', accessLevel: 'write' },
-				{ planner: 'planner-3', accessLevel: 'read' },
+				{ planner: '507f1f77bcf86cd799439011', accessLevel: 'owner' },
+				{ planner: '507f1f77bcf86cd799439012', accessLevel: 'write' },
+				{ planner: '507f1f77bcf86cd799439013', accessLevel: 'read' },
 			],
 		};
-		const planner1 = makePlanner({ id: 'planner-1', name: 'Planner 1' });
-		const planner2 = makePlanner({ id: 'planner-2', name: 'Planner 2' });
-		const planner3 = makePlanner({ id: 'planner-3', name: 'Planner 3' });
+		const planner1 = makePlanner({
+			id: '507f1f77bcf86cd799439011',
+			name: 'Planner 1',
+		});
+		const planner2 = makePlanner({
+			id: '507f1f77bcf86cd799439012',
+			name: 'Planner 2',
+		});
+		const planner3 = makePlanner({
+			id: '507f1f77bcf86cd799439013',
+			name: 'Planner 3',
+		});
 
 		vi.mocked(getUser).mockResolvedValueOnce(
 			mockUserWithMultiplePlanners as never,
@@ -167,7 +179,7 @@ describe('getPlanners', () => {
 			tags: unknown[];
 		};
 		Object.defineProperty(plannerWithUndefinedName, '_id', {
-			value: 'planner-1',
+			value: '507f1f77bcf86cd799439011',
 			enumerable: true,
 		});
 		// Define name as a getter that always returns undefined - this simulates a scenario where
@@ -207,9 +219,12 @@ describe('getPlanners', () => {
 	test('should default to read access when accessLevel not found', async () => {
 		const mockUserWithMissingAccess = {
 			name: 'Ariel',
-			planners: [{ planner: 'different-planner-id', accessLevel: 'owner' }],
+			planners: [{ planner: '507f1f77bcf86cd799439099', accessLevel: 'owner' }],
 		};
-		const planner = makePlanner({ id: 'planner-1', name: "Ariel's Planner" });
+		const planner = makePlanner({
+			id: '507f1f77bcf86cd799439011',
+			name: "Ariel's Planner",
+		});
 		vi.mocked(getUser).mockResolvedValueOnce(
 			mockUserWithMissingAccess as never,
 		);

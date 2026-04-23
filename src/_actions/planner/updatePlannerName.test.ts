@@ -80,7 +80,10 @@ describe('updatePlannerName', () => {
 	});
 
 	test('updates planner name when authorized', async () => {
-		mockCheckAuth.mockResolvedValue({ type: 'authorized' });
+		mockCheckAuth.mockResolvedValue({
+			type: 'authorized',
+			accessLevel: 'admin',
+		});
 		vi.mocked(Planner.collection.updateOne).mockResolvedValue({} as never);
 
 		const result = await updatePlannerName(validId, 'New Name');
@@ -97,7 +100,10 @@ describe('updatePlannerName', () => {
 	});
 
 	test('propagates error when DB update throws', async () => {
-		mockCheckAuth.mockResolvedValue({ type: 'authorized' });
+		mockCheckAuth.mockResolvedValue({
+			type: 'authorized',
+			accessLevel: 'admin',
+		});
 		vi.mocked(Planner.collection.updateOne).mockRejectedValue(
 			new Error('DB error'),
 		);

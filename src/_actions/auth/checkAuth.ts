@@ -31,7 +31,9 @@ export const checkAuth = async (
 
 	if (!user) return { type: 'unauthenticated' };
 
-	const membership = user.planners.find(({ planner }) => planner.equals(id));
+	const membership = user.planners.find(
+		(p) => (p.planner as unknown as string) === id.toString(),
+	);
 	if (!membership) return { type: 'unauthorized' };
 
 	if (
