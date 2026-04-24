@@ -3,10 +3,11 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
     "build": "next build",
-    "start": "next start",
+    "check:types": "tsc --noEmit --project tsconfig.json",
+    "dev": "next dev",
     "lint": "biome check --write",
+    "start": "next start",
     "test": "sh -c 'vitest ${1:-src}' --",
     "test:agent": "vitest run [--args] --coverage --coverage.include [--args] --reporter=agent",
     "test:coverage": "vitest run --coverage src"

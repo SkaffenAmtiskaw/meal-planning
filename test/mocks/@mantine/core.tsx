@@ -608,6 +608,12 @@ export const ListItem = vi.fn(({ children, 'data-testid': testId }: WithChildren
 	<li data-testid={testId}>{children}</li>
 ));
 
+// ─── Loader ───────────────────────────────────────────────────────────────────
+
+export const Loader = vi.fn(({ size, 'data-testid': testId }: { size?: string; 'data-testid'?: string }) => (
+	<span data-testid={testId ?? 'loader'} data-size={size} />
+));
+
 // ─── Menu (compound + standalone named exports) ───────────────────────────────
 
 export const MenuDivider = vi.fn(() => <hr />);

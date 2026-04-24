@@ -40,6 +40,8 @@ export default defineConfig({
           'src/**/index.{ts,tsx}',
           // type declaration files - no runtime code
           'src/**/*.d.ts',
+          // type definition files - no runtime code
+          'src/**/*.types.ts',
           // test files
           'src/**/*.test.{ts,tsx}',
           // test mocks

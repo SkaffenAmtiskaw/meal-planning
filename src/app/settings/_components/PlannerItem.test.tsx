@@ -2,6 +2,7 @@ import { fireEvent, render, screen } from '@testing-library/react';
 
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
+import type { PendingInvite } from '@/_actions/planner/invite.types';
 import type { AccessLevel } from '@/_models/user';
 
 import { PlannerItem } from './PlannerItem';
@@ -13,6 +14,17 @@ vi.mock('@mantine/core', async () => {
 	return actual;
 });
 
+vi.mock('@/_utils/date', () => ({
+	toLocaleDateString: (date: string) =>
+		new Date(date).toLocaleDateString('en-US', {
+			year: 'numeric',
+			month: 'short',
+			day: 'numeric',
+		}),
+	isPastDate: () => false,
+	isWithinHours: () => false,
+}));
+
 vi.mock('./MemberListContainer', () => ({
 	MemberListContainer: ({ plannerId }: { plannerId: string }) => (
 		<div data-testid="member-list" data-planner-id={plannerId} />
@@ -22,6 +34,38 @@ vi.mock('./MemberListContainer', () => ({
 const mockUseRenamePlanner = vi.fn();
 vi.mock('./useRenamePlanner', () => ({
 	useRenamePlanner: (...args: unknown[]) => mockUseRenamePlanner(...args),
+}));
+
+const mockInviteUser = vi.fn();
+const mockCancelInvite = vi.fn();
+
+interface UseInvitesReturn {
+	invites: PendingInvite[];
+	loading: boolean;
+	error: string | null;
+	inviteStatus: 'idle' | 'loading' | 'success' | 'error';
+	inviteError: string | null;
+	cancelStatus: 'idle' | 'loading' | 'success' | 'error';
+	cancelError: string | null;
+	inviteUser: typeof mockInviteUser;
+	cancelInvite: typeof mockCancelInvite;
+}
+
+const mockUseInvites = vi.fn(
+	(): UseInvitesReturn => ({
+		invites: [],
+		loading: false,
+		error: null,
+		inviteStatus: 'idle',
+		inviteError: null,
+		cancelStatus: 'idle',
+		cancelError: null,
+		inviteUser: mockInviteUser,
+		cancelInvite: mockCancelInvite,
+	}),
+);
+vi.mock('../_hooks/useInvites', () => ({
+	useInvites: () => mockUseInvites(),
 }));
 
 const id = '507f1f77bcf86cd799439011';
@@ -356,6 +400,76 @@ describe('PlannerItem', () => {
 			render(<PlannerItem id={id} name={name} accessLevel="owner" />);
 
 			expect(mockUseRenamePlanner).toHaveBeenCalledWith(id, name);
+		});
+	});
+
+	describe('invite functionality', () => {
+		it('calls inviteUser when invite form is submitted with valid email', () => {
+			mockUseRenamePlanner.mockReturnValue(notEditingState);
+			mockInviteUser.mockResolvedValue(undefined);
+
+			render(<PlannerItem id={id} name={name} accessLevel="owner" />);
+
+			const emailInput = screen.getByTestId('input-Email address');
+			fireEvent.change(emailInput, { target: { value: 'test@example.com' } });
+
+			fireEvent.click(screen.getByTestId('invite-button'));
+
+			expect(mockInviteUser).toHaveBeenCalledWith('test@example.com');
+		});
+
+		it('displays invites error when present', () => {
+			mockUseRenamePlanner.mockReturnValue(notEditingState);
+			mockUseInvites.mockReturnValue({
+				invites: [],
+				loading: false,
+				error: 'Failed to load invites',
+				inviteStatus: 'idle',
+				inviteError: null,
+				cancelStatus: 'idle',
+				cancelError: null,
+				inviteUser: mockInviteUser,
+				cancelInvite: mockCancelInvite,
+			});
+
+			render(<PlannerItem id={id} name={name} accessLevel="owner" />);
+
+			expect(screen.getByTestId('invites-error')).toBeDefined();
+			expect(screen.getByTestId('invites-error').textContent).toBe(
+				'Failed to load invites',
+			);
+		});
+	});
+
+	describe('cancel invite functionality', () => {
+		it('calls cancelInvite when cancel button is clicked on a pending invite', () => {
+			const inviteId = 'invite-123';
+			mockUseRenamePlanner.mockReturnValue(notEditingState);
+			const mockInvite: PendingInvite = {
+				id: inviteId,
+				email: 'invited@example.com',
+				accessLevel: 'write',
+				invitedAt: new Date().toISOString(),
+				expiresAt: new Date(Date.now() + 86400000).toISOString(),
+			};
+			mockUseInvites.mockReturnValue({
+				invites: [mockInvite],
+				loading: false,
+				error: null,
+				inviteStatus: 'idle',
+				inviteError: null,
+				cancelStatus: 'idle',
+				cancelError: null,
+				inviteUser: mockInviteUser,
+				cancelInvite: mockCancelInvite,
+			});
+			mockCancelInvite.mockResolvedValue(undefined);
+
+			render(<PlannerItem id={id} name={name} accessLevel="owner" />);
+
+			fireEvent.click(screen.getByTestId(`cancel-button-${inviteId}`));
+
+			expect(mockCancelInvite).toHaveBeenCalledWith(inviteId);
 		});
 	});
 });

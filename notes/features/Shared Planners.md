@@ -235,13 +235,13 @@
 1. As owner, expand planner in settings
 2. Enter an email that already has a pending invite for this planner
 3. Click Invite
-4. **Verify**: See error "Pending invite already exists"
+4. ✅ **Verify**: See error "Pending invite already exists"
 5. Enter a new email address (no existing account)
 6. Click Invite
-7. **Verify**: Invite appears in pending list
-8. **Verify**: Receive email with accept link (for new user signup)
+7. ✅ **Verify**: Invite appears in pending list
+8. ✅ **Verify**: Receive email with accept link (for new user signup)
 9. Click Cancel on the invite
-10. **Verify**: Invite disappears from list immediately (optimistic update)
+10. ✅ **Verify**: Invite disappears from list immediately (optimistic update)
 
 **Security Checklist:**
 - Server action must verify caller is owner/admin

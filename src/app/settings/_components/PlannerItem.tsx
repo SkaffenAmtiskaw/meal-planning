@@ -14,9 +14,12 @@ import {
 
 import type { AccessLevel } from '@/_models/user';
 
+import { InviteForm } from './InviteForm';
 import { MemberListContainer } from './MemberListContainer';
+import { PendingInvitesList } from './PendingInvitesList';
 import { useRenamePlanner } from './useRenamePlanner';
 
+import { useInvites } from '../_hooks/useInvites';
 import { getAccessLevelColor } from '../_utils/getAccessLevelColor';
 
 type Props = {
@@ -38,6 +41,26 @@ export const PlannerItem = ({ id, name, accessLevel }: Props) => {
 		cancel,
 		save,
 	} = useRenamePlanner(id, name);
+
+	const {
+		invites,
+		loading: invitesLoading,
+		error: invitesError,
+		inviteStatus,
+		inviteError,
+		cancelStatus,
+		cancelError,
+		inviteUser,
+		cancelInvite,
+	} = useInvites(id);
+
+	const handleInvite = async (email: string) => {
+		await inviteUser(email);
+	};
+
+	const handleCancel = async (inviteId: string) => {
+		await cancelInvite(inviteId);
+	};
 
 	return (
 		<Accordion>
@@ -98,10 +121,46 @@ export const PlannerItem = ({ id, name, accessLevel }: Props) => {
 								</Alert>
 							)}
 
+							{invitesError && (
+								<Alert color="red" data-testid="invites-error">
+									{invitesError}
+								</Alert>
+							)}
+
 							<Divider />
 
 							{/* MemberList section */}
 							<MemberListContainer plannerId={id} />
+
+							<Divider />
+
+							{/* Invite Section */}
+							<Stack>
+								<Text size="sm" fw={500}>
+									Invite New Member
+								</Text>
+								<InviteForm
+									status={inviteStatus}
+									error={inviteError}
+									onInvite={handleInvite}
+								/>
+							</Stack>
+
+							<Divider />
+
+							{/* Pending Invites Section */}
+							<Stack>
+								<Text size="sm" fw={500}>
+									Pending Invites
+								</Text>
+								<PendingInvitesList
+									invites={invites}
+									loading={invitesLoading}
+									cancelStatus={cancelStatus}
+									cancelError={cancelError}
+									onCancel={handleCancel}
+								/>
+							</Stack>
 
 							<Divider />
 
