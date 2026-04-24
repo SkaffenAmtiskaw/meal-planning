@@ -233,16 +233,15 @@
 
 **Acceptance Criteria:**
 1. As owner, expand planner in settings
-2. Enter your own email (that has no account)
+2. Enter an email that already has a pending invite for this planner
 3. Click Invite
-4. **Verify**: See error "User is already a member" or "Pending invite exists"
-5. Enter a new email address
+4. **Verify**: See error "Pending invite already exists"
+5. Enter a new email address (no existing account)
 6. Click Invite
 7. **Verify**: Invite appears in pending list
-8. **Verify**: Receive email with accept link
+8. **Verify**: Receive email with accept link (for new user signup)
 9. Click Cancel on the invite
-10. **Verify**: Invite disappears from list
-11. **Re-test**: Delete a user from the planner to ensure the member list UI still works correctly with the invite system changes
+10. **Verify**: Invite disappears from list immediately (optimistic update)
 
 **Security Checklist:**
 - Server action must verify caller is owner/admin
@@ -289,6 +288,10 @@
 9. **Verify**: Can access planner at read-only level
 10. Repeat with Decline
 11. **Verify**: Invite disappears, no planner access
+
+**Additional Acceptance Criteria (moved from Step 6):**
+- Test "User is already a member" error: Invite an email that belongs to an existing member of the planner
+- **Re-test Step 5**: Delete a user from the planner to ensure the member list UI still works correctly with the invite system changes
 
 **Security Checklist:**
 - Server action must verify invite token is valid and not expired
