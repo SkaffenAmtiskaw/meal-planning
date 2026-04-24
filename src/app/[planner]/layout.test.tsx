@@ -2,11 +2,14 @@ import { render, screen } from '@testing-library/react';
 
 import { afterEach, describe, expect, test, vi } from 'vitest';
 
-const { mockCheckAuth, mockRedirect, mockNotFound } = vi.hoisted(() => ({
-	mockCheckAuth: vi.fn(),
-	mockRedirect: vi.fn(),
-	mockNotFound: vi.fn(),
-}));
+const { mockCheckAuth, mockRedirect, mockNotFound, mockGetUser } = vi.hoisted(
+	() => ({
+		mockCheckAuth: vi.fn(),
+		mockRedirect: vi.fn(),
+		mockNotFound: vi.fn(),
+		mockGetUser: vi.fn(),
+	}),
+);
 
 vi.mock('@/_models', async () => {
 	const { zObjectId } = await import('@/_models/utils/zObjectId');
@@ -15,6 +18,7 @@ vi.mock('@/_models', async () => {
 
 vi.mock('@/_actions', () => ({
 	checkAuth: (...args: unknown[]) => mockCheckAuth(...args),
+	getUser: () => mockGetUser(),
 }));
 
 vi.mock('next/navigation', () => ({
@@ -22,12 +26,13 @@ vi.mock('next/navigation', () => ({
 	notFound: () => mockNotFound(),
 }));
 
-vi.mock('./_components/NavbarServer', () => ({
-	NavbarServer: () => null,
+vi.mock('@/app/_components/Header', () => ({
+	Header: ({ children }: { children?: React.ReactNode }) => children || null,
 }));
 
 const plannerProviderCalls: unknown[] = [];
-vi.mock('./_components', () => {
+vi.mock('./_components', async () => {
+	const React = await import('react');
 	const mp = vi.fn(
 		({
 			children,
@@ -37,14 +42,19 @@ vi.mock('./_components', () => {
 			accessLevel: string;
 		}) => {
 			plannerProviderCalls.push(props);
-			return <>{children}</>;
+			return React.createElement(React.Fragment, null, children);
 		},
 	);
 	return {
-		PlannerLayout: ({ children }: { children: React.ReactNode }) => (
-			<>{children}</>
-		),
+		PlannerLayout: ({ children }: { children: React.ReactNode }) =>
+			React.createElement(React.Fragment, null, children),
 		PlannerProvider: mp,
+		BurgerToggle: () => null,
+		ToggleContext: {
+			Provider: ({ children }: { children: React.ReactNode }) =>
+				React.createElement(React.Fragment, null, children),
+		},
+		NavbarServer: () => null,
 	};
 });
 
@@ -56,6 +66,7 @@ const params = Promise.resolve({ planner: plannerId });
 describe('planner layout', () => {
 	afterEach(() => {
 		plannerProviderCalls.length = 0;
+		mockGetUser.mockResolvedValue({ email: 'test@example.com' });
 	});
 
 	test('redirects to / when unauthenticated', async () => {

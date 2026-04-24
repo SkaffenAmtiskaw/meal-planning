@@ -6,8 +6,10 @@ import { z } from 'zod';
 
 import { checkAuth } from '@/_actions';
 import { zObjectId } from '@/_models';
+import { THEME_COLORS } from '@/_theme/colors';
+import { Header } from '@/app/_components/Header';
 
-import { PlannerLayout, PlannerProvider } from './_components';
+import { BurgerToggle, PlannerLayout, PlannerProvider } from './_components';
 
 import { NavbarServer } from './_components/NavbarServer';
 
@@ -26,7 +28,12 @@ const Layout = async ({ children, params }: LayoutProps<'/[planner]'>) => {
 
 	// TODO: Add suspense so the layout will still load while the auth is being checked
 	return (
-		<PlannerLayout navbar={<NavbarServer id={String(id)} />}>
+		<PlannerLayout
+			header={
+				<Header leftSection={<BurgerToggle color={THEME_COLORS.chalk} />} />
+			}
+			navbar={<NavbarServer id={String(id)} />}
+		>
 			<PlannerProvider id={String(id)} accessLevel={result.accessLevel}>
 				{children}
 			</PlannerProvider>

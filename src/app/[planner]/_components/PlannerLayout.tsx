@@ -2,12 +2,9 @@
 
 import { useParams } from 'next/navigation';
 
-import { AppShell, AppShellMain, AppShellNavbar, Burger } from '@mantine/core';
-import { useDisclosure } from '@mantine/hooks';
+import { AppShell, AppShellMain, AppShellNavbar } from '@mantine/core';
 
-import { THEME_COLORS } from '@/_theme/colors';
-import { Header } from '@/app/_components/Header';
-
+import { ToggleProvider, useToggleContext } from './ToggleContext';
 import { useLastOpenedPlanner } from './useLastOpenedPlanner';
 
 import { HEADER_HEIGHT } from '../../_constants';
@@ -15,11 +12,11 @@ import { HEADER_HEIGHT } from '../../_constants';
 type Props = {
 	children: React.ReactNode;
 	navbar?: React.ReactNode;
+	header?: React.ReactNode;
 };
 
-export const PlannerLayout = ({ children, navbar }: Props) => {
-	const [opened, { toggle }] = useDisclosure();
-
+const PlannerLayoutContent = ({ children, navbar, header }: Props) => {
+	const { opened } = useToggleContext();
 	const { planner } = useParams();
 
 	useLastOpenedPlanner(planner as string);
@@ -38,13 +35,19 @@ export const PlannerLayout = ({ children, navbar }: Props) => {
 				width: 300,
 			}}
 		>
-			<Header
-				leftSection={
-					<Burger opened={opened} onClick={toggle} color={THEME_COLORS.chalk} />
-				}
-			/>
+			{header}
 			<AppShellNavbar>{navbar}</AppShellNavbar>
 			<AppShellMain>{children}</AppShellMain>
 		</AppShell>
+	);
+};
+
+export const PlannerLayout = ({ children, navbar, header }: Props) => {
+	return (
+		<ToggleProvider>
+			<PlannerLayoutContent navbar={navbar} header={header}>
+				{children}
+			</PlannerLayoutContent>
+		</ToggleProvider>
 	);
 };

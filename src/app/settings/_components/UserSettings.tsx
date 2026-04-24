@@ -7,6 +7,7 @@ import { ChangeEmailForm } from './ChangeEmailForm';
 import { ChangeNameForm } from './ChangeNameForm';
 import { ChangePasswordForm } from './ChangePasswordForm';
 import { DeleteAccountForm } from './DeleteAccountForm';
+import { InvitesSettings } from './InvitesSettings';
 
 export const UserSettings = async ({ email }: { email: string }) => {
 	const [emailStatus, user] = await Promise.all([
@@ -46,6 +47,13 @@ export const UserSettings = async ({ email }: { email: string }) => {
 					)}
 				</Stack>
 			</SimpleGrid>
+
+			<Divider mt="xl" />
+			<Stack mt="lg">
+				<Title order={3}>Pending Invites</Title>
+				<InvitesSettings />
+			</Stack>
+
 			<Divider mt="xl" />
 			<Box
 				mt="lg"

@@ -216,6 +216,44 @@ export const Badge = vi.fn(
 	),
 );
 
+export const Indicator = vi.fn(
+	({
+		children,
+		'data-testid': testId,
+		color,
+		position,
+		size,
+		label,
+		maxValue,
+		inline,
+		showZero,
+		disabled,
+	}: WithChildren & {
+		color?: string;
+		position?: string;
+		size?: number;
+		label?: React.ReactNode;
+		maxValue?: number;
+		inline?: boolean;
+		showZero?: boolean;
+		disabled?: boolean;
+	}) => (
+		<span
+			data-testid={testId ?? 'indicator'}
+			data-color={color}
+			data-position={position}
+			data-size={size}
+			data-label={label}
+			data-max-value={maxValue}
+			data-inline={inline}
+			data-show-zero={showZero}
+			data-disabled={disabled}
+		>
+			{children}
+		</span>
+	),
+);
+
 export const Affix = vi.fn(({ children, 'data-testid': testId }: WithChildren) => (
 	<div data-testid={testId}>{children}</div>
 ));

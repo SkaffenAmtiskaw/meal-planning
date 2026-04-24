@@ -1,8 +1,9 @@
 import { render, screen } from '@testing-library/react';
 
-import { describe, expect, test, vi } from 'vitest';
+import { beforeEach, describe, expect, test, vi } from 'vitest';
 
 import { PlannerLayout } from './PlannerLayout';
+import { useToggleContext } from './ToggleContext';
 
 vi.mock('next/navigation', () => ({
 	useParams: () => ({ planner: 'maleficent-planner-id' }),
@@ -10,22 +11,21 @@ vi.mock('next/navigation', () => ({
 
 vi.mock('@mantine/core', async () => await import('@mocks/@mantine/core'));
 
+const mockUseDisclosure = vi.fn();
 vi.mock('@mantine/hooks', () => ({
-	useDisclosure: () => [false, { toggle: vi.fn() }],
+	useDisclosure: () => mockUseDisclosure(),
 }));
 
 vi.mock('./useLastOpenedPlanner', () => ({
 	useLastOpenedPlanner: vi.fn(),
 }));
 
-const mockHeader = vi.fn<(props: { leftSection?: React.ReactNode }) => null>(
-	() => null,
-);
-vi.mock('@/app/_components/Header', () => ({
-	Header: (props: { leftSection?: React.ReactNode }) => mockHeader(props),
-}));
-
 describe('PlannerLayout', () => {
+	beforeEach(() => {
+		vi.resetAllMocks();
+		mockUseDisclosure.mockReturnValue([false, { toggle: vi.fn() }]);
+	});
+
 	test('renders children', () => {
 		render(<PlannerLayout>{"Ursula's Menu"}</PlannerLayout>);
 
@@ -42,11 +42,49 @@ describe('PlannerLayout', () => {
 		expect(screen.getByTestId('test-navbar')).toBeDefined();
 	});
 
-	test('passes Burger as leftSection to Header', () => {
-		render(<PlannerLayout>{'content'}</PlannerLayout>);
-
-		expect(mockHeader).toHaveBeenCalledWith(
-			expect.objectContaining({ leftSection: expect.anything() }),
+	test('renders header prop', () => {
+		render(
+			<PlannerLayout header={<div data-testid="test-header" />}>
+				{'content'}
+			</PlannerLayout>,
 		);
+
+		expect(screen.getByTestId('test-header')).toBeDefined();
+	});
+
+	test('provides toggle function via ToggleContext to children', () => {
+		const TestComponent = () => {
+			const { toggle } = useToggleContext();
+			return (
+				<button type="button" data-testid="toggle-btn" onClick={toggle}>
+					Toggle
+				</button>
+			);
+		};
+
+		render(
+			<PlannerLayout>
+				<TestComponent />
+			</PlannerLayout>,
+		);
+
+		expect(screen.getByTestId('toggle-btn')).toBeDefined();
+	});
+
+	test('provides opened state via ToggleContext to children', () => {
+		mockUseDisclosure.mockReturnValue([true, { toggle: vi.fn() }]);
+
+		const TestComponent = () => {
+			const { opened } = useToggleContext();
+			return <div data-testid="opened-state">{opened ? 'open' : 'closed'}</div>;
+		};
+
+		render(
+			<PlannerLayout>
+				<TestComponent />
+			</PlannerLayout>,
+		);
+
+		expect(screen.getByTestId('opened-state').textContent).toBe('open');
 	});
 });

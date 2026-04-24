@@ -12,7 +12,8 @@
   - ✅ Build passing
 - ✅ **Step 4** (Change User Access Level) - Commit `9c9db2af146bec8ea41d98379a1ed289400966b0`
 - ✅ **Step 5** (Remove Member from Planner) - Commit `636c3e5e7fb6f5dab5a9bbd0067fcd7d9f10ea82`
-- ⏳ Steps 6-8: Not started
+- ✅ Step 6 (Invite User UI) - Commit `5ec0db3f92287e4ebc3fd64593c9537e19e1bd04`
+- ⏳ Steps 7-10: Not started
 
 ## Requirements
 
@@ -279,19 +280,19 @@
 **Acceptance Criteria:**
 1. Have a pending invite for your user (from Step 6)
 2. Log in as invited user
-3. **Verify**: See notification badge on user avatar
+3. ✅ **Verify**: See notification badge on user avatar
 4. Go to User Settings
-5. **Verify**: See Invites section with planner name and inviter
+5. ✅ **Verify**: See Invites section with planner name and inviter
 6. Click Accept
-7. **Verify**: Invite disappears, planner appears in your planner list
+7. ✅ **Verify**: Invite disappears, planner appears in your planner list
 8. Navigate to planner
-9. **Verify**: Can access planner at read-only level
+9. ✅ **Verify**: Can access planner at read-only level
 10. Repeat with Decline
-11. **Verify**: Invite disappears, no planner access
+11. ✅ **Verify**: Invite disappears, no planner access
 
 **Additional Acceptance Criteria (moved from Step 6):**
-- Test "User is already a member" error: Invite an email that belongs to an existing member of the planner
-- **Re-test Step 5**: Delete a user from the planner to ensure the member list UI still works correctly with the invite system changes
+- ✅ Test "User is already a member" error: Invite an email that belongs to an existing member of the planner
+- ✅ **Re-test Step 5**: Delete a user from the planner to ensure the member list UI still works correctly with the invite system changes
 
 **Security Checklist:**
 - Server action must verify invite token is valid and not expired

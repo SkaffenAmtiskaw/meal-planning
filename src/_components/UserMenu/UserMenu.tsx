@@ -10,15 +10,22 @@ import { IconSettings, IconUser } from '@tabler/icons-react';
 
 import { THEME_COLORS } from '@/_theme/colors';
 
+import { InviteBadge } from './InviteBadge';
 import { SignOutButton } from './SignOutButton';
 
 export const UserMenu = () => (
 	<Menu>
-		<MenuTarget>
-			<ActionIcon variant="transparent" data-testid="user-avatar">
-				<IconUser size={20} color={THEME_COLORS.chalk} />
-			</ActionIcon>
-		</MenuTarget>
+		<InviteBadge>
+			<MenuTarget>
+				<ActionIcon
+					variant="transparent"
+					data-testid="user-avatar"
+					suppressHydrationWarning
+				>
+					<IconUser size={20} color={THEME_COLORS.chalk} />
+				</ActionIcon>
+			</MenuTarget>
+		</InviteBadge>
 		<MenuDropdown>
 			<MenuItem
 				component="a"

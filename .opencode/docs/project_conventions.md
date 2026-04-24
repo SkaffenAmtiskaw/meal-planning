@@ -1,7 +1,7 @@
 # Naming Conventions
 - To align with JS/TS project conventions, use camelCase or UpperCamelCase (for React components) for file names.
 
-# Barrels Files
+# Barrel Files
 - Barrel files should NEVER have logic.
 
 # Unit Tests

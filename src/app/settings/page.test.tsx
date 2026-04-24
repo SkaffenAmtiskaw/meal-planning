@@ -1,6 +1,6 @@
 import { render, screen } from '@testing-library/react';
 
-import { describe, expect, test, vi } from 'vitest';
+import { beforeEach, describe, expect, test, vi } from 'vitest';
 
 import SettingsPage from './page';
 
@@ -40,6 +40,10 @@ vi.mock('@mantine/core', async () => await import('@mocks/@mantine/core'));
 const session = { user: { email: 'user@example.com' } };
 
 describe('SettingsPage', () => {
+	beforeEach(() => {
+		vi.resetAllMocks();
+	});
+
 	test('redirects to home when no session', async () => {
 		mockGetSession.mockResolvedValueOnce(null);
 

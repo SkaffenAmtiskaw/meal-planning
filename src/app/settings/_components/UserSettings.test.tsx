@@ -49,6 +49,10 @@ vi.mock('./DeleteAccountForm', () => ({
 	DeleteAccountForm: () => <div data-testid="delete-account-form" />,
 }));
 
+vi.mock('./InvitesSettings', () => ({
+	InvitesSettings: () => <div data-testid="invites-settings" />,
+}));
+
 vi.mock('@mantine/core', async () => await import('@mocks/@mantine/core'));
 
 const futureDate = new Date(Date.now() + 1000 * 60 * 60 * 24);
@@ -140,5 +144,23 @@ describe('UserSettings', () => {
 		render(await UserSettings({ email: 'user@example.com' }));
 
 		expect(screen.getByTestId('delete-account-form')).toBeDefined();
+	});
+
+	test('renders InvitesSettings component', async () => {
+		mockCheckEmailStatus.mockResolvedValueOnce('has-password');
+		mockGetUser.mockResolvedValueOnce(null);
+
+		render(await UserSettings({ email: 'user@example.com' }));
+
+		expect(screen.getByTestId('invites-settings')).toBeDefined();
+	});
+
+	test('renders Pending Invites title', async () => {
+		mockCheckEmailStatus.mockResolvedValueOnce('has-password');
+		mockGetUser.mockResolvedValueOnce(null);
+
+		render(await UserSettings({ email: 'user@example.com' }));
+
+		expect(screen.getByText('Pending Invites')).toBeDefined();
 	});
 });
