@@ -6,31 +6,24 @@ import { deleteRecipe } from '@/_actions/saved';
 
 import { RecipeDetail } from './RecipeDetail';
 
-vi.mock('../../_components/DeleteConfirmModal', () => ({
-	DeleteConfirmModal: ({
-		loading,
-		onClose,
+vi.mock('@/_components', () => ({
+	ConfirmButton: ({
 		onConfirm,
-		opened,
+		onSuccess,
+		renderTrigger,
 	}: {
-		opened: boolean;
-		onClose: () => void;
-		onConfirm: () => void;
-		loading: boolean;
-		title: string;
-		message: string;
-	}) =>
-		opened ? (
-			<div data-testid="delete-confirm-modal">
-				<span data-testid="modal-loading">{String(loading)}</span>
-				<button data-testid="modal-cancel" onClick={onClose} type="button">
-					Cancel
-				</button>
-				<button data-testid="modal-confirm" onClick={onConfirm} type="button">
-					Delete
-				</button>
-			</div>
-		) : null,
+		onConfirm: () => Promise<{ ok: boolean; data: undefined }>;
+		onSuccess?: () => void;
+		renderTrigger: (onOpen: () => void) => React.ReactNode;
+	}) => {
+		const handleClick = async () => {
+			const result = await onConfirm();
+			if (result?.ok) {
+				onSuccess?.();
+			}
+		};
+		return <>{renderTrigger(handleClick)}</>;
+	},
 }));
 
 const mockPush = vi.fn();
@@ -135,21 +128,7 @@ describe('RecipeDetail', () => {
 		expect(screen.getByTestId('delete-button')).toBeDefined();
 	});
 
-	test('clicking delete button opens confirm modal', () => {
-		render(<RecipeDetail {...defaultProps} />);
-		fireEvent.click(screen.getByTestId('delete-button'));
-		expect(screen.getByTestId('delete-confirm-modal')).toBeDefined();
-	});
-
-	test('clicking cancel in modal closes it without calling deleteRecipe', () => {
-		render(<RecipeDetail {...defaultProps} />);
-		fireEvent.click(screen.getByTestId('delete-button'));
-		fireEvent.click(screen.getByTestId('modal-cancel'));
-		expect(screen.queryByTestId('delete-confirm-modal')).toBeNull();
-		expect(deleteRecipe).not.toHaveBeenCalled();
-	});
-
-	test('confirming delete calls deleteRecipe and redirects to recipes list', async () => {
+	test('clicking delete calls deleteRecipe action and redirects to recipes list', async () => {
 		vi.mocked(deleteRecipe).mockResolvedValueOnce({
 			ok: true,
 			data: undefined,
@@ -157,7 +136,6 @@ describe('RecipeDetail', () => {
 		render(<RecipeDetail {...defaultProps} />);
 
 		fireEvent.click(screen.getByTestId('delete-button'));
-		fireEvent.click(screen.getByTestId('modal-confirm'));
 
 		await waitFor(() => {
 			expect(deleteRecipe).toHaveBeenCalledWith({

@@ -1,3 +1,6 @@
+# Global
+- Mantine `color` props is being used in cases where `variant` is more appropriate - audit usage
+
 # Recipes List
 - recipe and bookmark links styling needs to be aligned
 

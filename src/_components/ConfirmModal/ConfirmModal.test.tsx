@@ -2,7 +2,7 @@ import { fireEvent, render, screen } from '@testing-library/react';
 
 import { describe, expect, test, vi } from 'vitest';
 
-import { DeleteConfirmModal } from './DeleteConfirmModal';
+import { ConfirmModal } from './ConfirmModal';
 
 vi.mock('@mantine/core', async () => await import('@mocks/@mantine/core'));
 
@@ -28,17 +28,17 @@ const defaultProps = {
 	message: 'Are you sure? This cannot be undone.',
 };
 
-describe('DeleteConfirmModal', () => {
+describe('ConfirmModal', () => {
 	test('renders modal content when opened', () => {
-		render(<DeleteConfirmModal {...defaultProps} />);
+		render(<ConfirmModal {...defaultProps} />);
 		expect(screen.getByRole('dialog')).toBeDefined();
 		expect(screen.getByTestId('cancel-button')).toBeDefined();
-		expect(screen.getByTestId('confirm-delete-button')).toBeDefined();
+		expect(screen.getByTestId('confirm-button')).toBeDefined();
 	});
 
 	test('renders title and message', () => {
 		render(
-			<DeleteConfirmModal
+			<ConfirmModal
 				{...defaultProps}
 				title="Delete Bookmark"
 				message="Are you sure you want to delete this bookmark?"
@@ -51,51 +51,47 @@ describe('DeleteConfirmModal', () => {
 	});
 
 	test('does not render when not opened', () => {
-		render(<DeleteConfirmModal {...defaultProps} opened={false} />);
+		render(<ConfirmModal {...defaultProps} opened={false} />);
 		expect(screen.queryByRole('dialog')).toBeNull();
 	});
 
 	test('clicking cancel calls onClose', () => {
 		const onClose = vi.fn();
-		render(<DeleteConfirmModal {...defaultProps} onClose={onClose} />);
+		render(<ConfirmModal {...defaultProps} onClose={onClose} />);
 		fireEvent.click(screen.getByTestId('cancel-button'));
 		expect(onClose).toHaveBeenCalledOnce();
 	});
 
-	test('clicking delete calls onConfirm', () => {
+	test('clicking confirm calls onConfirm', () => {
 		const onConfirm = vi.fn();
-		render(<DeleteConfirmModal {...defaultProps} onConfirm={onConfirm} />);
-		fireEvent.click(screen.getByTestId('confirm-delete-button'));
+		render(<ConfirmModal {...defaultProps} onConfirm={onConfirm} />);
+		fireEvent.click(screen.getByTestId('confirm-button'));
 		expect(onConfirm).toHaveBeenCalledOnce();
 	});
 
 	test('cancel button is disabled when loading', () => {
-		render(<DeleteConfirmModal {...defaultProps} loading />);
+		render(<ConfirmModal {...defaultProps} loading />);
 		expect(
 			(screen.getByTestId('cancel-button') as HTMLButtonElement).disabled,
 		).toBe(true);
 	});
 
-	test('confirm delete button is disabled when loading', () => {
-		render(<DeleteConfirmModal {...defaultProps} loading />);
+	test('confirm button is disabled when loading', () => {
+		render(<ConfirmModal {...defaultProps} loading />);
 		expect(
-			(screen.getByTestId('confirm-delete-button') as HTMLButtonElement)
-				.disabled,
+			(screen.getByTestId('confirm-button') as HTMLButtonElement).disabled,
 		).toBe(true);
 	});
 
 	test('shows error alert when errorMessage is provided', () => {
 		render(
-			<DeleteConfirmModal
-				{...defaultProps}
-				errorMessage="Something went wrong"
-			/>,
+			<ConfirmModal {...defaultProps} errorMessage="Something went wrong" />,
 		);
 		expect(screen.getByTestId('form-feedback-alert')).toBeDefined();
 	});
 
 	test('does not show error alert when errorMessage is undefined', () => {
-		render(<DeleteConfirmModal {...defaultProps} />);
+		render(<ConfirmModal {...defaultProps} />);
 		expect(screen.queryByTestId('form-feedback-alert')).toBeNull();
 	});
 });

@@ -1,3 +1,5 @@
+export * from './ConfirmButton';
+export * from './ConfirmModal';
 export * from './FormFeedbackAlert';
 export * from './FullWidthListItem';
 export * from './GoogleLogoSVG';

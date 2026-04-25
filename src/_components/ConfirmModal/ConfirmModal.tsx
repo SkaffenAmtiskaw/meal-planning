@@ -11,10 +11,11 @@ type Props = {
 	loading: boolean;
 	errorMessage?: string;
 	title: string;
-	message: string;
+	message: React.ReactNode;
+	confirmButtonText?: string;
 };
 
-export const DeleteConfirmModal = ({
+export const ConfirmModal = ({
 	errorMessage,
 	loading,
 	message,
@@ -22,6 +23,7 @@ export const DeleteConfirmModal = ({
 	onConfirm,
 	opened,
 	title,
+	confirmButtonText = 'Confirm',
 }: Props) => (
 	<Modal onClose={onClose} opened={opened} title={title}>
 		<Text>{message}</Text>
@@ -40,11 +42,11 @@ export const DeleteConfirmModal = ({
 			</Button>
 			<Button
 				color="red"
-				data-testid="confirm-delete-button"
+				data-testid="confirm-button"
 				loading={loading}
 				onClick={onConfirm}
 			>
-				Delete
+				{confirmButtonText}
 			</Button>
 		</Group>
 	</Modal>

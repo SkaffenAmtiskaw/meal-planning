@@ -1,10 +1,8 @@
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 
-import { beforeEach, describe, expect, test, vi } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { DeleteItemButton } from './DeleteItemButton';
-
-type FeedbackStatus = 'idle' | 'submitting' | 'success' | 'error';
 
 const mockRefresh = vi.fn();
 
@@ -12,24 +10,7 @@ vi.mock('next/navigation', () => ({
 	useRouter: () => ({ refresh: mockRefresh }),
 }));
 
-const { mockUseFormFeedback } = vi.hoisted(() => {
-	const mockUseFormFeedback = vi.fn(() => ({
-		status: 'idle' as FeedbackStatus,
-		errorMessage: undefined as string | undefined,
-		wrap: (fn: () => Promise<void>, onSuccess: () => void) => async () => {
-			await fn();
-			onSuccess();
-		},
-		reset: vi.fn(),
-	}));
-	return { mockUseFormFeedback };
-});
-
 const mockUseCanWrite = vi.fn();
-
-vi.mock('@/_hooks', () => ({
-	useFormFeedback: () => mockUseFormFeedback(),
-}));
 
 vi.mock('@/app/[planner]/_components', () => ({
 	useCanWrite: () => mockUseCanWrite(),
@@ -37,34 +18,47 @@ vi.mock('@/app/[planner]/_components', () => ({
 
 vi.mock('@mantine/core', async () => await import('@mocks/@mantine/core'));
 
-vi.mock('./DeleteConfirmModal', () => ({
-	DeleteConfirmModal: ({
-		errorMessage,
-		loading,
-		onClose,
+vi.mock('@tabler/icons-react', () => ({
+	IconTrash: () => <svg data-testid="icon-trash" />,
+}));
+
+// Mock ConfirmButton - it calls onConfirm when trigger is clicked
+const mockOnConfirmCallback = vi.fn();
+
+vi.mock('@/_components', () => ({
+	ConfirmButton: ({
 		onConfirm,
-		opened,
+		onSuccess,
+		title,
+		message,
+		confirmButtonText,
+		renderTrigger,
 	}: {
-		opened: boolean;
-		onClose: () => void;
-		onConfirm: () => void;
-		loading: boolean;
-		errorMessage?: string;
+		onConfirm: () => Promise<{ ok: boolean; data?: undefined; error?: string }>;
+		onSuccess?: () => void;
 		title: string;
 		message: string;
-	}) =>
-		opened ? (
-			<div data-testid="delete-confirm-modal">
-				<span data-testid="modal-loading">{String(loading)}</span>
-				{errorMessage && <span data-testid="modal-error">{errorMessage}</span>}
-				<button data-testid="modal-cancel" onClick={onClose} type="button">
-					Cancel
-				</button>
-				<button data-testid="modal-confirm" onClick={onConfirm} type="button">
-					Delete
+		confirmButtonText: string;
+		renderTrigger: (onOpen: () => void) => React.ReactNode;
+	}) => {
+		const handleClick = async () => {
+			mockOnConfirmCallback();
+			const result = await onConfirm();
+			if (result.ok && onSuccess) {
+				onSuccess();
+			}
+		};
+		return (
+			<div data-testid="confirm-button">
+				<div data-testid="confirm-button-title">{title}</div>
+				<div data-testid="confirm-button-message">{message}</div>
+				<div data-testid="confirm-button-text">{confirmButtonText}</div>
+				<button type="button" onClick={handleClick} onKeyDown={handleClick}>
+					{renderTrigger(() => {})}
 				</button>
 			</div>
-		) : null,
+		);
+	},
 }));
 
 const defaultProps = {
@@ -73,111 +67,49 @@ const defaultProps = {
 	message: 'Are you sure?',
 };
 
-const defaultFormFeedback = () => ({
-	status: 'idle' as FeedbackStatus,
-	errorMessage: undefined as string | undefined,
-	wrap: (fn: () => Promise<void>, onSuccess: () => void) => async () => {
-		await fn();
-		onSuccess();
-	},
-	reset: vi.fn(),
-});
-
-beforeEach(() => {
-	mockUseFormFeedback.mockImplementation(defaultFormFeedback);
-	mockUseCanWrite.mockReturnValue(true);
-	vi.clearAllMocks();
-});
-
 describe('DeleteItemButton', () => {
-	test('renders delete button with default testid', () => {
+	beforeEach(() => {
+		vi.resetAllMocks();
+		mockUseCanWrite.mockReturnValue(true);
+	});
+
+	it('renders delete button with default testid', () => {
 		render(<DeleteItemButton {...defaultProps} />);
 		expect(screen.getByTestId('delete-button')).toBeDefined();
 	});
 
-	test('renders delete button with custom testid', () => {
+	it('renders delete button with custom testid', () => {
 		render(<DeleteItemButton {...defaultProps} data-testid="custom-delete" />);
 		expect(screen.getByTestId('custom-delete')).toBeDefined();
 	});
 
-	test('modal is not shown initially', () => {
-		render(<DeleteItemButton {...defaultProps} />);
-		expect(screen.queryByTestId('delete-confirm-modal')).toBeNull();
-	});
-
-	test('clicking delete button opens modal', () => {
-		render(<DeleteItemButton {...defaultProps} />);
-		fireEvent.click(screen.getByTestId('delete-button'));
-		expect(screen.getByTestId('delete-confirm-modal')).toBeDefined();
-	});
-
-	test('clicking cancel closes modal without calling onDelete', () => {
-		const onDelete = vi.fn();
-		render(<DeleteItemButton {...defaultProps} onDelete={onDelete} />);
-		fireEvent.click(screen.getByTestId('delete-button'));
-		fireEvent.click(screen.getByTestId('modal-cancel'));
-		expect(screen.queryByTestId('delete-confirm-modal')).toBeNull();
-		expect(onDelete).not.toHaveBeenCalled();
-	});
-
-	test('confirming calls onDelete and refreshes', async () => {
+	it('confirming calls onDelete and refreshes', async () => {
 		const onDelete = vi
 			.fn()
 			.mockResolvedValueOnce({ ok: true, data: undefined });
 		render(<DeleteItemButton {...defaultProps} onDelete={onDelete} />);
 		fireEvent.click(screen.getByTestId('delete-button'));
-		fireEvent.click(screen.getByTestId('modal-confirm'));
+
+		await waitFor(() => {
+			expect(mockOnConfirmCallback).toHaveBeenCalled();
+		});
 
 		await waitFor(() => {
 			expect(onDelete).toHaveBeenCalledOnce();
+		});
+
+		await waitFor(() => {
 			expect(mockRefresh).toHaveBeenCalled();
 		});
 	});
 
-	test('modal closes after confirmed delete', async () => {
-		const onDelete = vi
-			.fn()
-			.mockResolvedValueOnce({ ok: true, data: undefined });
-		render(<DeleteItemButton {...defaultProps} onDelete={onDelete} />);
-		fireEvent.click(screen.getByTestId('delete-button'));
-		fireEvent.click(screen.getByTestId('modal-confirm'));
-
-		await waitFor(() => {
-			expect(screen.queryByTestId('delete-confirm-modal')).toBeNull();
-		});
-	});
-
-	test('passes loading=true to modal when submitting', () => {
-		mockUseFormFeedback.mockImplementation(() => ({
-			status: 'submitting' as FeedbackStatus,
-			errorMessage: undefined,
-			wrap: vi.fn(),
-			reset: vi.fn(),
-		}));
-		render(<DeleteItemButton {...defaultProps} />);
-		fireEvent.click(screen.getByTestId('delete-button'));
-		expect(screen.getByTestId('modal-loading').textContent).toBe('true');
-	});
-
-	test('passes errorMessage to modal when status is error', () => {
-		mockUseFormFeedback.mockImplementation(() => ({
-			status: 'error' as FeedbackStatus,
-			errorMessage: 'Delete failed',
-			wrap: vi.fn(),
-			reset: vi.fn(),
-		}));
-		render(<DeleteItemButton {...defaultProps} />);
-		fireEvent.click(screen.getByTestId('delete-button'));
-		expect(screen.getByTestId('modal-error').textContent).toBe('Delete failed');
-	});
-
-	test('does not render when user has read-only access', () => {
+	it('does not render when user has read-only access', () => {
 		mockUseCanWrite.mockReturnValue(false);
 		render(<DeleteItemButton {...defaultProps} />);
 		expect(screen.queryByTestId('delete-button')).toBeNull();
 	});
 
-	test('renders when user has write access', () => {
+	it('renders when user has write access', () => {
 		mockUseCanWrite.mockReturnValue(true);
 		render(<DeleteItemButton {...defaultProps} />);
 		expect(screen.getByTestId('delete-button')).toBeDefined();
