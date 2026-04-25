@@ -34,9 +34,10 @@ You SHOULD NOT assume you know already know the libraries the project uses - you
 
 **Design Rules**
 - **Single Concern** — All modules must have a single concern. Decompose into subcomponents, hooks, and utilities where needed.
+- **Avoid Unnecessary Complexity** Do not add unused props/options "just in case". Only add what is _necessary_ to implement the feature.
 - **Re-Use** — Existing components, hooks, or utilities should be re-used where possible.
 - **Mantine** — Mantine components and hooks are preferred over building from scratch.
-- If specific styling is planned, refer to `.opencode/docs/style_guidelines`.
+  - If specific styling is planned, refer to `.opencode/docs/style_guidelines`.
 
 **Instructions**
 

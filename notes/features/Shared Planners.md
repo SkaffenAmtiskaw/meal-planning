@@ -14,7 +14,8 @@
 - ✅ **Step 5** (Remove Member from Planner) - Commit `636c3e5e7fb6f5dab5a9bbd0067fcd7d9f10ea82`
 - ✅ Step 6 (Invite User UI) - Commit `5ec0db3f92287e4ebc3fd64593c9537e19e1bd04`
 - ✅ Step 7 (Add Existing User to Planner) - Commit `111ee4579d80fd356647e6bda53cc30c0c321577`
-- ⏳ Steps 8-10: Not started
+- 🚧 Step 8 (Leave Planner) - In Progress
+- ⏳ Steps 9-10: Not started
 
 ## Requirements
 
@@ -318,44 +319,52 @@
   - Calls `removePlannerMembership` utility to remove self from planner
   - Returns success/error
 - **Modified**: `src/app/settings/_components/PlannerItem.tsx`
-  - Add Leave Planner button using `ConfirmButton` component
+  - Add Leave Planner button using `ConfirmButton` component (reusable component that combines button + confirmation modal)
   - Pass `leavePlanner` server action directly to `ConfirmButton`
   - Handle success with `onSuccess` callback (refresh planner list, redirect if needed)
   - Use consistent button styling (subtle variant) for all access levels
   - Hide button for owners (only show for non-owners with read/write/admin access)
-- **New File**: `src/_components/ConfirmModal/ConfirmModal.tsx` (rename from `DeleteConfirmModal`)
-  - Move and rename from `src/app/[planner]/recipes/_components/DeleteConfirmModal.tsx`
-  - Add `confirmButtonText` prop for customizable button label
-  - Update all existing imports to use new name/location
 
 **Acceptance Criteria:**
 1. Have a second user invited and accepted (from Steps 2-3)
 2. As owner, change their access to `read` or `write`
 3. Log in as that user
 4. Go to Settings → Planner Settings
-5. **Verify**: See "Leave Planner" button in the planner panel (consistent styling regardless of access level)
+5. ✅ **Verify**: See "Leave Planner" button in the planner panel (consistent styling regardless of access level)
 6. Click "Leave Planner"
-7. **Verify**: Confirmation modal appears with warning message
+7. ✅ **Verify**: Confirmation modal appears with warning message
 8. Confirm leaving
-9. **Verify**: User is redirected away from that planner
-10. **Verify**: Planner no longer appears in user's planner list
+9. ✅ **Verify**: User stays on Settings page (not redirected away)
+10. ✅ **Verify**: Planner immediately disappears from the list (UI refreshes)
 11. Try to access the planner URL directly
 12. **Verify**: Get 404 (no access)
 13. Log in as owner
-14. **Verify**: The left member no longer appears in member list
-15. **Verify**: Owner does NOT see "Leave Planner" button (hidden, not disabled)
+14. ✅ **Verify**: The left member no longer appears in member list
+15. ✅ **Verify**: Owner does NOT see "Leave Planner" button (hidden, not disabled)
 
 **Security Checklist:**
 - Server action must verify user is authenticated
 - Server action must verify user is actually a member of the planner
 - Owners cannot leave via this action (must use ownership transfer)
-- User should be redirected away from planner after leaving
+- UI should refresh to show updated planner list after leaving
 
 ---
 
 ## Step 9 — New User Auto-Accept Flow
 
-**Implementation Details:**
+**Requirements**
+- When a user who does not yet have an account accepts an email invite, they should be prompted to create an account.
+	  - They should NOT have to type in their email; that is known from the link/token they followed.
+	  - They should NOT have to verify their email; we know their email is good because they would have had to get the link/token from their email.
+  - After the user has created an account, a new planner should NOT be created. Instead, the invitation for the planner should be auto-accepted, and that should be the single planner they belong to.
+	  - If they have multiple pending invitations, only the planner for the link/token should be auto-accepted. Everything else should remain as a pending invite.
+  - If a new user who has a pending invite creates an account through the regular new user flow (without following the link) they should have to verify their email and the auto-accept should not happen. A new planner should be created (that they are the owner of) and the pending invites should appear in the badge/pending invites list in settings.
+  - If the user follows the link for an invite that is expired, they should receive a error message that the link is expired, and be offered an opportunity to sign up for an account.
+  - TODO: If a user joined via an invite link they will not have a planner they are an owner of. Nothing prevents them from leaving the only planner they have. We should make a Step 11 to account for this possibility - when they navigate to '/' they need some sort of empty state which prompts them to create a planner.
+
+_Note: The requirements have been added. The **Implementation Details** and **Acceptance Criteria** need to be reworked in light of the new requirements. The **Security Checklist** needs to be audited for completion in light of the new requirements._
+
+⚠️ NEEDS REWORKED - **Implementation Details:**
 
 - **Modified**: `src/_auth/emails/sendInviteEmail.ts`
   - Different email template for non-users (includes signup link with token)
@@ -368,7 +377,7 @@
   - After successful registration, call `acceptPendingInvites`
   - Show success message listing accepted planners
 
-**Acceptance Criteria:**
+⚠️ NEEDS REWORKED - **Acceptance Criteria:**
 1. Invite an email that has no account
 2. Click signup link in email
 3. Complete registration and verify email
@@ -377,13 +386,13 @@
 6. Navigate to planner
 7. **Verify**: Can access planner at read-only level
 
-**Security Checklist:**
+⚠️ AUDIT - **Security Checklist:**
 - Tokens must be validated before auto-accepting
 - Must check invite hasn't expired
 - New user gets only the access level specified in invite (read-only by default)
 
 ---
-## Step 11 — Ownership Transfer on Account Deletion
+## Step 10 — Ownership Transfer on Account Deletion
 
 **Requirement** - This should be reworked so that owners can have a way to transfer planner ownership without deleting their accounts. Otherwise the owner of a shared planner would never be able to leave a planner without fully deleting their account.
 

@@ -14,7 +14,7 @@ permission:
         "pnpm lint": allow
         "pnpm test:agent *": allow
     edit: deny
-    webfetch: ask
+    webfetch: allow
 ---
 
 You are a code review agent. You receive a feature and review code changes made for it. Then you create a summary of issues found.

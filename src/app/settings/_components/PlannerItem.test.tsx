@@ -1,4 +1,4 @@
-import { fireEvent, render, screen } from '@testing-library/react';
+import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
@@ -8,6 +8,73 @@ import type { AccessLevel } from '@/_models/user';
 import { PlannerItem } from './PlannerItem';
 
 import { getAccessLevelColor } from '../_utils/getAccessLevelColor';
+
+// Mock next/navigation
+const mockRefresh = vi.fn();
+vi.mock('next/navigation', () => ({
+	useRouter: () => ({
+		refresh: mockRefresh,
+	}),
+}));
+
+// Mock leavePlanner action
+const mockLeavePlanner = vi.fn();
+vi.mock('@/_actions/planner/leavePlanner', () => ({
+	leavePlanner: (id: string) => mockLeavePlanner(id),
+}));
+
+// Mock ConfirmButton
+const mockOnSuccessCallback = vi.fn();
+vi.mock('@/_components', async (importOriginal) => {
+	const actual = await importOriginal<typeof import('@/_components')>();
+	return {
+		...actual,
+		ConfirmButton: ({
+			title,
+			message,
+			confirmButtonText,
+			onConfirm,
+			onSuccess,
+			renderTrigger,
+		}: {
+			title: string;
+			message: React.ReactNode;
+			confirmButtonText?: string;
+			onConfirm: () => Promise<{ ok: boolean; error?: string }>;
+			onSuccess?: () => void;
+			renderTrigger: (onOpen: () => void) => React.ReactNode;
+		}) => {
+			// Store onSuccess for test access
+			if (onSuccess) {
+				mockOnSuccessCallback.mockImplementation(onSuccess);
+			}
+			return (
+				<>
+					{renderTrigger(() => {
+						// Trigger click handler
+					})}
+					<div data-testid="confirm-button">
+						<div data-testid="confirm-title">{title}</div>
+						<div data-testid="confirm-message">{message}</div>
+						<div data-testid="confirm-button-text">{confirmButtonText}</div>
+						<button
+							data-testid="confirm-action"
+							onClick={async () => {
+								const result = await onConfirm();
+								if (result.ok && onSuccess) {
+									onSuccess();
+								}
+							}}
+							type="button"
+						>
+							Confirm Action
+						</button>
+					</div>
+				</>
+			);
+		},
+	};
+});
 
 vi.mock('@mantine/core', async () => {
 	const actual = await import('@mocks/@mantine/core');
@@ -90,6 +157,9 @@ const editingState = {
 describe('PlannerItem', () => {
 	beforeEach(() => {
 		vi.clearAllMocks();
+		mockRefresh.mockClear();
+		mockLeavePlanner.mockClear();
+		mockOnSuccessCallback.mockClear();
 	});
 
 	describe('renders', () => {
@@ -335,27 +405,112 @@ describe('PlannerItem', () => {
 	});
 
 	describe('leave planner button', () => {
-		const accessLevels: AccessLevel[] = ['owner', 'admin', 'write', 'read'];
-
-		accessLevels.forEach((accessLevel) => {
-			it(`shows Leave Planner button for ${accessLevel} access`, () => {
-				mockUseRenamePlanner.mockReturnValue(notEditingState);
-
-				render(<PlannerItem id={id} name={name} accessLevel={accessLevel} />);
-
-				expect(screen.getByTestId('leave-planner-button')).toBeDefined();
-			});
-		});
-
-		it('shows subtle variant Leave Planner button for owner', () => {
+		it('does NOT show Leave Planner button for owner', () => {
 			mockUseRenamePlanner.mockReturnValue(notEditingState);
 
 			render(<PlannerItem id={id} name={name} accessLevel="owner" />);
 
-			const button = screen.getByTestId('leave-planner-button');
-			// The button should be present - we can't easily test variant in mock,
-			// but the test verifies it exists
-			expect(button).toBeDefined();
+			expect(screen.queryByTestId('confirm-button')).toBeNull();
+		});
+
+		it('shows Leave Planner button for admin access', () => {
+			mockUseRenamePlanner.mockReturnValue(notEditingState);
+
+			render(<PlannerItem id={id} name={name} accessLevel="admin" />);
+
+			expect(screen.getByTestId('confirm-button')).toBeDefined();
+		});
+
+		it('shows Leave Planner button for write access', () => {
+			mockUseRenamePlanner.mockReturnValue(notEditingState);
+
+			render(<PlannerItem id={id} name={name} accessLevel="write" />);
+
+			expect(screen.getByTestId('confirm-button')).toBeDefined();
+		});
+
+		it('shows Leave Planner button for read access', () => {
+			mockUseRenamePlanner.mockReturnValue(notEditingState);
+
+			render(<PlannerItem id={id} name={name} accessLevel="read" />);
+
+			expect(screen.getByTestId('confirm-button')).toBeDefined();
+		});
+
+		it('displays confirmation modal with correct title and message', () => {
+			mockUseRenamePlanner.mockReturnValue(notEditingState);
+
+			render(<PlannerItem id={id} name={name} accessLevel="admin" />);
+
+			expect(screen.getByTestId('confirm-title').textContent).toBe(
+				'Leave Planner',
+			);
+			expect(screen.getByTestId('confirm-message').textContent).toContain(
+				'Are you sure you want to leave this planner?',
+			);
+			expect(screen.getByTestId('confirm-button-text').textContent).toBe(
+				'Leave Planner',
+			);
+		});
+
+		it('calls leavePlanner with planner ID when confirmed', async () => {
+			mockUseRenamePlanner.mockReturnValue(notEditingState);
+			mockLeavePlanner.mockResolvedValue({ ok: true });
+
+			render(<PlannerItem id={id} name={name} accessLevel="admin" />);
+
+			fireEvent.click(screen.getByTestId('confirm-action'));
+
+			await waitFor(() => {
+				expect(mockLeavePlanner).toHaveBeenCalledWith(id);
+			});
+		});
+
+		it('calls router.refresh when leave succeeds', async () => {
+			mockUseRenamePlanner.mockReturnValue(notEditingState);
+			mockLeavePlanner.mockResolvedValue({ ok: true });
+
+			render(<PlannerItem id={id} name={name} accessLevel="admin" />);
+
+			fireEvent.click(screen.getByTestId('confirm-action'));
+
+			await waitFor(() => {
+				expect(mockRefresh).toHaveBeenCalled();
+			});
+		});
+
+		it('does not call router.refresh when leave fails', async () => {
+			mockUseRenamePlanner.mockReturnValue(notEditingState);
+			mockLeavePlanner.mockResolvedValue({
+				ok: false,
+				error: 'Failed to leave planner',
+			});
+
+			render(<PlannerItem id={id} name={name} accessLevel="admin" />);
+
+			fireEvent.click(screen.getByTestId('confirm-action'));
+
+			await waitFor(() => {
+				expect(mockLeavePlanner).toHaveBeenCalledWith(id);
+			});
+
+			expect(mockRefresh).not.toHaveBeenCalled();
+		});
+
+		it('calls router.refresh for write access level after successful leave', async () => {
+			mockUseRenamePlanner.mockReturnValue(notEditingState);
+			mockLeavePlanner.mockResolvedValue({ ok: true });
+
+			render(<PlannerItem id={id} name={name} accessLevel="write" />);
+
+			expect(screen.getByTestId('confirm-button')).toBeDefined();
+
+			fireEvent.click(screen.getByTestId('confirm-action'));
+
+			await waitFor(() => {
+				expect(mockLeavePlanner).toHaveBeenCalledWith(id);
+				expect(mockRefresh).toHaveBeenCalled();
+			});
 		});
 	});
 

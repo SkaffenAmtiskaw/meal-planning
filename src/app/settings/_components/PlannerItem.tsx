@@ -1,10 +1,13 @@
 'use client';
 
+import { useRouter } from 'next/navigation';
+
 import {
 	Accordion,
 	Alert,
 	Badge,
 	Button,
+	Center,
 	Divider,
 	Group,
 	Stack,
@@ -12,6 +15,8 @@ import {
 	TextInput,
 } from '@mantine/core';
 
+import { leavePlanner } from '@/_actions/planner/leavePlanner';
+import { ConfirmButton } from '@/_components';
 import type { AccessLevel } from '@/_models/user';
 
 import { InviteForm } from './InviteForm';
@@ -31,6 +36,8 @@ type Props = {
 const SHOW_MEMBERS_ACCESS_LEVELS: AccessLevel[] = ['owner', 'admin'];
 
 export const PlannerItem = ({ id, name, accessLevel }: Props) => {
+	const router = useRouter();
+
 	const {
 		editing,
 		name: editName,
@@ -80,114 +87,124 @@ export const PlannerItem = ({ id, name, accessLevel }: Props) => {
 					</Group>
 				</Accordion.Control>
 				<Accordion.Panel>
-					{SHOW_MEMBERS_ACCESS_LEVELS.includes(accessLevel) ? (
-						// Owner/Admin view
-						<Stack>
-							{/* Name editing section */}
-							<Group align="flex-end">
-								<TextInput
-									label="Planner name"
-									value={editName}
-									onChange={(e) => setName(e.currentTarget.value)}
-									disabled={!editing}
-									data-testid="planner-name-input"
-								/>
-								{!editing ? (
-									<Button onClick={enterEditing} data-testid="rename-button">
-										Rename
-									</Button>
-								) : (
-									<Group>
-										<Button
-											loading={loading}
-											onClick={save}
-											data-testid="save-name-button"
-										>
-											Save
+					<Stack>
+						{SHOW_MEMBERS_ACCESS_LEVELS.includes(accessLevel) ? (
+							<>
+								<Group align="flex-end">
+									<TextInput
+										label="Planner name"
+										value={editName}
+										onChange={(e) => setName(e.currentTarget.value)}
+										disabled={!editing}
+										data-testid="planner-name-input"
+									/>
+									{!editing ? (
+										<Button onClick={enterEditing} data-testid="rename-button">
+											Rename
 										</Button>
-										<Button
-											variant="subtle"
-											onClick={cancel}
-											data-testid="cancel-rename-button"
-										>
-											Cancel
-										</Button>
-									</Group>
+									) : (
+										<Group>
+											<Button
+												loading={loading}
+												onClick={save}
+												data-testid="save-name-button"
+											>
+												Save
+											</Button>
+											<Button
+												variant="subtle"
+												onClick={cancel}
+												data-testid="cancel-rename-button"
+											>
+												Cancel
+											</Button>
+										</Group>
+									)}
+								</Group>
+								{error && (
+									<Alert color="red" data-testid="rename-error">
+										{error}
+									</Alert>
 								)}
-							</Group>
-							{error && (
-								<Alert color="red" data-testid="rename-error">
-									{error}
-								</Alert>
-							)}
 
-							{invitesError && (
-								<Alert color="red" data-testid="invites-error">
-									{invitesError}
-								</Alert>
-							)}
+								{invitesError && (
+									<Alert color="red" data-testid="invites-error">
+										{invitesError}
+									</Alert>
+								)}
 
-							<Divider />
+								<Divider />
 
-							{/* MemberList section */}
-							<MemberListContainer plannerId={id} />
+								{/* MemberList section */}
+								<MemberListContainer plannerId={id} />
 
-							<Divider />
+								<Divider />
 
-							{/* Invite Section */}
+								{/* Invite Section */}
+								<Stack>
+									<Text size="sm" fw={500}>
+										Invite New Member
+									</Text>
+									<InviteForm
+										status={inviteStatus}
+										error={inviteError}
+										onInvite={handleInvite}
+									/>
+								</Stack>
+
+								<Divider />
+
+								{/* Pending Invites Section */}
+								<Stack>
+									<Text size="sm" fw={500}>
+										Pending Invites
+									</Text>
+									<PendingInvitesList
+										invites={invites}
+										loading={invitesLoading}
+										cancelStatus={cancelStatus}
+										cancelError={cancelError}
+										onCancel={handleCancel}
+									/>
+								</Stack>
+							</>
+						) : (
+							// Read/Write view
 							<Stack>
-								<Text size="sm" fw={500}>
-									Invite New Member
+								<Text size="sm" c="dimmed">
+									You have {accessLevel} access to this planner
 								</Text>
-								<InviteForm
-									status={inviteStatus}
-									error={inviteError}
-									onInvite={handleInvite}
-								/>
 							</Stack>
+						)}
 
-							<Divider />
-
-							{/* Pending Invites Section */}
-							<Stack>
-								<Text size="sm" fw={500}>
-									Pending Invites
-								</Text>
-								<PendingInvitesList
-									invites={invites}
-									loading={invitesLoading}
-									cancelStatus={cancelStatus}
-									cancelError={cancelError}
-									onCancel={handleCancel}
-								/>
-							</Stack>
-
-							<Divider />
-
-							{/* Leave Planner button */}
-							<Button
-								variant="subtle"
-								color="red"
-								data-testid="leave-planner-button"
-							>
-								Leave Planner
-							</Button>
-						</Stack>
-					) : (
-						// Read/Write view
-						<Stack align="center" py="md">
-							<Text size="sm" c="dimmed">
-								You have {accessLevel} access to this planner
-							</Text>
-							<Button
-								variant="filled"
-								color="red"
-								data-testid="leave-planner-button"
-							>
-								Leave Planner
-							</Button>
-						</Stack>
-					)}
+						{/* Leave Planner button - only for non-owners */}
+						{accessLevel !== 'owner' && (
+							<>
+								<Divider />
+								<Center>
+									<ConfirmButton
+										title="Leave Planner"
+										message="Are you sure you want to leave this planner? You will lose access to all recipes and meal plans. This action cannot be undone."
+										confirmButtonText="Leave Planner"
+										onConfirm={() => leavePlanner(id)}
+										onSuccess={() => {
+											router.refresh();
+										}}
+										renderTrigger={(onOpen) => (
+											<Button
+												variant="subtle"
+												color="red"
+												onClick={onOpen}
+												data-testid="leave-planner-button"
+											>
+												Leave Planner
+											</Button>
+										)}
+									/>
+								</Center>
+							</>
+						)}
+					</Stack>
 				</Accordion.Panel>
 			</Accordion.Item>
 		</Accordion>
