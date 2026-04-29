@@ -57,6 +57,7 @@ This consistency helps users quickly identify meal types visually across the cal
 ---
 
 ## Step 1: Install Dependencies
+**Status**: ✅ Complete - `4a22c6c0d98496654e8c2392c7b7d9a71e39d97d`
 
 **What we're doing:** Add luxon dependency.
 

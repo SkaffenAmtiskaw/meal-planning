@@ -8,17 +8,12 @@
 # High-Priority
 ## Calendar Page
 - [[Replace Schedule-X|replace schedule-x]]
-- [[Render Calendar List View|render list view]]
-- [[Render Month Agenda View (Mobile)|render (or verify) meals in month agenda view (mobile)]]
-- [[Replace Calendar Header|replace header]]
 - add meals by clicking month cell
 - add meals by clicking week day
 - work through adding meals on mobile (get rid of the header button and add a FAB maybe?)
 - edit meals
 - delete meals
 - default to week view on desktop - list view on mobile
-- styling fixes to calendar view
-- [[Reduce Client Components in Calendar|reduce client components in calendar]]
 ## Planner Settings
 - [[Delete Planner|allow user to delete a planner]]
 - [[Transfer Ownership of Planner|transfer ownership of planner]]
