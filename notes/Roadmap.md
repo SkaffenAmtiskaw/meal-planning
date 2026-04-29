@@ -1,11 +1,14 @@
 *Note: These should ALWAYS be planned and implemented individually. They are discrete units of work.*
 
 **AI Instructions** - DO NOT delete this file. You may remove lines, but under no circumstances may you delete the file.
+
+# Bugfixes/User Issues
+- meals created in month view don't show up in week view
+- meal creation modal is too narrow on desktop - two columns might allow for easier entry (UX review)
 # High-Priority
 
 # Security
 - Update Nextjs version
-
 ## Calendar Page
 - [[Render Calendar List View|render list view]]
 - [[Render Month Agenda View (Mobile)|render (or verify) meals in month agenda view (mobile)]]
