@@ -58,6 +58,7 @@ describe('validateInviteToken', () => {
 		expect(result).toEqual({
 			valid: false,
 			reason: 'expired',
+			email: 'test@example.com',
 		});
 		expect(mockDeleteOne).toHaveBeenCalled();
 	});

@@ -19,8 +19,8 @@
 - styling fixes to calendar view
 - [[Reduce Client Components in Calendar|reduce client components in calendar]]
 ## Planner Settings
-- [[Shared Planners|allow users to invite other users to a shared planner]]
-- allow user to delete a planner
+- [[Delete Planner|allow user to delete a planner]]
+- [[Transfer Ownership of Planner|transfer ownership of planner]]
 ## Misc
 - [[Style Fixes|style fixes]]
 - [[Email Improvements|email improvements]]

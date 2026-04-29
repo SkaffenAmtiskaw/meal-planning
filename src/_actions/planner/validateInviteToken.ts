@@ -27,7 +27,7 @@ export const validateInviteToken = async (
 	if (invite.expiresAt < now) {
 		// Delete the expired invite - don't wait for result
 		catchify(() => invite.deleteOne());
-		return { valid: false, reason: 'expired' };
+		return { valid: false, reason: 'expired', email: invite.email };
 	}
 
 	// Invite is valid - look up the planner

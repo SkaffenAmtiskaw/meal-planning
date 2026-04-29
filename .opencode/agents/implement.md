@@ -58,16 +58,18 @@ Repeat the following loop for each step in the plan, in order. Do not begin the 
    - Have all dependencies identified by name and import path
    - Be ordered by dependency — no module is delegated before the modules it depends on
 
-2. **Delegate modules** — Hand off each module in dependency order to `@develop`. Each handoff must include exactly:
-   - **Target files** — the module file and its test file only (e.g. `src/lib/foo.ts` and `src/lib/foo.test.ts`). No other files.
-   - **Interface spec** — the full TypeScript interface the module must satisfy (types, signatures, props)
-   - **Dependency manifest** — every import the module needs, with either the real file path or a stub. Stubs are your responsibility, not the subagent's.
-   - **Behavior spec** — what the module must do, as a list of behaviors (not implementation steps)
-   - **Test Skeleton** — the describe block, and it-block names
-   - **Constraints** — what the module must not do; note if it is a React component, hook, or Next.js server component and any relevant conventions
-   - **Design Rules** — pass the subagent the exact text of the design rules listed above
+2. **Delegate modules** — Hand off each module in dependency order to `@develop`. Each handoff must include the following 7 elements:
+   - **Element 1: Target files** — the module file and its test file only (e.g. `src/lib/foo.ts` and `src/lib/foo.test.ts`). No other files.
+   - **Element 2: Interface spec** — the full TypeScript interface the module must satisfy (types, signatures, props)
+   - **Element 3: Dependency manifest** — every import the module needs, with either the real file path or a stub. Stubs are your responsibility, not the subagent's.
+   - **Element 4: Behavior spec** — what the module must do, as a list of behaviors (not implementation steps)
+   - **Element 5: Test Skeleton** — the describe block, and it-block names
+   - **Element 6: Constraints** — what the module must not do; note if it is a React component, hook, or Next.js server component and any relevant conventions
+   - **Element 7: Design Rules** — pass the subagent the exact text of the design rules listed above
 
-   **CRITICAL:** You may only delegate ONE file pair (implementation + test) at a time. Never combine multiple files or issues in a single handoff. You may run parallel subagents IF they are fully independent but you MAY NOT handoff multiple files to a single subagent.
+  **You MUST NOT call the subagent tool without these 7 elements. They are MANDATORY.**
+
+  **CRITICAL:** You may only delegate ONE file pair (implementation + test) at a time. Never combine multiple files or issues in a single handoff. You may run parallel subagents IF they are fully independent but you MAY NOT handoff multiple files to a single subagent.
 
 3. **Review results** — When `@develop` returns, verify:
    - The exported interface matches what you specified

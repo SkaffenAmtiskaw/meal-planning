@@ -6,7 +6,7 @@ Technical debt and refactoring notes for the project.
 
 **Status:** Future refactoring
 
-**Context:** During implementation of [Shared Planners](./Shared%20Planners.md), the `PlannerWithAccess` type was created in `src/_actions/planner/getPlanners.ts`. This type is a DTO (Data Transfer Object) that combines planner data with access level information. The question arose: where should shared DTOs/types live?
+**Context:** During implementation of [Transfer Ownership of Planner](Transfer%20Ownership%20of%20Planner.md), the `PlannerWithAccess` type was created in `src/_actions/planner/getPlanners.ts`. This type is a DTO (Data Transfer Object) that combines planner data with access level information. The question arose: where should shared DTOs/types live?
 
 **Problem:**
 - Action files exporting types breaks separation of concerns
@@ -67,7 +67,7 @@ src/_types/
 
 **Status:** Technical debt
 
-**Context:** During implementation of [Shared Planners](./Shared%20Planners.md), discovered that `z.string().email()` is deprecated in Zod 4 in favor of `z.email()`.
+**Context:** During implementation of [Transfer Ownership of Planner](Transfer%20Ownership%20of%20Planner.md), discovered that `z.string().email()` is deprecated in Zod 4 in favor of `z.email()`.
 
 **Files using deprecated pattern:**
 - `src/_models/pendingInvite.types.ts` - `z.string().email()`
