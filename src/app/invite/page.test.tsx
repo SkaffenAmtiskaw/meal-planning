@@ -15,20 +15,11 @@ vi.mock('@/_actions/planner/validateInviteToken', () => ({
 }));
 
 // Mock child components
-vi.mock('./_components/InviteRegistrationForm', () => ({
-	InviteRegistrationForm: vi.fn(
-		({
-			email,
-			plannerName,
-			token,
-		}: {
-			email: string;
-			plannerName: string;
-			token: string;
-		}) => (
-			<div data-testid="invite-registration-form">
+vi.mock('./_components/InviteRegistrationFlow', () => ({
+	InviteRegistrationFlow: vi.fn(
+		({ email, token }: { email: string; token: string }) => (
+			<div data-testid="invite-registration-flow">
 				<div data-testid="email-prop">{email}</div>
-				<div data-testid="plannerName-prop">{plannerName}</div>
 				<div data-testid="token-prop">{token}</div>
 			</div>
 		),
@@ -40,6 +31,15 @@ vi.mock('./_components/ExpiredInviteView', () => ({
 		<div data-testid="expired-invite-view">
 			<div data-testid="expired-email-prop">{email}</div>
 		</div>
+	)),
+}));
+
+vi.mock('../_components/AuthLayout', () => ({
+	AuthLayoutRoot: vi.fn(({ children }: { children: React.ReactNode }) => (
+		<div data-testid="auth-layout-root">{children}</div>
+	)),
+	AuthLayoutHeader: vi.fn(({ children }: { children: React.ReactNode }) => (
+		<div data-testid="auth-layout-header">{children}</div>
 	)),
 }));
 
@@ -75,7 +75,7 @@ describe('Invite Accept Page', () => {
 		vi.resetAllMocks();
 	});
 
-	it('renders InviteRegistrationForm for valid token', async () => {
+	it('renders InviteRegistrationFlow for valid token', async () => {
 		const validResult: ValidateInviteTokenResult = {
 			valid: true,
 			email: 'test@example.com',
@@ -88,10 +88,10 @@ describe('Invite Accept Page', () => {
 		});
 		render(PageComponent);
 
-		expect(screen.getByTestId('invite-registration-form')).toBeDefined();
+		expect(screen.getByTestId('invite-registration-flow')).toBeDefined();
 	});
 
-	it('passes correct props to InviteRegistrationForm', async () => {
+	it('passes correct props to InviteRegistrationFlow', async () => {
 		const validResult: ValidateInviteTokenResult = {
 			valid: true,
 			email: 'user@test.com',
@@ -105,10 +105,28 @@ describe('Invite Accept Page', () => {
 		render(PageComponent);
 
 		expect(screen.getByTestId('email-prop').textContent).toBe('user@test.com');
-		expect(screen.getByTestId('plannerName-prop').textContent).toBe(
-			'My Meal Planner',
-		);
 		expect(screen.getByTestId('token-prop').textContent).toBe('abc-123');
+	});
+
+	it('renders AuthLayoutHeader with message for valid token', async () => {
+		const validResult: ValidateInviteTokenResult = {
+			valid: true,
+			email: 'test@example.com',
+			plannerName: 'My Meal Planner',
+		};
+		mockValidateInviteToken.mockResolvedValue(validResult);
+
+		const PageComponent = await Page({
+			searchParams: Promise.resolve({ token: 'valid-token-123' }),
+		});
+		render(PageComponent);
+
+		expect(screen.getByTestId('auth-layout-header')).toBeDefined();
+		expect(
+			screen.getByText(
+				'In order to join My Meal Planner you must create an account.',
+			),
+		).toBeDefined();
 	});
 
 	it('renders ExpiredInviteView for expired token', async () => {
@@ -234,8 +252,8 @@ describe('Invite Accept Page', () => {
 		const PageComponent = await Page({ searchParams: Promise.resolve({}) });
 		render(PageComponent);
 
-		// Should render form with empty token string
-		expect(screen.getByTestId('invite-registration-form')).toBeDefined();
+		// Should render flow with empty token string
+		expect(screen.getByTestId('invite-registration-flow')).toBeDefined();
 		expect(screen.getByTestId('token-prop').textContent).toBe('');
 	});
 });

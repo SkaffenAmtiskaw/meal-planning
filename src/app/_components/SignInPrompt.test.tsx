@@ -4,14 +4,18 @@ import { describe, expect, test, vi } from 'vitest';
 
 import { SignInPrompt } from './SignInPrompt';
 
-vi.mock('@/_components', () => ({
-	AuthCard: ({ children }: { children: React.ReactNode }) => (
+vi.mock('./AuthLayout', () => ({
+	AuthLayoutRoot: ({ children }: { children: React.ReactNode }) => (
 		<div>{children}</div>
 	),
-	SignIn: () => <button type="button">Sign In</button>,
+	AuthLayoutHeader: ({ children }: { children: React.ReactNode }) => (
+		<div>{children}</div>
+	),
 }));
 
-vi.mock('@mantine/core', async () => await import('@mocks/@mantine/core'));
+vi.mock('./SignInFlow', () => ({
+	SignInFlow: () => <button type="button">Sign In</button>,
+}));
 
 describe('sign in prompt', () => {
 	test('renders the sign in message', () => {

@@ -1,3 +1,8 @@
+# Agent Instructions
+
+- Your agent instructions are not "soft rules" they are hard constraints on agent behavior. Immediately upon loading a new session, find your agent instructions and give the user a summary so they can have confidence you will follow the instructions.
+- If you are called out for violating instructions or ignoring user instructions, apologies are USELESS without an explanation of why you did so and how you will prevent it going forward. Do not apologize until you have a plan to improve.
+
 # Project Rules
 
 ### External File Loading

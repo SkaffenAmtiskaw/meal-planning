@@ -137,11 +137,20 @@ export const SimpleGrid = vi.fn(({ children, 'data-testid': testId }: WithChildr
 ));
 
 export const Stack = vi.fn(
-	({ children, 'data-testid': testId }: WithChildren & { 'data-orientation'?: string }) => (
-		<div data-orientation="vertical" data-testid={testId}>
-			{children}
-		</div>
-	),
+	({ children, 'data-testid': testId, component, onSubmit, ...props }: WithChildren & { 'data-orientation'?: string; component?: string; onSubmit?: React.FormEventHandler<HTMLFormElement>; [key: string]: unknown }) => {
+		if (component === 'form') {
+			return (
+				<form data-orientation="vertical" data-testid={testId} onSubmit={onSubmit} {...props}>
+					{children}
+				</form>
+			);
+		}
+		return (
+			<div data-orientation="vertical" data-testid={testId} {...props}>
+				{children}
+			</div>
+		);
+	},
 );
 
 // ─── Grid (compound) ─────────────────────────────────────────────────────────
@@ -258,9 +267,17 @@ export const Affix = vi.fn(({ children, 'data-testid': testId }: WithChildren) =
 	<div data-testid={testId}>{children}</div>
 ));
 
-export const Divider = vi.fn(({ 'data-testid': testId }: WithTestId) => (
-	<hr data-testid={testId} />
-));
+export const Divider = vi.fn(
+	({
+		label,
+		'data-testid': testId,
+	}: WithTestId & { label?: React.ReactNode }) => (
+		<div data-testid={testId}>
+			<hr />
+			{label && <span data-testid="divider-label">{label}</span>}
+		</div>
+	),
+);
 
 // ─── Alert ────────────────────────────────────────────────────────────────────
 

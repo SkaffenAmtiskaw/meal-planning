@@ -1,14 +1,13 @@
-import { Text } from '@mantine/core';
-
-import { AuthCard, SignIn } from '@/_components';
+import { AuthLayoutHeader, AuthLayoutRoot } from './AuthLayout';
+import { SignInFlow } from './SignInFlow';
 
 export const SignInPrompt = () => {
 	return (
-		<AuthCard>
-			<Text ta="center">
+		<AuthLayoutRoot>
+			<AuthLayoutHeader>
 				In order to use the meal planner, you must sign in.
-			</Text>
-			<SignIn />
-		</AuthCard>
+			</AuthLayoutHeader>
+			<SignInFlow />
+		</AuthLayoutRoot>
 	);
 };

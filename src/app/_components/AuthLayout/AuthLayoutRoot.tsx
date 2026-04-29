@@ -1,25 +1,21 @@
-'use client';
-
 import type { ReactNode } from 'react';
 
-import { Box, Center, Image, Stack, useMantineTheme } from '@mantine/core';
+import { Box, Center, Image, Stack } from '@mantine/core';
 
-interface AuthCardProps {
+export interface AuthLayoutRootProps {
 	children: ReactNode;
 }
 
-export const AuthCard = ({ children }: AuthCardProps) => {
-	const theme = useMantineTheme();
-
+export const AuthLayoutRoot: React.FC<AuthLayoutRootProps> = ({ children }) => {
 	return (
-		<Box bg={theme.colors.navy[5]} style={{ minHeight: '100vh' }}>
+		<Box bg="navy.5" style={{ minHeight: '100vh' }}>
 			<Center h="100vh" p="md">
 				<Stack
-					bg={theme.colors.chalk[5]}
+					bg="chalk.5"
 					p="xl"
 					align="center"
 					style={{
-						borderRadius: theme.radius.md,
+						borderRadius: 'var(--mantine-radius-md)',
 						maxWidth: 400,
 						width: '100%',
 					}}
