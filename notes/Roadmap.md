@@ -3,13 +3,11 @@
 **AI Instructions** - DO NOT delete this file. You may remove lines, but under no circumstances may you delete the file.
 
 # Bugfixes/User Issues
-- meals created in month view don't show up in week view
+- meals created in month view don't show up in week view - will be fixed in [[Replace Schedule-X]]
 - meal creation modal is too narrow on desktop - two columns might allow for easier entry (UX review)
 # High-Priority
-
-# Security
-- Update Nextjs version
 ## Calendar Page
+- [[Replace Schedule-X|replace schedule-x]]
 - [[Render Calendar List View|render list view]]
 - [[Render Month Agenda View (Mobile)|render (or verify) meals in month agenda view (mobile)]]
 - [[Replace Calendar Header|replace header]]
@@ -46,7 +44,7 @@
 - group ingredients when adding/editing a recipe
 - when adding/editing a recipe, make the instructions expand if you type more than a line
 - skip to content
-- keyboard shortcuts
+- [[Keyboard Shortcuts|keyboard shortcuts]]
 ## Misc
 - [[Tag Management|tag management - edit/delete]] (should live under planner settings)
 - performance - investigate mongo/mongoose caching - is next doing it already or do we need to implement it?

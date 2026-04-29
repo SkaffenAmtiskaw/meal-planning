@@ -81,3 +81,6 @@ src/_types/
 - [ ] Update all type definitions to use Zod 4 recommended patterns
 
 **Note:** Do not modify `.opencode/docs/project_conventions.md` until the `_types/` directory is actually created and populated. The conventions should document what exists, not what is planned.
+
+# Replicated React Hooks
+- the async hook could be replaced with a native React hook

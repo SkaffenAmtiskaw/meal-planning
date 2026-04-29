@@ -1,1 +1,1 @@
-Note: `schedule-x` is moving DND to paid in the next release so we need to implement our own custom DND solution on top of the `schedule-x` calendar
+We will be replacing schedule-x so this is implementing DND on top of the custom calendar
