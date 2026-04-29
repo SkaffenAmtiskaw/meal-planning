@@ -21,6 +21,9 @@
     "paths": {
       "@/*": [
         "./src/*"
+      ],
+      "@mocks/*": [
+        "./test/mocks/*"
       ]
     },
     "plugins": [

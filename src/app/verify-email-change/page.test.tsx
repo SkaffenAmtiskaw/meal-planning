@@ -37,31 +37,7 @@ vi.mock('./_components/SetPasswordForm', () => ({
 	),
 }));
 
-vi.mock('@mantine/core', () => ({
-	Center: ({ children }: { children: React.ReactNode }) => <>{children}</>,
-	Stack: ({ children }: { children: React.ReactNode }) => <>{children}</>,
-	Title: ({
-		children,
-		...props
-	}: {
-		children: React.ReactNode;
-		[key: string]: unknown;
-	}) => <h1 {...props}>{children}</h1>,
-	Text: ({
-		children,
-		...props
-	}: {
-		children: React.ReactNode;
-		[key: string]: unknown;
-	}) => <p {...props}>{children}</p>,
-	Anchor: ({
-		children,
-		...props
-	}: {
-		children: React.ReactNode;
-		[key: string]: unknown;
-	}) => <a {...props}>{children}</a>,
-}));
+vi.mock('@mantine/core', async () => await import('@mocks/@mantine/core'));
 
 const futureDate = new Date(Date.now() + 1000 * 60 * 60 * 24);
 const pastDate = new Date(Date.now() - 1000 * 60 * 60);

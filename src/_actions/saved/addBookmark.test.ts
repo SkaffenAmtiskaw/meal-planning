@@ -72,7 +72,16 @@ describe('addBookmark', () => {
 	});
 
 	test('returns Planner not found error when planner does not exist', async () => {
-		vi.mocked(checkAuth).mockResolvedValue({ type: 'authorized' });
+		vi.mocked(checkAuth).mockResolvedValue({
+			type: 'authorized',
+			accessLevel: 'write',
+			user: {
+				_id: 'user-id',
+				email: 'test@example.com',
+				name: 'Test User',
+				planners: [],
+			},
+		} as never);
 		vi.mocked(Planner.findById).mockResolvedValue(null);
 
 		const result = await addBookmark(validData);
@@ -82,7 +91,16 @@ describe('addBookmark', () => {
 
 	test('persists the bookmark and returns _id and name', async () => {
 		const planner = makePlanner();
-		vi.mocked(checkAuth).mockResolvedValue({ type: 'authorized' });
+		vi.mocked(checkAuth).mockResolvedValue({
+			type: 'authorized',
+			accessLevel: 'write',
+			user: {
+				_id: 'user-id',
+				email: 'test@example.com',
+				name: 'Test User',
+				planners: [],
+			},
+		} as never);
 		vi.mocked(Planner.findById).mockResolvedValue(planner as never);
 
 		const result = await addBookmark(validData);
@@ -97,7 +115,16 @@ describe('addBookmark', () => {
 
 	test('accepts optional tags', async () => {
 		const planner = makePlanner();
-		vi.mocked(checkAuth).mockResolvedValue({ type: 'authorized' });
+		vi.mocked(checkAuth).mockResolvedValue({
+			type: 'authorized',
+			accessLevel: 'write',
+			user: {
+				_id: 'user-id',
+				email: 'test@example.com',
+				name: 'Test User',
+				planners: [],
+			},
+		} as never);
 		vi.mocked(Planner.findById).mockResolvedValue(planner as never);
 
 		const result = await addBookmark({

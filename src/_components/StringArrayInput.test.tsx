@@ -1,19 +1,15 @@
-import { MantineProvider } from '@mantine/core';
 import { fireEvent, render, screen } from '@testing-library/react';
 
 import { describe, expect, test, vi } from 'vitest';
 
 import { StringArrayInput } from './StringArrayInput';
 
-const wrapper = ({ children }: { children: React.ReactNode }) => (
-	<MantineProvider>{children}</MantineProvider>
-);
+vi.mock('@mantine/core', async () => await import('@mocks/@mantine/core'));
 
 describe('StringArrayInput', () => {
 	test('renders label when provided', () => {
 		render(
 			<StringArrayInput value={[]} onChange={vi.fn()} label="Ingredients" />,
-			{ wrapper },
 		);
 		expect(screen.getByText('Ingredients')).toBeDefined();
 	});
@@ -21,7 +17,6 @@ describe('StringArrayInput', () => {
 	test('renders no label when not provided', () => {
 		const { container } = render(
 			<StringArrayInput value={[]} onChange={vi.fn()} />,
-			{ wrapper },
 		);
 		expect(container.querySelector('label')).toBeNull();
 	});
@@ -33,7 +28,6 @@ describe('StringArrayInput', () => {
 				onChange={vi.fn()}
 				placeholder="e.g. 1 cup flour"
 			/>,
-			{ wrapper },
 		);
 		expect(screen.getByDisplayValue('flour')).toBeDefined();
 		expect(screen.getByDisplayValue('sugar')).toBeDefined();
@@ -46,16 +40,13 @@ describe('StringArrayInput', () => {
 				onChange={vi.fn()}
 				placeholder="Enter item"
 			/>,
-			{ wrapper },
 		);
 		expect(screen.getByPlaceholderText('Enter item')).toBeDefined();
 	});
 
 	test('calls onChange when an item text changes', () => {
 		const onChange = vi.fn();
-		render(<StringArrayInput value={['flour']} onChange={onChange} />, {
-			wrapper,
-		});
+		render(<StringArrayInput value={['flour']} onChange={onChange} />);
 
 		fireEvent.change(screen.getByDisplayValue('flour'), {
 			target: { value: 'sugar' },
@@ -72,7 +63,6 @@ describe('StringArrayInput', () => {
 				onChange={onChange}
 				data-testid="sai"
 			/>,
-			{ wrapper },
 		);
 
 		const removeButtons = screen
@@ -85,9 +75,7 @@ describe('StringArrayInput', () => {
 
 	test('calls onChange with empty string appended when Add is clicked', () => {
 		const onChange = vi.fn();
-		render(<StringArrayInput value={['flour']} onChange={onChange} />, {
-			wrapper,
-		});
+		render(<StringArrayInput value={['flour']} onChange={onChange} />);
 
 		fireEvent.click(screen.getByRole('button', { name: /add/i }));
 

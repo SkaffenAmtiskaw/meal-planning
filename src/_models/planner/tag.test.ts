@@ -1,6 +1,8 @@
 import { Types } from 'mongoose';
 import { describe, expect, test } from 'vitest';
 
+import { TAG_COLOR_NAMES } from '@/_theme/colors';
+
 import { zTagInterface } from './tag';
 
 describe('tag interface', () => {
@@ -8,14 +10,17 @@ describe('tag interface', () => {
 
 	test('accepts a valid tag', () => {
 		expect(
-			zTagInterface.safeParse({ _id: tagId, name: 'Villain', color: '#8B0000' })
-				.success,
+			zTagInterface.safeParse({
+				_id: tagId,
+				name: 'Villain',
+				color: 'tangerine',
+			}).success,
 		).toBe(true);
 	});
 
 	test('rejects a tag missing _id', () => {
 		expect(
-			zTagInterface.safeParse({ name: 'Villain', color: '#8B0000' }).success,
+			zTagInterface.safeParse({ name: 'Villain', color: 'tangerine' }).success,
 		).toBe(false);
 	});
 
@@ -24,14 +29,14 @@ describe('tag interface', () => {
 			zTagInterface.safeParse({
 				_id: 'not-an-id',
 				name: 'Villain',
-				color: '#8B0000',
+				color: 'tangerine',
 			}).success,
 		).toBe(false);
 	});
 
 	test('rejects a tag missing name', () => {
 		expect(
-			zTagInterface.safeParse({ _id: tagId, color: '#8B0000' }).success,
+			zTagInterface.safeParse({ _id: tagId, color: 'tangerine' }).success,
 		).toBe(false);
 	});
 
@@ -43,8 +48,26 @@ describe('tag interface', () => {
 
 	test('rejects a tag with non-string name', () => {
 		expect(
-			zTagInterface.safeParse({ _id: tagId, name: 42, color: '#8B0000' })
+			zTagInterface.safeParse({ _id: tagId, name: 42, color: 'tangerine' })
 				.success,
 		).toBe(false);
+	});
+
+	test('rejects a tag with an invalid color', () => {
+		expect(
+			zTagInterface.safeParse({
+				_id: tagId,
+				name: 'Villain',
+				color: 'red',
+			}).success,
+		).toBe(false);
+	});
+
+	test('accepts all valid tag colors', () => {
+		for (const color of TAG_COLOR_NAMES) {
+			expect(
+				zTagInterface.safeParse({ _id: tagId, name: 'Villain', color }).success,
+			).toBe(true);
+		}
 	});
 });

@@ -1,4 +1,4 @@
-import { render } from '@testing-library/react';
+import { fireEvent, render, screen } from '@testing-library/react';
 
 import { afterEach, describe, expect, test, vi } from 'vitest';
 
@@ -10,24 +10,17 @@ vi.mock('next/navigation', () => ({
 	usePathname: () => '/jafar-planner/recipes',
 }));
 
-let capturedOnClose: (() => void) | undefined;
-vi.mock('@mantine/core', () => ({
-	Modal: (props: { onClose?: () => void }) => {
-		capturedOnClose = props.onClose;
-		return null;
-	},
-}));
+vi.mock('@mantine/core', async () => await import('@mocks/@mantine/core'));
 
 describe('modal wrapper', () => {
 	afterEach(() => {
 		vi.resetAllMocks();
-		capturedOnClose = undefined;
 	});
 
 	test('navigates to current pathname when closed', () => {
 		render(<ModalWrapper opened />);
 
-		capturedOnClose?.();
+		fireEvent.click(screen.getByRole('button', { name: /close/i }));
 
 		expect(mockPush).toHaveBeenCalledWith('/jafar-planner/recipes');
 	});
@@ -36,7 +29,7 @@ describe('modal wrapper', () => {
 		const onClose = vi.fn();
 		render(<ModalWrapper opened onClose={onClose} />);
 
-		capturedOnClose?.();
+		fireEvent.click(screen.getByRole('button', { name: /close/i }));
 
 		expect(onClose).toHaveBeenCalled();
 		expect(mockPush).toHaveBeenCalledWith('/jafar-planner/recipes');

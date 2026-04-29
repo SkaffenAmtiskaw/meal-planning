@@ -4,7 +4,7 @@ import type { Types } from 'mongoose';
 
 import { Planner } from '@/_models';
 
-export const getPlanner = async (id: Types.ObjectId) => {
+export const getPlanner = async (id: Types.ObjectId | string) => {
 	const planner = await Planner.findById(id);
 
 	if (!planner) {

@@ -7,6 +7,7 @@ import { ActionIcon, Group, Stack, Text, Textarea } from '@mantine/core';
 import { IconCheck, IconPencil, IconX } from '@tabler/icons-react';
 
 import { updateRecipeNotes } from '@/_actions/saved';
+import { useEditMode } from '@/_hooks/useEditMode';
 import { catchify } from '@/_utils/catchify';
 
 type Props = {
@@ -17,7 +18,7 @@ type Props = {
 
 export const InlineNotesEditor = ({ plannerId, recipeId, notes }: Props) => {
 	const router = useRouter();
-	const [editing, setEditing] = useState(false);
+	const [editing, { enterEditing, exitEditing }] = useEditMode();
 	const [value, setValue] = useState(notes ?? '');
 	const [saving, setSaving] = useState(false);
 	const [saveError, setSaveError] = useState<string | null>(null);
@@ -37,13 +38,13 @@ export const InlineNotesEditor = ({ plannerId, recipeId, notes }: Props) => {
 			setSaveError(result.error);
 			return;
 		}
-		setEditing(false);
+		exitEditing();
 		router.refresh();
 	};
 
 	const handleCancel = () => {
 		setValue(notes ?? '');
-		setEditing(false);
+		exitEditing();
 		setSaveError(null);
 	};
 
@@ -56,7 +57,7 @@ export const InlineNotesEditor = ({ plannerId, recipeId, notes }: Props) => {
 				{!editing && (
 					<ActionIcon
 						data-testid="notes-edit-button"
-						onClick={() => setEditing(true)}
+						onClick={enterEditing}
 						size="xs"
 						variant="subtle"
 					>

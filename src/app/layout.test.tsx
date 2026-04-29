@@ -1,17 +1,19 @@
-import { render, screen } from '@testing-library/react';
-
+import { renderToStaticMarkup } from 'react-dom/server';
 import { describe, expect, test, vi } from 'vitest';
 
 import RootLayout, { metadata } from './layout';
 
+vi.mock('next/font/google', () => ({
+	Inter: () => ({ className: 'mock-inter-class' }),
+	Roboto: () => ({
+		className: 'mock-roboto-class',
+		variable: 'mock-roboto-variable',
+	}),
+}));
+
 vi.mock('@mantine/core/styles.css', () => ({}));
 
-vi.mock('@mantine/core', () => ({
-	MantineProvider: ({ children }: { children: React.ReactNode }) => (
-		<>{children}</>
-	),
-	mantineHtmlProps: {},
-}));
+vi.mock('@mantine/core', async () => await import('@mocks/@mantine/core'));
 
 vi.mock('@/_components', () => ({
 	OneTapSignInWrapper: ({ children }: { children: React.ReactNode }) => (
@@ -29,8 +31,10 @@ describe('root layout', () => {
 	});
 
 	test('renders children', () => {
-		render(<RootLayout>{"Ursula's Kitchen"}</RootLayout>);
+		const html = renderToStaticMarkup(
+			<RootLayout>{"Ursula's Kitchen"}</RootLayout>,
+		);
 
-		expect(screen.getByText("Ursula's Kitchen")).toBeDefined();
+		expect(html).toContain('Ursula&#x27;s Kitchen');
 	});
 });

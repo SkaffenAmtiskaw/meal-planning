@@ -1,8 +1,10 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import type { ActionResult } from '@/_utils/actionResult';
+
+import { useAsyncStatus } from '../useAsyncStatus';
 
 type Status = 'idle' | 'submitting' | 'success' | 'error';
 
@@ -11,11 +13,23 @@ type Options = {
 };
 
 export const useFormFeedback = ({ successDuration = 3000 }: Options = {}) => {
-	const [status, setStatus] = useState<Status>('idle');
+	const {
+		status: asyncStatus,
+		error,
+		run,
+		reset: resetAsync,
+	} = useAsyncStatus();
 	const [countdown, setCountdown] = useState(0);
-	const [errorMessage, setErrorMessage] = useState<string | undefined>();
 	const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
 	const countdownRef = useRef(0);
+
+	// Map asyncStatus to form feedback status
+	const status: Status = useMemo(() => {
+		if (asyncStatus === 'loading') return 'submitting';
+		if (asyncStatus === 'success') return 'success';
+		if (asyncStatus === 'error') return 'error';
+		return 'idle';
+	}, [asyncStatus]);
 
 	useEffect(() => {
 		return () => {
@@ -25,43 +39,48 @@ export const useFormFeedback = ({ successDuration = 3000 }: Options = {}) => {
 		};
 	}, []);
 
-	const reset = () => {
+	const reset = useCallback(() => {
 		if (intervalRef.current !== null) {
 			clearInterval(intervalRef.current);
 			intervalRef.current = null;
 		}
-		setStatus('idle');
+		countdownRef.current = 0;
 		setCountdown(0);
-		setErrorMessage(undefined);
-	};
+		resetAsync();
+	}, [resetAsync]);
 
-	const wrap =
+	const wrap = useCallback(
 		<TArgs extends unknown[], TData>(
 			fn: (...args: TArgs) => Promise<ActionResult<TData>>,
-			onSuccess: (data: TData) => void,
+			onSuccess?: (data: TData) => void,
 		) =>
-		async (...args: TArgs): Promise<void> => {
-			setStatus('submitting');
-			setErrorMessage(undefined);
+			async (...args: TArgs): Promise<void> => {
+				// Clear any existing interval before starting new operation
+				if (intervalRef.current !== null) {
+					clearInterval(intervalRef.current);
+					intervalRef.current = null;
+				}
+				countdownRef.current = 0;
+				setCountdown(0);
 
-			try {
-				const result = await fn(...args);
+				const result = await run(() => fn(...args));
 
-				if (!result.ok) {
-					setStatus('error');
-					setErrorMessage(result.error);
+				// Error case - useAsyncStatus already handled status/error state
+				if (!result?.ok) {
 					return;
 				}
 
+				// Handle successDuration: 0 case - call onSuccess immediately and reset status
 				if (successDuration === 0) {
-					onSuccess(result.data);
+					onSuccess?.(result.data);
+					resetAsync();
 					return;
 				}
 
+				// Handle countdown case
 				const { data } = result;
 				const seconds = successDuration / 1000;
 				countdownRef.current = seconds;
-				setStatus('success');
 				setCountdown(seconds);
 
 				const id = setInterval(() => {
@@ -70,17 +89,18 @@ export const useFormFeedback = ({ successDuration = 3000 }: Options = {}) => {
 					if (countdownRef.current <= 0) {
 						intervalRef.current = null;
 						clearInterval(id);
-						onSuccess(data);
+						onSuccess?.(data);
 					}
 				}, 1000);
 				intervalRef.current = id;
-			} catch (err) {
-				setStatus('error');
-				setErrorMessage(
-					err instanceof Error ? err.message : 'An unexpected error occurred',
-				);
-			}
-		};
+			},
+		[run, successDuration, resetAsync],
+	);
+
+	// Provide fallback message for non-Error throws where error would be null/undefined
+	const errorMessage =
+		error ??
+		(asyncStatus === 'error' ? 'An unexpected error occurred' : undefined);
 
 	return { status, countdown, errorMessage, wrap, reset };
 };

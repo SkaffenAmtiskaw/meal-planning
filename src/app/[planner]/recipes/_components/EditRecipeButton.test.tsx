@@ -1,6 +1,6 @@
 import { fireEvent, render, screen } from '@testing-library/react';
 
-import { describe, expect, test, vi } from 'vitest';
+import { beforeEach, describe, expect, test, vi } from 'vitest';
 
 import { EditRecipeButton } from './EditRecipeButton';
 
@@ -9,35 +9,38 @@ vi.mock('next/navigation', () => ({
 	useRouter: () => ({ push: mockPush }),
 }));
 
-vi.mock('@mantine/core', () => ({
-	ActionIcon: ({
-		children,
-		onClick,
-		'data-testid': testId,
-	}: {
-		children: React.ReactNode;
-		onClick?: () => void;
-		'data-testid'?: string;
-	}) => (
-		<button data-testid={testId} onClick={onClick} type="button">
-			{children}
-		</button>
-	),
-}));
+vi.mock('@mantine/core', async () => await import('@mocks/@mantine/core'));
 
-vi.mock('@tabler/icons-react', () => ({
-	IconPencil: () => <svg data-testid="icon-pencil" />,
+const { mockUseCanWrite } = vi.hoisted(() => ({ mockUseCanWrite: vi.fn() }));
+vi.mock('@/app/[planner]/_components', () => ({
+	useCanWrite: () => mockUseCanWrite(),
 }));
 
 describe('EditRecipeButton', () => {
-	test('renders the pencil icon', () => {
-		render(<EditRecipeButton href="?item=123&status=edit&type=recipe" />);
-		expect(screen.getByTestId('icon-pencil')).toBeDefined();
+	beforeEach(() => {
+		vi.resetAllMocks();
+		mockUseCanWrite.mockReturnValue(true);
 	});
 
 	test('navigates to href when clicked', () => {
+		mockUseCanWrite.mockReturnValue(true);
+
 		render(<EditRecipeButton href="?item=123&status=edit&type=recipe" />);
 		fireEvent.click(screen.getByTestId('edit-button'));
 		expect(mockPush).toHaveBeenCalledWith('?item=123&status=edit&type=recipe');
+	});
+
+	test('does not render when user has read-only access', () => {
+		mockUseCanWrite.mockReturnValue(false);
+
+		render(<EditRecipeButton href="?item=123&status=edit&type=recipe" />);
+		expect(screen.queryByTestId('edit-button')).toBeNull();
+	});
+
+	test('renders when user has write access', () => {
+		mockUseCanWrite.mockReturnValue(true);
+
+		render(<EditRecipeButton href="?item=123&status=edit&type=recipe" />);
+		expect(screen.getByTestId('edit-button')).toBeDefined();
 	});
 });

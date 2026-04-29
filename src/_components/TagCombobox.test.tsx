@@ -1,11 +1,32 @@
-import { isLightColor } from '@mantine/core';
 import { act, fireEvent, render, screen } from '@testing-library/react';
 
 import { afterEach, describe, expect, test, vi } from 'vitest';
 
 import { addTag } from '@/_actions/planner/addTag';
+import { TAG_COLORS } from '@/_theme/colors';
 
 import { TagCombobox } from './TagCombobox';
+
+vi.mock('@/_theme/colors', () => ({
+	TAG_COLORS: {
+		fern: {
+			bg: 'rgb(228, 242, 228)',
+			text: 'rgb(30, 77, 30)',
+			border: 'rgb(135, 194, 135)',
+		},
+		red: {
+			bg: 'rgb(240, 100, 100)',
+			text: 'rgb(120, 20, 20)',
+			border: 'rgb(200, 80, 80)',
+		},
+		blue: {
+			bg: 'rgb(200, 220, 250)',
+			text: 'rgb(20, 40, 120)',
+			border: 'rgb(100, 140, 200)',
+		},
+	},
+	TagColor: 'fern',
+}));
 
 vi.mock('@/_actions/planner/addTag', () => ({
 	addTag: vi.fn(),
@@ -69,10 +90,17 @@ vi.mock('@mantine/core', () => {
 			label?: string;
 			onClick?: () => void;
 		}) => (
-			<button type="button" data-testid="pills-input" onClick={onClick}>
+			// biome-ignore lint/a11y/useSemanticElements: test mock — <button> would nest inside Pill's remove <button>
+			<div
+				data-testid="pills-input"
+				role="button"
+				tabIndex={0}
+				onClick={onClick}
+				onKeyDown={onClick}
+			>
 				{label && <span>{label}</span>}
 				{children}
-			</button>
+			</div>
 		),
 		{
 			Field: ({
@@ -101,13 +129,14 @@ vi.mock('@mantine/core', () => {
 			children,
 			withRemoveButton,
 			onRemove,
+			style,
 		}: {
 			children: React.ReactNode;
 			withRemoveButton?: boolean;
 			onRemove?: () => void;
 			style?: React.CSSProperties;
 		}) => (
-			<span data-testid="pill">
+			<span data-testid="pill" style={style}>
 				{children}
 				{withRemoveButton && (
 					<button type="button" data-testid="pill-remove" onClick={onRemove}>
@@ -154,10 +183,6 @@ vi.mock('@mantine/core', () => {
 				updateSelectedOptionIndex: vi.fn(),
 			};
 		},
-		useMantineTheme: () => ({
-			colors: { red: ['', '', '', '', '', '#f03e3e'] },
-		}),
-		isLightColor: vi.fn().mockReturnValue(false),
 	};
 });
 
@@ -358,20 +383,32 @@ describe('TagCombobox', () => {
 		expect(() => capturedOnDropdownOpen?.()).not.toThrow();
 	});
 
-	test('uses dark text on light-colored pills', () => {
-		vi.mocked(isLightColor).mockReturnValue(true);
-		render(<TagCombobox {...defaultProps} value={['tag-1']} />);
-		expect(screen.getByText('Spicy')).toBeDefined();
-	});
-
-	test('uses raw color as background when theme color is not found', () => {
+	test('applies pill style with TAG_COLORS bg and text colors', () => {
 		render(
 			<TagCombobox
 				{...defaultProps}
-				initialTags={[{ _id: 'tag-x', name: 'Custom', color: '#abcdef' }]}
+				initialTags={[{ _id: 'tag-fern', name: 'Fern', color: 'fern' }]}
+				value={['tag-fern']}
+			/>,
+		);
+		const pill = screen.getByTestId('pill');
+		expect(pill).toBeDefined();
+		const style = pill.style;
+		expect(style.backgroundColor).toBe(TAG_COLORS.fern.bg);
+		expect(style.color).toBe(TAG_COLORS.fern.text);
+		expect(style.border).toBe(`1px solid ${TAG_COLORS.fern.border}`);
+	});
+
+	test('applies pill style with fallback background for unknown color', () => {
+		render(
+			<TagCombobox
+				{...defaultProps}
+				initialTags={[{ _id: 'tag-x', name: 'Custom', color: 'turquoise' }]}
 				value={['tag-x']}
 			/>,
 		);
-		expect(screen.getByText('Custom')).toBeDefined();
+		const pill = screen.getByTestId('pill');
+		expect(pill).toBeDefined();
+		expect(pill.style.backgroundColor).toBe('turquoise');
 	});
 });

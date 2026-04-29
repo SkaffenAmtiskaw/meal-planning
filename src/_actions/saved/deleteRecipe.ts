@@ -15,7 +15,7 @@ const zDeleteRecipeSchema = z.object({
 export const deleteRecipe = async (data: unknown): Promise<ActionResult> => {
 	const { plannerId, recipeId } = zDeleteRecipeSchema.parse(data);
 
-	const auth = await checkAuth(new Types.ObjectId(plannerId));
+	const auth = await checkAuth(new Types.ObjectId(plannerId), 'write');
 	if (auth.type !== 'authorized') return { ok: false, error: 'Unauthorized' };
 
 	const planner = await Planner.findById(plannerId);

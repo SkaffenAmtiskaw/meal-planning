@@ -4,6 +4,7 @@ import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 
 import { Alert, Button, Group, Stack, Text, TextInput } from '@mantine/core';
+import { useDisclosure } from '@mantine/hooks';
 
 import { updateUserName } from '@/_actions/user';
 
@@ -13,7 +14,7 @@ type Props = {
 
 export const ChangeNameForm = ({ currentName }: Props) => {
 	const router = useRouter();
-	const [showForm, setShowForm] = useState(false);
+	const [showForm, formHandlers] = useDisclosure(false);
 	const [name, setName] = useState('');
 	const [error, setError] = useState<string | null>(null);
 	const [loading, setLoading] = useState(false);
@@ -31,7 +32,7 @@ export const ChangeNameForm = ({ currentName }: Props) => {
 			return;
 		}
 
-		setShowForm(false);
+		formHandlers.close();
 		setName('');
 		router.refresh();
 	};
@@ -45,7 +46,7 @@ export const ChangeNameForm = ({ currentName }: Props) => {
 					size="xs"
 					w="fit-content"
 					data-testid="change-name-button"
-					onClick={() => setShowForm(true)}
+					onClick={formHandlers.open}
 				>
 					Change name
 				</Button>
@@ -75,7 +76,7 @@ export const ChangeNameForm = ({ currentName }: Props) => {
 							variant="subtle"
 							data-testid="cancel-name-change-button"
 							onClick={() => {
-								setShowForm(false);
+								formHandlers.close();
 								setName('');
 							}}
 						>

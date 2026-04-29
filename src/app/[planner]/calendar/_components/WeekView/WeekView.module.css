@@ -1,0 +1,32 @@
+.grid {
+	overflow-x: auto;
+}
+
+.dayColumn {
+	min-width: 0;
+	/* TODO: 100px offset is approximate — update during calendar header styling pass */
+	min-height: calc(100dvh - var(--app-shell-header-height, 0px) - 100px);
+}
+
+.dayColumn:not(:last-child) {
+	border-right: 1px solid var(--mantine-color-default-border);
+	padding-right: 8px;
+}
+
+.card {
+	width: 100%;
+	cursor: pointer;
+}
+
+.title {
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+.description {
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	opacity: 0.8;
+}

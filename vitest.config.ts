@@ -5,11 +5,16 @@ import { defineConfig } from 'vitest/config'
 export default defineConfig({
   plugins: [react()],
   resolve: {
-    alias: {
-      '@': resolve(__dirname, './src'),
-    },
+    alias: [
+      { find: '@/env', replacement: new URL('./test/mocks/env.ts', import.meta.url).pathname },
+      { find: '@', replacement: resolve(__dirname, './src') },
+    ],
   },
   test: {
+    alias: {
+        'server-only': new URL('./test/mocks/server-only.ts', import.meta.url).pathname,
+        '@mocks': new URL('./test/mocks', import.meta.url).pathname,
+    },
     environment: 'jsdom',
     setupFiles: ['./test/setup.ts'],
     coverage: {
@@ -35,8 +40,14 @@ export default defineConfig({
           'src/**/index.{ts,tsx}',
           // type declaration files - no runtime code
           'src/**/*.d.ts',
+          // type definition files - no runtime code
+          'src/**/*.types.ts',
           // test files
-          'src/**/*.test.{ts,tsx}'
+          'src/**/*.test.{ts,tsx}',
+          // test mocks
+          'test/mocks/**',
+          // SVG icons are purely presentational, no logic to test
+          'src/**/*SVG.tsx'
       ],
       thresholds: {
         lines: 100,

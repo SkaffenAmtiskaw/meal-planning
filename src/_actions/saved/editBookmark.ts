@@ -24,7 +24,7 @@ export const editBookmark = async (
 		notes,
 	} = zEditBookmarkSchema.parse(data);
 
-	const auth = await checkAuth(new Types.ObjectId(plannerId));
+	const auth = await checkAuth(new Types.ObjectId(plannerId), 'write');
 	if (auth.type !== 'authorized') return { ok: false, error: 'Unauthorized' };
 
 	const $set: Record<string, unknown> = {

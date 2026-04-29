@@ -1,0 +1,904 @@
+/**
+ * Shared mock for @mantine/core.
+ *
+ * Usage in a test file:
+ *
+ *   vi.mock('@mantine/core', async () => await import('@mocks/@mantine/core'))
+ *
+ * All components are `vi.fn()` instances, so you can inspect props:
+ *
+ *   import { Select } from '@mantine/core'
+ *   expect(vi.mocked(Select)).toHaveBeenCalledWith(
+ *     expect.objectContaining({ data: [...] }),
+ *     undefined,
+ *   )
+ *
+ * Default implementations survive `vi.resetAllMocks()`. Use
+ * `vi.mocked(Comp).mockImplementationOnce(...)` to override for a single test.
+ */
+
+import { vi } from 'vitest';
+
+// ─── Shared prop shapes ───────────────────────────────────────────────────────
+
+type WithChildren = {
+	children?: React.ReactNode;
+	'data-testid'?: string;
+};
+
+type WithTestId = { 'data-testid'?: string };
+
+export const Image = vi.fn(
+	({
+		src,
+		alt,
+		w,
+		h,
+		fit,
+		'data-testid': testId,
+	}: {
+		src?: string;
+		alt?: string;
+		w?: number | string;
+		h?: number | string;
+		fit?: string;
+		'data-testid'?: string;
+	}) => (
+		<img
+			src={src}
+			alt={alt}
+			width={w}
+			height={h}
+			data-testid={testId}
+			style={{ objectFit: fit as React.CSSProperties['objectFit'] }}
+		/>
+	),
+);
+
+// ─── Layout / Container ───────────────────────────────────────────────────────
+
+export const AppShell = vi.fn(({ children, 'data-testid': testId }: WithChildren) => (
+	<div data-testid={testId}>{children}</div>
+));
+
+export const AppShellHeader = vi.fn(({ children, 'data-testid': testId }: WithChildren) => (
+	<div data-testid={testId}>{children}</div>
+));
+
+export const AppShellMain = vi.fn(({ children, 'data-testid': testId }: WithChildren) => (
+	<div data-testid={testId}>{children}</div>
+));
+
+export const AppShellNavbar = vi.fn(({ children, 'data-testid': testId }: WithChildren) => (
+	<div data-testid={testId}>{children}</div>
+));
+
+export const Box = vi.fn(({ children, 'data-testid': testId }: WithChildren) => (
+	<div data-testid={testId}>{children}</div>
+));
+
+export const Card = vi.fn(
+	({
+		children,
+		onClick,
+		'data-testid': testId,
+	}: WithChildren & { onClick?: React.MouseEventHandler<HTMLDivElement> }) => (
+		<div data-testid={testId} onClick={onClick}>
+			{children}
+		</div>
+	),
+);
+
+export const Collapse = vi.fn(
+	({ children, expanded, 'data-testid': testId }: WithChildren & { expanded?: boolean }) =>
+		expanded ? <div data-testid={testId}>{children}</div> : null,
+);
+
+// ─── Accordion (compound) ─────────────────────────────────────────────────────
+
+export const Accordion = Object.assign(
+	vi.fn(({ children }: WithChildren) => <div data-testid="accordion">{children}</div>),
+	{
+		Item: vi.fn(({ children, value }: WithChildren & { value?: string }) => (
+			<div data-testid="accordion-item" data-value={value}>{children}</div>
+		)),
+		Control: vi.fn(({ children }: WithChildren) => (
+			<button data-testid="accordion-control">{children}</button>
+		)),
+		Panel: vi.fn(({ children }: WithChildren) => (
+			<div data-testid="accordion-panel">{children}</div>
+		)),
+	}
+);
+
+export const Center = vi.fn(({ children, 'data-testid': testId }: WithChildren) => (
+	<div data-testid={testId}>{children}</div>
+));
+
+export const Container = vi.fn(({ children, 'data-testid': testId }: WithChildren) => (
+	<div data-testid={testId}>{children}</div>
+));
+
+export const Fieldset = vi.fn(
+	({
+		children,
+		'data-testid': testId,
+	}: WithChildren & { legend?: string; disabled?: boolean }) => (
+		<fieldset data-testid={testId}>{children}</fieldset>
+	),
+);
+
+export const Group = vi.fn(({ children, 'data-testid': testId }: WithChildren) => (
+	<div data-testid={testId}>{children}</div>
+));
+
+export const SimpleGrid = vi.fn(({ children, 'data-testid': testId }: WithChildren) => (
+	<div data-testid={testId}>{children}</div>
+));
+
+export const Stack = vi.fn(
+	({ children, 'data-testid': testId, component, onSubmit, ...props }: WithChildren & { 'data-orientation'?: string; component?: string; onSubmit?: React.FormEventHandler<HTMLFormElement>; [key: string]: unknown }) => {
+		if (component === 'form') {
+			return (
+				<form data-orientation="vertical" data-testid={testId} onSubmit={onSubmit} {...props}>
+					{children}
+				</form>
+			);
+		}
+		return (
+			<div data-orientation="vertical" data-testid={testId} {...props}>
+				{children}
+			</div>
+		);
+	},
+);
+
+// ─── Grid (compound) ─────────────────────────────────────────────────────────
+
+const GridCol = vi.fn(({ children, 'data-testid': testId }: WithChildren) => (
+	<div data-testid={testId}>{children}</div>
+));
+
+export const Grid = Object.assign(
+	vi.fn(({ children, 'data-testid': testId }: WithChildren) => (
+		<div data-testid={testId}>{children}</div>
+	)),
+	{ Col: GridCol },
+);
+
+// ─── Typography ───────────────────────────────────────────────────────────────
+
+export const Text = vi.fn(
+	({
+		children,
+		'data-testid': testId,
+	}: WithChildren & { c?: string; size?: string; fw?: number; span?: boolean }) => (
+		<p data-testid={testId}>{children}</p>
+	),
+);
+
+export const Title = vi.fn(
+	({ children, 'data-testid': testId }: WithChildren & { order?: number }) => (
+		<h2 data-testid={testId}>{children}</h2>
+	),
+);
+
+export const Typography = vi.fn(({ children, 'data-testid': testId }: WithChildren) => (
+	<div data-testid={testId}>{children}</div>
+));
+
+export const Anchor = vi.fn(
+	({
+		children,
+		href,
+		target,
+		onClick,
+		'data-testid': testId,
+	}: WithChildren & {
+		href?: string;
+		target?: string;
+		onClick?: React.MouseEventHandler<HTMLAnchorElement | HTMLButtonElement>;
+		component?: unknown;
+	}) => (
+		<a data-testid={testId} href={href} target={target} onClick={onClick as React.MouseEventHandler<HTMLAnchorElement>}>
+			{children}
+		</a>
+	),
+);
+
+export const Badge = vi.fn(
+	({
+		children,
+		'data-testid': testId,
+		color,
+		style,
+		className,
+	}: WithChildren & { color?: string; style?: React.CSSProperties; className?: string }) => (
+		<span
+			data-testid={testId ?? 'badge'}
+			data-color={color}
+			className={className}
+			style={style}
+		>
+			{children}
+		</span>
+	),
+);
+
+export const Indicator = vi.fn(
+	({
+		children,
+		'data-testid': testId,
+		color,
+		position,
+		size,
+		label,
+		maxValue,
+		inline,
+		showZero,
+		disabled,
+	}: WithChildren & {
+		color?: string;
+		position?: string;
+		size?: number;
+		label?: React.ReactNode;
+		maxValue?: number;
+		inline?: boolean;
+		showZero?: boolean;
+		disabled?: boolean;
+	}) => (
+		<span
+			data-testid={testId ?? 'indicator'}
+			data-color={color}
+			data-position={position}
+			data-size={size}
+			data-label={label}
+			data-max-value={maxValue}
+			data-inline={inline}
+			data-show-zero={showZero}
+			data-disabled={disabled}
+		>
+			{children}
+		</span>
+	),
+);
+
+export const Affix = vi.fn(({ children, 'data-testid': testId }: WithChildren) => (
+	<div data-testid={testId}>{children}</div>
+));
+
+export const Divider = vi.fn(
+	({
+		label,
+		'data-testid': testId,
+	}: WithTestId & { label?: React.ReactNode }) => (
+		<div data-testid={testId}>
+			<hr />
+			{label && <span data-testid="divider-label">{label}</span>}
+		</div>
+	),
+);
+
+// ─── Alert ────────────────────────────────────────────────────────────────────
+
+export const Alert = vi.fn(
+	({
+		children,
+		'data-testid': testId,
+		title,
+	}: WithChildren & { title?: React.ReactNode; color?: string; icon?: React.ReactNode }) => (
+		<div role="alert" data-testid={testId}>
+			{title && <div>{title}</div>}
+			{children}
+		</div>
+	),
+);
+
+// ─── Buttons ──────────────────────────────────────────────────────────────────
+
+export const ActionIcon = vi.fn(
+	({
+		children,
+		onClick,
+		disabled,
+		href,
+		'data-testid': testId,
+	}: {
+		children?: React.ReactNode;
+		onClick?: () => void;
+		disabled?: boolean;
+		href?: string;
+		'data-testid'?: string;
+		[key: string]: unknown;
+	}) =>
+		href ? (
+			<a href={href} data-testid={testId}>
+				{children}
+			</a>
+		) : (
+			<button type="button" onClick={onClick} disabled={disabled} data-testid={testId}>
+				{children}
+			</button>
+		),
+);
+
+export const Burger = vi.fn(
+	({
+		onClick,
+		opened,
+		'data-testid': testId,
+	}: {
+		onClick?: () => void;
+		opened?: boolean;
+		'data-testid'?: string;
+	}) => (
+		<button
+			type="button"
+			onClick={onClick}
+			data-opened={opened}
+			data-testid={testId}
+		/>
+	),
+);
+
+export const Button = vi.fn(
+	({
+		children,
+		onClick,
+		type,
+		disabled,
+		loading,
+		'data-testid': testId,
+	}: {
+		children?: React.ReactNode;
+		onClick?: () => void;
+		type?: 'button' | 'submit' | 'reset';
+		disabled?: boolean;
+		loading?: boolean;
+		'data-testid'?: string;
+		[key: string]: unknown;
+	}) => (
+		<button
+			type={type ?? 'button'}
+			onClick={onClick}
+			disabled={disabled || loading}
+			data-loading={loading ? 'true' : undefined}
+			data-testid={testId}
+		>
+			{children}
+		</button>
+	),
+);
+
+export const UnstyledButton = vi.fn(
+	({
+		children,
+		className,
+		'data-testid': testId,
+		...props
+	}: {
+		children?: React.ReactNode;
+		className?: string;
+		'data-testid'?: string;
+		[key: string]: unknown;
+	}) => (
+		<button type="button" className={className} data-testid={testId} {...props}>
+			{children}
+		</button>
+	),
+);
+
+// ─── Form inputs ──────────────────────────────────────────────────────────────
+
+export const NumberInput = vi.fn(
+	({
+		value,
+		onChange,
+		label,
+		'data-testid': testId,
+	}: {
+		value?: number | string;
+		onChange?: (value: number | string) => void;
+		label?: string;
+		'data-testid'?: string;
+		[key: string]: unknown;
+	}) => (
+		<input
+			type="number"
+			data-testid={testId ?? `number-${label}`}
+			value={value ?? ''}
+			onChange={(e) => onChange?.(Number(e.target.value))}
+		/>
+	),
+);
+
+export const PasswordInput = vi.fn(
+	({
+		value,
+		onChange,
+		label,
+		'data-testid': testId,
+	}: {
+		value?: string;
+		onChange?: React.ChangeEventHandler<HTMLInputElement>;
+		label?: string;
+		'data-testid'?: string;
+		[key: string]: unknown;
+	}) => (
+		<input
+			type="password"
+			data-testid={testId ?? `input-${label}`}
+			value={value ?? ''}
+			onChange={onChange ?? (() => {})}
+		/>
+	),
+);
+
+export const SegmentedControl = vi.fn(
+	({
+		value,
+		onChange,
+		data,
+		'data-testid': testId,
+	}: {
+		value?: string;
+		onChange?: (value: string) => void;
+		data?: { label: string; value: string }[];
+		'data-testid'?: string;
+	}) => (
+		<div data-testid={testId}>
+			{(data ?? []).map((d) => (
+				<button
+					key={d.value}
+					type="button"
+					data-value={d.value}
+					data-active={value === d.value}
+					onClick={() => onChange?.(d.value)}
+				>
+					{d.label}
+				</button>
+			))}
+		</div>
+	),
+);
+
+export const Select = vi.fn(
+	({
+		value,
+		onChange,
+		'data-testid': testId,
+		data,
+	}: {
+		value?: string | null;
+		onChange?: (value: string | null) => void;
+		data?: { value: string; label: string }[] | string[];
+		'data-testid'?: string;
+		[key: string]: unknown;
+	}) => (
+		<select
+			data-testid={testId}
+			value={value ?? ''}
+			onChange={(e) => onChange?.(e.currentTarget.value || null)}
+		>
+			{(data ?? []).map((item) => {
+				const optionValue = typeof item === 'string' ? item : item.value;
+				const optionLabel = typeof item === 'string' ? item : item.label;
+				return (
+					<option key={optionValue} value={optionValue}>
+						{optionLabel}
+					</option>
+				);
+			})}
+		</select>
+	),
+);
+
+export const Switch = vi.fn(
+	({
+		checked,
+		onChange,
+		label,
+		'data-testid': testId,
+	}: {
+		checked?: boolean;
+		onChange?: React.ChangeEventHandler<HTMLInputElement>;
+		label?: string;
+		'data-testid'?: string;
+	}) => (
+		<label>
+			{label}
+			<input
+				type="checkbox"
+				data-testid={testId}
+				checked={checked ?? false}
+				onChange={onChange ?? (() => {})}
+			/>
+		</label>
+	),
+);
+
+export const TextInput = vi.fn(
+	({
+		value,
+		onChange,
+		label,
+		type,
+		name,
+		placeholder,
+		disabled,
+		'data-testid': testId,
+	}: {
+		value?: string;
+		onChange?: React.ChangeEventHandler<HTMLInputElement>;
+		label?: string;
+		type?: string;
+		name?: string;
+		placeholder?: string;
+		disabled?: boolean;
+		'data-testid'?: string;
+		[key: string]: unknown;
+	}) => (
+		<input
+			data-testid={testId ?? `input-${name ?? label}`}
+			type={type}
+			value={value ?? ''}
+			placeholder={placeholder}
+			disabled={disabled}
+			onChange={onChange ?? (() => {})}
+		/>
+	),
+);
+
+export const Textarea = vi.fn(
+	({
+		value,
+		onChange,
+		label,
+		'data-testid': testId,
+	}: {
+		value?: string;
+		onChange?: React.ChangeEventHandler<HTMLTextAreaElement>;
+		label?: string;
+		'data-testid'?: string;
+		[key: string]: unknown;
+	}) => (
+		<textarea
+			data-testid={testId ?? `textarea-${label}`}
+			value={value ?? ''}
+			onChange={onChange ?? (() => {})}
+		/>
+	),
+);
+
+// ─── Input (compound) ─────────────────────────────────────────────────────────
+
+const InputLabel = vi.fn(({ children }: { children?: React.ReactNode }) => (
+	<span>{children}</span>
+));
+
+export const Input = Object.assign(
+	vi.fn(({ children, 'data-testid': testId }: WithChildren) => (
+		<div data-testid={testId}>{children}</div>
+	)),
+	{ Label: InputLabel },
+);
+
+// ─── Modal ────────────────────────────────────────────────────────────────────
+
+export const Modal = vi.fn(
+	({
+		children,
+		opened,
+		onClose,
+		title,
+		'data-testid': testId,
+	}: {
+		children?: React.ReactNode;
+		opened?: boolean;
+		onClose?: () => void;
+		title?: React.ReactNode;
+		'data-testid'?: string;
+		[key: string]: unknown;
+	}) =>
+		opened ? (
+			<div role="dialog" data-testid={testId}>
+				{title && <div>{title}</div>}
+				<button type="button" aria-label="close" onClick={onClose}>
+					×
+				</button>
+				{children}
+			</div>
+		) : null,
+);
+
+// ─── Navigation ───────────────────────────────────────────────────────────────
+
+export const Avatar = vi.fn(
+	({ 'data-testid': testId }: WithTestId & { src?: string; alt?: string }) => (
+		<div data-testid={testId} />
+	),
+);
+
+export const NavLink = vi.fn(
+	({
+		children,
+		label,
+		href,
+		active,
+		rightSection,
+		classNames,
+		'data-testid': testId,
+		...props
+	}: WithChildren & {
+		label?: React.ReactNode;
+		href?: string;
+		active?: boolean;
+		component?: string;
+		rightSection?: React.ReactNode;
+		classNames?: Record<string, string>;
+		'data-testid'?: string;
+		[key: string]: unknown;
+	}) => (
+		<a
+			href={href}
+			data-active={active || undefined}
+			data-testid={testId}
+			className={classNames?.root}
+			{...props}
+		>
+			<span className={classNames?.label}>{label}</span>
+			<span className={classNames?.section}>{rightSection}</span>
+			{children}
+		</a>
+	),
+);
+
+// ─── List ─────────────────────────────────────────────────────────────────────
+
+export const List = vi.fn(({ children, 'data-testid': testId }: WithChildren) => (
+	<ul data-testid={testId}>{children}</ul>
+));
+
+export const ListItem = vi.fn(({ children, 'data-testid': testId }: WithChildren) => (
+	<li data-testid={testId}>{children}</li>
+));
+
+// ─── Loader ───────────────────────────────────────────────────────────────────
+
+export const Loader = vi.fn(({ size, 'data-testid': testId }: { size?: string; 'data-testid'?: string }) => (
+	<span data-testid={testId ?? 'loader'} data-size={size} />
+));
+
+// ─── Menu (compound + standalone named exports) ───────────────────────────────
+
+export const MenuDivider = vi.fn(() => <hr />);
+
+export const MenuDropdown = vi.fn(({ children }: { children?: React.ReactNode }) => (
+	<>{children}</>
+));
+
+export const MenuItem = vi.fn(
+	({
+		children,
+		onClick,
+		href,
+		component,
+		'data-testid': testId,
+	}: {
+		children?: React.ReactNode;
+		onClick?: () => void;
+		href?: string;
+		component?: string;
+		'data-testid'?: string;
+		[key: string]: unknown;
+	}) =>
+		href || component === 'a' ? (
+			<a data-testid={testId} href={href} onClick={onClick}>
+				{children}
+			</a>
+		) : (
+			<button type="button" data-testid={testId} onClick={onClick}>
+				{children}
+			</button>
+		),
+);
+
+export const MenuTarget = vi.fn(({ children }: { children?: React.ReactNode }) => (
+	<>{children}</>
+));
+
+export const Menu = Object.assign(
+	vi.fn(({ children }: { children?: React.ReactNode }) => <>{children}</>),
+	{
+		Divider: MenuDivider,
+		Dropdown: MenuDropdown,
+		Item: MenuItem,
+		Target: MenuTarget,
+	},
+);
+
+// ─── Combobox (compound) ──────────────────────────────────────────────────────
+
+const ComboboxDropdownTarget = vi.fn(({ children }: { children?: React.ReactNode }) => (
+	<>{children}</>
+));
+
+const ComboboxDropdown = vi.fn(({ children, 'data-testid': testId }: WithChildren) => (
+	<div data-testid={testId ?? 'combobox-dropdown'}>{children}</div>
+));
+
+const ComboboxOptions = vi.fn(({ children, 'data-testid': testId }: WithChildren) => (
+	<div data-testid={testId}>{children}</div>
+));
+
+const ComboboxOption = vi.fn(
+	({
+		children,
+		value,
+		'data-testid': testId,
+	}: WithChildren & { value?: string }) => (
+		<div data-testid={testId ?? `option-${value}`} data-value={value}>
+			{children}
+		</div>
+	),
+);
+
+const ComboboxEmpty = vi.fn(({ children, 'data-testid': testId }: WithChildren) => (
+	<div data-testid={testId}>{children}</div>
+));
+
+export const Combobox = Object.assign(
+	vi.fn(
+		({
+			children,
+			'data-testid': testId,
+		}: WithChildren & {
+			onOptionSubmit?: (val: string) => void;
+			store?: unknown;
+		}) => <div data-testid={testId ?? 'combobox'}>{children}</div>,
+	),
+	{
+		DropdownTarget: ComboboxDropdownTarget,
+		Dropdown: ComboboxDropdown,
+		Options: ComboboxOptions,
+		Option: ComboboxOption,
+		Empty: ComboboxEmpty,
+	},
+);
+
+// ─── Pill (compound) ──────────────────────────────────────────────────────────
+
+const PillGroup = vi.fn(({ children }: { children?: React.ReactNode }) => (
+	<div>{children}</div>
+));
+
+export const Pill = Object.assign(
+	vi.fn(
+		({
+			children,
+			withRemoveButton,
+			onRemove,
+			'data-testid': testId,
+		}: {
+			children?: React.ReactNode;
+			withRemoveButton?: boolean;
+			onRemove?: () => void;
+			'data-testid'?: string;
+			style?: React.CSSProperties;
+		}) => (
+			<span data-testid={testId ?? 'pill'}>
+				{children}
+				{withRemoveButton && (
+					<button type="button" data-testid="pill-remove" onClick={onRemove}>
+						×
+					</button>
+				)}
+			</span>
+		),
+	),
+	{ Group: PillGroup },
+);
+
+// ─── PillsInput (compound) ────────────────────────────────────────────────────
+
+const PillsInputField = vi.fn(
+	(
+		props: React.InputHTMLAttributes<HTMLInputElement> & { 'data-testid'?: string },
+	) => <input {...props} data-testid={props['data-testid'] ?? 'pills-input-field'} />,
+);
+
+export const PillsInput = Object.assign(
+	vi.fn(
+		({
+			children,
+			label,
+			onClick,
+			'data-testid': testId,
+		}: {
+			children?: React.ReactNode;
+			label?: string;
+			onClick?: () => void;
+			'data-testid'?: string;
+		}) => (
+			<button type="button" data-testid={testId ?? 'pills-input'} onClick={onClick}>
+				{label && <span>{label}</span>}
+				{children}
+			</button>
+		),
+	),
+	{ Field: PillsInputField },
+);
+
+// ─── Tabs ─────────────────────────────────────────────────────────────────────
+
+export const TabsList = vi.fn(({ children, 'data-testid': testId }: WithChildren) => (
+	<div role="tablist" data-testid={testId}>{children}</div>
+));
+
+export const TabsTab = vi.fn(
+	({
+		children,
+		value,
+		'data-testid': testId,
+	}: WithChildren & { value?: string }) => (
+		<button type="button" role="tab" data-value={value} data-testid={testId}>
+			{children}
+		</button>
+	),
+);
+
+export const TabsPanel = vi.fn(
+	({
+		children,
+		value,
+		'data-testid': testId,
+	}: WithChildren & { value?: string }) => (
+		<div role="tabpanel" data-value={value} data-testid={testId}>
+			{children}
+		</div>
+	),
+);
+
+export const Tabs = vi.fn(({ children, 'data-testid': testId }: WithChildren) => (
+	<div data-testid={testId}>{children}</div>
+));
+
+// ─── Provider ─────────────────────────────────────────────────────────────────
+
+export const MantineProvider = vi.fn(({ children }: { children?: React.ReactNode }) => (
+	<>{children}</>
+));
+
+// ─── Hooks ────────────────────────────────────────────────────────────────────
+
+export const useCombobox = vi.fn(
+	(_options?: { onDropdownClose?: () => void; onDropdownOpen?: () => void }) => ({
+		openDropdown: vi.fn(),
+		closeDropdown: vi.fn(),
+		resetSelectedOption: vi.fn(),
+		updateSelectedOptionIndex: vi.fn(),
+	}),
+);
+
+export const useMantineTheme = vi.fn(() => ({
+	colors: {
+		navy: ['#E8EBEE', '#D1D7DD', '#BAC3CC', '#A3AFBB', '#8C9BAA', '#1C3144', '#192C3D', '#162736', '#132230', '#101D29'],
+		chalk: ['#FAF8F9', '#F5F3F4', '#F0EDEE', '#EBE8E9', '#E6E3E4', '#EFE7E9', '#E8E0E2', '#E1D9DB', '#DAD2D4', '#D3CBCB'],
+	},
+	radius: { md: '0.5rem' },
+}));
+
+// ─── Utilities ────────────────────────────────────────────────────────────────
+
+export const createTheme = vi.fn((theme: Record<string, unknown>) => theme);
+export const isLightColor = vi.fn(() => false);
+export const mantineHtmlProps = {};
+
+// ─── Types ────────────────────────────────────────────────────────────────────
+
+export type ModalProps = {
+	opened: boolean;
+	onClose: () => void;
+	title?: React.ReactNode;
+	children?: React.ReactNode;
+};

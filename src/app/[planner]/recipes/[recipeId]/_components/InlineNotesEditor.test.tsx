@@ -16,55 +16,7 @@ vi.mock('@/_actions/saved', () => ({
 	updateRecipeNotes: vi.fn(),
 }));
 
-vi.mock('@mantine/core', () => ({
-	ActionIcon: ({
-		children,
-		disabled,
-		onClick,
-		'data-testid': testId,
-	}: {
-		children: React.ReactNode;
-		disabled?: boolean;
-		onClick?: () => void;
-		'data-testid'?: string;
-	}) => (
-		<button
-			type="button"
-			data-testid={testId}
-			disabled={disabled}
-			onClick={onClick}
-		>
-			{children}
-		</button>
-	),
-	Group: ({ children }: { children: React.ReactNode }) => <div>{children}</div>,
-	Stack: ({ children }: { children: React.ReactNode }) => <div>{children}</div>,
-	Text: ({
-		children,
-		'data-testid': testId,
-	}: {
-		children?: React.ReactNode;
-		'data-testid'?: string;
-		c?: string;
-		fw?: number;
-		size?: string;
-	}) => <span data-testid={testId}>{children}</span>,
-	Textarea: ({
-		onChange,
-		value,
-		'data-testid': testId,
-	}: {
-		onChange: (e: React.ChangeEvent<HTMLTextAreaElement>) => void;
-		value: string;
-		'data-testid'?: string;
-	}) => <textarea data-testid={testId} onChange={onChange} value={value} />,
-}));
-
-vi.mock('@tabler/icons-react', () => ({
-	IconCheck: () => <span>check</span>,
-	IconPencil: () => <span>pencil</span>,
-	IconX: () => <span>x</span>,
-}));
+vi.mock('@mantine/core', async () => await import('@mocks/@mantine/core'));
 
 const defaultProps = {
 	plannerId: 'planner-1',

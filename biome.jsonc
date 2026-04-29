@@ -2,11 +2,43 @@
 	"files": {
 		"includes": ["src/**/*"]
 	},
+	"linter": {
+		"enabled": true,
+		"rules": {
+			"recommended": true
+		}
+	},
+	"css": {
+		"linter": {
+			"enabled": true
+		}
+	},
 	"javascript": {
 		"formatter": {
 			"quoteStyle": "single"
 		}
 	},
+	"overrides": [
+		{
+			"includes": ["**/*.module.css"],
+			"linter": {
+				"rules": {
+					"correctness": {
+						/**
+						 *  biome correctly identifies :global and :local as valid CSS module pseudo-classes but the
+						 *  LSP (used by the IDE) does not
+						 */
+						"noUnknownPseudoClass": {
+							"level": "error",
+							"options": {
+								"ignore": ["global", "local"]
+							}
+						}
+					}
+				}
+			}
+		}
+	],
 	"assist": {
 		"actions": {
 			"source": {
@@ -18,16 +50,46 @@
 							":BLANK_LINE:",
 							{
 								"type": false,
-								"source": ["next", "next/**", "react", "react-dom"]
+								"source": ["node:*"]
 							},
-							":BLANK_LINE:",
 							{
-								"type": false,
+								"type": true,
 								"source": ["node:*"]
 							},
 							":BLANK_LINE:",
 							{
 								"type": false,
+								"source": ["next", "next/**", "react", "react-dom"]
+							},
+							{
+								"type": true,
+								"source": ["next", "next/**", "react", "react-dom"]
+							},
+							":BLANK_LINE:",
+							{
+								"type": false,
+								"source": ["@mantine/*", "@tabler/*"]
+							},
+							{
+								"type": true,
+								"source": ["@mantine/*", "@tabler/*"]
+							},
+							":BLANK_LINE:",
+							{
+								"type": false,
+								"source": ["@schedule-x/*", "temporal-polyfill/global"]
+							},
+							{
+								"type": true,
+								"source": ["@schedule-x/*", "temporal-polyfill/global"]
+							},
+							":BLANK_LINE:",
+							{
+								"type": false,
+								"source": ["@*/**", "!@/**"]
+							},
+							{
+								"type": true,
 								"source": ["@*/**", "!@/**"]
 							},
 							":BLANK_LINE:",
@@ -35,7 +97,26 @@
 							":BLANK_LINE:",
 							":ALIAS:",
 							":BLANK_LINE:",
-							":PATH:"
+							{
+								"type": false,
+								"source": ["./*", "!./*.css"]
+							},
+							{
+								"type": true,
+								"source": ["./*", "!./*.css"]
+							},
+							{
+								"source": ["./*.css"]
+							},
+							":BLANK_LINE:",
+							{
+								"type": false,
+								"source": ["../*"]
+							},
+							{
+								"type": true,
+								"source": ["../*"]
+							}
 						]
 					}
 				}

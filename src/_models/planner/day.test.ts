@@ -59,7 +59,7 @@ describe('day interface', () => {
 		).toBe(true);
 	});
 
-	test('accepts a dish with a named URL source', () => {
+	test('accepts a dish with a URL source', () => {
 		expect(
 			zDayInterface.safeParse({
 				date: '2026-03-27',
@@ -69,10 +69,26 @@ describe('day interface', () => {
 						dishes: [
 							{
 								name: 'Flaming Ribs',
-								source: {
-									name: 'Olympus Kitchen',
-									url: 'https://olympus.example.com',
-								},
+								source: { url: 'https://olympus.example.com' },
+							},
+						],
+					},
+				],
+			}).success,
+		).toBe(true);
+	});
+
+	test('accepts a dish with a ref source', () => {
+		expect(
+			zDayInterface.safeParse({
+				date: '2026-03-27',
+				meals: [
+					{
+						name: "Hades' Power Lunch",
+						dishes: [
+							{
+								name: 'Flaming Ribs',
+								source: { ref: 'Olympus Kitchen Cookbook' },
 							},
 						],
 					},
@@ -141,7 +157,7 @@ describe('day schema', () => {
 	// we access the validator function directly from the schema definition object.
 	const dishSourceDef =
 		// biome-ignore lint/suspicious/noExplicitAny: accessing internal Mongoose schema definition
-		((daySchema.obj.meals as any)[0].meals[0].dishes[0].source as any).of[1];
+		((daySchema.obj.meals as any)[0].dishes[0].source as any).of[1];
 	const urlValidator: (v: unknown) => boolean = dishSourceDef.url.validate[0];
 
 	test('dish source URL validator accepts a valid URL', () => {

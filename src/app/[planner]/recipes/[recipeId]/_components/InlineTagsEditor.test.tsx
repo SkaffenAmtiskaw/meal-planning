@@ -14,6 +14,8 @@ import { InlineTagsEditor } from './InlineTagsEditor';
 
 const mockRefresh = vi.fn();
 
+vi.mock('@mantine/core', async () => await import('@mocks/@mantine/core'));
+
 vi.mock('next/navigation', () => ({
 	useRouter: () => ({ refresh: mockRefresh }),
 }));
@@ -24,98 +26,52 @@ vi.mock('@/_actions/saved', () => ({
 
 let capturedOnChange: ((value: string[]) => void) | undefined;
 
-vi.mock('@/_components/TagCombobox', () => ({
-	TagCombobox: ({
-		value,
-		onChange,
-		plannerId,
-		initialTags,
-	}: {
-		value: string[];
-		onChange: (value: string[]) => void;
-		plannerId: string;
-		initialTags: unknown[];
-	}) => {
-		capturedOnChange = onChange;
-		return (
-			<div
-				data-testid="tag-combobox"
-				data-planner-id={plannerId}
-				data-value={value.join(',')}
-				data-initial-tags-count={initialTags.length}
-			/>
-		);
-	},
-}));
-
-const mockUseMantineTheme = vi.fn(() => ({
-	colors: {} as Record<string, string[]>,
-}));
-const mockIsLightColor = vi.fn((_bg: string) => false);
-
-vi.mock('@mantine/core', () => ({
-	ActionIcon: ({
-		children,
-		disabled,
-		onClick,
-		'data-testid': testId,
-	}: {
-		children: React.ReactNode;
-		disabled?: boolean;
-		onClick?: () => void;
-		'data-testid'?: string;
-	}) => (
-		<button
-			type="button"
-			data-testid={testId}
-			disabled={disabled}
-			onClick={onClick}
-		>
-			{children}
-		</button>
-	),
-	Badge: ({
-		children,
-		style,
-	}: {
-		children: React.ReactNode;
-		style?: React.CSSProperties;
-	}) => <span style={style}>{children}</span>,
-	Group: ({
-		children,
-		'data-testid': testId,
-	}: {
-		children: React.ReactNode;
-		'data-testid'?: string;
-	}) => <div data-testid={testId}>{children}</div>,
-	Stack: ({ children }: { children: React.ReactNode }) => <div>{children}</div>,
-	Text: ({
-		children,
-		'data-testid': testId,
-	}: {
-		children: React.ReactNode;
-		'data-testid'?: string;
-		c?: string;
-		fw?: number;
-		size?: string;
-	}) => <span data-testid={testId}>{children}</span>,
-	isLightColor: (bg: string) => mockIsLightColor(bg),
-	useMantineTheme: () => mockUseMantineTheme(),
-}));
-
-vi.mock('@tabler/icons-react', () => ({
-	IconCheck: () => <span>check</span>,
-	IconPencil: () => <span>pencil</span>,
-	IconX: () => <span>x</span>,
-}));
+vi.mock('@/_components', async (importOriginal) => {
+	const actual = await importOriginal<typeof import('@/_components')>();
+	return {
+		...actual,
+		Tag: ({
+			children,
+			color,
+		}: {
+			children: React.ReactNode;
+			color: string;
+		}) => (
+			<span data-testid="tag" data-color={color}>
+				{children}
+			</span>
+		),
+		TagCombobox: ({
+			value,
+			onChange,
+			plannerId,
+			initialTags,
+		}: {
+			value: string[];
+			onChange: (value: string[]) => void;
+			plannerId: string;
+			initialTags: unknown[];
+		}) => {
+			capturedOnChange = onChange;
+			return (
+				<div
+					data-testid="tag-combobox"
+					data-planner-id={plannerId}
+					data-value={value.join(',')}
+					data-initial-tags-count={initialTags.length}
+				/>
+			);
+		},
+	};
+});
 
 const defaultProps = {
 	plannerId: 'planner-1',
 	recipeId: 'recipe-1',
 	tagIds: ['tag-1'],
 	availableTags: [
-		{ _id: 'tag-1', name: 'Spicy', color: 'red' },
-		{ _id: 'tag-2', name: 'Sweet', color: 'blue' },
+		{ _id: 'tag-1', name: 'Spicy', color: 'tangerine' },
+		{ _id: 'tag-2', name: 'Sweet', color: 'steel' },
 	],
 };
 
@@ -123,8 +79,6 @@ describe('InlineTagsEditor', () => {
 	afterEach(() => {
 		vi.resetAllMocks();
 		capturedOnChange = undefined;
-		mockUseMantineTheme.mockReturnValue({ colors: {} });
-		mockIsLightColor.mockReturnValue(false);
 	});
 
 	test('renders tag pills and edit button in read mode', () => {
@@ -288,28 +242,10 @@ describe('InlineTagsEditor', () => {
 		expect(mockRefresh).not.toHaveBeenCalled();
 	});
 
-	test('applies theme color to pill when color exists in palette', () => {
-		mockUseMantineTheme.mockReturnValue({
-			colors: { red: ['', '', '', '', '', '#cc0000'] },
-		});
+	test('renders tags using Tag component with correct color', () => {
 		render(<InlineTagsEditor {...defaultProps} />);
-		expect(screen.getByText('Spicy')).toBeDefined();
-	});
-
-	test('falls back to raw color string when not in theme palette', () => {
-		render(
-			<InlineTagsEditor
-				{...defaultProps}
-				tagIds={['tag-x']}
-				availableTags={[{ _id: 'tag-x', name: 'Custom', color: '#abcdef' }]}
-			/>,
-		);
-		expect(screen.getByText('Custom')).toBeDefined();
-	});
-
-	test('uses dark text on light-colored pills', () => {
-		mockIsLightColor.mockReturnValue(true);
-		render(<InlineTagsEditor {...defaultProps} />);
-		expect(screen.getByText('Spicy')).toBeDefined();
+		const tag = screen.getByTestId('tag');
+		expect(tag.textContent).toBe('Spicy');
+		expect(tag.getAttribute('data-color')).toBe('tangerine');
 	});
 });

@@ -1,4 +1,3 @@
-import { MantineProvider } from '@mantine/core';
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 
 import { afterEach, describe, expect, test, vi } from 'vitest';
@@ -8,6 +7,8 @@ import { DeleteAccountForm } from './DeleteAccountForm';
 const mockPush = vi.fn();
 const mockDeleteAccount = vi.fn();
 const mockSignOut = vi.fn();
+
+vi.mock('@mantine/core', async () => await import('@mocks/@mantine/core'));
 
 vi.mock('next/navigation', () => ({
 	useRouter: () => ({ push: mockPush }),
@@ -23,30 +24,26 @@ vi.mock('@/_utils/auth', () => ({
 	},
 }));
 
-const wrapper = ({ children }: { children: React.ReactNode }) => (
-	<MantineProvider>{children}</MantineProvider>
-);
-
 describe('DeleteAccountForm', () => {
 	afterEach(() => {
 		vi.resetAllMocks();
 	});
 
 	test('renders the confirmation input', () => {
-		render(<DeleteAccountForm />, { wrapper });
+		render(<DeleteAccountForm />);
 
 		expect(screen.getByTestId('delete-confirmation-input')).toBeDefined();
 	});
 
 	test('delete button is disabled when input is empty', () => {
-		render(<DeleteAccountForm />, { wrapper });
+		render(<DeleteAccountForm />);
 
 		const button = screen.getByTestId('delete-account-button');
 		expect(button).toHaveProperty('disabled', true);
 	});
 
 	test('delete button is disabled when input is not DELETE', () => {
-		render(<DeleteAccountForm />, { wrapper });
+		render(<DeleteAccountForm />);
 
 		fireEvent.change(screen.getByTestId('delete-confirmation-input'), {
 			target: { value: 'delete' },
@@ -57,7 +54,7 @@ describe('DeleteAccountForm', () => {
 	});
 
 	test('delete button is enabled when input is DELETE', () => {
-		render(<DeleteAccountForm />, { wrapper });
+		render(<DeleteAccountForm />);
 
 		fireEvent.change(screen.getByTestId('delete-confirmation-input'), {
 			target: { value: 'DELETE' },
@@ -71,7 +68,7 @@ describe('DeleteAccountForm', () => {
 		mockDeleteAccount.mockResolvedValueOnce({ ok: true, data: undefined });
 		mockSignOut.mockResolvedValueOnce(undefined);
 
-		render(<DeleteAccountForm />, { wrapper });
+		render(<DeleteAccountForm />);
 
 		fireEvent.change(screen.getByTestId('delete-confirmation-input'), {
 			target: { value: 'DELETE' },
@@ -87,7 +84,7 @@ describe('DeleteAccountForm', () => {
 		mockDeleteAccount.mockResolvedValueOnce({ ok: true, data: undefined });
 		mockSignOut.mockResolvedValueOnce(undefined);
 
-		render(<DeleteAccountForm />, { wrapper });
+		render(<DeleteAccountForm />);
 
 		fireEvent.change(screen.getByTestId('delete-confirmation-input'), {
 			target: { value: 'DELETE' },
@@ -106,7 +103,7 @@ describe('DeleteAccountForm', () => {
 			error: 'User not found.',
 		});
 
-		render(<DeleteAccountForm />, { wrapper });
+		render(<DeleteAccountForm />);
 
 		fireEvent.change(screen.getByTestId('delete-confirmation-input'), {
 			target: { value: 'DELETE' },
@@ -126,7 +123,7 @@ describe('DeleteAccountForm', () => {
 			error: 'User not found.',
 		});
 
-		render(<DeleteAccountForm />, { wrapper });
+		render(<DeleteAccountForm />);
 
 		fireEvent.change(screen.getByTestId('delete-confirmation-input'), {
 			target: { value: 'DELETE' },

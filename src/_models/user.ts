@@ -5,9 +5,10 @@ import type { UserInterface } from './user.types';
 
 export * from './user.types';
 
-const userSchema = new Schema<UserInterface>({
+export const userSchema = new Schema<UserInterface>({
 	email: {
 		type: String,
+		required: true,
 		unique: true,
 	},
 	name: {
@@ -16,9 +17,16 @@ const userSchema = new Schema<UserInterface>({
 	},
 	planners: [
 		{
-			type: SchemaTypes.ObjectId,
-			ref: 'Planner',
-			required: true,
+			planner: {
+				type: SchemaTypes.ObjectId,
+				ref: 'Planner',
+				required: true,
+			},
+			accessLevel: {
+				type: String,
+				enum: ['owner', 'admin', 'write', 'read'],
+				required: true,
+			},
 		},
 	],
 	pendingEmailChange: {
@@ -27,6 +35,8 @@ const userSchema = new Schema<UserInterface>({
 		expiresAt: { type: Date },
 	},
 });
+
+userSchema.index({ 'planners.planner': 1 });
 
 export const User: Model<UserInterface> =
 	models.User || model<UserInterface>('User', userSchema);

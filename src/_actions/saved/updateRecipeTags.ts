@@ -20,7 +20,7 @@ export const updateRecipeTags = async (
 ): Promise<ActionResult> => {
 	const { plannerId, recipeId, tags } = zUpdateRecipeTagsSchema.parse(data);
 
-	const auth = await checkAuth(new Types.ObjectId(plannerId));
+	const auth = await checkAuth(new Types.ObjectId(plannerId), 'write');
 	if (auth.type !== 'authorized') return { ok: false, error: 'Unauthorized' };
 
 	const tagObjectIds = tags.map((id) => new Types.ObjectId(id));

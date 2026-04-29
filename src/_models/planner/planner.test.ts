@@ -26,10 +26,28 @@ const validRecipe = {
 	instructions: ['Combine under desert sun', 'Serve to unsuspecting guests'],
 };
 
-const validTag = { _id: tagId, name: 'Villain Cuisine', color: '#4B0082' };
+const validTag = { _id: tagId, name: 'Villain Cuisine', color: 'lavender' };
 
 describe('planner interface', () => {
 	test('accepts a valid empty planner', () => {
+		expect(
+			zPlannerInterface.safeParse({ calendar: [], saved: [], tags: [] })
+				.success,
+		).toBe(true);
+	});
+
+	test('accepts a planner with a name', () => {
+		expect(
+			zPlannerInterface.safeParse({
+				name: "Ursula's Planner",
+				calendar: [],
+				saved: [],
+				tags: [],
+			}).success,
+		).toBe(true);
+	});
+
+	test('accepts a planner without a name', () => {
 		expect(
 			zPlannerInterface.safeParse({ calendar: [], saved: [], tags: [] })
 				.success,

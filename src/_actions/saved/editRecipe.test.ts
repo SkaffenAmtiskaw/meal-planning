@@ -75,7 +75,16 @@ describe('editRecipe', () => {
 	});
 
 	test('returns Recipe not found error when matchedCount is 0', async () => {
-		vi.mocked(checkAuth).mockResolvedValue({ type: 'authorized' });
+		vi.mocked(checkAuth).mockResolvedValue({
+			type: 'authorized',
+			accessLevel: 'write',
+			user: {
+				_id: 'user-id',
+				email: 'test@example.com',
+				name: 'Test User',
+				planners: [],
+			},
+		} as never);
 		vi.mocked(Planner.collection.updateOne).mockResolvedValue({
 			matchedCount: 0,
 		} as never);
@@ -86,7 +95,16 @@ describe('editRecipe', () => {
 	});
 
 	test('always $sets required fields', async () => {
-		vi.mocked(checkAuth).mockResolvedValue({ type: 'authorized' });
+		vi.mocked(checkAuth).mockResolvedValue({
+			type: 'authorized',
+			accessLevel: 'write',
+			user: {
+				_id: 'user-id',
+				email: 'test@example.com',
+				name: 'Test User',
+				planners: [],
+			},
+		} as never);
 		vi.mocked(Planner.collection.updateOne).mockResolvedValue({
 			matchedCount: 1,
 		} as never);
@@ -110,7 +128,16 @@ describe('editRecipe', () => {
 	});
 
 	test('$unsets all optional fields when absent', async () => {
-		vi.mocked(checkAuth).mockResolvedValue({ type: 'authorized' });
+		vi.mocked(checkAuth).mockResolvedValue({
+			type: 'authorized',
+			accessLevel: 'write',
+			user: {
+				_id: 'user-id',
+				email: 'test@example.com',
+				name: 'Test User',
+				planners: [],
+			},
+		} as never);
 		vi.mocked(Planner.collection.updateOne).mockResolvedValue({
 			matchedCount: 1,
 		} as never);
@@ -132,7 +159,16 @@ describe('editRecipe', () => {
 	});
 
 	test('$sets optional fields when present', async () => {
-		vi.mocked(checkAuth).mockResolvedValue({ type: 'authorized' });
+		vi.mocked(checkAuth).mockResolvedValue({
+			type: 'authorized',
+			accessLevel: 'write',
+			user: {
+				_id: 'user-id',
+				email: 'test@example.com',
+				name: 'Test User',
+				planners: [],
+			},
+		} as never);
 		vi.mocked(Planner.collection.updateOne).mockResolvedValue({
 			matchedCount: 1,
 		} as never);
@@ -169,7 +205,16 @@ describe('editRecipe', () => {
 	});
 
 	test('does not include $unset when all optional fields are present', async () => {
-		vi.mocked(checkAuth).mockResolvedValue({ type: 'authorized' });
+		vi.mocked(checkAuth).mockResolvedValue({
+			type: 'authorized',
+			accessLevel: 'write',
+			user: {
+				_id: 'user-id',
+				email: 'test@example.com',
+				name: 'Test User',
+				planners: [],
+			},
+		} as never);
 		vi.mocked(Planner.collection.updateOne).mockResolvedValue({
 			matchedCount: 1,
 		} as never);
@@ -190,7 +235,16 @@ describe('editRecipe', () => {
 
 	test('revalidates both list and detail paths on success', async () => {
 		const { revalidatePath } = await import('next/cache');
-		vi.mocked(checkAuth).mockResolvedValue({ type: 'authorized' });
+		vi.mocked(checkAuth).mockResolvedValue({
+			type: 'authorized',
+			accessLevel: 'write',
+			user: {
+				_id: 'user-id',
+				email: 'test@example.com',
+				name: 'Test User',
+				planners: [],
+			},
+		} as never);
 		vi.mocked(Planner.collection.updateOne).mockResolvedValue({
 			matchedCount: 1,
 		} as never);
@@ -205,7 +259,16 @@ describe('editRecipe', () => {
 
 	test('does not revalidate when recipe is not found', async () => {
 		const { revalidatePath } = await import('next/cache');
-		vi.mocked(checkAuth).mockResolvedValue({ type: 'authorized' });
+		vi.mocked(checkAuth).mockResolvedValue({
+			type: 'authorized',
+			accessLevel: 'write',
+			user: {
+				_id: 'user-id',
+				email: 'test@example.com',
+				name: 'Test User',
+				planners: [],
+			},
+		} as never);
 		vi.mocked(Planner.collection.updateOne).mockResolvedValue({
 			matchedCount: 0,
 		} as never);
@@ -216,7 +279,16 @@ describe('editRecipe', () => {
 	});
 
 	test('returns _id and name on success', async () => {
-		vi.mocked(checkAuth).mockResolvedValue({ type: 'authorized' });
+		vi.mocked(checkAuth).mockResolvedValue({
+			type: 'authorized',
+			accessLevel: 'write',
+			user: {
+				_id: 'user-id',
+				email: 'test@example.com',
+				name: 'Test User',
+				planners: [],
+			},
+		} as never);
 		vi.mocked(Planner.collection.updateOne).mockResolvedValue({
 			matchedCount: 1,
 		} as never);

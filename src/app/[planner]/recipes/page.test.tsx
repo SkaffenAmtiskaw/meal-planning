@@ -35,10 +35,7 @@ vi.mock('./_components', () => ({
 	SavedList: (props: SavedListProps) => mockSavedList(props),
 }));
 
-vi.mock('@mantine/core', () => ({
-	Container: ({ children }: { children: React.ReactNode }) => <>{children}</>,
-	Group: ({ children }: { children: React.ReactNode }) => <>{children}</>,
-}));
+vi.mock('@mantine/core', async () => await import('@mocks/@mantine/core'));
 
 const plannerId = '507f1f77bcf86cd799439011';
 

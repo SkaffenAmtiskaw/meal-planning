@@ -1,15 +1,32 @@
 import type { Types } from 'mongoose';
 
 import { getUser } from '@/_actions';
+import type { AccessLevel } from '@/_models/user';
 import { catchify } from '@/_utils/catchify';
 
+type UserDocument = Awaited<ReturnType<typeof getUser>>;
+
 type AuthResult =
-	| { type: 'authorized' }
+	| {
+			type: 'authorized';
+			accessLevel: AccessLevel;
+			user: NonNullable<UserDocument>;
+	  }
 	| { type: 'unauthenticated' }
 	| { type: 'unauthorized' }
 	| { type: 'error'; error: Error };
 
-export const checkAuth = async (id: Types.ObjectId): Promise<AuthResult> => {
+const ACCESS_LEVEL_ORDER: Record<AccessLevel, number> = {
+	read: 0,
+	write: 1,
+	admin: 2,
+	owner: 3,
+};
+
+export const checkAuth = async (
+	id: Types.ObjectId,
+	required: AccessLevel,
+): Promise<AuthResult> => {
 	const [user, error] = await catchify(getUser);
 
 	if (error) {
@@ -20,9 +37,16 @@ export const checkAuth = async (id: Types.ObjectId): Promise<AuthResult> => {
 
 	if (!user) return { type: 'unauthenticated' };
 
-	if (!user.planners.some((planner) => planner.equals(id))) {
+	const membership = user.planners.find(
+		(p) => (p.planner as unknown as string) === id.toString(),
+	);
+	if (!membership) return { type: 'unauthorized' };
+
+	if (
+		ACCESS_LEVEL_ORDER[membership.accessLevel] < ACCESS_LEVEL_ORDER[required]
+	) {
 		return { type: 'unauthorized' };
 	}
 
-	return { type: 'authorized' };
+	return { type: 'authorized', accessLevel: membership.accessLevel, user };
 };

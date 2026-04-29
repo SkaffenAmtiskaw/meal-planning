@@ -12,12 +12,7 @@ vi.mock('./_components/ResendVerificationForm', () => ({
 	ResendVerificationForm: () => <div data-testid="resend-form" />,
 }));
 
-vi.mock('@mantine/core', () => ({
-	Center: ({ children }: { children: React.ReactNode }) => <>{children}</>,
-	Stack: ({ children }: { children: React.ReactNode }) => <>{children}</>,
-	Title: ({ children }: { children: React.ReactNode }) => <h3>{children}</h3>,
-	Text: ({ children }: { children: React.ReactNode }) => <p>{children}</p>,
-}));
+vi.mock('@mantine/core', async () => await import('@mocks/@mantine/core'));
 
 describe('VerifyEmailPage', () => {
 	test('redirects to home when no error param', async () => {

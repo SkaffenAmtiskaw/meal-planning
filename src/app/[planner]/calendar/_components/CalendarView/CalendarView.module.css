@@ -1,0 +1,34 @@
+.calendarWrapper {
+	--sx-color-primary: #ff6542;
+	--sx-color-primary-container: rgba(255, 101, 66, 0.12);
+	--sx-color-surface: #ffffff;
+	--sx-color-surface-variant: #efe7e9;
+	--sx-color-on-surface: #1c3144;
+	--sx-color-on-surface-variant: #5a6a7a;
+	--sx-color-outline: #ddd8da;
+	--sx-color-today-bg: rgba(255, 101, 66, 0.08);
+}
+
+.calendarWrapper :global(.sx__month-grid-day__header-date--today) {
+	/* biome-ignore lint/complexity/noImportantStyles: Schedule-X applies inline styles with high
+	   specificity; navy bg is required per theme.md today badge */
+	background-color: #1c3144 !important;
+	/* biome-ignore lint/complexity/noImportantStyles: Schedule-X applies inline styles with high
+	   specificity; white text is required per theme.md today badge */
+	color: #ffffff !important;
+}
+
+.calendarWrapper :global(.sx__month-grid-day) {
+	min-height: 100px;
+}
+
+.calendarWrapper :global(.sx__month-grid-event) {
+	white-space: normal;
+	align-items: flex-start;
+	height: auto;
+	cursor: pointer;
+}
+
+.calendarWrapper :global(.sx__view-selection) {
+	display: none;
+}

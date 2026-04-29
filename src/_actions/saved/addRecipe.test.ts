@@ -72,7 +72,16 @@ describe('addRecipe', () => {
 	});
 
 	test('returns Planner not found error when planner does not exist', async () => {
-		vi.mocked(checkAuth).mockResolvedValue({ type: 'authorized' });
+		vi.mocked(checkAuth).mockResolvedValue({
+			type: 'authorized',
+			accessLevel: 'write',
+			user: {
+				_id: 'user-id',
+				email: 'test@example.com',
+				name: 'Test User',
+				planners: [],
+			},
+		} as never);
 		vi.mocked(Planner.findById).mockResolvedValue(null);
 
 		const result = await addRecipe(validData);
@@ -82,7 +91,16 @@ describe('addRecipe', () => {
 
 	test('persists the recipe and returns _id and name', async () => {
 		const planner = makePlanner();
-		vi.mocked(checkAuth).mockResolvedValue({ type: 'authorized' });
+		vi.mocked(checkAuth).mockResolvedValue({
+			type: 'authorized',
+			accessLevel: 'write',
+			user: {
+				_id: 'user-id',
+				email: 'test@example.com',
+				name: 'Test User',
+				planners: [],
+			},
+		} as never);
 		vi.mocked(Planner.findById).mockResolvedValue(planner as never);
 
 		const result = await addRecipe(validData);
@@ -97,7 +115,16 @@ describe('addRecipe', () => {
 
 	test('accepts optional fields', async () => {
 		const planner = makePlanner();
-		vi.mocked(checkAuth).mockResolvedValue({ type: 'authorized' });
+		vi.mocked(checkAuth).mockResolvedValue({
+			type: 'authorized',
+			accessLevel: 'write',
+			user: {
+				_id: 'user-id',
+				email: 'test@example.com',
+				name: 'Test User',
+				planners: [],
+			},
+		} as never);
 		vi.mocked(Planner.findById).mockResolvedValue(planner as never);
 
 		const result = await addRecipe({

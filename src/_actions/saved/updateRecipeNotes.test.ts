@@ -68,7 +68,16 @@ describe('updateRecipeNotes', () => {
 	});
 
 	test('returns Recipe not found error when matchedCount is 0', async () => {
-		vi.mocked(checkAuth).mockResolvedValue({ type: 'authorized' });
+		vi.mocked(checkAuth).mockResolvedValue({
+			type: 'authorized',
+			accessLevel: 'write',
+			user: {
+				_id: 'user-id',
+				email: 'test@example.com',
+				name: 'Test User',
+				planners: [],
+			},
+		} as never);
 		vi.mocked(Planner.collection.updateOne).mockResolvedValue({
 			matchedCount: 0,
 		} as never);
@@ -79,7 +88,16 @@ describe('updateRecipeNotes', () => {
 	});
 
 	test('uses $set when notes is non-empty', async () => {
-		vi.mocked(checkAuth).mockResolvedValue({ type: 'authorized' });
+		vi.mocked(checkAuth).mockResolvedValue({
+			type: 'authorized',
+			accessLevel: 'write',
+			user: {
+				_id: 'user-id',
+				email: 'test@example.com',
+				name: 'Test User',
+				planners: [],
+			},
+		} as never);
 		vi.mocked(Planner.collection.updateOne).mockResolvedValue({
 			matchedCount: 1,
 		} as never);
@@ -93,7 +111,16 @@ describe('updateRecipeNotes', () => {
 	});
 
 	test('uses $unset when notes is empty string', async () => {
-		vi.mocked(checkAuth).mockResolvedValue({ type: 'authorized' });
+		vi.mocked(checkAuth).mockResolvedValue({
+			type: 'authorized',
+			accessLevel: 'write',
+			user: {
+				_id: 'user-id',
+				email: 'test@example.com',
+				name: 'Test User',
+				planners: [],
+			},
+		} as never);
 		vi.mocked(Planner.collection.updateOne).mockResolvedValue({
 			matchedCount: 1,
 		} as never);
@@ -108,7 +135,16 @@ describe('updateRecipeNotes', () => {
 
 	test('revalidates the recipe path on success', async () => {
 		const { revalidatePath } = await import('next/cache');
-		vi.mocked(checkAuth).mockResolvedValue({ type: 'authorized' });
+		vi.mocked(checkAuth).mockResolvedValue({
+			type: 'authorized',
+			accessLevel: 'write',
+			user: {
+				_id: 'user-id',
+				email: 'test@example.com',
+				name: 'Test User',
+				planners: [],
+			},
+		} as never);
 		vi.mocked(Planner.collection.updateOne).mockResolvedValue({
 			matchedCount: 1,
 		} as never);
@@ -122,7 +158,16 @@ describe('updateRecipeNotes', () => {
 
 	test('does not revalidate when recipe is not found', async () => {
 		const { revalidatePath } = await import('next/cache');
-		vi.mocked(checkAuth).mockResolvedValue({ type: 'authorized' });
+		vi.mocked(checkAuth).mockResolvedValue({
+			type: 'authorized',
+			accessLevel: 'write',
+			user: {
+				_id: 'user-id',
+				email: 'test@example.com',
+				name: 'Test User',
+				planners: [],
+			},
+		} as never);
 		vi.mocked(Planner.collection.updateOne).mockResolvedValue({
 			matchedCount: 0,
 		} as never);
@@ -134,7 +179,16 @@ describe('updateRecipeNotes', () => {
 	});
 
 	test('returns ok on success', async () => {
-		vi.mocked(checkAuth).mockResolvedValue({ type: 'authorized' });
+		vi.mocked(checkAuth).mockResolvedValue({
+			type: 'authorized',
+			accessLevel: 'write',
+			user: {
+				_id: 'user-id',
+				email: 'test@example.com',
+				name: 'Test User',
+				planners: [],
+			},
+		} as never);
 		vi.mocked(Planner.collection.updateOne).mockResolvedValue({
 			matchedCount: 1,
 		} as never);

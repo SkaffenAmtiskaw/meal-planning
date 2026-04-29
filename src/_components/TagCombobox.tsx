@@ -2,17 +2,10 @@
 
 import { useState } from 'react';
 
-import {
-	Combobox,
-	isLightColor,
-	Pill,
-	PillsInput,
-	Text,
-	useCombobox,
-	useMantineTheme,
-} from '@mantine/core';
+import { Combobox, Pill, PillsInput, Text, useCombobox } from '@mantine/core';
 
 import { addTag } from '@/_actions/planner/addTag';
+import { TAG_COLORS, type TagColor } from '@/_theme/colors';
 import { catchify } from '@/_utils/catchify';
 
 export interface TagOption {
@@ -36,14 +29,20 @@ export const TagCombobox = ({
 	onChange,
 	label,
 }: Props) => {
-	const theme = useMantineTheme();
 	const [availableTags, setAvailableTags] = useState<TagOption[]>(initialTags);
 	const [search, setSearch] = useState('');
 	const [createError, setCreateError] = useState<string | null>(null);
 
 	const getPillStyle = (color: string) => {
-		const bg = theme.colors[color]?.[5] ?? color;
-		return { backgroundColor: bg, color: isLightColor(bg) ? '#000' : '#fff' };
+		const tagColor = TAG_COLORS[color as TagColor];
+		if (tagColor) {
+			return {
+				backgroundColor: tagColor.bg,
+				color: tagColor.text,
+				border: `1px solid ${tagColor.border}`,
+			};
+		}
+		return { backgroundColor: color };
 	};
 
 	const combobox = useCombobox({

@@ -1,4 +1,3 @@
-import { MantineProvider } from '@mantine/core';
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 
 import { afterEach, describe, expect, test, vi } from 'vitest';
@@ -7,15 +6,13 @@ import { client } from '@/_utils/auth';
 
 import { ResendVerificationForm } from './ResendVerificationForm';
 
+vi.mock('@mantine/core', async () => await import('@mocks/@mantine/core'));
+
 vi.mock('@/_utils/auth', () => ({
 	client: {
 		sendVerificationEmail: vi.fn(),
 	},
 }));
-
-const wrapper = ({ children }: { children: React.ReactNode }) => (
-	<MantineProvider>{children}</MantineProvider>
-);
 
 describe('ResendVerificationForm', () => {
 	afterEach(() => {
@@ -23,7 +20,7 @@ describe('ResendVerificationForm', () => {
 	});
 
 	test('renders email input and resend button', () => {
-		render(<ResendVerificationForm />, { wrapper });
+		render(<ResendVerificationForm />);
 
 		expect(screen.getByTestId('resend-email-input')).toBeDefined();
 		expect(screen.getByTestId('resend-button')).toBeDefined();
@@ -35,7 +32,7 @@ describe('ResendVerificationForm', () => {
 			error: null,
 		});
 
-		render(<ResendVerificationForm />, { wrapper });
+		render(<ResendVerificationForm />);
 
 		fireEvent.change(screen.getByTestId('resend-email-input'), {
 			target: { value: 'user@example.com' },
@@ -56,7 +53,7 @@ describe('ResendVerificationForm', () => {
 			error: null,
 		});
 
-		render(<ResendVerificationForm />, { wrapper });
+		render(<ResendVerificationForm />);
 
 		fireEvent.click(screen.getByTestId('resend-button'));
 
@@ -71,7 +68,7 @@ describe('ResendVerificationForm', () => {
 			error: { message: 'User not found' },
 		});
 
-		render(<ResendVerificationForm />, { wrapper });
+		render(<ResendVerificationForm />);
 
 		fireEvent.click(screen.getByTestId('resend-button'));
 
@@ -86,7 +83,7 @@ describe('ResendVerificationForm', () => {
 			error: { message: undefined },
 		});
 
-		render(<ResendVerificationForm />, { wrapper });
+		render(<ResendVerificationForm />);
 
 		fireEvent.click(screen.getByTestId('resend-button'));
 

@@ -13,7 +13,7 @@ interface Props {
 export const SubmitButton = ({ status, countdown, label }: Props) => {
 	if (status === 'submitting') {
 		return (
-			<Button type="submit" loading disabled>
+			<Button type="submit" color="ember" loading disabled>
 				{label}
 			</Button>
 		);
@@ -27,5 +27,9 @@ export const SubmitButton = ({ status, countdown, label }: Props) => {
 		);
 	}
 
-	return <Button type="submit">{label}</Button>;
+	return (
+		<Button type="submit" color="ember">
+			{label}
+		</Button>
+	);
 };

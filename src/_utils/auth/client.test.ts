@@ -11,12 +11,6 @@ vi.mock('better-auth/react', () => ({
 	createAuthClient: mockCreateAuthClient,
 }));
 
-vi.mock('@/env', () => ({
-	env: {
-		NEXT_PUBLIC_GOOGLE_CLIENT_ID: 'fake-google-client-id',
-	},
-}));
-
 describe('auth client', () => {
 	beforeEach(() => {
 		vi.resetModules();

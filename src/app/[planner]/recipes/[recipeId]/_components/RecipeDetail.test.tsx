@@ -6,31 +6,24 @@ import { deleteRecipe } from '@/_actions/saved';
 
 import { RecipeDetail } from './RecipeDetail';
 
-vi.mock('../../_components/DeleteConfirmModal', () => ({
-	DeleteConfirmModal: ({
-		loading,
-		onClose,
+vi.mock('@/_components', () => ({
+	ConfirmButton: ({
 		onConfirm,
-		opened,
+		onSuccess,
+		renderTrigger,
 	}: {
-		opened: boolean;
-		onClose: () => void;
-		onConfirm: () => void;
-		loading: boolean;
-		title: string;
-		message: string;
-	}) =>
-		opened ? (
-			<div data-testid="delete-confirm-modal">
-				<span data-testid="modal-loading">{String(loading)}</span>
-				<button data-testid="modal-cancel" onClick={onClose} type="button">
-					Cancel
-				</button>
-				<button data-testid="modal-confirm" onClick={onConfirm} type="button">
-					Delete
-				</button>
-			</div>
-		) : null,
+		onConfirm: () => Promise<{ ok: boolean; data: undefined }>;
+		onSuccess?: () => void;
+		renderTrigger: (onOpen: () => void) => React.ReactNode;
+	}) => {
+		const handleClick = async () => {
+			const result = await onConfirm();
+			if (result?.ok) {
+				onSuccess?.();
+			}
+		};
+		return <>{renderTrigger(handleClick)}</>;
+	},
 }));
 
 const mockPush = vi.fn();
@@ -88,103 +81,7 @@ vi.mock('./InlineTagsEditor', () => ({
 	),
 }));
 
-vi.mock('@mantine/core', () => {
-	const Anchor = ({
-		children,
-		href,
-		'data-testid': testId,
-	}: {
-		children: React.ReactNode;
-		href?: string;
-		'data-testid'?: string;
-	}) => (
-		<a data-testid={testId} href={href}>
-			{children}
-		</a>
-	);
-
-	const Button = ({
-		children,
-		disabled,
-		onClick,
-		'data-testid': testId,
-	}: {
-		children: React.ReactNode;
-		disabled?: boolean;
-		onClick?: () => void;
-		'data-testid'?: string;
-	}) => (
-		<button
-			type="button"
-			data-testid={testId}
-			disabled={disabled}
-			onClick={onClick}
-		>
-			{children}
-		</button>
-	);
-
-	const Container = ({
-		children,
-		'data-testid': testId,
-	}: {
-		children: React.ReactNode;
-		'data-testid'?: string;
-	}) => <div data-testid={testId}>{children}</div>;
-
-	const Group = ({
-		children,
-		'data-testid': testId,
-	}: {
-		children: React.ReactNode;
-		'data-testid'?: string;
-	}) => <div data-testid={testId}>{children}</div>;
-
-	const List = ({
-		children,
-		'data-testid': testId,
-	}: {
-		children: React.ReactNode;
-		'data-testid'?: string;
-	}) => <ul data-testid={testId}>{children}</ul>;
-
-	const ListItem = ({ children }: { children: React.ReactNode }) => (
-		<li>{children}</li>
-	);
-
-	const SimpleGrid = ({ children }: { children: React.ReactNode }) => (
-		<div>{children}</div>
-	);
-
-	const Stack = ({ children }: { children: React.ReactNode }) => (
-		<div>{children}</div>
-	);
-
-	const Text = ({
-		children,
-		'data-testid': testId,
-	}: {
-		children?: React.ReactNode;
-		'data-testid'?: string;
-	}) => <span data-testid={testId}>{children}</span>;
-
-	const Title = ({ children }: { children: React.ReactNode }) => (
-		<h2>{children}</h2>
-	);
-
-	return {
-		Anchor,
-		Button,
-		Container,
-		Group,
-		List,
-		ListItem,
-		SimpleGrid,
-		Stack,
-		Text,
-		Title,
-	};
-});
+vi.mock('@mantine/core', async () => await import('@mocks/@mantine/core'));
 
 const baseRecipe = {
 	_id: 'recipe-1' as never,
@@ -231,21 +128,7 @@ describe('RecipeDetail', () => {
 		expect(screen.getByTestId('delete-button')).toBeDefined();
 	});
 
-	test('clicking delete button opens confirm modal', () => {
-		render(<RecipeDetail {...defaultProps} />);
-		fireEvent.click(screen.getByTestId('delete-button'));
-		expect(screen.getByTestId('delete-confirm-modal')).toBeDefined();
-	});
-
-	test('clicking cancel in modal closes it without calling deleteRecipe', () => {
-		render(<RecipeDetail {...defaultProps} />);
-		fireEvent.click(screen.getByTestId('delete-button'));
-		fireEvent.click(screen.getByTestId('modal-cancel'));
-		expect(screen.queryByTestId('delete-confirm-modal')).toBeNull();
-		expect(deleteRecipe).not.toHaveBeenCalled();
-	});
-
-	test('confirming delete calls deleteRecipe and redirects to recipes list', async () => {
+	test('clicking delete calls deleteRecipe action and redirects to recipes list', async () => {
 		vi.mocked(deleteRecipe).mockResolvedValueOnce({
 			ok: true,
 			data: undefined,
@@ -253,7 +136,6 @@ describe('RecipeDetail', () => {
 		render(<RecipeDetail {...defaultProps} />);
 
 		fireEvent.click(screen.getByTestId('delete-button'));
-		fireEvent.click(screen.getByTestId('modal-confirm'));
 
 		await waitFor(() => {
 			expect(deleteRecipe).toHaveBeenCalledWith({
@@ -414,7 +296,7 @@ describe('RecipeDetail', () => {
 			<RecipeDetail
 				{...defaultProps}
 				recipe={{ ...baseRecipe, tags: ['tag-1' as never] }}
-				tags={[{ _id: 'tag-1' as never, name: 'Spicy', color: 'red' }]}
+				tags={[{ _id: 'tag-1' as never, name: 'Spicy', color: 'tangerine' }]}
 			/>,
 		);
 		expect(
@@ -426,7 +308,7 @@ describe('RecipeDetail', () => {
 		render(
 			<RecipeDetail
 				{...defaultProps}
-				tags={[{ _id: 'tag-1' as never, name: 'Spicy', color: 'red' }]}
+				tags={[{ _id: 'tag-1' as never, name: 'Spicy', color: 'tangerine' }]}
 			/>,
 		);
 		expect(

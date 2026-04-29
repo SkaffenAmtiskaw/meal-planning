@@ -17,28 +17,7 @@ vi.mock('@/_utils/auth', () => ({
 	client: { signOut: mockSignOut },
 }));
 
-vi.mock('@mantine/core', () => ({
-	MenuItem: ({
-		children,
-		onClick,
-		'data-testid': testId,
-		leftSection,
-	}: {
-		children: React.ReactNode;
-		onClick?: () => void;
-		'data-testid'?: string;
-		leftSection?: React.ReactNode;
-	}) => (
-		<button data-testid={testId} onClick={onClick} type="button">
-			{leftSection}
-			{children}
-		</button>
-	),
-}));
-
-vi.mock('@tabler/icons-react', () => ({
-	IconLogout: () => <svg data-testid="logout-icon" />,
-}));
+vi.mock('@mantine/core', async () => await import('@mocks/@mantine/core'));
 
 describe('SignOutButton', () => {
 	test('renders sign-out button with label', () => {

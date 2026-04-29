@@ -10,25 +10,7 @@ vi.mock('./_components/ResetPasswordForm', () => ({
 	),
 }));
 
-vi.mock('@mantine/core', () => ({
-	Center: ({ children }: { children: React.ReactNode }) => <>{children}</>,
-	Stack: ({ children }: { children: React.ReactNode }) => <>{children}</>,
-	Title: ({ children }: { children: React.ReactNode }) => <h3>{children}</h3>,
-	Text: ({ children }: { children: React.ReactNode }) => <p>{children}</p>,
-	Anchor: ({
-		children,
-		href,
-		...props
-	}: {
-		children: React.ReactNode;
-		href: string;
-		[key: string]: unknown;
-	}) => (
-		<a href={href} {...props}>
-			{children}
-		</a>
-	),
-}));
+vi.mock('@mantine/core', async () => await import('@mocks/@mantine/core'));
 
 describe('ResetPasswordPage', () => {
 	test('shows invalid link message when no token is present', async () => {

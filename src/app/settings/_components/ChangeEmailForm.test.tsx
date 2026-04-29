@@ -1,4 +1,3 @@
-import { MantineProvider } from '@mantine/core';
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 
 import { afterEach, describe, expect, test, vi } from 'vitest';
@@ -8,6 +7,8 @@ import { ChangeEmailForm } from './ChangeEmailForm';
 const mockRefresh = vi.fn();
 const mockRequestEmailChange = vi.fn();
 
+vi.mock('@mantine/core', async () => await import('@mocks/@mantine/core'));
+
 vi.mock('next/navigation', () => ({
 	useRouter: () => ({ refresh: mockRefresh }),
 }));
@@ -15,10 +16,6 @@ vi.mock('next/navigation', () => ({
 vi.mock('@/_actions/user', () => ({
 	requestEmailChange: (email: string) => mockRequestEmailChange(email),
 }));
-
-const wrapper = ({ children }: { children: React.ReactNode }) => (
-	<MantineProvider>{children}</MantineProvider>
-);
 
 const futureDate = new Date(Date.now() + 1000 * 60 * 60);
 const pastDate = new Date(Date.now() - 1000 * 60 * 60);
@@ -29,7 +26,7 @@ describe('ChangeEmailForm', () => {
 	});
 
 	test('displays current email', () => {
-		render(<ChangeEmailForm currentEmail="user@example.com" />, { wrapper });
+		render(<ChangeEmailForm currentEmail="user@example.com" />);
 
 		expect(screen.getByTestId('current-email').textContent).toBe(
 			'user@example.com',
@@ -37,13 +34,13 @@ describe('ChangeEmailForm', () => {
 	});
 
 	test('shows change email button', () => {
-		render(<ChangeEmailForm currentEmail="user@example.com" />, { wrapper });
+		render(<ChangeEmailForm currentEmail="user@example.com" />);
 
 		expect(screen.getByTestId('change-email-button')).toBeDefined();
 	});
 
 	test('does not show pending alert when no pending change', () => {
-		render(<ChangeEmailForm currentEmail="user@example.com" />, { wrapper });
+		render(<ChangeEmailForm currentEmail="user@example.com" />);
 
 		expect(screen.queryByTestId('pending-email-alert')).toBeNull();
 	});
@@ -54,7 +51,6 @@ describe('ChangeEmailForm', () => {
 				currentEmail="user@example.com"
 				pendingEmailChange={{ email: 'new@example.com', expiresAt: futureDate }}
 			/>,
-			{ wrapper },
 		);
 
 		const alert = screen.getByTestId('pending-email-alert');
@@ -67,14 +63,13 @@ describe('ChangeEmailForm', () => {
 				currentEmail="user@example.com"
 				pendingEmailChange={{ email: 'new@example.com', expiresAt: pastDate }}
 			/>,
-			{ wrapper },
 		);
 
 		expect(screen.queryByTestId('pending-email-alert')).toBeNull();
 	});
 
 	test('shows form when change email button is clicked', () => {
-		render(<ChangeEmailForm currentEmail="user@example.com" />, { wrapper });
+		render(<ChangeEmailForm currentEmail="user@example.com" />);
 
 		fireEvent.click(screen.getByTestId('change-email-button'));
 
@@ -84,7 +79,7 @@ describe('ChangeEmailForm', () => {
 	});
 
 	test('hides form when cancel is clicked', () => {
-		render(<ChangeEmailForm currentEmail="user@example.com" />, { wrapper });
+		render(<ChangeEmailForm currentEmail="user@example.com" />);
 
 		fireEvent.click(screen.getByTestId('change-email-button'));
 		fireEvent.click(screen.getByTestId('cancel-email-change-button'));
@@ -94,7 +89,7 @@ describe('ChangeEmailForm', () => {
 	});
 
 	test('updates new email input value', () => {
-		render(<ChangeEmailForm currentEmail="user@example.com" />, { wrapper });
+		render(<ChangeEmailForm currentEmail="user@example.com" />);
 
 		fireEvent.click(screen.getByTestId('change-email-button'));
 		fireEvent.change(screen.getByTestId('new-email-input'), {
@@ -111,7 +106,7 @@ describe('ChangeEmailForm', () => {
 			ok: true,
 			data: { hadPreviousRequest: false },
 		});
-		render(<ChangeEmailForm currentEmail="user@example.com" />, { wrapper });
+		render(<ChangeEmailForm currentEmail="user@example.com" />);
 
 		fireEvent.click(screen.getByTestId('change-email-button'));
 		fireEvent.change(screen.getByTestId('new-email-input'), {
@@ -129,7 +124,7 @@ describe('ChangeEmailForm', () => {
 			ok: true,
 			data: { hadPreviousRequest: false },
 		});
-		render(<ChangeEmailForm currentEmail="user@example.com" />, { wrapper });
+		render(<ChangeEmailForm currentEmail="user@example.com" />);
 
 		fireEvent.click(screen.getByTestId('change-email-button'));
 		fireEvent.click(screen.getByTestId('submit-email-change-button'));
@@ -145,7 +140,7 @@ describe('ChangeEmailForm', () => {
 			ok: true,
 			data: { hadPreviousRequest: false },
 		});
-		render(<ChangeEmailForm currentEmail="user@example.com" />, { wrapper });
+		render(<ChangeEmailForm currentEmail="user@example.com" />);
 
 		fireEvent.click(screen.getByTestId('change-email-button'));
 		fireEvent.change(screen.getByTestId('new-email-input'), {
@@ -167,7 +162,7 @@ describe('ChangeEmailForm', () => {
 			ok: true,
 			data: { hadPreviousRequest: true },
 		});
-		render(<ChangeEmailForm currentEmail="user@example.com" />, { wrapper });
+		render(<ChangeEmailForm currentEmail="user@example.com" />);
 
 		fireEvent.click(screen.getByTestId('change-email-button'));
 		fireEvent.change(screen.getByTestId('new-email-input'), {
@@ -189,7 +184,7 @@ describe('ChangeEmailForm', () => {
 			ok: false,
 			error: 'An account with that email already exists.',
 		});
-		render(<ChangeEmailForm currentEmail="user@example.com" />, { wrapper });
+		render(<ChangeEmailForm currentEmail="user@example.com" />);
 
 		fireEvent.click(screen.getByTestId('change-email-button'));
 		fireEvent.click(screen.getByTestId('submit-email-change-button'));
@@ -206,7 +201,7 @@ describe('ChangeEmailForm', () => {
 			ok: false,
 			error: 'Some error',
 		});
-		render(<ChangeEmailForm currentEmail="user@example.com" />, { wrapper });
+		render(<ChangeEmailForm currentEmail="user@example.com" />);
 
 		fireEvent.click(screen.getByTestId('change-email-button'));
 		fireEvent.click(screen.getByTestId('submit-email-change-button'));

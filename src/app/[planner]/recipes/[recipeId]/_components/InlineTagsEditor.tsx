@@ -3,19 +3,13 @@
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 
-import {
-	ActionIcon,
-	Badge,
-	Group,
-	isLightColor,
-	Stack,
-	Text,
-	useMantineTheme,
-} from '@mantine/core';
+import { ActionIcon, Group, Stack, Text } from '@mantine/core';
 import { IconCheck, IconPencil, IconX } from '@tabler/icons-react';
 
 import { updateRecipeTags } from '@/_actions/saved';
-import { TagCombobox, type TagOption } from '@/_components/TagCombobox';
+import { Tag, TagCombobox, type TagOption } from '@/_components';
+import { useEditMode } from '@/_hooks/useEditMode';
+import type { TagColor } from '@/_theme/colors';
 import { catchify } from '@/_utils/catchify';
 
 type Props = {
@@ -32,16 +26,10 @@ export const InlineTagsEditor = ({
 	availableTags,
 }: Props) => {
 	const router = useRouter();
-	const theme = useMantineTheme();
-	const [editing, setEditing] = useState(false);
+	const [editing, { enterEditing, exitEditing }] = useEditMode();
 	const [value, setValue] = useState(tagIds);
 	const [saving, setSaving] = useState(false);
 	const [saveError, setSaveError] = useState<string | null>(null);
-
-	const getPillStyle = (color: string) => {
-		const bg = theme.colors[color]?.[5] ?? color;
-		return { backgroundColor: bg, color: isLightColor(bg) ? '#000' : '#fff' };
-	};
 
 	const selectedTags = value
 		.map((id) => availableTags.find((t) => t._id === id))
@@ -62,13 +50,13 @@ export const InlineTagsEditor = ({
 			setSaveError(result.error);
 			return;
 		}
-		setEditing(false);
+		exitEditing();
 		router.refresh();
 	};
 
 	const handleCancel = () => {
 		setValue(tagIds);
-		setEditing(false);
+		exitEditing();
 		setSaveError(null);
 	};
 
@@ -81,7 +69,7 @@ export const InlineTagsEditor = ({
 				{!editing && (
 					<ActionIcon
 						data-testid="tags-edit-button"
-						onClick={() => setEditing(true)}
+						onClick={enterEditing}
 						size="xs"
 						variant="subtle"
 					>
@@ -126,9 +114,9 @@ export const InlineTagsEditor = ({
 			) : (
 				<Group gap="xs" data-testid="tags">
 					{selectedTags.map((tag) => (
-						<Badge key={tag._id} style={getPillStyle(tag.color)}>
+						<Tag key={tag._id} color={tag.color as TagColor}>
 							{tag.name}
-						</Badge>
+						</Tag>
 					))}
 				</Group>
 			)}

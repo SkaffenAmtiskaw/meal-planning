@@ -5,9 +5,16 @@ import { usePathname, useRouter } from 'next/navigation';
 import { Button, Menu } from '@mantine/core';
 import { IconBookmark, IconBowlSpoon, IconPlus } from '@tabler/icons-react';
 
+import { useCanWrite } from '@/app/[planner]/_components';
+
 export const AddItemDropdown = () => {
+	const canWrite = useCanWrite();
 	const router = useRouter();
 	const pathname = usePathname();
+
+	if (!canWrite) {
+		return null;
+	}
 
 	const createURL = (type: 'bookmark' | 'recipe') =>
 		`${pathname}?${new URLSearchParams({ status: 'add', type }).toString()}`;
@@ -15,7 +22,9 @@ export const AddItemDropdown = () => {
 	return (
 		<Menu>
 			<Menu.Target>
-				<Button leftSection={<IconPlus />}>Add Item</Button>
+				<Button leftSection={<IconPlus />} variant="cta">
+					Add Item
+				</Button>
 			</Menu.Target>
 			<Menu.Dropdown>
 				<Menu.Item
