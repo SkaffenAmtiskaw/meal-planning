@@ -213,7 +213,7 @@ describe('useInvites', () => {
 					},
 				],
 			});
-		mockInviteUserAction.mockResolvedValue({ success: true, inviteId: '2' });
+		mockInviteUserAction.mockResolvedValue({ ok: true, inviteId: '2' });
 		await loadHook();
 
 		const { result } = renderHook(() => useInvites(plannerId));
@@ -234,7 +234,7 @@ describe('useInvites', () => {
 	it('inviteUser sets error status on failure', async () => {
 		mockGetPendingInvites.mockResolvedValue({ invites: [] });
 		mockInviteUserAction.mockResolvedValue({
-			success: false,
+			ok: false,
 			error: 'User already invited',
 		});
 		await loadHook();
@@ -257,7 +257,7 @@ describe('useInvites', () => {
 	it('inviteUser uses default error message when result.error is undefined', async () => {
 		mockGetPendingInvites.mockResolvedValue({ invites: [] });
 		mockInviteUserAction.mockResolvedValue({
-			success: false,
+			ok: false,
 		});
 		await loadHook();
 
@@ -488,7 +488,7 @@ describe('useInvites', () => {
 
 	it('resets invite status after successful invite', async () => {
 		mockGetPendingInvites.mockResolvedValue({ invites: [] });
-		mockInviteUserAction.mockResolvedValue({ success: true, inviteId: '1' });
+		mockInviteUserAction.mockResolvedValue({ ok: true, inviteId: '1' });
 		await loadHook();
 
 		const { result } = renderHook(() => useInvites(plannerId));
@@ -683,7 +683,7 @@ describe('useInvites', () => {
 
 		mockGetPendingInvites.mockResolvedValue({ invites: mockInvites });
 		mockCancelInviteAction.mockResolvedValue({ success: true });
-		mockInviteUserAction.mockResolvedValue({ success: true, inviteId: '2' });
+		mockInviteUserAction.mockResolvedValue({ ok: true, inviteId: '2' });
 		await loadHook();
 
 		const { result } = renderHook(() => useInvites(plannerId));

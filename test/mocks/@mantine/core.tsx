@@ -864,7 +864,11 @@ export const useCombobox = vi.fn(
 );
 
 export const useMantineTheme = vi.fn(() => ({
-	colors: {} as Record<string, string[]>,
+	colors: {
+		navy: ['#E8EBEE', '#D1D7DD', '#BAC3CC', '#A3AFBB', '#8C9BAA', '#1C3144', '#192C3D', '#162736', '#132230', '#101D29'],
+		chalk: ['#FAF8F9', '#F5F3F4', '#F0EDEE', '#EBE8E9', '#E6E3E4', '#EFE7E9', '#E8E0E2', '#E1D9DB', '#DAD2D4', '#D3CBCB'],
+	},
+	radius: { md: '0.5rem' },
 }));
 
 // ─── Utilities ────────────────────────────────────────────────────────────────

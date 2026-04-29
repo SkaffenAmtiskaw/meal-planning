@@ -43,8 +43,12 @@ vi.mock('@/_actions', () => ({
 	addUser: vi.fn(),
 }));
 
+const mockSignInPrompt = vi.fn();
 vi.mock('./_components/SignInPrompt', () => ({
-	SignInPrompt: () => <div>Sign In Prompt</div>,
+	SignInPrompt: (props: unknown) => {
+		mockSignInPrompt(props);
+		return <div>Sign In Prompt</div>;
+	},
 }));
 
 const mockSession = {
@@ -62,7 +66,7 @@ describe('page', () => {
 	test('renders sign in prompt when there is no session', async () => {
 		vi.mocked(auth.api.getSession).mockResolvedValue(null as never);
 
-		render(await Page());
+		render(await Page({ searchParams: Promise.resolve({}) }));
 
 		expect(screen.getByText('Sign In Prompt')).toBeDefined();
 	});
@@ -74,7 +78,9 @@ describe('page', () => {
 		} as never);
 		mockCookiesGet.mockReturnValue(undefined);
 
-		await expect(Page()).rejects.toThrow('NEXT_REDIRECT');
+		await expect(Page({ searchParams: Promise.resolve({}) })).rejects.toThrow(
+			'NEXT_REDIRECT',
+		);
 
 		expect(redirect).toHaveBeenCalledWith(`${plannerId}/calendar`);
 	});
@@ -95,7 +101,9 @@ describe('page', () => {
 			success: true,
 		} as never);
 
-		await expect(Page()).rejects.toThrow('NEXT_REDIRECT');
+		await expect(Page({ searchParams: Promise.resolve({}) })).rejects.toThrow(
+			'NEXT_REDIRECT',
+		);
 
 		expect(redirect).toHaveBeenCalledWith(`${lastPlannerId}/calendar`);
 	});
@@ -111,7 +119,9 @@ describe('page', () => {
 			success: true,
 		} as never);
 
-		await expect(Page()).rejects.toThrow('NEXT_REDIRECT');
+		await expect(Page({ searchParams: Promise.resolve({}) })).rejects.toThrow(
+			'NEXT_REDIRECT',
+		);
 
 		expect(redirect).toHaveBeenCalledWith(`${plannerId}/calendar`);
 	});
@@ -125,7 +135,9 @@ describe('page', () => {
 			planners: [{ planner: 'new-planner-456', accessLevel: 'owner' }],
 		} as never);
 
-		await expect(Page()).rejects.toThrow('NEXT_REDIRECT');
+		await expect(Page({ searchParams: Promise.resolve({}) })).rejects.toThrow(
+			'NEXT_REDIRECT',
+		);
 
 		expect(addUser).toHaveBeenCalledWith('ariel@sea.com', undefined, 'Ariel');
 		expect(redirect).toHaveBeenCalledWith('new-planner-456/calendar');

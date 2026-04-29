@@ -34,6 +34,15 @@ const makePlanner = () => ({
 	calendar: [],
 });
 
+const mockUser = {
+	_id: new Types.ObjectId(),
+	id: new Types.ObjectId().toString(),
+	email: 'test@example.com',
+	name: 'Test User',
+	planners: [],
+	__v: 0,
+} as never;
+
 describe('addMeal', () => {
 	afterEach(() => {
 		vi.resetAllMocks();
@@ -78,6 +87,7 @@ describe('addMeal', () => {
 		vi.mocked(checkAuth).mockResolvedValue({
 			type: 'authorized',
 			accessLevel: 'write',
+			user: mockUser,
 		});
 		vi.mocked(Planner.findById).mockResolvedValueOnce(null);
 
@@ -90,6 +100,7 @@ describe('addMeal', () => {
 		vi.mocked(checkAuth).mockResolvedValue({
 			type: 'authorized',
 			accessLevel: 'write',
+			user: mockUser,
 		});
 		vi.mocked(Planner.findById).mockResolvedValue(makePlanner() as never);
 		vi.mocked(Planner.collection.updateOne).mockResolvedValueOnce({
@@ -113,6 +124,7 @@ describe('addMeal', () => {
 		vi.mocked(checkAuth).mockResolvedValue({
 			type: 'authorized',
 			accessLevel: 'write',
+			user: mockUser,
 		});
 		vi.mocked(Planner.findById).mockResolvedValue(makePlanner() as never);
 		vi.mocked(Planner.collection.updateOne).mockResolvedValueOnce({
@@ -142,6 +154,7 @@ describe('addMeal', () => {
 		vi.mocked(checkAuth).mockResolvedValue({
 			type: 'authorized',
 			accessLevel: 'write',
+			user: mockUser,
 		});
 		vi.mocked(Planner.findById)
 			.mockResolvedValueOnce(makePlanner() as never)
@@ -160,6 +173,7 @@ describe('addMeal', () => {
 		vi.mocked(checkAuth).mockResolvedValue({
 			type: 'authorized',
 			accessLevel: 'write',
+			user: mockUser,
 		});
 		vi.mocked(Planner.findById).mockResolvedValue(makePlanner() as never);
 		vi.mocked(Planner.collection.updateOne).mockResolvedValue({
@@ -189,6 +203,7 @@ describe('addMeal', () => {
 		vi.mocked(checkAuth).mockResolvedValue({
 			type: 'authorized',
 			accessLevel: 'write',
+			user: mockUser,
 		});
 		vi.mocked(Planner.findById).mockResolvedValue(makePlanner() as never);
 		vi.mocked(Planner.collection.updateOne).mockResolvedValue({
@@ -226,6 +241,7 @@ describe('addMeal', () => {
 		vi.mocked(checkAuth).mockResolvedValue({
 			type: 'authorized',
 			accessLevel: 'write',
+			user: mockUser,
 		});
 		vi.mocked(Planner.findById).mockResolvedValue(makePlanner() as never);
 		vi.mocked(Planner.collection.updateOne).mockResolvedValue({
@@ -263,6 +279,7 @@ describe('addMeal', () => {
 		vi.mocked(checkAuth).mockResolvedValue({
 			type: 'authorized',
 			accessLevel: 'write',
+			user: mockUser,
 		});
 		vi.mocked(Planner.findById).mockResolvedValue(makePlanner() as never);
 		vi.mocked(Planner.collection.updateOne).mockResolvedValue({
@@ -287,6 +304,7 @@ describe('addMeal', () => {
 		vi.mocked(checkAuth).mockResolvedValue({
 			type: 'authorized',
 			accessLevel: 'write',
+			user: mockUser,
 		});
 		vi.mocked(Planner.findById).mockResolvedValue(makePlanner() as never);
 		vi.mocked(Planner.collection.updateOne).mockResolvedValue({
@@ -314,6 +332,7 @@ describe('addMeal', () => {
 		vi.mocked(checkAuth).mockResolvedValue({
 			type: 'authorized',
 			accessLevel: 'write',
+			user: mockUser,
 		});
 		vi.mocked(Planner.findById).mockResolvedValue(makePlanner() as never);
 		vi.mocked(Planner.collection.updateOne).mockResolvedValue({
@@ -341,6 +360,7 @@ describe('addMeal', () => {
 		vi.mocked(checkAuth).mockResolvedValue({
 			type: 'authorized',
 			accessLevel: 'write',
+			user: mockUser,
 		});
 		vi.mocked(Planner.findById).mockResolvedValue(makePlanner() as never);
 		vi.mocked(Planner.collection.updateOne).mockResolvedValue({
@@ -365,6 +385,7 @@ describe('addMeal', () => {
 		vi.mocked(checkAuth).mockResolvedValue({
 			type: 'authorized',
 			accessLevel: 'write',
+			user: mockUser,
 		});
 		vi.mocked(Planner.findById).mockResolvedValue(makePlanner() as never);
 		vi.mocked(Planner.collection.updateOne).mockResolvedValue({
@@ -389,6 +410,7 @@ describe('addMeal', () => {
 		vi.mocked(checkAuth).mockResolvedValue({
 			type: 'authorized',
 			accessLevel: 'write',
+			user: mockUser,
 		});
 		vi.mocked(Planner.findById)
 			.mockResolvedValueOnce(makePlanner() as never)

@@ -2,17 +2,12 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { checkAuth } from '@/_actions/auth/checkAuth';
 import { removePlannerMembership } from '@/_actions/planner/_utils/removePlannerMembership';
-import { getUser } from '@/_actions/user/getUser';
 import type { AccessLevel } from '@/_models/user';
 
 import { leavePlanner } from './leavePlanner';
 
 vi.mock('@/_actions/auth/checkAuth', () => ({
 	checkAuth: vi.fn(),
-}));
-
-vi.mock('@/_actions/user/getUser', () => ({
-	getUser: vi.fn(),
 }));
 
 vi.mock('@/_actions/planner/_utils/removePlannerMembership', () => ({
@@ -22,6 +17,13 @@ vi.mock('@/_actions/planner/_utils/removePlannerMembership', () => ({
 describe('leavePlanner', () => {
 	const plannerId = '507f1f77bcf86cd799439011';
 	const userId = 'user-id-123';
+
+	const mockUser = {
+		_id: userId as never,
+		email: 'member@example.com',
+		name: 'Member User',
+		planners: [],
+	} as never;
 
 	beforeEach(() => {
 		vi.resetAllMocks();
@@ -35,7 +37,6 @@ describe('leavePlanner', () => {
 		const result = await leavePlanner(plannerId);
 
 		expect(result).toEqual({ ok: false, error: 'Unauthorized' });
-		expect(getUser).not.toHaveBeenCalled();
 		expect(removePlannerMembership).not.toHaveBeenCalled();
 	});
 
@@ -47,7 +48,6 @@ describe('leavePlanner', () => {
 		const result = await leavePlanner(plannerId);
 
 		expect(result).toEqual({ ok: false, error: 'Unauthorized' });
-		expect(getUser).not.toHaveBeenCalled();
 		expect(removePlannerMembership).not.toHaveBeenCalled();
 	});
 
@@ -55,13 +55,7 @@ describe('leavePlanner', () => {
 		vi.mocked(checkAuth).mockResolvedValue({
 			type: 'authorized',
 			accessLevel: 'owner' as AccessLevel,
-		});
-
-		vi.mocked(getUser).mockResolvedValue({
-			_id: userId as never,
-			email: 'owner@example.com',
-			name: 'Owner User',
-			planners: [],
+			user: mockUser,
 		} as never);
 
 		const result = await leavePlanner(plannerId);
@@ -77,13 +71,7 @@ describe('leavePlanner', () => {
 		vi.mocked(checkAuth).mockResolvedValue({
 			type: 'authorized',
 			accessLevel: 'admin' as AccessLevel,
-		});
-
-		vi.mocked(getUser).mockResolvedValue({
-			_id: userId as never,
-			email: 'member@example.com',
-			name: 'Member User',
-			planners: [],
+			user: mockUser,
 		} as never);
 
 		vi.mocked(removePlannerMembership).mockResolvedValue({ ok: true });
@@ -92,7 +80,6 @@ describe('leavePlanner', () => {
 
 		expect(result).toEqual({ ok: true });
 		expect(checkAuth).toHaveBeenCalledWith(expect.anything(), 'read');
-		expect(getUser).toHaveBeenCalled();
 		expect(removePlannerMembership).toHaveBeenCalledWith(userId, plannerId);
 	});
 
@@ -100,13 +87,7 @@ describe('leavePlanner', () => {
 		vi.mocked(checkAuth).mockResolvedValue({
 			type: 'authorized',
 			accessLevel: 'admin' as AccessLevel,
-		});
-
-		vi.mocked(getUser).mockResolvedValue({
-			_id: userId as never,
-			email: 'member@example.com',
-			name: 'Member User',
-			planners: [],
+			user: mockUser,
 		} as never);
 
 		vi.mocked(removePlannerMembership).mockResolvedValue({
@@ -123,13 +104,7 @@ describe('leavePlanner', () => {
 		vi.mocked(checkAuth).mockResolvedValue({
 			type: 'authorized',
 			accessLevel: 'admin' as AccessLevel,
-		});
-
-		vi.mocked(getUser).mockResolvedValue({
-			_id: userId as never,
-			email: 'member@example.com',
-			name: 'Member User',
-			planners: [],
+			user: mockUser,
 		} as never);
 
 		vi.mocked(removePlannerMembership).mockResolvedValue({
@@ -150,13 +125,7 @@ describe('leavePlanner', () => {
 		vi.mocked(checkAuth).mockResolvedValue({
 			type: 'authorized',
 			accessLevel,
-		});
-
-		vi.mocked(getUser).mockResolvedValue({
-			_id: userId as never,
-			email: `${accessLevel}@example.com`,
-			name: `${accessLevel} User`,
-			planners: [],
+			user: mockUser,
 		} as never);
 
 		vi.mocked(removePlannerMembership).mockResolvedValue({ ok: true });
@@ -172,21 +141,6 @@ describe('leavePlanner', () => {
 			type: 'error',
 			error: new Error('Auth check failed'),
 		});
-
-		const result = await leavePlanner(plannerId);
-
-		expect(result).toEqual({ ok: false, error: 'Unauthorized' });
-		expect(getUser).not.toHaveBeenCalled();
-		expect(removePlannerMembership).not.toHaveBeenCalled();
-	});
-
-	it('returns unauthorized error when getUser returns null', async () => {
-		vi.mocked(checkAuth).mockResolvedValue({
-			type: 'authorized',
-			accessLevel: 'admin' as AccessLevel,
-		});
-
-		vi.mocked(getUser).mockResolvedValue(null);
 
 		const result = await leavePlanner(plannerId);
 

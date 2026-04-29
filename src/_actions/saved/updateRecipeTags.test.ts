@@ -76,7 +76,13 @@ describe('updateRecipeTags', () => {
 		vi.mocked(checkAuth).mockResolvedValue({
 			type: 'authorized',
 			accessLevel: 'write',
-		});
+			user: {
+				_id: 'user-id',
+				email: 'test@example.com',
+				name: 'Test User',
+				planners: [],
+			},
+		} as never);
 		vi.mocked(Planner.collection.updateOne).mockResolvedValue({
 			matchedCount: 0,
 		} as never);
@@ -90,7 +96,13 @@ describe('updateRecipeTags', () => {
 		vi.mocked(checkAuth).mockResolvedValue({
 			type: 'authorized',
 			accessLevel: 'write',
-		});
+			user: {
+				_id: 'user-id',
+				email: 'test@example.com',
+				name: 'Test User',
+				planners: [],
+			},
+		} as never);
 		vi.mocked(Planner.collection.updateOne).mockResolvedValue({
 			matchedCount: 1,
 		} as never);
@@ -107,7 +119,13 @@ describe('updateRecipeTags', () => {
 		vi.mocked(checkAuth).mockResolvedValue({
 			type: 'authorized',
 			accessLevel: 'write',
-		});
+			user: {
+				_id: 'user-id',
+				email: 'test@example.com',
+				name: 'Test User',
+				planners: [],
+			},
+		} as never);
 		vi.mocked(Planner.collection.updateOne).mockResolvedValue({
 			matchedCount: 1,
 		} as never);
@@ -125,7 +143,13 @@ describe('updateRecipeTags', () => {
 		vi.mocked(checkAuth).mockResolvedValue({
 			type: 'authorized',
 			accessLevel: 'write',
-		});
+			user: {
+				_id: 'user-id',
+				email: 'test@example.com',
+				name: 'Test User',
+				planners: [],
+			},
+		} as never);
 		vi.mocked(Planner.collection.updateOne).mockResolvedValue({
 			matchedCount: 1,
 		} as never);
@@ -142,7 +166,13 @@ describe('updateRecipeTags', () => {
 		vi.mocked(checkAuth).mockResolvedValue({
 			type: 'authorized',
 			accessLevel: 'write',
-		});
+			user: {
+				_id: 'user-id',
+				email: 'test@example.com',
+				name: 'Test User',
+				planners: [],
+			},
+		} as never);
 		vi.mocked(Planner.collection.updateOne).mockResolvedValue({
 			matchedCount: 0,
 		} as never);
@@ -157,7 +187,13 @@ describe('updateRecipeTags', () => {
 		vi.mocked(checkAuth).mockResolvedValue({
 			type: 'authorized',
 			accessLevel: 'write',
-		});
+			user: {
+				_id: 'user-id',
+				email: 'test@example.com',
+				name: 'Test User',
+				planners: [],
+			},
+		} as never);
 		vi.mocked(Planner.collection.updateOne).mockResolvedValue({
 			matchedCount: 1,
 		} as never);

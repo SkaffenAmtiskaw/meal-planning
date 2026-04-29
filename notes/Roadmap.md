@@ -24,6 +24,7 @@
 ## Misc
 - [[Style Fixes|style fixes]]
 - [[Email Improvements|email improvements]]
+- [[Cleanup|fix deprecated Zod types - replace `z.string().email()` with `z.email()` and audit for other deprecated patterns]]
 
 # Medium Priority
 

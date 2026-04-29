@@ -14,5 +14,7 @@ export * from './getPlanners';
 export * from './invite.types';
 export * from './inviteUser';
 export * from './removeMember';
+export * from './signUpWithInvite';
 export * from './updateMemberAccess';
 export * from './updatePlannerName';
+export * from './validateInviteToken';

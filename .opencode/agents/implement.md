@@ -38,15 +38,16 @@ You SHOULD NOT assume you know already know the libraries the project uses - you
 - **Re-Use** — Existing components, hooks, or utilities should be re-used where possible.
 - **Mantine** — Mantine components and hooks are preferred over building from scratch.
   - If specific styling is planned, refer to `.opencode/docs/style_guidelines`.
+- **Project Conventions** - All modules must follow project conventions at `.opencode/docs/project_conventions.md`
 
 **Instructions**
 
 Repeat the following loop for each step in the plan, in order. Do not begin the next step until the user confirms the current one.
 
 *For each step:*
-
 1. **Plan modules** — Analyze the step and produce a module plan. The plan may propose modules — treat these as a starting point, but you are responsible for the final decomposition that satisfies the acceptance criteria. Each module must:
    - Own a single concern
+   - Follow the design rules above
    - Have a clearly defined interface (exported types, function signatures, or component props)
    - Have all dependencies identified by name and import path
    - Be ordered by dependency — no module is delegated before the modules it depends on
@@ -58,6 +59,7 @@ Repeat the following loop for each step in the plan, in order. Do not begin the 
    - **Behavior spec** — what the module must do, as a list of behaviors (not implementation steps)
    - **Test Skeleton** — the describe block, and it-block names
    - **Constraints** — what the module must not do; note if it is a React component, hook, or Next.js server component and any relevant conventions
+   - **Design Rules** — pass the subagent the exact text of the design rules listed above
 
    **CRITICAL:** You may only delegate ONE file pair (implementation + test) at a time. Never combine multiple files or issues in a single handoff. You may run parallel subagents IF they are fully independent but you MAY NOT handoff multiple files to a single subagent.
 

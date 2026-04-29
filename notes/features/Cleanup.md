@@ -63,4 +63,21 @@ src/_types/
 - [ ] Identify and migrate existing DTO types
 - [ ] Update imports across the codebase
 
+## Deprecated Zod Types
+
+**Status:** Technical debt
+
+**Context:** During implementation of [Shared Planners](./Shared%20Planners.md), discovered that `z.string().email()` is deprecated in Zod 4 in favor of `z.email()`.
+
+**Files using deprecated pattern:**
+- `src/_models/pendingInvite.types.ts` - `z.string().email()`
+- `src/_models/user.types.ts` - `z.string().email()`
+- `src/env.ts` - `z.string().email()`
+- `src/_actions/user/requestEmailChange.ts` - `z.string().email()`
+
+**Action Items:**
+- [ ] Replace `z.string().email()` with `z.email()` in all files
+- [ ] Audit codebase for other deprecated Zod patterns (check https://zod.dev/llms-full.txt for current API)
+- [ ] Update all type definitions to use Zod 4 recommended patterns
+
 **Note:** Do not modify `.opencode/docs/project_conventions.md` until the `_types/` directory is actually created and populated. The conventions should document what exists, not what is planned.

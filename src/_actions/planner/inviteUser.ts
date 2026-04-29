@@ -3,13 +3,16 @@
 import { randomUUID } from 'node:crypto';
 
 import { Types } from 'mongoose';
+import { z } from 'zod';
 
-import { getUser } from '@/_actions';
 import { checkAuth } from '@/_actions/auth/checkAuth';
 import { sendInviteEmail } from '@/_auth/emails/sendInviteEmail';
 import { PendingInvite, Planner, User } from '@/_models';
 import type { AccessLevel } from '@/_models/user';
+import type { ActionResult } from '@/_utils/actionResult';
+import { catchify } from '@/_utils/catchify';
 import { serialize } from '@/_utils/serialize';
+import { env } from '@/env';
 
 export interface InviteUserInput {
 	plannerId: string;
@@ -18,106 +21,134 @@ export interface InviteUserInput {
 }
 
 export interface InviteUserResult {
-	success: boolean;
-	error?: string;
-	inviteId?: string;
+	inviteId: string;
 }
-
-// Simple email validation regex
-const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 export const inviteUser = async (
 	input: InviteUserInput,
-): Promise<InviteUserResult> => {
-	try {
-		const { plannerId, email, accessLevel = 'read' } = input;
+): Promise<ActionResult<InviteUserResult>> => {
+	const { plannerId, email, accessLevel = 'read' } = input;
 
-		// 1. Validate email format
-		if (!EMAIL_REGEX.test(email)) {
-			return { success: false, error: 'Invalid email format' };
+	// 1. Validate email format
+	const emailResult = z.email().safeParse(email);
+	if (!emailResult.success) {
+		return { ok: false, error: 'Invalid email format' };
+	}
+
+	// 2. Verify caller is authenticated and has 'admin' access to the planner
+	const [authResult, authError] = await catchify(() =>
+		checkAuth(new Types.ObjectId(plannerId), 'admin'),
+	);
+
+	if (authError || !authResult || authResult.type !== 'authorized') {
+		return { ok: false, error: 'Unauthorized' };
+	}
+
+	// 3. Get the caller's user info from auth result
+	const callerUser = authResult.user;
+
+	// 4. Check if email is already a member of this planner
+	const [existingUser, userError] = await catchify(() =>
+		User.findOne({ email }),
+	);
+
+	if (userError) {
+		return { ok: false, error: userError.message };
+	}
+
+	if (existingUser) {
+		const isMember = existingUser.planners.some(
+			(p) => p.planner.toString() === plannerId,
+		);
+
+		if (isMember) {
+			return { ok: false, error: 'User is already a member' };
 		}
+	}
 
-		// 2. Verify caller is authenticated and has 'admin' access to the planner
-		const authResult = await checkAuth(new Types.ObjectId(plannerId), 'admin');
-
-		if (authResult.type !== 'authorized') {
-			return { success: false, error: 'Unauthorized' };
-		}
-
-		// 3. Get the caller's user info
-		const callerUser = await getUser();
-
-		if (!callerUser) {
-			return { success: false, error: 'Unauthorized' };
-		}
-
-		// 4. Check if email is already a member of this planner
-		const existingUser = await User.findOne({ email });
-
-		if (existingUser) {
-			const isMember = existingUser.planners.some(
-				(p) => p.planner.toString() === plannerId,
-			);
-
-			if (isMember) {
-				return { success: false, error: 'User is already a member' };
-			}
-		}
-
-		// 5. Check if there's already a pending invite for this email/planner combo
-		const existingInvite = await PendingInvite.findOne({
+	// 5. Check if there's already a pending invite for this email/planner combo
+	const [existingInvite, inviteError] = await catchify(() =>
+		PendingInvite.findOne({
 			email,
 			planner: new Types.ObjectId(plannerId),
-		});
+		}),
+	);
 
-		if (existingInvite) {
-			return { success: false, error: 'Pending invite already exists' };
-		}
+	if (inviteError) {
+		return { ok: false, error: inviteError.message };
+	}
 
-		// 6. Generate secure token using crypto.randomUUID()
-		const token = randomUUID();
+	if (existingInvite) {
+		return { ok: false, error: 'Pending invite already exists' };
+	}
 
-		// 7. Set expiration to 7 days from now
-		const expiresAt = new Date();
-		expiresAt.setDate(expiresAt.getDate() + 7);
+	// 6. Generate secure token using crypto.randomUUID()
+	const token = randomUUID();
 
-		// 8. Fetch planner to get the name
-		const planner = await Planner.findById(plannerId);
-		const plannerName = planner?.name ?? 'Meal Planner';
+	// 7. Set expiration to 7 days from now
+	const expiresAt = new Date();
+	expiresAt.setDate(expiresAt.getDate() + 7);
 
-		// 9. Create PendingInvite document
-		const invite = await PendingInvite.create({
+	// 8. Fetch planner to get the name
+	const [planner, plannerError] = await catchify(() =>
+		Planner.findById(plannerId),
+	);
+
+	if (plannerError) {
+		return { ok: false, error: plannerError.message };
+	}
+
+	const plannerName = planner?.name ?? 'Meal Planner';
+
+	// 9. Create PendingInvite document
+	const [invite, createError] = await catchify(() =>
+		PendingInvite.create({
 			email,
 			planner: new Types.ObjectId(plannerId),
 			invitedBy: callerUser._id,
 			accessLevel,
 			token,
 			expiresAt,
-		});
+		}),
+	);
 
-		// 10. Determine email type based on whether user exists
-		const emailType: 'existing_user' | 'new_user' = existingUser
-			? 'existing_user'
-			: 'new_user';
+	if (createError || !invite) {
+		return {
+			ok: false,
+			error: createError?.message ?? 'Failed to create invite',
+		};
+	}
 
-		// 11. Call sendInviteEmail
-		await sendInviteEmail({
+	// 10. Determine email type and URL based on whether user exists
+	const emailType: 'existing_user' | 'new_user' = existingUser
+		? 'existing_user'
+		: 'new_user';
+
+	// 11. Different URLs for new vs existing users
+	// New users go to /invite for registration flow
+	// Existing users go to / to handle invite in-app
+	const acceptUrl = existingUser
+		? `${env.BETTER_AUTH_URL}/`
+		: `${env.BETTER_AUTH_URL}/invite?token=${token}`;
+
+	// 12. Call sendInviteEmail
+	const [, emailError] = await catchify(() =>
+		sendInviteEmail({
 			email,
 			plannerName,
 			inviterName: callerUser.name || 'Someone',
-			acceptUrl: `${process.env.NEXT_PUBLIC_APP_URL}/invite/accept?token=${token}`,
+			acceptUrl,
 			type: emailType,
-		});
+		}),
+	);
 
-		// 12. Return success with inviteId
-		return {
-			success: true,
-			inviteId: serialize(invite)._id.toString(),
-		};
-	} catch (error) {
-		return {
-			success: false,
-			error: error instanceof Error ? error.message : 'An error occurred',
-		};
+	if (emailError) {
+		return { ok: false, error: emailError.message };
 	}
+
+	// 13. Return success with inviteId
+	return {
+		ok: true,
+		data: { inviteId: serialize(invite)._id.toString() },
+	};
 };

@@ -57,19 +57,21 @@ describe('check auth', () => {
 		});
 	});
 
-	test('should return authorized with actual accessLevel when user has read access and requires read', async () => {
+	test('should return authorized with actual accessLevel and user when user has read access and requires read', async () => {
 		const authorizedPlannerId = new Types.ObjectId();
-
-		vi.mocked(getUser).mockResolvedValue({
+		const mockUser = {
 			email: 'test@example.com',
 			planners: [
 				{ planner: authorizedPlannerId.toString(), accessLevel: 'read' },
 			],
-		} as unknown as Awaited<ReturnType<typeof getUser>>);
+		} as unknown as Awaited<ReturnType<typeof getUser>>;
+
+		vi.mocked(getUser).mockResolvedValue(mockUser);
 
 		expect(await checkAuth(authorizedPlannerId, 'read')).toEqual({
 			type: 'authorized',
 			accessLevel: 'read',
+			user: mockUser,
 		});
 	});
 
@@ -84,27 +86,33 @@ describe('check auth', () => {
 		});
 	});
 
-	test('should return authorized with actual accessLevel when access level meets required', async () => {
-		vi.mocked(getUser).mockResolvedValue({
+	test('should return authorized with actual accessLevel and user when access level meets required', async () => {
+		const mockUser = {
 			email: 'test@example.com',
 			planners: [{ planner: mockPlannerId.toString(), accessLevel: 'write' }],
-		} as unknown as Awaited<ReturnType<typeof getUser>>);
+		} as unknown as Awaited<ReturnType<typeof getUser>>;
+
+		vi.mocked(getUser).mockResolvedValue(mockUser);
 
 		expect(await checkAuth(mockPlannerId, 'write')).toEqual({
 			type: 'authorized',
 			accessLevel: 'write',
+			user: mockUser,
 		});
 	});
 
-	test('should return authorized with actual accessLevel when owner accesses with admin required', async () => {
-		vi.mocked(getUser).mockResolvedValue({
+	test('should return authorized with actual accessLevel and user when owner accesses with admin required', async () => {
+		const mockUser = {
 			email: 'test@example.com',
 			planners: [{ planner: mockPlannerId.toString(), accessLevel: 'owner' }],
-		} as unknown as Awaited<ReturnType<typeof getUser>>);
+		} as unknown as Awaited<ReturnType<typeof getUser>>;
+
+		vi.mocked(getUser).mockResolvedValue(mockUser);
 
 		expect(await checkAuth(mockPlannerId, 'admin')).toEqual({
 			type: 'authorized',
 			accessLevel: 'owner',
+			user: mockUser,
 		});
 	});
 });

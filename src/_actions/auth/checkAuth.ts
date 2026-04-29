@@ -4,8 +4,14 @@ import { getUser } from '@/_actions';
 import type { AccessLevel } from '@/_models/user';
 import { catchify } from '@/_utils/catchify';
 
+type UserDocument = Awaited<ReturnType<typeof getUser>>;
+
 type AuthResult =
-	| { type: 'authorized'; accessLevel: AccessLevel }
+	| {
+			type: 'authorized';
+			accessLevel: AccessLevel;
+			user: NonNullable<UserDocument>;
+	  }
 	| { type: 'unauthenticated' }
 	| { type: 'unauthorized' }
 	| { type: 'error'; error: Error };
@@ -42,5 +48,5 @@ export const checkAuth = async (
 		return { type: 'unauthorized' };
 	}
 
-	return { type: 'authorized', accessLevel: membership.accessLevel };
+	return { type: 'authorized', accessLevel: membership.accessLevel, user };
 };

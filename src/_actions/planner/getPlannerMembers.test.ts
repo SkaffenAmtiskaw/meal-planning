@@ -30,7 +30,13 @@ describe('getPlannerMembers', () => {
 		vi.mocked(checkAuth).mockResolvedValue({
 			type: 'authorized',
 			accessLevel: 'owner' as AccessLevel,
-		});
+			user: {
+				_id: 'user-id',
+				email: 'test@example.com',
+				name: 'Test User',
+				planners: [],
+			},
+		} as never);
 
 		const mockPlannerId = { toString: () => plannerId };
 		const mockMembers = [
@@ -63,7 +69,13 @@ describe('getPlannerMembers', () => {
 		vi.mocked(checkAuth).mockResolvedValue({
 			type: 'authorized',
 			accessLevel: 'owner' as AccessLevel,
-		});
+			user: {
+				_id: 'user-id',
+				email: 'test@example.com',
+				name: 'Test User',
+				planners: [],
+			},
+		} as never);
 
 		// Test with planner as string instead of ObjectId
 		const mockMembers = [
@@ -95,7 +107,13 @@ describe('getPlannerMembers', () => {
 		vi.mocked(checkAuth).mockResolvedValue({
 			type: 'authorized',
 			accessLevel: 'owner' as AccessLevel,
-		});
+			user: {
+				_id: 'user-id',
+				email: 'test@example.com',
+				name: 'Test User',
+				planners: [],
+			},
+		} as never);
 
 		const mockPlannerId = { toString: () => plannerId };
 		const mockMembers = [
@@ -135,7 +153,13 @@ describe('getPlannerMembers', () => {
 		vi.mocked(checkAuth).mockResolvedValue({
 			type: 'authorized',
 			accessLevel: 'admin' as AccessLevel,
-		});
+			user: {
+				_id: 'user-id',
+				email: 'test@example.com',
+				name: 'Test User',
+				planners: [],
+			},
+		} as never);
 
 		const mockPlannerId = { toString: () => plannerId };
 		const mockMembers = [
@@ -188,7 +212,13 @@ describe('getPlannerMembers', () => {
 		vi.mocked(checkAuth).mockResolvedValue({
 			type: 'authorized',
 			accessLevel: 'owner' as AccessLevel,
-		});
+			user: {
+				_id: 'user-id',
+				email: 'test@example.com',
+				name: 'Test User',
+				planners: [],
+			},
+		} as never);
 
 		const otherPlannerId = '507f1f77bcf86cd799439022';
 		const mockPlannerId = { toString: () => plannerId };
@@ -223,7 +253,13 @@ describe('getPlannerMembers', () => {
 		vi.mocked(checkAuth).mockResolvedValue({
 			type: 'authorized',
 			accessLevel: 'owner' as AccessLevel,
-		});
+			user: {
+				_id: 'user-id',
+				email: 'test@example.com',
+				name: 'Test User',
+				planners: [],
+			},
+		} as never);
 
 		const otherPlannerId = '507f1f77bcf86cd799439022';
 		const mockOtherPlannerId = { toString: () => otherPlannerId };
@@ -259,7 +295,13 @@ describe('getPlannerMembers', () => {
 		vi.mocked(checkAuth).mockResolvedValue({
 			type: 'authorized',
 			accessLevel: 'owner' as AccessLevel,
-		});
+			user: {
+				_id: 'user-id',
+				email: 'test@example.com',
+				name: 'Test User',
+				planners: [],
+			},
+		} as never);
 
 		const mockPlannerId = { toString: () => plannerId };
 		const mockMembers = [
@@ -308,7 +350,13 @@ describe('getPlannerMembers', () => {
 		vi.mocked(checkAuth).mockResolvedValue({
 			type: 'authorized',
 			accessLevel: 'owner' as AccessLevel,
-		});
+			user: {
+				_id: 'user-id',
+				email: 'test@example.com',
+				name: 'Test User',
+				planners: [],
+			},
+		} as never);
 
 		vi.mocked(User.find).mockImplementation(() => {
 			throw new Error('DB connection failed');

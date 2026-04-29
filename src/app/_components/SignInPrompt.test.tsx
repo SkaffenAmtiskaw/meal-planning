@@ -5,6 +5,9 @@ import { describe, expect, test, vi } from 'vitest';
 import { SignInPrompt } from './SignInPrompt';
 
 vi.mock('@/_components', () => ({
+	AuthCard: ({ children }: { children: React.ReactNode }) => (
+		<div>{children}</div>
+	),
 	SignIn: () => <button type="button">Sign In</button>,
 }));
 

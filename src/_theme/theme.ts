@@ -7,7 +7,7 @@ import {
 	type VariantColorsResolver,
 } from '@mantine/core';
 
-import { EMBER_RAMPS, FOREST_RAMPS, NAVY_RAMPS } from './colors';
+import { CHALK_RAMPS, EMBER_RAMPS, FOREST_RAMPS, NAVY_RAMPS } from './colors';
 
 const variantColorResolver: VariantColorsResolver = (input) => {
 	const defaultResolvedColors = defaultVariantColorsResolver(input);
@@ -36,6 +36,7 @@ export const theme = createTheme({
 		ember: EMBER_RAMPS,
 		forest: FOREST_RAMPS,
 		navy: NAVY_RAMPS,
+		chalk: CHALK_RAMPS,
 	},
 	components: {
 		AppShell: {

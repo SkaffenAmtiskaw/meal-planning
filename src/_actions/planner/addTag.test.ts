@@ -29,6 +29,15 @@ const makePlanner = (existingCount = 0) => ({
 	})),
 });
 
+const mockUser = {
+	_id: new Types.ObjectId(),
+	id: new Types.ObjectId().toString(),
+	email: 'test@example.com',
+	name: 'Test User',
+	planners: [],
+	__v: 0,
+} as never;
+
 describe('addTag', () => {
 	afterEach(() => {
 		vi.resetAllMocks();
@@ -55,6 +64,7 @@ describe('addTag', () => {
 		vi.mocked(checkAuth).mockResolvedValue({
 			type: 'authorized',
 			accessLevel: 'write',
+			user: mockUser,
 		});
 		vi.mocked(Planner.findById).mockResolvedValue(null);
 
@@ -67,6 +77,7 @@ describe('addTag', () => {
 		vi.mocked(checkAuth).mockResolvedValue({
 			type: 'authorized',
 			accessLevel: 'write',
+			user: mockUser,
 		});
 		vi.mocked(Planner.findById).mockResolvedValue(makePlanner(0) as never);
 		vi.mocked(Planner.collection.updateOne).mockResolvedValue({} as never);
@@ -81,6 +92,7 @@ describe('addTag', () => {
 		vi.mocked(checkAuth).mockResolvedValue({
 			type: 'authorized',
 			accessLevel: 'write',
+			user: mockUser,
 		});
 		// 3 existing tags → 4th color = 'fern' (index 3)
 		vi.mocked(Planner.findById).mockResolvedValue(makePlanner(3) as never);
@@ -96,6 +108,7 @@ describe('addTag', () => {
 		vi.mocked(checkAuth).mockResolvedValue({
 			type: 'authorized',
 			accessLevel: 'write',
+			user: mockUser,
 		});
 		vi.mocked(Planner.findById).mockResolvedValue(makePlanner(0) as never);
 		vi.mocked(Planner.collection.updateOne).mockResolvedValue({} as never);
@@ -120,6 +133,7 @@ describe('addTag', () => {
 		vi.mocked(checkAuth).mockResolvedValue({
 			type: 'authorized',
 			accessLevel: 'write',
+			user: mockUser,
 		});
 		vi.mocked(Planner.findById).mockResolvedValue(makePlanner(0) as never);
 		vi.mocked(Planner.collection.updateOne).mockResolvedValue({} as never);

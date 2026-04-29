@@ -4,7 +4,6 @@ import { Types } from 'mongoose';
 
 import { checkAuth } from '@/_actions/auth/checkAuth';
 import { removePlannerMembership } from '@/_actions/planner/_utils/removePlannerMembership';
-import { getUser } from '@/_actions/user/getUser';
 import type { ActionResult } from '@/_utils/actionResult';
 
 export const leavePlanner = async (
@@ -25,12 +24,8 @@ export const leavePlanner = async (
 		};
 	}
 
-	// 3. Get the current user's ID
-	const user = await getUser();
-
-	if (!user) {
-		return { ok: false, error: 'Unauthorized' };
-	}
+	// 3. Get the current user's ID from auth result
+	const user = authResult.user;
 
 	// 4. Call removePlannerMembership to remove the user's membership from the planner
 	const removalResult = await removePlannerMembership(

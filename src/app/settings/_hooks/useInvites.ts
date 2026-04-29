@@ -76,7 +76,7 @@ export const useInvites = (plannerId: string): UseInvitesResult => {
 					accessLevel,
 				});
 
-				if (result.success) {
+				if (result.ok) {
 					setInviteStatus('success');
 					setInviteError(null);
 					await refresh();

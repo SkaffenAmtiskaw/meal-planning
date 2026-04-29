@@ -22,6 +22,15 @@ vi.mock('@/_utils/serialize', () => ({
 	serialize: vi.fn((data) => data),
 }));
 
+const mockUser = {
+	_id: new Types.ObjectId(),
+	id: new Types.ObjectId().toString(),
+	email: 'test@example.com',
+	name: 'Test User',
+	planners: [],
+	__v: 0,
+} as never;
+
 describe('cancelInvite', () => {
 	const plannerId = '507f1f77bcf86cd799439011';
 	const inviteId = '507f1f77bcf86cd799439012';
@@ -69,6 +78,7 @@ describe('cancelInvite', () => {
 		vi.mocked(checkAuth).mockResolvedValue({
 			type: 'authorized',
 			accessLevel: 'admin' as AccessLevel,
+			user: mockUser,
 		});
 
 		const result = await cancelInvite({
@@ -88,6 +98,7 @@ describe('cancelInvite', () => {
 		vi.mocked(checkAuth).mockResolvedValue({
 			type: 'authorized',
 			accessLevel: 'admin' as AccessLevel,
+			user: mockUser,
 		});
 
 		vi.mocked(PendingInvite.findOne).mockResolvedValue(null);
@@ -109,6 +120,7 @@ describe('cancelInvite', () => {
 		vi.mocked(checkAuth).mockResolvedValue({
 			type: 'authorized',
 			accessLevel: 'admin' as AccessLevel,
+			user: mockUser,
 		});
 
 		const mockInvite = {
@@ -144,6 +156,7 @@ describe('cancelInvite', () => {
 		vi.mocked(checkAuth).mockResolvedValue({
 			type: 'authorized',
 			accessLevel: 'admin' as AccessLevel,
+			user: mockUser,
 		});
 
 		vi.mocked(PendingInvite.findOne).mockRejectedValue(
@@ -161,6 +174,7 @@ describe('cancelInvite', () => {
 		vi.mocked(checkAuth).mockResolvedValue({
 			type: 'authorized',
 			accessLevel: 'admin' as AccessLevel,
+			user: mockUser,
 		});
 
 		const mockInvite = {
@@ -188,6 +202,7 @@ describe('cancelInvite', () => {
 		vi.mocked(checkAuth).mockResolvedValue({
 			type: 'authorized',
 			accessLevel: 'admin' as AccessLevel,
+			user: mockUser,
 		});
 
 		vi.mocked(PendingInvite.findOne).mockRejectedValue('String error');
@@ -218,6 +233,7 @@ describe('cancelInvite', () => {
 		vi.mocked(checkAuth).mockResolvedValue({
 			type: 'authorized',
 			accessLevel: 'admin' as AccessLevel,
+			user: mockUser,
 		});
 
 		const mockInvite = {

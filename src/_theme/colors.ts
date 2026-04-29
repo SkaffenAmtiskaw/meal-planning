@@ -107,6 +107,30 @@ export const NAVY_RAMPS: [
 	'#101D29',
 ];
 
+export const CHALK_RAMPS: [
+	string,
+	string,
+	string,
+	string,
+	string,
+	string,
+	string,
+	string,
+	string,
+	string,
+] = [
+	'#FAF8F9',
+	'#F5F3F4',
+	'#F0EDEE',
+	'#EBE8E9',
+	'#E6E3E4',
+	'#EFE7E9',
+	'#E8E0E2',
+	'#E1D9DB',
+	'#DAD2D4',
+	'#D3CBCB',
+];
+
 export const TAG_COLOR_NAMES = Object.keys(TAG_COLORS) as TagColor[];
 
 export function getMealColor(title: string): TagColor {

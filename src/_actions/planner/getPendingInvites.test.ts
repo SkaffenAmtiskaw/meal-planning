@@ -62,7 +62,13 @@ describe('getPendingInvites', () => {
 		mockCheckAuth.mockResolvedValue({
 			type: 'authorized',
 			accessLevel: 'admin',
-		});
+			user: {
+				_id: 'user-id',
+				email: 'test@example.com',
+				name: 'Test User',
+				planners: [],
+			},
+		} as never);
 		mockPendingInviteFind.mockReturnValue({
 			sort: vi.fn().mockResolvedValue([]),
 		} as unknown as ReturnType<typeof PendingInvite.find>);
@@ -81,7 +87,13 @@ describe('getPendingInvites', () => {
 		mockCheckAuth.mockResolvedValue({
 			type: 'authorized',
 			accessLevel: 'admin',
-		});
+			user: {
+				_id: 'user-id',
+				email: 'test@example.com',
+				name: 'Test User',
+				planners: [],
+			},
+		} as never);
 
 		const mockInvites = [
 			{
@@ -122,7 +134,13 @@ describe('getPendingInvites', () => {
 		mockCheckAuth.mockResolvedValue({
 			type: 'authorized',
 			accessLevel: 'admin',
-		});
+			user: {
+				_id: 'user-id',
+				email: 'test@example.com',
+				name: 'Test User',
+				planners: [],
+			},
+		} as never);
 
 		const mockInvite = {
 			_id: { toString: () => 'invite123' },
@@ -158,7 +176,13 @@ describe('getPendingInvites', () => {
 		mockCheckAuth.mockResolvedValue({
 			type: 'authorized',
 			accessLevel: 'admin',
-		});
+			user: {
+				_id: 'user-id',
+				email: 'test@example.com',
+				name: 'Test User',
+				planners: [],
+			},
+		} as never);
 		mockPendingInviteFind.mockReturnValue({
 			sort: vi.fn().mockRejectedValue(new Error('Database connection failed')),
 		} as unknown as ReturnType<typeof PendingInvite.find>);

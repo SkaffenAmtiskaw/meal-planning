@@ -7,7 +7,11 @@ import { User, zObjectId } from '@/_models';
 
 import { SignInPrompt } from './_components/SignInPrompt';
 
-const Page = async () => {
+const Page = async ({
+	searchParams: _searchParams,
+}: {
+	searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
+}) => {
 	/**
 	 * 1. If the user is not signed in, make them sign in.
 	 * 2. If the user has a query param of "invite", add that meal plan to their user.

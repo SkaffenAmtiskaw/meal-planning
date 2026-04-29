@@ -1,6 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
-import { getUser } from '@/_actions';
 import { checkAuth } from '@/_actions/auth/checkAuth';
 import { sendInviteEmail } from '@/_auth/emails/sendInviteEmail';
 import { PendingInvite, Planner, User } from '@/_models';
@@ -10,10 +9,6 @@ import { inviteUser } from './inviteUser';
 
 vi.mock('@/_actions/auth/checkAuth', () => ({
 	checkAuth: vi.fn(),
-}));
-
-vi.mock('@/_actions', () => ({
-	getUser: vi.fn(),
 }));
 
 vi.mock('@/_models', () => ({
@@ -48,25 +43,40 @@ vi.mock('node:crypto', async (importOriginal) => {
 	};
 });
 
+vi.mock('@/env', () => ({
+	env: {
+		BETTER_AUTH_URL: 'http://localhost:3000',
+	},
+}));
+
 describe('inviteUser', () => {
 	const plannerId = '507f1f77bcf86cd799439011';
 	const callerUserId = '507f1f77bcf86cd799439012'; // Valid 24-char hex ObjectId
 	const inviteEmail = 'invitee@example.com';
 	const mockToken = 'mock-uuid-12345';
 	const mockInviteId = '507f1f77bcf86cd799439013'; // Valid 24-char hex ObjectId
-	const originalEnv = process.env.NEXT_PUBLIC_APP_URL;
+
+	const mockCallerUser = {
+		_id: callerUserId,
+		email: 'caller@example.com',
+		name: 'Caller User',
+		planners: [],
+	} as never;
+
+	const mockCallerUserNoName = {
+		_id: callerUserId,
+		email: 'caller@example.com',
+		planners: [],
+	} as never;
 
 	beforeEach(() => {
 		vi.resetAllMocks();
 		// Reset Date mock
 		vi.useRealTimers();
-		// Set environment variable for tests
-		process.env.NEXT_PUBLIC_APP_URL = 'http://localhost:3000';
 	});
 
 	afterEach(() => {
-		// Restore original environment variable
-		process.env.NEXT_PUBLIC_APP_URL = originalEnv;
+		vi.useRealTimers();
 	});
 
 	it('returns error when user is not authenticated', async () => {
@@ -80,7 +90,7 @@ describe('inviteUser', () => {
 		});
 
 		expect(result).toEqual({
-			success: false,
+			ok: false,
 			error: 'Unauthorized',
 		});
 		expect(checkAuth).toHaveBeenCalledWith(expect.anything(), 'admin');
@@ -99,7 +109,7 @@ describe('inviteUser', () => {
 		});
 
 		expect(result).toEqual({
-			success: false,
+			ok: false,
 			error: 'Unauthorized',
 		});
 		expect(User.findOne).not.toHaveBeenCalled();
@@ -110,14 +120,7 @@ describe('inviteUser', () => {
 		vi.mocked(checkAuth).mockResolvedValue({
 			type: 'authorized',
 			accessLevel: 'admin' as AccessLevel,
-		});
-
-		// Mock caller user
-		vi.mocked(getUser).mockResolvedValue({
-			_id: callerUserId as never,
-			email: 'caller@example.com',
-			name: 'Caller User',
-			planners: [],
+			user: mockCallerUser,
 		} as never);
 
 		// Mock existing user who is already a member
@@ -139,7 +142,7 @@ describe('inviteUser', () => {
 		});
 
 		expect(result).toEqual({
-			success: false,
+			ok: false,
 			error: 'User is already a member',
 		});
 		expect(PendingInvite.findOne).not.toHaveBeenCalled();
@@ -150,14 +153,7 @@ describe('inviteUser', () => {
 		vi.mocked(checkAuth).mockResolvedValue({
 			type: 'authorized',
 			accessLevel: 'admin' as AccessLevel,
-		});
-
-		// Mock caller user
-		vi.mocked(getUser).mockResolvedValue({
-			_id: callerUserId as never,
-			email: 'caller@example.com',
-			name: 'Caller User',
-			planners: [],
+			user: mockCallerUser,
 		} as never);
 
 		// Mock user not found (not a member yet)
@@ -176,7 +172,7 @@ describe('inviteUser', () => {
 		});
 
 		expect(result).toEqual({
-			success: false,
+			ok: false,
 			error: 'Pending invite already exists',
 		});
 		expect(PendingInvite.create).not.toHaveBeenCalled();
@@ -190,14 +186,7 @@ describe('inviteUser', () => {
 		vi.mocked(checkAuth).mockResolvedValue({
 			type: 'authorized',
 			accessLevel: 'admin' as AccessLevel,
-		});
-
-		// Mock caller user
-		vi.mocked(getUser).mockResolvedValue({
-			_id: callerUserId as never,
-			email: 'caller@example.com',
-			name: 'Caller User',
-			planners: [],
+			user: mockCallerUser,
 		} as never);
 
 		// Mock no existing user
@@ -230,14 +219,7 @@ describe('inviteUser', () => {
 		vi.mocked(checkAuth).mockResolvedValue({
 			type: 'authorized',
 			accessLevel: 'admin' as AccessLevel,
-		});
-
-		// Mock caller user
-		vi.mocked(getUser).mockResolvedValue({
-			_id: callerUserId as never,
-			email: 'caller@example.com',
-			name: 'Caller User',
-			planners: [],
+			user: mockCallerUser,
 		} as never);
 
 		// Mock no existing user
@@ -271,14 +253,7 @@ describe('inviteUser', () => {
 		vi.mocked(checkAuth).mockResolvedValue({
 			type: 'authorized',
 			accessLevel: 'admin' as AccessLevel,
-		});
-
-		// Mock caller user
-		vi.mocked(getUser).mockResolvedValue({
-			_id: callerUserId as never,
-			email: 'caller@example.com',
-			name: 'Caller User',
-			planners: [],
+			user: mockCallerUser,
 		} as never);
 
 		// Mock database error
@@ -291,23 +266,28 @@ describe('inviteUser', () => {
 			email: inviteEmail,
 		});
 
-		expect(result.success).toBe(false);
-		expect(result.error).toContain('Database connection failed');
+		expect(result.ok).toBe(false);
+		if (!result.ok) {
+			expect(result.error).toContain('Database connection failed');
+		}
 	});
 
 	it('returns error for invalid email format', async () => {
 		vi.mocked(checkAuth).mockResolvedValue({
 			type: 'authorized',
 			accessLevel: 'admin' as AccessLevel,
-		});
+			user: mockCallerUser,
+		} as never);
 
 		const result = await inviteUser({
 			plannerId,
 			email: 'invalid-email',
 		});
 
-		expect(result.success).toBe(false);
-		expect(result.error).toContain('Invalid email format');
+		expect(result.ok).toBe(false);
+		if (!result.ok) {
+			expect(result.error).toContain('Invalid email format');
+		}
 	});
 
 	it('returns error when checkAuth returns error type', async () => {
@@ -322,28 +302,7 @@ describe('inviteUser', () => {
 		});
 
 		expect(result).toEqual({
-			success: false,
-			error: 'Unauthorized',
-		});
-		expect(User.findOne).not.toHaveBeenCalled();
-	});
-
-	it('returns error when getUser returns null', async () => {
-		vi.mocked(checkAuth).mockResolvedValue({
-			type: 'authorized',
-			accessLevel: 'admin' as AccessLevel,
-		});
-
-		// Mock getUser returning null
-		vi.mocked(getUser).mockResolvedValue(null);
-
-		const result = await inviteUser({
-			plannerId,
-			email: inviteEmail,
-		});
-
-		expect(result).toEqual({
-			success: false,
+			ok: false,
 			error: 'Unauthorized',
 		});
 		expect(User.findOne).not.toHaveBeenCalled();
@@ -353,14 +312,7 @@ describe('inviteUser', () => {
 		vi.mocked(checkAuth).mockResolvedValue({
 			type: 'authorized',
 			accessLevel: 'admin' as AccessLevel,
-		});
-
-		// Mock caller user without a name
-		vi.mocked(getUser).mockResolvedValue({
-			_id: callerUserId as never,
-			email: 'caller@example.com',
-			// name is undefined
-			planners: [],
+			user: mockCallerUserNoName,
 		} as never);
 
 		// Mock no existing user
@@ -388,6 +340,7 @@ describe('inviteUser', () => {
 		expect(sendInviteEmail).toHaveBeenCalledWith(
 			expect.objectContaining({
 				inviterName: 'Someone',
+				acceptUrl: expect.stringContaining('/invite?token='),
 			}),
 		);
 	});
@@ -396,14 +349,7 @@ describe('inviteUser', () => {
 		vi.mocked(checkAuth).mockResolvedValue({
 			type: 'authorized',
 			accessLevel: 'admin' as AccessLevel,
-		});
-
-		// Mock caller user
-		vi.mocked(getUser).mockResolvedValue({
-			_id: callerUserId as never,
-			email: 'caller@example.com',
-			name: 'Caller User',
-			planners: [],
+			user: mockCallerUser,
 		} as never);
 
 		// Mock planner with name
@@ -437,6 +383,7 @@ describe('inviteUser', () => {
 		expect(sendInviteEmail).toHaveBeenCalledWith(
 			expect.objectContaining({
 				plannerName: 'My Custom Meal Planner',
+				acceptUrl: expect.stringContaining('/invite?token='),
 			}),
 		);
 	});
@@ -445,14 +392,7 @@ describe('inviteUser', () => {
 		vi.mocked(checkAuth).mockResolvedValue({
 			type: 'authorized',
 			accessLevel: 'admin' as AccessLevel,
-		});
-
-		// Mock caller user
-		vi.mocked(getUser).mockResolvedValue({
-			_id: callerUserId as never,
-			email: 'caller@example.com',
-			name: 'Caller User',
-			planners: [],
+			user: mockCallerUser,
 		} as never);
 
 		// Mock planner not found (returns null)
@@ -483,6 +423,7 @@ describe('inviteUser', () => {
 		expect(sendInviteEmail).toHaveBeenCalledWith(
 			expect.objectContaining({
 				plannerName: 'Meal Planner',
+				acceptUrl: expect.stringContaining('/invite?token='),
 			}),
 		);
 	});
@@ -491,14 +432,7 @@ describe('inviteUser', () => {
 		vi.mocked(checkAuth).mockResolvedValue({
 			type: 'authorized',
 			accessLevel: 'admin' as AccessLevel,
-		});
-
-		// Mock caller user
-		vi.mocked(getUser).mockResolvedValue({
-			_id: callerUserId as never,
-			email: 'caller@example.com',
-			name: 'Caller User',
-			planners: [],
+			user: mockCallerUser,
 		} as never);
 
 		// Mock existing user who is NOT a member of this planner (different planner)
@@ -533,14 +467,16 @@ describe('inviteUser', () => {
 			email: inviteEmail,
 		});
 
-		expect(result.success).toBe(true);
+		expect(result.ok).toBe(true);
 		expect(User.findOne).toHaveBeenCalledWith({ email: inviteEmail });
 		expect(PendingInvite.findOne).toHaveBeenCalled();
 		expect(PendingInvite.create).toHaveBeenCalled();
 		// Verify email type is 'existing_user' when user exists
+		// Existing users get '/' since they handle invites in-app
 		expect(sendInviteEmail).toHaveBeenCalledWith(
 			expect.objectContaining({
 				type: 'existing_user',
+				acceptUrl: 'http://localhost:3000/',
 			}),
 		);
 	});
@@ -549,14 +485,7 @@ describe('inviteUser', () => {
 		vi.mocked(checkAuth).mockResolvedValue({
 			type: 'authorized',
 			accessLevel: 'admin' as AccessLevel,
-		});
-
-		// Mock caller user
-		vi.mocked(getUser).mockResolvedValue({
-			_id: callerUserId as never,
-			email: 'caller@example.com',
-			name: 'Caller User',
-			planners: [],
+			user: mockCallerUser,
 		} as never);
 
 		// Mock no existing user
@@ -586,50 +515,119 @@ describe('inviteUser', () => {
 			email: inviteEmail,
 		});
 
-		expect(result.success).toBe(false);
-		expect(result.error).toBe('Email service failed');
+		expect(result.ok).toBe(false);
+		if (!result.ok) {
+			expect(result.error).toBe('Email service failed');
+		}
 	});
 
-	it('returns generic error when non-Error is thrown', async () => {
-		vi.mocked(checkAuth).mockResolvedValue({
-			type: 'authorized',
-			accessLevel: 'admin' as AccessLevel,
-		});
-
-		// Mock caller user
-		vi.mocked(getUser).mockResolvedValue({
-			_id: callerUserId as never,
-			email: 'caller@example.com',
-			name: 'Caller User',
-			planners: [],
-		} as never);
-
-		// Mock no existing user
-		vi.mocked(User.findOne).mockResolvedValue(null);
-
-		// Mock no existing pending invite
-		vi.mocked(PendingInvite.findOne).mockResolvedValue(null);
-
-		// Mock successful creation
-		vi.mocked(PendingInvite.create).mockResolvedValue({
-			_id: mockInviteId as never,
-			email: inviteEmail,
-			planner: plannerId,
-			invitedBy: callerUserId as never,
-			accessLevel: 'read',
-			token: 'some-token',
-			expiresAt: new Date(),
-		} as never);
-
-		// Mock sendInviteEmail throwing a non-Error
-		vi.mocked(sendInviteEmail).mockRejectedValue('String error');
+	it('returns error when checkAuth throws', async () => {
+		vi.mocked(checkAuth).mockRejectedValue(new Error('Auth service error'));
 
 		const result = await inviteUser({
 			plannerId,
 			email: inviteEmail,
 		});
 
-		expect(result.success).toBe(false);
-		expect(result.error).toBe('An error occurred');
+		expect(result).toEqual({
+			ok: false,
+			error: 'Unauthorized',
+		});
+	});
+
+	it('returns error when PendingInvite.findOne throws', async () => {
+		vi.mocked(checkAuth).mockResolvedValue({
+			type: 'authorized',
+			accessLevel: 'admin' as AccessLevel,
+			user: mockCallerUser,
+		} as never);
+
+		vi.mocked(User.findOne).mockResolvedValue(null);
+		vi.mocked(PendingInvite.findOne).mockRejectedValue(
+			new Error('Database error'),
+		);
+
+		const result = await inviteUser({
+			plannerId,
+			email: inviteEmail,
+		});
+
+		expect(result.ok).toBe(false);
+		if (!result.ok) {
+			expect(result.error).toBe('Database error');
+		}
+	});
+
+	it('returns error when Planner.findById throws', async () => {
+		vi.mocked(checkAuth).mockResolvedValue({
+			type: 'authorized',
+			accessLevel: 'admin' as AccessLevel,
+			user: mockCallerUser,
+		} as never);
+
+		vi.mocked(User.findOne).mockResolvedValue(null);
+		vi.mocked(PendingInvite.findOne).mockResolvedValue(null);
+		vi.mocked(Planner.findById).mockRejectedValue(
+			new Error('Planner lookup failed'),
+		);
+
+		const result = await inviteUser({
+			plannerId,
+			email: inviteEmail,
+		});
+
+		expect(result.ok).toBe(false);
+		if (!result.ok) {
+			expect(result.error).toBe('Planner lookup failed');
+		}
+	});
+
+	it('returns error when PendingInvite.create throws', async () => {
+		vi.mocked(checkAuth).mockResolvedValue({
+			type: 'authorized',
+			accessLevel: 'admin' as AccessLevel,
+			user: mockCallerUser,
+		} as never);
+
+		vi.mocked(User.findOne).mockResolvedValue(null);
+		vi.mocked(PendingInvite.findOne).mockResolvedValue(null);
+		vi.mocked(Planner.findById).mockResolvedValue(null);
+		vi.mocked(PendingInvite.create).mockRejectedValue(
+			new Error('Create failed'),
+		);
+
+		const result = await inviteUser({
+			plannerId,
+			email: inviteEmail,
+		});
+
+		expect(result.ok).toBe(false);
+		if (!result.ok) {
+			expect(result.error).toBe('Create failed');
+		}
+	});
+
+	it('returns default error when PendingInvite.create returns null', async () => {
+		vi.mocked(checkAuth).mockResolvedValue({
+			type: 'authorized',
+			accessLevel: 'admin' as AccessLevel,
+			user: mockCallerUser,
+		} as never);
+
+		vi.mocked(User.findOne).mockResolvedValue(null);
+		vi.mocked(PendingInvite.findOne).mockResolvedValue(null);
+		vi.mocked(Planner.findById).mockResolvedValue(null);
+		// @ts-expect-error mock create returning null (no error thrown)
+		vi.mocked(PendingInvite.create).mockResolvedValue(null);
+
+		const result = await inviteUser({
+			plannerId,
+			email: inviteEmail,
+		});
+
+		expect(result.ok).toBe(false);
+		if (!result.ok) {
+			expect(result.error).toBe('Failed to create invite');
+		}
 	});
 });

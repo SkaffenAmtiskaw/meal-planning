@@ -29,7 +29,13 @@ describe('updateMemberAccess', () => {
 		vi.mocked(checkAuth).mockResolvedValue({
 			type: 'authorized',
 			accessLevel: 'owner' as AccessLevel,
-		});
+			user: {
+				_id: 'caller-user-id',
+				email: 'caller@example.com',
+				name: 'Caller User',
+				planners: [],
+			},
+		} as never);
 
 		const mockTargetUser = {
 			_id: 'target-user-id',
@@ -65,7 +71,13 @@ describe('updateMemberAccess', () => {
 		vi.mocked(checkAuth).mockResolvedValue({
 			type: 'authorized',
 			accessLevel: 'owner' as AccessLevel,
-		});
+			user: {
+				_id: 'caller-user-id',
+				email: 'caller@example.com',
+				name: 'Caller User',
+				planners: [],
+			},
+		} as never);
 
 		const mockTargetUser = {
 			_id: 'target-user-id',
@@ -101,7 +113,13 @@ describe('updateMemberAccess', () => {
 		vi.mocked(checkAuth).mockResolvedValue({
 			type: 'authorized',
 			accessLevel: 'admin' as AccessLevel,
-		});
+			user: {
+				_id: 'caller-user-id',
+				email: 'caller@example.com',
+				name: 'Caller User',
+				planners: [],
+			},
+		} as never);
 
 		const mockTargetUser = {
 			_id: 'target-user-id',
@@ -129,7 +147,13 @@ describe('updateMemberAccess', () => {
 		vi.mocked(checkAuth).mockResolvedValue({
 			type: 'authorized',
 			accessLevel: 'admin' as AccessLevel,
-		});
+			user: {
+				_id: 'caller-user-id',
+				email: 'caller@example.com',
+				name: 'Caller User',
+				planners: [],
+			},
+		} as never);
 
 		const mockTargetUser = {
 			_id: 'target-user-id',
@@ -161,7 +185,13 @@ describe('updateMemberAccess', () => {
 		vi.mocked(checkAuth).mockResolvedValue({
 			type: 'authorized',
 			accessLevel: 'admin' as AccessLevel,
-		});
+			user: {
+				_id: 'caller-user-id',
+				email: 'caller@example.com',
+				name: 'Caller User',
+				planners: [],
+			},
+		} as never);
 
 		const mockTargetUser = {
 			_id: 'target-user-id',
@@ -194,7 +224,13 @@ describe('updateMemberAccess', () => {
 		vi.mocked(checkAuth).mockResolvedValue({
 			type: 'authorized',
 			accessLevel: 'owner' as AccessLevel,
-		});
+			user: {
+				_id: 'caller-user-id',
+				email: 'caller@example.com',
+				name: 'Caller User',
+				planners: [],
+			},
+		} as never);
 
 		const mockTargetUser = {
 			_id: 'target-user-id',
@@ -224,7 +260,13 @@ describe('updateMemberAccess', () => {
 		vi.mocked(checkAuth).mockResolvedValue({
 			type: 'authorized',
 			accessLevel: 'owner' as AccessLevel,
-		});
+			user: {
+				_id: 'caller-user-id',
+				email: 'caller@example.com',
+				name: 'Caller User',
+				planners: [],
+			},
+		} as never);
 
 		const mockTargetUser = {
 			_id: 'target-user-id',
@@ -287,7 +329,13 @@ describe('updateMemberAccess', () => {
 		vi.mocked(checkAuth).mockResolvedValue({
 			type: 'authorized',
 			accessLevel: 'owner' as AccessLevel,
-		});
+			user: {
+				_id: 'caller-user-id',
+				email: 'caller@example.com',
+				name: 'Caller User',
+				planners: [],
+			},
+		} as never);
 
 		vi.mocked(User.findOne).mockResolvedValue(null);
 
@@ -305,7 +353,13 @@ describe('updateMemberAccess', () => {
 		vi.mocked(checkAuth).mockResolvedValue({
 			type: 'authorized',
 			accessLevel: 'read' as AccessLevel,
-		});
+			user: {
+				_id: 'caller-user-id',
+				email: 'caller@example.com',
+				name: 'Caller User',
+				planners: [],
+			},
+		} as never);
 
 		const result = await updateMemberAccess(
 			plannerId,
@@ -321,7 +375,13 @@ describe('updateMemberAccess', () => {
 		vi.mocked(checkAuth).mockResolvedValue({
 			type: 'authorized',
 			accessLevel: 'write' as AccessLevel,
-		});
+			user: {
+				_id: 'caller-user-id',
+				email: 'caller@example.com',
+				name: 'Caller User',
+				planners: [],
+			},
+		} as never);
 
 		const result = await updateMemberAccess(plannerId, targetUserEmail, 'read');
 
@@ -333,7 +393,13 @@ describe('updateMemberAccess', () => {
 		vi.mocked(checkAuth).mockResolvedValue({
 			type: 'authorized',
 			accessLevel: 'admin' as AccessLevel,
-		});
+			user: {
+				_id: 'caller-user-id',
+				email: 'caller@example.com',
+				name: 'Caller User',
+				planners: [],
+			},
+		} as never);
 
 		const mockTargetUser = {
 			_id: 'target-user-id',

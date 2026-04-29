@@ -1,6 +1,6 @@
 import { betterAuth } from 'better-auth';
 import { mongodbAdapter } from 'better-auth/adapters/mongodb';
-import { oneTap } from 'better-auth/plugins';
+import { admin, oneTap } from 'better-auth/plugins';
 import { MongoClient } from 'mongodb';
 
 import { env } from '@/env';
@@ -11,7 +11,7 @@ export const mongoClient = new MongoClient(env.DB_URL);
 
 export const auth = betterAuth({
 	database: mongodbAdapter(mongoClient.db()),
-	plugins: [oneTap()],
+	plugins: [oneTap(), admin()],
 	session: {
 		expiresIn: 60 * 60 * 24 * 7,
 		cookieCache: {

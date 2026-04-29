@@ -75,7 +75,13 @@ describe('addBookmark', () => {
 		vi.mocked(checkAuth).mockResolvedValue({
 			type: 'authorized',
 			accessLevel: 'write',
-		});
+			user: {
+				_id: 'user-id',
+				email: 'test@example.com',
+				name: 'Test User',
+				planners: [],
+			},
+		} as never);
 		vi.mocked(Planner.findById).mockResolvedValue(null);
 
 		const result = await addBookmark(validData);
@@ -88,7 +94,13 @@ describe('addBookmark', () => {
 		vi.mocked(checkAuth).mockResolvedValue({
 			type: 'authorized',
 			accessLevel: 'write',
-		});
+			user: {
+				_id: 'user-id',
+				email: 'test@example.com',
+				name: 'Test User',
+				planners: [],
+			},
+		} as never);
 		vi.mocked(Planner.findById).mockResolvedValue(planner as never);
 
 		const result = await addBookmark(validData);
@@ -106,7 +118,13 @@ describe('addBookmark', () => {
 		vi.mocked(checkAuth).mockResolvedValue({
 			type: 'authorized',
 			accessLevel: 'write',
-		});
+			user: {
+				_id: 'user-id',
+				email: 'test@example.com',
+				name: 'Test User',
+				planners: [],
+			},
+		} as never);
 		vi.mocked(Planner.findById).mockResolvedValue(planner as never);
 
 		const result = await addBookmark({

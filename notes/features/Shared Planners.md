@@ -14,8 +14,9 @@
 - ✅ **Step 5** (Remove Member from Planner) - Commit `636c3e5e7fb6f5dab5a9bbd0067fcd7d9f10ea82`
 - ✅ Step 6 (Invite User UI) - Commit `5ec0db3f92287e4ebc3fd64593c9537e19e1bd04`
 - ✅ Step 7 (Add Existing User to Planner) - Commit `111ee4579d80fd356647e6bda53cc30c0c321577`
-- 🚧 Step 8 (Leave Planner) - In Progress
-- ⏳ Steps 9-10: Not started
+- ✅ Step 8 (Leave Planner) - In Progress
+- 🚧 Step 9 (Add New User to Planner) - In Progress
+- ⏳ Steps 10-11: Not started
 
 ## Requirements
 
@@ -354,42 +355,293 @@
 
 **Requirements**
 - When a user who does not yet have an account accepts an email invite, they should be prompted to create an account.
-	  - They should NOT have to type in their email; that is known from the link/token they followed.
-	  - They should NOT have to verify their email; we know their email is good because they would have had to get the link/token from their email.
+  	  - They should NOT have to type in their email; that is known from the link/token they followed.
+  	  - They should NOT have to verify their email; we know their email is good because they would have had to get the link/token from their email.
   - After the user has created an account, a new planner should NOT be created. Instead, the invitation for the planner should be auto-accepted, and that should be the single planner they belong to.
-	  - If they have multiple pending invitations, only the planner for the link/token should be auto-accepted. Everything else should remain as a pending invite.
+  	  - If they have multiple pending invitations, only the planner for the link/token should be auto-accepted. Everything else should remain as a pending invite.
   - If a new user who has a pending invite creates an account through the regular new user flow (without following the link) they should have to verify their email and the auto-accept should not happen. A new planner should be created (that they are the owner of) and the pending invites should appear in the badge/pending invites list in settings.
   - If the user follows the link for an invite that is expired, they should receive a error message that the link is expired, and be offered an opportunity to sign up for an account.
   - TODO: If a user joined via an invite link they will not have a planner they are an owner of. Nothing prevents them from leaving the only planner they have. We should make a Step 11 to account for this possibility - when they navigate to '/' they need some sort of empty state which prompts them to create a planner.
 
-_Note: The requirements have been added. The **Implementation Details** and **Acceptance Criteria** need to be reworked in light of the new requirements. The **Security Checklist** needs to be audited for completion in light of the new requirements._
+**Implementation Details:**
 
-⚠️ NEEDS REWORKED - **Implementation Details:**
+- **New Route**: `src/app/invite/accept/page.tsx`
+  - Server component that reads `?token=<token>` query param
+  - Calls `validateInviteToken` server action to check token validity
+  - If valid: Render `InviteRegistrationForm` with pre-filled email (read-only)
+  - If expired: Render `ExpiredInviteView` with option to sign up via regular flow
+  - If invalid: Render error message with link to sign in
+
+- **New File**: `src/_actions/planner/validateInviteToken.ts`
+  - Finds invite by token
+  - Checks if token is expired
+  - If expired: Delete the invite immediately and return `{ valid: false, reason: 'expired' }`
+  - Returns: `{ valid: true, email: string, plannerName: string }` or `{ valid: false, reason: 'expired' | 'invalid' }`
+
+- **New File**: `src/_components/RegistrationForm.tsx` (SHARED COMPONENT)
+  - Extracted from SignIn.tsx registration step to avoid code duplication
+  - Email display (read-only text)
+  - Optional "Change email" button (controlled via prop)
+  - Name input field (optional)
+  - Password input with configurable label
+  - Error Alert for validation errors
+  - Submit button with loading state
+  - Props interface:
+    ```typescript
+    interface RegistrationFormProps {
+      email: string;
+      onSubmit: (data: { name: string; password: string }) => Promise<void>;
+      submitLabel: string;
+      passwordLabel: string;
+      showChangeEmail?: boolean;
+      onChangeEmail?: () => void;
+    }
+    ```
+
+- **New File**: `src/app/invite/accept/_components/InviteRegistrationForm.tsx`
+  - Client component for invite-based registration
+  - Uses shared `RegistrationForm` component (no UI duplication)
+  - Calls `signUpWithInvite` server action instead of `client.signUp.email()`
+  - Passes `inviteToken` through to the server action
+
+- **New File**: `src/app/invite/accept/_components/ExpiredInviteView.tsx`
+  - Shows "Invite expired" message
+  - Single button "Continue to Sign In" → redirects to `/?email=<email>`
+  - From regular SignIn page, user can sign in, create account, or change email
+
+- **Modified**: `src/_actions/user/addUser.ts`
+  - Refactor to accept `AddUserOptions` object for extensibility
+  - Add `skipPlannerCreation?: boolean` option (default false)
+  - Add `accessLevel?: AccessLevel` option (default 'owner' for new planners, 'read' for existing)
+  - Add `emailVerified?: boolean` option for Better Auth integration
+  - Maintains backward compatibility with existing calls
+
+- **New File**: `src/_actions/planner/signUpWithInvite.ts`
+  - Server action for invite-based registration
+  - Validates token is valid and not expired (re-validate even though page already checked)
+  - If token invalid/expired: Return error (user should retry with fresh link)
+  - Creates user via Better Auth Admin API (`auth.api.createUser`) with `emailVerified: true` (bypasses verification)
+    - Requires Admin plugin to be added to auth.ts
+  - Calls refactored `addUser` with `skipPlannerCreation: true` and invite's `accessLevel`
+  - Immediately adds user to planner from token with specified accessLevel
+  - Deletes the invite after successful acceptance
+  - Returns redirect URL with success params
+  - All operations happen atomically in one server action
+
+- **Modified**: `src/_auth/auth.ts`
+  - Add Admin plugin: `import { admin } from 'better-auth/plugins'` and add to plugins array
+  - Minimal admin config - no custom roles needed for our use case
+
+- **Modified**: `src/app/page.tsx`
+  - Check for query params: `?invite_success=true&planner=<id>` (set by post-registration redirect)
+  - Show success message: "You've been added to [Planner Name]"
+  - If `?expired_invite=true`, show info banner: "Your invite expired, but you can still create an account"
+  - Support `?email=<email>` query param to pre-fill email in SignIn component
+  - If user has no planners after registration (edge case), redirect to create planner flow (handled in Step 11)
 
 - **Modified**: `src/_auth/emails/sendInviteEmail.ts`
-  - Different email template for non-users (includes signup link with token)
-  - Registration link includes `?invite_token=<token>`
-- **New File**: `src/_actions/planner/acceptPendingInvites.ts`
-  - Called after email verification
-  - Finds all pending invites for user's email
-  - Adds each to `User.planners` and deletes invite
-- **Modified**: `src/app/page.tsx` (or relevant post-registration page)
-  - After successful registration, call `acceptPendingInvites`
-  - Show success message listing accepted planners
+  - Update new_user template URL to `/invite/accept?token=<token>`
+  - Existing user template stays as `/` (they handle invite in-app)
 
-⚠️ NEEDS REWORKED - **Acceptance Criteria:**
-1. Invite an email that has no account
-2. Click signup link in email
-3. Complete registration and verify email
-4. **Verify**: After first login, see message "You've been added to X planner(s)"
-5. **Verify**: Planner appears in planner list immediately
-6. Navigate to planner
-7. **Verify**: Can access planner at read-only level
+- **Modified**: `src/_components/SignIn.tsx`
+  - Use shared `RegistrationForm` component instead of inline JSX for "new" step
+  - Support `?email=<email>` query param to pre-fill email and skip to registration step
+  - Maintains all existing functionality
 
-⚠️ AUDIT - **Security Checklist:**
-- Tokens must be validated before auto-accepting
-- Must check invite hasn't expired
-- New user gets only the access level specified in invite (read-only by default)
+**Key Differences from Regular Signup:**
+- Email is pre-filled and read-only
+- No email verification step required
+- No new planner created (user joins invited planner)
+- Only ONE invite is auto-accepted (the one from the token)
+- Other pending invites remain pending and appear in settings
+
+**Acceptance Criteria:**
+1. **Happy Path - Valid Invite:** ✅ - Manual Test Confirmed
+   - As owner, invite `newuser@example.com` (non-existent user)
+   - Open email and click invite link
+   - **Verify**: Land on `/invite/accept?token=<token>` with registration form
+   - **Verify**: Email field is pre-filled and disabled
+   - Enter password and name, click "Create Account"
+   - **Verify**: No "verify your email" screen shown
+   - **Verify**: Redirected to planner immediately
+   - **Verify**: Success message shows "You've been added to [Planner Name]"
+   - **Verify**: User can access planner at read-only level
+   - Go to Settings → Invites
+   - **Verify**: No other pending invites shown (only the one from token was auto-accepted)
+
+2. **Expired Invite Flow:**
+   - Create an invite, wait 7+ days (or manually expire in DB)
+   - Click expired invite link
+   - **Verify**: See "Invite expired" message
+   - Click "Continue to Sign In"
+   - **Verify**: Redirected to sign-in page with email pre-filled
+   - **Verify**: Can sign in or create account from there
+   - Complete registration normally
+   - **Verify**: Must verify email (since not using invite link)
+   - **Verify**: New planner created (user is owner)
+   - Go to Settings → Invites
+   - **Verify**: Expired invite does NOT appear in pending list (expired invites are not shown)
+
+3. **Regular Signup with Pending Invites:**
+   - As owner, invite `another@example.com` (non-existent user)
+   - DON'T click invite link - instead go directly to `/`
+   - Sign up normally with `another@example.com`
+   - **Verify**: Must verify email
+   - **Verify**: New planner created (user is owner)
+   - After verification, go to Settings → Invites
+   - **Verify**: See pending invite from owner
+   - Click Accept
+   - **Verify**: Now has 2 planners (owned + invited)
+
+1. **Security - Invalid Token:** ✅ - Manual Test Confirmed
+   - Navigate to `/invite/accept?token=invalid_token_123`
+   - **Verify**: See "Invalid invite" error message
+   - **Verify**: Option to sign in or go to home page
+
+5. **Security - Email Mismatch Prevention:** ✅ - Manual Test Confirmed
+   - Click valid invite link for `user1@example.com`
+   - Try to modify email in form (should be impossible - field is disabled)
+   - **Verify**: Cannot submit with different email
+
+6. **Security - Admin API Only:**
+   - **Verify**: Cannot call `auth.api.createUser` from client-side
+   - **Verify**: Server action validates invite token before creating user
+   - **Verify**: No way to bypass email verification without valid invite token
+
+**Regression Tests for Extracted Components:**
+
+7. **SignIn Component Still Works (Regression):**
+   - Navigate to `/`
+   - Enter new email, click Continue
+   - **Verify**: See registration form with "Change email" button visible
+   - **Verify**: Can change email and go back
+   - **Verify**: Can enter name and password
+   - **Verify**: Clicking "Create Account" creates user normally
+   - **Verify**: Must verify email before accessing app
+   - **Verify**: New planner created as owner
+   - Navigate to `/?email=test@example.com`
+   - **Verify**: Email pre-filled and skipped to appropriate step
+
+8. **addUser Backward Compatibility (Regression):**
+   - Call `addUser('test@example.com')` without options object
+   - **Verify**: Still creates user with new planner as owner
+   - Call `addUser('test2@example.com', existingPlannerId)`
+   - **Verify**: Still creates user added to existing planner with 'read' access
+   - Call `addUser('test3@example.com', undefined, 'Test User')`
+   - **Verify**: Still creates user with specified name
+   - Call with new options object:
+     ```typescript
+     addUser({
+       email: 'test4@example.com',
+       skipPlannerCreation: true,
+       accessLevel: 'admin',
+       emailVerified: true
+     })
+     ```
+   - **Verify**: Creates user without planner, with admin access, email marked verified
+
+9. **RegistrationForm Component (New Shared Component Tests):**
+   - Renders email as read-only text
+   - Renders name input with correct label
+   - Renders password input with configurable label
+   - Calls onSubmit with name and password when form submitted
+   - Shows loading state on submit button during submission
+   - Displays error alert when onSubmit throws
+   - Shows "Change email" button when showChangeEmail=true
+   - Calls onChangeEmail when "Change email" clicked
+   - Hides "Change email" button when showChangeEmail=false
+   - Validates password length (reuse existing validation logic)
+   - Validates name using zSafeString when provided
+
+**Unit Test Coverage Requirements:**
+
+- **validateInviteToken.ts**:
+  - Returns valid=true with email and plannerName for valid token
+  - Returns valid=false with reason='expired' for expired token
+  - Deletes expired token from database immediately
+  - Returns valid=false with reason='invalid' for non-existent token
+  - Returns valid=false with reason='invalid' for malformed token
+  - Includes planner name in response when valid
+
+- **signUpWithInvite.ts**:
+  - Creates user via Better Auth Admin API with emailVerified=true
+  - Calls addUser with skipPlannerCreation=true
+  - Adds user to planner with invite's accessLevel
+  - Deletes invite after successful acceptance
+  - Returns redirect URL on success
+  - Returns error if token expired (re-validates)
+  - Returns error if token invalid (re-validates)
+  - Only accepts the specific invite from token (not other pending invites)
+  - Rollback: If addUser fails after Better Auth user created, delete Better Auth user
+  - Rollback: If invite deletion fails, still return success (user is in planner)
+
+- **ExpiredInviteView.tsx**:
+  - Renders expired message
+  - Redirects to /?email=<email> when button clicked
+  - Properly encodes email in URL
+
+- InviteRegistrationForm.tsx
+  - Renders RegistrationForm with correct props (no change email button)
+  - Calls signUpWithInvite on submit
+  - Redirects on success to URL from server action
+  - Passes token to signUpWithInvite
+  - Shows error from signUpWithInvite in RegistrationForm
+  - Shows planner name in heading
+
+- **addUser.ts (Refactored)**:
+  - Creates new planner when skipPlannerCreation=false (default, backward compatible)
+  - Does not create new planner when skipPlannerCreation=true
+  - Sets accessLevel to 'owner' for new planner (default, backward compatible)
+  - Sets accessLevel to provided value when specified
+  - Passes emailVerified to User.create
+  - Maintains backward compatibility with positional arguments
+  - Validates email format
+  - Handles name defaulting to 'New User'
+
+- **RegistrationForm.tsx (New Shared Component)**:
+  - Renders with provided email displayed
+  - Renders name input (optional)
+  - Renders password input with custom label
+  - Renders submit button with custom label
+  - Shows change email button conditionally
+  - Handles form submission with loading state
+  - Displays errors from onSubmit
+  - Validates inputs before calling onSubmit
+
+- **SignIn.tsx (Modified)**:
+  - Still works with all existing flows (idle, has-password, social-only, email-sent)
+  - Uses RegistrationForm for 'new' step
+  - Pre-fills email from query param when present
+  - Skips to correct step when email query param present
+  - All existing tests still pass
+
+- **auth.ts (Modified)**:
+  - Admin plugin added without breaking existing functionality
+  - OneTap plugin still works
+  - All email flows still work
+  - Session configuration unchanged
+
+- **page.tsx (Modified)**:
+  - Shows success message with planner name when invite_success param present
+  - Shows expired invite banner when expired_invite param present
+  - Passes email to SignIn component when email param present
+  - Existing redirect logic unchanged
+  - Handles edge case: user with no planners (Step 11)
+
+**Security Checklist:**
+- Tokens must be validated server-side before showing registration form
+- Expired tokens must be rejected with clear messaging
+- Email field must be read-only in invite registration form (prevent tampering)
+- Only the specific planner from the token should be auto-accepted (not all pending invites)
+- Token must be cryptographically random (`crypto.randomUUID()` already used in inviteUser)
+- Tokens must expire after 7 days (already enforced in model)
+- No email verification bypass possible without valid invite token
+- User cannot forge invite token to join arbitrary planners
+- Admin API only callable server-side (enforced by Better Auth)
+- If invite validation fails during registration, user creation is blocked (not allowed to proceed)
+- Token must be single-use (deleted after successful acceptance)
+- Atomic operation: User creation, planner membership, and invite deletion happen together
+- Rollback handling: If partial failure occurs, orphaned users are cleaned up
 
 ---
 ## Step 10 — Ownership Transfer on Account Deletion
@@ -431,6 +683,11 @@ _Note: The requirements have been added. The **Implementation Details** and **Ac
 - Account deletion only proceeds after all ownership transfers complete
 
 ---
+11. Make `/invite` and `/` login pages share the same presentational code
+- Message text is center aligned
+- Inputs and buttons are full width
+- There is no rogue styling ANYWHERE
+---
 
 ## Key Files
 
@@ -461,4 +718,4 @@ After each step:
    - Tokens are cryptographically secure (`crypto.randomUUID()`)
    - Token expiration enforced
    - Rate limiting considered for invite endpoints
-4. User signs off on manual acceptance criteria
+1. User signs off on manual acceptance criteria
