@@ -26,7 +26,6 @@ export const NavLink = ({
 		component={Link}
 		classNames={{
 			root: styles.navLink,
-			label: styles.navLinkLabel,
 		}}
 		active={active}
 		href={href}
