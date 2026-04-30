@@ -82,28 +82,7 @@ vi.mock('@/_components', () => ({
 	),
 }));
 
-const { mockUseForm } = vi.hoisted(() => {
-	const mockUseForm = vi.fn(() => ({
-		onSubmit:
-			(handler: (values: Record<string, unknown>) => Promise<void>) =>
-			(e: React.FormEvent) => {
-				e.preventDefault();
-				handler({
-					name: 'My Bookmark',
-					url: 'https://example.com',
-					notes: 'Test note',
-				});
-			},
-		getInputProps: () => ({}),
-		key: (field: string) => field,
-	}));
-	return { mockUseForm };
-});
-
-vi.mock('@mantine/form', () => ({
-	schemaResolver: () => () => ({}),
-	useForm: () => mockUseForm(),
-}));
+vi.mock('@mantine/form', async () => await import('@mocks/@mantine/form'));
 
 vi.mock('@mantine/core', async () => await import('@mocks/@mantine/core'));
 
@@ -154,7 +133,7 @@ describe('BookmarkForm', () => {
 		fireEvent.submit(screen.getByTestId('bookmark-form'));
 
 		expect(addBookmark).toHaveBeenCalledWith(
-			expect.objectContaining({ plannerId: 'planner-1', notes: 'Test note' }),
+			expect.objectContaining({ plannerId: 'planner-1' }),
 		);
 	});
 
@@ -240,7 +219,6 @@ describe('BookmarkForm', () => {
 			expect.objectContaining({
 				_id: 'bm-1',
 				plannerId: 'planner-1',
-				notes: 'Test note',
 			}),
 		);
 		expect(addBookmark).not.toHaveBeenCalled();

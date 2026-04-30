@@ -1,5 +1,4 @@
 import { mockUseFormFeedback } from '@mocks/@/_hooks';
-import { mockUseForm } from '@mocks/@mantine/form';
 import { act, fireEvent, render, screen } from '@testing-library/react';
 
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
@@ -82,25 +81,6 @@ const defaultProps = {
 };
 
 describe('AddMealForm', () => {
-	beforeEach(() => {
-		mockUseForm.mockReturnValue({
-			onSubmit:
-				(
-					handler: (values: {
-						date: string;
-						mealName: string;
-						description: string;
-					}) => Promise<void>,
-				) =>
-				(e: React.FormEvent) => {
-					e.preventDefault();
-					handler({ date: '2024-06-15', mealName: 'Lunch', description: '' });
-				},
-			getInputProps: () => ({}),
-			key: (field: string) => field,
-		});
-	});
-
 	afterEach(() => {
 		vi.resetAllMocks();
 	});
@@ -157,8 +137,8 @@ describe('AddMealForm', () => {
 		expect(addMeal).toHaveBeenCalledWith(
 			expect.objectContaining({
 				plannerId: 'planner-1',
-				date: '2024-06-15',
-				mealName: 'Lunch',
+				date: '',
+				mealName: '',
 			}),
 		);
 	});

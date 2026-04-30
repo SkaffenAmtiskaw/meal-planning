@@ -10,11 +10,14 @@ import { Planner } from '@/_models';
 import { zRecipeFormSchema } from '@/_models/planner/recipe.types';
 import type { ActionResult } from '@/_utils/actionResult';
 
+import { transformRecipeForm } from './_utils/transformRecipeForm';
+
 const zEditRecipeSchema = zRecipeFormSchema.extend({ _id: z.string() });
 
 export const editRecipe = async (
 	data: unknown,
 ): Promise<ActionResult<{ _id: string; name: string }>> => {
+	const parsed = zEditRecipeSchema.parse(data);
 	const {
 		plannerId,
 		_id: recipeId,
@@ -27,7 +30,7 @@ export const editRecipe = async (
 		servings,
 		notes,
 		storage,
-	} = zEditRecipeSchema.parse(data);
+	} = transformRecipeForm(parsed);
 
 	const auth = await checkAuth(new Types.ObjectId(plannerId), 'write');
 	if (auth.type !== 'authorized') return { ok: false, error: 'Unauthorized' };
