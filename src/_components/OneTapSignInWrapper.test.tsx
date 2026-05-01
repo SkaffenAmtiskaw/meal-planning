@@ -6,9 +6,7 @@ import { useOneTap } from '@/_hooks';
 
 import { OneTapSignInWrapper } from './OneTapSignInWrapper';
 
-vi.mock('@/_hooks', () => ({
-	useOneTap: vi.fn(),
-}));
+vi.mock('@/_hooks', async () => await import('@mocks/@/_hooks'));
 
 describe('one tap sign in wrapper', () => {
 	afterEach(() => {

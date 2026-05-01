@@ -1,9 +1,9 @@
-import { mockUseFormFeedback } from '@mocks/@/_hooks';
 import { act, fireEvent, render, screen } from '@testing-library/react';
 
-import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
+import { afterEach, describe, expect, test, vi } from 'vitest';
 
 import { addMeal } from '@/_actions/planner/addMeal';
+import { useFormFeedback } from '@/_hooks';
 
 import { AddMealForm } from './AddMealForm';
 
@@ -112,7 +112,7 @@ describe('AddMealForm', () => {
 	});
 
 	test('shows error alert when status is error', () => {
-		mockUseFormFeedback.mockReturnValueOnce({
+		vi.mocked(useFormFeedback).mockReturnValueOnce({
 			status: 'error' as FeedbackStatus,
 			countdown: 0,
 			errorMessage: 'Something went wrong',

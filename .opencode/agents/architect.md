@@ -2,7 +2,7 @@
 description: Determines implementation details for planned features
 color: '#ee4266'
 mode: primary
-model: opencode-go/kimi-k2.5
+model: opencode-go/kimi-k2.6
 temperature: 0.6
 permission:
    webfetch: ask

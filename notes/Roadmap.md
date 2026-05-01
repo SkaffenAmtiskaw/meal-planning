@@ -5,6 +5,8 @@
 # Bugfixes/User Issues
 - meals created in month view don't show up in week view - will be fixed in [[Replace Schedule-X]]
 - meal creation modal is too narrow on desktop - two columns might allow for easier entry (UX review)
+- after adding a new recipe, it is not immediately available in the saved dishes dropdown in the create meal modal
+- you should be able to create a meal with just a title and a note
 # High-Priority
 ## Calendar Page
 - [[Replace Schedule-X|replace schedule-x]]

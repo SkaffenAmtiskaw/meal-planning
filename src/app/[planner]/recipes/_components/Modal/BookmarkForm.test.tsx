@@ -4,6 +4,7 @@ import { afterEach, describe, expect, test, vi } from 'vitest';
 
 import { addBookmark } from '@/_actions/saved/addBookmark';
 import { editBookmark } from '@/_actions/saved/editBookmark';
+import { useFormFeedback } from '@/_hooks';
 
 import { BookmarkForm } from './BookmarkForm';
 
@@ -23,25 +24,7 @@ vi.mock('@/_actions/saved/editBookmark', () => ({
 
 type FeedbackStatus = 'idle' | 'submitting' | 'success' | 'error';
 
-const { mockUseFormFeedback } = vi.hoisted(() => {
-	const mockUseFormFeedback = vi.fn(() => ({
-		status: 'idle' as FeedbackStatus,
-		countdown: 0,
-		errorMessage: undefined as string | undefined,
-		wrap:
-			(fn: (...args: unknown[]) => Promise<void>, onSuccess: () => void) =>
-			async (...args: unknown[]) => {
-				await fn(...args);
-				onSuccess();
-			},
-		reset: vi.fn(),
-	}));
-	return { mockUseFormFeedback };
-});
-
-vi.mock('@/_hooks', () => ({
-	useFormFeedback: () => mockUseFormFeedback(),
-}));
+vi.mock('@/_hooks', async () => await import('@mocks/@/_hooks'));
 
 vi.mock('@/_components', () => ({
 	FormFeedbackAlert: ({
@@ -169,7 +152,7 @@ describe('BookmarkForm', () => {
 	});
 
 	test('shows error alert when status is error', () => {
-		mockUseFormFeedback.mockReturnValueOnce({
+		vi.mocked(useFormFeedback).mockReturnValueOnce({
 			status: 'error' as FeedbackStatus,
 			countdown: 0,
 			errorMessage: 'Something went wrong',

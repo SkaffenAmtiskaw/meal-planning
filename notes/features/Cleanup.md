@@ -84,3 +84,12 @@ src/_types/
 
 # Replicated React Hooks
 - the async hook could be replaced with a native React hook
+
+# Confirm Button
+- doesn't do anything when useAsyncStatus has an actual exception - this seems incorrect?
+
+# Date Utils
+- replace date utils with luxon
+
+# Better Route Management
+- Emails create paths & query params that the application should correctly consume - but nothing keeps them in sync

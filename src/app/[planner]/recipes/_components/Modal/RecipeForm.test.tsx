@@ -21,27 +21,11 @@ vi.mock('@/_actions/saved/editRecipe', () => ({
 	editRecipe: vi.fn(),
 }));
 
+import { useFormFeedback } from '@/_hooks';
+
 type FeedbackStatus = 'idle' | 'submitting' | 'success' | 'error';
 
-const { mockUseFormFeedback } = vi.hoisted(() => {
-	const mockUseFormFeedback = vi.fn(() => ({
-		status: 'idle' as FeedbackStatus,
-		countdown: 0,
-		errorMessage: undefined as string | undefined,
-		wrap:
-			(fn: (...args: unknown[]) => Promise<void>, onSuccess: () => void) =>
-			async (...args: unknown[]) => {
-				await fn(...args);
-				onSuccess();
-			},
-		reset: vi.fn(),
-	}));
-	return { mockUseFormFeedback };
-});
-
-vi.mock('@/_hooks', () => ({
-	useFormFeedback: () => mockUseFormFeedback(),
-}));
+vi.mock('@/_hooks', async () => await import('@mocks/@/_hooks'));
 
 vi.mock('@/_components', () => ({
 	FormFeedbackAlert: ({
@@ -197,7 +181,7 @@ describe('RecipeForm', () => {
 	});
 
 	test('shows error alert when status is error', () => {
-		mockUseFormFeedback.mockReturnValueOnce({
+		vi.mocked(useFormFeedback).mockReturnValueOnce({
 			status: 'error' as FeedbackStatus,
 			countdown: 0,
 			errorMessage: 'Something went wrong',

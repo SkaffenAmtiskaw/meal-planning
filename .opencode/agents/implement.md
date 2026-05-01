@@ -2,7 +2,7 @@
 description: Implements feature plans
 color: '#ffd23f'
 mode: primary
-model: opencode-go/kimi-k2.5
+model: opencode-go/kimi-k2.6
 temperature: 0.4
 permission:
    edit:

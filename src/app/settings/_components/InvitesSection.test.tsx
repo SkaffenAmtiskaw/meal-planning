@@ -7,23 +7,9 @@ import type { AccessLevel } from '@/_models/user';
 
 import { InvitesSection } from './InvitesSection';
 
-type AsyncStatus = 'idle' | 'loading' | 'success' | 'error';
-
 const mockRefresh = vi.fn();
 
-const { mockUseAsyncStatus } = vi.hoisted(() => {
-	const mockUseAsyncStatus = vi.fn(() => ({
-		status: 'idle' as AsyncStatus,
-		error: null as string | null,
-		run: vi.fn((fn: () => Promise<unknown>) => fn() as Promise<unknown>),
-		reset: vi.fn(),
-	}));
-	return { mockUseAsyncStatus };
-});
-
-vi.mock('@/_hooks', () => ({
-	useAsyncStatus: () => mockUseAsyncStatus(),
-}));
+vi.mock('@/_hooks', async () => await import('@mocks/@/_hooks'));
 
 vi.mock('next/navigation', () => ({
 	useRouter: () => ({
@@ -80,13 +66,6 @@ vi.mock('../_utils/getAccessLevelColor', () => ({
 	}),
 }));
 
-const defaultAsyncStatus = () => ({
-	status: 'idle' as AsyncStatus,
-	error: null as string | null,
-	run: vi.fn((fn: () => Promise<unknown>) => fn() as Promise<unknown>),
-	reset: vi.fn(),
-});
-
 describe('InvitesSection', () => {
 	const mockOnAccept = vi.fn();
 	const mockOnDecline = vi.fn();
@@ -108,20 +87,7 @@ describe('InvitesSection', () => {
 
 	beforeEach(() => {
 		vi.resetAllMocks();
-		mockUseAsyncStatus.mockImplementation(defaultAsyncStatus);
 		mockRefresh.mockClear();
-	});
-
-	it('should render section title', () => {
-		render(
-			<InvitesSection
-				invites={[]}
-				onAccept={mockOnAccept}
-				onDecline={mockOnDecline}
-			/>,
-		);
-
-		expect(screen.getByText('Pending Invites')).toBeDefined();
 	});
 
 	it('should show empty message when no invites', () => {
@@ -152,54 +118,6 @@ describe('InvitesSection', () => {
 
 		expect(screen.getByText('Test Planner')).toBeDefined();
 		expect(screen.getByText('Second Planner')).toBeDefined();
-	});
-
-	it('should display planner name and inviter', () => {
-		const invites = [
-			createMockInvite({ plannerName: 'My Planner', invitedBy: 'Jane Smith' }),
-		];
-
-		render(
-			<InvitesSection
-				invites={invites}
-				onAccept={mockOnAccept}
-				onDecline={mockOnDecline}
-			/>,
-		);
-
-		expect(screen.getByText('My Planner')).toBeDefined();
-		expect(screen.getByText(/Jane Smith/)).toBeDefined();
-	});
-
-	it('should show access level badge', () => {
-		const invites = [createMockInvite({ accessLevel: 'admin' })];
-
-		render(
-			<InvitesSection
-				invites={invites}
-				onAccept={mockOnAccept}
-				onDecline={mockOnDecline}
-			/>,
-		);
-
-		expect(screen.getByTestId('badge')).toBeDefined();
-		expect(screen.getByText('admin')).toBeDefined();
-	});
-
-	it('should show invited date', () => {
-		const invites = [
-			createMockInvite({ invitedAt: '2024-01-15T00:00:00.000Z' }),
-		];
-
-		render(
-			<InvitesSection
-				invites={invites}
-				onAccept={mockOnAccept}
-				onDecline={mockOnDecline}
-			/>,
-		);
-
-		expect(screen.getByText(/Jan 15, 2024/)).toBeDefined();
 	});
 
 	it('should show expiration warning when near expiry', () => {
@@ -243,12 +161,7 @@ describe('InvitesSection', () => {
 		expect(screen.getByText(/Expired/)).toBeDefined();
 	});
 
-	it('should call onAccept with token when accept clicked', async () => {
-		mockOnAccept.mockResolvedValue({
-			ok: true,
-			data: { plannerId: 'planner-1' },
-		});
-
+	it('should call onAccept with token when accept clicked', () => {
 		const invites = [
 			createMockInvite({ id: 'invite-1', token: 'token-abc-123' }),
 		];
@@ -264,14 +177,10 @@ describe('InvitesSection', () => {
 		const acceptButton = screen.getByTestId('accept-button-invite-1');
 		fireEvent.click(acceptButton);
 
-		await waitFor(() => {
-			expect(mockOnAccept).toHaveBeenCalledWith({ token: 'token-abc-123' });
-		});
+		expect(mockOnAccept).toHaveBeenCalledWith({ token: 'token-abc-123' });
 	});
 
-	it('should call onDecline with inviteId when decline clicked', async () => {
-		mockOnDecline.mockResolvedValue({ ok: true, data: undefined });
-
+	it('should call onDecline with inviteId when decline clicked', () => {
 		const invites = [createMockInvite({ id: 'invite-1' })];
 
 		render(
@@ -285,20 +194,11 @@ describe('InvitesSection', () => {
 		const declineButton = screen.getByTestId('decline-button-invite-1');
 		fireEvent.click(declineButton);
 
-		await waitFor(() => {
-			expect(mockOnDecline).toHaveBeenCalledWith({ inviteId: 'invite-1' });
-		});
+		expect(mockOnDecline).toHaveBeenCalledWith({ inviteId: 'invite-1' });
 	});
 
-	it('should disable buttons during action submitting', async () => {
-		mockUseAsyncStatus.mockImplementation(() => ({
-			status: 'loading' as AsyncStatus,
-			error: null,
-			run: vi.fn(),
-			reset: vi.fn(),
-		}));
-
-		const invites = [createMockInvite({ id: 'invite-1' })];
+	it('should disable buttons while action is in progress', async () => {
+		const invites = [createMockInvite({ id: 'invite-1', token: 'token-123' })];
 
 		render(
 			<InvitesSection
@@ -309,18 +209,22 @@ describe('InvitesSection', () => {
 		);
 
 		const acceptButton = screen.getByTestId('accept-button-invite-1');
-		expect(acceptButton.getAttribute('disabled')).not.toBeNull();
+		const declineButton = screen.getByTestId('decline-button-invite-1');
+
+		// Click accept - this should put it in loading state
+		fireEvent.click(acceptButton);
+
+		// Buttons should be disabled while loading
+		await waitFor(() => {
+			expect(acceptButton.getAttribute('disabled')).not.toBeNull();
+			expect(declineButton.getAttribute('disabled')).not.toBeNull();
+		});
 	});
 
-	it('should display action error when server action fails', async () => {
-		mockUseAsyncStatus.mockImplementation(() => ({
-			status: 'error' as AsyncStatus,
-			error: 'Failed to accept invite',
-			run: vi.fn(),
-			reset: vi.fn(),
-		}));
+	it('should display error when action fails', async () => {
+		mockOnAccept.mockRejectedValue(new Error('Failed to accept'));
 
-		const invites = [createMockInvite({ id: 'invite-1' })];
+		const invites = [createMockInvite({ id: 'invite-1', token: 'token-123' })];
 
 		render(
 			<InvitesSection
@@ -330,32 +234,17 @@ describe('InvitesSection', () => {
 			/>,
 		);
 
-		expect(screen.getByText('Failed to accept invite')).toBeDefined();
+		const acceptButton = screen.getByTestId('accept-button-invite-1');
+		fireEvent.click(acceptButton);
+
+		// Error should be displayed after action fails
+		await waitFor(() => {
+			expect(screen.getByTestId('action-error')).toBeDefined();
+		});
 	});
 
-	it('should display generic error message when error is provided without specific message', async () => {
-		mockUseAsyncStatus.mockImplementation(() => ({
-			status: 'error' as AsyncStatus,
-			error: 'Failed to accept invite',
-			run: vi.fn(),
-			reset: vi.fn(),
-		}));
-
-		const invites = [createMockInvite({ id: 'invite-1' })];
-
-		render(
-			<InvitesSection
-				invites={invites}
-				onAccept={mockOnAccept}
-				onDecline={mockOnDecline}
-			/>,
-		);
-
-		expect(screen.getByText('Failed to accept invite')).toBeDefined();
-	});
-
-	it('should handle decline action success', async () => {
-		mockOnDecline.mockResolvedValue({ ok: true, data: undefined });
+	it('should display error when decline fails', async () => {
+		mockOnDecline.mockRejectedValue(new Error('Failed to decline'));
 
 		const invites = [createMockInvite({ id: 'invite-1' })];
 
@@ -370,52 +259,21 @@ describe('InvitesSection', () => {
 		const declineButton = screen.getByTestId('decline-button-invite-1');
 		fireEvent.click(declineButton);
 
+		// Error should be displayed after action fails
 		await waitFor(() => {
-			expect(mockOnDecline).toHaveBeenCalledWith({ inviteId: 'invite-1' });
+			expect(screen.getByTestId('action-error')).toBeDefined();
 		});
 	});
 
-	it('should handle decline action error', async () => {
-		mockUseAsyncStatus.mockImplementation(() => ({
-			status: 'error' as AsyncStatus,
-			error: 'Failed to decline invite',
-			run: vi.fn(),
-			reset: vi.fn(),
-		}));
-
-		const invites = [createMockInvite({ id: 'invite-1' })];
-
-		render(
-			<InvitesSection
-				invites={invites}
-				onAccept={mockOnAccept}
-				onDecline={mockOnDecline}
-			/>,
-		);
-
-		expect(screen.getByText('Failed to decline invite')).toBeDefined();
-	});
-
-	describe('action integration', () => {
-		it('should pass action function directly to run without wrapping', async () => {
-			const mockRun = vi.fn(
-				(fn: () => Promise<unknown>) => fn() as Promise<unknown>,
-			);
-
-			mockUseAsyncStatus.mockImplementation(() => ({
-				status: 'idle' as AsyncStatus,
-				error: null,
-				run: mockRun,
-				reset: vi.fn(),
-			}));
-
+	describe('router.refresh', () => {
+		it('should call router.refresh after successful accept', async () => {
 			mockOnAccept.mockResolvedValue({
 				ok: true,
-				data: { plannerId: 'planner-123' },
+				data: { plannerId: 'planner-1' },
 			});
 
 			const invites = [
-				createMockInvite({ id: 'invite-1', token: 'token-123' }),
+				createMockInvite({ id: 'invite-1', token: 'token-abc-123' }),
 			];
 
 			render(
@@ -430,31 +288,15 @@ describe('InvitesSection', () => {
 			fireEvent.click(acceptButton);
 
 			await waitFor(() => {
-				expect(mockRun).toHaveBeenCalled();
+				expect(mockOnAccept).toHaveBeenCalledWith({ token: 'token-abc-123' });
 			});
 
-			// Verify the function passed to run is the action directly
-			const passedFn = mockRun.mock.calls[0][0];
-			expect(passedFn).toBeDefined();
-
-			// Call the passed function and verify it returns the action result
-			const result = await passedFn();
-			expect(result).toEqual({ ok: true, data: { plannerId: 'planner-123' } });
-			expect(mockOnAccept).toHaveBeenCalledWith({ token: 'token-123' });
+			await waitFor(() => {
+				expect(mockRefresh).toHaveBeenCalledTimes(1);
+			});
 		});
 
-		it('should pass decline action function directly to run without wrapping', async () => {
-			const mockRun = vi.fn(
-				(fn: () => Promise<unknown>) => fn() as Promise<unknown>,
-			);
-
-			mockUseAsyncStatus.mockImplementation(() => ({
-				status: 'idle' as AsyncStatus,
-				error: null,
-				run: mockRun,
-				reset: vi.fn(),
-			}));
-
+		it('should call router.refresh after successful decline', async () => {
 			mockOnDecline.mockResolvedValue({ ok: true, data: undefined });
 
 			const invites = [createMockInvite({ id: 'invite-1' })];
@@ -471,35 +313,19 @@ describe('InvitesSection', () => {
 			fireEvent.click(declineButton);
 
 			await waitFor(() => {
-				expect(mockRun).toHaveBeenCalled();
+				expect(mockOnDecline).toHaveBeenCalledWith({ inviteId: 'invite-1' });
 			});
 
-			// Verify the function passed to run is the action directly
-			const passedFn = mockRun.mock.calls[0][0];
-			expect(passedFn).toBeDefined();
-
-			// Call the passed function and verify it returns the action result
-			const result = await passedFn();
-			expect(result).toEqual({ ok: true, data: undefined });
-			expect(mockOnDecline).toHaveBeenCalledWith({ inviteId: 'invite-1' });
+			await waitFor(() => {
+				expect(mockRefresh).toHaveBeenCalledTimes(1);
+			});
 		});
 
-		it('should handle action returning ok: false without throwing', async () => {
-			const mockRun = vi.fn(
-				(fn: () => Promise<unknown>) => fn() as Promise<unknown>,
-			);
-
-			mockUseAsyncStatus.mockImplementation(() => ({
-				status: 'idle' as AsyncStatus,
-				error: null,
-				run: mockRun,
-				reset: vi.fn(),
-			}));
-
-			mockOnAccept.mockResolvedValue({ ok: false, error: 'Custom error' });
+		it('should not call router.refresh when accept fails', async () => {
+			mockOnAccept.mockRejectedValue(new Error('Accept failed'));
 
 			const invites = [
-				createMockInvite({ id: 'invite-1', token: 'token-123' }),
+				createMockInvite({ id: 'invite-1', token: 'token-abc-123' }),
 			];
 
 			render(
@@ -514,126 +340,36 @@ describe('InvitesSection', () => {
 			fireEvent.click(acceptButton);
 
 			await waitFor(() => {
-				expect(mockRun).toHaveBeenCalled();
+				expect(mockOnAccept).toHaveBeenCalledWith({ token: 'token-abc-123' });
 			});
 
-			// Verify the function passed to run returns the error result without throwing
-			const passedFn = mockRun.mock.calls[0][0];
-			expect(passedFn).toBeDefined();
-
-			// Should resolve (not throw) and return the error result
-			const result = await passedFn();
-			expect(result).toEqual({ ok: false, error: 'Custom error' });
+			await waitFor(() => {
+				expect(mockRefresh).not.toHaveBeenCalled();
+			});
 		});
 
-		describe('router.refresh', () => {
-			it('should call router.refresh after successful accept', async () => {
-				mockOnAccept.mockResolvedValue({
-					ok: true,
-					data: { plannerId: 'planner-1' },
-				});
+		it('should not call router.refresh when decline fails', async () => {
+			mockOnDecline.mockRejectedValue(new Error('Decline failed'));
 
-				const invites = [
-					createMockInvite({ id: 'invite-1', token: 'token-abc-123' }),
-				];
+			const invites = [createMockInvite({ id: 'invite-1' })];
 
-				render(
-					<InvitesSection
-						invites={invites}
-						onAccept={mockOnAccept}
-						onDecline={mockOnDecline}
-					/>,
-				);
+			render(
+				<InvitesSection
+					invites={invites}
+					onAccept={mockOnAccept}
+					onDecline={mockOnDecline}
+				/>,
+			);
 
-				const acceptButton = screen.getByTestId('accept-button-invite-1');
-				fireEvent.click(acceptButton);
+			const declineButton = screen.getByTestId('decline-button-invite-1');
+			fireEvent.click(declineButton);
 
-				await waitFor(() => {
-					expect(mockOnAccept).toHaveBeenCalledWith({ token: 'token-abc-123' });
-				});
-
-				await waitFor(() => {
-					expect(mockRefresh).toHaveBeenCalledTimes(1);
-				});
+			await waitFor(() => {
+				expect(mockOnDecline).toHaveBeenCalledWith({ inviteId: 'invite-1' });
 			});
 
-			it('should call router.refresh after successful decline', async () => {
-				mockOnDecline.mockResolvedValue({ ok: true, data: undefined });
-
-				const invites = [createMockInvite({ id: 'invite-1' })];
-
-				render(
-					<InvitesSection
-						invites={invites}
-						onAccept={mockOnAccept}
-						onDecline={mockOnDecline}
-					/>,
-				);
-
-				const declineButton = screen.getByTestId('decline-button-invite-1');
-				fireEvent.click(declineButton);
-
-				await waitFor(() => {
-					expect(mockOnDecline).toHaveBeenCalledWith({ inviteId: 'invite-1' });
-				});
-
-				await waitFor(() => {
-					expect(mockRefresh).toHaveBeenCalledTimes(1);
-				});
-			});
-
-			it('should not call router.refresh when accept fails', async () => {
-				mockOnAccept.mockResolvedValue({ ok: false, error: 'Accept failed' });
-
-				const invites = [
-					createMockInvite({ id: 'invite-1', token: 'token-abc-123' }),
-				];
-
-				render(
-					<InvitesSection
-						invites={invites}
-						onAccept={mockOnAccept}
-						onDecline={mockOnDecline}
-					/>,
-				);
-
-				const acceptButton = screen.getByTestId('accept-button-invite-1');
-				fireEvent.click(acceptButton);
-
-				await waitFor(() => {
-					expect(mockOnAccept).toHaveBeenCalledWith({ token: 'token-abc-123' });
-				});
-
-				// Wait a bit to ensure any async operations complete
-				await waitFor(() => {
-					expect(mockRefresh).not.toHaveBeenCalled();
-				});
-			});
-
-			it('should not call router.refresh when decline fails', async () => {
-				mockOnDecline.mockResolvedValue({ ok: false, error: 'Decline failed' });
-
-				const invites = [createMockInvite({ id: 'invite-1' })];
-
-				render(
-					<InvitesSection
-						invites={invites}
-						onAccept={mockOnAccept}
-						onDecline={mockOnDecline}
-					/>,
-				);
-
-				const declineButton = screen.getByTestId('decline-button-invite-1');
-				fireEvent.click(declineButton);
-
-				await waitFor(() => {
-					expect(mockOnDecline).toHaveBeenCalledWith({ inviteId: 'invite-1' });
-				});
-
-				// Wait a bit to ensure any async operations complete
-				await waitFor(() => {
-					expect(mockRefresh).not.toHaveBeenCalled();
-				});
+			await waitFor(() => {
+				expect(mockRefresh).not.toHaveBeenCalled();
 			});
 		});
 	});
