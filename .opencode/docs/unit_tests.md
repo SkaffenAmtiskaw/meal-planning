@@ -28,29 +28,36 @@ export const useForm = () => mockUseForm();
 
 ## What Good Mock Defaults Look Like
 
-Mocks should provide simple, predictable defaults that let tests work without boilerplate. A good default:
+Mocks are stubs, not implementations. They exist to isolate the module under test, not to recreate the behavior of dependencies.
 
-1. **Returns minimal valid data** - not complex logic or real implementation details
-2. **Represents the success path** - tests override only when testing error/edge cases
-3. **Is configurable per-test** - use `mockReturnValueOnce` for specific test needs
+A good mock:
 
-**Example of good defaults:**
+1. **Returns minimal valid data** — not complex logic or real implementation details
+2. **Represents the success path** — tests override only when testing error/edge cases
+3. **Is configurable per-test** — use `mockReturnValueOnce` for specific test needs
+4. **Is as simple as possible** — a mock component renders a static placeholder; a mock function returns a static value
+
+### Permissible Complexity
+
+State and async behavior inside a mock are allowed **only when a test in the current file explicitly needs it** to verify dynamic UI state. Examples:
+
+- A mock hook that toggles `loading` to `true` so the test can assert a spinner appears
+- A mock hook that sets `error` so the test can assert an error message renders
+
+If no test in the file asserts the state transition, **do not include it in the mock.** Never add state or async behavior "just in case."
+
+### Component Example
+
+```tsx
+// ✅ CORRECT - dumb placeholder component
+export const InviteForm = vi.fn(() => <div data-testid="invite-form" />);
+```
+
+### Utility Example
 
 ```typescript
-// In test/mocks/@/_utils/validator.ts
+// ✅ CORRECT - simple stub
 export const validateEmail = vi.fn(() => ({ success: true }));
-
-// In test file - works without setup
-vi.mock('@/_utils/validator', async () => await import('@mocks/@/_utils/validator'));
-
-// Test overrides only when testing error path:
-it('displays error for invalid email', () => {
-  vi.mocked(validateEmail).mockReturnValueOnce({
-    success: false,
-    error: 'Invalid email',
-  });
-  // ... test error handling
-});
 ```
 
 **Antipattern to avoid:**
@@ -68,11 +75,30 @@ vi.mock('@/_utils/validator', () => ({
 }));
 ```
 
+```tsx
+// ❌ WRONG - Mock recreates real component behavior
+vi.mock('./InviteForm', () => ({
+  InviteForm: ({ status, error, onInvite }: InviteFormProps) => {
+    const [email, setEmail] = useState('');
+    return (
+      <div>
+        {status === 'error' && <div data-testid="error">{error}</div>}
+        <input value={email} onChange={(e) => setEmail(e.target.value)} />
+        <button onClick={() => onInvite(email)}>Invite</button>
+      </div>
+    );
+  },
+}));
+```
+
+If you find yourself writing more than a few lines inside a mock, you are recreating the real module. Stop. Reduce it to a static stub. The test that needs the real behavior belongs in the dependency's own test file, not in the consumer's test file.
+
 **Why this matters:**
 - Tests should verify behavior, not implementation details
-- Mocks with real logic couple tests to code internals
+- Mocks with real logic couple tests to code internals and silently drift when the real code changes
 - Simple defaults are easier to understand and maintain
 - Explicit overrides in tests make intent clear
+- Complex mocks hide what the test is actually verifying
 
 **Guideline:** The default mock implementations should work for the majority of tests. If you find yourself overriding the same mock behavior repeatedly across multiple test files, the default mock implementation probably needs to be improved rather than forcing every test to override it.
 
@@ -145,6 +171,82 @@ export const useAsyncStatus = vi.fn(() => {
 - Tests dynamic UI states (loading spinners, error messages) without manually mocking hook state
 - State changes trigger React re-renders automatically
 - More realistic component behavior
+
+## Testing Access Level Conditional Behavior
+
+When a component renders different UI based on user access levels, use `it.byAccessLevels` from `@test` to run the same test for all access levels in a single declaration.
+
+### Usage
+
+```tsx
+import { it } from '@test';
+
+it.byAccessLevels('shows member list for admins and owners', ({ accessLevel, expect }) => {
+    render(<PlannerItem id={id} name={name} accessLevel={accessLevel} />);
+
+    const memberList = screen.queryByTestId('member-list');
+
+    expect(memberList).atMinLevel('admin').toBeTruthy();
+});
+```
+
+This generates four tests:
+- `shows member list for admins and owners - read`
+- `shows member list for admins and owners - write`
+- `shows member list for admins and owners - admin` ✅
+- `shows member list for admins and owners - owner` ✅
+
+### Assertion Modifiers
+
+The custom `expect` injected by `it.byAccessLevels` provides three level-aware modifiers:
+
+| Modifier | Behavior |
+|----------|----------|
+| `.onlyAtLevel('admin')` | Passes only when `accessLevel === 'admin'` |
+| `.atMinLevel('admin')` | Passes when `accessLevel >= admin` (admin, owner) |
+| `.atMaxLevel('write')` | Passes when `accessLevel <= write` (read, write) |
+
+**Access level order:** `read < write < admin < owner`
+
+### Examples
+
+**Show element only for owners:**
+```tsx
+expect(button).onlyAtLevel('owner').toBeDefined();
+```
+
+**Show element for admins and owners:**
+```tsx
+expect(memberList).atMinLevel('admin').toBeTruthy();
+```
+
+**Show element for read and write only:**
+```tsx
+expect(infoText).atMaxLevel('write').toBeTruthy();
+```
+
+### Negation Caution
+
+**Do not use negation with level modifiers.** When a modifier returns `.not`, chaining `.not` again produces a double-negative that does not resolve back to the original assertion.
+
+```tsx
+// ❌ WRONG - .onlyAtLevel returns .not at other levels, then .not flips it again
+expect(button).onlyAtLevel('owner').not.toBeDefined();
+
+// ✅ CORRECT - test the positive presence instead
+expect(button).onlyAtLevel('owner').toBeDefined();
+```
+
+Test the positive presence of elements rather than their absence. If you need to assert something is hidden at certain levels, structure the test so the element is present and you assert against that.
+
+### When NOT to use
+
+Do not use `it.byAccessLevels` for behavior that is the same across all access levels. Use regular `it()` for:
+- Testing interactions (clicks, form submissions)
+- Testing state transitions
+- Testing hook integration
+
+Only use `it.byAccessLevels` when the assertion varies by access level.
 
 ## Testing Loading States
 

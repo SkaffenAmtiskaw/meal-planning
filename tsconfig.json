@@ -24,6 +24,9 @@
       ],
       "@mocks/*": [
         "./test/mocks/*"
+      ],
+      "@test": [
+        "./test/index.ts"
       ]
     },
     "plugins": [

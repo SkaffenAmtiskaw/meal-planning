@@ -17,13 +17,7 @@ vi.mock('next/navigation', () => ({
 	}),
 }));
 
-vi.mock('@mantine/core', async () => {
-	const actual = await import('@mocks/@mantine/core');
-	return {
-		...actual,
-		Loader: () => <span data-testid="loader">Loading...</span>,
-	};
-});
+vi.mock('@mantine/core', async () => await import('@mocks/@mantine/core'));
 
 vi.mock('@tabler/icons-react', () => ({
 	IconCheck: () => <span data-testid="icon-check">Check</span>,

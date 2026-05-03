@@ -5,7 +5,6 @@ import { useRouter } from 'next/navigation';
 import {
 	Accordion,
 	Alert,
-	Badge,
 	Button,
 	Center,
 	Divider,
@@ -25,7 +24,6 @@ import { PendingInvitesList } from './PendingInvitesList';
 import { useRenamePlanner } from './useRenamePlanner';
 
 import { useInvites } from '../_hooks/useInvites';
-import { getAccessLevelColor } from '../_utils/getAccessLevelColor';
 
 type Props = {
 	id: string;
@@ -75,15 +73,6 @@ export const PlannerItem = ({ id, name, accessLevel }: Props) => {
 				<Accordion.Control>
 					<Group justify="space-between">
 						<span>{name}</span>
-						{accessLevel !== 'owner' && (
-							<Badge
-								data-testid="access-level-badge"
-								size="sm"
-								color={getAccessLevelColor(accessLevel)}
-							>
-								{accessLevel}
-							</Badge>
-						)}
 					</Group>
 				</Accordion.Control>
 				<Accordion.Panel>
@@ -171,7 +160,7 @@ export const PlannerItem = ({ id, name, accessLevel }: Props) => {
 						) : (
 							// Read/Write view
 							<Stack>
-								<Text size="sm" c="dimmed">
+								<Text data-testid="access-level-info" size="sm" c="dimmed">
 									You have {accessLevel} access to this planner
 								</Text>
 							</Stack>

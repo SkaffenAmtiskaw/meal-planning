@@ -93,3 +93,16 @@ src/_types/
 
 # Better Route Management
 - Emails create paths & query params that the application should correctly consume - but nothing keeps them in sync
+
+# Switching Testing Library
+- switch to vitest-browser-react
+
+# InviteSettings.tsx
+- If the user is undefined - shouldn't it not render anything? (Shouldn't the user always be defined? It's in settings.)
+
+# Global Domain-Specific Components/Utils
+- components and utils that have domain knowledge but are still used throughout the app should be moved to `src/app/_components`/`src/app/_utils` and an alias should be created for them - the project conventions should be updated to clearly spell out what sort of content goes in each of them
+- access colors, etc.
+
+# InviteForm.tsx
+- using email regex rather than zod type check

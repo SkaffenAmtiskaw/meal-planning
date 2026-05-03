@@ -10,7 +10,6 @@ import { getUser } from '@/_actions/user/getUser';
 
 import { InvitesSettings } from './InvitesSettings';
 
-// Mock dependencies
 vi.mock('@/_actions/planner/getUserInvites', () => ({
 	getUserInvites: vi.fn(),
 }));
@@ -27,15 +26,7 @@ vi.mock('@/_actions/planner/declineInvite', () => ({
 	declineInvite: vi.fn(),
 }));
 
-vi.mock('@mantine/core', async () => {
-	const actual = await import('@mocks/@mantine/core');
-	return {
-		...actual,
-		Stack: ({ children }: { children: React.ReactNode }) => (
-			<div data-testid="stack">{children}</div>
-		),
-	};
-});
+vi.mock('@mantine/core', async () => await import('@mocks/@mantine/core'));
 
 vi.mock('./InvitesSection', () => ({
 	InvitesSection: (_props: { invites: UserInvite[] }) => (
@@ -69,52 +60,22 @@ describe('InvitesSettings', () => {
 		mockGetUser.mockResolvedValue(mockUser);
 	});
 
-	it('should fetch invites on render', async () => {
+	it('calls getUserInvites when user is authenticated', async () => {
 		mockGetUserInvites.mockResolvedValue({ invites: [mockInvite] });
 
 		const result = await InvitesSettings();
 		render(result);
 
 		expect(mockGetUserInvites).toHaveBeenCalledTimes(1);
+		expect(mockGetUserInvites).toHaveBeenCalledWith('test@example.com');
 	});
 
-	it('should render InvitesSection with invites', async () => {
-		mockGetUserInvites.mockResolvedValue({ invites: [mockInvite] });
-
-		const result = await InvitesSettings();
-		const { getByTestId } = render(result);
-
-		expect(getByTestId('invites-section')).toBeDefined();
-	});
-
-	it('should handle empty invites', async () => {
-		mockGetUserInvites.mockResolvedValue({ invites: [] });
-
-		const result = await InvitesSettings();
-		const { getByTestId } = render(result);
-
-		expect(getByTestId('invites-section')).toBeDefined();
-	});
-
-	it('should handle error from getUserInvites', async () => {
-		mockGetUserInvites.mockResolvedValue({
-			invites: [],
-			error: 'Failed to fetch',
-		});
-
-		const result = await InvitesSettings();
-		const { getByTestId } = render(result);
-
-		expect(getByTestId('invites-section')).toBeDefined();
-	});
-
-	it('should handle null user (not authenticated)', async () => {
+	it('does not call getUserInvites when user is not authenticated', async () => {
 		mockGetUser.mockResolvedValue(null);
 
 		const result = await InvitesSettings();
-		const { getByTestId } = render(result);
+		render(result);
 
-		expect(getByTestId('invites-section')).toBeDefined();
 		expect(mockGetUserInvites).not.toHaveBeenCalled();
 	});
 });

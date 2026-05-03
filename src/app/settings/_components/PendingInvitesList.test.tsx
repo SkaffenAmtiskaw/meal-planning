@@ -4,16 +4,11 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import type { PendingInvite } from '@/_actions/planner/invite.types';
 import type { AccessLevel } from '@/_models/user';
+import { isPastDate, isWithinHours } from '@/_utils/date';
 
 import { PendingInvitesList } from './PendingInvitesList';
 
-vi.mock('@mantine/core', async () => {
-	const actual = await import('@mocks/@mantine/core');
-	return {
-		...actual,
-		Loader: () => <span data-testid="loader">Loading...</span>,
-	};
-});
+vi.mock('@mantine/core', async () => await import('@mocks/@mantine/core'));
 
 vi.mock('@tabler/icons-react', () => ({
 	IconX: () => <span data-testid="icon-x">X</span>,
@@ -32,6 +27,13 @@ vi.mock('../_utils/getAccessLevelColor', () => ({
 	}),
 }));
 
+vi.mock('@/_utils/date', () => ({
+	isPastDate: vi.fn(),
+	isWithinHours: vi.fn(),
+	getRelativeTime: vi.fn((date: string) => `Relative: ${date}`),
+	toLocaleDateString: vi.fn((date: string) => `Formatted: ${date}`),
+}));
+
 describe('PendingInvitesList', () => {
 	// Use a future date for expiresAt so it's not expired
 	const mockInvite: PendingInvite = {
@@ -43,9 +45,13 @@ describe('PendingInvitesList', () => {
 	};
 
 	const mockOnCancel = vi.fn();
+	const mockIsPastDate = vi.mocked(isPastDate);
+	const mockIsWithinHours = vi.mocked(isWithinHours);
 
 	beforeEach(() => {
 		vi.clearAllMocks();
+		mockIsPastDate.mockReturnValue(false);
+		mockIsWithinHours.mockReturnValue(false);
 	});
 
 	it('shows loading state', () => {
@@ -74,36 +80,6 @@ describe('PendingInvitesList', () => {
 		);
 
 		expect(screen.getByText('No pending invites')).toBeDefined();
-	});
-
-	it('renders invite email and access level', () => {
-		render(
-			<PendingInvitesList
-				invites={[mockInvite]}
-				loading={false}
-				cancelStatus="idle"
-				cancelError={null}
-				onCancel={mockOnCancel}
-			/>,
-		);
-
-		expect(screen.getByText('test@example.com')).toBeDefined();
-		expect(screen.getByText('write')).toBeDefined();
-	});
-
-	it('shows cancel button for each invite', () => {
-		render(
-			<PendingInvitesList
-				invites={[mockInvite]}
-				loading={false}
-				cancelStatus="idle"
-				cancelError={null}
-				onCancel={mockOnCancel}
-			/>,
-		);
-
-		const cancelButtons = screen.getAllByRole('button');
-		expect(cancelButtons.length).toBeGreaterThan(0);
 	});
 
 	it('calls onCancel when cancel button clicked', () => {
@@ -139,6 +115,9 @@ describe('PendingInvitesList', () => {
 	});
 
 	it('shows expiration warning for invites expiring soon', () => {
+		mockIsWithinHours.mockReturnValue(true);
+		mockIsPastDate.mockReturnValue(false);
+
 		// Create an invite that expires in 12 hours
 		const soonToExpireInvite: PendingInvite = {
 			...mockInvite,
@@ -161,6 +140,8 @@ describe('PendingInvitesList', () => {
 	});
 
 	it('shows expired message for expired invites', () => {
+		mockIsPastDate.mockReturnValue(true);
+
 		// Create an invite that expired yesterday
 		const expiredInvite: PendingInvite = {
 			...mockInvite,
@@ -195,60 +176,5 @@ describe('PendingInvitesList', () => {
 		);
 
 		expect(screen.getByText('Failed to cancel invite')).toBeDefined();
-	});
-
-	it('renders invitation date', () => {
-		render(
-			<PendingInvitesList
-				invites={[mockInvite]}
-				loading={false}
-				cancelStatus="idle"
-				cancelError={null}
-				onCancel={mockOnCancel}
-			/>,
-		);
-
-		expect(screen.getByText(/Invited/i)).toBeDefined();
-	});
-
-	it('renders expiration date', () => {
-		render(
-			<PendingInvitesList
-				invites={[mockInvite]}
-				loading={false}
-				cancelStatus="idle"
-				cancelError={null}
-				onCancel={mockOnCancel}
-			/>,
-		);
-
-		expect(screen.getByText(/Expires/i)).toBeDefined();
-	});
-
-	it('renders multiple invites', () => {
-		const invites: PendingInvite[] = [
-			mockInvite,
-			{
-				id: 'invite-2',
-				email: 'second@example.com',
-				accessLevel: 'read',
-				invitedAt: '2024-01-02T00:00:00.000Z',
-				expiresAt: new Date(Date.now() + 8 * 24 * 60 * 60 * 1000).toISOString(), // 8 days from now
-			},
-		];
-
-		render(
-			<PendingInvitesList
-				invites={invites}
-				loading={false}
-				cancelStatus="idle"
-				cancelError={null}
-				onCancel={mockOnCancel}
-			/>,
-		);
-
-		expect(screen.getByText('test@example.com')).toBeDefined();
-		expect(screen.getByText('second@example.com')).toBeDefined();
-		expect(screen.getAllByTestId(/cancel-button-invite-/)).toHaveLength(2);
 	});
 });

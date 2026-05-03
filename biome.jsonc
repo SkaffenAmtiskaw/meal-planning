@@ -1,6 +1,6 @@
 {
 	"files": {
-		"includes": ["src/**/*"]
+		"includes": ["src/**/*", "test/**/*"]
 	},
 	"linter": {
 		"enabled": true,
@@ -19,6 +19,17 @@
 		}
 	},
 	"overrides": [
+		{
+			"includes": ["test/**/*"],
+			"linter": {
+				"rules": {
+					"a11y": "off",
+					"performance": {
+						"noImgElement": "off"
+					}
+				}
+			}
+		},
 		{
 			"includes": ["**/*.module.css"],
 			"linter": {

@@ -8,8 +8,9 @@
  * `vi.mocked(useFormFeedback).mockReturnValueOnce(...)` etc. to override for a single test.
  */
 
-import { vi } from 'vitest';
 import { useState } from 'react';
+
+import { vi } from 'vitest';
 
 type FeedbackStatus = 'idle' | 'submitting' | 'success' | 'error';
 
@@ -19,7 +20,9 @@ export const useFormFeedback = vi.fn(() => ({
 	errorMessage: undefined as string | undefined,
 	wrap:
 		<TArgs extends unknown[], TData>(
-			fn: (...args: TArgs) => Promise<{ ok: boolean; data?: TData; error?: string }>,
+			fn: (
+				...args: TArgs
+			) => Promise<{ ok: boolean; data?: TData; error?: string }>,
 			onSuccess?: (data: TData) => void,
 		) =>
 		async (...args: TArgs): Promise<void> => {
@@ -32,7 +35,9 @@ export const useFormFeedback = vi.fn(() => ({
 }));
 
 export const useAsyncStatus = vi.fn(() => {
-	const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
+	const [status, setStatus] = useState<
+		'idle' | 'loading' | 'success' | 'error'
+	>('idle');
 	const [error, setError] = useState<string | null>(null);
 
 	const run = async (fn: () => Promise<unknown>) => {
