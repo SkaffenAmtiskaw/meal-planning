@@ -20,7 +20,7 @@
 	},
 	"overrides": [
 		{
-			"includes": ["test/**/*"],
+			"includes": ["test/**/*", "**/*/*.test.ts*"],
 			"linter": {
 				"rules": {
 					"a11y": "off",

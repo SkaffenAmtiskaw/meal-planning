@@ -53,9 +53,9 @@ vi.mock('@/_components', () => ({
 				<div data-testid="confirm-button-title">{title}</div>
 				<div data-testid="confirm-button-message">{message}</div>
 				<div data-testid="confirm-button-text">{confirmButtonText}</div>
-				<button type="button" onClick={handleClick} onKeyDown={handleClick}>
+				<div onClick={handleClick} onKeyDown={handleClick}>
 					{renderTrigger(() => {})}
-				</button>
+				</div>
 			</div>
 		);
 	},

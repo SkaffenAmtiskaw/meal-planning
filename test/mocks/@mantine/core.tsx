@@ -416,6 +416,37 @@ export const Button = vi.fn(
 		disabled,
 		loading,
 		'data-testid': testId,
+		leftSection,
+		rightSection,
+		fullWidth,
+		variant,
+		size,
+		color,
+		className,
+		style,
+		w,
+		component,
+		radius,
+		visibleFrom,
+		hiddenFrom,
+		flex,
+		mt,
+		mb,
+		ml,
+		mr,
+		mx,
+		my,
+		m,
+		p,
+		px,
+		py,
+		pt,
+		pb,
+		pl,
+		pr,
+		justify,
+		align,
+		gap,
 		...props
 	}: {
 		children?: React.ReactNode;
@@ -424,6 +455,37 @@ export const Button = vi.fn(
 		disabled?: boolean;
 		loading?: boolean;
 		'data-testid'?: string;
+		leftSection?: React.ReactNode;
+		rightSection?: React.ReactNode;
+		fullWidth?: boolean;
+		variant?: string;
+		size?: string;
+		color?: string;
+		className?: string;
+		style?: React.CSSProperties;
+		w?: number | string;
+		component?: unknown;
+		radius?: string | number;
+		visibleFrom?: string;
+		hiddenFrom?: string;
+		flex?: number | string;
+		mt?: number | string;
+		mb?: number | string;
+		ml?: number | string;
+		mr?: number | string;
+		mx?: number | string;
+		my?: number | string;
+		m?: number | string;
+		p?: number | string;
+		px?: number | string;
+		py?: number | string;
+		pt?: number | string;
+		pb?: number | string;
+		pl?: number | string;
+		pr?: number | string;
+		justify?: string;
+		align?: string;
+		gap?: number | string;
 		[key: string]: unknown;
 	}) => (
 		<button
@@ -698,6 +760,8 @@ export const NavLink = vi.fn(
 		href,
 		active,
 		rightSection,
+		leftSection,
+		component,
 		classNames,
 		'data-testid': testId,
 		...props
@@ -706,6 +770,8 @@ export const NavLink = vi.fn(
 		href?: string;
 		active?: boolean;
 		rightSection?: React.ReactNode;
+		leftSection?: React.ReactNode;
+		component?: unknown;
 		classNames?: Record<string, string>;
 		'data-testid'?: string;
 		[key: string]: unknown;
@@ -915,14 +981,10 @@ export const PillsInput = Object.assign(
 			onClick?: () => void;
 			'data-testid'?: string;
 		}) => (
-			<button
-				type="button"
-				data-testid={testId ?? 'pills-input'}
-				onClick={onClick}
-			>
+			<div data-testid={testId ?? 'pills-input'} onClick={onClick}>
 				{label && <span>{label}</span>}
 				{children}
-			</button>
+			</div>
 		),
 	),
 	{ Field: PillsInputField },

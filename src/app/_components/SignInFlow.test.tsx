@@ -34,7 +34,7 @@ vi.mock('./AuthLayout', () => ({
 			</button>
 		</div>
 	)),
-	AuthLayoutSubmitButton: vi.fn(({ children, ...props }) => (
+	AuthLayoutSubmitButton: vi.fn(({ children, loading, ...props }) => (
 		<button type="button" data-testid={props['data-testid']} {...props}>
 			{children}
 		</button>
