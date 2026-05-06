@@ -1,3 +1,4 @@
+import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
 
 import { render, screen } from '@testing-library/react';
@@ -6,10 +7,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import Layout from './layout';
 
-const mockCookiesGet = vi.hoisted(() => vi.fn());
-vi.mock('next/headers', () => ({
-	cookies: vi.fn().mockResolvedValue({ get: mockCookiesGet }),
-}));
+vi.mock('next/headers', async () => await import('@mocks/next/headers'));
 
 const mockGetUser = vi.fn();
 vi.mock('@/_actions', () => ({
@@ -70,7 +68,6 @@ describe('settings layout', () => {
 		mockGetUser.mockResolvedValue({
 			planners: [{ planner: plannerId, accessLevel: 'owner' }],
 		});
-		mockCookiesGet.mockReturnValue(undefined);
 
 		render(await Layout({ children: null }));
 
@@ -86,7 +83,9 @@ describe('settings layout', () => {
 				{ planner: otherPlannerId, accessLevel: 'owner' },
 			],
 		});
-		mockCookiesGet.mockReturnValue({ value: otherPlannerId });
+		vi.mocked(cookies).mockResolvedValueOnce({
+			get: vi.fn().mockReturnValue({ value: otherPlannerId }),
+		} as never);
 
 		render(await Layout({ children: null }));
 
@@ -100,7 +99,9 @@ describe('settings layout', () => {
 		mockGetUser.mockResolvedValue({
 			planners: [{ planner: plannerId, accessLevel: 'owner' }],
 		});
-		mockCookiesGet.mockReturnValue({ value: foreignPlannerId });
+		vi.mocked(cookies).mockResolvedValueOnce({
+			get: vi.fn().mockReturnValue({ value: foreignPlannerId }),
+		} as never);
 
 		render(await Layout({ children: null }));
 

@@ -5,9 +5,7 @@ import { User } from '@/_models';
 
 import { getUser } from './getUser';
 
-vi.mock('next/headers', () => ({
-	headers: vi.fn().mockResolvedValue({}),
-}));
+vi.mock('next/headers', async () => await import('@mocks/next/headers'));
 
 vi.mock('@/_auth', () => ({
 	auth: {

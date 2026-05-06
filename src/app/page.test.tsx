@@ -1,3 +1,4 @@
+import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
 
 import { render, screen } from '@testing-library/react';
@@ -10,12 +11,7 @@ import { User, zObjectId } from '@/_models';
 
 import Page from './page';
 
-const mockCookiesGet = vi.hoisted(() => vi.fn());
-vi.mock('next/headers', () => ({
-	headers: vi.fn().mockResolvedValue({}),
-	cookies: vi.fn().mockResolvedValue({ get: mockCookiesGet }),
-}));
-
+vi.mock('next/headers', async () => await import('@mocks/next/headers'));
 vi.mock('next/navigation', async () => await import('@mocks/next/navigation'));
 
 const { mockSession, plannerId, membership } = vi.hoisted(() => {
@@ -74,7 +70,9 @@ describe('page', () => {
 	});
 
 	test('redirects to first planner when no last-opened cookie', async () => {
-		mockCookiesGet.mockReturnValue(undefined);
+		vi.mocked(cookies).mockResolvedValueOnce({
+			get: vi.fn(),
+		} as never);
 
 		await Page({ searchParams: Promise.resolve({}) });
 
@@ -91,7 +89,9 @@ describe('page', () => {
 				],
 			}),
 		} as never);
-		mockCookiesGet.mockReturnValue({ value: lastPlannerId });
+		vi.mocked(cookies).mockResolvedValueOnce({
+			get: vi.fn().mockReturnValueOnce({ value: lastPlannerId }),
+		} as never);
 		vi.mocked(zObjectId.safeParse).mockReturnValueOnce({
 			success: true,
 		} as never);
@@ -105,7 +105,9 @@ describe('page', () => {
 
 	test('falls back to first planner when cookie planner is not in user planners', async () => {
 		const foreignPlannerId = '507f1f77bcf86cd799439099';
-		mockCookiesGet.mockReturnValue({ value: foreignPlannerId });
+		vi.mocked(cookies).mockResolvedValueOnce({
+			get: vi.fn().mockReturnValueOnce({ value: foreignPlannerId }),
+		} as never);
 		vi.mocked(zObjectId.safeParse).mockReturnValueOnce({
 			success: true,
 		} as never);

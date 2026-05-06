@@ -35,9 +35,12 @@ We will go through mocks one by one and update the following:
 - Cleanup work:
 	- `transformRecipeForm` utility created with 100% coverage
 	- Related actions (`addRecipe.ts`, `editRecipe.ts`) updated to use transformation
-## ⏳ `@mantine/hooks` - NOT STARTED
+## ✅ `@mantine/hooks` - COMPLETE
 
-## ⏳ `next/headers` - NOT STARTED
+## 🚧 `next/headers` - PARTIAL
+- ✅ centralized mock in `test/mocks` has been created
+- ❌ consuming tests not updated - will be addressed later
+
 ## ✅ `next/navigation` - COMPLETE
 - ✅ centralized mock in `test/mocks` has been created
 - ✅ consuming test files updated to use centralized mock

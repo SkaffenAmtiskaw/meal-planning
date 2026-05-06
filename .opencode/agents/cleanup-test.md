@@ -8,9 +8,10 @@ permission:
    edit:
       "*": deny
       "src/**/*.test.ts*": allow
-steps: 5
 ---
-Clean up the $ARGUMENTS test file to align with project unit test standards.
+Your job is to clean up the test file passed to you to align with project unit test standards.
+
+You should ONLY change the test file in your prompt.
 
 1. **Review the module being tested and make sure tests align.**
     - Unit test files should be colocated with the module they are testing. If you are unable to find the module being tested in the same directory as $ARGUMENTS this is an indicator of a larger problem in the project; STOP immediately and report the problem.
