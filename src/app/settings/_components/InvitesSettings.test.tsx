@@ -2,28 +2,19 @@ import { render } from '@testing-library/react';
 
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-import {
-	getUserInvites,
-	type UserInvite,
-} from '@/_actions/planner/getUserInvites';
-import { getUser } from '@/_actions/user/getUser';
+import { getUserInvites, type UserInvite } from '@/_actions/sharing';
+import { getUser } from '@/_actions/user';
 
 import { InvitesSettings } from './InvitesSettings';
 
-vi.mock('@/_actions/planner/getUserInvites', () => ({
+vi.mock('@/_actions/sharing', () => ({
 	getUserInvites: vi.fn(),
-}));
-
-vi.mock('@/_actions/user/getUser', () => ({
-	getUser: vi.fn(),
-}));
-
-vi.mock('@/_actions/planner/acceptInvite', () => ({
 	acceptInvite: vi.fn(),
+	declineInvite: vi.fn(),
 }));
 
-vi.mock('@/_actions/planner/declineInvite', () => ({
-	declineInvite: vi.fn(),
+vi.mock('@/_actions/user', () => ({
+	getUser: vi.fn(),
 }));
 
 vi.mock('@mantine/core', async () => await import('@mocks/@mantine/core'));

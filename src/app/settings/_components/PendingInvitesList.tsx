@@ -11,7 +11,7 @@ import {
 } from '@mantine/core';
 import { IconClock, IconX } from '@tabler/icons-react';
 
-import type { PendingInvite } from '@/_actions/planner/invite.types';
+import type { PendingInvite } from '@/_actions/sharing';
 import { isPastDate, isWithinHours, toLocaleDateString } from '@/_utils/date';
 
 import { getAccessLevelColor } from '../_utils/getAccessLevelColor';

@@ -10,7 +10,7 @@ import Layout from './layout';
 vi.mock('next/headers', async () => await import('@mocks/next/headers'));
 
 const mockGetUser = vi.fn();
-vi.mock('@/_actions', () => ({
+vi.mock('@/_actions/user', () => ({
 	getUser: (...args: unknown[]) => mockGetUser(...args),
 }));
 

@@ -4,7 +4,7 @@ import { Container } from '@mantine/core';
 
 import { z } from 'zod';
 
-import { getPlanner } from '@/_actions';
+import { getPlanner } from '@/_actions/planner';
 import { matchesId, zObjectId } from '@/_models';
 import type { BookmarkInterface } from '@/_models/planner/bookmark.types';
 import type { RecipeInterface } from '@/_models/planner/recipe.types';

@@ -4,7 +4,7 @@ import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-import type { PlannerMember } from '@/_actions/planner/getPlannerMembers.types';
+import type { PlannerMember } from '@/_actions/sharing';
 
 import { MemberListContainer } from './MemberListContainer';
 
@@ -46,11 +46,8 @@ vi.mock('@tabler/icons-react', () => ({
 const mockUpdateMemberAccess = vi.fn();
 const mockRemoveMember = vi.fn();
 
-vi.mock('@/_actions/planner/updateMemberAccess', () => ({
+vi.mock('@/_actions/sharing', () => ({
 	updateMemberAccess: (...args: unknown[]) => mockUpdateMemberAccess(...args),
-}));
-
-vi.mock('@/_actions/planner/removeMember', () => ({
 	removeMember: (...args: unknown[]) => mockRemoveMember(...args),
 }));
 

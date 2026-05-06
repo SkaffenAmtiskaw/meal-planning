@@ -2,22 +2,22 @@ import { render, screen } from '@testing-library/react';
 
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-import type { GetUserInvitesResult } from '@/_actions/planner/getUserInvites';
+import type { GetUserInvitesResult } from '@/_actions/sharing';
 import type { AccessLevel } from '@/_models/user';
 import { THEME_COLORS } from '@/_theme/colors';
 
 // Mock dependencies
 vi.mock('@mantine/core', async () => await import('@mocks/@mantine/core'));
-vi.mock('@/_actions/planner/getUserInvites', () => ({
+vi.mock('@/_actions/sharing', () => ({
 	getUserInvites: vi.fn(),
 }));
-vi.mock('@/_actions/user/getUser', () => ({
+vi.mock('@/_actions/user', () => ({
 	getUser: vi.fn(),
 }));
 
 // Import mocked actions
-import { getUserInvites } from '@/_actions/planner/getUserInvites';
-import { getUser } from '@/_actions/user/getUser';
+import { getUserInvites } from '@/_actions/sharing';
+import { getUser } from '@/_actions/user';
 
 // Import component after mocks
 import { InviteBadge, InviteBadgeWithData } from './InviteBadge';

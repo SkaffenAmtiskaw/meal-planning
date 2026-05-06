@@ -6,7 +6,7 @@ import { afterEach, describe, expect, test, vi } from 'vitest';
 import { Modal } from './Modal';
 
 const mockGetSavedItem = vi.fn();
-vi.mock('@/_actions', () => ({
+vi.mock('@/_actions/library', () => ({
 	getSavedItem: (...args: unknown[]) => mockGetSavedItem(...args),
 }));
 

@@ -6,7 +6,7 @@ import { useState } from 'react';
 import { ActionIcon, Group, Stack, Text, Textarea } from '@mantine/core';
 import { IconCheck, IconPencil, IconX } from '@tabler/icons-react';
 
-import { updateRecipeNotes } from '@/_actions/saved';
+import { updateRecipeNotes } from '@/_actions/library';
 import { useEditMode } from '@/_hooks/useEditMode';
 import { catchify } from '@/_utils/catchify';
 

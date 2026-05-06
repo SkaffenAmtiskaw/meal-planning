@@ -2,10 +2,12 @@
 
 import { useCallback, useEffect, useState } from 'react';
 
-import { cancelInvite } from '@/_actions/planner/cancelInvite';
-import { getPendingInvites } from '@/_actions/planner/getPendingInvites';
-import type { PendingInvite } from '@/_actions/planner/invite.types';
-import { inviteUser } from '@/_actions/planner/inviteUser';
+import type { PendingInvite } from '@/_actions/sharing';
+import {
+	cancelInvite,
+	getPendingInvites,
+	inviteUser,
+} from '@/_actions/sharing';
 import type { AccessLevel } from '@/_models/user';
 
 type InviteStatus = 'idle' | 'loading' | 'success' | 'error';

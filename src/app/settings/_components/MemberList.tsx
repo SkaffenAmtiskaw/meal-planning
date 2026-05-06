@@ -2,7 +2,7 @@
 
 import { Alert, Grid, Group, Stack, Text } from '@mantine/core';
 
-import type { PlannerMember } from '@/_actions/planner/getPlannerMembers.types';
+import type { PlannerMember } from '@/_actions/sharing';
 
 import { AccessLevelBadge } from './AccessLevelBadge';
 import { MemberActions } from './MemberActions';

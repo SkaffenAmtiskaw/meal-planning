@@ -1,7 +1,7 @@
 import { cookies, headers } from 'next/headers';
 import { redirect } from 'next/navigation';
 
-import { addUser } from '@/_actions';
+import { addUser } from '@/_actions/user';
 import { auth } from '@/_auth';
 import { User, zObjectId } from '@/_models';
 

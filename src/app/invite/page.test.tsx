@@ -2,7 +2,7 @@ import { render, screen } from '@testing-library/react';
 
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-import type { ValidateInviteTokenResult } from '@/_actions/planner/validateInviteToken';
+import type { ValidateInviteTokenResult } from '@/_actions/sharing';
 
 import Page from './page';
 
@@ -10,7 +10,7 @@ import Page from './page';
 vi.mock('@mantine/core', async () => await import('@mocks/@mantine/core'));
 
 // Mock the server action
-vi.mock('@/_actions/planner/validateInviteToken', () => ({
+vi.mock('@/_actions/sharing', () => ({
 	validateInviteToken: vi.fn(),
 }));
 
@@ -66,7 +66,7 @@ vi.mock('@/_components', async () => {
 	};
 });
 
-import { validateInviteToken } from '@/_actions/planner/validateInviteToken';
+import { validateInviteToken } from '@/_actions/sharing';
 
 const mockValidateInviteToken = validateInviteToken as ReturnType<typeof vi.fn>;
 

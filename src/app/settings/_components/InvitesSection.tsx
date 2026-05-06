@@ -5,8 +5,7 @@ import { useRouter } from 'next/navigation';
 import { Alert, Badge, Button, Grid, Group, Stack, Text } from '@mantine/core';
 import { IconCheck, IconClock, IconX } from '@tabler/icons-react';
 
-import type { AcceptInviteResult } from '@/_actions/planner/acceptInvite';
-import type { UserInvite } from '@/_actions/planner/getUserInvites';
+import type { AcceptInviteResult, UserInvite } from '@/_actions/sharing';
 import { useAsyncStatus } from '@/_hooks';
 import type { ActionResult } from '@/_utils/actionResult/ActionResult';
 import { isPastDate, isWithinHours, toLocaleDateString } from '@/_utils/date';

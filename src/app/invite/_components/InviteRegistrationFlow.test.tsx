@@ -30,7 +30,7 @@ const mockPush = vi.fn();
 
 // Mock signUpWithInvite action with default implementation
 const mockSignUpWithInvite = vi.fn();
-vi.mock('@/_actions/planner/signUpWithInvite', () => ({
+vi.mock('@/_actions/sharing', () => ({
 	signUpWithInvite: (...args: Parameters<typeof mockSignUpWithInvite>) =>
 		mockSignUpWithInvite(...args),
 }));

@@ -15,7 +15,7 @@ import {
 	Title,
 } from '@mantine/core';
 
-import { deleteRecipe } from '@/_actions/saved';
+import { deleteRecipe } from '@/_actions/library';
 import { ConfirmButton } from '@/_components';
 import type { RecipeInterface } from '@/_models/planner/recipe.types';
 import type { TagInterface } from '@/_models/planner/tag.types';

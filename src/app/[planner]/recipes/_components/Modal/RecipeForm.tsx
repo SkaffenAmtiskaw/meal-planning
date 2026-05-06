@@ -17,8 +17,7 @@ import { schemaResolver, useForm } from '@mantine/form';
 
 import { z } from 'zod';
 
-import { addRecipe } from '@/_actions/saved/addRecipe';
-import { editRecipe } from '@/_actions/saved/editRecipe';
+import { addRecipe, editRecipe } from '@/_actions/library';
 import type { TagOption } from '@/_components';
 import {
 	FormFeedbackAlert,

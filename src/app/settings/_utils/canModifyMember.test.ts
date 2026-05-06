@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import type { PlannerMember } from '@/_actions/planner/getPlannerMembers.types';
+import type { PlannerMember } from '@/_actions/sharing';
 
 import { type CanModifyMemberParams, canModifyMember } from './canModifyMember';
 

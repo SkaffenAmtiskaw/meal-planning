@@ -4,7 +4,7 @@ import { act, fireEvent, render, screen } from '@testing-library/react';
 
 import { afterEach, describe, expect, test, vi } from 'vitest';
 
-import { addTag } from '@/_actions/planner/addTag';
+import { addTag } from '@/_actions/library';
 import { TAG_COLORS } from '@/_theme/colors';
 
 import { TagCombobox } from './TagCombobox';
@@ -30,7 +30,7 @@ vi.mock('@/_theme/colors', () => ({
 	TagColor: 'fern',
 }));
 
-vi.mock('@/_actions/planner/addTag', () => ({
+vi.mock('@/_actions/library', () => ({
 	addTag: vi.fn(),
 }));
 

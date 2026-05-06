@@ -18,8 +18,11 @@ vi.mock('@/_models', async () => {
 	};
 });
 
-vi.mock('@/_actions', () => ({
+vi.mock('@/_actions/auth', () => ({
 	checkAuth: (...args: unknown[]) => mockCheckAuth(...args),
+}));
+
+vi.mock('@/_actions/user', () => ({
 	getUser: () => mockGetUser(),
 }));
 

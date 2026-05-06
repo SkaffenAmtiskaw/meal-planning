@@ -2,7 +2,7 @@
 
 import type { Types } from 'mongoose';
 
-import { addPlanner } from '@/_actions';
+import { addPlanner } from '@/_actions/planner';
 import { User } from '@/_models';
 import type { AccessLevel } from '@/_models/user';
 

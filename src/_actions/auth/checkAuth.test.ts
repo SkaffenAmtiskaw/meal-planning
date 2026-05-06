@@ -1,12 +1,12 @@
 import { Types } from 'mongoose';
 import { afterEach, describe, expect, test, vi } from 'vitest';
 
-import { getUser } from '@/_actions';
+import { getUser } from '@/_actions/user';
 import { catchify } from '@/_utils/catchify';
 
 import { checkAuth } from './checkAuth';
 
-vi.mock('@/_actions', () => ({ getUser: vi.fn() }));
+vi.mock('@/_actions/user', () => ({ getUser: vi.fn() }));
 vi.mock('@/_utils/catchify', { spy: true });
 
 const mockPlannerId = new Types.ObjectId();

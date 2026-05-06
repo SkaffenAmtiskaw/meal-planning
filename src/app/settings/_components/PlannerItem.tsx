@@ -14,7 +14,7 @@ import {
 	TextInput,
 } from '@mantine/core';
 
-import { leavePlanner } from '@/_actions/planner/leavePlanner';
+import { leavePlanner } from '@/_actions/sharing';
 import { ConfirmButton } from '@/_components';
 import type { AccessLevel } from '@/_models/user';
 

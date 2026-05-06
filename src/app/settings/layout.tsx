@@ -3,7 +3,7 @@ import { redirect } from 'next/navigation';
 
 import { AppShell, AppShellMain } from '@mantine/core';
 
-import { getUser } from '@/_actions';
+import { getUser } from '@/_actions/user';
 import { zObjectId } from '@/_models';
 import { catchify } from '@/_utils/catchify';
 import { Header } from '@/app/_components/Header';

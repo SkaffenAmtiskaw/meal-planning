@@ -1,12 +1,12 @@
 import { Types } from 'mongoose';
 import { afterEach, describe, expect, test, vi } from 'vitest';
 
-import { addPlanner } from '@/_actions';
+import { addPlanner } from '@/_actions/planner';
 import { User } from '@/_models';
 
 import { addUser } from './addUser';
 
-vi.mock('@/_actions', () => ({
+vi.mock('@/_actions/planner', () => ({
 	addPlanner: vi.fn(),
 }));
 

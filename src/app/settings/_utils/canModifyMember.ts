@@ -1,4 +1,4 @@
-import type { PlannerMember } from '@/_actions/planner/getPlannerMembers.types';
+import type { PlannerMember } from '@/_actions/sharing';
 
 export interface CanModifyMemberParams {
 	member: PlannerMember;

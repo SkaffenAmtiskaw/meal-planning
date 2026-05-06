@@ -6,7 +6,7 @@ import { RemoveMemberButton } from './RemoveMemberButton';
 
 const mockRemoveMember = vi.fn();
 
-vi.mock('@/_actions/planner/removeMember', () => ({
+vi.mock('@/_actions/sharing', () => ({
 	removeMember: (...args: unknown[]) => mockRemoveMember(...args),
 }));
 

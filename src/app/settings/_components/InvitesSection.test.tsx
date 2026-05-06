@@ -4,7 +4,7 @@ import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 
 import { beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
 
-import type { UserInvite } from '@/_actions/planner/getUserInvites';
+import type { UserInvite } from '@/_actions/sharing';
 import type { AccessLevel } from '@/_models/user';
 
 import { InvitesSection } from './InvitesSection';

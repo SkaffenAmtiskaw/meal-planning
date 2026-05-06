@@ -4,7 +4,7 @@ import { notFound, redirect } from 'next/navigation';
 
 import { z } from 'zod';
 
-import { checkAuth } from '@/_actions';
+import { checkAuth } from '@/_actions/auth';
 import { zObjectId } from '@/_models';
 import { THEME_COLORS } from '@/_theme/colors';
 import { Header } from '@/app/_components/Header';

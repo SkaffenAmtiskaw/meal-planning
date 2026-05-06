@@ -2,7 +2,7 @@ import { Container, Group } from '@mantine/core';
 
 import { z } from 'zod';
 
-import { getPlanner } from '@/_actions';
+import { getPlanner } from '@/_actions/planner';
 import { zObjectId } from '@/_models';
 
 import { AddItemDropdown, Modal, SavedList } from './_components';

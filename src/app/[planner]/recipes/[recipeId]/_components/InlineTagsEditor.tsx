@@ -6,7 +6,7 @@ import { useState } from 'react';
 import { ActionIcon, Group, Stack, Text } from '@mantine/core';
 import { IconCheck, IconPencil, IconX } from '@tabler/icons-react';
 
-import { updateRecipeTags } from '@/_actions/saved';
+import { updateRecipeTags } from '@/_actions/library';
 import { Tag, TagCombobox, type TagOption } from '@/_components';
 import { useEditMode } from '@/_hooks/useEditMode';
 import type { TagColor } from '@/_theme/colors';

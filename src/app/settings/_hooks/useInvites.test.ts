@@ -2,22 +2,16 @@ import { renderHook, waitFor } from '@testing-library/react';
 
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-import type { PendingInvite } from '@/_actions/planner/invite.types';
+import type { PendingInvite } from '@/_actions/sharing';
 import type { AccessLevel } from '@/_models/user';
 
 const mockGetPendingInvites = vi.fn();
 const mockInviteUserAction = vi.fn();
 const mockCancelInviteAction = vi.fn();
 
-vi.mock('@/_actions/planner/getPendingInvites', () => ({
+vi.mock('@/_actions/sharing', () => ({
 	getPendingInvites: (...args: unknown[]) => mockGetPendingInvites(...args),
-}));
-
-vi.mock('@/_actions/planner/inviteUser', () => ({
 	inviteUser: (...args: unknown[]) => mockInviteUserAction(...args),
-}));
-
-vi.mock('@/_actions/planner/cancelInvite', () => ({
 	cancelInvite: (...args: unknown[]) => mockCancelInviteAction(...args),
 }));
 

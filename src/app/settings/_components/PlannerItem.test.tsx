@@ -5,7 +5,7 @@ import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { it } from '@test';
 import { beforeAll, beforeEach, describe, expect, vi } from 'vitest';
 
-import type { PendingInvite } from '@/_actions/planner/invite.types';
+import type { PendingInvite } from '@/_actions/sharing';
 
 import { InviteForm } from './InviteForm';
 import { PendingInvitesList } from './PendingInvitesList';
@@ -17,7 +17,7 @@ const mockRefresh = vi.fn();
 
 // Mock leavePlanner action
 const mockLeavePlanner = vi.fn();
-vi.mock('@/_actions/planner/leavePlanner', () => ({
+vi.mock('@/_actions/sharing', () => ({
 	leavePlanner: (id: string) => mockLeavePlanner(id),
 }));
 

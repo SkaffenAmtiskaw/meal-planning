@@ -25,6 +25,7 @@ Instructions:
 A full-stack meal planning web app. Users sign in, create meal planners, manage a recipe/bookmark library with tags, and plan daily meals on a calendar.
 
 ## Project Knowledge
-- Project Conventions: `.opencode/docs/project_conventions.md`
-- Project Structure:   `.opencode/docs/project_structure.md`
-- Theme Information:   `.opencode/docs/theme.md`
+- Project Conventions:      `.opencode/docs/project_conventions.md`
+- Project Structure:        `.opencode/docs/project_structure.md`
+- Theme Information:        `.opencode/docs/theme.md`
+- Unit Testing Conventions: `.opencode/docs/unit_tests.md`

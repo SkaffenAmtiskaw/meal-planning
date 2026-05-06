@@ -2,11 +2,11 @@ import { fireEvent, render, screen } from '@testing-library/react';
 
 import { describe, expect, test, vi } from 'vitest';
 
-import { deleteRecipe } from '@/_actions/saved';
+import { deleteRecipe } from '@/_actions/library';
 
 import { DeleteRecipeButton } from './DeleteRecipeButton';
 
-vi.mock('@/_actions/saved', () => ({
+vi.mock('@/_actions/library', () => ({
 	deleteRecipe: vi.fn(),
 }));
 

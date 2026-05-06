@@ -2,7 +2,7 @@ import { fireEvent, render, screen } from '@testing-library/react';
 
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-import type { PendingInvite } from '@/_actions/planner/invite.types';
+import type { PendingInvite } from '@/_actions/sharing';
 import type { AccessLevel } from '@/_models/user';
 import { isPastDate, isWithinHours } from '@/_utils/date';
 

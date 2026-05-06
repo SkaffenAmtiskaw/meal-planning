@@ -8,7 +8,7 @@ import { MemberActions } from './MemberActions';
 
 const mockUpdateMemberAccess = vi.fn();
 
-vi.mock('@/_actions/planner/updateMemberAccess', () => ({
+vi.mock('@/_actions/sharing', () => ({
 	updateMemberAccess: (...args: unknown[]) => mockUpdateMemberAccess(...args),
 }));
 

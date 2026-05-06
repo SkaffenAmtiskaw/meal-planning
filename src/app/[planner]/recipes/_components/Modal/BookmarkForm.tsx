@@ -8,8 +8,7 @@ import { schemaResolver, useForm } from '@mantine/form';
 
 import { z } from 'zod';
 
-import { addBookmark } from '@/_actions/saved/addBookmark';
-import { editBookmark } from '@/_actions/saved/editBookmark';
+import { addBookmark, editBookmark } from '@/_actions/library';
 import type { TagOption } from '@/_components';
 import { FormFeedbackAlert, SubmitButton, TagCombobox } from '@/_components';
 import { useFormFeedback } from '@/_hooks';

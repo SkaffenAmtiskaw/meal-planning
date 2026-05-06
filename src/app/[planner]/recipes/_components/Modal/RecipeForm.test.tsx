@@ -4,8 +4,7 @@ import { act, fireEvent, render, screen } from '@testing-library/react';
 
 import { beforeAll, beforeEach, describe, expect, test, vi } from 'vitest';
 
-import { addRecipe } from '@/_actions/saved/addRecipe';
-import { editRecipe } from '@/_actions/saved/editRecipe';
+import { addRecipe, editRecipe } from '@/_actions/library';
 
 import { RecipeForm } from './RecipeForm';
 
@@ -13,11 +12,8 @@ vi.mock('next/navigation', async () => await import('@mocks/next/navigation'));
 
 const mockPush = vi.fn();
 
-vi.mock('@/_actions/saved/addRecipe', () => ({
+vi.mock('@/_actions/library', () => ({
 	addRecipe: vi.fn(),
-}));
-
-vi.mock('@/_actions/saved/editRecipe', () => ({
 	editRecipe: vi.fn(),
 }));
 

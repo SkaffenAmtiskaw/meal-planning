@@ -2,13 +2,13 @@ import { renderHook, waitFor } from '@testing-library/react';
 
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-import type { PlannerMember } from '@/_actions/planner/getPlannerMembers.types';
+import type { PlannerMember } from '@/_actions/sharing';
 
 import { usePlannerMembers } from './usePlannerMembers';
 
 const mockGetPlannerMembers = vi.fn();
 
-vi.mock('@/_actions/planner/getPlannerMembers', () => ({
+vi.mock('@/_actions/sharing', () => ({
 	getPlannerMembers: (...args: unknown[]) => mockGetPlannerMembers(...args),
 }));
 

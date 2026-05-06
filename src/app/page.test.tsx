@@ -5,7 +5,7 @@ import { render, screen } from '@testing-library/react';
 
 import { beforeEach, describe, expect, test, vi } from 'vitest';
 
-import { addUser } from '@/_actions';
+import { addUser } from '@/_actions/user';
 import { auth } from '@/_auth';
 import { User, zObjectId } from '@/_models';
 
@@ -42,7 +42,7 @@ vi.mock('@/_models', () => ({
 	},
 }));
 
-vi.mock('@/_actions', () => ({
+vi.mock('@/_actions/user', () => ({
 	addUser: vi.fn().mockResolvedValue({
 		planners: [{ planner: 'fallback-planner', accessLevel: 'owner' }],
 	}),

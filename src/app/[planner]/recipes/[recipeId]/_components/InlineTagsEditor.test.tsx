@@ -10,7 +10,7 @@ import {
 
 import { beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
 
-import { updateRecipeTags } from '@/_actions/saved';
+import { updateRecipeTags } from '@/_actions/library';
 
 import { InlineTagsEditor } from './InlineTagsEditor';
 
@@ -20,7 +20,7 @@ vi.mock('next/navigation', async () => await import('@mocks/next/navigation'));
 
 vi.mock('@mantine/core', async () => await import('@mocks/@mantine/core'));
 
-vi.mock('@/_actions/saved', () => ({
+vi.mock('@/_actions/library', () => ({
 	updateRecipeTags: vi.fn(),
 }));
 

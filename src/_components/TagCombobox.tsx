@@ -4,7 +4,7 @@ import { useState } from 'react';
 
 import { Combobox, Pill, PillsInput, Text, useCombobox } from '@mantine/core';
 
-import { addTag } from '@/_actions/planner/addTag';
+import { addTag } from '@/_actions/library';
 import { TAG_COLORS, type TagColor } from '@/_theme/colors';
 import { catchify } from '@/_utils/catchify';
 

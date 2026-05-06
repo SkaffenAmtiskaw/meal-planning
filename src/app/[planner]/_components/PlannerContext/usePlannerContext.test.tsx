@@ -6,7 +6,7 @@ import { PlannerProvider } from './PlannerProvider';
 import { usePlannerContext } from './usePlannerContext';
 
 const mockGetPlannerClient = vi.fn();
-vi.mock('@/_actions', () => ({
+vi.mock('@/_actions/planner', () => ({
 	getPlannerClient: (...args: unknown[]) => mockGetPlannerClient(...args),
 }));
 

@@ -6,7 +6,7 @@ import { Planner } from '@/_models';
 import { updatePlannerName } from './updatePlannerName';
 
 const mockCheckAuth = vi.hoisted(() => vi.fn());
-vi.mock('@/_actions/auth/checkAuth', () => ({
+vi.mock('@/_actions/auth', () => ({
 	checkAuth: mockCheckAuth,
 }));
 

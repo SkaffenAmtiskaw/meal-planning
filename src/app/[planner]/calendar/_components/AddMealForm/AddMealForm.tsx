@@ -14,7 +14,7 @@ import { IconPlus } from '@tabler/icons-react';
 
 import { z } from 'zod';
 
-import { addMeal } from '@/_actions/planner/addMeal';
+import { addMeal } from '@/_actions/calendar';
 import { FormFeedbackAlert, SubmitButton } from '@/_components';
 import { useFormFeedback } from '@/_hooks';
 import { THEME_COLORS } from '@/_theme/colors';

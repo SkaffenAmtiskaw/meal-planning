@@ -2,11 +2,11 @@ import { fireEvent, render, screen } from '@testing-library/react';
 
 import { describe, expect, test, vi } from 'vitest';
 
-import { deleteBookmark } from '@/_actions/saved';
+import { deleteBookmark } from '@/_actions/library';
 
 import { DeleteBookmarkButton } from './DeleteBookmarkButton';
 
-vi.mock('@/_actions/saved', () => ({
+vi.mock('@/_actions/library', () => ({
 	deleteBookmark: vi.fn(),
 }));
 

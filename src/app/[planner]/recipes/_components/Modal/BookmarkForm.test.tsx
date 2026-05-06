@@ -4,8 +4,7 @@ import { act, fireEvent, render, screen } from '@testing-library/react';
 
 import { beforeAll, beforeEach, describe, expect, test, vi } from 'vitest';
 
-import { addBookmark } from '@/_actions/saved/addBookmark';
-import { editBookmark } from '@/_actions/saved/editBookmark';
+import { addBookmark, editBookmark } from '@/_actions/library';
 import { FormFeedbackAlert, TagCombobox } from '@/_components';
 import { useFormFeedback } from '@/_hooks';
 
@@ -15,11 +14,8 @@ vi.mock('next/navigation', async () => await import('@mocks/next/navigation'));
 
 const mockPush = vi.fn();
 
-vi.mock('@/_actions/saved/addBookmark', () => ({
+vi.mock('@/_actions/library', () => ({
 	addBookmark: vi.fn(),
-}));
-
-vi.mock('@/_actions/saved/editBookmark', () => ({
 	editBookmark: vi.fn(),
 }));
 

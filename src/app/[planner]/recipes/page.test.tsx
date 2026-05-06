@@ -10,7 +10,7 @@ vi.mock('@/_models', async () => {
 });
 
 const mockGetPlanner = vi.fn();
-vi.mock('@/_actions', () => ({
+vi.mock('@/_actions/planner', () => ({
 	getPlanner: (...args: unknown[]) => mockGetPlanner(...args),
 }));
 

@@ -4,14 +4,14 @@ import { fireEvent, render, screen } from '@testing-library/react';
 
 import { beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
 
-import { deleteRecipe } from '@/_actions/saved';
+import { deleteRecipe } from '@/_actions/library';
 import { ConfirmButton } from '@/_components';
 
 import { RecipeDetail } from './RecipeDetail';
 
 vi.mock('next/navigation', async () => await import('@mocks/next/navigation'));
 
-vi.mock('@/_actions/saved', () => ({
+vi.mock('@/_actions/library', () => ({
 	deleteRecipe: vi.fn(),
 }));
 

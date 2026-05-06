@@ -2,7 +2,7 @@ import { act, fireEvent, render, screen } from '@testing-library/react';
 
 import { afterEach, describe, expect, test, vi } from 'vitest';
 
-import { addMeal } from '@/_actions/planner/addMeal';
+import { addMeal } from '@/_actions/calendar';
 import { useFormFeedback } from '@/_hooks';
 
 import { AddMealForm } from './AddMealForm';
@@ -71,7 +71,7 @@ vi.mock('./DishRow', () => ({
 	),
 }));
 
-vi.mock('@/_actions/planner/addMeal', () => ({
+vi.mock('@/_actions/calendar', () => ({
 	addMeal: vi.fn(),
 }));
 

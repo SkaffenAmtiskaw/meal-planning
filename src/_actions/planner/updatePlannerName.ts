@@ -2,7 +2,7 @@
 
 import { Types } from 'mongoose';
 
-import { checkAuth } from '@/_actions/auth/checkAuth';
+import { checkAuth } from '@/_actions/auth';
 import { Planner, zObjectId } from '@/_models';
 import type { ActionResult } from '@/_utils/actionResult';
 import { zSafeString } from '@/_utils/zSafeString';

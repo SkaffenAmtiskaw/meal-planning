@@ -4,8 +4,8 @@ import { Suspense } from 'react';
 
 import { Indicator } from '@mantine/core';
 
-import { getUserInvites } from '@/_actions/planner/getUserInvites';
-import { getUser } from '@/_actions/user/getUser';
+import { getUserInvites } from '@/_actions/sharing';
+import { getUser } from '@/_actions/user';
 import { THEME_COLORS } from '@/_theme/colors';
 
 export interface InviteBadgeProps {

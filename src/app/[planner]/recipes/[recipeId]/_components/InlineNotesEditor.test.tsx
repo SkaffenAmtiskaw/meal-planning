@@ -4,7 +4,7 @@ import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 
 import { beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
 
-import { updateRecipeNotes } from '@/_actions/saved';
+import { updateRecipeNotes } from '@/_actions/library';
 
 import { InlineNotesEditor } from './InlineNotesEditor';
 
@@ -14,7 +14,7 @@ vi.mock('next/navigation', async () => await import('@mocks/next/navigation'));
 
 vi.mock('@mantine/core', async () => await import('@mocks/@mantine/core'));
 
-vi.mock('@/_actions/saved', () => ({
+vi.mock('@/_actions/library', () => ({
 	updateRecipeNotes: vi.fn(),
 }));
 
