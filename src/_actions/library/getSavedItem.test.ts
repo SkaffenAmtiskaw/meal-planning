@@ -2,57 +2,50 @@ import { Types } from 'mongoose';
 import { afterEach, describe, expect, test, vi } from 'vitest';
 
 import { getPlanner } from '@/_actions/planner';
+import { matchesId } from '@/_models';
 
 import { getSavedItem } from './getSavedItem';
 
-vi.mock('@/_actions/planner', () => ({
-	getPlanner: vi.fn(),
+vi.mock(
+	'@/_actions/planner',
+	async () => await import('@mocks/@/_actions/planner'),
+);
+vi.mock('@/_models', () => ({
+	matchesId: vi.fn(),
 }));
 
-describe('get saved item', () => {
+describe('getSavedItem', () => {
 	const plannerId = new Types.ObjectId();
 	const itemId = new Types.ObjectId();
+	const mockItem = { _id: itemId, name: 'Maleficent Mushroom Soup' };
 
 	afterEach(() => {
 		vi.resetAllMocks();
 	});
 
 	test('should return the item when found in the planner', async () => {
-		const mockItem = { _id: itemId, name: 'Maleficent Mushroom Soup' };
 		vi.mocked(getPlanner).mockResolvedValue({
 			saved: [mockItem],
 		} as never);
+		vi.mocked(matchesId).mockReturnValue(() => true);
 
 		const result = await getSavedItem(plannerId, itemId);
 
 		expect(getPlanner).toHaveBeenCalledWith(plannerId);
-		expect(result).toBe(mockItem);
-	});
-
-	test('should find the item by string comparison when _id is an ObjectId instance', async () => {
-		const objectIdInstance = new Types.ObjectId(itemId.toString());
-		const mockItem = {
-			_id: objectIdInstance,
-			name: 'Maleficent Mushroom Soup',
-		};
-		vi.mocked(getPlanner).mockResolvedValue({
-			saved: [mockItem],
-		} as never);
-
-		const result = await getSavedItem(plannerId, itemId);
-
+		expect(matchesId).toHaveBeenCalledWith(itemId);
 		expect(result).toBe(mockItem);
 	});
 
 	test('should throw when the item is not found in the planner', async () => {
 		vi.mocked(getPlanner).mockResolvedValue({ saved: [] } as never);
+		vi.mocked(matchesId).mockReturnValue(() => false);
 
 		await expect(getSavedItem(plannerId, itemId)).rejects.toThrow(
 			`Item ${itemId} not found in planner ${plannerId}`,
 		);
 	});
 
-	test('should throw when get planner fails', async () => {
+	test('should throw when getPlanner fails', async () => {
 		vi.mocked(getPlanner).mockRejectedValue(new Error('DB error'));
 
 		await expect(getSavedItem(plannerId, itemId)).rejects.toThrow('DB error');

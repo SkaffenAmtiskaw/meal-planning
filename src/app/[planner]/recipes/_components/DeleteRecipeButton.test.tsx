@@ -1,65 +1,35 @@
-import { fireEvent, render, screen } from '@testing-library/react';
+import { render } from '@testing-library/react';
 
-import { describe, expect, test, vi } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { deleteRecipe } from '@/_actions/library';
 
+import { DeleteItemButton } from './DeleteItemButton';
 import { DeleteRecipeButton } from './DeleteRecipeButton';
 
-vi.mock('@/_actions/library', () => ({
-	deleteRecipe: vi.fn(),
-}));
+vi.mock(
+	'@/_actions/library',
+	async () => await import('@mocks/@/_actions/library'),
+);
 
 vi.mock('./DeleteItemButton', () => ({
-	DeleteItemButton: ({
-		onDelete,
-		title,
-		message,
-		'data-testid': testId,
-	}: {
-		onDelete: () => Promise<unknown>;
-		title: string;
-		message: string;
-		'data-testid'?: string;
-	}) => (
-		<div>
-			<span data-testid="title">{title}</span>
-			<span data-testid="message">{message}</span>
-			<button
-				data-testid={testId ?? 'delete-button'}
-				onClick={onDelete}
-				type="button"
-			>
-				Delete
-			</button>
-		</div>
-	),
+	DeleteItemButton: vi.fn(() => null),
 }));
 
-const plannerId = '507f1f77bcf86cd799439011';
-const recipeId = '507f1f77bcf86cd799439012';
-
 describe('DeleteRecipeButton', () => {
-	test('renders with correct title and message', () => {
-		render(<DeleteRecipeButton plannerId={plannerId} recipeId={recipeId} />);
-		expect(screen.getByTestId('title').textContent).toBe('Delete Recipe');
-		expect(screen.getByTestId('message').textContent).toBe(
-			'Are you sure you want to delete this recipe? This cannot be undone.',
-		);
+	const plannerId = '507f1f77bcf86cd799439011';
+	const recipeId = '507f1f77bcf86cd799439012';
+
+	beforeEach(() => {
+		vi.clearAllMocks();
 	});
 
-	test('passes delete-button testid', () => {
+	it('calls deleteRecipe with correct args when onDelete is invoked', async () => {
 		render(<DeleteRecipeButton plannerId={plannerId} recipeId={recipeId} />);
-		expect(screen.getByTestId('delete-button')).toBeDefined();
-	});
 
-	test('onDelete calls deleteRecipe with correct args', async () => {
-		vi.mocked(deleteRecipe).mockResolvedValueOnce({
-			ok: true,
-			data: undefined,
-		});
-		render(<DeleteRecipeButton plannerId={plannerId} recipeId={recipeId} />);
-		fireEvent.click(screen.getByTestId('delete-button'));
+		const onDelete = vi.mocked(DeleteItemButton).mock.calls[0][0].onDelete;
+		await onDelete();
+
 		expect(deleteRecipe).toHaveBeenCalledWith({ plannerId, recipeId });
 	});
 });

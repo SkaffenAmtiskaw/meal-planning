@@ -135,7 +135,7 @@ vi.mock('@mantine/core', async (importOriginal) => {
 ```
 
 ## Use Async Import Pattern for All Mocks
-Always use the async factory pattern for reusable mocks. This is consistent and handles hoisting correctly.
+Always use the **async** factory pattern for reusable mocks. This is consistent and handles hoisting correctly.
 
 ```typescript
 // ✅ CORRECT - async factory

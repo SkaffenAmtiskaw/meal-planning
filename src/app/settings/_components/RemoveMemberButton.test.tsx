@@ -1,49 +1,19 @@
-import { fireEvent, render, screen, waitFor } from '@testing-library/react';
+import { render } from '@testing-library/react';
 
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
+import { removeMember } from '@/_actions/sharing';
+import { ConfirmButton } from '@/_components';
+
 import { RemoveMemberButton } from './RemoveMemberButton';
 
-const mockRemoveMember = vi.fn();
-
-vi.mock('@/_actions/sharing', () => ({
-	removeMember: (...args: unknown[]) => mockRemoveMember(...args),
-}));
-
+vi.mock(
+	'@/_actions/sharing',
+	async () => await import('@mocks/@/_actions/sharing'),
+);
 vi.mock('@mantine/core', async () => await import('@mocks/@mantine/core'));
-
-vi.mock('@tabler/icons-react', () => ({
-	IconTrash: () => <svg data-testid="icon-trash" />,
-}));
-
-// Mock ConfirmButton - it calls onConfirm when trigger is clicked and confirm is clicked
-const mockOnConfirmCallback = vi.fn();
-
 vi.mock('@/_components', () => ({
-	ConfirmButton: ({
-		onConfirm,
-		onSuccess,
-		renderTrigger,
-	}: {
-		onConfirm: () => Promise<{ ok: boolean; error?: string }>;
-		onSuccess?: () => void;
-		renderTrigger: (onOpen: () => void) => React.ReactNode;
-	}) => {
-		const handleClick = async () => {
-			mockOnConfirmCallback();
-			const result = await onConfirm();
-			if (result.ok && onSuccess) {
-				onSuccess();
-			}
-		};
-		return (
-			<div data-testid="confirm-button">
-				<div onClick={handleClick} onKeyDown={handleClick}>
-					{renderTrigger(() => {})}
-				</div>
-			</div>
-		);
-	},
+	ConfirmButton: vi.fn(({ renderTrigger }) => renderTrigger?.(() => {})),
 }));
 
 describe('RemoveMemberButton', () => {
@@ -53,10 +23,10 @@ describe('RemoveMemberButton', () => {
 	const onRemove = vi.fn();
 
 	beforeEach(() => {
-		vi.resetAllMocks();
+		vi.clearAllMocks();
 	});
 
-	it('renders trash icon button', () => {
+	it('passes correct props to ConfirmButton', () => {
 		render(
 			<RemoveMemberButton
 				plannerId={plannerId}
@@ -66,12 +36,33 @@ describe('RemoveMemberButton', () => {
 			/>,
 		);
 
-		expect(screen.getByTestId('remove-member-button')).toBeDefined();
-		expect(screen.getByTestId('icon-trash')).toBeDefined();
+		const call = vi.mocked(ConfirmButton).mock.calls[0][0];
+		expect(call.title).toBe(`Remove ${memberName}?`);
+		expect(call.message).toBe(
+			`Are you sure you want to remove ${memberEmail} from this planner? This action cannot be undone.`,
+		);
+		expect(call.confirmButtonText).toBe('Remove');
+		expect(call.onSuccess).toBe(onRemove);
 	});
 
-	it('calls removeMember and onRemove callback on successful confirm', async () => {
-		mockRemoveMember.mockResolvedValue({ ok: true });
+	it('calls removeMember with plannerId and memberEmail on confirm', async () => {
+		render(
+			<RemoveMemberButton
+				plannerId={plannerId}
+				memberEmail={memberEmail}
+				memberName={memberName}
+				onRemove={onRemove}
+			/>,
+		);
+
+		const { onConfirm } = vi.mocked(ConfirmButton).mock.calls[0][0];
+		await onConfirm();
+
+		expect(removeMember).toHaveBeenCalledWith(plannerId, memberEmail);
+	});
+
+	it('returns success result when removeMember succeeds', async () => {
+		vi.mocked(removeMember).mockResolvedValueOnce({ ok: true });
 
 		render(
 			<RemoveMemberButton
@@ -82,30 +73,17 @@ describe('RemoveMemberButton', () => {
 			/>,
 		);
 
-		fireEvent.click(screen.getByTestId('remove-member-button'));
+		const { onConfirm } = vi.mocked(ConfirmButton).mock.calls[0][0];
+		const result = await onConfirm();
 
-		await waitFor(() => {
-			expect(mockOnConfirmCallback).toHaveBeenCalled();
-		});
-
-		await waitFor(() => {
-			expect(mockRemoveMember).toHaveBeenCalledWith(plannerId, memberEmail);
-		});
-
-		await waitFor(() => {
-			expect(onRemove).toHaveBeenCalled();
-		});
+		expect(result).toEqual({ ok: true, data: undefined });
 	});
 
-	it.each([
-		{
+	it('returns error result when removeMember fails with error message', async () => {
+		vi.mocked(removeMember).mockResolvedValueOnce({
 			ok: false,
 			error: 'Cannot remove owner',
-			description: 'with error message',
-		},
-		{ ok: false, description: 'without error message (uses default)' },
-	])('does not call onRemove when removal fails %s', async (result) => {
-		mockRemoveMember.mockResolvedValue(result);
+		});
 
 		render(
 			<RemoveMemberButton
@@ -116,16 +94,27 @@ describe('RemoveMemberButton', () => {
 			/>,
 		);
 
-		fireEvent.click(screen.getByTestId('remove-member-button'));
+		const { onConfirm } = vi.mocked(ConfirmButton).mock.calls[0][0];
+		const result = await onConfirm();
 
-		await waitFor(() => {
-			expect(mockOnConfirmCallback).toHaveBeenCalled();
-		});
+		expect(result).toEqual({ ok: false, error: 'Cannot remove owner' });
+	});
 
-		await waitFor(() => {
-			expect(mockRemoveMember).toHaveBeenCalledWith(plannerId, memberEmail);
-		});
+	it('returns default error when removeMember fails without error message', async () => {
+		vi.mocked(removeMember).mockResolvedValueOnce({ ok: false });
 
-		expect(onRemove).not.toHaveBeenCalled();
+		render(
+			<RemoveMemberButton
+				plannerId={plannerId}
+				memberEmail={memberEmail}
+				memberName={memberName}
+				onRemove={onRemove}
+			/>,
+		);
+
+		const { onConfirm } = vi.mocked(ConfirmButton).mock.calls[0][0];
+		const result = await onConfirm();
+
+		expect(result).toEqual({ ok: false, error: 'Failed to remove member' });
 	});
 });

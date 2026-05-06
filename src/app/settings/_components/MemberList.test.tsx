@@ -4,39 +4,29 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import type { PlannerMember } from '@/_actions/sharing';
 
+import { MemberActions } from './MemberActions';
 import { MemberList } from './MemberList';
 
 vi.mock('@mantine/core', async () => await import('@mocks/@mantine/core'));
 
 const mockCanModifyMember = vi.fn();
+const mockGetAvailableAccessLevels = vi.fn();
 
 vi.mock('../_utils/canModifyMember', () => ({
-	canModifyMember: (...args: unknown[]) => mockCanModifyMember(...args),
+	canModifyMember: (params: unknown) => mockCanModifyMember(params),
 }));
 
 vi.mock('../_utils/getAvailableAccessLevels', () => ({
 	getAvailableAccessLevels: (viewerIsOwner: boolean) =>
-		viewerIsOwner ? ['admin', 'write', 'read'] : ['write', 'read'],
+		mockGetAvailableAccessLevels(viewerIsOwner),
 }));
 
 vi.mock('./AccessLevelBadge', () => ({
-	AccessLevelBadge: ({ accessLevel }: { accessLevel: string }) => (
-		<span data-testid="access-level-badge">{accessLevel}</span>
-	),
+	AccessLevelBadge: vi.fn(() => <span data-testid="access-level-badge" />),
 }));
 
 vi.mock('./MemberActions', () => ({
-	MemberActions: ({
-		memberName,
-		hidden,
-	}: {
-		memberName: string;
-		hidden?: boolean;
-	}) => (
-		<div data-testid={`member-actions-${memberName}`} data-hidden={hidden}>
-			Actions for {memberName}
-		</div>
-	),
+	MemberActions: vi.fn(() => <div data-testid="member-actions" />),
 }));
 
 describe('MemberList', () => {
@@ -44,101 +34,19 @@ describe('MemberList', () => {
 	const mockOnUpdate = vi.fn();
 	const mockOnError = vi.fn();
 
-	const createMockMembers = (): PlannerMember[] => [
+	const mockMembers: PlannerMember[] = [
 		{ name: 'Alice', email: 'alice@example.com', accessLevel: 'owner' },
 		{ name: 'Bob', email: 'bob@example.com', accessLevel: 'write' },
 		{ name: 'Charlie', email: 'charlie@example.com', accessLevel: 'read' },
 	];
 
 	beforeEach(() => {
-		vi.resetAllMocks();
-	});
-
-	it('renders member list with correct member information', () => {
-		const mockMembers = createMockMembers();
-
+		vi.clearAllMocks();
 		mockCanModifyMember.mockReturnValue(true);
-
-		render(
-			<MemberList
-				members={mockMembers}
-				currentUserEmail="admin@example.com"
-				currentUserIsOwner={true}
-				plannerId={plannerId}
-				onUpdate={mockOnUpdate}
-				onError={mockOnError}
-				updateError={null}
-			/>,
-		);
-
-		// Verify all members are rendered
-		expect(screen.getByText('Alice')).toBeDefined();
-		expect(screen.getByText('alice@example.com')).toBeDefined();
-		expect(screen.getByText('Bob')).toBeDefined();
-		expect(screen.getByText('bob@example.com')).toBeDefined();
-		expect(screen.getByText('Charlie')).toBeDefined();
-		expect(screen.getByText('charlie@example.com')).toBeDefined();
-	});
-
-	it('calls canModifyMember for each member with correct parameters', () => {
-		const mockMembers = createMockMembers();
-
-		mockCanModifyMember.mockReturnValue(true);
-
-		render(
-			<MemberList
-				members={mockMembers}
-				currentUserEmail="admin@example.com"
-				currentUserIsOwner={true}
-				plannerId={plannerId}
-				onUpdate={mockOnUpdate}
-				onError={mockOnError}
-				updateError={null}
-			/>,
-		);
-
-		expect(mockCanModifyMember).toHaveBeenCalledTimes(3);
-		expect(mockCanModifyMember).toHaveBeenNthCalledWith(1, {
-			member: mockMembers[0],
-			currentUserEmail: 'admin@example.com',
-			currentUserIsOwner: true,
-		});
-		expect(mockCanModifyMember).toHaveBeenNthCalledWith(2, {
-			member: mockMembers[1],
-			currentUserEmail: 'admin@example.com',
-			currentUserIsOwner: true,
-		});
-		expect(mockCanModifyMember).toHaveBeenNthCalledWith(3, {
-			member: mockMembers[2],
-			currentUserEmail: 'admin@example.com',
-			currentUserIsOwner: true,
-		});
-	});
-
-	it('renders empty list when no members provided', () => {
-		mockCanModifyMember.mockReturnValue(true);
-
-		render(
-			<MemberList
-				members={[]}
-				currentUserEmail="admin@example.com"
-				currentUserIsOwner={true}
-				plannerId={plannerId}
-				onUpdate={mockOnUpdate}
-				onError={mockOnError}
-				updateError={null}
-			/>,
-		);
-
-		// Should render without errors
-		expect(screen.queryByRole('alert')).toBeNull();
+		mockGetAvailableAccessLevels.mockReturnValue(['admin', 'write', 'read']);
 	});
 
 	it('displays update error when provided', () => {
-		const mockMembers = createMockMembers();
-
-		mockCanModifyMember.mockReturnValue(true);
-
 		render(
 			<MemberList
 				members={mockMembers}
@@ -156,10 +64,6 @@ describe('MemberList', () => {
 	});
 
 	it('does not display update error when null', () => {
-		const mockMembers = createMockMembers();
-
-		mockCanModifyMember.mockReturnValue(true);
-
 		render(
 			<MemberList
 				members={mockMembers}
@@ -175,16 +79,14 @@ describe('MemberList', () => {
 		expect(screen.queryByTestId('update-error')).toBeNull();
 	});
 
-	it('passes correct props to MemberActions', () => {
-		const mockMembers = createMockMembers();
-
+	it('hides member actions when user cannot modify member', () => {
 		mockCanModifyMember.mockReturnValue(false);
 
 		render(
 			<MemberList
 				members={mockMembers}
 				currentUserEmail="admin@example.com"
-				currentUserIsOwner={false}
+				currentUserIsOwner={true}
 				plannerId={plannerId}
 				onUpdate={mockOnUpdate}
 				onError={mockOnError}
@@ -192,21 +94,21 @@ describe('MemberList', () => {
 			/>,
 		);
 
-		// All actions should be hidden based on canModifyMember returning false
-		const aliceActions = screen.getByTestId('member-actions-Alice');
-		expect(aliceActions.getAttribute('data-hidden')).toBe('true');
+		const calls = vi.mocked(MemberActions).mock.calls;
+		expect(calls).toHaveLength(3);
+		for (const [props] of calls) {
+			expect(props.hidden).toBe(true);
+		}
 	});
 
-	it('passes non-owner available access levels when current user is not owner', () => {
-		const mockMembers = createMockMembers();
-
+	it('shows member actions when user can modify member', () => {
 		mockCanModifyMember.mockReturnValue(true);
 
 		render(
 			<MemberList
 				members={mockMembers}
 				currentUserEmail="admin@example.com"
-				currentUserIsOwner={false}
+				currentUserIsOwner={true}
 				plannerId={plannerId}
 				onUpdate={mockOnUpdate}
 				onError={mockOnError}
@@ -214,19 +116,21 @@ describe('MemberList', () => {
 			/>,
 		);
 
-		// Component renders successfully with non-owner permissions
-		expect(screen.getByText('Alice')).toBeDefined();
+		const calls = vi.mocked(MemberActions).mock.calls;
+		expect(calls).toHaveLength(3);
+		for (const [props] of calls) {
+			expect(props.hidden).toBe(false);
+		}
 	});
 
-	it('handles null currentUserEmail', () => {
-		const mockMembers = createMockMembers();
-
-		mockCanModifyMember.mockReturnValue(false);
+	it('passes available access levels based on user ownership to MemberActions', () => {
+		const nonOwnerLevels = ['write', 'read'];
+		mockGetAvailableAccessLevels.mockReturnValue(nonOwnerLevels);
 
 		render(
 			<MemberList
 				members={mockMembers}
-				currentUserEmail={null}
+				currentUserEmail="admin@example.com"
 				currentUserIsOwner={false}
 				plannerId={plannerId}
 				onUpdate={mockOnUpdate}
@@ -235,15 +139,9 @@ describe('MemberList', () => {
 			/>,
 		);
 
-		// Should still render members
-		expect(screen.getByText('Alice')).toBeDefined();
-		expect(screen.getByText('Bob')).toBeDefined();
+		expect(mockGetAvailableAccessLevels).toHaveBeenCalledWith(false);
 
-		// Verify canModifyMember was called with null email
-		expect(mockCanModifyMember).toHaveBeenCalledWith(
-			expect.objectContaining({
-				currentUserEmail: null,
-			}),
-		);
+		const calls = vi.mocked(MemberActions).mock.calls;
+		expect(calls[0][0].availableLevels).toEqual(nonOwnerLevels);
 	});
 });

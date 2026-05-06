@@ -4,14 +4,13 @@ import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 
 import { beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
 
+import { signUpWithInvite } from '@/_actions/sharing';
 import { zSafeString } from '@/_utils/zSafeString';
 
 import { InviteRegistrationFlow } from './InviteRegistrationFlow';
 
-// Mock Mantine components
 vi.mock('@mantine/core', async () => await import('@mocks/@mantine/core'));
 
-// Mock AuthLayout components
 vi.mock('../../_components/AuthLayout', () => ({
 	AuthLayoutAlert: vi.fn(({ children }) => <div role="alert">{children}</div>),
 	AuthLayoutEmailDisplay: vi.fn(({ email }) => <div>{email}</div>),
@@ -23,27 +22,23 @@ vi.mock('../../_components/AuthLayout', () => ({
 	)),
 }));
 
-// Mock Next.js router
 vi.mock('next/navigation', async () => await import('@mocks/next/navigation'));
 
-const mockPush = vi.fn();
+vi.mock(
+	'@/_actions/sharing',
+	async () => await import('@mocks/@/_actions/sharing'),
+);
 
-// Mock signUpWithInvite action with default implementation
-const mockSignUpWithInvite = vi.fn();
-vi.mock('@/_actions/sharing', () => ({
-	signUpWithInvite: (...args: Parameters<typeof mockSignUpWithInvite>) =>
-		mockSignUpWithInvite(...args),
-}));
-
-// Mock @/_hooks with centralized mock
 vi.mock('@/_hooks', async () => await import('@mocks/@/_hooks'));
 
-// Mock zSafeString with simplified factory
 vi.mock('@/_utils/zSafeString', () => ({
 	zSafeString: vi.fn(() => ({
-		safeParse: vi.fn(),
+		safeParse: vi.fn(() => ({ success: true })),
 	})),
 }));
+
+const mockPush = vi.fn();
+const mockSignUpWithInvite = vi.mocked(signUpWithInvite);
 
 describe('InviteRegistrationFlow', () => {
 	const defaultProps = {
@@ -57,12 +52,6 @@ describe('InviteRegistrationFlow', () => {
 			...defaultRouter,
 			push: mockPush,
 		});
-		// Set default mock behavior for zSafeString - success by default
-		vi.mocked(zSafeString).mockReturnValue({
-			safeParse: vi.fn().mockReturnValue({ success: true }),
-		} as unknown as ReturnType<typeof zSafeString>);
-		// Set a default resolved value that survives clears
-		mockSignUpWithInvite.mockResolvedValue({ success: true, redirectUrl: '/' });
 	});
 
 	beforeEach(() => {
@@ -136,7 +125,6 @@ describe('InviteRegistrationFlow', () => {
 			fireEvent.change(passwordInput, { target: { value: 'password123' } });
 			fireEvent.click(submitButton);
 
-			// Loading state should be active immediately
 			await waitFor(() => {
 				const button = screen.getByText('Create Account');
 				expect(button.getAttribute('data-loading')).toBe('true');
@@ -146,7 +134,6 @@ describe('InviteRegistrationFlow', () => {
 
 	describe('validation', () => {
 		it('validates name with zSafeString when provided', () => {
-			// Control the mock to return an error
 			vi.mocked(zSafeString).mockReturnValue({
 				safeParse: vi.fn().mockReturnValue({
 					success: false,
@@ -172,7 +159,6 @@ describe('InviteRegistrationFlow', () => {
 		});
 
 		it('shows fallback error message when name validation fails without message', () => {
-			// Control the mock to return error without issues
 			vi.mocked(zSafeString).mockReturnValue({
 				safeParse: vi.fn().mockReturnValue({
 					success: false,
@@ -230,7 +216,6 @@ describe('InviteRegistrationFlow', () => {
 		it('handles missing redirectUrl gracefully', async () => {
 			mockSignUpWithInvite.mockResolvedValueOnce({
 				success: true,
-				// no redirectUrl
 			});
 
 			render(<InviteRegistrationFlow {...defaultProps} />);
@@ -241,19 +226,16 @@ describe('InviteRegistrationFlow', () => {
 			fireEvent.change(passwordInput, { target: { value: 'password123' } });
 			fireEvent.click(submitButton);
 
-			// Wait for async completion
 			await waitFor(() => {
 				expect(mockSignUpWithInvite).toHaveBeenCalled();
 			});
 
-			// Should not redirect if no redirectUrl
 			expect(mockPush).not.toHaveBeenCalled();
 		});
 
 		it('displays default error message when signUpWithInvite fails without error', async () => {
 			mockSignUpWithInvite.mockResolvedValueOnce({
 				success: false,
-				// no error message
 			});
 
 			render(<InviteRegistrationFlow {...defaultProps} />);

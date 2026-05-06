@@ -2,13 +2,11 @@ import { renderHook, waitFor } from '@testing-library/react';
 
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
+import { getUser } from '@/_actions/user';
+
 import { useCurrentUserMembership } from './useCurrentUserMembership';
 
-const mockGetUser = vi.fn();
-
-vi.mock('@/_actions/user', () => ({
-	getUser: (...args: unknown[]) => mockGetUser(...args),
-}));
+vi.mock('@/_actions/user', async () => await import('@mocks/@/_actions/user'));
 
 describe('useCurrentUserMembership', () => {
 	const plannerId = '507f1f77bcf86cd799439011';
@@ -18,8 +16,6 @@ describe('useCurrentUserMembership', () => {
 	});
 
 	it('returns initial loading state', () => {
-		mockGetUser.mockImplementation(() => new Promise(() => {}));
-
 		const { result } = renderHook(() => useCurrentUserMembership(plannerId));
 
 		expect(result.current.loading).toBe(true);
@@ -28,13 +24,11 @@ describe('useCurrentUserMembership', () => {
 		expect(result.current.isOwner).toBe(false);
 	});
 
-	it('fetches user and returns email successfully', async () => {
-		mockGetUser.mockResolvedValue({
+	it('fetches user and returns email and ownership status', async () => {
+		vi.mocked(getUser).mockResolvedValue({
 			email: 'alice@example.com',
-			planners: [
-				{ planner: { toString: () => plannerId }, accessLevel: 'owner' },
-			],
-		});
+			planners: [{ planner: plannerId, accessLevel: 'owner' }],
+		} as never);
 
 		const { result } = renderHook(() => useCurrentUserMembership(plannerId));
 
@@ -43,33 +37,15 @@ describe('useCurrentUserMembership', () => {
 		});
 
 		expect(result.current.email).toBe('alice@example.com');
+		expect(result.current.isOwner).toBe(true);
 		expect(result.current.error).toBeNull();
 	});
 
-	it('calculates isOwner as true when user is owner', async () => {
-		mockGetUser.mockResolvedValue({
-			email: 'alice@example.com',
-			planners: [
-				{ planner: { toString: () => plannerId }, accessLevel: 'owner' },
-			],
-		});
-
-		const { result } = renderHook(() => useCurrentUserMembership(plannerId));
-
-		await waitFor(() => {
-			expect(result.current.loading).toBe(false);
-		});
-
-		expect(result.current.isOwner).toBe(true);
-	});
-
 	it('calculates isOwner as false when user is admin', async () => {
-		mockGetUser.mockResolvedValue({
+		vi.mocked(getUser).mockResolvedValue({
 			email: 'alice@example.com',
-			planners: [
-				{ planner: { toString: () => plannerId }, accessLevel: 'admin' },
-			],
-		});
+			planners: [{ planner: plannerId, accessLevel: 'admin' }],
+		} as never);
 
 		const { result } = renderHook(() => useCurrentUserMembership(plannerId));
 
@@ -81,15 +57,10 @@ describe('useCurrentUserMembership', () => {
 	});
 
 	it('calculates isOwner as false when user has no membership', async () => {
-		mockGetUser.mockResolvedValue({
+		vi.mocked(getUser).mockResolvedValue({
 			email: 'bob@example.com',
-			planners: [
-				{
-					planner: { toString: () => 'other-planner-id' },
-					accessLevel: 'owner',
-				},
-			],
-		});
+			planners: [{ planner: 'other-planner-id', accessLevel: 'owner' }],
+		} as never);
 
 		const { result } = renderHook(() => useCurrentUserMembership(plannerId));
 
@@ -101,7 +72,7 @@ describe('useCurrentUserMembership', () => {
 	});
 
 	it('sets null email when user is null', async () => {
-		mockGetUser.mockResolvedValue(null);
+		vi.mocked(getUser).mockResolvedValue(null as never);
 
 		const { result } = renderHook(() => useCurrentUserMembership(plannerId));
 
@@ -114,7 +85,7 @@ describe('useCurrentUserMembership', () => {
 	});
 
 	it('handles unexpected errors', async () => {
-		mockGetUser.mockRejectedValue(new Error('Network error'));
+		vi.mocked(getUser).mockRejectedValue(new Error('Network error'));
 
 		const { result } = renderHook(() => useCurrentUserMembership(plannerId));
 
@@ -128,10 +99,10 @@ describe('useCurrentUserMembership', () => {
 	});
 
 	it('refetches when plannerId changes', async () => {
-		mockGetUser.mockResolvedValue({
+		vi.mocked(getUser).mockResolvedValue({
 			email: 'alice@example.com',
 			planners: [],
-		});
+		} as never);
 
 		const { result, rerender } = renderHook(
 			({ id }: { id: string }) => useCurrentUserMembership(id),
@@ -142,13 +113,12 @@ describe('useCurrentUserMembership', () => {
 			expect(result.current.loading).toBe(false);
 		});
 
-		expect(mockGetUser).toHaveBeenCalledTimes(1);
+		expect(getUser).toHaveBeenCalledTimes(1);
 
-		// Change plannerId
 		rerender({ id: 'different-planner-id' });
 
 		await waitFor(() => {
-			expect(mockGetUser).toHaveBeenCalledTimes(2);
+			expect(getUser).toHaveBeenCalledTimes(2);
 		});
 	});
 });

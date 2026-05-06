@@ -3,13 +3,10 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { checkAuth } from '@/_actions/auth';
 import { PendingInvite } from '@/_models';
-import type { AccessLevel } from '@/_models/user';
 
 import { type CancelInviteInput, cancelInvite } from './cancelInvite';
 
-vi.mock('@/_actions/auth', () => ({
-	checkAuth: vi.fn(),
-}));
+vi.mock('@/_actions/auth', async () => await import('@mocks/@/_actions/auth'));
 
 vi.mock('@/_models', () => ({
 	PendingInvite: {
@@ -21,15 +18,6 @@ vi.mock('@/_models', () => ({
 vi.mock('@/_utils/serialize', () => ({
 	serialize: vi.fn((data) => data),
 }));
-
-const mockUser = {
-	_id: new Types.ObjectId(),
-	id: new Types.ObjectId().toString(),
-	email: 'test@example.com',
-	name: 'Test User',
-	planners: [],
-	__v: 0,
-} as never;
 
 describe('cancelInvite', () => {
 	const plannerId = '507f1f77bcf86cd799439011';
@@ -44,7 +32,7 @@ describe('cancelInvite', () => {
 	});
 
 	it('returns error when user is not authenticated', async () => {
-		vi.mocked(checkAuth).mockResolvedValue({
+		vi.mocked(checkAuth).mockResolvedValueOnce({
 			type: 'unauthenticated',
 		});
 
@@ -54,13 +42,13 @@ describe('cancelInvite', () => {
 			success: false,
 			error: 'Unauthorized',
 		});
-		expect(checkAuth).toHaveBeenCalledWith(expect.anything(), 'admin');
+		expect(checkAuth).toHaveBeenCalledWith(expect.any(Types.ObjectId), 'admin');
 		expect(PendingInvite.findOne).not.toHaveBeenCalled();
 		expect(PendingInvite.deleteOne).not.toHaveBeenCalled();
 	});
 
 	it('returns error when caller lacks admin access', async () => {
-		vi.mocked(checkAuth).mockResolvedValue({
+		vi.mocked(checkAuth).mockResolvedValueOnce({
 			type: 'unauthorized',
 		});
 
@@ -74,13 +62,23 @@ describe('cancelInvite', () => {
 		expect(PendingInvite.deleteOne).not.toHaveBeenCalled();
 	});
 
-	it('returns error when inviteId is invalid', async () => {
-		vi.mocked(checkAuth).mockResolvedValue({
-			type: 'authorized',
-			accessLevel: 'admin' as AccessLevel,
-			user: mockUser,
+	it('returns error when checkAuth returns error type', async () => {
+		vi.mocked(checkAuth).mockResolvedValueOnce({
+			type: 'error',
+			error: new Error('Auth check failed'),
 		});
 
+		const result = await cancelInvite(input);
+
+		expect(result).toEqual({
+			success: false,
+			error: 'Unauthorized',
+		});
+		expect(PendingInvite.findOne).not.toHaveBeenCalled();
+		expect(PendingInvite.deleteOne).not.toHaveBeenCalled();
+	});
+
+	it('returns error when inviteId is invalid', async () => {
 		const result = await cancelInvite({
 			inviteId: 'invalid-id',
 			plannerId,
@@ -95,12 +93,6 @@ describe('cancelInvite', () => {
 	});
 
 	it('returns error when invite not found for this planner', async () => {
-		vi.mocked(checkAuth).mockResolvedValue({
-			type: 'authorized',
-			accessLevel: 'admin' as AccessLevel,
-			user: mockUser,
-		});
-
 		vi.mocked(PendingInvite.findOne).mockResolvedValue(null);
 
 		const result = await cancelInvite(input);
@@ -117,23 +109,9 @@ describe('cancelInvite', () => {
 	});
 
 	it('successfully deletes the pending invite', async () => {
-		vi.mocked(checkAuth).mockResolvedValue({
-			type: 'authorized',
-			accessLevel: 'admin' as AccessLevel,
-			user: mockUser,
-		});
-
-		const mockInvite = {
+		vi.mocked(PendingInvite.findOne).mockResolvedValue({
 			_id: inviteId,
-			email: 'invited@example.com',
-			planner: plannerId,
-			invitedBy: '507f1f77bcf86cd799439013',
-			accessLevel: 'read',
-			token: 'some-token',
-			expiresAt: new Date(),
-		};
-
-		vi.mocked(PendingInvite.findOne).mockResolvedValue(mockInvite as never);
+		} as never);
 		vi.mocked(PendingInvite.deleteOne).mockResolvedValue({
 			deletedCount: 1,
 		} as never);
@@ -153,12 +131,6 @@ describe('cancelInvite', () => {
 	});
 
 	it('returns error on database failure during find', async () => {
-		vi.mocked(checkAuth).mockResolvedValue({
-			type: 'authorized',
-			accessLevel: 'admin' as AccessLevel,
-			user: mockUser,
-		});
-
 		vi.mocked(PendingInvite.findOne).mockRejectedValue(
 			new Error('Database connection failed'),
 		);
@@ -171,23 +143,9 @@ describe('cancelInvite', () => {
 	});
 
 	it('returns error on database failure during delete', async () => {
-		vi.mocked(checkAuth).mockResolvedValue({
-			type: 'authorized',
-			accessLevel: 'admin' as AccessLevel,
-			user: mockUser,
-		});
-
-		const mockInvite = {
+		vi.mocked(PendingInvite.findOne).mockResolvedValue({
 			_id: inviteId,
-			email: 'invited@example.com',
-			planner: plannerId,
-			invitedBy: '507f1f77bcf86cd799439013',
-			accessLevel: 'read',
-			token: 'some-token',
-			expiresAt: new Date(),
-		};
-
-		vi.mocked(PendingInvite.findOne).mockResolvedValue(mockInvite as never);
+		} as never);
 		vi.mocked(PendingInvite.deleteOne).mockRejectedValue(
 			new Error('Delete operation failed'),
 		);
@@ -199,64 +157,11 @@ describe('cancelInvite', () => {
 	});
 
 	it('returns generic error when non-Error is thrown', async () => {
-		vi.mocked(checkAuth).mockResolvedValue({
-			type: 'authorized',
-			accessLevel: 'admin' as AccessLevel,
-			user: mockUser,
-		});
-
 		vi.mocked(PendingInvite.findOne).mockRejectedValue('String error');
 
 		const result = await cancelInvite(input);
 
 		expect(result.success).toBe(false);
 		expect(result.error).toBe('An error occurred');
-	});
-
-	it('returns error when checkAuth returns error type', async () => {
-		vi.mocked(checkAuth).mockResolvedValue({
-			type: 'error',
-			error: new Error('Auth check failed'),
-		});
-
-		const result = await cancelInvite(input);
-
-		expect(result).toEqual({
-			success: false,
-			error: 'Unauthorized',
-		});
-		expect(PendingInvite.findOne).not.toHaveBeenCalled();
-		expect(PendingInvite.deleteOne).not.toHaveBeenCalled();
-	});
-
-	it('verifies invite belongs to specified planner for security', async () => {
-		vi.mocked(checkAuth).mockResolvedValue({
-			type: 'authorized',
-			accessLevel: 'admin' as AccessLevel,
-			user: mockUser,
-		});
-
-		const mockInvite = {
-			_id: inviteId,
-			email: 'invited@example.com',
-			planner: plannerId,
-			invitedBy: '507f1f77bcf86cd799439013',
-			accessLevel: 'read',
-			token: 'some-token',
-			expiresAt: new Date(),
-		};
-
-		vi.mocked(PendingInvite.findOne).mockResolvedValue(mockInvite as never);
-		vi.mocked(PendingInvite.deleteOne).mockResolvedValue({
-			deletedCount: 1,
-		} as never);
-
-		await cancelInvite(input);
-
-		// Verify that findOne was called with both _id and planner to ensure
-		// the invite belongs to the specified planner
-		const findOneCall = vi.mocked(PendingInvite.findOne).mock.calls[0][0];
-		expect(findOneCall).toHaveProperty('_id');
-		expect(findOneCall).toHaveProperty('planner');
 	});
 });

@@ -1,15 +1,12 @@
 import { render, screen } from '@testing-library/react';
 
-import { describe, expect, test, vi } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 
+import { checkEmailStatus } from '@/_actions/auth';
+import { verifyEmailChange } from '@/_actions/user';
 import { User } from '@/_models';
 
 import VerifyEmailChangePage from './page';
-
-const { mockCheckEmailStatus, mockVerifyEmailChange } = vi.hoisted(() => ({
-	mockCheckEmailStatus: vi.fn(),
-	mockVerifyEmailChange: vi.fn(),
-}));
 
 vi.mock('@/_models', () => ({
 	User: {
@@ -17,24 +14,20 @@ vi.mock('@/_models', () => ({
 	},
 }));
 
-vi.mock('@/_actions/auth', () => ({
-	checkEmailStatus: (email: string) => mockCheckEmailStatus(email),
-}));
+vi.mock('@/_actions/auth', async () => await import('@mocks/@/_actions/auth'));
 
-vi.mock('@/_actions/user', () => ({
-	verifyEmailChange: (token: string) => mockVerifyEmailChange(token),
-}));
+vi.mock('@/_actions/user', async () => await import('@mocks/@/_actions/user'));
 
 vi.mock('./_components/SignInWithNewEmailButton', () => ({
-	SignInWithNewEmailButton: () => (
+	SignInWithNewEmailButton: vi.fn(() => (
 		<button data-testid="sign-in-link" type="button" />
-	),
+	)),
 }));
 
 vi.mock('./_components/SetPasswordForm', () => ({
-	SetPasswordForm: ({ token }: { token: string }) => (
+	SetPasswordForm: vi.fn(({ token }: { token: string }) => (
 		<div data-testid="set-password-form" data-token={token} />
-	),
+	)),
 }));
 
 vi.mock('@mantine/core', async () => await import('@mocks/@mantine/core'));
@@ -56,13 +49,17 @@ const makeMockUser = (overrides = {}) => ({
 });
 
 describe('VerifyEmailChangePage', () => {
-	test('shows invalid link when no token in search params', async () => {
+	beforeEach(() => {
+		vi.clearAllMocks();
+	});
+
+	it('shows invalid link when no token in search params', async () => {
 		render(await VerifyEmailChangePage({ searchParams: makeSearchParams() }));
 
 		expect(screen.getByTestId('invalid-title')).toBeDefined();
 	});
 
-	test('shows expired link when token not found in database', async () => {
+	it('shows expired link when token not found in database', async () => {
 		vi.mocked(User.findOne).mockReturnValueOnce({
 			exec: vi.fn().mockResolvedValue(null),
 		} as never);
@@ -76,7 +73,7 @@ describe('VerifyEmailChangePage', () => {
 		expect(screen.getByTestId('expired-title')).toBeDefined();
 	});
 
-	test('shows expired link when pending change is missing', async () => {
+	it('shows expired link when pending change is missing', async () => {
 		vi.mocked(User.findOne).mockReturnValueOnce({
 			exec: vi
 				.fn()
@@ -92,7 +89,7 @@ describe('VerifyEmailChangePage', () => {
 		expect(screen.getByTestId('expired-title')).toBeDefined();
 	});
 
-	test('shows expired link when token is past expiry', async () => {
+	it('shows expired link when token is past expiry', async () => {
 		vi.mocked(User.findOne).mockReturnValueOnce({
 			exec: vi.fn().mockResolvedValue(
 				makeMockUser({
@@ -114,11 +111,11 @@ describe('VerifyEmailChangePage', () => {
 		expect(screen.getByTestId('expired-title')).toBeDefined();
 	});
 
-	test('shows set-password form for SSO-only users with token', async () => {
+	it('shows set-password form for SSO-only users with token', async () => {
 		vi.mocked(User.findOne).mockReturnValueOnce({
 			exec: vi.fn().mockResolvedValue(makeMockUser()),
 		} as never);
-		mockCheckEmailStatus.mockResolvedValueOnce('social-only');
+		vi.mocked(checkEmailStatus).mockResolvedValueOnce('social-only');
 
 		render(
 			await VerifyEmailChangePage({
@@ -131,26 +128,25 @@ describe('VerifyEmailChangePage', () => {
 		expect(form.getAttribute('data-token')).toBe('valid-token');
 	});
 
-	test('calls verifyEmailChange with the token for password users', async () => {
+	it('calls verifyEmailChange with the token for password users', async () => {
 		vi.mocked(User.findOne).mockReturnValueOnce({
 			exec: vi.fn().mockResolvedValue(makeMockUser()),
 		} as never);
-		mockCheckEmailStatus.mockResolvedValueOnce('has-password');
-		mockVerifyEmailChange.mockResolvedValueOnce({ ok: true, data: undefined });
+		vi.mocked(checkEmailStatus).mockResolvedValueOnce('has-password');
 
 		await VerifyEmailChangePage({
 			searchParams: makeSearchParams({ token: 'valid-token' }),
 		});
 
-		expect(mockVerifyEmailChange).toHaveBeenCalledWith('valid-token');
+		expect(vi.mocked(verifyEmailChange)).toHaveBeenCalledWith('valid-token');
 	});
 
-	test('shows expired link when verifyEmailChange action fails', async () => {
+	it('shows expired link when verifyEmailChange action fails', async () => {
 		vi.mocked(User.findOne).mockReturnValueOnce({
 			exec: vi.fn().mockResolvedValue(makeMockUser()),
 		} as never);
-		mockCheckEmailStatus.mockResolvedValueOnce('has-password');
-		mockVerifyEmailChange.mockResolvedValueOnce({
+		vi.mocked(checkEmailStatus).mockResolvedValueOnce('has-password');
+		vi.mocked(verifyEmailChange).mockResolvedValueOnce({
 			ok: false,
 			error: 'This link is invalid or has expired.',
 		});
@@ -164,12 +160,11 @@ describe('VerifyEmailChangePage', () => {
 		expect(screen.getByTestId('expired-title')).toBeDefined();
 	});
 
-	test('shows success message with new email on successful change', async () => {
+	it('shows success message with new email on successful change', async () => {
 		vi.mocked(User.findOne).mockReturnValueOnce({
 			exec: vi.fn().mockResolvedValue(makeMockUser()),
 		} as never);
-		mockCheckEmailStatus.mockResolvedValueOnce('has-password');
-		mockVerifyEmailChange.mockResolvedValueOnce({ ok: true, data: undefined });
+		vi.mocked(checkEmailStatus).mockResolvedValueOnce('has-password');
 
 		render(
 			await VerifyEmailChangePage({

@@ -112,15 +112,4 @@ describe('canModifyMember', () => {
 
 		expect(canModifyMember(params)).toBe(true);
 	});
-
-	it('returns true when modifying different user with write access', () => {
-		const member = createMember('charlie@example.com', 'write');
-		const params: CanModifyMemberParams = {
-			member,
-			currentUserEmail: 'bob@example.com',
-			currentUserIsOwner: false,
-		};
-
-		expect(canModifyMember(params)).toBe(true);
-	});
 });

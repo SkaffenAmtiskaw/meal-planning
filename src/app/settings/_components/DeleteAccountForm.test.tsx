@@ -15,11 +15,9 @@ vi.mock('@mantine/core', async () => await import('@mocks/@mantine/core'));
 
 vi.mock('next/navigation', async () => await import('@mocks/next/navigation'));
 
-vi.mock('@/_actions/user', () => ({
-	deleteAccount: vi.fn(),
-}));
+vi.mock('@/_actions/user', async () => await import('@mocks/@/_actions/user'));
 
-vi.mock('@/_utils/auth', () => ({
+vi.mock('@/_utils/auth', async () => ({
 	client: {
 		signOut: vi.fn(),
 	},
@@ -67,13 +65,7 @@ describe('DeleteAccountForm', () => {
 		expect(button).toHaveProperty('disabled', false);
 	});
 
-	it('calls deleteAccount on submit', async () => {
-		vi.mocked(deleteAccount).mockResolvedValueOnce({
-			ok: true,
-			data: undefined,
-		});
-		vi.mocked(client.signOut).mockResolvedValueOnce(undefined);
-
+	it('calls deleteAccount on submit', () => {
 		render(<DeleteAccountForm />);
 
 		fireEvent.change(screen.getByTestId('delete-confirmation-input'), {
@@ -81,18 +73,10 @@ describe('DeleteAccountForm', () => {
 		});
 		fireEvent.click(screen.getByTestId('delete-account-button'));
 
-		await waitFor(() => {
-			expect(deleteAccount).toHaveBeenCalledOnce();
-		});
+		expect(deleteAccount).toHaveBeenCalledOnce();
 	});
 
 	it('signs out and redirects to / on success', async () => {
-		vi.mocked(deleteAccount).mockResolvedValueOnce({
-			ok: true,
-			data: undefined,
-		});
-		vi.mocked(client.signOut).mockResolvedValueOnce(undefined);
-
 		render(<DeleteAccountForm />);
 
 		fireEvent.change(screen.getByTestId('delete-confirmation-input'), {

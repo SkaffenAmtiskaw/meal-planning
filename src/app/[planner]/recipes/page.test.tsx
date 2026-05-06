@@ -1,38 +1,26 @@
 import { render } from '@testing-library/react';
 
-import { afterEach, describe, expect, test, vi } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 
+import { getPlanner } from '@/_actions/planner';
+
+import { Modal, SavedList } from './_components';
 import RecipesPage from './page';
 
 vi.mock('@/_models', async () => {
-	const { zObjectId } = await import('@/_models/utils/zObjectId');
-	return { zObjectId };
+	const { z } = await import('zod');
+	return { zObjectId: z.string() };
 });
 
-const mockGetPlanner = vi.fn();
-vi.mock('@/_actions/planner', () => ({
-	getPlanner: (...args: unknown[]) => mockGetPlanner(...args),
-}));
-
-type ModalProps = {
-	planner: unknown;
-	item?: unknown;
-	status?: string;
-	type?: string;
-};
-
-type SavedListProps = {
-	items: unknown[];
-	plannerId: string;
-};
-
-const mockModal = vi.fn<(props: ModalProps) => null>(() => null);
-const mockSavedList = vi.fn<(props: SavedListProps) => null>(() => null);
+vi.mock(
+	'@/_actions/planner',
+	async () => await import('@mocks/@/_actions/planner'),
+);
 
 vi.mock('./_components', () => ({
-	Modal: (props: ModalProps) => mockModal(props),
+	Modal: vi.fn(() => null),
 	AddItemDropdown: () => null,
-	SavedList: (props: SavedListProps) => mockSavedList(props),
+	SavedList: vi.fn(() => null),
 }));
 
 vi.mock('@mantine/core', async () => await import('@mocks/@mantine/core'));
@@ -52,39 +40,47 @@ describe('recipes page', () => {
 	const params = Promise.resolve({ planner: plannerId });
 	const searchParams = Promise.resolve({});
 
-	afterEach(() => {
-		vi.resetAllMocks();
+	beforeEach(() => {
+		vi.clearAllMocks();
 	});
 
-	test('passes planner data to Modal', async () => {
+	it('fetches planner and passes it to Modal', async () => {
 		const planner = makePlanner();
-		mockGetPlanner.mockResolvedValue(planner);
+		vi.mocked(getPlanner).mockResolvedValueOnce(planner as never);
 
 		render(await RecipesPage({ params, searchParams }));
 
-		expect(mockModal).toHaveBeenCalledWith(
+		expect(getPlanner).toHaveBeenCalledWith(plannerId);
+		expect(vi.mocked(Modal)).toHaveBeenCalledWith(
 			expect.objectContaining({ planner }),
+			undefined,
 		);
 	});
 
-	test('passes search params to Modal', async () => {
+	it('passes search params to Modal when present', async () => {
 		const planner = makePlanner();
-		mockGetPlanner.mockResolvedValue(planner);
+		vi.mocked(getPlanner).mockResolvedValueOnce(planner as never);
 
+		const itemId = '507f1f77bcf86cd799439012';
 		const searchParamsWithQuery = Promise.resolve({
 			status: 'edit' as const,
 			type: 'recipe' as const,
-			item: '507f1f77bcf86cd799439012',
+			item: itemId,
 		});
 
 		render(await RecipesPage({ params, searchParams: searchParamsWithQuery }));
 
-		expect(mockModal).toHaveBeenCalledWith(
-			expect.objectContaining({ status: 'edit', type: 'recipe' }),
+		expect(vi.mocked(Modal)).toHaveBeenCalledWith(
+			expect.objectContaining({
+				item: itemId,
+				status: 'edit',
+				type: 'recipe',
+			}),
+			undefined,
 		);
 	});
 
-	test('passes saved items and plannerId to SavedList', async () => {
+	it('passes saved items, plannerId, and tags to SavedList', async () => {
 		const saved = [
 			{
 				_id: { toString: () => '507f1f77bcf86cd799439012' },
@@ -92,12 +88,17 @@ describe('recipes page', () => {
 			},
 		];
 		const planner = makePlanner(saved);
-		mockGetPlanner.mockResolvedValue(planner);
+		vi.mocked(getPlanner).mockResolvedValueOnce(planner as never);
 
 		render(await RecipesPage({ params, searchParams }));
 
-		expect(mockSavedList).toHaveBeenCalledWith(
-			expect.objectContaining({ items: planner.saved, plannerId }),
+		expect(vi.mocked(SavedList)).toHaveBeenCalledWith(
+			expect.objectContaining({
+				items: planner.saved,
+				plannerId,
+				tags: planner.tags,
+			}),
+			undefined,
 		);
 	});
 });

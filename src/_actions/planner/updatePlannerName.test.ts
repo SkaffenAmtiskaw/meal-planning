@@ -1,14 +1,12 @@
 import { Types } from 'mongoose';
 import { afterEach, describe, expect, test, vi } from 'vitest';
 
-import { Planner } from '@/_models';
+import { checkAuth } from '@/_actions/auth';
+import { Planner, zObjectId } from '@/_models';
 
 import { updatePlannerName } from './updatePlannerName';
 
-const mockCheckAuth = vi.hoisted(() => vi.fn());
-vi.mock('@/_actions/auth', () => ({
-	checkAuth: mockCheckAuth,
-}));
+vi.mock('@/_actions/auth', async () => await import('@mocks/@/_actions/auth'));
 
 vi.mock('@/_models', () => ({
 	Planner: {
@@ -17,13 +15,7 @@ vi.mock('@/_models', () => ({
 		},
 	},
 	zObjectId: {
-		safeParse: (v: unknown) =>
-			typeof v === 'string' && /^[0-9a-fA-F]{24}$/.test(v)
-				? { success: true }
-				: {
-						success: false,
-						error: { issues: [{ message: 'Invalid ObjectId' }] },
-					},
+		safeParse: vi.fn(() => ({ success: true })),
 	},
 }));
 
@@ -35,6 +27,11 @@ describe('updatePlannerName', () => {
 	});
 
 	test('returns error when planner ID is invalid', async () => {
+		vi.mocked(zObjectId.safeParse).mockReturnValueOnce({
+			success: false,
+			error: { issues: [{ message: 'Invalid ObjectId' }] },
+		} as never);
+
 		const result = await updatePlannerName('not-an-id', 'New Name');
 
 		expect(result).toEqual({ ok: false, error: 'Invalid planner ID.' });
@@ -53,7 +50,7 @@ describe('updatePlannerName', () => {
 	});
 
 	test('returns error when user is not authenticated', async () => {
-		mockCheckAuth.mockResolvedValue({ type: 'unauthenticated' });
+		vi.mocked(checkAuth).mockResolvedValue({ type: 'unauthenticated' });
 
 		const result = await updatePlannerName(validId, 'New Name');
 
@@ -61,7 +58,7 @@ describe('updatePlannerName', () => {
 	});
 
 	test('returns error when planner does not belong to user', async () => {
-		mockCheckAuth.mockResolvedValue({ type: 'unauthorized' });
+		vi.mocked(checkAuth).mockResolvedValue({ type: 'unauthorized' });
 
 		const result = await updatePlannerName(validId, 'New Name');
 
@@ -69,7 +66,7 @@ describe('updatePlannerName', () => {
 	});
 
 	test('returns error when there is an auth error', async () => {
-		mockCheckAuth.mockResolvedValue({
+		vi.mocked(checkAuth).mockResolvedValue({
 			type: 'error',
 			error: new Error('DB error'),
 		});
@@ -80,18 +77,9 @@ describe('updatePlannerName', () => {
 	});
 
 	test('updates planner name when authorized', async () => {
-		mockCheckAuth.mockResolvedValue({
-			type: 'authorized',
-			accessLevel: 'admin',
-		});
-		vi.mocked(Planner.collection.updateOne).mockResolvedValue({} as never);
-
 		const result = await updatePlannerName(validId, 'New Name');
 
-		expect(mockCheckAuth).toHaveBeenCalledWith(
-			expect.any(Types.ObjectId),
-			'admin',
-		);
+		expect(checkAuth).toHaveBeenCalledWith(expect.any(Types.ObjectId), 'admin');
 		expect(Planner.collection.updateOne).toHaveBeenCalledWith(
 			{ _id: expect.objectContaining({}) },
 			{ $set: { name: 'New Name' } },
@@ -100,10 +88,6 @@ describe('updatePlannerName', () => {
 	});
 
 	test('propagates error when DB update throws', async () => {
-		mockCheckAuth.mockResolvedValue({
-			type: 'authorized',
-			accessLevel: 'admin',
-		});
 		vi.mocked(Planner.collection.updateOne).mockRejectedValue(
 			new Error('DB error'),
 		);

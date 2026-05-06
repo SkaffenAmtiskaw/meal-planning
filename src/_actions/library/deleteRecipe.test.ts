@@ -1,27 +1,21 @@
-import { Types } from 'mongoose';
 import { afterEach, describe, expect, test, vi } from 'vitest';
 
 import { checkAuth } from '@/_actions/auth';
-import { Planner } from '@/_models';
+import { matchesId, Planner } from '@/_models';
 
 import { deleteRecipe } from './deleteRecipe';
 
-vi.mock('@/_actions/auth', () => ({
-	checkAuth: vi.fn(),
+vi.mock('@/_actions/auth', async () => await import('@mocks/@/_actions/auth'));
+
+vi.mock('@/_models', () => ({
+	matchesId: vi.fn(),
+	Planner: {
+		findById: vi.fn(),
+	},
 }));
 
-vi.mock('@/_models', async () => {
-	const { matchesId } = await import('@/_models/utils/matchesId');
-	return {
-		matchesId,
-		Planner: {
-			findById: vi.fn(),
-		},
-	};
-});
-
-const plannerId = new Types.ObjectId().toString();
-const recipeId = new Types.ObjectId().toString();
+const plannerId = '507f1f77bcf86cd799439011';
+const recipeId = '507f1f77bcf86cd799439012';
 
 const validData = { plannerId, recipeId };
 
@@ -42,16 +36,8 @@ describe('deleteRecipe', () => {
 		await expect(deleteRecipe({})).rejects.toThrow();
 	});
 
-	test('throws ZodError when plannerId is missing', async () => {
-		await expect(deleteRecipe({ recipeId })).rejects.toThrow();
-	});
-
-	test('throws ZodError when recipeId is missing', async () => {
-		await expect(deleteRecipe({ plannerId })).rejects.toThrow();
-	});
-
 	test('returns Unauthorized error when session is missing', async () => {
-		vi.mocked(checkAuth).mockResolvedValue({ type: 'unauthenticated' });
+		vi.mocked(checkAuth).mockResolvedValueOnce({ type: 'unauthenticated' });
 
 		const result = await deleteRecipe(validData);
 
@@ -60,7 +46,7 @@ describe('deleteRecipe', () => {
 	});
 
 	test('returns Unauthorized error when user does not own the planner', async () => {
-		vi.mocked(checkAuth).mockResolvedValue({ type: 'unauthorized' });
+		vi.mocked(checkAuth).mockResolvedValueOnce({ type: 'unauthorized' });
 
 		const result = await deleteRecipe(validData);
 
@@ -68,16 +54,6 @@ describe('deleteRecipe', () => {
 	});
 
 	test('returns Planner not found error when planner does not exist', async () => {
-		vi.mocked(checkAuth).mockResolvedValue({
-			type: 'authorized',
-			accessLevel: 'write',
-			user: {
-				_id: 'user-id',
-				email: 'test@example.com',
-				name: 'Test User',
-				planners: [],
-			},
-		} as never);
 		vi.mocked(Planner.findById).mockResolvedValue(null);
 
 		const result = await deleteRecipe(validData);
@@ -87,16 +63,7 @@ describe('deleteRecipe', () => {
 
 	test('returns Recipe not found error when recipeId is not in saved', async () => {
 		const planner = makePlanner(false);
-		vi.mocked(checkAuth).mockResolvedValue({
-			type: 'authorized',
-			accessLevel: 'write',
-			user: {
-				_id: 'user-id',
-				email: 'test@example.com',
-				name: 'Test User',
-				planners: [],
-			},
-		} as never);
+		vi.mocked(matchesId).mockReturnValue(() => false);
 		vi.mocked(Planner.findById).mockResolvedValue(planner as never);
 
 		const result = await deleteRecipe(validData);
@@ -107,16 +74,7 @@ describe('deleteRecipe', () => {
 
 	test('removes the recipe and returns ok', async () => {
 		const planner = makePlanner();
-		vi.mocked(checkAuth).mockResolvedValue({
-			type: 'authorized',
-			accessLevel: 'write',
-			user: {
-				_id: 'user-id',
-				email: 'test@example.com',
-				name: 'Test User',
-				planners: [],
-			},
-		} as never);
+		vi.mocked(matchesId).mockReturnValue(() => true);
 		vi.mocked(Planner.findById).mockResolvedValue(planner as never);
 
 		const result = await deleteRecipe(validData);

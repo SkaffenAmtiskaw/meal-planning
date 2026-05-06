@@ -2,15 +2,12 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { checkAuth } from '@/_actions/auth';
 import { User } from '@/_models';
-import type { AccessLevel } from '@/_models/user';
 
 import { removeMember } from './removeMember';
 
 import { removePlannerMembership } from './_utils/removePlannerMembership';
 
-vi.mock('@/_actions/auth', () => ({
-	checkAuth: vi.fn(),
-}));
+vi.mock('@/_actions/auth', async () => await import('@mocks/@/_actions/auth'));
 
 vi.mock('@/_models', () => ({
 	User: {
@@ -27,35 +24,24 @@ describe('removeMember', () => {
 	const memberEmail = 'member@example.com';
 	const targetUserId = 'target-user-id';
 
+	const targetUser = {
+		_id: targetUserId,
+		email: memberEmail,
+		name: 'Target User',
+		planners: [
+			{
+				planner: { toString: () => plannerId },
+				accessLevel: 'write',
+			},
+		],
+	};
+
 	beforeEach(() => {
 		vi.resetAllMocks();
 	});
 
-	it('removes member when caller is owner', async () => {
-		vi.mocked(checkAuth).mockResolvedValue({
-			type: 'authorized',
-			accessLevel: 'owner' as AccessLevel,
-			user: {
-				_id: 'caller-user-id',
-				email: 'caller@example.com',
-				name: 'Caller User',
-				planners: [],
-			},
-		} as never);
-
-		const mockTargetUser = {
-			_id: targetUserId,
-			email: memberEmail,
-			name: 'Target User',
-			planners: [
-				{
-					planner: { toString: () => plannerId },
-					accessLevel: 'write',
-				},
-			],
-		};
-
-		vi.mocked(User.findOne).mockResolvedValue(mockTargetUser as never);
+	it('removes member when caller is authorized', async () => {
+		vi.mocked(User.findOne).mockResolvedValue(targetUser as never);
 		vi.mocked(removePlannerMembership).mockResolvedValue({ ok: true });
 
 		const result = await removeMember(plannerId, memberEmail);
@@ -69,46 +55,12 @@ describe('removeMember', () => {
 		);
 	});
 
-	it('removes member when caller is admin', async () => {
-		vi.mocked(checkAuth).mockResolvedValue({
-			type: 'authorized',
-			accessLevel: 'admin' as AccessLevel,
-			user: {
-				_id: 'caller-user-id',
-				email: 'caller@example.com',
-				name: 'Caller User',
-				planners: [],
-			},
-		} as never);
-
-		const mockTargetUser = {
-			_id: targetUserId,
-			email: memberEmail,
-			name: 'Target User',
-			planners: [
-				{
-					planner: { toString: () => plannerId },
-					accessLevel: 'read',
-				},
-			],
-		};
-
-		vi.mocked(User.findOne).mockResolvedValue(mockTargetUser as never);
-		vi.mocked(removePlannerMembership).mockResolvedValue({ ok: true });
-
-		const result = await removeMember(plannerId, memberEmail);
-
-		expect(result).toEqual({ ok: true });
-		expect(removePlannerMembership).toHaveBeenCalledWith(
-			targetUserId,
-			plannerId,
-		);
-	});
-
-	it('returns unauthorized error when caller lacks permission', async () => {
-		vi.mocked(checkAuth).mockResolvedValue({
-			type: 'unauthorized',
-		});
+	it.each([
+		{ type: 'unauthorized' as const },
+		{ type: 'unauthenticated' as const },
+		{ type: 'error' as const, error: new Error('Auth check failed') },
+	])('returns unauthorized error when auth result is $type', async (authValue) => {
+		vi.mocked(checkAuth).mockResolvedValue(authValue as never);
 
 		const result = await removeMember(plannerId, memberEmail);
 
@@ -118,17 +70,6 @@ describe('removeMember', () => {
 	});
 
 	it('returns error when target user not found', async () => {
-		vi.mocked(checkAuth).mockResolvedValue({
-			type: 'authorized',
-			accessLevel: 'owner' as AccessLevel,
-			user: {
-				_id: 'caller-user-id',
-				email: 'caller@example.com',
-				name: 'Caller User',
-				planners: [],
-			},
-		} as never);
-
 		vi.mocked(User.findOne).mockResolvedValue(null);
 
 		const result = await removeMember(plannerId, memberEmail);
@@ -138,21 +79,8 @@ describe('removeMember', () => {
 	});
 
 	it('returns error when target user is not a member', async () => {
-		vi.mocked(checkAuth).mockResolvedValue({
-			type: 'authorized',
-			accessLevel: 'owner' as AccessLevel,
-			user: {
-				_id: 'caller-user-id',
-				email: 'caller@example.com',
-				name: 'Caller User',
-				planners: [],
-			},
-		} as never);
-
-		const mockTargetUser = {
-			_id: targetUserId,
-			email: memberEmail,
-			name: 'Target User',
+		const nonMember = {
+			...targetUser,
 			planners: [
 				{
 					planner: { toString: () => 'other-planner-id' },
@@ -161,7 +89,7 @@ describe('removeMember', () => {
 			],
 		};
 
-		vi.mocked(User.findOne).mockResolvedValue(mockTargetUser as never);
+		vi.mocked(User.findOne).mockResolvedValue(nonMember as never);
 
 		const result = await removeMember(plannerId, memberEmail);
 
@@ -173,21 +101,8 @@ describe('removeMember', () => {
 	});
 
 	it('returns error when trying to remove an owner', async () => {
-		vi.mocked(checkAuth).mockResolvedValue({
-			type: 'authorized',
-			accessLevel: 'owner' as AccessLevel,
-			user: {
-				_id: 'caller-user-id',
-				email: 'caller@example.com',
-				name: 'Caller User',
-				planners: [],
-			},
-		} as never);
-
-		const mockTargetUser = {
-			_id: targetUserId,
-			email: memberEmail,
-			name: 'Target User',
+		const owner = {
+			...targetUser,
 			planners: [
 				{
 					planner: { toString: () => plannerId },
@@ -196,7 +111,7 @@ describe('removeMember', () => {
 			],
 		};
 
-		vi.mocked(User.findOne).mockResolvedValue(mockTargetUser as never);
+		vi.mocked(User.findOne).mockResolvedValue(owner as never);
 
 		const result = await removeMember(plannerId, memberEmail);
 
@@ -205,30 +120,7 @@ describe('removeMember', () => {
 	});
 
 	it('returns error when removePlannerMembership fails', async () => {
-		vi.mocked(checkAuth).mockResolvedValue({
-			type: 'authorized',
-			accessLevel: 'owner' as AccessLevel,
-			user: {
-				_id: 'caller-user-id',
-				email: 'caller@example.com',
-				name: 'Caller User',
-				planners: [],
-			},
-		} as never);
-
-		const mockTargetUser = {
-			_id: targetUserId,
-			email: memberEmail,
-			name: 'Target User',
-			planners: [
-				{
-					planner: { toString: () => plannerId },
-					accessLevel: 'admin',
-				},
-			],
-		};
-
-		vi.mocked(User.findOne).mockResolvedValue(mockTargetUser as never);
+		vi.mocked(User.findOne).mockResolvedValue(targetUser as never);
 		vi.mocked(removePlannerMembership).mockResolvedValue({
 			ok: false,
 			error: 'Membership removal failed',
@@ -240,30 +132,5 @@ describe('removeMember', () => {
 			ok: false,
 			error: 'Membership removal failed',
 		});
-	});
-
-	it('returns unauthorized error when caller is unauthenticated', async () => {
-		vi.mocked(checkAuth).mockResolvedValue({
-			type: 'unauthenticated',
-		});
-
-		const result = await removeMember(plannerId, memberEmail);
-
-		expect(result).toEqual({ ok: false, error: 'Unauthorized' });
-		expect(User.findOne).not.toHaveBeenCalled();
-		expect(removePlannerMembership).not.toHaveBeenCalled();
-	});
-
-	it('returns unauthorized error when checkAuth returns error', async () => {
-		vi.mocked(checkAuth).mockResolvedValue({
-			type: 'error',
-			error: new Error('Auth check failed'),
-		});
-
-		const result = await removeMember(plannerId, memberEmail);
-
-		expect(result).toEqual({ ok: false, error: 'Unauthorized' });
-		expect(User.findOne).not.toHaveBeenCalled();
-		expect(removePlannerMembership).not.toHaveBeenCalled();
 	});
 });

@@ -1,35 +1,30 @@
-import { renderHook, waitFor } from '@testing-library/react';
+import type { ReactNode } from 'react';
 
-import { describe, expect, test, vi } from 'vitest';
+import { renderHook } from '@testing-library/react';
 
-import { PlannerProvider } from './PlannerProvider';
+import { describe, expect, it } from 'vitest';
+
+import { PlannerContext } from './PlannerContext';
 import { usePlannerContext } from './usePlannerContext';
 
-const mockGetPlannerClient = vi.fn();
-vi.mock('@/_actions/planner', () => ({
-	getPlannerClient: (...args: unknown[]) => mockGetPlannerClient(...args),
-}));
+const mockValue = {
+	name: 'Test Planner',
+	calendar: [],
+	saved: [],
+	tags: [],
+	accessLevel: 'owner' as const,
+};
 
-const maleficentsPlanner = { calendar: [], saved: [], tags: [] };
-const id = '507f1f77bcf86cd799439011';
+const wrapper = ({ children }: { children: ReactNode }) => (
+	<PlannerContext.Provider value={mockValue}>
+		{children}
+	</PlannerContext.Provider>
+);
 
 describe('usePlannerContext', () => {
-	test('returns planner data from context', async () => {
-		mockGetPlannerClient.mockResolvedValue(maleficentsPlanner);
+	it('returns the current planner context value', () => {
+		const { result } = renderHook(() => usePlannerContext(), { wrapper });
 
-		const { result } = renderHook(() => usePlannerContext(), {
-			wrapper: ({ children }) => (
-				<PlannerProvider id={id} accessLevel="owner">
-					{children}
-				</PlannerProvider>
-			),
-		});
-
-		await waitFor(() => {
-			expect(result.current).toEqual({
-				...maleficentsPlanner,
-				accessLevel: 'owner',
-			});
-		});
+		expect(result.current).toEqual(mockValue);
 	});
 });

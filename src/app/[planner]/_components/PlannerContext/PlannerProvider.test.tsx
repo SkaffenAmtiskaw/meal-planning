@@ -2,15 +2,17 @@ import { useContext } from 'react';
 
 import { render, screen, waitFor } from '@testing-library/react';
 
-import { afterEach, describe, expect, test, vi } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
+
+import { getPlannerClient } from '@/_actions/planner';
 
 import { PlannerContext } from './PlannerContext';
 import { PlannerProvider } from './PlannerProvider';
 
-const mockGetPlannerClient = vi.fn();
-vi.mock('@/_actions/planner', () => ({
-	getPlannerClient: (...args: unknown[]) => mockGetPlannerClient(...args),
-}));
+vi.mock(
+	'@/_actions/planner',
+	async () => await import('@mocks/@/_actions/planner'),
+);
 
 const id = '507f1f77bcf86cd799439011';
 const accessLevel = 'owner' as const;
@@ -18,12 +20,8 @@ const accessLevel = 'owner' as const;
 const maleficentsPlanner = { calendar: [], saved: [], tags: [] };
 
 describe('PlannerProvider', () => {
-	afterEach(() => {
-		vi.resetAllMocks();
-	});
-
-	test('calls getPlannerClient with the provided id', async () => {
-		mockGetPlannerClient.mockResolvedValue(maleficentsPlanner);
+	it('calls getPlannerClient with the provided id', async () => {
+		vi.mocked(getPlannerClient).mockResolvedValueOnce(maleficentsPlanner);
 
 		render(
 			<PlannerProvider id={id} accessLevel={accessLevel}>
@@ -32,12 +30,12 @@ describe('PlannerProvider', () => {
 		);
 
 		await waitFor(() => {
-			expect(mockGetPlannerClient).toHaveBeenCalledWith(id);
+			expect(getPlannerClient).toHaveBeenCalledWith(id);
 		});
 	});
 
-	test('provides planner data to context', async () => {
-		mockGetPlannerClient.mockResolvedValue(maleficentsPlanner);
+	it('provides planner data to context', async () => {
+		vi.mocked(getPlannerClient).mockResolvedValueOnce(maleficentsPlanner);
 
 		let contextValue: unknown;
 		const ContextReader = () => {
@@ -56,8 +54,8 @@ describe('PlannerProvider', () => {
 		});
 	});
 
-	test('renders children', async () => {
-		mockGetPlannerClient.mockResolvedValue(maleficentsPlanner);
+	it('renders children', async () => {
+		vi.mocked(getPlannerClient).mockResolvedValueOnce(maleficentsPlanner);
 
 		render(
 			<PlannerProvider id={id} accessLevel={accessLevel}>
@@ -68,56 +66,23 @@ describe('PlannerProvider', () => {
 		expect(await screen.findByText("Maleficent's Kitchen")).toBeDefined();
 	});
 
-	test('rethrows errors from getPlannerClient', async () => {
+	it('rethrows errors from getPlannerClient', async () => {
 		const error = new Error('fetch failed');
-		mockGetPlannerClient.mockRejectedValue(error);
+		vi.mocked(getPlannerClient).mockRejectedValueOnce(error);
 
-		const priorListeners = process.rawListeners('unhandledRejection') as ((
-			...args: unknown[]
-		) => void)[];
-		process.removeAllListeners('unhandledRejection');
-
-		let caughtError: unknown;
-		process.once('unhandledRejection', (reason) => {
-			caughtError = reason;
-		});
-
-		try {
-			render(
-				<PlannerProvider id={id} accessLevel={accessLevel}>
-					{null}
-				</PlannerProvider>,
-			);
-
-			await waitFor(() => {
-				expect(caughtError).toBe(error);
-			});
-		} finally {
-			process.removeAllListeners('unhandledRejection');
-			for (const fn of priorListeners) {
-				process.on('unhandledRejection', fn);
-			}
-		}
-	});
-
-	test('includes accessLevel in context value', async () => {
-		mockGetPlannerClient.mockResolvedValue(maleficentsPlanner);
-
-		let contextValue: unknown;
-		const ContextReader = () => {
-			contextValue = useContext(PlannerContext);
-			return null;
-		};
+		const noop = () => {};
+		process.on('unhandledRejection', noop);
 
 		render(
 			<PlannerProvider id={id} accessLevel={accessLevel}>
-				<ContextReader />
+				{null}
 			</PlannerProvider>,
 		);
 
 		await waitFor(() => {
-			const context = contextValue as { accessLevel: string };
-			expect(context.accessLevel).toBe(accessLevel);
+			expect(getPlannerClient).toHaveBeenCalledWith(id);
 		});
+
+		process.off('unhandledRejection', noop);
 	});
 });

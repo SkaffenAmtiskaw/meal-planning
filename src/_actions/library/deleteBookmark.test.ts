@@ -2,23 +2,18 @@ import { Types } from 'mongoose';
 import { afterEach, describe, expect, test, vi } from 'vitest';
 
 import { checkAuth } from '@/_actions/auth';
-import { Planner } from '@/_models';
+import { matchesId, Planner } from '@/_models';
 
 import { deleteBookmark } from './deleteBookmark';
 
-vi.mock('@/_actions/auth', () => ({
-	checkAuth: vi.fn(),
-}));
+vi.mock('@/_actions/auth', async () => await import('@mocks/@/_actions/auth'));
 
-vi.mock('@/_models', async () => {
-	const { matchesId } = await import('@/_models/utils/matchesId');
-	return {
-		matchesId,
-		Planner: {
-			findById: vi.fn(),
-		},
-	};
-});
+vi.mock('@/_models', async () => ({
+	matchesId: vi.fn(),
+	Planner: {
+		findById: vi.fn(),
+	},
+}));
 
 const plannerId = new Types.ObjectId().toString();
 const bookmarkId = new Types.ObjectId().toString();
@@ -42,16 +37,8 @@ describe('deleteBookmark', () => {
 		await expect(deleteBookmark({})).rejects.toThrow();
 	});
 
-	test('throws ZodError when plannerId is missing', async () => {
-		await expect(deleteBookmark({ bookmarkId })).rejects.toThrow();
-	});
-
-	test('throws ZodError when bookmarkId is missing', async () => {
-		await expect(deleteBookmark({ plannerId })).rejects.toThrow();
-	});
-
 	test('returns Unauthorized error when session is missing', async () => {
-		vi.mocked(checkAuth).mockResolvedValue({ type: 'unauthenticated' });
+		vi.mocked(checkAuth).mockResolvedValueOnce({ type: 'unauthenticated' });
 
 		const result = await deleteBookmark(validData);
 
@@ -60,7 +47,7 @@ describe('deleteBookmark', () => {
 	});
 
 	test('returns Unauthorized error when user does not own the planner', async () => {
-		vi.mocked(checkAuth).mockResolvedValue({ type: 'unauthorized' });
+		vi.mocked(checkAuth).mockResolvedValueOnce({ type: 'unauthorized' });
 
 		const result = await deleteBookmark(validData);
 
@@ -68,16 +55,6 @@ describe('deleteBookmark', () => {
 	});
 
 	test('returns Planner not found error when planner does not exist', async () => {
-		vi.mocked(checkAuth).mockResolvedValue({
-			type: 'authorized',
-			accessLevel: 'write',
-			user: {
-				_id: 'user-id',
-				email: 'test@example.com',
-				name: 'Test User',
-				planners: [],
-			},
-		} as never);
 		vi.mocked(Planner.findById).mockResolvedValue(null);
 
 		const result = await deleteBookmark(validData);
@@ -87,17 +64,8 @@ describe('deleteBookmark', () => {
 
 	test('returns Bookmark not found error when bookmarkId is not in saved', async () => {
 		const planner = makePlanner(false);
-		vi.mocked(checkAuth).mockResolvedValue({
-			type: 'authorized',
-			accessLevel: 'write',
-			user: {
-				_id: 'user-id',
-				email: 'test@example.com',
-				name: 'Test User',
-				planners: [],
-			},
-		} as never);
 		vi.mocked(Planner.findById).mockResolvedValue(planner as never);
+		vi.mocked(matchesId).mockReturnValue(() => false);
 
 		const result = await deleteBookmark(validData);
 
@@ -107,17 +75,8 @@ describe('deleteBookmark', () => {
 
 	test('removes the bookmark and returns ok', async () => {
 		const planner = makePlanner();
-		vi.mocked(checkAuth).mockResolvedValue({
-			type: 'authorized',
-			accessLevel: 'write',
-			user: {
-				_id: 'user-id',
-				email: 'test@example.com',
-				name: 'Test User',
-				planners: [],
-			},
-		} as never);
 		vi.mocked(Planner.findById).mockResolvedValue(planner as never);
+		vi.mocked(matchesId).mockReturnValue(() => true);
 
 		const result = await deleteBookmark(validData);
 

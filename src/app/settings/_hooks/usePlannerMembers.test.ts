@@ -3,14 +3,14 @@ import { renderHook, waitFor } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import type { PlannerMember } from '@/_actions/sharing';
+import { getPlannerMembers } from '@/_actions/sharing';
 
 import { usePlannerMembers } from './usePlannerMembers';
 
-const mockGetPlannerMembers = vi.fn();
-
-vi.mock('@/_actions/sharing', () => ({
-	getPlannerMembers: (...args: unknown[]) => mockGetPlannerMembers(...args),
-}));
+vi.mock(
+	'@/_actions/sharing',
+	async () => await import('@mocks/@/_actions/sharing'),
+);
 
 describe('usePlannerMembers', () => {
 	const plannerId = '507f1f77bcf86cd799439011';
@@ -20,7 +20,9 @@ describe('usePlannerMembers', () => {
 	});
 
 	it('returns initial loading state', () => {
-		mockGetPlannerMembers.mockImplementation(() => new Promise(() => {}));
+		vi.mocked(getPlannerMembers).mockImplementation(
+			() => new Promise(() => {}),
+		);
 
 		const { result } = renderHook(() => usePlannerMembers(plannerId));
 
@@ -35,7 +37,7 @@ describe('usePlannerMembers', () => {
 			{ name: 'Bob', email: 'bob@example.com', accessLevel: 'write' },
 		];
 
-		mockGetPlannerMembers.mockResolvedValue({ members: mockMembers });
+		vi.mocked(getPlannerMembers).mockResolvedValue({ members: mockMembers });
 
 		const { result } = renderHook(() => usePlannerMembers(plannerId));
 
@@ -48,7 +50,7 @@ describe('usePlannerMembers', () => {
 	});
 
 	it('handles error from getPlannerMembers', async () => {
-		mockGetPlannerMembers.mockResolvedValue({
+		vi.mocked(getPlannerMembers).mockResolvedValue({
 			members: [],
 			error: 'Unauthorized',
 		});
@@ -64,7 +66,7 @@ describe('usePlannerMembers', () => {
 	});
 
 	it('handles unexpected errors', async () => {
-		mockGetPlannerMembers.mockRejectedValue(new Error('Network error'));
+		vi.mocked(getPlannerMembers).mockRejectedValue(new Error('Network error'));
 
 		const { result } = renderHook(() => usePlannerMembers(plannerId));
 
@@ -85,7 +87,7 @@ describe('usePlannerMembers', () => {
 			{ name: 'Bob', email: 'bob@example.com', accessLevel: 'write' },
 		];
 
-		mockGetPlannerMembers
+		vi.mocked(getPlannerMembers)
 			.mockResolvedValueOnce({ members: initialMembers })
 			.mockResolvedValueOnce({ members: updatedMembers });
 
@@ -97,14 +99,13 @@ describe('usePlannerMembers', () => {
 
 		expect(result.current.members).toEqual(initialMembers);
 
-		// Call refresh
 		await result.current.refresh();
 
 		await waitFor(() => {
 			expect(result.current.members).toEqual(updatedMembers);
 		});
 
-		expect(mockGetPlannerMembers).toHaveBeenCalledTimes(2);
+		expect(getPlannerMembers).toHaveBeenCalledTimes(2);
 	});
 
 	it('refresh handles errors', async () => {
@@ -112,7 +113,7 @@ describe('usePlannerMembers', () => {
 			{ name: 'Alice', email: 'alice@example.com', accessLevel: 'owner' },
 		];
 
-		mockGetPlannerMembers
+		vi.mocked(getPlannerMembers)
 			.mockResolvedValueOnce({ members: initialMembers })
 			.mockResolvedValueOnce({ members: [], error: 'Refresh failed' });
 
@@ -124,11 +125,9 @@ describe('usePlannerMembers', () => {
 
 		expect(result.current.members).toEqual(initialMembers);
 
-		// Call refresh - should not update members on error
 		await result.current.refresh();
 
-		expect(mockGetPlannerMembers).toHaveBeenCalledTimes(2);
-		// Members should remain unchanged on refresh error
+		expect(getPlannerMembers).toHaveBeenCalledTimes(2);
 		expect(result.current.members).toEqual(initialMembers);
 	});
 
@@ -137,7 +136,7 @@ describe('usePlannerMembers', () => {
 			{ name: 'Alice', email: 'alice@example.com', accessLevel: 'owner' },
 		];
 
-		mockGetPlannerMembers.mockResolvedValue({ members: mockMembers });
+		vi.mocked(getPlannerMembers).mockResolvedValue({ members: mockMembers });
 
 		const { result, rerender } = renderHook(
 			({ id }: { id: string }) => usePlannerMembers(id),
@@ -148,17 +147,14 @@ describe('usePlannerMembers', () => {
 			expect(result.current.loading).toBe(false);
 		});
 
-		expect(mockGetPlannerMembers).toHaveBeenCalledTimes(1);
+		expect(getPlannerMembers).toHaveBeenCalledTimes(1);
 
-		// Change plannerId
 		rerender({ id: 'different-planner-id' });
 
 		await waitFor(() => {
-			expect(mockGetPlannerMembers).toHaveBeenCalledTimes(2);
+			expect(getPlannerMembers).toHaveBeenCalledTimes(2);
 		});
 
-		expect(mockGetPlannerMembers).toHaveBeenLastCalledWith(
-			'different-planner-id',
-		);
+		expect(getPlannerMembers).toHaveBeenLastCalledWith('different-planner-id');
 	});
 });

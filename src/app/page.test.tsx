@@ -3,7 +3,7 @@ import { redirect } from 'next/navigation';
 
 import { render, screen } from '@testing-library/react';
 
-import { beforeEach, describe, expect, test, vi } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { addUser } from '@/_actions/user';
 import { auth } from '@/_auth';
@@ -13,6 +13,7 @@ import Page from './page';
 
 vi.mock('next/headers', async () => await import('@mocks/next/headers'));
 vi.mock('next/navigation', async () => await import('@mocks/next/navigation'));
+vi.mock('@/_actions/user', async () => await import('@mocks/@/_actions/user'));
 
 const { mockSession, plannerId, membership } = vi.hoisted(() => {
 	const plannerId = '507f1f77bcf86cd799439011';
@@ -42,18 +43,8 @@ vi.mock('@/_models', () => ({
 	},
 }));
 
-vi.mock('@/_actions/user', () => ({
-	addUser: vi.fn().mockResolvedValue({
-		planners: [{ planner: 'fallback-planner', accessLevel: 'owner' }],
-	}),
-}));
-
-const mockSignInPrompt = vi.fn();
 vi.mock('./_components/SignInPrompt', () => ({
-	SignInPrompt: (props: unknown) => {
-		mockSignInPrompt(props);
-		return <div>Sign In Prompt</div>;
-	},
+	SignInPrompt: vi.fn(() => <div data-testid="sign-in-prompt" />),
 }));
 
 describe('page', () => {
@@ -61,25 +52,21 @@ describe('page', () => {
 		vi.clearAllMocks();
 	});
 
-	test('renders sign in prompt when there is no session', async () => {
+	it('renders sign in prompt when there is no session', async () => {
 		vi.mocked(auth.api.getSession).mockResolvedValueOnce(null as never);
 
 		render(await Page({ searchParams: Promise.resolve({}) }));
 
-		expect(screen.getByText('Sign In Prompt')).toBeDefined();
+		expect(screen.getByTestId('sign-in-prompt')).toBeDefined();
 	});
 
-	test('redirects to first planner when no last-opened cookie', async () => {
-		vi.mocked(cookies).mockResolvedValueOnce({
-			get: vi.fn(),
-		} as never);
-
+	it('redirects to first planner when no last-opened cookie', async () => {
 		await Page({ searchParams: Promise.resolve({}) });
 
 		expect(vi.mocked(redirect)).toHaveBeenCalledWith(`${plannerId}/calendar`);
 	});
 
-	test('redirects to last-opened planner when cookie matches a planner', async () => {
+	it('redirects to last-opened planner when cookie matches a planner', async () => {
 		const lastPlannerId = '507f1f77bcf86cd799439022';
 		vi.mocked(User.findOne).mockReturnValueOnce({
 			exec: vi.fn().mockResolvedValue({
@@ -103,7 +90,7 @@ describe('page', () => {
 		);
 	});
 
-	test('falls back to first planner when cookie planner is not in user planners', async () => {
+	it('falls back to first planner when cookie planner is not in user planners', async () => {
 		const foreignPlannerId = '507f1f77bcf86cd799439099';
 		vi.mocked(cookies).mockResolvedValueOnce({
 			get: vi.fn().mockReturnValueOnce({ value: foreignPlannerId }),
@@ -117,19 +104,14 @@ describe('page', () => {
 		expect(vi.mocked(redirect)).toHaveBeenCalledWith(`${plannerId}/calendar`);
 	});
 
-	test('creates a new user and redirects when no user exists', async () => {
+	it('creates a new user and redirects when no user exists', async () => {
 		vi.mocked(User.findOne).mockReturnValueOnce({
 			exec: vi.fn().mockResolvedValue(null),
-		} as never);
-		vi.mocked(addUser).mockResolvedValueOnce({
-			planners: [{ planner: 'new-planner-456', accessLevel: 'owner' }],
 		} as never);
 
 		await Page({ searchParams: Promise.resolve({}) });
 
 		expect(addUser).toHaveBeenCalledWith('ariel@sea.com', undefined, 'Ariel');
-		expect(vi.mocked(redirect)).toHaveBeenCalledWith(
-			'new-planner-456/calendar',
-		);
+		expect(vi.mocked(redirect)).toHaveBeenCalledWith(`${plannerId}/calendar`);
 	});
 });

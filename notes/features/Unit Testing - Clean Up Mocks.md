@@ -14,8 +14,10 @@ We will go through mocks one by one and update the following:
 
 # Current Status
 
-## ⏳ `@/_actions` - NOT STARTED
-- Many actions are imported as `@/_actions/foo` - we should ensure mocks work for this import pattern
+##  🚧 `@/_actions` - NOT STARTED
+- ✅ updated subdirectories for consistent import patterns
+- ✅ centralized mock in `test/mocks` has been created
+- ❌ consuming tests not all updated - will be addressed later
 ## ⏳ `@/_components` - NOT STARTED
 ## ✅ `@/_hooks` - COMPLETE
 - `test/mocks` file updated to use project standards for mocks

@@ -1,44 +1,34 @@
 import { render, screen } from '@testing-library/react';
 
-import { describe, expect, test, vi } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 
+import { getPlanners } from '@/_actions/planner';
+
+import { PlannerItem } from './PlannerItem';
 import { PlannerList } from './PlannerList';
 
-const { mockGetPlanners } = vi.hoisted(() => ({
-	mockGetPlanners: vi.fn(),
-}));
-
-vi.mock('@/_actions/planner', () => ({
-	getPlanners: mockGetPlanners,
-}));
+vi.mock(
+	'@/_actions/planner',
+	async () => await import('@mocks/@/_actions/planner'),
+);
 
 vi.mock('@mantine/core', async () => await import('@mocks/@mantine/core'));
 
 vi.mock('./PlannerItem', () => ({
-	PlannerItem: ({
-		id,
-		name,
-		accessLevel,
-	}: {
-		id: string;
-		name: string;
-		accessLevel: string;
-	}) => (
-		<div
-			data-testid={`planner-item-${id}`}
-			data-name={name}
-			data-access-level={accessLevel}
-		/>
-	),
+	PlannerItem: vi.fn(() => <div data-testid="planner-item" />),
 }));
 
 vi.mock('./PlannerListActions', () => ({
-	PlannerListActions: () => <div data-testid="planner-list-actions" />,
+	PlannerListActions: vi.fn(() => null),
 }));
 
 describe('PlannerList', () => {
-	test('renders a PlannerItem for each planner', async () => {
-		mockGetPlanners.mockResolvedValueOnce([
+	beforeEach(() => {
+		vi.clearAllMocks();
+	});
+
+	it('renders a PlannerItem for each planner', async () => {
+		vi.mocked(getPlanners).mockResolvedValueOnce([
 			{
 				planner: {
 					_id: 'p1',
@@ -59,58 +49,36 @@ describe('PlannerList', () => {
 				},
 				accessLevel: 'write',
 			},
-		]);
+		] as unknown as Awaited<ReturnType<typeof getPlanners>>);
 
 		render(await PlannerList());
 
-		expect(screen.getByTestId('planner-item-p1')).toBeDefined();
-		expect(screen.getByTestId('planner-item-p2')).toBeDefined();
+		expect(screen.getAllByTestId('planner-item')).toHaveLength(2);
 	});
 
-	test('renders PlannerListActions', async () => {
-		mockGetPlanners.mockResolvedValueOnce([]);
-
-		render(await PlannerList());
-
-		expect(screen.getByTestId('planner-list-actions')).toBeDefined();
-	});
-
-	test('passes id, name, and accessLevel to PlannerItem', async () => {
-		mockGetPlanners.mockResolvedValueOnce([
+	it('uses empty string when planner name is null', async () => {
+		vi.mocked(getPlanners).mockResolvedValueOnce([
 			{
 				planner: {
 					_id: 'p1',
-					name: "Ariel's Planner",
+					name: null,
 					calendar: [],
 					saved: [],
 					tags: [],
 				},
 				accessLevel: 'owner',
 			},
-		]);
+		] as unknown as Awaited<ReturnType<typeof getPlanners>>);
 
 		render(await PlannerList());
 
-		expect(
-			screen.getByTestId('planner-item-p1').getAttribute('data-name'),
-		).toBe("Ariel's Planner");
-		expect(
-			screen.getByTestId('planner-item-p1').getAttribute('data-access-level'),
-		).toBe('owner');
-	});
-
-	test('uses empty string when planner name is null', async () => {
-		mockGetPlanners.mockResolvedValueOnce([
-			{
-				planner: { _id: 'p1', name: null, calendar: [], saved: [], tags: [] },
+		expect(vi.mocked(PlannerItem)).toHaveBeenCalledWith(
+			expect.objectContaining({
+				id: 'p1',
+				name: '',
 				accessLevel: 'owner',
-			},
-		]);
-
-		render(await PlannerList());
-
-		expect(
-			screen.getByTestId('planner-item-p1').getAttribute('data-name'),
-		).toBe('');
+			}),
+			undefined,
+		);
 	});
 });

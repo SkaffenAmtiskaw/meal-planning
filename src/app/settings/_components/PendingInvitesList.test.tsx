@@ -3,45 +3,29 @@ import { fireEvent, render, screen } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import type { PendingInvite } from '@/_actions/sharing';
-import type { AccessLevel } from '@/_models/user';
 import { isPastDate, isWithinHours } from '@/_utils/date';
 
 import { PendingInvitesList } from './PendingInvitesList';
 
 vi.mock('@mantine/core', async () => await import('@mocks/@mantine/core'));
 
-vi.mock('@tabler/icons-react', () => ({
-	IconX: () => <span data-testid="icon-x">X</span>,
-	IconClock: () => <span data-testid="icon-clock">Clock</span>,
+vi.mock('../_utils/getAccessLevelColor', async () => ({
+	getAccessLevelColor: vi.fn(() => 'blue'),
 }));
 
-vi.mock('../_utils/getAccessLevelColor', () => ({
-	getAccessLevelColor: vi.fn((level: AccessLevel) => {
-		const colors: Record<AccessLevel, string> = {
-			owner: 'red',
-			admin: 'orange',
-			write: 'blue',
-			read: 'gray',
-		};
-		return colors[level];
-	}),
-}));
-
-vi.mock('@/_utils/date', () => ({
+vi.mock('@/_utils/date', async () => ({
 	isPastDate: vi.fn(),
 	isWithinHours: vi.fn(),
-	getRelativeTime: vi.fn((date: string) => `Relative: ${date}`),
-	toLocaleDateString: vi.fn((date: string) => `Formatted: ${date}`),
+	toLocaleDateString: vi.fn(() => 'mock-date'),
 }));
 
 describe('PendingInvitesList', () => {
-	// Use a future date for expiresAt so it's not expired
 	const mockInvite: PendingInvite = {
 		id: 'invite-1',
 		email: 'test@example.com',
 		accessLevel: 'write',
 		invitedAt: '2024-01-01T00:00:00.000Z',
-		expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(), // 7 days from now
+		expiresAt: '2024-12-31T00:00:00.000Z',
 	};
 
 	const mockOnCancel = vi.fn();
@@ -118,14 +102,13 @@ describe('PendingInvitesList', () => {
 		mockIsWithinHours.mockReturnValue(true);
 		mockIsPastDate.mockReturnValue(false);
 
-		// Create an invite that expires in 12 hours
 		const soonToExpireInvite: PendingInvite = {
 			...mockInvite,
 			id: 'invite-2',
-			expiresAt: new Date(Date.now() + 12 * 60 * 60 * 1000).toISOString(),
+			expiresAt: '2024-06-15T00:00:00.000Z',
 		};
 
-		render(
+		const { container } = render(
 			<PendingInvitesList
 				invites={[soonToExpireInvite]}
 				loading={false}
@@ -135,21 +118,19 @@ describe('PendingInvitesList', () => {
 			/>,
 		);
 
-		// Should show clock icon
-		expect(screen.getByTestId('icon-clock')).toBeDefined();
+		expect(container.querySelector('.tabler-icon-clock')).not.toBeNull();
 	});
 
 	it('shows expired message for expired invites', () => {
 		mockIsPastDate.mockReturnValue(true);
 
-		// Create an invite that expired yesterday
 		const expiredInvite: PendingInvite = {
 			...mockInvite,
 			id: 'invite-3',
-			expiresAt: new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString(),
+			expiresAt: '2023-12-31T00:00:00.000Z',
 		};
 
-		render(
+		const { container } = render(
 			<PendingInvitesList
 				invites={[expiredInvite]}
 				loading={false}
@@ -159,8 +140,7 @@ describe('PendingInvitesList', () => {
 			/>,
 		);
 
-		// Should show clock icon and expired message
-		expect(screen.getByTestId('icon-clock')).toBeDefined();
+		expect(container.querySelector('.tabler-icon-clock')).not.toBeNull();
 		expect(screen.getByText(/Expired/)).toBeDefined();
 	});
 

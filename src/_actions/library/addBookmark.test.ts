@@ -6,9 +6,7 @@ import { Planner } from '@/_models';
 
 import { addBookmark } from './addBookmark';
 
-vi.mock('@/_actions/auth', () => ({
-	checkAuth: vi.fn(),
-}));
+vi.mock('@/_actions/auth', async () => await import('@mocks/@/_actions/auth'));
 
 vi.mock('@/_models', () => ({
 	Planner: {
@@ -32,11 +30,10 @@ describe('addBookmark', () => {
 
 	const makePlanner = () => {
 		const saved: Array<Record<string, unknown>> = [];
-		const originalPush = Array.prototype.push.bind(saved);
-		saved.push = (...items: Record<string, unknown>[]) =>
-			originalPush(
-				...items.map((item) => ({ _id: new Types.ObjectId(), ...item })),
-			);
+		const originalPush = saved.push.bind(saved);
+		saved.push = vi.fn((item: Record<string, unknown>) =>
+			originalPush({ _id: new Types.ObjectId().toString(), ...item }),
+		) as never;
 		return { saved, save: vi.fn().mockResolvedValue(undefined) };
 	};
 
@@ -72,16 +69,6 @@ describe('addBookmark', () => {
 	});
 
 	test('returns Planner not found error when planner does not exist', async () => {
-		vi.mocked(checkAuth).mockResolvedValue({
-			type: 'authorized',
-			accessLevel: 'write',
-			user: {
-				_id: 'user-id',
-				email: 'test@example.com',
-				name: 'Test User',
-				planners: [],
-			},
-		} as never);
 		vi.mocked(Planner.findById).mockResolvedValue(null);
 
 		const result = await addBookmark(validData);
@@ -91,16 +78,6 @@ describe('addBookmark', () => {
 
 	test('persists the bookmark and returns _id and name', async () => {
 		const planner = makePlanner();
-		vi.mocked(checkAuth).mockResolvedValue({
-			type: 'authorized',
-			accessLevel: 'write',
-			user: {
-				_id: 'user-id',
-				email: 'test@example.com',
-				name: 'Test User',
-				planners: [],
-			},
-		} as never);
 		vi.mocked(Planner.findById).mockResolvedValue(planner as never);
 
 		const result = await addBookmark(validData);
@@ -115,16 +92,6 @@ describe('addBookmark', () => {
 
 	test('accepts optional tags', async () => {
 		const planner = makePlanner();
-		vi.mocked(checkAuth).mockResolvedValue({
-			type: 'authorized',
-			accessLevel: 'write',
-			user: {
-				_id: 'user-id',
-				email: 'test@example.com',
-				name: 'Test User',
-				planners: [],
-			},
-		} as never);
 		vi.mocked(Planner.findById).mockResolvedValue(planner as never);
 
 		const result = await addBookmark({

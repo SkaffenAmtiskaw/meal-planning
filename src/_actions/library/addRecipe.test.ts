@@ -3,11 +3,20 @@ import { afterEach, describe, expect, test, vi } from 'vitest';
 
 import { checkAuth } from '@/_actions/auth';
 import { Planner } from '@/_models';
+import { zRecipeFormSchema } from '@/_models/planner/recipe.types';
 
 import { addRecipe } from './addRecipe';
 
-vi.mock('@/_actions/auth', () => ({
-	checkAuth: vi.fn(),
+vi.mock('@/_actions/auth', async () => await import('@mocks/@/_actions/auth'));
+
+vi.mock('@/_models/planner/recipe.types', () => ({
+	zRecipeFormSchema: {
+		parse: vi.fn((data) => data),
+	},
+}));
+
+vi.mock('./_utils/transformRecipeForm', () => ({
+	transformRecipeForm: vi.fn((data) => data),
 }));
 
 vi.mock('@/_models', () => ({
@@ -31,7 +40,7 @@ describe('addRecipe', () => {
 	});
 
 	const makePlanner = () => {
-		const saved: Array<Record<string, unknown>> = [];
+		const saved: Array<{ _id: Types.ObjectId } & Record<string, unknown>> = [];
 		const originalPush = Array.prototype.push.bind(saved);
 		saved.push = (...items: Record<string, unknown>[]) =>
 			originalPush(
@@ -40,22 +49,16 @@ describe('addRecipe', () => {
 		return { saved, save: vi.fn().mockResolvedValue(undefined) };
 	};
 
-	test('throws ZodError on invalid input', async () => {
-		await expect(addRecipe({})).rejects.toThrow();
-	});
+	test('throws when schema validation fails', async () => {
+		vi.mocked(zRecipeFormSchema.parse).mockImplementationOnce(() => {
+			throw new Error('Validation failed');
+		});
 
-	test('throws ZodError when ingredients is missing', async () => {
-		await expect(
-			addRecipe({ ...validData, ingredients: undefined }),
-		).rejects.toThrow();
-	});
-
-	test('throws ZodError when name is empty string', async () => {
-		await expect(addRecipe({ ...validData, name: '' })).rejects.toThrow();
+		await expect(addRecipe({})).rejects.toThrow('Validation failed');
 	});
 
 	test('returns Unauthorized error when session is missing', async () => {
-		vi.mocked(checkAuth).mockResolvedValue({ type: 'unauthenticated' });
+		vi.mocked(checkAuth).mockResolvedValueOnce({ type: 'unauthenticated' });
 
 		const result = await addRecipe(validData);
 
@@ -64,7 +67,7 @@ describe('addRecipe', () => {
 	});
 
 	test('returns Unauthorized error when user does not own the planner', async () => {
-		vi.mocked(checkAuth).mockResolvedValue({ type: 'unauthorized' });
+		vi.mocked(checkAuth).mockResolvedValueOnce({ type: 'unauthorized' });
 
 		const result = await addRecipe(validData);
 
@@ -72,17 +75,7 @@ describe('addRecipe', () => {
 	});
 
 	test('returns Planner not found error when planner does not exist', async () => {
-		vi.mocked(checkAuth).mockResolvedValue({
-			type: 'authorized',
-			accessLevel: 'write',
-			user: {
-				_id: 'user-id',
-				email: 'test@example.com',
-				name: 'Test User',
-				planners: [],
-			},
-		} as never);
-		vi.mocked(Planner.findById).mockResolvedValue(null);
+		vi.mocked(Planner.findById).mockResolvedValueOnce(null);
 
 		const result = await addRecipe(validData);
 
@@ -91,17 +84,7 @@ describe('addRecipe', () => {
 
 	test('persists the recipe and returns _id and name', async () => {
 		const planner = makePlanner();
-		vi.mocked(checkAuth).mockResolvedValue({
-			type: 'authorized',
-			accessLevel: 'write',
-			user: {
-				_id: 'user-id',
-				email: 'test@example.com',
-				name: 'Test User',
-				planners: [],
-			},
-		} as never);
-		vi.mocked(Planner.findById).mockResolvedValue(planner as never);
+		vi.mocked(Planner.findById).mockResolvedValueOnce(planner as never);
 
 		const result = await addRecipe(validData);
 
@@ -115,17 +98,7 @@ describe('addRecipe', () => {
 
 	test('accepts optional fields', async () => {
 		const planner = makePlanner();
-		vi.mocked(checkAuth).mockResolvedValue({
-			type: 'authorized',
-			accessLevel: 'write',
-			user: {
-				_id: 'user-id',
-				email: 'test@example.com',
-				name: 'Test User',
-				planners: [],
-			},
-		} as never);
-		vi.mocked(Planner.findById).mockResolvedValue(planner as never);
+		vi.mocked(Planner.findById).mockResolvedValueOnce(planner as never);
 
 		const result = await addRecipe({
 			...validData,

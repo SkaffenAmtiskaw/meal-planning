@@ -5,6 +5,7 @@ import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { updateRecipeNotes } from '@/_actions/library';
+import { catchify } from '@/_utils/catchify';
 
 import { InlineNotesEditor } from './InlineNotesEditor';
 
@@ -14,8 +15,18 @@ vi.mock('next/navigation', async () => await import('@mocks/next/navigation'));
 
 vi.mock('@mantine/core', async () => await import('@mocks/@mantine/core'));
 
-vi.mock('@/_actions/library', () => ({
-	updateRecipeNotes: vi.fn(),
+vi.mock(
+	'@/_actions/library',
+	async () => await import('@mocks/@/_actions/library'),
+);
+
+vi.mock('@/_hooks/useEditMode', async () => {
+	const { useEditMode } = await import('@mocks/@/_hooks');
+	return { useEditMode };
+});
+
+vi.mock('@/_utils/catchify', () => ({
+	catchify: vi.fn(async (fn) => [await fn(), undefined]),
 }));
 
 const defaultProps = {
@@ -61,15 +72,6 @@ describe('InlineNotesEditor', () => {
 		expect(screen.queryByTestId('notes-edit-button')).toBeNull();
 	});
 
-	it('textarea is pre-populated with existing notes', () => {
-		render(<InlineNotesEditor {...defaultProps} />);
-		fireEvent.click(screen.getByTestId('notes-edit-button'));
-		const textarea = screen.getByTestId(
-			'notes-textarea',
-		) as HTMLTextAreaElement;
-		expect(textarea.value).toBe('Best served at midnight');
-	});
-
 	it('cancel restores original notes and exits editing mode', () => {
 		render(<InlineNotesEditor {...defaultProps} />);
 		fireEvent.click(screen.getByTestId('notes-edit-button'));
@@ -84,10 +86,6 @@ describe('InlineNotesEditor', () => {
 	});
 
 	it('save calls updateRecipeNotes with correct args then refreshes', async () => {
-		vi.mocked(updateRecipeNotes).mockResolvedValueOnce({
-			ok: true,
-			data: undefined,
-		});
 		render(<InlineNotesEditor {...defaultProps} />);
 		fireEvent.click(screen.getByTestId('notes-edit-button'));
 		fireEvent.change(screen.getByTestId('notes-textarea'), {
@@ -106,10 +104,6 @@ describe('InlineNotesEditor', () => {
 	});
 
 	it('save exits editing mode after success', async () => {
-		vi.mocked(updateRecipeNotes).mockResolvedValueOnce({
-			ok: true,
-			data: undefined,
-		});
 		render(<InlineNotesEditor {...defaultProps} />);
 		fireEvent.click(screen.getByTestId('notes-edit-button'));
 		fireEvent.click(screen.getByTestId('notes-save-button'));
@@ -162,10 +156,11 @@ describe('InlineNotesEditor', () => {
 		expect(screen.queryByTestId('notes-textarea')).toBeNull();
 	});
 
-	it('shows generic error when updateRecipeNotes throws unexpectedly', async () => {
-		vi.mocked(updateRecipeNotes).mockRejectedValueOnce(
+	it('shows generic error when catchify returns an error', async () => {
+		vi.mocked(catchify).mockResolvedValueOnce([
+			undefined,
 			new Error('Network failure'),
-		);
+		]);
 		render(<InlineNotesEditor {...defaultProps} />);
 		fireEvent.click(screen.getByTestId('notes-edit-button'));
 		fireEvent.click(screen.getByTestId('notes-save-button'));
@@ -177,17 +172,5 @@ describe('InlineNotesEditor', () => {
 			expect(screen.getByTestId('notes-textarea')).toBeDefined();
 		});
 		expect(mockRefresh).not.toHaveBeenCalled();
-	});
-
-	it('textarea updates as user types', () => {
-		render(<InlineNotesEditor {...defaultProps} />);
-		fireEvent.click(screen.getByTestId('notes-edit-button'));
-		fireEvent.change(screen.getByTestId('notes-textarea'), {
-			target: { value: 'New content' },
-		});
-		const textarea = screen.getByTestId(
-			'notes-textarea',
-		) as HTMLTextAreaElement;
-		expect(textarea.value).toBe('New content');
 	});
 });

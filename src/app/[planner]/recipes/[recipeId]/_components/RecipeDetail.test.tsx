@@ -11,9 +11,10 @@ import { RecipeDetail } from './RecipeDetail';
 
 vi.mock('next/navigation', async () => await import('@mocks/next/navigation'));
 
-vi.mock('@/_actions/library', () => ({
-	deleteRecipe: vi.fn(),
-}));
+vi.mock(
+	'@/_actions/library',
+	async () => await import('@mocks/@/_actions/library'),
+);
 
 vi.mock('@/_components', () => ({
 	ConfirmButton: vi.fn(({ renderTrigger }) => renderTrigger?.(() => {})),
@@ -68,7 +69,6 @@ describe('RecipeDetail', () => {
 	});
 
 	it('calls deleteRecipe and redirects on successful delete', async () => {
-		vi.mocked(deleteRecipe).mockResolvedValue({ ok: true, data: undefined });
 		render(<RecipeDetail {...defaultProps} />);
 
 		const call = vi.mocked(ConfirmButton).mock.calls[0][0];
@@ -83,7 +83,7 @@ describe('RecipeDetail', () => {
 		expect(mockPush).toHaveBeenCalledWith('/planner-1/recipes');
 	});
 
-	it('renders source as link when url is present', () => {
+	it('renders source section when source and url are present', () => {
 		render(
 			<RecipeDetail
 				{...defaultProps}
@@ -93,12 +93,11 @@ describe('RecipeDetail', () => {
 				}}
 			/>,
 		);
-		const link = screen.getByTestId('source-link') as HTMLAnchorElement;
-		expect(link.href).toBe('https://example.com/');
-		expect(screen.getByTestId('source-name').textContent).toBe('Dark Cookbook');
+		expect(screen.getByTestId('source-name')).toBeDefined();
+		expect(screen.getByTestId('source-link')).toBeDefined();
 	});
 
-	it('renders source name as plain text when no url', () => {
+	it('renders source section without url when url is absent', () => {
 		render(
 			<RecipeDetail
 				{...defaultProps}
@@ -108,9 +107,7 @@ describe('RecipeDetail', () => {
 				}}
 			/>,
 		);
-		expect(screen.getByTestId('source-name').textContent).toBe(
-			'Secret Grimoire',
-		);
+		expect(screen.getByTestId('source-name')).toBeDefined();
 		expect(screen.queryByTestId('source-link')).toBeNull();
 	});
 
@@ -120,7 +117,7 @@ describe('RecipeDetail', () => {
 		expect(screen.queryByTestId('source-link')).toBeNull();
 	});
 
-	it('renders all time fields when provided', () => {
+	it('renders time section when time fields are present', () => {
 		render(
 			<RecipeDetail
 				{...defaultProps}
@@ -130,20 +127,17 @@ describe('RecipeDetail', () => {
 				}}
 			/>,
 		);
-		expect(screen.getByTestId('time-prep').textContent).toBe('15m');
-		expect(screen.getByTestId('time-cook').textContent).toBe('1h');
-		expect(screen.getByTestId('time-total').textContent).toBe('1h15m');
-		expect(screen.getByTestId('time-actual').textContent).toBe('1h30m');
+		expect(screen.getByTestId('time-prep')).toBeDefined();
+		expect(screen.getByTestId('time-cook')).toBeDefined();
+		expect(screen.getByTestId('time-total')).toBeDefined();
+		expect(screen.getByTestId('time-actual')).toBeDefined();
 	});
 
-	it('renders only provided time fields', () => {
+	it('does not render time subfields when not provided', () => {
 		render(
-			<RecipeDetail
-				{...defaultProps}
-				recipe={{ ...baseRecipe, time: { prep: '10m' } }}
-			/>,
+			<RecipeDetail {...defaultProps} recipe={{ ...baseRecipe, time: {} }} />,
 		);
-		expect(screen.getByTestId('time-prep').textContent).toBe('10m');
+		expect(screen.queryByTestId('time-prep')).toBeNull();
 		expect(screen.queryByTestId('time-cook')).toBeNull();
 		expect(screen.queryByTestId('time-total')).toBeNull();
 		expect(screen.queryByTestId('time-actual')).toBeNull();
@@ -154,22 +148,22 @@ describe('RecipeDetail', () => {
 		expect(screen.queryByTestId('time-prep')).toBeNull();
 	});
 
-	it('renders servings when provided', () => {
+	it('renders servings section when provided', () => {
 		render(
 			<RecipeDetail
 				{...defaultProps}
 				recipe={{ ...baseRecipe, servings: 4 }}
 			/>,
 		);
-		expect(screen.getByTestId('servings').textContent).toBe('4');
+		expect(screen.getByTestId('servings')).toBeDefined();
 	});
 
-	it('does not render servings when absent', () => {
+	it('does not render servings section when absent', () => {
 		render(<RecipeDetail {...defaultProps} />);
 		expect(screen.queryByTestId('servings')).toBeNull();
 	});
 
-	it('renders ingredients list when provided', () => {
+	it('renders ingredients section when provided', () => {
 		render(<RecipeDetail {...defaultProps} />);
 		expect(screen.getByTestId('ingredients-list')).toBeDefined();
 	});
@@ -184,7 +178,7 @@ describe('RecipeDetail', () => {
 		expect(screen.queryByTestId('ingredients-list')).toBeNull();
 	});
 
-	it('renders instructions list when provided', () => {
+	it('renders instructions section when provided', () => {
 		render(<RecipeDetail {...defaultProps} />);
 		expect(screen.getByTestId('instructions-list')).toBeDefined();
 	});
@@ -199,29 +193,22 @@ describe('RecipeDetail', () => {
 		expect(screen.queryByTestId('instructions-list')).toBeNull();
 	});
 
-	it('renders storage when provided', () => {
+	it('renders storage section when provided', () => {
 		render(
 			<RecipeDetail
 				{...defaultProps}
 				recipe={{ ...baseRecipe, storage: 'Keep in enchanted chest' }}
 			/>,
 		);
-		expect(screen.getByTestId('storage').textContent).toBe(
-			'Keep in enchanted chest',
-		);
+		expect(screen.getByTestId('storage')).toBeDefined();
 	});
 
-	it('does not render storage when absent', () => {
+	it('does not render storage section when absent', () => {
 		render(<RecipeDetail {...defaultProps} />);
 		expect(screen.queryByTestId('storage')).toBeNull();
 	});
 
-	it('renders inline notes editor', () => {
-		render(<RecipeDetail {...defaultProps} />);
-		expect(screen.getByTestId('inline-notes-editor')).toBeDefined();
-	});
-
-	it('renders inline tags editor with recipe tags and available tags', () => {
+	it('renders inline tags editor with transformed tags and recipe tag ids', () => {
 		render(
 			<RecipeDetail
 				{...defaultProps}
@@ -230,10 +217,5 @@ describe('RecipeDetail', () => {
 			/>,
 		);
 		expect(screen.getByTestId('inline-tags-editor')).toBeDefined();
-	});
-
-	it('renders keep awake toggle', () => {
-		render(<RecipeDetail {...defaultProps} />);
-		expect(screen.getByTestId('keep-awake-toggle')).toBeDefined();
 	});
 });

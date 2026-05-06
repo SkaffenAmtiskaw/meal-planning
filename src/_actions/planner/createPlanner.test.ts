@@ -1,25 +1,31 @@
 import { afterEach, describe, expect, test, vi } from 'vitest';
 
 import { User } from '@/_models';
+import { catchify } from '@/_utils/catchify';
 
 import { addPlanner } from './addPlanner';
 import { createPlanner } from './createPlanner';
 
-const mockGetUser = vi.hoisted(() => vi.fn());
-vi.mock('@/_actions/user', () => ({
-	getUser: mockGetUser,
-}));
+const mockSafeParse = vi.hoisted(() => vi.fn());
 
+vi.mock('@/_actions/user', async () => await import('@mocks/@/_actions/user'));
 vi.mock('./addPlanner', () => ({
 	addPlanner: vi.fn(),
 }));
-
 vi.mock('@/_models', () => ({
 	User: {
 		collection: {
 			updateOne: vi.fn(),
 		},
 	},
+}));
+vi.mock('@/_utils/catchify', () => ({
+	catchify: vi.fn(),
+}));
+vi.mock('@/_utils/zSafeString', () => ({
+	zSafeString: vi.fn(() => ({
+		safeParse: mockSafeParse,
+	})),
 }));
 
 const mockUser = { _id: 'user-id-123', planners: [] };
@@ -31,19 +37,39 @@ describe('createPlanner', () => {
 	});
 
 	test('returns error when name is empty', async () => {
+		mockSafeParse.mockReturnValue({
+			success: false,
+			error: { issues: [{ message: 'Must be at least 1 character' }] },
+		} as never);
+
 		const result = await createPlanner('');
 
-		expect(result).toEqual({ ok: false, error: expect.any(String) });
+		expect(result).toEqual({
+			ok: false,
+			error: 'Must be at least 1 character',
+		});
 	});
 
 	test('returns error when name contains invalid characters', async () => {
+		mockSafeParse.mockReturnValue({
+			success: false,
+			error: { issues: [{ message: 'Contains invalid characters' }] },
+		} as never);
+
 		const result = await createPlanner('Planner <script>');
 
-		expect(result).toEqual({ ok: false, error: expect.any(String) });
+		expect(result).toEqual({ ok: false, error: 'Contains invalid characters' });
 	});
 
 	test('returns error when user is not authenticated', async () => {
-		mockGetUser.mockRejectedValue(new Error('No Valid Session'));
+		mockSafeParse.mockReturnValue({
+			success: true,
+			data: 'My Planner',
+		} as never);
+		vi.mocked(catchify).mockResolvedValue([
+			undefined,
+			new Error('No Valid Session'),
+		] as never);
 
 		const result = await createPlanner('My Planner');
 
@@ -51,7 +77,11 @@ describe('createPlanner', () => {
 	});
 
 	test('creates planner and links it to user', async () => {
-		mockGetUser.mockResolvedValue(mockUser);
+		mockSafeParse.mockReturnValue({
+			success: true,
+			data: 'My Planner',
+		} as never);
+		vi.mocked(catchify).mockResolvedValue([mockUser] as never);
 		vi.mocked(addPlanner).mockResolvedValue(mockPlanner as never);
 		vi.mocked(User.collection.updateOne).mockResolvedValue({} as never);
 
@@ -70,7 +100,11 @@ describe('createPlanner', () => {
 	});
 
 	test('propagates error when addPlanner throws', async () => {
-		mockGetUser.mockResolvedValue(mockUser);
+		mockSafeParse.mockReturnValue({
+			success: true,
+			data: 'My Planner',
+		} as never);
+		vi.mocked(catchify).mockResolvedValue([mockUser] as never);
 		vi.mocked(addPlanner).mockRejectedValue(new Error('DB error'));
 
 		await expect(createPlanner('My Planner')).rejects.toThrow('DB error');

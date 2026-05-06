@@ -1,14 +1,12 @@
 import { Types } from 'mongoose';
-import { afterEach, describe, expect, test, vi } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { checkAuth } from '@/_actions/auth';
 import { Planner } from '@/_models';
 
 import { addMeal } from './addMeal';
 
-vi.mock('@/_actions/auth', () => ({
-	checkAuth: vi.fn(),
-}));
+vi.mock('@/_actions/auth', async () => await import('@mocks/@/_actions/auth'));
 
 vi.mock('@/_models', () => ({
 	Planner: {
@@ -18,6 +16,11 @@ vi.mock('@/_models', () => ({
 		},
 	},
 }));
+
+vi.mock('@/_models/utils/zObjectId', async () => {
+	const { z } = await import('zod');
+	return { zObjectId: z.string() };
+});
 
 const plannerId = new Types.ObjectId().toString();
 const savedItemId = new Types.ObjectId().toString();
@@ -34,40 +37,35 @@ const makePlanner = () => ({
 	calendar: [],
 });
 
-const mockUser = {
-	_id: new Types.ObjectId(),
-	id: new Types.ObjectId().toString(),
-	email: 'test@example.com',
-	name: 'Test User',
-	planners: [],
-	__v: 0,
-} as never;
-
 describe('addMeal', () => {
-	afterEach(() => {
+	beforeEach(() => {
 		vi.resetAllMocks();
+		vi.mocked(Planner.findById).mockResolvedValue(makePlanner() as never);
+		vi.mocked(Planner.collection.updateOne).mockResolvedValue({
+			matchedCount: 1,
+		} as never);
 	});
 
-	test('throws ZodError on invalid input', async () => {
+	it('throws ZodError on invalid input', async () => {
 		await expect(addMeal({})).rejects.toThrow();
 	});
 
-	test('throws ZodError when date is missing', async () => {
+	it('throws ZodError when date is missing', async () => {
 		await expect(addMeal({ ...validData, date: undefined })).rejects.toThrow();
 	});
 
-	test('throws ZodError when date format is invalid', async () => {
+	it('throws ZodError when date format is invalid', async () => {
 		await expect(
 			addMeal({ ...validData, date: 'not-a-date' }),
 		).rejects.toThrow();
 	});
 
-	test('throws ZodError when mealName is empty', async () => {
+	it('throws ZodError when mealName is empty', async () => {
 		await expect(addMeal({ ...validData, mealName: '' })).rejects.toThrow();
 	});
 
-	test('returns Unauthorized when session is missing', async () => {
-		vi.mocked(checkAuth).mockResolvedValue({ type: 'unauthenticated' });
+	it('returns Unauthorized when session is missing', async () => {
+		vi.mocked(checkAuth).mockResolvedValueOnce({ type: 'unauthenticated' });
 
 		const result = await addMeal(validData);
 
@@ -75,20 +73,15 @@ describe('addMeal', () => {
 		expect(Planner.findById).not.toHaveBeenCalled();
 	});
 
-	test('returns Unauthorized when user does not own the planner', async () => {
-		vi.mocked(checkAuth).mockResolvedValue({ type: 'unauthorized' });
+	it('returns Unauthorized when user does not own the planner', async () => {
+		vi.mocked(checkAuth).mockResolvedValueOnce({ type: 'unauthorized' });
 
 		const result = await addMeal(validData);
 
 		expect(result).toEqual({ ok: false, error: 'Unauthorized' });
 	});
 
-	test('returns Planner not found when planner does not exist', async () => {
-		vi.mocked(checkAuth).mockResolvedValue({
-			type: 'authorized',
-			accessLevel: 'write',
-			user: mockUser,
-		});
+	it('returns Planner not found when planner does not exist', async () => {
 		vi.mocked(Planner.findById).mockResolvedValueOnce(null);
 
 		const result = await addMeal(validData);
@@ -96,17 +89,7 @@ describe('addMeal', () => {
 		expect(result).toEqual({ ok: false, error: 'Planner not found' });
 	});
 
-	test('pushes to existing day when date already in calendar', async () => {
-		vi.mocked(checkAuth).mockResolvedValue({
-			type: 'authorized',
-			accessLevel: 'write',
-			user: mockUser,
-		});
-		vi.mocked(Planner.findById).mockResolvedValue(makePlanner() as never);
-		vi.mocked(Planner.collection.updateOne).mockResolvedValueOnce({
-			matchedCount: 1,
-		} as never);
-
+	it('pushes to existing day when date already in calendar', async () => {
 		const result = await addMeal(validData);
 
 		expect(Planner.collection.updateOne).toHaveBeenCalledWith(
@@ -120,13 +103,7 @@ describe('addMeal', () => {
 		expect(result.ok).toBe(true);
 	});
 
-	test('adds new day when date is not in calendar', async () => {
-		vi.mocked(checkAuth).mockResolvedValue({
-			type: 'authorized',
-			accessLevel: 'write',
-			user: mockUser,
-		});
-		vi.mocked(Planner.findById).mockResolvedValue(makePlanner() as never);
+	it('adds new day when date is not in calendar', async () => {
 		vi.mocked(Planner.collection.updateOne).mockResolvedValueOnce({
 			matchedCount: 0,
 		} as never);
@@ -147,21 +124,13 @@ describe('addMeal', () => {
 		);
 	});
 
-	test('returns the updated calendar on success', async () => {
+	it('returns the updated calendar on success', async () => {
 		const calendar = [
 			{ date: '2024-06-15', meals: [{ name: 'Lunch', dishes: [] }] },
 		];
-		vi.mocked(checkAuth).mockResolvedValue({
-			type: 'authorized',
-			accessLevel: 'write',
-			user: mockUser,
-		});
 		vi.mocked(Planner.findById)
 			.mockResolvedValueOnce(makePlanner() as never)
 			.mockResolvedValueOnce({ calendar } as never);
-		vi.mocked(Planner.collection.updateOne).mockResolvedValue({
-			matchedCount: 1,
-		} as never);
 
 		const result = await addMeal(validData);
 
@@ -169,17 +138,7 @@ describe('addMeal', () => {
 		if (result.ok) expect(result.data.calendar).toEqual(calendar);
 	});
 
-	test('maps saved source type to ObjectId', async () => {
-		vi.mocked(checkAuth).mockResolvedValue({
-			type: 'authorized',
-			accessLevel: 'write',
-			user: mockUser,
-		});
-		vi.mocked(Planner.findById).mockResolvedValue(makePlanner() as never);
-		vi.mocked(Planner.collection.updateOne).mockResolvedValue({
-			matchedCount: 1,
-		} as never);
-
+	it('maps saved source type to ObjectId', async () => {
 		await addMeal({
 			...validData,
 			dishes: [{ name: 'Pasta', sourceType: 'saved', savedId: savedItemId }],
@@ -191,7 +150,9 @@ describe('addMeal', () => {
 				$push: {
 					'calendar.$.meals': expect.objectContaining({
 						dishes: [
-							expect.objectContaining({ source: expect.any(Types.ObjectId) }),
+							expect.objectContaining({
+								source: expect.any(Types.ObjectId),
+							}),
 						],
 					}),
 				},
@@ -199,17 +160,7 @@ describe('addMeal', () => {
 		);
 	});
 
-	test('maps text source type to url object when a URL is provided', async () => {
-		vi.mocked(checkAuth).mockResolvedValue({
-			type: 'authorized',
-			accessLevel: 'write',
-			user: mockUser,
-		});
-		vi.mocked(Planner.findById).mockResolvedValue(makePlanner() as never);
-		vi.mocked(Planner.collection.updateOne).mockResolvedValue({
-			matchedCount: 1,
-		} as never);
-
+	it('maps text source type to url object when a URL is provided', async () => {
 		await addMeal({
 			...validData,
 			dishes: [
@@ -237,17 +188,7 @@ describe('addMeal', () => {
 		);
 	});
 
-	test('maps text source type to ref object when a plain string is provided', async () => {
-		vi.mocked(checkAuth).mockResolvedValue({
-			type: 'authorized',
-			accessLevel: 'write',
-			user: mockUser,
-		});
-		vi.mocked(Planner.findById).mockResolvedValue(makePlanner() as never);
-		vi.mocked(Planner.collection.updateOne).mockResolvedValue({
-			matchedCount: 1,
-		} as never);
-
+	it('maps text source type to ref object when a plain string is provided', async () => {
 		await addMeal({
 			...validData,
 			dishes: [
@@ -275,17 +216,7 @@ describe('addMeal', () => {
 		);
 	});
 
-	test('sets source to undefined when sourceType is none', async () => {
-		vi.mocked(checkAuth).mockResolvedValue({
-			type: 'authorized',
-			accessLevel: 'write',
-			user: mockUser,
-		});
-		vi.mocked(Planner.findById).mockResolvedValue(makePlanner() as never);
-		vi.mocked(Planner.collection.updateOne).mockResolvedValue({
-			matchedCount: 1,
-		} as never);
-
+	it('sets source to undefined when sourceType is none', async () => {
 		await addMeal(validData);
 
 		expect(Planner.collection.updateOne).toHaveBeenCalledWith(
@@ -300,17 +231,7 @@ describe('addMeal', () => {
 		);
 	});
 
-	test('sets source to undefined when saved sourceType has no savedId', async () => {
-		vi.mocked(checkAuth).mockResolvedValue({
-			type: 'authorized',
-			accessLevel: 'write',
-			user: mockUser,
-		});
-		vi.mocked(Planner.findById).mockResolvedValue(makePlanner() as never);
-		vi.mocked(Planner.collection.updateOne).mockResolvedValue({
-			matchedCount: 1,
-		} as never);
-
+	it('sets source to undefined when saved sourceType has no savedId', async () => {
 		await addMeal({
 			...validData,
 			dishes: [{ name: 'Pasta', sourceType: 'saved' }],
@@ -328,17 +249,7 @@ describe('addMeal', () => {
 		);
 	});
 
-	test('sets source to undefined when text sourceType has no sourceText', async () => {
-		vi.mocked(checkAuth).mockResolvedValue({
-			type: 'authorized',
-			accessLevel: 'write',
-			user: mockUser,
-		});
-		vi.mocked(Planner.findById).mockResolvedValue(makePlanner() as never);
-		vi.mocked(Planner.collection.updateOne).mockResolvedValue({
-			matchedCount: 1,
-		} as never);
-
+	it('sets source to undefined when text sourceType has no sourceText', async () => {
 		await addMeal({
 			...validData,
 			dishes: [{ name: 'Pasta', sourceType: 'text' }],
@@ -356,17 +267,7 @@ describe('addMeal', () => {
 		);
 	});
 
-	test('includes description when provided', async () => {
-		vi.mocked(checkAuth).mockResolvedValue({
-			type: 'authorized',
-			accessLevel: 'write',
-			user: mockUser,
-		});
-		vi.mocked(Planner.findById).mockResolvedValue(makePlanner() as never);
-		vi.mocked(Planner.collection.updateOne).mockResolvedValue({
-			matchedCount: 1,
-		} as never);
-
+	it('includes description when provided', async () => {
 		await addMeal({ ...validData, description: 'A hearty lunch' });
 
 		expect(Planner.collection.updateOne).toHaveBeenCalledWith(
@@ -381,17 +282,7 @@ describe('addMeal', () => {
 		);
 	});
 
-	test('omits description when not provided', async () => {
-		vi.mocked(checkAuth).mockResolvedValue({
-			type: 'authorized',
-			accessLevel: 'write',
-			user: mockUser,
-		});
-		vi.mocked(Planner.findById).mockResolvedValue(makePlanner() as never);
-		vi.mocked(Planner.collection.updateOne).mockResolvedValue({
-			matchedCount: 1,
-		} as never);
-
+	it('omits description when not provided', async () => {
 		await addMeal(validData);
 
 		expect(Planner.collection.updateOne).toHaveBeenCalledWith(
@@ -406,18 +297,28 @@ describe('addMeal', () => {
 		);
 	});
 
-	test('falls back to empty calendar when updated planner is null', async () => {
-		vi.mocked(checkAuth).mockResolvedValue({
-			type: 'authorized',
-			accessLevel: 'write',
-			user: mockUser,
+	it('includes dish note when provided', async () => {
+		await addMeal({
+			...validData,
+			dishes: [{ name: 'Pasta', sourceType: 'none', note: 'Extra cheese' }],
 		});
+
+		expect(Planner.collection.updateOne).toHaveBeenCalledWith(
+			expect.anything(),
+			{
+				$push: {
+					'calendar.$.meals': expect.objectContaining({
+						dishes: [expect.objectContaining({ note: 'Extra cheese' })],
+					}),
+				},
+			},
+		);
+	});
+
+	it('falls back to empty calendar when updated planner is null', async () => {
 		vi.mocked(Planner.findById)
 			.mockResolvedValueOnce(makePlanner() as never)
 			.mockResolvedValueOnce(null);
-		vi.mocked(Planner.collection.updateOne).mockResolvedValue({
-			matchedCount: 1,
-		} as never);
 
 		const result = await addMeal(validData);
 
