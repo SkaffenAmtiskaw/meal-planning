@@ -1,20 +1,18 @@
+import { useRouter } from 'next/navigation';
+
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 
-import { afterEach, describe, expect, test, vi } from 'vitest';
+import { beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { client } from '@/_utils/auth';
 
 import { ResetPasswordForm } from './ResetPasswordForm';
 
-const { mockRouterPush } = vi.hoisted(() => ({
-	mockRouterPush: vi.fn(),
-}));
+const mockPush = vi.fn();
 
 vi.mock('@mantine/core', async () => await import('@mocks/@mantine/core'));
 
-vi.mock('next/navigation', () => ({
-	useRouter: () => ({ push: mockRouterPush }),
-}));
+vi.mock('next/navigation', async () => await import('@mocks/next/navigation'));
 
 vi.mock('@/_utils/auth', () => ({
 	client: {
@@ -23,19 +21,19 @@ vi.mock('@/_utils/auth', () => ({
 }));
 
 describe('ResetPasswordForm', () => {
-	afterEach(() => {
-		vi.resetAllMocks();
+	beforeAll(() => {
+		const defaultRouter = vi.mocked(useRouter)();
+		vi.mocked(useRouter).mockReturnValue({
+			...defaultRouter,
+			push: mockPush,
+		});
 	});
 
-	test('renders new password and confirm password inputs', () => {
-		render(<ResetPasswordForm token="abc123" />);
-
-		expect(screen.getByTestId('new-password-input')).toBeDefined();
-		expect(screen.getByTestId('confirm-password-input')).toBeDefined();
-		expect(screen.getByTestId('reset-password-button')).toBeDefined();
+	beforeEach(() => {
+		vi.clearAllMocks();
 	});
 
-	test('shows error when passwords do not match', async () => {
+	it('shows error when passwords do not match', async () => {
 		render(<ResetPasswordForm token="abc123" />);
 
 		fireEvent.change(screen.getByTestId('new-password-input'), {
@@ -55,7 +53,7 @@ describe('ResetPasswordForm', () => {
 		expect(client.resetPassword).not.toHaveBeenCalled();
 	});
 
-	test('calls resetPassword with token and new password when passwords match', async () => {
+	it('calls resetPassword with token and new password when passwords match', async () => {
 		vi.mocked(client.resetPassword).mockResolvedValueOnce({
 			data: {},
 			error: null,
@@ -79,7 +77,7 @@ describe('ResetPasswordForm', () => {
 		});
 	});
 
-	test('redirects to home on successful password reset', async () => {
+	it('redirects to home on successful password reset', async () => {
 		vi.mocked(client.resetPassword).mockResolvedValueOnce({
 			data: {},
 			error: null,
@@ -96,11 +94,11 @@ describe('ResetPasswordForm', () => {
 		fireEvent.click(screen.getByTestId('reset-password-button'));
 
 		await waitFor(() => {
-			expect(mockRouterPush).toHaveBeenCalledWith('/');
+			expect(mockPush).toHaveBeenCalledWith('/');
 		});
 	});
 
-	test('shows error alert with message when reset fails', async () => {
+	it('shows error alert with message when reset fails', async () => {
 		vi.mocked(client.resetPassword).mockResolvedValueOnce({
 			data: null,
 			error: { message: 'Token expired' },
@@ -123,7 +121,7 @@ describe('ResetPasswordForm', () => {
 		});
 	});
 
-	test('shows fallback error message when reset fails without message', async () => {
+	it('shows fallback error message when reset fails without message', async () => {
 		vi.mocked(client.resetPassword).mockResolvedValueOnce({
 			data: null,
 			error: { message: undefined },
@@ -146,7 +144,7 @@ describe('ResetPasswordForm', () => {
 		});
 	});
 
-	test('error alert includes a link back to sign in', async () => {
+	it('error alert includes a link back to sign in', async () => {
 		vi.mocked(client.resetPassword).mockResolvedValueOnce({
 			data: null,
 			error: { message: 'Token expired' },

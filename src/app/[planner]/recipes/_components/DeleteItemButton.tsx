@@ -20,7 +20,7 @@ const DeleteItemButton = ({
 	onDelete,
 	title,
 	message,
-	'data-testid': testId = 'delete-button',
+	'data-testid': testId,
 }: Props) => {
 	const router = useRouter();
 	const canWrite = useCanWrite();

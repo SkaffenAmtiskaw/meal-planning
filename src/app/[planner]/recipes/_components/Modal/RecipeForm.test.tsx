@@ -1,17 +1,17 @@
+import { usePathname, useRouter } from 'next/navigation';
+
 import { act, fireEvent, render, screen } from '@testing-library/react';
 
-import { afterEach, describe, expect, test, vi } from 'vitest';
+import { beforeAll, beforeEach, describe, expect, test, vi } from 'vitest';
 
 import { addRecipe } from '@/_actions/saved/addRecipe';
 import { editRecipe } from '@/_actions/saved/editRecipe';
 
 import { RecipeForm } from './RecipeForm';
 
+vi.mock('next/navigation', async () => await import('@mocks/next/navigation'));
+
 const mockPush = vi.fn();
-vi.mock('next/navigation', () => ({
-	useRouter: () => ({ push: mockPush }),
-	usePathname: () => '/planner-1/recipes',
-}));
 
 vi.mock('@/_actions/saved/addRecipe', () => ({
 	addRecipe: vi.fn(),
@@ -19,6 +19,14 @@ vi.mock('@/_actions/saved/addRecipe', () => ({
 
 vi.mock('@/_actions/saved/editRecipe', () => ({
 	editRecipe: vi.fn(),
+}));
+
+vi.mock('@/_models/planner/recipe.types', () => ({
+	zRecipeFormSchema: {
+		omit: () => ({
+			extend: () => ({}),
+		}),
+	},
 }));
 
 import { useFormFeedback } from '@/_hooks';
@@ -96,8 +104,17 @@ const defaultProps = {
 };
 
 describe('RecipeForm', () => {
-	afterEach(() => {
-		vi.resetAllMocks();
+	beforeAll(() => {
+		const defaultRouter = vi.mocked(useRouter)();
+		vi.mocked(useRouter).mockReturnValue({
+			...defaultRouter,
+			push: mockPush,
+		});
+		vi.mocked(usePathname).mockReturnValue('/planner-1/recipes');
+	});
+
+	beforeEach(() => {
+		vi.clearAllMocks();
 	});
 
 	test('renders Add Recipe submit button when no item', () => {

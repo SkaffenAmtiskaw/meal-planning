@@ -2,6 +2,8 @@ This is a cleanup story meant to align unit testing standards. All changes shoul
 
 Before starting any work on this task, you MUST read the project unit testing guidelines at `.opencode/docs/unit_tests.md`. Read carefully; DO NOT skim.
 
+_Note: The purpose of this task is to clean up bad patterns in unit tests. You should not blindly assume ANY code you encounter is a pattern we want to continue - ALL code should be evaluated against both the project guidelines and unit testing best practices._
+
 # **Workflow**
 We will go through mocks one by one and update the following:
 1. The mock file need to be updated to follow project conventions. If it does not yet exist, it should be created.
@@ -12,6 +14,18 @@ We will go through mocks one by one and update the following:
 
 # Current Status
 
+## ⏳ `@/_actions` - NOT STARTED
+- Many actions are imported as `@/_actions/foo` - we should ensure mocks work for this import pattern
+## ⏳ `@/_components` - NOT STARTED
+## ✅ `@/_hooks` - COMPLETE
+- `test/mocks` file updated to use project standards for mocks
+- consuming test files have been updated
+## ⏳ `@/_models` - NOT STARTED
+
+## ⏳ `@/_utils` - NOT STARTED
+## ✅ `@mantine/core` - COMPLETE
+- ✅ The centralized mock has been updated to provide simple useful mocks
+- ✅ Consuming test files have been updated to import the centralized mock and align with project standards
 ## ✅ @mantine/form` - COMPLETE
 - The `test/mocks` file was updated to use the correct convention.
 - Consuming test files updated:
@@ -21,24 +35,11 @@ We will go through mocks one by one and update the following:
 - Cleanup work:
 	- `transformRecipeForm` utility created with 100% coverage
 	- Related actions (`addRecipe.ts`, `editRecipe.ts`) updated to use transformation
-
-## 🚧 `@mantine/core` - PARTIAL
-- ✅ The `test/mocks` file exports the correct modules (Card, Button, Modal, etc.) - some mocks may need to be updated
-- Some test files are still incorrectly creating their own mocks for `@mantine/core`
-
-## ✅ `@/_hooks` - COMPLETE
-- `test/mocks` file updated to use project standards for mocks
-- consuming test files have been updated
-
-## ⏳ `@/_actions` - NOT STARTED
-- Many actions are imported as `@/_actions/foo` - we should ensure mocks work for this
-
-## ⏳ `@/_components` - NOT STARTED
-
-## ⏳ `@/_utils` - NOT STARTED
-
 ## ⏳ `@mantine/hooks` - NOT STARTED
 
-## ⏳ `next/navigation` - NOT STARTED
+## ⏳ `next/headers` - NOT STARTED
+## 🚧 `next/navigation` - IN PROGRESS
+- ✅ centralized mock in `test/mocks` has been created
+
 
 

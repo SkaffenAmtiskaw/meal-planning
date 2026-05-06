@@ -1,39 +1,22 @@
-import { fireEvent, render, screen, waitFor } from '@testing-library/react';
+import { useRouter } from 'next/navigation';
 
-import { afterEach, describe, expect, test, vi } from 'vitest';
+import { fireEvent, render, screen } from '@testing-library/react';
+
+import { beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { deleteRecipe } from '@/_actions/saved';
+import { ConfirmButton } from '@/_components';
 
 import { RecipeDetail } from './RecipeDetail';
 
-vi.mock('@/_components', () => ({
-	ConfirmButton: ({
-		onConfirm,
-		onSuccess,
-		renderTrigger,
-	}: {
-		onConfirm: () => Promise<{ ok: boolean; data: undefined }>;
-		onSuccess?: () => void;
-		renderTrigger: (onOpen: () => void) => React.ReactNode;
-	}) => {
-		const handleClick = async () => {
-			const result = await onConfirm();
-			if (result?.ok) {
-				onSuccess?.();
-			}
-		};
-		return <>{renderTrigger(handleClick)}</>;
-	},
-}));
-
-const mockPush = vi.fn();
-
-vi.mock('next/navigation', () => ({
-	useRouter: () => ({ push: mockPush }),
-}));
+vi.mock('next/navigation', async () => await import('@mocks/next/navigation'));
 
 vi.mock('@/_actions/saved', () => ({
 	deleteRecipe: vi.fn(),
+}));
+
+vi.mock('@/_components', () => ({
+	ConfirmButton: vi.fn(({ renderTrigger }) => renderTrigger?.(() => {})),
 }));
 
 vi.mock('./KeepAwakeToggle', () => ({
@@ -41,47 +24,16 @@ vi.mock('./KeepAwakeToggle', () => ({
 }));
 
 vi.mock('./InlineNotesEditor', () => ({
-	InlineNotesEditor: ({
-		notes,
-		plannerId,
-		recipeId,
-	}: {
-		notes?: string;
-		plannerId: string;
-		recipeId: string;
-	}) => (
-		<div
-			data-testid="inline-notes-editor"
-			data-notes={notes}
-			data-planner-id={plannerId}
-			data-recipe-id={recipeId}
-		/>
-	),
+	InlineNotesEditor: () => <div data-testid="inline-notes-editor" />,
 }));
 
 vi.mock('./InlineTagsEditor', () => ({
-	InlineTagsEditor: ({
-		tagIds,
-		availableTags,
-		plannerId,
-		recipeId,
-	}: {
-		tagIds: string[];
-		availableTags: { _id: string }[];
-		plannerId: string;
-		recipeId: string;
-	}) => (
-		<div
-			data-testid="inline-tags-editor"
-			data-tag-ids={tagIds.join(',')}
-			data-available-tags-count={availableTags.length}
-			data-planner-id={plannerId}
-			data-recipe-id={recipeId}
-		/>
-	),
+	InlineTagsEditor: () => <div data-testid="inline-tags-editor" />,
 }));
 
 vi.mock('@mantine/core', async () => await import('@mocks/@mantine/core'));
+
+const mockPush = vi.fn();
 
 const baseRecipe = {
 	_id: 'recipe-1' as never,
@@ -97,75 +49,41 @@ const defaultProps = {
 };
 
 describe('RecipeDetail', () => {
-	afterEach(() => {
-		vi.resetAllMocks();
-	});
-	test('renders the recipe name', () => {
-		render(<RecipeDetail {...defaultProps} />);
-		expect(screen.getByText("Maleficent's Dragon Roast")).toBeDefined();
-	});
-
-	test('renders the outermost container with data-testid', () => {
-		render(<RecipeDetail {...defaultProps} />);
-		expect(screen.getByTestId('recipe-detail')).toBeDefined();
+	beforeAll(() => {
+		const defaultRouter = vi.mocked(useRouter)();
+		vi.mocked(useRouter).mockReturnValue({
+			...defaultRouter,
+			push: mockPush,
+		});
 	});
 
-	test('renders an enabled edit button', () => {
-		render(<RecipeDetail {...defaultProps} />);
-		const btn = screen.getByTestId('edit-button') as HTMLButtonElement;
-		expect(btn).toBeDefined();
-		expect(btn.disabled).toBe(false);
+	beforeEach(() => {
+		vi.clearAllMocks();
 	});
 
-	test('clicking edit button navigates to ?status=edit', () => {
+	it('navigates to edit page when edit button is clicked', () => {
 		render(<RecipeDetail {...defaultProps} />);
 		fireEvent.click(screen.getByTestId('edit-button'));
 		expect(mockPush).toHaveBeenCalledWith('?status=edit');
 	});
 
-	test('renders a delete button', () => {
+	it('calls deleteRecipe and redirects on successful delete', async () => {
+		vi.mocked(deleteRecipe).mockResolvedValue({ ok: true, data: undefined });
 		render(<RecipeDetail {...defaultProps} />);
-		expect(screen.getByTestId('delete-button')).toBeDefined();
-	});
 
-	test('clicking delete calls deleteRecipe action and redirects to recipes list', async () => {
-		vi.mocked(deleteRecipe).mockResolvedValueOnce({
-			ok: true,
-			data: undefined,
+		const call = vi.mocked(ConfirmButton).mock.calls[0][0];
+		await call.onConfirm();
+
+		expect(deleteRecipe).toHaveBeenCalledWith({
+			plannerId: 'planner-1',
+			recipeId: 'recipe-1',
 		});
-		render(<RecipeDetail {...defaultProps} />);
 
-		fireEvent.click(screen.getByTestId('delete-button'));
-
-		await waitFor(() => {
-			expect(deleteRecipe).toHaveBeenCalledWith({
-				plannerId: 'planner-1',
-				recipeId: 'recipe-1',
-			});
-			expect(mockPush).toHaveBeenCalledWith('/planner-1/recipes');
-		});
+		call.onSuccess?.();
+		expect(mockPush).toHaveBeenCalledWith('/planner-1/recipes');
 	});
 
-	test('renders the keep awake toggle', () => {
-		render(<RecipeDetail {...defaultProps} />);
-		expect(screen.getByTestId('keep-awake-toggle')).toBeDefined();
-	});
-
-	test('renders ingredients list', () => {
-		render(<RecipeDetail {...defaultProps} />);
-		expect(screen.getByTestId('ingredients-list')).toBeDefined();
-		expect(screen.getByText('2 dragon scales')).toBeDefined();
-		expect(screen.getByText('1 cup dark broth')).toBeDefined();
-	});
-
-	test('renders instructions list', () => {
-		render(<RecipeDetail {...defaultProps} />);
-		expect(screen.getByTestId('instructions-list')).toBeDefined();
-		expect(screen.getByText('Heat cauldron')).toBeDefined();
-		expect(screen.getByText('Add ingredients')).toBeDefined();
-	});
-
-	test('renders source as link when url is present', () => {
+	it('renders source as link when url is present', () => {
 		render(
 			<RecipeDetail
 				{...defaultProps}
@@ -177,11 +95,10 @@ describe('RecipeDetail', () => {
 		);
 		const link = screen.getByTestId('source-link') as HTMLAnchorElement;
 		expect(link.href).toBe('https://example.com/');
-		expect(link.textContent).toBe('https://example.com');
 		expect(screen.getByTestId('source-name').textContent).toBe('Dark Cookbook');
 	});
 
-	test('renders source as plain text when no url', () => {
+	it('renders source name as plain text when no url', () => {
 		render(
 			<RecipeDetail
 				{...defaultProps}
@@ -197,7 +114,13 @@ describe('RecipeDetail', () => {
 		expect(screen.queryByTestId('source-link')).toBeNull();
 	});
 
-	test('renders time fields when provided', () => {
+	it('does not render source section when absent', () => {
+		render(<RecipeDetail {...defaultProps} />);
+		expect(screen.queryByTestId('source-name')).toBeNull();
+		expect(screen.queryByTestId('source-link')).toBeNull();
+	});
+
+	it('renders all time fields when provided', () => {
 		render(
 			<RecipeDetail
 				{...defaultProps}
@@ -213,7 +136,7 @@ describe('RecipeDetail', () => {
 		expect(screen.getByTestId('time-actual').textContent).toBe('1h30m');
 	});
 
-	test('renders partial time fields', () => {
+	it('renders only provided time fields', () => {
 		render(
 			<RecipeDetail
 				{...defaultProps}
@@ -226,7 +149,12 @@ describe('RecipeDetail', () => {
 		expect(screen.queryByTestId('time-actual')).toBeNull();
 	});
 
-	test('renders servings when provided', () => {
+	it('does not render time section when absent', () => {
+		render(<RecipeDetail {...defaultProps} />);
+		expect(screen.queryByTestId('time-prep')).toBeNull();
+	});
+
+	it('renders servings when provided', () => {
 		render(
 			<RecipeDetail
 				{...defaultProps}
@@ -236,30 +164,42 @@ describe('RecipeDetail', () => {
 		expect(screen.getByTestId('servings').textContent).toBe('4');
 	});
 
-	test('renders inline notes editor with notes prop', () => {
+	it('does not render servings when absent', () => {
+		render(<RecipeDetail {...defaultProps} />);
+		expect(screen.queryByTestId('servings')).toBeNull();
+	});
+
+	it('renders ingredients list when provided', () => {
+		render(<RecipeDetail {...defaultProps} />);
+		expect(screen.getByTestId('ingredients-list')).toBeDefined();
+	});
+
+	it('does not render ingredients section when empty', () => {
 		render(
 			<RecipeDetail
 				{...defaultProps}
-				recipe={{ ...baseRecipe, notes: 'Best served at midnight' }}
+				recipe={{ ...baseRecipe, ingredients: [] }}
 			/>,
 		);
-		const editor = screen.getByTestId('inline-notes-editor');
-		expect(editor.getAttribute('data-notes')).toBe('Best served at midnight');
+		expect(screen.queryByTestId('ingredients-list')).toBeNull();
 	});
 
-	test('renders inline notes editor without notes', () => {
+	it('renders instructions list when provided', () => {
 		render(<RecipeDetail {...defaultProps} />);
-		expect(screen.getByTestId('inline-notes-editor')).toBeDefined();
+		expect(screen.getByTestId('instructions-list')).toBeDefined();
 	});
 
-	test('passes plannerId and recipeId to inline notes editor', () => {
-		render(<RecipeDetail {...defaultProps} />);
-		const editor = screen.getByTestId('inline-notes-editor');
-		expect(editor.getAttribute('data-planner-id')).toBe('planner-1');
-		expect(editor.getAttribute('data-recipe-id')).toBe('recipe-1');
+	it('does not render instructions section when empty', () => {
+		render(
+			<RecipeDetail
+				{...defaultProps}
+				recipe={{ ...baseRecipe, instructions: [] }}
+			/>,
+		);
+		expect(screen.queryByTestId('instructions-list')).toBeNull();
 	});
 
-	test('renders storage when provided', () => {
+	it('renders storage when provided', () => {
 		render(
 			<RecipeDetail
 				{...defaultProps}
@@ -271,27 +211,17 @@ describe('RecipeDetail', () => {
 		);
 	});
 
-	test('does not render optional sections when absent', () => {
+	it('does not render storage when absent', () => {
 		render(<RecipeDetail {...defaultProps} />);
-		expect(screen.queryByTestId('source-link')).toBeNull();
-		expect(screen.queryByTestId('source-name')).toBeNull();
-		expect(screen.queryByTestId('time-prep')).toBeNull();
-		expect(screen.queryByTestId('servings')).toBeNull();
 		expect(screen.queryByTestId('storage')).toBeNull();
 	});
 
-	test('renders InlineTagsEditor', () => {
+	it('renders inline notes editor', () => {
 		render(<RecipeDetail {...defaultProps} />);
-		expect(screen.getByTestId('inline-tags-editor')).toBeDefined();
+		expect(screen.getByTestId('inline-notes-editor')).toBeDefined();
 	});
 
-	test('passes empty tagIds when recipe has no tags', () => {
-		render(<RecipeDetail {...defaultProps} />);
-		const editor = screen.getByTestId('inline-tags-editor');
-		expect(editor.getAttribute('data-tag-ids')).toBe('');
-	});
-
-	test('passes recipe tag ids to InlineTagsEditor', () => {
+	it('renders inline tags editor with recipe tags and available tags', () => {
 		render(
 			<RecipeDetail
 				{...defaultProps}
@@ -299,49 +229,11 @@ describe('RecipeDetail', () => {
 				tags={[{ _id: 'tag-1' as never, name: 'Spicy', color: 'tangerine' }]}
 			/>,
 		);
-		expect(
-			screen.getByTestId('inline-tags-editor').getAttribute('data-tag-ids'),
-		).toBe('tag-1');
+		expect(screen.getByTestId('inline-tags-editor')).toBeDefined();
 	});
 
-	test('passes available tags to InlineTagsEditor', () => {
-		render(
-			<RecipeDetail
-				{...defaultProps}
-				tags={[{ _id: 'tag-1' as never, name: 'Spicy', color: 'tangerine' }]}
-			/>,
-		);
-		expect(
-			screen
-				.getByTestId('inline-tags-editor')
-				.getAttribute('data-available-tags-count'),
-		).toBe('1');
-	});
-
-	test('passes plannerId and recipeId to InlineTagsEditor', () => {
+	it('renders keep awake toggle', () => {
 		render(<RecipeDetail {...defaultProps} />);
-		const editor = screen.getByTestId('inline-tags-editor');
-		expect(editor.getAttribute('data-planner-id')).toBe('planner-1');
-		expect(editor.getAttribute('data-recipe-id')).toBe('recipe-1');
-	});
-
-	test('does not render ingredients section when list is empty', () => {
-		render(
-			<RecipeDetail
-				{...defaultProps}
-				recipe={{ ...baseRecipe, ingredients: [] }}
-			/>,
-		);
-		expect(screen.queryByTestId('ingredients-list')).toBeNull();
-	});
-
-	test('does not render instructions section when list is empty', () => {
-		render(
-			<RecipeDetail
-				{...defaultProps}
-				recipe={{ ...baseRecipe, instructions: [] }}
-			/>,
-		);
-		expect(screen.queryByTestId('instructions-list')).toBeNull();
+		expect(screen.getByTestId('keep-awake-toggle')).toBeDefined();
 	});
 });

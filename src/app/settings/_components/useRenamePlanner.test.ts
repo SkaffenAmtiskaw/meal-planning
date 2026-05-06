@@ -1,17 +1,18 @@
+import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 
 import { act, renderHook } from '@testing-library/react';
 
-import { afterEach, describe, expect, test, vi } from 'vitest';
+import { beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { useRenamePlanner } from './useRenamePlanner';
 
+vi.mock('next/navigation', async () => await import('@mocks/next/navigation'));
+
 const mockRefresh = vi.fn();
-vi.mock('next/navigation', () => ({
-	useRouter: () => ({ refresh: mockRefresh }),
-}));
 
 const mockUpdatePlannerName = vi.hoisted(() => vi.fn());
+
 vi.mock('@/_actions/planner', () => ({
 	updatePlannerName: mockUpdatePlannerName,
 }));
@@ -29,15 +30,31 @@ vi.mock('@/_hooks', () => ({
 	},
 }));
 
+const defaultRouter = {
+	push: vi.fn(),
+	replace: vi.fn(),
+	refresh: vi.fn(),
+	back: vi.fn(),
+	forward: vi.fn(),
+	prefetch: vi.fn(),
+};
+
+beforeAll(() => {
+	vi.mocked(useRouter).mockReturnValue({
+		...defaultRouter,
+		refresh: mockRefresh,
+	});
+});
+
 const id = '507f1f77bcf86cd799439011';
 const currentName = 'My Planner';
 
 describe('useRenamePlanner', () => {
-	afterEach(() => {
+	beforeEach(() => {
 		vi.clearAllMocks();
 	});
 
-	test('initializes with not editing and current name', () => {
+	it('initializes with not editing and current name', () => {
 		const { result } = renderHook(() => useRenamePlanner(id, currentName));
 
 		expect(result.current.editing).toBe(false);
@@ -45,7 +62,7 @@ describe('useRenamePlanner', () => {
 		expect(result.current.error).toBeNull();
 	});
 
-	test('enterEditing sets editing to true', () => {
+	it('enterEditing sets editing to true', () => {
 		const { result } = renderHook(() => useRenamePlanner(id, currentName));
 
 		act(() => result.current.enterEditing());
@@ -53,7 +70,7 @@ describe('useRenamePlanner', () => {
 		expect(result.current.editing).toBe(true);
 	});
 
-	test('cancel resets name and exits editing', () => {
+	it('cancel resets name and exits editing', () => {
 		const { result } = renderHook(() => useRenamePlanner(id, currentName));
 
 		act(() => result.current.enterEditing());
@@ -65,7 +82,7 @@ describe('useRenamePlanner', () => {
 		expect(result.current.error).toBeNull();
 	});
 
-	test('save calls updatePlannerName and refreshes on success', async () => {
+	it('save calls updatePlannerName and refreshes on success', async () => {
 		mockUpdatePlannerName.mockResolvedValue({ ok: true });
 		const { result } = renderHook(() => useRenamePlanner(id, currentName));
 
@@ -78,7 +95,7 @@ describe('useRenamePlanner', () => {
 		expect(mockRefresh).toHaveBeenCalled();
 	});
 
-	test('save sets error and stays in editing when action fails', async () => {
+	it('save sets error and stays in editing when action fails', async () => {
 		mockUpdatePlannerName.mockResolvedValue({
 			ok: false,
 			error: 'Invalid name',

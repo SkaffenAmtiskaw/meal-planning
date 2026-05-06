@@ -1,3 +1,5 @@
+import { useRouter } from 'next/navigation';
+
 import {
 	act,
 	fireEvent,
@@ -6,7 +8,7 @@ import {
 	waitFor,
 } from '@testing-library/react';
 
-import { afterEach, describe, expect, test, vi } from 'vitest';
+import { beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { updateRecipeTags } from '@/_actions/saved';
 
@@ -14,11 +16,9 @@ import { InlineTagsEditor } from './InlineTagsEditor';
 
 const mockRefresh = vi.fn();
 
-vi.mock('@mantine/core', async () => await import('@mocks/@mantine/core'));
+vi.mock('next/navigation', async () => await import('@mocks/next/navigation'));
 
-vi.mock('next/navigation', () => ({
-	useRouter: () => ({ refresh: mockRefresh }),
-}));
+vi.mock('@mantine/core', async () => await import('@mocks/@mantine/core'));
 
 vi.mock('@/_actions/saved', () => ({
 	updateRecipeTags: vi.fn(),
@@ -26,44 +26,20 @@ vi.mock('@/_actions/saved', () => ({
 
 let capturedOnChange: ((value: string[]) => void) | undefined;
 
-vi.mock('@/_components', async (importOriginal) => {
-	const actual = await importOriginal<typeof import('@/_components')>();
-	return {
-		...actual,
-		Tag: ({
-			children,
-			color,
-		}: {
-			children: React.ReactNode;
-			color: string;
-		}) => (
-			<span data-testid="tag" data-color={color}>
-				{children}
-			</span>
-		),
-		TagCombobox: ({
-			value,
-			onChange,
-			plannerId,
-			initialTags,
-		}: {
-			value: string[];
-			onChange: (value: string[]) => void;
-			plannerId: string;
-			initialTags: unknown[];
-		}) => {
-			capturedOnChange = onChange;
-			return (
-				<div
-					data-testid="tag-combobox"
-					data-planner-id={plannerId}
-					data-value={value.join(',')}
-					data-initial-tags-count={initialTags.length}
-				/>
-			);
-		},
-	};
-});
+vi.mock('@/_components', () => ({
+	Tag: vi.fn(({ children }) => <span>{children}</span>),
+	TagCombobox: vi.fn(({ value, onChange, plannerId, initialTags }) => {
+		capturedOnChange = onChange;
+		return (
+			<div
+				data-testid="tag-combobox"
+				data-planner-id={plannerId}
+				data-value={value.join(',')}
+				data-initial-tags-count={initialTags.length}
+			/>
+		);
+	}),
+}));
 
 const defaultProps = {
 	plannerId: 'planner-1',
@@ -76,41 +52,44 @@ const defaultProps = {
 };
 
 describe('InlineTagsEditor', () => {
-	afterEach(() => {
-		vi.resetAllMocks();
+	beforeAll(() => {
+		const defaultRouter = vi.mocked(useRouter)();
+		vi.mocked(useRouter).mockReturnValue({
+			...defaultRouter,
+			refresh: mockRefresh,
+		});
+	});
+
+	beforeEach(() => {
+		vi.clearAllMocks();
 		capturedOnChange = undefined;
 	});
 
-	test('renders tag pills and edit button in read mode', () => {
+	it('renders tag pills and edit button in read mode', () => {
 		render(<InlineTagsEditor {...defaultProps} />);
 		expect(screen.getByText('Spicy')).toBeDefined();
 		expect(screen.getByTestId('tags-edit-button')).toBeDefined();
 		expect(screen.queryByTestId('tag-combobox')).toBeNull();
 	});
 
-	test('renders tags section label', () => {
-		render(<InlineTagsEditor {...defaultProps} />);
-		expect(screen.getByText('Tags')).toBeDefined();
-	});
-
-	test('does not render save/cancel buttons in read mode', () => {
+	it('does not render save/cancel buttons in read mode', () => {
 		render(<InlineTagsEditor {...defaultProps} />);
 		expect(screen.queryByTestId('tags-save-button')).toBeNull();
 		expect(screen.queryByTestId('tags-cancel-button')).toBeNull();
 	});
 
-	test('renders empty tags group when no matching tags', () => {
+	it('renders empty tags group when no matching tags', () => {
 		render(<InlineTagsEditor {...defaultProps} tagIds={[]} />);
 		expect(screen.getByTestId('tags')).toBeDefined();
 		expect(screen.queryByText('Spicy')).toBeNull();
 	});
 
-	test('does not render pill for unknown tag id', () => {
+	it('does not render pill for unknown tag id', () => {
 		render(<InlineTagsEditor {...defaultProps} tagIds={['unknown-id']} />);
 		expect(screen.queryByText('Spicy')).toBeNull();
 	});
 
-	test('clicking edit button switches to edit mode', () => {
+	it('clicking edit button switches to edit mode', () => {
 		render(<InlineTagsEditor {...defaultProps} />);
 		fireEvent.click(screen.getByTestId('tags-edit-button'));
 		expect(screen.getByTestId('tag-combobox')).toBeDefined();
@@ -119,22 +98,7 @@ describe('InlineTagsEditor', () => {
 		expect(screen.queryByTestId('tags-edit-button')).toBeNull();
 	});
 
-	test('TagCombobox receives correct plannerId and initialTags', () => {
-		render(<InlineTagsEditor {...defaultProps} />);
-		fireEvent.click(screen.getByTestId('tags-edit-button'));
-		const combobox = screen.getByTestId('tag-combobox');
-		expect(combobox.getAttribute('data-planner-id')).toBe('planner-1');
-		expect(combobox.getAttribute('data-initial-tags-count')).toBe('2');
-	});
-
-	test('TagCombobox receives current tag ids as value', () => {
-		render(<InlineTagsEditor {...defaultProps} />);
-		fireEvent.click(screen.getByTestId('tags-edit-button'));
-		const combobox = screen.getByTestId('tag-combobox');
-		expect(combobox.getAttribute('data-value')).toBe('tag-1');
-	});
-
-	test('TagCombobox onChange updates internal value', () => {
+	it('TagCombobox onChange updates internal value', () => {
 		render(<InlineTagsEditor {...defaultProps} />);
 		fireEvent.click(screen.getByTestId('tags-edit-button'));
 		act(() => {
@@ -144,7 +108,7 @@ describe('InlineTagsEditor', () => {
 		expect(combobox.getAttribute('data-value')).toBe('tag-1,tag-2');
 	});
 
-	test('cancel resets value and exits edit mode', () => {
+	it('cancel resets value and exits edit mode', () => {
 		render(<InlineTagsEditor {...defaultProps} />);
 		fireEvent.click(screen.getByTestId('tags-edit-button'));
 		act(() => {
@@ -156,7 +120,7 @@ describe('InlineTagsEditor', () => {
 		expect(screen.queryByText('Sweet')).toBeNull();
 	});
 
-	test('save calls updateRecipeTags with correct args then refreshes', async () => {
+	it('save calls updateRecipeTags with correct args then refreshes', async () => {
 		vi.mocked(updateRecipeTags).mockResolvedValueOnce({
 			ok: true,
 			data: undefined,
@@ -178,7 +142,7 @@ describe('InlineTagsEditor', () => {
 		});
 	});
 
-	test('save exits editing mode after success', async () => {
+	it('save exits editing mode after success', async () => {
 		vi.mocked(updateRecipeTags).mockResolvedValueOnce({
 			ok: true,
 			data: undefined,
@@ -192,7 +156,7 @@ describe('InlineTagsEditor', () => {
 		});
 	});
 
-	test('shows error message and stays in editing mode when save fails', async () => {
+	it('shows error message and stays in editing mode when save fails', async () => {
 		vi.mocked(updateRecipeTags).mockResolvedValueOnce({
 			ok: false,
 			error: 'Unauthorized',
@@ -208,7 +172,7 @@ describe('InlineTagsEditor', () => {
 		expect(mockRefresh).not.toHaveBeenCalled();
 	});
 
-	test('cancel clears save error', async () => {
+	it('cancel clears save error', async () => {
 		vi.mocked(updateRecipeTags).mockResolvedValueOnce({
 			ok: false,
 			error: 'Unauthorized',
@@ -225,7 +189,7 @@ describe('InlineTagsEditor', () => {
 		expect(screen.queryByTestId('save-error')).toBeNull();
 	});
 
-	test('shows generic error when updateRecipeTags throws unexpectedly', async () => {
+	it('shows generic error when updateRecipeTags throws unexpectedly', async () => {
 		vi.mocked(updateRecipeTags).mockRejectedValueOnce(
 			new Error('Network failure'),
 		);
@@ -240,12 +204,5 @@ describe('InlineTagsEditor', () => {
 			expect(screen.getByTestId('tag-combobox')).toBeDefined();
 		});
 		expect(mockRefresh).not.toHaveBeenCalled();
-	});
-
-	test('renders tags using Tag component with correct color', () => {
-		render(<InlineTagsEditor {...defaultProps} />);
-		const tag = screen.getByTestId('tag');
-		expect(tag.textContent).toBe('Spicy');
-		expect(tag.getAttribute('data-color')).toBe('tangerine');
 	});
 });

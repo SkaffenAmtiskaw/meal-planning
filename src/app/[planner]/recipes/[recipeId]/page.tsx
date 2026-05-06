@@ -34,7 +34,7 @@ const RecipePage = async ({
 	const item = planner.saved.find(matchesId(recipeId));
 
 	if (!item || !!(item as unknown as BookmarkInterface).url) {
-		notFound();
+		return notFound();
 	}
 
 	const recipe = JSON.parse(JSON.stringify(item)) as RecipeInterface;

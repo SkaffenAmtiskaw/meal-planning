@@ -106,3 +106,6 @@ src/_types/
 
 # InviteForm.tsx
 - using email regex rather than zod type check
+
+# Recipe Detail Component
+- swallows errors when recipe is deleted

@@ -1,7 +1,9 @@
+import { useRouter } from 'next/navigation';
+
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 
 import { it } from '@test';
-import { beforeEach, describe, expect, vi } from 'vitest';
+import { beforeAll, beforeEach, describe, expect, vi } from 'vitest';
 
 import type { PendingInvite } from '@/_actions/planner/invite.types';
 
@@ -9,13 +11,9 @@ import { InviteForm } from './InviteForm';
 import { PendingInvitesList } from './PendingInvitesList';
 import { PlannerItem } from './PlannerItem';
 
-// Mock next/navigation
+vi.mock('next/navigation', async () => await import('@mocks/next/navigation'));
+
 const mockRefresh = vi.fn();
-vi.mock('next/navigation', () => ({
-	useRouter: () => ({
-		refresh: mockRefresh,
-	}),
-}));
 
 // Mock leavePlanner action
 const mockLeavePlanner = vi.fn();
@@ -166,10 +164,16 @@ const editingState = {
 };
 
 describe('planner item component', () => {
+	beforeAll(() => {
+		const defaultRouter = vi.mocked(useRouter)();
+		vi.mocked(useRouter).mockReturnValue({
+			...defaultRouter,
+			refresh: mockRefresh,
+		});
+	});
+
 	beforeEach(() => {
 		vi.clearAllMocks();
-		mockRefresh.mockClear();
-		mockLeavePlanner.mockClear();
 		mockOnSuccessCallback.mockClear();
 	});
 

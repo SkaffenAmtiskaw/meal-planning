@@ -15,7 +15,7 @@ const Layout = async ({ children }: { children: React.ReactNode }) => {
 	const [user] = await catchify(getUser);
 	const planners = user?.planners ?? [];
 
-	if (!planners.length) redirect('/');
+	if (!planners.length) return redirect('/');
 
 	const cookieStore = await cookies();
 	const lastPlannerId = cookieStore.get('lastOpenedPlanner')?.value;

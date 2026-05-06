@@ -1,6 +1,8 @@
+import { useRouter } from 'next/navigation';
+
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 
-import { afterEach, describe, expect, test, vi } from 'vitest';
+import { beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { updateRecipeNotes } from '@/_actions/saved';
 
@@ -8,15 +10,13 @@ import { InlineNotesEditor } from './InlineNotesEditor';
 
 const mockRefresh = vi.fn();
 
-vi.mock('next/navigation', () => ({
-	useRouter: () => ({ refresh: mockRefresh }),
-}));
+vi.mock('next/navigation', async () => await import('@mocks/next/navigation'));
+
+vi.mock('@mantine/core', async () => await import('@mocks/@mantine/core'));
 
 vi.mock('@/_actions/saved', () => ({
 	updateRecipeNotes: vi.fn(),
 }));
-
-vi.mock('@mantine/core', async () => await import('@mocks/@mantine/core'));
 
 const defaultProps = {
 	plannerId: 'planner-1',
@@ -25,11 +25,19 @@ const defaultProps = {
 };
 
 describe('InlineNotesEditor', () => {
-	afterEach(() => {
-		vi.resetAllMocks();
+	beforeAll(() => {
+		const defaultRouter = vi.mocked(useRouter)();
+		vi.mocked(useRouter).mockReturnValue({
+			...defaultRouter,
+			refresh: mockRefresh,
+		});
 	});
 
-	test('renders notes text and edit button in read mode', () => {
+	beforeEach(() => {
+		vi.clearAllMocks();
+	});
+
+	it('renders notes text and edit button in read mode', () => {
 		render(<InlineNotesEditor {...defaultProps} />);
 		expect(screen.getByTestId('notes').textContent).toBe(
 			'Best served at midnight',
@@ -38,13 +46,13 @@ describe('InlineNotesEditor', () => {
 		expect(screen.queryByTestId('notes-textarea')).toBeNull();
 	});
 
-	test('renders without notes when notes is undefined', () => {
+	it('renders without notes when notes is undefined', () => {
 		render(<InlineNotesEditor {...defaultProps} notes={undefined} />);
 		expect(screen.getByTestId('notes')).toBeDefined();
 		expect(screen.getByTestId('notes-edit-button')).toBeDefined();
 	});
 
-	test('clicking edit button switches to editing mode', () => {
+	it('clicking edit button switches to editing mode', () => {
 		render(<InlineNotesEditor {...defaultProps} />);
 		fireEvent.click(screen.getByTestId('notes-edit-button'));
 		expect(screen.getByTestId('notes-textarea')).toBeDefined();
@@ -53,7 +61,7 @@ describe('InlineNotesEditor', () => {
 		expect(screen.queryByTestId('notes-edit-button')).toBeNull();
 	});
 
-	test('textarea is pre-populated with existing notes', () => {
+	it('textarea is pre-populated with existing notes', () => {
 		render(<InlineNotesEditor {...defaultProps} />);
 		fireEvent.click(screen.getByTestId('notes-edit-button'));
 		const textarea = screen.getByTestId(
@@ -62,7 +70,7 @@ describe('InlineNotesEditor', () => {
 		expect(textarea.value).toBe('Best served at midnight');
 	});
 
-	test('cancel restores original notes and exits editing mode', () => {
+	it('cancel restores original notes and exits editing mode', () => {
 		render(<InlineNotesEditor {...defaultProps} />);
 		fireEvent.click(screen.getByTestId('notes-edit-button'));
 		fireEvent.change(screen.getByTestId('notes-textarea'), {
@@ -75,7 +83,7 @@ describe('InlineNotesEditor', () => {
 		);
 	});
 
-	test('save calls updateRecipeNotes with correct args then refreshes', async () => {
+	it('save calls updateRecipeNotes with correct args then refreshes', async () => {
 		vi.mocked(updateRecipeNotes).mockResolvedValueOnce({
 			ok: true,
 			data: undefined,
@@ -97,7 +105,7 @@ describe('InlineNotesEditor', () => {
 		});
 	});
 
-	test('save exits editing mode after success', async () => {
+	it('save exits editing mode after success', async () => {
 		vi.mocked(updateRecipeNotes).mockResolvedValueOnce({
 			ok: true,
 			data: undefined,
@@ -111,7 +119,7 @@ describe('InlineNotesEditor', () => {
 		});
 	});
 
-	test('shows error message and stays in editing mode when save fails', async () => {
+	it('shows error message and stays in editing mode when save fails', async () => {
 		vi.mocked(updateRecipeNotes).mockResolvedValueOnce({
 			ok: false,
 			error: 'Unauthorized',
@@ -127,7 +135,7 @@ describe('InlineNotesEditor', () => {
 		expect(mockRefresh).not.toHaveBeenCalled();
 	});
 
-	test('cancel clears save error', async () => {
+	it('cancel clears save error', async () => {
 		vi.mocked(updateRecipeNotes).mockResolvedValueOnce({
 			ok: false,
 			error: 'Unauthorized',
@@ -144,7 +152,7 @@ describe('InlineNotesEditor', () => {
 		expect(screen.queryByTestId('save-error')).toBeNull();
 	});
 
-	test('cancel when notes is undefined resets value to empty string', () => {
+	it('cancel when notes is undefined resets value to empty string', () => {
 		render(<InlineNotesEditor {...defaultProps} notes={undefined} />);
 		fireEvent.click(screen.getByTestId('notes-edit-button'));
 		fireEvent.change(screen.getByTestId('notes-textarea'), {
@@ -154,7 +162,7 @@ describe('InlineNotesEditor', () => {
 		expect(screen.queryByTestId('notes-textarea')).toBeNull();
 	});
 
-	test('shows generic error when updateRecipeNotes throws unexpectedly', async () => {
+	it('shows generic error when updateRecipeNotes throws unexpectedly', async () => {
 		vi.mocked(updateRecipeNotes).mockRejectedValueOnce(
 			new Error('Network failure'),
 		);
@@ -171,7 +179,7 @@ describe('InlineNotesEditor', () => {
 		expect(mockRefresh).not.toHaveBeenCalled();
 	});
 
-	test('textarea updates as user types', () => {
+	it('textarea updates as user types', () => {
 		render(<InlineNotesEditor {...defaultProps} />);
 		fireEvent.click(screen.getByTestId('notes-edit-button'));
 		fireEvent.change(screen.getByTestId('notes-textarea'), {

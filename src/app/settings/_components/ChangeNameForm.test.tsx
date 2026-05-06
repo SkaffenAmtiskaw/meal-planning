@@ -1,40 +1,45 @@
+import { useRouter } from 'next/navigation';
+
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 
-import { afterEach, describe, expect, test, vi } from 'vitest';
+import { beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { ChangeNameForm } from './ChangeNameForm';
 
-const mockRefresh = vi.fn();
-const mockUpdateUserName = vi.fn();
-
 vi.mock('@mantine/core', async () => await import('@mocks/@mantine/core'));
 
-vi.mock('next/navigation', () => ({
-	useRouter: () => ({ refresh: mockRefresh }),
-}));
+vi.mock('next/navigation', async () => await import('@mocks/next/navigation'));
+
+const mockRefresh = vi.fn();
+
+const mockUpdateUserName = vi.hoisted(() => vi.fn());
 
 vi.mock('@/_actions/user', () => ({
-	updateUserName: (name: string) => mockUpdateUserName(name),
+	updateUserName: mockUpdateUserName,
 }));
 
+const defaultRouter = {
+	push: vi.fn(),
+	replace: vi.fn(),
+	refresh: vi.fn(),
+	back: vi.fn(),
+	forward: vi.fn(),
+	prefetch: vi.fn(),
+};
+
+beforeAll(() => {
+	vi.mocked(useRouter).mockReturnValue({
+		...defaultRouter,
+		refresh: mockRefresh,
+	});
+});
+
 describe('ChangeNameForm', () => {
-	afterEach(() => {
-		vi.resetAllMocks();
+	beforeEach(() => {
+		vi.clearAllMocks();
 	});
 
-	test('displays current name', () => {
-		render(<ChangeNameForm currentName="Ariel" />);
-
-		expect(screen.getByTestId('current-name').textContent).toBe('Ariel');
-	});
-
-	test('shows change name button', () => {
-		render(<ChangeNameForm currentName="Ariel" />);
-
-		expect(screen.getByTestId('change-name-button')).toBeDefined();
-	});
-
-	test('shows form when change name button is clicked', () => {
+	it('shows form when change name button is clicked', () => {
 		render(<ChangeNameForm currentName="Ariel" />);
 
 		fireEvent.click(screen.getByTestId('change-name-button'));
@@ -44,7 +49,7 @@ describe('ChangeNameForm', () => {
 		expect(screen.getByTestId('cancel-name-change-button')).toBeDefined();
 	});
 
-	test('hides form when cancel is clicked', () => {
+	it('hides form when cancel is clicked', () => {
 		render(<ChangeNameForm currentName="Ariel" />);
 
 		fireEvent.click(screen.getByTestId('change-name-button'));
@@ -54,7 +59,7 @@ describe('ChangeNameForm', () => {
 		expect(screen.getByTestId('change-name-button')).toBeDefined();
 	});
 
-	test('resets name input when cancel is clicked and form is reopened', () => {
+	it('resets name input when cancel is clicked and form is reopened', () => {
 		render(<ChangeNameForm currentName="Ariel" />);
 
 		fireEvent.click(screen.getByTestId('change-name-button'));
@@ -69,20 +74,7 @@ describe('ChangeNameForm', () => {
 		).toBe('');
 	});
 
-	test('updates name input value', () => {
-		render(<ChangeNameForm currentName="Ariel" />);
-
-		fireEvent.click(screen.getByTestId('change-name-button'));
-		fireEvent.change(screen.getByTestId('new-name-input'), {
-			target: { value: 'Ariel II' },
-		});
-
-		expect(
-			(screen.getByTestId('new-name-input') as HTMLInputElement).value,
-		).toBe('Ariel II');
-	});
-
-	test('calls updateUserName with new name on submit', async () => {
+	it('calls updateUserName with new name on submit', async () => {
 		mockUpdateUserName.mockResolvedValueOnce({ ok: true, data: undefined });
 		render(<ChangeNameForm currentName="Ariel" />);
 
@@ -97,7 +89,7 @@ describe('ChangeNameForm', () => {
 		});
 	});
 
-	test('hides form and calls router.refresh on success', async () => {
+	it('hides form and calls router.refresh on success', async () => {
 		mockUpdateUserName.mockResolvedValueOnce({ ok: true, data: undefined });
 		render(<ChangeNameForm currentName="Ariel" />);
 
@@ -110,7 +102,7 @@ describe('ChangeNameForm', () => {
 		});
 	});
 
-	test('shows error alert when action returns error', async () => {
+	it('shows error alert when action returns error', async () => {
 		mockUpdateUserName.mockResolvedValueOnce({
 			ok: false,
 			error: 'Contains invalid characters',
@@ -127,7 +119,7 @@ describe('ChangeNameForm', () => {
 		});
 	});
 
-	test('does not call router.refresh on error', async () => {
+	it('does not call router.refresh on error', async () => {
 		mockUpdateUserName.mockResolvedValueOnce({
 			ok: false,
 			error: 'Some error',

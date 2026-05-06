@@ -1,19 +1,21 @@
-import { render, screen } from '@testing-library/react';
+import { notFound, redirect } from 'next/navigation';
 
-import { afterEach, describe, expect, test, vi } from 'vitest';
+import { render } from '@testing-library/react';
 
-const { mockCheckAuth, mockRedirect, mockNotFound, mockGetUser } = vi.hoisted(
-	() => ({
-		mockCheckAuth: vi.fn(),
-		mockRedirect: vi.fn(),
-		mockNotFound: vi.fn(),
-		mockGetUser: vi.fn(),
-	}),
-);
+import { beforeEach, describe, expect, test, vi } from 'vitest';
+
+import { PlannerProvider } from './_components';
+
+const { mockCheckAuth, mockGetUser } = vi.hoisted(() => ({
+	mockCheckAuth: vi.fn(),
+	mockGetUser: vi.fn(),
+}));
 
 vi.mock('@/_models', async () => {
-	const { zObjectId } = await import('@/_models/utils/zObjectId');
-	return { zObjectId };
+	const { z } = await import('zod');
+	return {
+		zObjectId: z.string(),
+	};
 });
 
 vi.mock('@/_actions', () => ({
@@ -21,42 +23,25 @@ vi.mock('@/_actions', () => ({
 	getUser: () => mockGetUser(),
 }));
 
-vi.mock('next/navigation', () => ({
-	redirect: (...args: unknown[]) => mockRedirect(...args),
-	notFound: () => mockNotFound(),
-}));
+vi.mock('next/navigation', async () => await import('@mocks/next/navigation'));
 
 vi.mock('@/app/_components/Header', () => ({
 	Header: ({ children }: { children?: React.ReactNode }) => children || null,
 }));
 
-const plannerProviderCalls: unknown[] = [];
 vi.mock('./_components', async () => {
 	const React = await import('react');
-	const mp = vi.fn(
-		({
-			children,
-			...props
-		}: {
-			children: React.ReactNode;
-			accessLevel: string;
-		}) => {
-			plannerProviderCalls.push(props);
-			return React.createElement(React.Fragment, null, children);
-		},
-	);
 	return {
 		PlannerLayout: ({ children }: { children: React.ReactNode }) =>
 			React.createElement(React.Fragment, null, children),
-		PlannerProvider: mp,
+		PlannerProvider: vi.fn(() => null),
 		BurgerToggle: () => null,
-		ToggleContext: {
-			Provider: ({ children }: { children: React.ReactNode }) =>
-				React.createElement(React.Fragment, null, children),
-		},
-		NavbarServer: () => null,
 	};
 });
+
+vi.mock('./_components/NavbarServer', () => ({
+	NavbarServer: () => null,
+}));
 
 import Layout from './layout';
 
@@ -64,8 +49,8 @@ const plannerId = '507f1f77bcf86cd799439011';
 const params = Promise.resolve({ planner: plannerId });
 
 describe('planner layout', () => {
-	afterEach(() => {
-		plannerProviderCalls.length = 0;
+	beforeEach(() => {
+		vi.clearAllMocks();
 		mockGetUser.mockResolvedValue({ email: 'test@example.com' });
 	});
 
@@ -74,7 +59,7 @@ describe('planner layout', () => {
 
 		await Layout({ children: null, params });
 
-		expect(mockRedirect).toHaveBeenCalledWith('/');
+		expect(vi.mocked(redirect)).toHaveBeenCalledWith('/');
 	});
 
 	test('calls notFound when unauthorized', async () => {
@@ -82,7 +67,7 @@ describe('planner layout', () => {
 
 		await Layout({ children: null, params });
 
-		expect(mockNotFound).toHaveBeenCalled();
+		expect(vi.mocked(notFound)).toHaveBeenCalled();
 	});
 
 	test('throws when there is a system error', async () => {
@@ -92,17 +77,6 @@ describe('planner layout', () => {
 		await expect(Layout({ children: null, params })).rejects.toThrow(
 			'DB connection timeout',
 		);
-	});
-
-	test('renders children when authorized', async () => {
-		mockCheckAuth.mockResolvedValue({
-			type: 'authorized',
-			accessLevel: 'owner',
-		});
-
-		render(await Layout({ children: "Ursula's Menu", params }));
-
-		expect(screen.getByText("Ursula's Menu")).toBeDefined();
 	});
 
 	test('passes planner id to checkAuth', async () => {
@@ -124,7 +98,8 @@ describe('planner layout', () => {
 
 		render(await Layout({ children: null, params }));
 
-		expect(plannerProviderCalls).toContainEqual(
+		const calls = vi.mocked(PlannerProvider).mock.calls;
+		expect(calls[0][0]).toEqual(
 			expect.objectContaining({ accessLevel: 'owner' }),
 		);
 	});

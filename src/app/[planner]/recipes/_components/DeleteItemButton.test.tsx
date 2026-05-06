@@ -1,14 +1,16 @@
-import { fireEvent, render, screen, waitFor } from '@testing-library/react';
+import { useRouter } from 'next/navigation';
 
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { render } from '@testing-library/react';
+
+import { beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
+
+import { ConfirmButton } from '@/_components';
 
 import { DeleteItemButton } from './DeleteItemButton';
 
 const mockRefresh = vi.fn();
 
-vi.mock('next/navigation', () => ({
-	useRouter: () => ({ refresh: mockRefresh }),
-}));
+vi.mock('next/navigation', async () => await import('@mocks/next/navigation'));
 
 const mockUseCanWrite = vi.fn();
 
@@ -22,96 +24,56 @@ vi.mock('@tabler/icons-react', () => ({
 	IconTrash: () => <svg data-testid="icon-trash" />,
 }));
 
-// Mock ConfirmButton - it calls onConfirm when trigger is clicked
-const mockOnConfirmCallback = vi.fn();
-
 vi.mock('@/_components', () => ({
-	ConfirmButton: ({
-		onConfirm,
-		onSuccess,
-		title,
-		message,
-		confirmButtonText,
-		renderTrigger,
-	}: {
-		onConfirm: () => Promise<{ ok: boolean; data?: undefined; error?: string }>;
-		onSuccess?: () => void;
-		title: string;
-		message: string;
-		confirmButtonText: string;
-		renderTrigger: (onOpen: () => void) => React.ReactNode;
-	}) => {
-		const handleClick = async () => {
-			mockOnConfirmCallback();
-			const result = await onConfirm();
-			if (result.ok && onSuccess) {
-				onSuccess();
-			}
-		};
-		return (
-			<div data-testid="confirm-button">
-				<div data-testid="confirm-button-title">{title}</div>
-				<div data-testid="confirm-button-message">{message}</div>
-				<div data-testid="confirm-button-text">{confirmButtonText}</div>
-				<div onClick={handleClick} onKeyDown={handleClick}>
-					{renderTrigger(() => {})}
-				</div>
-			</div>
-		);
-	},
+	ConfirmButton: vi.fn(({ renderTrigger }) => renderTrigger?.(() => {})),
 }));
 
 const defaultProps = {
-	onDelete: vi.fn().mockResolvedValue({ ok: true, data: undefined }),
+	onDelete: vi.fn(),
 	title: 'Delete Item',
 	message: 'Are you sure?',
 };
 
 describe('DeleteItemButton', () => {
+	beforeAll(() => {
+		const defaultRouter = vi.mocked(useRouter)();
+		vi.mocked(useRouter).mockReturnValue({
+			...defaultRouter,
+			refresh: mockRefresh,
+		});
+	});
+
 	beforeEach(() => {
-		vi.resetAllMocks();
+		vi.clearAllMocks();
 		mockUseCanWrite.mockReturnValue(true);
 	});
 
-	it('renders delete button with default testid', () => {
+	it('passes onDelete as onConfirm to ConfirmButton', () => {
 		render(<DeleteItemButton {...defaultProps} />);
-		expect(screen.getByTestId('delete-button')).toBeDefined();
+		const call = vi.mocked(ConfirmButton).mock.calls[0][0];
+		expect(call.onConfirm).toBe(defaultProps.onDelete);
+		expect(call.title).toBe('Delete Item');
+		expect(call.message).toBe('Are you sure?');
+		expect(call.confirmButtonText).toBe('Delete');
 	});
 
-	it('renders delete button with custom testid', () => {
-		render(<DeleteItemButton {...defaultProps} data-testid="custom-delete" />);
-		expect(screen.getByTestId('custom-delete')).toBeDefined();
-	});
-
-	it('confirming calls onDelete and refreshes', async () => {
-		const onDelete = vi
-			.fn()
-			.mockResolvedValueOnce({ ok: true, data: undefined });
-		render(<DeleteItemButton {...defaultProps} onDelete={onDelete} />);
-		fireEvent.click(screen.getByTestId('delete-button'));
-
-		await waitFor(() => {
-			expect(mockOnConfirmCallback).toHaveBeenCalled();
-		});
-
-		await waitFor(() => {
-			expect(onDelete).toHaveBeenCalledOnce();
-		});
-
-		await waitFor(() => {
-			expect(mockRefresh).toHaveBeenCalled();
-		});
+	it('passes a refresh callback as onSuccess', () => {
+		render(<DeleteItemButton {...defaultProps} />);
+		const call = vi.mocked(ConfirmButton).mock.calls[0][0];
+		expect(call.onSuccess).toBeDefined();
+		call.onSuccess?.();
+		expect(mockRefresh).toHaveBeenCalled();
 	});
 
 	it('does not render when user has read-only access', () => {
 		mockUseCanWrite.mockReturnValue(false);
 		render(<DeleteItemButton {...defaultProps} />);
-		expect(screen.queryByTestId('delete-button')).toBeNull();
+		expect(vi.mocked(ConfirmButton)).not.toHaveBeenCalled();
 	});
 
 	it('renders when user has write access', () => {
 		mockUseCanWrite.mockReturnValue(true);
 		render(<DeleteItemButton {...defaultProps} />);
-		expect(screen.getByTestId('delete-button')).toBeDefined();
+		expect(vi.mocked(ConfirmButton)).toHaveBeenCalled();
 	});
 });

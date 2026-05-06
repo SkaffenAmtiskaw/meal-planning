@@ -1,6 +1,8 @@
+import { useRouter } from 'next/navigation';
+
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import type { UserInvite } from '@/_actions/planner/getUserInvites';
 import type { AccessLevel } from '@/_models/user';
@@ -11,11 +13,7 @@ const mockRefresh = vi.fn();
 
 vi.mock('@/_hooks', async () => await import('@mocks/@/_hooks'));
 
-vi.mock('next/navigation', () => ({
-	useRouter: () => ({
-		refresh: mockRefresh,
-	}),
-}));
+vi.mock('next/navigation', async () => await import('@mocks/next/navigation'));
 
 vi.mock('@mantine/core', async () => await import('@mocks/@mantine/core'));
 
@@ -79,9 +77,16 @@ describe('InvitesSection', () => {
 		...overrides,
 	});
 
+	beforeAll(() => {
+		const defaultRouter = vi.mocked(useRouter)();
+		vi.mocked(useRouter).mockReturnValue({
+			...defaultRouter,
+			refresh: mockRefresh,
+		});
+	});
+
 	beforeEach(() => {
-		vi.resetAllMocks();
-		mockRefresh.mockClear();
+		vi.clearAllMocks();
 	});
 
 	it('should show empty message when no invites', () => {

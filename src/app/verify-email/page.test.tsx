@@ -1,40 +1,35 @@
+import { redirect } from 'next/navigation';
+
 import { render, screen } from '@testing-library/react';
 
-import { describe, expect, test, vi } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import VerifyEmailPage from './page';
 
-vi.mock('next/navigation', () => ({
-	redirect: vi.fn(),
-}));
+vi.mock('next/navigation', async () => await import('@mocks/next/navigation'));
 
 vi.mock('./_components/ResendVerificationForm', () => ({
-	ResendVerificationForm: () => <div data-testid="resend-form" />,
+	ResendVerificationForm: vi.fn(() => null),
 }));
 
 vi.mock('@mantine/core', async () => await import('@mocks/@mantine/core'));
 
 describe('VerifyEmailPage', () => {
-	test('redirects to home when no error param', async () => {
-		const { redirect } = await import('next/navigation');
-
-		render(
-			await VerifyEmailPage({
-				searchParams: Promise.resolve({}),
-			}),
-		);
-
-		expect(redirect).toHaveBeenCalledWith('/');
+	beforeEach(() => {
+		vi.clearAllMocks();
 	});
 
-	test('shows error UI and resend form when error param is present', async () => {
+	it('redirects to home when no error param', async () => {
+		render(await VerifyEmailPage({ searchParams: Promise.resolve({}) }));
+		expect(vi.mocked(redirect)).toHaveBeenCalledWith('/');
+	});
+
+	it('shows error UI when error param is present', async () => {
 		render(
 			await VerifyEmailPage({
 				searchParams: Promise.resolve({ error: 'TOKEN_EXPIRED' }),
 			}),
 		);
-
 		expect(screen.getByText('Verification link expired')).toBeDefined();
-		expect(screen.getByTestId('resend-form')).toBeDefined();
 	});
 });

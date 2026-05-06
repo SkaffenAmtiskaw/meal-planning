@@ -1,6 +1,8 @@
+import { useRouter } from 'next/navigation';
+
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { zSafeString } from '@/_utils/zSafeString';
 
@@ -22,12 +24,9 @@ vi.mock('../../_components/AuthLayout', () => ({
 }));
 
 // Mock Next.js router
+vi.mock('next/navigation', async () => await import('@mocks/next/navigation'));
+
 const mockPush = vi.fn();
-vi.mock('next/navigation', () => ({
-	useRouter: () => ({
-		push: mockPush,
-	}),
-}));
 
 // Mock signUpWithInvite action with default implementation
 const mockSignUpWithInvite = vi.fn();
@@ -52,14 +51,22 @@ describe('InviteRegistrationFlow', () => {
 		token: 'abc123token',
 	};
 
-	beforeEach(() => {
-		vi.clearAllMocks();
+	beforeAll(() => {
+		const defaultRouter = vi.mocked(useRouter)();
+		vi.mocked(useRouter).mockReturnValue({
+			...defaultRouter,
+			push: mockPush,
+		});
 		// Set default mock behavior for zSafeString - success by default
 		vi.mocked(zSafeString).mockReturnValue({
 			safeParse: vi.fn().mockReturnValue({ success: true }),
 		} as unknown as ReturnType<typeof zSafeString>);
 		// Set a default resolved value that survives clears
 		mockSignUpWithInvite.mockResolvedValue({ success: true, redirectUrl: '/' });
+	});
+
+	beforeEach(() => {
+		vi.clearAllMocks();
 	});
 
 	describe('form submission', () => {

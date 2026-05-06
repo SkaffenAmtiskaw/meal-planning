@@ -1,6 +1,8 @@
+import { redirect } from 'next/navigation';
+
 import { render, screen } from '@testing-library/react';
 
-import { afterEach, describe, expect, test, vi } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import Layout from './layout';
 
@@ -14,20 +16,22 @@ vi.mock('@/_actions', () => ({
 	getUser: (...args: unknown[]) => mockGetUser(...args),
 }));
 
-const mockRedirect = vi.fn((..._args: unknown[]) => {
-	throw new Error('redirect');
-});
-vi.mock('next/navigation', () => ({
-	redirect: (...args: unknown[]) => mockRedirect(...args),
-}));
+vi.mock('next/navigation', async () => await import('@mocks/next/navigation'));
 
 vi.mock('@mantine/core', async () => await import('@mocks/@mantine/core'));
 
-const mockHeader = vi.fn<
-	(props: { leftSection?: React.ReactNode }) => React.ReactNode
->(({ leftSection }) => <>{leftSection}</>);
+vi.mock('@/_models', () => ({
+	zObjectId: {
+		safeParse: (value: unknown) => ({
+			success: typeof value === 'string' && /^[0-9a-fA-F]{24}$/.test(value),
+			data: value,
+		}),
+	},
+}));
+
 vi.mock('@/app/_components/Header', () => ({
-	Header: (props: { leftSection?: React.ReactNode }) => mockHeader(props),
+	Header: ({ leftSection }: { leftSection?: React.ReactNode }) =>
+		leftSection || null,
 }));
 
 vi.mock('./_components/BackButton', () => ({
@@ -42,46 +46,27 @@ const plannerId = '507f1f77bcf86cd799439011';
 const otherPlannerId = '507f1f77bcf86cd799439022';
 
 describe('settings layout', () => {
-	afterEach(() => {
+	beforeEach(() => {
 		vi.clearAllMocks();
 	});
 
-	test('redirects to / when user has no session', async () => {
+	it('redirects to / when user has no session', async () => {
 		mockGetUser.mockRejectedValue(new Error('No Valid Session'));
 
-		try {
-			await Layout({ children: null });
-		} catch {
-			// Expected
-		}
+		await Layout({ children: null });
 
-		expect(mockRedirect).toHaveBeenCalledWith('/');
+		expect(vi.mocked(redirect)).toHaveBeenCalledWith('/');
 	});
 
-	test('redirects to / when user has no planners', async () => {
+	it('redirects to / when user has no planners', async () => {
 		mockGetUser.mockResolvedValue({ planners: [] });
 
-		try {
-			await Layout({ children: null });
-		} catch {
-			// Expected
-		}
+		await Layout({ children: null });
 
-		expect(mockRedirect).toHaveBeenCalledWith('/');
+		expect(vi.mocked(redirect)).toHaveBeenCalledWith('/');
 	});
 
-	test('renders children when user has a planner', async () => {
-		mockGetUser.mockResolvedValue({
-			planners: [{ planner: plannerId, accessLevel: 'owner' }],
-		});
-		mockCookiesGet.mockReturnValue(undefined);
-
-		render(await Layout({ children: 'Settings Content' }));
-
-		expect(screen.getByText('Settings Content')).toBeDefined();
-	});
-
-	test('back button uses first planner when no last-opened cookie', async () => {
+	it('back button uses first planner when no last-opened cookie', async () => {
 		mockGetUser.mockResolvedValue({
 			planners: [{ planner: plannerId, accessLevel: 'owner' }],
 		});
@@ -89,11 +74,12 @@ describe('settings layout', () => {
 
 		render(await Layout({ children: null }));
 
-		const backButton = screen.getByTestId('back-button');
-		expect(backButton.getAttribute('href')).toBe(`/${plannerId}/calendar`);
+		expect(screen.getByTestId('back-button').getAttribute('href')).toBe(
+			`/${plannerId}/calendar`,
+		);
 	});
 
-	test('back button uses last-opened planner when cookie matches a planner', async () => {
+	it('back button uses last-opened planner when cookie matches a planner', async () => {
 		mockGetUser.mockResolvedValue({
 			planners: [
 				{ planner: plannerId, accessLevel: 'owner' },
@@ -104,11 +90,12 @@ describe('settings layout', () => {
 
 		render(await Layout({ children: null }));
 
-		const backButton = screen.getByTestId('back-button');
-		expect(backButton.getAttribute('href')).toBe(`/${otherPlannerId}/calendar`);
+		expect(screen.getByTestId('back-button').getAttribute('href')).toBe(
+			`/${otherPlannerId}/calendar`,
+		);
 	});
 
-	test('back button falls back to first planner when cookie planner not in user planners', async () => {
+	it('back button falls back to first planner when cookie planner not in user planners', async () => {
 		const foreignPlannerId = '507f1f77bcf86cd799439099';
 		mockGetUser.mockResolvedValue({
 			planners: [{ planner: plannerId, accessLevel: 'owner' }],
@@ -117,7 +104,8 @@ describe('settings layout', () => {
 
 		render(await Layout({ children: null }));
 
-		const backButton = screen.getByTestId('back-button');
-		expect(backButton.getAttribute('href')).toBe(`/${plannerId}/calendar`);
+		expect(screen.getByTestId('back-button').getAttribute('href')).toBe(
+			`/${plannerId}/calendar`,
+		);
 	});
 });

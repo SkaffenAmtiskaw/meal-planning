@@ -11,6 +11,17 @@
 - When writing tests, the `test/mocks/` directory should be checked for pre-existing mocks
 - Mock files should only export modules that exist on the module being mocked
 
+## Libraries That Should Not Be Mocked
+
+Some libraries are deterministic, side-effect-free utilities that tests should use directly. Mocking them adds boilerplate without improving isolation.
+
+| Library | Why Not Mock |
+|---------|-------------|
+| `@tabler/icons-react` | Pure presentational components with no logic. Mocking adds indirection for zero benefit. |
+| `zod` | Schema definitions are part of the implementation under test. Mocking zod means not testing validation boundaries. It is a synchronous, side-effect-free library with negligible test overhead. |
+
+**Exception for zod-based modules:** Do mock modules that *use* zod internally (e.g., `@/_models`, form validation utilities) so that tests are not coupled to schema changes. The library itself should be an exception; its consumers should not be.
+
 ## Export Actual Module Names
 Mocks at `test/mocks/` must export the actual module names they replace. Do not export `MockFoo` variants that tests then have to map back to real names.
 

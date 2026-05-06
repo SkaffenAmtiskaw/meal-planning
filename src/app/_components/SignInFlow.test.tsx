@@ -1,4 +1,4 @@
-import { useSearchParams } from 'next/navigation';
+import { ReadonlyURLSearchParams, useSearchParams } from 'next/navigation';
 
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 
@@ -49,12 +49,7 @@ vi.mock('./AuthLayout', () => ({
 	)),
 }));
 
-vi.mock('next/navigation', () => ({
-	useSearchParams: vi.fn(
-		() =>
-			new URLSearchParams() as unknown as import('next/navigation').ReadonlyURLSearchParams,
-	),
-}));
+vi.mock('next/navigation', async () => await import('@mocks/next/navigation'));
 
 vi.mock('@/_hooks', async () => await import('@mocks/@/_hooks'));
 
@@ -144,7 +139,7 @@ describe('SignInFlow', () => {
 	});
 
 	describe('has-password step', () => {
-		beforeEach(async () => {
+		beforeEach(() => {
 			vi.mocked(checkEmailStatus).mockResolvedValueOnce('has-password');
 		});
 
@@ -324,7 +319,7 @@ describe('SignInFlow', () => {
 	});
 
 	describe('new step', () => {
-		beforeEach(async () => {
+		beforeEach(() => {
 			vi.mocked(checkEmailStatus).mockResolvedValueOnce('new');
 		});
 
@@ -538,7 +533,7 @@ describe('SignInFlow', () => {
 	});
 
 	describe('social-only step', () => {
-		beforeEach(async () => {
+		beforeEach(() => {
 			vi.mocked(checkEmailStatus).mockResolvedValueOnce('social-only');
 		});
 
@@ -655,9 +650,7 @@ describe('SignInFlow', () => {
 	describe('email from query params', () => {
 		it('reads email from query params and triggers check', async () => {
 			vi.mocked(useSearchParams).mockReturnValue(
-				new URLSearchParams(
-					'email=query@example.com',
-				) as unknown as import('next/navigation').ReadonlyURLSearchParams,
+				new ReadonlyURLSearchParams('email=query@example.com'),
 			);
 
 			render(<SignInFlow />);

@@ -2,7 +2,7 @@ import { redirect } from 'next/navigation';
 
 import { render, screen } from '@testing-library/react';
 
-import { afterEach, describe, expect, test, vi } from 'vitest';
+import { beforeEach, describe, expect, test, vi } from 'vitest';
 
 import { addUser } from '@/_actions';
 import { auth } from '@/_auth';
@@ -16,23 +16,30 @@ vi.mock('next/headers', () => ({
 	cookies: vi.fn().mockResolvedValue({ get: mockCookiesGet }),
 }));
 
-vi.mock('next/navigation', () => ({
-	redirect: vi.fn().mockImplementation(() => {
-		throw new Error('NEXT_REDIRECT');
-	}),
-}));
+vi.mock('next/navigation', async () => await import('@mocks/next/navigation'));
+
+const { mockSession, plannerId, membership } = vi.hoisted(() => {
+	const plannerId = '507f1f77bcf86cd799439011';
+	return {
+		mockSession: { user: { email: 'ariel@sea.com', name: 'Ariel' } },
+		plannerId,
+		membership: { planner: plannerId, accessLevel: 'owner' },
+	};
+});
 
 vi.mock('@/_auth', () => ({
 	auth: {
 		api: {
-			getSession: vi.fn(),
+			getSession: vi.fn().mockResolvedValue(mockSession),
 		},
 	},
 }));
 
 vi.mock('@/_models', () => ({
 	User: {
-		findOne: vi.fn(),
+		findOne: vi.fn().mockReturnValue({
+			exec: vi.fn().mockResolvedValue({ planners: [membership] }),
+		}),
 	},
 	zObjectId: {
 		safeParse: vi.fn().mockReturnValue({ success: false }),
@@ -40,7 +47,9 @@ vi.mock('@/_models', () => ({
 }));
 
 vi.mock('@/_actions', () => ({
-	addUser: vi.fn(),
+	addUser: vi.fn().mockResolvedValue({
+		planners: [{ planner: 'fallback-planner', accessLevel: 'owner' }],
+	}),
 }));
 
 const mockSignInPrompt = vi.fn();
@@ -51,20 +60,13 @@ vi.mock('./_components/SignInPrompt', () => ({
 	},
 }));
 
-const mockSession = {
-	user: { email: 'ariel@sea.com', name: 'Ariel' },
-};
-
-const plannerId = '507f1f77bcf86cd799439011';
-const membership = { planner: plannerId, accessLevel: 'owner' };
-
 describe('page', () => {
-	afterEach(() => {
+	beforeEach(() => {
 		vi.clearAllMocks();
 	});
 
 	test('renders sign in prompt when there is no session', async () => {
-		vi.mocked(auth.api.getSession).mockResolvedValue(null as never);
+		vi.mocked(auth.api.getSession).mockResolvedValueOnce(null as never);
 
 		render(await Page({ searchParams: Promise.resolve({}) }));
 
@@ -72,23 +74,16 @@ describe('page', () => {
 	});
 
 	test('redirects to first planner when no last-opened cookie', async () => {
-		vi.mocked(auth.api.getSession).mockResolvedValue(mockSession as never);
-		vi.mocked(User.findOne).mockReturnValue({
-			exec: vi.fn().mockResolvedValue({ planners: [membership] }),
-		} as never);
 		mockCookiesGet.mockReturnValue(undefined);
 
-		await expect(Page({ searchParams: Promise.resolve({}) })).rejects.toThrow(
-			'NEXT_REDIRECT',
-		);
+		await Page({ searchParams: Promise.resolve({}) });
 
-		expect(redirect).toHaveBeenCalledWith(`${plannerId}/calendar`);
+		expect(vi.mocked(redirect)).toHaveBeenCalledWith(`${plannerId}/calendar`);
 	});
 
 	test('redirects to last-opened planner when cookie matches a planner', async () => {
 		const lastPlannerId = '507f1f77bcf86cd799439022';
-		vi.mocked(auth.api.getSession).mockResolvedValue(mockSession as never);
-		vi.mocked(User.findOne).mockReturnValue({
+		vi.mocked(User.findOne).mockReturnValueOnce({
 			exec: vi.fn().mockResolvedValue({
 				planners: [
 					membership,
@@ -101,45 +96,38 @@ describe('page', () => {
 			success: true,
 		} as never);
 
-		await expect(Page({ searchParams: Promise.resolve({}) })).rejects.toThrow(
-			'NEXT_REDIRECT',
-		);
+		await Page({ searchParams: Promise.resolve({}) });
 
-		expect(redirect).toHaveBeenCalledWith(`${lastPlannerId}/calendar`);
+		expect(vi.mocked(redirect)).toHaveBeenCalledWith(
+			`${lastPlannerId}/calendar`,
+		);
 	});
 
 	test('falls back to first planner when cookie planner is not in user planners', async () => {
 		const foreignPlannerId = '507f1f77bcf86cd799439099';
-		vi.mocked(auth.api.getSession).mockResolvedValue(mockSession as never);
-		vi.mocked(User.findOne).mockReturnValue({
-			exec: vi.fn().mockResolvedValue({ planners: [membership] }),
-		} as never);
 		mockCookiesGet.mockReturnValue({ value: foreignPlannerId });
 		vi.mocked(zObjectId.safeParse).mockReturnValueOnce({
 			success: true,
 		} as never);
 
-		await expect(Page({ searchParams: Promise.resolve({}) })).rejects.toThrow(
-			'NEXT_REDIRECT',
-		);
+		await Page({ searchParams: Promise.resolve({}) });
 
-		expect(redirect).toHaveBeenCalledWith(`${plannerId}/calendar`);
+		expect(vi.mocked(redirect)).toHaveBeenCalledWith(`${plannerId}/calendar`);
 	});
 
 	test('creates a new user and redirects when no user exists', async () => {
-		vi.mocked(auth.api.getSession).mockResolvedValue(mockSession as never);
-		vi.mocked(User.findOne).mockReturnValue({
+		vi.mocked(User.findOne).mockReturnValueOnce({
 			exec: vi.fn().mockResolvedValue(null),
 		} as never);
-		vi.mocked(addUser).mockResolvedValue({
+		vi.mocked(addUser).mockResolvedValueOnce({
 			planners: [{ planner: 'new-planner-456', accessLevel: 'owner' }],
 		} as never);
 
-		await expect(Page({ searchParams: Promise.resolve({}) })).rejects.toThrow(
-			'NEXT_REDIRECT',
-		);
+		await Page({ searchParams: Promise.resolve({}) });
 
 		expect(addUser).toHaveBeenCalledWith('ariel@sea.com', undefined, 'Ariel');
-		expect(redirect).toHaveBeenCalledWith('new-planner-456/calendar');
+		expect(vi.mocked(redirect)).toHaveBeenCalledWith(
+			'new-planner-456/calendar',
+		);
 	});
 });

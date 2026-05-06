@@ -1,8 +1,13 @@
+import { notFound } from 'next/navigation';
+
 import { render } from '@testing-library/react';
 
-import { afterEach, describe, expect, test, vi } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import RecipePage from './page';
+
+import { RecipeForm } from '../_components/Modal/RecipeForm';
+import { RecipeDetail } from './_components/RecipeDetail';
 
 vi.mock('@/_models', async () => {
 	const { zObjectId } = await import('@/_models/utils/zObjectId');
@@ -15,34 +20,14 @@ vi.mock('@/_actions', () => ({
 	getPlanner: (...args: unknown[]) => mockGetPlanner(...args),
 }));
 
-const mockNotFound = vi.fn(() => {
-	throw new Error('NEXT_NOT_FOUND');
-});
-vi.mock('next/navigation', () => ({
-	notFound: () => mockNotFound(),
-}));
+vi.mock('next/navigation', async () => await import('@mocks/next/navigation'));
 
-type RecipeDetailProps = {
-	plannerId: string;
-	recipe: unknown;
-	tags: unknown[];
-};
-
-const mockRecipeDetail = vi.fn<(props: RecipeDetailProps) => null>(() => null);
 vi.mock('./_components/RecipeDetail', () => ({
-	RecipeDetail: (props: RecipeDetailProps) => mockRecipeDetail(props),
+	RecipeDetail: vi.fn(() => null),
 }));
 
-type RecipeFormProps = {
-	plannerId: string;
-	item: unknown;
-	tags: unknown[];
-	redirectTo?: string;
-};
-
-const mockRecipeForm = vi.fn<(props: RecipeFormProps) => null>(() => null);
 vi.mock('../_components/Modal/RecipeForm', () => ({
-	RecipeForm: (props: RecipeFormProps) => mockRecipeForm(props),
+	RecipeForm: vi.fn(() => null),
 }));
 
 vi.mock('@mantine/core', async () => await import('@mocks/@mantine/core'));
@@ -68,25 +53,26 @@ describe('RecipePage', () => {
 	const params = Promise.resolve({ planner: plannerId, recipeId });
 	const searchParams = Promise.resolve({});
 
-	afterEach(() => {
-		vi.resetAllMocks();
+	beforeEach(() => {
+		vi.clearAllMocks();
 	});
 
-	test('renders RecipeDetail with the recipe when found', async () => {
+	it('renders RecipeDetail with the recipe when found', async () => {
 		const recipe = makeRecipe();
 		mockGetPlanner.mockResolvedValue(makePlanner([recipe]));
 
 		render(await RecipePage({ params, searchParams }));
 
-		expect(mockRecipeDetail).toHaveBeenCalledWith(
+		expect(vi.mocked(RecipeDetail)).toHaveBeenCalledWith(
 			expect.objectContaining({
 				plannerId,
 				recipe: expect.objectContaining({ name: "Maleficent's Dragon Roast" }),
 			}),
+			undefined,
 		);
 	});
 
-	test('passes resolved tags to RecipeDetail', async () => {
+	it('passes resolved tags to RecipeDetail', async () => {
 		const recipe = makeRecipe();
 		const planner = {
 			...makePlanner([recipe]),
@@ -96,23 +82,23 @@ describe('RecipePage', () => {
 
 		render(await RecipePage({ params, searchParams }));
 
-		expect(mockRecipeDetail).toHaveBeenCalledWith(
+		expect(vi.mocked(RecipeDetail)).toHaveBeenCalledWith(
 			expect.objectContaining({
 				tags: [{ _id: 'tag-1', name: 'Spicy', color: 'red' }],
 			}),
+			undefined,
 		);
 	});
 
-	test('calls notFound when item is not in saved', async () => {
+	it('calls notFound when item is not in saved', async () => {
 		mockGetPlanner.mockResolvedValue(makePlanner([]));
 
-		await expect(RecipePage({ params, searchParams })).rejects.toThrow(
-			'NEXT_NOT_FOUND',
-		);
-		expect(mockNotFound).toHaveBeenCalled();
+		await RecipePage({ params, searchParams });
+
+		expect(vi.mocked(notFound)).toHaveBeenCalled();
 	});
 
-	test('calls notFound when item is a bookmark', async () => {
+	it('calls notFound when item is a bookmark', async () => {
 		const bookmark = {
 			_id: { toString: () => recipeId },
 			name: 'Some Bookmark',
@@ -120,27 +106,26 @@ describe('RecipePage', () => {
 		};
 		mockGetPlanner.mockResolvedValue(makePlanner([bookmark]));
 
-		await expect(RecipePage({ params, searchParams })).rejects.toThrow(
-			'NEXT_NOT_FOUND',
-		);
-		expect(mockNotFound).toHaveBeenCalled();
+		await RecipePage({ params, searchParams });
+
+		expect(vi.mocked(notFound)).toHaveBeenCalled();
 	});
 
-	test('throws ZodError for invalid planner ID', async () => {
+	it('throws ZodError for invalid planner ID', async () => {
 		const badParams = Promise.resolve({ planner: 'not-an-id', recipeId });
 		await expect(
 			RecipePage({ params: badParams, searchParams }),
 		).rejects.toThrow();
 	});
 
-	test('throws ZodError for invalid recipe ID', async () => {
+	it('throws ZodError for invalid recipe ID', async () => {
 		const badParams = Promise.resolve({ planner: plannerId, recipeId: 'bad' });
 		await expect(
 			RecipePage({ params: badParams, searchParams }),
 		).rejects.toThrow();
 	});
 
-	test('renders RecipeForm when status=edit', async () => {
+	it('renders RecipeForm when status=edit', async () => {
 		const recipe = makeRecipe();
 		mockGetPlanner.mockResolvedValue(makePlanner([recipe]));
 
@@ -151,27 +136,28 @@ describe('RecipePage', () => {
 			}),
 		);
 
-		expect(mockRecipeForm).toHaveBeenCalledWith(
+		expect(vi.mocked(RecipeForm)).toHaveBeenCalledWith(
 			expect.objectContaining({
 				plannerId,
 				item: expect.objectContaining({ name: "Maleficent's Dragon Roast" }),
 				redirectTo: `/${plannerId}/recipes/${recipeId}`,
 			}),
+			undefined,
 		);
-		expect(mockRecipeDetail).not.toHaveBeenCalled();
+		expect(vi.mocked(RecipeDetail)).not.toHaveBeenCalled();
 	});
 
-	test('renders RecipeDetail (not RecipeForm) when no status', async () => {
+	it('renders RecipeDetail (not RecipeForm) when no status', async () => {
 		const recipe = makeRecipe();
 		mockGetPlanner.mockResolvedValue(makePlanner([recipe]));
 
 		render(await RecipePage({ params, searchParams }));
 
-		expect(mockRecipeDetail).toHaveBeenCalled();
-		expect(mockRecipeForm).not.toHaveBeenCalled();
+		expect(vi.mocked(RecipeDetail)).toHaveBeenCalled();
+		expect(vi.mocked(RecipeForm)).not.toHaveBeenCalled();
 	});
 
-	test('passes tags to RecipeForm in edit mode', async () => {
+	it('passes tags to RecipeForm in edit mode', async () => {
 		const recipe = makeRecipe();
 		const planner = {
 			...makePlanner([recipe]),
@@ -186,10 +172,11 @@ describe('RecipePage', () => {
 			}),
 		);
 
-		expect(mockRecipeForm).toHaveBeenCalledWith(
+		expect(vi.mocked(RecipeForm)).toHaveBeenCalledWith(
 			expect.objectContaining({
 				tags: [{ _id: 'tag-1', name: 'Spicy', color: 'red' }],
 			}),
+			undefined,
 		);
 	});
 });
