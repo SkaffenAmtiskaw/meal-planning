@@ -1,33 +1,32 @@
 import { useRouter } from 'next/navigation';
 
+import { useDisclosure } from '@mantine/hooks';
+
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 
 import { beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
+
+import { requestEmailChange } from '@/_actions/user';
 
 import { ChangeEmailForm } from './ChangeEmailForm';
 
 vi.mock('@mantine/core', async () => await import('@mocks/@mantine/core'));
 
+vi.mock('@mantine/hooks', async () => await import('@mocks/@mantine/hooks'));
+
 vi.mock('next/navigation', async () => await import('@mocks/next/navigation'));
+
+vi.mock('@/_actions/user', async () => ({
+	requestEmailChange: vi.fn(),
+}));
+
+const mockRequestEmailChange = vi.mocked(requestEmailChange);
+const mockUseDisclosure = vi.mocked(useDisclosure);
 
 const mockRefresh = vi.fn();
 
-const mockRequestEmailChange = vi.hoisted(() => vi.fn());
-
-vi.mock('@/_actions/user', () => ({
-	requestEmailChange: mockRequestEmailChange,
-}));
-
-const defaultRouter = {
-	push: vi.fn(),
-	replace: vi.fn(),
-	refresh: vi.fn(),
-	back: vi.fn(),
-	forward: vi.fn(),
-	prefetch: vi.fn(),
-};
-
 beforeAll(() => {
+	const defaultRouter = vi.mocked(useRouter)();
 	vi.mocked(useRouter).mockReturnValue({
 		...defaultRouter,
 		refresh: mockRefresh,
@@ -40,6 +39,10 @@ const pastDate = new Date(Date.now() - 1000 * 60 * 60);
 describe('ChangeEmailForm', () => {
 	beforeEach(() => {
 		vi.clearAllMocks();
+		mockUseDisclosure.mockReturnValue([
+			false,
+			{ open: vi.fn(), close: vi.fn(), toggle: vi.fn(), set: vi.fn() },
+		]);
 	});
 
 	it('does not show pending alert when no pending change', () => {
@@ -71,56 +74,86 @@ describe('ChangeEmailForm', () => {
 		expect(screen.queryByTestId('pending-email-alert')).toBeNull();
 	});
 
-	it('shows form when change email button is clicked', () => {
+	it('shows change email button when form is closed', () => {
 		render(<ChangeEmailForm currentEmail="user@example.com" />);
 
+		expect(screen.getByTestId('change-email-button')).toBeDefined();
+	});
+
+	it('calls open when change email button is clicked', () => {
+		const open = vi.fn();
+		mockUseDisclosure.mockReturnValue([
+			false,
+			{ open, close: vi.fn(), toggle: vi.fn(), set: vi.fn() },
+		]);
+
+		render(<ChangeEmailForm currentEmail="user@example.com" />);
 		fireEvent.click(screen.getByTestId('change-email-button'));
+
+		expect(open).toHaveBeenCalled();
+	});
+
+	it('shows form when useDisclosure is open', () => {
+		mockUseDisclosure.mockReturnValue([
+			true,
+			{ open: vi.fn(), close: vi.fn(), toggle: vi.fn(), set: vi.fn() },
+		]);
+
+		render(<ChangeEmailForm currentEmail="user@example.com" />);
 
 		expect(screen.getByTestId('new-email-input')).toBeDefined();
 		expect(screen.getByTestId('submit-email-change-button')).toBeDefined();
 		expect(screen.getByTestId('cancel-email-change-button')).toBeDefined();
 	});
 
-	it('hides form when cancel is clicked', () => {
-		render(<ChangeEmailForm currentEmail="user@example.com" />);
+	it('calls close when cancel is clicked', () => {
+		const close = vi.fn();
+		mockUseDisclosure.mockReturnValue([
+			true,
+			{ open: vi.fn(), close, toggle: vi.fn(), set: vi.fn() },
+		]);
 
-		fireEvent.click(screen.getByTestId('change-email-button'));
+		render(<ChangeEmailForm currentEmail="user@example.com" />);
 		fireEvent.click(screen.getByTestId('cancel-email-change-button'));
 
-		expect(screen.queryByTestId('new-email-input')).toBeNull();
-		expect(screen.getByTestId('change-email-button')).toBeDefined();
+		expect(close).toHaveBeenCalled();
 	});
 
-	it('calls requestEmailChange with new email on submit', async () => {
+	it('calls requestEmailChange with new email on submit', () => {
 		mockRequestEmailChange.mockResolvedValueOnce({
 			ok: true,
 			data: { hadPreviousRequest: false },
 		});
-		render(<ChangeEmailForm currentEmail="user@example.com" />);
+		mockUseDisclosure.mockReturnValue([
+			true,
+			{ open: vi.fn(), close: vi.fn(), toggle: vi.fn(), set: vi.fn() },
+		]);
 
-		fireEvent.click(screen.getByTestId('change-email-button'));
+		render(<ChangeEmailForm currentEmail="user@example.com" />);
 		fireEvent.change(screen.getByTestId('new-email-input'), {
 			target: { value: 'new@example.com' },
 		});
 		fireEvent.click(screen.getByTestId('submit-email-change-button'));
 
-		await waitFor(() => {
-			expect(mockRequestEmailChange).toHaveBeenCalledWith('new@example.com');
-		});
+		expect(mockRequestEmailChange).toHaveBeenCalledWith('new@example.com');
 	});
 
-	it('hides form and calls router.refresh on success', async () => {
+	it('calls close and router.refresh on success', async () => {
 		mockRequestEmailChange.mockResolvedValueOnce({
 			ok: true,
 			data: { hadPreviousRequest: false },
 		});
-		render(<ChangeEmailForm currentEmail="user@example.com" />);
+		const close = vi.fn();
+		mockUseDisclosure.mockReturnValue([
+			true,
+			{ open: vi.fn(), close, toggle: vi.fn(), set: vi.fn() },
+		]);
 
-		fireEvent.click(screen.getByTestId('change-email-button'));
+		render(<ChangeEmailForm currentEmail="user@example.com" />);
 		fireEvent.click(screen.getByTestId('submit-email-change-button'));
 
 		await waitFor(() => {
-			expect(screen.queryByTestId('new-email-input')).toBeNull();
+			expect(close).toHaveBeenCalled();
 			expect(mockRefresh).toHaveBeenCalledOnce();
 		});
 	});
@@ -130,9 +163,12 @@ describe('ChangeEmailForm', () => {
 			ok: true,
 			data: { hadPreviousRequest: false },
 		});
-		render(<ChangeEmailForm currentEmail="user@example.com" />);
+		mockUseDisclosure.mockReturnValue([
+			true,
+			{ open: vi.fn(), close: vi.fn(), toggle: vi.fn(), set: vi.fn() },
+		]);
 
-		fireEvent.click(screen.getByTestId('change-email-button'));
+		render(<ChangeEmailForm currentEmail="user@example.com" />);
 		fireEvent.change(screen.getByTestId('new-email-input'), {
 			target: { value: 'new@example.com' },
 		});
@@ -152,9 +188,12 @@ describe('ChangeEmailForm', () => {
 			ok: true,
 			data: { hadPreviousRequest: true },
 		});
-		render(<ChangeEmailForm currentEmail="user@example.com" />);
+		mockUseDisclosure.mockReturnValue([
+			true,
+			{ open: vi.fn(), close: vi.fn(), toggle: vi.fn(), set: vi.fn() },
+		]);
 
-		fireEvent.click(screen.getByTestId('change-email-button'));
+		render(<ChangeEmailForm currentEmail="user@example.com" />);
 		fireEvent.change(screen.getByTestId('new-email-input'), {
 			target: { value: 'new@example.com' },
 		});
@@ -174,9 +213,12 @@ describe('ChangeEmailForm', () => {
 			ok: false,
 			error: 'An account with that email already exists.',
 		});
-		render(<ChangeEmailForm currentEmail="user@example.com" />);
+		mockUseDisclosure.mockReturnValue([
+			true,
+			{ open: vi.fn(), close: vi.fn(), toggle: vi.fn(), set: vi.fn() },
+		]);
 
-		fireEvent.click(screen.getByTestId('change-email-button'));
+		render(<ChangeEmailForm currentEmail="user@example.com" />);
 		fireEvent.click(screen.getByTestId('submit-email-change-button'));
 
 		await waitFor(() => {
@@ -191,9 +233,12 @@ describe('ChangeEmailForm', () => {
 			ok: false,
 			error: 'Some error',
 		});
-		render(<ChangeEmailForm currentEmail="user@example.com" />);
+		mockUseDisclosure.mockReturnValue([
+			true,
+			{ open: vi.fn(), close: vi.fn(), toggle: vi.fn(), set: vi.fn() },
+		]);
 
-		fireEvent.click(screen.getByTestId('change-email-button'));
+		render(<ChangeEmailForm currentEmail="user@example.com" />);
 		fireEvent.click(screen.getByTestId('submit-email-change-button'));
 
 		await waitFor(() => {

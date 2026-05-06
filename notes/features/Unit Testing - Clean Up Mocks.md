@@ -38,8 +38,9 @@ We will go through mocks one by one and update the following:
 ## ⏳ `@mantine/hooks` - NOT STARTED
 
 ## ⏳ `next/headers` - NOT STARTED
-## 🚧 `next/navigation` - IN PROGRESS
+## ✅ `next/navigation` - COMPLETE
 - ✅ centralized mock in `test/mocks` has been created
+- ✅ consuming test files updated to use centralized mock
 
 
 

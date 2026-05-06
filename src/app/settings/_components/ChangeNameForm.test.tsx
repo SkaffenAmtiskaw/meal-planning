@@ -1,4 +1,5 @@
 import { useRouter } from 'next/navigation';
+import { useState } from 'react';
 
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 
@@ -8,9 +9,25 @@ import { ChangeNameForm } from './ChangeNameForm';
 
 vi.mock('@mantine/core', async () => await import('@mocks/@mantine/core'));
 
-vi.mock('next/navigation', async () => await import('@mocks/next/navigation'));
+const mockUseDisclosure = vi.hoisted(() =>
+	vi.fn((initialState = false) => {
+		const [opened, setOpened] = useState(initialState);
+		return [
+			opened,
+			{
+				open: vi.fn(() => setOpened(true)),
+				close: vi.fn(() => setOpened(false)),
+				toggle: vi.fn(() => setOpened((o: boolean) => !o)),
+			},
+		];
+	}),
+);
 
-const mockRefresh = vi.fn();
+vi.mock('@mantine/hooks', () => ({
+	useDisclosure: mockUseDisclosure,
+}));
+
+vi.mock('next/navigation', async () => await import('@mocks/next/navigation'));
 
 const mockUpdateUserName = vi.hoisted(() => vi.fn());
 
@@ -18,27 +35,32 @@ vi.mock('@/_actions/user', () => ({
 	updateUserName: mockUpdateUserName,
 }));
 
-const defaultRouter = {
-	push: vi.fn(),
-	replace: vi.fn(),
-	refresh: vi.fn(),
-	back: vi.fn(),
-	forward: vi.fn(),
-	prefetch: vi.fn(),
-};
+const mockRefresh = vi.fn();
 
 beforeAll(() => {
+	const defaultRouter = vi.mocked(useRouter)();
 	vi.mocked(useRouter).mockReturnValue({
 		...defaultRouter,
 		refresh: mockRefresh,
 	});
 });
 
-describe('ChangeNameForm', () => {
-	beforeEach(() => {
-		vi.clearAllMocks();
+beforeEach(() => {
+	vi.clearAllMocks();
+	mockUseDisclosure.mockImplementation((initialState = false) => {
+		const [opened, setOpened] = useState(initialState);
+		return [
+			opened,
+			{
+				open: vi.fn(() => setOpened(true)),
+				close: vi.fn(() => setOpened(false)),
+				toggle: vi.fn(() => setOpened((o: boolean) => !o)),
+			},
+		];
 	});
+});
 
+describe('ChangeNameForm', () => {
 	it('shows form when change name button is clicked', () => {
 		render(<ChangeNameForm currentName="Ariel" />);
 
@@ -74,7 +96,7 @@ describe('ChangeNameForm', () => {
 		).toBe('');
 	});
 
-	it('calls updateUserName with new name on submit', async () => {
+	it('calls updateUserName with new name on submit', () => {
 		mockUpdateUserName.mockResolvedValueOnce({ ok: true, data: undefined });
 		render(<ChangeNameForm currentName="Ariel" />);
 
@@ -84,9 +106,7 @@ describe('ChangeNameForm', () => {
 		});
 		fireEvent.click(screen.getByTestId('submit-name-change-button'));
 
-		await waitFor(() => {
-			expect(mockUpdateUserName).toHaveBeenCalledWith('Ariel II');
-		});
+		expect(mockUpdateUserName).toHaveBeenCalledWith('Ariel II');
 	});
 
 	it('hides form and calls router.refresh on success', async () => {
