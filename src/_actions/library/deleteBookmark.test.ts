@@ -2,17 +2,20 @@ import { Types } from 'mongoose';
 import { afterEach, describe, expect, test, vi } from 'vitest';
 
 import { checkAuth } from '@/_actions/auth';
-import { matchesId, Planner } from '@/_models';
+import { Planner } from '@/_models/planner';
+import { matchesId } from '@/_utils/matchesId';
 
 import { deleteBookmark } from './deleteBookmark';
 
 vi.mock('@/_actions/auth', async () => await import('@mocks/@/_actions/auth'));
 
-vi.mock('@/_models', async () => ({
-	matchesId: vi.fn(),
+vi.mock('@/_models/planner', () => ({
 	Planner: {
 		findById: vi.fn(),
 	},
+}));
+vi.mock('@/_utils/matchesId', () => ({
+	matchesId: vi.fn(),
 }));
 
 const plannerId = new Types.ObjectId().toString();

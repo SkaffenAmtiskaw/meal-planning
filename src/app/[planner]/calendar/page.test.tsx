@@ -6,7 +6,7 @@ import CalendarPage from './page';
 
 import { CalendarView } from './_components/CalendarView/CalendarView';
 
-vi.mock('@/_models', async () => {
+vi.mock('@/_utils/zObjectId', async () => {
 	const { z } = await import('zod');
 	return { zObjectId: z.string() };
 });

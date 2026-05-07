@@ -4,8 +4,9 @@ import { Types } from 'mongoose';
 import { z } from 'zod';
 
 import { checkAuth } from '@/_actions/auth';
-import { matchesId, Planner } from '@/_models';
+import { Planner } from '@/_models/planner';
 import type { ActionResult } from '@/_utils/actionResult';
+import { matchesId } from '@/_utils/matchesId';
 
 const zDeleteBookmarkSchema = z.object({
 	plannerId: z.string(),

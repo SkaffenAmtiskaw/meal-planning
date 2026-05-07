@@ -1,19 +1,18 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { getUser } from '@/_actions/user';
-import { PendingInvite } from '@/_models';
+import { PendingInvite } from '@/_models/sharing';
 
 import { type DeclineInviteInput, declineInvite } from './declineInvite';
 
 vi.mock('@/_actions/user', async () => await import('@mocks/@/_actions/user'));
 
-vi.mock('@/_models', () => ({
+vi.mock('@/_models/sharing', () => ({
 	PendingInvite: {
 		findOne: vi.fn(),
 		deleteOne: vi.fn(),
 	},
 }));
-
 vi.mock('@/_utils/serialize', () => ({
 	serialize: vi.fn((data) => data),
 }));

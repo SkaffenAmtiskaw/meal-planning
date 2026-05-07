@@ -8,7 +8,7 @@ import { z } from 'zod';
 
 import { auth, mongoClient } from '@/_auth';
 import { sendEmailChangeEmail } from '@/_auth/emails';
-import { User } from '@/_models';
+import { User } from '@/_models/user';
 import type { ActionResult } from '@/_utils/actionResult';
 import { env } from '@/env';
 

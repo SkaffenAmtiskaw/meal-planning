@@ -8,7 +8,7 @@ import {
 	getPendingInvites,
 	inviteUser,
 } from '@/_actions/sharing';
-import type { AccessLevel } from '@/_models/user';
+import type { AccessLevel } from '@/_models/types';
 
 type InviteStatus = 'idle' | 'loading' | 'success' | 'error';
 

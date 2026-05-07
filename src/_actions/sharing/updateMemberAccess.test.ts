@@ -1,14 +1,14 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { checkAuth } from '@/_actions/auth';
-import { User } from '@/_models';
 import type { AccessLevel } from '@/_models/user';
+import { User } from '@/_models/user';
 
 import { updateMemberAccess } from './updateMemberAccess';
 
 vi.mock('@/_actions/auth', async () => await import('@mocks/@/_actions/auth'));
 
-vi.mock('@/_models', () => ({
+vi.mock('@/_models/user', () => ({
 	User: {
 		findOne: vi.fn(),
 		updateOne: vi.fn(),

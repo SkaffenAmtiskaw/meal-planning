@@ -3,7 +3,7 @@
 import { Types } from 'mongoose';
 
 import { checkAuth } from '@/_actions/auth';
-import { Planner } from '@/_models';
+import { Planner } from '@/_models/planner';
 import { TAG_COLOR_NAMES } from '@/_theme/colors';
 import type { ActionResult } from '@/_utils/actionResult';
 

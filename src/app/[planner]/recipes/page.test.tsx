@@ -7,7 +7,7 @@ import { getPlanner } from '@/_actions/planner';
 import { Modal, SavedList } from './_components';
 import RecipesPage from './page';
 
-vi.mock('@/_models', async () => {
+vi.mock('@/_utils/zObjectId', async () => {
 	const { z } = await import('zod');
 	return { zObjectId: z.string() };
 });

@@ -1,6 +1,7 @@
 'use server';
 
-import { PendingInvite, Planner } from '@/_models';
+import { Planner } from '@/_models/planner';
+import { PendingInvite } from '@/_models/sharing';
 import { catchify } from '@/_utils/catchify';
 
 export interface ValidateInviteTokenResult {

@@ -1,8 +1,8 @@
 'use server';
 
 import { checkAuth } from '@/_actions/auth';
-import { User } from '@/_models';
 import type { AccessLevel } from '@/_models/user';
+import { User } from '@/_models/user';
 
 export const updateMemberAccess = async (
 	plannerId: string,

@@ -9,21 +9,24 @@ import {
 } from 'vitest';
 
 import { getUser } from '@/_actions/user';
-import { PendingInvite, User } from '@/_models';
+import { PendingInvite } from '@/_models/sharing';
+import { User } from '@/_models/user';
 
 import { acceptInvite } from './acceptInvite';
 
 vi.mock('@/_actions/user', async () => await import('@mocks/@/_actions/user'));
 
-vi.mock('@/_models', () => ({
-	PendingInvite: {
-		findOne: vi.fn(),
-	},
+vi.mock('@/_models/user', () => ({
 	User: {
 		updateOne: vi.fn(),
 	},
 }));
 
+vi.mock('@/_models/sharing', () => ({
+	PendingInvite: {
+		findOne: vi.fn(),
+	},
+}));
 describe('acceptInvite', () => {
 	const token = 'valid-token-123';
 	const userId = 'user-id';

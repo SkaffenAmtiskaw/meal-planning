@@ -2,18 +2,22 @@ import { Types } from 'mongoose';
 import { afterEach, describe, expect, test, vi } from 'vitest';
 
 import { checkAuth } from '@/_actions/auth';
-import { Planner, zObjectId } from '@/_models';
+import { Planner } from '@/_models/planner';
+import { zObjectId } from '@/_utils/zObjectId';
 
 import { updatePlannerName } from './updatePlannerName';
 
 vi.mock('@/_actions/auth', async () => await import('@mocks/@/_actions/auth'));
 
-vi.mock('@/_models', () => ({
+vi.mock('@/_models/planner', () => ({
 	Planner: {
 		collection: {
 			updateOne: vi.fn(),
 		},
 	},
+}));
+
+vi.mock('@/_utils/zObjectId', () => ({
 	zObjectId: {
 		safeParse: vi.fn(() => ({ success: true })),
 	},

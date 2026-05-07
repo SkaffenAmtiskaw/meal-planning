@@ -1,6 +1,6 @@
 import { afterEach, describe, expect, test, vi } from 'vitest';
 
-import { User } from '@/_models';
+import { User } from '@/_models/user';
 
 import { verifyEmailChangeAndSetPassword } from './verifyEmailChangeAndSetPassword';
 
@@ -33,13 +33,12 @@ vi.mock('@/_auth', () => ({
 	},
 }));
 
-vi.mock('@/_models', () => ({
+vi.mock('@/_models/user', () => ({
 	User: {
 		findOne: vi.fn(),
 		updateOne: vi.fn(),
 	},
 }));
-
 vi.mock('better-auth/crypto', () => ({
 	hashPassword: (pw: string) => mockHashPassword(pw),
 }));

@@ -1,6 +1,6 @@
 import { afterEach, describe, expect, test, vi } from 'vitest';
 
-import { User } from '@/_models';
+import { User } from '@/_models/user';
 import { catchify } from '@/_utils/catchify';
 
 import { addPlanner } from './addPlanner';
@@ -12,13 +12,14 @@ vi.mock('@/_actions/user', async () => await import('@mocks/@/_actions/user'));
 vi.mock('./addPlanner', () => ({
 	addPlanner: vi.fn(),
 }));
-vi.mock('@/_models', () => ({
+vi.mock('@/_models/user', () => ({
 	User: {
 		collection: {
 			updateOne: vi.fn(),
 		},
 	},
 }));
+
 vi.mock('@/_utils/catchify', () => ({
 	catchify: vi.fn(),
 }));

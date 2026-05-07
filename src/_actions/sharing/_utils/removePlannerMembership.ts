@@ -1,6 +1,6 @@
 import type { Types } from 'mongoose';
 
-import { User } from '@/_models';
+import { User } from '@/_models/user';
 
 export interface RemoveMembershipResult {
 	ok: boolean;

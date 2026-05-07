@@ -4,16 +4,15 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { checkEmailStatus } from '@/_actions/auth';
 import { verifyEmailChange } from '@/_actions/user';
-import { User } from '@/_models';
+import { User } from '@/_models/user';
 
 import VerifyEmailChangePage from './page';
 
-vi.mock('@/_models', () => ({
+vi.mock('@/_models/user', () => ({
 	User: {
 		findOne: vi.fn(),
 	},
 }));
-
 vi.mock('@/_actions/auth', async () => await import('@mocks/@/_actions/auth'));
 
 vi.mock('@/_actions/user', async () => await import('@mocks/@/_actions/user'));

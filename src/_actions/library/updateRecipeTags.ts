@@ -6,7 +6,7 @@ import { Types } from 'mongoose';
 import { z } from 'zod';
 
 import { checkAuth } from '@/_actions/auth';
-import { Planner } from '@/_models';
+import { Planner } from '@/_models/planner';
 import type { ActionResult } from '@/_utils/actionResult';
 
 const zUpdateRecipeTagsSchema = z.object({

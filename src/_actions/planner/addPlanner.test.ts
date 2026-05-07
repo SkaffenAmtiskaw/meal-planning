@@ -1,15 +1,14 @@
 import { afterEach, describe, expect, test, vi } from 'vitest';
 
-import { Planner } from '@/_models';
+import { Planner } from '@/_models/planner';
 
 import { addPlanner } from './addPlanner';
 
-vi.mock('@/_models', () => ({
+vi.mock('@/_models/planner', () => ({
 	Planner: {
 		create: vi.fn(),
 	},
 }));
-
 describe('addPlanner', () => {
 	afterEach(() => {
 		vi.resetAllMocks();

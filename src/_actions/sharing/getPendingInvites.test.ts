@@ -5,18 +5,17 @@ vi.mock('@/_actions/auth', () => ({
 	checkAuth: vi.fn(),
 }));
 
-vi.mock('@/_models', () => ({
+vi.mock('@/_models/sharing', () => ({
 	PendingInvite: {
 		find: vi.fn(),
 	},
 }));
-
 vi.mock('@/_utils/serialize', () => ({
 	serialize: vi.fn((data) => data),
 }));
 
 import { checkAuth } from '@/_actions/auth';
-import { PendingInvite } from '@/_models';
+import { PendingInvite } from '@/_models/sharing';
 import { serialize } from '@/_utils/serialize';
 
 import { getPendingInvites } from './getPendingInvites';

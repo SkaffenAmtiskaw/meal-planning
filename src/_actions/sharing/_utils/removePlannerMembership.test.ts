@@ -1,13 +1,13 @@
 import { Types } from 'mongoose';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-vi.mock('@/_models', () => ({
+vi.mock('@/_models/user', () => ({
 	User: {
 		findByIdAndUpdate: vi.fn(),
 	},
 }));
 
-import { User } from '@/_models';
+import { User } from '@/_models/user';
 
 import { removePlannerMembership } from './removePlannerMembership';
 

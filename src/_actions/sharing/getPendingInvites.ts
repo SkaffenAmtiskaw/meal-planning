@@ -3,7 +3,7 @@
 import { Types } from 'mongoose';
 
 import { checkAuth } from '@/_actions/auth';
-import { PendingInvite as PendingInviteModel } from '@/_models';
+import { PendingInvite as PendingInviteModel } from '@/_models/sharing';
 import { serialize } from '@/_utils/serialize';
 
 import type { PendingInvite } from './invite.types';

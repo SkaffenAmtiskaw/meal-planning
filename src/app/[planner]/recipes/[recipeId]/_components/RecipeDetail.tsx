@@ -17,8 +17,7 @@ import {
 
 import { deleteRecipe } from '@/_actions/library';
 import { ConfirmButton } from '@/_components';
-import type { RecipeInterface } from '@/_models/planner/recipe.types';
-import type { TagInterface } from '@/_models/planner/tag.types';
+import type { RecipeInterface, TagInterface } from '@/_models/types';
 
 import { InlineNotesEditor } from './InlineNotesEditor';
 import { InlineTagsEditor } from './InlineTagsEditor';

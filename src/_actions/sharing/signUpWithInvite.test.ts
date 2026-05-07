@@ -2,7 +2,7 @@ import { beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { addUser } from '@/_actions/user';
 import { auth } from '@/_auth';
-import { PendingInvite } from '@/_models';
+import { PendingInvite } from '@/_models/sharing';
 
 import { signUpWithInvite } from './signUpWithInvite';
 import { validateInviteToken } from './validateInviteToken';
@@ -23,13 +23,12 @@ vi.mock(
 	async () => await import('@mocks/@/_actions/sharing'),
 );
 
-vi.mock('@/_models', () => ({
+vi.mock('@/_models/sharing', () => ({
 	PendingInvite: {
 		findOne: vi.fn(),
 		deleteOne: vi.fn(),
 	},
 }));
-
 describe('signUpWithInvite', () => {
 	const token = 'valid-token-123';
 	const inviteId = 'invite-id-456';

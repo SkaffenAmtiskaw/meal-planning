@@ -6,8 +6,8 @@ import { Types } from 'mongoose';
 import { z } from 'zod';
 
 import { checkAuth } from '@/_actions/auth';
-import { Planner } from '@/_models';
-import { zBookmarkFormSchema } from '@/_models/planner/bookmark.types';
+import { zBookmarkFormSchema } from '@/_models/library';
+import { Planner } from '@/_models/planner';
 import type { ActionResult } from '@/_utils/actionResult';
 
 const zEditBookmarkSchema = zBookmarkFormSchema.extend({ _id: z.string() });

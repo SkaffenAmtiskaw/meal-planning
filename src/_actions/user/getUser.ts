@@ -3,7 +3,7 @@
 import { headers } from 'next/headers';
 
 import { auth } from '@/_auth';
-import { User } from '@/_models';
+import { User } from '@/_models/user';
 import { serialize } from '@/_utils/serialize';
 
 export const getUser = async () => {

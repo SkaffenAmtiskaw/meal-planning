@@ -1,18 +1,21 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-import { PendingInvite, Planner } from '@/_models';
+import { Planner } from '@/_models/planner';
+import { PendingInvite } from '@/_models/sharing';
 
 import { validateInviteToken } from './validateInviteToken';
 
-vi.mock('@/_models', () => ({
-	PendingInvite: {
-		findOne: vi.fn(),
-	},
+vi.mock('@/_models/planner', () => ({
 	Planner: {
 		findById: vi.fn(),
 	},
 }));
 
+vi.mock('@/_models/sharing', () => ({
+	PendingInvite: {
+		findOne: vi.fn(),
+	},
+}));
 describe('validateInviteToken', () => {
 	beforeEach(() => {
 		vi.resetAllMocks();

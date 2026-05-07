@@ -2,14 +2,14 @@ import { Types } from 'mongoose';
 import { afterEach, describe, expect, test, vi } from 'vitest';
 
 import { checkAuth } from '@/_actions/auth';
-import { Planner } from '@/_models';
-import { zRecipeFormSchema } from '@/_models/planner/recipe.types';
+import { zRecipeFormSchema } from '@/_models/library';
+import { Planner } from '@/_models/planner';
 
 import { addRecipe } from './addRecipe';
 
 vi.mock('@/_actions/auth', async () => await import('@mocks/@/_actions/auth'));
 
-vi.mock('@/_models/planner/recipe.types', () => ({
+vi.mock('@/_models/library', () => ({
 	zRecipeFormSchema: {
 		parse: vi.fn((data) => data),
 	},
@@ -19,12 +19,11 @@ vi.mock('./_utils/transformRecipeForm', () => ({
 	transformRecipeForm: vi.fn((data) => data),
 }));
 
-vi.mock('@/_models', () => ({
+vi.mock('@/_models/planner', () => ({
 	Planner: {
 		findById: vi.fn(),
 	},
 }));
-
 const plannerId = new Types.ObjectId().toString();
 
 const validData = {

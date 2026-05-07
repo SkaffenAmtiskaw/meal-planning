@@ -2,7 +2,7 @@ import { Types } from 'mongoose';
 import { afterEach, describe, expect, test, vi } from 'vitest';
 
 import { checkAuth } from '@/_actions/auth';
-import { Planner } from '@/_models';
+import { Planner } from '@/_models/planner';
 
 import { editRecipe } from './editRecipe';
 
@@ -12,7 +12,7 @@ vi.mock('next/cache', () => ({
 	revalidatePath: vi.fn(),
 }));
 
-vi.mock('@/_models', () => ({
+vi.mock('@/_models/planner', () => ({
 	Planner: {
 		collection: {
 			updateOne: vi.fn(),

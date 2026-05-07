@@ -1,7 +1,9 @@
 'use server';
 
-import { PendingInvite, Planner, User } from '@/_models';
+import { Planner } from '@/_models/planner';
+import { PendingInvite } from '@/_models/sharing';
 import type { AccessLevel } from '@/_models/user';
+import { User } from '@/_models/user';
 import { serialize } from '@/_utils/serialize';
 
 // Return type for pending invites with populated data

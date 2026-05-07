@@ -1,8 +1,7 @@
 import { z } from 'zod';
 
 import { TAG_COLOR_NAMES } from '@/_theme/colors';
-
-import { zObjectId } from '../utils/zObjectId';
+import { zObjectId } from '@/_utils/zObjectId';
 
 export const zTagInterface = z.object({
 	_id: zObjectId,

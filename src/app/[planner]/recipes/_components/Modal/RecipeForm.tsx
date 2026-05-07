@@ -26,8 +26,8 @@ import {
 	TagCombobox,
 } from '@/_components';
 import { useFormFeedback } from '@/_hooks';
-import type { RecipeInterface } from '@/_models/planner/recipe.types';
-import { zRecipeFormSchema } from '@/_models/planner/recipe.types';
+import type { RecipeInterface } from '@/_models/types';
+import { zRecipeFormSchema } from '@/_models/types';
 
 // Resolver only validates fields Mantine manages; ingredients/instructions/tags
 // are controlled via useState and merged in handleSubmit.

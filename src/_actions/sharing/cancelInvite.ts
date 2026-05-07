@@ -3,7 +3,7 @@
 import { Types } from 'mongoose';
 
 import { checkAuth } from '@/_actions/auth';
-import { PendingInvite } from '@/_models';
+import { PendingInvite } from '@/_models/sharing';
 import { serialize } from '@/_utils/serialize';
 
 export interface CancelInviteInput {

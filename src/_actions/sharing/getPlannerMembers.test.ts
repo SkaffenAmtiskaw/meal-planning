@@ -2,7 +2,7 @@ import { Types } from 'mongoose';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 vi.mock('@/_actions/auth', async () => await import('@mocks/@/_actions/auth'));
-vi.mock('@/_models', () => ({
+vi.mock('@/_models/user', () => ({
 	User: {
 		find: vi.fn(),
 	},
@@ -12,7 +12,7 @@ vi.mock('@/_utils/serialize', () => ({
 }));
 
 import { checkAuth } from '@/_actions/auth';
-import { User } from '@/_models';
+import { User } from '@/_models/user';
 
 import { getPlannerMembers } from './getPlannerMembers';
 

@@ -2,7 +2,7 @@
 
 import { addUser } from '@/_actions/user';
 import { auth } from '@/_auth';
-import { PendingInvite } from '@/_models';
+import { PendingInvite } from '@/_models/sharing';
 import { catchify } from '@/_utils/catchify';
 
 import { validateInviteToken } from './validateInviteToken';

@@ -3,7 +3,7 @@
 import { Types } from 'mongoose';
 
 import { checkAuth } from '@/_actions/auth';
-import { User } from '@/_models';
+import { User } from '@/_models/user';
 import { serialize } from '@/_utils/serialize';
 
 import type { PlannerMember } from './getPlannerMembers.types';

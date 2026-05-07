@@ -3,9 +3,9 @@
 import { Types } from 'mongoose';
 
 import { checkAuth } from '@/_actions/auth';
-import { Planner } from '@/_models';
-import type { BookmarkInterface } from '@/_models/planner/bookmark.types';
-import { zBookmarkFormSchema } from '@/_models/planner/bookmark.types';
+import type { BookmarkInterface } from '@/_models/library';
+import { zBookmarkFormSchema } from '@/_models/library';
+import { Planner } from '@/_models/planner';
 import type { ActionResult } from '@/_utils/actionResult';
 
 export const addBookmark = async (

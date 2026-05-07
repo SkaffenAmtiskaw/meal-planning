@@ -1,6 +1,6 @@
 import type { z } from 'zod';
 
-import type { zRecipeFormSchema } from '@/_models/planner/recipe.types';
+import type { zRecipeFormSchema } from '@/_models/library';
 
 type RecipeFormData = z.infer<typeof zRecipeFormSchema>;
 

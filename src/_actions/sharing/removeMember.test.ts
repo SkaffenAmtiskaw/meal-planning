@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { checkAuth } from '@/_actions/auth';
-import { User } from '@/_models';
+import { User } from '@/_models/user';
 
 import { removeMember } from './removeMember';
 
@@ -9,12 +9,11 @@ import { removePlannerMembership } from './_utils/removePlannerMembership';
 
 vi.mock('@/_actions/auth', async () => await import('@mocks/@/_actions/auth'));
 
-vi.mock('@/_models', () => ({
+vi.mock('@/_models/user', () => ({
 	User: {
 		findOne: vi.fn(),
 	},
 }));
-
 vi.mock('./_utils/removePlannerMembership', () => ({
 	removePlannerMembership: vi.fn(),
 }));

@@ -1,9 +1,11 @@
 import type { HydratedDocument, Types } from 'mongoose';
 
 import { getSavedItem } from '@/_actions/library';
-import type { PlannerInterface } from '@/_models/planner';
-import type { BookmarkInterface } from '@/_models/planner/bookmark';
-import type { RecipeInterface } from '@/_models/planner/recipe';
+import type {
+	BookmarkInterface,
+	PlannerInterface,
+	RecipeInterface,
+} from '@/_models/types';
 
 import { BookmarkForm } from './BookmarkForm';
 import { ModalWrapper } from './ModalWrapper';

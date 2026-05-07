@@ -11,8 +11,10 @@ import {
 
 import { checkAuth } from '@/_actions/auth';
 import { sendInviteEmail } from '@/_auth/emails/sendInviteEmail';
-import { PendingInvite, Planner, User } from '@/_models';
+import { Planner } from '@/_models/planner';
+import { PendingInvite } from '@/_models/sharing';
 import type { AccessLevel } from '@/_models/user';
+import { User } from '@/_models/user';
 
 import { inviteUser } from './inviteUser';
 
@@ -20,10 +22,16 @@ vi.mock('@/_actions/auth', async () => await import('@mocks/@/_actions/auth'));
 vi.mock('@/_auth/emails/sendInviteEmail', () => ({ sendInviteEmail: vi.fn() }));
 vi.mock('@/env', async () => await import('@mocks/env'));
 
-vi.mock('@/_models', () => ({
-	PendingInvite: { findOne: vi.fn(), create: vi.fn() },
-	User: { findOne: vi.fn() },
+vi.mock('@/_models/planner', () => ({
 	Planner: { findById: vi.fn() },
+}));
+
+vi.mock('@/_models/sharing', () => ({
+	PendingInvite: { findOne: vi.fn(), create: vi.fn() },
+}));
+
+vi.mock('@/_models/user', () => ({
+	User: { findOne: vi.fn() },
 }));
 
 vi.mock('node:crypto', () => ({

@@ -5,7 +5,7 @@ import { useState } from 'react';
 import { ActionIcon, Group } from '@mantine/core';
 import { IconPencil } from '@tabler/icons-react';
 
-import type { AccessLevel } from '@/_models/user';
+import type { AccessLevel } from '@/_models/types';
 
 import { AccessLevelEditor } from './AccessLevelEditor';
 import { RemoveMemberButton } from './RemoveMemberButton';

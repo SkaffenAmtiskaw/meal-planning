@@ -3,9 +3,9 @@
 import { Types } from 'mongoose';
 
 import { checkAuth } from '@/_actions/auth';
-import { Planner } from '@/_models';
-import type { RecipeInterface } from '@/_models/planner/recipe.types';
-import { zRecipeFormSchema } from '@/_models/planner/recipe.types';
+import type { RecipeInterface } from '@/_models/library';
+import { zRecipeFormSchema } from '@/_models/library';
+import { Planner } from '@/_models/planner';
 import type { ActionResult } from '@/_utils/actionResult';
 
 import { transformRecipeForm } from './_utils/transformRecipeForm';

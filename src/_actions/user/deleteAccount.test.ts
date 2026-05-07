@@ -1,7 +1,8 @@
 import { afterEach, describe, expect, test, vi } from 'vitest';
 
 import { auth } from '@/_auth';
-import { Planner, User } from '@/_models';
+import { Planner } from '@/_models/planner';
+import { User } from '@/_models/user';
 
 import { deleteAccount } from './deleteAccount';
 
@@ -41,17 +42,19 @@ vi.mock('@/_auth', () => ({
 	},
 }));
 
-vi.mock('@/_models', () => ({
+vi.mock('@/_models/user', () => ({
 	User: {
 		findOne: vi.fn(),
 		deleteOne: vi.fn(),
 		countDocuments: vi.fn(),
 	},
+}));
+
+vi.mock('@/_models/planner', () => ({
 	Planner: {
 		deleteOne: vi.fn(),
 	},
 }));
-
 vi.mock('@/_auth/emails', () => ({
 	sendAccountDeletionEmail: (opts: unknown) =>
 		mockSendAccountDeletionEmail(opts),

@@ -1,8 +1,7 @@
 import { z } from 'zod';
 
+import { zObjectId } from '@/_utils/zObjectId';
 import { zSafeString } from '@/_utils/zSafeString';
-
-import { zObjectId } from './utils/zObjectId';
 
 export const ACCESS_LEVELS = ['owner', 'admin', 'write', 'read'] as const;
 export type AccessLevel = (typeof ACCESS_LEVELS)[number];

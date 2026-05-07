@@ -1,6 +1,6 @@
 import { afterEach, describe, expect, test, vi } from 'vitest';
 
-import { User } from '@/_models';
+import { User } from '@/_models/user';
 
 import { verifyEmailChange } from './verifyEmailChange';
 
@@ -18,13 +18,12 @@ vi.mock('@/_auth', () => ({
 	},
 }));
 
-vi.mock('@/_models', () => ({
+vi.mock('@/_models/user', () => ({
 	User: {
 		findOne: vi.fn(),
 		updateOne: vi.fn(),
 	},
 }));
-
 const futureDate = new Date(Date.now() + 1000 * 60 * 60 * 24);
 const pastDate = new Date(Date.now() - 1000 * 60 * 60);
 

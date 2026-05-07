@@ -3,8 +3,9 @@
 import { Types } from 'mongoose';
 
 import { checkAuth } from '@/_actions/auth';
-import { Planner, zObjectId } from '@/_models';
+import { Planner } from '@/_models/planner';
 import type { ActionResult } from '@/_utils/actionResult';
+import { zObjectId } from '@/_utils/zObjectId';
 import { zSafeString } from '@/_utils/zSafeString';
 
 export const updatePlannerName = async (

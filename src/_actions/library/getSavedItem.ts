@@ -3,7 +3,7 @@
 import type { Types } from 'mongoose';
 
 import { getPlanner } from '@/_actions/planner';
-import { matchesId } from '@/_models';
+import { matchesId } from '@/_utils/matchesId';
 
 export const getSavedItem = async (
 	plannerId: Types.ObjectId,

@@ -1,7 +1,7 @@
 import { afterEach, describe, expect, test, vi } from 'vitest';
 
 import { auth } from '@/_auth';
-import { User } from '@/_models';
+import { User } from '@/_models/user';
 
 import { updateUserName } from './updateUserName';
 
@@ -15,12 +15,11 @@ vi.mock('@/_auth', () => ({
 
 vi.mock('next/headers', async () => await import('@mocks/next/headers'));
 
-vi.mock('@/_models', () => ({
+vi.mock('@/_models/user', () => ({
 	User: {
 		findOne: vi.fn(),
 	},
 }));
-
 const mockSession = { user: { email: 'ariel@sea.com' } };
 
 const mockSave = vi.fn();

@@ -2,7 +2,7 @@ import { Types } from 'mongoose';
 import { afterEach, describe, expect, test, vi } from 'vitest';
 
 import { getPlanner } from '@/_actions/planner';
-import { matchesId } from '@/_models';
+import { matchesId } from '@/_utils/matchesId';
 
 import { getSavedItem } from './getSavedItem';
 
@@ -10,7 +10,7 @@ vi.mock(
 	'@/_actions/planner',
 	async () => await import('@mocks/@/_actions/planner'),
 );
-vi.mock('@/_models', () => ({
+vi.mock('@/_utils/matchesId', () => ({
 	matchesId: vi.fn(),
 }));
 

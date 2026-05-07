@@ -3,7 +3,8 @@ import { redirect } from 'next/navigation';
 
 import { addUser } from '@/_actions/user';
 import { auth } from '@/_auth';
-import { User, zObjectId } from '@/_models';
+import { User } from '@/_models/user';
+import { zObjectId } from '@/_utils/zObjectId';
 
 import { SignInPrompt } from './_components/SignInPrompt';
 

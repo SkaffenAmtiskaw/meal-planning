@@ -27,7 +27,7 @@ vi.mock('@/_utils/catchify', () => ({
 	}),
 }));
 
-vi.mock('@/_models', () => ({
+vi.mock('@/_utils/zObjectId', () => ({
 	zObjectId: {
 		safeParse: (value: unknown) => ({
 			success: typeof value === 'string',

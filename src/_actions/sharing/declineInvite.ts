@@ -3,7 +3,7 @@
 import { Types } from 'mongoose';
 
 import { getUser } from '@/_actions/user';
-import { PendingInvite } from '@/_models';
+import { PendingInvite } from '@/_models/sharing';
 import type { ActionResult } from '@/_utils/actionResult/ActionResult';
 import { serialize } from '@/_utils/serialize';
 

@@ -1,7 +1,7 @@
 import { afterEach, describe, expect, test, vi } from 'vitest';
 
 import { auth } from '@/_auth';
-import { User } from '@/_models';
+import { User } from '@/_models/user';
 
 import { getUser } from './getUser';
 
@@ -15,12 +15,11 @@ vi.mock('@/_auth', () => ({
 	},
 }));
 
-vi.mock('@/_models', () => ({
+vi.mock('@/_models/user', () => ({
 	User: {
 		findOne: vi.fn(),
 	},
 }));
-
 const mockSession = {
 	user: { email: 'maleficent@evil.com' },
 };

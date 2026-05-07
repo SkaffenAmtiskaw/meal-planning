@@ -1,11 +1,11 @@
 import { beforeEach, describe, expect, test, vi } from 'vitest';
 
 import { getUser } from '@/_actions/user';
-import { Planner } from '@/_models';
+import { Planner } from '@/_models/planner';
 
 import { getPlanners } from './getPlanners';
 
-vi.mock('@/_models', async () => ({
+vi.mock('@/_models/planner', () => ({
 	Planner: {
 		find: vi.fn(),
 		collection: {

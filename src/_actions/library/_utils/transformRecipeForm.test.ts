@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { zRecipeFormSchema } from '@/_models/planner/recipe.types';
+import { zRecipeFormSchema } from '@/_models/library';
 
 import { transformRecipeForm } from './transformRecipeForm';
 

@@ -3,9 +3,11 @@ import Link from 'next/link';
 import { Anchor, Divider, Group, Stack } from '@mantine/core';
 
 import { Tag } from '@/_components';
-import type { BookmarkInterface } from '@/_models/planner/bookmark';
-import type { RecipeInterface } from '@/_models/planner/recipe';
-import type { TagInterface } from '@/_models/planner/tag.types';
+import type {
+	BookmarkInterface,
+	RecipeInterface,
+	TagInterface,
+} from '@/_models/types';
 import type { TagColor } from '@/_theme/colors';
 
 import { DeleteBookmarkButton } from './DeleteBookmarkButton';

@@ -11,7 +11,7 @@ const { mockCheckAuth, mockGetUser } = vi.hoisted(() => ({
 	mockGetUser: vi.fn(),
 }));
 
-vi.mock('@/_models', async () => {
+vi.mock('@/_utils/zObjectId', async () => {
 	const { z } = await import('zod');
 	return {
 		zObjectId: z.string(),

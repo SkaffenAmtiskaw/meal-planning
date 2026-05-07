@@ -1,6 +1,6 @@
 import { z } from 'zod';
 
-import { zObjectId } from '../utils/zObjectId';
+import { zObjectId } from '@/_utils/zObjectId';
 
 export const zDishFormInput = z.object({
 	name: z.string().min(1, 'Dish name is required'),

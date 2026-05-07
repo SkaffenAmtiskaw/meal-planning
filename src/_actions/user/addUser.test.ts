@@ -2,7 +2,7 @@ import { Types } from 'mongoose';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import { addPlanner } from '@/_actions/planner';
-import { User } from '@/_models';
+import { User } from '@/_models/user';
 
 import { addUser } from './addUser';
 
@@ -11,12 +11,11 @@ vi.mock(
 	async () => await import('@mocks/@/_actions/planner'),
 );
 
-vi.mock('@/_models', () => ({
+vi.mock('@/_models/user', () => ({
 	User: {
 		create: vi.fn(),
 	},
 }));
-
 const mockPlannerId = new Types.ObjectId();
 
 describe('addUser', () => {

@@ -5,8 +5,8 @@ import { notFound, redirect } from 'next/navigation';
 import { z } from 'zod';
 
 import { checkAuth } from '@/_actions/auth';
-import { zObjectId } from '@/_models';
 import { THEME_COLORS } from '@/_theme/colors';
+import { zObjectId } from '@/_utils/zObjectId';
 import { Header } from '@/app/_components/Header';
 
 import { BurgerToggle, PlannerLayout, PlannerProvider } from './_components';

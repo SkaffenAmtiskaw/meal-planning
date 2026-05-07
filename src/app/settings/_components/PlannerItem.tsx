@@ -16,7 +16,7 @@ import {
 
 import { leavePlanner } from '@/_actions/sharing';
 import { ConfirmButton } from '@/_components';
-import type { AccessLevel } from '@/_models/user';
+import type { AccessLevel } from '@/_models/types';
 
 import { InviteForm } from './InviteForm';
 import { MemberListContainer } from './MemberListContainer';

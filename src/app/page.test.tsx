@@ -7,7 +7,8 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { addUser } from '@/_actions/user';
 import { auth } from '@/_auth';
-import { User, zObjectId } from '@/_models';
+import { User } from '@/_models/user';
+import { zObjectId } from '@/_utils/zObjectId';
 
 import Page from './page';
 
@@ -32,12 +33,15 @@ vi.mock('@/_auth', () => ({
 	},
 }));
 
-vi.mock('@/_models', () => ({
+vi.mock('@/_models/user', () => ({
 	User: {
 		findOne: vi.fn().mockReturnValue({
 			exec: vi.fn().mockResolvedValue({ planners: [membership] }),
 		}),
 	},
+}));
+
+vi.mock('@/_utils/zObjectId', () => ({
 	zObjectId: {
 		safeParse: vi.fn().mockReturnValue({ success: false }),
 	},

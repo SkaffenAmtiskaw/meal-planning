@@ -2,13 +2,13 @@ import { Types } from 'mongoose';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { checkAuth } from '@/_actions/auth';
-import { Planner } from '@/_models';
+import { Planner } from '@/_models/planner';
 
 import { addMeal } from './addMeal';
 
 vi.mock('@/_actions/auth', async () => await import('@mocks/@/_actions/auth'));
 
-vi.mock('@/_models', () => ({
+vi.mock('@/_models/planner', () => ({
 	Planner: {
 		findById: vi.fn(),
 		collection: {
@@ -17,7 +17,7 @@ vi.mock('@/_models', () => ({
 	},
 }));
 
-vi.mock('@/_models/utils/zObjectId', async () => {
+vi.mock('@/_utils/zObjectId', async () => {
 	const { z } = await import('zod');
 	return { zObjectId: z.string() };
 });

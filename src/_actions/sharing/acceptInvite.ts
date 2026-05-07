@@ -1,8 +1,9 @@
 'use server';
 
 import { getUser } from '@/_actions/user';
-import { PendingInvite, User } from '@/_models';
+import { PendingInvite } from '@/_models/sharing';
 import type { AccessLevel } from '@/_models/user';
+import { User } from '@/_models/user';
 import type { ActionResult } from '@/_utils/actionResult/ActionResult';
 
 export interface AcceptInviteInput {

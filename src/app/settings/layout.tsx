@@ -4,8 +4,8 @@ import { redirect } from 'next/navigation';
 import { AppShell, AppShellMain } from '@mantine/core';
 
 import { getUser } from '@/_actions/user';
-import { zObjectId } from '@/_models';
 import { catchify } from '@/_utils/catchify';
+import { zObjectId } from '@/_utils/zObjectId';
 import { Header } from '@/app/_components/Header';
 import { HEADER_HEIGHT } from '@/app/_constants';
 

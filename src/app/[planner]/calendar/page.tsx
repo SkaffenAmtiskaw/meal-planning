@@ -1,6 +1,6 @@
 import { z } from 'zod';
 
-import { zObjectId } from '@/_models';
+import { zObjectId } from '@/_utils/zObjectId';
 
 import { CalendarView } from './_components/CalendarView/CalendarView';
 

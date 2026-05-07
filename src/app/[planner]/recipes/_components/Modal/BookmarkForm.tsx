@@ -12,7 +12,7 @@ import { addBookmark, editBookmark } from '@/_actions/library';
 import type { TagOption } from '@/_components';
 import { FormFeedbackAlert, SubmitButton, TagCombobox } from '@/_components';
 import { useFormFeedback } from '@/_hooks';
-import type { BookmarkInterface } from '@/_models/planner/bookmark.types';
+import type { BookmarkInterface } from '@/_models/types';
 
 const zFormFields = z.object({
 	name: z.string().min(1, 'Name is required'),

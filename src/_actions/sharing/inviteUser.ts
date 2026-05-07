@@ -7,8 +7,10 @@ import { z } from 'zod';
 
 import { checkAuth } from '@/_actions/auth';
 import { sendInviteEmail } from '@/_auth/emails/sendInviteEmail';
-import { PendingInvite, Planner, User } from '@/_models';
+import { Planner } from '@/_models/planner';
+import { PendingInvite } from '@/_models/sharing';
 import type { AccessLevel } from '@/_models/user';
+import { User } from '@/_models/user';
 import type { ActionResult } from '@/_utils/actionResult';
 import { catchify } from '@/_utils/catchify';
 import { serialize } from '@/_utils/serialize';
