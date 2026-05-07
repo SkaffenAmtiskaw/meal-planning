@@ -6,23 +6,24 @@
 - The naming convention for unit tests is `*.test.ts[x]`
 
 # Mocks
-- Almost all dependencies should be mocked using `vi.mock`
-- If the same library or module is mocked repeatedly throughout the app it should be turned into a reusable mock located at `test/mocks/` - vitest will provide an alias for it to be accessed in unit tests
-- When writing tests, the `test/mocks/` directory should be checked for pre-existing mocks
-- Mock files should only export modules that exist on the module being mocked
+- Almost all dependencies should be mocked using `vi.mock` (exceptions are listed below)
+- `test/mocks/` contains mocks for libraries and modules which are mocked frequently - vitest provides an alias for it to be accessed in unit tests
+- If a reusable mock is available in `test/mocks/`, it should ALWAYS be preferred over writing a custom mock implementation
 
 ## Libraries That Should Not Be Mocked
 
-Some libraries are deterministic, side-effect-free utilities that tests should use directly. Mocking them adds boilerplate without improving isolation.
-
-| Library | Why Not Mock |
-|---------|-------------|
-| `@tabler/icons-react` | Pure presentational components with no logic. Mocking adds indirection for zero benefit. |
+| Library | Why Not Mock                                                                                                                                                                                    |
+|---------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `react` | Underpins the entire application; mocking it can create false confidence that hooks/components work when they do not.                                                                           |
+| `@tabler/icons-react` | Pure presentational components with no logic. Mocking adds indirection for zero benefit.                                                                                                        |
 | `zod` | Schema definitions are part of the implementation under test. Mocking zod means not testing validation boundaries. It is a synchronous, side-effect-free library with negligible test overhead. |
 
-**Exception for zod-based modules:** Do mock modules that *use* zod internally (e.g., `@/_models`, form validation utilities) so that tests are not coupled to schema changes. The library itself should be an exception; its consumers should not be.
+**Clarification:** Modules that *use* these libraries internally should still be mocked (e.g., `@/_models`, form validation utilities) so that tests are not coupled to schema changes. Only the library is an exception; its consumers should not be.
 
-## Export Actual Module Names
+## Creating Centralized Mocks
+New centralized mocks should only be created when the user requests it.
+
+### Naming Conventions
 Mocks at `test/mocks/` must export the actual module names they replace. Do not export `MockFoo` variants that tests then have to map back to real names.
 
 **Why:** This keeps test files clean. Tests import from the real module (`import { useForm } from '@mantine/form'`) and vitest's mocking system substitutes the mock automatically. The test author never sees or thinks about mock internals.

@@ -1,66 +1,47 @@
-import { useContext } from 'react';
+import { render } from '@testing-library/react';
 
 import { DateTime } from 'luxon';
 import { describe, expect, it, vi } from 'vitest';
 
-import { useCalendarContext } from './CalendarContext';
-import type { CalendarContextValue, CalendarViewType } from './CalendarContext';
+import { CalendarContext, useCalendarContext } from './CalendarContext';
+import type { CalendarContextValue } from './CalendarContext';
 
-// Mock React's createContext and useContext
-vi.mock('react', async () => {
-	const actual = await vi.importActual('react');
-	return {
-		...actual,
-		createContext: vi.fn(),
-		useContext: vi.fn(),
-	};
-});
+describe('useCalendarContext', () => {
+	it('throws when used outside provider', () => {
+		const TestComponent = () => {
+			useCalendarContext();
+			return null;
+		};
 
-describe('CalendarContext', () => {
-	describe('useCalendarContext', () => {
-		it('should throw error when used outside provider', () => {
-			// Mock useContext to return undefined (simulating usage outside provider)
-			vi.mocked(useContext).mockReturnValue(undefined);
-
-			expect(() => {
-				useCalendarContext();
-			}).toThrow('useCalendarContext must be used within a CalendarProvider');
-		});
-
-		it('should return context value when inside provider', () => {
-			const mockContextValue: CalendarContextValue = {
-				selectedDate: DateTime.now(),
-				viewType: 'month',
-				setSelectedDate: vi.fn(),
-				setViewType: vi.fn(),
-				goToToday: vi.fn(),
-				goToPrevious: vi.fn(),
-				goToNext: vi.fn(),
-			};
-
-			// Mock useContext to return the mock context value
-			vi.mocked(useContext).mockReturnValue(mockContextValue);
-
-			const result = useCalendarContext();
-
-			expect(result).toBe(mockContextValue);
-		});
+		expect(() => render(<TestComponent />)).toThrow(
+			'useCalendarContext must be used within a CalendarProvider',
+		);
 	});
 
-	describe('CalendarViewType', () => {
-		it('should accept month view type', () => {
-			const viewType: CalendarViewType = 'month';
-			expect(viewType).toBe('month');
-		});
+	it('returns context value when inside provider', () => {
+		const mockValue: CalendarContextValue = {
+			selectedDate: DateTime.local(2024, 6, 15),
+			viewType: 'month',
+			setSelectedDate: vi.fn(),
+			setViewType: vi.fn(),
+			goToToday: vi.fn(),
+			goToPrevious: vi.fn(),
+			goToNext: vi.fn(),
+		};
 
-		it('should accept week view type', () => {
-			const viewType: CalendarViewType = 'week';
-			expect(viewType).toBe('week');
-		});
+		let capturedValue: CalendarContextValue | undefined;
 
-		it('should accept list view type', () => {
-			const viewType: CalendarViewType = 'list';
-			expect(viewType).toBe('list');
-		});
+		const TestComponent = () => {
+			capturedValue = useCalendarContext();
+			return null;
+		};
+
+		render(
+			<CalendarContext.Provider value={mockValue}>
+				<TestComponent />
+			</CalendarContext.Provider>,
+		);
+
+		expect(capturedValue).toBe(mockValue);
 	});
 });
