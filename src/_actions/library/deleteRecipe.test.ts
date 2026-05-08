@@ -1,4 +1,4 @@
-import { afterEach, describe, expect, test, vi } from 'vitest';
+import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import { checkAuth } from '@/_actions/auth';
 import { Planner } from '@/_models/planner';
@@ -8,12 +8,12 @@ import { deleteRecipe } from './deleteRecipe';
 
 vi.mock('@/_actions/auth', async () => await import('@mocks/@/_actions/auth'));
 
-vi.mock('@/_models/planner', () => ({
-	Planner: {
-		findById: vi.fn(),
-	},
-}));
-vi.mock('@/_utils/matchesId', () => ({
+vi.mock(
+	'@/_models/planner',
+	async () => await import('@mocks/@/_models/planner'),
+);
+
+vi.mock('@/_utils/matchesId', async () => ({
 	matchesId: vi.fn(),
 }));
 
@@ -35,11 +35,11 @@ describe('deleteRecipe', () => {
 		};
 	};
 
-	test('throws ZodError on invalid input', async () => {
+	it('throws on invalid input', async () => {
 		await expect(deleteRecipe({})).rejects.toThrow();
 	});
 
-	test('returns Unauthorized error when session is missing', async () => {
+	it('returns Unauthorized when user is unauthenticated', async () => {
 		vi.mocked(checkAuth).mockResolvedValueOnce({ type: 'unauthenticated' });
 
 		const result = await deleteRecipe(validData);
@@ -48,15 +48,16 @@ describe('deleteRecipe', () => {
 		expect(Planner.findById).not.toHaveBeenCalled();
 	});
 
-	test('returns Unauthorized error when user does not own the planner', async () => {
+	it('returns Unauthorized when user is unauthorized', async () => {
 		vi.mocked(checkAuth).mockResolvedValueOnce({ type: 'unauthorized' });
 
 		const result = await deleteRecipe(validData);
 
 		expect(result).toEqual({ ok: false, error: 'Unauthorized' });
+		expect(Planner.findById).not.toHaveBeenCalled();
 	});
 
-	test('returns Planner not found error when planner does not exist', async () => {
+	it('returns Planner not found when planner does not exist', async () => {
 		vi.mocked(Planner.findById).mockResolvedValue(null);
 
 		const result = await deleteRecipe(validData);
@@ -64,10 +65,10 @@ describe('deleteRecipe', () => {
 		expect(result).toEqual({ ok: false, error: 'Planner not found' });
 	});
 
-	test('returns Recipe not found error when recipeId is not in saved', async () => {
+	it('returns Recipe not found when recipe is not in saved', async () => {
 		const planner = makePlanner(false);
 		vi.mocked(matchesId).mockReturnValue(() => false);
-		vi.mocked(Planner.findById).mockResolvedValue(planner as never);
+		vi.mocked(Planner.findById).mockResolvedValue(planner);
 
 		const result = await deleteRecipe(validData);
 
@@ -75,10 +76,10 @@ describe('deleteRecipe', () => {
 		expect(planner.save).not.toHaveBeenCalled();
 	});
 
-	test('removes the recipe and returns ok', async () => {
+	it('removes the recipe and returns ok', async () => {
 		const planner = makePlanner();
 		vi.mocked(matchesId).mockReturnValue(() => true);
-		vi.mocked(Planner.findById).mockResolvedValue(planner as never);
+		vi.mocked(Planner.findById).mockResolvedValue(planner);
 
 		const result = await deleteRecipe(validData);
 

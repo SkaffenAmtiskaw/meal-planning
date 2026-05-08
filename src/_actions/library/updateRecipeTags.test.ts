@@ -10,17 +10,14 @@ import { updateRecipeTags } from './updateRecipeTags';
 
 vi.mock('@/_actions/auth', async () => await import('@mocks/@/_actions/auth'));
 
-vi.mock('next/cache', () => ({
+vi.mock('next/cache', async () => ({
 	revalidatePath: vi.fn(),
 }));
 
-vi.mock('@/_models/planner', () => ({
-	Planner: {
-		collection: {
-			updateOne: vi.fn(),
-		},
-	},
-}));
+vi.mock(
+	'@/_models/planner',
+	async () => await import('@mocks/@/_models/planner'),
+);
 
 const plannerId = new Types.ObjectId().toString();
 const recipeId = new Types.ObjectId().toString();
@@ -36,89 +33,97 @@ describe('updateRecipeTags', () => {
 		} as never);
 	});
 
-	it('throws on invalid input', async () => {
-		await expect(updateRecipeTags({})).rejects.toThrow();
+	describe('input validation', () => {
+		it('throws on invalid input', async () => {
+			await expect(updateRecipeTags({})).rejects.toThrow();
+		});
 	});
 
-	it('returns unauthorized error when session is missing', async () => {
-		vi.mocked(checkAuth).mockResolvedValueOnce({ type: 'unauthenticated' });
+	describe('authorization', () => {
+		it('calls checkAuth with write access', async () => {
+			await updateRecipeTags(validData);
 
-		const result = await updateRecipeTags(validData);
+			expect(checkAuth).toHaveBeenCalledWith(
+				expect.any(Types.ObjectId),
+				'write',
+			);
+		});
 
-		expect(result).toEqual({ ok: false, error: 'Unauthorized' });
-		expect(Planner.collection.updateOne).not.toHaveBeenCalled();
+		it('returns unauthorized when session is missing', async () => {
+			vi.mocked(checkAuth).mockResolvedValueOnce({ type: 'unauthenticated' });
+
+			const result = await updateRecipeTags(validData);
+
+			expect(result).toEqual({ ok: false, error: 'Unauthorized' });
+			expect(Planner.collection.updateOne).not.toHaveBeenCalled();
+		});
+
+		it('returns unauthorized when user does not own the planner', async () => {
+			vi.mocked(checkAuth).mockResolvedValueOnce({ type: 'unauthorized' });
+
+			const result = await updateRecipeTags(validData);
+
+			expect(result).toEqual({ ok: false, error: 'Unauthorized' });
+		});
 	});
 
-	it('returns unauthorized error when user does not own the planner', async () => {
-		vi.mocked(checkAuth).mockResolvedValueOnce({ type: 'unauthorized' });
+	describe('when recipe is not found', () => {
+		beforeEach(() => {
+			vi.mocked(Planner.collection.updateOne).mockResolvedValueOnce({
+				matchedCount: 0,
+			} as never);
+		});
 
-		const result = await updateRecipeTags(validData);
+		it('returns recipe not found error', async () => {
+			const result = await updateRecipeTags(validData);
 
-		expect(result).toEqual({ ok: false, error: 'Unauthorized' });
+			expect(result).toEqual({ ok: false, error: 'Recipe not found' });
+		});
+
+		it('does not revalidate the path', async () => {
+			await updateRecipeTags(validData);
+
+			expect(revalidatePath).not.toHaveBeenCalled();
+		});
 	});
 
-	it('returns recipe not found error when matchedCount is 0', async () => {
-		vi.mocked(Planner.collection.updateOne).mockResolvedValueOnce({
-			matchedCount: 0,
-		} as never);
+	describe('on success', () => {
+		it('updates the recipe tags as ObjectIds', async () => {
+			await updateRecipeTags(validData);
 
-		const result = await updateRecipeTags(validData);
+			expect(Planner.collection.updateOne).toHaveBeenCalledWith(
+				expect.objectContaining({
+					_id: expect.any(Types.ObjectId),
+					'saved._id': expect.any(Types.ObjectId),
+				}),
+				{ $set: { 'saved.$.tags': [expect.any(Types.ObjectId)] } },
+			);
+		});
 
-		expect(result).toEqual({ ok: false, error: 'Recipe not found' });
-	});
+		it('updates the recipe tags to an empty array when tags is empty', async () => {
+			await updateRecipeTags({ plannerId, recipeId, tags: [] });
 
-	it('calls checkAuth with write access', async () => {
-		await updateRecipeTags(validData);
+			expect(Planner.collection.updateOne).toHaveBeenCalledWith(
+				expect.objectContaining({
+					_id: expect.any(Types.ObjectId),
+					'saved._id': expect.any(Types.ObjectId),
+				}),
+				{ $set: { 'saved.$.tags': [] } },
+			);
+		});
 
-		expect(checkAuth).toHaveBeenCalledWith(expect.any(Types.ObjectId), 'write');
-	});
+		it('revalidates the recipe path', async () => {
+			await updateRecipeTags(validData);
 
-	it('sets tags as ObjectIds on success', async () => {
-		await updateRecipeTags(validData);
+			expect(revalidatePath).toHaveBeenCalledWith(
+				`/${plannerId}/recipes/${recipeId}`,
+			);
+		});
 
-		expect(Planner.collection.updateOne).toHaveBeenCalledWith(
-			expect.objectContaining({
-				_id: expect.any(Types.ObjectId),
-				'saved._id': expect.any(Types.ObjectId),
-			}),
-			{ $set: { 'saved.$.tags': [expect.any(Types.ObjectId)] } },
-		);
-	});
+		it('returns ok', async () => {
+			const result = await updateRecipeTags(validData);
 
-	it('sets empty tags array when tags is empty', async () => {
-		await updateRecipeTags({ plannerId, recipeId, tags: [] });
-
-		expect(Planner.collection.updateOne).toHaveBeenCalledWith(
-			expect.objectContaining({
-				_id: expect.any(Types.ObjectId),
-				'saved._id': expect.any(Types.ObjectId),
-			}),
-			{ $set: { 'saved.$.tags': [] } },
-		);
-	});
-
-	it('revalidates the recipe path on success', async () => {
-		await updateRecipeTags(validData);
-
-		expect(revalidatePath).toHaveBeenCalledWith(
-			`/${plannerId}/recipes/${recipeId}`,
-		);
-	});
-
-	it('does not revalidate when recipe is not found', async () => {
-		vi.mocked(Planner.collection.updateOne).mockResolvedValueOnce({
-			matchedCount: 0,
-		} as never);
-
-		const result = await updateRecipeTags(validData);
-
-		expect(result).toEqual({ ok: false, error: 'Recipe not found' });
-		expect(revalidatePath).not.toHaveBeenCalled();
-	});
-
-	it('returns ok on success', async () => {
-		const result = await updateRecipeTags(validData);
-
-		expect(result).toEqual({ ok: true, data: undefined });
+			expect(result).toEqual({ ok: true, data: undefined });
+		});
 	});
 });

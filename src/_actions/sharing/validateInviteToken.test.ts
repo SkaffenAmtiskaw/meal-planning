@@ -5,137 +5,154 @@ import { PendingInvite } from '@/_models/sharing';
 
 import { validateInviteToken } from './validateInviteToken';
 
-vi.mock('@/_models/planner', () => ({
-	Planner: {
-		findById: vi.fn(),
-	},
-}));
+vi.mock(
+	'@/_models/planner',
+	async () => await import('@mocks/@/_models/planner'),
+);
+vi.mock(
+	'@/_models/sharing',
+	async () => await import('@mocks/@/_models/sharing'),
+);
 
-vi.mock('@/_models/sharing', () => ({
-	PendingInvite: {
-		findOne: vi.fn(),
-	},
-}));
 describe('validateInviteToken', () => {
 	beforeEach(() => {
 		vi.resetAllMocks();
 	});
 
-	it('should return valid=true with email and plannerName for valid token', async () => {
-		const mockInvite = {
-			email: 'test@example.com',
-			planner: { toString: () => 'planner123' },
-			expiresAt: new Date(Date.now() + 86400000), // 1 day from now
-			deleteOne: vi.fn(),
-		};
+	describe('when the invite does not exist', () => {
+		it('returns invalid for a non-existent token', async () => {
+			vi.mocked(PendingInvite.findOne as any).mockResolvedValue(null);
 
-		const mockPlanner = {
-			name: 'Test Planner',
-		};
+			const result = await validateInviteToken('non-existent-token');
 
-		vi.mocked(PendingInvite.findOne).mockResolvedValue(mockInvite as never);
-		vi.mocked(Planner.findById).mockResolvedValue(mockPlanner as never);
+			expect(PendingInvite.findOne).toHaveBeenCalledWith({
+				token: 'non-existent-token',
+			});
+			expect(Planner.findById).not.toHaveBeenCalled();
+			expect(result).toEqual({ valid: false, reason: 'invalid' });
+		});
 
-		const result = await validateInviteToken('valid-token');
+		it('returns invalid for an empty token', async () => {
+			vi.mocked(PendingInvite.findOne as any).mockResolvedValue(null);
 
-		expect(result).toEqual({
-			valid: true,
-			email: 'test@example.com',
-			plannerName: 'Test Planner',
+			const result = await validateInviteToken('');
+
+			expect(PendingInvite.findOne).toHaveBeenCalledWith({ token: '' });
+			expect(Planner.findById).not.toHaveBeenCalled();
+			expect(result).toEqual({ valid: false, reason: 'invalid' });
+		});
+
+		it('returns invalid when the database query fails', async () => {
+			vi.mocked(PendingInvite.findOne as any).mockRejectedValue(
+				new Error('DB Error'),
+			);
+
+			const result = await validateInviteToken('valid-token');
+
+			expect(PendingInvite.findOne).toHaveBeenCalledWith({
+				token: 'valid-token',
+			});
+			expect(Planner.findById).not.toHaveBeenCalled();
+			expect(result).toEqual({ valid: false, reason: 'invalid' });
 		});
 	});
 
-	it('should return valid=false with reason=expired for expired token and delete it', async () => {
-		const mockDeleteOne = vi.fn().mockResolvedValue(undefined);
-		const mockInvite = {
-			email: 'test@example.com',
-			planner: { toString: () => 'planner123' },
-			expiresAt: new Date(Date.now() - 86400000), // 1 day ago
-			deleteOne: mockDeleteOne,
-		};
+	describe('when the invite is expired', () => {
+		it('returns expired with email and deletes the invite', async () => {
+			const mockDeleteOne = vi.fn().mockResolvedValue(undefined);
+			const mockInvite = {
+				email: 'test@example.com',
+				planner: 'planner123',
+				expiresAt: new Date(Date.now() - 86400000),
+				deleteOne: mockDeleteOne,
+			};
 
-		vi.mocked(PendingInvite.findOne).mockResolvedValue(mockInvite as never);
+			vi.mocked(PendingInvite.findOne as any).mockResolvedValue(mockInvite);
 
-		const result = await validateInviteToken('expired-token');
+			const result = await validateInviteToken('expired-token');
 
-		expect(result).toEqual({
-			valid: false,
-			reason: 'expired',
-			email: 'test@example.com',
-		});
-		expect(mockDeleteOne).toHaveBeenCalled();
-	});
-
-	it('should return valid=false with reason=invalid for non-existent token', async () => {
-		vi.mocked(PendingInvite.findOne).mockResolvedValue(null);
-
-		const result = await validateInviteToken('non-existent-token');
-
-		expect(result).toEqual({
-			valid: false,
-			reason: 'invalid',
+			expect(PendingInvite.findOne).toHaveBeenCalledWith({
+				token: 'expired-token',
+			});
+			expect(Planner.findById).not.toHaveBeenCalled();
+			expect(result).toEqual({
+				valid: false,
+				reason: 'expired',
+				email: 'test@example.com',
+			});
+			expect(mockDeleteOne).toHaveBeenCalled();
 		});
 	});
 
-	it('should return valid=false with reason=invalid for malformed token', async () => {
-		vi.mocked(PendingInvite.findOne).mockResolvedValue(null);
+	describe('when the invite is valid', () => {
+		it('returns valid with email and planner name', async () => {
+			const mockInvite = {
+				email: 'test@example.com',
+				planner: 'planner123',
+				expiresAt: new Date(Date.now() + 86400000),
+				deleteOne: vi.fn(),
+			};
 
-		const result = await validateInviteToken('');
+			const mockPlanner = {
+				name: 'Test Planner',
+			};
 
-		expect(result).toEqual({
-			valid: false,
-			reason: 'invalid',
+			vi.mocked(PendingInvite.findOne as any).mockResolvedValue(mockInvite);
+			vi.mocked(Planner.findById).mockResolvedValue(mockPlanner);
+
+			const result = await validateInviteToken('valid-token');
+
+			expect(PendingInvite.findOne).toHaveBeenCalledWith({
+				token: 'valid-token',
+			});
+			expect(Planner.findById).toHaveBeenCalledWith('planner123');
+			expect(result).toEqual({
+				valid: true,
+				email: 'test@example.com',
+				plannerName: 'Test Planner',
+			});
 		});
-	});
 
-	it('should include planner name in response when valid', async () => {
-		const mockInvite = {
-			email: 'test@example.com',
-			planner: { toString: () => 'planner123' },
-			expiresAt: new Date(Date.now() + 86400000),
-			deleteOne: vi.fn(),
-		};
+		it('returns valid with default planner name when planner is not found', async () => {
+			const mockInvite = {
+				email: 'test@example.com',
+				planner: 'planner123',
+				expiresAt: new Date(Date.now() + 86400000),
+				deleteOne: vi.fn(),
+			};
 
-		const mockPlanner = {
-			name: 'My Special Planner',
-		};
+			vi.mocked(PendingInvite.findOne as any).mockResolvedValue(mockInvite);
+			vi.mocked(Planner.findById).mockResolvedValue(null);
 
-		vi.mocked(PendingInvite.findOne).mockResolvedValue(mockInvite as never);
-		vi.mocked(Planner.findById).mockResolvedValue(mockPlanner as never);
+			const result = await validateInviteToken('valid-token');
 
-		const result = await validateInviteToken('valid-token');
-
-		expect(result.plannerName).toBe('My Special Planner');
-	});
-
-	it('should use default planner name when planner not found', async () => {
-		const mockInvite = {
-			email: 'test@example.com',
-			planner: { toString: () => 'planner123' },
-			expiresAt: new Date(Date.now() + 86400000),
-			deleteOne: vi.fn(),
-		};
-
-		vi.mocked(PendingInvite.findOne).mockResolvedValue(mockInvite as never);
-		vi.mocked(Planner.findById).mockResolvedValue(null);
-
-		const result = await validateInviteToken('valid-token');
-
-		expect(result).toEqual({
-			valid: true,
-			email: 'test@example.com',
-			plannerName: 'Meal Planner',
+			expect(Planner.findById).toHaveBeenCalledWith('planner123');
+			expect(result).toEqual({
+				valid: true,
+				email: 'test@example.com',
+				plannerName: 'Meal Planner',
+			});
 		});
-	});
 
-	it('should handle database errors gracefully', async () => {
-		vi.mocked(PendingInvite.findOne).mockRejectedValue(new Error('DB Error'));
+		it('returns valid with default planner name when planner lookup fails', async () => {
+			const mockInvite = {
+				email: 'test@example.com',
+				planner: 'planner123',
+				expiresAt: new Date(Date.now() + 86400000),
+				deleteOne: vi.fn(),
+			};
 
-		const result = await validateInviteToken('valid-token');
+			vi.mocked(PendingInvite.findOne as any).mockResolvedValue(mockInvite);
+			vi.mocked(Planner.findById).mockRejectedValue(new Error('DB Error'));
 
-		expect(result).toEqual({
-			valid: false,
-			reason: 'invalid',
+			const result = await validateInviteToken('valid-token');
+
+			expect(Planner.findById).toHaveBeenCalledWith('planner123');
+			expect(result).toEqual({
+				valid: true,
+				email: 'test@example.com',
+				plannerName: 'Meal Planner',
+			});
 		});
 	});
 });

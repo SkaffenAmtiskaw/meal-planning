@@ -19,38 +19,36 @@ import { User } from '@/_models/user';
 import { inviteUser } from './inviteUser';
 
 vi.mock('@/_actions/auth', async () => await import('@mocks/@/_actions/auth'));
-vi.mock('@/_auth/emails/sendInviteEmail', () => ({ sendInviteEmail: vi.fn() }));
+vi.mock('@/_auth/emails/sendInviteEmail', async () => ({
+	sendInviteEmail: vi.fn(),
+}));
 vi.mock('@/env', async () => await import('@mocks/env'));
-
-vi.mock('@/_models/planner', () => ({
-	Planner: { findById: vi.fn() },
-}));
-
-vi.mock('@/_models/sharing', () => ({
-	PendingInvite: { findOne: vi.fn(), create: vi.fn() },
-}));
-
-vi.mock('@/_models/user', () => ({
-	User: { findOne: vi.fn() },
-}));
-
-vi.mock('node:crypto', () => ({
-	default: { randomUUID: vi.fn(() => 'mock-uuid-12345') },
-	randomUUID: vi.fn(() => 'mock-uuid-12345'),
-}));
-
-vi.mock('@/_utils/serialize', () => ({
-	serialize: vi.fn((data) => data),
-}));
-
-vi.mock('@/_utils/catchify', () => ({
-	catchify: vi.fn(async (fn) => {
+vi.mock(
+	'@/_models/planner',
+	async () => await import('@mocks/@/_models/planner'),
+);
+vi.mock(
+	'@/_models/sharing',
+	async () => await import('@mocks/@/_models/sharing'),
+);
+vi.mock('@/_models/user', async () => await import('@mocks/@/_models/user'));
+vi.mock('@/_utils/catchify', async () => ({
+	catchify: vi.fn(async (callback: () => Promise<unknown>) => {
 		try {
-			return [await fn()];
-		} catch (error) {
-			return [undefined, error];
+			return [await callback()];
+		} catch (e) {
+			return [undefined, e as Error];
 		}
 	}),
+}));
+vi.mock('@/_utils/serialize', async () => ({
+	serialize: vi.fn((data) => data),
+}));
+vi.mock('node:crypto', () => ({
+	default: {
+		randomUUID: () => 'mock-uuid-12345',
+	},
+	randomUUID: () => 'mock-uuid-12345',
 }));
 
 describe('inviteUser', () => {

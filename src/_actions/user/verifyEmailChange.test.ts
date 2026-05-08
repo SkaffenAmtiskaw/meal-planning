@@ -1,4 +1,4 @@
-import { afterEach, describe, expect, test, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
 
 import { User } from '@/_models/user';
 
@@ -12,18 +12,14 @@ const { mockUpdateOne, mockCollection } = vi.hoisted(() => {
 	};
 });
 
-vi.mock('@/_auth', () => ({
+vi.mock('@/_auth', async () => ({
 	mongoClient: {
 		db: vi.fn(() => ({ collection: mockCollection })),
 	},
 }));
 
-vi.mock('@/_models/user', () => ({
-	User: {
-		findOne: vi.fn(),
-		updateOne: vi.fn(),
-	},
-}));
+vi.mock('@/_models/user', async () => await import('@mocks/@/_models/user'));
+
 const futureDate = new Date(Date.now() + 1000 * 60 * 60 * 24);
 const pastDate = new Date(Date.now() - 1000 * 60 * 60);
 
@@ -37,103 +33,101 @@ const makeMockUser = (overrides = {}) => ({
 	...overrides,
 });
 
+const setupValidUser = () => {
+	vi.mocked(User.findOne as any).mockReturnValueOnce({
+		exec: vi.fn().mockResolvedValue(makeMockUser()),
+	});
+	mockUpdateOne.mockResolvedValueOnce({});
+	vi.mocked(User.updateOne as any).mockResolvedValueOnce({});
+};
+
 describe('verifyEmailChange', () => {
 	afterEach(() => {
 		vi.resetAllMocks();
 	});
 
-	test('returns error when token is not found', async () => {
-		vi.mocked(User.findOne).mockReturnValueOnce({
-			exec: vi.fn().mockResolvedValue(null),
-		} as never);
+	describe('validation', () => {
+		test('returns an invalid link error when no user has the given token', async () => {
+			vi.mocked(User.findOne as any).mockReturnValueOnce({
+				exec: vi.fn().mockResolvedValue(null),
+			});
 
-		const result = await verifyEmailChange('bad-token');
+			const result = await verifyEmailChange('bad-token');
 
-		expect(result).toEqual({
-			ok: false,
-			error: 'This link is invalid or has expired.',
+			expect(result).toEqual({
+				ok: false,
+				error: 'This link is invalid or has expired.',
+			});
+		});
+
+		test('returns an invalid link error when the user has no pending email change', async () => {
+			vi.mocked(User.findOne as any).mockReturnValueOnce({
+				exec: vi
+					.fn()
+					.mockResolvedValue(makeMockUser({ pendingEmailChange: null })),
+			});
+
+			const result = await verifyEmailChange('valid-token');
+
+			expect(result).toEqual({
+				ok: false,
+				error: 'This link is invalid or has expired.',
+			});
+		});
+
+		test('returns an invalid link error when the token has expired', async () => {
+			vi.mocked(User.findOne as any).mockReturnValueOnce({
+				exec: vi.fn().mockResolvedValue(
+					makeMockUser({
+						pendingEmailChange: {
+							email: 'new@example.com',
+							token: 'expired-token',
+							expiresAt: pastDate,
+						},
+					}),
+				),
+			});
+
+			const result = await verifyEmailChange('expired-token');
+
+			expect(result).toEqual({
+				ok: false,
+				error: 'This link is invalid or has expired.',
+			});
 		});
 	});
 
-	test('returns error when pending change is missing', async () => {
-		vi.mocked(User.findOne).mockReturnValueOnce({
-			exec: vi
-				.fn()
-				.mockResolvedValue(makeMockUser({ pendingEmailChange: null })),
-		} as never);
-
-		const result = await verifyEmailChange('valid-token');
-
-		expect(result).toEqual({
-			ok: false,
-			error: 'This link is invalid or has expired.',
+	describe('success', () => {
+		beforeEach(() => {
+			setupValidUser();
 		});
-	});
 
-	test('returns error when token is expired', async () => {
-		vi.mocked(User.findOne).mockReturnValueOnce({
-			exec: vi.fn().mockResolvedValue(
-				makeMockUser({
-					pendingEmailChange: {
-						email: 'new@example.com',
-						token: 'expired-token',
-						expiresAt: pastDate,
-					},
-				}),
-			),
-		} as never);
+		test('updates the email in the better-auth user collection', async () => {
+			await verifyEmailChange('valid-token');
 
-		const result = await verifyEmailChange('expired-token');
-
-		expect(result).toEqual({
-			ok: false,
-			error: 'This link is invalid or has expired.',
+			expect(mockCollection).toHaveBeenCalledWith('user');
+			expect(mockUpdateOne).toHaveBeenCalledWith(
+				{ email: 'user@example.com' },
+				{ $set: { email: 'new@example.com' } },
+			);
 		});
-	});
 
-	test('updates email in better-auth user collection', async () => {
-		vi.mocked(User.findOne).mockReturnValueOnce({
-			exec: vi.fn().mockResolvedValue(makeMockUser()),
-		} as never);
-		mockUpdateOne.mockResolvedValue({});
-		vi.mocked(User.updateOne).mockResolvedValueOnce({} as never);
+		test('updates the app User model and clears the pending change', async () => {
+			await verifyEmailChange('valid-token');
 
-		await verifyEmailChange('valid-token');
+			expect(User.updateOne).toHaveBeenCalledWith(
+				{ email: 'user@example.com' },
+				{
+					$set: { email: 'new@example.com' },
+					$unset: { pendingEmailChange: '' },
+				},
+			);
+		});
 
-		expect(mockCollection).toHaveBeenCalledWith('user');
-		expect(mockUpdateOne).toHaveBeenCalledWith(
-			{ email: 'user@example.com' },
-			{ $set: { email: 'new@example.com' } },
-		);
-	});
+		test('returns ok: true on success', async () => {
+			const result = await verifyEmailChange('valid-token');
 
-	test('updates app User model and clears pending change', async () => {
-		vi.mocked(User.findOne).mockReturnValueOnce({
-			exec: vi.fn().mockResolvedValue(makeMockUser()),
-		} as never);
-		mockUpdateOne.mockResolvedValue({});
-		vi.mocked(User.updateOne).mockResolvedValueOnce({} as never);
-
-		await verifyEmailChange('valid-token');
-
-		expect(User.updateOne).toHaveBeenCalledWith(
-			{ email: 'user@example.com' },
-			{
-				$set: { email: 'new@example.com' },
-				$unset: { pendingEmailChange: '' },
-			},
-		);
-	});
-
-	test('returns success', async () => {
-		vi.mocked(User.findOne).mockReturnValueOnce({
-			exec: vi.fn().mockResolvedValue(makeMockUser()),
-		} as never);
-		mockUpdateOne.mockResolvedValue({});
-		vi.mocked(User.updateOne).mockResolvedValueOnce({} as never);
-
-		const result = await verifyEmailChange('valid-token');
-
-		expect(result).toEqual({ ok: true, data: undefined });
+			expect(result).toEqual({ ok: true, data: undefined });
+		});
 	});
 });

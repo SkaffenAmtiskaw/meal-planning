@@ -1,5 +1,5 @@
 import { Types } from 'mongoose';
-import { afterEach, describe, expect, test, vi } from 'vitest';
+import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import { checkAuth } from '@/_actions/auth';
 import { Planner } from '@/_models/planner';
@@ -8,14 +8,10 @@ import { addTag } from './addTag';
 
 vi.mock('@/_actions/auth', async () => await import('@mocks/@/_actions/auth'));
 
-vi.mock('@/_models/planner', () => ({
-	Planner: {
-		findById: vi.fn(),
-		collection: {
-			updateOne: vi.fn(),
-		},
-	},
-}));
+vi.mock(
+	'@/_models/planner',
+	async () => await import('@mocks/@/_models/planner'),
+);
 
 vi.mock('@/_theme/colors', async () => ({
 	TAG_COLOR_NAMES: ['red', 'green', 'blue'],
@@ -32,7 +28,7 @@ describe('addTag', () => {
 		vi.resetAllMocks();
 	});
 
-	test('returns Unauthorized error when session is missing', async () => {
+	it('returns Unauthorized error when session is missing', async () => {
 		vi.mocked(checkAuth).mockResolvedValue({ type: 'unauthenticated' });
 
 		const result = await addTag(plannerId, 'Spicy');
@@ -41,25 +37,26 @@ describe('addTag', () => {
 		expect(Planner.findById).not.toHaveBeenCalled();
 	});
 
-	test('returns Unauthorized error when user does not own the planner', async () => {
+	it('returns Unauthorized error when user does not own the planner', async () => {
 		vi.mocked(checkAuth).mockResolvedValue({ type: 'unauthorized' });
 
 		const result = await addTag(plannerId, 'Spicy');
 
 		expect(result).toEqual({ ok: false, error: 'Unauthorized' });
+		expect(Planner.findById).not.toHaveBeenCalled();
 	});
 
-	test('returns Planner not found error when planner does not exist', async () => {
+	it('returns Planner not found error when planner does not exist', async () => {
 		vi.mocked(Planner.findById).mockResolvedValue(null);
 
 		const result = await addTag(plannerId, 'Spicy');
 
 		expect(result).toEqual({ ok: false, error: 'Planner not found' });
+		expect(Planner.collection.updateOne).not.toHaveBeenCalled();
 	});
 
-	test('assigns the first TAG_COLOR_NAMES entry to the first tag', async () => {
-		vi.mocked(Planner.findById).mockResolvedValue(makePlanner(0) as never);
-		vi.mocked(Planner.collection.updateOne).mockResolvedValue({} as never);
+	it('assigns the first available color when no tags exist', async () => {
+		vi.mocked(Planner.findById).mockResolvedValue(makePlanner(0));
 
 		const result = await addTag(plannerId, 'Spicy');
 
@@ -67,10 +64,9 @@ describe('addTag', () => {
 		if (result.ok) expect(result.data.color).toBe('red');
 	});
 
-	test('cycles through TAG_COLOR_NAMES based on existing tag count', async () => {
+	it('cycles through available colors based on existing tag count', async () => {
 		// 4 existing tags → index 4 % 3 = 1 = 'green'
-		vi.mocked(Planner.findById).mockResolvedValue(makePlanner(4) as never);
-		vi.mocked(Planner.collection.updateOne).mockResolvedValue({} as never);
+		vi.mocked(Planner.findById).mockResolvedValue(makePlanner(4));
 
 		const result = await addTag(plannerId, 'New');
 
@@ -78,9 +74,8 @@ describe('addTag', () => {
 		if (result.ok) expect(result.data.color).toBe('green');
 	});
 
-	test('calls collection.updateOne with $push', async () => {
-		vi.mocked(Planner.findById).mockResolvedValue(makePlanner(0) as never);
-		vi.mocked(Planner.collection.updateOne).mockResolvedValue({} as never);
+	it('persists the new tag to the planner', async () => {
+		vi.mocked(Planner.findById).mockResolvedValue(makePlanner(0));
 
 		await addTag(plannerId, 'Quick');
 
@@ -98,9 +93,8 @@ describe('addTag', () => {
 		);
 	});
 
-	test('returns _id, name, and color on success', async () => {
-		vi.mocked(Planner.findById).mockResolvedValue(makePlanner(0) as never);
-		vi.mocked(Planner.collection.updateOne).mockResolvedValue({} as never);
+	it('returns the created tag on success', async () => {
+		vi.mocked(Planner.findById).mockResolvedValue(makePlanner(0));
 
 		const result = await addTag(plannerId, 'Quick');
 

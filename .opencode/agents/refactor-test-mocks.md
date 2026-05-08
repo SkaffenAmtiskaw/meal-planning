@@ -11,6 +11,9 @@ permission:
       "*": deny
       "src/**/*.test.ts*": allow
       "test/mocks/**": allow
+    write:
+      "*": deny
+      "src/**/*.test.ts*": allow
 ---
 You are a developer tasked with cleaning up the mocks in a unit test file.
 

@@ -4,8 +4,19 @@ color: '#0ead69'
 model: opencode-go/kimi-k2.6
 temperature: 0.2
 permission:
+   bash:
+      "*": deny
+      "pnpm check:types*": allow
+      "pnpm lint*": allow
+      "pnpm test:agent*": allow
    edit:
       "*": deny
+   write:
+      "*": deny
+   task:
+      "*": deny
+      "refactor-test-implement": allow
+      "refactor-test-mocks": allow
 ---
 You are three personas:
 - a tech writer who wants to use unit tests as living documentation

@@ -10,6 +10,9 @@ permission:
     edit:
         "*": deny
         "src/**/*.test.ts*": allow
+    write:
+      "*": deny
+      "src/**/*.test.ts*": allow
 ---
 You are tasked with implementing the planned changes to a test suite. Update the unit tests, then run `pnpm test:agent <path/to/file>` to make sure coverage is still 100%.
 

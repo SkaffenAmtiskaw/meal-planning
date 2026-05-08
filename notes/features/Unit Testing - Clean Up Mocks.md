@@ -22,7 +22,10 @@ We will go through mocks one by one and update the following:
 ## ✅ `@/_hooks` - COMPLETE
 - `test/mocks` file updated to use project standards for mocks
 - consuming test files have been updated
-## ⏳ `@/_models` - NOT STARTED
+## ✅ `@/_models` - COMPLETE
+- ✅ updated subdirectories for consistent import patterns
+- ✅ centralized mock in `test/mocks` has been created
+- ✅ consuming test files have been updated
 
 ## ⏳ `@/_utils` - NOT STARTED
 ## ✅ `@mantine/core` - COMPLETE

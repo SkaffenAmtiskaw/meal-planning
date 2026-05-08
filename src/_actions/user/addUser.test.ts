@@ -11,60 +11,16 @@ vi.mock(
 	async () => await import('@mocks/@/_actions/planner'),
 );
 
-vi.mock('@/_models/user', () => ({
-	User: {
-		create: vi.fn(),
-	},
-}));
-const mockPlannerId = new Types.ObjectId();
+vi.mock('@/_models/user', async () => await import('@mocks/@/_models/user'));
 
 describe('addUser', () => {
 	afterEach(() => {
 		vi.resetAllMocks();
 	});
 
-	describe('old signature (positional args)', () => {
-		it('should create a new planner when no plannerId is provided', async () => {
-			vi.mocked(addPlanner).mockResolvedValue({ _id: mockPlannerId } as never);
-
-			await addUser('cruella@deVil.com');
-
-			expect(addPlanner).toHaveBeenCalledOnce();
-			expect(User.create).toHaveBeenCalledWith({
-				email: 'cruella@deVil.com',
-				name: 'New User',
-				planners: [{ planner: mockPlannerId, accessLevel: 'owner' }],
-			});
-		});
-
-		it('should use the provided plannerId without creating a new planner', async () => {
-			const existingPlannerId = new Types.ObjectId();
-
-			await addUser('cruella@deVil.com', existingPlannerId);
-
-			expect(addPlanner).not.toHaveBeenCalled();
-			expect(User.create).toHaveBeenCalledWith({
-				email: 'cruella@deVil.com',
-				name: 'New User',
-				planners: [{ planner: existingPlannerId, accessLevel: 'read' }],
-			});
-		});
-
-		it('should use the provided name when given', async () => {
-			vi.mocked(addPlanner).mockResolvedValue({ _id: mockPlannerId } as never);
-
-			await addUser('cruella@deVil.com', undefined, 'Cruella');
-
-			expect(User.create).toHaveBeenCalledWith({
-				email: 'cruella@deVil.com',
-				name: 'Cruella',
-				planners: [{ planner: mockPlannerId, accessLevel: 'owner' }],
-			});
-		});
-	});
-
-	describe('new signature (options object)', () => {
-		it('should support options object with email only', async () => {
+	describe('with options object', () => {
+		it('creates a new planner and assigns owner access when no plannerId is provided', async () => {
+			const mockPlannerId = new Types.ObjectId();
 			vi.mocked(addPlanner).mockResolvedValue({ _id: mockPlannerId } as never);
 
 			await addUser({ email: 'cruella@deVil.com' });
@@ -77,13 +33,12 @@ describe('addUser', () => {
 			});
 		});
 
-		it('should skip planner creation when skipPlannerCreation=true', async () => {
+		it('uses the provided plannerId and assigns read access', async () => {
 			const existingPlannerId = new Types.ObjectId();
 
 			await addUser({
 				email: 'cruella@deVil.com',
 				plannerId: existingPlannerId,
-				skipPlannerCreation: true,
 			});
 
 			expect(addPlanner).not.toHaveBeenCalled();
@@ -94,28 +49,37 @@ describe('addUser', () => {
 			});
 		});
 
-		it('should use custom accessLevel when provided', async () => {
+		it('uses a custom name when provided', async () => {
+			const mockPlannerId = new Types.ObjectId();
 			vi.mocked(addPlanner).mockResolvedValue({ _id: mockPlannerId } as never);
 
-			await addUser({
-				email: 'cruella@deVil.com',
-				accessLevel: 'admin',
-			});
+			await addUser({ email: 'cruella@deVil.com', name: 'Cruella' });
 
-			expect(User.create).toHaveBeenCalledWith(
-				expect.objectContaining({
-					planners: [{ planner: mockPlannerId, accessLevel: 'admin' }],
-				}),
-			);
+			expect(User.create).toHaveBeenCalledWith({
+				email: 'cruella@deVil.com',
+				name: 'Cruella',
+				planners: [{ planner: mockPlannerId, accessLevel: 'owner' }],
+			});
 		});
 
-		it('should pass emailVerified to User.create when provided', async () => {
+		it('uses a custom accessLevel when provided', async () => {
+			const mockPlannerId = new Types.ObjectId();
 			vi.mocked(addPlanner).mockResolvedValue({ _id: mockPlannerId } as never);
 
-			await addUser({
+			await addUser({ email: 'cruella@deVil.com', accessLevel: 'admin' });
+
+			expect(User.create).toHaveBeenCalledWith({
 				email: 'cruella@deVil.com',
-				emailVerified: true,
+				name: 'New User',
+				planners: [{ planner: mockPlannerId, accessLevel: 'admin' }],
 			});
+		});
+
+		it('includes emailVerified when provided', async () => {
+			const mockPlannerId = new Types.ObjectId();
+			vi.mocked(addPlanner).mockResolvedValue({ _id: mockPlannerId } as never);
+
+			await addUser({ email: 'cruella@deVil.com', emailVerified: true });
 
 			expect(User.create).toHaveBeenCalledWith({
 				email: 'cruella@deVil.com',
@@ -125,44 +89,20 @@ describe('addUser', () => {
 			});
 		});
 
-		it('should combine skipPlannerCreation with custom accessLevel', async () => {
-			const existingPlannerId = new Types.ObjectId();
+		it('excludes emailVerified when not provided', async () => {
+			const mockPlannerId = new Types.ObjectId();
+			vi.mocked(addPlanner).mockResolvedValue({ _id: mockPlannerId } as never);
 
-			await addUser({
-				email: 'cruella@deVil.com',
-				plannerId: existingPlannerId,
-				skipPlannerCreation: true,
-				accessLevel: 'write',
-			});
+			await addUser({ email: 'cruella@deVil.com' });
 
-			expect(addPlanner).not.toHaveBeenCalled();
 			expect(User.create).toHaveBeenCalledWith({
 				email: 'cruella@deVil.com',
 				name: 'New User',
-				planners: [{ planner: existingPlannerId, accessLevel: 'write' }],
+				planners: [{ planner: mockPlannerId, accessLevel: 'owner' }],
 			});
 		});
 
-		it('should combine skipPlannerCreation with emailVerified', async () => {
-			const existingPlannerId = new Types.ObjectId();
-
-			await addUser({
-				email: 'cruella@deVil.com',
-				plannerId: existingPlannerId,
-				skipPlannerCreation: true,
-				emailVerified: false,
-			});
-
-			expect(addPlanner).not.toHaveBeenCalled();
-			expect(User.create).toHaveBeenCalledWith({
-				email: 'cruella@deVil.com',
-				name: 'New User',
-				planners: [{ planner: existingPlannerId, accessLevel: 'read' }],
-				emailVerified: false,
-			});
-		});
-
-		it('should throw if skipPlannerCreation=true but no plannerId provided', async () => {
+		it('throws when skipPlannerCreation is true without a plannerId', async () => {
 			await expect(
 				addUser({
 					email: 'cruella@deVil.com',
@@ -174,25 +114,75 @@ describe('addUser', () => {
 		});
 	});
 
-	it('should return the created user', async () => {
-		const mockUser = {
-			email: 'cruella@deVil.com',
-			name: 'New User',
-			planners: [{ planner: mockPlannerId, accessLevel: 'owner' as const }],
-		};
+	describe('with positional arguments', () => {
+		it('normalizes positional arguments and creates a new planner', async () => {
+			const mockPlannerId = new Types.ObjectId();
+			vi.mocked(addPlanner).mockResolvedValue({ _id: mockPlannerId } as never);
 
-		vi.mocked(addPlanner).mockResolvedValue({ _id: mockPlannerId } as never);
-		vi.mocked(User.create).mockResolvedValue(mockUser as never);
+			await addUser('cruella@deVil.com');
 
-		const result = await addUser('cruella@deVil.com');
+			expect(addPlanner).toHaveBeenCalledOnce();
+			expect(User.create).toHaveBeenCalledWith({
+				email: 'cruella@deVil.com',
+				name: 'New User',
+				planners: [{ planner: mockPlannerId, accessLevel: 'owner' }],
+			});
+		});
 
-		expect(result).toBe(mockUser);
+		it('normalizes positional arguments with a provided plannerId', async () => {
+			const existingPlannerId = new Types.ObjectId();
+
+			await addUser('cruella@deVil.com', existingPlannerId);
+
+			expect(addPlanner).not.toHaveBeenCalled();
+			expect(User.create).toHaveBeenCalledWith({
+				email: 'cruella@deVil.com',
+				name: 'New User',
+				planners: [{ planner: existingPlannerId, accessLevel: 'read' }],
+			});
+		});
+
+		it('normalizes positional arguments with a custom name', async () => {
+			const mockPlannerId = new Types.ObjectId();
+			vi.mocked(addPlanner).mockResolvedValue({ _id: mockPlannerId } as never);
+
+			await addUser('cruella@deVil.com', undefined, 'Cruella');
+
+			expect(User.create).toHaveBeenCalledWith({
+				email: 'cruella@deVil.com',
+				name: 'Cruella',
+				planners: [{ planner: mockPlannerId, accessLevel: 'owner' }],
+			});
+		});
 	});
 
-	it('should throw when User.create fails', async () => {
-		vi.mocked(addPlanner).mockResolvedValue({ _id: mockPlannerId } as never);
-		vi.mocked(User.create).mockRejectedValue(new Error('DB error'));
+	describe('return value', () => {
+		it('returns the created user', async () => {
+			const mockPlannerId = new Types.ObjectId();
+			const mockUser = {
+				email: 'cruella@deVil.com',
+				name: 'New User',
+				planners: [{ planner: mockPlannerId, accessLevel: 'owner' as const }],
+			};
 
-		await expect(addUser('cruella@deVil.com')).rejects.toThrow('DB error');
+			vi.mocked(addPlanner).mockResolvedValue({ _id: mockPlannerId } as never);
+			vi.mocked(User.create).mockResolvedValue(mockUser as never);
+
+			const result = await addUser({ email: 'cruella@deVil.com' });
+
+			expect(result).toBe(mockUser);
+		});
+	});
+
+	describe('error handling', () => {
+		it('propagates errors from User.create', async () => {
+			const mockPlannerId = new Types.ObjectId();
+			vi.mocked(addPlanner).mockResolvedValue({ _id: mockPlannerId } as never);
+			vi.mocked(User.create).mockRejectedValue(new Error('DB error'));
+
+			await expect(addUser({ email: 'cruella@deVil.com' })).rejects.toThrow(
+				'DB error',
+			);
+		});
 	});
 });

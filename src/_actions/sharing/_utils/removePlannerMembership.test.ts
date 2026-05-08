@@ -1,11 +1,7 @@
 import { Types } from 'mongoose';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-vi.mock('@/_models/user', () => ({
-	User: {
-		findByIdAndUpdate: vi.fn(),
-	},
-}));
+vi.mock('@/_models/user', async () => await import('@mocks/@/_models/user'));
 
 import { User } from '@/_models/user';
 
@@ -16,75 +12,75 @@ describe('removePlannerMembership', () => {
 		vi.resetAllMocks();
 	});
 
-	it('removes membership from user.planners array', async () => {
-		const userId = new Types.ObjectId().toString();
-		const plannerId = new Types.ObjectId().toString();
+	describe('success', () => {
+		it('removes membership from user.planners array when given string IDs', async () => {
+			const userId = new Types.ObjectId().toString();
+			const plannerId = new Types.ObjectId().toString();
 
-		vi.mocked(User.findByIdAndUpdate).mockResolvedValue({});
+			await removePlannerMembership(userId, plannerId);
 
-		await removePlannerMembership(userId, plannerId);
+			expect(User.findByIdAndUpdate).toHaveBeenCalledWith(userId, {
+				$pull: {
+					planners: { planner: new Types.ObjectId(plannerId) },
+				},
+			});
+		});
 
-		expect(User.findByIdAndUpdate).toHaveBeenCalledWith(userId, {
-			$pull: {
-				planners: { planner: new Types.ObjectId(plannerId) },
-			},
+		it('returns ok: true on successful removal', async () => {
+			const userId = new Types.ObjectId().toString();
+			const plannerId = new Types.ObjectId().toString();
+
+			const result = await removePlannerMembership(userId, plannerId);
+
+			expect(result).toEqual({ ok: true });
+		});
+
+		it('accepts ObjectId types as well as strings', async () => {
+			const userId = new Types.ObjectId();
+			const plannerId = new Types.ObjectId();
+
+			const result = await removePlannerMembership(userId, plannerId);
+
+			expect(result).toEqual({ ok: true });
+			expect(User.findByIdAndUpdate).toHaveBeenCalledWith(userId, {
+				$pull: {
+					planners: { planner: plannerId },
+				},
+			});
 		});
 	});
 
-	it('returns ok: true on successful removal', async () => {
-		const userId = new Types.ObjectId().toString();
-		const plannerId = new Types.ObjectId().toString();
+	describe('error', () => {
+		it('returns ok: false with error message when database throws an Error', async () => {
+			const userId = new Types.ObjectId().toString();
+			const plannerId = new Types.ObjectId().toString();
 
-		vi.mocked(User.findByIdAndUpdate).mockResolvedValue({});
+			vi.mocked(User.findByIdAndUpdate).mockRejectedValue(
+				new Error('Database connection failed'),
+			);
 
-		const result = await removePlannerMembership(userId, plannerId);
+			const result = await removePlannerMembership(userId, plannerId);
 
-		expect(result).toEqual({ ok: true });
-	});
-
-	it('handles database errors gracefully', async () => {
-		const userId = new Types.ObjectId().toString();
-		const plannerId = new Types.ObjectId().toString();
-
-		vi.mocked(User.findByIdAndUpdate).mockRejectedValue(
-			new Error('Database connection failed'),
-		);
-
-		const result = await removePlannerMembership(userId, plannerId);
-
-		expect(result).toEqual({
-			ok: false,
-			error: 'Database connection failed',
+			expect(result).toEqual({
+				ok: false,
+				error: 'Database connection failed',
+			});
 		});
-	});
 
-	it('handles non-Error exceptions', async () => {
-		const userId = new Types.ObjectId().toString();
-		const plannerId = new Types.ObjectId().toString();
+		it('returns ok: false with error message when database throws a non-Error value', async () => {
+			const userId = new Types.ObjectId().toString();
+			const plannerId = new Types.ObjectId().toString();
 
-		vi.mocked(User.findByIdAndUpdate).mockRejectedValue('String error message');
+			vi.mocked(User.findByIdAndUpdate).mockRejectedValue(
+				'String error message',
+			);
 
-		const result = await removePlannerMembership(userId, plannerId);
+			const result = await removePlannerMembership(userId, plannerId);
 
-		expect(result).toEqual({
-			ok: false,
-			error: 'String error message',
-		});
-	});
-
-	it('accepts ObjectId types as well as strings', async () => {
-		const userId = new Types.ObjectId();
-		const plannerId = new Types.ObjectId();
-
-		vi.mocked(User.findByIdAndUpdate).mockResolvedValue({});
-
-		const result = await removePlannerMembership(userId, plannerId);
-
-		expect(result).toEqual({ ok: true });
-		expect(User.findByIdAndUpdate).toHaveBeenCalledWith(userId, {
-			$pull: {
-				planners: { planner: plannerId },
-			},
+			expect(result).toEqual({
+				ok: false,
+				error: 'String error message',
+			});
 		});
 	});
 });

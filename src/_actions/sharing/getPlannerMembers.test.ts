@@ -2,12 +2,12 @@ import { Types } from 'mongoose';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 vi.mock('@/_actions/auth', async () => await import('@mocks/@/_actions/auth'));
-vi.mock('@/_models/user', () => ({
+vi.mock('@/_models/user', async () => ({
 	User: {
 		find: vi.fn(),
 	},
 }));
-vi.mock('@/_utils/serialize', () => ({
+vi.mock('@/_utils/serialize', async () => ({
 	serialize: vi.fn((data) => data),
 }));
 
@@ -20,13 +20,43 @@ describe('getPlannerMembers', () => {
 	const plannerId = '507f1f77bcf86cd799439011';
 	const objectId = new Types.ObjectId(plannerId);
 
+	const mockFindUsers = (users: unknown[]) =>
+		vi.mocked(User.find).mockReturnValue({
+			lean: vi.fn().mockResolvedValue(users),
+		} as any);
+
 	beforeEach(() => {
 		vi.resetAllMocks();
 	});
 
-	it('returns members for owner caller', async () => {
-		vi.mocked(User.find).mockReturnValue({
-			lean: vi.fn().mockResolvedValue([
+	describe('authorization', () => {
+		it.each([
+			{ type: 'unauthenticated' as const },
+			{ type: 'unauthorized' as const },
+		])('returns unauthorized when caller is $type', async (authResult) => {
+			vi.mocked(checkAuth).mockResolvedValue(authResult as never);
+
+			const result = await getPlannerMembers(plannerId);
+
+			expect(result).toEqual({ members: [], error: 'Unauthorized' });
+			expect(User.find).not.toHaveBeenCalled();
+		});
+
+		it('throws when checkAuth returns error', async () => {
+			vi.mocked(checkAuth).mockResolvedValue({
+				type: 'error',
+				error: new Error('Auth check failed'),
+			} as never);
+
+			await expect(getPlannerMembers(plannerId)).rejects.toThrow(
+				'Auth check failed',
+			);
+		});
+	});
+
+	describe('success', () => {
+		it('returns members for an owner caller', async () => {
+			mockFindUsers([
 				{
 					name: 'Alice',
 					email: 'alice@example.com',
@@ -47,33 +77,35 @@ describe('getPlannerMembers', () => {
 						},
 					],
 				},
-			]),
-		} as unknown as ReturnType<typeof User.find>);
+			]);
 
-		const result = await getPlannerMembers(plannerId);
+			const result = await getPlannerMembers(plannerId);
 
-		expect(result).toEqual({
-			members: [
-				{ name: 'Alice', email: 'alice@example.com', accessLevel: 'owner' },
-				{ name: 'Bob', email: 'bob@example.com', accessLevel: 'write' },
-			],
+			expect(checkAuth).toHaveBeenCalledWith(objectId, 'admin');
+			expect(User.find).toHaveBeenCalledWith({
+				'planners.planner': plannerId,
+			});
+			expect(result).toEqual({
+				members: [
+					{ name: 'Alice', email: 'alice@example.com', accessLevel: 'owner' },
+					{ name: 'Bob', email: 'bob@example.com', accessLevel: 'write' },
+				],
+			});
 		});
-	});
 
-	it('returns members for admin caller', async () => {
-		vi.mocked(checkAuth).mockResolvedValue({
-			type: 'authorized',
-			accessLevel: 'admin',
-			user: {
-				_id: 'user-id',
-				email: 'test@example.com',
-				name: 'Test User',
-				planners: [],
-			},
-		} as never);
+		it('returns members for an admin caller', async () => {
+			vi.mocked(checkAuth).mockResolvedValue({
+				type: 'authorized',
+				accessLevel: 'admin',
+				user: {
+					_id: 'user-id',
+					email: 'test@example.com',
+					name: 'Test User',
+					planners: [],
+				},
+			} as never);
 
-		vi.mocked(User.find).mockReturnValue({
-			lean: vi.fn().mockResolvedValue([
+			mockFindUsers([
 				{
 					name: 'Alice',
 					email: 'alice@example.com',
@@ -84,50 +116,19 @@ describe('getPlannerMembers', () => {
 						},
 					],
 				},
-			]),
-		} as unknown as ReturnType<typeof User.find>);
+			]);
 
-		const result = await getPlannerMembers(plannerId);
+			const result = await getPlannerMembers(plannerId);
 
-		expect(result).toEqual({
-			members: [
-				{ name: 'Alice', email: 'alice@example.com', accessLevel: 'owner' },
-			],
-		});
-	});
-
-	it('returns unauthorized for unauthenticated caller', async () => {
-		vi.mocked(checkAuth).mockResolvedValue({ type: 'unauthenticated' });
-
-		const result = await getPlannerMembers(plannerId);
-
-		expect(result).toEqual({ members: [], error: 'Unauthorized' });
-		expect(User.find).not.toHaveBeenCalled();
-	});
-
-	it('returns unauthorized for unauthorized caller', async () => {
-		vi.mocked(checkAuth).mockResolvedValue({ type: 'unauthorized' });
-
-		const result = await getPlannerMembers(plannerId);
-
-		expect(result).toEqual({ members: [], error: 'Unauthorized' });
-		expect(User.find).not.toHaveBeenCalled();
-	});
-
-	it('throws when checkAuth returns error', async () => {
-		vi.mocked(checkAuth).mockResolvedValue({
-			type: 'error',
-			error: new Error('Auth check failed'),
+			expect(result).toEqual({
+				members: [
+					{ name: 'Alice', email: 'alice@example.com', accessLevel: 'owner' },
+				],
+			});
 		});
 
-		await expect(getPlannerMembers(plannerId)).rejects.toThrow(
-			'Auth check failed',
-		);
-	});
-
-	it('accepts ObjectId as plannerId', async () => {
-		vi.mocked(User.find).mockReturnValue({
-			lean: vi.fn().mockResolvedValue([
+		it('accepts ObjectId as plannerId', async () => {
+			mockFindUsers([
 				{
 					name: 'Alice',
 					email: 'alice@example.com',
@@ -138,21 +139,25 @@ describe('getPlannerMembers', () => {
 						},
 					],
 				},
-			]),
-		} as unknown as ReturnType<typeof User.find>);
+			]);
 
-		const result = await getPlannerMembers(objectId);
+			const result = await getPlannerMembers(objectId);
 
-		expect(result).toEqual({
-			members: [
-				{ name: 'Alice', email: 'alice@example.com', accessLevel: 'owner' },
-			],
+			expect(checkAuth).toHaveBeenCalledWith(objectId, 'admin');
+			expect(User.find).toHaveBeenCalledWith({
+				'planners.planner': objectId,
+			});
+			expect(result).toEqual({
+				members: [
+					{ name: 'Alice', email: 'alice@example.com', accessLevel: 'owner' },
+				],
+			});
 		});
 	});
 
-	it('handles string planner ID in membership', async () => {
-		vi.mocked(User.find).mockReturnValue({
-			lean: vi.fn().mockResolvedValue([
+	describe('data mapping', () => {
+		it('handles string planner ID in membership', async () => {
+			mockFindUsers([
 				{
 					name: 'Alice',
 					email: 'alice@example.com',
@@ -163,21 +168,19 @@ describe('getPlannerMembers', () => {
 						},
 					],
 				},
-			]),
-		} as unknown as ReturnType<typeof User.find>);
+			]);
 
-		const result = await getPlannerMembers(plannerId);
+			const result = await getPlannerMembers(plannerId);
 
-		expect(result).toEqual({
-			members: [
-				{ name: 'Alice', email: 'alice@example.com', accessLevel: 'admin' },
-			],
+			expect(result).toEqual({
+				members: [
+					{ name: 'Alice', email: 'alice@example.com', accessLevel: 'admin' },
+				],
+			});
 		});
-	});
 
-	it('defaults missing name and email', async () => {
-		vi.mocked(User.find).mockReturnValue({
-			lean: vi.fn().mockResolvedValue([
+		it('defaults missing name and email', async () => {
+			mockFindUsers([
 				{
 					name: undefined,
 					email: undefined,
@@ -188,19 +191,17 @@ describe('getPlannerMembers', () => {
 						},
 					],
 				},
-			]),
-		} as unknown as ReturnType<typeof User.find>);
+			]);
 
-		const result = await getPlannerMembers(plannerId);
+			const result = await getPlannerMembers(plannerId);
 
-		expect(result).toEqual({
-			members: [{ name: 'New User', email: '', accessLevel: 'admin' }],
+			expect(result).toEqual({
+				members: [{ name: 'New User', email: '', accessLevel: 'admin' }],
+			});
 		});
-	});
 
-	it('defaults to read access when membership not found', async () => {
-		vi.mocked(User.find).mockReturnValue({
-			lean: vi.fn().mockResolvedValue([
+		it('defaults to read access when membership not found', async () => {
+			mockFindUsers([
 				{
 					name: 'Charlie',
 					email: 'charlie@example.com',
@@ -211,21 +212,23 @@ describe('getPlannerMembers', () => {
 						},
 					],
 				},
-			]),
-		} as unknown as ReturnType<typeof User.find>);
+			]);
 
-		const result = await getPlannerMembers(plannerId);
+			const result = await getPlannerMembers(plannerId);
 
-		expect(result).toEqual({
-			members: [
-				{ name: 'Charlie', email: 'charlie@example.com', accessLevel: 'read' },
-			],
+			expect(result).toEqual({
+				members: [
+					{
+						name: 'Charlie',
+						email: 'charlie@example.com',
+						accessLevel: 'read',
+					},
+				],
+			});
 		});
-	});
 
-	it('does not expose internal fields', async () => {
-		vi.mocked(User.find).mockReturnValue({
-			lean: vi.fn().mockResolvedValue([
+		it('does not expose internal fields', async () => {
+			mockFindUsers([
 				{
 					_id: 'internal-id-123',
 					__v: 0,
@@ -239,25 +242,27 @@ describe('getPlannerMembers', () => {
 						},
 					],
 				},
-			]),
-		} as unknown as ReturnType<typeof User.find>);
+			]);
 
-		const result = await getPlannerMembers(plannerId);
+			const result = await getPlannerMembers(plannerId);
 
-		expect(result).toEqual({
-			members: [
-				{ name: 'Alice', email: 'alice@example.com', accessLevel: 'owner' },
-			],
+			expect(result).toEqual({
+				members: [
+					{ name: 'Alice', email: 'alice@example.com', accessLevel: 'owner' },
+				],
+			});
 		});
 	});
 
-	it('throws on database error', async () => {
-		vi.mocked(User.find).mockImplementation(() => {
-			throw new Error('DB connection failed');
-		});
+	describe('errors', () => {
+		it('throws on database error', async () => {
+			vi.mocked(User.find).mockImplementation(() => {
+				throw new Error('DB connection failed');
+			});
 
-		await expect(getPlannerMembers(plannerId)).rejects.toThrow(
-			'DB connection failed',
-		);
+			await expect(getPlannerMembers(plannerId)).rejects.toThrow(
+				'DB connection failed',
+			);
+		});
 	});
 });

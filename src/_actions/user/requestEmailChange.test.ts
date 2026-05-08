@@ -1,20 +1,13 @@
 import { afterEach, describe, expect, test, vi } from 'vitest';
 
 import { auth } from '@/_auth';
+import { sendEmailChangeEmail } from '@/_auth/emails';
 import { User } from '@/_models/user';
+import { env } from '@/env';
 
 import { requestEmailChange } from './requestEmailChange';
 
-const { mockFindOne, mockCollection, mockSendEmailChangeEmail } = vi.hoisted(
-	() => {
-		const mockFindOne = vi.fn();
-		return {
-			mockFindOne,
-			mockCollection: vi.fn(() => ({ findOne: mockFindOne })),
-			mockSendEmailChangeEmail: vi.fn(),
-		};
-	},
-);
+const mockDbFindOne = vi.hoisted(() => vi.fn());
 
 vi.mock('next/headers', async () => await import('@mocks/next/headers'));
 
@@ -25,17 +18,18 @@ vi.mock('@/_auth', () => ({
 		},
 	},
 	mongoClient: {
-		db: vi.fn(() => ({ collection: mockCollection })),
+		db: vi.fn(() => ({
+			collection: vi.fn(() => ({
+				findOne: mockDbFindOne,
+			})),
+		})),
 	},
 }));
 
-vi.mock('@/_models/user', () => ({
-	User: {
-		findOne: vi.fn(),
-	},
-}));
+vi.mock('@/_models/user', async () => await import('@mocks/@/_models/user'));
+
 vi.mock('@/_auth/emails', () => ({
-	sendEmailChangeEmail: (opts: unknown) => mockSendEmailChangeEmail(opts),
+	sendEmailChangeEmail: vi.fn(),
 }));
 
 const mockSession = { user: { email: 'current@example.com' } };
@@ -64,131 +58,157 @@ describe('requestEmailChange', () => {
 		vi.resetAllMocks();
 	});
 
-	test('returns error when not authenticated', async () => {
-		vi.mocked(auth.api.getSession).mockResolvedValueOnce(null as never);
+	describe('authentication', () => {
+		test('returns error when not authenticated', async () => {
+			vi.mocked(auth.api.getSession).mockResolvedValueOnce(null as never);
 
-		const result = await requestEmailChange('new@example.com');
+			const result = await requestEmailChange('new@example.com');
 
-		expect(result).toEqual({ ok: false, error: 'Not authenticated.' });
-	});
-
-	test('returns error for invalid email', async () => {
-		vi.mocked(auth.api.getSession).mockResolvedValueOnce(mockSession as never);
-
-		const result = await requestEmailChange('not-an-email');
-
-		expect(result).toEqual({
-			ok: false,
-			error: 'Please enter a valid email address.',
+			expect(result).toEqual({ ok: false, error: 'Not authenticated.' });
 		});
 	});
 
-	test('returns error when new email equals current email', async () => {
-		vi.mocked(auth.api.getSession).mockResolvedValueOnce(mockSession as never);
+	describe('validation', () => {
+		test('returns error for invalid email', async () => {
+			vi.mocked(auth.api.getSession).mockResolvedValueOnce(
+				mockSession as never,
+			);
 
-		const result = await requestEmailChange('current@example.com');
+			const result = await requestEmailChange('not-an-email');
 
-		expect(result).toEqual({
-			ok: false,
-			error: 'New email must be different from your current email.',
+			expect(result).toEqual({
+				ok: false,
+				error: 'Please enter a valid email address.',
+			});
+		});
+
+		test('returns error when new email equals current email', async () => {
+			vi.mocked(auth.api.getSession).mockResolvedValueOnce(
+				mockSession as never,
+			);
+
+			const result = await requestEmailChange('current@example.com');
+
+			expect(result).toEqual({
+				ok: false,
+				error: 'New email must be different from your current email.',
+			});
+		});
+
+		test('returns error when new email is already taken', async () => {
+			vi.mocked(auth.api.getSession).mockResolvedValueOnce(
+				mockSession as never,
+			);
+			mockDbFindOne.mockResolvedValueOnce({ _id: 'other-user' });
+
+			const result = await requestEmailChange('taken@example.com');
+
+			expect(result).toEqual({
+				ok: false,
+				error: 'An account with that email already exists.',
+			});
 		});
 	});
 
-	test('returns error when new email is already taken', async () => {
-		vi.mocked(auth.api.getSession).mockResolvedValueOnce(mockSession as never);
-		mockFindOne.mockResolvedValueOnce({ _id: 'other-user' });
+	describe('user lookup', () => {
+		test('returns error when user is not found in app database', async () => {
+			vi.mocked(auth.api.getSession).mockResolvedValueOnce(
+				mockSession as never,
+			);
+			mockDbFindOne.mockResolvedValueOnce(null);
+			vi.mocked(User.findOne).mockReturnValueOnce({
+				exec: vi.fn().mockResolvedValue(null),
+			} as never);
 
-		const result = await requestEmailChange('taken@example.com');
+			const result = await requestEmailChange('new@example.com');
 
-		expect(result).toEqual({
-			ok: false,
-			error: 'An account with that email already exists.',
+			expect(result).toEqual({ ok: false, error: 'User not found.' });
 		});
 	});
 
-	test('returns error when user is not found in app database', async () => {
-		vi.mocked(auth.api.getSession).mockResolvedValueOnce(mockSession as never);
-		mockFindOne.mockResolvedValueOnce(null);
-		vi.mocked(User.findOne).mockReturnValueOnce({
-			exec: vi.fn().mockResolvedValue(null),
-		} as never);
+	describe('success', () => {
+		test('returns success with hadPreviousRequest false when no existing pending change', async () => {
+			vi.mocked(auth.api.getSession).mockResolvedValueOnce(
+				mockSession as never,
+			);
+			mockDbFindOne.mockResolvedValueOnce(null);
+			const mockUser = makeMockUser({ pendingEmailChange: null });
+			vi.mocked(User.findOne).mockReturnValueOnce({
+				exec: vi.fn().mockResolvedValue(mockUser),
+			} as never);
 
-		const result = await requestEmailChange('new@example.com');
+			const result = await requestEmailChange('new@example.com');
 
-		expect(result).toEqual({ ok: false, error: 'User not found.' });
-	});
-
-	test('returns success with hadPreviousRequest false when no existing pending change', async () => {
-		vi.mocked(auth.api.getSession).mockResolvedValueOnce(mockSession as never);
-		mockFindOne.mockResolvedValueOnce(null);
-		const mockUser = makeMockUser({ pendingEmailChange: null });
-		vi.mocked(User.findOne).mockReturnValueOnce({
-			exec: vi.fn().mockResolvedValue(mockUser),
-		} as never);
-
-		const result = await requestEmailChange('new@example.com');
-
-		expect(result).toEqual({ ok: true, data: { hadPreviousRequest: false } });
-	});
-
-	test('returns success with hadPreviousRequest true when a pending change existed', async () => {
-		vi.mocked(auth.api.getSession).mockResolvedValueOnce(mockSession as never);
-		mockFindOne.mockResolvedValueOnce(null);
-		const mockUser = makeMockUser({
-			pendingEmailChange: {
-				email: 'old-pending@example.com',
-				token: 'old-token',
-				expiresAt: new Date(),
-			},
+			expect(result).toEqual({ ok: true, data: { hadPreviousRequest: false } });
 		});
-		vi.mocked(User.findOne).mockReturnValueOnce({
-			exec: vi.fn().mockResolvedValue(mockUser),
-		} as never);
 
-		const result = await requestEmailChange('new@example.com');
+		test('returns success with hadPreviousRequest true when a pending change existed', async () => {
+			vi.mocked(auth.api.getSession).mockResolvedValueOnce(
+				mockSession as never,
+			);
+			mockDbFindOne.mockResolvedValueOnce(null);
+			const mockUser = makeMockUser({
+				pendingEmailChange: {
+					email: 'old-pending@example.com',
+					token: 'old-token',
+					expiresAt: new Date(),
+				},
+			});
+			vi.mocked(User.findOne).mockReturnValueOnce({
+				exec: vi.fn().mockResolvedValue(mockUser),
+			} as never);
 
-		expect(result).toEqual({ ok: true, data: { hadPreviousRequest: true } });
+			const result = await requestEmailChange('new@example.com');
+
+			expect(result).toEqual({ ok: true, data: { hadPreviousRequest: true } });
+		});
 	});
 
-	test('saves pending email change with 64-char hex token and 24-hour expiry', async () => {
-		vi.mocked(auth.api.getSession).mockResolvedValueOnce(mockSession as never);
-		mockFindOne.mockResolvedValueOnce(null);
-		const mockUser = makeMockUser();
-		vi.mocked(User.findOne).mockReturnValueOnce({
-			exec: vi.fn().mockResolvedValue(mockUser),
-		} as never);
+	describe('side effects', () => {
+		test('saves pending email change with 64-char hex token and 24-hour expiry', async () => {
+			vi.mocked(auth.api.getSession).mockResolvedValueOnce(
+				mockSession as never,
+			);
+			mockDbFindOne.mockResolvedValueOnce(null);
+			const mockUser = makeMockUser();
+			vi.mocked(User.findOne).mockReturnValueOnce({
+				exec: vi.fn().mockResolvedValue(mockUser),
+			} as never);
 
-		const before = Date.now();
-		await requestEmailChange('new@example.com');
-		const after = Date.now();
+			const before = Date.now();
+			await requestEmailChange('new@example.com');
+			const after = Date.now();
 
-		expect(mockUser.pendingEmailChange).toBeDefined();
-		// biome-ignore lint/style/noNonNullAssertion: asserted defined above
-		expect(mockUser.pendingEmailChange!.email).toBe('new@example.com');
-		// biome-ignore lint/style/noNonNullAssertion: asserted defined above
-		expect(mockUser.pendingEmailChange!.token).toMatch(/^[0-9a-f]{64}$/);
-		// biome-ignore lint/style/noNonNullAssertion: asserted defined above
-		const expiresAt = mockUser.pendingEmailChange!.expiresAt.getTime();
-		expect(expiresAt).toBeGreaterThanOrEqual(before + 24 * 60 * 60 * 1000);
-		expect(expiresAt).toBeLessThanOrEqual(after + 24 * 60 * 60 * 1000);
-		expect(mockUser.save).toHaveBeenCalledOnce();
-	});
+			expect(mockUser.pendingEmailChange).toBeDefined();
+			// biome-ignore lint/style/noNonNullAssertion: asserted defined above
+			expect(mockUser.pendingEmailChange!.email).toBe('new@example.com');
+			// biome-ignore lint/style/noNonNullAssertion: asserted defined above
+			expect(mockUser.pendingEmailChange!.token).toMatch(/^[0-9a-f]{64}$/);
+			// biome-ignore lint/style/noNonNullAssertion: asserted defined above
+			const expiresAt = mockUser.pendingEmailChange!.expiresAt.getTime();
+			expect(expiresAt).toBeGreaterThanOrEqual(before + 24 * 60 * 60 * 1000);
+			expect(expiresAt).toBeLessThanOrEqual(after + 24 * 60 * 60 * 1000);
+			expect(mockUser.save).toHaveBeenCalledOnce();
+		});
 
-	test('sends verification email to the new address with the stored token in the url', async () => {
-		vi.mocked(auth.api.getSession).mockResolvedValueOnce(mockSession as never);
-		mockFindOne.mockResolvedValueOnce(null);
-		const mockUser = makeMockUser();
-		vi.mocked(User.findOne).mockReturnValueOnce({
-			exec: vi.fn().mockResolvedValue(mockUser),
-		} as never);
+		test('sends verification email to the new address with the stored token in the url', async () => {
+			vi.mocked(auth.api.getSession).mockResolvedValueOnce(
+				mockSession as never,
+			);
+			mockDbFindOne.mockResolvedValueOnce(null);
+			const mockUser = makeMockUser();
+			vi.mocked(User.findOne).mockReturnValueOnce({
+				exec: vi.fn().mockResolvedValue(mockUser),
+			} as never);
 
-		await requestEmailChange('new@example.com');
+			await requestEmailChange('new@example.com');
 
-		// biome-ignore lint/style/noNonNullAssertion: set by requestEmailChange
-		const storedToken = mockUser.pendingEmailChange!.token;
-		expect(mockSendEmailChangeEmail).toHaveBeenCalledWith({
-			newEmail: 'new@example.com',
-			url: `https://app.example.com/verify-email-change?token=${storedToken}`,
+			// biome-ignore lint/style/noNonNullAssertion: set by requestEmailChange
+			const storedToken = mockUser.pendingEmailChange!.token;
+			expect(vi.mocked(sendEmailChangeEmail)).toHaveBeenCalledWith({
+				newEmail: 'new@example.com',
+				url: `${env.BETTER_AUTH_URL}/verify-email-change?token=${storedToken}`,
+			});
 		});
 	});
 });

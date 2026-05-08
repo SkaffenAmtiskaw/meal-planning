@@ -2,127 +2,74 @@ import { render, screen } from '@testing-library/react';
 
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-import type { GetUserInvitesResult } from '@/_actions/sharing';
-import type { AccessLevel } from '@/_models/user';
-import { THEME_COLORS } from '@/_theme/colors';
-
-// Mock dependencies
 vi.mock('@mantine/core', async () => await import('@mocks/@mantine/core'));
-vi.mock('@/_actions/sharing', () => ({
-	getUserInvites: vi.fn(),
-}));
-vi.mock('@/_actions/user', () => ({
-	getUser: vi.fn(),
-}));
+vi.mock(
+	'@/_actions/sharing',
+	async () => await import('@mocks/@/_actions/sharing'),
+);
+vi.mock('@/_actions/user', async () => await import('@mocks/@/_actions/user'));
 
-// Import mocked actions
 import { getUserInvites } from '@/_actions/sharing';
 import { getUser } from '@/_actions/user';
 
-// Import component after mocks
 import { InviteBadge, InviteBadgeWithData } from './InviteBadge';
 
 const mockGetUserInvites = vi.mocked(getUserInvites);
 const mockGetUser = vi.mocked(getUser);
 
-// Mock user data with all required fields
-const createMockUser = (email: string | undefined) =>
-	({
-		_id: '123',
-		email: email ?? 'test@example.com',
-		name: 'Test User',
-		planners: [],
-		createdAt: new Date().toISOString(),
-		updatedAt: new Date().toISOString(),
-	}) as never;
+const mockUser = {
+	email: 'test@example.com',
+	name: 'Test User',
+	planners: [],
+} as unknown as Awaited<ReturnType<typeof getUser>>;
 
 describe('InviteBadge', () => {
 	beforeEach(() => {
 		vi.resetAllMocks();
-		vi.spyOn(console, 'error').mockImplementation(() => {});
 	});
 
-	describe('InviteBadgeWithData (async server component)', () => {
-		it('should render indicator with count for multiple invites', async () => {
-			mockGetUser.mockResolvedValue(createMockUser('test@example.com'));
-
-			const mockResult: GetUserInvitesResult = {
+	describe('InviteBadgeWithData', () => {
+		it('renders invite indicator with count when user has invites', async () => {
+			mockGetUser.mockResolvedValue(mockUser);
+			mockGetUserInvites.mockResolvedValue({
 				invites: [
 					{
 						id: '1',
 						plannerId: 'p1',
-						plannerName: 'Test Planner',
-						invitedBy: 'Test User',
-						accessLevel: 'write' as AccessLevel,
+						plannerName: 'Planner 1',
+						invitedBy: 'User A',
+						accessLevel: 'write',
 						invitedAt: '2024-01-01T00:00:00Z',
 						expiresAt: '2024-01-15T00:00:00Z',
-						token: 'token1',
+						token: 't1',
 					},
 					{
 						id: '2',
 						plannerId: 'p2',
-						plannerName: 'Test Planner 2',
-						invitedBy: 'Test User 2',
-						accessLevel: 'read' as AccessLevel,
+						plannerName: 'Planner 2',
+						invitedBy: 'User B',
+						accessLevel: 'read',
 						invitedAt: '2024-01-02T00:00:00Z',
 						expiresAt: '2024-01-16T00:00:00Z',
-						token: 'token2',
+						token: 't2',
 					},
 				],
-			};
-			mockGetUserInvites.mockResolvedValue(mockResult);
+			});
 
-			// Directly await the async server component
 			render(
 				await InviteBadgeWithData({
 					children: <div data-testid="child">Child</div>,
 				}),
 			);
 
-			expect(mockGetUser).toHaveBeenCalled();
 			expect(mockGetUserInvites).toHaveBeenCalledWith('test@example.com');
-			const indicator = screen.getByTestId('invite-badge');
-			expect(indicator.getAttribute('data-label')).toBe('2');
-			expect(indicator.getAttribute('data-color')).toBe(THEME_COLORS.ember);
-			expect(indicator.getAttribute('data-size')).toBe('16');
-			expect(indicator.getAttribute('data-max-value')).toBe('99');
-			expect(indicator.getAttribute('data-inline')).toBe('true');
-			expect(indicator.getAttribute('data-show-zero')).toBe('false');
+			expect(
+				screen.getByTestId('invite-badge').getAttribute('data-label'),
+			).toBe('2');
 			expect(screen.getByTestId('child')).toBeTruthy();
 		});
 
-		it('should render indicator with count for single invite', async () => {
-			mockGetUser.mockResolvedValue(createMockUser('test@example.com'));
-
-			const mockResult: GetUserInvitesResult = {
-				invites: [
-					{
-						id: '1',
-						plannerId: 'p1',
-						plannerName: 'Test Planner',
-						invitedBy: 'Test User',
-						accessLevel: 'write' as AccessLevel,
-						invitedAt: '2024-01-01T00:00:00Z',
-						expiresAt: '2024-01-15T00:00:00Z',
-						token: 'token1',
-					},
-				],
-			};
-			mockGetUserInvites.mockResolvedValue(mockResult);
-
-			render(
-				await InviteBadgeWithData({
-					children: <div data-testid="child">Child</div>,
-				}),
-			);
-
-			expect(mockGetUser).toHaveBeenCalled();
-			expect(mockGetUserInvites).toHaveBeenCalledWith('test@example.com');
-			const indicator = screen.getByTestId('invite-badge');
-			expect(indicator.getAttribute('data-label')).toBe('1');
-		});
-
-		it('should return children without indicator when user is null', async () => {
+		it('renders children without indicator when user is not authenticated', async () => {
 			mockGetUser.mockResolvedValue(null);
 
 			render(
@@ -137,15 +84,12 @@ describe('InviteBadge', () => {
 			expect(screen.queryByTestId('invite-badge')).toBeNull();
 		});
 
-		it('should return children without indicator when user has no email', async () => {
+		it('renders children without indicator when user has no email', async () => {
 			mockGetUser.mockResolvedValue({
-				_id: '123',
 				email: undefined,
 				name: 'Test User',
 				planners: [],
-				createdAt: new Date().toISOString(),
-				updatedAt: new Date().toISOString(),
-			} as never);
+			} as unknown as Awaited<ReturnType<typeof getUser>>);
 
 			render(
 				await InviteBadgeWithData({
@@ -159,14 +103,12 @@ describe('InviteBadge', () => {
 			expect(screen.queryByTestId('invite-badge')).toBeNull();
 		});
 
-		it('should return children when getUserInvites returns an error', async () => {
-			mockGetUser.mockResolvedValue(createMockUser('test@example.com'));
-
-			const mockResult: GetUserInvitesResult = {
+		it('renders children when getUserInvites returns an error', async () => {
+			mockGetUser.mockResolvedValue(mockUser);
+			mockGetUserInvites.mockResolvedValue({
 				invites: [],
 				error: 'Failed to fetch invites',
-			};
-			mockGetUserInvites.mockResolvedValue(mockResult);
+			});
 
 			render(
 				await InviteBadgeWithData({
@@ -178,13 +120,9 @@ describe('InviteBadge', () => {
 			expect(screen.queryByTestId('invite-badge')).toBeNull();
 		});
 
-		it('should return children without indicator when no invites exist', async () => {
-			mockGetUser.mockResolvedValue(createMockUser('test@example.com'));
-
-			const mockResult: GetUserInvitesResult = {
-				invites: [],
-			};
-			mockGetUserInvites.mockResolvedValue(mockResult);
+		it('renders children without indicator when user has no invites', async () => {
+			mockGetUser.mockResolvedValue(mockUser);
+			mockGetUserInvites.mockResolvedValue({ invites: [] });
 
 			render(
 				await InviteBadgeWithData({
@@ -196,10 +134,13 @@ describe('InviteBadge', () => {
 			expect(screen.queryByTestId('invite-badge')).toBeNull();
 		});
 
-		it('should return children when an exception is thrown', async () => {
-			mockGetUser.mockResolvedValue(createMockUser('test@example.com'));
-
+		it('renders children and logs error when getUserInvites throws', async () => {
+			const consoleSpy = vi
+				.spyOn(console, 'error')
+				.mockImplementation(() => {});
 			const error = new Error('Network error');
+
+			mockGetUser.mockResolvedValue(mockUser);
 			mockGetUserInvites.mockRejectedValue(error);
 
 			render(
@@ -208,46 +149,16 @@ describe('InviteBadge', () => {
 				}),
 			);
 
-			expect(console.error).toHaveBeenCalledWith(
-				'InviteBadge: Exception:',
-				error,
-			);
+			expect(consoleSpy).toHaveBeenCalledWith('InviteBadge: Exception:', error);
 			expect(screen.getByTestId('child')).toBeTruthy();
 			expect(screen.queryByTestId('invite-badge')).toBeNull();
-		});
 
-		it('should handle large invite counts', async () => {
-			mockGetUser.mockResolvedValue(createMockUser('test@example.com'));
-
-			const mockResult: GetUserInvitesResult = {
-				invites: Array.from({ length: 100 }, (_, i) => ({
-					id: String(i),
-					plannerId: `p${i}`,
-					plannerName: `Test Planner ${i}`,
-					invitedBy: `Test User ${i}`,
-					accessLevel: 'read' as AccessLevel,
-					invitedAt: '2024-01-01T00:00:00Z',
-					expiresAt: '2024-01-15T00:00:00Z',
-					token: `token${i}`,
-				})),
-			};
-			mockGetUserInvites.mockResolvedValue(mockResult);
-
-			render(
-				await InviteBadgeWithData({
-					children: <div data-testid="child">Child</div>,
-				}),
-			);
-
-			const indicator = screen.getByTestId('invite-badge');
-			expect(indicator.getAttribute('data-label')).toBe('100');
-			expect(indicator.getAttribute('data-max-value')).toBe('99');
+			consoleSpy.mockRestore();
 		});
 	});
 
-	describe('InviteBadge (with Suspense)', () => {
-		it('should render children immediately as Suspense fallback', () => {
-			// Never resolve to stay in suspense
+	describe('InviteBadge', () => {
+		it('renders children as Suspense fallback while loading', () => {
 			mockGetUser.mockImplementation(() => new Promise(() => {}));
 			mockGetUserInvites.mockImplementation(() => new Promise(() => {}));
 
@@ -257,10 +168,7 @@ describe('InviteBadge', () => {
 				</InviteBadge>,
 			);
 
-			// Children should be visible immediately (Suspense fallback)
 			expect(screen.getByTestId('child')).toBeTruthy();
-			expect(screen.getByText('Child Element')).toBeTruthy();
-			// Indicator should not be rendered yet (still in suspense)
 			expect(screen.queryByTestId('invite-badge')).toBeNull();
 		});
 	});

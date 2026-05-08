@@ -1,20 +1,20 @@
-import { afterEach, describe, expect, test, vi } from 'vitest';
+import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import { Planner } from '@/_models/planner';
 
 import { addPlanner } from './addPlanner';
 
-vi.mock('@/_models/planner', () => ({
-	Planner: {
-		create: vi.fn(),
-	},
-}));
+vi.mock(
+	'@/_models/planner',
+	async () => await import('@mocks/@/_models/planner'),
+);
+
 describe('addPlanner', () => {
 	afterEach(() => {
 		vi.resetAllMocks();
 	});
 
-	test('should create and return a new planner with empty arrays and no name', async () => {
+	it('creates and returns a new planner with empty arrays and no name', async () => {
 		const mockPlanner = { calendar: [], saved: [], tags: [] };
 		vi.mocked(Planner.create).mockResolvedValue(mockPlanner as never);
 
@@ -29,7 +29,7 @@ describe('addPlanner', () => {
 		expect(result).toBe(mockPlanner);
 	});
 
-	test('should create a planner with a name when provided', async () => {
+	it('creates a planner with the provided name', async () => {
 		const mockPlanner = {
 			name: "Ursula's Planner",
 			calendar: [],
@@ -49,7 +49,7 @@ describe('addPlanner', () => {
 		expect(result).toBe(mockPlanner);
 	});
 
-	test('should throw when Planner.create fails', async () => {
+	it('throws when Planner.create fails', async () => {
 		vi.mocked(Planner.create).mockRejectedValue(new Error('DB error'));
 
 		await expect(addPlanner()).rejects.toThrow('DB error');

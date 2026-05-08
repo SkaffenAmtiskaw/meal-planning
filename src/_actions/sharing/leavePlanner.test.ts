@@ -30,21 +30,12 @@ describe('leavePlanner', () => {
 		vi.resetAllMocks();
 	});
 
-	it('returns error when user is unauthenticated', async () => {
-		vi.mocked(checkAuth).mockResolvedValueOnce({
-			type: 'unauthenticated',
-		});
-
-		const result = await leavePlanner(plannerId);
-
-		expect(result).toEqual({ ok: false, error: 'Unauthorized' });
-		expect(removePlannerMembership).not.toHaveBeenCalled();
-	});
-
-	it('returns error when user is not a member of the planner', async () => {
-		vi.mocked(checkAuth).mockResolvedValueOnce({
-			type: 'unauthorized',
-		});
+	it.each([
+		{ type: 'unauthenticated' as const },
+		{ type: 'unauthorized' as const },
+		{ type: 'error' as const, error: new Error('Auth check failed') },
+	])('returns unauthorized error when auth result is $type', async (authValue) => {
+		vi.mocked(checkAuth).mockResolvedValueOnce(authValue as never);
 
 		const result = await leavePlanner(plannerId);
 
@@ -117,17 +108,5 @@ describe('leavePlanner', () => {
 		const result = await leavePlanner(plannerId);
 
 		expect(result).toEqual({ ok: false, error: 'Failed to leave planner' });
-	});
-
-	it('returns unauthorized error when checkAuth returns error', async () => {
-		vi.mocked(checkAuth).mockResolvedValueOnce({
-			type: 'error',
-			error: new Error('Auth check failed'),
-		});
-
-		const result = await leavePlanner(plannerId);
-
-		expect(result).toEqual({ ok: false, error: 'Unauthorized' });
-		expect(removePlannerMembership).not.toHaveBeenCalled();
 	});
 });
