@@ -5,7 +5,7 @@ import { zObjectId } from '@/_utils/zObjectId';
 import { zAccessLevel } from '../user/user.types';
 
 export const zPendingInvite = z.object({
-	email: z.string().email(),
+	email: z.email(),
 	planner: zObjectId,
 	invitedBy: zObjectId,
 	accessLevel: zAccessLevel,

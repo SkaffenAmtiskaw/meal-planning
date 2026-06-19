@@ -15,8 +15,8 @@ import { useFormFeedback } from '@/_hooks';
 import type { BookmarkInterface } from '@/_models/types';
 
 const zFormFields = z.object({
-	name: z.string().min(1, 'Name is required'),
-	url: z.url('URL is required'),
+	name: z.string().min(1, { error: 'Name is required' }),
+	url: z.url({ error: 'URL is required' }),
 	notes: z.string().optional(),
 });
 

@@ -4,8 +4,8 @@ import { zObjectId } from '@/_utils/zObjectId';
 
 export const zBookmarkInterface = z.object({
 	_id: zObjectId,
-	name: z.string().min(1, 'Name is required'),
-	url: z.url('URL is required'),
+	name: z.string().min(1, { error: 'Name is required' }),
+	url: z.url({ error: 'URL is required' }),
 	tags: z.array(zObjectId),
 	notes: z.string().optional(),
 });

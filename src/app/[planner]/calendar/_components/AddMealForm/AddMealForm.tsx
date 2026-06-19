@@ -25,8 +25,8 @@ import { useDishes } from './useDishes';
 import type { SerializedDay } from '../../_utils/toScheduleXEvents';
 
 const zFormFields = z.object({
-	date: z.string().min(1, 'Date is required'),
-	mealName: z.string().min(1, 'Meal name is required'),
+	date: z.string().min(1, { error: 'Date is required' }),
+	mealName: z.string().min(1, { error: 'Meal name is required' }),
 	description: z.string().optional(),
 });
 

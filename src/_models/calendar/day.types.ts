@@ -3,7 +3,7 @@ import { z } from 'zod';
 import { zObjectId } from '@/_utils/zObjectId';
 
 export const zDishFormInput = z.object({
-	name: z.string().min(1, 'Dish name is required'),
+	name: z.string().min(1, { error: 'Dish name is required' }),
 	sourceType: z.enum(['none', 'saved', 'text']),
 	savedId: z.string().optional(),
 	sourceText: z.string().optional(),
@@ -13,7 +13,7 @@ export const zDishFormInput = z.object({
 export const zMealFormSchema = z.object({
 	plannerId: z.string(),
 	date: z.iso.date(),
-	mealName: z.string().min(1, 'Meal name is required'),
+	mealName: z.string().min(1, { error: 'Meal name is required' }),
 	description: z.string().optional(),
 	dishes: z.array(zDishFormInput),
 });

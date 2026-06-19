@@ -22,7 +22,7 @@ export const requestEmailChange = async (
 
 	const currentEmail = session.user.email;
 
-	const parsed = z.string().email().safeParse(newEmail);
+	const parsed = z.email().safeParse(newEmail);
 	if (!parsed.success)
 		return { ok: false, error: 'Please enter a valid email address.' };
 

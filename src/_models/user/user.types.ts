@@ -19,7 +19,7 @@ export const zUserInterface = z.object({
 	planners: z.array(zPlannerMembership),
 	pendingEmailChange: z
 		.object({
-			email: z.string().email(),
+			email: z.email(),
 			token: z.string(),
 			expiresAt: z.date(),
 		})
