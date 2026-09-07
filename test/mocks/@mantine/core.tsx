@@ -162,6 +162,12 @@ export const SimpleGrid = vi.fn(
 	),
 );
 
+export const Paper = vi.fn(
+	({ children, 'data-testid': testId }: WithChildren) => (
+		<div data-testid={testId}>{children}</div>
+	),
+);
+
 export const Stack = vi.fn(
 	({
 		children,
@@ -214,12 +220,17 @@ export const Text = vi.fn(
 	({
 		children,
 		'data-testid': testId,
+		c,
 	}: WithChildren & {
 		c?: string;
 		size?: string;
 		fw?: number;
 		span?: boolean;
-	}) => <p data-testid={testId}>{children}</p>,
+	}) => (
+		<p data-testid={testId} data-c={c}>
+			{children}
+		</p>
+	),
 );
 
 export const Title = vi.fn(

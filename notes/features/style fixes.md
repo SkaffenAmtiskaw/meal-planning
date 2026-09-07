@@ -10,3 +10,6 @@
 
 # Google Sign In
 - not using CSS modules properly
+
+# Calendar Header
+- datepicker header buttons aren't aligned with label
