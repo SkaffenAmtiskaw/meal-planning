@@ -1,209 +1,169 @@
-import { useNextCalendarApp } from '@schedule-x/react';
+import { useMediaQuery } from '@mantine/hooks';
 
-import { act, render, screen } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 
-import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
+import { DateTime } from 'luxon';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-import { usePlannerContext } from '@/app/[planner]/_components';
-import { usePlannerSavedItems } from '@/app/[planner]/calendar/_hooks/usePlannerSavedItems';
+import {
+	CalendarHeader,
+	CalendarProvider,
+	ListView,
+	MonthGrid,
+	useCalendarContext,
+	WeekView,
+} from '@/_components/Calendar';
 
 import { CalendarView } from './CalendarView';
 
+import { AddMealButton } from '../AddMealButton/AddMealButton';
 import { MealDetailModal } from '../MealDetailModal/MealDetailModal';
-import { WeekView } from '../WeekView/WeekView';
 
 vi.mock('@mantine/core', async () => await import('@mocks/@mantine/core'));
-
 vi.mock('@mantine/hooks', async () => await import('@mocks/@mantine/hooks'));
 
-vi.mock('@schedule-x/calendar', () => ({
-	createViewList: vi.fn(),
-	createViewMonthAgenda: vi.fn(),
-	createViewMonthGrid: vi.fn(),
-}));
-
-vi.mock('@schedule-x/events-service', () => ({
-	createEventsServicePlugin: vi.fn(() => ({ set: vi.fn() })),
-}));
-
-vi.mock('@schedule-x/react', () => ({
-	useNextCalendarApp: vi.fn(() => ({
-		$app: {
-			calendarState: { setView: vi.fn() },
-			datePickerState: { selectedDate: { value: '2024-01-01' } },
-		},
-	})),
-	ScheduleXCalendar: vi.fn((props) => {
-		const HeaderComponent = props.customComponents?.headerContentRightPrepend;
-		return (
-			<div data-testid="schedule-x-calendar">
-				{HeaderComponent && <HeaderComponent />}
-			</div>
-		);
-	}),
-}));
-
-vi.mock('temporal-polyfill/global', () => ({}));
-
-vi.mock('@/app/[planner]/_components', () => ({
-	usePlannerContext: vi.fn(),
-}));
-
-vi.mock('@/app/[planner]/calendar/_hooks/usePlannerSavedItems', () => ({
-	usePlannerSavedItems: vi.fn(() => []),
-}));
-
-const { useCalendarEventsMock, useViewTypeMock, useWeekNavigationMock } =
-	vi.hoisted(() => ({
-		useCalendarEventsMock: vi.fn(),
-		useViewTypeMock: vi.fn(),
-		useWeekNavigationMock: vi.fn(),
-	}));
-
-vi.mock('../../_hooks/useCalendarEvents', () => ({
-	useCalendarEvents: useCalendarEventsMock,
-}));
-
-vi.mock('../../_hooks/useViewType', () => ({
-	useViewType: useViewTypeMock,
-}));
-
-vi.mock('../../_hooks/useWeekNavigation', () => ({
-	useWeekNavigation: useWeekNavigationMock,
-}));
-
-vi.mock('../../_hooks/useScheduleXSync', () => ({
-	useScheduleXSync: vi.fn(),
-}));
-
-vi.mock('../CalendarHeader/CalendarHeader', () => ({
-	CalendarHeader: vi.fn(() => <div data-testid="calendar-header" />),
-}));
-
-vi.mock('../MonthGridEvent/MonthGridEvent', () => ({
-	MonthGridEvent: vi.fn(() => null),
-}));
-
-vi.mock('../WeekView/WeekView', () => ({
+vi.mock('@/_components/Calendar', () => ({
+	CalendarProvider: vi.fn(({ children }) => (
+		<div data-testid="calendar-provider">{children}</div>
+	)),
+	CalendarHeader: vi.fn(({ rightSection }) => (
+		<div data-testid="calendar-header">{rightSection}</div>
+	)),
+	MonthGrid: vi.fn(() => <div data-testid="month-grid" />),
 	WeekView: vi.fn(() => <div data-testid="week-view" />),
+	ListView: vi.fn(() => <div data-testid="list-view" />),
+	useCalendarContext: vi.fn(() => ({
+		selectedDate: DateTime.now(),
+		viewType: 'month',
+		setSelectedDate: vi.fn(),
+		setViewType: vi.fn(),
+		goToToday: vi.fn(),
+		goToPrevious: vi.fn(),
+		goToNext: vi.fn(),
+	})),
 }));
 
-vi.mock('../WeekViewHeader/WeekViewHeader', () => ({
-	WeekViewHeader: vi.fn(() => <div data-testid="week-view-header" />),
+vi.mock('../AddMealButton/AddMealButton', () => ({
+	AddMealButton: vi.fn(() => <div data-testid="add-meal-button" />),
 }));
 
 vi.mock('../MealDetailModal/MealDetailModal', () => ({
-	MealDetailModal: vi.fn(() => null),
+	MealDetailModal: vi.fn(() => <div data-testid="meal-detail-modal" />),
 }));
 
-const usePlannerContextMock = vi.mocked(usePlannerContext);
-const usePlannerSavedItemsMock = vi.mocked(usePlannerSavedItems);
-const mockHandleMealAdded = vi.fn();
-const mockSetViewType = vi.fn();
-const mockWeekStart = { _tag: 'week-start' };
-const mockHandlePrevWeek = vi.fn();
-const mockHandleNextWeek = vi.fn();
-const mockHandleToday = vi.fn();
+const mockUseCalendarContext = vi.mocked(useCalendarContext);
+const mockUseMediaQuery = vi.mocked(useMediaQuery);
 
 const defaultProps = { plannerId: 'planner-1' };
 
+const defaultCalendarContext: ReturnType<typeof useCalendarContext> = {
+	selectedDate: DateTime.now(),
+	viewType: 'month',
+	setSelectedDate: vi.fn(),
+	setViewType: vi.fn(),
+	goToToday: vi.fn(),
+	goToPrevious: vi.fn(),
+	goToNext: vi.fn(),
+};
+
 describe('CalendarView', () => {
 	beforeEach(() => {
-		usePlannerContextMock.mockReturnValue({
-			calendar: [],
-			saved: [],
-			tags: [],
-			accessLevel: 'write',
-		} as never);
-		usePlannerSavedItemsMock.mockReturnValue([]);
-		useCalendarEventsMock.mockReturnValue({
-			eventsService: { set: vi.fn() },
-			initialEvents: [],
-			handleMealAdded: mockHandleMealAdded,
-		});
-		useViewTypeMock.mockReturnValue({
-			viewType: 'month',
-			setViewType: mockSetViewType,
-		});
-		useWeekNavigationMock.mockReturnValue({
-			currentWeekStart: mockWeekStart,
-			handlePrevWeek: mockHandlePrevWeek,
-			handleNextWeek: mockHandleNextWeek,
-			handleToday: mockHandleToday,
-		});
-	});
-
-	afterEach(() => {
 		vi.resetAllMocks();
+		mockUseCalendarContext.mockReturnValue(defaultCalendarContext);
+		mockUseMediaQuery.mockReturnValue(false);
 	});
 
-	test('renders ScheduleXCalendar when viewType is month', () => {
+	it('renders CalendarHeader and MonthGrid by default', () => {
 		render(<CalendarView {...defaultProps} />);
-		expect(screen.getByTestId('schedule-x-calendar')).toBeDefined();
+
+		expect(screen.getByTestId('calendar-provider')).toBeDefined();
+		expect(screen.getByTestId('calendar-header')).toBeDefined();
+		expect(screen.getByTestId('month-grid')).toBeDefined();
+		expect(screen.queryByTestId('week-view')).toBeNull();
+		expect(screen.queryByTestId('list-view')).toBeNull();
+	});
+
+	it('renders WeekView when viewType is week', () => {
+		mockUseCalendarContext.mockReturnValue({
+			...defaultCalendarContext,
+			viewType: 'week',
+		});
+		render(<CalendarView {...defaultProps} />);
+
+		expect(screen.getByTestId('week-view')).toBeDefined();
+		expect(screen.queryByTestId('month-grid')).toBeNull();
+		expect(screen.queryByTestId('list-view')).toBeNull();
+	});
+
+	it('renders ListView when viewType is list', () => {
+		mockUseCalendarContext.mockReturnValue({
+			...defaultCalendarContext,
+			viewType: 'list',
+		});
+		render(<CalendarView {...defaultProps} />);
+
+		expect(screen.getByTestId('list-view')).toBeDefined();
+		expect(screen.queryByTestId('month-grid')).toBeNull();
 		expect(screen.queryByTestId('week-view')).toBeNull();
 	});
 
-	test('renders WeekViewHeader and WeekView when viewType is week', () => {
-		useViewTypeMock.mockReturnValue({
-			viewType: 'week',
-			setViewType: mockSetViewType,
-		});
+	it('passes mobile views to CalendarHeader when isMobile is true', () => {
+		mockUseMediaQuery.mockReturnValue(true);
 		render(<CalendarView {...defaultProps} />);
-		expect(screen.getByTestId('week-view')).toBeDefined();
-		expect(screen.getByTestId('week-view-header')).toBeDefined();
-		expect(screen.queryByTestId('schedule-x-calendar')).toBeNull();
+
+		expect(vi.mocked(CalendarHeader)).toHaveBeenCalledWith(
+			expect.objectContaining({ availableViews: ['month', 'list'] }),
+			undefined,
+		);
 	});
 
-	test('renders CalendarHeader inside the schedule-x header slot', () => {
+	it('passes desktop views to CalendarHeader when isMobile is false', () => {
 		render(<CalendarView {...defaultProps} />);
-		expect(screen.getByTestId('calendar-header')).toBeDefined();
+
+		expect(vi.mocked(CalendarHeader)).toHaveBeenCalledWith(
+			expect.objectContaining({ availableViews: ['month', 'week', 'list'] }),
+			undefined,
+		);
 	});
 
-	test('renders MealDetailModal with null event and plannerId initially', () => {
+	it('renders AddMealButton inside CalendarHeader rightSection', () => {
 		render(<CalendarView {...defaultProps} />);
+
+		expect(screen.getByTestId('add-meal-button')).toBeDefined();
+		expect(vi.mocked(AddMealButton)).toHaveBeenCalledWith(
+			expect.objectContaining({
+				plannerId: 'planner-1',
+				onMealAdded: expect.any(Function),
+			}),
+			undefined,
+		);
+	});
+
+	it('passes a no-op onMealAdded handler to AddMealButton', () => {
+		render(<CalendarView {...defaultProps} />);
+
+		const { onMealAdded } = vi.mocked(AddMealButton).mock.calls[0][0];
+		expect(() => onMealAdded?.([])).not.toThrow();
+	});
+
+	it('renders MealDetailModal with null event initially', () => {
+		render(<CalendarView {...defaultProps} />);
+
+		expect(screen.getByTestId('meal-detail-modal')).toBeDefined();
 		expect(vi.mocked(MealDetailModal)).toHaveBeenCalledWith(
 			expect.objectContaining({ event: null, plannerId: 'planner-1' }),
 			undefined,
 		);
 	});
 
-	test('opens MealDetailModal when an event is clicked in month view', () => {
+	it('clears clickedEvent when MealDetailModal onClose is called', () => {
 		render(<CalendarView {...defaultProps} />);
-		const { onEventClick } =
-			vi.mocked(useNextCalendarApp).mock.calls[0][0].callbacks ?? {};
-		const mockEvent = { id: 'meal-1', title: 'Breakfast', dishes: [] };
-		act(() => onEventClick?.(mockEvent as never, new MouseEvent('click')));
-		expect(vi.mocked(MealDetailModal)).toHaveBeenLastCalledWith(
-			expect.objectContaining({ event: mockEvent }),
-			undefined,
-		);
-	});
 
-	test('closes MealDetailModal when onClose is called', () => {
-		render(<CalendarView {...defaultProps} />);
-		const { onEventClick } =
-			vi.mocked(useNextCalendarApp).mock.calls[0][0].callbacks ?? {};
-		const mockEvent = { id: 'meal-1', title: 'Breakfast', dishes: [] };
-		act(() => onEventClick?.(mockEvent as never, new MouseEvent('click')));
-		const { onClose } = vi.mocked(MealDetailModal).mock.lastCall?.[0] || {};
-		act(() => onClose?.());
+		const { onClose } = vi.mocked(MealDetailModal).mock.calls[0][0];
+		onClose?.();
+
 		expect(vi.mocked(MealDetailModal)).toHaveBeenLastCalledWith(
 			expect.objectContaining({ event: null }),
-			undefined,
-		);
-	});
-
-	test('opens MealDetailModal when a meal is clicked in week view', () => {
-		useViewTypeMock.mockReturnValue({
-			viewType: 'week',
-			setViewType: mockSetViewType,
-		});
-		render(<CalendarView {...defaultProps} />);
-		const onMealClick = vi.mocked(WeekView).mock.calls[0][0].onMealClick;
-		const mockEvent = { id: 'meal-1', title: 'Breakfast', dishes: [] };
-		act(() => onMealClick?.(mockEvent as never));
-		expect(vi.mocked(MealDetailModal)).toHaveBeenLastCalledWith(
-			expect.objectContaining({ event: mockEvent }),
 			undefined,
 		);
 	});

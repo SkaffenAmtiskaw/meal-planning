@@ -365,16 +365,19 @@ export const ActionIcon = vi.fn(
 		disabled,
 		href,
 		'data-testid': testId,
+		'aria-label': ariaLabel,
+		...props
 	}: {
 		children?: React.ReactNode;
 		onClick?: () => void;
 		disabled?: boolean;
 		href?: string;
 		'data-testid'?: string;
+		'aria-label'?: string;
 		[key: string]: unknown;
 	}) =>
 		href ? (
-			<a href={href} data-testid={testId}>
+			<a href={href} data-testid={testId} aria-label={ariaLabel} {...props}>
 				{children}
 			</a>
 		) : (
@@ -383,6 +386,8 @@ export const ActionIcon = vi.fn(
 				onClick={onClick}
 				disabled={disabled}
 				data-testid={testId}
+				aria-label={ariaLabel}
+				{...props}
 			>
 				{children}
 			</button>

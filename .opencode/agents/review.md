@@ -1,7 +1,7 @@
 ---
 description: Implements feature plans
 color: '#540d6e'
-mode: subagent
+mode: primary
 model: opencode-go/kimi-k2.6
 temperature: 0.3
 permission:
