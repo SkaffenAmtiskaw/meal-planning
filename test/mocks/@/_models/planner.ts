@@ -14,7 +14,7 @@ import { vi } from 'vitest';
 
 const mockExec = vi.fn();
 
-export const Planner: any = {
+export const Planner = {
 	findById: vi.fn(),
 	find: vi.fn(),
 	create: vi.fn(),
@@ -26,7 +26,7 @@ export const Planner: any = {
 
 // ─── Zod Schemas ──────────────────────────────────────────────────────────────
 
-export const zPlannerInterface: any = {
+export const zPlannerInterface = {
 	safeParse: vi.fn(() => ({ success: true, data: {} })),
 	parse: vi.fn(() => ({})),
 };

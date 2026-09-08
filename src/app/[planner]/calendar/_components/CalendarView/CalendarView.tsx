@@ -10,28 +10,39 @@ import {
 	CalendarProvider,
 	WeekView as CalendarWeekView,
 	ListView,
-	MonthGrid,
 	useCalendarContext,
 } from '@/_components/Calendar';
 
-import type { MealEvent } from '../../_utils/toScheduleXEvents';
+import type { CalendarEvent } from '../../_utils/toCalendarEvents';
+import type { SavedItem, SerializedDay } from '../../_utils/toScheduleXEvents';
 import { AddMealButton } from '../AddMealButton/AddMealButton';
+import { MealCalendar } from '../MealCalendar/MealCalendar';
 import { MealDetailModal } from '../MealDetailModal/MealDetailModal';
 
 type Props = {
 	plannerId: string;
+	calendar: SerializedDay[];
+	savedItems: SavedItem[];
 };
 
 type CalendarViewContentProps = {
 	plannerId: string;
-	clickedEvent: MealEvent | null;
+	savedItems: SavedItem[];
+	calendarData: SerializedDay[];
+	clickedEvent: CalendarEvent | null;
 	onClose: () => void;
+	onMealAdded: (calendar: SerializedDay[]) => void;
+	onEventClick: (event: CalendarEvent) => void;
 };
 
 function CalendarViewContent({
 	plannerId,
+	savedItems,
+	calendarData,
 	clickedEvent,
 	onClose,
+	onMealAdded,
+	onEventClick,
 }: CalendarViewContentProps): React.ReactElement {
 	const { viewType } = useCalendarContext();
 	const isMobile = useMediaQuery('(max-width: 62em)');
@@ -45,28 +56,43 @@ function CalendarViewContent({
 			/>
 			<CalendarHeader
 				rightSection={
-					<AddMealButton plannerId={plannerId} onMealAdded={() => {}} />
+					<AddMealButton plannerId={plannerId} onMealAdded={onMealAdded} />
 				}
 				availableViews={
 					isMobile ? ['month', 'list'] : ['month', 'week', 'list']
 				}
 			/>
-			{viewType === 'month' && <MonthGrid />}
+			{viewType === 'month' && (
+				<MealCalendar
+					calendar={calendarData}
+					savedItems={savedItems}
+					onEventClick={onEventClick}
+				/>
+			)}
 			{viewType === 'week' && <CalendarWeekView />}
 			{viewType === 'list' && <ListView />}
 		</>
 	);
 }
 
-export function CalendarView({ plannerId }: Props): React.ReactElement {
-	const [clickedEvent, setClickedEvent] = useState<MealEvent | null>(null);
+export function CalendarView({
+	plannerId,
+	calendar,
+	savedItems,
+}: Props): React.ReactElement {
+	const [clickedEvent, setClickedEvent] = useState<CalendarEvent | null>(null);
+	const [calendarData, setCalendarData] = useState<SerializedDay[]>(calendar);
 
 	return (
 		<CalendarProvider>
 			<CalendarViewContent
 				plannerId={plannerId}
+				savedItems={savedItems}
+				calendarData={calendarData}
 				clickedEvent={clickedEvent}
 				onClose={() => setClickedEvent(null)}
+				onMealAdded={setCalendarData}
+				onEventClick={setClickedEvent}
 			/>
 		</CalendarProvider>
 	);

@@ -12,7 +12,7 @@ import { vi } from 'vitest';
 
 // ─── Mongoose Model ───────────────────────────────────────────────────────────
 
-export const PendingInvite: any = {
+export const PendingInvite = {
 	findOne: vi.fn(),
 	create: vi.fn(),
 	deleteOne: vi.fn(),
@@ -20,7 +20,7 @@ export const PendingInvite: any = {
 
 // ─── Zod Schemas ──────────────────────────────────────────────────────────────
 
-export const zPendingInvite: any = {
+export const zPendingInvite = {
 	safeParse: vi.fn(() => ({ success: true, data: {} })),
 	parse: vi.fn(() => ({})),
 };

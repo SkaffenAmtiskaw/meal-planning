@@ -32,19 +32,19 @@ const makePlanner = () => ({
 	calendar: [],
 });
 
-const callAddMeal = (data: any) => {
-	vi.mocked(zMealFormSchema.parse as any).mockReturnValue(data);
+const callAddMeal = (data: unknown) => {
+	vi.mocked(zMealFormSchema.parse).mockReturnValue(data as never);
 	return addMeal(data);
 };
 
 describe('addMeal', () => {
 	beforeEach(() => {
 		vi.resetAllMocks();
-		vi.mocked(zMealFormSchema.parse as any).mockReturnValue(validData);
+		vi.mocked(zMealFormSchema.parse).mockReturnValue(validData);
 		vi.mocked(Planner.findById).mockResolvedValue(makePlanner());
-		vi.mocked(Planner.collection.updateOne as any).mockResolvedValue({
+		vi.mocked(Planner.collection.updateOne).mockResolvedValue({
 			matchedCount: 1,
-		});
+		} as never);
 	});
 
 	describe('validation', () => {
@@ -106,9 +106,9 @@ describe('addMeal', () => {
 			});
 
 			it('adds new day when date is not in calendar', async () => {
-				vi.mocked(Planner.collection.updateOne as any).mockResolvedValueOnce({
+				vi.mocked(Planner.collection.updateOne).mockResolvedValueOnce({
 					matchedCount: 0,
-				});
+				} as never);
 
 				await addMeal(validData);
 

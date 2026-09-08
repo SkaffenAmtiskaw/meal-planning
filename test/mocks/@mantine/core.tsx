@@ -163,8 +163,10 @@ export const SimpleGrid = vi.fn(
 );
 
 export const Paper = vi.fn(
-	({ children, 'data-testid': testId }: WithChildren) => (
-		<div data-testid={testId}>{children}</div>
+	({ children, 'data-testid': testId, ...props }: WithChildren) => (
+		<div data-testid={testId} {...props}>
+			{children}
+		</div>
 	),
 );
 

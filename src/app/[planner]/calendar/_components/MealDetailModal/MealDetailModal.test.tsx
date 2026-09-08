@@ -8,8 +8,6 @@ vi.mock('@mantine/core', async () => await import('@mocks/@mantine/core'));
 
 const baseEvent = {
 	id: 'meal-1',
-	start: {} as Temporal.PlainDate,
-	end: {} as Temporal.PlainDate,
 	title: 'Breakfast',
 	dishes: [],
 };

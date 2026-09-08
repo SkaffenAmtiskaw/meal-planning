@@ -14,7 +14,7 @@ import { vi } from 'vitest';
 
 const mockExec = vi.fn();
 
-export const User: any = {
+export const User = {
 	findOne: vi.fn(() => ({ exec: mockExec })),
 	findById: vi.fn(),
 	findByIdAndUpdate: vi.fn(),
@@ -33,17 +33,17 @@ export const userSchema = {};
 
 // ─── Zod Schemas ──────────────────────────────────────────────────────────────
 
-export const zUserInterface: any = {
+export const zUserInterface = {
 	safeParse: vi.fn(() => ({ success: true, data: {} })),
 	parse: vi.fn(() => ({})),
 };
 
-export const zPlannerMembership: any = {
+export const zPlannerMembership = {
 	safeParse: vi.fn(() => ({ success: true, data: {} })),
 	parse: vi.fn(() => ({})),
 };
 
-export const zAccessLevel: any = {
+export const zAccessLevel = {
 	safeParse: vi.fn(() => ({ success: true, data: 'owner' })),
 	parse: vi.fn(() => 'owner'),
 };

@@ -2,10 +2,16 @@ import Link from 'next/link';
 
 import { Modal, Stack, Text } from '@mantine/core';
 
-import type { MealEvent, SerializedDish } from '../../_utils/toScheduleXEvents';
+import type { SerializedDish } from '../../_utils/toScheduleXEvents';
+
+type MealDetail = {
+	title: string;
+	description?: string;
+	dishes: SerializedDish[];
+};
 
 type Props = {
-	event: MealEvent | null;
+	event: MealDetail | null;
 	plannerId: string;
 	onClose: () => void;
 };

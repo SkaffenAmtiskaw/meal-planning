@@ -4,6 +4,7 @@ import { DateTime } from 'luxon';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { MonthGrid } from './MonthGrid';
+import type { MonthGridEvent } from './MonthGrid';
 
 import { useCalendarContext } from '../CalendarContext';
 import { CalendarProvider } from '../CalendarProvider';
@@ -90,7 +91,7 @@ describe('MonthGrid', () => {
 		const dayText = screen.getByText('15');
 		const badge = dayText.closest('[data-testid="badge"]');
 		expect(badge).not.toBeNull();
-		expect(badge!.getAttribute('data-color')).toBe('ember');
+		expect(badge?.getAttribute('data-color')).toBe('ember');
 	});
 
 	it('dims overflow days from adjacent months', () => {
@@ -162,5 +163,117 @@ describe('MonthGrid', () => {
 		dayCells = screen.getAllByTestId('day-cell');
 		expect(dayCells[0].textContent).toBe('1');
 		expect(getMonthGridDates).toHaveBeenCalledTimes(2);
+	});
+
+	it('renders events in the correct day cell', () => {
+		const initialDate = DateTime.local(2024, 3, 15);
+		vi.mocked(getMonthGridDates).mockReturnValue([
+			DateTime.local(2024, 3, 14),
+			DateTime.local(2024, 3, 15),
+			DateTime.local(2024, 3, 16),
+		]);
+
+		const events: MonthGridEvent[] = [
+			{ id: '1', date: '2024-03-15', title: 'Event A' },
+		];
+
+		const renderEvent = vi.fn((event: MonthGridEvent) => (
+			<span key={event.id}>{event.title} custom</span>
+		));
+
+		render(
+			<CalendarProvider initialDate={initialDate}>
+				<MonthGrid events={events} renderEvent={renderEvent} />
+			</CalendarProvider>,
+		);
+
+		expect(renderEvent).toHaveBeenCalledWith(events[0]);
+
+		const dayCells = screen.getAllByTestId('day-cell');
+		expect(dayCells[1].textContent).toContain('Event A custom');
+		expect(dayCells[0].textContent).not.toContain('Event A custom');
+		expect(dayCells[2].textContent).not.toContain('Event A custom');
+	});
+
+	it('limits visible events to 2 and shows +N more', () => {
+		const initialDate = DateTime.local(2024, 3, 15);
+		vi.mocked(getMonthGridDates).mockReturnValue([DateTime.local(2024, 3, 15)]);
+
+		const events: MonthGridEvent[] = [
+			{ id: '1', date: '2024-03-15', title: 'Event A' },
+			{ id: '2', date: '2024-03-15', title: 'Event B' },
+			{ id: '3', date: '2024-03-15', title: 'Event C' },
+		];
+
+		render(
+			<CalendarProvider initialDate={initialDate}>
+				<MonthGrid events={events} />
+			</CalendarProvider>,
+		);
+
+		const dayCells = screen.getAllByTestId('day-cell');
+		expect(dayCells[0].textContent).toContain('Event A');
+		expect(dayCells[0].textContent).toContain('Event B');
+		expect(dayCells[0].textContent).not.toContain('Event C');
+		expect(dayCells[0].textContent).toContain('+1 more');
+	});
+
+	it('does not show +N more when events are 2 or fewer', () => {
+		const initialDate = DateTime.local(2024, 3, 15);
+		vi.mocked(getMonthGridDates).mockReturnValue([DateTime.local(2024, 3, 15)]);
+
+		const events: MonthGridEvent[] = [
+			{ id: '1', date: '2024-03-15', title: 'Event A' },
+			{ id: '2', date: '2024-03-15', title: 'Event B' },
+		];
+
+		render(
+			<CalendarProvider initialDate={initialDate}>
+				<MonthGrid events={events} />
+			</CalendarProvider>,
+		);
+
+		const dayCells = screen.getAllByTestId('day-cell');
+		expect(dayCells[0].textContent).toContain('Event A');
+		expect(dayCells[0].textContent).toContain('Event B');
+		expect(dayCells[0].textContent).not.toContain('more');
+	});
+
+	it('adds aria-label with event count to day cells with events', () => {
+		const initialDate = DateTime.local(2024, 3, 15);
+		vi.mocked(getMonthGridDates).mockReturnValue([
+			DateTime.local(2024, 3, 14),
+			DateTime.local(2024, 3, 15),
+		]);
+
+		const events: MonthGridEvent[] = [
+			{ id: '1', date: '2024-03-15', title: 'Event A' },
+			{ id: '2', date: '2024-03-15', title: 'Event B' },
+		];
+
+		render(
+			<CalendarProvider initialDate={initialDate}>
+				<MonthGrid events={events} />
+			</CalendarProvider>,
+		);
+
+		const dayCells = screen.getAllByTestId('day-cell');
+		expect(dayCells[0].getAttribute('aria-label')).toBeNull();
+		expect(dayCells[1].getAttribute('aria-label')).toBe('March 15, 2 events');
+	});
+
+	it('does not break when events prop is undefined', () => {
+		const initialDate = DateTime.local(2024, 3, 15);
+		vi.mocked(getMonthGridDates).mockReturnValue([DateTime.local(2024, 3, 15)]);
+
+		render(
+			<CalendarProvider initialDate={initialDate}>
+				<MonthGrid />
+			</CalendarProvider>,
+		);
+
+		const dayCells = screen.getAllByTestId('day-cell');
+		expect(dayCells.length).toBe(1);
+		expect(dayCells[0].textContent).toBe('15');
 	});
 });

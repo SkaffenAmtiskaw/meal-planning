@@ -34,11 +34,11 @@ const makeMockUser = (overrides = {}) => ({
 });
 
 const setupValidUser = () => {
-	vi.mocked(User.findOne as any).mockReturnValueOnce({
+	vi.mocked(User.findOne).mockReturnValueOnce({
 		exec: vi.fn().mockResolvedValue(makeMockUser()),
-	});
+	} as never);
 	mockUpdateOne.mockResolvedValueOnce({});
-	vi.mocked(User.updateOne as any).mockResolvedValueOnce({});
+	vi.mocked(User.updateOne).mockResolvedValueOnce({} as never);
 };
 
 describe('verifyEmailChange', () => {
@@ -48,9 +48,9 @@ describe('verifyEmailChange', () => {
 
 	describe('validation', () => {
 		test('returns an invalid link error when no user has the given token', async () => {
-			vi.mocked(User.findOne as any).mockReturnValueOnce({
+			vi.mocked(User.findOne).mockReturnValueOnce({
 				exec: vi.fn().mockResolvedValue(null),
-			});
+			} as never);
 
 			const result = await verifyEmailChange('bad-token');
 
@@ -61,11 +61,11 @@ describe('verifyEmailChange', () => {
 		});
 
 		test('returns an invalid link error when the user has no pending email change', async () => {
-			vi.mocked(User.findOne as any).mockReturnValueOnce({
+			vi.mocked(User.findOne).mockReturnValueOnce({
 				exec: vi
 					.fn()
 					.mockResolvedValue(makeMockUser({ pendingEmailChange: null })),
-			});
+			} as never);
 
 			const result = await verifyEmailChange('valid-token');
 
@@ -76,7 +76,7 @@ describe('verifyEmailChange', () => {
 		});
 
 		test('returns an invalid link error when the token has expired', async () => {
-			vi.mocked(User.findOne as any).mockReturnValueOnce({
+			vi.mocked(User.findOne).mockReturnValueOnce({
 				exec: vi.fn().mockResolvedValue(
 					makeMockUser({
 						pendingEmailChange: {
@@ -86,7 +86,7 @@ describe('verifyEmailChange', () => {
 						},
 					}),
 				),
-			});
+			} as never);
 
 			const result = await verifyEmailChange('expired-token');
 

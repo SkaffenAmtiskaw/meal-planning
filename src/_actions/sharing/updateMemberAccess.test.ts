@@ -120,7 +120,7 @@ describe('updateMemberAccess', () => {
 	describe('when target user is invalid', () => {
 		it('returns error when target user is not found', async () => {
 			vi.mocked(checkAuth).mockResolvedValue(mockAuthorizedUser('owner'));
-			vi.mocked(User.findOne as any).mockResolvedValue(null);
+			vi.mocked(User.findOne).mockResolvedValue(null);
 
 			const result = await updateMemberAccess(
 				plannerId,
@@ -134,7 +134,7 @@ describe('updateMemberAccess', () => {
 
 		it('prevents changing non-member access', async () => {
 			vi.mocked(checkAuth).mockResolvedValue(mockAuthorizedUser('owner'));
-			vi.mocked(User.findOne as any).mockResolvedValue(
+			vi.mocked(User.findOne).mockResolvedValue(
 				mockTargetUser('admin', 'other-planner-id'),
 			);
 
@@ -155,7 +155,7 @@ describe('updateMemberAccess', () => {
 	describe('when target access level cannot be changed', () => {
 		it('prevents changing owner access', async () => {
 			vi.mocked(checkAuth).mockResolvedValue(mockAuthorizedUser('owner'));
-			vi.mocked(User.findOne as any).mockResolvedValue(mockTargetUser('owner'));
+			vi.mocked(User.findOne).mockResolvedValue(mockTargetUser('owner'));
 
 			const result = await updateMemberAccess(
 				plannerId,
@@ -172,7 +172,7 @@ describe('updateMemberAccess', () => {
 
 		it('prevents admin from changing other admin access', async () => {
 			vi.mocked(checkAuth).mockResolvedValue(mockAuthorizedUser('admin'));
-			vi.mocked(User.findOne as any).mockResolvedValue(mockTargetUser('admin'));
+			vi.mocked(User.findOne).mockResolvedValue(mockTargetUser('admin'));
 
 			const result = await updateMemberAccess(
 				plannerId,
@@ -189,7 +189,7 @@ describe('updateMemberAccess', () => {
 
 		it('prevents admin from changing owner access', async () => {
 			vi.mocked(checkAuth).mockResolvedValue(mockAuthorizedUser('admin'));
-			vi.mocked(User.findOne as any).mockResolvedValue(mockTargetUser('owner'));
+			vi.mocked(User.findOne).mockResolvedValue(mockTargetUser('owner'));
 
 			const result = await updateMemberAccess(
 				plannerId,
@@ -208,7 +208,7 @@ describe('updateMemberAccess', () => {
 	describe('when caller has sufficient permissions', () => {
 		it('allows owner to change admin access to write', async () => {
 			vi.mocked(checkAuth).mockResolvedValue(mockAuthorizedUser('owner'));
-			vi.mocked(User.findOne as any).mockResolvedValue(mockTargetUser('admin'));
+			vi.mocked(User.findOne).mockResolvedValue(mockTargetUser('admin'));
 
 			const result = await updateMemberAccess(
 				plannerId,
@@ -225,7 +225,7 @@ describe('updateMemberAccess', () => {
 
 		it('allows owner to change write access to admin', async () => {
 			vi.mocked(checkAuth).mockResolvedValue(mockAuthorizedUser('owner'));
-			vi.mocked(User.findOne as any).mockResolvedValue(mockTargetUser('write'));
+			vi.mocked(User.findOne).mockResolvedValue(mockTargetUser('write'));
 
 			const result = await updateMemberAccess(
 				plannerId,
@@ -242,7 +242,7 @@ describe('updateMemberAccess', () => {
 
 		it('allows admin to change write access to read', async () => {
 			vi.mocked(checkAuth).mockResolvedValue(mockAuthorizedUser('admin'));
-			vi.mocked(User.findOne as any).mockResolvedValue(mockTargetUser('write'));
+			vi.mocked(User.findOne).mockResolvedValue(mockTargetUser('write'));
 
 			const result = await updateMemberAccess(
 				plannerId,
@@ -259,7 +259,7 @@ describe('updateMemberAccess', () => {
 
 		it('allows admin to change read access to write', async () => {
 			vi.mocked(checkAuth).mockResolvedValue(mockAuthorizedUser('admin'));
-			vi.mocked(User.findOne as any).mockResolvedValue(mockTargetUser('read'));
+			vi.mocked(User.findOne).mockResolvedValue(mockTargetUser('read'));
 
 			const result = await updateMemberAccess(
 				plannerId,

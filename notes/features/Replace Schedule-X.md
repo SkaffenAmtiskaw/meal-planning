@@ -109,6 +109,7 @@ This consistency helps users quickly identify meal types visually across the cal
 ---
 
 ## Step 4: Create Month Grid Shell (No Events)
+**Status**: ✅ Complete
 
 **What we're doing:** Build the basic month grid layout showing days of the month, without any events yet.
 
@@ -126,6 +127,7 @@ This consistency helps users quickly identify meal types visually across the cal
 ---
 
 ## Step 5: Display Events in Month Grid
+**Status**: ✅ Complete
 
 **What we're doing:** Show meal events in the month grid cells with correct tag colors.
 

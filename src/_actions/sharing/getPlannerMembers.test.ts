@@ -23,7 +23,7 @@ describe('getPlannerMembers', () => {
 	const mockFindUsers = (users: unknown[]) =>
 		vi.mocked(User.find).mockReturnValue({
 			lean: vi.fn().mockResolvedValue(users),
-		} as any);
+		} as never);
 
 	beforeEach(() => {
 		vi.resetAllMocks();

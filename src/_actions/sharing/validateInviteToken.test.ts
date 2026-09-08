@@ -21,7 +21,7 @@ describe('validateInviteToken', () => {
 
 	describe('when the invite does not exist', () => {
 		it('returns invalid for a non-existent token', async () => {
-			vi.mocked(PendingInvite.findOne as any).mockResolvedValue(null);
+			vi.mocked(PendingInvite.findOne).mockResolvedValue(null);
 
 			const result = await validateInviteToken('non-existent-token');
 
@@ -33,7 +33,7 @@ describe('validateInviteToken', () => {
 		});
 
 		it('returns invalid for an empty token', async () => {
-			vi.mocked(PendingInvite.findOne as any).mockResolvedValue(null);
+			vi.mocked(PendingInvite.findOne).mockResolvedValue(null);
 
 			const result = await validateInviteToken('');
 
@@ -43,9 +43,7 @@ describe('validateInviteToken', () => {
 		});
 
 		it('returns invalid when the database query fails', async () => {
-			vi.mocked(PendingInvite.findOne as any).mockRejectedValue(
-				new Error('DB Error'),
-			);
+			vi.mocked(PendingInvite.findOne).mockRejectedValue(new Error('DB Error'));
 
 			const result = await validateInviteToken('valid-token');
 
@@ -67,7 +65,7 @@ describe('validateInviteToken', () => {
 				deleteOne: mockDeleteOne,
 			};
 
-			vi.mocked(PendingInvite.findOne as any).mockResolvedValue(mockInvite);
+			vi.mocked(PendingInvite.findOne).mockResolvedValue(mockInvite as never);
 
 			const result = await validateInviteToken('expired-token');
 
@@ -97,8 +95,8 @@ describe('validateInviteToken', () => {
 				name: 'Test Planner',
 			};
 
-			vi.mocked(PendingInvite.findOne as any).mockResolvedValue(mockInvite);
-			vi.mocked(Planner.findById).mockResolvedValue(mockPlanner);
+			vi.mocked(PendingInvite.findOne).mockResolvedValue(mockInvite as never);
+			vi.mocked(Planner.findById).mockResolvedValue(mockPlanner as never);
 
 			const result = await validateInviteToken('valid-token');
 
@@ -121,7 +119,7 @@ describe('validateInviteToken', () => {
 				deleteOne: vi.fn(),
 			};
 
-			vi.mocked(PendingInvite.findOne as any).mockResolvedValue(mockInvite);
+			vi.mocked(PendingInvite.findOne).mockResolvedValue(mockInvite as never);
 			vi.mocked(Planner.findById).mockResolvedValue(null);
 
 			const result = await validateInviteToken('valid-token');
@@ -142,7 +140,7 @@ describe('validateInviteToken', () => {
 				deleteOne: vi.fn(),
 			};
 
-			vi.mocked(PendingInvite.findOne as any).mockResolvedValue(mockInvite);
+			vi.mocked(PendingInvite.findOne).mockResolvedValue(mockInvite as never);
 			vi.mocked(Planner.findById).mockRejectedValue(new Error('DB Error'));
 
 			const result = await validateInviteToken('valid-token');
