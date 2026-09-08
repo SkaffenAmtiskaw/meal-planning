@@ -2,7 +2,7 @@
 description: Develops modules with TDD
 color: '#3bceac'
 mode: subagent
-model: opencode-go/kimi-k2.6
+model: opencode-go/kimi-k2.7-code
 temperature: 0.3
 permission:
   bash:

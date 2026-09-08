@@ -72,6 +72,7 @@ This consistency helps users quickly identify meal types visually across the cal
 ---
 
 ## Step 2: Create Calendar Context
+**Status**: ✅ Complete
 
 **What we're doing:** Create the calendar state management context.
 
@@ -138,7 +139,9 @@ This consistency helps users quickly identify meal types visually across the cal
   - [ ] Verify: All "Lunch" meals show the same color
   - [ ] Verify: Different titles have different colors
 - [ ] Events don't overflow their day cells (max 2-3 shown, then "+1 more")
-- [ ] Events are clickable (will wire up modal in next step)
+- [ ] Click an event - MealDetailModal opens with correct details
+- [ ] Dish links work correctly in modal
+- [ ] Close modal - return to calendar view
 - [ ] Screen reader announces events in each day
 
 **Files Created:**
@@ -151,23 +154,8 @@ This consistency helps users quickly identify meal types visually across the cal
 
 ---
 
-## Step 6: Wire Up Event Click to Modal
-
-**What we're doing:** Make clicking an event open the MealDetailModal.
-
-**Acceptance Criteria:**
-- [ ] Click on an event in month grid - MealDetailModal opens
-- [ ] Modal shows correct meal details (name, description, dishes)
-- [ ] Dish links work correctly in modal
-- [ ] Close modal - return to calendar view
-- [ ] Click on "+1 more" overflow indicator - see all events for that day
-
-**Files Modified:**
-- `MealCalendar.tsx` - add onEventClick handler
-
----
-
-## Step 7: Month View Keyboard Navigation
+## Step 6: Month View Keyboard Navigation
+**Status**: ✅ Complete
 
 **What we're doing:** Implement keyboard navigation for month view.
 
@@ -189,7 +177,7 @@ This consistency helps users quickly identify meal types visually across the cal
 
 ---
 
-## Step 8: Create Week View Shell
+## Step 7: Create Week View Shell
 
 **What we're doing:** Build the basic week view layout (7 columns), no events yet.
 
@@ -205,7 +193,7 @@ This consistency helps users quickly identify meal types visually across the cal
 
 ---
 
-## Step 9: Display Events in Week View
+## Step 8: Display Events in Week View
 
 **What we're doing:** Show meal events in week view columns with correct tag colors.
 
@@ -224,7 +212,7 @@ This consistency helps users quickly identify meal types visually across the cal
 
 ---
 
-## Step 10: Wire Up Week View Event Click
+## Step 9: Wire Up Week View Event Click
 
 **What we're doing:** Make clicking events in week view open the modal.
 
@@ -238,7 +226,7 @@ This consistency helps users quickly identify meal types visually across the cal
 
 ---
 
-## Step 11: Week View Keyboard Navigation
+## Step 10: Week View Keyboard Navigation
 
 **What we're doing:** Add keyboard navigation for week view.
 
@@ -256,7 +244,7 @@ This consistency helps users quickly identify meal types visually across the cal
 
 ---
 
-## Step 12: Create List View Shell
+## Step 11: Create List View Shell
 
 **What we're doing:** Build basic list view with date headers, no meals yet.
 
@@ -273,7 +261,7 @@ This consistency helps users quickly identify meal types visually across the cal
 
 ---
 
-## Step 13: Display Meals in List View
+## Step 12: Display Meals in List View
 
 **What we're doing:** Show full meal details in list view with correct tag colors.
 
@@ -292,7 +280,7 @@ This consistency helps users quickly identify meal types visually across the cal
 
 ---
 
-## Step 14: Wire Up List View Click
+## Step 13: Wire Up List View Click
 
 **What we're doing:** Make clicking meal cards in list view open modal.
 
@@ -303,7 +291,7 @@ This consistency helps users quickly identify meal types visually across the cal
 
 ---
 
-## Step 15: List View Keyboard Navigation
+## Step 14: List View Keyboard Navigation
 
 **What we're doing:** Add keyboard navigation for list view.
 
@@ -315,6 +303,23 @@ This consistency helps users quickly identify meal types visually across the cal
 
 **Files Modified:**
 - `ListView.tsx` - add keyboard handlers
+
+---
+
+## Step 15: Wire Up Overflow Indicator to List View
+
+**What we're doing:** Make clicking the "+N more" overflow indicator in the month grid switch to list view and jump to that day.
+
+**Acceptance Criteria:**
+- [ ] Click on "+N more" overflow indicator - view switches to list view
+- [ ] List view is scrolled to / focused on the selected day
+- [ ] Selected day is visually indicated in the list view
+- [ ] User can switch back to month view via the header
+
+**Files Modified:**
+- `MonthGrid.tsx` - add `onOverflowClick` prop and wire up overflow indicator
+- `CalendarView.tsx` - handle overflow click by switching view and setting date
+- `ListView.tsx` - accept an optional `focusedDate` prop and scroll to it
 
 ---
 
@@ -403,17 +408,17 @@ This consistency helps users quickly identify meal types visually across the cal
 | 2 | No visible changes, types pass |
 | 3 | Placeholders show, navigation works |
 | 4 | Month grid displays correctly |
-| 5 | Events appear, **tag colors consistent** |
-| 6 | Click event → modal opens |
-| 7 | Keyboard navigation works |
-| 8 | Week columns display |
-| 9 | Events in week, **colors match month** |
-| 10 | Click → modal |
-| 11 | Week keyboard nav |
-| 12 | List view shell works |
-| 13 | Meals in list, **colors match** |
-| 14 | Click → modal |
-| 15 | List keyboard nav |
+| 5 | Events appear, **tag colors consistent**, click opens modal |
+| 6 | Keyboard navigation works |
+| 7 | Week columns display |
+| 8 | Events in week, **colors match month** |
+| 9 | Click → modal |
+| 10 | Week keyboard nav |
+| 11 | List view shell works |
+| 12 | Meals in list, **colors match** |
+| 13 | Click → modal |
+| 14 | List keyboard nav |
+| 15 | Overflow indicator switches to list view |
 | 16 | Mobile agenda shell |
 | 17 | Meals in agenda, **colors match** |
 | 18 | Mobile keyboard nav |

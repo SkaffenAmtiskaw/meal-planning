@@ -15,9 +15,14 @@ import type { SavedItem, SerializedDay } from '../../_utils/toScheduleXEvents';
 vi.mock('@/_components/Calendar', async () => ({
 	MonthGrid: vi.fn(({ events, renderEvent }) => (
 		<div data-testid="month-grid">
-			{events?.map((event: MonthGridEvent) => (
+			{events?.map((event: MonthGridEvent, index: number) => (
 				<div key={event.id} data-testid="grid-event">
-					{renderEvent ? renderEvent(event) : event.title}
+					{renderEvent
+						? renderEvent(event, {
+								tabIndex: index === 0 ? 0 : -1,
+								ref: vi.fn(),
+							})
+						: event.title}
 				</div>
 			))}
 		</div>
@@ -25,10 +30,12 @@ vi.mock('@/_components/Calendar', async () => ({
 }));
 
 vi.mock('./MealEventCard', async () => ({
-	MealEventCard: vi.fn(({ event, onClick }) => (
+	MealEventCard: vi.fn(({ event, onClick, tabIndex, ref }) => (
 		<button
 			data-testid="meal-event-card"
 			data-event-id={event.id}
+			data-tabindex={tabIndex}
+			data-has-ref={ref ? 'true' : 'false'}
 			onClick={onClick}
 			type="button"
 		>
@@ -171,12 +178,49 @@ describe('MealCalendar', () => {
 		expect(monthGridCall.renderEvent).toBeDefined();
 
 		// Call renderEvent with an event ID that doesn't exist in eventMap
-		const result = monthGridCall.renderEvent?.({
+		const result = monthGridCall.renderEvent?.(
+			{
+				id: 'non-existent',
+				date: '2024-01-15',
+				title: 'Missing',
+			},
+			{ tabIndex: -1, ref: vi.fn() },
+		);
+
+		expect(result).toBeNull();
+	});
+
+	it('calls prop onEventClick with CalendarEvent when MonthGrid onEventClick fires', () => {
+		const handleClick = vi.fn();
+		vi.mocked(toCalendarEvents).mockReturnValue(mockCalendarEvents);
+
+		render(<MealCalendar calendar={mockCalendar} onEventClick={handleClick} />);
+
+		const monthGridCall = vi.mocked(MonthGrid).mock.calls[0][0];
+		const monthGridEvent = {
+			id: 'meal-1',
+			date: '2024-01-15',
+			title: 'Breakfast',
+		};
+		monthGridCall.onEventClick?.(monthGridEvent);
+
+		expect(handleClick).toHaveBeenCalledTimes(1);
+		expect(handleClick).toHaveBeenCalledWith(mockCalendarEvents[0]);
+	});
+
+	it('does not call prop onEventClick when MonthGrid onEventClick fires for a missing event', () => {
+		const handleClick = vi.fn();
+		vi.mocked(toCalendarEvents).mockReturnValue(mockCalendarEvents);
+
+		render(<MealCalendar calendar={mockCalendar} onEventClick={handleClick} />);
+
+		const monthGridCall = vi.mocked(MonthGrid).mock.calls[0][0];
+		monthGridCall.onEventClick?.({
 			id: 'non-existent',
 			date: '2024-01-15',
 			title: 'Missing',
 		});
 
-		expect(result).toBeNull();
+		expect(handleClick).not.toHaveBeenCalled();
 	});
 });

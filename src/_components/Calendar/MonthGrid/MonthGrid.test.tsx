@@ -4,7 +4,7 @@ import { DateTime } from 'luxon';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { MonthGrid } from './MonthGrid';
-import type { MonthGridEvent } from './MonthGrid';
+import type { MonthGridEvent, MonthGridEventRenderProps } from './MonthGrid';
 
 import { useCalendarContext } from '../CalendarContext';
 import { CalendarProvider } from '../CalendarProvider';
@@ -177,9 +177,13 @@ describe('MonthGrid', () => {
 			{ id: '1', date: '2024-03-15', title: 'Event A' },
 		];
 
-		const renderEvent = vi.fn((event: MonthGridEvent) => (
-			<span key={event.id}>{event.title} custom</span>
-		));
+		const renderEvent = vi.fn(
+			(event: MonthGridEvent, props: MonthGridEventRenderProps) => (
+				<span key={event.id} tabIndex={props.tabIndex} ref={props.ref}>
+					{event.title} custom
+				</span>
+			),
+		);
 
 		render(
 			<CalendarProvider initialDate={initialDate}>
@@ -187,7 +191,10 @@ describe('MonthGrid', () => {
 			</CalendarProvider>,
 		);
 
-		expect(renderEvent).toHaveBeenCalledWith(events[0]);
+		expect(renderEvent).toHaveBeenCalledWith(
+			events[0],
+			expect.objectContaining({ tabIndex: expect.any(Number) }),
+		);
 
 		const dayCells = screen.getAllByTestId('day-cell');
 		expect(dayCells[1].textContent).toContain('Event A custom');
@@ -275,5 +282,252 @@ describe('MonthGrid', () => {
 		const dayCells = screen.getAllByTestId('day-cell');
 		expect(dayCells.length).toBe(1);
 		expect(dayCells[0].textContent).toBe('15');
+	});
+});
+
+describe('MonthGrid keyboard navigation', () => {
+	beforeEach(() => {
+		vi.resetAllMocks();
+	});
+
+	afterEach(() => {
+		vi.useRealTimers();
+	});
+
+	function createRenderEventMock() {
+		return vi.fn(
+			(
+				event: MonthGridEvent,
+				props: { tabIndex: number; ref: React.RefCallback<HTMLElement> },
+			) => (
+				<div
+					key={event.id}
+					data-testid={`event-${event.id}`}
+					tabIndex={props.tabIndex}
+					ref={props.ref}
+				>
+					{event.title}
+				</div>
+			),
+		);
+	}
+
+	it('sets tabIndex=0 on today and -1 on other days initially', () => {
+		const today = DateTime.local(2024, 3, 15);
+		vi.useFakeTimers();
+		vi.setSystemTime(today.toJSDate());
+
+		vi.mocked(getMonthGridDates).mockReturnValue([
+			DateTime.local(2024, 3, 14),
+			DateTime.local(2024, 3, 15),
+			DateTime.local(2024, 3, 16),
+		]);
+
+		render(
+			<CalendarProvider initialDate={today}>
+				<MonthGrid />
+			</CalendarProvider>,
+		);
+
+		const dayCells = screen.getAllByTestId('day-cell');
+		expect(dayCells[0].getAttribute('tabindex')).toBe('-1');
+		expect(dayCells[1].getAttribute('tabindex')).toBe('0');
+		expect(dayCells[2].getAttribute('tabindex')).toBe('-1');
+	});
+
+	it('moves focus to next day with ArrowRight', () => {
+		const today = DateTime.local(2024, 3, 15);
+		vi.useFakeTimers();
+		vi.setSystemTime(today.toJSDate());
+
+		vi.mocked(getMonthGridDates).mockReturnValue([
+			DateTime.local(2024, 3, 14),
+			DateTime.local(2024, 3, 15),
+			DateTime.local(2024, 3, 16),
+		]);
+
+		render(
+			<CalendarProvider initialDate={today}>
+				<MonthGrid />
+			</CalendarProvider>,
+		);
+
+		const dayCells = screen.getAllByTestId('day-cell');
+		fireEvent.keyDown(dayCells[1], { key: 'ArrowRight' });
+
+		expect(dayCells[1].getAttribute('tabindex')).toBe('-1');
+		expect(dayCells[2].getAttribute('tabindex')).toBe('0');
+	});
+
+	it('calls onEventClick when Enter pressed on single-event day', () => {
+		const today = DateTime.local(2024, 3, 15);
+		vi.useFakeTimers();
+		vi.setSystemTime(today.toJSDate());
+
+		vi.mocked(getMonthGridDates).mockReturnValue([
+			DateTime.local(2024, 3, 14),
+			DateTime.local(2024, 3, 15),
+			DateTime.local(2024, 3, 16),
+		]);
+
+		const events: MonthGridEvent[] = [
+			{ id: '1', date: '2024-03-15', title: 'Event A' },
+		];
+
+		const onEventClick = vi.fn();
+
+		render(
+			<CalendarProvider initialDate={today}>
+				<MonthGrid events={events} onEventClick={onEventClick} />
+			</CalendarProvider>,
+		);
+
+		const dayCells = screen.getAllByTestId('day-cell');
+		fireEvent.keyDown(dayCells[1], { key: 'Enter' });
+
+		expect(onEventClick).toHaveBeenCalledWith(events[0]);
+	});
+
+	it('enters event mode when Enter pressed on multi-event day', () => {
+		const today = DateTime.local(2024, 3, 15);
+		vi.useFakeTimers();
+		vi.setSystemTime(today.toJSDate());
+
+		vi.mocked(getMonthGridDates).mockReturnValue([
+			DateTime.local(2024, 3, 14),
+			DateTime.local(2024, 3, 15),
+			DateTime.local(2024, 3, 16),
+		]);
+
+		const events: MonthGridEvent[] = [
+			{ id: '1', date: '2024-03-15', title: 'Event A' },
+			{ id: '2', date: '2024-03-15', title: 'Event B' },
+		];
+
+		const renderEvent = createRenderEventMock();
+
+		render(
+			<CalendarProvider initialDate={today}>
+				<MonthGrid events={events} renderEvent={renderEvent} />
+			</CalendarProvider>,
+		);
+
+		const dayCells = screen.getAllByTestId('day-cell');
+		fireEvent.keyDown(dayCells[1], { key: 'Enter' });
+
+		expect(dayCells[1].getAttribute('tabindex')).toBe('-1');
+		const event1 = screen.getByTestId('event-1');
+		const event2 = screen.getByTestId('event-2');
+		expect(event1.getAttribute('tabindex')).toBe('0');
+		expect(event2.getAttribute('tabindex')).toBe('-1');
+	});
+
+	it('navigates events with ArrowDown/ArrowUp in event mode', () => {
+		const today = DateTime.local(2024, 3, 15);
+		vi.useFakeTimers();
+		vi.setSystemTime(today.toJSDate());
+
+		vi.mocked(getMonthGridDates).mockReturnValue([
+			DateTime.local(2024, 3, 14),
+			DateTime.local(2024, 3, 15),
+			DateTime.local(2024, 3, 16),
+		]);
+
+		const events: MonthGridEvent[] = [
+			{ id: '1', date: '2024-03-15', title: 'Event A' },
+			{ id: '2', date: '2024-03-15', title: 'Event B' },
+		];
+
+		const renderEvent = createRenderEventMock();
+
+		render(
+			<CalendarProvider initialDate={today}>
+				<MonthGrid events={events} renderEvent={renderEvent} />
+			</CalendarProvider>,
+		);
+
+		const dayCells = screen.getAllByTestId('day-cell');
+		fireEvent.keyDown(dayCells[1], { key: 'Enter' });
+
+		const event1 = screen.getByTestId('event-1');
+		const event2 = screen.getByTestId('event-2');
+
+		fireEvent.keyDown(event1, { key: 'ArrowDown' });
+		expect(event1.getAttribute('tabindex')).toBe('-1');
+		expect(event2.getAttribute('tabindex')).toBe('0');
+
+		fireEvent.keyDown(event2, { key: 'ArrowUp' });
+		expect(event1.getAttribute('tabindex')).toBe('0');
+		expect(event2.getAttribute('tabindex')).toBe('-1');
+	});
+
+	it('event click does not exit event mode', () => {
+		const today = DateTime.local(2024, 3, 15);
+		vi.useFakeTimers();
+		vi.setSystemTime(today.toJSDate());
+
+		vi.mocked(getMonthGridDates).mockReturnValue([
+			DateTime.local(2024, 3, 14),
+			DateTime.local(2024, 3, 15),
+			DateTime.local(2024, 3, 16),
+		]);
+
+		const events: MonthGridEvent[] = [
+			{ id: '1', date: '2024-03-15', title: 'Event A' },
+			{ id: '2', date: '2024-03-15', title: 'Event B' },
+		];
+
+		const renderEvent = createRenderEventMock();
+
+		render(
+			<CalendarProvider initialDate={today}>
+				<MonthGrid events={events} renderEvent={renderEvent} />
+			</CalendarProvider>,
+		);
+
+		const dayCells = screen.getAllByTestId('day-cell');
+		fireEvent.keyDown(dayCells[1], { key: 'Enter' });
+
+		const event1 = screen.getByTestId('event-1');
+		fireEvent.click(event1);
+
+		expect(dayCells[1].getAttribute('tabindex')).toBe('-1');
+		expect(event1.getAttribute('tabindex')).toBe('0');
+		expect(screen.getByTestId('event-2').getAttribute('tabindex')).toBe('-1');
+	});
+
+	it('exits event mode and returns focus to day cell on Escape', () => {
+		const today = DateTime.local(2024, 3, 15);
+		vi.useFakeTimers();
+		vi.setSystemTime(today.toJSDate());
+
+		vi.mocked(getMonthGridDates).mockReturnValue([
+			DateTime.local(2024, 3, 14),
+			DateTime.local(2024, 3, 15),
+			DateTime.local(2024, 3, 16),
+		]);
+
+		const events: MonthGridEvent[] = [
+			{ id: '1', date: '2024-03-15', title: 'Event A' },
+			{ id: '2', date: '2024-03-15', title: 'Event B' },
+		];
+
+		const renderEvent = createRenderEventMock();
+
+		render(
+			<CalendarProvider initialDate={today}>
+				<MonthGrid events={events} renderEvent={renderEvent} />
+			</CalendarProvider>,
+		);
+
+		const dayCells = screen.getAllByTestId('day-cell');
+		fireEvent.keyDown(dayCells[1], { key: 'Enter' });
+
+		const event1 = screen.getByTestId('event-1');
+		fireEvent.keyDown(event1, { key: 'Escape' });
+
+		expect(dayCells[1].getAttribute('tabindex')).toBe('0');
+		expect(event1.getAttribute('tabindex')).toBe('-1');
+		expect(screen.getByTestId('event-2').getAttribute('tabindex')).toBe('-1');
 	});
 });

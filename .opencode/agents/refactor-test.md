@@ -1,7 +1,7 @@
 ---
 description: Refactor a unit test file
 color: '#0ead69'
-model: opencode-go/kimi-k2.6
+model: opencode-go/kimi-k2.7-code
 temperature: 0.2
 permission:
    bash:

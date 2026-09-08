@@ -1,6 +1,7 @@
 import { Paper, Text } from '@mantine/core';
 
 import { getMealColor, TAG_COLORS } from '@/_theme/colors';
+import focusClasses from '@/_theme/focus.module.css';
 
 export interface MealEventCardProps {
 	event: {
@@ -13,9 +14,16 @@ export interface MealEventCardProps {
 		title: string;
 		description?: string;
 	}) => void;
+	tabIndex?: number;
+	ref?: React.Ref<HTMLButtonElement>;
 }
 
-export function MealEventCard({ event, onClick }: MealEventCardProps) {
+export function MealEventCard({
+	event,
+	onClick,
+	tabIndex,
+	ref,
+}: MealEventCardProps) {
 	const tagColor = getMealColor(event.title);
 	const { bg, text, border } = TAG_COLORS[tagColor];
 
@@ -27,6 +35,9 @@ export function MealEventCard({ event, onClick }: MealEventCardProps) {
 			p="xs"
 			radius="md"
 			ta="left"
+			tabIndex={tabIndex}
+			ref={ref}
+			className={focusClasses.focusRing}
 			style={{
 				backgroundColor: bg,
 				border: `1px solid ${border}`,

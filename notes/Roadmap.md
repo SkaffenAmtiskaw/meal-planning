@@ -12,11 +12,12 @@
 # High-Priority
 ## Calendar Page
 - [[Replace Schedule-X|replace schedule-x]]
+- add Apple SSO
+- edit meals
+- delete meals
 - add meals by clicking month cell
 - add meals by clicking week day
 - work through adding meals on mobile (get rid of the header button and add a FAB maybe?)
-- edit meals
-- delete meals
 - default to week view on desktop - list view on mobile
 ## Planner Settings
 - [[Delete Planner|allow user to delete a planner]]
@@ -29,8 +30,6 @@
 # Medium Priority
 
 ## Sign In Improvements
-- update Google one-tap sign in - warning in console
-- add Apple SSO
 - add passkey sign in
 ## UX Improvements
 - take create planner pattern of button on top right in desktop - FAB in mobile and apply it throughout the app

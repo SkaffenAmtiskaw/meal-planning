@@ -14,6 +14,10 @@ import {
 
 import { DateTime } from 'luxon';
 
+import focusClasses from '@/_theme/focus.module.css';
+
+import { useMonthGridKeyboard } from './useMonthGridKeyboard';
+
 import { useCalendarContext } from '../CalendarContext';
 import { getMonthGridDates } from '../_utils/getMonthGridDates';
 
@@ -26,15 +30,28 @@ export interface MonthGridEvent {
 	description?: string;
 }
 
-export interface MonthGridProps {
-	events?: MonthGridEvent[];
-	renderEvent?: (event: MonthGridEvent) => React.ReactNode;
+export interface MonthGridEventRenderProps {
+	tabIndex: 0 | -1;
+	ref: React.RefCallback<HTMLElement>;
 }
 
-export function MonthGrid({ events, renderEvent }: MonthGridProps) {
+export interface MonthGridProps {
+	events?: MonthGridEvent[];
+	renderEvent?: (
+		event: MonthGridEvent,
+		props: MonthGridEventRenderProps,
+	) => React.ReactNode;
+	onEventClick?: (event: MonthGridEvent) => void;
+}
+
+export function MonthGrid({
+	events,
+	renderEvent,
+	onEventClick,
+}: MonthGridProps) {
 	const { selectedDate } = useCalendarContext();
 
-	const days = getMonthGridDates(selectedDate);
+	const days = useMemo(() => getMonthGridDates(selectedDate), [selectedDate]);
 	const today = DateTime.now();
 
 	const eventsByDate = useMemo(() => {
@@ -46,6 +63,13 @@ export function MonthGrid({ events, renderEvent }: MonthGridProps) {
 		}
 		return map;
 	}, [events]);
+
+	const { getDayProps, getEventProps } = useMonthGridKeyboard({
+		days,
+		eventsByDate,
+		onEventClick,
+		selectedDate,
+	});
 
 	return (
 		<Box bg="gray.3">
@@ -60,7 +84,7 @@ export function MonthGrid({ events, renderEvent }: MonthGridProps) {
 			</SimpleGrid>
 
 			<SimpleGrid cols={7} spacing="1px" role="grid">
-				{days.map((day) => {
+				{days.map((day, dayIndex) => {
 					const isToday = day.hasSame(today, 'day');
 					const isCurrentMonth = day.hasSame(selectedDate, 'month');
 					const dayNumber = day.day;
@@ -74,6 +98,8 @@ export function MonthGrid({ events, renderEvent }: MonthGridProps) {
 							? `${day.toFormat('MMMM d')}, ${dayEvents.length} events`
 							: undefined;
 
+					const dayProps = getDayProps(dayIndex);
+
 					return (
 						<Paper
 							key={isoDate}
@@ -81,8 +107,10 @@ export function MonthGrid({ events, renderEvent }: MonthGridProps) {
 							data-testid="day-cell"
 							p="xs"
 							radius={0}
+							className={focusClasses.focusRing}
 							style={{ minHeight: '100px' }}
 							aria-label={ariaLabel}
+							{...dayProps}
 						>
 							<Center>
 								{isToday ? (
@@ -101,15 +129,29 @@ export function MonthGrid({ events, renderEvent }: MonthGridProps) {
 							</Center>
 							{dayEvents.length > 0 && (
 								<Stack gap="xs" mt="xs">
-									{visibleEvents.map((event) => (
-										<div key={event.id}>
-											{renderEvent ? (
-												renderEvent(event)
-											) : (
-												<Text size="xs">{event.title}</Text>
-											)}
-										</div>
-									))}
+									{visibleEvents.map((event, eventIndex) => {
+										const eventProps = getEventProps(
+											dayIndex,
+											eventIndex,
+											isoDate,
+										);
+										return (
+											// biome-ignore lint/a11y/noStaticElementInteractions lint/a11y/useKeyWithClickEvents: Wrapper just prevents event propagation
+											<div key={event.id} onClick={(e) => e.stopPropagation()}>
+												{renderEvent ? (
+													renderEvent(event, eventProps)
+												) : (
+													<div
+														tabIndex={eventProps.tabIndex}
+														ref={eventProps.ref}
+														className={focusClasses.focusRing}
+													>
+														<Text size="xs">{event.title}</Text>
+													</div>
+												)}
+											</div>
+										);
+									})}
 									{overflowCount > 0 && (
 										<Text size="xs" c="gray.5">
 											+{overflowCount} more

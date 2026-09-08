@@ -82,8 +82,18 @@ export const AppShellNavbar = vi.fn(
 );
 
 export const Box = vi.fn(
-	({ children, 'data-testid': testId }: WithChildren) => (
-		<div data-testid={testId}>{children}</div>
+	({
+		children,
+		'data-testid': testId,
+		onBlur,
+		...props
+	}: WithChildren & {
+		onBlur?: React.FocusEventHandler<HTMLElement>;
+		[key: string]: unknown;
+	}) => (
+		<div data-testid={testId} onBlur={onBlur} {...props}>
+			{children}
+		</div>
 	),
 );
 
@@ -163,8 +173,13 @@ export const SimpleGrid = vi.fn(
 );
 
 export const Paper = vi.fn(
-	({ children, 'data-testid': testId, ...props }: WithChildren) => (
-		<div data-testid={testId} {...props}>
+	({
+		children,
+		'data-testid': testId,
+		ref,
+		...props
+	}: WithChildren & { ref?: React.Ref<HTMLDivElement> }) => (
+		<div data-testid={testId} ref={ref} {...props}>
 			{children}
 		</div>
 	),

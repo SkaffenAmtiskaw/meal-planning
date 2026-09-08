@@ -2,7 +2,7 @@
 
 import { useCallback, useMemo } from 'react';
 
-import type { MonthGridEvent } from '@/_components/Calendar';
+import type { MonthGridEvent, MonthGridProps } from '@/_components/Calendar';
 import { MonthGrid } from '@/_components/Calendar';
 
 import { MealEventCard } from './MealEventCard';
@@ -43,14 +43,29 @@ export function MealCalendar({
 		return { monthGridEvents, eventMap };
 	}, [events]);
 
-	const renderEvent = useCallback(
+	const handleEventClick = useCallback(
 		(event: MonthGridEvent) => {
+			const calendarEvent = eventMap.get(event.id);
+			if (calendarEvent) {
+				onEventClick?.(calendarEvent);
+			}
+		},
+		[eventMap, onEventClick],
+	);
+
+	const renderEvent = useCallback(
+		(
+			event: MonthGridEvent,
+			props: Parameters<NonNullable<MonthGridProps['renderEvent']>>[1],
+		) => {
 			const calendarEvent = eventMap.get(event.id);
 			if (!calendarEvent) return null;
 
 			return (
 				<MealEventCard
 					event={event}
+					tabIndex={props.tabIndex}
+					ref={props.ref}
 					onClick={() => {
 						onEventClick?.(calendarEvent);
 					}}
@@ -60,5 +75,11 @@ export function MealCalendar({
 		[eventMap, onEventClick],
 	);
 
-	return <MonthGrid events={monthGridEvents} renderEvent={renderEvent} />;
+	return (
+		<MonthGrid
+			events={monthGridEvents}
+			renderEvent={renderEvent}
+			onEventClick={handleEventClick}
+		/>
+	);
 }
