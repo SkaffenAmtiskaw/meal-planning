@@ -1,10 +1,17 @@
 import { render, screen } from '@testing-library/react';
 
-import { describe, expect, test, vi } from 'vitest';
+import { beforeEach, describe, expect, test, vi } from 'vitest';
 
 import { MealDetailModal } from './MealDetailModal';
 
+import { DishLink } from '../DishLink/DishLink';
+
 vi.mock('@mantine/core', async () => await import('@mocks/@mantine/core'));
+vi.mock('../DishLink/DishLink', () => ({
+	DishLink: vi.fn(({ dish }) => (
+		<span data-testid="dish-link">{dish.name}</span>
+	)),
+}));
 
 const baseEvent = {
 	id: 'meal-1',
@@ -13,6 +20,10 @@ const baseEvent = {
 };
 
 describe('MealDetailModal', () => {
+	beforeEach(() => {
+		vi.resetAllMocks();
+	});
+
 	test('is not visible when event is null', () => {
 		render(
 			<MealDetailModal event={null} plannerId="planner-1" onClose={() => {}} />,
@@ -105,13 +116,13 @@ describe('MealDetailModal', () => {
 				onClose={() => {}}
 			/>,
 		);
-		expect(screen.queryByText('Note')).toBeNull();
+		expect(screen.queryByText('al dente')).toBeNull();
 	});
 
-	test('dish name is an external link when source has a url', () => {
+	test('renders a DishLink for each dish', () => {
 		const event = {
 			...baseEvent,
-			dishes: [{ name: 'Carbonara', source: { url: 'https://example.com' } }],
+			dishes: [{ name: 'Eggs' }, { name: 'Toast' }],
 		};
 		render(
 			<MealDetailModal
@@ -120,27 +131,23 @@ describe('MealDetailModal', () => {
 				onClose={() => {}}
 			/>,
 		);
-		const link = screen.getByRole('link', { name: 'Carbonara' });
-		expect(link.getAttribute('href')).toBe('https://example.com');
-	});
-
-	test('dish name is an internal recipe link when source has an _id', () => {
-		const event = {
-			...baseEvent,
-			dishes: [{ name: 'Pasta', source: { _id: 'recipe-123' } }],
-		};
-		render(
-			<MealDetailModal
-				event={event}
-				plannerId="planner-1"
-				onClose={() => {}}
-			/>,
+		expect(screen.getAllByTestId('dish-link')).toHaveLength(2);
+		expect(vi.mocked(DishLink)).toHaveBeenCalledTimes(2);
+		expect(vi.mocked(DishLink).mock.calls[0][0]).toEqual(
+			expect.objectContaining({
+				dish: { name: 'Eggs' },
+				plannerId: 'planner-1',
+			}),
 		);
-		const link = screen.getByRole('link', { name: 'Pasta' });
-		expect(link.getAttribute('href')).toBe('/planner-1/recipes/recipe-123');
+		expect(vi.mocked(DishLink).mock.calls[1][0]).toEqual(
+			expect.objectContaining({
+				dish: { name: 'Toast' },
+				plannerId: 'planner-1',
+			}),
+		);
 	});
 
-	test('dish name is plain text and ref is shown below when source has a ref', () => {
+	test('shows ref text below dish name when source has a ref', () => {
 		const event = {
 			...baseEvent,
 			dishes: [{ name: 'Roast Chicken', source: { ref: 'The Flavor Bible' } }],
@@ -152,37 +159,6 @@ describe('MealDetailModal', () => {
 				onClose={() => {}}
 			/>,
 		);
-		expect(screen.getByText('Roast Chicken')).toBeDefined();
 		expect(screen.getByText('The Flavor Bible')).toBeDefined();
-		expect(screen.queryByRole('link')).toBeNull();
-	});
-
-	test('dish name is plain text when source is an unresolved string', () => {
-		const event = {
-			...baseEvent,
-			dishes: [{ name: 'Soup', source: 'some-object-id-string' }],
-		};
-		render(
-			<MealDetailModal
-				event={event}
-				plannerId="planner-1"
-				onClose={() => {}}
-			/>,
-		);
-		expect(screen.getByText('Soup')).toBeDefined();
-		expect(screen.queryByRole('link')).toBeNull();
-	});
-
-	test('dish name is plain text when there is no source', () => {
-		const event = { ...baseEvent, dishes: [{ name: 'Salad' }] };
-		render(
-			<MealDetailModal
-				event={event}
-				plannerId="planner-1"
-				onClose={() => {}}
-			/>,
-		);
-		expect(screen.getByText('Salad')).toBeDefined();
-		expect(screen.queryByRole('link')).toBeNull();
 	});
 });

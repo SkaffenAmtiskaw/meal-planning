@@ -9,7 +9,6 @@ import { useMediaQuery } from '@mantine/hooks';
 import {
 	CalendarHeader,
 	CalendarProvider,
-	WeekView as CalendarWeekView,
 	ListView,
 	useCalendarContext,
 } from '@/_components/Calendar';
@@ -19,6 +18,7 @@ import type { SavedItem, SerializedDay } from '../../_utils/toScheduleXEvents';
 import { AddMealButton } from '../AddMealButton/AddMealButton';
 import { MealCalendar } from '../MealCalendar/MealCalendar';
 import { MealDetailModal } from '../MealDetailModal/MealDetailModal';
+import { MealWeekView } from '../MealWeekView/MealWeekView';
 
 type Props = {
 	plannerId: string;
@@ -71,7 +71,14 @@ function CalendarViewContent({
 						onEventClick={onEventClick}
 					/>
 				)}
-				{viewType === 'week' && <CalendarWeekView />}
+				{viewType === 'week' && (
+					<MealWeekView
+						calendar={calendarData}
+						savedItems={savedItems}
+						plannerId={plannerId}
+						onEventClick={onEventClick}
+					/>
+				)}
 				{viewType === 'list' && <ListView />}
 			</Box>
 		</Stack>

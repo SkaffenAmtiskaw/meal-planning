@@ -195,6 +195,7 @@ This consistency helps users quickly identify meal types visually across the cal
 ---
 
 ## Step 8: Display Events in Week View
+**Status**: ✅ Complete
 
 **What we're doing:** Show meal events in week view columns with correct tag colors.
 
@@ -204,7 +205,7 @@ This consistency helps users quickly identify meal types visually across the cal
   - [ ] Verify: All "Dinner" meals match color from month view
   - [ ] Verify: All "Lunch" meals match color from month view
 - [ ] Dish titles are displayed
-- [ ] Dish links render correctly (green for saved recipes)
+- [ ] Dish links render correctly
 - [ ] Events are clickable
 
 **Files Modified:**
@@ -214,6 +215,7 @@ This consistency helps users quickly identify meal types visually across the cal
 ---
 
 ## Step 9: Wire Up Week View Event Click
+**Status**: ✅ Complete
 
 **What we're doing:** Make clicking events in week view open the modal.
 
@@ -384,6 +386,7 @@ This consistency helps users quickly identify meal types visually across the cal
 - [ ] Run `pnpm remove @schedule-x/calendar @schedule-x/events-service @schedule-x/react @schedule-x/theme-default`
 - [ ] Delete all schedule-x related files (hooks, utils, components)
 - [ ] Remove schedule-x CSS import from layout.tsx
+- [ ] Do a final pass for dead code and remove it
 - [ ] Run `pnpm check:types` - no errors
 - [ ] Run `pnpm test` - all tests pass
 - [ ] Run `pnpm lint` - no errors

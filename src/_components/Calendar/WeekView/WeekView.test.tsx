@@ -1,4 +1,4 @@
-import { fireEvent, render, screen } from '@testing-library/react';
+import { fireEvent, render, screen, within } from '@testing-library/react';
 
 import { DateTime } from 'luxon';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
@@ -139,5 +139,115 @@ describe('WeekView', () => {
 
 		expect(screen.getByText('Sun 9/22')).toBeDefined();
 		expect(getWeekDates).toHaveBeenCalledTimes(2);
+	});
+
+	it('groups events by date and renders them in the correct day column', () => {
+		const initialDate = DateTime.local(2024, 9, 18);
+		vi.mocked(getWeekDates).mockReturnValue([
+			DateTime.local(2024, 9, 15),
+			DateTime.local(2024, 9, 16),
+			DateTime.local(2024, 9, 17),
+			DateTime.local(2024, 9, 18),
+			DateTime.local(2024, 9, 19),
+			DateTime.local(2024, 9, 20),
+			DateTime.local(2024, 9, 21),
+		]);
+
+		const events = [
+			{ id: '1', date: '2024-09-16', title: 'Monday Event' },
+			{ id: '2', date: '2024-09-18', title: 'Wednesday Event' },
+			{ id: '3', date: '2024-09-18', title: 'Another Wednesday Event' },
+		];
+
+		render(
+			<CalendarProvider initialDate={initialDate} initialView="week">
+				<WeekView events={events} />
+			</CalendarProvider>,
+		);
+
+		const columns = screen.getAllByTestId('week-day-column');
+		expect(within(columns[1]).getByText('Monday Event')).toBeDefined();
+		expect(within(columns[3]).getByText('Wednesday Event')).toBeDefined();
+		expect(
+			within(columns[3]).getByText('Another Wednesday Event'),
+		).toBeDefined();
+		expect(within(columns[0]).queryByTestId('week-event')).toBeNull();
+		expect(within(columns[2]).queryByTestId('week-event')).toBeNull();
+		expect(within(columns[4]).queryByTestId('week-event')).toBeNull();
+		expect(within(columns[5]).queryByTestId('week-event')).toBeNull();
+		expect(within(columns[6]).queryByTestId('week-event')).toBeNull();
+	});
+
+	it('uses renderEvent when provided', () => {
+		const initialDate = DateTime.local(2024, 9, 18);
+		vi.mocked(getWeekDates).mockReturnValue([
+			DateTime.local(2024, 9, 15),
+			DateTime.local(2024, 9, 16),
+			DateTime.local(2024, 9, 17),
+			DateTime.local(2024, 9, 18),
+			DateTime.local(2024, 9, 19),
+			DateTime.local(2024, 9, 20),
+			DateTime.local(2024, 9, 21),
+		]);
+
+		const events = [{ id: '1', date: '2024-09-18', title: 'Custom Event' }];
+		const renderEvent = vi.fn((event) => (
+			<div data-testid="custom-event">{event.title}</div>
+		));
+
+		render(
+			<CalendarProvider initialDate={initialDate} initialView="week">
+				<WeekView events={events} renderEvent={renderEvent} />
+			</CalendarProvider>,
+		);
+
+		expect(screen.getByTestId('custom-event')).toBeDefined();
+		expect(renderEvent).toHaveBeenCalledWith(events[0]);
+	});
+
+	it('calls onEventClick when a default event is clicked', () => {
+		const initialDate = DateTime.local(2024, 9, 18);
+		vi.mocked(getWeekDates).mockReturnValue([
+			DateTime.local(2024, 9, 15),
+			DateTime.local(2024, 9, 16),
+			DateTime.local(2024, 9, 17),
+			DateTime.local(2024, 9, 18),
+			DateTime.local(2024, 9, 19),
+			DateTime.local(2024, 9, 20),
+			DateTime.local(2024, 9, 21),
+		]);
+
+		const event = { id: '1', date: '2024-09-18', title: 'Clickable Event' };
+		const onEventClick = vi.fn();
+
+		render(
+			<CalendarProvider initialDate={initialDate} initialView="week">
+				<WeekView events={[event]} onEventClick={onEventClick} />
+			</CalendarProvider>,
+		);
+
+		fireEvent.click(screen.getByTestId('week-event'));
+		expect(onEventClick).toHaveBeenCalledWith(event);
+	});
+
+	it('renders nothing for days without events', () => {
+		const initialDate = DateTime.local(2024, 9, 18);
+		vi.mocked(getWeekDates).mockReturnValue([
+			DateTime.local(2024, 9, 15),
+			DateTime.local(2024, 9, 16),
+			DateTime.local(2024, 9, 17),
+			DateTime.local(2024, 9, 18),
+			DateTime.local(2024, 9, 19),
+			DateTime.local(2024, 9, 20),
+			DateTime.local(2024, 9, 21),
+		]);
+
+		render(
+			<CalendarProvider initialDate={initialDate} initialView="week">
+				<WeekView events={[]} />
+			</CalendarProvider>,
+		);
+
+		expect(screen.queryAllByTestId('week-event')).toHaveLength(0);
 	});
 });
