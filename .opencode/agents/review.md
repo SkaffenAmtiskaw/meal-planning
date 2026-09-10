@@ -10,6 +10,7 @@ permission:
         "git diff *": allow
         "git log *": allow
         "git status": allow
+        "git status *": allow
         "git show *": allow
         "pnpm lint": allow
         "pnpm test:agent *": allow

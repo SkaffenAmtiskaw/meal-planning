@@ -30,16 +30,16 @@ describe('MonthGrid', () => {
 		vi.useRealTimers();
 	});
 
-	it('starts the grid on Monday', () => {
+	it('starts the grid on Sunday', () => {
 		const initialDate = DateTime.local(2024, 3, 15);
 		vi.mocked(getMonthGridDates).mockReturnValue([
+			DateTime.local(2024, 2, 25),
 			DateTime.local(2024, 2, 26),
 			DateTime.local(2024, 2, 27),
 			DateTime.local(2024, 2, 28),
 			DateTime.local(2024, 2, 29),
 			DateTime.local(2024, 3, 1),
 			DateTime.local(2024, 3, 2),
-			DateTime.local(2024, 3, 3),
 		]);
 
 		render(
@@ -51,7 +51,7 @@ describe('MonthGrid', () => {
 		expect(getMonthGridDates).toHaveBeenCalledWith(initialDate);
 		const dayCells = screen.getAllByTestId('day-cell');
 		expect(dayCells.length).toBeGreaterThan(0);
-		expect(dayCells[0].textContent).toBe('26');
+		expect(dayCells[0].textContent).toBe('25');
 	});
 
 	it('highlights today with an ember badge', () => {

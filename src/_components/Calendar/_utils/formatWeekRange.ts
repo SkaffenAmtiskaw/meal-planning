@@ -5,8 +5,8 @@ import type { DateTime } from 'luxon';
  * Returns a string like "Jun 10 – Jun 16, 2024" or "Dec 30, 2024 – Jan 5, 2025" when the week spans two years.
  */
 export function formatWeekRange(date: DateTime): string {
-	const start = date.startOf('week');
-	const end = date.endOf('week');
+	const start = date.startOf('day').minus({ days: date.weekday % 7 });
+	const end = start.plus({ days: 6 });
 
 	const startLabel = start.toFormat('MMM d');
 	const endLabel = end.toFormat('MMM d');

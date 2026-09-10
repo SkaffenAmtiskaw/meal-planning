@@ -26,6 +26,7 @@ const PlannerLayoutContent = ({ children, navbar, header }: Props) => {
 			header={{
 				height: HEADER_HEIGHT,
 			}}
+			h="100dvh"
 			navbar={{
 				breakpoint: 'sm',
 				collapsed: {
@@ -37,7 +38,7 @@ const PlannerLayoutContent = ({ children, navbar, header }: Props) => {
 		>
 			{header}
 			<AppShellNavbar>{navbar}</AppShellNavbar>
-			<AppShellMain>{children}</AppShellMain>
+			<AppShellMain h="100%">{children}</AppShellMain>
 		</AppShell>
 	);
 };

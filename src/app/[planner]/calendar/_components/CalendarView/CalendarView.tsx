@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import type React from 'react';
 
+import { Box, Stack } from '@mantine/core';
 import { useMediaQuery } from '@mantine/hooks';
 
 import {
@@ -48,7 +49,7 @@ function CalendarViewContent({
 	const isMobile = useMediaQuery('(max-width: 62em)');
 
 	return (
-		<>
+		<Stack gap={0} h="100%">
 			<MealDetailModal
 				event={clickedEvent}
 				plannerId={plannerId}
@@ -62,16 +63,18 @@ function CalendarViewContent({
 					isMobile ? ['month', 'list'] : ['month', 'week', 'list']
 				}
 			/>
-			{viewType === 'month' && (
-				<MealCalendar
-					calendar={calendarData}
-					savedItems={savedItems}
-					onEventClick={onEventClick}
-				/>
-			)}
-			{viewType === 'week' && <CalendarWeekView />}
-			{viewType === 'list' && <ListView />}
-		</>
+			<Box flex={1} mih={0}>
+				{viewType === 'month' && (
+					<MealCalendar
+						calendar={calendarData}
+						savedItems={savedItems}
+						onEventClick={onEventClick}
+					/>
+				)}
+				{viewType === 'week' && <CalendarWeekView />}
+				{viewType === 'list' && <ListView />}
+			</Box>
+		</Stack>
 	);
 }
 

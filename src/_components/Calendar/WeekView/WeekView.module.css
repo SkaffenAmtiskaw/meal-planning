@@ -1,0 +1,31 @@
+/* Custom CSS Grid gives exact 7-column sizing and vertical dividers without
+   resorting to magic-number spacing from Mantine SimpleGrid or Paper wrappers. */
+.grid {
+	flex: 1;
+	min-height: 0;
+	display: grid;
+	grid-template-columns: repeat(7, 1fr);
+	gap: var(--mantine-spacing-md);
+}
+
+.dayColumn {
+	position: relative;
+	min-width: 0;
+	height: 100%;
+}
+
+.dayColumn:not(:last-child)::after {
+	content: '';
+	position: absolute;
+	top: 0;
+	bottom: 0;
+	right: calc(var(--mantine-spacing-md) / -2);
+	width: 1px;
+	background-color: var(--mantine-color-default-border);
+}
+
+.dayHeader {
+	height: 32px;
+	display: flex;
+	align-items: center;
+}

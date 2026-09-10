@@ -160,6 +160,14 @@ export const Fieldset = vi.fn(
 	),
 );
 
+export const Flex = vi.fn(
+	({ children, 'data-testid': testId, ...props }: WithChildren) => (
+		<div data-testid={testId} {...props}>
+			{children}
+		</div>
+	),
+);
+
 export const Group = vi.fn(
 	({ children, 'data-testid': testId }: WithChildren) => (
 		<div data-testid={testId}>{children}</div>

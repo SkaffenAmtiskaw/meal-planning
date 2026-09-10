@@ -20,8 +20,7 @@ import { useMonthGridKeyboard } from './useMonthGridKeyboard';
 
 import { useCalendarContext } from '../CalendarContext';
 import { getMonthGridDates } from '../_utils/getMonthGridDates';
-
-const WEEKDAYS = ['MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT', 'SUN'];
+import { WEEKDAY_LABELS } from '../_utils/weekdays';
 
 export interface MonthGridEvent {
 	id: string;
@@ -74,7 +73,7 @@ export function MonthGrid({
 	return (
 		<Box bg="gray.3">
 			<SimpleGrid cols={7} spacing="1px">
-				{WEEKDAYS.map((day) => (
+				{WEEKDAY_LABELS.map((day) => day.toUpperCase()).map((day) => (
 					<Paper key={day} p="xs" radius={0}>
 						<Text size="sm" c="gray.5" ta="center" fw={500}>
 							{day}

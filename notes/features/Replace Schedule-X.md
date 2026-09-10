@@ -178,11 +178,12 @@ This consistency helps users quickly identify meal types visually across the cal
 ---
 
 ## Step 7: Create Week View Shell
+**Status**: ✅ Complete
 
 **What we're doing:** Build the basic week view layout (7 columns), no events yet.
 
 **Acceptance Criteria:**
-- [ ] Switch to Week view - see 7 columns (Sun-Sat or Mon-Sun)
+- [ ] Switch to Week view - see 7 columns (Sun-Sat)
 - [ ] Each day shows day name and date
 - [ ] Navigate to different weeks - updates correctly
 - [ ] Today is visually highlighted
