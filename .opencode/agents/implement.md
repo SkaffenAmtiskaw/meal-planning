@@ -37,7 +37,8 @@ If any edit or bash command returns "permission denied": stop immediately. Do no
 Before beginning, locate the implementation plan for this feature in `notes/features/*`. If you cannot locate it, stop and prompt the user for clarification. Then:
 1. MANDATORY: Thoroughly review the project structure at `.opencode/docs/project_structure.md`
 2. MANDATORY: Thoroughly review Next.js docs at `node_modules/next/dist/docs/` - they may be symlinked - if you cannot find them search for them - alert the user if you are unable to find the Next doc - DO NOT PROCEED without reading it
-3. MANDATORY: Thoroughly review reusable components (`src/_components`), hooks (`src/_hooks`) and utilities (`src/_utils`)
+3. MANDATORY: Thoroughly review reusable components (`src/_components`), hooks (`src/_hooks`) and utilities (`src/_utils`).
+4. MANDATORY: Read `.opencode/docs/unit_tests.md` and write a summary of unit test patterns you should follow. You will provide this in the handoff to the `@develop` subagent.
 4. IF the feature involves UI changes, review the Mantine docs.
     1. Fetch the index from https://mantine.dev/llms.txt.
     2. From the module's behavior spec, identify each distinct UI need separately (e.g., "form input for recipe name," "modal for delete confirmation," "date range picker for meal plan"). List them out individually before fetching anything else.
@@ -69,7 +70,7 @@ Repeat the following loop for each step in the plan, in order. Do not begin the 
    - Have all dependencies identified by name and import path
    - Be ordered by dependency — no module is delegated before the modules it depends on
 
-2. **Delegate modules** — Hand off each module in dependency order to `@develop`. Each handoff must include the following 7 elements:
+2. **Delegate modules** — Hand off each module in dependency order to `@develop`. Each handoff must include the following 8 elements:
    - **Element 1: Target files** — the module file and its test file only (e.g. `src/lib/foo.ts` and `src/lib/foo.test.ts`). No other files.
    - **Element 2: Interface spec** — the full TypeScript interface the module must satisfy (types, signatures, props)
    - **Element 3: Dependency manifest** — every import the module needs, with either the real file path or a stub. Stubs are your responsibility, not the subagent's.
@@ -77,6 +78,7 @@ Repeat the following loop for each step in the plan, in order. Do not begin the 
    - **Element 5: Test Skeleton** — the describe block, and it-block names
    - **Element 6: Constraints** — what the module must not do; note if it is a React component, hook, or Next.js server component and any relevant conventions
    - **Element 7: Design Rules** — pass the subagent the exact text of the design rules listed above
+   - **Element 8: Unit Test Rules** - pass the subagent the summary of the unit test conventions
 
   **You MUST NOT call the subagent tool without these 7 elements. They are MANDATORY.**
 
