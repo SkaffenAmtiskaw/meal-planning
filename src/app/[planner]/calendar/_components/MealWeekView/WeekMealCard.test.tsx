@@ -22,8 +22,10 @@ vi.mock('@/_theme/focus.module.css', () => ({
 	default: { focusRing: 'focus-ring-mock' },
 }));
 vi.mock('../DishLink/DishLink', () => ({
-	DishLink: vi.fn(({ dish }) => (
-		<span data-testid="dish-link">{dish.name}</span>
+	DishLink: vi.fn(({ dish, tabIndex }) => (
+		<span data-testid="dish-link" data-tab-index={tabIndex}>
+			{dish.name}
+		</span>
 	)),
 }));
 
@@ -76,7 +78,41 @@ describe('WeekMealCard', () => {
 		expect(screen.getByText('Pasta')).toBeDefined();
 	});
 
-	it('calls onClick when the button is clicked', () => {
+	it('removes dish links from the tab order', () => {
+		const event: CalendarEvent = {
+			...baseEvent,
+			dishes: [{ name: 'Soup', source: { url: 'https://example.com/soup' } }],
+		};
+		render(<WeekMealCard event={event} plannerId="planner-1" />);
+		expect(screen.getByTestId('dish-link').getAttribute('data-tab-index')).toBe(
+			'-1',
+		);
+	});
+
+	it('forwards tabIndex to the Paper root', () => {
+		render(
+			<WeekMealCard event={baseEvent} plannerId="planner-1" tabIndex={-1} />,
+		);
+		expect(Paper).toHaveBeenCalledWith(
+			expect.objectContaining({
+				tabIndex: -1,
+			}),
+			undefined,
+		);
+	});
+
+	it('forwards ref to the Paper root', () => {
+		const ref = vi.fn();
+		render(<WeekMealCard event={baseEvent} plannerId="planner-1" ref={ref} />);
+		expect(Paper).toHaveBeenCalledWith(
+			expect.objectContaining({
+				ref,
+			}),
+			undefined,
+		);
+	});
+
+	it('still calls onClick when the card is clicked', () => {
 		const onClick = vi.fn();
 		render(
 			<WeekMealCard

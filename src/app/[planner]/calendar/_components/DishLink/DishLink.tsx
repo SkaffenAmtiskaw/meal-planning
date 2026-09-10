@@ -8,9 +8,14 @@ import type { SerializedDish } from '../../_utils/toScheduleXEvents';
 export interface DishLinkProps {
 	dish: SerializedDish;
 	plannerId: string;
+	tabIndex?: number;
 }
 
-export function DishLink({ dish, plannerId }: DishLinkProps): ReactElement {
+export function DishLink({
+	dish,
+	plannerId,
+	tabIndex,
+}: DishLinkProps): ReactElement {
 	if (typeof dish.source === 'object' && dish.source !== null) {
 		if ('url' in dish.source) {
 			return (
@@ -19,6 +24,7 @@ export function DishLink({ dish, plannerId }: DishLinkProps): ReactElement {
 					target="_blank"
 					rel="noreferrer"
 					size="xs"
+					tabIndex={tabIndex}
 				>
 					{dish.name}
 				</Anchor>
@@ -31,6 +37,7 @@ export function DishLink({ dish, plannerId }: DishLinkProps): ReactElement {
 					component={Link}
 					href={`/${plannerId}/recipes/${dish.source._id}`}
 					size="xs"
+					tabIndex={tabIndex}
 				>
 					{dish.name}
 				</Anchor>

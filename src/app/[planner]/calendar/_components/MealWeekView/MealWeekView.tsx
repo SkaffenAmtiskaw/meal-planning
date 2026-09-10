@@ -2,7 +2,11 @@
 
 import { useCallback, useMemo } from 'react';
 
-import { WeekView, type WeekViewEvent } from '@/_components/Calendar';
+import {
+	WeekView,
+	type WeekViewEvent,
+	type WeekViewProps,
+} from '@/_components/Calendar';
 
 import { WeekMealCard } from './WeekMealCard';
 
@@ -55,7 +59,10 @@ export function MealWeekView({
 	);
 
 	const renderEvent = useCallback(
-		(event: WeekViewEvent) => {
+		(
+			event: WeekViewEvent,
+			props: Parameters<NonNullable<WeekViewProps['renderEvent']>>[1],
+		) => {
 			const calendarEvent = eventMap.get(event.id);
 			if (!calendarEvent) return null;
 
@@ -64,6 +71,8 @@ export function MealWeekView({
 					event={calendarEvent}
 					plannerId={plannerId}
 					onClick={() => onEventClick?.(calendarEvent)}
+					tabIndex={props.tabIndex}
+					ref={props.ref}
 				/>
 			);
 		},

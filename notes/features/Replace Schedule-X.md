@@ -293,8 +293,13 @@ This consistency helps users quickly identify meal types visually across the cal
 - [ ] Close modal - focus returns to card
 
 ---
+## Step 14: List View Mobile View
 
-## Step 14: List View Keyboard Navigation
+**What we're doing:** Changing the list view design on mobile
+
+---
+
+## Step 15: List View Keyboard Navigation
 
 **What we're doing:** Add keyboard navigation for list view.
 
@@ -309,7 +314,7 @@ This consistency helps users quickly identify meal types visually across the cal
 
 ---
 
-## Step 15: Wire Up Overflow Indicator to List View
+## Step 16: Wire Up Overflow Indicator to List View
 
 **What we're doing:** Make clicking the "+N more" overflow indicator in the month grid switch to list view and jump to that day.
 
@@ -326,7 +331,7 @@ This consistency helps users quickly identify meal types visually across the cal
 
 ---
 
-## Step 16: Create Mobile Month Agenda Shell
+## Step 17: Create Mobile Month Agenda Shell
 
 **What we're doing:** Build mobile-optimized month view (compact grid + agenda).
 
@@ -343,7 +348,7 @@ This consistency helps users quickly identify meal types visually across the cal
 
 ---
 
-## Step 17: Add Events to Mobile Agenda
+## Step 18: Add Events to Mobile Agenda
 
 **What we're doing:** Show meals in mobile agenda with correct tag colors.
 
@@ -360,7 +365,7 @@ This consistency helps users quickly identify meal types visually across the cal
 
 ---
 
-## Step 18: Mobile Agenda Keyboard Navigation
+## Step 19: Mobile Agenda Keyboard Navigation
 
 **What we're doing:** Add keyboard navigation for mobile agenda view.
 
@@ -378,7 +383,7 @@ This consistency helps users quickly identify meal types visually across the cal
 
 ---
 
-## Step 19: Remove Schedule-X
+## Step 20: Remove Schedule-X
 
 **What we're doing:** Remove all schedule-x dependencies.
 

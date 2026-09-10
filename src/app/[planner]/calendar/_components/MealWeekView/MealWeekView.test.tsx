@@ -5,6 +5,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { WeekView } from '@/_components/Calendar';
 
 import { MealWeekView } from './MealWeekView';
+import { WeekMealCard } from './WeekMealCard';
 
 import type { CalendarEvent } from '../../_utils/toCalendarEvents';
 import { toCalendarEvents } from '../../_utils/toCalendarEvents';
@@ -15,7 +16,12 @@ vi.mock('@/_components/Calendar', async () => ({
 		<div data-testid="week-view">
 			{events?.map((event: { id: string; date: string; title: string }) => (
 				<div key={event.id} data-testid="week-view-event">
-					{renderEvent ? renderEvent(event) : event.title}
+					{renderEvent
+						? renderEvent(event, {
+								tabIndex: 0,
+								ref: vi.fn(),
+							})
+						: event.title}
 					<button
 						type="button"
 						data-testid={`week-view-event-${event.id}`}
@@ -151,6 +157,28 @@ describe('MealWeekView', () => {
 		expect(onEventClick).toHaveBeenCalledWith(mockCalendarEvents[0]);
 	});
 
+	it('passes tabIndex and ref to WeekMealCard via renderEvent', () => {
+		vi.mocked(toCalendarEvents).mockReturnValue(mockCalendarEvents);
+
+		render(<MealWeekView calendar={mockCalendar} plannerId="planner-1" />);
+
+		const weekViewCall = vi.mocked(WeekView).mock.calls[0][0];
+		expect(weekViewCall.renderEvent).toBeDefined();
+
+		const ref = vi.fn();
+		const node = weekViewCall.renderEvent?.(
+			{ id: 'meal-1', date: '2024-01-15', title: 'Breakfast' },
+			{ tabIndex: -1, ref },
+		);
+
+		render(<div>{node}</div>);
+
+		expect(WeekMealCard).toHaveBeenCalledWith(
+			expect.objectContaining({ tabIndex: -1, ref }),
+			undefined,
+		);
+	});
+
 	it('returns null when renderEvent is called with a missing event id', () => {
 		vi.mocked(toCalendarEvents).mockReturnValue(mockCalendarEvents);
 		render(<MealWeekView calendar={mockCalendar} plannerId="planner-1" />);
@@ -158,11 +186,14 @@ describe('MealWeekView', () => {
 		const weekViewCall = vi.mocked(WeekView).mock.calls[0][0];
 		expect(weekViewCall.renderEvent).toBeDefined();
 
-		const result = weekViewCall.renderEvent?.({
-			id: 'non-existent',
-			date: '2024-01-15',
-			title: 'Missing',
-		});
+		const result = weekViewCall.renderEvent?.(
+			{
+				id: 'non-existent',
+				date: '2024-01-15',
+				title: 'Missing',
+			},
+			{ tabIndex: 0, ref: vi.fn() },
+		);
 
 		expect(result).toBeNull();
 	});

@@ -12,12 +12,16 @@ export interface WeekMealCardProps {
 	event: CalendarEvent;
 	plannerId: string;
 	onClick?: () => void;
+	tabIndex?: number;
+	ref?: React.Ref<HTMLButtonElement>;
 }
 
 export function WeekMealCard({
 	event,
 	plannerId,
 	onClick,
+	tabIndex,
+	ref,
 }: WeekMealCardProps): ReactElement {
 	const tagColor = getMealColor(event.title);
 	const { bg, text, border } = TAG_COLORS[tagColor];
@@ -38,6 +42,8 @@ export function WeekMealCard({
 				cursor: 'pointer',
 			}}
 			onClick={onClick}
+			tabIndex={tabIndex}
+			ref={ref}
 		>
 			<Text fw={700} size="sm" style={{ color: text }}>
 				{event.title}
@@ -50,7 +56,7 @@ export function WeekMealCard({
 			{event.dishes.map((dish, index) => (
 				// biome-ignore lint/suspicious/noArrayIndexKey: dishes have no stable id
 				<Box key={index} style={{ color: text }}>
-					<DishLink dish={dish} plannerId={plannerId} />
+					<DishLink dish={dish} plannerId={plannerId} tabIndex={-1} />
 				</Box>
 			))}
 		</Paper>

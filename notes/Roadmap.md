@@ -3,6 +3,7 @@
 **AI Instructions** - DO NOT delete this file. You may remove lines, but under no circumstances may you delete the file.
 
 # Bugfixes/User Issues
+- increase time until logout
 - meals created in month view don't show up in week view - will be fixed in [[Replace Schedule-X]]
 - meal creation modal is too narrow on desktop - two columns might allow for easier entry (UX review)
 - after adding a new recipe, it is not immediately available in the saved dishes dropdown in the create meal modal
@@ -17,7 +18,6 @@
 - delete meals
 - add meals by clicking month cell
 - add meals by clicking week day
-- work through adding meals on mobile (get rid of the header button and add a FAB maybe?)
 - default to week view on desktop - list view on mobile
 ## Planner Settings
 - [[Delete Planner|allow user to delete a planner]]

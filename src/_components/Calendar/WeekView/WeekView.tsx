@@ -6,6 +6,12 @@ import { Badge, Box, Divider, Flex, Paper, Stack, Text } from '@mantine/core';
 
 import { DateTime } from 'luxon';
 
+import focusClasses from '@/_theme/focus.module.css';
+
+import {
+	type EventKeyboardProps,
+	useWeekViewKeyboard,
+} from './useWeekViewKeyboard';
 import styles from './WeekView.module.css';
 
 import { useCalendarContext } from '../CalendarContext';
@@ -19,9 +25,14 @@ export interface WeekViewEvent {
 	description?: string;
 }
 
+export type WeekViewEventRenderProps = EventKeyboardProps;
+
 export interface WeekViewProps {
 	events?: WeekViewEvent[];
-	renderEvent?: (event: WeekViewEvent) => ReactNode;
+	renderEvent?: (
+		event: WeekViewEvent,
+		props: WeekViewEventRenderProps,
+	) => ReactNode;
 	onEventClick?: (event: WeekViewEvent) => void;
 }
 
@@ -46,21 +57,36 @@ export function WeekView({
 		return grouped;
 	}, [events]);
 
+	const { getDayProps, getEventProps } = useWeekViewKeyboard({
+		days,
+		eventsByDate,
+		onEventClick,
+		selectedDate,
+	});
+
 	return (
 		<Flex direction="column" h="100%" p="md">
-			<Box className={styles.grid}>
+			<Box className={styles.grid} role="grid">
 				{days.map((day, index) => {
 					const isoDate = day.toISODate() as string;
 					const isToday = day.hasSame(today, 'day');
 					const label = `${WEEKDAY_LABELS[index]} ${day.month}/${day.day}`;
 					const dayEvents = eventsByDate.get(isoDate) ?? [];
+					const ariaLabel =
+						dayEvents.length > 0
+							? `${label}, ${dayEvents.length} events`
+							: undefined;
+					const dayProps = getDayProps(index);
 
 					return (
 						<Box
 							key={isoDate}
+							role="gridcell"
 							p="xs"
-							className={styles.dayColumn}
+							className={`${styles.dayColumn} ${focusClasses.focusRing}`}
 							data-testid="week-day-column"
+							aria-label={ariaLabel}
+							{...dayProps}
 						>
 							<Box className={styles.dayHeader}>
 								{isToday ? (
@@ -75,20 +101,28 @@ export function WeekView({
 							</Box>
 							<Divider my="xs" />
 							<Stack gap="xs">
-								{dayEvents.map((event) => (
-									<Box key={event.id}>
-										{renderEvent ? (
-											renderEvent(event)
-										) : (
-											<Paper
-												data-testid="week-event"
-												onClick={() => onEventClick?.(event)}
-											>
-												{event.title}
-											</Paper>
-										)}
-									</Box>
-								))}
+								{dayEvents.map((event, eventIndex) => {
+									const eventProps = getEventProps(index, eventIndex, isoDate);
+
+									return (
+										<Box key={event.id} onClick={(e) => e.stopPropagation()}>
+											{renderEvent ? (
+												renderEvent(event, eventProps)
+											) : (
+												<Paper
+													data-testid="week-event"
+													className={focusClasses.focusRing}
+													tabIndex={eventProps.tabIndex}
+													ref={eventProps.ref}
+													role="button"
+													onClick={() => onEventClick?.(event)}
+												>
+													{event.title}
+												</Paper>
+											)}
+										</Box>
+									);
+								})}
 							</Stack>
 						</Box>
 					);

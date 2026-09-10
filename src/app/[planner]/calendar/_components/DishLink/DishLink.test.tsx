@@ -14,6 +14,19 @@ vi.mock('next/link', () => ({
 }));
 
 describe('DishLink', () => {
+	it('forwards tabIndex to the Anchor', () => {
+		const dish: SerializedDish = {
+			name: 'Tab Dish',
+			source: { url: 'https://example.com/recipe' },
+		};
+
+		render(<DishLink dish={dish} plannerId="planner-1" tabIndex={-1} />);
+
+		expect(vi.mocked(Anchor).mock.calls[0][0]).toMatchObject({
+			tabIndex: -1,
+		});
+	});
+
 	it('renders an external anchor for url sources', () => {
 		const dish: SerializedDish = {
 			name: 'External Dish',

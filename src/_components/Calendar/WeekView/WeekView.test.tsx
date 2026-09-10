@@ -191,8 +191,10 @@ describe('WeekView', () => {
 		]);
 
 		const events = [{ id: '1', date: '2024-09-18', title: 'Custom Event' }];
-		const renderEvent = vi.fn((event) => (
-			<div data-testid="custom-event">{event.title}</div>
+		const renderEvent = vi.fn((event, props) => (
+			<div data-testid="custom-event" data-tab-index={props.tabIndex}>
+				{event.title}
+			</div>
 		));
 
 		render(
@@ -202,7 +204,13 @@ describe('WeekView', () => {
 		);
 
 		expect(screen.getByTestId('custom-event')).toBeDefined();
-		expect(renderEvent).toHaveBeenCalledWith(events[0]);
+		expect(renderEvent).toHaveBeenCalledWith(
+			events[0],
+			expect.objectContaining({
+				tabIndex: expect.any(Number),
+				ref: expect.any(Function),
+			}),
+		);
 	});
 
 	it('calls onEventClick when a default event is clicked', () => {
@@ -228,6 +236,27 @@ describe('WeekView', () => {
 
 		fireEvent.click(screen.getByTestId('week-event'));
 		expect(onEventClick).toHaveBeenCalledWith(event);
+	});
+
+	it('renders default events with button role', () => {
+		const initialDate = DateTime.local(2024, 9, 18);
+		vi.mocked(getWeekDates).mockReturnValue([
+			DateTime.local(2024, 9, 15),
+			DateTime.local(2024, 9, 16),
+			DateTime.local(2024, 9, 17),
+			DateTime.local(2024, 9, 18),
+			DateTime.local(2024, 9, 19),
+			DateTime.local(2024, 9, 20),
+			DateTime.local(2024, 9, 21),
+		]);
+
+		render(
+			<CalendarProvider initialDate={initialDate} initialView="week">
+				<WeekView events={[{ id: '1', date: '2024-09-18', title: 'Event' }]} />
+			</CalendarProvider>,
+		);
+
+		expect(screen.getByRole('button', { name: 'Event' })).toBeDefined();
 	});
 
 	it('renders nothing for days without events', () => {
