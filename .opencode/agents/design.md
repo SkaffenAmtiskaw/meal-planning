@@ -1,6 +1,6 @@
 ---
 description: Creates high-level designs for planned features
-color: '#540d6e'
+color: '#ff5714'
 mode: primary
 model: opencode-go/kimi-k2.7-code
 temperature: 0.8

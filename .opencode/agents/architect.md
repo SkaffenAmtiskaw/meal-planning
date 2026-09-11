@@ -1,6 +1,6 @@
 ---
 description: Determines implementation details for planned features
-color: '#ee4266'
+color: '#09bc8a'
 mode: primary
 model: opencode-go/kimi-k2.7-code
 temperature: 0.6

@@ -1,6 +1,6 @@
 ---
 description: Fixes bugs
-color: '#540d6e'
+color: '#ffb800'
 mode: primary
 model: opencode-go/kimi-k2.7-code
 temperature: 0.3
