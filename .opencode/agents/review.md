@@ -20,7 +20,9 @@ permission:
         develop: allow
         resolve: allow
         apply: allow
-    edit: deny
+    edit:
+      "*": deny
+      ".opencode/scratch/**": allow
     webfetch: allow
 ---
 
