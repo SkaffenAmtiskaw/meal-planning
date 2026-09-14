@@ -2,9 +2,16 @@
 
 import { type ReactNode, useCallback, useState } from 'react';
 
+import type { DurationLike } from 'luxon';
 import { DateTime } from 'luxon';
 
 import { CalendarContext, type CalendarViewType } from './CalendarContext';
+
+const NAVIGATION_STEPS: Record<CalendarViewType, DurationLike> = {
+	month: { months: 1 },
+	week: { days: 7 },
+	list: { days: 1 },
+};
 
 export interface CalendarProviderProps {
 	children: ReactNode;
@@ -23,6 +30,9 @@ export function CalendarProvider({
 	const [viewType, setViewType] = useState<CalendarViewType>(
 		initialView ?? 'month',
 	);
+	const [rangeAnchor, setRangeAnchor] = useState<DateTime>(
+		initialDate ?? DateTime.now(),
+	);
 
 	const handleSetSelectedDate = useCallback((date: DateTime) => {
 		setSelectedDate(date);
@@ -32,37 +42,30 @@ export function CalendarProvider({
 		setViewType(view);
 	}, []);
 
-	const goToToday = useCallback(() => {
-		setSelectedDate(DateTime.now());
+	const navigateToDate = useCallback((date: DateTime) => {
+		setSelectedDate(date);
+		setRangeAnchor(date);
 	}, []);
 
+	const goToToday = useCallback(() => {
+		navigateToDate(DateTime.now());
+	}, [navigateToDate]);
+
 	const goToPrevious = useCallback(() => {
-		setSelectedDate((prev) => {
-			const navigationMap: Record<CalendarViewType, DateTime> = {
-				month: prev.minus({ months: 1 }),
-				week: prev.minus({ days: 7 }),
-				list: prev.minus({ days: 1 }),
-			};
-			return navigationMap[viewType];
-		});
-	}, [viewType]);
+		navigateToDate(selectedDate.minus(NAVIGATION_STEPS[viewType]));
+	}, [navigateToDate, selectedDate, viewType]);
 
 	const goToNext = useCallback(() => {
-		setSelectedDate((prev) => {
-			const navigationMap: Record<CalendarViewType, DateTime> = {
-				month: prev.plus({ months: 1 }),
-				week: prev.plus({ days: 7 }),
-				list: prev.plus({ days: 1 }),
-			};
-			return navigationMap[viewType];
-		});
-	}, [viewType]);
+		navigateToDate(selectedDate.plus(NAVIGATION_STEPS[viewType]));
+	}, [navigateToDate, selectedDate, viewType]);
 
 	const contextValue = {
 		selectedDate,
 		viewType,
+		rangeAnchor,
 		setSelectedDate: handleSetSelectedDate,
 		setViewType: handleSetViewType,
+		navigateToDate,
 		goToToday,
 		goToPrevious,
 		goToNext,

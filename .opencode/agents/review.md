@@ -14,6 +14,7 @@ permission:
         "git show *": allow
         "pnpm lint": allow
         "pnpm test:agent *": allow
+        "pnpm check:types": allow
     task:
         "*": deny
         develop: allow

@@ -15,6 +15,7 @@ import { IconChevronLeft, IconChevronRight } from '@tabler/icons-react';
 import { DateTime } from 'luxon';
 
 import { type CalendarViewType, useCalendarContext } from './CalendarContext';
+import styles from './CalendarHeader.module.css';
 
 import { formatWeekRange } from './_utils/formatWeekRange';
 
@@ -34,7 +35,7 @@ const DEFAULT_VIEWS: CalendarViewType[] = ['month', 'week', 'list'];
 const LABEL_FORMATTERS: Record<CalendarViewType, (date: DateTime) => string> = {
 	month: (date) => date.toFormat('MMMM yyyy'),
 	week: formatWeekRange,
-	list: (date) => date.toFormat('MMMM d, yyyy'),
+	list: (date) => date.toFormat('MMMM yyyy'),
 };
 
 export function CalendarHeader({
@@ -47,8 +48,8 @@ export function CalendarHeader({
 		goToToday,
 		goToPrevious,
 		goToNext,
-		setSelectedDate,
 		setViewType,
+		navigateToDate,
 	} = useCalendarContext();
 
 	const viewData = (availableViews ?? DEFAULT_VIEWS).map((view) => ({
@@ -56,24 +57,40 @@ export function CalendarHeader({
 		label: VIEW_LABELS[view],
 	}));
 
+	const label = LABEL_FORMATTERS[viewType](selectedDate);
+
 	return (
-		<Group justify="space-between" align="center" wrap="wrap" p="md">
+		<Group
+			className={styles.header}
+			pos="sticky"
+			top={0}
+			bg="var(--mantine-color-body)"
+			justify="space-between"
+			align="center"
+			wrap="wrap"
+			p="md"
+			style={{ zIndex: 100 }}
+		>
 			<Group>
 				<Button variant="default" onClick={goToToday}>
 					Today
 				</Button>
-				<ActionIcon
-					variant="subtle"
-					aria-label="Previous"
-					onClick={goToPrevious}
-				>
-					<IconChevronLeft />
-				</ActionIcon>
-				<ActionIcon variant="subtle" aria-label="Next" onClick={goToNext}>
-					<IconChevronRight />
-				</ActionIcon>
+				{viewType !== 'list' && (
+					<>
+						<ActionIcon
+							variant="subtle"
+							aria-label="Previous"
+							onClick={goToPrevious}
+						>
+							<IconChevronLeft />
+						</ActionIcon>
+						<ActionIcon variant="subtle" aria-label="Next" onClick={goToNext}>
+							<IconChevronRight />
+						</ActionIcon>
+					</>
+				)}
 				<Text size="lg" fw={500}>
-					{LABEL_FORMATTERS[viewType](selectedDate)}
+					{label}
 				</Text>
 			</Group>
 
@@ -92,7 +109,7 @@ export function CalendarHeader({
 					value={selectedDate.toISODate()}
 					onChange={(value) => {
 						if (value) {
-							setSelectedDate(DateTime.fromISO(value as string));
+							navigateToDate(DateTime.fromISO(value as string));
 						}
 					}}
 				/>

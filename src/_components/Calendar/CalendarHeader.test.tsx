@@ -1,15 +1,24 @@
+import { Group } from '@mantine/core';
+
 import { fireEvent, render, screen } from '@testing-library/react';
 
 import { DateTime } from 'luxon';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
+import {
+	type CalendarContextValue,
+	type CalendarViewType,
+	useCalendarContext,
+} from './CalendarContext';
 import { CalendarHeader, type CalendarHeaderProps } from './CalendarHeader';
-import { CalendarProvider } from './CalendarProvider';
-import type { CalendarViewType } from './CalendarContext';
 
 import { formatWeekRange } from './_utils/formatWeekRange';
 
 vi.mock('@mantine/core', async () => await import('@mocks/@mantine/core'));
+
+vi.mock('./CalendarHeader.module.css', () => ({
+	default: { header: 'header' },
+}));
 
 vi.mock('@mantine/dates', () => ({
 	DatePickerInput: vi.fn(({ value, onChange, 'data-testid': testId }) => (
@@ -22,18 +31,54 @@ vi.mock('@mantine/dates', () => ({
 	)),
 }));
 
+vi.mock('./CalendarContext', () => ({
+	useCalendarContext: vi.fn(),
+}));
+
+const mockNavigateToDate = vi.fn();
+const mockGoToToday = vi.fn();
+const mockGoToPrevious = vi.fn();
+const mockGoToNext = vi.fn();
+const mockSetViewType = vi.fn();
+
+function createMockContextValue(
+	overrides: Partial<CalendarContextValue> = {},
+): CalendarContextValue {
+	return {
+		selectedDate: DateTime.local(2024, 6, 15),
+		viewType: 'month',
+		rangeAnchor: DateTime.local(2024, 6, 15),
+		setSelectedDate: vi.fn(),
+		setViewType: mockSetViewType,
+		navigateToDate: mockNavigateToDate,
+		goToToday: mockGoToToday,
+		goToPrevious: mockGoToPrevious,
+		goToNext: mockGoToNext,
+		...overrides,
+	};
+}
+
 function renderHeader(
 	props: CalendarHeaderProps = {},
 	{
 		initialDate = DateTime.local(2024, 6, 15),
 		initialView = 'month',
-	}: { initialDate?: DateTime; initialView?: CalendarViewType } = {},
+		rangeAnchor = initialDate,
+	}: {
+		initialDate?: DateTime;
+		initialView?: CalendarViewType;
+		rangeAnchor?: DateTime;
+	} = {},
 ) {
-	return render(
-		<CalendarProvider initialDate={initialDate} initialView={initialView}>
-			<CalendarHeader {...props} />
-		</CalendarProvider>,
+	vi.mocked(useCalendarContext).mockReturnValue(
+		createMockContextValue({
+			selectedDate: initialDate,
+			viewType: initialView,
+			rangeAnchor,
+		}),
 	);
+
+	return render(<CalendarHeader {...props} />);
 }
 
 describe('CalendarHeader', () => {
@@ -44,18 +89,46 @@ describe('CalendarHeader', () => {
 	describe('layout', () => {
 		it('renders Today button', () => {
 			renderHeader();
+
 			expect(screen.getByRole('button', { name: 'Today' })).toBeDefined();
 		});
 
 		it('renders Previous and Next navigation buttons', () => {
 			renderHeader();
+
 			expect(screen.getByRole('button', { name: 'Previous' })).toBeDefined();
 			expect(screen.getByRole('button', { name: 'Next' })).toBeDefined();
 		});
 
 		it('renders the date label', () => {
 			renderHeader({}, { initialDate: DateTime.local(2024, 6, 15) });
+
 			expect(screen.getByText('June 2024')).toBeDefined();
+		});
+
+		it('applies a bottom border class to the root group', () => {
+			renderHeader();
+
+			expect(vi.mocked(Group)).toHaveBeenCalledWith(
+				expect.objectContaining({
+					className: 'header',
+				}),
+				undefined,
+			);
+		});
+	});
+
+	describe('sticky header', () => {
+		it('renders the header with sticky positioning', () => {
+			renderHeader();
+
+			expect(vi.mocked(Group)).toHaveBeenCalledWith(
+				expect.objectContaining({
+					pos: 'sticky',
+					top: 0,
+				}),
+				undefined,
+			);
 		});
 	});
 
@@ -80,11 +153,9 @@ describe('CalendarHeader', () => {
 		it('calls goToPrevious when prev button clicked', () => {
 			renderHeader({}, { initialDate: DateTime.local(2024, 6, 15) });
 
-			expect(screen.getByText('June 2024')).toBeDefined();
-
 			fireEvent.click(screen.getByRole('button', { name: /previous/i }));
 
-			expect(screen.getByText('May 2024')).toBeDefined();
+			expect(mockGoToPrevious).toHaveBeenCalled();
 		});
 
 		it('calls goToNext when next button clicked', () => {
@@ -92,7 +163,7 @@ describe('CalendarHeader', () => {
 
 			fireEvent.click(screen.getByRole('button', { name: /next/i }));
 
-			expect(screen.getByText('July 2024')).toBeDefined();
+			expect(mockGoToNext).toHaveBeenCalled();
 		});
 
 		it('calls goToToday when today button clicked', () => {
@@ -100,9 +171,7 @@ describe('CalendarHeader', () => {
 
 			fireEvent.click(screen.getByRole('button', { name: /today/i }));
 
-			expect(
-				screen.getByText(DateTime.now().toFormat('MMMM yyyy')),
-			).toBeDefined();
+			expect(mockGoToToday).toHaveBeenCalled();
 		});
 	});
 
@@ -127,13 +196,25 @@ describe('CalendarHeader', () => {
 			expect(screen.getByText(formatWeekRange(initialDate))).toBeDefined();
 		});
 
-		it('displays list date label in list view', () => {
+		it('displays selectedDate label in list view', () => {
 			renderHeader(
 				{},
 				{ initialDate: DateTime.local(2024, 6, 15), initialView: 'list' },
 			);
 
-			expect(screen.getByText('June 15, 2024')).toBeDefined();
+			expect(screen.getByText('June 2024')).toBeDefined();
+		});
+	});
+
+	describe('list view', () => {
+		it('hides Previous and Next buttons in list view', () => {
+			renderHeader(
+				{},
+				{ initialDate: DateTime.local(2024, 6, 15), initialView: 'list' },
+			);
+
+			expect(screen.queryByRole('button', { name: 'Previous' })).toBeNull();
+			expect(screen.queryByRole('button', { name: 'Next' })).toBeNull();
 		});
 	});
 
@@ -155,12 +236,11 @@ describe('CalendarHeader', () => {
 		});
 
 		it('calls setViewType when a view is selected', () => {
-			const initialDate = DateTime.local(2024, 6, 12);
-			renderHeader({}, { initialDate, initialView: 'month' });
+			renderHeader({}, { initialDate: DateTime.local(2024, 6, 12) });
 
 			fireEvent.click(screen.getByRole('button', { name: 'Week' }));
 
-			expect(screen.getByText(formatWeekRange(initialDate))).toBeDefined();
+			expect(mockSetViewType).toHaveBeenCalledWith('week');
 		});
 	});
 
@@ -171,23 +251,27 @@ describe('CalendarHeader', () => {
 			expect(screen.getByDisplayValue('2024-06-15')).toBeDefined();
 		});
 
-		it('calls setSelectedDate with the picked date', () => {
+		it('calls navigateToDate with the picked date', () => {
 			renderHeader({}, { initialDate: DateTime.local(2024, 6, 15) });
 
 			fireEvent.change(screen.getByDisplayValue('2024-06-15'), {
 				target: { value: '2024-07-20' },
 			});
 
-			expect(screen.getByText('July 2024')).toBeDefined();
+			expect(mockNavigateToDate).toHaveBeenCalledTimes(1);
+			expect(mockNavigateToDate.mock.calls[0]?.[0].toISODate()).toBe(
+				'2024-07-20',
+			);
 		});
 
-		it('does not update selectedDate when the picker is cleared', () => {
+		it('does not call navigateToDate when the picker is cleared', () => {
 			renderHeader({}, { initialDate: DateTime.local(2024, 6, 15) });
 
 			fireEvent.change(screen.getByDisplayValue('2024-06-15'), {
 				target: { value: '' },
 			});
 
+			expect(mockNavigateToDate).not.toHaveBeenCalled();
 			expect(screen.getByText('June 2024')).toBeDefined();
 		});
 	});

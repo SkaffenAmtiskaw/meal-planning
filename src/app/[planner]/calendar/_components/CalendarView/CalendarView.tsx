@@ -9,7 +9,6 @@ import { useMediaQuery } from '@mantine/hooks';
 import {
 	CalendarHeader,
 	CalendarProvider,
-	ListView,
 	useCalendarContext,
 } from '@/_components/Calendar';
 
@@ -18,6 +17,7 @@ import type { SavedItem, SerializedDay } from '../../_utils/toScheduleXEvents';
 import { AddMealButton } from '../AddMealButton/AddMealButton';
 import { MealCalendar } from '../MealCalendar/MealCalendar';
 import { MealDetailModal } from '../MealDetailModal/MealDetailModal';
+import { MealListView } from '../MealListView/MealListView';
 import { MealWeekView } from '../MealWeekView/MealWeekView';
 
 type Props = {
@@ -79,7 +79,9 @@ function CalendarViewContent({
 						onEventClick={onEventClick}
 					/>
 				)}
-				{viewType === 'list' && <ListView />}
+				{viewType === 'list' && (
+					<MealListView plannerId={plannerId} onMealAdded={onMealAdded} />
+				)}
 			</Box>
 		</Stack>
 	);

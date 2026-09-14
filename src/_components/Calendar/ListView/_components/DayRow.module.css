@@ -1,0 +1,77 @@
+/* Mantine layout props cannot express the required fixed 82px sticky gutter with right border, so the row layout is controlled here. */
+.row {
+	display: flex;
+	gap: 14px;
+	border-top: 1px solid var(--mantine-color-chalk-3);
+	padding: 14px 0;
+}
+
+/* Mantine does not expose sticky positioning or a single-edge border prop for this fixed-width gutter. */
+.gutter {
+	flex: 0 0 82px;
+	width: 82px;
+	min-width: 82px;
+	max-width: 82px;
+	box-sizing: border-box;
+	padding-right: 12px;
+	border-right: 1px solid var(--mantine-color-chalk-3);
+	position: sticky;
+	top: 8px;
+}
+
+.gutterContent {
+	display: grid;
+	grid-template-columns: 1fr 22px;
+	column-gap: 4px;
+	row-gap: 2px;
+	align-items: center;
+	width: 100%;
+	padding-right: 30px;
+}
+
+.gutterText {
+	grid-column: 1;
+	text-align: right;
+}
+
+.dateLine {
+	grid-column: 1;
+	display: flex;
+	justify-content: flex-end;
+	align-items: center;
+	width: 100%;
+}
+
+.addButton {
+	border: 1px solid var(--mantine-color-forest-2);
+	color: var(--mantine-color-forest-9);
+	opacity: 0;
+	transform: translateX(-4px) scale(0.9);
+	transition:
+		opacity 130ms ease,
+		transform 130ms ease;
+}
+
+.addButton:hover {
+	background-color: var(--mantine-color-forest-0);
+	border-color: var(--mantine-color-forest-9);
+}
+
+.row:hover .addButton,
+.row:focus-within .addButton,
+.addButton:focus-visible {
+	opacity: 1;
+	transform: translateX(0) scale(1);
+}
+
+.ghostRow {
+	margin-left: 22px;
+	padding: 9px 12px;
+	border-radius: 8px;
+	cursor: pointer;
+	width: fit-content;
+}
+
+.ghostRow:hover {
+	background-color: var(--mantine-color-forest-0);
+}

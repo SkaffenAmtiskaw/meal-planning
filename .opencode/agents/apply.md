@@ -12,7 +12,7 @@ permission:
      "*": deny
      "src/**": allow
   webfetch: deny
-steps: 6
+steps: 10
 ---
 
 **Role**

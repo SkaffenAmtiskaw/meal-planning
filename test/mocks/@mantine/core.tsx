@@ -17,6 +17,8 @@
  * `vi.mocked(Comp).mockImplementationOnce(...)` to override for a single test.
  */
 
+import type React from 'react';
+
 import { vi } from 'vitest';
 
 // ─── Shared prop shapes ───────────────────────────────────────────────────────
@@ -85,13 +87,14 @@ export const Box = vi.fn(
 	({
 		children,
 		'data-testid': testId,
-		onBlur,
+		ref,
 		...props
 	}: WithChildren & {
+		ref?: React.Ref<HTMLDivElement>;
 		onBlur?: React.FocusEventHandler<HTMLElement>;
 		[key: string]: unknown;
 	}) => (
-		<div data-testid={testId} onBlur={onBlur} {...props}>
+		<div data-testid={testId} ref={ref} {...props}>
 			{children}
 		</div>
 	),
@@ -1122,6 +1125,10 @@ export const useMantineTheme = vi.fn(() => ({
 }));
 
 // ─── Utilities ────────────────────────────────────────────────────────────────
+
+export const rgba = vi.fn(
+	(color: string, alpha: number) => `rgba(${color}, ${alpha})`,
+);
 
 export const createTheme = vi.fn((theme: Record<string, unknown>) => theme);
 export const isLightColor = vi.fn(() => false);

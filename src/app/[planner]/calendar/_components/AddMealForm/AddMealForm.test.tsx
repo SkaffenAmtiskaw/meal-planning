@@ -1,6 +1,8 @@
+import { useForm } from '@mantine/form';
+
 import { act, fireEvent, render, screen } from '@testing-library/react';
 
-import { beforeAll, beforeEach, describe, expect, test, vi } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { addMeal } from '@/_actions/calendar';
 import { FormFeedbackAlert, SubmitButton } from '@/_components';
@@ -38,7 +40,7 @@ vi.mock('./useDishes', async () => ({
 
 const defaultProps = {
 	plannerId: 'planner-1',
-	onClose: vi.fn(),
+	onCancel: vi.fn(),
 };
 
 const makeDish = (overrides: Partial<{ id: string; name: string }> = {}) => ({
@@ -56,7 +58,8 @@ describe('AddMealForm', () => {
 	const mockRemoveDish = vi.fn();
 	const mockUpdateDish = vi.fn();
 
-	beforeAll(() => {
+	beforeEach(() => {
+		vi.resetAllMocks();
 		vi.mocked(useDishes).mockReturnValue({
 			dishes: [makeDish()],
 			addDish: mockAddDish,
@@ -65,24 +68,13 @@ describe('AddMealForm', () => {
 		});
 	});
 
-	beforeEach(() => {
-		vi.clearAllMocks();
-	});
-
-	test('calls addDish when "Add dish" is clicked', () => {
+	it('calls addDish when "Add dish" is clicked', () => {
 		render(<AddMealForm {...defaultProps} />);
 		fireEvent.click(screen.getByText('Add dish'));
 		expect(mockAddDish).toHaveBeenCalledOnce();
 	});
 
-	test('cancel button calls onClose', () => {
-		const onClose = vi.fn();
-		render(<AddMealForm {...defaultProps} onClose={onClose} />);
-		fireEvent.click(screen.getByText('Cancel'));
-		expect(onClose).toHaveBeenCalledOnce();
-	});
-
-	test('passes status and errorMessage to FormFeedbackAlert', () => {
+	it('passes status and errorMessage to FormFeedbackAlert', () => {
 		vi.mocked(useFormFeedback).mockReturnValueOnce({
 			status: 'error' as FeedbackStatus,
 			countdown: 0,
@@ -100,7 +92,7 @@ describe('AddMealForm', () => {
 		);
 	});
 
-	test('passes status and label to SubmitButton', () => {
+	it('passes status and label to SubmitButton', () => {
 		render(<AddMealForm {...defaultProps} />);
 		expect(vi.mocked(SubmitButton)).toHaveBeenCalledWith(
 			expect.objectContaining({
@@ -112,7 +104,7 @@ describe('AddMealForm', () => {
 		);
 	});
 
-	test('calls addMeal with form values and dishes on submit', async () => {
+	it('calls addMeal with form values and dishes on submit', async () => {
 		vi.mocked(addMeal).mockResolvedValueOnce({
 			ok: true,
 			data: { calendar: [] },
@@ -133,8 +125,7 @@ describe('AddMealForm', () => {
 		);
 	});
 
-	test('calls onMealAdded with calendar and calls onClose on successful submission', async () => {
-		const onClose = vi.fn();
+	it('calls onMealAdded with calendar on successful submission', async () => {
 		const onMealAdded = vi.fn();
 		const calendar = [{ date: '2024-06-15', meals: [] }];
 		vi.mocked(addMeal).mockResolvedValueOnce({
@@ -142,22 +133,85 @@ describe('AddMealForm', () => {
 			data: { calendar },
 		});
 
+		render(<AddMealForm {...defaultProps} onMealAdded={onMealAdded} />);
+		await act(async () => {
+			fireEvent.submit(screen.getByTestId('add-meal-form'));
+		});
+
+		expect(onMealAdded).toHaveBeenCalledWith(calendar);
+	});
+
+	it('calls onSuccess with calendar on successful submission', async () => {
+		const onSuccess = vi.fn();
+		const calendar = [{ date: '2024-06-15', meals: [] }];
+		vi.mocked(addMeal).mockResolvedValueOnce({
+			ok: true,
+			data: { calendar },
+		});
+
+		render(<AddMealForm {...defaultProps} onSuccess={onSuccess} />);
+		await act(async () => {
+			fireEvent.submit(screen.getByTestId('add-meal-form'));
+		});
+
+		expect(onSuccess).toHaveBeenCalledWith(calendar);
+	});
+
+	it('calls onCancel when the Cancel button is clicked', () => {
+		const onCancel = vi.fn();
+		render(<AddMealForm {...defaultProps} onCancel={onCancel} />);
+		fireEvent.click(screen.getByText('Cancel'));
+		expect(onCancel).toHaveBeenCalledOnce();
+	});
+
+	it('does not call onMealAdded or onSuccess when submission fails', async () => {
+		const onMealAdded = vi.fn();
+		const onSuccess = vi.fn();
+		vi.mocked(addMeal).mockResolvedValueOnce({
+			ok: false,
+			error: 'Something went wrong',
+		});
+
 		render(
 			<AddMealForm
 				{...defaultProps}
-				onClose={onClose}
 				onMealAdded={onMealAdded}
+				onSuccess={onSuccess}
 			/>,
 		);
 		await act(async () => {
 			fireEvent.submit(screen.getByTestId('add-meal-form'));
 		});
 
-		expect(onMealAdded).toHaveBeenCalledWith(calendar);
-		expect(onClose).toHaveBeenCalledOnce();
+		expect(onMealAdded).not.toHaveBeenCalled();
+		expect(onSuccess).not.toHaveBeenCalled();
 	});
 
-	test('passes showRemove false to DishRow when there is only one dish', () => {
+	it('prefills the date field when initialDate is provided', () => {
+		vi.mocked(useForm).mockImplementationOnce(
+			(options) =>
+				({
+					onSubmit:
+						(handler: (values: Record<string, unknown>) => void) =>
+						(event: { preventDefault: () => void }) => {
+							event.preventDefault();
+							handler(options?.initialValues ?? {});
+						},
+					getInputProps: vi.fn((field: string) => ({
+						value: options?.initialValues?.[field],
+						onChange: () => {},
+					})),
+					key: vi.fn((field: string) => field),
+				}) as unknown as ReturnType<typeof useForm>,
+		);
+
+		render(<AddMealForm {...defaultProps} initialDate="2024-06-15" />);
+		expect((screen.getByTestId('meal-date') as HTMLInputElement).value).toBe(
+			'2024-06-15',
+		);
+	});
+
+	it('passes showRemove false to DishRow when there is only one dish', () => {
 		render(<AddMealForm {...defaultProps} />);
 		expect(vi.mocked(DishRow)).toHaveBeenCalledWith(
 			expect.objectContaining({ showRemove: false }),
@@ -165,7 +219,7 @@ describe('AddMealForm', () => {
 		);
 	});
 
-	test('passes showRemove true to DishRow when there are multiple dishes', () => {
+	it('passes showRemove true to DishRow when there are multiple dishes', () => {
 		vi.mocked(useDishes).mockReturnValueOnce({
 			dishes: [makeDish({ id: 'dish-1' }), makeDish({ id: 'dish-2' })],
 			addDish: mockAddDish,
@@ -179,32 +233,31 @@ describe('AddMealForm', () => {
 		);
 	});
 
-	test('DishRow onUpdate callback calls updateDish', () => {
+	it('DishRow onUpdate callback calls updateDish', () => {
 		render(<AddMealForm {...defaultProps} />);
 		const { onUpdate } = vi.mocked(DishRow).mock.calls[0][0];
 		onUpdate({ name: 'test' });
 		expect(mockUpdateDish).toHaveBeenCalledWith('dish-1', { name: 'test' });
 	});
 
-	test('DishRow onRemove callback calls removeDish', () => {
+	it('DishRow onRemove callback calls removeDish', () => {
 		render(<AddMealForm {...defaultProps} />);
 		const { onRemove } = vi.mocked(DishRow).mock.calls[0][0];
 		onRemove();
 		expect(mockRemoveDish).toHaveBeenCalledWith('dish-1');
 	});
 
-	test('does not throw when onMealAdded is not provided', async () => {
-		const onClose = vi.fn();
+	it('does not throw when onMealAdded is not provided', async () => {
 		vi.mocked(addMeal).mockResolvedValueOnce({
 			ok: true,
 			data: { calendar: [] },
 		});
 
-		render(<AddMealForm {...defaultProps} onClose={onClose} />);
+		render(<AddMealForm {...defaultProps} />);
 		await act(async () => {
 			fireEvent.submit(screen.getByTestId('add-meal-form'));
 		});
 
-		expect(onClose).toHaveBeenCalledOnce();
+		expect(addMeal).toHaveBeenCalledOnce();
 	});
 });

@@ -10,6 +10,8 @@
 
 CRITICAL: When you encounter a file reference (e.g., .opencode/docs/project_structure.md), use your Read tool to load it on a need-to-know basis. They're relevant to the SPECIFIC task at hand.
 
+_Note: When you encounter a link such as `.opencode/docs/` that could be resolved to either the in-project settings or the global settings, you should check the project settings first. Referencing external directories in your instructions would be extremely unusual._
+
 Instructions:
 
 - Do NOT preemptively load all references - use lazy loading based on actual need

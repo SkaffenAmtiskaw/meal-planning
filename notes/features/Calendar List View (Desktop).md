@@ -6,11 +6,11 @@ Source: `/Users/sarah/Downloads/design_handoff_list_view/`
 Prototype: `List View.dc.html`
 
 ### Overview
-A scrolling, agenda-style list view for the meal planner calendar. It replaces the current placeholder in `src/_components/Calendar/ListView/ListView.tsx` (which today renders a single `<Text>`). The view shows a continuous vertical run of days — every day in range, not just days with meals — each with its meals and dishes, anchored on today and with a sticky month label in the header that updates as you scroll.
+A scrolling, agenda-style list view for the meal planner calendar. It replaces the current placeholder in `src/_components/Calendar/ListView/ListView.tsx` (which today renders a single `<Text>`). The view shows a continuous vertical run of days — every day in range, not just days with meals — each with its meals and dishes, anchored on today. As the user scrolls, `selectedDate` tracks the topmost visible day so the header label and other views stay in sync.
 
 The files in the handoff bundle are **design references created in HTML** — a prototype showing the intended look and behavior. They are **not production code to copy**. The task is to recreate this design inside the existing Next.js + Mantine app using its established patterns (Mantine components, `@/_theme` colors, CSS modules, Luxon `DateTime`, colocated Vitest tests). Do not port the inline styles or the prototype's hand-rolled data layer.
 
-**Fidelity:** High. Colors, type sizes, spacing and interaction states are final and taken from the prototype. Match them, but express them through Mantine props/theme tokens where an equivalent exists (e.g. `c="navy"`, `size="sm"`, `gap="xs"`) rather than hardcoding hex values that already exist in `src/_theme/colors.ts`.
+**Fidelity:** High, but not pixel-perfect. Colors, type sizes, spacing and interaction states are taken from the prototype, but express them through Mantine props/theme tokens where an equivalent exists (e.g. `c="navy"`, `size="sm"`, `gap="xs"`) rather than hardcoding exact pixel values. Do not introduce custom CSS solely to match prototype pixel dimensions when a Mantine prop/theme token is close enough.
 
 ### Screen: Calendar → List view
 
@@ -22,21 +22,21 @@ The files in the handoff bundle are **design references created in HTML** — a 
 3. **Scroll region** — `flex: 1; min-height: 0; overflow-y: auto`. Inner column `max-width: 900px; margin: 0 auto; padding: 8px 24px 64px`.
 
 #### Header changes required for this view
-- The month label is **not** `selectedDate.toFormat('MMMM d, yyyy')` in list view. It reflects the month of the topmost visible day row and updates on scroll (e.g. "September 2026"). `LABEL_FORMATTERS.list` should become month+year, driven by scroll position rather than `selectedDate`. Suggested approach: the list view reports its current month up through `CalendarContext` (or a new `visibleMonth` value), and the header renders that when `viewType === 'list'`.
+- The month label in list view uses `selectedDate.toFormat('MMMM yyyy')`. `selectedDate` is updated to the topmost visible day after scrolling stops, so the header label tracks scroll position.
 - The prev/next `ActionIcon`s are **hidden in list view** (scrolling replaces them).
-- **Today** scroll-animates the list to today's row (`behavior: 'smooth'`, target `row.offsetTop - 12`) rather than only changing `selectedDate`.
+- **Today** scroll-animates the list to today's row (`behavior: 'smooth'`, target `row.offsetTop - 12`) and updates `selectedDate` to today.
 
 #### Day row
 One row per calendar day in the loaded range. Flex row, `gap: 14px`, `border-top: 1px solid #EBE8E9`, `padding: 14px 0`.
 
-- Background: `#ffffff`; **today's row** `#FFF8F5` (`ember.0`-adjacent tint).
+- Background: `#ffffff`; **today's row** uses `ember.0` with lowered opacity (e.g. `rgba(var(--mantine-color-ember-0), 0.5)`).
 - Row carries `data-iso="YYYY-MM-DD"` — used for scroll targeting and month detection.
 
-**Left gutter — 82px fixed** (`flex: 0 0 82px`), `padding-right: 12px`, `border-right: 1px solid #EBE8E9`. Contents are `position: sticky; top: 8px`, right-aligned, `gap: 2px`:
-- Weekday: `SUN`…`SAT`, 11px / 700 / `letter-spacing: .1em` / `#8C9BAA` (`navy.4`), `padding-right: 30px` so it aligns over the day number, not the add button.
-- Day number: 22px / 500 / `#1C3144`, 34px line box.
-  - **Today:** a 34px circular ember badge — `background #FF6542`, white text, 17px / 600, `border-radius: 17px`, `min-width: 34px`.
-- **First of month** only: month abbreviation (`SEP`) below the number, 11px / 600 / `letter-spacing: .08em` / `#FF6542`, `padding-right: 30px`.
+**Left gutter — 82px fixed** (`flex: 0 0 82px`), `padding-right: 12px`, `border-right: 1px solid #EBE8E9`. Contents are `position: sticky; top: 8px`, right-aligned, with a small vertical gap and `padding-right: 30px` so the weekday and day number align above one another:
+- Weekday: `SUN`…`SAT`, use Mantine `Text` with `size="xs"`, `fw={700}`, `c="navy.4"`, `tt="uppercase"`.
+- Day number: use Mantine `Text` with `size="xl"`, `fw={500}`.
+  - **Today:** use Mantine `Badge` with `circle` and `color="ember"`.
+- **First of month** only: month abbreviation (`SEP`) below the number, use Mantine `Text` with `size="xs"`, `fw={600}`, `c="ember.5"`, `tt="uppercase"`.
 - **Add-meal affordance:** 22px circle to the right of the day number, `border: 1px solid #CFDBCE` (`forest.2`), forest `#44633F` plus glyph. Hidden by default (`opacity: 0; transform: translateX(-4px) scale(.9)`), revealed on **row hover** (`opacity: 1; translateX(0) scale(1)`), transition `opacity 130ms ease, transform 130ms ease`. Hover on the button itself: `background #EFF3EF` (`forest.0`), `border-color #44633F`. Hover-out is debounced ~150ms so moving between the number and the button doesn't flicker. It must also be keyboard-reachable — give it a real `ActionIcon`/button with `aria-label="Add meal on {date}"` and the app's `focusClasses.focusRing`; visibility should also trigger on `:focus-within` of the row, not hover alone.
 
 **Right column** — `flex: 1; min-width: 0`, vertical stack, `gap: 6px`.
@@ -61,7 +61,7 @@ Days with no meals render a single ghost action instead of cards: `margin-left: 
 ### Interactions & Behavior
 - **Initial scroll:** on mount, jump (no animation) so today's row sits at the top of the scroll region, offset `-12px`. In the prototype this runs after two `requestAnimationFrame`s to wait for layout; in React prefer a layout effect keyed on data-loaded.
 - **Today button:** smooth-scrolls to the same position.
-- **Scroll → month label:** on scroll, find the last row whose `offsetTop <= scrollTop + 24` and publish its month; fall back to the first row. Throttle with `requestAnimationFrame`; an `IntersectionObserver` on the day rows is the cleaner production implementation.
+- **Scroll → selectedDate:** on scroll, find the last row whose `offsetTop <= scrollTop + 24` and set `selectedDate` to that day; fall back to the first row. Update only after scrolling stops (debounce ~150ms). Throttle detection with `requestAnimationFrame`; an `IntersectionObserver` on the day rows is the cleaner production implementation.
 - **Date picker:** choosing a date scrolls that day's row into view (and loads more range if the date falls outside the loaded window).
 - **Row hover:** reveals that row's add button only (state is a single "hovered ISO date", not per-row state).
 - **Dish link click:** must not bubble to the meal card click.
@@ -71,9 +71,11 @@ Days with no meals render a single ghost action instead of cards: `margin-left: 
 
 ### State Management
 - `selectedDate`, `viewType` — existing `CalendarContext`.
-- **New:** `visibleMonth` (string or DateTime) — derived from scroll, consumed by the header.
+- **New:** `rangeAnchor` (DateTime) — determines the fixed window of days shown in list view. It updates only on explicit navigation (Today, date picker, prev/next) so scrolling does not shift the list underneath the user.
+- **New:** `navigateToDate(date)` — explicit navigation action that updates both `selectedDate` and `rangeAnchor`.
+- `selectedDate` becomes the single source of truth for the calendar. The header label, month/week views, and today badge all use it. In list view, scroll updates `selectedDate` (debounced) to the topmost visible day; switching views then shows that same date in the new view.
 - **New, local to ListView:** `hoveredDate: string | null` (with the ~150ms leave debounce), a ref to the scroll container, and a map/array of day-row refs keyed by ISO date.
-- **Data:** the range of days to render. The prototype hardcodes 35 days starting 2026-08-24 (≈2 weeks back, 3 weeks forward from today). Production should derive the range from `selectedDate` and fetch `SerializedDay[]` the same way the month view does (`useCalendarEvents` / the calendar page's server fetch), plus `savedItems` for dish resolution. Infinite scroll in both directions is a natural follow-up but is **not** in this design — ship a fixed window first.
+- **Data:** the range of days to render. The prototype hardcodes 35 days starting 2026-08-24 (≈2 weeks back, 3 weeks forward from today). Production derives the range from `rangeAnchor` and fetches `SerializedDay[]` the same way the month view does (`useCalendarEvents` / the calendar page's server fetch), plus `savedItems` for dish resolution. Infinite scroll in both directions is a natural follow-up but is **not** in this design — ship a fixed window first.
 
 ### Design Tokens
 All already exist in `src/_theme/colors.ts` — use them, don't re-declare.
@@ -89,13 +91,13 @@ All already exist in `src/_theme/colors.ts` — use them, don't re-declare.
 | Add-button border | `#CFDBCE` | `forest.2` |
 | Forest hover bg | `#EFF3EF` | `forest.0` |
 | Today badge / accent | `#FF6542` | `THEME_COLORS.ember` |
-| Today row tint | `#FFF8F5` | between `ember.0` and white |
+| Today row tint | `ember.0` with lowered opacity | `rgba(var(--mantine-color-ember-0), 0.5)` |
 | Row / header divider | `#EBE8E9` | `chalk.3` |
 | Card border | `#F0EDEE` | `chalk.2` |
 | Card hover bg / border | `#FAF8F9` / `#E1D9DB` | `chalk.0` / `chalk.7` |
 | Meal rail | per-meal | `TAG_COLORS[getMealColor(name)].border` |
 
-**Spacing:** 2, 6, 8, 10, 12, 14, 16, 24 px. **Radii:** 6 (segmented pill), 8 (cards, buttons), 11 / 17 (circles). **Type:** Inter — 11/700, 12/400, 13/500, 13/600, 15/600, 17/600, 22/500. **Content width:** 900px max, centered. **Gutter:** 82px.
+**Spacing:** use Mantine spacing tokens where possible. **Radii:** use Mantine radius tokens where possible. **Type:** use Mantine `Text` size/font-weight props; do not hardcode exact pixel type sizes. **Content width:** 900px max, centered. **Gutter:** 82px.
 
 ### Assets
 - `assets/weeknight-header-dark.svg` — already in the repo at `public/weeknight-header-dark.svg`; included here only so the prototype renders standalone. No new assets.
@@ -114,26 +116,31 @@ All already exist in `src/_theme/colors.ts` — use them, don't re-declare.
 - **Tests**: Colocated with every module, not a separate step.
 - **Granularity**: Steps are small and build incrementally.
 
-## Step 1 — CalendarContext `visibleMonth` + CalendarHeader list-view behavior
+## Step 1 — CalendarHeader list-view behavior + calendar navigation model
+**Status: ✅ Completed**
 
-**Goal:** Prepare the header to behave correctly for list view.
+**Goal:** Prepare the header to behave correctly for list view and establish the single-source-of-truth calendar state.
 
 **Acceptance criteria:**
 - Run the app → Calendar → List view.
 - Verify **Previous** and **Next** arrow buttons are hidden.
 - Verify the month label shows the selected month/year (e.g. “September 2026”), not a day-specific label.
 - Verify Month and Week views still work exactly as before.
+- Verify switching views preserves the current `selectedDate` so the same date appears in the new view.
 
 **Architectural plan:**
-- Add `visibleMonth: DateTime` and `setVisibleMonth` to `CalendarContext`.
-- Add `visibleMonth` state to `CalendarProvider`, defaulting to `initialDate`.
+- `selectedDate` remains the single source of truth for the calendar.
+- Add `rangeAnchor: DateTime` and `navigateToDate(date)` to `CalendarContext`. `navigateToDate` updates both `selectedDate` and `rangeAnchor`; it is used for all explicit navigation (Today, date picker, prev/next).
+- Add `rangeAnchor` state to `CalendarProvider`, defaulting to `initialDate`.
 - Update `CalendarHeader`:
   - Hide prev/next `ActionIcon`s when `viewType === 'list'`.
-  - Use `visibleMonth` for the label in list view.
+  - In list view, render `selectedDate.toFormat('MMMM yyyy')`.
+  - Use `navigateToDate` for the date picker, Today button, and prev/next actions.
   - Add bottom border `1px solid #EBE8E9`.
 - Colocated tests: `CalendarContext.test.tsx`, `CalendarHeader.test.tsx`, `CalendarProvider.test.tsx`.
 
 ## Step 2 — Empty day list structure
+**Status: ✅ Completed**
 
 **Goal:** Render the continuous scrolling list with no meals yet.
 
@@ -148,13 +155,14 @@ All already exist in `src/_theme/colors.ts` — use them, don't re-declare.
 **Architectural plan:**
 - Create generic `src/_components/Calendar/ListView/ListView.tsx`.
 - Create `ListView.module.css` for layout (gutter, scroll region, sticky gutter, row dividers).
-- Add `src/_components/Calendar/ListView/_utils/getListDayRange.ts` to generate the fixed window of days around `selectedDate`, ensuring today is included.
+- Add `src/_components/Calendar/ListView/_utils/getListDayRange.ts` to generate the fixed window of days around `rangeAnchor`, ensuring today is included.
 - Add `src/_components/Calendar/ListView/_components/DayRow.tsx` to render a single empty day (gutter + right column placeholder).
 - Create app-specific adapter `src/app/[planner]/calendar/_components/MealListView/MealListView.tsx` (thin wrapper for now).
 - Update `CalendarView` to render `MealListView` instead of `ListView` for list view.
 - Colocated tests: `ListView.test.tsx`, `MealListView.test.tsx`, `getListDayRange.test.ts`.
 
 ## Step 3 — Empty-day “Add meal” ghost + gutter add button (UI only)
+**Status: ✅ Completed**
 
 **Goal:** Add the add-meal affordances, but do not wire them yet.
 
@@ -173,6 +181,7 @@ All already exist in `src/_theme/colors.ts` — use them, don't re-declare.
 - Colocated tests: `useDebouncedHover.test.ts`, updated `ListView.test.tsx`.
 
 ## Step 4 — Wire day-specific add meal
+**Status: ✅ Completed**
 
 **Goal:** Make the add-meal affordances open the modal with the correct date prefilled.
 
@@ -205,7 +214,7 @@ All already exist in `src/_theme/colors.ts` — use them, don't re-declare.
 - Add drag handle (non-interactive, desktop only) and hover state.
 - In `MealListView`, convert `SerializedDay[]` + `SavedItem[]` to `ListViewEvent[]` using `getMealColor`, `TAG_COLORS`, `resolveDishSource`.
 - Pass events to `ListView`, group by date, render `MealCard`s.
-- Map meal card click to `CalendarEvent` and call `onEventClick`.
+- Meal cards are display-only in list view; do not open `MealDetailModal` on click.
 - Colocated tests: `MealCard.test.tsx`, updated `MealListView.test.tsx` and `ListView.test.tsx`.
 
 ## Step 6 — Dish list with sources
@@ -227,25 +236,27 @@ All already exist in `src/_theme/colors.ts` — use them, don't re-declare.
 - `MealListView` provides `renderDish` using `DishLink` (size `sm`) and renders ref/note around it.
 - Colocated tests: `DishLink.test.tsx`, `DishListItem.test.tsx`, updated `MealListView.test.tsx`.
 
-## Step 7 — Scroll interactions and visible-month reporting
+## Step 7 — Scroll interactions and selected-date tracking (partial)
 
 **Goal:** The list anchors on today and the header month label tracks scroll.
+
+**Status:** Scroll-to-`selectedDate` sync is implemented (ListView debounces scroll events and updates `selectedDate` to the topmost visible day). The remaining pieces are initial scroll-to-today on mount, Today-button smooth scroll, and date-picker scroll.
 
 **Acceptance criteria:**
 - Run the app → List view.
 - Verify the page loads already scrolled so today’s row is near the top.
 - Click **Today** → list smooth-scrolls today’s row to the top.
 - Use the **Date** picker → list scrolls to the selected day.
-- Scroll slowly → header month label updates to the topmost visible month.
+- Scroll and stop → `selectedDate` updates to the topmost visible day, and the header month label updates accordingly.
 
 **Architectural plan:**
 - Add `src/_components/Calendar/ListView/_hooks/useScrollToDate.ts`.
-- Add `src/_components/Calendar/ListView/_hooks/useVisibleMonth.ts` (scroll listener throttled with `requestAnimationFrame`).
+- Add `src/_components/Calendar/ListView/_hooks/useScrolledDate.ts` (scroll listener throttled with `requestAnimationFrame`, debounced ~150ms before calling `setSelectedDate`).
 - In `ListView`:
-  - On mount, jump-scroll to today.
-  - When `selectedDate` changes, smooth-scroll to that date.
-  - Update `visibleMonth` in context on scroll.
-- Colocated tests: `useScrollToDate.test.ts`, `useVisibleMonth.test.ts`, updated `ListView.test.tsx`.
+  - On mount, jump-scroll to `selectedDate`.
+  - When `rangeAnchor` changes (explicit navigation), smooth-scroll to `selectedDate`.
+  - Update `selectedDate` in context after scrolling stops; do not auto-scroll when `selectedDate` changes from scroll.
+- Colocated tests: `useScrollToDate.test.ts`, `useScrolledDate.test.ts`, updated `ListView.test.tsx`.
 
 ## Step 8 — Mobile placeholder
 

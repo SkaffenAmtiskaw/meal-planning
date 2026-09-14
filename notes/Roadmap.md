@@ -10,6 +10,8 @@
 - you should be able to create a meal with just a title and a description
 - meal color should be based on hex of title + description
 - sidebar on modal should close after you click something
+- refactor all modal forms to separate presentation and data concerns
+
 # High-Priority
 ## Calendar Page
 - [[Replace Schedule-X|replace schedule-x]]
@@ -19,6 +21,8 @@
 - add meals by clicking month cell
 - add meals by clicking week day
 - default to week view on desktop - list view on mobile
+- add dish notes to list view - need design (that way we don't need the stupid modal)
+- calendar list view infinite scroll
 ## Planner Settings
 - [[Delete Planner|allow user to delete a planner]]
 - [[Transfer Ownership of Planner|transfer ownership of planner]]

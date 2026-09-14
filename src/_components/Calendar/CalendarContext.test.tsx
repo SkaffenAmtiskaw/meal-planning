@@ -22,8 +22,10 @@ describe('useCalendarContext', () => {
 		const mockValue: CalendarContextValue = {
 			selectedDate: DateTime.local(2024, 6, 15),
 			viewType: 'month',
+			rangeAnchor: DateTime.local(2024, 6, 1),
 			setSelectedDate: vi.fn(),
 			setViewType: vi.fn(),
+			navigateToDate: vi.fn(),
 			goToToday: vi.fn(),
 			goToPrevious: vi.fn(),
 			goToNext: vi.fn(),

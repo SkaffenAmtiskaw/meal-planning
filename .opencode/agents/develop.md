@@ -13,7 +13,7 @@ permission:
      "src/**": allow
      "test/**": allow
   webfetch: ask
-steps: 12
+steps: 24
 ---
 
 **Role**

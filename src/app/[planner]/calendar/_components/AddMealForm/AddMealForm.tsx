@@ -32,11 +32,19 @@ const zFormFields = z.object({
 
 type Props = {
 	plannerId: string;
-	onClose: () => void;
+	initialDate?: string;
+	onCancel: () => void;
 	onMealAdded?: (calendar: SerializedDay[]) => void;
+	onSuccess?: (calendar: SerializedDay[]) => void;
 };
 
-export const AddMealForm = ({ plannerId, onClose, onMealAdded }: Props) => {
+export const AddMealForm = ({
+	plannerId,
+	initialDate,
+	onCancel,
+	onMealAdded,
+	onSuccess,
+}: Props) => {
 	const { dishes, addDish, removeDish, updateDish } = useDishes();
 
 	const { status, countdown, errorMessage, wrap } = useFormFeedback();
@@ -44,7 +52,7 @@ export const AddMealForm = ({ plannerId, onClose, onMealAdded }: Props) => {
 	const form = useForm({
 		mode: 'uncontrolled',
 		validate: schemaResolver(zFormFields),
-		initialValues: { date: '', mealName: '', description: '' },
+		initialValues: { date: initialDate ?? '', mealName: '', description: '' },
 	});
 
 	const handleSubmit = form.onSubmit(
@@ -63,7 +71,7 @@ export const AddMealForm = ({ plannerId, onClose, onMealAdded }: Props) => {
 				}),
 			(data) => {
 				onMealAdded?.(data.calendar as SerializedDay[]);
-				onClose();
+				onSuccess?.(data.calendar as SerializedDay[]);
 			},
 		),
 	);
@@ -128,7 +136,7 @@ export const AddMealForm = ({ plannerId, onClose, onMealAdded }: Props) => {
 				</Card>
 
 				<Group justify="flex-end">
-					<Button variant="subtle" onClick={onClose}>
+					<Button variant="subtle" onClick={onCancel}>
 						Cancel
 					</Button>
 					<SubmitButton

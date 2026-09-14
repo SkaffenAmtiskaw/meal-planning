@@ -76,11 +76,56 @@ describe('CalendarProvider', () => {
 
 			expect(result.current.viewType).toBe('week');
 		});
+
+		it('should default rangeAnchor to now', () => {
+			const beforeTest = DateTime.now();
+
+			const { result } = renderHook(() => useTestContext(), {
+				wrapper: createTestWrapper(),
+			});
+
+			const afterTest = DateTime.now();
+
+			expect(result.current.rangeAnchor.toMillis()).toBeGreaterThanOrEqual(
+				beforeTest.toMillis(),
+			);
+			expect(result.current.rangeAnchor.toMillis()).toBeLessThanOrEqual(
+				afterTest.toMillis(),
+			);
+		});
+
+		it('should accept initialDate as rangeAnchor', () => {
+			const initialDate = DateTime.local(2024, 6, 15);
+
+			const { result } = renderHook(() => useTestContext(), {
+				wrapper: createTestWrapper({ initialDate }),
+			});
+
+			expect(result.current.rangeAnchor.toISODate()).toBe('2024-06-15');
+		});
+	});
+
+	describe('navigateToDate', () => {
+		it('updates both selectedDate and rangeAnchor', () => {
+			const initialDate = DateTime.local(2024, 6, 15);
+			const newDate = DateTime.local(2024, 9, 20);
+
+			const { result } = renderHook(() => useTestContext(), {
+				wrapper: createTestWrapper({ initialDate }),
+			});
+
+			act(() => {
+				result.current.navigateToDate(newDate);
+			});
+
+			expect(result.current.selectedDate.toISODate()).toBe('2024-09-20');
+			expect(result.current.rangeAnchor.toISODate()).toBe('2024-09-20');
+		});
 	});
 
 	describe('navigation', () => {
 		describe('goToToday', () => {
-			it('should set selectedDate to now', () => {
+			it('should set selectedDate and rangeAnchor to now', () => {
 				const initialDate = DateTime.local(2020, 1, 1);
 
 				const { result } = renderHook(() => useTestContext(), {
@@ -88,6 +133,7 @@ describe('CalendarProvider', () => {
 				});
 
 				expect(result.current.selectedDate.toISODate()).toBe('2020-01-01');
+				expect(result.current.rangeAnchor.toISODate()).toBe('2020-01-01');
 
 				const beforeTest = DateTime.now();
 
@@ -102,6 +148,9 @@ describe('CalendarProvider', () => {
 				);
 				expect(result.current.selectedDate.toMillis()).toBeLessThanOrEqual(
 					afterTest.toMillis(),
+				);
+				expect(result.current.rangeAnchor.toISODate()).toBe(
+					result.current.selectedDate.toISODate(),
 				);
 			});
 		});
@@ -119,6 +168,7 @@ describe('CalendarProvider', () => {
 				});
 
 				expect(result.current.selectedDate.toISODate()).toBe('2024-05-15');
+				expect(result.current.rangeAnchor.toISODate()).toBe('2024-05-15');
 			});
 
 			it('should subtract 7 days in week view', () => {
@@ -133,6 +183,7 @@ describe('CalendarProvider', () => {
 				});
 
 				expect(result.current.selectedDate.toISODate()).toBe('2024-06-08');
+				expect(result.current.rangeAnchor.toISODate()).toBe('2024-06-08');
 			});
 
 			it('should subtract 1 day in list view', () => {
@@ -147,6 +198,7 @@ describe('CalendarProvider', () => {
 				});
 
 				expect(result.current.selectedDate.toISODate()).toBe('2024-06-14');
+				expect(result.current.rangeAnchor.toISODate()).toBe('2024-06-14');
 			});
 		});
 
@@ -163,6 +215,7 @@ describe('CalendarProvider', () => {
 				});
 
 				expect(result.current.selectedDate.toISODate()).toBe('2024-07-15');
+				expect(result.current.rangeAnchor.toISODate()).toBe('2024-07-15');
 			});
 
 			it('should add 7 days in week view', () => {
@@ -177,6 +230,7 @@ describe('CalendarProvider', () => {
 				});
 
 				expect(result.current.selectedDate.toISODate()).toBe('2024-06-22');
+				expect(result.current.rangeAnchor.toISODate()).toBe('2024-06-22');
 			});
 
 			it('should add 1 day in list view', () => {
@@ -191,6 +245,7 @@ describe('CalendarProvider', () => {
 				});
 
 				expect(result.current.selectedDate.toISODate()).toBe('2024-06-16');
+				expect(result.current.rangeAnchor.toISODate()).toBe('2024-06-16');
 			});
 		});
 	});
@@ -215,6 +270,24 @@ describe('CalendarProvider', () => {
 
 			expect(result.current.viewType).toBe('list');
 		});
+
+		it('does not update selectedDate or rangeAnchor when view changes', () => {
+			const initialDate = DateTime.local(2020, 1, 1);
+
+			const { result } = renderHook(() => useTestContext(), {
+				wrapper: createTestWrapper({ initialDate, initialView: 'month' }),
+			});
+
+			expect(result.current.selectedDate.toISODate()).toBe('2020-01-01');
+			expect(result.current.rangeAnchor.toISODate()).toBe('2020-01-01');
+
+			act(() => {
+				result.current.setViewType('week');
+			});
+
+			expect(result.current.selectedDate.toISODate()).toBe('2020-01-01');
+			expect(result.current.rangeAnchor.toISODate()).toBe('2020-01-01');
+		});
 	});
 
 	describe('setSelectedDate', () => {
@@ -233,6 +306,23 @@ describe('CalendarProvider', () => {
 			});
 
 			expect(result.current.selectedDate.toISODate()).toBe('2024-08-25');
+		});
+
+		it('should not update rangeAnchor', () => {
+			const initialDate = DateTime.local(2024, 6, 15);
+			const newDate = DateTime.local(2024, 8, 25);
+
+			const { result } = renderHook(() => useTestContext(), {
+				wrapper: createTestWrapper({ initialDate }),
+			});
+
+			expect(result.current.rangeAnchor.toISODate()).toBe('2024-06-15');
+
+			act(() => {
+				result.current.setSelectedDate(newDate);
+			});
+
+			expect(result.current.rangeAnchor.toISODate()).toBe('2024-06-15');
 		});
 	});
 });
