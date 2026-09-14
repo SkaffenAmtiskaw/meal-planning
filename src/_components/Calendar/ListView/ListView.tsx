@@ -1,11 +1,12 @@
 'use client';
 
-import { type ReactElement, useEffect, useRef } from 'react';
+import { type ReactElement, useEffect, useMemo, useRef } from 'react';
 
 import { Box } from '@mantine/core';
 
 import { DateTime } from 'luxon';
 
+import type { ListViewEvent } from './ListViewEvent.types';
 import styles from './ListView.module.css';
 
 import { useCalendarContext } from '../CalendarContext';
@@ -15,12 +16,30 @@ import { getListDayRange } from './_utils/getListDayRange';
 export interface ListViewProps {
 	today?: DateTime;
 	onAddMeal?: (date: DateTime) => void;
+	events?: ListViewEvent[];
 }
 
-export function ListView({ today, onAddMeal }: ListViewProps): ReactElement {
+export function ListView({
+	today,
+	onAddMeal,
+	events = [],
+}: ListViewProps): ReactElement {
 	const { rangeAnchor, selectedDate, setSelectedDate } = useCalendarContext();
 	const days = getListDayRange(rangeAnchor);
 	const todayDate = today ?? DateTime.now().startOf('day');
+
+	const eventsByDate = useMemo(() => {
+		const map = new Map<string, ListViewEvent[]>();
+		for (const event of events) {
+			const list = map.get(event.date);
+			if (list) {
+				list.push(event);
+			} else {
+				map.set(event.date, [event]);
+			}
+		}
+		return map;
+	}, [events]);
 
 	const scrollRef = useRef<HTMLDivElement>(null);
 	const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -104,7 +123,12 @@ export function ListView({ today, onAddMeal }: ListViewProps): ReactElement {
 			<ul className={styles.innerColumn}>
 				{days.map((date) => (
 					<li key={date.toISODate() ?? ''}>
-						<DayRow date={date} today={todayDate} onAddMeal={onAddMeal} />
+						<DayRow
+							date={date}
+							today={todayDate}
+							meals={eventsByDate.get(date.toISODate() ?? '') ?? []}
+							onAddMeal={onAddMeal}
+						/>
 					</li>
 				))}
 			</ul>

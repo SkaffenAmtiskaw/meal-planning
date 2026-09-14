@@ -5,7 +5,15 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { DayRow } from './DayRow';
 
+import type { ListViewEvent } from '../ListViewEvent.types';
+
 vi.mock('@mantine/core', async () => await import('@mocks/@mantine/core'));
+
+vi.mock('./MealCard', () => ({
+	MealCard: vi.fn(({ event }: { event: ListViewEvent }) => (
+		<div data-testid="meal-card" data-event-id={event.id} />
+	)),
+}));
 
 vi.mock('./ListViewAddMealTrigger', () => ({
 	ListViewAddMealTrigger: vi.fn(({ variant, onClick }) => (
@@ -24,6 +32,16 @@ vi.mock('./DayRow.module.css', () => ({
 		dateLine: 'dateLine',
 	},
 }));
+
+function createMeal(id: string): ListViewEvent {
+	return {
+		id,
+		date: '2024-06-15',
+		name: `Meal ${id}`,
+		borderColor: 'red',
+		dishes: [],
+	};
+}
 
 describe('DayRow', () => {
 	beforeEach(() => {
@@ -119,7 +137,7 @@ describe('DayRow', () => {
 		expect(onAddMeal).toHaveBeenCalledWith(date);
 	});
 
-	it('renders both add triggers when onAddMeal is provided', () => {
+	it('renders the gutter trigger and ghost trigger when onAddMeal is provided and there are no meals', () => {
 		const date = DateTime.local(2024, 6, 15);
 		const today = DateTime.local(2024, 6, 10);
 
@@ -137,5 +155,40 @@ describe('DayRow', () => {
 
 		expect(screen.queryByText('Add meal')).toBeNull();
 		expect(screen.queryByRole('button')).toBeNull();
+	});
+
+	it('renders MealCards when meals are provided', () => {
+		const date = DateTime.local(2024, 6, 15);
+		const today = DateTime.local(2024, 6, 10);
+		const meals = [createMeal('meal-1'), createMeal('meal-2')];
+
+		render(<DayRow date={date} today={today} meals={meals} />);
+
+		const cards = screen.getAllByTestId('meal-card');
+		expect(cards).toHaveLength(2);
+		expect(cards[0].getAttribute('data-event-id')).toBe('meal-1');
+		expect(cards[1].getAttribute('data-event-id')).toBe('meal-2');
+	});
+
+	it('does not render the ghost trigger when meals are provided', () => {
+		const date = DateTime.local(2024, 6, 15);
+		const today = DateTime.local(2024, 6, 10);
+		const meals = [createMeal('meal-1')];
+
+		render(
+			<DayRow date={date} today={today} meals={meals} onAddMeal={vi.fn()} />,
+		);
+
+		expect(screen.getByTestId('meal-card')).toBeDefined();
+		expect(screen.queryByTestId('ghost-trigger')).toBeNull();
+	});
+
+	it('does not render MealCards when no meals are provided', () => {
+		const date = DateTime.local(2024, 6, 15);
+		const today = DateTime.local(2024, 6, 10);
+
+		render(<DayRow date={date} today={today} />);
+
+		expect(screen.queryByTestId('meal-card')).toBeNull();
 	});
 });

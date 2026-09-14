@@ -53,6 +53,7 @@
 - a11y audit
 - security - string validation on inputs
 - audit app works fully in mobile
+- switch all types files to `*.types.ts` - `*.types.d.ts` is awful
 
 # Low Priority
 ## Dev Tooling

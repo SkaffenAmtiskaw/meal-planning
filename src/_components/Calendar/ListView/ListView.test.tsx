@@ -8,6 +8,7 @@ import { DateTime } from 'luxon';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { ListView } from './ListView';
+import type { ListViewEvent } from './ListViewEvent.types';
 
 import {
 	type CalendarContextValue,
@@ -27,11 +28,18 @@ vi.mock('./_components/DayRow', () => ({
 		({
 			date,
 			onAddMeal,
+			meals,
 		}: {
 			date: DateTime;
 			onAddMeal?: (date: DateTime) => void;
+			meals?: ListViewEvent[];
 		}) => (
-			<div data-testid="day-row" data-iso={date.toISODate()}>
+			<div
+				data-testid="day-row"
+				data-iso={date.toISODate()}
+				data-meals-count={meals?.length ?? 0}
+				data-meal-ids={meals?.map((meal) => meal.id).join(',')}
+			>
 				<button
 					type="button"
 					data-testid="gutter-trigger"
@@ -493,5 +501,63 @@ describe('ListView', () => {
 		expect(mockOnAddMeal).toHaveBeenCalledTimes(2);
 		expect(mockOnAddMeal).toHaveBeenNthCalledWith(1, dates[1]);
 		expect(mockOnAddMeal).toHaveBeenNthCalledWith(2, dates[2]);
+	});
+
+	it('passes meals grouped by ISO date to each DayRow', () => {
+		const dates = [
+			DateTime.local(2024, 6, 10),
+			DateTime.local(2024, 6, 11),
+			DateTime.local(2024, 6, 12),
+		];
+		const events: ListViewEvent[] = [
+			{
+				id: 'a',
+				date: '2024-06-10',
+				name: 'A',
+				borderColor: 'red',
+				dishes: [],
+			},
+			{
+				id: 'b',
+				date: '2024-06-10',
+				name: 'B',
+				borderColor: 'red',
+				dishes: [],
+			},
+			{
+				id: 'c',
+				date: '2024-06-12',
+				name: 'C',
+				borderColor: 'red',
+				dishes: [],
+			},
+		];
+		vi.mocked(getListDayRange).mockReturnValue(dates);
+		vi.mocked(useCalendarContext).mockReturnValue(
+			createMockContextValue({ rangeAnchor: DateTime.local(2024, 6, 11) }),
+		);
+
+		render(<ListView events={events} />);
+
+		const rows = screen.getAllByTestId('day-row');
+		expect(rows[0].getAttribute('data-meals-count')).toBe('2');
+		expect(rows[0].getAttribute('data-meal-ids')).toBe('a,b');
+		expect(rows[1].getAttribute('data-meals-count')).toBe('0');
+		expect(rows[2].getAttribute('data-meals-count')).toBe('1');
+		expect(rows[2].getAttribute('data-meal-ids')).toBe('c');
+	});
+
+	it('passes an empty meals array to DayRow for dates with no events', () => {
+		const dates = [DateTime.local(2024, 6, 10), DateTime.local(2024, 6, 11)];
+		vi.mocked(getListDayRange).mockReturnValue(dates);
+		vi.mocked(useCalendarContext).mockReturnValue(
+			createMockContextValue({ rangeAnchor: DateTime.local(2024, 6, 10) }),
+		);
+
+		render(<ListView events={[]} />);
+
+		for (const call of vi.mocked(DayRow).mock.calls) {
+			expect(call[0].meals).toEqual([]);
+		}
 	});
 });

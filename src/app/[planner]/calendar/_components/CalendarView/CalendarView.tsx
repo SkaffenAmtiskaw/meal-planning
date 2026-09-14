@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import type React from 'react';
+import type { ReactElement } from 'react';
 
 import { Box, Stack } from '@mantine/core';
 import { useMediaQuery } from '@mantine/hooks';
@@ -44,7 +44,7 @@ function CalendarViewContent({
 	onClose,
 	onMealAdded,
 	onEventClick,
-}: CalendarViewContentProps): React.ReactElement {
+}: CalendarViewContentProps): ReactElement {
 	const { viewType } = useCalendarContext();
 	const isMobile = useMediaQuery('(max-width: 62em)');
 
@@ -80,7 +80,12 @@ function CalendarViewContent({
 					/>
 				)}
 				{viewType === 'list' && (
-					<MealListView plannerId={plannerId} onMealAdded={onMealAdded} />
+					<MealListView
+						plannerId={plannerId}
+						calendar={calendarData}
+						savedItems={savedItems}
+						onMealAdded={onMealAdded}
+					/>
 				)}
 			</Box>
 		</Stack>
@@ -91,7 +96,7 @@ export function CalendarView({
 	plannerId,
 	calendar,
 	savedItems,
-}: Props): React.ReactElement {
+}: Props): ReactElement {
 	const [clickedEvent, setClickedEvent] = useState<CalendarEvent | null>(null);
 	const [calendarData, setCalendarData] = useState<SerializedDay[]>(calendar);
 

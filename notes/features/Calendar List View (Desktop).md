@@ -200,6 +200,8 @@ All already exist in `src/_theme/colors.ts` — use them, don't re-declare.
 
 ## Step 5 — Wire meals into the list
 
+**Status: ✅ Completed**
+
 **Goal:** Render meal cards inside each day row.
 
 **Acceptance criteria:**

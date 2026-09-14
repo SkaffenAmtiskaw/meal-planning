@@ -8,6 +8,7 @@ permission:
   bash:
     "*": deny
     "pnpm lint": allow
+    "rm *": allow
   edit:
      "*": deny
      "src/**": allow

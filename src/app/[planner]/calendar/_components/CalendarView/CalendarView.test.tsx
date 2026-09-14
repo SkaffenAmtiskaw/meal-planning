@@ -140,7 +140,7 @@ describe('CalendarView', () => {
 		expect(screen.queryByTestId('meal-week-view')).toBeNull();
 	});
 
-	it('passes plannerId and onMealAdded to MealListView when viewType is list', () => {
+	it('passes calendar, savedItems, plannerId, and onMealAdded to MealListView when viewType is list', () => {
 		mockUseCalendarContext.mockReturnValue({
 			...defaultCalendarContext,
 			viewType: 'list',
@@ -150,6 +150,8 @@ describe('CalendarView', () => {
 		expect(vi.mocked(MealListView)).toHaveBeenCalledWith(
 			expect.objectContaining({
 				plannerId: 'planner-1',
+				calendar: defaultProps.calendar,
+				savedItems: defaultProps.savedItems,
 				onMealAdded: expect.any(Function),
 			}),
 			undefined,
