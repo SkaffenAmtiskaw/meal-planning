@@ -20,7 +20,6 @@
 - add meals by clicking month cell
 - add meals by clicking week day
 - default to week view on desktop - list view on mobile
-- add dish notes to list view - need design (that way we don't need the stupid modal)
 - calendar list view infinite scroll
 ## Planner Settings
 - [[Delete Planner|allow user to delete a planner]]

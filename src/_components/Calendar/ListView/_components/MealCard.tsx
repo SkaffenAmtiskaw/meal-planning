@@ -53,7 +53,7 @@ export function MealCard({ event, renderDish }: MealCardProps): ReactElement {
 					</Text>
 				)}
 				{event.dishes.length > 0 && (
-					<Stack className={styles.dishList} gap="2px">
+					<Stack className={styles.dishList} gap="5px">
 						{event.dishes.map((dish) => (
 							<DishListItem
 								key={dish.name}

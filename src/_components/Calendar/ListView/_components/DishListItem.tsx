@@ -2,7 +2,7 @@
 
 import type { MouseEvent, ReactElement, ReactNode } from 'react';
 
-import { Flex, Text } from '@mantine/core';
+import { Group, Stack, Text } from '@mantine/core';
 import { IconExternalLink } from '@tabler/icons-react';
 
 import styles from './DishListItem.module.css';
@@ -32,27 +32,33 @@ export function DishListItem({
 			: undefined;
 
 	return (
-		<Flex
+		<Stack
 			data-testid="dish-list-item"
-			align="baseline"
-			wrap="wrap"
-			gap="xs"
+			gap={1}
 			onClick={(event: MouseEvent<HTMLDivElement>) => event.stopPropagation()}
 		>
-			<span className={styles.dishName}>{renderName(dish)}</span>
-			{hasUrl && (
-				<IconExternalLink size={9} color="var(--mantine-color-forest-5)" />
-			)}
-			{sourceRef !== undefined && (
-				<Text size="xs" c="navy.4" fs="italic" span>
-					{String(sourceRef)}
-				</Text>
-			)}
+			<Group align="baseline" gap="xs" wrap="wrap">
+				<span className={styles.dishName}>{renderName(dish)}</span>
+				{hasUrl && (
+					<IconExternalLink size={9} color="var(--mantine-color-forest-5)" />
+				)}
+				{sourceRef !== undefined && (
+					<Text size="xs" c="navy.4" fs="italic" span>
+						{String(sourceRef)}
+					</Text>
+				)}
+			</Group>
 			{dish.note && (
-				<Text size="xs" c="navy.4" span>
+				<Text
+					size="xs"
+					c="navy"
+					lh={1.5}
+					maw="60ch"
+					className={styles.dishNote}
+				>
 					{dish.note}
 				</Text>
 			)}
-		</Flex>
+		</Stack>
 	);
 }

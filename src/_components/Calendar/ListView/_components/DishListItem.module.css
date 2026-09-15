@@ -12,3 +12,9 @@
 	color: var(--mantine-color-forest-6);
 	text-decoration-color: var(--mantine-color-forest-5);
 }
+
+/* Mantine's Text component does not provide props for white-space or text-wrap, so those rules live here. */
+.dishNote {
+	white-space: pre-line;
+	text-wrap: pretty;
+}
