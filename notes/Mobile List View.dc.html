@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="" />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<style>
+  html, body { margin: 0; padding: 0; }
+  body { font-family: Inter, sans-serif; background: #F5F3F4; color: #1C3144; -webkit-font-smoothing: antialiased; }
+  a { color: #44633F; text-decoration: none; }
+  a:hover { color: #3C5736; text-decoration: underline; }
+  .om-scroll::-webkit-scrollbar { width: 0; height: 0; }
+</style>
+</helmet>
+
+<div style="padding: 32px; display: flex; flex-direction: column; gap: 18px; align-items: flex-start">
+  <div style="display: flex; flex-direction: column; gap: 4px">
+    <div style="font-size: 12px; font-weight: 700; letter-spacing: 0.08em; color: #8C9BAA">DESIGN REFERENCE · MOBILE LIST VIEW</div>
+    <div style="font-size: 15px; color: #1C3144; max-width: 560px">One continuous scroll of days. Scroll the phone body to see empty days, today's tint, dish links and notes. Behavior and hierarchy are the spec; exact pixels are not.</div>
+  </div>
+
+  <div style="width: 390px; height: 844px; background: #ffffff; border-radius: 26px; border: 1px solid #E1D9DB; overflow: hidden; display: flex; flex-direction: column; position: relative; box-shadow: 0 10px 30px rgba(28,49,68,.10)">
+
+    <div style="height: 48px; flex: 0 0 48px; background: #1C3144; display: flex; align-items: center; justify-content: space-between; padding: 0 14px">
+      <div style="display: flex; align-items: center; gap: 12px">
+        <div style="width: 24px; height: 24px; display: flex; flex-direction: column; justify-content: center; gap: 5px">
+          <div style="height: 2px; background: #ffffff; border-radius: 1px"></div>
+          <div style="height: 2px; background: #ffffff; border-radius: 1px"></div>
+          <div style="height: 2px; background: #ffffff; border-radius: 1px"></div>
+        </div>
+        <img src="assets/weeknight-header-dark.svg" alt="weeknight" style="width: 118px; height: 20px; object-fit: contain" />
+      </div>
+      <div style="width: 18px; height: 18px; border: 1.6px solid #ffffff; border-radius: 50%; position: relative">
+        <div style="position: absolute; left: 50%; top: 3px; transform: translateX(-50%); width: 6px; height: 6px; border-radius: 50%; background: #ffffff"></div>
+        <div style="position: absolute; left: 50%; bottom: -1px; transform: translateX(-50%); width: 11px; height: 7px; border-radius: 6px 6px 0 0; background: #ffffff"></div>
+      </div>
+    </div>
+
+    <div style="padding: 10px 12px 8px; display: flex; flex-direction: column; gap: 10px; border-bottom: 1px solid #EBE8E9">
+      <div style="display: flex; align-items: center; gap: 4px">
+        <div style="flex: 1; min-width: 0; display: flex; align-items: center; justify-content: center; gap: 7px; height: 40px; border-radius: 10px; cursor: pointer" style-active="background: #F5F3F4">
+          <div style="font-size: 19px; font-weight: 600; letter-spacing: -0.01em; color: #1C3144">{{ monthLabel }}</div>
+          <div style="width: 8px; height: 8px; border-right: 2px solid #8C9BAA; border-bottom: 2px solid #8C9BAA; transform: rotate(45deg); margin-top: -5px"></div>
+        </div>
+        <div onClick="{{ goToday }}" style="height: 34px; padding: 0 14px; margin-left: 2px; display: flex; align-items: center; font-size: 13px; font-weight: 600; color: #44633F; border: 1px solid #CFDBCE; border-radius: 17px; cursor: pointer" style-active="background: #EFF3EF">Today</div>
+      </div>
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0; background: #f1f3f5; border-radius: 10px; padding: 3px">
+        <div style="height: 36px; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 500; color: #44633F; cursor: pointer">Month</div>
+        <div style="height: 36px; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 600; color: #1C3144; background: #ffffff; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,.06)">List</div>
+      </div>
+    </div>
+
+    <div class="om-scroll" style="flex: 1; min-height: 0; overflow-y: auto; background: #FAF8F9">
+      <div style="padding: 0 0 96px; display: flex; flex-direction: column">
+        <sc-for list="{{ listDays }}" as="day" hint-placeholder-count="8">
+          <div style="display: flex; flex-direction: column; gap: 8px; padding: 12px 14px 14px; background: {{ day.rowBg }}; border-bottom: 1px solid #F0EDEE">
+            <div style="display: flex; align-items: center; gap: 9px">
+              <div style="font-size: 13px; font-weight: 700; letter-spacing: 0.06em; color: {{ day.labelColor }}">{{ day.label }}</div>
+              <div style="flex: 1; height: 1px; background: #EBE8E9"></div>
+              <div style="width: 28px; height: 28px; border-radius: 14px; border: 1px solid #DFE7DF; color: #44633F; display: flex; align-items: center; justify-content: center; cursor: pointer" style-active="background: #EFF3EF">
+                <span style="position: relative; width: 12px; height: 12px; display: block">
+                  <span style="position: absolute; top: 5px; left: 0; width: 12px; height: 2px; background: currentColor; border-radius: 1px"></span>
+                  <span style="position: absolute; left: 5px; top: 0; width: 2px; height: 12px; background: currentColor; border-radius: 1px"></span>
+                </span>
+              </div>
+            </div>
+            <sc-for list="{{ day.meals }}" as="meal" hint-placeholder-count="1">
+              <div style="background: #ffffff; border: 1px solid #F0EDEE; border-left: 4px solid {{ meal.rail }}; border-radius: 12px; padding: 12px 14px; display: flex; flex-direction: column; gap: 7px">
+                <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap">
+                  <div style="font-size: 15px; font-weight: 600; color: #1C3144">{{ meal.name }}</div>
+                </div>
+                <sc-if value="{{ meal.description }}" hint-placeholder-val="{{ false }}">
+                  <div style="font-size: 13px; color: #8C9BAA; margin-top: -4px">{{ meal.description }}</div>
+                </sc-if>
+                <div style="display: flex; flex-direction: column; gap: 7px">
+                  <sc-for list="{{ meal.dishes }}" as="dish" hint-placeholder-count="2">
+                    <div style="display: flex; align-items: baseline; gap: 9px">
+                      <div style="width: 4px; height: 4px; flex: 0 0 4px; border-radius: 2px; background: #D1D7DD; transform: translateY(-3px)"></div>
+                      <div style="flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px">
+                        <div style="display: flex; align-items: baseline; gap: 8px; flex-wrap: wrap">
+                          <sc-if value="{{ dish.isPlain }}" hint-placeholder-val="{{ true }}">
+                            <div style="font-size: 14px; font-weight: 500; color: #1C3144">{{ dish.name }}</div>
+                          </sc-if>
+                          <sc-if value="{{ dish.isLink }}" hint-placeholder-val="{{ false }}">
+                            <a href="{{ dish.href }}" style="font-size: 14px; font-weight: 600; color: #44633F; text-decoration: underline; text-decoration-color: #AFC2AE; text-underline-offset: 3px">{{ dish.name }}</a>
+                          </sc-if>
+                          <sc-if value="{{ dish.refNote }}" hint-placeholder-val="{{ false }}">
+                            <div style="font-size: 12px; font-style: italic; color: #8C9BAA">{{ dish.refNote }}</div>
+                          </sc-if>
+                        </div>
+                        <sc-if value="{{ dish.note }}" hint-placeholder-val="{{ false }}">
+                          <div style="font-size: 13px; font-weight: 400; line-height: 1.45; color: #1C3144; white-space: pre-line; text-wrap: pretty">{{ dish.note }}</div>
+                        </sc-if>
+                      </div>
+                    </div>
+                  </sc-for>
+                </div>
+              </div>
+            </sc-for>
+            <sc-if value="{{ day.isEmpty }}" hint-placeholder-val="{{ false }}">
+              <div style="font-size: 13px; color: #8C9BAA; padding: 2px 2px 4px">No meals planned</div>
+            </sc-if>
+          </div>
+        </sc-for>
+      </div>
+    </div>
+
+    <div style="position: absolute; right: 18px; bottom: 22px; height: 52px; padding: 0 20px 0 17px; display: flex; align-items: center; gap: 9px; background: #FF6542; border-radius: 26px; box-shadow: 0 6px 18px rgba(255,101,66,.38); cursor: pointer">
+      <span style="position: relative; width: 18px; height: 18px; display: block">
+        <span style="position: absolute; top: 8px; left: 0; width: 18px; height: 2px; background: #ffffff; border-radius: 1px"></span>
+        <span style="position: absolute; left: 8px; top: 0; width: 2px; height: 18px; background: #ffffff; border-radius: 1px"></span>
+      </span>
+      <span style="font-size: 15px; font-weight: 600; color: #ffffff">Add Meal</span>
+    </div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;hideEmptyDays&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:false,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;List behavior&quot;}}">
+const TAG_COLORS = {
+  tangerine: { bg: '#FDEBD6', text: '#7A3410', border: '#F5B47A' },
+  rosewood: { bg: '#FDE8E8', text: '#7A1F1F', border: '#F0A8A8' },
+  honey: { bg: '#FDF3D6', text: '#6B4A0D', border: '#EAC96A' },
+  fern: { bg: '#E4F2E4', text: '#1E4D1E', border: '#87C287' },
+  seafoam: { bg: '#D6EDE8', text: '#0E3D32', border: '#72C2AF' },
+  steel: { bg: '#D9E8F5', text: '#0E2E4D', border: '#7AAFD4' },
+  lavender: { bg: '#E8E0F0', text: '#3A1F6B', border: '#B09DD4' },
+  mauve: { bg: '#F0E0EE', text: '#5C1A4A', border: '#CE8DC0' },
+  sageMist: { bg: '#E8EDE0', text: '#2E3D1A', border: '#A8BA8A' },
+  slate: { bg: '#E0E4ED', text: '#1C2744', border: '#8D99BE' },
+};
+const NAMES = Object.keys(TAG_COLORS);
+function getMealColor(title) {
+  let hash = 0;
+  for (let i = 0; i < title.length; i++) hash = title.charCodeAt(i) + ((hash << 5) - hash);
+  return NAMES[Math.abs(hash) % NAMES.length];
+}
+
+const TODAY = '2026-09-10';
+const WD = ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'];
+const MO = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+const MO_SHORT = ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC'];
+
+const MEALS = {
+  '2026-08-31': [{ name: 'Dinner', dishes: [{ name: 'Sheet Pan Sausages' }, { name: 'Roasted Broccoli', note: 'Same pan, add at the 15 minute mark.' }] }],
+  '2026-09-01': [{ name: 'Dinner - Meatless', dishes: [{ name: 'Black Bean Tacos', source: { _id: 'r1' }, note: 'Skip the chipotle — too spicy last time.' }, { name: 'Lime Slaw' }] }],
+  '2026-09-02': [{ name: 'Dinner - Asian-ish', description: 'Thai night', dishes: [{ name: 'Panang Curry', source: { url: 'https://example.com/curry' }, note: 'Extra veg, half the paste. Needs a can of coconut milk.' }, { name: 'Jasmine Rice' }] }],
+  '2026-09-03': [{ name: 'Dinner', dishes: [{ name: 'Leftovers', note: 'Sunday sausages + whatever is left of the broccoli.' }] }],
+  '2026-09-05': [{ name: 'Dinner - Tex Mex', dishes: [{ name: 'Enchiladas Verdes', source: { _id: 'r2' } }, { name: 'Refried Beans' }] }],
+  '2026-09-09': [{ name: 'Dinner - Asian-ish', dishes: [{ name: 'Gyoza', source: { ref: 'Dinner in French, p. 88' }, note: 'Frozen bag in the door. Steam-fry, do not boil.' }, { name: 'Cucumber Salad' }] }],
+  '2026-09-10': [
+    { name: 'Lunch - Packed', dishes: [{ name: 'Pasta Salad', note: 'Made Sunday, in the blue containers.' }, { name: 'Apple' }] },
+    { name: 'Dinner', description: 'Easy one-pan', dishes: [{ name: 'Sheet Pan Chicken', source: { _id: 'r3' }, note: 'Start at 6:15 if soccer runs late — it holds fine in the oven.' }, { name: 'Green Beans', note: 'Trim in the morning.' }, { name: 'Rice Pilaf' }] },
+  ],
+  '2026-09-11': [{ name: 'Dinner - Fun Friday', dishes: [{ name: 'Smash Burgers', source: { url: 'https://example.com/burgers' }, note: 'Need buns and a pound and a half of chuck.' }, { name: 'Oven Fries' }] }],
+  '2026-09-12': [{ name: 'Dinner', dishes: [{ name: 'Grilled Steak', note: 'Salt in the morning, pull it out an hour before.' }, { name: 'Corn on the Cob' }] }],
+  '2026-09-14': [{ name: 'Dinner - Meatless', dishes: [{ name: 'Lentil Soup', source: { _id: 'r4' }, note: 'Double it — freezes well.' }, { name: 'Crusty Bread' }] }],
+  '2026-09-16': [{ name: 'Dinner - Asian-ish', description: 'Japanese', dishes: [{ name: 'Chicken Katsu', source: { url: 'https://example.com/katsu' }, note: 'Panko is out — add to the list.' }, { name: 'Shredded Cabbage' }] }],
+  '2026-09-18': [{ name: 'Dinner - Fun Friday', dishes: [{ name: 'Taco Bar', note: 'Kids assemble their own. Grandma is coming, keep it mild.' }] }],
+  '2026-09-21': [{ name: 'Dinner - Meatless', dishes: [{ name: 'Shakshuka', note: 'Eggs, feta, one more can of tomatoes.' }] }],
+};
+
+function iso(d) { return d.toISOString().slice(0, 10); }
+
+class Component extends DCLogic {
+  dishesOf(meal) {
+    return (meal.dishes || []).map((dish) => {
+      const src = dish.source;
+      const isObj = typeof src === 'object' && src !== null;
+      const isExternal = isObj && 'url' in src;
+      const isRecipe = isObj && '_id' in src;
+      return {
+        name: dish.name,
+        note: dish.note || '',
+        refNote: isObj && 'ref' in src ? src.ref : '',
+        isLink: isExternal || isRecipe,
+        isPlain: !isExternal && !isRecipe,
+        href: isExternal ? src.url : isRecipe ? '#recipe-' + src._id : '#',
+      };
+    });
+  }
+
+  cardOf(meal) {
+    return {
+      name: meal.name,
+      description: meal.description || '',
+      rail: TAG_COLORS[getMealColor(meal.name)].border,
+      dishes: this.dishesOf(meal),
+    };
+  }
+
+  renderVals() {
+    const hideEmpty = this.props.hideEmptyDays ?? false;
+    const listDays = [];
+    const lStart = new Date(Date.UTC(2026, 8, 7));
+    for (let i = 0; i < 21; i++) {
+      const d = new Date(lStart.getTime() + i * 86400000);
+      const key = iso(d);
+      const meals = MEALS[key] || [];
+      const isToday = key === TODAY;
+      if (hideEmpty && meals.length === 0) continue;
+      listDays.push({
+        label: WD[d.getUTCDay()] + ' ' + d.getUTCDate() + '  ·  ' + MO_SHORT[d.getUTCMonth()],
+        labelColor: isToday ? '#FF6542' : '#8C9BAA',
+        rowBg: isToday ? '#FFF8F5' : 'transparent',
+        isEmpty: meals.length === 0,
+        meals: meals.map((m) => this.cardOf(m)),
+      });
+    }
+    return {
+      listDays,
+      monthLabel: MO[8] + ' 2026',
+      goToday: () => this.forceUpdate(),
+    };
+  }
+}
+</script>
+</body>
+</html>
