@@ -1,6 +1,6 @@
 'use client';
 
-import type { ReactElement } from 'react';
+import type { ReactElement, ReactNode } from 'react';
 
 import { Badge, Box, Flex, rgba, Stack, Text } from '@mantine/core';
 
@@ -10,13 +10,14 @@ import { ListViewAddMealTrigger } from './ListViewAddMealTrigger';
 import { MealCard } from './MealCard';
 import styles from './DayRow.module.css';
 
-import type { ListViewEvent } from '../ListViewEvent.types';
+import type { ListViewDish, ListViewEvent } from '../ListViewEvent.types';
 
 export interface DayRowProps {
 	date: DateTime;
 	today: DateTime;
 	meals?: ListViewEvent[];
 	onAddMeal?: (date: DateTime) => void;
+	renderDish?: (dish: ListViewDish) => ReactNode;
 }
 
 export function DayRow({
@@ -24,6 +25,7 @@ export function DayRow({
 	today,
 	meals = [],
 	onAddMeal,
+	renderDish,
 }: DayRowProps): ReactElement {
 	const isToday = date.hasSame(today, 'day');
 	const isFirstOfMonth = date.day === 1;
@@ -84,7 +86,13 @@ export function DayRow({
 				{hasMeals || onAddMeal ? (
 					<Stack gap="xs">
 						{hasMeals
-							? meals.map((meal) => <MealCard key={meal.id} event={meal} />)
+							? meals.map((meal) => (
+									<MealCard
+										key={meal.id}
+										event={meal}
+										renderDish={renderDish}
+									/>
+								))
 							: onAddMeal && (
 									<ListViewAddMealTrigger
 										variant="ghost"

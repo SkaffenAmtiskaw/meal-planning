@@ -1,8 +1,8 @@
-import { Anchor } from '@mantine/core';
+import { Anchor, Text } from '@mantine/core';
 
 import { render, screen } from '@testing-library/react';
 
-import { describe, expect, it, vi } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { DishLink } from './DishLink';
 
@@ -14,6 +14,10 @@ vi.mock('next/link', () => ({
 }));
 
 describe('DishLink', () => {
+	beforeEach(() => {
+		vi.resetAllMocks();
+	});
+
 	it('forwards tabIndex to the Anchor', () => {
 		const dish: SerializedDish = {
 			name: 'Tab Dish',
@@ -93,5 +97,57 @@ describe('DishLink', () => {
 		expect(screen.getByText('Missing Dish')).toBeDefined();
 		expect(screen.queryByRole('link')).toBeNull();
 		expect(screen.queryByText('Should not appear')).toBeNull();
+	});
+
+	it('defaults size to xs', () => {
+		const dish: SerializedDish = {
+			name: 'Default Size Dish',
+			source: { url: 'https://example.com/recipe' },
+		};
+
+		render(<DishLink dish={dish} plannerId="planner-1" />);
+
+		expect(vi.mocked(Anchor).mock.calls[0][0]).toMatchObject({
+			size: 'xs',
+		});
+	});
+
+	it('passes size="sm" to the anchor for url sources', () => {
+		const dish: SerializedDish = {
+			name: 'Sm Url Dish',
+			source: { url: 'https://example.com/recipe' },
+		};
+
+		render(<DishLink dish={dish} plannerId="planner-1" size="sm" />);
+
+		expect(vi.mocked(Anchor).mock.calls[0][0]).toMatchObject({
+			size: 'sm',
+		});
+	});
+
+	it('passes size="sm" to the anchor for _id sources', () => {
+		const dish: SerializedDish = {
+			name: 'Sm Saved Dish',
+			source: { _id: 'recipe-123' },
+		};
+
+		render(<DishLink dish={dish} plannerId="planner-1" size="sm" />);
+
+		expect(vi.mocked(Anchor).mock.calls[0][0]).toMatchObject({
+			size: 'sm',
+		});
+	});
+
+	it('passes size="sm" to Text for non-link sources', () => {
+		const dish: SerializedDish = {
+			name: 'Sm Text Dish',
+			source: { ref: 'some-ref' },
+		};
+
+		render(<DishLink dish={dish} plannerId="planner-1" size="sm" />);
+
+		expect(vi.mocked(Text).mock.calls[0][0]).toMatchObject({
+			size: 'sm',
+		});
 	});
 });

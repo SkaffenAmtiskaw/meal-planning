@@ -1,12 +1,18 @@
 'use client';
 
-import { type ReactElement, useEffect, useMemo, useRef } from 'react';
+import {
+	type ReactElement,
+	type ReactNode,
+	useEffect,
+	useMemo,
+	useRef,
+} from 'react';
 
 import { Box } from '@mantine/core';
 
 import { DateTime } from 'luxon';
 
-import type { ListViewEvent } from './ListViewEvent.types';
+import type { ListViewDish, ListViewEvent } from './ListViewEvent.types';
 import styles from './ListView.module.css';
 
 import { useCalendarContext } from '../CalendarContext';
@@ -17,12 +23,14 @@ export interface ListViewProps {
 	today?: DateTime;
 	onAddMeal?: (date: DateTime) => void;
 	events?: ListViewEvent[];
+	renderDish?: (dish: ListViewDish) => ReactNode;
 }
 
 export function ListView({
 	today,
 	onAddMeal,
 	events = [],
+	renderDish,
 }: ListViewProps): ReactElement {
 	const { rangeAnchor, selectedDate, setSelectedDate } = useCalendarContext();
 	const days = getListDayRange(rangeAnchor);
@@ -128,6 +136,7 @@ export function ListView({
 							today={todayDate}
 							meals={eventsByDate.get(date.toISODate() ?? '') ?? []}
 							onAddMeal={onAddMeal}
+							renderDish={renderDish}
 						/>
 					</li>
 				))}

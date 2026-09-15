@@ -1,0 +1,14 @@
+/* Mantine props cannot express the combined underline color, thickness, and offset for dish links, so the anchor styles live here. */
+.dishName a {
+	color: var(--mantine-color-forest-5);
+	font-weight: 600;
+	text-decoration: underline;
+	text-decoration-color: var(--mantine-color-forest-4);
+	text-decoration-thickness: 1px;
+	text-underline-offset: 3px;
+}
+
+.dishName a:hover {
+	color: var(--mantine-color-forest-6);
+	text-decoration-color: var(--mantine-color-forest-5);
+}

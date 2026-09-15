@@ -8,6 +8,7 @@ import { useDisclosure } from '@mantine/hooks';
 
 import type { DateTime } from 'luxon';
 
+import type { ListViewDish, ListViewEvent } from '@/_components/Calendar';
 import { ListView } from '@/_components/Calendar';
 import { getMealColor, TAG_COLORS } from '@/_theme/colors';
 import { useCanWrite } from '@/app/[planner]/_components';
@@ -15,6 +16,7 @@ import { useCanWrite } from '@/app/[planner]/_components';
 import { toCalendarEvents } from '../../_utils/toCalendarEvents';
 import type { SavedItem, SerializedDay } from '../../_utils/toScheduleXEvents';
 import { AddMealFormModalWrapper } from '../AddMealFormModalWrapper/AddMealFormModalWrapper';
+import { DishLink } from '../DishLink/DishLink';
 
 export interface MealListViewProps {
 	plannerId: string;
@@ -33,7 +35,7 @@ export function MealListView({
 	const [opened, { open, close }] = useDisclosure(false);
 	const [dateForAdd, setDateForAdd] = useState<DateTime | null>(null);
 
-	const events = useMemo(() => {
+	const events: ListViewEvent[] = useMemo(() => {
 		const calendarEvents = toCalendarEvents(calendar, savedItems);
 
 		return calendarEvents.map((event) => ({
@@ -46,6 +48,10 @@ export function MealListView({
 		}));
 	}, [calendar, savedItems]);
 
+	const renderDish = (dish: ListViewDish) => (
+		<DishLink dish={dish} plannerId={plannerId} size="sm" />
+	);
+
 	const handleAddMeal = canWrite
 		? (date: DateTime) => {
 				setDateForAdd(date);
@@ -55,7 +61,11 @@ export function MealListView({
 
 	return (
 		<>
-			<ListView events={events} onAddMeal={handleAddMeal} />
+			<ListView
+				events={events}
+				onAddMeal={handleAddMeal}
+				renderDish={renderDish}
+			/>
 			<Modal opened={opened} onClose={close} title="Add Meal" size="lg">
 				<AddMealFormModalWrapper
 					plannerId={plannerId}

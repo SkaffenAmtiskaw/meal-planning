@@ -1,18 +1,33 @@
+import type { ReactNode } from 'react';
+
 import { render, screen } from '@testing-library/react';
 
 import { DateTime } from 'luxon';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { DayRow } from './DayRow';
+import type { ListViewDish } from './DishListItem';
 
 import type { ListViewEvent } from '../ListViewEvent.types';
 
 vi.mock('@mantine/core', async () => await import('@mocks/@mantine/core'));
 
 vi.mock('./MealCard', () => ({
-	MealCard: vi.fn(({ event }: { event: ListViewEvent }) => (
-		<div data-testid="meal-card" data-event-id={event.id} />
-	)),
+	MealCard: vi.fn(
+		({
+			event,
+			renderDish,
+		}: {
+			event: ListViewEvent;
+			renderDish?: (dish: ListViewDish) => ReactNode;
+		}) => (
+			<div
+				data-testid="meal-card"
+				data-event-id={event.id}
+				data-render-dish={renderDish ? 'provided' : 'omitted'}
+			/>
+		),
+	),
 }));
 
 vi.mock('./ListViewAddMealTrigger', () => ({
@@ -190,5 +205,38 @@ describe('DayRow', () => {
 		render(<DayRow date={date} today={today} />);
 
 		expect(screen.queryByTestId('meal-card')).toBeNull();
+	});
+
+	it('passes renderDish to MealCard when provided', () => {
+		const date = DateTime.local(2024, 6, 15);
+		const today = DateTime.local(2024, 6, 10);
+		const meals = [createMeal('meal-1'), createMeal('meal-2')];
+		const renderDish = (dish: ListViewDish) => <span>{dish.name}</span>;
+
+		render(
+			<DayRow
+				date={date}
+				today={today}
+				meals={meals}
+				renderDish={renderDish}
+			/>,
+		);
+
+		const cards = screen.getAllByTestId('meal-card');
+		expect(cards).toHaveLength(2);
+		expect(cards[0].getAttribute('data-render-dish')).toBe('provided');
+		expect(cards[1].getAttribute('data-render-dish')).toBe('provided');
+	});
+
+	it('does not pass renderDish to MealCard when omitted', () => {
+		const date = DateTime.local(2024, 6, 15);
+		const today = DateTime.local(2024, 6, 10);
+		const meals = [createMeal('meal-1')];
+
+		render(<DayRow date={date} today={today} meals={meals} />);
+
+		expect(
+			screen.getByTestId('meal-card').getAttribute('data-render-dish'),
+		).toBe('omitted');
 	});
 });

@@ -6,12 +6,21 @@ import { MealCard } from './MealCard';
 
 vi.mock('@mantine/core', async () => await import('@mocks/@mantine/core'));
 
+vi.mock('./DishListItem', () => ({
+	DishListItem: vi.fn(({ dish, renderName }) => (
+		<div data-testid="dish-list-item" data-dish-name={dish.name}>
+			{renderName(dish)}
+		</div>
+	)),
+}));
+
 vi.mock('./MealCard.module.css', () => ({
 	default: {
 		mealCard: 'mealCard',
 		dragHandle: 'dragHandle',
 		dragHandleGrid: 'dragHandleGrid',
 		dragHandleDot: 'dragHandleDot',
+		dishList: 'dishList',
 	},
 }));
 
@@ -52,5 +61,50 @@ describe('MealCard', () => {
 		expect((card as HTMLElement).style.borderLeftColor).toBe(
 			'rgb(245, 180, 122)',
 		);
+	});
+
+	it('renders a DishListItem for each dish', () => {
+		const event = {
+			...baseEvent,
+			dishes: [{ name: 'Salmon' }, { name: 'Asparagus' }],
+		};
+
+		render(<MealCard event={event} />);
+
+		const items = screen.getAllByTestId('dish-list-item');
+
+		expect(items).toHaveLength(2);
+		expect(items[0]?.getAttribute('data-dish-name')).toBe('Salmon');
+		expect(items[1]?.getAttribute('data-dish-name')).toBe('Asparagus');
+	});
+
+	it('passes renderDish to DishListItem as renderName', () => {
+		const event = {
+			...baseEvent,
+			dishes: [{ name: 'Salmon' }],
+		};
+		const renderDish = vi.fn(() => <span>Custom rendered salmon</span>);
+
+		render(<MealCard event={event} renderDish={renderDish} />);
+
+		expect(renderDish).toHaveBeenCalledWith(event.dishes[0]);
+		expect(screen.getByText('Custom rendered salmon')).toBeDefined();
+	});
+
+	it('defaults to rendering dish names as plain Text when renderDish is omitted', () => {
+		const event = {
+			...baseEvent,
+			dishes: [{ name: 'Salmon' }],
+		};
+
+		render(<MealCard event={event} />);
+
+		expect(screen.getByText('Salmon')).toBeDefined();
+	});
+
+	it('does not render the dish list when there are no dishes', () => {
+		render(<MealCard event={baseEvent} />);
+
+		expect(screen.queryByTestId('dish-list-item')).toBeNull();
 	});
 });

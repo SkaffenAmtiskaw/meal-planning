@@ -38,3 +38,10 @@
 	background-color: var(--mantine-color-chalk-0);
 	border-color: var(--mantine-color-chalk-7);
 }
+
+/* Mantine Stack props cannot express the combined 1px left border, top margin, and left padding required by the dish-list design. */
+.dishList {
+	margin-top: 7px;
+	padding-left: 10px;
+	border-left: 1px solid var(--mantine-color-chalk-2);
+}

@@ -6,7 +6,10 @@ export type { CalendarHeaderProps } from './CalendarHeader';
 export type { CalendarProviderProps } from './CalendarProvider';
 
 export { ListView } from './ListView/ListView';
-export type { ListViewEvent } from './ListView/ListViewEvent.types';
+export type {
+	ListViewDish,
+	ListViewEvent,
+} from './ListView/ListViewEvent.types';
 export type { MonthGridEvent, MonthGridProps } from './MonthGrid/MonthGrid';
 export { MonthGrid } from './MonthGrid/MonthGrid';
 export type { WeekViewEvent, WeekViewProps } from './WeekView/WeekView';

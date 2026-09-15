@@ -9,12 +9,14 @@ export interface DishLinkProps {
 	dish: SerializedDish;
 	plannerId: string;
 	tabIndex?: number;
+	size?: 'xs' | 'sm';
 }
 
 export function DishLink({
 	dish,
 	plannerId,
 	tabIndex,
+	size = 'xs',
 }: DishLinkProps): ReactElement {
 	if (typeof dish.source === 'object' && dish.source !== null) {
 		if ('url' in dish.source) {
@@ -23,7 +25,7 @@ export function DishLink({
 					href={dish.source.url}
 					target="_blank"
 					rel="noreferrer"
-					size="xs"
+					size={size}
 					tabIndex={tabIndex}
 				>
 					{dish.name}
@@ -36,7 +38,7 @@ export function DishLink({
 				<Anchor
 					component={Link}
 					href={`/${plannerId}/recipes/${dish.source._id}`}
-					size="xs"
+					size={size}
 					tabIndex={tabIndex}
 				>
 					{dish.name}
@@ -45,5 +47,5 @@ export function DishLink({
 		}
 	}
 
-	return <Text size="xs">{dish.name}</Text>;
+	return <Text size={size}>{dish.name}</Text>;
 }

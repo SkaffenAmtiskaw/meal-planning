@@ -1,13 +1,15 @@
-import type { ReactElement } from 'react';
+import type { ReactElement, ReactNode } from 'react';
 
-import { Box, Flex, Text } from '@mantine/core';
+import { Box, Flex, Stack, Text } from '@mantine/core';
 
+import { DishListItem } from './DishListItem';
 import styles from './MealCard.module.css';
 
-import type { ListViewEvent } from '../ListViewEvent.types';
+import type { ListViewDish, ListViewEvent } from '../ListViewEvent.types';
 
 export interface MealCardProps {
 	event: ListViewEvent;
+	renderDish?: (dish: ListViewDish) => ReactNode;
 }
 
 const DRAG_HANDLE_POSITIONS = [
@@ -19,7 +21,11 @@ const DRAG_HANDLE_POSITIONS = [
 	'bottom-right',
 ] as const;
 
-export function MealCard({ event }: MealCardProps): ReactElement {
+export function MealCard({ event, renderDish }: MealCardProps): ReactElement {
+	const defaultRenderDish = (dish: ListViewDish) => (
+		<Text size="sm">{dish.name}</Text>
+	);
+
 	return (
 		<Flex>
 			<Box className={styles.dragHandle}>
@@ -45,6 +51,17 @@ export function MealCard({ event }: MealCardProps): ReactElement {
 					<Text size="xs" c="navy.4">
 						{event.description}
 					</Text>
+				)}
+				{event.dishes.length > 0 && (
+					<Stack className={styles.dishList} gap="2px">
+						{event.dishes.map((dish) => (
+							<DishListItem
+								key={dish.name}
+								dish={dish}
+								renderName={renderDish ?? defaultRenderDish}
+							/>
+						))}
+					</Stack>
 				)}
 			</Box>
 		</Flex>

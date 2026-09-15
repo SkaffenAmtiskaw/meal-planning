@@ -9,6 +9,7 @@ import { act, fireEvent, render, screen } from '@testing-library/react';
 import { DateTime } from 'luxon';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
+import type { ListViewDish, ListViewEvent } from '@/_components/Calendar';
 import { ListView } from '@/_components/Calendar';
 import { getMealColor, TAG_COLORS } from '@/_theme/colors';
 import { useCanWrite } from '@/app/[planner]/_components';
@@ -24,13 +25,24 @@ import {
 	AddMealFormModalWrapper,
 	type AddMealFormModalWrapperProps,
 } from '../AddMealFormModalWrapper/AddMealFormModalWrapper';
+import { DishLink } from '../DishLink/DishLink';
 
 vi.mock('@mantine/core', async () => await import('@mocks/@mantine/core'));
 vi.mock('@mantine/hooks', async () => await import('@mocks/@mantine/hooks'));
 
 vi.mock('@/_components/Calendar', async () => ({
-	ListView: vi.fn(({ events }) => (
-		<div data-testid="list-view" data-events={JSON.stringify(events)} />
+	ListView: vi.fn(({ events, renderDish }) => (
+		<div data-testid="list-view" data-events={JSON.stringify(events)}>
+			{events.map((event: ListViewEvent) => (
+				<div key={event.id} data-testid={`event-${event.id}`}>
+					{event.dishes.map((dish) => (
+						<div key={dish.name} data-testid={`dish-${event.id}-${dish.name}`}>
+							{renderDish?.(dish)}
+						</div>
+					))}
+				</div>
+			))}
+		</div>
 	)),
 }));
 
@@ -42,6 +54,10 @@ vi.mock('../AddMealFormModalWrapper/AddMealFormModalWrapper', async () => ({
 	AddMealFormModalWrapper: vi.fn(() => (
 		<div data-testid="add-meal-form-modal-wrapper" />
 	)),
+}));
+
+vi.mock('../DishLink/DishLink', async () => ({
+	DishLink: vi.fn(() => <div data-testid="dish-link" />),
 }));
 
 vi.mock('../../_utils/toCalendarEvents', async () => ({
@@ -62,6 +78,7 @@ const mockModal = vi.mocked(Modal);
 const mockAddMealFormModalWrapper = vi.mocked(AddMealFormModalWrapper);
 const mockToCalendarEvents = vi.mocked(toCalendarEvents);
 const mockGetMealColor = vi.mocked(getMealColor);
+const mockDishLink = vi.mocked(DishLink);
 
 const plannerId = 'planner-123';
 const onMealAdded = vi.fn();
@@ -141,6 +158,41 @@ describe('MealListView', () => {
 		);
 
 		expect(screen.getByTestId('list-view')).toBeDefined();
+	});
+
+	it('passes a renderDish function that uses DishLink with size sm', () => {
+		const dish: ListViewDish = {
+			name: 'Rendered Dish',
+			source: { _id: 'recipe-1' },
+		};
+		mockToCalendarEvents.mockReturnValue([
+			{
+				id: 'meal-1',
+				start: '2024-06-15',
+				end: '2024-06-15',
+				title: 'Breakfast',
+				dishes: [dish],
+			},
+		]);
+
+		render(
+			<MealListView
+				plannerId={plannerId}
+				calendar={calendar}
+				savedItems={savedItems}
+				onMealAdded={onMealAdded}
+			/>,
+		);
+
+		expect(screen.getByTestId('dish-link')).toBeDefined();
+		expect(mockDishLink).toHaveBeenCalledWith(
+			expect.objectContaining({
+				dish,
+				plannerId,
+				size: 'sm',
+			}),
+			undefined,
+		);
 	});
 
 	it('passes calendar-derived events to ListView', () => {

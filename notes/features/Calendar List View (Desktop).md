@@ -220,6 +220,7 @@ All already exist in `src/_theme/colors.ts` — use them, don't re-declare.
 - Colocated tests: `MealCard.test.tsx`, updated `MealListView.test.tsx` and `ListView.test.tsx`.
 
 ## Step 6 — Dish list with sources
+**Status: ✅ Completed**
 
 **Goal:** Render dishes inside each meal card, with links and notes.
 
