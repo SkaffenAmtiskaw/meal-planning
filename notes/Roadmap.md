@@ -7,7 +7,7 @@
 - meals created in month view don't show up in week view - will be fixed in [[Replace Schedule-X]]
 - meal creation modal is too narrow on desktop - two columns might allow for easier entry (UX review)
 - after adding a new recipe, it is not immediately available in the saved dishes dropdown in the create meal modal
-- you should be able to create a meal with just a title and a description
+- you should be able to create a meal with just a title and a description (or just a title)
 - meal color should be based on hex of title + description
 - sidebar on modal should close after you click something
 - refactor all modal forms to separate presentation and data concerns
@@ -15,7 +15,6 @@
 # High-Priority
 ## Calendar Page
 - [[Replace Schedule-X|replace schedule-x]]
-- add Apple SSO
 - edit meals
 - delete meals
 - add meals by clicking month cell
@@ -30,11 +29,11 @@
 - [[Style Fixes|style fixes]]
 - [[Email Improvements|email improvements]]
 - [[Cleanup|fix deprecated Zod types - replace `z.string().email()` with `z.email()` and audit for other deprecated patterns]]
-
 # Medium Priority
 
 ## Sign In Improvements
 - add passkey sign in
+- add Apple SSO
 ## UX Improvements
 - take create planner pattern of button on top right in desktop - FAB in mobile and apply it throughout the app
 - [[Filtering Recipe List|allow filtering in recipe list]]

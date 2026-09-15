@@ -17,6 +17,8 @@ import styles from './ListView.module.css';
 
 import { useCalendarContext } from '../CalendarContext';
 import { DayRow } from './_components/DayRow';
+import { useScrolledDate } from './_hooks/useScrolledDate';
+import { useScrollToDate } from './_hooks/useScrollToDate';
 import { getListDayRange } from './_utils/getListDayRange';
 
 export interface ListViewProps {
@@ -50,75 +52,32 @@ export function ListView({
 	}, [events]);
 
 	const scrollRef = useRef<HTMLDivElement>(null);
-	const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-	const selectedDateRef = useRef(selectedDate);
-	const setSelectedDateRef = useRef(setSelectedDate);
+	const scrollToDate = useScrollToDate(scrollRef);
+	const rangeAnchorKey = rangeAnchor.toISODate() ?? '';
 
-	selectedDateRef.current = selectedDate;
-	setSelectedDateRef.current = setSelectedDate;
+	useScrolledDate(scrollRef, rangeAnchorKey, selectedDate, setSelectedDate);
 
-	// biome-ignore lint/correctness/useExhaustiveDependencies: effect must re-observe rows when the day range changes
+	// biome-ignore lint/correctness/useExhaustiveDependencies: scroll to selectedDate once on mount after layout
 	useEffect(() => {
-		const container = scrollRef.current;
-		if (!container) {
-			return;
-		}
+		let frame1: number;
+		let frame2: number;
 
-		const rows = Array.from(
-			container.querySelectorAll('[data-iso]'),
-		) as HTMLElement[];
-		if (rows.length === 0) {
-			return;
-		}
-
-		const handleEntries = (entries: IntersectionObserverEntry[]) => {
-			const visibleEntries = entries.filter((entry) => entry.isIntersecting);
-			if (visibleEntries.length === 0) {
-				if (debounceRef.current) {
-					clearTimeout(debounceRef.current);
-					debounceRef.current = null;
-				}
-				return;
-			}
-
-			const topEntry = visibleEntries.reduce((top, entry) =>
-				entry.boundingClientRect.top < top.boundingClientRect.top ? entry : top,
-			);
-
-			const topRow = topEntry.target as HTMLElement;
-			const parsed = DateTime.fromISO(
-				topRow.getAttribute('data-iso') as string,
-			);
-
-			if (debounceRef.current) {
-				clearTimeout(debounceRef.current);
-			}
-
-			debounceRef.current = setTimeout(() => {
-				if (parsed.toISODate() !== selectedDateRef.current.toISODate()) {
-					setSelectedDateRef.current(parsed);
-				}
-				debounceRef.current = null;
-			}, 150);
-		};
-
-		const observer = new IntersectionObserver(handleEntries, {
-			root: container,
-			threshold: 0,
-		});
-
-		rows.forEach((row) => {
-			observer.observe(row);
+		frame1 = requestAnimationFrame(() => {
+			frame2 = requestAnimationFrame(() => {
+				scrollToDate(selectedDate, 'auto');
+			});
 		});
 
 		return () => {
-			if (debounceRef.current) {
-				clearTimeout(debounceRef.current);
-				debounceRef.current = null;
-			}
-			observer.disconnect();
+			cancelAnimationFrame(frame1);
+			cancelAnimationFrame(frame2);
 		};
-	}, [rangeAnchor.toISODate()]);
+	}, []);
+
+	// biome-ignore lint/correctness/useExhaustiveDependencies: scroll only when the day range changes
+	useEffect(() => {
+		scrollToDate(selectedDate, 'smooth');
+	}, [rangeAnchorKey]);
 
 	return (
 		<Box

@@ -71,7 +71,7 @@ Follow `red-green-refactor` strictly:
 _DO NOT write implementation code before a failing test exists for it. DO NOT write tests for behaviors not listed in the spec._
 
 **Test Conventions**
-- Refer to `.opencode/docs/unit_tests.md` for project-specific conventions.
+- Refer to `./.opencode/docs/unit_tests.md` for project-specific conventions.
 - Unit tests use [`vitest`](https://vitest.dev/api/) and [`@testing-library/react`](https://testing-library.com/docs/) - refer to their respective docs for clarifications about their API.
 - Use `describe` blocks named after the module
 - One `it` block per behavior

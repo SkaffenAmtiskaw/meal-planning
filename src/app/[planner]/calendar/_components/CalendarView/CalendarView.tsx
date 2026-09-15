@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import type { ReactElement } from 'react';
 
-import { Box, Stack } from '@mantine/core';
+import { Flex, Stack } from '@mantine/core';
 import { useMediaQuery } from '@mantine/hooks';
 
 import {
@@ -63,7 +63,7 @@ function CalendarViewContent({
 					isMobile ? ['month', 'list'] : ['month', 'week', 'list']
 				}
 			/>
-			<Box flex={1} mih={0}>
+			<Flex flex={1} mih={0} direction="column">
 				{viewType === 'month' && (
 					<MealCalendar
 						calendar={calendarData}
@@ -87,7 +87,7 @@ function CalendarViewContent({
 						onMealAdded={onMealAdded}
 					/>
 				)}
-			</Box>
+			</Flex>
 		</Stack>
 	);
 }

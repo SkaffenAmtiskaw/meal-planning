@@ -1,7 +1,5 @@
 import type { ReactNode } from 'react';
 
-import { Box } from '@mantine/core';
-
 import { act, render, screen } from '@testing-library/react';
 
 import { DateTime } from 'luxon';
@@ -16,6 +14,8 @@ import {
 } from '../CalendarContext';
 import { DayRow } from './_components/DayRow';
 import type { ListViewDish } from './_components/DishListItem';
+import { useScrolledDate } from './_hooks/useScrolledDate';
+import { useScrollToDate } from './_hooks/useScrollToDate';
 import { getListDayRange } from './_utils/getListDayRange';
 
 vi.mock('@mantine/core', async () => await import('@mocks/@mantine/core'));
@@ -82,6 +82,16 @@ vi.mock('../CalendarContext', () => ({
 	useCalendarContext: vi.fn(),
 }));
 
+vi.mock('./_hooks/useScrollToDate', async () => ({
+	useScrollToDate: vi.fn(),
+}));
+
+vi.mock('./_hooks/useScrolledDate', async () => ({
+	useScrolledDate: vi.fn(),
+}));
+
+const mockScrollToDate = vi.fn();
+
 function createMockContextValue(
 	overrides: Partial<CalendarContextValue> = {},
 ): CalendarContextValue {
@@ -99,65 +109,10 @@ function createMockContextValue(
 	};
 }
 
-class MockIntersectionObserver {
-	callback: IntersectionObserverCallback;
-	elements: Element[] = [];
-	observe = vi.fn((element: Element) => {
-		this.elements.push(element);
-	});
-	unobserve = vi.fn((element: Element) => {
-		this.elements = this.elements.filter((el) => el !== element);
-	});
-	disconnect = vi.fn(() => {
-		this.elements = [];
-	});
-
-	constructor(callback: IntersectionObserverCallback) {
-		this.callback = callback;
-	}
-
-	trigger(entries: IntersectionObserverEntry[]) {
-		this.callback(entries, this as unknown as IntersectionObserver);
-	}
-}
-
-let lastObserver: MockIntersectionObserver | null = null;
-
-function IntersectionObserverMockConstructor(
-	callback: IntersectionObserverCallback,
-): IntersectionObserver {
-	lastObserver = new MockIntersectionObserver(callback);
-	return lastObserver as unknown as IntersectionObserver;
-}
-
-function getLastObserver(): MockIntersectionObserver {
-	if (!lastObserver) {
-		throw new Error('No IntersectionObserver instance was created');
-	}
-	return lastObserver;
-}
-
-function createIntersectionEntry(
-	target: Element,
-	{ isIntersecting, top }: { isIntersecting: boolean; top: number },
-): IntersectionObserverEntry {
-	return {
-		target,
-		isIntersecting,
-		boundingClientRect: { top } as DOMRectReadOnly,
-		intersectionRatio: isIntersecting ? 1 : 0,
-		intersectionRect: {} as DOMRectReadOnly,
-		rootBounds: null,
-		time: Date.now(),
-	} as IntersectionObserverEntry;
-}
-
 describe('ListView', () => {
 	beforeEach(() => {
 		vi.resetAllMocks();
-		lastObserver = null;
-		global.IntersectionObserver =
-			IntersectionObserverMockConstructor as unknown as typeof IntersectionObserver;
+		vi.mocked(useScrollToDate).mockReturnValue(mockScrollToDate);
 	});
 
 	afterEach(() => {
@@ -230,230 +185,93 @@ describe('ListView', () => {
 		expect(getListDayRange).toHaveBeenCalledWith(rangeAnchor);
 	});
 
-	describe('intersection observer scroll detection', () => {
-		beforeEach(() => {
+	describe('scroll behavior', () => {
+		it('scrolls to selectedDate on mount with auto behavior', () => {
 			vi.useFakeTimers();
-		});
 
-		function setupIntersectionScenario(
-			selectedDate = DateTime.local(2024, 6, 13),
-			rangeAnchor = DateTime.local(2024, 6, 14),
-		) {
+			const selectedDate = DateTime.local(2024, 6, 13);
 			const dates = [
 				DateTime.local(2024, 6, 13),
 				DateTime.local(2024, 6, 14),
 				DateTime.local(2024, 6, 15),
 			];
 			vi.mocked(getListDayRange).mockReturnValue(dates);
-
-			const setSelectedDate = vi.fn();
 			vi.mocked(useCalendarContext).mockReturnValue(
 				createMockContextValue({
 					selectedDate,
-					rangeAnchor,
-					setSelectedDate,
+					rangeAnchor: DateTime.local(2024, 6, 14),
 				}),
-			);
-
-			const { container, unmount } = render(<ListView />);
-			const rows = Array.from(
-				container.querySelectorAll('[data-iso]'),
-			) as HTMLElement[];
-
-			return { rows, setSelectedDate, unmount };
-		}
-
-		it('observes all day rows after render', () => {
-			const { rows } = setupIntersectionScenario();
-			const observer = getLastObserver();
-
-			expect(observer.elements).toEqual(rows);
-		});
-
-		it('does not update selectedDate while the topmost visible row changes rapidly', () => {
-			const { rows, setSelectedDate } = setupIntersectionScenario();
-			const observer = getLastObserver();
-
-			act(() => {
-				observer.trigger([
-					createIntersectionEntry(rows[1], { isIntersecting: true, top: 0 }),
-				]);
-			});
-
-			act(() => {
-				vi.advanceTimersByTime(100);
-			});
-			expect(setSelectedDate).not.toHaveBeenCalled();
-
-			act(() => {
-				observer.trigger([
-					createIntersectionEntry(rows[2], { isIntersecting: true, top: 0 }),
-				]);
-			});
-
-			act(() => {
-				vi.advanceTimersByTime(100);
-			});
-			expect(setSelectedDate).not.toHaveBeenCalled();
-
-			act(() => {
-				vi.advanceTimersByTime(100);
-			});
-			expect(setSelectedDate).toHaveBeenCalledTimes(1);
-			expect(setSelectedDate).toHaveBeenCalledWith(DateTime.local(2024, 6, 15));
-		});
-
-		it('updates selectedDate to the topmost visible day after the debounce expires', () => {
-			const { rows, setSelectedDate } = setupIntersectionScenario();
-			const observer = getLastObserver();
-
-			act(() => {
-				observer.trigger([
-					createIntersectionEntry(rows[2], { isIntersecting: true, top: 0 }),
-				]);
-			});
-
-			act(() => {
-				vi.advanceTimersByTime(150);
-			});
-
-			expect(setSelectedDate).toHaveBeenCalledTimes(1);
-			expect(setSelectedDate).toHaveBeenCalledWith(DateTime.local(2024, 6, 15));
-		});
-
-		it('does not update selectedDate when the topmost visible day is already selected', () => {
-			const { rows, setSelectedDate } = setupIntersectionScenario(
-				DateTime.local(2024, 6, 15),
-			);
-			const observer = getLastObserver();
-
-			act(() => {
-				observer.trigger([
-					createIntersectionEntry(rows[2], { isIntersecting: true, top: 0 }),
-				]);
-			});
-
-			act(() => {
-				vi.advanceTimersByTime(150);
-			});
-
-			expect(setSelectedDate).not.toHaveBeenCalled();
-		});
-
-		it('cleans up the observer and pending timer on unmount', () => {
-			const { rows, setSelectedDate, unmount } = setupIntersectionScenario();
-			const observer = getLastObserver();
-
-			act(() => {
-				observer.trigger([
-					createIntersectionEntry(rows[2], { isIntersecting: true, top: 0 }),
-				]);
-			});
-
-			unmount();
-
-			act(() => {
-				vi.advanceTimersByTime(150);
-			});
-
-			expect(setSelectedDate).not.toHaveBeenCalled();
-			expect(observer.disconnect).toHaveBeenCalled();
-		});
-
-		it('does not update selectedDate when no rows are intersecting', () => {
-			const { rows, setSelectedDate } = setupIntersectionScenario();
-			const observer = getLastObserver();
-
-			act(() => {
-				observer.trigger(
-					rows.map((row) =>
-						createIntersectionEntry(row, { isIntersecting: false, top: 0 }),
-					),
-				);
-			});
-
-			act(() => {
-				vi.advanceTimersByTime(150);
-			});
-
-			expect(setSelectedDate).not.toHaveBeenCalled();
-		});
-
-		it('cancels the pending timer when no rows become intersecting', () => {
-			const { rows, setSelectedDate } = setupIntersectionScenario();
-			const observer = getLastObserver();
-
-			act(() => {
-				observer.trigger([
-					createIntersectionEntry(rows[2], { isIntersecting: true, top: 0 }),
-				]);
-			});
-
-			act(() => {
-				observer.trigger(
-					rows.map((row) =>
-						createIntersectionEntry(row, { isIntersecting: false, top: 0 }),
-					),
-				);
-			});
-
-			act(() => {
-				vi.advanceTimersByTime(150);
-			});
-
-			expect(setSelectedDate).not.toHaveBeenCalled();
-		});
-
-		it('selects the topmost intersecting row when multiple rows are visible', () => {
-			const { rows, setSelectedDate } = setupIntersectionScenario(
-				DateTime.local(2024, 6, 14),
-			);
-			const observer = getLastObserver();
-
-			act(() => {
-				observer.trigger([
-					createIntersectionEntry(rows[1], { isIntersecting: true, top: 100 }),
-					createIntersectionEntry(rows[0], { isIntersecting: true, top: 50 }),
-					createIntersectionEntry(rows[2], { isIntersecting: true, top: 150 }),
-				]);
-			});
-
-			act(() => {
-				vi.advanceTimersByTime(150);
-			});
-
-			expect(setSelectedDate).toHaveBeenCalledTimes(1);
-			expect(setSelectedDate).toHaveBeenCalledWith(DateTime.local(2024, 6, 13));
-		});
-
-		it('does not create an observer when there are no day rows', () => {
-			vi.mocked(getListDayRange).mockReturnValue([]);
-			vi.mocked(useCalendarContext).mockReturnValue(
-				createMockContextValue({ rangeAnchor: DateTime.local(2024, 6, 14) }),
 			);
 
 			render(<ListView />);
 
-			expect(getLastObserver).toThrow();
+			act(() => {
+				vi.advanceTimersByTime(32);
+			});
+			act(() => {
+				vi.advanceTimersByTime(32);
+			});
+
+			expect(mockScrollToDate).toHaveBeenCalledWith(selectedDate, 'auto');
 		});
 
-		it('does not create an observer when the scroll container ref is unavailable', () => {
-			vi.mocked(Box).mockImplementationOnce(
-				({
-					children,
-					'data-testid': testId,
-					ref: _ref,
-					...props
-				}: Record<string, unknown>) => (
-					<div data-testid={testId as string} {...props}>
-						{children as ReactNode}
-					</div>
-				),
+		it('scrolls to selectedDate with smooth behavior when rangeAnchor changes', () => {
+			const initialSelectedDate = DateTime.local(2024, 6, 13);
+			const newSelectedDate = DateTime.local(2024, 6, 20);
+			const dates = [
+				DateTime.local(2024, 6, 13),
+				DateTime.local(2024, 6, 14),
+				DateTime.local(2024, 6, 15),
+			];
+			vi.mocked(getListDayRange).mockReturnValue(dates);
+			vi.mocked(useCalendarContext).mockReturnValue(
+				createMockContextValue({
+					selectedDate: initialSelectedDate,
+					rangeAnchor: DateTime.local(2024, 6, 14),
+				}),
 			);
 
-			setupIntersectionScenario();
+			const { rerender } = render(<ListView />);
+			mockScrollToDate.mockClear();
 
-			expect(getLastObserver).toThrow();
+			vi.mocked(useCalendarContext).mockReturnValue(
+				createMockContextValue({
+					selectedDate: newSelectedDate,
+					rangeAnchor: DateTime.local(2024, 6, 20),
+				}),
+			);
+
+			act(() => {
+				rerender(<ListView />);
+			});
+
+			expect(mockScrollToDate).toHaveBeenCalledWith(newSelectedDate, 'smooth');
+		});
+
+		it('passes the container ref, rangeAnchorKey, selectedDate, and setSelectedDate to useScrolledDate', () => {
+			const rangeAnchor = DateTime.local(2024, 6, 14);
+			const selectedDate = DateTime.local(2024, 6, 15);
+			const setSelectedDate = vi.fn();
+			const dates = [
+				DateTime.local(2024, 6, 13),
+				DateTime.local(2024, 6, 14),
+				DateTime.local(2024, 6, 15),
+			];
+			vi.mocked(getListDayRange).mockReturnValue(dates);
+			vi.mocked(useCalendarContext).mockReturnValue(
+				createMockContextValue({ rangeAnchor, selectedDate, setSelectedDate }),
+			);
+
+			render(<ListView />);
+
+			expect(useScrolledDate).toHaveBeenCalledWith(
+				expect.objectContaining({
+					current: screen.getByTestId('scroll-region'),
+				}),
+				rangeAnchor.toISODate() ?? '',
+				selectedDate,
+				setSelectedDate,
+			);
 		});
 	});
 
@@ -466,6 +284,29 @@ describe('ListView', () => {
 
 		expect(() => render(<ListView />)).not.toThrow();
 		expect(screen.getAllByTestId('day-row')).toHaveLength(1);
+	});
+
+	it('falls back to an empty rangeAnchorKey when rangeAnchor has no ISO date', () => {
+		const invalidRangeAnchor = DateTime.invalid('invalid');
+		const setSelectedDate = vi.fn();
+		vi.mocked(getListDayRange).mockReturnValue([]);
+		vi.mocked(useCalendarContext).mockReturnValue(
+			createMockContextValue({
+				rangeAnchor: invalidRangeAnchor,
+				setSelectedDate,
+			}),
+		);
+
+		render(<ListView />);
+
+		expect(useScrolledDate).toHaveBeenCalledWith(
+			expect.objectContaining({
+				current: screen.getByTestId('scroll-region'),
+			}),
+			'',
+			DateTime.local(2024, 6, 15),
+			setSelectedDate,
+		);
 	});
 
 	it('passes onAddMeal to each DayRow', () => {

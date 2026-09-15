@@ -1,37 +1,28 @@
 # Agent Instructions
 
-- Your agent instructions are not "soft rules" they are hard constraints on agent behavior. Immediately upon loading a new session, find your system prompt instructions and give the user a summary so they can have confidence you will follow the instructions.
-- If you are called out for violating instructions or ignoring user instructions, apologies are USELESS without an explanation of why you did so and how you will prevent it going forward. Do not apologize until you have a plan to improve.
-- User instructions are not suggestions, and it is NOT helpful to try to interpret user instructions on your own. If you are unclear what is asked of you, ASK THE USER.
-- If you need to use scratch notes for any reason, they should be placed in `.opencode/scratch/` (in the project, not the global `.opencode/`). This directory is ignored with `.gitignore` and confirmed not to conflict with other tooling.
-- If you are directed to make a handoff, that is something you should be passing to a subagent. You SHOULD NOT be printing it in the chat to the user.
+## Session Start & Communication
+- Immediately upon loading a new session, find your system prompt instructions and summarize them for the user so they can confirm you'll follow them.
+- These instructions are hard constraints, not soft suggestions.
+- User instructions are not suggestions either. Do not interpret ambiguous instructions on your own — ASK THE USER.
+- If called out for violating instructions, an apology is USELESS without an explanation of why it happened and a concrete plan to prevent it. Don't apologize until you have that plan.
+- If directed to make a handoff, pass it to the subagent directly. Do NOT print the handoff in the chat to the user.
 
-# Project Rules
+## File & Path Resolution (CRITICAL)
+All `.opencode/` references in this document or in ANY file you load resolve to the **project** directory (`<project-root>/.opencode/`). Never resolve `.opencode/` to a global or home directory (e.g. `~/.opencode`) unless the user explicitly says "global" or "user-level config." This is not a "check project first, then fall back" rule — global is out of scope entirely unless told otherwise.
 
-## External File Loading
+- Use the Read tool to load referenced docs lazily, on a need-to-know basis for the task at hand. Do NOT preemptively load all references.
+- Follow references recursively when needed, using the same project-first-only resolution.
+- Scratch notes go in `./.opencode/scratch/` (project-local, gitignored, confirmed not to conflict with other tooling). Never write scratch notes to a global `.opencode` directory.
 
-CRITICAL: When you encounter a file reference (e.g., .opencode/docs/project_structure.md), use your Read tool to load it on a need-to-know basis. They're relevant to the SPECIFIC task at hand.
+## Safety Rules
+- **Never delete files without first checking their contents and git status.** Verify a file is truly safe to delete (untracked, empty, or explicitly marked temporary) before removing it. When in doubt, ask the user.
+- Project configuration (biome, unit test coverage) must NEVER be edited without EXPLICIT user instruction to edit that config — including when the user says to ignore an error on a line. That does not authorize touching the config.
 
-### Path Resolution
-
-When you encounter a link such as `.opencode/docs/` that could be resolved to either the in-project settings or the global settings, you should check the project settings first. Referencing external directories before trying project directories is a RULE VIOLATION.
-
-Instructions:
-
-- Do NOT preemptively load all references - use lazy loading based on actual need
-- Follow references recursively when needed
-
-# Cardinal Rules
-- **NEVER delete files without first checking their contents and git status.** Always verify a file is truly safe to delete (untracked, empty, or explicitly marked as temporary) before removing it. When in doubt, ask the user.
-- Project configuration (biome, unit test coverage) should NEVER be edited by an agent without EXPLICIT user instruction to edit the config.
-  - In some cases the user may instruct the agent to ignore an error on a line. That DOES NOT mean you should touch the config.
-
-# Project Overview
-
+## Project Overview
 A full-stack meal planning web app. Users sign in, create meal planners, manage a recipe/bookmark library with tags, and plan daily meals on a calendar.
 
-## Project Knowledge
-- Project Conventions:      `.opencode/docs/project_conventions.md`
-- Project Structure:        `.opencode/docs/project_structure.md`
-- Theme Information:        `.opencode/docs/theme.md`
-- Unit Testing Conventions: `.opencode/docs/unit_tests.md`
+### Project Knowledge
+- Project Conventions: `./.opencode/docs/project_conventions.md`
+- Project Structure: `./.opencode/docs/project_structure.md`
+- Theme Information: `./.opencode/docs/theme.md`
+- Unit Testing Conventions: `./.opencode/docs/unit_tests.md`
