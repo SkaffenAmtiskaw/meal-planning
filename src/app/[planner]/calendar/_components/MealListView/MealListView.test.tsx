@@ -2,7 +2,7 @@ import { useState } from 'react';
 import type { ReactElement } from 'react';
 
 import { Modal } from '@mantine/core';
-import { useDisclosure } from '@mantine/hooks';
+import { useDisclosure, useMediaQuery } from '@mantine/hooks';
 
 import { act, fireEvent, render, screen } from '@testing-library/react';
 
@@ -79,6 +79,7 @@ const mockAddMealFormModalWrapper = vi.mocked(AddMealFormModalWrapper);
 const mockToCalendarEvents = vi.mocked(toCalendarEvents);
 const mockGetMealColor = vi.mocked(getMealColor);
 const mockDishLink = vi.mocked(DishLink);
+const mockUseMediaQuery = vi.mocked(useMediaQuery);
 
 const plannerId = 'planner-123';
 const onMealAdded = vi.fn();
@@ -158,6 +159,64 @@ describe('MealListView', () => {
 		);
 
 		expect(screen.getByTestId('list-view')).toBeDefined();
+	});
+
+	it('renders MobileListViewPlaceholder on mobile', () => {
+		mockUseMediaQuery.mockReturnValue(true);
+
+		render(
+			<MealListView
+				plannerId={plannerId}
+				calendar={[]}
+				onMealAdded={onMealAdded}
+			/>,
+		);
+
+		expect(screen.getByText('Coming soon')).toBeDefined();
+		expect(screen.queryByTestId('list-view')).toBeNull();
+	});
+
+	it('renders ListView on desktop', () => {
+		mockUseMediaQuery.mockReturnValue(false);
+
+		render(
+			<MealListView
+				plannerId={plannerId}
+				calendar={[]}
+				onMealAdded={onMealAdded}
+			/>,
+		);
+
+		expect(screen.getByTestId('list-view')).toBeDefined();
+		expect(screen.queryByText('Coming soon')).toBeNull();
+	});
+
+	it('does not render ListView on mobile', () => {
+		mockUseMediaQuery.mockReturnValue(true);
+
+		render(
+			<MealListView
+				plannerId={plannerId}
+				calendar={[]}
+				onMealAdded={onMealAdded}
+			/>,
+		);
+
+		expect(screen.queryByTestId('list-view')).toBeNull();
+	});
+
+	it('does not render MobileListViewPlaceholder on desktop', () => {
+		mockUseMediaQuery.mockReturnValue(false);
+
+		render(
+			<MealListView
+				plannerId={plannerId}
+				calendar={[]}
+				onMealAdded={onMealAdded}
+			/>,
+		);
+
+		expect(screen.queryByText('Coming soon')).toBeNull();
 	});
 
 	it('passes a renderDish function that uses DishLink with size sm', () => {

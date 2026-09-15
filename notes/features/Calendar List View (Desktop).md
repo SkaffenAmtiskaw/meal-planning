@@ -240,6 +240,7 @@ All already exist in `src/_theme/colors.ts` — use them, don't re-declare.
 - Colocated tests: `DishLink.test.tsx`, `DishListItem.test.tsx`, updated `MealListView.test.tsx`.
 
 ## Step 7 — Scroll interactions and selected-date tracking (partial)
+**Status: ✅ Completed**
 
 **Goal:** The list anchors on today and the header month label tracks scroll.
 
@@ -262,6 +263,7 @@ All already exist in `src/_theme/colors.ts` — use them, don't re-declare.
 - Colocated tests: `useScrollToDate.test.ts`, `useScrolledDate.test.ts`, updated `ListView.test.tsx`.
 
 ## Step 8 — Mobile placeholder
+**Status: ✅ Completed**
 
 **Goal:** At phone breakpoint, render a placeholder instead of the desktop list.
 

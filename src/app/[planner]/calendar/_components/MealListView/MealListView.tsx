@@ -4,7 +4,7 @@ import { useMemo, useState } from 'react';
 import type { ReactElement } from 'react';
 
 import { Modal } from '@mantine/core';
-import { useDisclosure } from '@mantine/hooks';
+import { useDisclosure, useMediaQuery } from '@mantine/hooks';
 
 import type { DateTime } from 'luxon';
 
@@ -17,6 +17,7 @@ import { toCalendarEvents } from '../../_utils/toCalendarEvents';
 import type { SavedItem, SerializedDay } from '../../_utils/toScheduleXEvents';
 import { AddMealFormModalWrapper } from '../AddMealFormModalWrapper/AddMealFormModalWrapper';
 import { DishLink } from '../DishLink/DishLink';
+import { MobileListViewPlaceholder } from '../MobileListViewPlaceholder/MobileListViewPlaceholder';
 
 export interface MealListViewProps {
 	plannerId: string;
@@ -32,6 +33,7 @@ export function MealListView({
 	onMealAdded,
 }: MealListViewProps): ReactElement {
 	const canWrite = useCanWrite();
+	const isMobile = useMediaQuery('(max-width: 48em)');
 	const [opened, { open, close }] = useDisclosure(false);
 	const [dateForAdd, setDateForAdd] = useState<DateTime | null>(null);
 
@@ -47,6 +49,10 @@ export function MealListView({
 			dishes: event.dishes,
 		}));
 	}, [calendar, savedItems]);
+
+	if (isMobile) {
+		return <MobileListViewPlaceholder />;
+	}
 
 	const renderDish = (dish: ListViewDish) => (
 		<DishLink dish={dish} plannerId={plannerId} size="sm" />
