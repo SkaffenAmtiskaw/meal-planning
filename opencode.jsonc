@@ -5,6 +5,7 @@
       "command": ["pnpm", "lint", "$FILE"]
     }
   },
+  "default_agent": "implement",
   "agent": {
     "plan": {
       "disable": true
