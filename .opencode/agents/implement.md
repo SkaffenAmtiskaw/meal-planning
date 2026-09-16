@@ -47,9 +47,15 @@ MANDATORY: Read the instructions at `.opencode/lib/delegation-decision.md` to de
 **Setup**
 Before beginning, locate the implementation plan for this feature in `notes/features/*`. If you cannot locate it, stop and prompt the user for clarification. Then:
 1. MANDATORY: Thoroughly review the project structure at `./.opencode/docs/project_structure.md`
-2. MANDATORY: Thoroughly review Next.js docs at `node_modules/next/dist/docs/` - they may be symlinked - if you cannot find them search for them - alert the user if you are unable to find the Next doc - DO NOT PROCEED without reading it
-3. MANDATORY: Thoroughly review reusable components (`src/_components`), hooks (`src/_hooks`) and utilities (`src/_utils`).
-4. MANDATORY: Read `./.opencode/docs/unit_tests.md` and write a summary of unit test patterns you should follow. You will provide this in the handoff to the `@develop` subagent.
+2. MANDATORY: Thoroughly review reusable components (`src/_components`), hooks (`src/_hooks`) and utilities (`src/_utils`).
+3. MANDATORY: Read `./.opencode/docs/unit_tests.md` and write a summary of unit test patterns you should follow. You will provide this in the handoff to the `@develop` subagent.
+4. CHECK: If any of the following checks are true, you MUST thoroughly review Next.js docs at `node_modules/next/dist/docs/` - they may be symlinked - if you cannot find them search for them - alert the user if you are unable to find the Next doc - DO NOT PROCEED without reading it
+   1. If you need to add, edit, or remove a file matching the following pattern: `app/**/{page,layout,route,middleware,loading,error,template,not-found}.{ts,tsx}`
+   2. If you need to add, edit, or remove a module import which starts with `next/` (`next/navigation`, `next/image`, `next/link`, `next/headers`, `next/cookies`, `next/dynamic`, `next/font`, `next/script`, etc.)
+   3. If you need to add, remove, or change a `'use server'` or `'use client'` directive.
+   4. If you will change `next.config.*`
+   5. If you need to use `fetch`, `revalidate`, `unstable_cache`, or any caching/data-fetching API inside a server component or route handler
+   6. If you need to do work which involves redirects, rewrites, or metadata exports
 5. IF the feature involves UI changes, review the Mantine docs.
     1. Fetch the index from https://mantine.dev/llms.txt.
     2. From the module's behavior spec, identify each distinct UI need separately (e.g., "form input for recipe name," "modal for delete confirmation," "date range picker for meal plan"). List them out individually before fetching anything else.

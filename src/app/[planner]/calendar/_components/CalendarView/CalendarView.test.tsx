@@ -1,11 +1,10 @@
-import { useMediaQuery } from '@mantine/hooks';
-
 import { act, render, screen } from '@testing-library/react';
 
 import { DateTime } from 'luxon';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { CalendarHeader, useCalendarContext } from '@/_components/Calendar';
+import { useIsMobile } from '@/_hooks';
 
 import { CalendarView } from './CalendarView';
 
@@ -18,7 +17,7 @@ import { MealListView } from '../MealListView/MealListView';
 import { MealWeekView } from '../MealWeekView/MealWeekView';
 
 vi.mock('@mantine/core', async () => await import('@mocks/@mantine/core'));
-vi.mock('@mantine/hooks', async () => await import('@mocks/@mantine/hooks'));
+vi.mock('@/_hooks', async () => await import('@mocks/@/_hooks'));
 
 vi.mock('@/_components/Calendar', async () => ({
 	CalendarProvider: vi.fn(({ children }) => (
@@ -61,7 +60,7 @@ vi.mock('../MealDetailModal/MealDetailModal', async () => ({
 }));
 
 const mockUseCalendarContext = vi.mocked(useCalendarContext);
-const mockUseMediaQuery = vi.mocked(useMediaQuery);
+const mockUseIsMobile = vi.mocked(useIsMobile);
 
 const defaultProps = {
 	plannerId: 'planner-1',
@@ -85,7 +84,7 @@ describe('CalendarView', () => {
 	beforeEach(() => {
 		vi.resetAllMocks();
 		mockUseCalendarContext.mockReturnValue(defaultCalendarContext);
-		mockUseMediaQuery.mockReturnValue(false);
+		mockUseIsMobile.mockReturnValue(false);
 	});
 
 	it('renders CalendarHeader and MealCalendar by default', () => {
@@ -159,7 +158,7 @@ describe('CalendarView', () => {
 	});
 
 	it('passes mobile views to CalendarHeader when isMobile is true', () => {
-		mockUseMediaQuery.mockReturnValue(true);
+		mockUseIsMobile.mockReturnValue(true);
 		render(<CalendarView {...defaultProps} />);
 
 		expect(vi.mocked(CalendarHeader)).toHaveBeenCalledWith(

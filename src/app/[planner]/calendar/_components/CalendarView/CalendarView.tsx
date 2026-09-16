@@ -4,13 +4,13 @@ import { useState } from 'react';
 import type { ReactElement } from 'react';
 
 import { Flex, Stack } from '@mantine/core';
-import { useMediaQuery } from '@mantine/hooks';
 
 import {
 	CalendarHeader,
 	CalendarProvider,
 	useCalendarContext,
 } from '@/_components/Calendar';
+import { useIsMobile } from '@/_hooks';
 
 import type { CalendarEvent } from '../../_utils/toCalendarEvents';
 import type { SavedItem, SerializedDay } from '../../_utils/toScheduleXEvents';
@@ -46,7 +46,7 @@ function CalendarViewContent({
 	onEventClick,
 }: CalendarViewContentProps): ReactElement {
 	const { viewType } = useCalendarContext();
-	const isMobile = useMediaQuery('(max-width: 62em)');
+	const isMobile = useIsMobile();
 
 	return (
 		<Stack gap={0} h="100%">

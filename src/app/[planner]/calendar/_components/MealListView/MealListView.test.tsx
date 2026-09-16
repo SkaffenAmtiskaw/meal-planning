@@ -2,7 +2,7 @@ import { useState } from 'react';
 import type { ReactElement } from 'react';
 
 import { Modal } from '@mantine/core';
-import { useDisclosure, useMediaQuery } from '@mantine/hooks';
+import { useDisclosure } from '@mantine/hooks';
 
 import { act, fireEvent, render, screen } from '@testing-library/react';
 
@@ -11,6 +11,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import type { ListViewDish, ListViewEvent } from '@/_components/Calendar';
 import { ListView } from '@/_components/Calendar';
+import { useIsMobile } from '@/_hooks';
 import { getMealColor, TAG_COLORS } from '@/_theme/colors';
 import { useCanWrite } from '@/app/[planner]/_components';
 
@@ -29,6 +30,8 @@ import { DishLink } from '../DishLink/DishLink';
 
 vi.mock('@mantine/core', async () => await import('@mocks/@mantine/core'));
 vi.mock('@mantine/hooks', async () => await import('@mocks/@mantine/hooks'));
+
+vi.mock('@/_hooks', async () => await import('@mocks/@/_hooks'));
 
 vi.mock('@/_components/Calendar', async () => ({
 	ListView: vi.fn(({ events, renderDish }) => (
@@ -79,7 +82,7 @@ const mockAddMealFormModalWrapper = vi.mocked(AddMealFormModalWrapper);
 const mockToCalendarEvents = vi.mocked(toCalendarEvents);
 const mockGetMealColor = vi.mocked(getMealColor);
 const mockDishLink = vi.mocked(DishLink);
-const mockUseMediaQuery = vi.mocked(useMediaQuery);
+const mockUseIsMobile = vi.mocked(useIsMobile);
 
 const plannerId = 'planner-123';
 const onMealAdded = vi.fn();
@@ -135,6 +138,7 @@ describe('MealListView', () => {
 	beforeEach(() => {
 		vi.resetAllMocks();
 		mockUseCanWrite.mockReturnValue(true);
+		mockUseIsMobile.mockReturnValue(false);
 		vi.mocked(useDisclosure).mockImplementation((initialState = false) => {
 			const [opened, setOpened] = useState(initialState);
 			return [
@@ -162,7 +166,7 @@ describe('MealListView', () => {
 	});
 
 	it('renders MobileListViewPlaceholder on mobile', () => {
-		mockUseMediaQuery.mockReturnValue(true);
+		mockUseIsMobile.mockReturnValue(true);
 
 		render(
 			<MealListView
@@ -177,7 +181,7 @@ describe('MealListView', () => {
 	});
 
 	it('renders ListView on desktop', () => {
-		mockUseMediaQuery.mockReturnValue(false);
+		mockUseIsMobile.mockReturnValue(false);
 
 		render(
 			<MealListView
@@ -192,7 +196,7 @@ describe('MealListView', () => {
 	});
 
 	it('does not render ListView on mobile', () => {
-		mockUseMediaQuery.mockReturnValue(true);
+		mockUseIsMobile.mockReturnValue(true);
 
 		render(
 			<MealListView
@@ -206,7 +210,7 @@ describe('MealListView', () => {
 	});
 
 	it('does not render MobileListViewPlaceholder on desktop', () => {
-		mockUseMediaQuery.mockReturnValue(false);
+		mockUseIsMobile.mockReturnValue(false);
 
 		render(
 			<MealListView

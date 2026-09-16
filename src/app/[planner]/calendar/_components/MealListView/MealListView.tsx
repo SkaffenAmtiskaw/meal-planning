@@ -4,12 +4,13 @@ import { useMemo, useState } from 'react';
 import type { ReactElement } from 'react';
 
 import { Modal } from '@mantine/core';
-import { useDisclosure, useMediaQuery } from '@mantine/hooks';
+import { useDisclosure } from '@mantine/hooks';
 
 import type { DateTime } from 'luxon';
 
 import type { ListViewDish, ListViewEvent } from '@/_components/Calendar';
 import { ListView } from '@/_components/Calendar';
+import { useIsMobile } from '@/_hooks';
 import { getMealColor, TAG_COLORS } from '@/_theme/colors';
 import { useCanWrite } from '@/app/[planner]/_components';
 
@@ -33,7 +34,7 @@ export function MealListView({
 	onMealAdded,
 }: MealListViewProps): ReactElement {
 	const canWrite = useCanWrite();
-	const isMobile = useMediaQuery('(max-width: 48em)');
+	const isMobile = useIsMobile();
 	const [opened, { open, close }] = useDisclosure(false);
 	const [dateForAdd, setDateForAdd] = useState<DateTime | null>(null);
 

@@ -12,6 +12,7 @@ permission:
   edit:
      "*": deny
      "src/**": allow
+     "test/**": allow
   webfetch: deny
 steps: 10
 ---

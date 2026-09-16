@@ -205,17 +205,18 @@ them by hand only so it runs standalone. No new assets.
   mobile-specific trigger wrapper.
 
 ## Step 1: Establish a shared mobile breakpoint hook
+**Status**: ✅ Complete
 
 **What we're doing:** Define a single source of truth for the mobile breakpoint so calendar views do
 not each pick their own width, which would create inconsistent desktop/mobile behavior.
 
 **Acceptance criteria:**
-- [ ] A `useIsMobile` hook exists in `src/_hooks/` and is exported from `src/_hooks/index.ts`.
-- [ ] `CalendarView.tsx` uses `useIsMobile` instead of its inline `useMediaQuery('(max-width: 62em)')`.
-- [ ] `MealListView.tsx` uses `useIsMobile` instead of its inline `useMediaQuery('(max-width: 48em)')`.
-- [ ] At widths below `sm`/`48em` (phones), the calendar renders mobile layouts; at widths at or
+- [x] A `useIsMobile` hook exists in `src/_hooks/` and is exported from `src/_hooks/index.ts`.
+- [x] `CalendarView.tsx` uses `useIsMobile` instead of its inline `useMediaQuery('(max-width: 62em)')`.
+- [x] `MealListView.tsx` uses `useIsMobile` instead of its inline `useMediaQuery('(max-width: 48em)')`.
+- [x] At widths below `sm`/`48em` (phones), the calendar renders mobile layouts; at widths at or
   above `sm`/`48em` (tablets and desktops), it renders desktop layouts.
-- [ ] Existing tests for `CalendarView` and `MealListView` are updated to mock `useIsMobile` and still
+- [x] Existing tests for `CalendarView` and `MealListView` are updated to mock `useIsMobile` and still
   pass.
 
 **Architectural plan:**

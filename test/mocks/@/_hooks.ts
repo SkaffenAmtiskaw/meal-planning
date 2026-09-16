@@ -95,3 +95,5 @@ export const useAsyncButton = vi.fn(() => {
 });
 
 export const useOneTap = vi.fn();
+
+export const useIsMobile = vi.fn(() => false);
