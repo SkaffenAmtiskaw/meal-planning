@@ -297,13 +297,23 @@ This consistency helps users quickly identify meal types visually across the cal
 - [ ] Close modal - focus returns to card
 
 ---
-## Step 14: List View Mobile View
+## Step 14: Month View Mobile View
+
+**What we're doing:** Changing the month view design on mobile
+
+This will be handled as a separate story. See the [[Calendar - Mobile Month View|mobile month view]] note for more detailed implementation steps.
+
+---
+## Step 15: List View Mobile View
 
 **What we're doing:** Changing the list view design on mobile
 
+This will be handled as a separate story. See the [[Calendar - Mobile List View|mobile list view]] note for more detailed implementation steps.
+
 ---
 
-## Step 15: List View Keyboard Navigation
+## Step 16: List View Keyboard Navigation
+**Status**: ⚠️ Needs Design Review - The list view design has changed since these steps were created. This step should not be started until the acceptance criteria have been changed to match the new design.
 
 **What we're doing:** Add keyboard navigation for list view.
 
@@ -318,7 +328,7 @@ This consistency helps users quickly identify meal types visually across the cal
 
 ---
 
-## Step 16: Wire Up Overflow Indicator to List View
+## Step 17: Wire Up Overflow Indicator to List View
 
 **What we're doing:** Make clicking the "+N more" overflow indicator in the month grid switch to list view and jump to that day.
 
@@ -335,59 +345,7 @@ This consistency helps users quickly identify meal types visually across the cal
 
 ---
 
-## Step 17: Create Mobile Month Agenda Shell
-
-**What we're doing:** Build mobile-optimized month view (compact grid + agenda).
-
-**Acceptance Criteria:**
-- [ ] Resize to mobile viewport (< 768px)
-- [ ] See compact month grid (no events shown in grid)
-- [ ] Days with meals show dot indicators
-- [ ] Tap on day - agenda appears below
-- [ ] Agenda shows that day's meals
-- [ ] Tap different day - agenda updates
-
-**Files Created:**
-- `src/_components/Calendar/MonthAgenda/MonthAgenda.tsx`
-
----
-
-## Step 18: Add Events to Mobile Agenda
-
-**What we're doing:** Show meals in mobile agenda with correct tag colors.
-
-**Acceptance Criteria:**
-- [ ] Mobile agenda shows meal cards
-- [ ] **Tag colors are consistent:** Match desktop views
-- [ ] Dish titles are links
-- [ ] Tap meal - MealDetailModal opens
-- [ ] Scroll through month grid independently
-
-**Files Modified:**
-- `MonthAgenda.tsx` - add meal display
-- `MealCalendar.tsx` - responsive logic (mobile shows MonthAgenda, desktop shows MonthGrid)
-
----
-
-## Step 19: Mobile Agenda Keyboard Navigation
-
-**What we're doing:** Add keyboard navigation for mobile agenda view.
-
-**Acceptance Criteria:**
-- [ ] Press Tab - focus enters month grid
-- [ ] Arrow keys navigate between days
-- [ ] Enter - agenda expands with that day's meals
-- [ ] Tab - moves focus into agenda
-- [ ] Tab between meal cards in agenda
-- [ ] Enter on meal - opens modal
-- [ ] Escape - closes agenda
-
-**Files Modified:**
-- `MonthAgenda.tsx` - add keyboard handlers
-
----
-
-## Step 20: Remove Schedule-X
+## Step 19: Remove Schedule-X
 
 **What we're doing:** Remove all schedule-x dependencies.
 
