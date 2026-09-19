@@ -228,17 +228,19 @@ not each pick their own width, which would create inconsistent desktop/mobile be
 
 ## Step 2: Wire a mobile month-view shell into the calendar page
 
+**Status**: ✅ Complete
+
 **What we're doing:** Add the responsive switch so the calendar page renders a mobile-specific
 component on small screens. The component starts as a placeholder so we can validate the wiring
 before the grid/agenda are built.
 
 **Acceptance criteria:**
-- [ ] Open the calendar page on a desktop width — the existing desktop month grid still renders.
-- [ ] Resize to a mobile viewport — the page shows a placeholder mobile month view (e.g.,
+- [x] Open the calendar page on a desktop width — the existing desktop month grid still renders.
+- [x] Resize to a mobile viewport — the page shows a placeholder mobile month view (e.g.,
   "Mobile month view — selected date: [date]").
-- [ ] On mobile, the Month/List switcher in the header still works and switches views.
-- [ ] Today, prev/next, and the existing date picker still update the placeholder's selected date.
-- [ ] The two implementations do not mount at the same time.
+- [x] On mobile, the Month/List switcher in the header still works and switches views.
+- [x] Today, prev/next, and the existing date picker still update the placeholder's selected date.
+- [x] The two implementations do not mount at the same time.
 
 **Architectural plan:**
 - Create `src/app/[planner]/calendar/_components/MealMonthAgenda/MealMonthAgenda.tsx` as a thin shell
@@ -251,26 +253,31 @@ before the grid/agenda are built.
 
 ## Step 3: Responsive `CalendarHeader` for mobile
 
-**What we're doing:** Update the shared `CalendarHeader` so that on mobile it renders the two-row
-layout required by the handoff.
+**Status**: ✅ Complete
+
+**What we're doing:** Add a mobile-specific calendar header and wire it in place of the desktop
+header on small screens.
 
 **Acceptance criteria:**
-- [ ] Open the calendar page on a mobile viewport.
-- [ ] The header shows Row 1: prev chevron · month/year label with a chevron · next chevron · Today.
-- [ ] Tapping the month/year label opens a date picker.
-- [ ] Row 2 shows a full-width Month/List `SegmentedControl`.
-- [ ] The desktop date-picker input is hidden on mobile.
-- [ ] All header controls are ≥ 44px tall.
-- [ ] Today, prev/next, and date picker still work and update the selected date shown in the
+- [x] Open the calendar page on a mobile viewport.
+- [x] The header shows Row 1: prev chevron · month/year label with a chevron · next chevron · Today.
+- [x] Tapping the month/year label opens a date picker.
+- [x] Row 2 shows a full-width Month/List `SegmentedControl`.
+- [x] The desktop date-picker input is hidden on mobile.
+- [x] All header controls are ≥ 44px tall.
+- [x] Today, prev/next, and date picker still work and update the selected date shown in the
   placeholder.
-- [ ] The desktop header is unchanged at desktop widths.
+- [x] The desktop header is unchanged at desktop widths.
 
 **Architectural plan:**
-- Modify `src/_components/Calendar/CalendarHeader.tsx`.
-- Use `useIsMobile` to choose the mobile layout branch.
-- Keep the existing desktop branch unchanged.
-- Use Mantine `Group`, `ActionIcon`, `Button`, `Text`, `SegmentedControl`, and `DatePickerInput`
-  (or `Popover` + `DatePicker` for the month-label trigger).
+- Create `src/_components/Calendar/MobileCalendarHeader.tsx` for the two-row mobile layout.
+- Extract reusable `CalendarNavButtons` and a `formatCalendarLabel` utility so both headers share
+  the same navigation actions and label formatting.
+- Keep the existing `src/_components/Calendar/CalendarHeader.tsx` as the desktop header.
+- In `src/app/[planner]/calendar/_components/CalendarView/CalendarView.tsx`, use `useIsMobile` to
+  render `MobileCalendarHeader` on mobile and `CalendarHeader` on desktop.
+- Use Mantine `Group`, `Button`, `SegmentedControl`, `Stack`, `Popover`, and `DatePicker` for the
+  mobile layout, with `size="lg"` to meet the 44px touch-target minimum.
 - Read navigation state from `CalendarContext`.
 
 ## Step 4: Split `MealCard` into a base card and a drag-handle wrapper

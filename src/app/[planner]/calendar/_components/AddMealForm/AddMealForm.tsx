@@ -34,7 +34,6 @@ type Props = {
 	plannerId: string;
 	initialDate?: string;
 	onCancel: () => void;
-	onMealAdded?: (calendar: SerializedDay[]) => void;
 	onSuccess?: (calendar: SerializedDay[]) => void;
 };
 
@@ -42,7 +41,6 @@ export const AddMealForm = ({
 	plannerId,
 	initialDate,
 	onCancel,
-	onMealAdded,
 	onSuccess,
 }: Props) => {
 	const { dishes, addDish, removeDish, updateDish } = useDishes();
@@ -70,7 +68,6 @@ export const AddMealForm = ({
 					})),
 				}),
 			(data) => {
-				onMealAdded?.(data.calendar as SerializedDay[]);
 				onSuccess?.(data.calendar as SerializedDay[]);
 			},
 		),

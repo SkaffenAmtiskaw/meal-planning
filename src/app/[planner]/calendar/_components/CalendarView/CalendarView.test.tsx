@@ -3,29 +3,53 @@ import { act, render, screen } from '@testing-library/react';
 import { DateTime } from 'luxon';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-import { CalendarHeader, useCalendarContext } from '@/_components/Calendar';
+import { useCalendarContext } from '@/_components/Calendar';
 import { useIsMobile } from '@/_hooks';
 
 import { CalendarView } from './CalendarView';
 
 import type { CalendarEvent } from '../../_utils/toCalendarEvents';
 import type { SavedItem, SerializedDay } from '../../_utils/toScheduleXEvents';
-import { AddMealButton } from '../AddMealButton/AddMealButton';
 import { MealCalendar } from '../MealCalendar/MealCalendar';
 import { MealDetailModal } from '../MealDetailModal/MealDetailModal';
 import { MealListView } from '../MealListView/MealListView';
+import { MealMonthAgenda } from '../MealMonthAgenda/MealMonthAgenda';
 import { MealWeekView } from '../MealWeekView/MealWeekView';
 
 vi.mock('@mantine/core', async () => await import('@mocks/@mantine/core'));
+vi.mock('@mantine/hooks', async () => await import('@mocks/@mantine/hooks'));
 vi.mock('@/_hooks', async () => await import('@mocks/@/_hooks'));
 
 vi.mock('@/_components/Calendar', async () => ({
 	CalendarProvider: vi.fn(({ children }) => (
 		<div data-testid="calendar-provider">{children}</div>
 	)),
-	CalendarHeader: vi.fn(({ rightSection }) => (
-		<div data-testid="calendar-header">{rightSection}</div>
+	CalendarTodayButton: vi.fn(({ size }) => (
+		<button data-testid="today-button" data-size={size} aria-label="Today">
+			Today
+		</button>
 	)),
+	CalendarPreviousButton: vi.fn(({ size }) => (
+		<button
+			data-testid="previous-button"
+			data-size={size}
+			aria-label="Previous"
+		>
+			Previous
+		</button>
+	)),
+	CalendarNextButton: vi.fn(({ size }) => (
+		<button data-testid="next-button" data-size={size} aria-label="Next">
+			Next
+		</button>
+	)),
+	DEFAULT_VIEWS: ['month', 'week', 'list'],
+	VIEW_LABELS: { month: 'Month', week: 'Week', list: 'List' },
+	LABEL_FORMATTERS: {
+		month: () => 'Month',
+		week: () => 'Week',
+		list: () => 'Month',
+	},
 	useCalendarContext: vi.fn(() => ({
 		selectedDate: DateTime.now(),
 		viewType: 'month',
@@ -39,8 +63,21 @@ vi.mock('@/_components/Calendar', async () => ({
 	})),
 }));
 
+vi.mock('../CalendarHeader/CalendarHeader', async () => ({
+	CalendarHeaderDesktop: vi.fn(({ children }) => (
+		<div data-testid="calendar-header-desktop">{children}</div>
+	)),
+	CalendarHeaderMobile: vi.fn(() => (
+		<div data-testid="calendar-header-mobile" />
+	)),
+}));
+
 vi.mock('../MealCalendar/MealCalendar', async () => ({
 	MealCalendar: vi.fn(() => <div data-testid="meal-calendar" />),
+}));
+
+vi.mock('../MealMonthAgenda/MealMonthAgenda', async () => ({
+	MealMonthAgenda: vi.fn(() => <div data-testid="meal-month-agenda" />),
 }));
 
 vi.mock('../MealWeekView/MealWeekView', async () => ({
@@ -51,16 +88,13 @@ vi.mock('../MealListView/MealListView', async () => ({
 	MealListView: vi.fn(() => <div data-testid="meal-list-view" />),
 }));
 
-vi.mock('../AddMealButton/AddMealButton', async () => ({
-	AddMealButton: vi.fn(() => <div data-testid="add-meal-button" />),
-}));
-
 vi.mock('../MealDetailModal/MealDetailModal', async () => ({
 	MealDetailModal: vi.fn(() => <div data-testid="meal-detail-modal" />),
 }));
 
 const mockUseCalendarContext = vi.mocked(useCalendarContext);
 const mockUseIsMobile = vi.mocked(useIsMobile);
+const mockMealMonthAgenda = vi.mocked(MealMonthAgenda);
 
 const defaultProps = {
 	plannerId: 'planner-1',
@@ -87,11 +121,11 @@ describe('CalendarView', () => {
 		mockUseIsMobile.mockReturnValue(false);
 	});
 
-	it('renders CalendarHeader and MealCalendar by default', () => {
+	it('renders CalendarHeaderDesktop and MealCalendar by default', () => {
 		render(<CalendarView {...defaultProps} />);
 
 		expect(screen.getByTestId('calendar-provider')).toBeDefined();
-		expect(screen.getByTestId('calendar-header')).toBeDefined();
+		expect(screen.getByTestId('calendar-header-desktop')).toBeDefined();
 		expect(screen.getByTestId('meal-calendar')).toBeDefined();
 		expect(screen.queryByTestId('meal-week-view')).toBeNull();
 		expect(screen.queryByTestId('meal-list-view')).toBeNull();
@@ -139,7 +173,7 @@ describe('CalendarView', () => {
 		expect(screen.queryByTestId('meal-week-view')).toBeNull();
 	});
 
-	it('passes calendar, savedItems, plannerId, and onMealAdded to MealListView when viewType is list', () => {
+	it('passes calendar, savedItems, and plannerId to MealListView without onMealAdded', () => {
 		mockUseCalendarContext.mockReturnValue({
 			...defaultCalendarContext,
 			viewType: 'list',
@@ -151,57 +185,36 @@ describe('CalendarView', () => {
 				plannerId: 'planner-1',
 				calendar: defaultProps.calendar,
 				savedItems: defaultProps.savedItems,
-				onMealAdded: expect.any(Function),
 			}),
 			undefined,
 		);
+		expect(vi.mocked(MealListView).mock.calls[0][0]).not.toHaveProperty(
+			'onMealAdded',
+		);
 	});
 
-	it('passes mobile views to CalendarHeader when isMobile is true', () => {
+	it('renders CalendarHeaderMobile on mobile', () => {
 		mockUseIsMobile.mockReturnValue(true);
 		render(<CalendarView {...defaultProps} />);
 
-		expect(vi.mocked(CalendarHeader)).toHaveBeenCalledWith(
-			expect.objectContaining({ availableViews: ['month', 'list'] }),
-			undefined,
-		);
+		expect(screen.getByTestId('calendar-header-mobile')).toBeDefined();
+		expect(screen.queryByTestId('calendar-header-desktop')).toBeNull();
 	});
 
-	it('passes desktop views to CalendarHeader when isMobile is false', () => {
+	it('does not render CalendarHeaderMobile on desktop', () => {
 		render(<CalendarView {...defaultProps} />);
 
-		expect(vi.mocked(CalendarHeader)).toHaveBeenCalledWith(
-			expect.objectContaining({ availableViews: ['month', 'week', 'list'] }),
-			undefined,
-		);
+		expect(screen.queryByTestId('calendar-header-mobile')).toBeNull();
+		expect(screen.getByTestId('calendar-header-desktop')).toBeDefined();
 	});
 
-	it('renders AddMealButton inside CalendarHeader rightSection', () => {
+	it('uses the calendar prop directly without local state mutation', () => {
 		render(<CalendarView {...defaultProps} />);
 
-		expect(screen.getByTestId('add-meal-button')).toBeDefined();
-		expect(vi.mocked(AddMealButton)).toHaveBeenCalledWith(
+		expect(vi.mocked(MealCalendar)).toHaveBeenCalledWith(
 			expect.objectContaining({
-				plannerId: 'planner-1',
-				onMealAdded: expect.any(Function),
+				calendar: defaultProps.calendar,
 			}),
-			undefined,
-		);
-	});
-
-	it('updates calendar data when AddMealButton onMealAdded is called', () => {
-		render(<CalendarView {...defaultProps} />);
-
-		const updatedCalendar: SerializedDay[] = [
-			{ date: '2024-01-02', meals: [] },
-		];
-		const { onMealAdded } = vi.mocked(AddMealButton).mock.calls[0][0];
-		act(() => {
-			onMealAdded?.(updatedCalendar);
-		});
-
-		expect(vi.mocked(MealCalendar)).toHaveBeenLastCalledWith(
-			expect.objectContaining({ calendar: updatedCalendar }),
 			undefined,
 		);
 	});
@@ -285,5 +298,52 @@ describe('CalendarView', () => {
 			expect.objectContaining({ event: null }),
 			undefined,
 		);
+	});
+
+	describe('mobile month view', () => {
+		it('renders MealMonthAgenda on mobile when viewType is month', () => {
+			mockUseIsMobile.mockReturnValue(true);
+			render(<CalendarView {...defaultProps} />);
+
+			expect(screen.getByTestId('meal-month-agenda')).toBeDefined();
+		});
+
+		it('does not render MealCalendar on mobile when viewType is month', () => {
+			mockUseIsMobile.mockReturnValue(true);
+			render(<CalendarView {...defaultProps} />);
+
+			expect(screen.queryByTestId('meal-calendar')).toBeNull();
+		});
+
+		it('passes plannerId, calendar, and savedItems to MealMonthAgenda without onMealAdded', () => {
+			mockUseIsMobile.mockReturnValue(true);
+			render(<CalendarView {...defaultProps} />);
+
+			expect(mockMealMonthAgenda).toHaveBeenCalledWith(
+				expect.objectContaining({
+					plannerId: 'planner-1',
+					calendar: defaultProps.calendar,
+					savedItems: defaultProps.savedItems,
+				}),
+				undefined,
+			);
+			expect(vi.mocked(MealMonthAgenda).mock.calls[0][0]).not.toHaveProperty(
+				'onMealAdded',
+			);
+		});
+	});
+
+	describe('desktop month view', () => {
+		it('renders MealCalendar on desktop when viewType is month', () => {
+			render(<CalendarView {...defaultProps} />);
+
+			expect(screen.getByTestId('meal-calendar')).toBeDefined();
+		});
+
+		it('does not render MealMonthAgenda on desktop when viewType is month', () => {
+			render(<CalendarView {...defaultProps} />);
+
+			expect(screen.queryByTestId('meal-month-agenda')).toBeNull();
+		});
 	});
 });

@@ -1,3 +1,5 @@
+import { useRouter } from 'next/navigation';
+
 import { fireEvent, render, screen } from '@testing-library/react';
 
 import { beforeEach, describe, expect, it, vi } from 'vitest';
@@ -22,11 +24,20 @@ vi.mock('../AddMealForm/AddMealForm', () => ({
 	)),
 }));
 
-import type { SerializedDay } from '../../_utils/toScheduleXEvents';
+vi.mock('next/navigation', () => ({
+	useRouter: vi.fn(),
+}));
+
+const mockUseRouter = vi.mocked(useRouter);
 
 describe('AddMealFormModalWrapper', () => {
+	const mockRefresh = vi.fn();
+
 	beforeEach(() => {
 		vi.resetAllMocks();
+		mockUseRouter.mockReturnValue({
+			refresh: mockRefresh,
+		} as unknown as ReturnType<typeof useRouter>);
 	});
 
 	it('renders AddMealForm with the provided props', () => {
@@ -55,22 +66,7 @@ describe('AddMealFormModalWrapper', () => {
 		expect(onClose).toHaveBeenCalled();
 	});
 
-	it('passes onMealAdded to AddMealForm', () => {
-		const onMealAdded = vi.fn((_: SerializedDay[]) => {});
-
-		render(
-			<AddMealFormModalWrapper
-				plannerId="planner-1"
-				onMealAdded={onMealAdded}
-				onClose={() => {}}
-			/>,
-		);
-
-		const formCall = vi.mocked(AddMealForm).mock.calls[0][0];
-		expect(formCall.onMealAdded).toBe(onMealAdded);
-	});
-
-	it('closes the modal via onSuccess when AddMealForm reports success', () => {
+	it('closes the modal and refreshes the route when AddMealForm reports success', () => {
 		const onClose = vi.fn();
 
 		render(<AddMealFormModalWrapper plannerId="planner-1" onClose={onClose} />);
@@ -78,5 +74,6 @@ describe('AddMealFormModalWrapper', () => {
 		fireEvent.click(screen.getByTestId('success-button'));
 
 		expect(onClose).toHaveBeenCalled();
+		expect(mockRefresh).toHaveBeenCalled();
 	});
 });

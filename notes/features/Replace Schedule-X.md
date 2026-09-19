@@ -346,6 +346,7 @@ This will be handled as a separate story. See the [[Calendar - Mobile List View|
 ---
 
 ## Step 19: Remove Schedule-X
+**Status:** 🚧 Partial - some files removed but no comprehensive review done
 
 **What we're doing:** Remove all schedule-x dependencies.
 

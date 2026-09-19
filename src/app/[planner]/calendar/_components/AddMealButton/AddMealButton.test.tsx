@@ -8,12 +8,17 @@ import { AddMealButton } from './AddMealButton';
 
 vi.mock('@mantine/core', async () => await import('@mocks/@mantine/core'));
 
-const { mockUseCanWrite } = vi.hoisted(() => ({
+const { mockUseCanWrite, mockUseParams } = vi.hoisted(() => ({
 	mockUseCanWrite: vi.fn(),
+	mockUseParams: vi.fn(),
 }));
 
 vi.mock('@/app/[planner]/_components', () => ({
 	useCanWrite: mockUseCanWrite,
+}));
+
+vi.mock('next/navigation', () => ({
+	useParams: mockUseParams,
 }));
 
 const mockControlledModal = vi.fn();
@@ -42,20 +47,12 @@ const mockAddMealFormModalWrapper = vi.fn();
 vi.mock('../AddMealFormModalWrapper/AddMealFormModalWrapper', () => ({
 	AddMealFormModalWrapper: (props: {
 		plannerId: string;
-		onMealAdded?: (calendar: unknown[]) => void;
 		onClose: () => void;
 	}) => {
 		mockAddMealFormModalWrapper(props);
 
 		return (
 			<div data-testid="add-meal-form-modal-wrapper">
-				<button
-					type="button"
-					data-testid="wrapper-success"
-					onClick={() => props.onMealAdded?.([{ id: 'day-1' }])}
-				>
-					Simulate success
-				</button>
 				<button
 					type="button"
 					data-testid="wrapper-cancel"
@@ -72,6 +69,7 @@ describe('AddMealButton', () => {
 	beforeEach(() => {
 		vi.resetAllMocks();
 		mockUseCanWrite.mockReturnValue(true);
+		mockUseParams.mockReturnValue({ planner: 'planner-1' });
 	});
 
 	afterEach(() => {
@@ -103,35 +101,27 @@ describe('AddMealButton', () => {
 		expect(screen.getByTestId('controlled-modal-content')).toBeDefined();
 	});
 
-	it('passes plannerId and onMealAdded to AddMealFormModalWrapper', () => {
+	it('reads the planner id from useParams and passes it to AddMealFormModalWrapper', () => {
+		mockUseParams.mockReturnValue({ planner: 'planner-42' });
 		render(<AddMealButton />);
 		fireEvent.click(screen.getByTestId('add-meal-button'));
 		expect(mockAddMealFormModalWrapper).toHaveBeenLastCalledWith(
 			expect.objectContaining({
-				plannerId: '',
-				onMealAdded: undefined,
-				onClose: expect.any(Function),
-			}),
-		);
-
-		const onMealAdded = vi.fn();
-		render(<AddMealButton plannerId="planner-1" onMealAdded={onMealAdded} />);
-		fireEvent.click(screen.getAllByTestId('add-meal-button')[1]);
-		expect(mockAddMealFormModalWrapper).toHaveBeenLastCalledWith(
-			expect.objectContaining({
-				plannerId: 'planner-1',
-				onMealAdded,
+				plannerId: 'planner-42',
 				onClose: expect.any(Function),
 			}),
 		);
 	});
 
-	it('calls onMealAdded when AddMealForm reports success through the wrapper', () => {
-		const onMealAdded = vi.fn();
-		render(<AddMealButton plannerId="planner-1" onMealAdded={onMealAdded} />);
+	it('falls back to an empty planner id when the route param is missing', () => {
+		mockUseParams.mockReturnValue({});
+		render(<AddMealButton />);
 		fireEvent.click(screen.getByTestId('add-meal-button'));
-		fireEvent.click(screen.getByTestId('wrapper-success'));
-		expect(onMealAdded).toHaveBeenCalledWith([{ id: 'day-1' }]);
+		expect(mockAddMealFormModalWrapper).toHaveBeenLastCalledWith(
+			expect.objectContaining({
+				plannerId: '',
+			}),
+		);
 	});
 
 	it('passes the title and size to ControlledModal', () => {

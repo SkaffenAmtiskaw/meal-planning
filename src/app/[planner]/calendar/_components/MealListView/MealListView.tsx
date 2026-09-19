@@ -24,14 +24,12 @@ export interface MealListViewProps {
 	plannerId: string;
 	calendar: SerializedDay[];
 	savedItems?: SavedItem[];
-	onMealAdded: (calendar: SerializedDay[]) => void;
 }
 
 export function MealListView({
 	plannerId,
 	calendar,
 	savedItems = [],
-	onMealAdded,
 }: MealListViewProps): ReactElement {
 	const canWrite = useCanWrite();
 	const isMobile = useIsMobile();
@@ -77,7 +75,6 @@ export function MealListView({
 				<AddMealFormModalWrapper
 					plannerId={plannerId}
 					initialDate={dateForAdd?.toISODate() ?? undefined}
-					onMealAdded={onMealAdded}
 					onClose={close}
 				/>
 			</Modal>

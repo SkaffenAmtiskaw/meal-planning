@@ -196,6 +196,16 @@ export const Paper = vi.fn(
 	),
 );
 
+export const Popover = Object.assign(
+	vi.fn(({ children }: WithChildren) => <>{children}</>),
+	{
+		Target: vi.fn(({ children }: WithChildren) => <>{children}</>),
+		Dropdown: vi.fn(({ children }: WithChildren) => (
+			<div data-testid="popover-dropdown">{children}</div>
+		)),
+	},
+);
+
 export const Stack = vi.fn(
 	({
 		children,

@@ -6,6 +6,7 @@
     }
   },
   "default_agent": "implement",
+  "subagent_depth": 2,
   "agent": {
     "plan": {
       "disable": true

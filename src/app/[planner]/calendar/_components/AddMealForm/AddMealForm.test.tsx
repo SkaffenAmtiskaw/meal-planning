@@ -125,22 +125,6 @@ describe('AddMealForm', () => {
 		);
 	});
 
-	it('calls onMealAdded with calendar on successful submission', async () => {
-		const onMealAdded = vi.fn();
-		const calendar = [{ date: '2024-06-15', meals: [] }];
-		vi.mocked(addMeal).mockResolvedValueOnce({
-			ok: true,
-			data: { calendar },
-		});
-
-		render(<AddMealForm {...defaultProps} onMealAdded={onMealAdded} />);
-		await act(async () => {
-			fireEvent.submit(screen.getByTestId('add-meal-form'));
-		});
-
-		expect(onMealAdded).toHaveBeenCalledWith(calendar);
-	});
-
 	it('calls onSuccess with calendar on successful submission', async () => {
 		const onSuccess = vi.fn();
 		const calendar = [{ date: '2024-06-15', meals: [] }];
@@ -164,26 +148,18 @@ describe('AddMealForm', () => {
 		expect(onCancel).toHaveBeenCalledOnce();
 	});
 
-	it('does not call onMealAdded or onSuccess when submission fails', async () => {
-		const onMealAdded = vi.fn();
+	it('does not call onSuccess when submission fails', async () => {
 		const onSuccess = vi.fn();
 		vi.mocked(addMeal).mockResolvedValueOnce({
 			ok: false,
 			error: 'Something went wrong',
 		});
 
-		render(
-			<AddMealForm
-				{...defaultProps}
-				onMealAdded={onMealAdded}
-				onSuccess={onSuccess}
-			/>,
-		);
+		render(<AddMealForm {...defaultProps} onSuccess={onSuccess} />);
 		await act(async () => {
 			fireEvent.submit(screen.getByTestId('add-meal-form'));
 		});
 
-		expect(onMealAdded).not.toHaveBeenCalled();
 		expect(onSuccess).not.toHaveBeenCalled();
 	});
 

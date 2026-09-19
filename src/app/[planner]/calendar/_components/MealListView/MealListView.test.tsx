@@ -1,3 +1,4 @@
+import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import type { ReactElement } from 'react';
 
@@ -22,16 +23,17 @@ import {
 	toCalendarEvents,
 } from '../../_utils/toCalendarEvents';
 import type { SavedItem, SerializedDay } from '../../_utils/toScheduleXEvents';
-import {
-	AddMealFormModalWrapper,
-	type AddMealFormModalWrapperProps,
-} from '../AddMealFormModalWrapper/AddMealFormModalWrapper';
+import { AddMealFormModalWrapper } from '../AddMealFormModalWrapper/AddMealFormModalWrapper';
 import { DishLink } from '../DishLink/DishLink';
 
 vi.mock('@mantine/core', async () => await import('@mocks/@mantine/core'));
 vi.mock('@mantine/hooks', async () => await import('@mocks/@mantine/hooks'));
 
 vi.mock('@/_hooks', async () => await import('@mocks/@/_hooks'));
+
+vi.mock('next/navigation', () => ({
+	useRouter: vi.fn(),
+}));
 
 vi.mock('@/_components/Calendar', async () => ({
 	ListView: vi.fn(({ events, renderDish }) => (
@@ -53,9 +55,26 @@ vi.mock('@/app/[planner]/_components', async () => ({
 	useCanWrite: vi.fn(() => true),
 }));
 
-vi.mock('../AddMealFormModalWrapper/AddMealFormModalWrapper', async () => ({
-	AddMealFormModalWrapper: vi.fn(() => (
-		<div data-testid="add-meal-form-modal-wrapper" />
+const mockRefresh = vi.fn();
+vi.mock('../AddMealFormModalWrapper/AddMealFormModalWrapper', () => ({
+	AddMealFormModalWrapper: vi.fn(({ plannerId, initialDate, onClose }) => (
+		<div data-testid="add-meal-form-modal-wrapper">
+			<span data-testid="wrapper-planner-id">{plannerId}</span>
+			<span data-testid="wrapper-initial-date">{initialDate ?? 'none'}</span>
+			<button
+				type="button"
+				data-testid="wrapper-success"
+				onClick={() => {
+					onClose();
+					mockRefresh();
+				}}
+			>
+				Simulate success
+			</button>
+			<button type="button" data-testid="wrapper-cancel" onClick={onClose}>
+				Simulate cancel
+			</button>
+		</div>
 	)),
 }));
 
@@ -83,9 +102,9 @@ const mockToCalendarEvents = vi.mocked(toCalendarEvents);
 const mockGetMealColor = vi.mocked(getMealColor);
 const mockDishLink = vi.mocked(DishLink);
 const mockUseIsMobile = vi.mocked(useIsMobile);
+const mockUseRouter = vi.mocked(useRouter);
 
 const plannerId = 'planner-123';
-const onMealAdded = vi.fn();
 
 const savedItems: SavedItem[] = [
 	{ _id: 'saved-1', name: 'Saved Dish', url: 'http://example.com' },
@@ -139,6 +158,9 @@ describe('MealListView', () => {
 		vi.resetAllMocks();
 		mockUseCanWrite.mockReturnValue(true);
 		mockUseIsMobile.mockReturnValue(false);
+		mockUseRouter.mockReturnValue({
+			refresh: mockRefresh,
+		} as unknown as ReturnType<typeof useRouter>);
 		vi.mocked(useDisclosure).mockImplementation((initialState = false) => {
 			const [opened, setOpened] = useState(initialState);
 			return [
@@ -154,13 +176,7 @@ describe('MealListView', () => {
 	});
 
 	it('renders ListView', () => {
-		render(
-			<MealListView
-				plannerId={plannerId}
-				calendar={[]}
-				onMealAdded={onMealAdded}
-			/>,
-		);
+		render(<MealListView plannerId={plannerId} calendar={[]} />);
 
 		expect(screen.getByTestId('list-view')).toBeDefined();
 	});
@@ -168,13 +184,7 @@ describe('MealListView', () => {
 	it('renders MobileListViewPlaceholder on mobile', () => {
 		mockUseIsMobile.mockReturnValue(true);
 
-		render(
-			<MealListView
-				plannerId={plannerId}
-				calendar={[]}
-				onMealAdded={onMealAdded}
-			/>,
-		);
+		render(<MealListView plannerId={plannerId} calendar={[]} />);
 
 		expect(screen.getByText('Coming soon')).toBeDefined();
 		expect(screen.queryByTestId('list-view')).toBeNull();
@@ -183,13 +193,7 @@ describe('MealListView', () => {
 	it('renders ListView on desktop', () => {
 		mockUseIsMobile.mockReturnValue(false);
 
-		render(
-			<MealListView
-				plannerId={plannerId}
-				calendar={[]}
-				onMealAdded={onMealAdded}
-			/>,
-		);
+		render(<MealListView plannerId={plannerId} calendar={[]} />);
 
 		expect(screen.getByTestId('list-view')).toBeDefined();
 		expect(screen.queryByText('Coming soon')).toBeNull();
@@ -198,13 +202,7 @@ describe('MealListView', () => {
 	it('does not render ListView on mobile', () => {
 		mockUseIsMobile.mockReturnValue(true);
 
-		render(
-			<MealListView
-				plannerId={plannerId}
-				calendar={[]}
-				onMealAdded={onMealAdded}
-			/>,
-		);
+		render(<MealListView plannerId={plannerId} calendar={[]} />);
 
 		expect(screen.queryByTestId('list-view')).toBeNull();
 	});
@@ -212,13 +210,7 @@ describe('MealListView', () => {
 	it('does not render MobileListViewPlaceholder on desktop', () => {
 		mockUseIsMobile.mockReturnValue(false);
 
-		render(
-			<MealListView
-				plannerId={plannerId}
-				calendar={[]}
-				onMealAdded={onMealAdded}
-			/>,
-		);
+		render(<MealListView plannerId={plannerId} calendar={[]} />);
 
 		expect(screen.queryByText('Coming soon')).toBeNull();
 	});
@@ -243,7 +235,6 @@ describe('MealListView', () => {
 				plannerId={plannerId}
 				calendar={calendar}
 				savedItems={savedItems}
-				onMealAdded={onMealAdded}
 			/>,
 		);
 
@@ -266,7 +257,6 @@ describe('MealListView', () => {
 				plannerId={plannerId}
 				calendar={calendar}
 				savedItems={savedItems}
-				onMealAdded={onMealAdded}
 			/>,
 		);
 
@@ -308,13 +298,7 @@ describe('MealListView', () => {
 			},
 		]);
 
-		render(
-			<MealListView
-				plannerId={plannerId}
-				calendar={calendar}
-				onMealAdded={onMealAdded}
-			/>,
-		);
+		render(<MealListView plannerId={plannerId} calendar={calendar} />);
 
 		const events = JSON.parse(
 			screen.getByTestId('list-view').getAttribute('data-events') ?? '[]',
@@ -332,7 +316,6 @@ describe('MealListView', () => {
 				plannerId={plannerId}
 				calendar={calendar}
 				savedItems={savedItems}
-				onMealAdded={onMealAdded}
 			/>,
 		);
 
@@ -346,13 +329,7 @@ describe('MealListView', () => {
 	});
 
 	it('passes onAddMeal to ListView when user has write access', () => {
-		render(
-			<MealListView
-				plannerId={plannerId}
-				calendar={[]}
-				onMealAdded={onMealAdded}
-			/>,
-		);
+		render(<MealListView plannerId={plannerId} calendar={[]} />);
 
 		expect(mockListView).toHaveBeenCalledTimes(1);
 		expect(mockListView).toHaveBeenCalledWith(
@@ -364,13 +341,7 @@ describe('MealListView', () => {
 	it('does not pass onAddMeal to ListView when user has read-only access', () => {
 		mockUseCanWrite.mockReturnValue(false);
 
-		render(
-			<MealListView
-				plannerId={plannerId}
-				calendar={[]}
-				onMealAdded={onMealAdded}
-			/>,
-		);
+		render(<MealListView plannerId={plannerId} calendar={[]} />);
 
 		expect(mockListView).toHaveBeenCalledTimes(1);
 		expect(mockListView).toHaveBeenCalledWith(
@@ -386,13 +357,7 @@ describe('MealListView', () => {
 			<ListViewDayTrigger onAddMeal={onAddMeal} date={date} />
 		));
 
-		render(
-			<MealListView
-				plannerId={plannerId}
-				calendar={[]}
-				onMealAdded={onMealAdded}
-			/>,
-		);
+		render(<MealListView plannerId={plannerId} calendar={[]} />);
 
 		fireEvent.click(screen.getByTestId('day-trigger'));
 
@@ -409,7 +374,7 @@ describe('MealListView', () => {
 			expect.objectContaining({
 				plannerId,
 				initialDate: date.toISODate(),
-				onMealAdded,
+				onClose: expect.any(Function),
 			}),
 			undefined,
 		);
@@ -422,13 +387,7 @@ describe('MealListView', () => {
 			<ListViewDayTrigger onAddMeal={onAddMeal} date={invalidDate} />
 		));
 
-		render(
-			<MealListView
-				plannerId={plannerId}
-				calendar={[]}
-				onMealAdded={onMealAdded}
-			/>,
-		);
+		render(<MealListView plannerId={plannerId} calendar={[]} />);
 
 		fireEvent.click(screen.getByTestId('day-trigger'));
 
@@ -440,35 +399,24 @@ describe('MealListView', () => {
 		);
 	});
 
-	it('propagates onMealAdded and closes the modal via onClose', () => {
+	it('closes the modal and refreshes the route when the wrapper reports success', () => {
 		const date = DateTime.local(2024, 6, 15);
-		const updatedCalendar: SerializedDay[] = [];
 
 		mockListView.mockImplementation(({ onAddMeal }) => (
 			<ListViewDayTrigger onAddMeal={onAddMeal} date={date} />
 		));
 
-		render(
-			<MealListView
-				plannerId={plannerId}
-				calendar={[]}
-				onMealAdded={onMealAdded}
-			/>,
-		);
+		render(<MealListView plannerId={plannerId} calendar={[]} />);
 
 		fireEvent.click(screen.getByTestId('day-trigger'));
 
 		expect(screen.getByRole('dialog')).toBeDefined();
 
-		const wrapperProps = mockAddMealFormModalWrapper.mock
-			.calls[0][0] as AddMealFormModalWrapperProps;
-
-		wrapperProps.onMealAdded?.(updatedCalendar);
-		expect(onMealAdded).toHaveBeenCalledWith(updatedCalendar);
-
 		act(() => {
-			wrapperProps.onClose();
+			fireEvent.click(screen.getByTestId('wrapper-success'));
 		});
+
 		expect(screen.queryByRole('dialog')).toBeNull();
+		expect(mockRefresh).toHaveBeenCalled();
 	});
 });

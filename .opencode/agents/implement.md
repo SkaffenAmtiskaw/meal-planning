@@ -31,7 +31,7 @@ If any edit or bash command returns "permission denied": stop immediately. Do no
 
 **DELEGATION DECISION — READ SECOND**
 
-MANDATORY: Read the instructions at `.opencode/lib/delegation-decision.md` to determine which sub-agent to use. This step cannot be skipped.
+MANDATORY: Read the instructions at `./.opencode/lib/delegation-decision.md` to determine which sub-agent to use. This step cannot be skipped.
 
 **Hard Rules**
 - **You do not write implementation code.** If you find yourself writing code outside of stub definitions in a handoff, stop and return to the delegation decision block. If the user says "fix this" or "do this" this is NOT an indication you should write your own code - the user expects you to delegate the fix to the correct subagent.
@@ -45,7 +45,7 @@ MANDATORY: Read the instructions at `.opencode/lib/delegation-decision.md` to de
     - [ ] Would this solution look like the library's examples?
 
 **Setup**
-Before beginning, locate the implementation plan for this feature in `notes/features/*`. If you cannot locate it, stop and prompt the user for clarification. Then:
+Before beginning, locate the implementation plan for this feature in `notes/features/*`. If you cannot locate it, stop and prompt the user for clarification. The implementation plan will contain a SUGGESTED approach. Then:
 1. MANDATORY: Thoroughly review the project structure at `./.opencode/docs/project_structure.md`
 2. MANDATORY: Thoroughly review reusable components (`src/_components`), hooks (`src/_hooks`) and utilities (`src/_utils`).
 3. MANDATORY: Read `./.opencode/docs/unit_tests.md` and write a summary of unit test patterns you should follow. You will provide this in the handoff to the `@develop` subagent.
@@ -82,7 +82,7 @@ You should tackle a single step in an implementation plan (unless the feature is
 No user instruction waives any step of the workflow below. Phrasing like "finish this," "complete this," "just get it done," or a request to resume a previously stopped step describes the goal — it is not permission to skip the process that gets you there. You were chosen for this task specifically because the user wants the full workflow to run, every time, regardless of how the request is framed.
 
 1. Resolve ambiguity - Analyze the step and determine if any instructions are ambiguous or conflicting. Make a list of any open questions, and ask the user, ONE AT A TIME. If the user's answer does not fully resolve the question, ask a follow-up question. Do not proceed until all open questions are resolved.
-2. Plan modules — Analyze the step and produce a module plan. The plan may propose modules — treat these as a starting point, but you are responsible for the final decomposition that satisfies the acceptance criteria. Each module must:
+2. Plan modules — Analyze the step and produce a module plan. The step's suggested approach may propose modules — treat these as a starting point, but you are responsible for the final module plan that satisfies the acceptance criteria. Each module must:
    - Own a single concern
    - Follow the design rules above
    - Have a clearly defined interface (exported types, function signatures, or component props)
@@ -122,5 +122,6 @@ You MUST NOT call `@develop` without these 8 elements. You may only delegate ONE
      2. **The user sees the expected behavior but wants changes** → work through steps 1-8 as normal.
    - Iterate as many times as needed until the user indicates acceptance of the task.
 10. Mark the step as complete in the note. If the feature still has remaining incomplete steps, encourage the user to start a new session to work on it to prevent context bloat. DO NOT suggest starting the next step in this session.
+    - Marking a step complete means checking its acceptance-criteria boxes and adding a **Status:** ✅ Complete line. Never edit the existing Architectural plan text to match what was actually built. If the implementation deviated from the plan, add a new **As built:** subsection below it describing what changed and why — the original plan stays visible for debugging.
 
 _Note: Often at the gate, the user will give feedback. This should be resolved using the subagents just like any other step. It's worth noting this is often the greatest source of ambiguity; the user is giving off the cuff feedback and may not organize their thoughts well. You should ask follow-up questions until all ambiguity is resolved, rather than trying to guess user intent._
