@@ -4,6 +4,8 @@ import { DateTime } from 'luxon';
 
 import type { MonthGridMeal } from './MonthGrid';
 
+import { useRovingGridFocus } from '../_hooks/useRovingGridFocus';
+
 export interface UseMonthGridKeyboardOptions {
 	days: DateTime[];
 	mealsByDate: Map<string, MonthGridMeal[]>;
@@ -52,39 +54,32 @@ export function useMonthGridKeyboard(
 ): UseMonthGridKeyboardResult {
 	const { days, mealsByDate, onMealClick, selectedDate } = options;
 
-	const [focusedDayIndex, setFocusedDayIndex] = useState(() =>
-		computeInitialFocusIndex(days, selectedDate),
-	);
+	const initialFocusIndex = computeInitialFocusIndex(days, selectedDate);
+	const {
+		getDayProps: getRovingDayProps,
+		setFocusedDayIndex,
+		focusDay,
+	} = useRovingGridFocus({ days, initialFocusIndex });
+
 	const [mealMode, setMealMode] = useState<{
 		dayIndex: number;
 		mealIndex: number;
 	} | null>(null);
 
-	const dayRefs = useRef<(HTMLElement | null)[]>([]);
 	const mealRefs = useRef<Record<string, (HTMLElement | null)[]>>({});
-	const focusDayFlag = useRef(false);
 	const focusMealFlag = useRef(false);
 	const daysRef = useRef(days);
 	daysRef.current = days;
 	const mealModeRef = useRef(mealMode);
 	mealModeRef.current = mealMode;
 
-	// Reset on days change
+	// biome-ignore lint/correctness/useExhaustiveDependencies: reset meal mode when the grid days change
 	useEffect(() => {
-		setFocusedDayIndex(computeInitialFocusIndex(days, selectedDate));
 		setMealMode(null);
 		mealRefs.current = {};
-	}, [days, selectedDate]);
+	}, [days]);
 
-	// Programmatic focus for days
-	useEffect(() => {
-		if (focusDayFlag.current) {
-			focusDayFlag.current = false;
-			dayRefs.current[focusedDayIndex]?.focus();
-		}
-	}, [focusedDayIndex]);
-
-	// Programmatic focus for meals
+	// Programmatic focus for meals.
 	useEffect(() => {
 		if (focusMealFlag.current && mealMode) {
 			focusMealFlag.current = false;
@@ -97,11 +92,10 @@ export function useMonthGridKeyboard(
 
 	const handleDayClick = useCallback(
 		(dayIndex: number) => () => {
-			focusDayFlag.current = true;
 			setFocusedDayIndex(dayIndex);
 			setMealMode(null);
 		},
-		[],
+		[setFocusedDayIndex],
 	);
 
 	const handleDayKeyDown = useCallback(
@@ -132,39 +126,14 @@ export function useMonthGridKeyboard(
 					}
 				} else if (e.key === 'Escape') {
 					e.preventDefault();
+					const previousDayIndex = mealModeRef.current.dayIndex;
 					setMealMode(null);
-					dayRefs.current[mealModeRef.current.dayIndex]?.focus();
+					focusDay(previousDayIndex);
 				}
 				return;
 			}
 
-			if (e.key === 'ArrowRight') {
-				e.preventDefault();
-				const col = dayIndex % 7;
-				if (col < 6 && dayIndex + 1 < daysRef.current.length) {
-					focusDayFlag.current = true;
-					setFocusedDayIndex(dayIndex + 1);
-				}
-			} else if (e.key === 'ArrowLeft') {
-				e.preventDefault();
-				const col = dayIndex % 7;
-				if (col > 0) {
-					focusDayFlag.current = true;
-					setFocusedDayIndex(dayIndex - 1);
-				}
-			} else if (e.key === 'ArrowDown') {
-				e.preventDefault();
-				if (dayIndex + 7 < daysRef.current.length) {
-					focusDayFlag.current = true;
-					setFocusedDayIndex(dayIndex + 7);
-				}
-			} else if (e.key === 'ArrowUp') {
-				e.preventDefault();
-				if (dayIndex - 7 >= 0) {
-					focusDayFlag.current = true;
-					setFocusedDayIndex(dayIndex - 7);
-				}
-			} else if (e.key === 'Enter') {
+			if (e.key === 'Enter') {
 				e.preventDefault();
 				// biome-ignore lint/style/noNonNullAssertion: We know this will always be defined.
 				const isoDate = daysRef.current[dayIndex].toISODate()!;
@@ -175,27 +144,27 @@ export function useMonthGridKeyboard(
 					focusMealFlag.current = true;
 					setMealMode({ dayIndex, mealIndex: 0 });
 				}
+				return;
 			}
+
+			getRovingDayProps(dayIndex).onKeyDown(e);
 		},
-		[mealsByDate, onMealClick],
+		[mealsByDate, onMealClick, focusDay, getRovingDayProps],
 	);
 
 	const getDayProps = useCallback(
 		(dayIndex: number): DayKeyboardProps => {
-			const isActiveDay = focusedDayIndex === dayIndex;
+			const rovingProps = getRovingDayProps(dayIndex);
 			const isEventModeDay = mealMode?.dayIndex === dayIndex;
-			const tabIndex = isEventModeDay ? -1 : isActiveDay ? 0 : -1;
 
 			return {
-				tabIndex: tabIndex as 0 | -1,
+				tabIndex: isEventModeDay ? -1 : rovingProps.tabIndex,
 				onClick: handleDayClick(dayIndex),
 				onKeyDown: handleDayKeyDown(dayIndex),
-				ref: (el: HTMLElement | null) => {
-					dayRefs.current[dayIndex] = el;
-				},
+				ref: rovingProps.ref,
 			};
 		},
-		[focusedDayIndex, mealMode, handleDayClick, handleDayKeyDown],
+		[mealMode, getRovingDayProps, handleDayClick, handleDayKeyDown],
 	);
 
 	const getMealProps = useCallback(

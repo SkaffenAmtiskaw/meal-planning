@@ -309,21 +309,23 @@ than by the subagent. The resulting structure and test coverage match the plan.
 
 ## Step 5: `MobileMonthGrid` component with real dot data
 
+**Status**: ✅ Complete
+
 **What we're doing:** Build the compact dot-grid, convert real planner data into colored dot events
 in `MealMonthAgenda`, and swap the grid into the shell while keeping a placeholder agenda below it.
 
 **Acceptance criteria:**
-- [ ] On the calendar page at mobile width, see a compact 7-column grid for the current month plus
-  leading/trailing days.
-- [ ] Day numbers are centered; out-of-month days are muted.
-- [ ] Today is shown as an ember filled circle with white text.
-- [ ] The selected day has a tinted cell background; today and a different selected day are
-  distinguishable.
-- [ ] Days that have real meals in the planner show up to 3 small colored dots.
-- [ ] Dot colors match the tag-color mapping used elsewhere (same meal title → same color).
-- [ ] Days without meals keep their height but show no dots.
-- [ ] Tapping a day updates the placeholder agenda text below to show the selected date.
-- [ ] Each day cell is focusable and has an accessible name like "September 10, 2 meals".
+- [x] On the calendar page at mobile width, see a compact 7-column grid for the current month plus
+   leading/trailing days.
+- [x] Day numbers are centered; out-of-month days are muted.
+- [x] Today is shown as an ember filled circle with white text.
+- [x] The selected day has a tinted cell background; today and a different selected day are
+   distinguishable.
+- [x] Days that have real meals in the planner show up to 3 small colored dots.
+- [x] Dot colors match the tag-color mapping used elsewhere (same meal title → same color).
+- [x] Days without meals keep their height but show no dots.
+- [x] Tapping a day updates the placeholder agenda text below to show the selected date.
+- [x] Each day cell is focusable and has an accessible name like "September 10, 2 meals".
 
 **Architectural plan:**
 - Create `src/_components/Calendar/MobileMonthGrid/MobileMonthGrid.tsx`.
@@ -336,6 +338,8 @@ in `MealMonthAgenda`, and swap the grid into the shell while keeping a placehold
 - In `MealMonthAgenda`, map `SerializedDay[]` + `SavedItem[]` through `toCalendarEvents`,
   `getMealColor`, and `TAG_COLORS` to produce dot-colored events for `MobileMonthGrid`.
 - Update `MealMonthAgenda` to render `MobileMonthGrid` plus a small placeholder for the agenda.
+
+**As built:** The keyboard hook was kept internal to `MobileMonthGrid.tsx` rather than extracted into a separate file, and the day-number-to-dots spacing was adjusted to `gap={3}` to match the design reference.
 
 ## Step 6: `MobileAgenda` component with real meal data
 

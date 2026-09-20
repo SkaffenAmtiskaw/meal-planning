@@ -530,4 +530,226 @@ describe('MonthGrid keyboard navigation', () => {
 		expect(meal1.getAttribute('tabindex')).toBe('-1');
 		expect(screen.getByTestId('meal-2').getAttribute('tabindex')).toBe('-1');
 	});
+
+	it('moves focus to the previous day with ArrowLeft', () => {
+		const today = DateTime.local(2024, 3, 15);
+		vi.useFakeTimers();
+		vi.setSystemTime(today.toJSDate());
+
+		vi.mocked(getMonthGridDates).mockReturnValue([
+			DateTime.local(2024, 3, 14),
+			DateTime.local(2024, 3, 15),
+			DateTime.local(2024, 3, 16),
+		]);
+
+		render(
+			<CalendarProvider initialDate={today}>
+				<MonthGrid />
+			</CalendarProvider>,
+		);
+
+		const dayCells = screen.getAllByTestId('day-cell');
+		fireEvent.keyDown(dayCells[1], { key: 'ArrowLeft' });
+
+		expect(dayCells[0].getAttribute('tabindex')).toBe('0');
+		expect(dayCells[1].getAttribute('tabindex')).toBe('-1');
+	});
+
+	it('moves focus down one week with ArrowDown', () => {
+		const today = DateTime.local(2024, 3, 8);
+		vi.useFakeTimers();
+		vi.setSystemTime(today.toJSDate());
+
+		vi.mocked(getMonthGridDates).mockReturnValue(
+			Array.from({ length: 14 }, (_, i) => DateTime.local(2024, 3, 1 + i)),
+		);
+
+		render(
+			<CalendarProvider initialDate={today}>
+				<MonthGrid />
+			</CalendarProvider>,
+		);
+
+		const dayCells = screen.getAllByTestId('day-cell');
+		fireEvent.keyDown(dayCells[0], { key: 'ArrowDown' });
+
+		expect(dayCells[0].getAttribute('tabindex')).toBe('-1');
+		expect(dayCells[7].getAttribute('tabindex')).toBe('0');
+	});
+
+	it('moves focus up one week with ArrowUp', () => {
+		const today = DateTime.local(2024, 3, 15);
+		vi.useFakeTimers();
+		vi.setSystemTime(today.toJSDate());
+
+		vi.mocked(getMonthGridDates).mockReturnValue(
+			Array.from({ length: 14 }, (_, i) => DateTime.local(2024, 3, 1 + i)),
+		);
+
+		render(
+			<CalendarProvider initialDate={today}>
+				<MonthGrid />
+			</CalendarProvider>,
+		);
+
+		const dayCells = screen.getAllByTestId('day-cell');
+		fireEvent.keyDown(dayCells[7], { key: 'ArrowUp' });
+
+		expect(dayCells[0].getAttribute('tabindex')).toBe('0');
+		expect(dayCells[7].getAttribute('tabindex')).toBe('-1');
+	});
+
+	it('does not move focus right from the last column', () => {
+		const today = DateTime.local(2024, 3, 16);
+		vi.useFakeTimers();
+		vi.setSystemTime(today.toJSDate());
+
+		vi.mocked(getMonthGridDates).mockReturnValue(
+			Array.from({ length: 7 }, (_, i) => DateTime.local(2024, 3, 10 + i)),
+		);
+
+		render(
+			<CalendarProvider initialDate={today}>
+				<MonthGrid />
+			</CalendarProvider>,
+		);
+
+		const dayCells = screen.getAllByTestId('day-cell');
+		fireEvent.keyDown(dayCells[6], { key: 'ArrowRight' });
+
+		expect(dayCells[6].getAttribute('tabindex')).toBe('0');
+	});
+
+	it('does not move focus down from the last row', () => {
+		const today = DateTime.local(2024, 3, 7);
+		vi.useFakeTimers();
+		vi.setSystemTime(today.toJSDate());
+
+		vi.mocked(getMonthGridDates).mockReturnValue(
+			Array.from({ length: 7 }, (_, i) => DateTime.local(2024, 3, 1 + i)),
+		);
+
+		render(
+			<CalendarProvider initialDate={today}>
+				<MonthGrid />
+			</CalendarProvider>,
+		);
+
+		const dayCells = screen.getAllByTestId('day-cell');
+		fireEvent.keyDown(dayCells[6], { key: 'ArrowDown' });
+
+		expect(dayCells[6].getAttribute('tabindex')).toBe('0');
+	});
+
+	it('does not move focus up from the first row', () => {
+		const today = DateTime.local(2024, 3, 1);
+		vi.useFakeTimers();
+		vi.setSystemTime(today.toJSDate());
+
+		vi.mocked(getMonthGridDates).mockReturnValue(
+			Array.from({ length: 14 }, (_, i) => DateTime.local(2024, 3, 1 + i)),
+		);
+
+		render(
+			<CalendarProvider initialDate={today}>
+				<MonthGrid />
+			</CalendarProvider>,
+		);
+
+		const dayCells = screen.getAllByTestId('day-cell');
+		fireEvent.keyDown(dayCells[0], { key: 'ArrowUp' });
+
+		expect(dayCells[0].getAttribute('tabindex')).toBe('0');
+	});
+
+	it('moves focus to the clicked day cell and exits meal mode', () => {
+		const today = DateTime.local(2024, 3, 15);
+		vi.useFakeTimers();
+		vi.setSystemTime(today.toJSDate());
+
+		vi.mocked(getMonthGridDates).mockReturnValue([
+			DateTime.local(2024, 3, 14),
+			DateTime.local(2024, 3, 15),
+			DateTime.local(2024, 3, 16),
+		]);
+
+		const meals: MonthGridMeal[] = [
+			{ id: '1', date: '2024-03-15', title: 'Event A' },
+			{ id: '2', date: '2024-03-15', title: 'Event B' },
+		];
+
+		const renderMeal = createRenderMealMock();
+
+		render(
+			<CalendarProvider initialDate={today}>
+				<MonthGrid meals={meals} renderMeal={renderMeal} />
+			</CalendarProvider>,
+		);
+
+		const dayCells = screen.getAllByTestId('day-cell');
+		fireEvent.keyDown(dayCells[1], { key: 'Enter' });
+
+		const meal1 = screen.getByTestId('meal-1');
+		expect(meal1.getAttribute('tabindex')).toBe('0');
+		expect(dayCells[1].getAttribute('tabindex')).toBe('-1');
+
+		fireEvent.click(dayCells[2]);
+
+		expect(dayCells[2].getAttribute('tabindex')).toBe('0');
+		expect(dayCells[1].getAttribute('tabindex')).toBe('-1');
+		expect(meal1.getAttribute('tabindex')).toBe('-1');
+	});
+
+	it('calls onMealClick when Enter is pressed on a meal in meal mode', () => {
+		const today = DateTime.local(2024, 3, 15);
+		vi.useFakeTimers();
+		vi.setSystemTime(today.toJSDate());
+
+		vi.mocked(getMonthGridDates).mockReturnValue([
+			DateTime.local(2024, 3, 14),
+			DateTime.local(2024, 3, 15),
+			DateTime.local(2024, 3, 16),
+		]);
+
+		const meals: MonthGridMeal[] = [
+			{ id: '1', date: '2024-03-15', title: 'Event A' },
+			{ id: '2', date: '2024-03-15', title: 'Event B' },
+		];
+
+		const onMealClick = vi.fn();
+		const renderMeal = createRenderMealMock();
+
+		render(
+			<CalendarProvider initialDate={today}>
+				<MonthGrid
+					meals={meals}
+					onMealClick={onMealClick}
+					renderMeal={renderMeal}
+				/>
+			</CalendarProvider>,
+		);
+
+		const dayCells = screen.getAllByTestId('day-cell');
+		fireEvent.keyDown(dayCells[1], { key: 'Enter' });
+
+		const meal1 = screen.getByTestId('meal-1');
+		fireEvent.keyDown(meal1, { key: 'Enter' });
+
+		expect(onMealClick).toHaveBeenCalledWith(meals[0]);
+	});
+
+	it('throws when days array is empty', () => {
+		vi.useFakeTimers();
+		vi.setSystemTime(DateTime.local(2024, 3, 15).toJSDate());
+
+		vi.mocked(getMonthGridDates).mockReturnValue([]);
+
+		expect(() =>
+			render(
+				<CalendarProvider initialDate={DateTime.local(2024, 3, 15)}>
+					<MonthGrid />
+				</CalendarProvider>,
+			),
+		).toThrow('days array cannot be empty');
+	});
 });

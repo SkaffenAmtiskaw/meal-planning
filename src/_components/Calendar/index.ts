@@ -18,6 +18,11 @@ export {
 	VIEW_LABELS,
 } from './_utils/formatCalendarLabel';
 export { ListView } from './ListView/ListView';
+export type {
+	MobileMonthGridEvent,
+	MobileMonthGridProps,
+} from './MobileMonthGrid/MobileMonthGrid';
+export { MobileMonthGrid } from './MobileMonthGrid/MobileMonthGrid';
 export type { MonthGridMeal, MonthGridProps } from './MonthGrid/MonthGrid';
 export { MonthGrid } from './MonthGrid/MonthGrid';
 export type { WeekViewMeal, WeekViewProps } from './WeekView/WeekView';
