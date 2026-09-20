@@ -3,7 +3,6 @@
 **AI Instructions** - DO NOT delete this file. You may remove lines, but under no circumstances may you delete the file.
 
 # Bugfixes/User Issues
-- increase time until logout
 - meals created in month view don't show up in week view - will be fixed in [[Replace Schedule-X]]
 - [[Add Meal UX Changes]]
 - [[Stale Data Issues]]
