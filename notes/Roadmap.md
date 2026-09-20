@@ -6,7 +6,7 @@
 - increase time until logout
 - meals created in month view don't show up in week view - will be fixed in [[Replace Schedule-X]]
 - meal creation modal is too narrow on desktop - two columns might allow for easier entry (UX review)
-- after adding a new recipe, it is not immediately available in the saved dishes dropdown in the create meal modal
+- [[Stale Data Issues]]
 - you should be able to create a meal with just a title and a description (or just a title)
 - meal color should be based on hex of title + description
 - sidebar on modal should close after you click something
@@ -48,6 +48,7 @@
 ## Misc
 - [[Tag Management|tag management - edit/delete]] (should live under planner settings)
 - performance - investigate mongo/mongoose caching - is next doing it already or do we need to implement it?
+- could we get rid of mongoose and use zod + mongodb on its own? what does mongoose get us?
 - a11y audit
 - security - string validation on inputs
 - audit app works fully in mobile
