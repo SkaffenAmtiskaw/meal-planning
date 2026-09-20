@@ -11,10 +11,10 @@ import type { DateTime } from 'luxon';
 import type { CalendarDish, CalendarMeal } from '@/_components/Calendar';
 import { ListView } from '@/_components/Calendar';
 import { useIsMobile } from '@/_hooks';
-import { getMealColor, TAG_COLORS } from '@/_theme/colors';
 import { useCanWrite } from '@/app/[planner]/_components';
 
 import { toCalendarEvents } from '../../_utils/toCalendarEvents';
+import { toCalendarMeals } from '../../_utils/toCalendarMeals';
 import type { SavedItem, SerializedDay } from '../../_utils/toScheduleXEvents';
 import { AddMealFormModalWrapper } from '../AddMealFormModalWrapper/AddMealFormModalWrapper';
 import { DishLink } from '../DishLink/DishLink';
@@ -36,18 +36,10 @@ export function MealListView({
 	const [opened, { open, close }] = useDisclosure(false);
 	const [dateForAdd, setDateForAdd] = useState<DateTime | null>(null);
 
-	const events: CalendarMeal[] = useMemo(() => {
-		const calendarEvents = toCalendarEvents(calendar, savedItems);
-
-		return calendarEvents.map((event) => ({
-			id: event.id,
-			date: event.start,
-			name: event.title,
-			description: event.description,
-			borderColor: TAG_COLORS[getMealColor(event.title)].border,
-			dishes: event.dishes,
-		}));
-	}, [calendar, savedItems]);
+	const events: CalendarMeal[] = useMemo(
+		() => toCalendarMeals(toCalendarEvents(calendar, savedItems)),
+		[calendar, savedItems],
+	);
 
 	if (isMobile) {
 		return <MobileListViewPlaceholder />;

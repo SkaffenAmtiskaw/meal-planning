@@ -5,7 +5,7 @@
 # Bugfixes/User Issues
 - increase time until logout
 - meals created in month view don't show up in week view - will be fixed in [[Replace Schedule-X]]
-- meal creation modal is too narrow on desktop - two columns might allow for easier entry (UX review)
+- [[Add Meal UX Changes]]
 - [[Stale Data Issues]]
 - you should be able to create a meal with just a title and a description (or just a title)
 - meal color should be based on hex of title + description

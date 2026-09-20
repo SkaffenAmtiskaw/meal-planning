@@ -1,0 +1,9 @@
+/* Mantine Paper's `withBorder` prop only renders a solid border; the empty-state design calls for a dashed border, which requires a CSS module. */
+.emptyCard {
+	border: 1px dashed var(--mantine-color-chalk-3);
+}
+
+/* The 14px inset padding and 96px bottom padding match the design reference; no Mantine spacing step matches these exact values. */
+.stack {
+	padding: 14px 14px 96px;
+}

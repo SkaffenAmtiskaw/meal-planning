@@ -18,6 +18,8 @@ export {
 	VIEW_LABELS,
 } from './_utils/formatCalendarLabel';
 export { ListView } from './ListView/ListView';
+export type { MobileAgendaProps } from './MobileAgenda/MobileAgenda';
+export { MobileAgenda } from './MobileAgenda/MobileAgenda';
 export type {
 	MobileMonthGridEvent,
 	MobileMonthGridProps,

@@ -343,18 +343,20 @@ in `MealMonthAgenda`, and swap the grid into the shell while keeping a placehold
 
 ## Step 6: `MobileAgenda` component with real meal data
 
+**Status:** ✅ Complete
+
 **What we're doing:** Build the selected-day agenda panel, convert real planner data into full meal
 events in `MealMonthAgenda`, and replace the placeholder agenda with it.
 
 **Acceptance criteria:**
-- [ ] On the calendar page at mobile width, tap a day in the grid — the agenda below updates with
-  that day's real meals.
-- [ ] The agenda header shows the long-form date ("Thursday, September 10") prefixed with "Today · "
-  when applicable, and a muted meal count ("2 MEALS").
-- [ ] Meal cards show real meal names, descriptions, dishes, notes, and links.
-- [ ] Empty days show a dashed placeholder card reading "Nothing planned yet".
-- [ ] The agenda panel scrolls independently and has bottom padding for the future FAB.
-- [ ] Changing the selected day updates the agenda and announces the change to screen readers.
+- [x] On the calendar page at mobile width, tap a day in the grid — the agenda below updates with
+   that day's real meals.
+- [x] The agenda header shows the long-form date ("Thursday, September 10") prefixed with "Today · "
+   when applicable, and a muted meal count ("2 MEALS").
+- [x] Meal cards show real meal names, descriptions, dishes, notes, and links.
+- [x] Empty days show a dashed placeholder card reading "Nothing planned yet".
+- [x] The agenda panel scrolls independently and has bottom padding for the future FAB.
+- [x] Changing the selected day updates the agenda and announces the change to screen readers.
 
 **Architectural plan:**
 - Create `src/_components/Calendar/MobileAgenda/MobileAgenda.tsx`.
@@ -367,6 +369,12 @@ events in `MealMonthAgenda`, and replace the placeholder agenda with it.
 - In `MealMonthAgenda`, also compute full meal events from `SerializedDay[]` + `SavedItem[]` and pass
   them to `MobileAgenda` with a `renderDish` that uses `DishLink`.
 - Update `MealMonthAgenda` to render `MobileAgenda` instead of the placeholder.
+
+**As built:** The event type used is the existing `CalendarMeal` rather than a new alias, because the
+base `MealCard` already consumes it. The empty-state dashed border and the 96px FAB padding are
+implemented in a CSS module with justification comments, since Mantine does not provide those exact
+styles. The scroll-to-top effect uses a `biome-ignore` comment consistent with other scroll effects in
+the codebase.
 
 ## Step 7: FAB, stub actions, permissions, and skeletons
 

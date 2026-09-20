@@ -351,6 +351,7 @@ This will be handled as a separate story. See the [[Calendar - Mobile List View|
 **What we're doing:** Remove all schedule-x dependencies.
 
 **Acceptance Criteria:**
+- [ ] Fix all types imported from `schedule-x` modules; either re-create them in the appropriate places or delete them outright. This will require careful review.
 - [ ] Run `pnpm remove @schedule-x/calendar @schedule-x/events-service @schedule-x/react @schedule-x/theme-default`
 - [ ] Delete all schedule-x related files (hooks, utils, components)
 - [ ] Remove schedule-x CSS import from layout.tsx

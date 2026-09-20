@@ -17,7 +17,7 @@
  * `vi.mocked(Comp).mockImplementationOnce(...)` to override for a single test.
  */
 
-import type React from 'react';
+import React from 'react';
 
 import { vi } from 'vitest';
 
@@ -239,6 +239,38 @@ export const Stack = vi.fn(
 	},
 );
 
+export const ScrollArea = vi.fn(
+	({
+		children,
+		viewportRef,
+		'data-testid': testId,
+		...props
+	}: WithChildren & {
+		viewportRef?: React.Ref<HTMLDivElement>;
+		scrollbars?: string;
+		type?: string;
+		[key: string]: unknown;
+	}) => {
+		const ref = React.useRef<HTMLDivElement>(null);
+
+		React.useEffect(() => {
+			if (!viewportRef) return;
+			if (typeof viewportRef === 'function') {
+				viewportRef(ref.current);
+			} else {
+				(viewportRef as React.MutableRefObject<HTMLDivElement | null>).current =
+					ref.current;
+			}
+		});
+
+		return (
+			<div ref={ref} data-testid={testId ?? 'scroll-area'} {...props}>
+				{children}
+			</div>
+		);
+	},
+);
+
 // ─── Grid (compound) ─────────────────────────────────────────────────────────
 
 const GridCol = vi.fn(({ children, 'data-testid': testId }: WithChildren) => (
@@ -259,13 +291,15 @@ export const Text = vi.fn(
 		children,
 		'data-testid': testId,
 		c,
+		...props
 	}: WithChildren & {
 		c?: string;
 		size?: string;
 		fw?: number;
 		span?: boolean;
+		[key: string]: unknown;
 	}) => (
-		<p data-testid={testId} data-c={c}>
+		<p data-testid={testId} data-c={c} {...props}>
 			{children}
 		</p>
 	),

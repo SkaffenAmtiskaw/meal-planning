@@ -10,9 +10,6 @@
   "agent": {
     "plan": {
       "disable": true
-    },
-    "build": {
-      "disable": true
     }
   },
   "mcp": {
