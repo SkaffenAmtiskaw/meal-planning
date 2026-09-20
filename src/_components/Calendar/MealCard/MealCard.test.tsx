@@ -6,7 +6,7 @@ import { MealCard } from './MealCard';
 
 vi.mock('@mantine/core', async () => await import('@mocks/@mantine/core'));
 
-vi.mock('./DishListItem', () => ({
+vi.mock('../_components/DishListItem/DishListItem', () => ({
 	DishListItem: vi.fn(({ dish, renderName }) => (
 		<div data-testid="dish-list-item" data-dish-name={dish.name}>
 			{renderName(dish)}
@@ -17,9 +17,6 @@ vi.mock('./DishListItem', () => ({
 vi.mock('./MealCard.module.css', () => ({
 	default: {
 		mealCard: 'mealCard',
-		dragHandle: 'dragHandle',
-		dragHandleGrid: 'dragHandleGrid',
-		dragHandleDot: 'dragHandleDot',
 		dishList: 'dishList',
 	},
 }));
@@ -106,5 +103,28 @@ describe('MealCard', () => {
 		render(<MealCard event={baseEvent} />);
 
 		expect(screen.queryByTestId('dish-list-item')).toBeNull();
+	});
+
+	it('renders renderActions when provided', () => {
+		render(
+			<MealCard
+				event={baseEvent}
+				renderActions={<button type="button">Edit</button>}
+			/>,
+		);
+
+		expect(screen.getByText('Edit')).toBeDefined();
+	});
+
+	it('does not render renderActions when omitted', () => {
+		render(<MealCard event={baseEvent} />);
+
+		expect(screen.queryByText('Edit')).toBeNull();
+	});
+
+	it('contains no drag-handle markup', () => {
+		render(<MealCard event={baseEvent} />);
+
+		expect(screen.queryByTestId('drag-handle-dot')).toBeNull();
 	});
 });

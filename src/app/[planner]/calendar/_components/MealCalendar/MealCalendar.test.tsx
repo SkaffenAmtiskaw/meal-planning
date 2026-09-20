@@ -2,7 +2,7 @@ import { fireEvent, render, screen } from '@testing-library/react';
 
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-import type { MonthGridEvent } from '@/_components/Calendar';
+import type { MonthGridMeal } from '@/_components/Calendar';
 import { MonthGrid } from '@/_components/Calendar';
 
 import { MealCalendar } from './MealCalendar';
@@ -13,16 +13,16 @@ import { toCalendarEvents } from '../../_utils/toCalendarEvents';
 import type { SavedItem, SerializedDay } from '../../_utils/toScheduleXEvents';
 
 vi.mock('@/_components/Calendar', async () => ({
-	MonthGrid: vi.fn(({ events, renderEvent }) => (
+	MonthGrid: vi.fn(({ meals, renderMeal }) => (
 		<div data-testid="month-grid">
-			{events?.map((event: MonthGridEvent, index: number) => (
-				<div key={event.id} data-testid="grid-event">
-					{renderEvent
-						? renderEvent(event, {
+			{meals?.map((meal: MonthGridMeal, index: number) => (
+				<div key={meal.id} data-testid="grid-meal">
+					{renderMeal
+						? renderMeal(meal, {
 								tabIndex: index === 0 ? 0 : -1,
 								ref: vi.fn(),
 							})
-						: event.title}
+						: meal.title}
 				</div>
 			))}
 		</div>
@@ -72,7 +72,7 @@ describe('MealCalendar', () => {
 		},
 	];
 
-	it('converts calendar to events and passes to MonthGrid', () => {
+	it('converts calendar to meals and passes to MonthGrid', () => {
 		vi.mocked(toCalendarEvents).mockReturnValue(mockCalendarEvents);
 
 		render(<MealCalendar calendar={mockCalendar} />);
@@ -81,7 +81,7 @@ describe('MealCalendar', () => {
 		expect(MonthGrid).toHaveBeenCalled();
 
 		const monthGridCall = vi.mocked(MonthGrid).mock.calls[0][0];
-		expect(monthGridCall.events).toEqual([
+		expect(monthGridCall.meals).toEqual([
 			{
 				id: 'meal-1',
 				date: '2024-01-15',
@@ -91,7 +91,7 @@ describe('MealCalendar', () => {
 		]);
 	});
 
-	it('maps CalendarEvent start field to MonthGridEvent date field', () => {
+	it('maps CalendarEvent start field to MonthGridMeal date field', () => {
 		const events: CalendarEvent[] = [
 			{
 				id: 'meal-1',
@@ -107,7 +107,7 @@ describe('MealCalendar', () => {
 		render(<MealCalendar calendar={mockCalendar} />);
 
 		const monthGridCall = vi.mocked(MonthGrid).mock.calls[0][0];
-		expect(monthGridCall.events).toEqual([
+		expect(monthGridCall.meals).toEqual([
 			{
 				id: 'meal-1',
 				date: '2024-06-01',
@@ -117,7 +117,7 @@ describe('MealCalendar', () => {
 		]);
 	});
 
-	it('renders MealEventCard via renderEvent prop', () => {
+	it('renders MealEventCard via renderMeal prop', () => {
 		vi.mocked(toCalendarEvents).mockReturnValue(mockCalendarEvents);
 
 		render(<MealCalendar calendar={mockCalendar} />);
@@ -135,21 +135,19 @@ describe('MealCalendar', () => {
 		);
 	});
 
-	it('calls onEventClick with full CalendarEvent when card is clicked', () => {
-		const onEventClick = vi.fn();
+	it('calls onMealClick with full CalendarEvent when card is clicked', () => {
+		const onMealClick = vi.fn();
 		vi.mocked(toCalendarEvents).mockReturnValue(mockCalendarEvents);
 
-		render(
-			<MealCalendar calendar={mockCalendar} onEventClick={onEventClick} />,
-		);
+		render(<MealCalendar calendar={mockCalendar} onMealClick={onMealClick} />);
 
 		fireEvent.click(screen.getByTestId('meal-event-card'));
 
-		expect(onEventClick).toHaveBeenCalledTimes(1);
-		expect(onEventClick).toHaveBeenCalledWith(mockCalendarEvents[0]);
+		expect(onMealClick).toHaveBeenCalledTimes(1);
+		expect(onMealClick).toHaveBeenCalledWith(mockCalendarEvents[0]);
 	});
 
-	it('does not break when onEventClick is undefined', () => {
+	it('does not break when onMealClick is undefined', () => {
 		vi.mocked(toCalendarEvents).mockReturnValue(mockCalendarEvents);
 
 		render(<MealCalendar calendar={mockCalendar} />);
@@ -169,16 +167,16 @@ describe('MealCalendar', () => {
 		expect(toCalendarEvents).toHaveBeenCalledWith(mockCalendar, mockSavedItems);
 	});
 
-	it('returns null when renderEvent is called with a missing event id', () => {
+	it('returns null when renderMeal is called with a missing meal id', () => {
 		vi.mocked(toCalendarEvents).mockReturnValue(mockCalendarEvents);
 		render(<MealCalendar calendar={mockCalendar} />);
 
-		// Extract renderEvent from the MonthGrid mock call
+		// Extract renderMeal from the MonthGrid mock call
 		const monthGridCall = vi.mocked(MonthGrid).mock.calls[0][0];
-		expect(monthGridCall.renderEvent).toBeDefined();
+		expect(monthGridCall.renderMeal).toBeDefined();
 
-		// Call renderEvent with an event ID that doesn't exist in eventMap
-		const result = monthGridCall.renderEvent?.(
+		// Call renderMeal with a meal ID that doesn't exist in mealMap
+		const result = monthGridCall.renderMeal?.(
 			{
 				id: 'non-existent',
 				date: '2024-01-15',
@@ -190,32 +188,32 @@ describe('MealCalendar', () => {
 		expect(result).toBeNull();
 	});
 
-	it('calls prop onEventClick with CalendarEvent when MonthGrid onEventClick fires', () => {
+	it('calls prop onMealClick with CalendarEvent when MonthGrid onMealClick fires', () => {
 		const handleClick = vi.fn();
 		vi.mocked(toCalendarEvents).mockReturnValue(mockCalendarEvents);
 
-		render(<MealCalendar calendar={mockCalendar} onEventClick={handleClick} />);
+		render(<MealCalendar calendar={mockCalendar} onMealClick={handleClick} />);
 
 		const monthGridCall = vi.mocked(MonthGrid).mock.calls[0][0];
-		const monthGridEvent = {
+		const monthGridMeal = {
 			id: 'meal-1',
 			date: '2024-01-15',
 			title: 'Breakfast',
 		};
-		monthGridCall.onEventClick?.(monthGridEvent);
+		monthGridCall.onMealClick?.(monthGridMeal);
 
 		expect(handleClick).toHaveBeenCalledTimes(1);
 		expect(handleClick).toHaveBeenCalledWith(mockCalendarEvents[0]);
 	});
 
-	it('does not call prop onEventClick when MonthGrid onEventClick fires for a missing event', () => {
+	it('does not call prop onMealClick when MonthGrid onMealClick fires for a missing meal', () => {
 		const handleClick = vi.fn();
 		vi.mocked(toCalendarEvents).mockReturnValue(mockCalendarEvents);
 
-		render(<MealCalendar calendar={mockCalendar} onEventClick={handleClick} />);
+		render(<MealCalendar calendar={mockCalendar} onMealClick={handleClick} />);
 
 		const monthGridCall = vi.mocked(MonthGrid).mock.calls[0][0];
-		monthGridCall.onEventClick?.({
+		monthGridCall.onMealClick?.({
 			id: 'non-existent',
 			date: '2024-01-15',
 			title: 'Missing',

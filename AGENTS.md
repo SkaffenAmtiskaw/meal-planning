@@ -14,6 +14,9 @@ All `.opencode/` references in this document or in ANY file you load resolve to 
 - Follow references recursively when needed, using the same project-first-only resolution.
 - Scratch notes go in `./.opencode/scratch/` (project-local, gitignored, confirmed not to conflict with other tooling). Never write scratch notes to a global `.opencode` directory.
 
+## Tool Constraints
+When starting a new session, check which tools and commands are explicitly allowed to you. You should always prioritize using a tool or command which is allowed over one which you have to ask permission for. Allowed tools are meant as guidance, e.g. using `pnpm test:agent` instead of `vitest`.
+
 ## Safety Rules
 - **Never delete files without first checking their contents and git status.** Verify a file is truly safe to delete (untracked, empty, or explicitly marked temporary) before removing it. When in doubt, ask the user.
 - Project configuration (biome, unit test coverage) must NEVER be edited without EXPLICIT user instruction to edit that config — including when the user says to ignore an error on a line. That does not authorize touching the config.

@@ -4,7 +4,7 @@ import { useCallback, useMemo } from 'react';
 
 import {
 	WeekView,
-	type WeekViewEvent,
+	type WeekViewMeal,
 	type WeekViewProps,
 } from '@/_components/Calendar';
 
@@ -18,72 +18,72 @@ export interface MealWeekViewProps {
 	calendar: SerializedDay[];
 	savedItems?: SavedItem[];
 	plannerId: string;
-	onEventClick?: (event: CalendarEvent) => void;
+	onMealClick?: (meal: CalendarEvent) => void;
 }
 
 export function MealWeekView({
 	calendar,
 	savedItems,
 	plannerId,
-	onEventClick,
+	onMealClick,
 }: MealWeekViewProps) {
-	const events = useMemo(
+	const meals = useMemo(
 		() => toCalendarEvents(calendar, savedItems),
 		[calendar, savedItems],
 	);
 
-	const { weekEvents, eventMap } = useMemo(() => {
-		const weekEvents: WeekViewEvent[] = events.map((event) => ({
-			id: event.id,
-			date: event.start,
-			title: event.title,
-			description: event.description,
+	const { weekMeals, mealMap } = useMemo(() => {
+		const weekMeals: WeekViewMeal[] = meals.map((meal) => ({
+			id: meal.id,
+			date: meal.start,
+			title: meal.title,
+			description: meal.description,
 		}));
 
-		const eventMap = new Map<string, CalendarEvent>();
-		for (const event of events) {
-			eventMap.set(event.id, event);
+		const mealMap = new Map<string, CalendarEvent>();
+		for (const meal of meals) {
+			mealMap.set(meal.id, meal);
 		}
 
-		return { weekEvents, eventMap };
-	}, [events]);
+		return { weekMeals, mealMap };
+	}, [meals]);
 
-	const handleEventClick = useCallback(
-		(event: WeekViewEvent) => {
-			const calendarEvent = eventMap.get(event.id);
+	const handleMealClick = useCallback(
+		(meal: WeekViewMeal) => {
+			const calendarEvent = mealMap.get(meal.id);
 			if (calendarEvent) {
-				onEventClick?.(calendarEvent);
+				onMealClick?.(calendarEvent);
 			}
 		},
-		[eventMap, onEventClick],
+		[mealMap, onMealClick],
 	);
 
-	const renderEvent = useCallback(
+	const renderMeal = useCallback(
 		(
-			event: WeekViewEvent,
-			props: Parameters<NonNullable<WeekViewProps['renderEvent']>>[1],
+			meal: WeekViewMeal,
+			props: Parameters<NonNullable<WeekViewProps['renderMeal']>>[1],
 		) => {
-			const calendarEvent = eventMap.get(event.id);
+			const calendarEvent = mealMap.get(meal.id);
 			if (!calendarEvent) return null;
 
 			return (
 				<WeekMealCard
 					event={calendarEvent}
 					plannerId={plannerId}
-					onClick={() => onEventClick?.(calendarEvent)}
+					onClick={() => onMealClick?.(calendarEvent)}
 					tabIndex={props.tabIndex}
 					ref={props.ref}
 				/>
 			);
 		},
-		[eventMap, onEventClick, plannerId],
+		[mealMap, onMealClick, plannerId],
 	);
 
 	return (
 		<WeekView
-			events={weekEvents}
-			renderEvent={renderEvent}
-			onEventClick={handleEventClick}
+			meals={weekMeals}
+			renderMeal={renderMeal}
+			onMealClick={handleMealClick}
 		/>
 	);
 }

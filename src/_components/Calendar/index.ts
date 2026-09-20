@@ -8,17 +8,17 @@ export {
 	CalendarPreviousButton,
 	CalendarTodayButton,
 } from './_components/CalendarNavButtons';
+export type {
+	CalendarDish,
+	CalendarMeal,
+} from './_types/CalendarMeal.types';
 export {
 	DEFAULT_VIEWS,
 	LABEL_FORMATTERS,
 	VIEW_LABELS,
 } from './_utils/formatCalendarLabel';
 export { ListView } from './ListView/ListView';
-export type {
-	ListViewDish,
-	ListViewEvent,
-} from './ListView/ListViewEvent.types';
-export type { MonthGridEvent, MonthGridProps } from './MonthGrid/MonthGrid';
+export type { MonthGridMeal, MonthGridProps } from './MonthGrid/MonthGrid';
 export { MonthGrid } from './MonthGrid/MonthGrid';
-export type { WeekViewEvent, WeekViewProps } from './WeekView/WeekView';
+export type { WeekViewMeal, WeekViewProps } from './WeekView/WeekView';
 export { WeekView } from './WeekView/WeekView';

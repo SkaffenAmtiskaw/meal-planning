@@ -6,14 +6,14 @@ import { DateTime } from 'luxon';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { ListView } from './ListView';
-import type { ListViewEvent } from './ListViewEvent.types';
 
 import {
 	type CalendarContextValue,
 	useCalendarContext,
 } from '../CalendarContext';
+import type { CalendarDish } from '../_components/DishListItem/DishListItem';
+import type { CalendarMeal } from '../_types/CalendarMeal.types';
 import { DayRow } from './_components/DayRow';
-import type { ListViewDish } from './_components/DishListItem';
 import { useScrolledDate } from './_hooks/useScrolledDate';
 import { useScrollToDate } from './_hooks/useScrollToDate';
 import { getListDayRange } from './_utils/getListDayRange';
@@ -34,8 +34,8 @@ vi.mock('./_components/DayRow', () => ({
 		}: {
 			date: DateTime;
 			onAddMeal?: (date: DateTime) => void;
-			meals?: ListViewEvent[];
-			renderDish?: (dish: ListViewDish) => ReactNode;
+			meals?: CalendarMeal[];
+			renderDish?: (dish: CalendarDish) => ReactNode;
 		}) => (
 			<div
 				data-testid="day-row"
@@ -367,7 +367,7 @@ describe('ListView', () => {
 			createMockContextValue({ rangeAnchor: DateTime.local(2024, 6, 11) }),
 		);
 
-		const mockRenderDish = vi.fn((dish: ListViewDish) => dish.name);
+		const mockRenderDish = vi.fn((dish: CalendarDish) => dish.name);
 
 		render(<ListView renderDish={mockRenderDish} />);
 
@@ -379,11 +379,11 @@ describe('ListView', () => {
 
 	it('calls renderDish when a dish name is rendered through the day row', () => {
 		const dates = [DateTime.local(2024, 6, 10)];
-		const dishes: ListViewDish[] = [
+		const dishes: CalendarDish[] = [
 			{ name: 'Pasta Primavera' },
 			{ name: 'Caesar Salad' },
 		];
-		const events: ListViewEvent[] = [
+		const events: CalendarMeal[] = [
 			{
 				id: 'lunch',
 				date: '2024-06-10',
@@ -397,7 +397,7 @@ describe('ListView', () => {
 			createMockContextValue({ rangeAnchor: dates[0] }),
 		);
 
-		const mockRenderDish = vi.fn((dish: ListViewDish) => dish.name);
+		const mockRenderDish = vi.fn((dish: CalendarDish) => dish.name);
 
 		render(<ListView events={events} renderDish={mockRenderDish} />);
 
@@ -414,7 +414,7 @@ describe('ListView', () => {
 			DateTime.local(2024, 6, 11),
 			DateTime.local(2024, 6, 12),
 		];
-		const events: ListViewEvent[] = [
+		const events: CalendarMeal[] = [
 			{
 				id: 'a',
 				date: '2024-06-10',

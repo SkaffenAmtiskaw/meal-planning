@@ -9,7 +9,7 @@ import { DateTime } from 'luxon';
 import focusClasses from '@/_theme/focus.module.css';
 
 import {
-	type EventKeyboardProps,
+	type MealKeyboardProps,
 	useWeekViewKeyboard,
 } from './useWeekViewKeyboard';
 import styles from './WeekView.module.css';
@@ -18,49 +18,49 @@ import { useCalendarContext } from '../CalendarContext';
 import { getWeekDates } from '../_utils/getWeekDates';
 import { WEEKDAY_LABELS } from '../_utils/weekdays';
 
-export interface WeekViewEvent {
+export interface WeekViewMeal {
 	id: string;
 	date: string; // ISO date YYYY-MM-DD
 	title: string;
 	description?: string;
 }
 
-export type WeekViewEventRenderProps = EventKeyboardProps;
+export type WeekViewMealRenderProps = MealKeyboardProps;
 
 export interface WeekViewProps {
-	events?: WeekViewEvent[];
-	renderEvent?: (
-		event: WeekViewEvent,
-		props: WeekViewEventRenderProps,
+	meals?: WeekViewMeal[];
+	renderMeal?: (
+		meal: WeekViewMeal,
+		props: WeekViewMealRenderProps,
 	) => ReactNode;
-	onEventClick?: (event: WeekViewEvent) => void;
+	onMealClick?: (meal: WeekViewMeal) => void;
 }
 
 export function WeekView({
-	events = [],
-	renderEvent,
-	onEventClick,
+	meals = [],
+	renderMeal,
+	onMealClick,
 }: WeekViewProps): ReactElement {
 	const { selectedDate } = useCalendarContext();
 	const days = useMemo(() => getWeekDates(selectedDate), [selectedDate]);
 	const today = DateTime.now();
 
-	const eventsByDate = useMemo(() => {
-		const grouped = new Map<string, WeekViewEvent[]>();
+	const mealsByDate = useMemo(() => {
+		const grouped = new Map<string, WeekViewMeal[]>();
 
-		for (const event of events) {
-			const existing = grouped.get(event.date) ?? [];
-			existing.push(event);
-			grouped.set(event.date, existing);
+		for (const meal of meals) {
+			const existing = grouped.get(meal.date) ?? [];
+			existing.push(meal);
+			grouped.set(meal.date, existing);
 		}
 
 		return grouped;
-	}, [events]);
+	}, [meals]);
 
-	const { getDayProps, getEventProps } = useWeekViewKeyboard({
+	const { getDayProps, getMealProps } = useWeekViewKeyboard({
 		days,
-		eventsByDate,
-		onEventClick,
+		mealsByDate,
+		onMealClick,
 		selectedDate,
 	});
 
@@ -71,10 +71,10 @@ export function WeekView({
 					const isoDate = day.toISODate() as string;
 					const isToday = day.hasSame(today, 'day');
 					const label = `${WEEKDAY_LABELS[index]} ${day.month}/${day.day}`;
-					const dayEvents = eventsByDate.get(isoDate) ?? [];
+					const dayMeals = mealsByDate.get(isoDate) ?? [];
 					const ariaLabel =
-						dayEvents.length > 0
-							? `${label}, ${dayEvents.length} events`
+						dayMeals.length > 0
+							? `${label}, ${dayMeals.length} meals`
 							: undefined;
 					const dayProps = getDayProps(index);
 
@@ -101,23 +101,23 @@ export function WeekView({
 							</Box>
 							<Divider my="xs" />
 							<Stack gap="xs">
-								{dayEvents.map((event, eventIndex) => {
-									const eventProps = getEventProps(index, eventIndex, isoDate);
+								{dayMeals.map((meal, mealIndex) => {
+									const mealProps = getMealProps(index, mealIndex, isoDate);
 
 									return (
-										<Box key={event.id} onClick={(e) => e.stopPropagation()}>
-											{renderEvent ? (
-												renderEvent(event, eventProps)
+										<Box key={meal.id} onClick={(e) => e.stopPropagation()}>
+											{renderMeal ? (
+												renderMeal(meal, mealProps)
 											) : (
 												<Paper
 													data-testid="week-event"
 													className={focusClasses.focusRing}
-													tabIndex={eventProps.tabIndex}
-													ref={eventProps.ref}
+													tabIndex={mealProps.tabIndex}
+													ref={mealProps.ref}
 													role="button"
-													onClick={() => onEventClick?.(event)}
+													onClick={() => onMealClick?.(meal)}
 												>
-													{event.title}
+													{meal.title}
 												</Paper>
 											)}
 										</Box>

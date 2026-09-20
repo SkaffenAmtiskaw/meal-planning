@@ -132,7 +132,7 @@ Do this once, now, over final resolutions — not per-issue guesses made during 
 For each work item in the first wave, do the following:
 
 - Determine which subagent should be used based on the instructions at `.opencode/lib/delegation-decision.md`
-- Prepare the appropriate handoff from the list below, and delegate the work item to the subagents. Each subagent should receive a single file, or a file and its associated unit test in the case of `@develop`.
+- Prepare the appropriate handoff from the list below, and delegate the work item to the subagents. Each subagent should receive a single file (or a file and its associated unit test in the case of `@develop`). Delegating multiple files to an agent will almost certainly cause it to fail.
 - Delegate all work items in the current wave concurrently — do not process them one at a time.
 - Whenever a delegated task returns, verify the change addresses only its work item, with no unrelated modifications, and that any custom CSS includes its justification comment. If it has drifted, send it back with a correction note.
 - Once all work items in the wave are completed and verified, repeat Phase 5 for the next wave (until all waves are complete).

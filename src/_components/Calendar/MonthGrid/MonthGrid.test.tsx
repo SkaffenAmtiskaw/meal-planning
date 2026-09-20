@@ -4,7 +4,7 @@ import { DateTime } from 'luxon';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { MonthGrid } from './MonthGrid';
-import type { MonthGridEvent, MonthGridEventRenderProps } from './MonthGrid';
+import type { MonthGridMeal, MonthGridMealRenderProps } from './MonthGrid';
 
 import { useCalendarContext } from '../CalendarContext';
 import { CalendarProvider } from '../CalendarProvider';
@@ -165,7 +165,7 @@ describe('MonthGrid', () => {
 		expect(getMonthGridDates).toHaveBeenCalledTimes(2);
 	});
 
-	it('renders events in the correct day cell', () => {
+	it('renders meals in the correct day cell', () => {
 		const initialDate = DateTime.local(2024, 3, 15);
 		vi.mocked(getMonthGridDates).mockReturnValue([
 			DateTime.local(2024, 3, 14),
@@ -173,103 +173,103 @@ describe('MonthGrid', () => {
 			DateTime.local(2024, 3, 16),
 		]);
 
-		const events: MonthGridEvent[] = [
-			{ id: '1', date: '2024-03-15', title: 'Event A' },
+		const meals: MonthGridMeal[] = [
+			{ id: '1', date: '2024-03-15', title: 'Meal A' },
 		];
 
-		const renderEvent = vi.fn(
-			(event: MonthGridEvent, props: MonthGridEventRenderProps) => (
-				<span key={event.id} tabIndex={props.tabIndex} ref={props.ref}>
-					{event.title} custom
+		const renderMeal = vi.fn(
+			(meal: MonthGridMeal, props: MonthGridMealRenderProps) => (
+				<span key={meal.id} tabIndex={props.tabIndex} ref={props.ref}>
+					{meal.title} custom
 				</span>
 			),
 		);
 
 		render(
 			<CalendarProvider initialDate={initialDate}>
-				<MonthGrid events={events} renderEvent={renderEvent} />
+				<MonthGrid meals={meals} renderMeal={renderMeal} />
 			</CalendarProvider>,
 		);
 
-		expect(renderEvent).toHaveBeenCalledWith(
-			events[0],
+		expect(renderMeal).toHaveBeenCalledWith(
+			meals[0],
 			expect.objectContaining({ tabIndex: expect.any(Number) }),
 		);
 
 		const dayCells = screen.getAllByTestId('day-cell');
-		expect(dayCells[1].textContent).toContain('Event A custom');
-		expect(dayCells[0].textContent).not.toContain('Event A custom');
-		expect(dayCells[2].textContent).not.toContain('Event A custom');
+		expect(dayCells[1].textContent).toContain('Meal A custom');
+		expect(dayCells[0].textContent).not.toContain('Meal A custom');
+		expect(dayCells[2].textContent).not.toContain('Meal A custom');
 	});
 
-	it('limits visible events to 2 and shows +N more', () => {
+	it('limits visible meals to 2 and shows +N more', () => {
 		const initialDate = DateTime.local(2024, 3, 15);
 		vi.mocked(getMonthGridDates).mockReturnValue([DateTime.local(2024, 3, 15)]);
 
-		const events: MonthGridEvent[] = [
-			{ id: '1', date: '2024-03-15', title: 'Event A' },
-			{ id: '2', date: '2024-03-15', title: 'Event B' },
-			{ id: '3', date: '2024-03-15', title: 'Event C' },
+		const meals: MonthGridMeal[] = [
+			{ id: '1', date: '2024-03-15', title: 'Meal A' },
+			{ id: '2', date: '2024-03-15', title: 'Meal B' },
+			{ id: '3', date: '2024-03-15', title: 'Meal C' },
 		];
 
 		render(
 			<CalendarProvider initialDate={initialDate}>
-				<MonthGrid events={events} />
+				<MonthGrid meals={meals} />
 			</CalendarProvider>,
 		);
 
 		const dayCells = screen.getAllByTestId('day-cell');
-		expect(dayCells[0].textContent).toContain('Event A');
-		expect(dayCells[0].textContent).toContain('Event B');
-		expect(dayCells[0].textContent).not.toContain('Event C');
+		expect(dayCells[0].textContent).toContain('Meal A');
+		expect(dayCells[0].textContent).toContain('Meal B');
+		expect(dayCells[0].textContent).not.toContain('Meal C');
 		expect(dayCells[0].textContent).toContain('+1 more');
 	});
 
-	it('does not show +N more when events are 2 or fewer', () => {
+	it('does not show +N more when meals are 2 or fewer', () => {
 		const initialDate = DateTime.local(2024, 3, 15);
 		vi.mocked(getMonthGridDates).mockReturnValue([DateTime.local(2024, 3, 15)]);
 
-		const events: MonthGridEvent[] = [
-			{ id: '1', date: '2024-03-15', title: 'Event A' },
-			{ id: '2', date: '2024-03-15', title: 'Event B' },
+		const meals: MonthGridMeal[] = [
+			{ id: '1', date: '2024-03-15', title: 'Meal A' },
+			{ id: '2', date: '2024-03-15', title: 'Meal B' },
 		];
 
 		render(
 			<CalendarProvider initialDate={initialDate}>
-				<MonthGrid events={events} />
+				<MonthGrid meals={meals} />
 			</CalendarProvider>,
 		);
 
 		const dayCells = screen.getAllByTestId('day-cell');
-		expect(dayCells[0].textContent).toContain('Event A');
-		expect(dayCells[0].textContent).toContain('Event B');
+		expect(dayCells[0].textContent).toContain('Meal A');
+		expect(dayCells[0].textContent).toContain('Meal B');
 		expect(dayCells[0].textContent).not.toContain('more');
 	});
 
-	it('adds aria-label with event count to day cells with events', () => {
+	it('adds aria-label with meal count to day cells with meals', () => {
 		const initialDate = DateTime.local(2024, 3, 15);
 		vi.mocked(getMonthGridDates).mockReturnValue([
 			DateTime.local(2024, 3, 14),
 			DateTime.local(2024, 3, 15),
 		]);
 
-		const events: MonthGridEvent[] = [
-			{ id: '1', date: '2024-03-15', title: 'Event A' },
-			{ id: '2', date: '2024-03-15', title: 'Event B' },
+		const meals: MonthGridMeal[] = [
+			{ id: '1', date: '2024-03-15', title: 'Meal A' },
+			{ id: '2', date: '2024-03-15', title: 'Meal B' },
 		];
 
 		render(
 			<CalendarProvider initialDate={initialDate}>
-				<MonthGrid events={events} />
+				<MonthGrid meals={meals} />
 			</CalendarProvider>,
 		);
 
 		const dayCells = screen.getAllByTestId('day-cell');
 		expect(dayCells[0].getAttribute('aria-label')).toBeNull();
-		expect(dayCells[1].getAttribute('aria-label')).toBe('March 15, 2 events');
+		expect(dayCells[1].getAttribute('aria-label')).toBe('March 15, 2 meals');
 	});
 
-	it('does not break when events prop is undefined', () => {
+	it('does not break when meals prop is undefined', () => {
 		const initialDate = DateTime.local(2024, 3, 15);
 		vi.mocked(getMonthGridDates).mockReturnValue([DateTime.local(2024, 3, 15)]);
 
@@ -294,19 +294,19 @@ describe('MonthGrid keyboard navigation', () => {
 		vi.useRealTimers();
 	});
 
-	function createRenderEventMock() {
+	function createRenderMealMock() {
 		return vi.fn(
 			(
-				event: MonthGridEvent,
+				meal: MonthGridMeal,
 				props: { tabIndex: number; ref: React.RefCallback<HTMLElement> },
 			) => (
 				<div
-					key={event.id}
-					data-testid={`event-${event.id}`}
+					key={meal.id}
+					data-testid={`meal-${meal.id}`}
 					tabIndex={props.tabIndex}
 					ref={props.ref}
 				>
-					{event.title}
+					{meal.title}
 				</div>
 			),
 		);
@@ -359,7 +359,7 @@ describe('MonthGrid keyboard navigation', () => {
 		expect(dayCells[2].getAttribute('tabindex')).toBe('0');
 	});
 
-	it('calls onEventClick when Enter pressed on single-event day', () => {
+	it('calls onMealClick when Enter pressed on single-meal day', () => {
 		const today = DateTime.local(2024, 3, 15);
 		vi.useFakeTimers();
 		vi.setSystemTime(today.toJSDate());
@@ -370,25 +370,25 @@ describe('MonthGrid keyboard navigation', () => {
 			DateTime.local(2024, 3, 16),
 		]);
 
-		const events: MonthGridEvent[] = [
+		const meals: MonthGridMeal[] = [
 			{ id: '1', date: '2024-03-15', title: 'Event A' },
 		];
 
-		const onEventClick = vi.fn();
+		const onMealClick = vi.fn();
 
 		render(
 			<CalendarProvider initialDate={today}>
-				<MonthGrid events={events} onEventClick={onEventClick} />
+				<MonthGrid meals={meals} onMealClick={onMealClick} />
 			</CalendarProvider>,
 		);
 
 		const dayCells = screen.getAllByTestId('day-cell');
 		fireEvent.keyDown(dayCells[1], { key: 'Enter' });
 
-		expect(onEventClick).toHaveBeenCalledWith(events[0]);
+		expect(onMealClick).toHaveBeenCalledWith(meals[0]);
 	});
 
-	it('enters event mode when Enter pressed on multi-event day', () => {
+	it('enters meal mode when Enter pressed on multi-meal day', () => {
 		const today = DateTime.local(2024, 3, 15);
 		vi.useFakeTimers();
 		vi.setSystemTime(today.toJSDate());
@@ -399,16 +399,16 @@ describe('MonthGrid keyboard navigation', () => {
 			DateTime.local(2024, 3, 16),
 		]);
 
-		const events: MonthGridEvent[] = [
+		const meals: MonthGridMeal[] = [
 			{ id: '1', date: '2024-03-15', title: 'Event A' },
 			{ id: '2', date: '2024-03-15', title: 'Event B' },
 		];
 
-		const renderEvent = createRenderEventMock();
+		const renderMeal = createRenderMealMock();
 
 		render(
 			<CalendarProvider initialDate={today}>
-				<MonthGrid events={events} renderEvent={renderEvent} />
+				<MonthGrid meals={meals} renderMeal={renderMeal} />
 			</CalendarProvider>,
 		);
 
@@ -416,13 +416,13 @@ describe('MonthGrid keyboard navigation', () => {
 		fireEvent.keyDown(dayCells[1], { key: 'Enter' });
 
 		expect(dayCells[1].getAttribute('tabindex')).toBe('-1');
-		const event1 = screen.getByTestId('event-1');
-		const event2 = screen.getByTestId('event-2');
-		expect(event1.getAttribute('tabindex')).toBe('0');
-		expect(event2.getAttribute('tabindex')).toBe('-1');
+		const meal1 = screen.getByTestId('meal-1');
+		const meal2 = screen.getByTestId('meal-2');
+		expect(meal1.getAttribute('tabindex')).toBe('0');
+		expect(meal2.getAttribute('tabindex')).toBe('-1');
 	});
 
-	it('navigates events with ArrowDown/ArrowUp in event mode', () => {
+	it('navigates meals with ArrowDown/ArrowUp in meal mode', () => {
 		const today = DateTime.local(2024, 3, 15);
 		vi.useFakeTimers();
 		vi.setSystemTime(today.toJSDate());
@@ -433,35 +433,35 @@ describe('MonthGrid keyboard navigation', () => {
 			DateTime.local(2024, 3, 16),
 		]);
 
-		const events: MonthGridEvent[] = [
+		const meals: MonthGridMeal[] = [
 			{ id: '1', date: '2024-03-15', title: 'Event A' },
 			{ id: '2', date: '2024-03-15', title: 'Event B' },
 		];
 
-		const renderEvent = createRenderEventMock();
+		const renderMeal = createRenderMealMock();
 
 		render(
 			<CalendarProvider initialDate={today}>
-				<MonthGrid events={events} renderEvent={renderEvent} />
+				<MonthGrid meals={meals} renderMeal={renderMeal} />
 			</CalendarProvider>,
 		);
 
 		const dayCells = screen.getAllByTestId('day-cell');
 		fireEvent.keyDown(dayCells[1], { key: 'Enter' });
 
-		const event1 = screen.getByTestId('event-1');
-		const event2 = screen.getByTestId('event-2');
+		const meal1 = screen.getByTestId('meal-1');
+		const meal2 = screen.getByTestId('meal-2');
 
-		fireEvent.keyDown(event1, { key: 'ArrowDown' });
-		expect(event1.getAttribute('tabindex')).toBe('-1');
-		expect(event2.getAttribute('tabindex')).toBe('0');
+		fireEvent.keyDown(meal1, { key: 'ArrowDown' });
+		expect(meal1.getAttribute('tabindex')).toBe('-1');
+		expect(meal2.getAttribute('tabindex')).toBe('0');
 
-		fireEvent.keyDown(event2, { key: 'ArrowUp' });
-		expect(event1.getAttribute('tabindex')).toBe('0');
-		expect(event2.getAttribute('tabindex')).toBe('-1');
+		fireEvent.keyDown(meal2, { key: 'ArrowUp' });
+		expect(meal1.getAttribute('tabindex')).toBe('0');
+		expect(meal2.getAttribute('tabindex')).toBe('-1');
 	});
 
-	it('event click does not exit event mode', () => {
+	it('meal click does not exit meal mode', () => {
 		const today = DateTime.local(2024, 3, 15);
 		vi.useFakeTimers();
 		vi.setSystemTime(today.toJSDate());
@@ -472,31 +472,31 @@ describe('MonthGrid keyboard navigation', () => {
 			DateTime.local(2024, 3, 16),
 		]);
 
-		const events: MonthGridEvent[] = [
+		const meals: MonthGridMeal[] = [
 			{ id: '1', date: '2024-03-15', title: 'Event A' },
 			{ id: '2', date: '2024-03-15', title: 'Event B' },
 		];
 
-		const renderEvent = createRenderEventMock();
+		const renderMeal = createRenderMealMock();
 
 		render(
 			<CalendarProvider initialDate={today}>
-				<MonthGrid events={events} renderEvent={renderEvent} />
+				<MonthGrid meals={meals} renderMeal={renderMeal} />
 			</CalendarProvider>,
 		);
 
 		const dayCells = screen.getAllByTestId('day-cell');
 		fireEvent.keyDown(dayCells[1], { key: 'Enter' });
 
-		const event1 = screen.getByTestId('event-1');
-		fireEvent.click(event1);
+		const meal1 = screen.getByTestId('meal-1');
+		fireEvent.click(meal1);
 
 		expect(dayCells[1].getAttribute('tabindex')).toBe('-1');
-		expect(event1.getAttribute('tabindex')).toBe('0');
-		expect(screen.getByTestId('event-2').getAttribute('tabindex')).toBe('-1');
+		expect(meal1.getAttribute('tabindex')).toBe('0');
+		expect(screen.getByTestId('meal-2').getAttribute('tabindex')).toBe('-1');
 	});
 
-	it('exits event mode and returns focus to day cell on Escape', () => {
+	it('exits meal mode and returns focus to day cell on Escape', () => {
 		const today = DateTime.local(2024, 3, 15);
 		vi.useFakeTimers();
 		vi.setSystemTime(today.toJSDate());
@@ -507,27 +507,27 @@ describe('MonthGrid keyboard navigation', () => {
 			DateTime.local(2024, 3, 16),
 		]);
 
-		const events: MonthGridEvent[] = [
+		const meals: MonthGridMeal[] = [
 			{ id: '1', date: '2024-03-15', title: 'Event A' },
 			{ id: '2', date: '2024-03-15', title: 'Event B' },
 		];
 
-		const renderEvent = createRenderEventMock();
+		const renderMeal = createRenderMealMock();
 
 		render(
 			<CalendarProvider initialDate={today}>
-				<MonthGrid events={events} renderEvent={renderEvent} />
+				<MonthGrid meals={meals} renderMeal={renderMeal} />
 			</CalendarProvider>,
 		);
 
 		const dayCells = screen.getAllByTestId('day-cell');
 		fireEvent.keyDown(dayCells[1], { key: 'Enter' });
 
-		const event1 = screen.getByTestId('event-1');
-		fireEvent.keyDown(event1, { key: 'Escape' });
+		const meal1 = screen.getByTestId('meal-1');
+		fireEvent.keyDown(meal1, { key: 'Escape' });
 
 		expect(dayCells[1].getAttribute('tabindex')).toBe('0');
-		expect(event1.getAttribute('tabindex')).toBe('-1');
-		expect(screen.getByTestId('event-2').getAttribute('tabindex')).toBe('-1');
+		expect(meal1.getAttribute('tabindex')).toBe('-1');
+		expect(screen.getByTestId('meal-2').getAttribute('tabindex')).toBe('-1');
 	});
 });

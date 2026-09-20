@@ -4,7 +4,7 @@ import { fireEvent, render, screen } from '@testing-library/react';
 
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-import { DishListItem, type ListViewDish } from './DishListItem';
+import { type CalendarDish, DishListItem } from './DishListItem';
 
 vi.mock('@mantine/core', async () => await import('@mocks/@mantine/core'));
 
@@ -20,8 +20,8 @@ describe('DishListItem', () => {
 		vi.resetAllMocks();
 	});
 
-	const baseDish: ListViewDish = { name: 'Grilled Salmon' };
-	const renderName = vi.fn((dish: ListViewDish) => (
+	const baseDish: CalendarDish = { name: 'Grilled Salmon' };
+	const renderName = vi.fn((dish: CalendarDish) => (
 		<span data-testid="dish-name">{dish.name}</span>
 	));
 

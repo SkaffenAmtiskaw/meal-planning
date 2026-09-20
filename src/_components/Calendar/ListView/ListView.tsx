@@ -12,10 +12,10 @@ import { Box } from '@mantine/core';
 
 import { DateTime } from 'luxon';
 
-import type { ListViewDish, ListViewEvent } from './ListViewEvent.types';
 import styles from './ListView.module.css';
 
 import { useCalendarContext } from '../CalendarContext';
+import type { CalendarDish, CalendarMeal } from '../_types/CalendarMeal.types';
 import { DayRow } from './_components/DayRow';
 import { useScrolledDate } from './_hooks/useScrolledDate';
 import { useScrollToDate } from './_hooks/useScrollToDate';
@@ -24,8 +24,8 @@ import { getListDayRange } from './_utils/getListDayRange';
 export interface ListViewProps {
 	today?: DateTime;
 	onAddMeal?: (date: DateTime) => void;
-	events?: ListViewEvent[];
-	renderDish?: (dish: ListViewDish) => ReactNode;
+	events?: CalendarMeal[];
+	renderDish?: (dish: CalendarDish) => ReactNode;
 }
 
 export function ListView({
@@ -39,7 +39,7 @@ export function ListView({
 	const todayDate = today ?? DateTime.now().startOf('day');
 
 	const eventsByDate = useMemo(() => {
-		const map = new Map<string, ListViewEvent[]>();
+		const map = new Map<string, CalendarMeal[]>();
 		for (const event of events) {
 			const list = map.get(event.date);
 			if (list) {

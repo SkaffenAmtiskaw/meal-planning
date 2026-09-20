@@ -10,7 +10,7 @@ import { act, fireEvent, render, screen } from '@testing-library/react';
 import { DateTime } from 'luxon';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-import type { ListViewDish, ListViewEvent } from '@/_components/Calendar';
+import type { CalendarDish, CalendarMeal } from '@/_components/Calendar';
 import { ListView } from '@/_components/Calendar';
 import { useIsMobile } from '@/_hooks';
 import { getMealColor, TAG_COLORS } from '@/_theme/colors';
@@ -38,7 +38,7 @@ vi.mock('next/navigation', () => ({
 vi.mock('@/_components/Calendar', async () => ({
 	ListView: vi.fn(({ events, renderDish }) => (
 		<div data-testid="list-view" data-events={JSON.stringify(events)}>
-			{events.map((event: ListViewEvent) => (
+			{events.map((event: CalendarMeal) => (
 				<div key={event.id} data-testid={`event-${event.id}`}>
 					{event.dishes.map((dish) => (
 						<div key={dish.name} data-testid={`dish-${event.id}-${dish.name}`}>
@@ -216,7 +216,7 @@ describe('MealListView', () => {
 	});
 
 	it('passes a renderDish function that uses DishLink with size sm', () => {
-		const dish: ListViewDish = {
+		const dish: CalendarDish = {
 			name: 'Rendered Dish',
 			source: { _id: 'recipe-1' },
 		};

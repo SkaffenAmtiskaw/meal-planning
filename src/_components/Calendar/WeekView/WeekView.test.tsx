@@ -141,7 +141,7 @@ describe('WeekView', () => {
 		expect(getWeekDates).toHaveBeenCalledTimes(2);
 	});
 
-	it('groups events by date and renders them in the correct day column', () => {
+	it('groups meals by date and renders them in the correct day column', () => {
 		const initialDate = DateTime.local(2024, 9, 18);
 		vi.mocked(getWeekDates).mockReturnValue([
 			DateTime.local(2024, 9, 15),
@@ -153,7 +153,7 @@ describe('WeekView', () => {
 			DateTime.local(2024, 9, 21),
 		]);
 
-		const events = [
+		const meals = [
 			{ id: '1', date: '2024-09-16', title: 'Monday Event' },
 			{ id: '2', date: '2024-09-18', title: 'Wednesday Event' },
 			{ id: '3', date: '2024-09-18', title: 'Another Wednesday Event' },
@@ -161,7 +161,7 @@ describe('WeekView', () => {
 
 		render(
 			<CalendarProvider initialDate={initialDate} initialView="week">
-				<WeekView events={events} />
+				<WeekView meals={meals} />
 			</CalendarProvider>,
 		);
 
@@ -178,7 +178,7 @@ describe('WeekView', () => {
 		expect(within(columns[6]).queryByTestId('week-event')).toBeNull();
 	});
 
-	it('uses renderEvent when provided', () => {
+	it('uses renderMeal when provided', () => {
 		const initialDate = DateTime.local(2024, 9, 18);
 		vi.mocked(getWeekDates).mockReturnValue([
 			DateTime.local(2024, 9, 15),
@@ -190,22 +190,22 @@ describe('WeekView', () => {
 			DateTime.local(2024, 9, 21),
 		]);
 
-		const events = [{ id: '1', date: '2024-09-18', title: 'Custom Event' }];
-		const renderEvent = vi.fn((event, props) => (
+		const meals = [{ id: '1', date: '2024-09-18', title: 'Custom Event' }];
+		const renderMeal = vi.fn((meal, props) => (
 			<div data-testid="custom-event" data-tab-index={props.tabIndex}>
-				{event.title}
+				{meal.title}
 			</div>
 		));
 
 		render(
 			<CalendarProvider initialDate={initialDate} initialView="week">
-				<WeekView events={events} renderEvent={renderEvent} />
+				<WeekView meals={meals} renderMeal={renderMeal} />
 			</CalendarProvider>,
 		);
 
 		expect(screen.getByTestId('custom-event')).toBeDefined();
-		expect(renderEvent).toHaveBeenCalledWith(
-			events[0],
+		expect(renderMeal).toHaveBeenCalledWith(
+			meals[0],
 			expect.objectContaining({
 				tabIndex: expect.any(Number),
 				ref: expect.any(Function),
@@ -213,7 +213,7 @@ describe('WeekView', () => {
 		);
 	});
 
-	it('calls onEventClick when a default event is clicked', () => {
+	it('calls onMealClick when a default meal is clicked', () => {
 		const initialDate = DateTime.local(2024, 9, 18);
 		vi.mocked(getWeekDates).mockReturnValue([
 			DateTime.local(2024, 9, 15),
@@ -225,20 +225,20 @@ describe('WeekView', () => {
 			DateTime.local(2024, 9, 21),
 		]);
 
-		const event = { id: '1', date: '2024-09-18', title: 'Clickable Event' };
-		const onEventClick = vi.fn();
+		const meal = { id: '1', date: '2024-09-18', title: 'Clickable Event' };
+		const onMealClick = vi.fn();
 
 		render(
 			<CalendarProvider initialDate={initialDate} initialView="week">
-				<WeekView events={[event]} onEventClick={onEventClick} />
+				<WeekView meals={[meal]} onMealClick={onMealClick} />
 			</CalendarProvider>,
 		);
 
 		fireEvent.click(screen.getByTestId('week-event'));
-		expect(onEventClick).toHaveBeenCalledWith(event);
+		expect(onMealClick).toHaveBeenCalledWith(meal);
 	});
 
-	it('renders default events with button role', () => {
+	it('renders default meals with button role', () => {
 		const initialDate = DateTime.local(2024, 9, 18);
 		vi.mocked(getWeekDates).mockReturnValue([
 			DateTime.local(2024, 9, 15),
@@ -252,14 +252,14 @@ describe('WeekView', () => {
 
 		render(
 			<CalendarProvider initialDate={initialDate} initialView="week">
-				<WeekView events={[{ id: '1', date: '2024-09-18', title: 'Event' }]} />
+				<WeekView meals={[{ id: '1', date: '2024-09-18', title: 'Event' }]} />
 			</CalendarProvider>,
 		);
 
 		expect(screen.getByRole('button', { name: 'Event' })).toBeDefined();
 	});
 
-	it('renders nothing for days without events', () => {
+	it('renders nothing for days without meals', () => {
 		const initialDate = DateTime.local(2024, 9, 18);
 		vi.mocked(getWeekDates).mockReturnValue([
 			DateTime.local(2024, 9, 15),
@@ -273,7 +273,7 @@ describe('WeekView', () => {
 
 		render(
 			<CalendarProvider initialDate={initialDate} initialView="week">
-				<WeekView events={[]} />
+				<WeekView meals={[]} />
 			</CalendarProvider>,
 		);
 

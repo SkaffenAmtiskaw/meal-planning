@@ -7,17 +7,20 @@ import { Badge, Box, Flex, rgba, Stack, Text } from '@mantine/core';
 import type { DateTime } from 'luxon';
 
 import { ListViewAddMealTrigger } from './ListViewAddMealTrigger';
-import { MealCard } from './MealCard';
+import { MealCardWithDragHandle } from './MealCardWithDragHandle';
 import styles from './DayRow.module.css';
 
-import type { ListViewDish, ListViewEvent } from '../ListViewEvent.types';
+import type {
+	CalendarDish,
+	CalendarMeal,
+} from '../../_types/CalendarMeal.types';
 
 export interface DayRowProps {
 	date: DateTime;
 	today: DateTime;
-	meals?: ListViewEvent[];
+	meals?: CalendarMeal[];
 	onAddMeal?: (date: DateTime) => void;
-	renderDish?: (dish: ListViewDish) => ReactNode;
+	renderDish?: (dish: CalendarDish) => ReactNode;
 }
 
 export function DayRow({
@@ -87,7 +90,7 @@ export function DayRow({
 					<Stack gap="xs">
 						{hasMeals
 							? meals.map((meal) => (
-									<MealCard
+									<MealCardWithDragHandle
 										key={meal.id}
 										event={meal}
 										renderDish={renderDish}

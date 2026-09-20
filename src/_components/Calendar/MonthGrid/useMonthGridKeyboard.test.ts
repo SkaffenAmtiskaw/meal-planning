@@ -4,7 +4,7 @@ import { DateTime } from 'luxon';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { useMonthGridKeyboard } from './useMonthGridKeyboard';
-import type { MonthGridEvent } from './MonthGrid';
+import type { MonthGridMeal } from './MonthGrid';
 
 function createDays(startDate: DateTime, count: number = 42): DateTime[] {
 	return Array.from({ length: count }, (_, i) => startDate.plus({ days: i }));
@@ -36,7 +36,7 @@ describe('useMonthGridKeyboard', () => {
 			renderHook(() =>
 				useMonthGridKeyboard({
 					days: [],
-					eventsByDate: new Map(),
+					mealsByDate: new Map(),
 					selectedDate,
 				}),
 			);
@@ -50,7 +50,7 @@ describe('useMonthGridKeyboard', () => {
 		const { result } = renderHook(() =>
 			useMonthGridKeyboard({
 				days,
-				eventsByDate: new Map(),
+				mealsByDate: new Map(),
 				selectedDate,
 			}),
 		);
@@ -68,7 +68,7 @@ describe('useMonthGridKeyboard', () => {
 		const { result } = renderHook(() =>
 			useMonthGridKeyboard({
 				days,
-				eventsByDate: new Map(),
+				mealsByDate: new Map(),
 				selectedDate,
 			}),
 		);
@@ -93,7 +93,7 @@ describe('useMonthGridKeyboard', () => {
 		const { result } = renderHook(() =>
 			useMonthGridKeyboard({
 				days,
-				eventsByDate: new Map(),
+				mealsByDate: new Map(),
 				selectedDate: selectedDateOct,
 			}),
 		);
@@ -112,7 +112,7 @@ describe('useMonthGridKeyboard', () => {
 			({ days, selectedDate }) =>
 				useMonthGridKeyboard({
 					days,
-					eventsByDate: new Map(),
+					mealsByDate: new Map(),
 					selectedDate,
 				}),
 			{
@@ -144,11 +144,11 @@ describe('useMonthGridKeyboard', () => {
 		expect(result.current.getDayProps(6).tabIndex).toBe(-1);
 	});
 
-	it('exits event mode when days change', () => {
+	it('exits meal mode when days change', () => {
 		vi.setSystemTime(new Date(2025, 9, 15)); // Oct 15, 2025
 
 		const days1 = createDays(DateTime.local(2025, 9, 1));
-		const events = new Map<string, MonthGridEvent[]>([
+		const meals = new Map<string, MonthGridMeal[]>([
 			[
 				'2025-09-15',
 				[
@@ -162,7 +162,7 @@ describe('useMonthGridKeyboard', () => {
 			({ days, selectedDate }) =>
 				useMonthGridKeyboard({
 					days,
-					eventsByDate: events,
+					mealsByDate: meals,
 					selectedDate,
 				}),
 			{
@@ -170,12 +170,12 @@ describe('useMonthGridKeyboard', () => {
 			},
 		);
 
-		// Enter event mode on Sep 15 (index 14)
+		// Enter meal mode on Sep 15 (index 14)
 		act(() => {
 			result.current.getDayProps(14).onKeyDown(createKeyboardEvent('Enter'));
 		});
 		expect(result.current.getDayProps(14).tabIndex).toBe(-1);
-		expect(result.current.getEventProps(14, 0, '2025-09-15').tabIndex).toBe(0);
+		expect(result.current.getMealProps(14, 0, '2025-09-15').tabIndex).toBe(0);
 
 		// Change days to October grid
 		const days2 = createDays(DateTime.local(2025, 10, 1));
@@ -183,14 +183,14 @@ describe('useMonthGridKeyboard', () => {
 
 		// Event mode should be exited; Oct 15 is index 14 and should be focused
 		expect(result.current.getDayProps(14).tabIndex).toBe(0);
-		expect(result.current.getEventProps(14, 0, '2025-10-16').tabIndex).toBe(-1);
+		expect(result.current.getMealProps(14, 0, '2025-10-16').tabIndex).toBe(-1);
 	});
 
-	it('clears event refs when days change', () => {
+	it('clears meal refs when days change', () => {
 		vi.setSystemTime(new Date(2025, 9, 15)); // Oct 15, 2025
 
 		const days1 = createDays(DateTime.local(2025, 9, 1));
-		const events1 = new Map<string, MonthGridEvent[]>([
+		const meals1 = new Map<string, MonthGridMeal[]>([
 			[
 				'2025-09-15',
 				[
@@ -201,37 +201,37 @@ describe('useMonthGridKeyboard', () => {
 		]);
 
 		const { result, rerender } = renderHook(
-			({ days, eventsByDate, selectedDate }) =>
+			({ days, mealsByDate, selectedDate }) =>
 				useMonthGridKeyboard({
 					days,
-					eventsByDate,
+					mealsByDate,
 					selectedDate,
 				}),
 			{
 				initialProps: {
 					days: days1,
-					eventsByDate: events1,
+					mealsByDate: meals1,
 					selectedDate,
 				},
 			},
 		);
 
-		// Enter event mode
+		// Enter meal mode
 		act(() => {
 			result.current.getDayProps(14).onKeyDown(createKeyboardEvent('Enter'));
 		});
 
 		// Call ref callbacks to register elements
-		const ref1 = result.current.getEventProps(14, 0, '2025-09-15').ref;
-		const ref2 = result.current.getEventProps(14, 1, '2025-09-15').ref;
+		const ref1 = result.current.getMealProps(14, 0, '2025-09-15').ref;
+		const ref2 = result.current.getMealProps(14, 1, '2025-09-15').ref;
 		const el1 = document.createElement('div');
 		const el2 = document.createElement('div');
 		ref1(el1);
 		ref2(el2);
 
-		// Change days and events
+		// Change days and meals
 		const days2 = createDays(DateTime.local(2025, 10, 1));
-		const events2 = new Map<string, MonthGridEvent[]>([
+		const meals2 = new Map<string, MonthGridMeal[]>([
 			[
 				'2025-10-16',
 				[
@@ -242,17 +242,17 @@ describe('useMonthGridKeyboard', () => {
 		]);
 		rerender({
 			days: days2,
-			eventsByDate: events2,
+			mealsByDate: meals2,
 			selectedDate: selectedDateOct,
 		});
 
-		// Should be able to cleanly enter event mode on new day (Oct 16 = index 15)
+		// Should be able to cleanly enter meal mode on new day (Oct 16 = index 15)
 		act(() => {
 			result.current.getDayProps(15).onKeyDown(createKeyboardEvent('Enter'));
 		});
 
 		expect(result.current.getDayProps(15).tabIndex).toBe(-1);
-		expect(result.current.getEventProps(15, 0, '2025-10-16').tabIndex).toBe(0);
+		expect(result.current.getMealProps(15, 0, '2025-10-16').tabIndex).toBe(0);
 	});
 
 	it('returns tabIndex=0 for focused day and -1 for others', () => {
@@ -262,7 +262,7 @@ describe('useMonthGridKeyboard', () => {
 		const { result } = renderHook(() =>
 			useMonthGridKeyboard({
 				days,
-				eventsByDate: new Map(),
+				mealsByDate: new Map(),
 				selectedDate,
 			}),
 		);
@@ -283,7 +283,7 @@ describe('useMonthGridKeyboard', () => {
 		const { result } = renderHook(() =>
 			useMonthGridKeyboard({
 				days,
-				eventsByDate: new Map(),
+				mealsByDate: new Map(),
 				selectedDate,
 			}),
 		);
@@ -305,7 +305,7 @@ describe('useMonthGridKeyboard', () => {
 		const { result } = renderHook(() =>
 			useMonthGridKeyboard({
 				days,
-				eventsByDate: new Map(),
+				mealsByDate: new Map(),
 				selectedDate,
 			}),
 		);
@@ -362,7 +362,7 @@ describe('useMonthGridKeyboard', () => {
 		const { result } = renderHook(() =>
 			useMonthGridKeyboard({
 				days,
-				eventsByDate: new Map(),
+				mealsByDate: new Map(),
 				selectedDate,
 			}),
 		);
@@ -392,7 +392,7 @@ describe('useMonthGridKeyboard', () => {
 		const { result } = renderHook(() =>
 			useMonthGridKeyboard({
 				days,
-				eventsByDate: new Map(),
+				mealsByDate: new Map(),
 				selectedDate,
 			}),
 		);
@@ -448,7 +448,7 @@ describe('useMonthGridKeyboard', () => {
 		const { result } = renderHook(() =>
 			useMonthGridKeyboard({
 				days,
-				eventsByDate: new Map(),
+				mealsByDate: new Map(),
 				selectedDate,
 			}),
 		);
@@ -468,7 +468,7 @@ describe('useMonthGridKeyboard', () => {
 		const { result } = renderHook(() =>
 			useMonthGridKeyboard({
 				days,
-				eventsByDate: new Map(),
+				mealsByDate: new Map(),
 				selectedDate,
 			}),
 		);
@@ -496,7 +496,7 @@ describe('useMonthGridKeyboard', () => {
 		const { result } = renderHook(() =>
 			useMonthGridKeyboard({
 				days,
-				eventsByDate: new Map(),
+				mealsByDate: new Map(),
 				selectedDate,
 			}),
 		);
@@ -514,7 +514,7 @@ describe('useMonthGridKeyboard', () => {
 		const { result } = renderHook(() =>
 			useMonthGridKeyboard({
 				days,
-				eventsByDate: new Map(),
+				mealsByDate: new Map(),
 				selectedDate,
 			}),
 		);
@@ -532,21 +532,21 @@ describe('useMonthGridKeyboard', () => {
 		expect(result.current.getDayProps(6).tabIndex).toBe(0);
 	});
 
-	it('calls onEventClick on Enter for single-event day', () => {
-		const onEventClick = vi.fn();
-		const event: MonthGridEvent = {
+	it('calls onMealClick on Enter for single-meal day', () => {
+		const onMealClick = vi.fn();
+		const meal: MonthGridMeal = {
 			id: '1',
 			date: '2025-09-15',
 			title: 'Event 1',
 		};
-		const events = new Map<string, MonthGridEvent[]>([['2025-09-15', [event]]]);
+		const meals = new Map<string, MonthGridMeal[]>([['2025-09-15', [meal]]]);
 
 		const days = createDays(DateTime.local(2025, 9, 1));
 		const { result } = renderHook(() =>
 			useMonthGridKeyboard({
 				days,
-				eventsByDate: events,
-				onEventClick,
+				mealsByDate: meals,
+				onMealClick,
 				selectedDate,
 			}),
 		);
@@ -555,8 +555,8 @@ describe('useMonthGridKeyboard', () => {
 			result.current.getDayProps(14).onKeyDown(createKeyboardEvent('Enter'));
 		});
 
-		expect(onEventClick).toHaveBeenCalledTimes(1);
-		expect(onEventClick).toHaveBeenCalledWith(event);
+		expect(onMealClick).toHaveBeenCalledTimes(1);
+		expect(onMealClick).toHaveBeenCalledWith(meal);
 	});
 
 	it('does nothing on Enter for empty day', () => {
@@ -566,7 +566,7 @@ describe('useMonthGridKeyboard', () => {
 		const { result } = renderHook(() =>
 			useMonthGridKeyboard({
 				days,
-				eventsByDate: new Map(),
+				mealsByDate: new Map(),
 				selectedDate,
 			}),
 		);
@@ -575,12 +575,12 @@ describe('useMonthGridKeyboard', () => {
 			result.current.getDayProps(14).onKeyDown(createKeyboardEvent('Enter'));
 		});
 
-		// Should remain focused without entering event mode
+		// Should remain focused without entering meal mode
 		expect(result.current.getDayProps(14).tabIndex).toBe(0);
 	});
 
-	it('enters event mode on Enter for multi-event day', () => {
-		const events = new Map<string, MonthGridEvent[]>([
+	it('enters meal mode on Enter for multi-meal day', () => {
+		const meals = new Map<string, MonthGridMeal[]>([
 			[
 				'2025-09-15',
 				[
@@ -594,7 +594,7 @@ describe('useMonthGridKeyboard', () => {
 		const { result } = renderHook(() =>
 			useMonthGridKeyboard({
 				days,
-				eventsByDate: events,
+				mealsByDate: meals,
 				selectedDate,
 			}),
 		);
@@ -604,12 +604,12 @@ describe('useMonthGridKeyboard', () => {
 		});
 
 		expect(result.current.getDayProps(14).tabIndex).toBe(-1);
-		expect(result.current.getEventProps(14, 0, '2025-09-15').tabIndex).toBe(0);
-		expect(result.current.getEventProps(14, 1, '2025-09-15').tabIndex).toBe(-1);
+		expect(result.current.getMealProps(14, 0, '2025-09-15').tabIndex).toBe(0);
+		expect(result.current.getMealProps(14, 1, '2025-09-15').tabIndex).toBe(-1);
 	});
 
-	it('does nothing on unhandled key in event mode', () => {
-		const events = new Map<string, MonthGridEvent[]>([
+	it('does nothing on unhandled key in meal mode', () => {
+		const meals = new Map<string, MonthGridMeal[]>([
 			[
 				'2025-09-15',
 				[
@@ -623,16 +623,16 @@ describe('useMonthGridKeyboard', () => {
 		const { result } = renderHook(() =>
 			useMonthGridKeyboard({
 				days,
-				eventsByDate: events,
+				mealsByDate: meals,
 				selectedDate,
 			}),
 		);
 
-		// Enter event mode
+		// Enter meal mode
 		act(() => {
 			result.current.getDayProps(14).onKeyDown(createKeyboardEvent('Enter'));
 		});
-		expect(result.current.getEventProps(14, 0, '2025-09-15').tabIndex).toBe(0);
+		expect(result.current.getMealProps(14, 0, '2025-09-15').tabIndex).toBe(0);
 
 		// Press an unhandled key (e.g., ArrowRight)
 		act(() => {
@@ -641,8 +641,8 @@ describe('useMonthGridKeyboard', () => {
 				.onKeyDown(createKeyboardEvent('ArrowRight'));
 		});
 
-		// Should stay in event mode on first event
-		expect(result.current.getEventProps(14, 0, '2025-09-15').tabIndex).toBe(0);
+		// Should stay in meal mode on first meal
+		expect(result.current.getMealProps(14, 0, '2025-09-15').tabIndex).toBe(0);
 		expect(result.current.getDayProps(14).tabIndex).toBe(-1);
 	});
 
@@ -653,7 +653,7 @@ describe('useMonthGridKeyboard', () => {
 		const { result } = renderHook(() =>
 			useMonthGridKeyboard({
 				days,
-				eventsByDate: new Map(),
+				mealsByDate: new Map(),
 				selectedDate,
 			}),
 		);
@@ -667,8 +667,8 @@ describe('useMonthGridKeyboard', () => {
 		expect(result.current.getDayProps(14).tabIndex).toBe(0);
 	});
 
-	it('sets day tabIndex to -1 and first event to 0 in event mode', () => {
-		const events = new Map<string, MonthGridEvent[]>([
+	it('sets day tabIndex to -1 and first meal to 0 in meal mode', () => {
+		const meals = new Map<string, MonthGridMeal[]>([
 			[
 				'2025-09-15',
 				[
@@ -682,7 +682,7 @@ describe('useMonthGridKeyboard', () => {
 		const { result } = renderHook(() =>
 			useMonthGridKeyboard({
 				days,
-				eventsByDate: events,
+				mealsByDate: meals,
 				selectedDate,
 			}),
 		);
@@ -693,17 +693,17 @@ describe('useMonthGridKeyboard', () => {
 
 		// Day should have tabIndex -1
 		expect(result.current.getDayProps(14).tabIndex).toBe(-1);
-		// First event should have tabIndex 0
-		expect(result.current.getEventProps(14, 0, '2025-09-15').tabIndex).toBe(0);
-		// Other events should have tabIndex -1
-		expect(result.current.getEventProps(14, 1, '2025-09-15').tabIndex).toBe(-1);
+		// First meal should have tabIndex 0
+		expect(result.current.getMealProps(14, 0, '2025-09-15').tabIndex).toBe(0);
+		// Other meals should have tabIndex -1
+		expect(result.current.getMealProps(14, 1, '2025-09-15').tabIndex).toBe(-1);
 		// Other days should still have tabIndex -1
 		expect(result.current.getDayProps(13).tabIndex).toBe(-1);
 		expect(result.current.getDayProps(15).tabIndex).toBe(-1);
 	});
 
-	it('navigates events with ArrowDown in event mode', () => {
-		const events = new Map<string, MonthGridEvent[]>([
+	it('navigates meals with ArrowDown in meal mode', () => {
+		const meals = new Map<string, MonthGridMeal[]>([
 			[
 				'2025-09-15',
 				[
@@ -718,29 +718,29 @@ describe('useMonthGridKeyboard', () => {
 		const { result } = renderHook(() =>
 			useMonthGridKeyboard({
 				days,
-				eventsByDate: events,
+				mealsByDate: meals,
 				selectedDate,
 			}),
 		);
 
-		// Enter event mode
+		// Enter meal mode
 		act(() => {
 			result.current.getDayProps(14).onKeyDown(createKeyboardEvent('Enter'));
 		});
-		expect(result.current.getEventProps(14, 0, '2025-09-15').tabIndex).toBe(0);
+		expect(result.current.getMealProps(14, 0, '2025-09-15').tabIndex).toBe(0);
 
-		// ArrowDown to next event
+		// ArrowDown to next meal
 		act(() => {
 			result.current
 				.getDayProps(14)
 				.onKeyDown(createKeyboardEvent('ArrowDown'));
 		});
-		expect(result.current.getEventProps(14, 0, '2025-09-15').tabIndex).toBe(-1);
-		expect(result.current.getEventProps(14, 1, '2025-09-15').tabIndex).toBe(0);
+		expect(result.current.getMealProps(14, 0, '2025-09-15').tabIndex).toBe(-1);
+		expect(result.current.getMealProps(14, 1, '2025-09-15').tabIndex).toBe(0);
 	});
 
-	it('navigates events with ArrowUp in event mode', () => {
-		const events = new Map<string, MonthGridEvent[]>([
+	it('navigates meals with ArrowUp in meal mode', () => {
+		const meals = new Map<string, MonthGridMeal[]>([
 			[
 				'2025-09-15',
 				[
@@ -755,12 +755,12 @@ describe('useMonthGridKeyboard', () => {
 		const { result } = renderHook(() =>
 			useMonthGridKeyboard({
 				days,
-				eventsByDate: events,
+				mealsByDate: meals,
 				selectedDate,
 			}),
 		);
 
-		// Enter event mode
+		// Enter meal mode
 		act(() => {
 			result.current.getDayProps(14).onKeyDown(createKeyboardEvent('Enter'));
 		});
@@ -776,18 +776,18 @@ describe('useMonthGridKeyboard', () => {
 				.getDayProps(14)
 				.onKeyDown(createKeyboardEvent('ArrowDown'));
 		});
-		expect(result.current.getEventProps(14, 2, '2025-09-15').tabIndex).toBe(0);
+		expect(result.current.getMealProps(14, 2, '2025-09-15').tabIndex).toBe(0);
 
-		// ArrowUp to previous event
+		// ArrowUp to previous meal
 		act(() => {
 			result.current.getDayProps(14).onKeyDown(createKeyboardEvent('ArrowUp'));
 		});
-		expect(result.current.getEventProps(14, 2, '2025-09-15').tabIndex).toBe(-1);
-		expect(result.current.getEventProps(14, 1, '2025-09-15').tabIndex).toBe(0);
+		expect(result.current.getMealProps(14, 2, '2025-09-15').tabIndex).toBe(-1);
+		expect(result.current.getMealProps(14, 1, '2025-09-15').tabIndex).toBe(0);
 	});
 
-	it('stops at first event boundary with ArrowUp in event mode', () => {
-		const events = new Map<string, MonthGridEvent[]>([
+	it('stops at first meal boundary with ArrowUp in meal mode', () => {
+		const meals = new Map<string, MonthGridMeal[]>([
 			[
 				'2025-09-15',
 				[
@@ -801,26 +801,26 @@ describe('useMonthGridKeyboard', () => {
 		const { result } = renderHook(() =>
 			useMonthGridKeyboard({
 				days,
-				eventsByDate: events,
+				mealsByDate: meals,
 				selectedDate,
 			}),
 		);
 
-		// Enter event mode
+		// Enter meal mode
 		act(() => {
 			result.current.getDayProps(14).onKeyDown(createKeyboardEvent('Enter'));
 		});
-		expect(result.current.getEventProps(14, 0, '2025-09-15').tabIndex).toBe(0);
+		expect(result.current.getMealProps(14, 0, '2025-09-15').tabIndex).toBe(0);
 
-		// Try to move up from first event
+		// Try to move up from first meal
 		act(() => {
 			result.current.getDayProps(14).onKeyDown(createKeyboardEvent('ArrowUp'));
 		});
-		expect(result.current.getEventProps(14, 0, '2025-09-15').tabIndex).toBe(0);
+		expect(result.current.getMealProps(14, 0, '2025-09-15').tabIndex).toBe(0);
 	});
 
-	it('stops at last event boundary with ArrowDown in event mode', () => {
-		const events = new Map<string, MonthGridEvent[]>([
+	it('stops at last meal boundary with ArrowDown in meal mode', () => {
+		const meals = new Map<string, MonthGridMeal[]>([
 			[
 				'2025-09-15',
 				[
@@ -834,44 +834,44 @@ describe('useMonthGridKeyboard', () => {
 		const { result } = renderHook(() =>
 			useMonthGridKeyboard({
 				days,
-				eventsByDate: events,
+				mealsByDate: meals,
 				selectedDate,
 			}),
 		);
 
-		// Enter event mode
+		// Enter meal mode
 		act(() => {
 			result.current.getDayProps(14).onKeyDown(createKeyboardEvent('Enter'));
 		});
 
-		// Move to last event
+		// Move to last meal
 		act(() => {
 			result.current
 				.getDayProps(14)
 				.onKeyDown(createKeyboardEvent('ArrowDown'));
 		});
-		expect(result.current.getEventProps(14, 1, '2025-09-15').tabIndex).toBe(0);
+		expect(result.current.getMealProps(14, 1, '2025-09-15').tabIndex).toBe(0);
 
-		// Try to move down from last event
+		// Try to move down from last meal
 		act(() => {
 			result.current
 				.getDayProps(14)
 				.onKeyDown(createKeyboardEvent('ArrowDown'));
 		});
-		expect(result.current.getEventProps(14, 1, '2025-09-15').tabIndex).toBe(0);
+		expect(result.current.getMealProps(14, 1, '2025-09-15').tabIndex).toBe(0);
 	});
 
-	it('calls onEventClick on Enter in event mode', () => {
-		const onEventClick = vi.fn();
-		const event2: MonthGridEvent = {
+	it('calls onMealClick on Enter in meal mode', () => {
+		const onMealClick = vi.fn();
+		const meal2: MonthGridMeal = {
 			id: '2',
 			date: '2025-09-15',
 			title: 'Event 2',
 		};
-		const events = new Map<string, MonthGridEvent[]>([
+		const meals = new Map<string, MonthGridMeal[]>([
 			[
 				'2025-09-15',
-				[{ id: '1', date: '2025-09-15', title: 'Event 1' }, event2],
+				[{ id: '1', date: '2025-09-15', title: 'Event 1' }, meal2],
 			],
 		]);
 
@@ -879,18 +879,18 @@ describe('useMonthGridKeyboard', () => {
 		const { result } = renderHook(() =>
 			useMonthGridKeyboard({
 				days,
-				eventsByDate: events,
-				onEventClick,
+				mealsByDate: meals,
+				onMealClick,
 				selectedDate,
 			}),
 		);
 
-		// Enter event mode
+		// Enter meal mode
 		act(() => {
 			result.current.getDayProps(14).onKeyDown(createKeyboardEvent('Enter'));
 		});
 
-		// Move to second event
+		// Move to second meal
 		act(() => {
 			result.current
 				.getDayProps(14)
@@ -902,13 +902,13 @@ describe('useMonthGridKeyboard', () => {
 			result.current.getDayProps(14).onKeyDown(createKeyboardEvent('Enter'));
 		});
 
-		expect(onEventClick).toHaveBeenCalledTimes(1);
-		expect(onEventClick).toHaveBeenCalledWith(event2);
+		expect(onMealClick).toHaveBeenCalledTimes(1);
+		expect(onMealClick).toHaveBeenCalledWith(meal2);
 	});
 
-	it('does not call onEventClick when events disappear while in event mode', () => {
-		const onEventClick = vi.fn();
-		const events1 = new Map<string, MonthGridEvent[]>([
+	it('does not call onMealClick when meals disappear while in meal mode', () => {
+		const onMealClick = vi.fn();
+		const meals1 = new Map<string, MonthGridMeal[]>([
 			[
 				'2025-09-15',
 				[
@@ -920,17 +920,17 @@ describe('useMonthGridKeyboard', () => {
 
 		const days = createDays(DateTime.local(2025, 9, 1));
 		const { result, rerender } = renderHook(
-			({ eventsByDate }) =>
+			({ mealsByDate }) =>
 				useMonthGridKeyboard({
 					days,
-					eventsByDate,
-					onEventClick,
+					mealsByDate,
+					onMealClick,
 					selectedDate,
 				}),
-			{ initialProps: { eventsByDate: events1 } },
+			{ initialProps: { mealsByDate: meals1 } },
 		);
 
-		// Enter event mode and move to second event
+		// Enter meal mode and move to second meal
 		act(() => {
 			result.current.getDayProps(14).onKeyDown(createKeyboardEvent('Enter'));
 		});
@@ -941,21 +941,21 @@ describe('useMonthGridKeyboard', () => {
 		});
 
 		// Events disappear
-		const events2 = new Map<string, MonthGridEvent[]>();
-		rerender({ eventsByDate: events2 });
+		const meals2 = new Map<string, MonthGridMeal[]>();
+		rerender({ mealsByDate: meals2 });
 
-		// Press Enter - should not call onEventClick due to stale guard
+		// Press Enter - should not call onMealClick due to stale guard
 		act(() => {
 			result.current.getDayProps(14).onKeyDown(createKeyboardEvent('Enter'));
 		});
 
-		expect(onEventClick).not.toHaveBeenCalled();
+		expect(onMealClick).not.toHaveBeenCalled();
 	});
 
-	it('exits event mode on Escape', () => {
+	it('exits meal mode on Escape', () => {
 		vi.setSystemTime(new Date(2025, 8, 15)); // Sep 15, index 14
 
-		const events = new Map<string, MonthGridEvent[]>([
+		const meals = new Map<string, MonthGridMeal[]>([
 			[
 				'2025-09-15',
 				[
@@ -969,17 +969,17 @@ describe('useMonthGridKeyboard', () => {
 		const { result } = renderHook(() =>
 			useMonthGridKeyboard({
 				days,
-				eventsByDate: events,
+				mealsByDate: meals,
 				selectedDate,
 			}),
 		);
 
-		// Enter event mode
+		// Enter meal mode
 		act(() => {
 			result.current.getDayProps(14).onKeyDown(createKeyboardEvent('Enter'));
 		});
 		expect(result.current.getDayProps(14).tabIndex).toBe(-1);
-		expect(result.current.getEventProps(14, 0, '2025-09-15').tabIndex).toBe(0);
+		expect(result.current.getMealProps(14, 0, '2025-09-15').tabIndex).toBe(0);
 
 		// Press Escape
 		act(() => {
@@ -987,7 +987,7 @@ describe('useMonthGridKeyboard', () => {
 		});
 
 		expect(result.current.getDayProps(14).tabIndex).toBe(0);
-		expect(result.current.getEventProps(14, 0, '2025-09-15').tabIndex).toBe(-1);
+		expect(result.current.getMealProps(14, 0, '2025-09-15').tabIndex).toBe(-1);
 	});
 
 	it('sets focused day on click', () => {
@@ -997,7 +997,7 @@ describe('useMonthGridKeyboard', () => {
 		const { result } = renderHook(() =>
 			useMonthGridKeyboard({
 				days,
-				eventsByDate: new Map(),
+				mealsByDate: new Map(),
 				selectedDate,
 			}),
 		);
@@ -1012,8 +1012,8 @@ describe('useMonthGridKeyboard', () => {
 		expect(result.current.getDayProps(20).tabIndex).toBe(0);
 	});
 
-	it('exits event mode on click', () => {
-		const events = new Map<string, MonthGridEvent[]>([
+	it('exits meal mode on click', () => {
+		const meals = new Map<string, MonthGridMeal[]>([
 			[
 				'2025-09-15',
 				[
@@ -1027,12 +1027,12 @@ describe('useMonthGridKeyboard', () => {
 		const { result } = renderHook(() =>
 			useMonthGridKeyboard({
 				days,
-				eventsByDate: events,
+				mealsByDate: meals,
 				selectedDate,
 			}),
 		);
 
-		// Enter event mode
+		// Enter meal mode
 		act(() => {
 			result.current.getDayProps(14).onKeyDown(createKeyboardEvent('Enter'));
 		});
@@ -1044,11 +1044,11 @@ describe('useMonthGridKeyboard', () => {
 		});
 
 		expect(result.current.getDayProps(20).tabIndex).toBe(0);
-		expect(result.current.getEventProps(14, 0, '2025-09-15').tabIndex).toBe(-1);
+		expect(result.current.getMealProps(14, 0, '2025-09-15').tabIndex).toBe(-1);
 	});
 
-	it('event mode persists through accessing event props', () => {
-		const events = new Map<string, MonthGridEvent[]>([
+	it('meal mode persists through accessing meal props', () => {
+		const meals = new Map<string, MonthGridMeal[]>([
 			[
 				'2025-09-15',
 				[
@@ -1062,24 +1062,24 @@ describe('useMonthGridKeyboard', () => {
 		const { result } = renderHook(() =>
 			useMonthGridKeyboard({
 				days,
-				eventsByDate: events,
+				mealsByDate: meals,
 				selectedDate,
 			}),
 		);
 
-		// Enter event mode
+		// Enter meal mode
 		act(() => {
 			result.current.getDayProps(14).onKeyDown(createKeyboardEvent('Enter'));
 		});
-		expect(result.current.getEventProps(14, 0, '2025-09-15').tabIndex).toBe(0);
+		expect(result.current.getMealProps(14, 0, '2025-09-15').tabIndex).toBe(0);
 
-		// Accessing event props should not clear event mode
-		expect(result.current.getEventProps(14, 1, '2025-09-15').tabIndex).toBe(-1);
+		// Accessing meal props should not clear meal mode
+		expect(result.current.getMealProps(14, 1, '2025-09-15').tabIndex).toBe(-1);
 		expect(result.current.getDayProps(14).tabIndex).toBe(-1);
 	});
 
-	it('event mode persists through day keydown in event mode', () => {
-		const events = new Map<string, MonthGridEvent[]>([
+	it('meal mode persists through day keydown in meal mode', () => {
+		const meals = new Map<string, MonthGridMeal[]>([
 			[
 				'2025-09-15',
 				[
@@ -1093,32 +1093,32 @@ describe('useMonthGridKeyboard', () => {
 		const { result } = renderHook(() =>
 			useMonthGridKeyboard({
 				days,
-				eventsByDate: events,
+				mealsByDate: meals,
 				selectedDate,
 			}),
 		);
 
-		// Enter event mode
+		// Enter meal mode
 		act(() => {
 			result.current.getDayProps(14).onKeyDown(createKeyboardEvent('Enter'));
 		});
-		expect(result.current.getEventProps(14, 0, '2025-09-15').tabIndex).toBe(0);
+		expect(result.current.getMealProps(14, 0, '2025-09-15').tabIndex).toBe(0);
 
-		// Pressing an unhandled key should not clear event mode
+		// Pressing an unhandled key should not clear meal mode
 		act(() => {
 			result.current
 				.getDayProps(14)
 				.onKeyDown(createKeyboardEvent('ArrowRight'));
 		});
 
-		expect(result.current.getEventProps(14, 0, '2025-09-15').tabIndex).toBe(0);
+		expect(result.current.getMealProps(14, 0, '2025-09-15').tabIndex).toBe(0);
 		expect(result.current.getDayProps(14).tabIndex).toBe(-1);
 	});
 
-	it('exits event mode on Escape after navigating events', () => {
+	it('exits meal mode on Escape after navigating meals', () => {
 		vi.setSystemTime(new Date(2025, 8, 15)); // Sep 15, index 14
 
-		const events = new Map<string, MonthGridEvent[]>([
+		const meals = new Map<string, MonthGridMeal[]>([
 			[
 				'2025-09-15',
 				[
@@ -1132,12 +1132,12 @@ describe('useMonthGridKeyboard', () => {
 		const { result } = renderHook(() =>
 			useMonthGridKeyboard({
 				days,
-				eventsByDate: events,
+				mealsByDate: meals,
 				selectedDate,
 			}),
 		);
 
-		// Enter event mode and navigate to second event
+		// Enter meal mode and navigate to second meal
 		act(() => {
 			result.current.getDayProps(14).onKeyDown(createKeyboardEvent('Enter'));
 		});
@@ -1147,7 +1147,7 @@ describe('useMonthGridKeyboard', () => {
 				.onKeyDown(createKeyboardEvent('ArrowDown'));
 		});
 
-		expect(result.current.getEventProps(14, 1, '2025-09-15').tabIndex).toBe(0);
+		expect(result.current.getMealProps(14, 1, '2025-09-15').tabIndex).toBe(0);
 
 		// Press Escape
 		act(() => {
@@ -1155,7 +1155,7 @@ describe('useMonthGridKeyboard', () => {
 		});
 
 		expect(result.current.getDayProps(14).tabIndex).toBe(0);
-		expect(result.current.getEventProps(14, 0, '2025-09-15').tabIndex).toBe(-1);
-		expect(result.current.getEventProps(14, 1, '2025-09-15').tabIndex).toBe(-1);
+		expect(result.current.getMealProps(14, 0, '2025-09-15').tabIndex).toBe(-1);
+		expect(result.current.getMealProps(14, 1, '2025-09-15').tabIndex).toBe(-1);
 	});
 });

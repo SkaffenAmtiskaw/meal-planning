@@ -32,7 +32,7 @@ type CalendarViewContentProps = {
 	calendar: SerializedDay[];
 	clickedEvent: CalendarEvent | null;
 	onClose: () => void;
-	onEventClick: (event: CalendarEvent) => void;
+	onMealClick: (meal: CalendarEvent) => void;
 };
 
 function CalendarViewContent({
@@ -41,7 +41,7 @@ function CalendarViewContent({
 	calendar,
 	clickedEvent,
 	onClose,
-	onEventClick,
+	onMealClick,
 }: CalendarViewContentProps): ReactElement {
 	const { viewType } = useCalendarContext();
 	const isMobile = useIsMobile();
@@ -66,7 +66,7 @@ function CalendarViewContent({
 						<MealCalendar
 							calendar={calendar}
 							savedItems={savedItems}
-							onEventClick={onEventClick}
+							onMealClick={onMealClick}
 						/>
 					))}
 				{viewType === 'week' && (
@@ -74,7 +74,7 @@ function CalendarViewContent({
 						calendar={calendar}
 						savedItems={savedItems}
 						plannerId={plannerId}
-						onEventClick={onEventClick}
+						onMealClick={onMealClick}
 					/>
 				)}
 				{viewType === 'list' && (
@@ -104,7 +104,7 @@ export function CalendarView({
 				calendar={calendar}
 				clickedEvent={clickedEvent}
 				onClose={() => setClickedEvent(null)}
-				onEventClick={setClickedEvent}
+				onMealClick={setClickedEvent}
 			/>
 		</CalendarProvider>
 	);

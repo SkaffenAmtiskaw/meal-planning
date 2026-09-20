@@ -8,7 +8,7 @@ import { useDisclosure } from '@mantine/hooks';
 
 import type { DateTime } from 'luxon';
 
-import type { ListViewDish, ListViewEvent } from '@/_components/Calendar';
+import type { CalendarDish, CalendarMeal } from '@/_components/Calendar';
 import { ListView } from '@/_components/Calendar';
 import { useIsMobile } from '@/_hooks';
 import { getMealColor, TAG_COLORS } from '@/_theme/colors';
@@ -36,7 +36,7 @@ export function MealListView({
 	const [opened, { open, close }] = useDisclosure(false);
 	const [dateForAdd, setDateForAdd] = useState<DateTime | null>(null);
 
-	const events: ListViewEvent[] = useMemo(() => {
+	const events: CalendarMeal[] = useMemo(() => {
 		const calendarEvents = toCalendarEvents(calendar, savedItems);
 
 		return calendarEvents.map((event) => ({
@@ -53,7 +53,7 @@ export function MealListView({
 		return <MobileListViewPlaceholder />;
 	}
 
-	const renderDish = (dish: ListViewDish) => (
+	const renderDish = (dish: CalendarDish) => (
 		<DishLink dish={dish} plannerId={plannerId} size="sm" />
 	);
 

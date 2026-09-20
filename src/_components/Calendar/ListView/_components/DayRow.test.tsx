@@ -6,20 +6,20 @@ import { DateTime } from 'luxon';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { DayRow } from './DayRow';
-import type { ListViewDish } from './DishListItem';
 
-import type { ListViewEvent } from '../ListViewEvent.types';
+import type { CalendarDish } from '../../_components/DishListItem/DishListItem';
+import type { CalendarMeal } from '../../_types/CalendarMeal.types';
 
 vi.mock('@mantine/core', async () => await import('@mocks/@mantine/core'));
 
-vi.mock('./MealCard', () => ({
-	MealCard: vi.fn(
+vi.mock('./MealCardWithDragHandle', () => ({
+	MealCardWithDragHandle: vi.fn(
 		({
 			event,
 			renderDish,
 		}: {
-			event: ListViewEvent;
-			renderDish?: (dish: ListViewDish) => ReactNode;
+			event: CalendarMeal;
+			renderDish?: (dish: CalendarDish) => ReactNode;
 		}) => (
 			<div
 				data-testid="meal-card"
@@ -48,7 +48,7 @@ vi.mock('./DayRow.module.css', () => ({
 	},
 }));
 
-function createMeal(id: string): ListViewEvent {
+function createMeal(id: string): CalendarMeal {
 	return {
 		id,
 		date: '2024-06-15',
@@ -172,7 +172,7 @@ describe('DayRow', () => {
 		expect(screen.queryByRole('button')).toBeNull();
 	});
 
-	it('renders MealCards when meals are provided', () => {
+	it('renders MealCardWithDragHandles when meals are provided', () => {
 		const date = DateTime.local(2024, 6, 15);
 		const today = DateTime.local(2024, 6, 10);
 		const meals = [createMeal('meal-1'), createMeal('meal-2')];
@@ -207,11 +207,11 @@ describe('DayRow', () => {
 		expect(screen.queryByTestId('meal-card')).toBeNull();
 	});
 
-	it('passes renderDish to MealCard when provided', () => {
+	it('passes renderDish to MealCardWithDragHandle when provided', () => {
 		const date = DateTime.local(2024, 6, 15);
 		const today = DateTime.local(2024, 6, 10);
 		const meals = [createMeal('meal-1'), createMeal('meal-2')];
-		const renderDish = (dish: ListViewDish) => <span>{dish.name}</span>;
+		const renderDish = (dish: CalendarDish) => <span>{dish.name}</span>;
 
 		render(
 			<DayRow
@@ -228,7 +228,7 @@ describe('DayRow', () => {
 		expect(cards[1].getAttribute('data-render-dish')).toBe('provided');
 	});
 
-	it('does not pass renderDish to MealCard when omitted', () => {
+	it('does not pass renderDish to MealCardWithDragHandle when omitted', () => {
 		const date = DateTime.local(2024, 6, 15);
 		const today = DateTime.local(2024, 6, 10);
 		const meals = [createMeal('meal-1')];

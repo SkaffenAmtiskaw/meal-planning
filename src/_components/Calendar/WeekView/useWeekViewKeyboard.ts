@@ -2,12 +2,12 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 
 import { DateTime } from 'luxon';
 
-import type { WeekViewEvent } from './WeekView';
+import type { WeekViewMeal } from './WeekView';
 
 export interface UseWeekViewKeyboardOptions {
 	days: DateTime[];
-	eventsByDate: Map<string, WeekViewEvent[]>;
-	onEventClick?: (event: WeekViewEvent) => void;
+	mealsByDate: Map<string, WeekViewMeal[]>;
+	onMealClick?: (meal: WeekViewMeal) => void;
 	selectedDate: DateTime;
 }
 
@@ -18,18 +18,18 @@ export interface DayKeyboardProps {
 	ref: (el: HTMLElement | null) => void;
 }
 
-export interface EventKeyboardProps {
+export interface MealKeyboardProps {
 	tabIndex: 0 | -1;
 	ref: React.RefCallback<HTMLElement>;
 }
 
 export interface UseWeekViewKeyboardResult {
 	getDayProps: (dayIndex: number) => DayKeyboardProps;
-	getEventProps: (
+	getMealProps: (
 		dayIndex: number,
-		eventIndex: number,
+		mealIndex: number,
 		isoDate: string,
-	) => EventKeyboardProps;
+	) => MealKeyboardProps;
 }
 
 function computeInitialFocusIndex(
@@ -51,30 +51,30 @@ function computeInitialFocusIndex(
 export function useWeekViewKeyboard(
 	options: UseWeekViewKeyboardOptions,
 ): UseWeekViewKeyboardResult {
-	const { days, eventsByDate, onEventClick, selectedDate } = options;
+	const { days, mealsByDate, onMealClick, selectedDate } = options;
 
 	const [focusedDayIndex, setFocusedDayIndex] = useState(() =>
 		computeInitialFocusIndex(days, selectedDate),
 	);
-	const [eventMode, setEventMode] = useState<{
+	const [mealMode, setMealMode] = useState<{
 		dayIndex: number;
-		eventIndex: number;
+		mealIndex: number;
 	} | null>(null);
 
 	const dayRefs = useRef<(HTMLElement | null)[]>([]);
-	const eventRefs = useRef<Record<string, (HTMLElement | null)[]>>({});
+	const mealRefs = useRef<Record<string, (HTMLElement | null)[]>>({});
 	const focusDayFlag = useRef(false);
-	const focusEventFlag = useRef(false);
+	const focusMealFlag = useRef(false);
 	const daysRef = useRef(days);
 	daysRef.current = days;
-	const eventModeRef = useRef(eventMode);
-	eventModeRef.current = eventMode;
+	const mealModeRef = useRef(mealMode);
+	mealModeRef.current = mealMode;
 
 	// Reset on days or selectedDate change
 	useEffect(() => {
 		setFocusedDayIndex(computeInitialFocusIndex(days, selectedDate));
-		setEventMode(null);
-		eventRefs.current = {};
+		setMealMode(null);
+		mealRefs.current = {};
 	}, [days, selectedDate]);
 
 	// Programmatic focus for days
@@ -85,56 +85,56 @@ export function useWeekViewKeyboard(
 		}
 	}, [focusedDayIndex]);
 
-	// Programmatic focus for events
+	// Programmatic focus for meals
 	useEffect(() => {
-		if (focusEventFlag.current && eventMode) {
-			focusEventFlag.current = false;
+		if (focusMealFlag.current && mealMode) {
+			focusMealFlag.current = false;
 			// biome-ignore lint/style/noNonNullAssertion: We know this will always be defined.
-			const isoDate = daysRef.current[eventMode.dayIndex].toISODate()!;
-			const refs = eventRefs.current[isoDate];
-			refs?.[eventMode.eventIndex]?.focus();
+			const isoDate = daysRef.current[mealMode.dayIndex].toISODate()!;
+			const refs = mealRefs.current[isoDate];
+			refs?.[mealMode.mealIndex]?.focus();
 		}
-	}, [eventMode]);
+	}, [mealMode]);
 
 	const handleDayClick = useCallback(
 		(dayIndex: number) => () => {
 			focusDayFlag.current = true;
 			setFocusedDayIndex(dayIndex);
-			setEventMode(null);
+			setMealMode(null);
 		},
 		[],
 	);
 
 	const handleDayKeyDown = useCallback(
 		(dayIndex: number) => (e: React.KeyboardEvent<HTMLElement>) => {
-			if (eventModeRef.current && eventModeRef.current.dayIndex === dayIndex) {
+			if (mealModeRef.current && mealModeRef.current.dayIndex === dayIndex) {
 				// biome-ignore lint/style/noNonNullAssertion: We know this will always be defined.
 				const isoDate = daysRef.current[dayIndex].toISODate()!;
-				const dayEvents = eventsByDate.get(isoDate) ?? [];
+				const dayMeals = mealsByDate.get(isoDate) ?? [];
 
 				if (e.key === 'ArrowDown') {
 					e.preventDefault();
-					const nextIndex = eventModeRef.current.eventIndex + 1;
-					if (nextIndex < dayEvents.length) {
-						focusEventFlag.current = true;
-						setEventMode({ dayIndex, eventIndex: nextIndex });
+					const nextIndex = mealModeRef.current.mealIndex + 1;
+					if (nextIndex < dayMeals.length) {
+						focusMealFlag.current = true;
+						setMealMode({ dayIndex, mealIndex: nextIndex });
 					}
 				} else if (e.key === 'ArrowUp') {
 					e.preventDefault();
-					const prevIndex = eventModeRef.current.eventIndex - 1;
+					const prevIndex = mealModeRef.current.mealIndex - 1;
 					if (prevIndex >= 0) {
-						focusEventFlag.current = true;
-						setEventMode({ dayIndex, eventIndex: prevIndex });
+						focusMealFlag.current = true;
+						setMealMode({ dayIndex, mealIndex: prevIndex });
 					}
 				} else if (e.key === 'Enter') {
 					e.preventDefault();
-					if (eventModeRef.current.eventIndex < dayEvents.length) {
-						onEventClick?.(dayEvents[eventModeRef.current.eventIndex]);
+					if (mealModeRef.current.mealIndex < dayMeals.length) {
+						onMealClick?.(dayMeals[mealModeRef.current.mealIndex]);
 					}
 				} else if (e.key === 'Escape') {
 					e.preventDefault();
-					setEventMode(null);
-					dayRefs.current[eventModeRef.current.dayIndex]?.focus();
+					setMealMode(null);
+					dayRefs.current[mealModeRef.current.dayIndex]?.focus();
 				}
 				return;
 			}
@@ -155,21 +155,21 @@ export function useWeekViewKeyboard(
 				e.preventDefault();
 				// biome-ignore lint/style/noNonNullAssertion: We know this will always be defined.
 				const isoDate = daysRef.current[dayIndex].toISODate()!;
-				const dayEvents = eventsByDate.get(isoDate) ?? [];
-				if (dayEvents.length > 0) {
-					focusEventFlag.current = true;
-					setEventMode({ dayIndex, eventIndex: 0 });
+				const dayMeals = mealsByDate.get(isoDate) ?? [];
+				if (dayMeals.length > 0) {
+					focusMealFlag.current = true;
+					setMealMode({ dayIndex, mealIndex: 0 });
 				}
 			}
 		},
-		[eventsByDate, onEventClick],
+		[mealsByDate, onMealClick],
 	);
 
 	const getDayProps = useCallback(
 		(dayIndex: number): DayKeyboardProps => {
 			const isActiveDay = focusedDayIndex === dayIndex;
-			const isEventModeDay = eventMode?.dayIndex === dayIndex;
-			const tabIndex = isEventModeDay ? -1 : isActiveDay ? 0 : -1;
+			const isMealModeDay = mealMode?.dayIndex === dayIndex;
+			const tabIndex = isMealModeDay ? -1 : isActiveDay ? 0 : -1;
 
 			return {
 				tabIndex: tabIndex as 0 | -1,
@@ -180,34 +180,34 @@ export function useWeekViewKeyboard(
 				},
 			};
 		},
-		[focusedDayIndex, eventMode, handleDayClick, handleDayKeyDown],
+		[focusedDayIndex, mealMode, handleDayClick, handleDayKeyDown],
 	);
 
-	const getEventProps = useCallback(
+	const getMealProps = useCallback(
 		(
 			dayIndex: number,
-			eventIndex: number,
+			mealIndex: number,
 			isoDate: string,
-		): EventKeyboardProps => {
-			const isEventModeDay = eventMode?.dayIndex === dayIndex;
+		): MealKeyboardProps => {
+			const isMealModeDay = mealMode?.dayIndex === dayIndex;
 			const tabIndex =
-				isEventModeDay && eventMode?.eventIndex === eventIndex ? 0 : -1;
+				isMealModeDay && mealMode?.mealIndex === mealIndex ? 0 : -1;
 
 			return {
 				tabIndex: tabIndex as 0 | -1,
 				ref: (el: HTMLElement | null) => {
-					if (!eventRefs.current[isoDate]) {
-						eventRefs.current[isoDate] = [];
+					if (!mealRefs.current[isoDate]) {
+						mealRefs.current[isoDate] = [];
 					}
-					eventRefs.current[isoDate][eventIndex] = el;
+					mealRefs.current[isoDate][mealIndex] = el;
 				},
 			};
 		},
-		[eventMode],
+		[mealMode],
 	);
 
 	return {
 		getDayProps,
-		getEventProps,
+		getMealProps,
 	};
 }

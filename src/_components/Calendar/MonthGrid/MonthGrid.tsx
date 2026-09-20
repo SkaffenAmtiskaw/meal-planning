@@ -22,51 +22,47 @@ import { useCalendarContext } from '../CalendarContext';
 import { getMonthGridDates } from '../_utils/getMonthGridDates';
 import { WEEKDAY_LABELS } from '../_utils/weekdays';
 
-export interface MonthGridEvent {
+export interface MonthGridMeal {
 	id: string;
 	date: string; // ISO date YYYY-MM-DD
 	title: string;
 	description?: string;
 }
 
-export interface MonthGridEventRenderProps {
+export interface MonthGridMealRenderProps {
 	tabIndex: 0 | -1;
 	ref: React.RefCallback<HTMLElement>;
 }
 
 export interface MonthGridProps {
-	events?: MonthGridEvent[];
-	renderEvent?: (
-		event: MonthGridEvent,
-		props: MonthGridEventRenderProps,
+	meals?: MonthGridMeal[];
+	renderMeal?: (
+		meal: MonthGridMeal,
+		props: MonthGridMealRenderProps,
 	) => React.ReactNode;
-	onEventClick?: (event: MonthGridEvent) => void;
+	onMealClick?: (meal: MonthGridMeal) => void;
 }
 
-export function MonthGrid({
-	events,
-	renderEvent,
-	onEventClick,
-}: MonthGridProps) {
+export function MonthGrid({ meals, renderMeal, onMealClick }: MonthGridProps) {
 	const { selectedDate } = useCalendarContext();
 
 	const days = useMemo(() => getMonthGridDates(selectedDate), [selectedDate]);
 	const today = DateTime.now();
 
-	const eventsByDate = useMemo(() => {
-		const map = new Map<string, MonthGridEvent[]>();
-		for (const event of events ?? []) {
-			const list = map.get(event.date) ?? [];
-			list.push(event);
-			map.set(event.date, list);
+	const mealsByDate = useMemo(() => {
+		const map = new Map<string, MonthGridMeal[]>();
+		for (const meal of meals ?? []) {
+			const list = map.get(meal.date) ?? [];
+			list.push(meal);
+			map.set(meal.date, list);
 		}
 		return map;
-	}, [events]);
+	}, [meals]);
 
-	const { getDayProps, getEventProps } = useMonthGridKeyboard({
+	const { getDayProps, getMealProps } = useMonthGridKeyboard({
 		days,
-		eventsByDate,
-		onEventClick,
+		mealsByDate,
+		onMealClick,
 		selectedDate,
 	});
 
@@ -88,13 +84,13 @@ export function MonthGrid({
 					const isCurrentMonth = day.hasSame(selectedDate, 'month');
 					const dayNumber = day.day;
 					const isoDate = day.toISODate() as string;
-					const dayEvents = eventsByDate.get(isoDate) ?? [];
-					const visibleEvents = dayEvents.slice(0, 2);
-					const overflowCount = dayEvents.length - visibleEvents.length;
+					const dayMeals = mealsByDate.get(isoDate) ?? [];
+					const visibleMeals = dayMeals.slice(0, 2);
+					const overflowCount = dayMeals.length - visibleMeals.length;
 
 					const ariaLabel =
-						dayEvents.length > 0
-							? `${day.toFormat('MMMM d')}, ${dayEvents.length} events`
+						dayMeals.length > 0
+							? `${day.toFormat('MMMM d')}, ${dayMeals.length} meals`
 							: undefined;
 
 					const dayProps = getDayProps(dayIndex);
@@ -126,26 +122,26 @@ export function MonthGrid({
 									</Text>
 								)}
 							</Center>
-							{dayEvents.length > 0 && (
+							{dayMeals.length > 0 && (
 								<Stack gap="xs" mt="xs">
-									{visibleEvents.map((event, eventIndex) => {
-										const eventProps = getEventProps(
+									{visibleMeals.map((meal, mealIndex) => {
+										const mealProps = getMealProps(
 											dayIndex,
-											eventIndex,
+											mealIndex,
 											isoDate,
 										);
 										return (
 											// biome-ignore lint/a11y/noStaticElementInteractions lint/a11y/useKeyWithClickEvents: Wrapper just prevents event propagation
-											<div key={event.id} onClick={(e) => e.stopPropagation()}>
-												{renderEvent ? (
-													renderEvent(event, eventProps)
+											<div key={meal.id} onClick={(e) => e.stopPropagation()}>
+												{renderMeal ? (
+													renderMeal(meal, mealProps)
 												) : (
 													<div
-														tabIndex={eventProps.tabIndex}
-														ref={eventProps.ref}
+														tabIndex={mealProps.tabIndex}
+														ref={mealProps.ref}
 														className={focusClasses.focusRing}
 													>
-														<Text size="xs">{event.title}</Text>
+														<Text size="xs">{meal.title}</Text>
 													</div>
 												)}
 											</div>

@@ -282,14 +282,16 @@ header on small screens.
 
 ## Step 4: Split `MealCard` into a base card and a drag-handle wrapper
 
+**Status**: ✅ Complete
+
 **What we're doing:** Make the meal card reusable by both the list view and the mobile agenda by
 moving the drag handle out of the card itself.
 
 **Acceptance criteria:**
-- [ ] Open the calendar page and switch to List view — meal cards still render with drag handles.
-- [ ] Meal cards still show name, description, dishes, notes, and links exactly as before.
-- [ ] The base `MealCard` (used later by the mobile agenda) contains no drag-handle markup or props.
-- [ ] Existing list view tests still pass (after updating imports).
+- [x] Open the calendar page and switch to List view — meal cards still render with drag handles.
+- [x] Meal cards still show name, description, dishes, notes, and links exactly as before.
+- [x] The base `MealCard` (used later by the mobile agenda) contains no drag-handle markup or props.
+- [x] Existing list view tests still pass (after updating imports).
 
 **Architectural plan:**
 - Move the card body into a new shared base component at
@@ -300,6 +302,10 @@ moving the drag handle out of the card itself.
   base card with the drag-handle rail.
 - Update `src/_components/Calendar/ListView/_components/DayRow.tsx` to import and render
   `MealCardWithDragHandle` instead of the old `MealCard`.
+
+**As built:** The `MealCardWithDragHandle` handoff also updated `DayRow.tsx` and `DayRow.test.tsx`
+in the same pass, and the obsolete `MealCard.*` files were removed with `git rm` afterward rather
+than by the subagent. The resulting structure and test coverage match the plan.
 
 ## Step 5: `MobileMonthGrid` component with real dot data
 

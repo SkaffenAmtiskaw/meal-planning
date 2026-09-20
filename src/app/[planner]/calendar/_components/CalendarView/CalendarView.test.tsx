@@ -143,7 +143,7 @@ describe('CalendarView', () => {
 		expect(screen.queryByTestId('meal-list-view')).toBeNull();
 	});
 
-	it('passes calendar, savedItems, plannerId, and onEventClick to MealWeekView', () => {
+	it('passes calendar, savedItems, plannerId, and onMealClick to MealWeekView', () => {
 		mockUseCalendarContext.mockReturnValue({
 			...defaultCalendarContext,
 			viewType: 'week',
@@ -155,7 +155,7 @@ describe('CalendarView', () => {
 				calendar: defaultProps.calendar,
 				savedItems: defaultProps.savedItems,
 				plannerId: 'planner-1',
-				onEventClick: expect.any(Function),
+				onMealClick: expect.any(Function),
 			}),
 			undefined,
 		);
@@ -219,20 +219,20 @@ describe('CalendarView', () => {
 		);
 	});
 
-	it('passes calendar, savedItems, and onEventClick to MealCalendar', () => {
+	it('passes calendar, savedItems, and onMealClick to MealCalendar', () => {
 		render(<CalendarView {...defaultProps} />);
 
 		expect(vi.mocked(MealCalendar)).toHaveBeenCalledWith(
 			expect.objectContaining({
 				calendar: defaultProps.calendar,
 				savedItems: defaultProps.savedItems,
-				onEventClick: expect.any(Function),
+				onMealClick: expect.any(Function),
 			}),
 			undefined,
 		);
 	});
 
-	it('opens MealDetailModal when MealCalendar onEventClick is triggered', () => {
+	it('opens MealDetailModal when MealCalendar onMealClick is triggered', () => {
 		render(<CalendarView {...defaultProps} />);
 
 		const fakeEvent: CalendarEvent = {
@@ -242,9 +242,9 @@ describe('CalendarView', () => {
 			title: 'Test Event',
 			dishes: [],
 		};
-		const { onEventClick } = vi.mocked(MealCalendar).mock.calls[0][0];
+		const { onMealClick } = vi.mocked(MealCalendar).mock.calls[0][0];
 		act(() => {
-			onEventClick?.(fakeEvent);
+			onMealClick?.(fakeEvent);
 		});
 
 		expect(vi.mocked(MealDetailModal)).toHaveBeenLastCalledWith(
@@ -253,7 +253,7 @@ describe('CalendarView', () => {
 		);
 	});
 
-	it('opens MealDetailModal when MealWeekView onEventClick is triggered', () => {
+	it('opens MealDetailModal when MealWeekView onMealClick is triggered', () => {
 		mockUseCalendarContext.mockReturnValue({
 			...defaultCalendarContext,
 			viewType: 'week',
@@ -267,9 +267,9 @@ describe('CalendarView', () => {
 			title: 'Test Event',
 			dishes: [],
 		};
-		const { onEventClick } = vi.mocked(MealWeekView).mock.calls[0][0];
+		const { onMealClick } = vi.mocked(MealWeekView).mock.calls[0][0];
 		act(() => {
-			onEventClick?.(fakeEvent);
+			onMealClick?.(fakeEvent);
 		});
 
 		expect(vi.mocked(MealDetailModal)).toHaveBeenLastCalledWith(

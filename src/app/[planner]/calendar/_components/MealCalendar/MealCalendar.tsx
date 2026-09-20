@@ -2,7 +2,7 @@
 
 import { useCallback, useMemo } from 'react';
 
-import type { MonthGridEvent, MonthGridProps } from '@/_components/Calendar';
+import type { MonthGridMeal, MonthGridProps } from '@/_components/Calendar';
 import { MonthGrid } from '@/_components/Calendar';
 
 import { MealEventCard } from './MealEventCard';
@@ -14,72 +14,72 @@ import type { SavedItem, SerializedDay } from '../../_utils/toScheduleXEvents';
 export interface MealCalendarProps {
 	calendar: SerializedDay[];
 	savedItems?: SavedItem[];
-	onEventClick?: (event: CalendarEvent) => void;
+	onMealClick?: (meal: CalendarEvent) => void;
 }
 
 export function MealCalendar({
 	calendar,
 	savedItems,
-	onEventClick,
+	onMealClick,
 }: MealCalendarProps) {
-	const events = useMemo(
+	const meals = useMemo(
 		() => toCalendarEvents(calendar, savedItems),
 		[calendar, savedItems],
 	);
 
-	const { monthGridEvents, eventMap } = useMemo(() => {
-		const monthGridEvents: MonthGridEvent[] = events.map((event) => ({
-			id: event.id,
-			date: event.start,
-			title: event.title,
-			description: event.description,
+	const { monthGridMeals, mealMap } = useMemo(() => {
+		const monthGridMeals: MonthGridMeal[] = meals.map((meal) => ({
+			id: meal.id,
+			date: meal.start,
+			title: meal.title,
+			description: meal.description,
 		}));
 
-		const eventMap = new Map<string, CalendarEvent>();
-		for (const event of events) {
-			eventMap.set(event.id, event);
+		const mealMap = new Map<string, CalendarEvent>();
+		for (const meal of meals) {
+			mealMap.set(meal.id, meal);
 		}
 
-		return { monthGridEvents, eventMap };
-	}, [events]);
+		return { monthGridMeals, mealMap };
+	}, [meals]);
 
-	const handleEventClick = useCallback(
-		(event: MonthGridEvent) => {
-			const calendarEvent = eventMap.get(event.id);
+	const handleMealClick = useCallback(
+		(meal: MonthGridMeal) => {
+			const calendarEvent = mealMap.get(meal.id);
 			if (calendarEvent) {
-				onEventClick?.(calendarEvent);
+				onMealClick?.(calendarEvent);
 			}
 		},
-		[eventMap, onEventClick],
+		[mealMap, onMealClick],
 	);
 
-	const renderEvent = useCallback(
+	const renderMeal = useCallback(
 		(
-			event: MonthGridEvent,
-			props: Parameters<NonNullable<MonthGridProps['renderEvent']>>[1],
+			meal: MonthGridMeal,
+			props: Parameters<NonNullable<MonthGridProps['renderMeal']>>[1],
 		) => {
-			const calendarEvent = eventMap.get(event.id);
+			const calendarEvent = mealMap.get(meal.id);
 			if (!calendarEvent) return null;
 
 			return (
 				<MealEventCard
-					event={event}
+					event={meal}
 					tabIndex={props.tabIndex}
 					ref={props.ref}
 					onClick={() => {
-						onEventClick?.(calendarEvent);
+						onMealClick?.(calendarEvent);
 					}}
 				/>
 			);
 		},
-		[eventMap, onEventClick],
+		[mealMap, onMealClick],
 	);
 
 	return (
 		<MonthGrid
-			events={monthGridEvents}
-			renderEvent={renderEvent}
-			onEventClick={handleEventClick}
+			meals={monthGridMeals}
+			renderMeal={renderMeal}
+			onMealClick={handleMealClick}
 		/>
 	);
 }

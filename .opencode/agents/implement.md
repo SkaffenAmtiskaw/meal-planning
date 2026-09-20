@@ -6,7 +6,7 @@ model: opencode-go/kimi-k2.7-code
 temperature: 0.4
 permission:
     bash:
-       "*" ask
+       "*": ask
        "pnpm lint": allow
        "pnpm check:types": allow
        "pnpm test:agent *": allow
