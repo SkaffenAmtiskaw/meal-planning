@@ -1,6 +1,6 @@
 'use server';
 
-import type { PlannerInterface } from '@/_models';
+import type { PlannerInterface } from '@/_models/planner';
 
 import { getPlanner } from './getPlanner';
 

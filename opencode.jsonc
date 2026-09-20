@@ -5,9 +5,22 @@
       "command": ["pnpm", "lint", "$FILE"]
     }
   },
+  "default_agent": "implement",
+  "subagent_depth": 2,
   "agent": {
     "plan": {
       "disable": true
+    }
+  },
+  "mcp": {
+    "playwright": {
+      "type": "local",
+      "command": [
+        "npx",
+        "@playwright/mcp@latest",
+        "--headless"
+      ],
+      "enabled": true
     }
   },
   "permission": {

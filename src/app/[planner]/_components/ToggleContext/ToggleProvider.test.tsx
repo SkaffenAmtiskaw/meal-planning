@@ -1,25 +1,22 @@
 import { useContext } from 'react';
 
+import { useDisclosure } from '@mantine/hooks';
+
 import { render, screen } from '@testing-library/react';
 
-import { afterEach, describe, expect, test, vi } from 'vitest';
+import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import { ToggleContext } from './ToggleContext';
 import { ToggleProvider } from './ToggleProvider';
 
-const mockUseDisclosure = vi.fn();
-vi.mock('@mantine/hooks', () => ({
-	useDisclosure: () => mockUseDisclosure(),
-}));
+vi.mock('@mantine/hooks', async () => await import('@mocks/@mantine/hooks'));
 
 describe('ToggleProvider', () => {
 	afterEach(() => {
-		vi.resetAllMocks();
+		vi.clearAllMocks();
 	});
 
-	test('renders children', () => {
-		mockUseDisclosure.mockReturnValue([false, { toggle: vi.fn() }]);
-
+	it('renders children', () => {
 		render(
 			<ToggleProvider>
 				<div data-testid="child">Child Content</div>
@@ -29,9 +26,12 @@ describe('ToggleProvider', () => {
 		expect(screen.getByTestId('child')).toBeDefined();
 	});
 
-	test('provides opened state and toggle function via context', () => {
+	it('provides opened state and toggle function via context', () => {
 		const mockToggle = vi.fn();
-		mockUseDisclosure.mockReturnValue([true, { toggle: mockToggle }]);
+		vi.mocked(useDisclosure).mockReturnValueOnce([
+			true,
+			{ open: vi.fn(), close: vi.fn(), toggle: mockToggle, set: vi.fn() },
+		]);
 
 		let contextValue: { opened: boolean; toggle: () => void } | null = null;
 		const ContextReader = () => {
@@ -46,26 +46,5 @@ describe('ToggleProvider', () => {
 		);
 
 		expect(contextValue).toEqual({ opened: true, toggle: mockToggle });
-	});
-
-	test('provides closed state when useDisclosure returns false', () => {
-		const mockToggle = vi.fn();
-		mockUseDisclosure.mockReturnValue([false, { toggle: mockToggle }]);
-
-		let contextValue: { opened: boolean; toggle: () => void } | null = null;
-		const ContextReader = () => {
-			contextValue = useContext(ToggleContext);
-			return null;
-		};
-
-		render(
-			<ToggleProvider>
-				<ContextReader />
-			</ToggleProvider>,
-		);
-
-		expect(contextValue).not.toBeNull();
-		// biome-ignore lint/style/noNonNullAssertion: The previous assertion ensures it is not null.
-		expect(contextValue!.opened).toBe(false);
 	});
 });

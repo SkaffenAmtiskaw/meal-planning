@@ -2,8 +2,8 @@
 
 import { useCallback, useEffect, useState } from 'react';
 
-import { getPlannerMembers } from '@/_actions/planner/getPlannerMembers';
-import type { PlannerMember } from '@/_actions/planner/getPlannerMembers.types';
+import type { PlannerMember } from '@/_actions/sharing';
+import { getPlannerMembers } from '@/_actions/sharing';
 
 export interface UsePlannerMembersResult {
 	members: PlannerMember[];

@@ -1,0 +1,19 @@
+/* Mantine Paper/Card props cannot express the combined 1px chalk border plus dynamic 4px left rail color and per-prototype padding; custom CSS modules are required. */
+.mealCard {
+	padding: 9px 12px 11px;
+	border-radius: 8px;
+	border: 1px solid var(--mantine-color-chalk-2);
+	flex: 1;
+}
+
+.mealCard:hover {
+	background-color: var(--mantine-color-chalk-0);
+	border-color: var(--mantine-color-chalk-7);
+}
+
+/* Mantine Stack props cannot express the combined 1px left border, top margin, and left padding required by the dish-list design. */
+.dishList {
+	margin-top: 7px;
+	padding-left: 10px;
+	border-left: 1px solid var(--mantine-color-chalk-2);
+}

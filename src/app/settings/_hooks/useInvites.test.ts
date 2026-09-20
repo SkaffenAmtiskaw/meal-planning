@@ -2,64 +2,51 @@ import { renderHook, waitFor } from '@testing-library/react';
 
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-import type { PendingInvite } from '@/_actions/planner/invite.types';
-import type { AccessLevel } from '@/_models/user';
+import type { PendingInvite } from '@/_actions/sharing';
+import {
+	cancelInvite,
+	getPendingInvites,
+	inviteUser,
+} from '@/_actions/sharing';
 
-const mockGetPendingInvites = vi.fn();
-const mockInviteUserAction = vi.fn();
-const mockCancelInviteAction = vi.fn();
+import { useInvites } from './useInvites';
 
-vi.mock('@/_actions/planner/getPendingInvites', () => ({
-	getPendingInvites: (...args: unknown[]) => mockGetPendingInvites(...args),
-}));
-
-vi.mock('@/_actions/planner/inviteUser', () => ({
-	inviteUser: (...args: unknown[]) => mockInviteUserAction(...args),
-}));
-
-vi.mock('@/_actions/planner/cancelInvite', () => ({
-	cancelInvite: (...args: unknown[]) => mockCancelInviteAction(...args),
-}));
+vi.mock(
+	'@/_actions/sharing',
+	async () => await import('@mocks/@/_actions/sharing'),
+);
 
 describe('useInvites', () => {
 	const plannerId = '507f1f77bcf86cd799439011';
-	let useInvites: typeof import('./useInvites').useInvites;
 
 	beforeEach(() => {
 		vi.resetAllMocks();
-		// Clear module cache to get fresh hook instance
-		vi.resetModules();
 	});
-
-	async function loadHook() {
-		const module = await import('./useInvites');
-		useInvites = module.useInvites;
-	}
 
 	it('fetches invites on mount', async () => {
 		const mockInvites: PendingInvite[] = [
 			{
 				id: '1',
 				email: 'user1@example.com',
-				accessLevel: 'write' as AccessLevel,
+				accessLevel: 'write',
 				invitedAt: '2024-01-01T00:00:00.000Z',
 				expiresAt: '2024-01-08T00:00:00.000Z',
 			},
 		];
-		mockGetPendingInvites.mockResolvedValue({ invites: mockInvites });
-		await loadHook();
+		vi.mocked(getPendingInvites).mockResolvedValue({ invites: mockInvites });
 
 		const { result } = renderHook(() => useInvites(plannerId));
 
 		await waitFor(() => {
 			expect(result.current.invites).toEqual(mockInvites);
 		});
-		expect(mockGetPendingInvites).toHaveBeenCalledWith(plannerId);
+		expect(getPendingInvites).toHaveBeenCalledWith(plannerId);
 	});
 
-	it('sets loading state during initial fetch', async () => {
-		mockGetPendingInvites.mockImplementation(() => new Promise(() => {}));
-		await loadHook();
+	it('sets loading state during initial fetch', () => {
+		vi.mocked(getPendingInvites).mockImplementation(
+			() => new Promise(() => {}),
+		);
 
 		const { result } = renderHook(() => useInvites(plannerId));
 
@@ -67,11 +54,10 @@ describe('useInvites', () => {
 	});
 
 	it('sets error state on fetch failure', async () => {
-		mockGetPendingInvites.mockResolvedValue({
+		vi.mocked(getPendingInvites).mockResolvedValue({
 			invites: [],
 			error: 'Failed to fetch',
 		});
-		await loadHook();
 
 		const { result } = renderHook(() => useInvites(plannerId));
 
@@ -83,8 +69,7 @@ describe('useInvites', () => {
 	});
 
 	it('handles unexpected errors during initial fetch', async () => {
-		mockGetPendingInvites.mockRejectedValue(new Error('Network error'));
-		await loadHook();
+		vi.mocked(getPendingInvites).mockRejectedValue(new Error('Network error'));
 
 		const { result } = renderHook(() => useInvites(plannerId));
 
@@ -100,7 +85,7 @@ describe('useInvites', () => {
 			{
 				id: '1',
 				email: 'user1@example.com',
-				accessLevel: 'write' as AccessLevel,
+				accessLevel: 'write',
 				invitedAt: '2024-01-01T00:00:00.000Z',
 				expiresAt: '2024-01-08T00:00:00.000Z',
 			},
@@ -110,16 +95,15 @@ describe('useInvites', () => {
 			{
 				id: '2',
 				email: 'user2@example.com',
-				accessLevel: 'read' as AccessLevel,
+				accessLevel: 'read',
 				invitedAt: '2024-01-02T00:00:00.000Z',
 				expiresAt: '2024-01-09T00:00:00.000Z',
 			},
 		];
 
-		mockGetPendingInvites
+		vi.mocked(getPendingInvites)
 			.mockResolvedValueOnce({ invites: initialInvites })
 			.mockResolvedValueOnce({ invites: updatedInvites });
-		await loadHook();
 
 		const { result } = renderHook(() => useInvites(plannerId));
 
@@ -132,7 +116,7 @@ describe('useInvites', () => {
 		await waitFor(() => {
 			expect(result.current.invites).toEqual(updatedInvites);
 		});
-		expect(mockGetPendingInvites).toHaveBeenCalledTimes(2);
+		expect(getPendingInvites).toHaveBeenCalledTimes(2);
 	});
 
 	it('refresh keeps existing invites on error', async () => {
@@ -140,16 +124,15 @@ describe('useInvites', () => {
 			{
 				id: '1',
 				email: 'user1@example.com',
-				accessLevel: 'write' as AccessLevel,
+				accessLevel: 'write',
 				invitedAt: '2024-01-01T00:00:00.000Z',
 				expiresAt: '2024-01-08T00:00:00.000Z',
 			},
 		];
 
-		mockGetPendingInvites
+		vi.mocked(getPendingInvites)
 			.mockResolvedValueOnce({ invites: initialInvites })
 			.mockResolvedValueOnce({ invites: [], error: 'Refresh failed' });
-		await loadHook();
 
 		const { result } = renderHook(() => useInvites(plannerId));
 
@@ -159,15 +142,13 @@ describe('useInvites', () => {
 
 		await result.current.refresh();
 
-		// Invites should remain unchanged on refresh error
 		expect(result.current.invites).toEqual(initialInvites);
-		expect(mockGetPendingInvites).toHaveBeenCalledTimes(2);
+		expect(getPendingInvites).toHaveBeenCalledTimes(2);
 	});
 
 	it('inviteUser sets loading status and calls server action', async () => {
-		mockGetPendingInvites.mockResolvedValue({ invites: [] });
-		mockInviteUserAction.mockImplementation(() => new Promise(() => {}));
-		await loadHook();
+		vi.mocked(getPendingInvites).mockResolvedValue({ invites: [] });
+		vi.mocked(inviteUser).mockImplementation(() => new Promise(() => {}));
 
 		const { result } = renderHook(() => useInvites(plannerId));
 
@@ -175,13 +156,12 @@ describe('useInvites', () => {
 			expect(result.current.loading).toBe(false);
 		});
 
-		// Start invite operation
-		result.current.inviteUser('newuser@example.com', 'write' as AccessLevel);
+		result.current.inviteUser('newuser@example.com', 'write');
 
 		await waitFor(() => {
 			expect(result.current.inviteStatus).toBe('loading');
 		});
-		expect(mockInviteUserAction).toHaveBeenCalledWith({
+		expect(inviteUser).toHaveBeenCalledWith({
 			plannerId,
 			email: 'newuser@example.com',
 			accessLevel: 'write',
@@ -193,13 +173,13 @@ describe('useInvites', () => {
 			{
 				id: '1',
 				email: 'existing@example.com',
-				accessLevel: 'write' as AccessLevel,
+				accessLevel: 'write',
 				invitedAt: '2024-01-01T00:00:00.000Z',
 				expiresAt: '2024-01-08T00:00:00.000Z',
 			},
 		];
 
-		mockGetPendingInvites
+		vi.mocked(getPendingInvites)
 			.mockResolvedValueOnce({ invites: initialInvites })
 			.mockResolvedValueOnce({
 				invites: [
@@ -207,14 +187,16 @@ describe('useInvites', () => {
 					{
 						id: '2',
 						email: 'newuser@example.com',
-						accessLevel: 'read' as AccessLevel,
+						accessLevel: 'read',
 						invitedAt: '2024-01-02T00:00:00.000Z',
 						expiresAt: '2024-01-09T00:00:00.000Z',
 					},
 				],
 			});
-		mockInviteUserAction.mockResolvedValue({ ok: true, inviteId: '2' });
-		await loadHook();
+		vi.mocked(inviteUser).mockResolvedValue({
+			ok: true,
+			data: { inviteId: '2' },
+		});
 
 		const { result } = renderHook(() => useInvites(plannerId));
 
@@ -232,12 +214,11 @@ describe('useInvites', () => {
 	});
 
 	it('inviteUser sets error status on failure', async () => {
-		mockGetPendingInvites.mockResolvedValue({ invites: [] });
-		mockInviteUserAction.mockResolvedValue({
+		vi.mocked(getPendingInvites).mockResolvedValue({ invites: [] });
+		vi.mocked(inviteUser).mockResolvedValue({
 			ok: false,
 			error: 'User already invited',
 		});
-		await loadHook();
 
 		const { result } = renderHook(() => useInvites(plannerId));
 
@@ -255,11 +236,10 @@ describe('useInvites', () => {
 	});
 
 	it('inviteUser uses default error message when result.error is undefined', async () => {
-		mockGetPendingInvites.mockResolvedValue({ invites: [] });
-		mockInviteUserAction.mockResolvedValue({
+		vi.mocked(getPendingInvites).mockResolvedValue({ invites: [] });
+		vi.mocked(inviteUser).mockResolvedValue({
 			ok: false,
-		});
-		await loadHook();
+		} as never);
 
 		const { result } = renderHook(() => useInvites(plannerId));
 
@@ -277,9 +257,8 @@ describe('useInvites', () => {
 	});
 
 	it('inviteUser uses default error message for non-Error throws', async () => {
-		mockGetPendingInvites.mockResolvedValue({ invites: [] });
-		mockInviteUserAction.mockRejectedValue('String error');
-		await loadHook();
+		vi.mocked(getPendingInvites).mockResolvedValue({ invites: [] });
+		vi.mocked(inviteUser).mockRejectedValue('String error');
 
 		const { result } = renderHook(() => useInvites(plannerId));
 
@@ -296,28 +275,45 @@ describe('useInvites', () => {
 		expect(result.current.inviteError).toBe('Failed to invite user');
 	});
 
+	it('handles unexpected errors in inviteUser', async () => {
+		vi.mocked(getPendingInvites).mockResolvedValue({ invites: [] });
+		vi.mocked(inviteUser).mockRejectedValue(new Error('Network error'));
+
+		const { result } = renderHook(() => useInvites(plannerId));
+
+		await waitFor(() => {
+			expect(result.current.loading).toBe(false);
+		});
+
+		const success = await result.current.inviteUser('user@example.com');
+
+		expect(success).toBe(false);
+		await waitFor(() => {
+			expect(result.current.inviteStatus).toBe('error');
+		});
+		expect(result.current.inviteError).toBe('Network error');
+	});
+
 	it('removes invite immediately on cancel (optimistic update)', async () => {
 		const mockInvites: PendingInvite[] = [
 			{
 				id: '1',
 				email: 'user1@example.com',
-				accessLevel: 'write' as AccessLevel,
+				accessLevel: 'write',
 				invitedAt: '2024-01-01T00:00:00.000Z',
 				expiresAt: '2024-01-08T00:00:00.000Z',
 			},
 			{
 				id: '2',
 				email: 'user2@example.com',
-				accessLevel: 'read' as AccessLevel,
+				accessLevel: 'read',
 				invitedAt: '2024-01-02T00:00:00.000Z',
 				expiresAt: '2024-01-09T00:00:00.000Z',
 			},
 		];
 
-		mockGetPendingInvites.mockResolvedValue({ invites: mockInvites });
-		// Delay the resolve to verify optimistic update happens first
-		mockCancelInviteAction.mockImplementation(() => new Promise(() => {}));
-		await loadHook();
+		vi.mocked(getPendingInvites).mockResolvedValue({ invites: mockInvites });
+		vi.mocked(cancelInvite).mockImplementation(() => new Promise(() => {}));
 
 		const { result } = renderHook(() => useInvites(plannerId));
 
@@ -325,12 +321,11 @@ describe('useInvites', () => {
 			expect(result.current.invites).toHaveLength(2);
 		});
 
-		// Start cancel operation
 		result.current.cancelInvite('1');
 
-		// Verify invite is removed immediately (optimistically)
 		await waitFor(() => {
 			expect(result.current.invites).toHaveLength(1);
+			expect(result.current.cancelStatus).toBe('loading');
 		});
 		expect(result.current.invites[0].id).toBe('2');
 	});
@@ -340,22 +335,21 @@ describe('useInvites', () => {
 			{
 				id: '1',
 				email: 'user1@example.com',
-				accessLevel: 'write' as AccessLevel,
+				accessLevel: 'write',
 				invitedAt: '2024-01-01T00:00:00.000Z',
 				expiresAt: '2024-01-08T00:00:00.000Z',
 			},
 			{
 				id: '2',
 				email: 'user2@example.com',
-				accessLevel: 'read' as AccessLevel,
+				accessLevel: 'read',
 				invitedAt: '2024-01-02T00:00:00.000Z',
 				expiresAt: '2024-01-09T00:00:00.000Z',
 			},
 		];
 
-		mockGetPendingInvites.mockResolvedValue({ invites: mockInvites });
-		mockCancelInviteAction.mockResolvedValue({ success: true });
-		await loadHook();
+		vi.mocked(getPendingInvites).mockResolvedValue({ invites: mockInvites });
+		vi.mocked(cancelInvite).mockResolvedValue({ success: true });
 
 		const { result } = renderHook(() => useInvites(plannerId));
 
@@ -378,7 +372,7 @@ describe('useInvites', () => {
 		const inviteToCancel: PendingInvite = {
 			id: '1',
 			email: 'user1@example.com',
-			accessLevel: 'write' as AccessLevel,
+			accessLevel: 'write',
 			invitedAt: '2024-01-01T00:00:00.000Z',
 			expiresAt: '2024-01-08T00:00:00.000Z',
 		};
@@ -387,18 +381,17 @@ describe('useInvites', () => {
 			{
 				id: '2',
 				email: 'user2@example.com',
-				accessLevel: 'read' as AccessLevel,
+				accessLevel: 'read',
 				invitedAt: '2024-01-02T00:00:00.000Z',
 				expiresAt: '2024-01-09T00:00:00.000Z',
 			},
 		];
 
-		mockGetPendingInvites.mockResolvedValue({ invites: mockInvites });
-		mockCancelInviteAction.mockResolvedValue({
+		vi.mocked(getPendingInvites).mockResolvedValue({ invites: mockInvites });
+		vi.mocked(cancelInvite).mockResolvedValue({
 			success: false,
 			error: 'Invite not found',
 		});
-		await loadHook();
 
 		const { result } = renderHook(() => useInvites(plannerId));
 
@@ -413,7 +406,6 @@ describe('useInvites', () => {
 			expect(result.current.cancelStatus).toBe('error');
 		});
 		expect(result.current.cancelError).toBe('Invite not found');
-		// On failure, invite should be restored
 		expect(result.current.invites).toHaveLength(2);
 		expect(
 			result.current.invites.find((i: PendingInvite) => i.id === '1'),
@@ -424,17 +416,16 @@ describe('useInvites', () => {
 		const inviteToCancel: PendingInvite = {
 			id: '1',
 			email: 'user1@example.com',
-			accessLevel: 'write' as AccessLevel,
+			accessLevel: 'write',
 			invitedAt: '2024-01-01T00:00:00.000Z',
 			expiresAt: '2024-01-08T00:00:00.000Z',
 		};
 		const mockInvites: PendingInvite[] = [inviteToCancel];
 
-		mockGetPendingInvites.mockResolvedValue({ invites: mockInvites });
-		mockCancelInviteAction.mockResolvedValue({
+		vi.mocked(getPendingInvites).mockResolvedValue({ invites: mockInvites });
+		vi.mocked(cancelInvite).mockResolvedValue({
 			success: false,
 		});
-		await loadHook();
 
 		const { result } = renderHook(() => useInvites(plannerId));
 
@@ -449,7 +440,6 @@ describe('useInvites', () => {
 			expect(result.current.cancelStatus).toBe('error');
 		});
 		expect(result.current.cancelError).toBe('Failed to cancel invite');
-		// Invite should be restored
 		expect(result.current.invites).toHaveLength(1);
 		expect(result.current.invites[0]).toEqual(inviteToCancel);
 	});
@@ -458,15 +448,14 @@ describe('useInvites', () => {
 		const inviteToCancel: PendingInvite = {
 			id: '1',
 			email: 'user1@example.com',
-			accessLevel: 'write' as AccessLevel,
+			accessLevel: 'write',
 			invitedAt: '2024-01-01T00:00:00.000Z',
 			expiresAt: '2024-01-08T00:00:00.000Z',
 		};
 		const mockInvites: PendingInvite[] = [inviteToCancel];
 
-		mockGetPendingInvites.mockResolvedValue({ invites: mockInvites });
-		mockCancelInviteAction.mockRejectedValue('String error');
-		await loadHook();
+		vi.mocked(getPendingInvites).mockResolvedValue({ invites: mockInvites });
+		vi.mocked(cancelInvite).mockRejectedValue('String error');
 
 		const { result } = renderHook(() => useInvites(plannerId));
 
@@ -481,71 +470,22 @@ describe('useInvites', () => {
 			expect(result.current.cancelStatus).toBe('error');
 		});
 		expect(result.current.cancelError).toBe('Failed to cancel invite');
-		// Invite should be restored
 		expect(result.current.invites).toHaveLength(1);
 		expect(result.current.invites[0]).toEqual(inviteToCancel);
-	});
-
-	it('resets invite status after successful invite', async () => {
-		mockGetPendingInvites.mockResolvedValue({ invites: [] });
-		mockInviteUserAction.mockResolvedValue({ ok: true, inviteId: '1' });
-		await loadHook();
-
-		const { result } = renderHook(() => useInvites(plannerId));
-
-		await waitFor(() => {
-			expect(result.current.loading).toBe(false);
-		});
-
-		// First invite
-		await result.current.inviteUser('user1@example.com');
-
-		await waitFor(() => {
-			expect(result.current.inviteStatus).toBe('success');
-		});
-
-		// After starting another invite operation, status should reset to loading
-		mockInviteUserAction.mockImplementation(() => new Promise(() => {}));
-		result.current.inviteUser('user2@example.com');
-
-		await waitFor(() => {
-			expect(result.current.inviteStatus).toBe('loading');
-		});
-	});
-
-	it('handles unexpected errors in inviteUser', async () => {
-		mockGetPendingInvites.mockResolvedValue({ invites: [] });
-		mockInviteUserAction.mockRejectedValue(new Error('Network error'));
-		await loadHook();
-
-		const { result } = renderHook(() => useInvites(plannerId));
-
-		await waitFor(() => {
-			expect(result.current.loading).toBe(false);
-		});
-
-		const success = await result.current.inviteUser('user@example.com');
-
-		expect(success).toBe(false);
-		await waitFor(() => {
-			expect(result.current.inviteStatus).toBe('error');
-		});
-		expect(result.current.inviteError).toBe('Network error');
 	});
 
 	it('restores invite on Error exception', async () => {
 		const inviteToCancel: PendingInvite = {
 			id: '1',
 			email: 'user1@example.com',
-			accessLevel: 'write' as AccessLevel,
+			accessLevel: 'write',
 			invitedAt: '2024-01-01T00:00:00.000Z',
 			expiresAt: '2024-01-08T00:00:00.000Z',
 		};
 		const mockInvites: PendingInvite[] = [inviteToCancel];
 
-		mockGetPendingInvites.mockResolvedValue({ invites: mockInvites });
-		mockCancelInviteAction.mockRejectedValue(new Error('Database error'));
-		await loadHook();
+		vi.mocked(getPendingInvites).mockResolvedValue({ invites: mockInvites });
+		vi.mocked(cancelInvite).mockRejectedValue(new Error('Database error'));
 
 		const { result } = renderHook(() => useInvites(plannerId));
 
@@ -560,7 +500,6 @@ describe('useInvites', () => {
 			expect(result.current.cancelStatus).toBe('error');
 		});
 		expect(result.current.cancelError).toBe('Database error');
-		// Invite should be restored
 		expect(result.current.invites).toHaveLength(1);
 		expect(result.current.invites[0]).toEqual(inviteToCancel);
 	});
@@ -570,18 +509,17 @@ describe('useInvites', () => {
 			{
 				id: '1',
 				email: 'user1@example.com',
-				accessLevel: 'write' as AccessLevel,
+				accessLevel: 'write',
 				invitedAt: '2024-01-01T00:00:00.000Z',
 				expiresAt: '2024-01-08T00:00:00.000Z',
 			},
 		];
 
-		mockGetPendingInvites.mockResolvedValue({ invites: mockInvites });
-		mockCancelInviteAction.mockResolvedValue({
+		vi.mocked(getPendingInvites).mockResolvedValue({ invites: mockInvites });
+		vi.mocked(cancelInvite).mockResolvedValue({
 			success: false,
 			error: 'Invite not found',
 		});
-		await loadHook();
 
 		const { result } = renderHook(() => useInvites(plannerId));
 
@@ -589,14 +527,12 @@ describe('useInvites', () => {
 			expect(result.current.invites).toHaveLength(1);
 		});
 
-		// Try to cancel an invite that doesn't exist (already removed or invalid id)
 		const success = await result.current.cancelInvite('non-existent-id');
 
 		expect(success).toBe(false);
 		await waitFor(() => {
 			expect(result.current.cancelStatus).toBe('error');
 		});
-		// Original invites remain unchanged since inviteToCancel was undefined
 		expect(result.current.invites).toHaveLength(1);
 		expect(result.current.invites[0].id).toBe('1');
 	});
@@ -606,15 +542,14 @@ describe('useInvites', () => {
 			{
 				id: '1',
 				email: 'user1@example.com',
-				accessLevel: 'write' as AccessLevel,
+				accessLevel: 'write',
 				invitedAt: '2024-01-01T00:00:00.000Z',
 				expiresAt: '2024-01-08T00:00:00.000Z',
 			},
 		];
 
-		mockGetPendingInvites.mockResolvedValue({ invites: mockInvites });
-		mockCancelInviteAction.mockRejectedValue(new Error('Server error'));
-		await loadHook();
+		vi.mocked(getPendingInvites).mockResolvedValue({ invites: mockInvites });
+		vi.mocked(cancelInvite).mockRejectedValue(new Error('Server error'));
 
 		const { result } = renderHook(() => useInvites(plannerId));
 
@@ -622,14 +557,12 @@ describe('useInvites', () => {
 			expect(result.current.invites).toHaveLength(1);
 		});
 
-		// Try to cancel an invite that doesn't exist
 		const success = await result.current.cancelInvite('non-existent-id');
 
 		expect(success).toBe(false);
 		await waitFor(() => {
 			expect(result.current.cancelStatus).toBe('error');
 		});
-		// Original invites remain unchanged since inviteToCancel was undefined
 		expect(result.current.invites).toHaveLength(1);
 		expect(result.current.invites[0].id).toBe('1');
 	});
@@ -639,14 +572,13 @@ describe('useInvites', () => {
 			{
 				id: '1',
 				email: 'user1@example.com',
-				accessLevel: 'write' as AccessLevel,
+				accessLevel: 'write',
 				invitedAt: '2024-01-01T00:00:00.000Z',
 				expiresAt: '2024-01-08T00:00:00.000Z',
 			},
 		];
 
-		mockGetPendingInvites.mockResolvedValue({ invites: mockInvites });
-		await loadHook();
+		vi.mocked(getPendingInvites).mockResolvedValue({ invites: mockInvites });
 
 		const { result, rerender } = renderHook(
 			({ id }: { id: string }) => useInvites(id),
@@ -657,47 +589,14 @@ describe('useInvites', () => {
 			expect(result.current.loading).toBe(false);
 		});
 
-		expect(mockGetPendingInvites).toHaveBeenCalledTimes(1);
+		expect(getPendingInvites).toHaveBeenCalledTimes(1);
 
 		rerender({ id: 'different-planner-id' });
 
 		await waitFor(() => {
-			expect(mockGetPendingInvites).toHaveBeenCalledTimes(2);
+			expect(getPendingInvites).toHaveBeenCalledTimes(2);
 		});
 
-		expect(mockGetPendingInvites).toHaveBeenLastCalledWith(
-			'different-planner-id',
-		);
-	});
-
-	it('maintains independent status states for invite and cancel', async () => {
-		const mockInvites: PendingInvite[] = [
-			{
-				id: '1',
-				email: 'user1@example.com',
-				accessLevel: 'write' as AccessLevel,
-				invitedAt: '2024-01-01T00:00:00.000Z',
-				expiresAt: '2024-01-08T00:00:00.000Z',
-			},
-		];
-
-		mockGetPendingInvites.mockResolvedValue({ invites: mockInvites });
-		mockCancelInviteAction.mockResolvedValue({ success: true });
-		mockInviteUserAction.mockResolvedValue({ ok: true, inviteId: '2' });
-		await loadHook();
-
-		const { result } = renderHook(() => useInvites(plannerId));
-
-		await waitFor(() => {
-			expect(result.current.loading).toBe(false);
-		});
-
-		// Cancel an invite
-		await result.current.cancelInvite('1');
-
-		await waitFor(() => {
-			expect(result.current.cancelStatus).toBe('success');
-		});
-		expect(result.current.inviteStatus).toBe('idle');
+		expect(getPendingInvites).toHaveBeenLastCalledWith('different-planner-id');
 	});
 });

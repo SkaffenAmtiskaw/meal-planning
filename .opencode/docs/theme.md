@@ -11,7 +11,7 @@
 
 | Token | Hex | Role |
 |---|---|---|
-| Navy | `#1C3144` | App header background, today badge, planner name text |
+| Navy | `#1C3144` | App header background, planner name text |
 | Forest green | `#44633F` | Sidebar active state, links, tab underlines, segmented controls, input focus rings |
 | Sage | `#B1BA95` | Sidebar/navbar background, surface accents |
 | Ember | `#FF6542` | CTA buttons only (see below) |
@@ -21,14 +21,15 @@
 
 ## Color role rules
 
-### Ember is reserved for CTA buttons only
+### Ember is reserved for CTAs and the calendar today badge
 
-Ember (`#FF6542`) must only appear on buttons that create or commit something:
+Ember (`#FF6542`) must only appear on buttons that create or commit something, and on the calendar today badge:
 
 - "+ Add Meal" button
 - "Add Meal" submit button in modal
 - "Continue" on login
 - "Update password" on settings
+- Calendar today badge (red circle behind the current day number)
 
 Ember must NOT be used for links, tab underlines, segmented controls, focus rings, badges, or any secondary element.
 
@@ -82,7 +83,7 @@ Schedule-x uses its own CSS custom properties and does not inherit Mantine. Over
   --sx-color-on-surface: #1C3144;       /* navy */
   --sx-color-on-surface-variant: #5A6A7A;
   --sx-color-outline: #DDD8DA;
-  --sx-color-today-bg: rgba(28, 49, 68, 0.08); /* faint navy tint */
+  --sx-color-today-bg: rgba(255, 101, 66, 0.08); /* faint ember tint */
 }
 ```
 

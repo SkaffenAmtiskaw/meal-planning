@@ -8,16 +8,15 @@ import { schemaResolver, useForm } from '@mantine/form';
 
 import { z } from 'zod';
 
-import { addBookmark } from '@/_actions/saved/addBookmark';
-import { editBookmark } from '@/_actions/saved/editBookmark';
+import { addBookmark, editBookmark } from '@/_actions/library';
 import type { TagOption } from '@/_components';
 import { FormFeedbackAlert, SubmitButton, TagCombobox } from '@/_components';
 import { useFormFeedback } from '@/_hooks';
-import type { BookmarkInterface } from '@/_models/planner/bookmark.types';
+import type { BookmarkInterface } from '@/_models/types';
 
 const zFormFields = z.object({
-	name: z.string().min(1, 'Name is required'),
-	url: z.url('URL is required'),
+	name: z.string().min(1, { error: 'Name is required' }),
+	url: z.url({ error: 'URL is required' }),
 	notes: z.string().optional(),
 });
 

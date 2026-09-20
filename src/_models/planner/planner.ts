@@ -1,12 +1,9 @@
 import type { Model } from 'mongoose';
 import { model, models, Schema, SchemaTypes } from 'mongoose';
 
+import { daySchema } from '@/_models/calendar';
+import { bookmarkSchema, recipeSchema, tagSchema } from '@/_models/library';
 import type { PlannerInterface } from '@/_models/planner';
-import { bookmarkSchema } from '@/_models/planner/bookmark';
-import { daySchema } from '@/_models/planner/day';
-
-import { recipeSchema } from './recipe';
-import { tagSchema } from './tag';
 
 export * from './planner.types';
 

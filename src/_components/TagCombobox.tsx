@@ -4,7 +4,7 @@ import { useState } from 'react';
 
 import { Combobox, Pill, PillsInput, Text, useCombobox } from '@mantine/core';
 
-import { addTag } from '@/_actions/planner/addTag';
+import { addTag } from '@/_actions/library';
 import { TAG_COLORS, type TagColor } from '@/_theme/colors';
 import { catchify } from '@/_utils/catchify';
 
@@ -118,6 +118,7 @@ export const TagCombobox = ({
 						<Pill.Group>
 							{pills}
 							<PillsInput.Field
+								data-testid="tag-input"
 								value={search}
 								placeholder="Search or create tags"
 								onChange={(e) => {
@@ -154,7 +155,11 @@ export const TagCombobox = ({
 										{tag.name}
 									</Combobox.Option>
 								))
-							: !showCreate && <Combobox.Empty>No tags found</Combobox.Empty>}
+							: !showCreate && (
+									<Combobox.Empty data-testid="empty">
+										No tags found
+									</Combobox.Empty>
+								)}
 					</Combobox.Options>
 				</Combobox.Dropdown>
 			</Combobox>

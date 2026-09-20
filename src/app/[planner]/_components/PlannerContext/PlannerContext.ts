@@ -2,8 +2,7 @@
 
 import { createContext } from 'react';
 
-import type { PlannerInterface } from '@/_models';
-import type { AccessLevel } from '@/_models/user';
+import type { AccessLevel, PlannerInterface } from '@/_models/types';
 
 type PlannerContextValue = PlannerInterface & { accessLevel: AccessLevel };
 

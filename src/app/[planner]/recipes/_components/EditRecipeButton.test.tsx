@@ -1,13 +1,14 @@
+import { useRouter } from 'next/navigation';
+
 import { fireEvent, render, screen } from '@testing-library/react';
 
-import { beforeEach, describe, expect, test, vi } from 'vitest';
+import { beforeAll, beforeEach, describe, expect, test, vi } from 'vitest';
 
 import { EditRecipeButton } from './EditRecipeButton';
 
+vi.mock('next/navigation', async () => await import('@mocks/next/navigation'));
+
 const mockPush = vi.fn();
-vi.mock('next/navigation', () => ({
-	useRouter: () => ({ push: mockPush }),
-}));
 
 vi.mock('@mantine/core', async () => await import('@mocks/@mantine/core'));
 
@@ -17,8 +18,16 @@ vi.mock('@/app/[planner]/_components', () => ({
 }));
 
 describe('EditRecipeButton', () => {
+	beforeAll(() => {
+		const defaultRouter = vi.mocked(useRouter)();
+		vi.mocked(useRouter).mockReturnValue({
+			...defaultRouter,
+			push: mockPush,
+		});
+	});
+
 	beforeEach(() => {
-		vi.resetAllMocks();
+		vi.clearAllMocks();
 		mockUseCanWrite.mockReturnValue(true);
 	});
 

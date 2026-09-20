@@ -1,0 +1,11 @@
+/* 52px is a specific touch-target requirement not represented by a Mantine spacing step. */
+.dayCell {
+	height: 52px;
+}
+
+/* Mantine has no component that accepts an arbitrary tag-color hex and renders only a small dot; the tag palette is a domain token, so the dot background uses it directly. */
+.dot {
+	width: 6px;
+	height: 6px;
+	border-radius: 50%;
+}

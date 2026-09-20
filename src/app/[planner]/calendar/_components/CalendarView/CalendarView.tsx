@@ -1,129 +1,111 @@
 'use client';
 
-import { useCallback, useMemo, useState } from 'react';
+import { useState } from 'react';
+import type { ReactElement } from 'react';
 
-import { useMediaQuery } from '@mantine/hooks';
+import { Flex, Stack } from '@mantine/core';
 
+import { CalendarProvider, useCalendarContext } from '@/_components/Calendar';
+import { useIsMobile } from '@/_hooks';
+
+import type { CalendarEvent } from '../../_utils/toCalendarEvents';
+import type { SavedItem, SerializedDay } from '../../_utils/toScheduleXEvents';
 import {
-	createViewList,
-	createViewMonthAgenda,
-	createViewMonthGrid,
-} from '@schedule-x/calendar';
-import { ScheduleXCalendar, useNextCalendarApp } from '@schedule-x/react';
-
-import { usePlannerContext } from '@/app/[planner]/_components';
-import { usePlannerSavedItems } from '@/app/[planner]/calendar/_hooks/usePlannerSavedItems';
-
-import styles from './CalendarView.module.css';
-
-import { useCalendarEvents } from '../../_hooks/useCalendarEvents';
-import { useScheduleXSync } from '../../_hooks/useScheduleXSync';
-import { useViewType } from '../../_hooks/useViewType';
-import { useWeekNavigation } from '../../_hooks/useWeekNavigation';
-import type { MealEvent, SerializedDay } from '../../_utils/toScheduleXEvents';
-import { CalendarHeader } from '../CalendarHeader/CalendarHeader';
+	CalendarHeaderDesktop,
+	CalendarHeaderMobile,
+} from '../CalendarHeader/CalendarHeader';
+import { MealCalendar } from '../MealCalendar/MealCalendar';
 import { MealDetailModal } from '../MealDetailModal/MealDetailModal';
-import { MonthGridEvent } from '../MonthGridEvent/MonthGridEvent';
-import { WeekView } from '../WeekView/WeekView';
-import { WeekViewHeader } from '../WeekViewHeader/WeekViewHeader';
+import { MealListView } from '../MealListView/MealListView';
+import { MealMonthAgenda } from '../MealMonthAgenda/MealMonthAgenda';
+import { MealWeekView } from '../MealWeekView/MealWeekView';
 
 type Props = {
 	plannerId: string;
+	calendar: SerializedDay[];
+	savedItems: SavedItem[];
 };
 
-type ScheduleXCalendarApp = {
-	$app?: { datePickerState?: { selectedDate: { value: unknown } } };
+type CalendarViewContentProps = {
+	plannerId: string;
+	savedItems: SavedItem[];
+	calendar: SerializedDay[];
+	clickedEvent: CalendarEvent | null;
+	onClose: () => void;
+	onMealClick: (meal: CalendarEvent) => void;
 };
 
-export const CalendarView = ({ plannerId }: Props) => {
-	const planner = usePlannerContext();
-	const savedItems = usePlannerSavedItems();
-	const calendar = planner.calendar as SerializedDay[];
-
-	const isMobile = useMediaQuery('(max-width: 62em)');
-
-	const { eventsService, initialEvents, handleMealAdded } = useCalendarEvents(
-		calendar,
-		savedItems,
-	);
-	const { viewType, setViewType } = useViewType(isMobile);
-
-	const [clickedEvent, setClickedEvent] = useState<MealEvent | null>(null);
-
-	const calendarApp = useNextCalendarApp({
-		views: [createViewMonthGrid(), createViewMonthAgenda(), createViewList()],
-		defaultView: 'month-grid',
-		events: initialEvents,
-		plugins: [eventsService],
-		callbacks: {
-			onEventClick: (event) => {
-				setClickedEvent(event as unknown as MealEvent);
-			},
-		},
-	});
-
-	const { currentWeekStart, handlePrevWeek, handleNextWeek, handleToday } =
-		useWeekNavigation(
-			(calendarApp as unknown as ScheduleXCalendarApp)?.$app?.datePickerState
-				?.selectedDate.value as string | undefined,
-		);
-
-	useScheduleXSync(calendarApp, viewType, isMobile);
-
-	const HeaderRight = useCallback(
-		() => (
-			<CalendarHeader
-				plannerId={plannerId}
-				onMealAdded={handleMealAdded}
-				viewType={viewType}
-				isMobile={isMobile}
-				onViewChange={setViewType}
-			/>
-		),
-		[plannerId, handleMealAdded, viewType, isMobile, setViewType],
-	);
-
-	const customComponents = useMemo(
-		() => ({
-			headerContentRightPrepend: HeaderRight,
-			monthGridEvent: MonthGridEvent,
-		}),
-		[HeaderRight],
-	);
+function CalendarViewContent({
+	plannerId,
+	savedItems,
+	calendar,
+	clickedEvent,
+	onClose,
+	onMealClick,
+}: CalendarViewContentProps): ReactElement {
+	const { viewType } = useCalendarContext();
+	const isMobile = useIsMobile();
 
 	return (
-		<>
+		<Stack gap={0} h="100%">
 			<MealDetailModal
 				event={clickedEvent}
 				plannerId={plannerId}
-				onClose={() => setClickedEvent(null)}
+				onClose={onClose}
 			/>
-			{viewType === 'week' ? (
-				<>
-					<WeekViewHeader
-						onPrev={handlePrevWeek}
-						onNext={handleNextWeek}
-						onToday={handleToday}
-						viewType={viewType}
-						isMobile={isMobile}
-						onViewChange={setViewType}
-					/>
-					<WeekView
+			{isMobile ? <CalendarHeaderMobile /> : <CalendarHeaderDesktop />}
+			<Flex flex={1} mih={0} direction="column">
+				{viewType === 'month' &&
+					(isMobile ? (
+						<MealMonthAgenda
+							plannerId={plannerId}
+							calendar={calendar}
+							savedItems={savedItems}
+						/>
+					) : (
+						<MealCalendar
+							calendar={calendar}
+							savedItems={savedItems}
+							onMealClick={onMealClick}
+						/>
+					))}
+				{viewType === 'week' && (
+					<MealWeekView
 						calendar={calendar}
-						currentWeekStart={currentWeekStart}
-						onMealClick={setClickedEvent}
+						savedItems={savedItems}
 						plannerId={plannerId}
+						onMealClick={onMealClick}
+					/>
+				)}
+				{viewType === 'list' && (
+					<MealListView
+						plannerId={plannerId}
+						calendar={calendar}
 						savedItems={savedItems}
 					/>
-				</>
-			) : (
-				<div className={styles.calendarWrapper}>
-					<ScheduleXCalendar
-						calendarApp={calendarApp}
-						customComponents={customComponents}
-					/>
-				</div>
-			)}
-		</>
+				)}
+			</Flex>
+		</Stack>
 	);
-};
+}
+
+export function CalendarView({
+	plannerId,
+	calendar,
+	savedItems,
+}: Props): ReactElement {
+	const [clickedEvent, setClickedEvent] = useState<CalendarEvent | null>(null);
+
+	return (
+		<CalendarProvider>
+			<CalendarViewContent
+				plannerId={plannerId}
+				savedItems={savedItems}
+				calendar={calendar}
+				clickedEvent={clickedEvent}
+				onClose={() => setClickedEvent(null)}
+				onMealClick={setClickedEvent}
+			/>
+		</CalendarProvider>
+	);
+}

@@ -1,6 +1,6 @@
 'use client';
 
-import { deleteRecipe } from '@/_actions/saved';
+import { deleteRecipe } from '@/_actions/library';
 
 import { DeleteItemButton } from './DeleteItemButton';
 

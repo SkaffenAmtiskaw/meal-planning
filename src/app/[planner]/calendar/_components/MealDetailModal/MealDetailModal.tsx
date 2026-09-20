@@ -1,45 +1,18 @@
-import Link from 'next/link';
-
 import { Modal, Stack, Text } from '@mantine/core';
 
-import type { MealEvent, SerializedDish } from '../../_utils/toScheduleXEvents';
+import type { SerializedDish } from '../../_utils/toScheduleXEvents';
+import { DishLink } from '../DishLink/DishLink';
 
-type Props = {
-	event: MealEvent | null;
-	plannerId: string;
-	onClose: () => void;
+type MealDetail = {
+	title: string;
+	description?: string;
+	dishes: SerializedDish[];
 };
 
-const getDishName = (
-	dish: SerializedDish,
-	plannerId: string,
-): React.ReactNode => {
-	const { source } = dish;
-	if (typeof source === 'object' && source !== null) {
-		if ('url' in source) {
-			return (
-				<a href={source.url} target="_blank" rel="noreferrer">
-					<Text size="sm" fw={500}>
-						{dish.name}
-					</Text>
-				</a>
-			);
-		}
-		if ('_id' in source) {
-			return (
-				<Link href={`/${plannerId}/recipes/${source._id}`}>
-					<Text size="sm" fw={500}>
-						{dish.name}
-					</Text>
-				</Link>
-			);
-		}
-	}
-	return (
-		<Text size="sm" fw={500}>
-			{dish.name}
-		</Text>
-	);
+type Props = {
+	event: MealDetail | null;
+	plannerId: string;
+	onClose: () => void;
 };
 
 export const MealDetailModal = ({ event, plannerId, onClose }: Props) => (
@@ -65,7 +38,7 @@ export const MealDetailModal = ({ event, plannerId, onClose }: Props) => (
 			{event?.dishes.map((dish, i) => (
 				// biome-ignore lint/suspicious/noArrayIndexKey: dishes have no stable id
 				<div key={i}>
-					{getDishName(dish, plannerId)}
+					<DishLink dish={dish} plannerId={plannerId} />
 					{typeof dish.source === 'object' &&
 						dish.source !== null &&
 						'ref' in dish.source && (

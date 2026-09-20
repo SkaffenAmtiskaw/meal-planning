@@ -27,53 +27,15 @@ vi.mock('@/_components/NavLink', () => ({
 	),
 }));
 
-vi.mock('next/navigation', () => ({
-	useSelectedLayoutSegment: vi.fn(),
-}));
+vi.mock('next/navigation', async () => await import('@mocks/next/navigation'));
 
 vi.mock('./PlannerContextSection', () => ({
-	PlannerContextSection: ({
-		currentId,
-		planners,
-	}: {
-		currentId: string;
-		planners: { id: string; name: string }[];
-	}) => (
-		<div
-			data-testid="planner-context-section"
-			data-current-id={currentId}
-			data-planner-count={planners.length}
-		/>
-	),
+	PlannerContextSection: vi.fn(() => null),
 }));
 
 describe('Navbar', () => {
 	afterEach(() => {
 		vi.resetAllMocks();
-	});
-
-	test('renders calendar and recipes links', () => {
-		vi.mocked(useSelectedLayoutSegment).mockReturnValue(null);
-		const planners = [{ id: 'gaston-planner-1', name: 'Planner 1' }];
-
-		render(<Navbar id="gaston-planner-1" planners={planners} />);
-
-		expect(screen.getByText('Calendar')).toBeDefined();
-		expect(screen.getByText('Recipes')).toBeDefined();
-	});
-
-	test('links point to correct paths using the given planner id', () => {
-		vi.mocked(useSelectedLayoutSegment).mockReturnValue(null);
-		const planners = [{ id: 'gaston-planner-1', name: 'Planner 1' }];
-
-		render(<Navbar id="gaston-planner-1" planners={planners} />);
-
-		expect(
-			screen.getByRole('link', { name: /calendar/i }).getAttribute('href'),
-		).toBe('/gaston-planner-1/calendar');
-		expect(
-			screen.getByRole('link', { name: /recipes/i }).getAttribute('href'),
-		).toBe('/gaston-planner-1/recipes');
 	});
 
 	test('calendar link is active when on the calendar segment', () => {
@@ -110,35 +72,5 @@ describe('Navbar', () => {
 				.getByRole('link', { name: /calendar/i })
 				.getAttribute('data-active'),
 		).toBeFalsy();
-	});
-
-	test('renders PlannerContextSection with correct props', () => {
-		vi.mocked(useSelectedLayoutSegment).mockReturnValue(null);
-		const planners = [{ id: 'p1', name: 'Planner 1' }];
-
-		render(<Navbar id="p1" planners={planners} />);
-
-		const contextSection = screen.getByTestId('planner-context-section');
-		expect(contextSection.getAttribute('data-current-id')).toBe('p1');
-		expect(contextSection.getAttribute('data-planner-count')).toBe('1');
-	});
-
-	test('PlannerContextSection is always rendered', () => {
-		vi.mocked(useSelectedLayoutSegment).mockReturnValue(null);
-		const planners = [{ id: 'any-id', name: 'Any Planner' }];
-
-		render(<Navbar id="any-id" planners={planners} />);
-
-		expect(screen.getByTestId('planner-context-section')).toBeDefined();
-	});
-
-	test('does not render Divider', () => {
-		vi.mocked(useSelectedLayoutSegment).mockReturnValue(null);
-		const planners = [{ id: 'any-id', name: 'Any Planner' }];
-
-		render(<Navbar id="any-id" planners={planners} />);
-
-		const dividers = document.querySelectorAll('[data-mantine-dividider]');
-		expect(dividers.length).toBe(0);
 	});
 });

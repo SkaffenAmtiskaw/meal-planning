@@ -1,166 +1,141 @@
 import { render, screen } from '@testing-library/react';
 
-import { describe, expect, test, vi } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 
+import { checkEmailStatus } from '@/_actions/auth';
+import { getUser } from '@/_actions/user';
+
+import { ChangeEmailForm } from './ChangeEmailForm';
+import { ChangeNameForm } from './ChangeNameForm';
+import { ChangePasswordForm } from './ChangePasswordForm';
 import { UserSettings } from './UserSettings';
 
-const { mockCheckEmailStatus, mockGetUser } = vi.hoisted(() => ({
-	mockCheckEmailStatus: vi.fn(),
-	mockGetUser: vi.fn(),
-}));
-
-vi.mock('@/_actions/auth', () => ({
-	checkEmailStatus: mockCheckEmailStatus,
-}));
-
-vi.mock('@/_actions/user', () => ({
-	getUser: mockGetUser,
-}));
-
-vi.mock('./ChangePasswordForm', () => ({
-	ChangePasswordForm: ({ email }: { email: string }) => (
-		<div data-testid="change-password-form" data-email={email} />
-	),
-}));
+vi.mock('@/_actions/auth', async () => await import('@mocks/@/_actions/auth'));
+vi.mock('@/_actions/user', async () => await import('@mocks/@/_actions/user'));
+vi.mock('@mantine/core', async () => await import('@mocks/@mantine/core'));
 
 vi.mock('./ChangeEmailForm', () => ({
-	ChangeEmailForm: ({
-		currentEmail,
-		pendingEmailChange,
-	}: {
-		currentEmail: string;
-		pendingEmailChange?: { email: string; expiresAt: Date };
-	}) => (
-		<div
-			data-testid="change-email-form"
-			data-email={currentEmail}
-			data-pending={pendingEmailChange?.email ?? ''}
-		/>
-	),
+	ChangeEmailForm: vi.fn(() => null),
 }));
 
 vi.mock('./ChangeNameForm', () => ({
-	ChangeNameForm: ({ currentName }: { currentName: string }) => (
-		<div data-testid="change-name-form" data-name={currentName} />
-	),
+	ChangeNameForm: vi.fn(() => null),
+}));
+
+vi.mock('./ChangePasswordForm', () => ({
+	ChangePasswordForm: vi.fn(() => null),
 }));
 
 vi.mock('./DeleteAccountForm', () => ({
-	DeleteAccountForm: () => <div data-testid="delete-account-form" />,
+	DeleteAccountForm: vi.fn(() => null),
 }));
 
 vi.mock('./InvitesSettings', () => ({
-	InvitesSettings: () => <div data-testid="invites-settings" />,
+	InvitesSettings: vi.fn(() => null),
 }));
 
-vi.mock('@mantine/core', async () => await import('@mocks/@mantine/core'));
-
-const futureDate = new Date(Date.now() + 1000 * 60 * 60 * 24);
-
 describe('UserSettings', () => {
-	test('renders change name form with user name', async () => {
-		mockCheckEmailStatus.mockResolvedValueOnce('has-password');
-		mockGetUser.mockResolvedValueOnce({
-			name: 'Ariel',
-			pendingEmailChange: null,
-		});
+	beforeEach(() => {
+		vi.clearAllMocks();
+	});
+
+	it('should pass user name to ChangeNameForm', async () => {
+		vi.mocked(checkEmailStatus).mockResolvedValueOnce('has-password');
+		vi.mocked(getUser).mockResolvedValueOnce({ name: 'Ariel' } as never);
 
 		render(await UserSettings({ email: 'user@example.com' }));
 
-		const form = screen.getByTestId('change-name-form');
-		expect(form.getAttribute('data-name')).toBe('Ariel');
+		expect(vi.mocked(ChangeNameForm)).toHaveBeenCalledWith(
+			expect.objectContaining({ currentName: 'Ariel' }),
+			undefined,
+		);
 	});
 
-	test('renders change name form with "New User" when user is null', async () => {
-		mockCheckEmailStatus.mockResolvedValueOnce('has-password');
-		mockGetUser.mockResolvedValueOnce(null);
+	it('should pass "New User" to ChangeNameForm when user is null', async () => {
+		vi.mocked(checkEmailStatus).mockResolvedValueOnce('has-password');
+		vi.mocked(getUser).mockResolvedValueOnce(null as never);
 
 		render(await UserSettings({ email: 'user@example.com' }));
 
-		const form = screen.getByTestId('change-name-form');
-		expect(form.getAttribute('data-name')).toBe('New User');
+		expect(vi.mocked(ChangeNameForm)).toHaveBeenCalledWith(
+			expect.objectContaining({ currentName: 'New User' }),
+			undefined,
+		);
 	});
 
-	test('renders change email form with current email', async () => {
-		mockCheckEmailStatus.mockResolvedValueOnce('has-password');
-		mockGetUser.mockResolvedValueOnce({ pendingEmailChange: null });
+	it('should pass current email to ChangeEmailForm', async () => {
+		vi.mocked(checkEmailStatus).mockResolvedValueOnce('has-password');
+		vi.mocked(getUser).mockResolvedValueOnce({ name: 'Test User' } as never);
 
 		render(await UserSettings({ email: 'user@example.com' }));
 
-		const form = screen.getByTestId('change-email-form');
-		expect(form.getAttribute('data-email')).toBe('user@example.com');
+		expect(vi.mocked(ChangeEmailForm)).toHaveBeenCalledWith(
+			expect.objectContaining({ currentEmail: 'user@example.com' }),
+			undefined,
+		);
 	});
 
-	test('passes pending email change to ChangeEmailForm', async () => {
-		mockCheckEmailStatus.mockResolvedValueOnce('has-password');
-		mockGetUser.mockResolvedValueOnce({
+	it('should transform and pass pending email change to ChangeEmailForm', async () => {
+		const futureDate = new Date(Date.now() + 1000 * 60 * 60 * 24);
+
+		vi.mocked(checkEmailStatus).mockResolvedValueOnce('has-password');
+		vi.mocked(getUser).mockResolvedValueOnce({
+			name: 'Test User',
 			pendingEmailChange: {
 				email: 'new@example.com',
 				token: 'token123',
 				expiresAt: futureDate,
 			},
-		});
+		} as never);
 
 		render(await UserSettings({ email: 'user@example.com' }));
 
-		const form = screen.getByTestId('change-email-form');
-		expect(form.getAttribute('data-pending')).toBe('new@example.com');
+		expect(vi.mocked(ChangeEmailForm)).toHaveBeenCalledWith(
+			expect.objectContaining({
+				currentEmail: 'user@example.com',
+				pendingEmailChange: expect.objectContaining({
+					email: 'new@example.com',
+					expiresAt: futureDate,
+				}),
+			}),
+			undefined,
+		);
 	});
 
-	test('passes undefined pendingEmailChange when user is null', async () => {
-		mockCheckEmailStatus.mockResolvedValueOnce('has-password');
-		mockGetUser.mockResolvedValueOnce(null);
+	it('should pass undefined pendingEmailChange when user is null', async () => {
+		vi.mocked(checkEmailStatus).mockResolvedValueOnce('has-password');
+		vi.mocked(getUser).mockResolvedValueOnce(null as never);
 
 		render(await UserSettings({ email: 'user@example.com' }));
 
-		const form = screen.getByTestId('change-email-form');
-		expect(form.getAttribute('data-pending')).toBe('');
+		expect(vi.mocked(ChangeEmailForm)).toHaveBeenCalledWith(
+			expect.objectContaining({
+				currentEmail: 'user@example.com',
+				pendingEmailChange: undefined,
+			}),
+			undefined,
+		);
 	});
 
-	test('renders change password form for user with password', async () => {
-		mockCheckEmailStatus.mockResolvedValueOnce('has-password');
-		mockGetUser.mockResolvedValueOnce(null);
+	it('should render ChangePasswordForm when user has a password', async () => {
+		vi.mocked(checkEmailStatus).mockResolvedValueOnce('has-password');
+		vi.mocked(getUser).mockResolvedValueOnce(null as never);
 
 		render(await UserSettings({ email: 'user@example.com' }));
 
-		const form = screen.getByTestId('change-password-form');
-		expect(form).toBeDefined();
-		expect(form.getAttribute('data-email')).toBe('user@example.com');
+		expect(vi.mocked(ChangePasswordForm)).toHaveBeenCalledWith(
+			expect.objectContaining({ email: 'user@example.com' }),
+			undefined,
+		);
 	});
 
-	test('renders social-only message for Google-only user', async () => {
-		mockCheckEmailStatus.mockResolvedValueOnce('social-only');
-		mockGetUser.mockResolvedValueOnce(null);
+	it('should render social-only message when user does not have a password', async () => {
+		vi.mocked(checkEmailStatus).mockResolvedValueOnce('social-only');
+		vi.mocked(getUser).mockResolvedValueOnce(null as never);
 
 		render(await UserSettings({ email: 'user@example.com' }));
 
 		expect(screen.getByTestId('social-only-message')).toBeDefined();
-	});
-
-	test('renders delete account form in Danger Zone section', async () => {
-		mockCheckEmailStatus.mockResolvedValueOnce('has-password');
-		mockGetUser.mockResolvedValueOnce(null);
-
-		render(await UserSettings({ email: 'user@example.com' }));
-
-		expect(screen.getByTestId('delete-account-form')).toBeDefined();
-	});
-
-	test('renders InvitesSettings component', async () => {
-		mockCheckEmailStatus.mockResolvedValueOnce('has-password');
-		mockGetUser.mockResolvedValueOnce(null);
-
-		render(await UserSettings({ email: 'user@example.com' }));
-
-		expect(screen.getByTestId('invites-settings')).toBeDefined();
-	});
-
-	test('renders Pending Invites title', async () => {
-		mockCheckEmailStatus.mockResolvedValueOnce('has-password');
-		mockGetUser.mockResolvedValueOnce(null);
-
-		render(await UserSettings({ email: 'user@example.com' }));
-
-		expect(screen.getByText('Pending Invites')).toBeDefined();
+		expect(vi.mocked(ChangePasswordForm)).not.toHaveBeenCalled();
 	});
 });

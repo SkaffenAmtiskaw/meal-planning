@@ -3,7 +3,7 @@
 import { Types } from 'mongoose';
 
 import { getUser } from '@/_actions/user';
-import { Planner } from '@/_models';
+import { Planner } from '@/_models/planner';
 import type { AccessLevel } from '@/_models/user';
 
 export type PlannerWithAccess = {

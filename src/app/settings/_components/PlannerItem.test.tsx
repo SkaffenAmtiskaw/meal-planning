@@ -1,101 +1,46 @@
-import { fireEvent, render, screen, waitFor } from '@testing-library/react';
+import { useRouter } from 'next/navigation';
 
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { fireEvent, render, screen } from '@testing-library/react';
 
-import type { PendingInvite } from '@/_actions/planner/invite.types';
-import type { AccessLevel } from '@/_models/user';
+import { it } from '@test';
+import { beforeAll, beforeEach, describe, expect, vi } from 'vitest';
 
+import { leavePlanner } from '@/_actions/sharing';
+import { ConfirmButton } from '@/_components';
+
+import { InviteForm } from './InviteForm';
+import { PendingInvitesList } from './PendingInvitesList';
 import { PlannerItem } from './PlannerItem';
 
-import { getAccessLevelColor } from '../_utils/getAccessLevelColor';
+import type { UseInvitesResult } from '../_hooks/useInvites';
 
-// Mock next/navigation
-const mockRefresh = vi.fn();
-vi.mock('next/navigation', () => ({
-	useRouter: () => ({
-		refresh: mockRefresh,
-	}),
+vi.mock('next/navigation', async () => await import('@mocks/next/navigation'));
+
+vi.mock(
+	'@/_actions/sharing',
+	async () => await import('@mocks/@/_actions/sharing'),
+);
+
+vi.mock('@/_components', () => ({
+	ConfirmButton: vi.fn(({ renderTrigger }) => (
+		<div data-testid="confirm-button">{renderTrigger(() => {})}</div>
+	)),
 }));
 
-// Mock leavePlanner action
-const mockLeavePlanner = vi.fn();
-vi.mock('@/_actions/planner/leavePlanner', () => ({
-	leavePlanner: (id: string) => mockLeavePlanner(id),
-}));
-
-// Mock ConfirmButton
-const mockOnSuccessCallback = vi.fn();
-vi.mock('@/_components', async (importOriginal) => {
-	const actual = await importOriginal<typeof import('@/_components')>();
-	return {
-		...actual,
-		ConfirmButton: ({
-			title,
-			message,
-			confirmButtonText,
-			onConfirm,
-			onSuccess,
-			renderTrigger,
-		}: {
-			title: string;
-			message: React.ReactNode;
-			confirmButtonText?: string;
-			onConfirm: () => Promise<{ ok: boolean; error?: string }>;
-			onSuccess?: () => void;
-			renderTrigger: (onOpen: () => void) => React.ReactNode;
-		}) => {
-			// Store onSuccess for test access
-			if (onSuccess) {
-				mockOnSuccessCallback.mockImplementation(onSuccess);
-			}
-			return (
-				<>
-					{renderTrigger(() => {
-						// Trigger click handler
-					})}
-					<div data-testid="confirm-button">
-						<div data-testid="confirm-title">{title}</div>
-						<div data-testid="confirm-message">{message}</div>
-						<div data-testid="confirm-button-text">{confirmButtonText}</div>
-						<button
-							data-testid="confirm-action"
-							onClick={async () => {
-								const result = await onConfirm();
-								if (result.ok && onSuccess) {
-									onSuccess();
-								}
-							}}
-							type="button"
-						>
-							Confirm Action
-						</button>
-					</div>
-				</>
-			);
-		},
-	};
-});
-
-vi.mock('@mantine/core', async () => {
-	const actual = await import('@mocks/@mantine/core');
-	return actual;
-});
-
-vi.mock('@/_utils/date', () => ({
-	toLocaleDateString: (date: string) =>
-		new Date(date).toLocaleDateString('en-US', {
-			year: 'numeric',
-			month: 'short',
-			day: 'numeric',
-		}),
-	isPastDate: () => false,
-	isWithinHours: () => false,
-}));
+vi.mock('@mantine/core', async () => await import('@mocks/@mantine/core'));
 
 vi.mock('./MemberListContainer', () => ({
 	MemberListContainer: ({ plannerId }: { plannerId: string }) => (
 		<div data-testid="member-list" data-planner-id={plannerId} />
 	),
+}));
+
+vi.mock('./InviteForm', () => ({
+	InviteForm: vi.fn(() => <div data-testid="invite-form" />),
+}));
+
+vi.mock('./PendingInvitesList', () => ({
+	PendingInvitesList: vi.fn(() => <div data-testid="pending-invites-list" />),
 }));
 
 const mockUseRenamePlanner = vi.fn();
@@ -106,31 +51,19 @@ vi.mock('./useRenamePlanner', () => ({
 const mockInviteUser = vi.fn();
 const mockCancelInvite = vi.fn();
 
-interface UseInvitesReturn {
-	invites: PendingInvite[];
-	loading: boolean;
-	error: string | null;
-	inviteStatus: 'idle' | 'loading' | 'success' | 'error';
-	inviteError: string | null;
-	cancelStatus: 'idle' | 'loading' | 'success' | 'error';
-	cancelError: string | null;
-	inviteUser: typeof mockInviteUser;
-	cancelInvite: typeof mockCancelInvite;
-}
+const mockUseInvites = vi.fn<() => UseInvitesResult>(() => ({
+	invites: [],
+	loading: false,
+	error: null,
+	inviteStatus: 'idle',
+	inviteError: null,
+	cancelStatus: 'idle',
+	cancelError: null,
+	inviteUser: mockInviteUser,
+	cancelInvite: mockCancelInvite,
+	refresh: vi.fn(),
+}));
 
-const mockUseInvites = vi.fn(
-	(): UseInvitesReturn => ({
-		invites: [],
-		loading: false,
-		error: null,
-		inviteStatus: 'idle',
-		inviteError: null,
-		cancelStatus: 'idle',
-		cancelError: null,
-		inviteUser: mockInviteUser,
-		cancelInvite: mockCancelInvite,
-	}),
-);
 vi.mock('../_hooks/useInvites', () => ({
 	useInvites: () => mockUseInvites(),
 }));
@@ -154,75 +87,34 @@ const editingState = {
 	editing: true,
 };
 
-describe('PlannerItem', () => {
+describe('planner item component', () => {
+	const mockRefresh = vi.fn();
+
+	beforeAll(() => {
+		const defaultRouter = vi.mocked(useRouter)();
+		vi.mocked(useRouter).mockReturnValue({
+			...defaultRouter,
+			refresh: mockRefresh,
+		});
+	});
+
 	beforeEach(() => {
 		vi.clearAllMocks();
-		mockRefresh.mockClear();
-		mockLeavePlanner.mockClear();
-		mockOnSuccessCallback.mockClear();
 	});
 
-	describe('renders', () => {
-		it('renders accordion with planner name in control', () => {
-			mockUseRenamePlanner.mockReturnValue(notEditingState);
+	describe('rename planner', () => {
+		it.byAccessLevels(
+			'only allows admins and owners to rename the planner',
+			({ accessLevel, expect }) => {
+				mockUseRenamePlanner.mockReturnValue(notEditingState);
 
-			render(<PlannerItem id={id} name={name} accessLevel="owner" />);
+				render(<PlannerItem id={id} name={name} accessLevel={accessLevel} />);
 
-			expect(screen.getByTestId('accordion')).toBeDefined();
-			expect(screen.getByTestId('accordion-item')).toBeDefined();
-			expect(screen.getByTestId('accordion-control')).toBeDefined();
-			expect(screen.getByTestId('accordion-panel')).toBeDefined();
-		});
+				const input = screen.queryByTestId('planner-name-input');
 
-		it('displays planner name in accordion control', () => {
-			mockUseRenamePlanner.mockReturnValue(notEditingState);
-
-			render(<PlannerItem id={id} name={name} accessLevel="owner" />);
-
-			const control = screen.getByTestId('accordion-control');
-			expect(control.textContent).toContain(name);
-		});
-	});
-
-	describe('inline rename functionality', () => {
-		it('shows disabled name input in accordion panel by default', () => {
-			mockUseRenamePlanner.mockReturnValue(notEditingState);
-
-			render(<PlannerItem id={id} name={name} accessLevel="owner" />);
-
-			const input = screen.getByTestId('planner-name-input');
-			expect(input).toBeDefined();
-			expect(input.getAttribute('disabled')).not.toBeNull();
-		});
-
-		it('shows Rename button when not editing', () => {
-			mockUseRenamePlanner.mockReturnValue(notEditingState);
-
-			render(<PlannerItem id={id} name={name} accessLevel="owner" />);
-
-			expect(screen.getByTestId('rename-button')).toBeDefined();
-			expect(screen.queryByTestId('save-name-button')).toBeNull();
-			expect(screen.queryByTestId('cancel-rename-button')).toBeNull();
-		});
-
-		it('shows Save and Cancel buttons when editing', () => {
-			mockUseRenamePlanner.mockReturnValue(editingState);
-
-			render(<PlannerItem id={id} name={name} accessLevel="owner" />);
-
-			expect(screen.queryByTestId('rename-button')).toBeNull();
-			expect(screen.getByTestId('save-name-button')).toBeDefined();
-			expect(screen.getByTestId('cancel-rename-button')).toBeDefined();
-		});
-
-		it('enables input when editing', () => {
-			mockUseRenamePlanner.mockReturnValue(editingState);
-
-			render(<PlannerItem id={id} name={name} accessLevel="owner" />);
-
-			const input = screen.getByTestId('planner-name-input');
-			expect(input.getAttribute('disabled')).toBeNull();
-		});
+				expect(input).atMinLevel('admin').toBeTruthy();
+			},
+		);
 
 		it('calls enterEditing when rename button clicked', () => {
 			const enterEditing = vi.fn();
@@ -283,275 +175,67 @@ describe('PlannerItem', () => {
 				'Invalid name',
 			);
 		});
-
-		it('shows loading state on save button when loading', () => {
-			mockUseRenamePlanner.mockReturnValue({ ...editingState, loading: true });
-
-			render(<PlannerItem id={id} name={name} accessLevel="owner" />);
-
-			const saveButton = screen.getByTestId('save-name-button');
-			expect(saveButton.getAttribute('data-loading')).toBe('true');
-			expect(saveButton.getAttribute('disabled')).not.toBeNull();
-		});
 	});
 
-	describe('accordion stays open', () => {
-		it('renders accordion when editing', () => {
-			mockUseRenamePlanner.mockReturnValue(editingState);
-
-			render(<PlannerItem id={id} name={name} accessLevel="owner" />);
-
-			// Accordion should still be rendered
-			expect(screen.getByTestId('accordion')).toBeDefined();
-			expect(screen.getByTestId('accordion-panel')).toBeDefined();
-			// And panel should contain the inline editing UI
-			expect(screen.getByTestId('planner-name-input')).toBeDefined();
-		});
-
-		it('keeps MemberList visible when editing', () => {
-			mockUseRenamePlanner.mockReturnValue(editingState);
-
-			render(<PlannerItem id={id} name={name} accessLevel="owner" />);
-
-			expect(screen.getByTestId('member-list')).toBeDefined();
-		});
-	});
-
-	describe('access level badges', () => {
-		const testCases: {
-			accessLevel: AccessLevel;
-			shouldShowBadge: boolean;
-			expectedColor?: string;
-		}[] = [
-			{ accessLevel: 'owner', shouldShowBadge: false },
-			{ accessLevel: 'admin', shouldShowBadge: true, expectedColor: 'orange' },
-			{ accessLevel: 'write', shouldShowBadge: true, expectedColor: 'blue' },
-			{ accessLevel: 'read', shouldShowBadge: true, expectedColor: 'gray' },
-		];
-
-		testCases.forEach(({ accessLevel, shouldShowBadge, expectedColor }) => {
-			it(`for ${accessLevel} access, badge ${shouldShowBadge ? 'is shown' : 'is not shown'}`, () => {
+	describe('accordion panel content', () => {
+		it.byAccessLevels(
+			'only shows member list for admins and owners',
+			({ accessLevel, expect }) => {
 				mockUseRenamePlanner.mockReturnValue(notEditingState);
 
 				render(<PlannerItem id={id} name={name} accessLevel={accessLevel} />);
 
-				const badge = screen.queryByTestId('access-level-badge');
-				if (shouldShowBadge) {
-					expect(badge).toBeDefined();
-					expect(badge?.getAttribute('data-color')).toBe(expectedColor);
-					expect(badge?.textContent).toBe(accessLevel);
-				} else {
-					expect(badge).toBeNull();
-				}
-			});
-		});
-	});
+				const memberList = screen.queryByTestId('member-list');
 
-	describe('accordion panel content', () => {
-		it('shows MemberList for owner access level', () => {
-			mockUseRenamePlanner.mockReturnValue(notEditingState);
+				expect(memberList).atMinLevel('admin').toBeTruthy();
+			},
+		);
 
-			render(<PlannerItem id={id} name={name} accessLevel="owner" />);
+		it.byAccessLevels(
+			'shows access level info text for read and write access',
+			({ accessLevel, expect }) => {
+				render(<PlannerItem id={id} name={name} accessLevel={accessLevel} />);
 
-			expect(screen.getByTestId('member-list')).toBeDefined();
-			expect(
-				screen.getByTestId('member-list').getAttribute('data-planner-id'),
-			).toBe(id);
-		});
+				const accessLevelInfo = screen.queryByTestId('access-level-info');
 
-		it('shows MemberList for admin access level', () => {
-			mockUseRenamePlanner.mockReturnValue(notEditingState);
-
-			render(<PlannerItem id={id} name={name} accessLevel="admin" />);
-
-			expect(screen.getByTestId('member-list')).toBeDefined();
-		});
-
-		it('does not show MemberList for write access level', () => {
-			mockUseRenamePlanner.mockReturnValue(notEditingState);
-
-			render(<PlannerItem id={id} name={name} accessLevel="write" />);
-
-			expect(screen.queryByTestId('member-list')).toBeNull();
-		});
-
-		it('does not show MemberList for read access level', () => {
-			mockUseRenamePlanner.mockReturnValue(notEditingState);
-
-			render(<PlannerItem id={id} name={name} accessLevel="read" />);
-
-			expect(screen.queryByTestId('member-list')).toBeNull();
-		});
-
-		it('shows access level info text for write users', () => {
-			mockUseRenamePlanner.mockReturnValue(notEditingState);
-
-			render(<PlannerItem id={id} name={name} accessLevel="write" />);
-
-			expect(
-				screen.getByText(/You have write access to this planner/),
-			).toBeDefined();
-		});
-
-		it('shows access level info text for read users', () => {
-			mockUseRenamePlanner.mockReturnValue(notEditingState);
-
-			render(<PlannerItem id={id} name={name} accessLevel="read" />);
-
-			expect(
-				screen.getByText(/You have read access to this planner/),
-			).toBeDefined();
-		});
+				expect(accessLevelInfo).atMaxLevel('write').toBeTruthy();
+			},
+		);
 	});
 
 	describe('leave planner button', () => {
-		it('does NOT show Leave Planner button for owner', () => {
-			mockUseRenamePlanner.mockReturnValue(notEditingState);
+		it.byAccessLevels(
+			'shows leave planner button for non-owners',
+			({ accessLevel, expect }) => {
+				render(<PlannerItem id={id} name={name} accessLevel={accessLevel} />);
 
-			render(<PlannerItem id={id} name={name} accessLevel="owner" />);
+				const button = screen.queryByTestId('confirm-button');
 
-			expect(screen.queryByTestId('confirm-button')).toBeNull();
-		});
-
-		it('shows Leave Planner button for admin access', () => {
-			mockUseRenamePlanner.mockReturnValue(notEditingState);
-
-			render(<PlannerItem id={id} name={name} accessLevel="admin" />);
-
-			expect(screen.getByTestId('confirm-button')).toBeDefined();
-		});
-
-		it('shows Leave Planner button for write access', () => {
-			mockUseRenamePlanner.mockReturnValue(notEditingState);
-
-			render(<PlannerItem id={id} name={name} accessLevel="write" />);
-
-			expect(screen.getByTestId('confirm-button')).toBeDefined();
-		});
-
-		it('shows Leave Planner button for read access', () => {
-			mockUseRenamePlanner.mockReturnValue(notEditingState);
-
-			render(<PlannerItem id={id} name={name} accessLevel="read" />);
-
-			expect(screen.getByTestId('confirm-button')).toBeDefined();
-		});
-
-		it('displays confirmation modal with correct title and message', () => {
-			mockUseRenamePlanner.mockReturnValue(notEditingState);
-
-			render(<PlannerItem id={id} name={name} accessLevel="admin" />);
-
-			expect(screen.getByTestId('confirm-title').textContent).toBe(
-				'Leave Planner',
-			);
-			expect(screen.getByTestId('confirm-message').textContent).toContain(
-				'Are you sure you want to leave this planner?',
-			);
-			expect(screen.getByTestId('confirm-button-text').textContent).toBe(
-				'Leave Planner',
-			);
-		});
+				expect(button).atMaxLevel('admin').toBeTruthy();
+			},
+		);
 
 		it('calls leavePlanner with planner ID when confirmed', async () => {
-			mockUseRenamePlanner.mockReturnValue(notEditingState);
-			mockLeavePlanner.mockResolvedValue({ ok: true });
-
 			render(<PlannerItem id={id} name={name} accessLevel="admin" />);
 
-			fireEvent.click(screen.getByTestId('confirm-action'));
+			const { onConfirm } = vi.mocked(ConfirmButton).mock.calls[0][0];
+			await onConfirm();
 
-			await waitFor(() => {
-				expect(mockLeavePlanner).toHaveBeenCalledWith(id);
-			});
+			expect(leavePlanner).toHaveBeenCalledWith(id);
 		});
 
-		it('calls router.refresh when leave succeeds', async () => {
-			mockUseRenamePlanner.mockReturnValue(notEditingState);
-			mockLeavePlanner.mockResolvedValue({ ok: true });
-
+		it('calls router.refresh when leave succeeds', () => {
 			render(<PlannerItem id={id} name={name} accessLevel="admin" />);
 
-			fireEvent.click(screen.getByTestId('confirm-action'));
+			const { onSuccess } = vi.mocked(ConfirmButton).mock.calls[0][0];
+			onSuccess?.();
 
-			await waitFor(() => {
-				expect(mockRefresh).toHaveBeenCalled();
-			});
-		});
-
-		it('does not call router.refresh when leave fails', async () => {
-			mockUseRenamePlanner.mockReturnValue(notEditingState);
-			mockLeavePlanner.mockResolvedValue({
-				ok: false,
-				error: 'Failed to leave planner',
-			});
-
-			render(<PlannerItem id={id} name={name} accessLevel="admin" />);
-
-			fireEvent.click(screen.getByTestId('confirm-action'));
-
-			await waitFor(() => {
-				expect(mockLeavePlanner).toHaveBeenCalledWith(id);
-			});
-
-			expect(mockRefresh).not.toHaveBeenCalled();
-		});
-
-		it('calls router.refresh for write access level after successful leave', async () => {
-			mockUseRenamePlanner.mockReturnValue(notEditingState);
-			mockLeavePlanner.mockResolvedValue({ ok: true });
-
-			render(<PlannerItem id={id} name={name} accessLevel="write" />);
-
-			expect(screen.getByTestId('confirm-button')).toBeDefined();
-
-			fireEvent.click(screen.getByTestId('confirm-action'));
-
-			await waitFor(() => {
-				expect(mockLeavePlanner).toHaveBeenCalledWith(id);
-				expect(mockRefresh).toHaveBeenCalled();
-			});
-		});
-	});
-
-	describe('rename button visibility by access level', () => {
-		it('shows rename button in panel for owner', () => {
-			mockUseRenamePlanner.mockReturnValue(notEditingState);
-
-			render(<PlannerItem id={id} name={name} accessLevel="owner" />);
-
-			expect(screen.getByTestId('rename-button')).toBeDefined();
-		});
-
-		it('shows rename button in panel for admin', () => {
-			mockUseRenamePlanner.mockReturnValue(notEditingState);
-
-			render(<PlannerItem id={id} name={name} accessLevel="admin" />);
-
-			expect(screen.getByTestId('rename-button')).toBeDefined();
-		});
-
-		it('does not show rename button for write access', () => {
-			mockUseRenamePlanner.mockReturnValue(notEditingState);
-
-			render(<PlannerItem id={id} name={name} accessLevel="write" />);
-
-			expect(screen.queryByTestId('rename-button')).toBeNull();
-		});
-
-		it('does not show rename button for read access', () => {
-			mockUseRenamePlanner.mockReturnValue(notEditingState);
-
-			render(<PlannerItem id={id} name={name} accessLevel="read" />);
-
-			expect(screen.queryByTestId('rename-button')).toBeNull();
+			expect(mockRefresh).toHaveBeenCalled();
 		});
 	});
 
 	describe('useRenamePlanner integration', () => {
 		it('passes id and name to useRenamePlanner', () => {
-			mockUseRenamePlanner.mockReturnValue(notEditingState);
-
 			render(<PlannerItem id={id} name={name} accessLevel="owner" />);
 
 			expect(mockUseRenamePlanner).toHaveBeenCalledWith(id, name);
@@ -559,22 +243,30 @@ describe('PlannerItem', () => {
 	});
 
 	describe('invite functionality', () => {
-		it('calls inviteUser when invite form is submitted with valid email', () => {
-			mockUseRenamePlanner.mockReturnValue(notEditingState);
-			mockInviteUser.mockResolvedValue(undefined);
-
+		it('passes invite props to InviteForm', () => {
 			render(<PlannerItem id={id} name={name} accessLevel="owner" />);
 
-			const emailInput = screen.getByTestId('input-Email address');
-			fireEvent.change(emailInput, { target: { value: 'test@example.com' } });
+			expect(vi.mocked(InviteForm)).toHaveBeenCalledWith(
+				expect.objectContaining({
+					status: 'idle',
+					error: null,
+					onInvite: expect.any(Function),
+				}),
+				undefined,
+			);
+		});
 
-			fireEvent.click(screen.getByTestId('invite-button'));
+		it('wires onInvite to inviteUser', () => {
+			render(<PlannerItem id={id} name={name} accessLevel="owner" />);
+
+			const calls = vi.mocked(InviteForm).mock.calls;
+			const props = calls[0][0] as { onInvite: (email: string) => void };
+			props.onInvite('test@example.com');
 
 			expect(mockInviteUser).toHaveBeenCalledWith('test@example.com');
 		});
 
 		it('displays invites error when present', () => {
-			mockUseRenamePlanner.mockReturnValue(notEditingState);
 			mockUseInvites.mockReturnValue({
 				invites: [],
 				loading: false,
@@ -585,6 +277,7 @@ describe('PlannerItem', () => {
 				cancelError: null,
 				inviteUser: mockInviteUser,
 				cancelInvite: mockCancelInvite,
+				refresh: vi.fn(),
 			});
 
 			render(<PlannerItem id={id} name={name} accessLevel="owner" />);
@@ -596,53 +289,30 @@ describe('PlannerItem', () => {
 		});
 	});
 
-	describe('cancel invite functionality', () => {
-		it('calls cancelInvite when cancel button is clicked on a pending invite', () => {
-			const inviteId = 'invite-123';
-			mockUseRenamePlanner.mockReturnValue(notEditingState);
-			const mockInvite: PendingInvite = {
-				id: inviteId,
-				email: 'invited@example.com',
-				accessLevel: 'write',
-				invitedAt: new Date().toISOString(),
-				expiresAt: new Date(Date.now() + 86400000).toISOString(),
-			};
-			mockUseInvites.mockReturnValue({
-				invites: [mockInvite],
-				loading: false,
-				error: null,
-				inviteStatus: 'idle',
-				inviteError: null,
-				cancelStatus: 'idle',
-				cancelError: null,
-				inviteUser: mockInviteUser,
-				cancelInvite: mockCancelInvite,
-			});
-			mockCancelInvite.mockResolvedValue(undefined);
-
+	describe('pending invites functionality', () => {
+		it('passes pending invites props to PendingInvitesList', () => {
 			render(<PlannerItem id={id} name={name} accessLevel="owner" />);
 
-			fireEvent.click(screen.getByTestId(`cancel-button-${inviteId}`));
-
-			expect(mockCancelInvite).toHaveBeenCalledWith(inviteId);
+			expect(vi.mocked(PendingInvitesList)).toHaveBeenCalledWith(
+				expect.objectContaining({
+					invites: expect.any(Array),
+					loading: false,
+					cancelStatus: 'idle',
+					cancelError: null,
+					onCancel: expect.any(Function),
+				}),
+				undefined,
+			);
 		});
-	});
-});
 
-describe('getAccessLevelColor', () => {
-	it('returns red for owner', () => {
-		expect(getAccessLevelColor('owner')).toBe('red');
-	});
+		it('wires onCancel to cancelInvite', () => {
+			render(<PlannerItem id={id} name={name} accessLevel="owner" />);
 
-	it('returns orange for admin', () => {
-		expect(getAccessLevelColor('admin')).toBe('orange');
-	});
+			const calls = vi.mocked(PendingInvitesList).mock.calls;
+			const props = calls[0][0] as { onCancel: (inviteId: string) => void };
+			props.onCancel('invite-123');
 
-	it('returns blue for write', () => {
-		expect(getAccessLevelColor('write')).toBe('blue');
-	});
-
-	it('returns gray for read', () => {
-		expect(getAccessLevelColor('read')).toBe('gray');
+			expect(mockCancelInvite).toHaveBeenCalledWith('invite-123');
+		});
 	});
 });

@@ -5,8 +5,8 @@ import { useState } from 'react';
 import { ActionIcon, Group, Select } from '@mantine/core';
 import { IconCheck, IconX } from '@tabler/icons-react';
 
-import { updateMemberAccess } from '@/_actions/planner/updateMemberAccess';
-import type { AccessLevel } from '@/_models/user';
+import { updateMemberAccess } from '@/_actions/sharing';
+import type { AccessLevel } from '@/_models/types';
 
 interface AccessLevelEditorProps {
 	plannerId: string;

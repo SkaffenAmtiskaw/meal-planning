@@ -4,11 +4,14 @@ import { Container } from '@mantine/core';
 
 import { z } from 'zod';
 
-import { getPlanner } from '@/_actions';
-import { matchesId, zObjectId } from '@/_models';
-import type { BookmarkInterface } from '@/_models/planner/bookmark.types';
-import type { RecipeInterface } from '@/_models/planner/recipe.types';
-import type { TagInterface } from '@/_models/planner/tag.types';
+import { getPlanner } from '@/_actions/planner';
+import type {
+	BookmarkInterface,
+	RecipeInterface,
+	TagInterface,
+} from '@/_models/types';
+import { matchesId } from '@/_utils/matchesId';
+import { zObjectId } from '@/_utils/zObjectId';
 
 import { RecipeForm } from '../_components/Modal/RecipeForm';
 import { RecipeDetail } from './_components/RecipeDetail';
@@ -34,7 +37,7 @@ const RecipePage = async ({
 	const item = planner.saved.find(matchesId(recipeId));
 
 	if (!item || !!(item as unknown as BookmarkInterface).url) {
-		notFound();
+		return notFound();
 	}
 
 	const recipe = JSON.parse(JSON.stringify(item)) as RecipeInterface;

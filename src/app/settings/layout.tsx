@@ -3,9 +3,9 @@ import { redirect } from 'next/navigation';
 
 import { AppShell, AppShellMain } from '@mantine/core';
 
-import { getUser } from '@/_actions';
-import { zObjectId } from '@/_models';
+import { getUser } from '@/_actions/user';
 import { catchify } from '@/_utils/catchify';
+import { zObjectId } from '@/_utils/zObjectId';
 import { Header } from '@/app/_components/Header';
 import { HEADER_HEIGHT } from '@/app/_constants';
 
@@ -15,7 +15,7 @@ const Layout = async ({ children }: { children: React.ReactNode }) => {
 	const [user] = await catchify(getUser);
 	const planners = user?.planners ?? [];
 
-	if (!planners.length) redirect('/');
+	if (!planners.length) return redirect('/');
 
 	const cookieStore = await cookies();
 	const lastPlannerId = cookieStore.get('lastOpenedPlanner')?.value;

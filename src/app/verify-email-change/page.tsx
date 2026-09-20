@@ -2,7 +2,7 @@ import { Anchor, Center, Stack, Text, Title } from '@mantine/core';
 
 import { checkEmailStatus } from '@/_actions/auth';
 import { verifyEmailChange } from '@/_actions/user';
-import { User } from '@/_models';
+import { User } from '@/_models/user';
 
 import { SetPasswordForm } from './_components/SetPasswordForm';
 import { SignInWithNewEmailButton } from './_components/SignInWithNewEmailButton';

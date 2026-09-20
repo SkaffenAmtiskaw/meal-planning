@@ -1,47 +1,22 @@
-import { act, fireEvent, render, screen } from '@testing-library/react';
+import { usePathname, useRouter } from 'next/navigation';
 
-import { afterEach, describe, expect, test, vi } from 'vitest';
+import { fireEvent, render, screen } from '@testing-library/react';
 
-import { addRecipe } from '@/_actions/saved/addRecipe';
-import { editRecipe } from '@/_actions/saved/editRecipe';
+import { beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
+
+import { addRecipe, editRecipe } from '@/_actions/library';
+import { useFormFeedback } from '@/_hooks';
 
 import { RecipeForm } from './RecipeForm';
 
-const mockPush = vi.fn();
-vi.mock('next/navigation', () => ({
-	useRouter: () => ({ push: mockPush }),
-	usePathname: () => '/planner-1/recipes',
-}));
+vi.mock('next/navigation', async () => await import('@mocks/next/navigation'));
 
-vi.mock('@/_actions/saved/addRecipe', () => ({
-	addRecipe: vi.fn(),
-}));
+vi.mock(
+	'@/_actions/library',
+	async () => await import('@mocks/@/_actions/library'),
+);
 
-vi.mock('@/_actions/saved/editRecipe', () => ({
-	editRecipe: vi.fn(),
-}));
-
-type FeedbackStatus = 'idle' | 'submitting' | 'success' | 'error';
-
-const { mockUseFormFeedback } = vi.hoisted(() => {
-	const mockUseFormFeedback = vi.fn(() => ({
-		status: 'idle' as FeedbackStatus,
-		countdown: 0,
-		errorMessage: undefined as string | undefined,
-		wrap:
-			(fn: (...args: unknown[]) => Promise<void>, onSuccess: () => void) =>
-			async (...args: unknown[]) => {
-				await fn(...args);
-				onSuccess();
-			},
-		reset: vi.fn(),
-	}));
-	return { mockUseFormFeedback };
-});
-
-vi.mock('@/_hooks', () => ({
-	useFormFeedback: () => mockUseFormFeedback(),
-}));
+vi.mock('@/_hooks', async () => await import('@mocks/@/_hooks'));
 
 vi.mock('@/_components', () => ({
 	FormFeedbackAlert: ({
@@ -54,74 +29,20 @@ vi.mock('@/_components', () => ({
 		status === 'error' ? (
 			<div data-testid="form-feedback-alert">{errorMessage}</div>
 		) : null,
-	StringArrayInput: ({
-		label,
-		onChange,
-	}: {
-		label?: string;
-		onChange: (v: string[]) => void;
-	}) => (
-		<button
-			type="button"
-			data-testid={`string-array-${label}`}
-			onClick={() => onChange([`${label} item`])}
-		>
-			{label}
-		</button>
+	StringArrayInput: vi.fn(({ label }: { label?: string }) => (
+		<div data-testid={`string-array-${label}`}>{label}</div>
+	)),
+	SubmitButton: ({ label }: { label: string }) => (
+		<button type="submit">{label}</button>
 	),
-	SubmitButton: ({
-		label,
-		status,
-		countdown,
-	}: {
-		label: string;
-		status: string;
-		countdown: number;
-	}) => (
-		<button
-			type={status === 'success' ? 'button' : 'submit'}
-			data-testid="submit-button"
-			disabled={status === 'submitting'}
-		>
-			{status === 'success' ? `Saved! Closing in ${countdown}…` : label}
-		</button>
-	),
-	TagCombobox: ({
-		onChange,
-	}: {
-		label?: string;
-		onChange: (v: string[]) => void;
-	}) => (
-		<button
-			type="button"
-			data-testid="tag-combobox"
-			onClick={() => onChange(['tag-1'])}
-		>
-			Tags
-		</button>
-	),
+	TagCombobox: vi.fn(() => <div data-testid="tag-combobox">Tags</div>),
 }));
 
-const { mockUseForm } = vi.hoisted(() => {
-	const mockUseForm = vi.fn(() => ({
-		onSubmit:
-			(handler: (values: Record<string, unknown>) => Promise<void>) =>
-			(e: React.FormEvent) => {
-				e.preventDefault();
-				handler({});
-			},
-		getInputProps: () => ({}),
-		key: (field: string) => field,
-	}));
-	return { mockUseForm };
-});
-
-vi.mock('@mantine/form', () => ({
-	schemaResolver: () => () => ({}),
-	useForm: () => mockUseForm(),
-}));
+vi.mock('@mantine/form', async () => await import('@mocks/@mantine/form'));
 
 vi.mock('@mantine/core', async () => await import('@mocks/@mantine/core'));
+
+const mockPush = vi.fn();
 
 const defaultProps = {
 	plannerId: 'planner-1',
@@ -129,16 +50,25 @@ const defaultProps = {
 };
 
 describe('RecipeForm', () => {
-	afterEach(() => {
-		vi.resetAllMocks();
+	beforeAll(() => {
+		const defaultRouter = vi.mocked(useRouter)();
+		vi.mocked(useRouter).mockReturnValue({
+			...defaultRouter,
+			push: mockPush,
+		});
+		vi.mocked(usePathname).mockReturnValue('/planner-1/recipes');
 	});
 
-	test('renders Add Recipe submit button when no item', () => {
+	beforeEach(() => {
+		vi.clearAllMocks();
+	});
+
+	it('renders Add Recipe submit button when no item', () => {
 		render(<RecipeForm {...defaultProps} />);
 		expect(screen.getByRole('button', { name: 'Add Recipe' })).toBeDefined();
 	});
 
-	test('renders Save submit button when item is provided', () => {
+	it('renders Save submit button when item is provided', () => {
 		const item = {
 			_id: 'recipe-1' as never,
 			name: 'Croissant',
@@ -149,248 +79,45 @@ describe('RecipeForm', () => {
 		expect(screen.getByRole('button', { name: 'Save' })).toBeDefined();
 	});
 
-	test('Cancel navigates back to pathname', () => {
+	it('Cancel navigates back to pathname', () => {
 		render(<RecipeForm {...defaultProps} />);
 		fireEvent.click(screen.getByRole('button', { name: 'Cancel' }));
 		expect(mockPush).toHaveBeenCalledWith('/planner-1/recipes');
 	});
 
-	test('submitting the form calls addRecipe with plannerId', async () => {
-		vi.mocked(addRecipe).mockResolvedValue({
-			ok: true,
-			data: { _id: 'new-id', name: 'Croissant' },
-		});
-
+	it('submitting the form calls addRecipe with plannerId', async () => {
 		render(<RecipeForm {...defaultProps} />);
 		fireEvent.submit(screen.getByTestId('recipe-form'));
 
-		expect(addRecipe).toHaveBeenCalledWith(
-			expect.objectContaining({ plannerId: 'planner-1' }),
-		);
+		await vi.waitFor(() => {
+			expect(addRecipe).toHaveBeenCalledWith(
+				expect.objectContaining({ plannerId: 'planner-1' }),
+			);
+		});
 	});
 
-	test('navigates away after successful submission', async () => {
-		vi.mocked(addRecipe).mockResolvedValue({
-			ok: true,
-			data: { _id: 'new-id', name: 'Croissant' },
-		});
-
+	it('navigates away after successful submission', async () => {
 		render(<RecipeForm {...defaultProps} />);
-		await act(async () => {
-			fireEvent.submit(screen.getByTestId('recipe-form'));
-		});
+		fireEvent.submit(screen.getByTestId('recipe-form'));
 
-		expect(mockPush).toHaveBeenCalledWith('/planner-1/recipes');
+		await vi.waitFor(() => {
+			expect(mockPush).toHaveBeenCalledWith('/planner-1/recipes');
+		});
 	});
 
-	test('changing ingredients updates state', () => {
-		render(<RecipeForm {...defaultProps} />);
-		fireEvent.click(screen.getByTestId('string-array-Ingredients'));
-		// component re-renders without error
-	});
-
-	test('changing instructions updates state', () => {
-		render(<RecipeForm {...defaultProps} />);
-		fireEvent.click(screen.getByTestId('string-array-Instructions'));
-		// component re-renders without error
-	});
-
-	test('changing tags updates selected tags state', () => {
-		render(<RecipeForm {...defaultProps} />);
-		fireEvent.click(screen.getByTestId('tag-combobox'));
-		// component re-renders without error
-	});
-
-	test('submits source as undefined when source name is empty', async () => {
-		vi.mocked(addRecipe).mockResolvedValue({
-			ok: true,
-			data: { _id: 'id', name: 'x' },
-		});
-		mockUseForm.mockReturnValueOnce({
-			onSubmit:
-				(handler: (values: Record<string, unknown>) => Promise<void>) =>
-				(e: React.FormEvent) => {
-					e.preventDefault();
-					handler({ source: { name: '', url: '' } });
-				},
-			getInputProps: () => ({}),
-			key: (field: string) => field,
-		});
-		render(<RecipeForm {...defaultProps} />);
-		await act(async () => {
-			fireEvent.submit(screen.getByTestId('recipe-form'));
-		});
-		expect(addRecipe).toHaveBeenCalledWith(
-			expect.objectContaining({ source: undefined }),
-		);
-	});
-
-	test('submits source with name and no url when url is empty', async () => {
-		vi.mocked(addRecipe).mockResolvedValue({
-			ok: true,
-			data: { _id: 'id', name: 'x' },
-		});
-		mockUseForm.mockReturnValueOnce({
-			onSubmit:
-				(handler: (values: Record<string, unknown>) => Promise<void>) =>
-				(e: React.FormEvent) => {
-					e.preventDefault();
-					handler({ source: { name: 'Book', url: '' } });
-				},
-			getInputProps: () => ({}),
-			key: (field: string) => field,
-		});
-		render(<RecipeForm {...defaultProps} />);
-		await act(async () => {
-			fireEvent.submit(screen.getByTestId('recipe-form'));
-		});
-		expect(addRecipe).toHaveBeenCalledWith(
-			expect.objectContaining({ source: { name: 'Book', url: undefined } }),
-		);
-	});
-
-	test('submits source with url when both fields are filled', async () => {
-		vi.mocked(addRecipe).mockResolvedValue({
-			ok: true,
-			data: { _id: 'id', name: 'x' },
-		});
-		mockUseForm.mockReturnValueOnce({
-			onSubmit:
-				(handler: (values: Record<string, unknown>) => Promise<void>) =>
-				(e: React.FormEvent) => {
-					e.preventDefault();
-					handler({
-						source: { name: 'Bon Appétit', url: 'https://example.com' },
-					});
-				},
-			getInputProps: () => ({}),
-			key: (field: string) => field,
-		});
-		render(<RecipeForm {...defaultProps} />);
-		await act(async () => {
-			fireEvent.submit(screen.getByTestId('recipe-form'));
-		});
-		expect(addRecipe).toHaveBeenCalledWith(
-			expect.objectContaining({
-				source: { name: 'Bon Appétit', url: 'https://example.com' },
-			}),
-		);
-	});
-
-	test('submits time as undefined when all time fields are empty', async () => {
-		vi.mocked(addRecipe).mockResolvedValue({
-			ok: true,
-			data: { _id: 'id', name: 'x' },
-		});
-		mockUseForm.mockReturnValueOnce({
-			onSubmit:
-				(handler: (values: Record<string, unknown>) => Promise<void>) =>
-				(e: React.FormEvent) => {
-					e.preventDefault();
-					handler({ time: { prep: '', cook: '', total: '', actual: '' } });
-				},
-			getInputProps: () => ({}),
-			key: (field: string) => field,
-		});
-		render(<RecipeForm {...defaultProps} />);
-		await act(async () => {
-			fireEvent.submit(screen.getByTestId('recipe-form'));
-		});
-		expect(addRecipe).toHaveBeenCalledWith(
-			expect.objectContaining({ time: undefined }),
-		);
-	});
-
-	test('submits time with only non-empty fields when some are filled', async () => {
-		vi.mocked(addRecipe).mockResolvedValue({
-			ok: true,
-			data: { _id: 'id', name: 'x' },
-		});
-		mockUseForm.mockReturnValueOnce({
-			onSubmit:
-				(handler: (values: Record<string, unknown>) => Promise<void>) =>
-				(e: React.FormEvent) => {
-					e.preventDefault();
-					handler({
-						time: { prep: '10m', cook: '', total: '10m', actual: '' },
-					});
-				},
-			getInputProps: () => ({}),
-			key: (field: string) => field,
-		});
-		render(<RecipeForm {...defaultProps} />);
-		await act(async () => {
-			fireEvent.submit(screen.getByTestId('recipe-form'));
-		});
-		expect(addRecipe).toHaveBeenCalledWith(
-			expect.objectContaining({
-				time: { prep: '10m', cook: undefined, total: '10m', actual: undefined },
-			}),
-		);
-	});
-
-	test('submits time with cook only when prep and total are empty', async () => {
-		vi.mocked(addRecipe).mockResolvedValue({
-			ok: true,
-			data: { _id: 'id', name: 'x' },
-		});
-		mockUseForm.mockReturnValueOnce({
-			onSubmit:
-				(handler: (values: Record<string, unknown>) => Promise<void>) =>
-				(e: React.FormEvent) => {
-					e.preventDefault();
-					handler({
-						time: { prep: '', cook: '30m', total: '', actual: '' },
-					});
-				},
-			getInputProps: () => ({}),
-			key: (field: string) => field,
-		});
-		render(<RecipeForm {...defaultProps} />);
-		await act(async () => {
-			fireEvent.submit(screen.getByTestId('recipe-form'));
-		});
-		expect(addRecipe).toHaveBeenCalledWith(
-			expect.objectContaining({
-				time: {
-					prep: undefined,
-					cook: '30m',
-					total: undefined,
-					actual: undefined,
-				},
-			}),
-		);
-	});
-
-	test('populates initial state from existing item', () => {
-		const item = {
-			_id: 'recipe-1' as never,
-			name: 'Croissant',
-			ingredients: ['2 cups flour'],
-			instructions: ['Mix', 'Bake'],
-			tags: ['tag-1' as never],
-		};
-		render(<RecipeForm {...defaultProps} item={item} />);
-		expect(screen.getByRole('button', { name: 'Save' })).toBeDefined();
-	});
-
-	test('shows error alert when status is error', () => {
-		mockUseFormFeedback.mockReturnValueOnce({
-			status: 'error' as FeedbackStatus,
+	it('shows error alert when status is error', () => {
+		vi.mocked(useFormFeedback).mockReturnValueOnce({
+			status: 'error',
 			countdown: 0,
 			errorMessage: 'Something went wrong',
 			wrap: vi.fn(),
 			reset: vi.fn(),
-		});
+		} as ReturnType<typeof useFormFeedback>);
 		render(<RecipeForm {...defaultProps} />);
 		expect(screen.getByTestId('form-feedback-alert')).toBeDefined();
 	});
 
-	test('calls editRecipe (not addRecipe) when item is provided', async () => {
-		vi.mocked(editRecipe).mockResolvedValue({
-			ok: true,
-			data: { _id: 'recipe-1', name: 'Croissant' },
-		});
+	it('calls editRecipe (not addRecipe) when item is provided', async () => {
 		const item = {
 			_id: 'recipe-1' as never,
 			name: 'Croissant',
@@ -398,30 +125,28 @@ describe('RecipeForm', () => {
 			instructions: ['mix'],
 		};
 		render(<RecipeForm {...defaultProps} item={item} />);
-		await act(async () => {
-			fireEvent.submit(screen.getByTestId('recipe-form'));
+		fireEvent.submit(screen.getByTestId('recipe-form'));
+
+		await vi.waitFor(() => {
+			expect(editRecipe).toHaveBeenCalledWith(
+				expect.objectContaining({ plannerId: 'planner-1', _id: 'recipe-1' }),
+			);
+			expect(addRecipe).not.toHaveBeenCalled();
 		});
-		expect(editRecipe).toHaveBeenCalledWith(
-			expect.objectContaining({ plannerId: 'planner-1', _id: 'recipe-1' }),
-		);
-		expect(addRecipe).not.toHaveBeenCalled();
 	});
 
-	test('navigates to redirectTo after successful submission', async () => {
-		vi.mocked(addRecipe).mockResolvedValue({
-			ok: true,
-			data: { _id: 'new-id', name: 'Croissant' },
-		});
+	it('navigates to redirectTo after successful submission', async () => {
 		render(
 			<RecipeForm {...defaultProps} redirectTo="/planner-1/recipes/recipe-1" />,
 		);
-		await act(async () => {
-			fireEvent.submit(screen.getByTestId('recipe-form'));
+		fireEvent.submit(screen.getByTestId('recipe-form'));
+
+		await vi.waitFor(() => {
+			expect(mockPush).toHaveBeenCalledWith('/planner-1/recipes/recipe-1');
 		});
-		expect(mockPush).toHaveBeenCalledWith('/planner-1/recipes/recipe-1');
 	});
 
-	test('Cancel navigates to redirectTo when provided', () => {
+	it('Cancel navigates to redirectTo when provided', () => {
 		render(
 			<RecipeForm {...defaultProps} redirectTo="/planner-1/recipes/recipe-1" />,
 		);

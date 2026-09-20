@@ -14,7 +14,7 @@ import { IconPlus } from '@tabler/icons-react';
 
 import { z } from 'zod';
 
-import { addMeal } from '@/_actions/planner/addMeal';
+import { addMeal } from '@/_actions/calendar';
 import { FormFeedbackAlert, SubmitButton } from '@/_components';
 import { useFormFeedback } from '@/_hooks';
 import { THEME_COLORS } from '@/_theme/colors';
@@ -25,18 +25,24 @@ import { useDishes } from './useDishes';
 import type { SerializedDay } from '../../_utils/toScheduleXEvents';
 
 const zFormFields = z.object({
-	date: z.string().min(1, 'Date is required'),
-	mealName: z.string().min(1, 'Meal name is required'),
+	date: z.string().min(1, { error: 'Date is required' }),
+	mealName: z.string().min(1, { error: 'Meal name is required' }),
 	description: z.string().optional(),
 });
 
 type Props = {
 	plannerId: string;
-	onClose: () => void;
-	onMealAdded?: (calendar: SerializedDay[]) => void;
+	initialDate?: string;
+	onCancel: () => void;
+	onSuccess?: (calendar: SerializedDay[]) => void;
 };
 
-export const AddMealForm = ({ plannerId, onClose, onMealAdded }: Props) => {
+export const AddMealForm = ({
+	plannerId,
+	initialDate,
+	onCancel,
+	onSuccess,
+}: Props) => {
 	const { dishes, addDish, removeDish, updateDish } = useDishes();
 
 	const { status, countdown, errorMessage, wrap } = useFormFeedback();
@@ -44,7 +50,7 @@ export const AddMealForm = ({ plannerId, onClose, onMealAdded }: Props) => {
 	const form = useForm({
 		mode: 'uncontrolled',
 		validate: schemaResolver(zFormFields),
-		initialValues: { date: '', mealName: '', description: '' },
+		initialValues: { date: initialDate ?? '', mealName: '', description: '' },
 	});
 
 	const handleSubmit = form.onSubmit(
@@ -62,8 +68,7 @@ export const AddMealForm = ({ plannerId, onClose, onMealAdded }: Props) => {
 					})),
 				}),
 			(data) => {
-				onMealAdded?.(data.calendar as SerializedDay[]);
-				onClose();
+				onSuccess?.(data.calendar as SerializedDay[]);
 			},
 		),
 	);
@@ -128,7 +133,7 @@ export const AddMealForm = ({ plannerId, onClose, onMealAdded }: Props) => {
 				</Card>
 
 				<Group justify="flex-end">
-					<Button variant="subtle" onClick={onClose}>
+					<Button variant="subtle" onClick={onCancel}>
 						Cancel
 					</Button>
 					<SubmitButton

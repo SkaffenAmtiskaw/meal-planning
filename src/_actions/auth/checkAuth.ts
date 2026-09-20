@@ -1,6 +1,6 @@
 import type { Types } from 'mongoose';
 
-import { getUser } from '@/_actions';
+import { getUser } from '@/_actions/user';
 import type { AccessLevel } from '@/_models/user';
 import { catchify } from '@/_utils/catchify';
 

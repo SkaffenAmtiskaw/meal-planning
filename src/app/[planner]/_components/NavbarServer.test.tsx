@@ -1,30 +1,29 @@
 import { render } from '@testing-library/react';
 
-import { afterEach, describe, expect, test, vi } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
+
+import { getPlanners } from '@/_actions/planner';
+import { Navbar } from '@/_components';
 
 import { NavbarServer } from './NavbarServer';
 
-const mockGetPlanners = vi.hoisted(() => vi.fn());
-vi.mock('@/_actions/planner', () => ({
-	getPlanners: mockGetPlanners,
-}));
+vi.mock(
+	'@/_actions/planner',
+	async () => await import('@mocks/@/_actions/planner'),
+);
 
-const mockNavbar = vi.fn<
-	(props: { id: string; planners: { id: string; name: string }[] }) => null
->(() => null);
 vi.mock('@/_components', () => ({
-	Navbar: (props: { id: string; planners: { id: string; name: string }[] }) =>
-		mockNavbar(props),
+	Navbar: vi.fn(() => null),
 }));
 
 describe('NavbarServer', () => {
-	afterEach(() => {
+	beforeEach(() => {
 		vi.clearAllMocks();
 	});
 
-	test('passes current id and fetched planners to Navbar', async () => {
+	it('passes current id and fetched planners to Navbar', async () => {
 		const plannerId = '507f1f77bcf86cd799439011';
-		mockGetPlanners.mockResolvedValue([
+		vi.mocked(getPlanners).mockResolvedValue([
 			{
 				planner: {
 					_id: plannerId,
@@ -35,21 +34,22 @@ describe('NavbarServer', () => {
 				},
 				accessLevel: 'owner',
 			},
-		]);
+		] as unknown as Awaited<ReturnType<typeof getPlanners>>);
 
 		render(await NavbarServer({ id: plannerId }));
 
-		expect(mockNavbar).toHaveBeenCalledWith(
+		expect(vi.mocked(Navbar)).toHaveBeenCalledWith(
 			expect.objectContaining({
 				id: plannerId,
 				planners: [{ id: plannerId, name: "Ariel's Planner" }],
 			}),
+			undefined,
 		);
 	});
 
-	test('defaults to empty string when planner name is undefined', async () => {
+	it('defaults to empty string when planner name is undefined', async () => {
 		const plannerId = '507f1f77bcf86cd799439011';
-		mockGetPlanners.mockResolvedValue([
+		vi.mocked(getPlanners).mockResolvedValue([
 			{
 				planner: {
 					_id: plannerId,
@@ -60,14 +60,15 @@ describe('NavbarServer', () => {
 				},
 				accessLevel: 'owner',
 			},
-		]);
+		] as unknown as Awaited<ReturnType<typeof getPlanners>>);
 
 		render(await NavbarServer({ id: plannerId }));
 
-		expect(mockNavbar).toHaveBeenCalledWith(
+		expect(vi.mocked(Navbar)).toHaveBeenCalledWith(
 			expect.objectContaining({
 				planners: [{ id: plannerId, name: '' }],
 			}),
+			undefined,
 		);
 	});
 });

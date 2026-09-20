@@ -46,10 +46,7 @@ import './GoogleButton.css';
  * - Performance (no unnecessary effect re-runs)
  */
 
-export interface SignInFlowProps {
-	/** Optional initial email (e.g., from query params) */
-	initialEmail?: string;
-}
+// No props needed - component is self-contained
 
 export type Step =
 	| { type: 'idle' }
@@ -59,19 +56,8 @@ export type Step =
 	| { type: 'email-sent'; email: string }
 	| { type: 'forgot-password-sent'; email: string };
 
-export const isNewStep = (step: Step): step is Extract<Step, { type: 'new' }> =>
-	step.type === 'new';
-
-// Exported for testing - validates step type and throws if invalid
-export const validateNewStep = (step: Step): Extract<Step, { type: 'new' }> => {
-	if (!isNewStep(step)) {
-		throw new Error('Invalid step type for signup');
-	}
-	return step;
-};
-
-export const SignInFlow: React.FC<SignInFlowProps> = ({ initialEmail }) => {
-	const [email, setEmail] = useState(initialEmail ?? '');
+export const SignInFlow: React.FC = () => {
+	const [email, setEmail] = useState('');
 	const [password, setPassword] = useState('');
 	const [name, setName] = useState('');
 	const [step, setStep] = useState<Step>({ type: 'idle' });
@@ -86,17 +72,16 @@ export const SignInFlow: React.FC<SignInFlowProps> = ({ initialEmail }) => {
 	const searchParams = useSearchParams();
 	const emailFromQuery = searchParams.get('email');
 
-	// Auto-trigger email check when initialEmail is provided or from query params
+	// Auto-trigger email check when email is provided in query params
 	useEffect(() => {
-		const emailToCheck = initialEmail ?? emailFromQuery;
-		if (emailToCheck && step.type === 'idle') {
-			setEmail(emailToCheck);
+		if (emailFromQuery && step.type === 'idle') {
+			setEmail(emailFromQuery);
 			continueBtn.run(async () => {
-				const status = await checkEmailStatus(emailToCheck);
-				setStep({ type: status, email: emailToCheck });
+				const status = await checkEmailStatus(emailFromQuery);
+				setStep({ type: status, email: emailFromQuery });
 			});
 		}
-	}, [initialEmail, emailFromQuery, step.type, continueBtn]);
+	}, [emailFromQuery, step.type, continueBtn]);
 
 	const signInWithGoogle = () =>
 		googleBtn.run(async () => {
@@ -121,39 +106,6 @@ export const SignInFlow: React.FC<SignInFlowProps> = ({ initialEmail }) => {
 					result.error.message ?? 'Invalid password. Please try again.',
 				);
 			}
-		});
-
-	const handleSignUp = () =>
-		signUpBtn.run(async () => {
-			setSignupError(null);
-
-			const trimmedName = name.trim();
-			if (trimmedName) {
-				const parsed = zSafeString().safeParse(trimmedName);
-				if (!parsed.success) {
-					throw new Error(parsed.error.issues[0].message);
-				}
-			}
-
-			if (password.length < 8) {
-				throw new Error('Password must be at least 8 characters');
-			}
-
-			// handleSignUp is only called when step.type === 'new', so step.email is guaranteed to exist
-			const newStep = validateNewStep(step);
-			const currentEmail = newStep.email;
-			const result = await client.signUp.email({
-				email: currentEmail,
-				password,
-				name: trimmedName || 'New User',
-				callbackURL: '/verify-email',
-			});
-			if (result.error) {
-				throw new Error(
-					result.error.message ?? 'Could not create account. Please try again.',
-				);
-			}
-			setStep({ type: 'email-sent', email: currentEmail });
 		});
 
 	const handleForgotPassword = (emailToReset: string) =>
@@ -234,7 +186,6 @@ export const SignInFlow: React.FC<SignInFlowProps> = ({ initialEmail }) => {
 							onChangeEmail={resetToIdle}
 							data-testid="email-display"
 						/>
-
 						<AuthLayoutFormSection>
 							<PasswordInput
 								data-testid="password-input"
@@ -281,7 +232,41 @@ export const SignInFlow: React.FC<SignInFlowProps> = ({ initialEmail }) => {
 					</>
 				);
 
-			case 'new':
+			case 'new': {
+				// Define handleSignUp inside the case block so TypeScript can narrow step type
+				const handleSignUp = () =>
+					signUpBtn.run(async () => {
+						setSignupError(null);
+
+						const trimmedName = name.trim();
+						if (trimmedName) {
+							const parsed = zSafeString().safeParse(trimmedName);
+							if (!parsed.success) {
+								throw new Error(parsed.error.issues[0].message);
+							}
+						}
+
+						if (password.length < 8) {
+							throw new Error('Password must be at least 8 characters');
+						}
+
+						// TypeScript narrows step type here because we're inside case 'new'
+						const currentEmail = step.email;
+						const result = await client.signUp.email({
+							email: currentEmail,
+							password,
+							name: trimmedName || 'New User',
+							callbackURL: '/verify-email',
+						});
+						if (result.error) {
+							throw new Error(
+								result.error.message ??
+									'Could not create account. Please try again.',
+							);
+						}
+						setStep({ type: 'email-sent', email: currentEmail });
+					});
+
 				return (
 					<>
 						<AuthLayoutEmailDisplay
@@ -289,7 +274,6 @@ export const SignInFlow: React.FC<SignInFlowProps> = ({ initialEmail }) => {
 							onChangeEmail={resetToIdle}
 							data-testid="email-display"
 						/>
-
 						<AuthLayoutFormSection>
 							<TextInput
 								data-testid="name-input"
@@ -323,6 +307,7 @@ export const SignInFlow: React.FC<SignInFlowProps> = ({ initialEmail }) => {
 						</AuthLayoutFormSection>
 					</>
 				);
+			}
 
 			case 'social-only':
 				return (

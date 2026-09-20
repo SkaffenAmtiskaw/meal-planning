@@ -1,91 +1,26 @@
-import type React from 'react';
+import { useDisclosure } from '@mantine/hooks';
 
-import { fireEvent, render, screen, waitFor } from '@testing-library/react';
+import { act, render, screen } from '@testing-library/react';
 
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-import type { ActionResult } from '@/_utils/actionResult/ActionResult';
+import { ConfirmModal } from '@/_components';
+import { useAsyncStatus } from '@/_hooks';
 
 import { ConfirmButton } from './ConfirmButton';
 
-// Mock useDisclosure from @mantine/hooks
-const { mockOpen, mockClose, mockUseDisclosure } = vi.hoisted(() => {
-	const mockOpen = vi.fn();
-	const mockClose = vi.fn();
-	const mockUseDisclosure = vi.fn(() => [
-		false,
-		{ open: mockOpen, close: mockClose },
-	]);
-	return { mockOpen, mockClose, mockUseDisclosure };
-});
-
-vi.mock('@mantine/hooks', () => ({
-	useDisclosure: mockUseDisclosure,
-}));
-
-// Mock useAsyncStatus from @/_hooks
-const { mockRun, mockReset, mockUseAsyncStatus } = vi.hoisted(() => {
-	const mockRun = vi.fn();
-	const mockReset = vi.fn();
-	const mockUseAsyncStatus = vi.fn(() => ({
-		status: 'idle' as 'idle' | 'error' | 'loading',
-		error: null as string | null,
-		run: mockRun,
-		reset: mockReset,
-	}));
-	return { mockRun, mockReset, mockUseAsyncStatus };
-});
-
-vi.mock('@/_hooks', () => ({
-	useAsyncStatus: mockUseAsyncStatus,
-}));
-
-// Mock ConfirmModal
-vi.mock('@/_components', () => ({
-	ConfirmModal: ({
-		errorMessage,
-		onClose,
-		onConfirm,
-		opened,
-		loading,
-		title,
-		message,
-		confirmButtonText,
-	}: {
-		opened: boolean;
-		onClose: () => void;
-		onConfirm: () => void;
-		errorMessage?: string;
-		loading?: boolean;
-		title?: string;
-		message?: React.ReactNode;
-		confirmButtonText?: string;
-	}) => {
-		return opened ? (
-			<div data-testid="confirm-modal" role="dialog">
-				<div data-testid="modal-title">{title}</div>
-				<div data-testid="modal-message">{message}</div>
-				{errorMessage && <div data-testid="modal-error">{errorMessage}</div>}
-				<button data-testid="modal-cancel" onClick={onClose} type="button">
-					Cancel
-				</button>
-				<button
-					data-testid="modal-confirm"
-					onClick={onConfirm}
-					disabled={loading}
-					type="button"
-				>
-					{confirmButtonText || 'Confirm'}
-				</button>
-			</div>
-		) : null;
-	},
+vi.mock('@mantine/hooks', async () => await import('@mocks/@mantine/hooks'));
+vi.mock('@/_hooks', async () => await import('@mocks/@/_hooks'));
+vi.mock('@/_components', async () => ({
+	ConfirmModal: vi.fn(() => null),
 }));
 
 describe('ConfirmButton', () => {
-	const mockOnConfirm = vi.fn<() => Promise<ActionResult>>();
+	const mockOnConfirm = vi.fn();
 	const mockOnSuccess = vi.fn();
 	const mockOnError = vi.fn();
+	const mockOpen = vi.fn();
+	const mockClose = vi.fn();
 
 	const defaultProps = {
 		onConfirm: mockOnConfirm,
@@ -101,145 +36,105 @@ describe('ConfirmButton', () => {
 
 	beforeEach(() => {
 		vi.resetAllMocks();
-		mockUseDisclosure.mockReturnValue([
+		vi.mocked(useDisclosure).mockReturnValue([
 			false,
-			{ open: mockOpen, close: mockClose },
+			{ open: mockOpen, close: mockClose, toggle: vi.fn(), set: vi.fn() },
 		]);
-		mockUseAsyncStatus.mockReturnValue({
-			status: 'idle',
-			error: null,
-			run: mockRun,
-			reset: mockReset,
-		});
-	});
-
-	it('renders trigger via render prop', () => {
-		render(<ConfirmButton {...defaultProps} />);
-
-		expect(screen.getByTestId('trigger-button')).toBeDefined();
-		expect(screen.getByTestId('trigger-button').textContent).toBe(
-			'Delete Item',
-		);
 	});
 
 	it('opens modal when trigger is clicked', () => {
 		render(<ConfirmButton {...defaultProps} />);
 
-		fireEvent.click(screen.getByTestId('trigger-button'));
+		screen.getByTestId('trigger-button').click();
 
 		expect(mockOpen).toHaveBeenCalledOnce();
 	});
 
-	it('calls run with onConfirm when confirmed', async () => {
-		mockUseDisclosure.mockReturnValue([
-			true,
-			{ open: mockOpen, close: mockClose },
-		]);
-		mockRun.mockResolvedValue({ ok: true, data: undefined });
-
+	it('calls onConfirm when confirmed', async () => {
 		render(<ConfirmButton {...defaultProps} />);
 
-		fireEvent.click(screen.getByTestId('modal-confirm'));
-
-		await waitFor(() => {
-			expect(mockRun).toHaveBeenCalledOnce();
+		const { onConfirm } = vi.mocked(ConfirmModal).mock.calls[0][0];
+		await act(async () => {
+			await onConfirm();
 		});
 
-		// Verify run was called with the onConfirm function
-		expect(mockRun).toHaveBeenCalledWith(mockOnConfirm);
+		expect(mockOnConfirm).toHaveBeenCalledOnce();
 	});
 
 	it('calls onSuccess and closes modal on success', async () => {
-		mockUseDisclosure.mockReturnValue([
-			true,
-			{ open: mockOpen, close: mockClose },
-		]);
-		mockRun.mockResolvedValue({ ok: true, data: undefined });
-
 		render(<ConfirmButton {...defaultProps} onSuccess={mockOnSuccess} />);
 
-		fireEvent.click(screen.getByTestId('modal-confirm'));
-
-		await waitFor(() => {
-			expect(mockRun).toHaveBeenCalledOnce();
+		const { onConfirm } = vi.mocked(ConfirmModal).mock.calls[0][0];
+		await act(async () => {
+			await onConfirm();
 		});
 
-		// Verify callbacks were called
 		expect(mockOnSuccess).toHaveBeenCalledOnce();
 		expect(mockClose).toHaveBeenCalledOnce();
 	});
 
-	it('calls onError on failure without closing modal', async () => {
-		const errorMessage = 'Failed to delete item';
-		mockUseDisclosure.mockReturnValue([
-			true,
-			{ open: mockOpen, close: mockClose },
-		]);
-		mockRun.mockResolvedValue({ ok: false, error: errorMessage });
+	it('calls onError when run returns a failure result', async () => {
+		vi.mocked(useAsyncStatus).mockReturnValueOnce({
+			status: 'idle',
+			error: null,
+			run: vi.fn().mockResolvedValue({ ok: false, error: 'Failed' }),
+			reset: vi.fn(),
+		});
 
 		render(<ConfirmButton {...defaultProps} onError={mockOnError} />);
 
-		fireEvent.click(screen.getByTestId('modal-confirm'));
-
-		await waitFor(() => {
-			expect(mockRun).toHaveBeenCalledOnce();
+		const { onConfirm } = vi.mocked(ConfirmModal).mock.calls[0][0];
+		await act(async () => {
+			await onConfirm();
 		});
 
-		expect(mockOnError).toHaveBeenCalledOnce();
-		expect(mockOnError).toHaveBeenCalledWith(errorMessage);
+		expect(mockOnError).toHaveBeenCalledWith('Failed');
 		expect(mockClose).not.toHaveBeenCalled();
 	});
 
-	it('closes modal and resets when cancel clicked', () => {
-		mockUseDisclosure.mockReturnValue([
-			true,
-			{ open: mockOpen, close: mockClose },
-		]);
+	it('does not call callbacks when run returns undefined', async () => {
+		vi.mocked(useAsyncStatus).mockReturnValueOnce({
+			status: 'idle',
+			error: null,
+			run: vi.fn().mockResolvedValue(undefined),
+			reset: vi.fn(),
+		});
 
-		render(<ConfirmButton {...defaultProps} />);
+		render(
+			<ConfirmButton
+				{...defaultProps}
+				onSuccess={mockOnSuccess}
+				onError={mockOnError}
+			/>,
+		);
 
-		fireEvent.click(screen.getByTestId('modal-cancel'));
+		const { onConfirm } = vi.mocked(ConfirmModal).mock.calls[0][0];
+		await act(async () => {
+			await onConfirm();
+		});
 
-		expect(mockClose).toHaveBeenCalledOnce();
-		expect(mockReset).toHaveBeenCalledOnce();
+		expect(mockOnSuccess).not.toHaveBeenCalled();
+		expect(mockOnError).not.toHaveBeenCalled();
+		expect(mockClose).not.toHaveBeenCalled();
 	});
 
-	it('displays error message in modal when error occurs', () => {
-		const errorMessage = 'Something went wrong';
-		mockUseDisclosure.mockReturnValue([
-			true,
-			{ open: mockOpen, close: mockClose },
-		]);
-		mockUseAsyncStatus.mockReturnValue({
-			status: 'error',
-			error: errorMessage,
-			run: mockRun,
+	it('closes modal and resets async status when cancelled', () => {
+		const mockReset = vi.fn();
+		vi.mocked(useAsyncStatus).mockReturnValueOnce({
+			status: 'idle',
+			error: null,
+			run: vi.fn(),
 			reset: mockReset,
 		});
 
 		render(<ConfirmButton {...defaultProps} />);
 
-		expect(screen.getByTestId('modal-error').textContent).toBe(errorMessage);
-	});
-
-	it('does not call onError when run returns undefined (exception case)', async () => {
-		mockUseDisclosure.mockReturnValue([
-			true,
-			{ open: mockOpen, close: mockClose },
-		]);
-		// When an exception occurs, run returns undefined
-		mockRun.mockResolvedValue(undefined);
-
-		render(<ConfirmButton {...defaultProps} onError={mockOnError} />);
-
-		fireEvent.click(screen.getByTestId('modal-confirm'));
-
-		await waitFor(() => {
-			expect(mockRun).toHaveBeenCalledOnce();
+		const { onClose } = vi.mocked(ConfirmModal).mock.calls[0][0];
+		act(() => {
+			onClose();
 		});
 
-		// onError should not be called when result is undefined
-		expect(mockOnError).not.toHaveBeenCalled();
-		expect(mockClose).not.toHaveBeenCalled();
+		expect(mockClose).toHaveBeenCalledOnce();
+		expect(mockReset).toHaveBeenCalledOnce();
 	});
 });

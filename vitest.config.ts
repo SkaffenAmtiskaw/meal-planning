@@ -8,6 +8,7 @@ export default defineConfig({
     alias: [
       { find: '@/env', replacement: new URL('./test/mocks/env.ts', import.meta.url).pathname },
       { find: '@', replacement: resolve(__dirname, './src') },
+      { find: '@test', replacement: resolve(__dirname, './test/index.ts') },
     ],
   },
   test: {
@@ -44,8 +45,8 @@ export default defineConfig({
           'src/**/*.types.ts',
           // test files
           'src/**/*.test.{ts,tsx}',
-          // test mocks
-          'test/mocks/**',
+          // test utilities
+          'test/**',
           // SVG icons are purely presentational, no logic to test
           'src/**/*SVG.tsx'
       ],

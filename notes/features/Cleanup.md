@@ -6,7 +6,7 @@ Technical debt and refactoring notes for the project.
 
 **Status:** Future refactoring
 
-**Context:** During implementation of [Shared Planners](./Shared%20Planners.md), the `PlannerWithAccess` type was created in `src/_actions/planner/getPlanners.ts`. This type is a DTO (Data Transfer Object) that combines planner data with access level information. The question arose: where should shared DTOs/types live?
+**Context:** During implementation of [Transfer Ownership of Planner](Transfer%20Ownership%20of%20Planner.md), the `PlannerWithAccess` type was created in `src/_actions/planner/getPlanners.ts`. This type is a DTO (Data Transfer Object) that combines planner data with access level information. The question arose: where should shared DTOs/types live?
 
 **Problem:**
 - Action files exporting types breaks separation of concerns
@@ -62,22 +62,30 @@ src/_types/
 - [ ] Update `.opencode/docs/project_conventions.md` with `_types/` guidelines (create the file if it doesn't exist)
 - [ ] Identify and migrate existing DTO types
 - [ ] Update imports across the codebase
+# Replicated React Hooks
+- the async hook could be replaced with a native React hook
 
-## Deprecated Zod Types
+# Confirm Button
+- doesn't do anything when useAsyncStatus has an actual exception - this seems incorrect?
 
-**Status:** Technical debt
+# Date Utils
+- replace date utils with luxon
 
-**Context:** During implementation of [Shared Planners](./Shared%20Planners.md), discovered that `z.string().email()` is deprecated in Zod 4 in favor of `z.email()`.
+# Better Route Management
+- Emails create paths & query params that the application should correctly consume - but nothing keeps them in sync
 
-**Files using deprecated pattern:**
-- `src/_models/pendingInvite.types.ts` - `z.string().email()`
-- `src/_models/user.types.ts` - `z.string().email()`
-- `src/env.ts` - `z.string().email()`
-- `src/_actions/user/requestEmailChange.ts` - `z.string().email()`
+# Switching Testing Library
+- switch to vitest-browser-react
 
-**Action Items:**
-- [ ] Replace `z.string().email()` with `z.email()` in all files
-- [ ] Audit codebase for other deprecated Zod patterns (check https://zod.dev/llms-full.txt for current API)
-- [ ] Update all type definitions to use Zod 4 recommended patterns
+# InviteSettings.tsx
+- If the user is undefined - shouldn't it not render anything? (Shouldn't the user always be defined? It's in settings.)
 
-**Note:** Do not modify `.opencode/docs/project_conventions.md` until the `_types/` directory is actually created and populated. The conventions should document what exists, not what is planned.
+# Global Domain-Specific Components/Utils
+- components and utils that have domain knowledge but are still used throughout the app should be moved to `src/app/_components`/`src/app/_utils` and an alias should be created for them - the project conventions should be updated to clearly spell out what sort of content goes in each of them
+- access colors, etc.
+
+# InviteForm.tsx
+- using email regex rather than zod type check
+
+# Recipe Detail Component
+- swallows errors when recipe is deleted

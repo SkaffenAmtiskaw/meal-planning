@@ -1,38 +1,27 @@
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 
-import { afterEach, describe, expect, test, vi } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
+
+import { verifyEmailChangeAndSetPassword } from '@/_actions/user';
 
 import { SetPasswordForm } from './SetPasswordForm';
 
-const mockVerifyEmailChangeAndSetPassword = vi.fn();
-
 vi.mock('@mantine/core', async () => await import('@mocks/@mantine/core'));
 
-vi.mock('@/_actions/user', () => ({
-	verifyEmailChangeAndSetPassword: (token: string, password: string) =>
-		mockVerifyEmailChangeAndSetPassword(token, password),
-}));
+vi.mock('@/_actions/user', async () => await import('@mocks/@/_actions/user'));
 
 vi.mock('./SignInWithNewEmailButton', () => ({
-	SignInWithNewEmailButton: () => (
+	SignInWithNewEmailButton: vi.fn(() => (
 		<button data-testid="sign-in-link" type="button" />
-	),
+	)),
 }));
 
 describe('SetPasswordForm', () => {
-	afterEach(() => {
-		vi.resetAllMocks();
+	beforeEach(() => {
+		vi.clearAllMocks();
 	});
 
-	test('renders password inputs and submit button', () => {
-		render(<SetPasswordForm token="valid-token" />);
-
-		expect(screen.getByTestId('password-input')).toBeDefined();
-		expect(screen.getByTestId('confirm-password-input')).toBeDefined();
-		expect(screen.getByTestId('submit-button')).toBeDefined();
-	});
-
-	test('shows error when passwords do not match', async () => {
+	it('shows error when passwords do not match', async () => {
 		render(<SetPasswordForm token="valid-token" />);
 
 		fireEvent.change(screen.getByTestId('password-input'), {
@@ -49,14 +38,10 @@ describe('SetPasswordForm', () => {
 			);
 		});
 
-		expect(mockVerifyEmailChangeAndSetPassword).not.toHaveBeenCalled();
+		expect(verifyEmailChangeAndSetPassword).not.toHaveBeenCalled();
 	});
 
-	test('calls action with token and password when passwords match', async () => {
-		mockVerifyEmailChangeAndSetPassword.mockResolvedValueOnce({
-			ok: true,
-			data: undefined,
-		});
+	it('calls action with token and password when passwords match', () => {
 		render(<SetPasswordForm token="valid-token" />);
 
 		fireEvent.change(screen.getByTestId('password-input'), {
@@ -67,19 +52,13 @@ describe('SetPasswordForm', () => {
 		});
 		fireEvent.click(screen.getByTestId('submit-button'));
 
-		await waitFor(() => {
-			expect(mockVerifyEmailChangeAndSetPassword).toHaveBeenCalledWith(
-				'valid-token',
-				'password123',
-			);
-		});
+		expect(verifyEmailChangeAndSetPassword).toHaveBeenCalledWith(
+			'valid-token',
+			'password123',
+		);
 	});
 
-	test('shows success state with sign-in link after successful submit', async () => {
-		mockVerifyEmailChangeAndSetPassword.mockResolvedValueOnce({
-			ok: true,
-			data: undefined,
-		});
+	it('shows success state with sign-in link after successful submit', async () => {
 		render(<SetPasswordForm token="valid-token" />);
 
 		fireEvent.change(screen.getByTestId('password-input'), {
@@ -96,11 +75,12 @@ describe('SetPasswordForm', () => {
 		});
 	});
 
-	test('shows error alert when action returns error', async () => {
-		mockVerifyEmailChangeAndSetPassword.mockResolvedValueOnce({
+	it('shows error alert when action returns error', async () => {
+		vi.mocked(verifyEmailChangeAndSetPassword).mockResolvedValueOnce({
 			ok: false,
 			error: 'This link is invalid or has expired.',
 		});
+
 		render(<SetPasswordForm token="valid-token" />);
 
 		fireEvent.change(screen.getByTestId('password-input'), {

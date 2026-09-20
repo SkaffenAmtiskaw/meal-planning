@@ -2,9 +2,9 @@
 
 import type { Types } from 'mongoose';
 
-import { addPlanner } from '@/_actions';
-import { User } from '@/_models';
+import { addPlanner } from '@/_actions/planner';
 import type { AccessLevel } from '@/_models/user';
+import { User } from '@/_models/user';
 
 export interface AddUserOptions {
 	email: string;

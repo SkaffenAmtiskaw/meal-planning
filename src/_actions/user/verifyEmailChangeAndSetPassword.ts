@@ -4,7 +4,7 @@ import { hashPassword } from 'better-auth/crypto';
 import { z } from 'zod';
 
 import { mongoClient } from '@/_auth';
-import { User } from '@/_models';
+import { User } from '@/_models/user';
 import type { ActionResult } from '@/_utils/actionResult';
 
 export const verifyEmailChangeAndSetPassword = async (

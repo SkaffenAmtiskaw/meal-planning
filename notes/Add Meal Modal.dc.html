@@ -1,0 +1,525 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<meta name="design_doc_mode" content="canvas" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="" />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<style>
+  html, body { margin: 0; padding: 0; }
+  body { font-family: Inter, sans-serif; background: #F5F3F4; color: #1C3144; -webkit-font-smoothing: antialiased; }
+  a { color: #44633F; text-decoration: none; }
+  a:hover { color: #3C5736; text-decoration: underline; }
+  .om-scroll::-webkit-scrollbar { width: 8px; height: 8px; }
+  .om-scroll::-webkit-scrollbar-thumb { background: #DAD2D4; border-radius: 4px; }
+  .om-scroll::-webkit-scrollbar-track { background: transparent; }
+  input, textarea, button { font-family: Inter, sans-serif; }
+  input:focus, textarea:focus { outline: none; border-color: rgba(68,99,63,.55); box-shadow: 0 0 0 3px rgba(68,99,63,.12); }
+  ::placeholder { color: #A3AFBB; }
+</style>
+</helmet>
+
+<section style="padding: 40px; display: flex; flex-direction: column; gap: 22px">
+  <div style="display: flex; align-items: baseline; gap: 14px">
+    <div style="font-size: 12px; font-weight: 700; letter-spacing: 0.08em; color: #8C9BAA">ADD MEAL</div>
+    <div style="font-size: 15px; color: #1C3144">Wider modal, collapsed dish rows, Saved / Reference source, mobile sheet</div>
+  </div>
+
+  <div style="display: flex; flex-wrap: wrap; gap: 36px; align-items: flex-start">
+
+    <div id="2a" style="display: flex; flex-direction: column; gap: 10px">
+      <div style="display: flex; align-items: center; gap: 8px">
+        <div style="font-size: 11px; font-weight: 700; letter-spacing: 0.08em; color: #ffffff; background: #1C3144; border-radius: 4px; padding: 3px 7px">2a</div>
+        <div style="font-size: 13px; font-weight: 600; color: #1C3144">The modal — one dish expanded</div>
+      </div>
+
+      <div style="width: 980px; height: 640px; background: #ffffff; border-radius: 14px; border: 1px solid #E1D9DB; box-shadow: 0 24px 60px rgba(28,49,68,.18); display: flex; flex-direction: column; overflow: hidden">
+
+        <div style="flex: 0 0 auto; padding: 20px 24px 18px; display: flex; align-items: flex-start; justify-content: space-between; border-bottom: 1px solid #EBE8E9">
+          <div style="display: flex; flex-direction: column; gap: 3px">
+            <div style="font-size: 20px; font-weight: 700; letter-spacing: -0.01em; color: #1C3144">Add Meal</div>
+            <div style="font-size: 13px; color: #8C9BAA">{{ headerSub }}</div>
+          </div>
+          <div style="width: 32px; height: 32px; border-radius: 8px; display: flex; align-items: center; justify-content: center; cursor: pointer; position: relative" style-hover="background: #F5F3F4">
+            <span style="position: absolute; width: 15px; height: 1.8px; background: #8C9BAA; border-radius: 1px; transform: rotate(45deg)"></span>
+            <span style="position: absolute; width: 15px; height: 1.8px; background: #8C9BAA; border-radius: 1px; transform: rotate(-45deg)"></span>
+          </div>
+        </div>
+
+        <div style="flex: 1; min-height: 0; display: grid; grid-template-columns: 320px minmax(0, 1fr)">
+
+          <div style="border-right: 1px solid #EBE8E9; background: #FAF8F9; padding: 22px 24px; display: flex; flex-direction: column; gap: 18px">
+            <div style="font-size: 11px; font-weight: 700; letter-spacing: 0.09em; color: #5A6B7B">MEAL</div>
+
+            <div style="display: flex; flex-direction: column; gap: 7px">
+              <label style="font-size: 13px; font-weight: 600; color: #1C3144">Date <span style="color: #FF6542">*</span></label>
+              <input type="date" value="2026-09-10" style="height: 40px; padding: 0 12px; font-size: 14px; color: #1C3144; background: #ffffff; border: 1px solid #C8C0C3; border-radius: 8px; transition: box-shadow .12s, border-color .12s" />
+            </div>
+
+            <div style="display: flex; flex-direction: column; gap: 7px">
+              <label style="font-size: 13px; font-weight: 600; color: #1C3144">Meal name <span style="color: #FF6542">*</span></label>
+              <input type="text" value="Thai night" style="height: 40px; padding: 0 12px; font-size: 14px; color: #1C3144; background: #ffffff; border: 1px solid #C8C0C3; border-radius: 8px; transition: box-shadow .12s, border-color .12s" />
+            </div>
+
+            <div style="display: flex; flex-direction: column; gap: 7px; flex: 1; min-height: 0">
+              <label style="font-size: 13px; font-weight: 600; color: #1C3144">Description</label>
+              <textarea placeholder="Optional — a line of context for the week." style="flex: 1; min-height: 88px; resize: none; padding: 10px 12px; font-size: 14px; line-height: 1.5; color: #1C3144; background: #ffffff; border: 1px solid #C8C0C3; border-radius: 8px; transition: box-shadow .12s, border-color .12s"></textarea>
+            </div>
+          </div>
+
+          <div style="display: flex; flex-direction: column; min-height: 0">
+            <div style="flex: 0 0 auto; padding: 22px 24px 12px; display: flex; align-items: center; justify-content: space-between">
+              <div style="display: flex; align-items: baseline; gap: 10px">
+                <div style="font-size: 11px; font-weight: 700; letter-spacing: 0.09em; color: #5A6B7B">DISHES</div>
+                <div style="font-size: 12px; color: #5A6B7B">{{ count2 }}</div>
+              </div>
+              <div onClick="{{ add2 }}" style="height: 32px; padding: 0 13px 0 10px; display: flex; align-items: center; gap: 7px; font-size: 13px; font-weight: 600; color: #44633F; border: 1px solid #CFDBCE; border-radius: 16px; cursor: pointer" style-hover="background: #EFF3EF">
+                <span style="position: relative; width: 12px; height: 12px; display: block">
+                  <span style="position: absolute; top: 5px; left: 0; width: 12px; height: 2px; background: #44633F; border-radius: 1px"></span>
+                  <span style="position: absolute; left: 5px; top: 0; width: 2px; height: 12px; background: #44633F; border-radius: 1px"></span>
+                </span>
+                Add dish
+              </div>
+            </div>
+
+            <div class="om-scroll" style="flex: 1; min-height: 0; overflow-y: auto; padding: 0 24px 22px; display: flex; flex-direction: column; gap: 8px">
+              <sc-for list="{{ dishes2 }}" as="dish" hint-placeholder-count="3">
+                <div style="border: 1px solid {{ dish.cardBorder }}; background: {{ dish.cardBg }}; border-radius: 10px; padding: 9px 10px 9px 12px; display: flex; flex-direction: column; gap: 9px; transition: border-color .12s">
+                  <div style="display: flex; align-items: center; gap: 8px">
+                    <input type="text" value="{{ dish.name }}" onChange="{{ dish.setName }}" placeholder="Dish name" style="flex: 1; min-width: 0; height: 36px; padding: 0 11px; font-size: 14px; font-weight: 500; color: #1C3144; background: #ffffff; border: 1px solid #DAD2D4; border-radius: 7px; transition: box-shadow .12s, border-color .12s" />
+                    <div onClick="{{ dish.toggle }}" title="{{ dish.srcChipLabel }}" style="height: 30px; max-width: 200px; padding: 0 11px; display: flex; align-items: center; gap: 7px; font-size: 12px; font-weight: 600; color: {{ dish.srcChipText }}; background: {{ dish.srcChipBg }}; border: 1px {{ dish.srcChipStroke }} {{ dish.srcChipBorder }}; border-radius: 15px; cursor: pointer; white-space: nowrap" style-hover="border-color: #CFDBCE">
+                      <span style="width: 7px; height: 7px; flex: 0 0 7px; border-radius: {{ dish.srcMarkRadius }}; background: {{ dish.srcMarkColor }}; box-shadow: {{ dish.srcMarkRing }}"></span>
+                      <span style="overflow: hidden; text-overflow: ellipsis">{{ dish.srcChipLabel }}</span>
+                    </div>
+                    <div onClick="{{ dish.toggle }}" style="height: 30px; padding: 0 11px; display: flex; align-items: center; font-size: 12px; font-weight: 600; color: {{ dish.noteChipText }}; background: {{ dish.noteChipBg }}; border: 1px {{ dish.noteChipStroke }} {{ dish.noteChipBorder }}; border-radius: 15px; cursor: pointer; white-space: nowrap" style-hover="border-color: #CFDBCE">{{ dish.noteChipLabel }}</div>
+                    <div onClick="{{ dish.toggle }}" title="Collapse" style="width: 28px; height: 28px; border-radius: 8px; display: flex; align-items: center; justify-content: center; cursor: pointer" style-hover="background: #F0EDEE">
+                      <span style="width: 7px; height: 7px; border-right: 1.8px solid #44633F; border-bottom: 1.8px solid #44633F; transform: {{ dish.caret }}"></span>
+                    </div>
+                    <div onClick="{{ dish.remove }}" style="width: 30px; height: 30px; border-radius: 8px; align-items: center; justify-content: center; cursor: pointer; display: {{ dish.removeDisplay }}" style-hover="background: #FDE8E8">
+                      <span style="display: block; position: relative; width: 14px; height: 15px">
+                        <span style="position: absolute; top: 0; left: 4.5px; width: 5px; height: 2.6px; border: 1.6px solid #B2442E; border-bottom: none; border-radius: 2px 2px 0 0"></span>
+                        <span style="position: absolute; top: 3px; left: 0; width: 14px; height: 1.6px; background: #B2442E; border-radius: 1px"></span>
+                        <span style="position: absolute; top: 5.4px; left: 1.8px; width: 10.4px; height: 9.6px; border: 1.6px solid #B2442E; border-top: none; border-radius: 0 0 3px 3px"></span>
+                      </span>
+                    </div>
+                  </div>
+
+                  <sc-if value="{{ dish.collapsedNote }}" hint-placeholder-val="{{ false }}">
+                    <div style="font-size: 12.5px; line-height: 1.4; color: #5A6B7B; padding: 0 2px 3px; margin-top: -3px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap">{{ dish.collapsedNote }}</div>
+                  </sc-if>
+
+                  <sc-if value="{{ dish.expanded }}" hint-placeholder-val="{{ true }}">
+                    <div style="display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 14px; padding: 2px 2px 3px; border-top: 1px solid #EFEDEE; padding-top: 11px">
+                      <div style="display: flex; flex-direction: column; gap: 7px">
+                        <div style="font-size: 12px; font-weight: 700; letter-spacing: 0.04em; color: #8C9BAA">SOURCE</div>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; background: #F0EDEE; border-radius: 8px; padding: 3px">
+                          <div onClick="{{ dish.srcNone }}" style="height: 28px; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 600; border-radius: 6px; cursor: pointer; color: {{ dish.noneText }}; background: {{ dish.noneBg }}; box-shadow: {{ dish.noneShadow }}">None</div>
+                          <div onClick="{{ dish.srcSaved }}" style="height: 28px; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 600; border-radius: 6px; cursor: pointer; color: {{ dish.savedText }}; background: {{ dish.savedBg }}; box-shadow: {{ dish.savedShadow }}">Saved</div>
+                          <div onClick="{{ dish.srcText }}" style="height: 28px; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 600; border-radius: 6px; cursor: pointer; color: {{ dish.textText }}; background: {{ dish.textBg }}; box-shadow: {{ dish.textShadow }}">Reference</div>
+                        </div>
+                        <sc-if value="{{ dish.showNone }}" hint-placeholder-val="{{ false }}">
+                          <div style="font-size: 12px; line-height: 1.45; color: #5A6B7B; padding: 2px 2px 0">Just a dish name — no recipe attached.</div>
+                        </sc-if>
+                        <sc-if value="{{ dish.showSaved }}" hint-placeholder-val="{{ false }}">
+                          <div style="display: flex; flex-direction: column; gap: 5px">
+                            <div style="height: 36px; padding: 0 10px; display: flex; align-items: center; gap: 8px; background: #ffffff; border: 1px solid #DAD2D4; border-radius: 7px; cursor: pointer" style-hover="border-color: #CFDBCE">
+                              <span style="width: 7px; height: 7px; flex: 0 0 7px; border-radius: 4px; background: #44633F"></span>
+                              <span style="flex: 1; min-width: 0; font-size: 13px; color: #1C3144; overflow: hidden; text-overflow: ellipsis; white-space: nowrap">{{ dish.savedLabel }}</span>
+                              <span style="width: 6px; height: 6px; border-right: 1.6px solid #8C9BAA; border-bottom: 1.6px solid #8C9BAA; transform: rotate(45deg); margin-top: -3px"></span>
+                            </div>
+                            <div style="font-size: 12px; color: #5A6B7B; padding: 0 2px">Search your saved recipes and bookmarks.</div>
+                          </div>
+                        </sc-if>
+                        <sc-if value="{{ dish.showText }}" hint-placeholder-val="{{ false }}">
+                          <div style="display: flex; flex-direction: column; gap: 5px">
+                            <input type="text" value="{{ dish.sourceText }}" onChange="{{ dish.setSourceText }}" placeholder="https://…" style="height: 36px; padding: 0 10px; font-size: 13px; color: #1C3144; background: #ffffff; border: 1px solid #DAD2D4; border-radius: 7px; transition: box-shadow .12s, border-color .12s" />
+                            <div style="font-size: 12px; color: #5A6B7B; padding: 0 2px">A URL, or a book and page — “Dinner in French, p. 88”.</div>
+                          </div>
+                        </sc-if>
+                      </div>
+                      <div style="display: flex; flex-direction: column; gap: 7px">
+                        <div style="font-size: 12px; font-weight: 700; letter-spacing: 0.04em; color: #8C9BAA">NOTE</div>
+                        <textarea value="{{ dish.note }}" onChange="{{ dish.setNote }}" placeholder="Prep reminders, swaps, what to buy…" style="flex: 1; min-height: 78px; resize: vertical; padding: 8px 10px; font-size: 13px; line-height: 1.5; color: #1C3144; background: #ffffff; border: 1px solid #DAD2D4; border-radius: 7px; transition: box-shadow .12s, border-color .12s"></textarea>
+                      </div>
+                    </div>
+                  </sc-if>
+                </div>
+              </sc-for>
+
+              <div onClick="{{ add2 }}" style="height: 44px; display: flex; align-items: center; justify-content: center; gap: 8px; font-size: 13px; font-weight: 600; color: #8C9BAA; border: 1px dashed #DAD2D4; border-radius: 10px; cursor: pointer" style-hover="color: #44633F; border-color: #CFDBCE; background: #FAF8F9">
+                <span style="position: relative; width: 12px; height: 12px; display: block">
+                  <span style="position: absolute; top: 5px; left: 0; width: 12px; height: 2px; background: currentColor; border-radius: 1px"></span>
+                  <span style="position: absolute; left: 5px; top: 0; width: 2px; height: 12px; background: currentColor; border-radius: 1px"></span>
+                </span>
+                Add another dish
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div style="flex: 0 0 auto; padding: 14px 24px; display: flex; align-items: center; justify-content: space-between; border-top: 1px solid #EBE8E9; background: #FAF8F9">
+          <div style="font-size: 12.5px; color: #5A6B7B">{{ summary2 }}</div>
+          <div style="display: flex; align-items: center; gap: 10px">
+            <div style="height: 38px; padding: 0 16px; display: flex; align-items: center; font-size: 14px; font-weight: 600; color: #44633F; border-radius: 8px; cursor: pointer" style-hover="background: #EFF3EF">Cancel</div>
+            <div style="height: 38px; padding: 0 20px; display: flex; align-items: center; font-size: 14px; font-weight: 600; color: #ffffff; background: #FF6542; border-radius: 8px; cursor: pointer; box-shadow: 0 1px 2px rgba(255,101,66,.35)" style-hover="background: #E55A3B">Add Meal</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="2b" style="display: flex; flex-direction: column; gap: 10px">
+      <div style="display: flex; align-items: center; gap: 8px">
+        <div style="font-size: 11px; font-weight: 700; letter-spacing: 0.08em; color: #ffffff; background: #1C3144; border-radius: 4px; padding: 3px 7px">2b</div>
+        <div style="font-size: 13px; font-weight: 600; color: #1C3144">Every dish-row state</div>
+      </div>
+
+      <div style="width: 600px; background: #ffffff; border: 1px solid #E1D9DB; border-radius: 14px; padding: 20px; display: flex; flex-direction: column; gap: 16px">
+        <sc-for list="{{ states }}" as="dish" hint-placeholder-count="6">
+          <div style="display: flex; flex-direction: column; gap: 7px">
+            <div style="font-size: 11px; font-weight: 700; letter-spacing: 0.07em; color: #5A6B7B">{{ dish.caption }}</div>
+            <div style="border: 1px solid {{ dish.cardBorder }}; background: {{ dish.cardBg }}; border-radius: 10px; padding: 9px 10px 9px 12px; display: flex; flex-direction: column; gap: 9px">
+              <div style="display: flex; align-items: center; gap: 8px">
+                <input type="text" value="{{ dish.name }}" onChange="{{ dish.setName }}" placeholder="Dish name" style="flex: 1; min-width: 0; height: 36px; padding: 0 11px; font-size: 14px; font-weight: 500; color: #1C3144; background: #ffffff; border: 1px solid #DAD2D4; border-radius: 7px" />
+                <div onClick="{{ dish.toggle }}" title="{{ dish.srcChipLabel }}" style="height: 30px; max-width: 180px; padding: 0 11px; display: flex; align-items: center; gap: 7px; font-size: 12px; font-weight: 600; color: {{ dish.srcChipText }}; background: {{ dish.srcChipBg }}; border: 1px {{ dish.srcChipStroke }} {{ dish.srcChipBorder }}; border-radius: 15px; cursor: pointer; white-space: nowrap">
+                  <span style="width: 7px; height: 7px; flex: 0 0 7px; border-radius: {{ dish.srcMarkRadius }}; background: {{ dish.srcMarkColor }}; box-shadow: {{ dish.srcMarkRing }}"></span>
+                  <span style="overflow: hidden; text-overflow: ellipsis">{{ dish.srcChipLabel }}</span>
+                </div>
+                <div onClick="{{ dish.toggle }}" style="height: 30px; padding: 0 11px; display: flex; align-items: center; font-size: 12px; font-weight: 600; color: {{ dish.noteChipText }}; background: {{ dish.noteChipBg }}; border: 1px {{ dish.noteChipStroke }} {{ dish.noteChipBorder }}; border-radius: 15px; cursor: pointer; white-space: nowrap">{{ dish.noteChipLabel }}</div>
+                <div onClick="{{ dish.toggle }}" title="Collapse" style="width: 28px; height: 28px; border-radius: 8px; display: flex; align-items: center; justify-content: center; cursor: pointer">
+                  <span style="width: 7px; height: 7px; border-right: 1.8px solid #44633F; border-bottom: 1.8px solid #44633F; transform: {{ dish.caret }}"></span>
+                </div>
+                <div style="width: 30px; height: 30px; border-radius: 8px; display: flex; align-items: center; justify-content: center; cursor: pointer">
+                  <span style="display: block; position: relative; width: 14px; height: 15px">
+                    <span style="position: absolute; top: 0; left: 4.5px; width: 5px; height: 2.6px; border: 1.6px solid #B2442E; border-bottom: none; border-radius: 2px 2px 0 0"></span>
+                    <span style="position: absolute; top: 3px; left: 0; width: 14px; height: 1.6px; background: #B2442E; border-radius: 1px"></span>
+                    <span style="position: absolute; top: 5.4px; left: 1.8px; width: 10.4px; height: 9.6px; border: 1.6px solid #B2442E; border-top: none; border-radius: 0 0 3px 3px"></span>
+                  </span>
+                </div>
+              </div>
+
+              <sc-if value="{{ dish.collapsedNote }}" hint-placeholder-val="{{ false }}">
+                <div style="font-size: 12.5px; line-height: 1.4; color: #5A6B7B; padding: 0 2px 3px; margin-top: -3px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap">{{ dish.collapsedNote }}</div>
+              </sc-if>
+
+              <sc-if value="{{ dish.expanded }}" hint-placeholder-val="{{ true }}">
+                <div style="display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 14px; padding: 11px 2px 3px; border-top: 1px solid #EFEDEE">
+                  <div style="display: flex; flex-direction: column; gap: 7px">
+                    <div style="font-size: 12px; font-weight: 700; letter-spacing: 0.04em; color: #8C9BAA">SOURCE</div>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; background: #F0EDEE; border-radius: 8px; padding: 3px">
+                      <div onClick="{{ dish.srcNone }}" style="height: 28px; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 600; border-radius: 6px; cursor: pointer; color: {{ dish.noneText }}; background: {{ dish.noneBg }}; box-shadow: {{ dish.noneShadow }}">None</div>
+                      <div onClick="{{ dish.srcSaved }}" style="height: 28px; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 600; border-radius: 6px; cursor: pointer; color: {{ dish.savedText }}; background: {{ dish.savedBg }}; box-shadow: {{ dish.savedShadow }}">Saved</div>
+                      <div onClick="{{ dish.srcText }}" style="height: 28px; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 600; border-radius: 6px; cursor: pointer; color: {{ dish.textText }}; background: {{ dish.textBg }}; box-shadow: {{ dish.textShadow }}">Reference</div>
+                    </div>
+                    <sc-if value="{{ dish.showNone }}" hint-placeholder-val="{{ false }}">
+                      <div style="font-size: 12px; line-height: 1.45; color: #5A6B7B; padding: 2px 2px 0">Just a dish name — no recipe attached.</div>
+                    </sc-if>
+                    <sc-if value="{{ dish.showSaved }}" hint-placeholder-val="{{ false }}">
+                      <div style="display: flex; flex-direction: column; gap: 5px">
+                        <div style="height: 36px; padding: 0 10px; display: flex; align-items: center; gap: 8px; background: #ffffff; border: 1px solid #DAD2D4; border-radius: 7px; cursor: pointer">
+                          <span style="width: 7px; height: 7px; flex: 0 0 7px; border-radius: 4px; background: #44633F"></span>
+                          <span style="flex: 1; min-width: 0; font-size: 13px; color: #1C3144; overflow: hidden; text-overflow: ellipsis; white-space: nowrap">{{ dish.savedLabel }}</span>
+                          <span style="width: 6px; height: 6px; border-right: 1.6px solid #8C9BAA; border-bottom: 1.6px solid #8C9BAA; transform: rotate(45deg); margin-top: -3px"></span>
+                        </div>
+                        <div style="font-size: 12px; color: #5A6B7B; padding: 0 2px">Search your saved recipes and bookmarks.</div>
+                      </div>
+                    </sc-if>
+                    <sc-if value="{{ dish.showText }}" hint-placeholder-val="{{ false }}">
+                      <div style="display: flex; flex-direction: column; gap: 5px">
+                        <input type="text" value="{{ dish.sourceText }}" onChange="{{ dish.setSourceText }}" placeholder="https://…" style="height: 36px; padding: 0 10px; font-size: 13px; color: #1C3144; background: #ffffff; border: 1px solid #DAD2D4; border-radius: 7px" />
+                        <div style="font-size: 12px; color: #5A6B7B; padding: 0 2px">A URL, or a book and page — “Dinner in French, p. 88”.</div>
+                      </div>
+                    </sc-if>
+                  </div>
+                  <div style="display: flex; flex-direction: column; gap: 7px">
+                    <div style="font-size: 12px; font-weight: 700; letter-spacing: 0.04em; color: #8C9BAA">NOTE</div>
+                    <textarea value="{{ dish.note }}" onChange="{{ dish.setNote }}" placeholder="Prep reminders, swaps, what to buy…" style="flex: 1; min-height: 78px; resize: vertical; padding: 8px 10px; font-size: 13px; line-height: 1.5; color: #1C3144; background: #ffffff; border: 1px solid #DAD2D4; border-radius: 7px"></textarea>
+                  </div>
+                </div>
+              </sc-if>
+            </div>
+          </div>
+        </sc-for>
+
+        <div style="display: flex; gap: 14px; align-items: flex-start; padding-top: 4px; border-top: 1px solid #EFEDEE">
+          <div style="flex: 1; display: flex; flex-direction: column; gap: 4px; padding-top: 12px">
+            <div style="font-size: 12px; font-weight: 700; letter-spacing: 0.06em; color: #8C9BAA">READING THE CHIPS</div>
+            <div style="font-size: 12.5px; line-height: 1.55; color: #1C3144">A filled green dot means the dish points at something <strong style="font-weight: 600">saved in weeknight</strong> — a recipe or a bookmark. A hollow ring means a <strong style="font-weight: 600">reference</strong> — a URL, or a book and page. Dashed chips are empty and open the editor on click.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="2c" style="display: flex; flex-direction: column; gap: 10px">
+      <div style="display: flex; align-items: center; gap: 8px">
+        <div style="font-size: 11px; font-weight: 700; letter-spacing: 0.08em; color: #ffffff; background: #1C3144; border-radius: 4px; padding: 3px 7px">2c</div>
+        <div style="font-size: 13px; font-weight: 600; color: #1C3144">Mobile — same parts, stacked</div>
+      </div>
+
+      <div style="width: 390px; height: 844px; background: #ffffff; border-radius: 26px; border: 1px solid #E1D9DB; overflow: hidden; display: flex; flex-direction: column; position: relative; box-shadow: 0 10px 30px rgba(28,49,68,.10)">
+
+        <div style="height: 48px; flex: 0 0 48px; background: #1C3144; display: flex; align-items: center; justify-content: space-between; padding: 0 14px">
+          <img src="assets/weeknight-header-dark.svg" alt="weeknight" style="width: 118px; height: 20px; object-fit: contain" />
+          <div style="width: 18px; height: 18px; border: 1.6px solid #ffffff; border-radius: 50%; position: relative">
+            <div style="position: absolute; left: 50%; top: 3px; transform: translateX(-50%); width: 6px; height: 6px; border-radius: 50%; background: #ffffff"></div>
+            <div style="position: absolute; left: 50%; bottom: -1px; transform: translateX(-50%); width: 11px; height: 7px; border-radius: 6px 6px 0 0; background: #ffffff"></div>
+          </div>
+        </div>
+
+        <div style="flex: 0 0 auto; padding: 12px 14px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid #EBE8E9">
+          <div style="font-size: 14px; font-weight: 600; color: #44633F; padding: 6px 2px; cursor: pointer">Cancel</div>
+          <div style="font-size: 16px; font-weight: 700; color: #1C3144">Add Meal</div>
+          <div style="width: 52px"></div>
+        </div>
+
+        <div class="om-scroll" style="flex: 1; min-height: 0; overflow-y: auto; background: #FAF8F9">
+          <div style="padding: 14px 14px 20px; display: flex; flex-direction: column; gap: 14px">
+
+            <div style="background: #ffffff; border: 1px solid #F0EDEE; border-radius: 12px; padding: 14px; display: flex; flex-direction: column; gap: 14px">
+              <div style="display: flex; flex-direction: column; gap: 7px">
+                <label style="font-size: 13px; font-weight: 600; color: #1C3144">Date <span style="color: #FF6542">*</span></label>
+                <input type="date" value="2026-09-10" style="height: 46px; padding: 0 12px; font-size: 16px; color: #1C3144; background: #ffffff; border: 1px solid #C8C0C3; border-radius: 9px" />
+              </div>
+              <div style="display: flex; flex-direction: column; gap: 7px">
+                <label style="font-size: 13px; font-weight: 600; color: #1C3144">Meal name <span style="color: #FF6542">*</span></label>
+                <input type="text" value="Thai night" style="height: 46px; padding: 0 12px; font-size: 16px; color: #1C3144; background: #ffffff; border: 1px solid #C8C0C3; border-radius: 9px" />
+              </div>
+              <div style="display: flex; flex-direction: column; gap: 7px">
+                <label style="font-size: 13px; font-weight: 600; color: #1C3144">Description</label>
+                <textarea placeholder="Optional" style="min-height: 60px; resize: none; padding: 11px 12px; font-size: 16px; line-height: 1.45; color: #1C3144; background: #ffffff; border: 1px solid #C8C0C3; border-radius: 9px"></textarea>
+              </div>
+            </div>
+
+            <div style="display: flex; align-items: baseline; justify-content: space-between; padding: 0 4px">
+              <div style="font-size: 12px; font-weight: 700; letter-spacing: 0.08em; color: #5A6B7B">DISHES</div>
+              <div style="font-size: 12px; color: #5A6B7B">{{ countMx }}</div>
+            </div>
+
+            <sc-for list="{{ dishesMx }}" as="dish" hint-placeholder-count="3">
+              <div style="background: #ffffff; border: 1px solid {{ dish.cardBorder }}; border-radius: 12px; padding: 12px; display: flex; flex-direction: column; gap: 10px">
+                <div style="display: flex; align-items: center; gap: 8px">
+                  <input type="text" value="{{ dish.name }}" onChange="{{ dish.setName }}" placeholder="Dish name" style="flex: 1; min-width: 0; height: 46px; padding: 0 12px; font-size: 16px; font-weight: 500; color: #1C3144; background: #ffffff; border: 1px solid #DAD2D4; border-radius: 9px" />
+                  <div onClick="{{ dish.remove }}" style="width: 44px; height: 44px; flex: 0 0 44px; border-radius: 10px; align-items: center; justify-content: center; cursor: pointer; display: {{ dish.removeDisplay }}">
+                    <span style="display: block; position: relative; width: 16px; height: 17px">
+                      <span style="position: absolute; top: 0; left: 5px; width: 6px; height: 3px; border: 1.7px solid #B2442E; border-bottom: none; border-radius: 2px 2px 0 0"></span>
+                      <span style="position: absolute; top: 3.4px; left: 0; width: 16px; height: 1.7px; background: #B2442E; border-radius: 1px"></span>
+                      <span style="position: absolute; top: 6px; left: 2px; width: 12px; height: 11px; border: 1.7px solid #B2442E; border-top: none; border-radius: 0 0 3px 3px"></span>
+                    </span>
+                  </div>
+                </div>
+
+                <div style="display: flex; gap: 8px; align-items: center">
+                  <div onClick="{{ dish.toggle }}" title="{{ dish.srcChipLabel }}" style="flex: 1; min-width: 0; height: 38px; padding: 0 12px; display: flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 600; color: {{ dish.srcChipText }}; background: {{ dish.srcChipBg }}; border: 1px {{ dish.srcChipStroke }} {{ dish.srcChipBorder }}; border-radius: 19px; cursor: pointer">
+                    <span style="width: 8px; height: 8px; flex: 0 0 8px; border-radius: 4px; background: {{ dish.srcMarkColor }}; box-shadow: {{ dish.srcMarkRing }}"></span>
+                    <span style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap">{{ dish.srcChipLabel }}</span>
+                  </div>
+                  <div onClick="{{ dish.toggle }}" style="height: 38px; padding: 0 14px; display: flex; align-items: center; font-size: 13px; font-weight: 600; white-space: nowrap; color: {{ dish.noteChipText }}; background: {{ dish.noteChipBg }}; border: 1px {{ dish.noteChipStroke }} {{ dish.noteChipBorder }}; border-radius: 19px; cursor: pointer">{{ dish.noteChipLabel }}</div>
+                  <div onClick="{{ dish.toggle }}" style="width: 38px; height: 38px; flex: 0 0 38px; border-radius: 19px; border: 1px solid #E6E3E4; display: flex; align-items: center; justify-content: center; cursor: pointer">
+                    <span style="width: 8px; height: 8px; border-right: 1.8px solid #44633F; border-bottom: 1.8px solid #44633F; transform: {{ dish.caret }}"></span>
+                  </div>
+                </div>
+
+                <sc-if value="{{ dish.collapsedNote }}" hint-placeholder-val="{{ false }}">
+                  <div style="font-size: 13px; line-height: 1.45; color: #5A6B7B; padding: 0 3px 2px; margin-top: -3px">{{ dish.collapsedNote }}</div>
+                </sc-if>
+
+                <sc-if value="{{ dish.expanded }}" hint-placeholder-val="{{ true }}">
+                  <div style="display: flex; flex-direction: column; gap: 14px; border-top: 1px solid #F0EDEE; padding-top: 13px">
+                    <div style="display: flex; flex-direction: column; gap: 8px">
+                      <div style="font-size: 12px; font-weight: 700; letter-spacing: 0.06em; color: #5A6B7B">SOURCE</div>
+                      <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; background: #F0EDEE; border-radius: 10px; padding: 3px">
+                        <div onClick="{{ dish.srcNone }}" style="height: 40px; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 600; border-radius: 8px; cursor: pointer; color: {{ dish.noneText }}; background: {{ dish.noneBg }}; box-shadow: {{ dish.noneShadow }}">None</div>
+                        <div onClick="{{ dish.srcSaved }}" style="height: 40px; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 600; border-radius: 8px; cursor: pointer; color: {{ dish.savedText }}; background: {{ dish.savedBg }}; box-shadow: {{ dish.savedShadow }}">Saved</div>
+                        <div onClick="{{ dish.srcText }}" style="height: 40px; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 600; border-radius: 8px; cursor: pointer; color: {{ dish.textText }}; background: {{ dish.textBg }}; box-shadow: {{ dish.textShadow }}">Reference</div>
+                      </div>
+                      <sc-if value="{{ dish.showNone }}" hint-placeholder-val="{{ false }}">
+                        <div style="font-size: 12.5px; line-height: 1.45; color: #5A6B7B; padding: 0 3px">Just a dish name — no recipe attached.</div>
+                      </sc-if>
+                      <sc-if value="{{ dish.showSaved }}" hint-placeholder-val="{{ false }}">
+                        <div style="display: flex; flex-direction: column; gap: 6px">
+                          <div style="height: 46px; padding: 0 12px; display: flex; align-items: center; gap: 9px; background: #ffffff; border: 1px solid #DAD2D4; border-radius: 9px; cursor: pointer">
+                            <span style="width: 8px; height: 8px; flex: 0 0 8px; border-radius: 4px; background: #44633F"></span>
+                            <span style="flex: 1; min-width: 0; font-size: 15px; color: #1C3144; overflow: hidden; text-overflow: ellipsis; white-space: nowrap">{{ dish.savedLabel }}</span>
+                            <span style="width: 7px; height: 7px; border-right: 1.8px solid #8C9BAA; border-bottom: 1.8px solid #8C9BAA; transform: rotate(45deg); margin-top: -3px"></span>
+                          </div>
+                          <div style="font-size: 12.5px; line-height: 1.45; color: #5A6B7B; padding: 0 3px">Search your saved recipes and bookmarks.</div>
+                        </div>
+                      </sc-if>
+                      <sc-if value="{{ dish.showText }}" hint-placeholder-val="{{ false }}">
+                        <div style="display: flex; flex-direction: column; gap: 6px">
+                          <input type="text" value="{{ dish.sourceText }}" onChange="{{ dish.setSourceText }}" placeholder="https://…" style="height: 46px; padding: 0 12px; font-size: 16px; color: #1C3144; background: #ffffff; border: 1px solid #DAD2D4; border-radius: 9px" />
+                          <div style="font-size: 12.5px; line-height: 1.45; color: #5A6B7B; padding: 0 3px">A URL, or a book and page — “Dinner in French, p. 88”.</div>
+                        </div>
+                      </sc-if>
+                    </div>
+                    <div style="display: flex; flex-direction: column; gap: 8px">
+                      <div style="font-size: 12px; font-weight: 700; letter-spacing: 0.06em; color: #5A6B7B">NOTE</div>
+                      <textarea value="{{ dish.note }}" onChange="{{ dish.setNote }}" placeholder="Prep reminders, swaps, what to buy…" style="min-height: 84px; resize: none; padding: 11px 12px; font-size: 16px; line-height: 1.45; color: #1C3144; background: #ffffff; border: 1px solid #DAD2D4; border-radius: 9px"></textarea>
+                    </div>
+                  </div>
+                </sc-if>
+              </div>
+            </sc-for>
+
+            <div onClick="{{ addMx }}" style="height: 48px; display: flex; align-items: center; justify-content: center; gap: 8px; font-size: 14px; font-weight: 600; color: #44633F; border: 1px dashed #CFDBCE; border-radius: 12px; cursor: pointer">
+              <span style="position: relative; width: 14px; height: 14px; display: block">
+                <span style="position: absolute; top: 6px; left: 0; width: 14px; height: 2px; background: currentColor; border-radius: 1px"></span>
+                <span style="position: absolute; left: 6px; top: 0; width: 2px; height: 14px; background: currentColor; border-radius: 1px"></span>
+              </span>
+              Add dish
+            </div>
+          </div>
+        </div>
+
+        <div style="flex: 0 0 auto; padding: 12px 14px 22px; border-top: 1px solid #EBE8E9; background: #ffffff; display: flex; flex-direction: column; gap: 6px">
+          <div style="height: 50px; display: flex; align-items: center; justify-content: center; font-size: 16px; font-weight: 600; color: #ffffff; background: #FF6542; border-radius: 12px; cursor: pointer; box-shadow: 0 2px 8px rgba(255,101,66,.3)">Add Meal</div>
+          <div style="text-align: center; font-size: 12px; color: #5A6B7B">{{ summaryMx }}</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:2200,&quot;height&quot;:1000}}">
+const SAVED_DEFAULT = 'Choose a saved item…';
+
+function mk(id, name, sourceType, sourceText, note) {
+  return { id, name, sourceType: sourceType || 'none', sourceText: sourceText || '', savedLabel: SAVED_DEFAULT, note: note || '', expanded: false };
+}
+
+class Component extends DCLogic {
+  state = {
+    x: [
+      Object.assign(mk(21, 'Panang Curry', 'text', 'https://example.com/panang-curry', 'Extra veg, half the paste. Needs a can of coconut milk.'), { expanded: true }),
+      mk(22, 'Jasmine Rice'),
+      Object.assign(mk(23, 'Cucumber Salad', 'saved', '', 'Make it in the morning so it pickles.'), { savedLabel: 'Smashed Cucumber Salad' }),
+      Object.assign(mk(24, 'Mango Sticky Rice', 'saved'), { savedLabel: 'Mango Sticky Rice' }),
+    ],
+    st: [
+      Object.assign(mk(31, 'Jasmine Rice'), { caption: 'EMPTY — NOTHING ATTACHED' }),
+      Object.assign(mk(32, 'Cucumber Salad', 'saved', '', ''), { savedLabel: 'Smashed Cucumber Salad', caption: 'COLLAPSED — SAVED RECIPE OR BOOKMARK' }),
+      Object.assign(mk(33, 'Smash Burgers', 'text', 'https://example.com/burgers', 'Need buns and a pound and a half of chuck.'), { caption: 'COLLAPSED — REFERENCE + NOTE' }),
+      Object.assign(mk(34, 'Green Beans'), { expanded: true, caption: 'EXPANDED — CHOOSING A SOURCE' }),
+      Object.assign(mk(35, 'Chicken Katsu', 'saved', '', 'Panko is out — add it to the list.'), { savedLabel: 'Chicken Katsu', expanded: true, caption: 'EXPANDED — SAVED ITEM PICKED' }),
+      Object.assign(mk(36, 'Panang Curry', 'text', 'https://example.com/panang-curry', ''), { expanded: true, caption: 'EXPANDED — REFERENCE' }),
+      Object.assign(mk(37, 'Chicken Katsu', 'text', 'https://www.seriouseats.com/recipes/2019/04/japanese-style-chicken-katsu-with-tonkatsu-sauce-and-shredded-cabbage.html', 'Panko is out — add it to the list.'), { caption: 'COLLAPSED — VERY LONG REFERENCE (TRUNCATES, FULL TEXT ON HOVER)' }),
+    ],
+    mx: [
+      Object.assign(mk(41, 'Panang Curry', 'text', 'https://example.com/panang-curry', 'Extra veg, half the paste. Needs a can of coconut milk.'), { expanded: true }),
+      mk(42, 'Jasmine Rice'),
+      Object.assign(mk(43, 'Cucumber Salad', 'saved', '', 'Make it in the morning so it pickles.'), { savedLabel: 'Smashed Cucumber Salad' }),
+    ],
+    seq: 50,
+  };
+
+  patch(key, id, p) {
+    this.setState((s) => ({ [key]: s[key].map((d) => (d.id === id ? { ...d, ...p } : d)) }));
+  }
+
+  build(key, opts) {
+    const list = this.state[key];
+    return list.map((d) => {
+      const seg = (v, on) => ({
+        text: on ? '#1C3144' : '#44633F',
+        bg: on ? '#ffffff' : 'transparent',
+        shadow: on ? '0 1px 2px rgba(28,49,68,.12)' : 'none',
+      });
+      const none = seg('none', d.sourceType === 'none');
+      const saved = seg('saved', d.sourceType === 'saved');
+      const text = seg('text', d.sourceType === 'text');
+      const hasSource = d.sourceType !== 'none';
+      const hasNote = !!d.note;
+      const srcSummary = d.sourceType === 'saved' ? d.savedLabel : d.sourceType === 'text' ? d.sourceText : '';
+      const bits = [];
+      if (srcSummary) bits.push(srcSummary);
+      if (hasNote) bits.push(d.note);
+      const detailCount = (hasSource ? 1 : 0) + (hasNote ? 1 : 0);
+      const pillLabel = detailCount === 0 ? 'Details' : hasSource && hasNote ? 'Source + note' : hasSource ? 'Source' : 'Note';
+      const active = detailCount > 0;
+      return {
+        id: d.id,
+        name: d.name,
+        note: d.note,
+        sourceText: d.sourceText,
+        savedLabel: d.savedLabel,
+        expanded: d.expanded,
+        collapsedSummary: d.expanded ? '' : bits.join('  ·  '),
+        cardBorder: d.expanded ? '#CFDBCE' : '#EBE8E9',
+        cardBg: d.expanded ? '#FAFBFA' : '#ffffff',
+        rowBg: d.expanded ? '#FAFBFA' : '#ffffff',
+        dot: active ? '#AFC2AE' : '#E1D9DB',
+        pillLabel,
+        mobileLabel: d.expanded ? 'Source & note' : bits.length ? bits.join('  ·  ') : 'Add source or note',
+        pillText: active ? '#44633F' : '#8C9BAA',
+        pillBg: active ? '#EFF3EF' : '#ffffff',
+        pillBorder: active ? '#CFDBCE' : '#E6E3E4',
+        caret: d.expanded ? 'rotate(-135deg) translate(-2px, -2px)' : 'rotate(45deg) translateY(-2px)',
+        removeDisplay: list.length > 1 ? 'flex' : 'none',
+        caption: d.caption || '',
+        collapsedNote: d.expanded ? '' : d.note,
+        showNone: d.sourceType === 'none',
+        srcChipLabel: d.sourceType === 'saved' ? d.savedLabel : d.sourceType === 'text' ? String(d.sourceText || '').replace(/^https?:\/\//, '') || 'Reference' : 'Add source',
+        srcChipText: hasSource ? '#1C3144' : '#44633F',
+        srcChipBg: hasSource ? '#ffffff' : 'transparent',
+        srcChipBorder: hasSource ? '#DFE7DF' : '#DAD2D4',
+        srcChipStroke: hasSource ? 'solid' : 'dashed',
+        srcMarkColor: d.sourceType === 'saved' ? '#44633F' : d.sourceType === 'text' ? 'transparent' : '#C8C0C3',
+        srcMarkRadius: '4px',
+        srcMarkRing: d.sourceType === 'text' ? 'inset 0 0 0 1.8px #44633F' : 'none',
+        noteChipLabel: hasNote ? 'Note' : 'Add note',
+        noteChipText: hasNote ? '#1C3144' : '#44633F',
+        noteChipBg: hasNote ? '#ffffff' : 'transparent',
+        noteChipBorder: hasNote ? '#DFE7DF' : '#DAD2D4',
+        noteChipStroke: hasNote ? 'solid' : 'dashed',
+        showSaved: d.sourceType === 'saved',
+        showText: d.sourceType === 'text',
+        noneText: none.text, noneBg: none.bg, noneShadow: none.shadow,
+        savedText: saved.text, savedBg: saved.bg, savedShadow: saved.shadow,
+        textText: text.text, textBg: text.bg, textShadow: text.shadow,
+        toggle: () => this.patch(key, d.id, { expanded: !d.expanded }),
+        remove: () => this.setState((s) => ({ [key]: s[key].filter((x) => x.id !== d.id) })),
+        setName: (e) => this.patch(key, d.id, { name: e.target.value }),
+        setNote: (e) => this.patch(key, d.id, { note: e.target.value }),
+        setSourceText: (e) => this.patch(key, d.id, { sourceText: e.target.value }),
+        srcNone: () => this.patch(key, d.id, { sourceType: 'none' }),
+        srcSaved: () => this.patch(key, d.id, { sourceType: 'saved' }),
+        srcText: () => this.patch(key, d.id, { sourceType: 'text' }),
+      };
+    });
+  }
+
+  add(key) {
+    this.setState((s) => ({ seq: s.seq + 1, [key]: [...s[key], mk(s.seq + 1, '')] }));
+  }
+
+  count(key) {
+    const n = this.state[key].length;
+    return n === 1 ? '1 dish' : n + ' dishes';
+  }
+
+  renderVals() {
+    return {
+      headerSub: 'Thursday, September 10 · weeknight',
+      dishes2: this.build('x'),
+      states: this.build('st'),
+      count2: this.count('x'),
+      summary2: (() => { const n = this.state.x.filter((d) => d.name.trim()).length; return n + (n === 1 ? ' dish' : ' dishes') + ' on this meal'; })(),
+      add2: () => this.add('x'),
+      dishesMx: this.build('mx'),
+      countMx: this.count('mx'),
+      summaryMx: (() => { const n = this.state.mx.filter((d) => d.name.trim()).length; return n + (n === 1 ? ' dish' : ' dishes') + ' on this meal'; })(),
+      addMx: () => this.add('mx'),
+    };
+  }
+}
+
+</script>
+</body>
+</html>

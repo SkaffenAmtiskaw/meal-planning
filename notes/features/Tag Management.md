@@ -82,7 +82,7 @@ Planner Settings Tab
             └── TagManagementPanel
 ```
 
-*Note: The Shared Users Section is planned work for the [[Shared Planners]] feature and is not part of this implementation.*
+*Note: The Shared Users Section is planned work for the [[Transfer Ownership of Planner]] feature and is not part of this implementation.*
 
 **Desktop View:**
 - Tags displayed within the expanded planner accordion/card

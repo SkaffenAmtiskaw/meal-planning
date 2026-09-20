@@ -1,4 +1,0 @@
-- replace `x-schedule` header completely - use `mantine` components for consistent look and feel with the rest of the app
-- ensure no functionality from `x-schedule` is lost
-- ensure header is consistent across views
-- ensure header renders appropriately in mobile

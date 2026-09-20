@@ -17,8 +17,7 @@ import { schemaResolver, useForm } from '@mantine/form';
 
 import { z } from 'zod';
 
-import { addRecipe } from '@/_actions/saved/addRecipe';
-import { editRecipe } from '@/_actions/saved/editRecipe';
+import { addRecipe, editRecipe } from '@/_actions/library';
 import type { TagOption } from '@/_components';
 import {
 	FormFeedbackAlert,
@@ -27,13 +26,13 @@ import {
 	TagCombobox,
 } from '@/_components';
 import { useFormFeedback } from '@/_hooks';
-import type { RecipeInterface } from '@/_models/planner/recipe.types';
-import { zRecipeFormSchema } from '@/_models/planner/recipe.types';
+import type { RecipeInterface } from '@/_models/types';
+import { zRecipeFormSchema } from '@/_models/types';
 
 // Resolver only validates fields Mantine manages; ingredients/instructions/tags
 // are controlled via useState and merged in handleSubmit.
-// source.url uses z.string() (not z.url()) to allow empty strings — handleSubmit
-// converts empty strings to undefined before saving.
+// source.url uses z.string() (not z.url()) to allow empty strings — the action
+// transforms empty strings to undefined before saving.
 const zFormFields = zRecipeFormSchema
 	.omit({
 		ingredients: true,
@@ -95,24 +94,8 @@ export const RecipeForm = ({ item, plannerId, tags, redirectTo }: Props) => {
 	const handleSubmit = form.onSubmit(
 		wrap(
 			async (values) => {
-				const source = values.source?.name
-					? { name: values.source.name, url: values.source.url || undefined }
-					: undefined;
-
-				const time =
-					values.time && Object.values(values.time).some(Boolean)
-						? {
-								prep: values.time.prep || undefined,
-								cook: values.time.cook || undefined,
-								total: values.time.total || undefined,
-								actual: values.time.actual || undefined,
-							}
-						: undefined;
-
 				const payload = {
 					...values,
-					source,
-					time,
 					ingredients,
 					instructions,
 					tags: selectedTags,

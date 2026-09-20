@@ -1,37 +1,42 @@
+import { useRouter } from 'next/navigation';
+
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 
-import { describe, expect, test, vi } from 'vitest';
+import { beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
+
+import { client } from '@/_utils/auth';
 
 import { SignOutButton } from './SignOutButton';
 
-const { mockPush, mockSignOut } = vi.hoisted(() => ({
-	mockPush: vi.fn(),
-	mockSignOut: vi.fn(),
-}));
+const mockPush = vi.fn();
 
-vi.mock('next/navigation', () => ({
-	useRouter: () => ({ push: mockPush }),
-}));
-
-vi.mock('@/_utils/auth', () => ({
-	client: { signOut: mockSignOut },
-}));
+vi.mock('next/navigation', async () => await import('@mocks/next/navigation'));
 
 vi.mock('@mantine/core', async () => await import('@mocks/@mantine/core'));
 
+vi.mock('@/_utils/auth', () => ({
+	client: { signOut: vi.fn() },
+}));
+
 describe('SignOutButton', () => {
-	test('renders sign-out button with label', () => {
-		render(<SignOutButton />);
-		expect(screen.getByTestId('sign-out-button')).toBeDefined();
-		expect(screen.getByText('Log Out')).toBeDefined();
+	beforeAll(() => {
+		const defaultRouter = vi.mocked(useRouter)();
+		vi.mocked(useRouter).mockReturnValue({
+			...defaultRouter,
+			push: mockPush,
+		});
 	});
 
-	test('clicking calls signOut and redirects to /', async () => {
-		mockSignOut.mockResolvedValueOnce(undefined);
+	beforeEach(() => {
+		vi.clearAllMocks();
+	});
+
+	it('clicking calls signOut and redirects to /', async () => {
+		vi.mocked(client.signOut).mockResolvedValueOnce(undefined);
 		render(<SignOutButton />);
 		fireEvent.click(screen.getByTestId('sign-out-button'));
 		await waitFor(() => {
-			expect(mockSignOut).toHaveBeenCalledOnce();
+			expect(client.signOut).toHaveBeenCalledOnce();
 			expect(mockPush).toHaveBeenCalledWith('/');
 		});
 	});

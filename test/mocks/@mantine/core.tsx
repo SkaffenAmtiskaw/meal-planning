@@ -17,6 +17,8 @@
  * `vi.mocked(Comp).mockImplementationOnce(...)` to override for a single test.
  */
 
+import React from 'react';
+
 import { vi } from 'vitest';
 
 // ─── Shared prop shapes ───────────────────────────────────────────────────────
@@ -57,25 +59,46 @@ export const Image = vi.fn(
 
 // ─── Layout / Container ───────────────────────────────────────────────────────
 
-export const AppShell = vi.fn(({ children, 'data-testid': testId }: WithChildren) => (
-	<div data-testid={testId}>{children}</div>
-));
+export const AppShell = vi.fn(
+	({ children, 'data-testid': testId }: WithChildren) => (
+		<div data-testid={testId}>{children}</div>
+	),
+);
 
-export const AppShellHeader = vi.fn(({ children, 'data-testid': testId }: WithChildren) => (
-	<div data-testid={testId}>{children}</div>
-));
+export const AppShellHeader = vi.fn(
+	({ children, 'data-testid': testId }: WithChildren) => (
+		<div data-testid={testId}>{children}</div>
+	),
+);
 
-export const AppShellMain = vi.fn(({ children, 'data-testid': testId }: WithChildren) => (
-	<div data-testid={testId}>{children}</div>
-));
+export const AppShellMain = vi.fn(
+	({ children, 'data-testid': testId }: WithChildren) => (
+		<div data-testid={testId}>{children}</div>
+	),
+);
 
-export const AppShellNavbar = vi.fn(({ children, 'data-testid': testId }: WithChildren) => (
-	<div data-testid={testId}>{children}</div>
-));
+export const AppShellNavbar = vi.fn(
+	({ children, 'data-testid': testId }: WithChildren) => (
+		<div data-testid={testId}>{children}</div>
+	),
+);
 
-export const Box = vi.fn(({ children, 'data-testid': testId }: WithChildren) => (
-	<div data-testid={testId}>{children}</div>
-));
+export const Box = vi.fn(
+	({
+		children,
+		'data-testid': testId,
+		ref,
+		...props
+	}: WithChildren & {
+		ref?: React.Ref<HTMLDivElement>;
+		onBlur?: React.FocusEventHandler<HTMLElement>;
+		[key: string]: unknown;
+	}) => (
+		<div data-testid={testId} ref={ref} {...props}>
+			{children}
+		</div>
+	),
+);
 
 export const Card = vi.fn(
 	({
@@ -90,17 +113,25 @@ export const Card = vi.fn(
 );
 
 export const Collapse = vi.fn(
-	({ children, expanded, 'data-testid': testId }: WithChildren & { expanded?: boolean }) =>
+	({
+		children,
+		expanded,
+		'data-testid': testId,
+	}: WithChildren & { expanded?: boolean }) =>
 		expanded ? <div data-testid={testId}>{children}</div> : null,
 );
 
 // ─── Accordion (compound) ─────────────────────────────────────────────────────
 
 export const Accordion = Object.assign(
-	vi.fn(({ children }: WithChildren) => <div data-testid="accordion">{children}</div>),
+	vi.fn(({ children }: WithChildren) => (
+		<div data-testid="accordion">{children}</div>
+	)),
 	{
 		Item: vi.fn(({ children, value }: WithChildren & { value?: string }) => (
-			<div data-testid="accordion-item" data-value={value}>{children}</div>
+			<div data-testid="accordion-item" data-value={value}>
+				{children}
+			</div>
 		)),
 		Control: vi.fn(({ children }: WithChildren) => (
 			<button data-testid="accordion-control">{children}</button>
@@ -108,16 +139,20 @@ export const Accordion = Object.assign(
 		Panel: vi.fn(({ children }: WithChildren) => (
 			<div data-testid="accordion-panel">{children}</div>
 		)),
-	}
+	},
 );
 
-export const Center = vi.fn(({ children, 'data-testid': testId }: WithChildren) => (
-	<div data-testid={testId}>{children}</div>
-));
+export const Center = vi.fn(
+	({ children, 'data-testid': testId }: WithChildren) => (
+		<div data-testid={testId}>{children}</div>
+	),
+);
 
-export const Container = vi.fn(({ children, 'data-testid': testId }: WithChildren) => (
-	<div data-testid={testId}>{children}</div>
-));
+export const Container = vi.fn(
+	({ children, 'data-testid': testId }: WithChildren) => (
+		<div data-testid={testId}>{children}</div>
+	),
+);
 
 export const Fieldset = vi.fn(
 	({
@@ -128,25 +163,108 @@ export const Fieldset = vi.fn(
 	),
 );
 
-export const Group = vi.fn(({ children, 'data-testid': testId }: WithChildren) => (
-	<div data-testid={testId}>{children}</div>
-));
+export const Flex = vi.fn(
+	({ children, 'data-testid': testId, ...props }: WithChildren) => (
+		<div data-testid={testId} {...props}>
+			{children}
+		</div>
+	),
+);
 
-export const SimpleGrid = vi.fn(({ children, 'data-testid': testId }: WithChildren) => (
-	<div data-testid={testId}>{children}</div>
-));
+export const Group = vi.fn(
+	({ children, 'data-testid': testId }: WithChildren) => (
+		<div data-testid={testId}>{children}</div>
+	),
+);
+
+export const SimpleGrid = vi.fn(
+	({ children, 'data-testid': testId }: WithChildren) => (
+		<div data-testid={testId}>{children}</div>
+	),
+);
+
+export const Paper = vi.fn(
+	({
+		children,
+		'data-testid': testId,
+		ref,
+		...props
+	}: WithChildren & { ref?: React.Ref<HTMLDivElement> }) => (
+		<div data-testid={testId} ref={ref} {...props}>
+			{children}
+		</div>
+	),
+);
+
+export const Popover = Object.assign(
+	vi.fn(({ children }: WithChildren) => <>{children}</>),
+	{
+		Target: vi.fn(({ children }: WithChildren) => <>{children}</>),
+		Dropdown: vi.fn(({ children }: WithChildren) => (
+			<div data-testid="popover-dropdown">{children}</div>
+		)),
+	},
+);
 
 export const Stack = vi.fn(
-	({ children, 'data-testid': testId, component, onSubmit, ...props }: WithChildren & { 'data-orientation'?: string; component?: string; onSubmit?: React.FormEventHandler<HTMLFormElement>; [key: string]: unknown }) => {
+	({
+		children,
+		'data-testid': testId,
+		component,
+		onSubmit,
+		...props
+	}: WithChildren & {
+		'data-orientation'?: string;
+		component?: string;
+		onSubmit?: React.FormEventHandler<HTMLFormElement>;
+		[key: string]: unknown;
+	}) => {
 		if (component === 'form') {
 			return (
-				<form data-orientation="vertical" data-testid={testId} onSubmit={onSubmit} {...props}>
+				<form
+					data-orientation="vertical"
+					data-testid={testId}
+					onSubmit={onSubmit}
+					{...props}
+				>
 					{children}
 				</form>
 			);
 		}
 		return (
 			<div data-orientation="vertical" data-testid={testId} {...props}>
+				{children}
+			</div>
+		);
+	},
+);
+
+export const ScrollArea = vi.fn(
+	({
+		children,
+		viewportRef,
+		'data-testid': testId,
+		...props
+	}: WithChildren & {
+		viewportRef?: React.Ref<HTMLDivElement>;
+		scrollbars?: string;
+		type?: string;
+		[key: string]: unknown;
+	}) => {
+		const ref = React.useRef<HTMLDivElement>(null);
+
+		React.useEffect(() => {
+			if (!viewportRef) return;
+			if (typeof viewportRef === 'function') {
+				viewportRef(ref.current);
+			} else {
+				(viewportRef as React.MutableRefObject<HTMLDivElement | null>).current =
+					ref.current;
+			}
+		});
+
+		return (
+			<div ref={ref} data-testid={testId ?? 'scroll-area'} {...props}>
 				{children}
 			</div>
 		);
@@ -172,8 +290,18 @@ export const Text = vi.fn(
 	({
 		children,
 		'data-testid': testId,
-	}: WithChildren & { c?: string; size?: string; fw?: number; span?: boolean }) => (
-		<p data-testid={testId}>{children}</p>
+		c,
+		...props
+	}: WithChildren & {
+		c?: string;
+		size?: string;
+		fw?: number;
+		span?: boolean;
+		[key: string]: unknown;
+	}) => (
+		<p data-testid={testId} data-c={c} {...props}>
+			{children}
+		</p>
 	),
 );
 
@@ -183,9 +311,11 @@ export const Title = vi.fn(
 	),
 );
 
-export const Typography = vi.fn(({ children, 'data-testid': testId }: WithChildren) => (
-	<div data-testid={testId}>{children}</div>
-));
+export const Typography = vi.fn(
+	({ children, 'data-testid': testId }: WithChildren) => (
+		<div data-testid={testId}>{children}</div>
+	),
+);
 
 export const Anchor = vi.fn(
 	({
@@ -200,7 +330,12 @@ export const Anchor = vi.fn(
 		onClick?: React.MouseEventHandler<HTMLAnchorElement | HTMLButtonElement>;
 		component?: unknown;
 	}) => (
-		<a data-testid={testId} href={href} target={target} onClick={onClick as React.MouseEventHandler<HTMLAnchorElement>}>
+		<a
+			data-testid={testId}
+			href={href}
+			target={target}
+			onClick={onClick as React.MouseEventHandler<HTMLAnchorElement>}
+		>
 			{children}
 		</a>
 	),
@@ -213,7 +348,11 @@ export const Badge = vi.fn(
 		color,
 		style,
 		className,
-	}: WithChildren & { color?: string; style?: React.CSSProperties; className?: string }) => (
+	}: WithChildren & {
+		color?: string;
+		style?: React.CSSProperties;
+		className?: string;
+	}) => (
 		<span
 			data-testid={testId ?? 'badge'}
 			data-color={color}
@@ -263,9 +402,11 @@ export const Indicator = vi.fn(
 	),
 );
 
-export const Affix = vi.fn(({ children, 'data-testid': testId }: WithChildren) => (
-	<div data-testid={testId}>{children}</div>
-));
+export const Affix = vi.fn(
+	({ children, 'data-testid': testId }: WithChildren) => (
+		<div data-testid={testId}>{children}</div>
+	),
+);
 
 export const Divider = vi.fn(
 	({
@@ -286,7 +427,11 @@ export const Alert = vi.fn(
 		children,
 		'data-testid': testId,
 		title,
-	}: WithChildren & { title?: React.ReactNode; color?: string; icon?: React.ReactNode }) => (
+	}: WithChildren & {
+		title?: React.ReactNode;
+		color?: string;
+		icon?: React.ReactNode;
+	}) => (
 		<div role="alert" data-testid={testId}>
 			{title && <div>{title}</div>}
 			{children}
@@ -303,20 +448,30 @@ export const ActionIcon = vi.fn(
 		disabled,
 		href,
 		'data-testid': testId,
+		'aria-label': ariaLabel,
+		...props
 	}: {
 		children?: React.ReactNode;
 		onClick?: () => void;
 		disabled?: boolean;
 		href?: string;
 		'data-testid'?: string;
+		'aria-label'?: string;
 		[key: string]: unknown;
 	}) =>
 		href ? (
-			<a href={href} data-testid={testId}>
+			<a href={href} data-testid={testId} aria-label={ariaLabel} {...props}>
 				{children}
 			</a>
 		) : (
-			<button type="button" onClick={onClick} disabled={disabled} data-testid={testId}>
+			<button
+				type="button"
+				onClick={onClick}
+				disabled={disabled}
+				data-testid={testId}
+				aria-label={ariaLabel}
+				{...props}
+			>
 				{children}
 			</button>
 		),
@@ -349,6 +504,38 @@ export const Button = vi.fn(
 		disabled,
 		loading,
 		'data-testid': testId,
+		leftSection,
+		rightSection,
+		fullWidth,
+		variant,
+		size,
+		color,
+		className,
+		style,
+		w,
+		component,
+		radius,
+		visibleFrom,
+		hiddenFrom,
+		flex,
+		mt,
+		mb,
+		ml,
+		mr,
+		mx,
+		my,
+		m,
+		p,
+		px,
+		py,
+		pt,
+		pb,
+		pl,
+		pr,
+		justify,
+		align,
+		gap,
+		...props
 	}: {
 		children?: React.ReactNode;
 		onClick?: () => void;
@@ -356,6 +543,37 @@ export const Button = vi.fn(
 		disabled?: boolean;
 		loading?: boolean;
 		'data-testid'?: string;
+		leftSection?: React.ReactNode;
+		rightSection?: React.ReactNode;
+		fullWidth?: boolean;
+		variant?: string;
+		size?: string;
+		color?: string;
+		className?: string;
+		style?: React.CSSProperties;
+		w?: number | string;
+		component?: unknown;
+		radius?: string | number;
+		visibleFrom?: string;
+		hiddenFrom?: string;
+		flex?: number | string;
+		mt?: number | string;
+		mb?: number | string;
+		ml?: number | string;
+		mr?: number | string;
+		mx?: number | string;
+		my?: number | string;
+		m?: number | string;
+		p?: number | string;
+		px?: number | string;
+		py?: number | string;
+		pt?: number | string;
+		pb?: number | string;
+		pl?: number | string;
+		pr?: number | string;
+		justify?: string;
+		align?: string;
+		gap?: number | string;
 		[key: string]: unknown;
 	}) => (
 		<button
@@ -364,6 +582,7 @@ export const Button = vi.fn(
 			disabled={disabled || loading}
 			data-loading={loading ? 'true' : undefined}
 			data-testid={testId}
+			{...props}
 		>
 			{children}
 		</button>
@@ -521,6 +740,7 @@ export const TextInput = vi.fn(
 	({
 		value,
 		onChange,
+		onKeyDown,
 		label,
 		type,
 		name,
@@ -530,6 +750,7 @@ export const TextInput = vi.fn(
 	}: {
 		value?: string;
 		onChange?: React.ChangeEventHandler<HTMLInputElement>;
+		onKeyDown?: React.KeyboardEventHandler<HTMLInputElement>;
 		label?: string;
 		type?: string;
 		name?: string;
@@ -545,6 +766,7 @@ export const TextInput = vi.fn(
 			placeholder={placeholder}
 			disabled={disabled}
 			onChange={onChange ?? (() => {})}
+			onKeyDown={onKeyDown}
 		/>
 	),
 );
@@ -626,6 +848,8 @@ export const NavLink = vi.fn(
 		href,
 		active,
 		rightSection,
+		leftSection,
+		component,
 		classNames,
 		'data-testid': testId,
 		...props
@@ -633,8 +857,9 @@ export const NavLink = vi.fn(
 		label?: React.ReactNode;
 		href?: string;
 		active?: boolean;
-		component?: string;
 		rightSection?: React.ReactNode;
+		leftSection?: React.ReactNode;
+		component?: unknown;
 		classNames?: Record<string, string>;
 		'data-testid'?: string;
 		[key: string]: unknown;
@@ -655,27 +880,37 @@ export const NavLink = vi.fn(
 
 // ─── List ─────────────────────────────────────────────────────────────────────
 
-export const List = vi.fn(({ children, 'data-testid': testId }: WithChildren) => (
-	<ul data-testid={testId}>{children}</ul>
-));
+export const List = vi.fn(
+	({ children, 'data-testid': testId }: WithChildren) => (
+		<ul data-testid={testId}>{children}</ul>
+	),
+);
 
-export const ListItem = vi.fn(({ children, 'data-testid': testId }: WithChildren) => (
-	<li data-testid={testId}>{children}</li>
-));
+export const ListItem = vi.fn(
+	({ children, 'data-testid': testId }: WithChildren) => (
+		<li data-testid={testId}>{children}</li>
+	),
+);
 
 // ─── Loader ───────────────────────────────────────────────────────────────────
 
-export const Loader = vi.fn(({ size, 'data-testid': testId }: { size?: string; 'data-testid'?: string }) => (
-	<span data-testid={testId ?? 'loader'} data-size={size} />
-));
+export const Loader = vi.fn(
+	({
+		size,
+		'data-testid': testId,
+	}: {
+		size?: string;
+		'data-testid'?: string;
+	}) => <span data-testid={testId ?? 'loader'} data-size={size} />,
+);
 
 // ─── Menu (compound + standalone named exports) ───────────────────────────────
 
 export const MenuDivider = vi.fn(() => <hr />);
 
-export const MenuDropdown = vi.fn(({ children }: { children?: React.ReactNode }) => (
-	<>{children}</>
-));
+export const MenuDropdown = vi.fn(
+	({ children }: { children?: React.ReactNode }) => <>{children}</>,
+);
 
 export const MenuItem = vi.fn(
 	({
@@ -703,9 +938,9 @@ export const MenuItem = vi.fn(
 		),
 );
 
-export const MenuTarget = vi.fn(({ children }: { children?: React.ReactNode }) => (
-	<>{children}</>
-));
+export const MenuTarget = vi.fn(
+	({ children }: { children?: React.ReactNode }) => <>{children}</>,
+);
 
 export const Menu = Object.assign(
 	vi.fn(({ children }: { children?: React.ReactNode }) => <>{children}</>),
@@ -719,17 +954,21 @@ export const Menu = Object.assign(
 
 // ─── Combobox (compound) ──────────────────────────────────────────────────────
 
-const ComboboxDropdownTarget = vi.fn(({ children }: { children?: React.ReactNode }) => (
-	<>{children}</>
-));
+const ComboboxDropdownTarget = vi.fn(
+	({ children }: { children?: React.ReactNode }) => <>{children}</>,
+);
 
-const ComboboxDropdown = vi.fn(({ children, 'data-testid': testId }: WithChildren) => (
-	<div data-testid={testId ?? 'combobox-dropdown'}>{children}</div>
-));
+const ComboboxDropdown = vi.fn(
+	({ children, 'data-testid': testId }: WithChildren) => (
+		<div data-testid={testId ?? 'combobox-dropdown'}>{children}</div>
+	),
+);
 
-const ComboboxOptions = vi.fn(({ children, 'data-testid': testId }: WithChildren) => (
-	<div data-testid={testId}>{children}</div>
-));
+const ComboboxOptions = vi.fn(
+	({ children, 'data-testid': testId }: WithChildren) => (
+		<div data-testid={testId}>{children}</div>
+	),
+);
 
 const ComboboxOption = vi.fn(
 	({
@@ -743,9 +982,11 @@ const ComboboxOption = vi.fn(
 	),
 );
 
-const ComboboxEmpty = vi.fn(({ children, 'data-testid': testId }: WithChildren) => (
-	<div data-testid={testId}>{children}</div>
-));
+const ComboboxEmpty = vi.fn(
+	({ children, 'data-testid': testId }: WithChildren) => (
+		<div data-testid={testId}>{children}</div>
+	),
+);
 
 export const Combobox = Object.assign(
 	vi.fn(
@@ -779,6 +1020,7 @@ export const Pill = Object.assign(
 			withRemoveButton,
 			onRemove,
 			'data-testid': testId,
+			style,
 		}: {
 			children?: React.ReactNode;
 			withRemoveButton?: boolean;
@@ -786,7 +1028,7 @@ export const Pill = Object.assign(
 			'data-testid'?: string;
 			style?: React.CSSProperties;
 		}) => (
-			<span data-testid={testId ?? 'pill'}>
+			<span data-testid={testId ?? 'pill'} style={style}>
 				{children}
 				{withRemoveButton && (
 					<button type="button" data-testid="pill-remove" onClick={onRemove}>
@@ -803,8 +1045,15 @@ export const Pill = Object.assign(
 
 const PillsInputField = vi.fn(
 	(
-		props: React.InputHTMLAttributes<HTMLInputElement> & { 'data-testid'?: string },
-	) => <input {...props} data-testid={props['data-testid'] ?? 'pills-input-field'} />,
+		props: React.InputHTMLAttributes<HTMLInputElement> & {
+			'data-testid'?: string;
+		},
+	) => (
+		<input
+			{...props}
+			data-testid={props['data-testid'] ?? 'pills-input-field'}
+		/>
+	),
 );
 
 export const PillsInput = Object.assign(
@@ -820,10 +1069,10 @@ export const PillsInput = Object.assign(
 			onClick?: () => void;
 			'data-testid'?: string;
 		}) => (
-			<button type="button" data-testid={testId ?? 'pills-input'} onClick={onClick}>
+			<div data-testid={testId ?? 'pills-input'} onClick={onClick}>
 				{label && <span>{label}</span>}
 				{children}
-			</button>
+			</div>
 		),
 	),
 	{ Field: PillsInputField },
@@ -831,9 +1080,13 @@ export const PillsInput = Object.assign(
 
 // ─── Tabs ─────────────────────────────────────────────────────────────────────
 
-export const TabsList = vi.fn(({ children, 'data-testid': testId }: WithChildren) => (
-	<div role="tablist" data-testid={testId}>{children}</div>
-));
+export const TabsList = vi.fn(
+	({ children, 'data-testid': testId }: WithChildren) => (
+		<div role="tablist" data-testid={testId}>
+			{children}
+		</div>
+	),
+);
 
 export const TabsTab = vi.fn(
 	({
@@ -859,22 +1112,27 @@ export const TabsPanel = vi.fn(
 	),
 );
 
-export const Tabs = vi.fn(({ children, 'data-testid': testId }: WithChildren) => (
-	<div data-testid={testId}>{children}</div>
-));
+export const Tabs = vi.fn(
+	({ children, 'data-testid': testId }: WithChildren) => (
+		<div data-testid={testId}>{children}</div>
+	),
+);
 
 // ─── Provider ─────────────────────────────────────────────────────────────────
 
-export const MantineProvider = vi.fn(({ children }: { children?: React.ReactNode }) => (
-	<>{children}</>
-));
+export const MantineProvider = vi.fn(
+	({ children }: { children?: React.ReactNode }) => <>{children}</>,
+);
 
 // ─── Hooks ────────────────────────────────────────────────────────────────────
 
 export const useCombobox = vi.fn(
-	(_options?: { onDropdownClose?: () => void; onDropdownOpen?: () => void }) => ({
-		openDropdown: vi.fn(),
-		closeDropdown: vi.fn(),
+	(options?: {
+		onDropdownClose?: () => void;
+		onDropdownOpen?: () => void;
+	}) => ({
+		openDropdown: vi.fn(() => options?.onDropdownOpen?.()),
+		closeDropdown: vi.fn(() => options?.onDropdownClose?.()),
 		resetSelectedOption: vi.fn(),
 		updateSelectedOptionIndex: vi.fn(),
 	}),
@@ -882,13 +1140,39 @@ export const useCombobox = vi.fn(
 
 export const useMantineTheme = vi.fn(() => ({
 	colors: {
-		navy: ['#E8EBEE', '#D1D7DD', '#BAC3CC', '#A3AFBB', '#8C9BAA', '#1C3144', '#192C3D', '#162736', '#132230', '#101D29'],
-		chalk: ['#FAF8F9', '#F5F3F4', '#F0EDEE', '#EBE8E9', '#E6E3E4', '#EFE7E9', '#E8E0E2', '#E1D9DB', '#DAD2D4', '#D3CBCB'],
+		navy: [
+			'#E8EBEE',
+			'#D1D7DD',
+			'#BAC3CC',
+			'#A3AFBB',
+			'#8C9BAA',
+			'#1C3144',
+			'#192C3D',
+			'#162736',
+			'#132230',
+			'#101D29',
+		],
+		chalk: [
+			'#FAF8F9',
+			'#F5F3F4',
+			'#F0EDEE',
+			'#EBE8E9',
+			'#E6E3E4',
+			'#EFE7E9',
+			'#E8E0E2',
+			'#E1D9DB',
+			'#DAD2D4',
+			'#D3CBCB',
+		],
 	},
 	radius: { md: '0.5rem' },
 }));
 
 // ─── Utilities ────────────────────────────────────────────────────────────────
+
+export const rgba = vi.fn(
+	(color: string, alpha: number) => `rgba(${color}, ${alpha})`,
+);
 
 export const createTheme = vi.fn((theme: Record<string, unknown>) => theme);
 export const isLightColor = vi.fn(() => false);

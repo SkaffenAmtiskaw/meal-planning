@@ -1,16 +1,15 @@
 import { Types } from 'mongoose';
 import { afterEach, describe, expect, test, vi } from 'vitest';
 
-import { Planner } from '@/_models';
+import { Planner } from '@/_models/planner';
 
 import { getPlanner } from './getPlanner';
 
-vi.mock('@/_models', () => ({
+vi.mock('@/_models/planner', () => ({
 	Planner: {
 		findById: vi.fn(),
 	},
 }));
-
 describe('getPlanner', () => {
 	const mockId = new Types.ObjectId();
 

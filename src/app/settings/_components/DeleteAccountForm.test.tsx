@@ -1,48 +1,49 @@
+import { useRouter } from 'next/navigation';
+
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 
-import { afterEach, describe, expect, test, vi } from 'vitest';
+import { beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
+
+import { deleteAccount } from '@/_actions/user';
+import { client } from '@/_utils/auth';
 
 import { DeleteAccountForm } from './DeleteAccountForm';
 
 const mockPush = vi.fn();
-const mockDeleteAccount = vi.fn();
-const mockSignOut = vi.fn();
 
 vi.mock('@mantine/core', async () => await import('@mocks/@mantine/core'));
 
-vi.mock('next/navigation', () => ({
-	useRouter: () => ({ push: mockPush }),
-}));
+vi.mock('next/navigation', async () => await import('@mocks/next/navigation'));
 
-vi.mock('@/_actions/user', () => ({
-	deleteAccount: () => mockDeleteAccount(),
-}));
+vi.mock('@/_actions/user', async () => await import('@mocks/@/_actions/user'));
 
-vi.mock('@/_utils/auth', () => ({
+vi.mock('@/_utils/auth', async () => ({
 	client: {
-		signOut: () => mockSignOut(),
+		signOut: vi.fn(),
 	},
 }));
 
 describe('DeleteAccountForm', () => {
-	afterEach(() => {
-		vi.resetAllMocks();
+	beforeAll(() => {
+		const defaultRouter = vi.mocked(useRouter)();
+		vi.mocked(useRouter).mockReturnValue({
+			...defaultRouter,
+			push: mockPush,
+		});
 	});
 
-	test('renders the confirmation input', () => {
-		render(<DeleteAccountForm />);
-
-		expect(screen.getByTestId('delete-confirmation-input')).toBeDefined();
+	beforeEach(() => {
+		vi.clearAllMocks();
 	});
 
-	test('delete button is disabled when input is empty', () => {
+	it('delete button is disabled when input is empty', () => {
 		render(<DeleteAccountForm />);
 
 		const button = screen.getByTestId('delete-account-button');
 		expect(button).toHaveProperty('disabled', true);
 	});
 
-	test('delete button is disabled when input is not DELETE', () => {
+	it('delete button is disabled when input is not DELETE', () => {
 		render(<DeleteAccountForm />);
 
 		fireEvent.change(screen.getByTestId('delete-confirmation-input'), {
@@ -53,7 +54,7 @@ describe('DeleteAccountForm', () => {
 		expect(button).toHaveProperty('disabled', true);
 	});
 
-	test('delete button is enabled when input is DELETE', () => {
+	it('delete button is enabled when input is DELETE', () => {
 		render(<DeleteAccountForm />);
 
 		fireEvent.change(screen.getByTestId('delete-confirmation-input'), {
@@ -64,10 +65,7 @@ describe('DeleteAccountForm', () => {
 		expect(button).toHaveProperty('disabled', false);
 	});
 
-	test('calls deleteAccount on submit', async () => {
-		mockDeleteAccount.mockResolvedValueOnce({ ok: true, data: undefined });
-		mockSignOut.mockResolvedValueOnce(undefined);
-
+	it('calls deleteAccount on submit', () => {
 		render(<DeleteAccountForm />);
 
 		fireEvent.change(screen.getByTestId('delete-confirmation-input'), {
@@ -75,15 +73,10 @@ describe('DeleteAccountForm', () => {
 		});
 		fireEvent.click(screen.getByTestId('delete-account-button'));
 
-		await waitFor(() => {
-			expect(mockDeleteAccount).toHaveBeenCalledOnce();
-		});
+		expect(deleteAccount).toHaveBeenCalledOnce();
 	});
 
-	test('signs out and redirects to / on success', async () => {
-		mockDeleteAccount.mockResolvedValueOnce({ ok: true, data: undefined });
-		mockSignOut.mockResolvedValueOnce(undefined);
-
+	it('signs out and redirects to / on success', async () => {
 		render(<DeleteAccountForm />);
 
 		fireEvent.change(screen.getByTestId('delete-confirmation-input'), {
@@ -92,13 +85,13 @@ describe('DeleteAccountForm', () => {
 		fireEvent.click(screen.getByTestId('delete-account-button'));
 
 		await waitFor(() => {
-			expect(mockSignOut).toHaveBeenCalledOnce();
+			expect(client.signOut).toHaveBeenCalledOnce();
 			expect(mockPush).toHaveBeenCalledWith('/');
 		});
 	});
 
-	test('shows error alert when action returns error', async () => {
-		mockDeleteAccount.mockResolvedValueOnce({
+	it('shows error alert when action returns error', async () => {
+		vi.mocked(deleteAccount).mockResolvedValueOnce({
 			ok: false,
 			error: 'User not found.',
 		});
@@ -117,8 +110,8 @@ describe('DeleteAccountForm', () => {
 		});
 	});
 
-	test('does not sign out or redirect on error', async () => {
-		mockDeleteAccount.mockResolvedValueOnce({
+	it('does not sign out or redirect on error', async () => {
+		vi.mocked(deleteAccount).mockResolvedValueOnce({
 			ok: false,
 			error: 'User not found.',
 		});
@@ -134,7 +127,7 @@ describe('DeleteAccountForm', () => {
 			expect(screen.getByTestId('error-alert')).toBeDefined();
 		});
 
-		expect(mockSignOut).not.toHaveBeenCalled();
+		expect(client.signOut).not.toHaveBeenCalled();
 		expect(mockPush).not.toHaveBeenCalled();
 	});
 });

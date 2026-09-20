@@ -8,7 +8,7 @@ import { z } from 'zod';
 
 import { auth, mongoClient } from '@/_auth';
 import { sendEmailChangeEmail } from '@/_auth/emails';
-import { User } from '@/_models';
+import { User } from '@/_models/user';
 import type { ActionResult } from '@/_utils/actionResult';
 import { env } from '@/env';
 
@@ -22,7 +22,7 @@ export const requestEmailChange = async (
 
 	const currentEmail = session.user.email;
 
-	const parsed = z.string().email().safeParse(newEmail);
+	const parsed = z.email().safeParse(newEmail);
 	if (!parsed.success)
 		return { ok: false, error: 'Please enter a valid email address.' };
 

@@ -1,7 +1,7 @@
 'use server';
 
 import { getUser } from '@/_actions/user';
-import { User } from '@/_models';
+import { User } from '@/_models/user';
 import type { ActionResult } from '@/_utils/actionResult';
 import { catchify } from '@/_utils/catchify';
 import { zSafeString } from '@/_utils/zSafeString';

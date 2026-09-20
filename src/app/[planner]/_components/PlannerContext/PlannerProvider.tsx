@@ -3,8 +3,8 @@
 import { useEffect, useState } from 'react';
 import type { ReactNode } from 'react';
 
-import { getPlannerClient } from '@/_actions';
-import type { AccessLevel, PlannerInterface } from '@/_models';
+import { getPlannerClient } from '@/_actions/planner';
+import type { AccessLevel, PlannerInterface } from '@/_models/types';
 
 import { PlannerContext } from './PlannerContext';
 

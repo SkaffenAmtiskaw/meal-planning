@@ -1,25 +1,35 @@
+import { usePathname, useRouter } from 'next/navigation';
+
 import { fireEvent, render, screen } from '@testing-library/react';
 
-import { beforeEach, describe, expect, test, vi } from 'vitest';
+import { beforeAll, beforeEach, describe, expect, test, vi } from 'vitest';
 
 import { AddItemDropdown } from './AddItemDropdown';
 
-const mockPush = vi.fn();
-vi.mock('next/navigation', () => ({
-	useRouter: () => ({ push: mockPush }),
-	usePathname: () => '/jafar-planner/recipes',
-}));
+const { mockUseCanWrite } = vi.hoisted(() => ({ mockUseCanWrite: vi.fn() }));
+
+vi.mock('next/navigation', async () => await import('@mocks/next/navigation'));
 
 vi.mock('@mantine/core', async () => await import('@mocks/@mantine/core'));
 
-const { mockUseCanWrite } = vi.hoisted(() => ({ mockUseCanWrite: vi.fn() }));
 vi.mock('@/app/[planner]/_components', () => ({
 	useCanWrite: () => mockUseCanWrite(),
 }));
 
 describe('add item dropdown', () => {
+	const mockPush = vi.fn();
+
+	beforeAll(() => {
+		const defaultRouter = vi.mocked(useRouter)();
+		vi.mocked(useRouter).mockReturnValue({
+			...defaultRouter,
+			push: mockPush,
+		});
+		vi.mocked(usePathname).mockReturnValue('/jafar-planner/recipes');
+	});
+
 	beforeEach(() => {
-		vi.resetAllMocks();
+		vi.clearAllMocks();
 		mockUseCanWrite.mockReturnValue(true);
 	});
 

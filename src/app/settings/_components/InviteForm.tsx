@@ -61,6 +61,7 @@ export const InviteForm: React.FC<InviteFormProps> = ({
 					value={email}
 					onChange={(e) => setEmail(e.target.value)}
 					onKeyDown={handleKeyDown}
+					data-testid="email-input"
 					style={{ flex: 1 }}
 				/>
 				<Button

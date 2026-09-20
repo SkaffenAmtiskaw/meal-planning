@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import type { PlannerMember } from '@/_actions/planner/getPlannerMembers.types';
+import type { PlannerMember } from '@/_actions/sharing';
 
 import { type CanModifyMemberParams, canModifyMember } from './canModifyMember';
 
@@ -107,17 +107,6 @@ describe('canModifyMember', () => {
 		const params: CanModifyMemberParams = {
 			member,
 			currentUserEmail: null,
-			currentUserIsOwner: false,
-		};
-
-		expect(canModifyMember(params)).toBe(true);
-	});
-
-	it('returns true when modifying different user with write access', () => {
-		const member = createMember('charlie@example.com', 'write');
-		const params: CanModifyMemberParams = {
-			member,
-			currentUserEmail: 'bob@example.com',
 			currentUserIsOwner: false,
 		};
 

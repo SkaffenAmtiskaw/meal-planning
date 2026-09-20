@@ -1,0 +1,27 @@
+/* Mantine does not provide a 2×3 dot-grid drag handle component; custom CSS modules are required for the prototype's drag-handle visual. */
+.dragHandle,
+.dragHandleGrid,
+.dragHandleDot {
+	pointer-events: none;
+}
+
+.dragHandle {
+	width: 16px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	flex-shrink: 0;
+}
+
+.dragHandleGrid {
+	display: grid;
+	grid-template-columns: repeat(2, 1fr);
+	gap: 3px;
+}
+
+.dragHandleDot {
+	width: 3px;
+	height: 3px;
+	border-radius: 50%;
+	background-color: var(--mantine-color-navy-1);
+}

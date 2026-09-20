@@ -2,7 +2,7 @@ import type React from 'react';
 
 import { Text, Title } from '@mantine/core';
 
-import { validateInviteToken } from '@/_actions/planner/validateInviteToken';
+import { validateInviteToken } from '@/_actions/sharing';
 import { LinkButton } from '@/_components';
 
 import { AuthLayoutHeader, AuthLayoutRoot } from '../_components/AuthLayout';

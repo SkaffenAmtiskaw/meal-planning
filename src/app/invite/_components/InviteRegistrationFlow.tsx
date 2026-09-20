@@ -5,7 +5,7 @@ import { useState } from 'react';
 
 import { PasswordInput, Stack, TextInput } from '@mantine/core';
 
-import { signUpWithInvite } from '@/_actions/planner/signUpWithInvite';
+import { signUpWithInvite } from '@/_actions/sharing';
 import { useAsyncButton } from '@/_hooks';
 import { zSafeString } from '@/_utils/zSafeString';
 

@@ -4,7 +4,8 @@ import { headers } from 'next/headers';
 
 import { auth, mongoClient } from '@/_auth';
 import { sendAccountDeletionEmail } from '@/_auth/emails';
-import { Planner, User } from '@/_models';
+import { Planner } from '@/_models/planner';
+import { User } from '@/_models/user';
 import type { ActionResult } from '@/_utils/actionResult';
 
 export const deleteAccount = async (): Promise<ActionResult> => {

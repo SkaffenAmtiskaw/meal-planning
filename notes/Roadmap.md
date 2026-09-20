@@ -1,37 +1,37 @@
 *Note: These should ALWAYS be planned and implemented individually. They are discrete units of work.*
 
 **AI Instructions** - DO NOT delete this file. You may remove lines, but under no circumstances may you delete the file.
+
+# Bugfixes/User Issues
+- meals created in month view don't show up in week view - will be fixed in [[Replace Schedule-X]]
+- [[Add Meal UX Changes]]
+- [[Stale Data Issues]]
+- you should be able to create a meal with just a title and a description (or just a title)
+- meal color should be based on hex of title + description
+- sidebar on modal should close after you click something
+- refactor all modal forms to separate presentation and data concerns
+
 # High-Priority
-
-# Security
-- Update Nextjs version
-
 ## Calendar Page
-- [[Render Calendar List View|render list view]]
-- [[Render Month Agenda View (Mobile)|render (or verify) meals in month agenda view (mobile)]]
-- [[Replace Calendar Header|replace header]]
-- add meals by clicking month cell
-- add meals by clicking week day
-- work through adding meals on mobile (get rid of the header button and add a FAB maybe?)
+- [[Replace Schedule-X|replace schedule-x]]
 - edit meals
 - delete meals
+- add meals by clicking month cell
+- add meals by clicking week day
 - default to week view on desktop - list view on mobile
-- styling fixes to calendar view
-- [[Reduce Client Components in Calendar|reduce client components in calendar]]
+- calendar list view infinite scroll
 ## Planner Settings
-- [[Shared Planners|allow users to invite other users to a shared planner]]
-- allow user to delete a planner
+- [[Delete Planner|allow user to delete a planner]]
+- [[Transfer Ownership of Planner|transfer ownership of planner]]
 ## Misc
 - [[Style Fixes|style fixes]]
 - [[Email Improvements|email improvements]]
 - [[Cleanup|fix deprecated Zod types - replace `z.string().email()` with `z.email()` and audit for other deprecated patterns]]
-
 # Medium Priority
 
 ## Sign In Improvements
-- update Google one-tap sign in - warning in console
-- add Apple SSO
 - add passkey sign in
+- add Apple SSO
 ## UX Improvements
 - take create planner pattern of button on top right in desktop - FAB in mobile and apply it throughout the app
 - [[Filtering Recipe List|allow filtering in recipe list]]
@@ -43,13 +43,15 @@
 - group ingredients when adding/editing a recipe
 - when adding/editing a recipe, make the instructions expand if you type more than a line
 - skip to content
-- keyboard shortcuts
+- [[Keyboard Shortcuts|keyboard shortcuts]]
 ## Misc
 - [[Tag Management|tag management - edit/delete]] (should live under planner settings)
 - performance - investigate mongo/mongoose caching - is next doing it already or do we need to implement it?
+- could we get rid of mongoose and use zod + mongodb on its own? what does mongoose get us?
 - a11y audit
 - security - string validation on inputs
 - audit app works fully in mobile
+- switch all types files to `*.types.ts` - `*.types.d.ts` is awful
 
 # Low Priority
 ## Dev Tooling
