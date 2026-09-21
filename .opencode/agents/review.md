@@ -22,6 +22,7 @@ permission:
     apply: allow
   edit:
     "*": deny
+    "notes/**": ask
     ".opencode/scratch/**": allow
   webfetch: allow
 ---
@@ -40,7 +41,7 @@ These rules apply throughout every phase, not just verification:
 
 - **Use the sanctioned commands, exactly.** Run `pnpm test:agent` for tests and `pnpm lint` for linting — never `pnpm test` or a direct `biome check` invocation. These are the only forms that match the permission allowlist; any other form of the same check requires a manual approval that a differently-spelled command doesn't need.
 - **Prefer the read, grep, and glob tools over bash for exploring files.** Reading source, searching for patterns, or looking up a type definition in `node_modules` should go through those tools, not `bash ls`, `bash find`, `bash cat`, or `bash grep` — the former don't require approval, the latter always do. Reach for `webfetch` (already allowlisted) over grepping `node_modules` when the question is about a library's public API — official docs are more reliable than reading compiled type output anyway.
-- **Run each verification command once.** Capture and read its full output rather than piping to `tail -N` and re-running the same command with a different N when the first attempt was truncated. If output is genuinely long, redirect it to a scratch file and read the part you need with the read tool instead of re-invoking the command.
+- **IF you need to run a verification command, run it only once.** Capture and read its full output rather than piping to `tail -N` and re-running the same command with a different N when the first attempt was truncated. If output is genuinely long, redirect it to a scratch file and read the part you need with the read tool instead of re-invoking the command.
 - **Never run git staging or index commands.** `git add`, `git commit`, and similar are outside the scope of a review — verifying a fix means tests, lint, and type check pass, nothing about what's staged. Whether and how changes get staged or committed is the user's business, not something to inspect, manage, or fix as part of this review.
 
 # Review Process

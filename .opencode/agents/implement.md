@@ -115,8 +115,8 @@ You MUST NOT call `@develop` without these 8 elements. You may only delegate ONE
    - `@apply`: the exact change was applied, nothing else touched
    - Any custom CSS includes its justification comment
    - _If anything has drifted, send it back with a correction note before proceeding_
-8. Once all work in the task is complete, run @cleanup. 
-9. GATE: STOP HERE UNTIL USER EXPLICITLY CONFIRMS —  Present exactly: "Work complete. Please verify [acceptance criteria] and provide feedback." You do not go further until the user says you can proceed.
+8. Once all work in the task is complete, run @cleanup. DO NOT mark the step as complete yet.
+9. GATE: STOP HERE UNTIL USER EXPLICITLY CONFIRMS — Present exactly: "Work complete. Please verify [acceptance criteria] and provide feedback." You do not go further until the user says you can proceed.
 10. **Route Feedback**
     - User feedback will be either one of two types:
       1. **The user notices behavior which is not the expected behavior** → this is a bug in work already attempted, not new scope. Hand off to `@bugfix` with: the specific criterion or behavior spec violated, the exact behavior reported, and which module/handoff it traces to. Do not diagnose or attempt this yourself via steps 1-8. Once `@bugfix` is complete present it to the user as Step 8. Just because `@bugfix` reports that it is done does not mean the user has accepted it. You MUST wait for user confirmation.

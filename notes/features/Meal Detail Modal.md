@@ -1,0 +1,3 @@
+- needs to move to the `CalendarModalProvider` - this provider should function as a modal manager which prevents modals from opening on top of other modals
+- it uses "meal events" which do not follow the naming convention of not using the word "event" because it's confusing
+- the modal needs a design review - it is pretty bare bones as it is

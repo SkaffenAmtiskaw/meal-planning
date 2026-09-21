@@ -1,41 +1,30 @@
 'use client';
 
-import { useParams } from 'next/navigation';
+import type { ReactElement } from 'react';
 
 import { Button } from '@mantine/core';
 import { IconPlus } from '@tabler/icons-react';
 
 import { useCanWrite } from '@/app/[planner]/_components';
 
-import { AddMealFormModalWrapper } from '../AddMealFormModalWrapper/AddMealFormModalWrapper';
-import { ControlledModal } from '../ControlledModal/ControlledModal';
+import { useCalendarModal } from '../CalendarModal';
 
-export const AddMealButton = () => {
-	const params = useParams();
-	const plannerId = typeof params.planner === 'string' ? params.planner : '';
+export function AddMealButton(): ReactElement | null {
 	const canWrite = useCanWrite();
+	const { open } = useCalendarModal();
 
 	if (!canWrite) {
 		return null;
 	}
 
 	return (
-		<ControlledModal
-			modalProps={{ title: 'Add Meal', size: 'lg' }}
-			trigger={({ onOpen }) => (
-				<Button
-					color="ember"
-					data-testid="add-meal-button"
-					leftSection={<IconPlus />}
-					onClick={onOpen}
-				>
-					Add Meal
-				</Button>
-			)}
+		<Button
+			color="ember"
+			data-testid="add-meal-button"
+			leftSection={<IconPlus />}
+			onClick={() => open('add_meal', {})}
 		>
-			{({ onClose }) => (
-				<AddMealFormModalWrapper plannerId={plannerId} onClose={onClose} />
-			)}
-		</ControlledModal>
+			Add Meal
+		</Button>
 	);
-};
+}

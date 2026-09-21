@@ -229,6 +229,30 @@ Read `plannerId` from `useParams` inside the wrapper so callers stop passing it.
 - Submit a meal from each entry point; the meal is created and appears on the calendar.
 - The modal otherwise looks and behaves exactly as it does today.
 
+
+**Revised implementation (as built)**
+
+The original plan called for a dual-mode `AddMealFormModalWrapper` (trigger render prop + controlled `opened`/`onClose`). During review this proved awkward: the wrapper duplicated the modal/form shell and created unused `useDisclosure` state in controlled mode. The implementation was changed to a calendar-level modal manager instead.
+
+What was built:
+
+- **`CalendarModalProvider`** and **`useCalendarModal`** replace `AddMealFormModalWrapper`.
+- The provider owns a single active modal state using a discriminated union:
+  - `{ type: null; data: null }` when closed.
+  - `{ type: 'add_meal'; data: { initialDate?: string } }` when the Add Meal modal is open.
+- Type values use `snake_case` (`add_meal`) so future types like `meal_detail` and `edit_meal` fit the same pattern.
+- A single generic callback opens any modal: `open(type, data)`.
+- The Mantine `Modal` is rendered by the provider whenever `state.type !== null`; its title comes from a `MODAL_TITLES` map and its content from a `MODAL_CONTENT` type-to-component map.
+- `CalendarView` wraps `CalendarViewContent` with `<CalendarModalProvider plannerId={plannerId}>`.
+- `AddMealButton` calls `open('add_meal', {})`.
+- `MealListView` calls `open('add_meal', { initialDate })` from the existing `ListView` `onAddMeal` callback.
+- `AddMealFormModalWrapper` and `ControlledModal` were deleted.
+
+This keeps Step 1 behaviorally identical (header button and list-view triggers both open the same Add Meal modal) while giving the calendar a single place to manage all modals and preventing stacked modals later.
+
+
+**Status:** ✅ Complete
+
 ### Step 2 — Refactor `ListView` to `renderEmptyDay` and extract `useAddMealModal`
 
 Replace `ListView`’s `onAddMeal` prop with `renderEmptyDay?: (date: DateTime) => ReactNode`. Update `DayRow` and `ListViewAddMealTrigger` to render the provided node. Create `useAddMealModal` to manage `opened`, `dateForAdd`, `open(date)`, and `close`. Update `MealListView` to use the hook and pass `renderEmptyDay` that calls `open(date)`.

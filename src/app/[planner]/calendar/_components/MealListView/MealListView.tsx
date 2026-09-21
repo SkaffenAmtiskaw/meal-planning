@@ -1,10 +1,7 @@
 'use client';
 
-import { useMemo, useState } from 'react';
+import { useMemo } from 'react';
 import type { ReactElement } from 'react';
-
-import { Modal } from '@mantine/core';
-import { useDisclosure } from '@mantine/hooks';
 
 import type { DateTime } from 'luxon';
 
@@ -13,10 +10,10 @@ import { ListView } from '@/_components/Calendar';
 import { useIsMobile } from '@/_hooks';
 import { useCanWrite } from '@/app/[planner]/_components';
 
+import { useCalendarModal } from '../CalendarModal';
 import { toCalendarEvents } from '../../_utils/toCalendarEvents';
 import { toCalendarMeals } from '../../_utils/toCalendarMeals';
 import type { SavedItem, SerializedDay } from '../../_utils/toScheduleXEvents';
-import { AddMealFormModalWrapper } from '../AddMealFormModalWrapper/AddMealFormModalWrapper';
 import { DishLink } from '../DishLink/DishLink';
 import { MobileListViewPlaceholder } from '../MobileListViewPlaceholder/MobileListViewPlaceholder';
 
@@ -33,8 +30,7 @@ export function MealListView({
 }: MealListViewProps): ReactElement {
 	const canWrite = useCanWrite();
 	const isMobile = useIsMobile();
-	const [opened, { open, close }] = useDisclosure(false);
-	const [dateForAdd, setDateForAdd] = useState<DateTime | null>(null);
+	const { open } = useCalendarModal();
 
 	const events: CalendarMeal[] = useMemo(
 		() => toCalendarMeals(toCalendarEvents(calendar, savedItems)),
@@ -51,25 +47,15 @@ export function MealListView({
 
 	const handleAddMeal = canWrite
 		? (date: DateTime) => {
-				setDateForAdd(date);
-				open();
+				open('add_meal', { initialDate: date.toISODate() ?? undefined });
 			}
 		: undefined;
 
 	return (
-		<>
-			<ListView
-				events={events}
-				onAddMeal={handleAddMeal}
-				renderDish={renderDish}
-			/>
-			<Modal opened={opened} onClose={close} title="Add Meal" size="lg">
-				<AddMealFormModalWrapper
-					plannerId={plannerId}
-					initialDate={dateForAdd?.toISODate() ?? undefined}
-					onClose={close}
-				/>
-			</Modal>
-		</>
+		<ListView
+			events={events}
+			onAddMeal={handleAddMeal}
+			renderDish={renderDish}
+		/>
 	);
 }
