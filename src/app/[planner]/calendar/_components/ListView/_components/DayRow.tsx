@@ -6,20 +6,19 @@ import { Badge, Box, Flex, rgba, Stack, Text } from '@mantine/core';
 
 import type { DateTime } from 'luxon';
 
+import type { CalendarDish, CalendarMeal } from '@/_components/Calendar';
+import { useCanWrite } from '@/app/[planner]/_components';
+
 import { ListViewAddMealTrigger } from './ListViewAddMealTrigger';
 import { MealCardWithDragHandle } from './MealCardWithDragHandle';
 import styles from './DayRow.module.css';
 
-import type {
-	CalendarDish,
-	CalendarMeal,
-} from '../../_types/CalendarMeal.types';
+import { useCalendarModal } from '../../CalendarModal';
 
 export interface DayRowProps {
 	date: DateTime;
 	today: DateTime;
 	meals?: CalendarMeal[];
-	onAddMeal?: (date: DateTime) => void;
 	renderDish?: (dish: CalendarDish) => ReactNode;
 }
 
@@ -27,12 +26,17 @@ export function DayRow({
 	date,
 	today,
 	meals = [],
-	onAddMeal,
 	renderDish,
 }: DayRowProps): ReactElement {
+	const canWrite = useCanWrite();
+	const { open } = useCalendarModal();
 	const isToday = date.hasSame(today, 'day');
 	const isFirstOfMonth = date.day === 1;
 	const hasMeals = meals.length > 0;
+
+	const handleAddMeal = (): void => {
+		open('add_meal', { initialDate: date.toISODate() ?? undefined });
+	};
 
 	return (
 		<Flex
@@ -77,16 +81,13 @@ export function DayRow({
 							{date.toFormat('MMM').toUpperCase()}
 						</Text>
 					)}
-					{onAddMeal && (
-						<ListViewAddMealTrigger
-							variant="gutter"
-							onClick={() => onAddMeal(date)}
-						/>
+					{canWrite && (
+						<ListViewAddMealTrigger variant="gutter" onClick={handleAddMeal} />
 					)}
 				</Box>
 			</Box>
 			<Box flex={1} miw={0} mih={40}>
-				{hasMeals || onAddMeal ? (
+				{hasMeals || canWrite ? (
 					<Stack gap="xs">
 						{hasMeals
 							? meals.map((meal) => (
@@ -96,10 +97,10 @@ export function DayRow({
 										renderDish={renderDish}
 									/>
 								))
-							: onAddMeal && (
+							: canWrite && (
 									<ListViewAddMealTrigger
 										variant="ghost"
-										onClick={() => onAddMeal(date)}
+										onClick={handleAddMeal}
 									/>
 								)}
 					</Stack>

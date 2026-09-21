@@ -5,14 +5,15 @@ import { act, render, screen } from '@testing-library/react';
 import { DateTime } from 'luxon';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
+import {
+	type CalendarDish,
+	type CalendarMeal,
+	useCalendarContext,
+} from '@/_components/Calendar';
+import type { CalendarContextValue } from '@/_components/Calendar/CalendarContext';
+
 import { ListView } from './ListView';
 
-import {
-	type CalendarContextValue,
-	useCalendarContext,
-} from '../CalendarContext';
-import type { CalendarDish } from '../_components/DishListItem/DishListItem';
-import type { CalendarMeal } from '../_types/CalendarMeal.types';
 import { DayRow } from './_components/DayRow';
 import { useScrolledDate } from './_hooks/useScrolledDate';
 import { useScrollToDate } from './_hooks/useScrollToDate';
@@ -28,12 +29,10 @@ vi.mock('./_components/DayRow', () => ({
 	DayRow: vi.fn(
 		({
 			date,
-			onAddMeal,
 			meals,
 			renderDish,
 		}: {
 			date: DateTime;
-			onAddMeal?: (date: DateTime) => void;
 			meals?: CalendarMeal[];
 			renderDish?: (dish: CalendarDish) => ReactNode;
 		}) => (
@@ -43,20 +42,6 @@ vi.mock('./_components/DayRow', () => ({
 				data-meals-count={meals?.length ?? 0}
 				data-meal-ids={meals?.map((meal) => meal.id).join(',')}
 			>
-				<button
-					type="button"
-					data-testid="gutter-trigger"
-					onClick={() => onAddMeal?.(date)}
-				>
-					gutter
-				</button>
-				<button
-					type="button"
-					data-testid="ghost-trigger"
-					onClick={() => onAddMeal?.(date)}
-				>
-					ghost
-				</button>
 				{meals?.map((meal) => (
 					<div key={meal.id} data-testid="meal">
 						{meal.dishes.map((dish) => (
@@ -78,7 +63,8 @@ vi.mock('./ListView.module.css', () => ({
 	},
 }));
 
-vi.mock('../CalendarContext', () => ({
+vi.mock('@/_components/Calendar', async () => ({
+	...(await vi.importActual('@/_components/Calendar')),
 	useCalendarContext: vi.fn(),
 }));
 
@@ -307,53 +293,6 @@ describe('ListView', () => {
 			DateTime.local(2024, 6, 15),
 			setSelectedDate,
 		);
-	});
-
-	it('passes onAddMeal to each DayRow', () => {
-		const dates = [
-			DateTime.local(2024, 6, 10),
-			DateTime.local(2024, 6, 11),
-			DateTime.local(2024, 6, 12),
-		];
-		vi.mocked(getListDayRange).mockReturnValue(dates);
-		vi.mocked(useCalendarContext).mockReturnValue(
-			createMockContextValue({ rangeAnchor: DateTime.local(2024, 6, 11) }),
-		);
-
-		const mockOnAddMeal = vi.fn();
-
-		render(<ListView onAddMeal={mockOnAddMeal} />);
-
-		expect(DayRow).toHaveBeenCalledTimes(3);
-		for (const call of vi.mocked(DayRow).mock.calls) {
-			expect(call[0].onAddMeal).toBe(mockOnAddMeal);
-		}
-	});
-
-	it('calls onAddMeal with the correct date when a day row trigger is clicked', () => {
-		const dates = [
-			DateTime.local(2024, 6, 10),
-			DateTime.local(2024, 6, 11),
-			DateTime.local(2024, 6, 12),
-		];
-		vi.mocked(getListDayRange).mockReturnValue(dates);
-		vi.mocked(useCalendarContext).mockReturnValue(
-			createMockContextValue({ rangeAnchor: DateTime.local(2024, 6, 11) }),
-		);
-
-		const mockOnAddMeal = vi.fn();
-
-		render(<ListView onAddMeal={mockOnAddMeal} />);
-
-		const gutterTrigger = screen.getAllByTestId('gutter-trigger')[1];
-		const ghostTrigger = screen.getAllByTestId('ghost-trigger')[2];
-
-		gutterTrigger.click();
-		ghostTrigger.click();
-
-		expect(mockOnAddMeal).toHaveBeenCalledTimes(2);
-		expect(mockOnAddMeal).toHaveBeenNthCalledWith(1, dates[1]);
-		expect(mockOnAddMeal).toHaveBeenNthCalledWith(2, dates[2]);
 	});
 
 	it('passes renderDish to each DayRow', () => {

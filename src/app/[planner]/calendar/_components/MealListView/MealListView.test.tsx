@@ -1,15 +1,10 @@
-import type { ReactElement } from 'react';
+import { render, screen } from '@testing-library/react';
 
-import { fireEvent, render, screen } from '@testing-library/react';
-
-import { DateTime } from 'luxon';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import type { CalendarDish, CalendarMeal } from '@/_components/Calendar';
-import { ListView } from '@/_components/Calendar';
 import { useIsMobile } from '@/_hooks';
 import { getMealColor, TAG_COLORS } from '@/_theme/colors';
-import { useCanWrite } from '@/app/[planner]/_components';
 
 import { MealListView } from './MealListView';
 
@@ -18,7 +13,6 @@ import {
 	toCalendarEvents,
 } from '../../_utils/toCalendarEvents';
 import type { SavedItem, SerializedDay } from '../../_utils/toScheduleXEvents';
-import { useCalendarModal } from '../CalendarModal/CalendarModalContext';
 import { DishLink } from '../DishLink/DishLink';
 
 vi.mock('@mantine/core', async () => await import('@mocks/@mantine/core'));
@@ -26,7 +20,7 @@ vi.mock('@mantine/hooks', async () => await import('@mocks/@mantine/hooks'));
 
 vi.mock('@/_hooks', async () => await import('@mocks/@/_hooks'));
 
-vi.mock('@/_components/Calendar', async () => ({
+vi.mock('../ListView/ListView', async () => ({
 	ListView: vi.fn(({ events, renderDish }) => (
 		<div data-testid="list-view" data-events={JSON.stringify(events)}>
 			{events.map((event: CalendarMeal) => (
@@ -40,14 +34,6 @@ vi.mock('@/_components/Calendar', async () => ({
 			))}
 		</div>
 	)),
-}));
-
-vi.mock('@/app/[planner]/_components', async () => ({
-	useCanWrite: vi.fn(() => true),
-}));
-
-vi.mock('../CalendarModal/CalendarModalContext', async () => ({
-	useCalendarModal: vi.fn(() => ({ open: vi.fn() })),
 }));
 
 vi.mock('../DishLink/DishLink', async () => ({
@@ -66,13 +52,10 @@ vi.mock('@/_theme/colors', async (importOriginal) => {
 	};
 });
 
-const mockUseCanWrite = vi.mocked(useCanWrite);
-const mockListView = vi.mocked(ListView);
 const mockToCalendarEvents = vi.mocked(toCalendarEvents);
 const mockGetMealColor = vi.mocked(getMealColor);
 const mockDishLink = vi.mocked(DishLink);
 const mockUseIsMobile = vi.mocked(useIsMobile);
-const mockUseCalendarModal = vi.mocked(useCalendarModal);
 
 const plannerId = 'planner-123';
 
@@ -105,36 +88,10 @@ const calendarEvents: CalendarEvent[] = [
 	},
 ];
 
-function ListViewDayTrigger({
-	onAddMeal,
-	date,
-}: {
-	onAddMeal?: (date: DateTime) => void;
-	date: DateTime;
-}): ReactElement {
-	return (
-		<button
-			type="button"
-			data-testid="day-trigger"
-			onClick={() => onAddMeal?.(date)}
-		>
-			Add meal
-		</button>
-	);
-}
-
 describe('MealListView', () => {
-	const mockOpen = vi.fn();
-
 	beforeEach(() => {
 		vi.resetAllMocks();
-		mockUseCanWrite.mockReturnValue(true);
 		mockUseIsMobile.mockReturnValue(false);
-		mockUseCalendarModal.mockReturnValue({
-			state: { type: null, data: null },
-			open: mockOpen,
-			close: vi.fn(),
-		});
 	});
 
 	it('renders ListView', () => {
@@ -288,59 +245,5 @@ describe('MealListView', () => {
 		);
 
 		expect(events[0].dishes).toEqual(calendarEvents[0].dishes);
-	});
-
-	it('passes onAddMeal to ListView when user has write access', () => {
-		render(<MealListView plannerId={plannerId} calendar={[]} />);
-
-		expect(mockListView).toHaveBeenCalledTimes(1);
-		expect(mockListView).toHaveBeenCalledWith(
-			expect.objectContaining({ onAddMeal: expect.any(Function) }),
-			undefined,
-		);
-	});
-
-	it('does not pass onAddMeal to ListView when user has read-only access', () => {
-		mockUseCanWrite.mockReturnValue(false);
-
-		render(<MealListView plannerId={plannerId} calendar={[]} />);
-
-		expect(mockListView).toHaveBeenCalledTimes(1);
-		expect(mockListView).toHaveBeenCalledWith(
-			expect.objectContaining({ onAddMeal: undefined }),
-			undefined,
-		);
-	});
-
-	it('calls open with add_meal and the ISO date when a day trigger is clicked', () => {
-		const date = DateTime.local(2024, 6, 15);
-
-		mockListView.mockImplementation(({ onAddMeal }) => (
-			<ListViewDayTrigger onAddMeal={onAddMeal} date={date} />
-		));
-
-		render(<MealListView plannerId={plannerId} calendar={[]} />);
-
-		fireEvent.click(screen.getByTestId('day-trigger'));
-
-		expect(mockOpen).toHaveBeenCalledWith('add_meal', {
-			initialDate: date.toISODate(),
-		});
-	});
-
-	it('calls open with add_meal and undefined when the date has no ISO string', () => {
-		const invalidDate = DateTime.invalid('invalid');
-
-		mockListView.mockImplementation(({ onAddMeal }) => (
-			<ListViewDayTrigger onAddMeal={onAddMeal} date={invalidDate} />
-		));
-
-		render(<MealListView plannerId={plannerId} calendar={[]} />);
-
-		fireEvent.click(screen.getByTestId('day-trigger'));
-
-		expect(mockOpen).toHaveBeenCalledWith('add_meal', {
-			initialDate: undefined,
-		});
 	});
 });

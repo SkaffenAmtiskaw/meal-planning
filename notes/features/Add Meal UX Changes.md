@@ -262,6 +262,15 @@ Replace `ListView`’s `onAddMeal` prop with `renderEmptyDay?: (date: DateTime) 
 - The header button still opens the modal.
 - The list view otherwise looks and behaves exactly as it does today.
 
+**Status:** ✅ Complete
+
+**As built:**
+- Because Step 1 was implemented as `CalendarModalProvider` rather than `AddMealFormModalWrapper`, the `useAddMealModal` hook and `renderEmptyDay` render prop were unnecessary.
+- The entire list view was moved from `src/_components/Calendar/ListView/` to `src/app/[planner]/calendar/_components/ListView/` so it can depend on app-specific context without violating the generic `_components/Calendar` boundary.
+- `DayRow` now consumes `useCanWrite()` and `useCalendarModal()` directly. It shows/hides the gutter and ghost add-meal triggers based on write access and opens `add_meal` with the day's ISO date on click.
+- `ListView` and `MealListView` no longer pass an `onAddMeal` callback. `MealListView` only maps calendar data to events and provides `renderDish`.
+- The list view's visual behavior is unchanged.
+
 > **Optional commit point:** After Step 2, the old code is in a clean state. Consider committing here with a message like `refactor: consolidate Add Meal modal shell and ListView trigger API` before starting the UX redesign.
 
 ## Phase 2 — New UX
