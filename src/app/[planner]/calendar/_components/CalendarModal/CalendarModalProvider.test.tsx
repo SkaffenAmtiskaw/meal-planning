@@ -13,6 +13,8 @@ import {
 
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
+import { useIsMobile } from '@/_hooks';
+
 import { useCalendarModal } from './CalendarModalContext';
 import { CalendarModalProvider } from './CalendarModalProvider';
 
@@ -21,6 +23,7 @@ import { AddMealForm } from '../AddMealForm/AddMealForm';
 vi.mock('@mantine/core', async () => await import('@mocks/@mantine/core'));
 vi.mock('@mantine/hooks', async () => await import('@mocks/@mantine/hooks'));
 vi.mock('next/navigation', async () => await import('@mocks/next/navigation'));
+vi.mock('@/_hooks', async () => await import('@mocks/@/_hooks'));
 vi.mock('../AddMealForm/AddMealForm', () => ({
 	AddMealForm: vi.fn(({ onCancel, onSuccess }) => (
 		<div data-testid="add-meal-form">
@@ -35,6 +38,7 @@ vi.mock('../AddMealForm/AddMealForm', () => ({
 }));
 
 const mockUseRouter = vi.mocked(useRouter);
+const mockUseIsMobile = vi.mocked(useIsMobile);
 
 describe('CalendarModalProvider', () => {
 	beforeEach(() => {
@@ -87,7 +91,30 @@ describe('CalendarModalProvider', () => {
 				opened: true,
 				onClose: expect.any(Function),
 				title: 'Add Meal',
-				size: 'lg',
+				size: 'xl',
+				fullScreen: false,
+			}),
+			undefined,
+		);
+	});
+
+	it('renders the modal full screen on mobile', () => {
+		mockUseIsMobile.mockReturnValue(true);
+
+		const { result } = renderHook(() => useCalendarModal(), { wrapper });
+
+		act(() => {
+			result.current.open('add_meal', {});
+		});
+
+		expect(vi.mocked(Modal)).toHaveBeenCalledWith(
+			expect.objectContaining({
+				opened: true,
+				title: 'Add Meal',
+				size: 'xl',
+				fullScreen: true,
+				radius: 0,
+				transitionProps: { transition: 'fade', duration: 200 },
 			}),
 			undefined,
 		);

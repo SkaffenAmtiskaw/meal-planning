@@ -283,6 +283,13 @@ Update `AddMealFormModalWrapper` to use a larger desktop size and `fullScreen={i
 - At desktop width, open the modal and verify it is wide enough for the two-pane layout.
 - Shrink to mobile width and verify it becomes a full-screen sheet.
 
+**Status:** ✅ Complete
+
+**As built:**
+- `AddMealFormModalWrapper` was deleted in Steps 1–2; the modal shell now lives in `CalendarModalProvider`.
+- The desktop width is controlled by the Mantine theme: `src/_theme/theme.ts` sets `--modal-size-xl: 80%`, and `CalendarModalProvider` uses `size="xl"`.
+- Mobile still uses `fullScreen={isMobile}` with `radius={0}` and a `fade` transition (`duration: 200`).
+
 ### Step 4 — Reshape `AddMealForm` layout
 
 Restructure `AddMealForm` into the new layout: desktop two-pane (fixed left meal pane, scrollable right dishes pane), mobile single-column cards. Add `MealFields` and `DishList` subcomponents. Pin the header and footer so the primary “Add Meal” button and dish count are always visible. Add the “Add another dish” row at the end of the list.

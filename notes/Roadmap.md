@@ -3,6 +3,7 @@
 **AI Instructions** - DO NOT delete this file. You may remove lines, but under no circumstances may you delete the file.
 
 # Bugfixes/User Issues
+- Add default path to `pnpm test:agent`
 - calendar view - "Today" button on phone is cut off
 - meals created in month view don't show up in week view - will be fixed in [[Replace Schedule-X]]
 - [[Add Meal UX Changes]]

@@ -5,6 +5,8 @@ import { type ReactNode, useCallback, useState } from 'react';
 
 import { Modal } from '@mantine/core';
 
+import { useIsMobile } from '@/_hooks';
+
 import {
 	CalendarModalContext,
 	type CalendarModalData,
@@ -92,6 +94,8 @@ export function CalendarModalProvider({
 		setState({ type: null, data: null });
 	}, []);
 
+	const isMobile = useIsMobile();
+
 	return (
 		<CalendarModalContext.Provider value={{ state, open, close }}>
 			{children}
@@ -99,7 +103,12 @@ export function CalendarModalProvider({
 				opened={state.type !== null}
 				onClose={close}
 				title={state.type ? MODAL_TITLES[state.type] : ''}
-				size="lg"
+				size="xl"
+				fullScreen={isMobile}
+				radius={isMobile ? 0 : undefined}
+				transitionProps={
+					isMobile ? { transition: 'fade', duration: 200 } : undefined
+				}
 			>
 				<ModalContent state={state} close={close} plannerId={plannerId} />
 			</Modal>
