@@ -1,0 +1,26 @@
+.modalContent:global(.mantine-Modal-content) {
+	/* Mantine Modal.Content clones the className onto both .mantine-Modal-content and
+	   .mantine-Modal-inner. These rules are meant for the content box only; applying
+	   flex-direction: column to the inner wrapper changes its flex main axis from
+	   horizontal to vertical, so --modal-size (the xl 80% value) controls height instead
+	   of width and the modal collapses to its intrinsic content width. */
+	display: flex;
+	flex-direction: column;
+	overflow: hidden;
+
+	/* Mantine sets height: auto on .mantine-Modal-content, so non-full-screen modals
+	   shrink to their content; setting the designed CSS variable makes them fill their
+	   max-height instead. Mantine's full-screen override sets this variable to 100dvh
+	   with higher specificity, so mobile full-screen is preserved without a manual
+	   :not() guard. */
+	--modal-content-height: calc(100dvh - var(--modal-y-offset) * 2);
+}
+
+.modalBody {
+	/* Mantine Modal.Body defaults to overflow: auto; flex sizing is required so the body fills Modal.Content and AddMealForm's flex children can independently scroll. */
+	flex: 1 1 auto;
+	min-height: 0;
+	display: flex;
+	flex-direction: column;
+	overflow: hidden;
+}

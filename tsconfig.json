@@ -25,6 +25,9 @@
       "@mocks/*": [
         "./test/mocks/*"
       ],
+      "@fixtures/*": [
+        "./test/fixtures/*"
+      ],
       "@test": [
         "./test/index.ts"
       ]

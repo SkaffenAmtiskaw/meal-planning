@@ -1,15 +1,8 @@
-import { useRouter } from 'next/navigation';
-import { type ReactNode, useEffect } from 'react';
+import type { ReactNode } from 'react';
 
 import { Modal } from '@mantine/core';
 
-import {
-	act,
-	fireEvent,
-	render,
-	renderHook,
-	screen,
-} from '@testing-library/react';
+import { act, render, renderHook, screen } from '@testing-library/react';
 
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
@@ -18,31 +11,20 @@ import { useIsMobile } from '@/_hooks';
 import { useCalendarModal } from './CalendarModalContext';
 import { CalendarModalProvider } from './CalendarModalProvider';
 
-import { AddMealForm } from '../AddMealForm/AddMealForm';
-
 vi.mock('@mantine/core', async () => await import('@mocks/@mantine/core'));
 vi.mock('@mantine/hooks', async () => await import('@mocks/@mantine/hooks'));
-vi.mock('next/navigation', async () => await import('@mocks/next/navigation'));
 vi.mock('@/_hooks', async () => await import('@mocks/@/_hooks'));
-vi.mock('../AddMealForm/AddMealForm', () => ({
-	AddMealForm: vi.fn(({ onCancel, onSuccess }) => (
-		<div data-testid="add-meal-form">
-			<button data-testid="cancel-button" onClick={onCancel}>
-				Cancel
-			</button>
-			<button data-testid="success-button" onClick={() => onSuccess?.()}>
-				Success
-			</button>
-		</div>
-	)),
+vi.mock('../AddMealForm/AddMealModal', () => ({
+	AddMealModal: vi.fn(() => <div data-testid="add-meal-modal" />),
 }));
 
-const mockUseRouter = vi.mocked(useRouter);
 const mockUseIsMobile = vi.mocked(useIsMobile);
+const mockModalRoot = vi.mocked(Modal.Root);
 
 describe('CalendarModalProvider', () => {
 	beforeEach(() => {
 		vi.resetAllMocks();
+		mockUseIsMobile.mockReturnValue(false);
 	});
 
 	const wrapper = ({ children }: { children: ReactNode }) => (
@@ -61,11 +43,31 @@ describe('CalendarModalProvider', () => {
 		expect(screen.getByTestId('child')).toBeDefined();
 	});
 
+	it('renders Modal.Root/Overlay/Content when a modal is open', () => {
+		const { result } = renderHook(() => useCalendarModal(), { wrapper });
+
+		act(() => {
+			result.current.open('add_meal', {});
+		});
+
+		expect(screen.getByTestId('modal-root')).toBeDefined();
+		expect(screen.getByTestId('modal-overlay')).toBeDefined();
+		expect(screen.getByTestId('add-meal-modal')).toBeDefined();
+	});
+
 	it('does not render modal content when no modal is open', () => {
-		vi.mocked(Modal).mockImplementation(({ children, opened }) => (
-			<div role="dialog" data-opened={String(opened)}>
-				{children}
-			</div>
+		render(
+			<CalendarModalProvider plannerId="planner-123">
+				<div data-testid="child">Child</div>
+			</CalendarModalProvider>,
+		);
+
+		expect(screen.queryByTestId('modal-root')).toBeNull();
+	});
+
+	it('returns null from modal content mapping when no modal type is active', () => {
+		vi.mocked(Modal.Root).mockImplementation(({ children }) => (
+			<div data-testid="modal-root">{children}</div>
 		));
 
 		render(
@@ -74,9 +76,8 @@ describe('CalendarModalProvider', () => {
 			</CalendarModalProvider>,
 		);
 
-		const dialog = screen.getByRole('dialog');
-		expect(dialog.getAttribute('data-opened')).toBe('false');
-		expect(dialog.children.length).toBe(0);
+		expect(screen.getByTestId('modal-root')).toBeDefined();
+		expect(screen.queryByTestId('add-meal-modal')).toBeNull();
 	});
 
 	it('opens the modal when open is called with a modal type', () => {
@@ -86,11 +87,10 @@ describe('CalendarModalProvider', () => {
 			result.current.open('add_meal', {});
 		});
 
-		expect(vi.mocked(Modal)).toHaveBeenCalledWith(
+		expect(mockModalRoot).toHaveBeenCalledWith(
 			expect.objectContaining({
 				opened: true,
 				onClose: expect.any(Function),
-				title: 'Add Meal',
 				size: 'xl',
 				fullScreen: false,
 			}),
@@ -107,30 +107,13 @@ describe('CalendarModalProvider', () => {
 			result.current.open('add_meal', {});
 		});
 
-		expect(vi.mocked(Modal)).toHaveBeenCalledWith(
+		expect(mockModalRoot).toHaveBeenCalledWith(
 			expect.objectContaining({
 				opened: true,
-				title: 'Add Meal',
 				size: 'xl',
 				fullScreen: true,
 				radius: 0,
 				transitionProps: { transition: 'fade', duration: 200 },
-			}),
-			undefined,
-		);
-	});
-
-	it('passes initialDate to AddMealForm when open is called with add_meal data', () => {
-		const { result } = renderHook(() => useCalendarModal(), { wrapper });
-
-		act(() => {
-			result.current.open('add_meal', { initialDate: '2024-01-15' });
-		});
-
-		expect(vi.mocked(AddMealForm)).toHaveBeenCalledWith(
-			expect.objectContaining({
-				plannerId: 'planner-123',
-				initialDate: '2024-01-15',
 			}),
 			undefined,
 		);
@@ -143,45 +126,12 @@ describe('CalendarModalProvider', () => {
 			result.current.open('add_meal', {});
 		});
 
-		expect(screen.queryByRole('dialog')).toBeDefined();
+		expect(screen.queryByTestId('modal-root')).toBeDefined();
 
 		act(() => {
 			result.current.close();
 		});
 
-		expect(screen.queryByRole('dialog')).toBeNull();
-	});
-
-	it('closes the modal and calls router.refresh when AddMealForm onSuccess is triggered', () => {
-		const refresh = vi.fn();
-		mockUseRouter.mockReturnValue({
-			push: vi.fn(),
-			replace: vi.fn(),
-			refresh,
-			back: vi.fn(),
-			forward: vi.fn(),
-			prefetch: vi.fn(),
-		});
-
-		const TestOpener = () => {
-			const { open } = useCalendarModal();
-
-			useEffect(() => {
-				open('add_meal', {});
-			}, [open]);
-
-			return null;
-		};
-
-		render(
-			<CalendarModalProvider plannerId="planner-123">
-				<TestOpener />
-			</CalendarModalProvider>,
-		);
-
-		fireEvent.click(screen.getByTestId('success-button'));
-
-		expect(refresh).toHaveBeenCalledTimes(1);
-		expect(screen.queryByRole('dialog')).toBeNull();
+		expect(screen.queryByTestId('modal-root')).toBeNull();
 	});
 });

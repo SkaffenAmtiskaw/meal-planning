@@ -299,6 +299,43 @@ Restructure `AddMealForm` into the new layout: desktop two-pane (fixed left meal
 - On desktop, scroll the dishes pane and verify the meal pane stays fixed and the footer remains visible.
 - On mobile, verify the layout stacks into cards and the primary action remains accessible.
 
+**Status:** ✅ Complete
+
+**As built so far:**
+- Added `MealFields` subcomponent (`MealFields.tsx` + test) that renders the tinted meal card with Date, Meal name, and Description.
+- Added `DishList` subcomponent (`DishList.tsx` + test) that renders the DISHES header with count and Add dish button, the list of `DishRow`s, and the "Add another dish" row at the bottom.
+- Reshaped `AddMealForm` to use a two-pane desktop layout (Grid 4/8 split with `ScrollArea` for dishes) and a stacked mobile layout, with a pinned footer containing dish count, Cancel, and Add Meal.
+- Added a date subtitle showing the date in words plus the current meal name (e.g., "Thursday, September 10 · Thai night").
+- Added `AddMealForm.module.css` with justification comments for the flex/scroll layout rules that Mantine props cannot express.
+- `DishRow` and `useDishes` were intentionally not changed in this step; expand/collapse work is Step 5.
+
+**As built:**
+- During verification the modal shell was refactored to Mantine compound components (`Modal.Root`, `Modal.Header`, `Modal.Body`, `Modal.Content`) inside `CalendarModalProvider`, with a custom header rendered by `AddMealModalContent` and the subtitle pushed up from `AddMealForm` via `onSubtitleChange`.
+- The desktop modal was made to render at a static full height (`calc(100dvh - var(--modal-y-offset) * 2)`) so it does not shrink when only one empty dish is present; mobile full-screen behavior is preserved via `:not([data-full-screen])`.
+
+**As built (review pass):**
+
+A post-implementation review reworked several pieces. Behavior is unchanged except where noted:
+
+- The header subtitle now updates live while typing. `AddMealForm` computes it in `useForm`'s `onValuesChange` callback (plus a mount-only initial push) instead of reading `form.values` during render — in uncontrolled mode those reads never trigger a re-render, so the subtitle previously only refreshed on unrelated state changes. The centralized `@mocks/@mantine/form` mock now honors `onValuesChange`; the inline controlled-mode mock that masked the bug is gone.
+- `AddMealModalContent` was extracted from `CalendarModalProvider` into `AddMealForm/AddMealModal.tsx` as `AddMealModal`, which owns its `Modal.Content`/`Modal.Header`/`Modal.Body` and the subtitle state. The provider is now a pure shell (context, `Modal.Root` + `Modal.Overlay`, content-type map) with no AddMeal-specific styling; the full-height rule moved to `AddMealModal.module.css` and sets Mantine's `--modal-content-height` variable instead of overriding `height`, which drops the `:not([data-full-screen])` guard (Mantine's own full-screen rule wins on specificity). The AddMeal-specific provider tests moved to `AddMealModal.test.tsx`.
+- The desktop two-pane layout is Mantine `Flex`, not `Grid` — the Grid version required three `:global()` overrides of Mantine's internal Grid classes. The left pane is `flex="0 0 33.333%"` with `direction="column"` plus a grow-only `> *` rule, so the tinted meal card fills the pane's full width and height (the prototype's full-height tinted column); the right pane takes `miw={0}` (the design's `minmax(0, 1fr)`) so dish content can never squeeze the meal column.
+- The footer's `position: sticky`/`z-index`/background CSS was deleted — inert residue from an earlier iteration where the footer lived inside the scroll area. Pinning comes from flex layout (`flex-shrink: 0` sibling after the `flex: 1` content).
+- Test cleanup: `MealFields.test.tsx` is a single render test; `AddMealForm.test.tsx` uses a static `DishList` placeholder with captured-prop assertions and renders the real `MealFields`; the shared `makeDish` fixture lives in `test/fixtures/dish.ts` behind a new `@fixtures` alias (added to `tsconfig.json` and `vitest.config.ts`).
+- `MealFields` dropped its unneeded `'use client'` directive and its local `MealFormValues` duplicate — the shared type lives in `types.d.ts` and `useForm<MealFormValues>` turns field drift into a compile error. `DishList` lost an inert `Box` wrapper.
+- Deferred to Step 5 (pre-existing, not introduced by this step): the remove-dish trash icon is bottom-aligned with the dish-name input in the expanded `DishRow`; Step 5's collapsed one-line row replaces that markup.
+- Verified after the pass: full suite green (1,667 tests, 100% coverage), Biome clean, independent dish-pane scroll confirmed working in the running app.
+
+#### Mobile scroll regression and fix
+
+After Step 4 shipped, resizing an open Add Meal modal from desktop to mobile left the mobile sheet unscrollable: no scrollbar appeared and the dish list was simply cut off. This only affected the mobile layout; desktop two-pane scrolling continued to work.
+
+**Root cause.** The mobile branch rendered `MealFields` and `DishList` inside a `Stack` with the `.contentMobile` class (`flex: 1; min-height: 0; overflow: auto`). `DishList` is itself wrapped in a Mantine `Card`, which has `overflow: hidden` by default. Once the Card was taller than the available viewport it clipped its own content instead of overflowing the parent, so `.contentMobile` had nothing to scroll.
+
+**Fix.** Replaced the mobile `Stack`/`.contentMobile` with a Mantine `ScrollArea` (reusing the existing `.scrollArea` flex rule from the desktop right pane) wrapping the same stacked cards. The `ScrollArea` fills the remaining height between the modal header and footer and owns its own viewport, so the tall dish content is reachable on mobile without affecting the desktop layout. The unused `.contentMobile` rule was removed and a regression test was added to `AddMealForm.test.tsx` verifying that the mobile layout renders a `ScrollArea` containing both `MealFields` and `DishList`.
+
+- Files touched: `AddMealForm.tsx`, `AddMealForm.module.css`, `AddMealForm.test.tsx`.
+
 ### Step 5 — Add DishRow expand/collapse state and shell
 
 Rename `noteExpanded` to `expanded` and remove the logic that clears the note when collapsing. Rewrite `DishRow` to show a collapsed one-line row with dish name, chevron, and remove button. Expanding reveals the existing Source column and Note textarea. Do not add the source/note chips yet.

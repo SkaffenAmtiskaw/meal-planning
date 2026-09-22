@@ -1,6 +1,5 @@
 'use client';
 
-import { useRouter } from 'next/navigation';
 import { type ReactNode, useCallback, useState } from 'react';
 
 import { Modal } from '@mantine/core';
@@ -14,16 +13,12 @@ import {
 	type CalendarModalType,
 } from './CalendarModalContext';
 
-import { AddMealForm } from '../AddMealForm/AddMealForm';
+import { AddMealModal } from '../AddMealForm/AddMealModal';
 
 export interface CalendarModalProviderProps {
 	plannerId: string;
 	children: ReactNode;
 }
-
-const MODAL_TITLES: Record<CalendarModalType, string> = {
-	add_meal: 'Add Meal',
-};
 
 const MODAL_CONTENT: {
 	[K in CalendarModalType]: React.FC<{
@@ -32,32 +27,8 @@ const MODAL_CONTENT: {
 		plannerId: string;
 	}>;
 } = {
-	add_meal: AddMealModalContent,
+	add_meal: AddMealModal,
 };
-
-function AddMealModalContent({
-	data,
-	close,
-	plannerId,
-}: {
-	data: CalendarModalData['add_meal'];
-	close: () => void;
-	plannerId: string;
-}) {
-	const router = useRouter();
-
-	return (
-		<AddMealForm
-			plannerId={plannerId}
-			initialDate={data.initialDate}
-			onCancel={close}
-			onSuccess={() => {
-				close();
-				router.refresh();
-			}}
-		/>
-	);
-}
 
 function ModalContent({
 	state,
@@ -99,10 +70,9 @@ export function CalendarModalProvider({
 	return (
 		<CalendarModalContext.Provider value={{ state, open, close }}>
 			{children}
-			<Modal
+			<Modal.Root
 				opened={state.type !== null}
 				onClose={close}
-				title={state.type ? MODAL_TITLES[state.type] : ''}
 				size="xl"
 				fullScreen={isMobile}
 				radius={isMobile ? 0 : undefined}
@@ -110,8 +80,9 @@ export function CalendarModalProvider({
 					isMobile ? { transition: 'fade', duration: 200 } : undefined
 				}
 			>
+				<Modal.Overlay />
 				<ModalContent state={state} close={close} plannerId={plannerId} />
-			</Modal>
+			</Modal.Root>
 		</CalendarModalContext.Provider>
 	);
 }

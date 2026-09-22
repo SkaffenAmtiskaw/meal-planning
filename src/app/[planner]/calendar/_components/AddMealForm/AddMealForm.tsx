@@ -1,26 +1,30 @@
 'use client';
 
+import { useEffect } from 'react';
+
 import {
 	Button,
 	Card,
+	Flex,
 	Group,
+	ScrollArea,
 	Stack,
 	Text,
-	Textarea,
-	TextInput,
 } from '@mantine/core';
 import { schemaResolver, useForm } from '@mantine/form';
-import { IconPlus } from '@tabler/icons-react';
 
+import { DateTime } from 'luxon';
 import { z } from 'zod';
 
 import { addMeal } from '@/_actions/calendar';
 import { FormFeedbackAlert, SubmitButton } from '@/_components';
-import { useFormFeedback } from '@/_hooks';
-import { THEME_COLORS } from '@/_theme/colors';
+import { useFormFeedback, useIsMobile } from '@/_hooks';
 
-import { DishRow } from './DishRow';
+import { DishList } from './DishList';
+import { MealFields } from './MealFields';
 import { useDishes } from './useDishes';
+import type { MealFormValues } from './types';
+import classes from './AddMealForm.module.css';
 
 import type { SerializedDay } from '../../_utils/toScheduleXEvents';
 
@@ -30,11 +34,22 @@ const zFormFields = z.object({
 	description: z.string().optional(),
 });
 
-type Props = {
+const formatSubtitle = (values: Pick<MealFormValues, 'date' | 'mealName'>) => {
+	const dateTime = DateTime.fromISO(values.date);
+	const dateText = dateTime.isValid
+		? dateTime.toFormat('cccc, LLLL d')
+		: values.date || '';
+	return values.mealName
+		? `${dateText}${dateText ? ' · ' : ''}${values.mealName}`
+		: dateText;
+};
+
+export type Props = {
 	plannerId: string;
 	initialDate?: string;
 	onCancel: () => void;
 	onSuccess?: (calendar: SerializedDay[]) => void;
+	onSubtitleChange?: (subtitle: string) => void;
 };
 
 export const AddMealForm = ({
@@ -42,16 +57,34 @@ export const AddMealForm = ({
 	initialDate,
 	onCancel,
 	onSuccess,
+	onSubtitleChange,
 }: Props) => {
 	const { dishes, addDish, removeDish, updateDish } = useDishes();
-
 	const { status, countdown, errorMessage, wrap } = useFormFeedback();
+	const isMobile = useIsMobile();
 
-	const form = useForm({
+	const form = useForm<MealFormValues>({
 		mode: 'uncontrolled',
 		validate: schemaResolver(zFormFields),
-		initialValues: { date: initialDate ?? '', mealName: '', description: '' },
+		initialValues: {
+			date: initialDate ?? '',
+			mealName: '',
+			description: '',
+		},
+		onValuesChange: (values) => {
+			onSubtitleChange?.(formatSubtitle(values));
+		},
 	});
+
+	// biome-ignore lint/correctness/useExhaustiveDependencies: intentional mount-only initial subtitle push
+	useEffect(() => {
+		onSubtitleChange?.(
+			formatSubtitle({
+				date: initialDate ?? '',
+				mealName: '',
+			}),
+		);
+	}, []);
 
 	const handleSubmit = form.onSubmit(
 		wrap(
@@ -73,75 +106,77 @@ export const AddMealForm = ({
 		),
 	);
 
+	const dishCountLabel = `${dishes.length} ${dishes.length === 1 ? 'dish' : 'dishes'} on this meal`;
+
+	const dishListProps = {
+		dishes,
+		onAddDish: addDish,
+		onRemoveDish: removeDish,
+		onUpdateDish: updateDish,
+	};
+
 	return (
-		<form onSubmit={handleSubmit} data-testid="add-meal-form">
-			<Stack>
+		<form
+			onSubmit={handleSubmit}
+			className={classes.form}
+			data-testid="add-meal-form"
+		>
+			<Stack gap="md" className={classes.stack}>
 				<FormFeedbackAlert status={status} errorMessage={errorMessage} />
-				<TextInput
-					label="Date"
-					type="date"
-					withAsterisk
-					data-testid="meal-date"
-					key={form.key('date')}
-					{...form.getInputProps('date')}
-				/>
-				<TextInput
-					label="Meal name"
-					withAsterisk
-					data-testid="meal-name"
-					key={form.key('mealName')}
-					{...form.getInputProps('mealName')}
-				/>
-				<Textarea
-					label="Description"
-					data-testid="meal-description"
-					key={form.key('description')}
-					{...form.getInputProps('description')}
-				/>
 
-				<Card
-					style={{
-						backgroundColor: THEME_COLORS.sageLight,
-						borderLeft: `3px solid ${THEME_COLORS.sage}`,
-					}}
-					p="sm"
-				>
-					<Stack gap="xs">
-						<Text fw={500} size="sm">
-							Dishes
-						</Text>
-						{dishes.map((dish, index) => (
-							<DishRow
-								key={dish.id}
-								dish={dish}
-								index={index}
-								showRemove={dishes.length > 1}
-								onUpdate={(patch) => updateDish(dish.id, patch)}
-								onRemove={() => removeDish(dish.id)}
-							/>
-						))}
-
-						<Button
-							variant="subtle"
-							leftSection={<IconPlus size={14} />}
-							data-testid="add-dish-button"
-							onClick={addDish}
+				{isMobile ? (
+					<ScrollArea
+						className={classes.scrollArea}
+						data-testid="mobile-layout"
+					>
+						<Stack gap="md">
+							<MealFields form={form} />
+							<DishList {...dishListProps} />
+						</Stack>
+					</ScrollArea>
+				) : (
+					<Flex flex={1} mih={0} gap="md" data-testid="desktop-layout">
+						<Flex
+							flex="0 0 33.333%"
+							mih={0}
+							direction="column"
+							className={classes.mealFieldsPane}
+							data-testid="meal-fields-pane"
 						>
-							Add dish
-						</Button>
-					</Stack>
-				</Card>
+							<MealFields form={form} />
+						</Flex>
+						<Flex
+							flex={1}
+							miw={0}
+							mih={0}
+							direction="column"
+							className={classes.rightPane}
+							data-testid="dish-list-pane"
+						>
+							<ScrollArea className={classes.scrollArea}>
+								<DishList {...dishListProps} />
+							</ScrollArea>
+						</Flex>
+					</Flex>
+				)}
 
-				<Group justify="flex-end">
-					<Button variant="subtle" onClick={onCancel}>
-						Cancel
-					</Button>
-					<SubmitButton
-						status={status}
-						countdown={countdown}
-						label="Add Meal"
-					/>
-				</Group>
+				<Card withBorder className={classes.footer} data-testid="footer">
+					<Group justify="space-between" align="center">
+						<Text size="sm" c="dimmed">
+							{dishCountLabel}
+						</Text>
+						<Group>
+							<Button variant="subtle" onClick={onCancel}>
+								Cancel
+							</Button>
+							<SubmitButton
+								status={status}
+								countdown={countdown}
+								label="Add Meal"
+							/>
+						</Group>
+					</Group>
+				</Card>
 			</Stack>
 		</form>
 	);

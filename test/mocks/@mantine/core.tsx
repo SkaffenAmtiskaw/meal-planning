@@ -807,30 +807,132 @@ export const Input = Object.assign(
 
 // ─── Modal ────────────────────────────────────────────────────────────────────
 
-export const Modal = vi.fn(
+const ModalRoot = vi.fn(
 	({
 		children,
 		opened,
 		onClose,
-		title,
 		'data-testid': testId,
+		...props
 	}: {
 		children?: React.ReactNode;
 		opened?: boolean;
 		onClose?: () => void;
-		title?: React.ReactNode;
 		'data-testid'?: string;
 		[key: string]: unknown;
 	}) =>
 		opened ? (
-			<div role="dialog" data-testid={testId}>
-				{title && <div>{title}</div>}
-				<button type="button" aria-label="close" onClick={onClose}>
-					×
-				</button>
+			<div
+				role="dialog"
+				data-testid={testId ?? 'modal-root'}
+				data-opened={String(opened)}
+				{...props}
+			>
 				{children}
 			</div>
 		) : null,
+);
+
+const ModalOverlay = vi.fn(
+	({ 'data-testid': testId }: { 'data-testid'?: string }) => (
+		<div data-testid={testId ?? 'modal-overlay'} />
+	),
+);
+
+const ModalContent = vi.fn(
+	({
+		children,
+		'data-testid': testId,
+	}: {
+		children?: React.ReactNode;
+		'data-testid'?: string;
+	}) => <div data-testid={testId ?? 'modal-content'}>{children}</div>,
+);
+
+const ModalHeader = vi.fn(
+	({
+		children,
+		'data-testid': testId,
+	}: {
+		children?: React.ReactNode;
+		'data-testid'?: string;
+	}) => <div data-testid={testId ?? 'modal-header'}>{children}</div>,
+);
+
+const ModalTitle = vi.fn(
+	({
+		children,
+		'data-testid': testId,
+	}: {
+		children?: React.ReactNode;
+		'data-testid'?: string;
+	}) => <div data-testid={testId ?? 'modal-title'}>{children}</div>,
+);
+
+const ModalBody = vi.fn(
+	({
+		children,
+		'data-testid': testId,
+	}: {
+		children?: React.ReactNode;
+		'data-testid'?: string;
+	}) => <div data-testid={testId ?? 'modal-body'}>{children}</div>,
+);
+
+const ModalCloseButton = vi.fn(
+	({
+		onClick,
+		'data-testid': testId,
+	}: {
+		onClick?: () => void;
+		'data-testid'?: string;
+	}) => (
+		<button
+			type="button"
+			data-testid={testId ?? 'modal-close-button'}
+			aria-label="close"
+			onClick={onClick}
+		>
+			×
+		</button>
+	),
+);
+
+export const Modal = Object.assign(
+	vi.fn(
+		({
+			children,
+			opened,
+			onClose,
+			title,
+			'data-testid': testId,
+		}: {
+			children?: React.ReactNode;
+			opened?: boolean;
+			onClose?: () => void;
+			title?: React.ReactNode;
+			'data-testid'?: string;
+			[key: string]: unknown;
+		}) =>
+			opened ? (
+				<div role="dialog" data-testid={testId}>
+					{title && <div>{title}</div>}
+					<button type="button" aria-label="close" onClick={onClose}>
+						×
+					</button>
+					{children}
+				</div>
+			) : null,
+	),
+	{
+		Root: ModalRoot,
+		Overlay: ModalOverlay,
+		Content: ModalContent,
+		Header: ModalHeader,
+		Title: ModalTitle,
+		Body: ModalBody,
+		CloseButton: ModalCloseButton,
+	},
 );
 
 // ─── Navigation ───────────────────────────────────────────────────────────────

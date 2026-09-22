@@ -3,8 +3,14 @@ import { vi } from 'vitest';
 // ─── Shared mock implementations ────────────────────────────────────────────────
 
 export const useForm = vi.fn(
-	(options?: { initialValues?: Record<string, unknown> }) => {
-		const values = options?.initialValues ?? {};
+	(options?: {
+		initialValues?: Record<string, unknown>;
+		onValuesChange?: (
+			values: Record<string, unknown>,
+			previousValues: Record<string, unknown>,
+		) => void;
+	}) => {
+		const values = { ...(options?.initialValues ?? {}) };
 
 		return {
 			onSubmit:
@@ -13,7 +19,14 @@ export const useForm = vi.fn(
 					event.preventDefault();
 					handler(values);
 				},
-			getInputProps: vi.fn(() => ({}) as Record<string, unknown>),
+			getInputProps: vi.fn((field: string) => ({
+				value: values[field] ?? '',
+				onChange: (event: { target: { value: unknown } }) => {
+					const previousValues = { ...values };
+					values[field] = event.target.value;
+					options?.onValuesChange?.(values, previousValues);
+				},
+			})),
 			key: vi.fn((field: string) => field),
 		};
 	},
