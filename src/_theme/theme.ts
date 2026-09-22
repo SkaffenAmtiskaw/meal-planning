@@ -102,10 +102,8 @@ export const theme = createTheme({
 			},
 		},
 		SegmentedControl: {
-			styles: {
-				label: {
-					color: '#44633F',
-				},
+			defaultProps: {
+				color: 'forest',
 			},
 		},
 	},

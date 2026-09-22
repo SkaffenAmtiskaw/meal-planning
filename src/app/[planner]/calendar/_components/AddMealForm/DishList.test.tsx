@@ -12,6 +12,15 @@ vi.mock('./DishRow', async () => ({
 	DishRow: vi.fn(() => null),
 }));
 
+vi.mock('./DishList.module.css', () => ({
+	default: {
+		title: 'title',
+		count: 'count',
+		addButton: 'addButton',
+		addAnother: 'addAnother',
+	},
+}));
+
 const defaultProps = {
 	dishes: [makeDish()],
 	onAddDish: vi.fn(),

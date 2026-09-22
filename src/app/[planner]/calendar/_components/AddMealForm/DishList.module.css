@@ -1,0 +1,56 @@
+.title {
+	/* #5A6B7B has no exact theme token. */
+	color: #5a6b7b;
+	/* Mantine Text props cannot express 11px uppercase with 0.08em letter-spacing together. */
+	font-size: 11px;
+	font-weight: 700;
+	text-transform: uppercase;
+	letter-spacing: 0.08em;
+}
+
+.count {
+	/* #5A6B7B has no exact theme token. */
+	color: #5a6b7b;
+	/* Mantine has no 12px size token for Text. */
+	font-size: 12px;
+}
+
+.addButton {
+	/* Mantine outline Button border color derives from the color prop, not forest[2]. */
+	border: 1px solid var(--mantine-color-forest-2);
+	/* Mantine radius tokens are not 16px. */
+	border-radius: 16px;
+	/* Mantine Button padding props cannot express 0 13px 0 10px. */
+	padding: 0 13px 0 10px;
+	/* Mantine has no 13px size / 600 weight font token. */
+	font-size: 13px;
+	font-weight: 600;
+	/* Mantine Button size tokens do not match the 32px design height. */
+	height: 32px;
+}
+
+.addAnother {
+	/* Mantine UnstyledButton has no full-width prop. */
+	width: 100%;
+	/* Mantine has no dashed-border button variant. */
+	border: 1px dashed var(--mantine-color-chalk-8);
+	/* Mantine radius tokens are not 10px. */
+	border-radius: 10px;
+	/* Mantine size tokens do not match the 44px design height. */
+	height: 44px;
+	/* Mantine has no 13px size / 600 weight font token. */
+	font-size: 13px;
+	font-weight: 600;
+	/* Default row text color is navy[4]; hover switches to forest[5]. */
+	color: var(--mantine-color-navy-4);
+	/* Mantine Group cannot make a single element fill width and center children. */
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	gap: var(--mantine-spacing-xs);
+}
+
+.addAnother:hover {
+	/* Mantine has no hover-text-color prop. */
+	color: var(--mantine-color-forest-5);
+}

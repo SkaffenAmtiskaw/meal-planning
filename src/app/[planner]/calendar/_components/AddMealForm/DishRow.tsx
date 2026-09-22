@@ -1,21 +1,11 @@
 'use client';
 
-import {
-	Button,
-	Fieldset,
-	Group,
-	Input,
-	SegmentedControl,
-	Select,
-	Stack,
-	Textarea,
-	TextInput,
-} from '@mantine/core';
-import { IconTrash } from '@tabler/icons-react';
+import { ActionIcon, Box, Collapse, Group, TextInput } from '@mantine/core';
+import { IconChevronDown, IconChevronUp, IconTrash } from '@tabler/icons-react';
 
-import type { DishState, SourceType } from './types';
-
-import { usePlannerSavedItems } from '../../_hooks/usePlannerSavedItems';
+import { DishRowExpanded } from './DishRowExpanded';
+import type { DishState } from './types';
+import classes from './DishRow.module.css';
 
 type Props = {
 	dish: DishState;
@@ -32,93 +22,51 @@ export const DishRow = ({
 	onUpdate,
 	onRemove,
 }: Props) => {
-	const savedItems = usePlannerSavedItems();
-
 	return (
-		<Fieldset data-testid={`dish-row-${index}`}>
-			<Stack gap="xs">
-				<Group align="flex-end">
-					<TextInput
-						label="Dish name"
-						style={{ flex: 1 }}
-						data-testid={`dish-name-${index}`}
-						value={dish.name}
-						onChange={(e) => onUpdate({ name: e.currentTarget.value })}
-					/>
-					{showRemove && (
-						<Button
-							variant="subtle"
-							color="red"
-							size="compact-sm"
-							data-testid={`dish-remove-${index}`}
-							onClick={onRemove}
-						>
-							<IconTrash size={16} />
-						</Button>
-					)}
-				</Group>
-
-				<Stack gap={4}>
-					<Input.Label>Source</Input.Label>
-					<SegmentedControl
-						data-testid={`dish-source-type-${index}`}
-						value={dish.sourceType}
-						onChange={(value) => onUpdate({ sourceType: value as SourceType })}
-						data={[
-							{ label: 'None', value: 'none' },
-							{ label: 'Saved', value: 'saved' },
-							{ label: 'Reference', value: 'text' },
-						]}
-					/>
-				</Stack>
-
-				{dish.sourceType === 'saved' && (
-					<Select
-						label="Saved recipe / bookmark"
-						data-testid={`dish-saved-${index}`}
-						searchable
-						data={savedItems.map((item) => ({
-							value: item._id,
-							label: item.name,
-						}))}
-						value={dish.savedId || null}
-						onChange={(value) => onUpdate({ savedId: value ?? '' })}
-					/>
-				)}
-
-				{dish.sourceType === 'text' && (
-					<TextInput
-						label="URL or reference"
-						data-testid={`dish-source-text-${index}`}
-						value={dish.sourceText}
-						onChange={(e) => onUpdate({ sourceText: e.currentTarget.value })}
-					/>
-				)}
-
-				<Button
+		<Box
+			data-testid={`dish-row-${index}`}
+			className={
+				dish.expanded ? `${classes.root} ${classes.expanded}` : classes.root
+			}
+		>
+			<Group align="center" gap={8}>
+				<TextInput
+					aria-label="Dish name"
+					placeholder="Dish name"
+					className={classes.nameInput}
+					size="sm"
+					data-testid={`dish-name-${index}`}
+					value={dish.name}
+					onChange={(e) => onUpdate({ name: e.currentTarget.value })}
+				/>
+				<ActionIcon
 					variant="subtle"
-					size="compact-xs"
-					mt="xs"
-					data-testid={`dish-note-toggle-${index}`}
-					onClick={() =>
-						onUpdate({
-							noteExpanded: !dish.noteExpanded,
-							...(dish.noteExpanded && { note: '' }),
-						})
-					}
+					size="input-sm"
+					data-testid={`dish-expand-${index}`}
+					aria-label={dish.expanded ? 'Collapse dish' : 'Expand dish'}
+					onClick={() => onUpdate({ expanded: !dish.expanded })}
+					className={classes.expandButton}
 				>
-					{dish.noteExpanded ? 'Remove note' : 'Add note'}
-				</Button>
-
-				{dish.noteExpanded && (
-					<Textarea
-						label="Note"
-						data-testid={`dish-note-${index}`}
-						value={dish.note}
-						onChange={(e) => onUpdate({ note: e.currentTarget.value })}
-					/>
+					{dish.expanded ? <IconChevronUp /> : <IconChevronDown />}
+				</ActionIcon>
+				{showRemove && (
+					<ActionIcon
+						variant="subtle"
+						color="red"
+						size="input-sm"
+						data-testid={`dish-remove-${index}`}
+						aria-label="Remove dish"
+						onClick={onRemove}
+						className={classes.removeButton}
+					>
+						<IconTrash />
+					</ActionIcon>
 				)}
-			</Stack>
-		</Fieldset>
+			</Group>
+
+			<Collapse expanded={dish.expanded}>
+				<DishRowExpanded dish={dish} index={index} onUpdate={onUpdate} />
+			</Collapse>
+		</Box>
 	);
 };

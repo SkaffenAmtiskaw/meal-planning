@@ -346,6 +346,22 @@ Rename `noteExpanded` to `expanded` and remove the logic that clears the note wh
 - Switch source types; the note is still present.
 - The chevron toggles expand/collapse.
 
+**Status:** ✅ Complete
+
+**As built:**
+- `DishState.noteExpanded` was renamed to `expanded` across `types.d.ts`, `useDishes.ts`, the fixture, and tests.
+- `DishRow` was rewritten as a focused collapsible shell and split into single-responsibility subcomponents:
+  - `DishRow` — collapsed one-line row (dish-name input, chevron, remove button).
+  - `DishRowExpanded` — expanded panel layout (separator, responsive two-column grid).
+  - `DishSourceFields` — Source `SegmentedControl`, conditional Saved `Select` / Reference `TextInput`, and helper hints.
+  - `DishNoteField` — Note `Textarea`.
+- `DishList` received the DISHES header, pill "Add dish" button, and dashed "Add another dish" row.
+- Source helper hints were added under each `SegmentedControl` option.
+- The inline `style={{ flex: 1 }}` on the dish-name `TextInput` was moved into `DishRow.module.css` as `.nameInput`.
+- The Note textarea height is derived from the Source column by rendering an invisible placeholder (disabled `TextInput` + helper text) when `sourceType === 'none'`. This reserves the Saved/Reference Source column height so the Note textarea can stretch to match it via flex/grid, without a hardcoded pixel value. `resize` was disabled because the drag handle did not function inside the flex layout.
+- The presentational prop assertions in `DishList.test.tsx` and `DishRow.test.tsx` were removed; tests now focus on behavior (expand/collapse, note preservation, callbacks, conditional rendering). New behavior tests were added for `DishRowExpanded`, `DishSourceFields`, and `DishNoteField`.
+- Verified: full suite green (1,682 tests, 100% coverage); Biome clean.
+
 ### Step 6 — Add the source chip with reference truncation
 
 Add the source chip to the collapsed `DishRow`. It reads from the existing source state: dashed “Add source” when empty, saved item name with a filled dot when Saved, and stripped/truncated reference with a hollow ring when Reference. Add the small utility for protocol stripping and ellipsis.

@@ -7,5 +7,5 @@ export const makeDish = (overrides: Partial<DishState> = {}): DishState => ({
 	savedId: overrides.savedId ?? '',
 	sourceText: overrides.sourceText ?? '',
 	note: overrides.note ?? '',
-	noteExpanded: overrides.noteExpanded ?? false,
+	expanded: overrides.expanded ?? false,
 });

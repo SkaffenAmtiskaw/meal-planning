@@ -1,10 +1,11 @@
 'use client';
 
-import { Button, Card, Group, Stack, Text } from '@mantine/core';
+import { Button, Group, Stack, Text, UnstyledButton } from '@mantine/core';
 import { IconPlus } from '@tabler/icons-react';
 
 import { DishRow } from './DishRow';
 import type { DishState } from './types';
+import classes from './DishList.module.css';
 
 type DishListProps = {
 	dishes: DishState[];
@@ -22,47 +23,40 @@ export const DishList = ({
 	const countLabel = dishes.length === 1 ? '1 dish' : `${dishes.length} dishes`;
 
 	return (
-		<Card p="sm" withBorder>
-			<Stack gap="xs">
-				<Group justify="space-between" align="center">
-					<Group gap="xs">
-						<Text fw={500} size="sm" c="dimmed">
-							DISHES
-						</Text>
-						<Text size="sm" c="dimmed">
-							{countLabel}
-						</Text>
-					</Group>
-
-					<Button
-						variant="subtle"
-						size="compact-sm"
-						leftSection={<IconPlus size={14} />}
-						onClick={onAddDish}
-					>
-						Add dish
-					</Button>
+		<Stack gap={8}>
+			<Group justify="space-between" align="center">
+				<Group gap="xs">
+					<Text className={classes.title}>DISHES</Text>
+					<Text className={classes.count}>{countLabel}</Text>
 				</Group>
 
-				{dishes.map((dish, index) => (
-					<DishRow
-						key={dish.id}
-						dish={dish}
-						index={index}
-						showRemove={dishes.length > 1}
-						onUpdate={(patch) => onUpdateDish(dish.id, patch)}
-						onRemove={() => onRemoveDish(dish.id)}
-					/>
-				))}
-
 				<Button
-					variant="subtle"
+					variant="outline"
+					color="forest"
+					size="sm"
 					leftSection={<IconPlus size={14} />}
 					onClick={onAddDish}
+					className={classes.addButton}
 				>
-					Add another dish
+					Add dish
 				</Button>
-			</Stack>
-		</Card>
+			</Group>
+
+			{dishes.map((dish, index) => (
+				<DishRow
+					key={dish.id}
+					dish={dish}
+					index={index}
+					showRemove={dishes.length > 1}
+					onUpdate={(patch) => onUpdateDish(dish.id, patch)}
+					onRemove={() => onRemoveDish(dish.id)}
+				/>
+			))}
+
+			<UnstyledButton onClick={onAddDish} className={classes.addAnother}>
+				<IconPlus size={16} />
+				<Text c="inherit">Add another dish</Text>
+			</UnstyledButton>
+		</Stack>
 	);
 };

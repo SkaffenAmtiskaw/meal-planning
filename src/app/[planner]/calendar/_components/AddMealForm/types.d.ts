@@ -7,7 +7,7 @@ export type DishState = {
 	savedId: string;
 	sourceText: string;
 	note: string;
-	noteExpanded: boolean;
+	expanded: boolean;
 };
 
 export type MealFormValues = {

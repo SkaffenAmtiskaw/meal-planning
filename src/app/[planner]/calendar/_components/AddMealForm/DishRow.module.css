@@ -1,0 +1,92 @@
+.root {
+	/* Mantine has no single prop for a conditional border color + custom 10px radius + exact asymmetric padding. */
+	border: 1px solid var(--mantine-color-chalk-3);
+	background-color: var(--mantine-color-white);
+	border-radius: 10px;
+	padding: 9px 10px 9px 12px;
+}
+
+.expanded {
+	/* #FAFBFA has no exact theme token, so it is hard-coded here. */
+	background-color: #fafbfa;
+	border-color: var(--mantine-color-forest-2);
+}
+
+.expandButton:hover {
+	/* Mantine ActionIcon has no hover-background-color prop. */
+	background-color: var(--mantine-color-chalk-2);
+}
+
+.removeButton:hover {
+	/* No theme token exists for this rosewood-tint hover background. */
+	background-color: #fde8e8;
+}
+
+.label {
+	/* Mantine Input.Label / Textarea label cannot express 12px uppercase letter-spaced text via props. */
+	font-size: 12px;
+	font-weight: 700;
+	text-transform: uppercase;
+	letter-spacing: 0.04em;
+	color: var(--mantine-color-navy-4);
+}
+
+.expandedContent {
+	/* Mantine spacing tokens cannot express an 11px top padding, so the separator padding is custom. */
+	border-top: 1px solid var(--mantine-color-chalk-2);
+	padding-top: 11px;
+}
+
+.helperHint {
+	/* No theme tokens exist for this 12px/1.45 muted blue-grey helper text style. */
+	color: #5a6b7b;
+	font-size: 12px;
+	line-height: 1.45;
+}
+
+.nameInput {
+	/* Mantine has no single prop that makes one child fill the remaining space inside a Group while keeping siblings inline. */
+	flex: 1;
+}
+
+.expandedGrid {
+	/* Explicitly stretch SimpleGrid columns to the same row height so the Note column matches the Source column. */
+	align-items: stretch;
+}
+
+.sourceColumn {
+	/* Ensure the source column fills its share of the equal-height grid row. */
+	height: 100%;
+}
+
+.noteColumn {
+	/* Fill the SimpleGrid cell height so the textarea can grow to match the Source column. */
+	height: 100%;
+}
+
+.noteTextareaRoot {
+	/* Make the entire Textarea component (label + input wrapper) fill the note column height. */
+	display: flex;
+	flex-direction: column;
+	flex: 1;
+}
+
+.noteTextareaWrapper {
+	/* Make the wrapper fill the note column so the inner <textarea> can match Source column height without a magic number. */
+	display: flex;
+	flex-direction: column;
+	flex: 1;
+}
+
+.noteTextareaInput {
+	/* Make the inner <textarea> fill the wrapper; resize is disabled because it does not work inside this flex layout. */
+	flex: 1;
+	resize: none;
+}
+
+.hiddenSourcePlaceholder {
+	/* Keep the placeholder in document flow so it reserves the same vertical space as the Saved/Reference source column, while hiding it from view and interaction. */
+	visibility: hidden;
+	pointer-events: none;
+	user-select: none;
+}
