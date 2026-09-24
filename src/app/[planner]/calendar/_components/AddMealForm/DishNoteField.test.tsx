@@ -1,3 +1,5 @@
+import { createRef } from 'react';
+
 import { makeDish } from '@fixtures/dish';
 import { fireEvent, render, screen } from '@testing-library/react';
 
@@ -46,5 +48,12 @@ describe('DishNoteField', () => {
 			target: { value: 'A note' },
 		});
 		expect(onUpdate).toHaveBeenCalledWith({ note: 'A note' });
+	});
+
+	it('forwards ref to the textarea element', () => {
+		const ref = createRef<HTMLTextAreaElement>();
+		render(<DishNoteField {...defaultProps} ref={ref} />);
+		expect(ref.current).toBe(screen.getByTestId('dish-note-0'));
+		expect(() => ref.current?.focus()).not.toThrow();
 	});
 });

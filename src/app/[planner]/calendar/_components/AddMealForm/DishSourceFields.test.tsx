@@ -9,9 +9,11 @@ import { usePlannerSavedItems } from '../../_hooks/usePlannerSavedItems';
 
 vi.mock('@mantine/core', async () => await import('@mocks/@mantine/core'));
 
-vi.mock('../../_hooks/usePlannerSavedItems', () => ({
-	usePlannerSavedItems: vi.fn(),
-}));
+vi.mock(
+	'../../_hooks/usePlannerSavedItems',
+	async () =>
+		await import('@mocks/@app/[planner]/calendar/_hooks/usePlannerSavedItems'),
+);
 
 vi.mock('./DishRow.module.css', () => ({
 	default: {

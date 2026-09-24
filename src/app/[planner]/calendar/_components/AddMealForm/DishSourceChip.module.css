@@ -1,27 +1,6 @@
-/* Mantine UnstyledButton has no pill-shaped chip variant with this exact chrome, so the chip base styles are set via CSS module. */
+/* Cap the chip so a long reference truncates before it squeezes the dish-name input. */
 .root {
-	display: inline-flex;
-	align-items: center;
-	height: 36px;
-	padding: 0 12px;
-	border-radius: 16px;
-	color: var(--mantine-color-navy-5);
-	font-size: 13px;
-	font-weight: 500;
-	background-color: transparent;
-	min-width: 0;
-	/* Cap the chip so a long reference truncates before it squeezes the dish-name input. */
 	max-width: min(240px, 50%);
-}
-
-/* Mantine UnstyledButton has no dashed-border variant for the empty source state. */
-.empty {
-	border: 1px dashed var(--mantine-color-chalk-8);
-}
-
-/* Mantine UnstyledButton has no solid-border variant for the set source state. */
-.set {
-	border: 1px solid var(--mantine-color-chalk-8);
 }
 
 /* The source-type indicator dot is a custom visual element with no Mantine equivalent. */

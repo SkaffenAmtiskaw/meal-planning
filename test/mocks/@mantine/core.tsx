@@ -771,26 +771,25 @@ export const TextInput = vi.fn(
 	),
 );
 
-export const Textarea = vi.fn(
-	({
-		value,
-		onChange,
-		label,
-		'data-testid': testId,
-	}: {
+export const Textarea = React.forwardRef<
+	HTMLTextAreaElement,
+	{
 		value?: string;
 		onChange?: React.ChangeEventHandler<HTMLTextAreaElement>;
 		label?: string;
 		'data-testid'?: string;
-		[key: string]: unknown;
-	}) => (
-		<textarea
-			data-testid={testId ?? `textarea-${label}`}
-			value={value ?? ''}
-			onChange={onChange ?? (() => {})}
-		/>
-	),
-);
+	}
+>(({ value, onChange, label, 'data-testid': testId, ...props }, ref) => (
+	<textarea
+		ref={ref}
+		data-testid={testId ?? `textarea-${label}`}
+		value={value ?? ''}
+		onChange={onChange ?? (() => {})}
+		{...props}
+	/>
+));
+
+Textarea.displayName = 'Textarea';
 
 // ─── Input (compound) ─────────────────────────────────────────────────────────
 

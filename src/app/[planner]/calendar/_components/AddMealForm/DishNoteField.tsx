@@ -1,5 +1,7 @@
 'use client';
 
+import { forwardRef } from 'react';
+
 import { Stack, Textarea } from '@mantine/core';
 
 import type { DishState } from './types';
@@ -11,23 +13,28 @@ type Props = {
 	onUpdate: (patch: Partial<DishState>) => void;
 };
 
-export const DishNoteField = ({ dish, index, onUpdate }: Props) => {
-	return (
-		<Stack gap={7} className={classes.noteColumn}>
-			<Textarea
-				label="Note"
-				placeholder="Prep reminders, swaps, what to buy…"
-				autosize={false}
-				classNames={{
-					root: classes.noteTextareaRoot,
-					label: classes.label,
-					wrapper: classes.noteTextareaWrapper,
-					input: classes.noteTextareaInput,
-				}}
-				data-testid={`dish-note-${index}`}
-				value={dish.note}
-				onChange={(e) => onUpdate({ note: e.currentTarget.value })}
-			/>
-		</Stack>
-	);
-};
+export const DishNoteField = forwardRef<HTMLTextAreaElement, Props>(
+	({ dish, index, onUpdate }, ref) => {
+		return (
+			<Stack gap={7} className={classes.noteColumn}>
+				<Textarea
+					ref={ref}
+					label="Note"
+					placeholder="Prep reminders, swaps, what to buy…"
+					autosize={false}
+					classNames={{
+						root: classes.noteTextareaRoot,
+						label: classes.label,
+						wrapper: classes.noteTextareaWrapper,
+						input: classes.noteTextareaInput,
+					}}
+					data-testid={`dish-note-${index}`}
+					value={dish.note}
+					onChange={(e) => onUpdate({ note: e.currentTarget.value })}
+				/>
+			</Stack>
+		);
+	},
+);
+
+DishNoteField.displayName = 'DishNoteField';

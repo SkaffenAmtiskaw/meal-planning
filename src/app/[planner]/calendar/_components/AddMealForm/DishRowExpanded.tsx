@@ -1,5 +1,7 @@
 'use client';
 
+import { forwardRef } from 'react';
+
 import { SimpleGrid, Stack } from '@mantine/core';
 
 import { DishNoteField } from './DishNoteField';
@@ -13,13 +15,22 @@ type Props = {
 	onUpdate: (patch: Partial<DishState>) => void;
 };
 
-export const DishRowExpanded = ({ dish, index, onUpdate }: Props) => {
-	return (
-		<Stack gap={9} className={classes.expandedContent}>
-			<SimpleGrid cols={{ base: 1, sm: 2 }} className={classes.expandedGrid}>
-				<DishSourceFields dish={dish} index={index} onUpdate={onUpdate} />
-				<DishNoteField dish={dish} index={index} onUpdate={onUpdate} />
-			</SimpleGrid>
-		</Stack>
-	);
-};
+export const DishRowExpanded = forwardRef<HTMLTextAreaElement, Props>(
+	({ dish, index, onUpdate }, ref) => {
+		return (
+			<Stack gap={9} className={classes.expandedContent}>
+				<SimpleGrid cols={{ base: 1, sm: 2 }} className={classes.expandedGrid}>
+					<DishSourceFields dish={dish} index={index} onUpdate={onUpdate} />
+					<DishNoteField
+						ref={ref}
+						dish={dish}
+						index={index}
+						onUpdate={onUpdate}
+					/>
+				</SimpleGrid>
+			</Stack>
+		);
+	},
+);
+
+DishRowExpanded.displayName = 'DishRowExpanded';

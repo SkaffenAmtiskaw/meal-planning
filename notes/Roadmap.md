@@ -2,24 +2,21 @@
 
 **AI Instructions** - DO NOT delete this file. You may remove lines, but under no circumstances may you delete the file.
 
-# Bugfixes/User Issues
+# Bugfixes/User Issues/Tech Debt
 ## Calendar Page
 - MOBILE: calendar view - "Today" button on phone is cut off
 - [[Add Meal UX Changes]]
 - [[Meal Detail Modal|Meal Detail Modal Update]]
 - [[Stale Data Issues]]
-
-## Other
 - you should be able to create a meal with just a title and a description (or just a title)
 - meal color should be based on hex of title + description
-- sidebar on modal should close after you click something - wtf does this mean?
-- refactor all modal forms to separate presentation and data concerns
 - change segmented control theme to match design from Claude
-- month view current date circle is truncating numbers
-
+- Desktop: month view current date circle is truncating numbers
+## Other
+- [[Modal Form Architecture|refactor all modal forms to separate presentation and data concerns]]
 # High-Priority
 ## Calendar Page
-- [[Replace Schedule-X|replace schedule-x]]
+- [[Replace Schedule-X]]
 - edit meals
 - delete meals
 - add meals by clicking month cell

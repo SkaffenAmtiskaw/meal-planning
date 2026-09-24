@@ -1,5 +1,5 @@
 import { makeDish } from '@fixtures/dish';
-import { fireEvent, render, screen } from '@testing-library/react';
+import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
@@ -14,9 +14,11 @@ vi.mock('@mantine/core', async () => await import('@mocks/@mantine/core'));
 
 vi.mock('@/_hooks', async () => await import('@mocks/@/_hooks'));
 
-vi.mock('../../_hooks/usePlannerSavedItems', () => ({
-	usePlannerSavedItems: vi.fn(),
-}));
+vi.mock(
+	'../../_hooks/usePlannerSavedItems',
+	async () =>
+		await import('@mocks/@app/[planner]/calendar/_hooks/usePlannerSavedItems'),
+);
 
 vi.mock('./_utils/formatSourceChip', () => ({
 	formatSourceChip: vi.fn((value: string) => value),
@@ -147,7 +149,7 @@ describe('DishRow', () => {
 		expect(onUpdate).toHaveBeenCalledWith({ expanded: true });
 	});
 
-	it('collapses the row when the source chip is clicked while expanded', () => {
+	it('does nothing when the source chip is clicked while expanded', () => {
 		const onUpdate = vi.fn();
 		render(
 			<DishRow
@@ -157,7 +159,161 @@ describe('DishRow', () => {
 			/>,
 		);
 		fireEvent.click(screen.getByTestId('dish-source-chip-0'));
-		expect(onUpdate).toHaveBeenCalledWith({ expanded: false });
+		expect(onUpdate).not.toHaveBeenCalled();
+	});
+
+	it('renders note chip in the collapsed row', () => {
+		render(<DishRow dish={makeDish()} {...defaultProps} />);
+		expect(screen.getByTestId('dish-note-chip-0')).toBeDefined();
+	});
+
+	it('shows Add note chip when note is empty', () => {
+		render(<DishRow dish={makeDish({ note: '' })} {...defaultProps} />);
+		const chip = screen.getByTestId('dish-note-chip-0');
+		expect(chip.textContent).toBe('Add note');
+	});
+
+	it('shows Note chip when note is set', () => {
+		render(
+			<DishRow dish={makeDish({ note: 'Use less salt' })} {...defaultProps} />,
+		);
+		const chip = screen.getByTestId('dish-note-chip-0');
+		expect(chip.textContent).toBe('Note');
+	});
+
+	it('expands the row when note chip is clicked while collapsed', () => {
+		const onUpdate = vi.fn();
+		render(
+			<DishRow
+				dish={makeDish({ expanded: false })}
+				{...defaultProps}
+				onUpdate={onUpdate}
+			/>,
+		);
+		fireEvent.click(screen.getByTestId('dish-note-chip-0'));
+		expect(onUpdate).toHaveBeenCalledWith({ expanded: true });
+	});
+
+	it('does nothing when the note chip is clicked while expanded', () => {
+		const onUpdate = vi.fn();
+		render(
+			<DishRow
+				dish={makeDish({ expanded: true })}
+				{...defaultProps}
+				onUpdate={onUpdate}
+			/>,
+		);
+		fireEvent.click(screen.getByTestId('dish-note-chip-0'));
+		expect(onUpdate).not.toHaveBeenCalled();
+	});
+
+	it('focuses the note textarea after expanding via the note chip', async () => {
+		const onUpdate = vi.fn();
+		const { rerender } = render(
+			<DishRow
+				dish={makeDish({ expanded: false, note: '' })}
+				{...defaultProps}
+				onUpdate={onUpdate}
+			/>,
+		);
+		fireEvent.click(screen.getByTestId('dish-note-chip-0'));
+		expect(onUpdate).toHaveBeenCalledWith({ expanded: true });
+
+		rerender(
+			<DishRow
+				dish={makeDish({ expanded: true, note: '' })}
+				{...defaultProps}
+				onUpdate={onUpdate}
+			/>,
+		);
+		expect(screen.getByTestId('dish-note-0')).not.toBe(document.activeElement);
+
+		await waitFor(() => {
+			expect(screen.getByTestId('dish-note-0')).toBe(document.activeElement);
+		});
+	});
+
+	it('does not focus the note textarea when expanding via the source chip', () => {
+		const onUpdate = vi.fn();
+		const { rerender } = render(
+			<DishRow
+				dish={makeDish({ expanded: false })}
+				{...defaultProps}
+				onUpdate={onUpdate}
+			/>,
+		);
+		fireEvent.click(screen.getByTestId('dish-source-chip-0'));
+
+		rerender(
+			<DishRow
+				dish={makeDish({ expanded: true })}
+				{...defaultProps}
+				onUpdate={onUpdate}
+			/>,
+		);
+		expect(screen.getByTestId('dish-note-0')).not.toBe(document.activeElement);
+	});
+
+	it('does not focus the note textarea when expanding via the chevron', () => {
+		const onUpdate = vi.fn();
+		const { rerender } = render(
+			<DishRow
+				dish={makeDish({ expanded: false })}
+				{...defaultProps}
+				onUpdate={onUpdate}
+			/>,
+		);
+		fireEvent.click(screen.getByTestId('dish-expand-0'));
+
+		rerender(
+			<DishRow
+				dish={makeDish({ expanded: true })}
+				{...defaultProps}
+				onUpdate={onUpdate}
+			/>,
+		);
+		expect(screen.getByTestId('dish-note-0')).not.toBe(document.activeElement);
+	});
+
+	it('does not focus the note textarea when initially rendered expanded', () => {
+		render(<DishRow dish={makeDish({ expanded: true })} {...defaultProps} />);
+		expect(screen.getByTestId('dish-note-0')).not.toBe(document.activeElement);
+	});
+
+	it('renders note text below the row when note is set and collapsed', () => {
+		render(
+			<DishRow
+				dish={makeDish({ note: 'Chop herbs finely', expanded: false })}
+				{...defaultProps}
+			/>,
+		);
+		const noteText = screen.getByTestId('dish-note-text-0');
+		expect(noteText.textContent).toBe('Chop herbs finely');
+		expect(noteText.getAttribute('title')).toBe('Chop herbs finely');
+	});
+
+	it('hides note text below the row when expanded', () => {
+		render(
+			<DishRow
+				dish={makeDish({ note: 'Chop herbs finely', expanded: true })}
+				{...defaultProps}
+			/>,
+		);
+		expect(screen.queryByTestId('dish-note-text-0')).toBeNull();
+	});
+
+	it('truncates a long note text', () => {
+		const longNote = 'A'.repeat(200);
+		render(
+			<DishRow
+				dish={makeDish({ note: longNote, expanded: false })}
+				{...defaultProps}
+			/>,
+		);
+		const noteText = screen.getByTestId('dish-note-text-0');
+		expect(noteText.textContent).toBe(longNote);
+		expect(noteText.getAttribute('title')).toBe(longNote);
+		expect(noteText.getAttribute('truncate')).toBe('end');
 	});
 
 	it('shows Add source chip when sourceType is none', () => {
@@ -421,6 +577,7 @@ describe('DishRowLayout', () => {
 		index: 0,
 		nameInput: <div data-testid="name-input">Name</div>,
 		chip: <div data-testid="chip">Chip</div>,
+		noteChip: <div data-testid="note-chip">NoteChip</div>,
 		expandButton: <div data-testid="expand">Expand</div>,
 		removeButton: <div data-testid="remove">Remove</div>,
 	};
@@ -432,6 +589,7 @@ describe('DishRowLayout', () => {
 		expect(layout.getAttribute('direction')).toBeNull();
 		expect(screen.getByTestId('name-input')).toBeDefined();
 		expect(screen.getByTestId('chip')).toBeDefined();
+		expect(screen.getByTestId('note-chip')).toBeDefined();
 		expect(screen.getByTestId('expand')).toBeDefined();
 		expect(screen.getByTestId('remove')).toBeDefined();
 	});
@@ -443,6 +601,7 @@ describe('DishRowLayout', () => {
 		expect(layout.getAttribute('direction')).toBe('column');
 		expect(screen.getByTestId('name-input')).toBeDefined();
 		expect(screen.getByTestId('chip')).toBeDefined();
+		expect(screen.getByTestId('note-chip')).toBeDefined();
 	});
 
 	it('renders without a remove button when it is null', () => {

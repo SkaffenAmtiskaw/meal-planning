@@ -1,0 +1,23 @@
+/* Mantine UnstyledButton has no pill-shaped chip variant with this exact chrome, so the chip base styles are set via CSS module. */
+.root {
+	display: inline-flex;
+	align-items: center;
+	height: 36px;
+	padding: 0 12px;
+	border-radius: 16px;
+	color: var(--mantine-color-navy-5);
+	font-size: 13px;
+	font-weight: 500;
+	background-color: transparent;
+	min-width: 0;
+}
+
+/* Mantine UnstyledButton has no dashed-border variant for the empty chip state. */
+.empty {
+	border: 1px dashed var(--mantine-color-chalk-8);
+}
+
+/* Mantine UnstyledButton has no solid-border variant for the set chip state. */
+.set {
+	border: 1px solid var(--mantine-color-chalk-8);
+}

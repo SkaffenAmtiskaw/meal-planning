@@ -1,3 +1,5 @@
+import { createRef } from 'react';
+
 import { makeDish } from '@fixtures/dish';
 import { fireEvent, render, screen } from '@testing-library/react';
 
@@ -9,9 +11,11 @@ import { usePlannerSavedItems } from '../../_hooks/usePlannerSavedItems';
 
 vi.mock('@mantine/core', async () => await import('@mocks/@mantine/core'));
 
-vi.mock('../../_hooks/usePlannerSavedItems', () => ({
-	usePlannerSavedItems: vi.fn(),
-}));
+vi.mock(
+	'../../_hooks/usePlannerSavedItems',
+	async () =>
+		await import('@mocks/@app/[planner]/calendar/_hooks/usePlannerSavedItems'),
+);
 
 vi.mock('./DishRow.module.css', () => ({
 	default: {
@@ -62,5 +66,12 @@ describe('DishRowExpanded', () => {
 			target: { value: 'A note' },
 		});
 		expect(onUpdate).toHaveBeenCalledWith({ note: 'A note' });
+	});
+
+	it('forwards ref to the note textarea', () => {
+		const ref = createRef<HTMLTextAreaElement>();
+		render(<DishRowExpanded {...defaultProps} ref={ref} />);
+		expect(ref.current).toBe(screen.getByTestId('dish-note-0'));
+		expect(() => ref.current?.focus()).not.toThrow();
 	});
 });

@@ -6,18 +6,21 @@ import {
 	Collapse,
 	Flex,
 	Group,
+	Text,
 	TextInput,
 } from '@mantine/core';
 import { IconChevronDown, IconChevronUp, IconTrash } from '@tabler/icons-react';
 
 import { useIsMobile } from '@/_hooks';
 
+import { DishNoteChip } from './DishNoteChip';
 import { DishRowExpanded } from './DishRowExpanded';
 import { DishSourceChip } from './DishSourceChip';
 import type { DishState } from './types';
 import classes from './DishRow.module.css';
 
 import { usePlannerSavedItems } from '../../_hooks/usePlannerSavedItems';
+import { useFocusOnExpand } from './_hooks/useFocusOnExpand';
 import { formatSourceChip } from './_utils/formatSourceChip';
 
 type Props = {
@@ -32,6 +35,7 @@ type DishRowLayoutProps = {
 	index: number;
 	nameInput: React.ReactNode;
 	chip: React.ReactNode;
+	noteChip: React.ReactNode;
 	expandButton: React.ReactNode;
 	removeButton: React.ReactNode | null;
 };
@@ -40,6 +44,7 @@ export const DishRowLayout = ({
 	index,
 	nameInput,
 	chip,
+	noteChip,
 	expandButton,
 	removeButton,
 }: DishRowLayoutProps) => {
@@ -56,6 +61,7 @@ export const DishRowLayout = ({
 				{nameInput}
 				<Group gap="xs">
 					{chip}
+					{noteChip}
 					{expandButton}
 					{removeButton}
 				</Group>
@@ -73,6 +79,7 @@ export const DishRowLayout = ({
 			{nameInput}
 			<Group gap="xs">
 				{chip}
+				{noteChip}
 				{expandButton}
 				{removeButton}
 			</Group>
@@ -119,8 +126,21 @@ export const DishRow = ({
 	onRemove,
 }: Props) => {
 	const savedItems = usePlannerSavedItems();
+	const { ref: noteRef, requestFocus: requestNoteFocus } =
+		useFocusOnExpand<HTMLTextAreaElement>(dish.expanded);
 
 	const toggleExpanded = () => onUpdate({ expanded: !dish.expanded });
+	const expandSource = () => {
+		if (!dish.expanded) {
+			onUpdate({ expanded: true });
+		}
+	};
+	const expandNote = () => {
+		if (!dish.expanded) {
+			requestNoteFocus();
+			onUpdate({ expanded: true });
+		}
+	};
 
 	const { label, title, isEmpty } = deriveSourceChipProps(dish, savedItems);
 
@@ -142,8 +162,16 @@ export const DishRow = ({
 			title={title}
 			sourceType={dish.sourceType}
 			isEmpty={isEmpty}
-			onClick={toggleExpanded}
+			onClick={expandSource}
 			data-testid={`dish-source-chip-${index}`}
+		/>
+	);
+
+	const noteChip = (
+		<DishNoteChip
+			note={dish.note}
+			onClick={expandNote}
+			data-testid={`dish-note-chip-${index}`}
 		/>
 	);
 
@@ -185,12 +213,31 @@ export const DishRow = ({
 				index={index}
 				nameInput={nameInput}
 				chip={chip}
+				noteChip={noteChip}
 				expandButton={expandButton}
 				removeButton={removeButton}
 			/>
 
+			{dish.note !== '' && !dish.expanded && (
+				<Text
+					data-testid={`dish-note-text-${index}`}
+					title={dish.note}
+					truncate="end"
+					c="navy.4"
+					mt="xs"
+					size="sm"
+				>
+					{dish.note}
+				</Text>
+			)}
+
 			<Collapse expanded={dish.expanded}>
-				<DishRowExpanded dish={dish} index={index} onUpdate={onUpdate} />
+				<DishRowExpanded
+					ref={noteRef}
+					dish={dish}
+					index={index}
+					onUpdate={onUpdate}
+				/>
 			</Collapse>
 		</Box>
 	);

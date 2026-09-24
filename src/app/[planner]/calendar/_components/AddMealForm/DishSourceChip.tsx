@@ -1,7 +1,6 @@
 'use client';
 
-import { UnstyledButton } from '@mantine/core';
-
+import { BaseDishChip } from './BaseDishChip';
 import type { SourceType } from './types';
 import classes from './DishSourceChip.module.css';
 
@@ -30,15 +29,15 @@ export const DishSourceChip = ({
 				: classes.dotEmpty;
 
 	return (
-		<UnstyledButton
-			type="button"
+		<BaseDishChip
+			isEmpty={isEmpty}
 			onClick={onClick}
 			data-testid={testId}
 			title={title}
-			className={`${classes.root} ${isEmpty ? classes.empty : classes.set}`}
+			className={classes.root}
 		>
 			<span className={`${classes.dot} ${dotClass}`} aria-hidden="true" />
 			<span className={classes.label}>{label}</span>
-		</UnstyledButton>
+		</BaseDishChip>
 	);
 };
