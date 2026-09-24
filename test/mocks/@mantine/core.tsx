@@ -291,6 +291,7 @@ export const Text = vi.fn(
 		children,
 		'data-testid': testId,
 		c,
+		span,
 		...props
 	}: WithChildren & {
 		c?: string;
@@ -777,17 +778,36 @@ export const Textarea = React.forwardRef<
 		value?: string;
 		onChange?: React.ChangeEventHandler<HTMLTextAreaElement>;
 		label?: string;
+		autosize?: boolean;
+		minRows?: number;
+		maxRows?: number;
+		classNames?: Record<string, string>;
 		'data-testid'?: string;
 	}
->(({ value, onChange, label, 'data-testid': testId, ...props }, ref) => (
-	<textarea
-		ref={ref}
-		data-testid={testId ?? `textarea-${label}`}
-		value={value ?? ''}
-		onChange={onChange ?? (() => {})}
-		{...props}
-	/>
-));
+>(
+	(
+		{
+			value,
+			onChange,
+			label,
+			autosize,
+			minRows,
+			maxRows,
+			classNames,
+			'data-testid': testId,
+			...props
+		},
+		ref,
+	) => (
+		<textarea
+			ref={ref}
+			data-testid={testId ?? `textarea-${label}`}
+			value={value ?? ''}
+			onChange={onChange ?? (() => {})}
+			{...props}
+		/>
+	),
+);
 
 Textarea.displayName = 'Textarea';
 
@@ -811,12 +831,40 @@ const ModalRoot = vi.fn(
 		children,
 		opened,
 		onClose,
+		size,
+		radius,
+		fullScreen,
+		transitionProps,
+		overlayProps,
+		centered,
+		withCloseButton,
+		trapFocus,
+		keepMounted,
+		zIndex,
+		shadow,
+		padding,
+		classNames,
+		styles,
 		'data-testid': testId,
 		...props
 	}: {
 		children?: React.ReactNode;
 		opened?: boolean;
 		onClose?: () => void;
+		size?: string | number;
+		radius?: string | number;
+		fullScreen?: boolean;
+		transitionProps?: Record<string, unknown>;
+		overlayProps?: Record<string, unknown>;
+		centered?: boolean;
+		withCloseButton?: boolean;
+		trapFocus?: boolean;
+		keepMounted?: boolean;
+		zIndex?: number;
+		shadow?: string | number;
+		padding?: string | number;
+		classNames?: Record<string, string>;
+		styles?: Record<string, unknown>;
 		'data-testid'?: string;
 		[key: string]: unknown;
 	}) =>
