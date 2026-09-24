@@ -381,6 +381,8 @@ Add the source chip to the collapsed `DishRow`. It reads from the existing sourc
 
 Add the note chip to the collapsed `DishRow`. It reads from the existing note state: dashed “Add note” when empty, solid “Note” when set, with the note text truncated below the row.
 
+**Status:** ✅ Complete
+
 **Acceptance:**
 - Add a dish without a note and verify the chip reads “Add note”.
 - Add a note and verify the chip reads “Note” with the text displayed below the row.

@@ -5,7 +5,6 @@
 # Bugfixes/User Issues/Tech Debt
 ## Calendar Page
 - MOBILE: calendar view - "Today" button on phone is cut off
-- [[Add Meal UX Changes]]
 - [[Meal Detail Modal|Meal Detail Modal Update]]
 - [[Stale Data Issues]]
 - you should be able to create a meal with just a title and a description (or just a title)
