@@ -3,15 +3,16 @@
 **AI Instructions** - DO NOT delete this file. You may remove lines, but under no circumstances may you delete the file.
 
 # Bugfixes/User Issues
-- Add default path to `pnpm test:agent`
-- calendar view - "Today" button on phone is cut off
-- meals created in month view don't show up in week view - will be fixed in [[Replace Schedule-X]]
+## Calendar Page
+- MOBILE: calendar view - "Today" button on phone is cut off
 - [[Add Meal UX Changes]]
 - [[Meal Detail Modal|Meal Detail Modal Update]]
 - [[Stale Data Issues]]
+
+## Other
 - you should be able to create a meal with just a title and a description (or just a title)
 - meal color should be based on hex of title + description
-- sidebar on modal should close after you click something
+- sidebar on modal should close after you click something - wtf does this mean?
 - refactor all modal forms to separate presentation and data concerns
 - change segmented control theme to match design from Claude
 - month view current date circle is truncating numbers
