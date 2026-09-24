@@ -3,20 +3,31 @@ import { fireEvent, render, screen } from '@testing-library/react';
 
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-import { DishRow } from './DishRow';
+import { useIsMobile } from '@/_hooks';
+
+import { DishRow, DishRowLayout } from './DishRow';
 
 import { usePlannerSavedItems } from '../../_hooks/usePlannerSavedItems';
+import { formatSourceChip } from './_utils/formatSourceChip';
 
 vi.mock('@mantine/core', async () => await import('@mocks/@mantine/core'));
 
+vi.mock('@/_hooks', async () => await import('@mocks/@/_hooks'));
+
 vi.mock('../../_hooks/usePlannerSavedItems', () => ({
 	usePlannerSavedItems: vi.fn(),
+}));
+
+vi.mock('./_utils/formatSourceChip', () => ({
+	formatSourceChip: vi.fn((value: string) => value),
 }));
 
 vi.mock('./DishRow.module.css', () => ({
 	default: {
 		root: 'root',
 		expanded: 'expanded',
+		rowLayout: 'rowLayout',
+		rowLayoutMobile: 'rowLayoutMobile',
 		expandButton: 'expandButton',
 		label: 'label',
 		expandedContent: 'expandedContent',
@@ -30,6 +41,8 @@ vi.mock('./DishRow.module.css', () => ({
 }));
 
 const mockUsePlannerSavedItems = vi.mocked(usePlannerSavedItems);
+const mockUseIsMobile = vi.mocked(useIsMobile);
+const mockFormatSourceChip = vi.mocked(formatSourceChip);
 
 const defaultProps = {
 	index: 0,
@@ -42,6 +55,7 @@ describe('DishRow', () => {
 	beforeEach(() => {
 		vi.resetAllMocks();
 		mockUsePlannerSavedItems.mockReturnValue([]);
+		mockUseIsMobile.mockReturnValue(false);
 	});
 
 	it('renders dish row with correct data-testid', () => {
@@ -115,6 +129,107 @@ describe('DishRow', () => {
 		expect(onUpdate).toHaveBeenCalledWith({ expanded: false });
 	});
 
+	it('renders the source chip in the collapsed row', () => {
+		render(<DishRow dish={makeDish()} {...defaultProps} />);
+		expect(screen.getByTestId('dish-source-chip-0')).toBeDefined();
+	});
+
+	it('expands the row when the source chip is clicked while collapsed', () => {
+		const onUpdate = vi.fn();
+		render(
+			<DishRow
+				dish={makeDish({ expanded: false })}
+				{...defaultProps}
+				onUpdate={onUpdate}
+			/>,
+		);
+		fireEvent.click(screen.getByTestId('dish-source-chip-0'));
+		expect(onUpdate).toHaveBeenCalledWith({ expanded: true });
+	});
+
+	it('collapses the row when the source chip is clicked while expanded', () => {
+		const onUpdate = vi.fn();
+		render(
+			<DishRow
+				dish={makeDish({ expanded: true })}
+				{...defaultProps}
+				onUpdate={onUpdate}
+			/>,
+		);
+		fireEvent.click(screen.getByTestId('dish-source-chip-0'));
+		expect(onUpdate).toHaveBeenCalledWith({ expanded: false });
+	});
+
+	it('shows Add source chip when sourceType is none', () => {
+		render(
+			<DishRow dish={makeDish({ sourceType: 'none' })} {...defaultProps} />,
+		);
+		const chip = screen.getByTestId('dish-source-chip-0');
+		expect(chip.textContent).toBe('Add source');
+		expect(chip.getAttribute('title')).toBeNull();
+	});
+
+	it('shows saved item name in chip when sourceType is saved and item exists', () => {
+		mockUsePlannerSavedItems.mockReturnValue([
+			{ _id: '1', name: 'Pasta Primavera', url: '/pasta' },
+		]);
+		render(
+			<DishRow
+				dish={makeDish({ sourceType: 'saved', savedId: '1' })}
+				{...defaultProps}
+			/>,
+		);
+		const chip = screen.getByTestId('dish-source-chip-0');
+		expect(chip.textContent).toBe('Pasta Primavera');
+		expect(chip.getAttribute('title')).toBe('Pasta Primavera');
+	});
+
+	it('shows Choose a saved item fallback when saved item is not found', () => {
+		mockUsePlannerSavedItems.mockReturnValue([
+			{ _id: '2', name: 'Other Saved Item', url: '/other' },
+		]);
+		render(
+			<DishRow
+				dish={makeDish({ sourceType: 'saved', savedId: '1' })}
+				{...defaultProps}
+			/>,
+		);
+		const chip = screen.getByTestId('dish-source-chip-0');
+		expect(chip.textContent).toBe('Choose a saved item');
+		expect(chip.getAttribute('title')).toBeNull();
+	});
+
+	it('shows formatted text in chip when sourceType is text and text is non-empty', () => {
+		mockFormatSourceChip.mockReturnValue('example.com/recipe');
+		render(
+			<DishRow
+				dish={makeDish({
+					sourceType: 'text',
+					sourceText: 'https://example.com/recipe',
+				})}
+				{...defaultProps}
+			/>,
+		);
+		const chip = screen.getByTestId('dish-source-chip-0');
+		expect(chip.textContent).toBe('example.com/recipe');
+		expect(chip.getAttribute('title')).toBe('https://example.com/recipe');
+		expect(mockFormatSourceChip).toHaveBeenCalledWith(
+			'https://example.com/recipe',
+		);
+	});
+
+	it('shows Add reference fallback when sourceType is text and text is empty', () => {
+		render(
+			<DishRow
+				dish={makeDish({ sourceType: 'text', sourceText: '' })}
+				{...defaultProps}
+			/>,
+		);
+		const chip = screen.getByTestId('dish-source-chip-0');
+		expect(chip.textContent).toBe('Add reference');
+		expect(chip.getAttribute('title')).toBeNull();
+	});
+
 	it('hides source controls and note when collapsed', () => {
 		render(<DishRow dish={makeDish({ expanded: false })} {...defaultProps} />);
 		expect(screen.queryByTestId('dish-source-type-0')).toBeNull();
@@ -174,7 +289,11 @@ describe('DishRow', () => {
 
 		rerender(
 			<DishRow
-				dish={makeDish({ expanded: true, sourceType: 'text', note: 'Keep me' })}
+				dish={makeDish({
+					expanded: true,
+					sourceType: 'text',
+					note: 'Keep me',
+				})}
 				{...defaultProps}
 			/>,
 		);
@@ -221,7 +340,7 @@ describe('DishRow', () => {
 
 	it('calls onUpdate with savedId when saved select changes', () => {
 		const onUpdate = vi.fn();
-		mockUsePlannerSavedItems.mockReturnValueOnce([
+		mockUsePlannerSavedItems.mockReturnValue([
 			{ _id: '1', name: 'Pasta', url: '/pasta' },
 		]);
 		render(
@@ -239,12 +358,16 @@ describe('DishRow', () => {
 
 	it('calls onUpdate with empty savedId when saved select is cleared', () => {
 		const onUpdate = vi.fn();
-		mockUsePlannerSavedItems.mockReturnValueOnce([
+		mockUsePlannerSavedItems.mockReturnValue([
 			{ _id: '1', name: 'Pasta', url: '/pasta' },
 		]);
 		render(
 			<DishRow
-				dish={makeDish({ expanded: true, sourceType: 'saved', savedId: '1' })}
+				dish={makeDish({
+					expanded: true,
+					sourceType: 'saved',
+					savedId: '1',
+				})}
 				{...defaultProps}
 				onUpdate={onUpdate}
 			/>,
@@ -285,5 +408,46 @@ describe('DishRow', () => {
 			target: { value: 'A note' },
 		});
 		expect(onUpdate).toHaveBeenCalledWith({ note: 'A note' });
+	});
+});
+
+describe('DishRowLayout', () => {
+	beforeEach(() => {
+		vi.resetAllMocks();
+		mockUseIsMobile.mockReturnValue(false);
+	});
+
+	const layoutProps = {
+		index: 0,
+		nameInput: <div data-testid="name-input">Name</div>,
+		chip: <div data-testid="chip">Chip</div>,
+		expandButton: <div data-testid="expand">Expand</div>,
+		removeButton: <div data-testid="remove">Remove</div>,
+	};
+
+	it('renders children in a single horizontal row on desktop', () => {
+		mockUseIsMobile.mockReturnValue(false);
+		render(<DishRowLayout {...layoutProps} />);
+		const layout = screen.getByTestId('dish-row-layout-0');
+		expect(layout.getAttribute('direction')).toBeNull();
+		expect(screen.getByTestId('name-input')).toBeDefined();
+		expect(screen.getByTestId('chip')).toBeDefined();
+		expect(screen.getByTestId('expand')).toBeDefined();
+		expect(screen.getByTestId('remove')).toBeDefined();
+	});
+
+	it('renders children in a column on mobile', () => {
+		mockUseIsMobile.mockReturnValue(true);
+		render(<DishRowLayout {...layoutProps} />);
+		const layout = screen.getByTestId('dish-row-layout-0');
+		expect(layout.getAttribute('direction')).toBe('column');
+		expect(screen.getByTestId('name-input')).toBeDefined();
+		expect(screen.getByTestId('chip')).toBeDefined();
+	});
+
+	it('renders without a remove button when it is null', () => {
+		mockUseIsMobile.mockReturnValue(false);
+		render(<DishRowLayout {...layoutProps} removeButton={null} />);
+		expect(screen.queryByTestId('remove')).toBeNull();
 	});
 });

@@ -371,6 +371,12 @@ Add the source chip to the collapsed `DishRow`. It reads from the existing sourc
 - Each source chip renders in the collapsed row: dashed “Add source” when empty, saved item name with a filled dot when Saved, truncated reference with a hollow ring when Reference.
 - A very long reference URL displays as a single-line chip with an ellipsis.
 
+**Status:** ✅ Complete
+
+**As built:**
+- Capped the source chip at `max-width: min(240px, 50%)` so long references truncate before squeezing the dish-name input.
+- Included mobile two-line reflow for the collapsed dish row.
+
 ### Step 7 — Add the note chip
 
 Add the note chip to the collapsed `DishRow`. It reads from the existing note state: dashed “Add note” when empty, solid “Note” when set, with the note text truncated below the row.

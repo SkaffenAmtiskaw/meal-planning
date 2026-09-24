@@ -13,6 +13,8 @@
 - meal color should be based on hex of title + description
 - sidebar on modal should close after you click something
 - refactor all modal forms to separate presentation and data concerns
+- change segmented control theme to match design from Claude
+- month view current date circle is truncating numbers
 
 # High-Priority
 ## Calendar Page
@@ -67,8 +69,7 @@
 - email formatting
 - audit code for client component surface area - move as much as possible to server components
 - add different import order sorting for `.test.ts(x)` - vitest and react/testing-library should be at the top
-- toggle light/dark mode - make sure schedule-x corresponds to it
-
+- toggle light/dark mode
 # Undecided
 - [[Link SSO Login to Email|Link SSO to Email Login]]
 - Allow user to change meal color in calendar

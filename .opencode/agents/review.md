@@ -69,13 +69,13 @@ Check changed code for the following:
 5. **Unit tests are meaningful.** Unit tests should not be redundant, or test presentation. They should test absolutely necessary functionality. Meaningless unit tests are a code smell.
 6. **Code is DRY.** Repeated code should be turned into reusable utilities, hooks, and/or subcomponents.
 7. **Code is well organized.** WHERE code is placed is almost as important as what the code is. If modules are not where a user is expecting that impacts the maintainability of the codebase. Make sure code is located in the appropriate directory. Domain-specific code should not be placed in directories with generic code, and vice versa.
-8. **Existing libraries are utilized.** For any custom CSS found:
+8. **Existing libraries are utilized.** For any custom CSS found there must be a justification comment explaining why Mantine could not be used:
     - If a justification comment is present above it, quote the comment as-is when you raise the issue, so the user can judge the reasoning directly.
     - If no justification comment is present, flag it as "missing justification" — this is the issue itself. Do not research a Mantine replacement yourself during review.
 9. **Documented project standards are obeyed.** Refer to documentation in `.opencode/docs/*` - new code should not violate rules found in these files.
 10. **Minimize client-rendered components.** Components should not be client components unless absolutely necessary (typically when server side state is required). Client components should have minimal surface area. Using `useEffect` for data-fetching is a common React pattern, but it is an ANTI-PATTERN in Next.js.
 
-_Note: Changes to `.md` files made in `notes/` and `.opencode/` are almost always manual changes done by the user and can be safely ignored. If you are in doubt you can ask the user for confirmation of this._
+_Important Note: Changes to `.md` files made in `notes/` and `.opencode/` are almost always manual changes done by the user and can be safely ignored. NEVER revert a change to a `.md` file without first asking the user. The user will often make changes while the subagents are working on other things. If you are in doubt you can ask the user for confirmation of this._
 
 ## Phase 2: Dig Deeper
 
