@@ -2,9 +2,7 @@
 
 import type { ReactNode } from 'react';
 
-import { UnstyledButton } from '@mantine/core';
-
-import classes from './BaseDishChip.module.css';
+import { PillButton } from '@/_components/PillButton';
 
 type BaseDishChipProps = {
 	children: ReactNode;
@@ -24,14 +22,15 @@ export const BaseDishChip = ({
 	title,
 }: BaseDishChipProps) => {
 	return (
-		<UnstyledButton
-			type="button"
+		<PillButton
 			onClick={onClick}
 			data-testid={testId}
 			title={title}
-			className={`${classes.root} ${isEmpty ? classes.empty : classes.set} ${className ?? ''}`}
+			variant={isEmpty ? 'dashed' : 'outline'}
+			size="sm"
+			className={className}
 		>
 			{children}
-		</UnstyledButton>
+		</PillButton>
 	);
 };

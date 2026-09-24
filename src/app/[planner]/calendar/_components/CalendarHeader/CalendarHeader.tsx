@@ -5,7 +5,6 @@ import type { ReactElement } from 'react';
 
 import {
 	Button,
-	Flex,
 	Group,
 	Popover,
 	SegmentedControl,
@@ -25,6 +24,7 @@ import {
 	CalendarNextButton,
 	CalendarPreviousButton,
 	CalendarTodayButton,
+	CalendarTodayPillButton,
 	type CalendarViewType,
 	DEFAULT_VIEWS,
 	LABEL_FORMATTERS,
@@ -119,16 +119,16 @@ export function CalendarHeaderMobile(): ReactElement {
 			bg="var(--mantine-color-body)"
 			style={{ zIndex: 100 }}
 		>
-			<Group gap="xs" align="center" wrap="nowrap" w="100%">
-				{viewType !== 'list' && <CalendarPreviousButton size="lg" />}
+			<Group justify="space-between" align="center" wrap="nowrap" w="100%">
+				<Group gap="xs" align="center" wrap="nowrap" justify="center">
+					{viewType !== 'list' && <CalendarPreviousButton size="lg" />}
 
-				<Flex flex={1} justify="center">
 					<Popover opened={opened} onChange={setOpened}>
 						<Popover.Target>
 							<Button
 								variant="subtle"
-								size="lg"
-								rightSection={<IconChevronDown size={16} />}
+								size="compact-sm"
+								rightSection={<IconChevronDown size={14} />}
 								onClick={() => setOpened((o) => !o)}
 							>
 								{label}
@@ -148,11 +148,11 @@ export function CalendarHeaderMobile(): ReactElement {
 							/>
 						</Popover.Dropdown>
 					</Popover>
-				</Flex>
 
-				{viewType !== 'list' && <CalendarNextButton size="lg" />}
+					{viewType !== 'list' && <CalendarNextButton size="lg" />}
+				</Group>
 
-				<CalendarTodayButton size="lg" />
+				<CalendarTodayPillButton data-testid="today-button" />
 			</Group>
 
 			<SegmentedControl

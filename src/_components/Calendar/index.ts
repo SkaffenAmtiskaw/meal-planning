@@ -7,6 +7,7 @@ export {
 	CalendarNextButton,
 	CalendarPreviousButton,
 	CalendarTodayButton,
+	CalendarTodayPillButton,
 } from './_components/CalendarNavButtons';
 export type {
 	CalendarDish,

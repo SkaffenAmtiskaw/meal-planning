@@ -1,3 +1,5 @@
+import type { ReactNode } from 'react';
+
 import { fireEvent, render, screen } from '@testing-library/react';
 
 import { beforeEach, describe, expect, it, vi } from 'vitest';
@@ -6,11 +8,40 @@ import {
 	CalendarNextButton,
 	CalendarPreviousButton,
 	CalendarTodayButton,
+	CalendarTodayPillButton,
 } from './CalendarNavButtons';
 
 import { useCalendarContext } from '../CalendarContext';
 
 vi.mock('@mantine/core', async () => await import('@mocks/@mantine/core'));
+
+vi.mock('@/_components/PillButton', () => ({
+	PillButton: vi.fn(
+		({
+			children,
+			onClick,
+			'data-testid': testId,
+			size,
+			variant,
+		}: {
+			children?: ReactNode;
+			onClick?: () => void;
+			'data-testid'?: string;
+			size?: string;
+			variant?: string;
+		}) => (
+			<button
+				type="button"
+				data-testid={testId}
+				data-size={size}
+				data-variant={variant}
+				onClick={onClick}
+			>
+				{children}
+			</button>
+		),
+	),
+}));
 
 vi.mock('../CalendarContext', () => ({
 	useCalendarContext: vi.fn(),
@@ -50,6 +81,33 @@ describe('CalendarTodayButton', () => {
 
 	it('spreads extra props onto the button', () => {
 		render(<CalendarTodayButton data-testid="today-button" />);
+
+		expect(screen.getByTestId('today-button')).toBeDefined();
+	});
+});
+
+describe('CalendarTodayPillButton', () => {
+	beforeEach(() => {
+		vi.resetAllMocks();
+		setupCalendarContext();
+	});
+
+	it('renders a Today button', () => {
+		render(<CalendarTodayPillButton />);
+
+		expect(screen.getByRole('button', { name: 'Today' })).toBeDefined();
+	});
+
+	it('calls goToToday when clicked', () => {
+		render(<CalendarTodayPillButton />);
+
+		fireEvent.click(screen.getByRole('button', { name: 'Today' }));
+
+		expect(mockGoToToday).toHaveBeenCalled();
+	});
+
+	it('forwards extra props onto the button', () => {
+		render(<CalendarTodayPillButton data-testid="today-button" />);
 
 		expect(screen.getByTestId('today-button')).toBeDefined();
 	});

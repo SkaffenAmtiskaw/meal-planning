@@ -376,7 +376,7 @@ implemented in a CSS module with justification comments, since Mantine does not 
 styles. The scroll-to-top effect uses a `biome-ignore` comment consistent with other scroll effects in
 the codebase.
 
-## Step 7: FAB, stub actions, permissions, and skeletons
+## Step 7: FAB, stub actions, permissions
 
 **What we're doing:** Add the Add Meal FAB, disabled Edit/Add dish stubs, permission gating, and
 loading skeletons to the mobile month view.
@@ -386,8 +386,6 @@ loading skeletons to the mobile month view.
 - [ ] Empty days show "Nothing planned yet" and an enabled **Add meal** button.
 - [ ] A floating ember **Add Meal** button adds a meal for the currently selected day.
 - [ ] The FAB and empty-state Add meal button are hidden for read-only users.
-- [ ] While data is loading, skeleton placeholders for grid cells and agenda cards are shown without
-  collapsing layout.
 - [ ] Adding a meal via the FAB updates the calendar data and the agenda.
 
 **Architectural plan:**
@@ -396,7 +394,6 @@ loading skeletons to the mobile month view.
 - Build a small `MobileAddMealButton` FAB using Mantine `Affix` + `Button` (ember color) and the
   existing `AddMealForm`/`ControlledModal`, prefilling `selectedDate`.
 - Render disabled stub `Button` components for Edit and Add dish actions.
-- Add skeleton states using Mantine `Skeleton` for the grid and agenda during loading.
 
 ## Out of scope
 - Week view on mobile (already excluded on small screens).

@@ -20,6 +20,8 @@ permission:
     develop: allow
     resolve: allow
     apply: allow
+    cleanup: allow
+    inspect: allow
   edit:
     "*": deny
     "notes/**": ask

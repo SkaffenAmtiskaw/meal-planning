@@ -1,17 +1,43 @@
+import type { ReactNode } from 'react';
+
 import { fireEvent, render, screen } from '@testing-library/react';
 
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { BaseDishChip } from './BaseDishChip';
 
-vi.mock('@mantine/core', async () => await import('@mocks/@mantine/core'));
-
-vi.mock('./BaseDishChip.module.css', () => ({
-	default: {
-		root: 'base-root',
-		empty: 'empty',
-		set: 'set',
-	},
+vi.mock('@/_components/PillButton', () => ({
+	PillButton: vi.fn(
+		({
+			children,
+			onClick,
+			'data-testid': testId,
+			title,
+			className,
+			variant,
+			size,
+		}: {
+			children?: ReactNode;
+			onClick?: () => void;
+			'data-testid'?: string;
+			title?: string;
+			className?: string;
+			variant?: string;
+			size?: string;
+		}) => (
+			<button
+				type="button"
+				onClick={onClick}
+				data-testid={testId}
+				title={title}
+				data-variant={variant}
+				data-size={size}
+				className={className}
+			>
+				{children}
+			</button>
+		),
+	),
 }));
 
 const defaultProps = {
@@ -32,20 +58,20 @@ describe('BaseDishChip', () => {
 		expect(screen.getByTestId('base-dish-chip-0').textContent).toBe('Note');
 	});
 
-	it('applies the empty variant class when isEmpty is true', () => {
+	it('passes variant dashed when isEmpty is true', () => {
 		render(<BaseDishChip {...defaultProps} isEmpty />);
 
-		expect(screen.getByTestId('base-dish-chip-0').className).toContain(
-			'base-root empty',
-		);
+		expect(
+			screen.getByTestId('base-dish-chip-0').getAttribute('data-variant'),
+		).toBe('dashed');
 	});
 
-	it('applies the set variant class when isEmpty is false', () => {
+	it('passes variant outline when isEmpty is false', () => {
 		render(<BaseDishChip {...defaultProps} isEmpty={false} />);
 
-		expect(screen.getByTestId('base-dish-chip-0').className).toContain(
-			'base-root set',
-		);
+		expect(
+			screen.getByTestId('base-dish-chip-0').getAttribute('data-variant'),
+		).toBe('outline');
 	});
 
 	it('calls onClick when the chip is clicked', () => {
@@ -74,8 +100,6 @@ describe('BaseDishChip', () => {
 		);
 
 		const chip = screen.getByTestId('base-dish-chip-0');
-		expect(chip.className).toContain('base-root');
-		expect(chip.className).toContain('set');
 		expect(chip.className).toContain('extra-class');
 	});
 });
