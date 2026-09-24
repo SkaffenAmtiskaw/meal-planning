@@ -8,6 +8,7 @@ import { Flex, Stack } from '@mantine/core';
 import { CalendarProvider, useCalendarContext } from '@/_components/Calendar';
 import { useIsMobile } from '@/_hooks';
 
+import { CalendarModalProvider } from '../CalendarModal';
 import type { CalendarEvent } from '../../_utils/toCalendarEvents';
 import type { SavedItem, SerializedDay } from '../../_utils/toScheduleXEvents';
 import {
@@ -98,14 +99,16 @@ export function CalendarView({
 
 	return (
 		<CalendarProvider>
-			<CalendarViewContent
-				plannerId={plannerId}
-				savedItems={savedItems}
-				calendar={calendar}
-				clickedEvent={clickedEvent}
-				onClose={() => setClickedEvent(null)}
-				onMealClick={setClickedEvent}
-			/>
+			<CalendarModalProvider plannerId={plannerId}>
+				<CalendarViewContent
+					plannerId={plannerId}
+					savedItems={savedItems}
+					calendar={calendar}
+					clickedEvent={clickedEvent}
+					onClose={() => setClickedEvent(null)}
+					onMealClick={setClickedEvent}
+				/>
+			</CalendarModalProvider>
 		</CalendarProvider>
 	);
 }

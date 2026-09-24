@@ -9,7 +9,7 @@
     "lint": "biome check --write",
     "start": "next start",
     "test": "sh -c 'vitest ${1:-src}' --",
-    "test:agent": "vitest run [--args] --coverage --coverage.include [--args] --reporter=agent",
+    "test:agent": "sh -c 'vitest run ${1:-src} --coverage --coverage.include ${1:-src} --reporter=agent' --",
     "test:coverage": "vitest run --coverage src"
   },
   "dependencies": {

@@ -92,6 +92,14 @@ vi.mock('../MealDetailModal/MealDetailModal', async () => ({
 	MealDetailModal: vi.fn(() => <div data-testid="meal-detail-modal" />),
 }));
 
+vi.mock('../CalendarModal', async () => ({
+	CalendarModalProvider: vi.fn(({ children, plannerId }) => (
+		<div data-testid="calendar-modal-provider" data-planner-id={plannerId}>
+			{children}
+		</div>
+	)),
+}));
+
 const mockUseCalendarContext = vi.mocked(useCalendarContext);
 const mockUseIsMobile = vi.mocked(useIsMobile);
 const mockMealMonthAgenda = vi.mocked(MealMonthAgenda);
@@ -129,6 +137,14 @@ describe('CalendarView', () => {
 		expect(screen.getByTestId('meal-calendar')).toBeDefined();
 		expect(screen.queryByTestId('meal-week-view')).toBeNull();
 		expect(screen.queryByTestId('meal-list-view')).toBeNull();
+	});
+
+	it('renders CalendarModalProvider with plannerId', () => {
+		render(<CalendarView {...defaultProps} />);
+
+		const provider = screen.getByTestId('calendar-modal-provider');
+		expect(provider).toBeDefined();
+		expect(provider.dataset.plannerId).toBe('planner-1');
 	});
 
 	it('renders MealWeekView when viewType is week', () => {

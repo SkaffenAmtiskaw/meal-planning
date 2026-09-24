@@ -2,18 +2,19 @@
 
 **AI Instructions** - DO NOT delete this file. You may remove lines, but under no circumstances may you delete the file.
 
-# Bugfixes/User Issues
-- meals created in month view don't show up in week view - will be fixed in [[Replace Schedule-X]]
-- [[Add Meal UX Changes]]
+# Bugfixes/User Issues/Tech Debt
+## Calendar Page
+- [[Meal Detail Modal|Meal Detail Modal Update]]
 - [[Stale Data Issues]]
 - you should be able to create a meal with just a title and a description (or just a title)
 - meal color should be based on hex of title + description
-- sidebar on modal should close after you click something
-- refactor all modal forms to separate presentation and data concerns
-
+- change segmented control theme to match design from Claude
+- Desktop: month view current date circle is truncating numbers
+## Other
+- [[Modal Form Architecture|refactor all modal forms to separate presentation and data concerns]]
 # High-Priority
 ## Calendar Page
-- [[Replace Schedule-X|replace schedule-x]]
+- [[Replace Schedule-X]]
 - edit meals
 - delete meals
 - add meals by clicking month cell
@@ -64,8 +65,7 @@
 - email formatting
 - audit code for client component surface area - move as much as possible to server components
 - add different import order sorting for `.test.ts(x)` - vitest and react/testing-library should be at the top
-- toggle light/dark mode - make sure schedule-x corresponds to it
-
+- toggle light/dark mode
 # Undecided
 - [[Link SSO Login to Email|Link SSO to Email Login]]
 - Allow user to change meal color in calendar

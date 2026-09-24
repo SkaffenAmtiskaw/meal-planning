@@ -12,6 +12,7 @@ import {
 	type MobileMonthGridEvent,
 } from '@/_components/Calendar/MobileMonthGrid/MobileMonthGrid';
 import { getMealColor, TAG_COLORS } from '@/_theme/colors';
+import { MobileAddMealButton } from '@/app/[planner]/calendar/_components/AddMealButton';
 
 import type { CalendarEvent } from '../../_utils/toCalendarEvents';
 import { toCalendarEvents } from '../../_utils/toCalendarEvents';
@@ -61,6 +62,7 @@ export function MealMonthAgenda({
 		<Stack flex={1} mih={0} gap="md">
 			<MobileMonthGrid events={dotEvents} />
 			<MobileAgenda events={mealEvents} renderDish={renderDish} />
+			<MobileAddMealButton />
 		</Stack>
 	);
 }

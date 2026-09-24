@@ -1,0 +1,37 @@
+/* Cap the chip so a long reference truncates before it squeezes the dish-name input. */
+.root {
+	max-width: min(240px, 50%);
+}
+
+/* The source-type indicator dot is a custom visual element with no Mantine equivalent. */
+.dot {
+	width: 8px;
+	height: 8px;
+	border-radius: 50%;
+	flex-shrink: 0;
+	margin-right: 8px;
+}
+
+/* The source-type indicator dot is a custom visual element with no Mantine equivalent. */
+.dotEmpty {
+	background-color: var(--mantine-color-chalk-6);
+}
+
+/* The source-type indicator dot is a custom visual element with no Mantine equivalent. */
+.dotSaved {
+	background-color: var(--mantine-color-forest-5);
+}
+
+/* The source-type indicator dot is a custom visual element with no Mantine equivalent. */
+.dotText {
+	border: 1.5px solid var(--mantine-color-forest-5);
+	background-color: transparent;
+}
+
+/* Mantine has no built-in truncation utility for button labels, so text-overflow is set via CSS module. */
+.label {
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	min-width: 0;
+}

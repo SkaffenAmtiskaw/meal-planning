@@ -68,6 +68,12 @@ vi.mock('../DishLink/DishLink', async () => ({
 	DishLink: vi.fn(() => <span data-testid="dish-link" />),
 }));
 
+vi.mock('../AddMealButton/MobileAddMealButton', () => ({
+	MobileAddMealButton: vi.fn(() => (
+		<div data-testid="mobile-add-meal-button" />
+	)),
+}));
+
 const mockUseCalendarContext = vi.mocked(useCalendarContext);
 const mockMobileMonthGrid = vi.mocked(MobileMonthGrid);
 const mockMobileAgenda = vi.mocked(MobileAgenda);

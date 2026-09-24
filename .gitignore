@@ -49,3 +49,4 @@ next-env.d.ts
 # agent tooling
 .opencode/scratch/
 .opencode/secrets
+.playwright-mcp/

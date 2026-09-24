@@ -376,36 +376,23 @@ implemented in a CSS module with justification comments, since Mantine does not 
 styles. The scroll-to-top effect uses a `biome-ignore` comment consistent with other scroll effects in
 the codebase.
 
-## Step 7: FAB, stub actions, permissions, and skeletons
+## Step 7: Add Meal FAB
 
-**What we're doing:** Add the Add Meal FAB, disabled Edit/Add dish stubs, permission gating, and
-loading skeletons to the mobile month view.
+**What we're doing:** Add a FAB to add a meal
 
 **Acceptance criteria:**
-- [ ] Each meal card has disabled **Edit** and **Add dish** pill buttons.
-- [ ] Empty days show "Nothing planned yet" and an enabled **Add meal** button.
-- [ ] A floating ember **Add Meal** button adds a meal for the currently selected day.
-- [ ] The FAB and empty-state Add meal button are hidden for read-only users.
-- [ ] While data is loading, skeleton placeholders for grid cells and agenda cards are shown without
-  collapsing layout.
-- [ ] Adding a meal via the FAB updates the calendar data and the agenda.
+- [ ] A floating ember **Add Meal** button opens the add meal modal with the date pre-filled to the selected day.
+- [ ] The FAB is hidden for read-only users.
 
 **Architectural plan:**
-- In `src/app/[planner]/calendar/_components/MealMonthAgenda/MealMonthAgenda.tsx`, use `useCanWrite`
-  to hide write affordances for read-only users.
-- Build a small `MobileAddMealButton` FAB using Mantine `Affix` + `Button` (ember color) and the
-  existing `AddMealForm`/`ControlledModal`, prefilling `selectedDate`.
-- Render disabled stub `Button` components for Edit and Add dish actions.
-- Add skeleton states using Mantine `Skeleton` for the grid and agenda during loading.
+- In `src/app/[planner]/calendar/_components/MealMonthAgenda/MealMonthAgenda.tsx`, use `useCanWrite` to hide write affordances for read-only users.
+- Build a small `MobileAddMealButton` FAB using Mantine `Affix` + `Button` (ember color) and the existing `AddMealForm`/`ControlledModal`, prefilling `selectedDate`. (You can also consider using the `PillButton` component in `@/_components`).
 
-## Out of scope
-- Week view on mobile (already excluded on small screens).
-- The mobile list view (separate story / handoff).
-- Drag to reschedule, multi-month infinite scroll, swipe gestures.
-- Any change to the add/edit meal flow itself.
+## Step 8: Stub Actions
+**What we're doing:** Adding the stub actions to the meal card. The "Add Dish" button from the original design has been changed (as per user instruction) to be "Move to..."![[agenda_view_updated_meal_card.png]]
 
-## Files in this bundle
-- `Mobile Month View.dc.html` — interactive design reference; open in a browser and tap days.
-- `screenshots/01-month-today.png` — today selected, two meals with notes.
-- `assets/weeknight-header-dark.svg` — existing app logo, included only so the prototype renders
-  standalone.
+**Acceptance Criteria**
+- [ ] Each meal card has disabled **Edit** and **Move to...** pill buttons.
+
+**Architectural plan:**
+- [ ] Use the pre-existing PillButton component.

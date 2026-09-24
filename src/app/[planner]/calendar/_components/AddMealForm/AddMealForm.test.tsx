@@ -1,18 +1,18 @@
+import { ScrollArea } from '@mantine/core';
 import { useForm } from '@mantine/form';
 
+import { makeDish } from '@fixtures/dish';
 import { act, fireEvent, render, screen } from '@testing-library/react';
 
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { addMeal } from '@/_actions/calendar';
 import { FormFeedbackAlert, SubmitButton } from '@/_components';
-import { useFormFeedback } from '@/_hooks';
+import { useFormFeedback, useIsMobile } from '@/_hooks';
 
 import { AddMealForm } from './AddMealForm';
-import { DishRow } from './DishRow';
+import { DishList } from './DishList';
 import { useDishes } from './useDishes';
-
-type FeedbackStatus = 'idle' | 'submitting' | 'success' | 'error';
 
 vi.mock('@mantine/core', async () => await import('@mocks/@mantine/core'));
 
@@ -30,8 +30,8 @@ vi.mock('@/_components', async () => ({
 	SubmitButton: vi.fn(() => null),
 }));
 
-vi.mock('./DishRow', async () => ({
-	DishRow: vi.fn(() => null),
+vi.mock('./DishList', async () => ({
+	DishList: vi.fn(() => <div data-testid="dish-list" />),
 }));
 
 vi.mock('./useDishes', async () => ({
@@ -42,16 +42,6 @@ const defaultProps = {
 	plannerId: 'planner-1',
 	onCancel: vi.fn(),
 };
-
-const makeDish = (overrides: Partial<{ id: string; name: string }> = {}) => ({
-	id: overrides.id ?? 'dish-1',
-	name: overrides.name ?? '',
-	sourceType: 'none' as const,
-	savedId: '',
-	sourceText: '',
-	note: '',
-	noteExpanded: false,
-});
 
 describe('AddMealForm', () => {
 	const mockAddDish = vi.fn();
@@ -66,17 +56,20 @@ describe('AddMealForm', () => {
 			removeDish: mockRemoveDish,
 			updateDish: mockUpdateDish,
 		});
+		vi.mocked(useIsMobile).mockReturnValue(false);
 	});
 
-	it('calls addDish when "Add dish" is clicked', () => {
+	it('passes addDish to DishList', () => {
 		render(<AddMealForm {...defaultProps} />);
-		fireEvent.click(screen.getByText('Add dish'));
-		expect(mockAddDish).toHaveBeenCalledOnce();
+		expect(vi.mocked(DishList)).toHaveBeenCalledWith(
+			expect.objectContaining({ onAddDish: mockAddDish }),
+			undefined,
+		);
 	});
 
 	it('passes status and errorMessage to FormFeedbackAlert', () => {
 		vi.mocked(useFormFeedback).mockReturnValueOnce({
-			status: 'error' as FeedbackStatus,
+			status: 'error',
 			countdown: 0,
 			errorMessage: 'Something went wrong',
 			wrap: vi.fn(),
@@ -120,7 +113,15 @@ describe('AddMealForm', () => {
 				plannerId: 'planner-1',
 				date: '',
 				mealName: '',
-				dishes: expect.any(Array),
+				dishes: [
+					{
+						name: '',
+						sourceType: 'none',
+						savedId: undefined,
+						sourceText: undefined,
+						note: undefined,
+					},
+				],
 			}),
 		);
 	});
@@ -187,15 +188,112 @@ describe('AddMealForm', () => {
 		);
 	});
 
-	it('passes showRemove false to DishRow when there is only one dish', () => {
+	it('passes dishes to DishList', () => {
+		const dishes = [makeDish({ id: 'dish-1' }), makeDish({ id: 'dish-2' })];
+		vi.mocked(useDishes).mockReturnValueOnce({
+			dishes,
+			addDish: mockAddDish,
+			removeDish: mockRemoveDish,
+			updateDish: mockUpdateDish,
+		});
 		render(<AddMealForm {...defaultProps} />);
-		expect(vi.mocked(DishRow)).toHaveBeenCalledWith(
-			expect.objectContaining({ showRemove: false }),
+		expect(vi.mocked(DishList)).toHaveBeenCalledWith(
+			expect.objectContaining({ dishes }),
 			undefined,
 		);
 	});
 
-	it('passes showRemove true to DishRow when there are multiple dishes', () => {
+	it('DishList onUpdate callback calls updateDish', () => {
+		render(<AddMealForm {...defaultProps} />);
+		const { onUpdateDish } = vi.mocked(DishList).mock.calls[0][0];
+		onUpdateDish('dish-1', { name: 'updated' });
+		expect(mockUpdateDish).toHaveBeenCalledWith('dish-1', { name: 'updated' });
+	});
+
+	it('DishList onRemove callback calls removeDish', () => {
+		render(<AddMealForm {...defaultProps} />);
+		const { onRemoveDish } = vi.mocked(DishList).mock.calls[0][0];
+		onRemoveDish('dish-1');
+		expect(mockRemoveDish).toHaveBeenCalledWith('dish-1');
+	});
+
+	it('calls onSubtitleChange when date or meal name changes', () => {
+		const onSubtitleChange = vi.fn();
+		render(
+			<AddMealForm {...defaultProps} onSubtitleChange={onSubtitleChange} />,
+		);
+
+		fireEvent.change(screen.getByTestId('meal-name'), {
+			target: { value: 'Thai night' },
+		});
+		expect(onSubtitleChange).toHaveBeenLastCalledWith('Thai night');
+
+		fireEvent.change(screen.getByTestId('meal-date'), {
+			target: { value: '2024-09-10' },
+		});
+		expect(onSubtitleChange).toHaveBeenLastCalledWith(
+			'Tuesday, September 10 · Thai night',
+		);
+	});
+
+	it('calls onSubtitleChange with formatted initialDate on mount', () => {
+		const onSubtitleChange = vi.fn();
+		render(
+			<AddMealForm
+				{...defaultProps}
+				initialDate="2024-09-10"
+				onSubtitleChange={onSubtitleChange}
+			/>,
+		);
+		expect(onSubtitleChange).toHaveBeenCalledWith('Tuesday, September 10');
+	});
+
+	it('renders MealFields and DishList', () => {
+		render(<AddMealForm {...defaultProps} />);
+		expect(screen.getByTestId('meal-date')).toBeDefined();
+		expect(screen.getByTestId('dish-list')).toBeDefined();
+	});
+
+	it('uses desktop layout when not mobile', () => {
+		vi.mocked(useIsMobile).mockReturnValue(false);
+		render(<AddMealForm {...defaultProps} />);
+		expect(screen.getByTestId('desktop-layout')).toBeDefined();
+		expect(screen.queryByTestId('mobile-layout')).toBeNull();
+	});
+
+	it('uses mobile layout when mobile', () => {
+		vi.mocked(useIsMobile).mockReturnValue(true);
+		render(<AddMealForm {...defaultProps} />);
+		expect(screen.getByTestId('mobile-layout')).toBeDefined();
+		expect(screen.queryByTestId('desktop-layout')).toBeNull();
+	});
+
+	it('wraps mobile content in a ScrollArea so the stacked fields can scroll', () => {
+		vi.mocked(useIsMobile).mockReturnValue(true);
+		render(<AddMealForm {...defaultProps} />);
+
+		expect(vi.mocked(ScrollArea)).toHaveBeenCalledWith(
+			expect.objectContaining({
+				'data-testid': 'mobile-layout',
+			}),
+			undefined,
+		);
+
+		const mobileLayout = screen.getByTestId('mobile-layout');
+		expect(
+			mobileLayout.querySelector('[data-testid="meal-date"]'),
+		).not.toBeNull();
+		expect(
+			mobileLayout.querySelector('[data-testid="dish-list"]'),
+		).not.toBeNull();
+	});
+
+	it('shows the dish count in the footer', () => {
+		render(<AddMealForm {...defaultProps} />);
+		expect(screen.getByText('1 dish on this meal')).toBeDefined();
+	});
+
+	it('updates the footer dish count when more dishes are added', () => {
 		vi.mocked(useDishes).mockReturnValueOnce({
 			dishes: [makeDish({ id: 'dish-1' }), makeDish({ id: 'dish-2' })],
 			addDish: mockAddDish,
@@ -203,27 +301,10 @@ describe('AddMealForm', () => {
 			updateDish: mockUpdateDish,
 		});
 		render(<AddMealForm {...defaultProps} />);
-		expect(vi.mocked(DishRow)).toHaveBeenCalledWith(
-			expect.objectContaining({ showRemove: true }),
-			undefined,
-		);
+		expect(screen.getByText('2 dishes on this meal')).toBeDefined();
 	});
 
-	it('DishRow onUpdate callback calls updateDish', () => {
-		render(<AddMealForm {...defaultProps} />);
-		const { onUpdate } = vi.mocked(DishRow).mock.calls[0][0];
-		onUpdate({ name: 'test' });
-		expect(mockUpdateDish).toHaveBeenCalledWith('dish-1', { name: 'test' });
-	});
-
-	it('DishRow onRemove callback calls removeDish', () => {
-		render(<AddMealForm {...defaultProps} />);
-		const { onRemove } = vi.mocked(DishRow).mock.calls[0][0];
-		onRemove();
-		expect(mockRemoveDish).toHaveBeenCalledWith('dish-1');
-	});
-
-	it('does not throw when onMealAdded is not provided', async () => {
+	it('does not throw when onSuccess is not provided', async () => {
 		vi.mocked(addMeal).mockResolvedValueOnce({
 			ok: true,
 			data: { calendar: [] },

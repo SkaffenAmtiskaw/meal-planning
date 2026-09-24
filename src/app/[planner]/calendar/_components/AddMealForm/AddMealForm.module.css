@@ -1,0 +1,44 @@
+.form {
+	/* Mantine props cannot make the form fill the remaining flex space inside Modal.Body. */
+	flex: 1;
+	display: flex;
+	flex-direction: column;
+	min-height: 0;
+}
+
+.stack {
+	/* Mantine props cannot express that a flex child must not shrink when siblings grow and scroll. */
+	flex: 1;
+	display: flex;
+	flex-direction: column;
+	min-height: 0;
+	/* Mantine Stack does not provide a prop to clip overflowing children so only the right pane scrolls. */
+	overflow: hidden;
+}
+
+.mealFieldsPane {
+	/* Mantine Flex props cannot clip overflowing content when the pane is shorter than its children. */
+	overflow: hidden;
+}
+
+.mealFieldsPane > * {
+	/* Mantine Flex props cannot make a child component's root fill the pane's main axis; the
+	   pane's only child is MealFields' Card, which must grow to tint the full column height. */
+	flex: 1 1 auto;
+}
+
+.rightPane {
+	/* Mantine Flex props cannot clip overflowing content when the pane is shorter than its children. */
+	overflow: hidden;
+}
+
+.scrollArea {
+	/* ScrollArea must fill the remaining height of its flex parent and be allowed to shrink below its content height. */
+	flex: 1;
+	min-height: 0;
+}
+
+.footer {
+	/* The footer is the last flex child of a non-scrolling flex column; it must not shrink when the content pane grows. */
+	flex-shrink: 0;
+}

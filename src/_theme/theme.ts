@@ -80,6 +80,11 @@ export const theme = createTheme({
 				radius: 'md',
 				overlayProps: { blur: 2 },
 			},
+			vars: () => ({
+				root: {
+					'--modal-size-xl': '80%',
+				},
+			}),
 		},
 		Anchor: {
 			defaultProps: {
@@ -97,10 +102,8 @@ export const theme = createTheme({
 			},
 		},
 		SegmentedControl: {
-			styles: {
-				label: {
-					color: '#44633F',
-				},
+			defaultProps: {
+				color: 'forest',
 			},
 		},
 	},

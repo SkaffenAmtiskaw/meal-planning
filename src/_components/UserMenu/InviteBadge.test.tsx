@@ -1,4 +1,4 @@
-import { render, screen } from '@testing-library/react';
+import { act, render, screen } from '@testing-library/react';
 
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
@@ -158,18 +158,28 @@ describe('InviteBadge', () => {
 	});
 
 	describe('InviteBadge', () => {
-		it('renders children as Suspense fallback while loading', () => {
+		it('renders children as Suspense fallback while loading', async () => {
+			// Rendering an async server component in a client test env makes React
+			// log its "async Client Component" warning; it is expected here.
+			const consoleSpy = vi
+				.spyOn(console, 'error')
+				.mockImplementation(() => {});
+
 			mockGetUser.mockImplementation(() => new Promise(() => {}));
 			mockGetUserInvites.mockImplementation(() => new Promise(() => {}));
 
-			render(
-				<InviteBadge>
-					<div data-testid="child">Child Element</div>
-				</InviteBadge>,
-			);
+			await act(async () => {
+				render(
+					<InviteBadge>
+						<div data-testid="child">Child Element</div>
+					</InviteBadge>,
+				);
+			});
 
 			expect(screen.getByTestId('child')).toBeTruthy();
 			expect(screen.queryByTestId('invite-badge')).toBeNull();
+
+			consoleSpy.mockRestore();
 		});
 	});
 });

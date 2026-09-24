@@ -28,7 +28,17 @@ Before making any change, confirm: does the fix introduce any line or branch not
 
 **Scope**
 
-You may ONLY modify the file(s) explicitly listed in your handoff, and only to resolve the specific error described. If you discover the fix requires touching a file not in your handoff, or discover a second, unrelated error while working — STOP and report back. This is a signal the handoff was incomplete, not a signal to expand your scope.
+You may modify ONLY:
+1. The file(s) listed in your handoff, including any file your handoff names for creation.
+2. At most one other file: the file where a symbol on a handoff line is declared (a type, interface, function, constant, or component). Follow re-exports to the source file; never edit an `index.ts` barrel file. In that file, you may change only that one declaration.
+
+STOP and report back if:
+- the fix needs a file not covered by 1 or 2
+- the fix needs changes to more than one declaration in the file from rule 2
+- after your fix, `pnpm check:types` reports an error in a file you are not allowed to modify
+- you discover a second, unrelated error
+
+These are signals that the handoff was incomplete, not signals to expand your scope.
 
 **Constraints**
 - Do not add new tests. If an existing test needs updating because the fix changed something the test asserts on (e.g., a type signature it mocks), update that assertion only — do not add new test cases.

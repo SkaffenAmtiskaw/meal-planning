@@ -9,7 +9,7 @@ const makeDish = (): DishState => ({
 	savedId: '',
 	sourceText: '',
 	note: '',
-	noteExpanded: false,
+	expanded: false,
 });
 
 export const useDishes = () => {

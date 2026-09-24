@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { Flex, Group, Popover, SegmentedControl, Stack } from '@mantine/core';
+import { Button, Group, Popover, SegmentedControl, Stack } from '@mantine/core';
 import { DatePicker } from '@mantine/dates';
 
 import { fireEvent, render, screen } from '@testing-library/react';
@@ -46,6 +46,17 @@ vi.mock('@mantine/dates', () => ({
 vi.mock('@/_components/Calendar/_components/CalendarNavButtons', async () => ({
 	CalendarTodayButton: vi.fn(({ size }) => (
 		<button data-testid="today-button" data-size={size} aria-label="Today">
+			Today
+		</button>
+	)),
+	CalendarTodayPillButton: vi.fn(() => (
+		<button
+			data-testid="today-button"
+			data-size="md"
+			data-variant="outline"
+			aria-label="Today"
+			onClick={mockGoToToday}
+		>
 			Today
 		</button>
 	)),
@@ -269,6 +280,45 @@ describe('CalendarHeader', () => {
 			expect(screen.getByRole('button', { name: 'Next' })).toBeDefined();
 		});
 
+		it('renders Previous, month/year label, Next, and Today in order', () => {
+			renderMobile({ initialDate: DateTime.local(2024, 6, 15) });
+
+			const buttons = screen.getAllByRole('button');
+			expect(buttons[0].getAttribute('data-testid')).toBe('previous-button');
+			expect(buttons[1].textContent).toBe('June 2024');
+			expect(buttons[2].getAttribute('data-testid')).toBe('next-button');
+			expect(buttons[3].getAttribute('data-testid')).toBe('today-button');
+		});
+
+		it('renders Today as a PillButton with the correct props', () => {
+			renderMobile();
+
+			const today = screen.getByTestId('today-button');
+			expect(today.getAttribute('data-size')).toBe('md');
+			expect(today.getAttribute('data-variant')).toBe('outline');
+			expect(today.textContent).toBe('Today');
+		});
+
+		it('calls goToToday when the Today pill is clicked', () => {
+			renderMobile();
+
+			fireEvent.click(screen.getByRole('button', { name: 'Today' }));
+			expect(mockGoToToday).toHaveBeenCalledTimes(1);
+		});
+
+		it('lays out the header row so Today is aligned to the far right', () => {
+			renderMobile();
+
+			expect(vi.mocked(Group)).toHaveBeenCalledWith(
+				expect.objectContaining({
+					justify: 'space-between',
+					wrap: 'nowrap',
+					w: '100%',
+				}),
+				undefined,
+			);
+		});
+
 		it('uses large touch targets for mobile navigation buttons', () => {
 			renderMobile();
 
@@ -279,7 +329,7 @@ describe('CalendarHeader', () => {
 				'lg',
 			);
 			expect(screen.getByTestId('today-button').getAttribute('data-size')).toBe(
-				'lg',
+				'md',
 			);
 		});
 
@@ -292,13 +342,27 @@ describe('CalendarHeader', () => {
 			expect(screen.getByText('June 2024')).toBeDefined();
 		});
 
-		it('centers the month/year label in a flex container', () => {
+		it('centers the month/year label within the navigation group', () => {
 			renderMobile({ initialDate: DateTime.local(2024, 6, 15) });
 
-			expect(vi.mocked(Flex)).toHaveBeenCalledWith(
+			expect(vi.mocked(Group)).toHaveBeenCalledWith(
 				expect.objectContaining({
-					flex: 1,
 					justify: 'center',
+					gap: 'xs',
+					align: 'center',
+					wrap: 'nowrap',
+				}),
+				undefined,
+			);
+		});
+
+		it('uses a compact trigger for the month/year label', () => {
+			renderMobile({ initialDate: DateTime.local(2024, 6, 15) });
+
+			expect(vi.mocked(Button)).toHaveBeenCalledWith(
+				expect.objectContaining({
+					variant: 'subtle',
+					size: 'compact-sm',
 				}),
 				undefined,
 			);

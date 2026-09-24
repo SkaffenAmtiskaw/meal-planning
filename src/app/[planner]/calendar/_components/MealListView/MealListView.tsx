@@ -1,23 +1,16 @@
 'use client';
 
-import { useMemo, useState } from 'react';
+import { useMemo } from 'react';
 import type { ReactElement } from 'react';
 
-import { Modal } from '@mantine/core';
-import { useDisclosure } from '@mantine/hooks';
-
-import type { DateTime } from 'luxon';
-
 import type { CalendarDish, CalendarMeal } from '@/_components/Calendar';
-import { ListView } from '@/_components/Calendar';
 import { useIsMobile } from '@/_hooks';
-import { useCanWrite } from '@/app/[planner]/_components';
 
 import { toCalendarEvents } from '../../_utils/toCalendarEvents';
 import { toCalendarMeals } from '../../_utils/toCalendarMeals';
 import type { SavedItem, SerializedDay } from '../../_utils/toScheduleXEvents';
-import { AddMealFormModalWrapper } from '../AddMealFormModalWrapper/AddMealFormModalWrapper';
 import { DishLink } from '../DishLink/DishLink';
+import { ListView } from '../ListView/ListView';
 import { MobileListViewPlaceholder } from '../MobileListViewPlaceholder/MobileListViewPlaceholder';
 
 export interface MealListViewProps {
@@ -31,10 +24,7 @@ export function MealListView({
 	calendar,
 	savedItems = [],
 }: MealListViewProps): ReactElement {
-	const canWrite = useCanWrite();
 	const isMobile = useIsMobile();
-	const [opened, { open, close }] = useDisclosure(false);
-	const [dateForAdd, setDateForAdd] = useState<DateTime | null>(null);
 
 	const events: CalendarMeal[] = useMemo(
 		() => toCalendarMeals(toCalendarEvents(calendar, savedItems)),
@@ -49,27 +39,5 @@ export function MealListView({
 		<DishLink dish={dish} plannerId={plannerId} size="sm" />
 	);
 
-	const handleAddMeal = canWrite
-		? (date: DateTime) => {
-				setDateForAdd(date);
-				open();
-			}
-		: undefined;
-
-	return (
-		<>
-			<ListView
-				events={events}
-				onAddMeal={handleAddMeal}
-				renderDish={renderDish}
-			/>
-			<Modal opened={opened} onClose={close} title="Add Meal" size="lg">
-				<AddMealFormModalWrapper
-					plannerId={plannerId}
-					initialDate={dateForAdd?.toISODate() ?? undefined}
-					onClose={close}
-				/>
-			</Modal>
-		</>
-	);
+	return <ListView events={events} renderDish={renderDish} />;
 }
