@@ -16,7 +16,7 @@ One date picker panel, used everywhere the app asks for a date. It replaces the 
 > implemented**. It is documented here so the picker's API covers it, but it is not part of this
 > change. Don't build the modal changes yet.
 
-![Placements](assets/datepicker_placements.png)
+![Placements](datepicker_placements.png)
 
 ## One panel, three placements
 The component is only the panel. Each placement supplies its own trigger and decides what happens
@@ -34,7 +34,7 @@ on pick.
   owns the move or copy, closing, and Undo.
 
 ## Anatomy: fixed vs. optional
-![Anatomy and day cell states](assets/datepicker_anatomy.png)
+![Anatomy and day cell states](datepicker_anatomy.png)
 
 | # | Part | | Notes |
 |---|---|---|---|
@@ -134,7 +134,7 @@ dates being selectable, and the Tomorrow / Next day labeling rule. Keeping these
 makes the pickers consistent.
 
 ## Phones: Bottom Sheet
-![Phone bottom sheet](assets/datepicker_mobile.png)
+![Phone bottom sheet](datepicker_mobile.png)
 
 On phones, every placement opens the picker in a **bottom sheet** instead of a popover. The
 sheet is not full screen: at touch size the picker is about 600px tall, and the sheet keeps the
@@ -174,7 +174,7 @@ Everywhere else, only today is marked.
 | Meal detail — Move / Duplicate | — | *Planned, not yet implemented.* Will use the shared picker. |
 
 ## Planned: meal detail Move / Duplicate (not in this change)
-![Planned meal detail move picker](assets/datepicker_meal_detail_example.png)
+![Planned meal detail move picker](datepicker_meal_detail_example.png)
 
 Shown for context only. The picker's `label`, `shortcuts` and `hint` options exist so this
 placement works later without API changes. The screenshot shows a past meal (Sep 1), so there are

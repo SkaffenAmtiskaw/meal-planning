@@ -4,9 +4,9 @@
 
 # Bugfixes/User Issues/Tech Debt
 ## Calendar Page
-- [[Add Meal Changes (Saved Recipes)|User Feedback - Add Meal Changes]]
-- [[Unified Date Picker Component]]
-- [[Meal Detail Modal|Meal Detail Modal Update]]
+- [[✨ Add Meal Changes (Saved Recipes)|User Feedback - Add Meal Changes]]
+- [[🛑 Unified Date Picker Component|Date Picker Component]]
+- [[Meal Detail Modal & Edit Meals|Edit Meals & Update Meal Detail Modal]]
 - [[Stale Data Issues]]
 - you should be able to create a meal with just a title and a description (or just a title)
 - meal color should be based on hex of title + description
@@ -24,7 +24,6 @@
 - Add Sentry for logging
 - Add PostHog for analytics
 - Add a feedback button
-
 ## Calendar Page
 - [[Mobile List View]]
 - edit meals
@@ -51,7 +50,7 @@
 - batch delete meals
 - batch delete recipes/bookmarks
 - allow notes in recipe/bookmarks to render basic markdown - assess if other fields should too
-- [[DND|move meals to different days (drag and drop) & reorder meals within days]]
+- [[🧠 DND|move meals to different days (drag and drop) & reorder meals within days]]
 - add images to recipes
 - group ingredients when adding/editing a recipe
 - when adding/editing a recipe, make the instructions expand if you type more than a line
