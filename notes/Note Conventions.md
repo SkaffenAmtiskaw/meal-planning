@@ -24,6 +24,22 @@ Templates are in `templates/`. Pick by the shape of the fix, not where the work 
 - **Idea** - jot something down quickly.
 - **Hub** - a map of several stories that touch the same area (e.g. [[Meal Editing]]). Not implemented directly.
 
+# Next Step by Note State
+A note's `type` and `status` say what should happen to it next. This is the starting spec for agents that each take one kind of note and do its next step. Only `architect` and `implement` exist today; the other agent names are placeholders.
+
+| Note state | Next step | Moves to | Agent |
+|---|---|---|---|
+| `idea`, no `type` | Choose a template, move the notes into it, ask the open questions | `idea` with a `type` | shape *(planned)* |
+| `bug` · `idea` | Reproduce, find the root cause, list fix options | `spec` | investigate *(planned)* |
+| `cleanup` · `idea` | Scan the code and fill in Current State | `spec` | investigate *(planned)* |
+| `feature` · `spec` | Suggested Approach, then implementation steps | `ready` | architect |
+| `pattern` · `spec` | Rules, Enforcement and Migration Checklist, then implementation steps | `ready` | architect for patterns *(planned)* |
+| `ready` | Build it one step at a time | `in-progress` → `done` | implement |
+| any `spec` / `ready` | Check the note against the code, add ⚠️ review callouts, update `reviewed` | unchanged, or add `blocked-by` | review *(planned)* |
+| `done` | Move unfinished pieces to their owner, add As built notes, move to `archive/` | archived | archive *(planned)* |
+
+`feature` · `idea` and `pattern` · `idea` have no agent yet: turning rough notes into a detailed design or a set of rules is done with the user, e.g. via Claude Design for features.
+
 # Markers Inside Notes
 - **Step status** - `**Status:** ✅ Complete`, `❌ Will Not Do`, or `🚛 Moved to [[note]]`.
 - **As built** - when the build deviates from a step's plan, add an **As built:** note under the step. Never edit the plan text itself.
