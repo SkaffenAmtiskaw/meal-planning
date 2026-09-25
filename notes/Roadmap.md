@@ -5,8 +5,6 @@
 # Bugfixes/User Issues/Tech Debt
 ## Calendar Page
 - [[✨ Add Meal Changes (Saved Recipes)|User Feedback - Add Meal Changes]]
-- [[🛑 Unified Date Picker Component|Date Picker Component]]
-- [[Meal Detail Modal & Edit Meals|Edit Meals & Update Meal Detail Modal]]
 - [[Stale Data Issues]]
 - you should be able to create a meal with just a title and a description (or just a title)
 - meal color should be based on hex of title + description
@@ -25,8 +23,9 @@
 - Add PostHog for analytics
 - Add a feedback button
 ## Calendar Page
+- [[Meal Detail Modal & Edit Meals|Edit Meals & Update Meal Detail Modal]]
+- [[🛑 Unified Date Picker Component|Date Picker Component]]
 - [[Mobile List View]]
-- edit meals
 - delete meals
 - add meals by clicking month cell
 - add meals by clicking week day
