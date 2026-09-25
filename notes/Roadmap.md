@@ -10,6 +10,10 @@
 - meal color should be based on hex of title + description
 - change segmented control theme to match design from Claude
 - Desktop: month view current date circle is truncating numbers
+## Recipes Page
+- deleting a recipe from the recipe detail page always reports success - `RecipeDetail` ignores the `deleteRecipe` result
+## Planner Settings
+- [[Zero Planners Crash|root page crashes for users with zero planners (e.g. invited user leaves or is removed from their only planner)]]
 ## Other
 - [[Modal Form Architecture|refactor all modal forms to separate presentation and data concerns]]
 # High-Priority
