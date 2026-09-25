@@ -1,3 +1,5 @@
+**Status**: Mostly complete, but done in other stories. The primary task that remains is cleaning up remaining code.
+
 `schedule-x` has given me nothing but problems - we need to create a custom calendar component
 
 _Note_: In this story we will be using Luxon for date management. You should review Luxon doc at https://moment.github.io/luxon/#/ to make sure we do not replicate it's code.
@@ -298,17 +300,19 @@ This consistency helps users quickly identify meal types visually across the cal
 
 ---
 ## Step 14: Month View Mobile View
+**Status**: ✅ Complete
 
 **What we're doing:** Changing the month view design on mobile
 
-This will be handled as a separate story. See the [[Calendar - Mobile Month View|mobile month view]] note for more detailed implementation steps.
+This will be handled as a separate story. See the [[🚧 Mobile Month View|mobile month view]] note for more detailed implementation steps.
 
 ---
 ## Step 15: List View Mobile View
+**Status**: 🚛 Moved to [[Mobile List View]]
 
 **What we're doing:** Changing the list view design on mobile
 
-This will be handled as a separate story. See the [[Calendar - Mobile List View|mobile list view]] note for more detailed implementation steps.
+This will be handled as a separate story. See the [[Mobile List View|mobile list view]] note for more detailed implementation steps.
 
 ---
 

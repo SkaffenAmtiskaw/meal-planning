@@ -377,12 +377,13 @@ styles. The scroll-to-top effect uses a `biome-ignore` comment consistent with o
 the codebase.
 
 ## Step 7: Add Meal FAB
+**Status:** ✅ Complete
 
 **What we're doing:** Add a FAB to add a meal
 
 **Acceptance criteria:**
-- [ ] A floating ember **Add Meal** button opens the add meal modal with the date pre-filled to the selected day.
-- [ ] The FAB is hidden for read-only users.
+- [x] A floating ember **Add Meal** button opens the add meal modal with the date pre-filled to the selected day.
+- [x] The FAB is hidden for read-only users.
 
 **Architectural plan:**
 - In `src/app/[planner]/calendar/_components/MealMonthAgenda/MealMonthAgenda.tsx`, use `useCanWrite` to hide write affordances for read-only users.

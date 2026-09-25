@@ -4,6 +4,8 @@
 
 # Bugfixes/User Issues/Tech Debt
 ## Calendar Page
+- [[Add Meal Changes (Saved Recipes)|User Feedback - Add Meal Changes]]
+- [[Unified Date Picker Component]]
 - [[Meal Detail Modal|Meal Detail Modal Update]]
 - [[Stale Data Issues]]
 - you should be able to create a meal with just a title and a description (or just a title)
@@ -14,11 +16,17 @@
 - deleting a recipe from the recipe detail page always reports success - `RecipeDetail` ignores the `deleteRecipe` result
 ## Planner Settings
 - [[Zero Planners Crash|root page crashes for users with zero planners (e.g. invited user leaves or is removed from their only planner)]]
-## Other
+## Tech Debt
 - [[Modal Form Architecture|refactor all modal forms to separate presentation and data concerns]]
 # High-Priority
+
+## Observability
+- Add Sentry for logging
+- Add PostHog for analytics
+- Add a feedback button
+
 ## Calendar Page
-- [[Replace Schedule-X]]
+- [[Mobile List View]]
 - edit meals
 - delete meals
 - add meals by clicking month cell
@@ -29,7 +37,7 @@
 - [[Delete Planner|allow user to delete a planner]]
 - [[Transfer Ownership of Planner|transfer ownership of planner]]
 ## Misc
-- [[Style Fixes|style fixes]]
+- [[features/style fixes|style fixes]]
 - [[Email Improvements|email improvements]]
 - [[Cleanup|fix deprecated Zod types - replace `z.string().email()` with `z.email()` and audit for other deprecated patterns]]
 # Medium Priority
@@ -43,7 +51,7 @@
 - batch delete meals
 - batch delete recipes/bookmarks
 - allow notes in recipe/bookmarks to render basic markdown - assess if other fields should too
-- [[Calendar DND|move meals to different days (drag and drop) & reorder meals within days]]
+- [[DND|move meals to different days (drag and drop) & reorder meals within days]]
 - add images to recipes
 - group ingredients when adding/editing a recipe
 - when adding/editing a recipe, make the instructions expand if you type more than a line

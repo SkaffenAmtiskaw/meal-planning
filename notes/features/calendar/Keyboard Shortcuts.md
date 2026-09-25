@@ -56,7 +56,7 @@ Implement global keyboard shortcuts for power users to efficiently navigate and 
 
 ### Dependencies
 - This should be implemented **after** the custom calendar is complete
-- Depends on: [[Replace Schedule-X]]
+- Depends on: [[🚧 Replace Schedule-X]]
 
 ## Acceptance Criteria
 
