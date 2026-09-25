@@ -1,4 +1,8 @@
-**Status**: Mostly complete, but done in other stories. The primary task that remains is cleaning up remaining code.
+---
+status: done
+reviewed: 2026-09-25
+---
+**Status**: ✅ Done. The custom calendar replaced schedule-x in all views. Remaining schedule-x cleanup moved to [[Remove Schedule-X]]; steps 16 and 17 moved to the Roadmap as separate items. This note is kept as a record - its file paths and summary table are out of date and should not be used as a guide to the current code.
 
 `schedule-x` has given me nothing but problems - we need to create a custom calendar component
 
@@ -300,11 +304,11 @@ This consistency helps users quickly identify meal types visually across the cal
 
 ---
 ## Step 14: Month View Mobile View
-**Status**: ✅ Complete
+**Status**: 🚛 Moved to [[Mobile Month View]]
 
 **What we're doing:** Changing the month view design on mobile
 
-This will be handled as a separate story. See the [[🚧 Mobile Month View|mobile month view]] note for more detailed implementation steps.
+This will be handled as a separate story. See the [[Mobile Month View|mobile month view]] note for more detailed implementation steps.
 
 ---
 ## Step 15: List View Mobile View
@@ -317,7 +321,7 @@ This will be handled as a separate story. See the [[Mobile List View|mobile list
 ---
 
 ## Step 16: List View Keyboard Navigation
-**Status**: ⚠️ Needs Design Review - The list view design has changed since these steps were created. This step should not be started until the acceptance criteria have been changed to match the new design.
+**Status**: 🚛 Moved to the Roadmap - needs design review once the calendar views are mostly complete. The list view design has changed since these steps were created.
 
 **What we're doing:** Add keyboard navigation for list view.
 
@@ -333,6 +337,7 @@ This will be handled as a separate story. See the [[Mobile List View|mobile list
 ---
 
 ## Step 17: Wire Up Overflow Indicator to List View
+**Status**: 🚛 Moved to the Roadmap - the suggested approach below predates `useScrollToDate` and needs review.
 
 **What we're doing:** Make clicking the "+N more" overflow indicator in the month grid switch to list view and jump to that day.
 
@@ -350,7 +355,7 @@ This will be handled as a separate story. See the [[Mobile List View|mobile list
 ---
 
 ## Step 19: Remove Schedule-X
-**Status:** 🚧 Partial - some files removed but no comprehensive review done
+**Status:** 🚛 Moved to [[Remove Schedule-X]] - several files listed under "Files Deleted" below still exist
 
 **What we're doing:** Remove all schedule-x dependencies.
 

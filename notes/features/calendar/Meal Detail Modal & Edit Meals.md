@@ -1,3 +1,8 @@
+---
+status: spec
+blocked-by: "[[Unified Date Picker Component]]"
+reviewed: 2026-09-25
+---
 # Purpose
 The meal detail modal styling is bare-bones and does not match the rest of the calendar. It also needs to easily allow a user to edit a meal.
 
@@ -15,7 +20,7 @@ calendar). It now matches the rest of the app: the same header, footer and dish 
 Meal. Notes can be edited in place, there are Move to / Duplicate actions, and there's a full edit
 mode that reuses the Add Meal layout.
 
-> **Build Order: Implement this AFTER the [[🛑 Unified Date Picker Component|unified date picker]]**.
+> **Build Order: Implement this AFTER the [[Unified Date Picker Component|unified date picker]]**.
 > Move to, Duplicate and the edit-mode Date field all use that picker. Nothing here should be built with a temporary or native date input.
 
 ![Read view](assets/meal-detail-modal/01-read-view.png)

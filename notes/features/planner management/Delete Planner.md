@@ -1,3 +1,8 @@
+---
+status: idea
+blocked-by: "[[Zero Planners Crash]] fix decision"
+reviewed: 2026-04-29
+---
 **Requirements**
 - Only the owner can delete a planner
 - Should have a confirmation dialog before deleting

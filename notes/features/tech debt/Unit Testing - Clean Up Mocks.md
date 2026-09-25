@@ -1,3 +1,7 @@
+---
+status: in-progress
+reviewed: 2026-05-08
+---
 This is a cleanup story meant to align unit testing standards. All changes should be to unit test & mock files - no code should be changed.
 
 Before starting any work on this task, you MUST read the project unit testing guidelines at `.opencode/docs/unit_tests.md`. Read carefully; DO NOT skim.

@@ -1,3 +1,7 @@
+---
+status: done
+reviewed: 2026-09-24
+---
 ![[support 2.js]]
 
 # Handoff: Calendar → **Add Meal** — wider modal, new dish row, mobile sheet

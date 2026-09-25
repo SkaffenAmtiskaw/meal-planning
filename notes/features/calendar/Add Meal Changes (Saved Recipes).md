@@ -1,3 +1,7 @@
+---
+status: ready
+reviewed: 2026-09-25
+---
 # Purpose
 User feedback noticed it was difficult to understand how to add a meal with saved dishes. The design has been updated to allow users to better discover saved recipes.
 
@@ -8,7 +12,7 @@ The design handoff should be treated as a source of truth (except in the case of
 
 # Design Handoff
 
-Follow-up to [[✅ Add Meal UX Changes]]. The two-pane modal, collapsible dish row and mobile sheet from that handoff stay. This one changes **how a dish gets its saved recipe**, and adds a tag filter.
+Follow-up to [[Add Meal UX Changes]]. The two-pane modal, collapsible dish row and mobile sheet from that handoff stay. This one changes **how a dish gets its saved recipe**, and adds a tag filter.
 
 ## What's wrong today
 A mobile tester couldn't find how to add a saved recipe. The path is *Add source → Saved →

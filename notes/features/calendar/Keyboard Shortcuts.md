@@ -1,3 +1,8 @@
+---
+status: spec
+blocked-by: "outdated - re-review against current calendar designs once the calendar views are mostly complete"
+reviewed: 2026-04-29
+---
 # High-Level Overview
 
 Implement global keyboard shortcuts for power users to efficiently navigate and interact with the calendar without relying on mouse/touch.
@@ -56,7 +61,7 @@ Implement global keyboard shortcuts for power users to efficiently navigate and 
 
 ### Dependencies
 - This should be implemented **after** the custom calendar is complete
-- Depends on: [[🚧 Replace Schedule-X]]
+- Depends on: [[Replace Schedule-X]]
 
 ## Acceptance Criteria
 

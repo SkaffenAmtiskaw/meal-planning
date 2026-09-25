@@ -1,3 +1,7 @@
+---
+status: spec
+reviewed: 2026-09-25
+---
 # Purpose
 The date picker is implemented independently in two different places in the current app (the calendar header and the add meal modal). A third is planned in a future story. If the implementation is not unified these components will drift over time. This story serves to provide a unified experience whenever a user needs a date.
 

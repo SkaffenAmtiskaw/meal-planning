@@ -1,3 +1,7 @@
+---
+status: spec
+reviewed: 2026-09-25
+---
 The following issues currently existing in the app are likely a symptom of a larger issue with stale data in the app. This story needs to create a *consistent* pattern for refreshing data when mutations occur, and make sure that pattern is followed everywhere in the app.
 
 Any proposed architecture for this story will include a plan for enforcing this pattern in future stories. Drift is to be avoided. If programmatic enforcement is not possible this may lead to a larger discussion about development processes. Do not hesitate to ask the user questions to brainstorm possible strategies for enforcement.

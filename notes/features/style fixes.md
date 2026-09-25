@@ -1,3 +1,7 @@
+---
+status: idea
+reviewed: 2026-09-08
+---
 # Global
 - Mantine `color` props is being used in cases where `variant` is more appropriate - audit usage
 

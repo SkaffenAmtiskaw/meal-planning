@@ -1,3 +1,7 @@
+---
+status: idea
+reviewed: 2026-04-29
+---
 **Requirements**
 - The owner has the option to transfer ownership of a planner.
 - When deleting a planner, if the planner is shared, the owner will be given an option to transfer ownership and leave the planner instead.

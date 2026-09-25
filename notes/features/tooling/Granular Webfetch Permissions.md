@@ -1,1 +1,6 @@
+---
+status: idea
+blocked-by: "OpenCode release with granular webfetch permissions"
+reviewed: 2026-09-10
+---
 OpenCode agents cannot currently have granular `webfetch` permissions, so all agents are set to `ask`. There is an [merged PR](https://github.com/anomalyco/opencode/pull/46611) against OpenCode to fix this. Once it is available, add permissions to access dependency `llms.txt` files in OpenCode agents.

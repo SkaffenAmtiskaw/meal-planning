@@ -1,3 +1,7 @@
+---
+status: ready
+reviewed: 2026-09-19
+---
 ![[01-list-top.png]]
 
 ![[Mobile List View.dc 1.html]]

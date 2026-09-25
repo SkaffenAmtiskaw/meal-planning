@@ -1,8 +1,10 @@
+---
+status: spec
+reviewed: 2026-04-29
+---
 # Tag Management
 
-**Status**: Planning  
 **Location**: Planner Settings  
-**Priority**: Medium
 
 ---
 
