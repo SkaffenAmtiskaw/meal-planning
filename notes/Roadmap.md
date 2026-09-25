@@ -3,8 +3,7 @@
 **AI Instructions** - DO NOT delete this file. You may remove lines, but under no circumstances may you delete the file.
 
 # In Progress
-- [[Mobile Month View]] - remaining: Step 8 (stub Edit / Move to... buttons)
-- [[Unit Testing - Clean Up Mocks]] - remaining: `@/_actions` & `next/headers` consumers, `@/_components`, `@/_utils`
+- [[Unit Testing - Clean Up Mocks]] - remaining: a few straggler files in `@/_actions`, `@/_models` and `@mantine/hooks`; `@/_components` and `@/_utils` not started
 
 # Bugfixes/User Issues/Tech Debt
 ## Calendar Page
@@ -28,10 +27,9 @@
 - Add PostHog for analytics
 - Add a feedback button
 ## Calendar Page
-- [[Meal Detail Modal & Edit Meals|Edit Meals & Update Meal Detail Modal]]
+- [[Meal Editing|meal editing (edit, move, duplicate, delete, reorder) - see hub]]
 - [[Unified Date Picker Component|Date Picker Component]]
 - [[Mobile List View]]
-- delete meals on mobile (desktop delete is covered by [[Meal Detail Modal & Edit Meals]]; phone design not done yet)
 - add meals by clicking month cell
 - add meals by clicking week day
 - default to week view on desktop - list view on mobile
@@ -50,10 +48,8 @@
 ## UX Improvements
 - take create planner pattern of button on top right in desktop - FAB in mobile and apply it throughout the app
 - [[Filtering Recipe List|allow filtering in recipe list]]
-- batch delete meals
 - batch delete recipes/bookmarks
 - allow notes in recipe/bookmarks to render basic markdown - assess if other fields should too
-- [[DND|move meals to different days (drag and drop) & reorder meals within days]]
 - add images to recipes
 - group ingredients when adding/editing a recipe
 - when adding/editing a recipe, make the instructions expand if you type more than a line

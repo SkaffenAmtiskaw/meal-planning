@@ -1,5 +1,5 @@
 ---
-status: in-progress
+status: done
 reviewed: 2026-09-25
 ---
 ![[01-month-today.png]]![[Mobile Month View.dc.html]]![[support.js]]
@@ -96,7 +96,7 @@ distinct panel from the grid.
     - the dish's **note on its own line beneath the name**, full-strength navy ink, wrapping to as
       many lines as it needs. Never truncated, never clamped, never behind a tooltip. Author line
       breaks are preserved; render as plain text (no markdown, no autolinking).
-  - **Quick actions** at the bottom of the card: **Edit** and **Add dish**, as pill buttons.
+  - **Quick actions** at the bottom of the card: **Edit** and **Add dish**, as pill buttons. *(Superseded: the user changed these to **Edit** and **Move to…**. The card actions moved to [[Meal Editing]] - see Step 8.)*
     These replace desktop's hover affordances (there is no hover on touch). For this story both
     buttons are rendered as **disabled stubs**; they will be wired to the existing add/edit meal
     flow (once the edit flow exists) in a future story.
@@ -284,6 +284,8 @@ header on small screens.
   mobile layout, with `size="lg"` to meet the 44px touch-target minimum.
 - Read navigation state from `CalendarContext`.
 
+**As built (noted 2026-09-25):** No `MobileCalendarHeader.tsx` was created. Both headers live in one file, `src/app/[planner]/calendar/_components/CalendarHeader/CalendarHeader.tsx`, as `CalendarHeaderDesktop` and `CalendarHeaderMobile`. The shared pieces are `src/_components/Calendar/_components/CalendarNavButtons.tsx` and `src/_components/Calendar/_utils/formatCalendarLabel.ts`.
+
 ## Step 4: Split `MealCard` into a base card and a drag-handle wrapper
 
 **Status**: ✅ Complete
@@ -306,6 +308,8 @@ moving the drag handle out of the card itself.
   base card with the drag-handle rail.
 - Update `src/_components/Calendar/ListView/_components/DayRow.tsx` to import and render
   `MealCardWithDragHandle` instead of the old `MealCard`.
+
+**As built (paths, noted 2026-09-25):** The list view now lives at the app level, so `MealCardWithDragHandle.tsx` and `DayRow.tsx` are in `src/app/[planner]/calendar/_components/ListView/_components/`, not `src/_components/Calendar/ListView/`.
 
 **As built:** The `MealCardWithDragHandle` handoff also updated `DayRow.tsx` and `DayRow.test.tsx`
 in the same pass, and the obsolete `MealCard.*` files were removed with `git rm` afterward rather
@@ -394,10 +398,4 @@ the codebase.
 - Build a small `MobileAddMealButton` FAB using Mantine `Affix` + `Button` (ember color) and the existing `AddMealForm`/`ControlledModal`, prefilling `selectedDate`. (You can also consider using the `PillButton` component in `@/_components`).
 
 ## Step 8: Stub Actions
-**What we're doing:** Adding the stub actions to the meal card. The "Add Dish" button from the original design has been changed (as per user instruction) to be "Move to..."![[agenda_view_updated_meal_card.png]]
-
-**Acceptance Criteria**
-- [ ] Each meal card has disabled **Edit** and **Move to...** pill buttons.
-
-**Architectural plan:**
-- [ ] Use the pre-existing PillButton component.
+**Status**: 🚛 Moved to [[Meal Editing]] - the full step, its design image and the related handoff details are there.
