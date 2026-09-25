@@ -1,11 +1,12 @@
 ---
 status: ready
+blocked-by: "Steps 2 and 5 need re-review (see Review notes); [[Stale Data Issues]]"
 reviewed: 2026-09-19
 ---
 ![[01-list-top.png]]
 
-![[Mobile List View.dc 1.html]]
-![[support 1.js]]
+![[Mobile List View.dc.html]]
+![[support.js]]
 ![[weeknight-header-dark.svg]]
 
 # Handoff: Mobile — List view
@@ -184,7 +185,7 @@ them by hand only so it runs standalone. No new assets.
 
 ## Files in this bundle
 - `Mobile List View.dc.html` — interactive design reference; open in a browser and scroll the phone.
-- `screenshots/01-list-top.png` — empty days, a dish with a book reference, today's tinted section.
+- `assets/mobile-list-view/01-list-top.png` — empty days, a dish with a book reference, today's tinted section.
 - `assets/weeknight-header-dark.svg` — existing app logo, included only so the prototype renders
   standalone.
 
@@ -198,6 +199,11 @@ them by hand only so it runs standalone. No new assets.
 | Base `MealCard` (extracted from `ListView`) | Reused for mobile list-view meal cards | Verify the base card supports no drag handle, no actions, and a configurable dish-list container so the list view can use bullets instead of the desktop left-border stack. |
 | `DishListItem` | Reused as-is inside the base `MealCard` | Already renders name/link, external glyph, book ref, and note. Verify it meets mobile list-view needs. |
 | `MobileAddMealButton` FAB | Reused for the list-view floating add button | Verify it accepts a target date prop (or can be parameterized) so the list view can default it to today while month view uses the selected day. |
+
+> ⚠️ **Review 2026-09-25:** The mobile month view work is done, so these can now be answered from the code:
+> - `MobileCalendarHeader` was never created. The mobile header is `CalendarHeaderMobile` in `src/app/[planner]/calendar/_components/CalendarHeader/CalendarHeader.tsx`, and it already hides prev/next in `list` view and keeps the Month/List switcher.
+> - The base `MealCard` (`src/_components/Calendar/MealCard/MealCard.tsx`) has no drag handle and optional `renderActions`, but **no configurable dish-list container**. Step 4 will need to add one.
+> - `MobileAddMealButton` has **no target-date prop**; it always prefills the context's `selectedDate`. Step 5 will need to add one to prefill today.
 
 ## Step 1: Decouple the list-view scroll shell from the day-row layout
 
@@ -218,6 +224,8 @@ them by hand only so it runs standalone. No new assets.
 **Verification:**
 - On mobile List view, use the existing header date picker to jump several months into the past or future.
 - Confirm the target day renders and the list scrolls to it.
+
+> ⚠️ **Review 2026-09-25:** This step's premise is out of date and it needs re-review before implementation. The window is not fixed around today: `getListDayRange` already takes a `rangeAnchor` from `CalendarContext`, which `navigateToDate` updates. From reading the code (not verified in the running app), the bug still seems to exist for a different reason: `getListDayRange` forces today into the window, so when the anchor is more than ~3 weeks from today the window snaps back to today and the target day is not rendered. The fix is probably changing that rule rather than adding a `targetDate` parameter.
 
 ## Step 3: Build and wire the mobile day section
 
@@ -256,6 +264,10 @@ them by hand only so it runs standalone. No new assets.
 - Tapping either button opens the Add Meal modal with the correct date prefilled.
 - Submitting the form adds the meal and it appears in the list.
 - Scrolling to the bottom shows the last card is not covered by the floating button.
+
+> ⚠️ **Review 2026-09-25:** The modal wiring above describes code that no longer exists, and this step needs re-review before implementation:
+> - `AddMealFormModalWrapper` and `onMealAdded` no longer exist. Add Meal now opens through `CalendarModalProvider` / `useCalendarModal` (`src/app/[planner]/calendar/_components/CalendarModal/`), the pattern [[Modal Form Architecture]] standardizes. Mobile list should open the modal the same way rather than keeping its own modal state.
+> - Refreshing via `onMealAdded` conflicts with [[Stale Data Issues]], which moves invalidation to the server and removes `router.refresh()`. This step should be built after that story lands.
 
 ## Step 6: Read-only gating and accessibility polish
 

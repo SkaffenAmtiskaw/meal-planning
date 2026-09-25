@@ -2,7 +2,7 @@
 status: done
 reviewed: 2026-09-24
 ---
-![[support 2.js]]
+![[support.js]]
 
 # Handoff: Calendar → **Add Meal** — wider modal, new dish row, mobile sheet
 
@@ -157,7 +157,7 @@ the note, and a long reference doesn't break the row layout.
 
 ![[add-meal-mobile.png]]
 
-![[add-meal-desktop.png]]![[weeknight-header-dark 2.svg]]
+![[add-meal-desktop.png]]![[weeknight-header-dark.svg]]
 
 # Suggested Approach
 

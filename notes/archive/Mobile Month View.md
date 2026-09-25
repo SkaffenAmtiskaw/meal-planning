@@ -3,7 +3,7 @@ status: done
 reviewed: 2026-09-25
 ---
 ![[01-month-today.png]]![[Mobile Month View.dc.html]]![[support.js]]
-![[weeknight-header-dark 1.svg]]
+![[weeknight-header-dark.svg]]
 
 # Handoff: Mobile — Month view
 
