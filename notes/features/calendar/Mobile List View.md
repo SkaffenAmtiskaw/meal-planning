@@ -1,6 +1,8 @@
 ---
 status: ready
-blocked-by: "Steps 2 and 5 need re-review (see Review notes); [[Stale Data Issues]]"
+blocked-by:
+  - "Steps 2 and 5 need re-review (see Review notes)"
+  - "[[Stale Data Issues]]"
 reviewed: 2026-09-19
 ---
 ![[01-list-top.png]]

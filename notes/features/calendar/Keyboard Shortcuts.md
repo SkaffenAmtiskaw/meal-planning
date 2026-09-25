@@ -1,6 +1,7 @@
 ---
 status: spec
-blocked-by: "outdated - re-review against current calendar designs once the calendar views are mostly complete"
+blocked-by:
+  - "outdated - re-review against current calendar designs once the calendar views are mostly complete"
 reviewed: 2026-04-29
 ---
 # High-Level Overview

@@ -18,17 +18,16 @@
 - [[Unit Testing - Clean Up Mocks]] - remaining: a few straggler files in `@/_actions`, `@/_models` and `@mantine/hooks`; `@/_components` and `@/_utils` not started
 
 # Next
-*Not ordered yet. These are the notes that are `ready` or `spec` and not blocked. `spec` notes need implementation steps before they can be built.*
-- [[Stale Data Issues]] - spec. Unblocks [[Add Meal Changes (Saved Recipes)]] and [[Mobile List View]]; every meal-editing mutation should follow its pattern. *(was bugfix)*
-- [[Unified Date Picker Component]] - spec. Unblocks [[Meal Detail Modal & Edit Meals]]. *(was high)*
-- [[Remove Schedule-X]] - spec. Has an open decision on where shared types live, which overlaps [[Shared Types Directory]]. *(was bugfix)*
-- [[Shared Types Directory]] - spec, last reviewed April.
-- [[Tag Management]] - spec, last reviewed April. Should live under planner settings. *(was medium)*
+*Ordered 2026-09-25. All four are `spec`, so "next" means next to get implementation steps (via `architect`), then build.*
+1. [[Stale Data Issues]] - spec. Unblocks [[Add Meal Changes (Saved Recipes)]] and [[Mobile List View]]; every meal-editing mutation should follow its pattern. *(was bugfix)*
+2. [[Unified Date Picker Component]] - spec. Unblocks [[Meal Detail Modal & Edit Meals]]. *(was high)*
+3. [[Remove Schedule-X]] - spec. Has an open decision on where shared types live, which overlaps [[Shared Types Directory]]. *(was bugfix)*
+4. [[Shared Types Directory]] - spec, last reviewed April. May move up or fold into [[Remove Schedule-X]] depending on where that story puts the shared types.
 
 # Blocked
 - [[Add Meal Changes (Saved Recipes)|User Feedback - Add Meal Changes]] - ready. Waiting on [[Stale Data Issues]]. *(was bugfix)*
 - [[Mobile List View]] - ready. Waiting on re-review of Steps 2 and 5, and on [[Stale Data Issues]]. *(was high)*
-- [[Zero Planners Crash|root page crashes for users with zero planners (e.g. invited user leaves or is removed from their only planner)]] - spec. Waiting on your decision on which fix to use. *(was bugfix)*
+- [[Zero Planners Crash|root page crashes for users with zero planners (e.g. invited user leaves or is removed from their only planner)]] - spec. Waiting on your decision on which fix to use (deferred 2026-09-25). *(was bugfix)*
 - [[Delete Planner|allow user to delete a planner]] - idea. Waiting on the [[Zero Planners Crash]] decision. *(was high)*
 - [[Keyboard Shortcuts|keyboard shortcuts]] - spec. Out of date; re-review once the calendar views are mostly complete. *(was medium)*
 - calendar list view keyboard navigation - needs design review once the calendar views are mostly complete (see Step 16 in [[Replace Schedule-X]])
@@ -58,6 +57,7 @@
 
 ## Planner Settings
 - [[Transfer Ownership of Planner|transfer ownership of planner]] *(was high)*
+- [[Tag Management|tag management - edit/delete]] - wishlist; nothing depends on it. Spec last reviewed April - tag creation with palette cycling already exists (`TagCombobox` → `addTag`), so reconcile before planning. *(was medium)*
 
 ## Sign In & Account
 - add passkey sign in *(was medium)*

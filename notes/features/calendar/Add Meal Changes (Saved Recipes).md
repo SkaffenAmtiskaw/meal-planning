@@ -1,6 +1,7 @@
 ---
 status: ready
-blocked-by: "[[Stale Data Issues]]"
+blocked-by:
+  - "[[Stale Data Issues]]"
 reviewed: 2026-09-25
 ---
 # Purpose

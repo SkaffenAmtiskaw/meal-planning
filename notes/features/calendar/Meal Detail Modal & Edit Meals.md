@@ -1,6 +1,7 @@
 ---
 status: spec
-blocked-by: "[[Unified Date Picker Component]]"
+blocked-by:
+  - "[[Unified Date Picker Component]]"
 reviewed: 2026-09-25
 ---
 # Purpose

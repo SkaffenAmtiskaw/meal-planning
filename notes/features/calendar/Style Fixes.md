@@ -1,6 +1,7 @@
 ---
 status: idea
-blocked-by: "calendar header aligned across all views"
+blocked-by:
+  - "calendar header aligned across all views"
 reviewed: 2026-09-08
 ---
 - should be done AFTER the header is aligned across all views to catch any style issues that arise from the header feature

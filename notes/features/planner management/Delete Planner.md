@@ -1,6 +1,7 @@
 ---
 status: idea
-blocked-by: "[[Zero Planners Crash]] fix decision"
+blocked-by:
+  - "[[Zero Planners Crash]] fix decision"
 reviewed: 2026-04-29
 ---
 **Requirements**
