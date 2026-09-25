@@ -86,7 +86,7 @@ All paths relative to `src/_actions/`.
 
 | Action | Invalidates | Notes |
 |---|---|---|
-| `calendar/addMeal` | `calendar(p)` | drop the unused returned `calendar` (and the `onSuccess` param in `AddMealForm`) |
+| `calendar/addMeal` | `calendar(p)` | drop the unused returned `calendar` (and the `onSuccess` param in `AddMealForm`). Once [[Add Meal Changes (Saved Recipes)]] Step 1b makes `addMeal` write `lastUsed` on linked saved items, it must also invalidate `saved(p)`. |
 | `library/addBookmark` | `saved(p)` | |
 | `library/addRecipe` | `saved(p)` | |
 | `library/editBookmark` | `saved(p)` | remove existing `revalidatePath` |
