@@ -237,3 +237,249 @@ Starting points only. Use whatever fits the codebase best.
 
 Nothing else in the data changes: dishes still store a name, an optional saved recipe or
 reference, and an optional note.
+
+# Suggested Approach
+
+## Enumerated behaviors
+
+1. **Open the Add Meal modal** from the calendar header or a list-view date; system renders it as a large dialog on desktop and a full-screen sheet on mobile.
+2. **Render the desktop modal layout** with three columns: Meal (fixed, tinted, does not scroll), Dishes (scrolls independently), and Saved recipes (scrolls independently). Header and footer stay pinned. Mobile renders a single scrolling column.
+3. **Display and edit meal fields** (Date, Meal name, Description); system validates that Date and Meal name are filled and disables the Add Meal button until both are.
+4. **Add a dish** via the Dishes header "Add dish" button or the dashed "Add another dish" row. On desktop the system appends an empty dish row. On mobile the system appends an empty dish row and immediately opens that row's saved-recipe search list.
+5. **Remove a dish** via the trash icon; system shows the existing delete confirmation modal, removes the row on confirm, hides the remove button when only one dish remains, and cancels any active link-mode / mobile search for that dish.
+6. **Display a collapsed dish row** containing name, recipe chip, note chip, expand arrow, and optional remove button. The recipe chip reads "Link recipe" when empty, shows the saved recipe name with a filled green dot when linked, or shows the stripped/truncated reference with a hollow green ring when a reference is set.
+7. **Expand/collapse a dish row** by clicking the recipe chip, note chip, or expand arrow; system reveals the expand panel, preserves all typed values, and allows multiple rows to be open at once.
+8. **Link a saved recipe to an existing dish on desktop.** The user triggers link mode from an empty "Link recipe" chip, the expand panel's "Change", or the panel's "Link a saved recipe" button. System highlights the target dish, shows a "Linking to *Dish name*" banner, prefills the saved-recipes search with the dish name, clears selected tags, and switches each result's action to "Link". Selecting a recipe links it to the dish, keeps the dish name (or uses the recipe name if the dish is unnamed), exits link mode, and clears the search. Cancel, Esc, or deleting the linking dish exits link mode without changing anything.
+9. **Add a saved recipe as a new dish on desktop.** The user browses/search/filters the saved-recipes column and clicks a result's "Add" button. System appends a new dish named after and linked to that recipe. Recipes already on the meal show a muted "Added" button that does nothing.
+10. **Unlink a saved recipe** from a dish by clicking "Remove" in the expand panel; system keeps the dish name and clears the saved-recipe link.
+11. **Add or edit a reference** for a dish. When no saved recipe is linked, the expand panel shows a reference field. System displays the entered URL/book text on the recipe chip with protocol stripped and truncated to one line. Linking a saved recipe clears the reference.
+12. **Add or edit a note** for a dish. System shows an "Add note" chip when empty and a "Note" chip when set, displays the note text truncated below the closed row, and persists the note across source changes and expand/collapse.
+13. **Search saved recipes by name.** System filters by case-insensitive substring and combines the search with selected tags. When nothing matches, system shows "No saved recipes match."
+14. **Filter saved recipes by tags.** System lets the user select multiple tags with AND logic (a recipe must carry every selected tag). Selected tags are shown first, filled with their tag color, and can be tapped to turn off. Only tags carried by at least one current result are shown. Unselected tags are sorted by how many current results carry them, with ties broken by planner-wide usage count, and each shows that count. Only six tags are shown at a time; the rest hide behind a "+N more" chip that expands to show all and becomes "Fewer". A "Clear" button appears when any tags are selected.
+15. **Use mobile search-as-you-type.** Adding a dish opens the saved list titled "RECENTLY USED" (top 5). The dish name field's placeholder reads "Dish name or search saved recipes". Typing filters the list and re-titles it "FROM YOUR SAVED RECIPES" (or "SAVED · TAG1 + TAG2" when tags are selected). Each result shows a "Use" button; tapping it fills the dish name, links the recipe, and closes the list. The last row reads "Add '*typed text*' as a new dish" and keeps the typed text. Before typing it reads "Type a name for a new dish" and does nothing. Editing the name of a linked dish unlinks it. The list reopens from the name field, an empty "Link recipe" chip, "Change", or "Link a saved recipe". Only one row's list is open at a time. Tag chips scroll sideways in a single row.
+16. **Navigate the desktop saved-recipes list by keyboard.** System maintains a single highlight across results that moves with ↓/↑ and the mouse, activates with Enter, clears with Esc (and exits link mode), and shows the appropriate key hint under the tags.
+17. **Submit the meal.** System validates required fields, drops unnamed dishes, calls `addMeal`, updates a `lastUsed` date on every linked saved recipe/bookmark, closes the modal and refreshes the calendar on success, or shows an error alert on failure.
+18. **Cancel or close the modal** without saving; system discards unsaved changes and closes.
+
+## Decision log
+
+| Behavior | Piece | Decision | Options considered | Rationale |
+|---|---|---|---|---|
+| 1. Open modal | `CalendarModalProvider`, `AddMealModal`, `AddMealButton`, `MealListView`/`DayRow` | **REUSE WITH REWORK** | Build new modal manager | Triggers and mobile full-screen behavior already work. Desktop width must be kept wide enough (current 80 % `xl` is the right starting point) for three columns. |
+| 2. Three-column layout / scroll | `AddMealForm` desktop layout, `MealFields`, `DishList`, `SavedRecipesColumn` | **REUSE WITH REWORK** | Build new form shell | Existing two-pane flex layout and `ScrollArea` usage can be extended to a three-pane split with two independent scroll areas. Mobile single-column layout stays unchanged. |
+| 3. Meal fields | `MealFields`, `AddMealForm` form logic | **REUSE AS-IS** | Build new meal-field component | `MealFields` already isolates Date, Meal name, and Description; validation schema already enforces required fields. |
+| 4. Add dish | `useDishes.addDish`, `DishList` add triggers | **REUSE WITH REWORK** | Build new add-dish hook | The empty-row append is already implemented. The only change is making `addDish` return the new dish id so `AddMealForm` can open mobile search for that specific row. |
+| 5. Remove dish | `useDishes.removeDish`, `ConfirmModal` | **REUSE AS-IS** | Build new delete flow | Existing delete confirmation and row removal work unchanged. Link-mode cancellation is handled by the caller, not by the removal hook itself. |
+| 6. Collapsed dish row | `DishRow`, `DishRowLayout`, `DishSourceChip`, `DishNoteChip` | **REUSE WITH REWORK** | Build new row component | Props already carry all needed state. Rework is limited to updated chip labels/visuals and a new callback for starting link mode / mobile search from an empty chip. |
+| 7. Expand/collapse | `DishRow` toggle, `Collapse`, `DishRowExpanded` | **REUSE AS-IS** | Build new expand behavior | Existing per-row `expanded` state and toggle already match the design. |
+| 8. Desktop link mode | `useLinkMode` hook, `LinkModeBanner` component, `SavedRecipesColumn` | **BUILD NEW** | Inline everything in `AddMealForm` | No existing component owns the "linking to a specific dish" state, banner, or search-prefill/clear-tags behavior. |
+| 9. Desktop saved-recipes browse/add | `SavedRecipesColumn`, `SavedRecipeResults`, `SavedRecipeResultItem` | **BUILD NEW** | Extend `DishSourceFields` | There is no existing browseable, filterable saved-recipes column. The new third column is a distinct UI surface. |
+| 10. Unlink saved recipe | `DishSourceFields` | **REUSE WITH REWORK** | Build new source panel | The expanded source panel already exists. Rework removes the segmented control and adds Change/Remove actions for linked recipes. |
+| 11. Reference | `DishSourceFields` reference input, `formatSourceChip` | **REUSE WITH REWORK** | Build new reference utility | Reference input and protocol stripping already exist. Rework adds truncation/ellipsis and updates chip visuals. |
+| 12. Note | `DishNoteField`, `DishNoteChip` | **REUSE AS-IS** | Build new note field | Existing note textarea and chip already match the design. |
+| 13. Search saved recipes | `useSavedRecipeSearch` hook | **BUILD NEW** | Inline filtering in components | No existing hook combines name search, tag filtering, last-used sorting, and mobile top-5 selection. |
+| 14. Tag filter | `useTagFilter` hook, `TagFilter` component | **BUILD NEW** | Inline tag logic in saved-recipes column | No existing component or hook manages multi-select tag filters with dynamic availability, usage counts, "+N more", and selected-first ordering. |
+| 15. Mobile search-as-you-type | `MobileSavedRecipeSearch` component | **BUILD NEW** | Reuse desktop column | Mobile has no room for a column; the search list appears under the name field with a different title, layout, and "Add as new dish" row. |
+| 16. Keyboard navigation | `useSavedRecipeKeyboard` hook | **BUILD NEW** | Use Mantine `useRovingIndex` alone | The design requires shared keyboard/mouse highlight, Enter activation, and Esc clearing integrated with search/tag state. A small dedicated hook is clearer. |
+| 17. Submit + `lastUsed` | `addMeal` action, `recipe`/`bookmark` schemas and types | **REUSE WITH REWORK** | Build new action | `addMeal` already creates the meal. Rework adds `lastUsed` field to schemas/types and updates the action to write it for every linked saved item. |
+| 18. Cancel/close | `AddMealForm` `onCancel`, `CalendarModalProvider` close | **REUSE AS-IS** | Build new close flow | Existing close behavior is unchanged. |
+
+### Client/server and shape notes
+
+- All UI/interaction pieces are **client** (event handlers, `useState`, browser keyboard). The only server pieces are the existing `addMeal` action and the schema/type changes for `lastUsed`.
+- `SavedRecipesColumn` and `MobileSavedRecipeSearch` both depend on the same shared pieces: `useSavedRecipeSearch`, `useTagFilter`, `TagFilter`, `SavedRecipeResults`, `SavedRecipeResultItem`, and `useSavedRecipeKeyboard`. Extracting these first avoids duplicating search/filter/tag logic across desktop and mobile.
+- `useSavedRecipeSearch` is a hook (no markup). `useTagFilter` is a hook (no markup). `useSavedRecipeKeyboard` is a hook (no markup). `useLinkMode` is a hook (no markup).
+- `TagFilter`, `SavedRecipeResults`, `SavedRecipeResultItem`, `LinkModeBanner`, `MobileSavedRecipeSearch`, and `SavedRecipesColumn` are components (they produce markup).
+- `usePlannerSavedItems` currently returns only `_id`, `name`, and `url`. It must be **reworked** (or replaced by a richer hook) to also return `kind` (`recipe`/`bookmark`), `tags` (resolved to tag objects), and `lastUsed`.
+
+# Implementation
+
+## Step 1a — Add `lastUsed` field to recipe and bookmark schemas/types
+
+**Scope:** Add an optional `lastUsed` date field to the Mongoose schemas and Zod types. Keep it optional so existing data loads without migration.
+
+**Files:** `src/_models/library/recipe.ts`, `src/_models/library/recipe.types.ts`, `src/_models/library/bookmark.ts`, `src/_models/library/bookmark.types.ts`, plus tests.
+
+**Architectural note:** Covers Suggested Approach behavior **17. Submit + `lastUsed`** (data-model half).
+
+**Acceptance:**
+- Run the app and open a planner; confirm the calendar and recipe library still load normally.
+- Run `pnpm test` and confirm no schema/type regressions.
+
+## Step 1b — Update `addMeal` to write `lastUsed`
+
+**Scope:** After creating the meal, update `lastUsed` on every saved recipe or bookmark linked to a dish.
+
+**Files:** `src/_actions/calendar/addMeal.ts`, `src/_actions/calendar/addMeal.test.ts`.
+
+**Architectural note:** Covers Suggested Approach behavior **17. Submit + `lastUsed`** (action half).
+
+**Acceptance:**
+- Open the Add Meal modal, link a saved recipe to a dish, and submit the meal.
+- Inspect the planner document in the database and confirm the linked saved item now has an ISO `lastUsed` timestamp.
+
+## Step 2 — Enrich saved-item data access
+
+**Scope:** Extend `usePlannerSavedItems` to return each item's `kind` (`recipe`/`bookmark`), resolved tag objects, and `lastUsed`. Keep existing `_id`, `name`, `url` fields for backward compatibility. Add a temporary `console.log` in the hook to verify the enriched fields are produced; remove it in the next step.
+
+**Files:** `src/app/[planner]/calendar/_hooks/usePlannerSavedItems.ts`, its test, and the shared mock at `test/mocks/@app/[planner]/calendar/_hooks/usePlannerSavedItems.ts`.
+
+**Architectural note:** Supports behaviors **8. Desktop saved-recipes browse/add**, **13. Search saved recipes**, **14. Filter saved recipes by tags**, and **15. Mobile search-as-you-type**.
+
+**Acceptance:**
+- Open the Add Meal modal and check the browser console.
+- Verify each saved item is logged with `kind`, `tags`, and `lastUsed`.
+- Confirm the existing saved-recipe dropdown still works (regression).
+- Remove the temporary log before proceeding.
+
+## Step 3 — Three-column desktop layout with raw saved-recipes list
+
+**Scope:** Reshape `AddMealForm` from two desktop panes to three: Meal (fixed, tinted), Dishes (scrollable), and Saved recipes (scrollable). Render a raw, unfiltered list of saved recipes in the third column. Mobile stays a single scrolling column.
+
+**Files:** `src/app/[planner]/calendar/_components/AddMealForm/AddMealForm.tsx`, `AddMealForm.module.css`, `SavedRecipesColumn.tsx`, `SavedRecipeResultItem.tsx`, plus tests.
+
+**Architectural note:** Covers behavior **2. Three-column layout / scroll** and the list-rendering part of **9. Desktop saved-recipes browse/add**.
+
+**Acceptance:**
+- On desktop, open the Add Meal modal and verify three columns appear.
+- Scroll the Dishes column and the Saved recipes column independently; confirm the Meal column and the header/footer stay pinned.
+- On mobile (or narrow viewport), verify the layout is still a single scrolling column.
+
+## Step 4a — Sort saved recipes by last used, then alphabetically
+
+**Scope:** Build the sorting half of `useSavedRecipeSearch`: items with a `lastUsed` date sort first (most recent top), then items without `lastUsed` sort alphabetically.
+
+**Files:** `src/app/[planner]/calendar/_components/AddMealForm/_hooks/useSavedRecipeSearch.ts`, plus tests.
+
+**Architectural note:** Covers the sorting part of behavior **13. Search saved recipes**.
+
+**Acceptance:**
+- Create a meal that links recipe A, then open the Add Meal modal again.
+- Verify recipe A appears at the top of the Saved recipes list.
+- Verify recipes that have never been used sort alphabetically below used ones.
+
+## Step 4b — Search saved recipes by name
+
+**Scope:** Add the search input and name-substring filtering to `SavedRecipesColumn` and `useSavedRecipeSearch`.
+
+**Files:** `src/app/[planner]/calendar/_components/AddMealForm/SavedRecipesColumn.tsx`, `_hooks/useSavedRecipeSearch.ts`, plus tests.
+
+**Architectural note:** Covers the name-search part of behavior **13. Search saved recipes**.
+
+**Acceptance:**
+- Type in the Saved recipes search box and verify the list filters by name (case-insensitive substring).
+- Type a query that matches nothing and verify "No saved recipes match." appears.
+
+## Step 4c — Filter saved recipes by tags
+
+**Scope:** Build `useTagFilter` and `TagFilter`: multi-select AND logic, selected tags first in their color, dynamic availability, usage counts, "+N more" expansion, and Clear. Wire it into `SavedRecipesColumn`.
+
+**Files:** `src/app/[planner]/calendar/_components/AddMealForm/_hooks/useTagFilter.ts`, `TagFilter.tsx`, `SavedRecipesColumn.tsx`, `SavedRecipeResults.tsx`, plus tests.
+
+**Architectural note:** Covers behavior **14. Filter saved recipes by tags**.
+
+**Acceptance:**
+- Select one or more tag chips and verify the list shows only recipes/bookmarks that carry every selected tag.
+- Verify selected tags appear first, counts update, only six tags show initially, and "+N more" expands the rest.
+- Click Clear and verify all tag filters reset.
+
+## Step 5 — Add buttons and "Added" state in the saved-recipes column
+
+**Scope:** Give each result an "Add" button. Clicking it appends a new dish named after and linked to that recipe. Already-on-meal recipes show "Added". Update `useDishes.addDish` to return the new id.
+
+**Files:** `src/app/[planner]/calendar/_components/AddMealForm/SavedRecipeResultItem.tsx`, `SavedRecipeResults.tsx`, `SavedRecipesColumn.tsx`, `useDishes.ts`, plus tests.
+
+**Architectural note:** Covers the add-new-dish part of behavior **9. Desktop saved-recipes browse/add** and the `useDishes` rework in behavior **4. Add dish**.
+
+**Acceptance:**
+- Click Add on a saved recipe in the column; verify a new dish row appears at the end, named after and linked to that recipe.
+- Verify that recipe now shows "Added" and cannot be added again.
+- Submit the meal and confirm the linked recipe is saved.
+
+## Step 6a — Rework expanded source panel layout
+
+**Scope:** Remove the source segmented control. Show the linked recipe name with Change/Remove actions, or a "Link a saved recipe" button plus a reference field when nothing is linked. Preserve the existing mobile stacked layout (Source above Note).
+
+**Files:** `src/app/[planner]/calendar/_components/AddMealForm/DishSourceFields.tsx`, plus tests.
+
+**Architectural note:** Covers part of behaviors **10. Unlink saved recipe** and **11. Reference**, and sets up the panel for **8. Desktop link mode**.
+
+**Acceptance:**
+- Expand a dish row with no source and verify the panel shows "Link a saved recipe" button and a reference field (no segmented control).
+- Enter a reference and verify it appears on the source chip.
+- Link a saved recipe, expand the row, and verify the panel shows the recipe name with Change and Remove buttons.
+- Click Remove and verify the dish name is kept while the saved recipe is unlinked.
+- On mobile (narrow viewport), verify the expanded panel stacks Source above Note.
+
+## Step 6b — Rework source chip visuals and reference truncation
+
+**Scope:** Update `DishSourceChip` to show "Link recipe" when empty, a filled green dot for saved recipes, and a hollow green ring for references. Update `formatSourceChip` to truncate long references to one line.
+
+**Files:** `src/app/[planner]/calendar/_components/AddMealForm/DishSourceChip.tsx`, `DishSourceChip.module.css`, `_utils/formatSourceChip.ts`, plus tests.
+
+**Architectural note:** Covers part of behavior **6. Collapsed dish row** and **11. Reference**.
+
+**Acceptance:**
+- Add a dish with no source and verify the chip reads "Link recipe" with a grey hollow ring.
+- Link a saved recipe and verify the chip shows the recipe name with a filled green dot.
+- Add a very long reference URL and verify the chip strips `https://` and truncates with an ellipsis on one line.
+- Hover the chip and verify the full reference appears.
+
+## Step 6c — Desktop link mode
+
+**Scope:** Build `useLinkMode` and `LinkModeBanner`. Wire the empty "Link recipe" chip, the panel's "Link a saved recipe" button, and the panel's "Change" action to enter link mode. In link mode, highlight the target dish, show the banner, prefill search with the dish name, clear tags, switch result actions to "Link", and link on selection. If the dish is unnamed, fill its name with the recipe name; otherwise preserve the existing name.
+
+**Files:** `src/app/[planner]/calendar/_components/AddMealForm/_hooks/useLinkMode.ts`, `LinkModeBanner.tsx`, `SavedRecipesColumn.tsx`, `DishRow.tsx`, `DishSourceFields.tsx`, plus tests.
+
+**Architectural note:** Covers behavior **8. Desktop link mode**.
+
+**Acceptance:**
+- Click the empty "Link recipe" chip on an unnamed dish; verify link mode activates and selecting a recipe fills the dish name with the recipe name.
+- Click Change on a named, linked dish; verify link mode activates and selecting a different recipe preserves the existing dish name.
+- Press Esc or click Cancel to exit link mode without linking.
+- Delete the dish being linked and verify link mode exits.
+
+## Step 7a — Mobile search-as-you-type basics
+
+**Scope:** Build `MobileSavedRecipeSearch`. On mobile, adding a dish opens the list under the name field titled "RECENTLY USED" (top 5). Typing filters by name and retitles to "FROM YOUR SAVED RECIPES". Each result has a Use button. The last row is "Add ... as a new dish". Editing a linked dish's name unlinks it.
+
+**Files:** `src/app/[planner]/calendar/_components/AddMealForm/MobileSavedRecipeSearch.tsx`, `DishRow.tsx`, `useDishes.ts`, plus tests.
+
+**Architectural note:** Covers the list/search part of behavior **15. Mobile search-as-you-type** and the mobile part of behavior **4. Add dish**.
+
+**Acceptance:**
+- On mobile (or narrow viewport), tap Add dish and verify the saved list opens under the name field titled "RECENTLY USED" showing the top 5 most recently used recipes.
+- Type in the name field and verify the list filters and retitles to "FROM YOUR SAVED RECIPES".
+- Tap Use on a result; verify the dish name fills, the recipe links, and the list closes.
+- Type a custom name and tap "Add ... as a new dish"; verify a plain dish is created.
+- Edit the name of a linked dish and verify it unlinks.
+- Confirm only one row's list is open at a time.
+
+## Step 7b — Mobile tag filter
+
+**Scope:** Add the tag filter to the mobile saved-recipes list as a single horizontally scrolling row of chips, reusing `TagFilter`.
+
+**Files:** `src/app/[planner]/calendar/_components/AddMealForm/MobileSavedRecipeSearch.tsx`, `TagFilter.tsx`, plus tests.
+
+**Architectural note:** Covers the tag-filter part of behavior **15. Mobile search-as-you-type**.
+
+**Acceptance:**
+- On mobile, open a saved-recipes list and verify tag chips appear in a single horizontally scrollable row.
+- Select tags and verify the list filters by them.
+- Verify the title updates to "SAVED · TAG1 + TAG2" when tags are selected.
+
+## Step 8 — Keyboard navigation in the saved-recipes list
+
+**Scope:** Add `useSavedRecipeKeyboard` to manage a shared keyboard/mouse highlight across results. ↓/↑ move, Enter activates (Add or Link), Esc clears search or exits link mode, and the key hint updates.
+
+**Files:** `src/app/[planner]/calendar/_components/AddMealForm/_hooks/useSavedRecipeKeyboard.ts`, `SavedRecipesColumn.tsx`, `SavedRecipeResults.tsx`, plus tests.
+
+**Architectural note:** Covers behavior **16. Keyboard navigation**.
+
+**Acceptance:**
+- On desktop, focus the Saved recipes search field and press ↓; verify the first result is highlighted.
+- Press ↓/↑ to move the highlight; hover a different result and confirm keyboard and mouse share the same highlight.
+- Press Enter to add/link the highlighted result.
+- Press Esc and verify search clears in browse mode, or link mode exits without linking.
+- Verify the key hint under the tags reads "↑↓ move · ↵ add · Esc clear search" in browse mode and "↑↓ move · ↵ link · Esc cancel linking" in link mode.
+
