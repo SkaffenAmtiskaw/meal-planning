@@ -148,5 +148,6 @@ Move into server-only internal utils so they can't be called from the client:
 - Exempt: client better-auth calls (`SignInFlow`, `ChangePasswordForm`, `ResetPasswordForm`, `ResendVerificationForm`, sign-out buttons) — followed by navigation, no planner data displayed
 
 # Related Issues Found (Out of Scope)
+Both added to [[Roadmap]] under Bugfixes.
 - `src/app/[planner]/recipes/[recipeId]/_components/RecipeDetail.tsx` ignores `deleteRecipe`'s result and always reports success
-- Leaving your only planner likely crashes `src/app/page.tsx` (`user.planners[0]` on an empty array) — unverified, from static reading only
+- [[Zero Planners Crash]] — leaving your only planner likely crashes `src/app/page.tsx` (`user.planners[0]` on an empty array); unverified, from static reading only
