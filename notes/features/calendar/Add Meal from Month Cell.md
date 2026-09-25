@@ -2,25 +2,27 @@
 type: feature
 status: idea
 blocked-by: []
-reviewed: {{date:YYYY-MM-DD}}
+reviewed: 2026-09-25
 ---
 # Where It Stands
 
-%% The line ending in ` ^status` is the story's status and nothing else: what work it needs next, or what it's waiting on, e.g. "Next: design session in Claude Design, then /assess" or "Blocked until [[Stale Data Issues]] lands". Don't describe the story here; the Roadmap link already names it and Purpose describes it. The Roadmap embeds that line with `![[<note>#^status]]`, so keep the ` ^status` ID on it. Add detail below it only when the story needs it. %%
+Next: design session in Claude Design, then /assess. ^status
 
-No direction yet. ^status
+Questions for the design session:
+- What counts as "empty space" in a cell that already has meal cards and a "+N more" link? What does each click target do?
+- What cue shows that a cell can be clicked (hover state, cursor, a "+" that appears)?
+- What's the keyboard equivalent? Today, Enter on a focused day opens its meal (one meal) or steps into its meals (several), and does nothing on an empty day. [[Keyboard Shortcuts]] also plans `C` to open Add Meal.
+- Does clicking a day in the leading or trailing weeks of another month behave the same way?
 
 # Purpose
-%% What problem this solves, and for whom. One or two paragraphs. %%
+add meals by clicking month cell
 
 # Requirements
-%% What must be true when this is done. Rough bullets are fine while status is `idea`. Move to `spec` once there is a detailed design (Design Handoff below) or a detailed technical approach. %%
-
-# Open Decisions
-%% Decisions that must be made before the next step can start, written as questions, not proposals. Each one also gets a `"decision needed: <short question>"` entry in `blocked-by`. Record the answer here once it's made and remove its `blocked-by` entry. Delete the section if there are none. %%
+- On desktop month view, clicking a day cell opens the Add Meal modal with that day's date filled in.
 
 # Out of Scope
-%% Anything deliberately left out. Each item should also be on the Roadmap so it isn't lost. %%
+- Mobile month view. Tapping a cell already selects the day, and the floating Add Meal button adds a meal on the selected day.
+- Week view. "add meals by clicking week day" is its own Roadmap line. That story should reuse the interaction decisions from this story's design (click targets, hover cue, keyboard) so the two views behave the same.
 
 ## Meta-Instructions
 %% Keep this section only if the note has a Design Handoff. Delete it otherwise. %%

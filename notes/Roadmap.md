@@ -9,24 +9,29 @@
 - **Later** - committed, not ordered, grouped by area.
 - **Ideas** - not committed.
 - A story's status (`idea` / `spec` / `ready` / `in-progress` / `done`) lives in its note's frontmatter. This file only decides order.
+- Each line with a note embeds that note's status line from Where It Stands after the link, e.g. `[[Stale Data Issues]] ![[Stale Data Issues#^status]]`. It shows only what work the story needs next, not what the story is. Edit it in the note, not here.
 - *(was high)* etc. is the item's priority under the old High / Medium / Low layout, kept for reference while the queue is being ordered. *(was bugfix)* means it was in the old "Bugfixes/User Issues/Tech Debt" section.
 
 # Hubs
-- [[Meal Editing]] - every story that edits, moves, duplicates, deletes or reorders meals, with open decisions. Includes [[Meal Detail Modal & Edit Meals]] (blocked on [[Unified Date Picker Component]]), mobile delete, batch delete, [[DND]], and the mobile agenda Edit / Move to… buttons.
+- [[Meal Editing]] - every story that edits, moves, duplicates, deletes or reorders meals, with open decisions. Includes [[Meal Detail Modal & Edit Meals]] (blocked on [[Header Date Picker]] and [[Meal Form Date Picker]]), mobile delete, batch delete, [[DND]], and the mobile agenda Edit / Move to… buttons.
+- [[Unified Date Picker Component]] ![[Unified Date Picker Component#^status]] - the date picker design, split 2026-09-25 into [[Mantine Date Picker Setup]], [[Today and Selected Day Markers]], [[Header Date Picker]] and [[Meal Form Date Picker]].
 
 # Now
 - [[Unit Testing - Clean Up Mocks]] - remaining: a few straggler files in `@/_actions`, `@/_models` and `@mantine/hooks`; `@/_components` and `@/_utils` not started
 
 # Next
-*Ordered 2026-09-25. All four are `spec`, so "next" means next to get implementation steps (via `architect`), then build.*
+*Ordered 2026-09-25. All five are `spec`, so "next" means next to get implementation steps (via `/plan-steps`), then build.*
 1. [[Stale Data Issues]] - spec. Unblocks [[Add Meal Changes (Saved Recipes)]] and [[Mobile List View]]; every meal-editing mutation should follow its pattern. *(was bugfix)*
-2. [[Unified Date Picker Component]] - spec. Unblocks [[Meal Detail Modal & Edit Meals]]. *(was high)*
-3. [[Remove Schedule-X]] - spec. Has an open decision on where shared types live, which overlaps [[Shared Types Directory]]. *(was bugfix)*
-4. [[Shared Types Directory]] - spec, last reviewed April. May move up or fold into [[Remove Schedule-X]] depending on where that story puts the shared types.
+2. [[Mantine Date Picker Setup]] ![[Mantine Date Picker Setup#^status]] - spec. *(was high)*
+3. [[Today and Selected Day Markers]] ![[Today and Selected Day Markers#^status]] - spec. Fixes the truncated today circle; unblocks [[Mobile List View]]. *(was high)*
+4. [[Remove Schedule-X]] - spec. Has an open decision on where shared types live, which overlaps [[Shared Types Directory]]. *(was bugfix)*
+5. [[Shared Types Directory]] - spec, last reviewed April. May move up or fold into [[Remove Schedule-X]] depending on where that story puts the shared types.
 
 # Blocked
+- [[Header Date Picker]] ![[Header Date Picker#^status]] - spec. Waiting on [[Mantine Date Picker Setup]] and [[Today and Selected Day Markers]]. *(was high)*
+- [[Meal Form Date Picker]] ![[Meal Form Date Picker#^status]] - spec. Waiting on [[Header Date Picker]]. With it, unblocks [[Meal Detail Modal & Edit Meals]]. *(was high)*
 - [[Add Meal Changes (Saved Recipes)|User Feedback - Add Meal Changes]] - ready. Waiting on [[Stale Data Issues]]. *(was bugfix)*
-- [[Mobile List View]] - spec (was ready). Needs re-review: Steps 2 and 5, plus the today-marker change moved in from [[Unified Date Picker Component]] (affects Step 3, Tokens and Acceptance criterion 4). Waiting on [[Stale Data Issues]] and [[Unified Date Picker Component]]. *(was high)*
+- [[Mobile List View]] - spec (was ready). Needs re-review: Steps 2 and 5, plus the today-marker change moved in from [[Unified Date Picker Component]] (affects Step 3, Tokens and Acceptance criterion 4). Waiting on [[Stale Data Issues]] and [[Today and Selected Day Markers]]. *(was high)*
 - [[Zero Planners Crash|root page crashes for users with zero planners (e.g. invited user leaves or is removed from their only planner)]] - spec. Waiting on your decision on which fix to use (deferred 2026-09-25). *(was bugfix)*
 - [[Delete Planner|allow user to delete a planner]] - idea. Waiting on the [[Zero Planners Crash]] decision. *(was high)*
 - [[Keyboard Shortcuts|keyboard shortcuts]] - spec. Out of date; re-review once the calendar views are mostly complete. *(was medium)*
@@ -39,10 +44,9 @@
 - you should be able to create a meal with just a title and a description (or just a title) *(was bugfix)*
 - meal color should be based on hex of title + description *(was bugfix)*
 - change segmented control theme to match design from Claude *(was bugfix)*
-- Desktop: month view current date circle is truncating numbers - covered by [[Unified Date Picker Component]] (Suggested Approach, behavior 22) *(was bugfix)*
+- Desktop: month view current date circle is truncating numbers - covered by [[Today and Selected Day Markers]] (behavior 22) *(was bugfix)*
 - month views (desktop and mobile) should always show 6 rows, matching the date picker's fixed 6-week grid - the row count comes from `getMonthGridDates` (found while planning [[Unified Date Picker Component]])
-- add meals by clicking month cell *(was high)*
-- add meals by clicking week day *(was high)*
+- [[Add Meal from Month Cell]] ![[Add Meal from Month Cell#^status]]- add meals by clicking week day - reuse the interaction decisions from [[Add Meal from Month Cell]]'s design so month and week behave the same *(was high)*
 - default to week view on desktop - list view on mobile *(was high)*
 - calendar list view infinite scroll *(was high)*
 - clicking "+N more" in the month grid switches to list view at that day - approach needs review (see Step 17 in [[Replace Schedule-X]])

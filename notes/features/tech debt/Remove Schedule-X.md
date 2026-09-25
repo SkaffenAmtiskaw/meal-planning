@@ -29,6 +29,14 @@ All paths are relative to `src/app/[planner]/calendar/`. Each has a test file th
 - `package.json`: `@schedule-x/calendar`, `@schedule-x/events-service`, `@schedule-x/react`, `@schedule-x/theme-default`
 - `temporal-polyfill` (+ its global import in `layout.tsx`) appears to exist only for schedule-x - the only other `Temporal` users are the dead files above and `toScheduleXEvents.ts`. Confirm nothing else needs it before removing.
 
+## Docs
+*(Added 2026-09-25 from the [[Unified Date Picker Component]] plan check.)* `.opencode/docs/theme.md` still documents schedule-x. It's the only file in `.opencode/docs/` that mentions it:
+- L6: the Calendar line says the calendar is `schedule-x` with separate CSS variable theming. Update it to describe the custom calendar.
+- L73-90: the `## Schedule-x calendar theming` section, including `--sx-color-today-bg: rgba(255, 101, 66, 0.08); /* faint ember tint */`. Delete it.
+- L123 (dark mode): "schedule-x CSS variables will need a separate `[data-mantine-color-scheme="dark"]` block". Drop that clause.
+
+[[Today and Selected Day Markers]] Step 8 edits theme.md's ember rule (ember is for actions only; today is a navy ring). Keep that edit when removing these sections.
+
 # Open Decision
 Where do the shared types (`SerializedDish`, `SerializedMeal`, `SerializedDay`, `SavedItem`) move to? They are DTOs for serialized planner data, which overlaps with [[Shared Types Directory]] (not yet built). Options include a calendar-local `_types/` directory or waiting for / doing the shared `src/_types/` directory first.
 
@@ -40,5 +48,6 @@ Where do the shared types (`SerializedDish`, `SerializedMeal`, `SerializedDay`, 
 - [ ] No file in `src` imports from `toScheduleXEvents.ts`, and the file is deleted
 - [ ] All unused files listed above (and their tests) are deleted
 - [ ] No `@schedule-x` imports or packages remain; `temporal-polyfill` removed if confirmed unused
+- [ ] `.opencode/docs/theme.md` no longer mentions schedule-x
 - [ ] `pnpm check:types`, `pnpm test`, `pnpm lint` and `pnpm build` pass
 - [ ] Month, week and list views work on desktop and mobile with no visual regressions (schedule-x's CSS no longer loads)

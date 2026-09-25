@@ -28,7 +28,7 @@ This is planning only. Don't change code. A hook blocks edits outside `notes/` a
 ## 1. Read the note
 Find the note in `notes/features/`. `notes/Note Conventions.md` explains the frontmatter and markers. The note should be `type: feature` with `status: spec`. If it's missing or has a different status, tell Sarah what you found and stop. Turning rough notes into a design is done with her, not by this skill.
 
-If the note has a Design Handoff, treat it as the source of truth for UX, not for implementation.
+If the note has a Design Handoff, treat it as the source of truth for UX, not for implementation. A story split from a hub embeds its design sections from the hub (`![[Hub#Section]]`). Read each embedded section; it's part of this note.
 
 If the note already has a Suggested Approach, this is a re-assessment. Don't start from the old approach. It invites the same anchoring as old code. Do steps 2 to 5 fresh, then in step 6 show what changed compared with the old approach.
 
@@ -37,7 +37,17 @@ List the story as numbered behaviors, one line each. Cover what the user does an
 
 Where the note doesn't say, ask Sarah, one question at a time. Don't fill gaps yourself.
 
+If `.opencode/scratch/<note name> - behaviors.md` exists because this story was split from a larger one, start from that list instead of writing a new one. Show it and ask Sarah to confirm it still holds.
+
 Show the list and wait for her to confirm it before going on.
+
+### Check whether it's several stories
+Skip this check if the story was just split and its behaviors haven't changed since.
+
+The confirmed behavior list is the first point where the story's real size shows, and splitting is cheapest before an approach exists. Send the note path and the confirmed behaviors to the `split-checker` subagent, as the **Behaviors** checkpoint. Save its report to `.opencode/scratch/<note name> - split check.md`.
+
+- **One story:** tell Sarah in one line, link the report, and go on to step 3.
+- **Split:** follow "Splitting a story" at the end of this skill. That ends this session. Each child gets its own `/assess` in a new session.
 
 ## 3. Design the target before reading existing modules
 From the behaviors and the project docs (`.opencode/docs/project_conventions.md`, `project_structure.md` and `style_guidelines.md`), describe what you would build if the codebase were clean. Don't open existing modules yet. The point is a design that isn't anchored to what's already there.
@@ -74,6 +84,10 @@ Once she approves, write the behavior list, the table and the client pieces unde
 
 For a re-assessment, first show Sarah what changed compared with the old approach, and replace it only once she approves. Leave `status` at `spec`. The note isn't ready until it has implementation steps.
 
+Then:
+- Update the note's Where It Stands line, the one ending in ` ^status`, to say what work comes next, e.g. "Approach approved. Next: /plan-steps". It holds the status only, never a description of the story, because the Roadmap embeds it for scanning. Show Sarah the line and wait for her approval before writing it. If the note has no `# Where It Stands` section yet, add one at the top, right after the frontmatter, in the format from `notes/templates/Feature.md`.
+- Make sure the story's line in `notes/Roadmap.md` embeds that summary after the link (`![[<note>#^status]]`). Add the embed if it's missing.
+
 ## 7. Find a home for out-of-scope items
 If the out-of-scope list is empty, you're done.
 
@@ -84,3 +98,13 @@ Then go through its suggestions with Sarah **one item at a time**:
 2. Wait for her to approve, change or drop it.
 3. Apply that one change to the notes.
 4. Move to the next item.
+
+## Splitting a story
+`split-checker` proposes the split. Sarah decides, one piece at a time:
+1. **Whether to split.** Show the verdict and the reason, plus each child's name and scope line, then ask whether to split. If she says no, carry on as one story.
+2. **Each child, one at a time.** Show what it takes, what blocks it and which design sections it embeds. Wait for her to approve or change it. If a change moves something to another child, update that child before you get to it.
+3. **Leftovers, one at a time.** Raise anything under Unclaimed, and each move to an existing story.
+4. **Apply.** Once she has approved every child, apply the note changes from the report. Create the children first, then rewrite the original as the hub, then update the links in other notes. Show each Roadmap line before you write it, and never reorder the Roadmap.
+5. **Save each child's behaviors.** Write each child's share of the confirmed behaviors to `.opencode/scratch/<child name> - behaviors.md`, so its own `/assess` can start from them.
+6. **Route out-of-scope items.** If you've collected any, handle them as in step 7.
+7. **Stop.** Don't start work on any child in this session. By now it has read the whole design and the split report, and carrying that into a child's assessment bloats the context. Tell Sarah the split is done, and list each child with the command to run in a new session, e.g. `/assess <child name>`.

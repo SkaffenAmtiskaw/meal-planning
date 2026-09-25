@@ -2,7 +2,8 @@
 type: feature
 status: spec
 blocked-by:
-  - "[[Unified Date Picker Component]]"
+  - "[[Header Date Picker]]"
+  - "[[Meal Form Date Picker]]"
 reviewed: 2026-09-25
 ---
 # Purpose
@@ -68,6 +69,8 @@ Each dish row has a small button on the right: **Edit note** (solid outline) if 
 
 ## Move to / Duplicate
 ![Move to picker](assets/meal-detail-modal/02-move-to-picker.png)
+
+> ⚠️ **Split 2026-09-25:** The picker's `label`, relative shortcuts and `hint` that this placement uses don't exist yet. They moved to [[Meal Editing#Date picker options for Move / Duplicate]] when [[Unified Date Picker Component]] was split. Which story builds them is [[Meal Editing]] open decision 10.
 
 Both buttons open the **unified date picker** as a popover above the action bar, set up for this
 placement:

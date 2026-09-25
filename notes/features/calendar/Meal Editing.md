@@ -28,14 +28,17 @@ Before planning or implementing any story linked from this note, read this note 
 
 | Story | Status | Meal editing scope | Blocked by |
 |---|---|---|---|
-| [[Unified Date Picker Component]] | spec | the picker used by Move to, Duplicate and the edit-mode date field | - |
+| [[Header Date Picker]] | spec | the shared picker, its popover and bottom sheet, and meal dots, which Move to and Duplicate open | [[Mantine Date Picker Setup]], [[Today and Selected Day Markers]] |
+| [[Meal Form Date Picker]] | spec | the meal form Date field that edit mode reuses | [[Header Date Picker]] |
 | [[Add Meal Changes (Saved Recipes)]] | ready | the Add Meal layout that edit mode reuses | [[Stale Data Issues]] |
-| [[Meal Detail Modal & Edit Meals]] | spec | desktop read view, inline notes, Move to / Duplicate, edit mode, delete. Phone version not designed. | [[Unified Date Picker Component]] |
+| [[Meal Detail Modal & Edit Meals]] | spec | desktop read view, inline notes, Move to / Duplicate, edit mode, delete. Phone version not designed. | [[Header Date Picker]], [[Meal Form Date Picker]] |
+| Date picker options for Move / Duplicate (Deferred Work below) | not a story yet | the picker's label, relative shortcuts, custom shortcut items and hint, which Move to / Duplicate open | [[Header Date Picker]]; open decision 10 below |
 | Mobile agenda card actions (Deferred Work below) | not a story yet | Edit / Move to… buttons on mobile month agenda cards | open decisions 1, 2 and 9 below |
 | [[Mobile List View]] | ready | none - cards have no actions | re-review of Steps 2 and 5; [[Stale Data Issues]] |
 | [[DND]] | idea | move between days and reorder within a day, desktop only | - |
 
 **Related, not child stories:**
+- [[Unified Date Picker Component]] - hub holding the date picker design; split 2026-09-25 into the date picker stories above plus [[Mantine Date Picker Setup]] and [[Today and Selected Day Markers]]
 - [[Stale Data Issues]] - edit, move, duplicate and delete are all mutations and should follow its pattern
 - [[Modal Form Architecture]] - the meal detail modal is meant to follow its presentation/data split and use `CalendarModalContext`
 - [[Keyboard Shortcuts]] - `E` edits and `Delete` deletes the focused meal
@@ -50,10 +53,10 @@ These were separate Roadmap lines before 2026-09-25. The Roadmap now links to th
 - [[DND|move meals to different days (drag and drop) & reorder meals within days]] - was Medium
 
 # Build Order Implied by the Notes
-*[[Stale Data Issues]] is #1 in the Roadmap's Next queue and blocks [[Add Meal Changes (Saved Recipes)]] (decided 2026-09-25). [[Unified Date Picker Component]] is #2 and doesn't depend on it.*
-1. [[Unified Date Picker Component]]
+*[[Stale Data Issues]] is #1 in the Roadmap's Next queue and blocks [[Add Meal Changes (Saved Recipes)]] (decided 2026-09-25). The date picker stories ([[Unified Date Picker Component]] hub) don't depend on it.*
+1. [[Header Date Picker]], then [[Meal Form Date Picker]] (after [[Mantine Date Picker Setup]] and [[Today and Selected Day Markers]]; see the [[Unified Date Picker Component]] hub)
 2. [[Add Meal Changes (Saved Recipes)]] - after [[Stale Data Issues]] - so edit mode is not built on the old Add Meal layout (not stated in either note; see open decision 7)
-3. [[Meal Detail Modal & Edit Meals]]
+3. [[Meal Detail Modal & Edit Meals]]. The date picker options for Move / Duplicate come before it or with it (open decision 10).
 4. Wiring the mobile card actions (currently Step 8 stubs) to the edit flow
 
 # Open Decisions
@@ -71,6 +74,9 @@ These were separate Roadmap lines before 2026-09-25. The Roadmap now links to th
    - Partly answered 2026-09-25: [[Stale Data Issues]] is first in the Next queue, and [[Add Meal Changes (Saved Recipes)]] and [[Mobile List View]] are blocked on it. Whether edit mode waits for Add Meal Changes is still open.
 8. **Reorder on mobile.** Is reordering meals within a day needed on phones at all?
 9. **Disabled stubs.** Should the mobile agenda's Edit / Move to… buttons ship as disabled stubs before the edit flow exists (the original Step 8 plan), or wait until they can be wired up?
+10. **Date picker options for Move / Duplicate.** The picker's `label`, relative shortcuts, custom `shortcutItems` and `hint` were never built. They moved here from [[Unified Date Picker Component]] when it was split (see Deferred Work). Should they be their own story, or part of [[Meal Detail Modal & Edit Meals]]?
+    - Constraint: only Move to / Duplicate uses them. As a separate story, they'd need a temporary demo page to be checked in the app.
+    - No placement uses `shortcutItems` ("override, if ever needed"). Decide whether to build it at all.
 
 # Deferred Work
 Unfinished pieces moved here from stories that are otherwise done. Each keeps its full design references so whoever builds it does not have to go back to the archived note.
@@ -103,3 +109,46 @@ Unfinished pieces moved here from stories that are otherwise done. Each keeps it
 - `PillButton` is in `src/_components/PillButton/`.
 - `MealMonthAgenda` already uses `useCanWrite` to hide write affordances.
 - Whether these ship as disabled stubs first is open decision 9.
+
+## Date picker options for Move / Duplicate
+*Moved from [[Unified Date Picker Component]] on 2026-09-25, when it was split. Sarah had approved building these early and checking them on a temporary demo page. The demo page was dropped in the split, and the options wait for the placement that uses them. Which story builds them is open decision 10.*
+
+The design lives in [[Unified Date Picker Component]]. The sections embedded below are part of this work.
+
+**Anatomy** (the Label, Shortcuts and Hint rows):
+![[Unified Date Picker Component#^anatomy-parts]]
+
+**Shortcut labels (`shortcuts="relative"`):**
+![[Unified Date Picker Component#^shortcut-labels]]
+
+![[Unified Date Picker Component#Recommended Configuration]]
+
+![[Unified Date Picker Component#Behavior (all placements)]]
+
+![[Unified Date Picker Component#Phones Bottom Sheet]]
+
+![[Unified Date Picker Component#Planned meal detail Move / Duplicate (not in this change)]]
+
+### Behaviors
+From the original story's Suggested Approach, word for word. The demo page it mentions was dropped in the split.
+
+21. `label`, `shortcuts="relative"`, custom `shortcutItems` and `hint` are built now, so Move/Duplicate needs no API changes later. A temporary in-app page exercises them:
+    - a label
+    - relative shortcuts for a meal dated today, a later day and a past day, with shortcuts that land before today hidden
+    - custom shortcut items
+    - a hint
+
+    Once Sarah confirms they work, deleting the page is part of the story's cleanup.
+
+From Behavior 13: on phones, the placement's `label` becomes the bottom sheet's title, and the panel doesn't repeat it.
+
+### Pieces
+| # | Piece | Job | Decision | Existing code | Why |
+|---|---|---|---|---|---|
+| 5 | Shortcut cards | Show shortcut cards that each pick their date | Build new | — | |
+| 6 | Relative shortcuts | Build the Tomorrow / Next week (or Next day / Week later) shortcuts that land today or later | Build new, next to the picker | — | |
+
+Both live next to the shared picker in `src/_components/CalendarDatePicker/`, which [[Header Date Picker]] builds. The short weekday date style the cards use ("Wed, Sep 30") is added by [[Meal Form Date Picker]].
+
+### Draft steps (reference only)
+The original Steps 27-30 (label, hint, shortcut cards, relative shortcuts) are in `.opencode/scratch/Meal Editing - date picker option steps.md`. They were written against the dropped demo page, so re-plan them against Move to / Duplicate.

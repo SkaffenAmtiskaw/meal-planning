@@ -17,7 +17,8 @@ Pick exactly one home for each item:
 - **Existing note:** the item belongs to a story that already has a note.
   - Name the note and the section the item should go in.
   - If that note is `ready`, adding anything moves it back to `spec`, because its steps may no longer match. Also suggest adding a `blocked-by` entry and updating its Roadmap line to say what needs re-review.
-  - If the item is design material, such as part of a design handoff, it goes in its own clearly labeled section, separate from that note's own handoff. That section says that if it conflicts with the note's handoff or steps, the implementing agent must stop and ask Sarah which one wins. Name any conflicts you can already see.
+  - If the design material lives in a hub, the note embeds the hub sections it needs (`![[Hub#Section]]`) rather than copying them. Hubs are never archived, so the design stays visible in one copy.
+  - Otherwise, if the item is design material, such as part of a design handoff, it goes in its own clearly labeled section, separate from that note's own handoff. That section says that if it conflicts with the note's handoff or steps, the implementing agent must stop and ask Sarah which one wins. Name any conflicts you can already see.
 - **New Roadmap line:** a new story that takes a line or two to describe. Name the Roadmap section and write the exact line. Follow the style of the lines around it.
 - **New idea note:** a new story that needs more than a line or two. Suggest a title and folder under `notes/features/`, draft the body from the template in `notes/templates/` that fits its shape, and write the Roadmap line that links to it.
 

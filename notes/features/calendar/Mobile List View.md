@@ -5,7 +5,7 @@ blocked-by:
   - "Steps 2 and 5 need re-review (see Review notes)"
   - "Today marker changed by [[Unified Date Picker Component]] - Step 3, Tokens and Acceptance criterion 4 need re-review (see Design Update - Today Marker)"
   - "[[Stale Data Issues]]"
-  - "[[Unified Date Picker Component]]"
+  - "[[Today and Selected Day Markers]]"
 reviewed: 2026-09-19
 ---
 ![[01-list-top.png]]
@@ -228,7 +228,7 @@ Ember (orange) is kept for actions only. It is no longer used to mark days.
 
 ![[datepicker_anatomy.png]]
 
-**Implementation note:** [[Unified Date Picker Component]] builds a shared day-marks component for the today ring and uses it in the desktop list's date gutter. Use that component for the mobile day header rather than styling the ring again.
+**Implementation note:** [[Today and Selected Day Markers]] builds a shared day-marks component for the today ring and uses it in the desktop list's date gutter. Use that component for the mobile day header rather than styling the ring again.
 
 # Implementation
 

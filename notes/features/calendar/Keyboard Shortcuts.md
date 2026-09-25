@@ -61,6 +61,17 @@ Implement global keyboard shortcuts for power users to efficiently navigate and 
 - Document all shortcuts in a help modal (`?` key)
 - Follow established conventions (match Google Calendar where possible)
 
+### Keys the date picker already uses
+*(Added 2026-09-25 while planning [[Unified Date Picker Component]], Steps 21-22, now [[Header Date Picker]] Steps 10-11.)* When the global shortcuts are built, check each one against the keys the shared date picker (`src/_components/CalendarDatePicker/`) handles while it's open or focused, so neither one takes the other's keys:
+- Our code, in `useDatePickerKeys`: PgUp/PgDn (same day, previous or next month) and Home/End (start or end of the week)
+- Mantine's `DatePicker`: arrows, Enter, Esc, Ctrl/Cmd+arrow (jump a year; Ctrl+Shift+arrow for a decade) and `Y` (open the year view)
+
+Collisions already visible in the table above:
+- `Esc` - "close modals" vs the picker closing itself. Pressing Esc in a picker inside the Add Meal modal should close only the picker.
+- "Only activate when user is not typing in an input field" doesn't cover the picker's day grid, which is buttons, not an input. Letter and number shortcuts (`T`, `J`/`K`, `N`/`P`, `1`-`3`, `M`/`W`/`L`, `C`, `E`) would fire while a day is focused unless the picker is excluded as well.
+- `G` opens the date picker, so check that the picker's own keys take over once it's open.
+- Don't assign `Y` or Ctrl/Cmd+arrow to a global shortcut.
+
 ### Dependencies
 - This should be implemented **after** the custom calendar is complete
 - Depends on: [[Replace Schedule-X]]
