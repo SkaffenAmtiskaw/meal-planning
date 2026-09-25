@@ -1,4 +1,5 @@
 ---
+type: pattern
 status: idea
 reviewed: 2026-09-24
 ---

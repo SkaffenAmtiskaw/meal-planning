@@ -1,4 +1,5 @@
 ---
+type: feature
 status: spec
 blocked-by:
   - "outdated - re-review against current calendar designs once the calendar views are mostly complete"

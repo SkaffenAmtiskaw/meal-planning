@@ -29,10 +29,10 @@ Before planning or implementing any story linked from this note, read this note 
 | Story | Status | Meal editing scope | Blocked by |
 |---|---|---|---|
 | [[Unified Date Picker Component]] | spec | the picker used by Move to, Duplicate and the edit-mode date field | - |
-| [[Add Meal Changes (Saved Recipes)]] | ready | the Add Meal layout that edit mode reuses | - |
+| [[Add Meal Changes (Saved Recipes)]] | ready | the Add Meal layout that edit mode reuses | [[Stale Data Issues]] |
 | [[Meal Detail Modal & Edit Meals]] | spec | desktop read view, inline notes, Move to / Duplicate, edit mode, delete. Phone version not designed. | [[Unified Date Picker Component]] |
 | Mobile agenda card actions (Deferred Work below) | not a story yet | Edit / Move to… buttons on mobile month agenda cards | open decisions 1, 2 and 9 below |
-| [[Mobile List View]] | ready | none - cards have no actions | - |
+| [[Mobile List View]] | ready | none - cards have no actions | re-review of Steps 2 and 5; [[Stale Data Issues]] |
 | [[DND]] | idea | move between days and reorder within a day, desktop only | - |
 
 **Related, not child stories:**
@@ -50,8 +50,9 @@ These were separate Roadmap lines before 2026-09-25. The Roadmap now links to th
 - [[DND|move meals to different days (drag and drop) & reorder meals within days]] - was Medium
 
 # Build Order Implied by the Notes
+*[[Stale Data Issues]] is #1 in the Roadmap's Next queue and blocks [[Add Meal Changes (Saved Recipes)]] (decided 2026-09-25). [[Unified Date Picker Component]] is #2 and doesn't depend on it.*
 1. [[Unified Date Picker Component]]
-2. [[Add Meal Changes (Saved Recipes)]] - so edit mode is not built on the old Add Meal layout (not stated in either note; see open decision 7)
+2. [[Add Meal Changes (Saved Recipes)]] - after [[Stale Data Issues]] - so edit mode is not built on the old Add Meal layout (not stated in either note; see open decision 7)
 3. [[Meal Detail Modal & Edit Meals]]
 4. Wiring the mobile card actions (currently Step 8 stubs) to the edit flow
 
@@ -67,6 +68,7 @@ These were separate Roadmap lines before 2026-09-25. The Roadmap now links to th
 5. **Delete outside the desktop modal.** Where does delete live on mobile and in desktop list?
 6. **Inline note editing.** Desktop modal only, or anywhere a note is shown?
 7. **Build order.** Should [[Add Meal Changes (Saved Recipes)]] land before edit mode? Should [[Stale Data Issues]] land before any new meal mutations?
+   - Partly answered 2026-09-25: [[Stale Data Issues]] is first in the Next queue, and [[Add Meal Changes (Saved Recipes)]] and [[Mobile List View]] are blocked on it. Whether edit mode waits for Add Meal Changes is still open.
 8. **Reorder on mobile.** Is reordering meals within a day needed on phones at all?
 9. **Disabled stubs.** Should the mobile agenda's Edit / Move to… buttons ship as disabled stubs before the edit flow exists (the original Step 8 plan), or wait until they can be wired up?
 

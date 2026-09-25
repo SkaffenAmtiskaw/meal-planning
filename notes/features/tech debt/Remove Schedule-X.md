@@ -1,4 +1,5 @@
 ---
+type: cleanup
 status: spec
 reviewed: 2026-09-25
 ---

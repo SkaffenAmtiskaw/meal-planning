@@ -1,4 +1,5 @@
 ---
+type: bug
 status: spec
 blocked-by:
   - "decision needed on which fix to use"

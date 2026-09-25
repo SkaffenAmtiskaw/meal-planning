@@ -1,4 +1,5 @@
 ---
+type: feature
 status: ready
 blocked-by:
   - "[[Stale Data Issues]]"

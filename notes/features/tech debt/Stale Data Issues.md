@@ -1,4 +1,5 @@
 ---
+type: pattern
 status: spec
 reviewed: 2026-09-25
 ---

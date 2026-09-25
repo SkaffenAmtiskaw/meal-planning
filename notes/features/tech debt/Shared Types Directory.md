@@ -1,7 +1,10 @@
 ---
+type: pattern
 status: spec
 reviewed: 2026-04-22
 ---
+> ⚠️ **Review 2026-09-25:** The claim below that `PlannerWithAccess` was created during Transfer Ownership looks wrong: Transfer Ownership has not been implemented. The type does exist, in `src/_actions/planner/getPlanners.ts`. Confirm the history before relying on it.
+
 **Context:** During implementation of [[Transfer Ownership of Planner]], the `PlannerWithAccess` type was created in `src/_actions/planner/getPlanners.ts`. This type is a DTO (Data Transfer Object) that combines planner data with access level information. The question arose: where should shared DTOs/types live?
 
 **Problem:**

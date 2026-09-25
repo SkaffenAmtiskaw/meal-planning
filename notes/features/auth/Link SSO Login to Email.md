@@ -1,4 +1,5 @@
 ---
+type: feature
 status: idea
 reviewed: 2026-04-02
 ---

@@ -29,3 +29,4 @@ A full-stack meal planning web app. Users sign in, create meal planners, manage 
 - Project Structure: `./.opencode/docs/project_structure.md`
 - Theme Information: `./.opencode/docs/theme.md`
 - Unit Testing Conventions: `./.opencode/docs/unit_tests.md`
+- Note Conventions (Obsidian vault in `notes/`): `./notes/Note Conventions.md`

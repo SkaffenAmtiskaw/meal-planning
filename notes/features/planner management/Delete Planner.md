@@ -1,4 +1,5 @@
 ---
+type: feature
 status: idea
 blocked-by:
   - "[[Zero Planners Crash]] fix decision"

@@ -1,4 +1,5 @@
 ---
+type: cleanup
 status: in-progress
 reviewed: 2026-09-25
 ---
@@ -17,6 +18,8 @@ We will go through mocks one by one and update the following:
 5. At the end of a session, the user will prompt you to summarize lessons learned during the session and make suggestions if anything needs to be added to the unit testing guidelines file.
 
 # Current Status
+> ⚠️ **Review 2026-09-25:** Open question for the user: this story now covers two sizes of work - finishing ~11 straggler files in modules that already have centralized mocks, and creating new centralized mocks for `@/_components` and `@/_utils` (~37 files). Should the new-mocks part become its own story, so this one can close after the stragglers? Per `unit_tests.md`, new centralized mocks need the user's go-ahead.
+
 *Checked against the code on 2026-09-25 by scanning every `vi.mock` call in `src`. "Centralized" means the test uses `vi.mock('<module>', async () => await import('@mocks/...'))`; "ad-hoc" means it defines its own factory.*
 
 ## 🚧 `@/_actions` - MOSTLY DONE

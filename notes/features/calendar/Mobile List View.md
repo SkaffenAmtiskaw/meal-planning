@@ -1,4 +1,5 @@
 ---
+type: feature
 status: ready
 blocked-by:
   - "Steps 2 and 5 need re-review (see Review notes)"

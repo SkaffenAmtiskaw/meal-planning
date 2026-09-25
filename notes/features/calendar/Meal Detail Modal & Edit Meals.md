@@ -1,4 +1,5 @@
 ---
+type: feature
 status: spec
 blocked-by:
   - "[[Unified Date Picker Component]]"
