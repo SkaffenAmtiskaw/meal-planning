@@ -11,7 +11,7 @@ How notes in this vault are organized. The [[Roadmap]] decides order; everything
 # Lifecycle
 - **idea** - rough notes. Nobody builds from this.
 - **spec** - a detailed design or technical approach exists, but it isn't broken into steps.
-- **ready** - has implementation steps. A story is **not** ready until it has steps, however settled the design is - steps are what make the work reviewable in small pieces.
+- **ready** - has implementation steps. A story is **not** ready until it has steps, however settled the design is - steps are what make the work reviewable in small pieces. Any change to a `ready` note's design or steps sends it back to `spec` until Sarah re-reviews it.
 - **in-progress** - work has started.
 - **done** - finished. Move the note to `archive/`.
 

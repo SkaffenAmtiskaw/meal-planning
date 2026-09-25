@@ -26,7 +26,7 @@
 
 # Blocked
 - [[Add Meal Changes (Saved Recipes)|User Feedback - Add Meal Changes]] - ready. Waiting on [[Stale Data Issues]]. *(was bugfix)*
-- [[Mobile List View]] - ready. Waiting on re-review of Steps 2 and 5, and on [[Stale Data Issues]]. *(was high)*
+- [[Mobile List View]] - spec (was ready). Needs re-review: Steps 2 and 5, plus the today-marker change moved in from [[Unified Date Picker Component]] (affects Step 3, Tokens and Acceptance criterion 4). Waiting on [[Stale Data Issues]] and [[Unified Date Picker Component]]. *(was high)*
 - [[Zero Planners Crash|root page crashes for users with zero planners (e.g. invited user leaves or is removed from their only planner)]] - spec. Waiting on your decision on which fix to use (deferred 2026-09-25). *(was bugfix)*
 - [[Delete Planner|allow user to delete a planner]] - idea. Waiting on the [[Zero Planners Crash]] decision. *(was high)*
 - [[Keyboard Shortcuts|keyboard shortcuts]] - spec. Out of date; re-review once the calendar views are mostly complete. *(was medium)*
@@ -39,7 +39,8 @@
 - you should be able to create a meal with just a title and a description (or just a title) *(was bugfix)*
 - meal color should be based on hex of title + description *(was bugfix)*
 - change segmented control theme to match design from Claude *(was bugfix)*
-- Desktop: month view current date circle is truncating numbers - check whether [[Unified Date Picker Component]] covers this, since it realigns every "today" indicator *(was bugfix)*
+- Desktop: month view current date circle is truncating numbers - covered by [[Unified Date Picker Component]] (Suggested Approach, behavior 22) *(was bugfix)*
+- month views (desktop and mobile) should always show 6 rows, matching the date picker's fixed 6-week grid - the row count comes from `getMonthGridDates` (found while planning [[Unified Date Picker Component]])
 - add meals by clicking month cell *(was high)*
 - add meals by clicking week day *(was high)*
 - default to week view on desktop - list view on mobile *(was high)*
@@ -86,9 +87,14 @@
 - `InviteSettings.tsx` - if the user is undefined, shouldn't it render nothing? (shouldn't the user always be defined in settings?)
 - `InviteForm.tsx` - uses an email regex instead of a zod type check
 - replace the async hook with a native React hook
-- replace date utils with luxon
+- replace date utils with luxon - `src/_utils/date.ts` also mixes formatting with time comparisons, and `new Date('YYYY-MM-DD')` parses as UTC, so date-only strings show the previous day in US time zones
 - route management - emails create paths & query params the app must consume, but nothing keeps them in sync
-- move domain-specific components/utils used app-wide (e.g. access colors) to `src/app/_components` / `src/app/_utils` with an alias, and spell out in project conventions what goes in each
+- [[Domain-Specific Code Locations|move domain-specific code out of the generic folders]] and spell out in project conventions what goes where - idea, has a starting list of files
+- [[Calendar Code Tidy-Ups|calendar code tidy-ups]] - idea, small smells found during [[Unified Date Picker Component]] planning
+- `theme.ts` - hard-coded hex colors (navy, sage, white, border, focus rgba); input `&:focus` styles in a `styles` object never apply (Mantine drops pseudo-selectors there), so the forest focus ring isn't coming from the theme; `'use client'` has a real reason (theme functions passed from the server layout) but no comment saying so
+- "today" is computed independently in ~10 calendar places, several with `DateTime.now()` during server render - near midnight the server's time zone can mark the wrong day or cause a hydration mismatch. Consider one source of "today"
+- calendar duplication - group-by-date ×4 (`MonthGrid`, `MobileMonthGrid`, `WeekView`, `ListView`), meal color calculation ×2 (`toCalendarMeals`, `MealMonthAgenda`), near-identical adapters `MealCalendar` / `MealWeekView` with identical `MonthGridMeal` / `WeekViewMeal` types, and meal keyboard navigation copied between `useMonthGridKeyboard` and `useWeekViewKeyboard` (the week hook also re-implements `useRovingGridFocus`)
+- CTA buttons are styled two ways - `variant="cta"` (6 files) vs `color="ember"` (`AddMealButton`, `MobileAddMealButton`, `SubmitButton`, `ChangePasswordForm`); pick one
 - switch all types files to `*.types.ts` - `*.types.d.ts` is awful *(was medium)*
 - performance - investigate mongo/mongoose caching - is next doing it already or do we need to implement it? *(was medium)*
 - could we get rid of mongoose and use zod + mongodb on its own? what does mongoose get us? *(was medium)*
@@ -103,6 +109,7 @@
 
 ## Notes & Agent Workflow
 - build the planned note agents (shape, investigate, review, archive, architect for patterns) - see the Next Step by Note State table in [[Note Conventions]]
+- [[Agent Instructions Rewrite|rewrite AGENTS.md for Claude Code]] - idea. Part of moving the agents off OpenCode.
 - standardize the implementation step format - notes use at least three shapes today ("What we're doing / Acceptance Criteria / Architectural plan" in [[Replace Schedule-X]] and [[Mobile Month View]], "Problem to solve / Suggested Approach / Verification" in [[Mobile List View]], "Scope / Files / Architectural note / Acceptance" in [[Add Meal Changes (Saved Recipes)]])
 - reconcile each `spec` note against the code when it reaches the top of Next (Stale Data Issues and Unified Date Picker were written this week; Shared Types Directory and Tag Management date from April)
 - decide `type` for the untyped notes: [[features/style fixes|style fixes]], [[features/calendar/Style Fixes|calendar style fixes]], [[Email Improvements]], [[Granular Webfetch Permissions]] - the two style-fix notes are lists of small fixes rather than single stories

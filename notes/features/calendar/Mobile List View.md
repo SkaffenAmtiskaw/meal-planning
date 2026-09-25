@@ -1,9 +1,11 @@
 ---
 type: feature
-status: ready
+status: spec
 blocked-by:
   - "Steps 2 and 5 need re-review (see Review notes)"
+  - "Today marker changed by [[Unified Date Picker Component]] - Step 3, Tokens and Acceptance criterion 4 need re-review (see Design Update - Today Marker)"
   - "[[Stale Data Issues]]"
+  - "[[Unified Date Picker Component]]"
 reviewed: 2026-09-19
 ---
 ![[01-list-top.png]]
@@ -74,6 +76,8 @@ run of dates is what makes the list scannable.
 **Day section header** — a full-width row, not a gutter:
 - Left: weekday + day number + month, compact and uppercase ("THU 10 · SEP"), muted. On **today**
   it is ember and the whole section gets a soft ember tint background.
+
+> ⚠️ **Review 2026-09-25:** The today treatment here is superseded by [[#Design Update - Today Marker]] (navy ring around the day number, no section tint, no ember). Found by reading notes, not in the running app.
 - A hairline rule fills the space between the label and the action on the right.
 - Right: a **28px circular add button** with a plus glyph. Always visible — there is no hover on
   touch. It opens the add-meal flow with that day's date prefilled, and needs an accessible name
@@ -157,6 +161,8 @@ Everything below already exists in the theme — use the tokens, do not re-decla
 | Links and add affordances | `forest` (hover `forest.6`, underline `forest.4`, border `forest.1`/`forest.2`, tint `forest.0`) |
 | Today label + floating button | `ember` |
 | Today section tint | `ember.0` (light) |
+
+> ⚠️ **Review 2026-09-25:** The "Today label" and "Today section tint" rows are superseded by [[#Design Update - Today Marker]]. Ember stays for the floating button only. Found by reading notes, not in the running app.
 | Scroll region background | `chalk.0` |
 | Section dividers, card borders | `chalk.2` |
 | Meal rail | the meal's tag color (name → tag-color mapping) |
@@ -170,6 +176,8 @@ them by hand only so it runs standalone. No new assets.
    no left date gutter and no drag handle.
 3. Every day in the loaded range appears, including days with no meals.
 4. Today's section is tinted, labelled in ember, and is where the list is scrolled on open.
+
+> ⚠️ **Review 2026-09-25:** Criterion 4's "tinted, labelled in ember" is superseded by [[#Design Update - Today Marker]]. The scroll-on-open part still stands. Found by reading notes, not in the running app.
 5. Each meal card shows name, optional description, every dish, each dish's recipe or external
    link, book reference where present, and its full note on its own line.
 6. Dish notes are never truncated or clamped and clear 4.5:1 contrast, as does all other primary
@@ -191,6 +199,36 @@ them by hand only so it runs standalone. No new assets.
 - `assets/mobile-list-view/01-list-top.png` — empty days, a dish with a book reference, today's tinted section.
 - `assets/weeknight-header-dark.svg` — existing app logo, included only so the prototype renders
   standalone.
+
+# Design Update - Today Marker
+> [!warning] Separate from the handoff above
+> This section was moved here on 2026-09-25 from the [[Unified Date Picker Component]] design handoff. It is **not** part of this story's own handoff. It changes how today is marked in the mobile list. Where it conflicts with the handoff above (Day section header, Tokens, Acceptance criterion 4) or with the implementation steps (Step 3), **stop and ask Sarah** which one wins. Don't pick one yourself.
+>
+> One known conflict to raise with her: this story's day label is a single compact line ("THU 10 · SEP"), while the update below puts a ring "around the day number, same as desktop list".
+
+**App-wide rule (from the Unified Date Picker handoff, "Aligning every today / selected indicator"):**
+Target everywhere: **today = navy outline ring**, **selected = soft sage circle**, and they stack. The selected date is only marked where you pick a date: the date picker and the mobile month grid. Everywhere else, only today is marked.
+
+Ember (orange) is kept for actions only. It is no longer used to mark days.
+
+**The rows that apply to this story** (the desktop row is included because the mobile row refers to it):
+
+| Place | Today (now) | Plan |
+|---|---|---|
+| List view (desktop) | Filled orange circle on the day number, plus an orange-tinted row | Navy ring on the day number; drop the row tint. The date you jump to isn't marked; scrolling there is enough. |
+| List view (mobile) | Orange day label, plus an orange-tinted section | Navy ring around the day number, same as desktop list; drop the section tint. The date you jump to isn't marked. |
+
+**Day cell states** (the "Today" treatment is the one to match):
+
+| State | Treatment |
+|---|---|
+| Today | **Navy outline ring** around the number, bold |
+| Selected | **Soft sage circle** behind the number (`sage` at 45% opacity), navy bold text (~11:1) |
+| Selected + today | The sage circle sits inside the navy ring |
+
+![[datepicker_anatomy.png]]
+
+**Implementation note:** [[Unified Date Picker Component]] builds a shared day-marks component for the today ring and uses it in the desktop list's date gutter. Use that component for the mobile day header rather than styling the ring again.
 
 # Implementation
 
@@ -240,6 +278,8 @@ them by hand only so it runs standalone. No new assets.
 - On mobile List view, confirm every day in the range appears as its own section, including days with no meals.
 - Empty days show “No meals planned”.
 - Today’s section is tinted and the date label is ember; the list scrolls so today is near the top on first load.
+
+> ⚠️ **Review 2026-09-25:** The "tinted" and "ember" parts of this check (and the "today tint" in the Suggested Approach above) are superseded by [[#Design Update - Today Marker]]. This step needs re-review before it's built. Found by reading notes, not in the running app.
 
 ## Step 4: Reuse the generic meal card and dish row for mobile meal content
 

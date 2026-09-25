@@ -20,6 +20,7 @@ Live calendar code still imports shared types from a schedule-x-era file, so the
 - `_components/MonthGridEvent/`
 - `_components/WeekView/` (the old app-level week view: `WeekView.tsx`, `WeekMealCard.tsx`, `index.ts`) - the live week view is `MealWeekView` + `src/_components/Calendar/WeekView`
 - `_components/WeekViewHeader/` → `_components/ViewSwitcher/` → `_hooks/useViewType.ts`
+- `_components/CalendarView/CalendarView.module.css` - schedule-x theme variables and a today-badge style, with hard-coded hex colors. No file imports it. *(Added 2026-09-25 from the [[Unified Date Picker Component]] code review.)*
 
 All paths are relative to `src/app/[planner]/calendar/`. Each has a test file that goes with it.
 

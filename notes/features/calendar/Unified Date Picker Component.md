@@ -173,7 +173,7 @@ Everywhere else, only today is marked.
 | Mobile month agenda heading | "Today · Thursday, September 10" text prefix | No change. |
 | Week view | Filled orange pill around "Wed 9/18" | Navy outline pill around the whole label, with navy text. The selected date stays unmarked. |
 | List view (desktop) | Filled orange circle on the day number, plus an orange-tinted row | Navy ring on the day number; drop the row tint. The date you jump to isn't marked; scrolling there is enough. |
-| List view (mobile) | Orange day label, plus an orange-tinted section | Navy ring around the day number, same as desktop list; drop the section tint. The date you jump to isn't marked. |
+| List view (mobile) | Orange day label, plus an orange-tinted section | 🚛 Moved to [[Mobile List View#Design Update - Today Marker]]. Phones show a "Coming soon" placeholder today; that story builds the mobile list. |
 | Header date picker (desktop + mobile) | Mantine default: filled blue selected day, bold today | Swap in the shared date picker. |
 | Add / Edit meal date field | Browser's native date picker (looks different on every OS) | Swap in the shared date picker, with the Today button. |
 | Meal detail — Move / Duplicate | — | *Planned, not yet implemented.* Will use the shared picker. |
@@ -194,3 +194,114 @@ no shortcuts, only the calendar.
 
 The prototype HTML is a look-and-behavior reference built outside the app. Don't port its
 inline styles or fixture data.
+
+> ⚠️ **Review 2026-09-25:** None of the three `.dc.html` prototypes listed above are in the repo, and the images are in `assets/unified-datepicker/`, not `screenshots/`. Work from the embedded images and the handoff text. Found by searching the repo.
+
+# Suggested Approach
+*Approved by Sarah 2026-09-25 via `/assess`. The design was drawn up before reading the existing code, then the existing code was checked by the `code-critic` agent.*
+
+## Behaviors
+**Picker panel (every placement)**
+1. Opens on the month of the current value, or on today's month if there's no value.
+2. Previous and next arrows page by month. The grid is always 6 rows, so the panel height never changes.
+3. Clicking the month title opens the month and year views.
+4. Every week in the app starts on **Sunday**: pickers, month grid, week view and date utilities. Monday-start code is tech debt.
+5. Day cell states: default (navy), outside month (`navy.3`, still pickable), has meals (forest dot), today (navy ring, bold), selected (sage circle). Today and selected can stack.
+6. Picking a day from a neighboring month selects it and moves the view to that month.
+7. Past dates can be picked.
+8. Keyboard: arrows move by day or week, PgUp/PgDn by month, Home/End to the start or end of the week, Enter picks, Esc closes.
+9. When the Today footer is on, it shows today's date, and clicking it picks today.
+10. The panel only reports the pick. The placement closes it and acts on the date.
+11. A day with at least one meal gets a dot. Any meal counts, and titles aren't parsed. The meal dates come from the calendar data the page already loads on the server, so there's no fetching, loading state or error state.
+
+**Desktop and phone containers**
+
+12. On desktop it's a popover anchored to its trigger, and it flips above when there's no room below.
+13. On phones it's a bottom sheet, not full screen. It has a title and a Close button, and swiping down or tapping the backdrop closes it. It clears the safe area and scrolls if it gets taller than 90% of the screen.
+    - **Sheet title:** the placement's `label` if it has one. Otherwise **"Jump to date"** for the header and **"Choose day"** for the meal form.
+14. On phones it uses touch sizes: day cells around 50px, 44px arrows, 17px numbers, bigger dots. Pressed states replace hover.
+15. On phones, swiping left or right on the grid pages months.
+
+**Header placement**
+
+16. On desktop the trigger is an input-styled button labeled "Date", showing the date in view as `9/24/2026`.
+    - **Phones:** the period label ("September 2026 ▾") stays the trigger, as the approved design in the archived [[Mobile Month View]] note specifies.
+    - **The picker:** marks the date in view as selected, shows meal dots and has no Today footer.
+17. Picking a date moves the calendar to that date and closes the picker.
+
+**Add/Edit Meal placement**
+
+18. The required Date field becomes an input-styled trigger showing "Thursday, September 24".
+    - It keeps its current default date and its "Date is required" error.
+    - **The picker:** marks the field value as selected, shows meal dots and has the Today footer.
+19. Picking a date, or Today, sets the field and closes the picker. On phones no on-screen keyboard appears.
+20. The modal subtitle ("Thursday, September 24") updates when a new date is picked. Today it's set only once, when the form opens.
+
+**Picker options no placement uses yet**
+
+21. `label`, `shortcuts="relative"`, custom `shortcutItems` and `hint` are built now, so Move/Duplicate needs no API changes later. A temporary in-app page exercises them:
+    - a label
+    - relative shortcuts for a meal dated today, a later day and a past day, with shortcuts that land before today hidden
+    - custom shortcut items
+    - a hint
+
+    Once Sarah confirms they work, deleting the page is part of the story's cleanup.
+
+**Today and selected indicators in the calendar views**
+
+22. **Month view on desktop:** navy ring on today. The selected date isn't marked. The ring fits two-digit numbers without cutting them off, which fixes the Roadmap item "Desktop: month view current date circle is truncating numbers" ([[Roadmap#Calendar]]).
+23. **Month view on phones:** navy ring on today and a sage circle on the selected date, with no cell tint.
+24. **Week view:** a navy outline pill with navy text around today's label.
+25. **List view on desktop:** navy ring on today's day number, and the row tint goes. The month label on the 1st changes from ember to `navy.4` bold uppercase, matching the weekday label above the number.
+26. **Unchanged or moved:**
+    - The mobile month agenda heading doesn't change.
+    - The mobile list view doesn't exist yet (phones show a placeholder). Its today marker moved to [[Mobile List View#Design Update - Today Marker]].
+27. Ember (orange) no longer marks days anywhere.
+
+**Read-only users**
+
+28. Viewers use the header picker like everyone else, and nothing behaves differently for them. They never see the meal form.
+
+**Out of this story**
+- Month views fixed at 6 rows are on the [[Roadmap#Calendar]].
+- Meal detail Move/Duplicate is covered by [[Meal Detail Modal & Edit Meals]].
+
+## Pieces
+| # | Piece | Job | Decision | Existing code | Why |
+|---|---|---|---|---|---|
+| 1 | App dates settings | Set the Sunday week start and 6-week grid for every Mantine date component | Use as-is (add to it) | `src/app/layout.tsx` | Setting up app-wide providers is already the layout's job. Add `DatesProvider` (`firstDayOfWeek` from the shared constant in row 2, `consistentWeeks: true`). Also add the missing `@mantine/dates/styles.css` import: nothing imports it today, so the current header pickers render unstyled. |
+| 2 | Week-start utility | Return the Sunday that starts a date's week | Build new, then refactor callers | New: `getWeekStart` + `WEEK_START` constant in `src/_utils` (luxon). Refactor: `getWeekDates`, `getMonthGridDates`, `formatWeekRange` to call it. `weekdays.ts`: as-is. | Replaces three inline copies of the week-start math, and one constant feeds both Mantine and luxon. Never use luxon's `startOf('week')`, which starts on Monday. The dead `getWeekStart.ts` / `useWeekNavigation` are left for [[Remove Schedule-X]], which already lists them. |
+| 3 | Picker panel | Lay out the optional parts (label, shortcuts, hint, Today footer) around the day grid | Build new (`src/_components`) | — | There's nothing to extract. |
+| 4 | Picker grid | Show a month grid with today, selected and marked-day states | Build new | Header `DatePicker`: not a fit | Wraps Mantine `DatePicker`. Only the header's chevron icons carry over. |
+| 5 | Shortcut cards | Show shortcut cards that each pick their date | Build new | — | |
+| 6 | Relative shortcuts | Build the Tomorrow / Next week (or Next day / Week later) shortcuts that land today or later | Build new, next to the picker | — | |
+| 7 | Today footer | Offer a one-tap pick of today | Build new | `CalendarTodayButton`: not a fit | That button navigates the calendar. This one only reports a pick. |
+| 8 | Swipe hook | Report horizontal swipe direction on an element | Build new in `src/_hooks` | — | `@mantine/hooks` has no swipe hook. |
+| 9 | Day marks | Show a day number with today and selected marks | Build new, then refactor callers | Refactor first: `MonthGrid` (via 9a), `MobileMonthGrid`, `src/_components/Calendar/WeekView`, `DayRow` (via 9b). Dead files untouched. `MobileAgenda`: unchanged. | Replaces four copies of the today mark. The picker's day cells share the same ring and circle styles. The week header uses Mantine `Badge variant="outline" color="navy"` with the shared ring tokens, instead of a pill mode only one caller would use. The muted outside-month color becomes `navy.3` everywhere (today it's `gray.5`, `navy.2` and `navy.3`). Before the change, `MobileMonthGrid` also gets two fixes: its `findIndex`-inside-`map` (O(n²)) and its circular import through the `@/_components/Calendar` barrel. |
+| 9a | Month grid day cell | Show one month-grid day with its meals | Extract (refactor first), then add Day marks | `MonthGrid.tsx` L98-157 | Pulled out so the today-mark change lands in a component with one job. |
+| 9b | List day gutter | Show a list day's date column | Extract (refactor first), then add Day marks | `DayRow.tsx` L51-88 | Same reason. It also gets the new month-label color. |
+| 10 | Adaptive popover | Show content in a popover on desktop, or in a bottom sheet on phones | Build new (generic, `src/_components`) | `useIsMobile`: as-is. `CalendarModalProvider`: not a fit, untouched | Mantine `Popover` on desktop and `Drawer position="bottom"` on phones. This goes beyond the handoff, which has each placement own its popover/drawer. That would copy the desktop/phone switch into every placement, the drift this story exists to stop. |
+| 11 | Date trigger | Show a date in an input-styled button | Build new on `InputBase component="button" pointer` | Header `DatePickerInput` and the native date input: replace | Mantine first. |
+| 12 | Date formatting | Format an ISO date in a named style | Build new `formatDate(iso, style)` in `src/_utils` (luxon) | `src/_utils/date.ts`: not a fit, left alone | `date.ts` parses date-only strings as UTC and shows the previous day in US time zones. Also move the duplicated format strings onto named styles: `AddMealForm:40`, `MobileAgenda:46-47`, `Calendar/WeekView:73`, `formatWeekRange`. |
+| 13 | Meal dates | List the dates that have at least one meal | Build new in `src/app/[planner]/calendar/_utils`, computed in `page.tsx` on the server | `toCalendarMeals` / `toCalendarEvents` / `toScheduleXEvents`: not a fit | Built straight from `SerializedDay[]`. The types are imported from where they are now. **Flag:** if [[Shared Types Directory]] or [[Remove Schedule-X]] lands first, import them from wherever that story puts them and follow its pattern. |
+| 14 | Meal dates provider | Provide the planner's meal dates to the calendar page's components | Build new: `MealDatesProvider`, placed by `CalendarView` | `CalendarView`: small wiring change. `CalendarProvider`, `CalendarModalProvider`, `AddMealModal`, `AddMealForm`: untouched | Avoids passing a prop through 4 modules and keeps meal data out of generic navigation state. The data arrives as server props, which fits [[Stale Data Issues]] Rule 2. |
+| 15 | Jump to date | Move the calendar to a picked date | Build new, extracted from the header | `CalendarHeader`: refactor first (remove both jump implementations; both variants render `JumpToDate`) | Jump-to-date is built twice today. Desktop uses the input-styled Date field. Phones keep the period label as the trigger. |
+| 16 | Meal date field | Edit the meal form's date | Build new. `MealFields`: as-is, as the container | `AddMealForm`: refactor first (row 19) | Follows [Mantine's recommended pattern](https://mantine.dev/form/uncontrolled/) for custom inputs in uncontrolled forms. The field accepts `defaultValue`/`onChange` through `useUncontrolled` and gets its `key` from `form.key('date')`, so `setFieldValue` and resets re-seed it. The form stays in uncontrolled mode. It keeps `data-testid="meal-date"`, `withAsterisk` and the required error. |
+| 17 | Temporary demo page | Exercise the picker options no placement uses yet | Build new; delete during cleanup | — | Lives at `src/app/dev/date-picker/`, which calls `notFound()` in production. |
+| 18 | Theme | Register a `sage` color ramp | Refactor first (limited) | `src/_theme/theme.ts` | The selected state needs a token. Also update `.opencode/docs/theme.md`: ember no longer marks today. Other `theme.ts` issues are on the Roadmap. |
+| 19 | Meal modal subtitle | Show the chosen date in the modal header | Refactor first | `AddMealForm` (remove the mount-only effect), `AddMealModal` | The form reports date changes through Mantine's `form.watch('date', …)`. The modal formats the date with the named style from row 12, so the subtitle follows each pick. |
+
+## Client pieces
+The panel (3), shortcut cards (5), Today footer (7), trigger (11) and Day marks (9) have no `'use client'` directive of their own. The first four have event handlers, but they only ever render inside the client pieces below. Day marks takes props only.
+
+| Piece | Why client |
+|---|---|
+| Picker grid (4) | Passes function props (`getDayProps`, `onChange`) to Mantine's `DatePicker`, and handles swipes |
+| Swipe hook (8) | Touch events |
+| Adaptive popover (10) | Uses a media query (`useIsMobile`) |
+| Meal dates provider (14) | React context |
+| Jump to date (15) | Holds the open state; reads the calendar context |
+| Meal date field (16) | Holds the open state; uses `useUncontrolled` |
+| Demo page leaf (17) | Holds the last picked date. The page itself is a server component. |
+
+These stay on the server: `layout.tsx` (with `DatesProvider`), meal dates computed in `page.tsx`, and all the utilities.
