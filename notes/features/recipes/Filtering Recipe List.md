@@ -1,7 +1,7 @@
 ---
 type: feature
 status: idea
-reviewed: 2026-03-30
+confirmed: 2026-03-30
 ---
 - recipe list should be displayed alphabetized by title
 - user should be able to search for a recipe title

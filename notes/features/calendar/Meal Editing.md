@@ -1,6 +1,6 @@
 ---
 type: hub
-reviewed: 2026-09-25
+confirmed: 2026-09-25
 ---
 # Purpose
 Meal editing (edit, move, duplicate, delete, reorder) is spread across several stories, and was designed mostly around the desktop meal detail modal. Views without that modal - desktop list, mobile month, mobile list - were each deferred to "a future story", so most view × device combinations have no plan.

@@ -1,7 +1,7 @@
 ---
 type: cleanup
 status: spec
-reviewed: 2026-09-25
+confirmed: 2026-09-25
 ---
 # Purpose
 The custom calendar has replaced schedule-x in every view (see [[Replace Schedule-X]]), but schedule-x code, types and packages are still in the repo. This story removes them completely.

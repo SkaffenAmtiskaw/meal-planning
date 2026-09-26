@@ -1,6 +1,6 @@
 ---
 status: idea
-reviewed: 2026-04-12
+confirmed: 2026-04-12
 ---
 1. Create a reusable service at `src/_services/sendEmail.ts` so we don't have the exact same boilerplate in every single email function
 2. Create templates with [`mjml`](https://documentation.mjml.io/)

@@ -1,6 +1,6 @@
 ---
 type: hub
-reviewed: {{date:YYYY-MM-DD}}
+confirmed: {{date:YYYY-MM-DD}}
 ---
 # Where It Stands
 

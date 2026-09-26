@@ -34,7 +34,7 @@ Find the note in `notes/features/`. `notes/Note Conventions.md` explains the fro
 
 If the status or the approach is missing, tell Sarah what you found and stop. For a feature without an approach, `/assess` comes first.
 
-Read any ⚠️ review callouts and **As built** notes as well. A story split from a hub embeds its design sections from the hub (`![[Hub#Section]]`). Read each embedded section; it's part of this note.
+Read any ⚠️ Check Drift callouts and **As built** notes as well. A story split from a hub embeds its design sections from the hub (`![[Hub#Section]]`). Read each embedded section; it's part of this note.
 
 If `.opencode/scratch/<note name> - plan.md` exists because the story was split from a larger plan, start from that draft rather than drafting from nothing.
 

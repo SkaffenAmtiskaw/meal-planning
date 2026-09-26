@@ -1,7 +1,7 @@
 ---
 type: feature
 status: done
-reviewed: 2026-09-25
+confirmed: 2026-09-25
 ---
 ![[01-month-today.png]]![[Mobile Month View.dc.html]]![[support.js]]
 ![[weeknight-header-dark.svg]]

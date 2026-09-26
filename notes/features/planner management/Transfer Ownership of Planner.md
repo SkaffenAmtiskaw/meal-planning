@@ -1,7 +1,7 @@
 ---
 type: feature
 status: idea
-reviewed: 2026-04-29
+confirmed: 2026-04-29
 ---
 **Requirements**
 - The owner has the option to transfer ownership of a planner.

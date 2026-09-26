@@ -1,7 +1,7 @@
 ---
 type: pattern
 status: spec
-reviewed: 2026-09-25
+confirmed: 2026-09-25
 ---
 The following issues currently existing in the app are likely a symptom of a larger issue with stale data in the app. This story needs to create a *consistent* pattern for refreshing data when mutations occur, and make sure that pattern is followed everywhere in the app.
 

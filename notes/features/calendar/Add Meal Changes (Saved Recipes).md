@@ -3,7 +3,7 @@ type: feature
 status: ready
 blocked-by:
   - "[[Stale Data Issues]]"
-reviewed: 2026-09-25
+confirmed: 2026-09-25
 ---
 # Purpose
 User feedback noticed it was difficult to understand how to add a meal with saved dishes. The design has been updated to allow users to better discover saved recipes.
@@ -325,7 +325,7 @@ reference, and an optional note.
 - Open the Add Meal modal, link a saved recipe to a dish, and submit the meal.
 - Inspect the planner document in the database and confirm the linked saved item now has an ISO `lastUsed` timestamp.
 
-> ⚠️ **Review 2026-09-25:** Once this step lands, `addMeal` changes saved items as well as the calendar. Under [[Stale Data Issues]] it must invalidate `saved(p)` in addition to `calendar(p)` - that note's action table records this. Behavior 17's "refreshes the calendar on success" currently means `router.refresh()`, which [[Stale Data Issues]] removes; build this story after that one so the refresh follows the new pattern.
+> ⚠️ **Check Drift 2026-09-25:** Once this step lands, `addMeal` changes saved items as well as the calendar. Under [[Stale Data Issues]] it must invalidate `saved(p)` in addition to `calendar(p)` - that note's action table records this. Behavior 17's "refreshes the calendar on success" currently means `router.refresh()`, which [[Stale Data Issues]] removes; build this story after that one so the refresh follows the new pattern.
 
 ## Step 2 — Enrich saved-item data access
 
@@ -367,7 +367,7 @@ reference, and an optional note.
 - Verify recipe A appears at the top of the Saved recipes list.
 - Verify recipes that have never been used sort alphabetically below used ones.
 
-> ⚠️ **Review 2026-09-25:** From reading the code (not verified in the running app), this step's acceptance check would fail until [[Stale Data Issues]] lands. `usePlannerSavedItems` reads from `PlannerProvider`, which fetches the planner once in a `useEffect` and keeps it in client state, so a `lastUsed` written by `addMeal` is not visible until a hard reload. This is the same bug Stale Data Issues lists for the saved dishes dropdown. This story is blocked on that one for this reason.
+> ⚠️ **Check Drift 2026-09-25:** From reading the code (not verified in the running app), this step's acceptance check would fail until [[Stale Data Issues]] lands. `usePlannerSavedItems` reads from `PlannerProvider`, which fetches the planner once in a `useEffect` and keeps it in client state, so a `lastUsed` written by `addMeal` is not visible until a hard reload. This is the same bug Stale Data Issues lists for the saved dishes dropdown. This story is blocked on that one for this reason.
 
 ## Step 4b — Search saved recipes by name
 

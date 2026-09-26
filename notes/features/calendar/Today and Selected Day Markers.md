@@ -2,7 +2,7 @@
 type: feature
 status: spec
 blocked-by: []
-reviewed: 2026-09-25
+confirmed: 2026-09-25
 ---
 # Where It Stands
 

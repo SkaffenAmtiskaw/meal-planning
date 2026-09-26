@@ -3,7 +3,7 @@ type: feature
 status: idea
 blocked-by:
   - "[[Zero Planners Crash]] fix decision"
-reviewed: 2026-04-29
+confirmed: 2026-04-29
 ---
 **Requirements**
 - Only the owner can delete a planner

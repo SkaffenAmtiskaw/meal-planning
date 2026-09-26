@@ -2,7 +2,7 @@
 type: cleanup
 status: idea
 blocked-by: []
-reviewed: 2026-09-25
+confirmed: 2026-09-25
 ---
 # Purpose
 A handful of small smells in the calendar code. The code-critic review for [[Unified Date Picker Component]] turned them up, but that story doesn't need them fixed. Each one is small on its own, so they're collected here rather than as separate Roadmap lines.

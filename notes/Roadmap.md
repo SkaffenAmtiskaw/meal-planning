@@ -8,7 +8,7 @@
 - **Blocked** - committed, but waiting on something. The reason matches the note's `blocked-by`.
 - **Later** - committed, not ordered, grouped by area.
 - **Ideas** - not committed.
-- A story's status (`idea` / `spec` / `ready` / `in-progress` / `done`) lives in its note's frontmatter. This file only decides order.
+- A story's status (`idea` / `spec` / `ready` / `in-progress` / `in-review` / `done`) lives in its note's frontmatter. This file only decides order.
 - Each line with a note embeds that note's status line from Where It Stands after the link, e.g. `[[Stale Data Issues]] ![[Stale Data Issues#^status]]`. It shows only what work the story needs next, not what the story is. Edit it in the note, not here.
 - *(was high)* etc. is the item's priority under the old High / Medium / Low layout, kept for reference while the queue is being ordered. *(was bugfix)* means it was in the old "Bugfixes/User Issues/Tech Debt" section.
 
@@ -112,12 +112,13 @@
 - add different import order sorting for `.test.ts(x)` - vitest and react/testing-library should be at the top *(was low)*
 
 ## Notes & Agent Workflow
-- build the planned note agents (shape, investigate, review, archive, architect for patterns) - see the Next Step by Note State table in [[Note Conventions]]
+- build the planned note agents (investigate, check-drift, code review, archive, architect for patterns) - see the Next Step by Note State table in [[Note Conventions]]
 - [[Agent Instructions Rewrite|rewrite AGENTS.md for Claude Code]] - idea. Part of moving the agents off OpenCode.
+- [[Story Code Review]] ![[Story Code Review#^status]]
 - standardize the implementation step format - notes use at least three shapes today ("What we're doing / Acceptance Criteria / Architectural plan" in [[Replace Schedule-X]] and [[Mobile Month View]], "Problem to solve / Suggested Approach / Verification" in [[Mobile List View]], "Scope / Files / Architectural note / Acceptance" in [[Add Meal Changes (Saved Recipes)]])
 - reconcile each `spec` note against the code when it reaches the top of Next (Stale Data Issues and Unified Date Picker were written this week; Shared Types Directory and Tag Management date from April)
 - decide `type` for the untyped notes: [[features/style fixes|style fixes]], [[features/calendar/Style Fixes|calendar style fixes]], [[Email Improvements]], [[Granular Webfetch Permissions]] - the two style-fix notes are lists of small fixes rather than single stories
-- optional: an Obsidian Base listing notes by `type`, `status` and `reviewed`, to spot stale notes at a glance
+- optional: an Obsidian Base listing notes by `type`, `status` and `confirmed`, to spot stale notes at a glance
 
 # Ideas
 - [[Grocery List Integration]]

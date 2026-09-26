@@ -6,7 +6,7 @@ blocked-by:
   - "Today marker changed by [[Unified Date Picker Component]] - Step 3, Tokens and Acceptance criterion 4 need re-review (see Design Update - Today Marker)"
   - "[[Stale Data Issues]]"
   - "[[Today and Selected Day Markers]]"
-reviewed: 2026-09-19
+confirmed: 2026-09-19
 ---
 ![[01-list-top.png]]
 
@@ -77,7 +77,7 @@ run of dates is what makes the list scannable.
 - Left: weekday + day number + month, compact and uppercase ("THU 10 · SEP"), muted. On **today**
   it is ember and the whole section gets a soft ember tint background.
 
-> ⚠️ **Review 2026-09-25:** The today treatment here is superseded by [[#Design Update - Today Marker]] (navy ring around the day number, no section tint, no ember). Found by reading notes, not in the running app.
+> ⚠️ **Check Drift 2026-09-25:** The today treatment here is superseded by [[#Design Update - Today Marker]] (navy ring around the day number, no section tint, no ember). Found by reading notes, not in the running app.
 - A hairline rule fills the space between the label and the action on the right.
 - Right: a **28px circular add button** with a plus glyph. Always visible — there is no hover on
   touch. It opens the add-meal flow with that day's date prefilled, and needs an accessible name
@@ -162,7 +162,7 @@ Everything below already exists in the theme — use the tokens, do not re-decla
 | Today label + floating button | `ember` |
 | Today section tint | `ember.0` (light) |
 
-> ⚠️ **Review 2026-09-25:** The "Today label" and "Today section tint" rows are superseded by [[#Design Update - Today Marker]]. Ember stays for the floating button only. Found by reading notes, not in the running app.
+> ⚠️ **Check Drift 2026-09-25:** The "Today label" and "Today section tint" rows are superseded by [[#Design Update - Today Marker]]. Ember stays for the floating button only. Found by reading notes, not in the running app.
 | Scroll region background | `chalk.0` |
 | Section dividers, card borders | `chalk.2` |
 | Meal rail | the meal's tag color (name → tag-color mapping) |
@@ -177,7 +177,7 @@ them by hand only so it runs standalone. No new assets.
 3. Every day in the loaded range appears, including days with no meals.
 4. Today's section is tinted, labelled in ember, and is where the list is scrolled on open.
 
-> ⚠️ **Review 2026-09-25:** Criterion 4's "tinted, labelled in ember" is superseded by [[#Design Update - Today Marker]]. The scroll-on-open part still stands. Found by reading notes, not in the running app.
+> ⚠️ **Check Drift 2026-09-25:** Criterion 4's "tinted, labelled in ember" is superseded by [[#Design Update - Today Marker]]. The scroll-on-open part still stands. Found by reading notes, not in the running app.
 5. Each meal card shows name, optional description, every dish, each dish's recipe or external
    link, book reference where present, and its full note on its own line.
 6. Dish notes are never truncated or clamped and clear 4.5:1 contrast, as does all other primary
@@ -241,7 +241,7 @@ Ember (orange) is kept for actions only. It is no longer used to mark days.
 | `DishListItem` | Reused as-is inside the base `MealCard` | Already renders name/link, external glyph, book ref, and note. Verify it meets mobile list-view needs. |
 | `MobileAddMealButton` FAB | Reused for the list-view floating add button | Verify it accepts a target date prop (or can be parameterized) so the list view can default it to today while month view uses the selected day. |
 
-> ⚠️ **Review 2026-09-25:** The mobile month view work is done, so these can now be answered from the code:
+> ⚠️ **Check Drift 2026-09-25:** The mobile month view work is done, so these can now be answered from the code:
 > - `MobileCalendarHeader` was never created. The mobile header is `CalendarHeaderMobile` in `src/app/[planner]/calendar/_components/CalendarHeader/CalendarHeader.tsx`, and it already hides prev/next in `list` view and keeps the Month/List switcher.
 > - The base `MealCard` (`src/_components/Calendar/MealCard/MealCard.tsx`) has no drag handle and optional `renderActions`, but **no configurable dish-list container**. Step 4 will need to add one.
 > - `MobileAddMealButton` has **no target-date prop**; it always prefills the context's `selectedDate`. Step 5 will need to add one to prefill today.
@@ -266,7 +266,7 @@ Ember (orange) is kept for actions only. It is no longer used to mark days.
 - On mobile List view, use the existing header date picker to jump several months into the past or future.
 - Confirm the target day renders and the list scrolls to it.
 
-> ⚠️ **Review 2026-09-25:** This step's premise is out of date and it needs re-review before implementation. The window is not fixed around today: `getListDayRange` already takes a `rangeAnchor` from `CalendarContext`, which `navigateToDate` updates. From reading the code (not verified in the running app), the bug still seems to exist for a different reason: `getListDayRange` forces today into the window, so when the anchor is more than ~3 weeks from today the window snaps back to today and the target day is not rendered. The fix is probably changing that rule rather than adding a `targetDate` parameter.
+> ⚠️ **Check Drift 2026-09-25:** This step's premise is out of date and it needs re-review before implementation. The window is not fixed around today: `getListDayRange` already takes a `rangeAnchor` from `CalendarContext`, which `navigateToDate` updates. From reading the code (not verified in the running app), the bug still seems to exist for a different reason: `getListDayRange` forces today into the window, so when the anchor is more than ~3 weeks from today the window snaps back to today and the target day is not rendered. The fix is probably changing that rule rather than adding a `targetDate` parameter.
 
 ## Step 3: Build and wire the mobile day section
 
@@ -279,7 +279,7 @@ Ember (orange) is kept for actions only. It is no longer used to mark days.
 - Empty days show “No meals planned”.
 - Today’s section is tinted and the date label is ember; the list scrolls so today is near the top on first load.
 
-> ⚠️ **Review 2026-09-25:** The "tinted" and "ember" parts of this check (and the "today tint" in the Suggested Approach above) are superseded by [[#Design Update - Today Marker]]. This step needs re-review before it's built. Found by reading notes, not in the running app.
+> ⚠️ **Check Drift 2026-09-25:** The "tinted" and "ember" parts of this check (and the "today tint" in the Suggested Approach above) are superseded by [[#Design Update - Today Marker]]. This step needs re-review before it's built. Found by reading notes, not in the running app.
 
 ## Step 4: Reuse the generic meal card and dish row for mobile meal content
 
@@ -308,7 +308,7 @@ Ember (orange) is kept for actions only. It is no longer used to mark days.
 - Submitting the form adds the meal and it appears in the list.
 - Scrolling to the bottom shows the last card is not covered by the floating button.
 
-> ⚠️ **Review 2026-09-25:** The modal wiring above describes code that no longer exists, and this step needs re-review before implementation:
+> ⚠️ **Check Drift 2026-09-25:** The modal wiring above describes code that no longer exists, and this step needs re-review before implementation:
 > - `AddMealFormModalWrapper` and `onMealAdded` no longer exist. Add Meal now opens through `CalendarModalProvider` / `useCalendarModal` (`src/app/[planner]/calendar/_components/CalendarModal/`), the pattern [[Modal Form Architecture]] standardizes. Mobile list should open the modal the same way rather than keeping its own modal state.
 > - Refreshing via `onMealAdded` conflicts with [[Stale Data Issues]], which moves invalidation to the server and removes `router.refresh()`. This step should be built after that story lands.
 

@@ -62,7 +62,7 @@ Rewrite the note from `notes/templates/Hub.md`:
 - **Open Decisions:** the blocking decisions from step 2, one per line. Write them as questions, not proposals. Under an adopt-or-build decision, name the candidates from step 2 without ranking them.
 - **Child Stories:** leave the table empty. Children get their own `/shape` run once the decisions make them clear.
 - **Leave** Coverage, Build Order and Deferred Work as template comments.
-- **Frontmatter:** `type: hub` and `reviewed` set to today. Hubs have no `status` or `blocked-by`.
+- **Frontmatter:** `type: hub` and `confirmed` set to today. Hubs have no `status` or `blocked-by`.
 
 Show her the draft and wait for her approval, then write it as in step 6. Hubs have their own section on the Roadmap, so ask her whether the line moves there.
 
@@ -94,7 +94,7 @@ Draft the note from the template in `notes/templates/` for the chosen type:
 - **Open Decisions:** the blocking decisions from step 2, one per line. Write them as questions, not proposals. Under an adopt-or-build decision, name the candidates from step 2 without ranking them. Delete the section if there are none.
 - **Sarah's content:** move everything from the idea into the template's sections. Keep her wording. If something fits no section, put it under Where It Stands rather than dropping it.
 - **Don't fill** the sections that belong to a later step: Design Handoff, Suggested Approach, Root Cause, Fix Options, Current State, Rules, Migration Checklist and Implementation. Leave their template comments in place.
-- **Frontmatter:** set `type`, leave `status: idea`, set `reviewed` to today, and add `blocked-by` entries if the direction depends on another story. Add one `"decision needed: <short question>"` entry to `blocked-by` for each open decision.
+- **Frontmatter:** set `type`, leave `status: idea`, set `confirmed` to today, and add `blocked-by` entries if the direction depends on another story. Add one `"decision needed: <short question>"` entry to `blocked-by` for each open decision.
 
 Show her the draft and wait for her approval.
 

@@ -21,7 +21,7 @@
 **Clarification:** Modules that *use* these libraries internally should still be mocked (e.g., `@/_models`, form validation utilities) so that tests are not coupled to schema changes. Only the library is an exception; its consumers should not be.
 
 ## Creating Centralized Mocks
-New centralized mocks should only be created when the user requests it.
+Create a centralized mock as soon as the same mock starts being duplicated: when 3 or more test files mock the same module with the same factory body, move it to `test/mocks/` and have those files import it.
 
 ### Naming Conventions
 Mocks at `test/mocks/` must export the actual module names they replace. Do not export `MockFoo` variants that tests then have to map back to real names.

@@ -1,7 +1,7 @@
 ---
 type: feature
 status: spec
-reviewed: 2026-04-29
+confirmed: 2026-04-29
 ---
 # Tag Management
 
@@ -9,7 +9,7 @@ reviewed: 2026-04-29
 
 ---
 
-> ⚠️ **Review 2026-09-25:** Partly out of date. Tag creation already exists (`TagCombobox` → `src/_actions/library/addTag.ts`), and new tags already cycle through the palette colors (Open Question 3). The "Revalidate tags on mutation (Next.js cache)" line under Performance predates [[Stale Data Issues]], whose rules any new tag actions should follow. Nothing else depends on this story - it's a wishlist item (Roadmap: Later).
+> ⚠️ **Check Drift 2026-09-25:** Partly out of date. Tag creation already exists (`TagCombobox` → `src/_actions/library/addTag.ts`), and new tags already cycle through the palette colors (Open Question 3). The "Revalidate tags on mutation (Next.js cache)" line under Performance predates [[Stale Data Issues]], whose rules any new tag actions should follow. Nothing else depends on this story - it's a wishlist item (Roadmap: Later).
 
 ## Feature Overview
 

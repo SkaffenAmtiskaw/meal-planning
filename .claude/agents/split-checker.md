@@ -39,7 +39,7 @@ The original note becomes a hub and keeps the design. Each child is a new note t
 Propose these, each as exact note changes:
 
 **The hub (the original note, rewritten in place so links to it keep working):**
-- **Frontmatter:** `type: hub`. Drop `status` and `blocked-by`. Keep `reviewed`.
+- **Frontmatter:** `type: hub`. Drop `status` and `blocked-by`. Keep `confirmed`.
 - **Sections:** follow `notes/templates/Hub.md`, with Where It Stands, Purpose (the original's), Child Stories and Build Order filled in.
 - **Design:** keep the Design Handoff and its Meta-Instructions exactly as they are, images included, under `# Design Handoff`.
 - **Moved content:** the original's Requirements, behavior list, Suggested Approach and Implementation move to the children and leave the hub.

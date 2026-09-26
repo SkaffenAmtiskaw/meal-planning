@@ -1,7 +1,7 @@
 ---
 type: 
 status: idea
-reviewed: 2026-09-25
+confirmed: 2026-09-25
 ---
 # Notes
 Agents are moving from OpenCode to Claude Code, slowly. The first was `architect`, which became the `/assess` skill with the `code-critic` and `scope-router` subagents (2026-09-25). `AGENTS.md` still assumes OpenCode and needs rewriting as the move goes on.

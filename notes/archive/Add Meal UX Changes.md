@@ -1,7 +1,7 @@
 ---
 type: feature
 status: done
-reviewed: 2026-09-24
+confirmed: 2026-09-24
 ---
 ![[support.js]]
 

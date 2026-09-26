@@ -3,7 +3,7 @@ type: bug
 status: spec
 blocked-by:
   - "decision needed on which fix to use"
-reviewed: 2026-09-25
+confirmed: 2026-09-25
 ---
 A user whose last planner membership is removed ends up with zero planners, and the root page crashes for them. *Found by static reading during [[Stale Data Issues]]; not yet reproduced in the running app.*
 

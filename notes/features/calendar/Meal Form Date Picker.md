@@ -3,7 +3,7 @@ type: feature
 status: spec
 blocked-by:
   - "[[Header Date Picker]]"
-reviewed: 2026-09-25
+confirmed: 2026-09-25
 ---
 # Where It Stands
 

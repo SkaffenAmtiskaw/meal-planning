@@ -4,7 +4,7 @@ status: spec
 blocked-by:
   - "[[Mantine Date Picker Setup]]"
   - "[[Today and Selected Day Markers]]"
-reviewed: 2026-09-25
+confirmed: 2026-09-25
 ---
 # Where It Stands
 

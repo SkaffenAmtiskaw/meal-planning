@@ -1,7 +1,7 @@
 ---
 type: pattern
 status: idea
-reviewed: 2026-09-24
+confirmed: 2026-09-24
 ---
 Many modals in the app are mixing presentation and data concerns. An attempt to start separating them was made in the Add Meal modal, which now uses the `CalendarModalProvider` as well as a wrapper component around the form.
 

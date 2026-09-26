@@ -1,6 +1,6 @@
 ---
 type: hub
-reviewed: 2026-09-25
+confirmed: 2026-09-25
 ---
 # Where It Stands
 
@@ -206,7 +206,7 @@ no shortcuts, only the calendar.
 The prototype HTML is a look-and-behavior reference built outside the app. Don't port its
 inline styles or fixture data.
 
-> ⚠️ **Review 2026-09-25:** None of the three `.dc.html` prototypes listed above are in the repo, and the images are in `assets/unified-datepicker/`, not `screenshots/`. Work from the embedded images and the handoff text. Found by searching the repo.
+> ⚠️ **Check Drift 2026-09-25:** None of the three `.dc.html` prototypes listed above are in the repo, and the images are in `assets/unified-datepicker/`, not `screenshots/`. Work from the embedded images and the handoff text. Found by searching the repo.
 
 # Coverage
 | Handoff section | Built in |

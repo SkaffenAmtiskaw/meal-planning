@@ -4,7 +4,7 @@ status: spec
 blocked-by:
   - "[[Header Date Picker]]"
   - "[[Meal Form Date Picker]]"
-reviewed: 2026-09-25
+confirmed: 2026-09-25
 ---
 # Purpose
 The meal detail modal styling is bare-bones and does not match the rest of the calendar. It also needs to easily allow a user to edit a meal.

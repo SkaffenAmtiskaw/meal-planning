@@ -1,7 +1,7 @@
 ---
 type: feature
 status: idea
-reviewed: 2026-04-02
+confirmed: 2026-04-02
 ---
 If a user tries to sign in with email but only has a social sign-on (no password), they should be able to reset/set a password to link their accounts
 

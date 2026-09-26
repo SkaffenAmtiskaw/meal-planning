@@ -2,7 +2,7 @@
 type: pattern
 status: idea
 blocked-by: []
-reviewed: 2026-09-25
+confirmed: 2026-09-25
 ---
 # Purpose
 `src/_components`, `src/_hooks` and `src/_utils` are meant for generic, reusable code with no domain knowledge (see `.opencode/docs/project_conventions.md`). Some domain-specific code (meals, planners, invites, tags) lives there anyway. This story decides where domain code used across the app should live, likely `src/app/_components` / `src/app/_utils` with an alias. It also spells that out in the project conventions and moves the existing code over.

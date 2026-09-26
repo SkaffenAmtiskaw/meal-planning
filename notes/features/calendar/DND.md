@@ -1,6 +1,6 @@
 ---
 type: feature
 status: idea
-reviewed: 2026-04-29
+confirmed: 2026-04-29
 ---
 We need DND functionality in all desktop views. Users should be able both to drag a meal to a different day, but also to reorder meals within the same day.
