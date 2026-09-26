@@ -21,7 +21,6 @@ We will go through mocks one by one and update the following:
 2. All files which consume the mock will be updated to consume the new mock API.
 3. Follow the Boy Scout rule - any file that is touched should be updated to follow project conventions for unit tests.
 4. After EACH file is changed, you must ask the user for approval before moving to the next file.
-5. At the end of a session, the user will prompt you to summarize lessons learned during the session and make suggestions if anything needs to be added to the unit testing guidelines file.
 
 # Current Status
 > ⚠️ **Check Drift 2026-09-25:** Sarah decided on 2026-09-25 to split the new-mocks work into its own story. This story keeps only the stragglers in modules that already have centralized mocks (`@/_actions`, `@/_models`, `@/_hooks`, `@mantine/hooks`). The new story takes `@/_components`, `@/_utils`, the `@app` mock question and any other module with no centralized mock yet, along with their open design questions. The callout below also says new centralized mocks need the user's go-ahead. That is out of date: commit e3d8603 changed `unit_tests.md` to create one once 3 or more test files share the same factory body. Found by reading code, notes and the doc history.
@@ -116,8 +115,6 @@ We will go through mocks one by one and update the following:
 Every step changes test files only. No source file or `test/mocks/` file changes. The existing centralized mocks already export everything these tests need.
 
 Break-it checks run one test file with `pnpm vitest run <test file>`. Every temporary edit is reverted before the next check.
-
-Workflow item 5 stays as a session habit, not a step: after each `/implement` session on this story, Sarah asks for lessons learned and suggested changes to `unit_tests.md`. Decided by Sarah 2026-09-26.
 
 ---
 

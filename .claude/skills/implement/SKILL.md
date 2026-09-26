@@ -26,6 +26,7 @@ When the plan doesn't decide something, Sarah decides it, not you. She would rat
 ## Talking with Sarah
 - **One question at a time.** Ask one, wait for the answer, then ask the next. Never send a list of questions, and never ask her to approve a list of decisions at once.
 - **Wrong assumptions:** if her answer shows a question rested on a wrong assumption, say the question is no longer needed and move on. Don't apologize or explain how it happened.
+- **Doc gaps:** the moment you notice something that belongs in `.opencode/docs/` (a convention the docs don't cover, or a rule that's wrong or out of date), stop and ask Sarah whether it should become doc. If it should, draft the change, show it to her and write it once she approves. Don't save it for the report or a later pass.
 - **Out-of-scope items:** keep a running list of anything that belongs outside this step. Don't stop to deal with them as they come up. Step 10 handles them.
 
 ## 1. Find the step
