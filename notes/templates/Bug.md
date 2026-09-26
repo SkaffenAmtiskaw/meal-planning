@@ -22,8 +22,8 @@ No direction yet. ^status
 # Root Cause
 %% Where in the code it happens and why, with file paths. If the cause is systemic (the same mistake in many places), don't grow this note into a refactor - create a Pattern note, link it here, and keep this note about these symptoms. %%
 
-# Fix Options
-%% If there is more than one reasonable fix, list them and add "decision needed on which fix to use" to blocked-by. Record the decision here once it's made. Delete this section if the fix is obvious. %%
+# Fix
+%% The chosen fix: what changes, where, and why. If there were other reasonable options, one line says why this one won. If the choice is still open, it's an Open Decisions question with the options under it, and this section says which question it waits on. Filled in by /investigate. %%
 
 # Acceptance Criteria
 - [ ] %% the symptom no longer happens, checked in the running app %%

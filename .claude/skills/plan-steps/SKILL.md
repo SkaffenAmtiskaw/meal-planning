@@ -32,8 +32,10 @@ Find the note in `notes/features/`. `notes/Note Conventions.md` explains the fro
 - **Feature:** a `# Suggested Approach`.
 - **Pattern:** Rules, Enforcement, and a Migration Checklist. Some older notes call the checklist "Places to Update."
 - **Sweep:** its unchecked Items, minus any a ⚠️ Check Drift callout drops or moves out. A frozen sweep goes through `/check-drift` first. If its `^status` line still says "Frozen. Next: /check-drift", tell Sarah and stop.
+- **Bug:** a `# Fix` with the chosen fix, and the Root Cause behind it. If Fix points to an Open Decision, that decision needs a **Decided** line. Some older notes call the section "Fix Options"; use the option recorded as decided there.
+- **Cleanup:** Current State, with every question under Open Decisions decided.
 
-If the status or the approach is missing, tell Sarah what you found and stop. For a feature without an approach, `/assess` comes first.
+If the status or the approach is missing, tell Sarah what you found and stop. For a feature without an approach, `/assess` comes first. For a bug or cleanup, `/investigate` does.
 
 Read any ⚠️ Check Drift callouts and **As built** notes as well. A story split from a hub embeds its design sections from the hub (`![[Hub#Section]]`). Read each embedded section; it's part of this note.
 

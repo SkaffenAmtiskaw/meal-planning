@@ -118,7 +118,6 @@
 - [[Dev Tooling Tidy-Ups]] ![[Dev Tooling Tidy-Ups#^status]]
 
 ## Notes & Agent Workflow
-- build the planned investigate agent - see the Next Step by Note State table in [[Note Conventions]]
 - [[Architect for Patterns]] ![[Architect for Patterns#^status]]
 - [[Agent Workflow Changes]] - idea.
 - [[Skill and Agent Tidy-Ups]] ![[Skill and Agent Tidy-Ups#^status]]

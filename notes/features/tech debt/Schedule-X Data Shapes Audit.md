@@ -1,12 +1,12 @@
 ---
 type: cleanup
 status: idea
-blocked-by: ["investigate skill (not built yet)"]
+blocked-by: []
 confirmed: 2026-09-26
 ---
 # Where It Stands
 
-Blocked until the investigate skill is built, then: investigate - fill in Current State. ^status
+Next: /investigate. ^status
 
 Direction: find which calendar meal data shapes still carry schedule-x-driven fields or naming, then reshape them for the custom calendar, including renaming "event" to "meal".
 
