@@ -22,30 +22,6 @@ import {
 } from './AuthLayout';
 import './GoogleButton.css';
 
-/**
- * TODO: Break up SignInFlow into multiple components
- *
- * Current issues:
- * - Component is 350+ lines with complex state management
- * - useEffect has object (continueBtn) in dependency array causing unnecessary re-runs
- * - Multiple step types (idle, new, has-password, social-only, email-sent, forgot-password-sent)
- *   could each be their own component
- *
- * Proposed structure:
- * - SignInFlow: Orchestration component with shared state
- * - IdleStep: Initial email entry with Google sign-in
- * - HasPasswordStep: Password entry for existing accounts
- * - NewAccountStep: Registration form
- * - SocialOnlyStep: Google-only account warning
- * - SuccessStep: Email sent confirmation
- * - ForgotPasswordStep: Password reset flow
- *
- * This would improve:
- * - Testability (each step tested independently)
- * - Maintainability (smaller, focused components)
- * - Performance (no unnecessary effect re-runs)
- */
-
 // No props needed - component is self-contained
 
 export type Step =

@@ -96,6 +96,7 @@
 - `ConfirmButton` does nothing when `useAsyncStatus` hits an actual exception - seems incorrect?
 - `InviteSettings.tsx` - if the user is undefined, shouldn't it render nothing? (shouldn't the user always be defined in settings?)
 - `InviteForm.tsx` - uses an email regex instead of a zod type check
+- `SignInFlow.tsx` - 350+ lines managing six steps (idle, has-password, new, social-only, email-sent, forgot-password-sent); split into an orchestrating `SignInFlow` holding the shared state plus one component per step, so each step can be tested on its own. Its `useEffect` also has the `continueBtn` object in its dependency array, so it re-runs more than it needs to
 - replace the async hook with a native React hook
 - replace date utils with luxon - `src/_utils/date.ts` also mixes formatting with time comparisons, and `new Date('YYYY-MM-DD')` parses as UTC, so date-only strings show the previous day in US time zones
 - route management - emails create paths & query params the app must consume, but nothing keeps them in sync
