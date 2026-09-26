@@ -5,7 +5,7 @@ blocked-by: []
 confirmed: 2026-09-25
 ---
 # Where It Stands
-In progress. Next: implement Step 2. ^status
+In progress. Next: implement Step 3. ^status
 
 This is a cleanup story meant to align unit testing standards. All changes should be to unit test & mock files - no code should be changed.
 
@@ -171,12 +171,17 @@ Workflow item 5 stays as a session habit, not a step: after each `/implement` se
 - `src/app/[planner]/recipes/_components/Modal/BookmarkForm.test.tsx` - use the shared `@/_actions/library` mock, drop redundant overrides and the prop-pass test
 
 **Acceptance:**
-- [ ] In `test/mocks/@/_actions/library.ts:14`, change `addBookmark`'s `ok: true as const` to `ok: false as const`. Run `pnpm vitest run "src/app/[planner]/recipes/_components/Modal/BookmarkForm.test.tsx"` and see "navigates to pathname after successful add" fail, which shows the test relies on the shared mock's success default. Revert.
-- [ ] In `src/app/[planner]/recipes/_components/Modal/BookmarkForm.tsx:52`, change `plannerId }` to `plannerId: '' }`. Run the file and see "calls addBookmark with plannerId on submit" fail. Revert.
-- [ ] In `BookmarkForm.tsx:52`, change `tags: selectedTags` to `tags: []`. Run the file and see "submits with selected tags included" fail. Revert.
-- [ ] In `BookmarkForm.tsx:54`, change `if (item)` to `if (false)`. Run the file and see "calls editBookmark with _id in edit mode" fail. Revert.
-- [ ] In `BookmarkForm.tsx:60`, change `() => router.push(pathname)` to `() => {}`. Run the file and see "navigates to pathname after successful add" fail. Revert.
-- [ ] In `BookmarkForm.tsx:93`, change `onClick={() => router.push(pathname)}` to `onClick={() => {}}`. Run the file and see "navigates to pathname on cancel" fail. Revert.
+- [x] In `test/mocks/@/_actions/library.ts:14`, change `addBookmark`'s `ok: true as const` to `ok: false as const`. Run `pnpm vitest run "src/app/[planner]/recipes/_components/Modal/BookmarkForm.test.tsx"` and see "navigates to pathname after successful add" fail, which shows the test relies on the shared mock's success default. Revert.
+- [x] In `src/app/[planner]/recipes/_components/Modal/BookmarkForm.tsx:52`, change `plannerId }` to `plannerId: '' }`. Run the file and see "calls addBookmark with plannerId on submit" fail. Revert. [Sarah] - This also failed one other test. Confirm this is expected.
+- [x] In `BookmarkForm.tsx:52`, change `tags: selectedTags` to `tags: []`. Run the file and see "submits with selected tags included" fail. Revert.
+- [x] In `BookmarkForm.tsx:54`, change `if (item)` to `if (false)`. Run the file and see "calls editBookmark with _id in edit mode" fail. Revert.
+- [x] In `BookmarkForm.tsx:60`, change `() => router.push(pathname)` to `() => {}`. Run the file and see "navigates to pathname after successful add" fail. Revert.
+- [x] In `BookmarkForm.tsx:93`, change `onClick={() => router.push(pathname)}` to `onClick={() => {}}`. Run the file and see "navigates to pathname on cancel" fail. Revert.
+
+**Status:** ✅ Complete
+
+**As built:**
+- Emptying `plannerId` at `BookmarkForm.tsx:52` also fails "calls editBookmark with _id in edit mode", not just the test the check names. Line 52 builds the payload both branches send, and the edit test checks `plannerId` alongside `_id`, which is expected.
 
 ---
 
