@@ -14,6 +14,7 @@ Questions investigate answers as part of its scan:
 - Which fields on `CalendarEvent` and the meal types built from it (`CalendarMeal`, `MonthGridMeal`, `WeekViewMeal`, `MobileMonthGridEvent`) exist only because of schedule-x?
 - Does `CalendarEvent` need to exist as its own shape, separate from the view-level meal types?
 - Do `SerializedDish`, `SerializedMeal`, `SerializedDay` or `SavedItem` carry anything driven by schedule-x?
+- Why does `src/app/[planner]/calendar/page.tsx:20-21` need `as unknown as` double casts to turn `planner.calendar` and `planner.saved` into `SerializedDay[]` and `SavedItem[]`? Can the shapes line up so the casts go? (Moved in 2026-09-26 from [[Code Tidy-Ups]], found by reading code 2026-09-25.)
 
 First look (2026-09-26, by reading the two files, not a full audit):
 - The four types being moved mirror stored planner data (days → meals → dishes, Mongo `_id`s, date strings), not schedule-x.

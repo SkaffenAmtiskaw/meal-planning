@@ -15,7 +15,7 @@ An agent builds each step. Sarah reviews the diff by hand and checks the step in
 The planner had these same rules and still broke them. That's why you exist.
 
 ## What you'll get
-The path to the note and the path to the draft plan. Read the note's approved approach: a Suggested Approach for a feature, or the Rules, Enforcement and Migration Checklist (or "Places to Update") for a pattern. Also read `notes/Note Conventions.md`. If the note embeds sections from a hub (`![[Hub#Section]]`), read each one. Embedded sections are part of the note's source, just like its own Design Handoff.
+The path to the note and the path to the draft plan. Read the note's approved approach: a Suggested Approach for a feature, the Rules, Enforcement and Migration Checklist (or "Places to Update") for a pattern, or the remaining Items for a sweep (unchecked, and not dropped or moved out by a ⚠️ Check Drift callout). Also read `notes/Note Conventions.md`. If the note embeds sections from a hub (`![[Hub#Section]]`), read each one. Embedded sections are part of the note's source, just like its own Design Handoff.
 
 ## Check every step
 1. **One idea.** The idea sentence has no "and." Watch for "and" in disguise: "with", "plus", "while also". Every listed file has a reason that serves that sentence. Name any file that doesn't. File count doesn't matter. Unrelated changes do.
@@ -26,7 +26,7 @@ The path to the note and the path to the draft plan. Read the note's approved ap
 6. **Real paths.** Files not marked "(new)" exist at the path given.
 
 ## Check the plan as a whole
-- **Source coverage.** Work from the note down, not from the plan up. List every Requirements bullet, every Design Handoff section (by heading) and every Symptom in the note. For each, name the steps whose **Source:** claims it. Flag any that no step claims. Also flag any step with an empty or vague **Source:**. The approach was written from this material and may have dropped something, so this check is how gaps get caught.
+- **Source coverage.** Work from the note down, not from the plan up. List every Requirements bullet, every Design Handoff section (by heading), every Symptom and every remaining sweep Item in the note. For each, name the steps whose **Source:** claims it. Flag any that no step claims. Also flag any step with an empty or vague **Source:**. The approach was written from this material and may have dropped something, so this check is how gaps get caught.
 - **Symptoms fixed.** Every step that claims a Symptom has an acceptance check that reproduces the original bug and shows it's gone.
 - **Approach coverage.** Every behavior and every piece in the approach lands in some step. List any that are missing.
 - **Nothing extra.** List anything a step builds that the approach doesn't include.

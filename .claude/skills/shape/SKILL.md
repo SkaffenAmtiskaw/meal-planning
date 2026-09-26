@@ -82,6 +82,7 @@ Give Sarah two or three directions, each with:
 
 Recommend one and say why. These are also valid directions:
 - **Fold it into an existing note,** if step 2 found a story that already covers it.
+- **Fold it into a sweep,** if it's a small fix with zero ambiguity and no open decisions that fits a sweep note's What Belongs Here rule (`type: sweep`). Never create a new sweep. If it's small and decided but no sweep fits, and the Roadmap already has related small fixes, tell Sarah they could be grouped into a new sweep. Whether to create one is her call.
 - **Drop it,** if it's already done or no longer makes sense.
 
 **Don't make the blocking decisions from step 2,** even if a direction seems to depend on one. They need research and Sarah, and that's the decide step's job. Say which decisions each direction depends on instead.
@@ -100,9 +101,12 @@ Show her the draft and wait for her approval.
 
 **For the "fold it into an existing note" direction,** draft the addition to that note instead, following the rules in the `scope-router` agent (`.claude/agents/scope-router.md`) under "Existing note". In particular, a `ready` note that gets new work goes back to `spec`.
 
+**For the "fold it into a sweep" direction,** draft the item for the collecting sweep note's Items, following the rules in the `scope-router` agent under "Sweep".
+
 ## 6. Write it
 Once she approves:
 - **An existing idea note:** rewrite it in place, so links to it keep working. Don't rename or move it without asking.
 - **A Roadmap line with no note:** create the note in `notes/features/<area>/`, with a plain filename (no emoji or prefixes). If the area isn't obvious, ask her which folder.
-- **Folded into an existing note:** apply the addition there. Replace the idea note's content with a 🚛 pointer to where it went. Never delete the file.
+- **Folded into an existing note or a sweep:** apply the addition there. Replace the idea note's content with a 🚛 pointer to where it went. Never delete the file.
+- **Folded into a sweep from a Roadmap line with no note:** add the item and remove the Roadmap line.
 - **The Roadmap:** make the story's line link to the note and embed its summary, e.g. `[[Note]] ![[Note#^status]]`. Keep the line in its current section and keep annotations like *(was high)*. For a new note from a split, ask Sarah which section its line goes in. Never reorder the Roadmap; order is her call.

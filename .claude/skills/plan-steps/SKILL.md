@@ -31,6 +31,7 @@ This is planning only. Don't change code. A hook blocks edits outside `notes/` a
 Find the note in `notes/features/`. `notes/Note Conventions.md` explains the frontmatter and markers. It needs `status: spec` and an approved approach:
 - **Feature:** a `# Suggested Approach`.
 - **Pattern:** Rules, Enforcement, and a Migration Checklist. Some older notes call the checklist "Places to Update."
+- **Sweep:** its unchecked Items, minus any a ⚠️ Check Drift callout drops or moves out. A frozen sweep goes through `/check-drift` first. If its `^status` line still says "Frozen. Next: /check-drift", tell Sarah and stop.
 
 If the status or the approach is missing, tell Sarah what you found and stop. For a feature without an approach, `/assess` comes first.
 
@@ -67,7 +68,9 @@ Never use "tests pass", "inspect the code" or "types compile" as a check. Tests 
 ### Coverage
 Every behavior and every piece in the approach must land in some step. Nothing can land in a step unless it's in the approach.
 
-Coverage also runs back to the note's source material, not just the approach, because the approach can miss things. Every step's **Source:** names the parts of the note it builds or fixes: Requirements bullets, Design Handoff sections, or a pattern's Symptoms. Together the steps must claim every Requirements bullet, every Design Handoff section and every Symptom. Cite handoff sections by heading, not individual pixel values. The implementer reads those sections for the details.
+Coverage also runs back to the note's source material, not just the approach, because the approach can miss things. Every step's **Source:** names the parts of the note it builds or fixes: Requirements bullets, Design Handoff sections, a pattern's Symptoms, or a sweep's Items. Together the steps must claim every Requirements bullet, every Design Handoff section, every Symptom and every remaining sweep Item. Cite handoff sections by heading, not individual pixel values. The implementer reads those sections for the details.
+
+In a sweep, items share a step only when they're the same idea, such as one fix repeated across several files. Unrelated items are separate steps, however small.
 
 A step that claims a Symptom needs an acceptance check that reproduces the original bug and shows it's gone.
 
@@ -76,7 +79,7 @@ A step that claims a Symptom needs an acceptance check that reproduces the origi
 ## Step N: <short title>
 **Idea:** <one sentence, no "and">
 
-**Source:** <what this step builds or fixes from the note, e.g. "Handoff: Day cell states; Handoff: Behavior (all placements) → keyboard", "Requirement 3" or "Symptom: new recipe missing from saved dishes dropdown">
+**Source:** <what this step builds or fixes from the note, e.g. "Handoff: Day cell states; Handoff: Behavior (all placements) → keyboard", "Requirement 3", "Symptom: new recipe missing from saved dishes dropdown" or "Item: forbidden @tabler/icons-react mocks">
 
 **Approach:** <how, citing the approach's pieces by name or number, e.g. "Piece 9a". Don't re-argue decisions already made there.>
 

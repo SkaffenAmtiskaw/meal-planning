@@ -8,7 +8,7 @@ color: cyan
 You get a list of work items that turned out to be outside the story being planned or built. For each one, suggest where it should live in the `notes/` vault. You only suggest. The caller goes through your suggestions with Sarah one at a time and makes the changes she approves.
 
 ## Before you start
-Read `notes/Note Conventions.md` and `notes/Roadmap.md`. Search `notes/features/` and the Roadmap for anything that already covers each item. Check the Roadmap's Tech Debt section in particular, and look for the same smell under different wording.
+Read `notes/Note Conventions.md` and `notes/Roadmap.md`. Search `notes/features/` and the Roadmap for anything that already covers each item. Check the Roadmap's Tech Debt section in particular, and look for the same smell under different wording. Also read every sweep note (`type: sweep` in `notes/features/`) and its What Belongs Here rule.
 
 ## Where things go
 Pick exactly one home for each item:
@@ -19,6 +19,11 @@ Pick exactly one home for each item:
   - If that note is `ready`, adding anything moves it back to `spec`, because its steps may no longer match. Also suggest adding a `blocked-by` entry and updating its Roadmap line to say what needs re-review.
   - If the design material lives in a hub, the note embeds the hub sections it needs (`![[Hub#Section]]`) rather than copying them. Hubs are never archived, so the design stays visible in one copy.
   - Otherwise, if the item is design material, such as part of a design handoff, it goes in its own clearly labeled section, separate from that note's own handoff. That section says that if it conflicts with the note's handoff or steps, the implementing agent must stop and ask Sarah which one wins. Name any conflicts you can already see.
+- **Sweep:** the item is small, with zero ambiguity and no open decisions, and it fits a sweep note's What Belongs Here rule. Prefer this over a new Roadmap line whenever it fits.
+  - Name the sweep note and write the item as it should appear under its Items: the file with line numbers, exactly what changes, and how and when it was found.
+  - Add it to the collecting note, never to a frozen dated copy (`<name> YYYY-MM-DD`).
+  - If the item would fit a sweep but still needs a decision, it's a new Roadmap line instead. Say which decision it needs and which sweep it can join once that's decided.
+  - If no sweep fits, but the Roadmap already has related small fixes, suggest a new Roadmap line and say in **Why** that they could be grouped into a new sweep.
 - **New Roadmap line:** a new story that takes a line or two to describe. Name the Roadmap section and write the exact line. Follow the style of the lines around it.
 - **New idea note:** a new story that needs more than a line or two. Suggest a title and folder under `notes/features/`, draft the body from the template in `notes/templates/` that fits its shape, and write the Roadmap line that links to it.
 
@@ -28,7 +33,7 @@ If the item is being moved out of the current story's own note (for example, a r
 One block per item, in the order you received them:
 
 ### Item N: short name
-**Home:** already covered / existing note / new Roadmap line / new idea note
+**Home:** already covered / existing note / sweep / new Roadmap line / new idea note
 **Where:** note and section, or Roadmap section
 **Exact change:** the text to add, and any status, `blocked-by` or Roadmap line changes
 **Why:** one or two sentences, naming any existing note or line you considered and rejected

@@ -1,11 +1,11 @@
 ---
 type: cleanup
-status: in-progress
+status: in-review
 blocked-by: []
 confirmed: 2026-09-25
 ---
 # Where It Stands
-In progress. Next: implement Step 4. ^status
+All steps implemented. Next: code review ^status
 
 This is a cleanup story meant to align unit testing standards. All changes should be to unit test & mock files - no code should be changed.
 
@@ -223,6 +223,8 @@ Break-it checks run one test file with `pnpm vitest run <test file>`. Every temp
 - `src/app/[planner]/_components/BurgerToggle.test.tsx` - mock `./ToggleContext` instead of `@mantine/hooks`, drop the presentational test and the duplicate throw test
 
 **Acceptance:**
-- [ ] In `src/app/[planner]/_components/ToggleContext/useToggleContext.ts`, add `throw new Error('x');` as the first line of `useToggleContext`. Run `pnpm vitest run "src/app/[planner]/_components/BurgerToggle.test.tsx"` and see its one test still pass, which shows it no longer runs through the real hook. Revert.
-- [ ] In `src/app/[planner]/_components/BurgerToggle.tsx:13`, change `onClick={toggle}` to `onClick={() => {}}`. Run the file and see "should call toggle function when Burger is clicked" fail. Revert.
-- [ ] Run `grep -rn "vi.mock('@mantine/hooks', ()" src`. It finds nothing: every `@mantine/hooks` mock left uses the shared async import.
+- [x] In `src/app/[planner]/_components/ToggleContext/useToggleContext.ts`, add `throw new Error('x');` as the first line of `useToggleContext`. Run `pnpm vitest run "src/app/[planner]/_components/BurgerToggle.test.tsx"` and see its one test still pass, which shows it no longer runs through the real hook. Revert.
+- [x] In `src/app/[planner]/_components/BurgerToggle.tsx:13`, change `onClick={toggle}` to `onClick={() => {}}`. Run the file and see "should call toggle function when Burger is clicked" fail. Revert.
+- [x] Run `grep -rn "vi.mock('@mantine/hooks', ()" src`. It finds nothing: every `@mantine/hooks` mock left uses the shared async import.
+
+**Status:** ✅ Complete

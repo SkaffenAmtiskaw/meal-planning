@@ -31,7 +31,7 @@ It only reads code. It never runs the app and never changes code. A hook blocks 
 - **Out-of-scope items:** keep a running list of anything that belongs outside this story. Don't stop to deal with them as they come up. Step 8 handles them.
 
 ## 1. Read the note
-Find the note in `notes/features/`. `notes/Note Conventions.md` explains the frontmatter and markers. It needs `status: spec`, `ready` or `in-progress`. If it has another status, tell Sarah what you found and stop.
+Find the note in `notes/features/`. `notes/Note Conventions.md` explains the frontmatter and markers. It needs `status: spec`, `ready` or `in-progress`. If it has another status, tell Sarah what you found and stop. A collecting sweep note (`type: sweep`, `status: idea`) hasn't been frozen yet. Tell Sarah it needs freezing first, as Note Conventions describes under Sweeps, and stop.
 
 Read the whole note, including:
 - each embedded section (`![[Hub#Section]]`), which is part of the note
@@ -41,6 +41,7 @@ Read the whole note, including:
 Then work out the **remaining work**. That's all you check:
 - `spec`: the design, behaviors and Suggested Approach.
 - `ready` or `in-progress`: the steps with no `**Status:**` line, plus the design and approach sections they build. Skip completed steps. Their As built notes already record what happened.
+- a `spec` sweep: every unchecked item under Items.
 
 Note the `confirmed` date. It's the baseline for everything below.
 
@@ -79,6 +80,14 @@ For each finding, also note what it means for the note:
 - **Approach:** the approach, or part of it, no longer holds. It needs a re-assessment.
 - **Blocked:** it can't go ahead until another story lands or a decision is made.
 
+**Sweeps:** a sweep's items must stay small and decided, so sort each item's findings this way instead:
+- **Already fixed, or built by another story:** mechanical. The callout says the item is dropped and why, and `/plan-steps` skips it.
+- **Moved or renamed:** mechanical, as above.
+- **Now needs a decision:** it no longer belongs in a sweep. Take it out straight away, without asking whether to settle it, and put it on the out-of-scope list to become its own story. Leave a callout where it was saying it moved out and why.
+- **Now waits on another story:** move it back to the collecting note, starting with `**Blocked by [[Story]]:**`, so it rolls over to the next sweep. Leave a callout where it was saying it moved back and why.
+
+A sweep never needs a re-assessment and never gets a `decision needed` entry.
+
 ## 5. Write the callouts
 A callout goes directly above the text it's about, in this format:
 
@@ -110,6 +119,8 @@ Work out the next step from the findings' meanings in step 4:
 - **Blocked:** add the story (`"[[link]]"`) or decision to `blocked-by`.
 
 If more than one applies, the biggest wins: approach over steps over callouts only. Blocked can go with any of them.
+
+A `spec` sweep always goes to `/plan-steps` next.
 
 Show Sarah the new `^status` line, with any change to `status` or `blocked-by`, e.g. "Drift found. Next: /plan-steps to re-plan from Step 4". Wait for her approval before writing it. The line holds the status only, never a description of the story, because the Roadmap embeds it.
 

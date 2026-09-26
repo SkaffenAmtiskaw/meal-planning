@@ -6,12 +6,13 @@ confirmed: 2026-09-25
 ---
 # Where It Stands
 
-Split from [[Unified Date Picker Component]] with 3 draft steps. Next: /plan-steps to confirm them. ^status
+Split from [[Unified Date Picker Component]] with 3 draft steps. A symptom was added 2026-09-26. Next: /assess to add it to the approach, then /plan-steps. ^status
 
 # Symptoms
 - The header's Date field (desktop) and the period-label picker (phone) render unstyled, because nothing imports `@mantine/dates/styles.css`.
 - Their weeks start on Monday, Mantine's default. Every week in the app starts on Sunday.
 - Their height changes from month to month, because the grid isn't fixed at 6 rows.
+- The calendar's month views (desktop and phone) also change height from month to month, showing 5 or 6 rows, because `src/_components/Calendar/_utils/getMonthGridDates.ts` stops at the last week of the month. They should always show 6 rows (42 days from the Sunday on or before the 1st), matching the pickers. Moved in from the Roadmap 2026-09-26, found by reading code.
 
 Found by reading code during `/assess` of [[Unified Date Picker Component]].
 
@@ -23,7 +24,6 @@ Everyone, editors and viewers, on desktop and phone.
 - The week-start math is copied inline in `getWeekDates`, `getMonthGridDates` and `formatWeekRange`, with nothing tying it to the week start Mantine uses. Luxon's `startOf('week')` starts on Monday.
 
 # Out of Scope
-- Month views fixed at 6 rows are on the [[Roadmap#Calendar]].
 - The dead `getWeekStart.ts` / `useWeekNavigation` are left for [[Remove Schedule-X]], which already lists them.
 
 ## Meta-Instructions

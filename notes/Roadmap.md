@@ -10,6 +10,7 @@
 - **Ideas** - not committed.
 - A story's status (`idea` / `spec` / `ready` / `in-progress` / `in-review` / `done`) lives in its note's frontmatter. This file only decides order.
 - Each line with a note embeds that note's status line from Where It Stands after the link, e.g. `[[Stale Data Issues]] ![[Stale Data Issues#^status]]`. It shows only what work the story needs next, not what the story is. Edit it in the note, not here.
+- **Sweeps** (`type: sweep`) collect small, decided fixes that share a group, such as [[Unit Test Tidy-Ups]]. A small fix with no open decisions goes into the sweep for its group, not onto its own line here. When several related small fixes sit here as separate lines and no sweep covers them, flag to Sarah that they could become a new sweep. Never create one without her.
 - *(was high)* etc. is the item's priority under the old High / Medium / Low layout, kept for reference while the queue is being ordered. *(was bugfix)* means it was in the old "Bugfixes/User Issues/Tech Debt" section.
 
 # Hubs
@@ -38,7 +39,7 @@
 - [[Delete Planner|allow user to delete a planner]] - idea. Waiting on the [[Zero Planners Crash]] decision. *(was high)*
 - [[Keyboard Shortcuts|keyboard shortcuts]] - spec. Out of date; re-review once the calendar views are mostly complete. *(was medium)*
 - calendar list view keyboard navigation - needs design review once the calendar views are mostly complete (see Step 16 in [[Replace Schedule-X]])
-- [[features/calendar/Style Fixes|calendar style fixes]] - idea. Do after the calendar header is aligned across all views.
+- [[Style Decisions]] ![[Style Decisions#^status]]
 - [[Granular Webfetch Permissions|Update OpenCode agents webfetch permissions]] - idea. Waiting on an OpenCode release.
 - [[Settings Data Refresh]] ![[Settings Data Refresh#^status]] - spec. Waiting on [[Calendar and Recipes Data Refresh]].
 - [[Data Rules Enforcement]] ![[Data Rules Enforcement#^status]] - spec. Waiting on [[Calendar and Recipes Data Refresh]], [[Settings Data Refresh]] and [[Server-Only Creation and Pure Reads]].
@@ -49,13 +50,11 @@
 ## Calendar
 - you should be able to create a meal with just a title and a description (or just a title) *(was bugfix)*
 - meal color should be based on hex of title + description *(was bugfix)*
-- change segmented control theme to match design from Claude *(was bugfix)*
-- Desktop: month view current date circle is truncating numbers - covered by [[Today and Selected Day Markers]] (behavior 22) *(was bugfix)*
-- month views (desktop and mobile) should always show 6 rows, matching the date picker's fixed 6-week grid - the row count comes from `getMonthGridDates` (found while planning [[Unified Date Picker Component]])
 - [[Add Meal from Month Cell]] ![[Add Meal from Month Cell#^status]]- add meals by clicking week day - reuse the interaction decisions from [[Add Meal from Month Cell]]'s design so month and week behave the same *(was high)*
 - default to week view on desktop - list view on mobile *(was high)*
 - calendar list view infinite scroll *(was high)*
 - clicking "+N more" in the month grid switches to list view at that day - approach needs review (see Step 17 in [[Replace Schedule-X]])
+- two buttons are off-screen when tabbing from the first tab stop on the calendar page - a bug, needs investigating. Moved from the calendar style fixes list 2026-09-26
 
 ## Recipes
 - deleting a recipe from the recipe detail page always reports success - `RecipeDetail` ignores the `deleteRecipe` result *(was bugfix)*
@@ -81,7 +80,7 @@
 - Add a feedback button *(was high)*
 
 ## App-Wide UX & Quality
-- [[features/style fixes|style fixes]] *(was high)*
+- [[Style Fixes]] ![[Style Fixes#^status]] *(was high)*
 - [[Email Improvements|email improvements]] *(was high)*
 - take create planner pattern of button on top right in desktop - FAB in mobile and apply it throughout the app *(was medium)*
 - skip to content *(was medium)*
@@ -89,6 +88,7 @@
 - security - string validation on inputs *(was medium)*
 - audit app works fully in mobile *(was medium)*
 - toggle light/dark mode *(was low)*
+- calendar focus states look poor - needs a design, possibly a global focus state (see the `theme.ts` line under Tech Debt, whose focus styles never apply). Moved from the calendar style fixes list 2026-09-26
 
 ## Tech Debt
 - [[Modal Form Architecture|refactor all modal forms to separate presentation and data concerns]] *(was bugfix)*
@@ -101,33 +101,32 @@
 - replace date utils with luxon - `src/_utils/date.ts` also mixes formatting with time comparisons, and `new Date('YYYY-MM-DD')` parses as UTC, so date-only strings show the previous day in US time zones
 - route management - emails create paths & query params the app must consume, but nothing keeps them in sync
 - [[Domain-Specific Code Locations|move domain-specific code out of the generic folders]] and spell out in project conventions what goes where - idea, has a starting list of files
-- [[Calendar Code Tidy-Ups|calendar code tidy-ups]] - idea, small smells found during [[Unified Date Picker Component]] planning
-- `theme.ts` - hard-coded hex colors (navy, sage, white, border, focus rgba); input `&:focus` styles in a `styles` object never apply (Mantine drops pseudo-selectors there), so the forest focus ring isn't coming from the theme; `'use client'` has a real reason (theme functions passed from the server layout) but no comment saying so
+- [[Code Tidy-Ups]] ![[Code Tidy-Ups#^status]]
+- `src/_components/Calendar/_utils/formatCalendarLabel.ts` - also holds the view display names (`VIEW_LABELS`) and default view order (`DEFAULT_VIEWS`), which its name doesn't describe. Move them into a views config once it's decided where that lives, then it can join [[Code Tidy-Ups]]
+- `theme.ts` - the input border `#C8C0C3` has no color token (name one, then it can join [[Code Tidy-Ups]]); input `&:focus` styles in a `styles` object never apply (Mantine drops pseudo-selectors there), so the forest focus ring isn't coming from the theme - see the calendar focus states line under App-Wide UX & Quality
 - "today" is computed independently in ~10 calendar places, several with `DateTime.now()` during server render - near midnight the server's time zone can mark the wrong day or cause a hydration mismatch. Consider one source of "today"
 - calendar duplication - group-by-date ×4 (`MonthGrid`, `MobileMonthGrid`, `WeekView`, `ListView`), meal color calculation ×2 (`toCalendarMeals`, `MealMonthAgenda`), near-identical adapters `MealCalendar` / `MealWeekView` with identical `MonthGridMeal` / `WeekViewMeal` types, and meal keyboard navigation copied between `useMonthGridKeyboard` and `useWeekViewKeyboard` (the week hook also re-implements `useRovingGridFocus`)
-- CTA buttons are styled two ways - `variant="cta"` (6 files) vs `color="ember"` (`AddMealButton`, `MobileAddMealButton`, `SubmitButton`, `ChangePasswordForm`); pick one
-- switch all types files to `*.types.ts` - `*.types.d.ts` is awful *(was medium)*
 - performance - investigate mongo/mongoose caching - is next doing it already or do we need to implement it? *(was medium)*
 - could we get rid of mongoose and use zod + mongodb on its own? what does mongoose get us? *(was medium)*
 - audit code for client component surface area - move as much as possible to server components *(was low)*
-- remove the `@tabler/icons-react` mocks that `unit_tests.md` forbids - `PlannerContextSection`, `UserMenu`, `DeleteItemButton` and `InvitesSection` tests (the last two are also touched by [[Calendar and Recipes Data Refresh]] and [[Settings Data Refresh]])
 - [[Unit Test Tidy-Ups]] ![[Unit Test Tidy-Ups#^status]]
 
 ## Dev Tooling & Testing
 - switch testing library to `vitest-browser-react`
-- enable dependabot *(was low)*
+- enable dependabot *(was low)* - npm only (no `.github/` yet); decide how often it runs and whether minor/patch updates are grouped into one PR, then it can join [[Dev Tooling Tidy-Ups]]
 - e2e tests *(was low)*
-- disable biome a11y checks on unit test mocks *(was low)*
-- add different import order sorting for `.test.ts(x)` - vitest and react/testing-library should be at the top *(was low)*
+- disable biome a11y checks on unit test mocks *(was low)* - decide whether this covers only `test/mocks/**` or inline mocks in `*.test.tsx` too, then it can join [[Dev Tooling Tidy-Ups]]
 - [[Unit Testing - New Centralized Mocks]] ![[Unit Testing - New Centralized Mocks#^status]]
+- [[Dev Tooling Tidy-Ups]] ![[Dev Tooling Tidy-Ups#^status]]
 
 ## Notes & Agent Workflow
 - build the planned note agents (investigate, code review, archive, architect for patterns) - see the Next Step by Note State table in [[Note Conventions]]
-- [[Agent Workflow Changes]] - idea. Running list of changes to AGENTS.md, skills and subagents; includes the AGENTS.md rewrite for Claude Code.
+- [[Agent Workflow Changes]] - idea.
+- [[Skill and Agent Tidy-Ups]] ![[Skill and Agent Tidy-Ups#^status]]
 - [[Story Code Review]] ![[Story Code Review#^status]]
 - standardize the implementation step format - notes use at least three shapes today ("What we're doing / Acceptance Criteria / Architectural plan" in [[Replace Schedule-X]] and [[Mobile Month View]], "Problem to solve / Suggested Approach / Verification" in [[Mobile List View]], "Scope / Files / Architectural note / Acceptance" in [[Add Meal Changes (Saved Recipes)]])
 - reconcile each `spec` note against the code with `/check-drift` when it reaches the top of Next (Stale Data Issues and Unified Date Picker were written this week; Shared Types Directory and Tag Management date from April)
-- decide `type` for the untyped notes: [[features/style fixes|style fixes]], [[features/calendar/Style Fixes|calendar style fixes]], [[Email Improvements]], [[Granular Webfetch Permissions]] - the two style-fix notes are lists of small fixes rather than single stories
+- decide `type` for the untyped notes: [[Email Improvements]], [[Granular Webfetch Permissions]]
 - optional: an Obsidian Base listing notes by `type`, `status` and `confirmed`, to spot stale notes at a glance
 
 # Ideas
