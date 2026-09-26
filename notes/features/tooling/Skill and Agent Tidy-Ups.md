@@ -17,7 +17,7 @@ Changes to one skill or subagent file, each saying what to change, where, and wh
 
 # Items
 %% Add each item as an unchecked box. Say which file (with line numbers), exactly what changes, and how and when it was found, e.g. "found by reading code while planning [[Note]], 2026-09-26". Items go stale, so /check-drift re-checks every one when a sweep is scheduled. If an item can't be done until another story lands, start it with `**Blocked by [[Story]]:**`. Block the item, never the whole sweep. Blocked items stay here when a sweep is frozen and roll over to the next one. %%
-- [ ] 
+- [ ] `.claude/skills/plan-steps/SKILL.md`, step 4 ("Review with Sarah"), the outline bullet: don't ask Sarah whether the order/split is right when that's already settled by the skill's own checks (e.g. the split-checker returned a clear "no split" verdict and the note's template already allows the resulting step count, such as a bug note's single-step plan). State the settled outcome instead of asking her to confirm it; still ask when a checker flagged real uncertainty or the split/order is a genuine judgment call. Found while planning [[Unchecked Invite Lookup]], 2026-09-26 - Sarah: "That's something that doesn't need my feedback every time. When it's OBVIOUS it does not need to be asked."
 
 # Out of Scope
 - The `AGENTS.md` rewrite for Claude Code and other OpenCode-move changes: [[Agent Workflow Changes]].

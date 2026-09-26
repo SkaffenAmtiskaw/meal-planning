@@ -65,6 +65,8 @@ Note: `notes/features/tech debt/Server-Only Creation and Pure Reads.md` (type: c
 ## Step 8: Planner and user creation become server-only utilities
 **Idea:** `addPlanner` and `addUser` move out of `'use server'` files so the browser can't call them.
 
+> ⚠️ **Check Drift 2026-09-26:** Found while planning [[Unchecked Invite Lookup]], by reading code (not re-verified in the running app). Applying the placement rule decided there ([[Domain-Specific Code Locations]] Rules, once landed): a domain function's home is decided by which enclosing `_`-prefixed directory's scope already covers every consumer, not by relocating it into a nested `_utils/`. `addPlanner` still fits this Step's plan - its only consumers (`createPlanner.ts`, `signUpWithInvite.ts`) are both inside `_actions`, matching the sibling-only `_utils/` pattern. But `addUser` doesn't - it's consumed by `src/app/page.tsx`, outside `_actions` entirely, the same shape as `getUserInvites` (which [[Unchecked Invite Lookup]] kept flat in `_actions/sharing/` with `import 'server-only'`, rather than moving it to `_utils/`). `addUser` likely stays at `src/_actions/user/addUser.ts` with `import 'server-only'` swapped in for `'use server'`, not moved to `_utils/addUser.ts`. Re-verify at planning time.
+
 **Source:** Places C: `planner/addPlanner`, `user/addUser`; Places H: `src/app/page.tsx` calls `addUser` during render
 
 **Approach:** Move both into `server-only` internal utils (e.g. `src/_actions/planner/_utils/addPlanner.ts`, `src/_actions/user/_utils/addUser.ts`) and take them out of the barrels. `src/app/page.tsx` keeps calling `addUser` during render. It redirects, so no invalidation is needed.

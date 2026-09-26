@@ -10,7 +10,13 @@ confirmed: 2026-09-25
 Originally a Roadmap line: "move domain-specific components/utils used app-wide (e.g. access colors) to `src/app/_components` / `src/app/_utils` with an alias, and spell out in project conventions what goes in each".
 
 # Rules
-%% To decide with Sarah. Starting questions: what counts as "domain-specific"; where app-wide domain code goes versus code used by one route; what the alias is. %%
+**Decided 2026-09-26, while planning [[Unchecked Invite Lookup]]. To land in `.opencode/docs/project_conventions.md`'s "Generic vs Domain-Specific Utilities" section when this note is implemented; other notes should link there once it does, rather than repeat it:**
+
+A `_`-prefixed directory's contents are scoped for consumption from anywhere within its own parent directory, not just its immediate siblings. `src/_actions/`, `src/_components/`, `src/_hooks/`, `src/_models/`, `src/_theme/` and `src/_utils/` are all `_`-prefixed children of `src/`, so each is consumable from anywhere in `src/`. A domain folder inside one of them (e.g. `_actions/sharing/`) isn't itself `_`-prefixed, so it inherits that same `src/`-wide scope - a plain file there is exactly as available to a component or a page as to another action. Only another `_`-prefixed directory nested inside it (e.g. `_actions/sharing/_utils/`) introduces a new, tighter scope: consumable only from within that domain folder, not from elsewhere in `src/` or even a different domain.
+
+So a function's home isn't found by computing "the lowest common parent of all its consumers" as a one-off calculation - it's found by checking which enclosing `_`-prefixed directory's scope already covers every consumer. A function consumed from elsewhere in `src/` belongs as a plain file in its domain folder, the same as any other action. It only moves into a nested `_utils/` when its real consumers are narrower than that: limited to sibling files inside the same domain folder. A function that doesn't fit any domain folder's scope at all doesn't belong under `_actions` at all - it moves to `app/` or a new src-level directory (with its own alias), never into the generic `src/_utils/`, which stays reserved for utilities with no domain knowledge.
+
+%% Still to decide with Sarah. Starting questions: what counts as "domain-specific"; where app-wide domain code goes versus code used by one route; what the alias is. %%
 
 # Enforcement
 %% Required. A candidate: a lint or import-boundary rule that stops `src/_components`, `src/_hooks` and `src/_utils` from importing `@/_actions`, `@/_models` or `@/app/**`. To decide. %%
