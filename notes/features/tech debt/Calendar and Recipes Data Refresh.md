@@ -68,6 +68,23 @@ All paths relative to `src/_actions/`.
 ## G. Client-Local State to Reconcile
 - [ ] `src/_components/TagCombobox.tsx` — `availableTags` must re-sync from props or use `useOptimistic`
 
+## Tests and Shared Mocks
+*Added 2026-09-26: hand-off from [[Unit Testing - Clean Up Mocks]], decided by Sarah on 2026-09-25.* This story owns the mock clean-up for the test files it changes:
+- Every test file it rewrites or moves uses the centralized mock in `test/mocks/` for any module that has one (`vi.mock('<module>', async () => await import('@mocks/...'))`), not an ad-hoc factory, per `.opencode/docs/unit_tests.md`.
+- When it moves, renames or reshapes an export of `@/_actions` or `@/_models`, it updates the matching `test/mocks/@/_actions/*.ts` or `test/mocks/@/_models/*.ts` in the same step.
+- If another story already did this for a file, there's nothing more to do.
+
+Known files as of 2026-09-25 (found by reading code; re-check when planning):
+- `src/_actions/library/editBookmark.test.ts`: ad-hoc `@/_actions/auth`, `@/_models/planner`
+- `src/_actions/library/addBookmark.test.ts:11`, `deleteBookmark.test.ts:12`: ad-hoc `@/_models/planner`
+- `src/_actions/library/addRecipe.test.ts`: ad-hoc `@/_models/planner`, `@/_models/library` (line 12)
+- `editBookmark`, `editRecipe`, `updateRecipeNotes`, `updateRecipeTags` tests: drop the ad-hoc `next/cache` mock when `revalidatePath` goes
+- `src/app/[planner]/layout.test.tsx`: ad-hoc `@/_actions/user` (line 25) and `@/_actions/auth` (line 21)
+- `InlineTagsEditor.test.tsx`: ad-hoc `@/_actions/library`; doesn't mock `@/_hooks/useEditMode`, so the real hook runs
+- `InlineNotesEditor.test.tsx:23`: custom subpath factory for `@/_hooks/useEditMode`
+- `test/mocks/@/_actions/calendar.ts`: `addMeal` default still returns `data: { calendar: [] }`
+- `test/mocks/@/_actions/library.ts`: `addTag` takes `{ plannerId, name }`
+
 # Out of Scope
 - Planner, sharing and user actions and the settings screens - [[Settings Data Refresh]].
 - `defineQuery`, the conventions test and lefthook - [[Data Rules Enforcement]].

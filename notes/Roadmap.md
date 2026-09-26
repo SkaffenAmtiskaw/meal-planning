@@ -18,7 +18,7 @@
 - [[Stale Data Issues]] ![[Stale Data Issues#^status]] - the data refresh pattern (rules, tag model, enforcement), split 2026-09-25 into [[Calendar and Recipes Data Refresh]], [[Settings Data Refresh]], [[Server-Only Creation and Pure Reads]] and [[Data Rules Enforcement]].
 
 # Now
-- [[Unit Testing - Clean Up Mocks]] - remaining: a few straggler files in `@/_actions`, `@/_models` and `@mantine/hooks`; `@/_components` and `@/_utils` not started
+- [[Unit Testing - Clean Up Mocks]] ![[Unit Testing - Clean Up Mocks#^status]]
 
 # Next
 1. [[Unchecked Invite Lookup]] ![[Unchecked Invite Lookup#^status]] - spec. ⚠️ Security: anyone who knows an email may fetch that person's invite tokens. Nothing blocks it.
@@ -108,6 +108,7 @@
 - performance - investigate mongo/mongoose caching - is next doing it already or do we need to implement it? *(was medium)*
 - could we get rid of mongoose and use zod + mongodb on its own? what does mongoose get us? *(was medium)*
 - audit code for client component surface area - move as much as possible to server components *(was low)*
+- remove the `@tabler/icons-react` mocks that `unit_tests.md` forbids - `PlannerContextSection`, `UserMenu`, `DeleteItemButton` and `InvitesSection` tests (the last two are also touched by [[Calendar and Recipes Data Refresh]] and [[Settings Data Refresh]])
 
 ## Dev Tooling & Testing
 - switch testing library to `vitest-browser-react`
@@ -115,6 +116,7 @@
 - e2e tests *(was low)*
 - disable biome a11y checks on unit test mocks *(was low)*
 - add different import order sorting for `.test.ts(x)` - vitest and react/testing-library should be at the top *(was low)*
+- [[Unit Testing - New Centralized Mocks]] ![[Unit Testing - New Centralized Mocks#^status]]
 
 ## Notes & Agent Workflow
 - build the planned note agents (investigate, code review, archive, architect for patterns) - see the Next Step by Note State table in [[Note Conventions]]

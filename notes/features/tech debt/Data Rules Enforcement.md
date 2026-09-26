@@ -44,6 +44,20 @@ Already built: tag registry, `invalidate()`, `defineMutation` by [[Calendar and 
 `getPlanner`, `getPlannerClient` and `getSavedItem` leave `'use server'` in [[Unchecked Planner Reads]]. If that has landed, don't wrap them here.
 `getUserInvites` leaves `'use server'` in [[Unchecked Invite Lookup]]. If that has landed, don't wrap it here.
 
+## Tests and Shared Mocks
+*Added 2026-09-26: hand-off from [[Unit Testing - Clean Up Mocks]], decided by Sarah on 2026-09-25.* This story owns the mock clean-up for the test files it changes:
+- Every test file it rewrites or moves uses the centralized mock in `test/mocks/` for any module that has one (`vi.mock('<module>', async () => await import('@mocks/...'))`), not an ad-hoc factory, per `.opencode/docs/unit_tests.md`.
+- When it moves, renames or reshapes an export of `@/_actions` or `@/_models`, it updates the matching `test/mocks/@/_actions/*.ts` or `test/mocks/@/_models/*.ts` in the same step.
+- If another story already did this for a file, there's nothing more to do.
+
+Known files as of 2026-09-25 (found by reading code; re-check when planning):
+- `src/_actions/sharing/getPendingInvites.test.ts` (`@/_actions/auth` line 4, `@/_models/sharing` line 8)
+- `src/_actions/auth/checkAuth.test.ts:9` (`@/_actions/user`). If `checkAuth` isn't wrapped, this story still moves `checkAuth.test.ts` onto the centralized `@/_actions/user` mock.
+- `src/_actions/sharing/getPlannerMembers.test.ts:5` (`@/_models/user`)
+- `src/_actions/user/getUser.test.ts:18` (`@/_models/user`)
+- `getPlanner` / `getUserInvites` tests, only if [[Unchecked Planner Reads]] / [[Unchecked Invite Lookup]] haven't landed
+- `test/mocks/@/_models/sharing.ts`: `PendingInvite` needs `find`, unless [[Unchecked Invite Lookup]] already added it
+
 # Draft Steps (from the split)
 > [!warning] For the agent running /plan-steps
 > This section is the draft plan saved when [[Stale Data Issues]] was split on 2026-09-25. It replaces `.opencode/scratch/Data Rules Enforcement - plan.md`; start from it as that skill's "draft saved by a split". It has not been through plan-checker. **Once the approved plan is written under Implementation, delete this whole section** (heading included).

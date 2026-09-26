@@ -43,6 +43,15 @@ Once [[Calendar and Recipes Data Refresh]] has removed the client caller, move a
 
 Decided 2026-09-25: no interim `checkAuth` stopgap. It would be discarded by the move, and [[Calendar and Recipes Data Refresh]] is first in the Next queue. See the Security Concern above if that changes.
 
+**Tests and shared mocks:** *Added 2026-09-26: hand-off from [[Unit Testing - Clean Up Mocks]], decided by Sarah on 2026-09-25.* This story owns the mock clean-up for the test files it changes:
+- Every test file it rewrites or moves uses the centralized mock in `test/mocks/` for any module that has one (`vi.mock('<module>', async () => await import('@mocks/...'))`), not an ad-hoc factory, per `.opencode/docs/unit_tests.md`.
+- When it moves, renames or reshapes an export of `@/_actions` or `@/_models`, it updates the matching `test/mocks/@/_actions/*.ts` or `test/mocks/@/_models/*.ts` in the same step.
+- If another story already did this for a file, there's nothing more to do.
+
+Known files as of 2026-09-25 (found by reading code; re-check when planning):
+- `src/_actions/planner/getPlanner.test.ts` (`@/_models/planner`)
+- `test/mocks/@/_actions/planner.ts` and `library.ts` stop exporting `getPlanner`, `getPlannerClient` and `getSavedItem`; their consumers mock the new server-only path
+
 # Acceptance Criteria
 - [ ] `getPlanner`, `getPlannerClient` and `getSavedItem` are no longer exported from any `'use server'` file.
 - [ ] These flows are unchanged:
