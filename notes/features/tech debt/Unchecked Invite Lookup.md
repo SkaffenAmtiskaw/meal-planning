@@ -36,6 +36,8 @@ Found by reading code on 2026-09-25. **Not reproduced in the running app.**
 # Fix
 Move `getUserInvites` out of `'use server'` into a server-only utility, as [[Server-Only Creation and Pure Reads]] does for `addPlanner` / `addUser`. The browser then can't call it at all. Nothing blocks this: no client code calls it.
 
+The open "not yet verified" / "to verify" items above (Symptoms, Who Can Hit This) don't change this fix - removing the server action closes the hole no matter how those turn out. Sarah's OK treating them as background noise; `/plan-steps` doesn't need them resolved first.
+
 **Tests and shared mocks:** This story owns the mock clean-up for the test files it changes:
 - Every test file it rewrites or moves uses the centralized mock in `test/mocks/` for any module that has one (`vi.mock('<module>', async () => await import('@mocks/...'))`), not an ad-hoc factory, per `.opencode/docs/unit_tests.md`.
 - When it moves, renames or reshapes an export of `@/_actions` or `@/_models`, it updates the matching `test/mocks/@/_actions/*.ts` or `test/mocks/@/_models/*.ts` in the same step.
