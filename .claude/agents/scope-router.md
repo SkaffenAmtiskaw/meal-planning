@@ -17,7 +17,7 @@ Pick exactly one home for each item:
 - **Existing note:** the item belongs to a story that already has a note.
   - Name the note and the section the item should go in.
   - If that note is `ready`, adding anything moves it back to `spec`, because its steps may no longer match. Also suggest adding a `blocked-by` entry and updating its Roadmap line to say what needs re-review.
-  - If the design material lives in a hub, the note embeds the hub sections it needs (`![[Hub#Section]]`) rather than copying them. Hubs are never archived, so the design stays visible in one copy.
+  - If the design material lives in a hub, the note embeds the hub sections it needs (`![[Hub#Section]]`) rather than copying them. The design stays in one copy. If the hub is in `notes/archive/`, also add the note to the hub's `kept-for`.
   - Otherwise, if the item is design material, such as part of a design handoff, it goes in its own clearly labeled section, separate from that note's own handoff. That section says that if it conflicts with the note's handoff or steps, the implementing agent must stop and ask Sarah which one wins. Name any conflicts you can already see.
 - **Sweep:** the item is small, with zero ambiguity and no open decisions, and it fits a sweep note's What Belongs Here rule. Prefer this over a new Roadmap line whenever it fits.
   - Name the sweep note and write the item as it should appear under its Items: the file with line numbers, exactly what changes, and how and when it was found.

@@ -4,9 +4,10 @@ How notes in this vault are organized. The [[Roadmap]] decides order; everything
 | Property | Values | Meaning |
 |---|---|---|
 | `type` | `feature` · `bug` · `pattern` · `cleanup` · `sweep` · `hub` | Which template the note follows. Blank on an `idea` note until its kind is clear. |
-| `status` | `idea` · `spec` · `ready` · `in-progress` · `in-review` · `done` | See lifecycle below. Hubs have no status. |
+| `status` | `idea` · `spec` · `ready` · `in-progress` · `in-review` · `done` · `dropped` | See lifecycle below. Hubs have no status. |
 | `blocked-by` | list | Why the story can't move forward: another story (as a `"[[link]]"`), a decision that's needed, or an outside release. Empty when nothing blocks it. |
 | `confirmed` | date | When the note was last confirmed to match reality. Sarah shaping or re-shaping a note counts, since she only does that for issues she believes are still relevant. Don't bump it for moves, renames or link fixes. |
+| `kept-for` | list | Archived notes only. The open stories (as `"[[link]]"`) that still rely on this note's content, such as its design. `/close` deletes the note once none are left. Whenever a note starts relying on an archived note's content, add it here. An archived note with no `kept-for` is older than this property; `/close` asks about it when it comes across it. |
 
 # Lifecycle
 - **idea** - rough notes. Nobody builds from this.
@@ -14,7 +15,10 @@ How notes in this vault are organized. The [[Roadmap]] decides order; everything
 - **ready** - has implementation steps. A story is **not** ready until it has steps, however settled the design is - steps are what make the work reviewable in small pieces. Any change to a `ready` note's design or steps sends it back to `spec` until Sarah re-reviews it.
 - **in-progress** - work has started.
 - **in-review** - every step is implemented and confirmed. The code is waiting for a review of how the whole story fits together.
-- **done** - finished. Move the note to `archive/`.
+- **done** - finished. Next: `/close`.
+- **dropped** - won't be built. Next: `/close`.
+
+Closing a story keeps its note in `archive/` only while other stories rely on it (`kept-for`); otherwise the note is deleted. Nothing is kept just as a record. If a finished note seems worth keeping for reference, the docs in `.opencode/docs/` are missing something. Hubs close the same way.
 
 # Templates
 Templates are in `templates/`. Pick by the shape of the fix, not where the work came from:
@@ -30,10 +34,10 @@ Templates are in `templates/`. Pick by the shape of the fix, not where the work 
 A sweep note collects small fixes until Sarah decides it's time to handle them together. It follows the normal lifecycle, but in two notes: one that keeps collecting, and a dated copy for each sweep.
 - **Collecting** - the note stays at `idea`, with its Roadmap line in Later under its area. Anyone may add an item that meets its What Belongs Here rule. When several related small fixes fit no sweep, suggest a new sweep to Sarah rather than creating one.
 - **Freezing** - when Sarah schedules a sweep, copy the note to `<name> YYYY-MM-DD` (today's date) in the same folder. Set the copy's `status` to `spec`, set its `^status` line to "Frozen. Next: /check-drift", and give it a Roadmap line where Sarah wants it. In the original, clear the Items except blocked ones and leave everything else, so links to it keep working and it keeps collecting. Blocked items (`**Blocked by [[Story]]:**`) roll over to the next sweep. The frozen copy never gets them.
-- **Sweeping** - the dated copy goes through `/check-drift` (re-check each item, drop any already fixed), `/plan-steps` and `/implement`, then review and `archive/` like any story. It never gets new items. Anything found during the sweep goes into the collecting note.
+- **Sweeping** - the dated copy goes through `/check-drift` (re-check each item, drop any already fixed), `/plan-steps` and `/implement`, then `/review` and `/close` like any story. It never gets new items. Anything found during the sweep goes into the collecting note.
 
 # Next Step by Note State
-A note's `type` and `status` say what should happen to it next. This is the starting spec for agents that each take one kind of note and do its next step. Only the `/shape`, `/decide`, `/assess`, `/plan-steps`, `/implement`, `/review` and `/check-drift` skills exist today; the other agent names are placeholders.
+A note's `type` and `status` say what should happen to it next. This is the starting spec for agents that each take one kind of note and do its next step. Only the `/shape`, `/decide`, `/assess`, `/plan-steps`, `/implement`, `/review`, `/check-drift` and `/close` skills exist today; the other agent names are placeholders.
 
 | Note state                                                              | Next step                                                                                                                                                                          | Moves to                                                                                  | Agent                                |
 | ----------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------- | ------------------------------------ |
@@ -48,7 +52,7 @@ A note's `type` and `status` say what should happen to it next. This is the star
 | `ready`                                                                 | Build it one step at a time                                                                                                                                                        | `in-progress` → `in-review`                                                               | `/implement` skill                   |
 | `in-review`                                                             | Review how the code fits together across the whole story: what no single step's review can show                                                                                    | `done`                                                                                    | `/review` skill                      |
 | `spec` · `ready` · `in-progress`                                        | Check the remaining work against the code, conventions, other notes and Sarah's comments. Add ⚠️ Check Drift callouts, update `confirmed`                                          | unchanged, back to `spec` for `/plan-steps` or `/assess`, or add `blocked-by`             | `/check-drift` skill                 |
-| `done`                                                                  | Move unfinished pieces to their owner, add As built notes, unblock stories that waited on it (their `blocked-by`, their `^status` line and their Roadmap line) and remove its `**Blocked by**` marker from any sweep item waiting on it, move to `archive/` | archived                                                                                  | archive *(planned)*                  |
+| `done` · `dropped` · a hub with no open stories | Keep the note in `archive/` for the stories that still rely on it, or delete it. Unblock the stories that waited on it (their `blocked-by`, their `^status` line and their Roadmap line), clear its `**Blocked by**` marker from sweep items, and update every note that points to it | archived or deleted | `/close` skill |
 
 `feature` · `idea` and `pattern` · `idea` have no agent yet: turning rough notes into a detailed design or a set of rules is done with the user, e.g. via Claude Design for features.
 
@@ -64,6 +68,7 @@ A note's `type` and `status` say what should happen to it next. This is the star
 
 # Files
 - Filenames are plain names - no emoji or status prefixes.
-- Stories live in `features/<area>/`; finished stories in `archive/`.
+- Stories live in `features/<area>/`; closed stories that other stories still rely on live in `archive/`.
 - Images go in `assets/<story-name>/`.
+- A file that nothing in the vault references anymore (no note embeds, links or mentions it, and no other file such as a `.dc.html` prototype loads it) is deleted. Whenever an edit removes or moves an embed, check whether its file is now unused. Search by filename, not path, because Obsidian finds files by name.
 - Design prototypes (`*.dc.html`) sit in the vault root and load `./support.js` and `assets/weeknight-header-dark.svg`. Don't duplicate those files; embed the existing ones.

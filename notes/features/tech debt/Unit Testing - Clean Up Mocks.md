@@ -5,7 +5,7 @@ blocked-by: []
 confirmed: 2026-09-25
 ---
 # Where It Stands
-Reviewed. Next: archive ^status
+Reviewed. Next: /close ^status
 
 This is a cleanup story meant to align unit testing standards. All changes should be to unit test & mock files - no code should be changed.
 

@@ -119,7 +119,7 @@
 - [[Dev Tooling Tidy-Ups]] ![[Dev Tooling Tidy-Ups#^status]]
 
 ## Notes & Agent Workflow
-- build the planned note agents (investigate, archive, architect for patterns) - see the Next Step by Note State table in [[Note Conventions]]
+- build the planned note agents (investigate, architect for patterns) - see the Next Step by Note State table in [[Note Conventions]]
 - [[Agent Workflow Changes]] - idea.
 - [[Skill and Agent Tidy-Ups]] ![[Skill and Agent Tidy-Ups#^status]]
 - standardize the implementation step format - notes use at least three shapes today ("What we're doing / Acceptance Criteria / Architectural plan" in [[Replace Schedule-X]] and [[Mobile Month View]], "Problem to solve / Suggested Approach / Verification" in [[Mobile List View]], "Scope / Files / Architectural note / Acceptance" in [[Add Meal Changes (Saved Recipes)]])

@@ -20,6 +20,7 @@ Read `notes/Note Conventions.md` first. It explains the frontmatter and markers.
 ### 1. Find the changed notes
 - `git log --since=<confirmed> --name-only -- notes/` for notes changed since `confirmed`, and `git status -- notes/` for uncommitted changes.
 - Include `notes/archive/`. A story archived since `confirmed` may have **As built** notes that changed a shared component.
+- Include notes deleted since `confirmed`. `/close` deletes a finished note once no other story relies on it, but its **As built** notes may still matter. Read a deleted note with `git show <commit>^:<path>`, where `<commit>` deleted it.
 - Include the note's hub, and the embedded sections it pulls in (`![[Hub#Section]]`). A change there changes this note.
 - Include this note's own changes since `confirmed`, except Sarah's comments (lines where her name is a tag or signature). The caller handles those. Look for sections moved in from other notes, often with a "stop and ask Sarah which one wins" line.
 

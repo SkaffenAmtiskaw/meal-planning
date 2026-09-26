@@ -113,9 +113,9 @@ Otherwise, send the whole list to the `scope-router` subagent. For each item, in
 
 ## 8. Update the note
 1. Set `status` to `done`.
-2. Update the `^status` line to "Reviewed. Next: archive". Show Sarah the line and wait for her approval before writing it.
+2. Update the `^status` line to "Reviewed. Next: /close". Show Sarah the line and wait for her approval before writing it.
 
 Write nothing else to the note. The fixes live in the commits, and routed findings live in the notes they went to. Leave the note changes unstaged.
 
 ## 9. Stop
-Tell Sarah the review is done. Archiving the note and unblocking the stories that waited on it come next, and aren't part of this skill.
+Tell Sarah the review is done. Closing the story with `/close`, in a new session, comes next and isn't part of this skill.
