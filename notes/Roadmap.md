@@ -24,10 +24,10 @@
 1. [[Unchecked Invite Lookup]] ![[Unchecked Invite Lookup#^status]] - spec. ⚠️ Security: anyone who knows an email may fetch that person's invite tokens. Nothing blocks it.
 2. [[Calendar and Recipes Data Refresh]] ![[Calendar and Recipes Data Refresh#^status]] - spec. Fixes both stale-data symptoms; unblocks [[Add Meal Changes (Saved Recipes)]] and [[Mobile List View]]. *(was bugfix)*
 3. [[Server-Only Creation and Pure Reads]] ![[Server-Only Creation and Pure Reads#^status]] - spec. Closes the unauthenticated `addPlanner` server action; nothing blocks it.
-4. [[Mantine Date Picker Setup]] ![[Mantine Date Picker Setup#^status]] - spec. *(was high)*
-5. [[Today and Selected Day Markers]] ![[Today and Selected Day Markers#^status]] - spec. Fixes the truncated today circle; unblocks [[Mobile List View]]. *(was high)*
-6. [[Remove Schedule-X]] - spec. Has an open decision on where shared types live, which overlaps [[Shared Types Directory]]. *(was bugfix)*
-7. [[Shared Types Directory]] - spec, last reviewed April. May move up or fold into [[Remove Schedule-X]] depending on where that story puts the shared types.
+4. [[Schedule-X Data Shapes Audit]] ![[Schedule-X Data Shapes Audit#^status]]
+5. [[Mantine Date Picker Setup]] ![[Mantine Date Picker Setup#^status]] - spec. *(was high)*
+6. [[Today and Selected Day Markers]] ![[Today and Selected Day Markers#^status]] - spec. Fixes the truncated today circle; unblocks [[Mobile List View]]. *(was high)*
+7. [[Shared Types Directory]] - spec, last reviewed April. Unblocks [[Remove Schedule-X]].
 
 # Blocked
 - [[Header Date Picker]] ![[Header Date Picker#^status]] - spec. Waiting on [[Mantine Date Picker Setup]] and [[Today and Selected Day Markers]]. *(was high)*
@@ -43,6 +43,7 @@
 - [[Settings Data Refresh]] ![[Settings Data Refresh#^status]] - spec. Waiting on [[Calendar and Recipes Data Refresh]].
 - [[Data Rules Enforcement]] ![[Data Rules Enforcement#^status]] - spec. Waiting on [[Calendar and Recipes Data Refresh]], [[Settings Data Refresh]] and [[Server-Only Creation and Pure Reads]].
 - [[Unchecked Planner Reads]] ![[Unchecked Planner Reads#^status]] - spec. ⚠️ Security: any planner's data may be readable by id without a membership check. Waiting on [[Calendar and Recipes Data Refresh]].
+- [[Remove Schedule-X]] ![[Remove Schedule-X#^status]] - spec. *(was bugfix)*
 
 # Later
 ## Calendar

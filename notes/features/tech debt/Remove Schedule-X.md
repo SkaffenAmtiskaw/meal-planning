@@ -1,12 +1,17 @@
 ---
 type: cleanup
 status: spec
-confirmed: 2026-09-25
+blocked-by: ["[[Shared Types Directory]]", "[[Schedule-X Data Shapes Audit]]"]
+confirmed: 2026-09-26
 ---
+# Where It Stands
+
+Blocked until [[Shared Types Directory]] and [[Schedule-X Data Shapes Audit]] land, then needs implementation steps. ^status
+
 # Purpose
 The custom calendar has replaced schedule-x in every view (see [[Replace Schedule-X]]), but schedule-x code, types and packages are still in the repo. This story removes them completely.
 
-Live calendar code still imports shared types from a schedule-x-era file, so the types must be moved before the dead code can be deleted cleanly.
+Live calendar code still imports shared types from a schedule-x-era file. [[Shared Types Directory]] moves them to `src/_types/` first, so this story can delete the dead code cleanly.
 
 # Current State
 *Found by static import analysis on 2026-09-25. "Unused" means no non-test file imports it. Confirm with `pnpm check:types` and the test suite before deleting anything.*
@@ -37,8 +42,10 @@ All paths are relative to `src/app/[planner]/calendar/`. Each has a test file th
 
 [[Today and Selected Day Markers]] Step 8 edits theme.md's ember rule (ember is for actions only; today is a navy ring). Keep that edit when removing these sections.
 
-# Open Decision
+# Open Decisions
 Where do the shared types (`SerializedDish`, `SerializedMeal`, `SerializedDay`, `SavedItem`) move to? They are DTOs for serialized planner data, which overlaps with [[Shared Types Directory]] (not yet built). Options include a calendar-local `_types/` directory or waiting for / doing the shared `src/_types/` directory first.
+- **Decided 2026-09-26:** The shared types (`SerializedDish`, `SerializedMeal`, `SerializedDay`, `SavedItem`) move to `src/_types/`, following the pattern in [[Shared Types Directory]], and that story does the move. They are DTOs for serialized planner data, which is exactly what that directory is for.
+  - Rejected: calendar-local `_types/` directory - it would be a second home for shared DTOs alongside `src/_types/`.
 
 # Out of Scope
 - Renaming "event" to "meal" in calendar code (`CalendarEvent`, `toCalendarEvents`, `MealEventCard`) - separate Roadmap item, kept out so this change stays small to review

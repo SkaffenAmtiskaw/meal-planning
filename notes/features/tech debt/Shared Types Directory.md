@@ -53,6 +53,7 @@ src/_types/
 1. `PlannerWithAccess` from `src/_actions/planner/getPlanners.ts`
 2. Any DTOs defined in action files
 3. Shared prop types currently duplicated across components
+4. `SerializedDish`, `SerializedMeal`, `SerializedDay` and `SavedItem` from `src/app/[planner]/calendar/_utils/toScheduleXEvents.ts` - DTOs for serialized planner data (decided 2026-09-26 in [[Remove Schedule-X]]). About 14 live files import them from there (e.g. `page.tsx`, `CalendarView`, `AddMealForm`, `MealDetailModal`, `toCalendarEvents`, `resolveDishSource`, `DishLink`). Move only these four types. [[Remove Schedule-X]] is blocked until they move, and it deletes the rest of the file (the `toScheduleXEvents` function and `MealEvent` type) afterward.
 
 ## Action Items
 
