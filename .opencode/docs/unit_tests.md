@@ -318,6 +318,34 @@ The stateful mock's `run()` function sets `loading=true` immediately, before awa
 
 # Test Patterns
 
+## Use the Testing Library's Own Tools
+When a testing library already has a tool for the job, use it instead of hand-rolling an equivalent. For example, test a hook on its own with `renderHook`, and give it any provider the hook needs through the `wrapper` option, instead of writing a throwaway component that calls the hook.
+
+```tsx
+// ✅ CORRECT - renderHook with a wrapper
+const wrapper = ({ children }: { children: ReactNode }) => (
+	<ToggleContext.Provider value={value}>{children}</ToggleContext.Provider>
+);
+const { result } = renderHook(() => useToggleContext(), { wrapper });
+expect(result.current).toBe(value);
+```
+```tsx
+// ❌ INCORRECT - hand-rolled component just to reach the hook
+let hookValue = null;
+const TestComponent = () => {
+	hookValue = useToggleContext();
+	return null;
+};
+render(
+	<ToggleContext.Provider value={value}>
+		<TestComponent />
+	</ToggleContext.Provider>,
+);
+expect(hookValue).toBe(value);
+```
+
+**Why:** The library's tools are documented and familiar to anyone reading the test. A hand-rolled version is extra code each reader has to work out, and it can quietly differ from what the library does.
+
 ## Don't Create Purely Presentational Tests
 Do not write tests that only verify React renders props correctly. These test React's functionality, not your code's behavior.
 

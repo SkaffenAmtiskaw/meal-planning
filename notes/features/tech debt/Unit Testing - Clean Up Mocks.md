@@ -5,7 +5,7 @@ blocked-by: []
 confirmed: 2026-09-25
 ---
 # Where It Stands
-In progress. Next: implement Step 3. ^status
+In progress. Next: implement Step 4. ^status
 
 This is a cleanup story meant to align unit testing standards. All changes should be to unit test & mock files - no code should be changed.
 
@@ -199,9 +199,15 @@ Workflow item 5 stays as a session habit, not a step: after each `/implement` se
 - `src/app/[planner]/_components/ToggleContext/useToggleContext.test.tsx` - drop the `@mantine/hooks` mock, provide the context directly
 
 **Acceptance:**
-- [ ] In `src/app/[planner]/_components/ToggleContext/ToggleProvider.tsx:14`, add `throw new Error('x');` as the first line of the component. Run `pnpm vitest run "src/app/[planner]/_components/ToggleContext/useToggleContext.test.tsx"` and see every test still pass, which shows the tests no longer go through `ToggleProvider`. (Before this step, "returns toggle function that can be called" would fail.) Revert.
-- [ ] In `src/app/[planner]/_components/ToggleContext/useToggleContext.ts:9-10`, delete the `if (!ctx) throw …` lines. Run the file and see "throws error when used outside ToggleProvider" fail. Revert.
-- [ ] In `useToggleContext.ts:11`, change `return ctx;` to `return { ...ctx, toggle: () => {} };`. Run the file and see "returns the context value inside a provider" fail. Revert.
+- [x] In `src/app/[planner]/_components/ToggleContext/ToggleProvider.tsx:14`, add `throw new Error('x');` as the first line of the component. Run `pnpm vitest run "src/app/[planner]/_components/ToggleContext/useToggleContext.test.tsx"` and see every test still pass, which shows the tests no longer go through `ToggleProvider`. (Before this step, "returns toggle function that can be called" would fail.) Revert.
+- [x] In `src/app/[planner]/_components/ToggleContext/useToggleContext.ts:9-10`, delete the `if (!ctx) throw …` lines. Run the file and see "throws error when used outside ToggleProvider" fail. Revert.
+- [x] In `useToggleContext.ts:11`, change `return ctx;` to `return { ...ctx, toggle: () => {} };`. Run the file and see "returns the context value inside a provider" fail. Revert.
+
+**Status:** ✅ Complete
+
+**As built:**
+- Both tests use `renderHook`, including "throws error when used outside ToggleProvider", which the plan only said to strip of its unused `mockUseDisclosure` setup. Sarah's rule: unit tests always use a library's own convention when one exists, here `renderHook` for testing a hook, over a hand-rolled `TestComponent`. Decided by Sarah 2026-09-26.
+- "returns the context value inside a provider" asserts with `toBe`, so it checks the hook hands back the provider's exact object. Decided by Sarah 2026-09-26.
 
 ---
 

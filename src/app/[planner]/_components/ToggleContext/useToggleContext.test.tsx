@@ -1,51 +1,27 @@
-import { render, screen } from '@testing-library/react';
+import type { ReactNode } from 'react';
 
-import { describe, expect, test, vi } from 'vitest';
+import { renderHook } from '@testing-library/react';
 
-import { ToggleProvider } from './ToggleProvider';
+import { describe, expect, test } from 'vitest';
+
+import { ToggleContext } from './ToggleContext';
 import { useToggleContext } from './useToggleContext';
-
-const mockUseDisclosure = vi.fn();
-vi.mock('@mantine/hooks', () => ({
-	useDisclosure: () => mockUseDisclosure(),
-}));
 
 describe('useToggleContext', () => {
 	test('throws error when used outside ToggleProvider', () => {
-		mockUseDisclosure.mockReturnValue([false, { toggle: vi.fn() }]);
-
-		const TestComponent = () => {
-			useToggleContext();
-			return null;
-		};
-
-		expect(() => render(<TestComponent />)).toThrow(
+		expect(() => renderHook(() => useToggleContext())).toThrow(
 			'useToggleContext must be used within ToggleProvider',
 		);
 	});
 
-	test('returns toggle function that can be called', () => {
-		const mockToggle = vi.fn();
-		mockUseDisclosure.mockReturnValue([false, { toggle: mockToggle }]);
-
-		const TestComponent = () => {
-			const { toggle } = useToggleContext();
-			return (
-				<button data-testid="toggle-btn" type="button" onClick={toggle}>
-					Toggle
-				</button>
-			);
-		};
-
-		render(
-			<ToggleProvider>
-				<TestComponent />
-			</ToggleProvider>,
+	test('returns the context value inside a provider', () => {
+		const value = { opened: true, toggle: () => {} };
+		const wrapper = ({ children }: { children: ReactNode }) => (
+			<ToggleContext.Provider value={value}>{children}</ToggleContext.Provider>
 		);
 
-		const btn = screen.getByTestId('toggle-btn');
-		btn.click();
+		const { result } = renderHook(() => useToggleContext(), { wrapper });
 
-		expect(mockToggle).toHaveBeenCalledTimes(1);
+		expect(result.current).toBe(value);
 	});
 });
