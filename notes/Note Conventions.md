@@ -50,6 +50,7 @@ A note's `type` and `status` say what should happen to it next. This is the star
 - **As built** - when the build deviates from a step's plan, add an **As built:** note under the step. Never edit the plan text itself.
 - **Check Drift callouts** - when a note is checked against the code and something no longer matches, add `> ⚠️ **Check Drift YYYY-MM-DD:** ...` where the problem is, rather than rewriting the plan. Say whether it was verified in the running app or found by reading code.
 - **Sarah's comments** - a line where her name is a tag or a signature (`[Sarah] I want X instead.`, `Change this to Y - Sarah`) is Sarah's own words, usually a change of mind. Agents never edit her comments, and never write in her voice or sign as her. Third-person records of her decisions ("Approved by Sarah 2026-09-25") are fine.
+- **From the Split** - an unapproved handoff (behaviors or draft steps) that a split leaves in a child note, right before `# Suggested Approach`. The child's next skill starts from it and deletes it once it writes the real section. Nothing else builds from it.
 - **Moving unfinished work** - when a story is done except for one piece, move that piece (the full step, image embeds and relevant handoff text - not a summary) to the note that owns it, often a hub's Deferred Work section. Leave a 🚛 pointer behind. Archived notes are effectively invisible, so design references must travel with the work.
 
 # Files

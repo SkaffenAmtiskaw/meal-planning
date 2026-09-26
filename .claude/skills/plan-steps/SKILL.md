@@ -36,7 +36,7 @@ If the status or the approach is missing, tell Sarah what you found and stop. Fo
 
 Read any ⚠️ Check Drift callouts and **As built** notes as well. A story split from a hub embeds its design sections from the hub (`![[Hub#Section]]`). Read each embedded section; it's part of this note.
 
-If `.opencode/scratch/<note name> - plan.md` exists because the story was split from a larger plan, start from that draft rather than drafting from nothing.
+If the note has a `# From the Split` section because the story was split from a larger plan, start from its draft steps rather than drafting from nothing. They aren't approved yet, so they go through the checkers and Sarah's review like any other draft.
 
 If the note already has an Implementation section, this is a re-plan. Steps marked ✅ Complete stay exactly as they are. Plan only the remaining work, and in step 4 show what changed compared with the old steps.
 
@@ -93,7 +93,7 @@ Save the draft to `.opencode/scratch/<note name> - plan.md`.
 ## 3. Have the plan checked
 
 ### Several stories?
-A draft plan shows most clearly whether a story is really several. Skip this check if you started from a draft saved by a split and haven't changed which steps it holds. Otherwise, send the note path and the draft path to the `split-checker` subagent, as the **Plan** checkpoint. Save its report to `.opencode/scratch/<note name> - split check.md`.
+A draft plan shows most clearly whether a story is really several. Skip this check if you started from a `# From the Split` section and haven't changed which steps it holds. Otherwise, send the note path and the draft path to the `split-checker` subagent, as the **Plan** checkpoint. Save its report to `.opencode/scratch/<note name> - split check.md`.
 
 - **One story:** tell Sarah in one line, link the report, and go on to the plan checker.
 - **Split:** follow "Splitting a story" at the end of this skill. That ends this session. Each child gets its own `/plan-steps` in a new session, starting from its share of the draft.
@@ -109,7 +109,7 @@ Fix every finding you agree with, then run the checker once more. If you disagre
 3. **Each step in full, one at a time.** Show the step and wait for her to approve or change it before showing the next. If a change affects a later step, say which one and update it before you get there.
 
 ## 5. Write it to the note
-Once she has approved every step, write the plan under `# Implementation` in the note. If a template comment is there, replace it.
+Once she has approved every step, write the plan under `# Implementation` in the note. If a template comment is there, replace it. If the note has a `# From the Split` section, delete it.
 
 Then:
 - Set `status` to `ready`.
@@ -132,6 +132,6 @@ Otherwise, send the whole list to the `scope-router` subagent. For each item, in
 2. **Each child, one at a time.** Show what it takes, what blocks it and which design sections it embeds. Wait for her to approve or change it. If a change moves something to another child, update that child before you get to it.
 3. **Leftovers, one at a time.** Raise anything under Unclaimed, and each move to an existing story.
 4. **Apply.** Once she has approved every child, apply the note changes from the report. Create the children first, then rewrite the original as the hub, then update the links in other notes. Show each Roadmap line before you write it, and never reorder the Roadmap.
-5. **Save each child's draft.** Write each child's share of the draft steps to `.opencode/scratch/<child name> - plan.md`, so its own `/plan-steps` can start from it.
+5. **Hand each child its draft.** Copy each child's share of the draft steps, in full, into its `# From the Split` section. Its own `/plan-steps` runs in a new session and starts from that section. Never hand this over through scratch, which is wiped on commit.
 6. **Route out-of-scope items.** If you've collected any, handle them as in step 6.
 7. **Stop.** Don't start work on any child in this session. By now it has read the whole design, the approach, a full draft and the split report, and carrying that into a child's plan bloats the context. Tell Sarah the split is done, and list each child with the command to run in a new session, e.g. `/plan-steps <child name>`.

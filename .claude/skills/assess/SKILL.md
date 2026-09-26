@@ -37,12 +37,12 @@ List the story as numbered behaviors, one line each. Cover what the user does an
 
 Where the note doesn't say, ask Sarah, one question at a time. Don't fill gaps yourself.
 
-If `.opencode/scratch/<note name> - behaviors.md` exists because this story was split from a larger one, start from that list instead of writing a new one. Show it and ask Sarah to confirm it still holds.
+If the note has a `# From the Split` section because this story was split from a larger one, start from its behaviors instead of writing a new list. Show them and ask Sarah to confirm they still hold.
 
 Show the list and wait for her to confirm it before going on.
 
 ### Check whether it's several stories
-Skip this check if the story was just split and its behaviors haven't changed since.
+Skip this check if you started from a `# From the Split` section and its behaviors haven't changed since.
 
 The confirmed behavior list is the first point where the story's real size shows, and splitting is cheapest before an approach exists. Send the note path and the confirmed behaviors to the `split-checker` subagent, as the **Behaviors** checkpoint. Save its report to `.opencode/scratch/<note name> - split check.md`.
 
@@ -80,7 +80,7 @@ Refactors are part of the story by default. If one looks out of proportion to th
 When she pushes back, revise and show the changed rows again. Wait for her explicit approval.
 
 ## 6. Write it to the note
-Once she approves, write the behavior list, the table and the client pieces under `# Suggested Approach` in the note. If a template comment is there, replace it.
+Once she approves, write the behavior list, the table and the client pieces under `# Suggested Approach` in the note. If a template comment is there, replace it. If the note has a `# From the Split` section, delete it. The approved behaviors now live in the Suggested Approach.
 
 For a re-assessment, first show Sarah what changed compared with the old approach, and replace it only once she approves. Leave `status` at `spec`. The note isn't ready until it has implementation steps.
 
@@ -105,6 +105,6 @@ Then go through its suggestions with Sarah **one item at a time**:
 2. **Each child, one at a time.** Show what it takes, what blocks it and which design sections it embeds. Wait for her to approve or change it. If a change moves something to another child, update that child before you get to it.
 3. **Leftovers, one at a time.** Raise anything under Unclaimed, and each move to an existing story.
 4. **Apply.** Once she has approved every child, apply the note changes from the report. Create the children first, then rewrite the original as the hub, then update the links in other notes. Show each Roadmap line before you write it, and never reorder the Roadmap.
-5. **Save each child's behaviors.** Write each child's share of the confirmed behaviors to `.opencode/scratch/<child name> - behaviors.md`, so its own `/assess` can start from them.
+5. **Check each child's handoff.** Make sure each child's `# From the Split` section holds its full share of the confirmed behaviors, including any changes Sarah made while approving the children. Its own `/assess` runs in a new session and starts from that section. Never hand this over through scratch, which is wiped on commit.
 6. **Route out-of-scope items.** If you've collected any, handle them as in step 7.
 7. **Stop.** Don't start work on any child in this session. By now it has read the whole design and the split report, and carrying that into a child's assessment bloats the context. Tell Sarah the split is done, and list each child with the command to run in a new session, e.g. `/assess <child name>`.
