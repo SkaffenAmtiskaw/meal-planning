@@ -53,9 +53,7 @@ vi.mock('next/navigation', async () => await import('@mocks/next/navigation'));
 
 vi.mock('@/_hooks', async () => await import('@mocks/@/_hooks'));
 
-vi.mock('@/_actions/auth', () => ({
-	checkEmailStatus: vi.fn(),
-}));
+vi.mock('@/_actions/auth', async () => await import('@mocks/@/_actions/auth'));
 
 vi.mock('@/_utils/auth', () => ({
 	client: {
@@ -564,7 +562,7 @@ describe('SignInFlow', () => {
 			expect(screen.queryByTestId('continue-button')).toBeNull();
 		});
 
-		it('calls resetToIdle when change email button is clicked', async () => {
+		it('returns to idle from social-only when change email button is clicked', async () => {
 			render(<SignInFlow />);
 
 			fireEvent.change(screen.getByTestId('email-input'), {
@@ -647,9 +645,27 @@ describe('SignInFlow', () => {
 		});
 	});
 
+	describe('unknown status', () => {
+		it('renders nothing when checkEmailStatus returns an unknown status', async () => {
+			vi.mocked(checkEmailStatus).mockResolvedValueOnce('unknown' as never);
+
+			const { container } = render(<SignInFlow />);
+
+			fireEvent.change(screen.getByTestId('email-input'), {
+				target: { value: 'user@example.com' },
+			});
+			fireEvent.click(screen.getByTestId('continue-button'));
+
+			await waitFor(() => {
+				expect(screen.queryByTestId('email-input')).toBeNull();
+			});
+			expect(container.innerHTML).toBe('');
+		});
+	});
+
 	describe('email from query params', () => {
 		it('reads email from query params and triggers check', async () => {
-			vi.mocked(useSearchParams).mockReturnValue(
+			vi.mocked(useSearchParams).mockReturnValueOnce(
 				new ReadonlyURLSearchParams('email=query@example.com'),
 			);
 

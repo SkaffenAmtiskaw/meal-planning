@@ -48,7 +48,7 @@ Where do the shared types (`SerializedDish`, `SerializedMeal`, `SerializedDay`, 
   - Rejected: calendar-local `_types/` directory - it would be a second home for shared DTOs alongside `src/_types/`.
 
 # Out of Scope
-- Renaming "event" to "meal" in calendar code (`CalendarEvent`, `toCalendarEvents`, `MealEventCard`) - separate Roadmap item, kept out so this change stays small to review
+- Renaming "event" to "meal" in calendar code (`CalendarEvent`, `toCalendarEvents`, `MealEventCard`) - now part of [[Schedule-X Data Shapes Audit]], kept out so this change stays small to review
 - List view keyboard navigation and the month grid "+N more" → list view behavior - separate Roadmap items
 
 # Acceptance Criteria

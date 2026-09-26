@@ -92,7 +92,7 @@
 
 ## Tech Debt
 - [[Modal Form Architecture|refactor all modal forms to separate presentation and data concerns]] *(was bugfix)*
-- rename "event" to "meal" in calendar code (`CalendarEvent`, `toCalendarEvents`, `MealEventCard`)
+- rename "event" to "meal" in calendar code - 🚛 moved to [[Schedule-X Data Shapes Audit]]
 - `ConfirmButton` does nothing when `useAsyncStatus` hits an actual exception - seems incorrect?
 - `InviteSettings.tsx` - if the user is undefined, shouldn't it render nothing? (shouldn't the user always be defined in settings?)
 - `InviteForm.tsx` - uses an email regex instead of a zod type check

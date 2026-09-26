@@ -1,11 +1,11 @@
 ---
 type: cleanup
-status: ready
+status: in-progress
 blocked-by: []
 confirmed: 2026-09-25
 ---
 # Where It Stands
-Ready. Next: build Step 1. ^status
+In progress. Next: implement Step 2. ^status
 
 This is a cleanup story meant to align unit testing standards. All changes should be to unit test & mock files - no code should be changed.
 
@@ -136,13 +136,21 @@ Workflow item 5 stays as a session habit, not a step: after each `/implement` se
 - `src/app/_components/SignInFlow.test.tsx` - use the shared `@/_actions/auth` mock, scope the query-param override, rename one test
 
 **Acceptance:**
-- [ ] In `test/mocks/@/_actions/auth.ts:24`, rename the export `checkEmailStatus` to `checkEmailStatusX`. Run `pnpm vitest run src/app/_components/SignInFlow.test.tsx` and see the has-password, new-step and social-only tests fail, which shows the file really uses the shared mock. Revert.
-- [ ] In `src/app/_components/SignInFlow.tsx:93`, change `checkEmailStatus(email)` to `checkEmailStatus('')`. Run the file and see "calls checkEmailStatus on continue" fail. Revert.
-- [ ] In `SignInFlow.tsx:164`, change `{continueBtn.error && (` to `{false && (`. Run the file and see "displays error when checkEmailStatus fails" fail. Revert.
-- [ ] In `SignInFlow.tsx:80`, change `checkEmailStatus(emailFromQuery)` to `checkEmailStatus('')`. Run the file and see "reads email from query params and triggers check" fail. Revert.
-- [ ] In `SignInFlow.tsx:94`, change `setStep({ type: status, email })` to `setStep({ type: 'has-password', email })`. Run the file and see "displays name and password inputs and hides email/SSO after checkEmailStatus returns new" and "displays social-only warning and hides email/SSO after checkEmailStatus returns social-only" fail. Revert.
-- [ ] In `SignInFlow.tsx:320`, change `onClick={resetToIdle}` to `onClick={() => {}}`. Run the file and see "returns to idle from social-only when change email button is clicked" fail. Revert.
-- [ ] Leak check: in `SignInFlow.test.tsx`, temporarily move the "email from query params" `describe` block to the top of the outer `describe`. Run the file and see every test pass. Then, with the block still at the top, change that test's `useSearchParams` override back to an unscoped `mockReturnValue`, and remove anything that resets it. Run the file and see "displays error when checkEmailStatus fails" fail, because the leaked query email uses up its rejected value. Undo both edits.
+- [ ] In `test/mocks/@/_actions/auth.ts:24`, rename the export `checkEmailStatus` to `checkEmailStatusX`. Run `pnpm vitest run src/app/_components/SignInFlow.test.tsx` and see the has-password, new-step and social-only tests fail, which shows the file really uses the shared mock. Revert. [Sarah] - This blows up imports all over the place. I'm not sure that blowing up imports is a meaningful way to test the mock is being used.
+- [x] In `src/app/_components/SignInFlow.tsx:93`, change `checkEmailStatus(email)` to `checkEmailStatus('')`. Run the file and see "calls checkEmailStatus on continue" fail. Revert.
+- [x] In `SignInFlow.tsx:164`, change `{continueBtn.error && (` to `{false && (`. Run the file and see "displays error when checkEmailStatus fails" fail. Revert.
+- [x] In `SignInFlow.tsx:80`, change `checkEmailStatus(emailFromQuery)` to `checkEmailStatus('')`. Run the file and see "reads email from query params and triggers check" fail. Revert.
+- [x] In `SignInFlow.tsx:94`, change `setStep({ type: status, email })` to `setStep({ type: 'has-password', email })`. Run the file and see "displays name and password inputs and hides email/SSO after checkEmailStatus returns new" and "displays social-only warning and hides email/SSO after checkEmailStatus returns social-only" fail. Revert. [Sarah] - This failed a lot more than just those two.
+- [x] In `SignInFlow.tsx:320`, change `onClick={resetToIdle}` to `onClick={() => {}}`. Run the file and see "returns to idle from social-only when change email button is clicked" fail. Revert.
+- [x] Leak check: in `SignInFlow.test.tsx`, temporarily move the "email from query params" `describe` block to the top of the outer `describe`. Run the file and see every test pass. Then, with the block still at the top, change that test's `useSearchParams` override back to an unscoped `mockReturnValue`, and remove anything that resets it. Run the file and see "displays error when checkEmailStatus fails" fail, because the leaked query email uses up its rejected value. Undo both edits. [Sarah] - Do this and report the result? Since these changes aren't committed I don't have an easy way to make sure I revert everything correctly.
+
+**Status:** ✅ Complete
+
+**As built:**
+- Added "renders nothing when checkEmailStatus returns an unknown status" to keep `SignInFlow.tsx` at 100% coverage. The old ad-hoc mock returned `undefined`, which covered `default: return null` by accident; the shared mock returns `'new'`, so nothing reached it. Approved by Sarah 2026-09-26.
+- The first check (renaming the shared `checkEmailStatus` export) was dropped, so its box stays unchecked. It only broke imports, and no test relies on the mock's default value. The `vi.mock` line in the diff shows the file uses the shared mock. Decided by Sarah 2026-09-26.
+- Forcing `has-password` at `SignInFlow.tsx:94` fails 11 tests, not the two the check names. Every test that needs a different step after Continue fails, which is expected.
+- The agent ran the leak check and reported the result, because it edits `SignInFlow.test.tsx`, which wasn't committed yet. With the block moved to the top, all 27 tests pass. With the override also left unscoped, 16 fail, including "displays error when checkEmailStatus fails". This was a one-off for this check, not a rule for planning steps. Decided by Sarah 2026-09-26.
 
 ---
 
