@@ -19,7 +19,6 @@
 - [[Stale Data Issues]] ![[Stale Data Issues#^status]] - the data refresh pattern (rules, tag model, enforcement), split 2026-09-25 into [[Calendar and Recipes Data Refresh]], [[Settings Data Refresh]], [[Server-Only Creation and Pure Reads]] and [[Data Rules Enforcement]].
 
 # Now
-- [[Unit Testing - Clean Up Mocks]] ![[Unit Testing - Clean Up Mocks#^status]]
 # Next
 1. [[Unchecked Invite Lookup]] ![[Unchecked Invite Lookup#^status]] - spec. ⚠️ Security: anyone who knows an email may fetch that person's invite tokens. Nothing blocks it.
 2. [[Calendar and Recipes Data Refresh]] ![[Calendar and Recipes Data Refresh#^status]] - spec. Fixes both stale-data symptoms; unblocks [[Add Meal Changes (Saved Recipes)]] and [[Mobile List View]]. *(was bugfix)*
@@ -119,7 +118,8 @@
 - [[Dev Tooling Tidy-Ups]] ![[Dev Tooling Tidy-Ups#^status]]
 
 ## Notes & Agent Workflow
-- build the planned note agents (investigate, architect for patterns) - see the Next Step by Note State table in [[Note Conventions]]
+- build the planned investigate agent - see the Next Step by Note State table in [[Note Conventions]]
+- [[Architect for Patterns]] ![[Architect for Patterns#^status]]
 - [[Agent Workflow Changes]] - idea.
 - [[Skill and Agent Tidy-Ups]] ![[Skill and Agent Tidy-Ups#^status]]
 - standardize the implementation step format - notes use at least three shapes today ("What we're doing / Acceptance Criteria / Architectural plan" in [[Replace Schedule-X]] and [[Mobile Month View]], "Problem to solve / Suggested Approach / Verification" in [[Mobile List View]], "Scope / Files / Architectural note / Acceptance" in [[Add Meal Changes (Saved Recipes)]])

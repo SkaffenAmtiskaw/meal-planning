@@ -73,7 +73,7 @@ All paths relative to `src/_actions/`.
 - Exempt: client better-auth calls (`SignInFlow`, `ChangePasswordForm`, `ResetPasswordForm`, `ResendVerificationForm`, sign-out buttons) — followed by navigation, no planner data displayed
 
 ## Tests and Shared Mocks
-*Added 2026-09-26: hand-off from [[Unit Testing - Clean Up Mocks]], decided by Sarah on 2026-09-25.* This story owns the mock clean-up for the test files it changes:
+This story owns the mock clean-up for the test files it changes:
 - Every test file it rewrites or moves uses the centralized mock in `test/mocks/` for any module that has one (`vi.mock('<module>', async () => await import('@mocks/...'))`), not an ad-hoc factory, per `.opencode/docs/unit_tests.md`.
 - When it moves, renames or reshapes an export of `@/_actions` or `@/_models`, it updates the matching `test/mocks/@/_actions/*.ts` or `test/mocks/@/_models/*.ts` in the same step.
 - If another story already did this for a file, there's nothing more to do.
@@ -87,7 +87,6 @@ Known files as of 2026-09-25 (found by reading code; re-check when planning):
 - `src/_actions/user/verifyEmailChangeAndSetPassword.test.ts:31` (`@/_models/user`)
 - `src/_actions/sharing/signUpWithInvite.test.ts` (`@/_models/sharing`; also in [[Server-Only Creation and Pure Reads]])
 - `test/mocks/@/_actions/sharing.ts`: `cancelInvite` returns `{ ok }`, not `{ success: true }`
-- `SignInFlow.test.tsx` stays with [[Unit Testing - Clean Up Mocks]].
 
 # Out of Scope
 - `addPlanner` / `addUser`, `getPlanners` and `validateInviteToken` writes - [[Server-Only Creation and Pure Reads]].

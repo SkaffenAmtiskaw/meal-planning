@@ -31,7 +31,7 @@ Writes outside server actions (`updateTag` only works inside Server Actions):
 - [ ] `validateInviteToken` deletes expired invites on read — make the read pure; expire via a Mongo TTL index or in `acceptInvite`
 
 ## Tests and Shared Mocks
-*Added 2026-09-26: hand-off from [[Unit Testing - Clean Up Mocks]], decided by Sarah on 2026-09-25.* This story owns the mock clean-up for the test files it changes:
+This story owns the mock clean-up for the test files it changes:
 - Every test file it rewrites or moves uses the centralized mock in `test/mocks/` for any module that has one (`vi.mock('<module>', async () => await import('@mocks/...'))`), not an ad-hoc factory, per `.opencode/docs/unit_tests.md`.
 - When it moves, renames or reshapes an export of `@/_actions` or `@/_models`, it updates the matching `test/mocks/@/_actions/*.ts` or `test/mocks/@/_models/*.ts` in the same step.
 - If another story already did this for a file, there's nothing more to do.

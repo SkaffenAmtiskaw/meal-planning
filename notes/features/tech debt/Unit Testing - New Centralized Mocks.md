@@ -16,12 +16,10 @@ Waiting on your decisions in Open Decisions; then write the Rules with Sarah. ^s
 # Purpose
 Many test files mock modules that have no centralized mock in `test/mocks/`, each with its own factory. This story decides how new centralized mocks are laid out (barrels, subpaths, modules with no barrel, code under `src/app/`). It then creates them where `.opencode/docs/unit_tests.md` "Creating Centralized Mocks" calls for one, and moves the consuming tests over. It changes only test and mock files, never source.
 
-Split from [[Unit Testing - Clean Up Mocks]] on 2026-09-25. That story keeps only the stragglers in modules that already have centralized mocks.
-
 # Root Cause
 Until 2026-09-25, `unit_tests.md` said new centralized mocks needed the user's go-ahead, so tests wrote their own factories. The existing mocks mirror their import specifier (`@/_actions/auth` → `test/mocks/@/_actions/auth.ts`). Nothing says how to mirror a subpath import, a module with no barrel (`@/_utils`), or code under `src/app/`.
 
-# Current State (moved from [[Unit Testing - Clean Up Mocks]] on 2026-09-25)
+# Current State
 *Checked against the code on 2026-09-25 by scanning every `vi.mock` call in `src`. "Centralized" means the test uses `vi.mock('<module>', async () => await import('@mocks/...'))`; "ad-hoc" means it defines its own factory.*
 
 ## ⏳ `@/_components` - NOT STARTED
@@ -36,8 +34,8 @@ Until 2026-09-25, `unit_tests.md` said new centralized mocks needed the user's g
 ## Not tracked above
 > ⚠️ **Check Drift 2026-09-25:** `@app` is not an alias in `tsconfig.json` or `vitest.config.ts`. Every other centralized mock mirrors its import specifier (`@/_actions/auth` → `test/mocks/@/_actions/auth.ts`), but this one doesn't. The hook's real path is `@/app/[planner]/calendar/_hooks/usePlannerSavedItems`, and its 3 consumers mock the relative specifier `'../../_hooks/usePlannerSavedItems'` (`DishRow.test.tsx:17`, `DishRowExpanded.test.tsx:14`, `DishSourceFields.test.tsx:12`). Step 2 of Add Meal Changes (Saved Recipes) adds `kind`, `tags` and `lastUsed` to this mock. That story now waits on Calendar and Recipes Data Refresh. `@/app/[planner]/_components` (`useCanWrite`, `usePlannerContext`) is also mocked ad-hoc in 7 files with slightly different factories. Found by reading code and notes, not verified in the running app.
 - `test/mocks/@app/[planner]/calendar/_hooks/usePlannerSavedItems.ts` - an app-level centralized mock (added 2026-09-24), used by `DishRow`, `DishRowExpanded` and `DishSourceFields` tests. It is the first mock under `@app`; decide whether app-level mocks are part of this story's conventions.
-- `./AuthLayout` (`src/app/_components/AuthLayout`) - mocked ad-hoc by a relative specifier in 2 files, each exporting different parts: `SignInPrompt.test.tsx:7` (`AuthLayoutRoot`, `AuthLayoutHeader`) and `SignInFlow.test.tsx:15` (seven other `AuthLayout*` parts). The `SignInFlow` factory has logic in it: `AuthLayoutEmailDisplay` spreads its props and renders a working change-email button wired to `onChangeEmail`, which that file's change-email test clicks. Centralizing it means finding another way for that test to reach `onChangeEmail`, as with the `FormFeedbackAlert` conditional. Found by reading code while planning [[Unit Testing - Clean Up Mocks]], 2026-09-26.
-- `./ToggleContext` (`src/app/[planner]/_components/ToggleContext/`) - mocked ad-hoc by a relative specifier in `PlannerLayout.test.tsx:18` (`ToggleProvider` pass-through plus `useToggleContext`). [[Unit Testing - Clean Up Mocks]] Step 4 (planned 2026-09-26) adds a second inline factory in `BurgerToggle.test.tsx` (`useToggleContext` only). That's a deliberate, temporary exception to `unit_tests.md` "Use Async Import Pattern for All Mocks" until Open Decisions 1 and 4 are answered. The two factory bodies differ. Found by reading code and notes.
+- `./AuthLayout` (`src/app/_components/AuthLayout`) - mocked ad-hoc by a relative specifier in 2 files, each exporting different parts: `SignInPrompt.test.tsx:7` (`AuthLayoutRoot`, `AuthLayoutHeader`) and `SignInFlow.test.tsx:15` (seven other `AuthLayout*` parts). The `SignInFlow` factory has logic in it: `AuthLayoutEmailDisplay` spreads its props and renders a working change-email button wired to `onChangeEmail`, which that file's change-email test clicks. Centralizing it means finding another way for that test to reach `onChangeEmail`, as with the `FormFeedbackAlert` conditional.
+- `./ToggleContext` (`src/app/[planner]/_components/ToggleContext/`) - mocked ad-hoc by a relative specifier in `PlannerLayout.test.tsx:18` (`ToggleProvider` pass-through plus `useToggleContext`). `BurgerToggle.test.tsx` has a second inline factory (`useToggleContext` only), added 2026-09-26. That's a deliberate, temporary exception to `unit_tests.md` "Use Async Import Pattern for All Mocks" until Open Decisions 1 and 4 are answered. The two factory bodies differ. Found by reading code and notes.
 
 ## Other modules with no centralized mock
 *Found 2026-09-25 by parsing every `vi.mock(` call in `src/**/*.test.ts(x)`. Found by reading code, not verified in the running app.*
@@ -65,7 +63,7 @@ Until 2026-09-25, `unit_tests.md` said new centralized mocks needed the user's g
 %% Built from Current State once Open Decisions 1-4 are answered. Re-scan first: [[Mantine Date Picker Setup]], [[Header Date Picker]], [[Today and Selected Day Markers]], [[Mobile List View]] and [[Add Meal Changes (Saved Recipes)]] change these exports. %%
 
 # Out of Scope
-- Stragglers in modules that already have centralized mocks: [[Unit Testing - Clean Up Mocks]] and the Stale Data stories that rewrite those tests.
+- Stragglers in modules that already have centralized mocks: the [[Stale Data Issues]] stories that rewrite those tests.
 - `next/cache`: [[Calendar and Recipes Data Refresh]] replaces `revalidatePath` with `invalidate()`, so these 4 mocks go away.
 - `@tabler/icons-react` mocks that `unit_tests.md` forbids: Roadmap, Tech Debt.
 
