@@ -1,11 +1,11 @@
 ---
 type: cleanup
-status: spec
+status: ready
 blocked-by: []
 confirmed: 2026-09-25
 ---
 # Where It Stands
-Drift found. Next: /plan-steps. ^status
+Ready. Next: build Step 1. ^status
 
 This is a cleanup story meant to align unit testing standards. All changes should be to unit test & mock files - no code should be changed.
 
@@ -101,3 +101,112 @@ We will go through mocks one by one and update the following:
 ## Not tracked above
 > ⚠️ **Check Drift 2026-09-25:** Sarah decided on 2026-09-25 to split the new-mocks work into its own story (see the callout under Current Status), so this section moves out of this story. Found by reading code and notes.
 🚛 Moved to [[Unit Testing - New Centralized Mocks]] on 2026-09-25.
+
+# Implementation
+## Decisions made while planning (2026-09-26)
+- **Checks.** This story changes only test files, so nothing in the running app changes. Each step's checks are break-it checks instead of click-throughs: temporarily break the matching line in the source file (or the shared mock), run the test file, see the named test fail, then revert. This proves every kept or rewritten test catches real behavior. Approved by Sarah 2026-09-26.
+- **Toggle tests.** `BurgerToggle.test.tsx` and `useToggleContext.test.tsx` stop reaching through the real `ToggleProvider` to `useDisclosure`. Each isolates its direct dependency instead, so neither mocks `@mantine/hooks` anymore. This replaces the note's "move onto the existing `@mantine/hooks` mock". Approved by Sarah 2026-09-26.
+
+## Remaining work (the approach, from the 2026-09-25 Check Drift callout under Workflow)
+1. `SignInFlow.test.tsx` moves onto the centralized `@/_actions/auth` mock, with the Boy Scout clean-up.
+2. `BookmarkForm.test.tsx` moves onto the centralized `@/_actions/library` mock, with the Boy Scout clean-up.
+3. `useToggleContext.test.tsx` drops its ad-hoc `@mantine/hooks` factory (per the toggle decision above), with the Boy Scout clean-up.
+4. `BurgerToggle.test.tsx` drops its ad-hoc `@mantine/hooks` factory (per the toggle decision above), with the Boy Scout clean-up.
+
+Every step changes test files only. No source file or `test/mocks/` file changes. The existing centralized mocks already export everything these tests need.
+
+Break-it checks run one test file with `pnpm vitest run <test file>`. Every temporary edit is reverted before the next check.
+
+Workflow item 5 stays as a session habit, not a step: after each `/implement` session on this story, Sarah asks for lessons learned and suggested changes to `unit_tests.md`. Decided by Sarah 2026-09-26.
+
+---
+
+## Step 1: SignInFlow tests on the shared auth mock
+**Idea:** Bring `SignInFlow.test.tsx` up to the unit test conventions.
+
+**Source:** Current Status → `@/_actions` → `src/app/_components/SignInFlow.test.tsx` (`@/_actions/auth`); Workflow item 3 (Boy Scout rule)
+
+**Approach:** Remaining work 1.
+- Replace the ad-hoc `@/_actions/auth` factory with `vi.mock('@/_actions/auth', async () => await import('@mocks/@/_actions/auth'))`. The shared `checkEmailStatus` defaults to resolving `'new'`. The per-describe `mockResolvedValueOnce` overrides stay as they are.
+- Boy Scout: the "email from query params" test sets `useSearchParams` with `mockReturnValue`, so the override leaks into any test that runs after it. Scope it to that test only.
+- Boy Scout: rename "calls resetToIdle when change email button is clicked" to describe the behavior, not the handler name: "returns to idle from social-only when change email button is clicked".
+- The ad-hoc `./AuthLayout`, `@/_utils/auth` and `@/_utils/zSafeString` factories and the unmocked `GoogleLogoSVG` stay as they are (see the out-of-scope list).
+
+**Files:**
+- `src/app/_components/SignInFlow.test.tsx` - use the shared `@/_actions/auth` mock, scope the query-param override, rename one test
+
+**Acceptance:**
+- [ ] In `test/mocks/@/_actions/auth.ts:24`, rename the export `checkEmailStatus` to `checkEmailStatusX`. Run `pnpm vitest run src/app/_components/SignInFlow.test.tsx` and see the has-password, new-step and social-only tests fail, which shows the file really uses the shared mock. Revert.
+- [ ] In `src/app/_components/SignInFlow.tsx:93`, change `checkEmailStatus(email)` to `checkEmailStatus('')`. Run the file and see "calls checkEmailStatus on continue" fail. Revert.
+- [ ] In `SignInFlow.tsx:164`, change `{continueBtn.error && (` to `{false && (`. Run the file and see "displays error when checkEmailStatus fails" fail. Revert.
+- [ ] In `SignInFlow.tsx:80`, change `checkEmailStatus(emailFromQuery)` to `checkEmailStatus('')`. Run the file and see "reads email from query params and triggers check" fail. Revert.
+- [ ] In `SignInFlow.tsx:94`, change `setStep({ type: status, email })` to `setStep({ type: 'has-password', email })`. Run the file and see "displays name and password inputs and hides email/SSO after checkEmailStatus returns new" and "displays social-only warning and hides email/SSO after checkEmailStatus returns social-only" fail. Revert.
+- [ ] In `SignInFlow.tsx:320`, change `onClick={resetToIdle}` to `onClick={() => {}}`. Run the file and see "returns to idle from social-only when change email button is clicked" fail. Revert.
+- [ ] Leak check: in `SignInFlow.test.tsx`, temporarily move the "email from query params" `describe` block to the top of the outer `describe`. Run the file and see every test pass. Then, with the block still at the top, change that test's `useSearchParams` override back to an unscoped `mockReturnValue`, and remove anything that resets it. Run the file and see "displays error when checkEmailStatus fails" fail, because the leaked query email uses up its rejected value. Undo both edits.
+
+---
+
+## Step 2: BookmarkForm tests on the shared library mock
+**Idea:** Bring `BookmarkForm.test.tsx` up to the unit test conventions.
+
+**Source:** Current Status → `@/_actions` → Check Drift 2026-09-25 (`BookmarkForm.test.tsx:17` mocks `@/_actions/library` ad-hoc); Workflow item 3 (Boy Scout rule)
+
+**Approach:** Remaining work 2.
+- Replace the ad-hoc `@/_actions/library` factory with `vi.mock('@/_actions/library', async () => await import('@mocks/@/_actions/library'))`. The shared `addBookmark` and `editBookmark` default to `{ ok: true, data }`.
+- Boy Scout ("Only Mock Return Values When Testing Outcomes"): remove the `mockResolvedValue` overrides from the four tests that only check a call or rely on success. The shared default covers them.
+- Boy Scout ("Synchronous Handler Tests"): "calls addBookmark with plannerId on submit" has no `await`, so drop its `async`.
+- Boy Scout (no prop-pass tests): remove "passes error status to FormFeedbackAlert". It only asserts that `status` and `errorMessage` are passed through to a child. Also remove what only that test used: the local `FeedbackStatus` type and the `FormFeedbackAlert` and `useFormFeedback` imports. The `@/_components` factory keeps exporting `FormFeedbackAlert`, because the source renders it.
+- `_id: 'bm-1' as never` in the edit test stays. `as never` casts are used widely across test files (47 of them) and no convention rules them out.
+- The ad-hoc `@/_components` factory stays as it is (see the out-of-scope list).
+
+**Files:**
+- `src/app/[planner]/recipes/_components/Modal/BookmarkForm.test.tsx` - use the shared `@/_actions/library` mock, drop redundant overrides and the prop-pass test
+
+**Acceptance:**
+- [ ] In `test/mocks/@/_actions/library.ts:14`, change `addBookmark`'s `ok: true as const` to `ok: false as const`. Run `pnpm vitest run "src/app/[planner]/recipes/_components/Modal/BookmarkForm.test.tsx"` and see "navigates to pathname after successful add" fail, which shows the test relies on the shared mock's success default. Revert.
+- [ ] In `src/app/[planner]/recipes/_components/Modal/BookmarkForm.tsx:52`, change `plannerId }` to `plannerId: '' }`. Run the file and see "calls addBookmark with plannerId on submit" fail. Revert.
+- [ ] In `BookmarkForm.tsx:52`, change `tags: selectedTags` to `tags: []`. Run the file and see "submits with selected tags included" fail. Revert.
+- [ ] In `BookmarkForm.tsx:54`, change `if (item)` to `if (false)`. Run the file and see "calls editBookmark with _id in edit mode" fail. Revert.
+- [ ] In `BookmarkForm.tsx:60`, change `() => router.push(pathname)` to `() => {}`. Run the file and see "navigates to pathname after successful add" fail. Revert.
+- [ ] In `BookmarkForm.tsx:93`, change `onClick={() => router.push(pathname)}` to `onClick={() => {}}`. Run the file and see "navigates to pathname on cancel" fail. Revert.
+
+---
+
+## Step 3: useToggleContext tests without ToggleProvider
+**Idea:** Test `useToggleContext` against a plain `ToggleContext.Provider` instead of the real `ToggleProvider`.
+
+**Source:** Current Status → `@mantine/hooks` → `src/app/[planner]/_components/ToggleContext/useToggleContext.test.tsx` still uses an ad-hoc factory; Workflow item 3 (Boy Scout rule)
+
+**Approach:** Remaining work 3, per the toggle decision.
+- Remove the ad-hoc `@mantine/hooks` factory and `mockUseDisclosure`. The hook never calls `useDisclosure`; only `ToggleProvider` does, and `ToggleProvider.test.tsx` already covers that wiring ("provides opened state and toggle function via context").
+- "throws error when used outside ToggleProvider": remove its unused `mockUseDisclosure` setup.
+- Rewrite "returns toggle function that can be called" as "returns the context value inside a provider": wrap in `ToggleContext.Provider` with a test value `{ opened, toggle }`, and check the hook returns that value.
+
+**Files:**
+- `src/app/[planner]/_components/ToggleContext/useToggleContext.test.tsx` - drop the `@mantine/hooks` mock, provide the context directly
+
+**Acceptance:**
+- [ ] In `src/app/[planner]/_components/ToggleContext/ToggleProvider.tsx:14`, add `throw new Error('x');` as the first line of the component. Run `pnpm vitest run "src/app/[planner]/_components/ToggleContext/useToggleContext.test.tsx"` and see every test still pass, which shows the tests no longer go through `ToggleProvider`. (Before this step, "returns toggle function that can be called" would fail.) Revert.
+- [ ] In `src/app/[planner]/_components/ToggleContext/useToggleContext.ts:9-10`, delete the `if (!ctx) throw …` lines. Run the file and see "throws error when used outside ToggleProvider" fail. Revert.
+- [ ] In `useToggleContext.ts:11`, change `return ctx;` to `return { ...ctx, toggle: () => {} };`. Run the file and see "returns the context value inside a provider" fail. Revert.
+
+---
+
+## Step 4: BurgerToggle tests without ToggleProvider
+**Idea:** Test `BurgerToggle` against a mocked `useToggleContext` instead of the real `ToggleProvider`.
+
+**Source:** Current Status → `@mantine/hooks` → Check Drift 2026-09-25 (`BurgerToggle.test.tsx:11` has the same ad-hoc `useDisclosure` factory); Workflow item 3 (Boy Scout rule)
+
+**Approach:** Remaining work 4, per the toggle decision.
+- Remove the ad-hoc `@mantine/hooks` factory and `mockUseDisclosure`. Mock `./ToggleContext` instead, which is `BurgerToggle`'s only dependency besides `@mantine/core`. Use a small inline factory. This is a deliberate, temporary exception to "Use Async Import Pattern for All Mocks": only one other file (`PlannerLayout.test.tsx:18`) mocks `./ToggleContext`, with a different factory body, so it doesn't meet the 3-file bar for a centralized mock, and where app-level mocks live is still an open decision in [[Unit Testing - New Centralized Mocks]] (see the out-of-scope list).
+- Keep "should call toggle function when Burger is clicked", with its toggle coming from the mocked `useToggleContext`. Boy Scout: find the button with `screen.getByRole('button')` and click it with `fireEvent.click`, instead of `document.querySelector('button')?.click()`, which skips the click silently if the button is missing.
+- Boy Scout (no presentational tests): remove "should render Burger with color prop". It only checks that a button renders.
+- Remove "should throw error when used outside ToggleProvider". It tests `useToggleContext`'s own error, which Step 3's test covers.
+
+**Files:**
+- `src/app/[planner]/_components/BurgerToggle.test.tsx` - mock `./ToggleContext` instead of `@mantine/hooks`, drop the presentational test and the duplicate throw test
+
+**Acceptance:**
+- [ ] In `src/app/[planner]/_components/ToggleContext/useToggleContext.ts`, add `throw new Error('x');` as the first line of `useToggleContext`. Run `pnpm vitest run "src/app/[planner]/_components/BurgerToggle.test.tsx"` and see its one test still pass, which shows it no longer runs through the real hook. Revert.
+- [ ] In `src/app/[planner]/_components/BurgerToggle.tsx:13`, change `onClick={toggle}` to `onClick={() => {}}`. Run the file and see "should call toggle function when Burger is clicked" fail. Revert.
+- [ ] Run `grep -rn "vi.mock('@mantine/hooks', ()" src`. It finds nothing: every `@mantine/hooks` mock left uses the shared async import.

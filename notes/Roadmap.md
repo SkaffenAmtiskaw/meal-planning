@@ -109,6 +109,7 @@
 - could we get rid of mongoose and use zod + mongodb on its own? what does mongoose get us? *(was medium)*
 - audit code for client component surface area - move as much as possible to server components *(was low)*
 - remove the `@tabler/icons-react` mocks that `unit_tests.md` forbids - `PlannerContextSection`, `UserMenu`, `DeleteItemButton` and `InvitesSection` tests (the last two are also touched by [[Calendar and Recipes Data Refresh]] and [[Settings Data Refresh]])
+- [[Unit Test Tidy-Ups]] ![[Unit Test Tidy-Ups#^status]]
 
 ## Dev Tooling & Testing
 - switch testing library to `vitest-browser-react`
