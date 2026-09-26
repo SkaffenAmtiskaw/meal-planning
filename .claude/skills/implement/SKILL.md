@@ -141,8 +141,8 @@ Repeat until she confirms the step is done.
 Once she confirms:
 1. Check the step's acceptance boxes and add `**Status:** ✅ Complete`.
 2. If anything differs from the plan, or was added at review, add an **As built:** note under the step. Never edit the plan text itself.
-3. If this was the last step, set `status` to `in-review`. The code review of the whole story, archiving, and unblocking the stories that waited on it all come later, not in this skill.
-4. Update the note's `^status` line to say what happens next, e.g. "In progress. Next: implement Step 4", or "All steps implemented. Next: code review" after the last step. It holds the status only, never a description of the story. Show Sarah the line and wait for her approval before writing it.
+3. If this was the last step, set `status` to `in-review`. The review of the whole story (`/review`), archiving, and unblocking the stories that waited on it all come later, not in this skill.
+4. Update the note's `^status` line to say what happens next, e.g. "In progress. Next: implement Step 4", or "All steps implemented. Next: /review" after the last step. It holds the status only, never a description of the story. Show Sarah the line and wait for her approval before writing it.
 
 Leave the note changes unstaged.
 

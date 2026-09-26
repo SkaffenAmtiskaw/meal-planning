@@ -1,11 +1,11 @@
 ---
 type: cleanup
-status: in-review
+status: done
 blocked-by: []
 confirmed: 2026-09-25
 ---
 # Where It Stands
-All steps implemented. Next: code review ^status
+Reviewed. Next: archive ^status
 
 This is a cleanup story meant to align unit testing standards. All changes should be to unit test & mock files - no code should be changed.
 

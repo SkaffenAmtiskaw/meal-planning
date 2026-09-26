@@ -20,7 +20,6 @@
 
 # Now
 - [[Unit Testing - Clean Up Mocks]] ![[Unit Testing - Clean Up Mocks#^status]]
-
 # Next
 1. [[Unchecked Invite Lookup]] ![[Unchecked Invite Lookup#^status]] - spec. ⚠️ Security: anyone who knows an email may fetch that person's invite tokens. Nothing blocks it.
 2. [[Calendar and Recipes Data Refresh]] ![[Calendar and Recipes Data Refresh#^status]] - spec. Fixes both stale-data symptoms; unblocks [[Add Meal Changes (Saved Recipes)]] and [[Mobile List View]]. *(was bugfix)*
@@ -120,10 +119,9 @@
 - [[Dev Tooling Tidy-Ups]] ![[Dev Tooling Tidy-Ups#^status]]
 
 ## Notes & Agent Workflow
-- build the planned note agents (investigate, code review, archive, architect for patterns) - see the Next Step by Note State table in [[Note Conventions]]
+- build the planned note agents (investigate, archive, architect for patterns) - see the Next Step by Note State table in [[Note Conventions]]
 - [[Agent Workflow Changes]] - idea.
 - [[Skill and Agent Tidy-Ups]] ![[Skill and Agent Tidy-Ups#^status]]
-- [[Story Code Review]] ![[Story Code Review#^status]]
 - standardize the implementation step format - notes use at least three shapes today ("What we're doing / Acceptance Criteria / Architectural plan" in [[Replace Schedule-X]] and [[Mobile Month View]], "Problem to solve / Suggested Approach / Verification" in [[Mobile List View]], "Scope / Files / Architectural note / Acceptance" in [[Add Meal Changes (Saved Recipes)]])
 - reconcile each `spec` note against the code with `/check-drift` when it reaches the top of Next (Stale Data Issues and Unified Date Picker were written this week; Shared Types Directory and Tag Management date from April)
 - decide `type` for the untyped notes: [[Email Improvements]], [[Granular Webfetch Permissions]]

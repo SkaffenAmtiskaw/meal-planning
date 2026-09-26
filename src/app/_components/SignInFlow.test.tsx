@@ -317,10 +317,6 @@ describe('SignInFlow', () => {
 	});
 
 	describe('new step', () => {
-		beforeEach(() => {
-			vi.mocked(checkEmailStatus).mockResolvedValueOnce('new');
-		});
-
 		it('displays name and password inputs and hides email/SSO after checkEmailStatus returns new', async () => {
 			render(<SignInFlow />);
 
