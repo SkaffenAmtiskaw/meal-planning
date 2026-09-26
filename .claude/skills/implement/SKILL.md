@@ -130,6 +130,8 @@ Where a change or addition goes:
 - **Re-plan:** the idea sentence would have to change, or the work pulls in a later step or another story. Follow "Stopping to re-plan" below.
 - **Out of scope:** new work unrelated to this step goes on the out-of-scope list.
 
+**Corrections to how it's built.** Some feedback changes how the code is built rather than what it does: where a file lives, how data is fetched, which pattern to use. If the docs in `.opencode/docs/` already say it, you missed it, and there's nothing to ask. Otherwise, ask her whether it's a one-off for this step or the convention from now on. The docs lag far behind the code, and the moment she corrects you is the cheapest time to write the rule down. If it's the convention, draft the change to the doc that covers it, show it to her and write it once she approves. Match the doc's existing style.
+
 Leave feedback changes unstaged, so `git diff` shows her just the fix. She stages them when she's happy. Report again with the same sections, covering only what changed, and wait.
 
 Repeat until she confirms the step is done.

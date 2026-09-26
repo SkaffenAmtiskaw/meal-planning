@@ -4,7 +4,7 @@ status: spec
 blocked-by:
   - "Steps 2 and 5 need re-review (see Review notes)"
   - "Today marker changed by [[Unified Date Picker Component]] - Step 3, Tokens and Acceptance criterion 4 need re-review (see Design Update - Today Marker)"
-  - "[[Stale Data Issues]]"
+  - "[[Calendar and Recipes Data Refresh]]"
   - "[[Today and Selected Day Markers]]"
 confirmed: 2026-09-19
 ---
@@ -310,7 +310,7 @@ Ember (orange) is kept for actions only. It is no longer used to mark days.
 
 > ⚠️ **Check Drift 2026-09-25:** The modal wiring above describes code that no longer exists, and this step needs re-review before implementation:
 > - `AddMealFormModalWrapper` and `onMealAdded` no longer exist. Add Meal now opens through `CalendarModalProvider` / `useCalendarModal` (`src/app/[planner]/calendar/_components/CalendarModal/`), the pattern [[Modal Form Architecture]] standardizes. Mobile list should open the modal the same way rather than keeping its own modal state.
-> - Refreshing via `onMealAdded` conflicts with [[Stale Data Issues]], which moves invalidation to the server and removes `router.refresh()`. This step should be built after that story lands.
+> - Refreshing via `onMealAdded` conflicts with [[Calendar and Recipes Data Refresh]], which moves invalidation to the server and removes `router.refresh()`. This step should be built after that story lands.
 
 ## Step 6: Read-only gating and accessibility polish
 

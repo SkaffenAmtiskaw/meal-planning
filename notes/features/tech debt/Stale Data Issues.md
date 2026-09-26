@@ -1,15 +1,20 @@
 ---
-type: pattern
-status: spec
+type: hub
 confirmed: 2026-09-25
 ---
+# Where It Stands
+
+Split 2026-09-25 into four stories. Next: /plan-steps on [[Calendar and Recipes Data Refresh]] or [[Server-Only Creation and Pure Reads]]; both can start now. ^status
+
+# Purpose
 The following issues currently existing in the app are likely a symptom of a larger issue with stale data in the app. This story needs to create a *consistent* pattern for refreshing data when mutations occur, and make sure that pattern is followed everywhere in the app.
 
 Any proposed architecture for this story will include a plan for enforcing this pattern in future stories. Drift is to be avoided. If programmatic enforcement is not possible this may lead to a larger discussion about development processes. Do not hesitate to ask the user questions to brainstorm possible strategies for enforcement.
 
-At the end of this story the following should be fixed:
-- [ ] after adding a new recipe, it is not immediately available in the saved dishes dropdown in the create meal modal
-- [ ] meals created in month view don't show immediately show up when switching to week view
+The work was split into four stories on 2026-09-25. The calendar and recipes fixes ship and can be checked on their own, as can the settings migration and the cleanup of writes outside server actions. Enforcement can only pass once all three are done. The rules, tag model and enforcement plan stay here in one copy, and each story embeds the sections it builds.
+
+## Meta-Instructions
+Before planning or implementing any story linked from this note, read this note first. If a child story conflicts with a decision recorded here, or depends on a question that is still open, stop and ask the user.
 
 # Root Cause Analysis
 There is **no Next.js caching anywhere in the app** — no `'use cache'`, `unstable_cache`, `fetch`, or route `revalidate` config. Every read is a direct Mongoose query on each request. Tag revalidation on its own would therefore be a no-op; the staleness is entirely client-side.
@@ -65,7 +70,7 @@ export const addMeal = defineMutation({
 - Real-time sync to other members' open sessions. They get fresh data on their next request, since nothing is cached.
 
 # Enforcement
-- **Type level** — a `defineMutation` without a non-empty `invalidates` fails typechecking, caught by `pnpm build` in pre-commit.
+- **Type level** — a `defineMutation` without a non-empty `invalidates` fails typechecking, caught by `pnpm build` in pre-commit. ^type-level
 - **Conventions meta-test** — `src/dataConventions.test.ts`, a static scan using the `typescript` compiler API (no module imports, no mocks):
 	1. every export of every `'use server'` file under `src/_actions/**` is initialized by a `defineMutation(...)` or `defineQuery(...)` call (barrels and type-only exports skipped)
 	2. no `router.refresh(` in any non-test file under `src/**`
@@ -73,86 +78,49 @@ export const addMeal = defineMutation({
 - **Lefthook** — the pre-commit `test-coverage` step uses `vitest related`, which would never select a meta-test for a newly added action (no import-graph link). Add a pre-commit command that always runs `src/dataConventions.test.ts` when any `src/**/*.{ts,tsx}` file is staged. *The user explicitly authorized this `lefthook.yml` edit for this story on 2026-09-25.*
 - **Not programmatically enforced (open item)** — Rule 2 (`useEffect` fetching). Documented in `.opencode/docs/project_conventions.md` alongside Rules 1 and 3.
 
-# Places to Update
-## A. Infrastructure
-- [ ] tag registry — `src/_actions/_utils/cacheTags.ts`
-- [ ] `invalidate()` helper (+ spike from Rule 1)
-- [ ] `defineMutation` / `defineQuery` wrappers
-- [ ] `src/dataConventions.test.ts`
-- [ ] lefthook pre-commit command for the conventions test
-- [ ] `.opencode/docs/project_conventions.md` — document Rules 1–3 and the tag model
+# Coverage
+| Migration Checklist area | Story |
+|---|---|
+| A. tag registry, `invalidate()` + spike, `defineMutation` | [[Calendar and Recipes Data Refresh]] |
+| A. `defineQuery`, `src/dataConventions.test.ts`, lefthook command, `project_conventions.md` | [[Data Rules Enforcement]] |
+| B. `calendar/*`, `library/*` | [[Calendar and Recipes Data Refresh]] |
+| B. `planner/*`, `sharing/*`, `user/*` | [[Settings Data Refresh]] |
+| C. `addPlanner`, `addUser` | [[Server-Only Creation and Pure Reads]] |
+| D. reads → `defineQuery` | [[Data Rules Enforcement]] |
+| E. `PlannerProvider` | [[Calendar and Recipes Data Refresh]] |
+| E. settings hooks, `MemberListContainer` | [[Settings Data Refresh]] |
+| F. calendar and recipes components | [[Calendar and Recipes Data Refresh]] |
+| F. settings components | [[Settings Data Refresh]] |
+| G. `TagCombobox` | [[Calendar and Recipes Data Refresh]] |
+| H. `verify-email-change/page.tsx`, exempt client calls | [[Settings Data Refresh]] |
+| H. `src/app/page.tsx` `addUser`, `getPlanners`, `validateInviteToken` | [[Server-Only Creation and Pure Reads]] |
 
-## B. Mutating Actions → `defineMutation`
-All paths relative to `src/_actions/`.
+# Child Stories
+| Story | Status | Scope in this area | Blocked by |
+|---|---|---|---|
+| [[Calendar and Recipes Data Refresh]] | spec | tag registry, `invalidate()`, `defineMutation`; calendar and library mutations; both original symptoms | - |
+| [[Settings Data Refresh]] | spec | planner, sharing and user mutations; settings data as server props; verify-email-change write | [[Calendar and Recipes Data Refresh]] |
+| [[Server-Only Creation and Pure Reads]] | spec | `addPlanner` / `addUser` out of `'use server'`; `getPlanners` and `validateInviteToken` stop writing | - |
+| [[Data Rules Enforcement]] | spec | `defineQuery` on reads; conventions meta-test, lefthook command, conventions doc | the three stories above |
 
-| Action | Invalidates | Notes |
-|---|---|---|
-| `calendar/addMeal` | `calendar(p)` | drop the unused returned `calendar` (and the `onSuccess` param in `AddMealForm`). Once [[Add Meal Changes (Saved Recipes)]] Step 1b makes `addMeal` write `lastUsed` on linked saved items, it must also invalidate `saved(p)`. |
-| `library/addBookmark` | `saved(p)` | |
-| `library/addRecipe` | `saved(p)` | |
-| `library/editBookmark` | `saved(p)` | remove existing `revalidatePath` |
-| `library/editRecipe` | `saved(p)` | remove existing `revalidatePath` (×2) |
-| `library/deleteRecipe` | `saved(p)` | |
-| `library/deleteBookmark` | `saved(p)` | |
-| `library/updateRecipeNotes` | `saved(p)` | remove existing `revalidatePath` |
-| `library/updateRecipeTags` | `saved(p)` | remove existing `revalidatePath` |
-| `library/addTag` | `tags(p)` | |
-| `planner/createPlanner` | `userTags.planners(self)` | |
-| `planner/updatePlannerName` | `details(p)` | |
-| `sharing/inviteUser` | `invites(p)`, `userTags.invites(email)` | |
-| `sharing/cancelInvite` | `invites(p)`, `userTags.invites(email)` | normalize return to `ActionResult` (`{ ok }`, currently `{ success }`) |
-| `sharing/acceptInvite` | `userTags.planners(self)`, `userTags.invites(email)`, `invites(p)`, `members(p)` | |
-| `sharing/declineInvite` | `userTags.invites(email)`, `invites(p)` | |
-| `sharing/updateMemberAccess` | `members(p)`, `userTags.planners(target)` | |
-| `sharing/removeMember` | `members(p)`, `userTags.planners(target)` | |
-| `sharing/leavePlanner` | `members(p)`, `userTags.planners(self)` | |
-| `sharing/signUpWithInvite` | `invites(p)`, `members(p)` | access `'public'` |
-| `user/updateUserName` | `userTags.profile(self)` | |
-| `user/requestEmailChange` | `userTags.profile(self)` | |
-| `user/verifyEmailChangeAndSetPassword` | `userTags.profile(user)` | access `'public'` (token) |
-| `user/deleteAccount` | `userTags.profile(self)`, `userTags.planners(self)`, `members(p)` for each membership | |
+**Related, not child stories:**
+- [[Add Meal Changes (Saved Recipes)]] and [[Mobile List View]] - blocked on [[Calendar and Recipes Data Refresh]]
+- [[Meal Editing]] - new meal mutations follow the rules here
+- [[Unchecked Planner Reads]] - ⚠️ security: `getPlanner`, `getPlannerClient` and `getSavedItem` are server actions with no access check; found while planning, fixed after [[Calendar and Recipes Data Refresh]]
+- [[Unchecked Invite Lookup]] - ⚠️ security: `getUserInvites` is a server action that returns invite tokens for any email; found while planning
 
-## C. Not Actually Server Actions → Move Out of `'use server'`
-Move into server-only internal utils so they can't be called from the client:
-- [ ] `planner/addPlanner` — currently exported as a server action **with no auth check**
-- [ ] `user/addUser`
+# Build Order
+1. [[Calendar and Recipes Data Refresh]] and [[Server-Only Creation and Pure Reads]] can start now. They share no pieces (inferred: they only touch the same files, in `createPlanner` and `signUpWithInvite` imports).
+2. [[Settings Data Refresh]] after [[Calendar and Recipes Data Refresh]] (stated: it uses the tag registry, `invalidate()` and `defineMutation` built there).
+3. [[Data Rules Enforcement]] last (stated: the meta-test fails until every `'use server'` export is wrapped and every `router.refresh()` is removed).
 
-## D. Read Actions → `defineQuery`
-- [ ] `getPlanner`, `getPlannerClient`, `getPlanners`, `getSavedItem`
-- [ ] `getUser`, `getUserInvites`, `getPendingInvites`, `getPlannerMembers`
-- [ ] `checkAuth`, `checkEmailStatus`, `validateInviteToken`
-
-## E. Client Fetching → Server Props (Rule 2)
-- [ ] `src/app/[planner]/_components/PlannerContext/PlannerProvider.tsx` — layout fetches the planner server-side and passes it as a prop (consider React `cache()` on `getPlanner` to dedupe with the calendar page's read)
-- [ ] `src/app/settings/_hooks/useInvites.ts` — load in `PlannerList` (server) and pass down; cancel-invite optimism via `useOptimistic`
-- [ ] `src/app/settings/_hooks/usePlannerMembers.ts` — same
-- [ ] `src/app/settings/_hooks/useCurrentUserMembership.ts` — same
-- [ ] `src/app/settings/_components/MemberListContainer.tsx` — hook `refresh()` usage goes away
-
-## F. `router.refresh()` Removals (Rule 3)
-- [ ] `src/app/[planner]/calendar/_components/AddMealForm/AddMealModal.tsx`
-- [ ] `src/app/[planner]/recipes/_components/DeleteItemButton.tsx`
-- [ ] `src/app/[planner]/recipes/[recipeId]/_components/InlineNotesEditor.tsx`
-- [ ] `src/app/[planner]/recipes/[recipeId]/_components/InlineTagsEditor.tsx`
-- [ ] `src/app/settings/_components/CreatePlannerForm.tsx`
-- [ ] `src/app/settings/_components/useRenamePlanner.ts`
-- [ ] `src/app/settings/_components/InvitesSection.tsx` (×2)
-- [ ] `src/app/settings/_components/ChangeNameForm.tsx`
-- [ ] `src/app/settings/_components/ChangeEmailForm.tsx`
-- [ ] `src/app/settings/_components/PlannerItem.tsx`
-
-## G. Client-Local State to Reconcile
-- [ ] `src/_components/TagCombobox.tsx` — `availableTags` must re-sync from props or use `useOptimistic`
-
-## H. Writes Outside Server Actions
-`updateTag` only works inside Server Actions, so these need resolving:
-- [ ] `src/app/page.tsx` calls `addUser` during render (first sign-in) — keep as an internal util (C); no invalidation needed since it redirects
-- [ ] `src/app/verify-email-change/page.tsx` calls `verifyEmailChange` during render — move to a Route Handler that writes, calls `revalidateTag(tag, 'max')`, and redirects, or to a confirm-button action (*decide in story*)
-- [ ] `getPlanners` `$set`s default planner names on read — set the default at creation + one-off backfill, make the read pure
-- [ ] `validateInviteToken` deletes expired invites on read — make the read pure; expire via a Mongo TTL index or in `acceptInvite`
-- Exempt: client better-auth calls (`SignInFlow`, `ChangePasswordForm`, `ResetPasswordForm`, `ResendVerificationForm`, sign-out buttons) — followed by navigation, no planner data displayed
+# Open Decisions
+1. **`invalidates` needs values the input doesn't carry.** `cancelInvite` needs the invite's email, `deleteAccount` needs the user's memberships, and member changes may need the target user. Should `invalidates` also receive the handler's result? Doesn't affect [[Calendar and Recipes Data Refresh]], whose actions all take `plannerId`. Needed before [[Settings Data Refresh]] converts `cancelInvite` and `deleteAccount`. Record the answer in Wrapper Shape above.
 
 # Related Issues Found (Out of Scope)
 Both added to [[Roadmap]] under Bugfixes.
 - `src/app/[planner]/recipes/[recipeId]/_components/RecipeDetail.tsx` ignores `deleteRecipe`'s result and always reports success
 - [[Zero Planners Crash]] — leaving your only planner likely crashes `src/app/page.tsx` (`user.planners[0]` on an empty array); unverified, from static reading only
+
+# Deferred Work
+%% Unfinished pieces moved here from stories that are otherwise done. Move the full step, its image embeds and the relevant handoff text - not a summary - so whoever builds it doesn't have to go back to the archived note. Leave a "🚛 Moved to [[<this hub>]]" pointer in the original. %%

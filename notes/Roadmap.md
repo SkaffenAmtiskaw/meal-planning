@@ -15,29 +15,34 @@
 # Hubs
 - [[Meal Editing]] - every story that edits, moves, duplicates, deletes or reorders meals, with open decisions. Includes [[Meal Detail Modal & Edit Meals]] (blocked on [[Header Date Picker]] and [[Meal Form Date Picker]]), mobile delete, batch delete, [[DND]], and the mobile agenda Edit / Move to… buttons.
 - [[Unified Date Picker Component]] ![[Unified Date Picker Component#^status]] - the date picker design, split 2026-09-25 into [[Mantine Date Picker Setup]], [[Today and Selected Day Markers]], [[Header Date Picker]] and [[Meal Form Date Picker]].
+- [[Stale Data Issues]] ![[Stale Data Issues#^status]] - the data refresh pattern (rules, tag model, enforcement), split 2026-09-25 into [[Calendar and Recipes Data Refresh]], [[Settings Data Refresh]], [[Server-Only Creation and Pure Reads]] and [[Data Rules Enforcement]].
 
 # Now
 - [[Unit Testing - Clean Up Mocks]] - remaining: a few straggler files in `@/_actions`, `@/_models` and `@mantine/hooks`; `@/_components` and `@/_utils` not started
 
 # Next
-*Ordered 2026-09-25. All five are `spec`, so "next" means next to get implementation steps (via `/plan-steps`), then build.*
-1. [[Stale Data Issues]] - spec. Unblocks [[Add Meal Changes (Saved Recipes)]] and [[Mobile List View]]; every meal-editing mutation should follow its pattern. *(was bugfix)*
-2. [[Mantine Date Picker Setup]] ![[Mantine Date Picker Setup#^status]] - spec. *(was high)*
-3. [[Today and Selected Day Markers]] ![[Today and Selected Day Markers#^status]] - spec. Fixes the truncated today circle; unblocks [[Mobile List View]]. *(was high)*
-4. [[Remove Schedule-X]] - spec. Has an open decision on where shared types live, which overlaps [[Shared Types Directory]]. *(was bugfix)*
-5. [[Shared Types Directory]] - spec, last reviewed April. May move up or fold into [[Remove Schedule-X]] depending on where that story puts the shared types.
+1. [[Unchecked Invite Lookup]] ![[Unchecked Invite Lookup#^status]] - spec. ⚠️ Security: anyone who knows an email may fetch that person's invite tokens. Nothing blocks it.
+2. [[Calendar and Recipes Data Refresh]] ![[Calendar and Recipes Data Refresh#^status]] - spec. Fixes both stale-data symptoms; unblocks [[Add Meal Changes (Saved Recipes)]] and [[Mobile List View]]. *(was bugfix)*
+3. [[Server-Only Creation and Pure Reads]] ![[Server-Only Creation and Pure Reads#^status]] - spec. Closes the unauthenticated `addPlanner` server action; nothing blocks it.
+4. [[Mantine Date Picker Setup]] ![[Mantine Date Picker Setup#^status]] - spec. *(was high)*
+5. [[Today and Selected Day Markers]] ![[Today and Selected Day Markers#^status]] - spec. Fixes the truncated today circle; unblocks [[Mobile List View]]. *(was high)*
+6. [[Remove Schedule-X]] - spec. Has an open decision on where shared types live, which overlaps [[Shared Types Directory]]. *(was bugfix)*
+7. [[Shared Types Directory]] - spec, last reviewed April. May move up or fold into [[Remove Schedule-X]] depending on where that story puts the shared types.
 
 # Blocked
 - [[Header Date Picker]] ![[Header Date Picker#^status]] - spec. Waiting on [[Mantine Date Picker Setup]] and [[Today and Selected Day Markers]]. *(was high)*
 - [[Meal Form Date Picker]] ![[Meal Form Date Picker#^status]] - spec. Waiting on [[Header Date Picker]]. With it, unblocks [[Meal Detail Modal & Edit Meals]]. *(was high)*
-- [[Add Meal Changes (Saved Recipes)|User Feedback - Add Meal Changes]] - ready. Waiting on [[Stale Data Issues]]. *(was bugfix)*
-- [[Mobile List View]] - spec (was ready). Needs re-review: Steps 2 and 5, plus the today-marker change moved in from [[Unified Date Picker Component]] (affects Step 3, Tokens and Acceptance criterion 4). Waiting on [[Stale Data Issues]] and [[Today and Selected Day Markers]]. *(was high)*
+- [[Add Meal Changes (Saved Recipes)|User Feedback - Add Meal Changes]] - ready. Waiting on [[Calendar and Recipes Data Refresh]]. *(was bugfix)*
+- [[Mobile List View]] - spec (was ready). Needs re-review: Steps 2 and 5, plus the today-marker change moved in from [[Unified Date Picker Component]] (affects Step 3, Tokens and Acceptance criterion 4). Waiting on [[Calendar and Recipes Data Refresh]] and [[Today and Selected Day Markers]]. *(was high)*
 - [[Zero Planners Crash|root page crashes for users with zero planners (e.g. invited user leaves or is removed from their only planner)]] - spec. Waiting on your decision on which fix to use (deferred 2026-09-25). *(was bugfix)*
 - [[Delete Planner|allow user to delete a planner]] - idea. Waiting on the [[Zero Planners Crash]] decision. *(was high)*
 - [[Keyboard Shortcuts|keyboard shortcuts]] - spec. Out of date; re-review once the calendar views are mostly complete. *(was medium)*
 - calendar list view keyboard navigation - needs design review once the calendar views are mostly complete (see Step 16 in [[Replace Schedule-X]])
 - [[features/calendar/Style Fixes|calendar style fixes]] - idea. Do after the calendar header is aligned across all views.
 - [[Granular Webfetch Permissions|Update OpenCode agents webfetch permissions]] - idea. Waiting on an OpenCode release.
+- [[Settings Data Refresh]] ![[Settings Data Refresh#^status]] - spec. Waiting on [[Calendar and Recipes Data Refresh]].
+- [[Data Rules Enforcement]] ![[Data Rules Enforcement#^status]] - spec. Waiting on [[Calendar and Recipes Data Refresh]], [[Settings Data Refresh]] and [[Server-Only Creation and Pure Reads]].
+- [[Unchecked Planner Reads]] ![[Unchecked Planner Reads#^status]] - spec. ⚠️ Security: any planner's data may be readable by id without a membership check. Waiting on [[Calendar and Recipes Data Refresh]].
 
 # Later
 ## Calendar
@@ -112,11 +117,11 @@
 - add different import order sorting for `.test.ts(x)` - vitest and react/testing-library should be at the top *(was low)*
 
 ## Notes & Agent Workflow
-- build the planned note agents (investigate, check-drift, code review, archive, architect for patterns) - see the Next Step by Note State table in [[Note Conventions]]
-- [[Agent Instructions Rewrite|rewrite AGENTS.md for Claude Code]] - idea. Part of moving the agents off OpenCode.
+- build the planned note agents (investigate, code review, archive, architect for patterns) - see the Next Step by Note State table in [[Note Conventions]]
+- [[Agent Workflow Changes]] - idea. Running list of changes to AGENTS.md, skills and subagents; includes the AGENTS.md rewrite for Claude Code.
 - [[Story Code Review]] ![[Story Code Review#^status]]
 - standardize the implementation step format - notes use at least three shapes today ("What we're doing / Acceptance Criteria / Architectural plan" in [[Replace Schedule-X]] and [[Mobile Month View]], "Problem to solve / Suggested Approach / Verification" in [[Mobile List View]], "Scope / Files / Architectural note / Acceptance" in [[Add Meal Changes (Saved Recipes)]])
-- reconcile each `spec` note against the code when it reaches the top of Next (Stale Data Issues and Unified Date Picker were written this week; Shared Types Directory and Tag Management date from April)
+- reconcile each `spec` note against the code with `/check-drift` when it reaches the top of Next (Stale Data Issues and Unified Date Picker were written this week; Shared Types Directory and Tag Management date from April)
 - decide `type` for the untyped notes: [[features/style fixes|style fixes]], [[features/calendar/Style Fixes|calendar style fixes]], [[Email Improvements]], [[Granular Webfetch Permissions]] - the two style-fix notes are lists of small fixes rather than single stories
 - optional: an Obsidian Base listing notes by `type`, `status` and `confirmed`, to spot stale notes at a glance
 
