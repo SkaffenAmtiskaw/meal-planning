@@ -41,9 +41,10 @@ vi.mock('@/_utils/catchify', async () => ({
 		}
 	}),
 }));
-vi.mock('@/_utils/serialize', async () => ({
-	serialize: vi.fn((data) => data),
-}));
+vi.mock(
+	'@/_utils/serialize',
+	async () => await import('@mocks/@/_utils/serialize'),
+);
 vi.mock('node:crypto', () => ({
 	default: {
 		randomUUID: () => 'mock-uuid-12345',

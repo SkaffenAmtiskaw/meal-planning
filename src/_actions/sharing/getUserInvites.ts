@@ -1,27 +1,11 @@
-'use server';
+import 'server-only';
 
 import { Planner } from '@/_models/planner';
 import { PendingInvite } from '@/_models/sharing';
-import type { AccessLevel } from '@/_models/user';
 import { User } from '@/_models/user';
 import { serialize } from '@/_utils/serialize';
 
-// Return type for pending invites with populated data
-export interface UserInvite {
-	id: string;
-	plannerId: string;
-	plannerName: string;
-	invitedBy: string; // inviter's name
-	accessLevel: AccessLevel;
-	invitedAt: string;
-	expiresAt: string;
-	token: string;
-}
-
-export interface GetUserInvitesResult {
-	invites: UserInvite[];
-	error?: string;
-}
+import type { GetUserInvitesResult, UserInvite } from './invite.types';
 
 // Main function
 export const getUserInvites = async (

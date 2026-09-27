@@ -13,9 +13,10 @@ vi.mock('@/_models/sharing', () => ({
 		deleteOne: vi.fn(),
 	},
 }));
-vi.mock('@/_utils/serialize', () => ({
-	serialize: vi.fn((data) => data),
-}));
+vi.mock(
+	'@/_utils/serialize',
+	async () => await import('@mocks/@/_utils/serialize'),
+);
 
 describe('declineInvite', () => {
 	const inviteId = '507f1f77bcf86cd799439012';

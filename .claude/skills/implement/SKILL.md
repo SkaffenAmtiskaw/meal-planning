@@ -37,7 +37,7 @@ Read the whole note, including:
 - the Design Handoff and its images in `notes/assets/<story>/`
 - ⚠️ Check Drift callouts, and **As built** notes on earlier steps
 
-The step to implement is the first one under `# Implementation` with no `**Status:**` line. Tell Sarah in one line which step you're implementing. If `status` is `ready`, set it to `in-progress`.
+The step to implement is the first one under `# Implementation` with no `**Status:**` line. Tell Sarah in one line which step you're implementing. If `status` is `ready`, set it to `in-progress` and move the story's line in `notes/Roadmap.md` into **Now**, following that file's rules for what a line holds.
 
 Read the project docs when the work needs them, not all up front: `.opencode/docs/project_conventions.md` and `project_structure.md` before writing code, `unit_tests.md` before writing tests, `theme.md` before UI work.
 

@@ -7,9 +7,10 @@ vi.mock('@/_models/user', async () => ({
 		find: vi.fn(),
 	},
 }));
-vi.mock('@/_utils/serialize', async () => ({
-	serialize: vi.fn((data) => data),
-}));
+vi.mock(
+	'@/_utils/serialize',
+	async () => await import('@mocks/@/_utils/serialize'),
+);
 
 import { checkAuth } from '@/_actions/auth';
 import { User } from '@/_models/user';

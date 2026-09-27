@@ -4,7 +4,7 @@ import { Suspense } from 'react';
 
 import { Indicator } from '@mantine/core';
 
-import { getUserInvites } from '@/_actions/sharing';
+import { getUserInvites } from '@/_actions/sharing/getUserInvites';
 import { getUser } from '@/_actions/user';
 import { THEME_COLORS } from '@/_theme/colors';
 

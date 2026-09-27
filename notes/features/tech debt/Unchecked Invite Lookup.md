@@ -1,12 +1,12 @@
 ---
 type: bug
-status: ready
+status: in-review
 blocked-by: []
 confirmed: 2026-09-25
 ---
 # Where It Stands
 
-Ready. Next: build Step 1. ^status
+All steps implemented. Next: /review ^status
 
 # ⚠️ Security Concern
 **Anyone who knows a person's email may be able to fetch all of that person's pending invites, including the invite tokens, by calling a server action. No session check stops them.** Invite tokens are what the accept and sign-up-with-invite flows use to join a planner, so a leaked token may let someone else take the invite. This is an authorization hole, not a code-tidiness issue.
@@ -69,7 +69,15 @@ Known files as of 2026-09-26 (re-checked while planning): `getUserInvites` stays
 - `test/mocks/@/_models/sharing.ts` - Boy Scouting: add `find: vi.fn()` to `PendingInvite` (only `findOne`, `create`, `deleteOne` exist today), needed by the mock swap above
 
 **Acceptance (all "same as before"):**
-- [ ] Sign in as a user with at least one pending invite. The user menu shows the invite badge with the same count as before.
-- [ ] Go to Settings, on a phone and on desktop. The Pending Invites list shows the same invites as before.
-- [ ] Accept one invite. It disappears from the Pending Invites list with no error shown, same as before.
-- [ ] Decline another invite. It disappears from the list too, same as before.
+- [x] Sign in as a user with at least one pending invite. The user menu shows the invite badge with the same count as before.
+- [x] Go to Settings, on a phone and on desktop. The Pending Invites list shows the same invites as before.
+- [x] Accept one invite. It disappears from the Pending Invites list with no error shown, same as before.
+- [x] Decline another invite. It disappears from the list too, same as before.
+
+**Status:** ✅ Complete
+
+**As built:**
+- **Out of the barrel (temporary fix):** `getUserInvites` was taken out of the `@/_actions/sharing` barrel (`index.ts`). Eight client components import that barrel, so with the `server-only` guard in place `pnpm build` failed ("'server-only' cannot be imported from a Client Component module"). The barrel was also pulling the file's mongoose models into client bundles. `InviteBadge.tsx` and `InvitesSettings.tsx` now import `@/_actions/sharing/getUserInvites` directly. This is meant to be temporary until a reusable fix for server-only code reached through a barrel is decided.
+- **Types:** `UserInvite` and `GetUserInvitesResult` moved into `invite.types.ts`, which stays in the barrel, so the client `InvitesSection` still imports `UserInvite` from `@/_actions/sharing`.
+- **Mocks:** the `getUserInvites` stub moved from `test/mocks/@/_actions/sharing.ts` to `test/mocks/@/_actions/sharing/getUserInvites.ts`, to match the new import path. `InviteBadge.test.tsx` and `InvitesSettings.test.tsx` use it.
+- **Cleanup:** the `@/_utils/serialize` mock, identical in six sharing action tests, was centralized as `test/mocks/@/_utils/serialize.ts`.

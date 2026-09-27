@@ -13,6 +13,7 @@ import { vi } from 'vitest';
 // ─── Mongoose Model ───────────────────────────────────────────────────────────
 
 export const PendingInvite = {
+	find: vi.fn(),
 	findOne: vi.fn(),
 	create: vi.fn(),
 	deleteOne: vi.fn(),

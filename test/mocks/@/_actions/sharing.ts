@@ -30,10 +30,6 @@ export const getPlannerMembers = vi.fn(async () => ({
 	members: [] as PlannerMember[],
 }));
 
-export const getUserInvites = vi.fn(async () => ({
-	invites: [] as UserInvite[],
-}));
-
 export const inviteUser = vi.fn(async () => ({
 	ok: true as const,
 	data: { inviteId: '507f1f77bcf86cd799439012' },

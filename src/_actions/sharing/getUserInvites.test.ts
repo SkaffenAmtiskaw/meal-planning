@@ -1,26 +1,19 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 // Mocks must be hoisted before imports
-vi.mock('@/_models/user', () => ({
-	User: {
-		findById: vi.fn(),
-	},
-}));
-
-vi.mock('@/_models/planner', () => ({
-	Planner: {
-		findById: vi.fn(),
-	},
-}));
-
-vi.mock('@/_models/sharing', () => ({
-	PendingInvite: {
-		find: vi.fn(),
-	},
-}));
-vi.mock('@/_utils/serialize', () => ({
-	serialize: vi.fn((data) => data),
-}));
+vi.mock('@/_models/user', async () => await import('@mocks/@/_models/user'));
+vi.mock(
+	'@/_models/planner',
+	async () => await import('@mocks/@/_models/planner'),
+);
+vi.mock(
+	'@/_models/sharing',
+	async () => await import('@mocks/@/_models/sharing'),
+);
+vi.mock(
+	'@/_utils/serialize',
+	async () => await import('@mocks/@/_utils/serialize'),
+);
 
 import { Planner } from '@/_models/planner';
 import { PendingInvite } from '@/_models/sharing';

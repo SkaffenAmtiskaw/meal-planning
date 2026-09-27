@@ -28,6 +28,8 @@ So a function's home isn't found by computing "the lowest common parent of all i
 - [ ] `src/_components/TagCombobox.tsx`: imports `addTag` from `@/_actions/library`
 - [ ] `src/_components/UserMenu/InviteBadge.tsx`: imports `getUserInvites` and `getUser` from `@/_actions`
 
+> ⚠️ **Check Drift 2026-09-27:** Found while implementing [[Unchecked Invite Lookup]]. `InviteBadge.tsx` now imports `getUserInvites` straight from `@/_actions/sharing/getUserInvites`, not the barrel. That's a temporary fix until [[Server-Only Code Behind Barrels]] decides how server-only code is exported, so re-check this line's imports against that story's Rules when planning.
+
 ## Meal-specific code in `src/_components/Calendar`
 - [ ] `src/_components/Calendar/_types/CalendarMeal.types.ts`: the meal type
 - [ ] `src/_components/Calendar/MealCard/`

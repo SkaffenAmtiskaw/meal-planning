@@ -10,9 +10,10 @@ vi.mock('@/_models/sharing', () => ({
 		find: vi.fn(),
 	},
 }));
-vi.mock('@/_utils/serialize', () => ({
-	serialize: vi.fn((data) => data),
-}));
+vi.mock(
+	'@/_utils/serialize',
+	async () => await import('@mocks/@/_utils/serialize'),
+);
 
 import { checkAuth } from '@/_actions/auth';
 import { PendingInvite } from '@/_models/sharing';

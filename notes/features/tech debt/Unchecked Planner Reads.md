@@ -3,11 +3,12 @@ type: bug
 status: spec
 blocked-by:
   - "[[Calendar and Recipes Data Refresh]]"
+  - "[[Server-Only Code Behind Barrels]]"
 confirmed: 2026-09-25
 ---
 # Where It Stands
 
-Blocked until [[Calendar and Recipes Data Refresh]] lands; then /plan-steps. ^status
+Blocked until [[Calendar and Recipes Data Refresh]] and [[Server-Only Code Behind Barrels]] land; then /plan-steps. ^status
 
 # ⚠️ Security Concern
 **Anyone who can reach the app may be able to read any planner's data, including its calendar, saved recipes and tags, by calling a server action with that planner's id. No membership check stops them.** This is an authorization hole, not a code-tidiness issue.
@@ -39,6 +40,8 @@ Found by reading code on 2026-09-25. **Not reproduced in the running app.**
   - `src/app/[planner]/recipes/_components/Modal/Modal.tsx`
 
 # Fix
+> ⚠️ **Check Drift 2026-09-27:** Found by reading code while implementing [[Unchecked Invite Lookup]] (not verified in the running app). The `@/_actions/planner` barrel is imported by `'use client'` files (`CreatePlannerForm.tsx`, `useRenamePlanner.ts`, `PlannerProvider.tsx`), and so is `@/_actions/library` (`RecipeForm.tsx`, `BookmarkForm.tsx` and others). Making `getPlanner`, `getPlannerClient` or `getSavedItem` server-only while they stay in those barrels breaks `pnpm build`, the same failure `getUserInvites` hit. Moving them into `_utils/` as this Fix says may also clash with the placement rule in [[Domain-Specific Code Locations]], since app pages consume them, not only sibling actions. Plan with the Rules from [[Server-Only Code Behind Barrels]].
+
 Once [[Calendar and Recipes Data Refresh]] has removed the client caller, move all three reads out of `'use server'` into server-only utilities, as [[Server-Only Creation and Pure Reads]] does for `addPlanner` / `addUser`. The browser then can't call them at all. The remaining callers are already behind the layout's access check.
 
 Decided 2026-09-25: no interim `checkAuth` stopgap. It would be discarded by the move, and [[Calendar and Recipes Data Refresh]] is first in the Next queue. See the Security Concern above if that changes.

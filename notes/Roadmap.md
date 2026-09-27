@@ -19,14 +19,14 @@
 - [[Stale Data Issues]] ![[Stale Data Issues#^status]] - the data refresh pattern (rules, tag model, enforcement), split 2026-09-25 into [[Calendar and Recipes Data Refresh]], [[Settings Data Refresh]], [[Server-Only Creation and Pure Reads]] and [[Data Rules Enforcement]].
 
 # Now
+- [[Unchecked Invite Lookup]] ![[Unchecked Invite Lookup#^status]]
+
 # Next
-1. [[Unchecked Invite Lookup]] ![[Unchecked Invite Lookup#^status]] - ready. ⚠️ Security: anyone who knows an email may fetch that person's invite tokens. Nothing blocks it.
-2. [[Calendar and Recipes Data Refresh]] ![[Calendar and Recipes Data Refresh#^status]] - spec. Fixes both stale-data symptoms; unblocks [[Add Meal Changes (Saved Recipes)]] and [[Mobile List View]]. *(was bugfix)*
-3. [[Server-Only Creation and Pure Reads]] ![[Server-Only Creation and Pure Reads#^status]] - spec. Closes the unauthenticated `addPlanner` server action; nothing blocks it.
-4. [[Schedule-X Data Shapes Audit]] ![[Schedule-X Data Shapes Audit#^status]]
-5. [[Mantine Date Picker Setup]] ![[Mantine Date Picker Setup#^status]] - spec. *(was high)*
-6. [[Today and Selected Day Markers]] ![[Today and Selected Day Markers#^status]] - spec. Fixes the truncated today circle; unblocks [[Mobile List View]]. *(was high)*
-7. [[Shared Types Directory]] - spec, last reviewed April. Unblocks [[Remove Schedule-X]].
+1. [[Calendar and Recipes Data Refresh]] ![[Calendar and Recipes Data Refresh#^status]] - spec. Fixes both stale-data symptoms; unblocks [[Add Meal Changes (Saved Recipes)]] and [[Mobile List View]]. *(was bugfix)*
+2. [[Schedule-X Data Shapes Audit]] ![[Schedule-X Data Shapes Audit#^status]]
+3. [[Mantine Date Picker Setup]] ![[Mantine Date Picker Setup#^status]] - spec. *(was high)*
+4. [[Today and Selected Day Markers]] ![[Today and Selected Day Markers#^status]] - spec. Fixes the truncated today circle; unblocks [[Mobile List View]]. *(was high)*
+5. [[Shared Types Directory]] - spec, last reviewed April. Unblocks [[Remove Schedule-X]].
 
 # Blocked
 - [[Header Date Picker]] ![[Header Date Picker#^status]] - spec. Waiting on [[Mantine Date Picker Setup]] and [[Today and Selected Day Markers]]. *(was high)*
@@ -41,8 +41,9 @@
 - [[Granular Webfetch Permissions|Update OpenCode agents webfetch permissions]] - idea. Waiting on an OpenCode release.
 - [[Settings Data Refresh]] ![[Settings Data Refresh#^status]] - spec. Waiting on [[Calendar and Recipes Data Refresh]].
 - [[Data Rules Enforcement]] ![[Data Rules Enforcement#^status]] - spec. Waiting on [[Calendar and Recipes Data Refresh]], [[Settings Data Refresh]] and [[Server-Only Creation and Pure Reads]].
-- [[Unchecked Planner Reads]] ![[Unchecked Planner Reads#^status]] - spec. ⚠️ Security: any planner's data may be readable by id without a membership check. Waiting on [[Calendar and Recipes Data Refresh]].
+- [[Unchecked Planner Reads]] ![[Unchecked Planner Reads#^status]] - spec. ⚠️ Security: any planner's data may be readable by id without a membership check. Waiting on [[Calendar and Recipes Data Refresh]] and [[Server-Only Code Behind Barrels]].
 - [[Remove Schedule-X]] ![[Remove Schedule-X#^status]] - spec. *(was bugfix)*
+- [[Server-Only Creation and Pure Reads]] ![[Server-Only Creation and Pure Reads#^status]] - spec. Waiting on [[Server-Only Code Behind Barrels]].
 
 # Later
 ## Calendar
@@ -99,6 +100,7 @@
 - replace date utils with luxon - `src/_utils/date.ts` also mixes formatting with time comparisons, and `new Date('YYYY-MM-DD')` parses as UTC, so date-only strings show the previous day in US time zones
 - route management - emails create paths & query params the app must consume, but nothing keeps them in sync
 - [[Domain-Specific Code Locations|move domain-specific code out of the generic folders]] and spell out in project conventions what goes where - idea, has a starting list of files
+- [[Server-Only Code Behind Barrels]] ![[Server-Only Code Behind Barrels#^status]]
 - [[Code Tidy-Ups]] ![[Code Tidy-Ups#^status]]
 - `src/_components/Calendar/_utils/formatCalendarLabel.ts` - also holds the view display names (`VIEW_LABELS`) and default view order (`DEFAULT_VIEWS`), which its name doesn't describe. Move them into a views config once it's decided where that lives, then it can join [[Code Tidy-Ups]]
 - `theme.ts` - the input border `#C8C0C3` has no color token (name one, then it can join [[Code Tidy-Ups]]); input `&:focus` styles in a `styles` object never apply (Mantine drops pseudo-selectors there), so the forest focus ring isn't coming from the theme - see the calendar focus states line under App-Wide UX & Quality

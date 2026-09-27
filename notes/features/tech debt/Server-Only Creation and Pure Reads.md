@@ -1,12 +1,13 @@
 ---
 type: cleanup
 status: spec
-blocked-by: []
+blocked-by:
+  - "[[Server-Only Code Behind Barrels]]"
 confirmed: 2026-09-25
 ---
 # Where It Stands
 
-Next: /plan-steps. ^status
+Blocked until [[Server-Only Code Behind Barrels]] lands; then /plan-steps. ^status
 
 # Purpose
 `addPlanner` and `addUser` are exported as server actions, so the browser can call them (`addPlanner` has no auth check). Two reads also write: `getPlanners` sets default planner names and `validateInviteToken` deletes expired invites. This story moves the two creators into server-only utilities and makes both reads pure, because under the data refresh pattern only server actions can invalidate what they change.
@@ -66,6 +67,8 @@ Note: `notes/features/tech debt/Server-Only Creation and Pure Reads.md` (type: c
 **Idea:** `addPlanner` and `addUser` move out of `'use server'` files so the browser can't call them.
 
 > ⚠️ **Check Drift 2026-09-26:** Found while planning [[Unchecked Invite Lookup]], by reading code (not re-verified in the running app). Applying the placement rule decided there ([[Domain-Specific Code Locations]] Rules, once landed): a domain function's home is decided by which enclosing `_`-prefixed directory's scope already covers every consumer, not by relocating it into a nested `_utils/`. `addPlanner` still fits this Step's plan - its only consumers (`createPlanner.ts`, `signUpWithInvite.ts`) are both inside `_actions`, matching the sibling-only `_utils/` pattern. But `addUser` doesn't - it's consumed by `src/app/page.tsx`, outside `_actions` entirely, the same shape as `getUserInvites` (which [[Unchecked Invite Lookup]] kept flat in `_actions/sharing/` with `import 'server-only'`, rather than moving it to `_utils/`). `addUser` likely stays at `src/_actions/user/addUser.ts` with `import 'server-only'` swapped in for `'use server'`, not moved to `_utils/addUser.ts`. Re-verify at planning time.
+
+> ⚠️ **Check Drift 2026-09-27:** Found by reading code while implementing [[Unchecked Invite Lookup]] (not verified in the running app). Keeping `addUser` flat in `src/_actions/user/` with `import 'server-only'` would break `pnpm build`: the `@/_actions/user` barrel is imported by `'use client'` files (`ChangeNameForm.tsx:9`, `DeleteAccountForm.tsx:8`), the same failure `getUserInvites` hit. Plan this step with the Rules from [[Server-Only Code Behind Barrels]]. `addPlanner` moving to `_utils/` and out of the barrel is unaffected.
 
 **Source:** Places C: `planner/addPlanner`, `user/addUser`; Places H: `src/app/page.tsx` calls `addUser` during render
 

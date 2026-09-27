@@ -3,7 +3,7 @@ type: pattern
 status: spec
 confirmed: 2026-04-22
 ---
-> ⚠️ **Check Drift 2026-09-25:** The claim below that `PlannerWithAccess` was created during Transfer Ownership looks wrong: Transfer Ownership has not been implemented. The type does exist, in `src/_actions/planner/getPlanners.ts`. Confirm the history before relying on it.
+> ⚠️ **Check Drift 2026-09-25:** The claim below that `PlannerWithAccess` was created during Transfer Ownership looks wrong: Transfer Ownership has not been implemented. The type does exist, in `src/_actions/planner/getPlanners.ts`. Confirm the history before relying on it. [Sarah] - I also want to re-evaluate what belongs in the shared types directory and what doesn't - at the end of this story there should be a documented rule to follow similar to the documented rule for `_components/` or `_hooks/`
 
 **Context:** During implementation of [[Transfer Ownership of Planner]], the `PlannerWithAccess` type was created in `src/_actions/planner/getPlanners.ts`. This type is a DTO (Data Transfer Object) that combines planner data with access level information. The question arose: where should shared DTOs/types live?
 

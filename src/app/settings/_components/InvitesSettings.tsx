@@ -1,10 +1,7 @@
 import { Stack } from '@mantine/core';
 
-import {
-	acceptInvite,
-	declineInvite,
-	getUserInvites,
-} from '@/_actions/sharing';
+import { acceptInvite, declineInvite } from '@/_actions/sharing';
+import { getUserInvites } from '@/_actions/sharing/getUserInvites';
 import { getUser } from '@/_actions/user';
 
 import { InvitesSection } from './InvitesSection';

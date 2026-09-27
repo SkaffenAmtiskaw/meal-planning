@@ -4,7 +4,6 @@ export * from './declineInvite';
 export * from './getPendingInvites';
 export * from './getPlannerMembers';
 export * from './getPlannerMembers.types';
-export * from './getUserInvites';
 export * from './invite.types';
 export * from './inviteUser';
 export * from './leavePlanner';
