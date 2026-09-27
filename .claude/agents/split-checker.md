@@ -17,12 +17,12 @@ The note path and a checkpoint:
 - **Behaviors** (from `/assess`): the confirmed behavior list. No approach exists yet.
 - **Plan** (from `/plan-steps`): the path to the draft steps. The note has an approved Suggested Approach.
 
-Read the note, `notes/Note Conventions.md` and `notes/Roadmap.md`. Search `notes/features/` for stories this one blocks or is blocked by. Those links will need updating if it splits.
+Read the note and `notes/Roadmap.md`. Search `notes/features/` for stories this one blocks or is blocked by. Those links will need updating if it splits.
 
 ## The test
 A group of behaviors, pieces or steps can be its own story when all three hold:
 1. **It ships on its own.** It doesn't need another group to be finished to work. It may depend on a group that comes before it, and that becomes a `blocked-by`.
-2. **Sarah can check it in the running app on its own.** It has something to see or a flow that should stay unchanged.
+2. **Sarah can check it in the running app on its own.** It has something to see or a flow that should stay unchanged. Work that changes only tests is checked with break-it checks instead (see "Test-only steps" in `.claude/skills/plan-steps/SKILL.md`).
 3. **It's useful without the rest.** If only this group shipped, the app would be better for it.
 
 Signs that a story holds more than one:

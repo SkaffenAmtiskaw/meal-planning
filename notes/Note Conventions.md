@@ -1,34 +1,39 @@
-How notes in this vault are organized. The [[Roadmap]] decides order; everything else about a story lives in its note.
+---
+paths:
+  - ".claude/skills/**"
+  - ".claude/agents/**"
+---
+%% `paths` makes Claude Code load this note whenever a session reads a skill or agent file, through the symlink `.claude/rules/note-conventions.md`. The rules for editing any note live in AGENTS.md under "Editing notes". %%
+
+How notes in this vault are organized and move through their lifecycle. The [[Roadmap]] decides order; everything else about a story lives in its note.
 
 # Frontmatter
 | Property | Values | Meaning |
 |---|---|---|
 | `type` | `feature` · `bug` · `pattern` · `cleanup` · `sweep` · `hub` | Which template the note follows. Blank on an `idea` note until its kind is clear. |
-| `status` | `idea` · `spec` · `ready` · `in-progress` · `in-review` · `done` · `dropped` | See lifecycle below. Hubs have no status. |
+| `status` | `idea` · `spec` · `ready` · `in-progress` · `in-review` · `done` · `dropped` | See lifecycle below. Hubs have no status. Not the ` ^status` line under Where It Stands: this says which lifecycle stage the note is in, that line says what's happening right now. |
 | `blocked-by` | list | Why the story can't move forward: another story (as a `"[[link]]"`), a decision that's needed, or an outside release. Empty when nothing blocks it. |
 | `confirmed` | date | When the note was last confirmed to match reality. Sarah shaping or re-shaping a note counts, since she only does that for issues she believes are still relevant. Don't bump it for moves, renames or link fixes. |
-| `kept-for` | list | Archived notes only. The open stories (as `"[[link]]"`) that still rely on this note's content, such as its design. `/close` deletes the note once none are left. Whenever a note starts relying on an archived note's content, add it here. An archived note with no `kept-for` is older than this property; `/close` asks about it when it comes across it. |
+| `kept-for` | list | Archived notes only. The open stories (as `"[[link]]"`) that still rely on this note's content, such as its design. |
 
 # Lifecycle
 - **idea** - rough notes. Nobody builds from this.
 - **spec** - a detailed design or technical approach exists, but it isn't broken into steps.
-- **ready** - has implementation steps. A story is **not** ready until it has steps, however settled the design is - steps are what make the work reviewable in small pieces. Any change to a `ready` note's design or steps sends it back to `spec` until Sarah re-reviews it.
+- **ready** - has implementation steps. A story is **not** ready until it has steps, however settled the design is - steps are what make the work reviewable in small pieces.
 - **in-progress** - work has started.
 - **in-review** - every step is implemented and confirmed. The code is waiting for a review of how the whole story fits together.
 - **done** - finished. Next: `/close`.
 - **dropped** - won't be built. Next: `/close`.
 
-Closing a story keeps its note in `archive/` only while other stories rely on it (`kept-for`); otherwise the note is deleted. Nothing is kept just as a record. If a finished note seems worth keeping for reference, the docs in `.opencode/docs/` are missing something. Hubs close the same way.
-
 # Templates
 Templates are in `templates/`. Pick by the shape of the fix, not where the work came from:
 - **Feature** - new user-facing behavior, often with a design handoff.
-- **Bug** - something is broken and the fix is local. If the root cause turns out to be systemic, create a Pattern note and link it; the bug note stays about its symptoms.
-- **Pattern** - introduce or standardize a convention and migrate code to it. Must include an Enforcement section.
+- **Bug** - something is broken and the fix is local.
+- **Pattern** - introduce or standardize a convention and migrate code to it.
 - **Cleanup** - remove or tidy code without a new convention.
 - **Sweep** - a rolling checklist of small fixes that share a logical grouping (e.g. unit test fixes, style fixes), collected until Sarah schedules one sweep for them all. Every item must be small, with no ambiguity and no open decisions. See Sweeps below.
 - **Idea** - jot something down quickly.
-- **Hub** - a map of several stories that touch the same area (e.g. [[Meal Editing]]), or a big idea that will clearly be several stories but needs decisions before it can be split. Not implemented directly. If the open decisions would only change *how* one story is built, not *what* the stories are, it's a story with `decision needed` entries in `blocked-by`, not a hub. When a story with a design is split, the original note becomes the hub and keeps the design in one copy. The child stories embed the sections they build rather than copying them.
+- **Hub** - a map of several stories that touch the same area (e.g. [[Meal Editing]]), or a big idea that will clearly be several stories but needs decisions before it can be split. Not implemented directly.
 
 # Sweeps
 A sweep note collects small fixes until Sarah decides it's time to handle them together. It follows the normal lifecycle, but in two notes: one that keeps collecting, and a dated copy for each sweep.
@@ -37,7 +42,7 @@ A sweep note collects small fixes until Sarah decides it's time to handle them t
 - **Sweeping** - the dated copy goes through `/check-drift` (re-check each item, drop any already fixed), `/plan-steps` and `/implement`, then `/review` and `/close` like any story. It never gets new items. Anything found during the sweep goes into the collecting note.
 
 # Next Step by Note State
-A note's `type` and `status` say what should happen to it next. This is the starting spec for agents that each take one kind of note and do its next step. Only the `/shape`, `/decide`, `/investigate`, `/assess`, `/plan-steps`, `/implement`, `/review`, `/check-drift` and `/close` skills exist today; the other agent names are placeholders.
+A note's `type` and `status` say what should happen to it next.
 
 | Note state                                                              | Next step                                                                                                                                                                                                                                                                             | Moves to                                                                                                                                      | Agent                                |
 | ----------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------ |
@@ -48,29 +53,18 @@ A note's `type` and `status` say what should happen to it next. This is the star
 | `sweep` · `idea`                                                        | Collect items. When Sarah schedules a sweep, freeze a dated copy (see Sweeps)                                                                                                                                                                                                         | the copy moves to `spec`; the original stays `idea`                                                                                           | by hand                              |
 | `sweep` · `spec`                                                        | Re-check every item against the code and drop any already fixed, then plan steps                                                                                                                                                                                                      | `ready`                                                                                                                                       | `/check-drift`, then `/plan-steps`   |
 | `feature` · `spec`                                                      | Suggested Approach, then implementation steps                                                                                                                                                                                                                                         | `ready`                                                                                                                                       | `/assess`, then `/plan-steps` skills |
-| `pattern` · `spec`                                                      | Rules, Enforcement and Migration Checklist, then implementation steps                                                                                                                                                                                                                 | `ready`                                                                                                                                       | architect for patterns *(planned)*   |
+| `pattern` · `idea`, no open decisions                                   | Rules, Enforcement and an audited Migration Checklist, approved with Sarah one piece at a time                                                                                                                                                                                        | `spec`                                                                                                                                        | `/architect` skill                   |
+| `pattern` · `spec`                                                      | Implementation steps. No `/assess` step - `/architect` already settled the rules and every place to migrate                                                                                                                                                                           | `ready`                                                                                                                                       | `/plan-steps` skill                  |
 | `bug` · `spec`                                                          | Implementation steps. No `/assess` step - `/investigate` already settled the fix while it had the root cause in hand, so there's nothing left to weigh                                                                                                                                | `ready`                                                                                                                                       | `/plan-steps` skill                  |
 | `cleanup` · `spec`                                                      | Implementation steps. No `/assess` step - `/investigate` already settled the cleanup's decisions while it had the scan in hand                                                                                                                                                        | `ready`                                                                                                                                       | `/plan-steps` skill                  |
 | `ready`                                                                 | Build it one step at a time                                                                                                                                                                                                                                                           | `in-progress` → `in-review`                                                                                                                   | `/implement` skill                   |
 | `in-review`                                                             | Review how the code fits together across the whole story: what no single step's review can show                                                                                                                                                                                       | `done`                                                                                                                                        | `/review` skill                      |
 | `spec` · `ready` · `in-progress`                                        | Check the remaining work against the code, conventions, other notes and Sarah's comments. Add ⚠️ Check Drift callouts, update `confirmed`                                                                                                                                             | unchanged, back to `spec` for `/plan-steps` or `/assess`, or add `blocked-by`                                                                 | `/check-drift` skill                 |
-| `done` · `dropped` · a hub with no open stories                         | Keep the note in `archive/` for the stories that still rely on it, or delete it. Unblock the stories that waited on it (their `blocked-by`, their `^status` line and their Roadmap line), clear its `**Blocked by**` marker from sweep items, and update every note that points to it | archived or deleted                                                                                                                           | `/close` skill                       |
+| `done` · `dropped` · a hub with no open stories                         | Keep the note in `archive/` for the stories that still rely on it, or delete it, and update the notes around it | archived or deleted                                                                                                                           | `/close` skill                       |
 
-`feature` · `idea` and `pattern` · `idea` have no agent yet: turning rough notes into a detailed design or a set of rules is done with the user, e.g. via Claude Design for features.
-
-# Markers Inside Notes
-- **Where It Stands** - every note starts with this section. Its line ending in ` ^status` is the story's status and nothing else: what work it needs next, or what it's waiting on. Never a description of the story. The [[Roadmap]] embeds it with `![[<note>#^status]]` so Sarah can scan what work each story needs. Whoever moves a story forward updates that line. It is not the frontmatter `status` property - that says which lifecycle stage the note is in; this says what is happening right now.
-- **Embedded sections** - `![[Note#Section]]` shows another note's section inline, e.g. a child story embedding the hub's design. Agents reading the raw file see only the link, so they must open each embedded section and treat it as part of the note.
-- **Step status** - `**Status:** ✅ Complete`, `❌ Will Not Do`, or `🚛 Moved to [[note]]`.
-- **As built** - when the build deviates from a step's plan, add an **As built:** note under the step. Never edit the plan text itself.
-- **Check Drift callouts** - when a note is checked against the code and something no longer matches, add `> ⚠️ **Check Drift YYYY-MM-DD:** ...` where the problem is, rather than rewriting the plan. Say whether it was verified in the running app or found by reading code.
-- **Sarah's comments** - a line where her name is a tag or a signature (`[Sarah] I want X instead.`, `Change this to Y - Sarah`) is Sarah's own words, usually a change of mind. Agents never edit her comments, and never write in her voice or sign as her. Third-person records of her decisions ("Approved by Sarah 2026-09-25") are fine.
-- **From the Split** - an unapproved handoff (behaviors or draft steps) that a split leaves in a child note, right before `# Suggested Approach`. The child's next skill starts from it and deletes it once it writes the real section. Nothing else builds from it.
-- **Moving unfinished work** - when a story is done except for one piece, move that piece (the full step, image embeds and relevant handoff text - not a summary) to the note that owns it, often a hub's Deferred Work section. Leave a 🚛 pointer behind. Archived notes are effectively invisible, so design references must travel with the work.
+`feature` · `idea` has no agent yet: turning rough notes into a detailed design is done with the user, e.g. via Claude Design. A `pattern` · `idea` with open decisions goes through `/decide` before `/architect`.
 
 # Files
 - Filenames are plain names - no emoji or status prefixes.
 - Stories live in `features/<area>/`; closed stories that other stories still rely on live in `archive/`.
 - Images go in `assets/<story-name>/`.
-- A file that nothing in the vault references anymore (no note embeds, links or mentions it, and no other file such as a `.dc.html` prototype loads it) is deleted. Whenever an edit removes or moves an embed, check whether its file is now unused. Search by filename, not path, because Obsidian finds files by name.
-- Design prototypes (`*.dc.html`) sit in the vault root and load `./support.js` and `assets/weeknight-header-dark.svg`. Don't duplicate those files; embed the existing ones.

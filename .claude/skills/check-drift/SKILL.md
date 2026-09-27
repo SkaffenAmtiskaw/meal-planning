@@ -25,16 +25,12 @@ This skill **flags and routes**. It never rewrites the plan. It adds ⚠️ Chec
 It only reads code. It never runs the app and never changes code. A hook blocks edits outside `notes/`, `.scratch/` and `.opencode/docs/`.
 
 ## Talking with Sarah
-- **One question at a time.** Ask one, wait for the answer, then ask the next. Never send a list of questions, and never ask her to approve a list of decisions at once.
-- **Wrong assumptions:** if her answer shows a question rested on a wrong assumption, say the question is no longer needed and move on. Don't apologize or explain how it happened.
 - **Her decisions are made.** When she has written or said that she wants something changed, don't ask whether she still wants it, and don't ask again for every place it touches. Ask only where applying it leaves a real choice open.
-- **Out-of-scope items:** keep a running list of anything that belongs outside this story. Don't stop to deal with them as they come up. Step 8 handles them.
 
 ## 1. Read the note
-Find the note in `notes/features/`. `notes/Note Conventions.md` explains the frontmatter and markers. It needs `status: spec`, `ready` or `in-progress`. If it has another status, tell Sarah what you found and stop. A collecting sweep note (`type: sweep`, `status: idea`) hasn't been frozen yet. Tell Sarah it needs freezing first, as Note Conventions describes under Sweeps, and stop.
+Find the note in `notes/features/`. It needs `status: spec`, `ready` or `in-progress`. If it has another status, tell Sarah what you found and stop. A collecting sweep note (`type: sweep`, `status: idea`) hasn't been frozen yet. Tell Sarah it needs freezing first, as Note Conventions describes under Sweeps, and stop.
 
 Read the whole note, including:
-- each embedded section (`![[Hub#Section]]`), which is part of the note
 - the Design Handoff and its images in `notes/assets/<story>/`
 - existing ⚠️ Check Drift callouts, and **As built** notes
 
@@ -46,13 +42,11 @@ Then work out the **remaining work**. That's all you check:
 Note the `confirmed` date. It's the baseline for everything below.
 
 ## 2. Find Sarah's comments
-A line is Sarah's own comment when her name is used as a tag or a signature, e.g. `[Sarah] I want to do X instead.` or `This needs to change to Y - Sarah`. Third-person mentions like "Approved by Sarah 2026-09-25" are records written by agents, not her comments.
+AGENTS.md says what counts as Sarah's comment, under "Editing notes". Third-person mentions like "Approved by Sarah 2026-09-25" are records written by agents, not her comments.
 
 Run `git blame --date=short` on the note. A comment is **new** when its line was added after `confirmed`, or isn't committed yet. Older comments were handled when `confirmed` was set. A change she tells you in chat this session counts as new too.
 
 For each new comment, trace it through the remaining work: every behavior, design section, approach row and step it affects. Each affected place becomes a finding (step 4). Most will be clear from what she wrote. Ask her only where there are two reasonable ways to apply it.
-
-Never edit her comments, and never write in her voice or sign as her. When you record a decision she made, write it in the third person.
 
 ## 3. Map the footprint and send out the checkers
 From the remaining work, write the story's footprint to `.scratch/<note name> - footprint.md`:
@@ -122,11 +116,7 @@ If more than one applies, the biggest wins: approach over steps over callouts on
 
 A `spec` sweep always goes to `/plan-steps` next.
 
-Show Sarah the new `^status` line, with any change to `status` or `blocked-by`, e.g. "Drift found. Next: /plan-steps to re-plan from Step 4". Wait for her approval before writing it. The line holds the status only, never a description of the story, because the Roadmap embeds it.
-
-Then:
-- Set `confirmed` to today.
-- Make sure the story's line in `notes/Roadmap.md` embeds that summary after the link (`![[<note>#^status]]`). Add the embed if it's missing. Never reorder the Roadmap.
+Update the `^status` line as AGENTS.md describes under "Editing notes", e.g. "Drift found. Next: /plan-steps to re-plan from Step 4", and set `confirmed` to today. Mention any change to `status` or `blocked-by` in your summary.
 
 ## 7. Summarize
 Show Sarah:
@@ -138,11 +128,7 @@ Show Sarah:
 ## 8. Find a home for out-of-scope items
 If the out-of-scope list is empty, skip this.
 
-Otherwise, send the whole list to the `scope-router` subagent. For each item, include what it is, where it was found (with `file:line` if it came from code) and why it's outside this story. Then go through its suggestions with Sarah **one item at a time**:
-1. Show the item and the suggested home, with its reason.
-2. Wait for her to approve, change or drop it.
-3. Apply that one change to the notes.
-4. Move to the next item.
+Otherwise, route it as AGENTS.md describes under "Out-of-scope work".
 
 ## 9. Stop
 Don't start the next step in this session. Tell Sarah the check is done and give her the command for a new session, e.g. `/plan-steps <note name>`, `/assess <note name>` or `/implement <note name>`.

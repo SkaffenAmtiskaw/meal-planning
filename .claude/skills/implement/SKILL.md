@@ -23,23 +23,16 @@ The agent this skill replaces failed her in three ways, and most rules below exi
 
 When the plan doesn't decide something, Sarah decides it, not you. She would rather answer many questions than review a guess.
 
-## Talking with Sarah
-- **One question at a time.** Ask one, wait for the answer, then ask the next. Never send a list of questions, and never ask her to approve a list of decisions at once.
-- **Wrong assumptions:** if her answer shows a question rested on a wrong assumption, say the question is no longer needed and move on. Don't apologize or explain how it happened.
-- **Doc gaps:** the moment you notice something that belongs in `.opencode/docs/` (a convention the docs don't cover, or a rule that's wrong or out of date), stop and ask Sarah whether it should become doc. If it should, draft the change, show it to her and write it once she approves. Don't save it for the report or a later pass.
-- **Out-of-scope items:** keep a running list of anything that belongs outside this step. Don't stop to deal with them as they come up. Step 10 handles them.
-
 ## 1. Find the step
-Find the note in `notes/features/`. It needs `status: ready` or `in-progress`. If it has neither, tell Sarah what you found and stop. `notes/Note Conventions.md` explains the frontmatter and markers if you need them.
+Find the note in `notes/features/`. It needs `status: ready` or `in-progress`. If it has neither, tell Sarah what you found and stop.
 
 Read the whole note, including:
-- each embedded section (`![[Hub#Section]]`), which is part of the note
 - the Design Handoff and its images in `notes/assets/<story>/`
 - ⚠️ Check Drift callouts, and **As built** notes on earlier steps
 
 The step to implement is the first one under `# Implementation` with no `**Status:**` line. Tell Sarah in one line which step you're implementing. If `status` is `ready`, set it to `in-progress` and move the story's line in `notes/Roadmap.md` into **Now**, following that file's rules for what a line holds.
 
-Read the project docs when the work needs them, not all up front: `.opencode/docs/project_conventions.md` and `project_structure.md` before writing code, `unit_tests.md` before writing tests, `theme.md` before UI work.
+Read the project docs AGENTS.md lists when the work needs them, not all up front.
 
 ## 2. Settle the open choices
 **The rule:** a choice is open when there are two reasonable ways to do something and no written source picks one. Written sources are:
@@ -69,14 +62,7 @@ When a new open choice comes up, stop and ask right then. Don't save it for the 
 Keep a list of every choice you make, each with its source. It goes in your report. If a choice has no source, it should have been a question.
 
 ## 3. Use current library APIs
-Memory is never a source for a library API. Every API you use needs one of these:
-- **The same API already used in this codebase,** the same way.
-- **Next.js:** the version-matched docs in `node_modules/next/dist/docs/`.
-- **Mantine:** the first time the step uses a component, or uses one for a new purpose, read its mantine.dev page, found through https://mantine.dev/llms.txt. Its docs show how Mantine intends the component to be used, which the types don't. Sarah strongly prefers doing things Mantine's way. To look up a prop on a component already used the documented way, the type definitions in `node_modules/@mantine/*/lib/` are enough.
-- **better-auth:** https://better-auth.com/llms.txt, then the page for the API you need.
-- **Anything else:** the installed package's docs for that version, or its type definitions.
-
-Look up only what the step uses: one component, one function, one page. No whole-library reading.
+Follow "Library APIs" in AGENTS.md for every API you use. Your own sense of an API is never a source.
 
 When you use custom CSS instead of a Mantine component, theme setting or variant, put a one-line comment directly above it saying why Mantine didn't fit.
 
@@ -107,7 +93,7 @@ Then read `cleanup.md` in this skill's folder and do what it says.
 Read `first-pass.md` in this skill's folder and do what it says.
 
 ## 7. Stage and report
-Stage the files this step changed, by path. Never use `git add -A` or `git add .`. Don't commit. Sarah commits.
+Stage the files this step changed, by path. Don't commit.
 
 Then report, in this order:
 1. **Files:** each file changed, with a one-line reason. Mark any file that isn't in the step's Files list.
@@ -140,20 +126,16 @@ Repeat until she confirms the step is done.
 ## 9. Update the note
 Once she confirms:
 1. Check the step's acceptance boxes and add `**Status:** ✅ Complete`.
-2. If anything differs from the plan, or was added at review, add an **As built:** note under the step. Never edit the plan text itself.
+2. If anything differs from the plan, or was added at review, add an **As built:** note under the step.
 3. If this was the last step, set `status` to `in-review`. The review of the whole story (`/review`), archiving, and unblocking the stories that waited on it all come later, not in this skill.
-4. Update the note's `^status` line to say what happens next, e.g. "In progress. Next: implement Step 4", or "All steps implemented. Next: /review" after the last step. It holds the status only, never a description of the story. Show Sarah the line and wait for her approval before writing it.
+4. Update the `^status` line as AGENTS.md describes under "Editing notes", e.g. "In progress. Next: implement Step 4", or "All steps implemented. Next: /review" after the last step.
 
 Leave the note changes unstaged.
 
 ## 10. Find a home for out-of-scope items
 If the out-of-scope list is empty, skip this.
 
-Otherwise, send the whole list to the `scope-router` subagent. For each item, include what it is, where it was found and why it's outside this step. Then go through the router's suggestions with Sarah **one item at a time**:
-1. Show the item and the suggested home, with its reason.
-2. Wait for her to approve, change or drop it.
-3. Apply that one change to the notes.
-4. Move to the next item.
+Otherwise, route it as AGENTS.md describes under "Out-of-scope work".
 
 ## 11. Stop
 Don't start the next step in this session. By now it has read the note, the docs and the whole step, and carrying that into the next step bloats the context. Tell Sarah the step is done and give her the command for a new session: `/implement <note name>`.
@@ -163,6 +145,6 @@ When the plan itself has to change:
 1. Stop coding. Leave the work as it is, staged or not.
 2. Add an **As built:** note under the step saying what's done, what isn't, and why the plan needs to change.
 3. Set `status` to `spec`, since any change to a ready note's steps sends it back.
-4. Update the `^status` line, e.g. "Needs re-plan from Step 3", after showing Sarah the line.
+4. Update the `^status` line, e.g. "Needs re-plan from Step 3".
 5. Route any out-of-scope items (step 10).
 6. Tell her to run `/plan-steps <note name>` in a new session.

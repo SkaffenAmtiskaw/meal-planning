@@ -26,6 +26,9 @@
 3. [[Mantine Date Picker Setup]] ![[Mantine Date Picker Setup#^status]] - spec. *(was high)*
 4. [[Today and Selected Day Markers]] ![[Today and Selected Day Markers#^status]] - spec. Fixes the truncated today circle; unblocks [[Mobile List View]]. *(was high)*
 5. [[Shared Types Directory]] - spec, last reviewed April. Unblocks [[Remove Schedule-X]].
+6. [[Docs Updates]] ![[Docs Updates#^status]]
+7. [[Sweep Refinements]] ![[Sweep Refinements#^status]]
+8. purge Playwright and switch to Claude's built-in browser - remove `scripts/playwright-server.sh` and the `.opencode/tmp/` files it writes, the Playwright MCP in `opencode.jsonc`, `.playwright-mcp/` in `.gitignore`, and the script's callers in `.opencode/docs/running_the_app.md` and `.claude/agents/bug-reproducer.md`. Start the dev server through `.claude/launch.json` and the built-in browser's `preview_start` instead. The OpenCode `inspect` and `bugfix` agents also use Playwright: decide whether they go too, since the OpenCode agents were meant to stay until the whole move is finished. Found 2026-09-27
 
 # Blocked
 - [[Header Date Picker]] ![[Header Date Picker#^status]] - spec. Waiting on [[Mantine Date Picker Setup]] and [[Today and Selected Day Markers]]. *(was high)*
@@ -37,7 +40,6 @@
 - [[Keyboard Shortcuts|keyboard shortcuts]] - spec. Out of date; re-review once the calendar views are mostly complete. *(was medium)*
 - calendar list view keyboard navigation - needs design review once the calendar views are mostly complete (see Step 16 in [[Replace Schedule-X]])
 - [[Style Decisions]] ![[Style Decisions#^status]]
-- [[Granular Webfetch Permissions|Update OpenCode agents webfetch permissions]] - idea. Waiting on an OpenCode release.
 - [[Settings Data Refresh]] ![[Settings Data Refresh#^status]] - spec. Waiting on [[Calendar and Recipes Data Refresh]].
 - [[Data Rules Enforcement]] ![[Data Rules Enforcement#^status]] - spec. Waiting on [[Calendar and Recipes Data Refresh]], [[Settings Data Refresh]] and [[Server-Only Creation and Pure Reads]].
 - [[Unchecked Planner Reads]] ![[Unchecked Planner Reads#^status]] - spec. ⚠️ Security: any planner's data may be readable by id without a membership check. Waiting on [[Calendar and Recipes Data Refresh]] and [[Server-Only Code Behind Barrels]].
@@ -119,12 +121,11 @@
 - [[Dev Tooling Tidy-Ups]] ![[Dev Tooling Tidy-Ups#^status]]
 
 ## Notes & Agent Workflow
-- [[Architect for Patterns]] ![[Architect for Patterns#^status]]
 - [[Agent Workflow Changes]] - idea.
 - [[Skill and Agent Tidy-Ups]] ![[Skill and Agent Tidy-Ups#^status]]
 - standardize the implementation step format - notes use at least three shapes today ("What we're doing / Acceptance Criteria / Architectural plan" in [[Replace Schedule-X]] and [[Mobile Month View]], "Problem to solve / Suggested Approach / Verification" in [[Mobile List View]], "Scope / Files / Architectural note / Acceptance" in [[Add Meal Changes (Saved Recipes)]])
 - reconcile each `spec` note against the code with `/check-drift` when it reaches the top of Next (Stale Data Issues and Unified Date Picker were written this week; Shared Types Directory and Tag Management date from April)
-- decide `type` for the untyped notes: [[Email Improvements]], [[Granular Webfetch Permissions]]
+- decide `type` for the untyped note [[Email Improvements]]
 - optional: an Obsidian Base listing notes by `type`, `status` and `confirmed`, to spot stale notes at a glance
 
 # Ideas

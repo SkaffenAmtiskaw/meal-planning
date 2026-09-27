@@ -21,22 +21,17 @@ A few rules shape how it works:
 - **Done and dropped stories close the same way,** except for the stories that waited on them. A done story unblocks them. A dropped story doesn't, so each one needs a new decision about what it waits on.
 - **Hubs close like any story.** A hub is often where the design lives, so it gets the same keep-or-delete check.
 - **Unblocked stories go to `/check-drift` next.** They were planned before this story changed the code.
-- **No unused files.** A file in the vault (an image, a `.dc.html` prototype, a script or SVG it loads) that nothing references anymore gets deleted. A close is when files lose their last reference: the note that embedded them is deleted, or content moves and pointers get reworded.
+- **No unused files.** A file in the vault (an image, a `.dc.html` prototype, a script or SVG it loads) that nothing references anymore gets deleted. A close is when files lose their last reference: the note that embedded them is deleted, or content moves and pointers get reworded. Files don't always sit where the conventions say, and references get missed, so every close checks the whole vault, not just this story's files.
 - **One note per run.** When closing this story means another note should close too, such as an archived note that loses its last `kept-for` entry or a hub with no open stories left, tell Sarah. She runs `/close` on it in a new session.
 
 This is notes work only. Don't change code. A hook blocks edits outside `notes/`, `.scratch/` and `.opencode/docs/`. Move and delete notes with plain `mv` and `rm`, never `git mv` or `git rm`, so every change stays unstaged.
 
 ## Talking with Sarah
-- **One question at a time.** Ask one, wait for the answer, then ask the next. Never send a list of questions, and never ask her to approve a list of decisions at once.
-- **Self-contained.** Put what a question is about inside it: the story, the note, the line. She may see only the question, not the text before it.
-- **Wrong assumptions:** if her answer shows a question rested on a wrong assumption, say the question is no longer needed and move on. Don't apologize or explain how it happened.
 - **Choices, not mechanics.** Some edits have only one right answer once the story is closed, like removing it from a `blocked-by` list. Make those without asking, and list them in the report at the end. Ask only where there's a real choice.
-- **Her comments:** a line where her name is a tag or a signature (`[Sarah] ...`, `... - Sarah`) is her own words. Never edit it. If one mentions this story and is now out of date, show it to her and let her decide.
-- **Doc gaps:** the moment you notice something that belongs in `.opencode/docs/` (a convention the docs don't cover, or a rule that's wrong or out of date), stop and ask Sarah whether it should become doc. If it should, draft the change, show it to her and write it once she approves.
-- **Out-of-scope items:** keep a running list of work that belongs to another story, whether you or Sarah found it. Step 6 handles them.
+- **Her comments:** if one of Sarah's comments mentions this story and is now out of date, show it to her and let her decide.
 
 ## 1. Read the note
-Read `notes/Note Conventions.md` first. Then find the note in `notes/features/` or `notes/archive/` and read all of it, including each embedded section (`![[Hub#Section]]`), which is part of the note.
+Find the note in `notes/features/` or `notes/archive/` and read all of it.
 
 Where the note is and its `status` decide the kind of close:
 - **`done`, in `notes/features/`:** a done close. Check that every step is marked ✅ Complete, ❌ Will Not Do or 🚛 Moved, and that each 🚛 target note really holds the moved work: the full step, its image embeds and the handoff text, not a summary. If anything is missing, tell Sarah what you found and stop.
@@ -68,7 +63,7 @@ Save the list to `.scratch/<note name> - close.md`, and mark each item as you ha
 ## 3. Keep or delete
 The note is needed by every open story with a Content match. A Content match from an archived note counts for the stories in that note's `kept-for`, not for the archived note itself.
 
-**If an open story needs it,** go through those stories one at a time. For each, ask Sarah whether to keep this note for that story, or move the content it relies on into the story so it no longer needs this note. Moving follows "Moving unfinished work" in Note Conventions: the full text, image embeds and handoff details, never a summary. Only offer to move a piece that no other story needs, because the design stays in one copy.
+**If an open story needs it,** go through those stories one at a time. For each, ask Sarah whether to keep this note for that story, or move the content it relies on into the story so it no longer needs this note. Move the full step or section, its image embeds and the handoff text it relies on, never a summary, and leave a 🚛 pointer behind. Archived notes are effectively invisible, so design references must travel with the work. Only offer to move a piece that no other story needs, because the design stays in one copy.
 
 **If no open story needs it,** it will be deleted. First, if it holds something that seems worth keeping for reference, such as a convention or the reason the code is the way it is, ask Sarah whether `.opencode/docs/` should cover it. If it should, draft the change, show it to her and write it once she approves.
 
@@ -80,8 +75,10 @@ Skip this for a re-close. Go through the Blocker matches one story at a time.
 **For a done close:**
 1. Remove this story from the `blocked-by` list, and from the "waiting on" wording of the story's Roadmap line.
 2. If the list still has entries, the story stays blocked. Move on to the next one.
-3. If the list is now empty, set the story's `^status` line to "Unblocked. Next: /check-drift" if it's `spec`, `ready` or `in-progress`. For an `idea` note, write the next step its type calls for in the Next Step by Note State table.
+3. If the list is now empty, set the story's `^status` line to "Unblocked. Next: /check-drift" if it's `spec`, `ready` or `in-progress`. For an `idea` note, write the next step its type calls for in the table below.
 4. If its Roadmap line is under Blocked, show Sarah the story and the current Next list, and ask where it goes. Don't suggest a spot. Move the line where she says.
+
+!`sh scripts/note-section.sh "Next Step by Note State"`
 
 **For a dropped close:** ask Sarah what the story waits on now: nothing, another story, or a decision. Update its `blocked-by` and Roadmap line to match. If nothing blocks it anymore, finish as in steps 3 and 4 of a done close. It was planned expecting this story's changes, so it needs `/check-drift` too.
 
@@ -100,11 +97,7 @@ Go through the remaining matches:
 ## 6. Find a home for out-of-scope items
 If the out-of-scope list is empty, skip this.
 
-Otherwise, send the whole list to the `scope-router` subagent. For each item, include what it is, where it was found (with `file:line`, or the note and section) and why it's outside this close. For a piece of a dropped story, include its full text and image embeds. Then go through its suggestions with Sarah **one item at a time**:
-1. Show the item and the suggested home, with its reason.
-2. Wait for her to approve, change or drop it.
-3. Apply that one change to the notes.
-4. Move to the next item.
+Otherwise, route it as AGENTS.md describes under "Out-of-scope work". For a piece of a dropped story, include its full text and image embeds.
 
 ## 7. Close the note
 1. Remove the note's own line from the Roadmap. For a hub, that's its line under Hubs.
@@ -115,10 +108,7 @@ Otherwise, send the whole list to the `scope-router` subagent. For each item, in
    - **Delete:** run `git status` on the note. If it has uncommitted changes or isn't tracked, git can't bring it back, so ask Sarah before deleting it. Delete it with `rm`.
 
 ## 8. Delete unused files
-The files to check are:
-- every file in `notes/assets/<story-name>/`
-- every file the closed note embeds or links
-- every file whose embed or link this close removed from another note, or moved into one
+Check every file in `notes/` that isn't a note (images, `.dc.html` prototypes, scripts, SVGs and anything else), wherever it sits, except `notes/templates/`. Don't limit it to this story's assets folder or its embeds: artifacts end up in whatever folder they were saved to, and references are sometimes missed, so an orphan can be anywhere.
 
 For each, search all of `notes/` for its filename, not its path, because Obsidian finds files by name. A reference is an embed (`![[file]]`), a link (`[[file]]`), the filename or path in plain text ("see `archive/assets/dish-row-states.png`"), or another file loading it, like a `.dc.html` prototype loading `./support.js`. Only references from files that still exist count, so a reference from a note deleted in step 7 doesn't.
 

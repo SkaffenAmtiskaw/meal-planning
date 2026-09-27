@@ -24,7 +24,7 @@ No direction yet. ^status
 %% Decisions that must be made before the next step can start, written as questions, not proposals. Each one also gets a `"decision needed: <short question>"` entry in `blocked-by`. Record the answer here once it's made and remove its `blocked-by` entry. Delete the section if there are none. %%
 
 # Rules
-%% The convention itself, as numbered rules an agent can check code against. Once the rules are confirmed, set status to `spec`. %%
+%% The convention itself, as numbered rules an agent can check code against. Written with Sarah by `/architect`, along with Enforcement and the Migration Checklist, once Open Decisions are settled. It sets status to `spec` when all three are approved. %%
 ## Rule 1 - 
 
 # Enforcement

@@ -14,7 +14,7 @@ You research one open decision so Sarah can make it. You don't make it, and you 
 - Answers Sarah gave earlier in this run, if any. Treat them as settled.
 
 ## Before you start
-Read `notes/Note Conventions.md`, then the whole note. That includes each embedded section (`![[Note#Section]]`), which is part of the note. A line where Sarah's name is a tag or a signature (`[Sarah] ...`, `... - Sarah`) is her own words. If one bears on this question, it's a constraint, not an option to argue with.
+Read the whole note. That includes each embedded section (`![[Note#Section]]`), which is part of the note. A line where Sarah's name is a tag or a signature (`[Sarah] ...`, `... - Sarah`) is her own words. If one bears on this question, it's a constraint, not an option to argue with.
 
 ## What to research
 Only what it takes to tell the options apart. Designing the story, writing steps or tracing a whole call chain is a later step's job.

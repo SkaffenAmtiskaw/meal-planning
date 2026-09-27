@@ -25,17 +25,10 @@ Most of these can be proven mechanically, and that's where most of the value is.
 
 **The bias this skill is built against.** The review agent this replaces strongly favored whatever had been built. It read the diff first, so the code became the frame, and it had no target of its own to compare against. So here the target design comes first, from an agent that never sees the code. Where the code and the target differ, that's a finding for Sarah to decide. The code doesn't win by default. "It works" and "it's already there" aren't reasons to keep it.
 
-## Talking with Sarah
-- **One question at a time.** Ask one, wait for the answer, then ask the next. Never send a list of questions, and never ask her to approve a list of decisions at once.
-- **Self-contained.** Put what a question or finding is about inside it: the file, the piece, the step. She may see only the question, not the text before it.
-- **Wrong assumptions:** if her answer shows a question rested on a wrong assumption, say the question is no longer needed and move on. Don't apologize or explain how it happened.
-- **Doc gaps:** the moment you notice something that belongs in `.opencode/docs/` (a convention the docs don't cover, or a rule that's wrong or out of date), stop and ask Sarah whether it should become doc. If it should, draft the change, show it to her and write it once she approves.
-- **Out-of-scope items:** keep a running list of anything outside this story, whether you, an agent or Sarah found it. Step 7 handles them.
-
 ## 1. Read the note
-Find the note in `notes/features/`. It needs `status: in-review`. If it has a different status, tell Sarah what you found and stop. `notes/Note Conventions.md` explains the frontmatter and markers if you need them.
+Find the note in `notes/features/`. It needs `status: in-review`. If it has a different status, tell Sarah what you found and stop.
 
-Read the note, including each embedded section (`![[Hub#Section]]`), which is part of the note. Don't open the story's code yet.
+Read the note. Don't open the story's code yet.
 
 The review depends on `type`:
 - **feature:** the full review, steps 2 to 8.
@@ -105,15 +98,11 @@ Put the approved fixes in dependency order. For each one:
 ## 7. Find a home for out-of-scope items
 If the out-of-scope list is empty, skip this.
 
-Otherwise, send the whole list to the `scope-router` subagent. For each item, include what it is, where it was found (with `file:line`) and why it's outside this review's fixes. Then go through its suggestions with Sarah **one item at a time**:
-1. Show the item and the suggested home, with its reason.
-2. Wait for her to approve, change or drop it.
-3. Apply that one change to the notes.
-4. Move to the next item.
+Otherwise, route it as AGENTS.md describes under "Out-of-scope work".
 
 ## 8. Update the note
 1. Set `status` to `done`.
-2. Update the `^status` line to "Reviewed. Next: /close". Show Sarah the line and wait for her approval before writing it.
+2. Update the `^status` line to "Reviewed. Next: /close".
 
 Write nothing else to the note. The fixes live in the commits, and routed findings live in the notes they went to. Leave the note changes unstaged.
 

@@ -14,8 +14,6 @@ Use Bash only for read-only git commands: `git log`, `git show`, `git diff`, `gi
 - A footprint file listing the code the remaining work names, the kinds of things it builds, the UI areas it touches and its related notes.
 - Which part of the note is remaining work. Read that part, and the design and approach sections it builds. Ignore completed steps.
 
-Read `notes/Note Conventions.md` first. It explains the frontmatter and markers.
-
 ## What to check
 ### 1. Find the changed notes
 - `git log --since=<confirmed> --name-only -- notes/` for notes changed since `confirmed`, and `git status -- notes/` for uncommitted changes.

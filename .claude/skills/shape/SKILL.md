@@ -22,12 +22,8 @@ Pick the type by the shape of the fix, not by where the idea came from. A user r
 
 This is planning only. Don't change code. A hook blocks edits outside `notes/` and `.scratch/`.
 
-## Talking with Sarah
-- **One question at a time.** Ask one, wait for the answer, then ask the next. Never send a list of questions, and never ask her to approve a list of decisions at once. A later question often depends on an earlier answer.
-- **Wrong assumptions:** if her answer shows a question rested on a wrong assumption, say the question is no longer needed and move on. Don't apologize or explain how it happened.
-
 ## 1. Find the idea
-Read `notes/Note Conventions.md` first. It explains the frontmatter, templates and markers.
+Read `notes/Note Conventions.md` first. It explains the frontmatter, the note types and what step comes next for each note.
 
 - **A note name:** find it in `notes/features/`. It should have `status: idea`. If `type` is already set, this is a re-shape: confirm the type in step 4 rather than assuming it. If the status is `spec` or later, tell Sarah it's past shaping and stop.
 - **A Roadmap line:** find it in `notes/Roadmap.md`. If it already links to a note, use that note. Otherwise there's no note yet. Step 6 creates one.
@@ -41,7 +37,7 @@ Don't check whether the idea is still relevant. Sarah running `/shape` on it mea
 - **Story count:** whether this is one story or several. Signs of several: parts with different types (e.g. a bug for the symptoms and a pattern for the systemic cause), parts that could ship and be reviewed on their own, or parts that already belong to other stories.
 - **Libraries:** only if the idea could be a feature or a pattern. Check `package.json` for something already installed that covers it (Mantine often does), then do a quick search for libraries that solve the problem. Names only. Don't compare them, read their docs in depth or judge their fit. Whether to adopt one is a decision (next bullet), not something to settle here.
 
-- **Blocking decisions:** questions that must be answered before the next step can start. For example: can we use an outside service at all, who it's for, where the data lives, which platforms come first, adopt a library or build, or what another story decides. Questions the next step answers as part of its own work, like layout details for Claude Design, don't count. List them; don't answer them.
+- **Blocking decisions:** questions that must be answered before the next step can start. For example: can we use an outside service at all, who it's for, where the data lives, which platforms come first, adopt a library or build, or what another story decides. For a pattern, if the note says what's wrong but not what the convention should be ("these are all bad the same way, but what's the right fix?"), choosing the convention is a blocking decision. `/architect` writes the Rules for a chosen convention; it doesn't choose one. Questions the next step answers as part of its own work, like layout details for Claude Design, don't count. List them; don't answer them.
 
 Don't read external docs unless the idea depends on what a library can do, and then only enough to know whether it's possible.
 
@@ -70,7 +66,7 @@ Show her the draft and wait for her approval, then write it as in step 6. Hubs h
 Each story gets a placeholder now, and its real shaping later in its own session:
 1. **One idea note per story.** Create it in `notes/features/<area>/` from `notes/templates/Idea.md`, with `type` left blank. Its Where It Stands line is just the next step: "Next: /shape ^status". Under Notes goes a line saying which idea it was split from (a link to the original), its one-line scope, and the parts of Sarah's idea that belong to it, in her wording. If a part fits no story, ask her where it goes rather than dropping it. Show her each note before you write it, one at a time.
 2. **The original.** If it's an idea note, replace its content with 🚛 pointers to the new notes. Never delete it. If it's a Roadmap line with no note, it gets replaced in the next step.
-3. **The Roadmap.** Each new note gets a line that links to it and embeds its summary (`[[Note]] ![[Note#^status]]`). Ask Sarah which section each one goes in, one at a time. Never reorder the Roadmap.
+3. **The Roadmap.** Each new note gets a line that links to it and embeds its summary (`[[Note]] ![[Note#^status]]`). Ask Sarah which section each one goes in, one at a time.
 4. **Stop.** Don't start shaping any of the stories in this session, so the context from this one doesn't carry over. List each new note with the command to run in a new session, e.g. `/shape <note name>`.
 
 ## 4. Present the directions
@@ -91,7 +87,7 @@ Wait for her to pick one or suggest her own.
 
 ## 5. Draft the note
 Draft the note from the template in `notes/templates/` for the chosen type:
-- **Where It Stands:** a status line ending in ` ^status`: the next step, or what the story is waiting on, and nothing else. Don't describe the story or restate the direction on this line. The Roadmap embeds it so Sarah can scan what work each story needs, and the link already names the story. Below the line, give the chosen direction in a sentence or two, then list any questions the next step will answer as part of its own work.
+- **Where It Stands:** the `^status` line, with the next step or what the story is waiting on. Don't restate the direction on it. Below the line, give the chosen direction in a sentence or two, then list any questions the next step will answer as part of its own work.
 - **Open Decisions:** the blocking decisions from step 2, one per line. Write them as questions, not proposals. Under an adopt-or-build decision, name the candidates from step 2 without ranking them. Delete the section if there are none.
 - **Sarah's content:** move everything from the idea into the template's sections. Keep her wording. If something fits no section, put it under Where It Stands rather than dropping it.
 - **Don't fill** the sections that belong to a later step: Design Handoff, Suggested Approach, Root Cause, Fix Options, Current State, Rules, Migration Checklist and Implementation. Leave their template comments in place.
@@ -109,4 +105,4 @@ Once she approves:
 - **A Roadmap line with no note:** create the note in `notes/features/<area>/`, with a plain filename (no emoji or prefixes). If the area isn't obvious, ask her which folder.
 - **Folded into an existing note or a sweep:** apply the addition there. Replace the idea note's content with a 🚛 pointer to where it went. Never delete the file.
 - **Folded into a sweep from a Roadmap line with no note:** add the item and remove the Roadmap line.
-- **The Roadmap:** make the story's line link to the note and embed its summary, e.g. `[[Note]] ![[Note#^status]]`. Keep the line in its current section and keep annotations like *(was high)*. For a new note from a split, ask Sarah which section its line goes in. Never reorder the Roadmap; order is her call.
+- **The Roadmap:** make the story's line link to the note and embed its summary, e.g. `[[Note]] ![[Note#^status]]`. Keep the line in its current section and keep annotations like *(was high)*. For a new note from a split, ask Sarah which section its line goes in.

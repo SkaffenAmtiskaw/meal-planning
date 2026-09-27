@@ -24,14 +24,10 @@ A few things shape how it works:
 This is planning only. Don't change code. A hook blocks edits outside `notes/` and `.scratch/`.
 
 ## Talking with Sarah
-- **One question at a time.** Ask one, wait for the answer, then ask the next. Never send a list of questions, and never ask her to approve a list of decisions at once. A later question often depends on an earlier answer.
-- **Wrong assumptions:** if her answer shows a question rested on a wrong assumption, say the question is no longer needed and move on. Don't apologize or explain how it happened.
-- **Her decisions are made.** A line where her name is a tag or a signature (`[Sarah] ...`, `... - Sarah`) is her own words. If one already answers a question, show it to her and confirm it's still her answer. Never edit her comments.
-- **Recommendations:** give one when best practice supports it, and name the practice. When a choice comes down to her preference, say so and don't guess.
-- **Out-of-scope items:** keep a running list of anything that belongs outside this story. Don't stop to deal with them as they come up. Step 5 handles them.
+- **Her decisions are made.** If one of Sarah's comments already answers a question, show it to her and confirm it's still her answer.
 
 ## 1. Read the note
-Read `notes/Note Conventions.md` first. Then find the note in `notes/features/` and read all of it, including each embedded section (`![[Note#Section]]`), which is part of the note.
+Find the note in `notes/features/` and read all of it.
 
 It should be `type: bug` or `type: cleanup`, with `status: idea`. Otherwise, tell Sarah what you found and stop. A note at `spec` or later that needs re-checking goes through `/check-drift`.
 
@@ -72,16 +68,13 @@ If the cause depends on runtime behavior, such as layout, timing or the data the
 If the same mistake is made in many places, the cause is systemic. Keep this note about its symptoms, and add "a Pattern note for <the mistake>" to the out-of-scope list.
 
 ### 2d. Settle the fix
-Work out the reasonable fixes. Read the project docs they touch (`.opencode/docs/project_conventions.md`, `project_structure.md`, `unit_tests.md`), and read the installed version's docs for any library a fix relies on, never what you remember of its API:
-- Mantine: https://mantine.dev/llms.txt
-- better-auth: https://better-auth.com/llms.txt
-- Next.js: `node_modules/next/dist/docs/`
+Work out the reasonable fixes. Read the project docs they touch (`.opencode/docs/project_conventions.md`, `project_structure.md`, `unit_tests.md`), and check any library a fix relies on as AGENTS.md describes under "Library APIs".
 
 **Review fixes that add a job.** If a fix adds behavior or a responsibility to an existing module, and doesn't just correct what the module already does, send `code-critic` that module with the fix's job as a one-sentence target piece. Don't say which fix you prefer. Save its report, unedited, to `.scratch/<note name> - critic.md`. Add its "Outside this story" and "Duplication" items to your out-of-scope list. Pure corrections, like a wrong condition or a bad transform, skip this.
 
 **Present it.** Show Sarah the root cause from 2c, then the fix:
 - **One reasonable fix:** what changes and where, and why. If the critic reviewed it, give its verdict. Wait for her approval.
-- **More than one:** give each option with its trade-offs, what it touches and the critic's verdict if it has one. Then recommend one, following the Recommendations rule above. Wait for her to pick.
+- **More than one:** give each option with its trade-offs, what it touches and the critic's verdict if it has one. Then recommend one, following "Recommendations" in AGENTS.md. Wait for her to pick.
 
 If Sarah wants to think it over, or the choice needs research beyond this bug, don't push. Write it as an Open Decisions question with the options under it, and add a `"decision needed: which fix to use"` entry to `blocked-by`. `/decide` settles it later.
 
@@ -93,7 +86,7 @@ Find everything in the note's scope as it stands today, with file paths and line
 Record how you checked each finding, e.g. "grep for `CalendarEvent` on 2026-09-26" or "read both files". Cleanup notes go stale quickly, and `/plan-steps` re-checks them.
 
 ### 3b. Settle the decisions
-The scan usually raises questions about how to tidy something, such as whether a type needs to exist, or whether two shapes can line up. Take each one to Sarah, one at a time, with its options and trade-offs and a recommendation, following the Recommendations rule above. Read the project docs and library docs as in 2d when an option depends on them.
+The scan usually raises questions about how to tidy something, such as whether a type needs to exist, or whether two shapes can line up. Take each one to Sarah, one at a time, with its options and trade-offs and a recommendation, following "Recommendations" in AGENTS.md. Read the project docs and library docs as in 2d when an option depends on them.
 
 If Sarah wants to think one over, or it needs research beyond this scan, leave it for `/decide`. It gets an Open Decisions question and a `"decision needed: <short question>"` entry in `blocked-by`.
 
@@ -113,20 +106,14 @@ Draft the changes and show them to Sarah before writing. Keep her wording wherev
 - **Acceptance Criteria:** usually "X no longer exists", plus the existing flows that must stay unchanged, named.
 
 **Both:**
-- **Where It Stands:** remove the questions that were for this step, now that the note answers them. Draft the new ` ^status` line. It says what happens next and nothing else, e.g. "Next: /plan-steps" or "Waiting on your fix decision. Next: /decide, then /plan-steps". Show Sarah the line and wait for her approval.
+- **Where It Stands:** remove the questions that were for this step, now that the note answers them. Update the `^status` line as AGENTS.md describes under "Editing notes", e.g. "Next: /plan-steps" or "Waiting on your fix decision. Next: /decide, then /plan-steps".
 - **Frontmatter:** set `status: spec` and `confirmed` to today. Update `blocked-by`: remove entries this run settled or that only waited on this skill being built, and add any `decision needed` entries from 2d or 3b.
-- **Roadmap:** make sure the story's line in `notes/Roadmap.md` links to the note and embeds its status (`![[<note>#^status]]`). Fix any text on the line that this run made wrong, like "blocked on the investigate skill". Never reorder the Roadmap.
+- **Roadmap:** fix any text on the story's line in `notes/Roadmap.md` that this run made wrong, like "blocked on the investigate skill".
 
 ## 5. Find a home for out-of-scope items
 If the out-of-scope list is empty, skip this step.
 
-Otherwise, send the whole list to the `scope-router` subagent. For each item, include what it is, where it was found (with `file:line` if it came from code) and why it's outside this story. The router reads the notes and suggests a home for each item. It doesn't change anything.
-
-Then go through its suggestions with Sarah **one item at a time**:
-1. Show the item and the suggested home, with its reason.
-2. Wait for her to approve, change or drop it.
-3. Apply that one change to the notes.
-4. Move to the next item.
+Otherwise, route it as AGENTS.md describes under "Out-of-scope work".
 
 ## 6. Stop
 Don't start planning steps in this session. It has read the code and the repro reports, and carrying that into `/plan-steps` anchors the plan to this session's reading. Tell Sarah the note is at `spec`, and give the command to run in a new session: `/plan-steps <note name>`, or `/decide <note name>` if a decision was left open.

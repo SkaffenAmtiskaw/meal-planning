@@ -25,14 +25,11 @@ A few things shape how it works:
 This is planning only. Don't change code. A hook blocks edits outside `notes/` and `.scratch/`.
 
 ## Talking with Sarah
-- **One question at a time.** Ask one, wait for the answer, then ask the next. Never send a list of questions, and never ask her to approve a list of decisions at once. A later question often depends on an earlier answer.
-- **Wrong assumptions:** if her answer shows a question rested on a wrong assumption, say the question is no longer needed and move on. Don't apologize or explain how it happened.
-- **Her decisions are made.** A line where her name is a tag or a signature (`[Sarah] ...`, `... - Sarah`) is her own words. If one already answers a question, show it to her and confirm it's still her answer rather than researching it again. Never edit her comments.
-- **Recommendations:** give one when best practice supports it, and name the practice. When a question comes down to her preference, say so and don't guess. If she asks for a recommendation, always give one.
+- **Her decisions are made.** If one of Sarah's comments already answers a question, show it to her and confirm it's still her answer rather than researching it again.
 - **Running lists:** keep a list of effects on other notes and a list of new stories the answers imply. Don't stop to deal with them as they come up. Steps 5 and 6 handle them.
 
 ## 1. Read the note
-Read `notes/Note Conventions.md` first. Then find the note in `notes/features/` and read all of it, including each embedded section (`![[Note#Section]]`), which is part of the note.
+Find the note in `notes/features/` and read all of it.
 
 A decision is open if it's:
 - an item under `# Open Decisions` with no **Decided** line under it. One with only a **Partly answered** line is still open.
@@ -86,7 +83,7 @@ The `blocked-by` entry stays. The findings lines matter because the brief will b
 
 ### Knock-on effects
 After recording, look at what the answer changes:
-- **This note:** other sections the answer lands in, e.g. a section the question says to record it in, the chosen Fix Option, or a hub's Coverage or Child Stories table. Draft each change and go through them with Sarah one at a time. If the note is `ready` and the change touches its design or steps, it goes back to `spec` (Note Conventions, Lifecycle). Say so when you show the change.
+- **This note:** other sections the answer lands in, e.g. a section the question says to record it in, the chosen Fix Option, or a hub's Coverage or Child Stories table. Draft each change and go through them with Sarah one at a time. If the note is `ready` and the change touches its design or steps, it goes back to `spec` (AGENTS.md, "Editing notes"). Say so when you show the change.
 - **Other notes:** add each effect to the running list: which note, what changes and why. Step 6 handles them.
 - **New stories:** if the answer implies work no note covers yet, add it to the running list of new stories. Step 5 handles them.
 - **New questions:** if the brief found a blocking question that isn't on the note, or the answer raised one, show it to Sarah as a question, not a proposal. Once she approves, add it to Open Decisions (plus a `decision needed` entry in `blocked-by` on a story). Then ask whether to take it now or leave it for a later run.
@@ -95,9 +92,8 @@ Then go on to the next decision she picked.
 
 ## 4. Update the note's status
 Once the picked decisions are done:
-- **Where It Stands:** update the line ending in ` ^status` to say what work comes next or what the note waits on, e.g. "Decisions made. Next: /assess" or "2 open decisions. Next: /decide". Use the Next Step by Note State table in Note Conventions. It holds the status only, never a description of the story, because the Roadmap embeds it for scanning. Show Sarah the line and wait for her approval before writing it. If the note has no `# Where It Stands` section, add one at the top, right after the frontmatter, in the format from the note's template.
+- **Where It Stands:** update the `^status` line as AGENTS.md describes under "Editing notes", e.g. "Decisions made. Next: /assess" or "2 open decisions. Next: /decide".
 - **`confirmed`:** set it to today. Sarah making decisions on a note counts as confirming it.
-- **The Roadmap:** make sure the note's line in `notes/Roadmap.md` embeds its status (`![[<note>#^status]]`). Never reorder the Roadmap.
 
 ## 5. New stories
 Skip this if the running list of new stories is empty.
@@ -105,25 +101,21 @@ Skip this if the running list of new stories is empty.
 **On a hub:** propose the child stories, one at a time, each with a one-line scope and the decisions it comes from. Wait for Sarah to approve, change or drop each one. For each one she approves:
 1. Create an idea note in `notes/features/<area>/` from `notes/templates/Idea.md`, with `type` left blank. Its Where It Stands line is "Next: /shape ^status". Under Notes, link the hub, give the one-line scope, and quote the Decided lines it comes from.
 2. Add it to the hub's Child Stories table.
-3. Add a Roadmap line that links to it and embeds its status (`[[Note]] ![[Note#^status]]`). Ask Sarah which section it goes in. Never reorder the Roadmap.
+3. Add a Roadmap line that links to it and embeds its status (`[[Note]] ![[Note#^status]]`). Ask Sarah which section it goes in.
 
 **On a story:** add the new stories to the list for step 6. They go through `scope-router` like any other work outside this note.
 
 ## 6. Other notes
 Skip this if the running list is empty.
 
-Send the whole list to the `scope-router` subagent. For each item, include which decision it comes from, the Decided line, what it changes and why it's outside this note. The router suggests a home for each item. It doesn't change anything.
-
-Then go through its suggestions with Sarah **one item at a time**:
-1. Show the item and the suggested home, with its reason.
-2. Wait for her to approve, change or drop it.
-3. Apply that one change to the notes.
-4. Move to the next item.
+Route it as AGENTS.md describes under "Out-of-scope work". For each item, also include which decision it comes from and its Decided line.
 
 ## 7. Stop
 Tell Sarah what's left:
 - **Open decisions remain:** list them in one line each. The next run is `/decide <note name>`.
-- **None remain:** give the note's next step from Note Conventions, e.g. `/assess <note name>`.
+- **None remain:** give the note's next step from the table below, e.g. `/assess <note name>`.
 - **Children were created:** list each one with the command to run in a new session, e.g. `/shape <child name>`.
+
+!`sh scripts/note-section.sh "Next Step by Note State"`
 
 Don't start the next step in this session, even if it's the obvious one. It deserves a fresh context.

@@ -22,13 +22,8 @@ Past plans failed her in two ways:
 
 This is planning only. Don't change code. A hook blocks edits outside `notes/` and `.scratch/`.
 
-## Talking with Sarah
-- **One question at a time.** Ask one, wait for the answer, then ask the next. Never send a list of questions, and never ask her to approve a list of decisions at once.
-- **Wrong assumptions:** if her answer shows a question rested on a wrong assumption, say the question is no longer needed and move on. Don't apologize or explain how it happened.
-- **Out-of-scope items:** keep a running list of anything that belongs outside this story. Don't stop to deal with them as they come up. Step 6 handles them.
-
 ## 1. Read the note
-Find the note in `notes/features/`. `notes/Note Conventions.md` explains the frontmatter and markers. It needs `status: spec` and an approved approach:
+Find the note in `notes/features/`. It needs `status: spec` and an approved approach:
 - **Feature:** a `# Suggested Approach`.
 - **Pattern:** Rules, Enforcement, and a Migration Checklist. Some older notes call the checklist "Places to Update."
 - **Sweep:** its unchecked Items, minus any a ⚠️ Check Drift callout drops or moves out. A frozen sweep goes through `/check-drift` first. If its `^status` line still says "Frozen. Next: /check-drift", tell Sarah and stop.
@@ -37,7 +32,7 @@ Find the note in `notes/features/`. `notes/Note Conventions.md` explains the fro
 
 If the status or the approach is missing, tell Sarah what you found and stop. For a feature without an approach, `/assess` comes first. For a bug or cleanup, `/investigate` does.
 
-Read any ⚠️ Check Drift callouts and **As built** notes as well. A story split from a hub embeds its design sections from the hub (`![[Hub#Section]]`). Read each embedded section; it's part of this note.
+Read any ⚠️ Check Drift callouts and **As built** notes as well.
 
 If the note has a `# From the Split` section because the story was split from a larger plan, start from its draft steps rather than drafting from nothing. They aren't approved yet, so they go through the checkers and Sarah's review like any other draft.
 
@@ -66,6 +61,19 @@ When a step adds behavior to an existing module, name the job that module alread
 Each acceptance criterion is a checkbox with a click-through: "Go to [view], [do something], see [result]." Say which user (for example, read-only), which screen size (phone or desktop), and what data is needed (for example, a day with two meals).
 
 Never use "tests pass", "inspect the code" or "types compile" as a check. Tests passing is assumed for every step. Failure, empty and read-only behaviors are checked in the step that builds them.
+
+#### Test-only steps: break-it checks
+When a step changes only test files, shared mocks in `test/mocks/` included, nothing in the running app changes. Its checks are break-it checks instead of click-throughs. Each one proves that a kept or rewritten test catches real behavior:
+
+"Temporarily change `<file>:<line>` from `<code>` to `<code>`, run `pnpm vitest run <test file>`, see these tests fail: `<test name>`, `<test name>`. Revert."
+
+- **Name every test that should fail**, not just the one the check aims at. Read the test file to work out the full list. If a different set fails when the check is run, something is wrong: either the plan misread what the tests cover, or a test is weaker than it looks.
+- **Revert every edit** before the next check.
+- **Break behavior, not imports.** A break that only breaks imports proves nothing. For example, renaming a shared mock's export to show a test file uses the shared mock fails every importer at once. The `vi.mock` line in the diff already shows which mock a file uses.
+- **Breaking a shared mock's behavior counts.** For example, change a default `ok: true` to `ok: false` in `test/mocks/@/_actions/library.ts`, then see the tests that rely on the success default fail.
+- **Isolation checks count too.** Add `throw new Error('x')` to a dependency the tests should no longer reach, then see every test in the file still pass.
+
+A step that changes source files as well as tests uses click-throughs like any other step.
 
 ### Coverage
 Every behavior and every piece in the approach must land in some step. Nothing can land in a step unless it's in the approach.
@@ -119,24 +127,19 @@ Once she has approved every step, write the plan under `# Implementation` in the
 Then:
 - Set `status` to `ready`.
 - If the story's line in `notes/Roadmap.md` shows its status, update it.
-- Update the note's Where It Stands line, the one ending in ` ^status`, to say what work comes next, e.g. "Ready. Next: build Step 1". It holds the status only, never a description of the story, because the Roadmap embeds it for scanning. Show Sarah the line and wait for her approval before writing it. If the note has no `# Where It Stands` section yet, add one at the top, right after the frontmatter, in the format from `notes/templates/Feature.md`.
-- Make sure the story's line in `notes/Roadmap.md` embeds that summary after the link (`![[<note>#^status]]`). Add the embed if it's missing.
+- Update the `^status` line as AGENTS.md describes under "Editing notes", e.g. "Ready. Next: build Step 1".
 
 ## 6. Find a home for out-of-scope items
 If the out-of-scope list is empty, you're done.
 
-Otherwise, send the whole list to the `scope-router` subagent. For each item, include what it is, where it was found and why it's outside this story. Then go through the router's suggestions with Sarah **one item at a time**:
-1. Show the item and the suggested home, with its reason.
-2. Wait for her to approve, change or drop it.
-3. Apply that one change to the notes.
-4. Move to the next item.
+Otherwise, route it as AGENTS.md describes under "Out-of-scope work".
 
 ## Splitting a story
 `split-checker` proposes the split. Sarah decides, one piece at a time:
 1. **Whether to split.** Show the verdict and the reason, plus each child's name and scope line, then ask whether to split. If she says no, carry on as one story.
 2. **Each child, one at a time.** Show what it takes, what blocks it and which design sections it embeds. Wait for her to approve or change it. If a change moves something to another child, update that child before you get to it.
 3. **Leftovers, one at a time.** Raise anything under Unclaimed, and each move to an existing story.
-4. **Apply.** Once she has approved every child, apply the note changes from the report. Create the children first, then rewrite the original as the hub, then update the links in other notes. Show each Roadmap line before you write it, and never reorder the Roadmap.
+4. **Apply.** Once she has approved every child, apply the note changes from the report. Create the children first, then rewrite the original as the hub, then update the links in other notes. Show each Roadmap line before you write it.
 5. **Hand each child its draft.** Copy each child's share of the draft steps, in full, into its `# From the Split` section. Its own `/plan-steps` runs in a new session and starts from that section. Never hand this over through scratch, which is wiped on commit.
 6. **Route out-of-scope items.** If you've collected any, handle them as in step 6.
 7. **Stop.** Don't start work on any child in this session. By now it has read the whole design, the approach, a full draft and the split report, and carrying that into a child's plan bloats the context. Tell Sarah the split is done, and list each child with the command to run in a new session, e.g. `/plan-steps <child name>`.
