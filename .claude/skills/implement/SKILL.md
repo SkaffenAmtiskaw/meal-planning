@@ -61,7 +61,7 @@ Things the conventions settle, like local variable names or file naming, aren't 
 1. Read every file the step lists. Note anywhere the code isn't what the plan assumes.
 2. If the step adds behavior to an existing module, name the job that module already does. If the new behavior isn't that same job, it's an open choice.
 3. For UI work, go through each element in the design sections the step cites. For each one, name the Mantine component or theme value you'll use. If the nearest Mantine option would look clearly different from the design or wouldn't fit, that element was probably meant to be custom. Ask Sarah whether to build it custom or use a Mantine approximation.
-4. Write the open choices to `.opencode/scratch/<note name> - step <N> choices.md`, then ask about them one at a time.
+4. Write the open choices to `.scratch/<note name> - step <N> choices.md`, then ask about them one at a time.
 
 ### While writing code
 When a new open choice comes up, stop and ask right then. Don't save it for the end, and don't put in a placeholder to fix later.

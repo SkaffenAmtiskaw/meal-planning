@@ -47,6 +47,6 @@ next-env.d.ts
 .pnpm-store
 
 # agent tooling
-.opencode/scratch/
+.scratch/
 .opencode/secrets
 .playwright-mcp/

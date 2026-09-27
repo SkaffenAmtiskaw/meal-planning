@@ -20,7 +20,7 @@ Past plans failed her in two ways:
 - **Steps too big.** One step made many unrelated changes, so she couldn't follow the diff.
 - **Steps meaningless.** The check was "unit tests pass." `expect(true).toEqual(true)` passes too. Every step has to make progress she can see with her own eyes.
 
-This is planning only. Don't change code. A hook blocks edits outside `notes/` and `.opencode/scratch/`.
+This is planning only. Don't change code. A hook blocks edits outside `notes/` and `.scratch/`.
 
 ## Talking with Sarah
 - **One question at a time.** Ask one, wait for the answer, then ask the next. Never send a list of questions, and never ask her to approve a list of decisions at once.
@@ -93,18 +93,18 @@ A step that claims a Symptom needs an acceptance check that reproduces the origi
 - [ ] Go to ..., press ..., see ...
 ```
 
-Save the draft to `.opencode/scratch/<note name> - plan.md`.
+Save the draft to `.scratch/<note name> - plan.md`.
 
 ## 3. Have the plan checked
 
 ### Several stories?
-A draft plan shows most clearly whether a story is really several. Skip this check if you started from a `# From the Split` section and haven't changed which steps it holds. Otherwise, send the note path and the draft path to the `split-checker` subagent, as the **Plan** checkpoint. Save its report to `.opencode/scratch/<note name> - split check.md`.
+A draft plan shows most clearly whether a story is really several. Skip this check if you started from a `# From the Split` section and haven't changed which steps it holds. Otherwise, send the note path and the draft path to the `split-checker` subagent, as the **Plan** checkpoint. Save its report to `.scratch/<note name> - split check.md`.
 
 - **One story:** tell Sarah in one line, link the report, and go on to the plan checker.
 - **Split:** follow "Splitting a story" at the end of this skill. That ends this session. Each child gets its own `/plan-steps` in a new session, starting from its share of the draft.
 
 ### Plan checker
-Send the note path and the draft path to the `plan-checker` subagent. Save its report to `.opencode/scratch/<note name> - plan check.md`.
+Send the note path and the draft path to the `plan-checker` subagent. Save its report to `.scratch/<note name> - plan check.md`.
 
 Fix every finding you agree with, then run the checker once more. If you disagree with a finding, leave it as it is and raise it with Sarah in step 4.
 

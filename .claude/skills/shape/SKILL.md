@@ -20,7 +20,7 @@ It stops there on purpose. Design, Suggested Approach, root cause, fix options, 
 
 Pick the type by the shape of the fix, not by where the idea came from. A user report can turn out to be a missing pattern. A "cleanup" can turn out to be a feature.
 
-This is planning only. Don't change code. A hook blocks edits outside `notes/` and `.opencode/scratch/`.
+This is planning only. Don't change code. A hook blocks edits outside `notes/` and `.scratch/`.
 
 ## Talking with Sarah
 - **One question at a time.** Ask one, wait for the answer, then ask the next. Never send a list of questions, and never ask her to approve a list of decisions at once. A later question often depends on an earlier answer.

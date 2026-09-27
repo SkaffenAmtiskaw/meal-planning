@@ -22,7 +22,7 @@ A note is written against the codebase, the conventions and the other stories as
 
 This skill **flags and routes**. It never rewrites the plan. It adds ⚠️ Check Drift callouts where the note no longer matches, and sends the note to whichever skill fixes it: `/plan-steps` to re-plan, `/assess` to re-assess. The one thing it fixes itself is a convention doc, and only with Sarah's approval of the wording, because docs that wait for later never get updated.
 
-It only reads code. It never runs the app and never changes code. A hook blocks edits outside `notes/`, `.opencode/scratch/` and `.opencode/docs/`.
+It only reads code. It never runs the app and never changes code. A hook blocks edits outside `notes/`, `.scratch/` and `.opencode/docs/`.
 
 ## Talking with Sarah
 - **One question at a time.** Ask one, wait for the answer, then ask the next. Never send a list of questions, and never ask her to approve a list of decisions at once.
@@ -55,7 +55,7 @@ For each new comment, trace it through the remaining work: every behavior, desig
 Never edit her comments, and never write in her voice or sign as her. When you record a decision she made, write it in the third person.
 
 ## 3. Map the footprint and send out the checkers
-From the remaining work, write the story's footprint to `.opencode/scratch/<note name> - footprint.md`:
+From the remaining work, write the story's footprint to `.scratch/<note name> - footprint.md`:
 - **Named code:** every file, module, component, hook, action, route and prop the remaining work names.
 - **Kinds of things it builds:** e.g. a server action, a modal form, a hook, a unit test for a hook.
 - **UI areas:** e.g. the mobile day section header, the today marker.
@@ -63,7 +63,7 @@ From the remaining work, write the story's footprint to `.opencode/scratch/<note
 
 Then run the `code-drift-checker` and `note-drift-checker` subagents in parallel. Give each one the note path, the `confirmed` date, the footprint file and the remaining work (which steps, or "the whole approach" for a `spec` note). Don't tell them what you expect them to find.
 
-Save each report, unedited, to `.opencode/scratch/<note name> - drift (code).md` and `.opencode/scratch/<note name> - drift (notes).md`. Add their "Outside this story" items to your out-of-scope list.
+Save each report, unedited, to `.scratch/<note name> - drift (code).md` and `.scratch/<note name> - drift (notes).md`. Add their "Outside this story" items to your out-of-scope list.
 
 ## 4. Sort the findings
 Put the findings from Sarah's comments and both reports into one list. Merge findings that are the same problem seen from two sides.

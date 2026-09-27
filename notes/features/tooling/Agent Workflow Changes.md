@@ -7,7 +7,6 @@ confirmed: 2026-09-25
 Agents are moving from OpenCode to Claude Code, slowly. The first was `architect`, which became the `/assess` skill with the `code-critic` and `scope-router` subagents (2026-09-25). `AGENTS.md` still assumes OpenCode and needs rewriting as the move goes on.
 
 Known changes:
-- **Scratch location** - `/assess` saves critic reports to `.opencode/scratch/`. Move scratch somewhere outside `.opencode/`.
 - **`.opencode/` path rules and Project Knowledge docs** - the "File & Path Resolution" section and the docs in `.opencode/docs/` need a new home once OpenCode is gone.
 - **Rules meant for the main session** - Claude Code subagents load `AGENTS.md` too, so rules like "summarize your instructions at session start" also reach `code-critic` and `scope-router`. Word them so they only apply to the main session, or have those subagents skip `CLAUDE.md`.
 - **Tool Constraints and handoff rules** - written for OpenCode agents and permissions; check them against Claude Code.

@@ -1,12 +1,12 @@
 ---
 type: bug
-status: in-review
+status: done
 blocked-by: []
 confirmed: 2026-09-25
 ---
 # Where It Stands
 
-All steps implemented. Next: /review ^status
+Reviewed. Next: /close ^status
 
 # ⚠️ Security Concern
 **Anyone who knows a person's email may be able to fetch all of that person's pending invites, including the invite tokens, by calling a server action. No session check stops them.** Invite tokens are what the accept and sign-up-with-invite flows use to join a planner, so a leaked token may let someone else take the invite. This is an authorization hole, not a code-tidiness issue.

@@ -21,7 +21,7 @@ A few things shape how it works:
 - **Observation stays apart from diagnosis.** The `bug-reproducer` subagent follows exact steps and reports what it saw. It never gets your theory, so it can't see what it expects to see. You do the diagnosis from its report.
 - **Fixes don't pile into existing modules.** Single concern is one of Sarah's top priorities. A fix that gives an existing module a new job gets reviewed by `code-critic` before Sarah picks it.
 
-This is planning only. Don't change code. A hook blocks edits outside `notes/` and `.opencode/scratch/`.
+This is planning only. Don't change code. A hook blocks edits outside `notes/` and `.scratch/`.
 
 ## Talking with Sarah
 - **One question at a time.** Ask one, wait for the answer, then ask the next. Never send a list of questions, and never ask her to approve a list of decisions at once. A later question often depends on an earlier answer.
@@ -51,7 +51,7 @@ Write exact steps to reproduce the symptom: where to start, which user, what to 
 Also write down the values that would show the symptom plainly, e.g. an element's position against the viewport, or the console error after Save.
 
 ### 2b. Reproduce it
-Send the `bug-reproducer` subagent the repro steps, the symptom and the values to capture. Don't send it a theory about the cause. Save its report, unedited, to `.opencode/scratch/<note name> - repro.md`.
+Send the `bug-reproducer` subagent the repro steps, the symptom and the values to capture. Don't send it a theory about the cause. Save its report, unedited, to `.scratch/<note name> - repro.md`.
 
 - **Reproduced:** go on to 2c.
 - **Not reproduced:** stop and tell Sarah what the report says happened instead. She decides what comes next: sharper repro steps (run it again), or it's already fixed and the note is dropped with `/close`.
@@ -77,7 +77,7 @@ Work out the reasonable fixes. Read the project docs they touch (`.opencode/docs
 - better-auth: https://better-auth.com/llms.txt
 - Next.js: `node_modules/next/dist/docs/`
 
-**Review fixes that add a job.** If a fix adds behavior or a responsibility to an existing module, and doesn't just correct what the module already does, send `code-critic` that module with the fix's job as a one-sentence target piece. Don't say which fix you prefer. Save its report, unedited, to `.opencode/scratch/<note name> - critic.md`. Add its "Outside this story" and "Duplication" items to your out-of-scope list. Pure corrections, like a wrong condition or a bad transform, skip this.
+**Review fixes that add a job.** If a fix adds behavior or a responsibility to an existing module, and doesn't just correct what the module already does, send `code-critic` that module with the fix's job as a one-sentence target piece. Don't say which fix you prefer. Save its report, unedited, to `.scratch/<note name> - critic.md`. Add its "Outside this story" and "Duplication" items to your out-of-scope list. Pure corrections, like a wrong condition or a bad transform, skip this.
 
 **Present it.** Show Sarah the root cause from 2c, then the fix:
 - **One reasonable fix:** what changes and where, and why. If the critic reviewed it, give its verdict. Wait for her approval.

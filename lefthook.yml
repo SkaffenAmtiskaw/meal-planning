@@ -14,4 +14,4 @@ pre-commit:
       run: pnpm build
       glob: "src/**/*.{ts,tsx}"
     cleanup:
-      run: rm -rf .opencode/scratch
+      run: rm -rf .scratch

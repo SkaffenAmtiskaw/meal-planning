@@ -71,22 +71,6 @@ export interface PlannerMember {
 	accessLevel: 'read' | 'write' | 'admin' | 'owner';
 }
 
-export interface UserInvite {
-	id: string;
-	plannerId: string;
-	plannerName: string;
-	invitedBy: string;
-	accessLevel: 'read' | 'write' | 'admin' | 'owner';
-	invitedAt: string;
-	expiresAt: string;
-	token: string;
-}
-
-export interface GetUserInvitesResult {
-	invites: UserInvite[];
-	error?: string;
-}
-
 export interface AcceptInviteResult {
 	plannerId: string;
 }

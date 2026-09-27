@@ -1,6 +1,6 @@
 #!/bin/bash
 # PreToolUse hook registered by the planning skills (/assess, /plan-steps, /check-drift).
-# Blocks Edit/Write outside notes/, .opencode/scratch/ and Claude's memory directory.
+# Blocks Edit/Write outside notes/, .scratch/ and Claude's memory directory.
 # Extra project-relative directories to allow can be passed as arguments,
 # e.g. `notes-only-edits.sh .opencode/docs` for /check-drift.
 
@@ -12,7 +12,7 @@ if [[ "$file_path" == *"/../"* ]]; then
 fi
 
 case "$file_path" in
-  "$CLAUDE_PROJECT_DIR/notes/"* | "$CLAUDE_PROJECT_DIR/.opencode/scratch/"* | "$HOME/.claude/projects/"*)
+  "$CLAUDE_PROJECT_DIR/notes/"* | "$CLAUDE_PROJECT_DIR/.scratch/"* | "$HOME/.claude/projects/"*)
     exit 0
     ;;
 esac
@@ -23,7 +23,7 @@ for dir in "$@"; do
   fi
 done
 
-allowed="notes/ or .opencode/scratch/"
+allowed="notes/ or .scratch/"
 for dir in "$@"; do
   allowed="$allowed or ${dir%/}/"
 done

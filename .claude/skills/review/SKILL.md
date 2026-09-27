@@ -51,7 +51,7 @@ Commit messages don't name the story, and commits often mix code with notes chan
 Show Sarah the range (first and last commit, with their subjects), whether uncommitted changes are included, and both groups of files. Wait for her to confirm or correct them. This one confirmation covers the range and the file list together.
 
 ## 3. Build the target and run the checks
-Save each agent's full report, unedited, to `.opencode/scratch/<note name> - <agent name>.md`.
+Save each agent's full report, unedited, to `.scratch/<note name> - <agent name>.md`.
 
 **For every story:** send the note path, the confirmed range and the confirmed files to the `leftovers-checker` subagent. Start it now, in the background, so it runs while you do the rest of this step.
 
@@ -66,7 +66,7 @@ Save each agent's full report, unedited, to `.opencode/scratch/<note name> - <ag
 Add every agent's "Outside this story" and "Duplication" items that fall outside the story to your out-of-scope list.
 
 ## 4. Collect the findings
-Merge everything into one list, in `.opencode/scratch/<note name> - review findings.md`:
+Merge everything into one list, in `.scratch/<note name> - review findings.md`:
 - One root cause is one finding, with every place it shows up, even when two sources found it separately.
 - Order: architecture findings first (the critic's verdicts, differences from the approach, convention breaks), then the leftovers.
 - For each finding, propose one of:

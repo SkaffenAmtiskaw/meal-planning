@@ -18,7 +18,7 @@ Sarah wants to know, for a feature design, what already exists in the code and w
 
 So the order here is deliberate. First decide what *should* exist. Then judge the existing code against that. "Use it as-is" is the claim that needs evidence, not "refactor it."
 
-This is planning only. Don't change code. A hook blocks edits outside `notes/` and `.opencode/scratch/`.
+This is planning only. Don't change code. A hook blocks edits outside `notes/` and `.scratch/`.
 
 ## Talking with Sarah
 - **One question at a time.** Ask one, wait for the answer, then ask the next. Never send a list of questions, and never ask her to approve a list of decisions at once. A later question often depends on an earlier answer.
@@ -44,7 +44,7 @@ Show the list and wait for her to confirm it before going on.
 ### Check whether it's several stories
 Skip this check if you started from a `# From the Split` section and its behaviors haven't changed since.
 
-The confirmed behavior list is the first point where the story's real size shows, and splitting is cheapest before an approach exists. Send the note path and the confirmed behaviors to the `split-checker` subagent, as the **Behaviors** checkpoint. Save its report to `.opencode/scratch/<note name> - split check.md`.
+The confirmed behavior list is the first point where the story's real size shows, and splitting is cheapest before an approach exists. Send the note path and the confirmed behaviors to the `split-checker` subagent, as the **Behaviors** checkpoint. Save its report to `.scratch/<note name> - split check.md`.
 
 - **One story:** tell Sarah in one line, link the report, and go on to step 3.
 - **Split:** follow "Splitting a story" at the end of this skill. That ends this session. Each child gets its own `/assess` in a new session.
@@ -67,7 +67,7 @@ For each target piece, search for existing code that does the same job in whole 
 
 Send the list to the `code-critic` subagent. Give it each target piece with its job and the existing files you mapped to it. It returns a verdict for each file. Don't pre-judge the code for it, and don't say what you're hoping to reuse.
 
-Save the critic's full report, unedited, to `.opencode/scratch/<note name> - critic.md`. Add its "Outside this story" and "Duplication" items to your out-of-scope list.
+Save the critic's full report, unedited, to `.scratch/<note name> - critic.md`. Add its "Outside this story" and "Duplication" items to your out-of-scope list.
 
 ## 5. Present the approach
 Show Sarah:

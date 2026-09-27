@@ -19,10 +19,10 @@ Work through the open decisions on **$ARGUMENTS**.
 A few things shape how it works:
 - **Sarah picks the scope.** A hub can hold ten open decisions, and she may only want to tackle two today. Each run covers the ones she picks.
 - **Research happens in a subagent,** one decision at a time. Each decision can need its own look at the code, the other notes and library docs. Doing that inline would fill the context before the third decision. The `decision-researcher` agent returns a brief. You walk Sarah through it.
-- **The note is the only record.** `.opencode/scratch/` is wiped on commit. Anything the next run needs, including partial progress and findings that still matter, goes in the note.
+- **The note is the only record.** `.scratch/` is wiped on commit. Anything the next run needs, including partial progress and findings that still matter, goes in the note.
 - **Decisions, not design.** Settle the question. Don't design the story, write steps or pick implementation details the next step owns.
 
-This is planning only. Don't change code. A hook blocks edits outside `notes/` and `.opencode/scratch/`.
+This is planning only. Don't change code. A hook blocks edits outside `notes/` and `.scratch/`.
 
 ## Talking with Sarah
 - **One question at a time.** Ask one, wait for the answer, then ask the next. Never send a list of questions, and never ask her to approve a list of decisions at once. A later question often depends on an earlier answer.
@@ -55,7 +55,7 @@ Don't research the next decision until this one is recorded. Its answer can chan
 ### Research
 Send the `decision-researcher` subagent the note path, the question as written with its constraints, any Partly answered lines under it, and the answers Sarah has given earlier in this run. Don't tell it which answer you expect.
 
-Save its brief, unedited, to `.opencode/scratch/<note name> - decision <N>.md`. That's for this session only. Sarah can read the whole brief, but it won't survive a commit.
+Save its brief, unedited, to `.scratch/<note name> - decision <N>.md`. That's for this session only. Sarah can read the whole brief, but it won't survive a commit.
 
 ### Present
 Show Sarah:

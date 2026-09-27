@@ -24,7 +24,7 @@ A few rules shape how it works:
 - **No unused files.** A file in the vault (an image, a `.dc.html` prototype, a script or SVG it loads) that nothing references anymore gets deleted. A close is when files lose their last reference: the note that embedded them is deleted, or content moves and pointers get reworded.
 - **One note per run.** When closing this story means another note should close too, such as an archived note that loses its last `kept-for` entry or a hub with no open stories left, tell Sarah. She runs `/close` on it in a new session.
 
-This is notes work only. Don't change code. A hook blocks edits outside `notes/`, `.opencode/scratch/` and `.opencode/docs/`. Move and delete notes with plain `mv` and `rm`, never `git mv` or `git rm`, so every change stays unstaged.
+This is notes work only. Don't change code. A hook blocks edits outside `notes/`, `.scratch/` and `.opencode/docs/`. Move and delete notes with plain `mv` and `rm`, never `git mv` or `git rm`, so every change stays unstaged.
 
 ## Talking with Sarah
 - **One question at a time.** Ask one, wait for the answer, then ask the next. Never send a list of questions, and never ask her to approve a list of decisions at once.
@@ -63,7 +63,7 @@ This story's own Roadmap line isn't on the list. Step 7 removes it.
 
 Also note each archived note that this story links to, or that links to it, and has no `kept-for`. Step 5 asks about them.
 
-Save the list to `.opencode/scratch/<note name> - close.md`, and mark each item as you handle it.
+Save the list to `.scratch/<note name> - close.md`, and mark each item as you handle it.
 
 ## 3. Keep or delete
 The note is needed by every open story with a Content match. A Content match from an archived note counts for the stories in that note's `kept-for`, not for the archived note itself.
