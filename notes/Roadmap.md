@@ -28,7 +28,6 @@
 5. [[Shared Types Directory]] - spec, last reviewed April. Unblocks [[Remove Schedule-X]].
 6. [[Docs Updates]] ![[Docs Updates#^status]]
 7. [[Sweep Refinements]] ![[Sweep Refinements#^status]]
-8. purge Playwright and switch to Claude's built-in browser - remove `scripts/playwright-server.sh` and the `.opencode/tmp/` files it writes, the Playwright MCP in `opencode.jsonc`, `.playwright-mcp/` in `.gitignore`, and the script's callers in `.opencode/docs/running_the_app.md` and `.claude/agents/bug-reproducer.md`. Start the dev server through `.claude/launch.json` and the built-in browser's `preview_start` instead. The OpenCode `inspect` and `bugfix` agents also use Playwright: decide whether they go too, since the OpenCode agents were meant to stay until the whole move is finished. Found 2026-09-27
 
 # Blocked
 - [[Header Date Picker]] ![[Header Date Picker#^status]] - spec. Waiting on [[Mantine Date Picker Setup]] and [[Today and Selected Day Markers]]. *(was high)*
