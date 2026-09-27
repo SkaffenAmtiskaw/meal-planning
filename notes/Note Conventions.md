@@ -10,8 +10,8 @@ How notes in this vault are organized and move through their lifecycle. The [[Ro
 # Frontmatter
 | Property | Values | Meaning |
 |---|---|---|
-| `type` | `feature` · `bug` · `pattern` · `cleanup` · `sweep` · `hub` | Which template the note follows. Blank on an `idea` note until its kind is clear. |
-| `status` | `idea` · `spec` · `ready` · `in-progress` · `in-review` · `done` · `dropped` | See lifecycle below. Hubs have no status. Not the ` ^status` line under Where It Stands: this says which lifecycle stage the note is in, that line says what's happening right now. |
+| `type` | `feature` · `bug` · `pattern` · `cleanup` · `sweep` · `hub` · `workflow` | Which template the note follows. Blank on an `idea` note until its kind is clear. |
+| `status` | `idea` · `spec` · `ready` · `in-progress` · `in-review` · `done` · `dropped` | See lifecycle below. Hubs and workflow notes have no status. Not the ` ^status` line under Where It Stands: this says which lifecycle stage the note is in, that line says what's happening right now. |
 | `blocked-by` | list | Why the story can't move forward: another story (as a `"[[link]]"`), a decision that's needed, or an outside release. Empty when nothing blocks it. |
 | `confirmed` | date | When the note was last confirmed to match reality. Sarah shaping or re-shaping a note counts, since she only does that for issues she believes are still relevant. Don't bump it for moves, renames or link fixes. |
 | `kept-for` | list | Archived notes only. The open stories (as `"[[link]]"`) that still rely on this note's content, such as its design. |
@@ -32,6 +32,7 @@ Templates are in `templates/`. Pick by the shape of the fix, not where the work 
 - **Pattern** - introduce or standardize a convention and migrate code to it.
 - **Cleanup** - remove or tidy code without a new convention.
 - **Sweep** - a rolling checklist of small fixes that share a logical grouping (e.g. unit test fixes, style fixes), collected until Sarah schedules one sweep for them all. Every item must be small, with no ambiguity and no open decisions. See Sweeps below.
+- **Workflow** - a change to how the app is built, not what it does: skills, subagents, hooks, AGENTS.md, these conventions, templates, docs or tooling config. It skips the lifecycle: `/workflow` makes the whole change in one session and deletes the note.
 - **Idea** - jot something down quickly.
 - **Hub** - a map of several stories that touch the same area (e.g. [[Meal Editing]]), or a big idea that will clearly be several stories but needs decisions before it can be split. Not implemented directly.
 
@@ -60,6 +61,7 @@ A note's `type` and `status` say what should happen to it next.
 | `ready`                                                                 | Build it one step at a time                                                                                                                                                                                                                                                           | `in-progress` → `in-review`                                                                                                                   | `/implement` skill                   |
 | `in-review`                                                             | Review how the code fits together across the whole story: what no single step's review can show                                                                                                                                                                                       | `done`                                                                                                                                        | `/review` skill                      |
 | `spec` · `ready` · `in-progress`                                        | Check the remaining work against the code, conventions, other notes and Sarah's comments. Add ⚠️ Check Drift callouts, update `confirmed`                                                                                                                                             | unchanged, back to `spec` for `/plan-steps` or `/assess`, or add `blocked-by`                                                                 | `/check-drift` skill                 |
+| `workflow` | Settle the change with Sarah, make it everywhere it reaches, and clean up every note that refers to it | deleted | `/workflow` skill |
 | `done` · `dropped` · a hub with no open stories                         | Keep the note in `archive/` for the stories that still rely on it, or delete it, and update the notes around it | archived or deleted                                                                                                                           | `/close` skill                       |
 
 `feature` · `idea` has no agent yet: turning rough notes into a detailed design is done with the user, e.g. via Claude Design. A `pattern` · `idea` with open decisions goes through `/decide` before `/architect`.

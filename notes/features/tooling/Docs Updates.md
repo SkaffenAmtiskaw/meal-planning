@@ -1,11 +1,10 @@
 ---
-type:
-status: idea
+type: workflow
 confirmed: 2026-09-27
 ---
 # Where It Stands
 
-Next: /shape ^status
+Next: /workflow ^status
 
 # Notes
 A rolling list of changes the project docs in `.opencode/docs/` need, collected as they come up. Like a sweep, except items may still need decisions. Only for those docs: AGENTS.md and Note Conventions are changed where the need comes up, not collected here. Sarah, 2026-09-27: project rules found in Claude's memories belong in these docs, not just in memory.
