@@ -19,7 +19,6 @@
 - [[Stale Data Issues]] ![[Stale Data Issues#^status]] - the data refresh pattern (rules, tag model, enforcement), split 2026-09-25 into [[Calendar and Recipes Data Refresh]], [[Settings Data Refresh]], [[Server-Only Creation and Pure Reads]] and [[Data Rules Enforcement]].
 
 # Now
-- [[Unchecked Invite Lookup]] ![[Unchecked Invite Lookup#^status]]
 
 # Next
 1. [[Calendar and Recipes Data Refresh]] ![[Calendar and Recipes Data Refresh#^status]] - spec. Fixes both stale-data symptoms; unblocks [[Add Meal Changes (Saved Recipes)]] and [[Mobile List View]]. *(was bugfix)*

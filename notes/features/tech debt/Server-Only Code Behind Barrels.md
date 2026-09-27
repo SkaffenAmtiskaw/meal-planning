@@ -14,7 +14,7 @@ Waiting on your decisions in Open Decisions; then write the Rules with Sarah. ^s
 # Purpose
 Server-only code (reads and helpers marked `import 'server-only'` rather than `'use server'`) keeps being reached through domain barrels like `@/_actions/sharing` that client components also import. The build then fails, or mongoose models get pulled into client bundles. This story sets one convention for where server-only exports live and how they're imported, so the fix isn't worked out again each time. Then it moves the existing cases over.
 
-Found 2026-09-27 while implementing [[Unchecked Invite Lookup]]. Sarah said it's not the first time this has come up.
+Found 2026-09-27 while making `getUserInvites` server-only. Sarah said it's not the first time this has come up.
 
 # Symptoms
 - [ ] `pnpm build` (Next 16.2.9, Turbopack) fails with "'server-only' cannot be imported from a Client Component module" whenever a `server-only` file is re-exported from a barrel that a `'use client'` file imports.
@@ -25,7 +25,7 @@ Found 2026-09-27 while implementing [[Unchecked Invite Lookup]]. Sarah said it's
 - `.opencode/docs/project_conventions.md` "Barrel Files" says only that barrels have no logic. Nothing says what a barrel that client code imports may re-export.
 - The placement rule decided in [[Domain-Specific Code Locations]] (Rules) puts a function consumed across `src/` as a plain file in its domain folder. It doesn't say how that file is exported, so a server-only read there ends up in the same barrel as the client-called actions.
 
-Current temporary fix (from [[Unchecked Invite Lookup]] Step 1, As built): `getUserInvites` was taken out of `src/_actions/sharing/index.ts`. Its two server callers, `src/_components/UserMenu/InviteBadge.tsx:7` and `src/app/settings/_components/InvitesSettings.tsx`, import `@/_actions/sharing/getUserInvites` directly. Its types moved to `src/_actions/sharing/invite.types.ts`, which stays in the barrel. Its mock moved to `test/mocks/@/_actions/sharing/getUserInvites.ts`, a folder next to the `test/mocks/@/_actions/sharing.ts` barrel mock.
+Current temporary fix (made 2026-09-27 when `getUserInvites` became server-only): `getUserInvites` was taken out of `src/_actions/sharing/index.ts`. Its two server callers, `src/_components/UserMenu/InviteBadge.tsx:7` and `src/app/settings/_components/InvitesSettings.tsx`, import `@/_actions/sharing/getUserInvites` directly. Its types moved to `src/_actions/sharing/invite.types.ts`, which stays in the barrel. Its mock moved to `test/mocks/@/_actions/sharing/getUserInvites.ts`, a folder next to the `test/mocks/@/_actions/sharing.ts` barrel mock.
 
 # Open Decisions
 1. Where do server-only exports live, relative to a barrel that client code imports? Starting points to research, not proposals:

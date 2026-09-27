@@ -107,7 +107,6 @@ export const addMeal = defineMutation({
 - [[Add Meal Changes (Saved Recipes)]] and [[Mobile List View]] - blocked on [[Calendar and Recipes Data Refresh]]
 - [[Meal Editing]] - new meal mutations follow the rules here
 - [[Unchecked Planner Reads]] - ⚠️ security: `getPlanner`, `getPlannerClient` and `getSavedItem` are server actions with no access check; found while planning, fixed after [[Calendar and Recipes Data Refresh]]
-- [[Unchecked Invite Lookup]] - ⚠️ security: `getUserInvites` is a server action that returns invite tokens for any email; found while planning
 
 # Build Order
 1. [[Calendar and Recipes Data Refresh]] and [[Server-Only Creation and Pure Reads]] can start now. They share no pieces (inferred: they only touch the same files, in `createPlanner` and `signUpWithInvite` imports).

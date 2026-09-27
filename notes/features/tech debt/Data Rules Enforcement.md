@@ -38,11 +38,10 @@ Already built: tag registry, `invalidate()`, `defineMutation` by [[Calendar and 
 
 ## D. Read Actions → `defineQuery`
 - [ ] `getPlanner`, `getPlannerClient`, `getPlanners`, `getSavedItem`
-- [ ] `getUser`, `getUserInvites`, `getPendingInvites`, `getPlannerMembers`
+- [ ] `getUser`, `getPendingInvites`, `getPlannerMembers`
 - [ ] `checkAuth`, `checkEmailStatus`, `validateInviteToken`
 
 `getPlanner`, `getPlannerClient` and `getSavedItem` leave `'use server'` in [[Unchecked Planner Reads]]. If that has landed, don't wrap them here.
-`getUserInvites` leaves `'use server'` in [[Unchecked Invite Lookup]]. If that has landed, don't wrap it here.
 
 ## Tests and Shared Mocks
 This story owns the mock clean-up for the test files it changes:
@@ -55,8 +54,7 @@ Known files as of 2026-09-25 (found by reading code; re-check when planning):
 - `src/_actions/auth/checkAuth.test.ts:9` (`@/_actions/user`). If `checkAuth` isn't wrapped, this story still moves `checkAuth.test.ts` onto the centralized `@/_actions/user` mock.
 - `src/_actions/sharing/getPlannerMembers.test.ts:5` (`@/_models/user`)
 - `src/_actions/user/getUser.test.ts:18` (`@/_models/user`)
-- `getPlanner` / `getUserInvites` tests, only if [[Unchecked Planner Reads]] / [[Unchecked Invite Lookup]] haven't landed
-- `test/mocks/@/_models/sharing.ts`: `PendingInvite` needs `find`, unless [[Unchecked Invite Lookup]] already added it
+- `getPlanner` tests, only if [[Unchecked Planner Reads]] hasn't landed
 
 # Draft Steps (from the split)
 > [!warning] For the agent running /plan-steps
@@ -72,7 +70,7 @@ Note: `notes/features/tech debt/Data Rules Enforcement.md` (type: pattern). Step
 
 **Files:**
 - `src/_actions/_utils/defineQuery.ts` (new)
-- `getPlanner`, `getPlannerClient`, `getPlanners`, `getSavedItem`, `getUser`, `getUserInvites`, `getPendingInvites`, `getPlannerMembers`, `checkAuth`, `checkEmailStatus`, `validateInviteToken` + tests
+- `getPlanner`, `getPlannerClient`, `getPlanners`, `getSavedItem`, `getUser`, `getPendingInvites`, `getPlannerMembers`, `checkAuth`, `checkEmailStatus`, `validateInviteToken` + tests
 
 **Acceptance (all "same as before"):**
 - [ ] Calendar loads with meals (desktop month and week, phone list).
