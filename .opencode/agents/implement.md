@@ -15,7 +15,7 @@ permission:
         "*": deny
         "notes/**": ask
         ".opencode/docs/**": ask
-        ".opencode/scratch/**": allow
+        ".scratch/**": allow
         "*/index.ts": allow
     task:
         general: deny

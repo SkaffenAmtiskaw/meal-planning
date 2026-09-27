@@ -30,10 +30,6 @@ export const getPlannerMembers = vi.fn(async () => ({
 	members: [] as PlannerMember[],
 }));
 
-export const getUserInvites = vi.fn(async () => ({
-	invites: [] as UserInvite[],
-}));
-
 export const inviteUser = vi.fn(async () => ({
 	ok: true as const,
 	data: { inviteId: '507f1f77bcf86cd799439012' },
@@ -73,22 +69,6 @@ export interface PlannerMember {
 	name: string;
 	email: string;
 	accessLevel: 'read' | 'write' | 'admin' | 'owner';
-}
-
-export interface UserInvite {
-	id: string;
-	plannerId: string;
-	plannerName: string;
-	invitedBy: string;
-	accessLevel: 'read' | 'write' | 'admin' | 'owner';
-	invitedAt: string;
-	expiresAt: string;
-	token: string;
-}
-
-export interface GetUserInvitesResult {
-	invites: UserInvite[];
-	error?: string;
 }
 
 export interface AcceptInviteResult {

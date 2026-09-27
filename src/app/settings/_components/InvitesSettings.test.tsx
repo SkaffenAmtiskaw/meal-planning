@@ -5,9 +5,9 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 import {
 	acceptInvite,
 	declineInvite,
-	getUserInvites,
 	type UserInvite,
 } from '@/_actions/sharing';
+import { getUserInvites } from '@/_actions/sharing/getUserInvites';
 import { getUser } from '@/_actions/user';
 
 import { InvitesSection } from './InvitesSection';
@@ -16,6 +16,10 @@ import { InvitesSettings } from './InvitesSettings';
 vi.mock(
 	'@/_actions/sharing',
 	async () => await import('@mocks/@/_actions/sharing'),
+);
+vi.mock(
+	'@/_actions/sharing/getUserInvites',
+	async () => await import('@mocks/@/_actions/sharing/getUserInvites'),
 );
 vi.mock('@/_actions/user', async () => await import('@mocks/@/_actions/user'));
 vi.mock('@mantine/core', async () => await import('@mocks/@mantine/core'));

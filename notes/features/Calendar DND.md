@@ -1,1 +1,0 @@
-We will be replacing schedule-x so this is implementing DND on top of the custom calendar

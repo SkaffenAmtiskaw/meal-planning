@@ -25,7 +25,7 @@ permission:
   edit:
     "*": deny
     "notes/**": ask
-    ".opencode/scratch/**": allow
+    ".scratch/**": allow
   webfetch: allow
 ---
 

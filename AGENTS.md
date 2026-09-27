@@ -12,7 +12,7 @@ All `.opencode/` references in this document or in ANY file you load resolve to 
 
 - Use the Read tool to load referenced docs lazily, on a need-to-know basis for the task at hand. Do NOT preemptively load all references.
 - Follow references recursively when needed, using the same project-first-only resolution.
-- Scratch notes go in `./.opencode/scratch/` (project-local, gitignored, confirmed not to conflict with other tooling). Never write scratch notes to a global `.opencode` directory.
+- Scratch files go in `./.scratch/` (project-local, gitignored). It's wiped on every commit, so use it only for working files within one session. Anything a later session needs goes in the note itself, and a note must never link to or refer to a scratch file.
 
 ## Tool Constraints
 When starting a new session, check which tools and commands are explicitly allowed to you. You should always prioritize using a tool or command which is allowed over one which you have to ask permission for. Allowed tools are meant as guidance, e.g. using `pnpm test:agent` instead of `vitest`.
@@ -29,3 +29,4 @@ A full-stack meal planning web app. Users sign in, create meal planners, manage 
 - Project Structure: `./.opencode/docs/project_structure.md`
 - Theme Information: `./.opencode/docs/theme.md`
 - Unit Testing Conventions: `./.opencode/docs/unit_tests.md`
+- Note Conventions (Obsidian vault in `notes/`): `./notes/Note Conventions.md`

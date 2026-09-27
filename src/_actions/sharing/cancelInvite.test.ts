@@ -12,9 +12,10 @@ vi.mock(
 	'@/_models/sharing',
 	async () => await import('@mocks/@/_models/sharing'),
 );
-vi.mock('@/_utils/serialize', () => ({
-	serialize: vi.fn((data) => data),
-}));
+vi.mock(
+	'@/_utils/serialize',
+	async () => await import('@mocks/@/_utils/serialize'),
+);
 
 describe('cancelInvite', () => {
 	const plannerId = '507f1f77bcf86cd799439011';
