@@ -21,7 +21,7 @@
 # Now
 
 # Next
-1. [[Calendar and Recipes Data Refresh]] ![[Calendar and Recipes Data Refresh#^status]] - spec. Fixes both stale-data symptoms; unblocks [[Add Meal Changes (Saved Recipes)]] and [[Mobile List View]]. *(was bugfix)*
+1. [[Calendar and Recipes Data Refresh]] ![[Calendar and Recipes Data Refresh#^status]] - ready. Fixes both stale-data symptoms; unblocks [[Add Meal Changes (Saved Recipes)]] and [[Mobile List View]]. *(was bugfix)*
 2. [[Schedule-X Data Shapes Audit]] ![[Schedule-X Data Shapes Audit#^status]]
 3. [[Mantine Date Picker Setup]] ![[Mantine Date Picker Setup#^status]] - spec. *(was high)*
 4. [[Today and Selected Day Markers]] ![[Today and Selected Day Markers#^status]] - spec. Fixes the truncated today circle; unblocks [[Mobile List View]]. *(was high)*
@@ -56,7 +56,8 @@
 - two buttons are off-screen when tabbing from the first tab stop on the calendar page - a bug, needs investigating. Moved from the calendar style fixes list 2026-09-26
 
 ## Recipes
-- deleting a recipe from the recipe detail page always reports success - `RecipeDetail` ignores the `deleteRecipe` result *(was bugfix)*
+- [[Recipe Detail Delete Ignores Result]] ![[Recipe Detail Delete Ignores Result#^status]] *(was bugfix)*
+- [[Recipe Detail Read-Only Controls]] ![[Recipe Detail Read-Only Controls#^status]]
 - [[Filtering Recipe List|allow filtering in recipe list]] *(was medium)*
 - batch delete recipes/bookmarks *(was medium)*
 - allow notes in recipe/bookmarks to render basic markdown - assess if other fields should too *(was medium)*

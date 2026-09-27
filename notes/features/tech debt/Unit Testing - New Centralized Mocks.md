@@ -6,7 +6,6 @@ blocked-by:
   - "decision needed: how are subpath imports mocked?"
   - "decision needed: wait for Domain-Specific Code Locations?"
   - "decision needed: where do app-level mocks live?"
-  - "decision needed: who builds the mock for the new src/_actions/_utils helpers?"
 confirmed: 2026-09-25
 ---
 # Where It Stands
@@ -52,6 +51,7 @@ Until 2026-09-25, `unit_tests.md` said new centralized mocks needed the user's g
 3. Should this wait for [[Domain-Specific Code Locations]] (`pattern` · `idea`)? It may move code out of `@/_components` and `@/_utils` to a new alias, which would change the mock paths.
 4. Where do app-level mocks live? `test/mocks/@app/...` isn't an alias and doesn't mirror the import path. Its consumers mock a relative specifier. This also decides `@/app/[planner]/_components` (`useCanWrite`, `usePlannerContext`), which 7 files mock ad-hoc. It also decides the relative app-level mocks `./AuthLayout` and `./ToggleContext` (see Current State).
 5. Who builds the shared mock for the `src/_actions/_utils` helpers (`defineMutation`, `defineQuery`, `invalidate`, `cacheTags`) that [[Calendar and Recipes Data Refresh]] and [[Data Rules Enforcement]] add? [[Calendar and Recipes Data Refresh]] writes the first tests that need it, so answer this before its /plan-steps.
+   - **Decided** 2026-09-27: Sarah decided that [[Calendar and Recipes Data Refresh]] builds the shared mock for `invalidate()`, `test/mocks/@/_actions/_utils/invalidate.ts`, in the same step that creates `invalidate()`. Its path mirrors the import specifier, like the existing mocks.
 
 # Rules
 %% To decide with Sarah once the Open Decisions are answered. %%
@@ -65,7 +65,7 @@ Until 2026-09-25, `unit_tests.md` said new centralized mocks needed the user's g
 # Out of Scope
 - Stragglers in modules that already have centralized mocks: the [[Stale Data Issues]] stories that rewrite those tests.
 - `next/cache`: [[Calendar and Recipes Data Refresh]] replaces `revalidatePath` with `invalidate()`, so these 4 mocks go away.
-- `@tabler/icons-react` mocks that `unit_tests.md` forbids: Roadmap, Tech Debt.
+- `@tabler/icons-react` mocks that `unit_tests.md` forbids: [[Unit Test Tidy-Ups]].
 
 # Implementation
 %% Leave empty until the Rules and Migration Checklist are confirmed. %%

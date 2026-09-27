@@ -46,6 +46,8 @@ Once [[Calendar and Recipes Data Refresh]] has removed the client caller, move a
 
 Decided 2026-09-25: no interim `checkAuth` stopgap. It would be discarded by the move, and [[Calendar and Recipes Data Refresh]] is first in the Next queue. See the Security Concern above if that changes.
 
+**Dedupe the planner read (moved from [[Calendar and Recipes Data Refresh]] 2026-09-27):** once that story's Step 2 lands, the `[planner]` layout fetches the planner through `getPlannerClient`, which calls `getPlanner`. Each page under it then reads the same planner again: the calendar page through `getPlannerClient`, and the recipes list, recipe detail page and recipe `Modal.tsx` through `getPlanner`. That is one extra DB read per page load. When `getPlanner` moves out of `'use server'` into its server-only home, wrap it in React `cache()` so every read in a request shares one query. `getPlannerClient` goes through `getPlanner`, so it benefits too. This wasn't done in the `'use server'` file because wrapping an export there in `cache()` may clash with Next's rule that every `'use server'` export is an async function. Check the version-matched Next docs in `node_modules/next/dist/docs/` for `cache()` before building. Sarah decided on 2026-09-27 that [[Calendar and Recipes Data Refresh]] doesn't add it.
+
 **Tests and shared mocks:** This story owns the mock clean-up for the test files it changes:
 - Every test file it rewrites or moves uses the centralized mock in `test/mocks/` for any module that has one (`vi.mock('<module>', async () => await import('@mocks/...'))`), not an ad-hoc factory, per `.opencode/docs/unit_tests.md`.
 - When it moves, renames or reshapes an export of `@/_actions` or `@/_models`, it updates the matching `test/mocks/@/_actions/*.ts` or `test/mocks/@/_models/*.ts` in the same step.
@@ -62,6 +64,7 @@ Known files as of 2026-09-25 (found by reading code; re-check when planning):
   - the recipe list
   - a recipe detail page
   - the recipe add and edit modal
+- [ ] One page load under `[planner]` (calendar, recipe list or recipe detail) queries the planner once, not twice.
 
 # Implementation
 %% A small bug may need only one step, but it still goes here so it can be reviewed. Once it exists, set status to `ready`. %%
