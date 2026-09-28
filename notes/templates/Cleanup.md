@@ -17,7 +17,7 @@ No direction yet. ^status
 %% What exists now, with file paths. Say how it was checked (e.g. "static import scan on 2026-09-25", "grep for X") - cleanup notes go stale quickly, so re-check before planning. %%
 
 # Open Decisions
-%% Decisions that must be made before the next step can start, written as questions, not proposals. Each one also gets a `"decision needed: <short question>"` entry in `blocked-by`. Record the answer here once it's made and remove its `blocked-by` entry. Delete the section if there are none. %%
+%% Decisions that must be made before the next step can start, written as questions, not proposals. While any are open, `blocked-by` has one `"decision needed: ..."` entry for all of them. Record each answer here once it's made, and remove that entry once none are open. Delete the section if there are none. %%
 
 # Out of Scope
 %% Related cleanup that is deliberately left for another story. Each item should also be on the Roadmap. %%

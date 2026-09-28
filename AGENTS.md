@@ -27,7 +27,7 @@ Any change to a note in `notes/` follows these rules:
 - **Anything bigger, outside a skill:** a skill carries what it needs for the notes it changes. Without one, read `notes/Note Conventions.md` before creating, retyping, moving, closing or deleting a note, or changing its `status`.
 
 ## Out-of-scope work
-Keep a running list of anything that belongs outside the story or step you're working on, whether you, a subagent or Sarah found it. Don't stop to deal with items as they come up. At the end:
+Keep a running list of anything that belongs outside the story or step you're working on, whether you, a subagent or Sarah found it. Sarah's feedback on how a skill, subagent or the workflow itself behaves always goes on the list, even when it's also saved as a memory, unless this session is working on that same skill or subagent. Don't stop to deal with items as they come up. At the end:
 1. Send the whole list to the `scope-router` subagent. For each item, include what it is, where it was found (`file:line`, or the note and section) and why it's outside this work. The router suggests a home for each item. It doesn't change anything.
 2. Go through its suggestions with Sarah **one item at a time**: show the item and the suggested home with its reason, wait for her to approve, change or drop it, apply that one change to the notes, then move to the next.
 

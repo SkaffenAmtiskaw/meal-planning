@@ -33,11 +33,11 @@ Find the note in `notes/features/` and read all of it.
 
 A decision is open if it's:
 - an item under `# Open Decisions` with no **Decided** line under it. One with only a **Partly answered** line is still open.
-- a `"decision needed: ..."` entry in `blocked-by`.
+A story with open decisions has one `"decision needed: ..."` entry in `blocked-by` that covers them all. A roundup's issues are the questions under its Open Decisions.
 
-If the two don't match, raise each mismatch with Sarah, one at a time:
-- **A `blocked-by` entry with no question in Open Decisions:** draft the question and add it once she approves. If the note has no Open Decisions section, add one from the note's template.
-- **A question in Open Decisions with no `blocked-by` entry, on a story:** ask whether it blocks the next step. If it does, add the entry. Hubs have no `blocked-by`.
+If the two don't match, raise it with Sarah:
+- **A `decision needed` entry with no open question in Open Decisions:** draft the questions it stands for and add them once she approves. If the note has no Open Decisions section, add one from the note's template.
+- **Open questions with no `decision needed` entry, on a story:** ask whether they block the next step. If they do, add the entry. Hubs have no `blocked-by`.
 
 If the note has no open decisions, or it's `done` or archived, tell Sarah what you found and stop.
 
@@ -70,14 +70,14 @@ She'll decide, partly decide, or set it aside. Draft the note change, show it an
    - **Decided YYYY-MM-DD:** <the answer>. <one sentence on why>
      - Rejected: <option> - <one-line reason>
 ```
-One Rejected line per option she considered and turned down, so later agents don't propose it again. Then remove its `decision needed` entry from `blocked-by`.
+One Rejected line per option she considered and turned down, so later agents don't propose it again. If no open decisions remain, remove the `decision needed` entry from `blocked-by`.
 
 **Partly answered, or not yet.** Under the question:
 ```
    - **Partly answered YYYY-MM-DD:** Settled: <...>. Still open: <...>. Waits on: <e.g. a design session in Claude Design, or [[Other Story]]>.
      - <each research finding the next run needs, one line, with where it came from>
 ```
-The `blocked-by` entry stays. The findings lines matter because the brief will be gone by the next run. If Sarah just wants to skip it for now, write nothing.
+The `decision needed` entry stays. The findings lines matter because the brief will be gone by the next run. If Sarah just wants to skip it for now, write nothing.
 
 **Don't reword the original question.** Progress goes in lines under it.
 
@@ -86,7 +86,7 @@ After recording, look at what the answer changes:
 - **This note:** other sections the answer lands in, e.g. a section the question says to record it in, the chosen Fix Option, or a hub's Coverage or Child Stories table. Draft each change and go through them with Sarah one at a time. If the note is `ready` and the change touches its design or steps, it goes back to `spec` (AGENTS.md, "Editing notes"). Say so when you show the change.
 - **Other notes:** add each effect to the running list: which note, what changes and why. Step 6 handles them.
 - **New stories:** if the answer implies work no note covers yet, add it to the running list of new stories. Step 5 handles them.
-- **New questions:** if the brief found a blocking question that isn't on the note, or the answer raised one, show it to Sarah as a question, not a proposal. Once she approves, add it to Open Decisions (plus a `decision needed` entry in `blocked-by` on a story). Then ask whether to take it now or leave it for a later run.
+- **New questions:** if the brief found a blocking question that isn't on the note, or the answer raised one, show it to Sarah as a question, not a proposal. Once she approves, add it to Open Decisions (plus a `decision needed` entry in `blocked-by` on a story, if it doesn't have one). Then ask whether to take it now or leave it for a later run.
 
 Then go on to the next decision she picked.
 
@@ -94,6 +94,7 @@ Then go on to the next decision she picked.
 Once the picked decisions are done:
 - **Where It Stands:** update the `^status` line as AGENTS.md describes under "Editing notes", e.g. "Decisions made. Next: /assess" or "2 open decisions. Next: /decide".
 - **`confirmed`:** set it to today. Sarah making decisions on a note counts as confirming it.
+- **A roundup with no open decisions left:** set `status: spec`. Its next step is `/plan-steps`.
 
 ## 5. New stories
 Skip this if the running list of new stories is empty.

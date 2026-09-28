@@ -14,7 +14,7 @@ hooks:
 Close the story **$ARGUMENTS**.
 
 ## Why this skill works the way it does
-When a story leaves the board, two things happen: its note is kept or deleted, and the notes around it catch up. The second is where things get missed. A story that waited on it stays under Blocked, a Roadmap line still says "unblocks [[X]]", a sweep item keeps its **Blocked by** marker, or a note still sends readers to a design that's gone.
+When a story leaves the board, two things happen: its note is kept or deleted, and the notes around it catch up. The second is where things get missed. A story that waited on it stays under Blocked, a Roadmap line still says "unblocks [[X]]", a sweep or roundup item keeps its **Blocked by** marker, or a note still sends readers to a design that's gone.
 
 A few rules shape how it works:
 - **A note is kept only while another story needs it.** A kept note moves to `archive/` and lists the stories it's kept for in `kept-for`. When the last of them closes, the note is deleted. Nothing is kept just as a record, because git history is the backup. If a note feels worth keeping for reference, that means `.opencode/docs/` is missing something. Ask Sarah about the doc update instead.
@@ -46,7 +46,7 @@ Search for the note's name, and for its files (the files in `notes/assets/<story
 - **Outside the vault:** `src/`, `test/`, `.opencode/docs/`, `.claude/`, `AGENTS.md` and `CLAUDE.md`, for the name and for the note's path.
 
 Sort each match into one kind:
-- **Blocker:** an entry in another story's `blocked-by`, a sweep item's `**Blocked by [[Name]]:**` marker, or a Roadmap line that says it waits on this story.
+- **Blocker:** an entry in another story's `blocked-by`, a sweep or roundup item's `**Blocked by [[Name]]:**` marker, or a Roadmap line that says it waits on this story.
 - **Content:** a note that relies on this note's content. It embeds a section or image, or sends the reader here for a design, a decision or a rationale ("as the approved design in the archived [[Mobile Month View]] note specifies").
 - **Kept-for:** an archived note with this story in its `kept-for`.
 - **Hub list:** a hub that lists this story as one of its stories.
@@ -82,7 +82,7 @@ Skip this for a re-close. Go through the Blocker matches one story at a time.
 
 **For a dropped close:** ask Sarah what the story waits on now: nothing, another story, or a decision. Update its `blocked-by` and Roadmap line to match. If nothing blocks it anymore, finish as in steps 3 and 4 of a done close. It was planned expecting this story's changes, so it needs `/check-drift` too.
 
-**Sweep items:** for a done close, remove the `**Blocked by [[Name]]:**` marker. For a dropped close, ask Sarah whether the item still stands, now waits on something else, or should be removed.
+**Sweep and roundup items:** for a done close, remove the `**Blocked by [[Name]]:**` marker. For a dropped close, ask Sarah whether the item still stands, now waits on something else, or should be removed.
 
 ## 5. Update the other notes
 Go through the remaining matches:

@@ -17,7 +17,7 @@ No direction yet. ^status
 %% Which users, in which situations. "Everyone" is a valid answer. %%
 
 # Open Decisions
-%% Decisions that must be made before the next step can start, written as questions, not proposals. Each one also gets a `"decision needed: <short question>"` entry in `blocked-by`. Record the answer here once it's made and remove its `blocked-by` entry. Delete the section if there are none. %%
+%% Decisions that must be made before the next step can start, written as questions, not proposals. While any are open, `blocked-by` has one `"decision needed: ..."` entry for all of them. Record each answer here once it's made, and remove that entry once none are open. Delete the section if there are none. %%
 
 # Root Cause
 %% Where in the code it happens and why, with file paths. If the cause is systemic (the same mistake in many places), don't grow this note into a refactor - create a Pattern note, link it here, and keep this note about these symptoms. %%

@@ -3,13 +3,15 @@ type: workflow
 confirmed: 2026-09-27
 ---
 # Where It Stands
+Collecting items. Next: /workflow ^status
 
-Next: /workflow ^status
+# Purpose
+A rolling list of changes the project docs in `.opencode/docs/` need, collected as they come up. Sarah, 2026-09-27: project rules found in Claude's memories belong in these docs, not just in memory.
 
-# Notes
-A rolling list of changes the project docs in `.opencode/docs/` need, collected as they come up. Like a sweep, except items may still need decisions. Only for those docs: AGENTS.md and Note Conventions are changed where the need comes up, not collected here. Sarah, 2026-09-27: project rules found in Claude's memories belong in these docs, not just in memory.
+## What Belongs Here
+Changes to the docs in `.opencode/docs/`, which describe the codebase itself: its structure, code conventions, styling, tests and how to run it. Each says what to change, where, why, and how and when it was found. An item may still need a decision: /workflow settles it with Sarah. How agents work (AGENTS.md, skills, subagents, agent conventions) goes in [[Agent Workflow Changes]]. Note Conventions is changed where the need comes up.
 
-## Items
+# Items
 - [ ] Move the docs out of `.opencode/docs/` into a directory that isn't tied to OpenCode, and update every reference to the old path.
 - [ ] Weeks start on Sunday everywhere; Monday-start code is tech debt, not a convention. From Claude's memory, 2026-09-27.
 - [ ] Do UI work "Mantine's way": read the component's mantine.dev page for its intended usage, since the types alone don't show it. From Claude's memory, 2026-09-27.
@@ -20,6 +22,5 @@ A rolling list of changes the project docs in `.opencode/docs/` need, collected 
 - [ ] Create a shared mock in `test/mocks/` as soon as the same mock is duplicated across test files. From Claude's memory, 2026-09-27.
 
 # Questions
-- Is this a sweep with a relaxed rule, or a new note type?
 - Once a rule is in a doc, is the matching Claude memory deleted?
 - Where do the docs move to?

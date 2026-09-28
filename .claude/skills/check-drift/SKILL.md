@@ -28,7 +28,7 @@ It only reads code. It never runs the app and never changes code. A hook blocks 
 - **Her decisions are made.** When she has written or said that she wants something changed, don't ask whether she still wants it, and don't ask again for every place it touches. Ask only where applying it leaves a real choice open.
 
 ## 1. Read the note
-Find the note in `notes/features/`. It needs `status: spec`, `ready` or `in-progress`. If it has another status, tell Sarah what you found and stop. A collecting sweep note (`type: sweep`, `status: idea`) hasn't been frozen yet. Tell Sarah it needs freezing first, as Note Conventions describes under Sweeps, and stop.
+Find the note in `notes/features/`. It needs `status: spec`, `ready` or `in-progress`. If it has another status, tell Sarah what you found and stop. A collecting sweep (`type: sweep`, `status: idea`) is checked only after it's kicked off. Tell Sarah to run `/kickoff` on it first, then `/check-drift` on the note it kicks off, and stop.
 
 Read the whole note, including:
 - the Design Handoff and its images in `notes/assets/<story>/`
@@ -77,8 +77,8 @@ For each finding, also note what it means for the note:
 **Sweeps:** a sweep's items must stay small and decided, so sort each item's findings this way instead:
 - **Already fixed, or built by another story:** mechanical. The callout says the item is dropped and why, and `/plan-steps` skips it.
 - **Moved or renamed:** mechanical, as above.
-- **Now needs a decision:** it no longer belongs in a sweep. Take it out straight away, without asking whether to settle it, and put it on the out-of-scope list to become its own story. Leave a callout where it was saying it moved out and why.
-- **Now waits on another story:** move it back to the collecting note, starting with `**Blocked by [[Story]]:**`, so it rolls over to the next sweep. Leave a callout where it was saying it moved back and why.
+- **Now needs a decision:** it no longer belongs in a sweep. Take it out straight away, without asking whether to settle it, and put it on the out-of-scope list, where it may go to a roundup or become its own story. Leave a callout where it was saying it moved out and why.
+- **Now waits on another story:** move it back to the collecting note, starting with `**Blocked by [[Story]]:**`, so it rolls over to the next sweep. If no collecting note exists, put it on the out-of-scope list instead. Leave a callout where it was saying where it went and why.
 
 A sweep never needs a re-assessment and never gets a `decision needed` entry.
 
@@ -103,7 +103,7 @@ Some decisions need more than a callout:
 - **Recent code wins over the docs**, or recent code follows a convention the docs don't mention and Sarah says it's the convention: draft the change to the doc in `.opencode/docs/`, show it to her and write it once she approves. Match the doc's existing style.
 - **The docs win:** the recent code that breaks the convention goes on the out-of-scope list.
 - **The other story has to change:** that change goes on the out-of-scope list. Don't edit the other note here.
-- **A decision she wants to make later:** add a `"decision needed: <short question>"` entry to `blocked-by`, and the question to the note's Open Decisions.
+- **A decision she wants to make later:** add the question to the note's Open Decisions, and a `"decision needed: ..."` entry to `blocked-by` if the note doesn't have one.
 
 ## 6. Route the note
 Work out the next step from the findings' meanings in step 4:

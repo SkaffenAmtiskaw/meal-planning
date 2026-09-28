@@ -17,7 +17,7 @@ No direction yet. ^status
 %% What must be true when this is done. Rough bullets are fine while status is `idea`. Move to `spec` once there is a detailed design (Design Handoff below) or a detailed technical approach. %%
 
 # Open Decisions
-%% Decisions that must be made before the next step can start, written as questions, not proposals. Each one also gets a `"decision needed: <short question>"` entry in `blocked-by`. Record the answer here once it's made and remove its `blocked-by` entry. Delete the section if there are none. %%
+%% Decisions that must be made before the next step can start, written as questions, not proposals. While any are open, `blocked-by` has one `"decision needed: ..."` entry for all of them. Record each answer here once it's made, and remove that entry once none are open. Delete the section if there are none. %%
 
 # Out of Scope
 %% Anything deliberately left out. Each item should also be on the Roadmap so it isn't lost. %%

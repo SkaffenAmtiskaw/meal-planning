@@ -76,7 +76,7 @@ Work out the reasonable fixes. Read the project docs they touch (`.opencode/docs
 - **One reasonable fix:** what changes and where, and why. If the critic reviewed it, give its verdict. Wait for her approval.
 - **More than one:** give each option with its trade-offs, what it touches and the critic's verdict if it has one. Then recommend one, following "Recommendations" in AGENTS.md. Wait for her to pick.
 
-If Sarah wants to think it over, or the choice needs research beyond this bug, don't push. Write it as an Open Decisions question with the options under it, and add a `"decision needed: which fix to use"` entry to `blocked-by`. `/decide` settles it later.
+If Sarah wants to think it over, or the choice needs research beyond this bug, don't push. Write it as an Open Decisions question with the options under it, and add a `"decision needed: ..."` entry to `blocked-by` if it doesn't have one. `/decide` settles it later.
 
 ## 3. Cleanup notes
 
@@ -88,7 +88,7 @@ Record how you checked each finding, e.g. "grep for `CalendarEvent` on 2026-09-2
 ### 3b. Settle the decisions
 The scan usually raises questions about how to tidy something, such as whether a type needs to exist, or whether two shapes can line up. Take each one to Sarah, one at a time, with its options and trade-offs and a recommendation, following "Recommendations" in AGENTS.md. Read the project docs and library docs as in 2d when an option depends on them.
 
-If Sarah wants to think one over, or it needs research beyond this scan, leave it for `/decide`. It gets an Open Decisions question and a `"decision needed: <short question>"` entry in `blocked-by`.
+If Sarah wants to think one over, or it needs research beyond this scan, leave it for `/decide`. It gets an Open Decisions question, and a `"decision needed: ..."` entry in `blocked-by` if the note doesn't have one.
 
 ## 4. Write it to the note
 Draft the changes and show them to Sarah before writing. Keep her wording wherever the note already has it.
@@ -107,7 +107,7 @@ Draft the changes and show them to Sarah before writing. Keep her wording wherev
 
 **Both:**
 - **Where It Stands:** remove the questions that were for this step, now that the note answers them. Update the `^status` line as AGENTS.md describes under "Editing notes", e.g. "Next: /plan-steps" or "Waiting on your fix decision. Next: /decide, then /plan-steps".
-- **Frontmatter:** set `status: spec` and `confirmed` to today. Update `blocked-by`: remove entries this run settled or that only waited on this skill being built, and add any `decision needed` entries from 2d or 3b.
+- **Frontmatter:** set `status: spec` and `confirmed` to today. Update `blocked-by`: remove entries this run settled or that only waited on this skill being built, and add a `decision needed` entry if 2d or 3b left decisions open.
 - **Roadmap:** fix any text on the story's line in `notes/Roadmap.md` that this run made wrong, like "blocked on the investigate skill".
 
 ## 5. Find a home for out-of-scope items

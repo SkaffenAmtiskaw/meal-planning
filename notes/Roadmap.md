@@ -10,7 +10,7 @@
 - **Ideas** - not committed.
 - A story's status (`idea` / `spec` / `ready` / `in-progress` / `in-review` / `done`) lives in its note's frontmatter. This file only decides order.
 - Each line with a note embeds that note's status line from Where It Stands after the link, e.g. `[[Stale Data Issues]] ![[Stale Data Issues#^status]]`. It shows only what work the story needs next, not what the story is. Edit it in the note, not here.
-- **Sweeps** (`type: sweep`) collect small, decided fixes that share a group, such as [[Unit Test Tidy-Ups]]. A small fix with no open decisions goes into the sweep for its group, not onto its own line here. When several related small fixes sit here as separate lines and no sweep covers them, flag to Sarah that they could become a new sweep. Never create one without her.
+- **Collecting notes** gather items until they're handled together: sweeps (`type: sweep`) for small, decided fixes that share a group, such as [[Unit Test Tidy-Ups]]; roundups (`type: roundup`) for issues on a broad topic that still need decisions, such as [[Style Decisions]]; and collecting workflow notes for tooling and agent changes, such as [[Agent Workflow Changes]]. An item that fits one goes there, not onto its own line here. When several related items sit here as separate lines and none covers them, flag to Sarah that they could become a new one. Never create one without her.
 - *(was high)* etc. is the item's priority under the old High / Medium / Low layout, kept for reference while the queue is being ordered. *(was bugfix)* means it was in the old "Bugfixes/User Issues/Tech Debt" section.
 
 # Hubs
@@ -27,7 +27,6 @@
 4. [[Today and Selected Day Markers]] ![[Today and Selected Day Markers#^status]] - spec. Fixes the truncated today circle; unblocks [[Mobile List View]]. *(was high)*
 5. [[Shared Types Directory]] - spec, last reviewed April. Unblocks [[Remove Schedule-X]].
 6. [[Docs Updates]] ![[Docs Updates#^status]]
-7. [[Sweep Refinements]] ![[Sweep Refinements#^status]]
 
 # Blocked
 - [[Header Date Picker]] ![[Header Date Picker#^status]] - spec. Waiting on [[Mantine Date Picker Setup]] and [[Today and Selected Day Markers]]. *(was high)*
@@ -38,7 +37,6 @@
 - [[Delete Planner|allow user to delete a planner]] - idea. Waiting on the [[Zero Planners Crash]] decision. *(was high)*
 - [[Keyboard Shortcuts|keyboard shortcuts]] - spec. Out of date; re-review once the calendar views are mostly complete. *(was medium)*
 - calendar list view keyboard navigation - needs design review once the calendar views are mostly complete (see Step 16 in [[Replace Schedule-X]])
-- [[Style Decisions]] ![[Style Decisions#^status]]
 - [[Settings Data Refresh]] ![[Settings Data Refresh#^status]] - spec. Waiting on [[Calendar and Recipes Data Refresh]].
 - [[Data Rules Enforcement]] ![[Data Rules Enforcement#^status]] - spec. Waiting on [[Calendar and Recipes Data Refresh]], [[Settings Data Refresh]] and [[Server-Only Creation and Pure Reads]].
 - [[Unchecked Planner Reads]] ![[Unchecked Planner Reads#^status]] - spec. ⚠️ Security: any planner's data may be readable by id without a membership check. Waiting on [[Calendar and Recipes Data Refresh]] and [[Server-Only Code Behind Barrels]].
@@ -81,6 +79,7 @@
 
 ## App-Wide UX & Quality
 - [[Style Fixes]] ![[Style Fixes#^status]] *(was high)*
+- [[Style Decisions]] ![[Style Decisions#^status]]
 - [[Email Improvements|email improvements]] *(was high)*
 - take create planner pattern of button on top right in desktop - FAB in mobile and apply it throughout the app *(was medium)*
 - skip to content *(was medium)*
@@ -114,19 +113,12 @@
 
 ## Dev Tooling & Testing
 - switch testing library to `vitest-browser-react`
-- enable dependabot *(was low)* - npm only (no `.github/` yet); decide how often it runs and whether minor/patch updates are grouped into one PR, then it can join [[Dev Tooling Tidy-Ups]]
 - e2e tests *(was low)*
-- disable biome a11y checks on unit test mocks *(was low)* - decide whether this covers only `test/mocks/**` or inline mocks in `*.test.tsx` too, then it can join [[Dev Tooling Tidy-Ups]]
 - [[Unit Testing - New Centralized Mocks]] ![[Unit Testing - New Centralized Mocks#^status]]
 - [[Dev Tooling Tidy-Ups]] ![[Dev Tooling Tidy-Ups#^status]]
 
 ## Notes & Agent Workflow
-- [[Agent Workflow Changes]] - idea.
-- [[Skill and Agent Tidy-Ups]] ![[Skill and Agent Tidy-Ups#^status]]
-- standardize the implementation step format - notes use at least three shapes today ("What we're doing / Acceptance Criteria / Architectural plan" in [[Replace Schedule-X]] and [[Mobile Month View]], "Problem to solve / Suggested Approach / Verification" in [[Mobile List View]], "Scope / Files / Architectural note / Acceptance" in [[Add Meal Changes (Saved Recipes)]])
-- reconcile each `spec` note against the code with `/check-drift` when it reaches the top of Next (Stale Data Issues and Unified Date Picker were written this week; Shared Types Directory and Tag Management date from April)
-- decide `type` for the untyped note [[Email Improvements]]
-- optional: an Obsidian Base listing notes by `type`, `status` and `confirmed`, to spot stale notes at a glance
+- [[Agent Workflow Changes]] ![[Agent Workflow Changes#^status]]
 
 # Ideas
 - [[Grocery List Integration]]

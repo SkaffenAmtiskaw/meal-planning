@@ -37,4 +37,4 @@ Tidy-ups to app code that change nothing a user can see or do. Test-only fixes g
 - [ ] Sending a planner invite, and the app shell header, navbar and inputs, look and work as before.
 
 # Implementation
-%% Empty while collecting. When Sarah schedules a sweep, a dated copy is frozen (see Sweeps in Note Conventions) and /plan-steps writes the steps there. %%
+%% Empty while collecting. Once the sweep is kicked off and /check-drift has run, /plan-steps writes the steps there. %%

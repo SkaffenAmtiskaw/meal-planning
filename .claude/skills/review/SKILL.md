@@ -32,7 +32,7 @@ Read the note. Don't open the story's code yet.
 
 The review depends on `type`:
 - **feature:** the full review, steps 2 to 8.
-- **pattern, bug, cleanup or sweep:** there's no behavior list to design a target from, so skip the fresh design and `code-critic`. Step 3 explains what runs instead.
+- **pattern, bug, cleanup, sweep or roundup:** there's no behavior list to design a target from, so skip the fresh design and `code-critic`. Step 3 explains what runs instead.
 
 ## 2. Find the story's code
 Commit messages don't name the story, and commits often mix code with notes changes, so work the range out from the note's history and have Sarah confirm it.
@@ -54,7 +54,7 @@ Save each agent's full report, unedited, to `.scratch/<note name> - <agent name>
 3. Send the list to the `code-critic` subagent: each target piece with its job and the files mapped to it. Tell it this is a review of a finished story, so every file on the list has already been changed by the story. Don't pre-judge the code for it.
 4. Compare the fresh design with the approved Suggested Approach table. Each place they differ is a finding: what the approach planned, what a fresh design has, and what the code does. These are where the approach may have gone wrong once the later steps existed.
 
-**For a pattern, bug, cleanup or sweep:** read the conventions the story was meant to apply, such as a pattern's Rules section or the `.opencode/docs/` file a cleanup aligns code with (for example `unit_tests.md`). Then read the story's files and check each change against them. Findings need `file:line` evidence and the rule they break.
+**For a pattern, bug, cleanup, sweep or roundup:** read the conventions the story was meant to apply, such as a pattern's Rules section, a roundup's **Decided** lines or the `.opencode/docs/` file a cleanup aligns code with (for example `unit_tests.md`). Then read the story's files and check each change against them. Findings need `file:line` evidence and the rule they break.
 
 Add every agent's "Outside this story" and "Duplication" items that fall outside the story to your out-of-scope list.
 

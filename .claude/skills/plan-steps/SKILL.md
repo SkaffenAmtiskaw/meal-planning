@@ -26,7 +26,8 @@ This is planning only. Don't change code. A hook blocks edits outside `notes/` a
 Find the note in `notes/features/`. It needs `status: spec` and an approved approach:
 - **Feature:** a `# Suggested Approach`.
 - **Pattern:** Rules, Enforcement, and a Migration Checklist. Some older notes call the checklist "Places to Update."
-- **Sweep:** its unchecked Items, minus any a ⚠️ Check Drift callout drops or moves out. A frozen sweep goes through `/check-drift` first. If its `^status` line still says "Frozen. Next: /check-drift", tell Sarah and stop.
+- **Sweep:** its unchecked Items, minus any a ⚠️ Check Drift callout drops or moves out. A kicked-off sweep goes through `/check-drift` first. If its `^status` line still says "Kicked off. Next: /check-drift", tell Sarah and stop.
+- **Roundup:** every question under Open Decisions decided, minus any a ⚠️ Check Drift callout drops. If one is still open, `/decide` comes first.
 - **Bug:** a `# Fix` with the chosen fix, and the Root Cause behind it. If Fix points to an Open Decision, that decision needs a **Decided** line. Some older notes call the section "Fix Options"; use the option recorded as decided there.
 - **Cleanup:** Current State, with every question under Open Decisions decided.
 
@@ -78,9 +79,9 @@ A step that changes source files as well as tests uses click-throughs like any o
 ### Coverage
 Every behavior and every piece in the approach must land in some step. Nothing can land in a step unless it's in the approach.
 
-Coverage also runs back to the note's source material, not just the approach, because the approach can miss things. Every step's **Source:** names the parts of the note it builds or fixes: Requirements bullets, Design Handoff sections, a pattern's Symptoms, or a sweep's Items. Together the steps must claim every Requirements bullet, every Design Handoff section, every Symptom and every remaining sweep Item. Cite handoff sections by heading, not individual pixel values. The implementer reads those sections for the details.
+Coverage also runs back to the note's source material, not just the approach, because the approach can miss things. Every step's **Source:** names the parts of the note it builds or fixes: Requirements bullets, Design Handoff sections, a pattern's Symptoms, a sweep's Items, or a roundup's decided questions. Together the steps must claim every Requirements bullet, every Design Handoff section, every Symptom, every remaining sweep Item and every roundup decision. Cite handoff sections by heading, not individual pixel values. The implementer reads those sections for the details.
 
-In a sweep, items share a step only when they're the same idea, such as one fix repeated across several files. Unrelated items are separate steps, however small.
+In a sweep or roundup, items share a step only when they're the same idea, such as one fix repeated across several files. Unrelated items are separate steps, however small.
 
 A step that claims a Symptom needs an acceptance check that reproduces the original bug and shows it's gone.
 

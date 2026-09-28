@@ -8,7 +8,7 @@ disable-model-invocation: true
 Make this workflow or tooling change: **$ARGUMENTS**
 
 ## Why this skill works the way it does
-The agent workflow is being overhauled, and tooling changes skip the story lifecycle (`/shape`, `/decide`, `/plan-steps`, `/implement`, `/review`, `/close`). That lifecycle exists so product code is built and reviewed in small pieces. A change to a skill or a convention is small enough to understand whole, and Sarah reviews it directly. Workflow notes (`type: workflow`, usually in `notes/features/tooling/`) are only a place to keep track of ideas until she gets to them. They have no `status`: `/workflow` does the change and deletes the note.
+The agent workflow is being overhauled, and tooling changes skip the story lifecycle (`/shape`, `/decide`, `/plan-steps`, `/implement`, `/review`, `/close`). That lifecycle exists so product code is built and reviewed in small pieces. A change to a skill or a convention is small enough to understand whole, and Sarah reviews it directly. Workflow notes (`type: workflow`, usually in `notes/features/tooling/`) are only a place to keep track of ideas until she gets to them. They have no `status`: `/workflow` does the change and deletes the note. A workflow note with a What Belongs Here section is different: it collects items over time, like Docs Updates. `/workflow` does one of its items per session, or a group of logically related items when Sarah agrees, and the note stays.
 
 So one session does it all: find out what Sarah wants, make the change everywhere it reaches, then leave the notes matching what now exists. One change per session. When it's done, stop.
 
@@ -20,8 +20,8 @@ This skill is for changes to how the app is built (skills, subagents, hooks, AGE
 The argument is one of:
 - **A note name:** find it in `notes/` and check its `type`:
   - `workflow`: read all of it. The whole note is the change unless Sarah says otherwise.
+  - `workflow` with a What Belongs Here section: a collecting note. List its items, one line each, and point out any that are logically grouped, such as several rules that all land in the same doc. Ask Sarah which item or group this session does. That item or group is the change.
   - blank, in `notes/features/tooling/`: a tooling note from before the workflow type existed. Ask Sarah whether it's a workflow note. If it is, give it `type: workflow`, remove its `status`, set its `^status` line to "Next: /workflow", and go on.
-  - `sweep`: sweeps still follow the sweep lifecycle in Note Conventions. Tell Sarah, and ask whether to go ahead anyway.
   - anything else: it's story work. Tell Sarah it belongs in the story lifecycle, and stop.
 - **An item in a note:** find it and read the note around it. Check the note's `type` the same way.
 - **A description:** Sarah's own words. If it would change what the app does for its users, tell her it belongs in the story lifecycle, and stop. App code changed only as a side effect, such as files reformatted by a new lint rule, is fine. Otherwise, search `notes/` for notes and items about the same thing and tell her what you found. They may already hold details or decisions.
@@ -56,7 +56,7 @@ Once she approves, bring the notes in line with the change. Search all of `notes
 - text the change made wrong, such as a `^status` line naming a renamed skill, or a note describing the old workflow
 
 Handle each one:
-- **Done in full:** remove it, with no line recording that it was removed. For a whole note: if it holds something worth keeping for reference, such as a rationale or a convention, ask Sarah whether a doc should cover it. Then run `git status` on it (if it's untracked or has uncommitted changes, ask before deleting), delete it with `rm`, remove its Roadmap line, and reword or remove every link to it.
+- **Done in full:** remove it, with no line recording that it was removed. A collecting note this session worked from stays: remove only the items it did. If that leaves it with no items, ask Sarah whether it should keep collecting or be deleted. If it's deleted, it goes through the same steps as any whole note below. For any other whole note: if it holds something worth keeping for reference, such as a rationale or a convention, ask Sarah whether a doc should cover it. Then run `git status` on it (if it's untracked or has uncommitted changes, ask before deleting), delete it with `rm`, remove its Roadmap line, and reword or remove every link to it.
 - **Partly done:** remove the done parts and keep the rest.
 - **Out of date:** if there's one right fix, make it. If there's a real choice, propose the wording and wait. A story note's plan is never rewritten. Add a Check Drift callout as AGENTS.md describes.
 - **Sarah's comments:** never edit one. If one is now done or out of date, show it to her and ask whether to remove it.

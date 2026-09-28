@@ -32,4 +32,4 @@ Unit test fixes that don't follow `.opencode/docs/unit_tests.md`. Changes are to
 - [ ] Coverage stays at 100%.
 
 # Implementation
-%% Empty while collecting. When Sarah schedules a sweep, a dated copy is frozen (see Sweeps in Note Conventions) and /plan-steps writes the steps there. %%
+%% Empty while collecting. Once the sweep is kicked off and /check-drift has run, /plan-steps writes the steps there. %%

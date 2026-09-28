@@ -80,7 +80,7 @@ Give Sarah two or three directions, each with:
 
 Recommend one and say why. These are also valid directions:
 - **Fold it into an existing note,** if step 2 found a story that already covers it.
-- **Fold it into a sweep,** if it's a small fix with zero ambiguity and no open decisions that fits a sweep note's What Belongs Here rule (`type: sweep`). Never create a new sweep. If it's small and decided but no sweep fits, and the Roadmap already has related small fixes, tell Sarah they could be grouped into a new sweep. Whether to create one is her call.
+- **Fold it into a sweep or roundup,** if it fits a collecting sweep's or roundup's What Belongs Here rule (`type: sweep` or `type: roundup`), as the `scope-router` agent describes under "Sweep" and "Roundup". Never create a new one. If none fits but the Roadmap already has related items, tell Sarah they could be grouped into a new sweep or roundup. Whether to create one is her call.
 - **Drop it,** if it's already done or no longer makes sense.
 
 **Don't make the blocking decisions from step 2,** even if a direction seems to depend on one. They need research and Sarah, and that's the decide step's job. Say which decisions each direction depends on instead.
@@ -93,18 +93,18 @@ Draft the note from the template in `notes/templates/` for the chosen type:
 - **Open Decisions:** the blocking decisions from step 2, one per line. Write them as questions, not proposals. Under an adopt-or-build decision, name the candidates from step 2 without ranking them. Delete the section if there are none.
 - **Sarah's content:** move everything from the idea into the template's sections. Keep her wording. If something fits no section, put it under Where It Stands rather than dropping it.
 - **Don't fill** the sections that belong to a later step: Design Handoff, Suggested Approach, Root Cause, Fix Options, Current State, Rules, Migration Checklist and Implementation. Leave their template comments in place.
-- **Frontmatter:** set `type`, leave `status: idea`, set `confirmed` to today, and add `blocked-by` entries if the direction depends on another story. Add one `"decision needed: <short question>"` entry to `blocked-by` for each open decision.
+- **Frontmatter:** set `type`, leave `status: idea`, set `confirmed` to today, and add `blocked-by` entries if the direction depends on another story. If there are open decisions, add one `"decision needed: ..."` entry to `blocked-by` that covers them all.
 
 Show her the draft and wait for her approval.
 
 **For the "fold it into an existing note" direction,** draft the addition to that note instead, following the rules in the `scope-router` agent (`.claude/agents/scope-router.md`) under "Existing note". In particular, a `ready` note that gets new work goes back to `spec`.
 
-**For the "fold it into a sweep" direction,** draft the item for the collecting sweep note's Items, following the rules in the `scope-router` agent under "Sweep".
+**For the "fold it into a sweep or roundup" direction,** draft the item for the collecting note, following the rules in the `scope-router` agent under "Sweep" or "Roundup".
 
 ## 6. Write it
 Once she approves:
 - **An existing idea note:** rewrite it in place, so links to it keep working. Don't rename or move it without asking.
 - **A Roadmap line with no note:** create the note in `notes/features/<area>/`, with a plain filename (no emoji or prefixes). If the area isn't obvious, ask her which folder.
-- **Folded into an existing note or a sweep:** apply the addition there. Replace the idea note's content with a 🚛 pointer to where it went. Never delete the file.
-- **Folded into a sweep from a Roadmap line with no note:** add the item and remove the Roadmap line.
+- **Folded into an existing note, a sweep or a roundup:** apply the addition there. Replace the idea note's content with a 🚛 pointer to where it went. Never delete the file.
+- **Folded into a sweep or roundup from a Roadmap line with no note:** add the item and remove the Roadmap line.
 - **The Roadmap:** make the story's line link to the note and embed its summary, e.g. `[[Note]] ![[Note#^status]]`. Keep the line in its current section and keep annotations like *(was high)*. For a new note from a split, ask Sarah which section its line goes in.

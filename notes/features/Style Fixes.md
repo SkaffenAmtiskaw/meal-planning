@@ -8,7 +8,7 @@ confirmed: 2026-09-26
 Collecting items until you schedule a sweep. ^status
 
 # Purpose
-Small visual style fixes anywhere in the app. Each one is too small for its own story, so they're collected here and handled in one sweep. Style fixes that still need a decision wait in [[Style Decisions]] and join this list once decided.
+Small visual style fixes anywhere in the app. Each one is too small for its own story, so they're collected here and handled in one sweep. Style fixes that still need a decision go in the [[Style Decisions]] roundup.
 
 ## What Belongs Here
 Every item must be small, with zero ambiguity and no open decisions: whoever builds it should never need to ask what to do. An item that still needs a decision doesn't go here. Give it its own Roadmap line until it's decided, then add it.
@@ -28,4 +28,4 @@ Visible style fixes anywhere in the app (spacing, alignment, colors, component v
 - [ ] Every screen an item touches looks as before, apart from the fix.
 
 # Implementation
-%% Empty while collecting. When Sarah schedules a sweep, a dated copy is frozen (see Sweeps in Note Conventions) and /plan-steps writes the steps there. %%
+%% Empty while collecting. Once the sweep is kicked off and /check-drift has run, /plan-steps writes the steps there. %%
