@@ -82,7 +82,7 @@ Then note what it means for the note:
 - **Approach:** the approach, or part of it, no longer holds. Its approach needs re-settling.
 - **Blocked:** it can't go ahead until another story lands or a decision is made.
 
-Then triage the out-of-scope list as AGENTS.md describes under "Out-of-scope work". If an item is a sweep item this step took out, it can't be pulled back in, so offer route or drop only. Otherwise, an item Sarah pulls in becomes a finding that needs a decision. Sort it like the others.
+Then triage the out-of-scope list as AGENTS.md describes under "Out-of-scope work". If an item is a sweep item this step took out, it can't be pulled back in, so offer route or drop only. If the note is a sweep, an item Sarah pulls in must be decided before it joins: if it still needs a decision, ask her for it. If she wants to think it over, it can't join the sweep, so offer route or drop only. Otherwise, add it as a new unchecked box under Items, written as the Items comment in `notes/templates/Sweep.md` describes, with "Pulled in by Sarah YYYY-MM-DD" and any answer she gave ("Sarah decided: ..."). If the note isn't a sweep, an item Sarah pulls in becomes a finding that needs a decision. Sort it like the others.
 
 ## 5. Write the callouts
 Write each callout as AGENTS.md describes under "Editing notes", worded like this:
