@@ -55,7 +55,9 @@ Don't touch `confirmed`. The next skill checks the items against the code and se
 - **A new one starts:** the kicked-off copy needs a line that links to it and embeds its status (`[[Note]] ![[Note#^status]]`). The original keeps its line.
 - **No new one:** the note keeps its line.
 
-Either way, ask Sarah which section the kicked-off note's line goes in and where, as AGENTS.md describes under "Roadmap order". Put it where she says.
+Either way, ask Sarah which section the kicked-off note's line goes in and where, as AGENTS.md describes under "Roadmap order". Put it where she says. If it goes in Next, it needs a marker, as "How this file works" in the Roadmap describes. If none of its items serves an active goal, ask her whether it gets 📌 and with what reason.
+
+If any of its items end with a 🎯 goal link, the kicked-off note's line carries those links. Remove from the original's line any 🎯 link that none of its remaining items carries.
 
 ## 5. Find a home for out-of-scope items
 If the out-of-scope list is empty, skip this. Otherwise, route it as AGENTS.md describes under "Out-of-scope work". The kicked-off note can't take the items back, so the triage offers route or drop only.

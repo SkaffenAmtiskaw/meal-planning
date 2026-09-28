@@ -62,7 +62,7 @@ Rewrite the note from `notes/templates/Hub.md`:
 - **Leave** Coverage, Build Order and Deferred Work as template comments.
 - **Frontmatter:** `type: hub` and `confirmed` set to today. Hubs have no `status` or `blocked-by`.
 
-Show her the draft and wait for her approval, then write it as in step 6. Hubs have their own section on the Roadmap, so ask her whether the line moves there.
+Show her the draft and wait for her approval, then write it as in step 6. A hub keeps its Roadmap line while it has open decisions, so the line stays where it is.
 
 ### Splitting an idea
 Each story gets a placeholder now, and its real shaping later in its own session:

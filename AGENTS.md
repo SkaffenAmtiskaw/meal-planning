@@ -22,9 +22,10 @@ Any change to a note in `notes/` follows these rules:
 - **Plans aren't rewritten.** When the build differs from a step, add an **As built:** note under the step. When a note no longer matches the code, add a `> ⚠️ **Check Drift YYYY-MM-DD:** ...` callout directly above the text it's about. Never edit the plan text itself.
 - **The `^status` line** (the line ending in ` ^status` under Where It Stands) says what work the story needs next or what it's waiting on, and nothing else. Never describe the story there. The Roadmap embeds it so Sarah can scan what each story needs.
   - Whoever moves a story forward updates it. When the next step is settled, write it without asking and mention it in your summary. When there's a real choice, such as what the story is blocked on, show Sarah the line and wait for her approval.
-  - Every note starts with Where It Stands, right after the frontmatter, in its template's format. If a note has none, add it.
+  - Every note except a goal starts with Where It Stands, right after the frontmatter, in its template's format. If a note has none, add it.
   - The story's line in `notes/Roadmap.md` embeds it after the link: `[[Note]] ![[Note#^status]]`. Add the embed if it's missing.
 - **Roadmap order is Sarah's call.** Never reorder `notes/Roadmap.md`. Ask her where a new line goes. If the notes or the Roadmap make the spot clear, suggest it and say why. Otherwise, ask without a suggestion. Never guess one.
+- **A blocker outside the queue.** If a story in Next gets a story in its `blocked-by` that isn't in Now or Next, propose pulling that story into Next directly ahead of it, with the same markers, and say why.
 - **A `ready` note goes back to `spec`** when its design or steps change, until Sarah re-reviews it.
 - **Embedded sections** (`![[Note#Section]]`) are part of the note. A raw file shows only the link, so open each one and read it as part of the note.
 - **Anything bigger, outside a skill:** a skill carries what it needs for the notes it changes. Without one, read `notes/Note Conventions.md` before creating, retyping, moving, closing or deleting a note, or changing its `status`.

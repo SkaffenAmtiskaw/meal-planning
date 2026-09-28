@@ -14,7 +14,7 @@ hooks:
 Close the story **$ARGUMENTS**.
 
 ## Why this skill works the way it does
-When a story leaves the board, two things happen: its note is kept or deleted, and the notes around it catch up. The second is where things get missed. A story that waited on it stays under Blocked, a Roadmap line still says "unblocks [[X]]", a sweep or roundup item keeps its **Blocked by** marker, or a note still sends readers to a design that's gone.
+When a story leaves the board, two things happen: its note is kept or deleted, and the notes around it catch up. The second is where things get missed. A story that waited on it still lists it in `blocked-by`, a goal whose last story this was never gets flagged for release, a Roadmap line still says "unblocks [[X]]", a sweep or roundup item keeps its **Blocked by** marker, or a note still sends readers to a design that's gone.
 
 A few rules shape how it works:
 - **A note is kept only while another story needs it.** A kept note moves to `archive/` and lists the stories it's kept for in `kept-for`. When the last of them closes, the note is deleted. Nothing is kept just as a record, because git history is the backup. If a note feels worth keeping for reference, that means `.opencode/docs/` is missing something. Ask Sarah about the doc update instead.
@@ -34,6 +34,7 @@ Find the note in `notes/features/` or `notes/archive/` and read all of it.
 
 Where the note is and its `status` decide the kind of close:
 - **`done`, in `notes/features/`:** a done close. Check that every step is marked ✅ Complete, ❌ Will Not Do or 🚛 Moved, and that each 🚛 target note really holds the moved work: the full step, its image embeds and the handoff text, not a summary. If anything is missing, tell Sarah what you found and stop.
+- **A goal, in `notes/goals/`:** goals close through a release process, which isn't built yet. Tell Sarah, and stop.
 - **A hub, in `notes/features/`:** check each story it lists. If any is still open (its note is in `notes/features/`), tell Sarah which ones and stop. Otherwise it's a done close. A hub has no `status`, so leave it without one.
 - **Any other status, in `notes/features/`:** ask Sarah whether she's dropping the story. If not, stop. If she is, it's a dropped close. Then ask whether any part of it is still wanted somewhere else, such as a step or a piece of its design. Each part she names goes on the out-of-scope list, with its full text and images.
 - **In `notes/archive/`, with an empty or missing `kept-for`:** a re-close. The story itself closed earlier, so steps 4 and 6 don't apply. A missing `kept-for` means the note is older than the property, not that it's kept for good.
@@ -75,7 +76,7 @@ Skip this for a re-close. Go through the Blocker matches.
 1. Remove this story from the `blocked-by` list, and from the "waiting on" wording of the story's Roadmap line.
 2. If the list still has entries, the story stays blocked. Move on to the next one.
 3. If the list is now empty and the story is `spec`, `ready` or `in-progress`, set its `^status` line to "Unblocked. Next: /check-drift". If it's an `idea` note, write the next step its type calls for in the table below.
-4. If its Roadmap line is under Blocked, show Sarah the story and the current Next list, and ask where it goes, as AGENTS.md describes under "Roadmap order". Move the line where she says.
+4. If its Roadmap line is in Later and it serves an active goal, show Sarah the story and the current Next list, and ask whether it moves into Next and where, as AGENTS.md describes under "Roadmap order". Move the line where she says, with a 🎯 link for each goal it serves. Otherwise, leave the line where it is.
 
 !`sh scripts/note-section.sh "Next Step by Note State"`
 
@@ -87,7 +88,7 @@ Skip this for a re-close. Go through the Blocker matches.
 Go through the remaining matches:
 - **Content:** if a story's content was moved into it in step 3, make the move now, then reword the pointer so it no longer sends the reader to this note. If this note is kept, leave the pointers alone.
 - **Kept-for:** remove this story from the archived note's `kept-for`. If the list is now empty, that note needs `/close` in a new session. Add it to the follow-ups in step 9.
-- **Hub list:** mark this story done or dropped in the hub's list, following how the hub marks the others. If the hub now has no open stories left, add it to the follow-ups.
+- **Hub list:** mark this story done or dropped in the hub's list, following how the hub marks the others. If the hub now has no open stories left, set its `^status` line to "Next: /close", give it a Roadmap line that links to it and embeds its status, and ask Sarah where the line goes, as AGENTS.md describes under "Roadmap order". Then add the hub to the follow-ups.
 - **Passing mention:** if this note is being deleted, every link to it would be left pointing at nothing, so reword or remove each one, even the ones that are still true. Otherwise, only the out-of-date ones need it. For an out-of-date one, propose new wording to Sarah and wait for her approval. Never add a line saying the note was removed.
 - **Sarah's comment:** if it's done or out of date, handle it as AGENTS.md describes under "Editing notes".
 - **Archived notes with no `kept-for`:** for each one step 2 found, ask Sarah which open stories it's kept for. Write her answer into its `kept-for`. If none, add it to the follow-ups.
@@ -99,7 +100,7 @@ If the out-of-scope list is empty, skip this.
 Otherwise, a piece of a dropped story that Sarah asked to keep in step 1 skips the triage. For the other items, the story is closing, so the triage offers route or drop only. Then route the list as AGENTS.md describes under "Out-of-scope work". For a piece of a dropped story, include its full text and image embeds.
 
 ## 7. Close the note
-1. Remove the note's own line from the Roadmap. For a hub, that's its line under Hubs.
+1. Remove the note's own line from the Roadmap. First note the goals it served: the goal heading it sat under and its 🎯 links. For each one, if no other open line sits under its heading or carries its 🎯 link, and no collecting-note item carries its 🎯 link, add ` - waiting on a release process` to the goal's line under Goals.
 2. For a dropped close, set `status` to `dropped`. A done close stays `done`.
 3. Set the `^status` line to "Done." or "Dropped.". Don't touch `confirmed`.
 4. Then keep or delete it, as Sarah confirmed in step 3:
@@ -119,6 +120,7 @@ Tell Sarah:
 - each mechanical edit, grouped by note
 - each file deleted as unused
 - the stories that were unblocked, and where their Roadmap lines went
+- each goal now waiting on a release process
 - the follow-ups: each note that needs `/close` in a new session, and why
 
 Leave every change unstaged. Stop there, and don't start on any other note.

@@ -2,6 +2,12 @@
 type: hub
 confirmed: 2026-09-25
 ---
+# Where It Stands
+
+%% The line ending in ` ^status` says what this hub needs next and nothing else: "Next: /decide" while it has open decisions, "Next: /close" once its last child story has closed, otherwise "Next: its child stories". Don't describe the area here; Purpose does that. The Roadmap shows a hub's line only while it needs `/decide` or `/close`, and embeds this line with `![[<note>#^status]]`, so keep the ` ^status` ID on it. Add detail below it only when needed. %%
+
+Open decisions. Next: /decide ^status
+
 # Purpose
 Meal editing (edit, move, duplicate, delete, reorder) is spread across several stories, and was designed mostly around the desktop meal detail modal. Views without that modal - desktop list, mobile month, mobile list - were each deferred to "a future story", so most view × device combinations have no plan.
 

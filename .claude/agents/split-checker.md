@@ -59,7 +59,7 @@ Propose these, each as exact note changes:
 
 **Links from other notes:** list every note that links to the original as a dependency (in `blocked-by`, the Roadmap, or a hub). Say which child each one actually depends on.
 
-**Roadmap:** the original's line becomes the hub's line, and each child needs a line. Suggest a section for each only as AGENTS.md describes under "Roadmap order".
+**Roadmap:** each child needs a line, with the original line's 🎯 links or other marker. The hub gets no line unless it still has open decisions, so the original's line is removed. Suggest a spot for each child only as AGENTS.md describes under "Roadmap order".
 
 ## Report format
 **Verdict:** one story, or split into N.
