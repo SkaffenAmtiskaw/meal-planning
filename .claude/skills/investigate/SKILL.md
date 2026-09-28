@@ -1,6 +1,6 @@
 ---
 name: investigate
-description: Take a bug or cleanup idea note to spec. For a bug, reproduce it in the running app, find the root cause and settle the fix with Sarah. For a cleanup, scan the code, fill in Current State and settle its decisions with Sarah.
+description: Take a bug or cleanup idea note to spec, or re-investigate one at spec whose fix or Current State no longer holds. For a bug, reproduce it in the running app, find the root cause and settle the fix with Sarah. For a cleanup, scan the code, fill in Current State and settle its decisions with Sarah.
 argument-hint: "[note name]"
 disable-model-invocation: true
 hooks:
@@ -14,7 +14,7 @@ hooks:
 Investigate the note **$ARGUMENTS** and take it to `spec`.
 
 ## Why this skill works the way it does
-`/shape` gives a bug or cleanup a type and a direction, and stops there on purpose. This skill does the next part. It finds out what's actually in the code, and in the running app for a bug, and settles how to fix or tidy it. After this, the note goes straight to `/plan-steps`. There's no `/assess` step for bugs or cleanups, because the approach is picked here while the root cause or the scan is fresh.
+`/shape` gives a bug or cleanup a type and a direction, and stops there on purpose. This skill does the next part. It finds out what's actually in the code, and in the running app for a bug, and settles how to fix or tidy it. After this, the note goes straight to `/plan-steps`. There's no `/assess` step for bugs or cleanups, because the approach is picked here while the root cause or the scan is fresh. For the same reason, it re-investigates a bug or cleanup at `spec` whose Root Cause, Fix or Current State no longer holds, the way `/assess` re-assesses a feature.
 
 A few things shape how it works:
 - **Reproduce before you diagnose.** A diagnosis of runtime behavior nobody has seen is a guess. Past agents guessed, fixed the wrong thing and guessed again. Every bug is reproduced in the running app before a root cause is written down. The only exceptions are ones Sarah signs off on.
@@ -29,7 +29,10 @@ This is planning only. Don't change code. A hook blocks edits outside `notes/` a
 ## 1. Read the note
 Find the note in `notes/features/` and read all of it.
 
-It should be `type: bug` or `type: cleanup`, with `status: idea`. Otherwise, tell Sarah what you found and stop. A note at `spec` or later that needs re-checking goes through `/check-drift`.
+It should be `type: bug` or `type: cleanup`. If it's another type, tell Sarah what you found and stop. Then check `status`:
+- **`idea`:** a first investigation.
+- **`spec`:** a re-investigation, usually because `/check-drift` found that the Root Cause and Fix, or the Current State, no longer hold. Its ⚠️ Check Drift callouts say what changed. Don't start from the old sections. They invite the same anchoring as old code. Do step 2 or 3 fresh, then in step 4 show what changed compared with the old sections.
+- **`ready` or later:** tell Sarah what you found and stop. Changes to a planned story go through `/check-drift`.
 
 Check `blocked-by`. If it has a `decision needed` entry, those decisions come first with `/decide`. If another story blocks it, the investigation may be wasted until that story lands. In either case, tell Sarah and ask whether to go on anyway. An entry that only waited on this skill being built is stale. Remove it in step 4.
 
@@ -110,6 +113,7 @@ Draft the changes and show them to Sarah before writing. Keep her wording wherev
 - **Acceptance Criteria:** usually "X no longer exists", plus the existing flows that must stay unchanged, named.
 
 **Both:**
+- **Re-investigation:** before writing, show Sarah what changed compared with the old Root Cause and Fix, or Current State and Open Decisions, and replace them only once she approves. Remove the ⚠️ Check Drift callouts on the sections you replaced, since the new sections answer them.
 - **Where It Stands:** remove the questions that were for this step, now that the note answers them. Update the `^status` line as AGENTS.md describes under "Editing notes", e.g. "Next: /plan-steps" or "Waiting on your fix decision. Next: /decide, then /plan-steps".
 - **Frontmatter:** set `status: spec` and `confirmed` to today. Update `blocked-by`: remove entries this run settled or that only waited on this skill being built, and add a `decision needed` entry if 2d or 3b left decisions open.
 - **Roadmap:** fix any text on the story's line in `notes/Roadmap.md` that this run made wrong, like "blocked on the investigate skill".

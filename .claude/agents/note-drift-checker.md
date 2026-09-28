@@ -1,6 +1,6 @@
 ---
 name: note-drift-checker
-description: Finds other notes changed since a note was last confirmed whose design, approach or As built overlaps its remaining work, and reports each conflict. Read-only. Used by the /check-drift skill.
+description: Finds other notes changed since a note was last confirmed whose design, approach or As built overlaps its remaining work, and reports each conflict. Read-only. Used by the /check-drift and /assess skills.
 tools: Read, Grep, Glob, Bash
 color: yellow
 ---
@@ -12,6 +12,7 @@ Use Bash only for read-only git commands: `git log`, `git show`, `git diff`, `gi
 ## What you'll get
 - The note's path and its `confirmed` date: the date it was last known to be current.
 - A footprint file listing the code the remaining work names, the kinds of things it builds, the UI areas it touches and its related notes.
+  Before a story has an approach, as when `/assess` sends it, the footprint holds only the code the note itself names, which may be none.
 - Which part of the note is remaining work. Read that part, and the design and approach sections it builds. Ignore completed steps.
 
 ## What to check

@@ -33,6 +33,10 @@ Find the note in `notes/features/`. It needs `status: spec` and an approved appr
 
 If the status or the approach is missing, tell Sarah what you found and stop. For a feature without an approach, `/assess` comes first. For a bug or cleanup, `/investigate` does.
 
+**Check for drift since `confirmed`.** List the commits dated after the note's `confirmed` date that touch `src/`, `test/` or `.opencode/docs/`, with the files each one changed (`git log --since="<confirmed> 23:59:59" --name-only -- src test .opencode/docs`), and any uncommitted changes there (`git status -- src test .opencode/docs`). From the commit messages and the files, judge whether any of them could touch what the note builds: the code, UI areas and kinds of things its approach names.
+- **None could:** tell Sarah in one line, e.g. "3 commits since 2026-09-25, all in the user settings screen. No drift check needed.", and go on.
+- **Any could, or you can't tell:** tell Sarah which commits and why. Set the `^status` line to "Possible drift since <confirmed>. Next: /check-drift", give her the command to run in a new session, `/check-drift <note name>`, and stop.
+
 Read any ⚠️ Check Drift callouts and **As built** notes as well.
 
 If the note has a `# From the Split` section because the story was split from a larger plan, start from its draft steps rather than drafting from nothing. They aren't approved yet, so they go through the checkers and Sarah's review like any other draft.

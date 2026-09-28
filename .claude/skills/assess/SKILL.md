@@ -27,6 +27,22 @@ If the note has a Design Handoff, treat it as the source of truth for UX, not fo
 
 If the note already has a Suggested Approach, this is a re-assessment. Don't start from the old approach. It invites the same anchoring as old code. Do steps 2 to 5 fresh, then in step 6 show what changed compared with the old approach.
 
+### Check other notes for design changes
+Another story's design or build may have changed shared UI or a shared module since this note was confirmed. Catch it now, before the behaviors are confirmed, since a changed design changes them.
+
+Write the story's footprint to `.scratch/<note name> - footprint.md`:
+- **UI areas:** e.g. the mobile day section header, the today marker.
+- **Kinds of things it builds:** e.g. a modal form, a list grouped by day.
+- **Named code:** only what the note itself names. Don't search the code for more. That's step 4.
+- **Related notes:** its hub, the notes it links to, the stories in `blocked-by`.
+
+Send the `note-drift-checker` subagent the note path, its `confirmed` date, the footprint file and "the whole design and behaviors" as the remaining work. Save its report to `.scratch/<note name> - drift (notes).md`. Add its "Outside this story" items to your out-of-scope list.
+
+If it found nothing, tell Sarah in one line and go on. Otherwise, handle each finding before step 2:
+- **Mechanical:** add a ⚠️ Check Drift callout as AGENTS.md describes under "Editing notes", ending "Found by reading notes." Don't ask.
+- **Needs a decision:** show Sarah the finding, the other note and what conflicts, and recommend as AGENTS.md describes under "Recommendations". Wait for her answer, then write a callout recording it, e.g. "Sarah decided 2026-09-28 that ...". If she wants to decide later, add the question to Open Decisions, with a `decision needed` entry in `blocked-by` if the note doesn't have one. Set the `^status` line to "Next: /decide", and stop.
+- **Blocked:** if a finding means the story can't go ahead until another story lands, tell Sarah and ask whether to go on anyway. If she says no, add the story to `blocked-by` and stop.
+
 ## 2. Confirm the behaviors
 If the note has a `# From the Split` section because this story was split from a larger one, start from its behaviors. Show them and ask Sarah to confirm they still hold.
 
@@ -79,6 +95,7 @@ Then write the behavior list, the table and the client pieces under `# Suggested
 Leave `status` at `spec`. The note isn't ready until it has implementation steps.
 
 Then:
+- Set `confirmed` to today. `code-critic` just reviewed the code and `note-drift-checker` the notes, so the note matches both as of now.
 - Update the `^status` line as AGENTS.md describes under "Editing notes", e.g. "Approach approved. Next: /plan-steps".
 
 ## 7. Find a home for out-of-scope items

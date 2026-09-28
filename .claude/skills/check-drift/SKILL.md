@@ -20,7 +20,7 @@ A note is written against the codebase, the conventions and the other stories as
 - **Other notes:** another story's design or build changed shared UI or modules this story depends on. This is how design changes usually reach a story.
 - **Sarah changed her mind:** she writes a comment tagged or signed with her name in the note, or tells you in chat.
 
-This skill **flags and routes**. It never rewrites the plan. It adds ⚠️ Check Drift callouts where the note no longer matches, and sends the note to whichever skill fixes it: `/plan-steps` to re-plan, `/assess` to re-assess. The one thing it may fix itself is a convention doc, as AGENTS.md describes under "Doc gaps".
+This skill **flags and routes**. It never rewrites the plan. It adds ⚠️ Check Drift callouts where the note no longer matches, and sends the note to whichever skill fixes it: `/plan-steps` to re-plan, or the skill that re-settles its approach: `/assess` for a feature, `/investigate` for a bug or cleanup, `/architect` for a pattern, `/decide` for a roundup. The one thing it may fix itself is a convention doc, as AGENTS.md describes under "Doc gaps".
 
 It only reads code. It never runs the app and never changes code. A hook blocks edits outside `notes/`, `.scratch/` and `.opencode/docs/`.
 
@@ -35,7 +35,7 @@ Read the whole note, including:
 - existing ⚠️ Check Drift callouts, and **As built** notes
 
 Then work out the **remaining work**. That's all you check:
-- `spec`: the design, behaviors and Suggested Approach.
+- `spec`: the approach. For a feature, that's the design, behaviors and Suggested Approach. For a bug, the Root Cause and Fix. For a cleanup, Current State and the decided Open Decisions. For a pattern, the Rules and Migration Checklist. For a roundup, the decided questions under Open Decisions.
 - `ready` or `in-progress`: the steps with no `**Status:**` line, plus the design and approach sections they build. Skip completed steps. Their As built notes already record what happened.
 - a `spec` sweep: every unchecked item under Items.
 
@@ -79,7 +79,7 @@ A sweep never needs a re-assessment and never gets a `decision needed` entry.
 Then note what it means for the note:
 - **Callout only:** the plan still holds.
 - **Steps:** the approach holds but the remaining steps don't. It needs a re-plan.
-- **Approach:** the approach, or part of it, no longer holds. It needs a re-assessment.
+- **Approach:** the approach, or part of it, no longer holds. Its approach needs re-settling.
 - **Blocked:** it can't go ahead until another story lands or a decision is made.
 
 Then triage the out-of-scope list as AGENTS.md describes under "Out-of-scope work". If an item is a sweep item this step took out, it can't be pulled back in, so offer route or drop only. Otherwise, an item Sarah pulls in becomes a finding that needs a decision. Sort it like the others.
@@ -95,7 +95,7 @@ Say how it was found: by reading code, by reading notes, or from Sarah's comment
 
 **Sarah's comments:** add a callout at each place her comment affects, pointing back to it, e.g. "Sarah's comment under Behaviors (2026-09-24) drops the week view, so this step's week toggle no longer applies."
 
-**Findings that need a decision:** go through them with Sarah:
+**Findings that need a decision:** if the note is a roundup and a finding means Approach, don't settle it here. Add it to Open Decisions as a new question that says which decided question it reopens and why, with a `decision needed` entry in `blocked-by` if the note doesn't have one. Write a callout on the old decision that points to the new question. `/decide`'s researcher reads the current code for each question. Otherwise, go through them with Sarah:
 1. Show the finding, where it applies, its evidence (`file:line` or note and section) and how it was found.
 2. Say what the options are, and which you'd recommend and why.
 3. Wait for her answer.
@@ -111,7 +111,11 @@ Some decisions need more than a callout:
 If the note is a sweep, it stays at `spec` and always goes to `/plan-steps` next. Otherwise, work out the next step from the findings' meanings in step 4:
 - **Nothing beyond callouts:** `status` stays as it is.
 - **Steps:** set `status` to `spec`. Next is `/plan-steps`, which keeps the ✅ steps and re-plans the rest.
-- **Approach:** set `status` to `spec`. Next is `/assess`, as a re-assessment.
+- **Approach:** set `status` to `spec`. Next is the skill that re-settles the approach for the note's type:
+  - **Feature:** `/assess`, as a re-assessment.
+  - **Bug or cleanup:** `/investigate`, as a re-investigation.
+  - **Pattern:** `/architect`, as a revision.
+  - **Roundup:** `/decide`, for the questions step 5 added.
 - **Blocked:** add the story (`"[[link]]"`) or decision to `blocked-by`.
 
 If more than one applies, the biggest wins: approach over steps over callouts only. Blocked can go with any of them.
@@ -131,4 +135,4 @@ If the out-of-scope list is empty, skip this.
 Otherwise, route it as AGENTS.md describes under "Out-of-scope work".
 
 ## 9. Stop
-Don't start the next step in this session. Tell Sarah the check is done and give her the command for a new session, e.g. `/plan-steps <note name>`, `/assess <note name>` or `/implement <note name>`.
+Don't start the next step in this session. Tell Sarah the check is done and give her the command for a new session, e.g. `/plan-steps <note name>`, `/assess <note name>`, `/investigate <note name>`, `/architect <note name>`, `/decide <note name>` or `/implement <note name>`.
