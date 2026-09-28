@@ -11,7 +11,10 @@ Work is planned and tracked as notes in the Obsidian vault in `notes/`.
 - **Self-contained questions.** Put what a question is about inside it: the note, the file, the step. She may see only the question, not the text before it.
 - **Open choices are hers.** When an instruction or plan leaves a real choice open (two reasonable readings, and nothing written picks one), ask instead of choosing.
 - **Recommendations:** if she asks for a recommendation, always give one. Otherwise, give one when best practice supports it, and name the practice. When a choice comes down to her preference, say so and don't guess.
-- **Doc gaps:** the moment you notice something that belongs in `.opencode/docs/` (a convention the docs don't cover, or a rule that's wrong or out of date), stop and ask her whether it should become doc. Don't save the question for a report or a later pass. If she wants it done later, it goes in `notes/features/tooling/Docs Updates.md`. Otherwise, if it should become doc, draft the change, show it to her and write it once she approves.
+- **Doc gaps:** the moment you notice something that belongs in `.opencode/docs/` (a convention the docs don't cover, or a rule that's wrong or out of date), stop and ask her whether it should become doc. Don't save the question for a report or a later pass. If it should:
+  - **The default, for any change that isn't big:** recommend drafting it now, because docs that wait for later rarely get updated. If she says to do it later, remind her of that preference. If she still says later, add it to `notes/features/tooling/Docs Updates.md`.
+  - **A big change** (it needs more than one decision from her, or touches more than one file): give her a neutral choice between doing it now and adding it to Docs Updates, and do what she picks.
+  - **Drafting it:** match the doc's existing style, show her the draft and write it once she approves.
 
 ## Editing notes
 Any change to a note in `notes/` follows these rules:
@@ -21,7 +24,7 @@ Any change to a note in `notes/` follows these rules:
   - Whoever moves a story forward updates it. When the next step is settled, write it without asking and mention it in your summary. When there's a real choice, such as what the story is blocked on, show Sarah the line and wait for her approval.
   - Every note starts with Where It Stands, right after the frontmatter, in its template's format. If a note has none, add it.
   - The story's line in `notes/Roadmap.md` embeds it after the link: `[[Note]] ![[Note#^status]]`. Add the embed if it's missing.
-- **Roadmap order is Sarah's call.** Never reorder `notes/Roadmap.md`. Ask her where a new line goes.
+- **Roadmap order is Sarah's call.** Never reorder `notes/Roadmap.md`. Ask her where a new line goes. If the notes or the Roadmap make the spot clear, suggest it and say why. Otherwise, ask without a suggestion. Never guess one.
 - **A `ready` note goes back to `spec`** when its design or steps change, until Sarah re-reviews it.
 - **Embedded sections** (`![[Note#Section]]`) are part of the note. A raw file shows only the link, so open each one and read it as part of the note.
 - **Anything bigger, outside a skill:** a skill carries what it needs for the notes it changes. Without one, read `notes/Note Conventions.md` before creating, retyping, moving, closing or deleting a note, or changing its `status`.
@@ -69,4 +72,5 @@ Look up only what the task uses: one component, one function, one page.
 ## Git and files
 - Don't commit unless Sarah asks. Stage files by path, never with `git add -A` or `git add .`.
 - Before deleting a file, check its contents and `git status`. If it has uncommitted changes or isn't tracked, git can't bring it back, so ask Sarah first.
-- Never edit project config (`biome.jsonc`, `vitest.config.*`, `tsconfig*.json`, `lefthook.yml`) or add a comment that switches off a lint, type or coverage check, unless Sarah explicitly asks for that change. Telling you to ignore an error on a line doesn't count.
+- **Project config** (`biome.jsonc`, `vitest.config.*`, `tsconfig*.json`, `lefthook.yml`): edit it only when Sarah explicitly asks for that config change.
+- **Ignore comments** (a comment that switches off a lint, type or coverage check): add one only when Sarah tells you to ignore that error, and only on that one line. Telling you to ignore an error never means changing config.

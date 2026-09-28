@@ -20,7 +20,7 @@ A note is written against the codebase, the conventions and the other stories as
 - **Other notes:** another story's design or build changed shared UI or modules this story depends on. This is how design changes usually reach a story.
 - **Sarah changed her mind:** she writes a comment tagged or signed with her name in the note, or tells you in chat.
 
-This skill **flags and routes**. It never rewrites the plan. It adds ⚠️ Check Drift callouts where the note no longer matches, and sends the note to whichever skill fixes it: `/plan-steps` to re-plan, `/assess` to re-assess. The one thing it fixes itself is a convention doc, and only with Sarah's approval of the wording, because docs that wait for later never get updated.
+This skill **flags and routes**. It never rewrites the plan. It adds ⚠️ Check Drift callouts where the note no longer matches, and sends the note to whichever skill fixes it: `/plan-steps` to re-plan, `/assess` to re-assess. The one thing it may fix itself is a convention doc, as AGENTS.md describes under "Doc gaps".
 
 It only reads code. It never runs the app and never changes code. A hook blocks edits outside `notes/`, `.scratch/` and `.opencode/docs/`.
 
@@ -57,7 +57,7 @@ From the remaining work, write the story's footprint to `.scratch/<note name> - 
 
 Then run the `code-drift-checker` and `note-drift-checker` subagents in parallel. Give each one the note path, the `confirmed` date, the footprint file and the remaining work (which steps, or "the whole approach" for a `spec` note). Don't tell them what you expect them to find.
 
-Save each report, unedited, to `.scratch/<note name> - drift (code).md` and `.scratch/<note name> - drift (notes).md`. Add their "Outside this story" items to your out-of-scope list.
+Save each report to `.scratch/<note name> - drift (code).md` and `.scratch/<note name> - drift (notes).md`. Add their "Outside this story" items to your out-of-scope list.
 
 ## 4. Sort the findings
 Put the findings from Sarah's comments and both reports into one list. Merge findings that are the same problem seen from two sides.
@@ -85,24 +85,24 @@ Then note what it means for the note:
 Then triage the out-of-scope list as AGENTS.md describes under "Out-of-scope work". If an item is a sweep item this step took out, it can't be pulled back in, so offer route or drop only. Otherwise, an item Sarah pulls in becomes a finding that needs a decision. Sort it like the others.
 
 ## 5. Write the callouts
-A callout goes directly above the text it's about, in this format:
+Write each callout as AGENTS.md describes under "Editing notes", worded like this:
 
 `> ⚠️ **Check Drift YYYY-MM-DD:** what no longer matches, and what it means for this story. Found by reading code, not verified in the running app.`
 
-Say how it was found: by reading code, by reading notes, or from Sarah's comment. When a finding depends on runtime behavior, label it unverified and add a quick check Sarah can do in the app. Never edit the plan text itself.
+Say how it was found: by reading code, by reading notes, or from Sarah's comment. When a finding depends on runtime behavior, label it unverified and add a quick check Sarah can do in the app.
 
 **Mechanical findings:** add their callouts without asking. Keep a list for the summary in step 7.
 
 **Sarah's comments:** add a callout at each place her comment affects, pointing back to it, e.g. "Sarah's comment under Behaviors (2026-09-24) drops the week view, so this step's week toggle no longer applies."
 
-**Findings that need a decision:** go through them with Sarah **one at a time**:
+**Findings that need a decision:** go through them with Sarah:
 1. Show the finding, where it applies, its evidence (`file:line` or note and section) and how it was found.
 2. Say what the options are, and which you'd recommend and why.
 3. Wait for her answer.
-4. Write the callout, recording her decision in the third person, e.g. "Sarah decided 2026-09-25 that the ring replaces the tint here."
+4. Write the callout, recording her decision, e.g. "Sarah decided 2026-09-25 that the ring replaces the tint here."
 
 Some decisions need more than a callout:
-- **Recent code wins over the docs**, or recent code follows a convention the docs don't mention and Sarah says it's the convention: draft the change to the doc in `.opencode/docs/`, show it to her and write it once she approves. Match the doc's existing style.
+- **Recent code wins over the docs**, or recent code follows a convention the docs don't mention and Sarah says it's the convention: it's a doc gap. Handle it as AGENTS.md describes under "Doc gaps".
 - **The docs win:** the recent code that breaks the convention goes on the out-of-scope list.
 - **The other story has to change:** that change goes on the out-of-scope list. Don't edit the other note here.
 - **A decision she wants to make later:** add the question to the note's Open Decisions, and a `"decision needed: ..."` entry to `blocked-by` if the note doesn't have one.

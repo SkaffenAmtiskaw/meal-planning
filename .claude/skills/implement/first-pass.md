@@ -4,7 +4,7 @@ Before handing the step to Sarah, do its acceptance checks yourself in the runni
 ## Start the app
 Skip this if every check in the step is a break-it check (see below).
 
-Start it and sign in as `.opencode/docs/running_the_app.md` describes. If you started the server, leave it running for Sarah's review.
+Start it, sign in, and stop it when you're done, as `.opencode/docs/running_the_app.md` describes.
 
 ## Do each acceptance check
 Do each check as it's written, including the user, the screen size and the data it names:

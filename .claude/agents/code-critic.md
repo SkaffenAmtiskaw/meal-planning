@@ -15,7 +15,7 @@ Read each file in full, plus enough of its callers to see how it's used.
 
 - **Single concern.** This is Sarah's top priority. List every job the module does, one sentence each. If two jobs can each be described without mentioning the other, they're separate jobs. More than one job is a finding, even in a small module.
 - **Would the story give it another job?** For each file the story has to change, compare the target piece's job with the job the module already does. If they differ, adding the new behavior here creates a god component. Say so.
-- **Project conventions.** Read `.opencode/docs/project_conventions.md` and `.opencode/docs/style_guidelines.md`. Common violations: `'use client'` without a concrete reason, logic in barrel files, domain logic in `src/_utils`, custom components where Mantine has one, CSS modules where a theme change or variant would do, and hard-coded hex colors.
+- **Project conventions.** Read `.opencode/docs/project_conventions.md` and `.opencode/docs/style_guidelines.md`, and check the module against each rule in them.
 - **Fit.** Does the module's interface match the target piece's job as it is? Or would it have to be bent with extra flags, modes, or optional props that only one caller uses?
 - **Duplication.** Note any case of two or more existing modules doing the same thing.
 

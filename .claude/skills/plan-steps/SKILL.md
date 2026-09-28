@@ -124,8 +124,8 @@ Fix every finding you agree with, then run the checker once more. If you disagre
 
 ## 4. Review with Sarah
 1. **The outline.** Show the numbered step titles, each with its idea sentence and a one-line summary of its check. The check line isn't the full acceptance criteria. It just tells Sarah at a glance whether the step is a regression check ("everything looks the same as before") or tests a specific new behavior, and which one. Keep it even when the idea makes the check obvious. Link the draft and the checker report. If the checks already settled the order and the split, say so in one line, with why, and go on. They're settled when the split-checker found one story (or you skipped it because the steps came from `# From the Split`), no plan-checker finding you disagreed with is about order or size, and no step's place in the order was your own judgment call between orders that would both work. Otherwise, ask whether the order and the split are right, and wait for her answer.
-2. **Checker findings you disagreed with.** Raise each one separately. Say what the checker found and why you disagree.
-3. **Each step in full, one at a time.** Show the step and wait for her to approve or change it before showing the next. If a change affects a later step, say which one and update it before you get there.
+2. **Checker findings you disagreed with.** Raise each one. Say what the checker found and why you disagree.
+3. **Each step in full.** Show the step and wait for her to approve or change it. If a change affects a later step, say which one and update it before you get there.
 
 ## 5. Write it to the note
 Once she has approved every step, write the plan under `# Implementation` in the note. If a template comment is there, replace it. If the note has a `# From the Split` section, delete it.
@@ -141,11 +141,11 @@ If the out-of-scope list is empty, you're done.
 Otherwise, route it as AGENTS.md describes under "Out-of-scope work".
 
 ## Splitting a story
-`split-checker` proposes the split. Sarah decides, one piece at a time:
+`split-checker` proposes the split. Sarah decides:
 1. **Whether to split.** Show the verdict and the reason, plus each child's name and scope line, then ask whether to split. If she says no, carry on as one story.
-2. **Each child, one at a time.** Show what it takes, what blocks it and which design sections it embeds. Wait for her to approve or change it. If a change moves something to another child, update that child before you get to it.
-3. **Leftovers, one at a time.** Raise anything under Unclaimed, and each move to an existing story.
+2. **Each child.** Show what it takes, what blocks it and which design sections it embeds. Wait for her to approve or change it. If a change moves something to another child, update that child before you get to it.
+3. **Leftovers.** Raise anything under Unclaimed, and each move to an existing story.
 4. **Apply.** Once she has approved every child, apply the note changes from the report. Create the children first, then rewrite the original as the hub, then update the links in other notes. Show each Roadmap line before you write it.
-5. **Hand each child its draft.** Copy each child's share of the draft steps, in full, into its `# From the Split` section. Its own `/plan-steps` runs in a new session and starts from that section. Never hand this over through scratch, which is wiped on commit.
+5. **Hand each child its draft.** Copy each child's share of the draft steps, in full, into its `# From the Split` section. Its own `/plan-steps` runs in a new session and starts from that section.
 6. **Route out-of-scope items.** If you've collected any, handle them as in step 6.
 7. **Stop.** Don't start work on any child in this session. By now it has read the whole design, the approach, a full draft and the split report, and carrying that into a child's plan bloats the context. Tell Sarah the split is done, and list each child with the command to run in a new session, e.g. `/plan-steps <child name>`.

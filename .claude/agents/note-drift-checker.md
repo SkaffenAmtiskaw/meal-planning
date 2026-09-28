@@ -20,7 +20,7 @@ Use Bash only for read-only git commands: `git log`, `git show`, `git diff`, `gi
 - Include `notes/archive/`. A story archived since `confirmed` may have **As built** notes that changed a shared component.
 - Include notes deleted since `confirmed`. `/close` deletes a finished note once no other story relies on it, but its **As built** notes may still matter. Read a deleted note with `git show <commit>^:<path>`, where `<commit>` deleted it.
 - Include the note's hub, and the embedded sections it pulls in (`![[Hub#Section]]`). A change there changes this note.
-- Include this note's own changes since `confirmed`, except Sarah's comments (lines where her name is a tag or signature). The caller handles those. Look for sections moved in from other notes, often with a "stop and ask Sarah which one wins" line.
+- Include this note's own changes since `confirmed`, except Sarah's comments. The caller handles those. Look for sections moved in from other notes, often with a "stop and ask Sarah which one wins" line.
 
 ### 2. Keep the ones that overlap
 For each changed note, read what changed (`git diff` since `confirmed`, or `git log -p`). Keep it if any of these is true:

@@ -29,7 +29,7 @@ The argument is one of:
 Then read the files the change touches: the skills, agents, hooks, docs or config it names, plus Note Conventions or AGENTS.md if it changes how notes or sessions work. Read only what it touches.
 
 ## 2. Settle it with Sarah
-Ask what you need to make the change without guessing, one question at a time. Skip anything the note or Sarah has already answered. What often needs asking:
+Ask what you need to make the change without guessing. Skip anything the note or Sarah has already answered. What often needs asking:
 - where the change belongs, when it could go in more than one place (a skill, an agent, AGENTS.md, Note Conventions, `.opencode/docs/`)
 - the note's open questions
 
@@ -38,12 +38,13 @@ Then find everything the change reaches. Search `.claude/`, `AGENTS.md`, `notes/
 ## 3. Make the change
 Size decides whether to draft first:
 - **Small, clear edits:** a line or a few, where the wording follows directly from what Sarah said. Write them.
-- **Anything larger:** rewriting a section, or a new skill, agent, hook, template or doc. Show Sarah the draft and wait for her approval, one file at a time.
+- **Anything larger:** rewriting a section, or a new skill, agent, hook, template or doc. Show Sarah the draft of each file and wait for her approval.
 
 While making it:
 - **Claude Code features** (skill frontmatter, hooks, subagents, rules): check the current Claude Code docs, never memory.
 - **New skills and agents** follow the shape of the existing ones in `.claude/skills/` and `.claude/agents/`. A skill carries or points to only the parts of shared docs it uses, never a whole long doc.
 - **Writing instructions** in a skill or agent: put the condition first ("If ..., do Y. Otherwise, do X."). Never write an instruction followed by its exception in a later sentence ("Do X." then "Don't do X when ..."), because agents act on the plain instruction and miss the exception.
+- **AGENTS.md and the docs:** AGENTS.md is loaded into every session and every subagent, and the docs in `.opencode/docs/` are read when a task needs them. If a rule is already in AGENTS.md or a doc, a skill or agent never restates it, because two copies drift apart. Where a skill needs to say that a rule applies at a certain point, it points to the AGENTS.md section or the doc by name ("as AGENTS.md describes under ...", "as `running_the_app.md` describes"). If a skill's or agent's wording differs from AGENTS.md or a doc, ask Sarah whether it's a deliberate exception or drift. Keep an exception in the skill or agent, and remove drift.
 - **Project config:** Sarah asking for this change is the explicit instruction AGENTS.md requires, but only for the config it names.
 - **OpenCode agents** in `.opencode/agents/` stay until the whole move to Claude Code is finished, even when a Claude skill replaces one.
 - **Code, config or scripts:** run `pnpm lint` and `pnpm check:types`. Test a hook or script by running it with sample input.
@@ -60,14 +61,14 @@ Handle each one:
 - **Sarah's comments:** if one is now done or out of date, handle it as AGENTS.md describes under "Editing notes". The bullets below are for everything else.
 - **Done in full:** remove it, with no line recording that it was removed. How depends on what it is:
   - **An item in a collecting note:** remove only the item. The note stays. If that leaves the note this session worked from with no items, ask Sarah whether it should keep collecting or be deleted. If it's deleted, handle it as a whole note (next bullet).
-  - **A whole note:** if it holds something worth keeping for reference, such as a rationale or a convention, ask Sarah whether a doc should cover it. Then run `git status` on it. If it's untracked or has uncommitted changes, ask Sarah before deleting it. Otherwise, delete it with `rm`. Then remove its Roadmap line, and reword or remove every link to it.
+  - **A whole note:** if it holds something worth keeping for reference, such as a rationale or a convention, ask Sarah whether a doc should cover it. Then delete it with `rm`, as AGENTS.md describes under "Git and files". Then remove its Roadmap line, and reword or remove every link to it.
   - **Anything else,** such as an item in a story note: remove it.
 - **Partly done:** remove the done parts and keep the rest.
 - **Out of date:** if it's a story note's plan, never rewrite it. Add a Check Drift callout as AGENTS.md describes. Otherwise, if there's one right fix, make it. If there's a real choice, propose the wording and wait.
 
 Don't bring other notes up to a convention this change introduced. They're updated when next worked on.
 
-Last, check every file in `notes/` that isn't a note (images, `.dc.html` prototypes, scripts, SVGs), except `notes/templates/`. Search `notes/` for its filename. If nothing references it, run `git status` on it. If it's untracked or has uncommitted changes, ask Sarah before deleting it. Otherwise, delete it.
+Last, check every file in `notes/` that isn't a note (images, `.dc.html` prototypes, scripts, SVGs), except `notes/templates/`. Search `notes/` for its filename. If nothing references it, delete it as AGENTS.md describes under "Git and files".
 
 ## 5. Report and stop
 Route the out-of-scope list as AGENTS.md describes. Then tell Sarah, in the same table format as step 3:

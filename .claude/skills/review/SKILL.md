@@ -1,6 +1,6 @@
 ---
 name: review
-description: Review how an in-review story's code fits together across all its steps, against a fresh target design, then go through the findings with Sarah one at a time, fix the small ones here and route the rest to the notes.
+description: Review how an in-review story's code fits together across all its steps, against a fresh target design, then go through the findings with Sarah, fix the small ones here and route the rest to the notes.
 argument-hint: "[note name]"
 disable-model-invocation: true
 hooks:
@@ -44,7 +44,7 @@ Commit messages don't name the story, and commits often mix code with notes chan
 Show Sarah the range (first and last commit, with their subjects), whether uncommitted changes are included, and both groups of files. Wait for her to confirm or correct them. This one confirmation covers the range and the file list together.
 
 ## 3. Build the target and run the checks
-Save each agent's full report, unedited, to `.scratch/<note name> - <agent name>.md`.
+Save each agent's report to `.scratch/<note name> - <agent name>.md`.
 
 **For every story:** send the note path, the confirmed range and the confirmed files to the `leftovers-checker` subagent. Start it now, in the background, so it runs while you do the rest of this step.
 
@@ -71,7 +71,7 @@ Don't review steps one by one. If you trip over a clear bug, include it. Otherwi
 If there are no findings, tell Sarah in one line and go to step 8.
 
 ## 5. Go through the findings with Sarah
-First, tell her in one line how many findings there are. Then show them **one at a time**:
+First, tell her in one line how many findings there are. Then show each one:
 
 ```
 F[n] of [total]: [title]
@@ -80,7 +80,7 @@ Found by: [agent or check]
 Proposed: [fix here, with the fix in a sentence or two / route to the notes, and why]
 ```
 
-Wait for her answer: fix here, route to the notes, skip, or something else. If she chooses fix here and the fix has open choices, settle them now, one question at a time, following "Settle the open choices" in `.claude/skills/implement/SKILL.md`. By the end of this step, every fix must be fully decided.
+Wait for her answer: fix here, route to the notes, skip, or something else. If she chooses fix here and the fix has open choices, settle them now, following "Settle the open choices" in `.claude/skills/implement/SKILL.md`. By the end of this step, every fix must be fully decided.
 
 Record each answer in the findings file as you go. Routed findings join the out-of-scope list. Skipped findings are dropped and never recorded anywhere.
 
@@ -93,7 +93,7 @@ Put the approved fixes in dependency order. For each one:
 3. If the fix changes anything she could see in the app, redo the story's acceptance checks that cover it, as `first-pass.md` in the implement skill's folder describes.
 4. Leave it unstaged, so her unstaged changes show just this fix.
 5. Report: the files changed, the tests and the logic each covers, the checks run, and the acceptance checks redone with what you saw.
-6. Ask her whether she approves the fix, and wait. Handle any feedback as "Handle her feedback" in the implement skill describes, using its `bugs.md` for bugs. Once she approves, stage the files the fix changed, by path, and go on to the next approved fix in the order.
+6. Ask her whether she approves the fix, and wait. Handle any feedback as "Handle her feedback" in the implement skill describes, using its `bugs.md` for bugs. Once she approves, stage the files the fix changed, and go on to the next approved fix in the order.
 
 ## 7. Find a home for out-of-scope items
 If the out-of-scope list is empty, skip this.

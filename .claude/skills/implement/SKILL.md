@@ -19,7 +19,7 @@ Sarah reviews every step by hand, in the diff and in the running app, before the
 The agent this skill replaces failed her in three ways, and most rules below exist because of one of them:
 - **It settled questions itself.** When the plan was silent, it picked an answer instead of asking, and the answers were often wrong.
 - **Its tests were worthless.** They checked that a class was applied or a prop was passed, not the logic.
-- **It used APIs from memory.** The libraries in this project are newer than your training data.
+- **It used APIs from memory.**
 
 When the plan doesn't decide something, Sarah decides it, not you. She would rather answer many questions than review a guess.
 
@@ -35,13 +35,13 @@ The step to implement is the first one under `# Implementation` with no `**Statu
 Read the project docs AGENTS.md lists when the work needs them, not all up front.
 
 ## 2. Settle the open choices
-**The rule:** a choice is open when there are two reasonable ways to do something and no written source picks one. Written sources are:
+**The rule:** a choice is open as AGENTS.md describes under "Open choices are hers". Here, the written sources are:
 - the note: the step, the approach, the Design Handoff and its images
 - Sarah's answers in this session
 - the project docs in `.opencode/docs/`
 - current library docs (see step 3)
 
-Your own sense of what's obvious is never a source. An open choice is a question for Sarah.
+Your own sense of what's obvious is never a source.
 
 Open choices include:
 - anything she'd see in the app: layout, wording, what happens on an edge case or an error
@@ -54,7 +54,7 @@ Things the conventions settle, like local variable names or file naming, aren't 
 1. Read every file the step lists. Note anywhere the code isn't what the plan assumes.
 2. If the step adds behavior to an existing module, name the job that module already does. If the new behavior isn't that same job, it's an open choice.
 3. For UI work, go through each element in the design sections the step cites. For each one, name the Mantine component or theme value you'll use. If the nearest Mantine option would look clearly different from the design or wouldn't fit, that element was probably meant to be custom. Ask Sarah whether to build it custom or use a Mantine approximation.
-4. Write the open choices to `.scratch/<note name> - step <N> choices.md`, then ask about them one at a time.
+4. Write the open choices to `.scratch/<note name> - step <N> choices.md`, then ask Sarah about them.
 
 ### While writing code
 When a new open choice comes up, stop and ask right then. Don't save it for the end, and don't put in a placeholder to fix later.
@@ -62,7 +62,7 @@ When a new open choice comes up, stop and ask right then. Don't save it for the 
 Keep a list of every choice you make, each with its source. It goes in your report. If a choice has no source, it should have been a question.
 
 ## 3. Use current library APIs
-Follow "Library APIs" in AGENTS.md for every API you use. Your own sense of an API is never a source.
+Follow "Library APIs" in AGENTS.md for every API you use.
 
 When you use custom CSS instead of a Mantine component, theme setting or variant, put a one-line comment directly above it saying why Mantine didn't fit.
 
@@ -80,12 +80,10 @@ A component with no branches still needs coverage. After writing it, add one tes
 
 A change that adds no logic (a type fix, lint fix, rename or import change) gets no new tests. The existing tests just have to keep passing. If a fix does add a branch, like a null guard, it needs a test. Say so in your report so it doesn't look like padding.
 
-Follow `.opencode/docs/unit_tests.md` for mocks and test patterns.
-
 Change files only with Edit and Write, never through Bash. The hook that protects the project config only sees Edit and Write.
 
 ## 5. Run the checks
-Run `pnpm lint`, `pnpm check:types` and `pnpm test:agent` on the files you changed. Fix what they find. Never silence a check with an ignore comment or a config change unless Sarah told you to. A hook will ask her if you try.
+Run `pnpm lint`, `pnpm check:types` and `pnpm test:agent` on the files you changed. Fix what they find. A hook asks Sarah before you add an ignore comment or change project config.
 
 Then read `cleanup.md` in this skill's folder and do what it says.
 
@@ -95,7 +93,7 @@ Read `first-pass.md` in this skill's folder and do what it says.
 ## 7. Stage and report
 First, triage the out-of-scope list as AGENTS.md describes under "Out-of-scope work". An item Sarah pulls in is handled like a change or addition in step 8: if the step's idea sentence still holds, build it now and record it as As built. Otherwise, follow "Stopping to re-plan".
 
-Stage the files this step changed, by path. Don't commit.
+Stage the files this step changed.
 
 Then report, in this order:
 1. **Files:** each file changed, with a one-line reason. Mark any file that isn't in the step's Files list.
@@ -119,9 +117,9 @@ Where a change or addition goes:
 - **Re-plan:** the idea sentence would have to change, or the work pulls in a later step or another story. Follow "Stopping to re-plan" below.
 - **Out of scope:** new work unrelated to this step goes on the out-of-scope list.
 
-**Corrections to how it's built.** Some feedback changes how the code is built rather than what it does: where a file lives, how data is fetched, which pattern to use. If the docs in `.opencode/docs/` already say it, you missed it, and there's nothing to ask. Otherwise, ask her whether it's a one-off for this step or the convention from now on. The docs lag far behind the code, and the moment she corrects you is the cheapest time to write the rule down. If it's the convention, draft the change to the doc that covers it, show it to her and write it once she approves. Match the doc's existing style.
+**Corrections to how it's built.** Some feedback changes how the code is built rather than what it does: where a file lives, how data is fetched, which pattern to use. If the docs in `.opencode/docs/` already say it, you missed it, and there's nothing to ask. Otherwise, ask her whether it's a one-off for this step or the convention from now on. If it's the convention, handle it as AGENTS.md describes under "Doc gaps".
 
-Leave feedback changes unstaged, so her unstaged changes show just the fix. Report again with the same sections, covering only what changed, and ask her whether she approves them. Once she does, stage the files they changed, by path.
+Leave feedback changes unstaged, so her unstaged changes show just the fix. Report again with the same sections, covering only what changed, and ask her whether she approves them. Once she does, stage the files they changed.
 
 Repeat until she confirms the step is done.
 

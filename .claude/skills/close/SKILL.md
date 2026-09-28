@@ -62,20 +62,20 @@ Save the list to `.scratch/<note name> - close.md`, and mark each item as you ha
 ## 3. Keep or delete
 The note is needed by every open story with a Content match. A Content match from an archived note counts for the stories in that note's `kept-for`, not for the archived note itself.
 
-**If an open story needs it,** go through those stories one at a time. For each: if another story also needs the content it relies on, that content can't move, because the design stays in one copy, so ask Sarah only to confirm keeping this note for that story. Otherwise, ask her whether to keep this note for that story, or move the content it relies on into the story so it no longer needs this note. Move the full step or section, its image embeds and the handoff text it relies on, never a summary, and leave a 🚛 pointer behind. Archived notes are effectively invisible, so design references must travel with the work.
+**If an open story needs it,** go through those stories. For each: if another story also needs the content it relies on, that content can't move, because the design stays in one copy, so ask Sarah only to confirm keeping this note for that story. Otherwise, ask her whether to keep this note for that story, or move the content it relies on into the story so it no longer needs this note. Move the full step or section, its image embeds and the handoff text it relies on, never a summary, and leave a 🚛 pointer behind. Archived notes are effectively invisible, so design references must travel with the work.
 
-**If no open story needs it,** it will be deleted. First, if it holds something that seems worth keeping for reference, such as a convention or the reason the code is the way it is, ask Sarah whether `.opencode/docs/` should cover it. If it should, draft the change, show it to her and write it once she approves.
+**If no open story needs it,** it will be deleted. First, if it holds something that seems worth keeping for reference, such as a convention or the reason the code is the way it is, that's a doc gap. Handle it as AGENTS.md describes under "Doc gaps".
 
 Then tell Sarah the outcome in one line, either "keep in `archive/` for [[A]] and [[B]]" or "delete", and wait for her to confirm.
 
 ## 4. Handle the stories that waited on it
-Skip this for a re-close. Go through the Blocker matches one story at a time.
+Skip this for a re-close. Go through the Blocker matches.
 
 **For a done close:**
 1. Remove this story from the `blocked-by` list, and from the "waiting on" wording of the story's Roadmap line.
 2. If the list still has entries, the story stays blocked. Move on to the next one.
 3. If the list is now empty and the story is `spec`, `ready` or `in-progress`, set its `^status` line to "Unblocked. Next: /check-drift". If it's an `idea` note, write the next step its type calls for in the table below.
-4. If its Roadmap line is under Blocked, show Sarah the story and the current Next list, and ask where it goes. Don't suggest a spot. Move the line where she says.
+4. If its Roadmap line is under Blocked, show Sarah the story and the current Next list, and ask where it goes, as AGENTS.md describes under "Roadmap order". Move the line where she says.
 
 !`sh scripts/note-section.sh "Next Step by Note State"`
 
@@ -104,14 +104,14 @@ Otherwise, a piece of a dropped story that Sarah asked to keep in step 1 skips t
 3. Set the `^status` line to "Done." or "Dropped.". Don't touch `confirmed`.
 4. Then keep or delete it, as Sarah confirmed in step 3:
    - **Keep:** add `kept-for` to the frontmatter with the stories she confirmed, each as a `"[[link]]"`. If the note is in `notes/features/`, move it to `notes/archive/` with `mv`. Leave its files where they are. Obsidian finds embeds by name.
-   - **Delete:** run `git status` on the note. If it has uncommitted changes or isn't tracked, git can't bring it back, so ask Sarah before deleting it. Delete it with `rm`.
+   - **Delete:** delete it with `rm`, as AGENTS.md describes under "Git and files".
 
 ## 8. Delete unused files
 Check every file in `notes/` that isn't a note (images, `.dc.html` prototypes, scripts, SVGs and anything else), wherever it sits, except `notes/templates/`. Don't limit it to this story's assets folder or its embeds: artifacts end up in whatever folder they were saved to, and references are sometimes missed, so an orphan can be anywhere.
 
 For each, search all of `notes/` for its filename, not its path, because Obsidian finds files by name. A reference is an embed (`![[file]]`), a link (`[[file]]`), the filename or path in plain text ("see `archive/assets/dish-row-states.png`"), or another file loading it, like a `.dc.html` prototype loading `./support.js`. Only references from files that still exist count, so a reference from a note deleted in step 7 doesn't.
 
-If nothing references a file, run `git status` on it. If it has uncommitted changes or isn't tracked, ask Sarah before deleting it. Otherwise, delete it without asking. Deleting a file can leave the files it loaded with nothing referencing them, such as a prototype's script, so check those too. Remove any assets folder left empty.
+If nothing references a file, delete it as AGENTS.md describes under "Git and files". Deleting a file can leave the files it loaded with nothing referencing them, such as a prototype's script, so check those too. Remove any assets folder left empty.
 
 ## 9. Report and stop
 Tell Sarah:

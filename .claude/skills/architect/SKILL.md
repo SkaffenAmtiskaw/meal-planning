@@ -1,6 +1,6 @@
 ---
 name: architect
-description: Turn a pattern note's settled decisions into numbered Rules, an Enforcement for each rule and a full, audited Migration Checklist, approved with Sarah one piece at a time. Moves the note from idea to spec, ready for /plan-steps.
+description: Turn a pattern note's settled decisions into numbered Rules, an Enforcement for each rule and a full, audited Migration Checklist, approved with Sarah. Moves the note from idea to spec, ready for /plan-steps.
 argument-hint: "[note name]"
 disable-model-invocation: true
 hooks:
@@ -55,21 +55,21 @@ Where the decisions don't settle something a rule needs, don't fill it in:
 - **It needs research** (which library feature, what best practice says): send the `decision-researcher` subagent the note path and the question, with the answers she's given this session. Save its brief to `.scratch/<note name> - decision <N>.md`, walk her through the options and recommendation, and record her answer under `# Open Decisions` in the format the `/decide` skill uses (a **Decided** line plus one **Rejected** line per option she turned down). Show the entry and wait for her approval before writing it.
 
 ### Approve
-Show the rules **one at a time**: the rule, its examples and where it lands. Wait for her to approve or change each one before showing the next. If a change affects a later rule, say which one and update it before you get to it.
+Show each rule with its examples and where it lands, and wait for her to approve or change it. If a change affects a later rule, say which one and update it before you get to it.
 
 Once every rule is approved, write them under `# Rules` in the note as `## Rule N - <short name>`, replacing the template comment. Write them now, before Enforcement, so they survive if the session ends.
 
 ## 3. Enforcement
 Every rule needs something that stops future code drifting from it. For each rule, propose the strongest mechanism that works, in this order:
 1. **A type** that makes the wrong code fail to compile.
-2. **A lint rule** in Biome. Check the installed Biome version's docs for what it can express. Don't go from memory. Any change to `biome.jsonc` is a project config change, and Sarah's approval of this enforcement is the explicit instruction to make it. Say so when you propose it.
+2. **A lint rule** in Biome. Check what it can express as AGENTS.md describes under "Library APIs". Any change to `biome.jsonc` is a project config change, and Sarah's approval of this enforcement is the explicit instruction to make it. Say so when you propose it.
 3. **A test** that checks the code itself, such as a conventions test that scans imports.
 4. **A build error** that already exists, such as `server-only` failing `pnpm build`. Say which command catches it and whether it runs before every commit.
 5. **Process only,** when nothing above can catch it: the rule in the project docs, which the planning and review agents read. Say why.
 
 When the right mechanism isn't clear, send `decision-researcher` the question, the same way as a gap in step 2.
 
-Show each rule's enforcement **one at a time**, with why nothing stronger works. Once all are approved, write them under `# Enforcement`, one entry per rule, naming the rule by number.
+Show each rule's enforcement with why nothing stronger works. Once all are approved, write them under `# Enforcement`, one entry per rule, naming the rule by number.
 
 ## 4. Migration Checklist
 ### Audit
@@ -80,7 +80,7 @@ Send the `rule-auditor` subagent:
 
 Don't send the note path or the existing Migration Checklist. The audit is only useful if it isn't anchored to the starting list.
 
-Save its report, unedited, to `.scratch/<note name> - audit.md`. Add its "Outside these rules" items to your out-of-scope list.
+Save its report to `.scratch/<note name> - audit.md`. Add its "Outside these rules" items to your out-of-scope list.
 
 **Unclear rules.** If the auditor reports a rule it couldn't apply without judgment, the rule isn't checkable yet. Show Sarah what it was unsure about, sharpen the rule with her, update the note, and send that rule to the auditor again.
 
@@ -101,7 +101,7 @@ Then triage the out-of-scope list as AGENTS.md describes under "Out-of-scope wor
 
 ### Approve
 1. **The checklist as a whole.** Show it grouped, with the number of items in each group, and link the audit report. This is information, not an approval.
-2. **Each question, one at a time.** Items only in the note that the audit didn't find. Places that look like deliberate exceptions to a rule. Groups that look like more than one story's worth of work. For an exception, the answer changes the rule or adds an exception to it, so update the rule in the note once she decides.
+2. **Each question.** Items only in the note that the audit didn't find. Places that look like deliberate exceptions to a rule. Groups that look like more than one story's worth of work. For an exception, the answer changes the rule or adds an exception to it, so update the rule in the note once she decides.
 3. **The finished checklist.** Ask whether it's complete.
 
 Write it under `# Migration Checklist`, replacing what was there.

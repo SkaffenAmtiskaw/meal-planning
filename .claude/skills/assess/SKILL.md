@@ -30,7 +30,7 @@ If the note already has a Suggested Approach, this is a re-assessment. Don't sta
 ## 2. Confirm the behaviors
 If the note has a `# From the Split` section because this story was split from a larger one, start from its behaviors. Show them and ask Sarah to confirm they still hold.
 
-Otherwise, list the story as numbered behaviors, one line each. Cover what the user does and every way the app can respond: success, each kind of failure, empty states, and differences for read-only users. Where the note doesn't say, ask Sarah, one question at a time. Don't fill gaps yourself.
+Otherwise, list the story as numbered behaviors, one line each. Cover what the user does and every way the app can respond: success, each kind of failure, empty states, and differences for read-only users. Where the note doesn't say, ask Sarah. Don't fill gaps yourself.
 
 Show the list and wait for her to confirm it before going on.
 
@@ -48,16 +48,16 @@ From the behaviors and the project docs (`.opencode/docs/project_conventions.md`
 For each piece, give:
 - **Kind:** component, hook, utility, server action or model.
 - **Job:** one sentence without "and". If it needs "and", it's two pieces.
-- **Server or client:** client if the piece has a concrete reason (an event handler, React state, a browser API or a client-only library) and is the smallest leaf that needs it. Otherwise, server.
+- **Server or client:** follow "Prefer Server Components" in `.opencode/docs/project_conventions.md`.
 
-Prefer Mantine components and hooks over custom ones. Check library docs only when the story needs them, as AGENTS.md describes under "Library APIs".
+Check library docs only when the story needs them, as AGENTS.md describes under "Library APIs".
 
 ## 4. Find overlapping code and have it reviewed
 For each target piece, search for existing code that does the same job in whole or in part. Search by pattern, not just by name: another modal, another form with a list of rows, another list grouped by day. Also list existing modules the story will have to change even though no target piece replaces them, such as callers, providers and contexts. That is where new behavior tends to get piled in.
 
 Send the list to the `code-critic` subagent. Give it each target piece with its job and the existing files you mapped to it. It returns a verdict for each file. Don't pre-judge the code for it, and don't say what you're hoping to reuse.
 
-Save the critic's full report, unedited, to `.scratch/<note name> - critic.md`. Add its "Outside this story" and "Duplication" items to your out-of-scope list.
+Save the critic's report to `.scratch/<note name> - critic.md`. Add its "Outside this story" and "Duplication" items to your out-of-scope list.
 
 Then triage the out-of-scope list as AGENTS.md describes under "Out-of-scope work". An item Sarah pulls in becomes one or more behaviors: show her the new lines for the behavior list, then give them target pieces (step 3) and map and review their overlapping code (this step) before you present the approach.
 
@@ -87,11 +87,11 @@ If the out-of-scope list is empty, you're done.
 Otherwise, route it as AGENTS.md describes under "Out-of-scope work".
 
 ## Splitting a story
-`split-checker` proposes the split. Sarah decides, one piece at a time:
+`split-checker` proposes the split. Sarah decides:
 1. **Whether to split.** Show the verdict and the reason, plus each child's name and scope line, then ask whether to split. If she says no, carry on as one story.
-2. **Each child, one at a time.** Show what it takes, what blocks it and which design sections it embeds. Wait for her to approve or change it. If a change moves something to another child, update that child before you get to it.
-3. **Leftovers, one at a time.** Raise anything under Unclaimed, and each move to an existing story.
+2. **Each child.** Show what it takes, what blocks it and which design sections it embeds. Wait for her to approve or change it. If a change moves something to another child, update that child before you get to it.
+3. **Leftovers.** Raise anything under Unclaimed, and each move to an existing story.
 4. **Apply.** Once she has approved every child, apply the note changes from the report. Create the children first, then rewrite the original as the hub, then update the links in other notes. Show each Roadmap line before you write it.
-5. **Check each child's handoff.** Make sure each child's `# From the Split` section holds its full share of the confirmed behaviors, including any changes Sarah made while approving the children. Its own `/assess` runs in a new session and starts from that section. Never hand this over through scratch, which is wiped on commit.
+5. **Check each child's handoff.** Make sure each child's `# From the Split` section holds its full share of the confirmed behaviors, including any changes Sarah made while approving the children. Its own `/assess` runs in a new session and starts from that section.
 6. **Route out-of-scope items.** If you've collected any, handle them as in step 7.
 7. **Stop.** Don't start work on any child in this session. By now it has read the whole design and the split report, and carrying that into a child's assessment bloats the context. Tell Sarah the split is done, and list each child with the command to run in a new session, e.g. `/assess <child name>`.

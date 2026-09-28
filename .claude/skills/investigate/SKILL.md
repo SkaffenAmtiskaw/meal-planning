@@ -42,12 +42,12 @@ Then follow step 2 for a bug, or step 3 for a cleanup.
 ## 2. Bug notes
 
 ### 2a. Repro steps
-Write exact steps to reproduce the symptom: where to start, which user, what to click or type, the screen size when it matters, and what goes wrong. Build them from Symptoms. Where the note doesn't say, ask Sarah, one question at a time. Don't fill gaps with guesses about what she meant.
+Write exact steps to reproduce the symptom: where to start, which user, what to click or type, the screen size when it matters, and what goes wrong. Build them from Symptoms. Where the note doesn't say, ask Sarah. Don't fill gaps with guesses about what she meant.
 
 Also write down the values that would show the symptom plainly, e.g. an element's position against the viewport, or the console error after Save.
 
 ### 2b. Reproduce it
-Send the `bug-reproducer` subagent the repro steps, the symptom and the values to capture. Don't send it a theory about the cause. Save its report, unedited, to `.scratch/<note name> - repro.md`.
+Send the `bug-reproducer` subagent the repro steps, the symptom and the values to capture. Don't send it a theory about the cause. Save its report to `.scratch/<note name> - repro.md`.
 
 - **Reproduced:** go on to 2c.
 - **Not reproduced:** stop and tell Sarah what the report says happened instead. She decides what comes next: sharper repro steps (run it again), or it's already fixed and the note is dropped with `/close`.
@@ -70,7 +70,7 @@ If the same mistake is made in many places, the cause is systemic. Keep this not
 ### 2d. Settle the fix
 Work out the reasonable fixes. Read the project docs they touch (`.opencode/docs/project_conventions.md`, `project_structure.md`, `unit_tests.md`), and check any library a fix relies on as AGENTS.md describes under "Library APIs".
 
-**Review fixes that add a job.** If a fix adds behavior or a responsibility to an existing module, and doesn't just correct what the module already does, send `code-critic` that module with the fix's job as a one-sentence target piece. Don't say which fix you prefer. Save its report, unedited, to `.scratch/<note name> - critic.md`. Add its "Outside this story" and "Duplication" items to your out-of-scope list. Pure corrections, like a wrong condition or a bad transform, skip this.
+**Review fixes that add a job.** If a fix adds behavior or a responsibility to an existing module, and doesn't just correct what the module already does, send `code-critic` that module with the fix's job as a one-sentence target piece. Don't say which fix you prefer. Save its report to `.scratch/<note name> - critic.md`. Add its "Outside this story" and "Duplication" items to your out-of-scope list. Pure corrections, like a wrong condition or a bad transform, skip this.
 
 **Triage the out-of-scope list** as AGENTS.md describes under "Out-of-scope work". An item Sarah pulls in becomes part of the fix: work it into the fixes before you present them.
 
@@ -90,7 +90,7 @@ Record how you checked each finding, e.g. "grep for `CalendarEvent` on 2026-09-2
 ### 3b. Settle the decisions
 First, triage the out-of-scope list as AGENTS.md describes under "Out-of-scope work". An item Sarah pulls in joins the scan: find it in the code as in 3a, and record how you checked it.
 
-The scan usually raises questions about how to tidy something, such as whether a type needs to exist, or whether two shapes can line up. Take each one to Sarah, one at a time, with its options and trade-offs and a recommendation, following "Recommendations" in AGENTS.md. Read the project docs and library docs as in 2d when an option depends on them.
+The scan usually raises questions about how to tidy something, such as whether a type needs to exist, or whether two shapes can line up. Take each one to Sarah with its options and trade-offs and a recommendation, following "Recommendations" in AGENTS.md. Read the project docs and library docs as in 2d when an option depends on them.
 
 If Sarah wants to think one over, or it needs research beyond this scan, leave it for `/decide`. It gets an Open Decisions question, and a `"decision needed: ..."` entry in `blocked-by` if the note doesn't have one.
 

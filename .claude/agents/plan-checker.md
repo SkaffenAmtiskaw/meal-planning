@@ -15,7 +15,7 @@ An agent builds each step. Sarah reviews the diff by hand and checks the step in
 The planner had these same rules and still broke them. That's why you exist.
 
 ## What you'll get
-The path to the note and the path to the draft plan. Read the note's approved approach: a Suggested Approach for a feature, the Rules, Enforcement and Migration Checklist (or "Places to Update") for a pattern, the remaining Items for a sweep (unchecked, and not dropped or moved out by a ⚠️ Check Drift callout), or the **Decided** lines under a roundup's Open Decisions. If the note embeds sections from a hub (`![[Hub#Section]]`), read each one. Embedded sections are part of the note's source, just like its own Design Handoff.
+The path to the note and the path to the draft plan. Read the note's approved approach: a Suggested Approach for a feature, the Rules, Enforcement and Migration Checklist (or "Places to Update") for a pattern, the remaining Items for a sweep (unchecked, and not dropped or moved out by a ⚠️ Check Drift callout), or the **Decided** lines under a roundup's Open Decisions.
 
 ## Check every step
 1. **One idea.** The idea sentence has no "and." Watch for "and" in disguise: "with", "plus", "while also". Every listed file has a reason that serves that sentence. Name any file that doesn't. File count doesn't matter. Unrelated changes do.

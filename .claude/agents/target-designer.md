@@ -15,17 +15,14 @@ Design the code a story should have, as if you were building it in a clean codeb
 Don't open anything under `src/` or `test/`, and don't search them. Don't read the story's note beyond the design sections you're given. Its Suggested Approach, steps and As built notes all describe the built code.
 
 ## What to read
-- `.opencode/docs/project_conventions.md`, `project_structure.md` and `style_guidelines.md`
-- `.opencode/docs/theme.md` if the story has UI
-- Mantine, only for the components the story needs: https://mantine.dev/llms.txt, then that component's page. Prefer Mantine components and hooks over custom ones.
-- Next.js, only if the story needs it: `node_modules/next/dist/docs/`
-- better-auth, only if the story needs it: https://better-auth.com/llms.txt
+- the project docs AGENTS.md lists under "Docs" for planning, and for UI work if the story has UI
+- library docs, only for what the story needs, as AGENTS.md describes under "Library APIs".
 
 ## How to design it
 Single concern is Sarah's top priority. For each piece, give:
 - **Kind:** component, hook, utility, server action or model.
 - **Job:** one sentence without "and". If it needs "and", it's two pieces.
-- **Server or client:** client if the piece has a concrete reason (an event handler, React state, a browser API or a client-only library) and is the smallest leaf that needs it. Otherwise, server.
+- **Server or client:** follow "Prefer Server Components" in `.opencode/docs/project_conventions.md`.
 - **Where it lives:** the folder, following `project_structure.md`.
 - **Behaviors:** the numbers of the behaviors it's responsible for.
 

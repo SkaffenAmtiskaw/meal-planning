@@ -26,6 +26,9 @@ ALWAYS implement as a Server Component first. Only add `'use client'` when you h
 - React hooks (useState, useEffect, useContext)                                                            
 - Event handlers that need closure state                                                                 
 - Client-side interactivity (drag and drop, complex animations)
+- Third-party components that rely on client-only features (wrap them in your own Client Component)
+
+**Keep the client boundary small:** add `'use client'` to the smallest component that needs it, not to a parent that only contains it. For example, a mostly static layout with a search bar stays a Server Component, and only the search bar is a Client Component. (Next.js docs, Server and Client Components: "Reducing JS bundle size".)
 
 **Pattern for Data Fetching:**                                                                                                                   
 ```tsx

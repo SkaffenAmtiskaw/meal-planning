@@ -66,9 +66,9 @@ Show her the draft and wait for her approval, then write it as in step 6. Hubs h
 
 ### Splitting an idea
 Each story gets a placeholder now, and its real shaping later in its own session:
-1. **One idea note per story.** Create it in `notes/features/<area>/` from `notes/templates/Idea.md`, with `type` left blank. Its Where It Stands line is just the next step: "Next: /shape ^status". Under Notes goes a line saying which idea it was split from (a link to the original), its one-line scope, and the parts of Sarah's idea that belong to it, in her wording. If a part fits no story, ask her where it goes rather than dropping it. Show her each note before you write it, one at a time.
+1. **One idea note per story.** Create it in `notes/features/<area>/` from `notes/templates/Idea.md`, with `type` left blank. Its Where It Stands line is just the next step: "Next: /shape ^status". Under Notes goes a line saying which idea it was split from (a link to the original), its one-line scope, and the parts of Sarah's idea that belong to it, in her wording. If a part fits no story, ask her where it goes rather than dropping it. Show her each note before you write it.
 2. **The original.** If it's an idea note, replace its content with 🚛 pointers to the new notes. Never delete it. If it's a Roadmap line with no note, it gets replaced in the next step.
-3. **The Roadmap.** Each new note gets a line that links to it and embeds its summary (`[[Note]] ![[Note#^status]]`). Ask Sarah which section each one goes in, one at a time.
+3. **The Roadmap.** Each new note gets a line that links to it and embeds its summary (`[[Note]] ![[Note#^status]]`). Ask Sarah which section each one goes in.
 4. **Stop.** Don't start shaping any of the stories in this session, so the context from this one doesn't carry over. List each new note with the command to run in a new session, e.g. `/shape <note name>`.
 
 ## 4. Present the directions
@@ -90,7 +90,7 @@ Wait for her to pick one or suggest her own.
 ## 5. Draft the note
 **If Sarah picked "drop it",** there's nothing to draft or write:
 - **A Roadmap line with no note:** remove the line.
-- **An idea note:** search `notes/` for its name. If anything other than its own Roadmap line references it, tell Sarah it needs `/close` in a new session. Otherwise, run `git status` on it. If it's untracked or has uncommitted changes, ask Sarah before deleting it. Otherwise, delete it with `rm` and remove its Roadmap line.
+- **An idea note:** search `notes/` for its name. If anything other than its own Roadmap line references it, tell Sarah it needs `/close` in a new session. Otherwise, delete it with `rm`, as AGENTS.md describes under "Git and files", and remove its Roadmap line.
 
 Then stop. Step 6 doesn't apply.
 

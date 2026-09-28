@@ -19,7 +19,6 @@ Work through the open decisions on **$ARGUMENTS**.
 A few things shape how it works:
 - **Sarah picks the scope.** A hub can hold ten open decisions, and she may only want to tackle two today. Each run covers the ones she picks.
 - **Research happens in a subagent,** one decision at a time. Each decision can need its own look at the code, the other notes and library docs. Doing that inline would fill the context before the third decision. The `decision-researcher` agent returns a brief. You walk Sarah through it.
-- **The note is the only record.** `.scratch/` is wiped on commit. Anything the next run needs, including partial progress and findings that still matter, goes in the note.
 - **Decisions, not design.** Settle the question. Don't design the story, write steps or pick implementation details the next step owns.
 
 This is planning only. Don't change code. A hook blocks edits outside `notes/` and `.scratch/`.
@@ -52,7 +51,7 @@ Don't research the next decision until this one is recorded. Its answer can chan
 ### Research
 Send the `decision-researcher` subagent the note path, the question as written with its constraints, any Partly answered lines under it, and the answers Sarah has given earlier in this run. Don't tell it which answer you expect.
 
-Save its brief, unedited, to `.scratch/<note name> - decision <N>.md`. That's for this session only. Sarah can read the whole brief, but it won't survive a commit.
+Save its brief to `.scratch/<note name> - decision <N>.md`.
 
 ### Present
 Show Sarah:
@@ -83,7 +82,7 @@ The `decision needed` entry stays. The findings lines matter because the brief w
 
 ### Knock-on effects
 After recording, look at what the answer changes:
-- **This note:** other sections the answer lands in, e.g. a section the question says to record it in, the chosen Fix Option, or a hub's Coverage or Child Stories table. Draft each change and go through them with Sarah one at a time. If the note is `ready` and the change touches its design or steps, it goes back to `spec` (AGENTS.md, "Editing notes"). Say so when you show the change.
+- **This note:** other sections the answer lands in, e.g. a section the question says to record it in, the chosen Fix Option, or a hub's Coverage or Child Stories table. Draft each change and go through them with Sarah. If the note is `ready` and the change touches its design or steps, it goes back to `spec` (AGENTS.md, "Editing notes"). Say so when you show the change.
 - **Other notes:** add each effect to the running list: which note, what changes and why. Step 6 handles them.
 - **New stories:** if the answer implies work no note covers yet, add it to the running list of new stories. Step 5 handles them.
 - **New questions:** if the brief found a blocking question that isn't on the note, or the answer raised one, show it to Sarah as a question, not a proposal. Once she approves, add it to Open Decisions (plus a `decision needed` entry in `blocked-by` on a story, if it doesn't have one). Then ask whether to take it now or leave it for a later run.
@@ -99,7 +98,7 @@ Once the picked decisions are done:
 ## 5. New stories
 Skip this if the running list of new stories is empty.
 
-**On a hub:** propose the child stories, one at a time, each with a one-line scope and the decisions it comes from. Wait for Sarah to approve, change or drop each one. For each one she approves:
+**On a hub:** propose the child stories, each with a one-line scope and the decisions it comes from. Wait for Sarah to approve, change or drop each one. For each one she approves:
 1. Create an idea note in `notes/features/<area>/` from `notes/templates/Idea.md`, with `type` left blank. Its Where It Stands line is "Next: /shape ^status". Under Notes, link the hub, give the one-line scope, and quote the Decided lines it comes from.
 2. Add it to the hub's Child Stories table.
 3. Add a Roadmap line that links to it and embeds its status (`[[Note]] ![[Note#^status]]`). Ask Sarah which section it goes in.
