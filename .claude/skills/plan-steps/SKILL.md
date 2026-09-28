@@ -77,7 +77,7 @@ When a step changes only test files, shared mocks in `test/mocks/` included, not
 A step that changes source files as well as tests uses click-throughs like any other step.
 
 ### Coverage
-Every behavior and every piece in the approach must land in some step. Nothing can land in a step unless it's in the approach.
+Every behavior and every piece in the approach must land in some step. Nothing can land in a step unless it's in the approach or Sarah pulled it in (see "Out-of-scope items" below).
 
 Coverage also runs back to the note's source material, not just the approach, because the approach can miss things. Every step's **Source:** names the parts of the note it builds or fixes: Requirements bullets, Design Handoff sections, a pattern's Symptoms, a sweep's Items, or a roundup's decided questions. Together the steps must claim every Requirements bullet, every Design Handoff section, every Symptom, every remaining sweep Item and every roundup decision. Cite handoff sections by heading, not individual pixel values. The implementer reads those sections for the details.
 
@@ -101,6 +101,13 @@ A step that claims a Symptom needs an acceptance check that reproduces the origi
 **Acceptance:**
 - [ ] Go to ..., press ..., see ...
 ```
+
+### Out-of-scope items
+Before you save the draft, triage the out-of-scope list as AGENTS.md describes under "Out-of-scope work". An item Sarah pulls in becomes its own step, with **Source:** "Pulled in by Sarah YYYY-MM-DD: <the item>". It counts as source material for Coverage, even though the approach doesn't name it.
+
+If the item needs a new piece or a decision the approach doesn't make:
+- **A new piece in a feature:** this skill can't design it. Once Sarah agrees, add it under Where It Stands as work for the re-assessment, set the `^status` line to "Next: /assess (re-assessment)", and stop.
+- **A decision:** ask Sarah for it. If she answers, the item becomes a step as above, with her answer in its **Source:** ("Pulled in by Sarah YYYY-MM-DD: <the item>. Sarah decided: <answer>"). If her answer needs a new piece, it's the case above. Only if she wants to think it over or research it, add it to Open Decisions as a question, with a `decision needed` entry in `blocked-by` if the note doesn't have one, set the `^status` line to "Next: /decide", and stop.
 
 Save the draft to `.scratch/<note name> - plan.md`.
 

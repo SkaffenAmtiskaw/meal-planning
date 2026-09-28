@@ -113,8 +113,9 @@
 
 ## Dev Tooling & Testing
 - [[Vercel Plugin]]
-- switch testing library to `vitest-browser-react`
-- e2e tests *(was low)*
+- switch testing library to `vitest-browser-react` - needs research to determine if this is worth doing
+- I want a way to watch certain libraries and tools to see if they have new releases or features that are worth implementing
+- [[E2E Testing]]
 - [[Unit Testing - New Centralized Mocks]] ![[Unit Testing - New Centralized Mocks#^status]]
 - [[Dev Tooling Tidy-Ups]] ![[Dev Tooling Tidy-Ups#^status]]
 

@@ -97,6 +97,8 @@ Then add the items that come from the Rules and Enforcement rather than from vio
 
 Group the items by kind, as checkboxes with file paths and line numbers. Put a line under the heading saying when it was audited: `*Audited YYYY-MM-DD by reading code.*`
 
+Then triage the out-of-scope list as AGENTS.md describes under "Out-of-scope work". An item Sarah pulls in becomes a checklist item. If it breaks none of the approved Rules, a rule has to change first: sharpen it with her as for an unclear rule, update the note, and send that rule to the auditor again.
+
 ### Approve
 1. **The checklist as a whole.** Show it grouped, with the number of items in each group, and link the audit report. This is information, not an approval.
 2. **Each question, one at a time.** Items only in the note that the audit didn't find. Places that look like deliberate exceptions to a rule. Groups that look like more than one story's worth of work. For an exception, the answer changes the rule or adds an exception to it, so update the rule in the note once she decides.

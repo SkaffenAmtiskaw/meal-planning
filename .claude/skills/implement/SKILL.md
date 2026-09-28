@@ -93,6 +93,8 @@ Then read `cleanup.md` in this skill's folder and do what it says.
 Read `first-pass.md` in this skill's folder and do what it says.
 
 ## 7. Stage and report
+First, triage the out-of-scope list as AGENTS.md describes under "Out-of-scope work". An item Sarah pulls in is handled like a change or addition in step 8: if the step's idea sentence still holds, build it now and record it as As built. Otherwise, follow "Stopping to re-plan".
+
 Stage the files this step changed, by path. Don't commit.
 
 Then report, in this order:
@@ -101,7 +103,7 @@ Then report, in this order:
 3. **Tests:** each test and the branch or logic it covers. List coverage-only tests as such. Mark tests added for a branch that a fix introduced.
 4. **First pass:** each acceptance check, and what you saw or why you couldn't run it. Then any differences from the design.
 5. **As built:** anything that differs from the step's plan. This is a draft; it goes into the note in step 9.
-6. **Out of scope:** anything you collected.
+6. **Out of scope:** each item triaged, and what Sarah chose for it.
 
 End with: "Please check the acceptance criteria and review the staged diff."
 

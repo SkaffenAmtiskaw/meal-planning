@@ -61,6 +61,8 @@ Send the list to the `code-critic` subagent. Give it each target piece with its 
 
 Save the critic's full report, unedited, to `.scratch/<note name> - critic.md`. Add its "Outside this story" and "Duplication" items to your out-of-scope list.
 
+Then triage the out-of-scope list as AGENTS.md describes under "Out-of-scope work". An item Sarah pulls in becomes one or more behaviors: show her the new lines for the behavior list, then give them target pieces (step 3) and map and review their overlapping code (this step) before you present the approach.
+
 ## 5. Present the approach
 Show Sarah:
 1. **The critic's verdicts,** one line per file: the file, the verdict, and its main finding. Link the full report file. When she questions a line, read her that file's section of the report and discuss it.

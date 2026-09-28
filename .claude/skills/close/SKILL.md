@@ -97,7 +97,7 @@ Go through the remaining matches:
 ## 6. Find a home for out-of-scope items
 If the out-of-scope list is empty, skip this.
 
-Otherwise, route it as AGENTS.md describes under "Out-of-scope work". For a piece of a dropped story, include its full text and image embeds.
+Otherwise, route it as AGENTS.md describes under "Out-of-scope work". The story is closing, so the triage offers route or drop only, and a piece of a dropped story that Sarah asked to keep in step 1 skips it. For a piece of a dropped story, include its full text and image embeds.
 
 ## 7. Close the note
 1. Remove the note's own line from the Roadmap. For a hub, that's its line under Hubs.

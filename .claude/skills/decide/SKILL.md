@@ -109,7 +109,7 @@ Skip this if the running list of new stories is empty.
 ## 6. Other notes
 Skip this if the running list is empty.
 
-Route it as AGENTS.md describes under "Out-of-scope work". For each item, also include which decision it comes from and its Decided line.
+Route it as AGENTS.md describes under "Out-of-scope work". These items are other notes' work, so the triage offers route or drop only. For each item, also include which decision it comes from and its Decided line.
 
 ## 7. Stop
 Tell Sarah what's left:

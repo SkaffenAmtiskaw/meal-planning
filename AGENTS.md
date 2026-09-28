@@ -27,8 +27,17 @@ Any change to a note in `notes/` follows these rules:
 - **Anything bigger, outside a skill:** a skill carries what it needs for the notes it changes. Without one, read `notes/Note Conventions.md` before creating, retyping, moving, closing or deleting a note, or changing its `status`.
 
 ## Out-of-scope work
-Keep a running list of anything that belongs outside the story or step you're working on, whether you, a subagent or Sarah found it. Sarah's feedback on how a skill, subagent or the workflow itself behaves always goes on the list, even when it's also saved as a memory, unless this session is working on that same skill or subagent. Don't stop to deal with items as they come up. At the end:
-1. Send the whole list to the `scope-router` subagent. For each item, include what it is, where it was found (`file:line`, or the note and section) and why it's outside this work. The router suggests a home for each item. It doesn't change anything.
+Keep a running list of anything that looks like it belongs outside the story or step you're working on, whether you, a subagent or Sarah found it. Sarah's feedback on how a skill, subagent or the workflow itself behaves always goes on the list, even when it's also saved as a memory, unless this session is working on that same skill or subagent. Don't stop to deal with items as they come up.
+
+**Sarah decides what's out of scope.** Before you show her the result she approves, go through the list so far with her, **one item at a time**. Each skill names the point where this happens. For each item, show what it is, where it was found and why it looks outside this work, then ask whether to:
+- **Pull it in:** it becomes part of this story. She may have thought it was in scope, or want it done while this work is here. The skill says how it enters the story.
+- **Route it:** it belongs somewhere else. If she names where, put it there now, without the router, written the way `.claude/agents/scope-router.md` describes for that kind of home.
+- **Drop it:** take it off the list and don't record it anywhere.
+
+Triage items that turn up after that point the same way, at the end. A skill with no story to pull into offers only route or drop.
+
+Then route the items she routed without naming a home:
+1. Send them to the `scope-router` subagent. For each item, include what it is, where it was found (`file:line`, or the note and section) and why it's outside this work. The router suggests a home for each item. It doesn't change anything.
 2. Go through its suggestions with Sarah **one item at a time**: show the item and the suggested home with its reason, wait for her to approve, change or drop it, apply that one change to the notes, then move to the next.
 
 ## Subagent reports and scratch files

@@ -82,6 +82,8 @@ For each finding, also note what it means for the note:
 
 A sweep never needs a re-assessment and never gets a `decision needed` entry.
 
+Then triage the out-of-scope list as AGENTS.md describes under "Out-of-scope work". An item Sarah pulls in becomes a finding that needs a decision. Sort it like the others. A sweep item this step took out can't be pulled back in, so for those offer route or drop only.
+
 ## 5. Write the callouts
 A callout goes directly above the text it's about, in this format:
 

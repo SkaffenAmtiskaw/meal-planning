@@ -47,7 +47,7 @@ While making it:
 - **OpenCode agents** in `.opencode/agents/` stay until the whole move to Claude Code is finished, even when a Claude skill replaces one.
 - **Code, config or scripts:** run `pnpm lint` and `pnpm check:types`. Test a hook or script by running it with sample input.
 
-When everything is written, list each changed file with a one-line summary, and ask Sarah whether she approves.
+When everything is written, triage the out-of-scope list as AGENTS.md describes under "Out-of-scope work". An item Sarah pulls in becomes part of this change: make it the same way. Then show a table with one row per changed file: the file as a markdown link she can click, and a one-line summary of its change. Files with the same change can share a row. Ask Sarah whether she approves.
 
 ## 4. Clean up the notes
 Once she approves, bring the notes in line with the change. Search all of `notes/`, including `archive/` and the Roadmap, for:
@@ -66,7 +66,7 @@ Don't bring other notes up to a convention this change introduced. They're updat
 Last, check every file in `notes/` that isn't a note (images, `.dc.html` prototypes, scripts, SVGs), except `notes/templates/`. Search `notes/` for its filename. If nothing references it, delete it, running `git status` on it first as above.
 
 ## 5. Report and stop
-Route the out-of-scope list as AGENTS.md describes. Then tell Sarah:
+Route the out-of-scope list as AGENTS.md describes. Then tell Sarah, in the same table format as step 3:
 - each file changed, and why
 - each note edited or deleted
 - each unused file deleted

@@ -56,7 +56,7 @@ Save each agent's full report, unedited, to `.scratch/<note name> - <agent name>
 
 **For a pattern, bug, cleanup, sweep or roundup:** read the conventions the story was meant to apply, such as a pattern's Rules section, a roundup's **Decided** lines or the `.opencode/docs/` file a cleanup aligns code with (for example `unit_tests.md`). Then read the story's files and check each change against them. Findings need `file:line` evidence and the rule they break.
 
-Add every agent's "Outside this story" and "Duplication" items that fall outside the story to your out-of-scope list.
+Every agent's "Outside this story" and "Duplication" items that fall outside the story become findings in step 4, proposed as route to the notes, instead of going straight to the out-of-scope list. Step 5 is their triage: fix here pulls one into the story, and skip drops it.
 
 ## 4. Collect the findings
 Merge everything into one list, in `.scratch/<note name> - review findings.md`:

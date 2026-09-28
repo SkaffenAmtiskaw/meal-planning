@@ -72,6 +72,8 @@ Work out the reasonable fixes. Read the project docs they touch (`.opencode/docs
 
 **Review fixes that add a job.** If a fix adds behavior or a responsibility to an existing module, and doesn't just correct what the module already does, send `code-critic` that module with the fix's job as a one-sentence target piece. Don't say which fix you prefer. Save its report, unedited, to `.scratch/<note name> - critic.md`. Add its "Outside this story" and "Duplication" items to your out-of-scope list. Pure corrections, like a wrong condition or a bad transform, skip this.
 
+**Triage the out-of-scope list** as AGENTS.md describes under "Out-of-scope work". An item Sarah pulls in becomes part of the fix: work it into the fixes before you present them.
+
 **Present it.** Show Sarah the root cause from 2c, then the fix:
 - **One reasonable fix:** what changes and where, and why. If the critic reviewed it, give its verdict. Wait for her approval.
 - **More than one:** give each option with its trade-offs, what it touches and the critic's verdict if it has one. Then recommend one, following "Recommendations" in AGENTS.md. Wait for her to pick.
@@ -86,6 +88,8 @@ Find everything in the note's scope as it stands today, with file paths and line
 Record how you checked each finding, e.g. "grep for `CalendarEvent` on 2026-09-26" or "read both files". Cleanup notes go stale quickly, and `/plan-steps` re-checks them.
 
 ### 3b. Settle the decisions
+First, triage the out-of-scope list as AGENTS.md describes under "Out-of-scope work". An item Sarah pulls in joins the scan: find it in the code as in 3a, and record how you checked it.
+
 The scan usually raises questions about how to tidy something, such as whether a type needs to exist, or whether two shapes can line up. Take each one to Sarah, one at a time, with its options and trade-offs and a recommendation, following "Recommendations" in AGENTS.md. Read the project docs and library docs as in 2d when an option depends on them.
 
 If Sarah wants to think one over, or it needs research beyond this scan, leave it for `/decide`. It gets an Open Decisions question, and a `"decision needed: ..."` entry in `blocked-by` if the note doesn't have one.
