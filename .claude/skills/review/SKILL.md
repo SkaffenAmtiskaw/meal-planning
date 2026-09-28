@@ -91,9 +91,9 @@ Put the approved fixes in dependency order. For each one:
 1. Tell Sarah in one line which fix you're on.
 2. Make it following `.claude/skills/implement/SKILL.md`: "Use current library APIs", "Write the tests first, then the code", and "Run the checks", including its `cleanup.md`. The open choices were settled in step 5. If a new one comes up, stop and ask. If the fix turns out bigger than it looked, stop and ask Sarah whether to route it to the notes instead.
 3. If the fix changes anything she could see in the app, redo the story's acceptance checks that cover it, as `first-pass.md` in the implement skill's folder describes.
-4. Leave it unstaged, so `git diff` shows her just this fix.
+4. Leave it unstaged, so her unstaged changes show just this fix.
 5. Report: the files changed, the tests and the logic each covers, the checks run, and the acceptance checks redone with what you saw.
-6. Wait. She reviews the diff and stages it when she's happy. Handle feedback as "Handle her feedback" in the implement skill describes, using its `bugs.md` for bugs. Only then start the next fix.
+6. Ask her whether she approves the fix, and wait. Handle any feedback as "Handle her feedback" in the implement skill describes, using its `bugs.md` for bugs. Once she approves, stage the files the fix changed, by path, and go on to the next approved fix in the order.
 
 ## 7. Find a home for out-of-scope items
 If the out-of-scope list is empty, skip this.

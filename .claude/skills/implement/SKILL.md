@@ -121,7 +121,7 @@ Where a change or addition goes:
 
 **Corrections to how it's built.** Some feedback changes how the code is built rather than what it does: where a file lives, how data is fetched, which pattern to use. If the docs in `.opencode/docs/` already say it, you missed it, and there's nothing to ask. Otherwise, ask her whether it's a one-off for this step or the convention from now on. The docs lag far behind the code, and the moment she corrects you is the cheapest time to write the rule down. If it's the convention, draft the change to the doc that covers it, show it to her and write it once she approves. Match the doc's existing style.
 
-Leave feedback changes unstaged, so `git diff` shows her just the fix. She stages them when she's happy. Report again with the same sections, covering only what changed, and wait.
+Leave feedback changes unstaged, so her unstaged changes show just the fix. Report again with the same sections, covering only what changed, and ask her whether she approves them. Once she does, stage the files they changed, by path.
 
 Repeat until she confirms the step is done.
 
