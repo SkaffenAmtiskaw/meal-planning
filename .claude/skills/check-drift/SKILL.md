@@ -44,9 +44,9 @@ Note the `confirmed` date. It's the baseline for everything below.
 ## 2. Find Sarah's comments
 AGENTS.md says what counts as Sarah's comment, under "Editing notes". Third-person mentions like "Approved by Sarah 2026-09-25" are records written by agents, not her comments.
 
-Run `git blame --date=short` on the note. A comment is **new** when its line was added after `confirmed`, or isn't committed yet. Older comments were handled when `confirmed` was set. A change she tells you in chat this session counts as new too.
+Run `git blame --date=short` on the note. A comment is **new** when its line was added after `confirmed`, or isn't committed yet. A change she tells you in chat this session counts as new too.
 
-For each new comment, trace it through the remaining work: every behavior, design section, approach row and step it affects. Each affected place becomes a finding (step 4). Most will be clear from what she wrote. Ask her only where there are two reasonable ways to apply it.
+For each comment, old or new: if the code or the note already does what it asks, handle it as AGENTS.md describes under "Editing notes". Otherwise, if it's older than `confirmed`, leave it. It was handled when `confirmed` was set. If it's new, trace it through the remaining work: every behavior, design section, approach row and step it affects. Each affected place becomes a finding (step 4). Most will be clear from what she wrote. Ask her only where there are two reasonable ways to apply it.
 
 ## 3. Map the footprint and send out the checkers
 From the remaining work, write the story's footprint to `.scratch/<note name> - footprint.md`:
@@ -62,19 +62,9 @@ Save each report, unedited, to `.scratch/<note name> - drift (code).md` and `.sc
 ## 4. Sort the findings
 Put the findings from Sarah's comments and both reports into one list. Merge findings that are the same problem seen from two sides.
 
-Sort each one:
-- **Mechanical:** the plan's intent still works as written, just with a different name or path. A hook moved, a prop was renamed, a file the plan edits was split.
-- **Needs a decision:** anything that changes what gets built or how. A conflict with another story's design, docs vs. recent code, a module that now does a different job, a piece another story already built.
+If a finding traces one of Sarah's comments, don't sort it. She has decided. It gets a callout recording her decision, and a question only where applying it is open. Sort every other finding as below.
 
-Findings that trace one of Sarah's comments are neither. She has decided. They get a callout recording her decision, and a question only where applying it is open.
-
-For each finding, also note what it means for the note:
-- **Callout only:** the plan still holds.
-- **Steps:** the approach holds but the remaining steps don't. It needs a re-plan.
-- **Approach:** the approach, or part of it, no longer holds. It needs a re-assessment.
-- **Blocked:** it can't go ahead until another story lands or a decision is made.
-
-**Sweeps:** a sweep's items must stay small and decided, so sort each item's findings this way instead:
+**If the note is a sweep,** its items must stay small and decided, so sort each item's findings this way:
 - **Already fixed, or built by another story:** mechanical. The callout says the item is dropped and why, and `/plan-steps` skips it.
 - **Moved or renamed:** mechanical, as above.
 - **Now needs a decision:** it no longer belongs in a sweep. Take it out straight away, without asking whether to settle it, and put it on the out-of-scope list, where it may go to a roundup or become its own story. Leave a callout where it was saying it moved out and why.
@@ -82,7 +72,17 @@ For each finding, also note what it means for the note:
 
 A sweep never needs a re-assessment and never gets a `decision needed` entry.
 
-Then triage the out-of-scope list as AGENTS.md describes under "Out-of-scope work". An item Sarah pulls in becomes a finding that needs a decision. Sort it like the others. A sweep item this step took out can't be pulled back in, so for those offer route or drop only.
+**Otherwise,** sort each finding:
+- **Mechanical:** the plan's intent still works as written, just with a different name or path. A hook moved, a prop was renamed, a file the plan edits was split.
+- **Needs a decision:** anything that changes what gets built or how. A conflict with another story's design, docs vs. recent code, a module that now does a different job, a piece another story already built.
+
+Then note what it means for the note:
+- **Callout only:** the plan still holds.
+- **Steps:** the approach holds but the remaining steps don't. It needs a re-plan.
+- **Approach:** the approach, or part of it, no longer holds. It needs a re-assessment.
+- **Blocked:** it can't go ahead until another story lands or a decision is made.
+
+Then triage the out-of-scope list as AGENTS.md describes under "Out-of-scope work". If an item is a sweep item this step took out, it can't be pulled back in, so offer route or drop only. Otherwise, an item Sarah pulls in becomes a finding that needs a decision. Sort it like the others.
 
 ## 5. Write the callouts
 A callout goes directly above the text it's about, in this format:
@@ -108,15 +108,13 @@ Some decisions need more than a callout:
 - **A decision she wants to make later:** add the question to the note's Open Decisions, and a `"decision needed: ..."` entry to `blocked-by` if the note doesn't have one.
 
 ## 6. Route the note
-Work out the next step from the findings' meanings in step 4:
+If the note is a sweep, it stays at `spec` and always goes to `/plan-steps` next. Otherwise, work out the next step from the findings' meanings in step 4:
 - **Nothing beyond callouts:** `status` stays as it is.
 - **Steps:** set `status` to `spec`. Next is `/plan-steps`, which keeps the ✅ steps and re-plans the rest.
 - **Approach:** set `status` to `spec`. Next is `/assess`, as a re-assessment.
 - **Blocked:** add the story (`"[[link]]"`) or decision to `blocked-by`.
 
 If more than one applies, the biggest wins: approach over steps over callouts only. Blocked can go with any of them.
-
-A `spec` sweep always goes to `/plan-steps` next.
 
 Update the `^status` line as AGENTS.md describes under "Editing notes", e.g. "Drift found. Next: /plan-steps to re-plan from Step 4", and set `confirmed` to today. Mention any change to `status` or `blocked-by` in your summary.
 

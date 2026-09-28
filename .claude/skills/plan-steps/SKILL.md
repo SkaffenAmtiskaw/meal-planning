@@ -59,7 +59,7 @@ If the note already has an Implementation section, this is a re-plan. Steps mark
 When a step adds behavior to an existing module, name the job that module already does and confirm the new behavior is the same job. If it isn't, the behavior needs its own piece. If the approach doesn't already have one, ask Sarah before adding it.
 
 ### Checks
-Each acceptance criterion is a checkbox with a click-through: "Go to [view], [do something], see [result]." Say which user (for example, read-only), which screen size (phone or desktop), and what data is needed (for example, a day with two meals).
+If a step changes only test files, its checks are break-it checks, as "Test-only steps" below describes. Otherwise, each acceptance criterion is a checkbox with a click-through: "Go to [view], [do something], see [result]." Say which user (for example, read-only), which screen size (phone or desktop), and what data is needed (for example, a day with two meals).
 
 Never use "tests pass", "inspect the code" or "types compile" as a check. Tests passing is assumed for every step. Failure, empty and read-only behaviors are checked in the step that builds them.
 
@@ -73,8 +73,6 @@ When a step changes only test files, shared mocks in `test/mocks/` included, not
 - **Break behavior, not imports.** A break that only breaks imports proves nothing. For example, renaming a shared mock's export to show a test file uses the shared mock fails every importer at once. The `vi.mock` line in the diff already shows which mock a file uses.
 - **Breaking a shared mock's behavior counts.** For example, change a default `ok: true` to `ok: false` in `test/mocks/@/_actions/library.ts`, then see the tests that rely on the success default fail.
 - **Isolation checks count too.** Add `throw new Error('x')` to a dependency the tests should no longer reach, then see every test in the file still pass.
-
-A step that changes source files as well as tests uses click-throughs like any other step.
 
 ### Coverage
 Every behavior and every piece in the approach must land in some step. Nothing can land in a step unless it's in the approach or Sarah pulled it in (see "Out-of-scope items" below).

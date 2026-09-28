@@ -28,7 +28,6 @@ This is notes work only. Don't change code. A hook blocks edits outside `notes/`
 
 ## Talking with Sarah
 - **Choices, not mechanics.** Some edits have only one right answer once the story is closed, like removing it from a `blocked-by` list. Make those without asking, and list them in the report at the end. Ask only where there's a real choice.
-- **Her comments:** if one of Sarah's comments mentions this story and is now out of date, show it to her and let her decide.
 
 ## 1. Read the note
 Find the note in `notes/features/` or `notes/archive/` and read all of it.
@@ -63,7 +62,7 @@ Save the list to `.scratch/<note name> - close.md`, and mark each item as you ha
 ## 3. Keep or delete
 The note is needed by every open story with a Content match. A Content match from an archived note counts for the stories in that note's `kept-for`, not for the archived note itself.
 
-**If an open story needs it,** go through those stories one at a time. For each, ask Sarah whether to keep this note for that story, or move the content it relies on into the story so it no longer needs this note. Move the full step or section, its image embeds and the handoff text it relies on, never a summary, and leave a 🚛 pointer behind. Archived notes are effectively invisible, so design references must travel with the work. Only offer to move a piece that no other story needs, because the design stays in one copy.
+**If an open story needs it,** go through those stories one at a time. For each: if another story also needs the content it relies on, that content can't move, because the design stays in one copy, so ask Sarah only to confirm keeping this note for that story. Otherwise, ask her whether to keep this note for that story, or move the content it relies on into the story so it no longer needs this note. Move the full step or section, its image embeds and the handoff text it relies on, never a summary, and leave a 🚛 pointer behind. Archived notes are effectively invisible, so design references must travel with the work.
 
 **If no open story needs it,** it will be deleted. First, if it holds something that seems worth keeping for reference, such as a convention or the reason the code is the way it is, ask Sarah whether `.opencode/docs/` should cover it. If it should, draft the change, show it to her and write it once she approves.
 
@@ -75,7 +74,7 @@ Skip this for a re-close. Go through the Blocker matches one story at a time.
 **For a done close:**
 1. Remove this story from the `blocked-by` list, and from the "waiting on" wording of the story's Roadmap line.
 2. If the list still has entries, the story stays blocked. Move on to the next one.
-3. If the list is now empty, set the story's `^status` line to "Unblocked. Next: /check-drift" if it's `spec`, `ready` or `in-progress`. For an `idea` note, write the next step its type calls for in the table below.
+3. If the list is now empty and the story is `spec`, `ready` or `in-progress`, set its `^status` line to "Unblocked. Next: /check-drift". If it's an `idea` note, write the next step its type calls for in the table below.
 4. If its Roadmap line is under Blocked, show Sarah the story and the current Next list, and ask where it goes. Don't suggest a spot. Move the line where she says.
 
 !`sh scripts/note-section.sh "Next Step by Note State"`
@@ -89,15 +88,15 @@ Go through the remaining matches:
 - **Content:** if a story's content was moved into it in step 3, make the move now, then reword the pointer so it no longer sends the reader to this note. If this note is kept, leave the pointers alone.
 - **Kept-for:** remove this story from the archived note's `kept-for`. If the list is now empty, that note needs `/close` in a new session. Add it to the follow-ups in step 9.
 - **Hub list:** mark this story done or dropped in the hub's list, following how the hub marks the others. If the hub now has no open stories left, add it to the follow-ups.
-- **Passing mention:** if it's out of date, propose new wording to Sarah and wait for her approval. If this note is being deleted, every link to it would be left pointing at nothing, so reword or remove each one, even the ones that are still true. Never add a line saying the note was removed.
-- **Sarah's comment:** if it's out of date, show it to her. Never edit it.
+- **Passing mention:** if this note is being deleted, every link to it would be left pointing at nothing, so reword or remove each one, even the ones that are still true. Otherwise, only the out-of-date ones need it. For an out-of-date one, propose new wording to Sarah and wait for her approval. Never add a line saying the note was removed.
+- **Sarah's comment:** if it's done or out of date, handle it as AGENTS.md describes under "Editing notes".
 - **Archived notes with no `kept-for`:** for each one step 2 found, ask Sarah which open stories it's kept for. Write her answer into its `kept-for`. If none, add it to the follow-ups.
 - **Outside the vault:** add it to the out-of-scope list.
 
 ## 6. Find a home for out-of-scope items
 If the out-of-scope list is empty, skip this.
 
-Otherwise, route it as AGENTS.md describes under "Out-of-scope work". The story is closing, so the triage offers route or drop only, and a piece of a dropped story that Sarah asked to keep in step 1 skips it. For a piece of a dropped story, include its full text and image embeds.
+Otherwise, a piece of a dropped story that Sarah asked to keep in step 1 skips the triage. For the other items, the story is closing, so the triage offers route or drop only. Then route the list as AGENTS.md describes under "Out-of-scope work". For a piece of a dropped story, include its full text and image embeds.
 
 ## 7. Close the note
 1. Remove the note's own line from the Roadmap. For a hub, that's its line under Hubs.
@@ -112,7 +111,7 @@ Check every file in `notes/` that isn't a note (images, `.dc.html` prototypes, s
 
 For each, search all of `notes/` for its filename, not its path, because Obsidian finds files by name. A reference is an embed (`![[file]]`), a link (`[[file]]`), the filename or path in plain text ("see `archive/assets/dish-row-states.png`"), or another file loading it, like a `.dc.html` prototype loading `./support.js`. Only references from files that still exist count, so a reference from a note deleted in step 7 doesn't.
 
-If nothing references a file, delete it. This is mechanical, but run `git status` on it first. If it has uncommitted changes or isn't tracked, ask Sarah before deleting it. Deleting a file can leave the files it loaded with nothing referencing them, such as a prototype's script, so check those too. Remove any assets folder left empty.
+If nothing references a file, run `git status` on it. If it has uncommitted changes or isn't tracked, ask Sarah before deleting it. Otherwise, delete it without asking. Deleting a file can leave the files it loaded with nothing referencing them, such as a prototype's script, so check those too. Remove any assets folder left empty.
 
 ## 9. Report and stop
 Tell Sarah:

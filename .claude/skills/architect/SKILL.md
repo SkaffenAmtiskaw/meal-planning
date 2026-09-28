@@ -39,7 +39,7 @@ Then read the project docs the convention touches: `.opencode/docs/project_conve
 
 ## 2. Rules
 ### Draft
-Draft every rule before showing any. Sources, in order of authority: Sarah's comments, **Decided** lines, then Purpose, Root Cause and Symptoms. If the Rules section already has text, treat it as a draft, unless it's marked as decided or approved. In that case, confirm with Sarah that it still holds rather than redrafting it.
+Draft every rule before showing any. Sources, in order of authority: Sarah's comments, **Decided** lines, then Purpose, Root Cause and Symptoms. If the Rules section already has text marked as decided or approved, confirm with Sarah that it still holds rather than redrafting it. Otherwise, treat any text there as a draft.
 
 Each rule:
 - **One convention.** If the rule needs "and" to join two requirements that can be broken separately, it's two rules.
@@ -65,7 +65,7 @@ Every rule needs something that stops future code drifting from it. For each rul
 2. **A lint rule** in Biome. Check the installed Biome version's docs for what it can express. Don't go from memory. Any change to `biome.jsonc` is a project config change, and Sarah's approval of this enforcement is the explicit instruction to make it. Say so when you propose it.
 3. **A test** that checks the code itself, such as a conventions test that scans imports.
 4. **A build error** that already exists, such as `server-only` failing `pnpm build`. Say which command catches it and whether it runs before every commit.
-5. **Process only:** the rule in the project docs, which the planning and review agents read. Use this only when nothing above can catch it. Say why.
+5. **Process only,** when nothing above can catch it: the rule in the project docs, which the planning and review agents read. Say why.
 
 When the right mechanism isn't clear, send `decision-researcher` the question, the same way as a gap in step 2.
 

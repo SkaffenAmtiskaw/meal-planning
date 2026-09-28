@@ -39,7 +39,7 @@ Don't check whether the idea is still relevant. Sarah running `/shape` on it mea
 - **Story count:** whether this is one story or several. Signs of several: parts with different types (e.g. a bug for the symptoms and a pattern for the systemic cause), parts that could ship and be reviewed on their own, or parts that already belong to other stories.
 - **Libraries:** only if the idea could be a feature or a pattern. Check `package.json` for something already installed that covers it (Mantine often does), then do a quick search for libraries that solve the problem. Names only. Don't compare them, read their docs in depth or judge their fit. Whether to adopt one is a decision (next bullet), not something to settle here.
 
-- **Blocking decisions:** questions that must be answered before the next step can start. For example: can we use an outside service at all, who it's for, where the data lives, which platforms come first, adopt a library or build, or what another story decides. For a pattern, if the note says what's wrong but not what the convention should be ("these are all bad the same way, but what's the right fix?"), choosing the convention is a blocking decision. `/architect` writes the Rules for a chosen convention; it doesn't choose one. Questions the next step answers as part of its own work, like layout details for Claude Design, don't count. List them; don't answer them.
+- **Blocking decisions:** if the next step answers a question as part of its own work, like layout details for Claude Design, it doesn't count. Otherwise, a question that must be answered before the next step can start is a blocking decision. For example: can we use an outside service at all, who it's for, where the data lives, which platforms come first, adopt a library or build, or what another story decides. For a pattern, if the note says what's wrong but not what the convention should be ("these are all bad the same way, but what's the right fix?"), choosing the convention is a blocking decision. `/architect` writes the Rules for a chosen convention; it doesn't choose one. List them; don't answer them.
 
 Don't read external docs unless the idea depends on what a library can do, and then only enough to know whether it's possible.
 
@@ -88,7 +88,17 @@ Recommend one and say why. These are also valid directions:
 Wait for her to pick one or suggest her own.
 
 ## 5. Draft the note
-Draft the note from the template in `notes/templates/` for the chosen type:
+**If Sarah picked "drop it",** there's nothing to draft or write:
+- **A Roadmap line with no note:** remove the line.
+- **An idea note:** search `notes/` for its name. If anything other than its own Roadmap line references it, tell Sarah it needs `/close` in a new session. Otherwise, run `git status` on it. If it's untracked or has uncommitted changes, ask Sarah before deleting it. Otherwise, delete it with `rm` and remove its Roadmap line.
+
+Then stop. Step 6 doesn't apply.
+
+**For the "fold it into an existing note" direction,** draft the addition to that note, following the rules in the `scope-router` agent (`.claude/agents/scope-router.md`) under "Existing note". In particular, a `ready` note that gets new work goes back to `spec`.
+
+**For the "fold it into a sweep or roundup" direction,** draft the item for the collecting note, following the rules in the `scope-router` agent under "Sweep" or "Roundup".
+
+**Otherwise,** draft the note from the template in `notes/templates/` for the chosen type:
 - **Where It Stands:** the `^status` line, with the next step or what the story is waiting on. Don't restate the direction on it. Below the line, give the chosen direction in a sentence or two, then list any questions the next step will answer as part of its own work.
 - **Open Decisions:** the blocking decisions from step 2, one per line. Write them as questions, not proposals. Under an adopt-or-build decision, name the candidates from step 2 without ranking them. Delete the section if there are none.
 - **Sarah's content:** move everything from the idea into the template's sections. Keep her wording. If something fits no section, put it under Where It Stands rather than dropping it.
@@ -96,10 +106,6 @@ Draft the note from the template in `notes/templates/` for the chosen type:
 - **Frontmatter:** set `type`, leave `status: idea`, set `confirmed` to today, and add `blocked-by` entries if the direction depends on another story. If there are open decisions, add one `"decision needed: ..."` entry to `blocked-by` that covers them all.
 
 Show her the draft and wait for her approval.
-
-**For the "fold it into an existing note" direction,** draft the addition to that note instead, following the rules in the `scope-router` agent (`.claude/agents/scope-router.md`) under "Existing note". In particular, a `ready` note that gets new work goes back to `spec`.
-
-**For the "fold it into a sweep or roundup" direction,** draft the item for the collecting note, following the rules in the `scope-router` agent under "Sweep" or "Roundup".
 
 ## 6. Write it
 Once she approves:

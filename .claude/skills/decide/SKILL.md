@@ -72,12 +72,12 @@ She'll decide, partly decide, or set it aside. Draft the note change, show it an
 ```
 One Rejected line per option she considered and turned down, so later agents don't propose it again. If no open decisions remain, remove the `decision needed` entry from `blocked-by`.
 
-**Partly answered, or not yet.** Under the question:
+**Partly answered, or not yet.** If Sarah just wants to skip it for now, write nothing. Otherwise, under the question:
 ```
    - **Partly answered YYYY-MM-DD:** Settled: <...>. Still open: <...>. Waits on: <e.g. a design session in Claude Design, or [[Other Story]]>.
      - <each research finding the next run needs, one line, with where it came from>
 ```
-The `decision needed` entry stays. The findings lines matter because the brief will be gone by the next run. If Sarah just wants to skip it for now, write nothing.
+The `decision needed` entry stays. The findings lines matter because the brief will be gone by the next run.
 
 **Don't reword the original question.** Progress goes in lines under it.
 

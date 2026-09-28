@@ -7,4 +7,5 @@
 - I'd love if a failed e2e test automatically kicked off a Claude agent that did a preliminary root cause analysis for me to review
 - we need to update agents to specify when a feature needs e2e tests added and when it's not worth doing
 - I guess I'm most familiar with Playwright, and assumed we'd use it, but we should do at least a cursory check that it's the best tool to use.
+- Part of this will be an app-wide review to determine what needs e2e tests added now.
 

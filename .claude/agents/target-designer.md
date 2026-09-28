@@ -25,7 +25,7 @@ Don't open anything under `src/` or `test/`, and don't search them. Don't read t
 Single concern is Sarah's top priority. For each piece, give:
 - **Kind:** component, hook, utility, server action or model.
 - **Job:** one sentence without "and". If it needs "and", it's two pieces.
-- **Server or client:** default server. Use client only for a concrete reason (an event handler, React state, a browser API or a client-only library), and only on the smallest leaf that needs it.
+- **Server or client:** client if the piece has a concrete reason (an event handler, React state, a browser API or a client-only library) and is the smallest leaf that needs it. Otherwise, server.
 - **Where it lives:** the folder, following `project_structure.md`.
 - **Behaviors:** the numbers of the behaviors it's responsible for.
 

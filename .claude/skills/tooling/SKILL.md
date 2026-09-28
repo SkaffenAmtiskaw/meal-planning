@@ -19,12 +19,12 @@ This skill is for changes to how the app is built (skills, subagents, hooks, AGE
 
 The argument is one of:
 - **A note name:** find it in `notes/` and check its `type`:
-  - `workflow`: read all of it. The whole note is the change unless Sarah says otherwise.
   - `workflow` with a What Belongs Here section: a collecting note. List its items, one line each, and point out any that are logically grouped, such as several rules that all land in the same doc. Ask Sarah which item or group this session does. That item or group is the change.
+  - `workflow` without one: read all of it. The whole note is the change unless Sarah says otherwise.
   - blank, in `notes/features/tooling/`: a tooling note from before the workflow type existed. Ask Sarah whether it's a workflow note. If it is, give it `type: workflow`, remove its `status`, set its `^status` line to "Next: /tooling", and go on.
   - anything else: it's story work. Tell Sarah it belongs in the story lifecycle, and stop.
 - **An item in a note:** find it and read the note around it. Check the note's `type` the same way.
-- **A description:** Sarah's own words. If it would change what the app does for its users, tell her it belongs in the story lifecycle, and stop. App code changed only as a side effect, such as files reformatted by a new lint rule, is fine. Otherwise, search `notes/` for notes and items about the same thing and tell her what you found. They may already hold details or decisions.
+- **A description:** Sarah's own words. App code changed only as a side effect, such as files reformatted by a new lint rule, is fine. If it would change what the app does for its users, tell her it belongs in the story lifecycle, and stop. Otherwise, search `notes/` for notes and items about the same thing and tell her what you found. They may already hold details or decisions.
 
 Then read the files the change touches: the skills, agents, hooks, docs or config it names, plus Note Conventions or AGENTS.md if it changes how notes or sessions work. Read only what it touches.
 
@@ -43,6 +43,7 @@ Size decides whether to draft first:
 While making it:
 - **Claude Code features** (skill frontmatter, hooks, subagents, rules): check the current Claude Code docs, never memory.
 - **New skills and agents** follow the shape of the existing ones in `.claude/skills/` and `.claude/agents/`. A skill carries or points to only the parts of shared docs it uses, never a whole long doc.
+- **Writing instructions** in a skill or agent: put the condition first ("If ..., do Y. Otherwise, do X."). Never write an instruction followed by its exception in a later sentence ("Do X." then "Don't do X when ..."), because agents act on the plain instruction and miss the exception.
 - **Project config:** Sarah asking for this change is the explicit instruction AGENTS.md requires, but only for the config it names.
 - **OpenCode agents** in `.opencode/agents/` stay until the whole move to Claude Code is finished, even when a Claude skill replaces one.
 - **Code, config or scripts:** run `pnpm lint` and `pnpm check:types`. Test a hook or script by running it with sample input.
@@ -56,14 +57,17 @@ Once she approves, bring the notes in line with the change. Search all of `notes
 - text the change made wrong, such as a `^status` line naming a renamed skill, or a note describing the old workflow
 
 Handle each one:
-- **Done in full:** remove it, with no line recording that it was removed. A collecting note this session worked from stays: remove only the items it did. If that leaves it with no items, ask Sarah whether it should keep collecting or be deleted. If it's deleted, it goes through the same steps as any whole note below. For any other whole note: if it holds something worth keeping for reference, such as a rationale or a convention, ask Sarah whether a doc should cover it. Then run `git status` on it (if it's untracked or has uncommitted changes, ask before deleting), delete it with `rm`, remove its Roadmap line, and reword or remove every link to it.
+- **Sarah's comments:** if one is now done or out of date, handle it as AGENTS.md describes under "Editing notes". The bullets below are for everything else.
+- **Done in full:** remove it, with no line recording that it was removed. How depends on what it is:
+  - **An item in a collecting note:** remove only the item. The note stays. If that leaves the note this session worked from with no items, ask Sarah whether it should keep collecting or be deleted. If it's deleted, handle it as a whole note (next bullet).
+  - **A whole note:** if it holds something worth keeping for reference, such as a rationale or a convention, ask Sarah whether a doc should cover it. Then run `git status` on it. If it's untracked or has uncommitted changes, ask Sarah before deleting it. Otherwise, delete it with `rm`. Then remove its Roadmap line, and reword or remove every link to it.
+  - **Anything else,** such as an item in a story note: remove it.
 - **Partly done:** remove the done parts and keep the rest.
-- **Out of date:** if there's one right fix, make it. If there's a real choice, propose the wording and wait. A story note's plan is never rewritten. Add a Check Drift callout as AGENTS.md describes.
-- **Sarah's comments:** never edit one. If one is now done or out of date, show it to her and ask whether to remove it.
+- **Out of date:** if it's a story note's plan, never rewrite it. Add a Check Drift callout as AGENTS.md describes. Otherwise, if there's one right fix, make it. If there's a real choice, propose the wording and wait.
 
 Don't bring other notes up to a convention this change introduced. They're updated when next worked on.
 
-Last, check every file in `notes/` that isn't a note (images, `.dc.html` prototypes, scripts, SVGs), except `notes/templates/`. Search `notes/` for its filename. If nothing references it, delete it, running `git status` on it first as above.
+Last, check every file in `notes/` that isn't a note (images, `.dc.html` prototypes, scripts, SVGs), except `notes/templates/`. Search `notes/` for its filename. If nothing references it, run `git status` on it. If it's untracked or has uncommitted changes, ask Sarah before deleting it. Otherwise, delete it.
 
 ## 5. Report and stop
 Route the out-of-scope list as AGENTS.md describes. Then tell Sarah, in the same table format as step 3:

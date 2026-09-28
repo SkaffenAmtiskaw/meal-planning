@@ -66,7 +66,7 @@ Merge everything into one list, in `.scratch/<note name> - review findings.md`:
   - **Fix here:** it's small, and any decision it needs can be settled in a question or two.
   - **Route to the notes:** it's bigger, needs design work, or reaches well outside the story's files.
 
-Don't review steps one by one, and don't hunt for issues inside a single step. If you trip over a clear bug, include it.
+Don't review steps one by one. If you trip over a clear bug, include it. Otherwise, don't hunt for issues inside a single step.
 
 If there are no findings, tell Sarah in one line and go to step 8.
 

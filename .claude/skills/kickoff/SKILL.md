@@ -47,7 +47,7 @@ In a roundup, renumber the remaining questions after removing any.
 
 Then set up the kicked-off note:
 - **A sweep:** set `status: spec` and the `^status` line to "Kicked off. Next: /check-drift".
-- **A roundup:** add `"decision needed: the questions under Open Decisions"` to `blocked-by`, and set the `^status` line to "Kicked off. Next: /decide". If every question already has a **Decided** line, set `status: spec` and the `^status` line to "Kicked off. Next: /plan-steps" instead.
+- **A roundup:** if every question already has a **Decided** line, set `status: spec` and the `^status` line to "Kicked off. Next: /plan-steps". Otherwise, add `"decision needed: the questions under Open Decisions"` to `blocked-by`, and set the `^status` line to "Kicked off. Next: /decide".
 
 Don't touch `confirmed`. The next skill checks the items against the code and sets it.
 
@@ -66,4 +66,4 @@ Tell Sarah:
 - how many items it holds, and which blocked items stayed behind or were routed elsewhere
 - where its Roadmap line went
 
-Give her the next command to run in a new session: `/check-drift <note>` for a sweep, `/decide <note>` for a roundup. Leave every change unstaged. Don't start the next step in this session.
+Give her the next command to run in a new session: `/check-drift <note>` for a sweep. For a roundup, if every question already had a **Decided** line, `/plan-steps <note>`. Otherwise, `/decide <note>`. Leave every change unstaged. Don't start the next step in this session.

@@ -29,9 +29,9 @@ Only what it takes to tell the options apart. Designing the story, writing steps
 - **Best practice:** search the web when an established practice bears on the question, such as clean architecture, UX guidance for touch devices, or accessibility. Say where it comes from.
 
 ## Recommending
-Usually recommend an option, especially when a best practice supports it. Name that practice and say how it applies.
+If a question comes down to Sarah's personal preference, such as which of two equally sound interactions she likes better, say it's a preference call and don't pick one. Don't guess her taste from other notes. If the options can't be told apart for another reason, such as needing a design session first, say that instead.
 
-Some questions come down to Sarah's personal preference, such as which of two equally sound interactions she likes better. For those, say it's a preference call and don't pick one. Don't guess her taste from other notes. If the options can't be told apart for another reason, such as needing a design session first, say that instead.
+Otherwise, recommend an option, especially when a best practice supports it. Name that practice and say how it applies.
 
 ## Report format
 

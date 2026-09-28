@@ -10,12 +10,12 @@ Work is planned and tracked as notes in the Obsidian vault in `notes/`.
 - **Wrong assumptions:** if her answer shows a question rested on a wrong assumption, say the question is no longer needed and move on.
 - **Self-contained questions.** Put what a question is about inside it: the note, the file, the step. She may see only the question, not the text before it.
 - **Open choices are hers.** When an instruction or plan leaves a real choice open (two reasonable readings, and nothing written picks one), ask instead of choosing.
-- **Recommendations:** give one when best practice supports it, and name the practice. When a choice comes down to her preference, say so and don't guess. If she asks for a recommendation, always give one.
-- **Doc gaps:** the moment you notice something that belongs in `.opencode/docs/` (a convention the docs don't cover, or a rule that's wrong or out of date), stop and ask her whether it should become doc. If it should, draft the change, show it to her and write it once she approves. Don't save it for a report or a later pass. If she wants it done later, it goes in `notes/features/tooling/Docs Updates.md`.
+- **Recommendations:** if she asks for a recommendation, always give one. Otherwise, give one when best practice supports it, and name the practice. When a choice comes down to her preference, say so and don't guess.
+- **Doc gaps:** the moment you notice something that belongs in `.opencode/docs/` (a convention the docs don't cover, or a rule that's wrong or out of date), stop and ask her whether it should become doc. Don't save the question for a report or a later pass. If she wants it done later, it goes in `notes/features/tooling/Docs Updates.md`. Otherwise, if it should become doc, draft the change, show it to her and write it once she approves.
 
 ## Editing notes
 Any change to a note in `notes/` follows these rules:
-- **Sarah's comments:** a line where her name is a tag or a signature (`[Sarah] I want X instead.`, `Change this to Y - Sarah`) is her own words. Never edit it, and never write in her voice or sign as her. Record her decisions in the third person ("Sarah decided 2026-09-25 that ...").
+- **Sarah's comments:** a line where her name is a tag or a signature (`[Sarah] I want X instead.`, `Change this to Y - Sarah`) is her own words. If one is done or out of date, show it to her and ask whether to remove it. Otherwise, never edit it. Never write in her voice or sign as her. Record her decisions in the third person ("Sarah decided 2026-09-25 that ...").
 - **Plans aren't rewritten.** When the build differs from a step, add an **As built:** note under the step. When a note no longer matches the code, add a `> ⚠️ **Check Drift YYYY-MM-DD:** ...` callout directly above the text it's about. Never edit the plan text itself.
 - **The `^status` line** (the line ending in ` ^status` under Where It Stands) says what work the story needs next or what it's waiting on, and nothing else. Never describe the story there. The Roadmap embeds it so Sarah can scan what each story needs.
   - Whoever moves a story forward updates it. When the next step is settled, write it without asking and mention it in your summary. When there's a real choice, such as what the story is blocked on, show Sarah the line and wait for her approval.
@@ -27,14 +27,14 @@ Any change to a note in `notes/` follows these rules:
 - **Anything bigger, outside a skill:** a skill carries what it needs for the notes it changes. Without one, read `notes/Note Conventions.md` before creating, retyping, moving, closing or deleting a note, or changing its `status`.
 
 ## Out-of-scope work
-Keep a running list of anything that looks like it belongs outside the story or step you're working on, whether you, a subagent or Sarah found it. Sarah's feedback on how a skill, subagent or the workflow itself behaves always goes on the list, even when it's also saved as a memory, unless this session is working on that same skill or subagent. Don't stop to deal with items as they come up.
+Keep a running list of anything that looks like it belongs outside the story or step you're working on, whether you, a subagent or Sarah found it. If Sarah gives feedback on how a skill, subagent or the workflow itself behaves, and this session isn't working on that same skill or subagent, it always goes on the list, even when it's also saved as a memory. Don't stop to deal with items as they come up.
 
-**Sarah decides what's out of scope.** Before you show her the result she approves, go through the list so far with her, **one item at a time**. Each skill names the point where this happens. For each item, show what it is, where it was found and why it looks outside this work, then ask whether to:
+**Sarah decides what's out of scope.** Before you show her the result she approves, go through the list so far with her, **one item at a time**. Each skill names the point where this happens. For each item, show what it is, where it was found and why it looks outside this work. Then offer the choices below. If the skill has no story to pull into, offer only route or drop. Otherwise, offer all three:
 - **Pull it in:** it becomes part of this story. She may have thought it was in scope, or want it done while this work is here. The skill says how it enters the story.
 - **Route it:** it belongs somewhere else. If she names where, put it there now, without the router, written the way `.claude/agents/scope-router.md` describes for that kind of home.
 - **Drop it:** take it off the list and don't record it anywhere.
 
-Triage items that turn up after that point the same way, at the end. A skill with no story to pull into offers only route or drop.
+Triage items that turn up after that point the same way, at the end.
 
 Then route the items she routed without naming a home:
 1. Send them to the `scope-router` subagent. For each item, include what it is, where it was found (`file:line`, or the note and section) and why it's outside this work. The router suggests a home for each item. It doesn't change anything.
@@ -54,7 +54,7 @@ Read the docs a task touches when it needs them, not all up front:
 The libraries in this project are newer than your training data. Never use an API from memory. Every API you use needs a source:
 - **The same API already used in this codebase,** the same way.
 - **Next.js:** the version-matched docs in `node_modules/next/dist/docs/`.
-- **Mantine:** the first time you use a component, or use one for a new purpose, read its mantine.dev page, found through https://mantine.dev/llms.txt. Its docs show how Mantine intends the component to be used, which the types don't. To look up a prop on a component already used the documented way, the type definitions in `node_modules/@mantine/*/lib/` are enough.
+- **Mantine:** to look up a prop on a component already used the documented way, the type definitions in `node_modules/@mantine/*/lib/` are enough. Otherwise, the first time you use a component, or use one for a new purpose, read its mantine.dev page, found through https://mantine.dev/llms.txt. Its docs show how Mantine intends the component to be used, which the types don't.
 - **better-auth:** https://better-auth.com/llms.txt, then the page for the API you need.
 - **Anything else:** the installed package's docs for that version, or its type definitions.
 
@@ -63,7 +63,7 @@ Look up only what the task uses: one component, one function, one page.
 ## Commands
 - `pnpm lint`: Biome. It **writes fixes** to the files, not just reports.
 - `pnpm check:types`: TypeScript, no emit.
-- `pnpm test:agent <path>`: runs the tests for a file or folder, with coverage and output made for agents. Use it instead of calling `vitest` directly. The one exception is a break-it check, which runs `pnpm vitest run <test file>` as the check says.
+- `pnpm test:agent <path>`: runs the tests for a file or folder, with coverage and output made for agents. For a break-it check, run `pnpm vitest run <test file>` as the check says. Otherwise, use `pnpm test:agent` instead of calling `vitest` directly.
 - `pnpm build`: Next.js production build.
 
 ## Git and files

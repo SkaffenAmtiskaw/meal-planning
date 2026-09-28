@@ -22,7 +22,7 @@ Read the note and `notes/Roadmap.md`. Search `notes/features/` for stories this 
 ## The test
 A group of behaviors, pieces or steps can be its own story when all three hold:
 1. **It ships on its own.** It doesn't need another group to be finished to work. It may depend on a group that comes before it, and that becomes a `blocked-by`.
-2. **Sarah can check it in the running app on its own.** It has something to see or a flow that should stay unchanged. Work that changes only tests is checked with break-it checks instead (see "Test-only steps" in `.claude/skills/plan-steps/SKILL.md`).
+2. **Sarah can check it on its own.** If it changes only tests, that means break-it checks (see "Test-only steps" in `.claude/skills/plan-steps/SKILL.md`). Otherwise, it has something to see in the running app, or a flow there that should stay unchanged.
 3. **It's useful without the rest.** If only this group shipped, the app would be better for it.
 
 Signs that a story holds more than one:

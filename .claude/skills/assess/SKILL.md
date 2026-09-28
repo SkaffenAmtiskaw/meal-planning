@@ -28,11 +28,9 @@ If the note has a Design Handoff, treat it as the source of truth for UX, not fo
 If the note already has a Suggested Approach, this is a re-assessment. Don't start from the old approach. It invites the same anchoring as old code. Do steps 2 to 5 fresh, then in step 6 show what changed compared with the old approach.
 
 ## 2. Confirm the behaviors
-List the story as numbered behaviors, one line each. Cover what the user does and every way the app can respond: success, each kind of failure, empty states, and differences for read-only users.
+If the note has a `# From the Split` section because this story was split from a larger one, start from its behaviors. Show them and ask Sarah to confirm they still hold.
 
-Where the note doesn't say, ask Sarah, one question at a time. Don't fill gaps yourself.
-
-If the note has a `# From the Split` section because this story was split from a larger one, start from its behaviors instead of writing a new list. Show them and ask Sarah to confirm they still hold.
+Otherwise, list the story as numbered behaviors, one line each. Cover what the user does and every way the app can respond: success, each kind of failure, empty states, and differences for read-only users. Where the note doesn't say, ask Sarah, one question at a time. Don't fill gaps yourself.
 
 Show the list and wait for her to confirm it before going on.
 
@@ -50,7 +48,7 @@ From the behaviors and the project docs (`.opencode/docs/project_conventions.md`
 For each piece, give:
 - **Kind:** component, hook, utility, server action or model.
 - **Job:** one sentence without "and". If it needs "and", it's two pieces.
-- **Server or client:** default server. Use client only for a concrete reason (an event handler, React state, a browser API or a client-only library), and only on the smallest leaf that needs it.
+- **Server or client:** client if the piece has a concrete reason (an event handler, React state, a browser API or a client-only library) and is the smallest leaf that needs it. Otherwise, server.
 
 Prefer Mantine components and hooks over custom ones. Check library docs only when the story needs them, as AGENTS.md describes under "Library APIs".
 
@@ -69,14 +67,16 @@ Show Sarah:
 2. **A table** with one row per target piece: Piece | Job | Decision | Existing code | Why. Decision is one of: build new, use as-is, refactor first, replace, or extract shared piece. Follow the critic's verdicts. If you disagree with one, say so in that row and explain why. Don't quietly override it.
 3. **Client pieces:** which pieces are client, and the reason for each.
 
-Refactors are part of the story by default. If one looks out of proportion to the story, don't defer it yourself. Ask Sarah whether to do it in this story or move it out.
+If a refactor looks out of proportion to the story, don't defer it yourself. Ask Sarah whether to do it in this story or move it out. Otherwise, refactors are part of the story.
 
 When she pushes back, revise and show the changed rows again. Wait for her explicit approval.
 
 ## 6. Write it to the note
-Once she approves, write the behavior list, the table and the client pieces under `# Suggested Approach` in the note. If a template comment is there, replace it. If the note has a `# From the Split` section, delete it. The approved behaviors now live in the Suggested Approach.
+Once she approves, if this is a re-assessment, first show Sarah what changed compared with the old approach, and replace it only once she approves that too.
 
-For a re-assessment, first show Sarah what changed compared with the old approach, and replace it only once she approves. Leave `status` at `spec`. The note isn't ready until it has implementation steps.
+Then write the behavior list, the table and the client pieces under `# Suggested Approach` in the note. If a template comment is there, replace it. If the note has a `# From the Split` section, delete it. The approved behaviors now live in the Suggested Approach.
+
+Leave `status` at `spec`. The note isn't ready until it has implementation steps.
 
 Then:
 - Update the `^status` line as AGENTS.md describes under "Editing notes", e.g. "Approach approved. Next: /plan-steps".

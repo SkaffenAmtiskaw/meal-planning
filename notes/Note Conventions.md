@@ -33,7 +33,7 @@ Templates are in `templates/`. Pick by the shape of the fix, not where the work 
 - **Cleanup** - remove or tidy code without a new convention.
 - **Sweep** - a rolling checklist of small fixes that share a logical grouping (e.g. unit test fixes, style fixes), collected until Sarah kicks one off. Every item must be small, with no ambiguity and no open decisions.
 - **Roundup** - issues on a broad topic (e.g. form UX, loading states) that still need decisions, collected until Sarah kicks one off. Its decisions are made together, then its fixes are built together.
-- **Workflow** - a change to how the app is built, not what it does: skills, subagents, hooks, AGENTS.md, these conventions, templates, docs or tooling config. It skips the lifecycle: `/tooling` makes the change and deletes the note, unless the note collects items over time.
+- **Workflow** - a change to how the app is built, not what it does: skills, subagents, hooks, AGENTS.md, these conventions, templates, docs or tooling config. It skips the lifecycle. If the note collects items over time, `/tooling` does its items one change at a time and the note stays. Otherwise, `/tooling` makes the change and deletes the note.
 - **Idea** - jot something down quickly.
 - **Hub** - a map of several stories that touch the same area (e.g. [[Meal Editing]]), or a big idea that will clearly be several stories but needs decisions before it can be split. Not implemented directly.
 
