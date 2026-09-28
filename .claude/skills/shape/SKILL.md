@@ -30,7 +30,7 @@ Read `notes/Note Conventions.md` first. It explains the frontmatter, the note ty
 
 If you can't find it, or more than one thing matches, ask Sarah which she means.
 
-**Workflow changes skip shaping.** If the note is already `type: workflow`, tell Sarah to run `/workflow` on it, and stop. If the idea changes how the app is built rather than what it does (skills, subagents, hooks, AGENTS.md, Note Conventions, templates, docs or tooling config), tell Sarah it's a workflow note. With her OK, rewrite it from `notes/templates/Workflow.md`, keeping her content under Notes, write it as in step 6, and stop. `/workflow` does the rest.
+**Workflow changes skip shaping.** If the note is already `type: workflow`, tell Sarah to run `/tooling` on it, and stop. If the idea changes how the app is built rather than what it does (skills, subagents, hooks, AGENTS.md, Note Conventions, templates, docs or tooling config), tell Sarah it's a workflow note. With her OK, rewrite it from `notes/templates/Workflow.md`, keeping her content under Notes, write it as in step 6, and stop. `/tooling` does the rest.
 
 ## 2. Look around, briefly
 Don't check whether the idea is still relevant. Sarah running `/shape` on it means she believes it is, and she'll ask for a deeper check if she isn't sure. Look just enough to tell the options apart:

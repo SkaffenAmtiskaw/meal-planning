@@ -1,5 +1,5 @@
 ---
-name: workflow
+name: tooling
 description: Make one change to the agent workflow or dev tooling (skills, subagents, hooks, AGENTS.md, Note Conventions, templates, docs, tooling config) in a single session, then clean up every note that refers to it. Tooling only; product stories use the story lifecycle.
 argument-hint: "[note name, an item in a note, or a description of the change]"
 disable-model-invocation: true
@@ -8,7 +8,7 @@ disable-model-invocation: true
 Make this workflow or tooling change: **$ARGUMENTS**
 
 ## Why this skill works the way it does
-The agent workflow is being overhauled, and tooling changes skip the story lifecycle (`/shape`, `/decide`, `/plan-steps`, `/implement`, `/review`, `/close`). That lifecycle exists so product code is built and reviewed in small pieces. A change to a skill or a convention is small enough to understand whole, and Sarah reviews it directly. Workflow notes (`type: workflow`, usually in `notes/features/tooling/`) are only a place to keep track of ideas until she gets to them. They have no `status`: `/workflow` does the change and deletes the note. A workflow note with a What Belongs Here section is different: it collects items over time, like Docs Updates. `/workflow` does one of its items per session, or a group of logically related items when Sarah agrees, and the note stays.
+The agent workflow is being overhauled, and tooling changes skip the story lifecycle (`/shape`, `/decide`, `/plan-steps`, `/implement`, `/review`, `/close`). That lifecycle exists so product code is built and reviewed in small pieces. A change to a skill or a convention is small enough to understand whole, and Sarah reviews it directly. Workflow notes (`type: workflow`, usually in `notes/features/tooling/`) are only a place to keep track of ideas until she gets to them. They have no `status`: `/tooling` does the change and deletes the note. A workflow note with a What Belongs Here section is different: it collects items over time, like Docs Updates. `/tooling` does one of its items per session, or a group of logically related items when Sarah agrees, and the note stays.
 
 So one session does it all: find out what Sarah wants, make the change everywhere it reaches, then leave the notes matching what now exists. One change per session. When it's done, stop.
 
@@ -21,7 +21,7 @@ The argument is one of:
 - **A note name:** find it in `notes/` and check its `type`:
   - `workflow`: read all of it. The whole note is the change unless Sarah says otherwise.
   - `workflow` with a What Belongs Here section: a collecting note. List its items, one line each, and point out any that are logically grouped, such as several rules that all land in the same doc. Ask Sarah which item or group this session does. That item or group is the change.
-  - blank, in `notes/features/tooling/`: a tooling note from before the workflow type existed. Ask Sarah whether it's a workflow note. If it is, give it `type: workflow`, remove its `status`, set its `^status` line to "Next: /workflow", and go on.
+  - blank, in `notes/features/tooling/`: a tooling note from before the workflow type existed. Ask Sarah whether it's a workflow note. If it is, give it `type: workflow`, remove its `status`, set its `^status` line to "Next: /tooling", and go on.
   - anything else: it's story work. Tell Sarah it belongs in the story lifecycle, and stop.
 - **An item in a note:** find it and read the note around it. Check the note's `type` the same way.
 - **A description:** Sarah's own words. If it would change what the app does for its users, tell her it belongs in the story lifecycle, and stop. App code changed only as a side effect, such as files reformatted by a new lint rule, is fine. Otherwise, search `notes/` for notes and items about the same thing and tell her what you found. They may already hold details or decisions.

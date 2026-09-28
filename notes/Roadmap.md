@@ -112,6 +112,7 @@
 - [[Unit Test Tidy-Ups]] ![[Unit Test Tidy-Ups#^status]]
 
 ## Dev Tooling & Testing
+- [[Vercel Plugin]]
 - switch testing library to `vitest-browser-react`
 - e2e tests *(was low)*
 - [[Unit Testing - New Centralized Mocks]] ![[Unit Testing - New Centralized Mocks#^status]]

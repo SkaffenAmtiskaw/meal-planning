@@ -3,7 +3,7 @@ type: workflow
 confirmed: 2026-09-27
 ---
 # Where It Stands
-Collecting items. Next: /workflow ^status
+Collecting items. Next: /tooling ^status
 
 # Purpose
 Changes to how agents work in this repo: skills (`.claude/skills/`), subagents (`.claude/agents/`), AGENTS.md, agent conventions and the move from OpenCode to Claude Code. This includes Sarah's feedback on how they behave. The planning skills block edits outside `notes/`, so an agent that spots a fix mid-run adds an item here instead.
@@ -11,7 +11,7 @@ Changes to how agents work in this repo: skills (`.claude/skills/`), subagents (
 Agents are moving from OpenCode to Claude Code, slowly. The first was `architect`, which became the `/assess` skill with the `code-critic` and `scope-router` subagents (2026-09-25).
 
 ## What Belongs Here
-Changes to skills, subagents, AGENTS.md, agent conventions or the OpenCode move, each saying what to change, where, why, and how and when it was found. An item may still need a decision: /workflow settles it with Sarah. Changes to the docs in `.opencode/docs/`, which describe the codebase, go in [[Docs Updates]]. Tooling config goes in [[Dev Tooling Tidy-Ups]].
+Changes to skills, subagents, AGENTS.md, agent conventions or the OpenCode move, each saying what to change, where, why, and how and when it was found. An item may still need a decision: /tooling settles it with Sarah. Changes to the docs in `.opencode/docs/`, which describe the codebase, go in [[Docs Updates]]. Tooling config goes in [[Dev Tooling Tidy-Ups]].
 
 # Items
 - [ ] `.claude/skills/plan-steps/SKILL.md`, step 4 ("Review with Sarah"), the outline item (L121): don't ask Sarah whether the order/split is right when that's already settled by the skill's own checks (e.g. the split-checker returned a clear "no split" verdict and the note's template already allows the resulting step count, such as a bug note's single-step plan). State the settled outcome instead of asking her to confirm it; still ask when a checker flagged real uncertainty or the split/order is a genuine judgment call. Found while planning the `getUserInvites` server-only fix, 2026-09-26 - Sarah: "That's something that doesn't need my feedback every time. When it's OBVIOUS it does not need to be asked."
@@ -33,4 +33,9 @@ Changes to skills, subagents, AGENTS.md, agent conventions or the OpenCode move,
 	- The skills that write Open Decisions: `/shape` (its blocking-decisions step and Open Decisions bullets write questions from the agent's own research without asking Sarah first), `/decide` "New questions", and `scope-router`, which may write items that still need decisions. `/investigate` and `/check-drift` already write one only when Sarah wants to think it over.
 
 	Found 2026-09-27: an agent had added "decide whether this covers only `test/mocks/**` or inline mocks in `*.test.tsx` too" to a Roadmap line, and Sarah said it was never an open question for her. Sarah: "Open questions should be things I genuinely haven't decided yet and want to think about (or research). They shouldn't be questions the AGENT has lol."
-- [Sarah] - How exactly is a story scope decided? The agent gets to decide what work it wants to do? Or am I signing off on scope somewhere?
+- [ ] [Sarah] - How exactly is a story scope decided? The agent gets to decide what work it wants to do? Or am I signing off on scope somewhere?
+- [ ] [Sarah] - I suppose I need some sort of priority tracking, ideally something that will be visible on the Roadmap when I am looking at what's in later.
+- [ ] [Sarah] - I feel like hubs need some work. There's nothing really differentiating something that is essentially an epic that I want to tackle in priority order and release all in one feature, and a task that happened to get split because it broke down nicely.
+- [ ] [Sarah] - Implement should pull a story into "now" if it starts being worked and isn't already in now. But is there any other point in the workflow an agent should be suggesting I move a story into a different part of the roadmap?
+- [ ] **Check new skill names against built-in commands** - `.claude/skills/tooling/SKILL.md` step 3 "Make the change", the "New skills and agents" bullet (L45): when an agent creates or renames a skill, it should first check the name against Claude Code's built-in commands and bundled skills, and against the commands the Claude desktop app (Code tab) handles itself. It should also check aliases, not just command names. If the name matches one, pick another. Why: the desktop app has a built-in `/workflows` command with the alias `workflow` and `noArgs: true`. It caught the `/workflow` skill every time Sarah typed `/workflow <args>` and showed "/workflow doesn't take arguments here", so the skill was renamed to `/tooling` 2026-09-28. The desktop app's list at the time: add-dir, advisor, allowed-tools, auto-mode-setup, autocompact, bashes, btw, bug, cd, clear, compact, config, context, continue, cost, create-pr, diff, effort, export, extra-usage, fast, feedback, fork, help, login, logout, logs, marketplace, mcp, memory, model, name, new, output-style, permissions, plan, plugin, plugins, reload-plugins, rename, reset, reset-limits, resume, rewind, sandbox, schedule, settings, share, skills, stats, status, storage, tasks, theme, ultrareview, usage, usage-credits, workflow, workflows. That list changes between app versions, so the rule should say to check the current one, not copy this list into the skill. Found 2026-09-28 while renaming `/workflow` to `/tooling`.
+- [ ] [Sarah] - Out of scope items seem to be entirely agent generated, and I have no opportunity to say "I don't care about this" before it goes to the subagent.
