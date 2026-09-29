@@ -30,7 +30,7 @@ Pick exactly one home for each item. If the only note on its topic was kicked of
 - **Workflow note:** the item changes how the app is built: a skill, subagent, hook, AGENTS.md, Note Conventions, a template, a doc or tooling config. This includes Sarah's feedback on how a skill, subagent or the workflow behaves.
   - If a collecting workflow note's What Belongs Here rule fits, write the item for its Items: what changes, where, why, and how and when it was found. For feedback, quote Sarah's words. The item may still need decisions.
   - Otherwise suggest a new workflow note from `notes/templates/Workflow.md`, and the Roadmap line that links to it.
-- **New Roadmap line:** a new story that takes a line or two to describe. Write the exact line. A new line goes in Ideas, because Sarah decides when work is committed and moves it to Later herself. Follow the style of the lines around it.
+- **New Roadmap line:** a new story that takes a line or two to describe. Write the exact line. A new line goes in Ideas, because Sarah decides when work is committed, by shaping it with `/shape` or moving it to Later herself. Follow the style of the lines around it.
 - **New idea note:** a new story that needs more than a line or two. Suggest a title and folder under `notes/features/`, draft the body from the template in `notes/templates/` that fits its shape, and write the Roadmap line that links to it.
 
 Never suggest creating a sweep, roundup or collecting workflow note directly: say in **Why** that one could be started, and Sarah decides. An item that can't be done until another story lands starts with `**Blocked by [[Story]]:**`.

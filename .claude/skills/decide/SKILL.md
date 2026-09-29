@@ -71,6 +71,8 @@ She'll decide, partly decide, or set it aside. Draft the note change, show it an
 ```
 One Rejected line per option she considered and turned down, so later agents don't propose it again. If no open decisions remain, remove the `decision needed` entry from `blocked-by`.
 
+If the question is "Is this worth doing?" and Sarah decides it isn't, the story is dropped. Skip the other decisions she picked for this run, because they no longer matter, and go to step 4.
+
 **Partly answered, or not yet.** If Sarah just wants to skip it for now, write nothing. Otherwise, under the question:
 ```
    - **Partly answered YYYY-MM-DD:** Settled: <...>. Still open: <...>. Waits on: <e.g. a design session in Claude Design, or [[Other Story]]>.
@@ -95,6 +97,8 @@ Once the picked decisions are done:
 - **`confirmed`:** set it to today. Sarah making decisions on a note counts as confirming it.
 - **A roundup with no open decisions left:** set `status: spec`. Its next step is `/plan-steps`.
 - **A hub with no open decisions left:** set its `^status` line to "Next: its child stories" and remove its Roadmap line. A hub has a line only while it has open decisions.
+- **A story Sarah decided is worth doing:** if its Roadmap line is in Ideas, the story is now committed. Check its goals and place its line as the `roadmap-placement` skill describes.
+- **A story Sarah decided isn't worth doing:** set `status: dropped`, remove the `decision needed` entry from `blocked-by`, and set the `^status` line to "Not worth doing. Next: /close".
 
 ## 5. New stories
 Skip this if the running list of new stories is empty.
