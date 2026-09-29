@@ -14,7 +14,10 @@ Next: /shape ^status
 # Notes
 When Sentry logs an error or an E2E test fails, an agent kicks off on its own and runs a preliminary root cause analysis, so it's ready for Sarah to review when she starts working. It's a Done When item of [[Dev Foundations]].
 
-Both triggers depend on other Dev Foundations work: Sentry isn't set up yet (the Sentry line under [[Dev Foundations]] on the Roadmap), and E2E tests don't exist or run in CI yet ([[E2E Testing]], [[CI Checks]]). [[E2E Testing]] has Sarah's bullet wanting this for failed E2E tests. The `/investigate` skill and its `bug-reproducer` subagent already reproduce and diagnose bugs by hand, which the analysis might build on.
+Both triggers depend on other Dev Foundations work: Sentry isn't set up yet (the Sentry line under [[Dev Foundations]] on the Roadmap), and E2E tests don't exist or run in CI yet ([[E2E Test Setup]], [[E2E Tests in CI]]). The `/investigate` skill and its `bug-reproducer` subagent already reproduce and diagnose bugs by hand, which the analysis might build on.
+
+Sarah's note from [[E2E Testing]], moved here 2026-09-28:
+- I'd love if a failed e2e test automatically kicked off a Claude agent that did a preliminary root cause analysis for me to review
 
 Found 2026-09-28 while shaping [[Dev Foundations]] with `/roadmap`.
 

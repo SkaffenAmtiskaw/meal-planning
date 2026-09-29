@@ -8,7 +8,7 @@ hooks:
     - matcher: "Edit|Write|MultiEdit|NotebookEdit"
       hooks:
         - type: command
-          command: '"$CLAUDE_PROJECT_DIR"/.claude/hooks/notes-only-edits.sh .opencode/docs'
+          command: '"$CLAUDE_PROJECT_DIR"/.claude/hooks/notes-only-edits.sh docs'
 ---
 
 Check the note **$ARGUMENTS** for drift.
@@ -16,13 +16,13 @@ Check the note **$ARGUMENTS** for drift.
 ## Why this skill works the way it does
 A note is written against the codebase, the conventions and the other stories as they were on its `confirmed` date. By the time it's built, any of these may have moved:
 - **Code:** things the plan names have moved, been renamed or been deleted, or another story already built part of it.
-- **Conventions:** the way this kind of thing is built has changed. The docs in `.opencode/docs/` lag far behind the code, so a diff of the docs catches only a little of this. Recent code is the best evidence of the current convention.
+- **Conventions:** the way this kind of thing is built has changed. The docs in `docs/` lag far behind the code, so a diff of the docs catches only a little of this. Recent code is the best evidence of the current convention.
 - **Other notes:** another story's design or build changed shared UI or modules this story depends on. This is how design changes usually reach a story.
 - **Sarah changed her mind:** she writes a comment tagged or signed with her name in the note, or tells you in chat.
 
 This skill **flags and routes**. It never rewrites the plan. It adds ⚠️ Check Drift callouts where the note no longer matches, and sends the note to whichever skill fixes it: `/plan-steps` to re-plan, or the skill that re-settles its approach: `/assess` for a feature, `/investigate` for a bug or cleanup, `/architect` for a pattern, `/decide` for a roundup. The one thing it may fix itself is a convention doc, as AGENTS.md describes under "Doc gaps".
 
-It only reads code. It never runs the app and never changes code. A hook blocks edits outside `notes/`, `.scratch/` and `.opencode/docs/`.
+It only reads code. It never runs the app and never changes code. A hook blocks edits outside `notes/`, `.scratch/` and `docs/`.
 
 ## Talking with Sarah
 - **Her decisions are made.** When she has written or said that she wants something changed, don't ask whether she still wants it, and don't ask again for every place it touches. Ask only where applying it leaves a real choice open.

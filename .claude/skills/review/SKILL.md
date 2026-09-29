@@ -54,7 +54,7 @@ Save each agent's report to `.scratch/<note name> - <agent name>.md`.
 3. Send the list to the `code-critic` subagent: each target piece with its job and the files mapped to it. Tell it this is a review of a finished story, so every file on the list has already been changed by the story. Don't pre-judge the code for it.
 4. Compare the fresh design with the approved Suggested Approach table. Each place they differ is a finding: what the approach planned, what a fresh design has, and what the code does. These are where the approach may have gone wrong once the later steps existed.
 
-**For a pattern, bug, cleanup, sweep or roundup:** read the conventions the story was meant to apply, such as a pattern's Rules section, a roundup's **Decided** lines or the `.opencode/docs/` file a cleanup aligns code with (for example `unit_tests.md`). Then read the story's files and check each change against them. Findings need `file:line` evidence and the rule they break.
+**For a pattern, bug, cleanup, sweep or roundup:** read the conventions the story was meant to apply, such as a pattern's Rules section, a roundup's **Decided** lines or the `docs/` file a cleanup aligns code with (for example `unit_tests.md`). Then read the story's files and check each change against them. Findings need `file:line` evidence and the rule they break.
 
 Every agent's "Outside this story" and "Duplication" items that fall outside the story become findings in step 4, proposed as route to the notes, instead of going straight to the out-of-scope list. Step 5 is their triage: fix here pulls one into the story, and skip drops it.
 

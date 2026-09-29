@@ -4,11 +4,11 @@ Before handing the step to Sarah, do its acceptance checks yourself in the runni
 ## Start the app
 Skip this if every check in the step is a break-it check (see below).
 
-Start it, sign in, and stop it when you're done, as `.opencode/docs/running_the_app.md` describes.
+Start it, sign in, and stop it when you're done, as the `running-the-app` skill describes.
 
 ## Do each acceptance check
 Do each check as it's written, including the user, the screen size and the data it names:
-- **Phone size:** see Screen Sizes in `.opencode/docs/running_the_app.md`.
+- **Phone size:** see Screen Sizes in the `running-the-app` skill.
 - **Data:** if the check needs data that doesn't exist yet, like a day with two meals, create it through the app's own screens. List what you created in your report.
 - **A user or setup you can't get to,** like a read-only user with no test login: don't run the check. Report it as not run, with the reason.
 
@@ -37,4 +37,4 @@ Sort each difference:
   - wording
   - which states exist
   - which kind of control it is (button vs link)
-  - color roles from `.opencode/docs/theme.md`
+  - color roles from `docs/theme.md`

@@ -35,6 +35,9 @@ All paths are relative to `src/app/[planner]/calendar/`. Each has a test file th
 - `temporal-polyfill` (+ its global import in `layout.tsx`) appears to exist only for schedule-x - the only other `Temporal` users are the dead files above and `toScheduleXEvents.ts`. Confirm nothing else needs it before removing.
 
 ## Docs
+
+> ⚠️ **Check Drift 2026-09-28:** The docs moved from `.opencode/docs/` to `docs/`, so `.opencode/docs/theme.md` below is now `docs/theme.md`, and `docs/` is the folder to check. Found while `/tooling` moved the docs.
+
 *(Added 2026-09-25 from the [[Unified Date Picker Component]] plan check.)* `.opencode/docs/theme.md` still documents schedule-x. It's the only file in `.opencode/docs/` that mentions it:
 - L6: the Calendar line says the calendar is `schedule-x` with separate CSS variable theming. Update it to describe the custom calendar.
 - L73-90: the `## Schedule-x calendar theming` section, including `--sx-color-today-bg: rgba(255, 101, 66, 0.08); /* faint ember tint */`. Delete it.
@@ -55,6 +58,9 @@ Where do the shared types (`SerializedDish`, `SerializedMeal`, `SerializedDay`, 
 - [ ] No file in `src` imports from `toScheduleXEvents.ts`, and the file is deleted
 - [ ] All unused files listed above (and their tests) are deleted
 - [ ] No `@schedule-x` imports or packages remain; `temporal-polyfill` removed if confirmed unused
+
+> ⚠️ **Check Drift 2026-09-28:** The docs moved from `.opencode/docs/` to `docs/`, so `.opencode/docs/theme.md` below is now `docs/theme.md`. Found while `/tooling` moved the docs.
+
 - [ ] `.opencode/docs/theme.md` no longer mentions schedule-x
 - [ ] `pnpm check:types`, `pnpm test`, `pnpm lint` and `pnpm build` pass
 - [ ] Month, week and list views work on desktop and mobile with no visual regressions (schedule-x's CSS no longer loads)

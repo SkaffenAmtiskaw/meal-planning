@@ -8,12 +8,12 @@ confirmed: 2026-09-26
 Collecting items until you schedule a sweep. ^status
 
 # Purpose
-A running list of small unit-test fixes that don't follow `.opencode/docs/unit_tests.md`. Each one is too small for its own story, so they're collected here and handled in one sweep every so often.
+A running list of small unit-test fixes that don't follow `docs/unit_tests.md`. Each one is too small for its own story, so they're collected here and handled in one sweep every so often.
 
 ## What Belongs Here
 Every item must be small, with zero ambiguity and no open decisions: whoever builds it should never need to ask what to do. An item that still needs a decision doesn't go here. Give it its own Roadmap line until it's decided, then add it.
 
-Unit test fixes that don't follow `.opencode/docs/unit_tests.md`. Changes are to test files only, unless an item names an exception.
+Unit test fixes that don't follow `docs/unit_tests.md`. Changes are to test files only, unless an item names an exception.
 
 # Items
 *Items are added as they're found. Re-check each one before planning.*

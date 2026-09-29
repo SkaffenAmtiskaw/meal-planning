@@ -76,6 +76,9 @@ export const addMeal = defineMutation({
 	2. no `router.refresh(` in any non-test file under `src/**`
 	3. no import of `revalidatePath` / `revalidateTag` / `updateTag` / `refresh` from `next/cache` outside the `invalidate()` helper
 - **Lefthook** — the pre-commit `test-coverage` step uses `vitest related`, which would never select a meta-test for a newly added action (no import-graph link). Add a pre-commit command that always runs `src/dataConventions.test.ts` when any `src/**/*.{ts,tsx}` file is staged. *The user explicitly authorized this `lefthook.yml` edit for this story on 2026-09-25.*
+
+> ⚠️ **Check Drift 2026-09-28:** The docs moved from `.opencode/docs/` to `docs/`, so `.opencode/docs/project_conventions.md` below is now `docs/project_conventions.md`. Found while `/tooling` moved the docs.
+
 - **Not programmatically enforced (open item)** — Rule 2 (`useEffect` fetching). Documented in `.opencode/docs/project_conventions.md` alongside Rules 1 and 3.
 
 # Coverage

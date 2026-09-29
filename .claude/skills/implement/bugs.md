@@ -4,7 +4,7 @@ A bug is when something doesn't do what its step or its design says. Most bad bu
 These rules are shared: any skill that fixes bugs in this project can follow this file.
 
 1. **Get exact repro steps.** If Sarah hasn't said exactly how to make it happen, ask. Don't start from "it's broken" or "doesn't work right".
-2. **Look before you diagnose.** If the bug involves layout, position, size, scrolling, what's visible, or timing (mount order, effects, async order), reproduce it in the browser pane first. Measure the specific values in question, like `getBoundingClientRect()`, `scrollTop` or computed styles. Don't form a theory about it until you have the measurements. A pure logic bug, like a calculation, a conditional or a data transform, can be diagnosed from the code. `.opencode/docs/running_the_app.md` explains starting the app and signing in.
+2. **Look before you diagnose.** If the bug involves layout, position, size, scrolling, what's visible, or timing (mount order, effects, async order), reproduce it in the browser pane first. Measure the specific values in question, like `getBoundingClientRect()`, `scrollTop` or computed styles. Don't form a theory about it until you have the measurements. A pure logic bug, like a calculation, a conditional or a data transform, can be diagnosed from the code. The `running-the-app` skill explains starting the app and signing in.
 3. **Tell Sarah the diagnosis** in a few lines before fixing it:
    - the file where the fault starts, not where the symptom shows
    - what that code does, and what it should do

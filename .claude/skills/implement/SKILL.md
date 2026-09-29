@@ -38,7 +38,7 @@ Read the project docs AGENTS.md lists when the work needs them, not all up front
 **The rule:** a choice is open as AGENTS.md describes under "Open choices are hers". Here, the written sources are:
 - the note: the step, the approach, the Design Handoff and its images
 - Sarah's answers in this session
-- the project docs in `.opencode/docs/`
+- the project docs in `docs/`
 - current library docs (see step 3)
 
 Your own sense of what's obvious is never a source.
@@ -117,7 +117,7 @@ Where a change or addition goes:
 - **Re-plan:** the idea sentence would have to change, or the work pulls in a later step or another story. Follow "Stopping to re-plan" below.
 - **Out of scope:** new work unrelated to this step goes on the out-of-scope list.
 
-**Corrections to how it's built.** Some feedback changes how the code is built rather than what it does: where a file lives, how data is fetched, which pattern to use. If the docs in `.opencode/docs/` already say it, you missed it, and there's nothing to ask. Otherwise, ask her whether it's a one-off for this step or the convention from now on. If it's the convention, handle it as AGENTS.md describes under "Doc gaps".
+**Corrections to how it's built.** Some feedback changes how the code is built rather than what it does: where a file lives, how data is fetched, which pattern to use. If the docs in `docs/` already say it, you missed it, and there's nothing to ask. Otherwise, ask her whether it's a one-off for this step or the convention from now on. If it's the convention, handle it as AGENTS.md describes under "Doc gaps".
 
 Leave feedback changes unstaged, so her unstaged changes show just the fix. Report again with the same sections, covering only what changed, and ask her whether she approves them. Once she does, stage the files they changed.
 

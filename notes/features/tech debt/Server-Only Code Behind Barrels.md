@@ -22,7 +22,7 @@ Found 2026-09-27 while making `getUserInvites` server-only. Sarah said it's not 
 
 # Root Cause
 - Each domain folder in `src/_actions/` has one barrel (`index.ts`, `export * from './...'`) that mixes callable server actions with everything else in the folder. Client components import server actions through that barrel, so everything it re-exports becomes part of the client module graph.
-- `.opencode/docs/project_conventions.md` "Barrel Files" says only that barrels have no logic. Nothing says what a barrel that client code imports may re-export.
+- `docs/project_conventions.md` "Barrel Files" says only that barrels have no logic. Nothing says what a barrel that client code imports may re-export.
 - The placement rule decided in [[Domain-Specific Code Locations]] (Rules) puts a function consumed across `src/` as a plain file in its domain folder. It doesn't say how that file is exported, so a server-only read there ends up in the same barrel as the client-called actions.
 
 Current temporary fix (made 2026-09-27 when `getUserInvites` became server-only): `getUserInvites` was taken out of `src/_actions/sharing/index.ts`. Its two server callers, `src/_components/UserMenu/InviteBadge.tsx:7` and `src/app/settings/_components/InvitesSettings.tsx`, import `@/_actions/sharing/getUserInvites` directly. Its types moved to `src/_actions/sharing/invite.types.ts`, which stays in the barrel. Its mock moved to `test/mocks/@/_actions/sharing/getUserInvites.ts`, a folder next to the `test/mocks/@/_actions/sharing.ts` barrel mock.
@@ -39,7 +39,7 @@ Current temporary fix (made 2026-09-27 when `getUserInvites` became server-only)
 3. Is the `server-only` build error (`pnpm build` in pre-commit) enough enforcement? Or does something also need to stop a server-only export being added to a client-imported barrel, e.g. a lint import rule or a check in the `src/dataConventions.test.ts` that [[Data Rules Enforcement]] adds?
 
 # Rules
-%% The convention itself, as numbered rules an agent can check code against. Once the rules are confirmed, set status to `spec`. Lands in `.opencode/docs/project_conventions.md` "Barrel Files", next to the placement rule from [[Domain-Specific Code Locations]]. %%
+%% The convention itself, as numbered rules an agent can check code against. Once the rules are confirmed, set status to `spec`. Lands in `docs/project_conventions.md` "Barrel Files", next to the placement rule from [[Domain-Specific Code Locations]]. %%
 
 # Enforcement
 %% Required. See Open Decision 3. %%
@@ -57,7 +57,7 @@ These barrels are imported by `'use client'` files, so each one will hit the sam
 - [ ] `getSavedItem`, in [[Unchecked Planner Reads]]. The `@/_actions/library` barrel is imported by `RecipeForm.tsx:20` and `BookmarkForm.tsx:11`.
 
 ## Docs
-- [ ] `.opencode/docs/project_conventions.md` "Barrel Files": add the rule.
+- [ ] `docs/project_conventions.md` "Barrel Files": add the rule.
 
 # Out of Scope
 - Where shared DTO types live in general: [[Shared Types Directory]].

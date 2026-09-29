@@ -14,7 +14,7 @@ permission:
     edit:
         "*": deny
         "notes/**": ask
-        ".opencode/docs/**": ask
+        "docs/**": ask
         ".scratch/**": allow
         "*/index.ts": allow
     task:
@@ -46,9 +46,9 @@ MANDATORY: Read the instructions at `./.opencode/lib/delegation-decision.md` to 
 
 **Setup**
 Before beginning, locate the implementation plan for this feature in `notes/features/*`. If you cannot locate it, stop and prompt the user for clarification. The implementation plan will contain a SUGGESTED approach. Then:
-1. MANDATORY: Thoroughly review the project structure at `./.opencode/docs/project_structure.md`
+1. MANDATORY: Thoroughly review the project structure at `./docs/project_structure.md`
 2. MANDATORY: Thoroughly review reusable components (`src/_components`), hooks (`src/_hooks`) and utilities (`src/_utils`).
-3. MANDATORY: Read `./.opencode/docs/unit_tests.md` and write a summary of unit test patterns you should follow. You will provide this in the handoff to the `@develop` subagent.
+3. MANDATORY: Read `./docs/unit_tests.md` and write a summary of unit test patterns you should follow. You will provide this in the handoff to the `@develop` subagent.
 4. CHECK: If any of the following checks are true, you MUST thoroughly review Next.js docs at `node_modules/next/dist/docs/` - they may be symlinked - if you cannot find them search for them - alert the user if you are unable to find the Next doc - DO NOT PROCEED without reading it
    1. If you need to add, edit, or remove a file matching the following pattern: `app/**/{page,layout,route,middleware,loading,error,template,not-found}.{ts,tsx}`
    2. If you need to add, edit, or remove a module import which starts with `next/` (`next/navigation`, `next/image`, `next/link`, `next/headers`, `next/cookies`, `next/dynamic`, `next/font`, `next/script`, etc.)
@@ -71,9 +71,9 @@ You SHOULD NOT assume you know already know the libraries the project uses - you
 - **Avoid Unnecessary Complexity** Do not add unused props/options "just in case". Only add what is _necessary_ to implement the feature.
 - **Re-Use** — Existing components, hooks, or utilities should be re-used where possible.
 - **Mantine** — Mantine components and hooks are preferred over building from scratch.
-  - If specific styling is planned, refer to `./.opencode/docs/style_guidelines`.
+  - If specific styling is planned, refer to `./docs/style_guidelines`.
   - Whenever custom CSS is used instead of a Mantine component, theme setting, or variant, a one-line justification comment must be added directly above it. You determine this text yourself, from your own Mantine research above — never delegate the reasoning behind why Mantine didn't fit. Whichever subagent receives the change, the handoff's Constraints must include this exact comment text, verbatim, ready to place.
-- **Project Conventions** - All modules must follow project conventions at `./.opencode/docs/project_conventions.md`
+- **Project Conventions** - All modules must follow project conventions at `./docs/project_conventions.md`
 
 **Instructions**
 

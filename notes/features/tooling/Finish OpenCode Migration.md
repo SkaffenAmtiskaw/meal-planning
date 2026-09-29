@@ -14,7 +14,7 @@ Next: /shape ^status
 # Notes
 Finish the move from OpenCode to Claude Code, so no OpenCode files remain. It's a Done When item of [[Dev Foundations]].
 
-What's left once [[Docs Updates]] moves the docs out of `.opencode/docs/`:
+What's left in `.opencode/`:
 - `.opencode/agents/`: 10 old agents (`apply`, `architect`, `bugfix`, `cleanup`, `design`, `develop`, `implement`, `inspect`, `resolve`, `review`). They stay until the whole move is finished, even where a Claude skill already replaces one.
 - `.opencode/lib/delegation-decision.md`: how the OpenCode `implement` agent picks `@develop`, `@resolve` or `@apply` for delegated work.
 - `.opencode/package.json`, `package-lock.json` and `node_modules/`.

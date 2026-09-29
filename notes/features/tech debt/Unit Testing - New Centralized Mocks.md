@@ -13,7 +13,7 @@ confirmed: 2026-09-25
 Waiting on your decisions in Open Decisions; then write the Rules with Sarah. ^status
 
 # Purpose
-Many test files mock modules that have no centralized mock in `test/mocks/`, each with its own factory. This story decides how new centralized mocks are laid out (barrels, subpaths, modules with no barrel, code under `src/app/`). It then creates them where `.opencode/docs/unit_tests.md` "Creating Centralized Mocks" calls for one, and moves the consuming tests over. It changes only test and mock files, never source.
+Many test files mock modules that have no centralized mock in `test/mocks/`, each with its own factory. This story decides how new centralized mocks are laid out (barrels, subpaths, modules with no barrel, code under `src/app/`). It then creates them where `docs/unit_tests.md` "Creating Centralized Mocks" calls for one, and moves the consuming tests over. It changes only test and mock files, never source.
 
 # Root Cause
 Until 2026-09-25, `unit_tests.md` said new centralized mocks needed the user's go-ahead, so tests wrote their own factories. The existing mocks mirror their import specifier (`@/_actions/auth` → `test/mocks/@/_actions/auth.ts`). Nothing says how to mirror a subpath import, a module with no barrel (`@/_utils`), or code under `src/app/`.

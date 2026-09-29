@@ -74,7 +74,7 @@ Check changed code for the following:
 8. **Existing libraries are utilized.** For any custom CSS found there must be a justification comment explaining why Mantine could not be used:
     - If a justification comment is present above it, quote the comment as-is when you raise the issue, so the user can judge the reasoning directly.
     - If no justification comment is present, flag it as "missing justification" — this is the issue itself. Do not research a Mantine replacement yourself during review.
-9. **Documented project standards are obeyed.** Refer to documentation in `.opencode/docs/*` - new code should not violate rules found in these files.
+9. **Documented project standards are obeyed.** Refer to documentation in `docs/*` - new code should not violate rules found in these files.
 10. **Minimize client-rendered components.** Components should not be client components unless absolutely necessary (typically when server side state is required). Client components should have minimal surface area. Using `useEffect` for data-fetching is a common React pattern, but it is an ANTI-PATTERN in Next.js.
 
 _Important Note: Changes to `.md` files made in `notes/` and `.opencode/` are almost always manual changes done by the user and can be safely ignored. NEVER revert a change to a `.md` file without first asking the user. The user will often make changes while the subagents are working on other things. If you are in doubt you can ask the user for confirmation of this._
@@ -113,7 +113,7 @@ Based on the user response, the following should occur:
 For each issue, you should now have a planned solution. Phase 4 is when you resolve any open questions.
 
 For each issue, determine if you have all the information you need to proceed with the fix. If not, you may need to research missing information. The following resources may be helpful, although you are not limited to them:
-- project information in `.opencode/docs/`
+- project information in `docs/`
 - Mantine [doc](https://mantine.dev/llms.txt)
 
 In some cases, particularly when the user has provided a custom response for an issue, you may need to ask follow-up questions. Asking questions is ALWAYS preferable to making a guess.

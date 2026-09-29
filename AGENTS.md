@@ -11,7 +11,7 @@ Work is planned and tracked as notes in the Obsidian vault in `notes/`.
 - **Self-contained questions.** Put what a question is about inside it: the note, the file, the step. She may see only the question, not the text before it.
 - **Open choices are hers.** When an instruction or plan leaves a real choice open (two reasonable readings, and nothing written picks one), ask instead of choosing.
 - **Recommendations:** if she asks for a recommendation, always give one. Otherwise, give one when best practice supports it, and name the practice. When a choice comes down to her preference, say so and don't guess.
-- **Doc gaps:** the moment you notice something that belongs in `.opencode/docs/` (a convention the docs don't cover, or a rule that's wrong or out of date), stop and ask her whether it should become doc. Don't save the question for a report or a later pass. If it should:
+- **Doc gaps:** the moment you notice something that belongs in `docs/` (a convention the docs don't cover, or a rule that's wrong or out of date), stop and ask her whether it should become doc. Don't save the question for a report or a later pass. If it should:
   - **The default, for any change that isn't big:** recommend drafting it now, because docs that wait for later rarely get updated. If she says to do it later, remind her of that preference. If she still says later, add it to `notes/features/tooling/Docs Updates.md`.
   - **A big change** (it needs more than one decision from her, or touches more than one file): give her a neutral choice between doing it now and adding it to Docs Updates, and do what she picks.
   - **Drafting it:** match the doc's existing style, show her the draft and write it once she approves.
@@ -49,10 +49,9 @@ Save each subagent's report, unedited, to `.scratch/<note name> - <what it is>.m
 
 ## Docs
 Read the docs a task touches when it needs them, not all up front:
-- `.opencode/docs/project_conventions.md` and `project_structure.md`: before planning or writing code
-- `.opencode/docs/style_guidelines.md` and `theme.md`: before UI work
-- `.opencode/docs/unit_tests.md`: before writing tests or mocks
-- `.opencode/docs/running_the_app.md`: before starting the app or checking something in the browser
+- `docs/project_conventions.md` and `project_structure.md`: before planning or writing code
+- `docs/style_guidelines.md` and `theme.md`: before UI work
+- `docs/unit_tests.md`: before writing tests or mocks
 
 ## Library APIs
 The libraries in this project are newer than your training data. Never use an API from memory. Every API you use needs a source:

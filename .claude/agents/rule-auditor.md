@@ -15,7 +15,7 @@ You audit the codebase against a new convention. The list you return becomes the
 You don't get the story's own list of places to change, on purpose. Find every place yourself.
 
 ## Before you start
-Read `.opencode/docs/project_conventions.md` and `.opencode/docs/project_structure.md`, so you know the layout and the conventions the rules sit next to. Read `.opencode/docs/unit_tests.md` if any rule touches tests or mocks.
+Read `docs/project_conventions.md` and `docs/project_structure.md`, so you know the layout and the conventions the rules sit next to. Read `docs/unit_tests.md` if any rule touches tests or mocks.
 
 ## How to search
 For each rule:

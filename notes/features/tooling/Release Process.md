@@ -16,7 +16,7 @@ There's no release process yet. Sarah decided 2026-09-28 that a goal (a ranked e
 Pieces a release might include, raised while designing goals (none decided):
 - a review across all of the goal's stories: leftovers between stories, duplicated logic, patterns that drifted between stories
 - checking each of the goal's Done When items in the running app
-- checking that `.opencode/docs/` covers what the goal added
+- checking that `docs/` covers what the goal added
 - merging `develop` into `main`, deploying, and possibly release notes or a version tag
 - closing the goal note, and handling any Roadmap lines still under it
 

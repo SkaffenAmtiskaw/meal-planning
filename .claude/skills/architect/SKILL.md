@@ -35,7 +35,7 @@ Check that it's ready for this skill:
 - **No open decisions.** An item under `# Open Decisions` with no **Decided** line (a **Partly answered** line still counts as open), or a `decision needed` entry in `blocked-by`, means the note isn't ready. List them in one line each, tell Sarah the next step is `/decide <note name>`, and stop.
 - **A chosen convention.** A **Decided** line or a comment from Sarah has to say what the convention is, not just what's wrong with the code today. If the note only describes the problem, or asks what the right fix is ("these are all bad the same way, help me find the right solution"), the convention hasn't been chosen, even when no decision is formally listed. Don't choose one while drafting rules. Draft the question, such as "What convention should modals follow to separate presentation from data?", show it to Sarah and, once she approves, add it to `# Open Decisions`, with a `decision needed` entry in `blocked-by` if the note doesn't have one. Then tell her the next step is `/decide <note name>`, and stop.
 
-Then read the project docs the convention touches: `.opencode/docs/project_conventions.md` and `project_structure.md` always, and `unit_tests.md` when the rules touch tests or mocks. Also read the Rules of every other `type: pattern` note in `notes/features/`, so you can spot overlaps and conflicts.
+Then read the project docs the convention touches: `docs/project_conventions.md` and `project_structure.md` always, and `unit_tests.md` when the rules touch tests or mocks. Also read the Rules of every other `type: pattern` note in `notes/features/`, so you can spot overlaps and conflicts.
 
 ## 2. Rules
 ### Draft
@@ -45,7 +45,7 @@ Each rule:
 - **One convention.** If the rule needs "and" to join two requirements that can be broken separately, it's two rules.
 - **Checkable.** Someone reading one file, or one import line, can say whether it follows the rule. Where the rule turns on a judgment ("domain-specific", "shared"), give the test for that judgment in the rule itself.
 - **Examples from this codebase.** One place that follows it and one that breaks it, each with `file:line`, when both exist.
-- **Where it lands.** The doc and section it goes into once built, usually a section of `.opencode/docs/project_conventions.md`. Rules end up there. The note only holds them until then.
+- **Where it lands.** The doc and section it goes into once built, usually a section of `docs/project_conventions.md`. Rules end up there. The note only holds them until then.
 
 Check each draft against the project docs and the other patterns' Rules. A rule that contradicts a doc or another pattern is a question for Sarah, not something to reconcile yourself.
 

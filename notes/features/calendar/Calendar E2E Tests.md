@@ -14,7 +14,7 @@ Next: /shape ^status
 # Notes
 The [[Calendar Page]] goal's Done When says E2E tests cover the calendar's major flows, including the ones this goal adds: editing meals, drag and drop, clicking a day to add a meal, and the phone workflows.
 
-[[E2E Testing]] (under Dev Foundations) sets up E2E testing and covers the app's core flows as they are now. The flows this goal adds don't exist yet, so that work can't cover them. This story can't start until [[E2E Testing]] has set up the tooling. Whether the tests are written as each flow is built, or in one pass before the goal ships, is for /shape to settle.
+Under Dev Foundations, [[E2E Test Setup]] sets up E2E testing and [[Core Flows E2E Tests]] covers the app's core flows as they are now. The flows this goal adds don't exist yet, so that work can't cover them. This story can't start until [[E2E Test Setup]] has set up the tooling. Whether the tests are written as each flow is built, or in one pass before the goal ships, is for /shape to settle.
 
 # Questions
 

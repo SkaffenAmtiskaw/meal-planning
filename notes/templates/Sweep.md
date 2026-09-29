@@ -16,7 +16,7 @@ Collecting items until you kick it off. ^status
 ## What Belongs Here
 Every item must be small, with zero ambiguity and no open decisions: whoever builds it should never need to ask what to do. An item that still needs a decision doesn't go here. It goes in a roundup on its topic, or gets its own Roadmap line until it's decided.
 
-%% This sweep's grouping rule, e.g. "unit test fixes that don't follow `.opencode/docs/unit_tests.md`; changes to test files only". Name any files or kinds of change it must not touch. %%
+%% This sweep's grouping rule, e.g. "unit test fixes that don't follow `docs/unit_tests.md`; changes to test files only". Name any files or kinds of change it must not touch. %%
 
 # Items
 %% Add each item as an unchecked box. Say which file (with line numbers), exactly what changes, and how and when it was found, e.g. "found by reading code while planning [[Note]], 2026-09-26". Items go stale, so /check-drift re-checks every one once the sweep is kicked off. If an item can't be done until another story lands, start it with `**Blocked by [[Story]]:**`. Block the item, never the whole sweep. Blocked items stay here when /kickoff freezes a copy, and roll over to the next one. %%

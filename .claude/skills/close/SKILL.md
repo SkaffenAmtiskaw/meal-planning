@@ -8,7 +8,7 @@ hooks:
     - matcher: "Edit|Write|MultiEdit|NotebookEdit"
       hooks:
         - type: command
-          command: '"$CLAUDE_PROJECT_DIR"/.claude/hooks/notes-only-edits.sh .opencode/docs'
+          command: '"$CLAUDE_PROJECT_DIR"/.claude/hooks/notes-only-edits.sh docs'
 ---
 
 Close the story **$ARGUMENTS**.
@@ -17,14 +17,14 @@ Close the story **$ARGUMENTS**.
 When a story leaves the board, two things happen: its note is kept or deleted, and the notes around it catch up. The second is where things get missed. A story that waited on it still lists it in `blocked-by`, a goal whose last story this was never gets flagged for release, a Roadmap line still says "unblocks [[X]]", a sweep or roundup item keeps its **Blocked by** marker, or a note still sends readers to a design that's gone.
 
 A few rules shape how it works:
-- **A note is kept only while another story needs it.** A kept note moves to `archive/` and lists the stories it's kept for in `kept-for`. When the last of them closes, the note is deleted. Nothing is kept just as a record, because git history is the backup. If a note feels worth keeping for reference, that means `.opencode/docs/` is missing something. Ask Sarah about the doc update instead.
+- **A note is kept only while another story needs it.** A kept note moves to `archive/` and lists the stories it's kept for in `kept-for`. When the last of them closes, the note is deleted. Nothing is kept just as a record, because git history is the backup. If a note feels worth keeping for reference, that means `docs/` is missing something. Ask Sarah about the doc update instead.
 - **Done and dropped stories close the same way,** except for the stories that waited on them. A done story unblocks them. A dropped story doesn't, so each one needs a new decision about what it waits on.
 - **Hubs close like any story.** A hub is often where the design lives, so it gets the same keep-or-delete check.
 - **Unblocked stories go to `/check-drift` next.** They were planned before this story changed the code.
 - **No unused files.** A file in the vault (an image, a `.dc.html` prototype, a script or SVG it loads) that nothing references anymore gets deleted. A close is when files lose their last reference: the note that embedded them is deleted, or content moves and pointers get reworded. Files don't always sit where the conventions say, and references get missed, so every close checks the whole vault, not just this story's files.
 - **One note per run.** When closing this story means another note should close too, such as an archived note that loses its last `kept-for` entry or a hub with no open stories left, tell Sarah. She runs `/close` on it in a new session.
 
-This is notes work only. Don't change code. A hook blocks edits outside `notes/`, `.scratch/` and `.opencode/docs/`. Move and delete notes with plain `mv` and `rm`, never `git mv` or `git rm`, so every change stays unstaged.
+This is notes work only. Don't change code. A hook blocks edits outside `notes/`, `.scratch/` and `docs/`. Move and delete notes with plain `mv` and `rm`, never `git mv` or `git rm`, so every change stays unstaged.
 
 ## Talking with Sarah
 - **Choices, not mechanics.** Some edits have only one right answer once the story is closed, like removing it from a `blocked-by` list. Make those without asking, and list them in the report at the end. Ask only where there's a real choice.
@@ -43,7 +43,7 @@ Where the note is and its `status` decide the kind of close:
 ## 2. Find everything that points to it
 Search for the note's name, and for its files (the files in `notes/assets/<story-name>/` and every file it embeds or links, such as images and `.dc.html` prototypes):
 - **The vault:** every note in `notes/`, including `notes/archive/` and the Roadmap, but not `notes/templates/`. Look for `[[Name]]`, `[[Name|`, `[[Name#`, `![[Name`, embeds of its files, and the name in plain text.
-- **Outside the vault:** `src/`, `test/`, `.opencode/docs/`, `.claude/`, `AGENTS.md` and `CLAUDE.md`, for the name and for the note's path.
+- **Outside the vault:** `src/`, `test/`, `docs/`, `.claude/`, `AGENTS.md` and `CLAUDE.md`, for the name and for the note's path.
 
 Sort each match into one kind:
 - **Blocker:** an entry in another story's `blocked-by`, a sweep or roundup item's `**Blocked by [[Name]]:**` marker, or a Roadmap line that says it waits on this story.

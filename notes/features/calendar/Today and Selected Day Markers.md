@@ -49,6 +49,9 @@ The design lives in [[Unified Date Picker Component]]. The sections embedded bel
 27. Ember (orange) no longer marks days anywhere.
 
 ## Pieces
+
+> ⚠️ **Check Drift 2026-09-28:** The docs moved from `.opencode/docs/` to `docs/`, so row 18's `.opencode/docs/theme.md` is now `docs/theme.md`. Found while `/tooling` moved the docs.
+
 | # | Piece | Job | Decision | Existing code | Why |
 |---|---|---|---|---|---|
 | 9 | Day marks | Show a day number with today and selected marks | Build new, then refactor callers | Refactor first: `MonthGrid` (via 9a), `MobileMonthGrid`, `src/_components/Calendar/WeekView`, `DayRow` (via 9b). Dead files untouched. `MobileAgenda`: unchanged. | Replaces four copies of the today mark. The picker's day cells share the same ring and circle styles. The week header uses Mantine `Badge variant="outline" color="navy"` with the shared ring tokens, instead of a pill mode only one caller would use. The muted outside-month color becomes `navy.3` everywhere (today it's `gray.5`, `navy.2` and `navy.3`). Before the change, `MobileMonthGrid` also gets two fixes: its `findIndex`-inside-`map` (O(n²)) and its circular import through the `@/_components/Calendar` barrel. |

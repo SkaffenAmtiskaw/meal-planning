@@ -1,3 +1,5 @@
+# docs/
+project documentation: structure, code conventions, styling, theme and unit tests
 # notes/                      
 notes on planned work in Obsidian-flavored Markdown
 ## Roadmap.md

@@ -71,7 +71,7 @@ If the cause depends on runtime behavior, such as layout, timing or the data the
 If the same mistake is made in many places, the cause is systemic. Keep this note about its symptoms, and add "a Pattern note for <the mistake>" to the out-of-scope list.
 
 ### 2d. Settle the fix
-Work out the reasonable fixes. Read the project docs they touch (`.opencode/docs/project_conventions.md`, `project_structure.md`, `unit_tests.md`), and check any library a fix relies on as AGENTS.md describes under "Library APIs".
+Work out the reasonable fixes. Read the project docs they touch (`docs/project_conventions.md`, `project_structure.md`, `unit_tests.md`), and check any library a fix relies on as AGENTS.md describes under "Library APIs".
 
 **Review fixes that add a job.** If a fix adds behavior or a responsibility to an existing module, and doesn't just correct what the module already does, send `code-critic` that module with the fix's job as a one-sentence target piece. Don't say which fix you prefer. Save its report to `.scratch/<note name> - critic.md`. Add its "Outside this story" and "Duplication" items to your out-of-scope list. Pure corrections, like a wrong condition or a bad transform, skip this.
 

@@ -22,7 +22,7 @@ Don't open anything under `src/` or `test/`, and don't search them. Don't read t
 Single concern is Sarah's top priority. For each piece, give:
 - **Kind:** component, hook, utility, server action or model.
 - **Job:** one sentence without "and". If it needs "and", it's two pieces.
-- **Server or client:** follow "Prefer Server Components" in `.opencode/docs/project_conventions.md`.
+- **Server or client:** follow "Prefer Server Components" in `docs/project_conventions.md`.
 - **Where it lives:** the folder, following `project_structure.md`.
 - **Behaviors:** the numbers of the behaviors it's responsible for.
 

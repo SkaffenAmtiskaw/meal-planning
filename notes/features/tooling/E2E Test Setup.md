@@ -12,10 +12,13 @@ confirmed: 2026-09-28
 Next: /shape ^status
 
 # Notes
-Run lint, type check, unit tests and build automatically on every PR into `main`. It's a Done When item of [[Dev Foundations]].
+Split from [[E2E Testing]] on 2026-09-28.
 
-There's no `.github/` yet, so nothing is checked outside Sarah's machine. The lefthook pre-commit hook runs Biome, tests and type checks on staged files, and a full `pnpm build` on every commit that touches `src/`. The Dependabot item in [[Dev Tooling Tidy-Ups]] and [[E2E Tests in CI]] (which wants E2E tests to run when `develop` opens a PR into `main`) both assume CI exists.
+Scope: pick the E2E tool and install it, get E2E tests running locally against test data that stays consistent, and prove it with one first test. Handling email confirmation in auth flows isn't part of this. Sarah decided 2026-09-28 that it gets worked out with the auth flow tests in [[Core Flows E2E Tests]].
 
-Found 2026-09-28 while shaping [[Dev Foundations]] with `/roadmap`.
+Sarah's notes from [[E2E Testing]]:
+- I guess I'm most familiar with Playwright, and assumed we'd use it, but we should do at least a cursory check that it's the best tool to use.
+- The E2E tests will either need to involve cleanup steps so the data stays consistent or we'll need to reset the database after it runs.
 
 # Questions
+

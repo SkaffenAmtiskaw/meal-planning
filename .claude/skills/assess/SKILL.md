@@ -59,12 +59,12 @@ The confirmed behavior list is the first point where the story's real size shows
 - **Split:** follow "Splitting a story" at the end of this skill. That ends this session. Each child gets its own `/assess` in a new session.
 
 ## 3. Design the target before reading existing modules
-From the behaviors and the project docs (`.opencode/docs/project_conventions.md`, `project_structure.md` and `style_guidelines.md`), describe what you would build if the codebase were clean. Don't open existing modules yet. The point is a design that isn't anchored to what's already there.
+From the behaviors and the project docs (`docs/project_conventions.md`, `project_structure.md` and `style_guidelines.md`), describe what you would build if the codebase were clean. Don't open existing modules yet. The point is a design that isn't anchored to what's already there.
 
 For each piece, give:
 - **Kind:** component, hook, utility, server action or model.
 - **Job:** one sentence without "and". If it needs "and", it's two pieces.
-- **Server or client:** follow "Prefer Server Components" in `.opencode/docs/project_conventions.md`.
+- **Server or client:** follow "Prefer Server Components" in `docs/project_conventions.md`.
 
 Check library docs only when the story needs them, as AGENTS.md describes under "Library APIs".
 
