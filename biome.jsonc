@@ -137,6 +137,170 @@
 				}
 			}
 		},
+		/**
+		 *  Import bans from docs/e2e_tests.md. Biome applies every override that matches a file, and a later
+		 *  override's options for a rule replace an earlier one's, so each file set below lists every ban that
+		 *  applies to it and no two of them match the same file.
+		 */
+		{
+			"includes": ["src/**/*", "!**/*/*.test.ts*"],
+			"linter": {
+				"rules": {
+					"style": {
+						"noRestrictedImports": {
+							"level": "error",
+							"options": {
+								"paths": {
+									"@playwright/test": "Playwright code lives in e2e/. See docs/e2e_tests.md.",
+									"better-auth/plugins": {
+										"message": "testUtils is used only in test/auth.ts, the test-only auth instance. See docs/e2e_tests.md.",
+										"importNames": ["testUtils"]
+									},
+									"better-auth/test": "testUtils is used only in test/auth.ts, the test-only auth instance. See docs/e2e_tests.md."
+								}
+							}
+						}
+					}
+				}
+			}
+		},
+		{
+			"includes": [
+				"test/**/*",
+				"**/*/*.test.ts*",
+				"!test/auth.ts",
+				"!test/factories/**/*",
+				"!e2e/**/*"
+			],
+			"linter": {
+				"rules": {
+					"style": {
+						"noRestrictedImports": {
+							"level": "error",
+							"options": {
+								"paths": {
+									"@playwright/test": "Playwright code lives in e2e/. See docs/e2e_tests.md.",
+									"better-auth/plugins": {
+										"message": "testUtils is used only in test/auth.ts, the test-only auth instance. See docs/e2e_tests.md.",
+										"importNames": ["testUtils"]
+									},
+									"better-auth/test": "testUtils is used only in test/auth.ts, the test-only auth instance. See docs/e2e_tests.md."
+								}
+							}
+						}
+					}
+				}
+			}
+		},
+		{
+			"includes": ["test/auth.ts"],
+			"linter": {
+				"rules": {
+					"style": {
+						"noRestrictedImports": {
+							"level": "error",
+							"options": {
+								"paths": {
+									"@playwright/test": "Playwright code lives in e2e/. See docs/e2e_tests.md."
+								}
+							}
+						}
+					}
+				}
+			}
+		},
+		{
+			"includes": ["test/factories/**/*"],
+			"linter": {
+				"rules": {
+					"style": {
+						"noRestrictedImports": {
+							"level": "error",
+							"options": {
+								"paths": {
+									"@playwright/test": "Playwright code lives in e2e/. See docs/e2e_tests.md.",
+									"better-auth/plugins": {
+										"message": "testUtils is used only in test/auth.ts, the test-only auth instance. See docs/e2e_tests.md.",
+										"importNames": ["testUtils"]
+									},
+									"better-auth/test": "testUtils is used only in test/auth.ts, the test-only auth instance. See docs/e2e_tests.md.",
+									"@/_actions": "Factories write only through @/_models and the test-only auth instance in test/auth.ts. See docs/e2e_tests.md.",
+									"@/_auth": "Factories write only through @/_models and the test-only auth instance in test/auth.ts. See docs/e2e_tests.md.",
+									"server-only": "Factories write only through @/_models and the test-only auth instance in test/auth.ts. See docs/e2e_tests.md."
+								},
+								"patterns": [
+									{
+										"group": ["@/_actions/**", "@/_auth/**"],
+										"message": "Factories write only through @/_models and the test-only auth instance in test/auth.ts. See docs/e2e_tests.md."
+									}
+								]
+							}
+						}
+					}
+				}
+			}
+		},
+		{
+			"includes": ["e2e/_fixtures/**/*"],
+			"linter": {
+				"rules": {
+					"style": {
+						"noRestrictedImports": {
+							"level": "error",
+							"options": {
+								"paths": {
+									"mongoose": "E2E code creates data only through the factories in test/factories/. See docs/e2e_tests.md.",
+									"mongodb": "E2E code creates data only through the factories in test/factories/. See docs/e2e_tests.md.",
+									"@/_models": "E2E code creates data only through the factories in test/factories/. See docs/e2e_tests.md.",
+									"better-auth/plugins": {
+										"message": "testUtils is used only in test/auth.ts, the test-only auth instance. See docs/e2e_tests.md.",
+										"importNames": ["testUtils"]
+									},
+									"better-auth/test": "testUtils is used only in test/auth.ts, the test-only auth instance. See docs/e2e_tests.md."
+								},
+								"patterns": [
+									{
+										"group": ["@/_models/**"],
+										"message": "E2E code creates data only through the factories in test/factories/. See docs/e2e_tests.md."
+									}
+								]
+							}
+						}
+					}
+				}
+			}
+		},
+		{
+			"includes": ["e2e/**/*", "!e2e/_fixtures/**/*"],
+			"linter": {
+				"rules": {
+					"style": {
+						"noRestrictedImports": {
+							"level": "error",
+							"options": {
+								"paths": {
+									"@playwright/test": "Specs import test and expect from e2e/_fixtures/, not @playwright/test. See docs/e2e_tests.md.",
+									"mongoose": "E2E code creates data only through the factories in test/factories/. See docs/e2e_tests.md.",
+									"mongodb": "E2E code creates data only through the factories in test/factories/. See docs/e2e_tests.md.",
+									"@/_models": "E2E code creates data only through the factories in test/factories/. See docs/e2e_tests.md.",
+									"better-auth/plugins": {
+										"message": "testUtils is used only in test/auth.ts, the test-only auth instance. See docs/e2e_tests.md.",
+										"importNames": ["testUtils"]
+									},
+									"better-auth/test": "testUtils is used only in test/auth.ts, the test-only auth instance. See docs/e2e_tests.md."
+								},
+								"patterns": [
+									{
+										"group": ["@/_models/**"],
+										"message": "E2E code creates data only through the factories in test/factories/. See docs/e2e_tests.md."
+									}
+								]
+							}
+						}
+					}
+				}
+			}
+		},
 		{
 			"includes": ["**/*.module.css"],
 			"linter": {

@@ -6,7 +6,7 @@ confirmed: 2026-09-29
 ---
 # Where It Stands
 
-In progress. Next: implement Step 5 ^status
+In progress. Next: implement Step 6 ^status
 
 Set up E2E testing as a convention (where tests live, how they get their data, how they sign in and how they're run) and prove it with one first test that follows the Rules. [[Core Flows E2E Tests]] and [[Calendar E2E Tests]] build on it.
 
@@ -177,7 +177,7 @@ A test that needs a signed-in user calls `signIn` from `e2e/_fixtures/`, which a
 - **Lands in:** "Signing In".
 
 # Enforcement
-Every `biome.jsonc` change below is one Sarah approved on 2026-09-29, which is the explicit instruction to make it. `files.includes` also gains `e2e/**/*` (decision 5), so Biome checks `e2e/` at all. The Biome bans run in the pre-commit `biome check` and in `pnpm lint`. Biome doesn't merge overlapping overrides (its configuration reference: when a file matches several override patterns, only the first is used), so each set of files gets one override holding every ban and relaxation that applies to it, ordered most specific first. The existing override at `biome.jsonc:22` (`test/**/*` and `**/*/*.test.ts*`, which turns a11y and `noImgElement` off and puts test libraries first in the import order) also matches unit tests in `src/`, so the file sets are: `test/auth.ts`; `test/factories/**`; the rest of `test/**` and `src/` test files; the rest of `src/**`; `e2e/_fixtures/**`; and the rest of `e2e/**`. Each ban is checked once with a deliberately wrong import. Biome's GritQL plugins could match call patterns such as `page.locator('…')`, but Biome's docs say plugin support still has bugs, so none of these rules relies on them.
+Every `biome.jsonc` change below is one Sarah approved on 2026-09-29, which is the explicit instruction to make it. `files.includes` also gains `e2e/**/*` (decision 5), so Biome checks `e2e/` at all. The Biome bans run in the pre-commit `biome check` and in `pnpm lint`. Biome 2.4.6 applies every override that matches a file, in order, and a later override's options for a rule replace an earlier one's (its configuration reference says only the first is used, but the installed version doesn't behave that way). So each set of files gets one override holding every ban that applies to it, and `!` negations keep any two from matching the same file. The existing test override (`test/**/*` and `**/*/*.test.ts*`, which turns a11y and `noImgElement` off and puts test libraries first in the import order) stays as it is and also matches unit tests in `src/`, so the file sets are: `test/auth.ts`; `test/factories/**`; the rest of `test/**` and `src/` test files; the rest of `src/**`; `e2e/_fixtures/**`; and the rest of `e2e/**`. Each ban is checked once with a deliberately wrong import. Biome's GritQL plugins could match call patterns such as `page.locator('…')`, but Biome's docs say plugin support still has bugs, so none of these rules relies on them.
 
 - **Rule 1:** Biome. An override for `src/**` and `test/**` turns on `style/noRestrictedImports`, banning `@playwright/test` with a message pointing to `docs/e2e_tests.md`.
 - **Rule 2:** config plus process. `vitest.config.ts` includes only `**/*.test.{ts,tsx}` and excludes `e2e/**`, so Vitest never runs a spec whatever it's named. A test file in `e2e/` not named `*.spec.ts` is silently skipped by Playwright; nothing can flag that from the file, so whoever writes a spec checks that Playwright's report lists the new tests.
@@ -380,9 +380,15 @@ The implementer verifies the overrides statically before handing the step over: 
 - `biome.jsonc` - the six overrides, the existing test override merged into them
 
 **Acceptance:**
-- [ ] Temporarily add `import { test } from '@playwright/test'` to `src/env.ts`, run `pnpm biome lint src/env.ts`, see a `noRestrictedImports` error pointing to `docs/e2e_tests.md`. Revert.
-- [ ] Temporarily add `import { User } from '@/_models/user'` and `import { test } from '@playwright/test'` to `e2e/auth/homeRedirect.spec.ts`, run `pnpm biome lint e2e/auth/homeRedirect.spec.ts`, see an error on each, pointing to `test/factories/` and `e2e/_fixtures/`. Revert.
-- [ ] Run `pnpm biome check src test e2e`. See no errors, so the test files keep their import order.
+- [x] Temporarily add `import { test } from '@playwright/test'` to `src/env.ts`, run `pnpm biome lint src/env.ts`, see a `noRestrictedImports` error pointing to `docs/e2e_tests.md`. Revert.
+- [x] Temporarily add `import { User } from '@/_models/user'` and `import { test } from '@playwright/test'` to `e2e/auth/homeRedirect.spec.ts`, run `pnpm biome lint e2e/auth/homeRedirect.spec.ts`, see an error on each, pointing to `test/factories/` and `e2e/_fixtures/`. Revert.
+- [x] Run `pnpm biome check src test e2e`. See no errors, so the test files keep their import order.
+
+**Status:** ✅ Complete
+
+**As built:**
+- Biome 2.4.6 applies every matching override in order, and a later override's options for a rule replace an earlier one's, not only the first match as the plan assumed. So the existing test override stays as it was, and the six new overrides set only `noRestrictedImports`, each listing every ban for its file set, with `!` negations so no two match the same file. The `src/**` set leaves out `**/*/*.test.ts*`, and the test set leaves out `e2e/**`, so an e2e file named `*.test.ts` gets only the e2e bans. Sarah decided 2026-09-29.
+- Each ban's message says what the Rule allows and points to `docs/e2e_tests.md`. Sarah approved the wording 2026-09-29.
 
 ## Step 6: Vitest runs only unit tests
 **Idea:** Vitest picks up only `*.test.ts[x]` files and never looks in `e2e/`.
