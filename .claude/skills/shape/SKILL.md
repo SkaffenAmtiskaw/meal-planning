@@ -66,7 +66,7 @@ Rewrite the note from `notes/templates/Hub.md`:
 - **Purpose:** what the idea is, in Sarah's words.
 - **Open Decisions:** each blocking decision from step 2 on its own line, written as a question, not a proposal. If Sarah already had an answer, put it on a **Decided** line under the question, e.g. "**Decided 2026-09-28:** web first, phones later." If she's leaving an adopt-or-build decision open, list the candidates from step 2 under it, without ranking them.
 - **Child Stories:** leave the table empty. Children get their own `/shape` run once the decisions make them clear.
-- **Leave** Coverage, Build Order and Deferred Work as template comments.
+- **Leave** Coverage, Build Order and Deferred Work as bare headings.
 - **Frontmatter:** `type: hub` and `confirmed` set to today. Hubs have no `status` or `blocked-by`.
 
 Show her the draft and wait for her approval, then write it as in step 6. A hub keeps its Roadmap line while it has open decisions, so the line stays where it is.
@@ -109,7 +109,7 @@ Then stop. Step 6 doesn't apply.
 - **Where It Stands:** the `^status` line, with the next step or what the story is waiting on. Don't restate the direction on it. Below the line, give the chosen direction in a sentence or two.
 - **Open Decisions:** each blocking decision from step 2 on its own line, written as a question, not a proposal. If Sarah already had an answer, put it on a **Decided** line under the question, e.g. "**Decided 2026-09-28:** web first, phones later." If she's leaving an adopt-or-build decision open, list the candidates from step 2 under it, without ranking them. Delete the section if step 2 found no blocking decisions.
 - **Sarah's content:** move everything from the idea into the template's sections. Keep her wording. If something fits no section, put it under Where It Stands rather than dropping it.
-- **Sections that belong to a later step:** Design Handoff, Suggested Approach, Root Cause, Fix, Current State, Rules, Migration Checklist and Implementation. Don't fill them, and leave their template comments in place. If the next step will answer questions as part of its own work, list them at the top of the section that step writes, under the line "Questions for this section:", so a reader finds each question where its answer will go. The sections are Design Handoff for a design session, Suggested Approach for `/assess`, Root Cause for a bug's `/investigate`, Current State for a cleanup's `/investigate`, and Rules for `/architect`.
+- **Sections that belong to a later step:** Design Handoff, Suggested Approach, Root Cause, Fix, Current State, Rules, Migration Checklist and Implementation. Don't fill them. If the next step will answer questions as part of its own work, list them at the top of the section that step writes, under the line "Questions for this section:", so a reader finds each question where its answer will go. The sections are Design Handoff for a design session, Suggested Approach for `/assess`, Root Cause for a bug's `/investigate`, Current State for a cleanup's `/investigate`, and Rules for `/architect`. Leave every other one as a bare heading.
 - **Frontmatter:** set `type`, leave `status: idea`, set `confirmed` to today, and add `blocked-by` entries if the direction depends on another story. If Sarah is leaving any decisions open, add one `"decision needed: ..."` entry to `blocked-by` that covers them all.
 
 Show her the draft and wait for her approval.
