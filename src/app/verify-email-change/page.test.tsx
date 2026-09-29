@@ -1,5 +1,4 @@
 import { render, screen } from '@testing-library/react';
-
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { checkEmailStatus } from '@/_actions/auth';
@@ -8,11 +7,11 @@ import { User } from '@/_models/user';
 
 import VerifyEmailChangePage from './page';
 
-vi.mock('@/_models/user', async () => await import('@mocks/@/_models/user'));
+vi.mock('@/_models/user', async () => await import('#mocks/@/_models/user'));
 
-vi.mock('@/_actions/auth', async () => await import('@mocks/@/_actions/auth'));
+vi.mock('@/_actions/auth', async () => await import('#mocks/@/_actions/auth'));
 
-vi.mock('@/_actions/user', async () => await import('@mocks/@/_actions/user'));
+vi.mock('@/_actions/user', async () => await import('#mocks/@/_actions/user'));
 
 vi.mock('./_components/SignInWithNewEmailButton', async () => ({
 	SignInWithNewEmailButton: vi.fn(() => (
@@ -26,7 +25,7 @@ vi.mock('./_components/SetPasswordForm', async () => ({
 	)),
 }));
 
-vi.mock('@mantine/core', async () => await import('@mocks/@mantine/core'));
+vi.mock('@mantine/core', async () => await import('#mocks/@mantine/core'));
 
 const futureDate = new Date(Date.now() + 1000 * 60 * 60 * 24);
 const pastDate = new Date(Date.now() - 1000 * 60 * 60);

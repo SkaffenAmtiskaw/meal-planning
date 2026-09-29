@@ -1,20 +1,19 @@
-import { useRouter } from 'next/navigation';
-
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
-
 import { beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
+
+import { useRouter } from 'next/navigation';
 
 import { createPlanner } from '@/_actions/planner';
 
 import { CreatePlannerForm } from './CreatePlannerForm';
 
-vi.mock('@mantine/core', async () => await import('@mocks/@mantine/core'));
+vi.mock('@mantine/core', async () => await import('#mocks/@mantine/core'));
 
-vi.mock('next/navigation', async () => await import('@mocks/next/navigation'));
+vi.mock('next/navigation', async () => await import('#mocks/next/navigation'));
 
 vi.mock(
 	'@/_actions/planner',
-	async () => await import('@mocks/@/_actions/planner'),
+	async () => await import('#mocks/@/_actions/planner'),
 );
 
 describe('CreatePlannerForm', () => {

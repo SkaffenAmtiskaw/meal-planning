@@ -1,10 +1,10 @@
-import { mockSend } from '@mocks/resend';
-
 import { beforeEach, describe, expect, it, vi } from 'vitest';
+
+import { mockSend } from '#mocks/resend';
 
 import { sendInviteEmail } from './sendInviteEmail';
 
-vi.mock('resend', async () => await import('@mocks/resend'));
+vi.mock('resend', async () => await import('#mocks/resend'));
 
 const MOCK_EMAIL = 'invite@example.com';
 const MOCK_PLANNER_NAME = 'My Meal Plan';

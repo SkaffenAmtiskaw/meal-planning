@@ -1,8 +1,7 @@
-import { redirect } from 'next/navigation';
-
 import { render } from '@testing-library/react';
-
 import { beforeEach, describe, expect, it, vi } from 'vitest';
+
+import { redirect } from 'next/navigation';
 
 import SettingsPage from './page';
 
@@ -18,7 +17,7 @@ vi.mock('@/_auth', () => ({
 	},
 }));
 
-vi.mock('next/headers', async () => await import('@mocks/next/headers'));
+vi.mock('next/headers', async () => await import('#mocks/next/headers'));
 
 vi.mock('./_components/UserSettings', () => ({
 	UserSettings: vi.fn(() => null),
@@ -28,9 +27,9 @@ vi.mock('./_components/PlannerList', () => ({
 	PlannerList: vi.fn(() => null),
 }));
 
-vi.mock('next/navigation', async () => await import('@mocks/next/navigation'));
+vi.mock('next/navigation', async () => await import('#mocks/next/navigation'));
 
-vi.mock('@mantine/core', async () => await import('@mocks/@mantine/core'));
+vi.mock('@mantine/core', async () => await import('#mocks/@mantine/core'));
 
 const session = { user: { email: 'user@example.com' } };
 

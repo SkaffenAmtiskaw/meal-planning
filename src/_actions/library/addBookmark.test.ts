@@ -1,12 +1,13 @@
-import { Types } from 'mongoose';
 import { afterEach, describe, expect, test, vi } from 'vitest';
+
+import { Types } from 'mongoose';
 
 import { checkAuth } from '@/_actions/auth';
 import { Planner } from '@/_models/planner';
 
 import { addBookmark } from './addBookmark';
 
-vi.mock('@/_actions/auth', async () => await import('@mocks/@/_actions/auth'));
+vi.mock('@/_actions/auth', async () => await import('#mocks/@/_actions/auth'));
 
 vi.mock('@/_models/planner', () => ({
 	Planner: {

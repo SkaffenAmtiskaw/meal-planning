@@ -1,14 +1,13 @@
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
-
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { verifyEmailChangeAndSetPassword } from '@/_actions/user';
 
 import { SetPasswordForm } from './SetPasswordForm';
 
-vi.mock('@mantine/core', async () => await import('@mocks/@mantine/core'));
+vi.mock('@mantine/core', async () => await import('#mocks/@mantine/core'));
 
-vi.mock('@/_actions/user', async () => await import('@mocks/@/_actions/user'));
+vi.mock('@/_actions/user', async () => await import('#mocks/@/_actions/user'));
 
 vi.mock('./SignInWithNewEmailButton', () => ({
 	SignInWithNewEmailButton: vi.fn(() => (

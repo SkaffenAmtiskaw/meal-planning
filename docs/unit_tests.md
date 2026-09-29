@@ -140,7 +140,7 @@ Always use the **async** factory pattern for reusable mocks. This is consistent 
 
 ```typescript
 // ✅ CORRECT - async factory
-vi.mock('@mantine/core', async () => await import('@mocks/@mantine/core'));
+vi.mock('@mantine/core', async () => await import('#mocks/@mantine/core'));
 
 // ❌ INCORRECT - inline factory with hoisting issues
 vi.mock('@mantine/core', () => ({ Button: vi.fn() }));
@@ -186,12 +186,12 @@ export const useAsyncStatus = vi.fn(() => {
 
 ## Testing Access Level Conditional Behavior
 
-When a component renders different UI based on user access levels, use `it.byAccessLevels` from `@test` to run the same test for all access levels in a single declaration.
+When a component renders different UI based on user access levels, use `it.byAccessLevels` from `#test` to run the same test for all access levels in a single declaration.
 
 ### Usage
 
 ```tsx
-import { it } from '@test';
+import { it } from '#test';
 
 it.byAccessLevels('shows member list for admins and owners', ({ accessLevel, expect }) => {
     render(<PlannerItem id={id} name={name} accessLevel={accessLevel} />);

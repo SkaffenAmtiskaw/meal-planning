@@ -1,5 +1,6 @@
-import { Types } from 'mongoose';
 import { describe, expect, test } from 'vitest';
+
+import { Types } from 'mongoose';
 
 import { TAG_COLOR_NAMES } from '@/_theme/colors';
 

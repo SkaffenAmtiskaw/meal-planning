@@ -1,10 +1,9 @@
 import { render, screen } from '@testing-library/react';
-
 import { describe, expect, test, vi } from 'vitest';
 
 import { FormFeedbackAlert } from './FormFeedbackAlert';
 
-vi.mock('@mantine/core', async () => await import('@mocks/@mantine/core'));
+vi.mock('@mantine/core', async () => await import('#mocks/@mantine/core'));
 
 describe('FormFeedbackAlert', () => {
 	test('renders null in idle state', () => {

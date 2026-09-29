@@ -1,8 +1,7 @@
-import { useRouter } from 'next/navigation';
-
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
-
 import { beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
+
+import { useRouter } from 'next/navigation';
 
 import { deleteAccount } from '@/_actions/user';
 import { client } from '@/_utils/auth';
@@ -11,11 +10,11 @@ import { DeleteAccountForm } from './DeleteAccountForm';
 
 const mockPush = vi.fn();
 
-vi.mock('@mantine/core', async () => await import('@mocks/@mantine/core'));
+vi.mock('@mantine/core', async () => await import('#mocks/@mantine/core'));
 
-vi.mock('next/navigation', async () => await import('@mocks/next/navigation'));
+vi.mock('next/navigation', async () => await import('#mocks/next/navigation'));
 
-vi.mock('@/_actions/user', async () => await import('@mocks/@/_actions/user'));
+vi.mock('@/_actions/user', async () => await import('#mocks/@/_actions/user'));
 
 vi.mock('@/_utils/auth', async () => ({
 	client: {

@@ -1,10 +1,9 @@
 import { render, screen } from '@testing-library/react';
-
 import { describe, expect, test, vi } from 'vitest';
 
 import { BackButton } from './BackButton';
 
-vi.mock('@mantine/core', async () => await import('@mocks/@mantine/core'));
+vi.mock('@mantine/core', async () => await import('#mocks/@mantine/core'));
 
 describe('BackButton', () => {
 	test('renders with correct href', () => {

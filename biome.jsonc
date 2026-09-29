@@ -28,6 +28,113 @@
 						"noImgElement": "off"
 					}
 				}
+			},
+			"assist": {
+				"actions": {
+					"source": {
+						"organizeImports": {
+							"level": "on",
+							"options": {
+								/**
+								 *  An override replaces the whole groups list, so this is a copy of the main list below
+								 *  with test libraries as the first group. Keep the two in step.
+								 */
+								"groups": [
+									{
+										"type": false,
+										"source": [
+											"vitest",
+											"vitest/**",
+											"@vitest/*",
+											"@testing-library/*"
+										]
+									},
+									{
+										"type": true,
+										"source": [
+											"vitest",
+											"vitest/**",
+											"@vitest/*",
+											"@testing-library/*"
+										]
+									},
+									":BLANK_LINE:",
+									"server-only",
+									":BLANK_LINE:",
+									{
+										"type": false,
+										"source": ["node:*"]
+									},
+									{
+										"type": true,
+										"source": ["node:*"]
+									},
+									":BLANK_LINE:",
+									{
+										"type": false,
+										"source": ["next", "next/**", "react", "react-dom"]
+									},
+									{
+										"type": true,
+										"source": ["next", "next/**", "react", "react-dom"]
+									},
+									":BLANK_LINE:",
+									{
+										"type": false,
+										"source": ["@mantine/*", "@tabler/*"]
+									},
+									{
+										"type": true,
+										"source": ["@mantine/*", "@tabler/*"]
+									},
+									":BLANK_LINE:",
+									{
+										"type": false,
+										"source": ["@schedule-x/*", "temporal-polyfill/global"]
+									},
+									{
+										"type": true,
+										"source": ["@schedule-x/*", "temporal-polyfill/global"]
+									},
+									":BLANK_LINE:",
+									{
+										"type": false,
+										"source": ["@*/**", "!@/**"]
+									},
+									{
+										"type": true,
+										"source": ["@*/**", "!@/**"]
+									},
+									":BLANK_LINE:",
+									":PACKAGE:",
+									":BLANK_LINE:",
+									":ALIAS:",
+									":BLANK_LINE:",
+									{
+										"type": false,
+										"source": ["./*", "!./*.css"]
+									},
+									{
+										"type": true,
+										"source": ["./*", "!./*.css"]
+									},
+									{
+										"source": ["./*.css"]
+									},
+									":BLANK_LINE:",
+									{
+										"type": false,
+										"source": ["../*"]
+									},
+									{
+										"type": true,
+										"source": ["../*"]
+									}
+								]
+							}
+						}
+					}
+				}
 			}
 		},
 		{

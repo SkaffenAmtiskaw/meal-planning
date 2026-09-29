@@ -7,7 +7,7 @@ import { removeMember } from './removeMember';
 
 import { removePlannerMembership } from './_utils/removePlannerMembership';
 
-vi.mock('@/_actions/auth', async () => await import('@mocks/@/_actions/auth'));
+vi.mock('@/_actions/auth', async () => await import('#mocks/@/_actions/auth'));
 
 vi.mock('@/_models/user', () => ({
 	User: {

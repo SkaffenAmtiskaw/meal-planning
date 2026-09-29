@@ -2,7 +2,7 @@
  * Shared mock for @/_models/sharing.
  *
  * Usage in a test file:
- *   vi.mock('@/_models/sharing', async () => await import('@mocks/@/_models/sharing'))
+ *   vi.mock('@/_models/sharing', async () => await import('#mocks/@/_models/sharing'))
  *
  * Default implementations survive `vi.resetAllMocks()`. Use
  * `vi.mocked(PendingInvite.findOne).mockReturnValueOnce(...)` etc. to override for a single test.

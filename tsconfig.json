@@ -22,13 +22,13 @@
       "@/*": [
         "./src/*"
       ],
-      "@mocks/*": [
+      "#mocks/*": [
         "./test/mocks/*"
       ],
-      "@fixtures/*": [
+      "#fixtures/*": [
         "./test/fixtures/*"
       ],
-      "@test": [
+      "#test": [
         "./test/index.ts"
       ]
     },

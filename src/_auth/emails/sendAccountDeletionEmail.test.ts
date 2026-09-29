@@ -1,10 +1,10 @@
-import { mockSend, resendConstructor } from '@mocks/resend';
-
 import { describe, expect, test, vi } from 'vitest';
+
+import { mockSend, resendConstructor } from '#mocks/resend';
 
 import { sendAccountDeletionEmail } from './sendAccountDeletionEmail';
 
-vi.mock('resend', async () => await import('@mocks/resend'));
+vi.mock('resend', async () => await import('#mocks/resend'));
 
 describe('sendAccountDeletionEmail', () => {
 	test('initializes Resend with the API key', () => {

@@ -1,16 +1,15 @@
-import { useRouter } from 'next/navigation';
-
 import { fireEvent, render, screen } from '@testing-library/react';
-
 import { beforeAll, beforeEach, describe, expect, test, vi } from 'vitest';
+
+import { useRouter } from 'next/navigation';
 
 import { EditRecipeButton } from './EditRecipeButton';
 
-vi.mock('next/navigation', async () => await import('@mocks/next/navigation'));
+vi.mock('next/navigation', async () => await import('#mocks/next/navigation'));
 
 const mockPush = vi.fn();
 
-vi.mock('@mantine/core', async () => await import('@mocks/@mantine/core'));
+vi.mock('@mantine/core', async () => await import('#mocks/@mantine/core'));
 
 const { mockUseCanWrite } = vi.hoisted(() => ({ mockUseCanWrite: vi.fn() }));
 vi.mock('@/app/[planner]/_components', () => ({

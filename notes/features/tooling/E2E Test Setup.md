@@ -1,12 +1,12 @@
 ---
 type: pattern
-status: spec
+status: ready
 blocked-by: []
 confirmed: 2026-09-29
 ---
 # Where It Stands
 
-Rules approved. Next: /plan-steps ^status
+Ready. Next: build Step 1 ^status
 
 Set up E2E testing as a convention (where tests live, how they get their data, how they sign in and how they're run) and prove it with one first test that follows the Rules. [[Core Flows E2E Tests]] and [[Calendar E2E Tests]] build on it.
 
@@ -152,7 +152,7 @@ At the top of `playwright.config.ts`, before any `webServer` starts, every varia
 - **Lands in:** "Running E2E Tests".
 
 ## Rule 14 - The memory server matches Atlas's MongoDB release series
-The memory server's `mongod` version is set explicitly (mongodb-memory-server's `binary.version`) to a version in the same release series (major.minor) as the Atlas cluster. `docs/e2e_tests.md` records that series. When Atlas moves to a new series, the pin and the doc change together.
+The memory server's `mongod` version is set explicitly in `package.json` (mongodb-memory-server's `config.mongodbMemoryServer.version`) to a version in the same release series (major.minor) as the Atlas cluster. The install-time download reads only that setting, so the launcher sets no version of its own (no `binary.version`). `docs/e2e_tests.md` records that series. When Atlas moves to a new series, the pin and the doc change together.
 - **Check:** the pinned version's major.minor must equal the series in the doc. An unset version breaks the rule.
 - **Lands in:** "Running E2E Tests".
 
@@ -162,7 +162,7 @@ Every spec imports `test` and `expect` from `e2e/_fixtures/`, never from `@playw
 - **Lands in:** "Writing Specs".
 
 ## Rule 16 - Fixtures provide connections and contexts, never test data
-A fixture in `e2e/_fixtures/` only opens, provides or closes a resource: a database connection or a browser context. It opens and closes database connections only through `test/factories/connection.ts` and `test/auth.ts`, never `mongoose` or `mongodb` directly. No fixture calls a factory that creates a user, planner or any other document. `signIn` is a plain function the spec calls, not a fixture.
+A `test.extend` fixture in `e2e/_fixtures/` only opens, provides or closes a resource: a database connection or a browser context. It opens and closes database connections only through `test/factories/connection.ts` and `test/auth.ts`, never `mongoose` or `mongodb` directly. No fixture calls a factory that creates a user, planner or any other document. `signIn` is a plain function the spec calls, not a fixture. Neither is the memory-server launcher `memoryServer.ts`, which also sits in `e2e/_fixtures/`.
 - **Check:** a `test.extend` fixture that imports from `test/factories/` other than `connection.ts`, a fixture that writes to the database, or a `signIn` written as a fixture breaks the rule.
 - **Lands in:** "Test Data".
 
@@ -177,7 +177,7 @@ A test that needs a signed-in user calls `signIn` from `e2e/_fixtures/`, which a
 - **Lands in:** "Signing In".
 
 # Enforcement
-Every `biome.jsonc` change below is one Sarah approved on 2026-09-29, which is the explicit instruction to make it. `files.includes` also gains `e2e/**/*` (decision 5), so Biome checks `e2e/` at all. The Biome bans run in the pre-commit `biome check` and in `pnpm lint`. Biome doesn't merge overlapping overrides (its configuration reference: when a file matches several override patterns, only the first is used), so each set of files gets one override holding every ban and relaxation that applies to it, ordered most specific first. The existing override at `biome.jsonc:22` (`test/**/*` and `**/*/*.test.ts*`, which turns a11y and `noImgElement` off) also matches unit tests in `src/`, so the file sets are: `test/auth.ts`; `test/factories/**`; the rest of `test/**` and `src/` test files; the rest of `src/**`; `e2e/_fixtures/**`; and the rest of `e2e/**`. Each ban is checked once with a deliberately wrong import. Biome's GritQL plugins could match call patterns such as `page.locator('…')`, but Biome's docs say plugin support still has bugs, so none of these rules relies on them.
+Every `biome.jsonc` change below is one Sarah approved on 2026-09-29, which is the explicit instruction to make it. `files.includes` also gains `e2e/**/*` (decision 5), so Biome checks `e2e/` at all. The Biome bans run in the pre-commit `biome check` and in `pnpm lint`. Biome doesn't merge overlapping overrides (its configuration reference: when a file matches several override patterns, only the first is used), so each set of files gets one override holding every ban and relaxation that applies to it, ordered most specific first. The existing override at `biome.jsonc:22` (`test/**/*` and `**/*/*.test.ts*`, which turns a11y and `noImgElement` off and puts test libraries first in the import order) also matches unit tests in `src/`, so the file sets are: `test/auth.ts`; `test/factories/**`; the rest of `test/**` and `src/` test files; the rest of `src/**`; `e2e/_fixtures/**`; and the rest of `e2e/**`. Each ban is checked once with a deliberately wrong import. Biome's GritQL plugins could match call patterns such as `page.locator('…')`, but Biome's docs say plugin support still has bugs, so none of these rules relies on them.
 
 - **Rule 1:** Biome. An override for `src/**` and `test/**` turns on `style/noRestrictedImports`, banning `@playwright/test` with a message pointing to `docs/e2e_tests.md`.
 - **Rule 2:** config plus process. `vitest.config.ts` includes only `**/*.test.{ts,tsx}` and excludes `e2e/**`, so Vitest never runs a spec whatever it's named. A test file in `e2e/` not named `*.spec.ts` is silently skipped by Playwright; nothing can flag that from the file, so whoever writes a spec checks that Playwright's report lists the new tests.
@@ -204,7 +204,7 @@ Every `biome.jsonc` change below is one Sarah approved on 2026-09-29, which is t
 ## Setup
 - [ ] Add `@playwright/test` and `mongodb-memory-server` as dev dependencies, and list `mongodb-memory-server` in `onlyBuiltDependencies` (`pnpm-workspace.yaml:1`) so its `mongod` downloads at install.
 - [ ] `.gitignore`: Playwright's output (`test-results/`, `playwright-report/`, `blob-report/`, `playwright/.cache/`).
-- [ ] `playwright.config.ts` (Rules 12, 13, 14): `testDir: 'e2e'`; the E2E env object with Rule 13's type; a memory-server `webServer` entry pinned to Atlas's release series (Sarah reads it from the Atlas console), with `DB_URL` captured through `wait`; the Next entry `next build && next start -p 3100`, `reuseExistingServer: false`, with `webServer.timeout` raised for the build. Confirm (decision 7) that a `webServer` entry with only `wait` is accepted, and that the captured `DB_URL` reaches the worker processes.
+- [ ] `playwright.config.ts` (Rules 12, 13, 14): `testDir: 'e2e'`; the E2E env object with Rule 13's type; a memory-server `webServer` entry running `e2e/_fixtures/memoryServer.ts`, with the version pinned in `package.json` to Atlas's release series (Sarah reads it from the Atlas console), and `DB_URL` captured through `wait`; the Next entry `next build && next start -p 3100`, `reuseExistingServer: false`, with `webServer.timeout` raised for the build. Confirm (decision 7) that a `webServer` entry with only `wait` is accepted, and that the captured `DB_URL` reaches the worker processes.
 - [ ] `package.json`: `test:e2e` runs `playwright test` (Rule 12).
 - [ ] `test/auth.ts` (Rules 10, 13, 16): the test-only instance with `testUtils()` and `admin()`, the shared dummy secret and `BETTER_AUTH_URL`, its own MongoClient, and connect/close exports for fixtures.
 - [ ] `test/factories/connection.ts` (Rule 16): the Mongoose connect/disconnect functions.
@@ -230,3 +230,132 @@ None: no module in `src/` moves, and files in `test/` have no tests of their own
 - Handling email confirmation in auth flows. Sarah decided 2026-09-28 that it gets worked out with the auth flow tests in [[Core Flows E2E Tests]].
 
 # Implementation
+## Step 1: E2E runner
+**Idea:** `pnpm test:e2e` runs a spec against a production build of the app backed by a throwaway memory-server database.
+
+**Source:** Migration Checklist → Setup: dev dependencies and `onlyBuiltDependencies`; `.gitignore`; `playwright.config.ts`; `package.json` `test:e2e`. Rules 1, 2, 3, 12, 13, 14, 15. Decision 7's confirmation that a `webServer` entry with only `wait` is accepted. Pulled in by Sarah 2026-09-29: which browsers the tests run in. Sarah decided: two projects, desktop Chromium and an emulated Pixel phone, so only Chromium is installed. Pulled in by Sarah 2026-09-29: where the memory-server launcher lives. Sarah decided: `e2e/_fixtures/memoryServer.ts` (Rule 16 now says it isn't a fixture).
+
+**Approach:** Decisions 3 and 7, Rules 12-14. The `mongod` version is pinned in `package.json` `config.mongodbMemoryServer.version` (Rule 14), in the Atlas cluster's release series: ask Sarah for the version from the Atlas console. The first `webServer` entry runs `e2e/_fixtures/memoryServer.ts`, which starts `MongoMemoryServer` with no version of its own, reads the running `mongod`'s version from the server itself (a `buildInfo` command on its URI, not the configured value), logs that version and the URI, and stays running. Playwright captures the URI into `DB_URL` through `wait` named groups. The second entry runs `next build && next start -p 3100` with `reuseExistingServer: false` and a `timeout` raised to cover the build. Both entries set `stdout: 'pipe'` so their output shows in the run. The E2E env object sits at the top of the config with Rule 13's `satisfies` type and a type-only import of `src/env.ts`, and is copied into `process.env` before any `webServer` starts. The config sets `reporter: [['list'], ['html', { open: 'never' }]]` and two projects, `desktop` (Desktop Chrome) and `phone` (Pixel 7). Confirm a `webServer` entry with only `wait` (no `url` or `port`) is accepted. `e2e/_fixtures/index.ts` exports `test` and `expect` (Rule 15), plain for now; Step 2 extends `test`. The spec is scaffolding: signed out, it opens `/` and sees the sign-in prompt, using a `getByRole` locator (Rule 6). Step 2 replaces its body with the first real test. Chromium is installed with `pnpm exec playwright install chromium` (ask Sarah before downloading).
+
+**Files:**
+- `package.json` - `@playwright/test` and `mongodb-memory-server` dev dependencies; `test:e2e` runs `playwright test`; `config.mongodbMemoryServer.version`
+- `pnpm-lock.yaml` - the new dependencies
+- `pnpm-workspace.yaml` - `mongodb-memory-server` in `onlyBuiltDependencies`, so the pinned `mongod` downloads at install
+- `.gitignore` - `test-results/`, `playwright-report/`, `blob-report/`, `playwright/.cache/`
+- `playwright.config.ts` (new) - `testDir: 'e2e'`, the reporters, the `desktop` and `phone` projects, the E2E env object, both `webServer` entries
+- `e2e/_fixtures/memoryServer.ts` (new) - the launcher the first `webServer` entry runs
+- `e2e/_fixtures/index.ts` (new) - exports `test` and `expect` for specs
+- `e2e/auth/homeRedirect.spec.ts` (new) - scaffold spec: signed out, `/` shows the sign-in prompt
+
+**Acceptance:**
+- [ ] Delete `node_modules/.cache/mongodb-memory-server/`, run `pnpm rebuild mongodb-memory-server`, then list that folder. See one `mongod` binary whose name has the pinned version, in the Atlas cluster's release series, and no other version.
+- [ ] With `pnpm dev` running in another terminal, run `pnpm test:e2e`. See the memory server log that same `mongod` version and a `mongodb://127.0.0.1:<port>/` URI, then `next build` run, then one test pass in the `desktop` project and one in the `phone` project. `pnpm dev` keeps running and serving `localhost:3000` throughout.
+- [ ] Run `pnpm test:e2e` a second time. See a different port in the memory server's URI.
+- [ ] Stop `pnpm dev`. Temporarily rename `.env.local` to `.env.local.bak`, run `pnpm test:e2e`, see both tests still pass, so no value comes from `.env.local`. Rename it back.
+- [ ] Run `pnpm test:e2e --trace on`, then `pnpm exec playwright show-report`. Open each test's trace. See the sign-in prompt at desktop width in the `desktop` test and at phone width in the `phone` test, both on `http://localhost:3100/`.
+- [ ] After a run, run `git status`. See no `test-results/` or `playwright-report/`.
+- [ ] Temporarily delete `RESEND_FROM_EMAIL` from the E2E env object in `playwright.config.ts`, run `pnpm check:types`, see an error naming `RESEND_FROM_EMAIL` as missing. Revert.
+- [ ] Temporarily set `RESEND_FROM_EMAIL` in the E2E env object to `not-an-email`, run `pnpm test:e2e`, see `next build` fail with an invalid environment variable error for `RESEND_FROM_EMAIL`. Revert.
+
+## Step 2: First test
+**Idea:** A test signs in a user made by the factories, then sees `/` send that user to their planner's calendar.
+
+**Source:** Migration Checklist → Setup: `test/auth.ts`; `test/factories/connection.ts`; `test/factories/` user and planner factories; `e2e/_fixtures/`. Migration Checklist → First test. Rules 4, 7, 8, 9, 10, 11, 16, 17, 18. Decision 6's `cookieCache` confirmation; decision 7's confirmation that the captured `DB_URL` reaches the worker processes.
+
+**Approach:** Decisions 2, 6 and 9, Rules 7-11 and 16-18. `test/auth.ts` builds the test-only instance with `testUtils()` and `admin()`, the same dummy `BETTER_AUTH_SECRET` and `BETTER_AUTH_URL` (`http://localhost:3100`) that `playwright.config.ts` sets, and its own `MongoClient` on `DB_URL`; it exports connect and close functions. The user factory creates the better-auth user through `auth.api.createUser` (`emailVerified: true`, optional password) and the app `User` doc through `User.create` from `@/_models/user`, with the default email `` `e2e-${crypto.randomUUID()}@example.com` `` (no `.toLowerCase()`, so the template itself stays lowercase) and the planners and access levels it's given. The planner factory creates a `Planner` through `@/_models/planner`. `e2e/_fixtures/index.ts` extends `test` with one worker-scoped automatic fixture that opens and closes both connections. `signIn(context, user)` adds the user's `getCookies` cookies (from `(await auth.$context).test`) to the context; confirm `getCookies`' `expires` is in the unit `context.addCookies` expects. The spec's body is replaced by one test, `signed-in user lands on their planner calendar`: it creates a planner and an owner of it, signs in, opens `/`, expects `/<plannerId>/calendar` and expects the calendar view to be visible, found with a user-facing locator (Rule 6), so a calendar route that errors or 404s fails the test. Nothing deletes data (Rule 11).
+
+**Files:**
+- `test/auth.ts` (new) - the test-only auth instance and its connection functions
+- `test/factories/connection.ts` (new) - Mongoose connect and disconnect
+- `test/factories/user.ts` (new) - the user factory
+- `test/factories/planner.ts` (new) - the planner factory
+- `e2e/_fixtures/index.ts` - `test` extended with the worker connection fixture
+- `e2e/_fixtures/signIn.ts` (new) - `signIn`
+- `e2e/auth/homeRedirect.spec.ts` - the scaffold test replaced by the first test
+
+**Acceptance:**
+- [ ] Run `pnpm test:e2e --trace on`, then `pnpm exec playwright show-report`. See `signed-in user lands on their planner calendar` pass in `desktop` and `phone`. Open each trace. See the page start at `/` and end on `/<plannerId>/calendar` showing the planner layout's header and the calendar, not the sign-in prompt, at desktop width and at phone width.
+
+App code: each check breaks the behavior the test covers.
+- [ ] Temporarily change `src/app/page.tsx:36` from `` redirect(`${plannerId}/calendar`) `` to `` redirect(`${plannerId}/recipes`) ``, run `pnpm test:e2e e2e/auth/homeRedirect.spec.ts`, see `signed-in user lands on their planner calendar` fail in `desktop` and `phone` on the URL assertion, with `/<plannerId>/recipes` as the received URL. Revert.
+- [ ] Temporarily change `src/app/page.tsx:24` from `User.findOne({ email: session.user.email })` to `User.findOne({ email: 'nobody@example.com' })`, run the same command, see the test fail in `desktop` and `phone` on the URL assertion, with a different planner ID in the received URL. Revert.
+- [ ] Temporarily change `src/app/page.tsx:20` from `if (!session)` to `if (session)`, run the same command, see the test fail in `desktop` and `phone` on the URL assertion, with `/` as the received URL (the sign-in prompt). Revert.
+- [ ] Temporarily change `src/app/[planner]/layout.tsx:26` from `if (result.type === 'unauthorized') notFound();` to `if (result.type !== 'unauthorized') notFound();`, run the same command, see the test fail in `desktop` and `phone` on the calendar-view assertion while the URL assertion passes (the right URL shows a 404). Revert.
+
+Test harness: each check breaks a factory or `signIn`, proving the first test catches it (Enforcement for Rules 8 and 9 relies on this).
+- [ ] Temporarily change the `context.addCookies(...)` call in `e2e/_fixtures/signIn.ts` to `context.addCookies([])`, run `pnpm test:e2e e2e/auth/homeRedirect.spec.ts`, see `signed-in user lands on their planner calendar` fail in `desktop` and `phone` on the URL assertion, with `/` as the received URL (the sign-in prompt). Revert.
+- [ ] Temporarily remove the `User.create(...)` call from `test/factories/user.ts`, run `pnpm test:e2e e2e/auth/homeRedirect.spec.ts`, see `signed-in user lands on their planner calendar` fail in `desktop` and `phone` on the URL assertion, with a different planner ID in the received URL (`src/app/page.tsx` made a new user and planner). Revert.
+- [ ] Temporarily pass `other-${crypto.randomUUID()}@example.com` as the email to `auth.api.createUser` in `test/factories/user.ts`, leaving the `User` doc's email as it is, run `pnpm test:e2e e2e/auth/homeRedirect.spec.ts`, see `signed-in user lands on their planner calendar` fail in `desktop` and `phone` on the URL assertion, with a different planner ID in the received URL. Revert.
+- [ ] Temporarily change the user factory's default email to the fixed `e2e@example.com`, run `pnpm test:e2e e2e/auth/homeRedirect.spec.ts --workers=1`, see `signed-in user lands on their planner calendar` pass in one project and fail in the other with "User already exists. Use another email." from `auth.api.createUser` in the user factory. Revert.
+- [ ] Temporarily change the user factory's default email template to `` `E2E-${crypto.randomUUID()}@example.com` ``, run `pnpm test:e2e e2e/auth/homeRedirect.spec.ts`, see `signed-in user lands on their planner calendar` fail in `desktop` and `phone` on the URL assertion, with a different planner ID in the received URL. Revert.
+
+## Step 3: E2E docs
+**Idea:** The docs describe the E2E convention where agents and Sarah will look for it.
+
+**Source:** Migration Checklist → Docs: `docs/e2e_tests.md`; AGENTS.md's Docs list; `docs/project_structure.md` `# e2e/` entry and top-level `test/` entry (Sarah decided 2026-09-29 to fix the misplaced entry here). Rules 1-18 "Lands in". Boy Scout fix: `docs/project_structure.md:7-8` describes `# scripts/` as "lefthook scripts", but it also holds the vault scripts (`vault-lint.sh`, `note-refs.sh`, `vault-orphans.sh`, `note-section.sh`), found by plan-checker during /plan-steps 2026-09-29.
+
+**Approach:** Rules' "Lands in" lines. `docs/e2e_tests.md` has "Where E2E Code Lives" (Rules 1-3, with the area table and the launcher in `e2e/_fixtures/`), "Writing Specs" (Rules 5, 6, 15), "Test Data" (Rules 4, 7, 8, 9, 11, 16, 17, with Rule 16 covering `test.extend` fixtures only), "Signing In" (Rules 10, 18) and "Running E2E Tests" (Rules 12-14, with the Atlas release series and the `package.json` pin Step 1 set, and Rule 13's list of better-auth variables that are set nowhere). Each Rule keeps its Check. It matches the style of `docs/unit_tests.md`.
+
+**Files:**
+- `docs/e2e_tests.md` (new) - the convention
+- `AGENTS.md` - "`docs/e2e_tests.md`: before writing E2E tests" in the Docs list
+- `docs/project_structure.md` - an `# e2e/` entry; the `test/` entry moved to the top level, covering `fixtures/`, `utils/`, `factories/` and `auth.ts` as well as the setup script and mocks; the `# docs/` description names E2E tests; Boy Scout fix to the `# scripts/` description
+
+**Acceptance:**
+- [ ] Read `docs/e2e_tests.md` top to bottom, as someone about to write a new spec with no access to the note. See that each section makes sense on its own: what to do, where things go and why, with nothing that only the note explains.
+- [ ] In `docs/e2e_tests.md`, see Rules 1-3 with the area table under "Where E2E Code Lives", Rules 5, 6 and 15 under "Writing Specs", Rules 4, 7, 8, 9, 11, 16 and 17 under "Test Data", Rules 10 and 18 under "Signing In", and Rules 12-14 under "Running E2E Tests", each with its Check. Under "Where E2E Code Lives", see `e2e/_fixtures/memoryServer.ts` named as the memory-server launcher. Under "Test Data", see Rule 16 apply to `test.extend` fixtures. Under "Running E2E Tests", see Rule 14 name `package.json` `config.mongodbMemoryServer.version` and not `binary.version`, the same release series as the `mongod` version `pnpm test:e2e` logs, and the better-auth variables that are set nowhere.
+- [ ] Open `docs/project_structure.md`. See `# e2e/` as a top-level entry describing specs grouped by feature area plus `_fixtures/`, and `# test/` as a top-level entry, no longer under `# src/`. Under `# test/`, see `fixtures/`, `utils/`, `factories/`, `auth.ts`, the setup script and `mocks/`. See `# docs/` mention E2E tests and `# scripts/` mention the vault scripts.
+- [ ] Open `AGENTS.md`. See `docs/e2e_tests.md` in the Docs list.
+
+## Step 4: Biome checks `e2e/`
+**Idea:** Biome lints and formats files in `e2e/` the same way it does `src/` and `test/`.
+
+**Source:** Migration Checklist → Config: `biome.jsonc` `files.includes` gains `e2e/**/*` (decision 5).
+
+**Approach:** Decision 5. Add `e2e/**/*` to `files.includes` at `biome.jsonc:3`, so the pre-commit `biome check` and `pnpm lint` cover the E2E code from here on. The import bans come in Step 5. Before the change, the implementer confirms `pnpm biome check e2e` processes no files.
+
+**Files:**
+- `biome.jsonc` - `e2e/**/*` in `files.includes`
+- `e2e/_fixtures/memoryServer.ts`, `e2e/_fixtures/index.ts`, `e2e/_fixtures/signIn.ts`, `e2e/auth/homeRedirect.spec.ts` - any formatting or lint fixes `pnpm lint` makes in the files Steps 1 and 2 wrote
+
+**Acceptance:**
+- [ ] Run `pnpm biome check e2e`. See it check the four files in `e2e/`.
+- [ ] Temporarily change a single-quoted string in `e2e/auth/homeRedirect.spec.ts` to double quotes, run `pnpm biome check e2e`, see a formatting error on that line. Revert.
+
+## Step 5: Biome import bans
+**Idea:** Biome rejects every import the E2E Rules forbid, each in the files the Rule covers.
+
+**Source:** Migration Checklist → Config: `biome.jsonc` overrides. Enforcement for Rules 1, 4, 7, 10 and 15.
+
+**Approach:** Enforcement's opening paragraph and its Rule 1, 4, 7, 10 and 15 entries. One override per file set, ordered most specific first, each holding every `style/noRestrictedImports` ban and relaxation that applies to its files, each ban with its message. The existing test override at `biome.jsonc:22` (`test/**/*` and `**/*/*.test.ts*`) holds two settings its files must keep: a11y and `noImgElement` off, and an `assist.actions.source.organizeImports.options.groups` list (the main groups list with `vitest`, `vitest/**`, `@vitest/*` and `@testing-library/*` as the first block). Both go into every override below whose files it matched, marked "test settings":
+- `test/auth.ts`: `@playwright/test` (Rule 1); test settings.
+- `test/factories/**`: `@playwright/test` (Rule 1); `testUtils` from `better-auth/plugins` and all of `better-auth/test` (Rule 10); `@/_actions`, `@/_actions/**`, `@/_auth`, `@/_auth/**`, `server-only` (Rule 7); test settings.
+- the rest of `test/**` with `src/` test files: Rules 1 and 10; test settings.
+- the rest of `src/**`: Rules 1 and 10.
+- `e2e/_fixtures/**`: `mongoose`, `mongodb`, `@/_models`, `@/_models/**` (Rule 4); Rule 10.
+- the rest of `e2e/**`: Rules 4 and 10, plus `@playwright/test` pointing to `e2e/_fixtures/` (Rule 15).
+
+The implementer verifies the overrides statically before handing the step over: every ban in every file set it belongs to, each with a deliberately wrong import in a file from that set (bare paths and `/**` patterns separately, and Rule 10's `better-auth/test`); that the real files stay clean (`mongodb-memory-server` in `e2e/_fixtures/memoryServer.ts`, `mongodb` and `testUtils` in `test/auth.ts`, `@playwright/test` in `e2e/_fixtures/index.ts`); and that the files relying on the test relaxation (`<img` at `test/mocks/@mantine/core.tsx:49`, `<div onClick=...>` at `src/_components/Calendar/_components/DishListItem/DishListItem.test.tsx:190`) show no a11y or `noImgElement` errors, as before; and that `pnpm biome check` wants no import-order changes in `test/` or `src/` test files.
+
+**Files:**
+- `biome.jsonc` - the six overrides, the existing test override merged into them
+
+**Acceptance:**
+- [ ] Temporarily add `import { test } from '@playwright/test'` to `src/env.ts`, run `pnpm biome lint src/env.ts`, see a `noRestrictedImports` error pointing to `docs/e2e_tests.md`. Revert.
+- [ ] Temporarily add `import { User } from '@/_models/user'` and `import { test } from '@playwright/test'` to `e2e/auth/homeRedirect.spec.ts`, run `pnpm biome lint e2e/auth/homeRedirect.spec.ts`, see an error on each, pointing to `test/factories/` and `e2e/_fixtures/`. Revert.
+- [ ] Run `pnpm biome check src test e2e`. See no errors, so the test files keep their import order.
+
+## Step 6: Vitest runs only unit tests
+**Idea:** Vitest picks up only `*.test.ts[x]` files and never looks in `e2e/`.
+
+**Source:** Migration Checklist → Config: `vitest.config.ts`. Rule 2's enforcement.
+
+**Approach:** Rule 2's enforcement. `test.include` becomes `['**/*.test.{ts,tsx}']` and `test.exclude` adds `e2e/**` to Vitest's `configDefaults.exclude`, keeping its defaults. Sarah asked for this config change 2026-09-29. Before the change, the implementer confirms `pnpm vitest run e2e` tries to run `e2e/auth/homeRedirect.spec.ts`, and records the test file and test counts `pnpm vitest run src` reports.
+
+**Files:**
+- `vitest.config.ts` - `include` and `exclude`
+
+**Acceptance:**
+- [ ] Run `pnpm vitest run e2e`. See "No test files found".
+- [ ] Run `pnpm vitest run src`. See the same test file and test counts the implementer recorded before the change.
+- [ ] Temporarily add `src/scratch.spec.ts` holding `import { test, expect } from 'vitest'; test('x', () => expect(1).toBe(2))`, run `pnpm vitest run src`, see it isn't run and nothing fails. Delete it.

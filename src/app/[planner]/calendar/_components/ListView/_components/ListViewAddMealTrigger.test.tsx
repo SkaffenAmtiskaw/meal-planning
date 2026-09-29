@@ -1,12 +1,11 @@
-import { ActionIcon, Flex, Text } from '@mantine/core';
-
 import { render, screen } from '@testing-library/react';
-
 import { beforeEach, describe, expect, it, vi } from 'vitest';
+
+import { ActionIcon, Flex, Text } from '@mantine/core';
 
 import { ListViewAddMealTrigger } from './ListViewAddMealTrigger';
 
-vi.mock('@mantine/core', async () => await import('@mocks/@mantine/core'));
+vi.mock('@mantine/core', async () => await import('#mocks/@mantine/core'));
 
 vi.mock('./DayRow.module.css', () => ({
 	default: {

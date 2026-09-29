@@ -1,5 +1,6 @@
-import { hashPassword } from 'better-auth/crypto';
 import { afterEach, describe, expect, it, vi } from 'vitest';
+
+import { hashPassword } from 'better-auth/crypto';
 
 import { User } from '@/_models/user';
 

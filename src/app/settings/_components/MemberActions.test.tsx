@@ -1,5 +1,4 @@
 import { act, fireEvent, render, screen } from '@testing-library/react';
-
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import type { AccessLevel } from '@/_models/user';
@@ -8,7 +7,7 @@ import { AccessLevelEditor } from './AccessLevelEditor';
 import { MemberActions } from './MemberActions';
 import { RemoveMemberButton } from './RemoveMemberButton';
 
-vi.mock('@mantine/core', async () => await import('@mocks/@mantine/core'));
+vi.mock('@mantine/core', async () => await import('#mocks/@mantine/core'));
 
 vi.mock('./AccessLevelEditor', () => ({
 	AccessLevelEditor: vi.fn(() => null),

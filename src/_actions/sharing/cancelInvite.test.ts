@@ -1,20 +1,21 @@
-import { Types } from 'mongoose';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
+
+import { Types } from 'mongoose';
 
 import { checkAuth } from '@/_actions/auth';
 import { PendingInvite } from '@/_models/sharing';
 
 import { type CancelInviteInput, cancelInvite } from './cancelInvite';
 
-vi.mock('@/_actions/auth', async () => await import('@mocks/@/_actions/auth'));
+vi.mock('@/_actions/auth', async () => await import('#mocks/@/_actions/auth'));
 
 vi.mock(
 	'@/_models/sharing',
-	async () => await import('@mocks/@/_models/sharing'),
+	async () => await import('#mocks/@/_models/sharing'),
 );
 vi.mock(
 	'@/_utils/serialize',
-	async () => await import('@mocks/@/_utils/serialize'),
+	async () => await import('#mocks/@/_utils/serialize'),
 );
 
 describe('cancelInvite', () => {

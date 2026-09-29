@@ -1,8 +1,7 @@
-import { Paper } from '@mantine/core';
-
 import { fireEvent, render, screen } from '@testing-library/react';
-
 import { beforeEach, describe, expect, it, vi } from 'vitest';
+
+import { Paper } from '@mantine/core';
 
 import { getMealColor } from '@/_theme/colors';
 
@@ -11,7 +10,7 @@ import { WeekMealCard } from './WeekMealCard';
 import type { CalendarEvent } from '../../_utils/toCalendarEvents';
 import { DishLink } from '../DishLink/DishLink';
 
-vi.mock('@mantine/core', async () => await import('@mocks/@mantine/core'));
+vi.mock('@mantine/core', async () => await import('#mocks/@mantine/core'));
 vi.mock('@/_theme/colors', () => ({
 	getMealColor: vi.fn(() => 'tangerine'),
 	TAG_COLORS: {

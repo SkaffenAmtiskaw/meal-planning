@@ -14,7 +14,7 @@ import { User } from '@/_models/user';
 
 import { acceptInvite } from './acceptInvite';
 
-vi.mock('@/_actions/user', async () => await import('@mocks/@/_actions/user'));
+vi.mock('@/_actions/user', async () => await import('#mocks/@/_actions/user'));
 
 vi.mock('@/_models/user', () => ({
 	User: {

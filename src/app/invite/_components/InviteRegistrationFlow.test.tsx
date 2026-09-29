@@ -1,15 +1,14 @@
-import { useRouter } from 'next/navigation';
-
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
-
 import { beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
+
+import { useRouter } from 'next/navigation';
 
 import { signUpWithInvite } from '@/_actions/sharing';
 import { zSafeString } from '@/_utils/zSafeString';
 
 import { InviteRegistrationFlow } from './InviteRegistrationFlow';
 
-vi.mock('@mantine/core', async () => await import('@mocks/@mantine/core'));
+vi.mock('@mantine/core', async () => await import('#mocks/@mantine/core'));
 
 vi.mock('../../_components/AuthLayout', () => ({
 	AuthLayoutAlert: vi.fn(({ children }) => <div role="alert">{children}</div>),
@@ -22,14 +21,14 @@ vi.mock('../../_components/AuthLayout', () => ({
 	)),
 }));
 
-vi.mock('next/navigation', async () => await import('@mocks/next/navigation'));
+vi.mock('next/navigation', async () => await import('#mocks/next/navigation'));
 
 vi.mock(
 	'@/_actions/sharing',
-	async () => await import('@mocks/@/_actions/sharing'),
+	async () => await import('#mocks/@/_actions/sharing'),
 );
 
-vi.mock('@/_hooks', async () => await import('@mocks/@/_hooks'));
+vi.mock('@/_hooks', async () => await import('#mocks/@/_hooks'));
 
 vi.mock('@/_utils/zSafeString', () => ({
 	zSafeString: vi.fn(() => ({

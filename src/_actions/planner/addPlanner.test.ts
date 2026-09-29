@@ -6,7 +6,7 @@ import { addPlanner } from './addPlanner';
 
 vi.mock(
 	'@/_models/planner',
-	async () => await import('@mocks/@/_models/planner'),
+	async () => await import('#mocks/@/_models/planner'),
 );
 
 describe('addPlanner', () => {

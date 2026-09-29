@@ -3,8 +3,8 @@
  *
  * Usage in a test file:
  *
- *   import { mockSend, resendConstructor } from '@mocks/resend';
- *   vi.mock('resend', async () => await import('@mocks/resend'));
+ *   import { mockSend, resendConstructor } from '#mocks/resend';
+ *   vi.mock('resend', async () => await import('#mocks/resend'));
  *
  * `mockSend` is the spy on `emails.send`. Use `mockSend.mockResolvedValueOnce(...)`
  * to control the return value for a single test.

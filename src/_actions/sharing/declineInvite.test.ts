@@ -5,7 +5,7 @@ import { PendingInvite } from '@/_models/sharing';
 
 import { type DeclineInviteInput, declineInvite } from './declineInvite';
 
-vi.mock('@/_actions/user', async () => await import('@mocks/@/_actions/user'));
+vi.mock('@/_actions/user', async () => await import('#mocks/@/_actions/user'));
 
 vi.mock('@/_models/sharing', () => ({
 	PendingInvite: {
@@ -15,7 +15,7 @@ vi.mock('@/_models/sharing', () => ({
 }));
 vi.mock(
 	'@/_utils/serialize',
-	async () => await import('@mocks/@/_utils/serialize'),
+	async () => await import('#mocks/@/_utils/serialize'),
 );
 
 describe('declineInvite', () => {

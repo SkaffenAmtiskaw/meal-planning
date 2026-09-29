@@ -51,7 +51,7 @@ This story owns the mock clean-up for the test files it changes:
 
 > ⚠️ **Check Drift 2026-09-28:** The docs moved from `.opencode/docs/` to `docs/`, so `.opencode/docs/unit_tests.md` below is now `docs/unit_tests.md`. Found while `/tooling` moved the docs.
 
-- Every test file it rewrites or moves uses the centralized mock in `test/mocks/` for any module that has one (`vi.mock('<module>', async () => await import('@mocks/...'))`), not an ad-hoc factory, per `.opencode/docs/unit_tests.md`.
+- Every test file it rewrites or moves uses the centralized mock in `test/mocks/` for any module that has one (`vi.mock('<module>', async () => await import('#mocks/...'))`), not an ad-hoc factory, per `docs/unit_tests.md`.
 - When it moves, renames or reshapes an export of `@/_actions` or `@/_models`, it updates the matching `test/mocks/@/_actions/*.ts` or `test/mocks/@/_models/*.ts` in the same step.
 - If another story already did this for a file, there's nothing more to do.
 

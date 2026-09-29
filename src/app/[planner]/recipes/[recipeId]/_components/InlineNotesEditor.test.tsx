@@ -1,8 +1,7 @@
-import { useRouter } from 'next/navigation';
-
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
-
 import { beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
+
+import { useRouter } from 'next/navigation';
 
 import { updateRecipeNotes } from '@/_actions/library';
 import { catchify } from '@/_utils/catchify';
@@ -11,17 +10,17 @@ import { InlineNotesEditor } from './InlineNotesEditor';
 
 const mockRefresh = vi.fn();
 
-vi.mock('next/navigation', async () => await import('@mocks/next/navigation'));
+vi.mock('next/navigation', async () => await import('#mocks/next/navigation'));
 
-vi.mock('@mantine/core', async () => await import('@mocks/@mantine/core'));
+vi.mock('@mantine/core', async () => await import('#mocks/@mantine/core'));
 
 vi.mock(
 	'@/_actions/library',
-	async () => await import('@mocks/@/_actions/library'),
+	async () => await import('#mocks/@/_actions/library'),
 );
 
 vi.mock('@/_hooks/useEditMode', async () => {
-	const { useEditMode } = await import('@mocks/@/_hooks');
+	const { useEditMode } = await import('#mocks/@/_hooks');
 	return { useEditMode };
 });
 

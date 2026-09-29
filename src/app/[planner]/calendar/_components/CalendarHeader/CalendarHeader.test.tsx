@@ -1,12 +1,12 @@
+import { fireEvent, render, screen } from '@testing-library/react';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
+
 import React from 'react';
 
 import { Button, Group, Popover, SegmentedControl, Stack } from '@mantine/core';
 import { DatePicker } from '@mantine/dates';
 
-import { fireEvent, render, screen } from '@testing-library/react';
-
 import { DateTime } from 'luxon';
-import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { formatWeekRange } from '@/_components/Calendar/_utils/formatWeekRange';
 import {
@@ -18,7 +18,7 @@ import { AddMealButton } from '@/app/[planner]/calendar/_components/AddMealButto
 
 import { CalendarHeaderDesktop, CalendarHeaderMobile } from './CalendarHeader';
 
-vi.mock('@mantine/core', async () => await import('@mocks/@mantine/core'));
+vi.mock('@mantine/core', async () => await import('#mocks/@mantine/core'));
 
 vi.mock('./CalendarHeader.module.css', () => ({
 	default: { header: 'header' },

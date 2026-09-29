@@ -1,7 +1,7 @@
 import { fireEvent, render, screen } from '@testing-library/react';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { DateTime } from 'luxon';
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { MonthGrid } from './MonthGrid';
 import type { MonthGridMeal, MonthGridMealRenderProps } from './MonthGrid';
@@ -9,7 +9,7 @@ import type { MonthGridMeal, MonthGridMealRenderProps } from './MonthGrid';
 import { useCalendarContext } from '../CalendarContext';
 import { CalendarProvider } from '../CalendarProvider';
 
-vi.mock('@mantine/core', async () => await import('@mocks/@mantine/core'));
+vi.mock('@mantine/core', async () => await import('#mocks/@mantine/core'));
 vi.mock('../_utils/getMonthGridDates', () => ({
 	getMonthGridDates: vi.fn(),
 }));

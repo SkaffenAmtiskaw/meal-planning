@@ -1,8 +1,7 @@
-import type { ReactNode } from 'react';
-
 import { renderHook } from '@testing-library/react';
-
 import { describe, expect, test } from 'vitest';
+
+import type { ReactNode } from 'react';
 
 import { ToggleContext } from './ToggleContext';
 import { useToggleContext } from './useToggleContext';

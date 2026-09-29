@@ -1,9 +1,9 @@
+import { fireEvent, render, screen } from '@testing-library/react';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
+
 import { createElement } from 'react';
 
-import { fireEvent, render, screen } from '@testing-library/react';
-
 import { DateTime } from 'luxon';
-import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { useRovingGridFocus } from './useRovingGridFocus';
 

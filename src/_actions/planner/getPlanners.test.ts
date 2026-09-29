@@ -7,9 +7,9 @@ import { getPlanners } from './getPlanners';
 
 vi.mock(
 	'@/_models/planner',
-	async () => await import('@mocks/@/_models/planner'),
+	async () => await import('#mocks/@/_models/planner'),
 );
-vi.mock('@/_actions/user', async () => await import('@mocks/@/_actions/user'));
+vi.mock('@/_actions/user', async () => await import('#mocks/@/_actions/user'));
 
 const makePlanner = (overrides: { name?: string; id?: string } = {}) => ({
 	_id: overrides.id ?? '507f1f77bcf86cd799439011',

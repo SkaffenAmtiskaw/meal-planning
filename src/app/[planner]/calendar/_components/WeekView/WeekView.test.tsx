@@ -1,12 +1,11 @@
 import 'temporal-polyfill/global';
 
 import { render, screen } from '@testing-library/react';
-
 import { beforeEach, describe, expect, test, vi } from 'vitest';
 
 import { WeekView } from './WeekView';
 
-vi.mock('@mantine/core', async () => await import('@mocks/@mantine/core'));
+vi.mock('@mantine/core', async () => await import('#mocks/@mantine/core'));
 
 const mockWeekMealCard = vi.fn();
 vi.mock('./WeekMealCard', () => ({

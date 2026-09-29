@@ -1,7 +1,7 @@
 import { fireEvent, render, screen } from '@testing-library/react';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { DateTime } from 'luxon';
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { useCalendarContext } from '@/_components/Calendar';
 
@@ -9,7 +9,7 @@ import { MobileAddMealButton } from './MobileAddMealButton';
 
 import { useCalendarModal } from '../CalendarModal';
 
-vi.mock('@mantine/core', async () => await import('@mocks/@mantine/core'));
+vi.mock('@mantine/core', async () => await import('#mocks/@mantine/core'));
 
 const { mockUseCanWrite, mockOpen } = vi.hoisted(() => ({
 	mockUseCanWrite: vi.fn(),

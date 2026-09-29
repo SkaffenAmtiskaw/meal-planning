@@ -1,5 +1,4 @@
 import { fireEvent, render, screen } from '@testing-library/react';
-
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import type { PendingInvite } from '@/_actions/sharing';
@@ -7,7 +6,7 @@ import { isPastDate, isWithinHours } from '@/_utils/date';
 
 import { PendingInvitesList } from './PendingInvitesList';
 
-vi.mock('@mantine/core', async () => await import('@mocks/@mantine/core'));
+vi.mock('@mantine/core', async () => await import('#mocks/@mantine/core'));
 
 vi.mock('../_utils/getAccessLevelColor', async () => ({
 	getAccessLevelColor: vi.fn(() => 'blue'),

@@ -2,7 +2,7 @@
  * Shared mock for @/_models/library.
  *
  * Usage in a test file:
- *   vi.mock('@/_models/library', async () => await import('@mocks/@/_models/library'))
+ *   vi.mock('@/_models/library', async () => await import('#mocks/@/_models/library'))
  *
  * Default implementations survive `vi.resetAllMocks()`. Use
  * `vi.mocked(tagSchema).mockReturnValueOnce(...)` etc. to override for a single test.

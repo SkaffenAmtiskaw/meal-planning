@@ -1,12 +1,11 @@
-import { Group, Stack, Text } from '@mantine/core';
-
 import { fireEvent, render, screen } from '@testing-library/react';
-
 import { beforeEach, describe, expect, it, vi } from 'vitest';
+
+import { Group, Stack, Text } from '@mantine/core';
 
 import { type CalendarDish, DishListItem } from './DishListItem';
 
-vi.mock('@mantine/core', async () => await import('@mocks/@mantine/core'));
+vi.mock('@mantine/core', async () => await import('#mocks/@mantine/core'));
 
 vi.mock('./DishListItem.module.css', () => ({
 	default: {

@@ -1,5 +1,4 @@
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
-
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { updateMemberAccess } from '@/_actions/sharing';
@@ -9,10 +8,10 @@ import { AccessLevelEditor } from './AccessLevelEditor';
 
 vi.mock(
 	'@/_actions/sharing',
-	async () => await import('@mocks/@/_actions/sharing'),
+	async () => await import('#mocks/@/_actions/sharing'),
 );
 
-vi.mock('@mantine/core', async () => await import('@mocks/@mantine/core'));
+vi.mock('@mantine/core', async () => await import('#mocks/@mantine/core'));
 
 describe('AccessLevelEditor', () => {
 	const plannerId = '507f1f77bcf86cd799439011';

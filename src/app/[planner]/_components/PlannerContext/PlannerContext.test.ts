@@ -1,8 +1,7 @@
-import { createElement, type ReactNode, useContext } from 'react';
-
 import { renderHook } from '@testing-library/react';
-
 import { describe, expect, test } from 'vitest';
+
+import { createElement, type ReactNode, useContext } from 'react';
 
 import { PlannerContext } from './PlannerContext';
 

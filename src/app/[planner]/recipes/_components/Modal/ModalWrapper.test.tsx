@@ -1,16 +1,15 @@
+import { render } from '@testing-library/react';
+import { beforeAll, beforeEach, describe, expect, test, vi } from 'vitest';
+
 import { usePathname, useRouter } from 'next/navigation';
 
 import { Modal } from '@mantine/core';
 
-import { render } from '@testing-library/react';
-
-import { beforeAll, beforeEach, describe, expect, test, vi } from 'vitest';
-
 import { ModalWrapper } from './ModalWrapper';
 
-vi.mock('next/navigation', async () => await import('@mocks/next/navigation'));
+vi.mock('next/navigation', async () => await import('#mocks/next/navigation'));
 
-vi.mock('@mantine/core', async () => await import('@mocks/@mantine/core'));
+vi.mock('@mantine/core', async () => await import('#mocks/@mantine/core'));
 
 describe('modal wrapper', () => {
 	const mockPush = vi.fn();

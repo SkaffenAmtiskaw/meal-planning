@@ -1,12 +1,11 @@
 import { render, screen } from '@testing-library/react';
-
 import { beforeEach, describe, expect, test, vi } from 'vitest';
 
 import { MealDetailModal } from './MealDetailModal';
 
 import { DishLink } from '../DishLink/DishLink';
 
-vi.mock('@mantine/core', async () => await import('@mocks/@mantine/core'));
+vi.mock('@mantine/core', async () => await import('#mocks/@mantine/core'));
 vi.mock('../DishLink/DishLink', () => ({
 	DishLink: vi.fn(({ dish }) => (
 		<span data-testid="dish-link">{dish.name}</span>

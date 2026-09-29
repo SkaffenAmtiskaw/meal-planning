@@ -1,9 +1,9 @@
+import { act, render, screen } from '@testing-library/react';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+
 import type { ReactNode } from 'react';
 
-import { act, render, screen } from '@testing-library/react';
-
 import { DateTime } from 'luxon';
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import {
 	type CalendarDish,
@@ -19,7 +19,7 @@ import { useScrolledDate } from './_hooks/useScrolledDate';
 import { useScrollToDate } from './_hooks/useScrollToDate';
 import { getListDayRange } from './_utils/getListDayRange';
 
-vi.mock('@mantine/core', async () => await import('@mocks/@mantine/core'));
+vi.mock('@mantine/core', async () => await import('#mocks/@mantine/core'));
 
 vi.mock('./_utils/getListDayRange', () => ({
 	getListDayRange: vi.fn(),

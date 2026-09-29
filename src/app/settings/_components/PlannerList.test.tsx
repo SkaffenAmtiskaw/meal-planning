@@ -1,5 +1,4 @@
 import { render, screen } from '@testing-library/react';
-
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { getPlanners } from '@/_actions/planner';
@@ -9,10 +8,10 @@ import { PlannerList } from './PlannerList';
 
 vi.mock(
 	'@/_actions/planner',
-	async () => await import('@mocks/@/_actions/planner'),
+	async () => await import('#mocks/@/_actions/planner'),
 );
 
-vi.mock('@mantine/core', async () => await import('@mocks/@mantine/core'));
+vi.mock('@mantine/core', async () => await import('#mocks/@mantine/core'));
 
 vi.mock('./PlannerItem', () => ({
 	PlannerItem: vi.fn(() => <div data-testid="planner-item" />),

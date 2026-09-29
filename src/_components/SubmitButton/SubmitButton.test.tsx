@@ -1,10 +1,9 @@
 import { render, screen } from '@testing-library/react';
-
 import { describe, expect, test, vi } from 'vitest';
 
 import { SubmitButton } from './SubmitButton';
 
-vi.mock('@mantine/core', async () => await import('@mocks/@mantine/core'));
+vi.mock('@mantine/core', async () => await import('#mocks/@mantine/core'));
 
 describe('SubmitButton', () => {
 	test('renders label in idle state and is enabled', () => {

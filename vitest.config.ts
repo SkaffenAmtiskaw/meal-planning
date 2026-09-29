@@ -8,14 +8,14 @@ export default defineConfig({
     alias: [
       { find: '@/env', replacement: new URL('./test/mocks/env.ts', import.meta.url).pathname },
       { find: '@', replacement: resolve(__dirname, './src') },
-      { find: '@test', replacement: resolve(__dirname, './test/index.ts') },
+      { find: '#test', replacement: resolve(__dirname, './test/index.ts') },
     ],
   },
   test: {
     alias: {
         'server-only': new URL('./test/mocks/server-only.ts', import.meta.url).pathname,
-        '@mocks': new URL('./test/mocks', import.meta.url).pathname,
-        '@fixtures': new URL('./test/fixtures', import.meta.url).pathname,
+        '#mocks': new URL('./test/mocks', import.meta.url).pathname,
+        '#fixtures': new URL('./test/fixtures', import.meta.url).pathname,
     },
     environment: 'jsdom',
     setupFiles: ['./test/setup.ts'],

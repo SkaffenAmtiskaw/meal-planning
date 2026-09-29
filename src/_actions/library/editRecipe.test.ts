@@ -1,7 +1,8 @@
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+
 import { revalidatePath } from 'next/cache';
 
 import { Types } from 'mongoose';
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { checkAuth } from '@/_actions/auth';
 import { zRecipeFormSchema } from '@/_models/library';
@@ -9,14 +10,14 @@ import { Planner } from '@/_models/planner';
 
 import { editRecipe } from './editRecipe';
 
-vi.mock('@/_actions/auth', async () => await import('@mocks/@/_actions/auth'));
+vi.mock('@/_actions/auth', async () => await import('#mocks/@/_actions/auth'));
 vi.mock(
 	'@/_models/library',
-	async () => await import('@mocks/@/_models/library'),
+	async () => await import('#mocks/@/_models/library'),
 );
 vi.mock(
 	'@/_models/planner',
-	async () => await import('@mocks/@/_models/planner'),
+	async () => await import('#mocks/@/_models/planner'),
 );
 vi.mock('next/cache', async () => ({ revalidatePath: vi.fn() }));
 vi.mock('./_utils/transformRecipeForm', async () => ({

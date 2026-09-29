@@ -1,9 +1,9 @@
+import { render, screen } from '@testing-library/react';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
+
 import type { ReactElement } from 'react';
 
-import { render, screen } from '@testing-library/react';
-
 import { DateTime } from 'luxon';
-import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import type { CalendarDish, CalendarMeal } from '@/_components/Calendar';
 import { useCalendarContext } from '@/_components/Calendar';
@@ -20,7 +20,7 @@ import { MealMonthAgenda } from './MealMonthAgenda';
 import type { SavedItem, SerializedDay } from '../../_utils/toScheduleXEvents';
 import { DishLink } from '../DishLink/DishLink';
 
-vi.mock('@mantine/core', async () => await import('@mocks/@mantine/core'));
+vi.mock('@mantine/core', async () => await import('#mocks/@mantine/core'));
 
 vi.mock('@/_components/Calendar', async () => ({
 	useCalendarContext: vi.fn(),

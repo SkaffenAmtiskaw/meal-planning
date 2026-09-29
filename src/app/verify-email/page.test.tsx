@@ -1,18 +1,17 @@
-import { redirect } from 'next/navigation';
-
 import { render, screen } from '@testing-library/react';
-
 import { beforeEach, describe, expect, it, vi } from 'vitest';
+
+import { redirect } from 'next/navigation';
 
 import VerifyEmailPage from './page';
 
-vi.mock('next/navigation', async () => await import('@mocks/next/navigation'));
+vi.mock('next/navigation', async () => await import('#mocks/next/navigation'));
 
 vi.mock('./_components/ResendVerificationForm', () => ({
 	ResendVerificationForm: vi.fn(() => null),
 }));
 
-vi.mock('@mantine/core', async () => await import('@mocks/@mantine/core'));
+vi.mock('@mantine/core', async () => await import('#mocks/@mantine/core'));
 
 describe('VerifyEmailPage', () => {
 	beforeEach(() => {

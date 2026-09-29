@@ -1,8 +1,7 @@
-import { Combobox, Pill, useCombobox } from '@mantine/core';
-
 import { act, fireEvent, render, screen } from '@testing-library/react';
-
 import { beforeEach, describe, expect, it, vi } from 'vitest';
+
+import { Combobox, Pill, useCombobox } from '@mantine/core';
 
 import { addTag } from '@/_actions/library';
 import { TAG_COLORS } from '@/_theme/colors';
@@ -31,10 +30,10 @@ vi.mock('@/_theme/colors', () => ({
 
 vi.mock(
 	'@/_actions/library',
-	async () => await import('@mocks/@/_actions/library'),
+	async () => await import('#mocks/@/_actions/library'),
 );
 
-vi.mock('@mantine/core', async () => await import('@mocks/@mantine/core'));
+vi.mock('@mantine/core', async () => await import('#mocks/@mantine/core'));
 
 vi.mock('@/_utils/catchify', () => ({
 	catchify: vi.fn((fn: () => Promise<unknown>) =>

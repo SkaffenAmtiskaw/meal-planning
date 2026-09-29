@@ -1,8 +1,7 @@
-import { notFound, redirect } from 'next/navigation';
-
 import { render } from '@testing-library/react';
-
 import { beforeEach, describe, expect, test, vi } from 'vitest';
+
+import { notFound, redirect } from 'next/navigation';
 
 import { PlannerProvider } from './_components';
 
@@ -26,7 +25,7 @@ vi.mock('@/_actions/user', () => ({
 	getUser: () => mockGetUser(),
 }));
 
-vi.mock('next/navigation', async () => await import('@mocks/next/navigation'));
+vi.mock('next/navigation', async () => await import('#mocks/next/navigation'));
 
 vi.mock('@/app/_components/Header', () => ({
 	Header: ({ children }: { children?: React.ReactNode }) => children || null,

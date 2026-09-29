@@ -12,7 +12,7 @@ vi.mock('@/_models/sharing', () => ({
 }));
 vi.mock(
 	'@/_utils/serialize',
-	async () => await import('@mocks/@/_utils/serialize'),
+	async () => await import('#mocks/@/_utils/serialize'),
 );
 
 import { checkAuth } from '@/_actions/auth';

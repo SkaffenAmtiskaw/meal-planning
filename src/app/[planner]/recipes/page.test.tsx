@@ -1,5 +1,4 @@
 import { render } from '@testing-library/react';
-
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { getPlanner } from '@/_actions/planner';
@@ -14,7 +13,7 @@ vi.mock('@/_utils/zObjectId', async () => {
 
 vi.mock(
 	'@/_actions/planner',
-	async () => await import('@mocks/@/_actions/planner'),
+	async () => await import('#mocks/@/_actions/planner'),
 );
 
 vi.mock('./_components', () => ({
@@ -23,7 +22,7 @@ vi.mock('./_components', () => ({
 	SavedList: vi.fn(() => null),
 }));
 
-vi.mock('@mantine/core', async () => await import('@mocks/@mantine/core'));
+vi.mock('@mantine/core', async () => await import('#mocks/@mantine/core'));
 
 const plannerId = '507f1f77bcf86cd799439011';
 

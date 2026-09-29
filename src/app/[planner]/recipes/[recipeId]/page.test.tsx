@@ -1,8 +1,7 @@
-import { notFound } from 'next/navigation';
-
 import { render } from '@testing-library/react';
-
 import { beforeEach, describe, expect, it, vi } from 'vitest';
+
+import { notFound } from 'next/navigation';
 
 import { getPlanner } from '@/_actions/planner';
 
@@ -27,12 +26,12 @@ vi.mock('@/_utils/matchesId', () => ({
 
 vi.mock(
 	'@/_actions/planner',
-	async () => await import('@mocks/@/_actions/planner'),
+	async () => await import('#mocks/@/_actions/planner'),
 );
 
-vi.mock('next/navigation', async () => await import('@mocks/next/navigation'));
+vi.mock('next/navigation', async () => await import('#mocks/next/navigation'));
 
-vi.mock('@mantine/core', async () => await import('@mocks/@mantine/core'));
+vi.mock('@mantine/core', async () => await import('#mocks/@mantine/core'));
 
 vi.mock('./_components/RecipeDetail', () => ({
 	RecipeDetail: vi.fn(() => null),

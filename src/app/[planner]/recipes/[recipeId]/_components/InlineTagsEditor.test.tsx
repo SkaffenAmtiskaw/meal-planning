@@ -1,5 +1,3 @@
-import { useRouter } from 'next/navigation';
-
 import {
 	act,
 	fireEvent,
@@ -7,8 +5,9 @@ import {
 	screen,
 	waitFor,
 } from '@testing-library/react';
-
 import { beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
+
+import { useRouter } from 'next/navigation';
 
 import { updateRecipeTags } from '@/_actions/library';
 
@@ -16,9 +15,9 @@ import { InlineTagsEditor } from './InlineTagsEditor';
 
 const mockRefresh = vi.fn();
 
-vi.mock('next/navigation', async () => await import('@mocks/next/navigation'));
+vi.mock('next/navigation', async () => await import('#mocks/next/navigation'));
 
-vi.mock('@mantine/core', async () => await import('@mocks/@mantine/core'));
+vi.mock('@mantine/core', async () => await import('#mocks/@mantine/core'));
 
 vi.mock('@/_actions/library', () => ({
 	updateRecipeTags: vi.fn(),

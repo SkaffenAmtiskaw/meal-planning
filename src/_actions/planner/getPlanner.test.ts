@@ -1,5 +1,6 @@
-import { Types } from 'mongoose';
 import { afterEach, describe, expect, test, vi } from 'vitest';
+
+import { Types } from 'mongoose';
 
 import { Planner } from '@/_models/planner';
 

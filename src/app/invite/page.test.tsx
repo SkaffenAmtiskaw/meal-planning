@@ -1,14 +1,13 @@
 import { render, screen } from '@testing-library/react';
-
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import Page from './page';
 
-vi.mock('@mantine/core', async () => await import('@mocks/@mantine/core'));
+vi.mock('@mantine/core', async () => await import('#mocks/@mantine/core'));
 
 vi.mock(
 	'@/_actions/sharing',
-	async () => await import('@mocks/@/_actions/sharing'),
+	async () => await import('#mocks/@/_actions/sharing'),
 );
 
 vi.mock('./_components/InviteRegistrationFlow', () => ({

@@ -1,5 +1,6 @@
-import { Types } from 'mongoose';
 import { afterEach, describe, expect, it, vi } from 'vitest';
+
+import { Types } from 'mongoose';
 
 import { addPlanner } from '@/_actions/planner';
 import { User } from '@/_models/user';
@@ -8,10 +9,10 @@ import { addUser } from './addUser';
 
 vi.mock(
 	'@/_actions/planner',
-	async () => await import('@mocks/@/_actions/planner'),
+	async () => await import('#mocks/@/_actions/planner'),
 );
 
-vi.mock('@/_models/user', async () => await import('@mocks/@/_models/user'));
+vi.mock('@/_models/user', async () => await import('#mocks/@/_models/user'));
 
 describe('addUser', () => {
 	afterEach(() => {

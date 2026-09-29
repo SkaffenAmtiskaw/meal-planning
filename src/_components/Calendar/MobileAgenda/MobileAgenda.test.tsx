@@ -1,9 +1,9 @@
+import { render, screen } from '@testing-library/react';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
+
 import type { ReactNode } from 'react';
 
-import { render, screen } from '@testing-library/react';
-
 import { DateTime } from 'luxon';
-import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { useCalendarContext } from '@/_components/Calendar';
 import type {
@@ -14,7 +14,7 @@ import { MealCard } from '@/_components/Calendar/MealCard/MealCard';
 
 import { MobileAgenda } from './MobileAgenda';
 
-vi.mock('@mantine/core', async () => await import('@mocks/@mantine/core'));
+vi.mock('@mantine/core', async () => await import('#mocks/@mantine/core'));
 vi.mock('@/_components/Calendar', async () => ({
 	useCalendarContext: vi.fn(),
 }));

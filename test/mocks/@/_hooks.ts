@@ -2,15 +2,15 @@
  * Shared mock for @/_hooks.
  *
  * Usage in a test file:
- *   vi.mock('@/_hooks', async () => await import('@mocks/@/_hooks'));
+ *   vi.mock('@/_hooks', async () => await import('#mocks/@/_hooks'));
  *
  * Default implementations survive `vi.resetAllMocks()`. Use
  * `vi.mocked(useFormFeedback).mockReturnValueOnce(...)` etc. to override for a single test.
  */
 
-import { useState } from 'react';
-
 import { vi } from 'vitest';
+
+import { useState } from 'react';
 
 type FeedbackStatus = 'idle' | 'submitting' | 'success' | 'error';
 

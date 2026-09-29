@@ -1,16 +1,15 @@
-import { useDisclosure } from '@mantine/hooks';
-
 import { act, render, screen } from '@testing-library/react';
-
 import { beforeEach, describe, expect, it, vi } from 'vitest';
+
+import { useDisclosure } from '@mantine/hooks';
 
 import { ConfirmModal } from '@/_components';
 import { useAsyncStatus } from '@/_hooks';
 
 import { ConfirmButton } from './ConfirmButton';
 
-vi.mock('@mantine/hooks', async () => await import('@mocks/@mantine/hooks'));
-vi.mock('@/_hooks', async () => await import('@mocks/@/_hooks'));
+vi.mock('@mantine/hooks', async () => await import('#mocks/@mantine/hooks'));
+vi.mock('@/_hooks', async () => await import('#mocks/@/_hooks'));
 vi.mock('@/_components', async () => ({
 	ConfirmModal: vi.fn(() => null),
 }));

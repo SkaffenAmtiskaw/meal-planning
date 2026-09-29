@@ -1,12 +1,11 @@
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
-
 import { afterEach, describe, expect, test, vi } from 'vitest';
 
 import { client } from '@/_utils/auth';
 
 import { ChangePasswordForm } from './ChangePasswordForm';
 
-vi.mock('@mantine/core', async () => await import('@mocks/@mantine/core'));
+vi.mock('@mantine/core', async () => await import('#mocks/@mantine/core'));
 
 vi.mock('@/_utils/auth', () => ({
 	client: {

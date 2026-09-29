@@ -1,19 +1,18 @@
-import { useRouter } from 'next/navigation';
-
 import { fireEvent, render, screen } from '@testing-library/react';
-
 import { beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
+
+import { useRouter } from 'next/navigation';
 
 import { deleteRecipe } from '@/_actions/library';
 import { ConfirmButton } from '@/_components';
 
 import { RecipeDetail } from './RecipeDetail';
 
-vi.mock('next/navigation', async () => await import('@mocks/next/navigation'));
+vi.mock('next/navigation', async () => await import('#mocks/next/navigation'));
 
 vi.mock(
 	'@/_actions/library',
-	async () => await import('@mocks/@/_actions/library'),
+	async () => await import('#mocks/@/_actions/library'),
 );
 
 vi.mock('@/_components', () => ({
@@ -32,7 +31,7 @@ vi.mock('./InlineTagsEditor', () => ({
 	InlineTagsEditor: () => <div data-testid="inline-tags-editor" />,
 }));
 
-vi.mock('@mantine/core', async () => await import('@mocks/@mantine/core'));
+vi.mock('@mantine/core', async () => await import('#mocks/@mantine/core'));
 
 const mockPush = vi.fn();
 

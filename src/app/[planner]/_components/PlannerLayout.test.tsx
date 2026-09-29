@@ -1,15 +1,14 @@
-import { useParams } from 'next/navigation';
-
 import { render } from '@testing-library/react';
-
 import { beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
+
+import { useParams } from 'next/navigation';
 
 import { PlannerLayout } from './PlannerLayout';
 import { useLastOpenedPlanner } from './useLastOpenedPlanner';
 
-vi.mock('next/navigation', async () => await import('@mocks/next/navigation'));
+vi.mock('next/navigation', async () => await import('#mocks/next/navigation'));
 
-vi.mock('@mantine/core', async () => await import('@mocks/@mantine/core'));
+vi.mock('@mantine/core', async () => await import('#mocks/@mantine/core'));
 
 vi.mock('./useLastOpenedPlanner', () => ({
 	useLastOpenedPlanner: vi.fn(),

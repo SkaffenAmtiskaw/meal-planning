@@ -1,12 +1,11 @@
 import 'temporal-polyfill/global';
 
 import { fireEvent, render, screen } from '@testing-library/react';
-
 import { beforeEach, describe, expect, test, vi } from 'vitest';
 
 import { WeekMealCard } from './WeekMealCard';
 
-vi.mock('@mantine/core', async () => await import('@mocks/@mantine/core'));
+vi.mock('@mantine/core', async () => await import('#mocks/@mantine/core'));
 
 const day = Temporal.PlainDate.from('2024-01-15');
 

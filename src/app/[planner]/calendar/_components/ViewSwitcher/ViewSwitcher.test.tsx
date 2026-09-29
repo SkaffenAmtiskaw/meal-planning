@@ -1,10 +1,9 @@
 import { fireEvent, render, screen } from '@testing-library/react';
-
 import { describe, expect, test, vi } from 'vitest';
 
 import { ViewSwitcher } from './ViewSwitcher';
 
-vi.mock('@mantine/core', async () => await import('@mocks/@mantine/core'));
+vi.mock('@mantine/core', async () => await import('#mocks/@mantine/core'));
 
 describe('ViewSwitcher', () => {
 	test('shows Month, Week, and List on desktop', () => {

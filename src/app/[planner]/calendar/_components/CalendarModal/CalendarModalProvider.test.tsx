@@ -1,19 +1,18 @@
+import { act, render, renderHook, screen } from '@testing-library/react';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
+
 import type { ReactNode } from 'react';
 
 import { Modal } from '@mantine/core';
-
-import { act, render, renderHook, screen } from '@testing-library/react';
-
-import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { useIsMobile } from '@/_hooks';
 
 import { useCalendarModal } from './CalendarModalContext';
 import { CalendarModalProvider } from './CalendarModalProvider';
 
-vi.mock('@mantine/core', async () => await import('@mocks/@mantine/core'));
-vi.mock('@mantine/hooks', async () => await import('@mocks/@mantine/hooks'));
-vi.mock('@/_hooks', async () => await import('@mocks/@/_hooks'));
+vi.mock('@mantine/core', async () => await import('#mocks/@mantine/core'));
+vi.mock('@mantine/hooks', async () => await import('#mocks/@mantine/hooks'));
+vi.mock('@/_hooks', async () => await import('#mocks/@/_hooks'));
 vi.mock('../AddMealForm/AddMealModal', () => ({
 	AddMealModal: vi.fn(() => <div data-testid="add-meal-modal" />),
 }));

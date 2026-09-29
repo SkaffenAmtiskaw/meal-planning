@@ -6,8 +6,8 @@ import { User } from '@/_models/user';
 
 import { updateMemberAccess } from './updateMemberAccess';
 
-vi.mock('@/_actions/auth', async () => await import('@mocks/@/_actions/auth'));
-vi.mock('@/_models/user', async () => await import('@mocks/@/_models/user'));
+vi.mock('@/_actions/auth', async () => await import('#mocks/@/_actions/auth'));
+vi.mock('@/_models/user', async () => await import('#mocks/@/_models/user'));
 
 describe('updateMemberAccess', () => {
 	const plannerId = '507f1f77bcf86cd799439011';

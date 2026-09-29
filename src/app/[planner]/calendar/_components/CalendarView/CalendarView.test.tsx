@@ -1,7 +1,7 @@
 import { act, render, screen } from '@testing-library/react';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { DateTime } from 'luxon';
-import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { useCalendarContext } from '@/_components/Calendar';
 import { useIsMobile } from '@/_hooks';
@@ -16,9 +16,9 @@ import { MealListView } from '../MealListView/MealListView';
 import { MealMonthAgenda } from '../MealMonthAgenda/MealMonthAgenda';
 import { MealWeekView } from '../MealWeekView/MealWeekView';
 
-vi.mock('@mantine/core', async () => await import('@mocks/@mantine/core'));
-vi.mock('@mantine/hooks', async () => await import('@mocks/@mantine/hooks'));
-vi.mock('@/_hooks', async () => await import('@mocks/@/_hooks'));
+vi.mock('@mantine/core', async () => await import('#mocks/@mantine/core'));
+vi.mock('@mantine/hooks', async () => await import('#mocks/@mantine/hooks'));
+vi.mock('@/_hooks', async () => await import('#mocks/@/_hooks'));
 
 vi.mock('@/_components/Calendar', async () => ({
 	CalendarProvider: vi.fn(({ children }) => (

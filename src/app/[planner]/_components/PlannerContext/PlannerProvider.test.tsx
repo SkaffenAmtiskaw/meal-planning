@@ -1,8 +1,7 @@
-import { useContext } from 'react';
-
 import { render, screen, waitFor } from '@testing-library/react';
-
 import { describe, expect, it, vi } from 'vitest';
+
+import { useContext } from 'react';
 
 import { getPlannerClient } from '@/_actions/planner';
 
@@ -11,7 +10,7 @@ import { PlannerProvider } from './PlannerProvider';
 
 vi.mock(
 	'@/_actions/planner',
-	async () => await import('@mocks/@/_actions/planner'),
+	async () => await import('#mocks/@/_actions/planner'),
 );
 
 const id = '507f1f77bcf86cd799439011';

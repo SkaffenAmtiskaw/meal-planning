@@ -2,7 +2,7 @@
  * Shared mock for @mantine/hooks.
  *
  * Usage in a test file:
- *   vi.mock('@mantine/hooks', async () => await import('@mocks/@mantine/hooks'));
+ *   vi.mock('@mantine/hooks', async () => await import('#mocks/@mantine/hooks'));
  *
  * Default implementations survive `vi.resetAllMocks()`. Use
  * `vi.mocked(useDisclosure).mockReturnValueOnce(...)` etc. to override for a single test.

@@ -7,11 +7,11 @@ import { validateInviteToken } from './validateInviteToken';
 
 vi.mock(
 	'@/_models/planner',
-	async () => await import('@mocks/@/_models/planner'),
+	async () => await import('#mocks/@/_models/planner'),
 );
 vi.mock(
 	'@/_models/sharing',
-	async () => await import('@mocks/@/_models/sharing'),
+	async () => await import('#mocks/@/_models/sharing'),
 );
 
 describe('validateInviteToken', () => {

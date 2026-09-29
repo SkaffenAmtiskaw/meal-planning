@@ -1,13 +1,13 @@
+import { fireEvent, render, screen } from '@testing-library/react';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
+
 import { createRef } from 'react';
 
-import { makeDish } from '@fixtures/dish';
-import { fireEvent, render, screen } from '@testing-library/react';
-
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { makeDish } from '#fixtures/dish';
 
 import { DishNoteField } from './DishNoteField';
 
-vi.mock('@mantine/core', async () => await import('@mocks/@mantine/core'));
+vi.mock('@mantine/core', async () => await import('#mocks/@mantine/core'));
 
 vi.mock('./DishRow.module.css', () => ({
 	default: {

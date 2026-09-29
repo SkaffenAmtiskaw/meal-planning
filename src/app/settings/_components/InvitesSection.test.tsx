@@ -1,8 +1,7 @@
-import { useRouter } from 'next/navigation';
-
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
-
 import { beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
+
+import { useRouter } from 'next/navigation';
 
 import type { UserInvite } from '@/_actions/sharing';
 import type { AccessLevel } from '@/_models/user';
@@ -11,11 +10,11 @@ import { InvitesSection } from './InvitesSection';
 
 const mockRefresh = vi.fn();
 
-vi.mock('@/_hooks', async () => await import('@mocks/@/_hooks'));
+vi.mock('@/_hooks', async () => await import('#mocks/@/_hooks'));
 
-vi.mock('next/navigation', async () => await import('@mocks/next/navigation'));
+vi.mock('next/navigation', async () => await import('#mocks/next/navigation'));
 
-vi.mock('@mantine/core', async () => await import('@mocks/@mantine/core'));
+vi.mock('@mantine/core', async () => await import('#mocks/@mantine/core'));
 
 vi.mock('@tabler/icons-react', () => ({
 	IconCheck: () => <span data-testid="icon-check">Check</span>,

@@ -1,7 +1,7 @@
 import { fireEvent, render, screen, within } from '@testing-library/react';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { DateTime } from 'luxon';
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { WeekView } from './WeekView';
 
@@ -9,7 +9,7 @@ import { useCalendarContext } from '../CalendarContext';
 import { CalendarProvider } from '../CalendarProvider';
 import { getWeekDates } from '../_utils/getWeekDates';
 
-vi.mock('@mantine/core', async () => await import('@mocks/@mantine/core'));
+vi.mock('@mantine/core', async () => await import('#mocks/@mantine/core'));
 
 vi.mock('../_utils/getWeekDates', () => ({
 	getWeekDates: vi.fn(),

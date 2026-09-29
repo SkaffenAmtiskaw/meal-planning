@@ -1,5 +1,6 @@
-import { Types } from 'mongoose';
 import { afterEach, describe, expect, test, vi } from 'vitest';
+
+import { Types } from 'mongoose';
 
 import { getUser } from '@/_actions/user';
 import { catchify } from '@/_utils/catchify';
