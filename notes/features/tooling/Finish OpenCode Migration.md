@@ -19,6 +19,11 @@ What's left in `.opencode/`:
 - `.opencode/lib/delegation-decision.md`: how the OpenCode `implement` agent picks `@develop`, `@resolve` or `@apply` for delegated work.
 - `.opencode/package.json`, `package-lock.json` and `node_modules/`.
 - `opencode.jsonc` at the repo root.
+- `.opencode/secrets/credentials.md`: the test login the `running-the-app` skill uses.
+
+Rules that point at `.opencode/` and go with it:
+- AGENTS.md's Project section, which has agents leave `.opencode/` out of searches.
+- `/review` step 2, which leaves `.opencode/` out of the story's changed files.
 
 Found 2026-09-28 while shaping [[Dev Foundations]] with `/roadmap`.
 

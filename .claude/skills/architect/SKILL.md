@@ -83,7 +83,7 @@ Send the `rule-auditor` subagent:
 
 Don't send the note path or the existing Migration Checklist. The audit is only useful if it isn't anchored to the starting list.
 
-Save its report to `.scratch/<note name> - audit.md`. Add its "Outside these rules" items to your out-of-scope list.
+Save its report to `.scratch/<note name> - audit.md`. The auditor never sees the note, so it lists everything no rule covers under "Outside these rules", including work the story needs. Sort each item against the note's Purpose. If the story needs it to meet its Purpose, it's part of the story, as AGENTS.md describes under "Out-of-scope work", so keep it for the checklist. Otherwise, add it to your out-of-scope list.
 
 **Unclear rules.** If the auditor reports a rule it couldn't apply without judgment, the rule isn't checkable yet. Show Sarah what it was unsure about, sharpen the rule with her, update the note, and send that rule to the auditor again.
 
@@ -93,10 +93,11 @@ Compare the audit with the note's existing checklist:
 - **Found only by the auditor:** add.
 - **Only in the note:** work out why. Some are forward-looking on purpose, such as code another story is about to change. Those stay, in their own group. Others are already fixed, or never broke the rule. Those are a question for Sarah.
 
-Then add the items that come from the Rules and Enforcement rather than from violations:
+Then add the items that don't come from violations:
 - **Enforcement:** each type, lint rule or test to add.
 - **Docs:** each rule, in the doc and section it lands in.
 - **Tests and mocks:** tests and shared mocks in `test/mocks/` that must change when the code they cover moves, as "Creating Centralized Mocks" in `docs/unit_tests.md` describes.
+- **Work the story needs:** each "Outside these rules" item you kept for the checklist during the audit.
 
 Group the items by kind, as checkboxes with file paths and line numbers. Put a line under the heading saying when it was audited: `*Audited YYYY-MM-DD by reading code.*`
 

@@ -5,6 +5,8 @@ A full-stack meal planning web app. Users sign in, create meal planners, manage 
 
 Work is planned and tracked as notes in the Obsidian vault in `notes/`.
 
+`.opencode/` holds the old OpenCode agents and their files, kept only until the move to Claude Code finishes. If a task moves an OpenCode agent to Claude Code, or a skill names a file there (such as the test login `running-the-app` uses), read what it needs. Otherwise, leave `.opencode/` out of searches, and don't report problems you see in it.
+
 ## Working with Sarah
 - **One question at a time.** Ask one, wait for the answer, then ask the next. Never send a list of questions, and never ask her to approve a list of decisions at once. A later question often depends on an earlier answer.
 - **Wrong assumptions:** if her answer shows a question rested on a wrong assumption, say the question is no longer needed and move on.
@@ -48,6 +50,8 @@ Any change to a note in `notes/` follows these rules:
 
 ## Out-of-scope work
 Keep a running list of anything that looks like it belongs outside the story or step you're working on, whether you, a subagent or Sarah found it. If Sarah gives feedback on how a skill, subagent or the workflow itself behaves, and this session isn't working on that same skill or subagent, it always goes on the list, even when it's also saved as a memory. Don't stop to deal with items as they come up.
+
+**Work the story needs isn't an item.** If the story can't meet its own Purpose without some piece of work, such as gitignoring the output of a tool the story adds, that work is part of the story, even when a subagent reports it as outside its rules or no rule covers it. If the story's steps are written, add it to the step that needs it. Otherwise, add it to the section that lists what the story changes, such as its Suggested Approach, Fix or Migration Checklist. Name it in your summary.
 
 **Immature stories aren't items.** A note or Roadmap line that isn't shaped yet, such as Sarah's jotted thoughts with no frontmatter or Where It Stands, a Roadmap line with a description after its status embed, or a story that is only a Roadmap line, stays off the list. `/shape` and the skills after it turn it into a unit of work and format it. If something is wrong with it beyond that, such as a wrong fact or a real conflict, it goes on the list.
 
