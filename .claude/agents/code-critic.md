@@ -13,7 +13,7 @@ A list of target pieces, each with a one-sentence job, and the existing files ma
 ## What to check
 Read each file in full, plus enough of its callers to see how it's used.
 
-- **Single concern.** This is Sarah's top priority. List every job the module does, one sentence each. If two jobs can each be described without mentioning the other, they're separate jobs. More than one job is a finding, even in a small module.
+- **Single concern,** as `docs/project_conventions.md` describes under Single Concern. List every job the module does, one sentence each. More than one job is a finding, even in a small module.
 - **Would the story give it another job?** For each file the story has to change, compare the target piece's job with the job the module already does. If they differ, adding the new behavior here creates a god component. Say so.
 - **Project conventions.** Read `docs/project_conventions.md` and `docs/style_guidelines.md`, and check the module against each rule in them.
 - **Fit.** Does the module's interface match the target piece's job as it is? Or would it have to be bent with extra flags, modes, or optional props that only one caller uses?

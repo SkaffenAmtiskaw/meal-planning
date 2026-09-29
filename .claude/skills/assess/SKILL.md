@@ -14,7 +14,7 @@ hooks:
 Assess the feature note **$ARGUMENTS** against the codebase and produce its Suggested Approach.
 
 ## Why this skill works the way it does
-Sarah wants to know, for a feature design, what already exists in the code and what has to be built, refactored or replaced. Past planning agents started from the existing code, reused it because it was there, and piled new behavior into components that already had a job. The result was god components. Single concern is one of Sarah's top priorities.
+Sarah wants to know, for a feature design, what already exists in the code and what has to be built, refactored or replaced. Past planning agents started from the existing code, reused it because it was there, and piled new behavior into components that already had a job. The result was god components, which break Single Concern in `docs/project_conventions.md`.
 
 So the order here is deliberate. First decide what *should* exist. Then judge the existing code against that. "Use it as-is" is the claim that needs evidence, not "refactor it."
 

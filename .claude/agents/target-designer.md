@@ -19,7 +19,7 @@ Don't open anything under `src/` or `test/`, and don't search them. Don't read t
 - library docs, only for what the story needs, as AGENTS.md describes under "Library APIs".
 
 ## How to design it
-Single concern is Sarah's top priority. For each piece, give:
+Follow Single Concern in `docs/project_conventions.md`. For each piece, give:
 - **Kind:** component, hook, utility, server action or model.
 - **Job:** one sentence without "and". If it needs "and", it's two pieces.
 - **Server or client:** follow "Prefer Server Components" in `docs/project_conventions.md`.

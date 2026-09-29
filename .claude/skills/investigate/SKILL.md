@@ -19,7 +19,7 @@ Investigate the note **$ARGUMENTS** and take it to `spec`.
 A few things shape how it works:
 - **Reproduce before you diagnose.** A diagnosis of runtime behavior nobody has seen is a guess. Past agents guessed, fixed the wrong thing and guessed again. Every bug is reproduced in the running app before a root cause is written down. The only exceptions are ones Sarah signs off on.
 - **Observation stays apart from diagnosis.** The `bug-reproducer` subagent follows exact steps and reports what it saw. It never gets your theory, so it can't see what it expects to see. You do the diagnosis from its report.
-- **Fixes don't pile into existing modules.** Single concern is one of Sarah's top priorities. A fix that gives an existing module a new job gets reviewed by `code-critic` before Sarah picks it.
+- **Fixes don't pile into existing modules.** A fix that gives an existing module a new job breaks Single Concern in `docs/project_conventions.md`, so it gets reviewed by `code-critic` before Sarah picks it.
 
 This is planning only. Don't change code. A hook blocks edits outside `notes/` and `.scratch/`.
 

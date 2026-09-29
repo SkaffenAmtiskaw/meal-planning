@@ -12,6 +12,11 @@
 - Utilities which have domain-knowledge should exist in `_utils` directories in the directories where they are consumed. If they are consumed in multiple places, the `_utils` directory should be placed in the lowest common parent directory of all consuming modules.
 
 # Architecture
+## Single Concern
+Single concern is a primary concern in this codebase. Each module (component, hook, utility, action) does one job. Two jobs are separate if each can be described without mentioning the other.
+- When new behavior is a different job from the one an existing module does, it should be built as a new component, hook or utility. It should never be added to the existing module, even when that module is where the behavior is used.
+- Existing code shouldn't be kept simply because it exists. If a module does more than one job, it should be refactored before anything new is built on it.
+
 ## Prefer Server Components
 ALWAYS implement as a Server Component first. Only add `'use client'` when you have a specific reason that requires client-side JavaScript.
 

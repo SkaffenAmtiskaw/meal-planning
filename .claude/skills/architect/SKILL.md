@@ -93,7 +93,7 @@ Compare the audit with the note's existing checklist:
 Then add the items that come from the Rules and Enforcement rather than from violations:
 - **Enforcement:** each type, lint rule or test to add.
 - **Docs:** each rule, in the doc and section it lands in.
-- **Tests and mocks:** tests and shared mocks in `test/mocks/` that must change when the code they cover moves. A mock moves with its module; it's never replaced with inline mocks.
+- **Tests and mocks:** tests and shared mocks in `test/mocks/` that must change when the code they cover moves, as "Creating Centralized Mocks" in `docs/unit_tests.md` describes.
 
 Group the items by kind, as checkboxes with file paths and line numbers. Put a line under the heading saying when it was audited: `*Audited YYYY-MM-DD by reading code.*`
 

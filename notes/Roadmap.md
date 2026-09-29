@@ -27,22 +27,21 @@
 # Now
 
 # Next
-1. [[Docs Updates]] ![[Docs Updates#^status]] 🎯 [[Dev Foundations]]
-2. [[Agent Workflow Changes]] ![[Agent Workflow Changes#^status]] 🎯 [[Dev Foundations]] 🎯 [[Calendar Page]]
-3. [[E2E Test Setup]] ![[E2E Test Setup#^status]] 🎯 [[Dev Foundations]] 🎯 [[Calendar Page]]
-4. [[Finish OpenCode Migration]] ![[Finish OpenCode Migration#^status]] 🎯 [[Dev Foundations]]
-5. [[Dev Tooling Tidy-Ups]] ![[Dev Tooling Tidy-Ups#^status]] 🎯 [[Dev Foundations]]
-6. [[CI Checks]] ![[CI Checks#^status]] 🎯 [[Dev Foundations]] 🎯 [[Calendar Page]]
-7. [[E2E Tests in CI]] ![[E2E Tests in CI#^status]] 🎯 [[Dev Foundations]]
-8. [[Docs Audit]] ![[Docs Audit#^status]] 🎯 [[Dev Foundations]]
-9. [[Calendar and Recipes Data Refresh]] ![[Calendar and Recipes Data Refresh#^status]] - ready. Fixes both stale-data symptoms; unblocks [[Add Meal Changes (Saved Recipes)]] and [[Mobile List View]]. *(was bugfix)* 🎯 [[Calendar Page]]
-10. [[Settings Data Refresh]] ![[Settings Data Refresh#^status]] - spec. Waiting on [[Calendar and Recipes Data Refresh]]. 🎯 [[Calendar Page]]
-11. [[Server-Only Code Behind Barrels]] ![[Server-Only Code Behind Barrels#^status]] 🎯 [[Calendar Page]]
-12. [[Server-Only Creation and Pure Reads]] ![[Server-Only Creation and Pure Reads#^status]] - spec. Waiting on [[Server-Only Code Behind Barrels]]. 🎯 [[Calendar Page]]
-13. [[Data Rules Enforcement]] ![[Data Rules Enforcement#^status]] - spec. Waiting on [[Calendar and Recipes Data Refresh]], [[Settings Data Refresh]] and [[Server-Only Creation and Pure Reads]]. 🎯 [[Calendar Page]]
-14. [[Today and Selected Day Markers]] ![[Today and Selected Day Markers#^status]] - spec. Fixes the truncated today circle; unblocks [[Mobile List View]]. *(was high)* 🎯 [[Calendar Page]]
-15. [[Mantine Date Picker Setup]] ![[Mantine Date Picker Setup#^status]] - spec. *(was high)* 🎯 [[Calendar Page]]
-16. [[Header Date Picker]] ![[Header Date Picker#^status]] - spec. Waiting on [[Mantine Date Picker Setup]] and [[Today and Selected Day Markers]]. *(was high)* 🎯 [[Calendar Page]]
+1. [[Agent Workflow Changes]] ![[Agent Workflow Changes#^status]] 🎯 [[Dev Foundations]] 🎯 [[Calendar Page]]
+2. [[E2E Test Setup]] ![[E2E Test Setup#^status]] 🎯 [[Dev Foundations]] 🎯 [[Calendar Page]]
+3. [[Finish OpenCode Migration]] ![[Finish OpenCode Migration#^status]] 🎯 [[Dev Foundations]]
+4. [[Dev Tooling Tidy-Ups]] ![[Dev Tooling Tidy-Ups#^status]] 🎯 [[Dev Foundations]]
+5. [[CI Checks]] ![[CI Checks#^status]] 🎯 [[Dev Foundations]] 🎯 [[Calendar Page]]
+6. [[E2E Tests in CI]] ![[E2E Tests in CI#^status]] 🎯 [[Dev Foundations]]
+7. [[Docs Audit]] ![[Docs Audit#^status]] 🎯 [[Dev Foundations]]
+8. [[Calendar and Recipes Data Refresh]] ![[Calendar and Recipes Data Refresh#^status]] - ready. Fixes both stale-data symptoms; unblocks [[Add Meal Changes (Saved Recipes)]] and [[Mobile List View]]. *(was bugfix)* 🎯 [[Calendar Page]]
+9. [[Settings Data Refresh]] ![[Settings Data Refresh#^status]] - spec. Waiting on [[Calendar and Recipes Data Refresh]]. 🎯 [[Calendar Page]]
+10. [[Server-Only Code Behind Barrels]] ![[Server-Only Code Behind Barrels#^status]] 🎯 [[Calendar Page]]
+11. [[Server-Only Creation and Pure Reads]] ![[Server-Only Creation and Pure Reads#^status]] - spec. Waiting on [[Server-Only Code Behind Barrels]]. 🎯 [[Calendar Page]]
+12. [[Data Rules Enforcement]] ![[Data Rules Enforcement#^status]] - spec. Waiting on [[Calendar and Recipes Data Refresh]], [[Settings Data Refresh]] and [[Server-Only Creation and Pure Reads]]. 🎯 [[Calendar Page]]
+13. [[Today and Selected Day Markers]] ![[Today and Selected Day Markers#^status]] - spec. Fixes the truncated today circle; unblocks [[Mobile List View]]. *(was high)* 🎯 [[Calendar Page]]
+14. [[Mantine Date Picker Setup]] ![[Mantine Date Picker Setup#^status]] - spec. *(was high)* 🎯 [[Calendar Page]]
+15. [[Header Date Picker]] ![[Header Date Picker#^status]] - spec. Waiting on [[Mantine Date Picker Setup]] and [[Today and Selected Day Markers]]. *(was high)* 🎯 [[Calendar Page]]
 
 # Later
 ## [[Dev Foundations]]
@@ -111,6 +110,7 @@
 - audit code for client component surface area - move as much as possible to server components *(was low)*
 - [[Unit Test Tidy-Ups]] ![[Unit Test Tidy-Ups#^status]]
 - [[Unit Testing - New Centralized Mocks]] ![[Unit Testing - New Centralized Mocks#^status]]
+- [[Docs Updates]] ![[Docs Updates#^status]]
 
 # Ideas
 - [[Grocery List Integration]]

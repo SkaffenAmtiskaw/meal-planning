@@ -20,6 +20,8 @@ The docs are the five files in `docs/`: `project_conventions.md`, `project_struc
 
 Some lines in the codebase docs talk to an agent instead of describing the code: "Before adding 'use client', ask yourself:" and its three questions in `docs/project_conventions.md`, and the Code Coverage line in `docs/unit_tests.md` that says never to exclude code from coverage unless the user says to. The coverage line also repeats AGENTS.md's "Ignore comments" rule under "Git and files" in different words, so the two could drift. Found 2026-09-28 while `/tooling` split the docs into two kinds.
 
+The docs are also more prescriptive than docs written for human engineers would be. Sarah noted 2026-09-28, while `/tooling` worked through [[Docs Updates]], that she'd never have given people a rule like the 3-test-file threshold in "Creating Centralized Mocks" in `docs/unit_tests.md`; she'd have called out messy mocks in a PR. The audit judges each rule on that, and settles how docs are worded: as descriptions of the codebase, not instructions to an agent. `/tooling` says only that docs describe the codebase, not how they're worded, so the outcome may need a line there so new docs don't drift back.
+
 Found 2026-09-28 while shaping [[Dev Foundations]] with `/roadmap`.
 
 # Questions
