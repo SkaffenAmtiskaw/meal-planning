@@ -80,6 +80,7 @@ Read the docs a task touches when it needs them, not all up front:
 - `docs/project_conventions.md` and `project_structure.md`: before planning or writing code
 - `docs/style_guidelines.md` and `theme.md`: before UI work
 - `docs/unit_tests.md`: before writing tests or mocks
+- `docs/e2e_tests.md`: before writing E2E tests
 
 ## Library APIs
 The libraries in this project are newer than your training data. Never use an API from memory. Every API you use needs a source:
@@ -95,6 +96,7 @@ Look up only what the task uses: one component, one function, one page.
 - `pnpm lint`: Biome. It **writes fixes** to the files, not just reports.
 - `pnpm check:types`: TypeScript, no emit.
 - `pnpm test:agent <path>`: runs the tests for a file or folder, with coverage and output made for agents. For a break-it check, run `pnpm vitest run <test file>` as the check says. Otherwise, use `pnpm test:agent` instead of calling `vitest` directly.
+- `pnpm test:e2e`: builds the app and runs the Playwright E2E tests against a throwaway database. Pass a spec file or folder to run only those. `pnpm test:e2e:trace` does the same with a trace for every test, then opens the report. See `docs/e2e_tests.md`.
 - `pnpm build`: Next.js production build.
 
 ## Git and files

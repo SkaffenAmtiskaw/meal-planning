@@ -6,7 +6,7 @@ confirmed: 2026-09-29
 ---
 # Where It Stands
 
-In progress. Next: implement Step 3 ^status
+In progress. Next: implement Step 4 ^status
 
 Set up E2E testing as a convention (where tests live, how they get their data, how they sign in and how they're run) and prove it with one first test that follows the Rules. [[Core Flows E2E Tests]] and [[Calendar E2E Tests]] build on it.
 
@@ -317,18 +317,26 @@ Test harness: each check breaks a factory or `signIn`, proving the first test ca
 
 **Source:** Migration Checklist → Docs: `docs/e2e_tests.md`; AGENTS.md's Docs list; `docs/project_structure.md` `# e2e/` entry and top-level `test/` entry (Sarah decided 2026-09-29 to fix the misplaced entry here). Rules 1-18 "Lands in". Boy Scout fix: `docs/project_structure.md:7-8` describes `# scripts/` as "lefthook scripts", but it also holds the vault scripts (`vault-lint.sh`, `note-refs.sh`, `vault-orphans.sh`, `note-section.sh`), found by plan-checker during /plan-steps 2026-09-29.
 
-**Approach:** Rules' "Lands in" lines. `docs/e2e_tests.md` has "Where E2E Code Lives" (Rules 1-3, with the area table and the launcher in `e2e/_fixtures/`), "Writing Specs" (Rules 5, 6, 15), "Test Data" (Rules 4, 7, 8, 9, 11, 16, 17, with Rule 16 covering `test.extend` fixtures only), "Signing In" (Rules 10, 18) and "Running E2E Tests" (Rules 12-14, with the Atlas release series and the `package.json` pin Step 1 set, and Rule 13's list of better-auth variables that are set nowhere). Each Rule keeps its Check. It matches the style of `docs/unit_tests.md`.
+**Approach:** Rules' "Lands in" lines. `docs/e2e_tests.md` has "Where E2E Code Lives" (Rules 1-3, with the area table and the launcher in `e2e/_fixtures/`), "Writing Specs" (Rules 5, 6, 15), "Test Data" (Rules 4, 7, 8, 9, 11, 16, 17, with Rule 16 covering `test.extend` fixtures only), "Signing In" (Rules 10, 18) and "Running E2E Tests" (Rules 12-14, with the Atlas release series and the `package.json` pin Step 1 set, and Rule 13's list of better-auth variables that are set nowhere). The doc is a guide for someone writing E2E tests, not a list of rules: each Rule becomes plain guidance with its reason, with ✅/❌ examples where a mistake is easy to make, in the style of `docs/unit_tests.md`. The Checks aren't carried over. One closing paragraph, for anyone who needs to change the conventions, names only enforcement whose location isn't obvious, such as the first spec guarding the factories; a type error that points at its file needs no mention (Sarah decided 2026-09-29).
 
 **Files:**
 - `docs/e2e_tests.md` (new) - the convention
-- `AGENTS.md` - "`docs/e2e_tests.md`: before writing E2E tests" in the Docs list
+- `AGENTS.md` - "`docs/e2e_tests.md`: before writing E2E tests" in the Docs list; `pnpm test:e2e` and `pnpm test:e2e:trace` in the Commands list (Sarah decided 2026-09-29)
 - `docs/project_structure.md` - an `# e2e/` entry; the `test/` entry moved to the top level, covering `fixtures/`, `utils/`, `factories/` and `auth.ts` as well as the setup script and mocks; the `# docs/` description names E2E tests; Boy Scout fix to the `# scripts/` description
 
 **Acceptance:**
-- [ ] Read `docs/e2e_tests.md` top to bottom, as someone about to write a new spec with no access to the note. See that each section makes sense on its own: what to do, where things go and why, with nothing that only the note explains.
-- [ ] In `docs/e2e_tests.md`, see Rules 1-3 with the area table under "Where E2E Code Lives", Rules 5, 6 and 15 under "Writing Specs", Rules 4, 7, 8, 9, 11, 16 and 17 under "Test Data", Rules 10 and 18 under "Signing In", and Rules 12-14 under "Running E2E Tests", each with its Check. Under "Where E2E Code Lives", see `e2e/_fixtures/memoryServer.ts` named as the memory-server launcher. Under "Test Data", see Rule 16 apply to `test.extend` fixtures. Under "Running E2E Tests", see Rule 14 name `package.json` `config.mongodbMemoryServer.version` and not `binary.version`, the same release series as the pin in `package.json`, the four `MONGOMS_*` variables the memory-server entry sets, and the better-auth variables that are set nowhere.
-- [ ] Open `docs/project_structure.md`. See `# e2e/` as a top-level entry describing specs grouped by feature area plus `_fixtures/`, and `# test/` as a top-level entry, no longer under `# src/`. Under `# test/`, see `fixtures/`, `utils/`, `factories/`, `auth.ts`, the setup script and `mocks/`. See `# docs/` mention E2E tests and `# scripts/` mention the vault scripts.
-- [ ] Open `AGENTS.md`. See `docs/e2e_tests.md` in the Docs list.
+- [x] Read `docs/e2e_tests.md` top to bottom, as someone about to write a new spec with no access to the note. See that each section makes sense on its own: what to do, where things go and why, with nothing that only the note explains.
+- [x] In `docs/e2e_tests.md`, see the guidance from Rules 1-3 with the area table under "Where E2E Code Lives", Rules 5, 6 and 15 under "Writing Specs", Rules 4, 7, 8, 9, 11, 16 and 17 under "Test Data", Rules 10 and 18 under "Signing In", and Rules 12-14 under "Running E2E Tests", each with its reason and no per-rule checks or enforcement. At the bottom, see one paragraph naming only the enforcement whose location isn't obvious: the first spec guarding the factories and `signIn`. Under "Where E2E Code Lives", see `e2e/_fixtures/memoryServer.ts` named as the memory-server launcher. Under "Test Data", see Rule 16 apply to `test.extend` fixtures. Under "Running E2E Tests", see Rule 14 name `package.json` `config.mongodbMemoryServer.version` and not `binary.version`, the same release series as the pin in `package.json`, the four `MONGOMS_*` variables the memory-server entry sets, and the better-auth variables that are set nowhere.
+- [x] Open `docs/project_structure.md`. See `# e2e/` as a top-level entry describing specs grouped by feature area plus `_fixtures/`, and `# test/` as a top-level entry, no longer under `# src/`. Under `# test/`, see `fixtures/`, `utils/`, `factories/`, `auth.ts`, the setup script and `mocks/`. See `# docs/` mention E2E tests and `# scripts/` mention the vault scripts.
+- [x] Open `AGENTS.md`. See `docs/e2e_tests.md` in the Docs list, and `pnpm test:e2e` in the Commands list.
+
+**Status:** ✅ Complete
+
+**As built:**
+- `docs/e2e_tests.md` is a guide to writing E2E tests, not a list of rules: each convention in plain words with its reason, ✅/❌ examples where a mistake is easy, and the first spec in full as a worked example. The closing paragraph names only enforcement whose location isn't obvious, the first spec guarding the factories and `signIn`; Steps 5 and 6 don't add to it. Sarah decided 2026-09-29.
+- The doc says almost every test runs in `desktop` and `phone`, and only tests of a workflow specific to one form factor run in one project. How a test is limited to one project is left to the first story that needs it. Sarah decided 2026-09-29.
+- The doc leaves out Playwright's default file pattern (it runs `*.test.ts` as well as `*.spec.ts`, which the Rule 2 Enforcement text doesn't reflect) and the "check the report lists your tests" tip. Sarah decided 2026-09-29.
+- AGENTS.md's Commands list gains `pnpm test:e2e`, with the optional path and `pnpm test:e2e:trace` in its text. Sarah pulled it in 2026-09-29.
 
 ## Step 4: Biome checks `e2e/`
 **Idea:** Biome lints and formats files in `e2e/` the same way it does `src/` and `test/`.

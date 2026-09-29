@@ -1,11 +1,15 @@
 # docs/
-project documentation: structure, code conventions, styling, theme and unit tests
+project documentation: structure, code conventions, styling, theme, unit tests and E2E tests
+# e2e/
+Playwright E2E specs, grouped in folders by feature area (see `docs/e2e_tests.md`)
+## _fixtures/
+Playwright support code: the `test` and `expect` specs import, `signIn` and the memory-server launcher
 # notes/                      
 notes on planned work in Obsidian-flavored Markdown
 ## Roadmap.md
 project roadmap with links to detailed notes
 # scripts/
-lefthook scripts
+lefthook scripts, and scripts that check the notes vault
 # src/
 project source code
 ## _actions/
@@ -26,5 +30,17 @@ reusable utilities for global use in application
 Next.js app directory
 ## env.ts
 environment variables typed with Zod
-## test/
-unit testing setup script & mocks
+# test/
+test support code shared by unit and E2E tests
+## auth.ts
+test-only better-auth instance, used by the E2E factories and `signIn`
+## factories/
+plain functions that create E2E test data in the database, and their connection
+## fixtures/
+unit-test data builders, imported through `#fixtures`
+## mocks/
+reusable unit-test mocks, imported through `#mocks`
+## setup.ts
+unit-test setup script
+## utils/
+unit-test helpers such as `it.byAccessLevels`, imported through `#test`
