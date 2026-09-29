@@ -1,6 +1,6 @@
 import react from '@vitejs/plugin-react'
 import { resolve } from 'node:path'
-import { defineConfig } from 'vitest/config'
+import { configDefaults, defineConfig } from 'vitest/config'
 
 export default defineConfig({
   plugins: [react()],
@@ -17,6 +17,8 @@ export default defineConfig({
         '#mocks': new URL('./test/mocks', import.meta.url).pathname,
         '#fixtures': new URL('./test/fixtures', import.meta.url).pathname,
     },
+    include: ['**/*.test.{ts,tsx}'],
+    exclude: [...configDefaults.exclude, 'e2e/**'],
     environment: 'jsdom',
     setupFiles: ['./test/setup.ts'],
     coverage: {

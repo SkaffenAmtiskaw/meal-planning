@@ -1,12 +1,12 @@
 ---
 type: pattern
-status: in-progress
+status: in-review
 blocked-by: []
 confirmed: 2026-09-29
 ---
 # Where It Stands
 
-In progress. Next: implement Step 6 ^status
+All steps implemented. Next: /review ^status
 
 Set up E2E testing as a convention (where tests live, how they get their data, how they sign in and how they're run) and prove it with one first test that follows the Rules. [[Core Flows E2E Tests]] and [[Calendar E2E Tests]] build on it.
 
@@ -401,6 +401,8 @@ The implementer verifies the overrides statically before handing the step over: 
 - `vitest.config.ts` - `include` and `exclude`
 
 **Acceptance:**
-- [ ] Run `pnpm vitest run e2e`. See "No test files found".
-- [ ] Run `pnpm vitest run src`. See the same test file and test counts the implementer recorded before the change.
-- [ ] Temporarily add `src/scratch.spec.ts` holding `import { test, expect } from 'vitest'; test('x', () => expect(1).toBe(2))`, run `pnpm vitest run src`, see it isn't run and nothing fails. Delete it.
+- [x] Run `pnpm vitest run e2e`. See "No test files found".
+- [x] Run `pnpm vitest run src`. See the same test file and test counts the implementer recorded before the change.
+- [x] Temporarily add `src/scratch.spec.ts` holding `import { test, expect } from 'vitest'; test('x', () => expect(1).toBe(2))`, run `pnpm vitest run src`, see it isn't run and nothing fails. Delete it.
+
+**Status:** ✅ Complete
