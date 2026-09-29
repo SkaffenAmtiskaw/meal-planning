@@ -73,7 +73,7 @@ Then route the items she routed without naming a home:
 2. Go through its suggestions with Sarah **one item at a time**: show the item and the suggested home with its reason, wait for her to approve, change or drop it, apply that one change to the notes, then move to the next.
 
 ## Subagent reports and scratch files
-Save each subagent's report, unedited, to `.scratch/<note name> - <what it is>.md`, and link it when you show Sarah its findings. `.scratch/` is gitignored and wiped on every commit, so it only holds working files for one session. Anything a later session needs goes in the note itself, and a note never links to a scratch file.
+Save each subagent's report, unedited, to `.scratch/<note name> - <what it is>.md`, and link it when you show Sarah its findings. `.scratch/` is gitignored, and each commit deletes the files in it that haven't been written to for a day, so it only holds working files for one session. Anything a later session needs goes in the note itself, and a note never links to a scratch file.
 
 ## Docs
 Read the docs a task touches when it needs them, not all up front:
