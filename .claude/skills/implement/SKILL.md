@@ -67,16 +67,12 @@ Follow "Library APIs" in AGENTS.md for every API you use.
 When you use custom CSS instead of a Mantine component, theme setting or variant, put a one-line comment directly above it saying why Mantine didn't fit.
 
 ## 4. Write the tests first, then the code
-**What a test is for:** every test names the branch or logic it covers. That means a conditional, a calculation, a state change, or what an interaction causes. If the test would still pass after you deleted the code it claims to cover, it doesn't count.
-
-**Never test that JSX renders to spec.** No tests that a class is applied, that a prop is passed to a child, or that text from a prop shows up. Those are brittle and check nothing Sarah cares about.
+Every test follows "Test Logic, Not Rendering" in `docs/unit_tests.md`.
 
 For each piece of logic:
 1. Write the test.
 2. Run it with `pnpm test:agent <path>` and see it fail for the right reason.
 3. Write the code that makes it pass.
-
-A component with no branches still needs coverage. After writing it, add one test named `renders (coverage only, no logic)` that renders it and asserts nothing about the JSX.
 
 A change that adds no logic (a type fix, lint fix, rename or import change) gets no new tests. The existing tests just have to keep passing. If a fix does add a branch, like a null guard, it needs a test. Say so in your report so it doesn't look like padding.
 

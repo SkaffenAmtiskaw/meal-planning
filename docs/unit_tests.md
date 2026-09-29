@@ -318,6 +318,45 @@ The stateful mock's `run()` function sets `loading=true` immediately, before awa
 
 # Test Patterns
 
+## Test Logic, Not Rendering
+Every test covers a branch or a piece of logic: a conditional, a calculation, a state change, or what an interaction causes. If a test would still pass after the code it claims to cover is deleted, it doesn't count.
+
+Never test that JSX renders to spec: that a class is applied, that a prop is passed to a child, or that text from a prop shows up. Those tests check React, not this code, and they break whenever the markup changes.
+
+**What to test in a component:**
+- Conditional rendering logic:
+  - Empty states and error states based on props
+  - Presence of elements after state transitions
+  - Absence of elements from previous states (verify cleanup with `queryByTestId` + `toBeNull()`)
+- User interactions and their effects
+- Business logic (date calculations, permission checks)
+- Integration with hooks and side effects
+- State transitions (loading → success → error)
+
+A component with no branches still needs coverage. Give it one test named `renders (coverage only, no logic)` that renders it and asserts nothing about the JSX.
+
+```tsx
+// ❌ DON'T WRITE - checks that a prop renders, not any logic
+it('should display planner name', () => {
+  render(<Component name="Test" />);
+  expect(screen.getByText('Test')).toBeDefined();
+});
+```
+```tsx
+// ✅ TEST BEHAVIOR - what happens when user interacts
+it('should call onDelete when delete button clicked', () => {
+  render(<PlannerListItem name="Test" onDelete={mockDelete} />);
+  fireEvent.click(screen.getByTestId('delete-button'));
+  expect(mockDelete).toHaveBeenCalledWith('test-id');
+});
+```
+```tsx
+// ✅ COVERAGE ONLY - a component with no branches
+it('renders (coverage only, no logic)', () => {
+  render(<PlannerHeader name="Test" />);
+});
+```
+
 ## Use the Testing Library's Own Tools
 When a testing library already has a tool for the job, use it instead of hand-rolling an equivalent. For example, test a hook on its own with `renderHook`, and give it any provider the hook needs through the `wrapper` option, instead of writing a throwaway component that calls the hook.
 
@@ -345,38 +384,6 @@ expect(hookValue).toBe(value);
 ```
 
 **Why:** The library's tools are documented and familiar to anyone reading the test. A hand-rolled version is extra code each reader has to work out, and it can quietly differ from what the library does.
-
-## Don't Create Purely Presentational Tests
-Do not write tests that only verify React renders props correctly. These test React's functionality, not your code's behavior.
-
-**Instead, focus on:**
-- Conditional rendering logic:
-  - Empty states and error states based on props
-  - Presence of elements after state transitions
-  - Absence of elements from previous states (verify cleanup with `queryByTestId` + `toBeNull()`)
-- User interactions and their effects
-- Business logic (date calculations, permission checks)
-- Integration with hooks and side effects
-- State transitions (loading → success → error)
-
-**Example of what NOT to create:**
-```tsx
-// ❌ DON'T WRITE - purely presentational
-it('should display planner name', () => {
-  render(<Component name="Test" />);
-  expect(screen.getByText('Test')).toBeDefined();
-});
-```
-
-**Instead, test behavior:**
-```tsx
-// ✅ TEST BEHAVIOR - what happens when user interacts
-it('should call onDelete when delete button clicked', () => {
-  render(<PlannerListItem name="Test" onDelete={mockDelete} />);
-  fireEvent.click(screen.getByTestId('delete-button'));
-  expect(mockDelete).toHaveBeenCalledWith('test-id');
-});
-```
 
 ## Only Mock Return Values When Testing Outcomes
 Don't mock return values when you're only testing that a handler was called:
