@@ -31,12 +31,12 @@
 
 # Next
 1. [[E2E Test Setup]] ![[E2E Test Setup#^status]] 🎯 [[Dev Foundations]] 🎯 [[Calendar Page]]
-2. [[Finish OpenCode Migration]] ![[Finish OpenCode Migration#^status]] 🎯 [[Dev Foundations]]
-3. [[Dev Tooling Tidy-Ups]] ![[Dev Tooling Tidy-Ups#^status]] 🎯 [[Dev Foundations]]
-4. [[CI Checks]] ![[CI Checks#^status]] 🎯 [[Dev Foundations]] 🎯 [[Calendar Page]]
-5. [[E2E Tests in CI]] ![[E2E Tests in CI#^status]] 🎯 [[Dev Foundations]]
-6. [[Docs Audit]] ![[Docs Audit#^status]] 🎯 [[Dev Foundations]]
-7. [[Manual and Agent Test Environment]] ![[Manual and Agent Test Environment#^status]] 🎯 [[Dev Foundations]] 🎯 [[Calendar Page]]
+2. [[Dev Tooling Tidy-Ups]] ![[Dev Tooling Tidy-Ups#^status]] 🎯 [[Dev Foundations]]
+3. [[CI Checks]] ![[CI Checks#^status]] 🎯 [[Dev Foundations]] 🎯 [[Calendar Page]]
+4. [[E2E Tests in CI]] ![[E2E Tests in CI#^status]] 🎯 [[Dev Foundations]]
+5. [[Docs Audit]] ![[Docs Audit#^status]] 🎯 [[Dev Foundations]]
+6. [[Manual and Agent Test Environment]] ![[Manual and Agent Test Environment#^status]] 🎯 [[Dev Foundations]] 🎯 [[Calendar Page]]
+7. [[Finish OpenCode Migration]] ![[Finish OpenCode Migration#^status]] 🎯 [[Dev Foundations]]
 8. [[Calendar and Recipes Data Refresh]] ![[Calendar and Recipes Data Refresh#^status]] - ready. Fixes both stale-data symptoms; unblocks [[Add Meal Changes (Saved Recipes)]] and [[Mobile List View]]. *(was bugfix)* 🎯 [[Calendar Page]]
 9. [[Settings Data Refresh]] ![[Settings Data Refresh#^status]] - spec. Waiting on [[Calendar and Recipes Data Refresh]]. 🎯 [[Calendar Page]]
 10. [[Server-Only Code Behind Barrels]] ![[Server-Only Code Behind Barrels#^status]] 🎯 [[Calendar Page]]

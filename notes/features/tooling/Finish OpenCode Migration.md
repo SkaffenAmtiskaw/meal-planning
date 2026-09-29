@@ -19,7 +19,7 @@ What's left in `.opencode/`:
 - `.opencode/lib/delegation-decision.md`: how the OpenCode `implement` agent picks `@develop`, `@resolve` or `@apply` for delegated work.
 - `.opencode/package.json`, `package-lock.json` and `node_modules/`.
 - `opencode.jsonc` at the repo root.
-- `.opencode/secrets/credentials.md`: the test login the `running-the-app` skill uses.
+- `.opencode/secrets/credentials.md`: the test login the `running-the-app` skill uses. [Sarah] - Agents keep wanting to put this in the story so I am now adding a note. This is covered in [[Manual and Agent Test Environment]]. As such I will consider that story a blocker for finishing the opencode migration
 
 Rules that point at `.opencode/` and go with it:
 - AGENTS.md's Project section, which has agents leave `.opencode/` out of searches.
