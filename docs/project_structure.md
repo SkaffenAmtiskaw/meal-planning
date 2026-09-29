@@ -33,9 +33,9 @@ environment variables typed with Zod
 # test/
 test support code shared by unit and E2E tests
 ## auth.ts
-test-only better-auth instance, used by the E2E factories and `signIn`
+test-only better-auth instance, used by the E2E factories and `signIn`, imported through `#auth`
 ## factories/
-plain functions that create E2E test data in the database, and their connection
+plain functions that create E2E test data in the database, and their connection, imported through `#factories`
 ## fixtures/
 unit-test data builders, imported through `#fixtures`
 ## mocks/

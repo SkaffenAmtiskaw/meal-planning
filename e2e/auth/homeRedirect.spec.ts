@@ -1,5 +1,6 @@
-import { createPlanner } from '../../test/factories/planner';
-import { createUser } from '../../test/factories/user';
+import { createPlanner } from '#factories/planner';
+import { createUser } from '#factories/user';
+
 import { expect, signIn, test } from '../_fixtures';
 
 test('signed-in user lands on their planner calendar', async ({

@@ -30,6 +30,12 @@
       ],
       "#test": [
         "./test/index.ts"
+      ],
+      "#factories/*": [
+        "./test/factories/*"
+      ],
+      "#auth": [
+        "./test/auth.ts"
       ]
     },
     "plugins": [

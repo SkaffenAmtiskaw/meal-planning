@@ -6,7 +6,7 @@ confirmed: 2026-09-29
 ---
 # Where It Stands
 
-In progress. Next: implement Step 4 ^status
+In progress. Next: implement Step 5 ^status
 
 Set up E2E testing as a convention (where tests live, how they get their data, how they sign in and how they're run) and prove it with one first test that follows the Rules. [[Core Flows E2E Tests]] and [[Calendar E2E Tests]] build on it.
 
@@ -350,8 +350,16 @@ Test harness: each check breaks a factory or `signIn`, proving the first test ca
 - `e2e/_fixtures/memoryServer.ts`, `e2e/_fixtures/index.ts`, `e2e/_fixtures/signIn.ts`, `e2e/auth/homeRedirect.spec.ts` - any formatting or lint fixes `pnpm lint` makes in the files Steps 1 and 2 wrote
 
 **Acceptance:**
-- [ ] Run `pnpm biome check e2e`. See it check the four files in `e2e/`.
-- [ ] Temporarily change a single-quoted string in `e2e/auth/homeRedirect.spec.ts` to double quotes, run `pnpm biome check e2e`, see a formatting error on that line. Revert.
+- [x] Run `pnpm biome check e2e`. See it check the four files in `e2e/`.
+- [x] Temporarily change a single-quoted string in `e2e/auth/homeRedirect.spec.ts` to double quotes, run `pnpm biome check e2e`, see a formatting error on that line. Revert.
+
+**Status:** ✅ Complete
+
+**As built:**
+- `files.includes` also gains `playwright.config.ts`, so Biome checks the Playwright config too. It needed no fixes. Sarah pulled it in 2026-09-29.
+- `tsconfig.json` gains the aliases `#factories/*` (`test/factories/*`) and `#auth` (`test/auth.ts`), and the files in `e2e/` import through them. `docs/e2e_tests.md` and `docs/project_structure.md` name the aliases. Sarah pulled it in and chose the names 2026-09-29.
+- The `databaseConnections` fixture keeps `async ({}, use)` with a one-line `biome-ignore` for `noEmptyPattern`, since Playwright reads a fixture's dependencies from that destructuring and it's the only fixture with none. It's typed `undefined` and calls `use(undefined)`, so `noConfusingVoidType` doesn't warn. Sarah decided both 2026-09-29.
+- Boy Scout fix: the worked example in `docs/e2e_tests.md` matches the spec's imports again, after `pnpm lint` reordered them.
 
 ## Step 5: Biome import bans
 **Idea:** Biome rejects every import the E2E Rules forbid, each in the files the Rule covers.

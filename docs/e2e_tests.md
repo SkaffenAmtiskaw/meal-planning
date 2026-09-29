@@ -9,8 +9,8 @@
 |------|---------------|
 | `e2e/<area>/*.spec.ts` | the specs, grouped by feature area |
 | `e2e/_fixtures/` | Playwright support code: the `test` and `expect` specs import, `signIn`, and `memoryServer.ts`, the launcher that starts the throwaway database |
-| `test/factories/` | plain functions that create test data, and the database connection they use |
-| `test/auth.ts` | the test-only better-auth instance |
+| `test/factories/` | plain functions that create test data, and the database connection they use, imported through `#factories` |
+| `test/auth.ts` | the test-only better-auth instance, imported through `#auth` |
 | `playwright.config.ts` | the Playwright config, at the repo root |
 
 Every file that imports `@playwright/test` is in `e2e/`, apart from `playwright.config.ts`. Keeping Playwright code out of `src/` and `test/` means Vitest never picks up a spec, and Playwright never picks up a unit test.
@@ -81,8 +81,9 @@ await page.getByTestId('save-button').click();
 The first spec, `e2e/auth/homeRedirect.spec.ts`, shows the whole shape: create the data, sign in, act, assert.
 
 ```typescript
-import { createPlanner } from '../../test/factories/planner';
-import { createUser } from '../../test/factories/user';
+import { createPlanner } from '#factories/planner';
+import { createUser } from '#factories/user';
+
 import { expect, signIn, test } from '../_fixtures';
 
 test('signed-in user lands on their planner calendar', async ({

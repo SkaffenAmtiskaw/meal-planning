@@ -1,6 +1,6 @@
 {
 	"files": {
-		"includes": ["src/**/*", "test/**/*"]
+		"includes": ["src/**/*", "test/**/*", "e2e/**/*", "playwright.config.ts"]
 	},
 	"linter": {
 		"enabled": true,
