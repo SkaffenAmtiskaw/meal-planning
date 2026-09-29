@@ -60,7 +60,7 @@ while IFS= read -r note; do
   esac
   line=$(awk -F '\t' -v n="$name" '$1 == n' "$tmp/lines" | head -1)
   case "$note" in
-    (notes/features/*)
+    (notes/features/*|notes/archive/*)
       if [ -n "$line" ] && ! printf '%s' "$line" | grep -qF "![[$name#^status]]"; then
         add "$note: its Roadmap line ($roadmap:$(printf '%s' "$line" | cut -f2)) doesn't embed ![[$name#^status]]"
       fi

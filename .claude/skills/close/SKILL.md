@@ -85,12 +85,14 @@ Skip this for a re-close. Go through the Blocker matches.
 ## 5. Update the other notes
 Go through the remaining matches:
 - **Content:** if a story's content was moved into it in step 3, make the move now, then reword the pointer so it no longer sends the reader to this note. If this note is kept, leave the pointers alone.
-- **Kept-for:** remove this story from the archived note's `kept-for`. If the list is now empty, that note needs `/close` in a new session. Add it to the follow-ups in step 9.
-- **Hub list:** mark this story done or dropped in the hub's list, following how the hub marks the others. If the hub now has no open stories left, set its `^status` line to "Next: /close", give it a Roadmap line that links to it and embeds its status, and ask Sarah where the line goes, as AGENTS.md describes under "Roadmap order". Then add the hub to the follow-ups.
+- **Kept-for:** remove this story from the archived note's `kept-for`. If the list is now empty, that note needs its own `/close`, as the paragraph below this list describes.
+- **Hub list:** mark this story done or dropped in the hub's list, following how the hub marks the others. If the hub now has no open stories left, it needs its own `/close`, as the paragraph below this list describes.
 - **Passing mention:** if this note is being deleted, every link to it would be left pointing at nothing, so reword or remove each one, even the ones that are still true. Otherwise, only the out-of-date ones need it. For an out-of-date one, propose new wording to Sarah and wait for her approval. Never add a line saying the note was removed.
 - **Sarah's comment:** if it's done or out of date, handle it as AGENTS.md describes under "Editing notes".
-- **Archived notes with no `kept-for`:** for each one step 2 found, ask Sarah which open stories it's kept for. Write her answer into its `kept-for`. If none, add it to the follow-ups.
+- **Archived notes with no `kept-for`:** for each one step 2 found, ask Sarah which open stories it's kept for. Write her answer into its `kept-for`. If none, that note needs its own `/close`, as the paragraph below this list describes.
 - **Outside the vault:** add it to the out-of-scope list.
+
+**A note that now needs its own `/close`** is easy to forget, because an archived note has no Roadmap line, and neither does a hub with no open decisions. So set its `^status` line to "Next: /close", give it a Roadmap line that links to it and embeds its status, and ask Sarah where the line goes, as AGENTS.md describes under "Roadmap order". Then add it to the follow-ups in step 9.
 
 ## 6. Find a home for out-of-scope items
 If the out-of-scope list is empty, skip this.
@@ -117,6 +119,6 @@ Tell Sarah:
 - each file deleted as unused
 - the stories that were unblocked, and where their Roadmap lines went
 - each goal now waiting on a release process
-- the follow-ups: each note that needs `/close` in a new session, and why
+- the follow-ups: each note that needs `/close` in a new session, why, and where its Roadmap line went
 
 Leave every change unstaged. Stop there, and don't start on any other note.
