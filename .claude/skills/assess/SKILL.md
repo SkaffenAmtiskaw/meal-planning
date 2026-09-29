@@ -42,7 +42,7 @@ Send the `note-drift-checker` subagent the note path, its `confirmed` date, the 
 
 If it found nothing, tell Sarah in one line and go on. Otherwise, handle each finding before step 2:
 - **Mechanical:** correct the name or path in place, as AGENTS.md describes under "Editing notes". Don't ask.
-- **Needs a decision:** show Sarah the finding, the other note and what conflicts, and recommend as AGENTS.md describes under "Recommendations". Wait for her answer, then write a callout recording it, e.g. "Sarah decided 2026-09-28 that ...". If she wants to decide later, add the question to Open Decisions, with a `decision needed` entry in `blocked-by` if the note doesn't have one. Set the `^status` line to "Next: /decide", and stop.
+- **Needs a decision:** show Sarah the finding, the other note and what conflicts, and recommend as AGENTS.md describes under "Recommendations". Wait for her answer, then write it into the design or behaviors it affects, with no callout. If she wants to decide later, add the question to Open Decisions, with a `decision needed` entry in `blocked-by` if the note doesn't have one. Set the `^status` line to "Next: /decide", and stop.
 - **Blocked:** if a finding means the story can't go ahead until another story lands, tell Sarah and ask whether to go on anyway. If she says no, add the story to `blocked-by` and stop.
 
 ## 2. Confirm the behaviors

@@ -85,7 +85,7 @@ Then note what it means for the note:
 Then triage the out-of-scope list as AGENTS.md describes under "Out-of-scope work". If an item is a sweep item this step took out, it can't be pulled back in, so offer route or drop only. If the note is a sweep, an item Sarah pulls in must be decided before it joins: if it still needs a decision, ask her for it. If she wants to think it over, it can't join the sweep, so offer route or drop only. Otherwise, add it as a new unchecked box under Items, written as the Items comment in `notes/templates/Sweep.md` describes, with "Pulled in by Sarah YYYY-MM-DD" and any answer she gave ("Sarah decided: ..."). If the note isn't a sweep, an item Sarah pulls in becomes a finding that needs a decision. Sort it like the others.
 
 ## 5. Write the callouts
-Write each callout as AGENTS.md describes under "Editing notes", worded like this:
+Write each callout directly above the text it's about, worded like this:
 
 `> ⚠️ **Check Drift YYYY-MM-DD:** what no longer matches, and what it means for this story. Found by reading code, not verified in the running app.`
 
@@ -99,7 +99,7 @@ Say how it was found: by reading code, by reading notes, or from Sarah's comment
 1. Show the finding, where it applies, its evidence (`file:line` or note and section) and how it was found.
 2. Say what the options are, and which you'd recommend and why.
 3. Wait for her answer.
-4. Write the callout, recording her decision, e.g. "Sarah decided 2026-09-25 that the ring replaces the tint here."
+4. Write the callout, recording her decision, e.g. "Sarah decided 2026-09-25 that the ring replaces the tint here." Write one even when she decides the plan stands, so no later session raises it again.
 
 Some decisions need more than a callout:
 - **Recent code wins over the docs**, or recent code follows a convention the docs don't mention and Sarah says it's the convention: it's a doc gap. Handle it as AGENTS.md describes under "Doc gaps".

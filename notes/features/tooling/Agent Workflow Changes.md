@@ -22,4 +22,3 @@ Changes to skills, subagents, AGENTS.md, agent conventions or the OpenCode move,
 	- **The state before the change:** the drafts of Steps 4 and 6 had her run commands before the change to see the old behavior, then again after, and `plan-checker` suggested one. The implementer confirms or records the before state, such as test counts, and her checks compare against what it recorded. Break-it checks stay, since they're edits she makes on the spot to the finished step.
 
 	🎯 [[Dev Foundations]]
-- [ ] [Sarah] - Sessions are _still_ wanting to write "Check Drift" callouts when they should fucking _not_. 🎯 [[Dev Foundations]]

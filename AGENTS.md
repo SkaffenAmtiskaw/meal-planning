@@ -27,12 +27,12 @@ Any change to a note in `notes/` follows these rules:
   - **It's done or out of date:** show it to her and ask whether to remove it.
   - **It needs a workflow marker:** add a `🎯 [[Goal]]` link to its end or a `**Blocked by [[Story]]:**` prefix to its start, without asking. They sit outside her words, so adding one isn't editing them.
   - **Otherwise:** never edit it.
-- **A note that's wrong or out of date** is handled by what the mistake changes. A ⚠️ Check Drift callout makes a later session act, so it's only for a mistake there's something to act on. A story's plan (its approved design, approach and steps) is never rewritten, except to correct a name or path.
-  - **It changes the story's remaining work** (what gets built, or how): add a `> ⚠️ **Check Drift YYYY-MM-DD:** ...` callout directly above the text it's about.
-  - **Sarah decides something about a mismatch:** record her decision in a Check Drift callout where the mismatch is, even when she decides the plan stands, so no later session raises it again.
+- **A note that's wrong or out of date** is handled by where the mistake is and what it changes. ⚠️ Check Drift callouts are only for drift: a story waited while the code, the conventions or other stories moved on, so parts of it no longer hold. Only `/check-drift` writes them, and it says how. No other session writes one or offers to, unless Sarah tells it to.
+  - **The story you're working on has a mistake that changes its remaining work** (what gets built, or how), such as a wrong assumption in its approach, a detail an earlier skill got wrong, or wording that conflicts with a choice Sarah just made: fix the text directly, and name the fix in your summary.
+  - **Your change affects another story's remaining work,** such as a tooling change that alters what one of its steps needs: leave that note alone. Tell Sarah in your summary what the change means for that story, and let her decide.
   - **The build differs from a step:** add an **As built:** note under the step.
-  - **Only a name or path changed,** and the plan still works as written, such as a moved file or a renamed function: correct the name or path in place, with no callout. Sarah approved the intent, not the path.
-  - **It changes nothing about the work,** such as a wrong detail in a finding: add no callout. If it's a line an agent wrote in a note you're working on, and not plan text, correct it. Otherwise, leave it.
+  - **Only a name or path changed,** and the plan still works as written, such as a moved file or a renamed function: correct the name or path in place. Sarah approved the intent, not the path.
+  - **It changes nothing about the work,** such as a wrong detail in a finding: if it's a line an agent wrote in a note you're working on, and not plan text, correct it. Otherwise, leave it.
 - **The `^status` line** (the line ending in ` ^status` under Where It Stands) says what work the story needs next or what it's waiting on, and nothing else. Never describe the story there. The Roadmap embeds it so Sarah can scan what each story needs.
   - Whoever moves a story forward updates it. When the next step is settled, write it without asking and mention it in your summary. When there's a real choice, such as what the story is blocked on, show Sarah the line and wait for her approval.
   - Every note except a goal starts with Where It Stands, right after the frontmatter, in its template's format. If a note has none, add it.
