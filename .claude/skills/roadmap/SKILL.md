@@ -32,27 +32,34 @@ Read `notes/Roadmap.md`, including "How this file works", and `notes/templates/G
 Ask Sarah what the goal is for and what shipping it means, in her words. If she names work that's out of scope for it, note that too. Draft Purpose, Done When and Out of Scope from the template, keeping her wording. Show her the draft and wait for her approval, then write the note to `notes/goals/<name>.md`, with `confirmed` set to today.
 
 ## 3. Scope
-Search the Roadmap, including Ideas, and `notes/features/` for work that looks related to the goal's Purpose and Done When: story lines, hubs with open decisions, and items in collecting notes. Skip anything already under the goal's Out of Scope, whether it was added in step 2 or by an earlier run. Skip anything already under the goal's heading or carrying its 🎯 link, unless this is a re-shape and Sarah asks to review it.
+Search the Roadmap, including Ideas, and `notes/features/` for work that looks related to the goal's Purpose and Done When: story lines, hubs with open decisions, and collecting notes and their items. Skip anything already under the goal's Out of Scope, whether it was added in step 2 or by an earlier run. Skip anything already under the goal's heading or carrying its 🎯 link, unless this is a re-shape and Sarah asks to review it. For a collecting note, skip only the items that carry the link, not the whole note.
 
 Leave tooling out of this step, and offer it in step 5. The exception is a goal about how the app is built, where tooling is the scope: offer it here and skip step 5.
 
-Go through the candidates one at a time. For each, show the line or item, why it looks related, and any goals it already serves. Sarah says:
+A goal takes a collecting note's items, never the note itself, as the Roadmap's "How this file works" describes under "Collecting notes". How a collecting note is offered depends on its Purpose:
+- **Its Purpose matches the goal:** offer the note as a whole, meaning the items it has now.
+- **It mixes work for different goals:** offer each related item on its own.
+
+Go through the candidates one at a time. For each, show the line, note or item, why it looks related, and any goals it already serves. Sarah says:
 - **In:**
   - **A line in Unaffiliated or Ideas:** move it under the goal's heading in Later. Add the heading, `## [[<goal>]]`, if it's missing, placed by the goal's rank.
   - **A line under another goal's heading, or in Now or Next:** leave it there, and add `🎯 [[<goal>]]` at its end.
-  - **An item in a collecting note:** it stays in its note. Add `🎯 [[<goal>]]` at the item's end, then give the note's Roadmap line the goal the same way as a line above, unless it already has it.
-- **Out:** add it to Out of Scope with her reason.
+  - **A collecting note as a whole:** add `🎯 [[<goal>]]` at the end of each of its items that doesn't have it yet, and at the end of the note's Roadmap line. The line stays where it is.
+  - **An item in a collecting note:** add `🎯 [[<goal>]]` at the item's end, and at the end of the note's Roadmap line unless it already has it. The line stays where it is.
+- **Out:** add it to Out of Scope with her reason. For a whole collecting note, the entry names the note and each of its current items, so items added later are still checked against the goal when they come in.
 - **Not related:** nothing is recorded.
 
 ## 4. Gaps
-Compare Done When with the in-scope work, and list each Done When item that nothing covers. Go through them one at a time. Sarah says whether each one gets a Roadmap line under the goal's heading, gets an idea note from `notes/templates/Idea.md` in `notes/features/<area>/` with "Next: /shape ^status" and a line under the heading, or comes out of Done When.
+Compare Done When with the in-scope work, and list each Done When item that nothing covers. Go through them one at a time. For each, draft an idea note from `notes/templates/Idea.md` for `notes/features/<area>/`, with "Next: /shape ^status", and show it to Sarah:
+- **She approves it,** with any changes she asks for: write the note, and add its line under the goal's heading.
+- **She says the gap doesn't fit an idea note:** ask whether it gets a Roadmap line under the goal's heading instead or comes out of Done When, and do what she says.
 
 Then list the in-scope stories whose next step is a design session in Claude Design. These are the designs the goal is waiting on. Report them; nothing is written.
 
 ## 5. Tooling
 Find the tooling that would make this goal's stories easier: tooling lines anywhere in Later (in Unaffiliated or under another goal) or in Ideas, the items in collecting workflow notes (`type: workflow` with a What Belongs Here section), and other workflow and tooling notes. Read what the in-scope stories will touch (their areas, their next steps, what their checks need) and match them up.
 
-Give Sarah a shortlist, most helpful first, each with what it would make easier and for which stories, and any goal it already serves. A tooling line or item stays where it is unless she says to put it under this goal. If she does, handle it the same way as "In" in step 3.
+Give Sarah a shortlist, most helpful first, each with what it would make easier and for which stories, and any goal it already serves. Collecting notes go on it as a whole or item by item, the same way as in step 3. A tooling line, note or item stays where it is unless she says to put it under this goal. If she does, handle it the same way as "In" in step 3.
 
 ## 6. Rank
 Show the Goals list with the two active goals marked. Name any dependencies you can point to, such as an in-scope story whose `blocked-by` names a story under another goal. Ask Sarah where this goal goes. With no argument, ask what moves. Recommend a spot only from those dependencies.
@@ -71,7 +78,7 @@ Triage the out-of-scope list as AGENTS.md describes under "Out-of-scope work". T
 
 Then tell Sarah:
 - the goal note, created or updated
-- each line moved or linked, grouped by where it went
+- each line or collecting-note item moved or linked, grouped by where it went
 - each note created for a gap
 - the designs the goal is waiting on
 - the tooling shortlist, and what she put under the goal
