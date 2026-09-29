@@ -36,7 +36,7 @@ It should be `type: bug` or `type: cleanup`. If it's another type, tell Sarah wh
 
 Check `blocked-by`. If it has a `decision needed` entry, those decisions come first with `/decide`. If another story blocks it, the investigation may be wasted until that story lands. In either case, tell Sarah and ask whether to go on anyway. An entry that only waited on this skill being built is stale. Remove it in step 4.
 
-If Where It Stands lists questions for this step to answer, each one gets an answer in the note by the end of this run.
+If the note lists questions for this step to answer, at the top of Root Cause or Current State (or under Where It Stands in an older note), each one gets an answer in the note by the end of this run.
 
 Don't check whether the issue is still relevant. Sarah running `/investigate` on it means she believes it is. If reproduction or the scan shows it's already fixed, step 2 or 3 handles that.
 
@@ -114,7 +114,8 @@ Draft the changes and show them to Sarah before writing. Keep her wording wherev
 
 **Both:**
 - **Re-investigation:** before writing, show Sarah what changed compared with the old Root Cause and Fix, or Current State and Open Decisions, and replace them only once she approves. Remove the ⚠️ Check Drift callouts on the sections you replaced, since the new sections answer them.
-- **Where It Stands:** remove the questions that were for this step, now that the note answers them. Update the `^status` line as AGENTS.md describes under "Editing notes", e.g. "Next: /plan-steps" or "Waiting on your fix decision. Next: /decide, then /plan-steps".
+- **Questions for this step:** remove their list from Root Cause or Current State, or from Where It Stands in an older note, now that the note answers them.
+- **Where It Stands:** update the `^status` line as AGENTS.md describes under "Editing notes", e.g. "Next: /plan-steps" or "Waiting on your fix decision. Next: /decide, then /plan-steps".
 - **Frontmatter:** set `status: spec` and `confirmed` to today. Update `blocked-by`: remove entries this run settled or that only waited on this skill being built, and add a `decision needed` entry if 2d or 3b left decisions open.
 - **Roadmap:** fix any text on the story's line in `notes/Roadmap.md` that this run made wrong, like "blocked on the investigate skill".
 

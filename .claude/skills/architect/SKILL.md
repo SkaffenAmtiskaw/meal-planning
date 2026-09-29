@@ -39,7 +39,10 @@ Then read the project docs the convention touches: `docs/project_conventions.md`
 
 ## 2. Rules
 ### Draft
-Draft every rule before showing any. Sources, in order of authority: Sarah's comments, **Decided** lines, then Purpose, Root Cause and Symptoms. If the Rules section already has text marked as decided or approved, confirm with Sarah that it still holds rather than redrafting it. Otherwise, treat any text there as a draft.
+Draft every rule before showing any. Sources, in order of authority: Sarah's comments, **Decided** lines, then Purpose, Root Cause and Symptoms. Text already under `# Rules` is one of three things:
+- **Questions for this step:** each one is something a rule has to settle. If the decisions settle it, answer it in the rule. Otherwise, it's a gap (below).
+- **Text marked as decided or approved:** confirm with Sarah that it still holds rather than redrafting it.
+- **Anything else:** treat it as a draft.
 
 Each rule:
 - **One convention.** If the rule needs "and" to join two requirements that can be broken separately, it's two rules.
@@ -57,7 +60,7 @@ Where the decisions don't settle something a rule needs, don't fill it in:
 ### Approve
 Show each rule with its examples and where it lands, and wait for her to approve or change it. If a change affects a later rule, say which one and update it before you get to it.
 
-Once every rule is approved, write them under `# Rules` in the note as `## Rule N - <short name>`, replacing the template comment. Write them now, before Enforcement, so they survive if the session ends.
+Once every rule is approved, write them under `# Rules` in the note as `## Rule N - <short name>`, replacing the template comment and the list of questions for this step. Write them now, before Enforcement, so they survive if the session ends.
 
 ## 3. Enforcement
 Every rule needs something that stops future code drifting from it. For each rule, propose the strongest mechanism that works, in this order:

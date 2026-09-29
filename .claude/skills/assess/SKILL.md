@@ -25,7 +25,9 @@ Find the note in `notes/features/`. The note should be `type: feature` with `sta
 
 If the note has a Design Handoff, treat it as the source of truth for UX, not for implementation.
 
-If the note already has a Suggested Approach, this is a re-assessment. Don't start from the old approach. It invites the same anchoring as old code. Do steps 2 to 5 fresh, then in step 6 show what changed compared with the old approach.
+If the Suggested Approach section lists questions for this step, each one gets an answer in the Suggested Approach by the end of this run.
+
+If the note's Suggested Approach holds anything besides a template comment or that list of questions, this is a re-assessment. Don't start from the old approach. It invites the same anchoring as old code. Do steps 2 to 5 fresh, then in step 6 show what changed compared with the old approach.
 
 ### Check other notes for design changes
 Another story's design or build may have changed shared UI or a shared module since this note was confirmed. Catch it now, before the behaviors are confirmed, since a changed design changes them.
@@ -90,7 +92,7 @@ When she pushes back, revise and show the changed rows again. Wait for her expli
 ## 6. Write it to the note
 Once she approves, if this is a re-assessment, first show Sarah what changed compared with the old approach, and replace it only once she approves that too.
 
-Then write the behavior list, the table and the client pieces under `# Suggested Approach` in the note. If a template comment is there, replace it. If the note has a `# From the Split` section, delete it. The approved behaviors now live in the Suggested Approach.
+Then write the behavior list, the table and the client pieces under `# Suggested Approach` in the note. If a template comment or the list of questions for this step is there, replace it. If the note has a `# From the Split` section, delete it. The approved behaviors now live in the Suggested Approach.
 
 Leave `status` at `spec`. The note isn't ready until it has implementation steps.
 

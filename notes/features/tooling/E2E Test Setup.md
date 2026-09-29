@@ -1,25 +1,17 @@
 ---
 type: pattern
 status: idea
-blocked-by: []
+blocked-by:
+  - "decision needed: where E2E tests live, how they sign in and where test users' credentials live, and how they're run locally"
 confirmed: 2026-09-28
 ---
 # Where It Stands
 
 %% The line ending in ` ^status` is the story's status and nothing else: what work it needs next, or what it's waiting on, e.g. "Next: design session in Claude Design, then /assess" or "Blocked until [[Stale Data Issues]] lands". Don't describe the story here; the Roadmap link already names it and Purpose describes it. The Roadmap embeds that line with `![[<note>#^status]]`, so keep the ` ^status` ID on it. Add detail below it only when the story needs it. %%
 
-Decisions made. Next: /architect ^status
+3 open decisions. Next: /decide ^status
 
 Set up E2E testing as a convention (where tests live, how they get their data, how they sign in and how they're run) and prove it with one first test that follows the Rules. [[Core Flows E2E Tests]] and [[Calendar E2E Tests]] build on it.
-
-Questions `/architect` answers as part of writing the Rules:
-- Where E2E tests and their helpers live.
-	- Decision 4 limits this: the data-creation helpers are plain functions, free of Playwright-specific code, so a dev seed script in the manual and agent testing story can reuse them.
-- How tests sign in, and where test users' credentials live.
-	- Finding for decision 2: better-auth's `testUtils` plugin (installed) creates users with `emailVerified: true` and returns Playwright-ready session cookies. Its docs have an E2E example that does exactly this, and recommend a test-only auth instance rather than adding it to the production config. The app's own `User` doc still has to be created alongside each better-auth user.
-- How the tests are run locally: the command, and whether they run against the dev server or a production build.
-	- Decision 3 limits this: the E2E server runs as its own process with `DB_URL` pointed at the memory server, never reusing Sarah's `pnpm dev` (Next 16 also blocks a second `next dev` in the same project), and the memory server has to be running before Playwright starts the Next server, because `webServer` starts before `globalSetup`.
-- Which flow the first test covers.
 
 # Purpose
 %% The convention being introduced or standardized, in a sentence or two. Use this template when the fix is "everything should work this way" plus moving existing code over. For removing or tidying code without a new convention, use Cleanup instead. %%
@@ -51,8 +43,17 @@ E2E tests run locally against test data that stays consistent, following one wri
 		- Rejected: one seed data set used by both - E2E tests create their own data and don't read a seed.
 		- Rejected: building the manual and agent environment in E2E Test Setup - gives a convention story a second job and blocks it on questions that have nothing to do with E2E, like whether the Atlas dev database is separate from production.
 		- Rejected: splitting it out with no link to the E2E helpers - a seed script later would duplicate the helpers or force a refactor.
+5. Where should E2E tests and their helpers live?
+	- Decision 4 limits this: the data-creation helpers are plain functions, free of Playwright-specific code, so a dev seed script in the manual and agent testing story can reuse them.
+6. How do E2E tests sign in, and where do test users' credentials live?
+	- Finding for decision 2: better-auth's `testUtils` plugin (installed) creates users with `emailVerified: true` and returns Playwright-ready session cookies. Its docs have an E2E example that does exactly this, and recommend a test-only auth instance rather than adding it to the production config. The app's own `User` doc still has to be created alongside each better-auth user.
+7. How are the E2E tests run locally: with which command, and against the dev server or a production build?
+	- Decision 3 limits this: the E2E server runs as its own process with `DB_URL` pointed at the memory server, never reusing Sarah's `pnpm dev` (Next 16 also blocks a second `next dev` in the same project), and the memory server has to be running before Playwright starts the Next server, because `webServer` starts before `globalSetup`.
 
 # Rules
+Questions for this section:
+- Which flow the first test covers.
+
 %% The convention itself, as numbered rules an agent can check code against. Written with Sarah by `/architect`, along with Enforcement and the Migration Checklist, once Open Decisions are settled. It sets status to `spec` when all three are approved. %%
 ## Rule 1 - 
 
