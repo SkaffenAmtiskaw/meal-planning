@@ -57,7 +57,7 @@
 - switch testing library to `vitest-browser-react` - needs research to determine if this is worth doing
 - [[Services and Environments Audit]] ![[Services and Environments Audit#^status]]
 - [[Atlas Version Check Script]] ![[Atlas Version Check Script#^status]]
-- [[Automatic Root Cause Analysis]] ![[Automatic Root Cause Analysis#^status]]
+- [[Sentry Root Cause Analysis]] ![[Sentry Root Cause Analysis#^status]]
 - [[Local Dependency Update Alerts]] ![[Local Dependency Update Alerts#^status]]
 - [[Database Backup and Restore]] ![[Database Backup and Restore#^status]]
 - [[Core Flows E2E Tests]] ![[Core Flows E2E Tests#^status]] 🎯 [[Calendar Page]]

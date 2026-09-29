@@ -2,16 +2,11 @@
 type: 
 status: idea
 blocked-by:
-  - "[[Desktop Inbox]]"
+  - "[[CI Checks]]"
 confirmed: 2026-09-28
 ---
-%% For jotting something down quickly. Leave `type` blank until it's clear what kind of story this is (feature / bug / pattern / cleanup / workflow), then move the content into that template. %%
-
 # Where It Stands
-
-%% The line ending in ` ^status` is the story's status and nothing else: what work it needs next, or what it's waiting on, e.g. "Next: design session in Claude Design, then /assess" or "Blocked until [[Stale Data Issues]] lands". Don't describe the story here; the Roadmap link already names it and Purpose describes it. The Roadmap embeds that line with `![[<note>#^status]]`, so keep the ` ^status` ID on it. Add detail below it only when the story needs it. %%
-
-Blocked until [[Desktop Inbox]] lands, then /shape ^status
+Blocked until [[CI Checks]] lands, then /shape ^status
 
 # Notes
 Split from [[E2E Testing]] on 2026-09-28.
@@ -20,6 +15,11 @@ Scope: run the E2E tests in GitHub Actions when `develop` opens a PR into `main`
 
 > [!warning]
 > The E2E tests build the app into the default `.next` folder, the same one `pnpm build` uses ([[E2E Test Setup]] Rule 12; Sarah decided 2026-09-29 not to give it a separate folder). Nothing in CI may run another `next build` in the same checkout while the E2E tests run, or the two builds collide.
+
+A failed E2E test reaches Sarah through the failed-check session [[CI Checks]] sets up. This story adds instructions for that session to run a preliminary root cause analysis of the failure, moved here from [[Sentry Root Cause Analysis]] 2026-09-29, which reuses it for Sentry errors.
+
+Sarah's note from [[E2E Testing]], moved here from [[Sentry Root Cause Analysis]] 2026-09-29:
+- I'd love if a failed e2e test automatically kicked off a Claude agent that did a preliminary root cause analysis for me to review
 
 Sarah's notes from [[E2E Testing]]:
 - I want e2e tests to run automatically, but I don't want them to run locally every time I commit because they take goddamn forever. So this probably means it's time for GHA. The most obvious (to me) place to run them is when develop opens a PR into main.
