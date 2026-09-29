@@ -6,7 +6,7 @@ confirmed: 2026-09-29
 ---
 # Where It Stands
 
-In progress. Next: implement Step 2 ^status
+In progress. Next: implement Step 3 ^status
 
 Set up E2E testing as a convention (where tests live, how they get their data, how they sign in and how they're run) and prove it with one first test that follows the Rules. [[Core Flows E2E Tests]] and [[Calendar E2E Tests]] build on it.
 
@@ -286,20 +286,31 @@ None: no module in `src/` moves, and files in `test/` have no tests of their own
 - `e2e/auth/homeRedirect.spec.ts` - the scaffold test replaced by the first test
 
 **Acceptance:**
-- [ ] Run `pnpm test:e2e --trace on`, then `pnpm exec playwright show-report`. See `signed-in user lands on their planner calendar` pass in `desktop` and `phone`. Open each trace. See the page start at `/` and end on `/<plannerId>/calendar` showing the planner layout's header and the calendar, not the sign-in prompt, at desktop width and at phone width.
+- [x] Run `pnpm test:e2e --trace on`, then `pnpm exec playwright show-report`. See `signed-in user lands on their planner calendar` pass in `desktop` and `phone`. Open each trace. See the page start at `/` and end on `/<plannerId>/calendar` showing the planner layout's header and the calendar, not the sign-in prompt, at desktop width and at phone width.
 
 App code: each check breaks the behavior the test covers.
-- [ ] Temporarily change `src/app/page.tsx:36` from `` redirect(`${plannerId}/calendar`) `` to `` redirect(`${plannerId}/recipes`) ``, run `pnpm test:e2e e2e/auth/homeRedirect.spec.ts`, see `signed-in user lands on their planner calendar` fail in `desktop` and `phone` on the URL assertion, with `/<plannerId>/recipes` as the received URL. Revert.
-- [ ] Temporarily change `src/app/page.tsx:24` from `User.findOne({ email: session.user.email })` to `User.findOne({ email: 'nobody@example.com' })`, run the same command, see the test fail in `desktop` and `phone` on the URL assertion, with a different planner ID in the received URL. Revert.
-- [ ] Temporarily change `src/app/page.tsx:20` from `if (!session)` to `if (session)`, run the same command, see the test fail in `desktop` and `phone` on the URL assertion, with `/` as the received URL (the sign-in prompt). Revert.
-- [ ] Temporarily change `src/app/[planner]/layout.tsx:26` from `if (result.type === 'unauthorized') notFound();` to `if (result.type !== 'unauthorized') notFound();`, run the same command, see the test fail in `desktop` and `phone` on the calendar-view assertion while the URL assertion passes (the right URL shows a 404). Revert.
+- [x] Temporarily change `src/app/page.tsx:36` from `` redirect(`${plannerId}/calendar`) `` to `` redirect(`${plannerId}/recipes`) ``, run `pnpm test:e2e e2e/auth/homeRedirect.spec.ts`, see `signed-in user lands on their planner calendar` fail in `desktop` and `phone` on the URL assertion, with `/<plannerId>/recipes` as the received URL. Revert.
+- [x] Temporarily change `src/app/page.tsx:24` from `User.findOne({ email: session.user.email })` to `User.findOne({ email: 'nobody@example.com' })`, run the same command, see the test fail in `desktop` and `phone` on the URL assertion, with `/` as the received URL (the page errors when `addUser` tries a second `User` doc with the same email). Revert.
+- [x] Temporarily change `src/app/page.tsx:17` from `headers: await headers(),` to `headers: new Headers([...(await headers())].filter(([name]) => name !== 'cookie')),`, run the same command, see the test fail in `desktop` and `phone` on the URL assertion, with `/` as the received URL (the sign-in prompt). Revert.
+- [x] Temporarily add `notFound();` as the first line of `CalendarPage` in `src/app/[planner]/calendar/page.tsx`, with `import { notFound } from 'next/navigation';`, run the same command, see the test fail in `desktop` and `phone` on the calendar-view assertion while the URL assertion passes (the right URL shows a 404). Revert.
 
 Test harness: each check breaks a factory or `signIn`, proving the first test catches it (Enforcement for Rules 8 and 9 relies on this).
-- [ ] Temporarily change the `context.addCookies(...)` call in `e2e/_fixtures/signIn.ts` to `context.addCookies([])`, run `pnpm test:e2e e2e/auth/homeRedirect.spec.ts`, see `signed-in user lands on their planner calendar` fail in `desktop` and `phone` on the URL assertion, with `/` as the received URL (the sign-in prompt). Revert.
-- [ ] Temporarily remove the `User.create(...)` call from `test/factories/user.ts`, run `pnpm test:e2e e2e/auth/homeRedirect.spec.ts`, see `signed-in user lands on their planner calendar` fail in `desktop` and `phone` on the URL assertion, with a different planner ID in the received URL (`src/app/page.tsx` made a new user and planner). Revert.
-- [ ] Temporarily pass `other-${crypto.randomUUID()}@example.com` as the email to `auth.api.createUser` in `test/factories/user.ts`, leaving the `User` doc's email as it is, run `pnpm test:e2e e2e/auth/homeRedirect.spec.ts`, see `signed-in user lands on their planner calendar` fail in `desktop` and `phone` on the URL assertion, with a different planner ID in the received URL. Revert.
-- [ ] Temporarily change the user factory's default email to the fixed `e2e@example.com`, run `pnpm test:e2e e2e/auth/homeRedirect.spec.ts --workers=1`, see `signed-in user lands on their planner calendar` pass in one project and fail in the other with "User already exists. Use another email." from `auth.api.createUser` in the user factory. Revert.
-- [ ] Temporarily change the user factory's default email template to `` `E2E-${crypto.randomUUID()}@example.com` ``, run `pnpm test:e2e e2e/auth/homeRedirect.spec.ts`, see `signed-in user lands on their planner calendar` fail in `desktop` and `phone` on the URL assertion, with a different planner ID in the received URL. Revert.
+- [x] Temporarily change the `context.addCookies(...)` call in `e2e/_fixtures/signIn.ts` to `context.addCookies([])`, run `pnpm test:e2e e2e/auth/homeRedirect.spec.ts`, see `signed-in user lands on their planner calendar` fail in `desktop` and `phone` on the URL assertion, with `/` as the received URL (the sign-in prompt). Revert.
+- [x] Temporarily remove the `User.create(...)` call from `test/factories/user.ts`, run `pnpm test:e2e e2e/auth/homeRedirect.spec.ts`, see `signed-in user lands on their planner calendar` fail in `desktop` and `phone` on the URL assertion, with a different planner ID in the received URL (`src/app/page.tsx` made a new user and planner). Revert.
+- [x] Temporarily pass `other-${crypto.randomUUID()}@example.com` as the email to `auth.api.createUser` in `test/factories/user.ts`, leaving the `User` doc's email as it is, run `pnpm test:e2e e2e/auth/homeRedirect.spec.ts`, see `signed-in user lands on their planner calendar` fail in `desktop` and `phone` on the URL assertion, with a different planner ID in the received URL. Revert.
+- [x] Temporarily change the user factory's default email to the fixed `e2e@example.com`, run `pnpm test:e2e e2e/auth/homeRedirect.spec.ts --workers=1`, see `signed-in user lands on their planner calendar` pass in one project and fail in the other with "User already exists. Use another email." from `auth.api.createUser` in the user factory. Revert.
+- [x] Temporarily change the user factory's default email template to `` `E2E-${crypto.randomUUID()}@example.com` ``, run `pnpm test:e2e e2e/auth/homeRedirect.spec.ts`, see `signed-in user lands on their planner calendar` fail in `desktop` and `phone` on the URL assertion, with a different planner ID in the received URL. Revert.
+
+**Status:** ✅ Complete
+
+**As built:**
+- `test/auth.ts` and `test/factories/connection.ts` read `DB_URL`, `BETTER_AUTH_SECRET` and `BETTER_AUTH_URL` from `@/env`, so the values come from `playwright.config.ts` alone and a later seed script picks up the dev values. Sarah decided 2026-09-29.
+- The user factory is `createUser({ planners, email?, password?, name? })`: `planners` is required, `name` defaults to `'New User'`, and there's no default password. It returns `{ id, email, name, password, planners }`, where `id` is the better-auth user id that `signIn` reads. Sarah decided 2026-09-29.
+- The planner factory is `createPlanner(overrides)`, taking `Partial<PlannerInterface>` with `addPlanner`'s defaults, and returns the saved `Planner` document. Sarah decided 2026-09-29.
+- `src/_models/user/user.ts`, `src/_models/planner/planner.ts` and `src/_models/sharing/pendingInvite.ts` read `models` from mongoose's default export (`mongoose.models.X`), because mongoose doesn't export `models` to ES modules and Playwright loads the factories as ES modules. Sarah decided 2026-09-29.
+- `e2e/_fixtures/index.ts` also re-exports `signIn`, so specs import it with `test` and `expect`.
+- The spec finds the calendar view with `getByRole('grid')`, which the default month view renders on desktop and phone.
+- App-code checks 2-4 were reworded after they didn't run as written. Check 2's received URL is `/`, because `addUser` hits the unique `email` index. Checks 3 and 4 as planned failed `next build`'s type check, so Sarah chose the cookie-stripping edit and a `notFound()` in `CalendarPage` instead.
 
 ## Step 3: E2E docs
 **Idea:** The docs describe the E2E convention where agents and Sarah will look for it.

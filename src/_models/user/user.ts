@@ -1,5 +1,6 @@
 import type { Model } from 'mongoose';
-import { model, models, Schema, SchemaTypes } from 'mongoose';
+// mongoose doesn't export `models` to ES modules, so it's read from the default export.
+import mongoose, { model, Schema, SchemaTypes } from 'mongoose';
 
 import type { UserInterface } from './user.types';
 
@@ -39,4 +40,4 @@ export const userSchema = new Schema<UserInterface>({
 userSchema.index({ 'planners.planner': 1 });
 
 export const User: Model<UserInterface> =
-	models.User || model<UserInterface>('User', userSchema);
+	mongoose.models.User || model<UserInterface>('User', userSchema);

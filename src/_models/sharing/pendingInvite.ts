@@ -1,5 +1,6 @@
 import type { Model } from 'mongoose';
-import { model, models, Schema, SchemaTypes } from 'mongoose';
+// mongoose doesn't export `models` to ES modules, so it's read from the default export.
+import mongoose, { model, Schema, SchemaTypes } from 'mongoose';
 
 import type { PendingInviteInterface } from './pendingInvite.types';
 
@@ -40,5 +41,5 @@ const pendingInviteSchema = new Schema<PendingInviteInterface>({
 });
 
 export const PendingInvite: Model<PendingInviteInterface> =
-	models.PendingInvite ||
+	mongoose.models.PendingInvite ||
 	model<PendingInviteInterface>('PendingInvite', pendingInviteSchema);
