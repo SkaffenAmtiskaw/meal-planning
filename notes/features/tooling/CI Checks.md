@@ -14,9 +14,9 @@ There's no `.github/` yet, so nothing is checked outside Sarah's machine. The le
 
 Found 2026-09-28 while shaping [[Dev Foundations]] with `/roadmap`.
 
-[[Desktop Inbox]] was folded in 2026-09-29: besides running the checks, this story makes a failed check start a Claude Code cloud session for Sarah, and does the one-time setup every later source of results shares. Sarah is the sole maintainer. She opens GitHub only to merge into `main` and doesn't check email often enough to rely on it, so results that happen away from her machine have to reach her another way.
+Besides running the checks, this story makes a failed check start a Claude Code cloud session for Sarah, and does the one-time setup every later source of results shares. Sarah is the sole maintainer. She opens GitHub only to merge into `main` and doesn't check email often enough to rely on it, so results that happen away from her machine have to reach her another way.
 
-Decided with /decide 2026-09-29, on Desktop Inbox:
+Decided with /decide 2026-09-29:
 - **What reaches Sarah:** a Claude Code session working on the issue, waiting for her input in the Code tab of the Claude desktop app. Sarah's call: she opens the desktop app whenever she works on the app, so sessions can wait until then; checked against the Claude Code docs, which show cloud routine runs as sessions there.
   - Rejected: a desktop notification (ntfy, Pushover, terminal-notifier) - not needed, since sessions can wait until she opens the app; something more urgent would be a new story.
 - **Where it runs:** the cloud. Sarah's call: work there reacts to events as they happen and keeps running while her laptop is closed; Claude Code cloud routines are the cloud option that starts a session in her Code tab.
