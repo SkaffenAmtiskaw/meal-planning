@@ -32,7 +32,7 @@ Check that it's ready for this skill:
 - **`type: pattern` and `status: idea`.** If `type` is blank, the next step is `/shape`. If it's another type, tell Sarah what you found and stop.
 - **`status: spec`:** its Rules were already confirmed. Ask Sarah whether this is a revision. If it is, work through steps 2 to 5 as usual, but show what changed compared with the existing sections before replacing each one.
 - **`ready` or later:** stop. Changes to a planned story go through `/check-drift`.
-- **No open decisions.** An item under `# Open Decisions` with no **Decided** line (a **Partly answered** line still counts as open), or a `decision needed` entry in `blocked-by`, means the note isn't ready. List them in one line each, tell Sarah the next step is `/decide <note name>`, and stop.
+- **No open decisions.** An item under `# Open Decisions` with no **Decided** line (a **Partly answered** or **Leaning** line still counts as open), or a `decision needed` entry in `blocked-by`, means the note isn't ready. List them in one line each, tell Sarah the next step is `/decide <note name>`, and stop.
 - **A chosen convention.** A **Decided** line or a comment from Sarah has to say what the convention is, not just what's wrong with the code today. If the note only describes the problem, or asks what the right fix is ("these are all bad the same way, help me find the right solution"), the convention hasn't been chosen, even when no decision is formally listed. Don't choose one while drafting rules. Draft the question, such as "What convention should modals follow to separate presentation from data?", show it to Sarah and, once she approves, add it to `# Open Decisions`, with a `decision needed` entry in `blocked-by` if the note doesn't have one. Then tell her the next step is `/decide <note name>`, and stop.
 
 Then read the project docs the convention touches: `docs/project_conventions.md` and `project_structure.md` always, and `unit_tests.md` when the rules touch tests or mocks. Also read the Rules of every other `type: pattern` note in `notes/features/`, so you can spot overlaps and conflicts.
@@ -54,7 +54,7 @@ Check each draft against the project docs and the other patterns' Rules. A rule 
 
 ### Gaps
 Where the decisions don't settle something a rule needs, don't fill it in:
-- **She can answer it on the spot** (a scope boundary, a naming choice): ask her.
+- **She can answer it on the spot** (a scope boundary, a naming choice): ask her, and read her answer as the `answer-confidence` skill describes. If it's hedged, send `decision-researcher` the note path, the question and her answer as a check, save its report to `.scratch/<note name> - decision <N>.md`, and show her any problems it finds before you use her answer.
 - **It needs research** (which library feature, what best practice says): send the `decision-researcher` subagent the note path and the question, with the answers she's given this session. Save its brief to `.scratch/<note name> - decision <N>.md`, walk her through the options and recommendation, and record her answer under `# Open Decisions` in the format the `/decide` skill uses (a **Decided** line plus one **Rejected** line per option she turned down). Show the entry and wait for her approval before writing it.
 
 ### Approve

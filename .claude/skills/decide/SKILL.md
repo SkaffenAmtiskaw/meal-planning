@@ -1,6 +1,6 @@
 ---
 name: decide
-description: Work through a note's open decisions with Sarah one at a time, researching each with a subagent, and record each answer, partial answer or new question in the note. Sarah picks which decisions each run covers.
+description: Work through a note's open decisions with Sarah one at a time, record each answer, partial answer or new question in the note, and research a decision with a subagent unless she already has a confident answer. Sarah picks which decisions each run covers.
 argument-hint: "[note name]"
 disable-model-invocation: true
 hooks:
@@ -19,6 +19,7 @@ Work through the open decisions on **$ARGUMENTS**.
 A few things shape how it works:
 - **Sarah picks the scope.** A hub can hold ten open decisions, and she may only want to tackle two today. Each run covers the ones she picks.
 - **Research happens in a subagent,** one decision at a time. Each decision can need its own look at the code, the other notes and library docs. Doing that inline would fill the context before the third decision. The `decision-researcher` agent returns a brief. You walk Sarah through it.
+- **Sarah may already know.** Each decision starts by asking her. A confident answer is recorded as she gave it, and a hedged one gets a check instead of full research, as the `answer-confidence` skill describes.
 - **Decisions, not design.** Settle the question. Don't design the story, write steps or pick implementation details the next step owns.
 
 This is planning only. Don't change code. A hook blocks edits outside `notes/` and `.scratch/`.
@@ -31,7 +32,7 @@ This is planning only. Don't change code. A hook blocks edits outside `notes/` a
 Find the note in `notes/features/` and read all of it.
 
 A decision is open if it's:
-- an item under `# Open Decisions` with no **Decided** line under it. One with only a **Partly answered** line is still open.
+- an item under `# Open Decisions` with no **Decided** line under it. One with only a **Partly answered** or **Leaning** line is still open.
 A story with open decisions has one `"decision needed: ..."` entry in `blocked-by` that covers them all. A roundup's issues are the questions under its Open Decisions.
 
 If the two don't match, raise it with Sarah:
@@ -41,12 +42,23 @@ If the two don't match, raise it with Sarah:
 If the note has no open decisions, or it's `done` or archived, tell Sarah what you found and stop.
 
 ## 2. Sarah picks the decisions
-List the open decisions, one line each: its number or short name, and any Partly answered progress. Say which ones depend on another's answer, from what the notes state, and mark any you're inferring. Then ask which ones she wants to work through this run.
+List the open decisions, one line each: its number or short name, and any Partly answered progress or Leaning line. Say which ones depend on another's answer, from what the notes state, and mark any you're inferring. Then ask which ones she wants to work through this run.
 
 Take them in the order she gives. If she picks one that depends on an unpicked one, say so once, and let her decide.
 
 ## 3. Each decision, one at a time
 Don't research the next decision until this one is recorded. Its answer can change the next one's options.
+
+### Ask first
+If the question has a **Leaning** line, show it to Sarah and ask whether it's still her answer. Otherwise, tell her what the decision is and ask whether she already has an answer in mind. Read her answer as the `answer-confidence` skill describes. What happens next depends on it:
+- **Confident:** record it without research, as Record describes for her own answers.
+- **Hedged:** check it, as Check describes.
+- **No answer:** research it, as Research describes.
+
+### Check
+Send the `decision-researcher` subagent the note path, the question as written with its constraints, any Partly answered lines under it, the answers Sarah has given earlier in this run, and her answer to this one. Say it's a check of her answer. Save its report to `.scratch/<note name> - decision <N>.md`. What happens next depends on what it finds:
+- **No problems:** record her answer, as Record describes for her own answers.
+- **Problems:** show Sarah each one and link the report. If she asks for full research, go on as Research describes. Otherwise, record what she decides, as Record describes for anything else.
 
 ### Research
 Send the `decision-researcher` subagent the note path, the question as written with its constraints, any Partly answered lines under it, and the answers Sarah has given earlier in this run. Don't tell it which answer you expect.
@@ -62,14 +74,16 @@ Show Sarah:
 Link the brief. When she questions an option, read her the relevant part of the brief and discuss it. If she wants more research, send the researcher a follow-up with her question and the earlier brief's path.
 
 ### Record
-She'll decide, partly decide, or set it aside. Draft the note change, show it and wait for her approval before writing it.
+How you record a decision depends on where the answer came from:
+- **Her own answer,** given confidently or checked with no problems found: write it to the note right away, in the format the `answer-confidence` skill describes. Print the Decided line in chat and go on to the next decision without waiting for approval. Sarah will say if it looks wrong.
+- **Anything else:** she'll decide, partly decide or set it aside. Draft the note change, show it and wait for her approval before writing it.
 
 **Decided.** Under the question in Open Decisions:
 ```
    - **Decided YYYY-MM-DD:** <the answer>. <one sentence on why>
      - Rejected: <option> - <one-line reason>
 ```
-One Rejected line per option she considered and turned down, so later agents don't propose it again. If no open decisions remain, remove the `decision needed` entry from `blocked-by`.
+One Rejected line per option she considered and turned down, so later agents don't propose it again. Remove any **Leaning** line under the question. If no open decisions remain, remove the `decision needed` entry from `blocked-by`.
 
 If the question is "Is this worth doing?" and Sarah decides it isn't, the story is dropped. Skip the other decisions she picked for this run, because they no longer matter, and go to step 4.
 
@@ -87,7 +101,7 @@ After recording, look at what the answer changes:
 - **This note:** other sections the answer lands in, e.g. a section the question says to record it in, the chosen Fix Option, or a hub's Coverage or Child Stories table. Draft each change and go through them with Sarah. If the note is `ready` and the change touches its design or steps, it goes back to `spec` (AGENTS.md, "Editing notes"). Say so when you show the change.
 - **Other notes:** add each effect to the running list: which note, what changes and why. Step 6 handles them.
 - **New stories:** if the answer implies work no note covers yet, add it to the running list of new stories. Step 5 handles them.
-- **New questions:** if the brief found a blocking question that isn't on the note, or the answer raised one, tell Sarah what needs deciding and ask whether she already has an answer in mind. If she does, add the question to Open Decisions, written as a question rather than a proposal, with her answer on a **Decided** line as above. If she wants to think it over or research it, add the question without one (plus a `decision needed` entry in `blocked-by` on a story, if it doesn't have one), then ask whether to take it now or leave it for a later run.
+- **New questions:** if the brief found a blocking question that isn't on the note, or the answer raised one, tell Sarah what needs deciding and add it to Open Decisions, written as a question rather than a proposal. Then ask whether she already has an answer in mind, and act on it as Ask first describes. If she wants to think it over or research it, add a `decision needed` entry in `blocked-by` on a story if it doesn't have one, then ask whether to take it now or leave it for a later run.
 
 Then go on to the next decision she picked.
 

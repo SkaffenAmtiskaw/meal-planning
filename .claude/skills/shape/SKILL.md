@@ -48,7 +48,12 @@ Don't check whether the idea is still relevant, meaning whether the problem it d
 Don't read external docs unless the idea depends on what a library can do, and then only enough to know whether it's possible.
 
 ### Check the blocking decisions with Sarah
-If step 2 found none, skip this. Otherwise, go through them one at a time. For each one, tell Sarah what needs deciding and which case makes it a blocking decision, then ask whether she already has an answer in mind. If she does, note it. If she wants to think it over or research it, it stays open for `/decide`. Do this before step 3, because her answers can change how many stories there are and which directions are worth offering.
+If step 2 found none, skip this. Otherwise, go through them one at a time. For each one, tell Sarah what needs deciding and which case makes it a blocking decision, then ask whether she already has an answer in mind. Read her answer as the `answer-confidence` skill describes. What happens next depends on it:
+- **Confident:** it's decided. Note it.
+- **Hedged:** don't check it here. Note it as her leaning. The decision stays open, and `/decide` checks it.
+- **No answer,** or she wants to think it over or research it: it stays open for `/decide`.
+
+Do this before step 3, because her answers can change how many stories there are and which directions are worth offering.
 
 ## 3. One story or several
 Tell Sarah which of these it is, and why:
@@ -64,7 +69,7 @@ Wait for her to agree or change it.
 Rewrite the note from `notes/templates/Hub.md`:
 - **Where It Stands:** e.g. "Not split yet. Next: work through Open Decisions with Sarah. ^status"
 - **Purpose:** what the idea is, in Sarah's words.
-- **Open Decisions:** each blocking decision from step 2 on its own line, written as a question, not a proposal. If Sarah already had an answer, put it on a **Decided** line under the question, e.g. "**Decided 2026-09-28:** web first, phones later." If she's leaving an adopt-or-build decision open, list the candidates from step 2 under it, without ranking them.
+- **Open Decisions:** each blocking decision from step 2 on its own line, written as a question, not a proposal. If Sarah gave a confident answer, put it on a **Decided** line under the question, as the `answer-confidence` skill describes, e.g. "**Decided 2026-09-28:** web first, phones later. Sarah's call." If she gave a hedged one, put it on a **Leaning** line in that skill's format. If she's leaving an adopt-or-build decision open, list the candidates from step 2 under it, without ranking them.
 - **Child Stories:** leave the table empty. Children get their own `/shape` run once the decisions make them clear.
 - **Leave** Coverage, Build Order and Deferred Work as bare headings.
 - **Frontmatter:** `type: hub` and `confirmed` set to today. Hubs have no `status` or `blocked-by`.
@@ -107,7 +112,7 @@ Then stop. Step 6 doesn't apply.
 
 **Otherwise,** draft the note from the template in `notes/templates/` for the chosen type:
 - **Where It Stands:** the `^status` line, with the next step or what the story is waiting on. Don't restate the direction on it. Below the line, give the chosen direction in a sentence or two.
-- **Open Decisions:** each blocking decision from step 2 on its own line, written as a question, not a proposal. If Sarah already had an answer, put it on a **Decided** line under the question, e.g. "**Decided 2026-09-28:** web first, phones later." If she's leaving an adopt-or-build decision open, list the candidates from step 2 under it, without ranking them. Delete the section if step 2 found no blocking decisions.
+- **Open Decisions:** each blocking decision from step 2 on its own line, written as a question, not a proposal. If Sarah gave a confident answer, put it on a **Decided** line under the question, as the `answer-confidence` skill describes, e.g. "**Decided 2026-09-28:** web first, phones later. Sarah's call." If she gave a hedged one, put it on a **Leaning** line in that skill's format. If she's leaving an adopt-or-build decision open, list the candidates from step 2 under it, without ranking them. Delete the section if step 2 found no blocking decisions.
 - **Sarah's content:** move everything from the idea into the template's sections. Keep her wording. If something fits no section, put it under Where It Stands rather than dropping it.
 - **Sections that belong to a later step:** Design Handoff, Suggested Approach, Root Cause, Fix, Current State, Rules, Migration Checklist and Implementation. Don't fill them. If the next step will answer questions as part of its own work, list them at the top of the section that step writes, under the line "Questions for this section:", so a reader finds each question where its answer will go. The sections are Design Handoff for a design session, Suggested Approach for `/assess`, Root Cause for a bug's `/investigate`, Current State for a cleanup's `/investigate`, and Rules for `/architect`. Leave every other one as a bare heading.
 - **Frontmatter:** set `type`, leave `status: idea`, set `confirmed` to today, and add `blocked-by` entries if the direction depends on another story. If Sarah is leaving any decisions open, add one `"decision needed: ..."` entry to `blocked-by` that covers them all.
