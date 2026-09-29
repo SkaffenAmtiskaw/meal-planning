@@ -1,12 +1,12 @@
 ---
 type: pattern
-status: ready
+status: in-progress
 blocked-by: []
 confirmed: 2026-09-29
 ---
 # Where It Stands
 
-Ready. Next: build Step 1 ^status
+In progress. Next: implement Step 2 ^status
 
 Set up E2E testing as a convention (where tests live, how they get their data, how they sign in and how they're run) and prove it with one first test that follows the Rules. [[Core Flows E2E Tests]] and [[Calendar E2E Tests]] build on it.
 
@@ -141,8 +141,8 @@ Nothing in `e2e/` or `test/factories/` deletes or drops data: no call that remov
 - **Lands in:** "Test Data".
 
 ## Rule 12 - E2E tests run against a production build
-`pnpm test:e2e` runs `playwright test`. In `playwright.config.ts`, the Next `webServer` entry runs `next build && next start -p 3100` with `reuseExistingServer: false`. No E2E config or script runs the tests against `next dev`, or against a server that's already running. The E2E build writes to the default `.next` folder, shared with `pnpm build` (Sarah decided 2026-09-29 against a separate `distDir`: `next dev` uses `.next/dev`, the pre-commit hook never runs E2E tests, and a collision needs another build in the same checkout at the same time).
-- **Check:** only `playwright.config.ts` and the `test:e2e` script in `package.json`. `next dev` in either, or `reuseExistingServer: true`, breaks the rule.
+`pnpm test:e2e` runs `playwright install chromium && playwright test`, and `pnpm test:e2e:trace` runs it with `--trace on`, then opens the HTML report. In `playwright.config.ts`, the Next `webServer` entry runs `next build && next start -p 3100` with `reuseExistingServer: false`. No E2E config or script runs the tests against `next dev`, or against a server that's already running. The E2E build writes to the default `.next` folder, shared with `pnpm build` (Sarah decided 2026-09-29 against a separate `distDir`: `next dev` uses `.next/dev`, the pre-commit hook never runs E2E tests, and a collision needs another build in the same checkout at the same time).
+- **Check:** only `playwright.config.ts` and the `test:e2e` and `test:e2e:trace` scripts in `package.json`. `next dev` in either, or `reuseExistingServer: true`, breaks the rule.
 - **Lands in:** "Running E2E Tests".
 
 ## Rule 13 - Every app environment variable gets an E2E value
@@ -152,8 +152,8 @@ At the top of `playwright.config.ts`, before any `webServer` starts, every varia
 - **Lands in:** "Running E2E Tests".
 
 ## Rule 14 - The memory server matches Atlas's MongoDB release series
-The memory server's `mongod` version is set explicitly in `package.json` (mongodb-memory-server's `config.mongodbMemoryServer.version`) to a version in the same release series (major.minor) as the Atlas cluster. The install-time download reads only that setting, so the launcher sets no version of its own (no `binary.version`). `docs/e2e_tests.md` records that series. When Atlas moves to a new series, the pin and the doc change together.
-- **Check:** the pinned version's major.minor must equal the series in the doc. An unset version breaks the rule.
+The memory server's `mongod` version is set explicitly in `package.json` (mongodb-memory-server's `config.mongodbMemoryServer.version`) to a version in the same release series (major.minor) as the Atlas cluster. The install-time download reads only that setting, so the launcher sets no version of its own (no `binary.version`). The memory-server `webServer` entry's `env` sets `MONGOMS_VERSION` from that pin and sets `MONGOMS_SYSTEM_BINARY`, `MONGOMS_DOWNLOAD_URL` and `MONGOMS_ARCHIVE_NAME` to empty strings, so no variable in the shell can swap in another `mongod` (Sarah decided 2026-09-29). `docs/e2e_tests.md` records that series. When Atlas moves to a new series, the pin and the doc change together.
+- **Check:** the pinned version's major.minor must equal the series in the doc. An unset version breaks the rule, and so does a memory-server `webServer` entry that doesn't set those four variables.
 - **Lands in:** "Running E2E Tests".
 
 ## Rule 15 - Specs import `test` and `expect` from `e2e/_fixtures/`
@@ -248,14 +248,26 @@ None: no module in `src/` moves, and files in `test/` have no tests of their own
 - `e2e/auth/homeRedirect.spec.ts` (new) - scaffold spec: signed out, `/` shows the sign-in prompt
 
 **Acceptance:**
-- [ ] Delete `node_modules/.cache/mongodb-memory-server/`, run `pnpm rebuild mongodb-memory-server`, then list that folder. See one `mongod` binary whose name has the pinned version, in the Atlas cluster's release series, and no other version.
-- [ ] With `pnpm dev` running in another terminal, run `pnpm test:e2e`. See the memory server log that same `mongod` version and a `mongodb://127.0.0.1:<port>/` URI, then `next build` run, then one test pass in the `desktop` project and one in the `phone` project. `pnpm dev` keeps running and serving `localhost:3000` throughout.
-- [ ] Run `pnpm test:e2e` a second time. See a different port in the memory server's URI.
-- [ ] Stop `pnpm dev`. Temporarily rename `.env.local` to `.env.local.bak`, run `pnpm test:e2e`, see both tests still pass, so no value comes from `.env.local`. Rename it back.
-- [ ] Run `pnpm test:e2e --trace on`, then `pnpm exec playwright show-report`. Open each test's trace. See the sign-in prompt at desktop width in the `desktop` test and at phone width in the `phone` test, both on `http://localhost:3100/`.
-- [ ] After a run, run `git status`. See no `test-results/` or `playwright-report/`.
-- [ ] Temporarily delete `RESEND_FROM_EMAIL` from the E2E env object in `playwright.config.ts`, run `pnpm check:types`, see an error naming `RESEND_FROM_EMAIL` as missing. Revert.
-- [ ] Temporarily set `RESEND_FROM_EMAIL` in the E2E env object to `not-an-email`, run `pnpm test:e2e`, see `next build` fail with an invalid environment variable error for `RESEND_FROM_EMAIL`. Revert.
+- [x] Delete `node_modules/.cache/mongodb-memory-server/`, run `pnpm rebuild mongodb-memory-server`, then list that folder. See one `mongod` binary whose name has the pinned version, in the Atlas cluster's release series, and no other version.
+- [x] With `pnpm dev` running in another terminal, run `pnpm test:e2e`. See the memory server log that same `mongod` version and a `mongodb://127.0.0.1:<port>/` URI, then `next build` run, then one test pass in the `desktop` project and one in the `phone` project. `pnpm dev` keeps running and serving `localhost:3000` throughout.
+- [x] Run `pnpm test:e2e` a second time. See a different port in the memory server's URI.
+- [x] Stop `pnpm dev`. Temporarily rename `.env.local` to `.env.local.bak`, run `pnpm test:e2e`, see both tests still pass, so no value comes from `.env.local`. Rename it back.
+- [x] Run `pnpm test:e2e --trace on`, then `pnpm exec playwright show-report`. Open each test's trace. See the sign-in prompt at desktop width in the `desktop` test and at phone width in the `phone` test, both on `http://localhost:3100/`.
+- [x] After a run, run `git status`. See no `test-results/` or `playwright-report/`.
+- [x] Temporarily delete `RESEND_FROM_EMAIL` from the E2E env object in `playwright.config.ts`, run `pnpm check:types`, see an error naming `RESEND_FROM_EMAIL` as missing. Revert.
+- [x] Temporarily set `RESEND_FROM_EMAIL` in the E2E env object to `not-an-email`, run `pnpm test:e2e`, see `next build` fail with an invalid environment variable error for `RESEND_FROM_EMAIL`. Revert.
+
+**Status:** ✅ Complete
+
+**As built:**
+- The pinned `mongod` is 8.0.32, the Atlas cluster's version.
+- The launcher doesn't log the `mongod` version. Instead, the memory-server `webServer` entry's `env` forces the pinned version over anything set in the shell: `MONGOMS_VERSION` is read from `package.json`'s `config.mongodbMemoryServer.version`, and `MONGOMS_SYSTEM_BINARY`, `MONGOMS_DOWNLOAD_URL` and `MONGOMS_ARCHIVE_NAME` are set to empty strings. Sarah decided 2026-09-29, so acceptance check 2 no longer looks for a version in the log.
+- `test:e2e` runs `playwright install chromium && playwright test`, so a fresh clone needs no separate browser install. Sarah chose this over a `postinstall` script, which would download Chromium on every `pnpm install`.
+- `test:e2e:trace` runs the E2E tests with `--trace on`, passing any spec path to the test run, then opens the HTML report even when tests fail. Added at Sarah's request during review.
+- `package.json` declares `"type": "module"`, which Node's docs recommend and which stops Node warning when it runs the launcher. Sarah decided 2026-09-29.
+- `tsconfig.json`'s `target` is `ES2022` instead of `es5`, matching the browsers Next.js 16 supports. The ES5 target rejected top-level `await` in the launcher and named groups in the config's `wait` regex. Sarah pulled it in from the out-of-scope list.
+- The scaffold spec expects the Email field, `getByRole('textbox', { name: 'Email' })`, since the prompt's message is a paragraph with no accessible name. Sarah chose it.
+- The Next `webServer` entry waits on `url` (`http://localhost:3100`), and the config sets `use.baseURL` to the same URL, since Playwright needs an explicit `baseURL` when `webServer` is a list. Its `timeout` is 120 seconds; the build takes about 12.
 
 ## Step 2: First test
 **Idea:** A test signs in a user made by the factories, then sees `/` send that user to their planner's calendar.
@@ -303,7 +315,7 @@ Test harness: each check breaks a factory or `signIn`, proving the first test ca
 
 **Acceptance:**
 - [ ] Read `docs/e2e_tests.md` top to bottom, as someone about to write a new spec with no access to the note. See that each section makes sense on its own: what to do, where things go and why, with nothing that only the note explains.
-- [ ] In `docs/e2e_tests.md`, see Rules 1-3 with the area table under "Where E2E Code Lives", Rules 5, 6 and 15 under "Writing Specs", Rules 4, 7, 8, 9, 11, 16 and 17 under "Test Data", Rules 10 and 18 under "Signing In", and Rules 12-14 under "Running E2E Tests", each with its Check. Under "Where E2E Code Lives", see `e2e/_fixtures/memoryServer.ts` named as the memory-server launcher. Under "Test Data", see Rule 16 apply to `test.extend` fixtures. Under "Running E2E Tests", see Rule 14 name `package.json` `config.mongodbMemoryServer.version` and not `binary.version`, the same release series as the `mongod` version `pnpm test:e2e` logs, and the better-auth variables that are set nowhere.
+- [ ] In `docs/e2e_tests.md`, see Rules 1-3 with the area table under "Where E2E Code Lives", Rules 5, 6 and 15 under "Writing Specs", Rules 4, 7, 8, 9, 11, 16 and 17 under "Test Data", Rules 10 and 18 under "Signing In", and Rules 12-14 under "Running E2E Tests", each with its Check. Under "Where E2E Code Lives", see `e2e/_fixtures/memoryServer.ts` named as the memory-server launcher. Under "Test Data", see Rule 16 apply to `test.extend` fixtures. Under "Running E2E Tests", see Rule 14 name `package.json` `config.mongodbMemoryServer.version` and not `binary.version`, the same release series as the pin in `package.json`, the four `MONGOMS_*` variables the memory-server entry sets, and the better-auth variables that are set nowhere.
 - [ ] Open `docs/project_structure.md`. See `# e2e/` as a top-level entry describing specs grouped by feature area plus `_fixtures/`, and `# test/` as a top-level entry, no longer under `# src/`. Under `# test/`, see `fixtures/`, `utils/`, `factories/`, `auth.ts`, the setup script and `mocks/`. See `# docs/` mention E2E tests and `# scripts/` mention the vault scripts.
 - [ ] Open `AGENTS.md`. See `docs/e2e_tests.md` in the Docs list.
 
