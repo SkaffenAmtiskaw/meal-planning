@@ -39,7 +39,7 @@ Links are the strongest signal: a changed note that links to this one, that this
 - **Needs a decision:** anything that changes what gets built or how. A conflict between two designs is always this.
 
 **Meaning for the note:**
-- **Callout only:** the plan still holds.
+- **Plan holds:** the plan still works as written.
 - **Steps:** the remaining steps no longer hold.
 - **Approach:** the approach, or part of it, no longer holds.
 - **Blocked:** it can't go ahead until another story lands or a decision is made. Say which.
@@ -52,7 +52,7 @@ One block per finding:
 **Other note:** link, the section that changed, and the commit or "uncommitted"
 **What conflicts:** what the other note now says, and what this note says, quoted briefly
 **Kind:** mechanical / needs a decision
-**Meaning:** callout only / steps / approach / blocked
+**Meaning:** plan holds / steps / approach / blocked
 **Found by:** reading notes
 
 After the findings, add:

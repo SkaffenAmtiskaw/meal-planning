@@ -40,7 +40,7 @@ When the plan, the docs and recent code don't all agree, report all three with e
 - **Needs a decision:** anything that changes what gets built or how.
 
 **Meaning for the note:**
-- **Callout only:** the plan still holds.
+- **Plan holds:** the plan still works as written.
 - **Steps:** the remaining steps no longer hold.
 - **Approach:** the approach, or part of it, no longer holds.
 - **Blocked:** it can't go ahead until something else happens. Say what.
@@ -55,7 +55,7 @@ One block per finding:
 **What changed:** with `file:line` evidence, and the commit if it changed since `confirmed`
 **For conventions:** what the plan says, what the docs say, what recent code does (with the example files)
 **Kind:** mechanical / needs a decision
-**Meaning:** callout only / steps / approach / blocked
+**Meaning:** plan holds / steps / approach / blocked
 **Verification:** read in code, or unverified plus the check for Sarah
 
 After the findings, add:

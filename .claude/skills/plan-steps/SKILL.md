@@ -79,7 +79,7 @@ When a step changes only test files, shared mocks in `test/mocks/` included, not
 - **Isolation checks count too.** Add `throw new Error('x')` to a dependency the tests should no longer reach, then see every test in the file still pass.
 
 ### Coverage
-Every behavior and every piece in the approach must land in some step. Nothing can land in a step unless it's in the approach or Sarah pulled it in (see "Out-of-scope items" below).
+Every behavior and every piece in the approach must land in some step. Nothing can land in a step unless it's in the approach, Sarah pulled it in (see "Out-of-scope items" below), or it's a Boy Scout fix. A Boy Scout fix goes in the step that edits its file, as AGENTS.md describes under "Out-of-scope work".
 
 Coverage also runs back to the note's source material, not just the approach, because the approach can miss things. Every step's **Source:** names the parts of the note it builds or fixes: Requirements bullets, Design Handoff sections, a pattern's Symptoms, a sweep's Items, or a roundup's decided questions. Together the steps must claim every Requirements bullet, every Design Handoff section, every Symptom, every remaining sweep Item and every roundup decision. Cite handoff sections by heading, not individual pixel values. The implementer reads those sections for the details.
 

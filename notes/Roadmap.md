@@ -55,6 +55,7 @@
 - [[Vercel Plugin]]
 - switch testing library to `vitest-browser-react` - needs research to determine if this is worth doing
 - [[Services and Environments Audit]] ![[Services and Environments Audit#^status]]
+- [[Atlas Version Check Script]] ![[Atlas Version Check Script#^status]]
 - [[Automatic Root Cause Analysis]] ![[Automatic Root Cause Analysis#^status]]
 - [[Local Dependency Update Alerts]] ![[Local Dependency Update Alerts#^status]]
 - [[Database Backup and Restore]] ![[Database Backup and Restore#^status]]
@@ -109,7 +110,8 @@
 - replace the custom `useAsyncButton` and `useAsyncStatus` hooks with React 19's built-in pending-state hooks - needs research into how they fit `ActionResult` errors
 - route management - emails create paths & query params the app must consume, but nothing keeps them in sync
 - [[Domain-Specific Code Locations|move domain-specific code out of the generic folders]] and spell out in project conventions what goes where - idea, has a starting list of files
-- could we get rid of mongoose and use zod + mongodb on its own? what does mongoose get us? *(was medium)*
+- [[Drop Mongoose]] ![[Drop Mongoose#^status]] *(was medium)*
+- [[Better-Auth Reads Env Directly]] ![[Better-Auth Reads Env Directly#^status]]
 - audit code for client component surface area - move as much as possible to server components *(was low)*
 - [[Unit Test Tidy-Ups]] ![[Unit Test Tidy-Ups#^status]]
 - [[Unit Testing - New Centralized Mocks]] ![[Unit Testing - New Centralized Mocks#^status]]

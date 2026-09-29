@@ -1,6 +1,6 @@
 ---
 name: check-drift
-description: Check a spec, ready or in-progress note against the code, the conventions, other notes and Sarah's own comments, add ⚠️ Check Drift callouts where it no longer matches, and route it to its next step. Never rewrites the plan.
+description: Check a spec, ready or in-progress note against the code, the conventions, other notes and Sarah's own comments, add ⚠️ Check Drift callouts where a mismatch changes its work, and route it to its next step. Never rewrites the plan.
 argument-hint: "[note name]"
 disable-model-invocation: true
 hooks:
@@ -20,7 +20,7 @@ A note is written against the codebase, the conventions and the other stories as
 - **Other notes:** another story's design or build changed shared UI or modules this story depends on. This is how design changes usually reach a story.
 - **Sarah changed her mind:** she writes a comment tagged or signed with her name in the note, or tells you in chat.
 
-This skill **flags and routes**. It never rewrites the plan. It adds ⚠️ Check Drift callouts where the note no longer matches, and sends the note to whichever skill fixes it: `/plan-steps` to re-plan, or the skill that re-settles its approach: `/assess` for a feature, `/investigate` for a bug or cleanup, `/architect` for a pattern, `/decide` for a roundup. The one thing it may fix itself is a convention doc, as AGENTS.md describes under "Doc gaps".
+This skill **flags and routes**. It never rewrites the plan, except to correct a name or path. It adds ⚠️ Check Drift callouts where a mismatch changes the story's work, and sends the note to whichever skill fixes it: `/plan-steps` to re-plan, or the skill that re-settles its approach: `/assess` for a feature, `/investigate` for a bug or cleanup, `/architect` for a pattern, `/decide` for a roundup. The one thing it may fix itself is a convention doc, as AGENTS.md describes under "Doc gaps".
 
 It only reads code. It never runs the app and never changes code. A hook blocks edits outside `notes/`, `.scratch/` and `docs/`.
 
@@ -65,8 +65,8 @@ Put the findings from Sarah's comments and both reports into one list. Merge fin
 If a finding traces one of Sarah's comments, don't sort it. She has decided. It gets a callout recording her decision, and a question only where applying it is open. Sort every other finding as below.
 
 **If the note is a sweep,** its items must stay small and decided, so sort each item's findings this way:
-- **Already fixed, or built by another story:** mechanical. The callout says the item is dropped and why, and `/plan-steps` skips it.
-- **Moved or renamed:** mechanical, as above.
+- **Already fixed, or built by another story:** add a callout, without asking, saying the item is dropped and why. `/plan-steps` skips it.
+- **Moved or renamed:** mechanical. Correct the name or path in the item.
 - **Now needs a decision:** it no longer belongs in a sweep. Take it out straight away, without asking whether to settle it, and put it on the out-of-scope list, where it may go to a roundup or become its own story. Leave a callout where it was saying it moved out and why.
 - **Now waits on another story:** move it back to the collecting note, starting with `**Blocked by [[Story]]:**`, so it rolls over to the next sweep. If no collecting note exists, put it on the out-of-scope list instead. Leave a callout where it was saying where it went and why.
 
@@ -77,7 +77,7 @@ A sweep never needs a re-assessment and never gets a `decision needed` entry.
 - **Needs a decision:** anything that changes what gets built or how. A conflict with another story's design, docs vs. recent code, a module that now does a different job, a piece another story already built.
 
 Then note what it means for the note:
-- **Callout only:** the plan still holds.
+- **Plan holds:** the plan still works as written.
 - **Steps:** the approach holds but the remaining steps don't. It needs a re-plan.
 - **Approach:** the approach, or part of it, no longer holds. Its approach needs re-settling.
 - **Blocked:** it can't go ahead until another story lands or a decision is made.
@@ -91,7 +91,7 @@ Write each callout as AGENTS.md describes under "Editing notes", worded like thi
 
 Say how it was found: by reading code, by reading notes, or from Sarah's comment. When a finding depends on runtime behavior, label it unverified and add a quick check Sarah can do in the app.
 
-**Mechanical findings:** add their callouts without asking. Keep a list for the summary in step 7.
+**Mechanical findings:** correct the name or path in place without asking, as AGENTS.md describes under "Editing notes". Keep a list of these, and of any sweep items dropped as already fixed, for the summary in step 7.
 
 **Sarah's comments:** add a callout at each place her comment affects, pointing back to it, e.g. "Sarah's comment under Behaviors (2026-09-24) drops the week view, so this step's week toggle no longer applies."
 
@@ -109,7 +109,7 @@ Some decisions need more than a callout:
 
 ## 6. Route the note
 If the note is a sweep, it stays at `spec` and always goes to `/plan-steps` next. Otherwise, work out the next step from the findings' meanings in step 4:
-- **Nothing beyond callouts:** `status` stays as it is.
+- **Plan holds:** `status` stays as it is.
 - **Steps:** set `status` to `spec`. Next is `/plan-steps`, which keeps the ✅ steps and re-plans the rest.
 - **Approach:** set `status` to `spec`. Next is the skill that re-settles the approach for the note's type:
   - **Feature:** `/assess`, as a re-assessment.
@@ -118,13 +118,13 @@ If the note is a sweep, it stays at `spec` and always goes to `/plan-steps` next
   - **Roundup:** `/decide`, for the questions Sarah left open in step 5. If she decided all of them there, the approach is settled again, so route it as **Steps**.
 - **Blocked:** add the story (`"[[link]]"`) or decision to `blocked-by`.
 
-If more than one applies, the biggest wins: approach over steps over callouts only. Blocked can go with any of them.
+If more than one applies, the biggest wins: approach over steps over plan holds. Blocked can go with any of them.
 
 Update the `^status` line as AGENTS.md describes under "Editing notes", e.g. "Drift found. Next: /plan-steps to re-plan from Step 4", and set `confirmed` to today. Mention any change to `status` or `blocked-by` in your summary.
 
 ## 7. Summarize
 Show Sarah:
-1. **Mechanical callouts:** a table with one row per callout, with where it is and what it says. This is for information. She can delete any she thinks are wrong.
+1. **Mechanical changes:** a table with one row per corrected name or path, or dropped sweep item, with where it is and what changed. This is for information. She can undo any she thinks are wrong.
 2. **Decisions:** one line per decision she made, and where it was recorded.
 3. **Doc updates:** each doc changed, with a one-line summary.
 4. **Reports:** links to the two reports and the footprint.

@@ -24,4 +24,6 @@ The docs are also more prescriptive than docs written for human engineers would 
 
 Found 2026-09-28 while shaping [[Dev Foundations]] with `/roadmap`.
 
+[Sarah] - Also in this audit we should do a check for human-readability. If the `docs/` directory is supposed to be read by both humans and agents, we need to make sure that the organization and prose is human-friendly. We also should make sure knowledge isn't assumed. An agent might have a consistent knowledge baseline but humans don't.
+
 # Questions

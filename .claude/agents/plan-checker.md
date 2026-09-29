@@ -31,7 +31,7 @@ The path to the note and the path to the draft plan. Read the note's approved ap
 - **Source coverage.** Work from the note down, not from the plan up. List every Requirements bullet, every Design Handoff section (by heading), every Symptom, every remaining sweep Item and every roundup decision in the note. For each, name the steps whose **Source:** claims it. Flag any that no step claims. Also flag any step with an empty or vague **Source:**. The approach was written from this material and may have dropped something, so this check is how gaps get caught.
 - **Symptoms fixed.** Every step that claims a Symptom has an acceptance check that reproduces the original bug and shows it's gone.
 - **Approach coverage.** Every behavior and every piece in the approach lands in some step. List any that are missing.
-- **Nothing extra.** List anything a step builds that the approach doesn't include.
+- **Nothing extra.** List anything a step builds that the approach doesn't include, except what its **Source:** labels "Boy Scout fix" or "Pulled in by Sarah".
 - **Scaffolding.** Every temporary page or hardcoded value has a step that removes it.
 
 ## Report format

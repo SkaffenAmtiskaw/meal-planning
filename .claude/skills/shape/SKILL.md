@@ -102,7 +102,7 @@ Wait for her to pick one or suggest her own.
 ## 5. Draft the note
 **If Sarah picked "drop it",** there's nothing to draft or write:
 - **A Roadmap line with no note:** remove the line.
-- **An idea note:** search `notes/` for its name. If anything other than its own Roadmap line references it, tell Sarah it needs `/close` in a new session. Otherwise, delete it with `rm`, as AGENTS.md describes under "Git and files", and remove its Roadmap line.
+- **An idea note:** run `sh scripts/note-refs.sh "<note name>"`. If its vault or outside-the-vault sections list anything other than its own Roadmap line, tell Sarah it needs `/close` in a new session. Otherwise, delete it with `rm`, as AGENTS.md describes under "Git and files", and remove its Roadmap line.
 
 Then stop. Step 6 doesn't apply.
 

@@ -41,11 +41,9 @@ Where the note is and its `status` decide the kind of close:
 - **In `notes/archive/`, with stories in `kept-for`:** tell Sarah which stories it's kept for, and stop.
 
 ## 2. Find everything that points to it
-Search for the note's name, and for its files (the files in `notes/assets/<story-name>/` and every file it embeds or links, such as images and `.dc.html` prototypes):
-- **The vault:** every note in `notes/`, including `notes/archive/` and the Roadmap, but not `notes/templates/`. Look for `[[Name]]`, `[[Name|`, `[[Name#`, `![[Name`, embeds of its files, and the name in plain text.
-- **Outside the vault:** `src/`, `test/`, `docs/`, `.claude/`, `AGENTS.md` and `CLAUDE.md`, for the name and for the note's path.
+Run `sh scripts/note-refs.sh "<note name>"`. It lists the note's files (everything it embeds or links, plus the rest of any assets folder they sit in), then every reference to the note and to its files, each with `file:line`. It searches the vault (except `notes/templates/`), and outside it `src/`, `test/`, `docs/`, `.claude/`, `AGENTS.md` and `CLAUDE.md`. It tags each vault reference by its form: a `blocked-by` or `kept-for` entry, a **Blocked by** marker, its own Roadmap line, another Roadmap line, an embed, a link or plain text. It also marks lines tagged `[Sarah]` or signed `- Sarah`.
 
-Sort each match into one kind:
+Sort each match into one kind. The tags settle Kept-for and Outside the vault, and most Blockers. Read the line for the rest. A comment of Sarah's the script didn't mark is still her comment.
 - **Blocker:** an entry in another story's `blocked-by`, a sweep or roundup item's `**Blocked by [[Name]]:**` marker, or a Roadmap line that says it waits on this story.
 - **Content:** a note that relies on this note's content. It embeds a section or image, or sends the reader here for a design, a decision or a rationale ("as the approved design in the archived [[Mobile Month View]] note specifies").
 - **Kept-for:** an archived note with this story in its `kept-for`.
@@ -56,7 +54,7 @@ Sort each match into one kind:
 
 This story's own Roadmap line isn't on the list. Step 7 removes it.
 
-Also note each archived note that this story links to, or that links to it, and has no `kept-for`. Step 5 asks about them.
+The script's last section lists each archived note that this story links to, or that links to it, and has no `kept-for`. Step 5 asks about them.
 
 Save the list to `.scratch/<note name> - close.md`, and mark each item as you handle it.
 
@@ -108,11 +106,9 @@ Otherwise, a piece of a dropped story that Sarah asked to keep in step 1 skips t
    - **Delete:** delete it with `rm`, as AGENTS.md describes under "Git and files".
 
 ## 8. Delete unused files
-Check every file in `notes/` that isn't a note (images, `.dc.html` prototypes, scripts, SVGs and anything else), wherever it sits, except `notes/templates/`. Don't limit it to this story's assets folder or its embeds: artifacts end up in whatever folder they were saved to, and references are sometimes missed, so an orphan can be anywhere.
+Run `sh scripts/vault-orphans.sh`. It checks the whole vault except `notes/templates/`, and lists every file that isn't a note and that nothing references anymore, each with its git state. Any mention of the filename counts as a reference: an embed, a link, plain text, or a prototype loading it. A file that only other unreferenced files load, such as a deleted prototype's script, is listed too. Run it after step 7, so a reference from a note deleted there doesn't count.
 
-For each, search all of `notes/` for its filename, not its path, because Obsidian finds files by name. A reference is an embed (`![[file]]`), a link (`[[file]]`), the filename or path in plain text ("see `archive/assets/dish-row-states.png`"), or another file loading it, like a `.dc.html` prototype loading `./support.js`. Only references from files that still exist count, so a reference from a note deleted in step 7 doesn't.
-
-If nothing references a file, delete it as AGENTS.md describes under "Git and files". Deleting a file can leave the files it loaded with nothing referencing them, such as a prototype's script, so check those too. Remove any assets folder left empty.
+Delete each file it lists as AGENTS.md describes under "Git and files", using the git state it prints. Then remove each folder it says is left empty.
 
 ## 9. Report and stop
 Tell Sarah:

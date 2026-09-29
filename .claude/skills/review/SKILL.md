@@ -56,7 +56,7 @@ Save each agent's report to `.scratch/<note name> - <agent name>.md`.
 
 **For a pattern, bug, cleanup, sweep or roundup:** read the conventions the story was meant to apply, such as a pattern's Rules section, a roundup's **Decided** lines or the `docs/` file a cleanup aligns code with (for example `unit_tests.md`). Then read the story's files and check each change against them. Findings need `file:line` evidence and the rule they break.
 
-Every agent's "Outside this story" and "Duplication" items that fall outside the story become findings in step 4, proposed as route to the notes, instead of going straight to the out-of-scope list. Step 5 is their triage: fix here pulls one into the story, and skip drops it.
+If an agent's item is a Boy Scout fix, as AGENTS.md describes under "Out-of-scope work", it isn't a finding: add it to the approved fixes for step 6, and say it's a Boy Scout fix when you get to it. Every other "Outside this story" and "Duplication" item that falls outside the story becomes a finding in step 4, proposed as route to the notes, instead of going straight to the out-of-scope list. Step 5 is their triage: fix here pulls one into the story, and skip drops it.
 
 ## 4. Collect the findings
 Merge everything into one list, in `.scratch/<note name> - review findings.md`:

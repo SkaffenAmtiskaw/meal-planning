@@ -45,6 +45,7 @@ Size decides whether to draft first:
 While making it:
 - **Claude Code features** (skill frontmatter, hooks, subagents, rules): check the current Claude Code docs, never memory.
 - **New skills and agents** follow the shape of the existing ones in `.claude/skills/` and `.claude/agents/`. A skill carries or points to only the parts of shared docs it uses, never a whole long doc.
+- **Model:** if a new agent's work is scripted or rule-following and its output is reviewed before anything acts on it, give it `model: sonnet`, as `bug-reproducer` and `scope-router` have. Otherwise, when its work takes judgment such as design, critique or weighing options, leave `model` out so it runs on the session's model. Skills never set `model`: the override ends when Sarah sends her next message, so an interactive skill would run only its first turn on it.
 - **Naming a new or renamed skill:** check the name, and each alias, against the skills in your own skill list and the built-in commands and bundled skills on the current Claude Code [commands page](https://code.claude.com/docs/en/commands). If it matches one, pick another name. Otherwise, ask Sarah to type `/<name>` in the Code tab and say whether anything built in comes up, because the docs can miss an alias: the desktop app's `/workflows` has a `workflow` alias the docs don't list, and it caught the old `/workflow` skill.
 - **Writing instructions** in a skill or agent: put the condition first ("If ..., do Y. Otherwise, do X."). Never write an instruction followed by its exception in a later sentence ("Do X." then "Don't do X when ..."), because agents act on the plain instruction and miss the exception.
 - **Readable as a whole:** Sarah reads each draft as prose, so reread every passage you changed from start to finish before showing it. If an addition is a separate idea, give it its own paragraph or bullet. If it's a case of an existing rule, rebuild the rule around its cases, such as sub-bullets, rather than wedging a sentence into the middle. Say in full what an agent does: what it asks, about what, and what happens with each answer. Never use shorthand like "asks Sarah them".
@@ -65,14 +66,14 @@ Handle each one:
 - **Sarah's comments:** if one is now done or out of date, handle it as AGENTS.md describes under "Editing notes". The bullets below are for everything else.
 - **Done in full:** remove it, with no line recording that it was removed. How depends on what it is:
   - **An item in a collecting note:** remove only the item. The note stays. If the item ended with 🎯 goal links, update the note's Roadmap line as the Roadmap's "How this file works" describes under "Collecting notes". If that leaves the note this session worked from with no items, ask Sarah whether it should keep collecting or be deleted. If it's deleted, handle it as a whole note (next bullet).
-  - **A whole note:** if it holds something worth keeping for reference, such as a rationale or a convention, ask Sarah whether a doc should cover it. Then delete it with `rm`, as AGENTS.md describes under "Git and files". Then remove its Roadmap line, and reword or remove every link to it.
+  - **A whole note:** if it holds something worth keeping for reference, such as a rationale or a convention, ask Sarah whether a doc should cover it. Before deleting it, run `sh scripts/note-refs.sh "<note name>"` to list every link to it. Then delete it with `rm`, as AGENTS.md describes under "Git and files", remove its Roadmap line, and reword or remove every link the script listed.
   - **Anything else,** such as an item in a story note: remove it.
 - **Partly done:** remove the done parts and keep the rest.
-- **Out of date:** if it's a story note's plan, never rewrite it. Add a Check Drift callout as AGENTS.md describes. Otherwise, if there's one right fix, make it. If there's a real choice, propose the wording and wait.
+- **Out of date:** if it's in a story note, handle it as AGENTS.md describes under "Editing notes" for a note that's wrong or out of date. Otherwise, if there's one right fix, make it. If there's a real choice, propose the wording and wait.
 
 Don't bring other notes up to a convention this change introduced. They're updated when next worked on.
 
-Last, check every file in `notes/` that isn't a note (images, `.dc.html` prototypes, scripts, SVGs), except `notes/templates/`. Search `notes/` for its filename. If nothing references it, delete it as AGENTS.md describes under "Git and files".
+Last, run `sh scripts/vault-orphans.sh`. It lists every file in `notes/` that isn't a note and that nothing references anymore, with its git state. Delete each one as AGENTS.md describes under "Git and files", and remove each folder it says is left empty.
 
 ## 5. Report and stop
 Route the out-of-scope list as AGENTS.md describes. Then tell Sarah, in the same table format as step 3:
