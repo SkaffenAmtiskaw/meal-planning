@@ -95,7 +95,7 @@ Say how it was found: by reading code, by reading notes, or from Sarah's comment
 
 **Sarah's comments:** add a callout at each place her comment affects, pointing back to it, e.g. "Sarah's comment under Behaviors (2026-09-24) drops the week view, so this step's week toggle no longer applies."
 
-**Findings that need a decision:** if the note is a roundup and a finding means Approach, don't settle it here. Add it to Open Decisions as a new question that says which decided question it reopens and why, with a `decision needed` entry in `blocked-by` if the note doesn't have one. Write a callout on the old decision that points to the new question. `/decide`'s researcher reads the current code for each question. Otherwise, go through them with Sarah:
+**Findings that need a decision:** go through them with Sarah:
 1. Show the finding, where it applies, its evidence (`file:line` or note and section) and how it was found.
 2. Say what the options are, and which you'd recommend and why.
 3. Wait for her answer.
@@ -105,7 +105,7 @@ Some decisions need more than a callout:
 - **Recent code wins over the docs**, or recent code follows a convention the docs don't mention and Sarah says it's the convention: it's a doc gap. Handle it as AGENTS.md describes under "Doc gaps".
 - **The docs win:** the recent code that breaks the convention goes on the out-of-scope list.
 - **The other story has to change:** that change goes on the out-of-scope list. Don't edit the other note here.
-- **A decision she wants to make later:** add the question to the note's Open Decisions, and a `"decision needed: ..."` entry to `blocked-by` if the note doesn't have one.
+- **A decision she wants to make later:** add the question to the note's Open Decisions, and a `"decision needed: ..."` entry to `blocked-by` if the note doesn't have one. If the note is a roundup and the finding reopens a question it already decided, the new question says which one it reopens and why, and a callout on the old decision points to the new question.
 
 ## 6. Route the note
 If the note is a sweep, it stays at `spec` and always goes to `/plan-steps` next. Otherwise, work out the next step from the findings' meanings in step 4:
@@ -115,7 +115,7 @@ If the note is a sweep, it stays at `spec` and always goes to `/plan-steps` next
   - **Feature:** `/assess`, as a re-assessment.
   - **Bug or cleanup:** `/investigate`, as a re-investigation.
   - **Pattern:** `/architect`, as a revision.
-  - **Roundup:** `/decide`, for the questions step 5 added.
+  - **Roundup:** `/decide`, for the questions Sarah left open in step 5. If she decided all of them there, the approach is settled again, so route it as **Steps**.
 - **Blocked:** add the story (`"[[link]]"`) or decision to `blocked-by`.
 
 If more than one applies, the biggest wins: approach over steps over callouts only. Blocked can go with any of them.

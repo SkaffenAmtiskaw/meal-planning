@@ -10,6 +10,7 @@ Work is planned and tracked as notes in the Obsidian vault in `notes/`.
 - **Wrong assumptions:** if her answer shows a question rested on a wrong assumption, say the question is no longer needed and move on.
 - **Self-contained questions.** Put what a question is about inside it: the note, the file, the step. She may see only the question, not the text before it.
 - **Open choices are hers.** When an instruction or plan leaves a real choice open (two reasonable readings, and nothing written picks one), ask instead of choosing.
+- **Open questions in notes are hers too.** An open question in a note (an Open Decisions question, an "Open questions:" list in an item, a `decision needed` entry) holds only what Sarah hasn't decided and wants to think about or research. If the code or docs can answer a question, look it up. If you aren't sure what she meant or what she'd pick, ask her right then. Only if she says she wants to think it over or research it, write it into the note.
 - **Recommendations:** if she asks for a recommendation, always give one. Otherwise, give one when best practice supports it, and name the practice. When a choice comes down to her preference, say so and don't guess.
 - **Doc gaps:** the moment you notice something that belongs in `docs/` (a convention the docs don't cover, or a rule that's wrong or out of date), stop and ask her whether it should become doc. Don't save the question for a report or a later pass. If it should:
   - **The default, for any change that isn't big:** recommend drafting it now, because docs that wait for later rarely get updated. If she says to do it later, remind her of that preference. If she still says later, add it to `notes/features/tooling/Docs Updates.md`.
@@ -18,7 +19,10 @@ Work is planned and tracked as notes in the Obsidian vault in `notes/`.
 
 ## Editing notes
 Any change to a note in `notes/` follows these rules:
-- **Sarah's comments:** a line where her name is a tag or a signature (`[Sarah] I want X instead.`, `Change this to Y - Sarah`) is her own words. If one is done or out of date, show it to her and ask whether to remove it. Otherwise, never edit it. Never write in her voice or sign as her. Record her decisions in the third person ("Sarah decided 2026-09-25 that ...").
+- **Sarah's comments:** a line where her name is a tag or a signature (`[Sarah] I want X instead.`, `Change this to Y - Sarah`) is her own words. Never write in her voice or sign as her, and record her decisions in the third person ("Sarah decided 2026-09-25 that ..."). What you may do with one of her lines depends on the case:
+  - **It's done or out of date:** show it to her and ask whether to remove it.
+  - **It needs a workflow marker:** add a `🎯 [[Goal]]` link to its end or a `**Blocked by [[Story]]:**` prefix to its start, without asking. They sit outside her words, so adding one isn't editing them.
+  - **Otherwise:** never edit it.
 - **Plans aren't rewritten.** When the build differs from a step, add an **As built:** note under the step. When a note no longer matches the code, add a `> ⚠️ **Check Drift YYYY-MM-DD:** ...` callout directly above the text it's about. Never edit the plan text itself.
 - **The `^status` line** (the line ending in ` ^status` under Where It Stands) says what work the story needs next or what it's waiting on, and nothing else. Never describe the story there. The Roadmap embeds it so Sarah can scan what each story needs.
   - Whoever moves a story forward updates it. When the next step is settled, write it without asking and mention it in your summary. When there's a real choice, such as what the story is blocked on, show Sarah the line and wait for her approval.
@@ -32,6 +36,8 @@ Any change to a note in `notes/` follows these rules:
 
 ## Out-of-scope work
 Keep a running list of anything that looks like it belongs outside the story or step you're working on, whether you, a subagent or Sarah found it. If Sarah gives feedback on how a skill, subagent or the workflow itself behaves, and this session isn't working on that same skill or subagent, it always goes on the list, even when it's also saved as a memory. Don't stop to deal with items as they come up.
+
+**Immature stories aren't items.** A note or Roadmap line that isn't shaped yet, such as Sarah's jotted thoughts with no frontmatter or Where It Stands, a Roadmap line with a description after its status embed, or a story that is only a Roadmap line, stays off the list. `/shape` and the skills after it turn it into a unit of work and format it. If something is wrong with it beyond that, such as a wrong fact or a real conflict, it goes on the list.
 
 **Sarah decides what's out of scope.** Before you show her the result she approves, go through the list so far with her, **one item at a time**. Each skill names the point where this happens. For each item, show what it is, where it was found and why it looks outside this work. Then offer the choices below. If the skill has no story to pull into, offer only route or drop. Otherwise, offer all three:
 - **Pull it in:** it becomes part of this story. She may have thought it was in scope, or want it done while this work is here. The skill says how it enters the story.

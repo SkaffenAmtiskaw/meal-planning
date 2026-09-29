@@ -85,7 +85,7 @@ After recording, look at what the answer changes:
 - **This note:** other sections the answer lands in, e.g. a section the question says to record it in, the chosen Fix Option, or a hub's Coverage or Child Stories table. Draft each change and go through them with Sarah. If the note is `ready` and the change touches its design or steps, it goes back to `spec` (AGENTS.md, "Editing notes"). Say so when you show the change.
 - **Other notes:** add each effect to the running list: which note, what changes and why. Step 6 handles them.
 - **New stories:** if the answer implies work no note covers yet, add it to the running list of new stories. Step 5 handles them.
-- **New questions:** if the brief found a blocking question that isn't on the note, or the answer raised one, show it to Sarah as a question, not a proposal. Once she approves, add it to Open Decisions (plus a `decision needed` entry in `blocked-by` on a story, if it doesn't have one). Then ask whether to take it now or leave it for a later run.
+- **New questions:** if the brief found a blocking question that isn't on the note, or the answer raised one, tell Sarah what needs deciding and ask whether she already has an answer in mind. If she does, add the question to Open Decisions, written as a question rather than a proposal, with her answer on a **Decided** line as above. If she wants to think it over or research it, add the question without one (plus a `decision needed` entry in `blocked-by` on a story, if it doesn't have one), then ask whether to take it now or leave it for a later run.
 
 Then go on to the next decision she picked.
 

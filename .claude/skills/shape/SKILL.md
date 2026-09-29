@@ -16,7 +16,7 @@ Shape **$ARGUMENTS** into a story with a type, a direction and a next step.
 ## Why this skill works the way it does
 Sarah jots ideas down fast, as an Idea note or a single Roadmap line. Before anything can be planned, someone has to decide what kind of story it is and which way to take it. That's all this skill does: it gives the idea a direction.
 
-It stops there on purpose. Design, Suggested Approach, root cause, fix options, a Current State scan, pattern Rules and the decisions that block the next step each belong to a later step, and each of those steps has its own process and checks. An answer worked out here would skip those checks, and it would anchor the later step to whatever this skill guessed. If you catch yourself tracing a call chain or sketching components, stop. That's the next step's job.
+It stops there on purpose. Design, Suggested Approach, root cause, fix options, a Current State scan and pattern Rules each belong to a later step, and each of those steps has its own process and checks. An answer worked out here would skip those checks, and it would anchor the later step to whatever this skill guessed. Blocking decisions are different, because they're Sarah's to make. This skill never answers one itself, but it checks each with her, since she may already know what she wants. The ones she wants to think over or research stay open for `/decide`. If you catch yourself tracing a call chain or sketching components, stop. That's the next step's job.
 
 Pick the type by the shape of the fix, not by where the idea came from. A user report can turn out to be a missing pattern. A "cleanup" can turn out to be a feature.
 
@@ -43,13 +43,16 @@ Don't check whether the idea is still relevant. Sarah running `/shape` on it mea
 
 Don't read external docs unless the idea depends on what a library can do, and then only enough to know whether it's possible.
 
+### Check the blocking decisions with Sarah
+If step 2 found none, skip this. Otherwise, go through them one at a time. For each one, tell Sarah what needs deciding and why it blocks the next step, then ask whether she already has an answer in mind. If she does, note it. If she wants to think it over or research it, it stays open for `/decide`. Do this before step 3, because her answers can change how many stories there are and which directions are worth offering.
+
 ## 3. One story or several
 Tell Sarah which of these it is, and why:
 - **One story.** Do steps 4 to 6 once.
 - **Several stories.** Give each one a one-line scope. Once she agrees to the split, follow "Splitting an idea" below. That ends this session. Each story gets its own `/shape` in a new session.
 - **Too big and too undecided to split yet.** It becomes a hub. Skip steps 4 and 5 and draft it as described under "Drafting a hub" below.
 
-**Hub, or a story blocked by decisions?** Ask whether the open decisions would change *what the stories are*, or only *how one story gets built*. If you can write a Purpose now that stays true whatever the decisions say, it's one story, blocked by those decisions. If at least one answer would change how many stories there are, where they split or what type they are, it's a hub. The number of decisions doesn't matter. When you can't tell, make it a story; it can be re-shaped into a hub later if working through the decisions shows it's really several.
+**Hub, or a story blocked by decisions?** Consider whether the decisions Sarah is leaving open would change *what the stories are*, or only *how one story gets built*. If you can write a Purpose now that stays true whatever the decisions say, it's one story, blocked by those decisions. If at least one answer would change how many stories there are, where they split or what type they are, it's a hub. The number of decisions doesn't matter. When you can't tell, make it a story; it can be re-shaped into a hub later if working through the decisions shows it's really several.
 
 Wait for her to agree or change it.
 
@@ -57,7 +60,7 @@ Wait for her to agree or change it.
 Rewrite the note from `notes/templates/Hub.md`:
 - **Where It Stands:** e.g. "Not split yet. Next: work through Open Decisions with Sarah. ^status"
 - **Purpose:** what the idea is, in Sarah's words.
-- **Open Decisions:** the blocking decisions from step 2, one per line. Write them as questions, not proposals. Under an adopt-or-build decision, name the candidates from step 2 without ranking them.
+- **Open Decisions:** each blocking decision from step 2 on its own line, written as a question, not a proposal. If Sarah already had an answer, put it on a **Decided** line under the question, e.g. "**Decided 2026-09-28:** web first, phones later." If she's leaving an adopt-or-build decision open, list the candidates from step 2 under it, without ranking them.
 - **Child Stories:** leave the table empty. Children get their own `/shape` run once the decisions make them clear.
 - **Leave** Coverage, Build Order and Deferred Work as template comments.
 - **Frontmatter:** `type: hub` and `confirmed` set to today. Hubs have no `status` or `blocked-by`.
@@ -75,7 +78,7 @@ Each story gets a placeholder now, and its real shaping later in its own session
 Give Sarah two or three directions, each with:
 - **Type:** feature, bug, pattern or cleanup.
 - **Direction:** one or two sentences on which way to take it.
-- **Next step:** what happens next and who does it. If step 2 found blocking decisions, the next step is deciding them with Sarah, then the usual one. Use the Next Step by Note State table in Note Conventions, e.g. "design session in Claude Design, then `/assess`", "investigate", "write the Rules with Sarah" or "blocked until [[X]] lands".
+- **Next step:** what happens next and who does it. If Sarah is leaving any blocking decisions open, the next step is working through them with `/decide`, then the usual one. Use the Next Step by Note State table in Note Conventions, e.g. "design session in Claude Design, then `/assess`", "investigate", "write the Rules with Sarah" or "blocked until [[X]] lands".
 - **Why:** what you found in step 2 that supports it.
 
 Recommend one and say why. These are also valid directions:
@@ -83,7 +86,7 @@ Recommend one and say why. These are also valid directions:
 - **Fold it into a sweep or roundup,** if it fits a collecting sweep's or roundup's What Belongs Here rule (`type: sweep` or `type: roundup`), as the `scope-router` agent describes under "Sweep" and "Roundup". Never create a new one. If none fits but the Roadmap already has related items, tell Sarah they could be grouped into a new sweep or roundup. Whether to create one is her call.
 - **Drop it,** if it's already done or no longer makes sense.
 
-**Don't make the blocking decisions from step 2,** even if a direction seems to depend on one. They need research and Sarah, and that's the decide step's job. Say which decisions each direction depends on instead.
+**Don't settle the decisions Sarah is leaving open,** even if a direction seems to depend on one. She wants to think them over or research them first, and that happens in `/decide`. Say which of them each direction depends on instead.
 
 Wait for her to pick one or suggest her own.
 
@@ -100,10 +103,10 @@ Then stop. Step 6 doesn't apply.
 
 **Otherwise,** draft the note from the template in `notes/templates/` for the chosen type:
 - **Where It Stands:** the `^status` line, with the next step or what the story is waiting on. Don't restate the direction on it. Below the line, give the chosen direction in a sentence or two, then list any questions the next step will answer as part of its own work.
-- **Open Decisions:** the blocking decisions from step 2, one per line. Write them as questions, not proposals. Under an adopt-or-build decision, name the candidates from step 2 without ranking them. Delete the section if there are none.
+- **Open Decisions:** each blocking decision from step 2 on its own line, written as a question, not a proposal. If Sarah already had an answer, put it on a **Decided** line under the question, e.g. "**Decided 2026-09-28:** web first, phones later." If she's leaving an adopt-or-build decision open, list the candidates from step 2 under it, without ranking them. Delete the section if step 2 found no blocking decisions.
 - **Sarah's content:** move everything from the idea into the template's sections. Keep her wording. If something fits no section, put it under Where It Stands rather than dropping it.
 - **Don't fill** the sections that belong to a later step: Design Handoff, Suggested Approach, Root Cause, Fix Options, Current State, Rules, Migration Checklist and Implementation. Leave their template comments in place.
-- **Frontmatter:** set `type`, leave `status: idea`, set `confirmed` to today, and add `blocked-by` entries if the direction depends on another story. If there are open decisions, add one `"decision needed: ..."` entry to `blocked-by` that covers them all.
+- **Frontmatter:** set `type`, leave `status: idea`, set `confirmed` to today, and add `blocked-by` entries if the direction depends on another story. If Sarah is leaving any decisions open, add one `"decision needed: ..."` entry to `blocked-by` that covers them all.
 
 Show her the draft and wait for her approval.
 
