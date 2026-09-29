@@ -31,7 +31,7 @@
 - [[E2E Test Setup]] ![[E2E Test Setup#^status]] 🎯 [[Dev Foundations]] 🎯 [[Calendar Page]]
 
 # Next
-1. [[Desktop Inbox]] ![[Desktop Inbox#^status]] 🎯 [[Dev Foundations]] 🎯 [[Calendar Page]]
+1. [[Desktop Inbox]] ![[Desktop Inbox#^status]] 🎯 [[Dev Foundations]]
 2. [[CI Checks]] ![[CI Checks#^status]] 🎯 [[Dev Foundations]] 🎯 [[Calendar Page]]
 3. [[E2E Tests in CI]] ![[E2E Tests in CI#^status]] 🎯 [[Dev Foundations]]
 4. [[Docs Audit]] ![[Docs Audit#^status]] 🎯 [[Dev Foundations]]
