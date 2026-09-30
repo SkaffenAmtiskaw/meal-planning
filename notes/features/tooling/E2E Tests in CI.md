@@ -2,17 +2,16 @@
 type: 
 status: idea
 blocked-by:
-  - "[[PR Checks]]"
   - "[[CI Failure Sessions]]"
 confirmed: 2026-09-28
 ---
 # Where It Stands
-Blocked until [[PR Checks]] and [[CI Failure Sessions]] land, then /shape ^status
+Blocked until [[CI Failure Sessions]] lands, then /shape ^status
 
 # Notes
 Split from E2E Testing on 2026-09-28.
 
-Scope: run the E2E tests in GitHub Actions when `develop` opens a PR into `main`, set up whatever environment that needs, and write a doc on how to create a new environment. It builds on [[PR Checks]] (which sets up CI) and E2E Test Setup (which gets the tests running locally).
+Scope: run the E2E tests in GitHub Actions when `develop` opens a PR into `main`, set up whatever environment that needs, and write a doc on how to create a new environment. It builds on the CI checks in `.github/workflows/checks.yml` and E2E Test Setup (which gets the tests running locally).
 
 > [!warning]
 > The E2E tests build the app into the default `.next` folder, the same one `pnpm build` uses (`docs/e2e_tests.md`, "How a Run Works"; Sarah decided 2026-09-29 not to give it a separate folder). Nothing in CI may run another `next build` in the same checkout while the E2E tests run, or the two builds collide.

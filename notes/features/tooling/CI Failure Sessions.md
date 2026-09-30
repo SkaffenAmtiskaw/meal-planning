@@ -1,8 +1,7 @@
 ---
 type: infra
 status: spec
-blocked-by:
-  - "[[PR Checks]]"
+blocked-by: []
 confirmed: 2026-09-30
 ---
 # Where It Stands
@@ -41,7 +40,7 @@ The design lives in [[CI Checks]]. The sections embedded below are part of this 
 
 ![[CI Checks#The flow]]
 
-Already built by a sibling: `checks.yml`'s four check jobs, the `lint:ci` script, `docs/ci.md` with its first sections, and the ruleset on `main`, all by [[PR Checks]].
+Already built by a sibling: `checks.yml`'s four check jobs, the `lint:ci` script, `docs/ci.md` with its first sections, and the ruleset on `main`.
 
 # Conventions
 ![[CI Checks#Convention 1 - Results reach Sarah only as a routine session]]
@@ -99,7 +98,7 @@ Decisions Sarah made 2026-09-30 while planning, cited in the steps below:
   - Install the Claude GitHub App on the repo, if it isn't already.
   - Create the cloud environment: Trusted network; the eight dummy values, the same as `checks.yml`'s; no `GH_TOKEN` or `GITHUB_TOKEN`. The setup script installs mise from npm (`npm install -g @jdxcode/mise`), because `mise.run` and `mise.jdx.dev` aren't on the Trusted list and GitHub release downloads reach only repos attached to the session. It then runs `mise trust` and `mise install node pnpm`, and puts mise's shims ahead of `/opt/node22` on `PATH` for the session's shell. If pnpm's default `aqua:pnpm/pnpm` backend is blocked, it sets `MISE_DISABLE_BACKENDS=aqua` so mise uses `npm:pnpm`. If node or pnpm can't be installed from the Trusted list at all, stop and bring it to Sarah, since that changes the network choice in the design.
   - Create the `ci-failure` routine on claude.ai: this repo, that environment, no connectors, the prompt above, an API trigger (no token yet).
-- Before the checks, a branch cut from `main` gets only `.claude/skills/routine-sessions/` and `.claude/skills/ci-failure/` from `develop` and goes into `main` through a PR. If `main` doesn't have `checks.yml` yet, the branch also takes `.github/workflows/checks.yml` and the `package.json` script changes from [[PR Checks]], so its required checks can run. No app code goes to `main`.
+- Before the checks, a branch cut from `main` gets only `.claude/skills/routine-sessions/` and `.claude/skills/ci-failure/` from `develop` and goes into `main` through a PR. If `main` doesn't have `checks.yml` yet, the branch also takes `.github/workflows/checks.yml` and the `lint:ci` and `check:types` script changes in `package.json`, so its required checks can run. No app code goes to `main`.
 - `docs/ci.md` "Setup Outside the Repo": the Claude GitHub App, the cloud environment (network level, which variables it sets, what the setup script does), and one line for the `ci-failure` routine with its purpose and a link to its skill (Convention 6).
 
 **Files:**

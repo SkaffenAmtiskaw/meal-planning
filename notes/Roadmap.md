@@ -32,7 +32,6 @@
 - [[App Health]]
 
 # Now
-- [[PR Checks]] ![[PR Checks#^status]] 🎯 [[Dev Foundations]] 🎯 [[Calendar Page]]
 
 # Next
 1. [[CI Failure Sessions]] ![[CI Failure Sessions#^status]] 🎯 [[Dev Foundations]] 🎯 [[Calendar Page]]
