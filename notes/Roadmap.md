@@ -48,14 +48,13 @@
 # Later
 ## [[Dev Foundations]]
 - [[Release Process]] ![[Release Process#^status]]
-- Add Sentry for logging *(was high)*
 - Add PostHog for analytics *(was high)*
 - I want a way to watch certain libraries and tools to see if they have new releases or features that are worth implementing
 - [[Vercel Plugin]]
 - switch testing library to `vitest-browser-react` - needs research to determine if this is worth doing
 - [[Services and Environments Audit]] ![[Services and Environments Audit#^status]]
 - [[Atlas Version Check Script]] ![[Atlas Version Check Script#^status]]
-- [[Sentry Root Cause Analysis]] ![[Sentry Root Cause Analysis#^status]]
+- [[Sentry Logging and Root Cause Analysis]] ![[Sentry Logging and Root Cause Analysis#^status]] *(was high)*
 - [[Local Dependency Update Alerts]] ![[Local Dependency Update Alerts#^status]]
 - [[Database Backup and Restore]] ![[Database Backup and Restore#^status]]
 - [[Core Flows E2E Tests]] ![[Core Flows E2E Tests#^status]] 🎯 [[Calendar Page]]

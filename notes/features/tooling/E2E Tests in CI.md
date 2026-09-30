@@ -16,9 +16,9 @@ Scope: run the E2E tests in GitHub Actions when `develop` opens a PR into `main`
 > [!warning]
 > The E2E tests build the app into the default `.next` folder, the same one `pnpm build` uses (`docs/e2e_tests.md`, "How a Run Works"; Sarah decided 2026-09-29 not to give it a separate folder). Nothing in CI may run another `next build` in the same checkout while the E2E tests run, or the two builds collide.
 
-A failed E2E test reaches Sarah through the failed-check session [[CI Checks]] sets up. This story adds instructions for that session to run a preliminary root cause analysis of the failure, moved here from [[Sentry Root Cause Analysis]] 2026-09-29, which reuses it for Sentry errors.
+A failed E2E test reaches Sarah through the failed-check session [[CI Checks]] sets up. This story adds instructions for that session to run a preliminary root cause analysis of the failure, moved here from [[Sentry Logging and Root Cause Analysis]] 2026-09-29, which reuses it for Sentry errors.
 
-Sarah's note from E2E Testing, moved here from [[Sentry Root Cause Analysis]] 2026-09-29:
+Sarah's note from E2E Testing, moved here from [[Sentry Logging and Root Cause Analysis]] 2026-09-29:
 - I'd love if a failed e2e test automatically kicked off a Claude agent that did a preliminary root cause analysis for me to review
 
 Sarah's notes from E2E Testing:
