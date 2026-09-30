@@ -27,4 +27,4 @@ Covers the OpenCode migration, removes current pain points in building the app, 
 
 # Out of Scope
 %% Work that was considered for this goal and left out, with Sarah's reason, so `/roadmap` doesn't offer it again. %%
-- Tech debt stories, including test-code tech debt such as [[Unit Testing - New Centralized Mocks]] and [[Unit Test Tidy-Ups]]: Sarah plans a separate tech debt goal later (2026-09-28).
+- Tech debt stories, including test-code tech debt such as [[Unit Testing - New Centralized Mocks]] and [[Unit Test Tidy-Ups]]: Sarah left them out on 2026-09-28, and they belong to the [[App Health]] standing goal.
