@@ -16,13 +16,18 @@ Shape the goal **$ARGUMENTS**, or re-rank the goals if no goal was named.
 ## Why this skill works the way it does
 Goals are how Sarah decides what matters. Each one is an epic she ships as one release, and the top two on the Roadmap are the active ones that Next is filled from. They often start out only in her head. This skill gets a goal into a note and onto the Roadmap, and keeps Next honest when the ranking changes.
 
-Some work never serves a goal, because it never blocks a feature: a library upgrade, or a piece of tech debt. A standing goal collects it. It's never ranked or active, and it never ships. When Sarah wants to take on some of that work, this skill draws a goal from it: an ordinary goal, named `<standing goal> YYYY-MM-DD`, that takes the work she picks and ships as one release, while the standing goal keeps collecting.
+Some work never serves a goal, because it never blocks a feature: a library upgrade, or a piece of tech debt. A standing goal collects it. It's never ranked or active, and it never ships. When Sarah wants to take on some of that work, this skill draws a goal from it: an ordinary goal, named `<standing goal> YYYY-MM-DD`, that takes the work she picks and ships as one release, while the standing goal keeps collecting. Any sweep or roundup whose items the drawn goal takes is kicked off in the same run, so those items get worked.
 
 It gathers facts and writes what Sarah decides. It makes almost no decisions: what the goal is for, what's in it, which gaps get filled, which tooling goes under it, its rank and the order of Next are all hers. Your own judgment covers only dependencies you can point to in the notes or code, and recommendations as AGENTS.md describes under "Recommendations".
 
 The Roadmap is the single place that says which work serves which goal. The goal note never lists its stories.
 
 This is notes work only. A hook blocks edits outside `notes/` and `.scratch/`.
+
+## A goal's own instructions
+A goal or standing goal can hold instructions for this skill under its Roadmap Instructions heading, such as a story to add each time a goal is drawn from a standing goal. They have no set format, and Sarah may write them herself in any wording. Whenever you work with a goal or standing goal, read its Roadmap Instructions and follow each one where it applies. An instruction is Sarah's decision, so for what it covers, don't ask her again. Ask only when you can't tell what an instruction wants or when it applies.
+
+If Sarah asks for a new instruction during a run, write it under the goal note's Roadmap Instructions in her words, adding the heading if it's missing. It's part of this skill's work, not out of scope.
 
 ## 1. Find the goal
 Read `notes/Roadmap.md`, including "How this file works", `notes/templates/Goal.md` and `notes/templates/Standing Goal.md`.
@@ -93,6 +98,7 @@ The drawn goal is an ordinary goal, named `<standing goal> YYYY-MM-DD` with toda
   - **Not this time:** it stays with the standing goal, and nothing is recorded.
 
   Then go on with step 3's search for other related work.
+- **After step 5:** kick off each sweep or roundup with items that carry the drawn goal's 🎯 link. For each one, read `.claude/skills/kickoff/SKILL.md` and follow it as its "Kicking off for a drawn goal" section describes. Collecting workflow notes aren't kicked off, because `/tooling` works their items. This comes before steps 6 and 7 so the kicked-off notes can move into Next with the rest of the goal's work.
 
 If Sarah takes work out of a drawn goal in a later re-shape, it goes back to its standing goal: under the standing goal's heading, or ending with its 🎯 link.
 
@@ -103,6 +109,7 @@ Then tell Sarah:
 - the goal or standing goal note, created or updated
 - each line or collecting-note item moved or linked, grouped by where it went
 - each note created for a gap
+- each collecting note kicked off, where its Roadmap line went, and the command for its next step
 - the designs the goal is waiting on
 - the tooling shortlist, and what she put under the goal
 - the Goals order, and which lines moved into or out of Next

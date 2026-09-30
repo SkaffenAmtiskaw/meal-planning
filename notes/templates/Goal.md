@@ -12,3 +12,6 @@ confirmed: {{date:YYYY-MM-DD}}
 
 # Out of Scope
 %% Work that was considered for this goal and left out, with Sarah's reason, so `/roadmap` doesn't offer it again. %%
+
+# Roadmap Instructions
+%% Anything Sarah wants `/roadmap` to do when it works with this goal, such as a check to make each time the goal is re-shaped. There's no set format: `/roadmap` follows what's written. %%

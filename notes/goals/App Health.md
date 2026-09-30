@@ -18,3 +18,6 @@ Looks close but doesn't belong:
 
 # Out of Scope
 - [[Remove Schedule-X]]: it depends on finishing the calendar code, and it's really a cleanup of what [[Calendar Page]] has planned.
+
+# Roadmap Instructions
+- When a goal is drawn from App Health, add a story at the very top of it that audits the existing E2E tests to make sure they still cover everything they should, so a library upgrade that breaks something shows up right away.

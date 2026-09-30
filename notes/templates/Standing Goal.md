@@ -12,3 +12,6 @@ confirmed: {{date:YYYY-MM-DD}}
 
 # Out of Scope
 %% Work that was considered for this standing goal and left out, with Sarah's reason, so `/roadmap` and the `roadmap-placement` skill don't offer it again. %%
+
+# Roadmap Instructions
+%% Anything Sarah wants `/roadmap` to do when it works with this standing goal, such as a story to add each time a goal is drawn from it. There's no set format: `/roadmap` follows what's written. %%

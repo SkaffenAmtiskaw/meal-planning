@@ -14,7 +14,7 @@ hooks:
 Kick off **$ARGUMENTS**.
 
 ## Why this skill works the way it does
-Sweeps (`type: sweep`) and roundups (`type: roundup`) collect items over time until Sarah decides it's time to handle them together. A sweep holds small fixes that are already decided. A roundup holds issues on a broad topic that still need decisions. Running this skill is how she schedules one.
+Sweeps (`type: sweep`) and roundups (`type: roundup`) collect items over time until Sarah decides it's time to handle them together. A sweep holds small fixes that are already decided. A roundup holds issues on a broad topic that still need decisions. Running this skill is how she schedules one. Drawing a goal from a standing goal schedules one too, for only the items the drawn goal takes. `/roadmap` then follows this skill as "Kicking off for a drawn goal" describes, so `/kickoff` stays a command only Sarah starts.
 
 Most topics keep turning up, so the note usually keeps collecting while a dated copy is worked. Some don't, and then the note itself is worked and closed. Only Sarah knows which, and only at this point, so this skill asks her every time.
 
@@ -69,3 +69,13 @@ Tell Sarah:
 - where its Roadmap line went
 
 Give her the next command to run in a new session: `/check-drift <note>` for a sweep. For a roundup, if every question already had a **Decided** line, `/plan-steps <note>`. Otherwise, `/decide <note>`. Leave every change unstaged. Don't start the next step in this session.
+
+## Kicking off for a drawn goal
+When `/roadmap` draws a goal from a standing goal, it follows steps 1 to 5 for each sweep or roundup with items that carry the drawn goal's 🎯 link, with these changes:
+- **Step 1:** the items are only the unchecked boxes or questions that carry the drawn goal's link. Where a step says to stop, tell Sarah why, skip this note and go on with `/roadmap`.
+- **Step 2:** if any items stay behind, a new one keeps collecting, since the original has to hold them, so don't ask. If every item carries the link, ask as usual.
+- **Step 3:** the copy gets the linked items, except blocked ones. The original keeps everything else.
+- **Step 4:** the kicked-off note's line goes under the drawn goal's heading in Later, so don't ask where. If no new one starts, the note's own line moves there.
+- **Step 5:** put the items on `/roadmap`'s out-of-scope list, which its step 8 triages.
+
+Skip step 6. `/roadmap` reports each kickoff in its step 8.

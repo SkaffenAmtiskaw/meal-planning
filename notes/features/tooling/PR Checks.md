@@ -74,9 +74,9 @@ Starting a session when a check fails belongs to [[CI Failure Sessions]].
 - `vitest.config.ts` - Boy Scout work pulled in by Sarah: typo in the coverage comment
 
 **Acceptance:**
-- [ ] With this step pushed to `develop`, open a PR from `develop` into `main` (no need to merge it), see four checks, `lint`, `type-check`, `unit-tests` and `build`, each listed separately and each passing.
-- [ ] On that PR, open the `type-check` job's log, see `✓ Types generated successfully` before `tsc` runs and passes.
-- [ ] On that PR, open the `lint` job's log, see mise install node and pnpm and nothing else, with the same Node version `mise latest node` prints on your machine.
+- [x] With this step pushed to `develop`, open a PR from `develop` into `main` (no need to merge it), see four checks, `lint`, `type-check`, `unit-tests` and `build`, each listed separately and each passing.
+- [x] On that PR, open the `type-check` job's log, see `✓ Types generated successfully` before `tsc` runs and passes.
+- [x] On that PR, open the `lint` job's log, see mise install node and pnpm and nothing else, with the same Node version `mise latest node` prints on your machine.
 - [ ] Cut a branch from `develop`, break the formatting of one line in a `src/` file (for example, add extra spaces inside a function call) and change one expected value in a unit test to another value of the same type so it fails (for example `toEqual(3)` → `toEqual(4)`). Commit with `git commit --no-verify` (the pre-commit hook would fix the formatting and block the failing test), push, and open a PR into `develop`. See `lint` and `unit-tests` fail and `type-check` and `build` pass.
 - [ ] On that branch, run `pnpm lint:ci`, see it report the formatting error, then see your IDE (or `git status`) show no changes. Then close the PR and delete the branch.
 
