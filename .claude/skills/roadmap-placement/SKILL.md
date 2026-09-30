@@ -5,9 +5,9 @@ user-invocable: false
 ---
 
 # Checking the goals
-Read each goal note in `notes/goals/`: its Purpose, Done When and Out of Scope. Which goals are plausible depends on the work, a story or an item:
-- **Dev tooling or agent work:** a goal is plausible when a line in its Purpose or Done When could reasonably include the work, or when the work could make the goal's work easier. Judge that from the goal's Done When and the Roadmap lines that serve it.
-- **Otherwise:** a goal is plausible when a line in its Purpose or Done When could reasonably include the work.
+Read each note in `notes/goals/`: a goal's Purpose, Done When and Out of Scope, and a standing goal's Purpose, What Belongs Here and Out of Scope. Which goals are plausible depends on the work, a story or an item:
+- **Dev tooling or agent work:** a goal is plausible when a line in its Purpose, Done When or What Belongs Here could reasonably include the work, or when the work could make the goal's work easier. Judge that from the goal's Done When and the Roadmap lines that serve it.
+- **Otherwise:** a goal is plausible when a line in its Purpose, Done When or What Belongs Here could reasonably include the work.
 
 A goal whose Out of Scope lists the story or item is never plausible.
 
@@ -19,7 +19,7 @@ If no goal is plausible, don't ask. Place a story's line with no goal, or leave 
 
 # Placing a story's line
 Where the line goes depends on where it sits now:
-- **In Ideas or Unaffiliated:** if Sarah named a goal, move the line under that goal's heading in Later. Add the heading, `## [[<goal>]]`, if it's missing, placed by the goal's rank. If she named no goal, the line goes in Unaffiliated.
+- **In Ideas or Unaffiliated:** if Sarah named a goal, move the line under that goal's heading in Later. Add the heading, `## [[<goal>]]`, if it's missing, placed as the Roadmap's "How this file works" describes under Later. If she named no goal, the line goes in Unaffiliated.
 - **Under a goal's heading, or in Now or Next:** leave it where it is. If she says it doesn't serve the goal it sits under, ask her where it goes.
 
 Then end the line with `🎯 [[<goal>]]` for each goal she named that its heading doesn't already cover. A line in Later stays there, even under an active goal, unless Sarah says it goes into Next. If she does, ask her where in Next, as AGENTS.md describes under "Roadmap order".

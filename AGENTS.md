@@ -36,7 +36,7 @@ Any change to a note in `notes/` follows these rules:
   - **It changes nothing about the work,** such as a wrong detail in a finding: if it's a line an agent wrote in a note you're working on, and not plan text, correct it. Otherwise, leave it.
 - **The `^status` line** (the line ending in ` ^status` under Where It Stands) says what work the story needs next or what it's waiting on, and nothing else. Never describe the story there. The Roadmap embeds it so Sarah can scan what each story needs.
   - Whoever moves a story forward updates it. When the next step is settled, write it without asking and mention it in your summary. When there's a real choice, such as what the story is blocked on, show Sarah the line and wait for her approval.
-  - Every note except a goal starts with Where It Stands, right after the frontmatter, in its template's format. If a note has none, add it.
+  - Every note except a goal or standing goal starts with Where It Stands, right after the frontmatter, in its template's format. If a note has none, add it.
   - The story's line in `notes/Roadmap.md` embeds it after the link: `[[Note]] ![[Note#^status]]`. Add the embed if it's missing.
 - **A note with the wrong type.** If a note's type doesn't fit its work, tell Sarah which type fits and why, and offer to retype it. If she agrees, retype it as the `retyping-a-note` skill describes, then stop.
 - **Roadmap order is Sarah's call.** Never reorder `notes/Roadmap.md`. Ask her where a new line goes. If the notes or the Roadmap make the spot clear, suggest it and say why. Otherwise, ask without a suggestion. Never guess one.

@@ -34,7 +34,7 @@ Find the note in `notes/features/` or `notes/archive/` and read all of it.
 
 Where the note is and its `status` decide the kind of close:
 - **`done`, in `notes/features/`:** a done close. Check that every step is marked ✅ Complete, ❌ Will Not Do or 🚛 Moved, and that each 🚛 target note really holds the moved work: the full step, its image embeds and the handoff text, not a summary. If anything is missing, tell Sarah what you found and stop.
-- **A goal, in `notes/goals/`:** goals close through a release process, which isn't built yet. Tell Sarah, and stop.
+- **A goal or standing goal, in `notes/goals/`:** `/close` doesn't close these. A goal closes through a release process, which isn't built yet, and a standing goal never closes. Tell Sarah, and stop.
 - **A hub, in `notes/features/`:** check each story it lists. If any is still open (its note is in `notes/features/`), tell Sarah which ones and stop. Otherwise it's a done close. A hub has no `status`, so leave it without one.
 - **Any other status, in `notes/features/`:** ask Sarah whether she's dropping the story. If not, stop. If she is, it's a dropped close. Then ask whether any part of it is still wanted somewhere else, such as a step or a piece of its design. Each part she names goes on the out-of-scope list, with its full text and images.
 - **In `notes/archive/`, with an empty or missing `kept-for`:** a re-close. The story itself closed earlier, so steps 4 and 6 don't apply. A missing `kept-for` means the note is older than the property, not that it's kept for good.
@@ -100,7 +100,7 @@ If the out-of-scope list is empty, skip this.
 Otherwise, a piece of a dropped story that Sarah asked to keep in step 1 skips the triage. For the other items, the story is closing, so the triage offers route or drop only. Then route the list as AGENTS.md describes under "Out-of-scope work". For a piece of a dropped story, include its full text and image embeds.
 
 ## 7. Close the note
-1. Remove the note's own line from the Roadmap. First note the goals it served: the goal heading it sat under and its 🎯 links. For each one, if no other open line sits under its heading or carries its 🎯 link, and no collecting-note item carries its 🎯 link, add ` - waiting on a release process` to the goal's line under Goals.
+1. Remove the note's own line from the Roadmap. First note the goals it served: the goal heading it sat under and its 🎯 links. For each one that isn't a standing goal, which never ships, if no other open line sits under its heading or carries its 🎯 link, and no collecting-note item carries its 🎯 link, add ` - waiting on a release process` to the goal's line under Goals.
 2. For a dropped close, set `status` to `dropped`. A done close stays `done`.
 3. Set the `^status` line to "Done." or "Dropped.". Don't touch `confirmed`.
 4. Then keep or delete it, as Sarah confirmed in step 3:

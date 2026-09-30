@@ -10,8 +10,8 @@ How notes in this vault are organized and move through their lifecycle. The [[Ro
 # Frontmatter
 | Property | Values | Meaning |
 |---|---|---|
-| `type` | `feature` · `bug` · `pattern` · `infra` · `cleanup` · `sweep` · `roundup` · `hub` · `goal` · `workflow` | Which template the note follows. Blank on an `idea` note until its kind is clear. |
-| `status` | `idea` · `spec` · `ready` · `in-progress` · `in-review` · `done` · `dropped` | See lifecycle below. Hubs, goals and workflow notes have no status. Not the ` ^status` line under Where It Stands: this says which lifecycle stage the note is in, that line says what's happening right now. |
+| `type` | `feature` · `bug` · `pattern` · `infra` · `cleanup` · `sweep` · `roundup` · `hub` · `goal` · `standing-goal` · `workflow` | Which template the note follows. Blank on an `idea` note until its kind is clear. |
+| `status` | `idea` · `spec` · `ready` · `in-progress` · `in-review` · `done` · `dropped` | See lifecycle below. Hubs, goals, standing goals and workflow notes have no status. Not the ` ^status` line under Where It Stands: this says which lifecycle stage the note is in, that line says what's happening right now. |
 | `blocked-by` | list | Why the story can't move forward: another story (as a `"[[link]]"`), open decisions (one `"decision needed: ..."` entry for all of them), or an outside release. Empty when nothing blocks it. |
 | `confirmed` | date | When the note was last confirmed to match reality. Sarah shaping or re-shaping a note counts, since she only does that for issues she believes are still relevant. Don't bump it for moves, renames or link fixes. |
 | `kept-for` | list | Archived notes only. The open stories (as `"[[link]]"`) that still rely on this note's content, such as its design. |
@@ -38,6 +38,7 @@ Templates are in `templates/`. Pick by the shape of the fix, not where the work 
 - **Idea** - jot something down quickly.
 - **Hub** - the single home for design or decisions shared by several stories: a story that was split, whose design stays in the hub, or a big idea that will clearly be several stories but needs decisions before it can be split (e.g. [[Meal Editing]]). It holds no priority; goals do. Not implemented directly.
 - **Goal** - an epic: work Sarah ranks and ships together as one release. The Roadmap, not the note, lists the work that serves it. It has no Where It Stands. Not implemented directly.
+- **Standing Goal** - collects work that no goal would take on its own, such as library upgrades and tech debt, which never block a feature. It never ships and is never ranked or active. When Sarah wants to take on some of its work, `/roadmap` draws a goal from it (`<name> YYYY-MM-DD`) that takes the work she picks and ships as a release, while the standing goal keeps collecting. It has no Where It Stands and no Done When.
 
 # Next Step by Note State
 A note's `type` and `status` say what should happen to it next.
@@ -63,6 +64,7 @@ A note's `type` and `status` say what should happen to it next.
 | `spec` · `ready` · `in-progress`                                        | When `/plan-steps` finds code changes since `confirmed` that could touch the story, or `/close` unblocks it: check the remaining work against the code, conventions, other notes and Sarah's comments. Add ⚠️ Check Drift callouts, update `confirmed`                                                                                                                                             | unchanged, back to `spec` for `/plan-steps` or the skill that re-settles its approach (`/assess`, `/investigate`, `/architect`, `/infra-design` or `/decide`), or add `blocked-by`                                                                 | `/check-drift` skill                 |
 | `workflow` | Settle the change with Sarah, make it everywhere it reaches, and clean up every note that refers to it | deleted · a collecting note loses the items it did and stays | `/tooling` skill |
 | `goal` | Shape it with Sarah: purpose, Done When, scope, gaps, supporting tooling and rank. Run it again to re-shape the goal, or with no goal to re-rank them all | unchanged · Roadmap lines moved under it or into Next, collecting-note items linked to it | `/roadmap` skill |
+| `standing-goal` | Shape it with Sarah: purpose, what belongs in it and scope. Run it again to re-shape it or to draw a goal from it | unchanged · Roadmap lines moved under it, collecting-note items linked to it · a new goal `<name> YYYY-MM-DD`, with the work Sarah picks moved to it | `/roadmap` skill |
 | a goal with no open stories or collecting-note items | Release it. The release process isn't built yet, so the goal waits, marked on its Roadmap line | - | none yet |
 | `done` · `dropped` · a hub with no open stories                         | Keep the note in `archive/` for the stories that still rely on it, or delete it, and update the notes around it | archived or deleted                                                                                                                           | `/close` skill                       |
 
@@ -70,5 +72,5 @@ A note's `type` and `status` say what should happen to it next.
 
 # Files
 - Filenames are plain names - no emoji or status prefixes.
-- Stories live in `features/<area>/`, goals in `goals/`; closed stories that other stories still rely on live in `archive/`.
+- Stories live in `features/<area>/`, goals and standing goals in `goals/`; closed stories that other stories still rely on live in `archive/`.
 - Images go in `assets/<story-name>/`.

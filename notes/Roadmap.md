@@ -4,9 +4,10 @@
 
 ## How this file works
 - **Goals** - ranked epics, each a note in `goals/`, shaped and ranked with `/roadmap`. The top two are **active**. Only Sarah changes the order.
+	- **Standing Goals** - listed under their own subheading below the ranked goals. Each collects work that no ranked goal would take, such as library upgrades, and never ships itself, so it's never ranked or active. When Sarah wants to take on some of that work, `/roadmap` draws a goal from it, named `<standing goal> YYYY-MM-DD`, which takes the work she picks and is ranked like any other goal.
 - **Now** - in progress. Keep this to 2-3 items.
 - **Next** - the queue for the active goals, in order. The first line not waiting on anything is the next one to plan or build. A line that's waiting keeps its place, and its status embed says what it waits on.
-- **Later** - committed, not ordered. One heading per goal, in rank order, then **Unaffiliated** for lines that serve no goal and for every collecting note's line. A line that serves more than one goal sits under one of their headings and ends with a `🎯 [[Goal]]` link for each other goal. A re-rank doesn't move it to another heading. Dev tooling and agent work stays in Unaffiliated unless Sarah puts it under a goal.
+- **Later** - committed, not ordered. One heading per goal, in rank order, then one per standing goal, then **Unaffiliated** for lines that serve no goal and for every collecting note's line. A line that serves more than one goal sits under one of their headings and ends with a `🎯 [[Goal]]` link for each other goal. A re-rank doesn't move it to another heading. Dev tooling and agent work stays in Unaffiliated unless Sarah puts it under a goal.
 - **Ideas** - not committed. A story's line moves to Later once it's committed: when `/shape` shapes it, or when `/decide` settles that it's worth doing.
 - **Markers:** every Now and Next line ends, after its status embed, with a 🎯 link for each goal it serves, at least one of them active, or with 🚨 or 📌:
 	- `🎯 [[Goal]]` - serves that goal.
