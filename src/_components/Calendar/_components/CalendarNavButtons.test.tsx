@@ -67,6 +67,7 @@ describe('CalendarTodayButton', () => {
 	it('renders a Today button', () => {
 		render(<CalendarTodayButton />);
 
+		expect(true).toBe(false); // needed to test CI failures
 		expect(screen.getByRole('button', { name: 'Today' })).toBeDefined();
 	});
 
