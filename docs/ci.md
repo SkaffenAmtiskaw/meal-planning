@@ -12,9 +12,11 @@ No script CI runs writes fixes. CI would pass on code it had silently fixed, the
 ## Tools Come from `mise.toml`
 A workflow installs Node, pnpm and any other tool it needs with [`jdx/mise-action`](https://github.com/jdx/mise-action), which runs `mise install` against `mise.toml`. So CI runs the same versions as your machine. `mise.toml` asks for `latest`, so a new release reaches CI and your machine alike, without anyone updating a version.
 
-No workflow names a Node or pnpm version of its own, or uses `actions/setup-node`.
+A routine's cloud session gets its tools the same way: the cloud environment's setup script installs mise, then runs `mise install node pnpm` against the repo's `mise.toml`, and the session runs those rather than the Node and pnpm that come in the cloud image (see "The Cloud Environment").
 
-CI installs only `node` and `pnpm` (the action's `install_args`), since it doesn't need the other tools in `mise.toml`. If a workflow needs another tool, add it to `mise.toml` and to that workflow's `install_args`.
+No workflow or setup script names a Node or pnpm version of its own, or uses `actions/setup-node` or the cloud image's Node.
+
+CI and the cloud environment install only `node` and `pnpm` (the action's `install_args`, and the setup script's `mise install`), since they don't need the other tools in `mise.toml`. If a workflow needs another tool, add it to `mise.toml` and to that workflow's `install_args`, and to the setup script if routine sessions need it too.
 
 # Checks on PRs
 `checks.yml` runs on every PR, whatever its base branch. It has four jobs:
@@ -36,15 +38,24 @@ Each job checks out the code, installs Node and pnpm from `mise.toml`, runs `pnp
 The workflow's token can only read the repo (`permissions: contents: read`), since no check needs more. A new push to a PR cancels that PR's run still in progress, so the PR shows only the newest commit's results.
 
 # Secrets and Environment Values
-Wherever a workflow sets a variable from `src/env.ts`, the value is a dummy that passes the schema, such as `mongodb://localhost:27017/ci` for `DB_URL`. It's never a real value, such as the production database URL or a Resend API key, and never read from an Actions secret. The checks only need values that pass validation.
+Wherever a workflow or the routines' cloud environment sets a variable from `src/env.ts`, the value is a dummy that passes the schema, such as `mongodb://localhost:27017/ci` for `DB_URL`. It's never a real value, such as the production database URL or a Resend API key, and never read from an Actions secret. The checks only need values that pass validation, and a routine's session runs without permission prompts while it reads untrusted text, such as CI logs.
 
-The dummies live in the `env:` block at the top of `checks.yml`, so every job sees the same values. When you add a variable to `src/env.ts`, give it a dummy there too, beside the unit-test value in `test/mocks/env.ts` and the E2E value in `playwright.config.ts` (see `docs/e2e_tests.md`, "Environment Variables").
+The dummies live in two places, with the same values:
+- the `env:` block at the top of `checks.yml`, so every job sees them
+- the cloud environment's variables (see "The Cloud Environment")
+
+When you add a variable to `src/env.ts`, give it a dummy in both, beside the unit-test value in `test/mocks/env.ts` and the E2E value in `playwright.config.ts` (see `docs/e2e_tests.md`, "Environment Variables"). For the cloud environment, that means its variables on claude.ai and their record in this doc.
 
 # Setup Outside the Repo
-Some of what CI needs lives in GitHub's settings, not in the repo. This section is its record.
+Some of what CI and the routines need lives in GitHub's and claude.ai's settings, not in the repo. This section is its record.
+
+## `develop` Is the Default Branch
+The repo's default branch on GitHub (Settings → General → Default branch) is `develop`. A routine clones the default branch and runs the skills committed there, so a change to a routine's skill reaches the routine once it's pushed to `develop`.
+
+The default branch changes nothing else here: the ruleset below targets `main` by name, and Vercel's production branch (Settings → Environments → Production → Branch Tracking) is its own setting, which stays `main`.
 
 ## The Ruleset on `main`
-A branch ruleset named `main` (Settings → Rules → Rulesets) targets `main`, with enforcement active and no bypass list. It has three rules:
+A branch ruleset named `main` (Settings → Rules → Rulesets) targets `main` by name, not the default branch, with enforcement active and no bypass list. It has three rules:
 - **Require status checks to pass:** `lint`, `type-check`, `unit-tests` and `build`, the four jobs in `checks.yml`. A PR into `main` can't be merged while any of them is failing. "Require branches to be up to date before merging" is off, since merging `develop` into `main` leaves merge commits on `main` that would make `develop` look out of date.
 - **Restrict deletions:** `main` can't be deleted.
 - **Block force pushes:** nobody can force-push to `main`.
@@ -52,3 +63,82 @@ A branch ruleset named `main` (Settings → Rules → Rulesets) targets `main`, 
 The ruleset covers only `main`, so you can still push straight to `develop`.
 
 When a check job in `checks.yml` is renamed, added or removed, change the ruleset's required checks and this record in the same change. That way every job is required, and every required check has a job to report it. A required check with no job never reports, and blocks every merge.
+
+## The Claude GitHub App
+The [Claude GitHub App](https://github.com/apps/claude) is installed on the repo, with access to only `meal-planning`. It lets routines clone the repo and push their `claude/` branches. A cloud session reaches GitHub through the cloud GitHub proxy, which authenticates `git` and `gh` with the app's access, so no GitHub token is stored anywhere.
+
+## The Cloud Environment
+Routines run in a claude.ai cloud environment named `Meal Planning Routines` (at https://claude.ai/code, the cloud button above the message box). A new session starts from a snapshot of what its setup script installed, which claude.ai rebuilds about every seven days, or when the script changes.
+
+**Network access:** Trusted, the default. It allows the npm registry, `nodejs.org` (where mise gets Node) and Google Fonts (which `pnpm build` downloads). GitHub goes through its own proxy whatever the level.
+
+**Variables:** the dummy values from `checks.yml` (see "Secrets and Environment Values"), plus `CLAUDE_ENV_FILE`, a file Claude Code runs before each command in the session, which the setup script writes. There's no `GH_TOKEN` or `GITHUB_TOKEN`: a token set here would pass into the session, where Claude and its commands could read it, and the GitHub proxy needs none.
+
+```text
+DB_URL=mongodb://localhost:27017/ci
+BETTER_AUTH_SECRET=ci-dummy-secret-at-least-32-characters
+BETTER_AUTH_URL=http://localhost:3000
+GOOGLE_CLIENT_ID=ci-google-client-id
+GOOGLE_CLIENT_SECRET=ci-google-client-secret
+RESEND_API_KEY=ci-resend-api-key
+RESEND_FROM_EMAIL=ci@example.com
+NEXT_PUBLIC_GOOGLE_CLIENT_ID=ci-google-client-id
+CLAUDE_ENV_FILE=/opt/mise-session-env.sh
+```
+
+**Setup script:** it runs before Claude Code starts, and only the files it writes carry over into sessions. It:
+1. installs mise from npm, since mise's own download hosts aren't on the Trusted list
+2. turns off mise's `aqua` backend, so mise installs pnpm from npm. The default backend downloads pnpm from GitHub releases, and the GitHub proxy only serves release files for the repos attached to the session.
+3. runs `mise install node pnpm` in the cloned repo
+4. writes the `CLAUDE_ENV_FILE` file, which puts mise's shims ahead of the image's Node on `PATH`
+5. runs `pnpm install --frozen-lockfile`, so the snapshot holds a warm pnpm store. Each session installs again after it checks out its branch, so a failure here doesn't fail the session.
+
+The script fails the session if it can't find the repo, rather than let it fall back to the image's Node.
+
+```bash
+#!/bin/bash
+# Setup script for the `Meal Planning Routines` cloud environment. Its record is in docs/ci.md, "The Cloud Environment".
+set -euo pipefail
+
+# mise's own download hosts aren't on the Trusted list, so it comes from npm.
+npm install -g @jdxcode/mise
+
+# mise's default backend for pnpm downloads from GitHub releases, which the GitHub proxy blocks for
+# repos not attached to the session. With it off, mise installs pnpm from npm.
+export MISE_DISABLE_BACKENDS=aqua
+
+# Find the cloned repo, to install the versions its mise.toml names.
+repo=""
+for f in $(find / -maxdepth 4 -path /proc -prune -o -name mise.toml -print 2>/dev/null); do
+  if grep -q '"name": "meal-planner"' "$(dirname "$f")/package.json" 2>/dev/null; then
+    repo=$(dirname "$f")
+    break
+  fi
+done
+if [ -z "$repo" ]; then
+  echo "setup: can't find the meal-planning repo, so there's no mise.toml to install from" >&2
+  exit 1
+fi
+echo "setup: repo found at $repo"
+cd "$repo"
+mise trust mise.toml
+mise install node pnpm
+
+# Claude Code runs this file before each Bash command (CLAUDE_ENV_FILE, set in the environment's
+# variables), so the session runs mise's Node and pnpm, not the image's /opt/node22.
+shims="${MISE_DATA_DIR:-$HOME/.local/share/mise}/shims"
+cat > /opt/mise-session-env.sh <<EOF
+export MISE_DISABLE_BACKENDS=aqua
+export PATH="$shims:\$PATH"
+EOF
+
+# Warms the pnpm store for the cached snapshot. Each session installs again after its checkout.
+export PATH="$shims:$PATH"
+pnpm install --frozen-lockfile || echo "setup: pnpm install failed; each session installs on its own" >&2
+```
+
+When you change the variables or the script on claude.ai, change this record in the same change.
+
+## Routines
+Each routine's configuration on claude.ai (its prompt, trigger, model and environment) is in the `routine.md` beside its skill. This list says only what each one is for:
+- **`ci-failure`:** looks into a failed check on a PR, so the result reaches you as a session in the Code tab. Its skill is [`.claude/skills/ci-failure/`](../.claude/skills/ci-failure/SKILL.md).
