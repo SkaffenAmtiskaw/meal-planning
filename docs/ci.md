@@ -28,7 +28,7 @@ CI installs only `node` and `pnpm` (the action's `install_args`), since it doesn
 
 Each check is its own job, so:
 - the PR shows which check failed
-- the ruleset on `main` can require each check by its job name
+- the ruleset on `main` can require each check by its job name (see "Setup Outside the Repo")
 - each job runs in its own checkout, so the build never shares a `.next` folder with another job
 
 Each job checks out the code, installs Node and pnpm from `mise.toml`, runs `pnpm install --frozen-lockfile`, then runs its one script.
@@ -39,3 +39,16 @@ The workflow's token can only read the repo (`permissions: contents: read`), sin
 Wherever a workflow sets a variable from `src/env.ts`, the value is a dummy that passes the schema, such as `mongodb://localhost:27017/ci` for `DB_URL`. It's never a real value, such as the production database URL or a Resend API key, and never read from an Actions secret. The checks only need values that pass validation.
 
 The dummies live in the `env:` block at the top of `checks.yml`, so every job sees the same values. When you add a variable to `src/env.ts`, give it a dummy there too, beside the unit-test value in `test/mocks/env.ts` and the E2E value in `playwright.config.ts` (see `docs/e2e_tests.md`, "Environment Variables").
+
+# Setup Outside the Repo
+Some of what CI needs lives in GitHub's settings, not in the repo. This section is its record.
+
+## The Ruleset on `main`
+A branch ruleset named `main` (Settings → Rules → Rulesets) targets `main`, with enforcement active and no bypass list. It has three rules:
+- **Require status checks to pass:** `lint`, `type-check`, `unit-tests` and `build`, the four jobs in `checks.yml`. A PR into `main` can't be merged while any of them is failing. "Require branches to be up to date before merging" is off, since merging `develop` into `main` leaves merge commits on `main` that would make `develop` look out of date.
+- **Restrict deletions:** `main` can't be deleted.
+- **Block force pushes:** nobody can force-push to `main`.
+
+The ruleset covers only `main`, so you can still push straight to `develop`.
+
+When a check job in `checks.yml` is renamed, added or removed, change the ruleset's required checks and this record in the same change. That way every job is required, and every required check has a job to report it. A required check with no job never reports, and blocks every merge.

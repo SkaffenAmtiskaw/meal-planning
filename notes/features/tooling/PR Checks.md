@@ -5,7 +5,7 @@ blocked-by: []
 confirmed: 2026-09-30
 ---
 # Where It Stands
-In progress. Next: implement Step 1 ^status
+In progress. Next: implement Step 2 ^status
 
 # Purpose
 Run lint, type check, unit tests and build automatically on every PR, each as its own job with its own result, and block the merge into `main` while any of them fails. This covers the Done When item of [[Dev Foundations]] for PRs into `main`. It also creates the `checks.yml` workflow and `docs/ci.md`, which [[CI Failure Sessions]] and [[E2E Tests in CI]] build on. Split from [[CI Checks]] on 2026-09-30.
@@ -47,6 +47,8 @@ Starting a session when a check fails belongs to [[CI Failure Sessions]].
 
 # Implementation
 ## Step 1: The four check jobs
+**Status:** ✅ Complete
+
 **Idea:** Every PR runs the four check jobs, each showing its own result.
 
 **Source:** Goal 1; Goal 3 (the "Workflows", "Checks on PRs" and "Secrets and Environment Values" parts of `docs/ci.md`); Decision 6 (`docs/ci.md` holds the CI side); Decision 9 (every PR, whatever its base branch); Design: `.github/workflows/checks.yml` - the four check jobs (including its "Found by /architect's audit" items); Design: `package.json` - the `lint:ci` script; Design: `docs/ci.md` - the CI doc ("Workflows", "Checks on PRs" for the four jobs, "Secrets and Environment Values" for Convention 11); Design: Other changes; Design: The flow (steps 1-3, the checks' results on the PR); Conventions 11 (workflow side), 13, 15 (workflow side). Sarah decided 2026-09-30: typegen inside `check:types`; only node and pnpm in CI; `docs/e2e_tests.md:188` points to `docs/ci.md`. Pulled in by Sarah 2026-09-29: the `vitest.config.ts:28` typo (Sarah decided 2026-09-30 that it rides along in this step as Boy Scout work, since a comment fix has nothing to check on its own). Boy Scout fix: a `# .claude/` entry in `docs/project_structure.md`, found by the rule-auditor 2026-09-29.
@@ -77,8 +79,14 @@ Starting a session when a check fails belongs to [[CI Failure Sessions]].
 - [x] With this step pushed to `develop`, open a PR from `develop` into `main` (no need to merge it), see four checks, `lint`, `type-check`, `unit-tests` and `build`, each listed separately and each passing.
 - [x] On that PR, open the `type-check` job's log, see `✓ Types generated successfully` before `tsc` runs and passes.
 - [x] On that PR, open the `lint` job's log, see mise install node and pnpm and nothing else, with the same Node version `mise latest node` prints on your machine.
-- [ ] Cut a branch from `develop`, break the formatting of one line in a `src/` file (for example, add extra spaces inside a function call) and change one expected value in a unit test to another value of the same type so it fails (for example `toEqual(3)` → `toEqual(4)`). Commit with `git commit --no-verify` (the pre-commit hook would fix the formatting and block the failing test), push, and open a PR into `develop`. See `lint` and `unit-tests` fail and `type-check` and `build` pass.
-- [ ] On that branch, run `pnpm lint:ci`, see it report the formatting error, then see your IDE (or `git status`) show no changes. Then close the PR and delete the branch.
+- [x] Cut a branch from `develop`, break the formatting of one line in a `src/` file (for example, add extra spaces inside a function call) and change one expected value in a unit test to another value of the same type so it fails (for example `toEqual(3)` → `toEqual(4)`). Commit with `git commit --no-verify` (the pre-commit hook would fix the formatting and block the failing test), push, and open a PR into `develop`. See `lint` and `unit-tests` fail and `type-check` and `build` pass.
+- [x] On that branch, run `pnpm lint:ci`, see it report the formatting error, then see your IDE (or `git status`) show no changes. Then close the PR and delete the branch.
+
+**As built:**
+- `checks.yml` also sets `permissions: contents: read` and a per-PR `concurrency` group with `cancel-in-progress: true`, so a new push cancels that PR's run still in progress. Sarah chose both 2026-09-30, and `docs/ci.md` "Checks on PRs" records them.
+- The `.gitignore` comment on `next-env.d.ts` now says `pnpm check:types` generates it, replacing advice to un-ignore it when adding CI. Sarah pulled it in 2026-09-30.
+- Boy Scout fix: the `docs/` line in `docs/project_structure.md` lists CI among the doc topics.
+- Sarah kept the break-it branch from the fourth check open for testing in Step 2.
 
 ## Step 2: The ruleset on `main`
 **Idea:** A PR into `main` can't be merged while any of the four check jobs is failing.
@@ -95,5 +103,5 @@ Starting a session when a check fails belongs to [[CI Failure Sessions]].
 
 **Acceptance:**
 - [ ] With the ruleset set up, push this step's commit straight to `develop`, see the push accepted (the ruleset covers only `main`).
-- [ ] Cut a branch from `develop`, change one expected value in a unit test to another value of the same type so it fails, commit with `git commit --no-verify` (the pre-commit hook would block the failing test), push, and open a PR into `main`. See `unit-tests` fail and the merge button blocked, naming the required check. Close the PR and delete the branch.
+- [x] Cut a branch from `develop`, change one expected value in a unit test to another value of the same type so it fails, commit with `git commit --no-verify` (the pre-commit hook would block the failing test), push, and open a PR into `main`. See `unit-tests` fail and the merge button blocked, naming the required check. Close the PR and delete the branch.
 - [ ] Open (or reopen) the PR from `develop` into `main`, see all four checks pass and the merge button enabled. You don't have to merge it.
