@@ -26,10 +26,10 @@ This is planning only. Don't change code. A hook blocks edits outside `notes/` a
 - **Her decisions are made.** Her comments and the **Decided** lines under Open Decisions are settled. Build the rules from them; don't argue them again.
 
 ## 1. Read the note
-Find the note in `notes/features/` and read all of it. Read the notes it links to when the Rules, Root Cause or Open Decisions depend on them.
+Find the note in `notes/features/` and read all of it. Read the notes it links to when the Rules, Root Cause or Open Decisions depend on them. If Where It Stands has a retype line, follow the `retyping-a-note` skill's "After a retype".
 
 Check that it's ready for this skill:
-- **`type: pattern` and `status: idea`.** If `type` is blank, the next step is `/shape`. If it's another type, tell Sarah what you found and stop.
+- **`type: pattern` and `status: idea`.** If `type` is blank, the next step is `/shape`. If it's another type, check whether that type fits the work. If it doesn't, offer to retype the note, as AGENTS.md describes under "Editing notes". If it does, tell Sarah which skill the note needs, and stop.
 - **`status: spec`:** its Rules were already confirmed. Ask Sarah whether this is a revision. If it is, work through steps 2 to 5 as usual, but show what changed compared with the existing sections before replacing each one.
 - **`ready` or later:** stop. Changes to a planned story go through `/check-drift`.
 - **No open decisions.** An item under `# Open Decisions` with no **Decided** line (a **Partly answered** or **Leaning** line still counts as open), or a `decision needed` entry in `blocked-by`, means the note isn't ready. List them in one line each, tell Sarah the next step is `/decide <note name>`, and stop.

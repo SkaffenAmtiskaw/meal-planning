@@ -27,9 +27,9 @@ This is planning only. Don't change code. A hook blocks edits outside `notes/` a
 - **Her decisions are made.** If one of Sarah's comments already answers a question, show it to her and confirm it's still her answer.
 
 ## 1. Read the note
-Find the note in `notes/features/` and read all of it.
+Find the note in `notes/features/` and read all of it. If Where It Stands has a retype line, follow the `retyping-a-note` skill's "After a retype".
 
-It should be `type: bug` or `type: cleanup`. If it's another type, tell Sarah what you found and stop. Then check `status`:
+It should be `type: bug` or `type: cleanup`. If it's another type, check whether that type fits the work. If it doesn't, offer to retype the note, as AGENTS.md describes under "Editing notes". If it does, tell Sarah which skill the note needs, and stop. Then check `status`:
 - **`idea`:** a first investigation.
 - **`spec`:** a re-investigation, usually because `/check-drift` found that the Root Cause and Fix, or the Current State, no longer hold. Its ⚠️ Check Drift callouts say what changed. Don't start from the old sections. They invite the same anchoring as old code. Do step 2 or 3 fresh, then in step 4 show what changed compared with the old sections.
 - **`ready` or later:** tell Sarah what you found and stop. Changes to a planned story go through `/check-drift`.

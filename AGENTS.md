@@ -37,6 +37,7 @@ Any change to a note in `notes/` follows these rules:
   - Whoever moves a story forward updates it. When the next step is settled, write it without asking and mention it in your summary. When there's a real choice, such as what the story is blocked on, show Sarah the line and wait for her approval.
   - Every note except a goal starts with Where It Stands, right after the frontmatter, in its template's format. If a note has none, add it.
   - The story's line in `notes/Roadmap.md` embeds it after the link: `[[Note]] ![[Note#^status]]`. Add the embed if it's missing.
+- **A note with the wrong type.** If a note's type doesn't fit its work, tell Sarah which type fits and why, and offer to retype it. If she agrees, retype it as the `retyping-a-note` skill describes, then stop.
 - **Roadmap order is Sarah's call.** Never reorder `notes/Roadmap.md`. Ask her where a new line goes. If the notes or the Roadmap make the spot clear, suggest it and say why. Otherwise, ask without a suggestion. Never guess one.
 - **A blocker outside the queue.** If a story in Next gets a story in its `blocked-by` that isn't in Now or Next, propose pulling that story into Next directly ahead of it, with the same markers, and say why.
 - **A new item in a collecting note.** When you add one, check which goals it serves and link it as the `roadmap-placement` skill describes. An item that `/check-drift` moves back or `/kickoff` rolls over isn't new, so it keeps the links it has.
@@ -46,7 +47,7 @@ Any change to a note in `notes/` follows these rules:
   - When you work on a note that still has template comments, rather than just editing it in passing, remove them.
 - **Embedded sections** (`![[Note#Section]]`) are part of the note. A raw file shows only the link, so open each one and read it as part of the note.
 - **Before you finish** a session that changed any note, run `sh scripts/vault-lint.sh`. It checks the notes changed since the last commit, and the whole vault, for the rules above that a script can check, such as a missing `^status` line or status embed, a broken link or a `blocked-by` entry for a closed story. Fix what it reports in the notes this session changed, following the rules above. If it reports something in a note this session didn't change, tell Sarah instead of fixing it.
-- **Anything bigger, outside a skill:** a skill carries what it needs for the notes it changes. Without one, read `notes/Note Conventions.md` before creating, retyping, moving, closing or deleting a note, or changing its `status`.
+- **Anything bigger, outside a skill:** a skill carries what it needs for the notes it changes. Without one, read `notes/Note Conventions.md` before creating, moving, closing or deleting a note, or changing its `status`.
 
 ## Out-of-scope work
 Keep a running list of anything that looks like it belongs outside the story or step you're working on, whether you, a subagent or Sarah found it. If Sarah gives feedback on how a skill, subagent or the workflow itself behaves, and this session isn't working on that same skill or subagent, it always goes on the list, even when it's also saved as a memory. Don't stop to deal with items as they come up.
