@@ -78,10 +78,18 @@ Show her the draft and wait for her approval, then write it as in step 6. A hub 
 
 ### Splitting an idea
 Each story gets a placeholder now, and its real shaping later in its own session:
-1. **One idea note per story.** Create it in `notes/features/<area>/` from `notes/templates/Idea.md`, with `type` left blank. Its Where It Stands line is just the next step: "Next: /shape ^status". Under Notes goes a line saying which idea it was split from (a link to the original), its one-line scope, and the parts of Sarah's idea that belong to it, in her wording. If a part fits no story, ask her where it goes rather than dropping it. Show her each note before you write it.
-2. **The original.** If it's an idea note, replace its content with 🚛 pointers to the new notes. Never delete it. If it's a Roadmap line with no note, it gets replaced in the next step.
+1. **One idea note per story.** Create it in `notes/features/<area>/` from `notes/templates/Idea.md`, with `type` left blank. Its Where It Stands line is just the next step: "Next: /shape ^status". Under Notes goes a line saying which idea it was split from (the original's name in plain text, not a link, since the next item deletes it), its one-line scope, and the parts of Sarah's idea that belong to it, in her wording. If a part fits no story, ask her where it goes rather than dropping it. Show her each note before you write it.
+2. **The original.** If it's an idea note, delete it as "Deleting a split or folded idea note" below describes. If it's a Roadmap line with no note, it gets replaced in the next step.
 3. **The Roadmap.** Each new note gets a line that links to it and embeds its summary (`[[Note]] ![[Note#^status]]`). Ask Sarah which section each one goes in.
 4. **Stop.** Don't start shaping any of the stories in this session, so the context from this one doesn't carry over. List each new note with the command to run in a new session, e.g. `/shape <note name>`.
+
+### Deleting a split or folded idea note
+Once an idea note's content lives in the notes it was split into, or in the note it was folded into, the idea note is deleted, so no stub of pointers is left behind:
+1. Run `sh scripts/note-refs.sh "<note name>"` to list every link to it.
+2. Reword each link the script listed:
+   - **After a fold:** point it to the note the idea was folded into.
+   - **After a split:** if the link is about a part that went to one new note, point it to that note. If it's about more than one part, or you can't tell which, show Sarah the line and ask how to reword it.
+3. Delete the note with `rm`, as AGENTS.md describes under "Git and files", and remove its Roadmap line.
 
 ## 4. Present the directions
 Give Sarah two or three directions, each with:
@@ -123,7 +131,7 @@ Show her the draft and wait for her approval.
 Once she approves:
 - **An existing idea note:** rewrite it in place, so links to it keep working. Don't rename or move it without asking.
 - **A Roadmap line with no note:** create the note in `notes/features/<area>/`, with a plain filename (no emoji or prefixes). If the area isn't obvious, ask her which folder.
-- **Folded into an existing note, a sweep or a roundup:** apply the addition there. Replace the idea note's content with a 🚛 pointer to where it went. Never delete the file.
+- **Folded into an existing note, a sweep or a roundup:** apply the addition there. Then delete the idea note as "Deleting a split or folded idea note" (step 3) describes.
 - **Folded into a sweep or roundup from a Roadmap line with no note:** add the item and remove the Roadmap line.
 - **The Roadmap:** make the story's line link to the note and embed its summary, e.g. `[[Note]] ![[Note#^status]]`. Keep annotations like *(was high)*. Then, depending on what was shaped:
   - **A hub, or a story whose "Is this worth doing?" decision is still open:** keep the line where it is. Neither is committed yet. `/decide` moves the story's line once Sarah decides it's worth doing.
