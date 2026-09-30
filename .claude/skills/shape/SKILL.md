@@ -1,6 +1,6 @@
 ---
 name: shape
-description: Turn an idea note or a Roadmap line into a typed story (feature, bug, pattern or cleanup) with a chosen direction and next step, or into a hub of open decisions when it is too big to split yet. Light research only - no design, no root cause.
+description: Turn an idea note or a Roadmap line into a typed story (feature, bug, pattern, infra or cleanup) with a chosen direction and next step, or into a hub of open decisions when it is too big to split yet. Light research only - no design, no root cause.
 argument-hint: "[note name or Roadmap line]"
 disable-model-invocation: true
 hooks:
@@ -16,7 +16,7 @@ Shape **$ARGUMENTS** into a story with a type, a direction and a next step.
 ## Why this skill works the way it does
 Sarah jots ideas down fast, as an Idea note or a single Roadmap line. Before anything can be planned, someone has to decide what kind of story it is and which way to take it. That's all this skill does: it gives the idea a direction.
 
-It stops there on purpose. Design, Suggested Approach, root cause, fix options, a Current State scan and pattern Rules each belong to a later step, and each of those steps has its own process and checks. An answer worked out here would skip those checks, and it would anchor the later step to whatever this skill guessed. Blocking decisions are different, because they're Sarah's to make. This skill never answers one itself, but it checks each with her, since she may already know what she wants. The ones she wants to think over or research stay open for `/decide`. If you catch yourself tracing a call chain or sketching components, stop. That's the next step's job.
+It stops there on purpose. Design, Suggested Approach, root cause, fix options, a Current State scan, pattern Rules and an infra Design each belong to a later step, and each of those steps has its own process and checks. An answer worked out here would skip those checks, and it would anchor the later step to whatever this skill guessed. Blocking decisions are different, because they're Sarah's to make. This skill never answers one itself, but it checks each with her, since she may already know what she wants. The ones she wants to think over or research stay open for `/decide`. If you catch yourself tracing a call chain or sketching components, stop. That's the next step's job.
 
 Pick the type by the shape of the fix, not by where the idea came from. A user report can turn out to be a missing pattern. A "cleanup" can turn out to be a feature.
 
@@ -30,14 +30,14 @@ Read `notes/Note Conventions.md` first. It explains the frontmatter, the note ty
 
 If you can't find it, or more than one thing matches, ask Sarah which she means.
 
-**Workflow changes skip shaping.** If the note is already `type: workflow`, tell Sarah to run `/tooling` on it, and stop. If the idea changes how the app is built rather than what it does (skills, subagents, hooks, AGENTS.md, Note Conventions, templates, docs or tooling config), tell Sarah it's a workflow note. With her OK, rewrite it from `notes/templates/Workflow.md`, keeping her content under Notes, write it as in step 6, and stop. `/tooling` does the rest.
+**Workflow changes skip shaping.** If the note is already `type: workflow`, tell Sarah to run `/tooling` on it, and stop. If the idea builds new infrastructure, such as CI, a test setup or a hosted service, it's an infra story: shape it like any other story. Otherwise, if the idea changes how the app is built rather than what it does (skills, subagents, hooks, AGENTS.md, Note Conventions, templates, docs or tooling config), tell Sarah it's a workflow note. With her OK, rewrite it from `notes/templates/Workflow.md`, keeping her content under Notes, write it as in step 6, and stop. `/tooling` does the rest.
 
 ## 2. Look around, briefly
 Don't check whether the idea is still relevant, meaning whether the problem it describes still exists. Sarah running `/shape` on it means she believes it is, and she'll ask for a deeper check if she isn't sure. Whether it's worth doing is a different question, and it's covered under blocking decisions below. Look just enough to tell the options apart:
 - **The vault:** search `notes/features/`, `notes/archive/` and the Roadmap for stories that already cover this, overlap it or block it. Check the hubs too.
 - **The code:** find the area the idea touches, meaning which files or modules and roughly how many places. That's usually what separates a local bug or cleanup from a pattern. Also check whether the behavior already exists in some form. Name files; don't trace them.
 - **Story count:** whether this is one story or several. Signs of several: parts with different types (e.g. a bug for the symptoms and a pattern for the systemic cause), parts that could ship and be reviewed on their own, or parts that already belong to other stories.
-- **Libraries:** only if the idea could be a feature or a pattern. Check `package.json` for something already installed that covers it (Mantine often does), then do a quick search for libraries that solve the problem. Names only. Don't compare them, read their docs in depth or judge their fit. Whether to adopt one is a decision (next bullet), not something to settle here.
+- **Libraries:** only if the idea could be a feature, a pattern or infra. Check `package.json` for something already installed that covers it (Mantine often does), then do a quick search for libraries that solve the problem. Names only. Don't compare them, read their docs in depth or judge their fit. Whether to adopt one is a decision (next bullet), not something to settle here.
 
 - **Blocking decisions:** a question is a blocking decision in either of these cases:
   - **The next step can't start until it's answered.** For example: can we use an outside service at all, who it's for, where the data lives, which platforms come first, adopt a library or build, or what another story decides. For a pattern, if the note says what's wrong but not what the convention should be ("these are all bad the same way, but what's the right fix?"), choosing the convention is a blocking decision. `/architect` writes the Rules for a chosen convention; it doesn't choose one. If the idea says it needs research to know whether it's worth doing at all, "Is this worth doing?" is a blocking decision.
@@ -85,7 +85,7 @@ Each story gets a placeholder now, and its real shaping later in its own session
 
 ## 4. Present the directions
 Give Sarah two or three directions, each with:
-- **Type:** feature, bug, pattern or cleanup.
+- **Type:** feature, bug, pattern, infra or cleanup.
 - **Direction:** one or two sentences on which way to take it.
 - **Next step:** what happens next and who does it. If Sarah is leaving any blocking decisions open, the next step is working through them with `/decide`, then the usual one. Use the Next Step by Note State table in Note Conventions, e.g. "design session in Claude Design, then `/assess`", "investigate", "write the Rules with Sarah" or "blocked until [[X]] lands".
 - **Why:** what you found in step 2 that supports it.
@@ -114,7 +114,7 @@ Then stop. Step 6 doesn't apply.
 - **Where It Stands:** the `^status` line, with the next step or what the story is waiting on. Don't restate the direction on it. Below the line, give the chosen direction in a sentence or two.
 - **Open Decisions:** each blocking decision from step 2 on its own line, written as a question, not a proposal. If Sarah gave a confident answer, put it on a **Decided** line under the question, as the `answer-confidence` skill describes, e.g. "**Decided 2026-09-28:** web first, phones later. Sarah's call." If she gave a hedged one, put it on a **Leaning** line in that skill's format. If she's leaving an adopt-or-build decision open, list the candidates from step 2 under it, without ranking them. Delete the section if step 2 found no blocking decisions.
 - **Sarah's content:** move everything from the idea into the template's sections. Keep her wording. If something fits no section, put it under Where It Stands rather than dropping it.
-- **Sections that belong to a later step:** Design Handoff, Suggested Approach, Root Cause, Fix, Current State, Rules, Migration Checklist and Implementation. Don't fill them. If the next step will answer questions as part of its own work, list them at the top of the section that step writes, under the line "Questions for this section:", so a reader finds each question where its answer will go. The sections are Design Handoff for a design session, Suggested Approach for `/assess`, Root Cause for a bug's `/investigate`, Current State for a cleanup's `/investigate`, and Rules for `/architect`. Leave every other one as a bare heading.
+- **Sections that belong to a later step:** Design Handoff, Suggested Approach, Root Cause, Fix, Current State, Rules, Migration Checklist, Design, Conventions, Setup Outside the Repo and Implementation. Don't fill them. If the next step will answer questions as part of its own work, list them at the top of the section that step writes, under the line "Questions for this section:", so a reader finds each question where its answer will go. The sections are Design Handoff for a design session, Suggested Approach for `/assess`, Root Cause for a bug's `/investigate`, Current State for a cleanup's `/investigate`, Rules for `/architect`, and Design for `/infra-design`. Leave every other one as a bare heading.
 - **Frontmatter:** set `type`, leave `status: idea`, set `confirmed` to today, and add `blocked-by` entries if the direction depends on another story. If Sarah is leaving any decisions open, add one `"decision needed: ..."` entry to `blocked-by` that covers them all.
 
 Show her the draft and wait for her approval.

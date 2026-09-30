@@ -20,7 +20,7 @@ A note is written against the codebase, the conventions and the other stories as
 - **Other notes:** another story's design or build changed shared UI or modules this story depends on. This is how design changes usually reach a story.
 - **Sarah changed her mind:** she writes a comment tagged or signed with her name in the note, or tells you in chat.
 
-This skill **flags and routes**. It never rewrites the plan, except to correct a name or path. It adds ⚠️ Check Drift callouts where a mismatch changes the story's work, and sends the note to whichever skill fixes it: `/plan-steps` to re-plan, or the skill that re-settles its approach: `/assess` for a feature, `/investigate` for a bug or cleanup, `/architect` for a pattern, `/decide` for a roundup. The one thing it may fix itself is a convention doc, as AGENTS.md describes under "Doc gaps".
+This skill **flags and routes**. It never rewrites the plan, except to correct a name or path. It adds ⚠️ Check Drift callouts where a mismatch changes the story's work, and sends the note to whichever skill fixes it: `/plan-steps` to re-plan, or the skill that re-settles its approach: `/assess` for a feature, `/investigate` for a bug or cleanup, `/architect` for a pattern, `/infra-design` for infra, `/decide` for a roundup. The one thing it may fix itself is a convention doc, as AGENTS.md describes under "Doc gaps".
 
 It only reads code. It never runs the app and never changes code. A hook blocks edits outside `notes/`, `.scratch/` and `docs/`.
 
@@ -35,7 +35,7 @@ Read the whole note, including:
 - existing ⚠️ Check Drift callouts, and **As built** notes
 
 Then work out the **remaining work**. That's all you check:
-- `spec`: the approach. For a feature, that's the design, behaviors and Suggested Approach. For a bug, the Root Cause and Fix. For a cleanup, Current State and the decided Open Decisions. For a pattern, the Rules and Migration Checklist. For a roundup, the decided questions under Open Decisions.
+- `spec`: the approach. For a feature, that's the design, behaviors and Suggested Approach. For a bug, the Root Cause and Fix. For a cleanup, Current State and the decided Open Decisions. For a pattern, the Rules and Migration Checklist. For infra, the Goals, Design, Conventions and Setup Outside the Repo. For a roundup, the decided questions under Open Decisions.
 - `ready` or `in-progress`: the steps with no `**Status:**` line, plus the design and approach sections they build. Skip completed steps. Their As built notes already record what happened.
 - a `spec` sweep: every unchecked item under Items.
 
@@ -115,6 +115,7 @@ If the note is a sweep, it stays at `spec` and always goes to `/plan-steps` next
   - **Feature:** `/assess`, as a re-assessment.
   - **Bug or cleanup:** `/investigate`, as a re-investigation.
   - **Pattern:** `/architect`, as a revision.
+  - **Infra:** `/infra-design`, as a revision.
   - **Roundup:** `/decide`, for the questions Sarah left open in step 5. If she decided all of them there, the approach is settled again, so route it as **Steps**.
 - **Blocked:** add the story (`"[[link]]"`) or decision to `blocked-by`.
 
@@ -135,4 +136,4 @@ If the out-of-scope list is empty, skip this.
 Otherwise, route it as AGENTS.md describes under "Out-of-scope work".
 
 ## 9. Stop
-Don't start the next step in this session. Tell Sarah the check is done and give her the command for a new session, e.g. `/plan-steps <note name>`, `/assess <note name>`, `/investigate <note name>`, `/architect <note name>`, `/decide <note name>` or `/implement <note name>`.
+Don't start the next step in this session. Tell Sarah the check is done and give her the command for a new session, e.g. `/plan-steps <note name>`, `/assess <note name>`, `/investigate <note name>`, `/architect <note name>`, `/infra-design <note name>`, `/decide <note name>` or `/implement <note name>`.

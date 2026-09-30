@@ -98,6 +98,7 @@ Then report, in this order:
 4. **First pass:** each acceptance check, and what you saw or why you couldn't run it. Then any differences from the design.
 5. **As built:** anything that differs from the step's plan. This is a draft; it goes into the note in step 9.
 6. **Out of scope:** each item triaged, and what Sarah chose for it.
+7. **Setup for Sarah:** in an infra story, each piece of setup outside the repo the step needs, with the instructions from its Approach, for her to do before she runs the checks. Leave this out if there's none.
 
 End with: "Please check the acceptance criteria and review the staged diff."
 

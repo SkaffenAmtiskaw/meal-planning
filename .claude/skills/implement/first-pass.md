@@ -2,7 +2,7 @@
 Before handing the step to Sarah, do its acceptance checks yourself in the running app, and compare what you built with the design. This doesn't replace her checks. It means she shouldn't run into the obvious failures.
 
 ## Start the app
-Skip this if every check in the step is a break-it check (see below).
+Skip this if no check in the step needs the app, such as when every check is a break-it check or a run-and-see check (see below).
 
 Start it, sign in, and stop it when you're done, as the `running-the-app` skill describes.
 
@@ -24,6 +24,9 @@ A step that changes only tests has break-it checks instead of click-throughs, an
 4. Revert the edit, and check with `git diff` that the file is back to how it was before the check.
 
 If the tests that failed aren't exactly the ones the check names, don't change the tests or the check yourself. Show Sarah both lists and ask what to do.
+
+### Run-and-see checks
+A step that builds infrastructure in an infra story, such as a workflow or a script, has run-and-see checks: run a command, open a PR or trigger a workflow, then see the result. If a check runs only on this machine, run it and record what you saw. If it needs a commit or a push, such as opening a PR, or setup outside the repo that Sarah hasn't done yet, don't run it. Report it as not run, with the reason.
 
 ## Compare with the design
 For each Design Handoff section and image the step's **Source:** cites, screenshot the same view at the same screen size and compare. Designs aren't pixel perfect, but the build should mostly match them.

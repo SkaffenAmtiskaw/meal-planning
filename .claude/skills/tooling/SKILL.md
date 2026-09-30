@@ -15,7 +15,7 @@ So one session does it all: find out what Sarah wants, make the change everywher
 Sarah decides what changes. Your job is to understand it fully and carry it through, not to redesign it. If you think another approach would work better, say so once with the reason, then do what she decides.
 
 ## 1. Find out what's changing
-This skill is for changes to how the app is built (skills, subagents, hooks, AGENTS.md, Note Conventions, templates, docs, tooling config), never to what the app does. Check that first.
+This skill is for changes to how the app is built (skills, subagents, hooks, AGENTS.md, Note Conventions, templates, docs, tooling config), never to what the app does. Building new infrastructure, such as CI, a test setup or a hosted service, is an infra story, which goes through the story lifecycle. Check both first.
 
 The argument is one of:
 - **A note name:** find it in `notes/` and check its `type`:
@@ -24,7 +24,7 @@ The argument is one of:
   - blank, in `notes/features/tooling/`: a tooling note from before the workflow type existed. Ask Sarah whether it's a workflow note. If it is, give it `type: workflow`, remove its `status`, set its `^status` line to "Next: /tooling", and go on.
   - anything else: it's story work. Tell Sarah it belongs in the story lifecycle, and stop.
 - **An item in a note:** find it and read the note around it. Check the note's `type` the same way.
-- **A description:** Sarah's own words. App code changed only as a side effect, such as files reformatted by a new lint rule, is fine. If it would change what the app does for its users, tell her it belongs in the story lifecycle, and stop. Otherwise, search `notes/` for notes and items about the same thing and tell her what you found. They may already hold details or decisions.
+- **A description:** Sarah's own words. App code changed only as a side effect, such as files reformatted by a new lint rule, is fine. If it would change what the app does for its users, or build new infrastructure, tell her it belongs in the story lifecycle, and stop. Otherwise, search `notes/` for notes and items about the same thing and tell her what you found. They may already hold details or decisions.
 
 Then read the files the change touches: the skills, agents, hooks, docs or config it names, plus Note Conventions or AGENTS.md if it changes how notes or sessions work. Read only what it touches.
 

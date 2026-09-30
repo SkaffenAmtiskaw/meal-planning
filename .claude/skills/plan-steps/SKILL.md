@@ -26,12 +26,13 @@ This is planning only. Don't change code. A hook blocks edits outside `notes/` a
 Find the note in `notes/features/`. It needs `status: spec` and an approved approach:
 - **Feature:** a `# Suggested Approach`.
 - **Pattern:** Rules, Enforcement, and a Migration Checklist. Some older notes call the checklist "Places to Update."
+- **Infra:** Goals and a Design, plus Conventions and Setup Outside the Repo if it has them.
 - **Sweep:** its unchecked Items, minus any a ⚠️ Check Drift callout drops or moves out. A kicked-off sweep goes through `/check-drift` first. If its `^status` line still says "Kicked off. Next: /check-drift", tell Sarah and stop.
 - **Roundup:** every question under Open Decisions decided, minus any a ⚠️ Check Drift callout drops. If one is still open, `/decide` comes first.
 - **Bug:** a `# Fix` with the chosen fix, and the Root Cause behind it. If Fix points to an Open Decision, that decision needs a **Decided** line. Some older notes call the section "Fix Options"; use the option recorded as decided there.
 - **Cleanup:** Current State, with every question under Open Decisions decided.
 
-If the status or the approach is missing, tell Sarah what you found and stop. For a feature without an approach, `/assess` comes first. For a bug or cleanup, `/investigate` does.
+If the status or the approach is missing, tell Sarah what you found and stop. For a feature without an approach, `/assess` comes first. For a bug or cleanup, `/investigate` does. For infra, `/infra-design` does.
 
 **Check for drift since `confirmed`.** List the commits dated after the note's `confirmed` date that touch `src/`, `test/` or `docs/`, with the files each one changed (`git log --since="<confirmed> 23:59:59" --name-only -- src test docs`), and any uncommitted changes there (`git status -- src test docs`). From the commit messages and the files, judge whether any of them could touch what the note builds: the code, UI areas and kinds of things its approach names.
 - **None could:** tell Sarah in one line, e.g. "3 commits since 2026-09-25, all in the user settings screen. No drift check needed.", and go on.
@@ -54,6 +55,7 @@ If the note already has an Implementation section, this is a re-plan. Steps mark
 - **Slice vertically.** Don't split by layer (types, then hook, then component). Layer steps have nothing to see. The first step of new UI puts something on screen in the right place, even if it's hardcoded or unstyled. Each later step replaces one fake part with the real thing or adds one behavior.
 - **Order.** For every step, ask: can its checks be done in the running app using only the code through this step? If a check needs a later step, the step is out of order or split wrong. Never end with a "wire it all together" step.
 - **Scaffolding.** A temporary page or hardcoded value is fine if it's how Sarah sees progress. Plan when it gets removed.
+- **Setup outside the repo.** In an infra story, each piece of Setup Outside the Repo goes in the first step whose checks need it. The step's Approach gives Sarah the instructions to set it up, and she does it before running the checks.
 
 ### Refactors
 - **Their own steps.** Every "refactor first", "replace" or "extract shared piece" decision in the approach gets its own step, before the step that builds on it.
@@ -63,7 +65,10 @@ If the note already has an Implementation section, this is a re-plan. Steps mark
 When a step adds behavior to an existing module, name the job that module already does and confirm the new behavior is the same job. If it isn't, the behavior needs its own piece. If the approach doesn't already have one, ask Sarah before adding it.
 
 ### Checks
-If a step changes only test files, its checks are break-it checks, as "Test-only steps" below describes. Otherwise, each acceptance criterion is a checkbox with a click-through: "Go to [view], [do something], see [result]." Say which user (for example, read-only), which screen size (phone or desktop), and what data is needed (for example, a day with two meals).
+Each acceptance criterion is a checkbox. What kind of check it is depends on what the step changes:
+- **Only test files:** break-it checks, as "Test-only steps" below describes.
+- **Infrastructure in an infra story,** such as a workflow, a script or a config file: run-and-see checks. "Run [command] or [open a PR into `main`], see [result]." Say what the check needs, such as a branch with a failing test.
+- **Anything else:** a click-through in the running app. "Go to [view], [do something], see [result]." Say which user (for example, read-only), which screen size (phone or desktop), and what data is needed (for example, a day with two meals).
 
 Never use "tests pass", "inspect the code" or "types compile" as a check. Tests passing is assumed for every step. Failure, empty and read-only behaviors are checked in the step that builds them.
 
@@ -81,7 +86,7 @@ When a step changes only test files, shared mocks in `test/mocks/` included, not
 ### Coverage
 Every behavior and every piece in the approach must land in some step. Nothing can land in a step unless it's in the approach, Sarah pulled it in (see "Out-of-scope items" below), or it's a Boy Scout fix. A Boy Scout fix goes in the step that edits its file, as AGENTS.md describes under "Out-of-scope work".
 
-Coverage also runs back to the note's source material, not just the approach, because the approach can miss things. Every step's **Source:** names the parts of the note it builds or fixes: Requirements bullets, Design Handoff sections, a pattern's Symptoms, a sweep's Items, or a roundup's decided questions. Together the steps must claim every Requirements bullet, every Design Handoff section, every Symptom, every remaining sweep Item and every roundup decision. Cite handoff sections by heading, not individual pixel values. The implementer reads those sections for the details.
+Coverage also runs back to the note's source material, not just the approach, because the approach can miss things. Every step's **Source:** names the parts of the note it builds or fixes: Requirements bullets, an infra story's Goals, Design Handoff sections, a pattern's Symptoms, a sweep's Items, or a roundup's decided questions. Together the steps must claim every Requirements bullet, every Goal, every Design Handoff section, every Symptom, every remaining sweep Item and every roundup decision. Cite handoff sections by heading, not individual pixel values. The implementer reads those sections for the details.
 
 In a sweep or roundup, items share a step only when they're the same idea, such as one fix repeated across several files. Unrelated items are separate steps, however small.
 
@@ -108,7 +113,7 @@ A step that claims a Symptom needs an acceptance check that reproduces the origi
 Before you save the draft, triage the out-of-scope list as AGENTS.md describes under "Out-of-scope work". An item Sarah pulls in becomes its own step, with **Source:** "Pulled in by Sarah YYYY-MM-DD: <the item>". It counts as source material for Coverage, even though the approach doesn't name it.
 
 If the item needs a new piece or a decision the approach doesn't make:
-- **A new piece in a feature:** this skill can't design it. Once Sarah agrees, add it under Where It Stands as work for the re-assessment, set the `^status` line to "Next: /assess (re-assessment)", and stop.
+- **A new piece in a feature or infra story:** this skill can't design it. Once Sarah agrees, add it under Where It Stands as work for the redesign, set the `^status` line to "Next: /assess (re-assessment)" for a feature or "Next: /infra-design (revision)" for infra, and stop.
 - **A decision:** ask Sarah for it. If she answers, the item becomes a step as above, with her answer in its **Source:** ("Pulled in by Sarah YYYY-MM-DD: <the item>. Sarah decided: <answer>"). If her answer needs a new piece, it's the case above. Only if she wants to think it over or research it, add it to Open Decisions as a question, with a `decision needed` entry in `blocked-by` if the note doesn't have one, set the `^status` line to "Next: /decide", and stop.
 
 Save the draft to `.scratch/<note name> - plan.md`.

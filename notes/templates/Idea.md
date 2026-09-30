@@ -3,7 +3,7 @@ type:
 status: idea
 confirmed: {{date:YYYY-MM-DD}}
 ---
-%% For jotting something down quickly. Leave `type` blank until it's clear what kind of story this is (feature / bug / pattern / cleanup / workflow), then move the content into that template. %%
+%% For jotting something down quickly. Leave `type` blank until it's clear what kind of story this is (feature / bug / pattern / infra / cleanup / workflow), then move the content into that template. %%
 
 # Where It Stands
 

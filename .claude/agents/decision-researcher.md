@@ -1,6 +1,6 @@
 ---
 name: decision-researcher
-description: Researches one open decision on a note (the code, other notes, library docs and best practices) and returns a brief with the options, their trade-offs and a recommendation where best practice supports one, or checks an answer Sarah is leaning toward. Read-only. Used by the /decide and /architect skills.
+description: Researches one open decision on a note (the code, other notes, library docs and best practices) and returns a brief with the options, their trade-offs and a recommendation where best practice supports one, or checks an answer Sarah is leaning toward. Read-only. Used by the /decide, /architect and /infra-design skills.
 tools: Read, Grep, Glob, WebFetch, WebSearch
 color: purple
 skills:

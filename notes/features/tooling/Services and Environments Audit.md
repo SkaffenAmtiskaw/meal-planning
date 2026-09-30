@@ -18,6 +18,8 @@ It covers two Done When items of [[Dev Foundations]]:
 - Sarah doesn't have to go digging to remember how her services and accounts are set up, such as how to set up a new MongoDB environment or who she pays for the domain (Cloudflare), when she needs to change anything.
 - The production environment on Vercel has been audited: Sarah knows what it uses and how it differs from local, and anything it should be doing differently is fixed or has a Roadmap line.
 
+[[CI Checks]] records its own setup outside the repo (the Claude GitHub App, the cloud environment, the routines, the Actions secrets and the merge block on `main`) in a section of its CI doc in `docs/`, with each routine's own configuration in a `routine.md` beside its skill. This audit takes that section into account: it moves the section into the home it sets up for Sarah's services, or links to it.
+
 What's known so far: production is on Vercel and doesn't use the same data as local, but Sarah isn't sure whether it's a different database or something else. Its Resend domain is also different.
 
 Found 2026-09-28 while shaping [[Dev Foundations]] with `/roadmap`.
