@@ -1,6 +1,6 @@
 ---
 name: implement
-description: Implement the next step of a ready note's implementation plan, asking Sarah about every choice the plan doesn't settle, then stop for her review. One step per session.
+description: Implement the next step of a ready note's implementation plan, asking Sarah about each real choice the plan leaves open, then stop for her review. One step per session.
 argument-hint: "[note name]"
 disable-model-invocation: true
 hooks:
@@ -21,7 +21,7 @@ The agent this skill replaces failed her in three ways, and most rules below exi
 - **Its tests were worthless.** They checked that a class was applied or a prop was passed, not the logic.
 - **It used APIs from memory.**
 
-When the plan doesn't decide something, Sarah decides it, not you. She would rather answer many questions than review a guess.
+When the plan leaves a real choice open, Sarah decides it, not you. A choice that the note, the docs or the existing code already settle isn't a question: make it and list it in your report, where she can check it without being asked about every detail.
 
 ## 1. Find the step
 Find the note in `notes/features/`. It needs `status: ready` or `in-progress`. If it has neither, tell Sarah what you found and stop.
@@ -35,31 +35,37 @@ The step to implement is the first one under `# Implementation` with no `**Statu
 Read the project docs AGENTS.md lists when the work needs them, not all up front.
 
 ## 2. Settle the open choices
-**The rule:** a choice is open as AGENTS.md describes under "Open choices are hers". Here, the written sources are:
+**The rule:** a choice is open as AGENTS.md describes under "Open choices are hers": it has more than one reasonable answer, and nothing written picks one. Here, the written sources are:
 - the note: the step, the approach, the Design Handoff and its images
 - Sarah's answers in this session
 - the project docs in `docs/`
 - current library docs (see step 3)
+- the existing code, when it leaves only one answer that works, such as an argument that has to be required because a caller breaks without it
 
-Your own sense of what's obvious is never a source.
+Your own sense of what's obvious, or what you'd prefer, is never a source. If you can't point to the file and line, the note section or the doc that rules out the other answers, the choice is open.
 
-Open choices include:
+Choices that are often open:
 - anything she'd see in the app: layout, wording, what happens on an edge case or an error
 - the shape of the code: a new module or reusing one, where it lives, its props or arguments
 - anywhere the plan and the code disagree, such as a file that isn't what the plan assumed or a file the step needs that isn't in its Files list
 
 Things the conventions settle, like local variable names or file naming, aren't open choices.
 
+Keep a list of every choice you make without asking, each with its source. It goes in your report. If a choice has no source, it should have been a question.
+
+### Asking about an open choice
+Ask about one choice at a time, even when several belong to the same function or component. Leave the parts the sources already settle out of the question: they go in the report. For each open choice, give:
+- each reasonable approach, and what it changes: what she'd see in the app, which code it touches, and what later work it makes easier or harder
+- a recommendation, as AGENTS.md describes under "Recommendations"
+
 ### Before writing any code
 1. Read every file the step lists. Note anywhere the code isn't what the plan assumes.
 2. If the step adds behavior to an existing module, name the job that module already does. If the new behavior isn't that same job, it's an open choice.
 3. For UI work, go through each element in the design sections the step cites. For each one, name the Mantine component or theme value you'll use. If the nearest Mantine option would look clearly different from the design or wouldn't fit, that element was probably meant to be custom. Ask Sarah whether to build it custom or use a Mantine approximation.
-4. Write the open choices to `.scratch/<note name> - step <N> choices.md`, then ask Sarah about them.
+4. Write the open choices to `.scratch/<note name> - step <N> choices.md`, then ask Sarah about each one, as "Asking about an open choice" describes.
 
 ### While writing code
 When a new open choice comes up, stop and ask right then. Don't save it for the end, and don't put in a placeholder to fix later.
-
-Keep a list of every choice you make, each with its source. It goes in your report. If a choice has no source, it should have been a question.
 
 ## 3. Use current library APIs
 Follow "Library APIs" in AGENTS.md for every API you use.
@@ -92,8 +98,8 @@ First, triage the out-of-scope list as AGENTS.md describes under "Out-of-scope w
 Stage the files this step changed.
 
 Then report, in this order:
-1. **Files:** each file changed, with a one-line reason. Mark any file that isn't in the step's Files list.
-2. **Choices:** each choice you made, what you picked and its source.
+1. **Files:** a table with one row per changed file: the file as a markdown link she can click, and a one-line summary of its change. Mark any file that isn't in the step's Files list.
+2. **Choices:** a table of each choice you made without asking her: what you picked, and its source as a link (`file:line`, the note section or the doc). Leave out the choices she answered in this session.
 3. **Tests:** each test and the branch or logic it covers. List coverage-only tests as such. Mark tests added for a branch that a fix introduced.
 4. **First pass:** each acceptance check, and what you saw or why you couldn't run it. Then any differences from the design.
 5. **As built:** anything that differs from the step's plan. This is a draft; it goes into the note in step 9.
