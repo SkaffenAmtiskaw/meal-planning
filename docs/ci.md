@@ -88,9 +88,9 @@ CLAUDE_ENV_FILE=/opt/mise-session-env.sh
 
 **Setup script:** it runs before Claude Code starts, and only the files it writes carry over into sessions. It:
 1. installs mise from npm, since mise's own download hosts aren't on the Trusted list
-2. turns off mise's `aqua` backend, so mise installs pnpm from npm. The default backend downloads pnpm from GitHub releases, and the GitHub proxy only serves release files for the repos attached to the session.
+2. turns off mise's `aqua` backend, so mise installs pnpm from npm. The default backend downloads pnpm from GitHub releases, and the GitHub proxy only serves release files for the repos attached to the session. Installing from npm, mise skips a package's install scripts unless they're approved, and pnpm's puts its native binary in place, so `mise.toml` approves it (`allow_builds`).
 3. runs `mise install node pnpm` in the cloned repo
-4. writes the `CLAUDE_ENV_FILE` file, which puts mise's shims ahead of the image's Node on `PATH`
+4. writes the `CLAUDE_ENV_FILE` file, which puts mise's shims ahead of the image's Node on `PATH`, and keeps the two mise settings the script uses: the `aqua` backend off, and `rtk` ignored, since sessions need only node and pnpm and mise would otherwise look up `rtk`'s latest version on GitHub and get a 403
 5. runs `pnpm install --frozen-lockfile`, so the snapshot holds a warm pnpm store. Each session installs again after it checks out its branch, so a failure here doesn't fail the session.
 
 The script fails the session if it can't find the repo, rather than let it fall back to the image's Node.
@@ -106,6 +106,8 @@ npm install -g @jdxcode/mise
 # mise's default backend for pnpm downloads from GitHub releases, which the GitHub proxy blocks for
 # repos not attached to the session. With it off, mise installs pnpm from npm.
 export MISE_DISABLE_BACKENDS=aqua
+# Sessions need only node and pnpm. Without this, mise looks up rtk's latest version on GitHub, and gets a 403.
+export MISE_DISABLE_TOOLS=rtk
 
 # Find the cloned repo, to install the versions its mise.toml names.
 repo=""
@@ -129,6 +131,7 @@ mise install node pnpm
 shims="${MISE_DATA_DIR:-$HOME/.local/share/mise}/shims"
 cat > /opt/mise-session-env.sh <<EOF
 export MISE_DISABLE_BACKENDS=aqua
+export MISE_DISABLE_TOOLS=rtk
 export PATH="$shims:\$PATH"
 EOF
 
