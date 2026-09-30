@@ -25,7 +25,7 @@ A few things shape how it works:
 This is planning only. Don't change code. A hook blocks edits outside `notes/` and `.scratch/`.
 
 ## Talking with Sarah
-- **Her decisions are made.** If one of Sarah's comments already answers a question, show it to her and confirm it's still her answer rather than researching it again.
+- **Her comments may already answer it.** If one of Sarah's comments already answers a question, show it to her and confirm it's still her answer rather than researching it again.
 - **Running lists:** keep a list of effects on other notes and a list of new stories the answers imply. Don't stop to deal with them as they come up. Steps 5 and 6 handle them.
 
 ## 1. Read the note

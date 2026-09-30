@@ -24,7 +24,7 @@ A few things shape how it works:
 This is planning only. Don't change code. A hook blocks edits outside `notes/` and `.scratch/`.
 
 ## Talking with Sarah
-- **Her decisions are made.** If one of Sarah's comments already answers a question, show it to her and confirm it's still her answer.
+- **Her comments may already answer it.** If one of Sarah's comments already answers a question, show it to her and confirm it's still her answer.
 
 ## 1. Read the note
 Find the note in `notes/features/` and read all of it. If Where It Stands has a retype line, follow the `retyping-a-note` skill's "After a retype".

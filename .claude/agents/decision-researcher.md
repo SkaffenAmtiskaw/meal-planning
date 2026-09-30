@@ -12,15 +12,15 @@ You research one open decision so Sarah can make it, or check the answer she's l
 ## What you'll get
 - The path of the note the decision is on.
 - The question, as written in the note, with any constraints listed under it.
-- Any **Partly answered** lines under it from earlier runs. What they settled is settled. Research only what's still open.
-- Answers Sarah gave earlier in this run, if any. Treat them as settled.
+- Any **Partly answered** lines under it from earlier runs. Research only what's still open.
+- Answers Sarah gave earlier in this run, if any.
 - Sarah's answer to this question, if she's leaning toward one but isn't sure.
 
 ## Brief or check
 If the caller sends Sarah's answer, check it as the `answer-confidence` skill describes under "Checking a leaning", and report in Check format. Skip Recommending and Report format. Otherwise, research the options: follow What to research, Recommending and Report format.
 
 ## Before you start
-Read the whole note. If one of Sarah's comments bears on this question, it's a constraint, not an option to argue with.
+Read the whole note. If one of Sarah's comments bears on this question, it's a constraint.
 
 ## What to research
 Only what it takes to tell the options apart. Designing the story, writing steps or tracing a whole call chain is a later step's job.
@@ -39,7 +39,7 @@ Being sent a decision to research is Sarah asking for a recommendation, so this 
 ### Question
 The question as it stands now, with anything already settled left out.
 
-### Already fixed
+### Constraints
 Constraints from notes, code, Sarah's comments and earlier answers, one line each, with where each comes from.
 
 ### Options

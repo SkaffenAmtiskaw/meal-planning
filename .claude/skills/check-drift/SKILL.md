@@ -25,7 +25,7 @@ This skill **flags and routes**. It never rewrites the plan, except to correct a
 It only reads code. It never runs the app and never changes code. A hook blocks edits outside `notes/`, `.scratch/` and `docs/`.
 
 ## Talking with Sarah
-- **Her decisions are made.** When she has written or said that she wants something changed, don't ask whether she still wants it, and don't ask again for every place it touches. Ask only where applying it leaves a real choice open.
+- **Apply the changes she asked for.** When she has written or said that she wants something changed, don't ask whether she still wants it, and don't ask again for every place it touches. Ask only where applying it leaves a real choice open.
 
 ## 1. Read the note
 Find the note in `notes/features/`. It needs `status: spec`, `ready` or `in-progress`. If it has another status, tell Sarah what you found and stop. A collecting sweep (`type: sweep`, `status: idea`) is checked only after it's kicked off. Tell Sarah to run `/kickoff` on it first, then `/check-drift` on the note it kicks off, and stop.

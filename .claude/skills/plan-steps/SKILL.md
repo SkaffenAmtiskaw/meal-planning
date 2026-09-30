@@ -99,7 +99,7 @@ A step that claims a Symptom needs an acceptance check that reproduces the origi
 
 **Source:** <what this step builds or fixes from the note, e.g. "Handoff: Day cell states; Handoff: Behavior (all placements) → keyboard", "Requirement 3", "Symptom: new recipe missing from saved dishes dropdown" or "Item: forbidden @tabler/icons-react mocks">
 
-**Approach:** <how, citing the approach's pieces by name or number, e.g. "Piece 9a". Don't re-argue decisions already made there.>
+**Approach:** <how, citing the approach's pieces by name or number, e.g. "Piece 9a".>
 
 **Files:**
 - `path/to/file.tsx` (new) - reason

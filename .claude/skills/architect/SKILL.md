@@ -23,7 +23,7 @@ This skill starts after the thinking is done. `/shape` gave the note its type an
 This is planning only. Don't change code. A hook blocks edits outside `notes/` and `.scratch/`.
 
 ## Talking with Sarah
-- **Her decisions are made.** Her comments and the **Decided** lines under Open Decisions are settled. Build the rules from them; don't argue them again.
+- **Build from her decisions.** Build the rules from her comments and the **Decided** lines under Open Decisions.
 
 ## 1. Read the note
 Find the note in `notes/features/` and read all of it. Read the notes it links to when the Rules, Root Cause or Open Decisions depend on them. If Where It Stands has a retype line, follow the `retyping-a-note` skill's "After a retype".
