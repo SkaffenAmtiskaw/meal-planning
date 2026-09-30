@@ -185,7 +185,7 @@ Nothing in an E2E run comes from `.env.local`. At the top of `playwright.config.
 
 `test/auth.ts` and `test/factories/connection.ts` read `DB_URL`, `BETTER_AUTH_SECRET` and `BETTER_AUTH_URL` from `@/env`, so the tests and the app get the same values.
 
-When you add a variable to `src/env.ts`, add an E2E value for it to `playwright.config.ts`.
+When you add a variable to `src/env.ts`, add an E2E value for it to `playwright.config.ts`. It also needs a dummy in the lists `docs/ci.md` names under "Secrets and Environment Values".
 
 A few variables are read by better-auth on its own, because `src/_auth/auth.ts` and `src/_utils/auth/client.ts` don't pass them in. They're set nowhere, neither in `.env.local` nor in the E2E config, until they go through `src/env.ts`: `BETTER_AUTH_SECRETS`, `AUTH_SECRET`, `NEXT_PUBLIC_BETTER_AUTH_URL`, `BASE_URL`, `BETTER_AUTH_TRUSTED_ORIGINS`, `NEXT_PUBLIC_AUTH_URL` and `NEXTAUTH_URL`.
 

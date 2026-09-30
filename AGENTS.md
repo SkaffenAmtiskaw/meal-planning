@@ -83,6 +83,7 @@ Read the docs a task touches when it needs them, not all up front:
 - `docs/style_guidelines.md` and `theme.md`: before UI work
 - `docs/unit_tests.md`: before writing tests or mocks
 - `docs/e2e_tests.md`: before writing E2E tests
+- `docs/ci.md`: before changing a workflow or a routine
 
 ## Library APIs
 The libraries in this project are newer than your training data. Never use an API from memory. Every API you use needs a source:
@@ -96,7 +97,9 @@ Look up only what the task uses: one component, one function, one page.
 
 ## Commands
 - `pnpm lint`: Biome. It **writes fixes** to the files, not just reports.
-- `pnpm check:types`: TypeScript, no emit.
+- `pnpm lint:ci`: Biome, report only. The lint check CI runs.
+- `pnpm check:types`: generates Next's route types, then runs TypeScript with no emit.
+- `pnpm test:coverage`: runs every unit test with coverage, as CI does.
 - `pnpm test:agent <path>`: runs the tests for a file or folder, with coverage and output made for agents. For a break-it check on a unit test, run `pnpm vitest run <test file>` as the check says. Otherwise, use `pnpm test:agent` instead of calling `vitest` directly.
 - `pnpm test:e2e`: builds the app and runs the Playwright E2E tests against a throwaway database. Pass a spec file or folder to run only those. `pnpm test:e2e:trace` does the same with a trace for every test, then opens the report. See `docs/e2e_tests.md`.
 - `pnpm build`: Next.js production build.

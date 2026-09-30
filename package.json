@@ -5,9 +5,10 @@
   "type": "module",
   "scripts": {
     "build": "next build",
-    "check:types": "tsc --noEmit",
+    "check:types": "next typegen && tsc --noEmit",
     "dev": "next dev",
     "lint": "biome check --write",
+    "lint:ci": "biome ci",
     "start": "next start",
     "test": "sh -c 'vitest ${1:-src}' --",
     "test:agent": "sh -c 'vitest run ${1:-src} --coverage --coverage.include ${1:-src} --reporter=agent' --",

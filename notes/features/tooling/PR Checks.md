@@ -1,11 +1,11 @@
 ---
 type: infra
-status: ready
+status: in-progress
 blocked-by: []
 confirmed: 2026-09-30
 ---
 # Where It Stands
-Ready. Next: build Step 1 ^status
+In progress. Next: implement Step 1 ^status
 
 # Purpose
 Run lint, type check, unit tests and build automatically on every PR, each as its own job with its own result, and block the merge into `main` while any of them fails. This covers the Done When item of [[Dev Foundations]] for PRs into `main`. It also creates the `checks.yml` workflow and `docs/ci.md`, which [[CI Failure Sessions]] and [[E2E Tests in CI]] build on. Split from [[CI Checks]] on 2026-09-30.

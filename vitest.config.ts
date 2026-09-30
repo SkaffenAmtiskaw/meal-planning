@@ -25,7 +25,7 @@ export default defineConfig({
       provider: 'v8',
       reporter: ['text', 'html', 'lcov'],
       include: ['src/**/*.{ts,tsx}'],
-      // Excluded files should are either test files or files that should NEVER have logic - any logic should be
+      // Excluded files are either test files or files that should NEVER have logic - any logic should be
       // pulled into separate testable modules.
       exclude: [
           // Mantine theme config

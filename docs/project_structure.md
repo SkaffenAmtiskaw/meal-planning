@@ -1,5 +1,9 @@
+# .claude/
+Claude Code skills, subagents, hooks and rules
+# .github/
+GitHub Actions workflows (see `docs/ci.md`)
 # docs/
-project documentation: structure, code conventions, styling, theme, unit tests and E2E tests
+project documentation: structure, code conventions, styling, theme, unit tests, E2E tests and CI
 # e2e/
 Playwright E2E specs, grouped in folders by feature area (see `docs/e2e_tests.md`)
 ## _fixtures/
