@@ -23,7 +23,7 @@ The design lives in [[Stale Data Issues]]. The sections embedded below are part 
 *From [[Stale Data Issues]] (static reading, 2026-09-25). Re-check before planning.*
 
 > [!warning]
-> This may affect the E2E test helpers. [[E2E Test Setup]]'s shared user helper in `test/` creates the app's `User` doc outside Next (in the Playwright process, and later a dev seed script). Moving `addUser` or `addPlanner` must not break E2E testing or any other testing that uses those helpers.
+> This may affect the E2E test helpers. The E2E user factory, `createUser` in `test/factories/user.ts` (`docs/e2e_tests.md`, "The Factories"), creates the app's `User` doc outside Next (in the Playwright process, and later a dev seed script). Moving `addUser` or `addPlanner` must not break E2E testing or any other testing that uses those helpers.
 
 Not actually server actions. Move into server-only internal utils so they can't be called from the client:
 - [ ] `planner/addPlanner` — currently exported as a server action **with no auth check**

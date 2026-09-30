@@ -28,7 +28,6 @@
 2. [[Calendar Page]] - active
 
 # Now
-- [[E2E Test Setup]] ![[E2E Test Setup#^status]] 🎯 [[Dev Foundations]] 🎯 [[Calendar Page]]
 
 # Next
 1. [[CI Checks]] ![[CI Checks#^status]] 🎯 [[Dev Foundations]] 🎯 [[Calendar Page]]

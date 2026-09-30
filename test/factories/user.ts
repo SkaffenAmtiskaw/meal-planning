@@ -1,7 +1,6 @@
+import { auth } from '#auth';
 import type { PlannerMembership } from '@/_models/user';
 import { User } from '@/_models/user';
-
-import { auth } from '../auth';
 
 interface CreateUserOptions {
 	planners: PlannerMembership[];

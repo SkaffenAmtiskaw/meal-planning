@@ -262,6 +262,10 @@
 									{
 										"group": ["@/_models/**"],
 										"message": "E2E code creates data only through the factories in test/factories/. See docs/e2e_tests.md."
+									},
+									{
+										"group": ["#factories/*", "!#factories/connection"],
+										"message": "Fixtures only open and close connections. Specs create their own data with the factories. See docs/e2e_tests.md."
 									}
 								]
 							}

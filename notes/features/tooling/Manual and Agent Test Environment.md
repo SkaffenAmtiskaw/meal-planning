@@ -12,7 +12,7 @@ confirmed: 2026-09-28
 Next: /shape ^status
 
 # Notes
-Split from [[E2E Test Setup]] by its decision 4:
+Split from E2E Test Setup by its decision 4:
 > **Decided 2026-09-28:** No shared seed. E2E tests read no seed data (decision 2). Manual and agent testing get their own Dev Foundations story, scoped to Sarah's goals: manual testing of access-level edge cases without tedious setup, and `first-pass` agents never stopping because no user exists for an access level. `/architect` writes the E2E data-creation helpers as plain functions, free of Playwright-specific code, so a dev seed script can reuse them. This follows the practice of tests and seeders sharing one set of factories, and the Single Concern rule.
 
 Sarah's goals for this story:
