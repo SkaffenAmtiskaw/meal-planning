@@ -18,6 +18,10 @@ Scope: run the E2E tests in GitHub Actions when `develop` opens a PR into `main`
 
 A failed E2E test reaches Sarah through the failed-check session [[CI Failure Sessions]] sets up. This story adds instructions for that session to run a preliminary root cause analysis of the failure, moved here from [[Sentry Logging and Root Cause Analysis]] 2026-09-29, which reuses it for Sentry errors.
 
+The `ci-failure` routine runs on Sonnet, since the failures [[CI Failure Sessions]] handles (lint, types, unit tests, build) are mostly straightforward. Sarah decided 2026-09-30 that a failure needing more reasoning should get a stronger model, and E2E failures are the first she expects to need it (sometimes). A routine has one model for every run, so the two ways found while planning CI Failure Sessions 2026-09-30 are:
+- the skill hands a hard failure's diagnosis to a subagent set to a stronger model, such as Opus
+- a second routine with its own model, which the workflow fires instead of `ci-failure` when the E2E job fails
+
 Sarah's note from E2E Testing, moved here from [[Sentry Logging and Root Cause Analysis]] 2026-09-29:
 - I'd love if a failed e2e test automatically kicked off a Claude agent that did a preliminary root cause analysis for me to review
 

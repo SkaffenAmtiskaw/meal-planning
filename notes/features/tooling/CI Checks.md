@@ -61,11 +61,15 @@ Before planning or implementing any story linked from this note, read this note 
 		- Rejected: only PRs into `main` - switching to feature branches would mean redoing the workflow.
 		- Rejected: only PRs into `main` and `develop` - nothing about the checks depends on the base branch.
 		- Rejected: starting a session for `claude/` PRs too - a failing fix would start another session, up to `/fire`'s limit of 30 an hour.
+	- **Revised 2026-09-30:** a failed check on a PR from a fork starts no session either. GitHub gives fork PRs no Actions secrets, so the `/fire` call would fail every time, and a session couldn't fix a branch in someone else's fork. Sarah's call: the repo is public for convenience, not for contributors.
+10. Which branch do routines clone, and so which copy of their skills do they run?
+	- **Decided 2026-09-30:** `develop`, made the repo's default branch on GitHub. A routine clones the default branch and runs the skills committed there, so a skill change reaches the routines as soon as it's pushed to `develop`. The ruleset on `main` targets `main` by name, so it stays on `main`, and Vercel's production branch is its own setting, which stays `main`. Sarah's call, when planning showed that a `main` default would need every routine skill change sent to `main` on its own.
+		- Rejected: keeping `main` as the default and sending each skill change to `main` through a PR holding only the skill files - three extra PRs in CI Failure Sessions alone, the first also carrying `checks.yml`, and merge conflicts with `develop` later.
 
 ## Research
 Research from 2026-09-29:
 - Routines start from a schedule, the API (`/fire`) or a GitHub pull request or release event. A failed check can't start one directly: an `if: failure()` workflow step calls `/fire`, with the routine's URL and token kept as Actions secrets, as Anthropic's `/fire` docs show. `/fire` allows 30 calls an hour per routine, doesn't dedupe retries and is still experimental. (code.claude.com/docs/en/routines, platform.claude.com/docs/en/api/claude-code/routines-fire)
-- A routine clones the default branch (`main`) unless its prompt checks out another. It pushes to `claude/` branches, and its PRs can target `develop`. It sees only what Sarah has pushed.
+- A routine clones the default branch (`develop`, Decision 10) unless its prompt checks out another. It pushes to `claude/` branches, and its PRs can target `develop`. It sees only what Sarah has pushed.
 - A cloud session gets only what's in the repo: not Sarah's `~/.claude` memory or user settings, and not gitignored files such as `.env*` or the test login in `.opencode/secrets`.
 - `anthropics/claude-code-action` posts to PR comments or the workflow log, not a session.
 
@@ -96,7 +100,7 @@ Found by /architect's audit of the code on 2026-09-29:
 - **Lands in:** `docs/ci.md`, "Workflows".
 
 ### `.github/workflows/checks.yml` - the job that starts `ci-failure`
-`checks.yml` has one more job, which runs only when all three hold: at least one check job failed, the run is on its first attempt (`github.run_attempt == 1`), and the PR's head branch doesn't start with `claude/` (Decision 9). It calls the `ci-failure` routine's `/fire` once, with the `text` naming the PR number, its head branch, the workflow run's ID and URL, and which jobs failed. It sends only identifiers, no logs, so the session reads the failure itself from the branch and the run. A run where every check passes, a cancelled run, any re-run and any `claude/` PR start nothing. The `ci-failure` session watches its own re-run (the `ci-failure` skill, below). A re-run Sarah starts by hand on GitHub, and a failed check on a routine's own `claude/` fix PR, are both things she's already looking at on GitHub.
+`checks.yml` has one more job, which runs only when all four hold: at least one check job failed, the run is on its first attempt (`github.run_attempt == 1`), the PR's head branch doesn't start with `claude/`, and the PR comes from this repo, not a fork (Decision 9). It calls the `ci-failure` routine's `/fire` once, with the `text` naming the PR number, its head branch, the workflow run's ID and URL, and which jobs failed. It sends only identifiers, no logs, so the session reads the failure itself from the branch and the run. A run where every check passes, a cancelled run, any re-run, any `claude/` PR and any PR from a fork start nothing. The `ci-failure` session watches its own re-run (the `ci-failure` skill, below). A re-run Sarah starts by hand on GitHub, and a failed check on a routine's own `claude/` fix PR, are both things she's already looking at on GitHub.
 - **Comes from:** Decisions 4, 8 and 9, Convention 2, and the research that a failed check can't start a routine directly, so a workflow step calls `/fire`.
 - **Lands in:** `docs/ci.md`, "Checks on PRs".
 
@@ -139,7 +143,7 @@ A new shared-rule skill (`user-invocable: false`) with these sections:
 ### The flow
 1. **A PR opens, or gets a new push.** `checks.yml` runs the four check jobs, each in its own checkout with tools installed from `mise.toml`.
 2. **Every check passes:** the PR shows four passing checks. For a PR into `main`, the ruleset allows the merge. Nothing else runs, and no session starts.
-3. **A check fails:** the PR shows which job failed, and for a PR into `main` the ruleset blocks the merge. The start job fires `ci-failure` only on the first attempt of a PR whose head branch doesn't start with `claude/`, and sends identifiers only. Otherwise the flow stops here, and Sarah sees the failed check when she opens the PR on GitHub.
+3. **A check fails:** the PR shows which job failed, and for a PR into `main` the ruleset blocks the merge. The start job fires `ci-failure` only on the first attempt of a PR from this repo whose head branch doesn't start with `claude/`, and sends identifiers only. Otherwise the flow stops here, and Sarah sees the failed check when she opens the PR on GitHub.
 4. **The routine starts a cloud session** in the cloud environment: tools come from `mise.toml`, and the app's variables get dummy values. Its saved prompt runs `/ci-failure` on the payload.
 5. **The session checks out the head branch and runs each failed job's script:**
    - **It fails in the cloud:** the session commits a fix to a `claude/` branch and opens a PR into the head branch. That PR runs the checks too, but its failures start no session. The session then stops with its summary.
@@ -176,6 +180,7 @@ Every routine's skill folder holds a `routine.md` with that routine's configurat
 - its name on claude.ai
 - its prompt, word for word (Convention 3)
 - each trigger. For an API trigger, that's the workflow that calls its `/fire` and the names of the two Actions secrets holding its URL and token (Convention 12). For a GitHub trigger, the event and its filters.
+- its model
 - its cloud environment, and the environment variables and credentials its session uses (Convention 10)
 
 `SKILL.md` doesn't point to it, so the routine's session never loads it. It's for whoever sets up or changes the routine, and a change to the routine on claude.ai updates `routine.md` in the same change.
@@ -183,12 +188,12 @@ Every routine's skill folder holds a `routine.md` with that routine's configurat
 - **Lands in:** the `routine-sessions` skill, "Instructions".
 
 ### Convention 6 - `docs/ci.md` lists every routine with its purpose
-The "Setup Outside the Repo" section of `docs/ci.md` has one line per routine: its name, what it's for, and a link to its skill. The routine's configuration isn't repeated there. Beside that list, the section holds the one-time shared setup: the Claude GitHub App, the cloud environment and the ruleset on `main` (see Setup Outside the Repo below).
+The "Setup Outside the Repo" section of `docs/ci.md` has one line per routine: its name, what it's for, and a link to its skill. The routine's configuration isn't repeated there. Beside that list, the section holds the one-time shared setup: `develop` as the default branch, the Claude GitHub App, the cloud environment and the ruleset on `main` (see Setup Outside the Repo below).
 - **Comes from:** Decision 7.
 - **Lands in:** `docs/ci.md`, "Setup Outside the Repo".
 
 ### Convention 7 - A routine's skill names the branch it works from
-Before the session reads or changes any file in the repo, its `SKILL.md` has it check out the branch or branches it works from, each named in the skill: a fixed branch such as `develop`, or one read from the event, such as the PR's head branch. A routine clones the default branch (`main`) unless told otherwise, so a skill that says nothing works from `main` by accident.
+Before the session reads or changes any file in the repo, its `SKILL.md` has it check out the branch or branches it works from, each named in the skill: a fixed branch such as `develop`, or one read from the event, such as the PR's head branch. A routine clones the default branch (`develop`, Decision 10) unless told otherwise, so a skill that says nothing works from `develop` by accident, even when the event is about another branch.
 - **Comes from:** Decision 1 ("each source decides … which branch it works from"), and the routines docs, which say each run starts from the default branch unless the prompt says otherwise.
 - **Lands in:** the `routine-sessions` skill, "What the Session Does".
 
@@ -241,6 +246,11 @@ A workflow installs Node, pnpm and any other tool it needs with `jdx/mise-action
 - **Lands in:** `docs/ci.md`, "Workflows".
 
 ## Setup Outside the Repo
+### `develop` as the default branch
+The repo's default branch on GitHub is `develop`, so routines clone it and run its skills (Decision 10). The ruleset on `main` targets `main` by name, and Vercel's production branch stays `main`.
+- **Comes from:** Decision 10.
+- **Lands in:** `docs/ci.md`, "Setup Outside the Repo".
+
 ### The Claude GitHub App
 Installed on the repo. The cloud environments docs confirm `gh` comes installed in a cloud session and authenticates through the GitHub proxy. Only a user report says the app's access covers re-running Actions jobs, so confirm that `gh run rerun <run_id> --failed` works from a cloud session, which the `ci-failure` skill needs.
 - **Comes from:** Purpose, and Decision 7.
@@ -279,7 +289,7 @@ Related notes that follow the convention or the setup record kept here: [[E2E Te
 1. PR Checks (done)
 2. [[CI Failure Sessions]]
 
-Stated in the Design: the job that starts `ci-failure` is one more job in `checks.yml`. Stated in CI Failure Sessions' draft steps: its skill-only PRs into `main` need `checks.yml` for the ruleset's required checks.
+Stated in the Design: the job that starts `ci-failure` is one more job in `checks.yml`.
 
 # Open Decisions
 
