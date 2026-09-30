@@ -1,49 +1,30 @@
 ---
-type: infra
-status: spec
-blocked-by: []
+type: hub
 confirmed: 2026-09-30
 ---
 # Where It Stands
-Design approved. Next: /plan-steps ^status
+Next: its child stories ^status
+
+# Purpose
+[[PR Checks]] runs lint, type check, unit tests and build automatically on every PR, which covers the Done When item of [[Dev Foundations]] for PRs into `main`.
+
+Besides running the checks, [[CI Failure Sessions]] makes a failed check start a Claude Code cloud session for Sarah, and does the one-time setup every later source of results shares. Sarah is the sole maintainer. She opens GitHub only to merge into `main` and doesn't check email often enough to rely on it, so results that happen away from her machine have to reach her another way.
+
+One-time setup [[CI Failure Sessions]] does, for [[E2E Tests in CI]], [[Sentry Logging and Root Cause Analysis]], [[Local Dependency Update Alerts]] and the watch-tools line under [[Dev Foundations]]:
+- Install the Claude GitHub App on the repo, and create the cloud environment the routines run in.
+- Write the convention for later sources: a shared-rule skill for routine sessions, and a doc for the CI side.
 
 Set the convention for how a source of results that happen away from Sarah's machine reaches her as a Claude Code cloud session. Prove it with the first source: the checks on PRs, where a failed check starts a session.
 
 There's no `.github/` yet, so nothing is checked outside Sarah's machine. The lefthook pre-commit hook runs Biome, tests and type checks on staged files, and a full `pnpm build` on every commit that touches `src/`. Dependabot, if [[Local Dependency Update Alerts]] uses it, and [[E2E Tests in CI]] (which wants E2E tests to run when `develop` opens a PR into `main`) both assume CI exists.
 
-Research from 2026-09-29:
-- Routines start from a schedule, the API (`/fire`) or a GitHub pull request or release event. A failed check can't start one directly: an `if: failure()` workflow step calls `/fire`, with the routine's URL and token kept as Actions secrets, as Anthropic's `/fire` docs show. `/fire` allows 30 calls an hour per routine, doesn't dedupe retries and is still experimental. (code.claude.com/docs/en/routines, platform.claude.com/docs/en/api/claude-code/routines-fire)
-- A routine clones the default branch (`main`) unless its prompt checks out another. It pushes to `claude/` branches, and its PRs can target `develop`. It sees only what Sarah has pushed.
-- A cloud session gets only what's in the repo: not Sarah's `~/.claude` memory or user settings, and not gitignored files such as `.env*` or the test login in `.opencode/secrets`.
-- `anthropics/claude-code-action` posts to PR comments or the workflow log, not a session.
-
 Found 2026-09-28 while shaping [[Dev Foundations]] with `/roadmap`.
 
-# Purpose
-Run lint, type check, unit tests and build automatically on every PR, which covers the Done When item of [[Dev Foundations]] for PRs into `main`.
+## Meta-Instructions
+Before planning or implementing any story linked from this note, read this note first. If a child story conflicts with a decision recorded here, or depends on a question that is still open, stop and ask the user.
 
-Besides running the checks, this story makes a failed check start a Claude Code cloud session for Sarah, and does the one-time setup every later source of results shares. Sarah is the sole maintainer. She opens GitHub only to merge into `main` and doesn't check email often enough to rely on it, so results that happen away from her machine have to reach her another way.
-
-One-time setup this story does, for [[E2E Tests in CI]], [[Sentry Logging and Root Cause Analysis]], [[Local Dependency Update Alerts]] and the watch-tools line under [[Dev Foundations]]:
-- Install the Claude GitHub App on the repo, and create the cloud environment the routines run in.
-- Write the convention for later sources: a shared-rule skill for routine sessions, and a doc for the CI side.
-
-# Goals
-- [ ] Every PR runs four check jobs (lint, type check, unit tests with coverage, build) and shows each job's result on the PR.
-- [ ] A PR into `main` can't be merged while any of the four check jobs is failing.
-- [ ] A PR with a failed check starts one `ci-failure` cloud session, which appears in the Code tab of the Claude desktop app.
-- [ ] A PR where every check passes starts no session.
-- [ ] A failed check on a PR whose head branch starts with `claude/` starts no session.
-- [ ] The session runs each failed job's script on the failing PR's head branch, to see whether the failure reproduces in the cloud.
-- [ ] When the failure reproduces, the session leaves a PR from a `claude/` branch into the failing PR's head branch with a fix, and its summary names the cause.
-- [ ] When the failure doesn't reproduce in the cloud, the session re-runs the failed jobs on GitHub once.
-- [ ] If that re-run passes, the session leaves only a flake verdict: which check flaked, with the failed run, the cloud pass and the passing re-run.
-- [ ] If that re-run fails too, the session diagnoses it from both runs. It either leaves a fix PR the same way as a failure that reproduces, or says what it found and what it needs from Sarah.
-- [ ] Re-running failed jobs never starts another session, whether the `ci-failure` session starts the re-run or Sarah does.
-- [ ] `docs/ci.md` covers the checks, how a routine gets started, secrets and environment values, and the setup outside the repo.
-- [ ] The `routine-sessions` skill holds the rules for how a routine's session behaves, so later sources can follow them.
-
-# Open Decisions
+# Design Handoff
+## Decisions
 1. How do results that happen away from Sarah's machine reach her?
 	- **Decided 2026-09-29:** a Claude Code session working on the issue, waiting for her input in the Code tab of the Claude desktop app. Each source decides what its session has done before Sarah opens it (some only write notes, some start digging into a bug), what starts its routine, and which branch it works from. A run that finds nothing leaves no session in Sarah's Code tab. Sarah's call: she opens the desktop app whenever she works on the app, so sessions can wait until then; checked against the Claude Code docs, which show cloud routine runs as sessions there.
 		- Rejected: a desktop notification (ntfy, Pushover, terminal-notifier) - not needed, since sessions can wait until she opens the app; something more urgent would be a new story.
@@ -81,8 +62,15 @@ One-time setup this story does, for [[E2E Tests in CI]], [[Sentry Logging and Ro
 		- Rejected: only PRs into `main` and `develop` - nothing about the checks depends on the base branch.
 		- Rejected: starting a session for `claude/` PRs too - a failing fix would start another session, up to `/fire`'s limit of 30 an hour.
 
-# Design
-## `.github/workflows/checks.yml`: the four check jobs
+## Research
+Research from 2026-09-29:
+- Routines start from a schedule, the API (`/fire`) or a GitHub pull request or release event. A failed check can't start one directly: an `if: failure()` workflow step calls `/fire`, with the routine's URL and token kept as Actions secrets, as Anthropic's `/fire` docs show. `/fire` allows 30 calls an hour per routine, doesn't dedupe retries and is still experimental. (code.claude.com/docs/en/routines, platform.claude.com/docs/en/api/claude-code/routines-fire)
+- A routine clones the default branch (`main`) unless its prompt checks out another. It pushes to `claude/` branches, and its PRs can target `develop`. It sees only what Sarah has pushed.
+- A cloud session gets only what's in the repo: not Sarah's `~/.claude` memory or user settings, and not gitignored files such as `.env*` or the test login in `.opencode/secrets`.
+- `anthropics/claude-code-action` posts to PR comments or the workflow log, not a session.
+
+## Design
+### `.github/workflows/checks.yml` - the four check jobs
 `.github/workflows/checks.yml` runs on `pull_request` with no branch filter, so every PR runs it whatever its base branch (Decision 9). It has one job for each check:
 - lint (`pnpm lint:ci`)
 - type check (`pnpm check:types`)
@@ -102,17 +90,17 @@ Found by /architect's audit of the code on 2026-09-29:
 - **Comes from:** Purpose, Decisions 5 and 9, and Sarah's answer 2026-09-29 that CI runs `pnpm test:coverage`.
 - **Lands in:** `docs/ci.md`, "Checks on PRs".
 
-## `package.json`: the `lint:ci` script
+### `package.json` - the `lint:ci` script
 `pnpm lint` runs `biome check --write` (`package.json:10`), so CI gets a script that only reports: `lint:ci`, running `biome ci`, Biome's command for CI (Convention 13).
 - **Comes from:** Purpose, and the `pnpm lint` entry in AGENTS.md "Commands", which says it writes fixes.
 - **Lands in:** `docs/ci.md`, "Workflows".
 
-## `.github/workflows/checks.yml`: the job that starts `ci-failure`
+### `.github/workflows/checks.yml` - the job that starts `ci-failure`
 `checks.yml` has one more job, which runs only when all three hold: at least one check job failed, the run is on its first attempt (`github.run_attempt == 1`), and the PR's head branch doesn't start with `claude/` (Decision 9). It calls the `ci-failure` routine's `/fire` once, with the `text` naming the PR number, its head branch, the workflow run's ID and URL, and which jobs failed. It sends only identifiers, no logs, so the session reads the failure itself from the branch and the run. A run where every check passes, a cancelled run, any re-run and any `claude/` PR start nothing. The `ci-failure` session watches its own re-run (the `ci-failure` skill, below). A re-run Sarah starts by hand on GitHub, and a failed check on a routine's own `claude/` fix PR, are both things she's already looking at on GitHub.
 - **Comes from:** Decisions 4, 8 and 9, Convention 2, and the research that a failed check can't start a routine directly, so a workflow step calls `/fire`.
 - **Lands in:** `docs/ci.md`, "Checks on PRs".
 
-## `.claude/skills/ci-failure/`: the `ci-failure` routine's skill
+### `.claude/skills/ci-failure/` - the `ci-failure` routine's skill
 `SKILL.md` keeps the default invocation frontmatter (Convention 4) and follows Conventions 7 to 10. The folder also holds the routine's `routine.md` (Convention 5). The skill doesn't load or follow `running-the-app` or anything that reaches it (`.claude/agents/bug-reproducer.md:8`, `.claude/skills/implement/bugs.md:7`, `.claude/skills/implement/first-pass.md:7,11`, `.claude/skills/investigate/SKILL.md:53`), since `running-the-app/SKILL.md:8-9` starts the dev server (which loads `.env.local`) and reads `.opencode/secrets/credentials.md` (Convention 10).
 
 The skill has its session:
@@ -128,7 +116,7 @@ It re-runs on GitHub at most once.
 - **Comes from:** Decisions 4, 8 and 9. Sarah decided 2026-09-29 that the fix goes through a PR into the head branch, so it doesn't pick up local work on her `develop` that isn't ready for `main`.
 - **Lands in:** the `ci-failure` skill.
 
-## `docs/ci.md`: the CI doc
+### `docs/ci.md` - the CI doc
 A new doc with these sections:
 - "Workflows": Conventions 13 and 15.
 - "Checks on PRs": the four check jobs and the job that starts `ci-failure`.
@@ -136,19 +124,19 @@ A new doc with these sections:
 - "Secrets and Environment Values": Conventions 11 and 12.
 - "Setup Outside the Repo": Conventions 6 and 14, and the setup under Setup Outside the Repo below.
 
-## `.claude/skills/routine-sessions/SKILL.md`: the shared rules for routine sessions
+### `.claude/skills/routine-sessions/SKILL.md` - the shared rules for routine sessions
 A new shared-rule skill (`user-invocable: false`) with these sections:
 - "Instructions": Conventions 3, 4 and 5.
 - "What the Session Does": Conventions 7 and 8.
 - "Branches": Convention 9.
 - "What the Session Can Use": Convention 10.
 
-## Other changes
+### Other changes
 - `AGENTS.md` "Docs": a line saying when to read `docs/ci.md`. `AGENTS.md` "Commands" (`AGENTS.md:97-102`): add `pnpm lint:ci` and `pnpm test:coverage`.
 - `docs/project_structure.md`: a `# .github/` entry. Boy Scout fix: a `# .claude/` entry (Claude Code skills, subagents, hooks and rules), found by the rule-auditor 2026-09-29 and approved by Sarah.
 - `vitest.config.ts:28`: the comment reads "Excluded files should are". Fix the typo. Sarah pulled this in 2026-09-29 during `/architect`, which is her explicit ask for this one config edit.
 
-## The flow
+### The flow
 1. **A PR opens, or gets a new push.** `checks.yml` runs the four check jobs, each in its own checkout with tools installed from `mise.toml`.
 2. **Every check passes:** the PR shows four passing checks. For a PR into `main`, the ruleset allows the merge. Nothing else runs, and no session starts.
 3. **A check fails:** the PR shows which job failed, and for a PR into `main` the ruleset blocks the merge. The start job fires `ci-failure` only on the first attempt of a PR whose head branch doesn't start with `claude/`, and sends identifiers only. Otherwise the flow stops here, and Sarah sees the failed check when she opens the PR on GitHub.
@@ -160,30 +148,30 @@ A new shared-rule skill (`user-invocable: false`) with these sections:
 
 **When the plumbing fails:** if the `/fire` call fails (a wrong secret, the API down, or its limit of 30 calls an hour), the start job fails on the PR and no session starts. Sarah sees it next to the failed check when she opens the PR.
 
-# Conventions
+## Conventions
 Each convention lands in one of two files, named under it: `docs/ci.md` for the workflows, secrets, checks and setup outside the repo, and the `routine-sessions` skill (`user-invocable: false`) for how a routine's session behaves (Decision 6).
 
-## Convention 1 - Results reach Sarah only as a routine session
+### Convention 1 - Results reach Sarah only as a routine session
 Any source of results Sarah needs to act on, such as a failed check, a Sentry error or a dependency update, reaches her by starting a Claude Code cloud routine. Nothing in the repo delivers a result any other way: no `anthropics/claude-code-action`, no email, chat or push-notification step, and no bot comment on a PR or issue. GitHub's own check status on a PR doesn't count, since it isn't a delivery. Neither does a step that only passes the result along to start a routine, such as a Sentry alert opening an issue that a workflow then picks up.
 - **Comes from:** Decision 1, and the research that `claude-code-action` posts to PR comments or the workflow log, not a session.
 - **Lands in:** `docs/ci.md`, "Starting a Routine".
 
-## Convention 2 - A routine starts only when there's something for Sarah
+### Convention 2 - A routine starts only when there's something for Sarah
 A routine is started only by an event that is itself a result for Sarah: a failed check, a new Sentry issue, an update found. No routine has a schedule trigger, because a scheduled run leaves a session even when it finds nothing. A scheduled check that runs somewhere else, such as a workflow on a `schedule`, is fine, as long as it starts the routine only when it finds something.
 - **Comes from:** Decision 1 ("a run that finds nothing leaves no session"), and the research in [[Local Dependency Update Alerts]] that a scheduled routine leaves a session on every run.
 - **Lands in:** `docs/ci.md`, "Starting a Routine".
 
-## Convention 3 - A routine's prompt only runs its skill
+### Convention 3 - A routine's prompt only runs its skill
 The prompt saved on claude.ai for each routine is one instruction: run that routine's checked-in skill (`.claude/skills/<name>/SKILL.md`) on the event that started it. For an API trigger, the prompt names the `routine-fire-payload` block, for example "Run `/<name>` on the failed run described in the routine-fire-payload block." Every other instruction lives in the skill. The routine's `routine.md` holds its prompt word for word (Convention 5), so it can be checked against the repo.
 - **Comes from:** Decision 3. The routines docs say `/fire` text arrives wrapped as untrusted data, and a routine acts on it only if its saved prompt says to, which is why the prompt names the block.
 - **Lands in:** the `routine-sessions` skill, "Instructions".
 
-## Convention 4 - A routine's skill keeps the default invocation settings
+### Convention 4 - A routine's skill keeps the default invocation settings
 A skill that a routine's prompt runs has neither `user-invocable: false` nor `disable-model-invocation: true` in its frontmatter. The Claude Code skills docs say a `user-invocable: false` skill doesn't run when `/name` is typed. They also say `disable-model-invocation: true` stops a skill from running when a scheduled task fires with the skill as its prompt, and they don't say whether routines count as scheduled tasks. Only the shared `routine-sessions` skill is `user-invocable: false`, because no prompt ever runs it by name. Routine skills showing up in Sarah's `/` menu is the accepted cost.
 - **Comes from:** the skills docs (frontmatter table, "Control who invokes a skill").
 - **Lands in:** the `routine-sessions` skill, "Instructions".
 
-## Convention 5 - Each routine's configuration is in its skill's `routine.md`
+### Convention 5 - Each routine's configuration is in its skill's `routine.md`
 Every routine's skill folder holds a `routine.md` with that routine's configuration on claude.ai:
 - its name on claude.ai
 - its prompt, word for word (Convention 3)
@@ -194,17 +182,17 @@ Every routine's skill folder holds a `routine.md` with that routine's configurat
 - **Comes from:** Decision 7.
 - **Lands in:** the `routine-sessions` skill, "Instructions".
 
-## Convention 6 - `docs/ci.md` lists every routine with its purpose
+### Convention 6 - `docs/ci.md` lists every routine with its purpose
 The "Setup Outside the Repo" section of `docs/ci.md` has one line per routine: its name, what it's for, and a link to its skill. The routine's configuration isn't repeated there. Beside that list, the section holds the one-time shared setup: the Claude GitHub App, the cloud environment and the ruleset on `main` (see Setup Outside the Repo below).
 - **Comes from:** Decision 7.
 - **Lands in:** `docs/ci.md`, "Setup Outside the Repo".
 
-## Convention 7 - A routine's skill names the branch it works from
+### Convention 7 - A routine's skill names the branch it works from
 Before the session reads or changes any file in the repo, its `SKILL.md` has it check out the branch or branches it works from, each named in the skill: a fixed branch such as `develop`, or one read from the event, such as the PR's head branch. A routine clones the default branch (`main`) unless told otherwise, so a skill that says nothing works from `main` by accident.
 - **Comes from:** Decision 1 ("each source decides … which branch it works from"), and the routines docs, which say each run starts from the default branch unless the prompt says otherwise.
 - **Lands in:** the `routine-sessions` skill, "What the Session Does".
 
-## Convention 8 - A routine's skill says how the session ends, for each outcome
+### Convention 8 - A routine's skill says how the session ends, for each outcome
 A routine's `SKILL.md` says what the session has done and what it leaves for Sarah when it stops, for two outcomes:
 - **Something to act on:** what it has done (written notes, diagnosed a cause, drafted a fix on a `claude/` branch), whether it opens a pull request from that branch, and what it asks her to decide.
 - **Nothing to act on after all,** such as "this isn't really an error", "a future story already fixes this" or a flaky failure: a short verdict with its evidence, so she can check it and archive the session.
@@ -213,12 +201,12 @@ Either way, the session ends by waiting for Sarah's input in the Code tab and ne
 - **Comes from:** Decision 1 ("each source decides what its session has done before Sarah opens it"). The routines docs describe no way for a session to remove itself, so a session that finds nothing still waits in her Code tab. Sarah decided 2026-09-29 that whether a session opens a PR is each source's call.
 - **Lands in:** the `routine-sessions` skill, "What the Session Does".
 
-## Convention 9 - A routine's session pushes only to `claude/` branches
+### Convention 9 - A routine's session pushes only to `claude/` branches
 A routine's session commits and pushes only to branches whose names start with `claude/`. It never pushes to `develop`, `main` or any other branch, and never merges one branch into another. Its skill never tells it to.
 - **Comes from:** Decision 4. The routines docs say pushes to `claude/` branches are always accepted, while a push to any other branch is checked first and can be rejected, for example when the branch is protected.
 - **Lands in:** the `routine-sessions` skill, "Branches".
 
-## Convention 10 - A routine's skill uses only what's in the repo and its cloud environment
+### Convention 10 - A routine's skill uses only what's in the repo and its cloud environment
 A routine's session sees the repo as Sarah last pushed it, plus its cloud environment's variables and setup script. Its `SKILL.md`, and every skill or subagent it loads or follows (directly or through another), relies on nothing that exists only on Sarah's machine: no `~/.claude` memory or user settings, no gitignored files she keeps locally such as `.env*` or `.opencode/secrets/`, and no work she hasn't pushed. That includes anything they start that reads such files on its own, such as the dev server loading `.env.local`. A value the session needs that isn't in the repo comes from a cloud environment variable, named in the routine's `routine.md`.
 
 GitHub is the exception that needs nothing set up. A session reaches it through the Claude GitHub App and the cloud GitHub proxy, which authenticates `git` and `gh` on the session's behalf, so the session needs no GitHub credential of its own. The cloud environment never sets `GH_TOKEN` or `GITHUB_TOKEN`: the cloud environments docs say a token set there passes into the session unchanged, where Claude and its commands can read it.
@@ -226,39 +214,39 @@ GitHub is the exception that needs nothing set up. A session reaches it through 
 - **Comes from:** the research that a cloud session gets only what's in the repo and sees only what Sarah has pushed, and the cloud environments docs ("GitHub proxy", "Work with GitHub issues and pull requests").
 - **Lands in:** the `routine-sessions` skill, "What the Session Can Use".
 
-## Convention 11 - The app's variables get dummy values in CI and cloud environments
+### Convention 11 - The app's variables get dummy values in CI and cloud environments
 Wherever a workflow or a routine's cloud environment sets a variable from `src/env.ts`, the value is a dummy that passes the schema, such as `mongodb://localhost:27017/ci` for `DB_URL` or a made-up address for `RESEND_FROM_EMAIL`. It is never a real value, such as the production database URL, a Resend API key or a Google client secret, and never read from an Actions secret. A new `src/env.ts` variable gets a dummy in the workflow and the cloud environment, a third list beside `test/mocks/env.ts` and `playwright.config.ts:10-18`.
 - **Examples:** `test/mocks/env.ts` follows the same idea for unit tests, and `playwright.config.ts:10-18` does for the E2E tests (`docs/e2e_tests.md`, "Environment Variables").
 - **Comes from:** least privilege: the checks need only values that pass validation, and a routine's session runs without permission prompts while reading untrusted text (the `/fire` payload, CI logs, later Sentry errors).
 - **Lands in:** `docs/ci.md`, "Secrets and Environment Values".
 
-## Convention 12 - A routine's `/fire` URL and token are Actions secrets
+### Convention 12 - A routine's `/fire` URL and token are Actions secrets
 A workflow that starts a routine reads its `/fire` URL and bearer token from two GitHub Actions secrets, named `ROUTINE_<NAME>_URL` and `ROUTINE_<NAME>_TOKEN` after the routine (for example `ROUTINE_CI_FAILURE_URL`). Neither value is written anywhere in the repo. The routines docs say the token is shown once when it's generated, so it goes straight into the secret.
 - **Comes from:** the research that the routine's URL and token are kept as Actions secrets, as Anthropic's `/fire` docs show.
 - **Lands in:** `docs/ci.md`, "Secrets and Environment Values".
 
-## Convention 13 - CI runs only `package.json` scripts, and none of them writes fixes
+### Convention 13 - CI runs only `package.json` scripts, and none of them writes fixes
 Every check a workflow runs is a `package.json` script, called as `pnpm <script>`. The only other steps are setup (checking out the code, installing pnpm, Node and dependencies) and the step that starts a routine. That way Sarah, or a routine's session, can rerun exactly what CI ran with the same command. No script CI runs writes fixes, since CI would pass on code it silently fixed and then threw away.
 - **Comes from:** Purpose, and the `pnpm lint` entry in AGENTS.md "Commands", which says it writes fixes.
 - **Lands in:** `docs/ci.md`, "Workflows".
 
-## Convention 14 - The ruleset on `main` changes with the check jobs
+### Convention 14 - The ruleset on `main` changes with the check jobs
 When a check job in `checks.yml` is renamed, added or removed, the ruleset on `main` and its record in `docs/ci.md` change in the same change, so every job is required and every required check has a job.
 - **Comes from:** Decision 5.
 - **Lands in:** `docs/ci.md`, "Setup Outside the Repo".
 
-## Convention 15 - Every environment installs its tools from `mise.toml`
+### Convention 15 - Every environment installs its tools from `mise.toml`
 A workflow installs Node, pnpm and any other tool it needs with `jdx/mise-action`. A routine's cloud environment installs them with `mise install` in its setup script. That way CI, cloud sessions and Sarah's machine all run the versions `mise.toml` names. No workflow or setup script names a Node or pnpm version of its own, or uses `actions/setup-node` or the Node that comes installed in the cloud image.
 - **Comes from:** Sarah's decision 2026-09-30 to keep `latest` in `mise.toml` rather than pin versions, so she never has to remember to update Node. A `ci-failure` session's check of whether a failure reproduces in the cloud is only fair when the cloud and CI run the same versions.
 - **Lands in:** `docs/ci.md`, "Workflows".
 
-# Setup Outside the Repo
-## The Claude GitHub App
+## Setup Outside the Repo
+### The Claude GitHub App
 Installed on the repo. The cloud environments docs confirm `gh` comes installed in a cloud session and authenticates through the GitHub proxy. Only a user report says the app's access covers re-running Actions jobs, so confirm that `gh run rerun <run_id> --failed` works from a cloud session, which the `ci-failure` skill needs.
 - **Comes from:** Purpose, and Decision 7.
 - **Lands in:** `docs/ci.md`, "Setup Outside the Repo".
 
-## The cloud environment
+### The cloud environment
 The claude.ai cloud environment the routines run in:
 - **Variables:** dummy values for the eight `src/env.ts` variables (Convention 11), and no `GH_TOKEN` or `GITHUB_TOKEN` (Convention 10).
 - **Setup script:** installs mise and runs `mise install`, then the dependencies (Convention 15). How it gets mise is for `/plan-steps`; check the download host against the network allowlist. The docs say the setup script's result is cached for about seven days. If the script installs the lefthook hooks, a commit that touches `src/` runs `pnpm build` (`lefthook.yml:13-15`), so the session's own commits need the hooks too.
@@ -267,16 +255,32 @@ The claude.ai cloud environment the routines run in:
 - **Comes from:** Purpose, Decision 7, and Sarah's decision 2026-09-30 on tool versions.
 - **Lands in:** `docs/ci.md`, "Setup Outside the Repo".
 
-## The `ci-failure` routine
+### The `ci-failure` routine
 Created on claude.ai with an API trigger. Its URL and token are stored as the Actions secrets `ROUTINE_CI_FAILURE_URL` and `ROUTINE_CI_FAILURE_TOKEN` (Convention 12).
 - **Comes from:** Decisions 3 and 7.
 - **Lands in:** `.claude/skills/ci-failure/routine.md` (Convention 5), with a line in `docs/ci.md`, "Setup Outside the Repo" (Convention 6).
 
-## The ruleset on `main`
+### The ruleset on `main`
 A GitHub ruleset on `main` requires the four check jobs from `checks.yml` to pass, each by its job name, before a PR can be merged. The ruleset is a GitHub setting, not a repo file, so the "Setup Outside the Repo" section of `docs/ci.md` records it: its name and the checks it requires.
 - **Comes from:** Decision 5.
 - **Lands in:** `docs/ci.md`, "Setup Outside the Repo".
 
-# Out of Scope
+# Coverage
 
-# Implementation
+# Child Stories
+| Story | Status | Scope in this area | Blocked by |
+|---|---|---|---|
+| [[PR Checks]] | spec | The four check jobs on every PR, the ruleset on `main`, and the checks' parts of `docs/ci.md` | - |
+| [[CI Failure Sessions]] | spec | The job that starts `ci-failure`, the `ci-failure` and `routine-sessions` skills, the Claude GitHub App, the cloud environment, and the routine parts of `docs/ci.md` | [[PR Checks]] |
+
+Related notes that follow the convention or the setup record kept here: [[E2E Tests in CI]], [[Local Dependency Update Alerts]], [[Sentry Logging and Root Cause Analysis]] and [[Services and Environments Audit]].
+
+# Build Order
+1. [[PR Checks]]
+2. [[CI Failure Sessions]]
+
+Stated in the Design: the job that starts `ci-failure` is one more job in the `checks.yml` that PR Checks creates. Stated in CI Failure Sessions' draft steps: its skill-only PRs into `main` need `checks.yml` for the ruleset's required checks. CI Failure Sessions can be planned before PR Checks is built.
+
+# Open Decisions
+
+# Deferred Work

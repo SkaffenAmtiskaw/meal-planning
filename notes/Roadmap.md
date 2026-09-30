@@ -28,23 +28,27 @@
 1. [[Dev Foundations]] - active
 2. [[Calendar Page]] - active
 
+## Standing Goals
+- [[App Health]]
+
 # Now
 
 # Next
-1. [[CI Checks]] ![[CI Checks#^status]] 🎯 [[Dev Foundations]] 🎯 [[Calendar Page]]
-2. [[E2E Tests in CI]] ![[E2E Tests in CI#^status]] 🎯 [[Dev Foundations]]
-3. [[Docs Audit]] ![[Docs Audit#^status]] 🎯 [[Dev Foundations]]
-4. [[Manual and Agent Test Environment]] ![[Manual and Agent Test Environment#^status]] 🎯 [[Dev Foundations]] 🎯 [[Calendar Page]]
-5. [[Finish OpenCode Migration]] ![[Finish OpenCode Migration#^status]] 🎯 [[Dev Foundations]]
-6. [[Calendar and Recipes Data Refresh]] ![[Calendar and Recipes Data Refresh#^status]] - ready. Fixes both stale-data symptoms; unblocks [[Add Meal Changes (Saved Recipes)]] and [[Mobile List View]]. *(was bugfix)* 🎯 [[Calendar Page]]
-7. [[Settings Data Refresh]] ![[Settings Data Refresh#^status]] - spec. Waiting on [[Calendar and Recipes Data Refresh]]. 🎯 [[Calendar Page]]
-8. [[Server-Only Code Behind Barrels]] ![[Server-Only Code Behind Barrels#^status]] 🎯 [[Calendar Page]]
-9. [[Server-Only Creation and Pure Reads]] ![[Server-Only Creation and Pure Reads#^status]] - spec. Waiting on [[Server-Only Code Behind Barrels]]. 🎯 [[Calendar Page]]
-10. [[Data Rules Enforcement]] ![[Data Rules Enforcement#^status]] - spec. Waiting on [[Calendar and Recipes Data Refresh]], [[Settings Data Refresh]] and [[Server-Only Creation and Pure Reads]]. 🎯 [[Calendar Page]]
-11. [[Today and Selected Day Markers]] ![[Today and Selected Day Markers#^status]] - spec. Fixes the truncated today circle; unblocks [[Mobile List View]]. *(was high)* 🎯 [[Calendar Page]]
-12. [[Mantine Date Picker Setup]] ![[Mantine Date Picker Setup#^status]] - spec. *(was high)* 🎯 [[Calendar Page]]
-13. [[Header Date Picker]] ![[Header Date Picker#^status]] - spec. Waiting on [[Mantine Date Picker Setup]] and [[Today and Selected Day Markers]]. *(was high)* 🎯 [[Calendar Page]]
-14. [[Agent Workflow Changes]] ![[Agent Workflow Changes#^status]] 🎯 [[Dev Foundations]] 🎯 [[Calendar Page]]
+1. [[PR Checks]] ![[PR Checks#^status]] 🎯 [[Dev Foundations]] 🎯 [[Calendar Page]]
+2. [[CI Failure Sessions]] ![[CI Failure Sessions#^status]] 🎯 [[Dev Foundations]] 🎯 [[Calendar Page]]
+3. [[E2E Tests in CI]] ![[E2E Tests in CI#^status]] 🎯 [[Dev Foundations]]
+4. [[Docs Audit]] ![[Docs Audit#^status]] 🎯 [[Dev Foundations]]
+5. [[Manual and Agent Test Environment]] ![[Manual and Agent Test Environment#^status]] 🎯 [[Dev Foundations]] 🎯 [[Calendar Page]]
+6. [[Finish OpenCode Migration]] ![[Finish OpenCode Migration#^status]] 🎯 [[Dev Foundations]]
+7. [[Calendar and Recipes Data Refresh]] ![[Calendar and Recipes Data Refresh#^status]] - ready. Fixes both stale-data symptoms; unblocks [[Add Meal Changes (Saved Recipes)]] and [[Mobile List View]]. *(was bugfix)* 🎯 [[Calendar Page]]
+8. [[Settings Data Refresh]] ![[Settings Data Refresh#^status]] - spec. Waiting on [[Calendar and Recipes Data Refresh]]. 🎯 [[Calendar Page]]
+9. [[Server-Only Code Behind Barrels]] ![[Server-Only Code Behind Barrels#^status]] 🎯 [[Calendar Page]]
+10. [[Server-Only Creation and Pure Reads]] ![[Server-Only Creation and Pure Reads#^status]] - spec. Waiting on [[Server-Only Code Behind Barrels]]. 🎯 [[Calendar Page]]
+11. [[Data Rules Enforcement]] ![[Data Rules Enforcement#^status]] - spec. Waiting on [[Calendar and Recipes Data Refresh]], [[Settings Data Refresh]] and [[Server-Only Creation and Pure Reads]]. 🎯 [[Calendar Page]]
+12. [[Today and Selected Day Markers]] ![[Today and Selected Day Markers#^status]] - spec. Fixes the truncated today circle; unblocks [[Mobile List View]]. *(was high)* 🎯 [[Calendar Page]]
+13. [[Mantine Date Picker Setup]] ![[Mantine Date Picker Setup#^status]] - spec. *(was high)* 🎯 [[Calendar Page]]
+14. [[Header Date Picker]] ![[Header Date Picker#^status]] - spec. Waiting on [[Mantine Date Picker Setup]] and [[Today and Selected Day Markers]]. *(was high)* 🎯 [[Calendar Page]]
+15. [[Agent Workflow Changes]] ![[Agent Workflow Changes#^status]] 🎯 [[Dev Foundations]] 🎯 [[Calendar Page]]
 
 # Later
 ## [[Dev Foundations]]
@@ -59,6 +63,7 @@
 - [[Local Dependency Update Alerts]] ![[Local Dependency Update Alerts#^status]]
 - [[Database Backup and Restore]] ![[Database Backup and Restore#^status]]
 - [[Core Flows E2E Tests]] ![[Core Flows E2E Tests#^status]] 🎯 [[Calendar Page]]
+- We also need a routine to handle Vercel deploy failures, just like the planned ones for CI failures and Sentry errors
 
 ## [[Calendar Page]]
 - [[Remove Schedule-X]] ![[Remove Schedule-X#^status]] - spec. *(was bugfix)*
@@ -95,6 +100,8 @@
 - [[Planner Access Audit]] ![[Planner Access Audit#^status]]
 - [[Calendar E2E Tests]] ![[Calendar E2E Tests#^status]]
 - [[Calendar UX and Styles Pass]] ![[Calendar UX and Styles Pass#^status]]
+
+## [[App Health]]
 
 ## Unaffiliated
 - [[Zero Planners Crash|root page crashes for users with zero planners (e.g. invited user leaves or is removed from their only planner)]] - spec. Waiting on your decision on which fix to use (deferred 2026-09-25). *(was bugfix)*
