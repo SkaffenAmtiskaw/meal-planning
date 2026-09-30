@@ -59,10 +59,11 @@ Ask about one choice at a time, even when several belong to the same function or
 - a recommendation, as AGENTS.md describes under "Recommendations"
 
 ### Before writing any code
-1. Read every file the step lists. Note anywhere the code isn't what the plan assumes.
-2. If the step adds behavior to an existing module, name the job that module already does. If the new behavior isn't that same job, it's an open choice.
-3. For UI work, go through each element in the design sections the step cites. For each one, name the Mantine component or theme value you'll use. If the nearest Mantine option would look clearly different from the design or wouldn't fit, that element was probably meant to be custom. Ask Sarah whether to build it custom or use a Mantine approximation.
-4. Write the open choices to `.scratch/<note name> - step <N> choices.md`, then ask Sarah about each one, as "Asking about an open choice" describes.
+1. If the step's Approach asks you to record the state before the change, such as test counts, record it now, before you change anything.
+2. Read every file the step lists. Note anywhere the code isn't what the plan assumes.
+3. If the step adds behavior to an existing module, name the job that module already does. If the new behavior isn't that same job, it's an open choice.
+4. For UI work, go through each element in the design sections the step cites. For each one, name the Mantine component or theme value you'll use. If the nearest Mantine option would look clearly different from the design or wouldn't fit, that element was probably meant to be custom. Ask Sarah whether to build it custom or use a Mantine approximation.
+5. Write the open choices to `.scratch/<note name> - step <N> choices.md`, then ask Sarah about each one, as "Asking about an open choice" describes.
 
 ### While writing code
 When a new open choice comes up, stop and ask right then. Don't save it for the end, and don't put in a placeholder to fix later.
@@ -101,7 +102,7 @@ Then report, in this order:
 1. **Files:** a table with one row per changed file: the file as a markdown link she can click, and a one-line summary of its change. Mark any file that isn't in the step's Files list.
 2. **Choices:** a table of each choice you made without asking her: what you picked, and its source as a link (`file:line`, the note section or the doc). Leave out the choices she answered in this session.
 3. **Tests:** each test and the branch or logic it covers. List coverage-only tests as such. Mark tests added for a branch that a fix introduced.
-4. **First pass:** each acceptance check, and what you saw or why you couldn't run it. Then any differences from the design.
+4. **First pass:** each acceptance check, and what you saw or why you couldn't run it. If you recorded the state before the change, give it first, since her checks compare against it. Then any differences from the design.
 5. **As built:** anything that differs from the step's plan. This is a draft; it goes into the note in step 9.
 6. **Out of scope:** each item triaged, and what Sarah chose for it.
 7. **Setup for Sarah:** in an infra story, each piece of setup outside the repo the step needs, with the instructions from its Approach, for her to do before she runs the checks. Leave this out if there's none.

@@ -19,14 +19,16 @@ A failing check is part of the step's spec. If fixing it involves an open choice
 ### Break-it checks
 A step that changes only tests has break-it checks instead of click-throughs, and doesn't need the app. For each check:
 1. Make the edit exactly as written.
-2. Run the test file it names with `pnpm vitest run <test file>`.
+2. Run the command the check names: `pnpm vitest run <test file>` for a unit test, or `pnpm test:e2e <spec file>` for an E2E spec.
 3. Record which tests failed.
 4. Revert the edit, and check with `git diff` that the file is back to how it was before the check.
 
 If the tests that failed aren't exactly the ones the check names, don't change the tests or the check yourself. Show Sarah both lists and ask what to do.
 
 ### Run-and-see checks
-A step that builds infrastructure in an infra story, such as a workflow or a script, has run-and-see checks: run a command, open a PR or trigger a workflow, then see the result. If a check runs only on this machine, run it and record what you saw. If it needs a commit or a push, such as opening a PR, or setup outside the repo that Sarah hasn't done yet, don't run it. Report it as not run, with the reason.
+Two kinds of step have run-and-see checks: a step that builds infrastructure in an infra story, such as a workflow or a script, and a test-only step that changes E2E code. In each, you run a command, open a PR or trigger a workflow, then see the result. If a check runs only on this machine, run it and record what you saw. If it needs a commit or a push, such as opening a PR, or setup outside the repo that Sarah hasn't done yet, don't run it. Report it as not run, with the reason.
+
+For an E2E trace check, run `pnpm test:e2e <spec file>` instead of `pnpm test:e2e:trace`, and record which tests passed in each project. The trace command keeps a report server running until it's stopped, and watching the trace is Sarah's check.
 
 ## Compare with the design
 For each Design Handoff section and image the step's **Source:** cites, screenshot the same view at the same screen size and compare. Designs aren't pixel perfect, but the build should mostly match them.
