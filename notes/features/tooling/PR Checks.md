@@ -1,11 +1,11 @@
 ---
 type: infra
-status: in-progress
+status: done
 blocked-by: []
 confirmed: 2026-09-30
 ---
 # Where It Stands
-In progress. Next: implement Step 2 ^status
+Reviewed. Next: /close ^status
 
 # Purpose
 Run lint, type check, unit tests and build automatically on every PR, each as its own job with its own result, and block the merge into `main` while any of them fails. This covers the Done When item of [[Dev Foundations]] for PRs into `main`. It also creates the `checks.yml` workflow and `docs/ci.md`, which [[CI Failure Sessions]] and [[E2E Tests in CI]] build on. Split from [[CI Checks]] on 2026-09-30.
@@ -89,6 +89,8 @@ Starting a session when a check fails belongs to [[CI Failure Sessions]].
 - Sarah kept the break-it branch from the fourth check open for testing in Step 2.
 
 ## Step 2: The ruleset on `main`
+**Status:** ✅ Complete
+
 **Idea:** A PR into `main` can't be merged while any of the four check jobs is failing.
 
 **Source:** Goal 2; Goal 3 (the ruleset part of `docs/ci.md`); Setup Outside the Repo: The ruleset on `main`; Design: `docs/ci.md` - the CI doc ("Setup Outside the Repo" for the ruleset); Design: The flow (steps 2-3, the ruleset allowing or blocking the merge); Convention 14; Decision 5; Decision 7 (the ruleset's record in `docs/ci.md`).
@@ -102,6 +104,11 @@ Starting a session when a check fails belongs to [[CI Failure Sessions]].
 - `docs/ci.md` - records the ruleset and Convention 14
 
 **Acceptance:**
-- [ ] With the ruleset set up, push this step's commit straight to `develop`, see the push accepted (the ruleset covers only `main`).
+- [x] With the ruleset set up, push this step's commit straight to `develop`, see the push accepted (the ruleset covers only `main`).
 - [x] Cut a branch from `develop`, change one expected value in a unit test to another value of the same type so it fails, commit with `git commit --no-verify` (the pre-commit hook would block the failing test), push, and open a PR into `main`. See `unit-tests` fail and the merge button blocked, naming the required check. Close the PR and delete the branch.
-- [ ] Open (or reopen) the PR from `develop` into `main`, see all four checks pass and the merge button enabled. You don't have to merge it.
+- [x] Open (or reopen) the PR from `develop` into `main`, see all four checks pass and the merge button enabled. You don't have to merge it.
+
+**As built:**
+- Sarah named the ruleset `main` at setup, instead of `main - required checks`, and `docs/ci.md` records that name.
+- The ruleset keeps GitHub's default "Restrict deletions" and "Block force pushes" rules. Sarah chose to keep both 2026-09-30, and `docs/ci.md` records them.
+- `docs/ci.md` "Checks on PRs" points its line about the ruleset to the new "Setup Outside the Repo" section.
