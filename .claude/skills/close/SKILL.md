@@ -20,7 +20,7 @@ A few rules shape how it works:
 - **A note is kept only while another story needs it.** A kept note moves to `archive/` and lists the stories it's kept for in `kept-for`. When the last of them closes, the note is deleted. Nothing is kept just as a record, because git history is the backup. If a note feels worth keeping for reference, that means `docs/` is missing something. Ask Sarah about the doc update instead.
 - **Done and dropped stories close the same way,** except for the stories that waited on them. A done story unblocks them. A dropped story doesn't, so each one needs a new decision about what it waits on.
 - **Hubs close like any story.** A hub is often where the design lives, so it gets the same keep-or-delete check.
-- **Unblocked stories go to `/check-drift` next.** They were planned before this story changed the code.
+- **An unblocked story goes to `/check-drift` only if it sat waiting.** A story that waited in the backlog was planned before this story changed the code. A story whose `^status` line names a step it could take while this story was still open is moving forward, possibly in another session, so its next step stays.
 - **No unused files.** A file in the vault (an image, a `.dc.html` prototype, a script or SVG it loads) that nothing references anymore gets deleted. A close is when files lose their last reference: the note that embedded them is deleted, or content moves and pointers get reworded. Files don't always sit where the conventions say, and references get missed, so every close checks the whole vault, not just this story's files.
 - **One note per run.** When closing this story means another note should close too, such as an archived note that loses its last `kept-for` entry or a hub with no open stories left, tell Sarah. She runs `/close` on it in a new session.
 
@@ -73,12 +73,15 @@ Skip this for a re-close. Go through the Blocker matches.
 **For a done close:**
 1. Remove this story from the `blocked-by` list, and from the "waiting on" wording of the story's Roadmap line.
 2. If the list still has entries, the story stays blocked. Move on to the next one.
-3. If the list is now empty and the story is `spec`, `ready` or `in-progress`, set its `^status` line to "Unblocked. Next: /check-drift". If it's an `idea` note, write the next step its type calls for in the table below.
+3. If the list is now empty, read the story's `^status` line:
+   - **It names a next step that didn't wait on this story,** such as "Next: /plan-steps" for a story being planned while this one was built: the story is moving forward, possibly in another session. Keep that step, and remove only any wording about waiting on this story.
+   - **It waits on this story,** such as "Waiting on [[X]]" or "Blocked until [[X]] lands, then /shape": the story sat in the backlog. If it's `spec`, `ready` or `in-progress`, set the line to "Unblocked. Next: /check-drift". If it's an `idea` note, write the next step its type calls for in the table below.
+   - **You can't tell which:** show Sarah the line, and ask whether the story goes to `/check-drift` or keeps its next step.
 4. If its Roadmap line is in Later and it serves an active goal, show Sarah the story and the current Next list, and ask whether it moves into Next and where, as AGENTS.md describes under "Roadmap order". Move the line where she says, with a 🎯 link for each goal it serves. Otherwise, leave the line where it is.
 
 !`sh scripts/note-section.sh "Next Step by Note State"`
 
-**For a dropped close:** ask Sarah what the story waits on now: nothing, another story, or a decision. Update its `blocked-by` and Roadmap line to match. If nothing blocks it anymore, finish as in steps 3 and 4 of a done close. It was planned expecting this story's changes, so it needs `/check-drift` too.
+**For a dropped close:** ask Sarah what the story waits on now: nothing, another story, or a decision. Update its `blocked-by` and Roadmap line to match. If nothing blocks it anymore, finish as in steps 3 and 4 of a done close, with one difference. The story was planned expecting this story's changes, which will never land, and `/plan-steps` checks for drift only in commits that did. So if it's `spec`, `ready` or `in-progress` and its `^status` line names a next step, don't keep that step without asking: tell Sarah the story was planned expecting this story's changes, show her the line, and ask whether to set it to "Unblocked. Next: /check-drift" or keep its next step.
 
 **Sweep and roundup items:** for a done close, remove the `**Blocked by [[Name]]:**` marker. For a dropped close, ask Sarah whether the item still stands, now waits on something else, or should be removed.
 
