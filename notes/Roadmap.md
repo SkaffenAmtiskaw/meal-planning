@@ -18,7 +18,7 @@
 - **Hubs** hold shared design, not priority. A hub has a line only while it has open decisions for `/decide`, or once its last child story has closed and it needs `/close`.
 - **Archived notes** have no line while an open story still relies on them. Once none does, an archived note gets a line until `/close` deletes it.
 - A story's status (`idea` / `spec` / `ready` / `in-progress` / `in-review` / `done`) lives in its note's frontmatter. This file only decides order.
-- Each line with a note, except a goal's, embeds that note's status line from Where It Stands after the link, e.g. `[[Stale Data Issues]] ![[Stale Data Issues#^status]]`. It shows only what work the story needs next, not what the story is. Edit it in the note, not here.
+- Each line with a note, except a goal's, embeds that note's status line from Where It Stands after the link, e.g. `[[Stale Data Issues]] ![[Stale Data Issues#^status]]`. It shows only what the story needs next, the next skill or a link to what blocks it, not what the story is. Edit it in the note, not here.
 - **Collecting notes** gather items until they're handled together: sweeps (`type: sweep`) for small, decided fixes that share a group, such as [[Unit Test Tidy-Ups]]; roundups (`type: roundup`) for issues on a broad topic that still need decisions, such as [[Style Decisions]]; and collecting workflow notes for tooling and agent changes, such as [[Agent Workflow Changes]]. An item that fits one goes there, not onto its own line here. When several related items sit here as separate lines and none covers them, flag to Sarah that they could become a new one. Never create one without her.
 	- **Goals take items, not notes.** A collecting note keeps getting new items, so it never finishes. A goal holds only the items that serve it, and it can ship once they're done. An item serves a goal only when Sarah says so, and then it ends with that goal's 🎯 link. A new item's goals are checked when it's added, as AGENTS.md describes under "Editing notes".
 	- **The note's line** ends with a 🎯 link for each goal that one of its items serves. In Later, it sits in Unaffiliated, never under a goal's heading. When an item is done, moved or dropped, the line loses that item's links unless another item still carries them. If that leaves a line in Next with no 🎯 link to an active goal and no 🚨 or 📌, move it to Unaffiliated in Later.
@@ -84,15 +84,15 @@
 - clicking "+N more" in the month grid switches to list view at that day - approach needs review (see Step 17 in [[Replace Schedule-X]])
 - two buttons are off-screen when tabbing from the first tab stop on the calendar page - a bug, needs investigating. Moved from the calendar style fixes list 2026-09-26
 - calendar focus states look poor - needs a design, possibly a global focus state (see the `theme.ts` line in Later, whose focus styles never apply). Moved from the calendar style fixes list 2026-09-26
-- `theme.ts` - the input border `#C8C0C3` has no color token (name one, then it can join [[Code Tidy-Ups]]); input `&:focus` styles in a `styles` object never apply (Mantine drops pseudo-selectors there), so the forest focus ring isn't coming from the theme - see the calendar focus states line 🎯 [[App Health]]
+- `theme.ts` - the input border `#C8C0C3` has no color token, and the input `&:focus` styles never apply (Mantine drops pseudo-selectors in `styles`) - see the calendar focus states line 🎯 [[App Health]]
 - calendar list view keyboard navigation - needs design review once the calendar views are mostly complete (see Step 16 in [[Replace Schedule-X]])
 - skip to content *(was medium)*
 - a11y audit of the calendar page against WCAG 2.2 AA - the app-wide a11y audit stays in Ideas for the other pages
 - audit that the calendar page works fully on phones - the app-wide mobile audit stays in Ideas for the other pages
 - "today" is computed independently in ~10 calendar places, several with `DateTime.now()` during server render - near midnight the server's time zone can mark the wrong day or cause a hydration mismatch. Consider one source of "today"
 - replace date utils with luxon - `src/_utils/date.ts` also mixes formatting with time comparisons, and `new Date('YYYY-MM-DD')` parses as UTC, so date-only strings show the previous day in US time zones 🎯 [[App Health]]
-- calendar duplication - group-by-date ×4 (`MonthGrid`, `MobileMonthGrid`, `WeekView`, `ListView`), meal color calculation ×2 (`toCalendarMeals`, `MealMonthAgenda`), near-identical adapters `MealCalendar` / `MealWeekView` with identical `MonthGridMeal` / `WeekViewMeal` types, and meal keyboard navigation copied between `useMonthGridKeyboard` and `useWeekViewKeyboard` (the week hook also re-implements `useRovingGridFocus`) 🎯 [[App Health]]
-- `src/_components/Calendar/_utils/formatCalendarLabel.ts` - also holds the view display names (`VIEW_LABELS`) and default view order (`DEFAULT_VIEWS`), which its name doesn't describe. Move them into a views config once it's decided where that lives, then it can join [[Code Tidy-Ups]] 🎯 [[App Health]]
+- calendar duplication - group-by-date (×4), meal color calculation (×2), the near-identical `MealCalendar` / `MealWeekView` adapters and their types, and meal keyboard navigation copied between the month and week hooks 🎯 [[App Health]]
+- `formatCalendarLabel.ts` - also holds the view names and default view order, which its name doesn't describe; move them into a views config once it's decided where that lives 🎯 [[App Health]]
 - [[Planner Access Audit]] ![[Planner Access Audit#^status]]
 - [[Calendar E2E Tests]] ![[Calendar E2E Tests#^status]]
 - [[Calendar UX and Styles Pass]] ![[Calendar UX and Styles Pass#^status]]
@@ -102,7 +102,7 @@
 - [[Drop Mongoose]] ![[Drop Mongoose#^status]] *(was medium)*
 - [[Better-Auth Reads Env Directly]] ![[Better-Auth Reads Env Directly#^status]]
 - [[Domain-Specific Code Locations|move domain-specific code out of the generic folders]] and spell out in project conventions what goes where - idea, has a starting list of files
-- `SignInFlow.tsx` - 350+ lines managing six steps (idle, has-password, new, social-only, email-sent, forgot-password-sent); split into an orchestrating `SignInFlow` holding the shared state plus one component per step, so each step can be tested on its own. Its `useEffect` also has the `continueBtn` object in its dependency array, so it re-runs more than it needs to
+- `SignInFlow.tsx` - 350+ lines managing six sign-in steps; split it into one component per step so each can be tested on its own. Its `useEffect` also re-runs too often (`continueBtn` is in its dependencies)
 - replace the custom `useAsyncButton` and `useAsyncStatus` hooks with React 19's built-in pending-state hooks - needs research into how they fit `ActionResult` errors
 - route management - emails create paths & query params the app must consume, but nothing keeps them in sync
 - audit code for client component surface area - move as much as possible to server components *(was low)*
@@ -141,8 +141,8 @@
 - take create planner pattern of button on top right in desktop - FAB in mobile and apply it throughout the app *(was medium)*
 - a11y audit *(was medium)*
 - security - string validation on inputs *(was medium)*
-- security - the production auth instance's `admin()` plugin (`src/_auth/auth.ts:14`) exposes better-auth's admin endpoints (impersonate, set role, ban, list users) to any user with the better-auth role `admin`; check whether any production user has it and whether `signUpWithInvite` needs the plugin. Found 2026-10-01 while deciding [[Manual and Agent Test Environment]]
+- security - check whether any production user has the better-auth role `admin`, which the `admin()` plugin (`src/_auth/auth.ts:14`) lets impersonate users, and whether `signUpWithInvite` needs the plugin at all
 - audit app works fully in mobile *(was medium)*
 - toggle light/dark mode *(was low)*
 - a way to load extra seed data that one story's checks need, on top of `pnpm seed`'s generic data (today `first-pass` creates it through the app's screens). Found 2026-10-01 while designing [[Manual and Agent Test Environment]]
-- bug - account deletion may delete planners other users still share: in `src/_actions/user/deleteAccount.ts:20-27`, the loop goes over membership subdocuments, not planner ids, so the owner count probably always comes back 1, and `Planner.deleteOne` either deletes every planner the user belongs to (shared ones included) or matches nothing. Not reproduced; found by reading code on 2026-10-01 while running /infra-design on [[Manual and Agent Test Environment]]. Overlaps [[Settings Data Refresh]] Step 18, which edits the same file, and [[Transfer Ownership of Planner]], which says what happens to planners on account deletion.
+- [[Account Deletion Deletes Shared Planners]] ![[Account Deletion Deletes Shared Planners#^status]]

@@ -33,6 +33,7 @@ Pick exactly one home for each item. If the only note on its topic was kicked of
   - If a collecting workflow note's What Belongs Here rule fits, write the item for its Items: what changes, where, why, and how and when it was found. For feedback, quote Sarah's words. The item may still need decisions.
   - Otherwise suggest a new workflow note from `notes/templates/Workflow.md`, and the Roadmap line that links to it.
 - **New Roadmap line:** a new story that takes a line or two to describe. Write the exact line. A new line goes in Ideas, because Sarah decides when work is committed, by shaping it with `/shape` or moving it to Later herself. Follow the style of the lines around it.
+  - If the line runs past a line or two, check each detail in it, such as how and when it was found, file paths or the stories it overlaps, and ask whether it changes the understanding of the story. If none does, cut them until the line is a line or two. If any does, the item is a new idea note instead, holding only the details that do.
 - **New idea note:** a new story that needs more than a line or two. Suggest a title and folder under `notes/features/`, draft the body from the template in `notes/templates/` that fits its shape, and write the Roadmap line that links to it.
 
 Never suggest creating a sweep, roundup or collecting workflow note directly: say in **Why** that one could be started, and Sarah decides. An item that can't be done until another story lands starts with `**Blocked by [[Story]]:**`.

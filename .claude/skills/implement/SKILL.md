@@ -135,7 +135,7 @@ Once she confirms:
 1. Check the step's acceptance boxes and add `**Status:** ✅ Complete`. Remove any check she dropped. Its As built note says which of your runs covered it.
 2. If anything differs from the plan, or was added at review, add an **As built:** note under the step.
 3. If this was the last step, set `status` to `in-review`. The review of the whole story (`/final-review`), archiving, and unblocking the stories that waited on it all come later, not in this skill.
-4. Update the `^status` line as AGENTS.md describes under "Editing notes", e.g. "In progress. Next: implement Step 4", or "All steps implemented. Next: /final-review" after the last step.
+4. Update the `^status` line as AGENTS.md describes under "Editing notes", e.g. "In progress. Next: /implement Step 4", or "All steps implemented. Next: /final-review" after the last step.
 
 Leave the note changes unstaged.
 
@@ -152,6 +152,6 @@ When the plan itself has to change:
 1. Stop coding. Leave the work as it is, staged or not.
 2. Add an **As built:** note under the step saying what's done, what isn't, and why the plan needs to change.
 3. Set `status` to `spec`, since any change to a ready note's steps sends it back.
-4. Update the `^status` line, e.g. "Needs re-plan from Step 3".
+4. Update the `^status` line as AGENTS.md describes under "Editing notes", e.g. "Needs re-plan. Next: /plan-steps".
 5. Route any out-of-scope items (step 10).
 6. Tell her to run `/plan-steps <note name>` in a new session.

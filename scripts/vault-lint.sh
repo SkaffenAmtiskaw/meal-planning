@@ -64,6 +64,11 @@ while IFS= read -r note; do
       if [ -n "$line" ] && ! printf '%s' "$line" | grep -qF "![[$name#^status]]"; then
         add "$note: its Roadmap line ($roadmap:$(printf '%s' "$line" | cut -f2)) doesn't embed ![[$name#^status]]"
       fi
+      # A status line on the Roadmap names the next skill or links what blocks the story.
+      status=$(grep ' \^status$' "$note" | head -1)
+      if [ -n "$line" ] && [ -n "$status" ] && ! printf '%s' "$status" | grep -qE '(^|[ (])/[a-z]|\[\['; then
+        add "$note: its ^status line names no /skill and links no blocker: $status"
+      fi
       ;;
   esac
   if grep -q '^## What Belongs Here' "$note" && [ -n "$line" ]; then

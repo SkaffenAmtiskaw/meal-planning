@@ -83,7 +83,7 @@ Wait for her to agree or change it.
 
 ### Drafting a hub
 Rewrite the note from `notes/templates/Hub.md`:
-- **Where It Stands:** e.g. "Not split yet. Next: work through Open Decisions with Sarah. ^status"
+- **Where It Stands:** e.g. "Not split yet. Next: /decide ^status"
 - **Purpose:** what the idea is, in Sarah's words.
 - **Open Decisions:** each blocking decision from step 2 on its own line, written as a question, not a proposal. If Sarah gave a confident answer, put it on a **Decided** line under the question, as the `answer-confidence` skill describes, e.g. "**Decided 2026-09-28:** web first, phones later. Sarah's call." If she gave a hedged one, put it on a **Leaning** line in that skill's format. If she's leaving an adopt-or-build decision open, list the candidates from step 2 under it, without ranking them.
 - **Child Stories:** leave the table empty. Children get their own `/shape` run once the decisions make them clear.

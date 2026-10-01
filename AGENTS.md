@@ -38,7 +38,14 @@ Any change to a note in `notes/` follows these rules:
   - **Only a name or path changed,** and the plan still works as written, such as a moved file or a renamed function: correct the name or path in place. Sarah approved the intent, not the path.
   - **It changes nothing about the work,** such as a wrong detail in a finding: if it's a line an agent wrote in a note you're working on, and not plan text, correct it. Otherwise, leave it.
 - **Where It Stands** is the first section of every note except a goal or standing goal, right after the frontmatter, in its template's format. If a note has none, add it. It's a summary Sarah can read at a glance, and it holds only two things:
-  - **The `^status` line** (the line ending in ` ^status`) says what work the story needs next or what it's waiting on, and nothing else. Never describe the story there. The story's line in `notes/Roadmap.md` embeds it after the link, `[[Note]] ![[Note#^status]]`, so Sarah can scan what each story needs. Add the embed if it's missing.
+  - **The `^status` line** (the line ending in ` ^status`) says what the story needs next, so Sarah can tell from the Roadmap without opening the note. It always names the next skill as a command, or links what the story is blocked by:
+    - **It can move now:** `Next: /plan-steps` or `Next: /implement Step 4`. If the next step isn't a skill, such as a design session in Claude Design, name it, then the skill after it.
+    - **It can be planned now, but building waits on another story:** name the skill that can run now and link the blocker, as in `Next: /plan-steps. Building waits on [[A]] and [[B]]`. This tells Sarah she can plan it now but can't build it yet, which affects how she prioritizes it.
+    - **It's blocked by another story:** link the blocker and name the skill after it, as in `Blocked by [[A]] and [[B]]; then /plan-steps`.
+    - **It waits on Sarah's decisions:** `Next: /decide`.
+    - **A collecting note:** `Collecting items. Next: /kickoff when you schedule it`, or `Next: /tooling` for a workflow note.
+
+    It may start with a state word or two, such as `Design approved.` or `In progress.`, and holds nothing else. Never describe the story there. Other context, such as what the story was split from, goes in the summary below it. The story's line in `notes/Roadmap.md` embeds the `^status` line after the link, `[[Note]] ![[Note#^status]]`. Add the embed if it's missing.
   - **Below it, a short summary** of what work has been done and what remains, in a few sentences. It doesn't describe the story, because Purpose does that.
 
   Whoever moves a story forward updates both. When the next step is settled, write them without asking and mention it in your summary. When there's a real choice, such as what the story is blocked on, show Sarah the line and wait for her approval.

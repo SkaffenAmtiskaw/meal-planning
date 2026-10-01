@@ -157,7 +157,7 @@ Once she has approved every step, write the plan under `# Implementation` in the
 Then:
 - Set `status` to `ready`.
 - If the story's line in `notes/Roadmap.md` shows its status, update it.
-- Update the `^status` line as AGENTS.md describes under "Editing notes", e.g. "Ready. Next: build Step 1".
+- Update the `^status` line as AGENTS.md describes under "Editing notes", e.g. "Ready. Next: /implement Step 1".
 
 ## 6. Find a home for out-of-scope items
 If the out-of-scope list is empty, you're done.

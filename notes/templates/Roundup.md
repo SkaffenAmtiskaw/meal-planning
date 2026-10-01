@@ -6,9 +6,9 @@ confirmed: {{date:YYYY-MM-DD}}
 ---
 # Where It Stands
 
-%% The line ending in ` ^status` is the roundup's status and nothing else, e.g. "Collecting issues until you kick it off" or, once /kickoff has run, "Kicked off. Next: /decide". The Roadmap embeds it with `![[<note>#^status]]`, so keep the ` ^status` ID on it. Below it goes a short summary of what work has been done and what remains, and nothing else. Items for a later step go in the Inbox. %%
+%% The line ending in ` ^status` is the roundup's status and nothing else, e.g. "Collecting issues. Next: /kickoff when you schedule it" or, once /kickoff has run, "Kicked off. Next: /decide". The Roadmap embeds it with `![[<note>#^status]]`, so keep the ` ^status` ID on it. Below it goes a short summary of what work has been done and what remains, and nothing else. Items for a later step go in the Inbox. %%
 
-Collecting issues until you kick it off. ^status
+Collecting issues. Next: /kickoff when you schedule it ^status
 
 # Inbox
 

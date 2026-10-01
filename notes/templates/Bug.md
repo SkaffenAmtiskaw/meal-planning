@@ -6,7 +6,7 @@ confirmed: {{date:YYYY-MM-DD}}
 ---
 # Where It Stands
 
-%% The line ending in ` ^status` is the story's status and nothing else: what work it needs next, or what it's waiting on, e.g. "Next: design session in Claude Design, then /assess" or "Blocked until [[Stale Data Issues]] lands". Don't describe the story here; the Roadmap link already names it and Purpose describes it. The Roadmap embeds that line with `![[<note>#^status]]`, so keep the ` ^status` ID on it. Below it goes a short summary of what work has been done and what remains, and nothing else. Items for a later step go in the Inbox. %%
+%% The line ending in ` ^status` says what the story needs next and nothing else: the next skill as a command, or a link to what blocks it and the skill after, as AGENTS.md describes under "Editing notes", e.g. "Next: design session in Claude Design, then /assess", "Next: /plan-steps. Building waits on [[Stale Data Issues]]" or "Blocked by [[Stale Data Issues]]; then /plan-steps". It may start with a state word or two, such as "Design approved.". Don't describe the story here; the Roadmap link already names it and Purpose describes it. The Roadmap embeds that line with `![[<note>#^status]]`, so keep the ` ^status` ID on it. Below it goes a short summary of what work has been done and what remains, and nothing else. Items for a later step go in the Inbox. %%
 
 No direction yet. ^status
 
