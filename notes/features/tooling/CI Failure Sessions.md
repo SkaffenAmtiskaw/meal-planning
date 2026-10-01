@@ -1,11 +1,11 @@
 ---
 type: infra
-status: ready
+status: in-progress
 blocked-by: []
 confirmed: 2026-09-30
 ---
 # Where It Stands
-Ready. Next: build Step 1 ^status
+In progress. Next: implement Step 2 ^status
 
 # Purpose
 Make a failed check on a PR start a Claude Code cloud session. The session reproduces the failure, then either fixes it through a PR or tells a flake from a real failure, so the result reaches Sarah in the Code tab of the Claude desktop app instead of on GitHub. This story also does the one-time setup and writes the convention every later source of results shares: the Claude GitHub App, the cloud environment, the `routine-sessions` skill and the routine parts of `docs/ci.md`. Those later sources are [[E2E Tests in CI]], [[Sentry Logging and Root Cause Analysis]], [[Local Dependency Update Alerts]] and the watch-tools line under [[Dev Foundations]]. Split from [[CI Checks]] on 2026-09-30.
@@ -111,14 +111,14 @@ Decisions Sarah made 2026-09-30 while planning, cited in the steps below:
   3. **Create the cloud environment (claude.ai).** Cloud environments live on claude.ai, not GitHub. They're where Claude Code cloud sessions run, and routines use them too.
      - Go to https://claude.ai/code. In the row just above the message box, click the cloud button showing an environment's name (probably **Default**). There's no settings page or direct link for this menu.
      - In the menu that opens, under **Cloud**, click **Add cloud environment**.
-     - In the **New cloud environment** dialog: **Name**: `routines`. **Network access**: leave it on **Trusted**. **Environment variables**: paste the variables block. **Setup script**: paste the setup script.
+     - In the **New cloud environment** dialog: **Name**: `Meal Planning Routines`. **Network access**: leave it on **Trusted**. **Environment variables**: paste the variables block. **Setup script**: paste the setup script.
      - Click **Create environment**.
      - You don't need to start a session in it. The routine will use it.
   4. **Create the `ci-failure` routine (claude.ai).** Go to https://claude.ai/code/routines and click **New routine**. (In the desktop app's Code tab, **Routines** in the sidebar → **New routine** → **Cloud** opens the same form.)
      - **Name:** `ci-failure`.
      - **Prompt:** paste `Run /ci-failure on the failed run described in the routine-fire-payload block.` In the model selector in the prompt box, pick **Sonnet**.
      - **Repositories:** add `meal-planning`.
-     - **Environment:** pick `routines`.
+     - **Environment:** pick `Meal Planning Routines`.
      - **Select a trigger:** choose **API**. The URL and token come after saving, in Step 2.
      - **Connectors:** at the bottom of the form, remove every connector. The routine needs none, and it can use any connector left there without asking.
      - Click **Create**.
@@ -136,9 +136,20 @@ Decisions Sarah made 2026-09-30 while planning, cited in the steps below:
 - `docs/ci.md` - records the default branch, the app, the cloud environment and the routine, and adds the cloud environment's tools and dummy values beside the workflow's
 
 **Acceptance:**
-- [ ] On the `ci-failure` routine's page on claude.ai, click **Run now** with the text "PR #1, head branch main, run 1 https://example.com, failed jobs: lint". See a new session appear in the Code tab of the desktop app. Its summary lists the PR, the head branch, the run and `lint` from the text, says it's on `main` (the routine starts on `develop`, so this shows the checkout), and says the rest isn't built yet. (`main`'s `mise.toml` matches `develop`'s, checked 2026-09-30, so the next check reads the same tools.)
-- [ ] In that session, ask it to run `which node pnpm` and `node --version`. See mise's shim paths for both, not `/opt/node22`, and the Node version `mise latest node` prints on your machine. (The cloud environment is cached for about seven days, so a Node release since it was built can make yours newer.)
-- [ ] In the same session, ask it to run `echo $DB_URL $GH_TOKEN`. See the dummy `DB_URL` and `proxy-injected` (the cloud environments docs' placeholder when the GitHub proxy handles authentication).
+- [x] On the `ci-failure` routine's page on claude.ai, click **Run now** with the text "PR #1, head branch main, run 1 https://example.com, failed jobs: lint". See a new session appear in the Code tab of the desktop app. Its summary lists the PR, the head branch, the run and `lint` from the text, says it's on `main` (the routine starts on `develop`, so this shows the checkout), and says the rest isn't built yet. (`main`'s `mise.toml` matches `develop`'s, checked 2026-09-30, so the next check reads the same tools.)
+- [x] In that session, ask it to run `which node pnpm` and `node --version`. See mise's shim paths for both, not `/opt/node22`, and the Node version `mise latest node` prints on your machine. (The cloud environment is cached for about seven days, so a Node release since it was built can make yours newer.)
+- [x] In the same session, ask it to run `echo $DB_URL $GH_TOKEN`. See the dummy `DB_URL` and `proxy-injected` (the cloud environments docs' placeholder when the GitHub proxy handles authentication).
+
+**Status:** ✅ Complete
+
+**As built:**
+- **Environment name:** the cloud environment is named `Meal Planning Routines`, not `routines`, since Sarah already had a "Meal Planning" environment and wanted the project's name in it. Routine sessions appear under **Routines** in the Code tab's sidebar, which `docs/ci.md` now says.
+- **Setup script:** the environment has a ninth variable, `CLAUDE_ENV_FILE=/opt/mise-session-env.sh`, a file the setup script writes and Claude Code runs before each command, which puts mise's shims first on `PATH`. The tools reference only promises that aliases, functions and shell options carry over from `~/.bashrc`. The script turns off mise's `aqua` backend from the start, since the cloud environments docs say the GitHub proxy blocks release downloads from repos not attached to the session, and it fails the session if it can't find the repo, rather than fall back to the image's Node.
+- **pnpm 12 and `rtk`:** mise's npm backend skips a package's install scripts unless they're approved, and pnpm 12's install script puts its native binary in place, so pnpm crashed on launch. `mise.toml` (not in this step's Files) approves it with `allow_builds = ['pnpm']` and a comment saying why: Sarah chose that over a temporary cloud-only config, and the default backend on her machine and in CI ignores it. The setup script and the file it writes also set `MISE_DISABLE_TOOLS=rtk`, so mise stops looking up `rtk` on GitHub and getting a 403 (Sarah's call).
+- **Creating the routine:** the form adds a "Pull request: Opened" GitHub trigger by default, which is removed with ✕ before adding **API** with **+ Add another trigger**.
+- **Check 1:** **Run now** on claude.ai has no text field, though the routines docs say it takes text. The check ran through the API trigger instead, with `curl` from Sarah's terminal and the token she copied when she created the routine, so Step 2's setup regenerates the token.
+- **Check 3:** a session's permission classifier blocks printing `$GH_TOKEN`, so the check compared `DB_URL` and `GH_TOKEN` to the dummy and `proxy-injected` instead of echoing them.
+- **Push notifications:** a session may send one on its own. Sarah doesn't rely on them and left them alone, since the session in the Code tab is still the delivery (Convention 1).
 
 ## Step 2: A failed check starts the routine
 **Idea:** A failed check on a PR fires the `ci-failure` routine once.
@@ -150,7 +161,7 @@ Decisions Sarah made 2026-09-30 while planning, cited in the steps below:
 - A run cancelled by a new push starts nothing, even when a check had already failed before the cancel (`!cancelled()`). Confirm it by pushing a second commit to a failing branch after `lint` has failed but while `build` is still running: only the second run's session appears.
 - The header comment at the top of `checks.yml` mentions the job that starts `ci-failure`, beside the checks.
 - **Setup Sarah does by hand before the checks.** The step gives her these instructions (Convention 12: the token goes straight into the secret):
-  1. **Get the routine's URL and token (claude.ai).** Go to https://claude.ai/code/routines and click `ci-failure`. Open the menu next to the routine's name, select **Edit**, and scroll to **Select a trigger**. Open the **API** trigger: its dialog shows the routine's URL and a sample `curl` command. Copy the URL somewhere for a moment. Then click **Generate token** and keep the dialog open: the token is shown only once and can't be seen again.
+  1. **Get the routine's URL and token (claude.ai).** Go to https://claude.ai/code/routines and click `ci-failure`. Open the menu next to the routine's name, select **Edit**, and scroll to **Select a trigger**. Open the **API** trigger: its dialog shows the routine's URL and a sample `curl` command. Copy the URL somewhere for a moment. Then click **Regenerate** and keep the dialog open: the token is shown only once and can't be seen again. (The token shown when the routine was created was used for Step 1's check, so a new one goes straight into the secret.)
   2. **Store both as Actions secrets (GitHub).** In another tab, open the `meal-planning` repo on github.com → **Settings** → **Secrets and variables** → **Actions** → **New repository secret**.
      - **Name** `ROUTINE_CI_FAILURE_URL`, **Secret** the URL. Click **Add secret**.
      - **New repository secret** again: **Name** `ROUTINE_CI_FAILURE_TOKEN`, **Secret** the token from the claude.ai dialog. Click **Add secret**.

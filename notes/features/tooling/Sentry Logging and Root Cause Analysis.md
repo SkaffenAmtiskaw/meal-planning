@@ -1,5 +1,5 @@
 ---
-type: 
+type:
 status: idea
 blocked-by:
   - "[[E2E Tests in CI]]"

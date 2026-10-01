@@ -281,7 +281,7 @@ A GitHub ruleset on `main` requires the four check jobs from `checks.yml` to pas
 | Story | Status | Scope in this area | Blocked by |
 |---|---|---|---|
 | PR Checks | done | The four check jobs on every PR, the ruleset on `main`, and the checks' parts of `docs/ci.md` | - |
-| [[CI Failure Sessions]] | spec | The job that starts `ci-failure`, the `ci-failure` and `routine-sessions` skills, the Claude GitHub App, the cloud environment, and the routine parts of `docs/ci.md` | - |
+| [[CI Failure Sessions]] | in-progress | The job that starts `ci-failure`, the `ci-failure` and `routine-sessions` skills, the Claude GitHub App, the cloud environment, and the routine parts of `docs/ci.md` | - |
 
 Related notes that follow the convention or the setup record kept here: [[E2E Tests in CI]], [[Local Dependency Update Alerts]], [[Sentry Logging and Root Cause Analysis]] and [[Services and Environments Audit]].
 

@@ -32,22 +32,22 @@
 - [[App Health]]
 
 # Now
+- [[CI Failure Sessions]] ![[CI Failure Sessions#^status]] 🎯 [[Dev Foundations]] 🎯 [[Calendar Page]]
 
 # Next
-1. [[CI Failure Sessions]] ![[CI Failure Sessions#^status]] 🎯 [[Dev Foundations]] 🎯 [[Calendar Page]]
-2. [[Manual and Agent Test Environment]] ![[Manual and Agent Test Environment#^status]] 🎯 [[Dev Foundations]] 🎯 [[Calendar Page]]
-3. [[Finish OpenCode Migration]] ![[Finish OpenCode Migration#^status]] 🎯 [[Dev Foundations]]
-4. [[E2E Tests in CI]] ![[E2E Tests in CI#^status]] 🎯 [[Dev Foundations]]
-5. [[Docs Audit]] ![[Docs Audit#^status]] 🎯 [[Dev Foundations]]
-6. [[Calendar and Recipes Data Refresh]] ![[Calendar and Recipes Data Refresh#^status]] - ready. Fixes both stale-data symptoms; unblocks [[Add Meal Changes (Saved Recipes)]] and [[Mobile List View]]. *(was bugfix)* 🎯 [[Calendar Page]] 🎯 [[App Health]]
-7. [[Settings Data Refresh]] ![[Settings Data Refresh#^status]] - spec. Waiting on [[Calendar and Recipes Data Refresh]]. 🎯 [[Calendar Page]] 🎯 [[App Health]]
-8. [[Server-Only Code Behind Barrels]] ![[Server-Only Code Behind Barrels#^status]] 🎯 [[Calendar Page]] 🎯 [[App Health]]
-9. [[Server-Only Creation and Pure Reads]] ![[Server-Only Creation and Pure Reads#^status]] - spec. Waiting on [[Server-Only Code Behind Barrels]]. 🎯 [[Calendar Page]] 🎯 [[App Health]]
-10. [[Data Rules Enforcement]] ![[Data Rules Enforcement#^status]] - spec. Waiting on [[Calendar and Recipes Data Refresh]], [[Settings Data Refresh]] and [[Server-Only Creation and Pure Reads]]. 🎯 [[Calendar Page]] 🎯 [[App Health]]
-11. [[Today and Selected Day Markers]] ![[Today and Selected Day Markers#^status]] - spec. Fixes the truncated today circle; unblocks [[Mobile List View]]. *(was high)* 🎯 [[Calendar Page]]
-12. [[Mantine Date Picker Setup]] ![[Mantine Date Picker Setup#^status]] - spec. *(was high)* 🎯 [[Calendar Page]]
-13. [[Header Date Picker]] ![[Header Date Picker#^status]] - spec. Waiting on [[Mantine Date Picker Setup]] and [[Today and Selected Day Markers]]. *(was high)* 🎯 [[Calendar Page]]
-14. [[Agent Workflow Changes]] ![[Agent Workflow Changes#^status]] 🎯 [[Dev Foundations]] 🎯 [[Calendar Page]]
+1. [[Manual and Agent Test Environment]] ![[Manual and Agent Test Environment#^status]] 🎯 [[Dev Foundations]] 🎯 [[Calendar Page]]
+2. [[Finish OpenCode Migration]] ![[Finish OpenCode Migration#^status]] 🎯 [[Dev Foundations]]
+3. [[E2E Tests in CI]] ![[E2E Tests in CI#^status]] 🎯 [[Dev Foundations]]
+4. [[Docs Audit]] ![[Docs Audit#^status]] 🎯 [[Dev Foundations]]
+5. [[Calendar and Recipes Data Refresh]] ![[Calendar and Recipes Data Refresh#^status]] - ready. Fixes both stale-data symptoms; unblocks [[Add Meal Changes (Saved Recipes)]] and [[Mobile List View]]. *(was bugfix)* 🎯 [[Calendar Page]] 🎯 [[App Health]]
+6. [[Settings Data Refresh]] ![[Settings Data Refresh#^status]] - spec. Waiting on [[Calendar and Recipes Data Refresh]]. 🎯 [[Calendar Page]] 🎯 [[App Health]]
+7. [[Server-Only Code Behind Barrels]] ![[Server-Only Code Behind Barrels#^status]] 🎯 [[Calendar Page]] 🎯 [[App Health]]
+8. [[Server-Only Creation and Pure Reads]] ![[Server-Only Creation and Pure Reads#^status]] - spec. Waiting on [[Server-Only Code Behind Barrels]]. 🎯 [[Calendar Page]] 🎯 [[App Health]]
+9. [[Data Rules Enforcement]] ![[Data Rules Enforcement#^status]] - spec. Waiting on [[Calendar and Recipes Data Refresh]], [[Settings Data Refresh]] and [[Server-Only Creation and Pure Reads]]. 🎯 [[Calendar Page]] 🎯 [[App Health]]
+10. [[Today and Selected Day Markers]] ![[Today and Selected Day Markers#^status]] - spec. Fixes the truncated today circle; unblocks [[Mobile List View]]. *(was high)* 🎯 [[Calendar Page]]
+11. [[Mantine Date Picker Setup]] ![[Mantine Date Picker Setup#^status]] - spec. *(was high)* 🎯 [[Calendar Page]]
+12. [[Header Date Picker]] ![[Header Date Picker#^status]] - spec. Waiting on [[Mantine Date Picker Setup]] and [[Today and Selected Day Markers]]. *(was high)* 🎯 [[Calendar Page]]
+13. [[Agent Workflow Changes]] ![[Agent Workflow Changes#^status]] 🎯 [[Dev Foundations]] 🎯 [[Calendar Page]]
 
 # Later
 ## [[Dev Foundations]]
