@@ -55,7 +55,7 @@ If the note already has an Implementation section, this is a re-plan. Steps mark
 - **Slice vertically.** Don't split by layer (types, then hook, then component). Layer steps have nothing to see. The first step of new UI puts something on screen in the right place, even if it's hardcoded or unstyled. Each later step replaces one fake part with the real thing or adds one behavior.
 - **Order.** For every step, ask: can its checks be done in the running app using only the code through this step? If a check needs a later step, the step is out of order or split wrong. Never end with a "wire it all together" step.
 - **Scaffolding.** A temporary page or hardcoded value is fine if it's how Sarah sees progress. Plan when it gets removed.
-- **Setup outside the repo.** In an infra story, each piece of Setup Outside the Repo goes in the first step whose checks need it. The step's Approach gives Sarah the instructions to set it up, and she does it before running the checks.
+- **Setup outside the repo.** In an infra story, each piece of Setup Outside the Repo goes in the first step whose checks need it. The step's Approach gives the instructions Sarah follows to set it up, and `/implement` walks her through them before the first check that needs it.
 
 ### Refactors
 - **Their own steps.** Every "refactor first", "replace" or "extract shared piece" decision in the approach gets its own step, before the step that builds on it.
@@ -70,17 +70,20 @@ Each acceptance criterion is a checkbox. What kind of check it is depends on wha
 - **Infrastructure in an infra story,** such as a workflow, a script or a config file: run-and-see checks. "Run [command] or [open a PR into `main`], see [result]." Say what the check needs, such as a branch with a failing test.
 - **Anything else:** a click-through in the running app. "Go to [view], [do something], see [result]." Say which user (for example, read-only), which screen size (phone or desktop), and what data is needed (for example, a day with two meals).
 
+Each check ends by saying briefly what it proves, such as "Proves: a re-run Sarah starts doesn't start a second session." Sarah has to be able to tell what a check would teach her before she spends time on it.
+
 Never use "tests pass", "inspect the code" or "types compile" as a check. Tests passing is assumed for every step. Failure, empty and read-only behaviors are checked in the step that builds them.
 
 #### What Sarah checks and what the implementer checks
 Whatever kind they are, Sarah's checks prove the finished step works. Any other verification goes in the step's **Approach**, as work the implementing agent does:
 - **A case or two per rule.** Give one or two cases that prove each behavior or rule works, not one check per case. A block of cases that share one mechanism, such as the bans in one Biome override, fails together, so one case proves the whole block. If checking every case adds value, or an edge case might slip through, the implementer does it.
 - **Only the finished step.** Never give Sarah a check to run before the change to see the old behavior. If her checks compare against the state before the change, such as test counts, the Approach has the implementer record it before changing anything. Her check then compares against what it recorded. Break-it checks aren't before checks: they're edits she makes to the finished step, so they stay.
+- **Nothing already shown.** If an earlier check, or a run the implementer can do on its own machine, already shows what a check would prove, drop the check. If that run isn't in the step yet, put it in the Approach as implementer work. For example, breaking a secret on GitHub to see a job fail isn't needed when the implementer can run the job's script against a local server that returns 401.
 
 #### Test-only steps: break-it checks
 A step that changes only test files, including shared mocks in `test/mocks/`, changes nothing in the running app, so it gets no click-throughs. Its checks are break-it checks instead. Each one proves that a kept or rewritten test catches real behavior:
 
-"Temporarily change `<file>:<line>` from `<code>` to `<code>`, run `<command> <test file>`, see these tests fail: `<test name>`, `<test name>`. Revert."
+"Temporarily change `<file>:<line>` from `<code>` to `<code>`, run `<command> <test file>`, see these tests fail: `<test name>`, `<test name>`. Revert. Proves: <what the tests catch>."
 
 The command is `pnpm vitest run` for a unit test and `pnpm test:e2e` for an E2E spec.
 
@@ -93,7 +96,7 @@ The command is `pnpm vitest run` for a unit test and `pnpm test:e2e` for an E2E 
 #### E2E steps: run-and-see checks
 A unit test shows nothing in the running app, but an E2E trace is a recording of it. So a test-only step that changes E2E code also gets at least one run-and-see check, alongside its break-it checks. Watching the trace is how Sarah sees for herself that a test does what it claims:
 
-"Run `pnpm test:e2e:trace <spec file>`, open the trace for `<test name>` in `<project>`, see <what the browser does>."
+"Run `pnpm test:e2e:trace <spec file>`, open the trace for `<test name>` in `<project>`, see <what the browser does>. Proves: <what the test shows>."
 
 ### Coverage
 Every behavior and every piece in the approach must land in some step. Nothing can land in a step unless it's in the approach, Sarah pulled it in (see "Out-of-scope items" below), or it's a Boy Scout fix. A Boy Scout fix goes in the step that edits its file, as AGENTS.md describes under "Out-of-scope work".
@@ -118,7 +121,7 @@ A step that claims a Symptom needs an acceptance check that follows the original
 - `path/to/other.ts` - reason
 
 **Acceptance:**
-- [ ] Go to ..., press ..., see ...
+- [ ] Go to ..., press ..., see .... Proves: ...
 ```
 
 ### Out-of-scope items

@@ -105,9 +105,12 @@ Then report, in this order:
 4. **First pass:** each acceptance check, and what you saw or why you couldn't run it. If you recorded the state before the change, give it first, since her checks compare against it. Then any differences from the design.
 5. **As built:** anything that differs from the step's plan. This is a draft; it goes into the note in step 9.
 6. **Out of scope:** each item triaged, and what Sarah chose for it.
-7. **Setup for Sarah:** in an infra story, each piece of setup outside the repo the step needs, with the instructions from its Approach, for her to do before she runs the checks. Leave this out if there's none.
 
-End with: "Please check the acceptance criteria and review the staged diff."
+After the report, go through these one at a time:
+1. **Checks your runs already cover,** as `first-pass.md` describes: for each, say which of your runs shows what it would prove, and ask Sarah whether to drop it.
+2. **Checks only Sarah can do,** such as ones that need a push or the claude.ai UI: walk her through them, as AGENTS.md describes under "Setup outside the repo". If one needs this step committed and pushed, first ask her to review the staged diff, then to commit and push it.
+
+End with: "Please check the acceptance criteria you haven't done yet, and review the staged diff if you haven't."
 
 Then stop and wait. The step isn't done until Sarah says it is.
 
@@ -129,7 +132,7 @@ Repeat until she confirms the step is done.
 
 ## 9. Update the note
 Once she confirms:
-1. Check the step's acceptance boxes and add `**Status:** ✅ Complete`.
+1. Check the step's acceptance boxes and add `**Status:** ✅ Complete`. Remove any check she dropped. Its As built note says which of your runs covered it.
 2. If anything differs from the plan, or was added at review, add an **As built:** note under the step.
 3. If this was the last step, set `status` to `in-review`. The review of the whole story (`/final-review`), archiving, and unblocking the stories that waited on it all come later, not in this skill.
 4. Update the `^status` line as AGENTS.md describes under "Editing notes", e.g. "In progress. Next: implement Step 4", or "All steps implemented. Next: /final-review" after the last step.
