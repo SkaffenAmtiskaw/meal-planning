@@ -1,11 +1,11 @@
 ---
 type: infra
-status: in-progress
+status: in-review
 blocked-by: []
 confirmed: 2026-09-30
 ---
 # Where It Stands
-In progress. Next: implement Step 4 ^status
+All steps implemented. Next: /final-review ^status
 
 # Purpose
 Make a failed check on a PR start a Claude Code cloud session. The session reproduces the failure, then either fixes it through a PR or tells a flake from a real failure, so the result reaches Sarah in the Code tab of the Claude desktop app instead of on GitHub. This story also does the one-time setup and writes the convention every later source of results shares: the Claude GitHub App, the cloud environment, the `routine-sessions` skill and the routine parts of `docs/ci.md`. Those later sources are [[E2E Tests in CI]], [[Sentry Logging and Root Cause Analysis]], [[Local Dependency Update Alerts]] and the watch-tools line under [[Dev Foundations]]. Split from [[CI Checks]] on 2026-09-30.
@@ -223,14 +223,20 @@ Decisions Sarah made 2026-09-30 while planning, cited in the steps below:
 **Approach:**
 - `ci-failure/SKILL.md`: if every failed script passes in the cloud, run `gh run rerun <run_id> --failed` and wait for it, up to 30 minutes (checking with `gh run view`; the cloud docs give commands a 2-minute default and 10-minute maximum timeout, so the wait polls rather than blocking in one command). Then: a passing re-run ends with only a flake verdict (which check flaked, the failed run, the cloud pass, the passing re-run; no fix, no note). A failing re-run is diagnosed from both runs' logs (`gh run view --log-failed`) and from what differs between the cloud and the Actions runner, such as tool versions; if it finds the cause it fixes it as in Step 3, otherwise it stops with what it found and what it needs from Sarah. A timeout stops with the re-run's link and says it's still going. It re-runs at most once. Replaces the Step 3 placeholder, which removes the last scaffolding.
 - First confirm `gh run rerun` and `gh run view --log-failed` work from a cloud session through the GitHub proxy (only a user report says the app's access covers re-runs, and the proxy serves only a pinned set of GraphQL operations). If they don't, stop and bring it to Sarah, since the design depends on it. Record the result in `docs/ci.md` "Setup Outside the Repo" under the Claude GitHub App.
-- Sarah pushes the skill change to `develop` before the checks, as in Step 1. [Sarah] - The agent can commit and push; just be sure to check for other changed files and confirm with me whether they should be included.
-- [Sarah] - For acceptance checks, go ahead and create the branches, push, and open a PR in GitHub. Be sure to _actually_ open the PR, don't just give me a branch comparison URL. (Or if you can't open a PR tell me clearly so I can do it myself.) I will check the URL output myself.
-
+- Sarah pushes the skill change to `develop` before the checks, as in Step 1.
 **Files:**
 - `.claude/skills/ci-failure/SKILL.md` - re-runs a failure that passes in the cloud and reports the outcome
 - `docs/ci.md` - records that the app's access covers re-running jobs and reading their logs
 
 **Acceptance:**
-- [ ] Cut a branch from `develop` and add `src/ci-flake.test.ts` with one test that fails only when `process.env.GITHUB_RUN_ATTEMPT === '1'`. Push and open a PR into `develop`. See `unit-tests` fail, then pass on attempt 2 without you re-running it. See one session in the Code tab whose verdict names `unit-tests` as flaky, links the failed run and the passing re-run, and says `pnpm test:coverage` passed in the cloud, with no fix PR. Close the PR and delete the branch.
-- [ ] Cut a branch from `develop` and add `src/ci-only.test.ts` with one test that fails only when `process.env.GITHUB_ACTIONS === 'true'`. Push and open a PR into `develop`. See `unit-tests` fail on both attempts and only one session, which says the failure didn't reproduce in the cloud and names the test's dependence on `GITHUB_ACTIONS` as the cause or its lead. It either opens a fix PR or says what it needs from you. Close any PRs and delete the branches.
-- [ ] Cut a branch from `develop` and add `src/ci-slow.test.ts` with one test that passes at once when `GITHUB_RUN_ATTEMPT` isn't set (the cloud and your pre-commit hook), fails when it's `'1'`, and otherwise waits 35 minutes before passing (with its own test timeout above that). Push and open a PR into `develop`. See the session stop after about 30 minutes, saying the re-run is still going, with its link. Cancel the run, close the PR and delete the branch.
+- [x] Cut a branch from `develop` and add `src/ci-flake.test.ts` with one test that fails only when `process.env.GITHUB_RUN_ATTEMPT === '1'`. Push and open a PR into `develop`. See `unit-tests` fail, then pass on attempt 2 without you re-running it. See one session in the Code tab whose verdict names `unit-tests` as flaky, links the failed run and the passing re-run, and says `pnpm test:coverage` passed in the cloud, with no fix PR. Close the PR and delete the branch.
+- [x] Cut a branch from `develop` and add `src/ci-only.test.ts` with one test that fails only when `process.env.GITHUB_ACTIONS === 'true'`. Push and open a PR into `develop`. See `unit-tests` fail on both attempts and only one session, which says the failure didn't reproduce in the cloud and names the test's dependence on `GITHUB_ACTIONS` as the cause or its lead. It either opens a fix PR or says what it needs from you. Close any PRs and delete the branches.
+- [x] Cut a branch from `develop` and add `src/ci-slow.test.ts` with one test that passes at once when `GITHUB_RUN_ATTEMPT` isn't set (the cloud and your pre-commit hook), fails when it's `'1'`, and otherwise waits 35 minutes before passing (with its own test timeout above that). Push and open a PR into `develop`. See the session stop after about 30 minutes, saying the re-run is still going, with its link. Cancel the run, close the PR and delete the branch.
+
+**Status:** ✅ Complete
+
+**As built:**
+- **The head branch moved on:** if the head branch's latest commit isn't the failed commit, the session doesn't re-run. It stops with a verdict naming the newer commit's run, since re-running the old run could cancel the newer one in the PR's concurrency group (Sarah's call).
+- **A failure only GitHub's runner has:** the session reproduces the difference it finds in the cloud, such as by setting `GITHUB_ACTIONS=true`, before it fixes anything, and step 4's fix flow then runs the failed scripts that way. If it can't reproduce it, it opens no PR and stops with what it found (Sarah's call). A cancelled re-run stops with a verdict, without a second re-run.
+- **The wait:** the session polls `gh run view --json attempt,status,conclusion` every minute in loops of about 9 minutes, at most three, and waits for attempt 2, since the run can still show attempt 1 completed right after `gh run rerun`.
+- **Logs and the cloud network:** `gh run rerun`, `gh run view` and `--log-failed` all work through the GitHub proxy, but the API redirects log downloads to `results-receiver.actions.githubusercontent.com`, which isn't on the Trusted list, so the first try got a 403. The `Meal Planning Routines` environment's network access is now Custom, with the default list plus that host (Sarah's call), and `docs/ci.md` records it under "The Claude GitHub App" and "The Cloud Environment".

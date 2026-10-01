@@ -1,6 +1,6 @@
 ---
 name: target-designer
-description: Designs the pieces a story should have if the codebase were clean, from its behaviors and the project conventions alone, without reading existing code. Read-only. Used by the /review skill.
+description: Designs the pieces a story should have if the codebase were clean, from its behaviors and the project conventions alone, without reading existing code. Read-only. Used by the /final-review skill.
 tools: Read, Grep, Glob, WebFetch
 color: purple
 ---

@@ -1,6 +1,6 @@
 ---
 name: leftovers-checker
-description: Finds what a story's steps left behind across the whole story - scaffolding that should be gone, logic duplicated across steps, dead code from As built changes, abandoned attempts, and early pieces that later steps made redundant. Read-only. Used by the /review skill.
+description: Finds what a story's steps left behind across the whole story - scaffolding that should be gone, logic duplicated across steps, dead code from As built changes, abandoned attempts, and early pieces that later steps made redundant. Read-only. Used by the /final-review skill.
 tools: Read, Grep, Glob, Bash
 color: yellow
 ---

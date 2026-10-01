@@ -131,8 +131,8 @@ Repeat until she confirms the step is done.
 Once she confirms:
 1. Check the step's acceptance boxes and add `**Status:** ✅ Complete`.
 2. If anything differs from the plan, or was added at review, add an **As built:** note under the step.
-3. If this was the last step, set `status` to `in-review`. The review of the whole story (`/review`), archiving, and unblocking the stories that waited on it all come later, not in this skill.
-4. Update the `^status` line as AGENTS.md describes under "Editing notes", e.g. "In progress. Next: implement Step 4", or "All steps implemented. Next: /review" after the last step.
+3. If this was the last step, set `status` to `in-review`. The review of the whole story (`/final-review`), archiving, and unblocking the stories that waited on it all come later, not in this skill.
+4. Update the `^status` line as AGENTS.md describes under "Editing notes", e.g. "In progress. Next: implement Step 4", or "All steps implemented. Next: /final-review" after the last step.
 
 Leave the note changes unstaged.
 

@@ -1,6 +1,6 @@
 ---
 name: code-critic
-description: Reviews existing modules against a target design for single concern and project conventions, and gives each one a verdict (use as-is, refactor first, replace or not a fit). Read-only. Used by the /assess, /review and /investigate skills.
+description: Reviews existing modules against a target design for single concern and project conventions, and gives each one a verdict (use as-is, refactor first, replace or not a fit). Read-only. Used by the /assess, /final-review and /investigate skills.
 tools: Read, Grep, Glob
 color: orange
 ---

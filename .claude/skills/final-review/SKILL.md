@@ -1,5 +1,5 @@
 ---
-name: review
+name: final-review
 description: Review how an in-review story's code fits together across all its steps, against a fresh target design, then go through the findings with Sarah, fix the small ones here and route the rest to the notes.
 argument-hint: "[note name]"
 disable-model-invocation: true

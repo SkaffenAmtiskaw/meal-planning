@@ -101,10 +101,18 @@ When a check job in `checks.yml` is renamed, added or removed, change the rulese
 ## The Claude GitHub App
 The [Claude GitHub App](https://github.com/apps/claude) is installed on the repo, with access to only `meal-planning`. It lets routines clone the repo and push their `claude/` branches. A cloud session reaches GitHub through the cloud GitHub proxy, which authenticates `git` and `gh` with the app's access, so no GitHub token is stored anywhere.
 
+The app's access covers what the `ci-failure` session does on GitHub: opening a PR, reading a run (`gh run view`), re-running its failed jobs (`gh run rerun --failed`) and reading their logs (`gh run view --log-failed`). The logs need one more allowed host in the cloud environment (see "The Cloud Environment").
+
 ## The Cloud Environment
 Routines run in a claude.ai cloud environment named `Meal Planning Routines` (at https://claude.ai/code, the cloud button above the message box). A new session starts from a snapshot of what its setup script installed, which claude.ai rebuilds about every seven days, or when the script changes.
 
-**Network access:** Trusted, the default. It allows the npm registry, `nodejs.org` (where mise gets Node) and Google Fonts (which `pnpm build` downloads). GitHub goes through its own proxy whatever the level.
+**Network access:** Custom, with **Also include default list of common package managers** checked, and one allowed domain:
+
+```text
+results-receiver.actions.githubusercontent.com
+```
+
+The default (Trusted) list allows the npm registry, `nodejs.org` (where mise gets Node) and Google Fonts (which `pnpm build` downloads). GitHub's API goes through its own proxy whatever the level, but a run's logs don't: `gh run view --log-failed` asks the API, which redirects to a signed download on `results-receiver.actions.githubusercontent.com`, and that host isn't on the Trusted list.
 
 **Variables:** the dummy values from `checks.yml` (see "Secrets and Environment Values"), plus `CLAUDE_ENV_FILE`, a file Claude Code runs before each command in the session, which the setup script writes. There's no `GH_TOKEN` or `GITHUB_TOKEN`: a token set here would pass into the session, where Claude and its commands could read it, and the GitHub proxy needs none.
 
@@ -174,7 +182,7 @@ export PATH="$shims:$PATH"
 pnpm install --frozen-lockfile || echo "setup: pnpm install failed; each session installs on its own" >&2
 ```
 
-When you change the variables or the script on claude.ai, change this record in the same change.
+When you change the network access, the variables or the script on claude.ai, change this record in the same change.
 
 ## Routines
 Each routine's configuration on claude.ai (its prompt, trigger, model and environment) is in the `routine.md` beside its skill. This list says only what each one is for:

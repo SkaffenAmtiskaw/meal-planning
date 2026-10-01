@@ -23,7 +23,7 @@ What's left in `.opencode/`:
 
 Rules that point at `.opencode/` and go with it:
 - AGENTS.md's Project section, which has agents leave `.opencode/` out of searches.
-- `/review` step 2, which leaves `.opencode/` out of the story's changed files.
+- `/final-review` step 2, which leaves `.opencode/` out of the story's changed files.
 
 Found 2026-09-28 while shaping [[Dev Foundations]] with `/roadmap`.
 
