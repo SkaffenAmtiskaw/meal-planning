@@ -40,7 +40,7 @@ Show each goal and wait for her to approve or change it. Once all are approved, 
 
 ## 3. Design
 ### Draft
-Draft the whole design before showing any of it. If the Design section lists questions for this step, each one gets an answer in the design. The design has:
+Draft the whole design before showing any of it. If the Design section lists questions for this step, each one gets an answer in the design. If a question has a **Decided** line under it, that's Sarah's answer. If it has a **Leaning** line, check it as part of this step's own work, not with a separate `decision-researcher` run, for the problems the `answer-confidence` skill lists under "Checking a leaning". If you find none, use her answer. If you find any, show her each one, and go on as that skill describes. The design has:
 - **Pieces:** each thing that gets built or changed, such as a workflow, a script, a config file, a skill or a service. For each: its path, or where it lives outside the repo, and its one job. A piece with two jobs is two pieces.
 - **The flow:** how a run moves through the pieces, from what starts it to where its result ends up, including what happens when it fails.
 

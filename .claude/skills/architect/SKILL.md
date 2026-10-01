@@ -40,7 +40,7 @@ Then read the project docs the convention touches: `docs/project_conventions.md`
 ## 2. Rules
 ### Draft
 Draft every rule before showing any. Sources, in order of authority: Sarah's comments, **Decided** lines, then Purpose, Root Cause and Symptoms. Text already under `# Rules` is one of three things:
-- **Questions for this step:** each one is something a rule has to settle. If the decisions settle it, answer it in the rule. Otherwise, it's a gap (below).
+- **Questions for this step:** each one is something a rule has to settle. If a question has a **Decided** line under it, that's Sarah's answer. If it has a **Leaning** line, check it as part of this step's own work, not with a separate `decision-researcher` run, for the problems the `answer-confidence` skill lists under "Checking a leaning". If you find none, use her answer. If you find any, show her each one, and go on as that skill describes. Otherwise, if the decisions settle it, answer it in the rule. If they don't, it's a gap (below).
 - **Text marked as decided or approved:** confirm with Sarah that it still holds rather than redrafting it.
 - **Anything else:** treat it as a draft.
 

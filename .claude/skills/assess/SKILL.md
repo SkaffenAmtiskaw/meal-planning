@@ -29,7 +29,7 @@ Check that it's ready for this skill:
 
 If the note has a Design Handoff, treat it as the source of truth for UX, not for implementation.
 
-If the Suggested Approach section lists questions for this step, each one gets an answer in the Suggested Approach by the end of this run.
+If the Suggested Approach section lists questions for this step, each one gets an answer in the Suggested Approach by the end of this run. If a question has a **Decided** line under it, that's Sarah's answer. If it has a **Leaning** line, check it as part of this step's own work, not with a separate `decision-researcher` run, for the problems the `answer-confidence` skill lists under "Checking a leaning". If you find none, use her answer. If you find any, show her each one, and go on as that skill describes.
 
 If the note's Suggested Approach holds anything besides a template comment or that list of questions, this is a re-assessment. Don't start from the old approach. It invites the same anchoring as old code. Do steps 2 to 5 fresh, then in step 6 show what changed compared with the old approach.
 

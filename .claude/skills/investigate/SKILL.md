@@ -36,7 +36,7 @@ It should be `type: bug` or `type: cleanup`. If it's another type, check whether
 
 Check `blocked-by`. If it has a `decision needed` entry, those decisions come first with `/decide`. If another story blocks it, the investigation may be wasted until that story lands. In either case, tell Sarah and ask whether to go on anyway. An entry that only waited on this skill being built is stale. Remove it in step 4.
 
-If the note lists questions for this step to answer, at the top of Root Cause or Current State (or under Where It Stands in an older note), each one gets an answer in the note by the end of this run.
+If the note lists questions for this step to answer, at the top of Root Cause or Current State (or under Where It Stands in an older note), each one gets an answer in the note by the end of this run. If a question has a **Decided** line under it, that's Sarah's answer. If it has a **Leaning** line, check it as part of this step's own work, not with a separate `decision-researcher` run, for the problems the `answer-confidence` skill lists under "Checking a leaning". If you find none, use her answer. If you find any, show her each one, and go on as that skill describes.
 
 Don't check whether the issue is still relevant. Sarah running `/investigate` on it means she believes it is. If reproduction or the scan shows it's already fixed, step 2 or 3 handles that.
 

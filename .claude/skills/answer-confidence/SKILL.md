@@ -1,6 +1,6 @@
 ---
 name: answer-confidence
-description: How to act on Sarah's answer to a decision. A confident answer is decided as she gave it, and a hedged one is checked before it counts as decided. Use when a skill asks whether she already has an answer, such as /decide before researching a decision, /shape when checking blocking decisions, or /architect when she answers a gap in the Rules.
+description: How to act on Sarah's answer to a decision. A confident answer is decided as she gave it, and a hedged one is checked before it counts as decided. Use when a skill asks whether she already has an answer, such as /decide before researching a decision, /shape when checking blocking decisions or the next step's questions, or /architect when she answers a gap in the Rules.
 user-invocable: false
 ---
 
