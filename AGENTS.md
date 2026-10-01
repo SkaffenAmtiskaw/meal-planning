@@ -41,6 +41,12 @@ Any change to a note in `notes/` follows these rules:
 - **A note with the wrong type.** If a note's type doesn't fit its work, tell Sarah which type fits and why, and offer to retype it. If she agrees, retype it as the `retyping-a-note` skill describes, then stop.
 - **Roadmap order is Sarah's call.** Never reorder `notes/Roadmap.md`. Ask her where a new line goes. If the notes or the Roadmap make the spot clear, suggest it and say why. Otherwise, ask without a suggestion. Never guess one.
 - **A blocker outside the queue.** If a story in Next gets a story in its `blocked-by` that isn't in Now or Next, propose pulling that story into Next directly ahead of it, with the same markers, and say why.
+- **Starting on a story in the backlog.** Sarah running a skill on a story means she's moving forward with it. If the story's Roadmap line is in Later or Ideas when a skill starts on it, ask her whether it moves into Next. If it does:
+  - check its goals as the `roadmap-placement` skill describes
+  - give it a 🎯 link for each goal she names; if none of them is active, ask her whether it gets 📌 and with what reason
+  - ask her where in Next it goes, as "Roadmap order" above describes
+
+  This doesn't apply to `/implement`, which moves the line into Now itself, or to `/tooling`, which finishes its change in one session.
 - **A new item in a collecting note.** When you add one, check which goals it serves and link it as the `roadmap-placement` skill describes. An item that `/check-drift` moves back or `/kickoff` rolls over isn't new, so it keeps the links it has.
 - **A `ready` note goes back to `spec`** when its design or steps change, until Sarah re-reviews it. Three changes don't count, because they leave the plan as she approved it: a corrected name or path, a Boy Scout fix (see "Out-of-scope work") and a routed impact's acceptance check (see `.claude/agents/scope-router.md`).
 - **Template comments** (the `%% ... %%` guidance in `notes/templates/`) never stay in a note. The template keeps them, and the skill that writes each section carries its rules.
