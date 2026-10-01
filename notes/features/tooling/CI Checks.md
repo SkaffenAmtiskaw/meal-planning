@@ -3,14 +3,14 @@ type: hub
 confirmed: 2026-09-30
 ---
 # Where It Stands
-Next: its child stories ^status
+Next: /close ^status
 
 # Purpose
 The four check jobs in `.github/workflows/checks.yml` run lint, type check, unit tests and build automatically on every PR, which covers the Done When item of [[Dev Foundations]] for PRs into `main`.
 
-Besides running the checks, [[CI Failure Sessions]] makes a failed check start a Claude Code cloud session for Sarah, and does the one-time setup every later source of results shares. Sarah is the sole maintainer. She opens GitHub only to merge into `main` and doesn't check email often enough to rely on it, so results that happen away from her machine have to reach her another way.
+Besides running the checks, CI Failure Sessions makes a failed check start a Claude Code cloud session for Sarah, and does the one-time setup every later source of results shares. Sarah is the sole maintainer. She opens GitHub only to merge into `main` and doesn't check email often enough to rely on it, so results that happen away from her machine have to reach her another way.
 
-One-time setup [[CI Failure Sessions]] does, for [[E2E Tests in CI]], [[Sentry Logging and Root Cause Analysis]], [[Local Dependency Update Alerts]] and the watch-tools line under [[Dev Foundations]]:
+One-time setup CI Failure Sessions does, for [[E2E Tests in CI]], [[Sentry Logging and Root Cause Analysis]], [[Local Dependency Update Alerts]] and the watch-tools line under [[Dev Foundations]]:
 - Install the Claude GitHub App on the repo, and create the cloud environment the routines run in.
 - Write the convention for later sources: a shared-rule skill for routine sessions, and a doc for the CI side.
 
@@ -281,13 +281,13 @@ A GitHub ruleset on `main` requires the four check jobs from `checks.yml` to pas
 | Story | Status | Scope in this area | Blocked by |
 |---|---|---|---|
 | PR Checks | done | The four check jobs on every PR, the ruleset on `main`, and the checks' parts of `docs/ci.md` | - |
-| [[CI Failure Sessions]] | in-progress | The job that starts `ci-failure`, the `ci-failure` and `routine-sessions` skills, the Claude GitHub App, the cloud environment, and the routine parts of `docs/ci.md` | - |
+| CI Failure Sessions | done | The job that starts `ci-failure`, the `ci-failure` and `routine-sessions` skills, the Claude GitHub App, the cloud environment, and the routine parts of `docs/ci.md` | - |
 
 Related notes that follow the convention or the setup record kept here: [[E2E Tests in CI]], [[Local Dependency Update Alerts]], [[Sentry Logging and Root Cause Analysis]] and [[Services and Environments Audit]].
 
 # Build Order
 1. PR Checks (done)
-2. [[CI Failure Sessions]]
+2. CI Failure Sessions (done)
 
 Stated in the Design: the job that starts `ci-failure` is one more job in `checks.yml`.
 

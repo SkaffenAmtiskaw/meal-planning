@@ -174,3 +174,5 @@ When you change the network access, the variables or the script on claude.ai, ch
 ## Routines
 Each routine's configuration on claude.ai (its prompt, trigger, model and environment) is in the `routine.md` beside its skill. This list says only what each one is for:
 - **`ci-failure`:** looks into a failed check on a PR, so the result reaches you as a session in the Code tab, under **Routines** in the sidebar. Its skill is [`.claude/skills/ci-failure/`](../.claude/skills/ci-failure/SKILL.md).
+
+To add a routine, go to https://claude.ai/code/routines → **New routine**. The form adds a **Pull request: Opened** GitHub trigger by default. Remove it with ✕, then add the trigger the routine needs with **+ Add another trigger**. To try a routine that reads the `text` it's sent, call its API trigger with `curl`, as the trigger's sample command shows. **Run now** has no text field.

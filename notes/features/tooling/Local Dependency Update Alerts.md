@@ -1,12 +1,11 @@
 ---
 type: 
 status: idea
-blocked-by:
-  - "[[CI Failure Sessions]]"
+blocked-by: []
 confirmed: 2026-09-28
 ---
 # Where It Stands
-Blocked until [[CI Failure Sessions]] lands, then /shape ^status
+Unblocked. Next: /shape ^status
 
 # Notes
 Sarah finds out about dependency updates on her own machine, from Claude, without checking GitHub or digging through her email. It's a Done When item of [[Dev Foundations]].
