@@ -45,7 +45,7 @@ Constraints from notes, code, Sarah's comments and earlier answers, one line eac
 ### Options
 Two to four. For each one:
 - **What it means:** one or two sentences.
-- **Trade-offs:** for and against, one line each.
+- **Trade-offs:** for and against, one line each. Weigh a security risk as AGENTS.md describes under "Security risks".
 - **What it touches:** notes (and their sections) and code that would change.
 - **What it implies:** new stories, follow-up decisions, or other decisions it settles along the way.
 
