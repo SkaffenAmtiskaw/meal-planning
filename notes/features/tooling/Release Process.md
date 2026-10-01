@@ -22,5 +22,7 @@ Pieces a release might include, raised while designing goals (none decided):
 
 Found 2026-09-28 while running `/tooling` on the goals and Roadmap priority items from [[Agent Workflow Changes]].
 
+[Sarah] - I added a note to [[Agent Workflow Changes]] about feature branches. If I decide to go that direction this will probably impact this story, so that might need to be decided first (or pulled into this story and all the decisions made first).
+
 # Questions
 

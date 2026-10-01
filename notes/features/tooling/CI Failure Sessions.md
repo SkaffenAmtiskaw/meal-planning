@@ -5,7 +5,7 @@ blocked-by: []
 confirmed: 2026-09-30
 ---
 # Where It Stands
-In progress. Next: implement Step 3 ^status
+In progress. Next: implement Step 4 ^status
 
 # Purpose
 Make a failed check on a PR start a Claude Code cloud session. The session reproduces the failure, then either fixes it through a PR or tells a flake from a real failure, so the result reaches Sarah in the Code tab of the Claude desktop app instead of on GitHub. This story also does the one-time setup and writes the convention every later source of results shares: the Claude GitHub App, the cloud environment, the `routine-sessions` skill and the routine parts of `docs/ci.md`. Those later sources are [[E2E Tests in CI]], [[Sentry Logging and Root Cause Analysis]], [[Local Dependency Update Alerts]] and the watch-tools line under [[Dev Foundations]]. Split from [[CI Checks]] on 2026-09-30.
@@ -202,9 +202,18 @@ Decisions Sarah made 2026-09-30 while planning, cited in the steps below:
 - `.claude/skills/ci-failure/SKILL.md` - runs the failed scripts and fixes a failure that reproduces
 
 **Acceptance:**
-- [ ] Cut a branch from `develop`, add an error only types catch to a `src/` file (for example, change an existing variable's type annotation to one its value doesn't match), commit with `git commit --no-verify` (the pre-commit build would block it), push, and open a PR into `develop`. See `type-check` and `build` fail, and `lint` and `unit-tests` pass. See one session in the Code tab that ran `pnpm check:types` and `pnpm build`, both failed, committed a fix to a `claude/` branch, reran them passing, and opened a PR from that branch into your branch. Its summary names the type error as the cause and links the PR.
-- [ ] In that session's transcript, see the pre-commit hooks run on its fix commit.
-- [ ] Merge the fix PR on GitHub. See the original PR's checks run again and all four pass. Close the PR and delete both branches.
+- [x] Cut a branch from `develop`, add an error only types catch to a `src/` file (for example, change an existing variable's type annotation to one its value doesn't match), commit with `git commit --no-verify` (the pre-commit build would block it), push, and open a PR into `develop`. See `type-check` and `build` fail, and `lint` and `unit-tests` pass. See one session in the Code tab that ran `pnpm check:types` and `pnpm build`, both failed, committed a fix to a `claude/` branch, reran them passing, and opened a PR from that branch into your branch. Its summary names the type error as the cause and links the PR.
+- [x] In that session's transcript, see the pre-commit hooks run on its fix commit.
+- [x] Merge the fix PR on GitHub. See the original PR's checks run again and all four pass. Close the PR and delete both branches.
+
+**Status:** ✅ Complete
+
+**As built:**
+- **Hooks:** the skill always runs `pnpm lefthook install` after `pnpm install`, rather than only if the check showed it was needed, since it affects only this routine (Sarah's call). Each session starts from a fresh clone, and lefthook's postinstall skips itself when `CI` is set.
+- **The failed commit:** the session checks out the commit the failed run tested (`gh run view <run ID> --json headSha`), not the head branch's latest, and cuts the fix branch from the head branch's latest commit (Sarah's call). If the head has moved on and the failed scripts already pass there, it stops with a verdict and opens no PR. It reproduces on the head commit, not GitHub's merge of it into the base branch, so a failure that comes only from the merge goes to the re-run path (Sarah's call). The fetch names the branch with an explicit refspec, since the clone may hold only `develop`. `gh run view` works through the GitHub proxy.
+- **Fix branch and PR:** the branch is `claude/ci-fix-<run ID>`, unique per failed run (Sarah's call). The PR's title is "Fix <failed jobs> on <head branch>", and its body gives the cause and the fix in a line or two with links to the original PR and the failed run; Claude Code adds the session's link itself (Sarah's call).
+- **No fix:** if the session can't make the failed scripts pass, it opens no PR, pushes any partial work, and stops with what it found, what it tried and what it needs from Sarah (Sarah's call).
+- **`docs/ci.md`:** Boy Scout fix, "The Job That Starts `ci-failure`" says the session checks out the commit the failed run tested.
 
 ## Step 4: Re-run a failure that passes in the cloud
 **Idea:** A `ci-failure` session re-runs a failure that passes in the cloud once on GitHub.
