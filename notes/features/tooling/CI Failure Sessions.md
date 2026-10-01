@@ -5,7 +5,7 @@ blocked-by: []
 confirmed: 2026-09-30
 ---
 # Where It Stands
-In progress. Next: implement Step 2 ^status
+In progress. Next: implement Step 3 ^status
 
 # Purpose
 Make a failed check on a PR start a Claude Code cloud session. The session reproduces the failure, then either fixes it through a PR or tells a flake from a real failure, so the result reaches Sarah in the Code tab of the Claude desktop app instead of on GitHub. This story also does the one-time setup and writes the convention every later source of results shares: the Claude GitHub App, the cloud environment, the `routine-sessions` skill and the routine parts of `docs/ci.md`. Those later sources are [[E2E Tests in CI]], [[Sentry Logging and Root Cause Analysis]], [[Local Dependency Update Alerts]] and the watch-tools line under [[Dev Foundations]]. Split from [[CI Checks]] on 2026-09-30.
@@ -175,11 +175,17 @@ Decisions Sarah made 2026-09-30 while planning, cited in the steps below:
 - `docs/ci.md` - documents the start job, how routines start and the secrets
 
 **Acceptance:**
-- [ ] Cut a branch from `develop`, break the formatting of one line in a `src/` file, commit with `git commit --no-verify` (the pre-commit hook would fix the formatting), push, and open a PR into `develop`. See `lint` fail, `start-ci-failure` pass, and one new session in the Code tab whose placeholder summary names this PR, its head branch, this run and `lint`.
-- [ ] On that PR, click **Re-run failed jobs** on GitHub. See `lint` fail again, `start-ci-failure` skipped, and no new session.
-- [ ] Fix the formatting and push to the same branch. See all four checks pass, `start-ci-failure` skipped, and no new session. Close the PR and delete the branch.
-- [ ] Cut a branch named `claude/ci-test` from `develop` with the same formatting break (committed with `--no-verify`), push, and open a PR into `develop`. See `lint` fail, `start-ci-failure` skipped, and no new session. Close the PR and delete the branch.
-- [ ] Break the URL secret for a moment: on github.com, **Settings** → **Secrets and variables** → **Actions**, click the pencil on `ROUTINE_CI_FAILURE_URL`, and paste the routine's URL from its API trigger on claude.ai with the last character removed. Repeat the first check on a new branch. See `start-ci-failure` fail on the PR and no new session. Then edit the secret again and paste the whole URL. Close the PR and delete the branch.
+- [x] Cut a branch from `develop`, break the formatting of one line in a `src/` file, commit with `git commit --no-verify` (the pre-commit hook would fix the formatting), push, and open a PR into `develop`. See `lint` fail, `start-ci-failure` pass, and one new session in the Code tab whose placeholder summary names this PR, its head branch, this run and `lint`.
+- [x] On that PR, click **Re-run failed jobs** on GitHub. See `lint` fail again, `start-ci-failure` skipped, and no new session.
+- [x] Fix the formatting and push to the same branch. See all four checks pass, `start-ci-failure` skipped, and no new session. Close the PR and delete the branch.
+- [x] Cut a branch named `claude/ci-test` from `develop` with the same formatting break (committed with `--no-verify`), push, and open a PR into `develop`. See `lint` fail, `start-ci-failure` skipped, and no new session. Close the PR and delete the branch.
+
+**Status:** ✅ Complete
+
+**As built:**
+- **The job's log:** `curl --fail-with-body` prints `/fire`'s response, so the log shows the new session's link on success and the error on failure (Sarah's choice, since the error type is what she'd need to fix the plumbing).
+- **The plumbing failure:** Sarah dropped the check that broke the URL secret. Running the job's script against a local server that returned 401 already showed curl printing the error and exiting 22, which fails the job.
+- **`docs/ci.md`:** Boy Scout fixes, since a fifth job made "four jobs" wrong: "Checks on PRs" and the ruleset record say "check jobs", the ruleset record says `start-ci-failure` isn't required, and the new section says a new check job also goes in `start-ci-failure`'s `needs`.
 
 ## Step 3: Fix a failure that reproduces
 **Idea:** A `ci-failure` session fixes a failure that reproduces in the cloud.

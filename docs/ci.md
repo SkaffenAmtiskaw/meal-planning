@@ -38,7 +38,7 @@ Each check job checks out the code, installs Node and pnpm from `mise.toml`, run
 The workflow's token can only read the repo (`permissions: contents: read`), since no check needs more. A new push to a PR cancels that PR's run still in progress, so the PR shows only the newest commit's results.
 
 ## The Job That Starts `ci-failure`
-A fifth job, `start-ci-failure`, runs after the four checks. When at least one of them failed, it starts the [`ci-failure` routine](#routines) by calling its `/fire` endpoint once (see "Starting a Routine"). The session that starts checks out the PR's head branch, reruns the failed checks and either fixes the failure or tells a flake from a real failure.
+A fifth job, `start-ci-failure`, runs after the four checks. When at least one of them failed, it starts the [`ci-failure` routine](#routines) by calling its `/fire` endpoint once (see "Starting a Routine"). The session that starts checks out the commit the failed run tested on the PR's head branch, reruns the failed checks and either fixes the failure or tells a flake from a real failure.
 
 It fires only when all of these hold:
 - at least one check failed, and the run wasn't cancelled. A new push that cancels a run starts nothing, even if a check had already failed, since the new push's run gets its own chance.
