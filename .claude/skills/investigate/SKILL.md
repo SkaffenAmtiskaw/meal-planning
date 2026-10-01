@@ -27,7 +27,7 @@ This is planning only. Don't change code. A hook blocks edits outside `notes/` a
 - **Her comments may already answer it.** If one of Sarah's comments already answers a question, show it to her and confirm it's still her answer.
 
 ## 1. Read the note
-Find the note in `notes/features/` and read all of it. If Where It Stands has a retype line, follow the `retyping-a-note` skill's "After a retype".
+Find the note in `notes/features/` and read all of it. If the Inbox has a retype line, follow the `retyping-a-note` skill's "After a retype".
 
 It should be `type: bug` or `type: cleanup`. If it's another type, check whether that type fits the work. If it doesn't, offer to retype the note, as AGENTS.md describes under "Editing notes". If it does, tell Sarah which skill the note needs, and stop. Then check `status`:
 - **`idea`:** a first investigation.

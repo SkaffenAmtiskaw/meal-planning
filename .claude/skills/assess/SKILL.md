@@ -21,7 +21,7 @@ So the order here is deliberate. First decide what *should* exist. Then judge th
 This is planning only. Don't change code. A hook blocks edits outside `notes/` and `.scratch/`.
 
 ## 1. Read the note
-Find the note in `notes/features/`. If it's missing, tell Sarah and stop. If Where It Stands has a retype line, follow the `retyping-a-note` skill's "After a retype".
+Find the note in `notes/features/`. If it's missing, tell Sarah and stop. If the Inbox has a retype line, follow the `retyping-a-note` skill's "After a retype".
 
 Check that it's ready for this skill:
 - **`type: feature`.** If it's another type, check whether that type fits the work. If it doesn't, offer to retype the note, as AGENTS.md describes under "Editing notes". If it does, tell Sarah which skill the note needs, and stop.

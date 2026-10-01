@@ -125,7 +125,7 @@ A step that claims a Symptom needs an acceptance check that follows the original
 Before you save the draft, triage the out-of-scope list as AGENTS.md describes under "Out-of-scope work". An item Sarah pulls in becomes its own step, with **Source:** "Pulled in by Sarah YYYY-MM-DD: <the item>". It counts as source material for Coverage, even though the approach doesn't name it.
 
 If the item needs a new piece or a decision the approach doesn't make:
-- **A new piece in a feature or infra story:** this skill can't design it. Once Sarah agrees, add it under Where It Stands as work for the redesign, set the `^status` line to "Next: /assess (re-assessment)" for a feature or "Next: /infra-design (revision)" for infra, and stop.
+- **A new piece in a feature or infra story:** this skill can't design it. Once Sarah agrees, add it to the Inbox as work for the redesign, set the `^status` line to "Next: /assess (re-assessment)" for a feature or "Next: /infra-design (revision)" for infra, and stop.
 - **A decision:** ask Sarah for it. If she answers, the item becomes a step as above, with her answer in its **Source:** ("Pulled in by Sarah YYYY-MM-DD: <the item>. Sarah decided: <answer>"). If her answer needs a new piece, it's the case above. Only if she wants to think it over or research it, add it to Open Decisions as a question, with a `decision needed` entry in `blocked-by` if the note doesn't have one, set the `^status` line to "Next: /decide", and stop.
 
 Save the draft to `.scratch/<note name> - plan.md`.

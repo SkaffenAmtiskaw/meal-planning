@@ -4,9 +4,13 @@ confirmed: {{date:YYYY-MM-DD}}
 ---
 # Where It Stands
 
-%% The line ending in ` ^status` says what this hub needs next and nothing else: "Next: /decide" while it has open decisions, "Next: /close" once its last child story has closed, otherwise "Next: its child stories". Don't describe the area here; Purpose does that. The Roadmap shows a hub's line only while it needs `/decide` or `/close`, and embeds this line with `![[<note>#^status]]`, so keep the ` ^status` ID on it. Add detail below it only when needed. %%
+%% The line ending in ` ^status` says what this hub needs next and nothing else: "Next: /decide" while it has open decisions, "Next: /close" once its last child story has closed, otherwise "Next: its child stories". Don't describe the area here; Purpose does that. The Roadmap shows a hub's line only while it needs `/decide` or `/close`, and embeds this line with `![[<note>#^status]]`, so keep the ` ^status` ID on it. Below it goes a short summary of what work has been done and what remains, and nothing else. Items for a later step go in the Inbox. %%
 
 No direction yet. ^status
+
+# Inbox
+
+%% Items for a later step to act on that have no section of their own, added by Sarah or by a session or agent. Each skill that works on the note acts on the items that are its step's, then deletes them, as AGENTS.md describes under "Editing notes". %%
 
 # Purpose
 %% What area of the app this hub covers, and why the work is spread across several stories. A hub holds shared design and decisions, not priority: goals rank the work, and each child story's Roadmap line shows which goal it serves. A hub is not a story and is never implemented directly. %%

@@ -26,7 +26,7 @@ This is planning only. Don't change code. A hook blocks edits outside `notes/` a
 - **Build from her decisions.** Build the rules from her comments and the **Decided** lines under Open Decisions.
 
 ## 1. Read the note
-Find the note in `notes/features/` and read all of it. Read the notes it links to when the Rules, Root Cause or Open Decisions depend on them. If Where It Stands has a retype line, follow the `retyping-a-note` skill's "After a retype".
+Find the note in `notes/features/` and read all of it. Read the notes it links to when the Rules, Root Cause or Open Decisions depend on them. If the Inbox has a retype line, follow the `retyping-a-note` skill's "After a retype".
 
 Check that it's ready for this skill:
 - **`type: pattern` and `status: idea`.** If `type` is blank, the next step is `/shape`. If it's another type, check whether that type fits the work. If it doesn't, offer to retype the note, as AGENTS.md describes under "Editing notes". If it does, tell Sarah which skill the note needs, and stop.

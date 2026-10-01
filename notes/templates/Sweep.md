@@ -6,9 +6,13 @@ confirmed: {{date:YYYY-MM-DD}}
 ---
 # Where It Stands
 
-%% The line ending in ` ^status` is the sweep's status and nothing else, e.g. "Collecting items until you kick it off" or, once /kickoff has run, "Kicked off. Next: /check-drift". The Roadmap embeds it with `![[<note>#^status]]`, so keep the ` ^status` ID on it. %%
+%% The line ending in ` ^status` is the sweep's status and nothing else, e.g. "Collecting items until you kick it off" or, once /kickoff has run, "Kicked off. Next: /check-drift". The Roadmap embeds it with `![[<note>#^status]]`, so keep the ` ^status` ID on it. Below it goes a short summary of what work has been done and what remains, and nothing else. Items for a later step go in the Inbox. %%
 
 Collecting items until you kick it off. ^status
+
+# Inbox
+
+%% Items for a later step to act on that have no section of their own, added by Sarah or by a session or agent. Each skill that works on the note acts on the items that are its step's, then deletes them, as AGENTS.md describes under "Editing notes". %%
 
 # Purpose
 %% What this sweep collects and why it's handled as one batch, in a sentence or two. %%

@@ -35,10 +35,16 @@ Any change to a note in `notes/` follows these rules:
   - **The build differs from a step:** add an **As built:** note under the step.
   - **Only a name or path changed,** and the plan still works as written, such as a moved file or a renamed function: correct the name or path in place. Sarah approved the intent, not the path.
   - **It changes nothing about the work,** such as a wrong detail in a finding: if it's a line an agent wrote in a note you're working on, and not plan text, correct it. Otherwise, leave it.
-- **The `^status` line** (the line ending in ` ^status` under Where It Stands) says what work the story needs next or what it's waiting on, and nothing else. Never describe the story there. The Roadmap embeds it so Sarah can scan what each story needs.
-  - Whoever moves a story forward updates it. When the next step is settled, write it without asking and mention it in your summary. When there's a real choice, such as what the story is blocked on, show Sarah the line and wait for her approval.
-  - Every note except a goal or standing goal starts with Where It Stands, right after the frontmatter, in its template's format. If a note has none, add it.
-  - The story's line in `notes/Roadmap.md` embeds it after the link: `[[Note]] ![[Note#^status]]`. Add the embed if it's missing.
+- **Where It Stands** is the first section of every note except a goal or standing goal, right after the frontmatter, in its template's format. If a note has none, add it. It's a summary Sarah can read at a glance, and it holds only two things:
+  - **The `^status` line** (the line ending in ` ^status`) says what work the story needs next or what it's waiting on, and nothing else. Never describe the story there. The story's line in `notes/Roadmap.md` embeds it after the link, `[[Note]] ![[Note#^status]]`, so Sarah can scan what each story needs. Add the embed if it's missing.
+  - **Below it, a short summary** of what work has been done and what remains, in a few sentences. It doesn't describe the story, because Purpose does that.
+
+  Whoever moves a story forward updates both. When the next step is settled, write them without asking and mention it in your summary. When there's a real choice, such as what the story is blocked on, show Sarah the line and wait for her approval.
+
+  In an older note, Where It Stands may hold other things, such as background, findings or a list of questions. When you work on the note, rather than just editing it in passing, move each one where it belongs: a question for a later step to the top of the section that step writes, and anything else to the Inbox.
+- **The Inbox** comes right after Where It Stands in every story and hub. It holds items for a later step to act on that have no section of their own. Sarah adds items there when something occurs to her. Sessions and agents add things like background from another story, a new piece for a redesign or a retype line. A question for a later step isn't an Inbox item: it goes at the top of the section that step writes, as `/shape` describes.
+  - **Adding an item:** say what it is and where it came from. If the note has no Inbox, add one right after Where It Stands.
+  - **Working on a note:** read its Inbox, and decide which items are your step's to act on. Act on each one. Then, if it's one of Sarah's lines, handle it as "Sarah's comments" above describes. Otherwise, delete it. Leave items that belong to a later step.
 - **A note with the wrong type.** If a note's type doesn't fit its work, tell Sarah which type fits and why, and offer to retype it. If she agrees, retype it as the `retyping-a-note` skill describes, then stop.
 - **Roadmap order is Sarah's call.** Never reorder `notes/Roadmap.md`. Ask her where a new line goes. If the notes or the Roadmap make the spot clear, suggest it and say why. Otherwise, ask without a suggestion. Never guess one.
 - **A blocker outside the queue.** If a story in Next gets a story in its `blocked-by` that isn't in Now or Next, propose pulling that story into Next directly ahead of it, with the same markers, and say why.
