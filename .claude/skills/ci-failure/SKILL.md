@@ -7,8 +7,6 @@ Look into the failed check described in the `routine-fire-payload` block.
 
 This session is a routine's session, so it follows the `routine-sessions` skill: read it first. After the checkout in step 2, `docs/ci.md` describes the checks on that commit, such as which script each job runs. Read that commit's copy, since it matches the `checks.yml` the failed run used.
 
-Never load the `running-the-app` skill, or anything that uses it: the `bug-reproducer` subagent, `/implement`'s first pass or bug steps, or `/investigate`. It starts the dev server and reads a file that exists only on Sarah's machine.
-
 ## 1. Read the payload
 The block names the failed run in this shape:
 
@@ -45,7 +43,14 @@ Run each failed job's script once, with `pnpm <script>`, and keep each one's out
 ## 4. Fix a failure that reproduces
 Diagnose the cause from the scripts' output and the code. Fix only what makes the failed scripts fail.
 
-If step 5 sent you here, run each failed job's script the way you reproduced the failure there, such as with the same variable set, everywhere this step runs it.
+If step 5 sent you here, run each failed job's script the way you reproduced the failure there, such as with the same variable set, everywhere this step runs it. If you reproduced it by merging into the base branch, the fix branch never holds that merge. Each time this step runs the scripts, run them on a throwaway merge of the fix branch instead, then go back to it:
+
+```bash
+git checkout --detach "claude/ci-fix-<run ID>"
+git merge --no-edit "origin/<base branch>"
+# run each failed job's script
+git checkout "claude/ci-fix-<run ID>"
+```
 
 Cut the fix branch from the head branch's latest commit, named after the failed run:
 
@@ -122,7 +127,7 @@ gh run view "<run ID>" --attempt 2 --log-failed
 Look for what differs between this session and the runner, such as:
 - the tool versions the logs show, against `node --version` and `pnpm --version` here
 - the variables the runner sets, such as `CI` and `GITHUB_ACTIONS`
-- the commit tested: GitHub ran the checks on a merge of the failed commit into the PR's base branch (`gh pr view "<PR number>" --json baseRefName`). If you merge it here to reproduce the failure, never push the merge.
+- the commit tested: GitHub ran the checks on a merge of the failed commit into the PR's base branch (`gh pr view "<PR number>" --json baseRefName`). If you merge it here to reproduce the failure, fetch the base branch the way step 2 fetches the head branch, merge in a detached checkout, and never push the merge.
 
 When you find a likely cause, reproduce it here before you fix anything: recreate that difference, such as by setting the variable, and run each failed job's script again.
 - **The failure shows up:** go to step 4.

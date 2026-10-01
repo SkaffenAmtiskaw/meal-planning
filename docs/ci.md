@@ -16,7 +16,7 @@ A routine's cloud session gets its tools the same way: the cloud environment's s
 
 No workflow or setup script names a Node or pnpm version of its own, or uses `actions/setup-node` or the cloud image's Node.
 
-CI and the cloud environment install only `node` and `pnpm` (the action's `install_args`, and the setup script's `mise install`), since they don't need the other tools in `mise.toml`. If a workflow needs another tool, add it to `mise.toml` and to that workflow's `install_args`, and to the setup script if routine sessions need it too.
+CI and the cloud environment install only `node` and `pnpm` (the action's `install_args`, and the setup script's `mise install`), since they don't need the other tools in `mise.toml`. If a workflow needs another tool, add it to `mise.toml` and to that workflow's `install_args`, and to the setup script if routine sessions need it too. If they don't, add it to `MISE_DISABLE_TOOLS` in the setup script and in the file the script writes, as `rtk` is, or mise may look up its latest version on GitHub and get a 403.
 
 # Checks on PRs
 `checks.yml` runs on every PR, whatever its base branch. It has four check jobs:
@@ -48,13 +48,7 @@ It fires only when all of these hold:
 
 Otherwise the job shows as skipped. It `needs` each check job, so when you add a check job, add it there too, or its failure starts nothing.
 
-The `text` it sends names only identifiers, in this shape, which the `ci-failure` skill reads:
-
-```text
-PR #<number>, head branch <branch>, run <run ID> <run URL>, failed jobs: <job>, <job>
-```
-
-It sends no logs: the session reads the failure itself from the branch and the run. The PR's values reach the script only through the step's `env:`, and `jq` builds the JSON body, since the repo is public and a branch name is untrusted input ([GitHub's security guide](https://docs.github.com/en/actions/reference/security/secure-use)).
+The `text` it sends names only identifiers: the PR number, its head branch, the run's ID and URL, and the failed jobs. Its exact shape is in step 1 of the [`ci-failure` skill](../.claude/skills/ci-failure/SKILL.md), which reads it, so a change to the shape changes the job and the skill together. It sends no logs: the session reads the failure itself from the branch and the run. The PR's values reach the script only through the step's `env:`, and `jq` builds the JSON body, since the repo is public and a branch name is untrusted input ([GitHub's security guide](https://docs.github.com/en/actions/reference/security/secure-use)).
 
 **When the call fails** (a wrong secret, the API down, or the routine's limit of 30 calls an hour), `start-ci-failure` fails on the PR, next to the failed check, and no session starts. Its log shows the error `/fire` returned, such as a 401 for a wrong token. On success, the log shows the new session's link. The job never retries, since `/fire` doesn't dedupe calls and a retry could start two sessions.
 
@@ -128,14 +122,7 @@ NEXT_PUBLIC_GOOGLE_CLIENT_ID=ci-google-client-id
 CLAUDE_ENV_FILE=/opt/mise-session-env.sh
 ```
 
-**Setup script:** it runs before Claude Code starts, and only the files it writes carry over into sessions. It:
-1. installs mise from npm, since mise's own download hosts aren't on the Trusted list
-2. turns off mise's `aqua` backend, so mise installs pnpm from npm. The default backend downloads pnpm from GitHub releases, and the GitHub proxy only serves release files for the repos attached to the session. Installing from npm, mise skips a package's install scripts unless they're approved, and pnpm's puts its native binary in place, so `mise.toml` approves it (`allow_builds`).
-3. runs `mise install node pnpm` in the cloned repo
-4. writes the `CLAUDE_ENV_FILE` file, which puts mise's shims ahead of the image's Node on `PATH`, and keeps the two mise settings the script uses: the `aqua` backend off, and `rtk` ignored, since sessions need only node and pnpm and mise would otherwise look up `rtk`'s latest version on GitHub and get a 403
-5. runs `pnpm install --frozen-lockfile`, so the snapshot holds a warm pnpm store. Each session installs again after it checks out its branch, so a failure here doesn't fail the session.
-
-The script fails the session if it can't find the repo, rather than let it fall back to the image's Node.
+**Setup script:** it runs before Claude Code starts, and only the files it writes carry over into sessions. Its comments say why each part is there. One reason lives outside it: with the `aqua` backend off, mise installs pnpm from npm, and skips a package's install scripts unless they're approved. pnpm's install script puts its native binary in place, so `mise.toml` approves it (`allow_builds`).
 
 ```bash
 #!/bin/bash

@@ -1,11 +1,11 @@
 ---
 type: infra
-status: in-review
+status: done
 blocked-by: []
 confirmed: 2026-09-30
 ---
 # Where It Stands
-All steps implemented. Next: /final-review ^status
+Reviewed. Next: /close ^status
 
 # Purpose
 Make a failed check on a PR start a Claude Code cloud session. The session reproduces the failure, then either fixes it through a PR or tells a flake from a real failure, so the result reaches Sarah in the Code tab of the Claude desktop app instead of on GitHub. This story also does the one-time setup and writes the convention every later source of results shares: the Claude GitHub App, the cloud environment, the `routine-sessions` skill and the routine parts of `docs/ci.md`. Those later sources are [[E2E Tests in CI]], [[Sentry Logging and Root Cause Analysis]], [[Local Dependency Update Alerts]] and the watch-tools line under [[Dev Foundations]]. Split from [[CI Checks]] on 2026-09-30.

@@ -21,7 +21,9 @@ A routine's instructions live in a checked-in skill, `.claude/skills/<name>/SKIL
 Either way, the session ends by waiting for Sarah's input in the Code tab, and never assumes she has seen it. A session can't remove itself, so one that finds nothing still waits there.
 
 # Branches
-The session commits and pushes only to branches whose names start with `claude/`. It never pushes to `develop`, `main` or any other branch, and never merges one branch into another. A routine's skill never tells it to. Pushes to `claude/` branches are always accepted, while a push to any other branch is checked first and can be rejected.
+The session commits and pushes only to branches whose names start with `claude/`. It never pushes to `develop`, `main` or any other branch, and never merges one branch into another on GitHub, such as by merging a pull request. A routine's skill never tells it to. Pushes to `claude/` branches are always accepted, while a push to any other branch is checked first and can be rejected.
+
+A merge in a local checkout, such as one that recreates the merge GitHub's checks ran on, is fine as long as it's never pushed.
 
 # What the Session Can Use
 The session sees the repo as Sarah last pushed it, plus its cloud environment's variables and setup script. The routine's skill, and every skill or subagent it loads or follows (directly or through another), relies on nothing that exists only on Sarah's machine:
@@ -30,7 +32,7 @@ The session sees the repo as Sarah last pushed it, plus its cloud environment's 
 - no work she hasn't pushed
 - nothing that reads such files on its own, such as the dev server loading `.env.local`
 
-For example, the `running-the-app` skill starts the dev server and reads the test login from `.opencode/secrets/credentials.md`, so a routine's skill never loads it, or any skill or subagent that uses it.
+For example, the `running-the-app` skill starts the dev server and reads the test login from `.opencode/secrets/credentials.md`, so a routine's skill never loads it, or anything that uses it: the `bug-reproducer` subagent, `/implement`'s first pass or bug steps, or `/investigate`.
 
 A value the session needs that isn't in the repo comes from a cloud environment variable, named in the routine's `routine.md`.
 
