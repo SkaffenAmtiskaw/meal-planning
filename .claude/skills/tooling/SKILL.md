@@ -8,14 +8,14 @@ disable-model-invocation: true
 Make this workflow or tooling change: **$ARGUMENTS**
 
 ## Why this skill works the way it does
-The agent workflow is being overhauled, and tooling changes skip the story lifecycle (`/shape`, `/decide`, `/plan-steps`, `/implement`, `/review`, `/close`). That lifecycle exists so product code is built and reviewed in small pieces. A change to a skill or a convention is small enough to understand whole, and Sarah reviews it directly. Workflow notes (`type: workflow`, usually in `notes/features/tooling/`) are only a place to keep track of ideas until she gets to them. They have no `status`: `/tooling` does the change and deletes the note. A workflow note with a What Belongs Here section is different: it collects items over time, like Docs Updates. `/tooling` does one of its items per session, or a group of logically related items when Sarah agrees, and the note stays.
+The agent workflow is being overhauled, and tooling changes skip the story lifecycle (`/shape`, `/decide`, `/plan-steps`, `/implement`, `/review`, `/close`). That lifecycle exists so product code is built and reviewed in small pieces. A change to a skill or a convention is small enough to understand whole, and Sarah reviews it directly. A task too big for that, or one that isn't a tooling change at all, is a story, even when it sits in a workflow note, so step 1 checks for that and spins it off. Workflow notes (`type: workflow`, usually in `notes/features/tooling/`) are only a place to keep track of ideas until she gets to them. They have no `status`: `/tooling` does the change and deletes the note. A workflow note with a What Belongs Here section is different: it collects items over time, like Docs Updates. `/tooling` does one of its items per session, or a group of logically related items when Sarah agrees, and the note stays.
 
 So one session does it all: find out what Sarah wants, make the change everywhere it reaches, then leave the notes matching what now exists. One change per session. When it's done, stop.
 
 Sarah decides what changes. Your job is to understand it fully and carry it through, not to redesign it. If you think another approach would work better, say so once with the reason, then do what she decides.
 
 ## 1. Find out what's changing
-This skill is for changes to how the app is built (skills, subagents, hooks, AGENTS.md, Note Conventions, templates, docs, tooling config), never to what the app does. Building new infrastructure, such as CI, a test setup or a hosted service, is an infra story, which goes through the story lifecycle. Check both first.
+This skill is for changes to how the app is built (skills, subagents, hooks, AGENTS.md, Note Conventions, templates, docs or tooling config), never to what the app does. App code changed only as a side effect, such as files reformatted by a new lint rule, is fine.
 
 The argument is one of:
 - **A note name:** find it in `notes/` and check its `type`:
@@ -24,9 +24,28 @@ The argument is one of:
   - blank, in `notes/features/tooling/`: a tooling note from before the workflow type existed. Ask Sarah whether it's a workflow note. If it is, give it `type: workflow`, remove its `status`, set its `^status` line to "Next: /tooling", and go on.
   - anything else: it's story work. Tell Sarah it belongs in the story lifecycle, and stop.
 - **An item in a note:** find it and read the note around it. Check the note's `type` the same way.
-- **A description:** Sarah's own words. App code changed only as a side effect, such as files reformatted by a new lint rule, is fine. If it would change what the app does for its users, or build new infrastructure, tell her it belongs in the story lifecycle, and stop. Otherwise, search `notes/` for notes and items about the same thing and tell her what you found. They may already hold details or decisions.
+- **A description:** Sarah's own words. Search `notes/` for notes and items about the same thing and tell her what you found. They may already hold details or decisions.
 
 Then read the files the change touches: the skills, agents, hooks, docs or config it names, plus Note Conventions or AGENTS.md if it changes how notes or sessions work. Read only what it touches.
+
+### Is it a story?
+Some tasks are stories, whichever note they came from. Check the change against these cases once you've read what it touches, and again in step 2 if settling it turns one up:
+- **It changes what the app does for its users.**
+- **It builds new infrastructure,** such as CI, a test setup or a hosted service.
+- **It's too big for one session,** such as a change that needs research, several decisions or a design before it can be made.
+
+If none of these applies, go on to step 2. Otherwise, tell Sarah which case applies and why, and ask whether to spin the task off into a story. If she says no, go on to step 2. If she says yes:
+1. **The note.** It becomes a blank-type idea note, and `/shape` picks its type. How depends on where it came from:
+   - **A workflow note without a What Belongs Here section:** rewrite it in place from `notes/templates/Idea.md`, so links to it keep working.
+   - **An item in a collecting note, or a description:** create the note from `notes/templates/Idea.md` in `notes/features/<area>/`, with a plain filename. If the area isn't obvious, ask Sarah which folder. Remove the item from the collecting note, and update that note's Roadmap line as the Roadmap's "How this file works" describes under "Collecting notes".
+
+   Either way, leave `type` blank, keep `status: idea`, set `confirmed` to today, and make the Where It Stands line "Next: /shape ^status". Under Notes, put the task in Sarah's wording, with her `[Sarah]` lines moved word for word, and a line saying which case made it a story and why.
+2. **Its Roadmap line.** It links to the note and embeds its status (`[[Note]] ![[Note#^status]]`). A new note gets a new line. A rewritten workflow note's line moves. Ask Sarah these one at a time:
+   - **Is it committed?**
+     - **Yes:** if the task had 🎯 goal links, those are its goals. Otherwise, check its goals as the `roadmap-placement` skill describes. Then place the line as that skill describes under "Placing a story's line", ending with its 🎯 links.
+     - **No:** the line goes in Ideas, which holds uncommitted work. If the task had 🎯 goal links, ask whether to remove them. If she says to remove them, the line goes in Ideas without them. If she says to keep them, it's committed after all, so place it as "Yes" describes.
+   - **If it's committed: does it go into Next?** If it does, ask her where in Next, as AGENTS.md describes under "Roadmap order". A line in Next needs a 🎯 link to an active goal. If none of its goals is active, ask her whether it gets 📌, and with what reason.
+3. **Stop.** Tell Sarah to run `/shape <note name>` in a new session.
 
 ## 2. Settle it with Sarah
 Ask what you need to make the change without guessing. Skip anything the note or Sarah has already answered. What often needs asking:

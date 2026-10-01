@@ -30,7 +30,11 @@ Read `notes/Note Conventions.md` first. It explains the frontmatter, the note ty
 
 If you can't find it, or more than one thing matches, ask Sarah which she means.
 
-**Workflow changes skip shaping.** If the note is already `type: workflow`, tell Sarah to run `/tooling` on it, and stop. If the idea builds new infrastructure, such as CI, a test setup or a hosted service, it's an infra story: shape it like any other story. Otherwise, if the idea changes how the app is built rather than what it does (skills, subagents, hooks, AGENTS.md, Note Conventions, templates, docs or tooling config), tell Sarah it's a workflow note. With her OK, rewrite it from `notes/templates/Workflow.md`, keeping her content under Notes, write it as in step 6, and stop. `/tooling` does the rest.
+**Workflow changes skip shaping.** Which case it is decides what to do:
+- **The note is `type: workflow`:** tell Sarah to run `/tooling` on it, and stop.
+- **`/tooling` spun it off,** as its Notes say: Sarah has already agreed it's a story, such as a workflow change too big for one session. Shape it like any other story.
+- **The idea builds new infrastructure,** such as CI, a test setup or a hosted service: it's an infra story. Shape it like any other story.
+- **The idea changes how the app is built rather than what it does** (skills, subagents, hooks, AGENTS.md, Note Conventions, templates, docs or tooling config): tell Sarah it's a workflow note. With her OK, rewrite it from `notes/templates/Workflow.md`, keeping her content under Notes, write it as in step 6, and stop. `/tooling` does the rest.
 
 ## 2. Look around, briefly
 Don't check whether the idea is still relevant, meaning whether the problem it describes still exists. Sarah running `/shape` on it means she believes it is, and she'll ask for a deeper check if she isn't sure. Whether it's worth doing is a different question, and it's covered under blocking decisions below. Look just enough to tell the options apart:

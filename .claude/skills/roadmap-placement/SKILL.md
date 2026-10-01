@@ -5,7 +5,7 @@ user-invocable: false
 ---
 
 # Checking the goals
-If Sarah already named the story's goals this session, such as when its line moved into Next as the skill started, use her answer and go on to placing the line. Otherwise, read each note in `notes/goals/`: a goal's Purpose, Done When and Out of Scope, and a standing goal's Purpose, What Belongs Here and Out of Scope. Which goals are plausible depends on the work, a story or an item:
+If Sarah already named the story's goals, use them and go on to placing the line. She has named them if she answered this session, such as when its line moved into Next as the skill started, or if its Roadmap line already sits under a goal's heading in Later or ends with 🎯 links, as when `/tooling` spun it off. Otherwise, read each note in `notes/goals/`: a goal's Purpose, Done When and Out of Scope, and a standing goal's Purpose, What Belongs Here and Out of Scope. Which goals are plausible depends on the work, a story or an item:
 - **Dev tooling or agent work:** a goal is plausible when a line in its Purpose, Done When or What Belongs Here could reasonably include the work, or when the work could make the goal's work easier. Judge that from the goal's Done When and the Roadmap lines that serve it.
 - **Otherwise:** a goal is plausible when a line in its Purpose, Done When or What Belongs Here could reasonably include the work.
 
