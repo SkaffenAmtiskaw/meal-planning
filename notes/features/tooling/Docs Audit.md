@@ -22,12 +22,14 @@ Some lines in the codebase docs talk to an agent instead of describing the code:
 
 The docs are also more prescriptive than docs written for human engineers would be. Sarah noted 2026-09-28, while `/tooling` worked through [[Docs Updates]], that she'd never have given people a rule like the 3-test-file threshold in "Creating Centralized Mocks" in `docs/unit_tests.md`; she'd have called out messy mocks in a PR. The audit judges each rule on that, and settles how docs are worded: as descriptions of the codebase, not instructions to an agent. `/tooling` says only that docs describe the codebase, not how they're worded, so the outcome may need a line there so new docs don't drift back.
 
-Agent instructions that write docs should describe what a good doc looks like, rather than carry narrow rules about particular doc sections. A pattern note's Rules, with their Checks and Enforcement, are planning material. The doc that grows from them is a guide for whoever does the work: what to do, where things go and why, with enforcement at most a closing paragraph for anyone who needs to change it. Found 2026-09-29 while implementing Step 3 of E2E Test Setup, whose Approach said "Each Rule keeps its Check"; Sarah said the bulk of a doc shouldn't focus on rules or enforcement.
+Agent instructions that write docs should describe what a good doc looks like, rather than carry narrow rules about particular doc sections. ([Sarah] - Maybe a shared skill rather than a meta document about what good doc looks like.) A pattern note's Rules, with their Checks and Enforcement, are planning material. The doc that grows from them is a guide for whoever does the work: what to do, where things go and why, with enforcement at most a closing paragraph for anyone who needs to change it. Found 2026-09-29 while implementing Step 3 of E2E Test Setup, whose Approach said "Each Rule keeps its Check"; Sarah said the bulk of a doc shouldn't focus on rules or enforcement.
 
 A good doc also reads as one piece after every change. Sarah noted 2026-09-29, in the same session, that agents tend to insert paragraphs into docs wherever they happen to fit. Whatever describes good docs should cover this: an addition means rereading the section it lands in and restructuring it, not appending text.
 
 Found 2026-09-28 while shaping [[Dev Foundations]] with `/roadmap`.
 
 [Sarah] - Also in this audit we should do a check for human-readability. If the `docs/` directory is supposed to be read by both humans and agents, we need to make sure that the organization and prose is human-friendly. We also should make sure knowledge isn't assumed. An agent might have a consistent knowledge baseline but humans don't.
+
+[Sarah] - We might need to make this the last (or one of the last) items in the [[Dev Foundations]] goal. That way most of the plumbing is decided and wired up, and this story becomes a matter of making sure it's documented, and making sure that documentation is discoverable and readable.
 
 # Questions
