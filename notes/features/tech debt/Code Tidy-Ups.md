@@ -7,6 +7,8 @@ confirmed: 2026-09-25
 # Where It Stands
 Collecting items. Next: /kickoff when you schedule it ^status
 
+# Inbox
+
 # Purpose
 Small code smells anywhere in the app. Each one is small on its own, so they're collected here and handled in one sweep rather than as separate Roadmap lines.
 
@@ -18,7 +20,6 @@ Tidy-ups to app code that change nothing a user can see or do. Test-only fixes g
 # Items
 *Items are added as they're found. Re-check each one before planning.*
 
-- [ ] `src/app/[planner]/calendar/_components/ListView/_utils/getListDayRange.ts:12` reads `DateTime.now()` itself, so the `today` prop that `ListView` accepts (`ListView.tsx:29, 41`) never reaches the day window. Found by reading code during the [[Unified Date Picker Component]] review, 2026-09-25. 🎯 [[Calendar Page]]
 - [ ] `src/app/[planner]/calendar/_components/ListView/_components/DayRow.module.css` L45-77 hold `ListViewAddMealTrigger`'s styles (`.addButton`, `.ghostRow`). `ListViewAddMealTrigger.tsx:6` imports this module, so one component's styles live in another's file. `.ghostRow` also hard-codes `border-radius: 8px` instead of the theme radius. Found by reading code during the [[Unified Date Picker Component]] review, 2026-09-25. 🎯 [[App Health]]
 - [ ] `src/_components/Calendar/CalendarProvider.tsx` L37-43 wrap setters that are already stable, and the context value (L62) isn't memoized. Found by reading code during the [[Unified Date Picker Component]] review, 2026-09-25. 🎯 [[App Health]]
 - [ ] `src/app/[planner]/calendar/_components/MobileListViewPlaceholder/MobileListViewPlaceholder.tsx:1` has `'use client'` with no hooks or event handlers. [[Mobile List View]] removes the placeholder, so this may resolve itself. Found by reading code during the [[Unified Date Picker Component]] review, 2026-09-25. 🎯 [[App Health]]
@@ -38,4 +39,3 @@ Tidy-ups to app code that change nothing a user can see or do. Test-only fixes g
 - [ ] Sending a planner invite, and the app shell header, navbar and inputs, look and work as before.
 
 # Implementation
-%% Empty while collecting. Once the sweep is kicked off and /check-drift has run, /plan-steps writes the steps there. %%

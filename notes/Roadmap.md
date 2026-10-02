@@ -21,7 +21,7 @@
 - Each line with a note, except a goal's, embeds that note's status line from Where It Stands after the link, e.g. `[[Stale Data Issues]] ![[Stale Data Issues#^status]]`. It shows only what the story needs next, the next skill or a link to what blocks it, not what the story is. Edit it in the note, not here.
 - **Collecting notes** gather items until they're handled together: sweeps (`type: sweep`) for small, decided fixes that share a group, such as [[Unit Test Tidy-Ups]]; roundups (`type: roundup`) for issues on a broad topic that still need decisions, such as [[Style Decisions]]; and collecting workflow notes for tooling and agent changes, such as [[Agent Workflow Changes]]. An item that fits one goes there, not onto its own line here. When several related items sit here as separate lines and none covers them, flag to Sarah that they could become a new one. Never create one without her.
 	- **Goals take items, not notes.** A collecting note keeps getting new items, so it never finishes. A goal holds only the items that serve it, and it can ship once they're done. An item serves a goal only when Sarah says so, and then it ends with that goal's 🎯 link. A new item's goals are checked when it's added, as AGENTS.md describes under "Editing notes".
-	- **The note's line** ends with a 🎯 link for each goal that one of its items serves. In Later, it sits in Unaffiliated, never under a goal's heading. When an item is done, moved or dropped, the line loses that item's links unless another item still carries them. If that leaves a line in Next with no 🎯 link to an active goal and no 🚨 or 📌, move it to Unaffiliated in Later.
+	- **The note's line** carries no 🎯 links and always sits in Unaffiliated in Later. Once a goal is active, `/roadmap` kicks off the items that serve it into a dated copy, `<note> YYYY-MM-DD`. The copy's line carries its items' 🎯 links and sits under one of their goals' headings in Later, or in Next once Sarah moves it there.
 - *(was high)* etc. is the item's priority under the old High / Medium / Low layout, kept for reference while the queue is being ordered. *(was bugfix)* means it was in the old "Bugfixes/User Issues/Tech Debt" section.
 
 # Goals
@@ -39,18 +39,20 @@
 2. [[Local Dependency Update Alerts]] ![[Local Dependency Update Alerts#^status]] 🎯 [[Dev Foundations]]
 3. [[Branching and Releases]] ![[Branching and Releases#^status]] 🎯 [[Dev Foundations]]
 4. [[E2E Tests in CI]] ![[E2E Tests in CI#^status]] 🎯 [[Dev Foundations]]
-5. [[Dev Tooling Tidy-Ups]] ![[Dev Tooling Tidy-Ups#^status]] 🎯 [[Dev Foundations]]
-6. [[Finish OpenCode Migration]] ![[Finish OpenCode Migration#^status]] 🎯 [[Dev Foundations]]
-7. [[Docs Audit]] ![[Docs Audit#^status]] 🎯 [[Dev Foundations]]
-8. [[Calendar and Recipes Data Refresh]] ![[Calendar and Recipes Data Refresh#^status]] - ready. Fixes both stale-data symptoms; unblocks [[Add Meal Changes (Saved Recipes)]] and [[Mobile List View]]. *(was bugfix)* 🎯 [[Calendar Page]] 🎯 [[App Health]]
-9. [[Settings Data Refresh]] ![[Settings Data Refresh#^status]] - spec. Waiting on [[Calendar and Recipes Data Refresh]]. 🎯 [[Calendar Page]] 🎯 [[App Health]]
-10. [[Server-Only Code Behind Barrels]] ![[Server-Only Code Behind Barrels#^status]] 🎯 [[Calendar Page]] 🎯 [[App Health]]
-11. [[Server-Only Creation and Pure Reads]] ![[Server-Only Creation and Pure Reads#^status]] - spec. Waiting on [[Server-Only Code Behind Barrels]]. 🎯 [[Calendar Page]] 🎯 [[App Health]] 🎯 [[Bugs]]
-12. [[Data Rules Enforcement]] ![[Data Rules Enforcement#^status]] - spec. Waiting on [[Calendar and Recipes Data Refresh]], [[Settings Data Refresh]] and [[Server-Only Creation and Pure Reads]]. 🎯 [[Calendar Page]] 🎯 [[App Health]]
-13. [[Today and Selected Day Markers]] ![[Today and Selected Day Markers#^status]] - spec. Fixes the truncated today circle; unblocks [[Mobile List View]]. *(was high)* 🎯 [[Calendar Page]]
-14. [[Mantine Date Picker Setup]] ![[Mantine Date Picker Setup#^status]] - spec. *(was high)* 🎯 [[Calendar Page]]
-15. [[Header Date Picker]] ![[Header Date Picker#^status]] - spec. Waiting on [[Mantine Date Picker Setup]] and [[Today and Selected Day Markers]]. *(was high)* 🎯 [[Calendar Page]]
-16. [[Agent Workflow Changes]] ![[Agent Workflow Changes#^status]] 🎯 [[Dev Foundations]] 🎯 [[Calendar Page]]
+5. [[Agent Workflow Changes 2026-10-02]] ![[Agent Workflow Changes 2026-10-02#^status]] 🎯 [[Dev Foundations]]
+6. [[Dev Tooling Tidy-Ups 2026-10-02]] ![[Dev Tooling Tidy-Ups 2026-10-02#^status]] 🎯 [[Dev Foundations]]
+7. [[Finish OpenCode Migration]] ![[Finish OpenCode Migration#^status]] 🎯 [[Dev Foundations]]
+8. [[Docs Audit]] ![[Docs Audit#^status]] 🎯 [[Dev Foundations]]
+9. [[Calendar and Recipes Data Refresh]] ![[Calendar and Recipes Data Refresh#^status]] - ready. Fixes both stale-data symptoms; unblocks [[Add Meal Changes (Saved Recipes)]] and [[Mobile List View]]. *(was bugfix)* 🎯 [[Calendar Page]] 🎯 [[App Health]]
+10. [[Settings Data Refresh]] ![[Settings Data Refresh#^status]] - spec. Waiting on [[Calendar and Recipes Data Refresh]]. 🎯 [[Calendar Page]] 🎯 [[App Health]]
+11. [[Server-Only Code Behind Barrels]] ![[Server-Only Code Behind Barrels#^status]] 🎯 [[Calendar Page]] 🎯 [[App Health]]
+12. [[Server-Only Creation and Pure Reads]] ![[Server-Only Creation and Pure Reads#^status]] - spec. Waiting on [[Server-Only Code Behind Barrels]]. 🎯 [[Calendar Page]] 🎯 [[App Health]] 🎯 [[Bugs]]
+13. [[Data Rules Enforcement]] ![[Data Rules Enforcement#^status]] - spec. Waiting on [[Calendar and Recipes Data Refresh]], [[Settings Data Refresh]] and [[Server-Only Creation and Pure Reads]]. 🎯 [[Calendar Page]] 🎯 [[App Health]]
+14. [[Today and Selected Day Markers]] ![[Today and Selected Day Markers#^status]] - spec. Fixes the truncated today circle; unblocks [[Mobile List View]]. *(was high)* 🎯 [[Calendar Page]]
+15. [[Mantine Date Picker Setup]] ![[Mantine Date Picker Setup#^status]] - spec. *(was high)* 🎯 [[Calendar Page]]
+16. [[Header Date Picker]] ![[Header Date Picker#^status]] - spec. Waiting on [[Mantine Date Picker Setup]] and [[Today and Selected Day Markers]]. *(was high)* 🎯 [[Calendar Page]]
+17. [[Style Fixes 2026-10-02]] ![[Style Fixes 2026-10-02#^status]] 🎯 [[Calendar Page]]
+18. [[Code Tidy-Ups 2026-10-02]] ![[Code Tidy-Ups 2026-10-02#^status]] 🎯 [[Calendar Page]]
 
 # Later
 ## [[Dev Foundations]]
@@ -97,6 +99,7 @@
 - [[Planner Access Audit]] ![[Planner Access Audit#^status]] 🎯 [[Bugs]]
 - [[Calendar E2E Tests]] ![[Calendar E2E Tests#^status]]
 - [[Calendar UX and Styles Pass]] ![[Calendar UX and Styles Pass#^status]]
+- [[Style Decisions 2026-10-02]] ![[Style Decisions 2026-10-02#^status]]
 
 ## [[App Health]]
 - [[Unit Testing - New Centralized Mocks]] ![[Unit Testing - New Centralized Mocks#^status]]
@@ -123,11 +126,13 @@
 - [[Filtering Recipe List|allow filtering in recipe list]] *(was medium)*
 - [[Transfer Ownership of Planner|transfer ownership of planner]] *(was high)*
 - [[Tag Management|tag management - edit/delete]] - Spec last reviewed April - tag creation with palette cycling already exists (`TagCombobox` → `addTag`), so reconcile before planning. *(was medium)*
-- [[Unit Test Tidy-Ups]] ![[Unit Test Tidy-Ups#^status]] 🎯 [[App Health]]
+- [[Unit Test Tidy-Ups]] ![[Unit Test Tidy-Ups#^status]]
 - [[Docs Updates]] ![[Docs Updates#^status]]
-- [[Code Tidy-Ups]] ![[Code Tidy-Ups#^status]] 🎯 [[Calendar Page]] 🎯 [[App Health]]
-- [[Style Fixes]] ![[Style Fixes#^status]] *(was high)* 🎯 [[Calendar Page]]
-- [[Style Decisions]] ![[Style Decisions#^status]] 🎯 [[Calendar Page]]
+- [[Code Tidy-Ups]] ![[Code Tidy-Ups#^status]]
+- [[Style Fixes]] ![[Style Fixes#^status]] *(was high)*
+- [[Style Decisions]] ![[Style Decisions#^status]]
+- [[Dev Tooling Tidy-Ups]] ![[Dev Tooling Tidy-Ups#^status]]
+- [[Agent Workflow Changes]] ![[Agent Workflow Changes#^status]]
 
 # Ideas
 - [[Grocery List Integration]]

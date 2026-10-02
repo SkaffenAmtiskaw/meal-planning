@@ -1,0 +1,21 @@
+---
+type: workflow
+confirmed: 2026-09-27
+---
+# Where It Stands
+Kicked off. Next: /tooling ^status
+
+Kicked off 2026-10-02 from [[Agent Workflow Changes]] with the items that serve [[Dev Foundations]].
+
+# Purpose
+Changes to how agents work in this repo: skills (`.claude/skills/`), subagents (`.claude/agents/`), AGENTS.md, agent conventions and the move from OpenCode to Claude Code. This includes Sarah's feedback on how they behave. The planning skills block edits outside `notes/`, so an agent that spots a fix mid-run adds an item here instead.
+
+Agents are moving from OpenCode to Claude Code, slowly. The first was `architect`, which became the `/assess` skill with the `code-critic` and `scope-router` subagents (2026-09-25).
+
+## What Belongs Here
+Changes to skills, subagents, AGENTS.md, agent conventions or the OpenCode move, each saying what to change, where, why, and how and when it was found. An item may still need a decision: /tooling settles it with Sarah. Changes to the docs in `docs/`, which describe the codebase, go in [[Docs Updates]]. Tooling config goes in [[Dev Tooling Tidy-Ups]].
+
+# Items
+- [ ] **When a story needs E2E tests** - no skill or agent says when a feature or fix should add E2E tests and when it isn't worth it. Settle the rule with Sarah, then add it where stories get planned and reviewed (likely `/assess`, `/plan-steps` and `/final-review`), with any codebase facts about the E2E setup going in `docs/`. Sarah: "we need to update agents to specify when a feature needs e2e tests added and when it's not worth doing". Found 2026-09-28 when `/shape` split E2E Testing. It also covers new feature areas: when a story adds a route that isn't in the route-to-area table in `docs/e2e_tests.md` ("Feature Areas"), the planning agents should notice and make adding the route to the table an acceptance criterion. Sarah raised this 2026-09-29 during `/architect` on E2E Test Setup. 🎯 [[Dev Foundations]]
+- [ ] **The config hook doesn't guard routine sessions** - AGENTS.md ("Git and files") forbids editing project config or adding ignore comments without Sarah's explicit ask, and `.claude/hooks/protect-config.sh` enforces it, but only in sessions running `/implement` or `/final-review`, which register it in their frontmatter (`.claude/skills/implement/SKILL.md:11`, `.claude/skills/final-review/SKILL.md:11`). The `ci-failure` routine skill (`.claude/skills/ci-failure/SKILL.md`) fixes lint and type failures in a cloud session with nobody watching, so only the AGENTS.md text stops it. Registering the hook there isn't enough on its own: the hook answers "ask", a routine has no one to answer, and how "ask" behaves in a routine is undocumented, so a routine may need the hook to deny instead. The hook also needs `jq`, which the cloud environment may not have, and its header comment still says only `/implement` registers it. Found 2026-09-29 by the `rule-auditor` during `/architect` on CI Checks. 🎯 [[Dev Foundations]]
+- [ ] **Notes copy a story's status instead of embedding it** - the Hub template's Child Stories table (`notes/templates/Hub.md:24`) has a Status column that each hub fills in by hand, so it goes stale as soon as a child moves on: CI Checks still listed CI Failure Sessions as `spec` after it had gone to `ready`. Where a note needs a child's status, it should embed the child's `^status` line (`![[<child>#^status]]`) instead of restating it, and a note shouldn't show a status at all where it doesn't add value. Check the templates, and the skills and agents that fill them in (such as `split-checker`, `/decide`, `/shape` and `/close`), for copied status, and settle with Sarah which places need one. Other hand-kept copies of a child's state, such as the hub's Blocked by column and the "(done)" markers in Build Order, may be the same problem. Sarah: "If a hub or a stub needs to have a child's status it should be a link to the status rather than recreating it. And we shouldn't be linking status anywhere it doesn't add value." Found 2026-09-30 during `/implement` on CI Failure Sessions Step 1, when the out-of-scope triage found the stale cell in CI Checks. 🎯 [[Dev Foundations]]

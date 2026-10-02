@@ -1,11 +1,14 @@
 ---
 type: roundup
 status: idea
-blocked-by: []
+blocked-by:
+  - "decision needed: the questions under Open Decisions"
 confirmed: 2026-09-26
 ---
 # Where It Stands
-Collecting issues. Next: /kickoff when you schedule it ^status
+Kicked off. Next: /decide ^status
+
+Kicked off 2026-10-02 from [[Style Decisions]] with the issue that serves [[Calendar Page]].
 
 # Inbox
 
@@ -18,14 +21,9 @@ Issues on this roundup's topic that still need a decision. An issue on the topic
 Visible style anywhere in the app: spacing, alignment, colors, component variants and how Mantine is used to style them. Style fixes that are already decided and stand alone go in [[Style Fixes]]. Code tidy-ups that change nothing visible don't belong here.
 
 # Open Decisions
-1. Which uses of the Mantine `color` prop should be a `variant` instead? This needs an audit of `color` usage first.
-    - Known case: CTA buttons are styled two ways, `variant="cta"` (6 files) vs `color="ember"` (`AddMealButton`, `MobileAddMealButton`, `SubmitButton`, `ChangePasswordForm`). Pick one. (Moved from the Roadmap 2026-09-26.)
-2. Recipe list: recipe links and bookmark links are styled differently. Which style should both use?
-3. Planner settings: a badge shows on planners where the user has read access, but not on planners they own. How should the two be marked so they're consistent? (The original item asked for a UX review.)
-4. Planner settings: the leave planner button is styled differently on read-access planners and owned planners. Which style should both use?
-5. Sign-in: `src/app/_components/GoogleButton.css` is a global stylesheet, imported at `SignInFlow.tsx:23`, that overrides Mantine's Button with nine `!important` rules. How should the Google button be styled Mantine's way: Styles API `classNames` in a CSS module, or a custom Button variant?
+1. Calendar: the week view has no horizontal padding, so its edges touch the edge of the screen. How much padding, and at which screen sizes? 🎯 [[Calendar Page]]
 
-*These questions are from the app-wide style fixes list, dated 2026-09-08 and not re-checked.*
+*This question is from the calendar style fixes list, dated 2026-09-08 and not re-checked.*
 
 # Out of Scope
 - Calendar focus states need a design, and the off-screen tab stops in the calendar are a bug. Each gets its own Roadmap line.
