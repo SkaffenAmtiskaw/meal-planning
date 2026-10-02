@@ -30,6 +30,7 @@
 
 ## Standing Goals
 - [[App Health]]
+- [[Bugs]]
 
 # Now
 
@@ -44,7 +45,7 @@
 8. [[Calendar and Recipes Data Refresh]] ![[Calendar and Recipes Data Refresh#^status]] - ready. Fixes both stale-data symptoms; unblocks [[Add Meal Changes (Saved Recipes)]] and [[Mobile List View]]. *(was bugfix)* 🎯 [[Calendar Page]] 🎯 [[App Health]]
 9. [[Settings Data Refresh]] ![[Settings Data Refresh#^status]] - spec. Waiting on [[Calendar and Recipes Data Refresh]]. 🎯 [[Calendar Page]] 🎯 [[App Health]]
 10. [[Server-Only Code Behind Barrels]] ![[Server-Only Code Behind Barrels#^status]] 🎯 [[Calendar Page]] 🎯 [[App Health]]
-11. [[Server-Only Creation and Pure Reads]] ![[Server-Only Creation and Pure Reads#^status]] - spec. Waiting on [[Server-Only Code Behind Barrels]]. 🎯 [[Calendar Page]] 🎯 [[App Health]]
+11. [[Server-Only Creation and Pure Reads]] ![[Server-Only Creation and Pure Reads#^status]] - spec. Waiting on [[Server-Only Code Behind Barrels]]. 🎯 [[Calendar Page]] 🎯 [[App Health]] 🎯 [[Bugs]]
 12. [[Data Rules Enforcement]] ![[Data Rules Enforcement#^status]] - spec. Waiting on [[Calendar and Recipes Data Refresh]], [[Settings Data Refresh]] and [[Server-Only Creation and Pure Reads]]. 🎯 [[Calendar Page]] 🎯 [[App Health]]
 13. [[Today and Selected Day Markers]] ![[Today and Selected Day Markers#^status]] - spec. Fixes the truncated today circle; unblocks [[Mobile List View]]. *(was high)* 🎯 [[Calendar Page]]
 14. [[Mantine Date Picker Setup]] ![[Mantine Date Picker Setup#^status]] - spec. *(was high)* 🎯 [[Calendar Page]]
@@ -68,7 +69,7 @@
 - [[Remove Schedule-X]] ![[Remove Schedule-X#^status]] - spec. *(was bugfix)*
 - [[Shared Types Directory]] - spec, last reviewed April. Unblocks [[Remove Schedule-X]]. 🎯 [[App Health]]
 - [[Schedule-X Data Shapes Audit]] ![[Schedule-X Data Shapes Audit#^status]] 🎯 [[App Health]]
-- [[Unchecked Planner Reads]] ![[Unchecked Planner Reads#^status]] - spec. ⚠️ Security: any planner's data may be readable by id without a membership check. Waiting on [[Calendar and Recipes Data Refresh]] and [[Server-Only Code Behind Barrels]].
+- [[Unchecked Planner Reads]] ![[Unchecked Planner Reads#^status]] - spec. ⚠️ Security: any planner's data may be readable by id without a membership check. Waiting on [[Calendar and Recipes Data Refresh]] and [[Server-Only Code Behind Barrels]]. 🎯 [[Bugs]]
 - [[Add Meal Changes (Saved Recipes)|User Feedback - Add Meal Changes]] - ready. Waiting on [[Calendar and Recipes Data Refresh]]. *(was bugfix)*
 - [[Meal Form Date Picker]] ![[Meal Form Date Picker#^status]] - spec. Waiting on [[Header Date Picker]]. With it, unblocks [[Meal Detail Modal & Edit Meals]]. *(was high)*
 - [[Mobile List View]] - spec (was ready). Needs re-review: Steps 2 and 5, plus the today-marker change moved in from [[Unified Date Picker Component]] (affects Step 3, Tokens and Acceptance criterion 4). Waiting on [[Calendar and Recipes Data Refresh]] and [[Today and Selected Day Markers]]. *(was high)*
@@ -93,7 +94,7 @@
 - replace date utils with luxon - `src/_utils/date.ts` also mixes formatting with time comparisons, and `new Date('YYYY-MM-DD')` parses as UTC, so date-only strings show the previous day in US time zones 🎯 [[App Health]]
 - calendar duplication - group-by-date (×4), meal color calculation (×2), the near-identical `MealCalendar` / `MealWeekView` adapters and their types, and meal keyboard navigation copied between the month and week hooks 🎯 [[App Health]]
 - `formatCalendarLabel.ts` - also holds the view names and default view order, which its name doesn't describe; move them into a views config once it's decided where that lives 🎯 [[App Health]]
-- [[Planner Access Audit]] ![[Planner Access Audit#^status]]
+- [[Planner Access Audit]] ![[Planner Access Audit#^status]] 🎯 [[Bugs]]
 - [[Calendar E2E Tests]] ![[Calendar E2E Tests#^status]]
 - [[Calendar UX and Styles Pass]] ![[Calendar UX and Styles Pass#^status]]
 
@@ -108,15 +109,20 @@
 - audit code for client component surface area - move as much as possible to server components *(was low)*
 - performance - investigate mongo/mongoose caching - is next doing it already or do we need to implement it? *(was medium)*
 
-## Unaffiliated
-- [[Zero Planners Crash|root page crashes for users with zero planners (e.g. invited user leaves or is removed from their only planner)]] - spec. Waiting on your decision on which fix to use (deferred 2026-09-25). *(was bugfix)*
-- [[Delete Planner|allow user to delete a planner]] - idea. Waiting on the [[Zero Planners Crash]] decision. *(was high)*
+## [[Bugs]]
+- [[Zero Planners Crash|root page crashes for users with zero planners (e.g. invited user leaves or is removed from their only planner)]] ![[Zero Planners Crash#^status]] *(was bugfix)*
 - [[Recipe Detail Delete Ignores Result]] ![[Recipe Detail Delete Ignores Result#^status]] *(was bugfix)*
 - [[Recipe Detail Read-Only Controls]] ![[Recipe Detail Read-Only Controls#^status]]
+- [[Account Deletion Deletes Shared Planners]] ![[Account Deletion Deletes Shared Planners#^status]]
+- security - check whether any production user has the better-auth role `admin`, which the `admin()` plugin (`src/_auth/auth.ts:14`) lets impersonate users, and whether `signUpWithInvite` needs the plugin at all
+- security - string validation on inputs *(was medium)*
+- `ConfirmButton` calls `onError` when the action returns `ok: false`, but not when it throws. No caller passes `onError` yet, so either call it on exceptions too or remove the prop
+
+## Unaffiliated
+- [[Delete Planner|allow user to delete a planner]] - idea. Waiting on the [[Zero Planners Crash]] decision. *(was high)*
 - [[Filtering Recipe List|allow filtering in recipe list]] *(was medium)*
 - [[Transfer Ownership of Planner|transfer ownership of planner]] *(was high)*
 - [[Tag Management|tag management - edit/delete]] - Spec last reviewed April - tag creation with palette cycling already exists (`TagCombobox` → `addTag`), so reconcile before planning. *(was medium)*
-- `ConfirmButton` calls `onError` when the action returns `ok: false`, but not when it throws. No caller passes `onError` yet, so either call it on exceptions too or remove the prop
 - [[Unit Test Tidy-Ups]] ![[Unit Test Tidy-Ups#^status]] 🎯 [[App Health]]
 - [[Docs Updates]] ![[Docs Updates#^status]]
 - [[Code Tidy-Ups]] ![[Code Tidy-Ups#^status]] 🎯 [[Calendar Page]] 🎯 [[App Health]]
@@ -140,9 +146,6 @@
 - [[Email Improvements|email improvements]] *(was high)*
 - take create planner pattern of button on top right in desktop - FAB in mobile and apply it throughout the app *(was medium)*
 - a11y audit *(was medium)*
-- security - string validation on inputs *(was medium)*
-- security - check whether any production user has the better-auth role `admin`, which the `admin()` plugin (`src/_auth/auth.ts:14`) lets impersonate users, and whether `signUpWithInvite` needs the plugin at all
 - audit app works fully in mobile *(was medium)*
 - toggle light/dark mode *(was low)*
 - a way to load extra seed data that one story's checks need, on top of `pnpm seed`'s generic data (today `first-pass` creates it through the app's screens). Found 2026-10-01 while designing [[Manual and Agent Test Environment]]
-- [[Account Deletion Deletes Shared Planners]] ![[Account Deletion Deletes Shared Planners#^status]]

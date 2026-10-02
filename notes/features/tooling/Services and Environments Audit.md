@@ -20,6 +20,8 @@ It covers two Done When items of [[Dev Foundations]]:
 
 `docs/ci.md` ("Setup Outside the Repo") records the CI setup outside the repo (the Claude GitHub App, the cloud environment, the routines, the Actions secrets and the merge block on `main`), with each routine's own configuration in a `routine.md` beside its skill. This audit takes that section into account: it moves the section into the home it sets up for Sarah's services, or links to it.
 
+Sarah's wish for a document about creating a new environment that she can refer back to later moved here from [[E2E Tests in CI]] on 2026-10-02, since CI needs no new environment for the E2E tests.
+
 What's known so far: production is on Vercel and doesn't use the same data as local, but Sarah isn't sure whether it's a different database or something else. Its Resend domain is also different.
 
 Found 2026-09-28 while shaping [[Dev Foundations]] with `/roadmap`.

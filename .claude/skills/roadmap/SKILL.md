@@ -16,7 +16,9 @@ Shape the goal **$ARGUMENTS**, or re-rank the goals if no goal was named.
 ## Why this skill works the way it does
 Goals are how Sarah decides what matters. Each one is an epic she ships as one release, and the top two on the Roadmap are the active ones that Next is filled from. They often start out only in her head. This skill gets a goal into a note and onto the Roadmap, and keeps Next honest when the ranking changes.
 
-Some work never serves a goal, because it never blocks a feature: a library upgrade, or a piece of tech debt. A standing goal collects it. It's never ranked or active, and it never ships. When Sarah wants to take on some of that work, this skill draws a goal from it: an ordinary goal, named `<standing goal> YYYY-MM-DD`, that takes the work she picks and ships as one release, while the standing goal keeps collecting. Any sweep or roundup whose items the drawn goal takes is kicked off in the same run, so those items get worked.
+Some work never serves a goal, because it never blocks a feature: a library upgrade, or a piece of tech debt. A standing goal collects it. It's never ranked or active, and it never ships. When Sarah wants to take on some of that work, this skill draws a goal from it: an ordinary goal, named `<standing goal> YYYY-MM-DD`, that takes the work she picks and ships as one release, while the standing goal keeps collecting.
+
+A goal takes collecting-note items by their 🎯 links. Once a goal is active, this skill kicks off each collecting note with items that serve it into a dated copy, so the goal has a fixed set it can finish while the note keeps collecting.
 
 It gathers facts and writes what Sarah decides. It makes almost no decisions: what the goal is for, what's in it, which gaps get filled, which tooling goes under it, its rank and the order of Next are all hers. Your own judgment covers only dependencies you can point to in the notes or code, and recommendations as AGENTS.md describes under "Recommendations".
 
@@ -54,10 +56,12 @@ Go through the candidates one at a time. For each, show the line, note or item, 
 - **In:**
   - **A line in Unaffiliated or Ideas:** move it under the goal's heading in Later. Add the heading, `## [[<goal>]]`, if it's missing, placed as "How this file works" describes under Later.
   - **A line under another goal's heading, or in Now or Next:** leave it there, and add `🎯 [[<goal>]]` at its end.
-  - **A collecting note as a whole:** add `🎯 [[<goal>]]` at the end of each of its items that doesn't have it yet, and at the end of the note's Roadmap line. The line stays where it is.
-  - **An item in a collecting note:** add `🎯 [[<goal>]]` at the item's end, and at the end of the note's Roadmap line unless it already has it. The line stays where it is.
+  - **A collecting note as a whole:** add `🎯 [[<goal>]]` at the end of each of its items that doesn't have it yet. The note's line doesn't change.
+  - **An item in a collecting note:** add `🎯 [[<goal>]]` at the item's end. The note's line doesn't change.
 - **Out:** add it to Out of Scope with her reason. For a whole collecting note, the entry names the note and each of its current items, so items added later are still checked against the goal when they come in.
 - **Not related:** nothing is recorded.
+
+If an item that comes in already links to another goal, it serves one goal, as the Roadmap's "How this file works" describes under "Collecting notes". Ask Sarah which goal it fits best, and keep only that goal's link, unless she says neither goal can be done without it. If this goal is active, step 7 kicks off the items that come in.
 
 ## 4. Gaps
 Compare Done When with the in-scope work, and list each Done When item that nothing covers. Go through them one at a time. For each, draft an idea note from `notes/templates/Idea.md` for `notes/features/<area>/`, with "Next: /shape ^status", and show it to Sarah:
@@ -76,12 +80,14 @@ Show the Goals list with the two active goals marked. Name any dependencies you 
 
 Write the order she gives. Each Goals line is `1. [[<goal>]]`, with ` - active` on the top two. Put the goal headings in Later in the same order, followed by the standing goals' headings.
 
-## 7. Next and Later
+## 7. Kickoffs, Next and Later
+**Kick off.** Kick off every collecting note, but not a dated copy, that has an unblocked item carrying an active goal's 🎯 link. That happens when a goal has just become active, or when an active goal took items in step 3 or 5. For each note, read `.claude/skills/kickoff/SKILL.md` and follow it as its "Kicking off for active goals" section describes. Then check every collecting note's own line, and fix any that doesn't match "How this file works" under "Collecting notes".
+
 **If the active two changed:**
 - **A goal that became active:** go through every Later line that serves it, one at a time, whether it sits under the goal's heading or carries its 🎯 link. Judge each one by where the newly active goal stands, not by the goal it's filed under. Sarah says which move into Next. Then ask her the order for the lines she picked, recommending one from their `blocked-by` dependencies. A moved line keeps its 🎯 links, and gets one for the goal whose heading it leaves.
 - **A goal that's no longer active:** move each Next line that serves no other active goal back to Later, under the heading of a goal it serves, and remove that goal's 🎯 link. Its other 🎯 links stay. Lines marked 🚨 or 📌 stay. Later isn't ordered, so there's nothing to ask. List the lines you moved.
 
-**Always:** check every Now and Next line for its markers, as "How this file works" describes. Raise each line that's out of place, one at a time. Sarah says whether it gets a 🎯 link to an active goal, 🚨 or 📌 with a reason, or goes back to Later, under a goal's heading or in Unaffiliated. Never add 🚨 or 📌 yourself. If you think a line is urgent, say so and ask.
+**Always:** if a note was kicked off in this run for a goal that was already active, ask Sarah whether its line moves into Next. If it does, ask her where in Next, as AGENTS.md describes under "Roadmap order". Then check every Now and Next line for its markers, as "How this file works" describes. Raise each line that's out of place, one at a time. Sarah says whether it gets a 🎯 link to an active goal, 🚨 or 📌 with a reason, or goes back to Later, under a goal's heading or in Unaffiliated. Never add 🚨 or 📌 yourself. If you think a line is urgent, say so and ask.
 
 ## Shaping a standing goal
 1. **Purpose and What Belongs Here.** Ask Sarah what kind of work it collects and why no goal would take it, in her words, and what looks close but doesn't belong. Draft Purpose, What Belongs Here and Out of Scope from the Standing Goal template, keeping her wording. Show her the draft and wait for her approval, then write the note to `notes/goals/<name>.md`, with `confirmed` set to today.
@@ -94,11 +100,10 @@ Then go to step 8. Steps 4 to 7 don't apply: a standing goal has no Done When an
 The drawn goal is an ordinary goal, named `<standing goal> YYYY-MM-DD` with today's date. It goes through steps 2 to 7 like any new goal, with two differences:
 - **Step 2:** its Purpose starts with "Drawn from [[<standing goal>]]."
 - **Step 3:** before searching, offer the work that serves the standing goal: the lines under its heading in Later, the lines elsewhere that carry its 🎯 link, and the collecting-note items that carry it. Offer a collecting note's linked items together, as one candidate. Go through the candidates one at a time. Sarah says:
-  - **In:** the work moves to the drawn goal. A line under the standing goal's heading moves under the drawn goal's heading. Anywhere else, the standing goal's 🎯 link becomes the drawn goal's, on the line or on each item. A collecting note's Roadmap line gets the drawn goal's link, and keeps the standing goal's only if another of its items still carries it.
+  - **In:** the work moves to the drawn goal. A line under the standing goal's heading moves under the drawn goal's heading. Anywhere else, the standing goal's 🎯 link becomes the drawn goal's, on the line or on each item.
   - **Not this time:** it stays with the standing goal, and nothing is recorded.
 
   Then go on with step 3's search for other related work.
-- **After step 5:** kick off each sweep or roundup with items that carry the drawn goal's 🎯 link. For each one, read `.claude/skills/kickoff/SKILL.md` and follow it as its "Kicking off for a drawn goal" section describes. Collecting workflow notes aren't kicked off, because `/tooling` works their items. This comes before steps 6 and 7 so the kicked-off notes can move into Next with the rest of the goal's work.
 
 If Sarah takes work out of a drawn goal in a later re-shape, it goes back to its standing goal: under the standing goal's heading, or ending with its 🎯 link.
 

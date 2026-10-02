@@ -32,4 +32,6 @@ Found 2026-09-28 while shaping [[Dev Foundations]] with `/roadmap`.
 
 [Sarah] - We might need to make this the last (or one of the last) items in the [[Dev Foundations]] goal. That way most of the plumbing is decided and wired up, and this story becomes a matter of making sure it's documented, and making sure that documentation is discoverable and readable.
 
+[Sarah] - We should add somewhere in this that I have a very slight preference for title-cased headers. It's not so strong a preference I'd ever reject work based on not having it, but I like it better.
+
 # Questions

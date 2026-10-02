@@ -72,22 +72,37 @@ while IFS= read -r note; do
       ;;
   esac
   if grep -q '^## What Belongs Here' "$note" && [ -n "$line" ]; then
-    items=$(awk 'FNR == 1 && $0 == "---" { fm = 1; next } fm && $0 == "---" { fm = 0; next } !fm' "$note" |
-      grep -oE '🎯 \[\[[^]|]+' | sed 's/^🎯 \[\[//' | sort -u)
     onLine=$(printf '%s' "$line" | cut -f5 | grep -oE '🎯 \[\[[^]|]+' | sed 's/^🎯 \[\[//' | sort -u)
     at="$roadmap:$(printf '%s' "$line" | cut -f2)"
-    for g in $(printf '%s\n' "$items" | tr ' ' '\001'); do
-      g=$(printf '%s' "$g" | tr '\001' ' ')
-      printf '%s\n' "$onLine" | grep -qxF -- "$g" || add "$note: an item links 🎯 [[$g]], but its Roadmap line ($at) doesn't"
-    done
-    for g in $(printf '%s\n' "$onLine" | tr ' ' '\001'); do
-      g=$(printf '%s' "$g" | tr '\001' ' ')
-      printf '%s\n' "$items" | grep -qxF -- "$g" || add "$note: its Roadmap line ($at) links 🎯 [[$g]], but no item does"
-    done
     section=$(printf '%s' "$line" | cut -f3); heading=$(printf '%s' "$line" | cut -f4)
-    if [ "$section" = "Later" ] && [ -n "$heading" ] && [ "$heading" != "Unaffiliated" ]; then
-      add "$note: its Roadmap line ($at) sits under \"$heading\", but a collecting note's line goes in Unaffiliated"
-    fi
+    case "$name" in
+      (*\ [0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9])
+        # A kicked-off copy: its line carries its items' goal links. The goal
+        # heading it sits under counts as one.
+        case "$heading" in
+          ('[['*']]') onLine=$(printf '%s\n%s' "$onLine" "$(printf '%s' "$heading" | sed 's/^\[\[//; s/]]$//')" | grep -v '^$' | sort -u) ;;
+        esac
+        items=$(awk 'FNR == 1 && $0 == "---" { fm = 1; next } fm && $0 == "---" { fm = 0; next } !fm' "$note" |
+          grep -oE '🎯 \[\[[^]|]+' | sed 's/^🎯 \[\[//' | sort -u)
+        for g in $(printf '%s\n' "$items" | tr ' ' '\001'); do
+          g=$(printf '%s' "$g" | tr '\001' ' ')
+          printf '%s\n' "$onLine" | grep -qxF -- "$g" || add "$note: an item links 🎯 [[$g]], but its Roadmap line ($at) doesn't"
+        done
+        for g in $(printf '%s\n' "$onLine" | tr ' ' '\001'); do
+          g=$(printf '%s' "$g" | tr '\001' ' ')
+          printf '%s\n' "$items" | grep -qxF -- "$g" || add "$note: its Roadmap line ($at) links 🎯 [[$g]], but no item does"
+        done
+        ;;
+      (*)
+        # A collecting note's own line carries no goal links and sits in Unaffiliated.
+        [ -n "$onLine" ] && add "$note: its Roadmap line ($at) carries 🎯 links, but a collecting note's own line carries none"
+        case "$section" in
+          (Now|Next) add "$note: its Roadmap line ($at) sits in $section, but a collecting note's own line goes in Unaffiliated in Later" ;;
+          (Later) [ -n "$heading" ] && [ "$heading" != "Unaffiliated" ] &&
+            add "$note: its Roadmap line ($at) sits under \"$heading\", but a collecting note's own line goes in Unaffiliated" ;;
+        esac
+        ;;
+    esac
   fi
   comments=$(grep -c '%%' "$note")
   if [ "$comments" -gt 0 ]; then
