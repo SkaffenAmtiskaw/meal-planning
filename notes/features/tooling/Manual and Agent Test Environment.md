@@ -1,13 +1,13 @@
 ---
 type: infra
-status: ready
+status: in-progress
 blocked-by: []
 confirmed: 2026-10-01
 ---
 # Where It Stands
-Ready. Next: build Step 1 ^status
+In progress. Next: /implement Step 1 ^status
 
-The design and the 11-step plan are approved. No step is built yet.
+Step 1 is built but not yet reviewed. Its code (`package.json` and `pnpm-lock.yaml` with tsx 4.23.15 and the `seed` script, and the new `seed/devDatabase.ts` and `seed/seed.ts`) is in the git stash "Manual and Agent Test Environment Step 1: seed command and dev database guard (WIP)". Find it with `git stash list` and apply it before going on. Lint and types passed. The second acceptance check passed: pointed at `seed-guard-check`, `pnpm seed` stopped with an error naming it, before connecting. The first check hasn't run: on 2026-10-02 the `dev` cluster reset every connection while Sarah was on a VPN in a public place, and its IP isn't on the Atlas access list. Sarah will finish Step 1 from home rather than add the VPN's shared IP, since production is on the same cluster. Every step through Step 9 needs that connection.
 
 # Inbox
 
@@ -58,7 +58,7 @@ Everything for the local test environment lives in a new top-level `seed/` folde
   | `read` | Reid Reader | `delivered+seed-read@resend.dev` | `read` |
 
   The emails are Resend's labeled test address: the dev server sends real email through Resend, a send to a `resend.dev` test address counts as delivered without going out, and Resend's docs warn that sends to made-up addresses bounce and hurt the sending domain's reputation, which production shares. They're lowercase and unique, as `docs/e2e_tests.md` requires.
-- **`seed/devDatabase.ts`:** opens the seed's connections, and only to the dev database. It calls `connectDatabase` (`test/factories/connection.ts`) and `connectAuth` (`test/auth.ts`), then reads the name of the database it connected to. Unless it's `test`, it closes the connections and stops with an error naming the database, before anything is read or written. Production is on the same Atlas cluster under a different database name (Sarah, 2026-10-01), so checking the connected name, not the host, tells them apart. Only the seed uses it: decision 5 gives the link server no guards, and pointed elsewhere it finds no seeded users.
+- **`seed/devDatabase.ts`:** opens the seed's connections, and only to the dev database. It reads the name of the database `DB_URL` points at, with the MongoDB driver's own parsing, which opens no connection. Unless it's `test`, it stops with an error naming the database. Only then does it call `connectDatabase` (`test/factories/connection.ts`) and `connectAuth` (`test/auth.ts`), which both take their database from `DB_URL`. Sarah decided 2026-10-02 to check before connecting, because mongoose creates each imported model's collections and indexes as soon as it connects. Production is on the same Atlas cluster under a different database name (Sarah, 2026-10-01), so checking the database name, not the host, tells them apart. Only the seed uses it: decision 5 gives the link server no guards, and pointed elsewhere it finds no seeded users.
 - **`seed/reset.ts`:** removes everything the seed made, and what was later done as a seeded user, found from the emails in `seed/users.ts`:
   - deletes every planner a seeded user owns: the shared planner, the personal planners, and any planner created while signed in as one
   - removes only the membership in those planners from any other user's `User` doc, such as Sarah's after accepting an invite, so the navbar has no dead link
@@ -126,6 +126,8 @@ Everything for the local test environment lives in a new top-level `seed/` folde
 **Acceptance:**
 - [ ] Run `pnpm seed`, see it print that it connected to the `test` database and exit without an error. Proves: the seed reaches the dev database through `.env.local`, with `@/` and `#auth` paths resolving outside Next.js.
 - [ ] Copy `DB_URL` from `.env.local`, change only the database name in it to `seed-guard-check`, and run `DB_URL='<that URL>' pnpm seed`. See it stop with an error naming `seed-guard-check`. Proves: pointed at any other database on the same cluster, such as production, the seed refuses before touching anything.
+
+**As built (draft, Step 1 not yet reviewed):** `seed/devDatabase.ts` checks the database name from `DB_URL` before it connects, not after (Sarah's call 2026-10-02, now in Design → Pieces). Once Step 3 imports the models, connecting first would let mongoose create their collections and indexes in the wrong database before the guard refused. Since the refused run never connects, it can't leave a `seed-guard-check` database behind.
 
 ## Step 2: Biome checks the seed
 **Idea:** Biome checks `seed/` the same way it checks the support code in `test/`.
