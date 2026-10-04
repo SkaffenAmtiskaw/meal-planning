@@ -7,6 +7,7 @@ export const useRouter = vi.fn(() => ({
 	back: vi.fn(),
 	forward: vi.fn(),
 	prefetch: vi.fn(),
+	bfcacheId: '',
 }));
 
 export const usePathname = vi.fn(() => '');
