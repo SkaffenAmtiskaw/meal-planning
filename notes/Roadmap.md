@@ -33,7 +33,6 @@
 - [[Bugs]]
 
 # Now
-- [[Better-Auth Security Upgrade]] ![[Better-Auth Security Upgrade#^status]] 🚨 critical security advisories in a package that ships in the app's build
 - [[Manual and Agent Test Environment]] ![[Manual and Agent Test Environment#^status]] 🎯 [[Dev Foundations]] 🎯 [[Calendar Page]]
 
 # Next
@@ -124,6 +123,7 @@
 - security - check whether any production user has the better-auth role `admin`, which the `admin()` plugin (`src/_auth/auth.ts:14`) lets impersonate users, and whether `signUpWithInvite` needs the plugin at all
 - security - string validation on inputs *(was medium)*
 - `ConfirmButton` calls `onError` when the action returns `ok: false`, but not when it throws. No caller passes `onError` yet, so either call it on exceptions too or remove the prop
+- on the sign-in page, pressing Enter in the email, password or sign-up inputs doesn't submit; only clicking the button does. `SignInFlow.tsx` has no `<form>` or `onSubmit`, so wrap each step in a form. Overlaps the "split `SignInFlow.tsx` into one component per step" line in App Health, so the two could be planned together.
 
 ## Unaffiliated
 - [[Delete Planner|allow user to delete a planner]] - idea. Waiting on the [[Zero Planners Crash]] decision. *(was high)*
@@ -139,7 +139,6 @@
 - [[Agent Workflow Changes]] ![[Agent Workflow Changes#^status]]
 
 # Ideas
-- Bug - on the sign-in page, pressing Enter in the email, password or sign-up inputs doesn't submit; only clicking the button does. `SignInFlow.tsx` has no `<form>` or `onSubmit`, so wrap each step in a form. Overlaps the "split `SignInFlow.tsx` into one component per step" line in App Health, so the two could be planned together.
 - [[Grocery List Integration]]
 - [[Link SSO Login to Email|Link SSO to Email Login]] *(was undecided)*
 - Allow user to change meal color in calendar *(was undecided)*

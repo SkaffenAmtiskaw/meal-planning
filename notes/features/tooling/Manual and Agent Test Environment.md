@@ -5,9 +5,9 @@ blocked-by: []
 confirmed: 2026-10-01
 ---
 # Where It Stands
-In progress. Next: /implement Step 1 ^status
+In progress. Next: /implement Step 2 ^status
 
-Step 1 is built but not yet reviewed. Its code (`package.json` and `pnpm-lock.yaml` with tsx 4.23.15 and the `seed` script, and the new `seed/devDatabase.ts` and `seed/seed.ts`) is in the git stash "Manual and Agent Test Environment Step 1: seed command and dev database guard (WIP)". Find it with `git stash list` and apply it before going on. Lint and types passed. The second acceptance check passed: pointed at `seed-guard-check`, `pnpm seed` stopped with an error naming it, before connecting. The first check hasn't run: on 2026-10-02 the `dev` cluster reset every connection while Sarah was on a VPN in a public place, and its IP isn't on the Atlas access list. Sarah will finish Step 1 from home rather than add the VPN's shared IP, since production is on the same cluster. Every step through Step 9 needs that connection.
+Step 1 is done: `pnpm seed` runs through tsx against the dev database and refuses any other database before connecting. Steps 2 to 11 remain, and every step through Step 9 needs a connection to the Atlas cluster, which works from Sarah's home network.
 
 # Inbox
 
@@ -124,10 +124,12 @@ Everything for the local test environment lives in a new top-level `seed/` folde
 - `seed/seed.ts` (new) - scaffold that connects through `seed/devDatabase.ts`, prints the database name and exits
 
 **Acceptance:**
-- [ ] Run `pnpm seed`, see it print that it connected to the `test` database and exit without an error. Proves: the seed reaches the dev database through `.env.local`, with `@/` and `#auth` paths resolving outside Next.js.
-- [ ] Copy `DB_URL` from `.env.local`, change only the database name in it to `seed-guard-check`, and run `DB_URL='<that URL>' pnpm seed`. See it stop with an error naming `seed-guard-check`. Proves: pointed at any other database on the same cluster, such as production, the seed refuses before touching anything.
+- [x] Run `pnpm seed`, see it print that it connected to the `test` database and exit without an error. Proves: the seed reaches the dev database through `.env.local`, with `@/` and `#auth` paths resolving outside Next.js.
+- [x] Copy `DB_URL` from `.env.local`, change only the database name in it to `seed-guard-check`, and run `DB_URL='<that URL>' pnpm seed`. See it stop with an error naming `seed-guard-check`. Proves: pointed at any other database on the same cluster, such as production, the seed refuses before touching anything.
 
-**As built (draft, Step 1 not yet reviewed):** `seed/devDatabase.ts` checks the database name from `DB_URL` before it connects, not after (Sarah's call 2026-10-02, now in Design → Pieces). Once Step 3 imports the models, connecting first would let mongoose create their collections and indexes in the wrong database before the guard refused. Since the refused run never connects, it can't leave a `seed-guard-check` database behind.
+**Status:** ✅ Complete
+
+**As built:** `seed/devDatabase.ts` checks the database name from `DB_URL` before it connects, not after (Sarah's call 2026-10-02, now in Design → Pieces). Once Step 3 imports the models, connecting first would let mongoose create their collections and indexes in the wrong database before the guard refused. Since the refused run never connects, it can't leave a `seed-guard-check` database behind, and a listing of the cluster's databases after the check showed none.
 
 ## Step 2: Biome checks the seed
 **Idea:** Biome checks `seed/` the same way it checks the support code in `test/`.
