@@ -126,6 +126,7 @@ describe('AddMealModal', () => {
 			back: vi.fn(),
 			forward: vi.fn(),
 			prefetch: vi.fn(),
+			bfcacheId: '',
 		});
 
 		const close = vi.fn();
