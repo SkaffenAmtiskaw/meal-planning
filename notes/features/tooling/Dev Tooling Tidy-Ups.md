@@ -20,3 +20,4 @@ Changes to tooling config: `biome.jsonc`, `lefthook.yml`, `.github/`, `tsconfig.
 	- leave it as it is.
 
 	Sarah decided 2026-09-30 that this isn't urgent, because it saves only a few lines today, and that it's worth doing if the setup grows. Found by the leftovers-checker during `/final-review` of PR Checks, 2026-09-30.
+- [ ] [Sarah] - We need automatic recursive merges from `main` to `develop`.
