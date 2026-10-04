@@ -36,23 +36,27 @@
 - [[Manual and Agent Test Environment]] ![[Manual and Agent Test Environment#^status]] 🎯 [[Dev Foundations]] 🎯 [[Calendar Page]]
 
 # Next
-1. [[Local Dependency Update Alerts]] ![[Local Dependency Update Alerts#^status]] 🎯 [[Dev Foundations]]
-2. [[Branching and Releases]] ![[Branching and Releases#^status]] 🎯 [[Dev Foundations]]
-3. [[E2E Tests in CI]] ![[E2E Tests in CI#^status]] 🎯 [[Dev Foundations]]
-4. [[Agent Workflow Changes 2026-10-02]] ![[Agent Workflow Changes 2026-10-02#^status]] 🎯 [[Dev Foundations]]
-5. [[Dev Tooling Tidy-Ups 2026-10-02]] ![[Dev Tooling Tidy-Ups 2026-10-02#^status]] 🎯 [[Dev Foundations]]
-6. [[Finish OpenCode Migration]] ![[Finish OpenCode Migration#^status]] 🎯 [[Dev Foundations]]
-7. [[Docs Audit]] ![[Docs Audit#^status]] 🎯 [[Dev Foundations]]
-8. [[Calendar and Recipes Data Refresh]] ![[Calendar and Recipes Data Refresh#^status]] - ready. Fixes both stale-data symptoms; unblocks [[Add Meal Changes (Saved Recipes)]] and [[Mobile List View]]. *(was bugfix)* 🎯 [[Calendar Page]] 🎯 [[App Health]]
-9. [[Settings Data Refresh]] ![[Settings Data Refresh#^status]] - spec. Waiting on [[Calendar and Recipes Data Refresh]]. 🎯 [[Calendar Page]] 🎯 [[App Health]]
-10. [[Server-Only Code Behind Barrels]] ![[Server-Only Code Behind Barrels#^status]] 🎯 [[Calendar Page]] 🎯 [[App Health]]
-11. [[Server-Only Creation and Pure Reads]] ![[Server-Only Creation and Pure Reads#^status]] - spec. Waiting on [[Server-Only Code Behind Barrels]]. 🎯 [[Calendar Page]] 🎯 [[App Health]] 🎯 [[Bugs]]
-12. [[Data Rules Enforcement]] ![[Data Rules Enforcement#^status]] - spec. Waiting on [[Calendar and Recipes Data Refresh]], [[Settings Data Refresh]] and [[Server-Only Creation and Pure Reads]]. 🎯 [[Calendar Page]] 🎯 [[App Health]]
-13. [[Today and Selected Day Markers]] ![[Today and Selected Day Markers#^status]] - spec. Fixes the truncated today circle; unblocks [[Mobile List View]]. *(was high)* 🎯 [[Calendar Page]]
-14. [[Mantine Date Picker Setup]] ![[Mantine Date Picker Setup#^status]] - spec. *(was high)* 🎯 [[Calendar Page]]
-15. [[Header Date Picker]] ![[Header Date Picker#^status]] - spec. Waiting on [[Mantine Date Picker Setup]] and [[Today and Selected Day Markers]]. *(was high)* 🎯 [[Calendar Page]]
-16. [[Style Fixes 2026-10-02]] ![[Style Fixes 2026-10-02#^status]] 🎯 [[Calendar Page]]
-17. [[Code Tidy-Ups 2026-10-02]] ![[Code Tidy-Ups 2026-10-02#^status]] 🎯 [[Calendar Page]]
+1. bump `next` 16.2.9 → 16.3.6 or later, which fixes its critical advisories (16.3 has no breaking changes) 🚨 critical security advisories in a package that ships in the app's build
+2. [[Better-Auth Security Upgrade]] ![[Better-Auth Security Upgrade#^status]] 🚨 critical security advisories in a package that ships in the app's build
+3. [[Local Dependency Update Alerts]] ![[Local Dependency Update Alerts#^status]] 🎯 [[Dev Foundations]]
+4. [[Notes Vault Repo]] ![[Notes Vault Repo#^status]] 🎯 [[Dev Foundations]]
+5. [[One Goal at a Time]] ![[One Goal at a Time#^status]] 🎯 [[Dev Foundations]]
+6. [[Branching and Releases]] ![[Branching and Releases#^status]] 🎯 [[Dev Foundations]]
+7. [[E2E Tests in CI]] ![[E2E Tests in CI#^status]] 🎯 [[Dev Foundations]]
+8. [[Agent Workflow Changes 2026-10-02]] ![[Agent Workflow Changes 2026-10-02#^status]] 🎯 [[Dev Foundations]]
+9. [[Dev Tooling Tidy-Ups 2026-10-02]] ![[Dev Tooling Tidy-Ups 2026-10-02#^status]] 🎯 [[Dev Foundations]]
+10. [[Finish OpenCode Migration]] ![[Finish OpenCode Migration#^status]] 🎯 [[Dev Foundations]]
+11. [[Docs Audit]] ![[Docs Audit#^status]] 🎯 [[Dev Foundations]]
+12. [[Calendar and Recipes Data Refresh]] ![[Calendar and Recipes Data Refresh#^status]] - ready. Fixes both stale-data symptoms; unblocks [[Add Meal Changes (Saved Recipes)]] and [[Mobile List View]]. *(was bugfix)* 🎯 [[Calendar Page]] 🎯 [[App Health]]
+13. [[Settings Data Refresh]] ![[Settings Data Refresh#^status]] - spec. Waiting on [[Calendar and Recipes Data Refresh]]. 🎯 [[Calendar Page]] 🎯 [[App Health]]
+14. [[Server-Only Code Behind Barrels]] ![[Server-Only Code Behind Barrels#^status]] 🎯 [[Calendar Page]] 🎯 [[App Health]]
+15. [[Server-Only Creation and Pure Reads]] ![[Server-Only Creation and Pure Reads#^status]] - spec. Waiting on [[Server-Only Code Behind Barrels]]. 🎯 [[Calendar Page]] 🎯 [[App Health]] 🎯 [[Bugs]]
+16. [[Data Rules Enforcement]] ![[Data Rules Enforcement#^status]] - spec. Waiting on [[Calendar and Recipes Data Refresh]], [[Settings Data Refresh]] and [[Server-Only Creation and Pure Reads]]. 🎯 [[Calendar Page]] 🎯 [[App Health]]
+17. [[Today and Selected Day Markers]] ![[Today and Selected Day Markers#^status]] - spec. Fixes the truncated today circle; unblocks [[Mobile List View]]. *(was high)* 🎯 [[Calendar Page]]
+18. [[Mantine Date Picker Setup]] ![[Mantine Date Picker Setup#^status]] - spec. *(was high)* 🎯 [[Calendar Page]]
+19. [[Header Date Picker]] ![[Header Date Picker#^status]] - spec. Waiting on [[Mantine Date Picker Setup]] and [[Today and Selected Day Markers]]. *(was high)* 🎯 [[Calendar Page]]
+20. [[Style Fixes 2026-10-02]] ![[Style Fixes 2026-10-02#^status]] 🎯 [[Calendar Page]]
+21. [[Code Tidy-Ups 2026-10-02]] ![[Code Tidy-Ups 2026-10-02#^status]] 🎯 [[Calendar Page]]
 
 # Later
 ## [[Dev Foundations]]
@@ -154,3 +158,4 @@
 - audit app works fully in mobile *(was medium)*
 - toggle light/dark mode *(was low)*
 - a way to load extra seed data that one story's checks need, on top of `pnpm seed`'s generic data (today `first-pass` creates it through the app's screens). Found 2026-10-01 while designing [[Manual and Agent Test Environment]]
+- [[What's Changed Notification]] ![[What's Changed Notification#^status]]
