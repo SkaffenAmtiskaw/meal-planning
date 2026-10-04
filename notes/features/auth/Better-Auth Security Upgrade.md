@@ -1,13 +1,13 @@
 ---
 type: 
-status: in-progress
+status: done
 confirmed: 2026-10-04
 ---
 # Where It Stands
 
-Built and checked on `fix/better-auth-security-upgrade`. Next: commit and PR to main, then /close ^status
+Done. Next: /close ^status
 
-better-auth is upgraded from 1.5.6 to 1.6.33, and the lockfile's `defu` from 6.1.4 to 6.1.7. `pnpm audit` no longer lists better-auth, defu or kysely. Types, lint, unit tests, the build and the E2E test pass, and signing in and out through the form works against the dev database. What remains is committing, the PR to main and closing the note.
+better-auth is upgraded from 1.5.6 to 1.6.33, and the lockfile's `defu` from 6.1.4 to 6.1.7. `pnpm audit` no longer lists better-auth, defu or kysely. Types, lint, unit tests, the build and the E2E test pass, and signing in and out through the form works against the dev database. It reached develop in PR #20 and main in PR #21. All that remains is closing the note.
 
 # Inbox
 
