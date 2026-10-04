@@ -1,6 +1,12 @@
 {
 	"files": {
-		"includes": ["src/**/*", "test/**/*", "e2e/**/*", "playwright.config.ts"]
+		"includes": [
+			"src/**/*",
+			"test/**/*",
+			"e2e/**/*",
+			"seed/**/*",
+			"playwright.config.ts"
+		]
 	},
 	"linter": {
 		"enabled": true,
@@ -167,6 +173,7 @@
 		{
 			"includes": [
 				"test/**/*",
+				"seed/**/*",
 				"**/*/*.test.ts*",
 				"!test/auth.ts",
 				"!test/factories/**/*",

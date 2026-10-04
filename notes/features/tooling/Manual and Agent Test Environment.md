@@ -5,9 +5,9 @@ blocked-by: []
 confirmed: 2026-10-01
 ---
 # Where It Stands
-In progress. Next: /implement Step 2 ^status
+In progress. Next: /implement Step 4 ^status
 
-Step 1 is done: `pnpm seed` runs through tsx against the dev database and refuses any other database before connecting. Steps 2 to 11 remain, and every step through Step 9 needs a connection to the Atlas cluster, which works from Sarah's home network.
+Steps 1 to 3 are done: `pnpm seed` runs through tsx against the dev database and refuses any other database before connecting, Biome checks `seed/` with the test-support import bans, and the seed creates the four seeded users with the shared planner and their personal planners. Until Step 4 builds the reset, a second run fails on the existing seeded emails. Steps 4 to 11 remain, and every step through Step 9 needs a connection to the Atlas cluster, which works from Sarah's home network.
 
 # Inbox
 
@@ -143,7 +143,9 @@ Everything for the local test environment lives in a new top-level `seed/` folde
 - `seed/devDatabase.ts`, `seed/seed.ts` - any fixes `pnpm lint` makes
 
 **Acceptance:**
-- [ ] Add `import { testUtils } from 'better-auth/plugins';` to the top of `seed/seed.ts`, run `pnpm lint:ci`, and see it fail on that import with the message that `testUtils` is used only in `test/auth.ts`. Revert. Proves: Biome checks `seed/`, and code there can reach `testUtils` only through the test-only auth instance.
+- [x] Add `import { testUtils } from 'better-auth/plugins';` to the top of `seed/seed.ts`, run `pnpm lint:ci`, and see it fail on that import with the message that `testUtils` is used only in `test/auth.ts`. Revert. Proves: Biome checks `seed/`, and code there can reach `testUtils` only through the test-only auth instance.
+
+**Status:** ✅ Complete
 
 ## Step 3: Seeded users with their planners
 **Idea:** `pnpm seed` creates each seeded user with the planners the design gives them.
@@ -162,9 +164,13 @@ Everything for the local test environment lives in a new top-level `seed/` folde
 - `seed/seed.ts` - creates the shared planner and each seeded user with their two planners, and prints who's who
 
 **Acceptance:**
-- [ ] Run `pnpm seed`, see it print the four seeded users with their name, email and access level. Proves: the seed says who's who when it finishes.
-- [ ] On desktop, open a private window so your own session stays put. Sign in through the sign-in form as `read`, using Reid Reader's email and the dev password from `seed/users.ts`. See the app land on "Seeded Shared Planner" as read-only, and the navbar list "Seeded Shared Planner" and "Reid's Planner". Proves: seeded users have the committed password, get the shared planner first at their own access level, and own a personal planner.
-- [ ] In a new private window, sign in through the form as `owner`. Open Settings and expand "Seeded Shared Planner". See its member list show Olive Owner as owner, Adam Admin as admin, Wren Writer as write and Reid Reader as read. Proves: all four users share one planner, each at their own access level.
+- [x] Run `pnpm seed`, see it print the four seeded users with their name, email and access level. Proves: the seed says who's who when it finishes.
+- [x] On desktop, open a private window so your own session stays put. Sign in through the sign-in form as `read`, using Reid Reader's email and the dev password from `seed/users.ts`. See the app land on "Seeded Shared Planner" as read-only, and the navbar list "Seeded Shared Planner" and "Reid's Planner". Proves: seeded users have the committed password, get the shared planner first at their own access level, and own a personal planner.
+- [x] In a new private window, sign in through the form as `owner`. Open Settings and expand "Seeded Shared Planner". See its member list show Olive Owner as owner, Adam Admin as admin, Wren Writer as write and Reid Reader as read. Proves: all four users share one planner, each at their own access level.
+
+**Status:** ✅ Complete
+
+**As built:** The dev password is `password` (Sarah's call 2026-10-04: it makes plain the data is fake), and the printout's header gives it: `Seeded users (password: password):`.
 
 ## Step 4: Re-running the seed starts the seeded users fresh
 **Idea:** `pnpm seed` removes everything seeded before it creates the seed again.

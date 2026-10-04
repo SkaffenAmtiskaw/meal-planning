@@ -1,12 +1,11 @@
 ---
-type: infra
-status: spec
+type: hub
 confirmed: 2026-10-04
 ---
 # Where It Stands
-Design approved. Next: /plan-steps ^status
+Next: its child stories ^status
 
-Shaped 2026-10-02 as one infra story, and its open decisions settled with `/decide` the same day. `/infra-design` on 2026-10-04 wrote the Goals, the Design (seven pieces and the flow), one Convention and the Setup Outside the Repo. The implementation steps remain.
+Split 2026-10-04 during /plan-steps into [[Dependency Update PRs]], [[Dependency Release Analysis]] and [[Major Upgrade Sweeps]]. The design is approved and nothing is built yet.
 
 # Inbox
 
@@ -15,15 +14,10 @@ Sarah finds out about dependency updates on her own machine, from Claude, withou
 
 Sarah is the sole maintainer, so she doesn't check GitHub for new PRs every day, and an email from GitHub about an update is easy to miss among the rest. This story finds the updates and hands them to Sarah as a Claude Code session.
 
-# Goals
-- [ ] A scheduled workflow on `develop` checks the dependencies in `package.json` for new versions, without Sarah doing anything.
-- [ ] The same workflow checks every installed package, including the dependencies of dependencies, against known security advisories.
-- [ ] When a run finds something, a session starts that Sarah sees in the Code tab of the Claude desktop app, under **Routines**.
-- [ ] A run that finds nothing new starts no session. That covers a run that finds nothing, and a run that finds only updates and advisories it has already reported.
-- [ ] Small updates, security fixes first among them, get a PR into `develop` without Sarah asking.
-- [ ] A major update to a library the app depends on heavily gets an assessment in the session of how much effort the upgrade would take and how much the app would gain.
-- [ ] A major update never gets a PR without Sarah's say-so.
-- [ ] Besides its PR, a minor update gets a summary in the session of what the release adds and a quick analysis of whether there's anything the app should adopt.
+The work is spread across three stories so the PRs for security fixes and small updates go live before the release analysis and the sweeps for majors.
+
+## Meta-Instructions
+Before planning or implementing any story linked from this note, read this note first. If a child story conflicts with a decision recorded here, or depends on a question that is still open, stop and ask the user.
 
 # Open Decisions
 1. Where does the check that finds updates run? Sarah sees pros and cons for both a local and a cloud check, and wants them laid out.
@@ -47,7 +41,9 @@ Sarah is the sole maintainer, so she doesn't check GitHub for new PRs every day,
      - Rejected: a JSON file on its own branch - the workflow would need `contents: write`, which could also push to `develop`, and each run that reports something adds a commit
      - Rejected: looking the update up in the repo's PRs - assessments and advisories with no fix never get a PR, so they'd be reported again every run
    - **Decided 2026-10-04:** an advisory that's still unfixed is listed again in the weekly run, as a reminder in that week's session. Version updates stay quiet once reported. Sarah's call: GitHub keeps an alert open until it's fixed, and without a reminder an unfixed advisory would be reported once and then forgotten.
+     - **Decided 2026-10-04 (/plan-steps):** a weekly run with nothing new still starts a session while any advisory is unfixed, so the reminder reaches Sarah in a quiet week too. Sarah's call, on the recommendation that a reminder that only rides along with new findings fails in exactly the week it's needed.
    - **Decided 2026-10-04:** the first run reports the whole backlog, with no baseline run. Sarah's call: the critical advisories in `next` and `better-auth` ship in the app's build and shouldn't wait for an [[App Health]] goal, and the first run tests the whole flow.
+     - **Decided 2026-10-04 (/plan-steps):** when the story was split, the first run became [[Dependency Update PRs]]'s, so it tests only that story's flow, and the six libraries' backlog minors go into its first PR without an assessment. Sarah's call: security fixes reach a PR sooner.
    - **Decided 2026-10-04:** every run's PR comes from one fixed `claude/` branch. While its PR is open, a run adds its updates to that PR and brings the branch up to date with `develop`, so only one dependency PR is ever open and none conflicts with another in `pnpm-lock.yaml`. A PR Sarah closed without merging is left alone, and the next run starts a fresh one from `develop`. Sarah's call, as Renovate updates its existing PR rather than opening another.
      - Rejected: a new PR each run - the second conflicts in the lockfile once the first is merged, and a security fix would queue behind an unmerged weekly PR
 
@@ -79,24 +75,24 @@ Sarah is the sole maintainer, so she doesn't check GitHub for new PRs every day,
   - **Decided 2026-10-04:** when the weekly run's check fails, it starts the routine with a short payload saying so, and the session looks into it. A failed hourly run starts nothing, since an outage usually clears by the next run. Sarah's call: a check that stays broken reaches her within a week, as one session.
 
 ## Pieces
-1. **`pnpm deps:check`** (`scripts/dependency-check.mjs`, plain Node, no new dependency) lists what's new since the last report.
+1. **`pnpm deps:check`** (`scripts/dependency-check.ts`, TypeScript that Node runs directly by stripping its types, no new dependency) lists what's new since the last report. Sarah decided 2026-10-04 during `/plan-steps` that it's TypeScript rather than plain `.mjs`, so `pnpm check:types` covers it (`tsconfig.json` includes `**/*.ts`) while the hourly run still needs no install, and that Biome lints it, with no unit tests. ^piece-1
    - Hourly mode (`pnpm deps:check`) runs `pnpm audit --json`, which reads only the lockfile, so it needs no `pnpm install` (checked 2026-10-04 on a copy of the repo without `node_modules`).
    - Weekly mode (`pnpm deps:check --weekly`) also runs `pnpm outdated --format json`, which needs an install to know the current versions. It lists every advisory that's still unfixed, reported or not, as the weekly reminder.
    - Each finding gets an identifier and a kind: `package@version` marked patch, minor or major (a pre-1.0 minor is marked major), or an advisory's ID with its severity and package.
    - It takes the reported list from a file (`--reported <path>`) and prints JSON with the new findings and the updated list, which keeps only what's still current, so a merged or superseded version drops out. With no list it reports everything, so Sarah or a session can rerun exactly what CI ran.
    - It only reports. It never changes `package.json` or the lockfile (`docs/ci.md`: no script CI runs writes fixes).
-2. **`.github/workflows/dependency-updates.yml`** runs the check on a schedule and starts the routine when there's something new.
+2. **`.github/workflows/dependency-updates.yml`** runs the check on a schedule and starts the routine when there's something new. ^piece-2
    - Triggers: `schedule` hourly at minute 17 (`17 * * * *`), off the top of the hour, when GitHub drops runs most often; `schedule` weekly, Mondays at 13:47 UTC (`47 13 * * 1`); and `workflow_dispatch` with an hourly or weekly choice, for trying it by hand.
    - `permissions: contents: read`. A `concurrency` group without cancel-in-progress makes runs wait their turn, so the hourly and weekly runs never read the same list.
    - Two jobs, split like `checks.yml`, so the routine's token never shares a job with third-party install scripts:
      - `check` checks out the code, installs Node and pnpm from `mise.toml`, and runs `pnpm install --frozen-lockfile` on the weekly run only. It restores the newest `dependency-alerts-reported-*` cache entry (`actions/cache/restore@v6`), runs `pnpm deps:check` (with `--weekly` on the weekly run), and passes the new findings and the updated list on as job outputs (up to 1 MB per job).
      - `start-dependency-updates` runs no install. It runs when `check` found something new, or when the weekly run's `check` failed. It calls the routine's `/fire` once, with the text built by `jq` from `env:` values as `start-ci-failure` builds its own. Only after that call succeeds does it write the updated list and save it as `dependency-alerts-reported-<run ID>` (`actions/cache/save@v6`). For a failed weekly check it sends "the weekly check failed" with the run's link, and saves nothing.
-3. **The `dependency-updates` routine** on claude.ai starts a cloud session when the workflow calls it. Its configuration is recorded in `.claude/skills/dependency-updates/routine.md`, as `routine-sessions` requires.
+3. **The `dependency-updates` routine** on claude.ai starts a cloud session when the workflow calls it. Its configuration is recorded in `.claude/skills/dependency-updates/routine.md`, as `routine-sessions` requires. ^piece-3
    - Prompt: `Run /dependency-updates on the findings described in the routine-fire-payload block.`
    - Model: Sonnet. Repositories: `meal-planning`. Connectors: none.
    - Trigger: API, called by `start-dependency-updates`. Its URL and token are in the Actions secrets `ROUTINE_DEPENDENCY_UPDATES_URL` and `ROUTINE_DEPENDENCY_UPDATES_TOKEN`.
    - Cloud environment: `Meal Planning Routines`.
-4. **The `dependency-updates` skill** (`.claude/skills/dependency-updates/SKILL.md`) handles one run's findings in the session. It follows `routine-sessions`, and reads the payload as untrusted identifiers, as `ci-failure` does.
+4. **The `dependency-updates` skill** (`.claude/skills/dependency-updates/SKILL.md`) handles one run's findings in the session. It follows `routine-sessions`, and reads the payload as untrusted identifiers, as `ci-failure` does. ^piece-4
    1. A failed weekly check: it reruns `pnpm deps:check --weekly` to find the cause, and fixes it on a `claude/` branch with a PR, or explains what it found.
    2. Its branch: if the PR from `claude/dependency-updates` is open, it checks out that branch and brings it up to date with `develop`. Otherwise it cuts the branch fresh from `develop`.
    3. Patches, minors and security fixes go on that branch. A transitive advisory gets the smallest fix that works: a lockfile bump when the parent's range already allows the fixed version, a parent update when it doesn't, or a `pnpm.overrides` entry like the ones `pnpm audit --fix` adds. It runs the four check scripts. If one fails, it finds the update that breaks it, drops it from the branch and reports it.
@@ -108,19 +104,19 @@ Sarah is the sole maintainer, so she doesn't check GitHub for new PRs every day,
    6. Reminders: it lists each advisory that's still unfixed.
    7. It pushes and opens the PR into `develop`, or updates the open one, then waits for the PR's checks to finish. `start-ci-failure` skips `claude/` branches, so the session handles a failure itself, the way `ci-failure` does: it reruns the failed script, fixes the failure, or re-runs a check that passes in the session once on GitHub to tell a flake from a real failure, and explains what it can't fix.
    8. It ends with a summary: the PR and its checks' result, the dropped updates, the minor summaries, the assessments, the sweep lines, any upgrade that looks like its own story, and the reminders.
-5. **The `upgrade-assessor` subagent** (`.claude/agents/upgrade-assessor.md`, `model: opus`) assesses a new release of React, Next, Mantine, better-auth, luxon or Zod, so Sarah can decide what to pick up and how much to prioritize it.
+5. **The `upgrade-assessor` subagent** (`.claude/agents/upgrade-assessor.md`, `model: opus`) assesses a new release of React, Next, Mantine, better-auth, luxon or Zod, so Sarah can decide what to pick up and how much to prioritize it. ^piece-5
    - Benefit to the app (majors and minors): for each new feature or change, whether the app has code it would improve (workarounds it would replace, bugs it would fix, code it would make simpler), with the files and an example of each. `useEffectEvent` replacing dependency-array workarounds is the kind of thing it looks for. A feature with no place to use it gets one line at most.
    - Effort (majors only): from the migration guide and release notes, each breaking change the app actually hits, with file counts.
    - Urgency (majors only): how long the current major keeps getting security fixes, and any advisory only the new major fixes.
    - Verdict: for a major, the benefit and urgency weighed against the effort, not a ranking on security alone. For a minor, whether anything is worth adopting now.
    - Read-only tools: `Read`, `Grep`, `Glob`, `WebFetch`, `WebSearch`. It returns its report to the session.
    - The release notes and guides live on `react.dev`, `nextjs.org`, `mantine.dev`, `better-auth.com`, `zod.dev` and `moment.github.io` (luxon), none of them on the Trusted list, so they're added to the environment's allowed domains (see Setup Outside the Repo). The docs don't say whether `WebFetch` goes through that allowlist, so the plan checks that the first assessment can read them.
-6. **Two new sweep notes,** from the Sweep template, collect the small majors that get no assessment until a goal picks them up.
+6. **Two new sweep notes,** from the Sweep template, collect the small majors that get no assessment until a goal picks them up. ^piece-6
    - **Library Upgrades** (`notes/features/tech debt/Library Upgrades.md`): majors of packages in `dependencies` other than the six assessed libraries. Its items link 🎯 [[App Health]].
    - **Dev Tool Upgrades** (`notes/features/tooling/Dev Tool Upgrades.md`): majors of packages in `devDependencies`. Its items link 🎯 [[Dev Foundations]] until the Dev Tooling standing goal exists, then that goal.
    - Each item names the package, the current and new versions, links its release notes or migration guide, and ends with "found by the dependency-updates routine" and the date.
    - Both Roadmap lines go in Unaffiliated with the other collecting notes, with no goal links. Sarah picks where in Unaffiliated when they're created.
-7. **`docs/ci.md`** records how the dependency check works.
+7. **`docs/ci.md`** records how the dependency check works. ^piece-7
    - A new section, "Dependency Updates": the two schedules, the two jobs, when `start-dependency-updates` fires, the shape of its `text`, the reported list in the Actions cache and how to clear it (deleting the cache entries re-reports everything), and what happens when a call fails.
    - "Every Check Is a `package.json` Script": the cache restore and save steps join setup and the routine call as the only steps that aren't a script.
    - "Routines": a `dependency-updates` entry pointing to its skill.
@@ -143,12 +139,36 @@ Sarah is the sole maintainer, so she doesn't check GitHub for new PRs every day,
 - **The payload's shape changes in two places together.** The `text` that `start-dependency-updates` sends has its exact shape in step 1 of the `dependency-updates` skill, which reads it. A change to the shape changes the job and the skill in the same change, as `docs/ci.md` already requires for `start-ci-failure` and the `ci-failure` skill. Lands in `docs/ci.md`, in the new "Dependency Updates" section.
 
 # Setup Outside the Repo
-- **The `dependency-updates` routine** on claude.ai (https://claude.ai/code/routines → New routine): its prompt, Sonnet, the `meal-planning` repo, an API trigger (remove the default "Pull request: Opened" trigger), the `Meal Planning Routines` environment and no connectors. Recorded in `.claude/skills/dependency-updates/routine.md`.
-- **Two Actions secrets** (repo Settings → Secrets and variables → Actions): `ROUTINE_DEPENDENCY_UPDATES_URL` and `ROUTINE_DEPENDENCY_UPDATES_TOKEN`, from the routine's API trigger. Only their names are recorded, in `routine.md` and `docs/ci.md`.
-- **Six allowed domains** on the `Meal Planning Routines` cloud environment (Network access, Custom): `react.dev`, `nextjs.org`, `mantine.dev`, `better-auth.com`, `zod.dev` and `moment.github.io` (luxon's docs). Recorded in `docs/ci.md`, "The Cloud Environment".
+- **The `dependency-updates` routine** on claude.ai (https://claude.ai/code/routines → New routine): its prompt, Sonnet, the `meal-planning` repo, an API trigger (remove the default "Pull request: Opened" trigger), the `Meal Planning Routines` environment and no connectors. Recorded in `.claude/skills/dependency-updates/routine.md`. ^setup-routine
+- **Two Actions secrets** (repo Settings → Secrets and variables → Actions): `ROUTINE_DEPENDENCY_UPDATES_URL` and `ROUTINE_DEPENDENCY_UPDATES_TOKEN`, from the routine's API trigger. Only their names are recorded, in `routine.md` and `docs/ci.md`. ^setup-secrets
+- **Six allowed domains** on the `Meal Planning Routines` cloud environment (Network access, Custom): `react.dev`, `nextjs.org`, `mantine.dev`, `better-auth.com`, `zod.dev` and `moment.github.io` (luxon's docs). Recorded in `docs/ci.md`, "The Cloud Environment". ^setup-domains
 
 # Out of Scope
 - The tools in `mise.toml`: they ask for `latest`, so they update themselves.
 - Watching tools and libraries for new features worth adopting: that's its own line under [[Dev Foundations]] on the Roadmap.
 
-# Implementation
+# Coverage
+| Goal | Story |
+|---|---|
+| A scheduled workflow on `develop` checks `package.json` for new versions | [[Dependency Update PRs]] |
+| The same workflow checks every installed package against security advisories | [[Dependency Update PRs]] |
+| A run that finds something starts a session under **Routines** | [[Dependency Update PRs]] |
+| A run that finds nothing new starts no session (except the weekly reminder) | [[Dependency Update PRs]] |
+| Small updates, security fixes first, get a PR into `develop` | [[Dependency Update PRs]] |
+| A major update to a heavily used library gets an effort and gain assessment | [[Dependency Release Analysis]] |
+| A major update never gets a PR without Sarah's say-so | [[Dependency Update PRs]] |
+| A minor update gets a release summary and adoption analysis | [[Dependency Release Analysis]] |
+| A major of any other package becomes a sweep item or a flagged story | [[Major Upgrade Sweeps]] |
+
+# Child Stories
+| Story | Status | Scope in this area | Blocked by |
+|---|---|---|---|
+| [[Dependency Update PRs]] | spec | The check, the workflow, the routine, and the one PR for patches, minors and security fixes | |
+| [[Dependency Release Analysis]] | spec | Minor release summaries, and the `upgrade-assessor` for the six libraries | [[Dependency Update PRs]] |
+| [[Major Upgrade Sweeps]] | spec | The Library Upgrades and Dev Tool Upgrades sweeps for other packages' majors | [[Dependency Update PRs]] |
+
+# Build Order
+- **Stated:** [[Dependency Update PRs]] first, from the other two stories' `blocked-by`.
+- **Inferred from the draft plan:** [[Dependency Release Analysis]] and [[Major Upgrade Sweeps]] don't depend on each other and can come in either order. Both edit steps 5 and 8 of the `dependency-updates` skill, but different branches of each.
+
+# Deferred Work
