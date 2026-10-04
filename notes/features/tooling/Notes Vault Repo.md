@@ -9,6 +9,7 @@ Next: /shape ^status
 
 # Inbox
 - The planned `dependency-updates` routine from [[Local Dependency Update Alerts]] (designed 2026-10-04, building doesn't wait on this story) adds lines to two sweep notes in the vault, Library Upgrades and Dev Tool Upgrades, by committing them on its dependency PR's branch in the code repo. Once the notes move, its skill (`.claude/skills/dependency-updates/SKILL.md`) has to send those lines to the notes repo instead, and the routine on claude.ai needs the notes repo added to its repositories (recorded in `.claude/skills/dependency-updates/routine.md`). Added from `/infra-design` on Local Dependency Update Alerts, where Sarah asked that the routine not be overlooked.
+- [Sarah] - If the repo is now an Obsidian vault and nothing else, then I'd like to use the Obsidian git plugin which automatically updates. But I want to have a second opinion if there might be any undesirable side effects to using it.
 
 # Notes
 Split from [[Branching and Releases]]. Moves the notes vault out of the code repo into its own git repo, so notes are never branched. Branching and Releases waits on it. From that story's Open Decisions:
