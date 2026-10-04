@@ -26,4 +26,6 @@ What's known so far: production is on Vercel and doesn't use the same data as lo
 
 Found 2026-09-28 while shaping [[Dev Foundations]] with `/roadmap`.
 
+[Sarah] - I suspect some of the white-listed IPs on the Atlas cluster are for my old address, but I don't know which one(s).
+
 # Questions
