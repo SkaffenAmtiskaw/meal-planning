@@ -1,5 +1,7 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
+import { Types } from 'mongoose';
+
 import { User } from '@/_models/user';
 import { catchify } from '@/_utils/catchify';
 
@@ -22,7 +24,9 @@ vi.mock('@/_utils/zSafeString', async () => ({
 	})),
 }));
 
-const mockUser = { _id: 'user-id-123', planners: [] };
+// getUser returns a serialized user, so its _id is a string.
+const userId = '6ac2c11f3206463befe44de0';
+const mockUser = { _id: userId, planners: [] };
 const mockPlanner = { _id: 'planner-id-456', name: 'My Planner' };
 
 describe('createPlanner', () => {
@@ -70,7 +74,7 @@ describe('createPlanner', () => {
 		expect(result).toEqual({ ok: false, error: 'Not authenticated.' });
 	});
 
-	it('creates a planner and links it to the user', async () => {
+	it('creates a planner and links it to the user by their ObjectId', async () => {
 		mockSafeParse.mockReturnValue({
 			success: true,
 			data: 'My Planner',
@@ -83,7 +87,8 @@ describe('createPlanner', () => {
 
 		expect(addPlanner).toHaveBeenCalledWith('My Planner');
 		expect(User.collection.updateOne).toHaveBeenCalledWith(
-			{ _id: 'user-id-123' },
+			// A raw collection call doesn't cast, so a string _id would match no user.
+			{ _id: new Types.ObjectId(userId) },
 			{
 				$push: {
 					planners: { planner: 'planner-id-456', accessLevel: 'owner' },

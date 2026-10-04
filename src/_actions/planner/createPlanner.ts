@@ -1,5 +1,7 @@
 'use server';
 
+import { Types } from 'mongoose';
+
 import { getUser } from '@/_actions/user';
 import { User } from '@/_models/user';
 import type { ActionResult } from '@/_utils/actionResult';
@@ -22,7 +24,11 @@ export const createPlanner = async (name: string): Promise<ActionResult> => {
 		$push: { planners: { planner: planner._id, accessLevel: 'owner' } },
 	};
 
-	await User.collection.updateOne({ _id: user._id }, update);
+	// getUser returns a serialized user, and a raw collection call doesn't cast its string _id.
+	await User.collection.updateOne(
+		{ _id: new Types.ObjectId(user._id) },
+		update,
+	);
 
 	return { ok: true, data: undefined };
 };

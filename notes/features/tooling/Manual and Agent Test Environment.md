@@ -5,9 +5,9 @@ blocked-by: []
 confirmed: 2026-10-01
 ---
 # Where It Stands
-In progress. Next: /implement Step 4 ^status
+In progress. Next: /implement Step 5 ^status
 
-Steps 1 to 3 are done: `pnpm seed` runs through tsx against the dev database and refuses any other database before connecting, Biome checks `seed/` with the test-support import bans, and the seed creates the four seeded users with the shared planner and their personal planners. Until Step 4 builds the reset, a second run fails on the existing seeded emails. Steps 4 to 11 remain, and every step through Step 9 needs a connection to the Atlas cluster, which works from Sarah's home network.
+Steps 1 to 4 are done: `pnpm seed` runs through tsx against the dev database and refuses any other database before connecting, Biome checks `seed/` with the test-support import bans, and each run removes everything seeded before, then creates the four seeded users with the shared planner and their personal planners. Steps 5 to 11 remain, and every step through Step 9 needs a connection to the Atlas cluster, which works from Sarah's home network.
 
 # Inbox
 
@@ -193,14 +193,14 @@ Everything for the local test environment lives in a new top-level `seed/` folde
 - `seed/seed.ts` - runs the reset before creating the seed
 
 **Acceptance:**
-- [ ] On desktop:
+- [x] On desktop:
   1. In a private window, sign in through the form as `owner` and rename "Seeded Shared Planner" in Settings to "Renamed".
   2. In a new private window, sign in as `write` and create a new planner called "Wren's Extra".
   3. Run `pnpm seed`.
   4. In a new private window, sign in as `write` again.
 
   See the navbar list only "Seeded Shared Planner" and "Wren's Planner". Proves: a rerun works on top of an earlier seed, puts changed seeded data back and removes planners a seeded user made.
-- [ ] On desktop:
+- [x] On desktop:
   1. In your normal browser, signed in as your own dev account, invite `read`'s email to one of your planners.
   2. In a private window, sign in as `read`, open Settings from the user menu and accept the invite under Invites.
   3. In a new private window, sign in as `owner` and invite your own dev account's email to "Seeded Shared Planner".
@@ -208,6 +208,10 @@ Everything for the local test environment lives in a new top-level `seed/` folde
   5. Run `pnpm seed`, then reload the app in your normal browser.
 
   See all your own planners still in the navbar with their data, and "Seeded Shared Planner" gone. In Settings, see that Reid Reader is no longer in your planner's member list. Proves: the reset leaves your own data alone, apart from memberships that involve seeded users.
+
+**Status:** ✅ Complete
+
+**As built:** Creating a planner in Settings never added it to the user who made it: `getUser` returns a serialized user, and `createPlanner`'s raw `User.collection.updateOne` doesn't cast its string `_id`, so the first check's "Wren's Extra" step couldn't work. Sarah pulled the fix into this step 2026-10-04: `src/_actions/planner/createPlanner.ts` casts the id with `new Types.ObjectId`, and its test expects the ObjectId.
 
 ## Step 5: Sample data in the shared planner
 **Idea:** `pnpm seed` fills the shared planner with data to work with.

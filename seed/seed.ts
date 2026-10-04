@@ -2,9 +2,11 @@ import { createPlanner } from '#factories/planner';
 import { createUser } from '#factories/user';
 
 import { closeDevDatabase, connectDevDatabase } from './devDatabase';
+import { resetSeed } from './reset';
 import { DEV_PASSWORD, SEEDED_USERS } from './users';
 
 await connectDevDatabase();
+await resetSeed();
 
 const sharedPlanner = await createPlanner({ name: 'Seeded Shared Planner' });
 
