@@ -2,7 +2,7 @@
  * Shared mock for @/_actions/sharing.
  *
  * Usage in a test file:
- *   vi.mock('@/_actions/sharing', async () => await import('@mocks/@/_actions/sharing'))
+ *   vi.mock('@/_actions/sharing', async () => await import('#mocks/@/_actions/sharing'))
  *
  * Default implementations survive `vi.resetAllMocks()`. Use
  * `vi.mocked(acceptInvite).mockReturnValueOnce(...)` etc. to override for a single test.

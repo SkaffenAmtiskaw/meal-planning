@@ -1,7 +1,7 @@
 import { render } from '@testing-library/react';
+import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import { Types } from 'mongoose';
-import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import { getSavedItem } from '@/_actions/library';
 
@@ -12,7 +12,7 @@ import { RecipeForm } from './RecipeForm';
 
 vi.mock(
 	'@/_actions/library',
-	async () => await import('@mocks/@/_actions/library'),
+	async () => await import('#mocks/@/_actions/library'),
 );
 
 vi.mock('./BookmarkForm', async () => ({

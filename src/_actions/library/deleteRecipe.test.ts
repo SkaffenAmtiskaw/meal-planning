@@ -6,11 +6,11 @@ import { matchesId } from '@/_utils/matchesId';
 
 import { deleteRecipe } from './deleteRecipe';
 
-vi.mock('@/_actions/auth', async () => await import('@mocks/@/_actions/auth'));
+vi.mock('@/_actions/auth', async () => await import('#mocks/@/_actions/auth'));
 
 vi.mock(
 	'@/_models/planner',
-	async () => await import('@mocks/@/_models/planner'),
+	async () => await import('#mocks/@/_models/planner'),
 );
 
 vi.mock('@/_utils/matchesId', async () => ({

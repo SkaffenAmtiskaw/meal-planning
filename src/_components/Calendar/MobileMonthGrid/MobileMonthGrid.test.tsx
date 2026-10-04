@@ -1,13 +1,13 @@
 import { fireEvent, render, screen } from '@testing-library/react';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { DateTime } from 'luxon';
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { useCalendarContext } from '@/_components/Calendar';
 
 import { MobileMonthGrid, type MobileMonthGridEvent } from './MobileMonthGrid';
 
-vi.mock('@mantine/core', async () => await import('@mocks/@mantine/core'));
+vi.mock('@mantine/core', async () => await import('#mocks/@mantine/core'));
 vi.mock('@/_components/Calendar', async () => ({
 	useCalendarContext: vi.fn(),
 }));

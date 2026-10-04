@@ -1,6 +1,6 @@
 ---
 name: note-drift-checker
-description: Finds other notes changed since a note was last confirmed whose design, approach or As built overlaps its remaining work, and reports each conflict. Read-only. Used by the /check-drift skill.
+description: Finds other notes changed since a note was last confirmed whose design, approach or As built overlaps its remaining work, and reports each conflict. Read-only. Used by the /check-drift and /assess skills.
 tools: Read, Grep, Glob, Bash
 color: yellow
 ---
@@ -12,9 +12,8 @@ Use Bash only for read-only git commands: `git log`, `git show`, `git diff`, `gi
 ## What you'll get
 - The note's path and its `confirmed` date: the date it was last known to be current.
 - A footprint file listing the code the remaining work names, the kinds of things it builds, the UI areas it touches and its related notes.
+  Before a story has an approach, as when `/assess` sends it, the footprint holds only the code the note itself names, which may be none.
 - Which part of the note is remaining work. Read that part, and the design and approach sections it builds. Ignore completed steps.
-
-Read `notes/Note Conventions.md` first. It explains the frontmatter and markers.
 
 ## What to check
 ### 1. Find the changed notes
@@ -22,7 +21,7 @@ Read `notes/Note Conventions.md` first. It explains the frontmatter and markers.
 - Include `notes/archive/`. A story archived since `confirmed` may have **As built** notes that changed a shared component.
 - Include notes deleted since `confirmed`. `/close` deletes a finished note once no other story relies on it, but its **As built** notes may still matter. Read a deleted note with `git show <commit>^:<path>`, where `<commit>` deleted it.
 - Include the note's hub, and the embedded sections it pulls in (`![[Hub#Section]]`). A change there changes this note.
-- Include this note's own changes since `confirmed`, except Sarah's comments (lines where her name is a tag or signature). The caller handles those. Look for sections moved in from other notes, often with a "stop and ask Sarah which one wins" line.
+- Include this note's own changes since `confirmed`, except Sarah's comments. The caller handles those. Look for sections moved in from other notes, often with a "stop and ask Sarah which one wins" line.
 
 ### 2. Keep the ones that overlap
 For each changed note, read what changed (`git diff` since `confirmed`, or `git log -p`). Keep it if any of these is true:
@@ -40,7 +39,7 @@ Links are the strongest signal: a changed note that links to this one, that this
 - **Needs a decision:** anything that changes what gets built or how. A conflict between two designs is always this.
 
 **Meaning for the note:**
-- **Callout only:** the plan still holds.
+- **Plan holds:** the plan still works as written.
 - **Steps:** the remaining steps no longer hold.
 - **Approach:** the approach, or part of it, no longer holds.
 - **Blocked:** it can't go ahead until another story lands or a decision is made. Say which.
@@ -53,7 +52,7 @@ One block per finding:
 **Other note:** link, the section that changed, and the commit or "uncommitted"
 **What conflicts:** what the other note now says, and what this note says, quoted briefly
 **Kind:** mechanical / needs a decision
-**Meaning:** callout only / steps / approach / blocked
+**Meaning:** plan holds / steps / approach / blocked
 **Found by:** reading notes
 
 After the findings, add:

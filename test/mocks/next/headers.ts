@@ -3,7 +3,7 @@
  *
  * Usage in a test file:
  *
- *   vi.mock('next/headers', async () => await import('@mocks/next/headers'));
+ *   vi.mock('next/headers', async () => await import('#mocks/next/headers'));
  *
  * Default implementations survive `vi.resetAllMocks()`. Use
  * `vi.mocked(cookies).mockResolvedValueOnce(...)` etc. to override for a single test.

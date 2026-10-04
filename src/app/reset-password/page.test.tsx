@@ -1,5 +1,4 @@
 import { render, screen } from '@testing-library/react';
-
 import { describe, expect, test, vi } from 'vitest';
 
 import ResetPasswordPage from './page';
@@ -10,7 +9,7 @@ vi.mock('./_components/ResetPasswordForm', () => ({
 	),
 }));
 
-vi.mock('@mantine/core', async () => await import('@mocks/@mantine/core'));
+vi.mock('@mantine/core', async () => await import('#mocks/@mantine/core'));
 
 describe('ResetPasswordPage', () => {
 	test('shows invalid link message when no token is present', async () => {

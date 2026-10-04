@@ -1,18 +1,18 @@
-import { makeDish } from '@fixtures/dish';
 import { fireEvent, render, screen } from '@testing-library/react';
-
 import { beforeEach, describe, expect, it, vi } from 'vitest';
+
+import { makeDish } from '#fixtures/dish';
 
 import { DishSourceFields } from './DishSourceFields';
 
 import { usePlannerSavedItems } from '../../_hooks/usePlannerSavedItems';
 
-vi.mock('@mantine/core', async () => await import('@mocks/@mantine/core'));
+vi.mock('@mantine/core', async () => await import('#mocks/@mantine/core'));
 
 vi.mock(
 	'../../_hooks/usePlannerSavedItems',
 	async () =>
-		await import('@mocks/@app/[planner]/calendar/_hooks/usePlannerSavedItems'),
+		await import('#mocks/@app/[planner]/calendar/_hooks/usePlannerSavedItems'),
 );
 
 vi.mock('./DishRow.module.css', () => ({

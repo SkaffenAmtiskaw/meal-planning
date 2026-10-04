@@ -1,5 +1,6 @@
-import { renderToStaticMarkup } from 'react-dom/server';
 import { describe, expect, test, vi } from 'vitest';
+
+import { renderToStaticMarkup } from 'react-dom/server';
 
 import RootLayout, { metadata } from './layout';
 
@@ -13,7 +14,7 @@ vi.mock('next/font/google', () => ({
 
 vi.mock('@mantine/core/styles.css', () => ({}));
 
-vi.mock('@mantine/core', async () => await import('@mocks/@mantine/core'));
+vi.mock('@mantine/core', async () => await import('#mocks/@mantine/core'));
 
 vi.mock('@/_components', () => ({
 	OneTapSignInWrapper: ({ children }: { children: React.ReactNode }) => (

@@ -1,10 +1,9 @@
 import { render, screen } from '@testing-library/react';
-
 import { describe, expect, test, vi } from 'vitest';
 
 import { MonthGridEvent } from './MonthGridEvent';
 
-vi.mock('@mantine/core', async () => await import('@mocks/@mantine/core'));
+vi.mock('@mantine/core', async () => await import('#mocks/@mantine/core'));
 
 describe('MonthGridEvent', () => {
 	test('renders the event title in a bold paragraph', () => {

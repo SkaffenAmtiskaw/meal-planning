@@ -1,7 +1,7 @@
 import { render } from '@testing-library/react';
+import { describe, expect, it, vi } from 'vitest';
 
 import { DateTime } from 'luxon';
-import { describe, expect, it, vi } from 'vitest';
 
 import { CalendarContext, useCalendarContext } from './CalendarContext';
 import type { CalendarContextValue } from './CalendarContext';

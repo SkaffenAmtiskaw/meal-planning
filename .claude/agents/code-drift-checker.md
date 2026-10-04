@@ -27,10 +27,10 @@ Check existence even when nothing changed since `confirmed`. The note may have b
 Search for code that already does part of the remaining work, whether another story built it or it was always there. Search by pattern, not just by name.
 
 ### 3. Conventions
-The docs in `.opencode/docs/` lag far behind the code, so don't treat them as the only source. For each kind of thing in the footprint, compare the plan with three sources:
+The docs in `docs/` lag far behind the code, so don't treat them as the only source. For each kind of thing in the footprint, compare the plan with three sources:
 1. **Recent code.** Find the 2 or 3 most recently added or rewritten examples of the same kind, e.g. with `git log --diff-filter=A --name-only` over the right folder. Read them. If they agree with each other and differ from the plan, that's a finding. If they disagree with each other, say so; that's a convention in flux.
-2. **Pattern notes.** Search `notes/features/` and `notes/archive/` for `type: pattern` notes whose Rules cover this kind of thing. A pattern that is in progress or done, or that is migrating code the story touches, applies to the story even if the note predates it.
-3. **The docs.** Read the doc that covers this kind of thing, and `git log --since=<confirmed> -p -- .opencode/docs` for rule changes since `confirmed`.
+2. **Pattern and infra notes.** Search `notes/features/` and `notes/archive/` for `type: pattern` notes whose Rules, and `type: infra` notes whose Conventions, cover this kind of thing. One that is in progress or done, or a pattern that is migrating code the story touches, applies to the story even if the note predates it.
+3. **The docs.** Read the doc that covers this kind of thing, and `git log --since=<confirmed> -p -- docs` for rule changes since `confirmed`.
 
 When the plan, the docs and recent code don't all agree, report all three with evidence. Don't pick a winner.
 
@@ -40,7 +40,7 @@ When the plan, the docs and recent code don't all agree, report all three with e
 - **Needs a decision:** anything that changes what gets built or how.
 
 **Meaning for the note:**
-- **Callout only:** the plan still holds.
+- **Plan holds:** the plan still works as written.
 - **Steps:** the remaining steps no longer hold.
 - **Approach:** the approach, or part of it, no longer holds.
 - **Blocked:** it can't go ahead until something else happens. Say what.
@@ -55,7 +55,7 @@ One block per finding:
 **What changed:** with `file:line` evidence, and the commit if it changed since `confirmed`
 **For conventions:** what the plan says, what the docs say, what recent code does (with the example files)
 **Kind:** mechanical / needs a decision
-**Meaning:** callout only / steps / approach / blocked
+**Meaning:** plan holds / steps / approach / blocked
 **Verification:** read in code, or unverified plus the check for Sarah
 
 After the findings, add:

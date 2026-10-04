@@ -1,8 +1,7 @@
-import { ReadonlyURLSearchParams, useSearchParams } from 'next/navigation';
-
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
-
 import { beforeEach, describe, expect, it, vi } from 'vitest';
+
+import { ReadonlyURLSearchParams, useSearchParams } from 'next/navigation';
 
 import { checkEmailStatus } from '@/_actions/auth';
 import { client } from '@/_utils/auth';
@@ -10,7 +9,7 @@ import { zSafeString } from '@/_utils/zSafeString';
 
 import { SignInFlow } from './SignInFlow';
 
-vi.mock('@mantine/core', async () => await import('@mocks/@mantine/core'));
+vi.mock('@mantine/core', async () => await import('#mocks/@mantine/core'));
 
 vi.mock('./AuthLayout', () => ({
 	AuthLayoutSocialSection: vi.fn(({ children }) => (
@@ -49,11 +48,11 @@ vi.mock('./AuthLayout', () => ({
 	)),
 }));
 
-vi.mock('next/navigation', async () => await import('@mocks/next/navigation'));
+vi.mock('next/navigation', async () => await import('#mocks/next/navigation'));
 
-vi.mock('@/_hooks', async () => await import('@mocks/@/_hooks'));
+vi.mock('@/_hooks', async () => await import('#mocks/@/_hooks'));
 
-vi.mock('@/_actions/auth', async () => await import('@mocks/@/_actions/auth'));
+vi.mock('@/_actions/auth', async () => await import('#mocks/@/_actions/auth'));
 
 vi.mock('@/_utils/auth', () => ({
 	client: {

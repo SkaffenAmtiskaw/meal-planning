@@ -1,10 +1,9 @@
-import { useRouter } from 'next/navigation';
-
 import { fireEvent, render, screen } from '@testing-library/react';
-
-import { it } from '@test';
 import { beforeAll, beforeEach, describe, expect, vi } from 'vitest';
 
+import { useRouter } from 'next/navigation';
+
+import { it } from '#test';
 import { leavePlanner } from '@/_actions/sharing';
 import { ConfirmButton } from '@/_components';
 
@@ -14,11 +13,11 @@ import { PlannerItem } from './PlannerItem';
 
 import type { UseInvitesResult } from '../_hooks/useInvites';
 
-vi.mock('next/navigation', async () => await import('@mocks/next/navigation'));
+vi.mock('next/navigation', async () => await import('#mocks/next/navigation'));
 
 vi.mock(
 	'@/_actions/sharing',
-	async () => await import('@mocks/@/_actions/sharing'),
+	async () => await import('#mocks/@/_actions/sharing'),
 );
 
 vi.mock('@/_components', () => ({
@@ -27,7 +26,7 @@ vi.mock('@/_components', () => ({
 	)),
 }));
 
-vi.mock('@mantine/core', async () => await import('@mocks/@mantine/core'));
+vi.mock('@mantine/core', async () => await import('#mocks/@mantine/core'));
 
 vi.mock('./MemberListContainer', () => ({
 	MemberListContainer: ({ plannerId }: { plannerId: string }) => (

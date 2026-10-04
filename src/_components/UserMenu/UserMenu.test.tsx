@@ -1,13 +1,12 @@
-import { ActionIcon } from '@mantine/core';
-
 import { render, screen } from '@testing-library/react';
-
 import { beforeEach, describe, expect, it, vi } from 'vitest';
+
+import { ActionIcon } from '@mantine/core';
 
 import { UserMenu } from './UserMenu';
 
 // Mock Mantine core components
-vi.mock('@mantine/core', async () => await import('@mocks/@mantine/core'));
+vi.mock('@mantine/core', async () => await import('#mocks/@mantine/core'));
 
 // Mock Tabler icons
 vi.mock('@tabler/icons-react', () => ({

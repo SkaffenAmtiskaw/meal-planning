@@ -1,13 +1,12 @@
 import { act, render, screen } from '@testing-library/react';
-
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-vi.mock('@mantine/core', async () => await import('@mocks/@mantine/core'));
+vi.mock('@mantine/core', async () => await import('#mocks/@mantine/core'));
 vi.mock(
 	'@/_actions/sharing/getUserInvites',
-	async () => await import('@mocks/@/_actions/sharing/getUserInvites'),
+	async () => await import('#mocks/@/_actions/sharing/getUserInvites'),
 );
-vi.mock('@/_actions/user', async () => await import('@mocks/@/_actions/user'));
+vi.mock('@/_actions/user', async () => await import('#mocks/@/_actions/user'));
 
 import { getUserInvites } from '@/_actions/sharing/getUserInvites';
 import { getUser } from '@/_actions/user';

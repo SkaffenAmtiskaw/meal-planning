@@ -2,7 +2,7 @@
  * Shared mock for @/_actions/library.
  *
  * Usage in a test file:
- *   vi.mock('@/_actions/library', async () => await import('@mocks/@/_actions/library'))
+ *   vi.mock('@/_actions/library', async () => await import('#mocks/@/_actions/library'))
  *
  * Default implementations survive `vi.resetAllMocks()`. Use
  * `vi.mocked(addRecipe).mockReturnValueOnce(...)` etc. to override for a single test.

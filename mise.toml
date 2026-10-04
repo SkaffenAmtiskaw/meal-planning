@@ -1,4 +1,6 @@
 [tools]
 node = 'latest'
-pnpm = 'latest'
+# allow_builds lets mise's npm backend run pnpm's install script, which puts pnpm's native binary in place.
+# Only the routines' cloud environment installs pnpm from npm (see docs/ci.md, "The Cloud Environment").
+pnpm = { version = 'latest', allow_builds = ['pnpm'] }
 rtk = 'latest'

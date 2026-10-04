@@ -1,21 +1,20 @@
+import { render, screen } from '@testing-library/react';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
+
 import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
-
-import { render, screen } from '@testing-library/react';
-
-import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { getUser } from '@/_actions/user';
 
 import Layout from './layout';
 
-vi.mock('next/headers', async () => await import('@mocks/next/headers'));
+vi.mock('next/headers', async () => await import('#mocks/next/headers'));
 
-vi.mock('next/navigation', async () => await import('@mocks/next/navigation'));
+vi.mock('next/navigation', async () => await import('#mocks/next/navigation'));
 
-vi.mock('@mantine/core', async () => await import('@mocks/@mantine/core'));
+vi.mock('@mantine/core', async () => await import('#mocks/@mantine/core'));
 
-vi.mock('@/_actions/user', async () => await import('@mocks/@/_actions/user'));
+vi.mock('@/_actions/user', async () => await import('#mocks/@/_actions/user'));
 
 vi.mock('@/_utils/catchify', () => ({
 	catchify: vi.fn(async (fn: () => Promise<unknown>) => {

@@ -1,5 +1,4 @@
 import { render, screen } from '@testing-library/react';
-
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import type { CalendarDish, CalendarMeal } from '@/_components/Calendar';
@@ -15,10 +14,10 @@ import {
 import type { SavedItem, SerializedDay } from '../../_utils/toScheduleXEvents';
 import { DishLink } from '../DishLink/DishLink';
 
-vi.mock('@mantine/core', async () => await import('@mocks/@mantine/core'));
-vi.mock('@mantine/hooks', async () => await import('@mocks/@mantine/hooks'));
+vi.mock('@mantine/core', async () => await import('#mocks/@mantine/core'));
+vi.mock('@mantine/hooks', async () => await import('#mocks/@mantine/hooks'));
 
-vi.mock('@/_hooks', async () => await import('@mocks/@/_hooks'));
+vi.mock('@/_hooks', async () => await import('#mocks/@/_hooks'));
 
 vi.mock('../ListView/ListView', async () => ({
 	ListView: vi.fn(({ events, renderDish }) => (

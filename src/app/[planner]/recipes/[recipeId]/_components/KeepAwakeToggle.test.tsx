@@ -1,5 +1,4 @@
 import { fireEvent, render, screen } from '@testing-library/react';
-
 import { afterEach, describe, expect, test, vi } from 'vitest';
 
 import { KeepAwakeToggle } from './KeepAwakeToggle';
@@ -12,7 +11,7 @@ vi.mock('react-screen-wake-lock', () => ({
 	useWakeLock: (opts: unknown) => mockUseWakeLock(opts),
 }));
 
-vi.mock('@mantine/core', async () => await import('@mocks/@mantine/core'));
+vi.mock('@mantine/core', async () => await import('#mocks/@mantine/core'));
 
 afterEach(() => {
 	vi.resetAllMocks();

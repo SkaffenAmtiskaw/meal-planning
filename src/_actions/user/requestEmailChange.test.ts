@@ -9,7 +9,7 @@ import { requestEmailChange } from './requestEmailChange';
 
 const mockDbFindOne = vi.hoisted(() => vi.fn());
 
-vi.mock('next/headers', async () => await import('@mocks/next/headers'));
+vi.mock('next/headers', async () => await import('#mocks/next/headers'));
 
 vi.mock('@/_auth', () => ({
 	auth: {
@@ -26,7 +26,7 @@ vi.mock('@/_auth', () => ({
 	},
 }));
 
-vi.mock('@/_models/user', async () => await import('@mocks/@/_models/user'));
+vi.mock('@/_models/user', async () => await import('#mocks/@/_models/user'));
 
 vi.mock('@/_auth/emails', () => ({
 	sendEmailChangeEmail: vi.fn(),

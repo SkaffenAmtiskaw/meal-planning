@@ -1,5 +1,4 @@
 import { render } from '@testing-library/react';
-
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { deleteRecipe } from '@/_actions/library';
@@ -9,7 +8,7 @@ import { DeleteRecipeButton } from './DeleteRecipeButton';
 
 vi.mock(
 	'@/_actions/library',
-	async () => await import('@mocks/@/_actions/library'),
+	async () => await import('#mocks/@/_actions/library'),
 );
 
 vi.mock('./DeleteItemButton', () => ({

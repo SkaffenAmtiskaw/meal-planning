@@ -1,20 +1,19 @@
+import { fireEvent, render, screen, waitFor } from '@testing-library/react';
+import { beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
+
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 
 import { useDisclosure } from '@mantine/hooks';
 
-import { fireEvent, render, screen, waitFor } from '@testing-library/react';
-
-import { beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
-
 import { updateUserName } from '@/_actions/user';
 
 import { ChangeNameForm } from './ChangeNameForm';
 
-vi.mock('@mantine/core', async () => await import('@mocks/@mantine/core'));
-vi.mock('@mantine/hooks', async () => await import('@mocks/@mantine/hooks'));
-vi.mock('next/navigation', async () => await import('@mocks/next/navigation'));
-vi.mock('@/_actions/user', async () => await import('@mocks/@/_actions/user'));
+vi.mock('@mantine/core', async () => await import('#mocks/@mantine/core'));
+vi.mock('@mantine/hooks', async () => await import('#mocks/@mantine/hooks'));
+vi.mock('next/navigation', async () => await import('#mocks/next/navigation'));
+vi.mock('@/_actions/user', async () => await import('#mocks/@/_actions/user'));
 
 const mockRefresh = vi.fn();
 

@@ -1,5 +1,6 @@
-import { Types } from 'mongoose';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
+
+import { Types } from 'mongoose';
 
 import { checkAuth } from '@/_actions/auth';
 import { zMealFormSchema } from '@/_models/calendar';
@@ -7,14 +8,14 @@ import { Planner } from '@/_models/planner';
 
 import { addMeal } from './addMeal';
 
-vi.mock('@/_actions/auth', async () => await import('@mocks/@/_actions/auth'));
+vi.mock('@/_actions/auth', async () => await import('#mocks/@/_actions/auth'));
 vi.mock(
 	'@/_models/calendar',
-	async () => await import('@mocks/@/_models/calendar'),
+	async () => await import('#mocks/@/_models/calendar'),
 );
 vi.mock(
 	'@/_models/planner',
-	async () => await import('@mocks/@/_models/planner'),
+	async () => await import('#mocks/@/_models/planner'),
 );
 
 const plannerId = new Types.ObjectId().toString();

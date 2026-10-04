@@ -1,12 +1,11 @@
-import { ListItem } from '@mantine/core';
-
 import { render, screen } from '@testing-library/react';
-
 import { beforeEach, describe, expect, test, vi } from 'vitest';
+
+import { ListItem } from '@mantine/core';
 
 import { FullWidthListItem } from './FullWidthListItem';
 
-vi.mock('@mantine/core', async () => await import('@mocks/@mantine/core'));
+vi.mock('@mantine/core', async () => await import('#mocks/@mantine/core'));
 
 describe('FullWidthListItem', () => {
 	beforeEach(() => {

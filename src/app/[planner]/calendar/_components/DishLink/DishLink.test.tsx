@@ -1,14 +1,13 @@
-import { Anchor, Text } from '@mantine/core';
-
 import { render, screen } from '@testing-library/react';
-
 import { beforeEach, describe, expect, it, vi } from 'vitest';
+
+import { Anchor, Text } from '@mantine/core';
 
 import { DishLink } from './DishLink';
 
 import type { SerializedDish } from '../../_utils/toScheduleXEvents';
 
-vi.mock('@mantine/core', async () => await import('@mocks/@mantine/core'));
+vi.mock('@mantine/core', async () => await import('#mocks/@mantine/core'));
 vi.mock('next/link', () => ({
 	default: vi.fn(({ children, href }) => <a href={href}>{children}</a>),
 }));

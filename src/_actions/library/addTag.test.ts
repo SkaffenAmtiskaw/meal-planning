@@ -1,16 +1,17 @@
-import { Types } from 'mongoose';
 import { afterEach, describe, expect, it, vi } from 'vitest';
+
+import { Types } from 'mongoose';
 
 import { checkAuth } from '@/_actions/auth';
 import { Planner } from '@/_models/planner';
 
 import { addTag } from './addTag';
 
-vi.mock('@/_actions/auth', async () => await import('@mocks/@/_actions/auth'));
+vi.mock('@/_actions/auth', async () => await import('#mocks/@/_actions/auth'));
 
 vi.mock(
 	'@/_models/planner',
-	async () => await import('@mocks/@/_models/planner'),
+	async () => await import('#mocks/@/_models/planner'),
 );
 
 vi.mock('@/_theme/colors', async () => ({

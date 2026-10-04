@@ -1,28 +1,21 @@
 ---
-type: 
-status: idea
-confirmed: 2026-09-25
+type: workflow
+confirmed: 2026-09-27
 ---
-# Notes
-Agents are moving from OpenCode to Claude Code, slowly. The first was `architect`, which became the `/assess` skill with the `code-critic` and `scope-router` subagents (2026-09-25). `AGENTS.md` still assumes OpenCode and needs rewriting as the move goes on.
+# Where It Stands
+Collecting items. Next: /tooling ^status
 
-Known changes:
-- **`.opencode/` path rules and Project Knowledge docs** - the "File & Path Resolution" section and the docs in `.opencode/docs/` need a new home once OpenCode is gone.
-- **Rules meant for the main session** - Claude Code subagents load `AGENTS.md` too, so rules like "summarize your instructions at session start" also reach `code-critic` and `scope-router`. Word them so they only apply to the main session, or have those subagents skip `CLAUDE.md`.
-- **Tool Constraints and handoff rules** - written for OpenCode agents and permissions; check them against Claude Code.
-- [Sarah] - The `AGENTS.md` instruction where agents have to recite their instructions is unnecessary. Also it's resulting in annoying behavior like the agent waiting for me to confirm it's instructions before it actually starts on the work.
-- [Sarah] - How exactly is a story scope decided? The agent gets to decide what work it wants to do? Or am I signing off on scope somewhere?
-- **Boy Scout Rule (incidental cleanup)** - No existing convention says a story should leave a touched file a little cleaner than it found it (e.g. bringing a test file's ad-hoc mocks onto the centralized-mock convention while making an unrelated fix in the same file), though the `getUserInvites` server-only fix applied an informal version of it. Sarah: "if there isn't [a rule], there should be." Open questions: how far "a bit better" extends (any convention violation in a touched file, or only within the hunks already being edited); production code too, or tests only (the "Tests and shared mocks" section several notes already carry is a scoped version of the same idea for tests); whether it needs its own Enforcement or is just agent judgment; whether "Tests and shared mocks" should eventually just point at this rule instead of repeating it. Likely lands in `.opencode/docs/project_conventions.md` once decided. Found 2026-09-26 while planning that fix.
-- **Dev server script** - `/implement`'s `first-pass.md` starts the app with `scripts/playwright-server.sh`, a leftover from the OpenCode setup. Nothing uses Playwright any more: it only runs `next dev` in the background, and the built-in browser pane does the rest. It writes `dev.log` and `dev.pid` to `.opencode/tmp/` inside the repo, to avoid OpenCode's prompts for writing outside the project. That folder isn't gitignored or removed on `stop`, so it shows up in `git status` after every first pass. Open questions: the script's name; where the log and pid should live now that OpenCode's prompts don't apply; whether `stop` should clean up after itself. Found 2026-09-27 after implementing the `getUserInvites` server-only fix.
-- [Sarah] - Agents are asking me for permission to do work that has zero ambiguity, like setting the status of a note to done. I don't mind something like "my checklist is complete - am I good to change the status to [status]?" but the proposed line change setting the status is silly when it's something like this:
-		Next, I'll set `status` to `done` in Unchecked Invite Lookup and change its `^status` line to:
+# Purpose
+Changes to how agents work in this repo: skills (`.claude/skills/`), subagents (`.claude/agents/`), AGENTS.md, agent conventions and the move from OpenCode to Claude Code. This includes Sarah's feedback on how they behave. The planning skills block edits outside `notes/`, so an agent that spots a fix mid-run adds an item here instead.
 
-		Reviewed. Next: /close ^status
+Agents are moving from OpenCode to Claude Code, slowly. The first was `architect`, which became the `/assess` skill with the `code-critic` and `scope-router` subagents (2026-09-25).
 
-		Is that status line for Unchecked Invite Lookup OK to write?
+## What Belongs Here
+Changes to skills, subagents, AGENTS.md, agent conventions or the OpenCode move, each saying what to change, where, why, and how and when it was found. An item may still need a decision: /tooling settles it with Sarah. Changes to the docs in `docs/`, which describe the codebase, go in [[Docs Updates]]. Tooling config goes in [[Dev Tooling Tidy-Ups]].
 
-# Skill and Agent Changes
-Specific skill and subagent fixes are collected in [[Skill and Agent Tidy-Ups]].
-
-# Questions
-- Once OpenCode is gone, keep `AGENTS.md` (loaded through `CLAUDE.md`), or move its contents into `CLAUDE.md`?
+# Items
+- [ ] **More scripts for deterministic checks** - three more checks in the skills could each be one script instead of several git commands read by hand: `story-range.sh` for `/final-review` step 2 (find the first ✅ Complete commit, propose the range, and list the changed code and test files split into those a step names and the rest), `sarah-comments.sh` for `/check-drift` step 2 (`git blame` the note, list the lines tagged `[Sarah]` or signed `- Sarah`, and mark each new or old against `confirmed`), and `commits-since.sh` for `/plan-steps` step 1 (read `confirmed` from the frontmatter and list the later commits touching `src/`, `test/` or `docs/`, with their files, plus uncommitted changes there). Sarah wants to see whether `vault-orphans.sh`, `note-refs.sh` and `vault-lint.sh` make sessions faster before building more. Found 2026-09-29 while going through the skills for deterministic checks during `/tooling` on Sarah's Sonnet question.
+- [ ] **A story never waits on an item in a collecting note** - work a story waits on becomes its own story, never a line in a sweep, roundup or collecting workflow note. Today Note Conventions' `blocked-by` row allows another story as a blocker, and `scope-router` can route work a story needs into a collecting note, but nothing rules out a story depending on one of those items. Apply the rule in Note Conventions and `.claude/agents/scope-router.md`. Sarah's call, 2026-10-04, during `/decide` on [[Branching and Releases]], when the one-goal-at-a-time change became its own story rather than an item here.
+- [ ] **`/infra-design` asks Sarah to confirm a Setup Outside the Repo list she's already approved** - step 5 of `.claude/skills/infra-design/SKILL.md` says to "show the list and ask whether it's complete", even when every item follows from Design pieces Sarah has already approved, so her sign-off only repeats that approval. Sarah's words: "why am I the one signing off on the setup outside the repo list being right? Is that part of the skill instructions?" A possible change: ask only when the list depends on facts about her setup that only she knows, such as something already configured in her accounts. Found 2026-10-04 during `/infra-design` on [[Local Dependency Update Alerts]].
+- [ ] **A light path for small note-less work, such as a one-off dependency upgrade** - Sarah asked whether a skill suits dependency updates, since "putting it through a full design -> architect -> implement process is silly." A session with no skill loads AGENTS.md, but nothing in AGENTS.md, Note Conventions or the Roadmap's "How this file works" says that a Roadmap line with no note comes off the Roadmap once its work is done, or which checks to run before committing (the pre-commit hook covers lint, types and tests on staged files, not the build). The fix can be a very light skill or a rule in AGENTS.md, such as "when a session finishes the work of a Roadmap line with no note, it runs the four CI checks, then removes the line" (Sarah's call which). Found 2026-10-04 during `/infra-design` on [[Local Dependency Update Alerts]], when the `next` security bump became a note-less 🚨 line. Sarah handles the Roadmap updates for the `next` and Better-Auth lines herself until this lands.
+- [ ] [Sarah] - I would like the ability to run agents on my phone. I wouldn't do major code changes, but some backlog work might work well on a phone. However, I'm not going to have Obsidian and my IDE open on my phone so I can't look at note output as the agent changes it. I'd need to have some agents that format the chat output in a way that makes it easy for me to review changes on mobile. I'd probably also want to really restrict what I do on the phone - it'd be worth thinking through what type of work would work well on a phone. Probably not long sessions where we go through an entire workflow, but targeted sessions that handle single decisions or something similar. I'd also need to be much more vigilant about pushing to remote.

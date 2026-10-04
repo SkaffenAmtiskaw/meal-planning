@@ -1,5 +1,6 @@
-import { Types } from 'mongoose';
 import { afterEach, describe, expect, test, vi } from 'vitest';
+
+import { Types } from 'mongoose';
 
 import { checkAuth } from '@/_actions/auth';
 import { zRecipeFormSchema } from '@/_models/library';
@@ -7,7 +8,7 @@ import { Planner } from '@/_models/planner';
 
 import { addRecipe } from './addRecipe';
 
-vi.mock('@/_actions/auth', async () => await import('@mocks/@/_actions/auth'));
+vi.mock('@/_actions/auth', async () => await import('#mocks/@/_actions/auth'));
 
 vi.mock('@/_models/library', () => ({
 	zRecipeFormSchema: {

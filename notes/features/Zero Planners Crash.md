@@ -5,6 +5,17 @@ blocked-by:
   - "decision needed on which fix to use"
 confirmed: 2026-09-25
 ---
+# Where It Stands
+
+Next: /investigate ^status
+
+Found by reading code and never reproduced. Once it's reproduced, a fix still needs choosing from Fix Options.
+
+# Inbox
+
+- Verify in the running app that a user can really end up with zero planners and crash at `/`. Sarah recalled a check that adds a planner when a user has none (2026-10-02, during `/roadmap Bugs`). The only one found so far is in `src/app/page.tsx`: it creates a planner only when no `User` document exists yet, so an existing user with an empty `planners` list still reaches `user.planners[0]`.
+
+# Symptoms
 A user whose last planner membership is removed ends up with zero planners, and the root page crashes for them. *Found by static reading during [[Stale Data Issues]]; not yet reproduced in the running app.*
 
 ## Who Can Hit This

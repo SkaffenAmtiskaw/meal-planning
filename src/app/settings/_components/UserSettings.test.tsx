@@ -1,5 +1,4 @@
 import { render, screen } from '@testing-library/react';
-
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { checkEmailStatus } from '@/_actions/auth';
@@ -10,9 +9,9 @@ import { ChangeNameForm } from './ChangeNameForm';
 import { ChangePasswordForm } from './ChangePasswordForm';
 import { UserSettings } from './UserSettings';
 
-vi.mock('@/_actions/auth', async () => await import('@mocks/@/_actions/auth'));
-vi.mock('@/_actions/user', async () => await import('@mocks/@/_actions/user'));
-vi.mock('@mantine/core', async () => await import('@mocks/@mantine/core'));
+vi.mock('@/_actions/auth', async () => await import('#mocks/@/_actions/auth'));
+vi.mock('@/_actions/user', async () => await import('#mocks/@/_actions/user'));
+vi.mock('@mantine/core', async () => await import('#mocks/@mantine/core'));
 
 vi.mock('./ChangeEmailForm', () => ({
 	ChangeEmailForm: vi.fn(() => null),

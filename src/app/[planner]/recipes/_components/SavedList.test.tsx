@@ -1,12 +1,11 @@
 import { render, screen } from '@testing-library/react';
-
 import { describe, expect, test, vi } from 'vitest';
 
 import type { TagColor } from '@/_theme/colors';
 
 import { SavedList } from './SavedList';
 
-vi.mock('@mantine/core', async () => await import('@mocks/@mantine/core'));
+vi.mock('@mantine/core', async () => await import('#mocks/@mantine/core'));
 
 vi.mock('@/_components', () => ({
 	Tag: ({ children, color }: { children: React.ReactNode; color: string }) => (

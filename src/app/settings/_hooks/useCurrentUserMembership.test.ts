@@ -1,12 +1,11 @@
 import { renderHook, waitFor } from '@testing-library/react';
-
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { getUser } from '@/_actions/user';
 
 import { useCurrentUserMembership } from './useCurrentUserMembership';
 
-vi.mock('@/_actions/user', async () => await import('@mocks/@/_actions/user'));
+vi.mock('@/_actions/user', async () => await import('#mocks/@/_actions/user'));
 
 describe('useCurrentUserMembership', () => {
 	const plannerId = '507f1f77bcf86cd799439011';

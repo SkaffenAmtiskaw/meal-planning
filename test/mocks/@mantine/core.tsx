@@ -3,7 +3,7 @@
  *
  * Usage in a test file:
  *
- *   vi.mock('@mantine/core', async () => await import('@mocks/@mantine/core'))
+ *   vi.mock('@mantine/core', async () => await import('#mocks/@mantine/core'))
  *
  * All components are `vi.fn()` instances, so you can inspect props:
  *
@@ -17,9 +17,9 @@
  * `vi.mocked(Comp).mockImplementationOnce(...)` to override for a single test.
  */
 
-import React from 'react';
-
 import { vi } from 'vitest';
+
+import React from 'react';
 
 // ─── Shared prop shapes ───────────────────────────────────────────────────────
 

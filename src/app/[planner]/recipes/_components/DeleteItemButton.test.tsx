@@ -1,8 +1,7 @@
-import { useRouter } from 'next/navigation';
-
 import { render } from '@testing-library/react';
-
 import { beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
+
+import { useRouter } from 'next/navigation';
 
 import { ConfirmButton } from '@/_components';
 
@@ -10,7 +9,7 @@ import { DeleteItemButton } from './DeleteItemButton';
 
 const mockRefresh = vi.fn();
 
-vi.mock('next/navigation', async () => await import('@mocks/next/navigation'));
+vi.mock('next/navigation', async () => await import('#mocks/next/navigation'));
 
 const mockUseCanWrite = vi.fn();
 
@@ -18,7 +17,7 @@ vi.mock('@/app/[planner]/_components', () => ({
 	useCanWrite: () => mockUseCanWrite(),
 }));
 
-vi.mock('@mantine/core', async () => await import('@mocks/@mantine/core'));
+vi.mock('@mantine/core', async () => await import('#mocks/@mantine/core'));
 
 vi.mock('@tabler/icons-react', () => ({
 	IconTrash: () => <svg data-testid="icon-trash" />,

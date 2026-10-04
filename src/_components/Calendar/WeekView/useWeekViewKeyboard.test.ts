@@ -1,7 +1,7 @@
 import { act, renderHook } from '@testing-library/react';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { DateTime } from 'luxon';
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { useWeekViewKeyboard } from './useWeekViewKeyboard';
 import type { WeekViewMeal } from './WeekView';

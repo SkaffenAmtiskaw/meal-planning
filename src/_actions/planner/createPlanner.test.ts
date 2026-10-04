@@ -8,8 +8,8 @@ import { createPlanner } from './createPlanner';
 
 const mockSafeParse = vi.hoisted(() => vi.fn());
 
-vi.mock('@/_actions/user', async () => await import('@mocks/@/_actions/user'));
-vi.mock('@/_models/user', async () => await import('@mocks/@/_models/user'));
+vi.mock('@/_actions/user', async () => await import('#mocks/@/_actions/user'));
+vi.mock('@/_models/user', async () => await import('#mocks/@/_models/user'));
 vi.mock('./addPlanner', async () => ({
 	addPlanner: vi.fn(),
 }));

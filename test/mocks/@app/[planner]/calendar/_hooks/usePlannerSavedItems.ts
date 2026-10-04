@@ -3,7 +3,7 @@
  *
  * Usage in a test file:
  *   vi.mock('../../_hooks/usePlannerSavedItems', async () =>
- *     await import('@mocks/@app/[planner]/calendar/_hooks/usePlannerSavedItems')
+ *     await import('#mocks/@app/[planner]/calendar/_hooks/usePlannerSavedItems')
  *   );
  *
  * Default return value is an empty array. Override in specific tests with:

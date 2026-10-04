@@ -1,19 +1,18 @@
-import { useRouter } from 'next/navigation';
-
 import { act, renderHook } from '@testing-library/react';
-
 import { beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
+
+import { useRouter } from 'next/navigation';
 
 import { updatePlannerName } from '@/_actions/planner';
 
 import { useRenamePlanner } from './useRenamePlanner';
 
-vi.mock('next/navigation', async () => await import('@mocks/next/navigation'));
+vi.mock('next/navigation', async () => await import('#mocks/next/navigation'));
 vi.mock(
 	'@/_actions/planner',
-	async () => await import('@mocks/@/_actions/planner'),
+	async () => await import('#mocks/@/_actions/planner'),
 );
-vi.mock('@/_hooks', async () => await import('@mocks/@/_hooks'));
+vi.mock('@/_hooks', async () => await import('#mocks/@/_hooks'));
 
 describe('useRenamePlanner', () => {
 	const mockRefresh = vi.fn();

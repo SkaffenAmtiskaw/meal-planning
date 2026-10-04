@@ -1,14 +1,13 @@
+import { renderHook } from '@testing-library/react';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
+
 import { useMantineTheme } from '@mantine/core';
 import { useMediaQuery } from '@mantine/hooks';
 
-import { renderHook } from '@testing-library/react';
-
-import { beforeEach, describe, expect, it, vi } from 'vitest';
-
 import { useIsMobile } from './useIsMobile';
 
-vi.mock('@mantine/core', async () => await import('@mocks/@mantine/core'));
-vi.mock('@mantine/hooks', async () => await import('@mocks/@mantine/hooks'));
+vi.mock('@mantine/core', async () => await import('#mocks/@mantine/core'));
+vi.mock('@mantine/hooks', async () => await import('#mocks/@mantine/hooks'));
 
 describe('useIsMobile', () => {
 	beforeEach(() => {

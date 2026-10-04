@@ -1,11 +1,10 @@
+import { act, fireEvent, render, screen } from '@testing-library/react';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
+
 import { ScrollArea } from '@mantine/core';
 import { useForm } from '@mantine/form';
 
-import { makeDish } from '@fixtures/dish';
-import { act, fireEvent, render, screen } from '@testing-library/react';
-
-import { beforeEach, describe, expect, it, vi } from 'vitest';
-
+import { makeDish } from '#fixtures/dish';
 import { addMeal } from '@/_actions/calendar';
 import { FormFeedbackAlert, SubmitButton } from '@/_components';
 import { useFormFeedback, useIsMobile } from '@/_hooks';
@@ -14,15 +13,15 @@ import { AddMealForm } from './AddMealForm';
 import { DishList } from './DishList';
 import { useDishes } from './useDishes';
 
-vi.mock('@mantine/core', async () => await import('@mocks/@mantine/core'));
+vi.mock('@mantine/core', async () => await import('#mocks/@mantine/core'));
 
-vi.mock('@mantine/form', async () => await import('@mocks/@mantine/form'));
+vi.mock('@mantine/form', async () => await import('#mocks/@mantine/form'));
 
-vi.mock('@/_hooks', async () => await import('@mocks/@/_hooks'));
+vi.mock('@/_hooks', async () => await import('#mocks/@/_hooks'));
 
 vi.mock(
 	'@/_actions/calendar',
-	async () => await import('@mocks/@/_actions/calendar'),
+	async () => await import('#mocks/@/_actions/calendar'),
 );
 
 vi.mock('@/_components', async () => ({

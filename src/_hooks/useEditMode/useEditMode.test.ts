@@ -1,12 +1,11 @@
-import { useDisclosure } from '@mantine/hooks';
-
 import { renderHook } from '@testing-library/react';
-
 import { beforeEach, describe, expect, it, vi } from 'vitest';
+
+import { useDisclosure } from '@mantine/hooks';
 
 import { useEditMode } from './useEditMode';
 
-vi.mock('@mantine/hooks', async () => await import('@mocks/@mantine/hooks'));
+vi.mock('@mantine/hooks', async () => await import('#mocks/@mantine/hooks'));
 
 describe('useEditMode', () => {
 	beforeEach(() => {

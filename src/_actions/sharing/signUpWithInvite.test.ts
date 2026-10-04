@@ -7,7 +7,7 @@ import { PendingInvite } from '@/_models/sharing';
 import { signUpWithInvite } from './signUpWithInvite';
 import { validateInviteToken } from './validateInviteToken';
 
-vi.mock('@/_actions/user', async () => await import('@mocks/@/_actions/user'));
+vi.mock('@/_actions/user', async () => await import('#mocks/@/_actions/user'));
 
 vi.mock('@/_auth', () => ({
 	auth: {
@@ -20,7 +20,7 @@ vi.mock('@/_auth', () => ({
 
 vi.mock(
 	'./validateInviteToken',
-	async () => await import('@mocks/@/_actions/sharing'),
+	async () => await import('#mocks/@/_actions/sharing'),
 );
 
 vi.mock('@/_models/sharing', () => ({

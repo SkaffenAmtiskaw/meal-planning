@@ -1,24 +1,23 @@
-import { usePathname, useRouter } from 'next/navigation';
-
 import { act, fireEvent, render, screen } from '@testing-library/react';
-
 import { beforeAll, beforeEach, describe, expect, test, vi } from 'vitest';
+
+import { usePathname, useRouter } from 'next/navigation';
 
 import { addBookmark, editBookmark } from '@/_actions/library';
 import { TagCombobox } from '@/_components';
 
 import { BookmarkForm } from './BookmarkForm';
 
-vi.mock('next/navigation', async () => await import('@mocks/next/navigation'));
+vi.mock('next/navigation', async () => await import('#mocks/next/navigation'));
 
 const mockPush = vi.fn();
 
 vi.mock(
 	'@/_actions/library',
-	async () => await import('@mocks/@/_actions/library'),
+	async () => await import('#mocks/@/_actions/library'),
 );
 
-vi.mock('@/_hooks', async () => await import('@mocks/@/_hooks'));
+vi.mock('@/_hooks', async () => await import('#mocks/@/_hooks'));
 
 vi.mock('@/_components', () => ({
 	FormFeedbackAlert: vi.fn(),
@@ -26,9 +25,9 @@ vi.mock('@/_components', () => ({
 	TagCombobox: vi.fn(() => null),
 }));
 
-vi.mock('@mantine/form', async () => await import('@mocks/@mantine/form'));
+vi.mock('@mantine/form', async () => await import('#mocks/@mantine/form'));
 
-vi.mock('@mantine/core', async () => await import('@mocks/@mantine/core'));
+vi.mock('@mantine/core', async () => await import('#mocks/@mantine/core'));
 
 const defaultProps = {
 	plannerId: 'planner-1',

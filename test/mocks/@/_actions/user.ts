@@ -2,7 +2,7 @@
  * Shared mock for @/_actions/user.
  *
  * Usage in a test file:
- *   vi.mock('@/_actions/user', async () => await import('@mocks/@/_actions/user'))
+ *   vi.mock('@/_actions/user', async () => await import('#mocks/@/_actions/user'))
  *
  * Default implementations survive `vi.resetAllMocks()`. Use
  * `vi.mocked(getUser).mockReturnValueOnce(...)` etc. to override for a single test.

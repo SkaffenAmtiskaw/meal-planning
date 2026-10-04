@@ -19,13 +19,13 @@ const { mockCollection, mockBaFindOne, mockBaDeleteMany, mockBaDeleteOne } =
 		})),
 	}));
 
-vi.mock('next/headers', async () => await import('@mocks/next/headers'));
+vi.mock('next/headers', async () => await import('#mocks/next/headers'));
 
-vi.mock('@/_models/user', async () => await import('@mocks/@/_models/user'));
+vi.mock('@/_models/user', async () => await import('#mocks/@/_models/user'));
 
 vi.mock(
 	'@/_models/planner',
-	async () => await import('@mocks/@/_models/planner'),
+	async () => await import('#mocks/@/_models/planner'),
 );
 
 vi.mock('@/_auth', () => ({

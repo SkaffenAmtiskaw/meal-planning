@@ -6,7 +6,6 @@ blocked-by:
   - "decision needed: how are subpath imports mocked?"
   - "decision needed: wait for Domain-Specific Code Locations?"
   - "decision needed: where do app-level mocks live?"
-  - "decision needed: who builds the mock for the new src/_actions/_utils helpers?"
 confirmed: 2026-09-25
 ---
 # Where It Stands
@@ -14,13 +13,13 @@ confirmed: 2026-09-25
 Waiting on your decisions in Open Decisions; then write the Rules with Sarah. ^status
 
 # Purpose
-Many test files mock modules that have no centralized mock in `test/mocks/`, each with its own factory. This story decides how new centralized mocks are laid out (barrels, subpaths, modules with no barrel, code under `src/app/`). It then creates them where `.opencode/docs/unit_tests.md` "Creating Centralized Mocks" calls for one, and moves the consuming tests over. It changes only test and mock files, never source.
+Many test files mock modules that have no centralized mock in `test/mocks/`, each with its own factory. This story decides how new centralized mocks are laid out (barrels, subpaths, modules with no barrel, code under `src/app/`). It then creates them where `docs/unit_tests.md` "Creating Centralized Mocks" calls for one, and moves the consuming tests over. It changes only test and mock files, never source.
 
 # Root Cause
 Until 2026-09-25, `unit_tests.md` said new centralized mocks needed the user's go-ahead, so tests wrote their own factories. The existing mocks mirror their import specifier (`@/_actions/auth` → `test/mocks/@/_actions/auth.ts`). Nothing says how to mirror a subpath import, a module with no barrel (`@/_utils`), or code under `src/app/`.
 
 # Current State
-*Checked against the code on 2026-09-25 by scanning every `vi.mock` call in `src`. "Centralized" means the test uses `vi.mock('<module>', async () => await import('@mocks/...'))`; "ad-hoc" means it defines its own factory.*
+*Checked against the code on 2026-09-25 by scanning every `vi.mock` call in `src`. "Centralized" means the test uses `vi.mock('<module>', async () => await import('#mocks/...'))`; "ad-hoc" means it defines its own factory.*
 
 ## ⏳ `@/_components` - NOT STARTED
 > ⚠️ **Check Drift 2026-09-25:** The scope is bigger than stated, and one mock can't cover it. There are 33 ad-hoc calls across 29 files, not 12. 15 files mock the `@/_components` barrel. 8 mock the sub-barrel `@/_components/Calendar`. The rest mock deep paths (`Calendar/CalendarContext`, `Calendar/MealCard/MealCard`, `Calendar/MobileAgenda/MobileAgenda`, `Calendar/MobileMonthGrid/MobileMonthGrid`, `Calendar/_components/CalendarNavButtons`, `NavLink`, `PillButton` ×2, `UserMenu`), because that is what the source imports. Most barrel factories export a different set of components in each file. Only three groups share an identical body: `ConfirmButton` (`RecipeDetail`, `DeleteItemButton`, `RemoveMemberButton` tests), `FormFeedbackAlert` (`ConfirmModal`, `RecipeForm`, `InviteForm` tests) and `useCalendarContext: vi.fn()` (`MobileAgenda`, `MobileMonthGrid`, `MobileAddMealButton`, `MealMonthAgenda` tests). Other stories will also change these exports: Header Date Picker adds `src/_components/CalendarDatePicker/`, Today and Selected Day Markers refactors `WeekView` and `MobileMonthGrid` and fixes a circular import through the `Calendar` barrel, and Mobile List View changes `MealCard`. Found by reading code and notes, not verified in the running app.
@@ -52,6 +51,7 @@ Until 2026-09-25, `unit_tests.md` said new centralized mocks needed the user's g
 3. Should this wait for [[Domain-Specific Code Locations]] (`pattern` · `idea`)? It may move code out of `@/_components` and `@/_utils` to a new alias, which would change the mock paths.
 4. Where do app-level mocks live? `test/mocks/@app/...` isn't an alias and doesn't mirror the import path. Its consumers mock a relative specifier. This also decides `@/app/[planner]/_components` (`useCanWrite`, `usePlannerContext`), which 7 files mock ad-hoc. It also decides the relative app-level mocks `./AuthLayout` and `./ToggleContext` (see Current State).
 5. Who builds the shared mock for the `src/_actions/_utils` helpers (`defineMutation`, `defineQuery`, `invalidate`, `cacheTags`) that [[Calendar and Recipes Data Refresh]] and [[Data Rules Enforcement]] add? [[Calendar and Recipes Data Refresh]] writes the first tests that need it, so answer this before its /plan-steps.
+   - **Decided** 2026-09-27: Sarah decided that [[Calendar and Recipes Data Refresh]] builds the shared mock for `invalidate()`, `test/mocks/@/_actions/_utils/invalidate.ts`, in the same step that creates `invalidate()`. Its path mirrors the import specifier, like the existing mocks.
 
 # Rules
 %% To decide with Sarah once the Open Decisions are answered. %%
@@ -65,7 +65,7 @@ Until 2026-09-25, `unit_tests.md` said new centralized mocks needed the user's g
 # Out of Scope
 - Stragglers in modules that already have centralized mocks: the [[Stale Data Issues]] stories that rewrite those tests.
 - `next/cache`: [[Calendar and Recipes Data Refresh]] replaces `revalidatePath` with `invalidate()`, so these 4 mocks go away.
-- `@tabler/icons-react` mocks that `unit_tests.md` forbids: Roadmap, Tech Debt.
+- `@tabler/icons-react` mocks that `unit_tests.md` forbids: [[Unit Test Tidy-Ups]].
 
 # Implementation
 %% Leave empty until the Rules and Migration Checklist are confirmed. %%

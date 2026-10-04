@@ -22,6 +22,9 @@ The design lives in [[Stale Data Issues]]. The sections embedded below are part 
 # Current State
 *From [[Stale Data Issues]] (static reading, 2026-09-25). Re-check before planning.*
 
+> [!warning]
+> This may affect the E2E test helpers. The E2E user factory, `createUser` in `test/factories/user.ts` (`docs/e2e_tests.md`, "The Factories"), creates the app's `User` doc outside Next (in the Playwright process, and later a dev seed script). Moving `addUser` or `addPlanner` must not break E2E testing or any other testing that uses those helpers.
+
 Not actually server actions. Move into server-only internal utils so they can't be called from the client:
 - [ ] `planner/addPlanner` — currently exported as a server action **with no auth check**
 - [ ] `user/addUser`
@@ -33,7 +36,10 @@ Writes outside server actions (`updateTag` only works inside Server Actions):
 
 ## Tests and Shared Mocks
 This story owns the mock clean-up for the test files it changes:
-- Every test file it rewrites or moves uses the centralized mock in `test/mocks/` for any module that has one (`vi.mock('<module>', async () => await import('@mocks/...'))`), not an ad-hoc factory, per `.opencode/docs/unit_tests.md`.
+
+> ⚠️ **Check Drift 2026-09-28:** The docs moved from `.opencode/docs/` to `docs/`, so `.opencode/docs/unit_tests.md` below is now `docs/unit_tests.md`. Found while `/tooling` moved the docs.
+
+- Every test file it rewrites or moves uses the centralized mock in `test/mocks/` for any module that has one (`vi.mock('<module>', async () => await import('#mocks/...'))`), not an ad-hoc factory, per `docs/unit_tests.md`.
 - When it moves, renames or reshapes an export of `@/_actions` or `@/_models`, it updates the matching `test/mocks/@/_actions/*.ts` or `test/mocks/@/_models/*.ts` in the same step.
 - If another story already did this for a file, there's nothing more to do.
 

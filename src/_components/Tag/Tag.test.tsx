@@ -1,10 +1,9 @@
 import { render, screen } from '@testing-library/react';
-
 import { describe, expect, it, vi } from 'vitest';
 
 import { Tag } from './Tag';
 
-vi.mock('@mantine/core', async () => await import('@mocks/@mantine/core'));
+vi.mock('@mantine/core', async () => await import('#mocks/@mantine/core'));
 
 describe('Tag', () => {
 	it('renders children text', () => {

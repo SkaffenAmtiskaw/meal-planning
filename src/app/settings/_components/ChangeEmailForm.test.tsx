@@ -1,22 +1,21 @@
+import { fireEvent, render, screen, waitFor } from '@testing-library/react';
+import { beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
+
 import { useRouter } from 'next/navigation';
 
 import { useDisclosure } from '@mantine/hooks';
-
-import { fireEvent, render, screen, waitFor } from '@testing-library/react';
-
-import { beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { requestEmailChange } from '@/_actions/user';
 
 import { ChangeEmailForm } from './ChangeEmailForm';
 
-vi.mock('@mantine/core', async () => await import('@mocks/@mantine/core'));
+vi.mock('@mantine/core', async () => await import('#mocks/@mantine/core'));
 
-vi.mock('@mantine/hooks', async () => await import('@mocks/@mantine/hooks'));
+vi.mock('@mantine/hooks', async () => await import('#mocks/@mantine/hooks'));
 
-vi.mock('next/navigation', async () => await import('@mocks/next/navigation'));
+vi.mock('next/navigation', async () => await import('#mocks/next/navigation'));
 
-vi.mock('@/_actions/user', async () => await import('@mocks/@/_actions/user'));
+vi.mock('@/_actions/user', async () => await import('#mocks/@/_actions/user'));
 
 const mockRequestEmailChange = vi.mocked(requestEmailChange);
 const mockUseDisclosure = vi.mocked(useDisclosure);

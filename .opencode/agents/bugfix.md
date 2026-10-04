@@ -8,7 +8,7 @@ permission:
   edit:
     "*": deny
     "notes/**": ask
-    ".opencode/docs/**": ask
+    "docs/**": ask
     "*/index.ts": allow
   task:
     general: deny

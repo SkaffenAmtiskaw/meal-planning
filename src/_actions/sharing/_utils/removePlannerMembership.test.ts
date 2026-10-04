@@ -1,7 +1,8 @@
-import { Types } from 'mongoose';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-vi.mock('@/_models/user', async () => await import('@mocks/@/_models/user'));
+import { Types } from 'mongoose';
+
+vi.mock('@/_models/user', async () => await import('#mocks/@/_models/user'));
 
 import { User } from '@/_models/user';
 

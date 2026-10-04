@@ -1,5 +1,4 @@
 import { act, render, screen } from '@testing-library/react';
-
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { MemberList } from './MemberList';
@@ -8,7 +7,7 @@ import { MemberListContainer } from './MemberListContainer';
 import { useCurrentUserMembership } from '../_hooks/useCurrentUserMembership';
 import { usePlannerMembers } from '../_hooks/usePlannerMembers';
 
-vi.mock('@mantine/core', async () => await import('@mocks/@mantine/core'));
+vi.mock('@mantine/core', async () => await import('#mocks/@mantine/core'));
 
 vi.mock('../_hooks/usePlannerMembers', () => ({
 	usePlannerMembers: vi.fn(),

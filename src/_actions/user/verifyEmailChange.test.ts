@@ -18,7 +18,7 @@ vi.mock('@/_auth', async () => ({
 	},
 }));
 
-vi.mock('@/_models/user', async () => await import('@mocks/@/_models/user'));
+vi.mock('@/_models/user', async () => await import('#mocks/@/_models/user'));
 
 const futureDate = new Date(Date.now() + 1000 * 60 * 60 * 24);
 const pastDate = new Date(Date.now() - 1000 * 60 * 60);

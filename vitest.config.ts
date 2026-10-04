@@ -1,6 +1,6 @@
 import react from '@vitejs/plugin-react'
 import { resolve } from 'node:path'
-import { defineConfig } from 'vitest/config'
+import { configDefaults, defineConfig } from 'vitest/config'
 
 export default defineConfig({
   plugins: [react()],
@@ -8,22 +8,24 @@ export default defineConfig({
     alias: [
       { find: '@/env', replacement: new URL('./test/mocks/env.ts', import.meta.url).pathname },
       { find: '@', replacement: resolve(__dirname, './src') },
-      { find: '@test', replacement: resolve(__dirname, './test/index.ts') },
+      { find: '#test', replacement: resolve(__dirname, './test/index.ts') },
     ],
   },
   test: {
     alias: {
         'server-only': new URL('./test/mocks/server-only.ts', import.meta.url).pathname,
-        '@mocks': new URL('./test/mocks', import.meta.url).pathname,
-        '@fixtures': new URL('./test/fixtures', import.meta.url).pathname,
+        '#mocks': new URL('./test/mocks', import.meta.url).pathname,
+        '#fixtures': new URL('./test/fixtures', import.meta.url).pathname,
     },
+    include: ['**/*.test.{ts,tsx}'],
+    exclude: [...configDefaults.exclude, 'e2e/**'],
     environment: 'jsdom',
     setupFiles: ['./test/setup.ts'],
     coverage: {
       provider: 'v8',
       reporter: ['text', 'html', 'lcov'],
       include: ['src/**/*.{ts,tsx}'],
-      // Excluded files should are either test files or files that should NEVER have logic - any logic should be
+      // Excluded files are either test files or files that should NEVER have logic - any logic should be
       // pulled into separate testable modules.
       exclude: [
           // Mantine theme config

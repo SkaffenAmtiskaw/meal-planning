@@ -1,10 +1,9 @@
 import { render, screen } from '@testing-library/react';
-
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { MealCard } from './MealCard';
 
-vi.mock('@mantine/core', async () => await import('@mocks/@mantine/core'));
+vi.mock('@mantine/core', async () => await import('#mocks/@mantine/core'));
 
 vi.mock('../_components/DishListItem/DishListItem', () => ({
 	DishListItem: vi.fn(({ dish, renderName }) => (

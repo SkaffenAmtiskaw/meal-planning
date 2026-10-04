@@ -1,14 +1,15 @@
+import { beforeEach, describe, expect, it, vi } from 'vitest';
+
 import { revalidatePath } from 'next/cache';
 
 import { Types } from 'mongoose';
-import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { checkAuth } from '@/_actions/auth';
 import { Planner } from '@/_models/planner';
 
 import { updateRecipeNotes } from './updateRecipeNotes';
 
-vi.mock('@/_actions/auth', async () => await import('@mocks/@/_actions/auth'));
+vi.mock('@/_actions/auth', async () => await import('#mocks/@/_actions/auth'));
 
 vi.mock('next/cache', async () => ({
 	revalidatePath: vi.fn(),
@@ -16,7 +17,7 @@ vi.mock('next/cache', async () => ({
 
 vi.mock(
 	'@/_models/planner',
-	async () => await import('@mocks/@/_models/planner'),
+	async () => await import('#mocks/@/_models/planner'),
 );
 
 const plannerId = new Types.ObjectId().toString();

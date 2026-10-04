@@ -1,5 +1,6 @@
-import { Types } from 'mongoose';
 import { describe, expect, test, vi } from 'vitest';
+
+import { Types } from 'mongoose';
 
 vi.mock('mongoose', async (importOriginal) => {
 	const actual = await importOriginal<typeof import('mongoose')>();

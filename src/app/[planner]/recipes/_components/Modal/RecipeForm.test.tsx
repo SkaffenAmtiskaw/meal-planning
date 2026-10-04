@@ -1,22 +1,21 @@
-import { usePathname, useRouter } from 'next/navigation';
-
 import { fireEvent, render, screen } from '@testing-library/react';
-
 import { beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
+
+import { usePathname, useRouter } from 'next/navigation';
 
 import { addRecipe, editRecipe } from '@/_actions/library';
 import { useFormFeedback } from '@/_hooks';
 
 import { RecipeForm } from './RecipeForm';
 
-vi.mock('next/navigation', async () => await import('@mocks/next/navigation'));
+vi.mock('next/navigation', async () => await import('#mocks/next/navigation'));
 
 vi.mock(
 	'@/_actions/library',
-	async () => await import('@mocks/@/_actions/library'),
+	async () => await import('#mocks/@/_actions/library'),
 );
 
-vi.mock('@/_hooks', async () => await import('@mocks/@/_hooks'));
+vi.mock('@/_hooks', async () => await import('#mocks/@/_hooks'));
 
 vi.mock('@/_components', () => ({
 	FormFeedbackAlert: ({
@@ -38,9 +37,9 @@ vi.mock('@/_components', () => ({
 	TagCombobox: vi.fn(() => <div data-testid="tag-combobox">Tags</div>),
 }));
 
-vi.mock('@mantine/form', async () => await import('@mocks/@mantine/form'));
+vi.mock('@mantine/form', async () => await import('#mocks/@mantine/form'));
 
-vi.mock('@mantine/core', async () => await import('@mocks/@mantine/core'));
+vi.mock('@mantine/core', async () => await import('#mocks/@mantine/core'));
 
 const mockPush = vi.fn();
 

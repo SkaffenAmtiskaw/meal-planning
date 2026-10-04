@@ -1,15 +1,14 @@
+import { render, screen } from '@testing-library/react';
+import { afterEach, describe, expect, it, vi } from 'vitest';
+
 import { useContext } from 'react';
 
 import { useDisclosure } from '@mantine/hooks';
 
-import { render, screen } from '@testing-library/react';
-
-import { afterEach, describe, expect, it, vi } from 'vitest';
-
 import { ToggleContext } from './ToggleContext';
 import { ToggleProvider } from './ToggleProvider';
 
-vi.mock('@mantine/hooks', async () => await import('@mocks/@mantine/hooks'));
+vi.mock('@mantine/hooks', async () => await import('#mocks/@mantine/hooks'));
 
 describe('ToggleProvider', () => {
 	afterEach(() => {

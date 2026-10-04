@@ -1,8 +1,7 @@
 import { render, screen } from '@testing-library/react';
-
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-vi.mock('@mantine/core', async () => await import('@mocks/@mantine/core'));
+vi.mock('@mantine/core', async () => await import('#mocks/@mantine/core'));
 vi.mock('next/link', () => ({
 	Link: vi.fn(({ children, href, ...props }) => (
 		<a href={href} {...props}>

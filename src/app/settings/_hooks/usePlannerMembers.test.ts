@@ -1,5 +1,4 @@
 import { renderHook, waitFor } from '@testing-library/react';
-
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import type { PlannerMember } from '@/_actions/sharing';
@@ -9,7 +8,7 @@ import { usePlannerMembers } from './usePlannerMembers';
 
 vi.mock(
 	'@/_actions/sharing',
-	async () => await import('@mocks/@/_actions/sharing'),
+	async () => await import('#mocks/@/_actions/sharing'),
 );
 
 describe('usePlannerMembers', () => {

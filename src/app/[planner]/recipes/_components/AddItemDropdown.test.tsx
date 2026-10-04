@@ -1,16 +1,15 @@
-import { usePathname, useRouter } from 'next/navigation';
-
 import { fireEvent, render, screen } from '@testing-library/react';
-
 import { beforeAll, beforeEach, describe, expect, test, vi } from 'vitest';
+
+import { usePathname, useRouter } from 'next/navigation';
 
 import { AddItemDropdown } from './AddItemDropdown';
 
 const { mockUseCanWrite } = vi.hoisted(() => ({ mockUseCanWrite: vi.fn() }));
 
-vi.mock('next/navigation', async () => await import('@mocks/next/navigation'));
+vi.mock('next/navigation', async () => await import('#mocks/next/navigation'));
 
-vi.mock('@mantine/core', async () => await import('@mocks/@mantine/core'));
+vi.mock('@mantine/core', async () => await import('#mocks/@mantine/core'));
 
 vi.mock('@/app/[planner]/_components', () => ({
 	useCanWrite: () => mockUseCanWrite(),

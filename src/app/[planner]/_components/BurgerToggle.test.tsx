@@ -1,11 +1,10 @@
 import { fireEvent, render, screen } from '@testing-library/react';
-
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { BurgerToggle } from './BurgerToggle';
 import { useToggleContext } from './ToggleContext';
 
-vi.mock('@mantine/core', async () => await import('@mocks/@mantine/core'));
+vi.mock('@mantine/core', async () => await import('#mocks/@mantine/core'));
 
 vi.mock('./ToggleContext', () => ({
 	useToggleContext: vi.fn(),

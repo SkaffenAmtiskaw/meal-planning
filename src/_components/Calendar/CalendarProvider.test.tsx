@@ -1,9 +1,9 @@
+import { act, renderHook } from '@testing-library/react';
+import { describe, expect, it } from 'vitest';
+
 import { type ReactNode, useContext } from 'react';
 
-import { act, renderHook } from '@testing-library/react';
-
 import { DateTime } from 'luxon';
-import { describe, expect, it } from 'vitest';
 
 import { CalendarContext, type CalendarViewType } from './CalendarContext';
 import {

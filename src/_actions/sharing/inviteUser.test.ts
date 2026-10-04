@@ -1,4 +1,3 @@
-import { Types } from 'mongoose';
 import {
 	afterAll,
 	beforeAll,
@@ -9,6 +8,8 @@ import {
 	vi,
 } from 'vitest';
 
+import { Types } from 'mongoose';
+
 import { checkAuth } from '@/_actions/auth';
 import { sendInviteEmail } from '@/_auth/emails/sendInviteEmail';
 import { Planner } from '@/_models/planner';
@@ -18,20 +19,20 @@ import { User } from '@/_models/user';
 
 import { inviteUser } from './inviteUser';
 
-vi.mock('@/_actions/auth', async () => await import('@mocks/@/_actions/auth'));
+vi.mock('@/_actions/auth', async () => await import('#mocks/@/_actions/auth'));
 vi.mock('@/_auth/emails/sendInviteEmail', async () => ({
 	sendInviteEmail: vi.fn(),
 }));
-vi.mock('@/env', async () => await import('@mocks/env'));
+vi.mock('@/env', async () => await import('#mocks/env'));
 vi.mock(
 	'@/_models/planner',
-	async () => await import('@mocks/@/_models/planner'),
+	async () => await import('#mocks/@/_models/planner'),
 );
 vi.mock(
 	'@/_models/sharing',
-	async () => await import('@mocks/@/_models/sharing'),
+	async () => await import('#mocks/@/_models/sharing'),
 );
-vi.mock('@/_models/user', async () => await import('@mocks/@/_models/user'));
+vi.mock('@/_models/user', async () => await import('#mocks/@/_models/user'));
 vi.mock('@/_utils/catchify', async () => ({
 	catchify: vi.fn(async (callback: () => Promise<unknown>) => {
 		try {
@@ -43,7 +44,7 @@ vi.mock('@/_utils/catchify', async () => ({
 }));
 vi.mock(
 	'@/_utils/serialize',
-	async () => await import('@mocks/@/_utils/serialize'),
+	async () => await import('#mocks/@/_utils/serialize'),
 );
 vi.mock('node:crypto', () => ({
 	default: {

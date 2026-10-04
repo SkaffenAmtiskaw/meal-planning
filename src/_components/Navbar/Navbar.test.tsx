@@ -1,12 +1,11 @@
-import { useSelectedLayoutSegment } from 'next/navigation';
-
 import { render, screen } from '@testing-library/react';
-
 import { afterEach, describe, expect, test, vi } from 'vitest';
+
+import { useSelectedLayoutSegment } from 'next/navigation';
 
 import { Navbar } from './Navbar';
 
-vi.mock('@mantine/core', async () => await import('@mocks/@mantine/core'));
+vi.mock('@mantine/core', async () => await import('#mocks/@mantine/core'));
 
 vi.mock('@/_components/NavLink', () => ({
 	NavLink: ({
@@ -27,7 +26,7 @@ vi.mock('@/_components/NavLink', () => ({
 	),
 }));
 
-vi.mock('next/navigation', async () => await import('@mocks/next/navigation'));
+vi.mock('next/navigation', async () => await import('#mocks/next/navigation'));
 
 vi.mock('./PlannerContextSection', () => ({
 	PlannerContextSection: vi.fn(() => null),

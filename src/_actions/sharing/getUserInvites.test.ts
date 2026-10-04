@@ -1,18 +1,18 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 // Mocks must be hoisted before imports
-vi.mock('@/_models/user', async () => await import('@mocks/@/_models/user'));
+vi.mock('@/_models/user', async () => await import('#mocks/@/_models/user'));
 vi.mock(
 	'@/_models/planner',
-	async () => await import('@mocks/@/_models/planner'),
+	async () => await import('#mocks/@/_models/planner'),
 );
 vi.mock(
 	'@/_models/sharing',
-	async () => await import('@mocks/@/_models/sharing'),
+	async () => await import('#mocks/@/_models/sharing'),
 );
 vi.mock(
 	'@/_utils/serialize',
-	async () => await import('@mocks/@/_utils/serialize'),
+	async () => await import('#mocks/@/_utils/serialize'),
 );
 
 import { Planner } from '@/_models/planner';

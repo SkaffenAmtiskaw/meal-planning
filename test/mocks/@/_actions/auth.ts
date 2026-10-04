@@ -2,7 +2,7 @@
  * Shared mock for @/_actions/auth.
  *
  * Usage in a test file:
- *   vi.mock('@/_actions/auth', async () => await import('@mocks/@/_actions/auth'))
+ *   vi.mock('@/_actions/auth', async () => await import('#mocks/@/_actions/auth'))
  *
  * Default implementations survive `vi.resetAllMocks()`. Use
  * `vi.mocked(checkAuth).mockReturnValueOnce(...)` etc. to override for a single test.

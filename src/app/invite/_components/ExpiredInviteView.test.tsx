@@ -1,16 +1,15 @@
-import { useRouter } from 'next/navigation';
-
 import { fireEvent, render, screen } from '@testing-library/react';
-
 import { beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
+
+import { useRouter } from 'next/navigation';
 
 import { ExpiredInviteView } from './ExpiredInviteView';
 
 const mockPush = vi.fn();
 
-vi.mock('@mantine/core', async () => await import('@mocks/@mantine/core'));
+vi.mock('@mantine/core', async () => await import('#mocks/@mantine/core'));
 
-vi.mock('next/navigation', async () => await import('@mocks/next/navigation'));
+vi.mock('next/navigation', async () => await import('#mocks/next/navigation'));
 
 describe('ExpiredInviteView', () => {
 	beforeAll(() => {

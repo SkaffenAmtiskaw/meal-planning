@@ -2,7 +2,7 @@
  * Shared mock for @/_actions/planner.
  *
  * Usage in a test file:
- *   vi.mock('@/_actions/planner', async () => await import('@mocks/@/_actions/planner'))
+ *   vi.mock('@/_actions/planner', async () => await import('#mocks/@/_actions/planner'))
  *
  * Default implementations survive `vi.resetAllMocks()`. Use
  * `vi.mocked(getPlanner).mockReturnValueOnce(...)` etc. to override for a single test.

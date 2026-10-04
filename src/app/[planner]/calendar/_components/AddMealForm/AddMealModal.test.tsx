@@ -1,16 +1,15 @@
+import { fireEvent, render, screen } from '@testing-library/react';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
+
 import { useRouter } from 'next/navigation';
 
 import { Stack } from '@mantine/core';
 
-import { fireEvent, render, screen } from '@testing-library/react';
-
-import { beforeEach, describe, expect, it, vi } from 'vitest';
-
 import { AddMealForm } from './AddMealForm';
 import { AddMealModal } from './AddMealModal';
 
-vi.mock('@mantine/core', async () => await import('@mocks/@mantine/core'));
-vi.mock('next/navigation', async () => await import('@mocks/next/navigation'));
+vi.mock('@mantine/core', async () => await import('#mocks/@mantine/core'));
+vi.mock('next/navigation', async () => await import('#mocks/next/navigation'));
 vi.mock('./AddMealForm', () => ({
 	AddMealForm: vi.fn(({ onCancel, onSuccess, onSubtitleChange }) => (
 		<div data-testid="add-meal-form">
@@ -127,6 +126,7 @@ describe('AddMealModal', () => {
 			back: vi.fn(),
 			forward: vi.fn(),
 			prefetch: vi.fn(),
+			bfcacheId: '',
 		});
 
 		const close = vi.fn();

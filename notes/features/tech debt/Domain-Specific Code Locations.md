@@ -5,12 +5,12 @@ blocked-by: []
 confirmed: 2026-09-25
 ---
 # Purpose
-`src/_components`, `src/_hooks` and `src/_utils` are meant for generic, reusable code with no domain knowledge (see `.opencode/docs/project_conventions.md`). Some domain-specific code (meals, planners, invites, tags) lives there anyway. This story decides where domain code used across the app should live, likely `src/app/_components` / `src/app/_utils` with an alias. It also spells that out in the project conventions and moves the existing code over.
+`src/_components`, `src/_hooks` and `src/_utils` are meant for generic, reusable code with no domain knowledge (see `docs/project_conventions.md`). Some domain-specific code (meals, planners, invites, tags) lives there anyway. This story decides where domain code used across the app should live, likely `src/app/_components` / `src/app/_utils` with an alias. It also spells that out in the project conventions and moves the existing code over.
 
 Originally a Roadmap line: "move domain-specific components/utils used app-wide (e.g. access colors) to `src/app/_components` / `src/app/_utils` with an alias, and spell out in project conventions what goes in each".
 
 # Rules
-**Decided 2026-09-26, while planning the `getUserInvites` server-only fix. To land in `.opencode/docs/project_conventions.md`'s "Generic vs Domain-Specific Utilities" section when this note is implemented; other notes should link there once it does, rather than repeat it:**
+**Decided 2026-09-26, while planning the `getUserInvites` server-only fix. To land in `docs/project_conventions.md`'s "Generic vs Domain-Specific Utilities" section when this note is implemented; other notes should link there once it does, rather than repeat it:**
 
 A `_`-prefixed directory's contents are scoped for consumption from anywhere within its own parent directory, not just its immediate siblings. `src/_actions/`, `src/_components/`, `src/_hooks/`, `src/_models/`, `src/_theme/` and `src/_utils/` are all `_`-prefixed children of `src/`, so each is consumable from anywhere in `src/`. A domain folder inside one of them (e.g. `_actions/sharing/`) isn't itself `_`-prefixed, so it inherits that same `src/`-wide scope - a plain file there is exactly as available to a component or a page as to another action. Only another `_`-prefixed directory nested inside it (e.g. `_actions/sharing/_utils/`) introduces a new, tighter scope: consumable only from within that domain folder, not from elsewhere in `src/` or even a different domain.
 

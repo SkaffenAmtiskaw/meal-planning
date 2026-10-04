@@ -34,6 +34,9 @@ Already built: tag registry, `invalidate()`, `defineMutation` by [[Calendar and 
 - [ ] `defineQuery` wrapper
 - [ ] `src/dataConventions.test.ts`
 - [ ] lefthook pre-commit command for the conventions test
+
+> ⚠️ **Check Drift 2026-09-28:** The docs moved from `.opencode/docs/` to `docs/`, so `.opencode/docs/project_conventions.md` below is now `docs/project_conventions.md`. Found while `/tooling` moved the docs.
+
 - [ ] `.opencode/docs/project_conventions.md` — document Rules 1–3 and the tag model
 
 ## D. Read Actions → `defineQuery`
@@ -45,7 +48,10 @@ Already built: tag registry, `invalidate()`, `defineMutation` by [[Calendar and 
 
 ## Tests and Shared Mocks
 This story owns the mock clean-up for the test files it changes:
-- Every test file it rewrites or moves uses the centralized mock in `test/mocks/` for any module that has one (`vi.mock('<module>', async () => await import('@mocks/...'))`), not an ad-hoc factory, per `.opencode/docs/unit_tests.md`.
+
+> ⚠️ **Check Drift 2026-09-28:** The docs moved from `.opencode/docs/` to `docs/`, so `.opencode/docs/unit_tests.md` below is now `docs/unit_tests.md`. Found while `/tooling` moved the docs.
+
+- Every test file it rewrites or moves uses the centralized mock in `test/mocks/` for any module that has one (`vi.mock('<module>', async () => await import('#mocks/...'))`), not an ad-hoc factory, per `docs/unit_tests.md`.
 - When it moves, renames or reshapes an export of `@/_actions` or `@/_models`, it updates the matching `test/mocks/@/_actions/*.ts` or `test/mocks/@/_models/*.ts` in the same step.
 - If another story already did this for a file, there's nothing more to do.
 
@@ -87,6 +93,9 @@ Note: `notes/features/tech debt/Data Rules Enforcement.md` (type: pattern). Step
 **Files:**
 - `src/dataConventions.test.ts` (new) - static scan for the three checks
 - `lefthook.yml` - always run the conventions test when any `src/**/*.{ts,tsx}` file is staged (authorized in the note, 2026-09-25)
+
+> ⚠️ **Check Drift 2026-09-28:** The docs moved from `.opencode/docs/` to `docs/`, so `.opencode/docs/project_conventions.md` below is now `docs/project_conventions.md`. Found while `/tooling` moved the docs.
+
 - `.opencode/docs/project_conventions.md` - Rules 1–3 and the tag model; Rule 2 marked as not tool-enforced
 
 **Acceptance:**

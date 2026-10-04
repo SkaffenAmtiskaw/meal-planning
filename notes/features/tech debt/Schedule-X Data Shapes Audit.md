@@ -34,7 +34,7 @@ Related:
 %% What exists now, with file paths. Say how it was checked (e.g. "static import scan on 2026-09-25", "grep for X") - cleanup notes go stale quickly, so re-check before planning. %%
 
 # Out of Scope
-- Duplicated calendar logic (group-by-date, meal color, the `MealCalendar` / `MealWeekView` adapters, keyboard hooks) - the "calendar duplication" line under Tech Debt on the [[Roadmap]]. It's about duplicated logic, not schedule-x.
+- Duplicated calendar logic (group-by-date, meal color, the `MealCalendar` / `MealWeekView` adapters, keyboard hooks) - the "calendar duplication" line in Later on the [[Roadmap]]. It's about duplicated logic, not schedule-x.
 - Moving the four shared types to `src/_types/` - [[Shared Types Directory]].
 - Deleting schedule-x code, packages and docs - [[Remove Schedule-X]].
 

@@ -1,5 +1,4 @@
 import { render, screen } from '@testing-library/react';
-
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import type { PlannerMember } from '@/_actions/sharing';
@@ -7,7 +6,7 @@ import type { PlannerMember } from '@/_actions/sharing';
 import { MemberActions } from './MemberActions';
 import { MemberList } from './MemberList';
 
-vi.mock('@mantine/core', async () => await import('@mocks/@mantine/core'));
+vi.mock('@mantine/core', async () => await import('#mocks/@mantine/core'));
 
 const mockCanModifyMember = vi.fn();
 const mockGetAvailableAccessLevels = vi.fn();
