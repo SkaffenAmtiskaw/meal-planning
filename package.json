@@ -10,6 +10,7 @@
     "lint": "biome check --write",
     "lint:ci": "biome ci",
     "seed": "tsx --env-file=.env.local seed/seed.ts",
+    "sign-in": "tsx --env-file=.env.local seed/signInServer.ts",
     "start": "next start",
     "test": "sh -c 'vitest ${1:-src}' --",
     "test:agent": "sh -c 'vitest run ${1:-src} --coverage --coverage.include ${1:-src} --reporter=agent' --",

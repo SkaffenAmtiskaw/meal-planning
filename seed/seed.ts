@@ -237,3 +237,4 @@ for (const { name, email, accessLevel } of SEEDED_USERS) {
 		`  ${accessLevel.padEnd(levelWidth)}  ${name.padEnd(nameWidth)}  ${email}`,
 	);
 }
+console.log('Run `pnpm sign-in` for their sign-in links.');

@@ -11,6 +11,7 @@ Decisions made. Next: /infra-design. /plan-steps waits on [[Notes Vault Repo]], 
 Shaped as one infra story that designs parallel story branches in worktrees, protection for `develop` and a release process together. All seven open decisions were made 2026-10-02 to 2026-10-04; [[Notes Vault Repo]] was split out to move the notes vault to its own repo first. Next is the Design.
 
 # Inbox
+- [Sarah] - Do we need a hotfix process as well? Is this already covered?
 
 # Purpose
 Let Sarah work on two product features at once with agents, protect `develop`, and give a finished goal a way to ship as a release.

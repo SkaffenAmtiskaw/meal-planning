@@ -5,9 +5,9 @@ blocked-by: []
 confirmed: 2026-10-01
 ---
 # Where It Stands
-In progress. Next: /implement Step 6 ^status
+In progress. Next: /implement Step 7 ^status
 
-Steps 1 to 5 are done: `pnpm seed` runs through tsx against the dev database and refuses any other database before connecting, Biome checks `seed/` with the test-support import bans, and each run removes everything seeded before, then creates the four seeded users with their personal planners and a shared planner filled with tags, recipes, bookmarks and meals. Steps 6 to 11 remain, and every step through Step 9 needs a connection to the Atlas cluster, which works from Sarah's home network.
+Steps 1 to 6 are done: `pnpm seed` runs through tsx against the dev database and refuses any other database before connecting, Biome checks `seed/` with the test-support import bans, and each run removes everything seeded before, then creates the four seeded users with their personal planners and a shared planner filled with tags, recipes, bookmarks and meals. `pnpm sign-in` serves a link per seeded user at `http://localhost:3001` that signs any browser in as them. Steps 7 to 11 remain, and every step through Step 9 needs a connection to the Atlas cluster, which works from Sarah's home network.
 
 # Inbox
 
@@ -259,10 +259,12 @@ Everything for the local test environment lives in a new top-level `seed/` folde
 - `seed/seed.ts` - the printout's closing line about `pnpm sign-in`
 
 **Acceptance:**
-- [ ] Run `pnpm seed` and see its last line say `pnpm sign-in` gives the sign-in links. Run `pnpm dev`, and `pnpm sign-in` in a second terminal. In a private window, open `http://localhost:3001` and see the four seeded users, each with name, access level, email and link. Click `admin`'s link. See the app open on "Seeded Shared Planner", signed in as Adam Admin, with no sign-in form. Proves: a link signs a fresh browser in as the user it names.
-- [ ] In the browser you normally use for the app, signed in as your own dev account, open `http://localhost:3001/read`. See the app signed in as Reid Reader, read-only on "Seeded Shared Planner". Reload the page and see it's still Reid Reader. Afterwards, sign out and sign back in as yourself. Proves: a link replaces a session the browser already had, including better-auth's cached copy of it.
-- [ ] Open `http://localhost:3001/nobody` and see a not-found page listing `owner`, `admin`, `write` and `read`. Proves: a mistyped key gets a page saying which keys work.
-- [ ] Stop `pnpm sign-in` and run it again as `DB_URL='<DB_URL from .env.local with the database name changed to seed-guard-check>' pnpm sign-in`. Open `http://localhost:3001/owner` and see a page saying to run `pnpm seed`. Proves: a link for a user who isn't seeded says how to fix it.
+- [x] Run `pnpm seed` and see its last line say `pnpm sign-in` gives the sign-in links. Run `pnpm dev`, and `pnpm sign-in` in a second terminal. In a private window, open `http://localhost:3001` and see the four seeded users, each with name, access level, email and link. Click `admin`'s link. See the app open on "Seeded Shared Planner", signed in as Adam Admin, with no sign-in form. Proves: a link signs a fresh browser in as the user it names.
+- [x] In the browser you normally use for the app, signed in as your own dev account, open `http://localhost:3001/read`. See the app signed in as Reid Reader, read-only on "Seeded Shared Planner". Reload the page and see it's still Reid Reader. Afterwards, sign out and sign back in as yourself. Proves: a link replaces a session the browser already had, including better-auth's cached copy of it.
+- [x] Open `http://localhost:3001/nobody` and see a not-found page listing `owner`, `admin`, `write` and `read`. Proves: a mistyped key gets a page saying which keys work.
+- [x] Stop `pnpm sign-in` and run it again as `DB_URL='<DB_URL from .env.local with the database name changed to seed-guard-check>' pnpm sign-in`. Open `http://localhost:3001/owner` and see a page saying to run `pnpm seed`. Proves: a link for a user who isn't seeded says how to fix it.
+
+**Status:** ✅ Complete
 
 ## Step 7: One command for the app and the link server
 **Idea:** `pnpm dev:sign-in` runs the dev server and the link server together.
@@ -360,7 +362,7 @@ Afterwards, reread the whole "Checks" section so it reads naturally as a whole.
 
 **Source:** Goal: `.opencode/secrets/credentials.md` is deleted.
 
-**Approach:** Design → Pieces: `.opencode/secrets/credentials.md` is deleted as the story's last change, once Step 8 has left nothing in `.claude/` pointing at it. The file is gitignored, so deleting it can't be undone: ask Sarah before deleting it, as AGENTS.md describes under "Git and files". The `.opencode/secrets` line in `.gitignore` stays.
+**Approach:** Design → Pieces: `.opencode/secrets/credentials.md` is deleted as the story's last change, once Step 8 has left nothing in `.claude/` pointing at it. The file is gitignored, so deleting it can't be undone: ask Sarah before deleting it, as AGENTS.md describes under "Git and files". The `.opencode/secrets` line in `.gitignore` does not stay. [Sarah] - I changed this to delete the line in `.gitignore` - it's stupid to keep it.
 
 **Files:**
 - `.opencode/secrets/credentials.md` (deleted) - nothing uses it any more
