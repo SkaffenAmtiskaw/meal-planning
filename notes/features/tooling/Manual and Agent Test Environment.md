@@ -5,9 +5,9 @@ blocked-by: []
 confirmed: 2026-10-01
 ---
 # Where It Stands
-In progress. Next: /implement Step 5 ^status
+In progress. Next: /implement Step 6 ^status
 
-Steps 1 to 4 are done: `pnpm seed` runs through tsx against the dev database and refuses any other database before connecting, Biome checks `seed/` with the test-support import bans, and each run removes everything seeded before, then creates the four seeded users with the shared planner and their personal planners. Steps 5 to 11 remain, and every step through Step 9 needs a connection to the Atlas cluster, which works from Sarah's home network.
+Steps 1 to 5 are done: `pnpm seed` runs through tsx against the dev database and refuses any other database before connecting, Biome checks `seed/` with the test-support import bans, and each run removes everything seeded before, then creates the four seeded users with their personal planners and a shared planner filled with tags, recipes, bookmarks and meals. Steps 6 to 11 remain, and every step through Step 9 needs a connection to the Atlas cluster, which works from Sarah's home network.
 
 # Inbox
 
@@ -228,13 +228,17 @@ Everything for the local test environment lives in a new top-level `seed/` folde
 - `seed/seed.ts` - the shared planner's tags, recipes, bookmarks and meals
 
 **Acceptance:**
-- [ ] Run `pnpm seed`. On desktop, in a private window, sign in through the form as `write`. In the recipes view, see 3 tags in different colors, 4 recipes with one untagged, and 2 bookmarks with one tagged. Proves: the shared planner has a library to work with, tagged and untagged.
-- [ ] Still as `write`, open the calendar:
+- [x] Run `pnpm seed`. On desktop, in a private window, sign in through the form as `write`. In the recipes view, see 3 tags in different colors, 4 recipes with one untagged, and 2 bookmarks with one tagged. Proves: the shared planner has a library to work with, tagged and untagged.
+- [x] Still as `write`, open the calendar:
   1. See meals on most days of the current week, with at least one empty day and one day with two meals.
   2. Open a dish that links to a saved recipe, and see the recipe.
   3. Move to next month, and see meals through its first full week.
 
   Proves: the calendar always has meals around today and across a month boundary, with dishes that link to recipes.
+
+**Status:** ✅ Complete
+
+**As built:** The range runs in whole Sunday-to-Saturday weeks, matching the calendar's `getWeekStart`, with the same meals on each day of the week: Wednesday empty, Sunday and Friday with two meals. `seed/seed.ts` works out the week start itself rather than importing the app's `getWeekStart`, and the date logic stays inline without unit tests (both Sarah's calls 2026-10-04).
 
 ## Step 6: Sign-in links
 **Idea:** Opening a seeded user's link at `http://localhost:3001` signs the browser in as that user.
