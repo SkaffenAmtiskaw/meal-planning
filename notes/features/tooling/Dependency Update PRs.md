@@ -5,9 +5,9 @@ blocked-by: []
 confirmed: 2026-10-04
 ---
 # Where It Stands
-In progress. Next: /implement Step 5 ^status
+In progress. Next: /implement Step 6 ^status
 
-Split from [[Local Dependency Update Alerts]] on 2026-10-04. Its ten implementation steps were planned and approved on 2026-10-04. Steps 1-4 are built: `pnpm deps:check` lists the advisories that aren't in the reported list, `--weekly` adds new versions marked patch, minor or major and repeats every unfixed advisory as a reminder, and CI lints and type-checks the script. Steps 5-10 remain.
+Split from [[Local Dependency Update Alerts]] on 2026-10-04. Its ten implementation steps were planned and approved on 2026-10-04. Steps 1-5 are built: `pnpm deps:check` lists the advisories that aren't in the reported list, `--weekly` adds new versions marked patch, minor or major and repeats every unfixed advisory as a reminder, and CI lints and type-checks the script. The `dependency-updates` routine exists on claude.ai, and its session reads the findings it's sent and lists them without applying any. Steps 6-10 remain.
 
 # Inbox
 
@@ -179,7 +179,17 @@ Facts the steps rely on, checked 2026-10-04:
 - `docs/ci.md` - the routine's entry under "Routines"
 
 **Acceptance:**
-- [ ] Call the routine with `curl`, as the API trigger's sample command shows, with a text the implementer gives in the payload's shape: `patch @types/luxon@3.7.6`, `minor resend@6.32.0`, `major typescript@7.0.2`, the `undici` advisory 1121187, and the `mongoose` advisory 1118996 as a reminder. See a new session in the Code tab under **Routines** whose summary lists each finding under its kind, `typescript` with a link to its release notes and marked "not applied", and the reminder apart from them. Proves: the routine starts a session that reads the payload's shape, and a major is listed without being applied.
+- [x] Call the routine with `curl`, as the API trigger's sample command shows, with a text the implementer gives in the payload's shape: `patch @types/luxon@3.7.6`, `minor resend@6.32.0`, `major typescript@7.0.2`, the `undici` advisory 1121187, and the `mongoose` advisory 1118996 as a reminder. See a new session in the Code tab under **Routines** whose summary lists each finding under its kind, `typescript` with a link to its release notes and marked "not applied", and the reminder apart from them. Proves: the routine starts a session that reads the payload's shape, and a major is listed without being applied.
+
+**Status:** ✅ Complete
+
+**As built:**
+- The payload is one finding per line: a run line, `<hourly|weekly> run <run ID> <run URL>`, then `new:` and `reminders:`, each followed by its findings or the single line `none`. Sarah chose lines over a single line like `ci-failure`'s, since the weekly reminders can stay long while hard-to-fix advisories wait. Step 9's job builds this shape.
+- A payload line the skill can't read stops the session, as a missing part does, naming the line and quoting the block. Sarah's call, so a job and skill that have drifted apart show up rather than half-run.
+- A major's link is the repository's GitHub releases page, found with `pnpm view "<package>" repository --json` (a URL, `github:owner/repo` or a bare `owner/repo`). A package with no repository, one not on GitHub, or one in DefinitelyTyped (`@types/*`) links its npm page instead and says it has no GitHub releases page. Both are Sarah's calls.
+- The implementer ran the Approach's check with a local Sonnet stand-in: on a block with no run line, it stopped, said the run line was missing, quoted the block and changed nothing.
+- In Sarah's check, the session also sent a push notification on its own, which the skill doesn't ask for. Sarah decided 2026-10-05 to leave that as it is.
+- The new routine and its session showed under **Routines** in the desktop app's sidebar only after the app was restarted.
 
 ## Step 6: Small updates get a PR
 **Idea:** The session puts the patches, minors and security fixes it's sent in a PR into `develop` from `claude/dependency-updates`.
