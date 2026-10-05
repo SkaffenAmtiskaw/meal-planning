@@ -1,11 +1,13 @@
 ---
 type: 
 status: idea
+blocked-by:
+  - "[[Services and Environments Audit]]"
 confirmed: 2026-09-29
 ---
 # Where It Stands
 
-Waiting on [[Services and Environments Audit]]; then /shape ^status
+Blocked by [[Services and Environments Audit]]; then /shape ^status
 
 # Notes
 If [[Services and Environments Audit]] finds that the dev database in `.env.local` runs on the same Atlas cluster as production, add a `pnpm` script that reads `db.version()` from the dev database and checks that its release series (major.minor) matches the MongoDB version pinned for the E2E memory server. If they're on different clusters, the script can't tell what production runs, so it isn't worth building.

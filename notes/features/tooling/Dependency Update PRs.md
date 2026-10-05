@@ -5,9 +5,9 @@ blocked-by: []
 confirmed: 2026-10-04
 ---
 # Where It Stands
-In progress. Next: /implement Step 6 ^status
+In progress. Next: /implement Step 7 ^status
 
-Split from [[Local Dependency Update Alerts]] on 2026-10-04. Its ten implementation steps were planned and approved on 2026-10-04. Steps 1-5 are built: `pnpm deps:check` lists the advisories that aren't in the reported list, `--weekly` adds new versions marked patch, minor or major and repeats every unfixed advisory as a reminder, and CI lints and type-checks the script. The `dependency-updates` routine exists on claude.ai, and its session reads the findings it's sent and lists them without applying any. Steps 6-10 remain.
+Split from [[Local Dependency Update Alerts]] on 2026-10-04. Its ten implementation steps were planned and approved on 2026-10-04. Steps 1-6 are built: `pnpm deps:check` lists the advisories that aren't in the reported list, `--weekly` adds new versions marked patch, minor or major and repeats every unfixed advisory as a reminder, and CI lints and type-checks the script. The `dependency-updates` routine exists on claude.ai, and its session puts the patches, minors and security fixes it's sent in a PR from `claude/dependency-updates` into `develop`, and lists the majors and reminders. Step 6's PR (#22) stays open for Step 7's checks. Steps 7-10 remain.
 
 # Inbox
 
@@ -210,7 +210,21 @@ Facts the steps rely on, checked 2026-10-04:
 - `.claude/skills/dependency-updates/SKILL.md` - applies small updates and security fixes, opens the PR
 
 **Acceptance:**
-- [ ] Call the routine with `curl` and a text naming `patch @testing-library/react@16.3.3`, `minor resend@6.32.0`, `major typescript@7.0.2`, the `undici` advisory 1121187 and the `mongoose` advisory 1139503. See a PR from `claude/dependency-updates` into `develop` with `@testing-library/react` and `resend` bumped in `package.json`, `mongoose` updated to a fixed 9.x, `undici` raised in `pnpm-lock.yaml` with no change to `jsdom`'s entry in `package.json`, and `typescript` untouched. See the session's summary link the PR, list what's in it, say the four checks passed, and list `typescript` as "not applied". Proves: small updates and security fixes reach one PR with the smallest fix each, and a major doesn't.
+- [x] Call the routine with `curl` and a text naming `patch @testing-library/react@16.3.3`, `minor resend@6.32.0`, `major typescript@7.0.2`, the `undici` advisory 1121187 and the `mongoose` advisory 1139503. See a PR from `claude/dependency-updates` into `develop` with `@testing-library/react` and `resend` bumped in `package.json`, `mongoose` updated to a fixed 9.x, `undici` raised in `pnpm-lock.yaml` with no change to `jsdom`'s entry in `package.json`, and `typescript` untouched. See the session's summary link the PR, list what's in it, say the four checks passed, and list `typescript` as "not applied". Proves: small updates and security fixes reach one PR with the smallest fix each, and a major doesn't.
+
+**Status:** ✅ Complete
+
+**As built:**
+- Sarah decided 2026-10-05: a security fix that updates a package in `package.json` (the vulnerable package, or a transitive one's parent) moves it to the lowest fixed version; each update is its own commit, in `git log` style, security fixes first; when a check also fails on `develop` with every update taken off, the session drops nothing and opens the PR anyway, saying so; the PR is titled "Dependency updates", and its body links the run and lists what's in it and what was dropped.
+- Overrides go under `overrides` in `pnpm-workspace.yaml`, where pnpm 10.14's `pnpm audit --fix` writes them, kept to the installed major with `^<fixed>` rather than `audit --fix`'s open `>=`. The note's "`pnpm.overrides`" was corrected to match, here and in [[Local Dependency Update Alerts]].
+- A parent update covers only the parent just before the package in a path, when it's in `package.json`. A deeper path goes to an override.
+- To find an update that breaks a check, the session first checks that `develop` passes it, then runs `git bisect` with that check's script, and cuts the branch again from `develop` without the bad update.
+- Added at review: on a run that cuts a branch, the session removes each override that no longer does anything, meaning removing it changes nothing in `pnpm-lock.yaml` outside its own `overrides:` section, each removal its own commit. Sarah asked for this 2026-10-05, after a test showed pnpm matches an override's key against the range a parent asks for, so a `^<fixed>` target never pushes a package below what a parent needs, but nothing removed an override once no dependency matched it.
+- Added at review: a commit message always names the old and new versions, read from `pnpm-lock.yaml` for a transitive package. Sarah's check had committed undici as `→ lockfile bump`.
+- Pulled in at triage: `ci-failure` step 4's `gh pr create` passes the body through a quoted heredoc with `--body-file -`, as this skill does, so backticks in the body aren't run by the shell.
+- `pnpm update` can also move unrelated lockfile entries within their ranges, such as postcss 8.5.28 → 8.5.29 alongside undici's bump. Left as it is.
+- The implementer ran the Approach's checks with local Sonnet stand-ins in throwaway clones that couldn't push: a payload of only a major and a reminder cut no branch and said there was nothing to apply; a temporary test that failed on resend 6.32.0 had the session bisect, drop resend and keep the rest; xml2js 0.4.23's advisory 1096693, fixed only in 0.5.0, was listed with the majors as a security fix and not applied; and a lint failure already on `develop` was reported with nothing dropped for it.
+- Sarah's check opened [PR #22](https://github.com/SkaffenAmtiskaw/meal-planning/pull/22). The session's own commits for mongoose, `@testing-library/react` and `resend` lack the blank line before their `Co-Authored-By` trailers, which comes from the cloud session, not the skill. Left as it is.
 
 ## Step 7: One open dependency PR at a time
 **Idea:** A run adds its updates to the open `claude/dependency-updates` PR rather than opening another.

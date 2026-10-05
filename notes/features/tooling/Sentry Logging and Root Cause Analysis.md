@@ -1,12 +1,11 @@
 ---
 type:
 status: idea
-blocked-by:
-  - "[[E2E Tests in CI]]"
+blocked-by: []
 confirmed: 2026-09-30
 ---
 # Where It Stands
-Blocked until [[E2E Tests in CI]] lands, then /shape ^status
+Next: /shape. Designing waits on [[E2E Tests in CI]] ^status
 
 # Notes
 Add Sentry so production errors get reported to Sarah, and a routine that runs a preliminary root cause analysis on each new Sentry error, so it's ready for her to review when she starts working. It covers two Done When items of [[Dev Foundations]]: production errors get reported (Sentry), and an agent runs a root cause analysis when Sentry logs an error. Sarah merged the "Add Sentry for logging" Roadmap line into this note on 2026-09-30. It can be split later.
