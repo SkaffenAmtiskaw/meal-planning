@@ -1,13 +1,13 @@
 ---
 type: infra
-status: ready
+status: in-progress
 blocked-by: []
 confirmed: 2026-10-04
 ---
 # Where It Stands
-Ready. Next: /implement Step 1 ^status
+In progress. Next: /implement Step 2 ^status
 
-Split from [[Local Dependency Update Alerts]] on 2026-10-04. Its ten implementation steps were planned and approved on 2026-10-04. Nothing is built yet.
+Split from [[Local Dependency Update Alerts]] on 2026-10-04. Its ten implementation steps were planned and approved on 2026-10-04. Step 1 is built: `pnpm deps:check` lists the advisories that aren't in the reported list. Steps 2-10 remain.
 
 # Inbox
 
@@ -60,23 +60,32 @@ Facts the steps rely on, checked 2026-10-04:
 **Source:** Piece 1 (hourly mode, identifiers, `--reported`, the updated list, no list reports everything, report only); Goal: the workflow checks every installed package against known security advisories; Goal: a run that finds nothing new starts no session (the reported list's half); Open Decision 2 (a finding is identified by its advisory ID; the updated list keeps only what's still current). Sarah decided 2026-10-04 while planning: `scripts/` is the right home, and `docs/project_structure.md` is updated in this step.
 
 **Approach:**
-- `scripts/dependency-check.ts` (new, TypeScript that Node runs directly, using only syntax Node can strip; no new dependency, no `pnpm install` needed): runs `pnpm audit --json` and turns each advisory into a finding with its ID, severity and package. It reads the reported list from `--reported <path>` if given, and prints JSON with two parts: the new findings (those not in the list) and the updated list (every current advisory, so a fixed one drops out). With no `--reported`, everything is new. The JSON's exact shape is the implementer's choice. Step 9's job reads it, so the implementer keeps it simple for `jq`. It never writes to `package.json` or the lockfile.
-- `package.json`: `"deps:check": "node scripts/dependency-check.ts"`.
+- `scripts/dependencyCheck.ts` (new, TypeScript that Node runs directly, using only syntax Node can strip; no new dependency, no `pnpm install` needed): runs `pnpm audit --json` and turns each advisory into a finding with its ID, severity and package. It reads the reported list from `--reported <path>` if given, and prints JSON with two parts: the new findings (those not in the list) and the updated list (every current advisory, so a fixed one drops out). With no `--reported`, everything is new. The JSON's exact shape is the implementer's choice. Step 9's job reads it, so the implementer keeps it simple for `jq`. It never writes to `package.json` or the lockfile.
+- `package.json`: `"deps:check": "node scripts/dependencyCheck.ts"`.
 - `pnpm audit` exits non-zero when it finds advisories. The script tells that apart from a real failure, such as no network, and exits non-zero only for the second.
 - **Implementer:** on a copy of the repo without `node_modules`, run `pnpm deps:check` and confirm it works without an install. After running it, confirm `package.json` and `pnpm-lock.yaml` are unchanged.
 - `docs/project_structure.md`: the `scripts/` line becomes "lefthook scripts, scripts that check the notes vault, and the dependency check CI runs".
 
 **Files:**
-- `scripts/dependency-check.ts` (new) - the check, hourly mode
+- `scripts/dependencyCheck.ts` (new) - the check, hourly mode
 - `package.json` - the `deps:check` script
 - `docs/project_structure.md` - `scripts/` now holds a CI script too
 
 **Acceptance:**
-- [ ] In the repo, run `pnpm deps:check`. See JSON listing advisories as new, among them `undici` 1121187 (high) and `mongoose` 1139503, each with its ID, severity and package, and the same IDs in the updated list. Proves: the check finds every advisory, transitive ones included, when it has no list.
-- [ ] Save the updated list to a file, as the implementer's command shows (e.g. `pnpm deps:check | jq .reported > /tmp/reported.json`). Remove one advisory's ID from the file and add a made-up one, then run `pnpm deps:check --reported /tmp/reported.json`. See only the removed advisory as new, and an updated list with the made-up ID gone. Proves: only unreported advisories count as new, and the list drops what's no longer current.
+- [x] In the repo, run `pnpm deps:check`. See JSON listing advisories as new, among them `undici` 1121187 (high) and `mongoose` 1139503, each with its ID, severity and package, and the same IDs in the updated list. Proves: the check finds every advisory, transitive ones included, when it has no list.
+- [x] Save the updated list to a file with `pnpm -s deps:check | jq .reported > /tmp/reported.json` (`-s` hides pnpm's script banner, which would break `jq`). Remove one advisory's ID from the file and add a made-up one, then run `pnpm deps:check --reported /tmp/reported.json`. See only the removed advisory as new, and an updated list with the made-up ID gone. Proves: only unreported advisories count as new, and the list drops what's no longer current.
+
+**Status:** ✅ Complete
+
+**As built:**
+- The script is `scripts/dependencyCheck.ts`, following the camelCase rule in `docs/project_conventions.md`, and this note's paths were corrected to match.
+- Its output is `{ "new": [...], "reported": [...] }`. Each finding is `{ "kind": "advisory", "id", "severity", "package" }`, with the ID as a string so Step 3's `package@version` identifiers share the list. The file `--reported` reads is the `reported` array.
+- A `--reported` path that doesn't exist is an error, and so is a list that isn't a JSON array of strings. Sarah decided 2026-10-04 that a missing file fails rather than counting as an empty list, so Step 9's job passes `--reported` only when the cache restored a list.
+- Every caller that reads the JSON runs `pnpm -s deps:check`, since `pnpm run` prints its script banner to stdout before the JSON. Sarah decided this 2026-10-04 at review, over an `--output` argument. Check 2 and Step 9's Approach were updated to match.
+- Check 2: Sarah saved the list with the command above. The implementer's run covered the rest of the check: with 1121187 removed and a made-up ID added, only `undici` 1121187 came back as new and the made-up ID dropped out.
 
 ## Step 2: The dependency check gets CI's code checks
-**Idea:** Biome lints `scripts/dependency-check.ts` like the rest of the code.
+**Idea:** Biome lints `scripts/dependencyCheck.ts` like the rest of the code.
 
 **Source:** Pulled in by Sarah 2026-10-04: the new script would get no lint, type check or unit tests, since Biome, lefthook's glob and Vitest cover only `src/`, `test/`, `e2e/` and `seed/`. Sarah decided: the script is TypeScript, so the existing `pnpm check:types` covers it; `biome.jsonc` gains `"scripts/**/*.ts"` in `files.includes` (her explicit go-ahead for that config change); no unit tests.
 
@@ -87,10 +96,10 @@ Facts the steps rely on, checked 2026-10-04:
 
 **Files:**
 - `biome.jsonc` - lint `scripts/**/*.ts`
-- `scripts/dependency-check.ts` - whatever Biome reports
+- `scripts/dependencyCheck.ts` - whatever Biome reports
 
 **Acceptance:**
-- [ ] Temporarily add an unused variable to `scripts/dependency-check.ts`, run `pnpm lint:ci`, and see Biome report it in that file. Revert. Proves: CI lints the script.
+- [ ] Temporarily add an unused variable to `scripts/dependencyCheck.ts`, run `pnpm lint:ci`, and see Biome report it in that file. Revert. Proves: CI lints the script.
 
 ## Step 3: The weekly check lists new versions
 **Idea:** `pnpm deps:check --weekly` also lists new versions of the packages in `package.json`, each marked patch, minor or major.
@@ -98,13 +107,13 @@ Facts the steps rely on, checked 2026-10-04:
 **Source:** Piece 1 (weekly mode, `pnpm outdated --format json`, `package@version` identifiers, the kinds, a pre-1.0 minor marked major); Goal: the workflow checks the dependencies in `package.json` for new versions; Design decision: a minor of a `0.y.z` package is treated as a major; Open Decision 2 (a reported version stays quiet until a newer one comes out).
 
 **Approach:**
-- `scripts/dependency-check.ts`: with `--weekly`, it also runs `pnpm outdated --format json` and adds a finding for each package's latest version, identified as `package@version` and marked patch, minor or major against the installed version. A minor bump of a package below 1.0 is marked major. The version identifiers go through the same reported list as advisories, so a reported version stays quiet until a newer one replaces it, and one that's been merged or superseded drops out of the updated list. `pnpm outdated` needs an install, and it exits non-zero when it finds something, which the script tells apart from a failure, as in Step 1.
+- `scripts/dependencyCheck.ts`: with `--weekly`, it also runs `pnpm outdated --format json` and adds a finding for each package's latest version, identified as `package@version` and marked patch, minor or major against the installed version. A minor bump of a package below 1.0 is marked major. The version identifiers go through the same reported list as advisories, so a reported version stays quiet until a newer one replaces it, and one that's been merged or superseded drops out of the updated list. `pnpm outdated` needs an install, and it exits non-zero when it finds something, which the script tells apart from a failure, as in Step 1.
 - In hourly mode, which can't tell whether a version is still current, the version identifiers in the reported list pass through to the updated list unchanged. Otherwise an hourly run that saves would drop them, and the next weekly run would report every version again.
 - **Implementer:** after a weekly run, confirm `package.json` and `pnpm-lock.yaml` are unchanged.
 - **Implementer:** check the pre-1.0 rule on a case that exists. No package has one today, so pin a `0.y` package to an older minor in a scratch copy, such as `@t3-oss/env-nextjs`, run the check, see it marked major, and throw the copy away.
 
 **Files:**
-- `scripts/dependency-check.ts` - weekly mode lists new versions
+- `scripts/dependencyCheck.ts` - weekly mode lists new versions
 
 **Acceptance:**
 - [ ] Run `pnpm deps:check --weekly`. See `@types/luxon@3.7.6` marked patch, `better-auth@1.7.7` minor, `typescript@7.0.2` major and `temporal-polyfill@1.0.5` major, beside the advisories. Proves: the weekly check finds each kind of update.
@@ -118,10 +127,10 @@ Facts the steps rely on, checked 2026-10-04:
 **Source:** Piece 1 (weekly mode lists every advisory still unfixed as the weekly reminder); Open Decision 2 (an unfixed advisory is listed again in the weekly run, while version updates stay quiet once reported). Sarah decided 2026-10-04 while planning: a weekly run with nothing new still starts a session while an advisory is unfixed.
 
 **Approach:**
-- `scripts/dependency-check.ts`: in weekly mode, the output also holds the reminders: every advisory still in the audit that's in the reported list. They're kept apart from new findings, so the session can tell them apart. Step 9's job starts the routine on a weekly run when there's a new finding or a reminder.
+- `scripts/dependencyCheck.ts`: in weekly mode, the output also holds the reminders: every advisory still in the audit that's in the reported list. They're kept apart from new findings, so the session can tell them apart. Step 9's job starts the routine on a weekly run when there's a new finding or a reminder.
 
 **Files:**
-- `scripts/dependency-check.ts` - weekly reminders
+- `scripts/dependencyCheck.ts` - weekly reminders
 
 **Acceptance:**
 - [ ] Save a fresh updated list from `pnpm deps:check --weekly` to `/tmp/reported.json`, as in Step 1, then run `pnpm deps:check --weekly --reported /tmp/reported.json`. See no new findings, and every advisory listed as a reminder, `undici` among them. Proves: an unfixed advisory comes back each week.
@@ -213,7 +222,7 @@ Facts the steps rely on, checked 2026-10-04:
 **Source:** Piece 2 (triggers, permissions, concurrency, the `check` and `start-dependency-updates` jobs, the cache restore and save, the `/fire` call built with `jq` from `env:`); Piece 3 (the API trigger, its two secrets); Piece 7 (the "Dependency Updates" section, "Every Check Is a `package.json` Script", the 60-day note); Convention: the payload's shape changes in the job and the skill together; Setup Outside the Repo: the two Actions secrets; Flow steps 1-6 (step 4 without the assessor and the sweeps); Goals: the scheduled workflow checks `package.json` for new versions; the same workflow checks every installed package against advisories; a run that finds nothing new starts no session; Open Decision 1 (the scheduled workflow on `develop`); Open Decision 2 (the Actions cache, the reported list, concurrency, the first run reports the whole backlog, the weekly reminder); Design decision: audit hourly, versions weekly. Sarah decided 2026-10-04 while planning: a weekly run starts a session while any advisory is unfixed. Sarah decided 2026-10-04 while planning: the workflow's first push leaves out the `schedule` triggers, so an hourly run can't beat the first weekly dispatch.
 
 **Approach:**
-- `.github/workflows/dependency-updates.yml` (new), as Piece 2 says: `schedule` `17 * * * *` and `47 13 * * 1`, `workflow_dispatch` with an hourly/weekly choice, `permissions: contents: read`, a `concurrency` group without cancel-in-progress. `check` restores the newest `dependency-alerts-reported-*` entry (`actions/cache/restore@v6`), installs only on the weekly run, runs `pnpm deps:check` (`--weekly` on the weekly run, telling it apart by the schedule or the dispatch input) and passes the new findings, the reminders and the updated list on as job outputs. `start-dependency-updates` runs no install, runs when there's a new finding or a reminder, builds the `text` in the skill's step-1 shape with `jq` from `env:` values, calls `/fire` once with `curl --fail-with-body` and no retry, then writes the updated list and saves it as `dependency-alerts-reported-<run ID>` (`actions/cache/save@v6`). A header comment says what the workflow does and points to `docs/ci.md`.
+- `.github/workflows/dependency-updates.yml` (new), as Piece 2 says: `schedule` `17 * * * *` and `47 13 * * 1`, `workflow_dispatch` with an hourly/weekly choice, `permissions: contents: read`, a `concurrency` group without cancel-in-progress. `check` restores the newest `dependency-alerts-reported-*` entry (`actions/cache/restore@v6`), installs only on the weekly run, runs `pnpm -s deps:check` (`-s` so stdout holds only the JSON; `--weekly` on the weekly run, telling it apart by the schedule or the dispatch input) and passes the new findings, the reminders and the updated list on as job outputs. `start-dependency-updates` runs no install, runs when there's a new finding or a reminder, builds the `text` in the skill's step-1 shape with `jq` from `env:` values, calls `/fire` once with `curl --fail-with-body` and no retry, then writes the updated list and saves it as `dependency-alerts-reported-<run ID>` (`actions/cache/save@v6`). A header comment says what the workflow does and points to `docs/ci.md`.
 - `routine.md`: the trigger's caller and the two secret names.
 - `docs/ci.md`: a new "Dependency Updates" section (the two schedules, the two jobs, when `start-dependency-updates` fires, the shape of its `text` pointing to step 1 of the skill, the Convention, the reported list in the Actions cache and how to clear it, what happens when the call fails, and that GitHub turns off a public repo's scheduled workflows after 60 days with no activity); "Every Check Is a `package.json` Script" names the cache restore and save beside setup and the routine call; the opening bullets at the top name the new workflow.
 - **Setup Sarah does by hand before the checks:** on the routine's API trigger, **Regenerate** the token and keep the dialog open; in the repo's Settings → Secrets and variables → Actions, add `ROUTINE_DEPENDENCY_UPDATES_URL` (the URL) and `ROUTINE_DEPENDENCY_UPDATES_TOKEN` (the new token). The token from Step 5 stops working.
@@ -249,5 +258,5 @@ Facts the steps rely on, checked 2026-10-04:
 - `docs/ci.md` - the failure path
 
 **Acceptance:**
-- [ ] Push a branch `claude/deps-check-test` from `develop` with a line at the end of `scripts/dependency-check.ts` that throws (at the end, so Biome's pre-commit hook doesn't flag the rest as unreachable), then run `gh workflow run dependency-updates.yml --ref claude/deps-check-test -f mode=weekly`. See `check` fail, `start-dependency-updates` pass, and a session that names the throw as the cause, with a PR or an explanation. Proves: a broken weekly check reaches Sarah as a session.
+- [ ] Push a branch `claude/deps-check-test` from `develop` with a line at the end of `scripts/dependencyCheck.ts` that throws (at the end, so Biome's pre-commit hook doesn't flag the rest as unreachable), then run `gh workflow run dependency-updates.yml --ref claude/deps-check-test -f mode=weekly`. See `check` fail, `start-dependency-updates` pass, and a session that names the throw as the cause, with a PR or an explanation. Proves: a broken weekly check reaches Sarah as a session.
 - [ ] Run the same with `-f mode=hourly`. See `check` fail, `start-dependency-updates` skipped and no new session. Delete the branch, and close any PR the session opened. Proves: a failed hourly run waits for the next hour instead of starting a session.

@@ -13,7 +13,7 @@ notes on planned work in Obsidian-flavored Markdown
 ## Roadmap.md
 project roadmap with links to detailed notes
 # scripts/
-lefthook scripts, and scripts that check the notes vault
+lefthook scripts, scripts that check the notes vault, and the dependency check CI runs
 # seed/
 `pnpm seed`, which fills the dev database with seeded users and sample data, and the sign-in link server (see `docs/seed.md`)
 # src/

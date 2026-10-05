@@ -38,23 +38,23 @@
 - [[Dev Tooling]]
 
 # Now
+- [[Dependency Update PRs]] ![[Dependency Update PRs#^status]] 🎯 [[Dev Foundations]]
 
 # Next
-1. [[Dependency Update PRs]] ![[Dependency Update PRs#^status]] 🎯 [[Dev Foundations]]
-2. [[Major Upgrade Sweeps]] ![[Major Upgrade Sweeps#^status]] 🎯 [[Dev Foundations]]
-3. [[Dependency Release Analysis]] ![[Dependency Release Analysis#^status]] 🎯 [[Dev Foundations]]
-4. [[Notes Vault Repo]] ![[Notes Vault Repo#^status]] 🎯 [[Dev Foundations]]
-5. [[Branching and Releases]] ![[Branching and Releases#^status]] 🎯 [[Dev Foundations]]
-6. [[E2E Tests in CI]] ![[E2E Tests in CI#^status]] 🎯 [[Dev Foundations]]
-7. [[Auth E2E Tests]] ![[Auth E2E Tests#^status]] 🎯 [[Dev Foundations]]
-8. [[Current Calendar E2E Tests]] ![[Current Calendar E2E Tests#^status]] 🎯 [[Dev Foundations]] 🎯 [[Calendar Page]]
-9. [[Recipes E2E Tests]] ![[Recipes E2E Tests#^status]] 🎯 [[Dev Foundations]]
-10. [[Settings E2E Tests]] ![[Settings E2E Tests#^status]] 🎯 [[Dev Foundations]]
-11. [[Sharing E2E Tests]] ![[Sharing E2E Tests#^status]] 🎯 [[Dev Foundations]]
-12. [[Agent Workflow Changes 2026-10-02]] ![[Agent Workflow Changes 2026-10-02#^status]] 🎯 [[Dev Foundations]]
-13. [[Dev Tooling Tidy-Ups 2026-10-02]] ![[Dev Tooling Tidy-Ups 2026-10-02#^status]] 🎯 [[Dev Foundations]]
-14. [[Finish OpenCode Migration]] ![[Finish OpenCode Migration#^status]] 🎯 [[Dev Foundations]]
-15. [[Docs Audit]] ![[Docs Audit#^status]] 🎯 [[Dev Foundations]]
+1. [[Major Upgrade Sweeps]] ![[Major Upgrade Sweeps#^status]] 🎯 [[Dev Foundations]]
+2. [[Dependency Release Analysis]] ![[Dependency Release Analysis#^status]] 🎯 [[Dev Foundations]]
+3. [[Notes Vault Repo]] ![[Notes Vault Repo#^status]] 🎯 [[Dev Foundations]]
+4. [[Branching and Releases]] ![[Branching and Releases#^status]] 🎯 [[Dev Foundations]]
+5. [[E2E Tests in CI]] ![[E2E Tests in CI#^status]] 🎯 [[Dev Foundations]]
+6. [[Auth E2E Tests]] ![[Auth E2E Tests#^status]] 🎯 [[Dev Foundations]]
+7. [[Current Calendar E2E Tests]] ![[Current Calendar E2E Tests#^status]] 🎯 [[Dev Foundations]] 🎯 [[Calendar Page]]
+8. [[Recipes E2E Tests]] ![[Recipes E2E Tests#^status]] 🎯 [[Dev Foundations]]
+9. [[Settings E2E Tests]] ![[Settings E2E Tests#^status]] 🎯 [[Dev Foundations]]
+10. [[Sharing E2E Tests]] ![[Sharing E2E Tests#^status]] 🎯 [[Dev Foundations]]
+11. [[Agent Workflow Changes 2026-10-02]] ![[Agent Workflow Changes 2026-10-02#^status]] 🎯 [[Dev Foundations]]
+12. [[Dev Tooling Tidy-Ups 2026-10-02]] ![[Dev Tooling Tidy-Ups 2026-10-02#^status]] 🎯 [[Dev Foundations]]
+13. [[Finish OpenCode Migration]] ![[Finish OpenCode Migration#^status]] 🎯 [[Dev Foundations]]
+14. [[Docs Audit]] ![[Docs Audit#^status]] 🎯 [[Dev Foundations]]
 
 # Planning
 1. [[Calendar and Recipes Data Refresh]] ![[Calendar and Recipes Data Refresh#^status]] - ready. Fixes both stale-data symptoms; unblocks [[Add Meal Changes (Saved Recipes)]] and [[Mobile List View]]. *(was bugfix)* 🎯 [[Calendar Page]] 🎯 [[App Health]]
