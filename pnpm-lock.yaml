@@ -30,8 +30,8 @@ importers:
         specifier: 4.9.1
         version: 4.9.1(@preact/signals@2.11.3(preact@10.29.0))(preact@10.29.0)(temporal-polyfill@0.3.2)
       '@schedule-x/events-service':
-        specifier: 4.3.1
-        version: 4.3.1
+        specifier: 4.9.1
+        version: 4.9.1
       '@schedule-x/react':
         specifier: 4.1.0
         version: 4.1.0(@schedule-x/calendar@4.9.1(@preact/signals@2.11.3(preact@10.29.0))(preact@10.29.0)(temporal-polyfill@0.3.2))(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
@@ -1133,8 +1133,8 @@ packages:
       preact: ^10.19.2
       temporal-polyfill: 0.3.2
 
-  '@schedule-x/events-service@4.3.1':
-    resolution: {integrity: sha512-jTdDraYe+F7nof6VRnF/GX3VJjl7CNUlfpMnZDQazgXlsRjiRHCiyxiyiw3LyOhpW0ssqIBkPWA/H+7qAF/BUQ==}
+  '@schedule-x/events-service@4.9.1':
+    resolution: {integrity: sha512-7pZMC6Khh4/i5PwTkCJzYb4qxVuFHKi+ho5xmkLu0Kv7HNO9z06rkcJw4Kc88bsbMJLkLXi6vTnHFClROIEZVg==}
 
   '@schedule-x/react@4.1.0':
     resolution: {integrity: sha512-l2hn1kdTModk4Lbt+nEr/VAcuNMA+w+hAAtgz8VLOj5UeieM7PWoK+cDapzPHCjUKisCSPd8QZfAX966Ma82kQ==}
@@ -3459,7 +3459,7 @@ snapshots:
       preact: 10.29.0
       temporal-polyfill: 0.3.2
 
-  '@schedule-x/events-service@4.3.1': {}
+  '@schedule-x/events-service@4.9.1': {}
 
   '@schedule-x/react@4.1.0(@schedule-x/calendar@4.9.1(@preact/signals@2.11.3(preact@10.29.0))(preact@10.29.0)(temporal-polyfill@0.3.2))(react-dom@19.2.4(react@19.2.4))(react@19.2.4)':
     dependencies:
