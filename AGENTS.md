@@ -106,6 +106,7 @@ Read the docs a task touches when it needs them, not all up front:
 - `docs/unit_tests.md`: before writing tests or mocks
 - `docs/e2e_tests.md`: before writing E2E tests
 - `docs/ci.md`: before changing a workflow or a routine
+- `docs/seed.md`: before changing `seed/` or adding a model
 
 ## Library APIs
 The libraries in this project are newer than your training data. Never use an API from memory. Every API you use needs a source:

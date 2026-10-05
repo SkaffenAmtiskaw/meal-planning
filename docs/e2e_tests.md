@@ -15,7 +15,7 @@
 
 Every file that imports `@playwright/test` is in `e2e/`, apart from `playwright.config.ts`. Keeping Playwright code out of `src/` and `test/` means Vitest never picks up a spec, and Playwright never picks up a unit test.
 
-The factories and the test-only auth instance sit in `test/`, not `e2e/`, because they don't use Playwright. They're plain functions, so a script that seeds a dev database can reuse them later.
+The factories and the test-only auth instance sit in `test/`, not `e2e/`, because they don't use Playwright. They're plain functions, so the dev seed in `seed/` reuses them too (see `docs/seed.md`).
 
 ## Naming Specs
 A file that defines Playwright tests is named `<flow>.spec.ts`, such as `homeRedirect.spec.ts`. No other file in `e2e/` ends in `.spec.ts`. `*.test.ts[x]` is the unit-test naming convention (see `docs/unit_tests.md`), so a name tells you at a glance which runner a file belongs to. (Unit tests are also colocated with the module they test.)
@@ -137,7 +137,7 @@ Unless you pass one, `createUser` generates an email that is unique on every cal
 - The home page looks users up by the email in the session, which better-auth stores in lowercase. A mixed-case email in the `User` doc isn't found.
 
 ## Writing a Factory
-Factories write through the models in `@/_models` and the test-only auth instance in `test/auth.ts`. They never import `@/_actions`, `@/_auth`, anything in `e2e/`, or any module that imports `server-only`. Factories run in Playwright's worker, outside Next.js, where `server-only` throws. Going straight to the models also keeps them free of app logic, so they can seed a dev database later.
+Factories write through the models in `@/_models` and the test-only auth instance in `test/auth.ts`. They never import `@/_actions`, `@/_auth`, anything in `e2e/`, or any module that imports `server-only`. Factories run in Playwright's worker, outside Next.js, where `server-only` throws. Going straight to the models also keeps them free of app logic, so the dev seed in `seed/` can use them too.
 
 ## Fixtures Hold Connections, Not Data
 A `test.extend` fixture in `e2e/_fixtures/` only opens, provides or closes a resource, such as a database connection or a browser context. It opens and closes connections only through `test/factories/connection.ts` and `test/auth.ts`, never through `mongoose` or `mongodb` directly, and it never creates users, planners or other documents.

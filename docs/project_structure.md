@@ -3,7 +3,7 @@ Claude Code skills, subagents, hooks and rules
 # .github/
 GitHub Actions workflows (see `docs/ci.md`)
 # docs/
-project documentation: structure, code conventions, styling, theme, unit tests, E2E tests and CI
+project documentation: structure, code conventions, styling, theme, unit tests, E2E tests, CI and the dev seed
 # e2e/
 Playwright E2E specs, grouped in folders by feature area (see `docs/e2e_tests.md`)
 ## _fixtures/
@@ -14,6 +14,8 @@ notes on planned work in Obsidian-flavored Markdown
 project roadmap with links to detailed notes
 # scripts/
 lefthook scripts, and scripts that check the notes vault
+# seed/
+`pnpm seed`, which fills the dev database with seeded users and sample data, and the sign-in link server (see `docs/seed.md`)
 # src/
 project source code
 ## _actions/
@@ -35,11 +37,11 @@ Next.js app directory
 ## env.ts
 environment variables typed with Zod
 # test/
-test support code shared by unit and E2E tests
+test support code shared by unit tests, E2E tests and the seed
 ## auth.ts
-test-only better-auth instance, used by the E2E factories and `signIn`, imported through `#auth`
+test-only better-auth instance, used by the E2E factories, `signIn` and the seed, imported through `#auth`
 ## factories/
-plain functions that create E2E test data in the database, and their connection, imported through `#factories`
+plain functions that create test data in the database for E2E tests and the seed, and their connection, imported through `#factories`
 ## fixtures/
 unit-test data builders, imported through `#fixtures`
 ## mocks/

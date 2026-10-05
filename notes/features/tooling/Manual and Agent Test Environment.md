@@ -5,9 +5,9 @@ blocked-by: []
 confirmed: 2026-10-01
 ---
 # Where It Stands
-In progress. Next: /implement Step 9 ^status
+In progress. Next: /implement Step 10 ^status
 
-Steps 1 to 8 are done: `pnpm seed` runs through tsx against the dev database and refuses any other database before connecting, Biome checks `seed/` with the test-support import bans, and each run removes everything seeded before, then creates the four seeded users with their personal planners and a shared planner filled with tags, recipes, bookmarks and meals. `pnpm sign-in` serves a link per seeded user at `http://localhost:3001` that signs any browser in as them, and `pnpm dev:sign-in` runs it alongside the dev server. Agents sign in through those links as the seeded user a check names, and nothing in `.claude/` or AGENTS.md points at the old test login. Steps 9 to 11 remain, and Step 9 needs a connection to the Atlas cluster, which works from Sarah's home network.
+Steps 1 to 9 are done: `pnpm seed` runs through tsx against the dev database and refuses any other database before connecting, Biome checks `seed/` with the test-support import bans, and each run removes everything seeded before, then creates the four seeded users with their personal planners and a shared planner filled with tags, recipes, bookmarks and meals. `pnpm sign-in` serves a link per seeded user at `http://localhost:3001` that signs any browser in as them, and `pnpm dev:sign-in` runs it alongside the dev server. Agents sign in through those links as the seeded user a check names, and nothing in `.claude/` or AGENTS.md points at the old test login. `docs/seed.md` describes the seed and its reset convention, and AGENTS.md sends anyone changing `seed/` or adding a model there. Steps 10 and 11 remain.
 
 # Inbox
 
@@ -348,8 +348,15 @@ Everything for the local test environment lives in a new top-level `seed/` folde
 - `docs/e2e_tests.md` - the "later" lines point to `seed/`
 
 **Acceptance:**
-- [ ] With nothing running, follow only `docs/seed.md`: reseed, start the app with the link server, and sign in as `write` from its link. See the app open on "Seeded Shared Planner" as Wren Writer. Proves: the doc alone gets someone from a terminal to signed in as a seeded user.
-- [ ] Start a new Claude Code session and ask: "I'm adding a ShoppingList model, one per planner. Besides the model, what else needs to change?" See the answer include adding it to `seed/reset.ts`, citing `docs/seed.md`. Proves: AGENTS.md sends an agent who adds a model to the reset convention.
+- [x] With nothing running, follow only `docs/seed.md`: reseed, start the app with the link server, and sign in as `write` from its link. See the app open on "Seeded Shared Planner" as Wren Writer. Proves: the doc alone gets someone from a terminal to signed in as a seeded user.
+- [x] Start a new Claude Code session and ask: "I'm adding a ShoppingList model, one per planner. Besides the model, what else needs to change?" See the answer include adding it to `seed/reset.ts`, citing `docs/seed.md`. Proves: AGENTS.md sends an agent who adds a model to the reset convention.
+
+**Status:** ✅ Complete
+
+**As built:**
+- `docs/seed.md` names the seeded users' keys, which are their access levels, and points to `seed/users.ts`, the link server's page and the seed's printout for names, emails and the dev password, rather than copying them (Sarah's call 2026-10-04: one source for who's who).
+- Its "Starting Fresh" section lists what a reseed deletes, and the reset convention says a new record added to `seed/reset.ts` joins that list too (Sarah's call 2026-10-04).
+- Boy Scout fix: `docs/project_structure.md`'s `test/` line said the folder is shared by unit and E2E tests; it now names the seed too. Found while editing that file's `test/auth.ts` and `test/factories/` lines.
 
 ## Step 10: Checks name a seeded user
 **Idea:** `/plan-steps` writes every check that needs a signed-in user as a named seeded user.
