@@ -71,7 +71,7 @@
 - [[Atlas Version Check Script]] ![[Atlas Version Check Script#^status]]
 - [[Sentry Logging and Root Cause Analysis]] ![[Sentry Logging and Root Cause Analysis#^status]] *(was high)*
 - [[Database Backup and Restore]] ![[Database Backup and Restore#^status]]
-- We also need a routine to handle Vercel deploy failures, just like the planned ones for CI failures and Sentry errors
+- [[Vercel Deploy Errors]] ![[Vercel Deploy Errors#^status]]
 
 ## [[Calendar Page]]
 - [Sarah] - Bug - When adding a URL as a reference, the dish title input can shrink too small to read the text (this was observed in the deployed production app but not confirmed in develop yet)
