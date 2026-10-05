@@ -181,6 +181,12 @@ EOF
 
 Build the body's lists from the commits on the branch that aren't on `develop`: `git log --no-merges --reverse --format=%B origin/develop..claude/dependency-updates`. Each one names its package, its old and new versions and any advisories it fixes. Take each earlier advisory's severity from the current body, read with `gh pr view "<number>" --json body --jq .body`. A package two runs both updated is one line, from its version before the first update to its version after the last. **Dropped** lists only this run's dropped updates.
 
+Leave out everything the current body has after its lists, such as an earlier session's link and the footers Claude Code added. Claude Code adds a footer when a body is edited too, but without the session's link, so end the body with `Session: <link>`, this session's link, read from the `Claude-Session` trailer of its latest commit:
+
+```bash
+git log -1 --no-merges --format='%(trailers:key=Claude-Session,valueonly)'
+```
+
 ### No open pull request
 Push the branch over any branch a closed pull request left behind, but only if it's still on the commit `git ls-remote` printed in step 2, so you never overwrite another session's push. Then open a pull request from it into `develop`:
 
