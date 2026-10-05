@@ -21,6 +21,10 @@ Let Sarah work on two product features at once with agents, protect `develop`, a
 # Goals
 - [ ] Sarah can work on two product features at once, each with its own agent session, without either one blocking the other.
 - [ ] Sarah has a crash course in working this way with agents, and the way of working is documented.
+> [!warning] Impact from [[Notes Vault Repo]] decision 2 (2026-10-04)
+> Notes Vault Repo decided that routines push their note changes straight to the notes repo's `main`. Routines push to GitHub as Sarah's account, and nothing on Claude's side limits which branch a push updates (code.claude.com/docs/en/routines, "Repositories and branch permissions"), so GitHub's rules on `develop` are the only thing that keeps a routine from pushing to it. A rule her account can bypass doesn't block a routine's push.
+> Acceptance criterion: a direct push to `develop` from Sarah's account, and so from a routine, is rejected.
+
 - [ ] `develop` is protected in CI.
 - [ ] A release process exists (a [[Dev Foundations]] Done When item).
 - [ ] A goal whose last story closes has a next step: `/close` no longer marks it "waiting on a release process", and Note Conventions' row for it names that step.
