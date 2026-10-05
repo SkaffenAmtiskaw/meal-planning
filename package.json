@@ -44,7 +44,7 @@
     "next": "16.3.8",
     "preact": "10.29.0",
     "react": "19.3.0",
-    "react-dom": "19.2.4",
+    "react-dom": "19.3.0",
     "react-screen-wake-lock": "3.1.1",
     "resend": "6.10.0",
     "server-only": "0.0.1",
