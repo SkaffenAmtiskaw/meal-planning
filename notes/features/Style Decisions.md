@@ -24,8 +24,9 @@ Visible style anywhere in the app: spacing, alignment, colors, component variant
 3. Planner settings: a badge shows on planners where the user has read access, but not on planners they own. How should the two be marked so they're consistent? (The original item asked for a UX review.)
 4. Planner settings: the leave planner button is styled differently on read-access planners and owned planners. Which style should both use?
 5. Sign-in: `src/app/_components/GoogleButton.css` is a global stylesheet, imported at `SignInFlow.tsx:23`, that overrides Mantine's Button with nine `!important` rules. How should the Google button be styled Mantine's way: Styles API `classNames` in a CSS module, or a custom Button variant?
+6. Calendar: the week view has no horizontal padding, so its edges touch the edge of the screen. How much padding, and at which screen sizes? 🎯 [[Calendar Page]]
 
-*These questions are from the app-wide style fixes list, dated 2026-09-08 and not re-checked.*
+*Questions 1 to 5 are from the app-wide style fixes list and question 6 from the calendar style fixes list, both dated 2026-09-08 and not re-checked.*
 
 # Out of Scope
 - Calendar focus states need a design, and the off-screen tab stops in the calendar are a bug. Each gets its own Roadmap line.

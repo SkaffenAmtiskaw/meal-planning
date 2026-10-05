@@ -26,6 +26,8 @@ The argument is one of:
 - **An item in a note:** find it and read the note around it. Check the note's `type` the same way.
 - **A description:** Sarah's own words. Search `notes/` for notes and items about the same thing and tell her what you found. They may already hold details or decisions.
 
+If the note or item serves a ranked goal but not the building goal, and its Roadmap line has no 🚨 or 📌, it can't be built yet, as the Roadmap's "How this file works" describes under "Goals". Tell Sarah which goal it waits on, and stop.
+
 Then read the files the change touches: the skills, agents, hooks, docs or config it names, plus Note Conventions or AGENTS.md if it changes how notes or sessions work. Read only what it touches.
 
 ### Is it a story?
@@ -44,7 +46,7 @@ If none of these applies, go on to step 2. Otherwise, tell Sarah which case appl
    - **Is it committed?**
      - **Yes:** if the task had 🎯 goal links, those are its goals. Otherwise, check its goals as the `roadmap-placement` skill describes. Then place the line as that skill describes under "Placing a story's line", ending with its 🎯 links.
      - **No:** the line goes in Ideas, which holds uncommitted work. If the task had 🎯 goal links, ask whether to remove them. If she says to remove them, the line goes in Ideas without them. If she says to keep them, it's committed after all, so place it as "Yes" describes.
-   - **If it's committed: does it go into Next?** If it does, ask her where in Next, as AGENTS.md describes under "Roadmap order". A line in Next needs a 🎯 link to an active goal. If none of its goals is active, ask her whether it gets 📌, and with what reason.
+   - **If it's committed: does it go into Next or Planning?** A line in Next needs a 🎯 link to the building goal, or 📌, and a line in Planning needs one to the planning goal, as the Roadmap's "How this file works" describes under "Markers". If she says Next and none of its goals is the building goal, ask her whether it gets 📌, and with what reason. Then ask her where in that section, as AGENTS.md describes under "Roadmap order".
 3. **Stop.** Tell Sarah to run `/shape <note name>` in a new session.
 
 ## 2. Settle it with Sarah

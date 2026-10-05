@@ -26,6 +26,8 @@ When the plan leaves a real choice open, Sarah decides it, not you. A choice tha
 ## 1. Find the step
 Find the note in `notes/features/`. It needs `status: ready` or `in-progress`. If it has neither, tell Sarah what you found and stop.
 
+If its Roadmap line serves a ranked goal but not the building goal, and has no 🚨 or 📌, it can't be built yet, as the Roadmap's "How this file works" describes under "Goals". Tell Sarah which goal it waits on, and stop.
+
 Read the whole note, including:
 - the Design Handoff and its images in `notes/assets/<story>/`
 - ⚠️ Check Drift callouts, and **As built** notes on earlier steps

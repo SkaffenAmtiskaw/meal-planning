@@ -5,7 +5,7 @@
 #   notes named as arguments. Older notes are brought up to spec when they're
 #   worked on, so unchanged ones aren't checked.
 # - Whole vault: broken links, blocked-by entries, Roadmap status embeds, and
-#   Now and Next markers.
+#   Now, Next and Planning markers.
 # Changes nothing. Exits 1 if it reports anything.
 # Usage: sh scripts/vault-lint.sh [note name or path ...]
 
@@ -97,7 +97,7 @@ while IFS= read -r note; do
         # A collecting note's own line carries no goal links and sits in Unaffiliated.
         [ -n "$onLine" ] && add "$note: its Roadmap line ($at) carries 🎯 links, but a collecting note's own line carries none"
         case "$section" in
-          (Now|Next) add "$note: its Roadmap line ($at) sits in $section, but a collecting note's own line goes in Unaffiliated in Later" ;;
+          (Now|Next|Planning) add "$note: its Roadmap line ($at) sits in $section, but a collecting note's own line goes in Unaffiliated in Later" ;;
           (Later) [ -n "$heading" ] && [ "$heading" != "Unaffiliated" ] &&
             add "$note: its Roadmap line ($at) sits under \"$heading\", but a collecting note's own line goes in Unaffiliated" ;;
         esac
@@ -163,19 +163,25 @@ grep -oE '!\[\[[^]#]+#\^status\]\]' "$roadmap" | sed -E 's/^!\[\[//; s/#\^status
     [ -n "$target" ] && ! grep -q ' \^status$' "$target" && add "$roadmap: embeds [[$t#^status]], but $target has no ^status line"
   done
 
-# Every Now and Next line needs a 🎯 link to an active goal, 🚨 or 📌.
+# Every Now and Next line needs a 🎯 link to the building goal, 🚨 or 📌, and
+# every Planning line a 🎯 link to the planning goal.
 awk '
   /^# / { section = substr($0, 3); next }
-  section == "Goals" && /- active/ { g = $0; sub(/.*\[\[/, "", g); sub(/[]|].*/, "", g); active[g] = 1; next }
-  (section == "Now" || section == "Next") && /^[ \t]*([-*]|[0-9]+\.)[ \t]+/ {
-    if (index($0, "🚨") || index($0, "📌")) next
+  section == "Goals" && /- (building|planning)$/ {
+    g = $0; sub(/.*\[\[/, "", g); sub(/[]|].*/, "", g)
+    if (/- building$/) building[g] = 1; else planning[g] = 1
+    next
+  }
+  (section == "Now" || section == "Next" || section == "Planning") && /^[ \t]*([-*]|[0-9]+\.)[ \t]+/ {
+    if (section != "Planning" && (index($0, "🚨") || index($0, "📌"))) next
     rest = $0; ok = 0
     while (match(rest, /🎯 \[\[[^]|]+/)) {
       g = substr(rest, RSTART, RLENGTH); sub(/^🎯 \[\[/, "", g)
-      if (g in active) ok = 1
+      if (section == "Planning" ? (g in planning) : (g in building)) ok = 1
       rest = substr(rest, RSTART + RLENGTH)
     }
-    if (!ok) printf "%s:%d: a %s line with no 🎯 link to an active goal, 🚨 or 📌\n", FILENAME, NR, section
+    if (!ok && section == "Planning") printf "%s:%d: a Planning line with no 🎯 link to the planning goal\n", FILENAME, NR
+    else if (!ok) printf "%s:%d: a %s line with no 🎯 link to the building goal, 🚨 or 📌\n", FILENAME, NR, section
   }' "$roadmap" >> "$report"
 
 checked=$(grep -c . "$tmp/changed")

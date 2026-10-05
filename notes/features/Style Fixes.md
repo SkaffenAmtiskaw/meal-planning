@@ -19,6 +19,7 @@ Visible style fixes anywhere in the app (spacing, alignment, colors, component v
 
 # Items
 - [ ] **Blocked by [[Header Date Picker]]:** the calendar header's prev/next buttons don't line up vertically with the period label. Header Date Picker rebuilds this row, so check whether it still happens once that lands. From the calendar style fixes list (2026-09-08), not re-checked. 🎯 [[Calendar Page]]
+- [ ] Restyle `SegmentedControl` to match the archived [[Add Meal UX Changes]] handoff (`archive/assets/dish-row-states.png`, `add-meal-desktop.png`): a white active pill on a light grey track, the active label in navy, and inactive labels in forest. In `src/_theme/theme.ts:104-108`, remove `color: 'forest'` so Mantine's default white indicator and grey track show. Then set the label colors with Styles API `classNames` in a CSS module in `src/_theme/` (like `focus.module.css`): `label` forest, `label[data-active]` navy. Never use the lightest ramp step, which fails the handoff's 4.5:1 contrast rule. In `docs/theme.md:42`, replace "SegmentedControl active state (white text on forest green)" with the new look. Applies to `ViewSwitcher.tsx:16` and `CalendarHeader.tsx:78, 158`. The Add Meal modal's control is being removed by another story. Moved from the Roadmap 2026-09-26. 🎯 [[Calendar Page]]
 
 # Out of Scope
 - Style fixes that still need a decision: [[Style Decisions]].

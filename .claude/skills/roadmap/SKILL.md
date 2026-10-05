@@ -1,6 +1,6 @@
 ---
 name: roadmap
-description: Shape a goal (an epic Sarah ranks and ships as one release) or a standing goal (one that collects work no goal would take, and never ships), draw a goal from a standing goal, or re-rank the goals, then keep Next and Later in line with the two active goals.
+description: Shape a goal (an epic Sarah ranks and ships as one release) or a standing goal (one that collects work no goal would take, and never ships), draw a goal from a standing goal, or re-rank the goals, then keep Next, Planning and Later in line with the building and planning goals.
 argument-hint: "[goal or standing goal name, or nothing to re-rank]"
 disable-model-invocation: true
 hooks:
@@ -14,11 +14,11 @@ hooks:
 Shape the goal **$ARGUMENTS**, or re-rank the goals if no goal was named.
 
 ## Why this skill works the way it does
-Goals are how Sarah decides what matters. Each one is an epic she ships as one release, and the top two on the Roadmap are the active ones that Next is filled from. They often start out only in her head. This skill gets a goal into a note and onto the Roadmap, and keeps Next honest when the ranking changes.
+Goals are how Sarah decides what matters. Each one is an epic she ships as one release, and the top two on the Roadmap are the building goal, whose stories fill Next, and the planning goal, whose stories fill Planning and are planned but not built until the building goal is released. They often start out only in her head. This skill gets a goal into a note and onto the Roadmap, and keeps Next honest when the ranking changes.
 
-Some work never serves a goal, because it never blocks a feature: a library upgrade, or a piece of tech debt. A standing goal collects it. It's never ranked or active, and it never ships. When Sarah wants to take on some of that work, this skill draws a goal from it: an ordinary goal, named `<standing goal> YYYY-MM-DD`, that takes the work she picks and ships as one release, while the standing goal keeps collecting.
+Some work never serves a goal, because it never blocks a feature: a library upgrade, or a piece of tech debt. A standing goal collects it. It's never ranked, building or planning, and it never ships. When Sarah wants to take on some of that work, this skill draws a goal from it: an ordinary goal, named `<standing goal> YYYY-MM-DD`, that takes the work she picks and ships as one release, while the standing goal keeps collecting.
 
-A goal takes collecting-note items by their 🎯 links. Once a goal is active, this skill kicks off each collecting note with items that serve it into a dated copy, so the goal has a fixed set it can finish while the note keeps collecting.
+A goal takes collecting-note items by their 🎯 links. Once a goal is building, this skill kicks off each collecting note with items that serve it into a dated copy, so the goal has a fixed set it can finish while the note keeps collecting.
 
 It gathers facts and writes what Sarah decides. It makes almost no decisions: what the goal is for, what's in it, which gaps get filled, which tooling goes under it, its rank and the order of Next are all hers. Your own judgment covers only dependencies you can point to in the notes or code, and recommendations as AGENTS.md describes under "Recommendations".
 
@@ -55,13 +55,13 @@ A goal takes a collecting note's items, never the note itself, as the Roadmap's 
 Go through the candidates one at a time. For each, show the line, note or item, why it looks related, and any goals it already serves. Sarah says:
 - **In:**
   - **A line in Unaffiliated or Ideas:** move it under the goal's heading in Later. Add the heading, `## [[<goal>]]`, if it's missing, placed as "How this file works" describes under Later.
-  - **A line under another goal's heading, or in Now or Next:** leave it there, and add `🎯 [[<goal>]]` at its end.
+  - **A line under another goal's heading, or in Now, Next or Planning:** leave it there, and add `🎯 [[<goal>]]` at its end.
   - **A collecting note as a whole:** add `🎯 [[<goal>]]` at the end of each of its items that doesn't have it yet. The note's line doesn't change.
   - **An item in a collecting note:** add `🎯 [[<goal>]]` at the item's end. The note's line doesn't change.
 - **Out:** add it to Out of Scope with her reason. For a whole collecting note, the entry names the note and each of its current items, so items added later are still checked against the goal when they come in.
 - **Not related:** nothing is recorded.
 
-If an item that comes in already links to another goal, it serves one goal, as the Roadmap's "How this file works" describes under "Collecting notes". Ask Sarah which goal it fits best, and keep only that goal's link, unless she says neither goal can be done without it. If this goal is active, step 7 kicks off the items that come in.
+If an item that comes in already links to another goal, it serves one goal, as the Roadmap's "How this file works" describes under "Collecting notes". Ask Sarah which goal it fits best, and keep only that goal's link, unless she says neither goal can be done without it. If this goal is building, step 7 kicks off the items that come in.
 
 ## 4. Gaps
 Compare Done When with the in-scope work, and list each Done When item that nothing covers. Go through them one at a time. For each, draft an idea note from `notes/templates/Idea.md` for `notes/features/<area>/`, with "Next: /shape ^status", and show it to Sarah:
@@ -76,18 +76,24 @@ Find the tooling that would make this goal's stories easier: tooling lines anywh
 Give Sarah a shortlist, most helpful first, each with what it would make easier and for which stories, and any goal it already serves. Collecting notes go on it as a whole or item by item, the same way as in step 3. A tooling line, note or item stays where it is unless she says to put it under this goal. If she does, handle it the same way as "In" in step 3.
 
 ## 6. Rank
-Show the Goals list with the two active goals marked. Name any dependencies you can point to, such as an in-scope story whose `blocked-by` names a story under another goal. Ask Sarah where this goal goes. With no argument, ask what moves. Recommend a spot only from those dependencies. Standing goals are never ranked. They stay under the Standing Goals subheading, unnumbered, and never take an active spot.
+Show the Goals list with the building and planning goals marked. Name any dependencies you can point to, such as an in-scope story whose `blocked-by` names a story under another goal. Ask Sarah where this goal goes. With no argument, ask what moves. Recommend a spot only from those dependencies. Standing goals are never ranked. They stay under the Standing Goals subheading, unnumbered, and never become the building or planning goal.
 
-Write the order she gives. Each Goals line is `1. [[<goal>]]`, with ` - active` on the top two. Put the goal headings in Later in the same order, followed by the standing goals' headings.
+Write the order she gives. Each Goals line is `1. [[<goal>]]`, with ` - building` on the first and ` - planning` on the second. Put the goal headings in Later in the same order, followed by the standing goals' headings.
 
-## 7. Kickoffs, Next and Later
-**Kick off.** Kick off every collecting note, but not a dated copy, that has an unblocked item carrying an active goal's 🎯 link. That happens when a goal has just become active, or when an active goal took items in step 3 or 5. For each note, read `.claude/skills/kickoff/SKILL.md` and follow it as its "Kicking off for active goals" section describes. Then check every collecting note's own line, and fix any that doesn't match "How this file works" under "Collecting notes".
+## 7. Kickoffs, Next and Planning
+**Kick off.** Kick off every collecting note, but not a dated copy, that has an unblocked item carrying the building goal's 🎯 link. That happens when a goal has just started building, or when the building goal took items in step 3 or 5. For each note, read `.claude/skills/kickoff/SKILL.md` and follow it as its "Kicking off for the building goal" section describes. Then check every collecting note's own line, and fix any that doesn't match "How this file works" under "Collecting notes".
 
-**If the active two changed:**
-- **A goal that became active:** go through every Later line that serves it, one at a time, whether it sits under the goal's heading or carries its 🎯 link. Judge each one by where the newly active goal stands, not by the goal it's filed under. Sarah says which move into Next. Then ask her the order for the lines she picked, recommending one from their `blocked-by` dependencies. A moved line keeps its 🎯 links, and gets one for the goal whose heading it leaves.
-- **A goal that's no longer active:** move each Next line that serves no other active goal back to Later, under the heading of a goal it serves, and remove that goal's 🎯 link. Its other 🎯 links stay. Lines marked 🚨 or 📌 stay. Later isn't ordered, so there's nothing to ask. List the lines you moved.
+**If the building or planning goal changed,** first sort the lines already in Next and Planning:
+- **Next:** a line stays if it serves the building goal or has 🚨 or 📌. Otherwise, it moves to Planning if it serves the planning goal, or back to Later.
+- **Planning:** a line moves into Next if it serves the building goal, stays if it serves the planning goal, and otherwise goes back to Later.
+- **A line moved into Next or Planning** keeps its order among the lines moved with it. If the section already holds lines, ask Sarah where the moved ones go, as AGENTS.md describes under "Roadmap order".
+- **A line moved back to Later** goes under the heading of a goal it serves, and loses that goal's 🎯 link. Its other 🎯 links stay. Later isn't ordered, so there's nothing to ask.
 
-**Always:** if a note was kicked off in this run for a goal that was already active, ask Sarah whether its line moves into Next. If it does, ask her where in Next, as AGENTS.md describes under "Roadmap order". Then check every Now and Next line for its markers, as "How this file works" describes. Raise each line that's out of place, one at a time. Sarah says whether it gets a 🎯 link to an active goal, 🚨 or 📌 with a reason, or goes back to Later, under a goal's heading or in Unaffiliated. Never add 🚨 or 📌 yourself. If you think a line is urgent, say so and ask.
+Then fill the queue of each goal that just became the building or planning goal. Go through every Later line that serves it, one at a time, whether it sits under the goal's heading or carries its 🎯 link. Judge each one by where the goal stands now, not by the goal it's filed under. Sarah says which move into the goal's queue: Next for the building goal, Planning for the planning goal. Then ask her the order for the lines she picked, recommending one from their `blocked-by` dependencies. A moved line keeps its 🎯 links, and gets one for the goal whose heading it leaves.
+
+List the lines you moved.
+
+**Always:** if a note was kicked off in this run for a goal that was already building, ask Sarah whether its line moves into Next. If it does, ask her where in Next, as AGENTS.md describes under "Roadmap order". Then check every Now, Next and Planning line for its marker, as "How this file works" describes. Raise each line that's out of place, one at a time. Sarah says whether it gets the marker its section needs, moves to the section whose marker it has, or goes back to Later, under a goal's heading or in Unaffiliated. Never add 🚨 or 📌 yourself. If you think a line is urgent, say so and ask.
 
 ## Shaping a standing goal
 1. **Purpose and What Belongs Here.** Ask Sarah what kind of work it collects and why no goal would take it, in her words, and what looks close but doesn't belong. Draft Purpose, What Belongs Here and Out of Scope from the Standing Goal template, keeping her wording. Show her the draft and wait for her approval, then write the note to `notes/goals/<name>.md`, with `confirmed` set to today.
@@ -117,6 +123,6 @@ Then tell Sarah:
 - each collecting note kicked off, where its Roadmap line went, and the command for its next step
 - the designs the goal is waiting on
 - the tooling shortlist, and what she put under the goal
-- the Goals order, and which lines moved into or out of Next
+- the Goals order, and which lines moved into or out of Next and Planning
 
 Leave every change unstaged. Stop there, and don't start work on any story.

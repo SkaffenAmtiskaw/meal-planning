@@ -77,7 +77,7 @@ Skip this for a re-close. Go through the Blocker matches.
    - **It names a next step that didn't wait on this story,** such as "Next: /plan-steps" for a story being planned while this one was built: the story is moving forward, possibly in another session. Keep that step, and remove only any wording about waiting on this story.
    - **It waits on this story,** such as "Waiting on [[X]]" or "Blocked until [[X]] lands, then /shape": the story sat in the backlog. If it's `spec`, `ready` or `in-progress`, set the line to "Unblocked. Next: /check-drift". If it's an `idea` note, write the next step its type calls for in the table below.
    - **You can't tell which:** show Sarah the line, and ask whether the story goes to `/check-drift` or keeps its next step.
-4. If its Roadmap line is in Later and it serves an active goal, show Sarah the story and the current Next list, and ask whether it moves into Next and where, as AGENTS.md describes under "Roadmap order". Move the line where she says, with a 🎯 link for each goal it serves. Otherwise, leave the line where it is.
+4. If its Roadmap line is in Later and it serves the building or planning goal, show Sarah the story and that goal's queue (Next for the building goal, Planning for the planning goal), and ask whether it moves there and where, as AGENTS.md describes under "Roadmap order". Move the line where she says, with a 🎯 link for each goal it serves. Otherwise, leave the line where it is.
 
 !`sh scripts/note-section.sh "Next Step by Note State"`
 

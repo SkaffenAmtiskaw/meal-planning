@@ -40,7 +40,7 @@ Any change to a note in `notes/` follows these rules:
 - **Where It Stands** is the first section of every note except a goal or standing goal, right after the frontmatter, in its template's format. If a note has none, add it. It's a summary Sarah can read at a glance, and it holds only two things:
   - **The `^status` line** (the line ending in ` ^status`) says what the story needs next, so Sarah can tell from the Roadmap without opening the note. It always names the next skill as a command, or links what the story is blocked by:
     - **It can move now:** `Next: /plan-steps` or `Next: /implement Step 4`. If the next step isn't a skill, such as a design session in Claude Design, name it, then the skill after it.
-    - **It can be planned now, but building waits on another story:** name the skill that can run now and link the blocker, as in `Next: /plan-steps. Building waits on [[A]] and [[B]]`. This tells Sarah she can plan it now but can't build it yet, which affects how she prioritizes it.
+    - **It can move now, but a later step waits on another story:** name the skill that can run now, then the step that waits and its blockers, as in `Next: /plan-steps. Building waits on [[A]] and [[B]]` or `Next: /decide. Architecting waits on [[A]]`. This tells Sarah what she can do now and what has to wait, which affects how she prioritizes it.
     - **It's blocked by another story:** link the blocker and name the skill after it, as in `Blocked by [[A]] and [[B]]; then /plan-steps`.
     - **It waits on Sarah's decisions:** `Next: /decide`.
     - **A collecting note:** `Collecting items. Next: /kickoff when you schedule it`, or `Next: /tooling` for a workflow note.
@@ -56,11 +56,11 @@ Any change to a note in `notes/` follows these rules:
   - **Working on a note:** read its Inbox, and decide which items are your step's to act on. Act on each one. Then, if it's one of Sarah's lines, handle it as "Sarah's comments" above describes. Otherwise, delete it. Leave items that belong to a later step.
 - **A note with the wrong type.** If a note's type doesn't fit its work, tell Sarah which type fits and why, and offer to retype it. If she agrees, retype it as the `retyping-a-note` skill describes, then stop.
 - **Roadmap order is Sarah's call.** Never reorder `notes/Roadmap.md`. Ask her where a new line goes. If the notes or the Roadmap make the spot clear, suggest it and say why. Otherwise, ask without a suggestion. Never guess one.
-- **A blocker outside the queue.** If a story in Next gets a story in its `blocked-by` that isn't in Now or Next, propose pulling that story into Next directly ahead of it, with the same markers, and say why.
-- **Starting on a story in the backlog.** Sarah running a skill on a story means she's moving forward with it. If the story's Roadmap line is in Later or Ideas when a skill starts on it, ask her whether it moves into Next. If it does:
+- **A blocker outside the queue.** If a story in Next gets a story in its `blocked-by` that isn't in Now or Next, or a story in Planning gets one that isn't in Now, Next or Planning, propose pulling that story into the blocked story's section directly ahead of it, with the same markers, and say why.
+- **Starting on a story in the backlog.** Sarah running a skill on a story means she's moving forward with it. If the story's Roadmap line is in Later or Ideas when a skill starts on it, ask her whether it moves into Next or Planning. If it does:
   - check its goals as the `roadmap-placement` skill describes
-  - give it a 🎯 link for each goal she names; if none of them is active, ask her whether it gets 📌 and with what reason
-  - ask her where in Next it goes, as "Roadmap order" above describes
+  - give it a 🎯 link for each goal she names. If one of them is the building goal, it goes in Next. Otherwise, if one is the planning goal, it goes in Planning. If neither, ask her whether it goes in Next with 📌, and with what reason
+  - ask her where in that section it goes, as "Roadmap order" above describes
 
   This doesn't apply to `/implement`, which moves the line into Now itself, or to `/tooling`, which finishes its change in one session.
 - **A new item in a collecting note.** When you add one, check which goals it serves and link it as the `roadmap-placement` skill describes. An item that `/check-drift` moves back or `/kickoff` rolls over isn't new, so it keeps the links it has.

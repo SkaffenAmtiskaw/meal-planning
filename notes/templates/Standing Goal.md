@@ -2,7 +2,7 @@
 type: standing-goal
 confirmed: {{date:YYYY-MM-DD}}
 ---
-%% A standing goal collects work that no goal would take on its own, such as library upgrades and tech debt, which never block a feature. `/roadmap` shapes it. It never ships, and it's never ranked or active: the Roadmap lists it under Goals, in Standing Goals, and the work that serves it sits under its heading in Later or ends with its 🎯 link. When Sarah wants to take on some of that work, `/roadmap` draws a goal from it, named `<standing goal> YYYY-MM-DD`, which takes the work she picks and ships as a release. The standing goal keeps collecting. It has no `status`, no Where It Stands and no Done When. %%
+%% A standing goal collects work that no goal would take on its own, such as library upgrades and tech debt, which never block a feature. `/roadmap` shapes it. It never ships, and it's never ranked, building or planning: the Roadmap lists it under Goals, in Standing Goals, and the work that serves it sits under its heading in Later or ends with its 🎯 link. When Sarah wants to take on some of that work, `/roadmap` draws a goal from it, named `<standing goal> YYYY-MM-DD`, which takes the work she picks and ships as a release. The standing goal keeps collecting. It has no `status`, no Where It Stands and no Done When. %%
 
 # Purpose
 %% What kind of work this collects, and why no goal would take it on its own. %%
