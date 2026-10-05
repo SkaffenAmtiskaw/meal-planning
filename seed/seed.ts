@@ -6,6 +6,7 @@ import { createPlanner } from '#factories/planner';
 import { createUser } from '#factories/user';
 import type { DayInterface } from '@/_models/calendar';
 import type { BookmarkInterface, RecipeInterface } from '@/_models/library';
+import { TAG_COLOR_NAMES } from '@/_theme/colors';
 
 import { closeDevDatabase, connectDevDatabase } from './devDatabase';
 import { resetSeed } from './reset';
@@ -19,12 +20,12 @@ const tagIds = {
 
 // Colors in the order the app's addTag assigns them.
 const tags = [
-	{ _id: tagIds.quick, name: 'Quick', color: 'tangerine' as const },
-	{ _id: tagIds.vegetarian, name: 'Vegetarian', color: 'rosewood' as const },
+	{ _id: tagIds.quick, name: 'Quick', color: TAG_COLOR_NAMES[0] },
+	{ _id: tagIds.vegetarian, name: 'Vegetarian', color: TAG_COLOR_NAMES[1] },
 	{
 		_id: tagIds.familyFavorite,
 		name: 'Family Favorite',
-		color: 'honey' as const,
+		color: TAG_COLOR_NAMES[2],
 	},
 ];
 

@@ -27,7 +27,7 @@ You reproduce a bug in the running app and report what you saw. You don't diagno
 3. **Sign in** when the steps need a signed-in user, as the seeded user they name, through the link the `running-the-app` skill describes. If the link says that user isn't seeded, stop and report it: you can't run `pnpm seed`.
 4. **Follow the steps** in order.
 5. **Capture** exactly the requested values. Prefer text and measurements (`read_page`, `get_page_text`, `javascript_tool` for `getBoundingClientRect()`, `scrollTop` or computed styles) over screenshots. Check console errors when the symptom could involve one.
-6. **Clean up.** Close the tab you opened. Reset any screen size you set and stop the server as the `running-the-app` skill describes.
+6. **Clean up.** Close the tab you opened. Reset any screen size you set and stop the servers as the `running-the-app` skill describes.
 
 ## Report format
 ### Reproduced

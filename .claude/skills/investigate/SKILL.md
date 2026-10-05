@@ -45,7 +45,7 @@ Then follow step 2 for a bug, or step 3 for a cleanup.
 ## 2. Bug notes
 
 ### 2a. Repro steps
-Write exact steps to reproduce the symptom: where to start, which user, what to click or type, the screen size when it matters, and what goes wrong. Build them from Symptoms. Where the note doesn't say, ask Sarah. Don't fill gaps with guesses about what she meant.
+Write exact steps to reproduce the symptom: where to start, which user, what to click or type, the screen size when it matters, and what goes wrong. Name the user as "Which User to Sign In As" in the `running-the-app` skill describes. Build them from Symptoms. Where the note doesn't say, ask Sarah. Don't fill gaps with guesses about what she meant.
 
 Also write down the values that would show the symptom plainly, e.g. an element's position against the viewport, or the console error after Save.
 

@@ -19,8 +19,6 @@ export const connectDevDatabase = async () => {
 
 	await connectDatabase();
 	await connectAuth();
-
-	return databaseName;
 };
 
 export const closeDevDatabase = async () => {

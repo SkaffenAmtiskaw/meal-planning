@@ -17,7 +17,7 @@ The session follows the convention for Claude Code cloud sessions in `docs/ci.md
 
 Research from 2026-09-29:
 - Sentry can't start a routine itself: its webhooks can't send the auth header the routine's `/fire` API needs. A Sentry alert rule can create a GitHub issue, and a workflow on `issues: opened` then calls `/fire`. Sentry's own Claude Agent integration runs a managed agent in the Claude Console, not a session in Sarah's Code tab. (docs.sentry.io/organization/integrations/source-code-mgmt/github/, docs.sentry.io/integrations/coding-agents/claude/)
-- A cloud session can't reproduce a bug in the running app as things stand: `.env*` and the test login in `.opencode/secrets` are gitignored, and the Claude Code docs don't say whether preview tools run in cloud sessions. Every bug is reproduced before a root cause is written down, so the session needs a way to run the app.
+- A cloud session can't reproduce a bug in the running app as things stand: `.env*` is gitignored, and the Claude Code docs don't say whether preview tools run in cloud sessions. Every bug is reproduced before a root cause is written down, so the session needs a way to run the app.
 	- Test users and data that work in cloud sessions were left out of [[Manual and Agent Test Environment]] and routed here 2026-09-30, since Sarah decided that story covers only her machine. They need a database the cloud can reach, the app's secrets on the cloud environment and a way to run the app in a cloud session. That story's seed and agent sign-in (better-auth `testUtils` `getCookies`) may be reusable.
 
 ## If the routine needs Sentry access

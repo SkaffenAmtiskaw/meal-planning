@@ -1,11 +1,11 @@
 ---
 type: infra
-status: in-review
+status: done
 blocked-by: []
 confirmed: 2026-10-01
 ---
 # Where It Stands
-All steps implemented. Next: /final-review ^status
+Reviewed. Next: /close ^status
 
 All 11 steps are done: `pnpm seed` runs through tsx against the dev database and refuses any other database before connecting, Biome checks `seed/` with the test-support import bans, and each run removes everything seeded before, then creates the four seeded users with their personal planners and a shared planner filled with tags, recipes, bookmarks and meals. `pnpm sign-in` serves a link per seeded user at `http://localhost:3001` that signs any browser in as them, and `pnpm dev:sign-in` runs it alongside the dev server. Agents sign in through those links as the seeded user a check names, and nothing in `.claude/` or AGENTS.md points at the old test login. `docs/seed.md` describes the seed and its reset convention, and AGENTS.md sends anyone changing `seed/` or adding a model there. `/plan-steps` writes each check that needs a signed-in user as a named seeded user, or as a new user signed up through the app when the check changes the email. The old test login in `.opencode/secrets/` is deleted, along with its `.gitignore` line. What remains is the review of the whole story.
 
