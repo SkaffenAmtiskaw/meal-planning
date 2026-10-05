@@ -54,8 +54,8 @@ importers:
         specifier: ^7.7.0
         version: 7.7.0
       mongoose:
-        specifier: 9.7.2
-        version: 9.7.2
+        specifier: 9.11.0
+        version: 9.11.0
       next:
         specifier: 16.3.8
         version: 16.3.8(@babel/core@7.29.7)(@opentelemetry/api@1.9.1)(@playwright/test@1.63.0)(@types/node@24.3.3)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)(sass@1.98.0)
@@ -1757,8 +1757,8 @@ packages:
     engines: {node: '>=6'}
     hasBin: true
 
-  kareem@3.3.0:
-    resolution: {integrity: sha512-kpSuLD3/7RenBnjnJdOHXCKC8dTd1JzeOiJhN0necWWci6cC+qX+VuwPnMVgb+a4+KNJSfgqahpnfWaeDXCimw==}
+  kareem@3.4.0:
+    resolution: {integrity: sha512-JAKhnR4S027v/8949QXNInRskgETCg9rFUMi1VjhGbjX+XltCAAEFcXykkSocNkom1kc66EMJfjWvhj87BDQKg==}
     engines: {node: '>=18.0.0'}
 
   klona@2.0.6:
@@ -1901,33 +1901,6 @@ packages:
     resolution: {integrity: sha512-8ZCDrraqKqmAikoeKuEq+16jeWdVKwjtEAuMxxeQctHiGSGYt17W9LmoRzV1Nwnz7owyxwDKMhow4IVkNYYRKw==}
     engines: {node: '>=20.19.0'}
 
-  mongodb@7.2.0:
-    resolution: {integrity: sha512-F/2+BMZtLVhY30ioZp0dAmZ+IRZMBqI+nrv6t5+9/1AIwCa8sMRC3jBf81lpxMhnZgqq8CoUD503Z1oZWq1/sw==}
-    engines: {node: '>=20.19.0'}
-    peerDependencies:
-      '@aws-sdk/credential-providers': ^3.806.0
-      '@mongodb-js/zstd': ^7.0.0
-      gcp-metadata: ^7.0.1
-      kerberos: ^7.0.0
-      mongodb-client-encryption: '>=7.0.0 <7.1.0'
-      snappy: ^7.3.2
-      socks: ^2.8.6
-    peerDependenciesMeta:
-      '@aws-sdk/credential-providers':
-        optional: true
-      '@mongodb-js/zstd':
-        optional: true
-      gcp-metadata:
-        optional: true
-      kerberos:
-        optional: true
-      mongodb-client-encryption:
-        optional: true
-      snappy:
-        optional: true
-      socks:
-        optional: true
-
   mongodb@7.5.0:
     resolution: {integrity: sha512-5FnrEDLnvp6ycUOGLNLLU33BfCx2qmp2mJjGPDwKLruYsVzXVSK5fsGpoDXvsXJwBfBsD7ebMRdawbDxC2814g==}
     engines: {node: '>=20.19.0'}
@@ -1982,8 +1955,8 @@ packages:
       socks:
         optional: true
 
-  mongoose@9.7.2:
-    resolution: {integrity: sha512-VxxS3tjOGRIvhBMd84RR7L1WbDdm08Qq6V88VMq6jP6aE1Q+NlbTZDBtye2NAyO48i5kBFxM2oxfX0CPKNwCMg==}
+  mongoose@9.11.0:
+    resolution: {integrity: sha512-dclC0gx/AfasCMX0VChpv4FQ69ylEf3Crve0zKhmYM3VVBK8b0FU8VODx50Th7evM60JxVal8V/1XZQiwLHjwA==}
     engines: {node: '>=20.19.0'}
 
   mpath@0.9.0:
@@ -4027,7 +4000,7 @@ snapshots:
 
   json5@2.2.3: {}
 
-  kareem@3.3.0: {}
+  kareem@3.4.0: {}
 
   klona@2.0.6: {}
 
@@ -4194,12 +4167,6 @@ snapshots:
       - socks
       - supports-color
 
-  mongodb@7.2.0:
-    dependencies:
-      '@mongodb-js/saslprep': 1.5.5
-      bson: 7.3.3
-      mongodb-connection-string-url: 7.0.2
-
   mongodb@7.5.0:
     dependencies:
       '@mongodb-js/saslprep': 1.5.5
@@ -4212,10 +4179,11 @@ snapshots:
       bson: 7.3.3
       mongodb-connection-string-url: 7.0.2
 
-  mongoose@9.7.2:
+  mongoose@9.11.0:
     dependencies:
-      kareem: 3.3.0
-      mongodb: 7.2.0
+      '@standard-schema/spec': 1.1.0
+      kareem: 3.4.0
+      mongodb: 7.7.0
       mpath: 0.9.0
       mquery: 6.0.0
       ms: 2.1.3
