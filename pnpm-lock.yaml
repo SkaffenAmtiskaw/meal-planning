@@ -42,8 +42,8 @@ importers:
         specifier: 0.13.11
         version: 0.13.11(typescript@5.9.3)(zod@4.4.3)
       '@tabler/icons-react':
-        specifier: 3.48.0
-        version: 3.48.0(react@19.2.4)
+        specifier: 3.49.0
+        version: 3.49.0(react@19.2.4)
       better-auth:
         specifier: 1.6.33
         version: 1.6.33(@opentelemetry/api@1.9.1)(mongodb@7.0.0)(next@16.3.8(@babel/core@7.29.7)(@opentelemetry/api@1.9.1)(@playwright/test@1.63.0)(@types/node@24.3.3)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)(sass@1.98.0))(react-dom@19.2.4(react@19.2.4))(react@19.2.4)(vitest@4.1.11)
@@ -1189,13 +1189,13 @@ packages:
       zod:
         optional: true
 
-  '@tabler/icons-react@3.48.0':
-    resolution: {integrity: sha512-OCeAlpaWHEMV+EsgdVeGQ3YuKfmfnThZhc++CaZ/ujYzi5+/DONDQlX4OGvH1ikYhIfmc0grI4otJgHy7QAvng==}
+  '@tabler/icons-react@3.49.0':
+    resolution: {integrity: sha512-Um59pm5RVNUaQjFUtG0r4oYJbZuBS3tGugAA2tgBg0WufMk34Eio3nsO30RUkLuL2giYPQUNdY9HvqltLLYyNA==}
     peerDependencies:
       react: '>= 16'
 
-  '@tabler/icons@3.48.0':
-    resolution: {integrity: sha512-lQk06gVHNVBnJp0UOgtth54mcZBJM7rdYKsAxKOProj1bbSAx+/xiuOWfHlyvgdL3M+Y+I0HINrjHa3ygp8eXQ==}
+  '@tabler/icons@3.49.0':
+    resolution: {integrity: sha512-l+GnSkFETx0U26icxv1VUFnxxiTqXfCcVRiRAnyMwibupM2S2L/hSaZ9gmSgz01rkrsH/93NvLsxykqdanc6lw==}
 
   '@testing-library/dom@10.4.1':
     resolution: {integrity: sha512-o4PXJQidqJl82ckFaXUeoAW+XysPLauYI43Abki5hABd853iMhitooc6znOnczgbTYmEP6U6/y1ZyKAIsvMKGg==}
@@ -3489,12 +3489,12 @@ snapshots:
       typescript: 5.9.3
       zod: 4.4.3
 
-  '@tabler/icons-react@3.48.0(react@19.2.4)':
+  '@tabler/icons-react@3.49.0(react@19.2.4)':
     dependencies:
-      '@tabler/icons': 3.48.0
+      '@tabler/icons': 3.49.0
       react: 19.2.4
 
-  '@tabler/icons@3.48.0': {}
+  '@tabler/icons@3.49.0': {}
 
   '@testing-library/dom@10.4.1':
     dependencies:
