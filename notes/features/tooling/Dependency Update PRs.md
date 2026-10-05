@@ -5,9 +5,9 @@ blocked-by: []
 confirmed: 2026-10-04
 ---
 # Where It Stands
-In progress. Next: /implement Step 3 ^status
+In progress. Next: /implement Step 4 ^status
 
-Split from [[Local Dependency Update Alerts]] on 2026-10-04. Its ten implementation steps were planned and approved on 2026-10-04. Steps 1-2 are built: `pnpm deps:check` lists the advisories that aren't in the reported list, and CI lints and type-checks the script. Steps 3-10 remain.
+Split from [[Local Dependency Update Alerts]] on 2026-10-04. Its ten implementation steps were planned and approved on 2026-10-04. Steps 1-3 are built: `pnpm deps:check` lists the advisories that aren't in the reported list, `--weekly` adds new versions marked patch, minor or major, and CI lints and type-checks the script. Steps 4-10 remain.
 
 # Inbox
 
@@ -122,10 +122,17 @@ Facts the steps rely on, checked 2026-10-04:
 - `scripts/dependencyCheck.ts` - weekly mode lists new versions
 
 **Acceptance:**
-- [ ] Run `pnpm deps:check --weekly`. See `@types/luxon@3.7.6` marked patch, `better-auth@1.7.7` minor, `typescript@7.0.2` major and `temporal-polyfill@1.0.5` major, beside the advisories. Proves: the weekly check finds each kind of update.
-- [ ] Save its updated list as in Step 1, then run `pnpm deps:check --weekly --reported /tmp/reported.json`. See no new versions. Proves: a reported version stays quiet.
-- [ ] In that file, change `better-auth@1.7.7` to `better-auth@1.7.6`, then run it again. See `better-auth@1.7.7` listed as new, and `better-auth@1.7.6` gone from the updated list. Proves: a newer version of a reported package counts as new, and the old one drops out.
-- [ ] Run `pnpm deps:check --reported /tmp/reported.json`, without `--weekly`. See no versions among the new findings, and the updated list still holding every `package@version` from the file. Proves: the hourly run checks only advisories, and leaves the reported versions alone.
+- [x] Run `pnpm deps:check --weekly`. See `@types/luxon@3.7.6` marked patch, `better-auth@1.7.7` minor, `typescript@7.0.2` major and `temporal-polyfill@1.0.5` major, beside the advisories. Proves: the weekly check finds each kind of update.
+- [x] Save its updated list as in Step 1, then run `pnpm deps:check --weekly --reported /tmp/reported.json`. See no new versions. Proves: a reported version stays quiet.
+- [x] In that file, change `better-auth@1.7.7` to `better-auth@1.7.6`, then run it again. See `better-auth@1.7.7` listed as new, and `better-auth@1.7.6` gone from the updated list. Proves: a newer version of a reported package counts as new, and the old one drops out.
+- [x] Run `pnpm deps:check --reported /tmp/reported.json`, without `--weekly`. See no versions among the new findings, and the updated list still holding every `package@version` from the file. Proves: the hourly run checks only advisories, and leaves the reported versions alone.
+
+**Status:** ✅ Complete
+
+**As built:**
+- Version findings are `{ "kind": "patch" | "minor" | "major", "id": "package@version", "package" }`, beside the advisory findings in `new`, with their identifiers in `reported`.
+- A package `pnpm outdated` lists with no installed version stops the run with "run pnpm install first", rather than being skipped, so a weekly run that missed its install fails instead of reporting nothing.
+- The implementer ran the Approach's checks: `package.json` and `pnpm-lock.yaml` were unchanged after the weekly runs, and a scratch copy with `@t3-oss/env-nextjs` pinned to `0.12.0` listed `@t3-oss/env-nextjs@0.13.11` as major.
 
 ## Step 4: The weekly check repeats unfixed advisories
 **Idea:** `pnpm deps:check --weekly` lists every advisory that's still unfixed as a reminder, even one already reported.
