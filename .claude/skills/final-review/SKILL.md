@@ -39,7 +39,7 @@ Commit messages don't name the story, and commits often mix code with notes chan
 
 1. Find the first commit that marked a step complete: `git log --follow -S'**Status:** ✅ Complete' --format='%h %ad %s' --date=short -- "<note path>"`, and take the last line (`--follow` doesn't work with `--reverse`). Its parent is the proposed start. Check the few commits before it for changes to step 1's files, in case the code was committed separately, and move the start back if so.
 2. The range runs to `HEAD`. If `git status` shows uncommitted changes to code files, include them too.
-3. List the code and test files changed in the range, leaving out `notes/` and `.opencode/`. Split them into two groups: files named in a step's Files list or an As built note, and everything else. The second group may come from other stories committed in between.
+3. List the code and test files changed in the range, leaving out `notes/`. Split them into two groups: files named in a step's Files list or an As built note, and everything else. The second group may come from other stories committed in between.
 
 Show Sarah the range (first and last commit, with their subjects), whether uncommitted changes are included, and both groups of files. Wait for her to confirm or correct them. This one confirmation covers the range and the file list together.
 

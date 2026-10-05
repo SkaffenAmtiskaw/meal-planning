@@ -75,8 +75,6 @@ All paths relative to `src/_actions/`.
 ## Tests and Shared Mocks
 This story owns the mock clean-up for the test files it changes:
 
-> ⚠️ **Check Drift 2026-09-28:** The docs moved from `.opencode/docs/` to `docs/`, so `.opencode/docs/unit_tests.md` below is now `docs/unit_tests.md`. Found while `/tooling` moved the docs.
-
 - Every test file it rewrites or moves uses the centralized mock in `test/mocks/` for any module that has one (`vi.mock('<module>', async () => await import('#mocks/...'))`), not an ad-hoc factory, per `docs/unit_tests.md`.
 - When it moves, renames or reshapes an export of `@/_actions` or `@/_models`, it updates the matching `test/mocks/@/_actions/*.ts` or `test/mocks/@/_models/*.ts` in the same step.
 - If another story already did this for a file, there's nothing more to do.
@@ -97,7 +95,7 @@ Known files as of 2026-09-25 (found by reading code; re-check when planning):
 
 # Draft Steps (from the split)
 > [!warning] For the agent running /plan-steps
-> This section is the draft plan saved when [[Stale Data Issues]] was split on 2026-09-25. It replaces `.opencode/scratch/Settings Data Refresh - plan.md`; start from it as that skill's "draft saved by a split". It has not been through plan-checker. **Once the approved plan is written under Implementation, delete this whole section** (heading included).
+> This section is the draft plan saved when [[Stale Data Issues]] was split on 2026-09-25. Start from it as that skill's "draft saved by a split". It has not been through plan-checker. **Once the approved plan is written under Implementation, delete this whole section** (heading included).
 
 Note: `notes/features/tech debt/Settings Data Refresh.md` (type: pattern). Step numbers are the original draft's; renumber when planning. "Places A–H" refers to the Migration Checklist sections as they appeared in [[Stale Data Issues]] before the split; this note carries its share of them.
 

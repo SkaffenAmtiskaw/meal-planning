@@ -8,12 +8,10 @@ Kicked off. Next: /tooling ^status
 Kicked off 2026-10-02 from [[Agent Workflow Changes]] with the items that serve [[Dev Foundations]].
 
 # Purpose
-Changes to how agents work in this repo: skills (`.claude/skills/`), subagents (`.claude/agents/`), AGENTS.md, agent conventions and the move from OpenCode to Claude Code. This includes Sarah's feedback on how they behave. The planning skills block edits outside `notes/`, so an agent that spots a fix mid-run adds an item here instead.
-
-Agents are moving from OpenCode to Claude Code, slowly. The first was `architect`, which became the `/assess` skill with the `code-critic` and `scope-router` subagents (2026-09-25).
+Changes to how agents work in this repo: skills (`.claude/skills/`), subagents (`.claude/agents/`), AGENTS.md and agent conventions. This includes Sarah's feedback on how they behave. The planning skills block edits outside `notes/`, so an agent that spots a fix mid-run adds an item here instead.
 
 ## What Belongs Here
-Changes to skills, subagents, AGENTS.md, agent conventions or the OpenCode move, each saying what to change, where, why, and how and when it was found. An item may still need a decision: /tooling settles it with Sarah. Changes to the docs in `docs/`, which describe the codebase, go in [[Docs Updates]]. Tooling config goes in [[Dev Tooling Tidy-Ups]].
+Changes to skills, subagents, AGENTS.md or agent conventions, each saying what to change, where, why, and how and when it was found. An item may still need a decision: /tooling settles it with Sarah. Changes to the docs in `docs/`, which describe the codebase, go in [[Docs Updates]]. Tooling config goes in [[Dev Tooling Tidy-Ups]].
 
 # Items
 - [ ] **When a story needs E2E tests** - no skill or agent says when a feature or fix should add E2E tests and when it isn't worth it. Settle the rule with Sarah, then add it where stories get planned and reviewed (likely `/assess`, `/plan-steps` and `/final-review`), with any codebase facts about the E2E setup going in `docs/`. Sarah: "we need to update agents to specify when a feature needs e2e tests added and when it's not worth doing". Found 2026-09-28 when `/shape` split E2E Testing. It also covers new feature areas: when a story adds a route that isn't in the route-to-area table in `docs/e2e_tests.md` ("Feature Areas"), the planning agents should notice and make adding the route to the table an acceptance criterion. Sarah raised this 2026-09-29 during `/architect` on E2E Test Setup. 🎯 [[Dev Foundations]]

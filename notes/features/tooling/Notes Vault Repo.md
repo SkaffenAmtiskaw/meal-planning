@@ -13,7 +13,7 @@ Shaped 2026-10-04 as one infra story. /decide settled on 2026-10-04 that the Obs
 
 # Inbox
 - For /infra-design, findings from /decide on [[Branching and Releases]] (2026-10-04):
-  - **What the move changes:** about 115 `notes/` references across 30 files, outside `notes/` and `.opencode/`. Most are path swaps. These need new logic:
+  - **What the move changes:** about 115 `notes/` references across 30 files, outside `notes/`. Most are path swaps. These need new logic:
     - the git commands in `scripts/vault-lint.sh`, `scripts/vault-orphans.sh` and `.claude/agents/note-drift-checker.md`, and `/check-drift`'s `git blame`
     - `.claude/hooks/notes-only-edits.sh`'s `$CLAUDE_PROJECT_DIR/notes/` check, which 11 planning skills register
     - the `.claude/rules/note-conventions.md` symlink
@@ -78,6 +78,5 @@ Questions for this section:
 
 # Out of Scope
 - Worktrees, protecting `develop` and the release process: [[Branching and Releases]].
-- The `notes/` references in `.opencode/`, which goes away with [[Finish OpenCode Migration]].
 
 # Implementation

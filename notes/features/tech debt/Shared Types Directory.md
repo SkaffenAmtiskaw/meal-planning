@@ -60,8 +60,6 @@ src/_types/
 - [ ] Create `src/_types/` directory
 - [ ] Define the directory rules
 
-> ⚠️ **Check Drift 2026-09-28:** The docs moved from `.opencode/docs/` to `docs/`, so `.opencode/docs/project_conventions.md` below is now `docs/project_conventions.md`. Found while `/tooling` moved the docs.
-
-- [ ] Update `.opencode/docs/project_conventions.md` with `_types/` guidelines (create the file if it doesn't exist)
+- [ ] Update `docs/project_conventions.md` with `_types/` guidelines (create the file if it doesn't exist)
 - [ ] Identify and migrate existing DTO types
 - [ ] Update imports across the codebase

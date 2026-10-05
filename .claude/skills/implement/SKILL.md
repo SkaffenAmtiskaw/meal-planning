@@ -71,9 +71,7 @@ Ask about one choice at a time, even when several belong to the same function or
 When a new open choice comes up, stop and ask right then. Don't save it for the end, and don't put in a placeholder to fix later.
 
 ## 3. Use current library APIs
-Follow "Library APIs" in AGENTS.md for every API you use.
-
-When you use custom CSS instead of a Mantine component, theme setting or variant, put a one-line comment directly above it saying why Mantine didn't fit.
+Follow "Library APIs" in AGENTS.md for every API you use, and "Customization" in `docs/style_guidelines.md` for any custom CSS.
 
 ## 4. Write the tests first, then the code
 Every test follows "Test Logic, Not Rendering" in `docs/unit_tests.md`.

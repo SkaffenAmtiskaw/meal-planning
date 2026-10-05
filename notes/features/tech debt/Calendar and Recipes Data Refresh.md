@@ -6,7 +6,7 @@ confirmed: 2026-09-25
 ---
 # Where It Stands
 
-Ready. Next: build Step 1. ^status
+Ready. Next: /implement Step 1. ^status
 
 # Purpose
 Adding a meal or a library item doesn't reliably refresh what's on screen. Refreshing is a client-side side effect tied to modals and countdowns, and the planner lives in client state that no refresh reaches. This story builds the shared pieces of the data refresh pattern (tag registry, `invalidate()`, `defineMutation`) and moves every calendar and recipe mutation onto them, so these mutations refresh the page from the server.
@@ -73,8 +73,6 @@ All paths relative to `src/_actions/`.
 
 ## Tests and Shared Mocks
 This story owns the mock clean-up for the test files it changes:
-
-> ⚠️ **Check Drift 2026-09-28:** The docs moved from `.opencode/docs/` to `docs/`, so `.opencode/docs/unit_tests.md` below is now `docs/unit_tests.md`. Found while `/tooling` moved the docs.
 
 - Every test file it rewrites or moves uses the centralized mock in `test/mocks/` for any module that has one (`vi.mock('<module>', async () => await import('#mocks/...'))`), not an ad-hoc factory, per `docs/unit_tests.md`.
 - When it moves, renames or reshapes an export of `@/_actions` or `@/_models`, it updates the matching `test/mocks/@/_actions/*.ts` or `test/mocks/@/_models/*.ts` in the same step.

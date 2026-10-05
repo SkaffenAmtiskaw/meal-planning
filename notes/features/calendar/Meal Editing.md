@@ -156,5 +156,5 @@ From Behavior 13: on phones, the placement's `label` becomes the bottom sheet's 
 
 Both live next to the shared picker in `src/_components/CalendarDatePicker/`, which [[Header Date Picker]] builds. The short weekday date style the cards use ("Wed, Sep 30") is added by [[Meal Form Date Picker]].
 
-### Draft steps (reference only)
-The original Steps 27-30 (label, hint, shortcut cards, relative shortcuts) are in `.opencode/scratch/Meal Editing - date picker option steps.md`. They were written against the dropped demo page, so re-plan them against Move to / Duplicate.
+### Draft steps
+The original Steps 27-30 (label, hint, shortcut cards, relative shortcuts) need re-planning against Move to / Duplicate. Their draft was written against the dropped demo page, and it's gone.

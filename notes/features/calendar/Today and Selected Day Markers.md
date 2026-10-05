@@ -50,14 +50,12 @@ The design lives in [[Unified Date Picker Component]]. The sections embedded bel
 
 ## Pieces
 
-> ⚠️ **Check Drift 2026-09-28:** The docs moved from `.opencode/docs/` to `docs/`, so row 18's `.opencode/docs/theme.md` is now `docs/theme.md`. Found while `/tooling` moved the docs.
-
 | # | Piece | Job | Decision | Existing code | Why |
 |---|---|---|---|---|---|
 | 9 | Day marks | Show a day number with today and selected marks | Build new, then refactor callers | Refactor first: `MonthGrid` (via 9a), `MobileMonthGrid`, `src/_components/Calendar/WeekView`, `DayRow` (via 9b). Dead files untouched. `MobileAgenda`: unchanged. | Replaces four copies of the today mark. The picker's day cells share the same ring and circle styles. The week header uses Mantine `Badge variant="outline" color="navy"` with the shared ring tokens, instead of a pill mode only one caller would use. The muted outside-month color becomes `navy.3` everywhere (today it's `gray.5`, `navy.2` and `navy.3`). Before the change, `MobileMonthGrid` also gets two fixes: its `findIndex`-inside-`map` (O(n²)) and its circular import through the `@/_components/Calendar` barrel. |
 | 9a | Month grid day cell | Show one month-grid day with its meals | Extract (refactor first), then add Day marks | `MonthGrid.tsx` L98-157 | Pulled out so the today-mark change lands in a component with one job. |
 | 9b | List day gutter | Show a list day's date column | Extract (refactor first), then add Day marks | `DayRow.tsx` L51-88 | Same reason. It also gets the new month-label color. |
-| 18 | Theme | Register a `sage` color ramp | Refactor first (limited) | `src/_theme/theme.ts` | The selected state needs a token. Also update `.opencode/docs/theme.md`: ember no longer marks today. Other `theme.ts` issues are on the Roadmap. |
+| 18 | Theme | Register a `sage` color ramp | Refactor first (limited) | `src/_theme/theme.ts` | The selected state needs a token. Also update `docs/theme.md`: ember no longer marks today. Other `theme.ts` issues are on the Roadmap. |
 
 Day marks (9) takes props only and has no `'use client'` directive of its own.
 

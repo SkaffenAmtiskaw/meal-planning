@@ -35,9 +35,7 @@ Already built: tag registry, `invalidate()`, `defineMutation` by [[Calendar and 
 - [ ] `src/dataConventions.test.ts`
 - [ ] lefthook pre-commit command for the conventions test
 
-> ⚠️ **Check Drift 2026-09-28:** The docs moved from `.opencode/docs/` to `docs/`, so `.opencode/docs/project_conventions.md` below is now `docs/project_conventions.md`. Found while `/tooling` moved the docs.
-
-- [ ] `.opencode/docs/project_conventions.md` — document Rules 1–3 and the tag model
+- [ ] `docs/project_conventions.md` — document Rules 1–3 and the tag model
 
 ## D. Read Actions → `defineQuery`
 - [ ] `getPlanner`, `getPlannerClient`, `getPlanners`, `getSavedItem`
@@ -48,8 +46,6 @@ Already built: tag registry, `invalidate()`, `defineMutation` by [[Calendar and 
 
 ## Tests and Shared Mocks
 This story owns the mock clean-up for the test files it changes:
-
-> ⚠️ **Check Drift 2026-09-28:** The docs moved from `.opencode/docs/` to `docs/`, so `.opencode/docs/unit_tests.md` below is now `docs/unit_tests.md`. Found while `/tooling` moved the docs.
 
 - Every test file it rewrites or moves uses the centralized mock in `test/mocks/` for any module that has one (`vi.mock('<module>', async () => await import('#mocks/...'))`), not an ad-hoc factory, per `docs/unit_tests.md`.
 - When it moves, renames or reshapes an export of `@/_actions` or `@/_models`, it updates the matching `test/mocks/@/_actions/*.ts` or `test/mocks/@/_models/*.ts` in the same step.
@@ -64,7 +60,7 @@ Known files as of 2026-09-25 (found by reading code; re-check when planning):
 
 # Draft Steps (from the split)
 > [!warning] For the agent running /plan-steps
-> This section is the draft plan saved when [[Stale Data Issues]] was split on 2026-09-25. It replaces `.opencode/scratch/Data Rules Enforcement - plan.md`; start from it as that skill's "draft saved by a split". It has not been through plan-checker. **Once the approved plan is written under Implementation, delete this whole section** (heading included).
+> This section is the draft plan saved when [[Stale Data Issues]] was split on 2026-09-25. Start from it as that skill's "draft saved by a split". It has not been through plan-checker. **Once the approved plan is written under Implementation, delete this whole section** (heading included).
 
 Note: `notes/features/tech debt/Data Rules Enforcement.md` (type: pattern). Step numbers are the original draft's; renumber when planning. "Places A–H" refers to the Migration Checklist sections as they appeared in [[Stale Data Issues]] before the split; this note carries its share of them.
 
@@ -94,9 +90,7 @@ Note: `notes/features/tech debt/Data Rules Enforcement.md` (type: pattern). Step
 - `src/dataConventions.test.ts` (new) - static scan for the three checks
 - `lefthook.yml` - always run the conventions test when any `src/**/*.{ts,tsx}` file is staged (authorized in the note, 2026-09-25)
 
-> ⚠️ **Check Drift 2026-09-28:** The docs moved from `.opencode/docs/` to `docs/`, so `.opencode/docs/project_conventions.md` below is now `docs/project_conventions.md`. Found while `/tooling` moved the docs.
-
-- `.opencode/docs/project_conventions.md` - Rules 1–3 and the tag model; Rule 2 marked as not tool-enforced
+- `docs/project_conventions.md` - Rules 1–3 and the tag model; Rule 2 marked as not tool-enforced
 
 **Acceptance:**
 - [ ] Add `router.refresh()` to any component and try to commit. Pre-commit fails, naming the file. Revert.
