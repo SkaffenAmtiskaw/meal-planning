@@ -71,6 +71,13 @@ Commit each package's fix on its own. If a try changed nothing in the audit, und
 ### Patches and minors
 For each patch, then each minor, run `pnpm update "<package>@<version>"` and commit it. If `package.json` already has that version, such as when a security fix moved it there, there's nothing to commit: list it as already in the PR.
 
+### Overrides that no longer do anything
+An override stops doing anything once no dependency asks for a version its key matches, such as when a parent update now asks for a fixed version. Take each one like that out of `pnpm-workspace.yaml`, so only the overrides still at work stay there.
+
+For each entry under `overrides` in `pnpm-workspace.yaml`, remove it and run `pnpm install`. Then look at `git diff pnpm-lock.yaml`:
+- **Only the lockfile's own `overrides:` section changed:** the override did nothing. Commit its removal on its own, such as `deps: remove the undici override, which no dependency needs any more`. If it was the last one, remove the `overrides:` key too.
+- **Anything else changed:** the override is still at work. Put it back (`git checkout -- pnpm-workspace.yaml pnpm-lock.yaml`, then `pnpm install --frozen-lockfile`).
+
 ### Run the checks
 If this step made no commit, such as when every advisory was already fixed or needs a major, skip the rest of this step and step 7. Otherwise, run each of the four checks CI runs on a PR, and keep each one's output:
 
@@ -146,6 +153,7 @@ End with a summary for Sarah, in this order. Leave out a group or section with n
    - security fixes: each package, as `<package>`: advisory `<ID>` (`<severity>`), with every advisory it fixes, then how: `<package>` `<old>` → `<new>`, a lockfile bump to `<version>`, `<parent>` `<old>` → `<new>`, or an override to `^<version>`
    - patches: each as `<package>` `<old>` → `<new>`
    - minors: each as `<package>` `<old>` → `<new>`
+   - overrides removed: each override's key, as `'<package>@<range>'`, that no longer did anything
 3. **Dropped:** each update taken off the branch, as above, with the check it broke and the line of its output that shows why.
 4. **Not fixed:** each new advisory step 3 didn't fix, as `<package>`: advisory `<ID>` (`<severity>`), and why: already fixed on `develop`, no fix released yet, or no fix cleared it, with what was tried.
 5. **Majors:** each as `<package>` `<version>`: not applied, with its release notes link from step 5. An advisory whose only fix is a major is listed here as `<package>` `<version>`: security fix for advisory `<ID>` (`<severity>`), not applied, with its link.
