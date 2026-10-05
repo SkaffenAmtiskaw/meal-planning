@@ -5,7 +5,7 @@ A full-stack meal planning web app. Users sign in, create meal planners, manage 
 
 Work is planned and tracked as notes in the Obsidian vault in `notes/`.
 
-`.opencode/` holds the old OpenCode agents and their files, kept only until the move to Claude Code finishes. If a task moves an OpenCode agent to Claude Code, or a skill names a file there (such as the test login `running-the-app` uses), read what it needs. Otherwise, leave `.opencode/` out of searches, and don't report problems you see in it.
+`.opencode/` holds the old OpenCode agents and their files, kept only until the move to Claude Code finishes. If a task moves an OpenCode agent to Claude Code, or a skill names a file there, read what it needs. Otherwise, leave `.opencode/` out of searches, and don't report problems you see in it.
 
 ## Working with Sarah
 - **One question at a time.** Ask one, wait for the answer, then ask the next. Never send a list of questions, and never ask her to approve a list of decisions at once. A later question often depends on an earlier answer.

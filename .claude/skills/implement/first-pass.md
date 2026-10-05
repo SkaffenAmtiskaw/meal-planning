@@ -11,7 +11,7 @@ Do each check as it's written, including the user, the screen size and the data 
 - **Phone size:** see Screen Sizes in the `running-the-app` skill.
 - **Data:** if the check needs data that doesn't exist yet, like a day with two meals, create it through the app's own screens. List what you created in your report.
 - **Setup outside the repo** that the step's Approach gives Sarah and she hasn't done yet: before the first check that needs it, walk her through it, as AGENTS.md describes under "Setup outside the repo". Then run the check, unless it's one only Sarah can do (see "Run-and-see checks").
-- **A user or anything else you can't get to,** like a read-only user with no test login: don't run the check. Report it as not run, with the reason.
+- **A user or anything else you can't get to:** don't run the check. Report it as not run, with the reason.
 
 Record what you actually saw, in concrete terms: "the modal closed and the meal appeared on Tuesday", not "works". Never report a check as passing unless you saw it pass.
 

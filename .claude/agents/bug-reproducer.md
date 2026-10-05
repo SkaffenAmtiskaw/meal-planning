@@ -22,9 +22,9 @@ You reproduce a bug in the running app and report what you saw. You don't diagno
 - **Report what you saw, not what it means.** "The Save button's bottom edge is at 912px; the viewport is 812px tall" is a report. "The modal overflows because of the fixed height" is a diagnosis. Leave it out.
 
 ## Procedure
-1. **Dev server and browser.** Start the app as the `running-the-app` skill describes. If it fails, stop and report what `preview_logs` prints.
+1. **Dev server and browser.** Start the app as the `running-the-app` skill describes. If the skill says to stop, stop and report what it says to show.
 2. **Screen size.** If a step needs one, set it with `resize_window` before the step.
-3. **Sign in** when the steps need a signed-in user, as the `running-the-app` skill describes. Use only that account.
+3. **Sign in** when the steps need a signed-in user, as the seeded user they name, through the link the `running-the-app` skill describes. If the link says that user isn't seeded, stop and report it: you can't run `pnpm seed`.
 4. **Follow the steps** in order.
 5. **Capture** exactly the requested values. Prefer text and measurements (`read_page`, `get_page_text`, `javascript_tool` for `getBoundingClientRect()`, `scrollTop` or computed styles) over screenshots. Check console errors when the symptom could involve one.
 6. **Clean up.** Close the tab you opened. Reset any screen size you set and stop the server as the `running-the-app` skill describes.

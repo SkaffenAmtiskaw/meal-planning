@@ -5,9 +5,9 @@ blocked-by: []
 confirmed: 2026-10-01
 ---
 # Where It Stands
-In progress. Next: /implement Step 8 ^status
+In progress. Next: /implement Step 9 ^status
 
-Steps 1 to 7 are done: `pnpm seed` runs through tsx against the dev database and refuses any other database before connecting, Biome checks `seed/` with the test-support import bans, and each run removes everything seeded before, then creates the four seeded users with their personal planners and a shared planner filled with tags, recipes, bookmarks and meals. `pnpm sign-in` serves a link per seeded user at `http://localhost:3001` that signs any browser in as them, and `pnpm dev:sign-in` runs it alongside the dev server. Steps 8 to 11 remain, and Steps 8 and 9 need a connection to the Atlas cluster, which works from Sarah's home network.
+Steps 1 to 8 are done: `pnpm seed` runs through tsx against the dev database and refuses any other database before connecting, Biome checks `seed/` with the test-support import bans, and each run removes everything seeded before, then creates the four seeded users with their personal planners and a shared planner filled with tags, recipes, bookmarks and meals. `pnpm sign-in` serves a link per seeded user at `http://localhost:3001` that signs any browser in as them, and `pnpm dev:sign-in` runs it alongside the dev server. Agents sign in through those links as the seeded user a check names, and nothing in `.claude/` or AGENTS.md points at the old test login. Steps 9 to 11 remain, and Step 9 needs a connection to the Atlas cluster, which works from Sarah's home network.
 
 # Inbox
 
@@ -308,7 +308,7 @@ Everything for the local test environment lives in a new top-level `seed/` folde
 - `AGENTS.md` - the `.opencode/` paragraph's example of the test login goes
 
 **Acceptance:**
-- [ ] With nothing running on ports 3000 or 3001:
+- [x] With nothing running on ports 3000 or 3001:
   1. Open a new Claude Code session in this repo in the desktop app.
   2. Ask: "Use the running-the-app skill to open the app as the `read` seeded user, then tell me which planner you landed on and whether you could add a meal."
   3. In the browser pane, see it open `http://localhost:3001/read` and land on "Seeded Shared Planner" as Reid Reader.
@@ -316,8 +316,14 @@ Everything for the local test environment lives in a new top-level `seed/` folde
   5. When it's done, open `http://localhost:3000` and see nothing respond.
 
   Proves: an agent signs in as any seeded user on its own, and stops the servers it started.
-- [ ] Run `pnpm dev:sign-in`, then ask a new session the same thing with `admin`. See it reuse both servers, report Adam Admin's view of "Seeded Shared Planner", and leave both running. Proves: an agent uses servers you already have running and doesn't stop them.
-- [ ] Run `grep -rnE "opencode/secrets|test login" .claude/ AGENTS.md` and see no matches. Proves: nothing an agent reads points at the old test login.
+- [x] Run `pnpm dev:sign-in`, then ask a new session the same thing with `admin`. See it reuse both servers, report Adam Admin's view of "Seeded Shared Planner", and leave both running. Proves: an agent uses servers you already have running and doesn't stop them.
+- [x] Run `grep -rnE "opencode/secrets|test login" .claude/ AGENTS.md` and see no matches. Proves: nothing an agent reads points at the old test login.
+
+**Status:** ✅ Complete
+
+**As built:**
+- `preview_start` doesn't reuse a server it didn't start: with `pnpm dev:sign-in` running in a terminal, it refuses because the port is in use by a process that isn't a preview server. `running-the-app` handles that case by opening the port's URL, checking it's this app (the meal planner on 3000, the seeded users list on 3001), using it and leaving it running. `bug-reproducer`'s first step now stops only when the skill says to, rather than on any `preview_start` failure.
+- `bug-reproducer` has no Bash and doesn't change data the steps don't ask for, so if a link says its user isn't seeded, it stops and reports that instead of running `pnpm seed` (Sarah's call 2026-10-04).
 
 ## Step 9: Docs for the seed
 **Idea:** The project docs describe the seed.

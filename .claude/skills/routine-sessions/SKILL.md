@@ -28,11 +28,11 @@ A merge in a local checkout, such as one that recreates the merge GitHub's check
 # What the Session Can Use
 The session sees the repo as Sarah last pushed it, plus its cloud environment's variables and setup script. The routine's skill, and every skill or subagent it loads or follows (directly or through another), relies on nothing that exists only on Sarah's machine:
 - no `~/.claude` memory or user settings
-- no gitignored files she keeps locally, such as `.env*` or `.opencode/secrets/`
+- no gitignored files she keeps locally, such as `.env*`
 - no work she hasn't pushed
 - nothing that reads such files on its own, such as the dev server loading `.env.local`
 
-For example, the `running-the-app` skill starts the dev server and reads the test login from `.opencode/secrets/credentials.md`, so a routine's skill never loads it, or anything that uses it: the `bug-reproducer` subagent, `/implement`'s first pass or bug steps, or `/investigate`.
+For example, the `running-the-app` skill starts the dev server and signs in through the link server against Sarah's local dev database, so a routine's skill never loads it, or anything that uses it: the `bug-reproducer` subagent, `/implement`'s first pass or bug steps, or `/investigate`.
 
 A value the session needs that isn't in the repo comes from a cloud environment variable, named in the routine's `routine.md`.
 
