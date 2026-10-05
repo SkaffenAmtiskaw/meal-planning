@@ -4,7 +4,7 @@ status: idea
 confirmed: 2026-10-04
 ---
 # Where It Stands
-Next: /shape ^status
+Next: /shape. /plan-steps waits on [[Auth E2E Tests]] ^status
 
 # Notes
 Split from Core Flows E2E Tests on 2026-10-04.
