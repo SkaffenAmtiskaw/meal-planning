@@ -1,13 +1,12 @@
 ---
-type: 
-status: idea
+type: workflow
 confirmed: 2026-10-04
 ---
 # Where It Stands
 
-Next: /shape ^status
+Next: /tooling ^status
 
-# Inbox
+Split from [[Branching and Releases]] and made a workflow note 2026-10-04. Nothing is changed yet; `/tooling` makes the whole change.
 
 # Notes
 Split from [[Branching and Releases]]. Only one goal is built at a time; the next goal's stories can be shaped, decided and designed, but not implemented until the goal before it is done. Branching and Releases' release design relies on it: a release is `develop` merged into `main` once the goal is finished, which only works if `develop` holds no other goal's work. From that story's Open Decisions:

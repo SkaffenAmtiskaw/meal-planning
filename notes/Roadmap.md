@@ -36,11 +36,11 @@
 - [[Manual and Agent Test Environment]] ![[Manual and Agent Test Environment#^status]] 🎯 [[Dev Foundations]] 🎯 [[Calendar Page]]
 
 # Next
-1. [[Dependency Update PRs]] ![[Dependency Update PRs#^status]] 🎯 [[Dev Foundations]]
-2. [[Major Upgrade Sweeps]] ![[Major Upgrade Sweeps#^status]] 🎯 [[Dev Foundations]]
-3. [[Dependency Release Analysis]] ![[Dependency Release Analysis#^status]] 🎯 [[Dev Foundations]]
-4. [[Notes Vault Repo]] ![[Notes Vault Repo#^status]] 🎯 [[Dev Foundations]]
-5. [[One Goal at a Time]] ![[One Goal at a Time#^status]] 🎯 [[Dev Foundations]]
+1. [[One Goal at a Time]] ![[One Goal at a Time#^status]] 🎯 [[Dev Foundations]]
+2. [[Dependency Update PRs]] ![[Dependency Update PRs#^status]] 🎯 [[Dev Foundations]]
+3. [[Major Upgrade Sweeps]] ![[Major Upgrade Sweeps#^status]] 🎯 [[Dev Foundations]]
+4. [[Dependency Release Analysis]] ![[Dependency Release Analysis#^status]] 🎯 [[Dev Foundations]]
+5. [[Notes Vault Repo]] ![[Notes Vault Repo#^status]] 🎯 [[Dev Foundations]]
 6. [[Branching and Releases]] ![[Branching and Releases#^status]] 🎯 [[Dev Foundations]]
 7. [[E2E Tests in CI]] ![[E2E Tests in CI#^status]] 🎯 [[Dev Foundations]]
 8. [[Agent Workflow Changes 2026-10-02]] ![[Agent Workflow Changes 2026-10-02#^status]] 🎯 [[Dev Foundations]]
