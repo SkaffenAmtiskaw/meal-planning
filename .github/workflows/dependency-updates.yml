@@ -1,0 +1,102 @@
+# Checks every installed package against security advisories each hour, and the packages in package.json for new
+# versions each week. When it finds something it hasn't reported before, the start-dependency-updates job starts the
+# dependency-updates routine, a cloud session that handles the findings. The weekly run also starts it while any
+# advisory is still unfixed, as a reminder. See docs/ci.md, "Dependency Updates".
+name: Dependency Updates
+
+on:
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: Which check to run
+        type: choice
+        options: [hourly, weekly]
+        default: hourly
+
+permissions:
+  contents: read
+
+# Runs wait their turn, so two never read the same reported list.
+concurrency:
+  group: ${{ github.workflow }}
+
+env:
+  # Weekly on the Monday schedule or a weekly dispatch, otherwise hourly.
+  MODE: ${{ (github.event.schedule == '47 13 * * 1' || inputs.mode == 'weekly') && 'weekly' || 'hourly' }}
+  # The identifiers already reported, kept in the Actions cache between runs.
+  REPORTED: dependency-alerts-reported.json
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    outputs:
+      found: ${{ steps.check.outputs.found }}
+      new: ${{ steps.check.outputs.new }}
+      reminders: ${{ steps.check.outputs.reminders }}
+      reported: ${{ steps.check.outputs.reported }}
+    steps:
+      - uses: actions/checkout@v7
+      - uses: jdx/mise-action@v4
+        with:
+          install_args: node pnpm
+      # pnpm audit reads only the lockfile, but pnpm outdated needs an install.
+      - if: env.MODE == 'weekly'
+        run: pnpm install --frozen-lockfile
+      # Each run saves its list under its own key, so the prefix restores the newest one.
+      - uses: actions/cache/restore@v6
+        with:
+          path: ${{ env.REPORTED }}
+          key: dependency-alerts-reported-${{ github.run_id }}
+          restore-keys: dependency-alerts-reported-
+      - id: check
+        run: |
+          args=()
+          if [ "$MODE" = weekly ]; then args+=(--weekly); fi
+          # With no list, as on the first run or after the cache is cleared, every finding is new.
+          if [ -f "$REPORTED" ]; then args+=(--reported "$REPORTED"); fi
+          result=$(pnpm -s deps:check "${args[@]}")
+          {
+            echo "new=$(jq -c .new <<< "$result")"
+            echo "reminders=$(jq -c .reminders <<< "$result")"
+            echo "reported=$(jq -c .reported <<< "$result")"
+            echo "found=$(jq '(.new | length) + (.reminders | length) > 0' <<< "$result")"
+          } >> "$GITHUB_OUTPUT"
+
+  # Starts the dependency-updates routine once when the check found something new, or a reminder on the weekly run.
+  # It runs no install, so the routine's token never shares a job with third-party install scripts.
+  start-dependency-updates:
+    needs: check
+    if: needs.check.outputs.found == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      # The findings reach the script only through env, and jq builds the text and the body, since package names come
+      # from the registry. The text's shape is in step 1 of the dependency-updates skill, which reads it.
+      # No --retry: /fire doesn't dedupe, so a retry could start two sessions.
+      - env:
+          ROUTINE_URL: ${{ secrets.ROUTINE_DEPENDENCY_UPDATES_URL }}
+          ROUTINE_TOKEN: ${{ secrets.ROUTINE_DEPENDENCY_UPDATES_TOKEN }}
+          RUN_ID: ${{ github.run_id }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+          NEW: ${{ needs.check.outputs.new }}
+          REMINDERS: ${{ needs.check.outputs.reminders }}
+        run: |
+          text=$(jq -rn --arg mode "$MODE" --arg run_id "$RUN_ID" --arg run_url "$RUN_URL" \
+            --argjson new "$NEW" --argjson reminders "$REMINDERS" '
+            def line: if .kind == "advisory" then "advisory \(.id) \(.severity) \(.package)" else "\(.kind) \(.id)" end;
+            def lines: if length == 0 then "none" else map(line) | join("\n") end;
+            "\($mode) run \($run_id) \($run_url)\nnew:\n\($new | lines)\nreminders:\n\($reminders | lines)"')
+          body=$(jq -n --arg text "$text" '{text: $text}')
+          curl --fail-with-body --silent --show-error -X POST "$ROUTINE_URL" \
+            -H "Authorization: Bearer $ROUTINE_TOKEN" \
+            -H "anthropic-beta: experimental-cc-routine-2026-04-01" \
+            -H "anthropic-version: 2023-06-01" \
+            -H "Content-Type: application/json" \
+            --data "$body"
+      # Only after the call succeeds, so a failed call leaves the findings for the next run to send.
+      - env:
+          REPORTED_LIST: ${{ needs.check.outputs.reported }}
+        run: jq . <<< "$REPORTED_LIST" > "$REPORTED"
+      - uses: actions/cache/save@v6
+        with:
+          path: ${{ env.REPORTED }}
+          key: dependency-alerts-reported-${{ github.run_id }}

@@ -1,11 +1,12 @@
 # CI
 - CI runs on [GitHub Actions](https://docs.github.com/en/actions). The workflows live in `.github/workflows/`.
 - `checks.yml` runs lint, type check, unit tests and build on every PR, and starts the `ci-failure` routine when one of them fails.
+- `dependency-updates.yml` checks the dependencies for security advisories every hour and for new versions every week, and starts the `dependency-updates` routine when it finds something new.
 
 # Workflows
 
 ## Every Check Is a `package.json` Script
-Every check a workflow runs is a `package.json` script, called as `pnpm <script>`. The only other steps are setup (checking out the code, installing tools and dependencies) and the step that starts a routine. That way you, or a cloud session looking into a failure, can rerun exactly what CI ran with the same command.
+Every check a workflow runs is a `package.json` script, called as `pnpm <script>`. The only other steps are setup (checking out the code, installing tools and dependencies), the step that starts a routine, and the steps that restore and save `dependency-updates.yml`'s reported list in the Actions cache. That way you, or a cloud session looking into a failure, can rerun exactly what CI ran with the same command.
 
 No script CI runs writes fixes. CI would pass on code it had silently fixed, then throw the fix away. That's why the lint job runs `pnpm lint:ci` (`biome ci`, which only reports) and not `pnpm lint` (`biome check --write`).
 
@@ -51,6 +52,36 @@ Otherwise the job shows as skipped. It `needs` each check job, so when you add a
 The `text` it sends names only identifiers: the PR number, its head branch, the run's ID and URL, and the failed jobs. Its exact shape is in step 1 of the [`ci-failure` skill](../.claude/skills/ci-failure/SKILL.md), which reads it, so a change to the shape changes the job and the skill together. It sends no logs: the session reads the failure itself from the branch and the run. The PR's values reach the script only through the step's `env:`, and `jq` builds the JSON body, since the repo is public and a branch name is untrusted input ([GitHub's security guide](https://docs.github.com/en/actions/reference/security/secure-use)).
 
 **When the call fails** (a wrong secret, the API down, or the routine's limit of 30 calls an hour), `start-ci-failure` fails on the PR, next to the failed check, and no session starts. Its log shows the error `/fire` returned, such as a 401 for a wrong token. On success, the log shows the new session's link. The job never retries, since `/fire` doesn't dedupe calls and a retry could start two sessions.
+
+# Dependency Updates
+`dependency-updates.yml` checks the dependencies with `pnpm deps:check` (`scripts/dependencyCheck.ts`) and starts the [`dependency-updates` routine](#routines) when it finds something you haven't been told about. It runs on `develop`, the default branch, on two schedules:
+- **Hourly, at minute 17:** the security audit only (`pnpm deps:check`). It's off the top of the hour, when GitHub drops scheduled runs most often.
+- **Weekly, Mondays at 13:47 UTC:** the audit plus new versions of the packages in `package.json` (`pnpm deps:check --weekly`).
+
+Scheduled runs can start late. To run it by hand, open Actions → **Dependency Updates** → **Run workflow** and pick hourly or weekly. The form starts on hourly.
+
+The workflow's token can only read the repo (`permissions: contents: read`). Runs wait their turn rather than cancelling each other, so two never read the same reported list.
+
+GitHub turns off a public repo's scheduled workflows after 60 days with no activity in the repo. If that happens, turn the workflow back on from its page in Actions.
+
+## The Two Jobs
+They're split like `checks.yml`'s, so the routine's token never shares a job with third-party install scripts:
+- **`check`** installs Node and pnpm from `mise.toml`, runs `pnpm install --frozen-lockfile` on the weekly run only (`pnpm audit` reads only the lockfile, but `pnpm outdated` needs an install), restores the reported list and runs `pnpm -s deps:check`. It passes the new findings, the reminders and the updated list on to the next job.
+- **`start-dependency-updates`** runs no install. It runs when `check` found something new, or, on the weekly run, any advisory that's still unfixed. It calls the routine's `/fire` once, then saves the updated list.
+
+When nothing is new, `start-dependency-updates` shows as skipped, no session starts and the reported list stays as it was.
+
+The `text` it sends names only identifiers: the run, then each new finding and each reminder, one per line. Its exact shape is in step 1 of the [`dependency-updates` skill](../.claude/skills/dependency-updates/SKILL.md), which reads it, so a change to the shape changes the job and the skill together, as for `start-ci-failure`. Package names come from the registry, so the findings reach the script only through the step's `env:`, and `jq` builds the `text` and the JSON body.
+
+## The Reported List
+The Actions cache holds the identifiers already reported: each advisory's ID, and each new version as `package@version`. A finding in the list isn't new, so a run starts the routine only for findings no earlier run sent. A reported version stays quiet until a newer one comes out. The weekly run is the exception for advisories: it sends every one that's still unfixed as a reminder, until it's fixed.
+
+`check` restores the newest cache entry whose key starts with `dependency-alerts-reported-`, and `start-dependency-updates` saves the updated list as `dependency-alerts-reported-<run ID>`, since a cache entry can't be changed once saved. The updated list keeps only what's still current, so a fixed advisory, or a version that's been merged or superseded, drops out.
+
+With no entry to restore, every finding is new, and the next run that finds something sends the whole backlog. That happens on the first run, after the entries are cleared, and when the cache is lost: GitHub deletes an entry no run has read in 7 days, so a workflow that's been off that long starts over. To clear the list on purpose, delete the entries, from Actions → Caches or with `gh cache delete <key>`.
+
+## When the Call Fails
+If `/fire` fails (a wrong secret, the API down, or the routine's limit of 30 calls an hour), `start-dependency-updates` fails, no session starts and the list isn't saved. The next run finds the same findings and sends them again. The job's log shows the error `/fire` returned, such as a 401 for a wrong token. On success, the log shows the new session's link. Like `start-ci-failure`, it never retries.
 
 # Starting a Routine
 Results that happen away from your machine, such as a failed check, reach you as a Claude Code cloud session: a routine starts it, and it waits for you in the Code tab of the Claude desktop app, under **Routines**. Nothing in the repo delivers a result any other way: no `anthropics/claude-code-action`, no email, chat or push-notification step, and no bot comment on a PR or issue. GitHub's own check status on a PR doesn't count, since it isn't a delivery. Neither does a step that only passes the result along to start a routine, such as a Sentry alert opening an issue that a workflow then picks up.
