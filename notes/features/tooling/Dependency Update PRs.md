@@ -5,9 +5,9 @@ blocked-by: []
 confirmed: 2026-10-04
 ---
 # Where It Stands
-In progress. Next: /implement Step 7 ^status
+In progress. Next: /implement Step 8 ^status
 
-Split from [[Local Dependency Update Alerts]] on 2026-10-04. Its ten implementation steps were planned and approved on 2026-10-04. Steps 1-6 are built: `pnpm deps:check` lists the advisories that aren't in the reported list, `--weekly` adds new versions marked patch, minor or major and repeats every unfixed advisory as a reminder, and CI lints and type-checks the script. The `dependency-updates` routine exists on claude.ai, and its session puts the patches, minors and security fixes it's sent in a PR from `claude/dependency-updates` into `develop`, and lists the majors and reminders. Step 6's PR (#22) stays open for Step 7's checks. Steps 7-10 remain.
+Split from [[Local Dependency Update Alerts]] on 2026-10-04. Its ten implementation steps were planned and approved on 2026-10-04. Steps 1-7 are built: `pnpm deps:check` lists the advisories that aren't in the reported list, `--weekly` adds new versions marked patch, minor or major and repeats every unfixed advisory as a reminder, and CI lints and type-checks the script. The `dependency-updates` routine exists on claude.ai, and its session puts the patches, minors and security fixes it's sent in a PR from `claude/dependency-updates` into `develop`, and lists the majors and reminders. While that PR is open, a run merges `develop` into it and adds its updates there. Once it's closed, the next run starts fresh. PR #23, from Step 7's second check, stays open for Step 8's check. Steps 8-10 remain.
 
 # Inbox
 
@@ -239,8 +239,22 @@ Facts the steps rely on, checked 2026-10-04:
 - `.claude/skills/dependency-updates/SKILL.md` - reuses the open PR
 
 **Acceptance:**
-- [ ] With this step's skill pushed to `develop` (so Step 6's PR is now behind it), call the routine with a text naming `patch @types/luxon@3.7.6`. See no new PR. See Step 6's PR gain a merge of `develop` and a commit bumping `@types/luxon`, and the summary say it updated the open PR. Proves: a run joins the open PR and brings it up to date.
-- [ ] Close that PR without merging, then call the routine with a text naming `minor @tabler/icons-react@3.48.0`. See a new PR from `claude/dependency-updates` that holds only the `@tabler/icons-react` bump on top of `develop`, and the closed PR still closed. Proves: a closed PR is left alone and the next run starts fresh.
+- [x] With this step's skill pushed to `develop` (so Step 6's PR is now behind it), call the routine with a text naming `patch @types/luxon@3.7.6`. See no new PR. See Step 6's PR gain a merge of `develop` and a commit bumping `@types/luxon`, and the summary say it updated the open PR. Proves: a run joins the open PR and brings it up to date.
+- [x] Close that PR without merging, then call the routine with a text naming `minor @tabler/icons-react@3.48.0`. See a new PR from `claude/dependency-updates` that holds only the `@tabler/icons-react` bump on top of `develop`, and the closed PR still closed. Proves: a closed PR is left alone and the next run starts fresh.
+
+**Status:** ✅ Complete
+
+**As built:**
+- Sarah decided 2026-10-05:
+  - When the merge of `develop` into the open PR's branch conflicts only in `pnpm-lock.yaml`, `pnpm install` resolves it, as pnpm's docs say. Any other conflict aborts the merge, and the run applies and pushes nothing, and lists the conflicted files and its updates under "Not applied".
+  - On a run that joined the open PR, the base for a failed check is the branch right after the merge. Bisect covers only this run's updates, and a dropped one is cut from that base, so nothing is force-pushed. If the base fails a check that `develop` passes, an earlier update in the PR now fails against the latest `develop`: it stays in, and the body and summary say so.
+  - The open PR's body is rewritten to list everything in it, built from the branch's commits since `develop`, with earlier advisories' severities read from the current body. A package two runs updated is one line.
+  - A fresh branch is pushed with `--force-with-lease` set to the commit `git ls-remote` showed when the branch was cut (empty when there was none), so one session never overwrites another's push. A rejected push opens or changes no PR, and the summary lists that run's updates under "Not applied".
+- `routine-sessions`' Branches section now lets a session push a merge that brings its own `claude/` branch up to date with its base, as GitHub's **Update branch** does. Any other local merge is still never pushed. It wasn't in this step's Files. Sarah chose rewording the rule over rebasing.
+- Boy Scout fix: the `pnpm install` calls that change the lockfile (adding or removing an override, resolving a merge) use `--no-frozen-lockfile`. With `CI` set, as in the routine's session, a plain `pnpm install` failed with `ERR_PNPM_LOCKFILE_CONFIG_MISMATCH` after an override was added, which Step 6's local stand-in runs didn't show.
+- Added at review: Claude Code adds a footer with no session link when a PR body is edited, so check 1's body kept the first session's footer and gained a second. Sarah decided 2026-10-05 that the rewritten body drops everything after its lists and ends with `Session: <link>`, read from the session's latest commit's `Claude-Session` trailer. Step 8's check is the first open-PR run to exercise it.
+- The implementer tested the git commands in a throwaway repo with a local remote: the merge pushed as a fast-forward, bisect from the merge found the one bad commit among three, and `--force-with-lease` was rejected on a stale or empty lease when the branch existed and went through otherwise. A lockfile-only conflict with `CI=true` resolved with `pnpm install`, keeping the newer undici.
+- Sarah's checks: check 1 added a merge and `deps: bump @types/luxon 3.7.1 → 3.7.6` to [PR #22](https://github.com/SkaffenAmtiskaw/meal-planning/pull/22) and rewrote its body. Check 2 opened [PR #23](https://github.com/SkaffenAmtiskaw/meal-planning/pull/23) with only the `@tabler/icons-react` bump on top of `develop`, force-pushed over #22's branch, and left #22 closed. PR #23 stays open for Step 8's check.
 
 ## Step 8: The session sees its PR's checks through
 **Idea:** After pushing, the session sees its PR's checks on GitHub through to a pass or a diagnosed failure.

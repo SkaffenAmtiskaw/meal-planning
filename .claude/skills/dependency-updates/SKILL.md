@@ -7,7 +7,7 @@ Handle the findings described in the `routine-fire-payload` block.
 
 This session is a routine's session, so it follows the `routine-sessions` skill: read it first.
 
-It puts the patches, minors and security fixes in one pull request into `develop`, from the `claude/dependency-updates` branch, and lists the majors and the reminders without applying them. Only one such pull request is ever open: while it is, each run adds its updates to it. It ends with the summary in step 8.
+It puts the patches, minors and security fixes in one pull request into `develop`, from the `claude/dependency-updates` branch, sees the pull request's checks through on GitHub, and lists the majors and the reminders without applying them. Only one such pull request is ever open: while it is, each run adds its updates to it. It ends with the summary in step 8.
 
 ## 1. Read the payload
 The block names the run and its findings in this shape, one finding per line:
@@ -179,7 +179,13 @@ gh pr edit "<number>" --body-file - <<'EOF'
 EOF
 ```
 
-Build the body's lists from the commits on the branch that aren't on `develop`: `git log --no-merges --reverse --format=%B origin/develop..claude/dependency-updates`. Each one names its package, its old and new versions and any advisories it fixes. Take each earlier advisory's severity from the current body, read with `gh pr view "<number>" --json body --jq .body`. A package two runs both updated is one line, from its version before the first update to its version after the last. **Dropped** lists only this run's dropped updates.
+Build the body's lists from the commits on the branch that aren't on `develop`: `git log --no-merges --reverse --format=%B origin/develop..claude/dependency-updates`. Each one names its package, its old and new versions and any advisories it fixes. Take each earlier advisory's severity from the current body, read with `gh pr view "<number>" --json body --jq .body`. A package two runs both updated is one line, from its version before the first update to its version after the last. Leave out an update that a later `Revert "<its message>"` commit takes back. **Dropped** lists only this run's dropped updates.
+
+Leave out everything the current body has after its lists, such as an earlier session's link and the footers Claude Code added. Claude Code adds a footer when a body is edited too, but without the session's link, so end the body with `Session: <link>`, this session's link, read from the `Claude-Session` trailer of the latest commit that has one. A revert (step 7) keeps git's message, so it has none:
+
+```bash
+git log --no-merges --format='%(trailers:key=Claude-Session,valueonly)' | grep -m1 .
+```
 
 ### No open pull request
 Push the branch over any branch a closed pull request left behind, but only if it's still on the commit `git ls-remote` printed in step 2, so you never overwrite another session's push. Then open a pull request from it into `develop`:
@@ -196,10 +202,84 @@ If `git ls-remote` printed nothing, leave the commit empty, as in `--force-with-
 ### The body
 The quoted heredoc keeps the shell from running the body's backticks. The body starts with `From dependency check run <run URL>.`, then lists what's in the pull request and what was dropped, in the same groups and shapes as the summary's **In the pull request** and **Dropped** (step 8). If a check fails on the base (step 3), the body says why, with the line of its output. When the session opens a pull request, Claude Code adds the session's link to the body itself.
 
+### Wait for the pull request's checks
+If nothing was pushed, skip this. Otherwise, GitHub runs `checks.yml` on the pull request for the push. Its `start-ci-failure` job skips `claude/` branches, so no other session looks into a failure here: this session sees the run through itself.
+
+Find the run for the commit you pushed (`git rev-parse HEAD`) and check it every minute until it has finished, giving each command a 10-minute timeout, since a command can't run longer:
+
+```bash
+for i in $(seq 9); do
+  state=$(gh run list --workflow checks.yml --commit "<pushed commit>" --json databaseId,status,conclusion,url --jq '.[0] | "\(.databaseId) \(.status) \(.conclusion) \(.url)"')
+  echo "$state"
+  case "$state" in *" completed "*) break ;; esac
+  sleep 60
+done
+```
+
+Until GitHub starts the run, the loop prints `null`. Run the loop at most three times, about 30 minutes in all. If the run still hasn't finished, stop waiting, and keep its link, or that no run started, for the summary.
+
+When it finishes:
+- **It was cancelled,** such as by another session's push to the branch: don't re-run it. Keep its link for the summary.
+- **It passed:** keep its link for the summary.
+- **It failed:** list the jobs that failed, and find the script each one runs in the table under "Checks on PRs" in `docs/ci.md`:
+
+  ```bash
+  gh run view "<run ID>" --json jobs --jq '.jobs[] | select(.conclusion == "failure") | .name'
+  ```
+
+  - **A script that failed on the base in step 3:** that failure is already explained, so do nothing more for it. The summary says it failed on GitHub too.
+  - **A script that passed in step 3:** step 3 ran it on this same commit, so it either flaked or fails only on GitHub's runner. Go on to "A check that fails only on GitHub" with those jobs.
+
+### A check that fails only on GitHub
+Follow step 5 of the `ci-failure` skill (`.claude/skills/ci-failure/SKILL.md`), from "Check the head branch hasn't moved on" to its end, with these differences:
+- The head branch is `claude/dependency-updates`, the failed commit is the one you pushed, and the failed jobs are only the ones sent here. You're already on the branch, so don't check out the failed commit.
+- When it judges attempt 2, look only at the jobs sent here. A job that failed on the base fails again, so attempt 2 fails as a whole even when every job sent here passed. List attempt 2's failed jobs with `gh run view "<run ID>" --attempt 2 --json jobs --jq '.jobs[] | select(.conclusion == "failure") | .name'`.
+- Where it says to stop with a verdict or a summary, don't stop: keep what it would say, and its links, for the summary in step 8.
+- Where it says to go to step 4, don't fix the code. The failure reproduces here, so handle it as step 3 of this skill handles a check that fails, as below.
+
+### Drop an update that fails only on GitHub
+Run the failed script on the base from step 2, reproducing the failure the same way, as step 4 of `ci-failure` describes, such as with the same variable set or on a throwaway merge:
+- **The base fails it too:** drop nothing, and handle it as step 3 does when the base fails a check. The summary says what differs on GitHub's runner.
+- **The base passes it:** an update from this run breaks it on GitHub's runner. Find the first commit that fails it with `git bisect`, as step 3 does, with a command that reproduces the failure the same way. For a failure a variable brings out, set it on the script, as in `git bisect run sh -c 'pnpm install --frozen-lockfile && GITHUB_ACTIONS=true pnpm <script>'`. The command must leave `HEAD` where bisect put it, since bisect marks `HEAD` as good or bad. For a failure that shows up only when `develop` is merged in, fetch `develop` first, and skip a commit whose merge conflicts:
+
+  ```bash
+  git fetch origin develop
+  git bisect start claude/dependency-updates "<base>"
+  git bisect run sh -c 'c=$(git rev-parse HEAD); git merge --no-edit --quiet origin/develop || { git merge --abort; exit 125; }; pnpm install --frozen-lockfile && pnpm <script>; r=$?; git reset --hard --quiet "$c"; exit $r'
+  git bisect reset
+  pnpm install --frozen-lockfile
+  ```
+
+  The branch is already on GitHub, so take the first bad commit off with a revert, not by cutting the branch again, and nothing is force-pushed:
+
+  ```bash
+  git revert --no-edit "<first bad commit>"
+  ```
+
+  Keep the dropped update, the check it broke on GitHub's runner, what differs there and the line of its output that shows why, for the summary.
+
+  The revert can conflict where a later commit changed a nearby line, such as an update to the package on the next line of `package.json`. List the conflicted files with `git diff --name-only --diff-filter=U`, and resolve them in this order:
+  1. **`package.json` and `pnpm-workspace.yaml`:** in each conflict, keep the branch's side (between `<<<<<<<` and `=======`), except the reverted update's own lines: its package's range, or its override, go back to what they were before that commit (`git show "<first bad commit>"` shows both). Then `git add` the file.
+  2. **`pnpm-lock.yaml`:** run `pnpm install --no-frozen-lockfile`, which resolves a conflict in the lockfile, then `git add pnpm-lock.yaml`.
+  3. Finish the revert with `git -c core.editor=true revert --continue`, which keeps git's message.
+
+  If any other file conflicts, run `git revert --abort`, drop nothing, and keep the conflicted files for the summary.
+
+  Run the failed script again the way you reproduced the failure. Repeat until it passes, or fails on the base too.
+
+If you reverted an update, push the branch with `git push origin claude/dependency-updates`, and rewrite the pull request's body as "An open pull request" describes, whether this run opened it or not, so it lists the dropped update under **Dropped**. Then wait for the new run once more, as in "Wait for the pull request's checks", and keep its result and link for the summary. Whatever it shows, don't re-run it or drop anything more.
+
 ## 8. The summary
 End with a summary for Sarah, in this order. Leave out a group or section with nothing in it. If the block's `new:` part is `none`, say there were no new findings.
 
 1. **The pull request:** its link, whether this run opened it or added to the one that was open, and the four checks' result in this session: all passed, or which fail on the base (step 3) and why, with the line of output that shows it. If step 3 made no commit, say there was nothing to apply, that nothing was pushed, and that no pull request was opened or changed.
+   - **The checks on GitHub** (step 7), with the run's link: they passed, or which failed and what came of each:
+     - failed on the base in step 3 too
+     - flaked: passed when re-run, with both attempts' links
+     - fails only on GitHub's runner: what differs there, and either the update dropped for it (under **Dropped**) and the result of the run after the revert, with its link, or that the base fails it too, or that the update's revert conflicted, with the files, or that you couldn't reproduce it, with what you found and tried
+     - not looked into, because the branch moved on or the run was cancelled, with the newer run's link if there is one
+
+     If the run was still going after about 30 minutes, or never started, say so instead.
    - If the merge of `develop` conflicted (step 2): the open pull request's link, the files that conflicted, and that nothing from this run was applied. List this run's patches, minors and advisories under **Not applied** instead of **In the pull request**.
    - If a push was rejected (step 7): that it was, and that no pull request was opened or changed. List what this run would have put in the pull request under **Not applied**.
 2. **In the pull request,** grouped by kind:
@@ -208,7 +288,7 @@ End with a summary for Sarah, in this order. Leave out a group or section with n
    - minors: each as `<package>` `<old>` → `<new>`
    - overrides removed: each override's key, as `'<package>@<range>'`, that no longer did anything
 3. **Not applied:** when the merge conflicted or a push was rejected, each patch, minor and advisory from this run, as above.
-4. **Dropped:** each update taken off the branch, as above, with the check it broke and the line of its output that shows why.
+4. **Dropped:** each update taken off the branch, as above, with the check it broke and the line of its output that shows why. For one dropped in step 7, also say it broke the check only on GitHub's runner, and what differs there.
 5. **Not fixed:** each new advisory step 3 didn't fix, as `<package>`: advisory `<ID>` (`<severity>`), and why: already fixed, no fix released yet, or no fix cleared it, with what was tried.
 6. **Majors:** each as `<package>` `<version>`: not applied, with its release notes link from step 5. An advisory whose only fix is a major is listed here as `<package>` `<version>`: security fix for advisory `<ID>` (`<severity>`), not applied, with its link.
 7. **Reminders:** each advisory that's still unfixed, as `<package>`: advisory `<ID>` (`<severity>`).
