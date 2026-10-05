@@ -7,7 +7,7 @@
 	- **Standing Goals** - listed under their own subheading below the ranked goals. Each collects work that no ranked goal would take, such as library upgrades, and never ships itself, so it's never ranked or active. When Sarah wants to take on some of that work, `/roadmap` draws a goal from it, named `<standing goal> YYYY-MM-DD`, which takes the work she picks and is ranked like any other goal.
 - **Now** - in progress. Keep this to 2-3 items.
 - **Next** - the queue for the active goals, in order. The first line not waiting on anything is the next one to plan or build. A line that's waiting keeps its place, and its status embed says what it waits on.
-- **Later** - committed, not ordered. One heading per goal, in rank order, then one per standing goal, then **Unaffiliated** for lines that serve no goal and for every collecting note's line. A line that serves more than one goal sits under one of their headings and ends with a `🎯 [[Goal]]` link for each other goal. A re-rank doesn't move it to another heading. Dev tooling and agent work stays in Unaffiliated unless Sarah puts it under a goal.
+- **Later** - committed, not ordered. One heading per goal, in rank order, then one per standing goal, then **Unaffiliated** for lines that serve no goal and for every collecting note's line. A line that serves more than one goal sits under one of their headings and ends with a `🎯 [[Goal]]` link for each other goal. A re-rank doesn't move it to another heading. Dev tooling and agent work sits under [[Dev Tooling]]'s heading unless Sarah puts it under a ranked goal.
 - **Ideas** - not committed. A story's line moves to Later once it's committed: when `/shape` shapes it, or when `/decide` settles that it's worth doing.
 - **Markers:** every Now and Next line ends, after its status embed, with a 🎯 link for each goal it serves, at least one of them active, or with 🚨 or 📌:
 	- `🎯 [[Goal]]` - serves that goal.
@@ -31,9 +31,9 @@
 ## Standing Goals
 - [[App Health]]
 - [[Bugs]]
+- [[Dev Tooling]]
 
 # Now
-- [[Manual and Agent Test Environment]] ![[Manual and Agent Test Environment#^status]] 🎯 [[Dev Foundations]] 🎯 [[Calendar Page]]
 
 # Next
 1. [[One Goal at a Time]] ![[One Goal at a Time#^status]] 🎯 [[Dev Foundations]]
@@ -60,10 +60,6 @@
 
 # Later
 ## [[Dev Foundations]]
-- Add PostHog for analytics *(was high)*
-- I want a way to watch certain libraries and tools to see if they have new releases or features that are worth implementing
-- [[Vercel Plugin]]
-- switch testing library to `vitest-browser-react` - needs research to determine if this is worth doing 🎯 [[App Health]]
 - [[Services and Environments Audit]] ![[Services and Environments Audit#^status]]
 - [[Atlas Version Check Script]] ![[Atlas Version Check Script#^status]]
 - [[Sentry Logging and Root Cause Analysis]] ![[Sentry Logging and Root Cause Analysis#^status]] *(was high)*
@@ -126,7 +122,14 @@
 - security - string validation on inputs *(was medium)*
 - `ConfirmButton` calls `onError` when the action returns `ok: false`, but not when it throws. No caller passes `onError` yet, so either call it on exceptions too or remove the prop
 - on the sign-in page, pressing Enter in the email, password or sign-up inputs doesn't submit; only clicking the button does. `SignInFlow.tsx` has no `<form>` or `onSubmit`, so wrap each step in a form. Overlaps the "split `SignInFlow.tsx` into one component per step" line in App Health, so the two could be planned together.
-- Planner's mongoose schemas don't match their zod types: recipe `time` is typed as numbers in `src/_models/library/recipe.ts` but saved as strings; the `saved` union in `src/_models/planner/planner.ts` tries `bookmarkSchema` (`strict: false`) first, so `recipeSchema` never validates a recipe; and the dish `source` union in `src/_models/calendar/day.ts` turns linked recipe ObjectIds into strings when saved through mongoose. Found in [[Manual and Agent Test Environment]] Step 5
+- Planner's mongoose schemas don't match their zod types: recipe `time` is typed as numbers in `src/_models/library/recipe.ts` but saved as strings; the `saved` union in `src/_models/planner/planner.ts` tries `bookmarkSchema` (`strict: false`) first, so `recipeSchema` never validates a recipe; and the dish `source` union in `src/_models/calendar/day.ts` turns linked recipe ObjectIds into strings when saved through mongoose. Found 2026-10-04 while building the dev seed's sample data (`seed/seed.ts`)
+
+## [[Dev Tooling]]
+- a way to load extra seed data that one story's checks need, on top of `pnpm seed`'s generic data (today `first-pass` creates it through the app's screens). Found 2026-10-01 while designing the dev seed (`docs/seed.md`)
+- switch testing library to `vitest-browser-react` - needs research to determine if this is worth doing 🎯 [[App Health]]
+- [[Vercel Plugin]]
+- I want a way to watch certain libraries and tools to see if they have new releases or features that are worth implementing
+- Add PostHog for analytics *(was high)*
 
 ## Unaffiliated
 - [[Delete Planner|allow user to delete a planner]] - idea. Waiting on the [[Zero Planners Crash]] decision. *(was high)*
@@ -160,5 +163,4 @@
 - a11y audit *(was medium)*
 - audit app works fully in mobile *(was medium)*
 - toggle light/dark mode *(was low)*
-- a way to load extra seed data that one story's checks need, on top of `pnpm seed`'s generic data (today `first-pass` creates it through the app's screens). Found 2026-10-01 while designing [[Manual and Agent Test Environment]]
 - [[What's Changed Notification]] ![[What's Changed Notification#^status]]

@@ -6,7 +6,7 @@ confirmed: 2026-10-04
 ---
 # Where It Stands
 
-Decisions made. Next: /infra-design. /plan-steps waits on [[Notes Vault Repo]], and building also on [[Manual and Agent Test Environment]] ^status
+Decisions made. Next: /infra-design. /plan-steps waits on [[Notes Vault Repo]] ^status
 
 Shaped as one infra story that designs parallel story branches in worktrees, protection for `develop` and a release process together. All seven open decisions were made 2026-10-02 to 2026-10-04; [[Notes Vault Repo]] was split out to move the notes vault to its own repo first. Next is the Design.
 

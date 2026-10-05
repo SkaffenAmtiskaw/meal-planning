@@ -12,7 +12,7 @@ Collects bugs in the shipped app: defects in behavior that already shipped, whic
 
 Looks close but doesn't belong:
 - Bugs in unfinished features. A bug in work a ranked goal is still building belongs to that goal.
-- Dev tooling and CI bugs. They belong with dev tooling.
+- Dev tooling and CI bugs. They belong to [[Dev Tooling]].
 - Tech debt that causes no symptom. Code that works but needs changing stays in [[App Health]].
 
 # Out of Scope

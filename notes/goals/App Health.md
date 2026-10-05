@@ -13,7 +13,7 @@ Everything in this goal affects code, which means testing needs to be a priority
 - Tech debt: code that works but needs changing, such as code that doesn't follow the conventions. Test code counts.
 
 Looks close but doesn't belong:
-- Dev tooling and infrastructure. They'll be their own standing goal.
+- Dev tooling and infrastructure. They belong to [[Dev Tooling]].
 - Bugs. They'll be their own standing goal, since they generally don't need the regression prevention emphasis this one has.
 
 # Out of Scope

@@ -21,7 +21,6 @@ Shaped 2026-10-04 as one infra story. Two decisions are open for /decide: where 
     - `.gitignore`'s `/notes/.obsidian/` line
   - **Setup outside the repo:** a new GitHub repo, the Claude GitHub App's access to it, the routines' repo selection, and the Obsidian vault pointed at the new folder.
   - **Keeping the notes' git history:** a fresh repo makes every line look added on the day of the move. `/check-drift` would treat every [Sarah] comment as new since `confirmed`, and `note-drift-checker`'s `git log --since=<confirmed>` would list every note.
-  - **Stories in flight:** if [[Manual and Agent Test Environment]] is still open when the move lands, its note moves mid-story. Before the move, check that its git stash ("Manual and Agent Test Environment Step 1: ...") holds no `notes/` files, or popping it would recreate `notes/` in the code repo.
   - **Notes that quote `notes/` paths** get name-only corrections: three tech-debt notes at their "Note:" lines, the Hub template path in [[Agent Workflow Changes 2026-10-02]], and [[Docs Updates]].
 
 # Purpose
