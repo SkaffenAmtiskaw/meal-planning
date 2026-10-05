@@ -7,6 +7,7 @@
     "build": "next build",
     "check:types": "next typegen && tsc --noEmit",
     "dev": "next dev",
+    "dev:sign-in": "pnpm run \"/^(dev|sign-in)$/\"",
     "lint": "biome check --write",
     "lint:ci": "biome ci",
     "seed": "tsx --env-file=.env.local seed/seed.ts",

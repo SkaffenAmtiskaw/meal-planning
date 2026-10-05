@@ -5,9 +5,9 @@ blocked-by: []
 confirmed: 2026-10-01
 ---
 # Where It Stands
-In progress. Next: /implement Step 7 ^status
+In progress. Next: /implement Step 8 ^status
 
-Steps 1 to 6 are done: `pnpm seed` runs through tsx against the dev database and refuses any other database before connecting, Biome checks `seed/` with the test-support import bans, and each run removes everything seeded before, then creates the four seeded users with their personal planners and a shared planner filled with tags, recipes, bookmarks and meals. `pnpm sign-in` serves a link per seeded user at `http://localhost:3001` that signs any browser in as them. Steps 7 to 11 remain, and every step through Step 9 needs a connection to the Atlas cluster, which works from Sarah's home network.
+Steps 1 to 7 are done: `pnpm seed` runs through tsx against the dev database and refuses any other database before connecting, Biome checks `seed/` with the test-support import bans, and each run removes everything seeded before, then creates the four seeded users with their personal planners and a shared planner filled with tags, recipes, bookmarks and meals. `pnpm sign-in` serves a link per seeded user at `http://localhost:3001` that signs any browser in as them, and `pnpm dev:sign-in` runs it alongside the dev server. Steps 8 to 11 remain, and Steps 8 and 9 need a connection to the Atlas cluster, which works from Sarah's home network.
 
 # Inbox
 
@@ -277,7 +277,13 @@ Everything for the local test environment lives in a new top-level `seed/` folde
 - `package.json` - the `dev:sign-in` script
 
 **Acceptance:**
-- [ ] Run `pnpm dev:sign-in`, and see output from both the Next.js dev server and the link server. Open `http://localhost:3001/write` and see the app signed in as Wren Writer. Press Ctrl-C, then open `http://localhost:3000` and `http://localhost:3001`, and see that neither responds. Proves: one command starts both servers, and Ctrl-C stops both.
+- [x] Run `pnpm dev:sign-in`, and see output from both the Next.js dev server and the link server. Open `http://localhost:3001/write` and see the app signed in as Wren Writer. Press Ctrl-C, then open `http://localhost:3000` and `http://localhost:3001`, and see that neither responds. Proves: one command starts both servers, and Ctrl-C stops both.
+
+**Status:** ✅ Complete
+
+**As built:**
+- On Ctrl-C, pnpm reports each script as `Failed` with exit code 130, since each was stopped by a signal. Both servers still stop.
+- `next dev` (Next.js 16.3.8) appended its agent-rules block to `AGENTS.md` on every start, which left the tree changed after any dev run. Sarah pulled the fix into this step 2026-10-04: `next.config.mjs` sets `agentRules: false`, since AGENTS.md's "Library APIs" already points agents to Next's bundled docs.
 
 ## Step 8: Agents sign in through the links
 **Idea:** Agents sign in through the link server as the seeded user a check names.
