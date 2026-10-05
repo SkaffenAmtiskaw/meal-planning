@@ -94,8 +94,8 @@ importers:
         specifier: 28.0.1
         version: 28.0.1
       '@types/luxon':
-        specifier: 3.7.1
-        version: 3.7.1
+        specifier: 3.7.6
+        version: 3.7.6
       '@types/node':
         specifier: 24.3.3
         version: 24.3.3
@@ -1388,8 +1388,8 @@ packages:
   '@types/jsdom@28.0.1':
     resolution: {integrity: sha512-GJq2QE4TAZ5ajSoCasn5DOFm8u1mI3tIFvM5tIq3W5U/RTB6gsHwc6Yhpl91X9VSDOUVblgXmG+2+sSvFQrdlw==}
 
-  '@types/luxon@3.7.1':
-    resolution: {integrity: sha512-H3iskjFIAn5SlJU7OuxUmTEpebK6TKB8rxZShDslBMZJ5u9S//KM1sbdAisiSrqwLQncVjnpi2OK2J51h+4lsg==}
+  '@types/luxon@3.7.6':
+    resolution: {integrity: sha512-6KSjliQAXK8ZLgFQO4B7iE4Rpf/B3rItzCFuXezBY/XIAGxOdLd7vRNK9/StRPwiS/yJsVbB7HKpW46B8tcEuQ==}
 
   '@types/node@24.3.3':
     resolution: {integrity: sha512-GKBNHjoNw3Kra1Qg5UXttsY5kiWMEfoHq2TmXb+b1rcm6N7B3wTrFYIf/oSZ1xNQ+hVVijgLkiDZh7jRRsh+Gw==}
@@ -3748,7 +3748,7 @@ snapshots:
       parse5: 7.3.0
       undici-types: 7.24.6
 
-  '@types/luxon@3.7.1': {}
+  '@types/luxon@3.7.6': {}
 
   '@types/node@24.3.3':
     dependencies:
