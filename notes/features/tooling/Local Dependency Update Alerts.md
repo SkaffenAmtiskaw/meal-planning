@@ -167,7 +167,7 @@ Before planning or implementing any story linked from this note, read this note 
 | Story | Status | Scope in this area | Blocked by |
 |---|---|---|---|
 | [[Dependency Update PRs]] | ready | The check, the workflow, the routine, and the one PR for patches, minors and security fixes | |
-| [[Dependency Release Analysis]] | spec | Minor release summaries, and the `upgrade-assessor` for the six libraries | [[Dependency Update PRs]] |
+| [[Dependency Release Analysis]] | ready | Minor release summaries, and the `upgrade-assessor` for the six libraries | [[Dependency Update PRs]] |
 | [[Major Upgrade Sweeps]] | spec | The Library Upgrades and Dev Tool Upgrades sweeps for other packages' majors | [[Dependency Update PRs]] |
 
 # Build Order
