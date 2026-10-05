@@ -53,4 +53,3 @@ next-env.d.ts
 
 # agent tooling
 .scratch/
-.opencode/secrets

@@ -1,13 +1,13 @@
 ---
 type: infra
-status: in-progress
+status: in-review
 blocked-by: []
 confirmed: 2026-10-01
 ---
 # Where It Stands
-In progress. Next: /implement Step 11 ^status
+All steps implemented. Next: /final-review ^status
 
-Steps 1 to 10 are done: `pnpm seed` runs through tsx against the dev database and refuses any other database before connecting, Biome checks `seed/` with the test-support import bans, and each run removes everything seeded before, then creates the four seeded users with their personal planners and a shared planner filled with tags, recipes, bookmarks and meals. `pnpm sign-in` serves a link per seeded user at `http://localhost:3001` that signs any browser in as them, and `pnpm dev:sign-in` runs it alongside the dev server. Agents sign in through those links as the seeded user a check names, and nothing in `.claude/` or AGENTS.md points at the old test login. `docs/seed.md` describes the seed and its reset convention, and AGENTS.md sends anyone changing `seed/` or adding a model there. `/plan-steps` writes each check that needs a signed-in user as a named seeded user, or as a new user signed up through the app when the check changes the email. Step 11 remains.
+All 11 steps are done: `pnpm seed` runs through tsx against the dev database and refuses any other database before connecting, Biome checks `seed/` with the test-support import bans, and each run removes everything seeded before, then creates the four seeded users with their personal planners and a shared planner filled with tags, recipes, bookmarks and meals. `pnpm sign-in` serves a link per seeded user at `http://localhost:3001` that signs any browser in as them, and `pnpm dev:sign-in` runs it alongside the dev server. Agents sign in through those links as the seeded user a check names, and nothing in `.claude/` or AGENTS.md points at the old test login. `docs/seed.md` describes the seed and its reset convention, and AGENTS.md sends anyone changing `seed/` or adding a model there. `/plan-steps` writes each check that needs a signed-in user as a named seeded user, or as a new user signed up through the app when the check changes the email. The old test login in `.opencode/secrets/` is deleted, along with its `.gitignore` line. What remains is the review of the whole story.
 
 # Inbox
 
@@ -92,7 +92,7 @@ Everything for the local test environment lives in a new top-level `seed/` folde
   - `routine-sessions`: the example of a skill a routine never loads gives the new reason, that `running-the-app` signs in through the link server against Sarah's local dev database. The list of what a routine can't reach drops `.opencode/secrets/` and keeps `.env*`.
   - `AGENTS.md`: the `.opencode/` paragraph drops its example "(such as the test login `running-the-app` uses)", which the change to `running-the-app` makes untrue.
 - **Docs:** `docs/project_structure.md` gets `seed/`, its `docs/` line's list of topics gains the seed, and its `test/auth.ts` and `test/factories/` lines say the seed uses them too. `docs/e2e_tests.md`'s lines saying a dev seed could reuse the factories "later" point to `seed/` instead.
-- **`.opencode/secrets/credentials.md`:** deleted, as the story's last change, once nothing in `.claude/` points at it. It's gitignored, so this can't be undone. The `.opencode/secrets` line in `.gitignore` stays until [[Finish OpenCode Migration]] removes `.opencode/`.
+- **`.opencode/secrets/credentials.md`:** deleted, as the story's last change, once nothing in `.claude/` points at it. It's gitignored, so this can't be undone. The `.opencode/secrets` line in `.gitignore` goes with it (Sarah's call, 2026-10-04).
 
 ## Flow
 1. **Seeding:** Sarah, or an agent whose link says the user isn't seeded, runs `pnpm seed`. tsx loads `.env.local`, and `seed/devDatabase.ts` connects and checks the database name. If it isn't `test`, the run stops and nothing is read or written. Otherwise `seed/reset.ts` removes the old seeded data, `seed/seed.ts` creates the users and planners fresh, and the script prints who's who. If it fails partway, running it again cleans up, since the reset removes whatever it finds.
@@ -383,10 +383,15 @@ Afterwards, reread the whole "Checks" section so it reads naturally as a whole.
 
 **Source:** Goal: `.opencode/secrets/credentials.md` is deleted.
 
-**Approach:** Design → Pieces: `.opencode/secrets/credentials.md` is deleted as the story's last change, once Step 8 has left nothing in `.claude/` pointing at it. The file is gitignored, so deleting it can't be undone: ask Sarah before deleting it, as AGENTS.md describes under "Git and files". The `.opencode/secrets` line in `.gitignore` does not stay. [Sarah] - I changed this to delete the line in `.gitignore` - it's stupid to keep it.
+**Approach:** Design → Pieces: `.opencode/secrets/credentials.md` is deleted as the story's last change, once Step 8 has left nothing in `.claude/` pointing at it. The file is gitignored, so deleting it can't be undone: ask Sarah before deleting it, as AGENTS.md describes under "Git and files". The `.opencode/secrets` line in `.gitignore` does not stay.
 
 **Files:**
 - `.opencode/secrets/credentials.md` (deleted) - nothing uses it any more
+- `.gitignore` - the `.opencode/secrets` line goes
 
 **Acceptance:**
-- [ ] Run `ls .opencode/secrets/` and see no `credentials.md`. Proves: the old test login is gone.
+- [x] Run `ls .opencode/secrets/` and see no `credentials.md`. Proves: the old test login is gone.
+
+**Status:** ✅ Complete
+
+**As built:** The empty `.opencode/secrets/` folder stays, since the check lists it and git doesn't track an empty folder.
