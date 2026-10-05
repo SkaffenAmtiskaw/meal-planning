@@ -1,15 +1,11 @@
 ---
-type: 
-status: idea
-confirmed: 2026-09-28
+type: workflow
+confirmed: 2026-10-05
 ---
-%% For jotting something down quickly. Leave `type` blank until it's clear what kind of story this is (feature / bug / pattern / cleanup / workflow), then move the content into that template. %%
 
 # Where It Stands
 
-%% The line ending in ` ^status` is the story's status and nothing else: what work it needs next, or what it's waiting on, e.g. "Next: design session in Claude Design, then /assess" or "Blocked until [[Stale Data Issues]] lands". Don't describe the story here; the Roadmap link already names it and Purpose describes it. The Roadmap embeds that line with `![[<note>#^status]]`, so keep the ` ^status` ID on it. Add detail below it only when the story needs it. %%
-
-Next: /shape ^status
+Next: /tooling ^status
 
 # Notes
 Finish the move from OpenCode to Claude Code, so no OpenCode files remain. It's a Done When item of [[Dev Foundations]].
@@ -23,8 +19,12 @@ What's left in `.opencode/`:
 Rules that point at `.opencode/` and go with it:
 - AGENTS.md's Project section, which has agents leave `.opencode/` out of searches.
 - `/final-review` step 2, which leaves `.opencode/` out of the story's changed files.
+- `/tooling`'s rule that the OpenCode agents in `.opencode/agents/` stay until the whole move is finished (`.claude/skills/tooling/SKILL.md`).
+
+Notes that still name `.opencode/docs/` or `.opencode/scratch/` paths, which are already gone: Meal Editing, Today and Selected Day Markers, Settings Data Refresh, Data Rules Enforcement, Calendar and Recipes Data Refresh, Remove Schedule-X, Server-Only Creation and Pure Reads, Shared Types Directory, Stale Data Issues and Unchecked Planner Reads. Found 2026-10-05 while shaping this note.
 
 Found 2026-09-28 while shaping [[Dev Foundations]] with `/roadmap`.
 
 # Questions
 - When is it safe to drop the old OpenCode agents and files?
+  - **Leaning 2026-10-05:** nothing should block it any more. Not checked yet. `/tooling` checks it before removing anything, for example that every old agent's job and `.opencode/lib/delegation-decision.md` is covered by a Claude skill or agent, or no longer needed.
