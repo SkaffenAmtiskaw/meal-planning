@@ -46,13 +46,13 @@ importers:
         version: 3.49.0(react@19.2.4)
       better-auth:
         specifier: 1.7.7
-        version: 1.7.7(@opentelemetry/api@1.9.1)(mongodb@7.0.0)(next@16.3.8(@babel/core@7.29.7)(@opentelemetry/api@1.9.1)(@playwright/test@1.63.0)(@types/node@24.3.3)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)(sass@1.98.0))(react-dom@19.2.4(react@19.2.4))(react@19.2.4)(vitest@4.1.11)
+        version: 1.7.7(@opentelemetry/api@1.9.1)(mongodb@7.7.0)(next@16.3.8(@babel/core@7.29.7)(@opentelemetry/api@1.9.1)(@playwright/test@1.63.0)(@types/node@24.3.3)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)(sass@1.98.0))(react-dom@19.2.4(react@19.2.4))(react@19.2.4)(vitest@4.1.11)
       luxon:
         specifier: 3.7.2
         version: 3.7.2
       mongodb:
-        specifier: ^7.0.0
-        version: 7.0.0
+        specifier: ^7.7.0
+        version: 7.7.0
       mongoose:
         specifier: 9.7.2
         version: 9.7.2
@@ -821,12 +821,6 @@ packages:
     peerDependencies:
       react: ^19.2.0
 
-  '@mongodb-js/saslprep@1.4.4':
-    resolution: {integrity: sha512-p7X/ytJDIdwUfFL/CLOhKgdfJe1Fa8uw9seJYvdOmnP9JBWGWHW69HkOixXS6Wy9yvGf1MbhcS6lVmrhy4jm2g==}
-
-  '@mongodb-js/saslprep@1.5.4':
-    resolution: {integrity: sha512-05UC0jQsjKAOuXQ0H9Ud9vUTJpZIg+n/FinpR30tI5I8pY2inTfPOZ5OF/cg3Ce/N9MoD1xhRCeOsJtuTbFYlw==}
-
   '@mongodb-js/saslprep@1.5.5':
     resolution: {integrity: sha512-0PV4mvjGd2Q2/viDvXuoSNzTjQngHvtuWUry1vqvcK4Q/CTeO1zEKMf9set01DMocJnogl/pyNAdvyk+Pe0kQA==}
 
@@ -1481,10 +1475,6 @@ packages:
     engines: {node: ^6 || ^7 || ^8 || ^9 || ^10 || ^11 || ^12 || >=13.7}
     hasBin: true
 
-  bson@7.0.0:
-    resolution: {integrity: sha512-Kwc6Wh4lQ5OmkqqKhYGKIuELXl+EPYSCObVE6bWsp1T/cGkOCBN0I8wF/T44BiuhHyNi1mmKVPXk60d41xZ7kw==}
-    engines: {node: '>=20.19.0'}
-
   bson@7.3.3:
     resolution: {integrity: sha512-oz3LwE3qGEhTCSyhzQRLY3Bj1NLOsjFMf6tcmY5J8M+3R7EVcmoBfSHWvjUK3yXCLDUsGpIuB3aQL4nDZ1EV/g==}
     engines: {node: '>=20.19.0'}
@@ -1899,10 +1889,6 @@ packages:
   minimist@1.2.8:
     resolution: {integrity: sha512-2yyAR8qBkN3YuheJanUpWC5U3bb5osDywNB8RzDVlDwDHbocAJveqqj1u8+SVD7jkWT4yvsHCpWqqWqAxb0zCA==}
 
-  mongodb-connection-string-url@7.0.0:
-    resolution: {integrity: sha512-irhhjRVLE20hbkRl4zpAYLnDMM+zIZnp0IDB9akAFFUZp/3XdOfwwddc7y6cNvF2WCEtfTYRwYbIfYa2kVY0og==}
-    engines: {node: '>=20.19.0'}
-
   mongodb-connection-string-url@7.0.2:
     resolution: {integrity: sha512-ZoS07RoFqpKYQwAk59qmrx8+jJHNHU30UjlU96QktiGn1ltvDr+vCznLX5DiUBLEpMAHatHNWV1nM/74ul66kA==}
     engines: {node: '>=20.19.0'}
@@ -1914,33 +1900,6 @@ packages:
   mongodb-memory-server@11.3.0:
     resolution: {integrity: sha512-8ZCDrraqKqmAikoeKuEq+16jeWdVKwjtEAuMxxeQctHiGSGYt17W9LmoRzV1Nwnz7owyxwDKMhow4IVkNYYRKw==}
     engines: {node: '>=20.19.0'}
-
-  mongodb@7.0.0:
-    resolution: {integrity: sha512-vG/A5cQrvGGvZm2mTnCSz1LUcbOPl83hfB6bxULKQ8oFZauyox/2xbZOoGNl+64m8VBrETkdGCDBdOsCr3F3jg==}
-    engines: {node: '>=20.19.0'}
-    peerDependencies:
-      '@aws-sdk/credential-providers': ^3.806.0
-      '@mongodb-js/zstd': ^7.0.0
-      gcp-metadata: ^7.0.1
-      kerberos: ^7.0.0
-      mongodb-client-encryption: '>=7.0.0 <7.1.0'
-      snappy: ^7.3.2
-      socks: ^2.8.6
-    peerDependenciesMeta:
-      '@aws-sdk/credential-providers':
-        optional: true
-      '@mongodb-js/zstd':
-        optional: true
-      gcp-metadata:
-        optional: true
-      kerberos:
-        optional: true
-      mongodb-client-encryption:
-        optional: true
-      snappy:
-        optional: true
-      socks:
-        optional: true
 
   mongodb@7.2.0:
     resolution: {integrity: sha512-F/2+BMZtLVhY30ioZp0dAmZ+IRZMBqI+nrv6t5+9/1AIwCa8sMRC3jBf81lpxMhnZgqq8CoUD503Z1oZWq1/sw==}
@@ -1971,6 +1930,33 @@ packages:
 
   mongodb@7.5.0:
     resolution: {integrity: sha512-5FnrEDLnvp6ycUOGLNLLU33BfCx2qmp2mJjGPDwKLruYsVzXVSK5fsGpoDXvsXJwBfBsD7ebMRdawbDxC2814g==}
+    engines: {node: '>=20.19.0'}
+    peerDependencies:
+      '@aws-sdk/credential-providers': ^3.806.0
+      '@mongodb-js/zstd': ^7.0.0
+      gcp-metadata: ^7.0.1
+      kerberos: ^7.0.0
+      mongodb-client-encryption: ^7.2.0
+      snappy: ^7.3.2
+      socks: ^2.8.6
+    peerDependenciesMeta:
+      '@aws-sdk/credential-providers':
+        optional: true
+      '@mongodb-js/zstd':
+        optional: true
+      gcp-metadata:
+        optional: true
+      kerberos:
+        optional: true
+      mongodb-client-encryption:
+        optional: true
+      snappy:
+        optional: true
+      socks:
+        optional: true
+
+  mongodb@7.7.0:
+    resolution: {integrity: sha512-XG1xXEqyouAV8GCb3PuRaujofeXKpAJAPvXYWZgHl6Dz4QHSJ1nRLl0+GpqaLTwKvC0RFE9truOur34RNFY1nw==}
     engines: {node: '>=20.19.0'}
     peerDependencies:
       '@aws-sdk/credential-providers': ^3.806.0
@@ -2890,12 +2876,12 @@ snapshots:
       '@better-auth/core': 1.7.7(@better-auth/utils@0.4.2)(@better-fetch/fetch@1.3.2)(@opentelemetry/api@1.9.1)(better-call@1.4.0(zod@4.4.3))(jose@6.2.12)(kysely@0.29.6)(nanostores@1.5.4)
       '@better-auth/utils': 0.4.2
 
-  '@better-auth/mongo-adapter@1.7.7(@better-auth/core@1.7.7(@better-auth/utils@0.4.2)(@better-fetch/fetch@1.3.2)(@opentelemetry/api@1.9.1)(better-call@1.4.0(zod@4.4.3))(jose@6.2.12)(kysely@0.29.6)(nanostores@1.5.4))(@better-auth/utils@0.4.2)(mongodb@7.0.0)':
+  '@better-auth/mongo-adapter@1.7.7(@better-auth/core@1.7.7(@better-auth/utils@0.4.2)(@better-fetch/fetch@1.3.2)(@opentelemetry/api@1.9.1)(better-call@1.4.0(zod@4.4.3))(jose@6.2.12)(kysely@0.29.6)(nanostores@1.5.4))(@better-auth/utils@0.4.2)(mongodb@7.7.0)':
     dependencies:
       '@better-auth/core': 1.7.7(@better-auth/utils@0.4.2)(@better-fetch/fetch@1.3.2)(@opentelemetry/api@1.9.1)(better-call@1.4.0(zod@4.4.3))(jose@6.2.12)(kysely@0.29.6)(nanostores@1.5.4)
       '@better-auth/utils': 0.4.2
     optionalDependencies:
-      mongodb: 7.0.0
+      mongodb: 7.7.0
 
   '@better-auth/prisma-adapter@1.7.7(@better-auth/core@1.7.7(@better-auth/utils@0.4.2)(@better-fetch/fetch@1.3.2)(@opentelemetry/api@1.9.1)(better-call@1.4.0(zod@4.4.3))(jose@6.2.12)(kysely@0.29.6)(nanostores@1.5.4))(@better-auth/utils@0.4.2)':
     dependencies:
@@ -3253,14 +3239,6 @@ snapshots:
   '@mantine/hooks@9.7.0(react@19.2.4)':
     dependencies:
       react: 19.2.4
-
-  '@mongodb-js/saslprep@1.4.4':
-    dependencies:
-      sparse-bitfield: 3.0.3
-
-  '@mongodb-js/saslprep@1.5.4':
-    dependencies:
-      sparse-bitfield: 3.0.3
 
   '@mongodb-js/saslprep@1.5.5':
     dependencies:
@@ -3723,13 +3701,13 @@ snapshots:
 
   baseline-browser-mapping@2.11.27: {}
 
-  better-auth@1.7.7(@opentelemetry/api@1.9.1)(mongodb@7.0.0)(next@16.3.8(@babel/core@7.29.7)(@opentelemetry/api@1.9.1)(@playwright/test@1.63.0)(@types/node@24.3.3)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)(sass@1.98.0))(react-dom@19.2.4(react@19.2.4))(react@19.2.4)(vitest@4.1.11):
+  better-auth@1.7.7(@opentelemetry/api@1.9.1)(mongodb@7.7.0)(next@16.3.8(@babel/core@7.29.7)(@opentelemetry/api@1.9.1)(@playwright/test@1.63.0)(@types/node@24.3.3)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)(sass@1.98.0))(react-dom@19.2.4(react@19.2.4))(react@19.2.4)(vitest@4.1.11):
     dependencies:
       '@better-auth/core': 1.7.7(@better-auth/utils@0.4.2)(@better-fetch/fetch@1.3.2)(@opentelemetry/api@1.9.1)(better-call@1.4.0(zod@4.4.3))(jose@6.2.12)(kysely@0.29.6)(nanostores@1.5.4)
       '@better-auth/drizzle-adapter': 1.7.7(@better-auth/core@1.7.7(@better-auth/utils@0.4.2)(@better-fetch/fetch@1.3.2)(@opentelemetry/api@1.9.1)(better-call@1.4.0(zod@4.4.3))(jose@6.2.12)(kysely@0.29.6)(nanostores@1.5.4))(@better-auth/utils@0.4.2)
       '@better-auth/kysely-adapter': 1.7.7(@better-auth/core@1.7.7(@better-auth/utils@0.4.2)(@better-fetch/fetch@1.3.2)(@opentelemetry/api@1.9.1)(better-call@1.4.0(zod@4.4.3))(jose@6.2.12)(kysely@0.29.6)(nanostores@1.5.4))(@better-auth/utils@0.4.2)(kysely@0.29.6)
       '@better-auth/memory-adapter': 1.7.7(@better-auth/core@1.7.7(@better-auth/utils@0.4.2)(@better-fetch/fetch@1.3.2)(@opentelemetry/api@1.9.1)(better-call@1.4.0(zod@4.4.3))(jose@6.2.12)(kysely@0.29.6)(nanostores@1.5.4))(@better-auth/utils@0.4.2)
-      '@better-auth/mongo-adapter': 1.7.7(@better-auth/core@1.7.7(@better-auth/utils@0.4.2)(@better-fetch/fetch@1.3.2)(@opentelemetry/api@1.9.1)(better-call@1.4.0(zod@4.4.3))(jose@6.2.12)(kysely@0.29.6)(nanostores@1.5.4))(@better-auth/utils@0.4.2)(mongodb@7.0.0)
+      '@better-auth/mongo-adapter': 1.7.7(@better-auth/core@1.7.7(@better-auth/utils@0.4.2)(@better-fetch/fetch@1.3.2)(@opentelemetry/api@1.9.1)(better-call@1.4.0(zod@4.4.3))(jose@6.2.12)(kysely@0.29.6)(nanostores@1.5.4))(@better-auth/utils@0.4.2)(mongodb@7.7.0)
       '@better-auth/prisma-adapter': 1.7.7(@better-auth/core@1.7.7(@better-auth/utils@0.4.2)(@better-fetch/fetch@1.3.2)(@opentelemetry/api@1.9.1)(better-call@1.4.0(zod@4.4.3))(jose@6.2.12)(kysely@0.29.6)(nanostores@1.5.4))(@better-auth/utils@0.4.2)
       '@better-auth/telemetry': 1.7.7(@better-auth/core@1.7.7(@better-auth/utils@0.4.2)(@better-fetch/fetch@1.3.2)(@opentelemetry/api@1.9.1)(better-call@1.4.0(zod@4.4.3))(jose@6.2.12)(kysely@0.29.6)(nanostores@1.5.4))(@better-auth/utils@0.4.2)(@better-fetch/fetch@1.3.2)
       '@better-auth/utils': 0.4.2
@@ -3743,7 +3721,7 @@ snapshots:
       nanostores: 1.5.4
       zod: 4.6.5
     optionalDependencies:
-      mongodb: 7.0.0
+      mongodb: 7.7.0
       next: 16.3.8(@babel/core@7.29.7)(@opentelemetry/api@1.9.1)(@playwright/test@1.63.0)(@types/node@24.3.3)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)(sass@1.98.0)
       react: 19.2.4
       react-dom: 19.2.4(react@19.2.4)
@@ -3777,8 +3755,6 @@ snapshots:
       electron-to-chromium: 1.5.444
       node-releases: 2.0.57
       update-browserslist-db: 1.3.3(browserslist@4.29.3)
-
-  bson@7.0.0: {}
 
   bson@7.3.3: {}
 
@@ -4169,11 +4145,6 @@ snapshots:
 
   minimist@1.2.8: {}
 
-  mongodb-connection-string-url@7.0.0:
-    dependencies:
-      '@types/whatwg-url': 13.0.0
-      whatwg-url: 14.2.0
-
   mongodb-connection-string-url@7.0.2:
     dependencies:
       '@types/whatwg-url': 13.0.0
@@ -4223,12 +4194,6 @@ snapshots:
       - socks
       - supports-color
 
-  mongodb@7.0.0:
-    dependencies:
-      '@mongodb-js/saslprep': 1.4.4
-      bson: 7.0.0
-      mongodb-connection-string-url: 7.0.0
-
   mongodb@7.2.0:
     dependencies:
       '@mongodb-js/saslprep': 1.5.5
@@ -4237,7 +4202,13 @@ snapshots:
 
   mongodb@7.5.0:
     dependencies:
-      '@mongodb-js/saslprep': 1.5.4
+      '@mongodb-js/saslprep': 1.5.5
+      bson: 7.3.3
+      mongodb-connection-string-url: 7.0.2
+
+  mongodb@7.7.0:
+    dependencies:
+      '@mongodb-js/saslprep': 1.5.5
       bson: 7.3.3
       mongodb-connection-string-url: 7.0.2
 
