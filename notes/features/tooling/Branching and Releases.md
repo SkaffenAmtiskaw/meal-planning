@@ -12,6 +12,7 @@ Shaped as one infra story that designs parallel story branches in worktrees, pro
 
 # Inbox
 - [Sarah] - Do we need a hotfix process as well? Is this already covered?
+- For /infra-design, from /decide on [[Notes Vault Repo]] decision 4 (2026-10-05): with notes unbranched, a story's note and Roadmap line live on the notes repo's `main` while its code sits on a story branch until the PR merges into `develop`. Which step marks the story done in its note and on the Roadmap? Sarah said during that run that it happens after the PR merges. It sits with the open Design question on which skill opens a story's PR and merges it.
 
 # Purpose
 Let Sarah work on two product features at once with agents, protect `develop`, and give a finished goal a way to ship as a release.

@@ -1,22 +1,21 @@
 ---
 type: infra
 status: idea
-blocked-by:
-  - "decision needed: where Note Conventions lives, and how a workflow change to both the skills and the vault's own files stays in step"
-confirmed: 2026-10-04
+blocked-by: []
+confirmed: 2026-10-05
 ---
 # Where It Stands
 
-2 open decisions. Next: /decide ^status
+Decisions made. Next: /infra-design ^status
 
-Shaped 2026-10-04 as one infra story. /decide settled on 2026-10-04 that the Obsidian Git plugin and routines push notes straight to the notes repo's `main`, and that the workflow instructions stay in the code repo. Two decisions it raised are still open: where Note Conventions lives, and how a workflow change to both the skills and the vault's own files stays in step. After that, /infra-design writes the Design, Conventions and Setup Outside the Repo.
+Shaped 2026-10-04 as one infra story. /decide settled every open decision: on 2026-10-04 that the Obsidian Git plugin and routines push notes straight to the notes repo's `main` and that the workflow instructions stay in the code repo, and on 2026-10-05 that Note Conventions, the templates and the Roadmap's rules move into the code repo too, so the vault holds only notes. /infra-design writes the Design, Conventions and Setup Outside the Repo next.
 
 # Inbox
 - For /infra-design, findings from /decide on [[Branching and Releases]] (2026-10-04):
   - **What the move changes:** about 115 `notes/` references across 30 files, outside `notes/`. Most are path swaps. These need new logic:
     - the git commands in `scripts/vault-lint.sh`, `scripts/vault-orphans.sh` and `.claude/agents/note-drift-checker.md`, and `/check-drift`'s `git blame`
     - `.claude/hooks/notes-only-edits.sh`'s `$CLAUDE_PROJECT_DIR/notes/` check, which 11 planning skills register
-    - the `.claude/rules/note-conventions.md` symlink
+    - `.claude/rules/note-conventions.md` becomes the real file, in place of the symlink (decision 3). Its wikilinks, such as `[[Roadmap]]` and `[[Meal Editing]]`, stop resolving outside the vault, and `scripts/note-section.sh` and `scripts/vault-lint.sh` name its `notes/` path.
     - commits that now go to two repos (`/tooling`, AGENTS.md "Git and files")
     - `.gitignore`'s `/notes/.obsidian/` line
   - **Setup outside the repo:** a new GitHub repo, the Claude GitHub App's access to it, the routines' repo selection, and the Obsidian vault pointed at the new folder.
@@ -44,7 +43,7 @@ Move the notes vault out of the code repo into its own git repo, so notes are ne
 1. Where do the instructions for working with the notes repo live: the skills, agents, hook, scripts and Note Conventions symlink that describe the vault, which today all sit in the code repo?
    - [Sarah] - I have concerns about agent instructions in the `meal-planning` repo containing instructions for how to interact with a different repo (the `notes` repo). As part of the planning for this story I want to work through how to handle this.
    - Candidates: keep them in the code repo and point them at the notes repo; move some or all into the notes repo; package them another way, such as a Claude Code plugin or user-level skills. A folder added through `additionalDirectories` grants file access only, so no CLAUDE.md or skills load from it.
-   - **Decided 2026-10-04:** the workflow instructions (skills, agents, the hook, scripts and the AGENTS.md note rules) stay in the code repo, and every reference to the notes folder goes through one place that finds it. The vault keeps its own reference material (Note Conventions, templates, the Roadmap's rules). They describe this project's workflow, whose state happens to live in a second repo, so they change with the code and go through its PRs, and the notes repo stays a vault and nothing else, which decision 2 rests on.
+   - **Decided 2026-10-04:** the workflow instructions (skills, agents, the hook, scripts and the AGENTS.md note rules) stay in the code repo, and every reference to the notes folder goes through one place that finds it. The vault keeps only notes: Note Conventions, the templates and the Roadmap's rules move to the code repo, as decisions 3 and 4 settled. They describe this project's workflow, whose state happens to live in a second repo, so they change with the code and go through its PRs, and the notes repo stays a vault and nothing else, which decision 2 rests on.
      - Rejected: move the note-only pieces into the notes repo's `.claude/` - nothing loads locally through the `additionalDirectories` setting (only `--add-dir` or `/add-dir`, which the desktop app doesn't offer for local sessions), Obsidian Git would push unreviewed skill edits straight to `main`, and mixed skills would still stay in the code repo.
      - Rejected: a Claude Code plugin - cloud sessions don't install plugins, so routines would lose the note rules, and it adds a third place to version.
      - Rejected: user-level `~/.claude` or claude.ai skills - they leave version control, `~/.claude` doesn't reach routines, and claude.ai skills can't carry hooks, agents or scripts.
@@ -56,8 +55,14 @@ Move the notes vault out of the code repo into its own git repo, so notes are ne
 3. Where does Note Conventions live, and how do sessions load it once the vault is its own repo?
    - Today the `.claude/rules/note-conventions.md` symlink loads it whenever a skill or agent file is read. Across repos, a relative link breaks when a worktree sits at a different depth and in a routine's clone layout, and an absolute link works only on Sarah's machine. Found by /decide on decision 1 (2026-10-04).
    - It maps skills and agents and changes with them, but it also links `[[Roadmap]]` and Sarah may read it in Obsidian.
+   - **Decided 2026-10-05:** Note Conventions moves into the code repo as a real file at `.claude/rules/note-conventions.md`, in place of the symlink, and loads from there through its `paths` frontmatter like any rule file. Sarah's call.
+     - Rejected: keep it in the vault and load it another way - the symlink that loads it today breaks across repos.
 4. How does a workflow change that touches both the skills and the vault's own files (templates, Note Conventions, the Roadmap's rules) stay in step?
    - `/tooling` (`.claude/skills/tooling/SKILL.md:59`) treats these as one change today. After the move, the vault half goes live as soon as Obsidian Git pushes it, while `develop` and every open worktree run the old skills until the `/tooling` PR merges and `develop` is merged in. Found by /decide on decision 1 (2026-10-04).
+   - **Decided 2026-10-05:** the templates and the Roadmap's rules ("How this file works") move into the code repo, like Note Conventions, and version with the skills. When a workflow change also edits existing Roadmap lines or sections, such as renaming a section, those edits are applied after its `/tooling` PR merges; story progress still updates the Roadmap right away. Sarah's call after research: every past change to them also changed the skills or `vault-lint.sh` (Common Closure Principle), and she doesn't insert templates in Obsidian, so the vault loses nothing she uses.
+     - Rejected: keep the vault files and apply their half after the PR merges - every crossing change needs a second pass, and Sarah would review the vault half as a description, not in place.
+     - Rejected: backward-compatible vault edits (expand, then contract) - renames can't be made compatible cleanly, the clean-up pass has to be remembered, and the vault half is live before approval.
+     - Rejected: one combined change, accepting the gap - the vault half is live before approval, and an old worktree's `vault-lint.sh` can flag a restructured Roadmap that a session then reverts.
 
 # Design
 Questions for this section:
@@ -71,6 +76,10 @@ Questions for this section:
 - How does `/final-review` find a story's code range once the notes are in another repo? Today it uses the first commit that marks a step ✅ in the note, then its parent, and that commit won't be in the code repo. Branching and Releases changes the range again for story branches, so a range method that also works with story branches avoids doing it twice.
 - How does `scripts/vault-lint.sh` find the notes a session changed, now that the plugin commits them every few minutes? Today its per-note checks cover only uncommitted notes (`git status`), and AGENTS.md "Before you finish" relies on that. Options from /decide (2026-10-04): the session passes the note names (the script already takes them), or the script diffs from a starting point.
 - How do scripts and skill steps find the notes repo in a routine with both repos? Its working folder is the parent of the two clones, and it doesn't read the code repo's `.claude/settings.json`, so a fixed path or `$CLAUDE_PROJECT_DIR` won't find the notes there. Source: code.claude.com/docs/en/cloud-environments, "What carries over".
+- Where do the templates and the Roadmap's rules go in the code repo, and how do the skills that use them find them? Decision 4 (2026-10-05) moves them there. Findings from /decide:
+  - **What moves:** `notes/templates/` (12 files) and "How this file works" in `notes/Roadmap.md` (lines 5-29). The rules could go into `.claude/rules/note-conventions.md` or a file of their own, and the Roadmap could keep a pointer line to them.
+  - **What reads them:** 9 skills and agents read templates by path (`shape`, `decide`, `roadmap`, `tooling`, `retyping-a-note`, `close`, `check-drift`, `split-checker`, `scope-router`), and 5 skills point to "How this file works" (`implement`, `roadmap`, `tooling`, `roadmap-placement`, `kickoff`). Also AGENTS.md:66, Note Conventions' "Templates are in `templates/`", the `notes/templates/` exclusions in `vault-lint.sh`, `vault-orphans.sh` and `note-refs.sh`, and `notes/.obsidian/templates.json`, which can go.
+- How does `/tooling` hold a workflow change's edits to existing Roadmap lines or sections until its PR merges (decision 4)? `vault-lint.sh` hard-codes the Roadmap's section names and markers (lines 97-103 and 166-185), so it changes in the same PR as the skills.
 
 # Conventions
 

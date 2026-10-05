@@ -67,10 +67,12 @@ Run each failed job's script again.
 
   ```bash
   git push -u origin "claude/ci-fix-<run ID>"
-  gh pr create --base "<branch>" --head "claude/ci-fix-<run ID>" --title "Fix <failed jobs> on <branch>" --body "<body>"
+  gh pr create --base "<branch>" --head "claude/ci-fix-<run ID>" --title "Fix <failed jobs> on <branch>" --body-file - <<'EOF'
+  <body>
+  EOF
   ```
 
-  The body says the cause and the fix in a line or two, then links the original PR and the failed run. Claude Code adds the session's link to the body itself.
+  The quoted heredoc keeps the shell from running the body's backticks. The body says the cause and the fix in a line or two, then links the original PR and the failed run. Claude Code adds the session's link to the body itself.
 
   Stop with a summary for Sarah: the cause, the fix, the PR's link and anything she needs to decide.
 - **Any still fails, and you can't fix it,** for example because the fix needs a decision from Sarah or you can't find the cause: open no pull request. If you committed partial work, push the branch so she can look at it. Stop with a summary for Sarah: what you found, what you tried, the branch if you pushed one, and what you need from her.
