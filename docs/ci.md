@@ -95,7 +95,7 @@ When a check job in `checks.yml` is renamed, added or removed, change the rulese
 ## The Claude GitHub App
 The [Claude GitHub App](https://github.com/apps/claude) is installed on the repo, with access to only `meal-planning`. It lets routines clone the repo and push their `claude/` branches. A cloud session reaches GitHub through the cloud GitHub proxy, which authenticates `git` and `gh` with the app's access, so no GitHub token is stored anywhere.
 
-The app's access covers what the `ci-failure` session does on GitHub: opening a PR, reading a run (`gh run view`), re-running its failed jobs (`gh run rerun --failed`) and reading their logs (`gh run view --log-failed`). The logs need one more allowed host in the cloud environment (see "The Cloud Environment").
+The app's access covers what the `ci-failure` and `dependency-updates` sessions do on GitHub: opening and editing a PR, reading a run (`gh run view`), re-running its failed jobs (`gh run rerun --failed`) and reading their logs (`gh run view --log-failed`). The logs need one more allowed host in the cloud environment (see "The Cloud Environment").
 
 ## The Cloud Environment
 Routines run in a claude.ai cloud environment named `Meal Planning Routines` (at https://claude.ai/code, the cloud button above the message box). A new session starts from a snapshot of what its setup script installed, which claude.ai rebuilds about every seven days, or when the script changes.
