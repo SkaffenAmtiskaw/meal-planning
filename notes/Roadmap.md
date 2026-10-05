@@ -40,22 +40,22 @@
 - [[Dependency Update PRs]] ![[Dependency Update PRs#^status]] 🎯 [[Dev Foundations]]
 
 # Next
-1. [[Major Upgrade Sweeps]] ![[Major Upgrade Sweeps#^status]] 🎯 [[Dev Foundations]]
-2. [[Dependency Release Analysis]] ![[Dependency Release Analysis#^status]] 🎯 [[Dev Foundations]]
-3. [[Notes Vault Repo]] ![[Notes Vault Repo#^status]] 🎯 [[Dev Foundations]]
-4. [[Branching and Releases]] ![[Branching and Releases#^status]] 🎯 [[Dev Foundations]]
-5. [[Vercel Deploy Errors]] ![[Vercel Deploy Errors#^status]] 🎯 [[Dev Foundations]]
-6. [[Services and Environments Audit]] ![[Services and Environments Audit#^status]] 🎯 [[Dev Foundations]]
-7. [[Atlas Version Check Script]] ![[Atlas Version Check Script#^status]] 🎯 [[Dev Foundations]]
-8. [[Database Backup and Restore]] ![[Database Backup and Restore#^status]] 🎯 [[Dev Foundations]]
-9. [[E2E Tests in CI]] ![[E2E Tests in CI#^status]] 🎯 [[Dev Foundations]]
-10. [[Sentry Logging and Root Cause Analysis]] ![[Sentry Logging and Root Cause Analysis#^status]] 🎯 [[Dev Foundations]]
-11. [[Auth E2E Tests]] ![[Auth E2E Tests#^status]] 🎯 [[Dev Foundations]]
-12. [[Current Calendar E2E Tests]] ![[Current Calendar E2E Tests#^status]] 🎯 [[Dev Foundations]] 🎯 [[Calendar Page]]
-13. [[Recipes E2E Tests]] ![[Recipes E2E Tests#^status]] 🎯 [[Dev Foundations]]
-14. [[Settings E2E Tests]] ![[Settings E2E Tests#^status]] 🎯 [[Dev Foundations]]
-15. [[Sharing E2E Tests]] ![[Sharing E2E Tests#^status]] 🎯 [[Dev Foundations]]
-16. [[Agent Workflow Changes 2026-10-02]] ![[Agent Workflow Changes 2026-10-02#^status]] 🎯 [[Dev Foundations]]
+1. [[Agent Workflow Changes 2026-10-02]] ![[Agent Workflow Changes 2026-10-02#^status]] 🎯 [[Dev Foundations]]
+2. [[Major Upgrade Sweeps]] ![[Major Upgrade Sweeps#^status]] 🎯 [[Dev Foundations]]
+3. [[Dependency Release Analysis]] ![[Dependency Release Analysis#^status]] 🎯 [[Dev Foundations]]
+4. [[Notes Vault Repo]] ![[Notes Vault Repo#^status]] 🎯 [[Dev Foundations]]
+5. [[Branching and Releases]] ![[Branching and Releases#^status]] 🎯 [[Dev Foundations]]
+6. [[Vercel Deploy Errors]] ![[Vercel Deploy Errors#^status]] 🎯 [[Dev Foundations]]
+7. [[Services and Environments Audit]] ![[Services and Environments Audit#^status]] 🎯 [[Dev Foundations]]
+8. [[Atlas Version Check Script]] ![[Atlas Version Check Script#^status]] 🎯 [[Dev Foundations]]
+9. [[Database Backup and Restore]] ![[Database Backup and Restore#^status]] 🎯 [[Dev Foundations]]
+10. [[E2E Tests in CI]] ![[E2E Tests in CI#^status]] 🎯 [[Dev Foundations]]
+11. [[Sentry Logging and Root Cause Analysis]] ![[Sentry Logging and Root Cause Analysis#^status]] 🎯 [[Dev Foundations]]
+12. [[Auth E2E Tests]] ![[Auth E2E Tests#^status]] 🎯 [[Dev Foundations]]
+13. [[Current Calendar E2E Tests]] ![[Current Calendar E2E Tests#^status]] 🎯 [[Dev Foundations]] 🎯 [[Calendar Page]]
+14. [[Recipes E2E Tests]] ![[Recipes E2E Tests#^status]] 🎯 [[Dev Foundations]]
+15. [[Settings E2E Tests]] ![[Settings E2E Tests#^status]] 🎯 [[Dev Foundations]]
+16. [[Sharing E2E Tests]] ![[Sharing E2E Tests#^status]] 🎯 [[Dev Foundations]]
 17. [[Docs Audit]] ![[Docs Audit#^status]] 🎯 [[Dev Foundations]]
 
 # Planning
@@ -170,3 +170,4 @@
 - toggle light/dark mode
 - printable meal plan
 - [[What's Changed Notification]] ![[What's Changed Notification#^status]]
+- have a Vercel Deploy Errors session watch Vercel's status page and say when an incident ends, such as with a cron job, if checking it by hand becomes a problem ([[Vercel Deploy Errors]] decision 5)

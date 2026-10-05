@@ -11,6 +11,7 @@ Design approved. Blocked by [[Notes Vault Repo]]; then /plan-steps ^status
 Shaped as one infra story covering parallel story branches in worktrees, protection for `develop` and `main`, hotfixes and a release process. /infra-design wrote the Goals, Design, Conventions and Setup Outside the Repo on 2026-10-05, settling 22 more decisions along the way (8-29). Nothing is planned or built yet. /plan-steps runs once [[Notes Vault Repo]] is built, since the Design names the paths it leaves.
 
 # Inbox
+- A second route into `main`, for the design: [[Vercel Deploy Errors]] decision 2 (2026-10-05) has its routine open a `claude/` fix PR into `main` when a production deploy fails with a code cause, which Sarah merges and back-merge carries into `develop`. That changes decision 29 ("a hotfix is an ordinary bug story") for this case. The Flow ("A hotfix" or "When something fails") and `docs/branching.md`'s "When something goes wrong" (Piece 32) describe only releases and hotfixes reaching `main`, so they'd need this route. The rulesets don't change, since a PR from `claude/` into `main` already fits them. Found by /infra-design on Vercel Deploy Errors.
 
 # Purpose
 Let Sarah work on two product features at once with agents, protect `develop`, and give a finished goal a way to ship as a release.
