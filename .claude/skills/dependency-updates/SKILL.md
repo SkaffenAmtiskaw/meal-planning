@@ -46,7 +46,7 @@ Then run `pnpm install --frozen-lockfile`. Then run `pnpm lefthook install`, so 
 ## 3. Apply the updates
 Apply the security fixes first, then the patches, then the minors. Each update is its own commit, so Sarah can revert one alone and step 3 can find one that breaks a check.
 
-Commit after the update, once `package.json` or `pnpm-lock.yaml` shows the new version, with a message in the style of `git log`, such as `security: bump mongoose 9.0.2 → 9.7.2 for advisories 1118996, 1139503` or `deps: bump resend 6.10.0 → 6.32.0`. The pre-commit hooks run on each commit. If one fails, fix what it reports and commit again. Never skip them with `--no-verify`.
+Commit after the update, once `package.json` or `pnpm-lock.yaml` shows the new version, with a message in the style of `git log`, such as `security: bump mongoose 9.0.2 → 9.7.2 for advisories 1118996, 1139503` or `deps: bump resend 6.10.0 → 6.32.0`. A message always names the old and new versions. For a package that isn't in `package.json`, read both from `pnpm-lock.yaml`, as in `security: bump undici 7.24.6 → 7.30.0 for advisory 1121187`. The pre-commit hooks run on each commit. If one fails, fix what it reports and commit again. Never skip them with `--no-verify`.
 
 ### Security fixes
 Run `pnpm audit --json`. Its `advisories` object is keyed by advisory ID. For each advisory under `new:`, read its entry there:
