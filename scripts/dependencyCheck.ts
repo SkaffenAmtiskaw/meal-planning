@@ -1,9 +1,10 @@
 // Lists the security advisories and, with --weekly, the new versions of the
 // packages in package.json that aren't in the reported list, for the
-// dependency-updates workflow. Prints JSON with two parts: `new`, the findings
-// the list doesn't have, and `reported`, the updated list of every current
-// identifier, so a fixed advisory or a merged or superseded version drops out.
-// With no list, every finding is new.
+// dependency-updates workflow. Prints JSON with three parts: `new`, the
+// findings the list doesn't have; `reminders`, the advisories the list has that
+// are still unfixed, on the weekly check only; and `reported`, the updated list
+// of every current identifier, so a fixed advisory or a merged or superseded
+// version drops out. With no list, every finding is new.
 // It only reports: it never changes package.json or the lockfile.
 // `pnpm audit` reads only the lockfile, so the hourly check needs no
 // `pnpm install`. `pnpm outdated` needs one, so the weekly check does.
@@ -163,6 +164,14 @@ console.log(
 	JSON.stringify(
 		{
 			new: findings.filter((finding) => !reported.has(finding.id)),
+			// The weekly check repeats every unfixed advisory, so one isn't
+			// reported once and forgotten. Versions stay quiet once reported.
+			reminders: values.weekly
+				? findings.filter(
+						(finding) =>
+							finding.kind === 'advisory' && reported.has(finding.id),
+					)
+				: [],
 			reported: [...findings.map((finding) => finding.id), ...keptVersions],
 		},
 		null,

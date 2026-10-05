@@ -5,9 +5,9 @@ blocked-by: []
 confirmed: 2026-10-04
 ---
 # Where It Stands
-In progress. Next: /implement Step 4 ^status
+In progress. Next: /implement Step 5 ^status
 
-Split from [[Local Dependency Update Alerts]] on 2026-10-04. Its ten implementation steps were planned and approved on 2026-10-04. Steps 1-3 are built: `pnpm deps:check` lists the advisories that aren't in the reported list, `--weekly` adds new versions marked patch, minor or major, and CI lints and type-checks the script. Steps 4-10 remain.
+Split from [[Local Dependency Update Alerts]] on 2026-10-04. Its ten implementation steps were planned and approved on 2026-10-04. Steps 1-4 are built: `pnpm deps:check` lists the advisories that aren't in the reported list, `--weekly` adds new versions marked patch, minor or major and repeats every unfixed advisory as a reminder, and CI lints and type-checks the script. Steps 5-10 remain.
 
 # Inbox
 
@@ -146,8 +146,13 @@ Facts the steps rely on, checked 2026-10-04:
 - `scripts/dependencyCheck.ts` - weekly reminders
 
 **Acceptance:**
-- [ ] Save a fresh updated list from `pnpm deps:check --weekly` to `/tmp/reported.json`, as in Step 1, then run `pnpm deps:check --weekly --reported /tmp/reported.json`. See no new findings, and every advisory listed as a reminder, `undici` among them. Proves: an unfixed advisory comes back each week.
-- [ ] Run `pnpm deps:check --reported /tmp/reported.json`. See no new findings and no reminders. Proves: the hourly run never repeats an advisory.
+- [x] Save a fresh updated list from `pnpm deps:check --weekly` to `/tmp/reported.json`, as in Step 1, then run `pnpm deps:check --weekly --reported /tmp/reported.json`. See no new findings, and every advisory listed as a reminder, `undici` among them. Proves: an unfixed advisory comes back each week.
+- [x] Run `pnpm deps:check --reported /tmp/reported.json`. See no new findings and no reminders. Proves: the hourly run never repeats an advisory.
+
+**Status:** ✅ Complete
+
+**As built:**
+- The output is `{ "new": [...], "reminders": [...], "reported": [...] }`. Each reminder has the same shape as an advisory finding in `new`. `reminders` is always present, and is `[]` on an hourly run or with no list.
 
 ## Step 5: The routine, called by hand
 **Idea:** Calling the `dependency-updates` routine starts a session that summarizes the findings it was sent.
