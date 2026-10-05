@@ -18,7 +18,7 @@ Sarah decides what changes. Your job is to understand it fully and carry it thro
 This skill is for changes to how the app is built (skills, subagents, hooks, AGENTS.md, Note Conventions, templates, docs or tooling config), never to what the app does. App code changed only as a side effect, such as files reformatted by a new lint rule, is fine.
 
 The argument is one of:
-- **A note name:** find it in `notes/` and check its `type`:
+- **A note name:** find it in `notes/`. If it's a collecting note and a kicked-off copy of it (`<name> YYYY-MM-DD`) serves the building goal, work the copy instead. Check the note's `type`:
   - `workflow` with a What Belongs Here section: a collecting note. List its items, one line each, and point out any that are logically grouped, such as several rules that all land in the same doc. Ask Sarah which item or group this session does. That item or group is the change.
   - `workflow` without one: read all of it. The whole note is the change unless Sarah says otherwise.
   - blank, in `notes/features/tooling/`: a tooling note from before the workflow type existed. Ask Sarah whether it's a workflow note. If it is, give it `type: workflow`, remove its `status`, set its `^status` line to "Next: /tooling", and go on.

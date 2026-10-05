@@ -61,11 +61,11 @@ Save the list to `.scratch/<note name> - close.md`, and mark each item as you ha
 ## 3. Keep or delete
 The note is needed by every open story with a Content match. A Content match from an archived note counts for the stories in that note's `kept-for`, not for the archived note itself.
 
-**If an open story needs it,** go through those stories. For each: if another story also needs the content it relies on, that content can't move, because the design stays in one copy, so ask Sarah only to confirm keeping this note for that story. Otherwise, ask her whether to keep this note for that story, or move the content it relies on into the story so it no longer needs this note. Move the full step or section, its image embeds and the handoff text it relies on, never a summary, and leave a 🚛 pointer behind. Archived notes are effectively invisible, so design references must travel with the work.
+**If an open story needs it,** go through those stories. For each: if another story also needs the content it relies on, that content can't move, because the design stays in one copy, so this note is kept for that story without asking. Otherwise, ask her whether to keep this note for that story, or move the content it relies on into the story so it no longer needs this note. Move the full step or section, its image embeds and the handoff text it relies on, never a summary, and leave a 🚛 pointer behind. Archived notes are effectively invisible, so design references must travel with the work.
 
 **If no open story needs it,** it will be deleted. First, if it holds something that seems worth keeping for reference, such as a convention or the reason the code is the way it is, that's a doc gap. Handle it as AGENTS.md describes under "Doc gaps".
 
-Then tell Sarah the outcome in one line, either "keep in `archive/` for [[A]] and [[B]]" or "delete", and wait for her to confirm.
+Then tell Sarah the outcome in one line, either "keep in `archive/` for [[A]] and [[B]]" or "delete", and go on. It follows from her answers and the rules above, as AGENTS.md describes under "Approval covers the edits".
 
 ## 4. Handle the stories that waited on it
 Skip this for a re-close. Go through the Blocker matches.
