@@ -5,9 +5,9 @@ blocked-by: []
 confirmed: 2026-10-04
 ---
 # Where It Stands
-In progress. Next: /implement Step 8 ^status
+In progress. Next: /implement Step 9 ^status
 
-Split from [[Local Dependency Update Alerts]] on 2026-10-04. Its ten implementation steps were planned and approved on 2026-10-04. Steps 1-7 are built: `pnpm deps:check` lists the advisories that aren't in the reported list, `--weekly` adds new versions marked patch, minor or major and repeats every unfixed advisory as a reminder, and CI lints and type-checks the script. The `dependency-updates` routine exists on claude.ai, and its session puts the patches, minors and security fixes it's sent in a PR from `claude/dependency-updates` into `develop`, and lists the majors and reminders. While that PR is open, a run merges `develop` into it and adds its updates there. Once it's closed, the next run starts fresh. PR #23, from Step 7's second check, stays open for Step 8's check. Steps 8-10 remain.
+Split from [[Local Dependency Update Alerts]] on 2026-10-04. Its ten implementation steps were planned and approved on 2026-10-04. Steps 1-8 are built: `pnpm deps:check` lists the advisories that aren't in the reported list, `--weekly` adds new versions marked patch, minor or major and repeats every unfixed advisory as a reminder, and CI lints and type-checks the script. The `dependency-updates` routine exists on claude.ai, and its session puts the patches, minors and security fixes it's sent in a PR from `claude/dependency-updates` into `develop`, and lists the majors and reminders. While that PR is open, a run merges `develop` into it and adds its updates there. Once it's closed, the next run starts fresh. After pushing, the session waits for the PR's checks on GitHub, re-runs a failure there once, and drops an update that breaks a check only on GitHub's runner. PR #23 is still open, holding the `@tabler/icons-react` and `lefthook` bumps from Steps 7 and 8. Step 9's first check needs it closed or merged first. Steps 9 and 10 remain.
 
 # Inbox
 
@@ -270,7 +270,24 @@ Facts the steps rely on, checked 2026-10-04:
 - `.claude/skills/dependency-updates/SKILL.md` - waits for the PR's checks and handles a failure
 
 **Acceptance:**
-- [ ] Call the routine with `curl` and a text naming `patch lefthook@2.1.16`. See the session's summary say the PR's four checks passed on GitHub, with the run's link, and that run on the PR show all four green. Proves: the session doesn't end before GitHub has checked its PR.
+- [x] Call the routine with `curl` and a text naming `patch lefthook@2.1.16`. See the session's summary say the PR's four checks passed on GitHub, with the run's link, and that run on the PR show all four green. Proves: the session doesn't end before GitHub has checked its PR.
+
+**Status:** ✅ Complete
+
+**As built:**
+- Sarah decided 2026-10-05:
+  - A check that failed on the base in step 3 and fails on GitHub too is left as already explained: no re-run and no fix.
+  - A check that passed in step 3 goes straight to a re-run on GitHub, since step 3 already ran its script on the pushed commit.
+  - A failure the session reproduces from a runner-only difference is handled as step 3 handles a failing check, not fixed in code. If the base fails it too, it's explained. Otherwise the update that breaks it is bisected and dropped with a `git revert`, so nothing is force-pushed, and the body is rewritten with it under **Dropped**.
+  - After a revert, the session waits for the new run once more, then reports it with no further re-run or drop.
+  - A revert that conflicts in `package.json` or `pnpm-workspace.yaml` is resolved by keeping the branch's side, except the reverted update's own lines.
+- These replace the Approach's "fix a failure that reproduces on the same branch", and its implementer check changed to match. A Sonnet stand-in ran the skill against a throwaway PR with a unit test that failed only when `GITHUB_ACTIONS=true`. It saw the run fail, re-ran it on GitHub, reproduced the failure with the variable, bisected and reverted the update, pushed and saw the next run pass. The PR was then closed and its branch deleted.
+- A body rewrite reads the session's link from the newest commit with a `Claude-Session` trailer, since a revert keeps git's message and has none.
+- Sarah's check: the session joined [PR #23](https://github.com/SkaffenAmtiskaw/meal-planning/pull/23) with a merge of `develop` and `deps: bump lefthook 2.1.4 → 2.1.16`, rewrote its body, and reported that its checks run passed, with all four checks green.
+- Added at review: the session reported that `gh pr list` and `gh pr edit` fail because the cloud session can't reach GitHub's GraphQL API, and it fell back to REST. Sarah decided 2026-10-05 to fold the fix in here. Every pull request call in this skill now goes through `gh api` REST, and the base branch for `ci-failure` step 5's diagnosis is `develop`. The first live `POST` and `PATCH` come with Step 9's first run.
+- Pulled in at triage: the `ci-failure` skill's `gh pr create` and `gh pr view` became `gh api` REST calls too. It wasn't in this step's Files.
+- Boy Scout fix: `docs/ci.md`'s "The Claude GitHub App" says the app's access covers the `dependency-updates` session too.
+- `gh` is now installed on Sarah's Mac from Homebrew, and signed in.
 
 ## Step 9: The workflow starts the routine
 **Idea:** A scheduled workflow on `develop` starts the `dependency-updates` routine when `pnpm deps:check` finds something new.

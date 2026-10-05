@@ -56,8 +56,7 @@
 14. [[Settings E2E Tests]] ![[Settings E2E Tests#^status]] 🎯 [[Dev Foundations]]
 15. [[Sharing E2E Tests]] ![[Sharing E2E Tests#^status]] 🎯 [[Dev Foundations]]
 16. [[Agent Workflow Changes 2026-10-02]] ![[Agent Workflow Changes 2026-10-02#^status]] 🎯 [[Dev Foundations]]
-17. [[Dev Tooling Tidy-Ups 2026-10-02]] ![[Dev Tooling Tidy-Ups 2026-10-02#^status]] 🎯 [[Dev Foundations]]
-18. [[Docs Audit]] ![[Docs Audit#^status]] 🎯 [[Dev Foundations]]
+17. [[Docs Audit]] ![[Docs Audit#^status]] 🎯 [[Dev Foundations]]
 
 # Planning
 1. [[Calendar and Recipes Data Refresh]] ![[Calendar and Recipes Data Refresh#^status]] - ready. Fixes both stale-data symptoms; unblocks [[Add Meal Changes (Saved Recipes)]] and [[Mobile List View]]. 🎯 [[Calendar Page]] 🎯 [[App Health]]
@@ -169,4 +168,5 @@
 - a11y audit
 - audit app works fully in mobile
 - toggle light/dark mode
+- printable meal plan
 - [[What's Changed Notification]] ![[What's Changed Notification#^status]]

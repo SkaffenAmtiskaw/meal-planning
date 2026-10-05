@@ -34,11 +34,11 @@ If the block is missing any part (the run line, `new:` or `reminders:`), stop, a
 ## 2. Check out the branch
 If `new:` holds no patch, minor or advisory, such as a run with only majors or reminders, skip steps 2, 3 and 7: check out no branch, push nothing, and open or change no pull request.
 
-Otherwise, fetch the latest `develop` and look for an open pull request from `claude/dependency-updates`:
+Otherwise, fetch the latest `develop` and look for an open pull request from `claude/dependency-updates`. This session reaches GitHub's REST API but not its GraphQL API, which the `gh pr` commands use, so every pull request call in this skill goes through `gh api`, which fills in `{owner}` and `{repo}` itself:
 
 ```bash
 git fetch origin develop
-gh pr list --head claude/dependency-updates --base develop --state open --json number,url
+gh api -X GET "repos/{owner}/{repo}/pulls" -F head="{owner}:claude/dependency-updates" -f base=develop -f state=open --jq '.[] | "\(.number) \(.html_url)"'
 ```
 
 ### An open pull request
@@ -174,12 +174,12 @@ git push origin claude/dependency-updates
 Then rewrite the pull request's body, so it lists everything in the pull request, not only what the first run put there:
 
 ```bash
-gh pr edit "<number>" --body-file - <<'EOF'
+gh api -X PATCH "repos/{owner}/{repo}/pulls/<number>" -F body=@- --jq .html_url <<'EOF'
 <body>
 EOF
 ```
 
-Build the body's lists from the commits on the branch that aren't on `develop`: `git log --no-merges --reverse --format=%B origin/develop..claude/dependency-updates`. Each one names its package, its old and new versions and any advisories it fixes. Take each earlier advisory's severity from the current body, read with `gh pr view "<number>" --json body --jq .body`. A package two runs both updated is one line, from its version before the first update to its version after the last. Leave out an update that a later `Revert "<its message>"` commit takes back. **Dropped** lists only this run's dropped updates.
+Build the body's lists from the commits on the branch that aren't on `develop`: `git log --no-merges --reverse --format=%B origin/develop..claude/dependency-updates`. Each one names its package, its old and new versions and any advisories it fixes. Take each earlier advisory's severity from the current body, read with `gh api "repos/{owner}/{repo}/pulls/<number>" --jq .body`. A package two runs both updated is one line, from its version before the first update to its version after the last. Leave out an update that a later `Revert "<its message>"` commit takes back. **Dropped** lists only this run's dropped updates.
 
 Leave out everything the current body has after its lists, such as an earlier session's link and the footers Claude Code added. Claude Code adds a footer when a body is edited too, but without the session's link, so end the body with `Session: <link>`, this session's link, read from the `Claude-Session` trailer of the latest commit that has one. A revert (step 7) keeps git's message, so it has none:
 
@@ -192,10 +192,12 @@ Push the branch over any branch a closed pull request left behind, but only if i
 
 ```bash
 git push -u --force-with-lease="claude/dependency-updates:<commit from step 2>" origin claude/dependency-updates
-gh pr create --base develop --head claude/dependency-updates --title "Dependency updates" --body-file - <<'EOF'
+gh api -X POST "repos/{owner}/{repo}/pulls" -f base=develop -f head=claude/dependency-updates -f title="Dependency updates" -F body=@- --jq .html_url <<'EOF'
 <body>
 EOF
 ```
+
+It prints the new pull request's link.
 
 If `git ls-remote` printed nothing, leave the commit empty, as in `--force-with-lease="claude/dependency-updates:"`, so the push is rejected if the branch has appeared since.
 
@@ -233,6 +235,7 @@ When it finishes:
 ### A check that fails only on GitHub
 Follow step 5 of the `ci-failure` skill (`.claude/skills/ci-failure/SKILL.md`), from "Check the head branch hasn't moved on" to its end, with these differences:
 - The head branch is `claude/dependency-updates`, the failed commit is the one you pushed, and the failed jobs are only the ones sent here. You're already on the branch, so don't check out the failed commit.
+- The pull request's base branch is `develop`, so don't look it up with `gh pr view`, which this session can't reach (step 2).
 - When it judges attempt 2, look only at the jobs sent here. A job that failed on the base fails again, so attempt 2 fails as a whole even when every job sent here passed. List attempt 2's failed jobs with `gh run view "<run ID>" --attempt 2 --json jobs --jq '.jobs[] | select(.conclusion == "failure") | .name'`.
 - Where it says to stop with a verdict or a summary, don't stop: keep what it would say, and its links, for the summary in step 8.
 - Where it says to go to step 4, don't fix the code. The failure reproduces here, so handle it as step 3 of this skill handles a check that fails, as below.

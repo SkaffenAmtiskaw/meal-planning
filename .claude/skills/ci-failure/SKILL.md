@@ -63,16 +63,16 @@ If that's a different commit from the failed one, run `pnpm install --frozen-loc
 Commit the fix there with a message in the style of `git log`, naming the cause. The pre-commit hooks run on the commit. If one fails, fix what it reports and commit again. Never skip them with `--no-verify`.
 
 Run each failed job's script again.
-- **Every one passes:** push the branch, then open a pull request from it into the head branch:
+- **Every one passes:** push the branch, then open a pull request from it into the head branch. This session reaches GitHub's REST API but not its GraphQL API, which the `gh pr` commands use, so pull request calls go through `gh api`, which fills in `{owner}` and `{repo}` itself:
 
   ```bash
   git push -u origin "claude/ci-fix-<run ID>"
-  gh pr create --base "<branch>" --head "claude/ci-fix-<run ID>" --title "Fix <failed jobs> on <branch>" --body-file - <<'EOF'
+  gh api -X POST "repos/{owner}/{repo}/pulls" -f base="<branch>" -f head="claude/ci-fix-<run ID>" -f title="Fix <failed jobs> on <branch>" -F body=@- --jq .html_url <<'EOF'
   <body>
   EOF
   ```
 
-  The quoted heredoc keeps the shell from running the body's backticks. The body says the cause and the fix in a line or two, then links the original PR and the failed run. Claude Code adds the session's link to the body itself.
+  It prints the new pull request's link. The quoted heredoc keeps the shell from running the body's backticks. The body says the cause and the fix in a line or two, then links the original PR and the failed run. Claude Code adds the session's link to the body itself.
 
   Stop with a summary for Sarah: the cause, the fix, the PR's link and anything she needs to decide.
 - **Any still fails, and you can't fix it,** for example because the fix needs a decision from Sarah or you can't find the cause: open no pull request. If you committed partial work, push the branch so she can look at it. Stop with a summary for Sarah: what you found, what you tried, the branch if you pushed one, and what you need from her.
@@ -129,7 +129,7 @@ gh run view "<run ID>" --attempt 2 --log-failed
 Look for what differs between this session and the runner, such as:
 - the tool versions the logs show, against `node --version` and `pnpm --version` here
 - the variables the runner sets, such as `CI` and `GITHUB_ACTIONS`
-- the commit tested: GitHub ran the checks on a merge of the failed commit into the PR's base branch (`gh pr view "<PR number>" --json baseRefName`). If you merge it here to reproduce the failure, fetch the base branch the way step 2 fetches the head branch, merge in a detached checkout, and never push the merge.
+- the commit tested: GitHub ran the checks on a merge of the failed commit into the PR's base branch (`gh api "repos/{owner}/{repo}/pulls/<PR number>" --jq .base.ref`, since `gh pr view` can't reach GitHub's GraphQL API here). If you merge it here to reproduce the failure, fetch the base branch the way step 2 fetches the head branch, merge in a detached checkout, and never push the merge.
 
 When you find a likely cause, reproduce it here before you fix anything: recreate that difference, such as by setting the variable, and run each failed job's script again.
 - **The failure shows up:** go to step 4.
