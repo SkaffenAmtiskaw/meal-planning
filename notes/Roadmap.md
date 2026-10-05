@@ -46,10 +46,15 @@
 4. [[Notes Vault Repo]] ![[Notes Vault Repo#^status]] 🎯 [[Dev Foundations]]
 5. [[Branching and Releases]] ![[Branching and Releases#^status]] 🎯 [[Dev Foundations]]
 6. [[E2E Tests in CI]] ![[E2E Tests in CI#^status]] 🎯 [[Dev Foundations]]
-7. [[Agent Workflow Changes 2026-10-02]] ![[Agent Workflow Changes 2026-10-02#^status]] 🎯 [[Dev Foundations]]
-8. [[Dev Tooling Tidy-Ups 2026-10-02]] ![[Dev Tooling Tidy-Ups 2026-10-02#^status]] 🎯 [[Dev Foundations]]
-9. [[Finish OpenCode Migration]] ![[Finish OpenCode Migration#^status]] 🎯 [[Dev Foundations]]
-10. [[Docs Audit]] ![[Docs Audit#^status]] 🎯 [[Dev Foundations]]
+7. [[Auth E2E Tests]] ![[Auth E2E Tests#^status]] 🎯 [[Dev Foundations]]
+8. [[Current Calendar E2E Tests]] ![[Current Calendar E2E Tests#^status]] 🎯 [[Dev Foundations]] 🎯 [[Calendar Page]]
+9. [[Recipes E2E Tests]] ![[Recipes E2E Tests#^status]] 🎯 [[Dev Foundations]]
+10. [[Settings E2E Tests]] ![[Settings E2E Tests#^status]] 🎯 [[Dev Foundations]]
+11. [[Sharing E2E Tests]] ![[Sharing E2E Tests#^status]] 🎯 [[Dev Foundations]]
+12. [[Agent Workflow Changes 2026-10-02]] ![[Agent Workflow Changes 2026-10-02#^status]] 🎯 [[Dev Foundations]]
+13. [[Dev Tooling Tidy-Ups 2026-10-02]] ![[Dev Tooling Tidy-Ups 2026-10-02#^status]] 🎯 [[Dev Foundations]]
+14. [[Finish OpenCode Migration]] ![[Finish OpenCode Migration#^status]] 🎯 [[Dev Foundations]]
+15. [[Docs Audit]] ![[Docs Audit#^status]] 🎯 [[Dev Foundations]]
 
 # Planning
 1. [[Calendar and Recipes Data Refresh]] ![[Calendar and Recipes Data Refresh#^status]] - ready. Fixes both stale-data symptoms; unblocks [[Add Meal Changes (Saved Recipes)]] and [[Mobile List View]]. *(was bugfix)* 🎯 [[Calendar Page]] 🎯 [[App Health]]
@@ -67,7 +72,6 @@
 - [[Atlas Version Check Script]] ![[Atlas Version Check Script#^status]]
 - [[Sentry Logging and Root Cause Analysis]] ![[Sentry Logging and Root Cause Analysis#^status]] *(was high)*
 - [[Database Backup and Restore]] ![[Database Backup and Restore#^status]]
-- [[Core Flows E2E Tests]] ![[Core Flows E2E Tests#^status]] 🎯 [[Calendar Page]]
 - We also need a routine to handle Vercel deploy failures, just like the planned ones for CI failures and Sentry errors
 
 ## [[Calendar Page]]

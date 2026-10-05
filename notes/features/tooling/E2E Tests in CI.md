@@ -47,7 +47,7 @@ Questions for this section:
 # Setup Outside the Repo
 
 # Out of Scope
-- Writing more E2E tests: [[Core Flows E2E Tests]] and [[Calendar E2E Tests]].
+- Writing more E2E tests: [[Auth E2E Tests]], [[Current Calendar E2E Tests]], [[Recipes E2E Tests]], [[Settings E2E Tests]], [[Sharing E2E Tests]] and [[Calendar E2E Tests]].
 - Stopping the four existing check jobs from downloading MongoDB: an item in [[Dev Tooling Tidy-Ups]].
 - Feature branches, protecting `develop` and the release process, which may later change where the E2E tests run: [[Branching and Releases]].
 - A doc on creating a new environment: [[Services and Environments Audit]]. CI needs no new environment, since the E2E tests run against a throwaway database with dummy values (Sarah confirmed 2026-10-02).
