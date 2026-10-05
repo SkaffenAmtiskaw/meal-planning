@@ -68,11 +68,16 @@ When a step adds behavior to an existing module, name the job that module alread
 Each acceptance criterion is a checkbox. What kind of check it is depends on what the step changes:
 - **Only test files:** break-it checks, as "Test-only steps" below describes. If any of the files are E2E code, as `docs/e2e_tests.md` lists under "Where E2E Code Lives", the step also gets a run-and-see check, as "E2E steps" below describes.
 - **Infrastructure in an infra story,** such as a workflow, a script or a config file: run-and-see checks. "Run [command] or [open a PR into `main`], see [result]." Say what the check needs, such as a branch with a failing test.
-- **Anything else:** a click-through in the running app. "Go to [view], [do something], see [result]." Say which user (for example, read-only), which screen size (phone or desktop), and what data is needed (for example, a day with two meals).
+- **Anything else:** a click-through in the running app. "Go to [view], [do something], see [result]." Say which screen size (phone or desktop) and what data is needed (for example, a day with two meals). If it needs a signed-in user, say which one, as "Which user a check signs in as" below describes.
 
 Each check ends by saying briefly what it proves, such as "Proves: a re-run Sarah starts doesn't start a second session." Sarah has to be able to tell what a check would teach her before she spends time on it.
 
 Never use "tests pass", "inspect the code" or "types compile" as a check. Tests passing is assumed for every step. Failure, empty and read-only behaviors are checked in the step that builds them.
+
+#### Which user a check signs in as
+A click-through check that needs a signed-in user says who it signs in as:
+- **If it changes the user's email:** a new user it signs up through the app. `pnpm seed` finds seeded users by their email, so it would leave a seeded user with a changed email behind.
+- **Otherwise:** a seeded user, named by key: `owner`, `admin`, `write` or `read`, as listed in `seed/users.ts`. If the behavior differs by access level, it's the user at that level.
 
 #### What Sarah checks and what the implementer checks
 Whatever kind they are, Sarah's checks prove the finished step works. Any other verification goes in the step's **Approach**, as work the implementing agent does:

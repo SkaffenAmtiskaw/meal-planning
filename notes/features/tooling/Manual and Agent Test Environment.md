@@ -5,9 +5,9 @@ blocked-by: []
 confirmed: 2026-10-01
 ---
 # Where It Stands
-In progress. Next: /implement Step 10 ^status
+In progress. Next: /implement Step 11 ^status
 
-Steps 1 to 9 are done: `pnpm seed` runs through tsx against the dev database and refuses any other database before connecting, Biome checks `seed/` with the test-support import bans, and each run removes everything seeded before, then creates the four seeded users with their personal planners and a shared planner filled with tags, recipes, bookmarks and meals. `pnpm sign-in` serves a link per seeded user at `http://localhost:3001` that signs any browser in as them, and `pnpm dev:sign-in` runs it alongside the dev server. Agents sign in through those links as the seeded user a check names, and nothing in `.claude/` or AGENTS.md points at the old test login. `docs/seed.md` describes the seed and its reset convention, and AGENTS.md sends anyone changing `seed/` or adding a model there. Steps 10 and 11 remain.
+Steps 1 to 10 are done: `pnpm seed` runs through tsx against the dev database and refuses any other database before connecting, Biome checks `seed/` with the test-support import bans, and each run removes everything seeded before, then creates the four seeded users with their personal planners and a shared planner filled with tags, recipes, bookmarks and meals. `pnpm sign-in` serves a link per seeded user at `http://localhost:3001` that signs any browser in as them, and `pnpm dev:sign-in` runs it alongside the dev server. Agents sign in through those links as the seeded user a check names, and nothing in `.claude/` or AGENTS.md points at the old test login. `docs/seed.md` describes the seed and its reset convention, and AGENTS.md sends anyone changing `seed/` or adding a model there. `/plan-steps` writes each check that needs a signed-in user as a named seeded user, or as a new user signed up through the app when the check changes the email. Step 11 remains.
 
 # Inbox
 
@@ -372,9 +372,11 @@ Afterwards, reread the whole "Checks" section so it reads naturally as a whole.
 **Files:**
 - `.claude/skills/plan-steps/SKILL.md` - the two conventions under "Checks"
 
-**Acceptance:**
-- [ ] Start a new Claude Code session and ask: "Following the Checks section of the plan-steps skill, write the acceptance check for a step that hides the Add meal button from read-only members." See the check sign in as `read`. Proves: checks name the seeded user at the access level they test.
-- [ ] In the same session, ask: "Now write the check for a step that lets a user change their email in Settings." See the check sign up a new user through the app instead of using a seeded one. Proves: email-change checks leave seeded users where `pnpm seed` can find them.
+**Status:** ✅ Complete
+
+**As built:**
+- The two conventions are one rule with cases, the email-change case first and then "Otherwise: a seeded user", in a new "Which user a check signs in as" subsection (Sarah's call 2026-10-04: condition before instruction, so an agent doesn't act on "name a seeded user" and miss the exception).
+- Both acceptance checks were dropped (Sarah's call 2026-10-04): the implementer gave both prompts to a fresh subagent, which loads AGENTS.md and none of the implementing session's context. Its check for hiding Add meal signed in as `read` (and `write` for contrast), and its email-change check signed up a new user, citing the reason `pnpm seed` would leave a changed seeded user behind.
 
 ## Step 11: Delete the old test login
 **Idea:** The old test login file is deleted.
