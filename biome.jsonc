@@ -5,6 +5,7 @@
 			"test/**/*",
 			"e2e/**/*",
 			"seed/**/*",
+			"scripts/**/*.ts",
 			"playwright.config.ts"
 		]
 	},

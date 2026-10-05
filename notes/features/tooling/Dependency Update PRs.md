@@ -5,9 +5,9 @@ blocked-by: []
 confirmed: 2026-10-04
 ---
 # Where It Stands
-In progress. Next: /implement Step 2 ^status
+In progress. Next: /implement Step 3 ^status
 
-Split from [[Local Dependency Update Alerts]] on 2026-10-04. Its ten implementation steps were planned and approved on 2026-10-04. Step 1 is built: `pnpm deps:check` lists the advisories that aren't in the reported list. Steps 2-10 remain.
+Split from [[Local Dependency Update Alerts]] on 2026-10-04. Its ten implementation steps were planned and approved on 2026-10-04. Steps 1-2 are built: `pnpm deps:check` lists the advisories that aren't in the reported list, and CI lints and type-checks the script. Steps 3-10 remain.
 
 # Inbox
 
@@ -99,7 +99,13 @@ Facts the steps rely on, checked 2026-10-04:
 - `scripts/dependencyCheck.ts` - whatever Biome reports
 
 **Acceptance:**
-- [ ] Temporarily add an unused variable to `scripts/dependencyCheck.ts`, run `pnpm lint:ci`, and see Biome report it in that file. Revert. Proves: CI lints the script.
+- [x] Temporarily add an unused variable to `scripts/dependencyCheck.ts`, run `pnpm lint:ci`, and see Biome report it in that file. Revert. Proves: CI lints the script.
+
+**Status:** ✅ Complete
+
+**As built:**
+- Biome found nothing to fix in the script, so `biome.jsonc` is the only file changed.
+- The implementer ran the type-check probe from the Approach: `pnpm check:types` reported `TS2322` in `scripts/dependencyCheck.ts`, then the probe was reverted.
 
 ## Step 3: The weekly check lists new versions
 **Idea:** `pnpm deps:check --weekly` also lists new versions of the packages in `package.json`, each marked patch, minor or major.
