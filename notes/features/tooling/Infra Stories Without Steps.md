@@ -6,7 +6,7 @@ confirmed: 2026-10-05
 # Where It Stands
 Design approved. Next: a one-off session for Step 1 (see Inbox), then /implement ^status
 
-/infra-design wrote the Goals and the Design on 2026-10-05, with this story's own Build Order of four steps. It sets no Conventions and needs no Setup Outside the Repo. Nothing is built yet. Step 1 is built in a one-off plain session, since no skill builds a Build Order step until it lands, and `/implement` builds Steps 2 to 4.
+/infra-design wrote the Goals and the Design on 2026-10-05, with this story's own Build Order of four steps. It sets no Conventions and needs no Setup Outside the Repo. Nothing is built yet. Step 1 is built in a one-off plain session, since no skill builds a Build Order step until it lands, and `/implement` builds Steps 2 to 4. Sarah decided 2026-10-05 to build it once the [[Agent Workflow Changes 2026-10-02]] items that affect it are done, so its skill edits are written with them in place: "Tell what Sarah wants apart from what she only approved" and "Skill and doc edits read as a whole".
 
 # Inbox
 - For the one-off session that builds Step 1 of the Build Order, as Sarah decided 2026-10-05: no skill builds a Build Order step yet, so Sarah starts a plain session and asks it to build Step 1 of Infra Stories Without Steps, as this item says. The session reads this note and `.claude/skills/implement/SKILL.md`, and works as `/implement` would on a step, with three differences:
