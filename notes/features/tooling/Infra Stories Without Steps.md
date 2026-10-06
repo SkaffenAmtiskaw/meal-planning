@@ -6,7 +6,7 @@ confirmed: 2026-10-05
 # Where It Stands
 In progress. Next: /implement ^status
 
-/infra-design wrote the Goals and the Design on 2026-10-05, with this story's own Build Order of four steps. Step 1 is built: `/implement` now builds a Build Order step. Steps 2 to 4 remain, each in its own `/implement` session. Sarah first decided to build the story once the [[Agent Workflow Changes 2026-10-02]] items that affect it were done. On 2026-10-05 she decided to go ahead before its "Skill and doc edits read as a whole" item, with each session following `/tooling`'s readability guidance instead.
+/infra-design wrote the Goals and the Design on 2026-10-05, with this story's own Build Order of four steps. Steps 1 and 2 are built: `/implement` builds a Build Order step, and `/infra-design` writes Goals by the new rule and a Build Order, with Note Conventions and the Infra template to match. Steps 3 and 4 remain, each in its own `/implement` session. Sarah first decided to build the story once the [[Agent Workflow Changes 2026-10-02]] items that affect it were done. On 2026-10-05 she decided to go ahead before its "Skill and doc edits read as a whole" item, with each session following `/tooling`'s readability guidance instead.
 
 # Inbox
 - For each `/implement` session on Steps 2 to 4: before drafting a change to a skill, agent, AGENTS.md, Note Conventions or a template, read `/tooling`'s "Writing instructions" and "Readable as a whole" guidance in step 3 of `.claude/skills/tooling/SKILL.md`, and follow it. Sarah decided 2026-10-05 to build the story before the "Skill and doc edits read as a whole" item in [[Agent Workflow Changes 2026-10-02]] moves that guidance where every session reads it. Delete this item once Step 4 is complete, or once that item lands.
@@ -16,7 +16,7 @@ Sarah wonders whether `/plan-steps` is inappropriate for `infra` stories. It's b
 
 # Goals
 - [ ] Sarah's checks on an infra story prove that it works, not that its code matches what she expected.
-- [ ] `/implement` asks Sarah to check an infra story only when a chunk reaches one of its Goals or needs something only she can do.
+- [x] `/implement` asks Sarah to check an infra story only when a chunk reaches one of its Goals or needs something only she can do.
 - [ ] Each check Sarah does on an infra story says exactly what to run, paste or open. Where that can only be known at build time, `/implement` gives it to her in chat, ready to paste.
 - [ ] The Goals `/infra-design` writes name only what Sarah wants to get out of the story. Requirements that serve them, such as Notes Vault Repo's scripts working from a worktree, go in the Design, and the implementer checks those, not Sarah.
 - [ ] Sarah approves an infra story's build order, in session-sized chunks, along with its Design, and no separate planning session follows.
@@ -93,7 +93,10 @@ This story builds the path it would use, so Sarah decided 2026-10-05 that Step 1
 **Setup first:** none
 **Implementer checks:** Note Conventions' rows for other types are unchanged.
 **Sarah checks:**
-- [ ] When this `/implement` session reports, see that it asked you to check nothing beyond approving its drafts, and ended with one table of changed files and a link to the full diff. Goal: `/implement` asks only when a chunk reaches a Goal or needs something only Sarah can do.
+- [x] When this `/implement` session reports, see that it asked you to check nothing beyond approving its drafts, and ended with one table of changed files and a link to the full diff. Goal: `/implement` asks only when a chunk reaches a Goal or needs something only Sarah can do.
+
+**Status:** ✅ Complete
+**As built:** at review, Sarah approved a Size rule for judging one session: the Pieces in a step share an area (the same files, docs or library), and two Pieces in unrelated areas that can each be checked on their own are separate steps. The `infra` · `spec` row in Note Conventions reads "Revise the Design and the Build Order's remaining steps", without naming who sends a story back, which the `/check-drift` row already says. Beyond Piece 2's list, the Build Order step lets Implementer checks say "none", requires every Piece to be built by some step, and moves a check the implementer's own run covers into Implementer checks. Out-of-scope triage stays at step 6, before the Build Order (step 7), so pulled-in items get a step. The Where It Stands examples in the Infra template still name `/plan-steps`, since that comment is shared by six templates.
 
 ### Step 3: The rest of the workflow follows Build Orders
 **Builds:** Pieces 5, 6, 7 and 10
