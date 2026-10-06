@@ -1,14 +1,13 @@
 ---
 type: infra
 status: idea
-blocked-by:
-  - "decision needed: how a hard E2E failure gets a stronger model"
-confirmed: 2026-10-02
+blocked-by: []
+confirmed: 2026-10-06
 ---
 # Where It Stands
-Next: /decide ^status
+Decisions made. Next: /infra-design ^status
 
-Shaped as one infra story: an `e2e` job on PRs into `main`, and when it fails, `ci-failure` runs a root cause analysis that the Sentry routine can reuse. Split from E2E Testing on 2026-09-28. One open decision first, then `/infra-design`.
+Shaped as one infra story: an `e2e` job on PRs into `main`, and when it fails, `ci-failure` runs a root cause analysis that the Sentry routine can reuse. Split from E2E Testing on 2026-09-28. Its one open decision was settled on 2026-10-06, so the design comes next.
 
 # Inbox
 - Background for `/infra-design`, from the idea note: the E2E tests build the app into the default `.next` folder, the same one `pnpm build` uses (`docs/e2e_tests.md`, "How a Run Works"; Sarah decided 2026-09-29 not to give it a separate folder). Nothing in CI may run another `next build` in the same checkout while the E2E tests run, or the two builds collide.
@@ -32,6 +31,8 @@ Sarah's notes from E2E Testing:
 1. How does a hard E2E failure's diagnosis get a stronger model? A routine has one model for every run, and `ci-failure` runs on Sonnet (`.claude/skills/ci-failure/routine.md`). The two ways found while planning CI Failure Sessions 2026-09-30:
    - the skill hands a hard failure's diagnosis to a subagent set to a stronger model, such as Opus
    - a second routine with its own model, which the workflow fires instead of `ci-failure` when the E2E job fails
+   - **Decided 2026-10-06:** the skill hands a hard failure's diagnosis to a subagent set to a stronger model, following the pattern [[Dependency Release Analysis]] uses: the routine stays on Sonnet, and a subagent whose `model` frontmatter is `opus` does the work that needs more reasoning (its `upgrade-assessor`, decided in [[Local Dependency Update Alerts]]). Sarah's call: follow the pattern already established.
+     - Rejected: a second routine with its own model, fired instead of `ci-failure` when the E2E job fails - the established pattern keeps one Sonnet routine and moves the hard work to an Opus subagent
 
 # Design
 Questions for this section:
