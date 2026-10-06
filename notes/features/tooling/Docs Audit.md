@@ -3,37 +3,22 @@ type:
 status: idea
 confirmed: 2026-09-28
 ---
-%% For jotting something down quickly. Leave `type` blank until it's clear what kind of story this is (feature / bug / pattern / cleanup / workflow), then move the content into that template. %%
-
 # Where It Stands
-
-%% The line ending in ` ^status` is the story's status and nothing else: what work it needs next, or what it's waiting on, e.g. "Next: design session in Claude Design, then /assess" or "Blocked until [[Stale Data Issues]] lands". Don't describe the story here; the Roadmap link already names it and Purpose describes it. The Roadmap embeds that line with `![[<note>#^status]]`, so keep the ` ^status` ID on it. Add detail below it only when the story needs it. %%
-
-Next: /shape ^status
+Next: /shape. Building waits on [[What Makes a Good Doc]] ^status
 
 # Notes
-Check every project doc against the code and confirm it matches reality. Fix what's wrong or out of date, and note what's missing. It's a Done When item of [[Dev Foundations]]: "Documentation is confirmed to match reality."
+Check every project doc against the code and against the standard for good docs that [[What Makes a Good Doc]] sets. Fix what's wrong, out of date or short of the standard, and note what's missing. It's a Done When item of [[Dev Foundations]]: "Documentation is confirmed to match reality."
 
-The docs are the five files in `docs/`: `project_conventions.md`, `project_structure.md`, `style_guidelines.md`, `theme.md` and `unit_tests.md`.
+The docs are every file in `docs/`.
 
 `README.md` is still the Mantine template ("Mantine Next Template", "Use this template") and says nothing about the meal-planning app, so it could mislead an agent. The audit covers it too.
 
 Some lines in the codebase docs talk to an agent instead of describing the code: "Before adding 'use client', ask yourself:" and its three questions in `docs/project_conventions.md`, and the Code Coverage line in `docs/unit_tests.md` that says never to exclude code from coverage unless the user says to. The coverage line also repeats AGENTS.md's "Ignore comments" rule under "Git and files" in different words, so the two could drift. Found 2026-09-28 while `/tooling` split the docs into two kinds.
 
-The docs are also more prescriptive than docs written for human engineers would be. Sarah noted 2026-09-28, while `/tooling` worked through [[Docs Updates]], that she'd never have given people a rule like the 3-test-file threshold in "Creating Centralized Mocks" in `docs/unit_tests.md`; she'd have called out messy mocks in a PR. The audit judges each rule on that, and settles how docs are worded: as descriptions of the codebase, not instructions to an agent. `/tooling` says only that docs describe the codebase, not how they're worded, so the outcome may need a line there so new docs don't drift back.
-
-Agent instructions that write docs should describe what a good doc looks like, rather than carry narrow rules about particular doc sections. ([Sarah] - Maybe a shared skill rather than a meta document about what good doc looks like.) A pattern note's Rules, with their Checks and Enforcement, are planning material. The doc that grows from them is a guide for whoever does the work: what to do, where things go and why, with enforcement at most a closing paragraph for anyone who needs to change it. Found 2026-09-29 while implementing Step 3 of E2E Test Setup, whose Approach said "Each Rule keeps its Check"; Sarah said the bulk of a doc shouldn't focus on rules or enforcement.
-
-A good doc also reads as one piece after every change. Sarah noted 2026-09-29, in the same session, that agents tend to insert paragraphs into docs wherever they happen to fit. Whatever describes good docs should cover this: an addition means rereading the section it lands in and restructuring it, not appending text.
+The docs are also more prescriptive than docs written for human engineers would be, such as the 3-test-file threshold in "Creating Centralized Mocks" in `docs/unit_tests.md`. The audit judges each rule against the standard.
 
 Found 2026-09-28 while shaping [[Dev Foundations]] with `/roadmap`.
 
-[Sarah] - Also in this audit we should do a check for human-readability. If the `docs/` directory is supposed to be read by both humans and agents, we need to make sure that the organization and prose is human-friendly. We also should make sure knowledge isn't assumed. An agent might have a consistent knowledge baseline but humans don't.
-
 [Sarah] - We might need to make this the last (or one of the last) items in the [[Dev Foundations]] goal. That way most of the plumbing is decided and wired up, and this story becomes a matter of making sure it's documented, and making sure that documentation is discoverable and readable.
-
-[Sarah] - We should add somewhere in this that I have a very slight preference for title-cased headers. It's not so strong a preference I'd ever reject work based on not having it, but I like it better.
-
-[Sarah] - Apparently there's published best practices for docs (the decision agent for Vercel Deploy errors referenced Google and Diátaxis). We should research best practices and come up with a list our docs should follow.
 
 # Questions
