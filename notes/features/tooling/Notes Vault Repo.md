@@ -11,6 +11,7 @@ Ready. Next: /implement. Steps 6 and 7 wait on [[Major Upgrade Sweeps]] ^status
 Shaped 2026-10-04, with five decisions settled on 2026-10-04 and 2026-10-05. `/infra-design` revised it on 2026-10-06: three Goals became requirements on their Pieces, and an 8-step Build Order replaced the 11 planned steps. Nothing is built yet. Steps 1-5 can be built now, while the notes are still in `notes/`.
 
 # Inbox
+- From [[Agent Instructions Audit]] (`/decide`, 2026-10-06): Note Conventions now loads on demand, not through `paths` frontmatter in `.claude/rules/`. Agent Instructions Audit makes that change: it removes the `.claude/rules/note-conventions.md` symlink and the `paths` frontmatter, and AGENTS.md's "Anything bigger, outside a skill" line points a session that changes a skill or agent to Note Conventions. Decision 3, Pieces 5, 7 and 12 and Step 2 assume Note Conventions moves to `.claude/rules/` and loads through `paths`, so its new home in the code repo has to be outside `.claude/rules/`.
 
 # Purpose
 Move the notes vault out of the code repo into its own git repo, so notes are never branched. Split from [[Branching and Releases]], which waits on it. That story decided 2026-10-04 that the vault moves to its own git repo in a folder beside the code repo (outside its checkouts), that Obsidian points at it, that every session reaches it through Claude Code's `additionalDirectories` setting, and that notes are never branched.
