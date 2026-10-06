@@ -4,9 +4,9 @@ status: in-progress
 confirmed: 2026-10-06
 ---
 # Where It Stands
-In progress. Next: /implement Step 2 ^status
+In progress. Next: /implement Step 3 ^status
 
-Shaped 2026-10-06 as infra: a standard for good docs and agent instructions, drawn from research, that an agent loads only while it edits those files. Its decisions and design were settled the same day: a `writing-standard` shared-rule skill holding a shared core with a part for docs and a part for agent instructions, a `rule-placement` shared-rule skill for where a rule lives, and pointers from AGENTS.md, `/tooling` and `/infra-design`. Step 1 is built: the `writing-standard` skill, with its docs and agent-instructions parts, and the three memories it replaces are deleted. Steps 2 and 3 remain: the `rule-placement` skill, then the pointers in AGENTS.md, `/tooling` and `/infra-design`. Spun off from [[Agent Workflow Changes 2026-10-02]] during `/tooling` on 2026-10-06.
+Shaped 2026-10-06 as infra: a standard for good docs and agent instructions, drawn from research, that an agent loads only while it edits those files. Its decisions and design were settled the same day: a `writing-standard` shared-rule skill holding a shared core with a part for docs and a part for agent instructions, a `rule-placement` shared-rule skill for where a rule lives, and pointers from AGENTS.md, `/tooling` and `/infra-design`. Steps 1 and 2 are built: the `writing-standard` skill, with its docs and agent-instructions parts, and the `rule-placement` skill, and the five memories they replace are deleted. Step 3 remains: the pointers in AGENTS.md, `/tooling` and `/infra-design`, and the headless runs that check Goals 1 and 3. Spun off from [[Agent Workflow Changes 2026-10-02]] during `/tooling` on 2026-10-06.
 
 # Inbox
 
@@ -136,6 +136,8 @@ The "New skills and agents" bullet stays, and the Convention on reviewing agents
 - It follows the `writing-standard` skill.
 - `docs-describe-codebase-not-agents` and `dont-repeat-agents-md` are deleted from Claude's memory folder, with their `MEMORY.md` lines, and their content is in the skill.
 **Sarah checks:** none
+**Status:** ✅ Complete
+**As built:** the line in `docs-describe-codebase-not-agents` saying that an agent rule still being worked out waits in the Agent Workflow Changes note, not in Docs Updates, was left out of the skill. It's about which note holds pending work, not where a settled rule lives, and each collecting note's What Belongs Here section already covers that.
 
 ### Step 3: Pointers to the two skills
 **Builds:** Pieces 4, 5 and 8, and the Convention on reviewing agents
