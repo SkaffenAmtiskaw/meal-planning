@@ -34,4 +34,6 @@ Found 2026-09-28 while shaping [[Dev Foundations]] with `/roadmap`.
 
 [Sarah] - We should add somewhere in this that I have a very slight preference for title-cased headers. It's not so strong a preference I'd ever reject work based on not having it, but I like it better.
 
+[Sarah] - Apparently there's published best practices for docs (the decision agent for Vercel Deploy errors referenced Google and Diátaxis). We should research best practices and come up with a list our docs should follow.
+
 # Questions
