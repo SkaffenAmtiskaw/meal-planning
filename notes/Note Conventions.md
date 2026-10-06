@@ -18,8 +18,8 @@ How notes in this vault are organized and move through their lifecycle. The [[Ro
 
 # Lifecycle
 - **idea** - rough notes. Nobody builds from this.
-- **spec** - a detailed design or technical approach exists, but it isn't broken into steps.
-- **ready** - has implementation steps. A story is **not** ready until it has steps, however settled the design is - steps are what make the work reviewable in small pieces. For infra, the steps are the Build Order Sarah approves with its Design.
+- **spec** - a detailed design or technical approach exists, but it has no approved steps yet, or its remaining steps need re-planning. A story sent back to `spec` keeps its steps marked ✅ Complete.
+- **ready** - has implementation steps. A story is **not** ready until it has steps, however settled the design is. For most types, steps are what make the work reviewable in small pieces. For infra, the steps are the Build Order Sarah approves with its Design: session-sized chunks, whose checks prove the story works.
 - **in-progress** - work has started.
 - **in-review** - every step is implemented and confirmed. The code is waiting for a review of how the whole story fits together.
 - **done** - finished. Next: `/close`.

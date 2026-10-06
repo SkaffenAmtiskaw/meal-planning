@@ -139,8 +139,8 @@ Where a change or addition goes:
 **Corrections to how it's built.** Some feedback changes how the code is built rather than what it does: where a file lives, how data is fetched, which pattern to use. If the docs in `docs/` already say it, you missed it, and there's nothing to ask. Otherwise, ask her whether it's a one-off for this step or the convention from now on. If it's the convention, handle it as AGENTS.md describes under "Doc gaps".
 
 How a feedback change is reported depends on its form, as AGENTS.md describes under "Approval covers the edits":
-- **If its exact form was settled before you wrote it,** such as a swap she named: report again with the same sections, covering only what changed. Don't ask her to approve it.
-- **Otherwise:** report again with the same sections, covering only what changed. Show her the change itself: the new text in the chat, or a link to each changed file at the line that changed. Then ask her whether she approves it.
+- **If its exact form was settled before you wrote it,** such as a swap she named: report again in the same form as step 7's report, covering only what changed. Don't ask her to approve it.
+- **Otherwise:** report again in the same form as step 7's report, covering only what changed. Show her the change itself: the new text in the chat, or a link to each changed file at the line that changed. Then ask her whether she approves it.
 
 Repeat until she confirms the step is done.
 
@@ -151,7 +151,6 @@ Once she confirms:
 3. If anything differs from the plan, or was added at review, add an **As built:** note under the step.
 4. If this was the last step, set `status` to `in-review`. The review of the whole story (`/final-review`), archiving, and unblocking the stories that waited on it all come later, not in this skill.
 5. Update the `^status` line as AGENTS.md describes under "Editing notes", e.g. "In progress. Next: /implement Step 4", or "All steps implemented. Next: /final-review" after the last step.
-
 
 ## 10. Find a home for out-of-scope items
 If the out-of-scope list is empty, skip this.

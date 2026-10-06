@@ -150,5 +150,3 @@ Nothing changes in Vercel's project settings: the Vercel GitHub App already has 
 - Errors in the running deployed app: [[Sentry Logging and Root Cause Analysis]].
 - Auditing Vercel's setup and how production differs from local: [[Services and Environments Audit]].
 - Vercel's plugin for coding agents: [[Vercel Plugin]].
-
-# Implementation

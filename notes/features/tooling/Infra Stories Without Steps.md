@@ -1,10 +1,10 @@
 ---
 type: infra
-status: in-review
+status: done
 confirmed: 2026-10-05
 ---
 # Where It Stands
-All steps implemented. Next: /final-review ^status
+Reviewed. Next: /close ^status
 
 All four Build Order steps are built: `/implement` builds a Build Order step, `/infra-design` writes Goals by the new rule and a Build Order, `/plan-steps`, `/check-drift`, `/final-review` and their agents follow Build Orders, and the notes that waited on this story are on the new path. Major Upgrade Sweeps and Notes Vault Repo have already been revised onto it. What remains is the review of the whole story.
 

@@ -52,5 +52,3 @@ Questions for this section:
 - Feature branches, protecting `develop` and the release process, which may later change where the E2E tests run: [[Branching and Releases]].
 - A doc on creating a new environment: [[Services and Environments Audit]]. CI needs no new environment, since the E2E tests run against a throwaway database with dummy values (Sarah confirmed 2026-10-02).
 - Root cause analysis for Sentry errors: [[Sentry Logging and Root Cause Analysis]].
-
-# Implementation
