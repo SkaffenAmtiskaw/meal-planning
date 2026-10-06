@@ -5,9 +5,9 @@ blocked-by: []
 confirmed: 2026-10-04
 ---
 # Where It Stands
-In progress. Next: /implement Step 9 ^status
+In progress. Next: /implement Step 10 ^status
 
-Split from [[Local Dependency Update Alerts]] on 2026-10-04. Its ten implementation steps were planned and approved on 2026-10-04. Steps 1-8 are built: `pnpm deps:check` lists the advisories that aren't in the reported list, `--weekly` adds new versions marked patch, minor or major and repeats every unfixed advisory as a reminder, and CI lints and type-checks the script. The `dependency-updates` routine exists on claude.ai, and its session puts the patches, minors and security fixes it's sent in a PR from `claude/dependency-updates` into `develop`, and lists the majors and reminders. While that PR is open, a run merges `develop` into it and adds its updates there. Once it's closed, the next run starts fresh. After pushing, the session waits for the PR's checks on GitHub, re-runs a failure there once, and drops an update that breaks a check only on GitHub's runner. PR #23 is still open, holding the `@tabler/icons-react` and `lefthook` bumps from Steps 7 and 8. Step 9's first check needs it closed or merged first. Steps 9 and 10 remain.
+Split from [[Local Dependency Update Alerts]] on 2026-10-04. Its ten implementation steps were planned and approved on 2026-10-04. Steps 1-8 are built: `pnpm deps:check` lists the advisories that aren't in the reported list, `--weekly` adds new versions marked patch, minor or major and repeats every unfixed advisory as a reminder, and CI lints and type-checks the script. The `dependency-updates` routine exists on claude.ai, and its session puts the patches, minors and security fixes it's sent in a PR from `claude/dependency-updates` into `develop`, and lists the majors and reminders. While that PR is open, a run merges `develop` into it and adds its updates there. Once it's closed, the next run starts fresh. After pushing, the session waits for the PR's checks on GitHub, re-runs a failure there once, and drops an update that breaks a check only on GitHub's runner. Step 9 is built too: the `dependency-updates` workflow on `develop` runs the check hourly and weekly, and starts the routine only for findings it hasn't reported, or for the weekly reminders. Its first run opened PR #25 with the backlog. Step 10 remains: a failed weekly check starting a session.
 
 # Inbox
 
@@ -309,10 +309,20 @@ Facts the steps rely on, checked 2026-10-04:
 - `docs/ci.md` - the "Dependency Updates" section and the cache steps
 
 **Acceptance:**
-- [ ] On GitHub, open Actions → the dependency-updates workflow → **Run workflow**, pick weekly. See `check` and `start-dependency-updates` pass, the start job's log show the session's link, and one new session whose summary covers the whole backlog: a PR with the small updates and security fixes and its checks' result, every advisory listed as new, and every major listed with a link to its release notes and marked "not applied". Proves: the first run reports everything through this story's whole flow.
-- [ ] Run it again, hourly. See `check` pass, `start-dependency-updates` skipped and no new session. Proves: the reported list in the cache stops a repeat session.
-- [ ] Before merging the PR from the first run, run it again, weekly. See a session whose summary lists the still-unfixed advisories as reminders, no new versions and nothing to apply, and the first run's PR unchanged. Proves: the weekly reminder reaches Sarah even with nothing new.
-- [ ] With the `schedule` triggers pushed to `develop`, wait for the next :17, then open the workflow's runs. See a scheduled hourly run that passed with the start job skipped. Proves: the check runs on its own schedule without Sarah.
+- [x] On GitHub, open Actions → the dependency-updates workflow → **Run workflow**, pick weekly. See `check` and `start-dependency-updates` pass, the start job's log show the session's link, and one new session whose summary covers the whole backlog: a PR with the small updates and security fixes and its checks' result, every advisory listed as new, and every major listed with a link to its release notes and marked "not applied". Proves: the first run reports everything through this story's whole flow.
+- [x] Run it again, hourly. See `check` pass, `start-dependency-updates` skipped and no new session. Proves: the reported list in the cache stops a repeat session.
+- [x] With the `schedule` triggers pushed to `develop`, wait for the next :17, then open the workflow's runs. See a scheduled hourly run that passed with the start job skipped. Proves: the check runs on its own schedule without Sarah.
+
+**Status:** ✅ Complete
+
+**As built:**
+- The **Run workflow** form starts on hourly. Sarah decided 2026-10-05, so a run started without looking is the quiet one.
+- The workflow works out hourly or weekly once, in a workflow-level `MODE`, from the weekly `cron` string or the dispatch input. The reported list is `dependency-alerts-reported.json`, the same path in the restore and the save, and the job outputs are compact one-line JSON. `docs/ci.md` also says GitHub deletes a cache entry no run has read in 7 days, so a workflow that's been off that long reports the whole backlog again.
+- The implementer ran the Approach's checks. Against a local server returning 401, the start script exited 22, so the save steps after it don't run. Of two hourly runs dispatched back to back, the second's `check` was queued one second after the first finished. A third dispatch that day was cancelled when GitHub's Actions outage gave it no runner, which changed nothing, since a cancelled `check` skips the start job.
+- Sarah merged [PR #23](https://github.com/SkaffenAmtiskaw/meal-planning/pull/23) before check 1. Check 1's run opened [PR #25](https://github.com/SkaffenAmtiskaw/meal-planning/pull/25) with 11 security fixes, 4 patches and 18 minors, its checks green on GitHub. It dropped the `@biomejs/biome` 2.5.15 minor, which breaks `pnpm lint:ci`, and listed the `uuid` advisory 1119441 with the majors, since only a major fixes it.
+- Sarah dropped check 3 (a weekly run with nothing new still sends the reminders) on 2026-10-05, after GitHub's outage cancelled its run. Other runs cover it: the implementer's local weekly run with a weekly list gave no new findings, 54 reminders and a start, and a text whose `new:` is `none`; checks 1 and 2 showed the weekly install and the restore on GitHub; and Step 6's stand-in run on only a major and a reminder applied nothing.
+- The `schedule` triggers were first pushed at 20:12 UTC on 2026-10-05, during GitHub's Actions incident, and no scheduled run followed. A second push that touched the workflow file, at 00:18 UTC, registered them.
+- Check 4: the first scheduled run, at 01:17 UTC on 2026-10-06, passed, but it started a session rather than skipping, since advisories 1241232 (`postcss-selector-parser`) and 1241209 (`source-map-js`) had come out after the first run. Sarah counted check 4 as passed, since the run proves the schedule and check 2 already proves the skip.
 
 ## Step 10: A failed weekly check starts a session
 **Idea:** When the weekly run's check fails, the routine starts a session that looks into it.
