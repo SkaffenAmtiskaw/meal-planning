@@ -40,7 +40,7 @@ Shaped as an infra story: a workflow, a script, a routine and a skill that diagn
      - Rejected: a workflow on `deployment_status` - a run for every deployment state, no branch in the payload, the workflow file comes from the deployed commit, and Vercel keeps it only for backwards compatibility.
      - Rejected: a Vercel webhook to a relay that calls `/fire` - needs a Pro or Enterprise plan and a hosted relay holding the routine's token outside GitHub, against `docs/ci.md`'s rule that a workflow job calls `/fire`.
 
-4. Which Vercel token does the session use to read the failed build's logs, and with what scope? Sarah assumed one is needed, and wants that confirmed as part of this story. Vercel's Build Logs and Source Protection setting is on by default, which keeps build logs private. The credential rule in [[Sentry Logging and Root Cause Analysis]] ("If the routine needs Sentry access") applies. Moved from the Design questions by /infra-design (2026-10-05).
+4. Which Vercel token does the session use to read the failed build's logs, and with what scope? Sarah assumed one is needed, and wants that confirmed as part of this story. Vercel's Build Logs and Source Protection setting is on by default, which keeps build logs private. The credential rule in [[Sentry Root Cause Analysis]] ("If the routine needs Sentry access") applies. Moved from the Design questions by /infra-design (2026-10-05).
    - **Decided 2026-10-05:** a token is needed, and the workflow holds it, not the session: a project-scoped Vercel access token in an Actions secret, which the workflow uses to fetch the failed build's log from Vercel's REST API, sending the failing lines and the log's tail in the `/fire` text within its 65,536-character limit. The session has no Vercel access, so the Sentry note's credential rule doesn't apply. Sarah's call after research: Vercel has no read-only access token, and even a project-scoped one can deploy to production and read and change env vars, so least privilege for LLM agents (OWASP Top 10 for LLM Applications, "Excessive Agency") keeps it out of an unattended session that reads untrusted build output; the workflow runs from `develop`'s copy (decision 3), so no branch can change the code that uses it.
      - Rejected: a project-scoped token as an API credential on the cloud environment - the session could use it to deploy or change env vars, only the skill keeps it to reads, and the other routines in the shared environment would get it too.
      - Rejected: Vercel's MCP server as a claude.ai connector - it gets the whole Vercel account's access, every tool runs without asking, and nothing narrows it.
@@ -196,6 +196,6 @@ Each step's checks keep Sarah's part to reading results and the Vercel clicks on
 Nothing changes in Vercel's project settings: the Vercel GitHub App already has the access dispatch events need, and they have no setting to turn on.
 
 # Out of Scope
-- Errors in the running deployed app: [[Sentry Logging and Root Cause Analysis]].
+- Errors in the running deployed app: [[Sentry Error Reporting]] reports them, and [[Sentry Root Cause Analysis]] diagnoses them.
 - Auditing Vercel's setup and how production differs from local: [[Services and Environments Audit]].
 - Vercel's plugin for coding agents: [[Vercel Plugin]].

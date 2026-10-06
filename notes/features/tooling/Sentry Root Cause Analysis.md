@@ -1,18 +1,21 @@
 ---
-type:
+type: 
 status: idea
-blocked-by: []
-confirmed: 2026-09-30
+confirmed: 2026-10-06
 ---
 # Where It Stands
-Next: /shape. Designing waits on [[E2E Tests in CI]] ^status
+Next: /shape ^status
 
 # Notes
-Add Sentry so production errors get reported to Sarah, and a routine that runs a preliminary root cause analysis on each new Sentry error, so it's ready for her to review when she starts working. It covers two Done When items of [[Dev Foundations]]: production errors get reported (Sentry), and an agent runs a root cause analysis when Sentry logs an error. Sarah merged the "Add Sentry for logging" Roadmap line into this note on 2026-09-30. It can be split later.
+Split from Sentry Logging and Root Cause Analysis by `/shape` on 2026-10-06. Scope: a routine that starts a cloud session for each new Sentry error, which leaves a preliminary root cause analysis from `root-cause-analyst` waiting under **Routines**.
+
+A routine that runs a preliminary root cause analysis on each new Sentry error, so it's ready for Sarah to review when she starts working. It covers one Done When item of [[Dev Foundations]]: an agent runs a root cause analysis when Sentry logs an error. Sentry itself is added by [[Sentry Error Reporting]].
 
 It depends on other Dev Foundations work: [[E2E Tests in CI]] builds the first root cause analysis, for failed E2E tests, and this story reuses it for Sentry errors (moved there 2026-09-29). The `/investigate` skill and its `bug-reproducer` subagent already reproduce and diagnose bugs by hand, which the analysis might build on.
 
 The session follows the convention for Claude Code cloud sessions in `docs/ci.md` ("Starting a Routine") and the `routine-sessions` skill. Sarah decided 2026-09-29 that it works from `main`, since Sentry errors come from the deployed app, which runs `main`.
+
+Scope Sarah confirmed while shaping the original on 2026-10-06: the session only analyzes and never opens a fix PR, as [[E2E Tests in CI]] does for a broken app (no fix, and an offer to create a bug note).
 
 Research from 2026-09-29:
 - Sentry can't start a routine itself: its webhooks can't send the auth header the routine's `/fire` API needs. A Sentry alert rule can create a GitHub issue, and a workflow on `issues: opened` then calls `/fire`. Sentry's own Claude Agent integration runs a managed agent in the Claude Console, not a session in Sarah's Code tab. (docs.sentry.io/organization/integrations/source-code-mgmt/github/, docs.sentry.io/integrations/coding-agents/claude/)
@@ -28,3 +31,4 @@ The expected convention, moved here from CI Checks on 2026-09-30 because no stor
 Found 2026-09-28 while shaping [[Dev Foundations]] with `/roadmap`.
 
 # Questions
+- How does the routine's cloud session reproduce a production error before it writes a root cause? `routine-sessions` rules out `running-the-app` and `bug-reproducer`. The ways found: reproduce it with a failing unit test or E2E spec against the throwaway database, which [[E2E Tests in CI]] makes runnable in the cloud environment; build a way to run the real app in the cloud (a reachable database, seeded test users and the app's secrets), possibly as its own story; or don't reproduce it, and mark the analysis as unconfirmed from Sentry's stack trace and the code until Sarah runs `/investigate` on the bug note. Later routines that diagnose runtime errors would follow the same answer. Found by `/shape` on 2026-10-06, and Sarah left it for `/decide`.
