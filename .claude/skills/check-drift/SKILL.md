@@ -20,7 +20,7 @@ A note is written against the codebase, the conventions and the other stories as
 - **Other notes:** another story's design or build changed shared UI or modules this story depends on. This is how design changes usually reach a story.
 - **Sarah changed her mind:** she writes a comment tagged or signed with her name in the note, or tells you in chat.
 
-This skill **flags and routes**. It never rewrites the plan, except to correct a name or path. It adds ⚠️ Check Drift callouts where a mismatch changes the story's work, and sends the note to whichever skill fixes it: `/plan-steps` to re-plan, or the skill that re-settles its approach: `/assess` for a feature, `/investigate` for a bug or cleanup, `/architect` for a pattern, `/infra-design` for infra, `/decide` for a roundup. The one thing it may fix itself is a convention doc, as AGENTS.md describes under "Doc gaps".
+This skill **flags and routes**. It never rewrites the plan, except to correct a name or path. It adds ⚠️ Check Drift callouts where a mismatch changes the story's work, and sends the note to whichever skill fixes it: `/plan-steps` to re-plan (`/infra-design` for infra), or the skill that re-settles its approach: `/assess` for a feature, `/investigate` for a bug or cleanup, `/architect` for a pattern, `/infra-design` for infra, `/decide` for a roundup. The one thing it may fix itself is a convention doc, as AGENTS.md describes under "Doc gaps".
 
 It only reads code. It never runs the app and never changes code. A hook blocks edits outside `notes/`, `.scratch/` and `docs/`.
 
@@ -36,7 +36,9 @@ Read the whole note, including:
 
 Then work out the **remaining work**. That's all you check:
 - `spec`: the approach. For a feature, that's the design, behaviors and Suggested Approach. For a bug, the Root Cause and Fix. For a cleanup, Current State and the decided Open Decisions. For a pattern, the Rules and Migration Checklist. For infra, the Goals, Design, Conventions and Setup Outside the Repo. For a roundup, the decided questions under Open Decisions.
-- `ready` or `in-progress`: the steps with no `**Status:**` line, plus the design and approach sections they build. Skip completed steps. Their As built notes already record what happened.
+- `ready` or `in-progress`: the steps with no `**Status:**` line, plus what they build. Skip completed steps. Their As built notes already record what happened. Where the steps are depends on the note's type:
+  - **Infra:** under `## Build Order`, at the end of `# Design`. They build the Design's Pieces that each step's **Builds:** line names.
+  - **Any other type:** under `# Implementation`. They build the design and approach sections they cite.
 - a `spec` sweep: every unchecked item under Items.
 
 Note the `confirmed` date. It's the baseline for everything below.
@@ -110,7 +112,9 @@ Some decisions need more than a callout:
 ## 6. Route the note
 If the note is a sweep, it stays at `spec` and always goes to `/plan-steps` next. Otherwise, work out the next step from the findings' meanings in step 4:
 - **Plan holds:** `status` stays as it is.
-- **Steps:** set `status` to `spec`. Next is `/plan-steps`, which keeps the ✅ steps and re-plans the rest.
+- **Steps:** set `status` to `spec`. Next is the skill that keeps the ✅ steps and re-plans the rest:
+  - **Infra:** `/infra-design`, as a revision.
+  - **Any other type:** `/plan-steps`.
 - **Approach:** set `status` to `spec`. Next is the skill that re-settles the approach for the note's type:
   - **Feature:** `/assess`, as a re-assessment.
   - **Bug or cleanup:** `/investigate`, as a re-investigation.

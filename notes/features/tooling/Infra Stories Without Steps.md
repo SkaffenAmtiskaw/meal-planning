@@ -6,7 +6,7 @@ confirmed: 2026-10-05
 # Where It Stands
 In progress. Next: /implement ^status
 
-/infra-design wrote the Goals and the Design on 2026-10-05, with this story's own Build Order of four steps. Steps 1 and 2 are built: `/implement` builds a Build Order step, and `/infra-design` writes Goals by the new rule and a Build Order, with Note Conventions and the Infra template to match. Steps 3 and 4 remain, each in its own `/implement` session. Sarah first decided to build the story once the [[Agent Workflow Changes 2026-10-02]] items that affect it were done. On 2026-10-05 she decided to go ahead before its "Skill and doc edits read as a whole" item, with each session following `/tooling`'s readability guidance instead.
+/infra-design wrote the Goals and the Design on 2026-10-05, with this story's own Build Order of four steps. Steps 1 to 3 are built: `/implement` builds a Build Order step, `/infra-design` writes Goals by the new rule and a Build Order, with Note Conventions and the Infra template to match, and `/plan-steps`, `/check-drift`, `/final-review` and their agents follow Build Orders. Step 4, moving the waiting notes onto the new path, remains. Sarah first decided to build the story once the [[Agent Workflow Changes 2026-10-02]] items that affect it were done. On 2026-10-05 she decided to go ahead before its "Skill and doc edits read as a whole" item, with each session following `/tooling`'s readability guidance instead.
 
 # Inbox
 - For each `/implement` session on Steps 2 to 4: before drafting a change to a skill, agent, AGENTS.md, Note Conventions or a template, read `/tooling`'s "Writing instructions" and "Readable as a whole" guidance in step 3 of `.claude/skills/tooling/SKILL.md`, and follow it. Sarah decided 2026-10-05 to build the story before the "Skill and doc edits read as a whole" item in [[Agent Workflow Changes 2026-10-02]] moves that guidance where every session reads it. Delete this item once Step 4 is complete, or once that item lands.
@@ -103,6 +103,8 @@ This story builds the path it would use, so Sarah decided 2026-10-05 that Step 1
 **Setup first:** none
 **Implementer checks:** planning, drift and review for other types are unchanged.
 **Sarah checks:** none
+**Status:** ✅ Complete
+**As built:** `/plan-steps` also lost the infra parts of Coverage ("an infra story's Goals") and of "A new piece in a feature or infra story", which could no longer apply. Its infra-flavoured examples under "Checks" (a re-run session, a token, a GitHub secret) stay, since they still illustrate rules other types use. Boy Scout fix: AGENTS.md's "Otherwise" bullet under Boy Scout fixes said "so `/plan-steps` puts it in the step", which no longer held for infra; it now says "the skill that writes the steps". The Implementer check was done by reading the diff: every other-type branch keeps its original text, apart from the restructured lines in `/check-drift`, `/final-review` and leftovers-checker that Sarah approved.
 
 ### Step 4: The waiting notes move onto the new path
 **Builds:** Piece 11

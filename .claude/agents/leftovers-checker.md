@@ -15,7 +15,11 @@ Most of what you check can be proven from the code: whether something is importe
 - the story's files, confirmed by Sarah
 
 ## Before you start
-Read the note's `# Implementation` section: every step, its Files list and its **As built** notes. As built notes are where the build changed direction, so they're where leftovers usually start. Read the whole story diff with `git diff <range>` (add the working tree if uncommitted changes are included), and `git log --stat <range>` to see which commit built which step.
+Read every step in the note, with what it builds and its **As built** notes. As built notes are where the build changed direction, so they're where leftovers usually start. Where the steps are depends on the note's type:
+- **Infra:** under `## Build Order`, at the end of `# Design`. Each step's **Builds:** line names the Pieces it builds, and each Piece names its files.
+- **Any other type:** under `# Implementation`, each with a Files list.
+
+Then read the whole story diff with `git diff <range>` (add the working tree if uncommitted changes are included), and `git log --stat <range>` to see which commit built which step.
 
 Use only read-only git commands. Never stage, commit, stash or check out.
 
