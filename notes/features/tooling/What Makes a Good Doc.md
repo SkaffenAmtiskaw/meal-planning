@@ -1,10 +1,10 @@
 ---
 type: infra
-status: in-review
+status: done
 confirmed: 2026-10-06
 ---
 # Where It Stands
-All steps implemented. Next: /final-review ^status
+Reviewed. Next: /close ^status
 
 Shaped 2026-10-06 as infra: a standard for good docs and agent instructions, drawn from research, that an agent loads only while it edits those files. Its decisions and design were settled the same day: a `writing-standard` shared-rule skill holding a shared core with a part for docs and a part for agent instructions, a `rule-placement` shared-rule skill for where a rule lives, and pointers from AGENTS.md, `/tooling` and `/infra-design`. All three steps are built: the `writing-standard` skill, with its docs and agent-instructions parts, the `rule-placement` skill, the pointers to them from AGENTS.md, `/tooling` and `/infra-design`, and the deletion of the five memories they replace. Headless runs showed sessions loading the standard before drafting and not loading it when only reading, and Sarah confirmed the drafts follow it. What remains is the review of the whole story. Spun off from [[Agent Workflow Changes 2026-10-02]] during `/tooling` on 2026-10-06.
 
