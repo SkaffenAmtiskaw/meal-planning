@@ -37,7 +37,6 @@
 - [[Dev Tooling]]
 
 # Now
-- [[Dependency Update PRs]] ![[Dependency Update PRs#^status]] 🎯 [[Dev Foundations]]
 - [[Infra Stories Without Steps]] ![[Infra Stories Without Steps#^status]] 🎯 [[Dev Foundations]]
 
 # Next

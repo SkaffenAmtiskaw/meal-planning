@@ -5,15 +5,15 @@ blocked-by: ["[[Infra Stories Without Steps]]"]
 confirmed: 2026-10-04
 ---
 # Where It Stands
-Blocked by [[Infra Stories Without Steps]]; then /infra-design. Building waits on [[Dependency Update PRs]] ^status
+Blocked by [[Infra Stories Without Steps]]; then /infra-design ^status
 
 Split from [[Local Dependency Update Alerts]] on 2026-10-04. Its one implementation step was planned and approved on 2026-10-04. Nothing is built yet. Sarah decided 2026-10-05 that it waits for [[Infra Stories Without Steps]] and then goes back to `/infra-design` to replace its steps with a Build Order.
 
 # Inbox
-- For `/infra-design`, from [[Dependency Update PRs]] Step 9 (2026-10-05): Sarah decided that the Library Upgrades and Dev Tool Upgrades sweeps also take a patch or minor that the `dependency-updates` session drops from its PR because it breaks a check, not only majors. Today a dropped update goes quiet: its `package@version` is in the reported list, so no later run mentions it until a newer version comes out, and nothing records the work that would let it in. The first real run dropped `@biomejs/biome` 2.4.6 → 2.5.15, which fails `pnpm lint:ci` ([PR #25](https://github.com/SkaffenAmtiskaw/meal-planning/pull/25), **Dropped**). That upgrade sits in [[Dev Tooling Tidy-Ups]] for now. This widens the Purpose and Goals beyond majors, and reaches the places in the `dependency-updates` skill where an update is dropped (step 3, and step 7's "Drop an update that fails only on GitHub"), as well as step 5.
+- For `/infra-design`, from Dependency Update PRs Step 9 (2026-10-05): Sarah decided that the Library Upgrades and Dev Tool Upgrades sweeps also take a patch or minor that the `dependency-updates` session drops from its PR because it breaks a check, not only majors. Today a dropped update goes quiet: its `package@version` is in the reported list, so no later run mentions it until a newer version comes out, and nothing records the work that would let it in. The first real run dropped `@biomejs/biome` 2.4.6 → 2.5.15, which fails `pnpm lint:ci` ([PR #25](https://github.com/SkaffenAmtiskaw/meal-planning/pull/25), **Dropped**). That upgrade sits in [[Dev Tooling Tidy-Ups]] for now. This widens the Purpose and Goals beyond majors, and reaches the places in the `dependency-updates` skill where an update is dropped (step 3, and step 7's "Drop an update that fails only on GitHub"), as well as step 5.
 
 # Purpose
-A major update of a package other than the six assessed libraries lands where a goal can pick it up: an item on the new Library Upgrades or Dev Tool Upgrades sweep when it's small, or a flag in the session that it looks like a story of its own. It extends the session [[Dependency Update PRs]] builds. Split from [[Local Dependency Update Alerts]] on 2026-10-04.
+A major update of a package other than the six assessed libraries lands where a goal can pick it up: an item on the new Library Upgrades or Dev Tool Upgrades sweep when it's small, or a flag in the session that it looks like a story of its own. It extends the session Dependency Update PRs built. Split from [[Local Dependency Update Alerts]] on 2026-10-04.
 
 # Goals
 - [ ] A major update of a package other than React, Next, Mantine, better-auth, luxon and Zod becomes an item on the Library Upgrades or Dev Tool Upgrades sweep when it's small and needs no decision, or is flagged in the session as a story of its own.
@@ -21,7 +21,7 @@ A major update of a package other than the six assessed libraries lands where a 
 # Design
 The design lives in [[Local Dependency Update Alerts]]. The sections embedded below are part of this note.
 
-This story builds Piece 6 whole, and the "any other package" half of Piece 4's sub-step 5, with its sweep lines committed on the PR's branch. Piece 4's skill is already built by [[Dependency Update PRs]]. Of the Decisions, it builds Mongoose getting no assessment, a smaller library's major going on a sweep linked to App Health, and a dev tool's major going on its own sweep. It also builds the four decisions Sarah made while planning it on 2026-10-04: Dev Tool Upgrades items carry no goal link for now, the three assessed libraries' `@types` majors go with their library, a major that's the only fix for an advisory is always flagged as a story, and a major whose breaking changes can't be read is flagged with the site it couldn't reach. From Open Decision 2, it relies on the one fixed `claude/` branch.
+This story builds Piece 6 whole, and the "any other package" half of Piece 4's sub-step 5, with its sweep lines committed on the PR's branch. Piece 4's skill is already built by Dependency Update PRs. Of the Decisions, it builds Mongoose getting no assessment, a smaller library's major going on a sweep linked to App Health, and a dev tool's major going on its own sweep. It also builds the four decisions Sarah made while planning it on 2026-10-04: Dev Tool Upgrades items carry no goal link for now, the three assessed libraries' `@types` majors go with their library, a major that's the only fix for an advisory is always flagged as a story, and a major whose breaking changes can't be read is flagged with the site it couldn't reach. From Open Decision 2, it relies on the one fixed `claude/` branch.
 
 ![[Local Dependency Update Alerts#^piece-4]]
 ![[Local Dependency Update Alerts#^piece-6]]
@@ -30,12 +30,12 @@ This story builds Piece 6 whole, and the "any other package" half of Piece 4's s
 
 # Out of Scope
 - Assessments of the six libraries' majors: [[Dependency Release Analysis]].
-- The check, the workflow, the routine and the PR for small updates: [[Dependency Update PRs]].
+- The check, the workflow, the routine and the PR for small updates: built, as `docs/ci.md` ("Dependency Updates") describes.
 
 # Implementation
 Facts the steps rely on, checked 2026-10-04:
-- **The backlog majors.** `pnpm outdated` lists majors of `typescript` (7.0.2), `vitest` (5.0.3), `jsdom` (30.1.2), `preact` (11.0.0) and `temporal-polyfill` (0.3.2 → 1.0.5). [[Dependency Update PRs]]'s first run reports them, and a reported version stays quiet until a newer one comes out. Sarah decided 2026-10-04 while planning that Step 1's check calls the routine with exactly these majors (as `pnpm outdated` lists them when it's built), so one run tests the new branch of the skill and sweeps the backlog, with nothing else reported again.
-- **The routine's token.** [[Dependency Update PRs]] Step 9 puts the token in the Actions secret `ROUTINE_DEPENDENCY_UPDATES_TOKEN`, where it can't be read back. Sarah decided 2026-10-04 while planning: for Step 1's check she regenerates it, pastes the new one into the secret and keeps a copy until the check is done.
+- **The backlog majors.** `pnpm outdated` lists majors of `typescript` (7.0.2), `vitest` (5.0.3), `jsdom` (30.1.2), `preact` (11.0.0) and `temporal-polyfill` (0.3.2 → 1.0.5). Dependency Update PRs' first run reports them, and a reported version stays quiet until a newer one comes out. Sarah decided 2026-10-04 while planning that Step 1's check calls the routine with exactly these majors (as `pnpm outdated` lists them when it's built), so one run tests the new branch of the skill and sweeps the backlog, with nothing else reported again.
+- **The routine's token.** Dependency Update PRs Step 9 put the token in the Actions secret `ROUTINE_DEPENDENCY_UPDATES_TOKEN`, where it can't be read back. Sarah decided 2026-10-04 while planning: for Step 1's check she regenerates it, pastes the new one into the secret and keeps a copy until the check is done.
 - **Where the session reads release notes.** For packages other than the six assessed libraries, Piece 4 sub-step 4 has the session read release notes on `github.com` and `raw.githubusercontent.com`, as hosts the cloud environment allows. Some migration guides live elsewhere, such as TypeScript 7's on `devblogs.microsoft.com` and Vitest's on `vitest.dev`. Not yet confirmed: `docs/ci.md` says GitHub goes through its own proxy, and its setup script's comments say that proxy blocks downloads from repos not attached to the session, so a cloud session may not reach other projects' release pages or raw changelogs at all. The Approach checks this before step 5 is built. Sarah decided 2026-10-04 while planning: no new domains. A major the session can't read is flagged as a possible story, and the summary names the site it couldn't reach.
 
 ## Step 1: Majors of other packages become sweep items or story flags
@@ -59,7 +59,7 @@ Facts the steps rely on, checked 2026-10-04:
   - **Acceptance Criteria:** the template's first box, and "The flows each upgraded package is used in behave as before."
 - `notes/Roadmap.md`: both lines in Unaffiliated with their status embeds and no 🎯 links. Ask Sarah where in Unaffiliated each one goes.
 - **Implementer, before building step 5:** confirm that a session on the `Meal Planning Routines` environment can read a backlog major's GitHub release page and its raw `CHANGELOG.md` (for example `vitest-dev/vitest`), the way the skill will read them. If the implementer can't start such a session, Sarah starts one at https://claude.ai/code with that environment and pastes the result. If the reads are blocked, stop and bring it to Sarah, since it changes the trade-off behind her "no new domains" decision.
-- **`.claude/skills/dependency-updates/SKILL.md` step 5:** a major of any package other than the six (Mongoose included) replaces [[Dependency Update PRs]]'s listing (release notes link, "not applied") with this:
+- **`.claude/skills/dependency-updates/SKILL.md` step 5:** a major of any package other than the six (Mongoose included) replaces the `dependency-updates` skill's current listing (release notes link, "not applied") with this:
   - The session reads the major's breaking changes from its GitHub releases, changelog or migration guide on `github.com` or `raw.githubusercontent.com`, and searches the code for each one the app hits. If the release only points to a guide on another site, it follows the link.
   - **Small and needs no decision:** it adds an item to Library Upgrades or Dev Tool Upgrades, written as that sweep's What Belongs Here says. Packages that have to move together share one item. The goal link is fixed by What Belongs Here, so the session doesn't run `roadmap-placement`'s goal check (AGENTS.md "A new item in a collecting note"), asks nothing and kicks nothing off.
   - **Otherwise:** no item. The summary says why it looks like a story of its own, with each breaking change the app hits and its file count.

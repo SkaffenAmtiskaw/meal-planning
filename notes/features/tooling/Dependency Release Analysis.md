@@ -5,14 +5,14 @@ blocked-by: ["[[Infra Stories Without Steps]]"]
 confirmed: 2026-10-04
 ---
 # Where It Stands
-Blocked by [[Infra Stories Without Steps]]; then /infra-design. Building waits on [[Dependency Update PRs]] ^status
+Blocked by [[Infra Stories Without Steps]]; then /infra-design ^status
 
 Split from [[Local Dependency Update Alerts]] on 2026-10-04 during `/plan-steps`. Its three implementation steps were planned and approved on 2026-10-04. Nothing is built yet. Sarah decided 2026-10-05 that it waits for [[Infra Stories Without Steps]] and then goes back to `/infra-design` to replace its steps with a Build Order.
 
 # Inbox
 
 # Purpose
-Each minor update the `dependency-updates` routine finds gets a summary of what its release adds and whether the app should adopt any of it. A minor or major of React, Next, Mantine, better-auth, luxon or Zod goes to the Opus `upgrade-assessor` subagent, which ties new features to the app's code and, for a major, weighs effort and urgency against the gain. It extends the session [[Dependency Update PRs]] builds. Split from [[Local Dependency Update Alerts]] on 2026-10-04.
+Each minor update the `dependency-updates` routine finds gets a summary of what its release adds and whether the app should adopt any of it. A minor or major of React, Next, Mantine, better-auth, luxon or Zod goes to the Opus `upgrade-assessor` subagent, which ties new features to the app's code and, for a major, weighs effort and urgency against the gain. It extends the session Dependency Update PRs built. Split from [[Local Dependency Update Alerts]] on 2026-10-04.
 
 # Goals
 - [ ] A major update to a library the app depends on heavily gets an assessment in the session of how much effort the upgrade would take and how much the app would gain.
@@ -21,7 +21,7 @@ Each minor update the `dependency-updates` routine finds gets a summary of what 
 # Design
 The design lives in [[Local Dependency Update Alerts]]. The sections embedded below are part of this note.
 
-This story builds Piece 5 whole, Piece 4's sub-step 4 and the six libraries' half of sub-step 5, and Piece 7's "The Cloud Environment". Piece 4's skill is already built by [[Dependency Update PRs]]. Of the Decisions, it builds the minor summary, which six libraries get an assessment, where an assessment ends up, a minor of the six going to the Opus subagent, and the Opus subagent half of the model decision.
+This story builds Piece 5 whole, Piece 4's sub-step 4 and the six libraries' half of sub-step 5, and Piece 7's "The Cloud Environment". Piece 4's skill is already built by Dependency Update PRs. Of the Decisions, it builds the minor summary, which six libraries get an assessment, where an assessment ends up, a minor of the six going to the Opus subagent, and the Opus subagent half of the model decision.
 
 ![[Local Dependency Update Alerts#^piece-4]]
 ![[Local Dependency Update Alerts#^piece-5]]
@@ -33,13 +33,13 @@ This story builds Piece 5 whole, Piece 4's sub-step 4 and the six libraries' hal
 ![[Local Dependency Update Alerts#^setup-domains]]
 
 # Out of Scope
-- The check, the workflow, the routine and the PR for small updates: [[Dependency Update PRs]].
+- The check, the workflow, the routine and the PR for small updates: built, as `docs/ci.md` ("Dependency Updates") describes.
 - Majors of other packages: [[Major Upgrade Sweeps]].
 
 # Implementation
 Facts the steps rely on, checked 2026-10-04:
-- **No backlog to check with.** [[Dependency Update PRs]]'s first run puts every backlog minor in its first PR without a summary or an assessment, so the minors outstanding today (`@mantine/core` 9.6.3, `react` 19.3.0, `zod` 4.6.5, `better-auth` 1.7.7, `@tabler/icons-react` 3.48.0, `resend` 6.32.0) are probably merged by the time this story is built. Each check uses an update that `pnpm outdated` lists on `develop` when the step is built, which the implementer picks once no dependency PR is open. None of the six assessed libraries has a new major out.
-- **The routine's token.** [[Dependency Update PRs]] Step 9 puts the token in the Actions secret `ROUTINE_DEPENDENCY_UPDATES_TOKEN`, where it can't be read back. Sarah decided 2026-10-04 while planning: before Step 1's check she regenerates it, pastes the new one into the secret and keeps a copy until Step 2's check is done, as for [[Major Upgrade Sweeps]].
+- **No backlog to check with.** Dependency Update PRs' first run puts every backlog minor in its first PR without a summary or an assessment, so the minors outstanding today (`@mantine/core` 9.6.3, `react` 19.3.0, `zod` 4.6.5, `better-auth` 1.7.7, `@tabler/icons-react` 3.48.0, `resend` 6.32.0) are probably merged by the time this story is built. Each check uses an update that `pnpm outdated` lists on `develop` when the step is built, which the implementer picks once no dependency PR is open. None of the six assessed libraries has a new major out.
+- **The routine's token.** Dependency Update PRs Step 9 put the token in the Actions secret `ROUTINE_DEPENDENCY_UPDATES_TOKEN`, where it can't be read back. Sarah decided 2026-10-04 while planning: before Step 1's check she regenerates it, pastes the new one into the secret and keeps a copy until Step 2's check is done, as for [[Major Upgrade Sweeps]].
 - **Where the session reads release notes.** Piece 4 sub-step 4 has the session read release notes on `github.com` and `raw.githubusercontent.com`. Not yet confirmed: `docs/ci.md` says GitHub goes through its own proxy, and its setup script's comments say that proxy blocks downloads from repos not attached to the session, so a cloud session may not reach other projects' release pages or raw changelogs. [[Major Upgrade Sweeps]] checks the same thing before its step 5 is built. Whichever story is built first finds out.
 - **Pushing before checks.** A routine runs the skill as it is on `develop` (`routine-sessions`), so each step's skill and subagent changes are pushed to `develop` before its checks.
 
@@ -95,7 +95,7 @@ Facts the steps rely on, checked 2026-10-04:
 
 **Approach:**
 - `upgrade-assessor.md`: for a major, it adds three parts. The effort: each breaking change from the migration guide and release notes that the app actually hits, with file counts. The urgency: how long the current major keeps getting security fixes, and any advisory only the new major fixes. The verdict: benefit and urgency weighed against effort, not a ranking on security alone. The verdict says how soon the upgrade is worth planning, for deciding when to next draw a goal from [[App Health]], and how high to rank it among other work.
-- `SKILL.md` step 5: a major of the six, or an advisory of one of them that only a major fixes, goes to `upgrade-assessor`, replacing [[Dependency Update PRs]]'s listing (release notes link, "not applied"). A major of `@types/react`, `@types/react-dom` or `@types/luxon` in the same run goes to the assessor with its library, so the effort counts its changes, and the summary lists it beside the report. One that comes without its library's major isn't sent to the assessor on its own: the summary lists it as part of that library's upgrade. If [[Major Upgrade Sweeps]] is already built, its step 5 already has a line for these three packages, so the implementer extends that line rather than adding a second one. The summary shows the report unedited, still marked "not applied" (and flagged as a security fix for an advisory), and ends with the offer to create a note for the upgrade. A note Sarah asks for follows `routine-sessions`, like any other change the session makes.
+- `SKILL.md` step 5: a major of the six, or an advisory of one of them that only a major fixes, goes to `upgrade-assessor`, replacing the `dependency-updates` skill's current listing (release notes link, "not applied"). A major of `@types/react`, `@types/react-dom` or `@types/luxon` in the same run goes to the assessor with its library, so the effort counts its changes, and the summary lists it beside the report. One that comes without its library's major isn't sent to the assessor on its own: the summary lists it as part of that library's upgrade. If [[Major Upgrade Sweeps]] is already built, its step 5 already has a line for these three packages, so the implementer extends that line rather than adding a second one. The summary shows the report unedited, still marked "not applied" (and flagged as a security fix for an advisory), and ends with the offer to create a note for the upgrade. A note Sarah asks for follows `routine-sessions`, like any other change the session makes.
 - None of the six has a new major out, so Sarah's check runs the subagent in a local session on a real major of another package as a stand-in. **Implementer:** confirm the routing with local runs of the skill's step 5, on a throwaway branch that's never pushed:
   - A made-up major of one of the six: see it handed to the subagent.
   - A made-up advisory of one of the six that only a major fixes: see it flagged as a security fix.

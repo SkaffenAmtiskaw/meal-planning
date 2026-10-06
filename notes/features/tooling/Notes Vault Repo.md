@@ -283,7 +283,7 @@ Order and facts the steps rely on, settled while planning on 2026-10-05:
 **Approach:**
 - `/final-review` step 2, point 1: the same `git log --follow -S'**Status:** ✅ Complete'` on the note, with the ✅ commit's full committer timestamp (`%cI`, since `--before` filters on the committer date and a day alone would depend on the time of day it runs). The proposed start is the parent of the last code-repo commit at or before that time (`git log -1 --before=<timestamp>`). The check of the few commits before it for step 1's files stays. Step 2 says this is interim until [[Branching and Releases]] replaces it with the story branch's range.
 - Until Step 8, the notes share the code repo's history, so the method finds the same commit the old one did. Step 8 points the `git log` at the notes repo and drops point 3's "leaving out `notes/`".
-- **Implementer:** before changing anything, pick a story with ✅ steps (such as [[Dependency Update PRs]], if it's still open) and record the start the old method gives for it.
+- **Implementer:** before changing anything, pick a story with ✅ steps (such as Dependency Update PRs, if it's still open) and record the start the old method gives for it.
 
 **Files:**
 - `.claude/skills/final-review/SKILL.md` - step 2 finds the start by date

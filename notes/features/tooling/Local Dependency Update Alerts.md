@@ -5,7 +5,7 @@ confirmed: 2026-10-04
 # Where It Stands
 Next: its child stories ^status
 
-Split 2026-10-04 during /plan-steps into [[Dependency Update PRs]], [[Dependency Release Analysis]] and [[Major Upgrade Sweeps]]. The design is approved and nothing is built yet.
+Split 2026-10-04 during /plan-steps into Dependency Update PRs, [[Dependency Release Analysis]] and [[Major Upgrade Sweeps]]. The design is approved. Dependency Update PRs is built and closed: the check, the workflow, the routine and the PR for small updates. The other two wait on [[Infra Stories Without Steps]], then go back to `/infra-design`.
 
 # Inbox
 
@@ -43,7 +43,7 @@ Before planning or implementing any story linked from this note, read this note 
    - **Decided 2026-10-04:** an advisory that's still unfixed is listed again in the weekly run, as a reminder in that week's session. Version updates stay quiet once reported. Sarah's call: GitHub keeps an alert open until it's fixed, and without a reminder an unfixed advisory would be reported once and then forgotten.
      - **Decided 2026-10-04 (/plan-steps):** a weekly run with nothing new still starts a session while any advisory is unfixed, so the reminder reaches Sarah in a quiet week too. Sarah's call, on the recommendation that a reminder that only rides along with new findings fails in exactly the week it's needed.
    - **Decided 2026-10-04:** the first run reports the whole backlog, with no baseline run. Sarah's call: the critical advisories in `next` and `better-auth` ship in the app's build and shouldn't wait for an [[App Health]] goal, and the first run tests the whole flow.
-     - **Decided 2026-10-04 (/plan-steps):** when the story was split, the first run became [[Dependency Update PRs]]'s, so it tests only that story's flow, and the six libraries' backlog minors go into its first PR without an assessment. Sarah's call: security fixes reach a PR sooner.
+     - **Decided 2026-10-04 (/plan-steps):** when the story was split, the first run became Dependency Update PRs', so it tests only that story's flow, and the six libraries' backlog minors go into its first PR without an assessment. Sarah's call: security fixes reach a PR sooner.
    - **Decided 2026-10-04:** every run's PR comes from one fixed `claude/` branch. While its PR is open, a run adds its updates to that PR and brings the branch up to date with `develop`, so only one dependency PR is ever open and none conflicts with another in `pnpm-lock.yaml`. A PR Sarah closed without merging is left alone, and the next run starts a fresh one from `develop`. Sarah's call, as Renovate updates its existing PR rather than opening another.
      - Rejected: a new PR each run - the second conflicts in the lockfile once the first is merged, and a security fix would queue behind an unmerged weekly PR
 
@@ -153,25 +153,25 @@ Before planning or implementing any story linked from this note, read this note 
 # Coverage
 | Goal | Story |
 |---|---|
-| A scheduled workflow on `develop` checks `package.json` for new versions | [[Dependency Update PRs]] |
-| The same workflow checks every installed package against security advisories | [[Dependency Update PRs]] |
-| A run that finds something starts a session under **Routines** | [[Dependency Update PRs]] |
-| A run that finds nothing new starts no session (except the weekly reminder) | [[Dependency Update PRs]] |
-| Small updates, security fixes first, get a PR into `develop` | [[Dependency Update PRs]] |
+| A scheduled workflow on `develop` checks `package.json` for new versions | Dependency Update PRs |
+| The same workflow checks every installed package against security advisories | Dependency Update PRs |
+| A run that finds something starts a session under **Routines** | Dependency Update PRs |
+| A run that finds nothing new starts no session (except the weekly reminder) | Dependency Update PRs |
+| Small updates, security fixes first, get a PR into `develop` | Dependency Update PRs |
 | A major update to a heavily used library gets an effort and gain assessment | [[Dependency Release Analysis]] |
-| A major update never gets a PR without Sarah's say-so | [[Dependency Update PRs]] |
+| A major update never gets a PR without Sarah's say-so | Dependency Update PRs |
 | A minor update gets a release summary and adoption analysis | [[Dependency Release Analysis]] |
 | A major of any other package becomes a sweep item or a flagged story | [[Major Upgrade Sweeps]] |
 
 # Child Stories
 | Story | Status | Scope in this area | Blocked by |
 |---|---|---|---|
-| [[Dependency Update PRs]] | ready | The check, the workflow, the routine, and the one PR for patches, minors and security fixes | |
-| [[Dependency Release Analysis]] | ready | Minor release summaries, and the `upgrade-assessor` for the six libraries | [[Dependency Update PRs]] |
-| [[Major Upgrade Sweeps]] | spec | The Library Upgrades and Dev Tool Upgrades sweeps for other packages' majors | [[Dependency Update PRs]] |
+| Dependency Update PRs | done | The check, the workflow, the routine, and the one PR for patches, minors and security fixes | |
+| [[Dependency Release Analysis]] | spec | Minor release summaries, and the `upgrade-assessor` for the six libraries | [[Infra Stories Without Steps]] |
+| [[Major Upgrade Sweeps]] | spec | The Library Upgrades and Dev Tool Upgrades sweeps for other packages' majors | [[Infra Stories Without Steps]] |
 
 # Build Order
-- **Stated:** [[Dependency Update PRs]] first, from the other two stories' `blocked-by`.
+- **Stated:** Dependency Update PRs first, since the other two extend the session it built. It's built and closed.
 - **Inferred from the draft plan:** [[Dependency Release Analysis]] and [[Major Upgrade Sweeps]] don't depend on each other and can come in either order. Both edit steps 5 and 8 of the `dependency-updates` skill, but different branches of each.
 
 # Deferred Work
