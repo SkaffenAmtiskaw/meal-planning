@@ -1,12 +1,12 @@
 ---
 type: infra
-status: ready
+status: in-progress
 confirmed: 2026-10-06
 ---
 # Where It Stands
-Ready. Next: /implement ^status
+In progress. Next: /implement Step 2 ^status
 
-Shaped 2026-10-06 as infra: a standard for good docs and agent instructions, drawn from research, that an agent loads only while it edits those files. Its decisions and design were settled the same day: a `writing-standard` shared-rule skill holding a shared core with a part for docs and a part for agent instructions, a `rule-placement` shared-rule skill for where a rule lives, and pointers from AGENTS.md, `/tooling` and `/infra-design`. Nothing is built yet: `/implement` builds it in three steps. Spun off from [[Agent Workflow Changes 2026-10-02]] during `/tooling` on 2026-10-06.
+Shaped 2026-10-06 as infra: a standard for good docs and agent instructions, drawn from research, that an agent loads only while it edits those files. Its decisions and design were settled the same day: a `writing-standard` shared-rule skill holding a shared core with a part for docs and a part for agent instructions, a `rule-placement` shared-rule skill for where a rule lives, and pointers from AGENTS.md, `/tooling` and `/infra-design`. Step 1 is built: the `writing-standard` skill, with its docs and agent-instructions parts, and the three memories it replaces are deleted. Steps 2 and 3 remain: the `rule-placement` skill, then the pointers in AGENTS.md, `/tooling` and `/infra-design`. Spun off from [[Agent Workflow Changes 2026-10-02]] during `/tooling` on 2026-10-06.
 
 # Inbox
 
@@ -124,6 +124,8 @@ The "New skills and agents" bullet stays, and the Convention on reviewing agents
 - The core names no skill that uses it, and ends by naming the part to read for each kind of file.
 - `docs-are-guides-not-rule-lists`, `restructure-for-readability` and `condition-before-instruction` are deleted from Claude's memory folder, with their `MEMORY.md` lines, and their content is in the standard.
 **Sarah checks:** none
+**Status:** ✅ Complete
+**As built:** the core also opens with "Write for Your Reader", the principle Piece 3 says both parts apply, and `docs.md` gains "Prose by Default", saying how the core's list rule applies to docs. The planning rule at the end of `restructure-for-readability` (a plan step that adds to a doc says it does a readability pass) was dropped rather than moved in, since the standard now reaches the agent that builds the step (Sarah, 2026-10-06).
 
 ### Step 2: Rule placement
 **Builds:** Piece 7, and Piece 6's last two memories
