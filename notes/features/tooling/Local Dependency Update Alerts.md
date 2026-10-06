@@ -5,7 +5,7 @@ confirmed: 2026-10-04
 # Where It Stands
 Next: its child stories ^status
 
-Split 2026-10-04 during /plan-steps into Dependency Update PRs, [[Dependency Release Analysis]] and [[Major Upgrade Sweeps]]. The design is approved. Dependency Update PRs is built and closed: the check, the workflow, the routine and the PR for small updates. [[Major Upgrade Sweeps]] has its Build Order and is ready to build. [[Dependency Release Analysis]] goes back to `/infra-design` to replace its steps with a Build Order.
+Split 2026-10-04 during /plan-steps into Dependency Update PRs, [[Dependency Release Analysis]] and [[Major Upgrade Sweeps]]. The design is approved. Dependency Update PRs is built and closed: the check, the workflow, the routine and the PR for small updates. [[Major Upgrade Sweeps]] has its Build Order and is ready to build. [[Dependency Release Analysis]] has its Build Order and is ready to build too.
 
 # Inbox
 
@@ -102,15 +102,18 @@ Before planning or implementing any story linked from this note, read this note 
    - Model: Sonnet. Repositories: `meal-planning`. Connectors: none.
    - Trigger: API, called by `start-dependency-updates`. Its URL and token are in the Actions secrets `ROUTINE_DEPENDENCY_UPDATES_URL` and `ROUTINE_DEPENDENCY_UPDATES_TOKEN`.
    - Cloud environment: `Meal Planning Routines`.
-4. **The `dependency-updates` skill** (`.claude/skills/dependency-updates/SKILL.md`) handles one run's findings in the session. It follows `routine-sessions`, and reads the payload as untrusted identifiers, as `ci-failure` does. ^piece-4
+4. **The `dependency-updates` skill** (`.claude/skills/dependency-updates/SKILL.md`) handles one run's findings in the session. It follows `routine-sessions`, and reads the payload as untrusted identifiers, as `ci-failure` does. Requirement: it names the assessed libraries (Piece 5) in one place, and its other steps and the `upgrade-assessor` refer to them by that name, so adding or removing one changes one line. ^piece-4
    1. A failed weekly check: it reruns `pnpm deps:check --weekly` on the commit the run tested. A failure that reproduces is fixed on a `claude/` branch with a PR into the run's branch. One that doesn't is re-run on GitHub once, as `ci-failure` does, and a re-run that passes sends the week's findings. Otherwise it explains what it found.
    2. Its branch: if the PR from `claude/dependency-updates` is open, it checks out that branch and brings it up to date with `develop`. Otherwise it cuts the branch fresh from `develop`. A run with only majors still gets its branch, since the sweep rule (sub-step 5) may write an item. If the run ends with nothing to commit, it pushes nothing and opens or changes no PR.
    3. Patches, minors and security fixes go on that branch. A transitive advisory gets the smallest fix that works: a lockfile bump when the parent's range already allows the fixed version, a parent update when it doesn't, or an `overrides` entry in `pnpm-workspace.yaml` like the ones `pnpm audit --fix` adds. It runs the four check scripts. If one fails, it finds the update that breaks it, drops it from the branch and reports it. The dropped update goes through the sweep rule in sub-step 5, with what broke as its work.
-   4. Minors: a minor of React, Next, Mantine, better-auth, luxon or Zod goes to the `upgrade-assessor` subagent (Piece 5) for its benefit to the app. Every other minor gets a summary of what the release adds and a quick analysis of anything worth adopting. Release notes come from the package's GitHub releases and changelog (`github.com` and `raw.githubusercontent.com`, both on the environment's Trusted list).
+   4. Minors in the PR. A minor the session dropped (sub-steps 3 and 7) or couldn't apply gets none of this.
+      - **One of the assessed libraries:** it goes to the `upgrade-assessor` subagent (Piece 5), and the summary shows its report unedited.
+      - **Any other package:** the session reads the release notes for every version after the one on `develop`, up to the new one, from the package's GitHub releases or changelog (`github.com` and `raw.githubusercontent.com`, both on the environment's Trusted list). The summary says what they add, with links, and in a line or two whether anything is worth a story to adopt, naming the files where it would apply.
+      - **Release notes it can't read:** the summary says so and names the site it couldn't reach.
    5. Majors (an advisory fixed only by a major counts as one, flagged as a security fix):
-      - React, Next, Mantine, better-auth, luxon or Zod: the `upgrade-assessor` subagent writes the assessment, shown unedited.
+      - **One of the assessed libraries:** the `upgrade-assessor` subagent writes the assessment. A major of the library's `@types/*` package in the same run goes to the subagent with it, so the effort counts its changes. The summary shows the report unedited, marked "not applied", or flagged as a security fix for an advisory only the major fixes. It lists the type package's major beside the report, and offers to create a note for the upgrade. A note Sarah asks for follows `routine-sessions`, like any other change the session makes.
       - **Any other package:** the session reads the major's breaking changes, searches the code for each one the app hits, and follows the sweep rule.
-      - **The sweep rule** handles two kinds of update: a major of any package other than the six, and an update of any package that sub-step 3 or 7 dropped because it broke a check. For each one, the session goes through these steps in order:
+      - **The sweep rule** handles two kinds of update: a major of any package other than the assessed libraries, and an update of any package that sub-step 3 or 7 dropped because it broke a check. For each one, the session goes through these steps in order:
         1. **Rule out what's never an item.** The summary lists it instead, and the session goes on to the next update:
            - **A security fix,** meaning a major that's the only fix for an advisory, or a dropped fix for an advisory. The summary flags it as a security fix with its advisory ID, as an upgrade to plan on its own.
            - **A major of `@types/react`, `@types/react-dom` or `@types/luxon`.** The summary lists it beside its library.
@@ -135,13 +138,14 @@ Before planning or implementing any story linked from this note, read this note 
    6. Reminders: it lists each advisory that's still unfixed.
    7. It pushes and opens the PR into `develop`, or updates the open one, then waits for the PR's checks to finish. `start-ci-failure` skips `claude/` branches, so the session handles a failure itself, the way `ci-failure` does: it re-runs a check that passed in the session once on GitHub, to tell a flake from a failure only GitHub's runner has. If it reproduces that failure, it finds the update that causes it with `git bisect` and drops it with a `git revert`, rather than fixing the code. The dropped update goes through the sweep rule, and its item is committed with the revert. It explains what it can't reproduce or drop.
    8. It ends with a summary: the PR and its checks' result, the dropped updates, the minor summaries, the assessments, each sweep item the run added or updated, with its sweep, or its Roadmap line with the missing sweep flagged, each update flagged as a possible story or a security fix, with why, and the reminders. If nothing was pushed, because the merge of `develop` conflicted or a push was rejected, **Not applied** also lists what each item would have said. That's the only record of it, since the reported list keeps those versions quiet until a newer one comes out.
-5. **The `upgrade-assessor` subagent** (`.claude/agents/upgrade-assessor.md`, `model: opus`) assesses a new release of React, Next, Mantine, better-auth, luxon or Zod, so Sarah can decide what to pick up and how much to prioritize it. ^piece-5
+5. **The `upgrade-assessor` subagent** (`.claude/agents/upgrade-assessor.md`, `model: opus`) assesses a new release of one of **the assessed libraries**, React, Next, Mantine, better-auth, luxon and Zod, so Sarah can decide what to pick up and how much to prioritize it. It's given the package, the version on `develop` and the new one, and for a major, the type package's major that goes with it. ^piece-5
    - Benefit to the app (majors and minors): for each new feature or change, whether the app has code it would improve (workarounds it would replace, bugs it would fix, code it would make simpler), with the files and an example of each. `useEffectEvent` replacing dependency-array workarounds is the kind of thing it looks for. A feature with no place to use it gets one line at most.
    - Effort (majors only): from the migration guide and release notes, each breaking change the app actually hits, with file counts.
-   - Urgency (majors only): how long the current major keeps getting security fixes, and any advisory only the new major fixes.
-   - Verdict: for a major, the benefit and urgency weighed against the effort, not a ranking on security alone. For a minor, whether anything is worth adopting now.
+   - Urgency (majors only): how long the current major keeps getting security fixes, and any advisory only the new major fixes. If the project states no support policy, it says so, and where it looked.
+   - Verdict: for a major, the benefit and urgency weighed against the effort, not a ranking on security alone, saying how soon the upgrade is worth planning: for deciding when to next draw a goal from [[App Health]], and how high to rank it among other work. For a minor, whether anything is worth a story to adopt.
+   - **Sources:** it cites the pages it read, and names any page it couldn't reach rather than falling back on what it already knows. Requirement: without this, a report can't show whether the docs domains are reachable (below).
    - Read-only tools: `Read`, `Grep`, `Glob`, `WebFetch`, `WebSearch`. It returns its report to the session.
-   - The release notes and guides live on `react.dev`, `nextjs.org`, `mantine.dev`, `better-auth.com`, `zod.dev` and `moment.github.io` (luxon), none of them on the Trusted list, so they're added to the environment's allowed domains (see Setup Outside the Repo). The docs don't say whether `WebFetch` goes through that allowlist, so the plan checks that the first assessment can read them.
+   - The release notes and guides live on `react.dev`, `nextjs.org`, `mantine.dev`, `better-auth.com`, `zod.dev` and `moment.github.io` (luxon), none of them on the Trusted list, so they're added to the environment's allowed domains (see Setup Outside the Repo). The docs don't say whether `WebFetch` goes through that allowlist, so the Build Order checks that the first assessment can read them.
 6. **Two new sweep notes,** from the Sweep template. They collect upgrades the `dependency-updates` session can't apply, until a goal picks them up. ^piece-6
    - **Library Upgrades** (`notes/features/tech debt/Library Upgrades.md`) collects packages in `dependencies`. It takes small majors of any package other than the six assessed libraries, Mongoose included. It also takes small fixes for an update of any package, the six included, that the session dropped because it broke a check. Its items end 🎯 [[App Health]].
    - **Dev Tool Upgrades** (`notes/features/tooling/Dev Tool Upgrades.md`) takes the same two kinds for packages in `devDependencies`. Its items end 🎯 [[Dev Tooling]].
@@ -170,7 +174,7 @@ Before planning or implementing any story linked from this note, read this note 
 3. `start-dependency-updates` calls `/fire` once with the new identifiers.
    - The call fails (a wrong secret, the API down, the limit of 30 calls an hour): the job fails and nothing is saved, so the next run finds the same findings and tries again. There's no retry within the run, since `/fire` doesn't dedupe.
    - The call succeeds: the job saves the updated list to the cache, and its log shows the session's link.
-4. The session (Sonnet) runs the `dependency-updates` skill. It brings the open `claude/dependency-updates` PR up to date or cuts a fresh branch, applies patches, minors and security fixes, runs the four checks and drops any update that breaks one. The `upgrade-assessor` subagent (Opus) handles the six libraries' releases. Majors of other packages and dropped updates go through the sweep rule (Piece 4, sub-step 5): an item on a sweep when the work is small, otherwise a flag in the summary. Items are committed on the PR's branch, so a run with only sweep items still opens a PR.
+4. The session (Sonnet) runs the `dependency-updates` skill. It brings the open `claude/dependency-updates` PR up to date or cuts a fresh branch, applies patches, minors and security fixes, runs the four checks and drops any update that breaks one. Each minor in the PR gets a summary, and the `upgrade-assessor` subagent (Opus) writes it for the assessed libraries' minors, and the assessment of their majors. Majors of other packages and dropped updates go through the sweep rule (Piece 4, sub-step 5): an item on a sweep when the work is small, otherwise a flag in the summary. Items are committed on the PR's branch, so a run with only sweep items still opens a PR.
 5. It pushes and opens or updates the PR into `develop`, then waits for the PR's checks. `start-ci-failure` skips `claude/` branches, so the session handles a failure itself, the way `ci-failure` does. An update it drops there goes through the sweep rule too, and its item is pushed with the revert.
 6. The session waits in the Code tab under **Routines** with its summary. Sarah merges the PR on GitHub, which brings its sweep items onto `develop`, where a goal drawn from [[App Health]] or [[Dev Tooling]] can pick them up. If she closes the PR without merging, its items go with it. She asks the session to create notes for anything she wants to pick up.
 
@@ -194,9 +198,10 @@ Before planning or implementing any story linked from this note, read this note 
 | A run that finds something starts a session under **Routines** | Dependency Update PRs |
 | A run that finds nothing new starts no session (except the weekly reminder) | Dependency Update PRs |
 | Small updates, security fixes first, get a PR into `develop` | Dependency Update PRs |
-| A major update to a heavily used library gets an effort and gain assessment | [[Dependency Release Analysis]] |
+| A major of an assessed library gets an assessment weighing gain and urgency against effort | [[Dependency Release Analysis]] |
 | A major update never gets a PR without Sarah's say-so | Dependency Update PRs |
-| A minor update gets a release summary and adoption analysis | [[Dependency Release Analysis]] |
+| A minor of another package in the PR gets a release summary and whether it's worth a story | [[Dependency Release Analysis]] |
+| A minor of an assessed library in the PR gets an analysis of the code each new feature would improve | [[Dependency Release Analysis]] |
 | A major of any other package becomes a sweep item or a flagged story | [[Major Upgrade Sweeps]] |
 | A patch or minor dropped because it breaks a check becomes a sweep item or a flagged story | [[Major Upgrade Sweeps]] |
 
@@ -204,7 +209,7 @@ Before planning or implementing any story linked from this note, read this note 
 | Story | Status | Scope in this area | Blocked by |
 |---|---|---|---|
 | Dependency Update PRs | done | The check, the workflow, the routine, and the one PR for patches, minors and security fixes | |
-| [[Dependency Release Analysis]] | spec | Minor release summaries, and the `upgrade-assessor` for the six libraries | |
+| [[Dependency Release Analysis]] | ready | Minor release summaries, and the `upgrade-assessor` for the assessed libraries | |
 | [[Major Upgrade Sweeps]] | ready | The Library Upgrades and Dev Tool Upgrades sweeps, for other packages' majors and for updates the session drops | |
 
 # Build Order

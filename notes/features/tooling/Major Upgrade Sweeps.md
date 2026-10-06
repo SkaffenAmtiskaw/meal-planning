@@ -10,6 +10,7 @@ Ready. Next: /implement ^status
 Split from [[Local Dependency Update Alerts]] on 2026-10-04. `/infra-design` revised it on 2026-10-06: it now also takes updates the session drops for breaking a check, and a two-step Build Order replaces its old steps. Nothing is built yet.
 
 # Inbox
+- From [[Dependency Release Analysis]]'s `/infra-design` revision (2026-10-06): Sarah wants the assessed libraries (React, Next, Mantine, better-auth, luxon and Zod) listed in one place, so adding or removing one changes one line. The hub now defines them once, in Piece 5, and Piece 4 requires the built skill to name them in one place. This story's parts still repeat the list: its Goal 1, the hub's sweep rule step 1 (`@types/react`, `@types/react-dom`, `@types/luxon`, which could become "an assessed library's `@types/*` package") and the hub's Piece 6 (Library Upgrades' description and its What Belongs Here line "Never here: …"), so the built sweeps and the sweep rule would each keep their own copy.
 
 # Purpose
 A major update of a package other than the six assessed libraries, or a patch or minor that the `dependency-updates` session drops from its PR because it breaks a check, lands where a goal can pick it up: an item on the new Library Upgrades or Dev Tool Upgrades sweep when the work is small, or a flag in the session that it looks like a story of its own. Without this, a dropped update goes quiet until a newer version comes out. It extends the session Dependency Update PRs built. Split from [[Local Dependency Update Alerts]] on 2026-10-04.
