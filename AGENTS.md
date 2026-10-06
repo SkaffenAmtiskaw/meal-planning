@@ -63,8 +63,13 @@ Any change to a note in `notes/` follows these rules:
 
   Whoever moves a story forward updates both. When the next step is settled, write them without asking and mention it in your summary. When there's a real choice, such as what the story is blocked on, show Sarah the line and wait for her approval.
 
-  In an older note, Where It Stands may hold other things, such as background, findings or a list of questions. When you work on the note, rather than just editing it in passing, move each one where it belongs: a question for a later step to the top of the section that step writes, and anything else to the Inbox.
-- **The Inbox** comes right after Where It Stands in every story and hub. It holds items for a later step to act on that have no section of their own. Sarah adds items there when something occurs to her. Sessions and agents add things like background from another story, a new piece for a redesign or a retype line. A question for a later step isn't an Inbox item: it goes at the top of the section that step writes, as `/shape` describes.
+  In an older note, Where It Stands may hold other things, such as background, findings or a list of questions. When you work on the note, rather than just editing it in passing, move each one where it belongs: a question or finding for a later step to the top of the section that step writes, and anything else to the Inbox.
+- **The Inbox** comes right after Where It Stands in every story and hub. It holds what reaches a note from outside its usual flow from one skill to the next:
+  - **Sarah's items,** added when something occurs to her.
+  - **Items from another note's work,** such as background that a session working on another story found for this one.
+  - **Why a note was sent back** to an earlier step, such as a new piece `/plan-steps` found for a redesign, a problem that sends an infra story from `/implement` back to `/infra-design`, or a retype line.
+
+  In the usual flow, a step doesn't leave the next one an Inbox item. A finding or question for a later step goes at the top of the section that step writes, as `/shape` describes.
   - **Adding an item:** say what it is and where it came from. If the note has no Inbox, add one right after Where It Stands.
   - **Working on a note:** read its Inbox, and decide which items are your step's to act on. Act on each one. Then, if it's one of Sarah's lines, handle it as "Sarah's comments" above describes. Otherwise, delete it. Leave items that belong to a later step.
 - **A note with the wrong type.** If a note's type doesn't fit its work, tell Sarah which type fits and why, and offer to retype it. If she agrees, retype it as the `retyping-a-note` skill describes, then stop.

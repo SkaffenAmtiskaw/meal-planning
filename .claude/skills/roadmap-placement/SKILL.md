@@ -5,17 +5,23 @@ user-invocable: false
 ---
 
 # Checking the goals
-If Sarah already named the story's goals, use them and go on to placing the line. She has named them if she answered this session, such as when its line moved into Next as the skill started, or if its Roadmap line already sits under a goal's heading in Later or ends with 🎯 links, as when `/tooling` spun it off. Otherwise, read each note in `notes/goals/`: a goal's Purpose, Done When and Out of Scope, and a standing goal's Purpose, What Belongs Here and Out of Scope. Which goals are plausible depends on the work, a story or an item:
+If Sarah already named the story's goals, use them and go on to placing the line. She has named them if she answered this session, such as when its line moved into Next as the skill started, or if its Roadmap line already sits under a goal's heading in Later or ends with 🎯 links, as when `/tooling` spun it off. Otherwise, read each note in `notes/goals/`: a goal's Purpose, Done When, Out of Scope and Roadmap Instructions, and a standing goal's Purpose, What Belongs Here, Out of Scope and Roadmap Instructions.
+
+A goal's Roadmap Instructions are Sarah's own rules, in her own wording. If one says the story or item serves that goal, as Dev Tooling's do for everything in its collecting notes, don't ask about that goal:
+- **A story** serves it. Go on to check the other goals.
+- **An item** serves it unless Sarah picks another goal below, since an item fits one goal best.
+
+Which goals are plausible depends on the work, a story or an item:
 - **Dev tooling or agent work:** a goal is plausible when a line in its Purpose, Done When or What Belongs Here could reasonably include the work, or when the work could make the goal's work easier. Judge that from the goal's Done When and the Roadmap lines that serve it.
 - **Otherwise:** a goal is plausible when a line in its Purpose, Done When or What Belongs Here could reasonably include the work.
 
 A goal whose Out of Scope lists the story or item is never plausible. For an item, the building or planning goal (the top two under the Roadmap's Goals) is plausible only when you see a compelling case that the goal can't be complete without it, as the Roadmap's "How this file works" describes under "Collecting notes".
 
-If no goal is plausible, don't ask. Place a story's line with no goal, or leave an item with no 🎯 link, and mention it in your summary. Otherwise, ask Sarah which goals the story or item serves:
+If no goal is plausible, apart from any its Roadmap Instructions settled, don't ask. Place a story's line with only the settled goals, or no goal, or link an item to its settled goal, or leave it with no 🎯 link, and mention it in your summary. Otherwise, ask Sarah which other goals the story or item serves:
 - **Dev tooling or agent work:** name each plausible goal, and the line that includes the work or the work it would make easier. Don't recommend one. The Roadmap's "How this file works" says tooling sits under Dev Tooling's heading unless Sarah puts it under a ranked goal.
 - **Otherwise:** suggest each plausible goal, and quote the line that covers it.
 
-For an item, ask which one goal it fits best, and give the compelling case for the building or planning goal. It serves two only when neither goal can be done without it.
+For an item, ask which one goal it fits best, counting a goal its Roadmap Instructions settled as one of the choices, and give the compelling case for the building or planning goal. It serves two only when neither goal can be done without it.
 
 "None" is an answer too.
 

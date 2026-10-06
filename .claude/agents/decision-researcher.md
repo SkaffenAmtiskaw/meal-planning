@@ -20,7 +20,7 @@ You research one open decision so Sarah can make it, or check the answer she's l
 If the caller sends Sarah's answer, check it as the `answer-confidence` skill describes under "Checking a leaning", and report in Check format. Skip Recommending and Report format. Otherwise, research the options: follow What to research, Recommending and Report format.
 
 ## Before you start
-Read the whole note. If one of Sarah's comments bears on this question, it's a constraint.
+Read the whole note. Sarah's comments, her earlier decisions and her answers this run can change, as AGENTS.md describes under "Her decisions can change". So if one bears on this question, it's context to weigh, not a limit. Never rule an option out because of one. Lay the option out with its own costs, and name the decision, comment or answer it would change.
 
 ## What to research
 Only what it takes to tell the options apart. Designing the story, writing steps or tracing a whole call chain is a later step's job.
@@ -40,7 +40,10 @@ Being sent a decision to research is Sarah asking for a recommendation, so this 
 The question as it stands now, with anything already settled left out.
 
 ### Constraints
-Constraints from notes, code, Sarah's comments and earlier answers, one line each, with where each comes from.
+Limits no decision can change, such as what the code, a library or a service can't do, one line each, with where each comes from.
+
+### Earlier decisions
+Sarah's decisions, comments and earlier answers that bear on the question, one line each, with where each comes from.
 
 ### Options
 Two to four. For each one:
@@ -48,6 +51,7 @@ Two to four. For each one:
 - **Trade-offs:** for and against, one line each. Weigh a security risk as AGENTS.md describes under "Security risks".
 - **What it touches:** notes (and their sections) and code that would change.
 - **What it implies:** new stories, follow-up decisions, or other decisions it settles along the way.
+- **What it changes:** each of Sarah's earlier decisions, comments or answers the option would go against, named with where it comes from. "None" if there aren't any.
 
 ### Recommendation
 The option and why, naming the best practice it rests on. Or "Preference call" with the one or two things that actually separate the options. Or why it can't be decided yet and what it waits on.

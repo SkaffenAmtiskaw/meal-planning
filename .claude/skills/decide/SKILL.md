@@ -67,7 +67,7 @@ Save its brief to `.scratch/<note name> - decision <N>.md`.
 
 ### Present
 Show Sarah:
-1. **The question** as the brief restates it, and what's already fixed.
+1. **The question** as the brief restates it, its constraints, and the earlier decisions that bear on it.
 2. **The options,** each with its trade-offs and what it touches.
 3. **The recommendation,** with the practice it rests on. Or say it's a preference call and what separates the options. Or say it can't be decided yet, and why.
 

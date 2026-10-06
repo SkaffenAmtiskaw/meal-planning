@@ -4,13 +4,13 @@ confirmed: {{date:YYYY-MM-DD}}
 ---
 # Where It Stands
 
-%% The line ending in ` ^status` says what this hub needs next and nothing else: "Next: /decide" while it has open decisions, "Next: /close" once its last child story has closed, otherwise "Next: its child stories". Don't describe the area here; Purpose does that. The Roadmap shows a hub's line only while it needs `/decide` or `/close`, and embeds this line with `![[<note>#^status]]`, so keep the ` ^status` ID on it. Below it goes a short summary of what work has been done and what remains, and nothing else. Items for a later step go in the Inbox. %%
+%% The line ending in ` ^status` says what this hub needs next and nothing else: "Next: /decide" while it has open decisions, "Next: /close" once its last child story has closed, otherwise "Next: its child stories". Don't describe the area here; Purpose does that. The Roadmap shows a hub's line only while it needs `/decide` or `/close`, and embeds this line with `![[<note>#^status]]`, so keep the ` ^status` ID on it. Below it goes a short summary of what work has been done and what remains, and nothing else. Anything for a later step goes at the top of the section that step writes, or in the Inbox, as AGENTS.md describes under "Editing notes". %%
 
 No direction yet. ^status
 
 # Inbox
 
-%% Items for a later step to act on that have no section of their own, added by Sarah or by a session or agent. Each skill that works on the note acts on the items that are its step's, then deletes them, as AGENTS.md describes under "Editing notes". %%
+%% What reaches the note from outside its usual flow: Sarah's items, items from another note's work, and why the note was sent back to an earlier step. A finding or question for a later step in the usual flow goes at the top of the section that step writes. Each skill that works on the note acts on the items that are its step's, then deletes them, as AGENTS.md describes under "Editing notes". %%
 
 # Purpose
 %% What area of the app this hub covers, and why the work is spread across several stories. A hub holds shared design and decisions, not priority: goals rank the work, and each child story's Roadmap line shows which goal it serves. A hub is not a story and is never implemented directly. %%
