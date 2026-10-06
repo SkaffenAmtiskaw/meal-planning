@@ -51,26 +51,23 @@ If none of these applies, go on to step 2. Otherwise, tell Sarah which case appl
 
 ## 2. Settle it with Sarah
 Ask what you need to make the change without guessing. Skip anything the note or Sarah has already answered. What often needs asking:
-- where the change belongs, when it could go in more than one place (a skill, an agent, AGENTS.md, Note Conventions, `docs/`)
-
-The docs in `docs/` describe the codebase itself, never how agents work. If an agent rule is shared by several skills or agents but doesn't belong in every session, it goes in its own skill with `user-invocable: false`, like `running-the-app`. The skills that need it point to it by name, and agents that need it preload it with `skills:` in their frontmatter.
+- where the change belongs, when it could go in more than one place (a skill, an agent, AGENTS.md, Note Conventions, `docs/`). If the change adds or moves a rule, decide where it goes as the `rule-placement` skill describes, and ask only if that leaves more than one place.
 - the note's open questions
 
 Then find everything the change reaches. Search `.claude/`, `AGENTS.md`, `notes/Note Conventions.md`, `notes/templates/`, `docs/` and `scripts/` for the skill, agent, rule or term being changed. A renamed skill, a new note type or a changed rule is usually referenced in several places, and each reference is part of this change.
 
 ## 3. Make the change
+Before you draft or write a change to a doc or an agent instruction, read the `writing-standard` skill.
+
 Size decides whether to draft first:
 - **Small, clear edits:** a line or a few, where the wording follows directly from what Sarah said. Write them.
 - **Anything larger:** rewriting a section, or a new skill, agent, hook, template or doc. Show Sarah the draft of each file and wait for her approval.
 
 While making it:
 - **Claude Code features** (skill frontmatter, hooks, subagents, rules): check the current Claude Code docs, never memory.
-- **New skills and agents** follow the shape of the existing ones in `.claude/skills/` and `.claude/agents/`. A skill carries or points to only the parts of shared docs it uses, never a whole long doc.
+- **New skills and agents** follow the shape of the existing ones in `.claude/skills/` and `.claude/agents/`. A skill carries or points to only the parts of shared docs it uses, never a whole long doc. An agent that reviews docs or agent instructions loads the `writing-standard` skill with `skills:` in its frontmatter, rather than restating the standard or pointing to it from its prompt, so it reviews against the same standard the writer drafted to.
 - **Model:** if a new agent's work is scripted or rule-following and its output is reviewed before anything acts on it, give it `model: sonnet`, as `bug-reproducer` and `scope-router` have. Otherwise, when its work takes judgment such as design, critique or weighing options, leave `model` out so it runs on the session's model. Skills never set `model`: the override ends when Sarah sends her next message, so an interactive skill would run only its first turn on it.
 - **Naming a new or renamed skill:** check the name, and each alias, against the skills in your own skill list and the built-in commands and bundled skills on the current Claude Code [commands page](https://code.claude.com/docs/en/commands). If it matches one, pick another name. Otherwise, ask Sarah to type `/<name>` in the Code tab and say whether anything built in comes up, because the docs can miss an alias: the desktop app's `/workflows` has a `workflow` alias the docs don't list, and it caught the old `/workflow` skill.
-- **Writing instructions** in a skill or agent: put the condition first ("If ..., do Y. Otherwise, do X."). Never write an instruction followed by its exception in a later sentence ("Do X." then "Don't do X when ..."), because agents act on the plain instruction and miss the exception.
-- **Readable as a whole:** Sarah reads each draft as prose, so reread every passage you changed from start to finish before showing it. If an addition is a separate idea, give it its own paragraph or bullet. If it's a case of an existing rule, rebuild the rule around its cases, such as sub-bullets, rather than wedging a sentence into the middle. Say in full what an agent does: what it asks, about what, and what happens with each answer. Never use shorthand like "asks Sarah them".
-- **AGENTS.md, the docs and shared-rule skills:** AGENTS.md is loaded into every session and every subagent, the docs in `docs/` are read when a task needs them, and a shared-rule skill loads when it's relevant or when an agent preloads it. If a rule is already in one of them, a skill or agent never restates it, because two copies drift apart. Where a skill needs to say that a rule applies at a certain point, it points to the AGENTS.md section, the doc or the shared-rule skill by name ("as AGENTS.md describes under ...", "as `unit_tests.md` describes", "as the `running-the-app` skill describes"). The reverse holds too: a shared-rule skill holds only the shared rule. If a change needs to say which skill uses that rule, at which step or who does what, that goes in each skill that uses it, never in the shared-rule skill. If a skill's or agent's wording differs from one of them, ask Sarah whether it's a deliberate exception or drift. Keep an exception in the skill or agent, and remove drift.
 - **Project config:** Sarah asking for this change is the explicit instruction AGENTS.md requires, but only for the config it names.
 - **Code, config or scripts:** run `pnpm lint` and `pnpm check:types`. Test a hook or script by running it with sample input.
 

@@ -36,7 +36,7 @@ Work is planned and tracked as notes in the Obsidian vault in `notes/`.
   - **Anything else:** stop and ask her whether it should become doc. If it should:
     - **The default, for any change that isn't big:** recommend drafting it now, because docs that wait for later rarely get updated. If she says to do it later, remind her of that preference. If she still says later, add it to `notes/features/tooling/Docs Updates.md`.
     - **A big change** (it needs more than one decision from her, or touches more than one file): give her a neutral choice between doing it now and adding it to Docs Updates, and do what she picks.
-    - **Drafting it:** match the doc's existing style, show her the draft and write it once she approves.
+    - **Drafting it:** show her the draft and write it once she approves.
 
 ## Editing notes
 Any change to a note in `notes/` follows these rules:
@@ -125,6 +125,7 @@ Read the docs a task touches when it needs them, not all up front:
 - `docs/e2e_tests.md`: before writing E2E tests
 - `docs/ci.md`: before changing a workflow or a routine
 - `docs/seed.md`: before changing `seed/` or adding a model
+- the `writing-standard` skill: before drafting or changing a file in `docs/`, `README.md`, AGENTS.md, a skill or an agent
 
 ## Library APIs
 The libraries in this project are newer than your training data. Never use an API from memory. Every API you use needs a source:

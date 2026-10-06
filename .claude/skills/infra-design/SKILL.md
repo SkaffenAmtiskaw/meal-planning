@@ -63,7 +63,7 @@ Where the decisions don't settle something the design needs, don't fill it in:
 Show each piece with its job, then the flow, and wait for her to approve or change each. If a change affects a later piece, say which one and update it before you get to it. Once all are approved, write them under `# Design`, so they survive if the session ends.
 
 ## 4. Conventions
-Draft what later work must follow once this exists, such as how a later source of CI results starts its session. Cover only what the decisions and the design settle. Don't write conventions for cases no story has asked for yet. Each convention says in plain words what later work does, and names where it lands: a file in `docs/` if it describes the codebase, or a skill, a shared-rule skill or AGENTS.md if it's about how agents work, as the `tooling` skill describes.
+Draft what later work must follow once this exists, such as how a later source of CI results starts its session. Cover only what the decisions and the design settle. Don't write conventions for cases no story has asked for yet. Each convention says in plain words what later work does, and names where it lands, as the `rule-placement` skill describes.
 
 If the story sets no conventions, tell Sarah in one line and delete the section. Otherwise, show each one and wait for her to approve or change it, then write them under `# Conventions`.
 

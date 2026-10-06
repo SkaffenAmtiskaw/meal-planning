@@ -7,6 +7,8 @@ A doc's reader may be a person new to this codebase, or an agent, and either may
 ## Describe the Codebase in a Guide's Voice
 A doc describes the codebase: how it's built, where things go and why. It's written in a guide's voice for anyone working on the code, not as instructions to an agent. It explains what's normal and why, and leaves judgment to the reader, the way a reviewer would call out messy mocks in a PR, rather than setting a hard rule such as moving a mock to `test/mocks/` once 3 test files use it. A rule applied by rote misfires on the cases it didn't foresee, while a reader who understands the aim can make the right call.
 
+If what you're drafting is a rule only agents follow, such as when to use `pnpm test:agent`, it doesn't go in a doc, even when it's about code. Place it as the `rule-placement` skill describes instead. A doc is for everyone who works on the code, and an agent rule belongs where agents load it.
+
 A doc that grows from a pattern's Rules is still a guide: what to do, where things go and why, not a numbered list of rules with their checks. Enforcement, such as a Biome ban or a type check, gets at most one short closing paragraph, for anyone who needs to change it. Even there, name only enforcement whose location isn't obvious. A TypeScript error that names the problem and points at the file explains itself, while a test that happens to guard unrelated code is worth naming.
 
 ## Keep Each Doc to One Kind

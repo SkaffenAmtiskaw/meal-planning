@@ -1,12 +1,12 @@
 ---
 type: infra
-status: in-progress
+status: in-review
 confirmed: 2026-10-06
 ---
 # Where It Stands
-In progress. Next: /implement Step 3 ^status
+All steps implemented. Next: /final-review ^status
 
-Shaped 2026-10-06 as infra: a standard for good docs and agent instructions, drawn from research, that an agent loads only while it edits those files. Its decisions and design were settled the same day: a `writing-standard` shared-rule skill holding a shared core with a part for docs and a part for agent instructions, a `rule-placement` shared-rule skill for where a rule lives, and pointers from AGENTS.md, `/tooling` and `/infra-design`. Steps 1 and 2 are built: the `writing-standard` skill, with its docs and agent-instructions parts, and the `rule-placement` skill, and the five memories they replace are deleted. Step 3 remains: the pointers in AGENTS.md, `/tooling` and `/infra-design`, and the headless runs that check Goals 1 and 3. Spun off from [[Agent Workflow Changes 2026-10-02]] during `/tooling` on 2026-10-06.
+Shaped 2026-10-06 as infra: a standard for good docs and agent instructions, drawn from research, that an agent loads only while it edits those files. Its decisions and design were settled the same day: a `writing-standard` shared-rule skill holding a shared core with a part for docs and a part for agent instructions, a `rule-placement` shared-rule skill for where a rule lives, and pointers from AGENTS.md, `/tooling` and `/infra-design`. All three steps are built: the `writing-standard` skill, with its docs and agent-instructions parts, the `rule-placement` skill, the pointers to them from AGENTS.md, `/tooling` and `/infra-design`, and the deletion of the five memories they replace. Headless runs showed sessions loading the standard before drafting and not loading it when only reading, and Sarah confirmed the drafts follow it. What remains is the review of the whole story. Spun off from [[Agent Workflow Changes 2026-10-02]] during `/tooling` on 2026-10-06.
 
 # Inbox
 
@@ -16,9 +16,9 @@ Define what good docs and good agent instructions look like in this repo, which 
 The standard applies to edits from the time it exists. The slimming pass in [[Agent Workflow Changes 2026-10-02]] waits on this story, and [[Docs Audit]] then checks the existing docs against the standard it sets.
 
 # Goals
-- [ ] An agent that drafts or changes a doc or an agent instruction reads the standard before it drafts, whether it's running a skill or working without one.
-- [ ] A draft of a doc or an agent instruction follows the whole standard: the shared core and the part for its kind of file.
-- [ ] A session that reads docs or agent instructions without changing them doesn't load the standard.
+- [x] An agent that drafts or changes a doc or an agent instruction reads the standard before it drafts, whether it's running a skill or working without one.
+- [x] A draft of a doc or an agent instruction follows the whole standard: the shared core and the part for its kind of file.
+- [x] A session that reads docs or agent instructions without changing them doesn't load the standard.
 
 # Open Decisions
 1. Do project docs and agent instructions share one standard, or does each get its own?
@@ -150,7 +150,9 @@ The "New skills and agents" bullet stays, and the Convention on reviewing agents
 - Goal 1, in a skill: a fresh headless session running `/tooling` asked to draft, without writing, a one-sentence change to the `scope-router` agent's description invokes `writing-standard` and reads `instructions.md` before its draft.
 - Goal 3: a fresh headless session asked "How are shared mocks set up? Read `docs/unit_tests.md` and tell me." answers without invoking `writing-standard`.
 **Sarah checks:**
-- [ ] `/implement` gives you in chat the two drafts from the Goal 1 runs. Read the `docs/unit_tests.md` paragraph against `.claude/skills/writing-standard/SKILL.md` and `docs.md`, and the `scope-router` change against `SKILL.md` and `instructions.md`. See that each follows every quality there, not only reading as one piece. Goal: a draft follows the whole standard.
+- [x] `/implement` gives you in chat the two drafts from the Goal 1 runs. Read the `docs/unit_tests.md` paragraph against `.claude/skills/writing-standard/SKILL.md` and `docs.md`, and the `scope-router` change against `SKILL.md` and `instructions.md`. See that each follows every quality there, not only reading as one piece. Goal: a draft follows the whole standard.
+**Status:** ✅ Complete
+**As built:** the `rule-placement` pointer in `/tooling` step 2 sits in the "where the change belongs" bullet, and the `writing-standard` pointer opens step 3, before the size split. In the first Goal 1 runs, the `docs/unit_tests.md` paragraph read well but was an agent rule, since `pnpm test:agent` exists only for agents, and the made-up `scope-router` change was redundant, since "planning" already covers `/infra-design`. So `docs.md` gained a paragraph at review (Sarah, 2026-10-06): a rule only agents follow doesn't go in a doc, and is placed as `rule-placement` describes. On the rerun, the doc request was declined and pointed to the AGENTS.md Commands entry, and the `scope-router` run drafted a real change (covering items from a tooling change, which has no story), which Sarah confirmed follows the standard. Goals 1 and 3 were proved by the Implementer checks' headless runs, Goal 2 by the Sarah check.
 
 # Conventions
 - **A reviewing agent preloads the standard.** An agent in `.claude/agents/` that reviews docs or agent instructions, such as a checker [[Docs Audit]] might add, loads `writing-standard` with `skills:` in its frontmatter, rather than restating the standard or pointing to it from its prompt. Lands in `/tooling` step 3, in the bullet on new skills and agents.
