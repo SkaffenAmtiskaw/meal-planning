@@ -1,13 +1,13 @@
 ---
 type: infra
-status: in-progress
+status: in-review
 blocked-by: []
 confirmed: 2026-10-04
 ---
 # Where It Stands
-In progress. Next: /implement Step 10 ^status
+All steps implemented. Next: /final-review ^status
 
-Split from [[Local Dependency Update Alerts]] on 2026-10-04. Its ten implementation steps were planned and approved on 2026-10-04. Steps 1-8 are built: `pnpm deps:check` lists the advisories that aren't in the reported list, `--weekly` adds new versions marked patch, minor or major and repeats every unfixed advisory as a reminder, and CI lints and type-checks the script. The `dependency-updates` routine exists on claude.ai, and its session puts the patches, minors and security fixes it's sent in a PR from `claude/dependency-updates` into `develop`, and lists the majors and reminders. While that PR is open, a run merges `develop` into it and adds its updates there. Once it's closed, the next run starts fresh. After pushing, the session waits for the PR's checks on GitHub, re-runs a failure there once, and drops an update that breaks a check only on GitHub's runner. Step 9 is built too: the `dependency-updates` workflow on `develop` runs the check hourly and weekly, and starts the routine only for findings it hasn't reported, or for the weekly reminders. Its first run opened PR #25 with the backlog. Step 10 remains: a failed weekly check starting a session.
+Split from [[Local Dependency Update Alerts]] on 2026-10-04. Its ten implementation steps were planned and approved on 2026-10-04. Steps 1-8 are built: `pnpm deps:check` lists the advisories that aren't in the reported list, `--weekly` adds new versions marked patch, minor or major and repeats every unfixed advisory as a reminder, and CI lints and type-checks the script. The `dependency-updates` routine exists on claude.ai, and its session puts the patches, minors and security fixes it's sent in a PR from `claude/dependency-updates` into `develop`, and lists the majors and reminders. While that PR is open, a run merges `develop` into it and adds its updates there. Once it's closed, the next run starts fresh. After pushing, the session waits for the PR's checks on GitHub, re-runs a failure there once, and drops an update that breaks a check only on GitHub's runner. Step 9 is built too: the `dependency-updates` workflow on `develop` runs the check hourly and weekly, and starts the routine only for findings it hasn't reported, or for the weekly reminders. Its first run opened PR #25 with the backlog. Step 10 is built too: a failed weekly check starts a session that looks into it, and a failed hourly run starts nothing. What remains is the review of the whole story.
 
 # Inbox
 
@@ -341,5 +341,14 @@ Facts the steps rely on, checked 2026-10-04:
 - `docs/ci.md` - the failure path
 
 **Acceptance:**
-- [ ] Push a branch `claude/deps-check-test` from `develop` with a line at the end of `scripts/dependencyCheck.ts` that throws (at the end, so Biome's pre-commit hook doesn't flag the rest as unreachable), then run `gh workflow run dependency-updates.yml --ref claude/deps-check-test -f mode=weekly`. See `check` fail, `start-dependency-updates` pass, and a session that names the throw as the cause, with a PR or an explanation. Proves: a broken weekly check reaches Sarah as a session.
-- [ ] Run the same with `-f mode=hourly`. See `check` fail, `start-dependency-updates` skipped and no new session. Delete the branch, and close any PR the session opened. Proves: a failed hourly run waits for the next hour instead of starting a session.
+- [x] Push a branch `claude/deps-check-test` from `develop` with a line at the end of `scripts/dependencyCheck.ts` that throws (at the end, so Biome's pre-commit hook doesn't flag the rest as unreachable), then run `gh workflow run dependency-updates.yml --ref claude/deps-check-test -f mode=weekly`. See `check` fail, `start-dependency-updates` pass, and a session that names the throw as the cause, with a PR or an explanation. Proves: a broken weekly check reaches Sarah as a session.
+- [x] Run the same with `-f mode=hourly`. See `check` fail, `start-dependency-updates` skipped and no new session. Delete the branch, and close any PR the session opened. Proves: a failed hourly run waits for the next hour instead of starting a session.
+
+**Status:** ✅ Complete
+
+**As built:**
+- Sarah decided 2026-10-05: when the session's rerun of the check passes, it re-runs the failed job on GitHub once, as `ci-failure` does. A re-run that passes sends the week's findings, which start a session of their own. So a failed weekly check starts the routine only on the run's first attempt, and a re-run that fails again, the session's or Sarah's, starts nothing.
+- The failure text is the run line, then the single line `check failed`. The session reads the run's branch and commit with `gh run view`, reads the failed step's log, and reruns the install and `pnpm deps:check --weekly` without a reported list. It fixes a failure that reproduces through `ci-failure` step 4, on `claude/ci-fix-<run ID>` with a PR into the branch the run tested, which is `develop` for every scheduled run, rather than always into `develop`. Otherwise it follows `ci-failure` step 5 from "Re-run the failed jobs", and adds the restored reported list to the differences it looks for. It also says that week's findings weren't sent.
+- The job's `if` repeats `MODE`'s weekly test, since a job's `if` can't read `env`. `docs/ci.md` gained its own "When the Check Fails" section.
+- The implementer ran the start step's script against a local server: the failure path sent `weekly run <ID> <URL>\ncheck failed`, and the findings path was unchanged.
+- The implementer ran both checks for Sarah. Check 1's [run](https://github.com/SkaffenAmtiskaw/meal-planning/actions/runs/37407016788) failed `check` on the throw, `start-dependency-updates` passed and skipped both save steps, and the session named the throw, explained why it opened no PR, and said the week's findings weren't sent. It skipped the skill's rerun of the check, since the test commit's message said it was a test. So the reproduce-and-fix path hasn't run live yet, and Sarah counted the check as passed. Check 2's [run](https://github.com/SkaffenAmtiskaw/meal-planning/actions/runs/37407250870) failed `check` with `start-dependency-updates` skipped. The session opened no PR, and the branch was deleted.
