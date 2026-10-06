@@ -37,7 +37,6 @@
 - [[Dev Tooling]]
 
 # Now
-- [[What Makes a Good Doc]] ![[What Makes a Good Doc#^status]] 🎯 [[Dev Foundations]]
 
 # Next
 1. [[Agent Instructions Audit]] ![[Agent Instructions Audit#^status]] 🎯 [[Dev Foundations]]

@@ -4,13 +4,13 @@ status: idea
 confirmed: 2026-09-28
 ---
 # Where It Stands
-Next: /shape. Building waits on [[What Makes a Good Doc]] ^status
+Next: /shape ^status
 
 # Inbox
-- Two sections of `docs/unit_tests.md` contradict each other on state in mocks. "Permissible Complexity" (line 52) allows state in a mock only when a test in the current file needs it, while "Stateful Mocks Using React Hooks" (line 154) recommends a shared `useAsyncStatus` mock that always holds state, so every file using it gets that state. The first was probably written for mocks defined inside a test file, but the doc doesn't say so. Found 2026-10-06 by a headless session that read the doc during `/implement` Step 3 of [[What Makes a Good Doc]].
+- Two sections of `docs/unit_tests.md` contradict each other on state in mocks. "Permissible Complexity" (line 52) allows state in a mock only when a test in the current file needs it, while "Stateful Mocks Using React Hooks" (line 154) recommends a shared `useAsyncStatus` mock that always holds state, so every file using it gets that state. The first was probably written for mocks defined inside a test file, but the doc doesn't say so. Found 2026-10-06 by a headless session that read the doc during `/implement` Step 3 of What Makes a Good Doc.
 
 # Notes
-Check every project doc against the code and against the standard for good docs that [[What Makes a Good Doc]] sets. Fix what's wrong, out of date or short of the standard, and note what's missing. It's a Done When item of [[Dev Foundations]]: "Documentation is confirmed to match reality."
+Check every project doc against the code and against the standard for good docs that the `writing-standard` skill sets. Fix what's wrong, out of date or short of the standard, and note what's missing. It's a Done When item of [[Dev Foundations]]: "Documentation is confirmed to match reality."
 
 The docs are every file in `docs/`.
 
