@@ -7,10 +7,12 @@ Skip this if no check in the step needs the app, such as when every check is a b
 Start it, sign in, and stop it when you're done, as the `running-the-app` skill describes.
 
 ## Do each acceptance check
+If the step is a Build Order step, do its Implementer checks first. They're yours alone and never go to Sarah, and you fix a failing one the same way as a failing acceptance check (below). Its Sarah checks are then its acceptance checks. If it says "Sarah checks: none", it has none.
+
 Do each check as it's written, including the user, the screen size and the data it names:
 - **Phone size:** see Screen Sizes in the `running-the-app` skill.
 - **Data:** if the check needs data that doesn't exist yet, like a day with two meals, create it through the app's own screens. List what you created in your report.
-- **Setup outside the repo** that the step's Approach gives Sarah and she hasn't done yet: before the first check that needs it, walk her through it, as AGENTS.md describes under "Setup outside the repo". Then run the check, unless it's one only Sarah can do (see "Run-and-see checks").
+- **Setup outside the repo** that the step's Approach, or a Build Order step's Setup first line, gives Sarah and she hasn't done yet: before the first check that needs it, walk her through it, as AGENTS.md describes under "Setup outside the repo". Then run the check, unless it's one only Sarah can do (see "Run-and-see checks").
 - **A user or anything else you can't get to:** don't run the check. Report it as not run, with the reason.
 
 Record what you actually saw, in concrete terms: "the modal closed and the meal appeared on Tuesday", not "works". Never report a check as passing unless you saw it pass.

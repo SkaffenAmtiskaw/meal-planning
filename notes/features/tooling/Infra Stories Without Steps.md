@@ -1,21 +1,15 @@
 ---
 type: infra
-status: ready
+status: in-progress
 confirmed: 2026-10-05
 ---
 # Where It Stands
-Design approved. Next: a one-off session for Step 1 (see Inbox), then /implement ^status
+In progress. Next: /implement ^status
 
-/infra-design wrote the Goals and the Design on 2026-10-05, with this story's own Build Order of four steps. It sets no Conventions and needs no Setup Outside the Repo. Nothing is built yet. Step 1 is built in a one-off plain session, since no skill builds a Build Order step until it lands, and `/implement` builds Steps 2 to 4. Sarah decided 2026-10-05 to build it once the [[Agent Workflow Changes 2026-10-02]] items that affect it are done, so its skill edits are written with them in place. "Tell what Sarah wants apart from what she only approved" is done, and "Skill and doc edits read as a whole" remains.
+/infra-design wrote the Goals and the Design on 2026-10-05, with this story's own Build Order of four steps. Step 1 is built: `/implement` now builds a Build Order step. Steps 2 to 4 remain, each in its own `/implement` session. Sarah first decided to build the story once the [[Agent Workflow Changes 2026-10-02]] items that affect it were done. On 2026-10-05 she decided to go ahead before its "Skill and doc edits read as a whole" item, with each session following `/tooling`'s readability guidance instead.
 
 # Inbox
-- For the one-off session that builds Step 1 of the Build Order, as Sarah decided 2026-10-05: no skill builds a Build Order step yet, so Sarah starts a plain session and asks it to build Step 1 of Infra Stories Without Steps, as this item says. The session reads this note and `.claude/skills/implement/SKILL.md`, and works as `/implement` would on a step, with three differences:
-  - It finds Step 1 under `## Build Order` in `# Design`, not under `# Implementation`.
-  - It shows Sarah the draft of each change to `/implement` and asks her to approve it, as AGENTS.md describes under "Approval covers the edits".
-  - It ends with one table of the changed files, each a link with a one-line summary, and opens the Code tab's diff pane for the full diff.
-
-  Once Sarah says Step 1 is done, it marks the step `**Status:** ✅ Complete`, sets `status` to `in-progress`, moves the story's Roadmap line into Now, sets the `^status` line to "In progress. Next: /implement", and deletes this item.
-- For the session that builds Step 1 (Piece 4, `/implement` builds a Build Order step): AGENTS.md "Her decisions can change" now lets an agent change a choice Sarah only approved, such as the order of an approved Build Order, without asking first. It records the change, names it in its summary (with a bold ⚠️ line at the top if it's big), and the story stays `ready`. The Flow's "Building shows the Design or the Build Order doesn't hold" line and Piece 4's Re-plan bullet send every such case back to `spec` for `/infra-design`. Check with Sarah whether they should cover only what `/implement` can't change on its own, and update them to match. Added 2026-10-05 by `/tooling` on [[Agent Workflow Changes 2026-10-02]], when the "Tell what Sarah wants apart from what she only approved" item landed.
+- For each `/implement` session on Steps 2 to 4: before drafting a change to a skill, agent, AGENTS.md, Note Conventions or a template, read `/tooling`'s "Writing instructions" and "Readable as a whole" guidance in step 3 of `.claude/skills/tooling/SKILL.md`, and follow it. Sarah decided 2026-10-05 to build the story before the "Skill and doc edits read as a whole" item in [[Agent Workflow Changes 2026-10-02]] moves that guidance where every session reads it. Delete this item once Step 4 is complete, or once that item lands.
 
 # Purpose
 Sarah wonders whether `/plan-steps` is inappropriate for `infra` stories. It's built for small incremental work, which she does want for feature work, where she reviews the code to make sure it matches what she expects. For infra, such as wiring up a GitHub Actions routine, she just wants it to work. Part of her problem is how finicky the steps are.
@@ -63,7 +57,7 @@ Every piece changes only the infra parts of the files it touches. Planning for f
    - **Checks:** it does the step's Implementer checks in its first pass, and asks Sarah only the step's Sarah checks. A step with "Sarah checks: none" asks her for nothing beyond approving drafts.
    - **Report:** one table, with each changed file as a link, a one-line summary of the change and any choice made in it, plus a link to the full diff (the Code tab's diff pane). No other tables, and no prompt to review the diff.
    - **Updating the note:** besides ticking the step's checks and adding ✅ Complete, it ticks each Goal in `# Goals` that the step's checks proved.
-   - **Re-plan:** the story goes back to `spec` with "Next: /infra-design (revision)" instead of `/plan-steps`.
+   - **Re-plan:** if the change touches only choices Sarah merely signed off on, such as the order of the steps, `/implement` makes it in the note itself, as AGENTS.md describes under "Her decisions can change", and keeps building. If it's her call, it asks her, then makes it the same way. Only when the Design itself has to be reworked does the story go back to `spec`, with "Next: /infra-design (revision)" instead of `/plan-steps`. (Sarah's call)
 5. **Planning drops infra** - `.claude/skills/plan-steps/SKILL.md` and `.claude/agents/plan-checker.md`. Take out the Infra approach in step 1, "Setup outside the repo" in step 2, the infra kind of check, the infra review in step 4 and plan-checker's infra lines. Run on an infra note, `/plan-steps` says `/infra-design` writes its Build Order, and stops. The rules Piece 2 takes over stay here too, since other types still use them.
 6. **Drift routes infra to `/infra-design`** - `.claude/skills/check-drift/SKILL.md`. For a `ready` or `in-progress` infra story, the remaining work is the Build Order steps with no Status line, plus the Design pieces they build. A finding that the steps no longer hold sends an infra story to `/infra-design` (revision) instead of `/plan-steps`.
 7. **Final review reads the Build Order** - `.claude/skills/final-review/SKILL.md` step 2, and `.claude/agents/leftovers-checker.md`. For an infra story, the story's files come from `## Build Order`: the paths of the Pieces each step builds, plus its As built notes. The range still starts from the first ✅ Complete.
@@ -79,7 +73,7 @@ Every piece changes only the infra parts of the files it touches. Planning for f
 4. **After the last step:** `in-review`, then `/final-review`, then `/close`.
 
 When something fails:
-- **Building shows the Design or the Build Order doesn't hold:** `/implement` stops, the story goes back to `spec`, and `/infra-design` revises it, keeping the ✅ steps.
+- **Building shows the Design or the Build Order doesn't hold:** if the change touches only choices Sarah merely signed off on, `/implement` makes it in the note and keeps building, and if it's her call, it asks her first. Only when the Design itself has to be reworked does `/implement` stop, the story go back to `spec`, and `/infra-design` revise it, keeping the ✅ steps.
 - **`/check-drift` finds the remaining steps or the Design no longer hold:** the same route, to `/infra-design` (revision).
 - **A check fails:** handled inside the `/implement` session as today, fixed if it needs no decision, otherwise asked.
 
@@ -91,6 +85,8 @@ This story builds the path it would use, so Sarah decided 2026-10-05 that Step 1
 **Setup first:** none
 **Implementer checks:** `/implement`'s steps for other story types read exactly as before.
 **Sarah checks:** none
+**Status:** ✅ Complete
+**As built:** Piece 4's report links to the full diff, but the diff pane can't be linked, so `/implement` opens it instead. `/implement` also changed in places Piece 4 doesn't name, so the skill doesn't contradict itself for infra: its "Why" section, the sources for choices and files to read in step 2, the push and closing lines after the report in step 7, and the idea-sentence lines in steps 7 and 8, where a Build Order step's title stands in. Boy Scout fix: "Stopping to re-plan" step 3 dropped its out-of-date reason, "since any change to a ready note's steps sends it back". The Implementer check was done by reading the diff: every other-type branch keeps its original text, apart from that fix.
 
 ### Step 2: `/infra-design` writes Goals by the new rule, and a Build Order
 **Builds:** Pieces 1, 2, 3, 8 and 9
