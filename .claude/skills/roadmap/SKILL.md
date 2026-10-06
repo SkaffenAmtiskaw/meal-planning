@@ -125,4 +125,4 @@ Then tell Sarah:
 - the tooling shortlist, and what she put under the goal
 - the Goals order, and which lines moved into or out of Next and Planning
 
-Leave every change unstaged. Stop there, and don't start work on any story.
+Stop there, and don't start work on any story.

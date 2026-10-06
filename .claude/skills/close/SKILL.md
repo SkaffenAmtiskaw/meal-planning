@@ -24,7 +24,7 @@ A few rules shape how it works:
 - **No unused files.** A file in the vault (an image, a `.dc.html` prototype, a script or SVG it loads) that nothing references anymore gets deleted. A close is when files lose their last reference: the note that embedded them is deleted, or content moves and pointers get reworded. Files don't always sit where the conventions say, and references get missed, so every close checks the whole vault, not just this story's files.
 - **One note per run.** When closing this story means another note should close too, such as an archived note that loses its last `kept-for` entry or a hub with no open stories left, tell Sarah. She runs `/close` on it in a new session.
 
-This is notes work only. Don't change code. A hook blocks edits outside `notes/`, `.scratch/` and `docs/`. Move and delete notes with plain `mv` and `rm`, never `git mv` or `git rm`, so every change stays unstaged.
+This is notes work only. Don't change code. A hook blocks edits outside `notes/`, `.scratch/` and `docs/`.
 
 ## Talking with Sarah
 - **Choices, not mechanics.** Some edits have only one right answer once the story is closed, like removing it from a `blocked-by` list. Make those without asking, and list them in the report at the end. Ask only where there's a real choice.
@@ -124,4 +124,4 @@ Tell Sarah:
 - each goal now waiting on a release process
 - the follow-ups: each note that needs `/close` in a new session, why, and where its Roadmap line went
 
-Leave every change unstaged. Stop there, and don't start on any other note.
+Stop there, and don't start on any other note.

@@ -101,4 +101,4 @@ Route the out-of-scope list as AGENTS.md describes. Then tell Sarah, in the same
 - each note edited or deleted
 - each unused file deleted
 
-Leave every change unstaged. Stop there, and don't start another change.
+Stop there, and don't start another change.

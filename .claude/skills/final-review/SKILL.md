@@ -93,9 +93,8 @@ Put the approved fixes in dependency order. For each one:
 1. Tell Sarah in one line which fix you're on.
 2. Make it following `.claude/skills/implement/SKILL.md`: "Use current library APIs", "Write the tests first, then the code", and "Run the checks", including its `cleanup.md`. The open choices were settled in step 5. If a new one comes up, stop and ask. If the fix turns out bigger than it looked, stop and ask Sarah whether to route it to the notes instead.
 3. If the fix changes anything she could see in the app, redo the story's acceptance checks that cover it, as `first-pass.md` in the implement skill's folder describes.
-4. Leave it unstaged, so her unstaged changes show just this fix.
-5. **If the fix's exact form was settled in step 5,** as AGENTS.md describes under "Approval covers the edits": stage the files it changed, add it to the rollup for step 9 with any acceptance checks redone and what you saw, and go on to the next approved fix in the order.
-6. **Otherwise:** report the files changed, the tests and the logic each covers, the checks run, and the acceptance checks redone with what you saw. Ask her whether she approves the fix, and wait. Handle any feedback as "Handle her feedback" in the implement skill describes, using its `bugs.md` for bugs. Once she approves, stage the files the fix changed, and go on to the next approved fix in the order.
+4. **If the fix's exact form was settled in step 5,** as AGENTS.md describes under "Approval covers the edits": add it to the rollup for step 9 with any acceptance checks redone and what you saw, and go on to the next approved fix in the order.
+5. **Otherwise:** report the files changed, the tests and the logic each covers, the checks run, and the acceptance checks redone with what you saw. Show her the change itself: the new text in the chat, or a link to each changed file at the line that changed. Ask her whether she approves the fix, and wait. Handle any feedback as "Handle her feedback" in the implement skill describes, using its `bugs.md` for bugs. Once she approves, go on to the next approved fix in the order.
 
 ## 7. Find a home for out-of-scope items
 If the out-of-scope list is empty, skip this.
@@ -106,7 +105,7 @@ Otherwise, route it as AGENTS.md describes under "Out-of-scope work".
 1. Set `status` to `done`.
 2. Update the `^status` line to "Reviewed. Next: /close".
 
-Write nothing else to the note. The fixes live in the commits, and routed findings live in the notes they went to. Leave the note changes unstaged.
+Write nothing else to the note. The fixes live in the commits, and routed findings live in the notes they went to.
 
 ## 9. Stop
 If step 6 made any fixes without asking, show the rollup first: a table with one row per fix, its files as markdown links she can click, a one-line summary, and any acceptance checks redone with what you saw.

@@ -29,7 +29,11 @@ Find the note in `notes/features/` and read all of it. Read the notes it links t
 
 Check that it's ready for this skill:
 - **`type: infra` and `status: idea`.** If `type` is blank, the next step is `/shape`. If it's another type, check whether that type fits the work. If it doesn't, offer to retype the note, as AGENTS.md describes under "Editing notes". If it does, tell Sarah which skill the note needs, and stop.
-- **`status: spec`:** its design was already approved. Ask Sarah whether this is a revision. If it is, work through steps 2 to 7 as usual, but show what changed compared with the existing sections before replacing each one.
+- **`status: spec`:** its design was already approved.
+  - **If the note says it's due a revision,** such as its `^status` line naming `/infra-design` or an Inbox item asking for one, it's a revision.
+  - **Otherwise,** ask Sarah whether this is a revision. If it isn't, stop.
+
+  In a revision, work through steps 2 to 7 as usual, but show what changed compared with the existing sections before replacing each one.
 - **`ready` or later:** stop. Changes to a planned story go through `/check-drift`.
 - **No open decisions.** An item under `# Open Decisions` with no **Decided** line (a **Partly answered** or **Leaning** line still counts as open), or a `decision needed` entry in `blocked-by`, means the note isn't ready. List them in one line each, tell Sarah the next step is `/decide <note name>`, and stop.
 

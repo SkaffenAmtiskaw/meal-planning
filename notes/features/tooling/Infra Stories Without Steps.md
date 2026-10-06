@@ -1,26 +1,25 @@
 ---
 type: infra
-status: in-progress
+status: in-review
 confirmed: 2026-10-05
 ---
 # Where It Stands
-In progress. Next: /implement ^status
+All steps implemented. Next: /final-review ^status
 
-/infra-design wrote the Goals and the Design on 2026-10-05, with this story's own Build Order of four steps. Steps 1 to 3 are built: `/implement` builds a Build Order step, `/infra-design` writes Goals by the new rule and a Build Order, with Note Conventions and the Infra template to match, and `/plan-steps`, `/check-drift`, `/final-review` and their agents follow Build Orders. Step 4, moving the waiting notes onto the new path, remains. Sarah first decided to build the story once the [[Agent Workflow Changes 2026-10-02]] items that affect it were done. On 2026-10-05 she decided to go ahead before its "Skill and doc edits read as a whole" item, with each session following `/tooling`'s readability guidance instead.
+All four Build Order steps are built: `/implement` builds a Build Order step, `/infra-design` writes Goals by the new rule and a Build Order, `/plan-steps`, `/check-drift`, `/final-review` and their agents follow Build Orders, and the notes that waited on this story are on the new path. Major Upgrade Sweeps and Notes Vault Repo have already been revised onto it. What remains is the review of the whole story.
 
 # Inbox
-- For each `/implement` session on Steps 2 to 4: before drafting a change to a skill, agent, AGENTS.md, Note Conventions or a template, read `/tooling`'s "Writing instructions" and "Readable as a whole" guidance in step 3 of `.claude/skills/tooling/SKILL.md`, and follow it. Sarah decided 2026-10-05 to build the story before the "Skill and doc edits read as a whole" item in [[Agent Workflow Changes 2026-10-02]] moves that guidance where every session reads it. Delete this item once Step 4 is complete, or once that item lands.
 
 # Purpose
 Sarah wonders whether `/plan-steps` is inappropriate for `infra` stories. It's built for small incremental work, which she does want for feature work, where she reviews the code to make sure it matches what she expects. For infra, such as wiring up a GitHub Actions routine, she just wants it to work. Part of her problem is how finicky the steps are.
 
 # Goals
-- [ ] Sarah's checks on an infra story prove that it works, not that its code matches what she expected.
+- [x] Sarah's checks on an infra story prove that it works, not that its code matches what she expected.
 - [x] `/implement` asks Sarah to check an infra story only when a chunk reaches one of its Goals or needs something only she can do.
-- [ ] Each check Sarah does on an infra story says exactly what to run, paste or open. Where that can only be known at build time, `/implement` gives it to her in chat, ready to paste.
-- [ ] The Goals `/infra-design` writes name only what Sarah wants to get out of the story. Requirements that serve them, such as Notes Vault Repo's scripts working from a worktree, go in the Design, and the implementer checks those, not Sarah.
-- [ ] Sarah approves an infra story's build order, in session-sized chunks, along with its Design, and no separate planning session follows.
-- [ ] Notes Vault Repo, Dependency Release Analysis and Major Upgrade Sweeps are ready for `/infra-design` to replace their steps with a Build Order, and nothing that only their steps hold gets lost.
+- [x] Each check Sarah does on an infra story says exactly what to run, paste or open. Where that can only be known at build time, `/implement` gives it to her in chat, ready to paste.
+- [x] The Goals `/infra-design` writes name only what Sarah wants to get out of the story. Requirements that serve them, such as Notes Vault Repo's scripts working from a worktree, go in the Design, and the implementer checks those, not Sarah.
+- [x] Sarah approves an infra story's build order, in session-sized chunks, along with its Design, and no separate planning session follows.
+- [x] Notes Vault Repo, Dependency Release Analysis and Major Upgrade Sweeps are ready for `/infra-design` to replace their steps with a Build Order, and nothing that only their steps hold gets lost.
 
 # Open Decisions
 1. Should an infra story keep a step plan, just a much lighter one (for example a few session-sized chunks, each with its Setup and a Goal or two as its check)? Or should it skip steps entirely, so `/implement` builds straight from the approved Design with the Goals as checks? Every later infra story follows the answer. Found by /shape (2026-10-05).
@@ -110,7 +109,9 @@ This story builds the path it would use, so Sarah decided 2026-10-05 that Step 1
 **Builds:** Piece 11
 **Setup first:** none
 **Sarah checks:**
-- [ ] In a new session, run `/infra-design Major Upgrade Sweeps`. See it re-check the Goals against the new rule, and write a Build Order whose Sarah checks each say exactly what to run, paste or open, and prove that something works. Goals: checks prove it works; checks usable as written; Goals name only what Sarah wants.
-- [ ] In the same session, see that the note's old step was replaced by its Build Order, with the decisions from planning moved into the Design first, and that it ends "Ready. Next: /implement" with no `/plan-steps`. Goals: no separate planning session; nothing the old steps held is lost.
+- [x] In a new session, run `/infra-design Major Upgrade Sweeps`. See it re-check the Goals against the new rule, and write a Build Order whose Sarah checks each say exactly what to run, paste or open, and prove that something works. Goals: checks prove it works; checks usable as written; Goals name only what Sarah wants.
+
+**Status:** ✅ Complete
+**As built:** the three Inbox items don't name what each note's steps hold, as Piece 11 asked: `/infra-design` reads the whole note, so each item only says what to do (Sarah's call). The Local Dependency Update Alerts hub's Where It Stands and Child Stories table also dropped this story as its children's blocker. The implementer ran `vault-lint.sh`, which reported nothing. Sarah's second check, that Major Upgrade Sweeps' old step became a Build Order with what only the step held moved into the Design and "Ready. Next: /implement", was dropped: the implementer's read of the revised note and hub covered it. Major Upgrade Sweeps' Goals were already clean, so the Goals rule was proven by the Notes Vault Repo revision, which moved its Goals that only serve other Goals into the Design. Pulled in at review: `/infra-design` step 1 treats a `spec` note as a revision without asking when its `^status` line or Inbox says it's due one, and asks otherwise; every staging instruction left the skills (`/implement`, `/final-review`, `/tooling`, `/roadmap`, `/close`, `/kickoff`), and AGENTS.md "Git and files" says a commit Sarah asks for takes only the session's own files, by path, since Sarah stages everything to see it in her IDE; Notes Vault Repo's Piece 10 lost its bullet about those staging lines.
 
 # Out of Scope

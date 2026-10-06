@@ -101,10 +101,10 @@ Then read `cleanup.md` in this skill's folder and do what it says.
 ## 6. First pass in the app
 Read `first-pass.md` in this skill's folder and do what it says.
 
-## 7. Stage and report
+## 7. Report
 First, triage the out-of-scope list as AGENTS.md describes under "Out-of-scope work". An item Sarah pulls in is handled like a change or addition in step 8: if the step's idea sentence, or a Build Order step's title, still holds, build it now and record it as As built. Otherwise, follow "Stopping to re-plan".
 
-Stage the files this step changed. Then report. What the report holds depends on the step:
+Then report. What the report holds depends on the step:
 - **A Build Order step:** one table with one row per changed file: the file as a markdown link she can click, a one-line summary of its change, and any choice you made in it without asking her. If anything differs from the step's plan, say so in a line or two under the table. It's the draft of the As built note in step 9. Then open the Code tab's diff pane, so the full diff is at hand. Add no other tables, and don't ask her to review the diff.
 - **Any other step:** these sections, in this order:
   1. **Files:** a table with one row per changed file: the file as a markdown link she can click, and a one-line summary of its change. Mark any file that isn't in the step's Files list.
@@ -118,11 +118,11 @@ After the report, go through these one at a time:
 1. **Checks your runs already cover,** as `first-pass.md` describes: for each, say which of your runs shows what it would prove, and ask Sarah whether to drop it.
 2. **Checks only Sarah can do,** such as ones that need a push or the claude.ai UI: walk her through them, as AGENTS.md describes under "Setup outside the repo". If one needs this step committed and pushed, what you ask first depends on the step:
    - **A Build Order step:** ask her to commit and push it.
-   - **Any other step:** ask her to review the staged diff, then to commit and push it.
+   - **Any other step:** ask her to review the step's changes, then to commit and push it.
 
 How you end also depends on the step:
 - **A Build Order step:** if it has Sarah checks she hasn't done, ask her to do them. Otherwise, ask her whether the step is done.
-- **Any other step:** end with: "Please check the acceptance criteria you haven't done yet, and review the staged diff if you haven't."
+- **Any other step:** end with: "Please check the acceptance criteria you haven't done yet, and review the step's changes if you haven't."
 
 Then stop and wait. The step isn't done until Sarah says it is.
 
@@ -139,8 +139,8 @@ Where a change or addition goes:
 **Corrections to how it's built.** Some feedback changes how the code is built rather than what it does: where a file lives, how data is fetched, which pattern to use. If the docs in `docs/` already say it, you missed it, and there's nothing to ask. Otherwise, ask her whether it's a one-off for this step or the convention from now on. If it's the convention, handle it as AGENTS.md describes under "Doc gaps".
 
 How a feedback change is reported depends on its form, as AGENTS.md describes under "Approval covers the edits":
-- **If its exact form was settled before you wrote it,** such as a swap she named: stage the files it changed, and report again with the same sections, covering only what changed. Don't ask her to approve it.
-- **Otherwise:** leave it unstaged, so her unstaged changes show just the fix. Report again with the same sections, covering only what changed, and ask her whether she approves it. Once she does, stage the files it changed.
+- **If its exact form was settled before you wrote it,** such as a swap she named: report again with the same sections, covering only what changed. Don't ask her to approve it.
+- **Otherwise:** report again with the same sections, covering only what changed. Show her the change itself: the new text in the chat, or a link to each changed file at the line that changed. Then ask her whether she approves it.
 
 Repeat until she confirms the step is done.
 
@@ -152,7 +152,6 @@ Once she confirms:
 4. If this was the last step, set `status` to `in-review`. The review of the whole story (`/final-review`), archiving, and unblocking the stories that waited on it all come later, not in this skill.
 5. Update the `^status` line as AGENTS.md describes under "Editing notes", e.g. "In progress. Next: /implement Step 4", or "All steps implemented. Next: /final-review" after the last step.
 
-Leave the note changes unstaged.
 
 ## 10. Find a home for out-of-scope items
 If the out-of-scope list is empty, skip this.
@@ -169,7 +168,7 @@ When the plan itself has to change, what you do depends on the story and the cha
 - **An infra story, where the Design itself has to be reworked,** such as a Piece that can't work as designed: follow the steps below, with `/infra-design` as the next skill.
 - **Any other story:** follow the steps below, with `/plan-steps` as the next skill.
 
-1. Stop coding. Leave the work as it is, staged or not.
+1. Stop coding, and leave the work as it is.
 2. Add an **As built:** note under the step saying what's done, what isn't, and why the plan needs to change.
 3. Set `status` to `spec`.
 4. Update the `^status` line as AGENTS.md describes under "Editing notes", e.g. "Needs re-plan. Next: /plan-steps" or "Needs re-plan. Next: /infra-design (revision)".

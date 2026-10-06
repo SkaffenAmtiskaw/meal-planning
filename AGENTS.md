@@ -141,7 +141,7 @@ Look up only what the task uses: one component, one function, one page.
 - `pnpm build`: Next.js production build.
 
 ## Git and files
-- Don't commit unless Sarah asks. Stage files by path, never with `git add -A` or `git add .`.
+- Don't commit unless Sarah asks. When she does, commit only this session's files, by path, since other sessions' changes may be staged too.
 - Before deleting a file, check its contents and `git status`. If it has uncommitted changes or isn't tracked, git can't bring it back, so ask Sarah first.
 - **Project config** (`biome.jsonc`, `vitest.config.*`, `tsconfig*.json`, `lefthook.yml`): edit it only when Sarah explicitly asks for that config change.
 - **Ignore comments** (a comment that switches off a lint, type or coverage check): add one only when Sarah tells you to ignore that error, and only on that one line. Telling you to ignore an error never means changing config.

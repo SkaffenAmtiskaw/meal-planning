@@ -23,7 +23,7 @@ After this, the kicked-off note follows the usual lifecycle:
 - **A roundup** goes to `/decide`. Its researcher reads the current code for each issue, so it doesn't need `/check-drift`. Once every decision is made, `/plan-steps`.
 - **A collecting workflow note** goes to `/tooling`, which works its items one at a time and deletes it once it's empty. It's kicked off only for the building goal. Otherwise, `/tooling` works the collecting note's items directly.
 
-This is notes work only. Don't change code. A hook blocks edits outside `notes/` and `.scratch/`. Copy and delete notes with plain `cp` and `rm`, never git commands, so every change stays unstaged.
+This is notes work only. Don't change code. A hook blocks edits outside `notes/` and `.scratch/`.
 
 ## 1. Read the note
 Find the note in `notes/features/` and read all of it. It has to be a collecting note:
@@ -70,7 +70,7 @@ Tell Sarah:
 - how many items it holds, and which blocked items stayed behind or were routed elsewhere
 - where its Roadmap line went
 
-Give her the next command to run in a new session: `/check-drift <note>` for a sweep. For a roundup, if every question already had a **Decided** line, `/plan-steps <note>`. Otherwise, `/decide <note>`. Leave every change unstaged. Don't start the next step in this session.
+Give her the next command to run in a new session: `/check-drift <note>` for a sweep. For a roundup, if every question already had a **Decided** line, `/plan-steps <note>`. Otherwise, `/decide <note>`. Don't start the next step in this session.
 
 ## Kicking off for the building goal
 When `/roadmap` kicks off the collecting notes with items that serve the building goal, or `roadmap-placement` kicks off an item for one, it follows steps 1 to 5 for each note, with these changes:

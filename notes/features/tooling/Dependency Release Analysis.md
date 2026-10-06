@@ -1,15 +1,16 @@
 ---
 type: infra
 status: spec
-blocked-by: ["[[Infra Stories Without Steps]]"]
+blocked-by: []
 confirmed: 2026-10-04
 ---
 # Where It Stands
-Blocked by [[Infra Stories Without Steps]]; then /infra-design ^status
+Next: /infra-design (revision) ^status
 
-Split from [[Local Dependency Update Alerts]] on 2026-10-04 during `/plan-steps`. Its three implementation steps were planned and approved on 2026-10-04. Nothing is built yet. Sarah decided 2026-10-05 that it waits for [[Infra Stories Without Steps]] and then goes back to `/infra-design` to replace its steps with a Build Order.
+Split from [[Local Dependency Update Alerts]] on 2026-10-04 during `/plan-steps`. Its three implementation steps were planned and approved on 2026-10-04. Nothing is built yet. Sarah decided 2026-10-05 that it goes back to `/infra-design` to replace its steps with a Build Order, now that [[Infra Stories Without Steps]] has built that path.
 
 # Inbox
+- For `/infra-design` (revision), from [[Infra Stories Without Steps]] (2026-10-06): this note was planned with steps under `# Implementation`, before infra stories had a Build Order. Replace those steps with a Build Order at the end of `# Design`, and remove `# Implementation`. Before you do, move anything the steps hold that the Design doesn't into the Design, so nothing is lost.
 
 # Purpose
 Each minor update the `dependency-updates` routine finds gets a summary of what its release adds and whether the app should adopt any of it. A minor or major of React, Next, Mantine, better-auth, luxon or Zod goes to the Opus `upgrade-assessor` subagent, which ties new features to the app's code and, for a major, weighs effort and urgency against the gain. It extends the session Dependency Update PRs built. Split from [[Local Dependency Update Alerts]] on 2026-10-04.

@@ -1,13 +1,13 @@
 ---
 type: infra
 status: spec
-blocked-by: ["[[Infra Stories Without Steps]]"]
+blocked-by: []
 confirmed: 2026-10-05
 ---
 # Where It Stands
-Design approved. Blocked by [[Infra Stories Without Steps]]; then /infra-design ^status
+Design approved. Next: /infra-design (revision) ^status
 
-Shaped as an infra story: a workflow, a script, a routine and a skill that diagnose a failed Vercel deployment and fix it where they can. /infra-design wrote the Goals, Design, Conventions and Setup Outside the Repo on 2026-10-05, settling decisions 1-5 along the way. Nothing is planned or built yet. Sarah decided 2026-10-05 that it waits for [[Infra Stories Without Steps]] and then goes back to `/infra-design` for a Build Order, rather than getting steps from `/plan-steps`. Sarah decided building doesn't wait on [[Branching and Releases]]: until its back-merge exists, she merges `main` into `develop` herself after a production fix.
+Shaped as an infra story: a workflow, a script, a routine and a skill that diagnose a failed Vercel deployment and fix it where they can. /infra-design wrote the Goals, Design, Conventions and Setup Outside the Repo on 2026-10-05, settling decisions 1-5 along the way. Nothing is planned or built yet. Sarah decided 2026-10-05 that it goes back to `/infra-design` for a Build Order, rather than getting steps from `/plan-steps`, now that [[Infra Stories Without Steps]] has built that path. Sarah decided building doesn't wait on [[Branching and Releases]]: until its back-merge exists, she merges `main` into `develop` herself after a production fix.
 
 # Inbox
 
