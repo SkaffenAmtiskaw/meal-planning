@@ -37,7 +37,6 @@
 - [[Dev Tooling]]
 
 # Now
-- [[Infra Stories Without Steps]] ![[Infra Stories Without Steps#^status]] 🎯 [[Dev Foundations]]
 
 # Next
 1. [[Agent Workflow Changes 2026-10-02]] ![[Agent Workflow Changes 2026-10-02#^status]] 🎯 [[Dev Foundations]]
