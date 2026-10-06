@@ -1,6 +1,6 @@
 ---
 name: infra-design
-description: Turn an infra note's settled decisions into Goals, a Design, Conventions for later work and the Setup Outside the Repo, approved with Sarah one piece at a time. Moves the note from idea to spec, ready for /plan-steps.
+description: Turn an infra note's settled decisions into Goals, a Design and Conventions for later work, approved with Sarah one piece at a time, and the Setup Outside the Repo. Moves the note from idea to spec, ready for /plan-steps.
 argument-hint: "[note name]"
 disable-model-invocation: true
 hooks:
@@ -62,7 +62,9 @@ If the story sets no conventions, tell Sarah in one line and delete the section.
 ## 5. Setup Outside the Repo
 List everything set up by hand outside the repo, such as an app install, a GitHub setting, a hosted service's configuration or a secret: what it is, where it's set up, and which doc or file records it. A secret's value is never recorded, only its name.
 
-If there's none, tell Sarah in one line and delete the section. Otherwise, show the list and ask whether it's complete, then write it under `# Setup Outside the Repo`.
+If an item depends on a fact about Sarah's setup that only she knows, such as whether she already has an account or which plan she's on, ask her about that fact first, one item at a time.
+
+If there's none, tell Sarah in one line and delete the section. Otherwise, write the list under `# Setup Outside the Repo`, then show it to her as information, not an approval: each item follows from the Design she approved, as AGENTS.md describes under "Approval covers the edits".
 
 ## 6. Out-of-scope items
 Triage the out-of-scope list as AGENTS.md describes under "Out-of-scope work". An item Sarah pulls in becomes part of the Goals, Design, Conventions or Setup, whichever it belongs to: draft the change, show it and wait for her approval before writing it.

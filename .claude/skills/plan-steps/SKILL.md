@@ -72,6 +72,8 @@ Each acceptance criterion is a checkbox. What kind of check it is depends on wha
 
 Each check ends by saying briefly what it proves, such as "Proves: a re-run Sarah starts doesn't start a second session." Sarah has to be able to tell what a check would teach her before she spends time on it.
 
+Each check is usable as written. It spells out the exact command Sarah runs, the text she pastes or the screen she opens. If that can only be known at build time, such as a token or a generated URL, the check says the implementer gives it to her in chat, ready to paste. A check never sends her to another part of the note to work out what it refers to, such as "Step 1's token" or "the command from the Design".
+
 Never use "tests pass", "inspect the code" or "types compile" as a check. Tests passing is assumed for every step. Failure, empty and read-only behaviors are checked in the step that builds them.
 
 #### What Sarah checks and what the implementer checks
@@ -147,12 +149,16 @@ Send the note path and the draft path to the `plan-checker` subagent. Save its r
 Fix every finding you agree with, then run the checker once more. If you disagree with a finding, leave it as it is and raise it with Sarah in step 4.
 
 ## 4. Review with Sarah
-1. **The outline.** Show the numbered step titles, each with its idea sentence and a one-line summary of its check. The check line isn't the full acceptance criteria. It just tells Sarah at a glance whether the step is a regression check ("everything looks the same as before") or tests a specific new behavior, and which one. Keep it even when the idea makes the check obvious. Link the draft and the checker report. If the checks already settled the order and the split, say so in one line, with why, and go on. They're settled when the split-checker found one story (or you skipped it because the steps came from `# From the Split`), no plan-checker finding you disagreed with is about order or size, and no step's place in the order was your own judgment call between orders that would both work. Otherwise, ask whether the order and the split are right, and wait for her answer.
+How much of the plan Sarah reviews depends on the note's type. For an infra story, she only needs to be sure the plan roughly matches what she expects, so she approves it as a whole. For every other type, she approves each step.
+
+1. **The outline.** Show the numbered step titles, each with its idea sentence and a one-line summary of its check. The check line isn't the full acceptance criteria. It just tells Sarah at a glance whether the step is a regression check ("everything looks the same as before") or tests a specific new behavior, and which one. Keep it even when the idea makes the check obvious. Link the draft and the checker report. If the checks already settled the order and the split, say so in one line, with why, and go on. They're settled when the split-checker found one story (or you skipped it because the steps came from `# From the Split`), no plan-checker finding you disagreed with is about order or size, and no step's place in the order was your own judgment call between orders that would both work. Otherwise, if the note is infra, say what's unsettled and go on, since her approval in item 3 covers it. For any other type, ask whether the order and the split are right, and wait for her answer.
 2. **Checker findings you disagreed with.** Raise each one. Say what the checker found and why you disagree.
-3. **Each step in full.** Show the step and wait for her to approve or change it. If a change affects a later step, say which one and update it before you get there.
+3. **The steps.**
+   - **An infra story:** ask whether she approves the whole plan. She may first ask to see a step in full, or change one. If a change affects another step, update that step too, show her both, and ask again.
+   - **Any other type:** show each step in full and wait for her to approve or change it. If a change affects a later step, say which one and update it before you get there.
 
 ## 5. Write it to the note
-Once she has approved every step, write the plan under `# Implementation` in the note. If a template comment is there, replace it. If the note has a `# From the Split` section, delete it.
+Once she has approved the plan, write the plan under `# Implementation` in the note. If a template comment is there, replace it. If the note has a `# From the Split` section, delete it.
 
 Then:
 - Set `status` to `ready`.

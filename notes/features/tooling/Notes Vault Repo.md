@@ -1,14 +1,14 @@
 ---
 type: infra
-status: ready
-blocked-by: []
+status: spec
+blocked-by: ["[[Infra Stories Without Steps]]"]
 confirmed: 2026-10-05
 ---
 # Where It Stands
 
-Ready. Next: /implement Step 1. Step 8 waits on [[Major Upgrade Sweeps]] ^status
+Blocked by [[Infra Stories Without Steps]]; then /infra-design. The cutover waits on [[Major Upgrade Sweeps]] ^status
 
-Shaped 2026-10-04, and /decide settled its first four decisions on 2026-10-04 and 2026-10-05. /infra-design wrote the Goals, Design, Conventions and Setup Outside the Repo on 2026-10-05, settling a fifth decision on how sessions find the notes repo. /plan-steps planned 11 implementation steps on 2026-10-05, and nothing is built yet. Steps 1-7 can be built now: a test cloud session for the routine clone layout, then the changes that work while the notes are still in `notes/`. The cutover (Step 8) and the routine step (Step 9) wait on Major Upgrade Sweeps.
+Shaped 2026-10-04, and /decide settled its first four decisions on 2026-10-04 and 2026-10-05. /infra-design wrote the Goals, Design, Conventions and Setup Outside the Repo on 2026-10-05, settling a fifth decision on how sessions find the notes repo. /plan-steps planned 11 implementation steps on 2026-10-05, and nothing is built yet. Steps 1-7 can be built now: a test cloud session for the routine clone layout, then the changes that work while the notes are still in `notes/`. The cutover (Step 8) and the routine step (Step 9) wait on Major Upgrade Sweeps. Sarah decided 2026-10-05 that it waits for [[Infra Stories Without Steps]] and then goes back to `/infra-design` to replace its steps with a Build Order.
 
 # Inbox
 

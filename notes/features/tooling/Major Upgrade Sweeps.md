@@ -1,13 +1,13 @@
 ---
 type: infra
-status: ready
-blocked-by: ["[[Dependency Update PRs]]"]
+status: spec
+blocked-by: ["[[Infra Stories Without Steps]]"]
 confirmed: 2026-10-04
 ---
 # Where It Stands
-Ready. Blocked by [[Dependency Update PRs]]; then /implement Step 1 ^status
+Blocked by [[Infra Stories Without Steps]]; then /infra-design. Building waits on [[Dependency Update PRs]] ^status
 
-Split from [[Local Dependency Update Alerts]] on 2026-10-04. Its one implementation step was planned and approved on 2026-10-04. Nothing is built yet.
+Split from [[Local Dependency Update Alerts]] on 2026-10-04. Its one implementation step was planned and approved on 2026-10-04. Nothing is built yet. Sarah decided 2026-10-05 that it waits for [[Infra Stories Without Steps]] and then goes back to `/infra-design` to replace its steps with a Build Order.
 
 # Inbox
 

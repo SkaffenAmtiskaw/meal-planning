@@ -53,6 +53,8 @@ Choices that are often open:
 
 Things the conventions settle, like local variable names or file naming, aren't open choices.
 
+How tooling plumbing works, such as which API, protocol or command flags a routine or script uses, isn't an open choice either, as AGENTS.md describes under "What to ask about". Pick what works, and give that AGENTS.md section as its source, with your reason.
+
 Keep a list of every choice you make without asking, each with its source. It goes in your report. If a choice has no source, it should have been a question.
 
 ### Asking about an open choice
@@ -126,7 +128,9 @@ Where a change or addition goes:
 
 **Corrections to how it's built.** Some feedback changes how the code is built rather than what it does: where a file lives, how data is fetched, which pattern to use. If the docs in `docs/` already say it, you missed it, and there's nothing to ask. Otherwise, ask her whether it's a one-off for this step or the convention from now on. If it's the convention, handle it as AGENTS.md describes under "Doc gaps".
 
-Leave feedback changes unstaged, so her unstaged changes show just the fix. Report again with the same sections, covering only what changed, and ask her whether she approves them. Once she does, stage the files they changed.
+How a feedback change is reported depends on its form, as AGENTS.md describes under "Approval covers the edits":
+- **If its exact form was settled before you wrote it,** such as a swap she named: stage the files it changed, and report again with the same sections, covering only what changed. Don't ask her to approve it.
+- **Otherwise:** leave it unstaged, so her unstaged changes show just the fix. Report again with the same sections, covering only what changed, and ask her whether she approves it. Once she does, stage the files it changed.
 
 Repeat until she confirms the step is done.
 
