@@ -71,6 +71,11 @@ They're split like `checks.yml`'s, so the routine's token never shares a job wit
 
 When nothing is new, `start-dependency-updates` shows as skipped, no session starts and the reported list stays as it was.
 
+## When the Check Fails
+When the weekly run's `check` fails, `start-dependency-updates` still runs. It sends only the run and `check failed`, and saves nothing. The session checks out the commit the run tested and runs the check again. If it fails there too, the session fixes it on a `claude/` branch with a pull request into the run's branch, or explains what it found. If it passes there, the session re-runs the failed job on GitHub once, as `ci-failure` does, to tell a flake from a failure only GitHub's runner has. When the re-run passes, `start-dependency-updates` sends that week's findings, which start a session of their own.
+
+A failed hourly run starts nothing, since an outage usually clears by the next hour. Neither does a re-run that fails again, whether the session starts it or you do.
+
 The `text` it sends names only identifiers: the run, then each new finding and each reminder, one per line. Its exact shape is in step 1 of the [`dependency-updates` skill](../.claude/skills/dependency-updates/SKILL.md), which reads it, so a change to the shape changes the job and the skill together, as for `start-ci-failure`. Package names come from the registry, so the findings reach the script only through the step's `env:`, and `jq` builds the `text` and the JSON body.
 
 ## The Reported List

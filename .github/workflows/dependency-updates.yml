@@ -1,7 +1,7 @@
 # Checks every installed package against security advisories each hour, and the packages in package.json for new
 # versions each week. When it finds something it hasn't reported before, the start-dependency-updates job starts the
 # dependency-updates routine, a cloud session that handles the findings. The weekly run also starts it while any
-# advisory is still unfixed, as a reminder. See docs/ci.md, "Dependency Updates".
+# advisory is still unfixed, as a reminder, and when its check fails. See docs/ci.md, "Dependency Updates".
 name: Dependency Updates
 
 on:
@@ -68,10 +68,17 @@ jobs:
           } >> "$GITHUB_OUTPUT"
 
   # Starts the dependency-updates routine once when the check found something new, or a reminder on the weekly run.
+  # It also starts it when the weekly run's check failed, on the run's first attempt only, so a re-run that fails
+  # again starts no second session. A failed hourly run starts nothing, since an outage usually clears by the next.
+  # The job's `if` can't read env, so it repeats MODE's weekly test.
   # It runs no install, so the routine's token never shares a job with third-party install scripts.
   start-dependency-updates:
     needs: check
-    if: needs.check.outputs.found == 'true'
+    if: >-
+      !cancelled()
+      && (needs.check.outputs.found == 'true'
+      || (needs.check.result == 'failure' && github.run_attempt == 1
+      && (github.event.schedule == '47 13 * * 1' || inputs.mode == 'weekly')))
     runs-on: ubuntu-latest
     steps:
       # The findings reach the script only through env, and jq builds the text and the body, since package names come
@@ -82,14 +89,19 @@ jobs:
           ROUTINE_TOKEN: ${{ secrets.ROUTINE_DEPENDENCY_UPDATES_TOKEN }}
           RUN_ID: ${{ github.run_id }}
           RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+          CHECK_RESULT: ${{ needs.check.result }}
           NEW: ${{ needs.check.outputs.new }}
           REMINDERS: ${{ needs.check.outputs.reminders }}
         run: |
-          text=$(jq -rn --arg mode "$MODE" --arg run_id "$RUN_ID" --arg run_url "$RUN_URL" \
-            --argjson new "$NEW" --argjson reminders "$REMINDERS" '
-            def line: if .kind == "advisory" then "advisory \(.id) \(.severity) \(.package)" else "\(.kind) \(.id)" end;
-            def lines: if length == 0 then "none" else map(line) | join("\n") end;
-            "\($mode) run \($run_id) \($run_url)\nnew:\n\($new | lines)\nreminders:\n\($reminders | lines)"')
+          if [ "$CHECK_RESULT" = failure ]; then
+            text="$MODE run $RUN_ID $RUN_URL"$'\n'"check failed"
+          else
+            text=$(jq -rn --arg mode "$MODE" --arg run_id "$RUN_ID" --arg run_url "$RUN_URL" \
+              --argjson new "$NEW" --argjson reminders "$REMINDERS" '
+              def line: if .kind == "advisory" then "advisory \(.id) \(.severity) \(.package)" else "\(.kind) \(.id)" end;
+              def lines: if length == 0 then "none" else map(line) | join("\n") end;
+              "\($mode) run \($run_id) \($run_url)\nnew:\n\($new | lines)\nreminders:\n\($reminders | lines)"')
+          fi
           body=$(jq -n --arg text "$text" '{text: $text}')
           curl --fail-with-body --silent --show-error -X POST "$ROUTINE_URL" \
             -H "Authorization: Bearer $ROUTINE_TOKEN" \
@@ -97,11 +109,14 @@ jobs:
             -H "anthropic-version: 2023-06-01" \
             -H "Content-Type: application/json" \
             --data "$body"
-      # Only after the call succeeds, so a failed call leaves the findings for the next run to send.
-      - env:
+      # Only after the call succeeds, so a failed call leaves the findings for the next run to send. A failed check
+      # has no updated list, so it saves nothing.
+      - if: needs.check.result == 'success'
+        env:
           REPORTED_LIST: ${{ needs.check.outputs.reported }}
         run: jq . <<< "$REPORTED_LIST" > "$REPORTED"
-      - uses: actions/cache/save@v6
+      - if: needs.check.result == 'success'
+        uses: actions/cache/save@v6
         with:
           path: ${{ env.REPORTED }}
           key: dependency-alerts-reported-${{ github.run_id }}
