@@ -8,7 +8,8 @@ on:
   schedule:
     # Hourly at minute 17, off the top of the hour, when GitHub drops scheduled runs most often
     - cron: '17 * * * *'
-    # Weekly, Mondays at 13:47 UTC. The MODE expression below matches this string.
+    # Weekly, Mondays at 13:47 UTC. The MODE expression and the start-dependency-updates job's `if` below
+    # match this string.
     - cron: '47 13 * * 1'
   workflow_dispatch:
     inputs:

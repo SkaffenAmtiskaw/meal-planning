@@ -69,7 +69,7 @@ Wherever you stop, also say that this week's findings and reminders weren't sent
 ## 2. Check out the branch
 If `new:` holds no patch, minor or advisory, such as a run with only majors or reminders, skip steps 2, 3 and 7: check out no branch, push nothing, and open or change no pull request.
 
-Otherwise, fetch the latest `develop` and look for an open pull request from `claude/dependency-updates`. This session reaches GitHub's REST API but not its GraphQL API, which the `gh pr` commands use, so every pull request call in this skill goes through `gh api`, which fills in `{owner}` and `{repo}` itself:
+Otherwise, fetch the latest `develop` and look for an open pull request from `claude/dependency-updates`. Every pull request call goes through `gh api`, as `routine-sessions` describes:
 
 ```bash
 git fetch origin develop
@@ -102,7 +102,7 @@ git checkout -b claude/dependency-updates origin/develop
 Keep the commit `git ls-remote` prints, or that it printed nothing, for step 7. Here the **base** for step 3 is `origin/develop`.
 
 ### Then
-Run `pnpm install --frozen-lockfile`. Then run `pnpm lefthook install`, so your commits run the pre-commit hooks as Sarah's do. Each session starts from a fresh clone, and lefthook's own install skips itself when `CI` is set.
+Run `pnpm install --frozen-lockfile`. Then run `pnpm lefthook install`, so your commits run the pre-commit hooks, as `routine-sessions` describes.
 
 ## 3. Apply the updates
 Apply the security fixes first, then the patches, then the minors. Each update is its own commit, so Sarah can revert one alone and step 3 can find one that breaks a check.
@@ -242,7 +242,7 @@ The quoted heredoc keeps the shell from running the body's backticks. The body s
 ### Wait for the pull request's checks
 If nothing was pushed, skip this. Otherwise, GitHub runs `checks.yml` on the pull request for the push. Its `start-ci-failure` job skips `claude/` branches, so no other session looks into a failure here: this session sees the run through itself.
 
-Find the run for the commit you pushed (`git rev-parse HEAD`) and check it every minute until it has finished, giving each command a 10-minute timeout, since a command can't run longer:
+Find the run for the commit you pushed (`git rev-parse HEAD`) and check it every minute until it has finished, with the same limits as "Wait for it" in step 5 of the `ci-failure` skill:
 
 ```bash
 for i in $(seq 9); do
@@ -253,7 +253,7 @@ for i in $(seq 9); do
 done
 ```
 
-Until GitHub starts the run, the loop prints `null`. Run the loop at most three times, about 30 minutes in all. If the run still hasn't finished, stop waiting, and keep its link, or that no run started, for the summary.
+Until GitHub starts the run, the loop prints `null`. If the run still hasn't finished when those limits are up, stop waiting, and keep its link, or that no run started, for the summary.
 
 When it finishes:
 - **It was cancelled,** such as by another session's push to the branch: don't re-run it. Keep its link for the summary.
@@ -270,7 +270,7 @@ When it finishes:
 ### A check that fails only on GitHub
 Follow step 5 of the `ci-failure` skill (`.claude/skills/ci-failure/SKILL.md`), from "Check the head branch hasn't moved on" to its end, with these differences:
 - The head branch is `claude/dependency-updates`, the failed commit is the one you pushed, and the failed jobs are only the ones sent here. You're already on the branch, so don't check out the failed commit.
-- The pull request's base branch is `develop`, so don't look it up with `gh pr view`, which this session can't reach (step 2).
+- The pull request's base branch is `develop`, so don't look it up.
 - When it judges attempt 2, look only at the jobs sent here. A job that failed on the base fails again, so attempt 2 fails as a whole even when every job sent here passed. List attempt 2's failed jobs with `gh run view "<run ID>" --attempt 2 --json jobs --jq '.jobs[] | select(.conclusion == "failure") | .name'`.
 - Where it says to stop with a verdict or a summary, don't stop: keep what it would say, and its links, for the summary in step 8.
 - Where it says to go to step 4, don't fix the code. The failure reproduces here, so handle it as step 3 of this skill handles a check that fails, as below.
@@ -317,7 +317,7 @@ End with a summary for Sarah, in this order. Leave out a group or section with n
      - fails only on GitHub's runner: what differs there, and either the update dropped for it (under **Dropped**) and the result of the run after the revert, with its link, or that the base fails it too, or that the update's revert conflicted, with the files, or that you couldn't reproduce it, with what you found and tried
      - not looked into, because the branch moved on or the run was cancelled, with the newer run's link if there is one
 
-     If the run was still going after about 30 minutes, or never started, say so instead.
+     If the run was still going when you stopped waiting, or never started, say so instead.
    - If the merge of `develop` conflicted (step 2): the open pull request's link, the files that conflicted, and that nothing from this run was applied. List this run's patches, minors and advisories under **Not applied** instead of **In the pull request**.
    - If a push was rejected (step 7): that it was, and that no pull request was opened or changed. List what this run would have put in the pull request under **Not applied**.
 2. **In the pull request,** grouped by kind:

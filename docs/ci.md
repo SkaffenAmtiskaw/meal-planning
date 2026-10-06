@@ -67,16 +67,16 @@ GitHub turns off a public repo's scheduled workflows after 60 days with no activ
 ## The Two Jobs
 They're split like `checks.yml`'s, so the routine's token never shares a job with third-party install scripts:
 - **`check`** installs Node and pnpm from `mise.toml`, runs `pnpm install --frozen-lockfile` on the weekly run only (`pnpm audit` reads only the lockfile, but `pnpm outdated` needs an install), restores the reported list and runs `pnpm -s deps:check`. It passes the new findings, the reminders and the updated list on to the next job.
-- **`start-dependency-updates`** runs no install. It runs when `check` found something new, or, on the weekly run, any advisory that's still unfixed. It calls the routine's `/fire` once, then saves the updated list.
+- **`start-dependency-updates`** runs no install. It runs when `check` found something new, or, on the weekly run, any advisory that's still unfixed. It also runs when the weekly run's `check` failed, as "When the Check Fails" describes. It calls the routine's `/fire` once, then saves the updated list, unless `check` failed.
 
 When nothing is new, `start-dependency-updates` shows as skipped, no session starts and the reported list stays as it was.
+
+The `text` it sends names only identifiers: the run, then each new finding and each reminder, one per line. Its exact shape is in step 1 of the [`dependency-updates` skill](../.claude/skills/dependency-updates/SKILL.md), which reads it, so a change to the shape changes the job and the skill together, as for `start-ci-failure`. Package names come from the registry, so the findings reach the script only through the step's `env:`, and `jq` builds the `text` and the JSON body.
 
 ## When the Check Fails
 When the weekly run's `check` fails, `start-dependency-updates` still runs. It sends only the run and `check failed`, and saves nothing. The session checks out the commit the run tested and runs the check again. If it fails there too, the session fixes it on a `claude/` branch with a pull request into the run's branch, or explains what it found. If it passes there, the session re-runs the failed job on GitHub once, as `ci-failure` does, to tell a flake from a failure only GitHub's runner has. When the re-run passes, `start-dependency-updates` sends that week's findings, which start a session of their own.
 
 A failed hourly run starts nothing, since an outage usually clears by the next hour. Neither does a re-run that fails again, whether the session starts it or you do.
-
-The `text` it sends names only identifiers: the run, then each new finding and each reminder, one per line. Its exact shape is in step 1 of the [`dependency-updates` skill](../.claude/skills/dependency-updates/SKILL.md), which reads it, so a change to the shape changes the job and the skill together, as for `start-ci-failure`. Package names come from the registry, so the findings reach the script only through the step's `env:`, and `jq` builds the `text` and the JSON body.
 
 ## The Reported List
 The Actions cache holds the identifiers already reported: each advisory's ID, and each new version as `package@version`. A finding in the list isn't new, so a run starts the routine only for findings no earlier run sent. A reported version stays quiet until a newer one comes out. The weekly run is the exception for advisories: it sends every one that's still unfixed as a reminder, until it's fixed.
@@ -131,7 +131,7 @@ When a check job in `checks.yml` is renamed, added or removed, change the rulese
 ## The Claude GitHub App
 The [Claude GitHub App](https://github.com/apps/claude) is installed on the repo, with access to only `meal-planning`. It lets routines clone the repo and push their `claude/` branches. A cloud session reaches GitHub through the cloud GitHub proxy, which authenticates `git` and `gh` with the app's access, so no GitHub token is stored anywhere.
 
-The app's access covers what the `ci-failure` and `dependency-updates` sessions do on GitHub: opening and editing a PR, reading a run (`gh run view`), re-running its failed jobs (`gh run rerun --failed`) and reading their logs (`gh run view --log-failed`). The logs need one more allowed host in the cloud environment (see "The Cloud Environment").
+The app's access covers what the `ci-failure` and `dependency-updates` sessions do on GitHub: opening and editing a PR (`gh api`), finding a run (`gh run list`), reading one (`gh run view`), re-running its failed jobs (`gh run rerun --failed`) and reading their logs (`gh run view --log-failed`). The logs need one more allowed host in the cloud environment (see "The Cloud Environment").
 
 ## The Cloud Environment
 Routines run in a claude.ai cloud environment named `Meal Planning Routines` (at https://claude.ai/code, the cloud button above the message box). A new session starts from a snapshot of what its setup script installed, which claude.ai rebuilds about every seven days, or when the script changes.

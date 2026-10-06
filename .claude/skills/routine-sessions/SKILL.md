@@ -14,6 +14,8 @@ A routine's instructions live in a checked-in skill, `.claude/skills/<name>/SKIL
 # What the Session Does
 **It checks out its branch first.** Before the session reads or changes any file in the repo, its skill has it check out the branch or branches it works from, each named in the skill: a fixed branch such as `develop`, or one read from the event, such as a PR's head branch. A routine clones `develop` unless told otherwise, so a skill that says nothing works from `develop` by accident, even when the event is about another branch.
 
+**Its commits run the pre-commit hooks.** Each session starts from a fresh clone, and lefthook's own install skips itself when `CI` is set. So a skill whose session commits has it run `pnpm lefthook install` after `pnpm install`, and its commits then run the hooks as Sarah's do.
+
 **Its skill says how it ends, for each outcome:**
 - **Something to act on:** what the session has done (written notes, diagnosed a cause, drafted a fix on a `claude/` branch), whether it opens a pull request from that branch, and what it asks Sarah to decide.
 - **Nothing to act on after all,** such as "this isn't really an error", "a future story already fixes this" or a flaky failure: a short verdict with its evidence, so Sarah can check it and archive the session.
@@ -37,3 +39,5 @@ For example, the `running-the-app` skill starts the dev server and signs in thro
 A value the session needs that isn't in the repo comes from a cloud environment variable, named in the routine's `routine.md`.
 
 GitHub needs nothing set up. The session reaches it through the Claude GitHub App and the cloud GitHub proxy, which authenticates `git` and `gh` on its behalf, so the session has no GitHub credential of its own. The cloud environment never sets `GH_TOKEN` or `GITHUB_TOKEN`, since a token set there passes into the session unchanged, where Claude and its commands can read it.
+
+The proxy reaches GitHub's REST API but not its GraphQL API, which the `gh pr` commands use. So a routine's skill makes every pull request call through `gh api`, which fills in `{owner}` and `{repo}` itself, such as `gh api "repos/{owner}/{repo}/pulls/<number>"` in place of `gh pr view`. The `gh run` commands work as they are.

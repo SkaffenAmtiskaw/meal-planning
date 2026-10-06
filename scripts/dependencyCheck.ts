@@ -26,7 +26,6 @@ type Finding =
 			kind: VersionKind;
 			// `package@version`
 			id: string;
-			package: string;
 	  };
 
 type VersionKind = 'patch' | 'minor' | 'major';
@@ -142,7 +141,7 @@ const runOutdated = (): Finding[] => {
 			parseVersion(name, current),
 			parseVersion(name, latest),
 		);
-		return kind ? [{ kind, id: `${name}@${latest}`, package: name }] : [];
+		return kind ? [{ kind, id: `${name}@${latest}` }] : [];
 	});
 };
 

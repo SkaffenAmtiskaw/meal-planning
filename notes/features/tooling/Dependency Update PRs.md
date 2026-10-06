@@ -1,11 +1,11 @@
 ---
 type: infra
-status: in-review
+status: done
 blocked-by: []
 confirmed: 2026-10-04
 ---
 # Where It Stands
-All steps implemented. Next: /final-review ^status
+Reviewed. Next: /close ^status
 
 Split from [[Local Dependency Update Alerts]] on 2026-10-04. Its ten implementation steps were planned and approved on 2026-10-04. Steps 1-8 are built: `pnpm deps:check` lists the advisories that aren't in the reported list, `--weekly` adds new versions marked patch, minor or major and repeats every unfixed advisory as a reminder, and CI lints and type-checks the script. The `dependency-updates` routine exists on claude.ai, and its session puts the patches, minors and security fixes it's sent in a PR from `claude/dependency-updates` into `develop`, and lists the majors and reminders. While that PR is open, a run merges `develop` into it and adds its updates there. Once it's closed, the next run starts fresh. After pushing, the session waits for the PR's checks on GitHub, re-runs a failure there once, and drops an update that breaks a check only on GitHub's runner. Step 9 is built too: the `dependency-updates` workflow on `develop` runs the check hourly and weekly, and starts the routine only for findings it hasn't reported, or for the weekly reminders. Its first run opened PR #25 with the backlog. Step 10 is built too: a failed weekly check starts a session that looks into it, and a failed hourly run starts nothing. What remains is the review of the whole story.
 

@@ -31,7 +31,7 @@ This is the failed commit. The head branch may have moved on since the run, so i
 
 If the checkout fails because the commit isn't in the clone, such as after a force-push, run `git fetch origin "<head SHA>"` and check it out again. If a command still fails, stop, and say which command failed and what it printed.
 
-Then run `pnpm install --frozen-lockfile`, since the failed commit's lockfile may differ from `develop`'s. Then run `pnpm lefthook install`, so your commits run the pre-commit hooks as Sarah's do. Each session starts from a fresh clone, and lefthook's own install skips itself when `CI` is set.
+Then run `pnpm install --frozen-lockfile`, since the failed commit's lockfile may differ from `develop`'s. Then run `pnpm lefthook install`, so your commits run the pre-commit hooks, as `routine-sessions` describes.
 
 ## 3. Run the failed checks
 Find the script each failed job runs in the table under "Checks on PRs" in `docs/ci.md`. If a failed job has no row there, stop, and say which job it is and that `docs/ci.md` names no script for it.
@@ -63,7 +63,7 @@ If that's a different commit from the failed one, run `pnpm install --frozen-loc
 Commit the fix there with a message in the style of `git log`, naming the cause. The pre-commit hooks run on the commit. If one fails, fix what it reports and commit again. Never skip them with `--no-verify`.
 
 Run each failed job's script again.
-- **Every one passes:** push the branch, then open a pull request from it into the head branch. This session reaches GitHub's REST API but not its GraphQL API, which the `gh pr` commands use, so pull request calls go through `gh api`, which fills in `{owner}` and `{repo}` itself:
+- **Every one passes:** push the branch, then open a pull request from it into the head branch, through `gh api` as `routine-sessions` describes:
 
   ```bash
   git push -u origin "claude/ci-fix-<run ID>"
@@ -129,7 +129,7 @@ gh run view "<run ID>" --attempt 2 --log-failed
 Look for what differs between this session and the runner, such as:
 - the tool versions the logs show, against `node --version` and `pnpm --version` here
 - the variables the runner sets, such as `CI` and `GITHUB_ACTIONS`
-- the commit tested: GitHub ran the checks on a merge of the failed commit into the PR's base branch (`gh api "repos/{owner}/{repo}/pulls/<PR number>" --jq .base.ref`, since `gh pr view` can't reach GitHub's GraphQL API here). If you merge it here to reproduce the failure, fetch the base branch the way step 2 fetches the head branch, merge in a detached checkout, and never push the merge.
+- the commit tested: GitHub ran the checks on a merge of the failed commit into the PR's base branch (`gh api "repos/{owner}/{repo}/pulls/<PR number>" --jq .base.ref`). If you merge it here to reproduce the failure, fetch the base branch the way step 2 fetches the head branch, merge in a detached checkout, and never push the merge.
 
 When you find a likely cause, reproduce it here before you fix anything: recreate that difference, such as by setting the variable, and run each failed job's script again.
 - **The failure shows up:** go to step 4.
