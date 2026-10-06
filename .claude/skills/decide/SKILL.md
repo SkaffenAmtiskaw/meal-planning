@@ -83,6 +83,7 @@ How you record a decision depends on where the answer came from:
    - **Decided YYYY-MM-DD:** <the answer>. <one sentence on why>
      - Rejected: <option> - <one-line reason>
 ```
+If the answer is her call, as AGENTS.md describes under "Her decisions can change", such as an option she picked for a reason of her own, the why says so, as the `answer-confidence` skill describes.
 One Rejected line per option she considered and turned down, so later agents don't propose it again. Remove any **Leaning** line under the question. If no open decisions remain, remove the `decision needed` entry from `blocked-by`.
 
 If the question is "Is this worth doing?" and Sarah decides it isn't, the story is dropped. Skip the other decisions she picked for this run, because they no longer matter, and go to step 4.
