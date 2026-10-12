@@ -29,7 +29,7 @@
     "@mantine/core": "9.7.2",
     "@mantine/dates": "9.7.2",
     "@mantine/form": "9.7.2",
-    "@mantine/hooks": "9.7.0",
+    "@mantine/hooks": "9.7.2",
     "@preact/signals": "2.11.3",
     "@schedule-x/calendar": "4.9.1",
     "@schedule-x/events-service": "4.9.1",
