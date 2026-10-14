@@ -6,7 +6,6 @@ confirmed: 2026-10-06
 Next: /tooling ^status
 
 # Inbox
-- **Settling a gap, from Feature Shape Review on 2026-10-14:** `/infra-design`'s Gaps section (`infra-design:60`) carries its own short copy of how to settle a decision with `decision-researcher`, a procedure now kept in the `settling-a-decision` shared-rule skill. Sarah decided that this review switches the copy to that skill.
 
 # Notes
 Part of [[Agent Instructions Audit]].
@@ -17,7 +16,7 @@ Part of [[Agent Instructions Audit]].
 
 **Full review here,** as the first story that uses them: `/infra-design`.
 
-**Re-checks for this step:** `answer-confidence` (reviewed in [[Shared Note Procedures Review]]); `rule-placement` (reviewed in [[Writing Standard Review]]); the `notes-only-edits.sh` hook (reviewed in Feature Shape Review); `retyping-a-note` (reviewed in [[Feature Assess Review]]); the `decision-researcher` agent (reviewed in [[Feature Decide Review]]).
+**Re-checks for this step:** `rule-placement` (reviewed in [[Writing Standard Review]]); the `notes-only-edits.sh` hook (reviewed in Feature Shape Review); `retyping-a-note` (reviewed in [[Feature Assess Review]]); `settling-a-decision`, the `decision-researcher` agent (reviewed in [[Feature Decide Review]]).
 
 **Decisions that apply:**
 
@@ -39,12 +38,11 @@ From the audit's scan on 2026-10-06. Line numbers are as of that day.
 - **Decision 10:** a revision reworks only what its trigger names. Today a revision re-approves every section; Branching and Releases' revision would take about 55 approvals.
 - **Decision 11:** a Build Order's Implementer check says only what the Design doesn't, with Piece block IDs and links.
 - **Decision 12:** a Design's Flow covers only what no single Piece holds.
-- `/infra-design` checks a hedged answer to a Gap in the session (`:59`), as it already does a Leaning line, with no `decision-researcher` run.
 - `/infra-design` makes a Piece whose exact form Sarah's answer already settled without asking for approval, as AGENTS.md's "Approval covers the edits" describes (`:63`).
 - `/infra-design` stops saving the Build Order draft to `.scratch` (`:107`). It was copied from `/plan-steps`, where checkers read the file, and nothing reads it here.
 - The description (:3) is imperative and doesn't say when to use it.
 - "Step" means both a section of the skill and a Build Order step (:36, :45, :81, :103); the skill's sections are referred to by name.
-- :51 opens with Design-section questions before "The design has:", and misses the case of a question with neither a Decided nor a Leaning line (it's a Gap).
+- :51 opens with Design-section questions before "The design has:", and misses the case of a question the decisions don't settle (it's a Gap).
 - :47, :63 and :68 restate the approval rule; they keep the unit of approval and point to AGENTS.md.
 - :66 has no reason; :81's sentence on why they're called steps, :115 ("For an infra story …") and step 9 (folds into step 10) don't earn their place.
 - :100 packs four rules into one bullet; it becomes sub-bullets, together with the Agent Workflow Changes item below, which changes the same rule.

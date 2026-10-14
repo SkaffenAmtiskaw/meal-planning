@@ -35,7 +35,7 @@ The Inbox item: AGENTS.md says implementation details are the agent's call, yet 
 4. The plumbing line (:15) is framed around routines and scripts, and "what she sees" is vague enough to cover how a file she reads loads.
 5. No rule covers Sarah herself making a decision that changes an earlier one, so the agent raised it at every point it touched it.
 
-The fix: the test of what a choice is about comes first. A choice about how something is built, such as a mechanism, where a file lives, how it loads, or which API or command flags a script uses, is the agent's call even when it's marked as Sarah's: make it and name it in the summary. "Big" covers only Decided lines about what the work does for her. When Sarah makes a new decision that changes an earlier one, the agent doesn't ask or warn, and names the affected note once in its summary. `answer-confidence:21` follows decision 3. Then the `dont-flag-reversed-build-decisions` memory is deleted, and `implement:165-166`, which restates the rule in other words, points to AGENTS.md.
+The fix: the test of what a choice is about comes first. A choice about how something is built, such as a mechanism, where a file lives, how it loads, or which API or command flags a script uses, is the agent's call even when it's marked as Sarah's: make it and name it in the summary. "Big" covers only Decided lines about what the work does for her. When Sarah makes a new decision that changes an earlier one, the agent doesn't ask or warn, and names the affected note once in its summary. Then the `dont-flag-reversed-build-decisions` memory is deleted, and `implement:165-166`, which restates the rule in other words, points to AGENTS.md.
 
 A draft from the scan, for this review to start from. It replaces AGENTS.md:15 and the cases at :25-29, leaves "Telling them apart" and the two reason bullets as they are apart from decision 3, and needs decision 17's "the user" wording:
 
@@ -54,7 +54,7 @@ A draft from the scan, for this review to start from. It replaces AGENTS.md:15 a
 
 ### Other Findings
 - **Decision 5:** "Editing notes" moves into an `editing-notes` shared-rule skill, and the out-of-scope triage procedure moves to a shared-rule skill the same way. The rules for reading embeds and links stay.
-- **Decision 3:** "Telling them apart" says "her own answer to a decision" makes any answer her call; under decision 3, only an answer with her own reason is. (`answer-confidence`'s side is in [[Shared Note Procedures Review]].)
+- **Decision 3:** "Telling them apart" says "her own answer to a decision" makes any answer her call; under decision 3, only an answer with her own reason is.
 - **Following links:** AGENTS.md gets a rule for following links, next to the embed rule: a link to a heading or a block (`[[#^piece-7]]`, `[[Note#Section]]`) points to content the line depends on, so read the target when that line matters to the work. Both rules stay in AGENTS.md when "Editing notes" moves out (decision 5).
 - **"One at a time"** at :18, :106 and :115 (the last two in bold, which is emphasis too) repeats the question rule.
 - **The 📌 question** (:80) is also in the Roadmap's Markers, `tooling:49` and `kickoff:60`; it gets one home in `roadmap-placement`, with the Roadmap rules below.

@@ -5,7 +5,7 @@ confirmed: 2026-10-06
 # Where It Stands
 Next: its child stories ^status
 
-Split on 2026-10-06 into workflow-step reviews, one for each step of each note type's workflow except Feature's `/shape` step, which has five, plus AGENTS.md, the memory folder, Note Conventions with the Roadmap header, and Conventions Review. The scan's findings and the open Agent Workflow Changes items about each step moved into the review notes. Feature Shape Review is done, and the rest aren't reviewed yet.
+Split on 2026-10-06 into workflow-step reviews, one for each step of each note type's workflow except Feature's `/shape` step, which has five, plus AGENTS.md, the memory folder, Note Conventions with the Roadmap header, and Conventions Review. The scan's findings and the open Agent Workflow Changes items about each step moved into the review notes. Feature Shape Review and Shared Note Procedures Review are done, and the rest aren't reviewed yet.
 
 # Inbox
 
@@ -33,11 +33,11 @@ Each note under Child Stories reviews one step of one note type's workflow, such
 
 **Split check.** Check the review's size after reading the files the step uses, and again each time a decision opens more work. If the session might not hold the whole review, suggest a split early, such as reviewing the skill now and its agents in a new note. Don't push on in a crowded session. A new note follows these same rules. Its Roadmap line goes right after the line of the note it was split from, so the reviews still work through the workflows in order (Sarah's call).
 
-The review covers every file the step uses: its skill, and the agents, shared skills, hooks and templates that skill uses.
-1. **Context.** Find what loads more than the step needs, or could make an agent miss an instruction, and settle with the user how to fix it. Decision 1 says when a skill splits, and when a procedure becomes a shared-rule skill or a supporting file.
-2. **Clarity.** Make each file as clear and unambiguous as the `writing-standard` skill describes.
-
-The note's Issues Found section is where the review starts. It lists what's already known, not a plan, and the user decides what changes.
+The review covers every file the step uses: its skill, and the agents, shared skills, hooks and templates that skill uses. For each file:
+1. **Read it whole, as its agent would.** Before looking at Issues Found, read the file from start to finish and ask of each line whether an agent would do the wrong thing without it. Cut every line that fails: what an agent already knows, a case it would handle anyway, and anything another file already says, including a line that restates AGENTS.md or only points to it, since AGENTS.md loads into every session. Aim for the shortest file that still does the step's job. This comes first because a list of known issues anchors whoever works from it, and the rest of the file passes unread.
+2. **Context.** Find what loads more than the step needs, or could make an agent miss an instruction, and settle with the user how to fix it. Decision 1 says when a skill splits, and when a procedure becomes a shared-rule skill or a supporting file.
+3. **Clarity.** Make what's left as clear and unambiguous as the `writing-standard` skill describes.
+4. **Issues Found.** Check each issue the note lists against the file as it now stands. The list holds what the scan found, not a plan or the review's scope, and the user decides what changes.
 
 **A file the step uses gets its full review in the first story that uses it, whether it's a skill, agent, shared skill, hook or template.** Each later story that uses it re-checks it: it has to meet the needs of every step reviewed so far and still meet the writing standard. If it can't, that's the signal to split it. AGENTS.md, the memory folder, and Note Conventions with the Roadmap header get their full reviews in their own stories after the workflows, but every story re-checks them for its step.
 
@@ -70,7 +70,7 @@ Each finding moved into the review note it belongs to on 2026-10-06.
 | Story | Scope |
 |---|---|
 | Feature Shape Review | Feature's `/shape` step; full review of `/shape`, the `notes-only-edits.sh` hook |
-| [[Shared Note Procedures Review]] | Feature's `/shape` step; full review of `answer-confidence`, `roadmap-placement`, and the procedures for creating an idea note and deleting a note |
+| Shared Note Procedures Review | Feature's `/shape` step; full review of `answer-confidence`, `roadmap-placement`, and the procedures for creating an idea note and deleting a note |
 | [[Scope-Router Review]] | Feature's `/shape` step; full review of the `scope-router` agent |
 | [[Writing Standard Review]] | Feature's `/shape` step; full review of `writing-standard`, `rule-placement` |
 | [[Feature Template Review]] | Feature's `/shape` step; full review of `notes/templates/Idea.md`, `notes/templates/Feature.md` and the comments the templates share |
@@ -186,7 +186,8 @@ Each finding moved into the review note it belongs to on 2026-10-06.
     - **Decided 2026-10-06:** They stay in the template, word for word, moved from under `# Out of Scope` to under `# Design Handoff`. Sarah's call: they're clearer than any skill's line, and they reach every skill and agent that reads a handoff.
       - Rejected: move them into the skills - seven skills and four agents read handoffs, and the skills' lines say less.
 17. What do instructions call the person they work with? ^decision-17
-    - **Decided 2026-10-06:** "The user", wherever an instruction means whoever is running the session. What agents write into notes keeps Sarah's name where it records that she made a call, such as "Sarah decided …", "Sarah's call" and her `[Sarah]` tags. Sarah's call: she doesn't want a hypothetical user called by her name.
+    - **Decided 2026-10-14:** "The user", wherever an instruction means whoever is running the session. Where an agent records that the user made a call, it writes that user's name, as in "Sarah decided …" and "Sarah's call", and an instruction recognizes a user's own lines by a tag or signature with their name, such as `[Sarah]`. Sarah's call: she doesn't want a hypothetical user called by her name, and since the user might in theory be someone else, the notes should record which user made each call.
+      - Rejected: instructions keep Sarah's name where agents record a call and in the tags they look for (decided 2026-10-06) - it ties those records to one user.
 
 
 # Out of Scope

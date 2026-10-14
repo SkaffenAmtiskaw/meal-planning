@@ -7,7 +7,6 @@ Next: /tooling ^status
 
 # Inbox
 - **A pattern's convention, from Feature Shape Review on 2026-10-14:** Sarah decided that `/shape` never treats choosing a pattern's convention as a blocking decision, so a pattern story can reach `/architect` with no convention chosen. Today `/architect` stops when the convention isn't chosen (its "A chosen convention" check, `architect:36`) and sends the note to `/decide`. Sarah wants this review either to make `/architect` handle choosing a pattern's convention itself, or to move the issue to the Inbox of the note it belongs in.
-- **Settling a gap, from Feature Shape Review on 2026-10-14:** `/architect`'s Gaps section (`architect:58`) carries its own short copy of how to settle a decision with `decision-researcher`, a procedure now kept in the `settling-a-decision` shared-rule skill. Sarah decided that this review switches the copy to that skill.
 
 # Notes
 Part of [[Agent Instructions Audit]].
@@ -18,7 +17,7 @@ Part of [[Agent Instructions Audit]].
 
 **Full review here,** as the first story that uses them: `/architect`, the `rule-auditor` agent.
 
-**Re-checks for this step:** `answer-confidence` (reviewed in [[Shared Note Procedures Review]]); the `notes-only-edits.sh` hook (reviewed in Feature Shape Review); `retyping-a-note` (reviewed in [[Feature Assess Review]]); the `decision-researcher` agent (reviewed in [[Feature Decide Review]]).
+**Re-checks for this step:** the `notes-only-edits.sh` hook (reviewed in Feature Shape Review); `retyping-a-note` (reviewed in [[Feature Assess Review]]); `settling-a-decision`, the `decision-researcher` agent (reviewed in [[Feature Decide Review]]).
 
 **Decisions that apply:**
 

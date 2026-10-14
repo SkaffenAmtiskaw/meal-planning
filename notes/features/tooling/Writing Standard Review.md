@@ -7,6 +7,7 @@ Next: /tooling ^status
 
 # Inbox
 - **Describing what something isn't, from Feature Shape Review on 2026-10-14:** Sarah's feedback on a `/shape` draft: after a change, agents tend to write about what something isn't, or why it's no longer the old thing. A reader coming to it fresh never knew the old thing, so those lines only cost attention. `writing-standard` doesn't cover this yet. The `describe-what-is-not-what-isnt` memory holds the same point, and the agent drafting `/shape` didn't follow it.
+- **Pointers to AGENTS.md, from Shared Note Procedures Review on 2026-10-14:** `rule-placement`'s "Referring to a Rule Kept Elsewhere" tells a skill to name where a rule lives, including "as AGENTS.md describes under ...". Sarah pointed out that AGENTS.md loads into every session, so its rules already apply and a pointer to one only costs context. "How Each Review Works" now removes lines that restate AGENTS.md or only point to it. The section needs an exception for AGENTS.md, leaving pointers for rules kept in a doc or a shared-rule skill.
 
 # Notes
 Part of [[Agent Instructions Audit]].

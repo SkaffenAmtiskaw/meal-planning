@@ -12,7 +12,7 @@ Part of [[Agent Instructions Audit]].
 
 **Step:** Bug's `/decide` step, which works through the note's open decisions with the user.
 
-**Re-checks for this step:** `/decide`, the `decision-researcher` agent (reviewed in [[Feature Decide Review]]); `answer-confidence`, `roadmap-placement` (reviewed in [[Shared Note Procedures Review]]); the `scope-router` agent (reviewed in [[Scope-Router Review]]); the `notes-only-edits.sh` hook (reviewed in Feature Shape Review); `notes/templates/Idea.md` (reviewed in [[Feature Template Review]]).
+**Re-checks for this step:** `/decide`, `settling-a-decision`, the `decision-researcher` agent (reviewed in [[Feature Decide Review]]); `roadmap-placement` (reviewed in Shared Note Procedures Review); the `scope-router` agent (reviewed in [[Scope-Router Review]]); the `notes-only-edits.sh` hook (reviewed in Feature Shape Review); `notes/templates/Idea.md` (reviewed in [[Feature Template Review]]).
 
 **Decisions that apply:**
 

@@ -107,7 +107,7 @@ Some decisions need more than a callout:
 - **Recent code wins over the docs**, or recent code follows a convention the docs don't mention and Sarah says it's the convention: it's a doc gap. Handle it as AGENTS.md describes under "Doc gaps".
 - **The docs win:** the recent code that breaks the convention goes on the out-of-scope list.
 - **The other story has to change:** that change goes on the out-of-scope list. Don't edit the other note here.
-- **A decision she wants to make later:** add the question to the note's Open Decisions, and a `"decision needed: ..."` entry to `blocked-by` if the note doesn't have one. If the note is a roundup and the finding reopens a question it already decided, the new question says which one it reopens and why, and a callout on the old decision points to the new question.
+- **A decision she wants to make later:** leave it for `/decide`. If the note is a roundup and the finding reopens a question it already decided, the new question says which one it reopens and why, and a callout on the old decision points to the new question.
 
 ## 6. Route the note
 If the note is a sweep, it stays at `spec` and always goes to `/plan-steps` next. Otherwise, work out the next step from the findings' meanings in step 4:

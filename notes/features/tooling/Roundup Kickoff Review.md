@@ -14,7 +14,7 @@ Part of [[Agent Instructions Audit]].
 
 **Full review here,** as the first story that uses them: `notes/templates/Roundup.md`.
 
-**Re-checks for this step:** `/kickoff` (reviewed in [[Sweep Kickoff Review]]); `roadmap-placement` (reviewed in [[Shared Note Procedures Review]]); the `notes-only-edits.sh` hook (reviewed in Feature Shape Review).
+**Re-checks for this step:** `/kickoff` (reviewed in [[Sweep Kickoff Review]]); `roadmap-placement` (reviewed in Shared Note Procedures Review); the `notes-only-edits.sh` hook (reviewed in Feature Shape Review).
 
 **Decisions that apply:**
 

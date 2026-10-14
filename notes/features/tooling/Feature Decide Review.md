@@ -6,7 +6,7 @@ confirmed: 2026-10-06
 Next: /tooling ^status
 
 # Inbox
-- **A new shared skill, from Feature Shape Review on 2026-10-14:** `/decide`'s per-decision procedure (Ask first through Record) moved, as written, into the new `settling-a-decision` shared-rule skill, which `/decide`'s step 3 and `/shape`'s step 3 now use. Its full review is this note's, as Sarah decided, along with `/decide`'s opening line, step 3 and step 4's new `blocked-by` bullet, which that session changed.
+- **A new shared skill, from Feature Shape Review on 2026-10-14:** `/decide`'s per-decision procedure (Ask first through Record) moved, as written, into the new `settling-a-decision` shared-rule skill, which `/decide`'s step 3 and `/shape`'s step 3 now use. Its full review is this note's, as Sarah decided, along with `/decide`'s opening line, step 3 and step 4's new `blocked-by` bullet, which that session changed. Shared Note Procedures Review then folded `answer-confidence` into it and cut it down on 2026-10-14, so this review starts from the skill as it now stands.
 
 # Notes
 Part of [[Agent Instructions Audit]].
@@ -17,7 +17,7 @@ Part of [[Agent Instructions Audit]].
 
 **Full review here,** as the first story that uses them: `/decide`, the `decision-researcher` agent.
 
-**Re-checks for this step:** `answer-confidence`, `roadmap-placement` (reviewed in [[Shared Note Procedures Review]]); the `scope-router` agent (reviewed in [[Scope-Router Review]]); the `notes-only-edits.sh` hook (reviewed in Feature Shape Review); `notes/templates/Idea.md` (reviewed in [[Feature Template Review]]).
+**Re-checks for this step:** `roadmap-placement` (reviewed in Shared Note Procedures Review); the `scope-router` agent (reviewed in [[Scope-Router Review]]); the `notes-only-edits.sh` hook (reviewed in Feature Shape Review); `notes/templates/Idea.md` (reviewed in [[Feature Template Review]]).
 
 **Decisions that apply:**
 
@@ -30,7 +30,6 @@ Part of [[Agent Instructions Audit]].
 ## Issues Found
 From the audit's scan on 2026-10-06. Line numbers are as of that day.
 - Check and Research (:58-66) spell out nearly the same message to `decision-researcher` twice; one send, with what differs.
-- Restatements of `answer-confidence`: :22, :54-56, :61, :86.
 - :29 keeps "a list of effects on other notes", which is AGENTS.md's out-of-scope list under another name, and :129's "the running list" doesn't say which; it becomes the out-of-scope list, plus a list of new child stories for a hub.
 - :34-36 is a one-item list followed by a sentence; it becomes prose.
 - :102 restates and points to the `ready` → `spec` rule; :79 restates the approval rule.

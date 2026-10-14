@@ -38,7 +38,7 @@ Where each memory to delete already has its rule, as of 2026-10-06. Some of thes
 | `leave-other-sessions-notes-alone` | AGENTS.md:49 |
 | `move-story-to-now-when-started` | `implement:41`, AGENTS.md:83 |
 | `named-home-skips-scope-router` | AGENTS.md:108 |
-| `new-roadmap-lines-start-in-ideas` | `scope-router:35`, Roadmap:15, `tooling:46-48`, `roadmap-placement:30` |
+| `new-roadmap-lines-start-in-ideas` | `scope-router:35`, Roadmap:15, `tooling:46-48`, `roadmap-placement:15` |
 | `new-session-per-note` | `shape:100`, `plan-steps:143`, `decide:137`, `close:25`, `kickoff:73`, `implement:161`, `tooling:50` |
 | `no-rules-for-hypothetical-cases` | `infra-design:66`, `architect:56` |
 | `one-question-at-a-time` | AGENTS.md:9 |
@@ -60,7 +60,7 @@ Where each memory to delete already has its rule, as of 2026-10-06. Some of thes
 | `stop-servers-you-start` | `running-the-app:13` |
 | `story-ready-definition` | Note Conventions:21-22 |
 | `tooling-enforcement-is-docs` | `infra-design:21` |
-| `tooling-stays-general-on-roadmap` | Roadmap:14, `roadmap-placement:21`, `roadmap:49,73-76` |
+| `tooling-stays-general-on-roadmap` | Roadmap:14, `roadmap-placement:10`, `roadmap:49,73-76` |
 | `tooling-summary-table` | `tooling:74,96` |
 | `work-the-kicked-off-copy` | `tooling:21` |
 | `migration-skills-skip-note-workflow` (stale) | `tooling:3,10-13`, Note Conventions:37 |

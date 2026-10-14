@@ -41,7 +41,7 @@ Where the note is and its `status` decide the kind of close:
 - **In `notes/archive/`, with stories in `kept-for`:** tell Sarah which stories it's kept for, and stop.
 
 ## 2. Find everything that points to it
-Run `sh scripts/note-refs.sh "<note name>"`. It lists the note's files (everything it embeds or links, plus the rest of any assets folder they sit in), then every reference to the note and to its files, each with `file:line`. It searches the vault (except `notes/templates/`), and outside it `src/`, `test/`, `docs/`, `.claude/`, `AGENTS.md` and `CLAUDE.md`. It tags each vault reference by its form: a `blocked-by` or `kept-for` entry, a **Blocked by** marker, its own Roadmap line, another Roadmap line, an embed, a link or plain text. It also marks lines tagged `[Sarah]` or signed `- Sarah`.
+Run `sh scripts/note-refs.sh "<note name>"`.
 
 Sort each match into one kind. The tags settle Kept-for and Outside the vault, and most Blockers. Read the line for the rest. A comment of Sarah's the script didn't mark is still her comment.
 - **Blocker:** an entry in another story's `blocked-by`, a sweep or roundup item's `**Blocked by [[Name]]:**` marker, or a Roadmap line that says it waits on this story.
@@ -63,7 +63,7 @@ The note is needed by every open story with a Content match. A Content match fro
 
 **If an open story needs it,** go through those stories. For each: if another story also needs the content it relies on, that content can't move, because the design stays in one copy, so this note is kept for that story without asking. Otherwise, ask her whether to keep this note for that story, or move the content it relies on into the story so it no longer needs this note. Move the full step or section, its image embeds and the handoff text it relies on, never a summary, and leave a 🚛 pointer behind. Archived notes are effectively invisible, so design references must travel with the work.
 
-**If no open story needs it,** it will be deleted. First, if it holds something that seems worth keeping for reference, such as a convention or the reason the code is the way it is, that's a doc gap. Handle it as AGENTS.md describes under "Doc gaps".
+**If no open story needs it,** it will be deleted. First, check it for anything worth keeping, as the `deleting-a-note` skill describes in step 1.
 
 Then tell Sarah the outcome in one line, either "keep in `archive/` for [[A]] and [[B]]" or "delete", and go on. It follows from her answers and the rules above, as AGENTS.md describes under "Approval covers the edits".
 
@@ -90,7 +90,7 @@ Go through the remaining matches:
 - **Content:** if a story's content was moved into it in step 3, make the move now, then reword the pointer so it no longer sends the reader to this note. If this note is kept, leave the pointers alone.
 - **Kept-for:** remove this story from the archived note's `kept-for`. If the list is now empty, that note needs its own `/close`, as the paragraph below this list describes.
 - **Hub list:** mark this story done or dropped in the hub's list, following how the hub marks the others. If the hub now has no open stories left, it needs its own `/close`, as the paragraph below this list describes.
-- **Passing mention:** if this note is being deleted, every link to it would be left pointing at nothing, so reword or remove each one, even the ones that are still true. Otherwise, only the out-of-date ones need it. For an out-of-date one: if the only change is swapping the link to this note for a link to the doc section that now holds its content, such as a pattern's Rule that landed in `docs/`, make it and list it in the step 9 report. Otherwise, propose new wording to Sarah and wait for her approval. Never add a line saying the note was removed.
+- **Passing mention:** if this note is being deleted, reword or remove each one, as the `deleting-a-note` skill describes in step 3. Otherwise, only the out-of-date ones need it. For an out-of-date one: if the only change is swapping the link to this note for a link to the doc section that now holds its content, such as a pattern's Rule that landed in `docs/`, make it and list it in the step 9 report. Otherwise, propose new wording to Sarah and wait for her approval. Never add a line saying the note was removed.
 - **Sarah's comment:** if it's done or out of date, handle it as AGENTS.md describes under "Editing notes".
 - **Archived notes with no `kept-for`:** for each one step 2 found, ask Sarah which open stories it's kept for. Write her answer into its `kept-for`. If none, that note needs its own `/close`, as the paragraph below this list describes.
 - **Outside the vault:** add it to the out-of-scope list.
@@ -103,17 +103,15 @@ If the out-of-scope list is empty, skip this.
 Otherwise, a piece of a dropped story that Sarah asked to keep in step 1 skips the triage. For the other items, the story is closing, so the triage offers route or drop only. Then route the list as AGENTS.md describes under "Out-of-scope work". For a piece of a dropped story, include its full text and image embeds.
 
 ## 7. Close the note
-1. Remove the note's own line from the Roadmap. First note the goals it served: the goal heading it sat under and its 🎯 links. For each one that isn't a standing goal, which never ships, if no other open line sits under its heading or carries its 🎯 link, and no collecting-note item carries its 🎯 link, add ` - waiting on a release process` to the goal's line under Goals.
+1. Remove the note's own line from the Roadmap, as the `deleting-a-note` skill describes in step 4.
 2. For a dropped close, set `status` to `dropped`. A done close stays `done`.
 3. Set the `^status` line to "Done." or "Dropped.". Don't touch `confirmed`.
 4. Then keep or delete it, as Sarah confirmed in step 3:
    - **Keep:** add `kept-for` to the frontmatter with the stories she confirmed, each as a `"[[link]]"`. If the note is in `notes/features/`, move it to `notes/archive/` with `mv`. Leave its files where they are. Obsidian finds embeds by name.
-   - **Delete:** delete it with `rm`, as AGENTS.md describes under "Git and files".
+   - **Delete:** delete it with `rm`.
 
 ## 8. Delete unused files
-Run `sh scripts/vault-orphans.sh`. It checks the whole vault except `notes/templates/`, and lists every file that isn't a note and that nothing references anymore, each with its git state. Any mention of the filename counts as a reference: an embed, a link, plain text, or a prototype loading it. A file that only other unreferenced files load, such as a deleted prototype's script, is listed too. Run it after step 7, so a reference from a note deleted there doesn't count.
-
-Delete each file it lists as AGENTS.md describes under "Git and files", using the git state it prints. Then remove each folder it says is left empty.
+Delete the files nothing references anymore, as the `deleting-a-note` skill describes in step 6. Do it after step 7, so a reference from a note deleted there doesn't count.
 
 ## 9. Report and stop
 Tell Sarah:

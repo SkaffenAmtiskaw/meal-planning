@@ -36,7 +36,7 @@ It should be `type: bug` or `type: cleanup`. If it's another type, check whether
 
 Check `blocked-by`. If it has a `decision needed` entry, those decisions come first with `/decide`. If another story blocks it, the investigation may be wasted until that story lands. In either case, tell Sarah and ask whether to go on anyway. An entry that only waited on this skill being built is stale. Remove it in step 4.
 
-If the note lists questions for this step to answer, at the top of Root Cause or Current State (or under Where It Stands in an older note), each one gets an answer in the note by the end of this run. If a question has a **Decided** line under it, that's Sarah's answer. If it has a **Leaning** line, check it as part of this step's own work, not with a separate `decision-researcher` run, for the problems the `answer-confidence` skill lists under "Checking a leaning". If you find none, use her answer. If you find any, show her each one, and go on as that skill describes.
+If the note lists questions for this step to answer, at the top of Root Cause or Current State (or under Where It Stands in an older note), each one gets an answer in the note by the end of this run.
 
 If reproduction or the scan shows the issue is already fixed, step 2 or 3 handles that.
 
@@ -81,7 +81,7 @@ Work out the reasonable fixes. Read the project docs they touch (`docs/project_c
 - **One reasonable fix:** what changes and where, and why. If the critic reviewed it, give its verdict. Wait for her approval.
 - **More than one:** give each option with its trade-offs, what it touches and the critic's verdict if it has one. Then recommend one, following "Recommendations" in AGENTS.md. Wait for her to pick.
 
-If Sarah wants to think it over, or the choice needs research beyond this bug, don't push. Write it as an Open Decisions question with the options under it, and add a `"decision needed: ..."` entry to `blocked-by` if it doesn't have one. `/decide` settles it later.
+If Sarah wants to think it over, or the choice needs research beyond this bug, don't push. Leave it for `/decide`, with the options under the question.
 
 ## 3. Cleanup notes
 
@@ -95,7 +95,7 @@ First, triage the out-of-scope list as AGENTS.md describes under "Out-of-scope w
 
 The scan usually raises questions about how to tidy something, such as whether a type needs to exist, or whether two shapes can line up. Take each one to Sarah with its options and trade-offs and a recommendation, following "Recommendations" in AGENTS.md. Read the project docs and library docs as in 2d when an option depends on them.
 
-If Sarah wants to think one over, or it needs research beyond this scan, leave it for `/decide`. It gets an Open Decisions question, and a `"decision needed: ..."` entry in `blocked-by` if the note doesn't have one.
+If Sarah wants to think one over, or it needs research beyond this scan, leave it for `/decide`.
 
 ## 4. Write it to the note
 Draft the changes and show them to Sarah before writing. Keep her wording wherever the note already has it.

@@ -14,7 +14,7 @@ Part of [[Agent Instructions Audit]].
 
 **Full review here,** as the first story that uses them: `/assess`, `retyping-a-note`, the `split-checker` agent, the `note-drift-checker` agent, the `code-critic` agent.
 
-**Re-checks for this step:** `answer-confidence` (reviewed in [[Shared Note Procedures Review]]); the `notes-only-edits.sh` hook (reviewed in Feature Shape Review); the `decision-researcher` agent (reviewed in [[Feature Decide Review]]).
+**Re-checks for this step:** the `notes-only-edits.sh` hook (reviewed in Feature Shape Review); the `decision-researcher` agent (reviewed in [[Feature Decide Review]]).
 
 **Decisions that apply:**
 

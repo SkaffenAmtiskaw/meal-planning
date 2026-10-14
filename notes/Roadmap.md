@@ -39,7 +39,6 @@
 # Now
 
 # Next
-2. [[Shared Note Procedures Review]] ![[Shared Note Procedures Review#^status]] 🎯 [[Dev Foundations]]
 3. [[Scope-Router Review]] ![[Scope-Router Review#^status]] 🎯 [[Dev Foundations]]
 4. [[Writing Standard Review]] ![[Writing Standard Review#^status]] 🎯 [[Dev Foundations]]
 5. [[Feature Template Review]] ![[Feature Template Review#^status]] 🎯 [[Dev Foundations]]

@@ -41,10 +41,10 @@ If none of these applies, go on to step 2. Otherwise, tell Sarah which case appl
    - **A workflow note without a What Belongs Here section:** rewrite it in place from `notes/templates/Idea.md`, so links to it keep working.
    - **An item in a collecting note, or a description:** create the note from `notes/templates/Idea.md` in `notes/features/<area>/`, with a plain filename. If the area isn't obvious, ask Sarah which folder. Remove the item from the collecting note, and update that note's Roadmap line as the Roadmap's "How this file works" describes under "Collecting notes".
 
-   Either way, leave `type` blank, keep `status: idea`, set `confirmed` to today, and make the Where It Stands line "Next: /shape ^status". Under Notes, put the task in Sarah's wording, with her `[Sarah]` lines moved word for word, and a line saying which case made it a story and why.
+   Either way, under Notes, put the task in Sarah's wording, with her `[Sarah]` lines moved word for word, and a line saying which case made it a story and why.
 2. **Its Roadmap line.** It links to the note and embeds its status (`[[Note]] ![[Note#^status]]`). A new note gets a new line. A rewritten workflow note's line moves. Ask Sarah these one at a time:
    - **Is it committed?**
-     - **Yes:** if the task had 🎯 goal links, those are its goals. Otherwise, check its goals as the `roadmap-placement` skill describes. Then place the line as that skill describes under "Placing a story's line", ending with its 🎯 links.
+     - **Yes:** if the task had 🎯 goal links, those are its goals. Otherwise, check its goals as the `roadmap-placement` skill describes. Then place the line as that skill describes under "Placing a Story's Line", ending with its 🎯 links.
      - **No:** the line goes in Ideas, which holds uncommitted work. If the task had 🎯 goal links, ask whether to remove them. If she says to remove them, the line goes in Ideas without them. If she says to keep them, it's committed after all, so place it as "Yes" describes.
    - **If it's committed: does it go into Next or Planning?** A line in Next needs a 🎯 link to the building goal, or 📌, and a line in Planning needs one to the planning goal, as the Roadmap's "How this file works" describes under "Markers". If she says Next and none of its goals is the building goal, ask her whether it gets 📌, and with what reason. Then ask her where in that section, as AGENTS.md describes under "Roadmap order".
 3. **Stop.** Tell Sarah to run `/shape <note name>` in a new session.
@@ -83,14 +83,14 @@ Handle each one:
 - **Sarah's comments:** if one is now done or out of date, handle it as AGENTS.md describes under "Editing notes". The bullets below are for everything else.
 - **Done in full:** remove it, with no line recording that it was removed. How depends on what it is:
   - **An item in a collecting note:** remove only the item. The note stays. If the item ended with 🎯 goal links, update the note's Roadmap line as the Roadmap's "How this file works" describes under "Collecting notes". If that leaves the note this session worked from with no items, what happens depends on the note. If it's a kicked-off copy (`<name> YYYY-MM-DD`), handle it as a whole note (next bullet). Otherwise, ask Sarah whether it should keep collecting or be deleted, and if it's deleted, handle it as a whole note.
-  - **A whole note:** if it holds something worth keeping for reference, such as a rationale or a convention, ask Sarah whether a doc should cover it. Before deleting it, run `sh scripts/note-refs.sh "<note name>"` to list every link to it. Then delete it with `rm`, as AGENTS.md describes under "Git and files", remove its Roadmap line, and reword or remove every link the script listed. If the line served a goal, check whether the goal now waits on a release, as `/close` describes in step 7.
+  - **A whole note:** delete it as the `deleting-a-note` skill describes.
   - **Anything else,** such as an item in a story note: remove it.
 - **Partly done:** remove the done parts and keep the rest.
 - **Out of date:** if it's in a story note, handle it as AGENTS.md describes under "Editing notes" for a note that's wrong or out of date. Otherwise, if there's one right fix, make it. If there's a real choice, propose the wording and wait.
 
 Don't bring other notes up to a convention this change introduced. They're updated when next worked on.
 
-Last, run `sh scripts/vault-orphans.sh`. It lists every file in `notes/` that isn't a note and that nothing references anymore, with its git state. Delete each one as AGENTS.md describes under "Git and files", and remove each folder it says is left empty.
+Last, delete the files nothing references anymore, as the `deleting-a-note` skill describes in step 6.
 
 ## 5. Report and stop
 Route the out-of-scope list as AGENTS.md describes. Then tell Sarah, in the same table format as step 3:

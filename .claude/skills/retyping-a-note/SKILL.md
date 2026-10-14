@@ -12,7 +12,7 @@ A wrong type usually leaves a lot of cruft behind, such as a pattern's Enforceme
 # Retyping a note
 1. **Read the new type's rules.** Read its template in `notes/templates/`, and its rows in the Next Step by Note State table in `notes/Note Conventions.md`.
 2. **Sort the note's content.** Go through every section of the note. Each piece goes one of two ways:
-   - **Carried:** it makes sense for the new type. Put it in the section of the new template where it belongs. Keep its wording, and reword it only as far as the new section needs, such as a Rule's title becoming a convention's. Sarah's comments move unchanged. Open Decisions, with their **Decided**, **Leaning** and **Rejected** lines, carry as they are.
+   - **Carried:** it makes sense for the new type. Put it in the section of the new template where it belongs. Keep its wording, and reword it only as far as the new section needs, such as a Rule's title becoming a convention's. Sarah's comments move unchanged. Open Decisions, with their **Decided** and **Rejected** lines, carry as they are.
    - **Dropped:** it doesn't make sense for the new type, and the story can be done without it.
 3. **Set the frontmatter, Where It Stands and the Inbox.**
    - `type`: the new type.

@@ -64,7 +64,7 @@ Go through the candidates one at a time. For each, show the line, note or item, 
 If an item that comes in already links to another goal, it serves one goal, as the Roadmap's "How this file works" describes under "Collecting notes". Ask Sarah which goal it fits best, and keep only that goal's link, unless she says neither goal can be done without it. If this goal is building, step 7 kicks off the items that come in.
 
 ## 4. Gaps
-Compare Done When with the in-scope work, and list each Done When item that nothing covers. Go through them one at a time. For each, draft an idea note from `notes/templates/Idea.md` for `notes/features/<area>/`, with "Next: /shape ^status", and show it to Sarah:
+Compare Done When with the in-scope work, and list each Done When item that nothing covers. Go through them one at a time. For each, draft an idea note from `notes/templates/Idea.md` for `notes/features/<area>/`, and show it to Sarah:
 - **She approves it,** with any changes she asks for: write the note, and add its line under the goal's heading.
 - **She says the gap doesn't fit an idea note:** ask whether it gets a Roadmap line under the goal's heading instead or comes out of Done When, and do what she says.
 

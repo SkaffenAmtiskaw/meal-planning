@@ -19,20 +19,18 @@ Other skills, such as `/shape` and `/investigate`, leave open the decisions Sara
 A few things shape how it works:
 - **Sarah picks the scope.** A hub can hold ten open decisions, and she may only want to tackle two today. Each run covers the ones she picks.
 - **Research happens in a subagent,** one decision at a time. Each decision can need its own look at the code, the other notes and library docs. Doing that inline would fill the context before the third decision. The `decision-researcher` agent returns a brief. You walk Sarah through it.
-- **Sarah may already know.** Each decision starts by asking her. A confident answer is recorded as she gave it, and a hedged one gets a check instead of full research, as the `answer-confidence` skill describes.
 - **Decisions, not design.** Settle the question. Don't design the story, write steps or pick implementation details the next step owns.
 
 This is planning only. Don't change code. A hook blocks edits outside `notes/` and `.scratch/`.
 
 ## Talking with Sarah
-- **Her comments may already answer it.** If one of Sarah's comments already answers a question, show it to her and confirm it's still her answer rather than researching it again.
 - **Running lists:** keep a list of effects on other notes and a list of new stories the answers imply. Don't stop to deal with them as they come up. Steps 5 and 6 handle them.
 
 ## 1. Read the note
 Find the note in `notes/features/` and read all of it.
 
 A decision is open if it's:
-- an item under `# Open Decisions` with no **Decided** line under it. One with only a **Partly answered** or **Leaning** line is still open.
+- an item under `# Open Decisions` with no **Decided** line under it. One with only a **Partly answered** line is still open.
 A story with open decisions has one `"decision needed: ..."` entry in `blocked-by` that covers them all. A roundup's issues are the questions under its Open Decisions.
 
 If the two don't match, raise it with Sarah:
@@ -42,7 +40,7 @@ If the two don't match, raise it with Sarah:
 If the note has no open decisions, or it's `done` or archived, tell Sarah what you found and stop.
 
 ## 2. Sarah picks the decisions
-List the open decisions, one line each: its number or short name, and any Partly answered progress or Leaning line. Say which ones depend on another's answer, from what the notes state, and mark any you're inferring. Then ask which ones she wants to work through this run.
+List the open decisions, one line each: its number or short name, and any Partly answered progress. Say which ones depend on another's answer, from what the notes state, and mark any you're inferring. Then ask which ones she wants to work through this run.
 
 Take them in the order she gives. If she picks one that depends on an unpicked one, say so once, and let her decide.
 
@@ -56,7 +54,7 @@ After recording, look at what the answer changes:
 - **This note:** other sections the answer lands in, e.g. a section the question says to record it in, the chosen Fix Option, or a hub's Coverage or Child Stories table. Draft each change and go through them with Sarah. If the note is `ready` and the change touches its design or steps, it goes back to `spec` (AGENTS.md, "Editing notes"). Say so when you show the change.
 - **Other notes:** add each effect to the running list: which note, what changes and why. Step 6 handles them.
 - **New stories:** if the answer implies work no note covers yet, add it to the running list of new stories. Step 5 handles them.
-- **New questions:** if the brief found a blocking question that isn't on the note, or the answer raised one, tell Sarah what needs deciding and add it to Open Decisions, written as a question rather than a proposal. Then ask whether she already has an answer in mind, and act on it as the `settling-a-decision` skill describes. If she wants to think it over or research it, add a `decision needed` entry in `blocked-by` on a story if it doesn't have one, then ask whether to take it now or leave it for a later run.
+- **New questions:** if the brief found a blocking question that isn't on the note, or the answer raised one, tell Sarah what needs deciding and add it to Open Decisions, written as a question rather than a proposal. Then ask whether she already has an answer in mind, and act on it as the `settling-a-decision` skill describes. If she wants to think it over or research it, ask whether to take it now or leave it for a later run.
 
 Then go on to the next decision she picked.
 
@@ -74,7 +72,7 @@ Once the picked decisions are done:
 Skip this if the running list of new stories is empty.
 
 **On a hub:** propose the child stories, each with a one-line scope and the decisions it comes from. Wait for Sarah to approve, change or drop each one. For each one she approves:
-1. Create an idea note in `notes/features/<area>/` from `notes/templates/Idea.md`, with `type` left blank. Its Where It Stands line is "Next: /shape ^status". Under Notes, link the hub, give the one-line scope, and quote the Decided lines it comes from.
+1. Create an idea note in `notes/features/<area>/` from `notes/templates/Idea.md`. Under Notes, link the hub, give the one-line scope, and quote the Decided lines it comes from.
 2. Add it to the hub's Child Stories table.
 3. Add a Roadmap line that links to it and embeds its status (`[[Note]] ![[Note#^status]]`). Ask Sarah where it goes, as AGENTS.md describes under "Roadmap order".
 

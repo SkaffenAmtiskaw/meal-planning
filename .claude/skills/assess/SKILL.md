@@ -29,7 +29,7 @@ Check that it's ready for this skill:
 
 If the note has a Design Handoff, treat it as the source of truth for UX, not for implementation.
 
-If the Suggested Approach section lists questions for this step, each one gets an answer in the Suggested Approach by the end of this run. If a question has a **Decided** line under it, that's Sarah's answer. If it has a **Leaning** line, check it as part of this step's own work, not with a separate `decision-researcher` run, for the problems the `answer-confidence` skill lists under "Checking a leaning". If you find none, use her answer. If you find any, show her each one, and go on as that skill describes.
+If the Suggested Approach section lists questions for this step, each one gets an answer in the Suggested Approach by the end of this run.
 
 If the note's Suggested Approach holds anything besides a template comment or that list of questions, this is a re-assessment. Don't start from the old approach. It invites the same anchoring as old code. Do steps 2 to 5 fresh, then in step 6 show what changed compared with the old approach.
 
@@ -46,7 +46,7 @@ Send the `note-drift-checker` subagent the note path, its `confirmed` date, the 
 
 If it found nothing, tell Sarah in one line and go on. Otherwise, handle each finding before step 2:
 - **Mechanical:** correct the name or path in place, as AGENTS.md describes under "Editing notes". Don't ask.
-- **Needs a decision:** show Sarah the finding, the other note and what conflicts, and recommend as AGENTS.md describes under "Recommendations". Wait for her answer, then write it into the design or behaviors it affects, with no callout. If she wants to decide later, add the question to Open Decisions, with a `decision needed` entry in `blocked-by` if the note doesn't have one. Set the `^status` line to "Next: /decide", and stop.
+- **Needs a decision:** show Sarah the finding, the other note and what conflicts, and recommend as AGENTS.md describes under "Recommendations". Wait for her answer, then write it into the design or behaviors it affects, with no callout. If she wants to decide later, leave it for `/decide`, set the `^status` line to "Next: /decide", and stop.
 - **Blocked:** if a finding means the story can't go ahead until another story lands, tell Sarah and ask whether to go on anyway. If she says no, add the story to `blocked-by` and stop.
 
 ## 2. Confirm the behaviors

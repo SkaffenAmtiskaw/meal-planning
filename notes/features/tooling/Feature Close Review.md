@@ -14,7 +14,7 @@ Part of [[Agent Instructions Audit]].
 
 **Full review here,** as the first story that uses them: `/close`.
 
-**Re-checks for this step:** the `notes-only-edits.sh` hook (reviewed in Feature Shape Review).
+**Re-checks for this step:** the `notes-only-edits.sh` hook (reviewed in Feature Shape Review); `deleting-a-note` (reviewed in Shared Note Procedures Review).
 
 **Decisions that apply:**
 

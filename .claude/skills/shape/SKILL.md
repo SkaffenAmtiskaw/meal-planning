@@ -119,14 +119,8 @@ Show the user the draft and wait for their approval.
 
 ## 7. Write it
 Once the user approves the draft, or picks "drop it", what you write depends on what the idea became:
-- **Dropped:** if it's a Roadmap line with no note, remove the line. If it's an idea note, run `sh scripts/note-refs.sh "<note name>"`. If its vault or outside-the-vault sections list anything other than its own Roadmap line, tell the user it needs `/close` in a new session. Otherwise, delete it as item 3 of "Deleting a split or folded idea note" at the end of this skill describes.
-- **Folded into an existing note, a sweep or a roundup:** apply the addition there. Then, if the idea was an idea note, delete it as "Deleting a split or folded idea note" describes. If it was a Roadmap line with no note, remove the line.
+- **Dropped:** if it's a Roadmap line with no note, remove the line. If it's an idea note, run `sh scripts/note-refs.sh "<note name>"`. If its vault or outside-the-vault sections list anything other than its own Roadmap line, tell the user it needs `/close` in a new session. Otherwise, delete it as the `deleting-a-note` skill describes.
+- **Folded into an existing note, a sweep or a roundup:** apply the addition there. Then, if the idea was an idea note, delete it as the `deleting-a-note` skill describes, pointing each link to the note it was folded into. If it was a Roadmap line with no note, remove the line.
 - **A story, a hub or a workflow note:** if the idea was an idea note, rewrite it in place, so links to it keep working, and don't rename or move it without asking. If it was a Roadmap line with no note, create the note in `notes/features/<area>/`, and if the area isn't obvious, ask the user which folder. Then make the Roadmap line link to the note and embed its status, as AGENTS.md describes under "Editing notes", and place it:
   - **A hub, or a story whose "Is this worth doing?" decision is still open:** keep the line where it is. Neither is committed yet. `/decide` moves the story's line once the user decides it's worth doing.
   - **Any other story, or a workflow note:** shaping commits it. Check its goals and place its line as the `roadmap-placement` skill describes.
-
-## Deleting a split or folded idea note
-Once an idea note's content lives in the notes it was split into, or in the note it was folded into, the idea note is deleted, so no stub of pointers is left behind:
-1. Run `sh scripts/note-refs.sh "<note name>"` to list every link to it.
-2. Reword each link the script listed. After a fold, point it to the note the idea was folded into. After a split, point it to the note or notes the link is about.
-3. Delete the note with `rm`, as AGENTS.md describes under "Git and files", and remove its Roadmap line.

@@ -12,7 +12,7 @@ Part of [[Agent Instructions Audit]].
 
 **Step:** Cleanup's `/close` step, which archives or deletes the finished note and updates the notes around it.
 
-**Re-checks for this step:** `/close` (reviewed in [[Feature Close Review]]); the `notes-only-edits.sh` hook (reviewed in Feature Shape Review).
+**Re-checks for this step:** `/close` (reviewed in [[Feature Close Review]]); the `notes-only-edits.sh` hook (reviewed in Feature Shape Review); `deleting-a-note` (reviewed in Shared Note Procedures Review).
 
 **Decisions that apply:**
 

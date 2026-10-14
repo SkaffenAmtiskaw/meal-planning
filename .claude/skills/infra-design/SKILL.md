@@ -35,7 +35,7 @@ Check that it's ready for this skill:
 
   In a revision, work through steps 2 to 7 as usual, but show what changed compared with the existing sections before replacing each one.
 - **`ready` or later:** stop. Changes to a planned story go through `/check-drift`.
-- **No open decisions.** An item under `# Open Decisions` with no **Decided** line (a **Partly answered** or **Leaning** line still counts as open), or a `decision needed` entry in `blocked-by`, means the note isn't ready. List them in one line each, tell Sarah the next step is `/decide <note name>`, and stop.
+- **No open decisions.** An item under `# Open Decisions` with no **Decided** line (a **Partly answered** line still counts as open), or a `decision needed` entry in `blocked-by`, means the note isn't ready. List them in one line each, tell Sarah the next step is `/decide <note name>`, and stop.
 
 Then read what the design touches: the config, scripts, workflows, skills and docs it changes or builds on, and the docs its conventions land in. Also read the Conventions of every other `type: infra` note and the Rules of every `type: pattern` note in `notes/features/` that cover the same ground, so you can spot overlaps and conflicts.
 
@@ -48,16 +48,14 @@ Show each goal and wait for her to approve or change it. Once all are approved, 
 
 ## 3. Design
 ### Draft
-Draft the whole design before showing any of it. If the Design section lists questions for this step, each one gets an answer in the design. If a question has a **Decided** line under it, that's Sarah's answer. If it has a **Leaning** line, check it as part of this step's own work, not with a separate `decision-researcher` run, for the problems the `answer-confidence` skill lists under "Checking a leaning". If you find none, use her answer. If you find any, show her each one, and go on as that skill describes. The design has:
+Draft the whole design before showing any of it. If the Design section lists questions for this step, each one gets an answer in the design. The design has:
 - **Pieces:** each thing that gets built or changed, such as a workflow, a script, a config file, a skill or a service. For each: its path, or where it lives outside the repo, its one job, and any requirement from step 2 that it has to meet. A piece with two jobs is two pieces.
 - **The flow:** how a run moves through the pieces, from what starts it to where its result ends up, including what happens when it fails.
 
 Every API, config key and Claude Code feature the design uses needs a source, as AGENTS.md describes under "Library APIs". Check each piece against the project docs and the other notes' Conventions and Rules. A conflict is a question for Sarah, not something to reconcile yourself.
 
 ### Gaps
-Where the decisions don't settle something the design needs, don't fill it in:
-- **She can answer it on the spot** (a name, a scope boundary): ask her, and read her answer as the `answer-confidence` skill describes. If it's hedged, send `decision-researcher` the note path, the question and her answer as a check, save its report to `.scratch/<note name> - decision <N>.md`, and show her any problems it finds before you use her answer.
-- **It needs research** (which service feature, what best practice says): send the `decision-researcher` subagent the note path and the question, with the answers she's given this session. Save its brief to `.scratch/<note name> - decision <N>.md`, walk her through the options and recommendation, and record her answer under `# Open Decisions` in the format the `settling-a-decision` skill describes under "Record" (a **Decided** line plus one **Rejected** line per option she turned down). If she answered confidently, write the entry right away, print the Decided line in chat and go on without waiting for approval. Otherwise, show the entry and wait for her approval before writing it.
+Where the decisions don't settle something the design needs, don't fill it in. Settle it with Sarah as the `settling-a-decision` skill describes. Where that skill writes the answer under its question, an answer given without research goes straight into the design instead. A researched one also goes under `# Open Decisions`, as a question with its Decided line, so its Rejected lines keep later agents from proposing those options again.
 
 ### Approve
 Show each piece with its job, then the flow, and wait for her to approve or change each. If a change affects a later piece, say which one and update it before you get to it. Once all are approved, write them under `# Design`, so they survive if the session ends.

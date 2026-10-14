@@ -26,7 +26,7 @@ Part of [[Agent Instructions Audit]].
 From the audit's scan on 2026-10-06. Line numbers are as of that day.
 - The test-only and E2E check sections (:84-100, about 350 words) move to a supporting file read when a step changes only test files; `plan-checker:24-25` points to them by name and changes too.
 - :160 (update the status on the Roadmap line) is out of date, since lines embed `^status`; it goes.
-- :131-133 restate AGENTS.md's "Open questions in notes are hers too"; only the `decision needed` entry, "Next: /decide" and the stop are the skill's.
+- :131-133 restate AGENTS.md's "Open questions in notes are hers too"; only "Next: /decide" and the stop are the skill's.
 - :151 puts its condition after the instruction; :93-95 are an edge-case list ("break behavior, not imports" plus two "counts" bullets); :23's hook sentence; :21 and :76 both ban "tests pass" as a check; :103 restates where a Boy Scout fix goes.
 - **Writing acceptance checks** (the proves line, usable as written, one or two cases per rule, nothing already shown): `plan-steps:57,74,80-82`, `infra-design:96,100,101`, `plan-checker:26-28`. `plan-checker` and `split-checker` preload the shared skill.
 - The `trust-mantine-defaults` memory moves here, where checks are written: no check that only proves a Mantine default.
