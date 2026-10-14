@@ -57,8 +57,6 @@ Ask what you need to make the change without guessing. Skip anything the note or
 Then find everything the change reaches. Search `.claude/`, `AGENTS.md`, `notes/Note Conventions.md`, `notes/templates/`, `docs/` and `scripts/` for the skill, agent, rule or term being changed. A renamed skill, a new note type or a changed rule is usually referenced in several places, and each reference is part of this change.
 
 ## 3. Make the change
-Before you draft or write a change to a doc or an agent instruction, read the `writing-standard` skill.
-
 Size decides whether to draft first:
 - **Small, clear edits:** a line or a few, where the wording follows directly from what Sarah said. Write them.
 - **Anything larger:** rewriting a section, or a new skill, agent, hook, template or doc. Show Sarah the draft of each file and wait for her approval.

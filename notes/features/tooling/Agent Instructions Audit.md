@@ -5,7 +5,7 @@ confirmed: 2026-10-06
 # Where It Stands
 Next: its child stories ^status
 
-Split on 2026-10-06 into workflow-step reviews, one for each step of each note type's workflow except Feature's `/shape` step, which has five, plus AGENTS.md, the memory folder, Note Conventions with the Roadmap header, and Conventions Review. The scan's findings and the open Agent Workflow Changes items about each step moved into the review notes. Feature Shape Review, Shared Note Procedures Review and Scope-Router Review are done, and the rest aren't reviewed yet.
+Split on 2026-10-06 into workflow-step reviews, one for each step of each note type's workflow except Feature's `/shape` step, which has five, plus AGENTS.md, the memory folder, Note Conventions with the Roadmap header, and Conventions Review. The scan's findings and the open Agent Workflow Changes items about each step moved into the review notes. Feature Shape Review, Shared Note Procedures Review, Writing Standard Reviewer and Scope-Router Review are done, and the rest aren't reviewed yet.
 
 # Inbox
 
@@ -71,7 +71,7 @@ Each finding moved into the review note it belongs to on 2026-10-06.
 |---|---|
 | Feature Shape Review | Feature's `/shape` step; full review of `/shape`, the `notes-only-edits.sh` hook |
 | Shared Note Procedures Review | Feature's `/shape` step; full review of `answer-confidence`, `roadmap-placement`, and the procedures for creating an idea note and deleting a note |
-| [[Writing Standard Reviewer]] | a reviewer subagent that checks each draft of a doc or agent instruction against `writing-standard` before the user sees it |
+| Writing Standard Reviewer | a reviewer subagent that checks each draft of a doc or agent instruction against `writing-standard` before the user sees it |
 | Scope-Router Review | Feature's `/shape` step; full review of the `scope-router` agent |
 | [[Writing Standard Review]] | Feature's `/shape` step; full review of `writing-standard`, `rule-placement` |
 | [[Feature Template Review]] | Feature's `/shape` step; full review of `notes/templates/Idea.md`, `notes/templates/Feature.md` and the comments the templates share |
