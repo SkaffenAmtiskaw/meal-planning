@@ -38,7 +38,7 @@ Check `blocked-by`. If it has a `decision needed` entry, those decisions come fi
 
 If the note lists questions for this step to answer, at the top of Root Cause or Current State (or under Where It Stands in an older note), each one gets an answer in the note by the end of this run. If a question has a **Decided** line under it, that's Sarah's answer. If it has a **Leaning** line, check it as part of this step's own work, not with a separate `decision-researcher` run, for the problems the `answer-confidence` skill lists under "Checking a leaning". If you find none, use her answer. If you find any, show her each one, and go on as that skill describes.
 
-Don't check whether the issue is still relevant. Sarah running `/investigate` on it means she believes it is. If reproduction or the scan shows it's already fixed, step 2 or 3 handles that.
+If reproduction or the scan shows the issue is already fixed, step 2 or 3 handles that.
 
 Then follow step 2 for a bug, or step 3 for a cleanup.
 

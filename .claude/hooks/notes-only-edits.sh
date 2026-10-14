@@ -1,8 +1,8 @@
 #!/bin/bash
-# PreToolUse hook registered by the planning skills (/assess, /plan-steps, /check-drift).
-# Blocks Edit/Write outside notes/, .scratch/ and Claude's memory directory.
+# PreToolUse hook for skills that plan or change notes but never change code.
+# Blocks file edits outside notes/, .scratch/ and Claude's memory directory.
 # Extra project-relative directories to allow can be passed as arguments,
-# e.g. `notes-only-edits.sh docs` for /check-drift.
+# e.g. `notes-only-edits.sh docs`.
 
 file_path=$(jq -r '.tool_input.file_path // .tool_input.notebook_path // empty')
 
