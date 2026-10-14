@@ -96,7 +96,7 @@ Give the user two or three directions, each with:
 
 These are also directions, when they fit:
 - **Fold it into an existing note,** if step 3 found a story that already covers it.
-- **Fold it into a sweep or roundup,** if it fits a collecting sweep's or roundup's What Belongs Here rule, as the `scope-router` agent describes under "Sweep" and "Roundup". If none fits but the Roadmap already has related items, tell the user they could be grouped into a new sweep or roundup.
+- **Fold it into a sweep or roundup,** if it fits a collecting sweep's or roundup's What Belongs Here rule, as the `filing-work` skill describes. If none fits but the Roadmap already has related items, tell the user they could be grouped into a new sweep or roundup.
 - **Drop it,** if step 3 found it's already done, or it no longer makes sense.
 
 Recommend one and say why. If a direction depends on a blocking decision that's still open, say which one, rather than settling it. Wait for the user to pick one or suggest their own.
@@ -104,8 +104,8 @@ Recommend one and say why. If a direction depends on a blocking decision that's 
 ## 6. Draft it
 What you draft depends on the direction the user picked:
 - **Drop it:** there's nothing to draft. Go on to step 7.
-- **Fold it into an existing note:** draft the addition to that note, following the `scope-router` agent's rules (`.claude/agents/scope-router.md`) under "Existing note".
-- **Fold it into a sweep or roundup:** draft the item for the collecting note, following the `scope-router` agent's rules under "Sweep" or "Roundup".
+- **Fold it into an existing note:** draft the addition to that note, as the `filing-work` skill describes.
+- **Fold it into a sweep or roundup:** draft the item for the collecting note, as the `filing-work` skill describes.
 - **A story:** draft the note from the template in `notes/templates/` for its type, as below.
 
 A story's note:

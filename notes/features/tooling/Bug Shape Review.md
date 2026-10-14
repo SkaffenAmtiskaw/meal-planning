@@ -14,7 +14,7 @@ Part of [[Agent Instructions Audit]].
 
 **Full review here,** as the first story that uses them: `notes/templates/Bug.md`.
 
-**Re-checks for this step:** `/shape`, the `notes-only-edits.sh` hook (reviewed in Feature Shape Review); `settling-a-decision` (reviewed in [[Feature Decide Review]]); `roadmap-placement`, `deleting-a-note` (reviewed in Shared Note Procedures Review); the `scope-router` agent (reviewed in [[Scope-Router Review]]); `notes/templates/Idea.md` (reviewed in [[Feature Template Review]]).
+**Re-checks for this step:** `/shape`, the `notes-only-edits.sh` hook (reviewed in Feature Shape Review); `settling-a-decision` (reviewed in [[Feature Decide Review]]); `roadmap-placement`, `deleting-a-note` (reviewed in Shared Note Procedures Review); the `scope-router` agent and `filing-work` (reviewed in Scope-Router Review); `notes/templates/Idea.md` (reviewed in [[Feature Template Review]]).
 
 **Decisions that apply:**
 

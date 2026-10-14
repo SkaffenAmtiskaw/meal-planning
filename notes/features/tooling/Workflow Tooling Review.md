@@ -14,7 +14,7 @@ Part of [[Agent Instructions Audit]].
 
 **Full review here,** as the first story that uses them: `/tooling`, `notes/templates/Workflow.md`.
 
-**Re-checks for this step:** `roadmap-placement`, `deleting-a-note` (reviewed in Shared Note Procedures Review); `writing-standard`, `rule-placement` (reviewed in [[Writing Standard Review]]); the `scope-router` agent (reviewed in [[Scope-Router Review]]); `notes/templates/Idea.md` (reviewed in [[Feature Template Review]]); the `bug-reproducer` agent (reviewed in [[Bug Investigate Review]]).
+**Re-checks for this step:** `roadmap-placement`, `deleting-a-note` (reviewed in Shared Note Procedures Review); `writing-standard`, `rule-placement` (reviewed in [[Writing Standard Review]]); the `scope-router` agent and `filing-work` (reviewed in Scope-Router Review); `notes/templates/Idea.md` (reviewed in [[Feature Template Review]]); the `bug-reproducer` agent (reviewed in [[Bug Investigate Review]]).
 
 **Decisions that apply:**
 

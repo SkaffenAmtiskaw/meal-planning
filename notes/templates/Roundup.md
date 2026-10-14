@@ -23,7 +23,7 @@ Issues on this roundup's topic that still need a decision. An issue on the topic
 %% This roundup's topic: a broad area where lots of small, loosely related issues turn up, e.g. "form UX" or "loading states". Name anything close to it that doesn't belong. %%
 
 # Open Decisions
-%% Add each issue as a numbered question. Say what it's about (files with line numbers, screens or notes), what the question is, and how and when it was found, e.g. "found while planning [[Note]], 2026-09-27". Write questions, not proposals. /decide records each answer under its question. If an issue can't be settled until another story lands, start it with `**Blocked by [[Story]]:**`. Block the issue, never the whole roundup. Blocked issues stay behind when /kickoff freezes a copy, and roll over to the next one. %%
+%% Add each issue as a numbered question. Say what it's about (files with line numbers, screens or notes) and what the question is. Write questions, not proposals. /decide records each answer under its question. If an issue can't be settled until another story lands, start it with `**Blocked by [[Story]]:**`. Block the issue, never the whole roundup. Blocked issues stay behind when /kickoff freezes a copy, and roll over to the next one. %%
 1. 
 
 # Out of Scope

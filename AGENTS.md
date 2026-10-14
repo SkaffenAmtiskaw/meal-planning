@@ -70,10 +70,14 @@ Any change to a note in `notes/` follows these rules:
   - **Why a note was sent back** to an earlier step, such as a new piece `/plan-steps` found for a redesign, a problem that sends an infra story from `/implement` back to `/infra-design`, or a retype line.
 
   In the usual flow, a step doesn't leave the next one an Inbox item. A finding or question for a later step goes at the top of the section that step writes.
-  - **Adding an item:** say what it is and where it came from. If the note has no Inbox, add one right after Where It Stands.
+  - **Adding an item:** say what it is. If the note has no Inbox, add one right after Where It Stands.
   - **Working on a note:** read its Inbox, and decide which items are your step's to act on. Act on each one. Then, if it's one of Sarah's lines, handle it as "Sarah's comments" above describes. Otherwise, delete it. Leave items that belong to a later step.
 - **A note with the wrong type.** If a note's type doesn't fit its work, tell Sarah which type fits and why, and offer to retype it. If she agrees, retype it as the `retyping-a-note` skill describes, then stop.
-- **Roadmap order is Sarah's call.** Never reorder `notes/Roadmap.md`. Ask her where a new line goes. If the notes or the Roadmap make the spot clear, suggest it and say why. Otherwise, ask without a suggestion. Never guess one.
+- **Roadmap order is Sarah's call.** Never reorder `notes/Roadmap.md`. A new line's spot follows from its work:
+  - **It serves a goal:** it's committed, so it goes under that goal's heading in Later.
+  - **It serves no goal:** it's uncommitted, so it goes in Ideas.
+
+  If something about the work makes that spot look wrong, ask her where it goes, such as when she's said in the session that it needs prioritizing, or when a line in Next or Planning waits on it, as "A blocker outside the queue" describes. Otherwise, don't ask. Next and Planning are ordered queues, so when a line goes into one, ask her where in it. If the notes or the Roadmap make the spot clear, suggest it and say why. Otherwise, ask without a suggestion. Never guess one.
 - **A blocker outside the queue.** If a story in Next gets a story in its `blocked-by` that isn't in Now or Next, or a story in Planning gets one that isn't in Now, Next or Planning, propose pulling that story into the blocked story's section directly ahead of it, with the same markers, and say why.
 - **Starting on a story in the backlog.** Sarah running a skill on a story means she's moving forward with it. It also means she wants it worked, whether it's a problem to fix or an idea she wants to weigh before deciding. So don't set out to check whether it's still needed, and don't recommend dropping it out of hand. Do the skill's own job on it, and leave whether it's worth doing to her. If the story's Roadmap line is in Later or Ideas when a skill starts on it, ask her whether it moves into Next or Planning. If it does:
   - check its goals as the `roadmap-placement` skill describes
@@ -82,7 +86,7 @@ Any change to a note in `notes/` follows these rules:
 
   This doesn't apply to `/implement`, which moves the line into Now itself, or to `/tooling`, which finishes its change in one session.
 - **A new item in a collecting note.** When you add one, check which goals it serves and link it as the `roadmap-placement` skill describes. An item that `/check-drift` moves back or `/kickoff` rolls over isn't new, so it keeps the links it has.
-- **A `ready` note goes back to `spec`** when its design or steps change, until Sarah re-reviews it. Four changes don't count. Three leave the plan as she approved it: a corrected name or path, a Boy Scout fix (see "Out-of-scope work") and a routed impact's acceptance check (see `.claude/agents/scope-router.md`). The fourth, a change to a choice she only approved, reaches her through the summary, as "Her decisions can change" describes.
+- **A `ready` note goes back to `spec`** when its design or steps change, until Sarah re-reviews it. Four changes don't count. Three leave the plan as she approved it: a corrected name or path, a Boy Scout fix (see "Out-of-scope work") and a routed impact's acceptance check (see the `filing-work` skill). The fourth, a change to a choice she only approved, reaches her through the summary, as "Her decisions can change" describes.
 - **Template comments** (the `%% ... %%` guidance in `notes/templates/`) never stay in a note. The template keeps them, and the skill that writes each section carries its rules.
   - When you create a note from a template, leave out every comment, along with any line that held only a comment, such as an empty checkbox. A section a later step writes stays as a bare heading.
   - When you work on a note that still has template comments, rather than just editing it in passing, remove them.
@@ -98,14 +102,14 @@ Keep a running list of anything that looks like it belongs outside the story or 
 **Immature stories aren't items.** A note or Roadmap line that isn't shaped yet, such as Sarah's jotted thoughts with no frontmatter or Where It Stands, a Roadmap line with a description after its status embed, or a story that is only a Roadmap line, stays off the list. `/shape` and the skills after it turn it into a unit of work and format it. If something is wrong with it beyond that, such as a wrong fact or a real conflict, it goes on the list.
 
 **Boy Scout fixes aren't items either.** A story leaves the files it edits a little cleaner than it found them. If a problem that you, a subagent or Sarah has found is small, needs no decision and sits in a file this story already edits (production code, tests or docs alike), the fix joins the story on its own. Don't go looking for problems to fix. This is only for ones found while working. Where the fix goes depends on how far the story has got:
-- **Its steps are written:** the fix goes with the step that edits the file. If that step isn't built yet, add "Boy Scout fix: <the problem>, found <how and when>" to its **Source:** line, or its **Builds:** line in a Build Order. Otherwise, make the fix now and record it the way your skill records its other changes, such as an As built note in `/implement`.
+- **Its steps are written:** the fix goes with the step that edits the file. If that step isn't built yet, add "Boy Scout fix: <the problem>" to its **Source:** line, or its **Builds:** line in a Build Order. Otherwise, make the fix now and record it the way your skill records its other changes, such as an As built note in `/implement`.
 - **Otherwise:** add it, starting "Boy Scout fix:", to the section that lists what the story changes, such as its Suggested Approach, Fix, Migration Checklist or Design, so the skill that writes the steps puts it in the step that edits the file.
 
 Name each Boy Scout fix in your summary, so Sarah can take one out.
 
 **Sarah decides what's out of scope.** Before you show her the result she approves, go through the list so far with her, **one item at a time**. Each skill names the point where this happens. For each item, show what it is, where it was found and why it looks outside this work. Then offer the choices below. If the skill has no story to pull into, offer only route or drop. Otherwise, offer all three:
 - **Pull it in:** it becomes part of this story. She may have thought it was in scope, or want it done while this work is here. The skill says how it enters the story.
-- **Route it:** it belongs somewhere else. If she names where, put it there now, without the router, written the way `.claude/agents/scope-router.md` describes for that kind of home.
+- **Route it:** it belongs somewhere else. If she names where, put it there now, without the router, written as the `filing-work` skill describes for that kind of home.
 - **Drop it:** take it off the list and don't record it anywhere.
 
 Triage items that turn up after that point the same way, at the end.

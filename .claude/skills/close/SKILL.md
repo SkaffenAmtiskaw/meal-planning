@@ -95,7 +95,7 @@ Go through the remaining matches:
 - **Archived notes with no `kept-for`:** for each one step 2 found, ask Sarah which open stories it's kept for. Write her answer into its `kept-for`. If none, that note needs its own `/close`, as the paragraph below this list describes.
 - **Outside the vault:** add it to the out-of-scope list.
 
-**A note that now needs its own `/close`** is easy to forget, because an archived note has no Roadmap line, and neither does a hub with no open decisions. So set its `^status` line to "Next: /close", give it a Roadmap line that links to it and embeds its status, and ask Sarah where the line goes, as AGENTS.md describes under "Roadmap order". Then add it to the follow-ups in step 9.
+**A note that now needs its own `/close`** is easy to forget, because an archived note has no Roadmap line, and neither does a hub with no open decisions. So set its `^status` line to "Next: /close", give it a Roadmap line that links to it and embeds its status, and place it as AGENTS.md describes under "Roadmap order". Then add it to the follow-ups in step 9.
 
 ## 6. Find a home for out-of-scope items
 If the out-of-scope list is empty, skip this.

@@ -12,7 +12,7 @@ How notes in this vault are organized and move through their lifecycle. The [[Ro
 |---|---|---|
 | `type` | `feature` · `bug` · `pattern` · `infra` · `cleanup` · `sweep` · `roundup` · `hub` · `goal` · `standing-goal` · `workflow` | Which template the note follows. Blank on an `idea` note until its kind is clear. |
 | `status` | `idea` · `spec` · `ready` · `in-progress` · `in-review` · `done` · `dropped` | See lifecycle below. Hubs, goals, standing goals and workflow notes have no status. Not the ` ^status` line under Where It Stands: this says which lifecycle stage the note is in, that line says what's happening right now. |
-| `blocked-by` | list | Why the story can't move forward: another story (as a `"[[link]]"`), open decisions (one `"decision needed: ..."` entry for all of them), or an outside release. Empty when nothing blocks it. |
+| `blocked-by` | list | Why the story can't move forward: another story (as a `"[[link]]"`), open decisions (one `"decision needed: ..."` entry for all of them), or an outside release. Empty when nothing blocks it. Work a story waits on is a story with its own note, rather than an item in a sweep, roundup or collecting workflow note. Collecting notes batch work to be done together, but blocking work usually needs doing on its own so its story can move, and a blocker inside a collecting note makes the Roadmap harder to read. |
 | `confirmed` | date | When the note was last confirmed to match reality. Sarah shaping or re-shaping a note counts, since she only does that for issues she believes are still relevant. Don't bump it for moves, renames or link fixes. |
 | `kept-for` | list | Archived notes only. The open stories (as `"[[link]]"`) that still rely on this note's content, such as its design. |
 

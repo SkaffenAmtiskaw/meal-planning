@@ -34,9 +34,9 @@ From the audit's scan on 2026-10-06. Line numbers are as of that day.
 - The "Find a home for out-of-scope items" step ("if the list is empty, skip; otherwise route as AGENTS.md describes") repeats AGENTS.md; it becomes one line in the last step.
 - "A hook blocks edits outside `notes/` and `.scratch/`" repeats the hook's own message; "Don't change code" stays.
 - Its description is imperative, where `writing-standard`'s `instructions.md:23` asks for the third person; it becomes what and when, in about 25 words.
-- **`Sweep.md`:** :21 (body text) copies the general sweep-or-roundup rule into every new note; each note keeps only its own topic rule. Its Items and issue format (`:26`) stays, since the template is its home, and its lifecycle sentences go; `scope-router:30` points to it instead of restating it.
+- **`Sweep.md`:** :21 (body text) copies the general sweep-or-roundup rule into every new note; each note keeps only its own topic rule. Its Items and issue format (`:26`) stays, since the template is its home, and its lifecycle sentences go.
 - **The general rule copied into collecting notes:** Style Fixes, Code Tidy-Ups and Unit Test Tidy-Ups each carry the general sweep-or-roundup rule in What Belongs Here, and Style Fixes and Code Tidy-Ups have drifted from the template ("Give it its own Roadmap line until it's decided", with no roundup). Each keeps only its own topic rule. (Style Decisions, a roundup, is in [[Roundup Kickoff Review]].)
-- **`scope-router`'s Sweep case:** gets the `batch-small-test-cleanups` memory's leftover: write a single obvious follow-on action into the item rather than calling it a decision.
+- **`filing-work`'s sweep-or-roundup home:** gets the `batch-small-test-cleanups` memory's leftover: write a single obvious follow-on action into the item rather than calling it a decision.
 - Wording difference at `roadmap:84`: kick off every collecting note with an unblocked item for the building goal. Where the rule is kept: `roadmap-placement:18` says if a kicked-off copy is open, move the item into it. Exception or drift?
 - Wording difference at the Out of Scope comment in `Sweep.md:30`: "work that belongs to another story, sweep or roundup, with a link". Where the rule is kept: AGENTS.md "Out-of-scope work" routes items to a note, a sweep, a roundup or a Roadmap line, or drops them. Exception or drift?
 

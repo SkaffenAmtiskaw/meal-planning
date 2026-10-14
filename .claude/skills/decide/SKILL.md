@@ -74,7 +74,7 @@ Skip this if the running list of new stories is empty.
 **On a hub:** propose the child stories, each with a one-line scope and the decisions it comes from. Wait for Sarah to approve, change or drop each one. For each one she approves:
 1. Create an idea note in `notes/features/<area>/` from `notes/templates/Idea.md`. Under Notes, link the hub, give the one-line scope, and quote the Decided lines it comes from.
 2. Add it to the hub's Child Stories table.
-3. Add a Roadmap line that links to it and embeds its status (`[[Note]] ![[Note#^status]]`). Ask Sarah where it goes, as AGENTS.md describes under "Roadmap order".
+3. Add a Roadmap line that links to it and embeds its status (`[[Note]] ![[Note#^status]]`), placed as AGENTS.md describes under "Roadmap order".
 
 **On a story:** add the new stories to the list for step 6. They go through `scope-router` like any other work outside this note.
 

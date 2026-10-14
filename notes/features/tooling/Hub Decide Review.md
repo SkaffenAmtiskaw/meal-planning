@@ -12,7 +12,7 @@ Part of [[Agent Instructions Audit]].
 
 **Step:** Hub's `/decide` step, which works through the note's open decisions with the user.
 
-**Re-checks for this step:** `/decide`, `settling-a-decision`, the `decision-researcher` agent (reviewed in [[Feature Decide Review]]); `roadmap-placement` (reviewed in Shared Note Procedures Review); the `scope-router` agent (reviewed in [[Scope-Router Review]]); the `notes-only-edits.sh` hook (reviewed in Feature Shape Review); `notes/templates/Idea.md` (reviewed in [[Feature Template Review]]); `notes/templates/Hub.md` (reviewed in [[Hub Shape Review]]).
+**Re-checks for this step:** `/decide`, `settling-a-decision`, the `decision-researcher` agent (reviewed in [[Feature Decide Review]]); `roadmap-placement` (reviewed in Shared Note Procedures Review); the `scope-router` agent and `filing-work` (reviewed in Scope-Router Review); the `notes-only-edits.sh` hook (reviewed in Feature Shape Review); `notes/templates/Idea.md` (reviewed in [[Feature Template Review]]); `notes/templates/Hub.md` (reviewed in [[Hub Shape Review]]).
 
 **Decisions that apply:**
 
