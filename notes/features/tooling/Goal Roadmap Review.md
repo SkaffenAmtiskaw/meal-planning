@@ -33,7 +33,7 @@ From the audit's scan on 2026-10-06. Line numbers are as of that day.
 - :64 points to "How this file works" for the one-goal rule, which lives in `roadmap-placement:12`.
 - :79 says standing goals are never ranked, for the third time (:19, :103); :96 packs three rules into a paragraph and repeats the 🚨/📌 rule; :117 and :51 repeat AGENTS.md and the Roadmap; :38-39 and :99 repeat themselves.
 - "One at a time" at :55, :67, :92, :96 and :108 repeats AGENTS.md's question rule.
-- Its description is imperative, where `writing-standard`'s `instructions.md:23` asks for the third person; it becomes what and when, in about 25 words.
+- Its description is imperative, where `writing-standard`'s `instructions.md` asks for the third person under Descriptions; it becomes what and when, in about 25 words.
 - Split check: no split. Its modes share step 3.
 - **`Goal.md`:** :5 repeats Note Conventions and `/roadmap`. The Done When item format (`Goal.md:11`) moves to `/roadmap` step 2 (decision 9).
 - Wording difference at `roadmap:56-61`: "In" outcomes include a line in Planning. Where the rule is kept: `roadmap-placement:15` says "A line already under a goal's heading, or in Now or Next, stays where it is". Exception or drift?

@@ -38,7 +38,7 @@ From the audit's scan on 2026-10-06. Line numbers are as of that day.
 - :31 restates the building-goal check word for word from `tooling:29`, which restates the Roadmap.
 - :43 points to an AGENTS.md section that loads anyway; :117's "one at a time" repeats AGENTS.md's question rule.
 - The "Find a home for out-of-scope items" step ("if the list is empty, skip; otherwise route as AGENTS.md describes") repeats AGENTS.md; it becomes one line in the last step.
-- Its description is imperative, where `writing-standard`'s `instructions.md:23` asks for the third person; it becomes what and when, in about 25 words.
+- Its description is imperative, where `writing-standard`'s `instructions.md` asks for the third person under Descriptions; it becomes what and when, in about 25 words.
 - **The `protect-config.sh` hook:** its header names `/implement`; it drops the name and says what the hook does.
 - Wording difference at `implement:67`: ask about one choice at a time, "even when several belong to the same function or component". Where the rule is kept: AGENTS.md says one question at a time. Exception or drift?
 - Wording difference at `implement/bugs.md:7`: a pure logic bug can be diagnosed from the code. Where the rule is kept: `/investigate`'s rule, and the `reproduce-bugs-before-diagnosing` memory, say diagnosing from code needs the user's sign-off. Exception or drift?

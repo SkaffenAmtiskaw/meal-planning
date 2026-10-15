@@ -5,7 +5,7 @@ confirmed: 2026-10-06
 # Where It Stands
 Next: its child stories ^status
 
-Split on 2026-10-06 into workflow-step reviews, one for each step of each note type's workflow except Feature's `/shape` step, which has five, plus AGENTS.md, the memory folder, Note Conventions with the Roadmap header, and Conventions Review. The scan's findings and the open Agent Workflow Changes items about each step moved into the review notes. Feature Shape Review, Shared Note Procedures Review, Writing Standard Reviewer and Scope-Router Review are done, and the rest aren't reviewed yet.
+Split on 2026-10-06 into workflow-step reviews, one for each step of each note type's workflow except Feature's `/shape` step, which has five, plus AGENTS.md, the memory folder, Note Conventions with the Roadmap header, and Conventions Review. The scan's findings and the open Agent Workflow Changes items about each step moved into the review notes. Feature Shape Review, Shared Note Procedures Review, Writing Standard Reviewer, Scope-Router Review and Writing Standard Review are done, and the rest aren't reviewed yet.
 
 # Inbox
 
@@ -16,7 +16,7 @@ Check every agent instruction against the standard the `writing-standard` skill 
 
 Sarah decided 2026-10-06 that the audit also covers what the instructions make agents do, so a skill or agent that doesn't work the way she expects is in scope: "This audit is about making sure the agent instructions are written so an agent can read them, but they're ALSO about making sure they do what I expect them to do. So if I say they aren't working like I want that's in scope. If we need to split this story into a gazillion tiny stories to make the agents do what I want so be it."
 
-The agent instructions are AGENTS.md, every skill in `.claude/skills/` with its supporting files, every agent in `.claude/agents/`, the hooks' header comments, the note templates in `notes/templates/`, Note Conventions, the Roadmap's "How this file works" section and its header lines, and Claude's memory folder (`MEMORY.md` and the memory files). `writing-standard` and `rule-placement` set the standard, so they're checked rather than reworked, apart from three additions: decision 1's split criterion as a new section in `writing-standard`'s `instructions.md` (Sarah decided 2026-10-06 to add it to this story), the rules for writing skills that move in from memory, and a case in `rule-placement` for a rule only one branch of a skill uses.
+The agent instructions are AGENTS.md, every skill in `.claude/skills/` with its supporting files, every agent in `.claude/agents/`, the hooks' header comments, the note templates in `notes/templates/`, Note Conventions, the Roadmap's "How this file works" section and its header lines, and Claude's memory folder (`MEMORY.md` and the memory files). `writing-standard` and `rule-placement` set the standard, so they're checked rather than reworked, apart from three additions: decision 1's split criterion as a section in the `keeping-sessions-lean` skill (Sarah decided 2026-10-06 to add it to this story), the rules for writing skills that move in from memory, and a case in `rule-placement` for a rule only one branch of a skill uses.
 
 Two changes were settled before the scan:
 - **A pass over `/infra-design` for repetitive or unnecessary work.** Sarah decided 2026-10-05 that infra stories skip `/plan-steps` and that `/infra-design` writes a Build Order into the Design instead, which makes its sessions longer. The pass goes through `.claude/skills/infra-design/SKILL.md` and the agents it calls, including the Build Order step, and cuts work that repeats itself or isn't needed.
@@ -73,7 +73,7 @@ Each finding moved into the review note it belongs to on 2026-10-06.
 | Shared Note Procedures Review | Feature's `/shape` step; full review of `answer-confidence`, `roadmap-placement`, and the procedures for creating an idea note and deleting a note |
 | Writing Standard Reviewer | a reviewer subagent that checks each draft of a doc or agent instruction against `writing-standard` before the user sees it |
 | Scope-Router Review | Feature's `/shape` step; full review of the `scope-router` agent |
-| [[Writing Standard Review]] | Feature's `/shape` step; full review of `writing-standard`, `rule-placement` |
+| Writing Standard Review | Feature's `/shape` step; full review of `writing-standard`, `rule-placement`, and a new `keeping-sessions-lean` skill |
 | [[Feature Template Review]] | Feature's `/shape` step; full review of `notes/templates/Idea.md`, `notes/templates/Feature.md` and the comments the templates share |
 | [[Feature Decide Review]] | Feature's `/decide` step; full review of `/decide`, the `decision-researcher` agent |
 | [[Merging Routed Designs]] | a skill that merges design material routed into a feature story's Inbox into its design |

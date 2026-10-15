@@ -33,7 +33,7 @@ From the audit's scan on 2026-10-06. Line numbers are as of that day.
 - `/plan-steps` alone says "save to `.scratch`" three times, which is a likely reason agents treat `.scratch` as a place to save things, as the hub's Purpose describes. AGENTS.md's "Subagent reports and scratch files" already holds the rule; only each file name is the skill's own.
 - The "Find a home for out-of-scope items" step ("if the list is empty, skip; otherwise route as AGENTS.md describes") repeats AGENTS.md; it becomes one line in the last step.
 - :156 says to replace a template comment, which AGENTS.md:88 already covers.
-- Its description is imperative, where `writing-standard`'s `instructions.md:23` asks for the third person; it becomes what and when, in about 25 words.
+- Its description is imperative, where `writing-standard`'s `instructions.md` asks for the third person under Descriptions; it becomes what and when, in about 25 words.
 - Split check: no split. Type matters only in step 1 and in Coverage's source list.
 - **`plan-checker`:** :21, :23-31, :35-36 and :39 restate `/plan-steps` (they go to the shared acceptance-checks skill or point to `/plan-steps`); :10-15 become one sentence; :38 puts its exception after; :27 is a 150-word bullet; its opener (:8) says it only suggests; its description ends "Read-only."
 - **`running-the-app`:** :13 gets its reason (the user starts their own server with `pnpm dev`), and the `stop-servers-you-start` memory goes; :13's last sentence goes; :9 and :18 both give the `seed/users.ts` path; :21 gets a reason for resetting to desktop.

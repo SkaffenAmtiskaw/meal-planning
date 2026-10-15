@@ -129,7 +129,7 @@ Read the docs a task touches when it needs them, not all up front:
 - `docs/e2e_tests.md`: before writing E2E tests
 - `docs/ci.md`: before changing a workflow or a routine
 - `docs/seed.md`: before changing `seed/` or adding a model
-- the `writing-standard` skill: before drafting or changing a file in `docs/`, `README.md`, AGENTS.md, a skill or an agent
+- the `writing-standard` skill: before planning, drafting or making a change to a file in `docs/`, `README.md`, AGENTS.md, a skill or an agent
 
 Before you show wording you've drafted for, or written in, one of the files `writing-standard` covers, whether as a draft in the chat or as a written change your summary names, check whether it needs a review by the `writing-reviewer` subagent:
 - **If its exact form was settled, or it's mechanical,** as "Approval covers the edits" describes, it doesn't, because its wording is already decided, or the edit leaves what the text means unchanged.

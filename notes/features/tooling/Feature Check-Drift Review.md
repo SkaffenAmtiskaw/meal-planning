@@ -32,7 +32,7 @@ From the audit's scan on 2026-10-06. Line numbers are as of that day.
 - The "Save its report to `.scratch/<note name> - …`" line repeats AGENTS.md's "Subagent reports and scratch files"; only the file name is the skill's own.
 - "A hook blocks edits outside `notes/` and `.scratch/`" repeats the hook's own message; "Don't change code" stays.
 - The "Find a home for out-of-scope items" step ("if the list is empty, skip; otherwise route as AGENTS.md describes") repeats AGENTS.md; it becomes one line in the last step.
-- Its description is imperative, where `writing-standard`'s `instructions.md:23` asks for the third person; it becomes what and when, in about 25 words.
+- Its description is imperative, where `writing-standard`'s `instructions.md` asks for the third person under Descriptions; it becomes what and when, in about 25 words.
 - Split check: no split.
 - **`code-drift-checker`:** :37-48 define the same Kind and Meaning sorting as `/check-drift` step 4 in other words; the skill sorts, so it leaves the agent, with the report fields at :57-58. :10's read-only Bash line matches `note-drift-checker:10` and differs from `leftovers-checker:24`; make them identical. :30 ("the docs in `docs/` lag far behind the code") may be stale; ask the user. :48's "Verification" is the same thing as `note-drift-checker`'s "Found by". Its opener (:8) says it only suggests, which its tools already show; its description ends "Read-only."
 - Wording difference at `check-drift:102`: recommend one option. Where the rule is kept: AGENTS.md "Recommendations" says to say so when it comes down to her preference. Exception or drift?

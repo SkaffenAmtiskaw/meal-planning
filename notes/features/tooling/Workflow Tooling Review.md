@@ -14,7 +14,7 @@ Part of [[Agent Instructions Audit]].
 
 **Full review here,** as the first story that uses them: `/tooling`, `notes/templates/Workflow.md`.
 
-**Re-checks for this step:** `roadmap-placement`, `deleting-a-note` (reviewed in Shared Note Procedures Review); `writing-standard`, `rule-placement` (reviewed in [[Writing Standard Review]]); the `writing-reviewer` agent (reviewed in Writing Standard Reviewer); the `scope-router` agent and `filing-work` (reviewed in Scope-Router Review); `notes/templates/Idea.md` (reviewed in [[Feature Template Review]]); the `bug-reproducer` agent (reviewed in [[Bug Investigate Review]]).
+**Re-checks for this step:** `roadmap-placement`, `deleting-a-note` (reviewed in Shared Note Procedures Review); `writing-standard`, `rule-placement`, `keeping-sessions-lean` (reviewed in Writing Standard Review); the `writing-reviewer` agent (reviewed in Writing Standard Reviewer); the `scope-router` agent and `filing-work` (reviewed in Scope-Router Review); `notes/templates/Idea.md` (reviewed in [[Feature Template Review]]); the `bug-reproducer` agent (reviewed in [[Bug Investigate Review]]).
 
 **Decisions that apply:**
 
@@ -34,9 +34,8 @@ From the audit's scan on 2026-10-06. Line numbers are as of that day.
 - The spin-off branch (:39-50, about 415 words) moves to a supporting file; its restatements of `roadmap-placement` (:47) and the Roadmap's Ideas and Markers (:48, :49) become pointers.
 - The Why section (:10-15, 232 words) re-describes workflow and collecting notes; it keeps only the reason a tooling change skips the lifecycle.
 - :18 repeats the description and :35; :53-55 (step 2's opening) mostly repeats AGENTS.md; :29 restates the building-goal check; :93 describes the script's output.
-- The `note-conventions-is-a-map` memory moves to step 3 (Note Conventions is only a workflow map), and the memory is deleted.
 - :45's "one at a time" repeats AGENTS.md's question rule; :31 ("or AGENTS.md") points to AGENTS.md, which loads anyway.
-- Its description is imperative, where `writing-standard`'s `instructions.md:23` asks for the third person; it becomes what and when, in about 25 words.
+- Its description is imperative, where `writing-standard`'s `instructions.md` asks for the third person under Descriptions; it becomes what and when, in about 25 words.
 - Split check: no split.
 - **`Workflow.md`:** :5 repeats Note Conventions and `/roadmap`; it keeps only its sentence on a collecting workflow note's format.
 - Wording difference at `tooling:62-64`: small, clear edits are written without showing them first. Where the rule is kept: AGENTS.md "Approval covers the edits" says new wording is shown first. Exception or drift?

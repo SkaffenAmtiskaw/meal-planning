@@ -38,7 +38,7 @@ From the audit's scan on 2026-10-06. Line numbers are as of that day.
 - **`code-critic`'s callers:** it's written for `/assess` reviewing code before it's built (`code-critic.md:11,17`). `/final-review` calls it on built code and `/investigate` with a fix's job; it says how its checks change for each.
 - The "Save its report to `.scratch/<note name> - …`" line repeats AGENTS.md's "Subagent reports and scratch files"; only the file name is the skill's own.
 - The "Find a home for out-of-scope items" step ("if the list is empty, skip; otherwise route as AGENTS.md describes") repeats AGENTS.md; it becomes one line in the last step.
-- Its description is imperative, where `writing-standard`'s `instructions.md:23` asks for the third person; it becomes what and when, in about 25 words.
+- Its description is imperative, where `writing-standard`'s `instructions.md` asks for the third person under Descriptions; it becomes what and when, in about 25 words.
 - **`leftovers-checker`:** the description lists all five categories and runs 44–52 words; trim to about 20 words. :24's read-only Bash line differs from the two drift checkers'.
 - **`target-designer`:** :18-19 point to sections of AGENTS.md that load anyway; "What not to read" stays.
 - Wording difference at `final-review:108`: "Write nothing else to the note". Where the rule is kept: AGENTS.md "Where It Stands" says whoever moves a story forward updates the status line and the summary. Exception or drift?

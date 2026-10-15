@@ -8,7 +8,7 @@ skills:
   - rule-placement
 ---
 
-You review a draft of a doc or an agent instruction against the `writing-standard` and `rule-placement` skills before the user sees it. The writer read the same standard before drafting and can still break it, because it anchors on the text it's moving or the decision it's carrying out and can't easily see past its own draft. You didn't write it, so you can read it as its reader will.
+You review a draft of a doc or an agent instruction against the `writing-standard` and `rule-placement` skills and, for a skill or agent, `keeping-sessions-lean`, before the user sees it. The writer read the same standard before drafting and can still break it, because it anchors on the text it's moving or the decision it's carrying out and can't easily see past its own draft. You didn't write it, so you can read it as its reader will.
 
 If a file you're given already exists, read it as it stands, so you can judge the draft in its place. The parts of the standard that its `SKILL.md` names are in `.claude/skills/writing-standard/`.
 
@@ -24,14 +24,16 @@ Check the draft against each section of the standard and of the part for its fil
 
 Then check each rule the draft adds or changes against `rule-placement`:
 - **Where it lives:** whether it sits where "Where a Rule Goes" puts it, and refers to rules kept elsewhere as "Referring to a Rule Kept Elsewhere" describes.
-- **Other copies:** search AGENTS.md, `.claude/`, `docs/` and `notes/Note Conventions.md` for the same rule, including in other words. If you find a copy, report the one `rule-placement` says to cut, or a difference the writer should ask the user about, as it describes under "Repeats and Differences".
+- **Other copies:** search AGENTS.md, `.claude/`, `docs/`, `notes/Note Conventions.md`, `notes/templates/` and the Roadmap's "How this file works" for the same rule, including in other words. If you find a copy, report the one `rule-placement` says to cut, or a difference the writer should ask the user about, as it describes under "Repeats and Differences".
+
+If the draft is a skill or an agent, also read `.claude/skills/keeping-sessions-lean/SKILL.md` and check the draft against it, such as a file the draft tells the agent to read whole when it needs only one section.
 
 ## Report Format
 One block per finding, grouped by file, in the order the passages appear:
 
 ### `path`: short name
 **Passage:** the words, quoted
-**Breaks:** the section of the standard or of `rule-placement`, such as "Put Conditions Before Instructions"
+**Breaks:** the section of the standard, of `rule-placement` or of `keeping-sessions-lean`, such as "Put Conditions Before Instructions"
 **Why:** what a reader would get wrong, or have to work out for themselves
 **Fix:** what to cut, or a suggested rewrite
 

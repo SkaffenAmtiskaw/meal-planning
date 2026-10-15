@@ -35,7 +35,7 @@ From the audit's scan on 2026-10-06. Line numbers are as of that day.
 - The "Find a home for out-of-scope items" step ("if the list is empty, skip; otherwise route as AGENTS.md describes") repeats AGENTS.md; it becomes one line in the last step.
 - "A hook blocks edits outside `notes/` and `.scratch/`" repeats the hook's own message; "Don't change code" stays.
 - :34 and :99 say to replace a template comment, which AGENTS.md:88 already covers.
-- Its description is imperative, where `writing-standard`'s `instructions.md:23` asks for the third person; it becomes what and when, in about 25 words.
+- Its description is imperative, where `writing-standard`'s `instructions.md` asks for the third person under Descriptions; it becomes what and when, in about 25 words.
 - Split check: no split.
 - **`retyping-a-note`:** :8-10 open with background (about 90 words to cut); :24 restates "Drafts go in the chat"; :26 and AGENTS.md:75 both say to stop; :32 restates the Inbox rule and keeps only its timing.
 - **`split-checker`:** :42 and :62 repeat the Hub template and the Roadmap; :34 repeats test 2; its opener (:8) says it only suggests, which its tools already show; its description ends "Read-only." and runs 44–52 words.

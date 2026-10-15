@@ -38,7 +38,7 @@ From the audit's scan on 2026-10-06. Line numbers are as of that day.
 - The "Save its report to `.scratch/<note name> - …`" line repeats AGENTS.md's "Subagent reports and scratch files"; only the file name is the skill's own.
 - The "Find a home for out-of-scope items" step ("if the list is empty, skip; otherwise route as AGENTS.md describes") repeats AGENTS.md; it becomes one line in the last step.
 - "A hook blocks edits outside `notes/` and `.scratch/`" repeats the hook's own message; "Don't change code" stays.
-- Its description is imperative, where `writing-standard`'s `instructions.md:23` asks for the third person; it becomes what and when, in about 25 words.
+- Its description is imperative, where `writing-standard`'s `instructions.md` asks for the third person under Descriptions; it becomes what and when, in about 25 words.
 - Split check: no split.
 - **`rule-auditor`:** :15 (you don't get the story's list) is also at `architect:84`; it leaves the agent. :8's "Be thorough." goes, and its opener says it only suggests, which its tools already show. Its description ends "Read-only."
 
