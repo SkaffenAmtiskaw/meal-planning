@@ -5,7 +5,7 @@ confirmed: 2026-10-06
 # Where It Stands
 Next: its child stories ^status
 
-Split on 2026-10-06 into workflow-step reviews, one for each step of each note type's workflow except Feature's `/shape` step, which has five, plus AGENTS.md, the memory folder, Note Conventions with the Roadmap header, and Conventions Review. The scan's findings and the open Agent Workflow Changes items about each step moved into the review notes. Feature Shape Review, Shared Note Procedures Review, Writing Standard Reviewer, Scope-Router Review, Writing Standard Review and Feature Template Review are done, and the rest aren't reviewed yet.
+Split on 2026-10-06 into workflow-step reviews, one for each step of each note type's workflow except Feature's `/shape` step, which has five, plus AGENTS.md, the memory folder, Note Conventions with the Roadmap header, and Conventions Review. The scan's findings and the open Agent Workflow Changes items about each step moved into the review notes. Feature Shape Review, Shared Note Procedures Review, Writing Standard Reviewer, Scope-Router Review, Writing Standard Review, Feature Template Review and Feature Decide Review are done, and the rest aren't reviewed yet.
 
 # Inbox
 
@@ -75,7 +75,7 @@ Each finding moved into the review note it belongs to on 2026-10-06.
 | Scope-Router Review | Feature's `/shape` step; full review of the `scope-router` agent |
 | Writing Standard Review | Feature's `/shape` step; full review of `writing-standard`, `rule-placement`, and a new `keeping-sessions-lean` skill |
 | Feature Template Review | Feature's `/shape` step; full review of `notes/templates/Idea.md`, `notes/templates/Feature.md` and the comments the templates share |
-| [[Feature Decide Review]] | Feature's `/decide` step; full review of `/decide`, the `decision-researcher` agent |
+| Feature Decide Review | Feature's `/decide` step; full review of `/decide`, the `decision-researcher` agent |
 | [[Merging Routed Designs]] | a skill that fits design material that isn't for a single story into the stories it belongs to: a handoff that affects several stories, or design material routed into a feature story's Inbox |
 | [[Feature Assess Review]] | Feature's `/assess` step; full review of `/assess`, `retyping-a-note`, the `split-checker` agent, the `note-drift-checker` agent, the `code-critic` agent |
 | [[Feature Check-Drift Review]] | Feature's `/check-drift` step; full review of `/check-drift`, the `code-drift-checker` agent |

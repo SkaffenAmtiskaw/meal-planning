@@ -5,6 +5,9 @@ confirmed: 2026-10-06
 # Where It Stands
 Next: /tooling ^status
 
+# Inbox
+- **Sarah's view on retypes, from Feature Decide Review on 2026-10-15:** that review dropped the audit scan's suggestion that `/decide` and `/plan-steps` follow `retyping-a-note`'s "After a retype", since a retyped note has never reached either of them next, and retypes have happened once (CI Checks, from pattern to infra). Sarah said: "when a retype _does_ happen I'll be aware of it and manually give the agents instructions how to handle it. This doesn't seem like something we need a pre-planned workflow for." It may bear on the whole retype workflow this review covers: `retyping-a-note`, the "After a retype" line in `/assess`, `/architect`, `/infra-design` and `/investigate`, and AGENTS.md's "A note with the wrong type".
+
 # Notes
 Part of [[Agent Instructions Audit]].
 
@@ -14,7 +17,7 @@ Part of [[Agent Instructions Audit]].
 
 **Full review here,** as the first story that uses them: `/assess`, `retyping-a-note`, the `split-checker` agent, the `note-drift-checker` agent, the `code-critic` agent.
 
-**Re-checks for this step:** the `notes-only-edits.sh` hook (reviewed in Feature Shape Review); the `decision-researcher` agent (reviewed in [[Feature Decide Review]]).
+**Re-checks for this step:** the `notes-only-edits.sh` hook (reviewed in Feature Shape Review); the `decision-researcher` agent (reviewed in Feature Decide Review).
 
 **Decisions that apply:**
 

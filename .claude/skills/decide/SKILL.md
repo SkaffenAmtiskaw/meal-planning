@@ -1,6 +1,6 @@
 ---
 name: decide
-description: Work through a note's open decisions with Sarah one at a time, record each answer, partial answer or new question in the note, and research a decision with a subagent unless she already has a confident answer. Sarah picks which decisions each run covers.
+description: Works through a note's open decisions with the user and records each answer in the note. Use when a note's next step is /decide.
 argument-hint: "[note name]"
 disable-model-invocation: true
 hooks:
@@ -11,84 +11,62 @@ hooks:
           command: '"$CLAUDE_PROJECT_DIR"/.claude/hooks/notes-only-edits.sh'
 ---
 
-Work through the open decisions on **$ARGUMENTS**.
-
-## Why this skill works the way it does
-Other skills, such as `/shape` and `/investigate`, leave open the decisions Sarah wants to think over or come back to. Settling them is this skill's job.
-
-A few things shape how it works:
-- **Sarah picks the scope.** A hub can hold ten open decisions, and she may only want to tackle two today. Each run covers the ones she picks.
-- **Research happens in a subagent,** one decision at a time. Each decision can need its own look at the code, the other notes and library docs. Doing that inline would fill the context before the third decision. The `decision-researcher` agent returns a brief. You walk Sarah through it.
-- **Decisions, not design.** Settle the question. Don't design the story, write steps or pick implementation details the next step owns.
-
-This is planning only. Don't change code. A hook blocks edits outside `notes/` and `.scratch/`.
-
-## Talking with Sarah
-- **Running lists:** keep a list of effects on other notes and a list of new stories the answers imply. Don't stop to deal with them as they come up. Steps 5 and 6 handle them.
+Work through the open decisions on **$ARGUMENTS**. This skill settles decisions, not design: don't design the story, write steps, pick implementation details or change code, because each belongs to a later step with its own process and checks.
 
 ## 1. Read the note
 Find the note in `notes/features/` and read all of it.
 
-A decision is open if it's:
-- an item under `# Open Decisions` with no **Decided** line under it. One with only a **Partly answered** line is still open.
-A story with open decisions has one `"decision needed: ..."` entry in `blocked-by` that covers them all. A roundup's issues are the questions under its Open Decisions.
+A decision is open if it's an item under `# Open Decisions` with no **Decided** line under it, including one with only a **Partly answered** line. A roundup's issues are the questions under its Open Decisions. A story with open decisions has one `"decision needed: ..."` entry in `blocked-by` that covers them all. A hub has no `blocked-by`.
 
-If the two don't match, raise it with Sarah:
-- **A `decision needed` entry with no open question in Open Decisions:** draft the questions it stands for and add them once she approves. If the note has no Open Decisions section, add one from the note's template.
-- **Open questions with no `decision needed` entry, on a story:** ask whether they block the next step. If they do, add the entry. Hubs have no `blocked-by`.
+If a story's Open Decisions and `blocked-by` don't match, raise it with the user:
+- **A `decision needed` entry with no open question in Open Decisions:** draft the questions it stands for and add them once the user approves. If the note has no Open Decisions section, add one from the note's template.
+- **Open questions with no `decision needed` entry:** ask whether they block the next step. If they do, add the entry.
 
-If the note has no open decisions, or it's `done` or archived, tell Sarah what you found and stop.
+If the note has no open decisions, or it's `done` or archived, tell the user what you found and stop.
 
-## 2. Sarah picks the decisions
-List the open decisions, one line each: its number or short name, and any Partly answered progress. Say which ones depend on another's answer, from what the notes state, and mark any you're inferring. Then ask which ones she wants to work through this run.
+## 2. The user picks the decisions
+A hub can hold ten open decisions when the user only wants to settle two today, so each run covers only the ones they pick. List the open decisions, one line each: its number or short name, and any Partly answered progress. Say which ones depend on another's answer, from what the notes state, and mark any you're inferring. Then ask which ones they want to work through this run.
 
-Take them in the order she gives. If she picks one that depends on an unpicked one, say so once, and let her decide.
+Take them in the order they give. If they pick one that depends on an unpicked one, say so once, and let them decide.
 
-## 3. Each decision, one at a time
-Settle each decision Sarah picked, in the order she gave, as the `settling-a-decision` skill describes.
+## 3. Settle each decision
+Settle each decision the user picked as the `settling-a-decision` skill describes.
 
-If the question is "Is this worth doing?" and Sarah decides it isn't, the story is dropped. Skip the other decisions she picked for this run, because they no longer matter, and go to step 4.
+If the question is "Is this worth doing?" and the user decides it isn't, the story is dropped. Skip the other decisions they picked for this run, because they no longer matter, and go to step 4.
 
 ### Knock-on effects
-After recording, look at what the answer changes:
-- **This note:** other sections the answer lands in, e.g. a section the question says to record it in, the chosen Fix Option, or a hub's Coverage or Child Stories table. Draft each change and go through them with Sarah. If the note is `ready` and the change touches its design or steps, it goes back to `spec` (AGENTS.md, "Editing notes"). Say so when you show the change.
-- **Other notes:** add each effect to the running list: which note, what changes and why. Step 6 handles them.
-- **New stories:** if the answer implies work no note covers yet, add it to the running list of new stories. Step 5 handles them.
-- **New questions:** if the brief found a blocking question that isn't on the note, or the answer raised one, tell Sarah what needs deciding and add it to Open Decisions, written as a question rather than a proposal. Then ask whether she already has an answer in mind, and act on it as the `settling-a-decision` skill describes. If she wants to think it over or research it, ask whether to take it now or leave it for a later run.
-
-Then go on to the next decision she picked.
+After recording each answer, look at what it changes:
+- **This note:** other sections the answer lands in, such as a section the question says to record it in, the chosen Fix Option, or a hub's Coverage or Child Stories table. Draft each change and go through them with the user.
+- **Other notes:** add each effect on another note to the out-of-scope list.
+- **New stories:** if the answer implies work no note covers yet, and the note is a hub, add it to a list of new child stories for step 5. Otherwise, add it to the out-of-scope list.
+- **New questions:** if `decision-researcher` found a blocking question that isn't on the note, or the answer raised one, tell the user what needs deciding, add it to Open Decisions, and ask whether they already have an answer in mind:
+  - **They have one:** go on from their answer as the `settling-a-decision` skill describes.
+  - **They don't:** ask whether to research it now or leave it for a later run, since research takes time and each run covers only the decisions they pick. If they want it now, research it as the `settling-a-decision` skill describes.
 
 ## 4. Update the note's status
-Once the picked decisions are done:
-- **Where It Stands:** update the `^status` line as AGENTS.md describes under "Editing notes", e.g. "Decisions made. Next: /assess" or "2 open decisions. Next: /decide".
-- **`confirmed`:** set it to today. Sarah making decisions on a note counts as confirming it.
-- **`blocked-by`:** if no open decisions remain, remove the `decision needed` entry.
-- **A roundup with no open decisions left:** set `status: spec`. Its next step is `/plan-steps`.
-- **A hub with no open decisions left:** set its `^status` line to "Next: its child stories" and remove its Roadmap line. A hub has a line only while it has open decisions.
-- **A story Sarah decided is worth doing:** if its Roadmap line is in Ideas, the story is now committed. Check its goals and place its line as the `roadmap-placement` skill describes.
-- **A story Sarah decided isn't worth doing:** set `status: dropped`, remove the `decision needed` entry from `blocked-by`, and set the `^status` line to "Not worth doing. Next: /close".
+Once the picked decisions are done, set `confirmed` to today, since the user making decisions on a note counts as confirming it. Then update the note for the first case that fits:
+- **The user decided the story isn't worth doing:** set `status: dropped`, remove the `decision needed` entry from `blocked-by`, and set the `^status` line to "Not worth doing. Next: /close".
+- **Decisions remain open:** set the `^status` line to how many remain, such as "2 open decisions. Next: /decide".
+- **A roundup with none left:** remove the `decision needed` entry from `blocked-by`, set `status: spec`, and set the `^status` line to "Decisions made. Next: /plan-steps".
+- **A hub with none left:** set its `^status` line to "Next: its child stories" and remove its Roadmap line, since a hub has a line only while it has open decisions.
+- **Any other story with none left:** remove the `decision needed` entry from `blocked-by`. Run `sh scripts/note-section.sh "Next Step by Note State"`, which prints Note Conventions' table of what each note state does next, and set the `^status` line to the story's next step from it, such as "Decisions made. Next: /assess".
 
-## 5. New stories
-Skip this if the running list of new stories is empty.
+If the user decided a story is worth doing and its Roadmap line is in Ideas, the story is now committed. Check its goals and place its line as the `roadmap-placement` skill describes.
 
-**On a hub:** propose the child stories, each with a one-line scope and the decisions it comes from. Wait for Sarah to approve, change or drop each one. For each one she approves:
+## 5. New child stories
+If the hub's list of new child stories is empty, skip this step. Otherwise, propose the child stories, each with a one-line scope and the decisions it comes from, and wait for the user to approve, change or drop each one. For each one they approve:
 1. Create an idea note in `notes/features/<area>/` from `notes/templates/Idea.md`. Under Notes, link the hub, give the one-line scope, and quote the Decided lines it comes from.
 2. Add it to the hub's Child Stories table.
-3. Add a Roadmap line that links to it and embeds its status (`[[Note]] ![[Note#^status]]`), placed as AGENTS.md describes under "Roadmap order".
+3. Add a Roadmap line for it.
 
-**On a story:** add the new stories to the list for step 6. They go through `scope-router` like any other work outside this note.
-
-## 6. Other notes
-Skip this if the running list is empty.
-
-Route it as AGENTS.md describes under "Out-of-scope work". These items are other notes' work, so the triage offers route or drop only. For each item, also include which decision it comes from and its Decided line.
+## 6. Out-of-scope work
+Triage the out-of-scope list. For an effect on another note or a new story from step 3, offer route or drop only, since it's another note's work. If you send `scope-router` an item that came from an answer, include the question it answers and its Decided line, so it can name the decision the item comes from.
 
 ## 7. Stop
-Tell Sarah what's left:
-- **Open decisions remain:** list them in one line each. The next run is `/decide <note name>`.
-- **None remain:** give the note's next step from the table below, e.g. `/assess <note name>`.
-- **Children were created:** list each one with the command to run in a new session, e.g. `/shape <child name>`.
+Tell the user what's left:
+- **The story was dropped:** say so, and give `/close <note name>` as its next step. Skip the other cases.
+- **Open decisions remain:** list them, one line each. The next run is `/decide <note name>`.
+- **None remain:** give the note's next step from its `^status` line, such as `/assess <note name>`.
+- **Children were created:** list each one with the command to run, such as `/shape <child name>`.
 
-!`sh scripts/note-section.sh "Next Step by Note State"`
-
-Don't start the next step in this session, even if it's the obvious one. It deserves a fresh context.
+Don't start the next step in this session, even if it's the obvious one, because it deserves a fresh context.

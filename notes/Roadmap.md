@@ -39,7 +39,6 @@
 # Now
 
 # Next
-4. [[Feature Decide Review]] ![[Feature Decide Review#^status]] 🎯 [[Dev Foundations]]
 5. [[Merging Routed Designs]] ![[Merging Routed Designs#^status]] 🎯 [[Dev Foundations]]
 6. [[Feature Assess Review]] ![[Feature Assess Review#^status]] 🎯 [[Dev Foundations]]
 7. [[Feature Check-Drift Review]] ![[Feature Check-Drift Review#^status]] 🎯 [[Dev Foundations]]

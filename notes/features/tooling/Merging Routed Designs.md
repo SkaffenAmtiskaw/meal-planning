@@ -18,4 +18,5 @@ Part of [[Agent Instructions Audit]].
 
 ![[Agent Instructions Audit#^decision-17]]
 
+[Sarah] - It's very possible this skill might be run before I know which note it applies to. I might get a handoff from an agent and need the skill to figure out which notes it should go in. Likewise I might have a note which had a design but we opted to not complete the entire design in that story, and we need to figure out which notes the rest of the design is completed on.
 # Questions
