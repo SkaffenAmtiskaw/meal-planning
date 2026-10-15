@@ -39,7 +39,6 @@
 # Now
 
 # Next
-8. [[Feature Check-Drift Review]] ![[Feature Check-Drift Review#^status]] 🎯 [[Dev Foundations]]
 9. [[Feature Plan-Steps Review]] ![[Feature Plan-Steps Review#^status]] 🎯 [[Dev Foundations]]
 10. [[Feature Implement Review]] ![[Feature Implement Review#^status]] 🎯 [[Dev Foundations]]
 11. [[Feature Final-Review Review]] ![[Feature Final-Review Review#^status]] 🎯 [[Dev Foundations]]

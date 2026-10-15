@@ -50,7 +50,8 @@ fi
 echo
 
 # Tags one file's lines that mention the name. Frontmatter lists are tagged by
-# their key; Sarah's comments get an extra tag.
+# their key; a user's comment, a line that starts with a name tag or ends with a
+# signature (as in user-comments.sh), gets an extra tag.
 tag() {
   awk -v name="$name" -v roadmap="notes/Roadmap.md" '
     FNR == 1 { fm = ($0 == "---"); key = ""; if (fm) next }
@@ -71,7 +72,10 @@ tag() {
       else if (embed) kind = "embed"
       else if (link) kind = "link"
       else kind = "plain text"
-      if ($0 ~ /\[Sarah\]/ || $0 ~ /- Sarah[ .]*$/) kind = kind ", Sarah'"'"'s comment"
+      plain = $0; gsub(/`[^`]*`/, "", plain)
+      who = "[A-Z][a-z]+( [A-Z][a-z]+)?"
+      if (plain ~ ("^[ \t]*([-*>][ \t]+)?(\\[[ xX]\\][ \t]+)?\\[" who "\\]") ||
+        plain ~ ("[^ \t-][ \t]+(-|–|—)[ \t]*" who "[.]?[ \t]*$")) kind = kind ", user'"'"'s comment"
       text = $0; gsub(/^[ \t]+/, "", text)
       if (length(text) > 160) text = substr(text, 1, 157) "..."
       printf "%s:%d\t%s\t%s\n", FILENAME, FNR, kind, text

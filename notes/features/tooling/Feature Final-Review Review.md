@@ -39,11 +39,12 @@ From the audit's scan on 2026-10-06. Line numbers are as of that day.
 - The "Save its report to `.scratch/<note name> - …`" line repeats AGENTS.md's "Subagent reports and scratch files"; only the file name is the skill's own.
 - The "Find a home for out-of-scope items" step ("if the list is empty, skip; otherwise route as AGENTS.md describes") repeats AGENTS.md; it becomes one line in the last step.
 - Its description is imperative, where `writing-standard`'s `instructions.md` asks for the third person under Descriptions; it becomes what and when, in about 25 words.
-- **`leftovers-checker`:** the description lists all five categories and runs 44–52 words; trim to about 20 words. :24's read-only Bash line differs from the two drift checkers'.
+- **`leftovers-checker`:** the description lists all five categories and runs 44–52 words; trim to about 20 words.
 - **`target-designer`:** :18-19 point to sections of AGENTS.md that load anyway; "What not to read" stays.
 - **`target-designer`'s callers:** `/assess` step 3 uses it too, to design the target before the existing code is judged, so its full review meets that step's needs as well as `/final-review`'s. Found 2026-10-15 in Feature Assess Review.
 - **`target-designer`'s inputs:** `final-review:54` sends it only the Design Handoff sections and images. In older notes, such as split children, the Meta-Instructions sit under `# Out of Scope`, so it never sees them and may treat the handoff's Mantine boundaries as binding. `/assess` step 3 sends their path too, and `target-designer` reads the Meta-Instructions it's given. Found 2026-10-15 in Feature Assess Review.
 - Wording difference at `final-review:108`: "Write nothing else to the note". Where the rule is kept: AGENTS.md "Where It Stands" says whoever moves a story forward updates the status line and the summary. Exception or drift?
+- **A `story-range.sh` script for step 2:** it would find the first ✅ Complete commit, propose the story's commit range, and list the changed code and test files, split into those a step names and the rest, so the session doesn't run several git commands and read them by hand. Feature Check-Drift Review built the first script of this kind, `scripts/user-comments.sh` for `/check-drift` step 2. Found 2026-09-29 while going through the skills for deterministic checks; moved here 2026-10-15 from Feature Check-Drift Review.
 
 Moved from Agent Workflow Changes on 2026-10-06:
 - [Sarah] - `final-review` asks for approval to make a change and then subsequently asks for approval of the exact text - surely each item doesn't need two separate approvals

@@ -37,5 +37,6 @@ From the audit's scan on 2026-10-06. Line numbers are as of that day.
 - Split check: no split. Type matters only in step 1 and in Coverage's source list.
 - **`plan-checker`:** :21, :23-31, :35-36 and :39 restate `/plan-steps` (they go to the shared acceptance-checks skill or point to `/plan-steps`); :10-15 become one sentence; :38 puts its exception after; :27 is a 150-word bullet; its opener (:8) says it only suggests; its description ends "Read-only."
 - **`running-the-app`:** :13 gets its reason (the user starts their own server with `pnpm dev`), and the `stop-servers-you-start` memory goes; :13's last sentence goes; :9 and :18 both give the `seed/users.ts` path; :21 gets a reason for resetting to desktop.
+- **A `commits-since.sh` script for step 1:** it would read `confirmed` from the note's frontmatter and list the later commits touching `src/`, `test/` or `docs/` with their files, plus uncommitted changes there, so the session doesn't run several git commands and read them by hand. Feature Check-Drift Review built the first script of this kind, `scripts/user-comments.sh` for `/check-drift` step 2. Found 2026-09-29 while going through the skills for deterministic checks; moved here 2026-10-15 from Feature Check-Drift Review.
 
 # Questions

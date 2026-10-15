@@ -26,4 +26,3 @@ Changes to tooling config: `biome.jsonc`, `lefthook.yml`, `.github/`, `tsconfig.
   - Biome 2.5's formatting changes in `src/_actions/sharing/leavePlanner.test.ts` and `src/_actions/sharing/removeMember.test.ts`.
 
   Then `pnpm lint:ci` passes. Found 2026-10-05 in the session summary of the first real run. 🎯 [[Dev Tooling]]
-- [ ] Make `scripts/note-refs.sh` tag the current user's comments rather than only Sarah's. Line 74 tags a line as a user's comment only when it holds `[Sarah]` or ends with `- Sarah`. Sarah decided 2026-10-14 (Agent Instructions Audit, decision 17) that instructions recognize a user's own lines by a tag or signature with that user's name, so another user's lines go untagged and `/close` would miss them. One way is to read the name from `git config user.name`. Nothing changes while Sarah is the user. Found while writing the `deleting-a-note` skill in Shared Note Procedures Review, 2026-10-14. 🎯 [[Dev Tooling]]

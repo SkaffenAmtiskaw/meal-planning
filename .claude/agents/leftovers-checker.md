@@ -21,7 +21,7 @@ Read every step in the note, with what it builds and its **As built** notes. As 
 
 Then read the whole story diff with `git diff <range>` (add the working tree if uncommitted changes are included), and `git log --stat <range>` to see which commit built which step.
 
-Use only read-only git commands. Never stage, commit, stash or check out.
+Use Bash only for read-only git commands: `git log`, `git show`, `git diff`, `git blame` and `git status`. Never change a file.
 
 ## What to check
 1. **Scaffolding.** Anything a step says is temporary, a placeholder or to be removed in a later step, and any TODO, FIXME or commented-out code the story added. Check whether it's still there.

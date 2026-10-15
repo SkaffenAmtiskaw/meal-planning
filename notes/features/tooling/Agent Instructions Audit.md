@@ -5,7 +5,7 @@ confirmed: 2026-10-06
 # Where It Stands
 Next: its child stories ^status
 
-Split on 2026-10-06 into workflow-step reviews, one for each step of each note type's workflow except Feature's `/shape` step, which has five, plus AGENTS.md, the memory folder, Note Conventions with the Roadmap header, and Conventions Review. The scan's findings and the open Agent Workflow Changes items about each step moved into the review notes. Feature Shape Review, Shared Note Procedures Review, Writing Standard Reviewer, Scope-Router Review, Writing Standard Review, Feature Template Review, Feature Decide Review, Merging Routed Designs, Overly Prescriptive Instructions and Feature Assess Review are done, and the rest aren't done yet.
+Split on 2026-10-06 into workflow-step reviews, one for each step of each note type's workflow except Feature's `/shape` step, which has five, plus AGENTS.md, the memory folder, Note Conventions with the Roadmap header, and Conventions Review. The scan's findings and the open Agent Workflow Changes items about each step moved into the review notes. Feature Shape Review, Shared Note Procedures Review, Writing Standard Reviewer, Scope-Router Review, Writing Standard Review, Feature Template Review, Feature Decide Review, Merging Routed Designs, Overly Prescriptive Instructions, Feature Assess Review and Feature Check-Drift Review are done, and the rest aren't done yet.
 
 # Inbox
 
@@ -34,10 +34,12 @@ Each note under Child Stories reviews one step of one note type's workflow, such
 **Split check.** Check the review's size after reading the files the step uses, and again each time a decision opens more work. If the session might not hold the whole review, suggest a split early, such as reviewing the skill now and its agents in a new note. Don't push on in a crowded session. A new note follows these same rules. Its Roadmap line goes right after the line of the note it was split from, so the reviews still work through the workflows in order (Sarah's call).
 
 The review covers every file the step uses: its skill, and the agents, shared skills, hooks and templates that skill uses. For each file:
-1. **Read it whole, as its agent would.** Before looking at Issues Found, read the file from start to finish and ask of each line whether an agent would do the wrong thing without it. Cut every line that fails: what an agent already knows, a case it would handle anyway, and anything another file already says, including a line that restates AGENTS.md or only points to it, since AGENTS.md loads into every session. Aim for the shortest file that still does the step's job. This comes first because a list of known issues anchors whoever works from it, and the rest of the file passes unread.
+1. **Read it whole, as its agent would.** Before looking at Issues Found, read the file from start to finish and ask of each line whether an agent would do the wrong thing without it. Cut every line that fails: what an agent already knows, a case it would handle anyway, and anything another file already says, including a line that restates AGENTS.md or only points to it, since AGENTS.md loads into every session. Aim for the shortest file that still does the step's job. This comes first because a list of known issues anchors whoever works from it, and the rest of the file passes unread. [Sarah] Read it as a whole includes checking if it meets quality standards. You should never assume that the way the file is now is the way it should be going forwards, both on a macro and a micro level. The entire point of this story is that we *know* the notes have major issues. Nothing is should be considered written in stone.
 2. **Context.** Find what loads more than the step needs, or could make an agent miss an instruction, and settle with the user how to fix it. Decision 1 says when a skill splits, and when a procedure becomes a shared-rule skill or a supporting file.
 3. **Clarity.** Make what's left as clear and unambiguous as the `writing-standard` skill describes.
 4. **Issues Found.** Check each issue the note lists against the file as it now stands. The list holds what the scan found, not a plan or the review's scope, and the user decides what changes.
+
+**The writing review.** When a review sends a file to the `writing-reviewer` agent, it sends the whole file, not just the changed passages, and asks it to judge every line on its own rather than against the old version: whether an agent would get it right without the line, and whether one example would cover a list of cases. In this audit the whole file is under review, so a draft that's only shorter than the old one hasn't passed.
 
 **A file the step uses gets its full review in the first story that uses it, whether it's a skill, agent, shared skill, hook or template.** Each later story that uses it re-checks it: it has to meet the needs of every step reviewed so far and still meet the writing standard. If it can't, that's the signal to split it. AGENTS.md, the memory folder, and Note Conventions with the Roadmap header get their full reviews in their own stories after the workflows, but every story re-checks them for its step.
 
@@ -51,6 +53,9 @@ The review covers every file the step uses: its skill, and the agents, shared sk
 
 ### No procedure for a rare case that differs each time
 **Decided in:** Feature Assess Review, 2026-10-15. Sarah dropped the retype workflow (`retyping-a-note` and each skill's "After a retype" line) because a retype is rare and its circumstances differ every time, so a prescribed procedure could cause problems. When such a case comes up, the agent asks the user how to handle it rather than stopping.
+
+### A short rule several agents share stays a copy in each, unless drift would matter
+**Decided in:** Feature Check-Drift Review, 2026-10-15. The read-only Bash line in `code-drift-checker`, `note-drift-checker` and `leftovers-checker` is kept word for word in each agent rather than in a shared-rule skill they preload, as `rule-placement` would place it, because a preloaded skill costs more context than the line, and copies that drift apart wouldn't change what the agents do. If drift between copies would really matter in a case, the rule goes in a shared-rule skill. Sarah's call: in most cases drift won't matter much.
 
 # Current State
 Scanned 2026-10-06 by eleven read-only subagents, each reading its files in full against the `writing-standard` skill (SKILL.md and `instructions.md`) and `rule-placement`, and grepping `.claude/skills`, `.claude/agents`, AGENTS.md, `docs/` and the notes for each rule's other copies. Word counts are from `wc -w`. Line numbers are as of that day, so re-check them before planning. Sarah said 2026-10-06 that the findings go in unreviewed, and that the agent working on each piece after the split goes through them with her.
@@ -82,7 +87,7 @@ Each finding moved into the review note it belongs to on 2026-10-06.
 | Merging Routed Designs | a skill that fits design material that isn't for a single story into the stories it belongs to: a handoff that affects several stories, or design material routed into a feature story's Inbox |
 | Overly Prescriptive Instructions | a check, in drafting or reviewing agent instructions, that catches an instruction fixed tighter than its task needs, and a rule that a change gets only the length and position its point earns |
 | Feature Assess Review | Feature's `/assess` step; full review of `/assess`, the `split-checker` agent, the `note-drift-checker` agent, the `code-critic` agent, and a new `splitting-a-story` skill for the split walkthrough `/assess` and `/plan-steps` share |
-| [[Feature Check-Drift Review]] | Feature's `/check-drift` step; full review of `/check-drift`, the `code-drift-checker` agent |
+| Feature Check-Drift Review | Feature's `/check-drift` step; full review of `/check-drift`, the `code-drift-checker` agent |
 | [[Feature Plan-Steps Review]] | Feature's `/plan-steps` step; full review of `/plan-steps`, `running-the-app`, the `plan-checker` agent |
 | [[Feature Implement Review]] | Feature's `/implement` step; full review of `/implement` (with `first-pass.md`, `bugs.md` and `cleanup.md`), the `protect-config.sh` hook |
 | [[Feature Final-Review Review]] | Feature's `/final-review` step; full review of `/final-review`, the `leftovers-checker` agent, the `target-designer` agent |
