@@ -5,7 +5,7 @@ confirmed: 2026-10-06
 # Where It Stands
 Next: its child stories ^status
 
-Split on 2026-10-06 into workflow-step reviews, one for each step of each note type's workflow except Feature's `/shape` step, which has five, plus AGENTS.md, the memory folder, Note Conventions with the Roadmap header, and Conventions Review. The scan's findings and the open Agent Workflow Changes items about each step moved into the review notes. Feature Shape Review, Shared Note Procedures Review, Writing Standard Reviewer, Scope-Router Review, Writing Standard Review, Feature Template Review, Feature Decide Review, Merging Routed Designs, Overly Prescriptive Instructions, Feature Assess Review, Feature Check-Drift Review and Feature Plan-Steps Review are done, and the rest aren't done yet.
+Split on 2026-10-06 into workflow-step reviews, one for each step of each note type's workflow except Feature's `/shape` step, which has five, plus AGENTS.md, the memory folder, Note Conventions with the Roadmap header, and Conventions Review. The scan's findings and the open Agent Workflow Changes items about each step moved into the review notes. Feature Shape Review, Shared Note Procedures Review, Writing Standard Reviewer, Scope-Router Review, Writing Standard Review, Feature Template Review, Feature Decide Review, Merging Routed Designs, Overly Prescriptive Instructions, Feature Assess Review, Feature Check-Drift Review, Feature Plan-Steps Review and Agents Miss the Writing Standard are done, and the rest aren't done yet.
 
 # Inbox
 
@@ -39,7 +39,7 @@ The review covers every file the step uses: its skill, and the agents, shared sk
 3. **Clarity.** Make what's left as clear and unambiguous as the `writing-standard` skill describes.
 4. **Issues Found.** Check each issue the note lists against the file as it now stands. The list holds what the scan found, not a plan or the review's scope, and the user decides what changes.
 
-**The writing review.** When a review sends a file to the `writing-reviewer` agent, it sends the whole file, not just the changed passages, and asks it to judge every line on its own rather than against the old version: whether an agent would get it right without the line, and whether one example would cover a list of cases. In this audit the whole file is under review, so a draft that's only shorter than the old one hasn't passed.
+**The writing review.** When a review sends a file to the `writing-reviewer` agent, it sends the whole file, not just the changed passages, since in this audit the whole file is under review.
 
 **A file the step uses gets its full review in the first story that uses it, whether it's a skill, agent, shared skill, hook or template.** Each later story that uses it re-checks it: it has to meet the needs of every step reviewed so far and still meet the writing standard. If it can't, that's the signal to split it. AGENTS.md, the memory folder, and Note Conventions with the Roadmap header get their full reviews in their own stories after the workflows, but every story re-checks them for its step.
 
@@ -90,7 +90,7 @@ Each finding moved into the review note it belongs to on 2026-10-06.
 | Feature Assess Review | Feature's `/assess` step; full review of `/assess`, the `split-checker` agent, the `note-drift-checker` agent, the `code-critic` agent, and a new `splitting-a-story` skill for the split walkthrough `/assess` and `/plan-steps` share |
 | Feature Check-Drift Review | Feature's `/check-drift` step; full review of `/check-drift`, the `code-drift-checker` agent |
 | Feature Plan-Steps Review | Feature's `/plan-steps` step; full review of `/plan-steps`, `running-the-app`, the `plan-checker` agent |
-| [[Agents Miss the Writing Standard]] | why agents drafting or reviewing agent instructions keep missing the writing standard (too detailed, too prescriptive, keeping patterns that don't conform), and a fix that holds |
+| Agents Miss the Writing Standard | why agents drafting or reviewing agent instructions keep missing the writing standard (too detailed, too prescriptive, keeping patterns that don't conform), and a fix that holds |
 | [[Feature Implement Review]] | Feature's `/implement` step; full review of `/implement` (with `first-pass.md`, `bugs.md` and `cleanup.md`), the `protect-config.sh` hook |
 | [[Feature Final-Review Review]] | Feature's `/final-review` step; full review of `/final-review`, the `leftovers-checker` agent, the `target-designer` agent |
 | [[Feature Close Review]] | Feature's `/close` step; full review of `/close` |
