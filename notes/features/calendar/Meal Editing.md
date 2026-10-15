@@ -8,6 +8,9 @@ confirmed: 2026-09-25
 
 Open decisions. Next: /decide ^status
 
+# Inbox
+- `Mobile Month View.dc.html`, the prototype that Deferred Work's mobile agenda card actions name, sits loose at the vault root. The story that builds those actions moves it into a folder of its own in `notes/assets/`, as Note Conventions describes under Files, with copies of the files it loads at the paths it loads them from.
+
 # Purpose
 Meal editing (edit, move, duplicate, delete, reorder) is spread across several stories, and was designed mostly around the desktop meal detail modal. Views without that modal - desktop list, mobile month, mobile list - were each deferred to "a future story", so most view × device combinations have no plan.
 

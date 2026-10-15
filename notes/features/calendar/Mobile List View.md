@@ -8,6 +8,44 @@ blocked-by:
   - "[[Today and Selected Day Markers]]"
 confirmed: 2026-09-19
 ---
+# Where It Stands
+Next: /place-design. Building waits on [[Calendar and Recipes Data Refresh]] and [[Today and Selected Day Markers]]. ^status
+
+Sent back from `ready` to `spec`. The today-marker design from [[Unified Date Picker Component]] conflicts with this story's handoff and still needs placing, and Check Drift found Steps 2, 3 and 5 out of date.
+
+# Inbox
+- This note's design files sit loose in the vault: `Mobile List View.dc.html` and `support.js` at the vault root, and `weeknight-header-dark.svg` at the root of `notes/assets/`. Move the prototype into a folder of its own in `notes/assets/`, as Note Conventions describes under Files, with copies of the files it loads at the paths it loads them from, and update this note's embeds. Leave the loose `support.js` and logo where they are, since archived notes still embed them.
+
+## Design Update - Today Marker
+> [!warning] Separate from this story's handoff
+> This section was moved here on 2026-09-25 from the [[Unified Date Picker Component]] design handoff. It is **not** part of this story's own handoff. It changes how today is marked in the mobile list. Where it conflicts with this story's handoff (Day section header, Tokens, Acceptance criterion 4) or with the implementation steps (Step 3), **stop and ask Sarah** which one wins. Don't pick one yourself.
+>
+> One known conflict to raise with her: this story's day label is a single compact line ("THU 10 · SEP"), while the update below puts a ring "around the day number, same as desktop list".
+
+**App-wide rule (from the Unified Date Picker handoff, "Aligning every today / selected indicator"):**
+Target everywhere: **today = navy outline ring**, **selected = soft sage circle**, and they stack. The selected date is only marked where you pick a date: the date picker and the mobile month grid. Everywhere else, only today is marked.
+
+Ember (orange) is kept for actions only. It is no longer used to mark days.
+
+**The rows that apply to this story** (the desktop row is included because the mobile row refers to it):
+
+| Place | Today (now) | Plan |
+|---|---|---|
+| List view (desktop) | Filled orange circle on the day number, plus an orange-tinted row | Navy ring on the day number; drop the row tint. The date you jump to isn't marked; scrolling there is enough. |
+| List view (mobile) | Orange day label, plus an orange-tinted section | Navy ring around the day number, same as desktop list; drop the section tint. The date you jump to isn't marked. |
+
+**Day cell states** (the "Today" treatment is the one to match):
+
+| State | Treatment |
+|---|---|
+| Today | **Navy outline ring** around the number, bold |
+| Selected | **Soft sage circle** behind the number (`sage` at 45% opacity), navy bold text (~11:1) |
+| Selected + today | The sage circle sits inside the navy ring |
+
+![[datepicker_anatomy.png]]
+
+**Implementation note:** [[Today and Selected Day Markers]] builds a shared day-marks component for the today ring and uses it in the desktop list's date gutter. Use that component for the mobile day header rather than styling the ring again.
+
 ![[01-list-top.png]]
 
 ![[Mobile List View.dc.html]]
@@ -199,36 +237,6 @@ them by hand only so it runs standalone. No new assets.
 - `assets/mobile-list-view/01-list-top.png` — empty days, a dish with a book reference, today's tinted section.
 - `assets/weeknight-header-dark.svg` — existing app logo, included only so the prototype renders
   standalone.
-
-# Design Update - Today Marker
-> [!warning] Separate from the handoff above
-> This section was moved here on 2026-09-25 from the [[Unified Date Picker Component]] design handoff. It is **not** part of this story's own handoff. It changes how today is marked in the mobile list. Where it conflicts with the handoff above (Day section header, Tokens, Acceptance criterion 4) or with the implementation steps (Step 3), **stop and ask Sarah** which one wins. Don't pick one yourself.
->
-> One known conflict to raise with her: this story's day label is a single compact line ("THU 10 · SEP"), while the update below puts a ring "around the day number, same as desktop list".
-
-**App-wide rule (from the Unified Date Picker handoff, "Aligning every today / selected indicator"):**
-Target everywhere: **today = navy outline ring**, **selected = soft sage circle**, and they stack. The selected date is only marked where you pick a date: the date picker and the mobile month grid. Everywhere else, only today is marked.
-
-Ember (orange) is kept for actions only. It is no longer used to mark days.
-
-**The rows that apply to this story** (the desktop row is included because the mobile row refers to it):
-
-| Place | Today (now) | Plan |
-|---|---|---|
-| List view (desktop) | Filled orange circle on the day number, plus an orange-tinted row | Navy ring on the day number; drop the row tint. The date you jump to isn't marked; scrolling there is enough. |
-| List view (mobile) | Orange day label, plus an orange-tinted section | Navy ring around the day number, same as desktop list; drop the section tint. The date you jump to isn't marked. |
-
-**Day cell states** (the "Today" treatment is the one to match):
-
-| State | Treatment |
-|---|---|
-| Today | **Navy outline ring** around the number, bold |
-| Selected | **Soft sage circle** behind the number (`sage` at 45% opacity), navy bold text (~11:1) |
-| Selected + today | The sage circle sits inside the navy ring |
-
-![[datepicker_anatomy.png]]
-
-**Implementation note:** [[Today and Selected Day Markers]] builds a shared day-marks component for the today ring and uses it in the desktop list's date gutter. Use that component for the mobile day header rather than styling the ring again.
 
 # Implementation
 

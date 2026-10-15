@@ -31,7 +31,7 @@ It only reads code. It never runs the app and never changes code. A hook blocks 
 Find the note in `notes/features/`. It needs `status: spec`, `ready` or `in-progress`. If it has another status, tell Sarah what you found and stop. A collecting sweep (`type: sweep`, `status: idea`) is checked only after it's kicked off. Tell Sarah to run `/kickoff` on it first, then `/check-drift` on the note it kicks off, and stop.
 
 Read the whole note, including:
-- the Design Handoff and its images in `notes/assets/<story>/`
+- the Design Handoff and the images it links
 - existing ⚠️ Check Drift callouts, and **As built** notes
 
 Then work out the **remaining work**. That's all you check:

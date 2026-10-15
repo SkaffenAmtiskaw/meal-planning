@@ -25,7 +25,7 @@ Find the note in `notes/features/`. If it's missing, tell Sarah and stop. If the
 
 Check that it's ready for this skill:
 - **`type: feature`.** If it's another type, check whether that type fits the work. If it doesn't, offer to retype the note, as AGENTS.md describes under "Editing notes". If it does, tell Sarah which skill the note needs, and stop.
-- **`status: spec`.** If it has a different status, tell Sarah what you found and stop. Turning rough notes into a design is done with her, not by this skill.
+- **`status: spec`.** If it's `idea`, tell Sarah that `/place-design` moves it to `spec` once its design from Claude Design is placed, and stop. If it has any other status, tell Sarah what you found and stop.
 
 If the note has a Design Handoff, treat it as the source of truth for UX, not for implementation.
 
