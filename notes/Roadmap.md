@@ -39,7 +39,6 @@
 # Now
 
 # Next
-6. [[Overly Prescriptive Instructions]] ![[Overly Prescriptive Instructions#^status]] 🎯 [[Dev Foundations]]
 7. [[Feature Assess Review]] ![[Feature Assess Review#^status]] 🎯 [[Dev Foundations]]
 8. [[Feature Check-Drift Review]] ![[Feature Check-Drift Review#^status]] 🎯 [[Dev Foundations]]
 9. [[Feature Plan-Steps Review]] ![[Feature Plan-Steps Review#^status]] 🎯 [[Dev Foundations]]
