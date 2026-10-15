@@ -14,7 +14,7 @@ Part of [[Agent Instructions Audit]].
 
 **Full review here,** as the first story that uses them: `/infra-build` (new, decision 8).
 
-**Re-checks for this step:** `/implement` (with `first-pass.md`, `bugs.md` and `cleanup.md`), the `protect-config.sh` hook (reviewed in [[Feature Implement Review]]); `running-the-app` (reviewed in [[Feature Plan-Steps Review]]).
+**Re-checks for this step:** `/implement` (with `first-pass.md`, `bugs.md` and `cleanup.md`), the `protect-config.sh` hook (reviewed in [[Feature Implement Review]]); `running-the-app` (reviewed in Feature Plan-Steps Review).
 
 **Decisions that apply:**
 

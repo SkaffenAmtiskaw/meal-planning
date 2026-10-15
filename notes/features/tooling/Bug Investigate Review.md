@@ -14,7 +14,7 @@ Part of [[Agent Instructions Audit]].
 
 **Full review here,** as the first story that uses them: `/investigate`, the `bug-reproducer` agent.
 
-**Re-checks for this step:** the `notes-only-edits.sh` hook (reviewed in Feature Shape Review); the `code-critic` agent (reviewed in Feature Assess Review); the `decision-researcher` agent (reviewed in Feature Decide Review); `running-the-app` (reviewed in [[Feature Plan-Steps Review]]).
+**Re-checks for this step:** the `notes-only-edits.sh` hook (reviewed in Feature Shape Review); the `code-critic` agent (reviewed in Feature Assess Review); the `decision-researcher` agent (reviewed in Feature Decide Review); `running-the-app` (reviewed in Feature Plan-Steps Review).
 
 **Decisions that apply:**
 

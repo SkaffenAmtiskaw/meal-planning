@@ -5,7 +5,7 @@ confirmed: 2026-10-06
 # Where It Stands
 Next: its child stories ^status
 
-Split on 2026-10-06 into workflow-step reviews, one for each step of each note type's workflow except Feature's `/shape` step, which has five, plus AGENTS.md, the memory folder, Note Conventions with the Roadmap header, and Conventions Review. The scan's findings and the open Agent Workflow Changes items about each step moved into the review notes. Feature Shape Review, Shared Note Procedures Review, Writing Standard Reviewer, Scope-Router Review, Writing Standard Review, Feature Template Review, Feature Decide Review, Merging Routed Designs, Overly Prescriptive Instructions, Feature Assess Review and Feature Check-Drift Review are done, and the rest aren't done yet.
+Split on 2026-10-06 into workflow-step reviews, one for each step of each note type's workflow except Feature's `/shape` step, which has five, plus AGENTS.md, the memory folder, Note Conventions with the Roadmap header, and Conventions Review. The scan's findings and the open Agent Workflow Changes items about each step moved into the review notes. Feature Shape Review, Shared Note Procedures Review, Writing Standard Reviewer, Scope-Router Review, Writing Standard Review, Feature Template Review, Feature Decide Review, Merging Routed Designs, Overly Prescriptive Instructions, Feature Assess Review, Feature Check-Drift Review and Feature Plan-Steps Review are done, and the rest aren't done yet.
 
 # Inbox
 
@@ -54,8 +54,9 @@ The review covers every file the step uses: its skill, and the agents, shared sk
 ### No procedure for a rare case that differs each time
 **Decided in:** Feature Assess Review, 2026-10-15. Sarah dropped the retype workflow (`retyping-a-note` and each skill's "After a retype" line) because a retype is rare and its circumstances differ every time, so a prescribed procedure could cause problems. When such a case comes up, the agent asks the user how to handle it rather than stopping.
 
-### A short rule several agents share stays a copy in each, unless drift would matter
+### A **short** rule several agents share stays a copy in each, unless drift would matter
 **Decided in:** Feature Check-Drift Review, 2026-10-15. The read-only Bash line in `code-drift-checker`, `note-drift-checker` and `leftovers-checker` is kept word for word in each agent rather than in a shared-rule skill they preload, as `rule-placement` would place it, because a preloaded skill costs more context than the line, and copies that drift apart wouldn't change what the agents do. If drift between copies would really matter in a case, the rule goes in a shared-rule skill. Sarah's call: in most cases drift won't matter much.
+- Feature Plan-Steps Review, 2026-10-15: `plan-checker`'s copy of `/plan-steps`' step rules had already drifted (its list of what counts as the approach left out bug and cleanup notes), and a checker working from a stale copy passes the mistakes it's there to catch, so drift mattered here: the rules moved to a new shared-rule skill, `writing-implementation-steps`, that `/plan-steps` loads and `plan-checker` preloads. `/infra-design`'s few lines on Sarah checks stay a copy, since loading the whole skill for them would cost more than it saves. The convention fit.
 
 # Current State
 Scanned 2026-10-06 by eleven read-only subagents, each reading its files in full against the `writing-standard` skill (SKILL.md and `instructions.md`) and `rule-placement`, and grepping `.claude/skills`, `.claude/agents`, AGENTS.md, `docs/` and the notes for each rule's other copies. Word counts are from `wc -w`. Line numbers are as of that day, so re-check them before planning. Sarah said 2026-10-06 that the findings go in unreviewed, and that the agent working on each piece after the split goes through them with her.
@@ -88,7 +89,8 @@ Each finding moved into the review note it belongs to on 2026-10-06.
 | Overly Prescriptive Instructions | a check, in drafting or reviewing agent instructions, that catches an instruction fixed tighter than its task needs, and a rule that a change gets only the length and position its point earns |
 | Feature Assess Review | Feature's `/assess` step; full review of `/assess`, the `split-checker` agent, the `note-drift-checker` agent, the `code-critic` agent, and a new `splitting-a-story` skill for the split walkthrough `/assess` and `/plan-steps` share |
 | Feature Check-Drift Review | Feature's `/check-drift` step; full review of `/check-drift`, the `code-drift-checker` agent |
-| [[Feature Plan-Steps Review]] | Feature's `/plan-steps` step; full review of `/plan-steps`, `running-the-app`, the `plan-checker` agent |
+| Feature Plan-Steps Review | Feature's `/plan-steps` step; full review of `/plan-steps`, `running-the-app`, the `plan-checker` agent |
+| [[Agents Miss the Writing Standard]] | why agents drafting or reviewing agent instructions keep missing the writing standard (too detailed, too prescriptive, keeping patterns that don't conform), and a fix that holds |
 | [[Feature Implement Review]] | Feature's `/implement` step; full review of `/implement` (with `first-pass.md`, `bugs.md` and `cleanup.md`), the `protect-config.sh` hook |
 | [[Feature Final-Review Review]] | Feature's `/final-review` step; full review of `/final-review`, the `leftovers-checker` agent, the `target-designer` agent |
 | [[Feature Close Review]] | Feature's `/close` step; full review of `/close` |

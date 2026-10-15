@@ -12,7 +12,7 @@ Part of [[Agent Instructions Audit]].
 
 **Step:** Sweep's `/implement` step, which builds the plan one step at a time.
 
-**Re-checks for this step:** `/implement` (with `first-pass.md`, `bugs.md` and `cleanup.md`), the `protect-config.sh` hook (reviewed in [[Feature Implement Review]]); `running-the-app` (reviewed in [[Feature Plan-Steps Review]]).
+**Re-checks for this step:** `/implement` (with `first-pass.md`, `bugs.md` and `cleanup.md`), the `protect-config.sh` hook (reviewed in [[Feature Implement Review]]); `running-the-app` (reviewed in Feature Plan-Steps Review).
 
 **Decisions that apply:**
 

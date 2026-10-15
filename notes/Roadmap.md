@@ -39,7 +39,7 @@
 # Now
 
 # Next
-9. [[Feature Plan-Steps Review]] ![[Feature Plan-Steps Review#^status]] 🎯 [[Dev Foundations]]
+9. [[Agents Miss the Writing Standard]] ![[Agents Miss the Writing Standard#^status]] 🎯 [[Dev Foundations]]
 10. [[Feature Implement Review]] ![[Feature Implement Review#^status]] 🎯 [[Dev Foundations]]
 11. [[Feature Final-Review Review]] ![[Feature Final-Review Review#^status]] 🎯 [[Dev Foundations]]
 12. [[Feature Close Review]] ![[Feature Close Review#^status]] 🎯 [[Dev Foundations]]
