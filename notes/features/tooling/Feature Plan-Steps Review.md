@@ -14,7 +14,7 @@ Part of [[Agent Instructions Audit]].
 
 **Full review here,** as the first story that uses them: `/plan-steps`, `running-the-app`, the `plan-checker` agent.
 
-**Re-checks for this step:** the `split-checker` agent (reviewed in [[Feature Assess Review]]); the `notes-only-edits.sh` hook (reviewed in Feature Shape Review).
+**Re-checks for this step:** the `split-checker` agent, `splitting-a-story` (reviewed in Feature Assess Review); the `notes-only-edits.sh` hook (reviewed in Feature Shape Review).
 
 **Decisions that apply:**
 
@@ -24,7 +24,7 @@ Part of [[Agent Instructions Audit]].
 
 ## Issues Found
 From the audit's scan on 2026-10-06. Line numbers are as of that day.
-- The test-only and E2E check sections (:84-100, about 350 words) move to a supporting file read when a step changes only test files; `plan-checker:24-25` points to them by name and changes too.
+- The test-only and E2E check sections (:84-100, about 350 words) move to a supporting file read when a step changes only test files; `plan-checker:24-25` and `split-checker`'s test 2 point to them by name and change too.
 - :160 (update the status on the Roadmap line) is out of date, since lines embed `^status`; it goes.
 - :131-133 restate AGENTS.md's "Open questions in notes are hers too"; only "Next: /decide" and the stop are the skill's.
 - :151 puts its condition after the instruction; :93-95 are an edge-case list ("break behavior, not imports" plus two "counts" bullets); :23's hook sentence; :21 and :76 both ban "tests pass" as a check; :103 restates where a Boy Scout fix goes.

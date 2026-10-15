@@ -166,11 +166,7 @@ If the out-of-scope list is empty, you're done.
 Otherwise, route it as AGENTS.md describes under "Out-of-scope work".
 
 ## Splitting a story
-`split-checker` proposes the split. Sarah decides:
-1. **Whether to split.** Show the verdict and the reason, plus each child's name and scope line, then ask whether to split. If she says no, carry on as one story.
-2. **Each child.** Show what it takes, what blocks it and which design sections it embeds. Wait for her to approve or change it. If a change moves something to another child, update that child before you get to it.
-3. **Leftovers.** Raise anything under Unclaimed, and each move to an existing story.
-4. **Apply.** Once she has approved every child, apply the note changes from the report. Create the children first, then rewrite the original as the hub, then update the links in other notes. Write each child's Roadmap line as the report gives it, and place each one as AGENTS.md describes under "Roadmap order".
-5. **Hand each child its draft.** Copy each child's share of the draft steps, in full, into its `# From the Split` section. Its own `/plan-steps` runs in a new session and starts from that section.
-6. **Route out-of-scope items.** If you've collected any, handle them as in step 6.
-7. **Stop.** Don't start work on any child in this session. By now it has read the whole design, the approach, a full draft and the split report, and carrying that into a child's plan bloats the context. Tell Sarah the split is done, and list each child with the command to run in a new session, e.g. `/plan-steps <child name>`.
+Go through the split with Sarah as the `splitting-a-story` skill describes. If she splits the story:
+1. **Hand each child its draft.** Copy each child's share of the draft steps, in full, into its `# From the Split` section. Its own `/plan-steps` runs in a new session and starts from that section.
+2. **Route out-of-scope items.** If you've collected any, handle them as in step 6.
+3. **Stop.** Don't start work on any child in this session. By now it has read the whole design, the approach, a full draft and the split report, and carrying that into a child's plan bloats the context. Tell Sarah the split is done, and list each child with the command to run in a new session, e.g. `/plan-steps <child name>`.

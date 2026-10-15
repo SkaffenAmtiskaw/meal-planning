@@ -12,7 +12,7 @@ Part of [[Agent Instructions Audit]].
 
 **Step:** Cleanup's `/plan-steps` step, which writes the implementation steps.
 
-**Re-checks for this step:** `/plan-steps`, `running-the-app`, the `plan-checker` agent (reviewed in [[Feature Plan-Steps Review]]); the `split-checker` agent (reviewed in [[Feature Assess Review]]); the `notes-only-edits.sh` hook (reviewed in Feature Shape Review).
+**Re-checks for this step:** `/plan-steps`, `running-the-app`, the `plan-checker` agent (reviewed in [[Feature Plan-Steps Review]]); the `split-checker` agent, `splitting-a-story` (reviewed in Feature Assess Review); the `notes-only-edits.sh` hook (reviewed in Feature Shape Review).
 
 **Decisions that apply:**
 

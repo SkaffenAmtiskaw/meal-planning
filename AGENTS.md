@@ -67,12 +67,14 @@ Any change to a note in `notes/` follows these rules:
 - **The Inbox** comes right after Where It Stands in every story and hub. It holds what reaches a note from outside its usual flow from one skill to the next:
   - **Sarah's items,** added when something occurs to her.
   - **Items from another note's work,** such as background that a session working on another story found for this one.
-  - **Why a note was sent back** to an earlier step, such as a new piece `/plan-steps` found for a redesign, a problem that sends an infra story from `/implement` back to `/infra-design`, or a retype line.
+  - **Why a note was sent back** to an earlier step, such as a new piece `/plan-steps` found for a redesign, or a problem that sends an infra story from `/implement` back to `/infra-design`.
 
   In the usual flow, a step doesn't leave the next one an Inbox item. A finding or question for a later step goes at the top of the section that step writes.
   - **Adding an item:** say what it is. If the note has no Inbox, add one right after Where It Stands.
   - **Working on a note:** read its Inbox, and decide which items are your step's to act on. Act on each one. Then, if it's one of Sarah's lines, handle it as "Sarah's comments" above describes. Otherwise, delete it. Leave items that belong to a later step.
-- **A note with the wrong type.** If a note's type doesn't fit its work, tell Sarah which type fits and why, and offer to retype it. If she agrees, retype it as the `retyping-a-note` skill describes, then stop.
+- **A note whose type doesn't fit its work, or the skill you're running:**
+  - **If its type doesn't fit its work,** tell Sarah which type fits and why, and ask how she wants to handle it, since retypes are rare and each one is different.
+  - **If it fits, but the skill you're running doesn't take it,** tell her which skill the note needs, and stop, since a skill's steps are written for the types it takes.
 - **Roadmap order is Sarah's call.** Never reorder `notes/Roadmap.md`. A new line's spot follows from its work:
   - **It serves a goal:** it's committed, so it goes under that goal's heading in Later.
   - **It serves no goal:** it's uncommitted, so it goes in Ideas.

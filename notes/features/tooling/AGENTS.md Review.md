@@ -71,6 +71,7 @@ A draft from the scan, for this review to start from. It replaces AGENTS.md:15 a
 - **Out-of-scope work:** another note's gaps against current conventions aren't an item, next to "Immature stories" (from `update-notes-when-touched`).
 - **Routine sessions:** AGENTS.md loads into every routine session, and most of it is for interactive sessions; decision 5 removes the biggest part.
 - Wording difference: AGENTS.md:150 says "Don't commit unless Sarah asks"; `dependency-updates` and `ci-failure` commit and push unasked. Exception or drift?
+- **Docs:** "before planning or writing code" sends every planning session to `project_conventions.md` and `project_structure.md`, including `/assess`, which hands its design to `target-designer` and so doesn't need them. Found 2026-10-15 in Feature Assess Review.
 - **Memories that move here, then are deleted:** `ask-about-unexpected-changes-when-committing`, `leave-other-sessions-notes-alone` (the commit rule above), `scratch-files-not-for-sarah` (:118 above), `update-notes-when-touched` (Out-of-scope work above), `dont-flag-reversed-build-decisions` (the implementation-details fix above), `docs-updates-note-scope` (the memory policy above), and `block-on-unbuilt-skills` and `remove-without-tombstones` (to `editing-notes`).
 
 Moved from Agent Workflow Changes 2026-10-02 on 2026-10-06:

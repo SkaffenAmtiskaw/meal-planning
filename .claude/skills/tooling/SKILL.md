@@ -22,7 +22,6 @@ The argument is one of:
   - `workflow` with a What Belongs Here section: a collecting note. List its items, one line each, and point out any that are logically grouped, such as several rules that all land in the same doc. Ask Sarah which item or group this session does. That item or group is the change.
   - `workflow` without one: read all of it. The whole note is the change unless Sarah says otherwise.
   - blank, in `notes/features/tooling/`: a tooling note from before the workflow type existed. Ask Sarah whether it's a workflow note. If it is, give it `type: workflow`, remove its `status`, set its `^status` line to "Next: /tooling", and go on.
-  - anything else: it's story work. Tell Sarah it belongs in the story lifecycle, and stop.
 - **An item in a note:** find it and read the note around it. Check the note's `type` the same way.
 - **A description:** Sarah's own words. Search `notes/` for notes and items about the same thing and tell her what you found. They may already hold details or decisions.
 

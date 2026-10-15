@@ -25,10 +25,10 @@ This skill starts after the thinking is done. `/shape` gave the note its type an
 This is planning only. Don't change code. A hook blocks edits outside `notes/` and `.scratch/`.
 
 ## 1. Read the note
-Find the note in `notes/features/` and read all of it. Read the notes it links to when the Goals, Design or Open Decisions depend on them. If the Inbox has a retype line, follow the `retyping-a-note` skill's "After a retype".
+Find the note in `notes/features/` and read all of it. Read the notes it links to when the Goals, Design or Open Decisions depend on them.
 
 Check that it's ready for this skill:
-- **`type: infra` and `status: idea`.** If `type` is blank, the next step is `/shape`. If it's another type, check whether that type fits the work. If it doesn't, offer to retype the note, as AGENTS.md describes under "Editing notes". If it does, tell Sarah which skill the note needs, and stop.
+- **`type: infra` and `status: idea`.** If `type` is blank, the next step is `/shape`.
 - **`status: spec`:** its design was already approved.
   - **If the note says it's due a revision,** such as its `^status` line naming `/infra-design` or an Inbox item asking for one, it's a revision.
   - **Otherwise,** ask Sarah whether this is a revision. If it isn't, stop.

@@ -14,7 +14,7 @@ Part of [[Agent Instructions Audit]].
 
 **Full review here,** as the first story that uses them: `/final-review`, the `leftovers-checker` agent, the `target-designer` agent.
 
-**Re-checks for this step:** the `code-critic` agent (reviewed in [[Feature Assess Review]]); the `protect-config.sh` hook, `/implement` (with `first-pass.md`, `bugs.md` and `cleanup.md`) (reviewed in [[Feature Implement Review]]).
+**Re-checks for this step:** the `code-critic` agent (reviewed in Feature Assess Review); the `protect-config.sh` hook, `/implement` (with `first-pass.md`, `bugs.md` and `cleanup.md`) (reviewed in [[Feature Implement Review]]).
 
 **Decisions that apply:**
 
@@ -41,6 +41,8 @@ From the audit's scan on 2026-10-06. Line numbers are as of that day.
 - Its description is imperative, where `writing-standard`'s `instructions.md` asks for the third person under Descriptions; it becomes what and when, in about 25 words.
 - **`leftovers-checker`:** the description lists all five categories and runs 44–52 words; trim to about 20 words. :24's read-only Bash line differs from the two drift checkers'.
 - **`target-designer`:** :18-19 point to sections of AGENTS.md that load anyway; "What not to read" stays.
+- **`target-designer`'s callers:** `/assess` step 3 uses it too, to design the target before the existing code is judged, so its full review meets that step's needs as well as `/final-review`'s. Found 2026-10-15 in Feature Assess Review.
+- **`target-designer`'s inputs:** `final-review:54` sends it only the Design Handoff sections and images. In older notes, such as split children, the Meta-Instructions sit under `# Out of Scope`, so it never sees them and may treat the handoff's Mantine boundaries as binding. `/assess` step 3 sends their path too, and `target-designer` reads the Meta-Instructions it's given. Found 2026-10-15 in Feature Assess Review.
 - Wording difference at `final-review:108`: "Write nothing else to the note". Where the rule is kept: AGENTS.md "Where It Stands" says whoever moves a story forward updates the status line and the summary. Exception or drift?
 
 Moved from Agent Workflow Changes on 2026-10-06:

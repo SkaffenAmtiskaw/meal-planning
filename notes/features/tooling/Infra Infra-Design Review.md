@@ -16,7 +16,7 @@ Part of [[Agent Instructions Audit]].
 
 **Full review here,** as the first story that uses them: `/infra-design`.
 
-**Re-checks for this step:** `rule-placement` (reviewed in Writing Standard Review); the `notes-only-edits.sh` hook (reviewed in Feature Shape Review); `retyping-a-note` (reviewed in [[Feature Assess Review]]); `settling-a-decision`, the `decision-researcher` agent (reviewed in Feature Decide Review).
+**Re-checks for this step:** `rule-placement` (reviewed in Writing Standard Review); the `notes-only-edits.sh` hook (reviewed in Feature Shape Review); `settling-a-decision`, the `decision-researcher` agent (reviewed in Feature Decide Review).
 
 **Decisions that apply:**
 

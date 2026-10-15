@@ -12,7 +12,7 @@ Part of [[Agent Instructions Audit]].
 
 **Step:** Bug's `/check-drift` step, which checks the remaining work against the code, conventions, other notes and the user's comments.
 
-**Re-checks for this step:** `/check-drift`, the `code-drift-checker` agent (reviewed in [[Feature Check-Drift Review]]); the `note-drift-checker` agent (reviewed in [[Feature Assess Review]]); the `notes-only-edits.sh` hook (reviewed in Feature Shape Review).
+**Re-checks for this step:** `/check-drift`, the `code-drift-checker` agent (reviewed in [[Feature Check-Drift Review]]); the `note-drift-checker` agent (reviewed in Feature Assess Review); the `notes-only-edits.sh` hook (reviewed in Feature Shape Review).
 
 **Decisions that apply:**
 

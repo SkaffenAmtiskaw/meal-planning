@@ -34,18 +34,8 @@ The docs in `docs/` lag far behind the code, so don't treat them as the only sou
 
 When the plan, the docs and recent code don't all agree, report all three with evidence. Don't pick a winner.
 
-## Sorting each finding
-**Kind:**
-- **Mechanical:** the plan's intent still works as written, just with a different name or path.
-- **Needs a decision:** anything that changes what gets built or how.
-
-**Meaning for the note:**
-- **Plan holds:** the plan still works as written.
-- **Steps:** the remaining steps no longer hold.
-- **Approach:** the approach, or part of it, no longer holds.
-- **Blocked:** it can't go ahead until something else happens. Say what.
-
-**Verification:** all findings come from reading code. If one depends on runtime behavior you can't be sure of from the code, mark it unverified and write a quick check Sarah can do in the running app.
+## Verification
+All findings come from reading code. If one depends on runtime behavior you can't be sure of from the code, mark it unverified and write a quick check Sarah can do in the running app.
 
 ## Report format
 One block per finding:
@@ -54,8 +44,6 @@ One block per finding:
 **Where in the note:** section, behavior, approach row or step
 **What changed:** with `file:line` evidence, and the commit if it changed since `confirmed`
 **For conventions:** what the plan says, what the docs say, what recent code does (with the example files)
-**Kind:** mechanical / needs a decision
-**Meaning:** plan holds / steps / approach / blocked
 **Verification:** read in code, or unverified plus the check for Sarah
 
 After the findings, add:

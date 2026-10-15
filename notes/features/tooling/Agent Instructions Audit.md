@@ -5,7 +5,7 @@ confirmed: 2026-10-06
 # Where It Stands
 Next: its child stories ^status
 
-Split on 2026-10-06 into workflow-step reviews, one for each step of each note type's workflow except Feature's `/shape` step, which has five, plus AGENTS.md, the memory folder, Note Conventions with the Roadmap header, and Conventions Review. The scan's findings and the open Agent Workflow Changes items about each step moved into the review notes. Feature Shape Review, Shared Note Procedures Review, Writing Standard Reviewer, Scope-Router Review, Writing Standard Review, Feature Template Review, Feature Decide Review, Merging Routed Designs and Overly Prescriptive Instructions are done, and the rest aren't done yet.
+Split on 2026-10-06 into workflow-step reviews, one for each step of each note type's workflow except Feature's `/shape` step, which has five, plus AGENTS.md, the memory folder, Note Conventions with the Roadmap header, and Conventions Review. The scan's findings and the open Agent Workflow Changes items about each step moved into the review notes. Feature Shape Review, Shared Note Procedures Review, Writing Standard Reviewer, Scope-Router Review, Writing Standard Review, Feature Template Review, Feature Decide Review, Merging Routed Designs, Overly Prescriptive Instructions and Feature Assess Review are done, and the rest aren't done yet.
 
 # Inbox
 
@@ -49,6 +49,9 @@ The review covers every file the step uses: its skill, and the agents, shared sk
 ### Embed relevant detail rather than link to it
 **Decided in:** planning these reviews, 2026-10-06. Sarah doesn't want to tab between notes to read relevant detail, so each review note embeds the decisions that apply to it instead of linking them.
 
+### No procedure for a rare case that differs each time
+**Decided in:** Feature Assess Review, 2026-10-15. Sarah dropped the retype workflow (`retyping-a-note` and each skill's "After a retype" line) because a retype is rare and its circumstances differ every time, so a prescribed procedure could cause problems. When such a case comes up, the agent asks the user how to handle it rather than stopping.
+
 # Current State
 Scanned 2026-10-06 by eleven read-only subagents, each reading its files in full against the `writing-standard` skill (SKILL.md and `instructions.md`) and `rule-placement`, and grepping `.claude/skills`, `.claude/agents`, AGENTS.md, `docs/` and the notes for each rule's other copies. Word counts are from `wc -w`. Line numbers are as of that day, so re-check them before planning. Sarah said 2026-10-06 that the findings go in unreviewed, and that the agent working on each piece after the split goes through them with her.
 
@@ -78,7 +81,7 @@ Each finding moved into the review note it belongs to on 2026-10-06.
 | Feature Decide Review | Feature's `/decide` step; full review of `/decide`, the `decision-researcher` agent |
 | Merging Routed Designs | a skill that fits design material that isn't for a single story into the stories it belongs to: a handoff that affects several stories, or design material routed into a feature story's Inbox |
 | Overly Prescriptive Instructions | a check, in drafting or reviewing agent instructions, that catches an instruction fixed tighter than its task needs, and a rule that a change gets only the length and position its point earns |
-| [[Feature Assess Review]] | Feature's `/assess` step; full review of `/assess`, `retyping-a-note`, the `split-checker` agent, the `note-drift-checker` agent, the `code-critic` agent |
+| Feature Assess Review | Feature's `/assess` step; full review of `/assess`, the `split-checker` agent, the `note-drift-checker` agent, the `code-critic` agent, and a new `splitting-a-story` skill for the split walkthrough `/assess` and `/plan-steps` share |
 | [[Feature Check-Drift Review]] | Feature's `/check-drift` step; full review of `/check-drift`, the `code-drift-checker` agent |
 | [[Feature Plan-Steps Review]] | Feature's `/plan-steps` step; full review of `/plan-steps`, `running-the-app`, the `plan-checker` agent |
 | [[Feature Implement Review]] | Feature's `/implement` step; full review of `/implement` (with `first-pass.md`, `bugs.md` and `cleanup.md`), the `protect-config.sh` hook |
