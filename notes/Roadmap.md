@@ -39,7 +39,6 @@
 # Now
 
 # Next
-3. [[Feature Template Review]] ![[Feature Template Review#^status]] 🎯 [[Dev Foundations]]
 4. [[Feature Decide Review]] ![[Feature Decide Review#^status]] 🎯 [[Dev Foundations]]
 5. [[Merging Routed Designs]] ![[Merging Routed Designs#^status]] 🎯 [[Dev Foundations]]
 6. [[Feature Assess Review]] ![[Feature Assess Review#^status]] 🎯 [[Dev Foundations]]

@@ -14,7 +14,7 @@ Part of [[Agent Instructions Audit]].
 
 **Full review here,** as the first story that uses them: `notes/templates/Cleanup.md`.
 
-**Re-checks for this step:** `/shape`, the `notes-only-edits.sh` hook (reviewed in Feature Shape Review); `settling-a-decision` (reviewed in [[Feature Decide Review]]); `roadmap-placement`, `deleting-a-note` (reviewed in Shared Note Procedures Review); the `scope-router` agent and `filing-work` (reviewed in Scope-Router Review); `notes/templates/Idea.md` (reviewed in [[Feature Template Review]]).
+**Re-checks for this step:** `/shape`, the `notes-only-edits.sh` hook (reviewed in Feature Shape Review); `settling-a-decision` (reviewed in [[Feature Decide Review]]); `roadmap-placement`, `deleting-a-note` (reviewed in Shared Note Procedures Review); the `scope-router` agent and `filing-work` (reviewed in Scope-Router Review); `notes/templates/Idea.md` (reviewed in Feature Template Review).
 
 **Decisions that apply:**
 
@@ -29,7 +29,6 @@ Part of [[Agent Instructions Audit]].
 ## Issues Found
 From the audit's scan on 2026-10-06. Line numbers are as of that day.
 - `Cleanup.md:34` sets status and `:18` says to use another template, repeating the skills and Note Conventions.
-- Wording difference at the Out of Scope comment in `Cleanup.md:27`: "each item should also be on the Roadmap". Where the rule is kept: AGENTS.md "Out-of-scope work" routes items to a note, a sweep, a roundup or a Roadmap line, or drops them. Exception or drift?
 
 # Questions
 - Was `cleanup` the right type for [[Agent Instructions Audit]], an audit of agent instructions? `cleanup` sent it on to `/plan-steps`, whose checks assume a running app, and Sarah said on 2026-10-06 that `/plan-steps` was a bad fit for it. Either `cleanup` was the wrong type, or `/plan-steps` isn't the right skill for a `cleanup`. If this review doesn't settle it, [[Cleanup Plan-Steps Review]] asks it again.

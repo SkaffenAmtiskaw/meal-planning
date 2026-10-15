@@ -5,7 +5,7 @@ confirmed: 2026-10-06
 # Where It Stands
 Next: its child stories ^status
 
-Split on 2026-10-06 into workflow-step reviews, one for each step of each note type's workflow except Feature's `/shape` step, which has five, plus AGENTS.md, the memory folder, Note Conventions with the Roadmap header, and Conventions Review. The scan's findings and the open Agent Workflow Changes items about each step moved into the review notes. Feature Shape Review, Shared Note Procedures Review, Writing Standard Reviewer, Scope-Router Review and Writing Standard Review are done, and the rest aren't reviewed yet.
+Split on 2026-10-06 into workflow-step reviews, one for each step of each note type's workflow except Feature's `/shape` step, which has five, plus AGENTS.md, the memory folder, Note Conventions with the Roadmap header, and Conventions Review. The scan's findings and the open Agent Workflow Changes items about each step moved into the review notes. Feature Shape Review, Shared Note Procedures Review, Writing Standard Reviewer, Scope-Router Review, Writing Standard Review and Feature Template Review are done, and the rest aren't reviewed yet.
 
 # Inbox
 
@@ -74,9 +74,9 @@ Each finding moved into the review note it belongs to on 2026-10-06.
 | Writing Standard Reviewer | a reviewer subagent that checks each draft of a doc or agent instruction against `writing-standard` before the user sees it |
 | Scope-Router Review | Feature's `/shape` step; full review of the `scope-router` agent |
 | Writing Standard Review | Feature's `/shape` step; full review of `writing-standard`, `rule-placement`, and a new `keeping-sessions-lean` skill |
-| [[Feature Template Review]] | Feature's `/shape` step; full review of `notes/templates/Idea.md`, `notes/templates/Feature.md` and the comments the templates share |
+| Feature Template Review | Feature's `/shape` step; full review of `notes/templates/Idea.md`, `notes/templates/Feature.md` and the comments the templates share |
 | [[Feature Decide Review]] | Feature's `/decide` step; full review of `/decide`, the `decision-researcher` agent |
-| [[Merging Routed Designs]] | a skill that merges design material routed into a feature story's Inbox into its design |
+| [[Merging Routed Designs]] | a skill that fits design material that isn't for a single story into the stories it belongs to: a handoff that affects several stories, or design material routed into a feature story's Inbox |
 | [[Feature Assess Review]] | Feature's `/assess` step; full review of `/assess`, `retyping-a-note`, the `split-checker` agent, the `note-drift-checker` agent, the `code-critic` agent |
 | [[Feature Check-Drift Review]] | Feature's `/check-drift` step; full review of `/check-drift`, the `code-drift-checker` agent |
 | [[Feature Plan-Steps Review]] | Feature's `/plan-steps` step; full review of `/plan-steps`, `running-the-app`, the `plan-checker` agent |
@@ -170,7 +170,8 @@ Each finding moved into the review note it belongs to on 2026-10-06.
    - **Decided 2026-10-06:** Infra moves out: a new `/infra-build` command builds an infra story's Build Order, with its own `protect-config.sh` hook. Infra is woven through nearly every step of `/implement` and follows a Build Order rather than `/plan-steps`' steps. The procedures both commands share (settling open choices, writing tests first, running the checks, cleanup, fixing a bug) move into shared-rule skills that `/final-review` also uses, instead of pointing into `/implement`'s SKILL.md.
    - **Still open:** whether feature, pattern, sweep, roundup, bug and cleanup all stay in `/implement`. Sarah can't judge it until the skills before `/implement` are reworked, since what they hand `/implement` decides whether one command fits. It's answered in the story that reworks `/implement`, after that work.
 9. What does a template comment hold? ^decision-9
-   - **Decided 2026-10-06:** Only what a person needs to fill in the section by hand. A section the user fills in gets one line on what it's for, plus its format where it has one, and the template is the one home for that format. A section a skill writes gets at most "Written by `/<skill>`." A rule an agent follows lives in its skill, agent or AGENTS.md, so the Done When item format moves to `/roadmap` and the hub's Coverage format moves to the skill that writes it. Body text that becomes part of the note, such as the Meta-Instructions blocks, isn't a comment and isn't covered by this.
+   - **Decided 2026-10-14:** Nothing, unless it earns its place like any other line: a reader would get the section wrong without it, and nothing else tells them, such as the format a person or `filing-work` follows when adding a roundup issue. A rule an agent follows lives in its skill, agent or AGENTS.md, so the Done When item format moves to `/roadmap` and the hub's Coverage format moves to the skill that writes it. Body text that becomes part of the note, such as the Meta-Instructions blocks, isn't a comment and isn't covered by this. Sarah's call: a comment costs attention like any other line, and one copied into several templates has to be kept in sync.
+     - Rejected: a one-line comment on each section the user fills in, saying what it's for, and "Written by `/<skill>`" on each section a skill writes (decided 2026-10-06) - most of those lines tell the reader nothing the heading doesn't.
 10. What does a revision with `/infra-design` or `/architect` rework? ^decision-10
     - **Decided 2026-10-06:** Only what its trigger names, such as the Inbox item, the `^status` line or Sarah's answer. `/infra-design` still runs the Goals check, and every other section keeps its approval unless the rework changes it. Today a revision re-approves every section; Branching and Releases' revision would take about 55 approvals.
 11. What does a Build Order's Implementer check say? ^decision-11
