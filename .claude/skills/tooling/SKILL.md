@@ -75,7 +75,7 @@ When everything is written, triage the out-of-scope list as AGENTS.md describes 
 Once she approves, bring the notes in line with the change. Search all of `notes/`, including `archive/` and the Roadmap, for:
 - the note or item this session worked from
 - items elsewhere that this change does or settles, such as a sweep item, a Docs Updates item or another note's open question
-- text the change made wrong, such as a `^status` line naming a renamed skill, or a note describing the old workflow
+- text the change made wrong, such as a `^status` line naming a renamed skill, or a note describing the old workflow. This search covers other stories' remaining work too, not only the effects you notice there.
 
 Handle each one:
 - **Sarah's comments:** if one is now done or out of date, handle it as AGENTS.md describes under "Editing notes". The bullets below are for everything else.

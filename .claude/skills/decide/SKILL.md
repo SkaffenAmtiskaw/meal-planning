@@ -37,7 +37,6 @@ If the question is "Is this worth doing?" and the user decides it isn't, the sto
 ### Knock-on effects
 After recording each answer, look at what it changes:
 - **This note:** other sections the answer lands in, such as a section the question says to record it in, the chosen Fix Option, or a hub's Coverage or Child Stories table. Draft each change and go through them with the user.
-- **Other notes:** add each effect on another note to the out-of-scope list.
 - **New stories:** if the answer implies work no note covers yet, and the note is a hub, add it to a list of new child stories for step 5. Otherwise, add it to the out-of-scope list.
 - **New questions:** if `decision-researcher` found a blocking question that isn't on the note, or the answer raised one, tell the user what needs deciding, add it to Open Decisions, and ask whether they already have an answer in mind:
   - **They have one:** go on from their answer as the `settling-a-decision` skill describes.
@@ -60,7 +59,7 @@ If the hub's list of new child stories is empty, skip this step. Otherwise, prop
 3. Add a Roadmap line for it.
 
 ## 6. Out-of-scope work
-Triage the out-of-scope list. For an effect on another note or a new story from step 3, offer route or drop only, since it's another note's work. If you send `scope-router` an item that came from an answer, include the question it answers and its Decided line, so it can name the decision the item comes from.
+Triage the out-of-scope list. For a new story from step 3, offer route or drop only, since it's another note's work. If you send `scope-router` an item that came from an answer, include the question it answers and its Decided line, so it can name the decision the item comes from.
 
 ## 7. Stop
 Tell the user what's left:

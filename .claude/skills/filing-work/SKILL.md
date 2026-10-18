@@ -12,7 +12,6 @@ Each piece of work gets one home in the vault, so it's found when that home is w
 Otherwise, take the first home that fits:
 1. **A note or Roadmap line that already covers it.** Nothing needs adding.
 2. **The note of a story or hub it belongs to:**
-   - **If it's an impact from another story's decision,** such as a risk that this story's work could break something the other story adds: write it as a `> [!warning]` callout directly above the text it's about. Name the risk, the story and decision it comes from, and what must not break, as an acceptance criterion. Leave out how to resolve it, because the story works that out against the code as it stands when it's planned. If the note is `ready` or `in-progress` and one of its remaining steps touches the code at risk, also add the criterion to that step as a check.
    - **If it's design material,** such as part of a design handoff: add it to the Inbox of the story it most likely belongs to, and put "/place-design" first in that story's `^status` line, keeping its old next step after it, such as "Next: /place-design, then /implement Step 4". Leave its `status` as it is. `/place-design` decides where the design really goes and moves each story it reaches to its next step, so a likely home is enough here.
    - **Otherwise:** add it to the note's Inbox.
 
