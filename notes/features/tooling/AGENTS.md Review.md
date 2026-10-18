@@ -64,7 +64,7 @@ A draft from the scan, for this review to start from. It replaces AGENTS.md:15 a
 - **Setup outside the repo (:13):** its second half restates the procedure for checks only Sarah can do; it becomes "walk the user through checks only they can do the same way".
 - **:98, Immature stories:** an edge-case list of three kinds; it becomes the principle with one example.
 - **:118, scratch files:** it says to link the report when showing findings, but not that the findings themselves go in chat; adding that makes the `scratch-files-not-for-sarah` memory redundant.
-- **:145:** the break-it clause in the `pnpm test:agent` line repeats `implement/first-pass.md:28`; it goes.
+- **:145:** the break-it clause in the `pnpm test:agent` line repeats `writing-implementation-steps/test-only-checks.md:7`; it goes.
 - **:150, Git and files:** committing only this session's files leaves out the user's forgotten hand edits; the rule asks about each unexpected change, by file and content, and leaves a note another session is working on alone (from the `ask-about-unexpected-changes-when-committing` and `leave-other-sessions-notes-alone` memories).
 - **:152-153:** the config and ignore-comment rules have no reason, and "explicitly" is emphasis.
 - **Memory policy:** project rules live in checked-in files, memory holds only how to work with the user, and a memory is deleted once its rule is checked in (from `docs-updates-note-scope`, which holds it nowhere else). Any session can save a memory, so it goes in AGENTS.md.

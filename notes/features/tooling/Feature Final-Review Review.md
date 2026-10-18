@@ -14,7 +14,7 @@ Part of [[Agent Instructions Audit]].
 
 **Full review here,** as the first story that uses them: `/final-review`, the `leftovers-checker` agent, the `target-designer` agent.
 
-**Re-checks for this step:** the `code-critic` agent (reviewed in Feature Assess Review); the `protect-config.sh` hook, `/implement` (with `first-pass.md`, `bugs.md` and `cleanup.md`) (reviewed in [[Feature Implement Review]]).
+**Re-checks for this step:** the `code-critic` agent (reviewed in Feature Assess Review); the `protect-config.sh` hook, the `building-code` skill (with `bugs.md`, `test-only-checks.md` and `design-comparison.md`) (reviewed in Feature Implement Review).
 
 **Decisions that apply:**
 
@@ -34,7 +34,6 @@ From the audit's scan on 2026-10-06. Line numbers are as of that day.
 - :17-24 repeat `leftovers-checker:27-31`; it becomes one sentence: the user reviewed each step's diff, so this review looks across steps.
 - :61 uses "fix here / route / skip" where AGENTS.md says "pull in / route / drop", and sits in step 3 while governing steps 4–5.
 - :96-97 restate the approval rule; :71 puts its condition after; :89 has no reason (fixes are ordered by dependency); :87 repeats AGENTS.md's "Drop it".
-- **Building a step:** `final-review:85,94,96-97` points into `implement/SKILL.md`'s "Settle the open choices", "Write the tests first", "Run the checks" and "Handle her feedback", and into `cleanup.md` and `bugs.md`, so a fix loads all of `/implement`. These become shared-rule skills (decision 8). `bugs.md:4` already says any skill can follow it.
 - **`code-critic`'s callers:** it's written for `/assess` reviewing code before it's built (`code-critic.md:11,17`). `/final-review` calls it on built code and `/investigate` with a fix's job; it says how its checks change for each.
 - The "Save its report to `.scratch/<note name> - …`" line repeats AGENTS.md's "Subagent reports and scratch files"; only the file name is the skill's own.
 - The "Find a home for out-of-scope items" step ("if the list is empty, skip; otherwise route as AGENTS.md describes") repeats AGENTS.md; it becomes one line in the last step.

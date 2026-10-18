@@ -12,7 +12,7 @@ Part of [[Agent Instructions Audit]].
 
 **Step:** Sweep's `/final-review` step, which reviews how the code fits together across the whole story.
 
-**Re-checks for this step:** `/final-review`, the `leftovers-checker` agent, the `target-designer` agent (reviewed in [[Feature Final-Review Review]]); the `code-critic` agent (reviewed in Feature Assess Review); the `protect-config.sh` hook, `/implement` (with `first-pass.md`, `bugs.md` and `cleanup.md`) (reviewed in [[Feature Implement Review]]).
+**Re-checks for this step:** `/final-review`, the `leftovers-checker` agent, the `target-designer` agent (reviewed in [[Feature Final-Review Review]]); the `code-critic` agent (reviewed in Feature Assess Review); the `protect-config.sh` hook, the `building-code` skill (with `bugs.md`, `test-only-checks.md` and `design-comparison.md`) (reviewed in Feature Implement Review).
 
 **Decisions that apply:**
 

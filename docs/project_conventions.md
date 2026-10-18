@@ -4,6 +4,9 @@
 # Barrel Files
 - Barrel files should NEVER have logic.
 
+# Imports
+- Import through a path alias from `tsconfig.json` (`@/` for `src/`, `#mocks/` for `test/mocks/` and so on) whenever it's shorter than the relative path, such as `@/_components` rather than `../../../../_components`.
+
 # Unit Tests
 - Reusable mocks should be placed in `test/mocks` - mock files should NEVER be in `src/`
 

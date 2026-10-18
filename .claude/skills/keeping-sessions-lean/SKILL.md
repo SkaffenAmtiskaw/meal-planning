@@ -9,7 +9,7 @@ Each session should load only the instructions it uses, because instructions a s
 - AGENTS.md loads into every session and every subagent, and the memory index into every session.
 - Most skill and agent descriptions load into every session.
 - A skill's body loads on each run, and its supporting files and the files it reads load when it reads them.
-- A shared-rule skill loads when a session invokes it or an agent preloads it.
+- A shared-rule skill loads when a session invokes it, or when an agent preloads it or reads it.
 
 The ways to keep a session to the instructions it uses each fit a different shape of problem:
 - A rule goes where only the sessions that need it load it. The `rule-placement` skill says where each kind of rule goes, including the next two.

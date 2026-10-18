@@ -23,7 +23,10 @@ If you're rewriting a section or a whole file, draft it from what it has to do r
 Open the file, and each section, with what the reader most needs: what it's for and its main point. Details, cases and background follow. A reader who stops early, or skims to find their place, still gets the point.
 
 ## Put Conditions Before Instructions
-Write "If ..., do Y. Otherwise, do X." Never write "Do X." and then, in a later sentence, "Don't do X when ...". Readers act on the plain instruction before they reach the exception, and agents often miss the exception altogether.
+Write "If ..., do Y. Otherwise, do X." Never write "Do X." and then, in a later sentence, "Don't do X when ...". Readers act on the plain instruction before they reach the exception, and agents often miss the exception altogether. If a condition takes more than a short clause, split the instruction into its cases rather than stacking clauses ahead of it. A reader can't tell what a stack of clauses is for until they reach the instruction.
+
+## Keep Each Sentence to One Idea
+A reader should be able to follow each sentence on the first read, without going back to see what goes with what. So give each sentence one idea, and keep its verb close to its subject and object. For example, "Work out from what the file is for the list the bullets below describe" reads more easily as "Work out the list the bullets below describe. Base it on what the file is for." A sentence that packs a condition, an instruction and a reason together often breaks this. If one does, give the reason a sentence of its own. A split adds a few words but no idea. A reader who goes back pays more than those words cost, and one who reads on may act on the wrong reading.
 
 ## Say It Plainly and the Same Way Each Time
 Write nothing in shorthand that only its writer understands, such as "Asks the user them". Use one term for each thing throughout, because a reader who meets a second term assumes it means something different.
@@ -33,6 +36,9 @@ Give each rule or convention its reason, in a sentence or so. A reader who knows
 
 ## Use Lists Only for Separate Items
 Write connected ideas as prose, and keep lists for items that truly stand apart, such as the steps of a sequence or the cases of one rule. A run of short bullets drops the words that link ideas, like "because", "so" and "unless", and leaves the reader to rebuild them.
+
+## Order Each List for Its Reader
+Put a list's items in an order the reader can use, such as the order things happen, the order the reader meets them or the most common first. In a list with no order, the reader has to read every item to find theirs, and a case that's missing or covered twice is hard to spot.
 
 ## Title-Case Headers
 Headers are title-cased, as the headers in this file are. It's a slight preference, so follow it in what you write, but never treat a header's case as a reason to reject or rework a draft.

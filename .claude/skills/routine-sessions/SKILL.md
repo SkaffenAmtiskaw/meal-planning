@@ -34,7 +34,7 @@ The session sees the repo as Sarah last pushed it, plus its cloud environment's 
 - no work she hasn't pushed
 - nothing that reads such files on its own, such as the dev server loading `.env.local`
 
-For example, the `running-the-app` skill starts the dev server and signs in through the link server against Sarah's local dev database, so a routine's skill never loads it, or anything that uses it: the `bug-reproducer` subagent, `/implement`'s first pass or bug steps, or `/investigate`.
+For example, the `running-the-app` skill starts the dev server and signs in through the link server against Sarah's local dev database, so a routine's skill never loads it, or anything that uses it: the `bug-reproducer` subagent, the `building-code` skill's acceptance checks or bug fixes, or `/investigate`.
 
 A value the session needs that isn't in the repo comes from a cloud environment variable, named in the routine's `routine.md`.
 

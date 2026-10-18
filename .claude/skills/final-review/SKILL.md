@@ -82,7 +82,7 @@ Found by: [agent or check]
 Proposed: [fix here, with the fix in a sentence or two / route to the notes, and why]
 ```
 
-Wait for her answer: fix here, route to the notes, skip, or something else. If she chooses fix here and the fix has open choices, settle them now, following "Settle the open choices" in `.claude/skills/implement/SKILL.md`. By the end of this step, every fix must be fully decided.
+Wait for her answer: fix here, route to the notes, skip, or something else. If she chooses fix here and the fix has open choices, settle them now, as the `building-code` skill describes in "Read the Plan and Check It Fits" and "Write It Test First". By the end of this step, every fix must be fully decided.
 
 Record each answer in the findings file as you go. Routed findings join the out-of-scope list. Skipped findings are dropped and never recorded anywhere.
 
@@ -91,10 +91,10 @@ Don't start fixing until every finding has an answer.
 ## 6. Make the fixes, one at a time
 Put the approved fixes in dependency order. For each one:
 1. Tell Sarah in one line which fix you're on.
-2. Make it following `.claude/skills/implement/SKILL.md`: "Use current library APIs", "Write the tests first, then the code", and "Run the checks", including its `cleanup.md`. The open choices were settled in step 5. If a new one comes up, stop and ask. If the fix turns out bigger than it looked, stop and ask Sarah whether to route it to the notes instead.
-3. If the fix changes anything she could see in the app, redo the story's acceptance checks that cover it, as `first-pass.md` in the implement skill's folder describes.
+2. Make it as the `building-code` skill describes in "Write It Test First" and "Clean Up and Run the Checks". The open choices were settled in step 5. If a new one comes up, stop and ask. If the fix turns out bigger than it looked, stop and ask Sarah whether to route it to the notes instead.
+3. If the fix changes anything she could see in the app, redo the story's acceptance checks that cover it, as the `building-code` skill describes in "Do the Acceptance Checks".
 4. **If the fix's exact form was settled in step 5,** as AGENTS.md describes under "Approval covers the edits": add it to the rollup for step 9 with any acceptance checks redone and what you saw, and go on to the next approved fix in the order.
-5. **Otherwise:** report the files changed, the tests and the logic each covers, the checks run, and the acceptance checks redone with what you saw. Show her the change itself: the new text in the chat, or a link to each changed file at the line that changed. Ask her whether she approves the fix, and wait. Handle any feedback as "Handle her feedback" in the implement skill describes, using its `bugs.md` for bugs. Once she approves, go on to the next approved fix in the order.
+5. **Otherwise:** report the files changed, the tests and the logic each covers, the checks run, and the acceptance checks redone with what you saw. Show her the change itself: the new text in the chat, or a link to each changed file at the line that changed. Ask her whether she approves the fix, and wait. Handle any feedback as the `building-code` skill describes in "Handle the User's Feedback". Once she approves, go on to the next approved fix in the order.
 
 ## 7. Find a home for out-of-scope items
 If the out-of-scope list is empty, skip this.

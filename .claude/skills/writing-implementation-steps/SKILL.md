@@ -36,7 +36,7 @@ Each check:
 ### The User's Checks and the Implementer's
 Each check costs the user time, so the user's checks stay within the limits below, and anything else the step needs verified goes in its Approach, for the implementer:
 - **A case or two per rule.** A block of cases sharing one mechanism, such as the bans in one Biome override, fails together, so one case proves the block.
-- **The finished step only.** The user never checks the old behavior first. If a check compares against the state before the change, such as a test count, the implementer records that state before changing anything. Break-it checks are fine, since they're edits to the finished step.
+- **The finished step only.** The user never checks the old behavior first. Break-it checks are fine, since they're edits to the finished step.
 - **Nothing already shown.** If an earlier check, or a run the implementer can do on its own machine, already proves something, there's no check for it. For example, there's no need to break a secret on GitHub to see a job fail when the implementer can run the job's script against a local server that returns 401.
 
 ## Coverage

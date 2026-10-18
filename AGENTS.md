@@ -135,15 +135,7 @@ Read the docs a task touches when it needs them, not all up front:
 
 Before you show wording you've drafted for, or written in, one of the files `writing-standard` covers, whether as a draft in the chat or as a written change your summary names, check whether it needs a review by the `writing-reviewer` subagent:
 - **If its exact form was settled, or it's mechanical,** as "Approval covers the edits" describes, it doesn't, because its wording is already decided, or the edit leaves what the text means unchanged.
-- **Otherwise, including each draft you revise after feedback,** it does. Reading the standard isn't enough on its own, because a writer anchors on its own draft and misses where it breaks the standard, while the reviewer reads it fresh.
-
-For each review:
-1. Send the reviewer each file's path, the wording (the whole file if it's new, or each changed passage and where it goes) and what the change is for.
-2. Go through its findings:
-   - **If fixing one needs a choice that isn't settled,** such as whether a difference from a rule kept elsewhere is deliberate, ask about that choice alone, as "Approval covers the edits" describes, then fix the text.
-   - **If you agree with one,** fix the text.
-   - **If you disagree with one,** leave the text as it is, and when you show the change, raise the finding and why you disagree.
-3. If you fixed any, have the reviewer check the passages you changed once more, and go through its findings as step 2 describes.
+- **Otherwise, including each draft you revise after feedback,** it does. Reading the standard isn't enough on its own, because a writer anchors on its own draft and misses where it breaks the standard, while the reviewer reads it fresh. Run the review as the `reviewing-a-draft` skill describes.
 
 ## Library APIs
 The libraries in this project are newer than your training data. Never use an API from memory. Every API you use needs a source:

@@ -12,11 +12,13 @@ Part of [[Agent Instructions Audit]].
 
 **Step:** Sweep's `/implement` step, which builds the plan one step at a time.
 
-**Re-checks for this step:** `/implement` (with `first-pass.md`, `bugs.md` and `cleanup.md`), the `protect-config.sh` hook (reviewed in [[Feature Implement Review]]); `running-the-app` (reviewed in Feature Plan-Steps Review).
+**Re-checks for this step:** `/implement` (with `re-planning.md`), the `building-code` skill (with `bugs.md`, `test-only-checks.md` and `design-comparison.md`), the `protect-config.sh` hook (reviewed in Feature Implement Review); `running-the-app` (reviewed in Feature Plan-Steps Review).
 
 **Decisions that apply:**
 
 ![[Agent Instructions Audit#^decision-1]]
+
+![[Agent Instructions Audit#^decision-8]]
 
 ![[Agent Instructions Audit#^decision-17]]
 
@@ -24,3 +26,4 @@ Part of [[Agent Instructions Audit]].
 None known yet. This review re-checks the files above for this step.
 
 # Questions
+- Decision 8's open part, for sweep stories: does a sweep story stay in `/implement`, or does its step need a command of its own? Sarah decided 2026-10-15 that each type is judged in its own Implement review. Record the answer under decision 8 in [[Agent Instructions Audit]].
