@@ -42,7 +42,7 @@ Where each memory to delete already has its rule, as of 2026-10-06. Some of thes
 | `no-rules-for-hypothetical-cases` | `infra-design:66`, `architect:56` |
 | `one-question-at-a-time` | AGENTS.md:9 |
 | `plan-outline-check-summary` | `plan-steps` step 4 |
-| `preserve-design-refs-when-moving-work` | `filing-work` "Content From Another Note", `close:36` |
+| `preserve-design-refs-when-moving-work` | `filing-work/content-from-another-note.md`, `close:36` |
 | `prompt-doc-updates-immediately` | AGENTS.md:33-39 |
 | `recommend-on-best-practice-not-taste` | AGENTS.md:32, `decision-researcher:35,57`, `decide:72` |
 | `records-belong-in-docs` | `close:20`, `tooling:86` |
@@ -53,7 +53,7 @@ Where each memory to delete already has its rule, as of 2026-10-06. Some of thes
 | `shape-reads-note-conventions` | `shape:28` |
 | `skill-invocation-confirms-relevance` | `shape:43`, Note Conventions:16, AGENTS.md:78 |
 | `skip-obvious-outline-confirmations` | `plan-steps` step 4 |
-| `split-stories-design-in-hub` | `split-checker:37`, `Hub.md:22`, `filing-work` "Content From Another Note" |
+| `split-stories-design-in-hub` | `split-checker:35`, `Hub.md:22`, `filing-work/content-from-another-note.md` |
 | `step-plan-standards` | `writing-implementation-steps` "One Idea per Step" and "Something to See in Every Step" |
 | `story-ready-definition` | Note Conventions:21-22 |
 | `tooling-enforcement-is-docs` | `infra-design:21` |

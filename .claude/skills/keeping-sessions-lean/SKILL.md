@@ -12,15 +12,20 @@ Each session should load only the instructions it uses, because instructions a s
 - A shared-rule skill loads when a session invokes it, or when an agent preloads it or reads it.
 
 The ways to keep a session to the instructions it uses each fit a different shape of problem:
-- A rule goes where only the sessions that need it load it. The `rule-placement` skill says where each kind of rule goes, including the next two.
-- A procedure several skills follow goes in a shared-rule skill.
-- A rule only one branch of a run needs goes in a supporting file.
-- A skill points to the section of a long shared file it needs rather than loading the whole file, as "What a Skill Reads" describes.
+- A rule goes where only the sessions that need it load it. The `rule-placement` skill says where each kind of rule goes, including:
+  - A procedure several skills follow goes in a shared-rule skill.
+  - A rule only one branch of a run needs goes in a supporting file.
+- A skill or agent reads only the files its steps need, since each one loads whole, as "What a Skill Reads" describes.
 - A step that reads a lot to reach a short answer goes to a subagent, as "When to Hand Work to a Subagent" describes.
 - A skill whose modes share little splits into separate commands, as "When to Split a Skill" describes.
 
 ## What a Skill Reads
-Each file a skill or agent tells the agent to read loads in every run of it, and since nearly every session runs a skill, a shared file that many skills read loads in nearly every session. So give each file a skill reads a reason from its steps. If it needs only part of a long shared file, such as Note Conventions, point to the section it needs, or state the one fact it uses as `rule-placement` allows, rather than loading the whole file.
+A skill or agent reads a file only if one of its steps needs it, because each file it says to read loads in every run of it.
+
+Invoking a skill, preloading it with `skills:` and reading a file with Read each load the whole file, even when a skill names only one section of the file. So when a skill or agent needs only part of a shared file:
+- **If it needs one fact from a long shared file:** it states the fact, as `rule-placement` allows.
+- **Otherwise, if the file is a shared-rule skill:** the part goes in a supporting file in that skill's folder, and the skill or agent that needs the part reads only that file, as `rule-placement` describes.
+- **Otherwise,** such as for Note Conventions or a doc: it reads the whole file. These files are laid out for the people who read them, so they aren't split up for agents.
 
 ## When to Hand Work to a Subagent
 A subagent works in its own context, with its instructions in its agent file, and only its report comes back to the session that called it. If a step needs the user's answers along the way, or the session needs what the step reads, such as the files it will edit next, keep the step in the session, since a subagent can't ask the user anything. Otherwise, if the step reads a lot to reach a short answer, such as comparing a note's remaining work against the code, hand it to a subagent, so the session loads only the answer, not the step's instructions or everything it read.

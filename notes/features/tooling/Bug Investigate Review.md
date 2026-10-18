@@ -14,7 +14,7 @@ Part of [[Agent Instructions Audit]].
 
 **Full review here,** as the first story that uses them: `/investigate`, the `bug-reproducer` agent.
 
-**Re-checks for this step:** the `notes-only-edits.sh` hook (reviewed in Feature Shape Review); the `code-critic` agent (reviewed in Feature Assess Review); the `decision-researcher` agent (reviewed in Feature Decide Review); `running-the-app` (reviewed in Feature Plan-Steps Review).
+**Re-checks for this step:** the `notes-only-edits.sh` hook (reviewed in Feature Shape Review); the `code-critic` agent (reviewed in Feature Assess Review); the `decision-researcher` agent (reviewed in Feature Decide Review); `running-the-app` and its `which-user.md` (reviewed in Feature Plan-Steps Review).
 
 **Decisions that apply:**
 
@@ -37,6 +37,6 @@ From the audit's scan on 2026-10-06. Line numbers are as of that day.
 - Its description is imperative, where `writing-standard`'s `instructions.md` asks for the third person under Descriptions; it becomes what and when, in about 25 words.
 - **`bug-reproducer`:** :20 repeats what its tools already enforce; :19 and :21 merge; :11's reason is restated at `investigate:21`, which keeps only "don't send it a theory"; :27 and :29 put conditions after. :25 and :27 are deliberate exceptions and stay.
 - Wording difference at `investigate:82,96`: recommend one option. Where the rule is kept: AGENTS.md "Recommendations" says to say so when it comes down to her preference. Exception or drift?
-- Wording difference at `bug-reproducer:29`: set the screen size "with `resize_window`". Where the rule is kept: `running-the-app:21` says use the `mobile` preset, then set it back to `desktop`. Exception or drift?
+- Wording difference at `bug-reproducer:29`: set the screen size "with `resize_window`". Where the rule is kept: `running-the-app:16` says use the `mobile` preset, then set it back to `desktop`. Exception or drift?
 
 # Questions

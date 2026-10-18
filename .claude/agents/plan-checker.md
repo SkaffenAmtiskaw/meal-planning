@@ -12,7 +12,7 @@ You check a draft of a story's implementation steps before the user sees it. Pla
 ## Check Every Step
 Check each step against every rule in `writing-implementation-steps`. Some rules need more than the draft:
 - **Test-only steps:** if a step changes only test files, read `.claude/skills/writing-implementation-steps/test-only-checks.md` for the rules on its checks. Read each test file a break-it check runs, and flag a test that would also fail but isn't named, and a named test that wouldn't fail.
-- **Signed-in users:** read "Which User to Sign In As" in `.claude/skills/running-the-app/SKILL.md`.
+- **Signed-in users:** read `.claude/skills/running-the-app/which-user.md`.
 - **No second job:** read each existing file a step changes, so you know the job it does now.
 - **Files:** flag a file not marked "(new)" that doesn't exist at the path given.
 

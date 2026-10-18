@@ -5,7 +5,7 @@ confirmed: 2026-10-06
 # Where It Stands
 Next: its child stories ^status
 
-Split on 2026-10-06 into workflow-step reviews, one for each step of each note type's workflow except Feature's `/shape` step, which has five, plus AGENTS.md, the memory folder, Note Conventions with the Roadmap header, and Conventions Review. The scan's findings and the open Agent Workflow Changes items about each step moved into the review notes. Feature Shape Review, Shared Note Procedures Review, Writing Standard Reviewer, Scope-Router Review, Writing Standard Review, Feature Template Review, Feature Decide Review, Merging Routed Designs, Overly Prescriptive Instructions, Feature Assess Review, Feature Check-Drift Review, Feature Plan-Steps Review, Agents Miss the Writing Standard, Feature Implement Review, Writing Reviewer Misses Criteria and Writing Standard Lacks Sentence Clarity are done, and the rest aren't done yet.
+Split on 2026-10-06 into workflow-step reviews, one for each step of each note type's workflow except Feature's `/shape` step, which has five, plus AGENTS.md, the memory folder, Note Conventions with the Roadmap header, and Conventions Review. The scan's findings and the open Agent Workflow Changes items about each step moved into the review notes. Feature Shape Review, Shared Note Procedures Review, Writing Standard Reviewer, Scope-Router Review, Writing Standard Review, Feature Template Review, Feature Decide Review, Merging Routed Designs, Overly Prescriptive Instructions, Feature Assess Review, Feature Check-Drift Review, Feature Plan-Steps Review, Agents Miss the Writing Standard, Feature Implement Review, Writing Reviewer Misses Criteria, Writing Standard Lacks Sentence Clarity and Breaking Up Long Skill Files are done, and the rest aren't done yet.
 
 # Inbox
 
@@ -94,7 +94,7 @@ Each finding moved into the review note it belongs to on 2026-10-06.
 | Feature Implement Review | Feature's `/implement` step; full review of `/implement` (with `first-pass.md`, `bugs.md` and `cleanup.md`), the `protect-config.sh` hook, and a new `building-code` skill for the build procedure `/implement` and `/final-review` share |
 | Writing Reviewer Misses Criteria | why the `writing-reviewer` agent reviews against only the criteria it thinks matter, and a fix that makes it review against the whole standard |
 | Writing Standard Lacks Sentence Clarity | a rule in `writing-standard` for sentences a reader can follow on the first read, and the `writing-reviewer` pass that checks it |
-| [[Breaking Up Long Skill Files]] | whether long skill files are broken into smaller ones each session loads whole, instead of agents reading one section by path |
+| Breaking Up Long Skill Files | whether long skill files are broken into smaller ones each session loads whole, instead of agents reading one section by path |
 | [[Changes That Reach Other Notes]] | a change that affects another story's remaining work reaching the user as a decision rather than inside a summary, and the notes that describe built work updated by the session that builds it |
 | [[Implement Follow-Up Fixes]] | the possible problems `writing-reviewer` test runs found in the shipped `/implement` and `building-code` text, which the first `/implement` review missed |
 | [[Feature Final-Review Review]] | Feature's `/final-review` step; full review of `/final-review`, the `leftovers-checker` agent, the `target-designer` agent |

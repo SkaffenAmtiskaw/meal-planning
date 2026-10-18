@@ -58,7 +58,7 @@ Write each answer into each design it changes. If that includes the new design, 
    - A reference to another handoff by its folder name becomes a link to the note that holds it.
 5. **Design already in the vault:**
    - **If a hub holds it:** it stays there, and step 3's answers are written into it there. Remove its embeds from any story that won't build it, and skip item 6.
-   - **Otherwise:** copy it from the note it's in, with its image links, into `.scratch/` for item 6. Then, if it's an Inbox item, delete the item. Otherwise, leave a pointer to its new home, as the `filing-work` skill describes under "Content From Another Note". Then point any `🚛 Moved to` pointer to it at its new home.
+   - **Otherwise:** copy it from the note it's in, with its image links, into `.scratch/` for item 6. Then, if it's an Inbox item, delete the item. Otherwise, leave a pointer to its new home, as `.claude/skills/filing-work/content-from-another-note.md` describes. Then point any `🚛 Moved to` pointer to it at its new home.
 6. **The new design,** with step 3's answers written in: in its home's `# Design Handoff`, after the Meta-Instructions and before any hub embeds.
    - **If the home has no design of its own:** write it there.
    - **If the home is a story with a design of its own:** combine the two into one design, so the story's readers find everything about each element in one place. The user approves its outline, and `design-merge-checker` reads the whole of it in their place:
@@ -67,7 +67,7 @@ Write each answer into each design it changes. If that includes the new design, 
      3. Send the `design-merge-checker` subagent the story's note path, the new design's path and the combined design's path.
      4. Fix what it finds, asking the user where a fix needs a choice.
      5. Replace the story's own design with the combined one, without asking the user to approve its wording.
-7. **Each story that builds part of a hub's design:** embed the sections it builds as the `filing-work` skill describes under "Content From Another Note". Its own design stays apart from the hub sections, because combining them would copy the hub's design into one story.
+7. **Each story that builds part of a hub's design:** embed the sections it builds as `.claude/skills/filing-work/content-from-another-note.md` describes. Its own design stays apart from the hub sections, because combining them would copy the hub's design into one story.
 
 ## 5. Move each story on
 For each story before `in-review` that got design or had its design changed, including each one that embeds a section step 3 rewrote:

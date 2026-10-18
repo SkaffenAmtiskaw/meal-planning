@@ -24,7 +24,7 @@ Each step carries one idea and ends in checks that show progress the user can se
 ## Checks
 Which kind of check a step gets depends on what it changes:
 - **If it changes only test files:** break-it checks, plus at least one run-and-see check if any of the files are E2E code, as `docs/e2e_tests.md` lists under "Where E2E Code Lives". Write them as `test-only-checks.md` in this skill's folder describes.
-- **Otherwise:** click-throughs in the running app, "Go to [view], [do something], see [result]", naming the screen size (phone or desktop), the data needed, such as a day with two meals, and any signed-in user, as "Which User to Sign In As" in the `running-the-app` skill describes.
+- **Otherwise:** click-throughs in the running app, "Go to [view], [do something], see [result]", naming the screen size (phone or desktop), the data needed, such as a day with two meals, and any signed-in user, as `.claude/skills/running-the-app/which-user.md` describes.
 
 A step whose Source names a Symptom checks it by following the Symptom's repro steps, which should no longer show the bug. A step that builds a failure, empty or read-only behavior checks that behavior too.
 

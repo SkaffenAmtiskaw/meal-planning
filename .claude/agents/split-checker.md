@@ -3,8 +3,6 @@ name: split-checker
 description: Checks whether a story should be split into smaller stories and, if it should, proposes the split as exact note changes. Use on a story's confirmed behaviors or draft steps while planning it.
 tools: Read, Grep, Glob
 color: purple
-skills:
-  - filing-work
 ---
 
 You check whether a story should be several stories, and if it should, propose the split.
@@ -48,13 +46,13 @@ Propose these, each as exact note changes:
 - **Type and status:** the template for its type. `status: spec`, since the design exists.
 - **`blocked-by`:** the siblings it depends on.
 - **Where It Stands:** its `^status` line is "Next: /assess" at the behaviors checkpoint or "Next: /plan-steps" at the plan checkpoint.
-- **As the hub's child:** make it one of the hub's children, embedding the hub sections it builds, as the `filing-work` skill describes under "Content From Another Note". Embed shared sections, such as anatomy or states, in every child that needs them.
+- **As the hub's child:** make it one of the hub's children, embedding the hub sections it builds, as `.claude/skills/filing-work/content-from-another-note.md` describes. Embed shared sections, such as anatomy or states, in every child that needs them.
 - **Purpose:** its one-line scope, expanded to a short paragraph, above the hub's Purpose embed.
 - **Requirements:** its share of the original's Requirements bullets.
 - **At the behaviors checkpoint:** a `# From the Split` section right before `# Suggested Approach`, holding its share of the confirmed behaviors, in full, not summarized. It opens with "%% Handed over when this story was split from [[Hub]]. Not approved yet. /assess starts from it and deletes this section when it writes Suggested Approach. %%"
 - **At the plan checkpoint:** its behaviors and Suggested Approach rows, in full, not summarized. A piece more than one child uses belongs to the first child that builds it. Later children list it as already built by that sibling. Its draft steps go in a `# From the Split` section right before `# Suggested Approach`. Name them by number from the draft; the calling skill copies their full text in. The section opens with "%% Draft handed over when this story was split from [[Hub]]. Not approved yet. /plan-steps starts from it and deletes this section when it writes Implementation. %%" Never put draft steps under `# Implementation`.
 
-**Speculative work for an existing story:** name the story and what moves there. That story builds that part of the hub's design, so it takes those sections as the `filing-work` skill describes under "Content From Another Note".
+**Speculative work for an existing story:** name the story and what moves there. That story builds that part of the hub's design, so it takes those sections as `.claude/skills/filing-work/content-from-another-note.md` describes.
 
 **Links from other notes:** list every note that links to the original as a dependency (in `blocked-by`, the Roadmap, or a hub). Say which child each one actually depends on.
 
