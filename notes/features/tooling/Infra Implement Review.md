@@ -28,9 +28,9 @@ Part of [[Agent Instructions Audit]].
 
 ## Issues Found
 From the audit's scan on 2026-10-06. Line numbers are as of that day.
-- **Decision 8:** infra moves out of `/implement` into a new `/infra-build` command, with its own `protect-config.sh` hook. The infra path, as of 2026-10-15: `implement/SKILL.md:17,19,25,37,47,50,57,66`, `implement/re-planning.md:3-5,11` and `building-code/SKILL.md:45`.
+- **Decision 8:** infra moves out of `/implement` into a new `/infra-build` command, with its own `protect-config.sh` hook. The infra path, as of 2026-10-18: `implement/SKILL.md:20,26,30,37,41,52,57,67`, `implement/re-planning.md:3-6,12` and `building-code/SKILL.md:38`.
 - `/infra-design:3,17,81,101,117,125` name `/implement`, and change to `/infra-build`. Infra notes' `^status` lines change too.
-- `implement/re-planning.md:3-4` restates AGENTS.md's "Her decisions can change" in other words; it points to AGENTS.md.
-- Wording difference at `implement/re-planning.md:3-4`: change "choices the user merely signed off on, not ones they made themselves or care about", and only for infra. Where the rule is kept: AGENTS.md "Her decisions can change" covers every type, with "only approved" and "her call". Exception or drift?
+- `implement/re-planning.md:5-6` restates AGENTS.md's "Her decisions can change" in other words; it points to AGENTS.md.
+- Wording difference at `implement/re-planning.md:5-6`: change "choices the user merely signed off on", and only for infra. Where the rule is kept: AGENTS.md "Her decisions can change" covers every type, with "only approved" and "her call". Exception or drift?
 
 # Questions

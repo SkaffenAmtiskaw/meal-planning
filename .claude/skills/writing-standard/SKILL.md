@@ -37,6 +37,9 @@ Give each rule or convention its reason, in a sentence or so. A reader who knows
 ## Use Lists Only for Separate Items
 Write connected ideas as prose, and keep lists for items that truly stand apart, such as the steps of a sequence or the cases of one rule. A run of short bullets drops the words that link ideas, like "because", "so" and "unless", and leaves the reader to rebuild them.
 
+## Say What Each List Holds
+Make a list's lead-in say what its items are, such as "the steps, in order" or "the cases where you don't follow the plan, and what to do in each". A lead-in that names a task, such as "check that the plan fits:", tells the reader the items are parts of that task. If they're something else, such as the cases where you don't follow the plan, the reader may take each case for one more check.
+
 ## Order Each List for Its Reader
 Put a list's items in an order the reader can use, such as the order things happen, the order the reader meets them or the most common first. In a list with no order, the reader has to read every item to find theirs, and a case that's missing or covered twice is hard to spot.
 

@@ -5,6 +5,9 @@ confirmed: 2026-10-06
 # Where It Stands
 Next: /tooling ^status
 
+# Inbox
+- Sarah's feedback on 2026-10-18, after a `/tooling` session had shown her its changes to `/implement` and `building-code` one at a time for approval, more than 20 in all: "This is a lot of changes to review. Could you maybe just give me the proposed whole file with a list of what's changed (or better yet, highlight if you can do it)". The session then showed each remaining file whole as a diff, with a short list of what changed and why, and she approved them together. "Approval covers the edits" asks for one change at a time.
+
 # Notes
 Part of [[Agent Instructions Audit]].
 

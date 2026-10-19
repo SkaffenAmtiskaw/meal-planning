@@ -26,13 +26,13 @@ Where each memory to delete already has its rule, as of 2026-10-06. Some of thes
 | Memory | Rule kept at |
 |---|---|
 | `agents-adapt-to-process` | AGENTS.md:21-22, `tooling:15` |
-| `as-built-covers-review-gaps` | `implement/SKILL.md:57` |
+| `as-built-covers-review-gaps` | `implement/SKILL.md:31` |
 | `batch-small-test-cleanups` | `Sweep.md:21`, `check-drift:72,75`, `kickoff:42-43`, Roadmap:26 |
 | `blocked-by-summary-not-per-decision` | Note Conventions:15, `shape:147`, `decide:36`, `kickoff:51` |
 | `confirm-before-logging-process-feedback` | AGENTS.md:94, :106-109 |
 | `convention-violations-are-tech-debt` | `notes/goals/App Health.md:13`, `notes/goals/Dev Tooling.md:16` |
 | `delete-unreferenced-vault-files` | `close:24,113-116`, `tooling:93`, AGENTS.md:151 |
-| `designs-mostly-not-pixel-perfect` | `building-code/design-comparison.md:2-6`, `building-code/SKILL.md:13-16` |
+| `designs-mostly-not-pixel-perfect` | `building-code/design-comparison.md:2-9`, `building-code/SKILL.md:14-17` |
 | `hubs-close-like-stories` | `close:22` |
 | `leave-other-sessions-notes-alone` | AGENTS.md:49 |
 | `move-story-to-now-when-started` | `implement:41`, AGENTS.md:83 |

@@ -5,6 +5,9 @@ confirmed: 2026-10-06
 # Where It Stands
 Next: /tooling ^status
 
+# Inbox
+- `final-review/SKILL.md:94` (step 6, item 2) says to make a fix as `building-code`'s "Write It Test First" describes, then adds "If a new one comes up, stop and ask." That sentence repeats what "Write It Test First" says about open choices, so it's a plain repeat. Found 2026-10-18 by a writing review of `building-code`.
+
 # Notes
 Part of [[Agent Instructions Audit]].
 

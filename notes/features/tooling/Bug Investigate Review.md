@@ -5,6 +5,12 @@ confirmed: 2026-10-06
 # Where It Stands
 Next: /tooling ^status
 
+# Inbox
+- Sarah decided 2026-10-18 that the way `building-code/bugs.md` reproduces and diagnoses a bug is the rule:
+  - **Reproducing:** a bug that involves layout, position, size, scrolling, what's visible or timing is reproduced in the running app, and any other, such as a calculation, a conditional or a data transform, in a unit test that fails. `investigate/SKILL.md:20` says every bug is reproduced in the running app unless she signs off, so it changes to match.
+  - **Diagnosing:** the diagnosis gives the file where the fault starts, what that code does and what it should do, the evidence, labeled "seen in the running app" or "reproduced in a unit test", and whether it's in one module or several. `/investigate`'s step 2c words it differently, with the evidence labeled "confirmed in the running app" or "found by reading code", and so does the Bug template's Symptoms comment ("reproduced in the running app or found by reading code"). Both change to match.
+- `building-code/bugs.md` step 2 now has the `bug-reproducer` subagent reproduce a layout or timing bug the same way `/investigate`'s step 2b does: the repro steps, the symptom and the values to capture, with no theory of the cause, and the same reason for leaving the theory out. So that hand-off is now written in both skills.
+
 # Notes
 Part of [[Agent Instructions Audit]].
 
