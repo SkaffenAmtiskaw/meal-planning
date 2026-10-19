@@ -43,7 +43,7 @@
     "mongoose": "9.11.2",
     "next": "16.4.2",
     "preact": "10.29.0",
-    "react": "19.3.0",
+    "react": "19.3.1",
     "react-dom": "19.3.0",
     "react-screen-wake-lock": "3.1.1",
     "resend": "6.32.1",
