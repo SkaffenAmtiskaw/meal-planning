@@ -5,5 +5,4 @@ onlyBuiltDependencies:
   - mongodb-memory-server
   - sharp
 overrides:
-  'vite@>=7.0.0 <7.3.5': '^7.3.5'
   'vite@>=7.0.0 <7.3.7': '^7.3.7'
