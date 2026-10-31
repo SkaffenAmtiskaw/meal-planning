@@ -30,6 +30,7 @@
 # Goals
 1. [[Dev Foundations]] - building
 2. [[Calendar Page]] - planning
+3. [[Grocery List Creation]]
 
 ## Standing Goals
 - [[App Health]]
@@ -156,6 +157,11 @@
 - [[Calendar E2E Tests]] ![[Calendar E2E Tests#^status]]
 - [[Calendar UX and Styles Pass]] ![[Calendar UX and Styles Pass#^status]]
 
+## [[Grocery List Creation]]
+- [[Grocery List Integration]] ![[Grocery List Integration#^status]]
+- printable meal plan
+- [[Grocery List Wish List Research]] ![[Grocery List Wish List Research#^status]]
+
 ## [[App Health]]
 - [Sarah] investigate replacing unit test environment for performance improvements - happy-dom and/or defaulting to node and only using happy-dom or jsdom in tests that need them. We should benchmark the options as part of researching options.
 - [[Unit Testing - New Centralized Mocks]] ![[Unit Testing - New Centralized Mocks#^status]]
@@ -182,7 +188,7 @@
 - Planner's mongoose schemas don't match their zod types: recipe `time` is typed as numbers in `src/_models/library/recipe.ts` but saved as strings; the `saved` union in `src/_models/planner/planner.ts` tries `bookmarkSchema` (`strict: false`) first, so `recipeSchema` never validates a recipe; and the dish `source` union in `src/_models/calendar/day.ts` turns linked recipe ObjectIds into strings when saved through mongoose. Found 2026-10-04 while building the dev seed's sample data (`seed/seed.ts`)
 
 ## [[Dev Tooling]]
-- a way to load extra seed data that one story's checks need, on top of `pnpm seed`'s generic data (today the `building-code` skill's acceptance checks create it through the app's screens). Found 2026-10-01 while designing the dev seed (`docs/seed.md`)
+- a way to load extra seed data that one story's checks need, on top of `pnpm seed`'s generic data (today the `building-code` skill's acceptance checks create it through the app's screens). Found 2026-10-01 while designing the dev seed (`docs/seed.md`) 🎯 [[Grocery List Creation]]
 - switch testing library to `vitest-browser-react` - needs research to determine if this is worth doing 🎯 [[App Health]]
 - [[Vercel Plugin]]
 - I want a way to watch certain libraries and tools to see if they have new releases or features that are worth implementing
@@ -203,7 +209,6 @@
 - [[Notes Vault Changes]] ![[Notes Vault Changes#^status]]
 
 # Ideas
-- [[Grocery List Integration]]
 - [[Link SSO Login to Email|Link SSO to Email Login]]
 - Allow user to change meal color in calendar
 - [[Keyboard Shortcuts|keyboard shortcuts]] - spec. Out of date; re-review once the calendar views are mostly complete.
@@ -221,6 +226,5 @@
 - a11y audit
 - audit app works fully in mobile
 - toggle light/dark mode
-- printable meal plan
 - [[What's Changed Notification]] ![[What's Changed Notification#^status]]
 - have a Vercel Deploy Errors session watch Vercel's status page and say when an incident ends, such as with a cron job, if checking it by hand becomes a problem ([[Vercel Deploy Errors]] decision 5)
