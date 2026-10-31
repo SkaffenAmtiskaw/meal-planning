@@ -105,7 +105,7 @@ Each finding moved into the review note it belongs to on 2026-10-06.
 | Bug Shape Review | Bug's `/shape` step; full review of `notes/templates/Bug.md` |
 | Bug Decide Review | Bug's `/decide` step |
 | Bug Investigate Review | Bug's `/investigate` step; full review of `/investigate`, the `bug-reproducer` agent |
-| [[Reviewer Misses Enforced Details]] | why `writing-reviewer` and drafting agents keep an exact detail that a hook, script or other rule already enforces, and a check that catches it |
+| Reviewer Misses Enforced Details | why `writing-reviewer` and drafting agents keep an exact detail that a hook, script or other rule already enforces, and a check that catches it |
 | [[Bug Check-Drift Review]] | Bug's `/check-drift` step |
 | [[Bug Plan-Steps Review]] | Bug's `/plan-steps` step |
 | [[Bug Implement Review]] | Bug's `/implement` step |

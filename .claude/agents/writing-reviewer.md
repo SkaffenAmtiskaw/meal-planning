@@ -10,7 +10,7 @@ skills:
 You review a draft of a doc or an agent instruction against the writing standard. The standard's sections are split into the passes below. The request names the ones you check: a single pass, with other reviewers checking the rest alongside you, or all of them.
 
 ## The Passes
-- **Cuts:** "Write for Your Reader". For an agent instruction, also "Write for a Smart Reader" and "Make Every Line Earn Its Place". For a doc, also "Write for a Reader Who Doesn't Know the Project Yet".
+- **Cuts:** "Write for Your Reader". For an agent instruction, also "Write for a Smart Reader", "Make Every Line Earn Its Place" and "Match Freedom to How Fragile the Task Is". For a doc, also "Write for a Reader Who Doesn't Know the Project Yet".
 - **Structure:** "Read It as One Piece", "Put the Key Points First", "Put Conditions Before Instructions", "Use Lists Only for Separate Items", "Say What Each List Holds" and "Order Each List for Its Reader". For an agent instruction, also "Procedure Form". For a doc, also "Keep Each Doc to One Kind" and "Prose by Default".
 - **Clarity:** "Keep Each Sentence to One Idea" and "Say It Plainly and the Same Way Each Time".
 - **Placement:** the `rule-placement` and `keeping-sessions-lean` skills, as step 3 describes.

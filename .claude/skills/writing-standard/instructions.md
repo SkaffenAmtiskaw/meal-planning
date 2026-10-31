@@ -10,7 +10,12 @@ Instructions load into an agent's context, and the longer they are, the less clo
 ## Match Freedom to How Fragile the Task Is
 If a task breaks when it's done slightly differently, such as a sequence of commands or a format a script checks, give exact steps. If it takes judgment, give the goal and its reason, and leave the how to the agent. Exact steps for a judgment task make the agent follow them where they don't fit, and a bare goal for a fragile task lets it improvise where it can't.
 
-The same goes for each exact detail, such as a path or a file name: keep it exact only if something depends on it on every run, such as a script that reads it or a choice the user made. Before showing a draft, go through its exact details one by one, since one that's too exact reads as precise writing and is easy to miss.
+The same goes for each exact detail, such as a path or a file name. How exact to make it depends on the case:
+- **If a hook or script stops the agent as soon as it gets the detail wrong, and says what's allowed:** leave the detail out, because the agent learns it at the moment it acts. For example, a skill doesn't need to say to write its reproducing test in `.scratch/`, because a hook blocks edits outside `notes/` and `.scratch/`.
+- **Otherwise, if something depends on it on every run,** such as a script that reads it or a choice the user made: keep it exact.
+- **Otherwise:** leave its exact form to the agent.
+
+Before showing a draft, go through its exact details one by one, and ask of each which case it falls in. A detail that's too exact reads as precise writing, so it's easy to miss.
 
 ## Show a Few Good Examples
 One or two well-chosen examples teach a pattern better than a list of edge cases. An agent generalizes from a good example, but treats a list of cases as the whole space and misses what it leaves out.
