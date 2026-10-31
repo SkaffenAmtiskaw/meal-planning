@@ -6,6 +6,9 @@ confirmed: 2026-10-06
 # Where It Stands
 Next: /shape ^status
 
+# Inbox
+- Since 2026-10-31, `/investigate` and `building-code` reproduce a bug in the running app only when it involves layout, position, size, scrolling, what's visible or timing, and reproduce any other bug in a failing unit test, as `.claude/skills/building-code/reproducing-a-bug.md` describes. The Notes' research says every bug is reproduced in the running app before a root cause is written down, so a cloud session needs a way to run the app. That now holds only for the layout and timing kind.
+
 # Notes
 Split from Sentry Logging and Root Cause Analysis by `/shape` on 2026-10-06. Scope: a routine that starts a cloud session for each new Sentry error, which leaves a preliminary root cause analysis from `root-cause-analyst` waiting under **Routines**.
 

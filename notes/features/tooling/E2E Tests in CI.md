@@ -10,6 +10,7 @@ Ready. Next: /implement ^status
 Split from E2E Testing on 2026-09-28. `/infra-design` wrote the Goals, Design, Conventions, Setup Outside the Repo and a four-step Build Order on 2026-10-06. Nothing is built yet.
 
 # Inbox
+- Piece 4 says `root-cause-analyst`'s report is "in the shape of `/investigate`'s Root Cause". Since 2026-10-31 that Root Cause follows `.claude/skills/building-code/reproducing-a-bug.md`: where the fault starts, what the code does and should do, the evidence labeled "seen in the running app" or "reproduced in a unit test", whether it's in one module or several, and whether a test covers it. Evidence read from the code alone is no longer one of the labels, so the report Piece 4 describes no longer matches that shape.
 
 # Purpose
 Run the E2E tests automatically in CI instead of locally on every commit, and when one fails, have an agent run a preliminary root cause analysis that's ready for Sarah to review.

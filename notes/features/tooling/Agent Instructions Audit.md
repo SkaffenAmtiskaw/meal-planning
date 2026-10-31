@@ -5,7 +5,7 @@ confirmed: 2026-10-06
 # Where It Stands
 Next: its child stories ^status
 
-Split on 2026-10-06 into workflow-step reviews, one for each step of each note type's workflow except Feature's `/shape` step, which has five, plus AGENTS.md, the memory folder, Note Conventions with the Roadmap header, and Conventions Review. The scan's findings and the open Agent Workflow Changes items about each step moved into the review notes. Feature Shape Review, Shared Note Procedures Review, Writing Standard Reviewer, Scope-Router Review, Writing Standard Review, Feature Template Review, Feature Decide Review, Merging Routed Designs, Overly Prescriptive Instructions, Feature Assess Review, Feature Check-Drift Review, Feature Plan-Steps Review, Agents Miss the Writing Standard, Feature Implement Review, Writing Reviewer Misses Criteria, Writing Standard Lacks Sentence Clarity, Breaking Up Long Skill Files, Changes That Reach Other Notes, Implement Follow-Up Fixes, Feature Final-Review Review, Feature Close Review, Bug Shape Review and Bug Decide Review are done, and the rest aren't done yet.
+Split on 2026-10-06 into workflow-step reviews, one for each step of each note type's workflow except Feature's `/shape` step, which has five, plus AGENTS.md, the memory folder, Note Conventions with the Roadmap header, and Conventions Review. The scan's findings and the open Agent Workflow Changes items about each step moved into the review notes. Feature Shape Review, Shared Note Procedures Review, Writing Standard Reviewer, Scope-Router Review, Writing Standard Review, Feature Template Review, Feature Decide Review, Merging Routed Designs, Overly Prescriptive Instructions, Feature Assess Review, Feature Check-Drift Review, Feature Plan-Steps Review, Agents Miss the Writing Standard, Feature Implement Review, Writing Reviewer Misses Criteria, Writing Standard Lacks Sentence Clarity, Breaking Up Long Skill Files, Changes That Reach Other Notes, Implement Follow-Up Fixes, Feature Final-Review Review, Feature Close Review, Bug Shape Review, Bug Decide Review and Bug Investigate Review are done, and the rest aren't done yet.
 
 # Inbox
 
@@ -57,7 +57,8 @@ The review covers every file the step uses: its skill, and the agents, shared sk
 ### A **short** rule several agents share stays a copy in each, unless drift would matter
 **Decided in:** Feature Check-Drift Review, 2026-10-15. The read-only Bash line in `code-drift-checker`, `note-drift-checker` and `leftovers-checker` is kept word for word in each agent rather than in a shared-rule skill they preload, as `rule-placement` would place it, because a preloaded skill costs more context than the line, and copies that drift apart wouldn't change what the agents do. If drift between copies would really matter in a case, the rule goes in a shared-rule skill. Sarah's call: in most cases drift won't matter much.
 - Feature Plan-Steps Review, 2026-10-15: `plan-checker`'s copy of `/plan-steps`' step rules had already drifted (its list of what counts as the approach left out bug and cleanup notes), and a checker working from a stale copy passes the mistakes it's there to catch, so drift mattered here: the rules moved to a new shared-rule skill, `writing-implementation-steps`, that `/plan-steps` loads and `plan-checker` preloads. `/infra-design`'s few lines on Sarah checks stay a copy, since loading the whole skill for them would cost more than it saves. The convention fit.
-- Implement Follow-Up Fixes, 2026-10-18: `building-code/bugs.md` now hands a layout or timing bug to `bug-reproducer` the same way `/investigate` does, so that short hand-off is a copy in two skills. Bug Investigate Review has an Inbox item about it, so whether the convention fits is still open.
+- Implement Follow-Up Fixes, 2026-10-18: `building-code/bugs.md` now hands a layout or timing bug to `bug-reproducer` the same way `/investigate` does, so that short hand-off is a copy in two skills.
+- Bug Investigate Review, 2026-10-31: once `/investigate` reproduced and diagnosed a bug the way `bugs.md` does, the two shared the whole procedure, not just the hand-off, and their copies had already drifted apart once. It moved into `building-code/reproducing-a-bug.md`, which both read, since reading that file costs about what a copy would. The convention didn't fit, because it keeps a copy only where loading the shared rule costs more than the copy.
 - Feature Close Review, 2026-10-31: `/close`'s done-close check keeps a short copy of `filing-work/content-from-another-note.md`'s rule that moved work comes along in full, with its image embeds and handoff text, since reading the file would cost more than the phrase. Where `/close` moves content itself, it reads that file, because only that branch needs the rule and the file then loads only there. The convention fit.
 
 # Current State
@@ -103,7 +104,8 @@ Each finding moved into the review note it belongs to on 2026-10-06.
 | Feature Close Review | Feature's `/close` step; full review of `/close` |
 | Bug Shape Review | Bug's `/shape` step; full review of `notes/templates/Bug.md` |
 | Bug Decide Review | Bug's `/decide` step |
-| [[Bug Investigate Review]] | Bug's `/investigate` step; full review of `/investigate`, the `bug-reproducer` agent |
+| Bug Investigate Review | Bug's `/investigate` step; full review of `/investigate`, the `bug-reproducer` agent |
+| [[Reviewer Misses Enforced Details]] | why `writing-reviewer` and drafting agents keep an exact detail that a hook, script or other rule already enforces, and a check that catches it |
 | [[Bug Check-Drift Review]] | Bug's `/check-drift` step |
 | [[Bug Plan-Steps Review]] | Bug's `/plan-steps` step |
 | [[Bug Implement Review]] | Bug's `/implement` step |

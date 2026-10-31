@@ -39,7 +39,7 @@
 # Now
 
 # Next
-1. [[Bug Investigate Review]] ![[Bug Investigate Review#^status]] 🎯 [[Dev Foundations]]
+1. [[Reviewer Misses Enforced Details]] ![[Reviewer Misses Enforced Details#^status]] 🎯 [[Dev Foundations]]
 2. [[Bug Check-Drift Review]] ![[Bug Check-Drift Review#^status]] 🎯 [[Dev Foundations]]
 3. [[Bug Plan-Steps Review]] ![[Bug Plan-Steps Review#^status]] 🎯 [[Dev Foundations]]
 4. [[Bug Implement Review]] ![[Bug Implement Review#^status]] 🎯 [[Dev Foundations]]
@@ -162,6 +162,7 @@
 - [[Calendar UX and Styles Pass]] ![[Calendar UX and Styles Pass#^status]]
 
 ## [[App Health]]
+- [Sarah] investigate replacing unit test environment for performance improvements - happy-dom and/or defaulting to node and only using happy-dom or jsdom in tests that need them
 - [[Unit Testing - New Centralized Mocks]] ![[Unit Testing - New Centralized Mocks#^status]]
 - [[Drop Mongoose]] ![[Drop Mongoose#^status]]
 - [[Better-Auth Reads Env Directly]] ![[Better-Auth Reads Env Directly#^status]]
