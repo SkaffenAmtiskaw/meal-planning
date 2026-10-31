@@ -159,7 +159,7 @@
 - [[Calendar UX and Styles Pass]] ![[Calendar UX and Styles Pass#^status]]
 
 ## [[App Health]]
-- [Sarah] investigate replacing unit test environment for performance improvements - happy-dom and/or defaulting to node and only using happy-dom or jsdom in tests that need them
+- [Sarah] investigate replacing unit test environment for performance improvements - happy-dom and/or defaulting to node and only using happy-dom or jsdom in tests that need them. We should benchmark the options as part of researching options.
 - [[Unit Testing - New Centralized Mocks]] ![[Unit Testing - New Centralized Mocks#^status]]
 - [[Drop Mongoose]] ![[Drop Mongoose#^status]]
 - [[Better-Auth Reads Env Directly]] ![[Better-Auth Reads Env Directly#^status]]

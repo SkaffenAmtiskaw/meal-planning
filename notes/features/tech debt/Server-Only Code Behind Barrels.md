@@ -2,17 +2,19 @@
 type: pattern
 status: idea
 blocked-by:
-  - "decision needed: where do server-only exports live, relative to a barrel that client code imports?"
-  - "decision needed: does the rule cover only src/_actions barrels, or every barrel?"
-  - "decision needed: is the server-only build error enough enforcement?"
-confirmed: 2026-09-27
+  - "decision needed: the data access layer's scope, access checks and DTO types"
+confirmed: 2026-10-31
 ---
 # Where It Stands
 
-Waiting on your decisions in Open Decisions; then write the Rules with Sarah. ^status
+3 open decisions. Next: /decide ^status
+
+Server-only code is moving to a data access layer. Until it's built, server-only code is imported by file path, and the interim rule for `docs/project_conventions.md` waits in [[Docs Updates]].
+
+# Inbox
 
 # Purpose
-Server-only code (reads and helpers marked `import 'server-only'` rather than `'use server'`) keeps being reached through domain barrels like `@/_actions/sharing` that client components also import. The build then fails, or mongoose models get pulled into client bundles. This story sets one convention for where server-only exports live and how they're imported, so the fix isn't worked out again each time. Then it moves the existing cases over.
+Server-only code (reads and helpers marked `import 'server-only'` rather than `'use server'`) keeps being reached through domain barrels like `@/_actions/sharing` that client components also import. The build then fails, or mongoose models get pulled into client bundles. This story gives server-only code a home of its own, a data access layer as Next.js recommends, which client code never imports. It sets the conventions for that layer and moves the existing server-only code into it.
 
 Found 2026-09-27 while making `getUserInvites` server-only. Sarah said it's not the first time this has come up.
 
@@ -40,34 +42,18 @@ Current temporary fix (made 2026-09-27 when `getUserInvites` became server-only)
 		- Rejected: direct file imports as the permanent rule - kept only as the interim fix until the DAL exists.
 		- Rejected: client code importing action files directly - about 25 client files would change, and nobody can check the rule by reading a file, since some client files have no `'use client'`.
 		- Rejected: keeping the barrels and setting Turbopack's `sideEffects` - the spike showed it works only on Turbopack and only with named re-exports, and a file missing from the list is silently dropped from production builds.
-2. Does the rule cover only `src/_actions/*` barrels, or every barrel? For example, `src/_components/UserMenu` holds the `server-only` `InviteBadge`.
-3. Is the `server-only` build error (`pnpm build` in pre-commit) enough enforcement? Or does something also need to stop a server-only export being added to a client-imported barrel, e.g. a lint import rule or a check in the `src/dataConventions.test.ts` that [[Data Rules Enforcement]] adds?
+2. What does the data access layer cover: reads only, all server-only code (adding `addUser` and `addPlanner`), or all database access, with each `'use server'` action becoming a thin wrapper that validates input, calls the layer and revalidates, as Next.js describes?
+3. Do the data access layer's functions check access themselves, as Next.js recommends, and if so, does `checkAuth` move into the layer?
+4. Where do the data access layer's return types (DTOs) live, so client code can import them? This overlaps [[Shared Types Directory]].
 
 # Rules
-%% The convention itself, as numbered rules an agent can check code against. Once the rules are confirmed, set status to `spec`. Lands in `docs/project_conventions.md` "Barrel Files", next to the placement rule from [[Domain-Specific Code Locations]]. %%
 
 # Enforcement
-%% Required. See Open Decision 3. %%
 
 # Migration Checklist
-*Found 2026-09-27 by reading code. A starting list, not a full audit. Re-check before planning.*
-
-## Already server-only, on the temporary fix
-- [ ] `src/_actions/sharing/getUserInvites.ts`: move from direct imports to the decided shape. Update `InviteBadge.tsx`, `InvitesSettings.tsx` and `test/mocks/@/_actions/sharing/getUserInvites.ts` to match.
-
-## About to become server-only in other stories
-These barrels are imported by `'use client'` files, so each one will hit the same build error:
-- [ ] `addUser`, in [[Server-Only Creation and Pure Reads]] Step 8. The `@/_actions/user` barrel is imported by `ChangeNameForm.tsx:9` and `DeleteAccountForm.tsx:8`.
-- [ ] `addPlanner`, in [[Server-Only Creation and Pure Reads]] Step 8. `src/_actions/user/addUser.ts:5` imports it through the `@/_actions/planner` barrel, so under the [[Domain-Specific Code Locations]] Rules it can't move to `planner/_utils/` and stays behind that barrel.
-- [ ] `getPlanner` and `getPlannerClient`, in [[Unchecked Planner Reads]]. The `@/_actions/planner` barrel is imported by `CreatePlannerForm.tsx:8`, `useRenamePlanner.ts:6` and `PlannerProvider.tsx:6`.
-- [ ] `getSavedItem`, in [[Unchecked Planner Reads]]. The `@/_actions/library` barrel is imported by `RecipeForm.tsx:20` and `BookmarkForm.tsx:11`.
-
-## Docs
-- [ ] `docs/project_conventions.md` "Barrel Files": add the rule.
 
 # Out of Scope
 - Where shared DTO types live in general: [[Shared Types Directory]].
 - How subpath imports are mocked: [[Unit Testing - New Centralized Mocks]] Open Decision 2. The mock paths here follow whatever import shape this story picks.
 
 # Implementation
-%% Leave empty until the Rules and Migration Checklist are confirmed. %%
