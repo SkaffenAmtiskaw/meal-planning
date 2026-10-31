@@ -10,11 +10,15 @@ Review existing code the way a strict reviewer would in a code review. You aren'
 ## What you'll get
 A list of target pieces, each with a one-sentence job, and the existing files mapped to each one. Some files are on the list because the story has to change them, not because they fill a piece.
 
+The caller also says whether the story is already built.
+
 ## What to check
-Read each file in full, plus enough of its callers to see how it's used.
+Read each file in full, plus enough of its callers to see how it's used. If the story is already built, every file on the list already holds its changes, and you can't see what the files were before. So run each check on the code as it now stands.
 
 - **Single concern,** as `docs/project_conventions.md` describes under Single Concern. List every job the module does, one sentence each. More than one job is a finding, even in a small module.
-- **Would the story give it another job?** For each file the story has to change, compare the target piece's job with the job the module already does. If they differ, adding the new behavior here creates a god component. Say so.
+- **Would the story give it another job?**
+  - **If the story isn't built yet:** for each file the story has to change, compare the target piece's job with the job the module already does. If they differ, adding the new behavior here creates a god component. Say so.
+  - **If it's built:** check whether the module now does any job other than its target piece's job.
 - **Project conventions.** Read `docs/project_conventions.md` and `docs/style_guidelines.md`, and check the module against each rule in them.
 - **Fit.** Does the module's interface match the target piece's job as it is? Or would it have to be bent with extra flags, modes, or optional props that only one caller uses?
 - **Duplication.** Note any case of two or more existing modules doing the same thing.
@@ -28,7 +32,7 @@ These are the mistakes this review exists to catch. Both come from the Add Meal 
 In each case, the problem was visible before any code was written: the new behavior was a different job from the one the existing module already had.
 
 ## Verdicts
-Give each file exactly one verdict:
+Give each file exactly one verdict. If the story is already built, each verdict says what has to change now.
 - **Use as-is:** it has one job, that job matches the target piece, and it breaks no conventions. This verdict needs the most evidence. Say what its one job is and why its interface fits without changes.
 - **Refactor first:** it's worth keeping, but it has to change before the story builds on it. List each change.
 - **Replace:** the target piece should be built fresh, and this module retired or rewritten. Say why a refactor isn't enough.

@@ -141,16 +141,17 @@ grep -vE '^notes/(Note Conventions\.md)$' "$tmp/notes" | tr '\n' '\0' |
       }
     }' >> "$report"
 
-# blocked-by entries must point at open stories.
+# blocked-by entries must not point at closed stories. A done or dropped story
+# stays in notes/features/ until /close removes it from the notes that wait on
+# it, so only an archived one is reported here.
 grep '^notes/features/' "$tmp/notes" | while IFS= read -r n; do
   awk 'FNR == 1 && $0 != "---" { exit } FNR > 1 && $0 == "---" { exit }
     /^[A-Za-z_-]+:/ { on = ($0 ~ /^blocked-by:/) } on' "$n" | grep -oE '\[\[[^]|#]+' | sed 's/^\[\[//' |
     while IFS= read -r t; do
       target=$(grep -F "/$t.md" "$tmp/notes" | while IFS= read -r c; do [ "$(basename "$c" .md)" = "$t" ] && echo "$c"; done | head -1)
       case "$target" in
-        ("") ;; # a missing note is already reported as a broken link
-        (notes/features/*)
-          grep -qE '^status: (done|dropped)' "$target" && add "$n: blocked-by [[$t]], which is $(grep -oE '^status: (done|dropped)' "$target" | cut -c9-)" ;;
+        ("") ;; # a deleted note is already reported as a broken link
+        (notes/features/*) ;;
         (*) add "$n: blocked-by [[$t]], which is closed ($target)" ;;
       esac
     done

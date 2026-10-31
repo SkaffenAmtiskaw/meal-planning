@@ -7,6 +7,7 @@ Next: /tooling ^status
 
 # Inbox
 - Sarah's feedback on 2026-10-18, after a `/tooling` session had shown her its changes to `/implement` and `building-code` one at a time for approval, more than 20 in all: "This is a lot of changes to review. Could you maybe just give me the proposed whole file with a list of what's changed (or better yet, highlight if you can do it)". The session then showed each remaining file whole as a diff, with a short list of what changed and why, and she approved them together. "Approval covers the edits" asks for one change at a time.
+- From Feature Final-Review Review (`/tooling`, 2026-10-31): `target-designer` no longer lists the docs it reads. It relies on AGENTS.md's "Docs" list to read `project_conventions.md` and `project_structure.md` ("before planning or writing code") and, for a story with UI, `style_guidelines.md` and `theme.md` ("before UI work"). This bears on the **Docs** item under Notes, found in Feature Assess Review.
 
 # Notes
 Part of [[Agent Instructions Audit]].

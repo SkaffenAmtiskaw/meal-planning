@@ -50,7 +50,7 @@ Any change to a note in `notes/` follows these rules:
   - **A change you've built affects another story's remaining work beyond a name or path:** leave its text alone, and add an Inbox item to it, as "Out-of-scope work" describes.
   - **Only a name or path changed,** and the plan still works as written, such as a moved file or a renamed function: correct the name or path in place. Sarah approved the intent, not the path.
   - **It changes nothing about the work,** such as a wrong detail in a finding: if it's a line an agent wrote in a note you're working on, and not plan text, correct it. Otherwise, leave it.
-- **Where It Stands** is the first section of every note except a goal or standing goal, right after the frontmatter, in its template's format. If a note has none, add it. It's a summary Sarah can read at a glance, and it holds only two things:
+- **Where It Stands** is the first section of every note except a goal or standing goal, right after the frontmatter, in its template's format. If a note has none, add it. It's a summary Sarah can read at a glance, and it holds at most two things:
   - **The `^status` line** (the line ending in ` ^status`) says what the story needs next, so Sarah can tell from the Roadmap without opening the note. It always names the next skill as a command, or links what the story is blocked by:
     - **It can move now:** `Next: /plan-steps` or `Next: /implement Step 4`. If the next step isn't a skill, such as a design session in Claude Design, name it, then the skill after it.
     - **It can move now, but a later step waits on another story:** name the skill that can run now, then the step that waits and its blockers, as in `Next: /plan-steps. Building waits on [[A]] and [[B]]` or `Next: /decide. Architecting waits on [[A]]`. This tells Sarah what she can do now and what has to wait, which affects how she prioritizes it.
@@ -59,9 +59,9 @@ Any change to a note in `notes/` follows these rules:
     - **A collecting note:** `Collecting items. Next: /kickoff when you schedule it`, or `Next: /tooling` for a workflow note.
 
     It may start with a state word or two, such as `Design approved.` or `In progress.`, and holds nothing else. Never describe the story there. Other context, such as what the story was split from, goes in the summary below it. The story's line in `notes/Roadmap.md` embeds the `^status` line after the link, `[[Note]] ![[Note#^status]]`. Add the embed if it's missing.
-  - **Below it, a short summary** of what work has been done and what remains, in a few sentences. It doesn't describe the story, because Purpose does that.
+  - **Below it, a short summary,** if there's something worth noting that the `^status` line doesn't say, such as what work has been done and what remains. Keep it to a few sentences. It doesn't describe the story, because Purpose does that.
 
-  Whoever moves a story forward updates both. When the next step is settled, write them without asking and mention it in your summary. When there's a real choice, such as what the story is blocked on, show Sarah the line and wait for her approval.
+  Whoever moves a story forward updates the `^status` line. They also update the summary below it, or remove that summary if nothing is left worth noting. When the next step is settled, make these changes without asking and mention them in your summary. When there's a real choice, such as what the story is blocked on, show Sarah the line and wait for her approval.
 
   In an older note, Where It Stands may hold other things, such as background, findings or a list of questions. When you work on the note, rather than just editing it in passing, move each one where it belongs: a question or finding for a later step to the top of the section that step writes, and anything else to the Inbox.
 - **The Inbox** comes right after Where It Stands in every story and hub. It holds what reaches a note from outside its usual flow from one skill to the next:

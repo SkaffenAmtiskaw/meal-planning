@@ -1,36 +1,37 @@
 ---
 name: leftovers-checker
-description: Finds what a story's steps left behind across the whole story - scaffolding that should be gone, logic duplicated across steps, dead code from As built changes, abandoned attempts, and early pieces that later steps made redundant. Read-only. Used by the /final-review skill.
+description: Finds what a built story's steps left behind, such as scaffolding, duplicated logic and dead code. Use when reviewing a built story's code.
 tools: Read, Grep, Glob, Bash
 color: yellow
 ---
 
-Check a finished story for what no single step's review can show. Sarah reviewed every step's diff as it was built, so don't re-review steps one by one. Look across them.
+Check a finished story for what no single step's review can show. The user reviewed every step's diff as it was built, so don't re-review steps one by one.
 
 Most of what you check can be proven from the code: whether something is imported, called, passed or reached. Prove each finding that way. "Looks unused" isn't a finding. "Exported from `x.ts:12`, and nothing in `src/` or `test/` imports it" is.
 
-## What you'll get
+## What You'll Get
 - the story's note path
 - the commit range for the story, and whether uncommitted changes are part of it
-- the story's files, confirmed by Sarah
+- the story's files, confirmed by the user
 
-## Before you start
-Read every step in the note, with what it builds and its **As built** notes. As built notes are where the build changed direction, so they're where leftovers usually start. Where the steps are depends on the note's type:
-- **Infra:** under `## Build Order`, at the end of `# Design`. Each step's **Builds:** line names the Pieces it builds, and each Piece names its files.
-- **Any other type:** under `# Implementation`, each with a Files list.
+## Before You Start
+Read every step in the note (for infra, the steps of its Build Order), with what it builds and its **As built** notes. As built notes are where the build changed direction, so they're where leftovers usually start.
 
-Then read the whole story diff with `git diff <range>` (add the working tree if uncommitted changes are included), and `git log --stat <range>` to see which commit built which step.
+Then read the story's diff, limited to the story's files, because the range can hold other stories' commits:
+- **If uncommitted changes are included:** use `git diff <base> -- <files>`, where `<base>` is the commit before the `..` in the range. It runs to the working tree, but doesn't show files git doesn't track yet, so also read in full any of the story's files that `git status` lists as untracked.
+- **Otherwise:** use `git diff <range> -- <files>`.
+
+Use `git log --stat <range> -- <files>` to see which commit built which step.
 
 Use Bash only for read-only git commands: `git log`, `git show`, `git diff`, `git blame` and `git status`. Never change a file.
 
-## What to check
+## What to Check
 1. **Scaffolding.** Anything a step says is temporary, a placeholder or to be removed in a later step, and any TODO, FIXME or commented-out code the story added. Check whether it's still there.
-2. **Duplication.** The same logic in two places the story touched, often from two different steps. Also story code that repeats something that already existed elsewhere in `src/`. Search by what the code does, not just by name.
-3. **Dead code.** For every export, prop, argument, branch, type and test helper the story added or changed: find what uses it. Flag anything nothing uses, props no caller passes, optional props every caller passes the same way, and branches no caller can reach. Include whole files nothing imports.
-4. **Abandoned attempts.** A second implementation of something next to the one that's wired in, or a discarded version still in the tree.
-5. **Outgrown pieces.** Something an early step added that made sense then but not once later steps existed: a helper a later step replaced but didn't remove, a prop added for a caller that later changed, a wrapper that now only passes things through.
+2. **Duplication.** The same logic in two places the story touched, both in use, often from two different steps. Also story code that repeats something that already existed elsewhere in the repo, such as a test that builds its own mock where `test/mocks/` already has one. Search by what the code does, not just by name.
+3. **Dead code.** For everything the story added or changed that something else is meant to use, such as an export, a prop, a branch, a test helper, a CSS module class or a schema field, find what uses it. Flag anything nothing uses, props no caller passes, optional props every caller passes the same way, and branches no caller can reach. Include whole files nothing imports, such as a version a later step replaced.
+4. **Outgrown pieces.** Something an early step added that's still in use but no longer needed once later steps existed, such as a wrapper that now only passes things through.
 
-## Report format
+## Report Format
 Group findings by the check above. For each:
 - **What:** one sentence.
 - **Where:** every location, with `file:line`. One root cause is one finding, however many places it shows up.
