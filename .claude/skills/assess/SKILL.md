@@ -48,13 +48,16 @@ Show the list and wait for the user to confirm it before going on.
 ### Check whether it's several stories
 Skip this check if you started from a `# From the Split` section and its behaviors haven't changed since.
 
-The confirmed behavior list is the first point where the story's real size shows, and splitting is cheapest before an approach exists. Send the note path and the confirmed behaviors to the `split-checker` subagent, as the **Behaviors** checkpoint.
+Send the note path and the confirmed behaviors to the `hidden-story-checker` subagent, as the **Behaviors** checkpoint.
 - **One story:** tell the user in one line, and go on to step 3.
-- **Split:** go through the split with the user as the `splitting-a-story` skill describes. If they split the story:
-  1. Triage the out-of-scope list. An item the user pulls in becomes one or more behaviors in the `# From the Split` section of each child they belong to.
-  2. Check that each child's `# From the Split` section holds its full share of the confirmed behaviors, including any changes the user made while approving the children, since the child's own `/assess` starts from it.
-  3. Route the out-of-scope list.
-  4. Stop. Don't start on any child in this session: it has read the whole design and the split report, and carrying that into a child's assessment bloats the context. Tell the user the split is done, and give `/assess <child name>` for each child, to run in a new session.
+- **Hidden stories:**
+  1. Put each one whose Shared design is "none" on the out-of-scope list with its behaviors, and triage it right away. The rest of this run works from the behavior list. If the user doesn't pull it in, take its behaviors out of the list.
+  2. If no hidden story shares design, go on to step 3. Otherwise, they need a hub to keep the shared design whole, so send `split-checker` the note path, the confirmed behaviors as the **Behaviors** checkpoint, the path of `hidden-story-checker`'s report and the hidden stories that share design. Then go through the split with the user as the `splitting-a-story` skill describes.
+  3. If they don't split the story, go on to step 3. If they split it:
+     1. Triage the out-of-scope list. An item the user pulls in becomes one or more behaviors in the `# From the Split` section of each child they belong to.
+     2. Check that each child's `# From the Split` section holds its full share of the confirmed behaviors, including any changes the user made while approving the children, since the child's own `/assess` starts from it.
+     3. Route the out-of-scope list.
+     4. Stop, and tell the user the split is done. Give `/assess <child name>` for each child, to run in a new session, since this one has read the whole design and the split report, and carrying them into a child's assessment bloats it.
 
 ## 3. Design the target
 Send the `target-designer` subagent the confirmed behaviors, numbered, and the paths to the note's Meta-Instructions, its Design Handoff sections and its images. Give it nothing else, and don't describe the existing code or an old approach to it, so its design isn't anchored to what's already there.

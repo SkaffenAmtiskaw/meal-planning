@@ -5,8 +5,9 @@ blocked-by: []
 confirmed: 2026-09-25
 ---
 # Where It Stands
+Next: /investigate ^status
 
-Split from [[Unified Date Picker Component]] with 3 draft steps. A symptom was added 2026-09-26. Next: /assess to add it to the approach, then /plan-steps. ^status
+Split from [[Unified Date Picker Component]]. The calendar month views' 6-row symptom, added 2026-09-26, isn't in its Suggested Approach yet.
 
 # Symptoms
 - The header's Date field (desktop) and the period-label picker (phone) render unstyled, because nothing imports `@mantine/dates/styles.css`.

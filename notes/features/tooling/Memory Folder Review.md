@@ -53,7 +53,7 @@ Where each memory to delete already has its rule, as of 2026-10-06. Some of thes
 | `shape-reads-note-conventions` | `shape:28` |
 | `skill-invocation-confirms-relevance` | `shape:43`, Note Conventions:16, AGENTS.md:78 |
 | `skip-obvious-outline-confirmations` | `plan-steps` step 4 |
-| `split-stories-design-in-hub` | `split-checker:35`, `Hub.md:22`, `filing-work/content-from-another-note.md` |
+| `split-stories-design-in-hub` | `split-checker:18`, `Hub.md:22`, `filing-work/content-from-another-note.md` |
 | `step-plan-standards` | `writing-implementation-steps` "One Idea per Step" and "Something to See in Every Step" |
 | `story-ready-definition` | Note Conventions:21-22 |
 | `tooling-enforcement-is-docs` | `infra-design:21` |

@@ -12,7 +12,7 @@ Part of [[Agent Instructions Audit]].
 
 **Step:** Roundup's `/plan-steps` step, which writes the implementation steps.
 
-**Re-checks for this step:** `/plan-steps`, `writing-implementation-steps` (with `test-only-checks.md`), `running-the-app` (with `which-user.md`), the `plan-checker` agent (reviewed in Feature Plan-Steps Review); the `split-checker` agent, `splitting-a-story` (reviewed in Feature Assess Review); the `notes-only-edits.sh` hook (reviewed in Feature Shape Review).
+**Re-checks for this step:** `/plan-steps`, `writing-implementation-steps` (with `test-only-checks.md`), `running-the-app` (with `which-user.md`), the `plan-checker` agent (reviewed in Feature Plan-Steps Review); the `hidden-story-checker` agent (reviewed in Bug Plan-Steps Review); the `split-checker` agent, `splitting-a-story` (reviewed in Feature Assess Review); the `notes-only-edits.sh` hook (reviewed in Feature Shape Review).
 
 **Decisions that apply:**
 
