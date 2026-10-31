@@ -5,7 +5,7 @@ confirmed: 2026-10-06
 # Where It Stands
 Next: its child stories ^status
 
-Split on 2026-10-06 into workflow-step reviews, one for each step of each note type's workflow except Feature's `/shape` step, which has five, plus AGENTS.md, the memory folder, Note Conventions with the Roadmap header, and Conventions Review. The scan's findings and the open Agent Workflow Changes items about each step moved into the review notes. Feature Shape Review, Shared Note Procedures Review, Writing Standard Reviewer, Scope-Router Review, Writing Standard Review, Feature Template Review, Feature Decide Review, Merging Routed Designs, Overly Prescriptive Instructions, Feature Assess Review, Feature Check-Drift Review, Feature Plan-Steps Review, Agents Miss the Writing Standard, Feature Implement Review, Writing Reviewer Misses Criteria, Writing Standard Lacks Sentence Clarity, Breaking Up Long Skill Files, Changes That Reach Other Notes, Implement Follow-Up Fixes, Feature Final-Review Review and Feature Close Review are done, and the rest aren't done yet.
+Split on 2026-10-06 into workflow-step reviews, one for each step of each note type's workflow except Feature's `/shape` step, which has five, plus AGENTS.md, the memory folder, Note Conventions with the Roadmap header, and Conventions Review. The scan's findings and the open Agent Workflow Changes items about each step moved into the review notes. Feature Shape Review, Shared Note Procedures Review, Writing Standard Reviewer, Scope-Router Review, Writing Standard Review, Feature Template Review, Feature Decide Review, Merging Routed Designs, Overly Prescriptive Instructions, Feature Assess Review, Feature Check-Drift Review, Feature Plan-Steps Review, Agents Miss the Writing Standard, Feature Implement Review, Writing Reviewer Misses Criteria, Writing Standard Lacks Sentence Clarity, Breaking Up Long Skill Files, Changes That Reach Other Notes, Implement Follow-Up Fixes, Feature Final-Review Review, Feature Close Review and Bug Shape Review are done, and the rest aren't done yet.
 
 # Inbox
 
@@ -101,7 +101,7 @@ Each finding moved into the review note it belongs to on 2026-10-06.
 | Implement Follow-Up Fixes | the possible problems `writing-reviewer` test runs found in the shipped `/implement` and `building-code` text, which the first `/implement` review missed |
 | Feature Final-Review Review | Feature's `/final-review` step; full review of `/final-review`, the `leftovers-checker` agent, the `target-designer` agent |
 | Feature Close Review | Feature's `/close` step; full review of `/close` |
-| [[Bug Shape Review]] | Bug's `/shape` step; full review of `notes/templates/Bug.md` |
+| Bug Shape Review | Bug's `/shape` step; full review of `notes/templates/Bug.md` |
 | [[Bug Decide Review]] | Bug's `/decide` step |
 | [[Bug Investigate Review]] | Bug's `/investigate` step; full review of `/investigate`, the `bug-reproducer` agent |
 | [[Bug Check-Drift Review]] | Bug's `/check-drift` step |
