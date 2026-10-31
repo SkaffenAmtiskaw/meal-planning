@@ -5,7 +5,7 @@ confirmed: 2026-10-06
 # Where It Stands
 Next: its child stories ^status
 
-Split on 2026-10-06 into workflow-step reviews, one for each step of each note type's workflow except Feature's `/shape` step, which has five, plus AGENTS.md, the memory folder, Note Conventions with the Roadmap header, and Conventions Review. The scan's findings and the open Agent Workflow Changes items about each step moved into the review notes. Feature Shape Review, Shared Note Procedures Review, Writing Standard Reviewer, Scope-Router Review, Writing Standard Review, Feature Template Review, Feature Decide Review, Merging Routed Designs, Overly Prescriptive Instructions, Feature Assess Review, Feature Check-Drift Review, Feature Plan-Steps Review, Agents Miss the Writing Standard, Feature Implement Review, Writing Reviewer Misses Criteria, Writing Standard Lacks Sentence Clarity, Breaking Up Long Skill Files, Changes That Reach Other Notes, Implement Follow-Up Fixes, Feature Final-Review Review, Feature Close Review, Bug Shape Review, Bug Decide Review and Bug Investigate Review are done, and the rest aren't done yet.
+Split on 2026-10-06 into workflow-step reviews, one for each step of each note type's workflow except Feature's `/shape` step, which has five, plus AGENTS.md, the memory folder, Note Conventions with the Roadmap header, and Conventions Review. The scan's findings and the open Agent Workflow Changes items about each step moved into the review notes. Feature Shape Review, Shared Note Procedures Review, Writing Standard Reviewer, Scope-Router Review, Writing Standard Review, Feature Template Review, Feature Decide Review, Merging Routed Designs, Overly Prescriptive Instructions, Feature Assess Review, Feature Check-Drift Review, Feature Plan-Steps Review, Agents Miss the Writing Standard, Feature Implement Review, Writing Reviewer Misses Criteria, Writing Standard Lacks Sentence Clarity, Breaking Up Long Skill Files, Changes That Reach Other Notes, Implement Follow-Up Fixes, Feature Final-Review Review, Feature Close Review, Bug Shape Review, Bug Decide Review, Bug Investigate Review, Reviewer Misses Enforced Details and Bug Check-Drift Review are done, and the rest aren't done yet.
 
 # Inbox
 
@@ -106,7 +106,7 @@ Each finding moved into the review note it belongs to on 2026-10-06.
 | Bug Decide Review | Bug's `/decide` step |
 | Bug Investigate Review | Bug's `/investigate` step; full review of `/investigate`, the `bug-reproducer` agent |
 | Reviewer Misses Enforced Details | why `writing-reviewer` and drafting agents keep an exact detail that a hook, script or other rule already enforces, and a check that catches it |
-| [[Bug Check-Drift Review]] | Bug's `/check-drift` step |
+| Bug Check-Drift Review | Bug's `/check-drift` step |
 | [[Bug Plan-Steps Review]] | Bug's `/plan-steps` step |
 | [[Bug Implement Review]] | Bug's `/implement` step |
 | [[Bug Final-Review Review]] | Bug's `/final-review` step |

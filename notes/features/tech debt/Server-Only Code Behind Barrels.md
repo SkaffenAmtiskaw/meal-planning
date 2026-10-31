@@ -35,6 +35,11 @@ Current temporary fix (made 2026-09-27 when `getUserInvites` became server-only)
 	- client code importing action files directly instead of the barrel
 
 	The answer also decides where the types of a server-only function live so client code can import them. `invite.types.ts` is today's answer; [[Shared Types Directory]] may change it.
+	- **Decided 2026-10-31:** a data access layer, as Next.js recommends. Its scope, name and access checks still need research and planning. Until it's built, server-only functions stay out of client-imported barrels and are imported by file path, as with `getUserInvites` today. Sarah's call: it's the approach Next.js recommends.
+		- Rejected: a server-only entry point per domain (`server.ts` or `server/index.ts`) - it isn't an established convention for app code, and `server.ts` is less obvious as a barrel than `index.ts`.
+		- Rejected: direct file imports as the permanent rule - kept only as the interim fix until the DAL exists.
+		- Rejected: client code importing action files directly - about 25 client files would change, and nobody can check the rule by reading a file, since some client files have no `'use client'`.
+		- Rejected: keeping the barrels and setting Turbopack's `sideEffects` - the spike showed it works only on Turbopack and only with named re-exports, and a file missing from the list is silently dropped from production builds.
 2. Does the rule cover only `src/_actions/*` barrels, or every barrel? For example, `src/_components/UserMenu` holds the `server-only` `InviteBadge`.
 3. Is the `server-only` build error (`pnpm build` in pre-commit) enough enforcement? Or does something also need to stop a server-only export being added to a client-imported barrel, e.g. a lint import rule or a check in the `src/dataConventions.test.ts` that [[Data Rules Enforcement]] adds?
 
@@ -53,6 +58,7 @@ Current temporary fix (made 2026-09-27 when `getUserInvites` became server-only)
 ## About to become server-only in other stories
 These barrels are imported by `'use client'` files, so each one will hit the same build error:
 - [ ] `addUser`, in [[Server-Only Creation and Pure Reads]] Step 8. The `@/_actions/user` barrel is imported by `ChangeNameForm.tsx:9` and `DeleteAccountForm.tsx:8`.
+- [ ] `addPlanner`, in [[Server-Only Creation and Pure Reads]] Step 8. `src/_actions/user/addUser.ts:5` imports it through the `@/_actions/planner` barrel, so under the [[Domain-Specific Code Locations]] Rules it can't move to `planner/_utils/` and stays behind that barrel.
 - [ ] `getPlanner` and `getPlannerClient`, in [[Unchecked Planner Reads]]. The `@/_actions/planner` barrel is imported by `CreatePlannerForm.tsx:8`, `useRenamePlanner.ts:6` and `PlannerProvider.tsx:6`.
 - [ ] `getSavedItem`, in [[Unchecked Planner Reads]]. The `@/_actions/library` barrel is imported by `RecipeForm.tsx:20` and `BookmarkForm.tsx:11`.
 

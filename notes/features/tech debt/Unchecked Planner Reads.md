@@ -3,12 +3,14 @@ type: bug
 status: spec
 blocked-by:
   - "[[Calendar and Recipes Data Refresh]]"
-  - "[[Server-Only Code Behind Barrels]]"
 confirmed: 2026-09-25
 ---
 # Where It Stands
 
-Blocked until [[Calendar and Recipes Data Refresh]] and [[Server-Only Code Behind Barrels]] land; then /plan-steps. ^status
+Blocked by [[Calendar and Recipes Data Refresh]]; then /plan-steps ^status
+
+# Inbox
+- From [[Server-Only Code Behind Barrels]], Decision 1 (decided 2026-10-31): server-only code is headed for a data access layer, which needs its own research and planning, so this story no longer waits on that note's Rules. Until the DAL exists, a server-only function stays out of every client-imported barrel, and its server callers import it by file path, as `getUserInvites` does. This affects the ⚠️ Check Drift callouts here that say to plan with that note's Rules. The functions this story makes server-only move into the DAL later; that note's Migration Checklist lists them.
 
 # ⚠️ Security Concern
 **Anyone who can reach the app may be able to read any planner's data, including its calendar, saved recipes and tags, by calling a server action with that planner's id. No membership check stops them.** This is an authorization hole, not a code-tidiness issue.

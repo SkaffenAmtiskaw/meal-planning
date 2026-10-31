@@ -1,13 +1,15 @@
 ---
 type: cleanup
 status: spec
-blocked-by:
-  - "[[Server-Only Code Behind Barrels]]"
+blocked-by: []
 confirmed: 2026-09-25
 ---
 # Where It Stands
 
-Blocked until [[Server-Only Code Behind Barrels]] lands; then /plan-steps. ^status
+Next: /plan-steps ^status
+
+# Inbox
+- From [[Server-Only Code Behind Barrels]], Decision 1 (decided 2026-10-31): server-only code is headed for a data access layer, which needs its own research and planning, so this story no longer waits on that note's Rules. Until the DAL exists, a server-only function stays out of every client-imported barrel, and its server callers import it by file path, as `getUserInvites` does. This affects the ⚠️ Check Drift callouts here that say to plan with that note's Rules. The functions this story makes server-only move into the DAL later; that note's Migration Checklist lists them.
 
 # Purpose
 `addPlanner` and `addUser` are exported as server actions, so the browser can call them (`addPlanner` has no auth check). Two reads also write: `getPlanners` sets default planner names and `validateInviteToken` deletes expired invites. This story moves the two creators into server-only utilities and makes both reads pure, because under the data refresh pattern only server actions can invalidate what they change.

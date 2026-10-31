@@ -13,7 +13,7 @@ hooks:
 
 Check the note **$ARGUMENTS** for drift.
 
-A note is planned against the code, the conventions and other notes as they were on its `confirmed` date, and by the time it's built any of them may have moved on, or the user may have changed their mind. Find where the remaining work no longer holds, mark each place with a ⚠️ Check Drift callout and send the note to the skill that fixes it. Don't rewrite the plan beyond correcting a name or path, because the skill that wrote each section settled it with the user and is the one to re-settle it. Don't change code either.
+A note is planned against the code, the conventions and other notes as they were on its `confirmed` date, and by the time it's built any of them may have moved on, or the user may have changed their mind. Find where the remaining work no longer holds, mark each place with a ⚠️ Check Drift callout and send the note to the skill that fixes it. Don't rewrite the plan beyond correcting a name or path, because the skill that wrote each section settled it with the user and is the one to re-settle it.
 
 ## 1. Read the note
 Find the note in `notes/features/`. If its status isn't `spec`, `ready` or `in-progress`, tell the user what you found and stop.
