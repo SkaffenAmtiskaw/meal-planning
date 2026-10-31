@@ -16,7 +16,7 @@ Investigate the note **$ARGUMENTS** and take it to `spec`. This is planning only
 ## 1. Read the note
 Find the note in `notes/features/` and read all of it. It should be `type: bug` or `type: cleanup`. What this run does depends on its `status`:
 - **`idea`:** a first investigation.
-- **`spec`:** a re-investigation. Its ⚠️ Check Drift callouts say what changed. Do step 2 or 3 fresh rather than starting from the old sections, because reading them first anchors you to their conclusions.
+- **`spec`:** a re-investigation. Its ⚠️ Check Drift callouts, or an Inbox item from `/implement`, say what changed. Do step 2 or 3 fresh rather than starting from the old sections, because reading them first anchors you to their conclusions.
 - **`ready` or later:** tell the user what you found and stop, because changes to a planned story go through `/check-drift`.
 
 If `blocked-by` has a `decision needed` entry, those decisions come first with `/decide`. If another story blocks the note, the investigation may be wasted until that story lands. In either case, tell the user and ask whether to go on anyway.

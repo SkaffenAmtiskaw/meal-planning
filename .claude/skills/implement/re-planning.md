@@ -4,6 +4,7 @@ When the plan itself has to change, what you do depends on the story and the cha
   - **If the Design itself has to be reworked,** such as a Piece that can't work as designed: follow the steps below, with `/infra-design` as the next skill.
   - **If the change is the user's call:** ask them about it, as AGENTS.md's "Her decisions can change" describes. Once they decide, make the change in the note as that section describes, and keep building.
   - **Otherwise,** when the change touches only choices the user merely signed off on, such as the order of the Build Order's steps, the step a Piece is built in or a check's wording: make the change in the note yourself, as that section describes, and keep building.
+- **A bug story whose Root Cause turned out wrong:** follow the steps below, with `/investigate` as the next skill, since it settles the Root Cause and Fix that `/plan-steps` plans from.
 - **Any other story:** follow the steps below, with `/plan-steps` as the next skill.
 
 1. Stop coding, and leave the work as it is.

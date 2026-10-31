@@ -25,9 +25,10 @@ Tell the user in one line which step you're building. If `status` is `ready`, se
 ## 2. Build it
 If it's a Build Order step whose **Setup first:** line names an item from Setup Outside the Repo, walk the user through it before you build.
 
-A change or addition the plan doesn't have can turn up as you build, or come from the user at review. Apart from work the story needs and Boy Scout fixes, sort where each one goes, so this step builds only the work that belongs in it:
+A change or addition the plan doesn't have can turn up as you build, or come from the user at review. Apart from Boy Scout fixes and work the story needs, sort where each one goes, so this step builds only the work that belongs in it. Sort a fix for a cause Root Cause doesn't name too, even though the story needs it:
 - **If it's work for a later step or another story, or new work unrelated to this step:** put it on the out-of-scope list, so the user decides whether to pull it in.
 - **If the step's idea sentence, or a Build Order step's title, would have to change:** re-plan, as `re-planning.md` in this skill's folder describes.
+- **If a bug story's planned fix leaves the symptom and you find the cause isn't the one Root Cause names:** re-plan, as `re-planning.md` describes. The user approved the Fix for the cause the note gives, so a fix for another cause is theirs to choose.
 - **Otherwise:** it goes in this step, recorded as As built. This includes behaviors the user assumed but the plan never said, like a button that should focus a field.
 
 Build the step as the `building-code` skill describes, through "Do the Acceptance Checks".
