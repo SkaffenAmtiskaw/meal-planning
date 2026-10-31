@@ -33,7 +33,7 @@ Part of [[Agent Instructions Audit]].
 
 ## Issues Found
 From the audit's scan on 2026-10-06. Line numbers are as of that day.
-- Leftovers from before the skill existed: :37 and :119 (an entry that waited on this skill being built), :107 (an older `# Fix Options` section; none exist), :120 (its Roadmap example), :39 and :117 ("or under Where It Stands in an older note").
+- Leftovers from before the skill existed: :37 and :119 (an entry that waited on this skill being built), :107 (an older `# Fix Options` section; [[Zero Planners Crash]] still has one), :120 (its Roadmap example), :39 and :117 ("or under Where It Stands in an older note").
 - "Don't tell `bug-reproducer` the theory" three times (:21, :53, :69); keep the reason and one instruction.
 - The re-investigation rule is split between :34 and :116.
 - :101 restates AGENTS.md's "Approval covers the edits".

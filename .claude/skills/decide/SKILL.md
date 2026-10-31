@@ -36,7 +36,7 @@ If the question is "Is this worth doing?" and the user decides it isn't, the sto
 
 ### Knock-on effects
 After recording each answer, look at what it changes:
-- **This note:** other sections the answer lands in, such as a section the question says to record it in, the chosen Fix Option, or a hub's Coverage or Child Stories table. Draft each change and go through them with the user.
+- **This note:** other sections the answer lands in, such as a section the question says to record it in, a bug's Fix section, or a hub's Coverage or Child Stories table. Draft each change and go through them with the user.
 - **New stories:** if the answer implies work no note covers yet, and the note is a hub, add it to a list of new child stories for step 5. Otherwise, add it to the out-of-scope list.
 - **New questions:** if `decision-researcher` found a blocking question that isn't on the note, or the answer raised one, tell the user what needs deciding, add it to Open Decisions, and ask whether they already have an answer in mind:
   - **They have one:** go on from their answer as the `settling-a-decision` skill describes.
