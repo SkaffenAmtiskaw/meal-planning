@@ -229,18 +229,19 @@ inline styles or fixture data.
 |---|---|---|---|
 | [[Mantine Date Picker Setup]] | spec | Mantine pickers styled, Sunday week start, 6 rows; one shared `getWeekStart` | - |
 | [[Today and Selected Day Markers]] | spec | navy today ring and sage selected circle in the month, week and desktop list views; ember no longer marks days | - |
-| [[Header Date Picker]] | spec | the shared `CalendarDatePicker`, its popover and bottom sheet, meal dots and picker keys; header jump-to-date | [[Mantine Date Picker Setup]], [[Today and Selected Day Markers]] |
-| [[Meal Form Date Picker]] | spec | Add/Edit Meal Date field, Today footer, date-only subtitle | [[Header Date Picker]] |
+| [[Header Date Picker]] | ready | the picker's shared day grid, its popover and bottom sheet, meal dots and picker keys; header jump-to-date | [[Named Date Formats]], [[Mantine Date Picker Setup]], [[Today and Selected Day Markers]] |
+| [[Meal Form Date Picker]] | spec | the picker panel, Add/Edit Meal Date field, Today footer, date-only subtitle | [[Named Date Formats]], [[Header Date Picker]] |
 
 Related, not child stories:
+- [[Named Date Formats]] - builds `formatDate`, which [[Header Date Picker]] and [[Meal Form Date Picker]] add their date styles to
 - [[Meal Editing]] - holds the picker's `label`, relative shortcuts, `shortcutItems` and `hint` as deferred work, with an open decision on which story builds them
 - [[Meal Detail Modal & Edit Meals]] - placement 3 (Move to / Duplicate), and edit mode's Date field
 - [[Mobile List View]] - owns the mobile list's today marker; uses Day marks from [[Today and Selected Day Markers]]
 
 # Build Order
-1. [[Mantine Date Picker Setup]] and [[Today and Selected Day Markers]], in either order. Neither uses the other (inferred from their draft steps).
-2. [[Header Date Picker]]. Uses `DatesProvider` and `getWeekStart` from Setup, and the Day marks styles and `sage` from Markers (stated in its draft steps).
-3. [[Meal Form Date Picker]]. Uses the panel, `AdaptivePopover`, `DateTrigger`, `formatDate` and `MealDatesProvider` from Header (stated in its draft steps).
+1. [[Mantine Date Picker Setup]], [[Today and Selected Day Markers]] and [[Named Date Formats]] (outside this hub), in any order. None uses another (inferred from their draft steps).
+2. [[Header Date Picker]]. Uses `DatesProvider` and `getWeekStart` from Setup, the Day marks styles and `sage` from Markers, and `formatDate` from [[Named Date Formats]] (stated in its draft steps).
+3. [[Meal Form Date Picker]]. Uses the day grid, `AdaptivePopover`, `DateTrigger` and `MealDatesProvider` from Header, and `formatDate` from [[Named Date Formats]] (stated in its draft steps).
 4. Outside this hub: [[Meal Detail Modal & Edit Meals]] after Header and Meal Form (stated in its handoff). [[Mobile List View]] after Markers (stated in its `blocked-by`).
 
 # Open Decisions

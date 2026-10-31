@@ -5,6 +5,8 @@ blocked-by:
   - "outdated - re-review against current calendar designs once the calendar views are mostly complete"
 confirmed: 2026-04-29
 ---
+[Sarah] - 10/31/2026 - I'd like a way for conflicts to be detected and existing keyboard shortcuts on any given screen to be displayed. This probably requires a full discussion, and might result in this story getting broken out into several stories.
+
 # High-Level Overview
 
 Implement global keyboard shortcuts for power users to efficiently navigate and interact with the calendar without relying on mouse/touch.
@@ -62,7 +64,7 @@ Implement global keyboard shortcuts for power users to efficiently navigate and 
 - Follow established conventions (match Google Calendar where possible)
 
 ### Keys the date picker already uses
-*(Added 2026-09-25 while planning [[Unified Date Picker Component]], Steps 21-22, now [[Header Date Picker]] Steps 10-11.)* When the global shortcuts are built, check each one against the keys the shared date picker (`src/_components/CalendarDatePicker/`) handles while it's open or focused, so neither one takes the other's keys:
+*(Added 2026-09-25 while planning [[Unified Date Picker Component]], Steps 21-22, now [[Header Date Picker]] Step 8.)* When the global shortcuts are built, check each one against the keys the shared date picker (`src/_components/CalendarDatePicker/`) handles while it's open or focused, so neither one takes the other's keys:
 - Our code, in `useDatePickerKeys`: PgUp/PgDn (same day, previous or next month) and Home/End (start or end of the week)
 - Mantine's `DatePicker`: arrows, Enter, Esc, Ctrl/Cmd+arrow (jump a year; Ctrl+Shift+arrow for a decade) and `Y` (open the year view)
 

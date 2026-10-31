@@ -63,7 +63,7 @@ These were separate Roadmap lines before 2026-09-25. The Roadmap now links to th
 
 # Build Order Implied by the Notes
 *[[Calendar and Recipes Data Refresh]] (split from [[Stale Data Issues]]) blocks [[Add Meal Changes (Saved Recipes)]] (decided 2026-09-25). The date picker stories ([[Unified Date Picker Component]] hub) don't depend on it.*
-1. [[Header Date Picker]], then [[Meal Form Date Picker]] (after [[Mantine Date Picker Setup]] and [[Today and Selected Day Markers]]; see the [[Unified Date Picker Component]] hub)
+1. [[Header Date Picker]], then [[Meal Form Date Picker]] (after [[Named Date Formats]], [[Mantine Date Picker Setup]] and [[Today and Selected Day Markers]]; see the [[Unified Date Picker Component]] hub)
 2. [[Add Meal Changes (Saved Recipes)]] - after [[Calendar and Recipes Data Refresh]] - so edit mode is not built on the old Add Meal layout (not stated in either note; see open decision 7)
 3. [[Meal Detail Modal & Edit Meals]]. The date picker options for Move / Duplicate come before it or with it (open decision 10).
 4. Wiring the mobile card actions (currently Step 8 stubs) to the edit flow

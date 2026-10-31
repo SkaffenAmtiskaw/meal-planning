@@ -121,7 +121,8 @@
 5. [[Data Rules Enforcement]] ![[Data Rules Enforcement#^status]] - spec. Waiting on [[Calendar and Recipes Data Refresh]], [[Settings Data Refresh]] and [[Server-Only Creation and Pure Reads]]. 🎯 [[Calendar Page]] 🎯 [[App Health]]
 6. [[Today and Selected Day Markers]] ![[Today and Selected Day Markers#^status]] - spec. Fixes the truncated today circle; unblocks [[Mobile List View]]. 🎯 [[Calendar Page]]
 7. [[Mantine Date Picker Setup]] ![[Mantine Date Picker Setup#^status]] - spec. 🎯 [[Calendar Page]]
-8. [[Header Date Picker]] ![[Header Date Picker#^status]] - spec. Waiting on [[Mantine Date Picker Setup]] and [[Today and Selected Day Markers]]. 🎯 [[Calendar Page]]
+8. [[Named Date Formats]] ![[Named Date Formats#^status]] 🎯 [[Calendar Page]]
+9. [[Header Date Picker]] ![[Header Date Picker#^status]] - ready. Waiting on [[Named Date Formats]], [[Mantine Date Picker Setup]] and [[Today and Selected Day Markers]]. 🎯 [[Calendar Page]]
 
 # Later
 ## [[Dev Foundations]]
@@ -133,7 +134,7 @@
 - [[Schedule-X Data Shapes Audit]] ![[Schedule-X Data Shapes Audit#^status]] 🎯 [[App Health]]
 - [[Unchecked Planner Reads]] ![[Unchecked Planner Reads#^status]] - spec. ⚠️ Security: any planner's data may be readable by id without a membership check. Waiting on [[Calendar and Recipes Data Refresh]] and [[Server-Only Code Behind Barrels]]. 🎯 [[Bugs]]
 - [[Add Meal Changes (Saved Recipes)|User Feedback - Add Meal Changes]] - ready. Waiting on [[Calendar and Recipes Data Refresh]].
-- [[Meal Form Date Picker]] ![[Meal Form Date Picker#^status]] - spec. Waiting on [[Header Date Picker]]. With it, unblocks [[Meal Detail Modal & Edit Meals]].
+- [[Meal Form Date Picker]] ![[Meal Form Date Picker#^status]] - spec. Waiting on [[Named Date Formats]] and [[Header Date Picker]]. With it, unblocks [[Meal Detail Modal & Edit Meals]].
 - [[Mobile List View]] ![[Mobile List View#^status]]
 - [[Meal Editing]] ![[Meal Editing#^status]]
 - [[Meal Detail Modal & Edit Meals]]

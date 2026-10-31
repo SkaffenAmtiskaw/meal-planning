@@ -2,12 +2,13 @@
 type: feature
 status: spec
 blocked-by:
+  - "[[Named Date Formats]]"
   - "[[Header Date Picker]]"
 confirmed: 2026-09-25
 ---
 # Where It Stands
 
-Split from [[Unified Date Picker Component]] with 3 draft steps. Next: /plan-steps to confirm them. Building waits on [[Header Date Picker]]. ^status
+Split from [[Unified Date Picker Component]] with 3 draft steps. Next: /plan-steps to confirm them. Building waits on [[Named Date Formats]] and [[Header Date Picker]]. ^status
 
 [[Add Meal Changes (Saved Recipes)]] also changes `MealFields`, `AddMealForm` and the modal header. Whichever story lands second rebases onto the other (see [[Meal Editing]] open decision 7).
 
@@ -72,14 +73,15 @@ The design lives in [[Unified Date Picker Component]]. The sections embedded bel
 ## Pieces
 | # | Piece | Job | Decision | Existing code | Why |
 |---|---|---|---|---|---|
+| 3 | Picker panel | Lay out the optional parts (label, shortcuts, hint, Today footer) around the day grid | Build new (`src/_components/CalendarDatePicker`) | [[Header Date Picker]]'s picker grid (Piece 4): as-is, wrapped | Moved from [[Header Date Picker]] by Sarah 2026-10-31 during its `/plan-steps`, since the Today footer is the first optional part to land. It passes `value`, `onChange` and `markedDates` straight through to the grid. |
 | 7 | Today footer | Offer a one-tap pick of today | Build new | `CalendarTodayButton`: not a fit | That button navigates the calendar. This one only reports a pick. |
 | 16 | Meal date field | Edit the meal form's date | Build new. `MealFields`: as-is, as the container | `AddMealForm`: refactor first (row 19) | Follows [Mantine's recommended pattern](https://mantine.dev/form/uncontrolled/) for custom inputs in uncontrolled forms. The field accepts `defaultValue`/`onChange` through `useUncontrolled` and gets its `key` from `form.key('date')`, so `setFieldValue` and resets re-seed it. The form stays in uncontrolled mode. It keeps `data-testid="meal-date"`, `withAsterisk` and the required error. |
 | 19 | Meal modal subtitle | Show the chosen date in the modal header | Refactor first | `AddMealForm` (remove the mount-only effect), `AddMealModal` | The form reports date changes through Mantine's `form.watch('date', …)`. The modal formats the date with the named style from row 12, so the subtitle follows each pick. |
 
-Uses Pieces 10, 11, 12 and 14, built by [[Header Date Picker]].
+Uses Pieces 4, 10, 11 and 14, built by [[Header Date Picker]], and Piece 12, built by [[Named Date Formats]].
 
 ## Client pieces
-The Today footer (7) has no `'use client'` directive of its own. It has an event handler, but it only ever renders inside the picker.
+The panel (3) and the Today footer (7) have no `'use client'` directive of their own. Both have event handlers, but they only ever render inside client pieces.
 
 | Piece | Why client |
 |---|---|
