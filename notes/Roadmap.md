@@ -128,7 +128,7 @@
 ## [[Dev Foundations]]
 
 ## [[Calendar Page]]
-- [Sarah] - Bug - When adding a URL as a reference, the dish title input can shrink too small to read the text (this was observed in the deployed production app but not confirmed in develop yet)
+- [[Long Reference URLs Shrink the Name Input]] ![[Long Reference URLs Shrink the Name Input#^status]]
 - [[Remove Schedule-X]] ![[Remove Schedule-X#^status]] - spec.
 - [[Shared Types Directory]] - spec, last reviewed April. Unblocks [[Remove Schedule-X]]. 🎯 [[App Health]]
 - [[Schedule-X Data Shapes Audit]] ![[Schedule-X Data Shapes Audit#^status]] 🎯 [[App Health]]
