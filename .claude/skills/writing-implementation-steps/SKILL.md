@@ -9,7 +9,8 @@ Each step carries one idea and ends in checks that show progress the user can se
 
 ## One Idea per Step
 - **The idea sentence.** A step opens with one sentence saying what it does. If it needs "and", or "and" in disguise such as "with" or "plus", it's two steps.
-- **Size.** Steps are sized by idea, not file count: eighteen files serving one new context provider are one step, and six files making unrelated changes aren't. In a sweep or roundup, unrelated items get separate steps, however small.
+- **Size.** Steps are sized by idea, not file count: eighteen files serving one new context provider are one step, and six files making unrelated changes aren't. In a sweep or roundup, unrelated items get separate steps, however small. In a pattern, places that migrate to one rule in the same way can share a step, since they're one idea.
+- **A pattern's Docs items.** A rule's Docs item goes in the step that builds its Enforcement, since both keep future code to the rule.
 - **Files.** Each file the step creates or changes is listed with a reason tied to the idea. A file whose reason doesn't serve the idea belongs in another step.
 
 ## Something to See in Every Step
@@ -23,10 +24,15 @@ Each step carries one idea and ends in checks that show progress the user can se
 
 ## Checks
 Which kind of check a step gets depends on what it changes:
-- **If it changes only test files:** break-it checks, plus at least one run-and-see check if any of the files are E2E code, as `docs/e2e_tests.md` lists under "Where E2E Code Lives". Write them as `test-only-checks.md` in this skill's folder describes.
+- **If it changes only what enforces a pattern's rule or where the rule is written, such as a Biome ban, a conventions test or a doc:** the Enforcement and doc checks below.
+- **Otherwise, if it changes only test files:** break-it checks, plus at least one run-and-see check if any of the files are E2E code, as `docs/e2e_tests.md` lists under "Where E2E Code Lives". Write them as `test-only-checks.md` in this skill's folder describes.
 - **Otherwise:** click-throughs in the running app, "Go to [view], [do something], see [result]", naming the screen size (phone or desktop), the data needed, such as a day with two meals, and any signed-in user, as `.claude/skills/running-the-app/which-user.md` describes.
 
-A step whose Source names a Symptom checks it by following the Symptom's repro steps, which should no longer show the bug. A step that builds a failure, empty or read-only behavior checks that behavior too.
+Some steps also need a particular check, on top of the kind above:
+- **If its Source names a Symptom:** follow the Symptom's repro steps, which should no longer show the bug.
+- **If it builds a failure, empty or read-only behavior:** check that behavior.
+- **If it builds a rule's Enforcement:** break the rule. "Temporarily add `<code>` to `<file>`, run `<command>`, see it fail with `<the error or rule it reports>`. Revert. Proves: <what the Enforcement catches>."
+- **If it writes a rule into a doc:** open the doc at the rule's section and read the rule there.
 
 Each check:
 - **Proves what the step built.** "Tests pass" and "types compile" aren't checks, since they hold for every step, and neither is a library's default behavior, such as a Mantine Popover flipping above its trigger, which the user trusts without checking.

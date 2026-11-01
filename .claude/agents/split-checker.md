@@ -43,6 +43,13 @@ Propose these, each as exact note changes:
 
 **Roadmap:** a line for each child, with the original line's 🎯 links or other marker. Also say whether the original's line stays or is removed, as the Roadmap's "Hubs" rule in `notes/Roadmap.md` decides.
 
+## If the Note Is a Pattern
+A pattern's Rules take the design's place: every child migrates code to them, so they stay in one copy. The note changes above and the report below apply, with these differences:
+- **The hub:** it keeps `# Rules` and `# Enforcement` in place of the Design Handoff. Its Symptoms and Migration Checklist move to the children.
+- **Each child:** its `# Rules` and `# Enforcement` embed the hub's sections. It takes its share of the Symptoms in place of Requirements. Its approach is its share of the Migration Checklist, under its own `# Migration Checklist`, and `# From the Split` goes right before that section.
+- **Enforcement items in the Migration Checklist:** one that fails on code not yet migrated, such as a lint rule or conventions test, goes to the child that migrates the last place under its rule, or to a child of its own that's blocked by the others.
+- **The report's Unclaimed line:** it also lists any Symptom or Migration Checklist item no child takes.
+
 ## Report Format
 For each child:
 

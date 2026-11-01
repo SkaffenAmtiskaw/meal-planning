@@ -37,6 +37,6 @@ For each hidden story:
 **Scope:** one line
 **Passes the test because:** one line, including what the user would check in the app
 **Takes:** at the Behaviors checkpoint, its behaviors; at the Plan checkpoint, its steps and approach pieces. Also the parts of the note they build, such as Requirements bullets or Symptoms
-**Shared design:** the design sections that both it and the rest of the story build, or "none". The caller splits the note into a hub only when this isn't "none"
+**Shared design:** the design sections that both it and the rest of the story build, or, in a pattern, the Rules that both migrate code to. Otherwise, "none"
 **Blocked by:** the parts of this story, or other stories, it would wait on
 **Belongs in:** the later story it was built for, if it's speculative work
