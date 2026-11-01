@@ -51,7 +51,7 @@ Before planning or implementing any story linked from this note, read this note 
 - [[Stale Data Issues]] - edit, move, duplicate and delete are all mutations and should follow its pattern
 - [[Modal Form Architecture]] - the meal detail modal is meant to follow its presentation/data split and use `CalendarModalContext`
 - [[Keyboard Shortcuts]] - `E` edits and `Delete` deletes the focused meal
-- Roadmap: "create a meal with just a title and a description" - changes validation that edit mode shares with Add Meal
+- [[Blank Dish Row Blocks Saving a Meal]] - changes validation that edit mode shares with Add Meal
 - Roadmap: "meal color should be based on hex of title + description" - editing a description would change a meal's color
 
 # Moved from the Roadmap

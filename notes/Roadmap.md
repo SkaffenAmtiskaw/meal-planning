@@ -132,7 +132,7 @@
 - [[Meal Editing]] ![[Meal Editing#^status]]
 - [[Meal Detail Modal & Edit Meals]]
 - [[DND]]
-- you should be able to create a meal with just a title and a description (or just a title)
+- [[Blank Dish Row Blocks Saving a Meal]] ![[Blank Dish Row Blocks Saving a Meal#^status]]
 - meal color should be based on hex of title + description
 - [[Modal Form Architecture|refactor all modal forms to separate presentation and data concerns]] 🎯 [[App Health]] 🎯 [[Recipes Page]]
 - [[Add Meal from Month Cell]] ![[Add Meal from Month Cell#^status]]- add meals by clicking week day - reuse the interaction decisions from [[Add Meal from Month Cell]]'s design so month and week behave the same
