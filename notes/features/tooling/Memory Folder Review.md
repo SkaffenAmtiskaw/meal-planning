@@ -39,7 +39,7 @@ Where each memory to delete already has its rule, as of 2026-10-06. Some of thes
 | `named-home-skips-scope-router` | AGENTS.md:108 |
 | `new-roadmap-lines-start-in-ideas` | AGENTS.md "Roadmap order", Roadmap:15, `tooling:46-48`, `roadmap-placement:15` |
 | `new-session-per-note` | `shape:100`, `plan-steps:14`, `decide:137`, `close:25`, `kickoff:73`, `implement:161`, `tooling:50` |
-| `no-rules-for-hypothetical-cases` | `infra-design:66`, `architect:56` |
+| `no-rules-for-hypothetical-cases` | `infra-design:64`, `architect:41` |
 | `one-question-at-a-time` | AGENTS.md:9 |
 | `plan-outline-check-summary` | `plan-steps` step 4 |
 | `preserve-design-refs-when-moving-work` | `filing-work/content-from-another-note.md`, `close:36` |

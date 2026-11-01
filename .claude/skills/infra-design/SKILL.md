@@ -55,13 +55,13 @@ Draft the whole design before showing any of it. If the Design section lists que
 Every API, config key and Claude Code feature the design uses needs a source, as AGENTS.md describes under "Library APIs". Check each piece against the project docs and the other notes' Conventions and Rules. A conflict is a question for Sarah, not something to reconcile yourself.
 
 ### Gaps
-Where the decisions don't settle something the design needs, don't fill it in. Settle it with Sarah as the `settling-a-decision` skill describes. Where that skill writes the answer under its question, an answer given without research goes straight into the design instead. A researched one also goes under `# Open Decisions`, as a question with its Decided line, so its Rejected lines keep later agents from proposing those options again.
+Where the decisions don't settle something the design needs, don't fill it in. Settle it with Sarah as the `settling-a-decision` skill describes.
 
 ### Approve
 Show each piece with its job, then the flow, and wait for her to approve or change each. If a change affects a later piece, say which one and update it before you get to it. Once all are approved, write them under `# Design`, so they survive if the session ends.
 
 ## 4. Conventions
-Draft what later work must follow once this exists, such as how a later source of CI results starts its session. Cover only what the decisions and the design settle. Don't write conventions for cases no story has asked for yet. Each convention says in plain words what later work does, and names where it lands, as the `rule-placement` skill describes.
+Draft what later work must follow once this exists, such as how a later source of CI results starts its session. Cover only what the decisions and the design settle. Don't write conventions for cases no story has asked for yet, because a convention stretched to them can bind later work in ways nobody chose. Each convention says in plain words what later work does, and names where it lands, as the `rule-placement` skill describes.
 
 If the story sets no conventions, tell Sarah in one line and delete the section. Otherwise, show each one and wait for her to approve or change it, then write them under `# Conventions`.
 

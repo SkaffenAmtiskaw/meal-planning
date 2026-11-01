@@ -22,8 +22,12 @@ Send the `decision-researcher` subagent the note path, the question as written w
 
 ## Record
 How you record a decision depends on where the answer came from:
-- **An answer the user already had in mind,** given confidently or checked with no problems found: write it under the question right away. Print the Decided line in chat and go on without waiting for approval, since the user will say if it looks wrong.
+- **An answer the user already had in mind,** given confidently or checked with no problems found: write it right away. Print what you wrote in chat and go on without waiting for approval, since the user will say if it looks wrong.
 - **Any other answer,** after research or after a check found problems, including one that settles only part of the question or waits on something else: draft the change, show it and wait for their approval before writing it.
+
+Where you write it depends on what the decision settles:
+- **A question under Open Decisions:** under that question, in the formats below.
+- **Something a section you're drafting needs,** such as a rule or a piece of a design: into that section. If it isn't an answer the user already had in mind, also write the question under `# Open Decisions` with its Decided and Rejected lines, so later agents don't propose the options the user turned down.
 
 **Decided.** Under the question in Open Decisions:
 ```
