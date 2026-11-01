@@ -39,7 +39,7 @@ Where each memory to delete already has its rule, as of 2026-10-06. Some of thes
 | `named-home-skips-scope-router` | AGENTS.md:108 |
 | `new-roadmap-lines-start-in-ideas` | AGENTS.md "Roadmap order", Roadmap:15, `tooling:46-48`, `roadmap-placement:15` |
 | `new-session-per-note` | `shape:100`, `plan-steps:14`, `decide:137`, `close:25`, `kickoff:73`, `implement:161`, `tooling:50` |
-| `no-rules-for-hypothetical-cases` | `infra-design:64`, `architect:41` |
+| `no-rules-for-hypothetical-cases` | `infra-design:52`, `architect:41` |
 | `one-question-at-a-time` | AGENTS.md:9 |
 | `plan-outline-check-summary` | `plan-steps` step 4 |
 | `preserve-design-refs-when-moving-work` | `filing-work/content-from-another-note.md`, `close:36` |
@@ -56,7 +56,7 @@ Where each memory to delete already has its rule, as of 2026-10-06. Some of thes
 | `split-stories-design-in-hub` | `split-checker:18`, `Hub.md:22`, `filing-work/content-from-another-note.md` |
 | `step-plan-standards` | `writing-implementation-steps` "One Idea per Step" and "Something to See in Every Step" |
 | `story-ready-definition` | Note Conventions:21-22 |
-| `tooling-enforcement-is-docs` | `infra-design:21` |
+| `tooling-enforcement-is-docs` | `infra-design:54` |
 | `tooling-stays-general-on-roadmap` | Roadmap:14, `roadmap-placement:10`, `roadmap:49,73-76` |
 | `tooling-summary-table` | `tooling:74,96` |
 | `work-the-kicked-off-copy` | `tooling:21` |

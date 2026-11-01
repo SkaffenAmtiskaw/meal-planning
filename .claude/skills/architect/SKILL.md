@@ -52,7 +52,7 @@ Each rule has:
 - **Examples from this codebase.** One place that follows it and one that breaks it, each with `file:line`, when both exist.
 - **Where it lands.** The doc and section in `docs/` it goes into once built. The note holds it only until then.
 
-Check each draft against the project docs and the other patterns' Rules. A rule that contradicts a doc or another pattern is a question for the user, not something to reconcile yourself.
+Check each draft against the project docs and the other patterns' Rules.
 
 ### Gaps
 Where the sources don't settle something a rule needs, don't fill it in. Settle it with the user as the `settling-a-decision` skill describes.

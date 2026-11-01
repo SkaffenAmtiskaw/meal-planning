@@ -29,7 +29,7 @@ Part of [[Agent Instructions Audit]].
 ## Issues Found
 From the audit's scan on 2026-10-06. Line numbers are as of that day.
 - **Decision 8:** infra moves out of `/implement` into a new `/infra-build` command, with its own `protect-config.sh` hook. The infra path, as of 2026-11-01: `implement/SKILL.md:20,26,30,39,43,54,59,70`, `implement/re-planning.md:3-6,14` and `building-code/SKILL.md:38`.
-- `/infra-design:3,17,81,101,117,125` name `/implement`, and change to `/infra-build`. Infra notes' `^status` lines change too.
+- `/infra-design:106` names `/implement`, and changes to `/infra-build`. Infra notes' `^status` lines change too.
 - `implement/re-planning.md:5-6` restates AGENTS.md's "Her decisions can change" in other words; it points to AGENTS.md.
 - Wording difference at `implement/re-planning.md:5-6`: change "choices the user merely signed off on", and only for infra. Where the rule is kept: AGENTS.md "Her decisions can change" covers every type, with "only approved" and "her call". Exception or drift?
 

@@ -10,7 +10,7 @@ Work is planned and tracked as notes in the Obsidian vault in `notes/`.
 - **Wrong assumptions:** if her answer shows a question rested on a wrong assumption, say the question is no longer needed and move on.
 - **Self-contained questions.** Put what a question is about inside it: the note, the file, the step. She may see only the question, not the text before it.
 - **Drafts go in the chat.** If Sarah has to approve a draft, such as note text, a file or a template, print it in the chat and ask whether she approves in plain text at the end of the same message, not with the question dialog (AskUserQuestion). The dialog hides the chat text before it, and its option previews don't show for her, so she can't see what she's approving. Otherwise, the dialog suits a short choice whose full context fits in the question and its options.
-- **Setup outside the repo.** If work needs something Sarah sets up by hand outside the repo, such as a GitHub setting, a claude.ai routine or a Vercel check, walk her through it at the point it's needed, one piece at a time: what to do, where, and any text to paste. Wait for her to say it's done, or to tell you what she saw, before you give the next piece. A list of setup at the end of a report reads as reference, not as a prompt to act. Walk her through the checks only she can do in the same way, such as one in the claude.ai UI or one that needs a push: one at a time and in order, saying what to do, what she should see and what it proves.
+- **Setup outside the repo.** If work needs something Sarah sets up by hand outside the repo, such as a GitHub setting, a claude.ai routine or a Vercel check, walk her through it at the point it's needed, one piece at a time: what to do, where, and any text to paste. Wait for her to say it's done, or to tell you what she saw, before you give the next piece. A list of setup at the end of a report reads as reference, not as a prompt to act. Walk her through the checks only she can do in the same way, such as one in the claude.ai UI or one that needs a push to a branch that isn't a throwaway: one at a time and in order, saying what to do, what she should see and what it proves.
 - **Open choices are hers.** When an instruction or plan leaves a real choice open (two reasonable readings, and nothing written picks one), ask instead of choosing.
 - **What to ask about.** Ask Sarah about the app's code and what she'd see in it, and about what tooling, CI or a routine does for her. How the plumbing does it, such as which API, protocol or command flags a routine or script uses, is your call: make it, and name it in your summary.
 - **Approval covers the edits.** Once Sarah has decided a change, what happens next depends on its form, even where a skill has an approval step:
@@ -161,7 +161,9 @@ Look up only what the task uses: one component, one function, one page.
 - `pnpm build`: Next.js production build.
 
 ## Git and files
-- Don't commit unless Sarah asks. When she does, commit only this session's files, by path, since other sessions' changes may be staged too.
+- **Commits:** commit only this session's files, by path, since other sessions' changes may be staged too. Whether Sarah has to ask first depends on the branch:
+  - **If it will be merged:** commit only when she asks.
+  - **If it's a throwaway that will never be merged:** commit and push freely, since nothing on it reaches the app.
 - Before deleting a file, check its contents and `git status`. If it has uncommitted changes or isn't tracked, git can't bring it back, so ask Sarah first.
 - **Project config** (`biome.jsonc`, `vitest.config.*`, `tsconfig*.json`, `lefthook.yml`): edit it only when Sarah explicitly asks for that config change.
 - **Ignore comments** (a comment that switches off a lint, type or coverage check): add one only when Sarah tells you to ignore that error, and only on that one line. Telling you to ignore an error never means changing config.

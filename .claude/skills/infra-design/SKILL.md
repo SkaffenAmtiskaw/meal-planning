@@ -1,6 +1,6 @@
 ---
 name: infra-design
-description: Turn an infra note's settled decisions into Goals, a Design and Conventions for later work, approved with Sarah one piece at a time, the Setup Outside the Repo, and a Build Order she approves as a whole. Moves the note from idea to ready, for /implement.
+description: Writes an infra note's Goals, Design, Conventions, Setup Outside the Repo and Build Order with the user. Use when an infra note's next step is /infra-design.
 argument-hint: "[note name]"
 disable-model-invocation: true
 hooks:
@@ -13,111 +13,94 @@ hooks:
 
 Write the design for the infra note **$ARGUMENTS**.
 
-## Why this skill works the way it does
-An infra note builds something new that the app is built, tested or run with, such as CI, a test setup or a hosted service. It's planned the way infrastructure usually is, with a design doc: what must be true when it's done, what gets built and how the pieces connect, what later work has to follow, and what gets set up by hand outside the repo. The design ends with a Build Order, the session-sized steps `/implement` builds it in.
-
-For an infra story, Sarah wants it to work, and cares little about how it's built. So its Goals name only what she wants to get out of it, and her checks prove that it works. Everything else is the implementer's to check.
-
-It isn't a pattern. There's usually no existing code to audit or migrate, and its conventions are about CI, workflows and agent behavior, which are held by the doc or skill they land in and by review. So this skill writes no Enforcement and never proposes a test, lint rule or hook to check a convention.
-
-This skill starts after the thinking is done. `/shape` gave the note its type and direction, and `/decide` settled its open decisions, so the design is built from her comments and the **Decided** lines.
-
-This is planning only. Don't change code. A hook blocks edits outside `notes/` and `.scratch/`.
-
-## 1. Read the note
-Find the note in `notes/features/` and read all of it. Read the notes it links to when the Goals, Design or Open Decisions depend on them.
+## 1. Read the Note
+Read all of the note, and the notes it links to when its Goals, Design or Open Decisions depend on them.
 
 Check that it's ready for this skill:
 - **`type: infra` and `status: idea`.** If `type` is blank, the next step is `/shape`.
-- **`status: spec`:** its design was already approved.
+- **`status: spec`:** its Design was already approved.
   - **If the note says it's due a revision,** such as its `^status` line naming `/infra-design` or an Inbox item asking for one, it's a revision.
-  - **Otherwise,** ask Sarah whether this is a revision. If it isn't, stop.
-
-  In a revision, work through steps 2 to 7 as usual, but show what changed compared with the existing sections before replacing each one.
+  - **Otherwise,** ask the user whether this is a revision. If it isn't, stop.
 - **`ready` or later:** stop. Changes to a planned story go through `/check-drift`.
-- **No open decisions.** An item under `# Open Decisions` with no **Decided** line (a **Partly answered** line still counts as open), or a `decision needed` entry in `blocked-by`, means the note isn't ready. List them in one line each, tell Sarah the next step is `/decide <note name>`, and stop.
+- **No open decisions.** The note isn't ready if it has a `decision needed` entry in `blocked-by`, or an item under `# Open Decisions` with no **Decided** line. An item with only a **Partly answered** line still counts as open. List the open decisions, one line each, tell the user the next step is `/decide <note name>`, and stop.
 
-Then read what the design touches: the config, scripts, workflows, skills and docs it changes or builds on, and the docs its conventions land in. Also read the Conventions of every other `type: infra` note and the Rules of every `type: pattern` note in `notes/features/` that cover the same ground, so you can spot overlaps and conflicts.
+**In a revision,** find what to rework in whatever called for it: the Inbox item, the `^status` line or the user's answer. Each step below works only on that, apart from the Goals check in step 2, which every revision runs. Everything else keeps its approval as written unless the rework changes it. Where step 2, 3 or 4 shows a part for approval, show the reworked part next to the version it replaces.
 
 ## 2. Goals
-Draft the Goals from Purpose, the **Decided** lines and any rough bullets already under `# Goals`. Each one names something Sarah wants to get out of the story: something that must be true when it's done, and that she can see for herself, such as "a PR into `main` shows four check jobs". If a goal needs "and" to join two things that can fail separately, it's two goals.
+Draft the Goals. The user wants an infra story to work, and cares little about how it's built. So each Goal names something they want to get out of the story: something that must be true when it's done, and that they can see for themselves, such as "a PR into `main` shows four check jobs". If a Goal needs "and" to join two things that can fail separately, it's two Goals.
 
-A requirement that only serves a Goal isn't a Goal, however sensible it is. If Sarah wouldn't mind the story meeting its Goals some other way, it's a requirement: it goes in the Design, under the piece it belongs to (step 3), and the implementer checks it, not Sarah. For example, "the vault scripts work from the main checkout, from a worktree or in a routine" is a requirement of moving the notes into their own repo, not something she wants from the move. In a revision, check the existing Goals against this rule too, and move each requirement you find into the Design.
+A requirement that only serves a Goal isn't a Goal, however sensible it is. To tell them apart, take each line that might be a Goal and ask whether the user would mind if the story met its Goals without it. If they wouldn't, it's a requirement. It goes in the Design, under the Piece it belongs to, and the implementer checks it. For example, "the vault scripts work from the main checkout, from a worktree or in a routine" is a requirement of moving the notes into their own repo, not something the user wants from the move. Every revision checks the existing Goals against this rule, and moves each requirement it finds into the Design.
 
-Show each goal and wait for her to approve or change it. Once all are approved, write them under `# Goals` as checkboxes.
+Get each Goal approved, then write the Goals under `# Goals` as checkboxes.
 
 ## 3. Design
 ### Draft
-Draft the whole design before showing any of it. If the Design section lists questions for this step, each one gets an answer in the design. The design has:
-- **Pieces:** each thing that gets built or changed, such as a workflow, a script, a config file, a skill or a service. For each: its path, or where it lives outside the repo, its one job, and any requirement from step 2 that it has to meet. A piece with two jobs is two pieces.
-- **The flow:** how a run moves through the pieces, from what starts it to where its result ends up, including what happens when it fails.
+Read what the story changes or builds on, and the docs its conventions will land in. Also read the Conventions of other `type: infra` notes and the Rules of `type: pattern` notes that cover the same ground.
 
-Every API, config key and Claude Code feature the design uses needs a source, as AGENTS.md describes under "Library APIs". Check each piece against the project docs and the other notes' Conventions and Rules. A conflict is a question for Sarah, not something to reconcile yourself.
+Then draft the whole Design before showing any of it, so you can see where Pieces overlap or should split before the user approves one. The Design has:
+- **Pieces:** each thing that gets built or changed, such as a workflow, a script, a config file, a skill or a service. For each: its path, or where it lives outside the repo, its one purpose, any requirement it has to meet, and a block ID (` ^piece-N`) that the Flow and the Build Order link to.
+- **The Flow:** only what no single Piece holds: what starts a run, the hand-offs between Pieces and failure paths that cross Pieces. It links each Piece it mentions, as in `[[#^piece-7|Piece 7]]`.
 
-### Gaps
-Where the decisions don't settle something the design needs, don't fill it in. Settle it with Sarah as the `settling-a-decision` skill describes.
+Check each service, config key and Claude Code feature the Design uses against its current docs, because what they offer changes. Check each Piece against the project docs and the other notes' Conventions and Rules.
+
+Where the note's decisions and the user's comments don't settle something the Design or Build Order needs, settle it with the user as the `settling-a-decision` skill describes.
 
 ### Approve
-Show each piece with its job, then the flow, and wait for her to approve or change each. If a change affects a later piece, say which one and update it before you get to it. Once all are approved, write them under `# Design`, so they survive if the session ends.
+Get each Piece approved, then the Flow. Once all are approved, write them under `# Design`, so they survive if the session ends.
 
 ## 4. Conventions
-Draft what later work must follow once this exists, such as how a later source of CI results starts its session. Cover only what the decisions and the design settle. Don't write conventions for cases no story has asked for yet, because a convention stretched to them can bind later work in ways nobody chose. Each convention says in plain words what later work does, and names where it lands, as the `rule-placement` skill describes.
+Draft what later work must follow once this exists, such as how a routine added later starts its session. Cover only what the decisions and the Design settle, because a convention stretched to cases no story has asked for can bind later work in ways nobody chose. Each convention names where it lands, as the `rule-placement` skill describes.
 
-If the story sets no conventions, tell Sarah in one line and delete the section. Otherwise, show each one and wait for her to approve or change it, then write them under `# Conventions`.
+Never propose a test, lint rule or hook to check a convention. These conventions are about CI, workflows and agent behavior, so what keeps later work to them is the doc or skill they land in, and review.
+
+If the story sets none, delete the section and say so. Otherwise, get each one approved, then write them under `# Conventions`.
 
 ## 5. Setup Outside the Repo
-List everything set up by hand outside the repo, such as an app install, a GitHub setting, a hosted service's configuration or a secret: what it is, where it's set up, and which doc or file records it. A secret's value is never recorded, only its name.
+List everything set up by hand outside the repo, such as an app install, a GitHub setting, a hosted service's configuration or a secret. For each, say what it is, where it's set up, and which doc or file records it.
 
-If an item depends on a fact about Sarah's setup that only she knows, such as whether she already has an account or which plan she's on, ask her about that fact first, one item at a time.
+If an item depends on a fact about the user's setup that only they know, such as whether they already have an account or which plan they're on, ask them about that fact first.
 
-If there's none, tell Sarah in one line and delete the section. Otherwise, write the list under `# Setup Outside the Repo`, then show it to her as information, not an approval: each item follows from the Design she approved, as AGENTS.md describes under "Approval covers the edits".
+If there's none, delete the section and say so. Otherwise, write the list under `# Setup Outside the Repo`, then show it as information, not for approval, since each item follows from the Design they approved.
 
-## 6. Out-of-scope items
-Triage the out-of-scope list as AGENTS.md describes under "Out-of-scope work". An item Sarah pulls in becomes part of the Goals, Design, Conventions or Setup, whichever it belongs to: draft the change, show it and wait for her approval before writing it.
+## 6. Out-of-Scope Items
+Triage the out-of-scope list. An item the user pulls in becomes part of the Goals, Design, Conventions or Setup Outside the Repo, whichever it belongs to, so the Build Order covers it.
 
 ## 7. Build Order
-The Build Order is the last part of `# Design`: the steps `/implement` builds the story in, one session each. They're called steps so that `/final-review`, `/close` and `/check-drift`, which look for steps and their ✅ Complete lines, work on it as they do on any other story.
-
 ### Draft
-Draft the whole Build Order before showing any of it, in this format:
+In a revision, steps marked ✅ Complete stay exactly as they are. Draft each step in this format:
 ```
 ### Step 1: <title>
-**Builds:** Pieces 2 and 3
+**Builds:** [[#^piece-2|Piece 2]] and [[#^piece-3|Piece 3]]
 **Setup first:** <a Setup Outside the Repo item, or none>
-**Implementer checks:** <requirements and failure paths from the Design that the implementer verifies on its own, or none>
+**Implementer checks:** <how the step's requirements and failure paths get checked, or none>
 **Sarah checks:**
-- [ ] Run `<command>`, see <result>. Goal: <which Goal it proves>.
+- [ ] <what the implementer kicks off, if anything>. <What the user runs, opens or reads>, see <result>. Goal: <which Goal it proves, if any>.
 ```
 
 Each step follows these rules:
-- **Size:** it fits one session. An implementer reads the docs and files for every Piece the step builds, so the Pieces in one step share an area: the same files, docs or library. If two Pieces sit in unrelated areas, such as a GitHub workflow and a skill, and each can be checked on its own, they're separate steps.
-- **Order:** its checks work with only what's built through that step. If a check needs a later step, the step is out of order or split wrong.
-- **Setup first:** each item of Setup Outside the Repo goes in the first step whose checks need it.
-- **Coverage:** every Piece is built by some step, and every Goal is reached by some step.
-- **Implementer checks:** the requirements the Design gives the pieces this step builds. A failure path gets a check only where the Design already has one worth checking. Don't invent failure paths to fill the line.
-- **Sarah checks:** if the step reaches a Goal, or needs something only Sarah can do, such as a push or a check in the claude.ai UI, it has Sarah checks. Otherwise, it has "Sarah checks: none". Each check proves that something the story builds works, not that its code matches what she expected, and ends by naming the Goal it proves. If a run the implementer can do on its own machine already shows what a check would prove, it's an Implementer check instead.
-- **Usable as written:** each Sarah check spells out the exact command she runs, the text she pastes or the screen she opens. If that can only be known at build time, such as a token or a generated URL, the check says `/implement` gives it to her in chat, ready to paste. A check never sends her to another part of the note to work out what it refers to, such as "Step 1's token" or "the command from the Design".
+- **Size:** it fits one session. The implementer reads the docs and files for every Piece the step builds, so the Pieces in one step share an area: the same files, docs or library. If two Pieces sit in unrelated areas, such as a GitHub workflow and a skill, and each can be checked on its own, they're separate steps.
+- **Order:** its checks work with only what's built through that step.
+- **Setup first:** each Setup Outside the Repo item goes in the first step whose checks need it.
+- **Implementer checks:** each says only what the Design doesn't: how a requirement or failure path gets checked, and what to do if the check fails. A check about one Piece links it rather than restating it, so the note keeps one copy of it. A failure path gets a check only if the Design already names that path and it's worth checking, because an invented one proves nothing.
+- **Sarah checks:**
+  - **When a step has them:** if the step proves a Goal, or needs something only the user can do, such as a check in the claude.ai UI. Otherwise, it has "Sarah checks: none". If a check doesn't prove a Goal and a run on the implementer's own machine can show what it would prove, it's an Implementer check.
+  - **What each one proves:** that something the story builds works, not that its code matches what the user expected.
+  - **Who does what:** the implementer kicks off everything it can, such as pushing a throwaway branch, opening a PR or running a skill locally. The user's part is verifying the results, plus what needs their access or their eyes, because they want as few manual steps as possible.
+  - **Usable as written:** each one spells out the exact command the user runs, the text they paste or the screen they open. If that can only be known at build time, such as a token or a generated URL, the check says the implementer gives it to them in chat, ready to paste. A check never sends them to another part of the note, such as "Step 1's token" or "the command from the Design".
 
-If ordering the steps turns up a decision the Design doesn't settle, handle it as "Gaps" in step 3 describes.
-
-In a revision, steps marked ✅ Complete stay exactly as they are. Order only the remaining work.
-
-Save the draft to `.scratch/<note name> - build order.md`.
+Across the Build Order, every Piece and Convention is built by some step, and every Goal is proved by a Sarah check in some step.
 
 ### Approve
-Show the outline: the numbered step titles, each with the Pieces it builds, its Setup first and a one-line summary of its Sarah checks, or "none". Link the draft, then ask whether she approves the Build Order as a whole. She may first ask to see a step in full, or change one. If a change affects another step, update that step too, show her both, and ask again.
+Show the outline, not the whole Build Order, because a whole one is too detailed to review closely (Sarah's call). The outline has the numbered step titles. Each title comes with the Pieces the step builds, its **Setup first** line and a one-line summary of its Sarah checks or "none". In a revision, the outline marks which steps changed.
 
-Once she approves, write it under `## Build Order`, at the end of `# Design`.
+Then ask whether the user approves the Build Order as a whole. They may first ask to see a step in full, or change one.
 
-## 8. Update the note's status
-- Set `status` to `ready`. For an infra story, the approved Build Order is what makes it ready.
-- Set `confirmed` to today. Sarah approving the design counts as confirming the note.
-- Update the `^status` line as AGENTS.md describes under "Editing notes": "Ready. Next: /implement", or, if `blocked-by` names another story, a link to it with `/implement` after it.
+Once they approve, write it under `## Build Order`, at the end of `# Design`.
 
-## 9. Find a home for out-of-scope items
-If the out-of-scope list is empty, skip to step 10.
+## 8. Update the Note's Status
+- Set `status` to `ready`.
+- Set `confirmed` to today, since the user approving the Design confirms the note.
+- Update the `^status` line.
 
-Otherwise, route it as AGENTS.md describes under "Out-of-scope work".
-
-## 10. Stop
-Tell Sarah the design and its Build Order are written, and that the next step is `/implement <note name>` in a new session, which builds Step 1. Don't start building in this session. It deserves a fresh context.
+## 9. Route Out-of-Scope Items and Stop
+Route the out-of-scope list. Then tell the user the next step is `/implement <note name>` in a new session, and stop.
