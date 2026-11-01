@@ -110,7 +110,7 @@ if [ -n "$hits" ]; then printf '%s\n' "$hits"; else echo "  none"; fi
 echo
 
 echo "Outside the vault (file:line, text):"
-outside=$(grep -rnIF -e "$name" -e "$note" src test docs .claude AGENTS.md CLAUDE.md 2>/dev/null |
+outside=$(grep -rnIF -e "$name" -e "$note" src test docs scripts .github .claude AGENTS.md CLAUDE.md 2>/dev/null |
   while IFS= read -r hit; do
     where=${hit%%:*}; rest=${hit#*:}; line=${rest%%:*}; text=${rest#*:}
     text=$(printf '%s' "$text" | sed -E 's/^[[:space:]]+//' | cut -c1-160)
