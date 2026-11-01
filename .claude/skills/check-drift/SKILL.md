@@ -37,8 +37,17 @@ Write the story's footprint to a scratch file, from the remaining work:
 
 Then run the `code-drift-checker` and `note-drift-checker` subagents in parallel. Give each one the note path, the `confirmed` date, the footprint file and the remaining work: which steps, or "the whole approach" for a `spec` note. Don't tell them what you expect them to find, because a checker that knows what you expect tends to find that and miss the rest.
 
+If the note is a pattern, also run the `rule-auditor` subagent alongside them. The note's Migration Checklist was audited on its `confirmed` date, so code written since then that breaks the Rules isn't on it. Send the auditor only the Rules as written in the note, not the note path or the checklist, so the audit isn't anchored to the checklist.
+
 ## 4. Sort the checkers' findings
 Merge findings that are the same problem seen from two sides. A checker's finding that one of the user's comments already settles is part of that comment's finding, so it needs no decision. Drop any finding that an earlier ⚠️ Check Drift callout already settled.
+
+**If the note is a pattern,** compare `rule-auditor`'s report with the Migration Checklist before sorting the other findings. Its report holds three kinds of item:
+- **A violation the checklist doesn't list:** the Rules already say it has to change, so add it to the checklist without asking. Put it in the group it belongs in, with the files the auditor says change with it. Write a callout above it saying the re-audit found it.
+- **A place under Unclear:** a rule can't be applied there without judgment, so it needs sharpening with the user. Write a callout on that rule saying what the auditor was unsure about, and leave it for `/architect`, which sharpens rules and re-audits them. When you route the note in step 6, it counts as **Approach**.
+- **An item under Outside These Rules:** put it on the out-of-scope list.
+
+Don't change a checklist item just because the report leaves it out. Enforcement, Docs and forward-looking items never come from an audit. A place fixed since `confirmed` reaches you as a `code-drift-checker` finding, which you sort below.
 
 **If the note is a sweep,** its items must stay small and decided, so sort each item's findings this way:
 - **Already fixed, or built by another story:** add a callout, without asking, saying the item is dropped and why. `/plan-steps` skips it.
@@ -48,7 +57,7 @@ Merge findings that are the same problem seen from two sides. A checker's findin
 
 A sweep never needs a re-assessment and never gets a `decision needed` entry.
 
-**Otherwise,** sort each finding:
+**If the note isn't a sweep,** sort each finding:
 - **Mechanical:** the plan still works as written with a different name or path, such as a renamed prop or a moved hook. Correct the name or path in place.
 - **Needs a decision:** anything that changes what gets built or how, such as a conflict with another story's design, docs that disagree with recent code, or a piece another story already built.
 
@@ -75,7 +84,7 @@ If the note is a roundup and the user leaves a finding for later that reopens a 
 ## 6. Route the note
 If the note is a sweep, it stays at `spec` and goes to `/plan-steps` next. Otherwise, route it by what its findings mean for it once the user has answered. If more than one case applies, the biggest wins: approach over steps over plan holds, and blocked can go with any of them.
 - **Plan holds:** `status` stays as it is, and the next step is the one its type and status call for, such as `/implement` for a `ready` note.
-- **Steps:** the approach holds but the remaining steps don't. Set `status` to `spec`. The next step is `/plan-steps`, or `/infra-design` for infra, which keeps the ✅ steps and re-plans the rest.
+- **Steps:** the approach holds but the remaining steps don't, such as when a pattern's Migration Checklist gains places its steps don't migrate. Set `status` to `spec`. The next step is `/plan-steps`, or `/infra-design` for infra, which keeps the ✅ steps and re-plans the rest.
 - **Approach:** the approach, or part of it, no longer holds. Set `status` to `spec`. The next step is the skill that settled the approach:
   - **Feature:** `/assess`.
   - **Bug or cleanup:** `/investigate`.
@@ -88,7 +97,7 @@ Then update Where It Stands, with a `^status` line such as "Drift found. Next: /
 
 ## 7. Summarize, route and stop
 Show the user:
-1. **Mechanical changes:** a table with one row per corrected name or path, or dropped sweep item, saying where it is and what changed. It's for information, not approval.
+1. **Changes made without asking:** a table with one row per change: a corrected name or path, a dropped sweep item, a sweep item moved back to its collecting note, or a place added to a pattern's Migration Checklist. Each row says where it is and what changed. It's for information, not approval.
 2. **Decisions:** one line per answer they gave, and where it was recorded.
 3. **Doc updates:** each doc changed, with a one-line summary.
 4. **Where the note goes next:** any change to `status` or `blocked-by`, and the new `^status` line.
