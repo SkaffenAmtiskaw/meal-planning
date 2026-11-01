@@ -5,7 +5,7 @@ blocked-by: []
 confirmed: 2026-10-06
 ---
 # Where It Stands
-Ready. Next: /implement ^status
+Ready. Next: /infra-build ^status
 
 Split from [[Local Dependency Update Alerts]] on 2026-10-04. `/infra-design` revised it on 2026-10-06: the assessed libraries are named in one place, minors get a summary only when they're in the PR, the old steps' details moved into the Design, and a three-step Build Order replaces them, its checks using stand-ins rather than waiting for real releases. Nothing is built yet.
 
@@ -50,13 +50,13 @@ The design's Pieces are in [[Local Dependency Update Alerts]], embedded above.
 - **Before the check:** if `temporal-polyfill` has been upgraded since 2026-10-06, pick another major that `pnpm outdated` lists on `develop`, and give Sarah the prompt below with it filled in.
 
 **Sarah checks:**
-- [ ] None of the assessed libraries has a major out, so `temporal-polyfill` stands in for one. Open a new Claude Code session in the folder `/implement` names in chat, and paste `Have the upgrade-assessor subagent assess temporal-polyfill 0.3.2 → 1.0.5.` (or the prompt `/implement` gives you in chat, if it picked another major). See a report with each breaking change the app hits and its file counts, how long the current major keeps getting fixes (or that no support policy is stated, and where it looked), the features the app could use with files and an example of each, the pages it read, and a verdict weighing gain and urgency against effort that says how soon the upgrade is worth planning. Goal: a major of an assessed library gets an assessment weighing gain and urgency against effort.
+- [ ] None of the assessed libraries has a major out, so `temporal-polyfill` stands in for one. Open a new Claude Code session in the folder `/infra-build` names in chat, and paste `Have the upgrade-assessor subagent assess temporal-polyfill 0.3.2 → 1.0.5.` (or the prompt `/infra-build` gives you in chat, if it picked another major). See a report with each breaking change the app hits and its file counts, how long the current major keeps getting fixes (or that no support policy is stated, and where it looked), the features the app could use with files and an example of each, the pages it read, and a verdict weighing gain and urgency against effort that says how soon the upgrade is worth planning. Goal: a major of an assessed library gets an assessment weighing gain and urgency against effort.
 
 ### Step 2: Minors of other packages get a summary
 **Builds:** Piece 4 sub-step 4 for any other package, including release notes it can't read, and sub-step 8's minor summaries.
 **Setup first:** none
 **Implementer checks:**
-- **Before building:** a session on the `Meal Planning Routines` cloud environment can read a package's GitHub release page and its raw `CHANGELOG.md` for a repo the session isn't attached to, such as `resend/resend-node`, the way the skill will read them. If [[Major Upgrade Sweeps]] has been built, use what its implementer found. If the implementer can't start such a session, `/implement` gives Sarah the prompt in chat to start one at https://claude.ai/code with that environment, and she pastes back the result. If the reads are blocked, stop and bring it to Sarah, since it changes sub-step 4.
+- **Before building:** a session on the `Meal Planning Routines` cloud environment can read a package's GitHub release page and its raw `CHANGELOG.md` for a repo the session isn't attached to, such as `resend/resend-node`, the way the skill will read them. If [[Major Upgrade Sweeps]] has been built, use what its implementer found. If the implementer can't start such a session, `/infra-build` gives Sarah the prompt in chat to start one at https://claude.ai/code with that environment, and she pastes back the result. If the reads are blocked, stop and bring it to Sarah, since it changes sub-step 4.
 - In a local session on a throwaway branch that's never pushed, the skill's step 4, run on made-up payloads, does each of these:
   - a minor of another package in the PR gets a summary of every release since the version on `develop`, with links, and an adoption line naming files where a feature would apply
   - a made-up minor whose release notes don't exist gets a summary that says it couldn't read them and names the site

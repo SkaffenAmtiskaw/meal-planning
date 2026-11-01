@@ -5,7 +5,7 @@ blocked-by: []
 confirmed: 2026-10-06
 ---
 # Where It Stands
-Ready. Next: /implement ^status
+Ready. Next: /infra-build ^status
 
 Shaped as an infra story: a workflow, a script, a routine and a skill that diagnose a failed Vercel deployment and fix it where they can. /infra-design wrote the Design on 2026-10-05 and revised it on 2026-10-06, adding a three-step Build Order. Nothing is built yet. Sarah decided building doesn't wait on [[Branching and Releases]]: until its back-merge exists, she merges `main` into `develop` herself after a production fix.
 
@@ -152,11 +152,11 @@ Each step's checks keep Sarah's part to reading results and the Vercel clicks on
   - Vercel's side, with an unresolved incident in the status, and a flaky-looking error with none (Sarah's check below)
 
 **Sarah checks:**
-- [ ] Read the two summaries `/implement` shows in chat from its local runs of the skill on stand-in payloads for a failed preview of `develop`: one with a platform error while Vercel's status names an unresolved incident, one with a flaky-looking error and no incident. See Vercel's status in both, the first saying to press **Redeploy** once https://www.vercel-status.com shows the incident resolved, the second saying to press it right away, and no PR from either. Goal: when a failure is on Vercel's side, the session opens no PR, gives Vercel's status and says when to press **Redeploy**.
+- [ ] Read the two summaries `/infra-build` shows in chat from its local runs of the skill on stand-in payloads for a failed preview of `develop`: one with a platform error while Vercel's status names an unresolved incident, one with a flaky-looking error and no incident. See Vercel's status in both, the first saying to press **Redeploy** once https://www.vercel-status.com shows the incident resolved, the second saying to press it right away, and no PR from either. Goal: when a failure is on Vercel's side, the session opens no PR, gives Vercel's status and says when to press **Redeploy**.
 
 ### Step 2: A failed deployment starts the routine
 **Builds:** Pieces 1, 2, 3, 4 and 6
-**Setup first:** Setup 1 (the Vercel access token), Setup 2 (`VERCEL_TOKEN`), Setup 3 (the routine) and Setup 4 (its two secrets). `/implement` walks Sarah through each, one at a time.
+**Setup first:** Setup 1 (the Vercel access token), Setup 2 (`VERCEL_TOKEN`), Setup 3 (the routine) and Setup 4 (its two secrets). `/infra-build` walks Sarah through each, one at a time.
 **Implementer checks:**
 - Without a Vercel token, `pnpm -s vercel:check` runs with `node` and no `pnpm install`, and stays quiet, printing its reason, for a `claude/` branch, a preview of a branch with no open PR, and a commit whose `build` check failed. For a preview of `develop` it goes on to the Vercel calls, and when they fail it puts the error where the log would be rather than stopping.
 - A commit with more than one failed deployment in that environment stays quiet, checked with Vercel's response stood in for, since only the workflow holds the token.
@@ -167,7 +167,7 @@ Each step's checks keep Sarah's part to reading results and the Vercel clicks on
 - **After Sarah's checks:** with Sarah's OK, close the throwaway PRs and delete the throwaway and `claude/vercel-fix-` branches.
 
 **Sarah checks:**
-- [ ] `/implement` pushes a throwaway branch whose commit adds a `vercel.json` with a build command that fails, and opens a draft PR from it into `develop`. Its `build` check passes and Vercel's preview fails. Within about 15 minutes, see a new session in the Code tab under **Routines**. Goal: a failed preview deployment of a branch with an open PR starts a routine session.
+- [ ] `/infra-build` pushes a throwaway branch whose commit adds a `vercel.json` with a build command that fails, and opens a draft PR from it into `develop`. Its `build` check passes and Vercel's preview fails. Within about 15 minutes, see a new session in the Code tab under **Routines**. Goal: a failed preview deployment of a branch with an open PR starts a routine session.
 - [ ] Open that session. See its summary name the `vercel.json` build command as the cause, quoting the failing lines of the build log. Goal: each session ends with a summary naming the cause and its evidence.
 - [ ] In the same session, see the link to a PR from `claude/vercel-fix-<deployment ID>` into the throwaway branch, whose preview deploys. Goal: a code cause gets a fix PR into the deployment's branch.
 - [ ] In Vercel, open the meal-planning project → Settings → Environment Variables, and set `RESEND_FROM_EMAIL`'s Production value to `not-an-email`. Then open Deployments, open the current production deployment's ⋯ menu and press **Redeploy**. Within about 10 minutes, see a new session under **Routines**. Goal: a failed production deployment starts a routine session.

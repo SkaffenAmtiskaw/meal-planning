@@ -5,7 +5,7 @@ blocked-by: []
 confirmed: 2026-10-06
 ---
 # Where It Stands
-Ready. Next: /implement ^status
+Ready. Next: /infra-build ^status
 
 Split from E2E Testing on 2026-09-28. `/infra-design` wrote the Goals, Design, Conventions, Setup Outside the Repo and a four-step Build Order on 2026-10-06. Nothing is built yet.
 
@@ -96,7 +96,7 @@ Sarah's notes from E2E Testing:
 - `e2e` is a job of its own, and `start-ci-failure` lists it in its `needs`.
 
 **Sarah checks:**
-- [ ] Once `/implement` has pushed this step to `develop` with your OK, open https://github.com/SkaffenAmtiskaw/meal-planning/compare/main...develop and create the PR (or open the PR from `develop` into `main` if one is already open). In its checks, see `e2e` run and pass beside `lint`, `type-check`, `unit-tests` and `build`, marked **Required**. If you created the PR only for this check, close it without merging. Goal: the E2E tests run in GitHub Actions on every PR into a protected branch.
+- [ ] Once `/infra-build` has pushed this step to `develop` with your OK, open https://github.com/SkaffenAmtiskaw/meal-planning/compare/main...develop and create the PR (or open the PR from `develop` into `main` if one is already open). In its checks, see `e2e` run and pass beside `lint`, `type-check`, `unit-tests` and `build`, marked **Required**. If you created the PR only for this check, close it without merging. Goal: the E2E tests run in GitHub Actions on every PR into a protected branch.
 
 ### Step 2: A cloud session can run the E2E tests
 **Builds:** Piece 5, and Piece 6's "The Cloud Environment".
@@ -106,7 +106,7 @@ Sarah's notes from E2E Testing:
 - From the result Sarah pastes back: neither host redirected to one that isn't allowed, and the session found Chromium and `mongod` without downloading them. If either fails, apply the fallback the Design names (`&` and `wait`, or `PLAYWRIGHT_BROWSERS_PATH` and `MONGOMS_DOWNLOAD_DIR` under `/opt`), update `docs/ci.md` and give Sarah the script to paste again.
 
 **Sarah checks:**
-- [ ] At https://claude.ai/code, start a session on the `Meal Planning Routines` environment with the `meal-planning` repo, and paste: `Run whoami, echo $HOME and ls ~/.cache/ms-playwright ~/.cache/mongodb-binaries, then pnpm install --frozen-lockfile and pnpm test:e2e. Change nothing. Tell me whether anything was downloaded, and whether every test passed.` See every test pass with nothing downloaded, then paste the reply back to `/implement`. Goal: groundwork for the fix and the analysis goals, since the `ci-failure` session reruns the E2E tests here.
+- [ ] At https://claude.ai/code, start a session on the `Meal Planning Routines` environment with the `meal-planning` repo, and paste: `Run whoami, echo $HOME and ls ~/.cache/ms-playwright ~/.cache/mongodb-binaries, then pnpm install --frozen-lockfile and pnpm test:e2e. Change nothing. Tell me whether anything was downloaded, and whether every test passed.` See every test pass with nothing downloaded, then paste the reply back to `/infra-build`. Goal: groundwork for the fix and the analysis goals, since the `ci-failure` session reruns the E2E tests here.
 
 ### Step 3: The root cause analyst
 **Builds:** Piece 4, and the second Convention in `routine-sessions`.
@@ -129,10 +129,10 @@ Sarah's notes from E2E Testing:
 - **After the checks:** with Sarah's OK, delete both throwaway branches and any `claude/ci-fix-` branches the sessions pushed.
 
 **Sarah checks:**
-- [ ] Open the compare link for `e2e-check-outdated-spec` that `/implement` gives you in chat, and create the PR into `main`. See `e2e` fail and the merge box say the PR can't be merged while a required check is failing. Goal: a PR into a protected branch can't be merged while its `e2e` check is failing.
+- [ ] Open the compare link for `e2e-check-outdated-spec` that `/infra-build` gives you in chat, and create the PR into `main`. See `e2e` fail and the merge box say the PR can't be merged while a required check is failing. Goal: a PR into a protected branch can't be merged while its `e2e` check is failing.
 - [ ] Within a few minutes, see a new `ci-failure` session in the Code tab under **Routines**. Goal: a failed `e2e` job starts a `ci-failure` session.
 - [ ] When that session ends, see a summary naming the spec that was out of date and a link to its fix PR into `e2e-check-outdated-spec`, whose diff updates only the spec. Close both PRs without merging. Goal: an out-of-date spec gets updated, with a fix PR.
-- [ ] Open the compare link for `e2e-check-broken-app` that `/implement` gives you in chat, and create the PR into `main`. When its `ci-failure` session ends, see the session's call to `root-cause-analyst`, the report shown unedited (its verdict, where the fault starts, the breaking commit and the fix as a direction), no fix PR, and an offer to create a bug note. Decline the note, and close the PR without merging. Goals: a broken app gets a root cause analysis with no fix and a bug note offer, and the analysis is written by a stronger model than Sonnet.
+- [ ] Open the compare link for `e2e-check-broken-app` that `/infra-build` gives you in chat, and create the PR into `main`. When its `ci-failure` session ends, see the session's call to `root-cause-analyst`, the report shown unedited (its verdict, where the fault starts, the breaking commit and the fix as a direction), no fix PR, and an offer to create a bug note. Decline the note, and close the PR without merging. Goals: a broken app gets a root cause analysis with no fix and a bug note offer, and the analysis is written by a stronger model than Sonnet.
 
 # Conventions
 - **The protected-branch list moves with the rulesets.** When a branch gets or loses a ruleset, the list of protected branches in the `e2e` job's `if` in `checks.yml` changes in the same change, along with that ruleset's required checks. A protected branch missing from the list would skip `e2e`, and GitHub counts the skip as a pass. Lands in `docs/ci.md`, "The Ruleset on `main`", beside the rule for renamed or added check jobs.

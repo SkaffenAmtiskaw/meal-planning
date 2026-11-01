@@ -102,4 +102,4 @@ Once they approve, write it under `## Build Order`, at the end of `# Design`.
 - Set `confirmed` to today, since the user approving the Design confirms the note.
 
 ## 9. Route Out-of-Scope Items and Stop
-Route the out-of-scope list. Then tell the user the next step is `/implement <note name>` in a new session, and stop.
+Route the out-of-scope list. Then tell the user the next step is `/infra-build <note name>` in a new session, and stop.

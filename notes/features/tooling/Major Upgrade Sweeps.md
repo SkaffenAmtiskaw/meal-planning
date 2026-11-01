@@ -5,7 +5,7 @@ blocked-by: []
 confirmed: 2026-10-06
 ---
 # Where It Stands
-Ready. Next: /implement ^status
+Ready. Next: /infra-build ^status
 
 Split from [[Local Dependency Update Alerts]] on 2026-10-04. `/infra-design` revised it on 2026-10-06: it now also takes updates the session drops for breaking a check, and a two-step Build Order replaces its old steps. Nothing is built yet.
 
@@ -40,7 +40,7 @@ The design's Pieces are in [[Local Dependency Update Alerts]], embedded above.
 **Builds:** Piece 6 (Library Upgrades, Dev Tool Upgrades and their Roadmap lines), and Piece 4 for majors: sub-step 5's sweep rule, sub-step 2's branch for a run with only majors, and sub-step 8's summary of sweep items and flags.
 **Setup first:** none
 **Implementer checks:**
-- **Before building the sweep rule's reading:** a session on the `Meal Planning Routines` cloud environment can read a backlog major's GitHub release page and its raw `CHANGELOG.md`, such as `vitest-dev/vitest`'s, the way the skill will read them. If the implementer can't start such a session, `/implement` gives Sarah the prompt in chat to start one at https://claude.ai/code with that environment, and she pastes back the result. If the reads are blocked, stop and bring it to Sarah, since it changes the trade-off behind her "no new domains" decision.
+- **Before building the sweep rule's reading:** a session on the `Meal Planning Routines` cloud environment can read a backlog major's GitHub release page and its raw `CHANGELOG.md`, such as `vitest-dev/vitest`'s, the way the skill will read them. If the implementer can't start such a session, `/infra-build` gives Sarah the prompt in chat to start one at https://claude.ai/code with that environment, and she pastes back the result. If the reads are blocked, stop and bring it to Sarah, since it changes the trade-off behind her "no new domains" decision.
 - `sh scripts/vault-lint.sh` passes once the two sweeps and their Roadmap lines are written. Ask Sarah where in Unaffiliated each line goes.
 - In a local session on a throwaway branch that's never pushed, the skill's sweep rule, run on payloads the implementer picks, does each of these:
   - a major whose breaking changes need a decision gets no item, and the summary says why, with file counts
@@ -56,7 +56,7 @@ The design's Pieces are in [[Local Dependency Update Alerts]], embedded above.
 - **Before the check:** with Sarah's OK, commit and push the notes and the skill to `develop`. If a dependency PR is open, ask Sarah to merge or close it. Then delete the `dependency-alerts-reported-*` cache entries with `gh cache delete`, start the weekly run with `gh workflow run`, and give Sarah the run's link and, once the session has opened it, the PR's link.
 
 **Sarah checks:**
-- [ ] Open the PR link `/implement` gives you in chat. See new items in Library Upgrades and Dev Tool Upgrades for the backlog majors that are small (`typescript`, `vitest`, `jsdom`, `preact` and `temporal-polyfill`), and no major's version changed in `package.json`. Any other changes are real patches, minors or security fixes still outstanding. See each Library Upgrades item end 🎯 [[App Health]] and each Dev Tool Upgrades item end 🎯 [[Dev Tooling]], each naming its versions, a release notes link, and the breaking changes the app hits with their files. Then open the session in the Code tab under **Routines**, and see its summary name each backlog major with the sweep it went to, or why it looks like a story of its own. Merge the PR once it looks right. Goal: a major of a package other than the six becomes a sweep item or a flagged story.
+- [ ] Open the PR link `/infra-build` gives you in chat. See new items in Library Upgrades and Dev Tool Upgrades for the backlog majors that are small (`typescript`, `vitest`, `jsdom`, `preact` and `temporal-polyfill`), and no major's version changed in `package.json`. Any other changes are real patches, minors or security fixes still outstanding. See each Library Upgrades item end 🎯 [[App Health]] and each Dev Tool Upgrades item end 🎯 [[Dev Tooling]], each naming its versions, a release notes link, and the breaking changes the app hits with their files. Then open the session in the Code tab under **Routines**, and see its summary name each backlog major with the sweep it went to, or why it looks like a story of its own. Merge the PR once it looks right. Goal: a major of a package other than the six becomes a sweep item or a flagged story.
 
 ### Step 2: Dropped updates become sweep items or story flags
 **Builds:** Piece 4 for dropped updates: sub-steps 3 and 7 sending a dropped update through the sweep rule, the rule's reading of what broke, and sub-step 8's **Not applied** record when nothing is pushed.
@@ -73,7 +73,7 @@ The design's Pieces are in [[Local Dependency Update Alerts]], embedded above.
 - **After the check:** once Sarah's check shows the Biome item in the PR, delete the Biome item from [[Dev Tooling Tidy-Ups]].
 
 **Sarah checks:**
-- [ ] Open the PR link `/implement` gives you in chat. See a Dev Tool Upgrades item for `@biomejs/biome`, ending 🎯 [[Dev Tooling]] and naming the `pnpm lint:ci` findings with their files. See the backlog majors' items (`typescript`, `vitest`, `jsdom`, `preact`, `temporal-polyfill`) updated in place, with no second item for any of them. Then open the session in the Code tab under **Routines**, and see its summary list Biome under **Dropped**, with the check it broke and the sweep its item went to. Merge the PR once it looks right. Goal: a patch or minor dropped because it breaks a check becomes a sweep item or a flagged story.
+- [ ] Open the PR link `/infra-build` gives you in chat. See a Dev Tool Upgrades item for `@biomejs/biome`, ending 🎯 [[Dev Tooling]] and naming the `pnpm lint:ci` findings with their files. See the backlog majors' items (`typescript`, `vitest`, `jsdom`, `preact`, `temporal-polyfill`) updated in place, with no second item for any of them. Then open the session in the Code tab under **Routines**, and see its summary list Biome under **Dropped**, with the check it broke and the sweep its item went to. Merge the PR once it looks right. Goal: a patch or minor dropped because it breaks a check becomes a sweep item or a flagged story.
 
 # Out of Scope
 - Assessments of the six libraries' majors: [[Dependency Release Analysis]].

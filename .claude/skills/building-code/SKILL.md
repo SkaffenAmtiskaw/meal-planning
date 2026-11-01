@@ -35,8 +35,6 @@ Then run `pnpm lint` on the files you changed, `pnpm test:agent` on each file or
 ## 4. Do the Acceptance Checks
 Before handing the change to the user, do its acceptance checks yourself, so the user doesn't run into the obvious failures.
 
-For a Build Order step, do its Implementer checks first, which are yours alone and never go to the user. Its Sarah checks are then its acceptance checks.
-
 How you do the checks depends on the change:
 - **If the change touches only tests:** do its checks as `test-only-checks.md` in this skill's folder describes.
 - **Otherwise:**

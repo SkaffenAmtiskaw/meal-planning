@@ -21,6 +21,7 @@ Part of [[Agent Instructions Audit]].
 ![[Agent Instructions Audit#^decision-17]]
 
 ## Issues Found
-None known yet. This review re-checks the files above for this step.
+This review re-checks the files above for this step.
+- `final-review/SKILL.md:17` says "The user reviewed each step's diff as it was built". That isn't true for an infra story, because `/infra-build` doesn't ask the user to review the diff, so `/final-review` could treat code nobody read as already reviewed. Found in Infra Implement Review, 2026-11-01.
 
 # Questions

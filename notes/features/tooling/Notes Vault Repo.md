@@ -6,7 +6,7 @@ confirmed: 2026-10-06
 ---
 # Where It Stands
 
-Ready. Next: /implement. Steps 6 and 7 wait on [[Major Upgrade Sweeps]] ^status
+Ready. Next: /infra-build. Steps 6 and 7 wait on [[Major Upgrade Sweeps]] ^status
 
 Shaped 2026-10-04, with five decisions settled on 2026-10-04 and 2026-10-05. `/infra-design` revised it on 2026-10-06: three Goals became requirements on their Pieces, and an 8-step Build Order replaced the 11 planned steps. Nothing is built yet. Steps 1-5 can be built now, while the notes are still in `notes/`.
 
@@ -95,7 +95,7 @@ Move the notes vault out of the code repo into its own git repo, so notes are ne
    - Every path to them changes with the move: the skills and agents that read a template (`/shape`, `/decide`, `/roadmap`, `/tooling`, `/check-drift`, `split-checker`, `scope-router` and any other a grep finds), AGENTS.md "Template comments" and Note Conventions' Templates line. `/tooling` step 2's search list drops `notes/templates/`, and `/close` steps 2 and 8 drop their mentions of the `templates/` exclusion.
    - The Feature template's "Put images in `assets/<story-name>/`", and any other vault folder path in a template, names the notes repo.
    - The vault's `.obsidian/templates.json` setting goes, since Sarah doesn't insert templates in Obsidian. It's untracked, so Sarah is asked before it's deleted.
-9. **The `roadmap-rules` shared-rule skill, at `.claude/skills/roadmap-rules/SKILL.md`** - holds the Roadmap's rules, "How this file works" (lines 5-29 of `Roadmap.md` today), moved word for word apart from link-to-name swaps. `user-invocable: false`, with a description saying to use it before adding, moving or editing a Roadmap line. `/implement`, `/roadmap`, `/tooling`, `roadmap-placement` and `/kickoff` point to it by name in place of "How this file works", and `vault-lint.sh`'s comment points to it. Sarah decided this 2026-10-05 over a section in Note Conventions, following `/tooling`'s rule that an agent rule several skills share but that doesn't belong in every session gets its own skill. The Roadmap keeps lines 1-3 and gets one plain-text line in place of the section: "How this file works: the `roadmap-rules` skill in the meal-planning repo."
+9. **The `roadmap-rules` shared-rule skill, at `.claude/skills/roadmap-rules/SKILL.md`** - holds the Roadmap's rules, "How this file works" (lines 5-29 of `Roadmap.md` today), moved word for word apart from link-to-name swaps. `user-invocable: false`, with a description saying to use it before adding, moving or editing a Roadmap line. `/implement`, `/infra-build`, `/roadmap`, `/tooling`, `roadmap-placement` and `/kickoff` point to it by name in place of "How this file works", and `vault-lint.sh`'s comment points to it. Sarah decided this 2026-10-05 over a section in Note Conventions, following `/tooling`'s rule that an agent rule several skills share but that doesn't belong in every session gets its own skill. The Roadmap keeps lines 1-3 and gets one plain-text line in place of the section: "How this file works: the `roadmap-rules` skill in the meal-planning repo."
    - The `[[Goal]]` in the marker formats stays, as a format example. The skill's "each a note in `goals/`" names the notes repo.
    - `/roadmap` step 1 reads the Roadmap and the skill.
    - `scope-router`, which suggests Roadmap lines, and `split-checker`, which writes children's lines, read the Roadmap for its rules today. Each preloads the skill with `skills:` in its frontmatter, as `/tooling` describes for shared-rule skills, and so does any other agent a grep finds reading the Roadmap for its rules.
@@ -171,7 +171,7 @@ Steps 1 to 5 change the code repo while the notes are still in `notes/`, and eac
 - The two clone paths and `$CLAUDE_PROJECT_DIR` are recorded in this step's As built note, for Steps 6 and 7.
 
 **Sarah checks:**
-- [ ] Start a session at https://claude.ai/code on the `Meal Planning Routines` environment with `meal-planning` and `meal-planning-notes` selected, and paste the prompt `/implement` gives you in chat. If the form takes only one repo, `/implement` walks you through a throwaway routine instead. See the clones of the two repos listed as two folders under one parent, and paste the output back into the `/implement` session. Goal: any note a routine's session adds or changes reaches the notes repo's `main` (the clone layout it relies on).
+- [ ] Start a session at https://claude.ai/code on the `Meal Planning Routines` environment with `meal-planning` and `meal-planning-notes` selected, and paste the prompt `/infra-build` gives you in chat. If the form takes only one repo, `/infra-build` walks you through a throwaway routine instead. See the clones of the two repos listed as two folders under one parent, and paste the output back into the `/infra-build` session. Goal: any note a routine's session adds or changes reaches the notes repo's `main` (the clone layout it relies on).
 
 ### Step 2: Note Conventions, the templates and the Roadmap's rules move into the code repo
 **Builds:** Pieces 7, 8 and 9, apart from the notes repo's folder paths (Step 6)
@@ -238,7 +238,7 @@ Steps 1 to 5 change the code repo while the notes are still in `notes/`, and eac
 - **Before the check:** with Sarah's OK, commit and push the step to `develop`. If a dependency PR is open, ask Sarah to merge or close it. Then delete the `dependency-alerts-reported-*` cache entries with `gh cache delete`, start the weekly run with `gh workflow run dependency-updates.yml -f mode=weekly`, and give Sarah the run's link and, once it starts, the session's.
 
 **Sarah checks:**
-- [ ] Open the session link `/implement` gives you in chat (in the Code tab under **Routines**). See it run `vault-lint.sh` naming the sweep notes it changed, then commit and push them to the notes repo's `main`. Open the commit link in its summary and see the commit in `meal-planning-notes` on github.com. If it opened or updated a PR, see no sweep note changed in it. Goal: any note a routine's session adds or changes reaches the notes repo's `main`, never a code branch.
+- [ ] Open the session link `/infra-build` gives you in chat (in the Code tab under **Routines**). See it run `vault-lint.sh` naming the sweep notes it changed, then commit and push them to the notes repo's `main`. Open the commit link in its summary and see the commit in `meal-planning-notes` on github.com. If it opened or updated a PR, see no sweep note changed in it. Goal: any note a routine's session adds or changes reaches the notes repo's `main`, never a code branch.
 - [ ] In the same summary, if it lists no applied patch, minor or security fix, see that it opened or updated no PR. Goal: a `dependency-updates` run whose only changes are notes opens no PR.
 
 ### Step 8: Obsidian Git syncs the vault
@@ -247,7 +247,7 @@ Steps 1 to 5 change the code repo while the notes are still in `notes/`, and eac
 **Implementer checks:** none
 
 **Sarah checks:**
-- [ ] In Obsidian, create a note `Sync Check` at the vault's top level with one line, and stop typing. Within about five minutes, open the commits link `/implement` gives you in chat and see a `vault backup:` commit adding it on `main`. Goal: an edit Sarah makes in Obsidian reaches `main` without her committing it.
+- [ ] In Obsidian, create a note `Sync Check` at the vault's top level with one line, and stop typing. Within about five minutes, open the commits link `/infra-build` gives you in chat and see a `vault backup:` commit adding it on `main`. Goal: an edit Sarah makes in Obsidian reaches `main` without her committing it.
 - [ ] On github.com, add a line to `Sync Check` and commit it to `main`. Within about five minutes, see the line in Obsidian without pulling. Goal: changes pushed to the notes repo's `main` show up in the local vault without pulling.
 - [ ] Close Obsidian. In a Code-tab session, ask it to add a line to `Sync Check` in the notes repo. Open Obsidian, and within about five minutes see a `vault backup:` commit with that line on `main`. Then delete `Sync Check` in Obsidian. Goal: an edit reaches `main` without Sarah committing it (a session's edit made while Obsidian was closed).
 

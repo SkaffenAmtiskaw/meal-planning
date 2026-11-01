@@ -67,7 +67,7 @@ Any change to a note in `notes/` follows these rules:
 - **The Inbox** comes right after Where It Stands in every story and hub. It holds what reaches a note from outside its usual flow from one skill to the next:
   - **Sarah's items,** added when something occurs to her.
   - **Items from another note's work,** such as background that a session working on another story found for this one.
-  - **Why a note was sent back** to an earlier step, such as a new piece `/plan-steps` found for a redesign, or a problem that sends an infra story from `/implement` back to `/infra-design`.
+  - **Why a note was sent back** to an earlier step, such as a new piece `/plan-steps` found for a redesign, or a problem that sends an infra story from `/infra-build` back to `/infra-design`.
 
   In the usual flow, a step doesn't leave the next one an Inbox item. A finding or question for a later step goes at the top of the section that step writes.
   - **Adding an item:** say what it is. If the note has no Inbox, add one right after Where It Stands.
@@ -86,7 +86,7 @@ Any change to a note in `notes/` follows these rules:
   - give it a 🎯 link for each goal she names. If one of them is the building goal, it goes in Next. Otherwise, if one is the planning goal, it goes in Planning. If neither, ask her whether it goes in Next with 📌, and with what reason
   - ask her where in that section it goes, as "Roadmap order" above describes
 
-  This doesn't apply to `/implement`, which moves the line into Now itself, or to `/tooling`, which finishes its change in one session.
+  This doesn't apply to `/implement` or `/infra-build`, which move the line into Now themselves, or to `/tooling`, which finishes its change in one session.
 - **A new item in a collecting note.** When you add one, check which goals it serves and link it as the `roadmap-placement` skill describes. An item that `/check-drift` moves back or `/kickoff` rolls over isn't new, so it keeps the links it has.
 - **A `ready` note goes back to `spec`** when its design or steps change, until Sarah re-reviews it. Three changes don't count. Two leave the plan as she approved it: a corrected name or path and a Boy Scout fix (see "Out-of-scope work"). The third, a change to a choice she only approved, reaches her through the summary, as "Her decisions can change" describes.
 - **Template comments** (the `%% ... %%` guidance in `notes/templates/`) never stay in a note. The template keeps them, and the skill that writes each section carries its rules.
