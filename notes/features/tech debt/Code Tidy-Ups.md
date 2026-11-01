@@ -29,6 +29,7 @@ Tidy-ups to app code that change nothing a user can see or do. Test-only fixes g
 - [ ] Three `.d.ts` files export ordinary types, against the `*.types.ts` convention. Rename them with `git mv` and update their imports: `src/_utils/types.d.ts` → `src/_utils/utility.types.ts` (generic helper types, starting with `Optionalize`); `src/_utils/actionResult/ActionResult.d.ts` → `ActionResult.types.ts`; `src/app/[planner]/calendar/_components/AddMealForm/types.d.ts` → `AddMealForm.types.ts`. Leave the ambient declarations `src/css-modules.d.ts` and `src/mantine.d.ts` alone. [[Shared Types Directory]] may later move `ActionResult` to `src/_types/`; that doesn't change this rename. Moved from the Roadmap 2026-09-26; `utility.types.ts` chosen by Sarah the same day, since `Optionalize` isn't a DTO and stays in `_utils`. 🎯 [[App Health]]
 - [ ] `src/app/settings/_components/InvitesSettings.tsx:10` calls `getUser()` to get the email, although `src/app/settings/page.tsx:32` already passes the signed-in email to `UserSettings`, which renders `<InvitesSettings />` at `UserSettings.tsx:54`. Pass `email` down as a prop, drop the `getUser()` call, and remove the `if (!email)` branch (L13-23), which can't run on a page that redirects signed-out users. Moved from the Roadmap 2026-09-28. 🎯 [[App Health]]
 - [ ] `src/app/[planner]/calendar/_components/ListView/_utils/getListDayRange.ts:12` reads `DateTime.now()` itself, so the `today` prop that `ListView` accepts (`ListView.tsx:29, 41`) never reaches the day window. Found by reading code during the [[Unified Date Picker Component]] review, 2026-09-25. 🎯 [[Calendar Page]]
+- [ ] Replace `src/_utils/date.ts` with luxon, and delete it and `date.test.ts`. Its only callers are `src/app/settings/_components/InvitesSection.tsx` and `PendingInvitesList.tsx`. Their "Invited" and "Expires" dates use a named `MMM d, yyyy` style in `formatDate` (`src/_utils/formatDate/`, which [[Named Date Formats]] adds), so they still read like "Oct 31, 2026". The expiry checks become luxon comparisons of `expiresAt` with `DateTime.now()`: expired once it's past, expiring soon when it's 24 hours away or less. `PendingInvitesList` works out `isExpired` and `isExpiringSoon` once per invite, as `InvitesSection.tsx:58-59` already does. The UTC bug in `date.ts`'s date-only parsing doesn't hit these callers, since they pass full timestamps. Waits on [[Named Date Formats]]. Sarah decided 2026-10-31 that it's worth doing. Moved from the Roadmap 2026-10-31. 🎯 [[Calendar Page]] 🎯 [[App Health]]
 
 # Out of Scope
 - Dead schedule-x code: [[Remove Schedule-X]].
@@ -37,6 +38,6 @@ Tidy-ups to app code that change nothing a user can see or do. Test-only fixes g
 # Acceptance Criteria
 - [ ] Each item above is fixed or explicitly dropped.
 - [ ] Calendar month, week and list views, jump-to-date, and Add Meal from the list view behave as before.
-- [ ] Sending a planner invite, and the app shell header, navbar and inputs, look and work as before.
+- [ ] Sending a planner invite, the settings page's invite lists, and the app shell header, navbar and inputs, look and work as before.
 
 # Implementation

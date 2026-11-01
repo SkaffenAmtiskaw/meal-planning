@@ -31,7 +31,7 @@ How should the calendar format its date labels?
 # Out of Scope
 - `AddMealForm.tsx:40`'s format moves onto a named style in [[Meal Form Date Picker]], which rewrites the meal modal's subtitle.
 - The Date field's `M/d/yyyy` style is added by [[Header Date Picker]], with the field.
-- Replacing `src/_utils/date.ts` with luxon is the "replace date utils with luxon" line on the Roadmap.
+- Replacing `src/_utils/date.ts` with luxon is an item in [[Code Tidy-Ups]].
 
 # Acceptance Criteria
 - [ ] The mobile agenda heading, the week view's day labels and week range, and both month grids' day aria-labels get their formats from `formatDate`.
