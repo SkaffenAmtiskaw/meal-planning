@@ -26,7 +26,7 @@ This is planning only. Don't change code. A hook blocks edits outside `notes/` a
 - **Build from her decisions.** Build the rules from her comments and the **Decided** lines under Open Decisions.
 
 ## 1. Read the note
-Find the note in `notes/features/` and read all of it. Read the notes it links to when the Rules, Root Cause or Open Decisions depend on them.
+Find the note in `notes/features/` and read all of it. Read the notes it links to when the Rules or Open Decisions depend on them.
 
 Check that it's ready for this skill:
 - **`type: pattern` and `status: idea`.** If `type` is blank, the next step is `/shape`.
@@ -39,7 +39,7 @@ Then read the project docs the convention touches: `docs/project_conventions.md`
 
 ## 2. Rules
 ### Draft
-Draft every rule before showing any. Sources, in order of authority: Sarah's comments, **Decided** lines, then Purpose, Root Cause and Symptoms. Text already under `# Rules` is one of three things:
+Draft every rule before showing any. Sources, in order of authority: Sarah's comments, **Decided** lines, then Purpose and Symptoms. Text already under `# Rules` is one of three things:
 - **Questions for this step:** each one is something a rule has to settle. If the decisions settle it, answer it in the rule. If they don't, it's a gap (below).
 - **Text marked as decided or approved:** confirm with Sarah that it still holds rather than redrafting it.
 - **Anything else:** treat it as a draft.
