@@ -9,6 +9,9 @@ confirmed: 2026-09-25
 
 Next: /plan-steps. Building waits on [[Calendar and Recipes Data Refresh]]. ^status
 
+# Inbox
+- From `/decide` on [[One Source of Today]]: Step 11's first check says "The invite is listed immediately, with no loading state". Sarah said 2026-11-01 that an agent-added requirement like this gets no workarounds. Where content has to wait, it shows a skeleton.
+
 # Purpose
 Settings still refreshes with `router.refresh()` after each change. It also loads invites, members and the viewer's membership through client hooks, so they appear after a loading state. This story moves every planner, sharing and user mutation onto `defineMutation`, passes settings data down as server props, and takes the verify-email-change write out of render, so Settings follows the data refresh pattern.
 
