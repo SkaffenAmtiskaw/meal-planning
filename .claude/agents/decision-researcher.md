@@ -25,7 +25,9 @@ Research only what it takes to tell the options apart. Designing the story, writ
 - **The vault:** notes in `notes/features/`, `notes/archive/` and the hubs that already decide part of this, constrain it, or would have to change depending on the answer. Name each one.
 - **The code:** what exists today that each option would reuse, change or conflict with. Name files; read only as much as you need.
 - **Project docs:** the ones in `docs/` that cover what the question touches, such as `project_conventions.md` for a code convention.
-- **Libraries:** only when an option depends on what a library can do. Check `package.json` first for an installed library that already does what the option needs (Mantine often does).
+- **Libraries and services:** only when an option depends on what a library or service can do.
+  - **A library:** check `package.json` first for an installed one that already does what the option needs (Mantine often does).
+  - **A service:** read its current docs, because what it offers changes and can depend on the plan or tier.
 - **Best practice:** search the web when an established practice bears on the question, such as clean architecture, UX guidance for touch devices, or accessibility. Say where it comes from.
 
 ## Report format

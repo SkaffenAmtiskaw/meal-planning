@@ -45,7 +45,7 @@ After recording each answer, look at what it changes:
 ## 4. Update the note's status
 Once the picked decisions are done, set `confirmed` to today, since the user making decisions on a note counts as confirming it. Then update the note for the first case that fits:
 - **The user decided the story isn't worth doing:** set `status: dropped`, remove the `decision needed` entry from `blocked-by`, and set the `^status` line to "Not worth doing. Next: /close".
-- **Decisions remain open:** set the `^status` line to how many remain, such as "2 open decisions. Next: /decide".
+- **Decisions remain open:** if `/decide` can run now, start the `^status` line with how many remain, such as "2 open decisions. Next: /decide". Either way, the line names any other story one of them waits on.
 - **A roundup with none left:** remove the `decision needed` entry from `blocked-by`, set `status: spec`, and set the `^status` line to "Decisions made. Next: /plan-steps".
 - **A hub with none left:** set its `^status` line to "Next: its child stories" and remove its Roadmap line, since a hub has a line only while it has open decisions.
 - **Any other story with none left:** remove the `decision needed` entry from `blocked-by`. Run `sh scripts/note-section.sh "Next Step by Note State"`, which prints Note Conventions' table of what each note state does next, and set the `^status` line to the story's next step from it, such as "Decisions made. Next: /assess".
@@ -64,7 +64,7 @@ Triage the out-of-scope list. For a new story from step 3, offer route or drop o
 ## 7. Stop
 Tell the user what's left:
 - **The story was dropped:** say so, and give `/close <note name>` as its next step. Skip the other cases.
-- **Open decisions remain:** list them, one line each. The next run is `/decide <note name>`.
+- **Open decisions remain:** list them, one line each, and give the next step from the `^status` line.
 - **None remain:** give the note's next step from its `^status` line, such as `/assess <note name>`.
 - **Children were created:** list each one with the command to run, such as `/shape <child name>`.
 
