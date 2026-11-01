@@ -1,12 +1,12 @@
 ---
 type: cleanup
 status: spec
-blocked-by: ["[[Shared Types Directory]]", "[[Schedule-X Data Shapes Audit]]"]
+blocked-by: ["[[Shared Types Directory]]"]
 confirmed: 2026-09-26
 ---
 # Where It Stands
 
-Blocked by [[Shared Types Directory]] and [[Schedule-X Data Shapes Audit]]; then /plan-steps ^status
+Next: /plan-steps. Building waits on [[Shared Types Directory]]. ^status
 
 # Purpose
 The custom calendar has replaced schedule-x in every view (see [[Replace Schedule-X]]), but schedule-x code, types and packages are still in the repo. This story removes them completely.

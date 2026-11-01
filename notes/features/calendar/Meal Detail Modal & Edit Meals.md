@@ -8,7 +8,7 @@ blocked-by:
 confirmed: 2026-09-25
 ---
 # Where It Stands
-Blocked by [[Meal Editing]], [[Header Date Picker]] and [[Meal Form Date Picker]]; then /assess ^status
+Blocked by [[Meal Editing]]; then /assess. Building waits on [[Header Date Picker]] and [[Meal Form Date Picker]]. ^status
 
 # Inbox
 

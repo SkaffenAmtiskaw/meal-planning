@@ -639,7 +639,7 @@ Before planning or implementing any story linked from this note, read this note 
 | [[Meal Detail Modal & Edit Meals]] | spec | desktop read view, inline notes, Move to / Duplicate, edit mode, delete. Phone version not designed. | this hub's design; [[Header Date Picker]], [[Meal Form Date Picker]] |
 | Date picker options for Move / Duplicate (Deferred Work below) | not a story yet | the picker's label, relative shortcuts, custom shortcut items and hint, which Move to / Duplicate open | [[Header Date Picker]]; open decision 10 below |
 | Mobile agenda card actions (Deferred Work below) | not a story yet | Edit / Move to… buttons on mobile month agenda cards | open decisions 1, 2 and 9 below |
-| [[Mobile List View]] | spec | none - cards have no actions | this hub's design; re-review of Steps 2 and 5; [[Calendar and Recipes Data Refresh]]; [[Today and Selected Day Markers]] |
+| [[Mobile List View]] | spec | none - cards have no actions | this hub's design; [[Today and Selected Day Markers]] |
 
 **Related, not child stories:**
 - [[Unified Date Picker Component]] - hub holding the date picker design; split 2026-09-25 into [[Header Date Picker]] and [[Meal Form Date Picker]], which Move to, Duplicate and edit mode use, plus [[Mantine Date Picker Setup]] and [[Today and Selected Day Markers]]
@@ -676,7 +676,7 @@ These were separate Roadmap lines before 2026-09-25. The Roadmap now links to th
 5. **Delete outside the desktop modal.** Where does delete live on mobile and in desktop list?
 6. **Inline note editing.** Desktop modal only, or anywhere a note is shown?
 7. **Build order.** Should [[Add Meal Changes (Saved Recipes)]] land before edit mode? Should [[Stale Data Issues]] land before any new meal mutations?
-   - Partly answered 2026-09-25: [[Add Meal Changes (Saved Recipes)]] and [[Mobile List View]] are blocked on [[Calendar and Recipes Data Refresh]] (split from [[Stale Data Issues]]). Whether edit mode waits for Add Meal Changes is still open.
+   - Partly answered 2026-09-25: [[Add Meal Changes (Saved Recipes)]] is blocked on [[Calendar and Recipes Data Refresh]] (split from [[Stale Data Issues]]). Whether edit mode waits for Add Meal Changes is still open.
 8. **Reorder on mobile.** Is reordering meals within a day needed on phones at all?
 9. **Disabled stubs.** Should the mobile agenda's Edit / Move to… buttons ship as disabled stubs before the edit flow exists (the original Step 8 plan), or wait until they can be wired up?
 10. **Date picker options for Move / Duplicate.** The picker's `label`, relative shortcuts, custom `shortcutItems` and `hint` were never built. They moved here from [[Unified Date Picker Component]] when it was split (see Deferred Work). Should they be their own story, or part of [[Meal Detail Modal & Edit Meals]]?

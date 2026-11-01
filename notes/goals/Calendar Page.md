@@ -3,7 +3,6 @@ type: goal
 confirmed: 2026-09-28
 ---
 # Inbox
-- For a later session on this goal: audit each `blocked-by` entry in this goal's stories to see whether the story is truly blocked by what it claims. Sarah is skeptical of many of them. Include the entries that aren't links, such as [[Mobile List View]]'s "Steps 2 and 5 need re-review", and the hub entries `/gather-goal` added on 2026-11-01.
 
 # Purpose
 Get the calendar page into a polished state that is ready for users. That means wrapping up the partially done schedule-x migration, adjusting screens based on user feedback, wiring up the ability to edit meals, and a final UX and styles pass at the end for polish.

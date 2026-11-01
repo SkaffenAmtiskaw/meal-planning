@@ -28,7 +28,7 @@ This story also takes in the Roadmap item to rename "event" to "meal" in calenda
 
 Related:
 - [[Shared Types Directory]] moves the four types to `src/_types/` (decided 2026-09-26 in [[Remove Schedule-X]]).
-- [[Remove Schedule-X]] deletes the rest of the schedule-x code and waits on this audit.
+- [[Remove Schedule-X]] deletes the rest of the schedule-x code.
 
 # Current State
 %% What exists now, with file paths. Say how it was checked (e.g. "static import scan on 2026-09-25", "grep for X") - cleanup notes go stale quickly, so re-check before planning. %%

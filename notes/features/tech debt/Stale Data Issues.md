@@ -105,7 +105,7 @@ export const addMeal = defineMutation({
 
 **Related, not child stories:**
 - [[Server-Only Creation and Pure Reads]] - moves `addPlanner` and `addUser` out of `'use server'` and makes two reads pure. It builds none of this hub's pieces, but [[Data Rules Enforcement]] waits on it
-- [[Add Meal Changes (Saved Recipes)]] and [[Mobile List View]] - blocked on [[Calendar and Recipes Data Refresh]]
+- [[Add Meal Changes (Saved Recipes)]] - blocked on [[Calendar and Recipes Data Refresh]]
 - [[Meal Editing]] - new meal mutations follow the rules here
 - [[Unchecked Planner Reads]] - ⚠️ security: `getPlanner`, `getPlannerClient` and `getSavedItem` are server actions with no access check; found while planning, fixed after [[Calendar and Recipes Data Refresh]]
 

@@ -3,13 +3,11 @@ type: feature
 status: spec
 blocked-by:
   - "[[Meal Editing]]"
-  - "Steps 2 and 5 need re-review (see Review notes)"
-  - "[[Calendar and Recipes Data Refresh]]"
   - "[[Today and Selected Day Markers]]"
 confirmed: 2026-09-19
 ---
 # Where It Stands
-Blocked by [[Meal Editing]], [[Calendar and Recipes Data Refresh]] and [[Today and Selected Day Markers]]; then /assess ^status
+Blocked by [[Meal Editing]]; then /assess. Building waits on [[Today and Selected Day Markers]]. ^status
 
 Sent back from `ready` to `spec`. Its design, with the today-marker update that conflicts with its handoff, moved to [[Meal Editing]] to share one design with the other meal screens, and Check Drift found Steps 2, 3 and 5 out of date.
 
@@ -103,8 +101,6 @@ Replaces the "Coming soon" placeholder that the list view shows on phones with a
 
 > ⚠️ **Check Drift 2026-09-25:** The modal wiring above describes code that no longer exists, and this step needs re-review before implementation:
 > - `AddMealFormModalWrapper` and `onMealAdded` no longer exist. Add Meal now opens through `CalendarModalProvider` / `useCalendarModal` (`src/app/[planner]/calendar/_components/CalendarModal/`), the pattern [[Modal Form Architecture]] standardizes. Mobile list should open the modal the same way rather than keeping its own modal state.
-> - Refreshing via `onMealAdded` conflicts with [[Calendar and Recipes Data Refresh]], which moves invalidation to the server and removes `router.refresh()`. This step should be built after that story lands.
-
 ## Step 6: Read-only gating and accessibility polish
 
 **Problem to solve:** Read-only users must not see add affordances, and the view must meet accessibility requirements.

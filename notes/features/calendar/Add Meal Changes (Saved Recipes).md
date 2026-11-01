@@ -7,7 +7,7 @@ blocked-by:
 confirmed: 2026-09-25
 ---
 # Where It Stands
-Blocked by [[Meal Editing]] and [[Calendar and Recipes Data Refresh]]; then /assess ^status
+Blocked by [[Meal Editing]]; then /assess. Building waits on [[Calendar and Recipes Data Refresh]]. ^status
 
 Sent back from `ready` to `spec`, because its design moved to [[Meal Editing]] to share one design with the other meal screens. Its steps were written against the old design.
 
