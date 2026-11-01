@@ -23,5 +23,6 @@ Part of [[Agent Instructions Audit]].
 ## Issues Found
 From the audit's scan on 2026-10-06. Line numbers are as of that day.
 - The sweep branch (`check-drift:69-75` and the sweep half of `:87`, about 280 words) moves to a supporting file.
+- The pattern branch in `/check-drift`'s step 4 moves to a supporting file too, since only pattern runs use it (from Infra Check-Drift Review, 2026-11-01).
 
 # Questions

@@ -24,7 +24,7 @@ Check that it's ready for this skill:
 - **`ready` or later:** stop. Changes to a planned story go through `/check-drift`.
 - **No open decisions.** The note isn't ready if it has a `decision needed` entry in `blocked-by`, or an item under `# Open Decisions` with no **Decided** line. An item with only a **Partly answered** line still counts as open. List the open decisions, one line each, tell the user the next step is `/decide <note name>`, and stop.
 
-**In a revision,** find what to rework in whatever called for it: the Inbox item, the `^status` line or the user's answer. Each step below works only on that, apart from the Goals check in step 2, which every revision runs. Everything else keeps its approval as written unless the rework changes it. Where step 2, 3 or 4 shows a part for approval, show the reworked part next to the version it replaces.
+**In a revision,** find what to rework in whatever called for it: the Inbox item, the ⚠️ Check Drift callouts, the `^status` line or the user's answer. Each step below works only on that, apart from the Goals check in step 2, which every revision runs. Everything else keeps its approval as written unless the rework changes it. Where step 2, 3 or 4 shows a part for approval, show the reworked part next to the version it replaces. Remove the callouts on the parts you rework, since the new text answers them.
 
 ## 2. Goals
 Draft the Goals. The user wants an infra story to work, and cares little about how it's built. So each Goal names something they want to get out of the story: something that must be true when it's done, and that they can see for themselves, such as "a PR into `main` shows four check jobs". If a Goal needs "and" to join two things that can fail separately, it's two Goals.
@@ -41,7 +41,7 @@ Then draft the whole Design before showing any of it, so you can see where Piece
 - **Pieces:** each thing that gets built or changed, such as a workflow, a script, a config file, a skill or a service. For each: its path, or where it lives outside the repo, its one purpose, any requirement it has to meet, and a block ID (` ^piece-N`) that the Flow and the Build Order link to.
 - **The Flow:** only what no single Piece holds: what starts a run, the hand-offs between Pieces and failure paths that cross Pieces. It links each Piece it mentions, as in `[[#^piece-7|Piece 7]]`.
 
-Check each service, config key and Claude Code feature the Design uses against its current docs, because what they offer changes. Check each Piece against the project docs and the other notes' Conventions and Rules.
+Check each service, config key and Claude Code feature the Design uses against its current docs, because what a service offers changes. Check each Piece against the project docs and the other notes' Conventions and Rules.
 
 Where the note's decisions and the user's comments don't settle something the Design or Build Order needs, settle it with the user as the `settling-a-decision` skill describes.
 
@@ -100,7 +100,6 @@ Once they approve, write it under `## Build Order`, at the end of `# Design`.
 ## 8. Update the Note's Status
 - Set `status` to `ready`.
 - Set `confirmed` to today, since the user approving the Design confirms the note.
-- Update the `^status` line.
 
 ## 9. Route Out-of-Scope Items and Stop
 Route the out-of-scope list. Then tell the user the next step is `/implement <note name>` in a new session, and stop.

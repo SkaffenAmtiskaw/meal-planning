@@ -44,7 +44,7 @@ Any change to a note in `notes/` follows these rules:
   - **It's done or out of date:** show it to her and ask whether to remove it.
   - **It needs a workflow marker:** add a `🎯 [[Goal]]` link to its end or a `**Blocked by [[Story]]:**` prefix to its start, without asking. They sit outside her words, so adding one isn't editing them.
   - **Otherwise:** never edit it.
-- **A note that's wrong or out of date** is handled by where the mistake is and what it changes. ⚠️ Check Drift callouts are only for drift: a story waited while the code, the conventions or other stories moved on, so parts of it no longer hold. Only `/check-drift` writes them, and it says how. No other session writes one or offers to, unless Sarah tells it to.
+- **A note that's wrong or out of date** is handled by where the mistake is and what it changes. ⚠️ Check Drift callouts are only for drift: a story waited while the code, the conventions, the services it uses or other stories moved on, so parts of it no longer hold. Only `/check-drift` writes them, and it says how. No other session writes one or offers to, unless Sarah tells it to.
   - **The story you're working on has a mistake that changes its remaining work** (what gets built, or how), such as a wrong assumption in its approach, a detail an earlier skill got wrong, or wording that conflicts with a choice Sarah just made: fix the text directly, and name the fix in your summary.
   - **The build differs from a step:** add an **As built:** note under the step.
   - **A change you've built affects another story's remaining work beyond a name or path:** leave its text alone, and add an Inbox item to it, as "Out-of-scope work" describes.

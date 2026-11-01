@@ -1,6 +1,6 @@
 ---
 name: check-drift
-description: Checks a note's remaining work against the code, the conventions, other notes and the user's comments, and routes the note to its next step. Use when a note's next step is /check-drift.
+description: Checks a note's remaining work for drift and routes the note to its next step. Use when a note's next step is /check-drift.
 argument-hint: "[note name]"
 disable-model-invocation: true
 hooks:
@@ -13,14 +13,14 @@ hooks:
 
 Check the note **$ARGUMENTS** for drift.
 
-A note is planned against the code, the conventions and other notes as they were on its `confirmed` date, and by the time it's built any of them may have moved on, or the user may have changed their mind. Find where the remaining work no longer holds, mark each place with a ⚠️ Check Drift callout and send the note to the skill that fixes it. Don't rewrite the plan beyond correcting a name or path, because the skill that wrote each section settled it with the user and is the one to re-settle it.
+A note is planned against the code, the conventions, the services it uses and other notes as they were on its `confirmed` date. By the time it's built, any of them may have moved on, or the user may have changed their mind. Find where the remaining work no longer holds, mark each place with a ⚠️ Check Drift callout and send the note to the skill that fixes it. Apart from the changes the steps below name, such as correcting a name or path, don't rewrite the plan, because the skill that wrote each section settled it with the user and is the one to re-settle it.
 
 ## 1. Read the note
 Find the note in `notes/features/`. If its status isn't `spec`, `ready` or `in-progress`, tell the user what you found and stop.
 
 Read the whole note, with the images its Design Handoff links and the artboards it names. Then work out its **remaining work**, which is all you check:
 - **`spec`:** the approach, meaning the sections that say what to build and what they rest on, such as a feature's design, behaviors and Suggested Approach, a cleanup's Current State, or a sweep's unchecked Items.
-- **`ready` or `in-progress`:** the steps not yet marked complete, and the design and approach sections they build. An infra note's steps are its Build Order, at the end of its Design.
+- **`ready` or `in-progress`:** the steps not yet marked complete, and the design and approach sections they build.
 
 ## 2. Find the user's comments
 Run `sh scripts/user-comments.sh "<note name>"`. It lists the lines that look like the user's comments, each marked new or old against `confirmed`. Anything the user asks to change in chat this session counts as a new comment too. For each comment:
@@ -33,6 +33,7 @@ Write the story's footprint to a scratch file, from the remaining work:
 - **Named code:** every file, component, hook, action, route and prop it names.
 - **Kinds of things it builds,** such as a server action, a modal form or a unit test for a hook.
 - **UI areas,** such as the mobile day section header.
+- **Services:** every service, config key and Claude Code feature it uses.
 - **Related notes:** its hub, the notes it links to and the stories in `blocked-by`.
 
 Then run the `code-drift-checker` and `note-drift-checker` subagents in parallel. Give each one the note path, the `confirmed` date, the footprint file and the remaining work: which steps, or "the whole approach" for a `spec` note. Don't tell them what you expect them to find, because a checker that knows what you expect tends to find that and miss the rest.
@@ -41,6 +42,12 @@ If the note is a pattern, also run the `rule-auditor` subagent alongside them. T
 
 ## 4. Sort the checkers' findings
 Merge findings that are the same problem seen from two sides. A checker's finding that one of the user's comments already settles is part of that comment's finding, so it needs no decision. Drop any finding that an earlier ⚠️ Check Drift callout already settled.
+
+Write each callout, in this step and step 5, directly above the text it's about, in this form:
+
+`> ⚠️ **Check Drift YYYY-MM-DD:** what no longer matches, and what it means for this story. How it was found.`
+
+End it with how the finding was found and anything it wasn't verified against, such as "From Sarah's comment" or "Found by reading GitHub's docs, not verified in the repo's settings."
 
 **If the note is a pattern,** compare `rule-auditor`'s report with the note's Migration Checklist before sorting the other findings. Its report holds three kinds of item:
 - **A violation the note's checklist doesn't list:**
@@ -55,33 +62,32 @@ Don't change a checklist item just because the report leaves it out. Enforcement
 - **Already fixed, or built by another story:** add a callout, without asking, saying the item is dropped and why. `/plan-steps` skips it.
 - **Moved or renamed:** mechanical. Correct the name or path in the item.
 - **Now needs a decision:** it no longer belongs in a sweep. Take it out straight away, without asking whether to settle it, and put it on the out-of-scope list, where it may go to a roundup or become its own story. Leave a callout where it was saying it moved out and why.
-- **Now waits on another story:** move it back to the collecting note, starting with `**Blocked by [[Story]]:**`, so it rolls over to the next sweep. If no collecting note exists, put it on the out-of-scope list instead. Leave a callout where it was saying where it went and why.
-
-A sweep never needs a re-assessment and never gets a `decision needed` entry.
+- **Now waits on another story:** leave a callout where it was saying what it waits on and that it moved out.
+  - **If a collecting note exists:** move it back there, starting with `**Blocked by [[Story]]:**`, so it rolls over to the next sweep.
+  - **Otherwise:** put it on the out-of-scope list.
 
 **If the note isn't a sweep,** sort each finding:
 - **Mechanical:** the plan still works as written with a different name or path, such as a renamed prop or a moved hook. Correct the name or path in place.
-- **Needs a decision:** anything that changes what gets built or how, such as a conflict with another story's design, docs that disagree with recent code, or a piece another story already built.
+- **Needs a decision:** anything that changes what gets built or how, such as a conflict with another story's design, project docs that disagree with recent code, or a piece another story already built.
 
-Then triage the out-of-scope list. If an item is a sweep item this step took out, it can't be pulled back in, so offer route or drop only. If the note is a sweep, an item the user pulls in must be decided before it joins: if it still needs a decision, ask them for it. If they want to think it over, it can't join the sweep, so offer route or drop only. Otherwise, add it as a new unchecked box under Items, written as the Items comment in `notes/templates/Sweep.md` describes, with "Pulled in by <their name> YYYY-MM-DD" and any answer they gave ("<their name> decided: ..."). If the note isn't a sweep, an item the user pulls in becomes a finding that needs a decision.
+Then triage the out-of-scope list. A sweep item this step took out can't be pulled back in, so offer route or drop only. What happens to an item the user pulls in depends on the note:
+- **If the note isn't a sweep:** it becomes a finding that needs a decision.
+- **If the note is a sweep and the item still needs a decision:** ask them for it. If they want to think it over, it can't join the sweep, so offer route or drop only.
+- **If the note is a sweep and the item is decided:** add it as a new unchecked box under Items, written as the Items comment in `notes/templates/Sweep.md` describes, with "Pulled in by <their name> YYYY-MM-DD" and any answer they gave ("<their name> decided: ...").
 
 ## 5. Settle the findings and write the callouts
-Write each callout directly above the text it's about, in this form:
-
-`> ⚠️ **Check Drift YYYY-MM-DD:** what no longer matches, and what it means for this story. Found by reading code, not verified in the running app.`
-
-End it with how the finding was found: by reading code, by reading notes or from the user's comment. If the finding depends on how the app behaves, don't check it in the app yourself. Add a quick check the user can do there.
+If a finding depends on how the app behaves or on what's set up outside the repo, and reading didn't settle it, don't check it yourself. Add a quick check the user can do in the app or where it's set up, using the checker's **Unverified** line if it has one.
 
 How you write each callout depends on where its finding came from:
 - **The user's comments:** add a callout at each place a comment affects, pointing back to it, e.g. "Sarah's comment under Behaviors (2026-09-24) drops the week view, so this step's week toggle no longer applies."
 - **Findings that need a decision:** go through them with the user, each with its evidence and the options. Write a callout recording each answer, e.g. "Sarah decided 2026-09-25 that the ring replaces the tint here", even when the plan stands, so no later session raises it again.
 
 Some answers need more than a callout:
-- **Recent code wins over the docs,** or follows a convention they don't cover: it's a doc gap.
-- **The docs win:** the code that breaks them goes on the out-of-scope list.
+- **Recent code wins over the project docs,** or follows a convention they don't cover: it's a doc gap.
+- **The project docs win:** the code that breaks them goes on the out-of-scope list.
 - **Another story has to change:** that change goes on the out-of-scope list.
 
-If the note is a roundup and the user leaves a finding for later that reopens a decided question, the question written for it under Open Decisions names the one it reopens, and a callout on the old **Decided** line points to it.
+If the note is a roundup and the user leaves for later a finding that reopens a decided question, write its new question under Open Decisions, naming the question it reopens. Add a callout on the old **Decided** line pointing to the new question.
 
 ## 6. Route the note
 If the note is a sweep, it stays at `spec` and goes to `/plan-steps` next. Otherwise, route it by what its findings mean for it once the user has answered. If more than one case applies, the biggest wins: approach over steps over plan holds, and blocked can go with any of them.

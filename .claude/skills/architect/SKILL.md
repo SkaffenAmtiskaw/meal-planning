@@ -31,7 +31,7 @@ Check that it's ready for this skill:
 
 Then read the Rules of every other `type: pattern` note in `notes/features/`, so you can spot overlaps and conflicts.
 
-**In a revision,** the Inbox item, `^status` line or user's answer that called for it names what to rework. Each step below works only on the rules it reworks, with their enforcements and checklist items, and every other rule, enforcement and checklist item keeps its approval as written. Show each reworked piece next to the version it replaces before writing it.
+**In a revision,** the Inbox item, ⚠️ Check Drift callouts, `^status` line or user's answer that called for it names what to rework. Each step below works only on the rules it reworks, with their enforcements and checklist items, and every other rule, enforcement and checklist item keeps its approval as written. Show each reworked piece next to the version it replaces before writing it. Remove the callouts on the rules you rework, since the new text answers them.
 
 ## 2. The Convention
 Every rule follows from the convention, so settle it before drafting any rule. A convention says what code should do, not just what's wrong with it today. A note that only describes the problem or asks for the right fix, such as "these are all bad the same way, help me find the right solution", hasn't chosen one. If no **Decided** line or comment from the user says what code should do, write the question of what the convention should be under `# Open Decisions`, and settle it as the `settling-a-decision` skill describes.
