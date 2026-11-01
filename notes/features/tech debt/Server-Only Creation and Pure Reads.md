@@ -17,11 +17,6 @@ Next: /plan-steps ^status
 
 Split from [[Stale Data Issues]] on 2026-09-25.
 
-# Design
-The design lives in [[Stale Data Issues]]. The sections embedded below are part of this note.
-
-![[Stale Data Issues#Rule 1 — Mutations invalidate on the server]]
-
 # Current State
 *From [[Stale Data Issues]] (static reading, 2026-09-25). Re-check before planning.*
 

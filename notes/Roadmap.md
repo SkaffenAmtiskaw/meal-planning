@@ -99,45 +99,40 @@
 56. [[When Stories Need E2E Tests]] ![[When Stories Need E2E Tests#^status]] 🎯 [[Dev Foundations]]
 57. [[Docs Audit]] ![[Docs Audit#^status]] 🎯 [[Dev Foundations]]
 # Planning
-1. [[Calendar and Recipes Data Refresh]] ![[Calendar and Recipes Data Refresh#^status]] - ready. Fixes both stale-data symptoms; unblocks [[Add Meal Changes (Saved Recipes)]] and [[Mobile List View]]. 🎯 [[Calendar Page]] 🎯 [[App Health]] 🎯 [[Recipes Page]]
-2. [[Settings Data Refresh]] ![[Settings Data Refresh#^status]] - spec. Waiting on [[Calendar and Recipes Data Refresh]]. 🎯 [[Calendar Page]] 🎯 [[App Health]]
-3. [[Server-Only Creation and Pure Reads]] ![[Server-Only Creation and Pure Reads#^status]] - spec. 🎯 [[Calendar Page]] 🎯 [[App Health]] 🎯 [[Bugs]]
-4. [[Data Rules Enforcement]] ![[Data Rules Enforcement#^status]] - spec. Waiting on [[Calendar and Recipes Data Refresh]], [[Settings Data Refresh]] and [[Server-Only Creation and Pure Reads]]. 🎯 [[Calendar Page]] 🎯 [[App Health]]
-5. [[Today and Selected Day Markers]] ![[Today and Selected Day Markers#^status]] - spec. Fixes the truncated today circle; unblocks [[Mobile List View]]. 🎯 [[Calendar Page]]
-6. [[Mantine Date Picker Setup]] ![[Mantine Date Picker Setup#^status]] - spec. 🎯 [[Calendar Page]]
+1. [[Calendar and Recipes Data Refresh]] ![[Calendar and Recipes Data Refresh#^status]] 🎯 [[Calendar Page]] 🎯 [[App Health]] 🎯 [[Recipes Page]]
+2. [[Settings Data Refresh]] ![[Settings Data Refresh#^status]] 🎯 [[Calendar Page]] 🎯 [[App Health]]
+3. [[Server-Only Creation and Pure Reads]] ![[Server-Only Creation and Pure Reads#^status]] 🎯 [[Calendar Page]] 🎯 [[App Health]] 🎯 [[Bugs]]
+4. [[Data Rules Enforcement]] ![[Data Rules Enforcement#^status]] 🎯 [[Calendar Page]] 🎯 [[App Health]]
+5. [[Today and Selected Day Markers]] ![[Today and Selected Day Markers#^status]] 🎯 [[Calendar Page]]
+6. [[Mantine Date Picker Setup]] ![[Mantine Date Picker Setup#^status]] 🎯 [[Calendar Page]]
 7. [[Named Date Formats]] ![[Named Date Formats#^status]] 🎯 [[Calendar Page]]
-8. [[Header Date Picker]] ![[Header Date Picker#^status]] - ready. Waiting on [[Named Date Formats]], [[Mantine Date Picker Setup]] and [[Today and Selected Day Markers]]. 🎯 [[Calendar Page]]
+8. [[Header Date Picker]] ![[Header Date Picker#^status]] 🎯 [[Calendar Page]]
 9. [[Long Reference URLs Shrink the Name Input]] ![[Long Reference URLs Shrink the Name Input#^status]] 🎯 [[Calendar Page]]
 
 # Later
 ## [[Dev Foundations]]
 
 ## [[Calendar Page]]
-- [[Remove Schedule-X]] ![[Remove Schedule-X#^status]] - spec.
-- [[Shared Types Directory]] - spec, last reviewed April. Unblocks [[Remove Schedule-X]]. 🎯 [[App Health]]
+- [[Remove Schedule-X]] ![[Remove Schedule-X#^status]]
+- [[Shared Types Directory]] ![[Shared Types Directory#^status]] 🎯 [[App Health]]
 - [[Schedule-X Data Shapes Audit]] ![[Schedule-X Data Shapes Audit#^status]] 🎯 [[App Health]]
-- [[Unchecked Planner Reads]] ![[Unchecked Planner Reads#^status]] - spec. ⚠️ Security: any planner's data may be readable by id without a membership check. Waiting on [[Calendar and Recipes Data Refresh]]. 🎯 [[Bugs]]
-- [[Add Meal Changes (Saved Recipes)|User Feedback - Add Meal Changes]] - ready. Waiting on [[Calendar and Recipes Data Refresh]].
-- [[Meal Form Date Picker]] ![[Meal Form Date Picker#^status]] - spec. Waiting on [[Named Date Formats]] and [[Header Date Picker]]. With it, unblocks [[Meal Detail Modal & Edit Meals]].
+- [[Unchecked Planner Reads]] ![[Unchecked Planner Reads#^status]] ⚠️ Security: any planner's data may be readable by id without a membership check. 🎯 [[Bugs]]
+- [[Add Meal Changes (Saved Recipes)]] ![[Add Meal Changes (Saved Recipes)#^status]]
+- [[Meal Form Date Picker]] ![[Meal Form Date Picker#^status]]
 - [[Mobile List View]] ![[Mobile List View#^status]]
 - [[Meal Editing]] ![[Meal Editing#^status]]
-- [[Meal Detail Modal & Edit Meals]]
-- [[DND]]
+- [[Meal Detail Modal & Edit Meals]] ![[Meal Detail Modal & Edit Meals#^status]]
+- [[Planning on the Calendar]] ![[Planning on the Calendar#^status]]
+- [[Calendar Keyboard and Focus]] ![[Calendar Keyboard and Focus#^status]]
 - [[Blank Dish Row Blocks Saving a Meal]] ![[Blank Dish Row Blocks Saving a Meal#^status]]
 - [[Meal Color from Name and Description]] ![[Meal Color from Name and Description#^status]]
-- [[Modal Form Architecture|refactor all modal forms to separate presentation and data concerns]] 🎯 [[App Health]] 🎯 [[Recipes Page]]
-- [[Add Meal from Month Cell]] ![[Add Meal from Month Cell#^status]]- add meals by clicking week day - reuse the interaction decisions from [[Add Meal from Month Cell]]'s design so month and week behave the same
+- [[Modal Form Architecture]] ![[Modal Form Architecture#^status]] 🎯 [[App Health]] 🎯 [[Recipes Page]]
+- [[Add Meal from Month Cell]] ![[Add Meal from Month Cell#^status]]
 - default to week view on desktop - list view on mobile
 - calendar list view infinite scroll
-- clicking "+N more" in the month grid switches to list view at that day - approach needs review (see Step 17 in [[Replace Schedule-X]])
-- two buttons are off-screen when tabbing from the first tab stop on the calendar page - a bug, needs investigating. Moved from the calendar style fixes list 2026-09-26
-- calendar focus states look poor - needs a design, possibly a global focus state (see the `theme.ts` line in Later, whose focus styles never apply). Moved from the calendar style fixes list 2026-09-26
-- `theme.ts` - the input border `#C8C0C3` has no color token, and the input `&:focus` styles never apply (Mantine drops pseudo-selectors in `styles`) - see the calendar focus states line 🎯 [[App Health]]
-- calendar list view keyboard navigation - needs design review once the calendar views are mostly complete (see Step 16 in [[Replace Schedule-X]])
-- skip to content
 - a11y audit of the calendar page against WCAG 2.2 AA - the app-wide a11y audit stays in Ideas for the other pages
 - audit that the calendar page works fully on phones - the app-wide mobile audit stays in Ideas for the other pages
-- "today" is computed independently in ~10 calendar places, several with `DateTime.now()` during server render - near midnight the server's time zone can mark the wrong day or cause a hydration mismatch. Consider one source of "today"
+- "today" is computed independently in 11 calendar places with `DateTime.now()`. They only run in the browser now, but [[Calendar and Recipes Data Refresh]] Step 2 makes them run during server render, so the server's time zone can mark the wrong day or cause a hydration mismatch. Consider one source of "today"
 - calendar duplication - group-by-date (×4), meal color calculation (×2), the near-identical `MealCalendar` / `MealWeekView` adapters and their types, and meal keyboard navigation copied between the month and week hooks 🎯 [[App Health]]
 - `formatCalendarLabel.ts` - also holds the view names and default view order, which its name doesn't describe; move them into a views config once it's decided where that lives 🎯 [[App Health]]
 - [[Planner Access Audit]] ![[Planner Access Audit#^status]] 🎯 [[Bugs]]
@@ -223,3 +218,4 @@
 - toggle light/dark mode
 - [[What's Changed Notification]] ![[What's Changed Notification#^status]]
 - have a Vercel Deploy Errors session watch Vercel's status page and say when an incident ends, such as with a cron job, if checking it by hand becomes a problem ([[Vercel Deploy Errors]] decision 5)
+- [[Replace Schedule-X]] ![[Replace Schedule-X#^status]]

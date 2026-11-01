@@ -6,7 +6,7 @@ confirmed: 2026-09-26
 ---
 # Where It Stands
 
-Blocked until [[Shared Types Directory]] and [[Schedule-X Data Shapes Audit]] land, then needs implementation steps. ^status
+Blocked by [[Shared Types Directory]] and [[Schedule-X Data Shapes Audit]]; then /plan-steps ^status
 
 # Purpose
 The custom calendar has replaced schedule-x in every view (see [[Replace Schedule-X]]), but schedule-x code, types and packages are still in the repo. This story removes them completely.
@@ -50,7 +50,7 @@ Where do the shared types (`SerializedDish`, `SerializedMeal`, `SerializedDay`, 
 
 # Out of Scope
 - Renaming "event" to "meal" in calendar code (`CalendarEvent`, `toCalendarEvents`, `MealEventCard`) - now part of [[Schedule-X Data Shapes Audit]], kept out so this change stays small to review
-- List view keyboard navigation and the month grid "+N more" → list view behavior - separate Roadmap items
+- List view keyboard navigation and the month grid "+N more" → list view behavior - in [[Calendar Keyboard and Focus]] and [[Planning on the Calendar]]
 
 # Acceptance Criteria
 - [ ] No file in `src` imports from `toScheduleXEvents.ts`, and the file is deleted

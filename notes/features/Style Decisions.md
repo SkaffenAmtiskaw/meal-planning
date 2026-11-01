@@ -29,7 +29,7 @@ Visible style anywhere in the app: spacing, alignment, colors, component variant
 *Questions 1 to 5 are from the app-wide style fixes list and question 6 from the calendar style fixes list, both dated 2026-09-08 and not re-checked.*
 
 # Out of Scope
-- Calendar focus states need a design, and the off-screen tab stops in the calendar are a bug. Each gets its own Roadmap line.
+- Calendar focus states need a design, and the off-screen tab stops in the calendar are a bug. Both are in [[Calendar Keyboard and Focus]].
 
 # Acceptance Criteria
 - [ ] Each decision above is built or explicitly dropped.

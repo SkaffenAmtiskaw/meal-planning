@@ -4,7 +4,7 @@ confirmed: 2026-09-25
 ---
 # Where It Stands
 
-Split 2026-09-25 into four stories. Next: /plan-steps on [[Calendar and Recipes Data Refresh]] or [[Server-Only Creation and Pure Reads]]; both can start now. ^status
+Next: its child stories ^status
 
 # Purpose
 The following issues currently existing in the app are likely a symptom of a larger issue with stale data in the app. This story needs to create a *consistent* pattern for refreshing data when mutations occur, and make sure that pattern is followed everywhere in the app.
@@ -99,12 +99,12 @@ export const addMeal = defineMutation({
 # Child Stories
 | Story | Status | Scope in this area | Blocked by |
 |---|---|---|---|
-| [[Calendar and Recipes Data Refresh]] | spec | tag registry, `invalidate()`, `defineMutation`; calendar and library mutations; both original symptoms | - |
+| [[Calendar and Recipes Data Refresh]] | ready | tag registry, `invalidate()`, `defineMutation`; calendar and library mutations; both original symptoms | - |
 | [[Settings Data Refresh]] | spec | planner, sharing and user mutations; settings data as server props; verify-email-change write | [[Calendar and Recipes Data Refresh]] |
-| [[Server-Only Creation and Pure Reads]] | spec | `addPlanner` / `addUser` out of `'use server'`; `getPlanners` and `validateInviteToken` stop writing | - |
 | [[Data Rules Enforcement]] | spec | `defineQuery` on reads; conventions meta-test, lefthook command, conventions doc | the three stories above |
 
 **Related, not child stories:**
+- [[Server-Only Creation and Pure Reads]] - moves `addPlanner` and `addUser` out of `'use server'` and makes two reads pure. It builds none of this hub's pieces, but [[Data Rules Enforcement]] waits on it
 - [[Add Meal Changes (Saved Recipes)]] and [[Mobile List View]] - blocked on [[Calendar and Recipes Data Refresh]]
 - [[Meal Editing]] - new meal mutations follow the rules here
 - [[Unchecked Planner Reads]] - ⚠️ security: `getPlanner`, `getPlannerClient` and `getSavedItem` are server actions with no access check; found while planning, fixed after [[Calendar and Recipes Data Refresh]]

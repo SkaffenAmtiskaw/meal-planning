@@ -6,7 +6,7 @@ confirmed: 2026-09-25
 ---
 # Where It Stands
 
-Split from [[Unified Date Picker Component]] with 8 draft steps. Next: /plan-steps to confirm them. ^status
+Next: /plan-steps ^status
 
 # Purpose
 Today and the selected day are marked four different ways across the calendar views, mostly with ember, which the design keeps for actions. This story gives every view the same marks as the date picker: a navy outline ring for today, and a soft sage circle for the selected day where a view has one. It also fixes the desktop month view's today circle, which cuts off two-digit numbers.
@@ -16,7 +16,7 @@ Today and the selected day are marked four different ways across the calendar vi
 - The Roadmap item "Desktop: month view current date circle is truncating numbers" is fixed.
 
 # Out of Scope
-- The mobile list view's today marker belongs to [[Mobile List View#Design Update - Today Marker]].
+- The mobile list view's today marker belongs to [[Meal Editing#Design Update - Today Marker]].
 - The date picker's own day cells are styled in [[Header Date Picker]], using the ring and circle styles this story builds.
 
 ## Meta-Instructions
@@ -45,7 +45,7 @@ The design lives in [[Unified Date Picker Component]]. The sections embedded bel
 25. **List view on desktop:** navy ring on today's day number, and the row tint goes. The month label on the 1st changes from ember to `navy.4` bold uppercase, matching the weekday label above the number.
 26. **Unchanged or moved:**
     - The mobile month agenda heading doesn't change.
-    - The mobile list view doesn't exist yet (phones show a placeholder). Its today marker moved to [[Mobile List View#Design Update - Today Marker]].
+    - The mobile list view doesn't exist yet (phones show a placeholder). Its today marker moved to [[Meal Editing#Design Update - Today Marker]].
 27. Ember (orange) no longer marks days anywhere.
 
 ## Pieces

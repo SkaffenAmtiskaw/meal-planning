@@ -2,18 +2,13 @@
 type: goal
 confirmed: 2026-09-28
 ---
-%% A goal is an epic: work Sarah ranks and ships together as one release. `/roadmap` shapes and ranks it. It has no `status` and no Where It Stands, and it's never implemented directly. Its rank lives on the Roadmap. So does the list of stories that serve it: the lines under its heading in Later, and every line elsewhere that ends with its 🎯 link. %%
-
 # Inbox
-- For `/gather-goal`: this goal has about 40 Roadmap lines and 27 notes, far more than other goals, so hand step 1's reading to a subagent that reports each note's scope, the screens it touches and what design it has, and checks which lines look done. Read in full only the designs you move.
-- For `/gather-goal`: at the end of the run, tidy this goal's remaining Roadmap lines down to their status, since many have extra text after it. Show Sarah any text worth keeping.
+- For a later session on this goal: audit each `blocked-by` entry in this goal's stories to see whether the story is truly blocked by what it claims. Sarah is skeptical of many of them. Include the entries that aren't links, such as [[Mobile List View]]'s "Steps 2 and 5 need re-review", and the hub entries `/gather-goal` added on 2026-11-01.
 
 # Purpose
-%% Why this goal matters and what it changes, for the app's users or for how the app is built. %%
 Get the calendar page into a polished state that is ready for users. That means wrapping up the partially done schedule-x migration, adjusting screens based on user feedback, wiring up the ability to edit meals, and a final UX and styles pass at the end for polish.
 
 # Done When
-%% What has to be true to ship this goal as a release. Each item is something Sarah can check in the running app, or a named piece of work being finished. %%
 - The schedule-x migration is wrapped up.
 - Screens are adjusted based on user feedback.
 - Meals can be edited.
@@ -27,7 +22,6 @@ Get the calendar page into a polished state that is ready for users. That means 
 - A final UX and styles pass is done. It starts only once everything else here is done.
 
 # Out of Scope
-%% Work that was considered for this goal and left out, with Sarah's reason, so `/roadmap` doesn't offer it again. %%
 - Letting users change a meal's color (Ideas): if Sarah decides on it, it belongs to a later calendar v2 (2026-09-28).
 - [[Keyboard Shortcuts]] (Ideas): not decided yet; if Sarah decides on it, it belongs to a later calendar v2 (2026-09-28).
 - [[Zero Planners Crash]]: it's more of a planner management story than a calendar story, and it affects every page, not just the calendar (2026-09-28).

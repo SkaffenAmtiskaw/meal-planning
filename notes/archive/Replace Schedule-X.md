@@ -3,6 +3,9 @@ type: feature
 status: done
 confirmed: 2026-09-25
 ---
+# Where It Stands
+Next: /close ^status
+
 **Status**: ✅ Done. The custom calendar replaced schedule-x in all views. Remaining schedule-x cleanup moved to [[Remove Schedule-X]]; steps 16 and 17 moved to the Roadmap as separate items. This note is kept as a record - its file paths and summary table are out of date and should not be used as a guide to the current code.
 
 `schedule-x` has given me nothing but problems - we need to create a custom calendar component

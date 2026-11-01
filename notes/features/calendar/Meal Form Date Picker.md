@@ -8,7 +8,7 @@ confirmed: 2026-09-25
 ---
 # Where It Stands
 
-Split from [[Unified Date Picker Component]] with 3 draft steps. Next: /plan-steps to confirm them. Building waits on [[Named Date Formats]] and [[Header Date Picker]]. ^status
+Next: /plan-steps. Building waits on [[Named Date Formats]] and [[Header Date Picker]]. ^status
 
 [[Add Meal Changes (Saved Recipes)]] also changes `MealFields`, `AddMealForm` and the modal header. Whichever story lands second rebases onto the other (see [[Meal Editing]] open decision 7).
 

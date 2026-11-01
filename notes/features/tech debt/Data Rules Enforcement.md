@@ -9,7 +9,7 @@ confirmed: 2026-09-25
 ---
 # Where It Stands
 
-Next: /plan-steps. Building waits on the other three [[Stale Data Issues]] stories. ^status
+Next: /plan-steps. Building waits on [[Calendar and Recipes Data Refresh]], [[Settings Data Refresh]] and [[Server-Only Creation and Pure Reads]]. ^status
 
 # Purpose
 Once every mutation follows the data refresh pattern, nothing yet stops a future story from drifting back. This story marks every read with `defineQuery`, adds the conventions meta-test and a lefthook command that always runs it, and documents the rules in the project conventions. It can only pass once every `'use server'` export is wrapped and every `router.refresh()` is gone, so it comes last.

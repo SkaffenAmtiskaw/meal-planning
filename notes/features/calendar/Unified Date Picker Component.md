@@ -4,7 +4,7 @@ confirmed: 2026-09-25
 ---
 # Where It Stands
 
-Split 2026-09-25 into four stories. Next: /plan-steps on [[Mantine Date Picker Setup]] or [[Today and Selected Day Markers]]; both can start now. ^status
+Next: its child stories ^status
 
 # Purpose
 The date picker is implemented independently in two different places in the current app (the calendar header and the add meal modal). A third is planned in a future story. If the implementation is not unified these components will drift over time. This story serves to provide a unified experience whenever a user needs a date.
@@ -184,7 +184,7 @@ Everywhere else, only today is marked.
 | Mobile month agenda heading | "Today · Thursday, September 10" text prefix | No change. |
 | Week view | Filled orange pill around "Wed 9/18" | Navy outline pill around the whole label, with navy text. The selected date stays unmarked. |
 | List view (desktop) | Filled orange circle on the day number, plus an orange-tinted row | Navy ring on the day number; drop the row tint. The date you jump to isn't marked; scrolling there is enough. |
-| List view (mobile) | Orange day label, plus an orange-tinted section | 🚛 Moved to [[Mobile List View#Design Update - Today Marker]]. Phones show a "Coming soon" placeholder today; that story builds the mobile list. |
+| List view (mobile) | Orange day label, plus an orange-tinted section | 🚛 Moved to [[Meal Editing#Design Update - Today Marker]]. Phones show a "Coming soon" placeholder today; that story builds the mobile list. |
 | Header date picker (desktop + mobile) | Mantine default: filled blue selected day, bold today | Swap in the shared date picker. |
 | Add / Edit meal date field | Browser's native date picker (looks different on every OS) | Swap in the shared date picker, with the Today button. |
 | Meal detail — Move / Duplicate | — | *Planned, not yet implemented.* Will use the shared picker. |
