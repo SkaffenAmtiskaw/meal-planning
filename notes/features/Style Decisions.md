@@ -20,7 +20,7 @@ Visible style anywhere in the app: spacing, alignment, colors, component variant
 # Open Decisions
 1. Which uses of the Mantine `color` prop should be a `variant` instead? This needs an audit of `color` usage first.
     - Known case: CTA buttons are styled two ways, `variant="cta"` (6 files) vs `color="ember"` (`AddMealButton`, `MobileAddMealButton`, `SubmitButton`, `ChangePasswordForm`). Pick one. (Moved from the Roadmap 2026-09-26.)
-2. Recipe list: recipe links and bookmark links are styled differently. Which style should both use?
+2. Recipe list: recipe links and bookmark links are styled differently. Which style should both use? 🎯 [[Recipes Page]]
 3. Planner settings: a badge shows on planners where the user has read access, but not on planners they own. How should the two be marked so they're consistent? (The original item asked for a UX review.)
 4. Planner settings: the leave planner button is styled differently on read-access planners and owned planners. Which style should both use?
 5. Sign-in: `src/app/_components/GoogleButton.css` is a global stylesheet, imported at `SignInFlow.tsx:23`, that overrides Mantine's Button with nine `!important` rules. How should the Google button be styled Mantine's way: Styles API `classNames` in a CSS module, or a custom Button variant?

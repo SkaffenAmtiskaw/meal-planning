@@ -30,7 +30,8 @@
 # Goals
 1. [[Dev Foundations]] - building
 2. [[Calendar Page]] - planning
-3. [[Grocery List Creation]]
+3. [[Recipes Page]]
+4. [[Grocery List Creation]]
 
 ## Standing Goals
 - [[App Health]]
@@ -108,7 +109,7 @@
 66. [[When Stories Need E2E Tests]] ![[When Stories Need E2E Tests#^status]] 🎯 [[Dev Foundations]]
 67. [[Docs Audit]] ![[Docs Audit#^status]] 🎯 [[Dev Foundations]]
 # Planning
-1. [[Calendar and Recipes Data Refresh]] ![[Calendar and Recipes Data Refresh#^status]] - ready. Fixes both stale-data symptoms; unblocks [[Add Meal Changes (Saved Recipes)]] and [[Mobile List View]]. 🎯 [[Calendar Page]] 🎯 [[App Health]]
+1. [[Calendar and Recipes Data Refresh]] ![[Calendar and Recipes Data Refresh#^status]] - ready. Fixes both stale-data symptoms; unblocks [[Add Meal Changes (Saved Recipes)]] and [[Mobile List View]]. 🎯 [[Calendar Page]] 🎯 [[App Health]] 🎯 [[Recipes Page]]
 2. [[Settings Data Refresh]] ![[Settings Data Refresh#^status]] - spec. Waiting on [[Calendar and Recipes Data Refresh]]. 🎯 [[Calendar Page]] 🎯 [[App Health]]
 3. [[Server-Only Creation and Pure Reads]] ![[Server-Only Creation and Pure Reads#^status]] - spec. 🎯 [[Calendar Page]] 🎯 [[App Health]] 🎯 [[Bugs]]
 4. [[Data Rules Enforcement]] ![[Data Rules Enforcement#^status]] - spec. Waiting on [[Calendar and Recipes Data Refresh]], [[Settings Data Refresh]] and [[Server-Only Creation and Pure Reads]]. 🎯 [[Calendar Page]] 🎯 [[App Health]]
@@ -134,7 +135,7 @@
 - [[DND]]
 - you should be able to create a meal with just a title and a description (or just a title)
 - meal color should be based on hex of title + description
-- [[Modal Form Architecture|refactor all modal forms to separate presentation and data concerns]] 🎯 [[App Health]]
+- [[Modal Form Architecture|refactor all modal forms to separate presentation and data concerns]] 🎯 [[App Health]] 🎯 [[Recipes Page]]
 - [[Add Meal from Month Cell]] ![[Add Meal from Month Cell#^status]]- add meals by clicking week day - reuse the interaction decisions from [[Add Meal from Month Cell]]'s design so month and week behave the same
 - default to week view on desktop - list view on mobile
 - calendar list view infinite scroll
@@ -153,6 +154,20 @@
 - [[Planner Access Audit]] ![[Planner Access Audit#^status]] 🎯 [[Bugs]]
 - [[Calendar E2E Tests]] ![[Calendar E2E Tests#^status]]
 - [[Calendar UX and Styles Pass]] ![[Calendar UX and Styles Pass#^status]]
+
+## [[Recipes Page]]
+- [[Recipes Page Redesign]] ![[Recipes Page Redesign#^status]]
+- [[Recipes Page Wish List Research]] ![[Recipes Page Wish List Research#^status]]
+- [[Recipes Mobile Audit]] ![[Recipes Mobile Audit#^status]]
+- [[Recipes Accessibility Audit]] ![[Recipes Accessibility Audit#^status]]
+- [[Recipes UX and Styles Pass]] ![[Recipes UX and Styles Pass#^status]]
+- [[Filtering Recipe List|allow filtering in recipe list]]
+- batch delete recipes/bookmarks
+- allow notes in recipe/bookmarks to render basic markdown - assess if other fields should too
+- add images to recipes
+- group ingredients when adding/editing a recipe
+- when adding/editing a recipe, make the instructions expand if you type more than a line
+- take create planner pattern of button on top right in desktop - FAB in mobile and apply it throughout the app
 
 ## [[Grocery List Creation]]
 - [[Grocery List Integration]] ![[Grocery List Integration#^status]]
@@ -175,8 +190,8 @@
 
 ## [[Bugs]]
 - [[Zero Planners Crash|root page crashes for users with zero planners (e.g. invited user leaves or is removed from their only planner)]] ![[Zero Planners Crash#^status]]
-- [[Recipe Detail Delete Ignores Result]] ![[Recipe Detail Delete Ignores Result#^status]]
-- [[Recipe Detail Read-Only Controls]] ![[Recipe Detail Read-Only Controls#^status]]
+- [[Recipe Detail Delete Ignores Result]] ![[Recipe Detail Delete Ignores Result#^status]] 🎯 [[Recipes Page]]
+- [[Recipe Detail Read-Only Controls]] ![[Recipe Detail Read-Only Controls#^status]] 🎯 [[Recipes Page]]
 - [[Account Deletion Deletes Shared Planners]] ![[Account Deletion Deletes Shared Planners#^status]]
 - security - check whether any production user has the better-auth role `admin`, which the `admin()` plugin (`src/_auth/auth.ts:14`) lets impersonate users, and whether `signUpWithInvite` needs the plugin at all
 - security - string validation on inputs
@@ -185,7 +200,7 @@
 - Planner's mongoose schemas don't match their zod types: recipe `time` is typed as numbers in `src/_models/library/recipe.ts` but saved as strings; the `saved` union in `src/_models/planner/planner.ts` tries `bookmarkSchema` (`strict: false`) first, so `recipeSchema` never validates a recipe; and the dish `source` union in `src/_models/calendar/day.ts` turns linked recipe ObjectIds into strings when saved through mongoose. Found 2026-10-04 while building the dev seed's sample data (`seed/seed.ts`)
 
 ## [[Dev Tooling]]
-- a way to load extra seed data that one story's checks need, on top of `pnpm seed`'s generic data (today the `building-code` skill's acceptance checks create it through the app's screens). Found 2026-10-01 while designing the dev seed (`docs/seed.md`) 🎯 [[Grocery List Creation]]
+- a way to load extra seed data that one story's checks need, on top of `pnpm seed`'s generic data (today the `building-code` skill's acceptance checks create it through the app's screens). Found 2026-10-01 while designing the dev seed (`docs/seed.md`) 🎯 [[Grocery List Creation]] 🎯 [[Recipes Page]]
 - switch testing library to `vitest-browser-react` - needs research to determine if this is worth doing 🎯 [[App Health]]
 - [[Vercel Plugin]]
 - I want a way to watch certain libraries and tools to see if they have new releases or features that are worth implementing
@@ -193,7 +208,6 @@
 
 ## Unaffiliated
 - [[Delete Planner|allow user to delete a planner]] - idea. Waiting on the [[Zero Planners Crash]] decision.
-- [[Filtering Recipe List|allow filtering in recipe list]]
 - [[Transfer Ownership of Planner|transfer ownership of planner]]
 - [[Tag Management|tag management - edit/delete]] - Spec last reviewed April - tag creation with palette cycling already exists (`TagCombobox` → `addTag`), so reconcile before planning.
 - [[Unit Test Tidy-Ups]] ![[Unit Test Tidy-Ups#^status]]
@@ -209,17 +223,11 @@
 - [[Link SSO Login to Email|Link SSO to Email Login]]
 - Allow user to change meal color in calendar
 - [[Keyboard Shortcuts|keyboard shortcuts]] - spec. Out of date; re-review once the calendar views are mostly complete.
-- batch delete recipes/bookmarks
-- allow notes in recipe/bookmarks to render basic markdown - assess if other fields should too
-- add images to recipes
-- group ingredients when adding/editing a recipe
-- when adding/editing a recipe, make the instructions expand if you type more than a line
 - add passkey sign in
 - add Apple SSO
 - let user set avatar
 - Add a feedback button
 - [[Email Improvements|email improvements]]
-- take create planner pattern of button on top right in desktop - FAB in mobile and apply it throughout the app
 - a11y audit
 - audit app works fully in mobile
 - toggle light/dark mode
