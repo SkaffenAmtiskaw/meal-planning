@@ -5,6 +5,9 @@ confirmed: 2026-10-06
 # Where It Stands
 Next: /tooling ^status
 
+# Inbox
+- **Add a route for a feature with nothing visual to design** - the Next Step by Note State table sends every `feature` · `idea` to a design session in Claude Design, then `/place-design`, and the paragraph under the table says the same. Neither covers a feature with nothing visual to design. The table needs a row, or the `feature` · `idea` row needs a second route, for a new feature that skips both: `/shape` writes it at `status: spec` with its behavior under Requirements, and its `^status` line says `Next: /assess`. `/shape` step 5 ("Next step") takes its next step from the table and gives only the design-session example, so it needs to offer this route when no part of the feature is visual. Sarah decided that [[Meal Color from Name and Description]] takes this route. Found 2026-10-31 while running /shape on the meal color Roadmap line.
+
 # Notes
 Part of [[Agent Instructions Audit]].
 

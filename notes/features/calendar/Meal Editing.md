@@ -52,7 +52,7 @@ Before planning or implementing any story linked from this note, read this note 
 - [[Modal Form Architecture]] - the meal detail modal is meant to follow its presentation/data split and use `CalendarModalContext`
 - [[Keyboard Shortcuts]] - `E` edits and `Delete` deletes the focused meal
 - [[Blank Dish Row Blocks Saving a Meal]] - changes validation that edit mode shares with Add Meal
-- Roadmap: "meal color should be based on hex of title + description" - editing a description would change a meal's color
+- [[Meal Color from Name and Description]] - editing a description would change a meal's color
 
 # Moved from the Roadmap
 These were separate Roadmap lines before 2026-09-25. The Roadmap now links to this hub instead. The priority each had there is kept for reference.

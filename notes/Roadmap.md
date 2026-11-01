@@ -131,7 +131,7 @@
 - [[Meal Detail Modal & Edit Meals]]
 - [[DND]]
 - [[Blank Dish Row Blocks Saving a Meal]] ![[Blank Dish Row Blocks Saving a Meal#^status]]
-- meal color should be based on hex of title + description
+- [[Meal Color from Name and Description]] ![[Meal Color from Name and Description#^status]]
 - [[Modal Form Architecture|refactor all modal forms to separate presentation and data concerns]] 🎯 [[App Health]] 🎯 [[Recipes Page]]
 - [[Add Meal from Month Cell]] ![[Add Meal from Month Cell#^status]]- add meals by clicking week day - reuse the interaction decisions from [[Add Meal from Month Cell]]'s design so month and week behave the same
 - default to week view on desktop - list view on mobile
