@@ -6,11 +6,11 @@ confirmed: 2026-09-26
 ---
 # Where It Stands
 
-Next: /investigate. ^status
+Next: /audit. ^status
 
 Direction: find which calendar meal data shapes still carry schedule-x-driven fields or naming, then reshape them for the custom calendar, including renaming "event" to "meal".
 
-Questions investigate answers as part of its scan:
+Questions `/audit` answers as part of its scan:
 - Which fields on `CalendarEvent` and the meal types built from it (`CalendarMeal`, `MonthGridMeal`, `WeekViewMeal`, `MobileMonthGridEvent`) exist only because of schedule-x?
 - Does `CalendarEvent` need to exist as its own shape, separate from the view-level meal types?
 - Do `SerializedDish`, `SerializedMeal`, `SerializedDay` or `SavedItem` carry anything driven by schedule-x?

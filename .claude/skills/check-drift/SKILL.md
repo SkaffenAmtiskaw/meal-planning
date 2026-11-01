@@ -95,7 +95,8 @@ If the note is a sweep, it stays at `spec` and goes to `/plan-steps` next. Other
 - **Steps:** the approach holds but the remaining steps don't, such as when a pattern's Migration Checklist gains places its steps don't migrate. Set `status` to `spec`. The next step is `/plan-steps`, or `/infra-design` for infra, which keeps the ✅ steps and re-plans the rest.
 - **Approach:** the approach, or part of it, no longer holds. Set `status` to `spec`. The next step is the skill that settled the approach:
   - **Feature:** `/assess`.
-  - **Bug or cleanup:** `/investigate`.
+  - **Bug:** `/investigate`.
+  - **Cleanup:** `/audit`.
   - **Pattern:** `/architect`.
   - **Infra:** `/infra-design`.
   - **Roundup:** if the user left any finding for later in step 5, `/decide`. Otherwise, the approach is settled again, so route it as **Steps**.

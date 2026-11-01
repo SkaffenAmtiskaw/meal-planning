@@ -5,9 +5,9 @@ blocked-by: []
 confirmed: 2026-10-06
 ---
 # Where It Stands
-Decisions made. Next: /investigate ^status
+Decisions made. Next: /audit ^status
 
-Shaped 2026-10-05 as a cleanup. `/investigate`'s Current State is the audit itself, read from each service's dashboard. The result is a new doc in `docs/` and a Roadmap line for each change production needs. Its one decision, how the new doc splits `docs/ci.md`'s "Setup Outside the Repo", was settled 2026-10-06.
+Shaped 2026-10-05 as a cleanup. `/audit`'s Current State is the audit itself, read from each service's dashboard. The result is a new doc in `docs/` and a Roadmap line for each change production needs. Its one decision, how the new doc splits `docs/ci.md`'s "Setup Outside the Repo", was settled 2026-10-06.
 
 # Inbox
 - [Sarah] - I suspect some of the white-listed IPs on the Atlas cluster are for my old address, but I don't know which one(s).
