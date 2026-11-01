@@ -18,7 +18,7 @@ Past planning agents started from the existing code, reused it because it was th
 ## 1. Read the note
 Find the note in `notes/features/` and read all of it. Check that it's ready for this skill:
 - **`type: feature`.**
-- **`status: spec`.** If it's `idea`, tell the user that `/place-design` moves it to `spec` once its design from Claude Design is placed, and stop. If it has any other status, tell the user what you found and stop.
+- **`status: spec`.** If it's `idea`, tell the user that `/place-design` moves it to `spec` once its design is placed, and stop. If it has any other status, tell the user what you found and stop.
 
 If the Suggested Approach lists questions for this step, answer each one in the Suggested Approach by the end of this run. If it holds an earlier approach, this is a re-assessment. Don't start from the old approach, because it anchors you the same way old code does. Do steps 2 to 5 fresh, then in step 6 show what changed compared with the old approach.
 
@@ -60,7 +60,7 @@ Send the note path and the confirmed behaviors to the `hidden-story-checker` sub
      4. Stop, and tell the user the split is done. Give `/assess <child name>` for each child, to run in a new session, since this one has read the whole design and the split report, and carrying them into a child's assessment bloats it.
 
 ## 3. Design the target
-Send the `target-designer` subagent the confirmed behaviors, numbered, and the paths to the note's Meta-Instructions, its Design Handoff sections and its images. Give it nothing else, and don't describe the existing code or an old approach to it, so its design isn't anchored to what's already there.
+Send the `target-designer` subagent the confirmed behaviors, numbered, and the paths to the note's Meta-Instructions, its Design Handoff sections, its images and its artboards. Give it nothing else, and don't describe the existing code or an old approach to it, so its design isn't anchored to what's already there.
 
 When its design comes back, show the user its Assumptions and ask about each one the note doesn't settle, since each fills a gap that step 2 leaves to the user. If an answer adds or changes a behavior, update the list and run this step again.
 

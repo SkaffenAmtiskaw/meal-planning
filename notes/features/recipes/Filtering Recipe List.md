@@ -5,7 +5,7 @@ blocked-by: []
 confirmed: 2026-11-01
 ---
 # Where It Stands
-Wireframe approved. Next: design session in Claude Design, then /place-design ^status
+Wireframe approved. Next: /design-feature, then /place-design ^status
 
 # Inbox
 - Wireframe from 2026-11-01: https://claude.ai/artifact/AxNU6QGVXDXBuK1hiyTyMq. It's a black and white canvas with the desktop list, which works in Play, and two static phone screens. It has no handoff text yet. It leaves out three things the design still has to show:

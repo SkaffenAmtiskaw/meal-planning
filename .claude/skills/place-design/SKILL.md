@@ -18,7 +18,7 @@ A design often reaches beyond one story. A handoff can touch several stories, so
 
 A handoff's files go in one fixed place. When they were placed by hand, they landed somewhere different each time, and agents inferred patterns from where they sat that didn't hold.
 
-The design is the user's, made in Claude Design. Change what it says only where the user settles a conflict. Step 4's edits only fit it into the vault and leave what it says as it is. Don't change code.
+The design is the user's. Change what it says only where the user settles a conflict. Step 4's edits only fit it into the vault and leave what it says as it is. Don't change code.
 
 ## 1. Find the design
 The argument is one of:
@@ -26,7 +26,7 @@ The argument is one of:
 - **A note whose Inbox holds design material:** the note was only the material's likeliest home when it was filed, so this skill decides where it really goes.
 - **A note and sections of its design it won't build:** if the user hasn't named the sections, ask which ones rather than working them out from the code or the steps, because which parts of its design a story leaves out is the user's call.
 
-Read the whole design, images included.
+Read the whole design, images and artboards included.
 
 ## 2. Find the stories it belongs to
 Search `notes/features/` and the Roadmap, hubs included, for stories before `in-review` that build the screens, components or behaviors the design covers, and read each one. A story `in-review` or later has all its steps built, so it takes no design.
@@ -41,11 +41,11 @@ The design's home follows from the answers:
 - **Otherwise:** a new hub. Propose a name for it, taken from the design, such as "Calendar Popover Restyle".
 
 ## 3. Settle conflicts with older designs
-For each story from step 2, read the designs it already has: its own Design Handoff and the hub sections it embeds. List each point where the new design and an older one disagree, meaning the same element with a different look or behavior. Go through them with the user, showing both versions with their images, and ask which holds or what the answer is.
+For each story from step 2, read the designs it already has: its own Design Handoff and the hub sections it embeds. List each point where the new design and an older one disagree, meaning the same element with a different look or behavior. Go through them with the user, and ask which holds or what the answer is. Show both versions, each with its images or, for an artboard, its link on the `design-files` preview server. Stop the server when you're done, as the `running-the-app` skill describes.
 
 Write each answer into each design it changes. If that includes the new design, write it in when step 4 places it:
 - **Text:** rewrite it in place to the answer, with no record of the old version.
-- **An image:** images can't be edited, so add a callout directly under it saying what in it no longer holds and what replaces it, such as `> [!note] This popover now has square corners.`
+- **An image or an artboard:** add a callout directly under it saying what in it no longer holds and what replaces it, such as `> [!note] This popover now has square corners.` An image can't be edited, and an edited artboard would no longer match the canvas the user approved.
 
 ## 4. Write it into the notes
 1. **A new hub,** if step 2 made one: from `notes/templates/Hub.md`, in the `notes/features/<area>/` folder of its stories, asking the user which one if they're in more than one. Give its `^status` line its child stories as the next step, write a Purpose of a sentence or two on what the design covers, and copy the `## Meta-Instructions` under `# Design Handoff` from `notes/templates/Feature.md` into its `# Design Handoff`. It gets no Roadmap line, because a hub has one only while it has open decisions.
@@ -67,6 +67,8 @@ Write each answer into each design it changes. If that includes the new design, 
      3. Send the `design-merge-checker` subagent the story's note path, the new design's path and the combined design's path.
      4. Fix what it finds, asking the user where a fix needs a choice.
      5. Replace the story's own design with the combined one, without asking the user to approve its wording.
+
+   If the home's Meta-Instructions differ from those in `notes/templates/Feature.md`, replace them with the template's. An older copy says Claude Design generated the design, and doesn't say an artboard is the design.
 7. **Each story that builds part of a hub's design:** embed the sections it builds as `.claude/skills/filing-work/content-from-another-note.md` describes. Its own design stays apart from the hub sections, because combining them would copy the hub's design into one story.
 
 ## 5. Move each story on

@@ -52,7 +52,7 @@ Any change to a note in `notes/` follows these rules:
   - **It changes nothing about the work,** such as a wrong detail in a finding: if it's a line an agent wrote in a note you're working on, and not plan text, correct it. Otherwise, leave it.
 - **Where It Stands** is the first section of every note except a goal or standing goal, right after the frontmatter, in its template's format. If a note has none, add it. It's a summary Sarah can read at a glance, and it holds at most two things:
   - **The `^status` line** (the line ending in ` ^status`) says what the story needs next, so Sarah can tell from the Roadmap without opening the note. It always names the next skill as a command, or links what the story is blocked by:
-    - **It can move now:** `Next: /plan-steps` or `Next: /implement Step 4`. If the next step isn't a skill, such as a design session in Claude Design, name it, then the skill after it.
+    - **It can move now:** `Next: /plan-steps` or `Next: /implement Step 4`. If the next step isn't a skill, name it, then the skill after it.
     - **It can move now, but a later step waits on another story:** name the skill that can run now, then the step that waits and its blockers, as in `Next: /plan-steps. Building waits on [[A]] and [[B]]` or `Next: /decide. Architecting waits on [[A]]`. This tells Sarah what she can do now and what has to wait, which affects how she prioritizes it.
     - **It's blocked by another story:** link the blocker and name the skill after it, as in `Blocked by [[A]] and [[B]]; then /plan-steps`.
     - **It waits on Sarah's decisions:** `Next: /decide`.

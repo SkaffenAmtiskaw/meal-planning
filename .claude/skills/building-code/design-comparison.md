@@ -1,5 +1,5 @@
 # Comparing With the Design
-For each Design Handoff section and image the plan cites, screenshot the same view at the same screen size and compare. Sort each difference:
+For each Design Handoff section and image the plan cites, screenshot the same view at the same screen size and compare. If a section names an artboard, open it on the `design-files` preview server at that size, stopping the server when you're done as the `running-the-app` skill describes. Sort each difference:
 - **Too small to notice at a glance,** like a few pixels of spacing that come from a Mantine theme value: don't chase it or report it.
 - **From the Mantine component or theme value used:**
   - **If the note or the user has settled it:** follow what they settled.

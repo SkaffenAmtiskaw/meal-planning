@@ -13,7 +13,7 @@ Collecting issues. Next: /kickoff when you schedule it ^status
 Style issues anywhere in the app that need a decision before they can be fixed. They're settled together with /decide once the roundup is kicked off, and then their fixes are built together.
 
 ## What Belongs Here
-Issues on this roundup's topic that still need a decision. An issue on the topic that's already decided can go here too, with its **Decided** line, so the fix is built with the rest. An issue is too big for a roundup, and becomes its own story, if its fix would take more than one implementation step once decided, or if settling it needs a design session in Claude Design, a root-cause investigation or a new convention that code must migrate to.
+Issues on this roundup's topic that still need a decision. An issue on the topic that's already decided can go here too, with its **Decided** line, so the fix is built with the rest. An issue is too big for a roundup, and becomes its own story, if its fix would take more than one implementation step once decided, or if settling it needs `/design-feature`, a root-cause investigation or a new convention that code must migrate to.
 
 Visible style anywhere in the app: spacing, alignment, colors, component variants and how Mantine is used to style them. Style fixes that are already decided and stand alone go in [[Style Fixes]]. Code tidy-ups that change nothing visible don't belong here.
 

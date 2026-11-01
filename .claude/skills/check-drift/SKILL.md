@@ -18,7 +18,7 @@ A note is planned against the code, the conventions and other notes as they were
 ## 1. Read the note
 Find the note in `notes/features/`. If its status isn't `spec`, `ready` or `in-progress`, tell the user what you found and stop.
 
-Read the whole note, with the images its Design Handoff links. Then work out its **remaining work**, which is all you check:
+Read the whole note, with the images its Design Handoff links and the artboards it names. Then work out its **remaining work**, which is all you check:
 - **`spec`:** the approach, meaning the sections that say what to build and what they rest on, such as a feature's design, behaviors and Suggested Approach, a cleanup's Current State, or a sweep's unchecked Items.
 - **`ready` or `in-progress`:** the steps not yet marked complete, and the design and approach sections they build. An infra note's steps are its Build Order, at the end of its Design.
 

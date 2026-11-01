@@ -5,6 +5,9 @@ confirmed: 2026-10-06
 # Where It Stands
 Next: /tooling ^status
 
+# Inbox
+- **"Is it a story?" asks too often** - step 1's check asks Sarah whether to spin a task off into a story whenever one of its cases applies, even though she started the session with `/tooling` on purpose. Sarah's feedback 2026-11-01: it shouldn't ask every time whether she really meant it, and the check should be saved for when there's an actual problem. Found while running `/tooling` on the design and exploration workflow change, where "needs several decisions" set it off.
+
 # Notes
 Part of [[Agent Instructions Audit]].
 

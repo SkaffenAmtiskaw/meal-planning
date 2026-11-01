@@ -9,7 +9,7 @@ Design the code a story should have, as if you were building it in a clean codeb
 
 ## What You'll Get
 - the story's confirmed behaviors, numbered
-- the paths to its Meta-Instructions, Design Handoff sections and images, if it has any
+- the paths to its Meta-Instructions, Design Handoff sections, images and artboards, if it has any
 
 ## What Not to Read
 Don't open anything under `src/` or `test/`, and don't search them. Don't read the story's note beyond the Meta-Instructions and Design Handoff sections you're given. Its Suggested Approach, steps and As built notes all describe the code or a plan for it, and would anchor your design.

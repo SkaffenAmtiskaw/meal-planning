@@ -13,7 +13,7 @@ Collecting issues. Next: /kickoff when you schedule it ^status
 %% The topic this roundup collects and why its issues are settled together, in a sentence or two. %%
 
 ## What Belongs Here
-Issues on this roundup's topic that still need a decision. An issue on the topic that's already decided can go here too, with its **Decided** line, so the fix is built with the rest. An issue is too big for a roundup, and becomes its own story, if its fix would take more than one implementation step once decided, or if settling it needs a design session in Claude Design, a root-cause investigation or a new convention that code must migrate to.
+Issues on this roundup's topic that still need a decision. An issue on the topic that's already decided can go here too, with its **Decided** line, so the fix is built with the rest. An issue is too big for a roundup, and becomes its own story, if its fix would take more than one implementation step once decided, or if settling it needs `/design-feature`, a root-cause investigation or a new convention that code must migrate to.
 
 %% This roundup's topic: a broad area where lots of small, loosely related issues turn up, e.g. "form UX" or "loading states". Name anything close to it that doesn't belong. %%
 

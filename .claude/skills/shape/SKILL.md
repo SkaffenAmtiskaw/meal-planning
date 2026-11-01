@@ -60,7 +60,7 @@ A blocking decision is a question whose answer would change what this skill writ
 - **The story's type.**
 - **The story's direction.**
 
-If a question isn't a blocking decision, don't ask the user about it here. The step that needs its answer settles it: how a feature looks and behaves, for example, is settled in its design session, and which library it's built with comes after that.
+If a question isn't a blocking decision, don't ask the user about it here. The step that needs its answer settles it: how a feature looks and behaves, for example, is settled in `/design-feature`, and which library it's built with comes after that.
 
 If the story has to wait for another story to decide or build something, that isn't a decision either. Add that story to `blocked-by`, as step 6 describes.
 
@@ -91,7 +91,7 @@ Pick the type by the shape of the fix, not by where the idea came from. A user r
 Give the user two or three directions, each with:
 - **Type:** feature, bug, pattern, infra or cleanup.
 - **Direction:** one or two sentences on which way to take it.
-- **Next step:** what happens next and who does it, from the Next Step by Note State table in Note Conventions, e.g. "design session in Claude Design, then `/place-design`" or "blocked until [[X]] lands". If any blocking decisions are still open, `/decide` comes first.
+- **Next step:** what happens next and who does it, from the Next Step by Note State table in Note Conventions, e.g. "`/design-feature`, then `/place-design`" or "blocked until [[X]] lands". If any blocking decisions are still open, `/decide` comes first.
 - **Why:** what you found in step 3 that supports it.
 
 These are also directions, when they fit:

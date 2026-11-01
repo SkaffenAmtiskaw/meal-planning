@@ -42,7 +42,7 @@ Add one **Rejected** line per option the user considered and turned down, such a
 
 **Partly answered, or not yet.** If the user just wants to skip it for now, write nothing. Otherwise, under the question:
 ```
-   - **Partly answered YYYY-MM-DD:** Settled: <...>. Still open: <...>. Waits on: <e.g. a design session in Claude Design, or [[Other Story]]>.
+   - **Partly answered YYYY-MM-DD:** Settled: <...>. Still open: <...>. Waits on: <e.g. `/design-feature`, or [[Other Story]]>.
      - <each research finding the next session needs, one line, with where it came from>
 ```
 The findings lines matter because the brief will be gone by the next session.

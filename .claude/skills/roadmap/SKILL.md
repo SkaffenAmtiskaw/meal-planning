@@ -68,7 +68,7 @@ Compare Done When with the in-scope work, and list each Done When item that noth
 - **She approves it,** with any changes she asks for: write the note, and add its line under the goal's heading.
 - **She says the gap doesn't fit an idea note:** ask whether it gets a Roadmap line under the goal's heading instead or comes out of Done When, and do what she says.
 
-Then list the in-scope stories whose next step is a design session in Claude Design. These are the designs the goal is waiting on. Report them; nothing is written.
+Then list the in-scope stories whose next step is `/design-feature`. These are the designs the goal is waiting on. Report them; nothing is written.
 
 ## 5. Tooling
 Find the tooling that would make this goal's stories easier: tooling lines anywhere in Later (in Unaffiliated or under another goal) or in Ideas, the items in collecting workflow notes (`type: workflow` with a What Belongs Here section), and other workflow and tooling notes. Read what the in-scope stories will touch (their areas, their next steps, what their checks need) and match them up.

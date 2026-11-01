@@ -6,7 +6,7 @@ confirmed: 2026-09-25
 ---
 # Where It Stands
 
-Next: design session in Claude Design, then /place-design. ^status
+Next: /design-feature, then /place-design. ^status
 
 Questions for the design session:
 - What counts as "empty space" in a cell that already has meal cards and a "+N more" link? What does each click target do?
