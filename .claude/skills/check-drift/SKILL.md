@@ -42,8 +42,10 @@ If the note is a pattern, also run the `rule-auditor` subagent alongside them. T
 ## 4. Sort the checkers' findings
 Merge findings that are the same problem seen from two sides. A checker's finding that one of the user's comments already settles is part of that comment's finding, so it needs no decision. Drop any finding that an earlier ⚠️ Check Drift callout already settled.
 
-**If the note is a pattern,** compare `rule-auditor`'s report with the Migration Checklist before sorting the other findings. Its report holds three kinds of item:
-- **A violation the checklist doesn't list:** the Rules already say it has to change, so add it to the checklist without asking. Put it in the group it belongs in, with the files the auditor says change with it. Write a callout above it saying the re-audit found it.
+**If the note is a pattern,** compare `rule-auditor`'s report with the note's Migration Checklist before sorting the other findings. Its report holds three kinds of item:
+- **A violation the note's checklist doesn't list:**
+  - **If another story, such as another child of the note's hub, lists it in its own Migration Checklist:** leave it, because that story migrates it.
+  - **Otherwise:** the Rules already say it has to change, so add it to the note's checklist without asking. Put it in the group it belongs in, with the files the auditor says change with it. Write a callout above it saying the re-audit found it.
 - **A place under Unclear:** a rule can't be applied there without judgment, so it needs sharpening with the user. Write a callout on that rule saying what the auditor was unsure about, and leave it for `/architect`, which sharpens rules and re-audits them. When you route the note in step 6, it counts as **Approach**.
 - **An item under Outside These Rules:** put it on the out-of-scope list.
 

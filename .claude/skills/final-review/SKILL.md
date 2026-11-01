@@ -43,8 +43,6 @@ Back every finding with evidence the user can check: `file:line` for code that's
 
 **Then, for every story,** do checks 1 and 3 yourself:
 - **Purpose:** check the built story against what it set out to do. Each place it falls short is a finding.
-  - **For a bug:** check that the fix gets rid of every symptom in its Symptoms, for everyone its Who Can Hit This names.
-  - **For any other story:** check it against its Purpose, and its Goals or Requirements if it has them.
 - **The plan:** compare the code with the note's approach and its steps. The approach is the section that says what to build, such as a feature's Suggested Approach or a bug's Fix. A difference is a finding if it changes what the app does or shows, or goes against a choice that's the user's call. Any other difference, in how the code is built, is a finding only if check 2 flags it. Keep the finding even when an **As built** note records the difference, because step 4 weighs the note's reason.
 
 ## 4. Collect the Findings
