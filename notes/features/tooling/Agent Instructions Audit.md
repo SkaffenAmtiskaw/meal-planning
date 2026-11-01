@@ -5,7 +5,7 @@ confirmed: 2026-10-06
 # Where It Stands
 Next: its child stories ^status
 
-Split on 2026-10-06 into workflow-step reviews, one for each step of each note type's workflow except Feature's `/shape` step, which has five, plus AGENTS.md, the memory folder, Note Conventions with the Roadmap header, and Conventions Review. The scan's findings and the open Agent Workflow Changes items about each step moved into the review notes. Feature Shape Review, Shared Note Procedures Review, Writing Standard Reviewer, Scope-Router Review, Writing Standard Review, Feature Template Review, Feature Decide Review, Merging Routed Designs, Overly Prescriptive Instructions, Feature Assess Review, Feature Check-Drift Review, Feature Plan-Steps Review, Agents Miss the Writing Standard, Feature Implement Review, Writing Reviewer Misses Criteria, Writing Standard Lacks Sentence Clarity, Breaking Up Long Skill Files, Changes That Reach Other Notes, Implement Follow-Up Fixes, Feature Final-Review Review, Feature Close Review, Bug Shape Review, Bug Decide Review, Bug Investigate Review, Reviewer Misses Enforced Details, Bug Check-Drift Review, Bug Plan-Steps Review, Bug Implement Review and Bug Final-Review Review are done, and the rest aren't done yet.
+Split on 2026-10-06 into workflow-step reviews, one for each step of each note type's workflow except Feature's `/shape` step, which has five, plus AGENTS.md, the memory folder, Note Conventions with the Roadmap header, and Conventions Review. The scan's findings and the open Agent Workflow Changes items about each step moved into the review notes. Feature Shape Review, Shared Note Procedures Review, Writing Standard Reviewer, Scope-Router Review, Writing Standard Review, Feature Template Review, Feature Decide Review, Merging Routed Designs, Overly Prescriptive Instructions, Feature Assess Review, Feature Check-Drift Review, Feature Plan-Steps Review, Agents Miss the Writing Standard, Feature Implement Review, Writing Reviewer Misses Criteria, Writing Standard Lacks Sentence Clarity, Breaking Up Long Skill Files, Changes That Reach Other Notes, Implement Follow-Up Fixes, Feature Final-Review Review, Feature Close Review, Bug Shape Review, Bug Decide Review, Bug Investigate Review, Reviewer Misses Enforced Details, Bug Check-Drift Review, Bug Plan-Steps Review, Bug Implement Review, Bug Final-Review Review and Bug Close Review are done, and the rest aren't done yet.
 
 # Inbox
 
@@ -112,7 +112,7 @@ Each finding moved into the review note it belongs to on 2026-10-06.
 | Bug Plan-Steps Review | Bug's `/plan-steps` step; full review of a new `hidden-story-checker` agent, which takes the hidden-story test out of `split-checker` |
 | Bug Implement Review | Bug's `/implement` step; a bug whose Root Cause turns out wrong goes back to `/investigate` |
 | Bug Final-Review Review | Bug's `/final-review` step; check 1 checks a bug against its Symptoms and Who Can Hit This, and check 3 names a bug's Fix as its approach |
-| [[Bug Close Review]] | Bug's `/close` step |
+| Bug Close Review | Bug's `/close` step; step 4 decides whether an unblocked story needs `/check-drift` from the reason it would, instead of from a list of status-line cases |
 | [[Pattern Shape Review]] | Pattern's `/shape` step; full review of `notes/templates/Pattern.md` |
 | [[Pattern Decide Review]] | Pattern's `/decide` step |
 | [[Pattern Architect Review]] | Pattern's `/architect` step; full review of `/architect`, the `rule-auditor` agent |

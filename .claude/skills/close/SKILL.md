@@ -48,24 +48,11 @@ If the note is kept for no story, it will be deleted. First, check it for anythi
 Then tell the user the outcome in one line, either "keep in `archive/` for [[A]] and [[B]]" or "delete". This lets them catch a wrong one before step 7 acts on it. Go on without waiting for a reply.
 
 ## 4. Handle the Stories That Waited on It
-Skip this for a re-close. Otherwise, go through the Blocker matches.
-
-**For a done close,** take each story in turn:
-1. Remove this story from its `blocked-by` list, and from any "waiting on" wording on its Roadmap line.
-2. If its `blocked-by` list still has entries, the story stays blocked, so go on to the next story.
-3. Otherwise, update its `^status` line by the case it fits:
-   - **It names a next step that didn't wait on this story,** such as "Next: /plan-steps. Building waits on [[X]]": the story is moving forward, possibly in another session. Keep that step, and remove only the wording about waiting on this story.
-   - **It waits on this story,** such as "Blocked by [[X]]; then /plan-steps": the story sat waiting. If it's `spec`, `ready` or `in-progress`, it was planned before this story changed the code, so set the line to "Unblocked. Next: /check-drift". If it's an `idea` note, run `sh scripts/note-section.sh "Next Step by Note State"`, and write the next step it gives for an `idea` note of the story's type.
-   - **You can't tell which:** show the user the line, and ask whether the story goes to `/check-drift` or keeps its next step.
+Skip this for a re-close. Otherwise, take each waiting story, a story with a Blocker match, in turn:
+1. **For a dropped close,** ask the user what the waiting story waits on now: nothing, another story or a decision. If something still blocks it, update its `blocked-by`, its `^status` line and its Roadmap line to match, and go on to the next story.
+2. Remove this story from the waiting story's `blocked-by` list, and from any "waiting on" wording on its `^status` line and Roadmap line. If its `blocked-by` still has entries, go on to the next story.
+3. Decide whether the waiting story goes to `/check-drift` before its next step. Its note may hold work planned while this story was open, such as an approach or steps, and that work may not fit the code once this story closes. If this story is done, its changes have landed. If it's dropped, they never will. So the waiting story needs `/check-drift` if its next step would build on that work without first checking the work against the code. For example, `/plan-steps` checks the note against the commits since it was confirmed, so it catches a done story's changes but not the ones a dropped story never made. If it needs `/check-drift`, make that the next step on its `^status` line. Otherwise, keep the next step its `^status` line names.
 4. If its Roadmap line is in Later and the story serves the building or planning goal, show the user the story and that goal's queue, and ask whether it moves there.
-
-**For a dropped close,** take each story in turn:
-1. Ask the user what it waits on now: nothing, another story or a decision.
-2. If something still blocks it, update its `blocked-by`, its `^status` line and its Roadmap line to match, and go on to the next story.
-3. Otherwise, remove this story from its `blocked-by` list, and from any "waiting on" wording on its Roadmap line. Then update its `^status` line by the case it fits:
-   - **It's `spec`, `ready` or `in-progress`, and its line names a next step that didn't wait on this story:** it was planned expecting this story's changes, which will never land. `/plan-steps` checks for drift only in commits that landed, so it won't catch that. Tell the user why, show them the line, and ask whether to set it to "Unblocked. Next: /check-drift" or keep its next step.
-   - **Otherwise:** update it as sub-step 3 of the done close describes.
-4. Handle its Roadmap line as sub-step 4 of the done close describes.
 
 **Sweep and roundup items:** for a done close, remove the `**Blocked by [[Name]]:**` marker. For a dropped close, ask the user whether the item still stands, now waits on something else, or should be removed.
 
