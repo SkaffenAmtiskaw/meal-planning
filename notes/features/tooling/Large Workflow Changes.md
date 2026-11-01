@@ -5,6 +5,9 @@ confirmed: 2026-10-06
 # Where It Stands
 Next: /tooling ^status
 
+# Inbox
+- [[Services and Environments Audit]] is a second case of this gap. It's typed `cleanup` but changes no code: it reads settings from dashboards and produces a doc and Roadmap lines, so `/plan-steps`' running-app checks may not fit it either.
+
 # Notes
 Part of [[Agent Instructions Audit]].
 

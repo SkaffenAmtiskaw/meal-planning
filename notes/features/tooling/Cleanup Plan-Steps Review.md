@@ -24,4 +24,3 @@ Part of [[Agent Instructions Audit]].
 None known yet. This review re-checks the files above for this step.
 
 # Questions
-- If [[Cleanup Shape Review]] didn't settle it: is `/plan-steps` the right skill for a `cleanup`? For [[Agent Instructions Audit]], an audit of agent instructions typed `cleanup`, Sarah said on 2026-10-06 that `/plan-steps` was a bad fit: its checks assume a running app, and it led to a plan of single-problem steps. Either `cleanup` was the wrong type, or `/plan-steps` isn't the right skill for it.
