@@ -23,7 +23,7 @@ A meal's color should be based on a hash of its name and description, not its na
 
 # Out of Scope
 - Letting the user pick a meal's color: the "Allow user to change meal color in calendar" line in Ideas on the [[Roadmap]].
-- Merging the duplicated meal color code: the "calendar duplication" line under Calendar Page on the [[Roadmap]].
+- Merging the duplicated meal color code: [[Calendar Duplication]].
 - The schedule-x components that still call the color function (`MonthGridEvent`, the old `WeekView`): [[Remove Schedule-X]] deletes them.
 
 # Suggested Approach

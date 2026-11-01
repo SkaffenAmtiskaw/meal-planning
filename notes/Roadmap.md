@@ -97,24 +97,26 @@
 54. [[When Stories Need E2E Tests]] ![[When Stories Need E2E Tests#^status]] 🎯 [[Dev Foundations]]
 55. [[Docs Audit]] ![[Docs Audit#^status]] 🎯 [[Dev Foundations]]
 # Planning
-1. [[Calendar and Recipes Data Refresh]] ![[Calendar and Recipes Data Refresh#^status]] 🎯 [[Calendar Page]] 🎯 [[App Health]] 🎯 [[Recipes Page]]
-2. [[Settings Data Refresh]] ![[Settings Data Refresh#^status]] 🎯 [[Calendar Page]] 🎯 [[App Health]]
-3. [[Server-Only Creation and Pure Reads]] ![[Server-Only Creation and Pure Reads#^status]] 🎯 [[Calendar Page]] 🎯 [[App Health]] 🎯 [[Bugs]]
-4. [[Data Rules Enforcement]] ![[Data Rules Enforcement#^status]] 🎯 [[Calendar Page]] 🎯 [[App Health]]
-5. [[Today and Selected Day Markers]] ![[Today and Selected Day Markers#^status]] 🎯 [[Calendar Page]]
-6. [[Mantine Date Picker Setup]] ![[Mantine Date Picker Setup#^status]] 🎯 [[Calendar Page]]
-7. [[Named Date Formats]] ![[Named Date Formats#^status]] 🎯 [[Calendar Page]]
-8. [[Header Date Picker]] ![[Header Date Picker#^status]] 🎯 [[Calendar Page]]
-9. [[Long Reference URLs Shrink the Name Input]] ![[Long Reference URLs Shrink the Name Input#^status]] 🎯 [[Calendar Page]]
+1. [[One Source of Today]] ![[One Source of Today#^status]] 🎯 [[Calendar Page]]
+2. [[Planner Access Audit]] ![[Planner Access Audit#^status]] 🎯 [[Calendar Page]] 🎯 [[Bugs]]
+3. [[Calendar and Recipes Data Refresh]] ![[Calendar and Recipes Data Refresh#^status]] 🎯 [[Calendar Page]] 🎯 [[App Health]] 🎯 [[Recipes Page]]
+4. [[Server-Only Creation and Pure Reads]] ![[Server-Only Creation and Pure Reads#^status]] 🎯 [[Calendar Page]] 🎯 [[App Health]] 🎯 [[Bugs]]
+5. [[Unchecked Planner Reads]] ![[Unchecked Planner Reads#^status]] ⚠️ Security: any planner's data may be readable by id without a membership check. 🎯 [[Calendar Page]] 🎯 [[Bugs]]
+6. [[Shared Types Directory]] ![[Shared Types Directory#^status]] 🎯 [[Calendar Page]] 🎯 [[App Health]]
+7. [[Remove Schedule-X]] ![[Remove Schedule-X#^status]] 🎯 [[Calendar Page]]
+8. [[Schedule-X Data Shapes Audit]] ![[Schedule-X Data Shapes Audit#^status]] 🎯 [[Calendar Page]] 🎯 [[App Health]]
+9. [[Calendar Duplication]] ![[Calendar Duplication#^status]] 🎯 [[Calendar Page]] 🎯 [[App Health]]
+10. [[Modal Form Architecture]] ![[Modal Form Architecture#^status]] 🎯 [[Calendar Page]] 🎯 [[App Health]] 🎯 [[Recipes Page]]
+11. [[Today and Selected Day Markers]] ![[Today and Selected Day Markers#^status]] 🎯 [[Calendar Page]]
+12. [[Mantine Date Picker Setup]] ![[Mantine Date Picker Setup#^status]] 🎯 [[Calendar Page]]
+13. [[Named Date Formats]] ![[Named Date Formats#^status]] 🎯 [[Calendar Page]]
+14. [[Header Date Picker]] ![[Header Date Picker#^status]] 🎯 [[Calendar Page]]
+15. [[Long Reference URLs Shrink the Name Input]] ![[Long Reference URLs Shrink the Name Input#^status]] 🎯 [[Calendar Page]]
 
 # Later
 ## [[Dev Foundations]]
 
 ## [[Calendar Page]]
-- [[Remove Schedule-X]] ![[Remove Schedule-X#^status]]
-- [[Shared Types Directory]] ![[Shared Types Directory#^status]] 🎯 [[App Health]]
-- [[Schedule-X Data Shapes Audit]] ![[Schedule-X Data Shapes Audit#^status]] 🎯 [[App Health]]
-- [[Unchecked Planner Reads]] ![[Unchecked Planner Reads#^status]] ⚠️ Security: any planner's data may be readable by id without a membership check. 🎯 [[Bugs]]
 - [[Add Meal Changes (Saved Recipes)]] ![[Add Meal Changes (Saved Recipes)#^status]]
 - [[Meal Form Date Picker]] ![[Meal Form Date Picker#^status]]
 - [[Mobile List View]] ![[Mobile List View#^status]]
@@ -124,16 +126,11 @@
 - [[Calendar Keyboard and Focus]] ![[Calendar Keyboard and Focus#^status]]
 - [[Blank Dish Row Blocks Saving a Meal]] ![[Blank Dish Row Blocks Saving a Meal#^status]]
 - [[Meal Color from Name and Description]] ![[Meal Color from Name and Description#^status]]
-- [[Modal Form Architecture]] ![[Modal Form Architecture#^status]] 🎯 [[App Health]] 🎯 [[Recipes Page]]
 - [[Add Meal from Month Cell]] ![[Add Meal from Month Cell#^status]]
 - default to week view on desktop - list view on mobile
 - calendar list view infinite scroll
 - a11y audit of the calendar page against WCAG 2.2 AA - the app-wide a11y audit stays in Ideas for the other pages
 - audit that the calendar page works fully on phones - the app-wide mobile audit stays in Ideas for the other pages
-- "today" is computed independently in 11 calendar places with `DateTime.now()`. They only run in the browser now, but [[Calendar and Recipes Data Refresh]] Step 2 makes them run during server render, so the server's time zone can mark the wrong day or cause a hydration mismatch. Consider one source of "today"
-- calendar duplication - group-by-date (×4), meal color calculation (×2), the near-identical `MealCalendar` / `MealWeekView` adapters and their types, and meal keyboard navigation copied between the month and week hooks 🎯 [[App Health]]
-- `formatCalendarLabel.ts` - also holds the view names and default view order, which its name doesn't describe; move them into a views config once it's decided where that lives 🎯 [[App Health]]
-- [[Planner Access Audit]] ![[Planner Access Audit#^status]] 🎯 [[Bugs]]
 - [[Calendar E2E Tests]] ![[Calendar E2E Tests#^status]]
 - [[Calendar UX and Styles Pass]] ![[Calendar UX and Styles Pass#^status]]
 
@@ -169,6 +166,8 @@
 - performance - investigate mongo/mongoose caching - is next doing it already or do we need to implement it? - in light of dropping mongoose this needs to be a broader caching question
 - [[What Makes a Good Unit Test]] ![[What Makes a Good Unit Test#^status]]
 - [[Server-Only Code Behind Barrels]] ![[Server-Only Code Behind Barrels#^status]]
+- [[Settings Data Refresh]] ![[Settings Data Refresh#^status]]
+- [[Data Rules Enforcement]] ![[Data Rules Enforcement#^status]]
 
 ## [[Bugs]]
 - [[Zero Planners Crash|root page crashes for users with zero planners (e.g. invited user leaves or is removed from their only planner)]] ![[Zero Planners Crash#^status]]

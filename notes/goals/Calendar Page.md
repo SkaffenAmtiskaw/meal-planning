@@ -12,7 +12,7 @@ Get the calendar page into a polished state that is ready for users. That means 
 - Screens are adjusted based on user feedback.
 - Meals can be edited.
 - You can plan right on the calendar: click a day to add a meal there, and drag a meal to another day or to a new spot within its day.
-- Any change a user makes shows up on screen right away, without a reload.
+- Any change a user makes on the calendar or recipes pages shows up on screen right away, without a reload.
 - The calendar is fully usable on a phone: every workflow you can do on desktop is possible on a phone, and it doesn't suck.
 - The calendar is accessible: it works fully with a keyboard and a screen reader, and passes an accessibility audit against WCAG 2.2 AA.
 - People can only see the planners they belong to, and can only change the planners they have permission to change. The goal checks this rather than assuming it.
@@ -26,3 +26,4 @@ Get the calendar page into a polished state that is ready for users. That means 
 - [[Zero Planners Crash]]: it's more of a planner management story than a calendar story, and it affects every page, not just the calendar (2026-09-28).
 - The [[Code Tidy-Ups]] item renaming three `.d.ts` files to `*.types.ts`, one of them `AddMealForm/types.d.ts`: it's tech debt (2026-09-28).
 - The [[Style Decisions]] decision on which uses of the Mantine `color` prop should be a `variant`, including the calendar's `AddMealButton` and `MobileAddMealButton`: it's tech debt (2026-09-28).
+- [[Settings Data Refresh]] and [[Data Rules Enforcement]]: the goal can finish without them, since Settings already refreshes after each change and [[Calendar and Recipes Data Refresh]] fixes the stale calendar and recipe data. They sit in [[App Health]] (2026-11-01).

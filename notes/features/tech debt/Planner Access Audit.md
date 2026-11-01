@@ -14,7 +14,7 @@ Next: /shape ^status
 # Notes
 The [[Calendar Page]] goal's Done When says people can only see the planners they belong to, and can only change the planners they have permission to change, and that the goal checks this rather than assuming it.
 
-Two known holes already have stories: [[Unchecked Planner Reads]] (reads that return planner data with no membership check) and [[Server-Only Creation and Pure Reads]] (`addPlanner` callable from the browser with no auth check). Nothing checks the rest. This audit goes through every server action and read that touches planner data and confirms each one checks membership, and the right permission level for writes. Anything it finds becomes its own fix.
+Two known holes already have stories: [[Unchecked Planner Reads]] (reads that return planner data with no membership check) and [[Server-Only Creation and Pure Reads]] (`addPlanner` and `addUser` callable from the browser with no auth check). Nothing checks the rest. This audit goes through every server action and read that touches planner data and confirms each one checks membership, and the right permission level for writes. Anything it finds becomes its own fix.
 
 # Questions
 

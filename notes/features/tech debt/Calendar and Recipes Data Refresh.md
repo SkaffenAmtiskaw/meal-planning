@@ -9,7 +9,7 @@ confirmed: 2026-09-25
 Ready. Next: /implement Step 1. ^status
 
 # Inbox
-- From `/gather-goal` on [[Calendar Page]]: Step 2 makes `PlannerProvider` take the planner as a server prop, so the calendar renders on the server for the first time. `CalendarProvider` and other calendar files call `DateTime.now()` during render, so the server's time zone can then mark the wrong day or cause a hydration mismatch. The "today" line under Calendar Page on the Roadmap holds this work. Found by reading code, not by running it.
+- From `/gather-goal` on [[Calendar Page]]: Step 2 makes `PlannerProvider` take the planner as a server prop, so the calendar renders on the server for the first time. `CalendarProvider` and other calendar files call `DateTime.now()` during render, so the server's time zone can then mark the wrong day or cause a hydration mismatch. [[One Source of Today]] holds this work. Found by reading code, not by running it.
 - From `/gather-goal` on [[Calendar Page]]: the checks in Steps 1 and 2 that test per-day add triggers in phone list view can't pass as written. Phones show a placeholder there (`src/app/[planner]/calendar/_components/MealListView/MealListView.tsx:34-36`) until [[Mobile List View]] builds the real one.
 
 # Purpose
