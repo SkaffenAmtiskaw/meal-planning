@@ -30,7 +30,7 @@ Once the code is written, make two cleanup edits:
 1. **Import aliases** in the files you changed, as "Imports" in `docs/project_conventions.md` describes.
 2. **Centralized mocks** for each module mocked with `vi.mock` in the test files you changed, as "Creating Centralized Mocks" in `docs/unit_tests.md` describes. Count the test files that mock it across the whole app, not only the ones you changed.
 
-Then run `pnpm lint` on the files you changed, `pnpm test:agent` on each file or folder you changed, and `pnpm check:types`, and fix what they find.
+Then run `pnpm lint` on the files you changed, `pnpm test:agent` on each file or folder you changed, and `pnpm check:types`, and fix what they find. If the change adds a lint rule, also run `pnpm lint:ci` on the whole app, because the rule can break files you didn't change.
 
 ## 4. Do the Acceptance Checks
 Before handing the change to the user, do its acceptance checks yourself, so the user doesn't run into the obvious failures.

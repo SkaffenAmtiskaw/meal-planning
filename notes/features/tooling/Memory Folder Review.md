@@ -26,7 +26,7 @@ Where each memory to delete already has its rule, as of 2026-10-06. Some of thes
 | Memory | Rule kept at |
 |---|---|
 | `agents-adapt-to-process` | AGENTS.md:21-22, `tooling:15` |
-| `as-built-covers-review-gaps` | `implement/SKILL.md:31` |
+| `as-built-covers-review-gaps` | `implement/SKILL.md:33` |
 | `batch-small-test-cleanups` | `Sweep.md:21`, `check-drift:72,75`, `kickoff:42-43`, Roadmap:26 |
 | `blocked-by-summary-not-per-decision` | Note Conventions:15, `shape:147`, `decide:36`, `kickoff:51` |
 | `confirm-before-logging-process-feedback` | AGENTS.md:94, :106-109 |
