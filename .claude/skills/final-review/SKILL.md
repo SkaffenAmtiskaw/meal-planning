@@ -30,7 +30,7 @@ Run `sh scripts/story-range.sh "<note name>"`. The script also lists the commits
 Show the user the range (first and last commit, with their subjects), whether uncommitted changes are included, and both groups of files. Wait for them to confirm or correct the range, and to say which of the other files belong to the story. This one confirmation covers the range and the files together.
 
 ## 3. Run the Checks
-Back every finding with evidence the user can check: `file:line` for code that's there, or, for something the story doesn't do, where you looked for it. Name the rule, Purpose line or plan line it breaks. A clear bug you come across inside a single step is a finding too.
+Back every finding with evidence the user can check: `file:line` for code that's there, or, for something the story doesn't do, where you looked for it. Name the rule, note line or plan line it breaks, such as a Purpose or Symptoms line. A clear bug you come across inside a single step is a finding too.
 
 **For every story:** send the `leftovers-checker` subagent the note path, the confirmed range in the `<base>..HEAD` form the script's `Range:` line prints, whether uncommitted changes are part of it, and the confirmed files. Start it in the background, so it runs while you do the rest of this step.
 
@@ -42,8 +42,10 @@ Back every finding with evidence the user can check: `file:line` for code that's
 **For a pattern, infra, bug, cleanup, sweep or roundup,** there are no behaviors to design a target from, so you do check 2 yourself. Read the conventions the story was meant to apply, such as a pattern's Rules section, an infra story's Design and Conventions, a roundup's **Decided** lines or the `docs/` file a cleanup aligns code with. Then read the story's files, and check each change against those conventions, the rest of the project's conventions and best practice.
 
 **Then, for every story,** do checks 1 and 3 yourself:
-- **Purpose:** check the built story against its Purpose, and its Goals or Requirements if it has them. Each place it falls short is a finding.
-- **The plan:** compare the code with the note's approach and its steps. A difference is a finding if it changes what the app does or shows, or goes against a choice that's the user's call. Any other difference, in how the code is built, is a finding only if check 2 flags it. Keep the finding even when an **As built** note records the difference, because step 4 weighs the note's reason.
+- **Purpose:** check the built story against what it set out to do. Each place it falls short is a finding.
+  - **For a bug:** check that the fix gets rid of every symptom in its Symptoms, for everyone its Who Can Hit This names.
+  - **For any other story:** check it against its Purpose, and its Goals or Requirements if it has them.
+- **The plan:** compare the code with the note's approach and its steps. The approach is the section that says what to build, such as a feature's Suggested Approach or a bug's Fix. A difference is a finding if it changes what the app does or shows, or goes against a choice that's the user's call. Any other difference, in how the code is built, is a finding only if check 2 flags it. Keep the finding even when an **As built** note records the difference, because step 4 weighs the note's reason.
 
 ## 4. Collect the Findings
 Sort what the checks and the agents found:
