@@ -3,6 +3,9 @@ type: goal
 confirmed: 2026-10-31
 ---
 
+# Inbox
+- For `/gather-goal`: this goal could start as one hub, since its notes are thin until the wish list is sorted. [[Grocery List Wish List Research]] would merge into this work, and `/brainstorm` would replace the research story that Done When names.
+
 # Purpose
 Let users turn the meals they've planned for a range of dates into a grocery list they can take to a grocery list app or a grocery shopping app. The wish list in [[Grocery List Integration]] goes beyond the list itself, and this goal decides which of those pieces are worth doing and which belong in this release.
 

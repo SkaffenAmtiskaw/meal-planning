@@ -13,6 +13,9 @@ No direction yet. ^status
 ## Meta-Instructions
 Before planning or implementing any story linked from this note, read this note first. If a child story conflicts with a decision recorded here, or depends on a question that is still open, stop and ask the user.
 
+# Requirements
+%% Only for an exploration hub: what this part of the goal has to do, from `/brainstorm`'s first pass and the answers `/decide` adds. Delete this section otherwise. %%
+
 # Design Handoff
 %% Only for a hub that holds a design several stories build: a story that was split, whose full design handoff moves here unchanged with its images and its own Meta-Instructions, or a design `/place-design` places here. Each child story embeds the sections it builds with `![[<this hub>#Section]]`. Change the design here, never in a child. Delete this section otherwise. %%
 

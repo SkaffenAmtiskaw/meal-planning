@@ -4,6 +4,10 @@ confirmed: 2026-09-28
 ---
 %% A goal is an epic: work Sarah ranks and ships together as one release. `/roadmap` shapes and ranks it. It has no `status` and no Where It Stands, and it's never implemented directly. Its rank lives on the Roadmap. So does the list of stories that serve it: the lines under its heading in Later, and every line elsewhere that ends with its 🎯 link. %%
 
+# Inbox
+- For `/gather-goal`: this goal has about 40 Roadmap lines and 27 notes, far more than other goals, so hand step 1's reading to a subagent that reports each note's scope, the screens it touches and what design it has, and checks which lines look done. Read in full only the designs you move.
+- For `/gather-goal`: at the end of the run, tidy this goal's remaining Roadmap lines down to their status, since many have extra text after it. Show Sarah any text worth keeping.
+
 # Purpose
 %% Why this goal matters and what it changes, for the app's users or for how the app is built. %%
 Get the calendar page into a polished state that is ready for users. That means wrapping up the partially done schedule-x migration, adjusting screens based on user feedback, wiring up the ability to edit meals, and a final UX and styles pass at the end for polish.

@@ -16,7 +16,7 @@ Work through the open decisions on **$ARGUMENTS**. This skill settles decisions,
 ## 1. Read the note
 Find the note in `notes/features/` and read all of it.
 
-A decision is open if it's an item under `# Open Decisions` with no **Decided** line under it, including one with only a **Partly answered** line. A roundup's issues are the questions under its Open Decisions. A story with open decisions has one `"decision needed: ..."` entry in `blocked-by` that covers them all. A hub has no `blocked-by`.
+A decision is open if it's an item under `# Open Decisions` with no **Decided** line under it, including one with only a **Partly answered** line. A roundup's issues are the questions under its Open Decisions. A story with open decisions has one `"decision needed: ..."` entry in `blocked-by` that covers them all. A hub has no `blocked-by`. An exploration hub is a hub with a Requirements section.
 
 If a story's Open Decisions and `blocked-by` don't match, raise it with the user:
 - **A `decision needed` entry with no open question in Open Decisions:** draft the questions it stands for and add them once the user approves. If the note has no Open Decisions section, add one from the note's template.
@@ -32,12 +32,13 @@ Take them in the order they give. If they pick one that depends on an unpicked o
 ## 3. Settle each decision
 Settle each decision the user picked as the `settling-a-decision` skill describes.
 
-If the question is "Is this worth doing?" and the user decides it isn't, the story is dropped. Skip the other decisions they picked for this run, because they no longer matter, and go to step 4.
+If a story's question is "Is this worth doing?" and the user decides it isn't, the story is dropped. Skip the other decisions they picked for this run, because they no longer matter, and go to step 4.
 
 ### Knock-on effects
 After recording each answer, look at what it changes:
-- **This note:** other sections the answer lands in, such as a section the question says to record it in, a bug's Fix section, or a hub's Coverage or Child Stories table. Draft each change and go through them with the user.
-- **New stories:** if the answer implies work no note covers yet, and the note is a hub, add it to a list of new child stories for step 5. Otherwise, add it to the out-of-scope list.
+- **An exploration hub's option:** if the answer puts it in this release, add it to the hub's Requirements, below the first-pass list and with its date. Add it without drafting it, because the answer settles it. If it's worth doing but not in this release, give it a new Roadmap line in Ideas.
+- **The rest of this note:** other sections the answer lands in, such as a section the question says to record it in, a bug's Fix section, or a hub's Coverage or Child Stories table. Draft each change and go through them with the user.
+- **New stories:** if the answer implies other work no note covers yet, and this note is a hub but not an exploration hub, add the work to a list of new child stories for step 5. Otherwise, add it to the out-of-scope list.
 - **New questions:** if `decision-researcher` found a blocking question that isn't on the note, or the answer raised one, tell the user what needs deciding, add it to Open Decisions, and ask whether they already have an answer in mind:
   - **They have one:** go on from their answer as the `settling-a-decision` skill describes.
   - **They don't:** ask whether to research it now or leave it for a later run, since research takes time and each run covers only the decisions they pick. If they want it now, research it as the `settling-a-decision` skill describes.
@@ -47,7 +48,8 @@ Once the picked decisions are done, set `confirmed` to today, since the user mak
 - **The user decided the story isn't worth doing:** set `status: dropped`, remove the `decision needed` entry from `blocked-by`, and set the `^status` line to "Not worth doing. Next: /close".
 - **Decisions remain open:** if `/decide` can run now, start the `^status` line with how many remain, such as "2 open decisions. Next: /decide". Either way, the line names any other story one of them waits on.
 - **A roundup with none left:** remove the `decision needed` entry from `blocked-by`, set `status: spec`, and set the `^status` line to "Decisions made. Next: /plan-steps".
-- **A hub with none left:** set its `^status` line to "Next: its child stories" and remove its Roadmap line, since a hub has a line only while it has open decisions.
+- **A hub with none left, no design in its `# Design Handoff` yet and something to design, meaning an Inbox item for `/design-feature` or at least one option in its Requirements:** set its `^status` line to "Next: /design-feature".
+- **Any other hub with none left:** set its `^status` line to "Next: its child stories" and remove its Roadmap line, since a hub has a line only while it has a next step of its own.
 - **Any other story with none left:** remove the `decision needed` entry from `blocked-by`. Run `sh scripts/note-section.sh "Next Step by Note State"`, which prints Note Conventions' table of what each note state does next, and set the `^status` line to the story's next step from it, such as "Decisions made. Next: /assess".
 
 If the user decided a story is worth doing and its Roadmap line is in Ideas, the story is now committed. Check its goals and place its line as the `roadmap-placement` skill describes.

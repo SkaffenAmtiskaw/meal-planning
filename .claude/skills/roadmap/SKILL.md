@@ -44,7 +44,7 @@ Read `notes/Roadmap.md`, including "How this file works", `notes/templates/Goal.
 Ask Sarah what the goal is for and what shipping it means, in her words. If she names work that's out of scope for it, note that too. Draft Purpose, Done When and Out of Scope from the template, keeping her wording. Show her the draft and wait for her approval, then write the note to `notes/goals/<name>.md`, with `confirmed` set to today.
 
 ## 3. Scope
-Search the Roadmap, including Ideas, and `notes/features/` for work that looks related to the goal's Purpose and Done When: story lines, hubs with open decisions, and collecting notes and their items. Skip anything already under the goal's Out of Scope, whether it was added in step 2 or by an earlier run. Skip anything already under the goal's heading or carrying its 🎯 link, unless this is a re-shape and Sarah asks to review it. For a collecting note, skip only the items that carry the link, not the whole note.
+Search the Roadmap, including Ideas, and `notes/features/` for work that looks related to the goal's Purpose and Done When: story lines, hubs with a next step of their own, and collecting notes and their items. Skip anything already under the goal's Out of Scope, whether it was added in step 2 or by an earlier run. Skip anything already under the goal's heading or carrying its 🎯 link, unless this is a re-shape and Sarah asks to review it. For a collecting note, skip only the items that carry the link, not the whole note.
 
 Leave tooling out of this step, and offer it in step 5. The exception is a goal about how the app is built, where tooling is the scope: offer it here and skip step 5.
 
@@ -64,11 +64,15 @@ Go through the candidates one at a time. For each, show the line, note or item, 
 If an item that comes in already links to another goal, it serves one goal, as the Roadmap's "How this file works" describes under "Collecting notes". Ask Sarah which goal it fits best, and keep only that goal's link, unless she says neither goal can be done without it. If this goal is building, step 7 kicks off the items that come in.
 
 ## 4. Gaps
-Compare Done When with the in-scope work, and list each Done When item that nothing covers. Go through them one at a time. For each, draft an idea note from `notes/templates/Idea.md` for `notes/features/<area>/`, and show it to Sarah:
-- **She approves it,** with any changes she asks for: write the note, and add its line under the goal's heading.
-- **She says the gap doesn't fit an idea note:** ask whether it gets a Roadmap line under the goal's heading instead or comes out of Done When, and do what she says.
+Compare Done When with the in-scope work, and list each Done When item that nothing covers. Go through them one at a time. For each, draft a note for `notes/features/<area>/`:
+- **If the item is a whole area, where what to build isn't known yet:** an exploration hub from `notes/templates/Hub.md`, with `Next: /brainstorm` as its `^status` line.
+- **Otherwise:** an idea note from `notes/templates/Idea.md`.
 
-Then list the in-scope stories whose next step is `/design-feature`. These are the designs the goal is waiting on. Report them; nothing is written.
+Show it to Sarah. Her answer decides what happens next:
+- **She approves it,** with any changes she asks for: write the note, and add its line under the goal's heading.
+- **She says the gap doesn't fit a note:** ask whether it gets a Roadmap line under the goal's heading instead or comes out of Done When, and do what she says.
+
+Then list the in-scope stories and hubs whose next step is `/design-feature`. These are the designs the goal is waiting on. Report them; nothing is written.
 
 ## 5. Tooling
 Find the tooling that would make this goal's stories easier: tooling lines anywhere in Later (in Unaffiliated or under another goal) or in Ideas, the items in collecting workflow notes (`type: workflow` with a What Belongs Here section), and other workflow and tooling notes. Read what the in-scope stories will touch (their areas, their next steps, what their checks need) and match them up.
@@ -124,5 +128,6 @@ Then tell Sarah:
 - the designs the goal is waiting on
 - the tooling shortlist, and what she put under the goal
 - the Goals order, and which lines moved into or out of Next and Planning
+- if the goal's lines and notes overlap or look scattered, `/gather-goal <goal>` as the next step
 
 Stop there, and don't start work on any story.

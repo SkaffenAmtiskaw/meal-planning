@@ -54,6 +54,8 @@ The idea is often a line or two, and a wrong guess about its scope would carry i
 Ask whether it matches what they have in mind, and wait for the answer. Work their corrections into your understanding. If one changes where you'd look, look again briefly. Everything after this builds on the corrected picture.
 
 ### Find the blocking decisions
+If the idea looks like a whole area, where what to build isn't known yet, tell the user it should be an exploration hub and why, and wait for them to agree. If they do, only whether it's worth doing can be a blocking decision, because `/brainstorm` finds what to build.
+
 A blocking decision is a question whose answer would change what this skill writes. Judge it only by this skill's own output. This skill doesn't know what each later step needs, and each of those steps checks that for itself and sends the note to `/decide` when something is missing. A blocking decision settles one of these:
 - **Whether the idea is worth doing,** when the idea or the user says they're unsure it is, such as an idea to explore whether a new library is worth pulling in.
 - **How many stories there are.**
@@ -70,17 +72,21 @@ Settle them now, so steps 4 and 5 rest on answers rather than guesses and the st
 Settle each one they pick, in the order they give, as the `settling-a-decision` skill describes. The note isn't drafted yet, so where that skill says to write an answer under its question, keep it for the draft instead. Step 6 puts it under its question in Open Decisions. If the user decides the idea isn't worth doing, skip the other decisions and go to step 7 to drop it.
 
 ## 4. One story or several
-If the decisions still open after step 3 would decide how many stories there are, it's one story for now. It can be shaped again once `/decide` settles them. Otherwise, tell the user which of these it is, and why, and wait for them to agree or change it:
+If the user agreed in step 3 that the idea is a whole area, what happens depends on whether it serves a goal, checked as the `roadmap-placement` skill describes:
+- **It does:** it becomes an exploration hub. Draft it as "Drafting a hub" below describes, then skip to step 7.
+- **It doesn't:** tell the user it needs a goal from `/roadmap` first, because deciding what's in this release needs a release to compare against. Then stop.
+
+Otherwise, if the decisions still open after step 3 would decide how many stories there are, it's one story for now. It can be shaped again once `/decide` settles them. Otherwise, tell the user which of these it is, and why, and wait for them to agree or change it:
 - **One story.** Go on to step 5.
 - **Several stories.** Give each one a one-line scope. Once the user agrees, follow `splitting.md` in this skill's folder. That ends this session.
 - **Several stories that overlap substantially,** so they need one shared place for their design and decisions. It becomes a hub. Draft it as "Drafting a hub" below describes, then skip to step 7.
 
 ### Drafting a hub
 Draft the note from `notes/templates/Hub.md`:
-- **Where It Stands:** e.g. "Not split yet. Next: /decide ^status"
+- **Where It Stands:** for an exploration hub, "Next: /brainstorm ^status". Otherwise, e.g. "Not split yet. Next: /decide ^status"
 - **Purpose:** what the idea is, in the user's words.
 - **Open Decisions:** as step 6 describes.
-- **Child Stories:** leave the table empty. Children get their own `/shape` run once the decisions make them clear.
+- **Child Stories:** leave the table empty. In a hub that isn't an exploration hub, children get their own `/shape` run once the decisions make them clear.
 - **Frontmatter:** `type: hub` and `confirmed` set to today. Hubs have no `status` or `blocked-by`.
 
 Show the user the draft and wait for their approval.
@@ -122,5 +128,5 @@ Once the user approves the draft, or picks "drop it", what you write depends on 
 - **Dropped:** if it's a Roadmap line with no note, remove the line. If it's an idea note, run `sh scripts/note-refs.sh "<note name>"`. If its vault or outside-the-vault sections list anything other than its own Roadmap line, tell the user it needs `/close` in a new session. Otherwise, delete it as the `deleting-a-note` skill describes.
 - **Folded into an existing note, a sweep or a roundup:** apply the addition there. Then, if the idea was an idea note, delete it as the `deleting-a-note` skill describes, pointing each link to the note it was folded into. If it was a Roadmap line with no note, remove the line.
 - **A story, a hub or a workflow note:** if the idea was an idea note, rewrite it in place, so links to it keep working, and don't rename or move it without asking. If it was a Roadmap line with no note, create the note in `notes/features/<area>/`, and if the area isn't obvious, ask the user which folder. Then make the Roadmap line link to the note and embed its status, as AGENTS.md describes under "Editing notes", and place it:
-  - **A hub, or a story whose "Is this worth doing?" decision is still open:** keep the line where it is. Neither is committed yet. `/decide` moves the story's line once the user decides it's worth doing.
-  - **Any other story, or a workflow note:** shaping commits it. Check its goals and place its line as the `roadmap-placement` skill describes.
+  - **A hub that isn't an exploration hub, or a story whose "Is this worth doing?" decision is still open:** keep the line where it is. Neither is committed yet. `/decide` moves the story's line once the user decides it's worth doing.
+  - **An exploration hub, any other story, or a workflow note:** shaping commits it. Check its goals and place its line as the `roadmap-placement` skill describes.

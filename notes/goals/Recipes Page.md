@@ -3,6 +3,9 @@ type: goal
 confirmed: 2026-10-31
 ---
 
+# Inbox
+- For `/gather-goal`: this goal's hubs might be recipe list, recipe detail, adding and updating recipes, and possibly bookmarks. [[Recipes Page Redesign]] and [[Recipes Page Wish List Research]] would merge into this work, and [[Filtering Recipe List]] would sit under the recipe list hub and keep its decisions. `/brainstorm` would replace the research story that Done When names.
+
 # Purpose
 The recipes page is in pretty rough shape. Redesign it so it's ready for users. The redesign will spawn multiple stories. This goal also brainstorms a wish list of ideas for the page and decides which of them are worth doing and which belong in this release.
 

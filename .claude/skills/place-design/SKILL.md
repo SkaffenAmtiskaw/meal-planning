@@ -36,7 +36,7 @@ If the handoff text names another handoff, such as "implement this after `design
 For each story, show the user the design sections it would build and why, and wait for them to confirm or change the list. Then propose new feature stories for the sections no story covers, each with a name and a one-line scope, and wait for the user to approve, change or drop each one.
 
 The design's home follows from the answers:
-- **If a hub already holds it:** that hub.
+- **If a hub's `# Design Handoff` already holds it, or `/design-feature` designed it on a hub:** that hub, because it exists to hold that design.
 - **Otherwise, if one story builds all of it:** that story's note.
 - **Otherwise:** a new hub. Propose a name for it, taken from the design, such as "Calendar Popover Restyle".
 
@@ -48,7 +48,7 @@ Write each answer into each design it changes. If that includes the new design, 
 - **An image or an artboard:** add a callout directly under it saying what in it no longer holds and what replaces it, such as `> [!note] This popover now has square corners.` An image can't be edited, and an edited artboard would no longer match the canvas the user approved.
 
 ## 4. Write it into the notes
-1. **A new hub,** if step 2 made one: from `notes/templates/Hub.md`, in the `notes/features/<area>/` folder of its stories, asking the user which one if they're in more than one. Give its `^status` line its child stories as the next step, write a Purpose of a sentence or two on what the design covers, and copy the `## Meta-Instructions` under `# Design Handoff` from `notes/templates/Feature.md` into its `# Design Handoff`. It gets no Roadmap line, because a hub has one only while it has open decisions.
+1. **A new hub,** if step 2 made one: from `notes/templates/Hub.md`, in the `notes/features/<area>/` folder of its stories, asking the user which one if they're in more than one. Give its `^status` line its child stories as the next step, write a Purpose of a sentence or two on what the design covers, and copy the `## Meta-Instructions` under `# Design Handoff` from `notes/templates/Feature.md` into its `# Design Handoff`. It gets no Roadmap line, because a hub has one only while it has a next step of its own.
 2. **Each new story:** from `notes/templates/Feature.md`, in `notes/features/<area>/`, asking the user which folder if the area isn't clear. Set `status: spec`, give its `^status` line `/assess` as the next step, and draft its Purpose from the design. Then add its Roadmap line, checking its goals as the `roadmap-placement` skill describes.
 3. **A zip's files:** if `notes/assets/<the handoff's folder name>/` already exists, another handoff's files are in it, so ask the user what to name this one. Then copy every file except the handoff text into that folder, keeping the layout the zip gives them, because the prototypes and the handoff text find other files by their relative path.
 4. **A zip's handoff text:** copy it into `.scratch/` for item 6, then make these changes in the copy:
@@ -57,18 +57,16 @@ Write each answer into each design it changes. If that includes the new design, 
    - Image links point to `assets/<folder>/<the image's path in that folder>`.
    - A reference to another handoff by its folder name becomes a link to the note that holds it.
 5. **Design already in the vault:**
-   - **If a hub holds it:** it stays there, and step 3's answers are written into it there. Remove its embeds from any story that won't build it, and skip item 6.
+   - **If a hub's `# Design Handoff` holds it:** it stays there, and step 3's answers are written into it there. Remove its embeds from any story that won't build it, and skip item 6.
    - **Otherwise:** copy it from the note it's in, with its image links, into `.scratch/` for item 6. Then, if it's an Inbox item, delete the item. Otherwise, leave a pointer to its new home, as `.claude/skills/filing-work/content-from-another-note.md` describes. Then point any `🚛 Moved to` pointer to it at its new home.
-6. **The new design,** with step 3's answers written in: in its home's `# Design Handoff`, after the Meta-Instructions and before any hub embeds.
+6. **The new design,** with step 3's answers written in. If the Meta-Instructions in the home's `# Design Handoff` are missing or differ from those in `notes/templates/Feature.md`, first write the template's Meta-Instructions there. An older copy says Claude Design generated the design, and doesn't say an artboard is the design. Then place the design after the Meta-Instructions and before any hub embeds:
    - **If the home has no design of its own:** write it there.
-   - **If the home is a story with a design of its own:** combine the two into one design, so the story's readers find everything about each element in one place. The user approves its outline, and `design-merge-checker` reads the whole of it in their place:
+   - **If the home is a story or hub with a design of its own:** combine the two into one design, so its readers find everything about each element in one place. The user approves its outline, and `design-merge-checker` reads the whole of it in their place:
      1. Show the user an outline of the combined design: each section, what it covers and which design it comes from, with an element both designs cover in one section. Wait for their approval.
      2. Write the combined design in `.scratch/`, following the outline, with a first line naming every handoff folder the design's files are in.
-     3. Send the `design-merge-checker` subagent the story's note path, the new design's path and the combined design's path.
+     3. Send the `design-merge-checker` subagent the home's note path, the new design's path and the combined design's path.
      4. Fix what it finds, asking the user where a fix needs a choice.
-     5. Replace the story's own design with the combined one, without asking the user to approve its wording.
-
-   If the home's Meta-Instructions differ from those in `notes/templates/Feature.md`, replace them with the template's. An older copy says Claude Design generated the design, and doesn't say an artboard is the design.
+     5. Replace the home's own design with the combined one, without asking the user to approve its wording.
 7. **Each story that builds part of a hub's design:** embed the sections it builds as `.claude/skills/filing-work/content-from-another-note.md` describes. Its own design stays apart from the hub sections, because combining them would copy the hub's design into one story.
 
 ## 5. Move each story on
@@ -77,6 +75,8 @@ For each story before `in-review` that got design or had its design changed, inc
 - **Otherwise:** its approach rests on the old design. Set `status: spec`, leaving any steps marked ✅ Complete as they are, and give its `^status` line `/assess` as the next step, as a re-assessment.
 
 If a story's `^status` line names `/place-design` but it took no design, remove `/place-design` from the line, leaving the step `filing-work` kept after it.
+
+If `/design-feature` made the design on a hub, set the hub's `^status` line to `Next: its child stories`, and remove its Roadmap line. Then take the hub out of any child story's `blocked-by` and `^status` line, because the design it waited on now exists.
 
 ## 6. Stop
 Triage the out-of-scope list, offering only route or drop, since this skill places a design rather than working one story. Then list each story the design reached with its next step, and each new hub and story. Don't start `/assess` in this session: each story gets its own, with a fresh context.
