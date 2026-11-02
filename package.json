@@ -30,7 +30,7 @@
     "@mantine/dates": "9.7.4",
     "@mantine/form": "9.7.4",
     "@mantine/hooks": "9.7.4",
-    "@preact/signals": "2.11.3",
+    "@preact/signals": "2.11.4",
     "@schedule-x/calendar": "4.9.1",
     "@schedule-x/events-service": "4.9.1",
     "@schedule-x/react": "4.1.0",
