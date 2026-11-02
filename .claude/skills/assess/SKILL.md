@@ -29,7 +29,6 @@ Write the story's footprint to a scratch file:
 - **UI areas:** e.g. the mobile day section header, the today marker.
 - **Kinds of things it builds:** e.g. a modal form, a list grouped by day.
 - **Named code:** only what the note itself names. Don't search the code for more, since that's step 4.
-- **Related notes:** its hub, the notes it links to, the stories in `blocked-by`.
 
 Send the `note-drift-checker` subagent the note path, its `confirmed` date, the footprint file and "the whole design and behaviors" as the remaining work.
 
