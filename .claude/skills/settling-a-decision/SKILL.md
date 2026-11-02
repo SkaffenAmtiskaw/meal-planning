@@ -10,10 +10,11 @@ Settle one decision at a time, and don't research the next one until this one is
 ## Ask First
 Research takes time, and the user often already knows what they want. So if one of their comments in the note already answers the question, show it to them and ask whether it's still their answer. Otherwise, tell them what the decision is and ask whether they already have an answer in mind.
 
-What happens next depends on how they word their answer. If you can't tell whether it's confident or hedged, treat it as hedged.
+What happens next depends on their reply. Use the first case that fits. If you can't tell whether an answer is confident or hedged, treat it as hedged.
+- **No answer,** or they want to see the options first: have the researcher research it.
+- **A reply that doesn't directly and fully answer the question, or that adds something other than a reason for its answer:** ask them about it, then go on from what they say next. Later sessions treat what's recorded as their decision. Examples are a remark about how something else should have worked, and an answer to only part of the question.
 - **Confident,** such as "I want X" or "Let's do X": record it without research or confirmation.
 - **Hedged,** such as "I think it should probably be X" or "maybe X": have the researcher check it.
-- **No answer,** or they want to see the options first: have the researcher research it.
 
 ## Check or Research
 Send the `decision-researcher` subagent the note path, the question as written with its constraints, any Partly answered lines under it, and the answers the user has given earlier in this session. What else you send, and what you do with its report, depends on why you're sending it:
@@ -37,6 +38,8 @@ Where you write it depends on what the decision settles:
 If the choice is the user's call, the why says "<their name>'s call", followed by their reason if they gave one. For an answer that was checked, the why says so. If the choice isn't the user's call, and the answer wasn't checked or researched, leave the why out rather than make one up. For example:
 - "**Decided 2026-09-29:** web first, phones later. Sarah's call: phones can wait until the planner works."
 - "**Decided 2026-09-29:** web first, phones later. Checked against the code and notes."
+
+If stating the answer on the Decided line would take something the user didn't say or pick, that part isn't answered yet, so ask them about it. Later sessions build on the whole line.
 
 Add one **Rejected** line per option the user considered and turned down, such as an option the brief laid out or one they named, so later agents don't propose it again. Don't add one for an option they never saw.
 

@@ -149,6 +149,7 @@ Each finding moved into the review note it belongs to on 2026-10-06.
 | Cleanup Plan-Steps Review | Cleanup's `/plan-steps` step: `hidden-story-checker` keeps a cleanup's one job as one story, `/plan-steps` and `/check-drift` name a cleanup's Current State and **Decided** lines as its approach, and a place Current State doesn't list joins it without asking |
 | Small Fixes Keep Growing | once a story is past `/shape`, a session adds no piece or question for a rare case with small harm, and names it in its summary |
 | Cleanup Implement Review | Cleanup's `/implement` step: `building-code`'s step 2 keeps a part that only moves, removes or tidies code on its existing tests, and its Edit and Write rule covers an agent's own edits, so deleting or moving a file can go through Bash |
+| Passing Remarks Recorded as Decisions | `settling-a-decision` writes a reply straight away only if it directly and fully answers the question, and asks about anything a Decided line would need that Sarah didn't say; `/shape` lists an assumption only if something depends on it and puts the overview's scope in the note; AGENTS.md says a yes or "looks fine" to an agent's text is only approved, an agent's account stays apart from her quotes, and a story's scope is her call |
 | [[Cleanup Final-Review Review]] | Cleanup's `/final-review` step |
 | [[Cleanup Close Review]] | Cleanup's `/close` step |
 | [[Sweep Kickoff Review]] | Sweep's `/kickoff` step; full review of `/kickoff`, `notes/templates/Sweep.md` |
@@ -177,7 +178,6 @@ Each finding moved into the review note it belongs to on 2026-10-06.
 | [[Memory Folder Review]] | Claude's memory folder as a whole |
 | [[Note Conventions and Roadmap Header Review]] | Note Conventions and the Roadmap's header, each as a whole |
 | [[Conventions Review]] | the Conventions list below, once every case is in |
-| [[Passing Remarks Recorded as Decisions]] | a session records only what Sarah actually decided, not a passing remark or her not objecting |
 # Open Decisions
 1. When should a skill be split into separate skills that share rules? ^decision-1
    - **Decided 2026-10-06:** A skill is split by mode when a run takes one of several paths chosen at its start, such as by the note's type, and the modes truly share little. Each mode becomes its own command, and steps both modes truly need are written into each. How much they truly share is judged skill by skill: for each step that looks shared, the scan asks whether every mode needs it as written, or whether one mode was fitted into steps written for another. A procedure more than one skill follows becomes a shared-rule skill, as `rule-placement` describes, and a branch that sits in one place in a run goes to a supporting file. A SKILL.md over about 5,000 tokens, or a variant woven through many of a skill's steps, is a smell: it gets a closer look, not a split on its own. Sarah's call: new commands cost her little, since the Roadmap says what to run on each story. Checked against the code and notes.

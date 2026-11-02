@@ -52,7 +52,7 @@ Look just enough to tell the directions apart:
 The idea is often a line or two, and a wrong guess about its scope would carry into every question and direction that follows. So before you raise any decision or question, tell the user how you understand the idea, in a few lines:
 - **Scope:** what you think is in and what's out.
 - **The work:** what you tentatively think it will look like, such as the likely type and the areas it touches. It's a first guess, not a direction or a design. Step 5 offers the directions.
-- **Assumptions:** each thing you filled in that the idea doesn't say, stated outright.
+- **Assumptions,** only if the scope or the work depends on one: each assumption, and what depends on it. Don't go looking for them, because a listed assumption starts to read as settled.
 
 Ask whether it matches what they have in mind, and wait for the answer. Work their corrections into your understanding. If one changes where you'd look, look again briefly. Everything after this builds on the corrected picture.
 
@@ -121,6 +121,7 @@ A story's note:
 - **Where It Stands:** the `^status` line and the summary, as AGENTS.md describes under "Editing notes". At this stage, the summary is the chosen direction in a sentence or two.
 - **Open Decisions:** each blocking decision from step 3 on its own line, written as a question, not a proposal, with the lines step 3 recorded under it. Delete the section if step 3 found no blocking decisions.
 - **The user's content:** move everything from the idea into the template's sections. Keep their wording. If something fits no section, put it in the Inbox rather than dropping it.
+- **Scope:** the scope from the overview, with the user's corrections, goes in the template's sections that say what the story covers.
 - **Sections a later step writes,** such as Suggested Approach, Root Cause, Rules or Design: if the user said something for a later step while shaping, it goes at the top of the section that step writes, as AGENTS.md describes under "Editing notes".
 - **Frontmatter:** set `type`, leave `status: idea`, set `confirmed` to today, and fill `blocked-by` as Note Conventions describes.
 
