@@ -140,6 +140,8 @@ Each finding moved into the review note it belongs to on 2026-10-06.
 | Cleanup Decide Review | Cleanup's `/decide` step |
 | Cleanup Investigate Review | Cleanup's `/audit` step; full review of `/audit`, which takes cleanup notes out of `/investigate` (decision 7): Current State is written without approval, and its decisions go through `settling-a-decision` |
 | [[Cleanup Check-Drift Review]] | Cleanup's `/check-drift` step |
+| [[Scope-Router Misses Ongoing Work]] | `scope-router` considers ongoing, prioritized work that directly addresses an item, not only notes that already cover it |
+| [[Architect Rules Only What Must Be True]] | `/architect` drafts only what actually has to be true, instead of how a module works or how code reaches a value |
 | [[Cleanup Plan-Steps Review]] | Cleanup's `/plan-steps` step |
 | [[Cleanup Implement Review]] | Cleanup's `/implement` step |
 | [[Cleanup Final-Review Review]] | Cleanup's `/final-review` step |
@@ -170,6 +172,7 @@ Each finding moved into the review note it belongs to on 2026-10-06.
 | [[Memory Folder Review]] | Claude's memory folder as a whole |
 | [[Note Conventions and Roadmap Header Review]] | Note Conventions and the Roadmap's header, each as a whole |
 | [[Conventions Review]] | the Conventions list below, once every case is in |
+| [[Passing Remarks Recorded as Decisions]] | a session records only what Sarah actually decided, not a passing remark or her not objecting |
 
 # Open Decisions
 1. When should a skill be split into separate skills that share rules? ^decision-1
