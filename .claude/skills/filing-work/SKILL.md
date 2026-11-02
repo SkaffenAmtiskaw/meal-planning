@@ -5,18 +5,21 @@ user-invocable: false
 ---
 
 # Filing Work
-Each piece of work gets one home in the vault, so it's found when that home is worked and isn't done twice. Two cases rule out some homes:
+Each piece of work gets one home in the vault, so it's found when that home is worked and isn't done twice. Two cases decide which homes are open:
 - **If a story waits on the work,** its home is a note of its own, existing or new, as Note Conventions describes under `blocked-by`.
-- **If the collecting note it fits has been kicked off,** that note takes no new items, because a kicked-off note works a fixed set. Work for a dated copy (`<name> YYYY-MM-DD`) goes to the note it was copied from. A note kicked off in place, which is a sweep at `spec` or later or a roundup with a `decision needed` entry, has no such note, so the work gets a new Roadmap line or idea note.
+- **If the collecting note the work fits has been kicked off, or has an open dated copy,** which of the two is open depends on what the work is about:
+  - **If it's about something not working as the user expected:** the kicked-off note is open, ranking ahead of the note it was copied from. The user counts this work as part of what was kicked off, even when no item says so.
+  - **Otherwise:** the kicked-off note isn't open, so the items it was kicked off with stay a set it can finish. The note it was copied from is open instead. A kicked-off note with no date in its name (`<name> YYYY-MM-DD`), such as a sweep at `spec` or later or a roundup with a `decision needed` entry, was kicked off in place, so it has no such note.
 
-Otherwise, take the first home that fits:
+Unless a story waits on the work, take the first open home that fits:
 1. **A note or Roadmap line that already covers it.** Nothing needs adding.
-2. **The note of a story or hub it belongs to:**
+2. **The note of a story or hub it belongs to.** Work belongs to a story or hub whose purpose directly addresses the problem the work is about. That holds even if the last story to deal with the problem is closed. Filed anywhere else, it waits while the effort meant to fix that problem goes on without it. Look first at prioritized work: the Roadmap's Now, Next and Planning lines, and the hubs their stories are children of. How it's filed depends on the work and the note:
    - **If it's design material,** such as part of a design handoff: add it to the Inbox of the story it most likely belongs to, and put "/place-design" first in that story's `^status` line, keeping its old next step after it, such as "Next: /place-design, then /implement Step 4". Leave its `status` as it is. `/place-design` decides where the design really goes and moves each story it reaches to its next step, so a likely home is enough here.
+   - **If it belongs to a hub whose `^status` line says `Next: its child stories`:** make it a new workflow note as item 4 describes if the work changes how the app is built, and otherwise a new idea note as item 6 describes. No session works that hub's Inbox, so an item there would wait unseen. The new note joins the hub as `.claude/skills/filing-work/content-from-another-note.md` describes. Its Roadmap line goes with its siblings' lines in Next, Planning or Later, with their 🎯 links, so it's worked as part of that effort.
    - **Otherwise:** add it to the note's Inbox.
 
    If the work isn't design material, the note is `ready`, and none of its remaining steps covers the work, its approved plan no longer covers what it has to build, so it goes back to `spec`. Set its `^status` line to its next skill, and say in its Inbox that it went back for this work.
-3. **A sweep or roundup whose What Belongs Here rule fits it.** Add it in the format the note's template gives.
+3. **A sweep or roundup whose What Belongs Here rule fits it.** Add it in the format the note's template gives. If the note is `ready`, check its steps as item 2 describes.
 4. **A workflow note,** if the work changes how the app is built, as Note Conventions' Workflow type describes. It goes in a collecting workflow note whose What Belongs Here rule fits it, written as that rule describes. If none fits, it's a new workflow note from `notes/templates/Workflow.md`, with a Roadmap line that links to it. Either way:
    - **If it asks for a workflow behavior for one case,** as opposed to a pattern's Rules, which cover only the cases the code has: write it as the general capability that would let this case, and the next one like it, be set up without changing the skill again, with this case as its first use. A skill full of one-off cases is harder to maintain than one mechanism that each note configures.
    - **If it's the user's feedback** on a skill, subagent or the workflow: quote their words.
