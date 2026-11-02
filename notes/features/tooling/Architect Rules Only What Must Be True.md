@@ -5,6 +5,9 @@ confirmed: 2026-11-01
 # Where It Stands
 Next: /tooling ^status
 
+# Inbox
+- From `/plan-steps` on [[One Source of Today]] on 2026-11-01: the design Sarah expected was a small utility that takes a time zone from a cookie. Sessions kept adding to it: two Rules, a lint rule, a hook with separate server and browser values for an out-of-date cookie, and temporary lines to check it with. The story got hard enough to follow that she dropped the cookie, then brought it back once she saw its real size: three small pieces and the swaps. Sarah: "the amount of planning around what should be a really straightforward change makes me think I've made the wrong decision architecting it", and "the solution keeps getting more and more complicated and I _don't_ understand why."
+
 # Notes
 Part of [[Agent Instructions Audit]].
 

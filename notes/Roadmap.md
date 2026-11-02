@@ -164,6 +164,7 @@
 - [[Server-Only Code Behind Barrels]] ![[Server-Only Code Behind Barrels#^status]]
 - [[Settings Data Refresh]] ![[Settings Data Refresh#^status]]
 - [[Data Rules Enforcement]] ![[Data Rules Enforcement#^status]]
+- [[Move Hook Support Components]] ![[Move Hook Support Components#^status]]
 
 ## [[Bugs]]
 - [[Zero Planners Crash|root page crashes for users with zero planners (e.g. invited user leaves or is removed from their only planner)]] ![[Zero Planners Crash#^status]]
