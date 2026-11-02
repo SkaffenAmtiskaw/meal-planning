@@ -18,12 +18,14 @@ Read every file the plan names, then check the plan against the code, the design
 
 Ask the user about each open choice before you build that part. Give each reasonable approach with what it changes: what the user would see in the app, which code it touches, and what later work it makes easier or harder.
 
-## 2. Write It Test First
-Build the change one piece of logic at a time: write the test, run it and see it fail for the right reason, then write the code that makes it pass. "Test Logic, Not Rendering" in `docs/unit_tests.md` says which tests a change gets and what each one covers.
+## 2. Write the Code
+How you build each part of the change depends on what it does:
+- **If it adds or changes behavior:** one piece of logic at a time, write the test, run it and see it fail for the right reason, then write the code that makes it pass. "Test Logic, Not Rendering" in `docs/unit_tests.md` says which tests a change gets and what each one covers.
+- **If it only moves, removes or tidies code:** it has no new logic for a test to fail on, and its existing tests show the behavior didn't change. So change only what it forces in them, such as an import path. Delete a test only when you delete the code it covers.
 
-As you build, you'll make decisions the plan doesn't, such as a button's wording, what happens when a save fails or a new component's props. If one is an open choice, stop and ask the user, as step 1 describes, before writing the code it affects, rather than putting in a placeholder to fix later. Otherwise, make it, and say in your report what settles it, so the user can catch one that was theirs to make.
+As you build, you'll make decisions the plan doesn't, such as a button's wording, what happens when a save fails or a new component's props. If one is an open choice, stop and ask the user, as step 1 describes, before writing the code it affects, rather than putting in a placeholder to fix later. Otherwise, make it, and name it in your report, so the user can catch one that was theirs to make.
 
-Change files only with Edit and Write, never through Bash, because the hook that guards the project config and ignore comments sees only Edit and Write.
+Make your own edits to a file with Edit and Write, never with a shell command such as `sed`, because the hook that guards the project config and ignore comments sees only Edit and Write.
 
 ## 3. Clean Up and Run the Checks
 Once the code is written, make two cleanup edits:
@@ -40,9 +42,11 @@ How you do the checks depends on the change:
 - **Otherwise:**
   1. If a check needs the running app, start it and sign in as the `running-the-app` skill describes.
   2. If a check needs data that doesn't exist yet, like a day with two meals, create it through the app's own screens, so the check runs on data the app itself could produce. When you report that check, say what data you created for it.
-  3. For each check you can run, do it as it's written, including the signed-in user, the screen size and the data it names. Record what you saw in concrete terms: "the modal closed and the meal appeared on Tuesday", not "works". For a check you can't run, such as one only the user can do, or one that needs a commit or a push you can't get to:
-     - **If another run of yours already shows everything it would prove:** report which run covers it. For example, a check might break a CI job's secret on GitHub to see the job fail. Running the job's script against a local server that returns 401 shows the same failure, so it covers the check.
-     - **Otherwise:** report it as not run, with the reason.
+  3. Go through each check, in one of these two ways:
+     - **If you can run it:** do it as it's written, including the signed-in user, the screen size and the data it names. Record what you saw in concrete terms: "the modal closed and the meal appeared on Tuesday", not "works".
+     - **If you can't,** such as one only the user can do, or one that needs a commit or a push you can't make yet:
+       - **If another run of yours already shows everything it would prove:** report which run covers it. For example, a check might break a CI job's secret on GitHub to see the job fail. Running the job's script against a local server that returns 401 shows the same failure, so it covers the check.
+       - **Otherwise:** report it as not run, with the reason.
   4. If a check fails, fix the code until it passes, because the check is part of the change's spec. Then rerun the tests and the acceptance checks the fix could affect.
   5. If the plan cites Design Handoff sections or images, compare what you built with them, as `design-comparison.md` in this skill's folder describes. After a fix from the comparison, rerun the tests and the acceptance checks it could affect.
 

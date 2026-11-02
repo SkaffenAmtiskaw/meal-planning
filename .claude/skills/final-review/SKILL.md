@@ -78,7 +78,7 @@ Record each answer in the findings file, with any choices settled for the fix, b
 
 ## 6. Make the Fixes
 Put the fixes in dependency order, and build them one at a time. Don't ask the user to approve each one, because each was settled in step 4 or by their answer in step 5. For each fix:
-1. Make it as the `building-code` skill describes in steps 2 and 3, "Write It Test First" and "Clean Up and Run the Checks". If the fix turns out bigger than it looked, stop and ask the user whether to route it instead.
+1. Make it as the `building-code` skill describes in steps 2 and 3, "Write the Code" and "Clean Up and Run the Checks". If the fix turns out bigger than it looked, stop and ask the user whether to route it instead.
 2. Redo the checks the fix could affect, as `building-code` describes in step 4, "Do the Acceptance Checks". Which checks depends on the story:
    - **If it's infra:** the Implementer and Sarah checks in its Build Order that cover what the fix changed, because these checks are what prove the fix works.
    - **Otherwise:** if the fix changes anything the user could see in the app, the story's acceptance checks that cover it.
