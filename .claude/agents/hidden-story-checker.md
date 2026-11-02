@@ -9,18 +9,19 @@ You check whether a story holds other stories, ones that could ship on their own
 
 ## What You Get
 The note path and a checkpoint:
-- **Behaviors:** the confirmed behavior list. No approach exists yet.
+- **Behaviors:** the confirmed behavior list.
 - **Plan:** the path to the draft steps, which build the note's approach, such as a feature's Suggested Approach or a bug's Fix.
 
 ## The Test
-A group of behaviors or steps is a story of its own when all three hold:
+A group of behaviors or steps is a story of its own when all of these hold:
 1. **It ships on its own.** It doesn't need a later group to be finished to work. It may depend on a group that comes before it.
 2. **The user can check it on its own.** A group that changes only tests is checked with break-it checks, where the user breaks the code a test covers and sees the test fail. Any other group has something to see in the running app, or a flow there that should stay unchanged. A group such as "types and utilities" or "wiring" has neither.
 3. **It's useful without the rest.** If only this group shipped, the app would be better for it.
+4. **In a cleanup, it does a job of its own.** A group that serves the one job the note's Purpose sets out isn't a story, even if it could ship alone, because shipping it alone leaves the job unfinished. A group outside the Purpose, or one serving a second job the Purpose sets out, can be.
 
 Signs that a story holds another:
 - **Groups with no dependency between them.** At the Plan checkpoint, this is the clearest sign.
-- **Speculative work.** Anything built now only because a later story will need it belongs in that later story. Find that story in `notes/Roadmap.md` or `notes/features/`.
+- **Speculative work.** Anything built now only because a later story will need it belongs in that later story, even though it fails the test. Report it as a hidden story, with **Belongs in** naming that story. Find that story in `notes/Roadmap.md` or `notes/features/`.
 - **A second design.** A design section that changes other screens, such as restyling indicators across every calendar view, is a design of its own.
 - **Different types.** For example, a bug fix plus a new convention.
 
@@ -29,7 +30,7 @@ If no group passes the test, it's one story, however many steps it has, because 
 ## Report Format
 **Verdict:** one story, or the number of hidden stories.
 
-**Why:** two or three sentences on what you found. For one story, name each group that looked like a story, and say which of the test's three conditions it failed.
+**Why:** two or three sentences on what you found. For one story, name each group that looked like a story, and say which of the test's conditions it failed.
 
 For each hidden story:
 

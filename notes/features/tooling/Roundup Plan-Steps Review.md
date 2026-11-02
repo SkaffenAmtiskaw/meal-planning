@@ -21,6 +21,8 @@ Part of [[Agent Instructions Audit]].
 ![[Agent Instructions Audit#^decision-17]]
 
 ## Issues Found
-None known yet. This review re-checks the files above for this step.
+- `/plan-steps` sends a roundup to `hidden-story-checker`, and a roundup is built from separate issues that could each ship alone, so the checker may report most of them as hidden stories. The test's condition 4 keeps a cleanup's one job together, but a roundup's issues aren't one job. Not tested on a roundup yet. Found by `writing-reviewer` in Cleanup Plan-Steps Review, 2026-11-01.
+
+This review also re-checks the files above for this step.
 
 # Questions

@@ -44,5 +44,6 @@ From the audit's scan on 2026-10-06. Line numbers are as of that day.
 - Wording difference at `tooling:62-64`: small, clear edits are written without showing them first. Where the rule is kept: AGENTS.md "Approval covers the edits" says new wording is shown first. Exception or drift?
 - Wording difference at `tooling:15`: another approach is suggested "once", with its reason. Where the rule is kept: AGENTS.md "Open choices are hers" and "Recommendations". Exception or drift?
 - Wording difference at `Workflow.md:9`: no Inbox and no summary under the status line. Where the rule is kept: AGENTS.md says every story and hub has both. Exception or drift?
+- `/tooling` says how to test a hook or script, but not an edited agent. In Cleanup Plan-Steps Review, 2026-11-01, re-running `hidden-story-checker` after editing it behaved as if the edit weren't there, while a fresh agent told to read the file from disk followed the new text. A session seems to load agent definitions when it starts. Seen once, and not checked against the Claude Code docs.
 
 # Questions

@@ -21,6 +21,8 @@ Part of [[Agent Instructions Audit]].
 ![[Agent Instructions Audit#^decision-17]]
 
 ## Issues Found
-None known yet. This review re-checks the files above for this step.
+- `/final-review`'s plan check says "The approach is the section that says what to build, such as a feature's Suggested Approach or a bug's Fix." A cleanup has no single section like that, so the agent has to work out what to compare the code with. `/plan-steps` and `/check-drift` name a cleanup's Current State and **Decided** lines. Found by `writing-reviewer` in Cleanup Plan-Steps Review, 2026-11-01.
+
+This review also re-checks the files above for this step.
 
 # Questions

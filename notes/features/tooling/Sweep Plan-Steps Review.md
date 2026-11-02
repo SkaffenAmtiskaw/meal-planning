@@ -21,6 +21,8 @@ Part of [[Agent Instructions Audit]].
 ![[Agent Instructions Audit#^decision-17]]
 
 ## Issues Found
-None known yet. This review re-checks the files above for this step.
+- `/plan-steps` sends a sweep to `hidden-story-checker`, and a sweep is built from separate items that could each ship alone, so the checker may report most of them as hidden stories. The test's condition 4 keeps a cleanup's one job together, but a sweep's items aren't one job. Not tested on a sweep yet. Found by `writing-reviewer` in Cleanup Plan-Steps Review, 2026-11-01.
+
+This review also re-checks the files above for this step.
 
 # Questions

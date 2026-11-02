@@ -8,6 +8,13 @@ confirmed: 2026-09-26
 
 Next: /plan-steps. Building waits on [[Shared Types Directory]]. ^status
 
+# Inbox
+- Found 2026-11-01 by running `hidden-story-checker` and `plan-checker` on a test draft of this story, and confirmed by reading the code and searching `src`, `seed` and `test`:
+  - `seed/seed.ts:1` imports `temporal-polyfill/global`, and lines 182 and 193 use `Temporal`, so Current State's claim that only dead code uses it is wrong. Uninstalling it would break `pnpm seed`.
+  - `biome.jsonc:100, 104, 374, 378` name `@schedule-x/*` and `temporal-polyfill/global`, and Current State doesn't list them.
+  - `preact` and `@preact/signals` (`package.json:33, 45`) aren't used in `src`, `seed` or `test`. `plan-checker` reports them as peer dependencies of `@schedule-x/calendar`, which wasn't confirmed.
+  - The Acceptance Criteria expect Week view on mobile, but the phone only offers Month and List (`CalendarHeader.tsx:38`).
+
 # Purpose
 The custom calendar has replaced schedule-x in every view (see [[Replace Schedule-X]]), but schedule-x code, types and packages are still in the repo. This story removes them completely.
 

@@ -1,6 +1,6 @@
 ---
 name: plan-steps
-description: Breaks a story's approved approach into implementation steps. Use when a note's next step is /plan-steps.
+description: Breaks a story's approach into implementation steps. Use when a note's next step is /plan-steps.
 argument-hint: "[note name]"
 disable-model-invocation: true
 hooks:
@@ -14,17 +14,18 @@ hooks:
 Plan the implementation steps for the note **$ARGUMENTS**. When this skill ends, give the user the command for the next skill, to run in a new session, since this session's reading and draft would bloat or anchor it.
 
 ## 1. Read the note
-Find the note in `notes/features/` and read all of it. If its status isn't `spec`, or its `^status` line doesn't say `/plan-steps` can run now, tell the user what you found and stop. The approach is the section that says what to build, such as a feature's Suggested Approach, a bug's Fix or a sweep's remaining Items.
+Read all of the note. If its status isn't `spec`, or its `^status` line doesn't say `/plan-steps` can run now, tell the user what you found and stop.
 
 Then run `sh scripts/commits-since.sh <confirmed>` with the note's `confirmed` date, and ignore what this story's own steps built, committed or not. If anything else it lists could touch what the note builds, or you can't tell, tell the user which changes and why, send the note to `/check-drift`, and stop. Otherwise, say so in one line.
 
 ## 2. Draft the steps
-Draft the steps as the `writing-implementation-steps` skill describes. If the note has a `# From the Split` section, start from its draft steps. If it already has an Implementation section, this is a re-plan: plan only the remaining work, and leave steps marked ✅ Complete as they are.
+The approach is the part of the note that says what to build, such as a feature's Suggested Approach, a bug's Fix, a cleanup's Current State and **Decided** lines or a sweep's remaining Items. Draft the steps as the `writing-implementation-steps` skill describes. If the note has a `# From the Split` section, start from its draft steps. If it already has an Implementation section, this is a re-plan: plan only the remaining work, and leave steps marked ✅ Complete as they are.
 
 If a step needs a piece the approach doesn't have:
 - **If the piece is a place that clearly breaks a pattern's Rules, and its Migration Checklist doesn't list it:** add it to the checklist, in the group it belongs in, with the files that change with it. Don't ask, because the Rules already say it has to change.
-- **If the piece only takes over work the approach already holds,** such as one that keeps an existing module to its job, add it to the note's approach once the user agrees.
-- **Otherwise,** it's new design for the skill that settled the approach, such as `/assess` for a feature: once the user agrees, send the note to that skill, route the out-of-scope list, and stop.
+- **If the piece is a place in a cleanup's scope that its Current State doesn't list, and tidying it needs no new decision:** add it to Current State, with the search that would find it, because the next re-check repeats it. Don't ask, because Current State only records what's there.
+- **If the piece adds no new work and only moves work the approach already holds into a piece of its own,** such as to keep an existing module to its one job, add it to the note's approach once the user agrees.
+- **Otherwise,** it's new design for the skill that settled the approach, such as `/assess` for a feature: once the user agrees, send the note to that skill, triage and route the out-of-scope list, and stop.
 
 Then triage the out-of-scope list. An item the user pulls in becomes its own step, and a piece it needs is handled as above. If it needs a decision the user leaves for `/decide`, send the note to `/decide`, route the out-of-scope list, and stop.
 
@@ -33,17 +34,17 @@ Write the draft to a file for the checkers.
 ## 3. Have the plan checked
 If the draft holds the same steps the note's `# From the Split` section handed over, skip `hidden-story-checker` and go on to `plan-checker` below. Those steps were checked for hidden stories when the story was split. Otherwise, send `hidden-story-checker` the note path and the draft path as the **Plan** checkpoint. If it finds one story, say so in one line. Otherwise:
 1. Put each hidden story whose Shared design is "none" on the out-of-scope list with its steps, and triage it right away. The outline the user reviews next depends on whether those steps stay. If the user doesn't pull it in, take its steps out of the draft.
-2. If any hidden story shares design, they need a hub to keep the shared design whole. Send `split-checker` the note path, the draft path as the **Plan** checkpoint, the path of `hidden-story-checker`'s report and the hidden stories that share design. Then go through the split with the user as the `splitting-a-story` skill describes. If they split the story, copy each child's share of the draft steps, in full, into its `# From the Split` section, route the out-of-scope list, and stop, giving `/plan-steps <child name>` for each child.
+2. If any hidden story shares design, those stories need a hub to keep the shared design whole. Send `split-checker` the note path, the draft path as the **Plan** checkpoint, the path of `hidden-story-checker`'s report and the hidden stories that share design. Then go through the split with the user as the `splitting-a-story` skill describes. If the user splits the story, copy each child's share of the draft steps, in full, into its `# From the Split` section, route the out-of-scope list, and stop, giving `/plan-steps <child name>` for each child.
 
 Then send `plan-checker` the note path, the draft path, where the approach and source material are, and what to leave out: anything a ⚠️ Check Drift callout drops, anything the ✅ Complete steps already cover, and the hidden stories the user didn't pull in. If you agree with any findings, fix them and run it once more.
 
 ## 4. Review with the user
-1. **The outline.** Show each step's title, idea sentence and a one-line summary of its checks: a regression check ("everything looks the same as before") or the new behavior it tests. In a re-plan, show what changed from the old steps. Name any place you added to the Migration Checklist in step 2.
+1. **The outline.** Show each step's title, idea sentence and a one-line summary of its checks: a regression check ("everything looks the same as before") or the new behavior it tests. In a re-plan, show what changed from the old steps. Name any place you added to the Migration Checklist or Current State in step 2.
 
    The steps' order and size are settled when all of these hold:
    - `hidden-story-checker` was skipped, found one story, or found only hidden stories the user has triaged.
    - No finding you disagree with is about order or size.
-   - No step's place was your own pick between two orders that would both work.
+   - No step's position was your own pick between two orders that would both work.
 
    If they're settled, say why in one line and go on. Otherwise, ask whether they're right.
 2. **Findings you disagree with.** Raise each one with why you disagree.
