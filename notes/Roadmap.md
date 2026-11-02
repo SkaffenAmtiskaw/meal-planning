@@ -41,7 +41,7 @@
 # Now
 
 # Next
-1. [[Architect Rules Only What Must Be True]] ![[Architect Rules Only What Must Be True#^status]] 🎯 [[Dev Foundations]]
+1. [[Small Fixes Keep Growing]] ![[Small Fixes Keep Growing#^status]] 🎯 [[Dev Foundations]]
 2. [[Cleanup Plan-Steps Review]] ![[Cleanup Plan-Steps Review#^status]] 🎯 [[Dev Foundations]]
 3. [[Cleanup Implement Review]] ![[Cleanup Implement Review#^status]] 🎯 [[Dev Foundations]]
 4. [[Cleanup Final-Review Review]] ![[Cleanup Final-Review Review#^status]] 🎯 [[Dev Foundations]]

@@ -26,4 +26,9 @@ Unless a story waits on the work, take the first open home that fits:
 5. **A new Roadmap line,** if a line or two describes the work.
 6. **A new idea note** in `notes/features/<area>/`, from `notes/templates/Idea.md`, with the work under Notes and a Roadmap line that links to it.
 
+Write the work as the problem. For a workflow note, the problem can be that an agent isn't doing what the user wants. The cases where the work comes with a fix, and what to do in each:
+- **If the user's own words name it:** keep them, because whether to drop a fix they named is their call.
+- **Otherwise, if the user has already settled it, or it goes in a sweep item,** whose template asks for exactly what changes: keep it.
+- **Otherwise:** leave it out of the text and out of a new note's name. Later sessions read what's written in the home as the direction, so they build a fix named there without weighing it. For example, write "the server's time zone can mark the wrong day", not "consider one source of today".
+
 If the work relies on content from another note, such as part of its design, bring the content along as `.claude/skills/filing-work/content-from-another-note.md` describes.

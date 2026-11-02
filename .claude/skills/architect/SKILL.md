@@ -27,6 +27,9 @@ Check that it's ready for this skill:
   - **If the note says it's due a revision,** such as its `^status` line naming `/architect` or an Inbox item asking for one, it's a revision.
   - **Otherwise,** ask the user whether this is a revision. If it isn't, stop.
 - **`ready` or later:** stop. Changes to a planned story go through `/check-drift`.
+- **Needs a convention.** A convention suits a problem that comes from how code keeps getting written. Rules, Enforcement and an audit are far more than a one-time fix needs. Check where the note's problem comes from:
+  - **If code written separately has already gone wrong the same way more than once, or every new file of some kind, such as a new mutation, faces the same choice:** the note needs a convention.
+  - **Otherwise,** changing today's code ends the problem, even if later code could bring it back, so the note's type doesn't fit its work. For example, clock calls that only go wrong once another story moves rendering to the server: switching them ends the problem.
 - **No open decisions.** The note isn't ready if it has a `decision needed` entry in `blocked-by`, or an item under `# Open Decisions` with no **Decided** line. An item with only a **Partly answered** line still counts as open. List the open decisions, one line each, tell the user the next step is `/decide <note name>`, and stop.
 
 Then read the Rules of every other `type: pattern` note in `notes/features/`, so you can spot overlaps and conflicts.
@@ -51,6 +54,8 @@ Each rule has:
 - **A check.** Someone reading one file, or one import line, can say whether it follows the rule. Where the rule turns on a judgment ("domain-specific", "shared"), the rule gives the test for that judgment.
 - **Examples from this codebase.** One place that follows it and one that breaks it, each with `file:line`, when both exist.
 - **Where it lands.** The doc and section in `docs/` it goes into once built. The note holds it only until then.
+
+Cut each draft down to what has to be true for the convention to hold. Ask of each requirement in it what would go wrong in later code if it were broken. If nothing would, it isn't a rule. For example, if the current date has to have one source, that holds however a component gets the date, so the rule doesn't need to list the ways. If how code reaches a value is what has to be true, the rule names it. A requirement that fails this usually describes how code written once works, and later code can't drift from that. Keep it for the Migration Checklist's Infrastructure items.
 
 Check each draft against the project docs and the other patterns' Rules.
 
@@ -88,6 +93,7 @@ Every place the auditor found goes in, with its `file:line`. For each item only 
 - **Already fixed, or never broke the rule:** a question for the user.
 
 Then add the items that don't come from violations:
+- **Infrastructure:** each piece the Rules need built, with the requirements cut from draft rules.
 - **Enforcement:** each type, lint rule or test to add.
 - **Docs:** each rule, in the doc and section it lands in.
 
