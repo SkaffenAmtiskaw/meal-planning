@@ -7,7 +7,7 @@ confirmed: 2026-09-27
 ---
 # Where It Stands
 
-Blocked until [[Calendar and Recipes Data Refresh]] lands; then /shape. ^status
+Next: /shape. Building waits on [[Calendar and Recipes Data Refresh]] ^status
 
 # Notes
 Read-only users see edit controls on the recipe detail page. Found by reading code while planning [[Calendar and Recipes Data Refresh]] on 2026-09-27; not reproduced in the running app.
