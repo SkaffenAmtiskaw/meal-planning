@@ -12,7 +12,6 @@ Next: /investigate ^status
 Found by reading code and never reproduced. Once it's reproduced, a fix still needs choosing from Fix Options.
 
 # Inbox
-
 - Verify in the running app that a user can really end up with zero planners and crash at `/`. Sarah recalled a check that adds a planner when a user has none (2026-10-02, during `/roadmap Bugs`). The only one found so far is in `src/app/page.tsx`: it creates a planner only when no `User` document exists yet, so an existing user with an empty `planners` list still reaches `user.planners[0]`.
 
 # Symptoms

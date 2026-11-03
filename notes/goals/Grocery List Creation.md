@@ -17,6 +17,6 @@ Let users turn the meals they've planned for a range of dates into a grocery lis
 
 # Out of Scope
 - Grouping ingredients when adding or editing a recipe (Ideas): it's more about the recipe view. This goal's changes might affect it, but it doesn't belong in the release (2026-10-31).
-- The [[Bugs]] line on Planner's mongoose schemas not matching their zod types (recipe `time`, the `saved` union and the dish `source` union): Sarah expects cleanup to fix it before this goal is built. If a story here is ever blocked by it, it can be pulled in then (2026-10-31).
+- The Bugs line on Planner's mongoose schemas not matching their zod types (recipe `time`, the `saved` union and the dish `source` union): Sarah expects cleanup to fix it before this goal is built. If a story here is ever blocked by it, it can be pulled in then (2026-10-31).
 
 # Roadmap Instructions

@@ -14,9 +14,8 @@ Collects dev tooling, infrastructure and agent workflow work: what Sarah uses to
 
 Looks close but doesn't belong:
 - Upgrades of the app's own libraries, and tech debt in app or test code. They belong to [[App Health]].
-- Bugs in the shipped app. They belong to [[Bugs]].
+- Bugs in the shipped app. They go under the Roadmap's Bugs heading.
 
 # Out of Scope
 
 # Roadmap Instructions
-- Whenever a goal is drawn from Dev Tooling, kick off [[Dev Tooling Tidy-Ups]], [[Agent Workflow Changes]] and [[Docs Updates]] and draw them into that goal. Everything in those collecting notes is related to Dev Tooling by definition (Sarah, 2026-10-04).

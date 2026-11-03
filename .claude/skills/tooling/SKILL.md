@@ -80,7 +80,7 @@ Once she approves, bring the notes in line with the change. Search all of `notes
 Handle each one:
 - **Sarah's comments:** if one is now done or out of date, handle it as AGENTS.md describes under "Editing notes". The bullets below are for everything else.
 - **Done in full:** remove it, with no line recording that it was removed. How depends on what it is:
-  - **An item in a collecting note:** remove only the item. The note stays. If the item ended with 🎯 goal links, update the note's Roadmap line as the Roadmap's "How this file works" describes under "Collecting notes". If that leaves the note this session worked from with no items, what happens depends on the note. If it's a kicked-off copy (`<name> YYYY-MM-DD`), handle it as a whole note (next bullet). Otherwise, ask Sarah whether it should keep collecting or be deleted, and if it's deleted, handle it as a whole note.
+  - **An item in a collecting note:** remove only the item. The note stays. If that leaves the note this session worked from with no items, what happens depends on the note. If it's a kicked-off copy (`<name> YYYY-MM-DD`), handle it as a whole note (next bullet). Otherwise, ask Sarah whether it should keep collecting or be deleted, and if it's deleted, handle it as a whole note.
   - **A whole note:** delete it as the `deleting-a-note` skill describes.
   - **Anything else,** such as an item in a story note: remove it.
 - **Partly done:** remove the done parts and keep the rest.

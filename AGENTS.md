@@ -82,18 +82,21 @@ Any change to a note in `notes/` follows these rules:
   - **If its type doesn't fit its work,** tell Sarah which type fits and why, and ask how she wants to handle it, since retypes are rare and each one is different.
   - **If it fits, but the skill you're running doesn't take it,** tell her which skill the note needs, and stop, since a skill's steps are written for the types it takes.
 - **Roadmap order is Sarah's call.** Never reorder `notes/Roadmap.md`. A new line's spot follows from its work:
+  - **It's a bug the Roadmap's "How this file works" puts under Bugs:** it goes under that heading in Later.
   - **It serves a goal:** it's committed, so it goes under that goal's heading in Later.
   - **It serves no goal:** it's uncommitted, so it goes in Ideas.
 
   If something about the work makes that spot look wrong, ask her where it goes, such as when she's said in the session that it needs prioritizing, or when a line in Next or Planning waits on it, as "A blocker outside the queue" describes. Otherwise, don't ask. Next and Planning are ordered queues, so when a line goes into one, ask her where in it. If the notes or the Roadmap make the spot clear, suggest it and say why. Otherwise, ask without a suggestion. Never guess one.
 - **A blocker outside the queue.** If a story in Next gets a story in its `blocked-by` that isn't in Now or Next, or a story in Planning gets one that isn't in Now, Next or Planning, propose pulling that story into the blocked story's section directly ahead of it, with the same markers, and say why.
-- **Starting on a story in the backlog.** Sarah running a skill on a story means she's moving forward with it. It also means she wants it worked, whether it's a problem to fix or an idea she wants to weigh before deciding. So don't set out to check whether it's still needed, and don't recommend dropping it out of hand. Do the skill's own job on it, and leave whether it's worth doing to her. If the story's Roadmap line is in Later or Ideas when a skill starts on it, ask her whether it moves into Next or Planning. If it does:
-  - check its goals as the `roadmap-placement` skill describes
-  - give it a 🎯 link for each goal she names. If one of them is the building goal, it goes in Next. Otherwise, if one is the planning goal, it goes in Planning. If neither, ask her whether it goes in Next with 📌, and with what reason
-  - ask her where in that section it goes, as "Roadmap order" above describes
-
-  This doesn't apply to `/implement` or `/infra-build`, which move the line into Now themselves, or to `/tooling`, which finishes its change in one session.
-- **A new item in a collecting note.** When you add one, check which goals it serves and link it as the `roadmap-placement` skill describes. An item that `/check-drift` moves back or `/kickoff` rolls over isn't new, so it keeps the links it has.
+- **Starting on a story in the backlog.** Sarah running a skill on a story means she's moving forward with it. It also means she wants it worked, whether it's a problem to fix or an idea she wants to weigh before deciding. So don't set out to check whether it's still needed, and don't recommend dropping it out of hand. Do the skill's own job on it, and leave whether it's worth doing to her. If the story's Roadmap line is in Later or Ideas when a skill starts on it, what you do depends on the skill and the line:
+  - **`/implement` or `/infra-build`:** leave it, because they move the line into Now themselves.
+  - **`/tooling`:** leave it, because it finishes its change in one session.
+  - **A line under the Bugs heading:** leave it, because a bug is shaped, investigated and planned ahead of the release that picks it up.
+  - **Otherwise:** ask her whether it moves into Next or Planning. If it does:
+    - check its goals as the `roadmap-placement` skill describes
+    - give it a 🎯 link for each goal she names. If one of them is the building goal, it goes in Next. Otherwise, if one is the planning goal, it goes in Planning. If neither, ask her whether it goes in Next with 📌, and with what reason
+    - ask her where in that section it goes, as "Roadmap order" above describes
+- **A new item in a roundup.** When you add one, check which goals it serves and link it as the `roadmap-placement` skill describes.
 - **A `ready` note goes back to `spec`** when its design or steps change, until Sarah re-reviews it. Three changes don't count. Two leave the plan as she approved it: a corrected name or path and a Boy Scout fix (see "Out-of-scope work"). The third, a change to a choice she only approved, reaches her through the summary, as "Her decisions can change" describes.
 - **Template comments** (the `%% ... %%` guidance in `notes/templates/`) never stay in a note. The template keeps them, and the skill that writes each section carries its rules.
   - When you create a note from a template, leave out every comment, along with any line that held only a comment, such as an empty checkbox. A section a later step writes stays as a bare heading.

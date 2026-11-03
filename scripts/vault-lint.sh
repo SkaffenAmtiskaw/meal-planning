@@ -77,21 +77,23 @@ while IFS= read -r note; do
     section=$(printf '%s' "$line" | cut -f3); heading=$(printf '%s' "$line" | cut -f4)
     case "$name" in
       (*\ [0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9])
-        # A kicked-off copy: its line carries its items' goal links. The goal
-        # heading it sits under counts as one.
-        case "$heading" in
-          ('[['*']]') onLine=$(printf '%s\n%s' "$onLine" "$(printf '%s' "$heading" | sed 's/^\[\[//; s/]]$//')" | grep -v '^$' | sort -u) ;;
-        esac
-        items=$(awk 'FNR == 1 && $0 == "---" { fm = 1; next } fm && $0 == "---" { fm = 0; next } !fm' "$note" |
-          grep -oE '🎯 \[\[[^]|]+' | sed 's/^🎯 \[\[//' | sort -u)
-        for g in $(printf '%s\n' "$items" | tr ' ' '\001'); do
-          g=$(printf '%s' "$g" | tr '\001' ' ')
-          printf '%s\n' "$onLine" | grep -qxF -- "$g" || add "$note: an item links 🎯 [[$g]], but its Roadmap line ($at) doesn't"
-        done
-        for g in $(printf '%s\n' "$onLine" | tr ' ' '\001'); do
-          g=$(printf '%s' "$g" | tr '\001' ' ')
-          printf '%s\n' "$items" | grep -qxF -- "$g" || add "$note: its Roadmap line ($at) links 🎯 [[$g]], but no item does"
-        done
+        # A kicked-off roundup: its line carries its items' goal links. The goal
+        # heading it sits under counts as one. Other copies' items carry no links.
+        if grep -q '^type: roundup' "$note"; then
+          case "$heading" in
+            ('[['*']]') onLine=$(printf '%s\n%s' "$onLine" "$(printf '%s' "$heading" | sed 's/^\[\[//; s/]]$//')" | grep -v '^$' | sort -u) ;;
+          esac
+          items=$(awk 'FNR == 1 && $0 == "---" { fm = 1; next } fm && $0 == "---" { fm = 0; next } !fm' "$note" |
+            grep -oE '🎯 \[\[[^]|]+' | sed 's/^🎯 \[\[//' | sort -u)
+          for g in $(printf '%s\n' "$items" | tr ' ' '\001'); do
+            g=$(printf '%s' "$g" | tr '\001' ' ')
+            printf '%s\n' "$onLine" | grep -qxF -- "$g" || add "$note: an item links 🎯 [[$g]], but its Roadmap line ($at) doesn't"
+          done
+          for g in $(printf '%s\n' "$onLine" | tr ' ' '\001'); do
+            g=$(printf '%s' "$g" | tr '\001' ' ')
+            printf '%s\n' "$items" | grep -qxF -- "$g" || add "$note: its Roadmap line ($at) links 🎯 [[$g]], but no item does"
+          done
+        fi
         ;;
       (*)
         # A collecting note's own line carries no goal links and sits in Unaffiliated.
@@ -164,7 +166,7 @@ grep -oE '!\[\[[^]#]+#\^status\]\]' "$roadmap" | sed -E 's/^!\[\[//; s/#\^status
     [ -n "$target" ] && ! grep -q ' \^status$' "$target" && add "$roadmap: embeds [[$t#^status]], but $target has no ^status line"
   done
 
-# Every Now and Next line needs a 🎯 link to the building goal, 🚨 or 📌, and
+# Every Now and Next line needs a 🎯 link to the building goal, 🚨, 📌 or 🔁, and
 # every Planning line a 🎯 link to the planning goal.
 awk '
   /^# / { section = substr($0, 3); next }
@@ -174,7 +176,7 @@ awk '
     next
   }
   (section == "Now" || section == "Next" || section == "Planning") && /^[ \t]*([-*]|[0-9]+\.)[ \t]+/ {
-    if (section != "Planning" && (index($0, "🚨") || index($0, "📌"))) next
+    if (section != "Planning" && (index($0, "🚨") || index($0, "📌") || index($0, "🔁"))) next
     rest = $0; ok = 0
     while (match(rest, /🎯 \[\[[^]|]+/)) {
       g = substr(rest, RSTART, RLENGTH); sub(/^🎯 \[\[/, "", g)
@@ -182,7 +184,7 @@ awk '
       rest = substr(rest, RSTART + RLENGTH)
     }
     if (!ok && section == "Planning") printf "%s:%d: a Planning line with no 🎯 link to the planning goal\n", FILENAME, NR
-    else if (!ok) printf "%s:%d: a %s line with no 🎯 link to the building goal, 🚨 or 📌\n", FILENAME, NR, section
+    else if (!ok) printf "%s:%d: a %s line with no 🎯 link to the building goal, 🚨, 📌 or 🔁\n", FILENAME, NR, section
   }' "$roadmap" >> "$report"
 
 checked=$(grep -c . "$tmp/changed")

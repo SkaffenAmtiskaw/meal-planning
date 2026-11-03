@@ -14,7 +14,7 @@ Everything in this goal affects code, which means testing needs to be a priority
 
 Looks close but doesn't belong:
 - Dev tooling and infrastructure. They belong to [[Dev Tooling]].
-- Bugs. They'll be their own standing goal, since they generally don't need the regression prevention emphasis this one has.
+- Bugs. They go under the Roadmap's Bugs heading, since they generally don't need the regression prevention emphasis this one has.
 
 # Out of Scope
 - [[Remove Schedule-X]]: it depends on finishing the calendar code, and it's really a cleanup of what [[Calendar Page]] has planned.

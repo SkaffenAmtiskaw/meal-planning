@@ -14,9 +14,9 @@ hooks:
 Kick off **$ARGUMENTS**.
 
 ## Why this skill works the way it does
-Sweeps (`type: sweep`) and roundups (`type: roundup`) collect items over time until Sarah decides it's time to handle them together. A sweep holds small fixes that are already decided. A roundup holds issues on a broad topic that still need decisions. Running this skill is how she schedules one. A goal that starts building schedules one too, for only the items that serve it, so the goal has a fixed set it can finish. That kickoff also covers collecting workflow notes. `/roadmap` and the `roadmap-placement` skill then follow this skill as "Kicking off for the building goal" describes, so `/kickoff` stays a command only Sarah starts.
+Sweeps (`type: sweep`) and roundups (`type: roundup`) collect items over time until they're scheduled to be handled together. A sweep holds small fixes that are already decided. A roundup holds issues on a broad topic that still need decisions. Sarah schedules one by running this skill. A goal that starts building schedules them too, as the Roadmap's "How this file works" describes under "What joins every release" and "Collecting notes".
 
-Most topics keep turning up, so the note usually keeps collecting while a dated copy is worked. Some don't, and then the note itself is worked and closed. Only Sarah knows which, and only at this point, so this skill asks her every time.
+Most topics keep turning up, so the note usually keeps collecting while a dated copy is worked. Some don't, and then the note itself is worked and closed. Only Sarah knows which, and only at this point, so a kickoff she runs always asks her.
 
 After this, the kicked-off note follows the usual lifecycle:
 - **A sweep** goes to `/check-drift` first. Its items can sit for weeks and name exact lines, so each one is re-checked and any already fixed are dropped. Then `/plan-steps`.
@@ -73,11 +73,16 @@ Tell Sarah:
 Give her the next command to run in a new session: `/check-drift <note>` for a sweep. For a roundup, if every question already had a **Decided** line, `/plan-steps <note>`. Otherwise, `/decide <note>`. Don't start the next step in this session.
 
 ## Kicking off for the building goal
-When `/roadmap` kicks off the collecting notes with items that serve the building goal, or `roadmap-placement` kicks off an item for one, it follows steps 1 to 5 for each note, with these changes:
-- **Step 1:** the note can also be a collecting workflow note (`type: workflow` with a What Belongs Here section), whose items are the unchecked boxes under Items. The items are only those that carry the building goal's 🎯 link. Where a step says to stop, tell Sarah why, skip this note and go back to the calling skill.
-- **Step 2:** if any items stay behind, a new one keeps collecting, since the original has to hold them, so don't ask. If every item carries the building goal's link, ask as usual.
-- **Step 3:** the copy gets the linked items, except blocked ones. The original keeps everything else.
-- **Step 4:** the kicked-off note's line goes under the heading of a goal its items serve in Later, so don't ask where. If no new one starts, the note's own line moves there. The calling skill asks Sarah whether it moves into Next.
+When `/roadmap` or `roadmap-placement` kicks off a note for the building goal, it follows steps 1 to 5 for each note, with these changes:
+- **Step 1:** the note can also be a collecting workflow note (`type: workflow` with a What Belongs Here section), whose items are the unchecked boxes under Items. In a roundup, the items are only those that carry the building goal's 🎯 link. Where a step says to stop, tell Sarah why, skip this note and go back to the calling skill.
+- **Step 2:** whether to ask depends on the note:
+  - **A sweep or collecting workflow note:** a new one starts, because the next release takes from it, so don't ask.
+  - **A roundup where items stay behind:** a new one starts, because the original has to hold them, so don't ask.
+  - **A roundup where no items stay behind:** ask as usual.
+- **Step 3:** the copy gets the items from step 1, except blocked ones. The original keeps everything else.
+- **Step 4:** the note's type settles the section, so don't ask which section the line goes in or whether it gets 📌:
+  - **A sweep or collecting workflow note:** the line goes in Next, ending with 🔁. The calling skill asks Sarah where in Next.
+  - **A roundup:** the line goes in Later, under the heading of a goal its items serve. If no new one starts, the note's own line moves there. The calling skill asks Sarah whether it moves into Next.
 - **Step 5:** put the items on the calling skill's out-of-scope list.
 
 Skip step 6. The calling skill reports each kickoff.

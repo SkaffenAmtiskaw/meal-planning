@@ -4,19 +4,22 @@
 
 ## How this file works
 - **Goals** - ranked epics, each a note in `goals/`, shaped and ranked with `/roadmap`. Only Sarah changes the order. Only one goal is built at a time, so `develop` never holds another goal's unfinished work and a finished goal releases all at once:
-	- **The building goal** is the top one, marked `- building`. A story or collecting-note item is built (`/implement`, `/infra-build`, `/tooling`) only when it serves the building goal, serves no ranked goal, or its line has 🚨 or 📌.
+	- **The building goal** is the top one, marked `- building`. A story or collecting-note item is built (`/implement`, `/infra-build`, `/tooling`) only when it serves the building goal, serves no ranked goal, or its line has 🚨 or 📌. A line under the Bugs heading isn't built until a release picks it up.
 	- **The planning goal** is the second, marked `- planning`. Its stories can be shaped, decided, designed and planned down to steps, but they aren't built until the building goal is released. Collecting notes aren't kicked off for it.
 	- **The rest** organize the backlog. Their lines sit under their headings in Later, and their stories can be shaped and decided ahead of their turn.
 	- **Standing Goals** - listed under their own subheading below the ranked goals. Each collects work that no ranked goal would take, such as library upgrades, and never ships itself, so it's never ranked, building or planning. When Sarah wants to take on some of that work, `/roadmap` draws a goal from it, named `<standing goal> YYYY-MM-DD`, which takes the work she picks and is ranked like any other goal.
+- **What joins every release** - sweeps, collecting workflow notes and bugs rarely fit a goal, so if they waited for one they might wait forever. So when any goal starts building, `/roadmap` kicks off every sweep and collecting workflow note and moves every bug line into Next. Blocked work waits for the next release. The goal ships once this work is done too.
 - **Now** - in progress. Keep this to 2-3 items.
 - **Next** - the building goal's queue, in order. The first line not waiting on anything is the next one to plan or build. A line that's waiting keeps its place, and its status embed says what it waits on. A line that serves both the building and planning goals goes here.
 - **Planning** - the planning goal's queue, in order. The first line not waiting on anything is the next one to plan. When the planning goal starts building, its lines move into Next in the same order.
-- **Later** - committed, not ordered. One heading per goal, in rank order, then one per standing goal, then **Unaffiliated** for lines that serve no goal and for every collecting note's line. A line that serves more than one goal sits under one of their headings and ends with a `🎯 [[Goal]]` link for each other goal. A re-rank doesn't move it to another heading. Dev tooling and agent work sits under [[Dev Tooling]]'s heading unless Sarah puts it under a ranked goal.
+- **Later** - committed, not ordered. One heading per goal, in rank order, then one per standing goal, then **Bugs**, then **Unaffiliated** for other lines that serve no goal and for every collecting note's line. A line that serves more than one goal sits under one of their headings and ends with a `🎯 [[Goal]]` link for each other goal. A re-rank doesn't move it to another heading. Dev tooling and agent work sits under [[Dev Tooling]]'s heading unless Sarah puts it under a ranked goal.
+- **Bugs** - the heading in Later where bugs in the shipped app, security issues included, wait for the next release. They belong to no goal, because they're just work that needs doing, and the next goal to start building picks them up. Until then, a bug can be shaped, investigated and planned down to steps, so it's ready when its release starts, but it isn't built. An urgent bug gets 🚨 and moves into Next. A bug in a story still being built belongs to that story, and one in dev tooling or CI belongs to [[Dev Tooling]]. Code that works but needs changing belongs to [[App Health]].
 - **Ideas** - not committed. A story's line moves to Later once it's committed: when `/shape` shapes it, or when `/decide` settles that it's worth doing.
-- **Markers:** every Now and Next line ends, after its status embed, with a 🎯 link for each goal it serves, one of them the building goal, or with 🚨 or 📌. Every Planning line ends with a 🎯 link for each goal it serves, one of them the planning goal:
+- **Markers:** every Now and Next line ends, after its status embed, with a 🎯 link for each goal it serves, one of them the building goal, or with 🚨, 📌 or 🔁. Every Planning line ends with a 🎯 link for each goal it serves, one of them the planning goal:
 	- `🎯 [[Goal]]` - serves that goal.
 	- `🚨 <reason>` - urgent, such as a security fix or a bug a user reported. Agents may suggest it, but only Sarah adds it.
 	- `📌 <reason>` - Sarah scheduled it outside the goals, such as a kicked-off sweep. Only Sarah adds it.
+	- `🔁` - joined this release without belonging to a goal: a bug, or a kicked-off sweep or collecting workflow note. `/roadmap` adds it when the line moves into Next.
 
 	A Now, Next or Planning line without its marker is out of place. Raise it with Sarah.
 - **Hubs** hold shared design, not priority. A hub has a line only while it has a next step of its own, such as `/brainstorm`, `/decide` or `/close`. Once its `^status` line says `Next: its child stories`, it has none.
@@ -24,8 +27,9 @@
 - A story's status (`idea` / `spec` / `ready` / `in-progress` / `in-review` / `done`) lives in its note's frontmatter. This file only decides order.
 - Each line with a note, except a goal's, embeds that note's status line from Where It Stands after the link, e.g. `[[Stale Data Issues]] ![[Stale Data Issues#^status]]`. It shows only what the story needs next, the next skill or a link to what blocks it, not what the story is. Edit it in the note, not here.
 - **Collecting notes** gather items until they're handled together: sweeps (`type: sweep`) for small, decided fixes that share a group, such as [[Unit Test Tidy-Ups]]; roundups (`type: roundup`) for issues on a broad topic that still need decisions, such as [[Style Decisions]]; and collecting workflow notes for tooling and agent changes, such as [[Agent Workflow Changes]]. An item that fits one, and belongs to no story or hub, goes there, not onto its own line here. When several related items sit here as separate lines and none covers them, flag to Sarah that they could become a new one. Never create one without her.
-	- **Goals take items, not notes.** A collecting note keeps getting new items, so it never finishes. A goal holds only the items that serve it, and it can ship once they're done. An item serves a goal only when Sarah says so, and then it ends with that goal's 🎯 link. A new item's goals are checked when it's added, as AGENTS.md describes under "Editing notes".
-	- **The note's line** carries no 🎯 links and always sits in Unaffiliated in Later. Once a goal is building, `/roadmap` kicks off the items that serve it into a dated copy, `<note> YYYY-MM-DD`. The copy's line carries its items' 🎯 links and sits under one of their goals' headings in Later, or in Next once Sarah moves it there.
+	- **The note's line** carries no 🎯 links and always sits in Unaffiliated in Later. A collecting note keeps getting new items, so it never finishes. A kickoff freezes some of its items into a dated copy, `<note> YYYY-MM-DD`, which can finish, and the note keeps collecting.
+	- **Sweeps and collecting workflow notes** have no goal links on their items, because each release takes all of them. The copy's line ends with 🔁 and sits in Next.
+	- **Roundups** give a goal only the items that serve it. An item serves a goal only when Sarah says so, and then it ends with that goal's 🎯 link. A new item's goals are checked when it's added, as AGENTS.md describes under "Editing notes". Once a goal is building, `/roadmap` kicks off the items that serve it. The copy's line carries its items' 🎯 links and sits under one of their goals' headings in Later, or in Next once Sarah moves it there.
 
 # Goals
 1. [[Dev Foundations]] - building
@@ -35,14 +39,13 @@
 
 ## Standing Goals
 - [[App Health]]
-- [[Bugs]]
 - [[Dev Tooling]]
 
 # Now
 - [[Major Upgrade Sweeps]] ![[Major Upgrade Sweeps#^status]] 🎯 [[Dev Foundations]]
 
 # Next
-1. [[Sweeps and Bugs in Every Release]] ![[Sweeps and Bugs in Every Release#^status]] 🎯 [[Dev Foundations]]
+1. [[Replace Roundups with Small Stories]] ![[Replace Roundups with Small Stories#^status]] 🎯 [[Dev Foundations]]
 2. [[Sweep Kickoff Review]] ![[Sweep Kickoff Review#^status]] 🎯 [[Dev Foundations]]
 3. [[Sweep Check-Drift Review]] ![[Sweep Check-Drift Review#^status]] 🎯 [[Dev Foundations]]
 4. [[Sweep Plan-Steps Review]] ![[Sweep Plan-Steps Review#^status]] 🎯 [[Dev Foundations]]
@@ -88,21 +91,17 @@
 44. [[When Stories Need E2E Tests]] ![[When Stories Need E2E Tests#^status]] 🎯 [[Dev Foundations]]
 45. [[Docs Audit]] ![[Docs Audit#^status]] 🎯 [[Dev Foundations]]
 # Planning
-1. [[One Source of Today]] ![[One Source of Today#^status]] 🎯 [[Calendar Page]]
-2. [[Planner Access Audit]] ![[Planner Access Audit#^status]] 🎯 [[Calendar Page]] 🎯 [[Bugs]]
-3. [[Calendar and Recipes Data Refresh]] ![[Calendar and Recipes Data Refresh#^status]] 🎯 [[Calendar Page]] 🎯 [[App Health]] 🎯 [[Recipes Page]]
-4. [[Server-Only Creation and Pure Reads]] ![[Server-Only Creation and Pure Reads#^status]] 🎯 [[Calendar Page]] 🎯 [[App Health]] 🎯 [[Bugs]]
-5. [[Unchecked Planner Reads]] ![[Unchecked Planner Reads#^status]] ⚠️ Security: any planner's data may be readable by id without a membership check. 🎯 [[Calendar Page]] 🎯 [[Bugs]]
-6. [[Shared Types Directory]] ![[Shared Types Directory#^status]] 🎯 [[Calendar Page]] 🎯 [[App Health]]
-7. [[Remove Schedule-X]] ![[Remove Schedule-X#^status]] 🎯 [[Calendar Page]]
-8. [[Schedule-X Data Shapes Audit]] ![[Schedule-X Data Shapes Audit#^status]] 🎯 [[Calendar Page]] 🎯 [[App Health]]
-9. [[Calendar Duplication]] ![[Calendar Duplication#^status]] 🎯 [[Calendar Page]] 🎯 [[App Health]]
-10. [[Modal Form Architecture]] ![[Modal Form Architecture#^status]] 🎯 [[Calendar Page]] 🎯 [[App Health]] 🎯 [[Recipes Page]]
-11. [[Today and Selected Day Markers]] ![[Today and Selected Day Markers#^status]] 🎯 [[Calendar Page]]
-12. [[Mantine Date Picker Setup]] ![[Mantine Date Picker Setup#^status]] 🎯 [[Calendar Page]]
-13. [[Named Date Formats]] ![[Named Date Formats#^status]] 🎯 [[Calendar Page]]
-14. [[Header Date Picker]] ![[Header Date Picker#^status]] 🎯 [[Calendar Page]]
-15. [[Long Reference URLs Shrink the Name Input]] ![[Long Reference URLs Shrink the Name Input#^status]] 🎯 [[Calendar Page]]
+1. [[Planner Access Audit]] ![[Planner Access Audit#^status]] 🎯 [[Calendar Page]]
+2. [[Calendar and Recipes Data Refresh]] ![[Calendar and Recipes Data Refresh#^status]] 🎯 [[Calendar Page]] 🎯 [[App Health]] 🎯 [[Recipes Page]]
+3. [[Server-Only Creation and Pure Reads]] ![[Server-Only Creation and Pure Reads#^status]] 🎯 [[Calendar Page]] 🎯 [[App Health]]
+4. [[Shared Types Directory]] ![[Shared Types Directory#^status]] 🎯 [[Calendar Page]] 🎯 [[App Health]]
+5. [[Remove Schedule-X]] ![[Remove Schedule-X#^status]] 🎯 [[Calendar Page]]
+6. [[Schedule-X Data Shapes Audit]] ![[Schedule-X Data Shapes Audit#^status]] 🎯 [[Calendar Page]] 🎯 [[App Health]]
+7. [[Calendar Duplication]] ![[Calendar Duplication#^status]] 🎯 [[Calendar Page]] 🎯 [[App Health]]
+8. [[Modal Form Architecture]] ![[Modal Form Architecture#^status]] 🎯 [[Calendar Page]] 🎯 [[App Health]] 🎯 [[Recipes Page]]
+9. [[Today and Selected Day Markers]] ![[Today and Selected Day Markers#^status]] 🎯 [[Calendar Page]]
+10. [[Named Date Formats]] ![[Named Date Formats#^status]] 🎯 [[Calendar Page]]
+11. [[Header Date Picker]] ![[Header Date Picker#^status]] 🎯 [[Calendar Page]]
 
 # Later
 ## [[Dev Foundations]]
@@ -115,7 +114,6 @@
 - [[Meal Detail Modal & Edit Meals]] ![[Meal Detail Modal & Edit Meals#^status]]
 - [[Planning on the Calendar]] ![[Planning on the Calendar#^status]]
 - [[Calendar Keyboard and Focus]] ![[Calendar Keyboard and Focus#^status]]
-- [[Blank Dish Row Blocks Saving a Meal]] ![[Blank Dish Row Blocks Saving a Meal#^status]]
 - [[Meal Color from Name and Description]] ![[Meal Color from Name and Description#^status]]
 - [[Add Meal from Month Cell]] ![[Add Meal from Month Cell#^status]]
 - default to week view on desktop - list view on mobile
@@ -162,15 +160,20 @@
 - [[Move Hook Support Components]] ![[Move Hook Support Components#^status]]
 - [[Form Pattern]] ![[Form Pattern#^status]]
 
-## [[Bugs]]
+## Bugs
 - [[Zero Planners Crash]] ![[Zero Planners Crash#^status]]
-- [[Recipe Detail Delete Ignores Result]] ![[Recipe Detail Delete Ignores Result#^status]] 🎯 [[Recipes Page]]
-- [[Recipe Detail Read-Only Controls]] ![[Recipe Detail Read-Only Controls#^status]] 🎯 [[Recipes Page]]
+- [[Recipe Detail Delete Ignores Result]] ![[Recipe Detail Delete Ignores Result#^status]]
+- [[Recipe Detail Read-Only Controls]] ![[Recipe Detail Read-Only Controls#^status]]
 - [[Account Deletion Deletes Shared Planners]] ![[Account Deletion Deletes Shared Planners#^status]]
 - security - check whether any production user has the better-auth role `admin`, which the `admin()` plugin (`src/_auth/auth.ts:14`) lets impersonate users, and whether `signUpWithInvite` needs the plugin at all
 - [[Crafted Input in Invite and Email Actions]] ![[Crafted Input in Invite and Email Actions#^status]]
 - [[Name Validation Rejects Real Names]] ![[Name Validation Rejects Real Names#^status]]
 - Planner's mongoose schemas don't match their zod types: recipe `time` is typed as numbers in `src/_models/library/recipe.ts` but saved as strings; the `saved` union in `src/_models/planner/planner.ts` tries `bookmarkSchema` (`strict: false`) first, so `recipeSchema` never validates a recipe; and the dish `source` union in `src/_models/calendar/day.ts` turns linked recipe ObjectIds into strings when saved through mongoose. Found 2026-10-04 while building the dev seed's sample data (`seed/seed.ts`)
+- [[One Source of Today]] ![[One Source of Today#^status]]
+- [[Unchecked Planner Reads]] ![[Unchecked Planner Reads#^status]] ⚠️ Security: any planner's data may be readable by id without a membership check.
+- [[Mantine Date Picker Setup]] ![[Mantine Date Picker Setup#^status]]
+- [[Long Reference URLs Shrink the Name Input]] ![[Long Reference URLs Shrink the Name Input#^status]]
+- [[Blank Dish Row Blocks Saving a Meal]] ![[Blank Dish Row Blocks Saving a Meal#^status]]
 
 ## [[Dev Tooling]]
 - a way to load extra seed data that one story's checks need, on top of `pnpm seed`'s generic data (today the `building-code` skill's acceptance checks create it through the app's screens). Found 2026-10-01 while designing the dev seed (`docs/seed.md`) 🎯 [[Grocery List Creation]] 🎯 [[Recipes Page]]
