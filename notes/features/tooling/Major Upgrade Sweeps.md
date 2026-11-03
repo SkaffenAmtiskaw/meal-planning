@@ -1,15 +1,27 @@
 ---
 type: infra
-status: ready
+status: spec
 blocked-by: []
 confirmed: 2026-10-06
 ---
 # Where It Stands
-Ready. Next: /infra-build ^status
+Needs re-plan. Next: /infra-design (revision) ^status
 
-Split from [[Local Dependency Update Alerts]] on 2026-10-04. `/infra-design` revised it on 2026-10-06: it now also takes updates the session drops for breaking a check, and a two-step Build Order replaces its old steps. Nothing is built yet.
+Split from [[Local Dependency Update Alerts]] on 2026-10-04. `/infra-build` stopped at Step 1's read check on 2026-11-02 and sent the story back, as the Inbox says. Nothing is built yet.
 
 # Inbox
+- **Sent back by `/infra-build` on 2026-11-02, from Step 1's read check.** Two cloud sessions on `Meal Planning Routines` tested the sweep rule's reading, and Sarah then asked for a change to what a flag leaves behind. Both change Piece 4.
+  - **What the session can read:**
+    - **GitHub pages:** WebFetch reads `github.com` release pages in full. Vitest 5's page gave all 43 breaking changes, without their author and PR details. `curl` to `github.com` and `gh api` on another repo get a 403 from the session's GitHub proxy, which reaches only the attached repo.
+    - **Raw files:** WebFetch and `curl` both read `raw.githubusercontent.com`. A root `CHANGELOG.md` can be a symlink, as `biomejs/biome`'s is, which returns only its target's path, so the session has to fetch that path. WebFetch read the first 100k of Biome's 1M characters, which is enough while the newest versions come first.
+    - **Other sites:** `vitest.dev` and `preactjs.com` are blocked for WebFetch and `curl` alike. Piece 4's "the session follows the link" works only for a site already on the allowed list.
+  - **What that does to the Step 1 check:** two of the five majors it expects as items only link elsewhere for their breaking changes: `preact` (`preactjs.com`) and `typescript` (`devblogs.microsoft.com`). As designed, both would be flagged instead. `temporal-polyfill`'s 1.0.0 notes weren't found under the tag tried, so it's unconfirmed.
+  - **What Sarah asked for:** a flag that leaves a Roadmap item or an item in a collecting note to check on the update, rather than only a line in the summary, since a summary can be overlooked, especially in a run with a lot in it. Once a version is reported it stays quiet, so a missed flag has no second chance until a newer version comes out.
+  - **Open for `/infra-design` to settle with Sarah:**
+    - **Where the record goes.** The agent's recommendation is a Roadmap line under App Health or Dev Tooling in Later, updated in place, since the Sweep template sends work that needs a decision to its own Roadmap line and Piece 4 already writes such a line when a sweep is missing. A flag-only run would then commit and open or update the PR, and closing that PR without merging loses the line.
+    - **Which flags get one:** unreadable, too big or needing a decision, and security fixes. The agent's recommendation is all three, with a security fix keeping its summary flag too, since Sarah decided those shouldn't wait for a goal.
+    - **Whether the session looks for a linked guide's source on GitHub before flagging.** Preact's guide is in `preactjs/preact-www` (`content/en/guide/v11/upgrade-guide.md` on `master`), Vitest's is under `docs/guide/migration/` in its own repo, and TypeScript's breaking-changes wiki page is on `github.com`. The agent's recommendation is yes, which keeps Sarah's "no new domains" decision. The alternatives are to flag these as designed, or to add domains, which reverses that decision.
+  - **What the revision has to change:** Goals 1 and 2 ("flagged in the session"), Piece 4's sub-steps 2 and 5, the Flow, and both steps' checks. The skill names WebFetch as the way to read GitHub pages.
 - From [[Dependency Release Analysis]]'s `/infra-design` revision (2026-10-06): Sarah wants the assessed libraries (React, Next, Mantine, better-auth, luxon and Zod) listed in one place, so adding or removing one changes one line. The hub now defines them once, in Piece 5, and Piece 4 requires the built skill to name them in one place. This story's parts still repeat the list: its Goal 1, the hub's sweep rule step 1 (`@types/react`, `@types/react-dom`, `@types/luxon`, which could become "an assessed library's `@types/*` package") and the hub's Piece 6 (Library Upgrades' description and its What Belongs Here line "Never here: …"), so the built sweeps and the sweep rule would each keep their own copy.
 
 # Purpose
@@ -57,6 +69,8 @@ The design's Pieces are in [[Local Dependency Update Alerts]], embedded above.
 
 **Sarah checks:**
 - [ ] Open the PR link `/infra-build` gives you in chat. See new items in Library Upgrades and Dev Tool Upgrades for the backlog majors that are small (`typescript`, `vitest`, `jsdom`, `preact` and `temporal-polyfill`), and no major's version changed in `package.json`. Any other changes are real patches, minors or security fixes still outstanding. See each Library Upgrades item end 🎯 [[App Health]] and each Dev Tool Upgrades item end 🎯 [[Dev Tooling]], each naming its versions, a release notes link, and the breaking changes the app hits with their files. Then open the session in the Code tab under **Routines**, and see its summary name each backlog major with the sweep it went to, or why it looks like a story of its own. Merge the PR once it looks right. Goal: a major of a package other than the six becomes a sweep item or a flagged story.
+
+**As built:** not built. The first Implementer check, the cloud read, ran twice on 2026-11-02, and its results sent the story back to `/infra-design`, as the Inbox says. The sweeps, their Roadmap lines and the skill's changes are all still to do.
 
 ### Step 2: Dropped updates become sweep items or story flags
 **Builds:** Piece 4 for dropped updates: sub-steps 3 and 7 sending a dropped update through the sweep rule, the rule's reading of what broke, and sub-step 8's **Not applied** record when nothing is pushed.
