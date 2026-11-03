@@ -42,24 +42,16 @@ Read `notes/Roadmap.md`, including "How this file works", `notes/templates/Goal.
 Ask Sarah what the goal is for and what shipping it means, in her words. If she names work that's out of scope for it, note that too. Draft Purpose, Done When and Out of Scope from the template, keeping her wording. Show her the draft and wait for her approval, then write the note to `notes/goals/<name>.md`, with `confirmed` set to today.
 
 ## 3. Scope
-Search the Roadmap, including Ideas, and `notes/features/` for work that looks related to the goal's Purpose and Done When: story lines, hubs with a next step of their own, and roundups and their items. Lines under the Bugs heading, sweeps and collecting workflow notes join every release, so they stay out. Skip anything already under the goal's Out of Scope, whether it was added in step 2 or by an earlier run. Skip anything already under the goal's heading or carrying its 🎯 link, unless this is a re-shape and Sarah asks to review it. For a roundup, skip only the items that carry the link, not the whole note.
+Search the Roadmap, including Ideas, and `notes/features/` for work that looks related to the goal's Purpose and Done When: story lines and hubs with a next step of their own. Lines under the Bugs heading, sweeps and collecting workflow notes join every release, so they stay out. Skip anything already under the goal's Out of Scope, whether it was added in step 2 or by an earlier run. Skip anything already under the goal's heading or carrying its 🎯 link, unless this is a re-shape and Sarah asks to review it.
 
 Leave tooling out of this step, and offer it in step 5. The exception is a goal about how the app is built, where tooling is the scope: offer it here and skip step 5.
-
-A goal takes a roundup's items, never the note itself, as the Roadmap's "How this file works" describes under "Collecting notes". How a roundup is offered depends on its Purpose:
-- **Its Purpose matches the goal:** offer the note as a whole, meaning the items it has now.
-- **It mixes work for different goals:** offer each related item on its own.
 
 Go through the candidates one at a time. For each, show the line, note or item, why it looks related, and any goals it already serves. Sarah says:
 - **In:**
   - **A line in Unaffiliated or Ideas:** move it under the goal's heading in Later. Add the heading, `## [[<goal>]]`, if it's missing, placed as "How this file works" describes under Later.
   - **A line under another goal's heading, or in Now, Next or Planning:** leave it there, and add `🎯 [[<goal>]]` at its end.
-  - **A roundup as a whole:** add `🎯 [[<goal>]]` at the end of each of its items that doesn't have it yet. The note's line doesn't change.
-  - **An item in a roundup:** add `🎯 [[<goal>]]` at the item's end. The note's line doesn't change.
-- **Out:** add it to Out of Scope with her reason. For a whole roundup, the entry names the note and each of its current items, so items added later are still checked against the goal when they come in.
+- **Out:** add it to Out of Scope with her reason.
 - **Not related:** nothing is recorded.
-
-If an item that comes in already links to another goal, it serves one goal, as the Roadmap's "How this file works" describes under "Collecting notes". Ask Sarah which goal it fits best, and keep only that goal's link, unless she says neither goal can be done without it. If this goal is building, step 7 kicks off the items that come in.
 
 ## 4. Gaps
 Compare Done When with the in-scope work, and list each Done When item that nothing covers. Go through them one at a time. For each, draft a note for `notes/features/<area>/`:
@@ -89,12 +81,9 @@ Write the order she gives. Each Goals line is `1. [[<goal>]]`, with ` - building
 - **A line moved into Next or Planning** keeps its order among the lines moved with it.
 - **A line moved back to Later** goes under the heading of a goal it serves, and loses that goal's 🎯 link. Its other 🎯 links stay. Later isn't ordered, so there's nothing to ask.
 
-**What joins the building goal** depends on what just happened. The cases, and what joins in each:
-- **A goal just became the building goal:**
-  - every sweep and collecting workflow note with an unblocked item
-  - every roundup with an unblocked item carrying the goal's 🎯 link
-  - every line under the Bugs heading whose `^status` line doesn't say it's blocked
-- **The building goal took roundup items in step 3:** every roundup with an unblocked item carrying its 🎯 link.
+**If a goal just became the building goal,** these join it:
+- every sweep and collecting workflow note with an unblocked item
+- every line under the Bugs heading whose `^status` line doesn't say it's blocked
 
 For each of these collecting notes that isn't a dated copy, read `.claude/skills/kickoff/SKILL.md` and follow it as its "Kicking off for the building goal" section describes. Move each of those lines under the Bugs heading into Next, ending it with 🔁. Then check every collecting note's own line, and fix any that doesn't match "How this file works" under "Collecting notes".
 
@@ -104,7 +93,7 @@ Then ask her where the lines that just joined each queue go. They're the lines m
 
 List the lines you moved.
 
-**Always:** if a note was kicked off in this run for a goal that was already building, ask Sarah whether its line moves into Next. If it does, ask her where in Next, as AGENTS.md describes under "Roadmap order". Then check every Now, Next and Planning line for its marker, as "How this file works" describes. Raise each line that's out of place, one at a time. Sarah says whether it gets the marker its section needs, moves to the section whose marker it has, or goes back to Later, under a goal's heading or in Unaffiliated. Never add 🚨 or 📌 yourself. If you think a line is urgent, say so and ask.
+**Always:** check every Now, Next and Planning line for its marker, as "How this file works" describes. Raise each line that's out of place, one at a time. Sarah says whether it gets the marker its section needs, moves to the section whose marker it has, or goes back to Later, under a goal's heading or in Unaffiliated. Never add 🚨 or 📌 yourself. If you think a line is urgent, say so and ask.
 
 ## Shaping a standing goal
 1. **Purpose and What Belongs Here.** Ask Sarah what kind of work it collects and why no goal would take it, in her words, and what looks close but doesn't belong. Draft Purpose, What Belongs Here and Out of Scope from the Standing Goal template, keeping her wording. Show her the draft and wait for her approval, then write the note to `notes/goals/<name>.md`, with `confirmed` set to today.
@@ -116,8 +105,8 @@ Then go to step 8. Steps 4 to 7 don't apply: a standing goal has no Done When an
 ## Drawing a goal from a standing goal
 The drawn goal is an ordinary goal, named `<standing goal> YYYY-MM-DD` with today's date. It goes through steps 2 to 7 like any new goal, with two differences:
 - **Step 2:** its Purpose starts with "Drawn from [[<standing goal>]]."
-- **Step 3:** before searching, offer the work that serves the standing goal: the lines under its heading in Later, the lines elsewhere that carry its 🎯 link, and the roundup items that carry it. Offer a roundup's linked items together, as one candidate. Go through the candidates one at a time. Sarah says:
-  - **In:** the work moves to the drawn goal. A line under the standing goal's heading moves under the drawn goal's heading. Anywhere else, the standing goal's 🎯 link becomes the drawn goal's, on the line or on each item.
+- **Step 3:** before searching, offer the work that serves the standing goal: the lines under its heading in Later, and the lines elsewhere that carry its 🎯 link. Go through the candidates one at a time. Sarah says:
+  - **In:** the work moves to the drawn goal. A line under the standing goal's heading moves under the drawn goal's heading. Anywhere else, the standing goal's 🎯 link on the line becomes the drawn goal's.
   - **Not this time:** it stays with the standing goal, and nothing is recorded.
 
   Then go on with step 3's search for other related work.
@@ -129,7 +118,7 @@ Triage the out-of-scope list as AGENTS.md describes under "Out-of-scope work". T
 
 Then tell Sarah:
 - the goal or standing goal note, created or updated
-- each line or roundup item moved or linked, grouped by where it went
+- each line moved or linked, grouped by where it went
 - each note created for a gap
 - each collecting note kicked off, where its Roadmap line went, and the command for its next step
 - the designs the goal is waiting on

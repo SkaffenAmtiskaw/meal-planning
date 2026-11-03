@@ -16,7 +16,11 @@ Implement the next step of the note **$ARGUMENTS**.
 ## 1. Find the Step
 Find the note. If its `status` isn't `ready` or `in-progress`, tell the user what you found, and stop. If the Roadmap's "How this file works" says under "Goals" that the story can't be built yet, tell them which goal it waits on, and stop.
 
-Read the whole note. The step to build is the first one under `# Implementation` with no `**Status:**` line. Tell the user in one line which step you're building. If `status` is `ready`, set it to `in-progress`, and move the story's Roadmap line into Now.
+Read the whole note. Which step you build depends on the type:
+- **A tweak:** the note is one step. Its Purpose and any **Decided** line say what to build, and its Acceptance Criteria are the checks. If they're empty, write them first, as `checks.md` in the `writing-implementation-steps` skill's folder describes.
+- **Any other type:** the first step under `# Implementation` with no `**Status:**` line.
+
+Tell the user in one line which step you're building. If `status` is `ready`, set it to `in-progress`, and move the story's Roadmap line into Now.
 
 ## 2. Build It
 Build the step as the `building-code` skill describes, through "Do the Acceptance Checks".
@@ -54,8 +58,12 @@ After the report:
 1. If the story is a pattern, confirm in the code that each Migration Checklist item this step took on is done, because the acceptance checks cover a place or two, not every place the step migrated. If an item isn't done, build it, report it as step 4's item 2 describes, and wait for the user to confirm the step again. Once every item is done, check each item's box.
 2. Check the step's acceptance boxes, remove any check the user dropped, and add `**Status:** ✅ Complete`.
 3. If anything differs from the plan, was added at review or dropped, add an **As built:** note under the step. For a dropped check, it says which of your runs covered it.
-4. If this was the last step, set `status` to `in-review`.
-5. Update Where It Stands, with a `^status` line such as "In progress. Next: /implement Step 4", or "All steps implemented. Next: /final-review" after the last step.
+4. If this was the last step, set `status`:
+   - **A tweak:** `done`.
+   - **Any other type:** `in-review`.
+5. Update Where It Stands, with a `^status` line such as "In progress. Next: /implement Step 4". After the last step, the line depends on the type:
+   - **A tweak:** "Built. Next: /close".
+   - **Any other type:** "All steps implemented. Next: /final-review".
 
 ## 6. Stop
 Route the out-of-scope list. Then tell the user the step is done, and give them the next command from the `^status` line to run in a new session, because this session has already read the note, the docs and the whole step, and carrying that into the next step bloats the context.

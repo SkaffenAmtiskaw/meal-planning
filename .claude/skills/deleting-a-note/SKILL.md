@@ -10,7 +10,6 @@ user-invocable: false
 3. **Reword or remove each link,** even one that's still true, since it would point at nothing. Never add a line saying the note was removed.
 4. **Remove its Roadmap line.** First note the goals waiting on it: the goal heading it sat under, its 🎯 links and, if its line ends with 🔁, the building goal. A goal with no work left waits on a release, and nothing else flags it. So for each one that isn't a standing goal, check what's left. If all of these hold, add ` - waiting on a release process` to the goal's line under Goals:
    - No other open line sits under its heading or carries its 🎯 link.
-   - No collecting-note item carries its 🎯 link.
    - For the building goal, no other line ends with 🔁.
 5. **Delete the note.**
 6. **Delete files nothing references anymore.** Run `sh scripts/vault-orphans.sh` after step 5, so the deleted note's references don't count. Delete each file it lists, then remove each folder it says is left empty.

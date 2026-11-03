@@ -16,7 +16,7 @@ Work through the open decisions on **$ARGUMENTS**. This skill settles decisions,
 ## 1. Read the note
 Find the note in `notes/features/` and read all of it.
 
-A decision is open if it's an item under `# Open Decisions` with no **Decided** line under it, including one with only a **Partly answered** line. A roundup's issues are the questions under its Open Decisions. A story with open decisions has one `"decision needed: ..."` entry in `blocked-by` that covers them all. A hub has no `blocked-by`. An exploration hub is a hub with a Requirements section.
+A decision is open if it's an item under `# Open Decisions` with no **Decided** line under it, including one with only a **Partly answered** line. A story with open decisions has one `"decision needed: ..."` entry in `blocked-by` that covers them all. A hub has no `blocked-by`. An exploration hub is a hub with a Requirements section.
 
 If a story's Open Decisions and `blocked-by` don't match, raise it with the user:
 - **A `decision needed` entry with no open question in Open Decisions:** draft the questions it stands for and add them once the user approves. If the note has no Open Decisions section, add one from the note's template.
@@ -47,7 +47,7 @@ After recording each answer, look at what it changes:
 Once the picked decisions are done, set `confirmed` to today, since the user making decisions on a note counts as confirming it. Then update the note for the first case that fits:
 - **The user decided the story isn't worth doing:** set `status: dropped`, remove the `decision needed` entry from `blocked-by`, and set the `^status` line to "Not worth doing. Next: /close".
 - **Decisions remain open:** if `/decide` can run now, start the `^status` line with how many remain, such as "2 open decisions. Next: /decide". Either way, the line names any other story one of them waits on.
-- **A roundup with none left:** remove the `decision needed` entry from `blocked-by`, set `status: spec`, and set the `^status` line to "Decisions made. Next: /plan-steps".
+- **A tweak with none left:** remove the `decision needed` entry from `blocked-by`, set `status: ready`, and set the `^status` line to "Decided. Next: /implement".
 - **A hub with none left, no design in its `# Design Handoff` yet and something to design, meaning an Inbox item for `/design-feature` or at least one option in its Requirements:** set its `^status` line to "Next: /design-feature".
 - **Any other hub with none left:** set its `^status` line to "Next: its child stories" and remove its Roadmap line, since a hub has a line only while it has a next step of its own.
 - **Any other story with none left:** remove the `decision needed` entry from `blocked-by`. Run `sh scripts/note-section.sh "Next Step by Note State"`, which prints Note Conventions' table of what each note state does next, and set the `^status` line to the story's next step from it, such as "Decisions made. Next: /assess".

@@ -64,6 +64,7 @@ A blocking decision is a question whose answer would change what this skill writ
 - **How many stories there are.**
 - **The story's type.**
 - **The story's direction.**
+- **The one choice a likely tweak turns on, if it has one,** because settling it lets this skill set the note to `ready`.
 
 If a question isn't a blocking decision, don't ask the user about it here. The step that needs its answer settles it: how a feature looks and behaves, for example, is settled in `/design-feature`, and which library it's built with comes after that.
 
@@ -98,14 +99,14 @@ Show the user the draft and wait for their approval.
 Pick the type by the shape of the fix, not by where the idea came from. A user report can turn out to be a missing pattern, and a "cleanup" can turn out to be a feature.
 
 Give the user two or three directions, each with:
-- **Type:** feature, bug, pattern, infra or cleanup.
+- **Type:** feature, bug, pattern, infra, cleanup or tweak.
 - **Direction:** one or two sentences on which way to take it.
 - **Next step:** what happens next and who does it, from the Next Step by Note State table in Note Conventions, e.g. "`/design-feature`, then `/place-design`" or "blocked until [[X]] lands". If any blocking decisions are still open, `/decide` comes first.
 - **Why:** what you found in step 3 that supports it.
 
 These are also directions, when they fit:
 - **Fold it into an existing note,** if step 3 found a story that already covers it.
-- **Fold it into a sweep or roundup,** if it fits a collecting sweep's or roundup's What Belongs Here rule, as the `filing-work` skill describes. If none fits but the Roadmap already has related items, tell the user they could be grouped into a new sweep or roundup.
+- **Fold it into a sweep,** if it fits a collecting sweep's What Belongs Here rule, as the `filing-work` skill describes. If none fits but the Roadmap already has related items, tell the user they could be grouped into a new sweep.
 - **Drop it,** if step 3 found it's already done, or it no longer makes sense.
 
 Recommend one and say why. If a direction depends on a blocking decision that's still open, say which one, rather than settling it. Wait for the user to pick one or suggest their own.
@@ -114,7 +115,7 @@ Recommend one and say why. If a direction depends on a blocking decision that's 
 What you draft depends on the direction the user picked:
 - **Drop it:** there's nothing to draft. Go on to step 7.
 - **Fold it into an existing note:** draft the addition to that note, as the `filing-work` skill describes.
-- **Fold it into a sweep or roundup:** draft the item for the collecting note, as the `filing-work` skill describes.
+- **Fold it into a sweep:** draft the item for the collecting note, as the `filing-work` skill describes.
 - **A story:** draft the note from the template in `notes/templates/` for its type, as below.
 
 A story's note:
@@ -123,14 +124,16 @@ A story's note:
 - **The user's content:** move everything from the idea into the template's sections. Keep their wording. If something fits no section, put it in the Inbox rather than dropping it.
 - **Scope:** the scope from the overview, with the user's corrections, goes in the template's sections that say what the story covers.
 - **Sections a later step writes,** such as Suggested Approach, Root Cause, Rules or Design: if the user said something for a later step while shaping, it goes at the top of the section that step writes, as AGENTS.md describes under "Editing notes".
-- **Frontmatter:** set `type`, leave `status: idea`, set `confirmed` to today, and fill `blocked-by` as Note Conventions describes.
+- **Frontmatter:** set `type`, set `confirmed` to today, and fill `blocked-by` as Note Conventions describes. Then set `status`:
+  - **A tweak with no open decision:** `status: ready`, because a tweak has no steps to plan.
+  - **Any other story:** leave `status: idea`.
 
 Show the user the draft and wait for their approval.
 
 ## 7. Write it
 Once the user approves the draft, or picks "drop it", what you write depends on what the idea became:
 - **Dropped:** if it's a Roadmap line with no note, remove the line. If it's an idea note, run `sh scripts/note-refs.sh "<note name>"`. If its vault or outside-the-vault sections list anything other than its own Roadmap line, tell the user it needs `/close` in a new session. Otherwise, delete it as the `deleting-a-note` skill describes.
-- **Folded into an existing note, a sweep or a roundup:** apply the addition there. Then, if the idea was an idea note, delete it as the `deleting-a-note` skill describes, pointing each link to the note it was folded into. If it was a Roadmap line with no note, remove the line.
+- **Folded into an existing note or a sweep:** apply the addition there. Then, if the idea was an idea note, delete it as the `deleting-a-note` skill describes, pointing each link to the note it was folded into. If it was a Roadmap line with no note, remove the line.
 - **A story, a hub or a workflow note:** if the idea was an idea note, rewrite it in place, so links to it keep working, and don't rename or move it without asking. If it was a Roadmap line with no note, create the note in `notes/features/<area>/`, and if the area isn't obvious, ask the user which folder. Then make the Roadmap line link to the note and embed its status, as AGENTS.md describes under "Editing notes", and place it:
   - **A hub that isn't an exploration hub, or a story whose "Is this worth doing?" decision is still open:** keep the line where it is. Neither is committed yet. `/decide` moves the story's line once the user decides it's worth doing.
   - **An exploration hub, any other story, or a workflow note:** shaping commits it. Check its goals and place its line as the `roadmap-placement` skill describes.

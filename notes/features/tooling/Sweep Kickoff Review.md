@@ -30,17 +30,16 @@ Part of [[Agent Instructions Audit]].
 
 ## Issues Found
 From the audit's scan on 2026-10-06. Line numbers are as of that day.
-- **Kicking off a collecting note for the building goal:** `kickoff:75-83`, with mode lines at `:17,24,52`, used by `roadmap:84` and `roadmap-placement:18`, each of which reads all of `/kickoff`. The two have diverged: `roadmap:84` has no "an open kicked-off copy already exists, move the item into it" case, so it could make a second dated copy. It becomes a shared-rule skill, and `/kickoff` keeps sweeps and roundups.
+- **Kicking off a collecting note for the building goal:** `kickoff:75-83`, with mode lines at `:17,24,52`, used by `/roadmap`, which reads all of `/kickoff`. It becomes a shared-rule skill, and `/kickoff` keeps sweeps.
 - "After this" (:21-24) restates Note Conventions' Next Step table, and the per-type next step is also at :50-52 and :73; it's kept once, in step 3.
 - :57 and :62 restate the Roadmap's line format and 🎯 rules. :60's 📌 question gets its one home in `roadmap-placement` ([[AGENTS.md Review]] moves the Roadmap rules there).
 - The "Find a home for out-of-scope items" step ("if the list is empty, skip; otherwise route as AGENTS.md describes") repeats AGENTS.md; it becomes one line in the last step.
 - "A hook blocks edits outside `notes/` and `.scratch/`" repeats the hook's own message; "Don't change code" stays.
 - Its description is imperative, where `writing-standard`'s `instructions.md` asks for the third person under Descriptions; it becomes what and when, in about 25 words.
-- **`Sweep.md`:** :21 (body text) copies the general sweep-or-roundup rule into every new note; each note keeps only its own topic rule. Its Items and issue format (`:26`) stays, since the template is its home, and its lifecycle sentences go.
-- **The general rule copied into collecting notes:** Style Fixes, Code Tidy-Ups and Unit Test Tidy-Ups each carry the general sweep-or-roundup rule in What Belongs Here, and Style Fixes and Code Tidy-Ups have drifted from the template ("Give it its own Roadmap line until it's decided", with no roundup). Each keeps only its own topic rule. (Style Decisions, a roundup, is in [[Roundup Kickoff Review]].)
-- **`filing-work`'s sweep-or-roundup home:** gets the `batch-small-test-cleanups` memory's leftover: write a single obvious follow-on action into the item rather than calling it a decision.
-- Wording difference at `roadmap:84`: kick off every collecting note with an unblocked item for the building goal. Where the rule is kept: `roadmap-placement:18` says if a kicked-off copy is open, move the item into it. Exception or drift?
-- Wording difference at the Out of Scope comment in `Sweep.md:30`: "work that belongs to another story, sweep or roundup, with a link". Where the rule is kept: AGENTS.md "Out-of-scope work" routes items to a note, a sweep, a roundup or a Roadmap line, or drops them. Exception or drift?
+- **`Sweep.md`:** :21 (body text) copies the general sweep rule into every new note; each note keeps only its own topic rule. Its Items and issue format (`:26`) stays, since the template is its home, and its lifecycle sentences go.
+- **The general rule copied into collecting notes:** Style Fixes, Code Tidy-Ups and Unit Test Tidy-Ups each carry the general sweep rule in What Belongs Here. Each keeps only its own topic rule.
+- **`filing-work`'s sweep home:** gets the `batch-small-test-cleanups` memory's leftover: write a single obvious follow-on action into the item rather than calling it a decision.
+- Wording difference at the Out of Scope comment in `Sweep.md:30`: "work that belongs to another story or sweep, with a link". Where the rule is kept: AGENTS.md "Out-of-scope work" routes items to a note, a sweep or a Roadmap line, or drops them. Exception or drift?
 - `/kickoff` names AGENTS.md where it points to a rule kept there: `kickoff:60` ("as AGENTS.md describes under "Roadmap order"") and `:65` ("route it as AGENTS.md describes under "Out-of-scope work""). `rule-placement`'s "Referring to a Rule Kept Elsewhere" says a skill doesn't point to a rule in AGENTS.md, since AGENTS.md loads into every session. Where AGENTS.md leaves it to the skill to say when the rule applies, the step says to do it without naming AGENTS.md, such as "triage the out-of-scope list". Found in Cleanup Close Review, 2026-11-02, which fixed `/close` the same way. Line numbers are as of that day.
 
 # Questions

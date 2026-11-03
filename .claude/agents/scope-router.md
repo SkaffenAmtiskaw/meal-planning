@@ -14,7 +14,7 @@ You get a list of work items found outside the story or tooling change being wor
 One block per item, in the order you received them:
 
 ### Item N: short name
-**Home:** already covered / story or hub note / sweep or roundup / workflow note / new Roadmap line / new idea note
+**Home:** already covered / story or hub note / sweep / workflow note / new Roadmap line / new idea note
 **Where:** note and section, or Roadmap section
 **Exact change:** the text to add, and any `status`, `^status`, `blocked-by` or Roadmap line changes
 **Why:** one or two sentences on why this home fits, and why any note or line your search found that nearly covers the item doesn't

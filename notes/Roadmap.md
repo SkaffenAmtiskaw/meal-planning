@@ -26,10 +26,9 @@
 - **Archived notes** have no line while an open story still relies on them. Once none does, an archived note gets a line until `/close` deletes it.
 - A story's status (`idea` / `spec` / `ready` / `in-progress` / `in-review` / `done`) lives in its note's frontmatter. This file only decides order.
 - Each line with a note, except a goal's, embeds that note's status line from Where It Stands after the link, e.g. `[[Stale Data Issues]] ![[Stale Data Issues#^status]]`. It shows only what the story needs next, the next skill or a link to what blocks it, not what the story is. Edit it in the note, not here.
-- **Collecting notes** gather items until they're handled together: sweeps (`type: sweep`) for small, decided fixes that share a group, such as [[Unit Test Tidy-Ups]]; roundups (`type: roundup`) for issues on a broad topic that still need decisions, such as [[Style Decisions]]; and collecting workflow notes for tooling and agent changes, such as [[Agent Workflow Changes]]. An item that fits one, and belongs to no story or hub, goes there, not onto its own line here. When several related items sit here as separate lines and none covers them, flag to Sarah that they could become a new one. Never create one without her.
+- **Collecting notes** gather items until they're handled together: sweeps (`type: sweep`) for small, decided fixes that share a group, such as [[Unit Test Tidy-Ups]], and collecting workflow notes for tooling and agent changes, such as [[Agent Workflow Changes]]. An item that fits one, and belongs to no story or hub, goes there, not onto its own line here. When several related items sit here as separate lines and none covers them, flag to Sarah that they could become a new one. Never create one without her.
 	- **The note's line** carries no 🎯 links and always sits in Unaffiliated in Later. A collecting note keeps getting new items, so it never finishes. A kickoff freezes some of its items into a dated copy, `<note> YYYY-MM-DD`, which can finish, and the note keeps collecting.
-	- **Sweeps and collecting workflow notes** have no goal links on their items, because each release takes all of them. The copy's line ends with 🔁 and sits in Next.
-	- **Roundups** give a goal only the items that serve it. An item serves a goal only when Sarah says so, and then it ends with that goal's 🎯 link. A new item's goals are checked when it's added, as AGENTS.md describes under "Editing notes". Once a goal is building, `/roadmap` kicks off the items that serve it. The copy's line carries its items' 🎯 links and sits under one of their goals' headings in Later, or in Next once Sarah moves it there.
+	- **Their items** have no goal links, because each release takes all of them. The copy's line ends with 🔁 and sits in Next.
 
 # Goals
 1. [[Dev Foundations]] - building
@@ -45,51 +44,43 @@
 - [[Major Upgrade Sweeps]] ![[Major Upgrade Sweeps#^status]] 🎯 [[Dev Foundations]]
 
 # Next
-1. [[Replace Roundups with Small Stories]] ![[Replace Roundups with Small Stories#^status]] 🎯 [[Dev Foundations]]
-2. [[Sweep Kickoff Review]] ![[Sweep Kickoff Review#^status]] 🎯 [[Dev Foundations]]
-3. [[Sweep Check-Drift Review]] ![[Sweep Check-Drift Review#^status]] 🎯 [[Dev Foundations]]
-4. [[Sweep Plan-Steps Review]] ![[Sweep Plan-Steps Review#^status]] 🎯 [[Dev Foundations]]
-5. [[Sweep Implement Review]] ![[Sweep Implement Review#^status]] 🎯 [[Dev Foundations]]
-6. [[Sweep Final-Review Review]] ![[Sweep Final-Review Review#^status]] 🎯 [[Dev Foundations]]
-7. [[Sweep Close Review]] ![[Sweep Close Review#^status]] 🎯 [[Dev Foundations]]
-8. [[Roundup Kickoff Review]] ![[Roundup Kickoff Review#^status]] 🎯 [[Dev Foundations]]
-9. [[Roundup Decide Review]] ![[Roundup Decide Review#^status]] 🎯 [[Dev Foundations]]
-10. [[Roundup Check-Drift Review]] ![[Roundup Check-Drift Review#^status]] 🎯 [[Dev Foundations]]
-11. [[Roundup Plan-Steps Review]] ![[Roundup Plan-Steps Review#^status]] 🎯 [[Dev Foundations]]
-12. [[Roundup Implement Review]] ![[Roundup Implement Review#^status]] 🎯 [[Dev Foundations]]
-13. [[Roundup Final-Review Review]] ![[Roundup Final-Review Review#^status]] 🎯 [[Dev Foundations]]
-14. [[Roundup Close Review]] ![[Roundup Close Review#^status]] 🎯 [[Dev Foundations]]
-15. [[Hub Shape Review]] ![[Hub Shape Review#^status]] 🎯 [[Dev Foundations]]
-16. [[Hub Decide Review]] ![[Hub Decide Review#^status]] 🎯 [[Dev Foundations]]
-17. [[Hub Close Review]] ![[Hub Close Review#^status]] 🎯 [[Dev Foundations]]
-18. [[Workflow Tooling Review]] ![[Workflow Tooling Review#^status]] 🎯 [[Dev Foundations]]
-19. [[Large Workflow Changes]] ![[Large Workflow Changes#^status]] 🎯 [[Dev Foundations]]
-20. [[Goal Roadmap Review]] ![[Goal Roadmap Review#^status]] 🎯 [[Dev Foundations]]
-21. [[Standing Goal Roadmap Review]] ![[Standing Goal Roadmap Review#^status]] 🎯 [[Dev Foundations]]
-22. [[CI-Failure Review]] ![[CI-Failure Review#^status]] 🎯 [[Dev Foundations]]
-23. [[Dependency-Updates Review]] ![[Dependency-Updates Review#^status]] 🎯 [[Dev Foundations]]
-24. [[AGENTS.md Review]] ![[AGENTS.md Review#^status]] 🎯 [[Dev Foundations]]
-25. [[Memory Folder Review]] ![[Memory Folder Review#^status]] 🎯 [[Dev Foundations]]
-26. [[Note Conventions and Roadmap Header Review]] ![[Note Conventions and Roadmap Header Review#^status]] 🎯 [[Dev Foundations]]
-27. [[Conventions Review]] ![[Conventions Review#^status]] 🎯 [[Dev Foundations]]
-28. [[Agent Workflow Changes 2026-10-02]] ![[Agent Workflow Changes 2026-10-02#^status]] 🎯 [[Dev Foundations]]
-29. [[Dependency Release Analysis]] ![[Dependency Release Analysis#^status]] 🎯 [[Dev Foundations]]
-30. [[Notes Vault Repo]] ![[Notes Vault Repo#^status]] 🎯 [[Dev Foundations]]
-31. [[Branching and Releases]] ![[Branching and Releases#^status]] 🎯 [[Dev Foundations]]
-32. [[Vercel Deploy Errors]] ![[Vercel Deploy Errors#^status]] 🎯 [[Dev Foundations]]
-33. [[Services and Environments Audit]] ![[Services and Environments Audit#^status]] 🎯 [[Dev Foundations]]
-34. [[Atlas Version Check Script]] ![[Atlas Version Check Script#^status]] 🎯 [[Dev Foundations]]
-35. [[Database Backup and Restore]] ![[Database Backup and Restore#^status]] 🎯 [[Dev Foundations]]
-36. [[E2E Tests in CI]] ![[E2E Tests in CI#^status]] 🎯 [[Dev Foundations]]
-37. [[Sentry Error Reporting]] ![[Sentry Error Reporting#^status]] 🎯 [[Dev Foundations]]
-38. [[Sentry Root Cause Analysis]] ![[Sentry Root Cause Analysis#^status]] 🎯 [[Dev Foundations]]
-39. [[Auth E2E Tests]] ![[Auth E2E Tests#^status]] 🎯 [[Dev Foundations]]
-40. [[Current Calendar E2E Tests]] ![[Current Calendar E2E Tests#^status]] 🎯 [[Dev Foundations]] 🎯 [[Calendar Page]]
-41. [[Recipes E2E Tests]] ![[Recipes E2E Tests#^status]] 🎯 [[Dev Foundations]]
-42. [[Settings E2E Tests]] ![[Settings E2E Tests#^status]] 🎯 [[Dev Foundations]]
-43. [[Sharing E2E Tests]] ![[Sharing E2E Tests#^status]] 🎯 [[Dev Foundations]]
-44. [[When Stories Need E2E Tests]] ![[When Stories Need E2E Tests#^status]] 🎯 [[Dev Foundations]]
-45. [[Docs Audit]] ![[Docs Audit#^status]] 🎯 [[Dev Foundations]]
+1. [[Sweep Kickoff Review]] ![[Sweep Kickoff Review#^status]] 🎯 [[Dev Foundations]]
+2. [[Sweep Check-Drift Review]] ![[Sweep Check-Drift Review#^status]] 🎯 [[Dev Foundations]]
+3. [[Sweep Plan-Steps Review]] ![[Sweep Plan-Steps Review#^status]] 🎯 [[Dev Foundations]]
+4. [[Sweep Implement Review]] ![[Sweep Implement Review#^status]] 🎯 [[Dev Foundations]]
+5. [[Sweep Final-Review Review]] ![[Sweep Final-Review Review#^status]] 🎯 [[Dev Foundations]]
+6. [[Sweep Close Review]] ![[Sweep Close Review#^status]] 🎯 [[Dev Foundations]]
+7. [[Hub Shape Review]] ![[Hub Shape Review#^status]] 🎯 [[Dev Foundations]]
+8. [[Hub Decide Review]] ![[Hub Decide Review#^status]] 🎯 [[Dev Foundations]]
+9. [[Hub Close Review]] ![[Hub Close Review#^status]] 🎯 [[Dev Foundations]]
+10. [[Workflow Tooling Review]] ![[Workflow Tooling Review#^status]] 🎯 [[Dev Foundations]]
+11. [[Large Workflow Changes]] ![[Large Workflow Changes#^status]] 🎯 [[Dev Foundations]]
+12. [[Goal Roadmap Review]] ![[Goal Roadmap Review#^status]] 🎯 [[Dev Foundations]]
+13. [[Standing Goal Roadmap Review]] ![[Standing Goal Roadmap Review#^status]] 🎯 [[Dev Foundations]]
+14. [[CI-Failure Review]] ![[CI-Failure Review#^status]] 🎯 [[Dev Foundations]]
+15. [[Dependency-Updates Review]] ![[Dependency-Updates Review#^status]] 🎯 [[Dev Foundations]]
+16. [[AGENTS.md Review]] ![[AGENTS.md Review#^status]] 🎯 [[Dev Foundations]]
+17. [[Memory Folder Review]] ![[Memory Folder Review#^status]] 🎯 [[Dev Foundations]]
+18. [[Note Conventions and Roadmap Header Review]] ![[Note Conventions and Roadmap Header Review#^status]] 🎯 [[Dev Foundations]]
+19. [[Conventions Review]] ![[Conventions Review#^status]] 🎯 [[Dev Foundations]]
+20. [[Agent Workflow Changes 2026-10-02]] ![[Agent Workflow Changes 2026-10-02#^status]] 🎯 [[Dev Foundations]]
+21. [[Dependency Release Analysis]] ![[Dependency Release Analysis#^status]] 🎯 [[Dev Foundations]]
+22. [[Notes Vault Repo]] ![[Notes Vault Repo#^status]] 🎯 [[Dev Foundations]]
+23. [[Branching and Releases]] ![[Branching and Releases#^status]] 🎯 [[Dev Foundations]]
+24. [[Vercel Deploy Errors]] ![[Vercel Deploy Errors#^status]] 🎯 [[Dev Foundations]]
+25. [[Services and Environments Audit]] ![[Services and Environments Audit#^status]] 🎯 [[Dev Foundations]]
+26. [[Atlas Version Check Script]] ![[Atlas Version Check Script#^status]] 🎯 [[Dev Foundations]]
+27. [[Database Backup and Restore]] ![[Database Backup and Restore#^status]] 🎯 [[Dev Foundations]]
+28. [[E2E Tests in CI]] ![[E2E Tests in CI#^status]] 🎯 [[Dev Foundations]]
+29. [[Sentry Error Reporting]] ![[Sentry Error Reporting#^status]] 🎯 [[Dev Foundations]]
+30. [[Sentry Root Cause Analysis]] ![[Sentry Root Cause Analysis#^status]] 🎯 [[Dev Foundations]]
+31. [[Auth E2E Tests]] ![[Auth E2E Tests#^status]] 🎯 [[Dev Foundations]]
+32. [[Current Calendar E2E Tests]] ![[Current Calendar E2E Tests#^status]] 🎯 [[Dev Foundations]] 🎯 [[Calendar Page]]
+33. [[Recipes E2E Tests]] ![[Recipes E2E Tests#^status]] 🎯 [[Dev Foundations]]
+34. [[Settings E2E Tests]] ![[Settings E2E Tests#^status]] 🎯 [[Dev Foundations]]
+35. [[Sharing E2E Tests]] ![[Sharing E2E Tests#^status]] 🎯 [[Dev Foundations]]
+36. [[When Stories Need E2E Tests]] ![[When Stories Need E2E Tests#^status]] 🎯 [[Dev Foundations]]
+37. [[Docs Audit]] ![[Docs Audit#^status]] 🎯 [[Dev Foundations]]
 # Planning
 1. [[Planner Access Audit]] ![[Planner Access Audit#^status]] 🎯 [[Calendar Page]]
 2. [[Calendar and Recipes Data Refresh]] ![[Calendar and Recipes Data Refresh#^status]] 🎯 [[Calendar Page]] 🎯 [[App Health]] 🎯 [[Recipes Page]]
@@ -122,6 +113,7 @@
 - audit that the calendar page works fully on phones - the app-wide mobile audit stays in Ideas for the other pages
 - [[Calendar E2E Tests]] ![[Calendar E2E Tests#^status]]
 - [[Calendar UX and Styles Pass]] ![[Calendar UX and Styles Pass#^status]]
+- [[Calendar Week View Padding]] ![[Calendar Week View Padding#^status]]
 
 ## [[Recipes Page]]
 - [[Recipes Page Redesign]] ![[Recipes Page Redesign#^status]]
@@ -136,6 +128,7 @@
 - group ingredients when adding/editing a recipe
 - when adding/editing a recipe, make the instructions expand if you type more than a line
 - take create planner pattern of button on top right in desktop - FAB in mobile and apply it throughout the app
+- [[Recipe and Bookmark Link Styles]] ![[Recipe and Bookmark Link Styles#^status]]
 
 ## [[Grocery List Creation]]
 - [[Grocery List Integration]] ![[Grocery List Integration#^status]]
@@ -159,6 +152,8 @@
 - [[Data Rules Enforcement]] ![[Data Rules Enforcement#^status]]
 - [[Move Hook Support Components]] ![[Move Hook Support Components#^status]]
 - [[Form Pattern]] ![[Form Pattern#^status]]
+- [[Google Button Styling]] ![[Google Button Styling#^status]]
+- [[Mantine Color and Variant Usage]] ![[Mantine Color and Variant Usage#^status]]
 
 ## Bugs
 - [[Zero Planners Crash]] ![[Zero Planners Crash#^status]]
@@ -190,7 +185,6 @@
 - [[Docs Updates]] ![[Docs Updates#^status]]
 - [[Code Tidy-Ups]] ![[Code Tidy-Ups#^status]]
 - [[Style Fixes]] ![[Style Fixes#^status]]
-- [[Style Decisions]] ![[Style Decisions#^status]]
 - [[Dev Tooling Tidy-Ups]] ![[Dev Tooling Tidy-Ups#^status]]
 - [[Agent Workflow Changes]] ![[Agent Workflow Changes#^status]]
 - [[Notes Vault Changes]] ![[Notes Vault Changes#^status]]
@@ -211,3 +205,5 @@
 - [[What's Changed Notification]] ![[What's Changed Notification#^status]]
 - have a Vercel Deploy Errors session watch Vercel's status page and say when an incident ends, such as with a cron job, if checking it by hand becomes a problem ([[Vercel Deploy Errors]] decision 5)
 - [[Replace Schedule-X]] ![[Replace Schedule-X#^status]]
+- [[Planner Settings Access Badge]] ![[Planner Settings Access Badge#^status]]
+- [[Planner Settings Leave Button]] ![[Planner Settings Leave Button#^status]]

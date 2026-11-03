@@ -164,13 +164,6 @@ Each finding moved into the review note it belongs to on 2026-10-06.
 | [[Sweep Implement Review]] | Sweep's `/implement` step |
 | [[Sweep Final-Review Review]] | Sweep's `/final-review` step |
 | [[Sweep Close Review]] | Sweep's `/close` step |
-| [[Roundup Kickoff Review]] | Roundup's `/kickoff` step; full review of `notes/templates/Roundup.md` |
-| [[Roundup Decide Review]] | Roundup's `/decide` step |
-| [[Roundup Check-Drift Review]] | Roundup's `/check-drift` step |
-| [[Roundup Plan-Steps Review]] | Roundup's `/plan-steps` step |
-| [[Roundup Implement Review]] | Roundup's `/implement` step |
-| [[Roundup Final-Review Review]] | Roundup's `/final-review` step |
-| [[Roundup Close Review]] | Roundup's `/close` step |
 | [[Hub Shape Review]] | Hub's `/shape` step; full review of `notes/templates/Hub.md` |
 | [[Hub Decide Review]] | Hub's `/decide` step |
 | [[Hub Close Review]] | Hub's `/close` step |
@@ -215,7 +208,7 @@ Each finding moved into the review note it belongs to on 2026-10-06.
    - **Decided 2026-10-06:** `/investigate` keeps bug notes. A new `/audit` command takes a cleanup note to `spec`: it scans the code in the note's scope, settles with Sarah how to tidy it, and writes Current State and Open Decisions. The two modes share little: every reason in `/investigate`'s "why" section is about bugs, and its cleanup step borrows from the bug step.
 8. How does `/implement` split? ^decision-8
    - **Decided 2026-10-06:** Infra moves out: a new `/infra-build` command builds an infra story's Build Order, with its own `protect-config.sh` hook. Infra is woven through nearly every step of `/implement` and follows a Build Order rather than `/plan-steps`' steps. The procedures both commands share (settling open choices, writing tests first, running the checks, cleanup, fixing a bug) move into shared-rule skills that `/final-review` also uses, instead of pointing into `/implement`'s SKILL.md.
-   - **Still open:** whether sweep and roundup each stay in `/implement`. Sarah decided 2026-10-15 that each type is judged in its own Implement review, with that type's step in view. Feature stays: Feature Implement Review rebuilt `/implement` around it, with the shared procedures in a `building-code` shared-rule skill that `/final-review` also uses.
+   - **Still open:** whether sweep stays in `/implement`. Sarah decided 2026-10-15 that each type is judged in its own Implement review, with that type's step in view. Feature stays: Feature Implement Review rebuilt `/implement` around it, with the shared procedures in a `building-code` shared-rule skill that `/final-review` also uses.
    - **Decided 2026-10-31:** bug stays too. Bug Implement Review found that a bug's step takes the same path as a feature's, and every step on it does work a bug fix needs. The parts only features use check their own condition, such as a plan that cites a design, and the bug procedures are already in `building-code`.
    - **Decided 2026-11-01:** pattern stays too. Pattern Implement Review found that a pattern's step takes the same path as a feature's or a bug's, and needs only a few lines of its own.
    - **Decided 2026-11-01:** a plan change no longer stops the build for any type. It's made in the note, as AGENTS.md's "Her decisions can change" describes, and only a Design rework, a wrong Root Cause or a wrong Rule sends a story back to an earlier skill.

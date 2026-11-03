@@ -96,7 +96,6 @@ Any change to a note in `notes/` follows these rules:
     - check its goals as the `roadmap-placement` skill describes
     - give it a 🎯 link for each goal she names. If one of them is the building goal, it goes in Next. Otherwise, if one is the planning goal, it goes in Planning. If neither, ask her whether it goes in Next with 📌, and with what reason
     - ask her where in that section it goes, as "Roadmap order" above describes
-- **A new item in a roundup.** When you add one, check which goals it serves and link it as the `roadmap-placement` skill describes.
 - **A `ready` note goes back to `spec`** when its design or steps change, until Sarah re-reviews it. Three changes don't count. Two leave the plan as she approved it: a corrected name or path and a Boy Scout fix (see "Out-of-scope work"). The third, a change to a choice she only approved, reaches her through the summary, as "Her decisions can change" describes.
 - **Template comments** (the `%% ... %%` guidance in `notes/templates/`) never stay in a note. The template keeps them, and the skill that writes each section carries its rules.
   - When you create a note from a template, leave out every comment, along with any line that held only a comment, such as an empty checkbox. A section a later step writes stays as a bare heading.

@@ -13,7 +13,7 @@ Collecting items. Next: /kickoff when you schedule it ^status
 %% What this sweep collects and why it's handled as one batch, in a sentence or two. %%
 
 ## What Belongs Here
-Every item must be small, with zero ambiguity and no open decisions: whoever builds it should never need to ask what to do. An item that still needs a decision doesn't go here. It goes in a roundup on its topic, or gets its own Roadmap line until it's decided.
+Every item must be small, with zero ambiguity and no open decisions: whoever builds it should never need to ask what to do. An item that still needs a decision doesn't go here. It gets its own Roadmap line until it's decided.
 
 %% This sweep's grouping rule, e.g. "unit test fixes that don't follow `docs/unit_tests.md`; changes to test files only". Name any files or kinds of change it must not touch. %%
 

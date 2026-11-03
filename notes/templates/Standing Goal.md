@@ -8,7 +8,7 @@ confirmed: {{date:YYYY-MM-DD}}
 %% What kind of work this collects, and why no goal would take it on its own. %%
 
 ## What Belongs Here
-%% The rule for which stories and roundup items serve it, e.g. "library upgrades, and code that works but doesn't follow the conventions". Name any kind of work that looks close but doesn't belong. %%
+%% The rule for which stories serve it, e.g. "library upgrades, and code that works but doesn't follow the conventions". Name any kind of work that looks close but doesn't belong. %%
 
 # Out of Scope
 %% Work that was considered for this standing goal and left out, with Sarah's reason, so `/roadmap` and the `roadmap-placement` skill don't offer it again. %%

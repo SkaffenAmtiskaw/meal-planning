@@ -24,5 +24,5 @@ Get the calendar page into a polished state that is ready for users. That means 
 - Letting users change a meal's color (Ideas): if Sarah decides on it, it belongs to a later calendar v2 (2026-09-28).
 - [[Keyboard Shortcuts]] (Ideas): not decided yet; if Sarah decides on it, it belongs to a later calendar v2 (2026-09-28).
 - [[Zero Planners Crash]]: it's more of a planner management story than a calendar story, and it affects every page, not just the calendar (2026-09-28).
-- The [[Style Decisions]] decision on which uses of the Mantine `color` prop should be a `variant`, including the calendar's `AddMealButton` and `MobileAddMealButton`: it's tech debt (2026-09-28).
+- The [[Mantine Color and Variant Usage]] decision on which uses of the Mantine `color` prop should be a `variant`, including the calendar's `AddMealButton` and `MobileAddMealButton`: it's tech debt (2026-09-28).
 - [[Settings Data Refresh]] and [[Data Rules Enforcement]]: the goal can finish without them, since Settings already refreshes after each change and [[Calendar and Recipes Data Refresh]] fixes the stale calendar and recipe data. They sit in [[App Health]] (2026-11-01).

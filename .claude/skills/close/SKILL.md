@@ -26,7 +26,7 @@ Find the note in `notes/` and read all of it. Where it is and its `status` decid
 ## 2. Find Everything That Points to It
 Run `sh scripts/note-refs.sh "<note name>"`. Sort the matches it lists into the kinds below, leaving out this story's own Roadmap line, which step 7 removes.
 - **Content:** a note that relies on content that only this note holds. It embeds a section or image, or sends the reader here for a design, a decision or a rationale ("as the approved design in the archived [[Mobile Month View]] note specifies").
-- **Blocker:** an entry in another story's `blocked-by`, a sweep or roundup item's `**Blocked by [[Name]]:**` marker, or a Roadmap line that says it waits on this story.
+- **Blocker:** an entry in another story's `blocked-by`, a sweep item's `**Blocked by [[Name]]:**` marker, or a Roadmap line that says it waits on this story.
 - **Kept-for:** an archived note with this story in its `kept-for`.
 - **Hub list:** a hub that lists this story as one of its stories.
 - **The user's comment:** a line tagged or signed with the user's name, whether or not the script labels it as the user's comment.
@@ -49,7 +49,7 @@ Then tell the user the outcome in one line: which stories the note is kept for, 
 
 ## 4. Handle the Stories That Waited on It
 Skip this for a re-close. Otherwise, handle each Blocker match by what it is:
-- **A sweep or roundup item's `**Blocked by [[Name]]:**` marker:** for a done close, remove the marker. For a dropped close, ask the user whether the item still stands, now waits on something else, or should be removed.
+- **A sweep item's `**Blocked by [[Name]]:**` marker:** for a done close, remove the marker. For a dropped close, ask the user whether the item still stands, now waits on something else, or should be removed.
 - **Anything else:** the story it's in is a waiting story. Take each waiting story in turn:
   1. **For a dropped close,** ask the user what the waiting story waits on now: nothing, another story or a decision. If something still blocks it, update its `blocked-by`, its `^status` line and its Roadmap line to match, and go on to the next story.
   2. Remove this story from the waiting story's `blocked-by` list, and from any "waiting on" wording on its `^status` line and Roadmap line. If its `blocked-by` still has entries, go on to the next story.

@@ -60,7 +60,7 @@ Don't change a checklist item just because the report leaves it out. Enforcement
 **If the note is a sweep,** its items must stay small and decided, so sort each item's findings this way:
 - **Already fixed, or built by another story:** add a callout, without asking, saying the item is dropped and why. `/plan-steps` skips it.
 - **Moved or renamed:** mechanical. Correct the name or path in the item.
-- **Now needs a decision:** it no longer belongs in a sweep. Take it out straight away, without asking whether to settle it, and put it on the out-of-scope list, where it may go to a roundup or become its own story. Leave a callout where it was saying it moved out and why.
+- **Now needs a decision:** it no longer belongs in a sweep. Take it out straight away, without asking whether to settle it, and put it on the out-of-scope list, where it may become its own story. Leave a callout where it was saying it moved out and why.
 - **Now waits on another story:** leave a callout where it was saying what it waits on and that it moved out.
   - **If a collecting note exists:** move it back there, starting with `**Blocked by [[Story]]:**`, so it rolls over to the next sweep.
   - **Otherwise:** put it on the out-of-scope list.
@@ -85,8 +85,6 @@ Some answers need more than a callout:
 - **The project docs win:** the code that breaks them goes on the out-of-scope list.
 - **Another story has to change:** that change goes on the out-of-scope list.
 
-If the note is a roundup, the user may leave for later a finding that reopens a decided question. If so, write a new question for the finding under Open Decisions, naming the decided question it reopens. Add a callout on the old **Decided** line pointing to the new question.
-
 ## 6. Route the note
 If the note is a sweep, it stays at `spec` and goes to `/plan-steps` next. Otherwise, route it by what its findings mean for it once the user has answered. If more than one case applies, the biggest wins: **Approach** beats **Steps**, and **Steps** beats **Plan holds**. **Blocked** can go with any of them.
 - **Plan holds:** `status` stays as it is, and the next step is the one its type and status call for, such as `/implement` for a `ready` note.
@@ -97,7 +95,7 @@ If the note is a sweep, it stays at `spec` and goes to `/plan-steps` next. Other
   - **Cleanup:** `/audit`.
   - **Pattern:** `/architect`.
   - **Infra:** `/infra-design`.
-  - **Roundup:** if the user left any finding for later in step 5, `/decide`. Otherwise, the approach is settled again, so route it as **Steps**.
+  - **Tweak:** `/decide`. First add what needs re-deciding to Open Decisions as a new question, and add a `decision needed` entry to `blocked-by`, because `/decide` only works on open questions.
 - **Blocked:** it waits on another story, or on a decision the user left for later. If it's a story, add it (`"[[link]]"`) to `blocked-by`.
 
 Then update Where It Stands, with a `^status` line such as "Drift found. Next: /plan-steps to re-plan from Step 4", and set `confirmed` to today.
