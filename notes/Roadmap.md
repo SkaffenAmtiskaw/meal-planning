@@ -41,7 +41,7 @@
 # Now
 
 # Next
-1. [[Cleanup Final-Review Review]] ![[Cleanup Final-Review Review#^status]] 🎯 [[Dev Foundations]]
+1. [[Writing Reviewer Passes Per-Type Section Lists]] ![[Writing Reviewer Passes Per-Type Section Lists#^status]] 🎯 [[Dev Foundations]]
 2. [[Cleanup Close Review]] ![[Cleanup Close Review#^status]] 🎯 [[Dev Foundations]]
 3. [[Sweep Kickoff Review]] ![[Sweep Kickoff Review#^status]] 🎯 [[Dev Foundations]]
 4. [[Sweep Check-Drift Review]] ![[Sweep Check-Drift Review#^status]] 🎯 [[Dev Foundations]]

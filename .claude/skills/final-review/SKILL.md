@@ -36,13 +36,13 @@ Back every finding with evidence the user can check: `file:line` for code that's
 
 **For a feature,** check 2 runs on a fresh target design, as `target-design.md` in this skill's folder describes.
 
-**For a pattern, infra, bug, cleanup, sweep or roundup,** there are no behaviors to design a target from, so you do check 2 yourself. Read the conventions the story was meant to apply, such as a pattern's Rules section, an infra story's Design and Conventions, a roundup's **Decided** lines or the `docs/` file a cleanup aligns code with. Then read the story's files, and check each change against those conventions, the rest of the project's conventions and best practice.
+**For any other type,** there are no behaviors to design a target from, so you do check 2 yourself. Read the conventions the story was meant to apply, such as a pattern's Rules section or the `docs/` file a cleanup aligns code with. Then read the story's files, and check each change against those conventions, the rest of the project's conventions and best practice.
 
 **On an infra story,** also read each change for bugs.
 
 **Then, for every story,** do checks 1 and 3 yourself:
 - **Purpose:** check the built story against what it set out to do. Each place it falls short is a finding.
-- **The plan:** compare the code with the note's approach and its steps. The approach is the section that says what to build, such as a feature's Suggested Approach or a bug's Fix. Whether a difference is a finding depends on what it changes:
+- **The plan:** compare the code with the note's approach and its steps. The approach is whatever the note says to build or change, in whichever sections hold it. Whether a difference is a finding depends on what it changes:
   - **If it changes what the app does or shows or what the tooling does for the user, or goes against a choice that's the user's call:** it's a finding.
   - **Otherwise,** the difference is only in how the code is written, so it's a finding only if check 2 flags it.
 

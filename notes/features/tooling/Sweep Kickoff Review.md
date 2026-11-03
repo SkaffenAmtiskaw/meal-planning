@@ -5,6 +5,12 @@ confirmed: 2026-10-06
 # Where It Stands
 Next: /tooling ^status
 
+# Inbox
+- [Sarah] I've been kind of mulling over changing how sweeps work. It seems like there will always be tidy ups and tech debt, and it's good to just kick off the sweep for them every time a release is kicked off. That way those items don't wait forever for the sweep to finally be prioritized. We don't even need to tie sweep items to a specific goal - they can just move into a release because part of the release can be to address outstanding issues.
+  
+  Likewise, I wonder if instead of having a bug goal I should just pull in any existing bugs whenever I move a release to in progress.
+  
+  It does mean I need to keep the sweeps and the bugs tidier perhaps, but that's totally doable.
 # Notes
 Part of [[Agent Instructions Audit]].
 

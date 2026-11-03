@@ -24,5 +24,6 @@ Part of [[Agent Instructions Audit]].
 From the audit's scan on 2026-10-06. Line numbers are as of that day.
 - The sweep branch (`check-drift:69-75` and the sweep half of `:87`, about 280 words) moves to a supporting file.
 - The pattern branch in `/check-drift`'s step 4 moves to a supporting file too, since only pattern runs use it (from Infra Check-Drift Review, 2026-11-01).
+- `/check-drift` step 1 (:22) says what a `spec` note's approach is by listing each type's sections ("such as a feature's design, behaviors and Suggested Approach, a cleanup's Current State and **Decided** lines, or a sweep's unchecked Items"), so a new type would need another clause. This breaks the Conventions entry "Give general guidance on finding a section, not a list of each type's headers". Found in Cleanup Final-Review Review, 2026-11-02, which reworded `/final-review`'s definition that way.
 
 # Questions
