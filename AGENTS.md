@@ -62,7 +62,7 @@ Any change to a note in `notes/` follows these rules:
     - **It can move now, but a later step waits on another story:** name the skill that can run now, then the step that waits and its blockers, as in `Next: /plan-steps. Building waits on [[A]] and [[B]]` or `Next: /decide. Architecting waits on [[A]]`. This tells Sarah what she can do now and what has to wait, which affects how she prioritizes it.
     - **It's blocked by another story:** link the blocker and name the skill after it, as in `Blocked by [[A]] and [[B]]; then /plan-steps`.
     - **It waits on Sarah's decisions:** `Next: /decide`.
-    - **A collecting note:** `Collecting items. Next: /kickoff when you schedule it`, or `Next: /tooling` for a workflow note.
+    - **A collecting note:** `Collecting items. Next: /roadmap when a goal starts building`, or `Next: /tooling` for a workflow note.
 
     It may start with a state word or two, such as `Design approved.` or `In progress.`, and holds nothing else. Never describe the story there. Other context, such as what the story was split from, goes in the summary below it. The story's line in `notes/Roadmap.md` embeds the `^status` line after the link, `[[Note]] ![[Note#^status]]`. Add the embed if it's missing.
   - **Below it, a short summary,** if there's something worth noting that the `^status` line doesn't say, such as what work has been done and what remains. Keep it to a few sentences. It doesn't describe the story, because Purpose does that.

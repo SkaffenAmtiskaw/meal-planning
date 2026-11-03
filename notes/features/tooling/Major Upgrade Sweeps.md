@@ -10,6 +10,7 @@ Needs re-plan. Next: /infra-design (revision) ^status
 Split from [[Local Dependency Update Alerts]] on 2026-10-04. `/infra-build` stopped at Step 1's read check on 2026-11-02 and sent the story back, as the Inbox says. Nothing is built yet.
 
 # Inbox
+- From Sweep Kickoff Review (`/tooling`, 2026-11-02): `/kickoff` is retired. A collecting sweep's status line is now `Collecting items. Next: /roadmap when a goal starts building`, and the general paragraph in the Sweep template's What Belongs Here moved to `filing-work`'s sweep home. Piece 6's wording for writing Library Upgrades and Dev Tool Upgrades, in [[Local Dependency Update Alerts]], still uses both.
 - **Sent back by `/infra-build` on 2026-11-02, from Step 1's read check.** Two cloud sessions on `Meal Planning Routines` tested the sweep rule's reading, and Sarah then asked for a change to what a flag leaves behind. Both change Piece 4.
   - **What the session can read:**
     - **GitHub pages:** WebFetch reads `github.com` release pages in full. Vitest 5's page gave all 43 breaking changes, without their author and PR details. `curl` to `github.com` and `gh api` on another repo get a 403 from the session's GitHub proxy, which reaches only the attached repo.

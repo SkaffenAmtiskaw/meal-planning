@@ -85,7 +85,7 @@ Write the order she gives. Each Goals line is `1. [[<goal>]]`, with ` - building
 - every sweep and collecting workflow note with an unblocked item
 - every line under the Bugs heading whose `^status` line doesn't say it's blocked
 
-For each of these collecting notes that isn't a dated copy, read `.claude/skills/kickoff/SKILL.md` and follow it as its "Kicking off for the building goal" section describes. Move each of those lines under the Bugs heading into Next, ending it with 🔁. Then check every collecting note's own line, and fix any that doesn't match "How this file works" under "Collecting notes".
+For each of these collecting notes that isn't a dated copy, freeze a dated copy as `freezing-a-copy.md` in this skill's folder describes. The copy is the kicked-off note, and its Roadmap line goes where "How this file works" describes under "Collecting notes". Move each of those lines under the Bugs heading into Next, ending it with 🔁. Then check every collecting note's own line, and fix any that doesn't match "How this file works" under "Collecting notes".
 
 Then fill that goal's queue. Go through every Later line that serves it, one at a time, whether it sits under the goal's heading or carries its 🎯 link. Judge each one by where the goal stands now, not by the goal it's filed under. Sarah says which move into the goal's queue: Next for the building goal, Planning for the planning goal. A moved line keeps its 🎯 links, and gets one for the goal whose heading it leaves.
 

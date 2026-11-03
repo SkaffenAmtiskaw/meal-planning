@@ -5,14 +5,12 @@ blocked-by: []
 confirmed: 2026-09-26
 ---
 # Where It Stands
-Collecting items. Next: /kickoff when you schedule it ^status
+Collecting items. Next: /roadmap when a goal starts building ^status
 
 # Purpose
 A running list of small unit-test fixes that don't follow `docs/unit_tests.md`. Each one is too small for its own story, so they're collected here and handled in one sweep every so often.
 
 ## What Belongs Here
-Every item must be small, with zero ambiguity and no open decisions: whoever builds it should never need to ask what to do. An item that still needs a decision doesn't go here. Give it its own Roadmap line until it's decided, then add it.
-
 Unit test fixes that don't follow `docs/unit_tests.md`. Changes are to test files only, unless an item names an exception.
 
 # Items
@@ -32,4 +30,3 @@ Unit test fixes that don't follow `docs/unit_tests.md`. Changes are to test file
 - [ ] Coverage stays at 100%.
 
 # Implementation
-%% Empty while collecting. Once the sweep is kicked off and /check-drift has run, /plan-steps writes the steps there. %%

@@ -5,16 +5,14 @@ blocked-by: []
 confirmed: 2026-09-26
 ---
 # Where It Stands
-Collecting items. Next: /kickoff when you schedule it ^status
+Collecting items. Next: /roadmap when a goal starts building ^status
 
 # Inbox
 
 # Purpose
-Small visual style fixes anywhere in the app. Each one is too small for its own story, so they're collected here and handled in one sweep. A style fix that still needs a decision gets its own Roadmap line.
+Small visual style fixes anywhere in the app. Each one is too small for its own story, so they're collected here and handled in one sweep.
 
 ## What Belongs Here
-Every item must be small, with zero ambiguity and no open decisions: whoever builds it should never need to ask what to do. An item that still needs a decision doesn't go here. Give it its own Roadmap line until it's decided, then add it.
-
 Visible style fixes anywhere in the app (spacing, alignment, colors, component variants) where the target look is already decided. Code tidy-ups that change nothing visible don't belong here.
 
 # Items

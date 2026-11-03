@@ -5,7 +5,7 @@ blocked-by: []
 confirmed: 2026-09-25
 ---
 # Where It Stands
-Collecting items. Next: /kickoff when you schedule it ^status
+Collecting items. Next: /roadmap when a goal starts building ^status
 
 # Inbox
 
@@ -13,8 +13,6 @@ Collecting items. Next: /kickoff when you schedule it ^status
 Small code smells anywhere in the app. Each one is small on its own, so they're collected here and handled in one sweep rather than as separate Roadmap lines.
 
 ## What Belongs Here
-Every item must be small, with zero ambiguity and no open decisions: whoever builds it should never need to ask what to do. An item that still needs a decision doesn't go here. Give it its own Roadmap line until it's decided, then add it.
-
 Tidy-ups to app code that change nothing a user can see or do. Test-only fixes go in [[Unit Test Tidy-Ups]], visible style fixes in [[Style Fixes]] and config changes in [[Dev Tooling Tidy-Ups]].
 
 # Items
