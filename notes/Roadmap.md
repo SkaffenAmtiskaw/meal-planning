@@ -167,7 +167,8 @@
 - [[Recipe Detail Read-Only Controls]] ![[Recipe Detail Read-Only Controls#^status]] 🎯 [[Recipes Page]]
 - [[Account Deletion Deletes Shared Planners]] ![[Account Deletion Deletes Shared Planners#^status]]
 - security - check whether any production user has the better-auth role `admin`, which the `admin()` plugin (`src/_auth/auth.ts:14`) lets impersonate users, and whether `signUpWithInvite` needs the plugin at all
-- security - string validation on inputs
+- [[Crafted Input in Invite and Email Actions]] ![[Crafted Input in Invite and Email Actions#^status]]
+- [[Name Validation Rejects Real Names]] ![[Name Validation Rejects Real Names#^status]]
 - on the sign-in page, pressing Enter in the email, password or sign-up inputs doesn't submit; only clicking the button does. `SignInFlow.tsx` has no `<form>` or `onSubmit`, so wrap each step in a form. Overlaps the "split `SignInFlow.tsx` into one component per step" line in App Health, so the two could be planned together.
 - Planner's mongoose schemas don't match their zod types: recipe `time` is typed as numbers in `src/_models/library/recipe.ts` but saved as strings; the `saved` union in `src/_models/planner/planner.ts` tries `bookmarkSchema` (`strict: false`) first, so `recipeSchema` never validates a recipe; and the dish `source` union in `src/_models/calendar/day.ts` turns linked recipe ObjectIds into strings when saved through mongoose. Found 2026-10-04 while building the dev seed's sample data (`seed/seed.ts`)
 
