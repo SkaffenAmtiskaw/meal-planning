@@ -77,6 +77,7 @@ The review covers every file the step uses: its skill, and the agents, shared sk
 
 ### Give general guidance on finding a section, not a list of each type's headers
 **Decided in:** Cleanup Final-Review Review, 2026-11-02. Sarah wants instructions to tell an agent how to find a part of a note rather than list the header for each story type, because a new type would otherwise need another clause on the line. A list like that is avoided unless it's absolutely necessary. Sarah's call. This covers inline "such as" lists as well as bullets. `/final-review`'s definition of the approach is the first line reworded this way, so it's no longer a copy of the one in `/plan-steps` and `hidden-story-checker`.
+- Writing Reviewer Passes Per-Type Section Lists, 2026-11-02: the rule now lives in `writing-standard`'s "Show a Few Good Examples". Sarah decided that the test isn't how many types a line names: a line tells the agent how to work out where the part is, and examples are fine if that description isn't enough. Sarah's call. The convention fit.
 
 # Current State
 Scanned 2026-10-06 by eleven read-only subagents, each reading its files in full against the `writing-standard` skill (SKILL.md and `instructions.md`) and `rule-placement`, and grepping `.claude/skills`, `.claude/agents`, AGENTS.md, `docs/` and the notes for each rule's other copies. Word counts are from `wc -w`. Line numbers are as of that day, so re-check them before planning. Sarah said 2026-10-06 that the findings go in unreviewed, and that the agent working on each piece after the split goes through them with her.
@@ -154,7 +155,7 @@ Each finding moved into the review note it belongs to on 2026-10-06.
 | Cleanup Implement Review | Cleanup's `/implement` step: `building-code`'s step 2 keeps a part that only moves, removes or tidies code on its existing tests, and its Edit and Write rule covers an agent's own edits, so deleting or moving a file can go through Bash |
 | Passing Remarks Recorded as Decisions | `settling-a-decision` writes a reply straight away only if it directly and fully answers the question, and asks about anything a Decided line would need that Sarah didn't say; `/shape` lists an assumption only if something depends on it and puts the overview's scope in the note; AGENTS.md says a yes or "looks fine" to an agent's text is only approved, an agent's account stays apart from her quotes, and a story's scope is her call |
 | Cleanup Final-Review Review | Cleanup's `/final-review` step: `/final-review` says what a note's approach is in general terms, and check 2's paragraph drops its list of types |
-| [[Writing Reviewer Passes Per-Type Section Lists]] | why `writing-reviewer` passes a line that defines something by listing each note type's sections, and a check that catches it |
+| Writing Reviewer Passes Per-Type Section Lists | `writing-standard`'s "Show a Few Good Examples" says to tell an agent how to work out where a part of a note is rather than list it type by type, so `writing-reviewer` now catches such a line |
 | [[Cleanup Close Review]] | Cleanup's `/close` step |
 | [[Sweep Kickoff Review]] | Sweep's `/kickoff` step; full review of `/kickoff`, `notes/templates/Sweep.md` |
 | [[Sweep Check-Drift Review]] | Sweep's `/check-drift` step |

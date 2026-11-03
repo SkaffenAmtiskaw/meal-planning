@@ -20,6 +20,8 @@ Before showing a draft, go through its exact details one by one, and ask of each
 ## Show a Few Good Examples
 One or two well-chosen examples teach a pattern better than a list of edge cases. An agent generalizes from a good example, but treats a list of cases as the whole space and misses what it leaves out.
 
+Some parts of a note, such as its approach, sit in different sections depending on the note type. If a line points to one, say how to work out where it is. Listing where it is type by type, whether inline or in bullets, is a list of cases too. Each new type would also need another clause on the line. Add examples only if saying how wouldn't be enough for an agent to find the part.
+
 ## No Emphasis Words
 Don't write "CRITICAL", "IMPORTANT" or "You MUST". Current models already follow instructions closely, and emphasis makes them apply the rule too broadly, even where it doesn't fit. If a rule matters, give its reason instead.
 
