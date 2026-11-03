@@ -167,7 +167,6 @@
 - [[Account Deletion Deletes Shared Planners]] ![[Account Deletion Deletes Shared Planners#^status]]
 - [[Crafted Input in Invite and Email Actions]] ![[Crafted Input in Invite and Email Actions#^status]]
 - [[Name Validation Rejects Real Names]] ![[Name Validation Rejects Real Names#^status]]
-- Planner's mongoose schemas don't match their zod types: recipe `time` is typed as numbers in `src/_models/library/recipe.ts` but saved as strings; the `saved` union in `src/_models/planner/planner.ts` tries `bookmarkSchema` (`strict: false`) first, so `recipeSchema` never validates a recipe; and the dish `source` union in `src/_models/calendar/day.ts` turns linked recipe ObjectIds into strings when saved through mongoose. Found 2026-10-04 while building the dev seed's sample data (`seed/seed.ts`)
 - [[One Source of Today]] ![[One Source of Today#^status]]
 - [[Unchecked Planner Reads]] ![[Unchecked Planner Reads#^status]] ⚠️ Security: any planner's data may be readable by id without a membership check.
 - [[Mantine Date Picker Setup]] ![[Mantine Date Picker Setup#^status]]
