@@ -6,11 +6,7 @@ confirmed: 2026-10-06
 Next: /tooling ^status
 
 # Inbox
-- [Sarah] I've been kind of mulling over changing how sweeps work. It seems like there will always be tidy ups and tech debt, and it's good to just kick off the sweep for them every time a release is kicked off. That way those items don't wait forever for the sweep to finally be prioritized. We don't even need to tie sweep items to a specific goal - they can just move into a release because part of the release can be to address outstanding issues.
-  
-  Likewise, I wonder if instead of having a bug goal I should just pull in any existing bugs whenever I move a release to in progress.
-  
-  It does mean I need to keep the sweeps and the bugs tidier perhaps, but that's totally doable.
+
 # Notes
 Part of [[Agent Instructions Audit]].
 
@@ -45,5 +41,6 @@ From the audit's scan on 2026-10-06. Line numbers are as of that day.
 - **`filing-work`'s sweep-or-roundup home:** gets the `batch-small-test-cleanups` memory's leftover: write a single obvious follow-on action into the item rather than calling it a decision.
 - Wording difference at `roadmap:84`: kick off every collecting note with an unblocked item for the building goal. Where the rule is kept: `roadmap-placement:18` says if a kicked-off copy is open, move the item into it. Exception or drift?
 - Wording difference at the Out of Scope comment in `Sweep.md:30`: "work that belongs to another story, sweep or roundup, with a link". Where the rule is kept: AGENTS.md "Out-of-scope work" routes items to a note, a sweep, a roundup or a Roadmap line, or drops them. Exception or drift?
+- `/kickoff` names AGENTS.md where it points to a rule kept there: `kickoff:60` ("as AGENTS.md describes under "Roadmap order"") and `:65` ("route it as AGENTS.md describes under "Out-of-scope work""). `rule-placement`'s "Referring to a Rule Kept Elsewhere" says a skill doesn't point to a rule in AGENTS.md, since AGENTS.md loads into every session. Where AGENTS.md leaves it to the skill to say when the rule applies, the step says to do it without naming AGENTS.md, such as "triage the out-of-scope list". Found in Cleanup Close Review, 2026-11-02, which fixed `/close` the same way. Line numbers are as of that day.
 
 # Questions
