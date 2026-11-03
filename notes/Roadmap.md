@@ -165,7 +165,6 @@
 - [[Recipe Detail Delete Ignores Result]] ![[Recipe Detail Delete Ignores Result#^status]]
 - [[Recipe Detail Read-Only Controls]] ![[Recipe Detail Read-Only Controls#^status]]
 - [[Account Deletion Deletes Shared Planners]] ![[Account Deletion Deletes Shared Planners#^status]]
-- security - check whether any production user has the better-auth role `admin`, which the `admin()` plugin (`src/_auth/auth.ts:14`) lets impersonate users, and whether `signUpWithInvite` needs the plugin at all
 - [[Crafted Input in Invite and Email Actions]] ![[Crafted Input in Invite and Email Actions#^status]]
 - [[Name Validation Rejects Real Names]] ![[Name Validation Rejects Real Names#^status]]
 - Planner's mongoose schemas don't match their zod types: recipe `time` is typed as numbers in `src/_models/library/recipe.ts` but saved as strings; the `saved` union in `src/_models/planner/planner.ts` tries `bookmarkSchema` (`strict: false`) first, so `recipeSchema` never validates a recipe; and the dish `source` union in `src/_models/calendar/day.ts` turns linked recipe ObjectIds into strings when saved through mongoose. Found 2026-10-04 while building the dev seed's sample data (`seed/seed.ts`)
@@ -174,6 +173,7 @@
 - [[Mantine Date Picker Setup]] ![[Mantine Date Picker Setup#^status]]
 - [[Long Reference URLs Shrink the Name Input]] ![[Long Reference URLs Shrink the Name Input#^status]]
 - [[Blank Dish Row Blocks Saving a Meal]] ![[Blank Dish Row Blocks Saving a Meal#^status]]
+- [[Invite Sign-Up Rollback Fails]] ![[Invite Sign-Up Rollback Fails#^status]]
 
 ## [[Dev Tooling]]
 - a way to load extra seed data that one story's checks need, on top of `pnpm seed`'s generic data (today the `building-code` skill's acceptance checks create it through the app's screens). Found 2026-10-01 while designing the dev seed (`docs/seed.md`) 🎯 [[Grocery List Creation]] 🎯 [[Recipes Page]]
