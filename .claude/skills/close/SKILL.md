@@ -24,7 +24,7 @@ Find the note in `notes/` and read all of it. Where it is and its `status` decid
 - **A goal or standing goal, in `notes/goals/`:** tell the user `/close` doesn't close these, and stop.
 
 ## 2. Find Everything That Points to It
-Run `sh scripts/note-refs.sh "<note name>"`. Leave out this story's own Roadmap line, which step 7 removes, and sort the rest of what it lists into the kinds below.
+Run `sh scripts/note-refs.sh "<note name>"`. Sort the matches it lists into the kinds below, leaving out this story's own Roadmap line, which step 7 removes.
 - **Content:** a note that relies on content that only this note holds. It embeds a section or image, or sends the reader here for a design, a decision or a rationale ("as the approved design in the archived [[Mobile Month View]] note specifies").
 - **Blocker:** an entry in another story's `blocked-by`, a sweep or roundup item's `**Blocked by [[Name]]:**` marker, or a Roadmap line that says it waits on this story.
 - **Kept-for:** an archived note with this story in its `kept-for`.
@@ -37,30 +37,31 @@ Run `sh scripts/note-refs.sh "<note name>"`. Leave out this story's own Roadmap 
 Save the list, and mark each match as you handle it.
 
 ## 3. Keep or Delete
-The note is needed by every open story with a Content match. If a Content match is in an archived note, the stories in that note's `kept-for` need this note. So first, take each archived note the script listed with no `kept-for`. Ask the user which open stories it's kept for, and write their answer into its `kept-for`. If they name none, that note needs its own `/close`, which the end of step 5 sets up.
+The note is needed by every open story with a Content match. If a Content match is in an archived note, the stories in that note's `kept-for` need this note. An archived note with no `kept-for` doesn't say which stories need it, so settle those notes first. Take each archived note the script listed with no `kept-for`. Ask the user which open stories it's kept for, and write their answer into its `kept-for`. If they name none, that note needs its own `/close`, which the end of step 5 sets up.
 
-Then go through the open stories that need this note:
+Then go through the open stories that need this note. What to do depends on the case:
 - **If another open story needs the same content,** the content can't move, because a design stays in one copy. Keep this note for the story without asking.
 - **Otherwise,** ask the user which they want: keep this note for the story, or move the content the story relies on into the story's own note, so the story no longer needs this one. Step 5 makes the move.
 
 If the note is kept for no story, it will be deleted. First, check it for anything worth keeping, as the `deleting-a-note` skill describes in step 1.
 
-Then tell the user the outcome in one line, either "keep in `archive/` for [[A]] and [[B]]" or "delete". This lets them catch a wrong one before step 7 acts on it. Go on without waiting for a reply.
+Then tell the user the outcome in one line: which stories the note is kept for, or that it will be deleted. This lets them catch a wrong one before step 7 acts on it. Go on without waiting for a reply.
 
 ## 4. Handle the Stories That Waited on It
-Skip this for a re-close. Otherwise, take each waiting story, a story with a Blocker match, in turn:
-1. **For a dropped close,** ask the user what the waiting story waits on now: nothing, another story or a decision. If something still blocks it, update its `blocked-by`, its `^status` line and its Roadmap line to match, and go on to the next story.
-2. Remove this story from the waiting story's `blocked-by` list, and from any "waiting on" wording on its `^status` line and Roadmap line. If its `blocked-by` still has entries, go on to the next story.
-3. Decide whether the waiting story goes to `/check-drift` before its next step. Its note may hold work planned while this story was open, such as an approach or steps, and that work may not fit the code once this story closes. If this story is done, its changes have landed. If it's dropped, they never will. So the waiting story needs `/check-drift` if its next step would build on that work without first checking the work against the code. For example, `/plan-steps` checks the note against the commits since it was confirmed, so it catches a done story's changes but not the ones a dropped story never made. If it needs `/check-drift`, make that the next step on its `^status` line. Otherwise, keep the next step its `^status` line names.
-4. If its Roadmap line is in Later and the story serves the building or planning goal, show the user the story and that goal's queue, and ask whether it moves there.
-
-**Sweep and roundup items:** for a done close, remove the `**Blocked by [[Name]]:**` marker. For a dropped close, ask the user whether the item still stands, now waits on something else, or should be removed.
+Skip this for a re-close. Otherwise, handle each Blocker match by what it is:
+- **A sweep or roundup item's `**Blocked by [[Name]]:**` marker:** for a done close, remove the marker. For a dropped close, ask the user whether the item still stands, now waits on something else, or should be removed.
+- **Anything else:** the story it's in is a waiting story. Take each waiting story in turn:
+  1. **For a dropped close,** ask the user what the waiting story waits on now: nothing, another story or a decision. If something still blocks it, update its `blocked-by`, its `^status` line and its Roadmap line to match, and go on to the next story.
+  2. Remove this story from the waiting story's `blocked-by` list, and from any "waiting on" wording on its `^status` line and Roadmap line. If its `blocked-by` still has entries, go on to the next story.
+  3. Check the waiting story's next step. If it would build on work planned while this story was open, such as an approach or steps, and wouldn't check that work against the code first, make `/check-drift` the next step on its `^status` line. That work may not fit the code once this story closes: a done story's changes have landed, and a dropped story's never will. For example, `/plan-steps` checks the note against the commits since it was confirmed, so it catches a done story's changes but not the ones a dropped story never made.
+  4. If its Roadmap line is in Later and the story serves the building or planning goal, show the user the story and that goal's queue, and ask whether it moves there.
 
 ## 5. Update the Other Notes
-Go through the rest of the matches, other than the user's comments:
-- **Content:** if the user chose in step 3 to move the content a story relies on into the story's own note, move it now, as `.claude/skills/filing-work/content-from-another-note.md` describes for work moving out of a note. Then reword the line in the story's note so it no longer sends the reader here. Leave the matches from the stories this note is kept for as they are.
+Go through the rest of the matches. What to do depends on the kind:
+- **Content:** if the user chose in step 3 to move the content a story relies on into the story's own note, move it now, as `.claude/skills/filing-work/content-from-another-note.md` describes for work moving out of a note. Then reword the line in the story's note so it no longer sends the reader here.
 - **Kept-for:** remove this story from the archived note's `kept-for`. If the list is now empty, that note needs its own `/close`.
 - **Hub list:** mark this story done or dropped in the hub's list, following how the hub marks the others. If the hub now has no open stories left, it needs its own `/close`.
+- **The user's comment:** if it's now done or out of date, follow the rule for the user's comments.
 - **Passing mention:** what to do depends on what the line relies on and what happens to this note:
   - **If it relies on content that now lives in `docs/`:** swap the link to this note for one to the `docs/` section that holds the content.
   - **Otherwise, if this note is being deleted:** reword or remove the mention, as the `deleting-a-note` skill describes in step 3.
@@ -77,7 +78,11 @@ Handle the out-of-scope list now, before step 7 deletes the note and step 8 dele
 ## 7. Close the Note
 1. Remove the note's own line from the Roadmap, as the `deleting-a-note` skill describes in step 4.
 2. Keep or delete the note, as step 3 settled:
-   - **Keep:** for a dropped close, set `status` to `dropped`. Set the `^status` line to "Done." or "Dropped.", and leave `confirmed` as it is. Add `kept-for` to the frontmatter with the stories it's kept for, each as a `"[[link]]"`. If the note is in `notes/features/`, move it to `notes/archive/`. Leave its files where they are, since Obsidian finds embeds by name.
+   - **Keep:**
+     1. For a dropped close, set `status` to `dropped`.
+     2. Set the `^status` line to "Done." or "Dropped.", and leave `confirmed` as it is.
+     3. Add `kept-for` to the frontmatter with the stories it's kept for, each as a `"[[link]]"`.
+     4. If the note is in `notes/features/`, move it to `notes/archive/`. Leave its files where they are, since Obsidian finds embeds by name.
    - **Delete:** delete the note.
 
 ## 8. Delete Unused Files

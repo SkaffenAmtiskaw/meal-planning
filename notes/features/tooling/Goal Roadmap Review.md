@@ -37,5 +37,6 @@ From the audit's scan on 2026-10-06. Line numbers are as of that day.
 - Split check: no split. Its modes share step 3.
 - **`Goal.md`:** :5 repeats Note Conventions and `/roadmap`. The Done When item format (`Goal.md:11`) moves to `/roadmap` step 2 (decision 9).
 - Wording difference at `roadmap:56-61`: "In" outcomes include a line in Planning. Where the rule is kept: `roadmap-placement:15` says "A line already under a goal's heading, or in Now or Next, stays where it is". Exception or drift?
+- `/roadmap` names AGENTS.md where it points to a rule kept there: `roadmap:23` ("as AGENTS.md describes under "Recommendations""), `:93` and `:100` ("Roadmap order"), and `:121` ("Out-of-scope work"). `rule-placement`'s "Referring to a Rule Kept Elsewhere" says a skill doesn't point to a rule in AGENTS.md, since AGENTS.md loads into every session. Where AGENTS.md leaves it to the skill to say when the rule applies, the step says to do it without naming AGENTS.md, such as "triage the out-of-scope list". Found in Cleanup Close Review, 2026-11-02, which fixed `/close` the same way. Line numbers are as of that day.
 
 # Questions
