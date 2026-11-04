@@ -1,15 +1,13 @@
 ---
 name: dependency-updates
-description: Handle the new dependency versions and security advisories the dependency check found, started by the dependency-updates routine. Reads the findings from the routine-fire-payload block and ends with a summary for Sarah.
+description: Handles the new dependency versions and security advisories the dependency check found. Use when the dependency-updates routine starts a session with findings in a routine-fire-payload block.
 ---
 
-Handle the findings described in the `routine-fire-payload` block.
+Handle the findings described in the `routine-fire-payload` block. This session is a routine's session, so read the `routine-sessions` skill first.
 
-This session is a routine's session, so it follows the `routine-sessions` skill: read it first.
+The session puts the patches, minors and security fixes in one pull request into `develop`, from the `claude/dependency-updates` branch, and sees the pull request's checks through on GitHub. Only one such pull request is ever open, and each run adds to it. A major is never applied, and an update that breaks a check is dropped.
 
-It puts the patches, minors and security fixes in one pull request into `develop`, from the `claude/dependency-updates` branch, and sees the pull request's checks through on GitHub. Only one such pull request is ever open: while it is, each run adds to it. It applies no major or reminder. A major of most packages goes in that pull request as a sweep item or a Roadmap line (step 5). So does an update that breaks a check, which the session drops. It ends with the summary in step 8. When the weekly run's check itself failed, it looks into that instead, as step 1 describes.
-
-## 1. Read the payload
+## 1. Read the Payload
 The block names the run and its findings in this shape, one finding per line:
 
 ```text
@@ -22,10 +20,10 @@ reminders:
 ```
 
 Each finding is one of:
-- `patch <package>@<version>`, `minor <package>@<version>` or `major <package>@<version>`: a new version of a package in `package.json`. A scoped package's name starts with `@` too, as in `patch @types/luxon@3.7.6`.
+- `patch <package>@<version>`, `minor <package>@<version>` or `major <package>@<version>`: a new version of a package in `package.json`.
 - `advisory <ID> <severity> <package>`: a security advisory, such as `advisory 1121187 high undici`.
 
-The lines under `new:` are the findings no earlier run has reported. The lines under `reminders:` are advisories an earlier run reported that are still unfixed, and are always advisories. A part with nothing in it holds the single line `none`.
+The lines under `new:` are the findings no earlier run has reported. The lines under `reminders:` are advisories an earlier run reported that are still unfixed. A part with nothing in it holds the single line `none`.
 
 When the weekly run's check itself failed, the block holds the run line and one more line instead, and no findings:
 
@@ -34,47 +32,20 @@ weekly run <run ID> <run URL>
 check failed
 ```
 
-Then follow "A failed weekly check" below, instead of steps 2 to 8.
+Then follow `failed-weekly-check.md` in this folder, instead of steps 2 to 6.
 
-If the block is missing any part (the run line, then either `check failed` or both `new:` and `reminders:`), stop, and say which parts are missing and what the block held. If it has a line that isn't in one of the shapes above, such as a reminder that isn't an advisory, stop, and say which line you couldn't read and what the block held.
+If the block is missing a part, or has a line in none of these shapes, such as a reminder that isn't an advisory, stop. Say which part or line it was and what the block held.
 
-### A failed weekly check
-The run's `check` job failed, so it sent no findings or reminders this week, and saved no reported list. The job runs `pnpm install --frozen-lockfile`, then `pnpm -s deps:check --weekly` with the reported list it restored from the Actions cache (`docs/ci.md`, "Dependency Updates"). Find out why it failed, and fix it or explain it.
-
-Find the branch and the commit the run tested, read the log of the step that failed, and check out that commit:
-
-```bash
-gh run view "<run ID>" --json headBranch,headSha --jq '"\(.headBranch) \(.headSha)"'
-gh run view "<run ID>" --log-failed
-git fetch origin "+refs/heads/<branch>:refs/remotes/origin/<branch>"
-git checkout --detach "<head SHA>"
-```
-
-A scheduled run's branch is `develop`.
-
-Then run the check as the job does, and keep its output: `pnpm install --frozen-lockfile`, then `pnpm lefthook install`, then `pnpm deps:check --weekly`. You have no reported list, so run it without `--reported`.
-
-Wherever you stop below, also say that this week's findings and reminders weren't sent, unless a re-run sent them. New advisories still come from the hourly runs. The rest comes with next Monday's run, or sooner if Sarah runs the workflow by hand with its weekly option, once any fix is merged.
-
-In the files below, the failed job is `check`, and its script is `pnpm install --frozen-lockfile`, then `pnpm deps:check --weekly`. The head branch is the run's branch, and the failed commit is the one you checked out. What to do depends on the check's result:
-- **The check fails:** follow `.claude/skills/routine-sessions/fixing-a-failure.md`. The pull request's title is `Fix the weekly dependency check on <branch>`, and its body links the failed run.
-- **The check passes:** follow `.claude/skills/routine-sessions/rerunning-a-failure.md`, with these additions:
-  - When attempt 2 passes, also say what its `start-dependency-updates` job did, since the re-run also re-runs it. Read it with `gh run view "<run ID>" --attempt 2 --json jobs --jq '.jobs[] | "\(.name) \(.conclusion)"'`. If it passed, it sent the week's findings and reminders, which start a session of their own. If it was skipped, there was nothing to send.
-  - When you diagnose a failure only GitHub's runner has, another difference is the reported list the run restored, which you don't have. If the log shows `pnpm deps:check` rejecting it, say so, and point Sarah to clearing it, as `docs/ci.md` describes under "The Reported List".
-  - Where it says to fix the failure, fix it as "The check fails" above describes.
-
-## 2. Check out the branch
-If `new:` is `none`, a run with only reminders, skip this step.
-
-Otherwise, fetch the latest `develop` and look for an open pull request from `claude/dependency-updates`:
+## 2. Check Out the Branch
+Fetch the latest `develop` and look for an open pull request from `claude/dependency-updates`:
 
 ```bash
 git fetch origin develop
 gh api -X GET "repos/{owner}/{repo}/pulls" -F head="{owner}:claude/dependency-updates" -f base=develop -f state=open --jq '.[] | "\(.number) \(.html_url)"'
 ```
 
-### An open pull request
-If it lists one, keep its number and link for step 7. Check out its branch and bring it up to date with `develop`:
+### An Open Pull Request
+If it lists one, keep its number and link for step 5. Check out its branch and bring it up to date with `develop`:
 
 ```bash
 git fetch origin "+refs/heads/claude/dependency-updates:refs/remotes/origin/claude/dependency-updates"
@@ -82,173 +53,96 @@ git checkout -b claude/dependency-updates origin/claude/dependency-updates
 git merge --no-edit origin/develop
 ```
 
-If the merge conflicts, list the conflicted files with `git diff --name-only --diff-filter=U`. What to do depends on which files they are:
+If the merge conflicts, what to do depends on which files conflict:
 - **Only `pnpm-lock.yaml`, `notes/Roadmap.md` or both:** resolve each file as its bullet says and `git add` it. Once they're all added, run `git commit --no-edit` to finish the merge.
   - **`pnpm-lock.yaml`:** run `pnpm install --no-frozen-lockfile`, which resolves a conflict in the lockfile.
-  - **`notes/Roadmap.md`:** keep both sides' lines, since each side's lines are separate work.
-- **Any other file:** run `git merge --abort`. Skip steps 3 and 7: apply nothing, push nothing, and leave the pull request as it is. The summary says which files conflicted (step 8).
+  - **`notes/Roadmap.md`:** keep both sides' lines, since each side's lines are separate work. If both sides hold the same line, keep one copy, as `develop` has it, since `develop` renumbers Next's lines.
+- **Any other file:** run `git merge --abort`. Skip steps 3 and 5, and leave the pull request as it is.
 
-The branch as the merge left it is the **base** for step 3: the open pull request's updates on top of the latest `develop`. Keep its commit, from `git rev-parse HEAD`.
+The branch as the merge left it is the **starting point** for step 3: the open pull request's updates on top of the latest `develop`. Keep its commit, from `git rev-parse HEAD`.
 
-### No open pull request
-If it lists none, including when the last one was closed without merging, cut the branch fresh from `develop`. A closed pull request's branch may still be on GitHub, and step 7 replaces it, so first note the commit it's on:
+### No Open Pull Request
+If it lists none, cut the branch fresh from `develop`. A closed pull request's branch may still be on GitHub, and step 5 replaces it, so first read the commit it's on:
 
 ```bash
 git ls-remote origin refs/heads/claude/dependency-updates
 git checkout -b claude/dependency-updates origin/develop
 ```
 
-Keep the commit `git ls-remote` prints, or that it printed nothing, for step 7. Here the **base** for step 3 is `origin/develop`.
+Keep the commit `git ls-remote` prints for step 5. If it prints nothing, keep that fact instead, since step 5's push depends on it. Here the **starting point** for step 3 is `origin/develop`.
 
-### Then
+### Install the Dependencies
 Run `pnpm install --frozen-lockfile`, then `pnpm lefthook install`.
 
-## 3. Apply the updates
-If `new:` holds no patch, minor or advisory, such as a run with only majors, skip this step.
+## 3. Apply the Updates
+If the payload holds no patch, minor or advisory, skip this step.
 
-Apply the security fixes first, then the patches, then the minors. Each update is its own commit, so Sarah can revert one alone and step 3 can find one that breaks a check.
+Apply the security fixes first, then the patches, then the minors. Each update is its own commit, so the user can revert one alone and `git bisect` can find one that breaks a check.
 
-Commit after the update, once `package.json` or `pnpm-lock.yaml` shows the new version, with a message in the style of `git log`, such as `security: bump mongoose 9.0.2 → 9.7.2 for advisories 1118996, 1139503` or `deps: bump resend 6.10.0 → 6.32.0`. A message always names the old and new versions. For a package that isn't in `package.json`, read both from `pnpm-lock.yaml`, as in `security: bump undici 7.24.6 → 7.30.0 for advisory 1121187`.
+Write each message in the style of `git log`, such as `security: bump mongoose 9.0.2 → 9.7.2 for advisories 1118996, 1139503` or `deps: bump resend 6.10.0 → 6.32.0`. A message always names the old and new versions, because step 5 builds the pull request's body from the messages.
 
-### Security fixes
-Run `pnpm audit --json`. Its `advisories` object is keyed by advisory ID. For each advisory under `new:`, read its entry there:
-- `module_name`: the package with the advisory
-- `patched_versions`: the versions that fix it, such as `>=7.28.0`
-- `vulnerable_versions`: the versions it affects
-- `findings`: each installed `version` of the package, and its `paths`. A path names the packages from `package.json` down to this one: `.>mongoose` means `mongoose` is in `package.json`, and `.>jsdom>undici` means `undici` is a dependency of `jsdom`.
+### Security Fixes
+If the payload holds an advisory, follow `security-fixes.md` in this folder.
 
-Some advisories need no fix from this session:
-- **The ID isn't in the audit:** it's already fixed, on `develop` or by an earlier update in the open pull request. Apply nothing, and list it as already fixed.
-- **`patched_versions` is `<0.0.0`:** no fixed version has been released. Apply nothing, and list it as having no fix yet.
-- **Its lowest fixed version is in a later major than the installed version,** where a minor of a version below 1.0 counts as a major (`0.3.2` → `0.4.0`): its only fix is a major. Apply nothing, and handle it with the majors (step 5).
+### Patches and Minors
+For each patch, then each minor:
+- **If `package.json` already has that version,** such as when a security fix moved it there: list it as already in the pull request.
+- **Otherwise:** run `pnpm update "<package>@<version>"` and commit it.
 
-Fix the rest one package at a time, taking every new advisory on that package together. The fixed version is the lowest version in every one of their `patched_versions`, such as `9.7.2` for `mongoose`'s `>=9.1.6` and `>=9.7.2`. Use the first fix below that clears them all, checking with `pnpm audit --json` after each try that their IDs are gone:
-1. **The package is in `package.json`:** update it to the fixed version, with `pnpm update "<package>@<fixed version>"`. This keeps its range's style, such as an exact pin or a `^`.
-2. **It isn't, so try a lockfile bump:** `pnpm update "<package>"` moves it to the newest version its parents' ranges allow, and leaves `package.json` alone. It works when a parent's range already allows a fixed version.
-3. **A parent update:** if the package just before it in a path is in `package.json`, find that parent's lowest version in its current major whose range for the package allows the fixed version. List its versions with `pnpm view "<parent>" versions --json`, read a version's range with `pnpm view "<parent>@<version>" dependencies --json` (or `peerDependencies`), and update it with `pnpm update "<parent>@<version>"`. If no version in its major allows the fix, go to the next fix.
-4. **An override:** for each advisory, add an entry under `overrides` in `pnpm-workspace.yaml`, in the shape `pnpm audit --fix` adds, but kept to the installed major with a `^`, such as `'undici@>=7.0.0 <7.28.0': '^7.28.0'`. A bare `>=7.28.0`, as `pnpm audit --fix` writes it, would let the next major in. Then run `pnpm install --no-frozen-lockfile`. `CI` is set in this session, so a plain `pnpm install` refuses to change the lockfile to match.
+### Overrides That No Longer Do Anything
+Take out of `pnpm-workspace.yaml` each override that no longer does anything, such as when a parent update now asks for a fixed version.
 
-Commit each package's fix on its own. If a try changed nothing in the audit, undo it (`git checkout -- package.json pnpm-lock.yaml pnpm-workspace.yaml`, then `pnpm install --frozen-lockfile`) before the next. If none of them clears an advisory, undo them all, and list it as not fixed, with what you tried.
+For each entry under `overrides`, remove it and run `pnpm install --no-frozen-lockfile`. Then look at `git diff pnpm-lock.yaml`. What to do depends on what changed:
+- **Only the lockfile's own `overrides:` section:** the override did nothing. Commit its removal on its own, such as `deps: remove the undici override, which no dependency needs any more`. If it was the last one, remove the `overrides:` key too.
+- **Anything else:** the override is still at work. Put it back (`git checkout -- pnpm-workspace.yaml pnpm-lock.yaml`, then `pnpm install --frozen-lockfile`).
 
-### Patches and minors
-For each patch, then each minor, run `pnpm update "<package>@<version>"` and commit it. If `package.json` already has that version, such as when a security fix moved it there, there's nothing to commit: list it as already in the PR.
+## 4. Majors and Uncleared Advisories
+This step takes what the session couldn't put in the pull request: each major, and each advisory no fix cleared. An advisory whose only fix is a major counts as a major of the package with the advisory, at its lowest fixed version. This skill calls it a **security major**.
 
-### Overrides that no longer do anything
-An override stops doing anything once no dependency asks for a version its key matches, such as when a parent update now asks for a fixed version. Take each one like that out of `pnpm-workspace.yaml`, so only the overrides still at work stay there.
+**The assessed libraries** are React (`react`, `react-dom`), Next (`next`), Mantine (`@mantine/*`), better-auth (`better-auth`), luxon (`luxon`) and Zod (`zod`). The app leans on them most, so a major of one is listed for the user to plan.
 
-For each entry under `overrides` in `pnpm-workspace.yaml`, remove it and run `pnpm install --no-frozen-lockfile`. Then look at `git diff pnpm-lock.yaml`:
-- **Only the lockfile's own `overrides:` section changed:** the override did nothing. Commit its removal on its own, such as `deps: remove the undici override, which no dependency needs any more`. If it was the last one, remove the `overrides:` key too.
-- **Anything else changed:** the override is still at work. Put it back (`git checkout -- pnpm-workspace.yaml pnpm-lock.yaml`, then `pnpm install --frozen-lockfile`).
+**The release notes link** is the package's GitHub releases page. If it has none, as with a package from `DefinitelyTyped`, link its npm page and say it has no GitHub releases page.
 
-### Run the checks
-If this step made no commit, such as when every advisory was already fixed or needs a major, skip the rest of this step. Otherwise, run each of the four checks CI runs on a PR, and keep each one's output:
+What to do with each, by case:
+- **If it's a major of one of the assessed libraries, and not a security major:** list it in the summary.
+- **Otherwise:** follow `sweep-rule.md` in this folder.
 
-```bash
-pnpm lint:ci
-pnpm check:types
-pnpm test:coverage
-pnpm build
-```
+## 5. Push and Open or Update the Pull Request
+If steps 3 and 4 left no commit on the branch, skip this step.
 
-Run all four before you decide what to do next. If every one passes, go on to step 4.
+### The Body
+The body starts with `From dependency check run <run URL>.`, then lists what's in the pull request and what was dropped, in the same groups and shapes as the summary's **In the pull request**, **Dropped**, **Sweep items** and **Roadmap lines**. If a check fails on the starting point, the body says why, with the line of its output.
 
-For each check that fails, find out whether the base from step 2 fails it too, with none of this run's updates:
+If a pull request is already open, the body lists everything in it, not only what this run added. Build it from these sources:
+- **Updates:** the commits on the branch that aren't on `develop`: `git log --no-merges --reverse --format=%B origin/develop..claude/dependency-updates`. A package two runs both updated is one line, from its version before the first update to its version after the last.
+- **Advisories' severity:** for an earlier advisory, the current body, read with `gh api "repos/{owner}/{repo}/pulls/<number>" --jq .body`.
+- **Sweep items and Roadmap lines:** `git diff origin/develop...claude/dependency-updates -- notes`.
+- **Dropped:** only this run's dropped updates.
+- **The end:** leave out everything the current body has after its lists, such as an earlier session's link and Claude Code's footers. Claude Code's footer on an edit has no session link, so end the body with `Session: <link>`. Read this session's link from the latest commit with a `Claude-Session` trailer: `git log --no-merges --format='%(trailers:key=Claude-Session,valueonly)' | grep -m1 .`
 
-```bash
-git checkout --detach "<base>"
-pnpm install --frozen-lockfile
-pnpm <script>
-git checkout claude/dependency-updates
-pnpm install --frozen-lockfile
-```
+### A Rejected Push
+If a push is rejected, the branch changed on GitHub during this session, such as when another run's session pushed to it. Don't push again or force it, and open or edit no pull request.
 
-- **The base fails it too:** no update from this run is to blame, so drop nothing for it. The pull request still opens or is updated, and its body and the summary say why the check fails, with the line of its output that shows it. If the base is the open pull request's merge, run the check the same way on `origin/develop` to find out which of these it is:
-  - **`develop` fails it too,** or the base is `origin/develop`: `develop` fails that check without any update.
-  - **`develop` passes it:** an update an earlier run put in the open pull request fails it now that the latest `develop` is merged in. Leave that update in, so Sarah decides what to do with it.
-- **The base passes it:** an update from this run breaks it. Find the first commit that fails it:
-
-  ```bash
-  git bisect start claude/dependency-updates "<base>"
-  git bisect run sh -c 'pnpm install --frozen-lockfile && pnpm <script>'
-  git bisect reset
-  pnpm install --frozen-lockfile
-  ```
-
-  The first bad commit is the update that breaks it. Run the check on that commit and keep each finding or failure it prints, with its file, for the sweep rule. Then take the update off the branch: cut the branch again from the base with `git checkout -B claude/dependency-updates "<base>"`, and apply every other update from this run again as above, each as its own commit. Keep the dropped update, the check it broke and the line of its output that shows why, for the summary.
-
-Then run the four checks again. Repeat until every check passes, or fails on the base too.
-
-## 4. Minors
-List each minor in the summary (step 8): under **In the pull request**, under **Dropped** if step 3 or 7 took it off the branch, or under **Not applied** if step 2 aborted the merge or a push was rejected.
-
-## 5. Majors and Dropped Updates
-A major is never applied, and an update that step 3 dropped is already off the branch. A small one of either becomes a sweep item and anything bigger gets a Roadmap line, except that a major of an assessed library is listed for Sarah to plan. An advisory whose only fix is a major (step 3) counts as a major of the package with the advisory, at its lowest fixed version. This skill calls it a **security major**.
-
-**The assessed libraries** are React (`react`, `react-dom`), Next (`next`), Mantine (`@mantine/*`), better-auth (`better-auth`), luxon (`luxon`) and Zod (`zod`). The app leans on them most, so a major of one is listed for Sarah to plan rather than swept.
-
-The cases, and what to do with each major or dropped update:
-- **If it's a major of one of the assessed libraries:** list it in the summary.
-- **Otherwise:** read `.claude/skills/dependency-updates/sweep-rule.md` and follow it.
-
-### The Release Notes Link
-Find the package's repository with `pnpm view "<package>" repository --json`. It prints a string, an object with a `url`, or nothing when the package has no repository. The repository is on GitHub when it's:
-- a URL on `github.com`, such as `git+https://github.com/microsoft/TypeScript.git`
-- `github:<owner>/<repo>`, or a bare `<owner>/<repo>`, which npm reads as GitHub
-
-The link is the repository's releases page, `https://github.com/<owner>/<repo>/releases`.
-
-If the package has no repository, its repository isn't on GitHub, or it's `DefinitelyTyped/DefinitelyTyped` (where the `@types/*` packages live), it has no releases page of its own. Link its npm page instead, `https://www.npmjs.com/package/<package>`, and say it has no GitHub releases page.
-
-## 6. Reminders
-List each reminder in the summary, apart from the new findings, as an advisory that's still unfixed. A reminder is never applied.
-
-## 7. Push and open or update the pull request
-If steps 3 and 5 left no commit on the branch, skip this step.
-
-If a push is rejected, the branch changed on GitHub during this session, such as when another run's session pushed to it. Don't push again or force it, and open or edit no pull request. The summary says the push was rejected (step 8).
-
-### An open pull request
-Push the branch, which now holds the merge of `develop` and this run's updates:
+### An Open Pull Request
+Push the branch, then rewrite the pull request's body:
 
 ```bash
-git push origin claude/dependency-updates
-```
-
-Then rewrite the pull request's body, so it lists everything in the pull request, not only what the first run put there:
-
-```bash
-gh api -X PATCH "repos/{owner}/{repo}/pulls/<number>" -F body=@- --jq .html_url <<'EOF'
+git push origin claude/dependency-updates && gh api -X PATCH "repos/{owner}/{repo}/pulls/<number>" -F body=@- --jq .html_url <<'EOF'
 <body>
 EOF
 ```
 
-Build the body's lists of updates from the commits on the branch that aren't on `develop`: `git log --no-merges --reverse --format=%B origin/develop..claude/dependency-updates`. Each update's commit names its package, its old and new versions and any advisories it fixes. Take each earlier advisory's severity from the current body, read with `gh api "repos/{owner}/{repo}/pulls/<number>" --jq .body`. A package two runs both updated is one line, from its version before the first update to its version after the last. Leave out an update that a later `Revert "<its message>"` commit takes back. Build the lists of sweep items and Roadmap lines from `git diff origin/develop...claude/dependency-updates -- notes`. **Dropped** lists only this run's dropped updates.
-
-Leave out everything the current body has after its lists, such as an earlier session's link and the footers Claude Code added. Claude Code adds a footer when a body is edited too, but without the session's link, so end the body with `Session: <link>`, this session's link, read from the `Claude-Session` trailer of the latest commit that has one. A revert (step 7) keeps git's message, so it has none:
-
-```bash
-git log --no-merges --format='%(trailers:key=Claude-Session,valueonly)' | grep -m1 .
-```
-
-### No open pull request
-Push the branch over any branch a closed pull request left behind, but only if it's still on the commit `git ls-remote` printed in step 2, so you never overwrite another session's push. Then open a pull request from it into `develop`:
+### No Open Pull Request
+Push the branch over any branch a closed pull request left behind, then open a pull request into `develop`. The lease holds the commit from step 2, or is empty if `git ls-remote` printed nothing, as in `--force-with-lease="claude/dependency-updates:"`:
 
 ```bash
-git push -u --force-with-lease="claude/dependency-updates:<commit from step 2>" origin claude/dependency-updates
-gh api -X POST "repos/{owner}/{repo}/pulls" -f base=develop -f head=claude/dependency-updates -f title="Dependency updates" -F body=@- --jq .html_url <<'EOF'
+git push -u --force-with-lease="claude/dependency-updates:<commit from step 2>" origin claude/dependency-updates && gh api -X POST "repos/{owner}/{repo}/pulls" -f base=develop -f head=claude/dependency-updates -f title="Dependency updates" -F body=@- --jq .html_url <<'EOF'
 <body>
 EOF
 ```
 
-If `git ls-remote` printed nothing, leave the commit empty, as in `--force-with-lease="claude/dependency-updates:"`, so the push is rejected if the branch has appeared since.
-
-### The body
-The body starts with `From dependency check run <run URL>.`, then lists what's in the pull request and what was dropped, in the same groups and shapes as the summary's **In the pull request**, **Dropped**, **Sweep items** and **Roadmap lines** (step 8). If a check fails on the base (step 3), the body says why, with the line of its output.
-
-### Wait for the pull request's checks
-If nothing was pushed, skip this. Otherwise, GitHub runs `checks.yml` on the pull request for the push. Its `start-ci-failure` job skips `claude/` branches, so no other session looks into a failure here: this session sees the run through itself.
-
-Find the run for the commit you pushed (`git rev-parse HEAD`), and check it every minute until it has finished. Run this loop as one command with a 10-minute timeout. Run it at most three times, about 30 minutes in all:
+### Wait for the Pull Request's Checks
+If nothing was pushed, skip this. Otherwise, find the run for the commit you pushed (`git rev-parse HEAD`). Run this loop as one command with a 10-minute timeout. Run it at most three times, about 30 minutes in all:
 
 ```bash
 for i in $(seq 9); do
@@ -259,88 +153,38 @@ for i in $(seq 9); do
 done
 ```
 
-Until GitHub starts the run, the loop prints `null`. If the run still hasn't finished when those limits are up, stop waiting, and keep its link, or that no run started, for the summary.
+Until GitHub starts the run, the loop prints `null`. If the run hasn't finished after the third loop, stop waiting. Keep its link for the summary, or, if no run started, that fact.
 
-When it finishes:
-- **It was cancelled,** such as by another session's push to the branch: don't re-run it. Keep its link for the summary.
+When it finishes, what to do depends on its result:
 - **It passed:** keep its link for the summary.
-- **It failed:** list the jobs that failed:
+- **It failed:** follow `failed-on-github.md` in this folder.
+- **It was cancelled,** such as by another session's push to the branch: don't re-run it. Keep its link for the summary.
 
-  ```bash
-  gh run view "<run ID>" --json jobs --jq '.jobs[] | select(.conclusion == "failure") | .name'
-  ```
-
-  Each one's script is the last `run:` line of that job in `.github/workflows/checks.yml`. What to do with them, by case:
-  - **This run left no update on the branch:** it changed only notes, so no update from it is to blame. Drop nothing, and the summary says which jobs failed on GitHub.
-  - **A script that failed on the base in step 3:** that failure is already explained, so do nothing more for it. The summary says it failed on GitHub too.
-  - **A script that passed in step 3:** step 3 ran it on this same code, so it either flaked or fails only on GitHub's runner. Go on to "A check that fails only on GitHub" with those jobs.
-
-### A check that fails only on GitHub
-Follow `.claude/skills/routine-sessions/rerunning-a-failure.md`. The head branch is `claude/dependency-updates`, and the failed commit is the one you pushed. The failed jobs are only the ones sent here, since a job that failed on the base would fail the re-run too. Two of its instructions change:
-- Where it says to stop, leave that file rather than ending the session: keep what it would say, and its links, for the summary, and go to step 8.
-- Where it says to fix the failure, don't fix the code. Go to "Drop an update that fails only on GitHub".
-
-### Drop an update that fails only on GitHub
-Run the failed script on the base from step 2, the way you reproduced the failure, such as with the same variable set or on a throwaway merge. What to do depends on the result:
-- **The base fails it too:** drop nothing, and handle it as step 3 does when the base fails a check. The summary says what differs on GitHub's runner.
-- **The base passes it:** an update from this run breaks it on GitHub's runner. Find the first commit that fails it with `git bisect`, as step 3 does, with a command that reproduces the failure the same way. For a failure a variable brings out, set it on the script, as in `git bisect run sh -c 'pnpm install --frozen-lockfile && GITHUB_ACTIONS=true pnpm <script>'`. The command must leave `HEAD` where bisect put it, since bisect marks `HEAD` as good or bad. For a failure that shows up only when `develop` is merged in, fetch `develop` first, and skip a commit whose merge conflicts:
-
-  ```bash
-  git fetch origin develop
-  git bisect start claude/dependency-updates "<base>"
-  git bisect run sh -c 'c=$(git rev-parse HEAD); git merge --no-edit --quiet origin/develop || { git merge --abort; exit 125; }; pnpm install --frozen-lockfile && pnpm <script>; r=$?; git reset --hard --quiet "$c"; exit $r'
-  git bisect reset
-  pnpm install --frozen-lockfile
-  ```
-
-  Run the failed script on the first bad commit, reproducing the failure the same way, and keep each finding or failure it prints, with its file, for the sweep rule. Then drop any merge that took, and go back with `git checkout claude/dependency-updates` and `pnpm install --frozen-lockfile`, since a revert acts on `HEAD`.
-
-  The branch is already on GitHub, so take the first bad commit off with a revert, not by cutting the branch again, and nothing is force-pushed:
-
-  ```bash
-  git revert --no-edit "<first bad commit>"
-  ```
-
-  Keep the dropped update, the check it broke on GitHub's runner, what differs there and the line of its output that shows why, for the summary.
-
-  The revert can conflict where a later commit changed a nearby line, such as an update to the package on the next line of `package.json`. List the conflicted files with `git diff --name-only --diff-filter=U`, and resolve them in this order:
-  1. **`package.json` and `pnpm-workspace.yaml`:** in each conflict, keep the branch's side (between `<<<<<<<` and `=======`), except the reverted update's own lines: its package's range, or its override, go back to what they were before that commit (`git show "<first bad commit>"` shows both). Then `git add` the file.
-  2. **`pnpm-lock.yaml`:** run `pnpm install --no-frozen-lockfile`, which resolves a conflict in the lockfile, then `git add pnpm-lock.yaml`.
-  3. Finish the revert with `git -c core.editor=true revert --continue`, which keeps git's message.
-
-  If any other file conflicts, run `git revert --abort`, drop nothing, and keep the conflicted files for the summary.
-
-  Run the failed script again the way you reproduced the failure. Repeat until it passes, or fails on the base too.
-
-If you reverted an update, take it through `.claude/skills/dependency-updates/sweep-rule.md`, which commits its item or line, so the revert and the record of the work go up in one push. Then push the branch with `git push origin claude/dependency-updates`, and rewrite the pull request's body as "An open pull request" describes, whether this run opened it or not, so it lists the dropped update under **Dropped**. Then wait for the new run once more, as in "Wait for the pull request's checks", and keep its result and link for the summary. Whatever it shows, don't re-run it or drop anything more.
-
-## 8. The summary
-End with a summary for Sarah, in this order. Leave out a group or section with nothing in it. If the block's `new:` part is `none`, say there were no new findings.
+## 6. The Summary
+End with a summary for the user, in this order. Leave out a group or section with nothing in it. If the block's `new:` part is `none`, say there were no new findings.
 
 1. **The pull request,** by how the run went:
-   - **Step 2 aborted the merge of `develop`:** the open pull request's link, the files that conflicted, and that nothing from this run was applied. List this run's patches, minors and advisories under **Not applied** instead of **In the pull request**.
-   - **A push was rejected (step 7):** that it was, and that no pull request was opened or changed. List what this run would have put in the pull request under **Not applied**.
-   - **Neither step 3 nor step 5 left a commit on the branch:** that no update went in, that nothing was pushed, and that no pull request was opened or changed.
-   - **Only step 5 left a commit on the branch:** its link, whether this run opened it or added to the one that was open, that no update went in, and the four checks' result in this session, or that they didn't run because step 3 applied nothing.
-   - **Otherwise:** its link, whether this run opened it or added to the one that was open, and the four checks' result in this session: all passed, or which fail on the base (step 3) and why, with the line of output that shows it.
+   - **Step 2 aborted the merge of `develop`:** the open pull request's link, the files that conflicted, and that nothing from this run was applied.
+   - **A push was rejected:** that it was, and that no pull request was opened or changed. If an earlier push in this run went through, give the pull request's link instead, and say it still holds the update that breaks the check.
+   - **Neither step 3 nor step 4 left a commit on the branch:** that no update went in, that nothing was pushed, and that no pull request was opened or changed.
+   - **Only step 4 left a commit on the branch:** its link, whether this run opened it or added to the one that was open, and that no update went in.
+   - **Otherwise:** its link, and whether this run opened it or added to the one that was open.
 
-   If the run pushed, also give **the checks on GitHub** (step 7), with the run's link: they passed, or which failed and what came of each:
-   - failed on the base in step 3 too
-   - flaked: passed when re-run, with both attempts' links
-   - fails only on GitHub's runner: what differs there, and either the update dropped for it (under **Dropped**) and the result of the run after the revert, with its link, or that the base fails it too, or that the update's revert conflicted, with the files, or that you couldn't reproduce it, with what you found and tried
-   - not looked into, because the branch moved on or the run was cancelled, with the newer run's link if there is one
-   - failed in a run that changed only notes: which jobs
-
-   If the run was still going when you stopped waiting, or never started, say so instead.
-2. **In the pull request,** grouped by kind:
-   - security fixes: each package, as `<package>`: advisory `<ID>` (`<severity>`), with every advisory it fixes, then how: `<package>` `<old>` → `<new>`, a lockfile bump to `<version>`, `<parent>` `<old>` → `<new>`, or an override to `^<version>`
-   - patches: each as `<package>` `<old>` → `<new>`
-   - minors: each as `<package>` `<old>` → `<new>`
-   - overrides removed: each override's key, as `'<package>@<range>'`, that no longer did anything
-3. **Not applied:** when step 2 aborted the merge or a push was rejected, each patch, minor and advisory from this run, as above. Also give the full text of each sweep item and Roadmap line this run would have written, and where it would have gone. This is its only record, since the reported list keeps those versions quiet until a newer one comes out. Leave these out of **Sweep items** and **Roadmap lines**.
-4. **Dropped:** each update taken off the branch, as above, with the check it broke, the line of its output that shows why, and the sweep its item went to or the heading of its Roadmap line. If a push was rejected, say its item or line is under **Not applied** instead. For one dropped in step 7, also say it broke the check only on GitHub's runner, and what differs there.
-5. **Not fixed:** each new advisory step 3 didn't fix, as `<package>`: advisory `<ID>` (`<severity>`), and why: already fixed, no fix released yet, or no fix cleared it, with what was tried.
-6. **Majors:** each major that step 5 listed with no sweep item or Roadmap line, as `<package>` `<version>`: not applied, with its release notes link from step 5. A security major here is listed as `<package>` `<version>`: security fix for advisory `<ID>` (`<severity>`), not applied, with its link. A major of an assessed library's `@types/*` package is listed beside its library, as part of that upgrade.
-7. **Sweep items:** each item this run added or updated, as `<package>` `<old>` → `<new>`: added to or updated on `<sweep>`, with the work in one sentence. If the sweep wasn't at the path in `sweep-rule.md`, say where it was. If an item went on the Roadmap because its sweep is missing, list it here and say the sweep is missing. If a package's item is in a kicked-off copy, list the package here, naming the copy and the newer version.
-8. **Roadmap lines:** each flagged package, as `<package>` `<old>` → `<new>`: the heading its line is under, then the reason its line gives. Name any unchecked sweep item for the package beside it.
-9. **Reminders:** each advisory that's still unfixed, as `<package>`: advisory `<ID>` (`<severity>`).
+   If this run pushed, also give **the checks on GitHub**, by how they went:
+   - **Still going when you stopped waiting, or never started:** say so.
+   - **Finished:** the last run's link, then either that they passed, or which failed and what came of each, as `failed-on-github.md` describes.
+2. **What this run applied,** by whether it reached the pull request:
+   - **If step 2 aborted the merge or a push was rejected: Not applied.** Give each patch, minor and advisory from this run, in the shapes below. Also give the full text of each sweep item and Roadmap line this run would have written, and where it would have gone. This is its only record, since the check won't report those versions again until a newer one comes out. Leave these out of **Sweep items** and **Roadmap lines**.
+   - **Otherwise: In the pull request.** Group them by kind, in these shapes:
+     - security fixes: each package once, as `<package>`: advisory `<ID>` (`<severity>`), repeating the advisory part for each one it fixes. Then say how it was fixed, as one of `<package>` `<old>` → `<new>`, a lockfile bump to `<version>`, `<parent>` `<old>` → `<new>`, or an override to `^<version>`
+     - patches: each as `<package>` `<old>` → `<new>`
+     - minors: each as `<package>` `<old>` → `<new>`
+     - overrides removed: each override's key, as `'<package>@<range>'`
+3. **Dropped:** each update taken off the branch, as above, with the check it broke, the line of its output that shows why, and the sweep its item went to or where its Roadmap line is. If a push was rejected, say its item or line is under **Not applied** instead.
+4. **Not fixed:** each new advisory the session didn't fix, as `<package>`: advisory `<ID>` (`<severity>`), and why: already fixed, no fix released yet, or no fix cleared it, with what was tried.
+5. **Majors:** each major that step 4 listed with no sweep item or Roadmap line, by kind:
+   - **A major of an assessed library's `@types/*` package:** beside its library, as part of that upgrade.
+   - **Any other major:** `<package>` `<version>`: not applied, with its release notes link.
+6. **Sweep items:** each item this run added or updated, as `<package>` `<old>` → `<new>`: added to or updated on `<sweep>`, with the work in one sentence. If the sweep wasn't at the path in `sweep-rule.md`, say where it was. If an item went on the Roadmap because its sweep is missing, list it here and say the sweep is missing. If a package's item is in a kicked-off copy, list the package here, naming the copy and the newer version.
+7. **Roadmap lines:** each flagged package, as `<package>` `<old>` → `<new>`: the section or heading its line is in, then the reason its line gives. Name any unchecked sweep item for the package beside it.
+8. **Reminders:** each reminder the session didn't fix, as `<package>`: advisory `<ID>` (`<severity>`), and why: no fix released yet, its Roadmap line, or already fixed in the open pull request.
