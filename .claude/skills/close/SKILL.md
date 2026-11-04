@@ -28,7 +28,7 @@ Run `sh scripts/note-refs.sh "<note name>"`. Sort the matches it lists into the 
 - **Content:** a note that relies on content that only this note holds. It embeds a section or image, or sends the reader here for a design, a decision or a rationale ("as the approved design in the archived [[Mobile Month View]] note specifies").
 - **Blocker:** an entry in another story's `blocked-by`, a collecting note item's `**Blocked by [[Name]]:**` marker, or a Roadmap line that says it waits on this story.
 - **Kept-for:** an archived note with this story in its `kept-for`.
-- **Hub list:** a hub that lists this story as one of its stories.
+- **Hub list:** a row for this story in a hub's Child Stories table.
 - **The user's comment:** a line tagged or signed with the user's name, whether or not the script labels it as the user's comment.
 - **Passing mention:** any other line in the vault, like "unblocks [[X]]", "follow-up to [[X]]" or "Depends on: [[X]]". This includes a line that relies on content now in `docs/`, such as a done pattern's Rules, because the reader no longer needs this note for it.
 - **Outside the vault:** code comments, docs, skills and agents.
@@ -59,7 +59,7 @@ Skip this for a re-close. Otherwise, handle each Blocker match by what it is:
 Go through the rest of the matches. What to do depends on the kind:
 - **Content:** if the user chose in step 3 to move the content a story relies on into the story's own note, move it now, as `.claude/skills/filing-work/content-from-another-note.md` describes for work moving out of a note. Then reword the line in the story's note so it no longer sends the reader here.
 - **Kept-for:** remove this story from the archived note's `kept-for`. If the list is now empty, that note needs its own `/close`.
-- **Hub list:** mark this story done or dropped in the hub's list, following how the hub marks the others. If the hub now has no open stories left, it needs its own `/close`.
+- **Hub list:** remove this story's row from the hub's Child Stories table. If the hub now has no open stories left and its `^status` line says `Next: its child stories`, it needs its own `/close`.
 - **The user's comment:** if it's now done or out of date, follow the rule for the user's comments.
 - **Passing mention:** what to do depends on what the line relies on and what happens to this note:
   - **If it relies on content that now lives in `docs/`:** swap the link to this note for one to the `docs/` section that holds the content.
