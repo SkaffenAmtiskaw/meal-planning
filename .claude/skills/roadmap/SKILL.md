@@ -81,13 +81,12 @@ Write the order she gives. Each Goals line is `1. [[<goal>]]`, with ` - building
 - **A line moved into Next or Planning** keeps its order among the lines moved with it.
 - **A line moved back to Later** goes under the heading of a goal it serves, and loses that goal's 🎯 link. Its other 🎯 links stay. Later isn't ordered, so there's nothing to ask.
 
-**If a goal just became the building goal,** these join it:
-- every sweep and collecting workflow note with an unblocked item
-- every line under the Bugs heading whose `^status` line doesn't say it's blocked
-
-For each of these collecting notes that isn't a dated copy, freeze a dated copy as `freezing-a-copy.md` in this skill's folder describes. The copy is the kicked-off note, and its Roadmap line goes where "How this file works" describes under "Collecting notes". Move each of those lines under the Bugs heading into Next, ending it with 🔁. Then check every collecting note's own line, and fix any that doesn't match "How this file works" under "Collecting notes".
-
 Then fill that goal's queue. Go through every Later line that serves it, one at a time, whether it sits under the goal's heading or carries its 🎯 link. Judge each one by where the goal stands now, not by the goal it's filed under. Sarah says which move into the goal's queue: Next for the building goal, Planning for the planning goal. A moved line keeps its 🎯 links, and gets one for the goal whose heading it leaves.
+
+**If a goal just became the building goal,** the bug lines and collecting notes also join the release. Handle them in this order, because a freeze reads Next to see which stories are in the release:
+1. For each line under the Bugs heading whose `^status` line doesn't say it's blocked, move it into Next and end it with 🔁.
+2. For each sweep and collecting workflow note that isn't a dated copy and has an item a frozen copy would keep, freeze a dated copy as `freezing-a-copy.md` in this skill's folder describes. The copy is the kicked-off note, and its Roadmap line goes where "How this file works" describes under "Collecting notes".
+3. Check every collecting note's own line, and fix any that doesn't match that part of "How this file works".
 
 Then ask her where the lines that just joined each queue go. They're the lines moved from another section, the ones she picked and, in Next, the kicked-off notes and bug lines.
 

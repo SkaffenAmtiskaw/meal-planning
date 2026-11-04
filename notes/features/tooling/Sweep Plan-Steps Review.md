@@ -7,6 +7,7 @@ Next: /tooling ^status
 
 # Inbox
 - From Sweep Kickoff Review (`/tooling`, 2026-11-02): how sweeps work changed. Sarah retired `/kickoff`, so `/roadmap` freezes a dated copy of every collecting note when a goal starts building, as `.claude/skills/roadmap/freezing-a-copy.md` describes. A sweep is never kicked off by hand or worked in place, and the general sweep rule moved from the Sweep template and the collecting sweeps to `filing-work`. Assess this review's skill in light of that. Sarah asked that if part of this note no longer makes sense because of the change, it gets fixed.
+- From Sweep Check-Drift Review (`/tooling`, 2026-11-03): `/check-drift` now deletes a sweep item that's already fixed or moved out, with no callout, so a sweep reaches `/plan-steps` holding only the items to build. A sweep with an item waiting on a story in this release waits as a whole through `blocked-by`, and reaches `/plan-steps` after that story lands.
 
 # Notes
 Part of [[Agent Instructions Audit]].

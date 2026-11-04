@@ -8,7 +8,7 @@
 	- **The planning goal** is the second, marked `- planning`. Its stories can be shaped, decided, designed and planned down to steps, but they aren't built until the building goal is released. Collecting notes aren't kicked off for it.
 	- **The rest** organize the backlog. Their lines sit under their headings in Later, and their stories can be shaped and decided ahead of their turn.
 	- **Standing Goals** - listed under their own subheading below the ranked goals. Each collects work that no ranked goal would take, such as library upgrades, and never ships itself, so it's never ranked, building or planning. When Sarah wants to take on some of that work, `/roadmap` draws a goal from it, named `<standing goal> YYYY-MM-DD`, which takes the work she picks and is ranked like any other goal.
-- **What joins every release** - sweeps, collecting workflow notes and bugs rarely fit a goal, so if they waited for one they might wait forever. So when any goal starts building, `/roadmap` kicks off every sweep and collecting workflow note and moves every bug line into Next. Blocked work waits for the next release. The goal ships once this work is done too.
+- **What joins every release** - sweeps, collecting workflow notes and bugs rarely fit a goal, so if they waited for one they might wait forever. So when any goal starts building, `/roadmap` kicks off every sweep and collecting workflow note and moves every bug line into Next. A sweep item blocked by a story in this release, meaning its line is in Now or Next, joins the release, and the sweep waits for the story through `blocked-by`. Other blocked work waits for the next release. The goal ships once this work is done too.
 - **Now** - in progress. Keep this to 2-3 items.
 - **Next** - the building goal's queue, in order. The first line not waiting on anything is the next one to plan or build. A line that's waiting keeps its place, and its status embed says what it waits on. A line that serves both the building and planning goals goes here.
 - **Planning** - the planning goal's queue, in order. The first line not waiting on anything is the next one to plan. When the planning goal starts building, its lines move into Next in the same order.
@@ -28,7 +28,7 @@
 - Each line with a note, except a goal's, embeds that note's status line from Where It Stands after the link, e.g. `[[Stale Data Issues]] ![[Stale Data Issues#^status]]`. It shows only what the story needs next, the next skill or a link to what blocks it, not what the story is. Edit it in the note, not here.
 - **Collecting notes** gather items until they're handled together: sweeps (`type: sweep`) for small, decided fixes that share a group, such as [[Unit Test Tidy-Ups]], and collecting workflow notes for tooling and agent changes, such as [[Agent Workflow Changes]]. An item that fits one, and belongs to no story or hub, goes there, not onto its own line here. When several related items sit here as separate lines and none covers them, flag to Sarah that they could become a new one. Never create one without her.
 	- **The note's line** carries no 🎯 links and always sits in Unaffiliated in Later. A collecting note keeps getting new items, so it never finishes. A kickoff freezes some of its items into a dated copy, `<note> YYYY-MM-DD`, which can finish, and the note keeps collecting.
-	- **Their items** have no goal links, because each release takes all of them. The copy's line ends with 🔁 and sits in Next.
+	- **Their items** have no goal links, because they join whichever release comes next. The copy's line ends with 🔁 and sits in Next.
 
 # Goals
 1. [[Dev Foundations]] - building
@@ -44,42 +44,41 @@
 - [[Major Upgrade Sweeps]] ![[Major Upgrade Sweeps#^status]] 🎯 [[Dev Foundations]]
 
 # Next
-1. [[Sweep Check-Drift Review]] ![[Sweep Check-Drift Review#^status]] 🎯 [[Dev Foundations]]
-2. [[Sweep Plan-Steps Review]] ![[Sweep Plan-Steps Review#^status]] 🎯 [[Dev Foundations]]
-3. [[Sweep Implement Review]] ![[Sweep Implement Review#^status]] 🎯 [[Dev Foundations]]
-4. [[Sweep Final-Review Review]] ![[Sweep Final-Review Review#^status]] 🎯 [[Dev Foundations]]
-5. [[Sweep Close Review]] ![[Sweep Close Review#^status]] 🎯 [[Dev Foundations]]
-6. [[Hub Shape Review]] ![[Hub Shape Review#^status]] 🎯 [[Dev Foundations]]
-7. [[Hub Decide Review]] ![[Hub Decide Review#^status]] 🎯 [[Dev Foundations]]
-8. [[Hub Close Review]] ![[Hub Close Review#^status]] 🎯 [[Dev Foundations]]
-9. [[Workflow Tooling Review]] ![[Workflow Tooling Review#^status]] 🎯 [[Dev Foundations]]
-10. [[Large Workflow Changes]] ![[Large Workflow Changes#^status]] 🎯 [[Dev Foundations]]
-11. [[Goal Roadmap Review]] ![[Goal Roadmap Review#^status]] 🎯 [[Dev Foundations]]
-12. [[Standing Goal Roadmap Review]] ![[Standing Goal Roadmap Review#^status]] 🎯 [[Dev Foundations]]
-13. [[CI-Failure Review]] ![[CI-Failure Review#^status]] 🎯 [[Dev Foundations]]
-14. [[Dependency-Updates Review]] ![[Dependency-Updates Review#^status]] 🎯 [[Dev Foundations]]
-15. [[AGENTS.md Review]] ![[AGENTS.md Review#^status]] 🎯 [[Dev Foundations]]
-16. [[Memory Folder Review]] ![[Memory Folder Review#^status]] 🎯 [[Dev Foundations]]
-17. [[Note Conventions and Roadmap Header Review]] ![[Note Conventions and Roadmap Header Review#^status]] 🎯 [[Dev Foundations]]
-18. [[Conventions Review]] ![[Conventions Review#^status]] 🎯 [[Dev Foundations]]
-19. [[Agent Workflow Changes 2026-10-02]] ![[Agent Workflow Changes 2026-10-02#^status]] 🎯 [[Dev Foundations]]
-20. [[Dependency Release Analysis]] ![[Dependency Release Analysis#^status]] 🎯 [[Dev Foundations]]
-21. [[Notes Vault Repo]] ![[Notes Vault Repo#^status]] 🎯 [[Dev Foundations]]
-22. [[Branching and Releases]] ![[Branching and Releases#^status]] 🎯 [[Dev Foundations]]
-23. [[Vercel Deploy Errors]] ![[Vercel Deploy Errors#^status]] 🎯 [[Dev Foundations]]
-24. [[Services and Environments Audit]] ![[Services and Environments Audit#^status]] 🎯 [[Dev Foundations]]
-25. [[Atlas Version Check Script]] ![[Atlas Version Check Script#^status]] 🎯 [[Dev Foundations]]
-26. [[Database Backup and Restore]] ![[Database Backup and Restore#^status]] 🎯 [[Dev Foundations]]
-27. [[E2E Tests in CI]] ![[E2E Tests in CI#^status]] 🎯 [[Dev Foundations]]
-28. [[Sentry Error Reporting]] ![[Sentry Error Reporting#^status]] 🎯 [[Dev Foundations]]
-29. [[Sentry Root Cause Analysis]] ![[Sentry Root Cause Analysis#^status]] 🎯 [[Dev Foundations]]
-30. [[Auth E2E Tests]] ![[Auth E2E Tests#^status]] 🎯 [[Dev Foundations]]
-31. [[Current Calendar E2E Tests]] ![[Current Calendar E2E Tests#^status]] 🎯 [[Dev Foundations]] 🎯 [[Calendar Page]]
-32. [[Recipes E2E Tests]] ![[Recipes E2E Tests#^status]] 🎯 [[Dev Foundations]]
-33. [[Settings E2E Tests]] ![[Settings E2E Tests#^status]] 🎯 [[Dev Foundations]]
-34. [[Sharing E2E Tests]] ![[Sharing E2E Tests#^status]] 🎯 [[Dev Foundations]]
-35. [[When Stories Need E2E Tests]] ![[When Stories Need E2E Tests#^status]] 🎯 [[Dev Foundations]]
-36. [[Docs Audit]] ![[Docs Audit#^status]] 🎯 [[Dev Foundations]]
+1. [[Sweep Plan-Steps Review]] ![[Sweep Plan-Steps Review#^status]] 🎯 [[Dev Foundations]]
+2. [[Sweep Implement Review]] ![[Sweep Implement Review#^status]] 🎯 [[Dev Foundations]]
+3. [[Sweep Final-Review Review]] ![[Sweep Final-Review Review#^status]] 🎯 [[Dev Foundations]]
+4. [[Sweep Close Review]] ![[Sweep Close Review#^status]] 🎯 [[Dev Foundations]]
+5. [[Hub Shape Review]] ![[Hub Shape Review#^status]] 🎯 [[Dev Foundations]]
+6. [[Hub Decide Review]] ![[Hub Decide Review#^status]] 🎯 [[Dev Foundations]]
+7. [[Hub Close Review]] ![[Hub Close Review#^status]] 🎯 [[Dev Foundations]]
+8. [[Workflow Tooling Review]] ![[Workflow Tooling Review#^status]] 🎯 [[Dev Foundations]]
+9. [[Large Workflow Changes]] ![[Large Workflow Changes#^status]] 🎯 [[Dev Foundations]]
+10. [[Goal Roadmap Review]] ![[Goal Roadmap Review#^status]] 🎯 [[Dev Foundations]]
+11. [[Standing Goal Roadmap Review]] ![[Standing Goal Roadmap Review#^status]] 🎯 [[Dev Foundations]]
+12. [[CI-Failure Review]] ![[CI-Failure Review#^status]] 🎯 [[Dev Foundations]]
+13. [[Dependency-Updates Review]] ![[Dependency-Updates Review#^status]] 🎯 [[Dev Foundations]]
+14. [[AGENTS.md Review]] ![[AGENTS.md Review#^status]] 🎯 [[Dev Foundations]]
+15. [[Memory Folder Review]] ![[Memory Folder Review#^status]] 🎯 [[Dev Foundations]]
+16. [[Note Conventions and Roadmap Header Review]] ![[Note Conventions and Roadmap Header Review#^status]] 🎯 [[Dev Foundations]]
+17. [[Conventions Review]] ![[Conventions Review#^status]] 🎯 [[Dev Foundations]]
+18. [[Agent Workflow Changes 2026-10-02]] ![[Agent Workflow Changes 2026-10-02#^status]] 🎯 [[Dev Foundations]]
+19. [[Dependency Release Analysis]] ![[Dependency Release Analysis#^status]] 🎯 [[Dev Foundations]]
+20. [[Notes Vault Repo]] ![[Notes Vault Repo#^status]] 🎯 [[Dev Foundations]]
+21. [[Branching and Releases]] ![[Branching and Releases#^status]] 🎯 [[Dev Foundations]]
+22. [[Vercel Deploy Errors]] ![[Vercel Deploy Errors#^status]] 🎯 [[Dev Foundations]]
+23. [[Services and Environments Audit]] ![[Services and Environments Audit#^status]] 🎯 [[Dev Foundations]]
+24. [[Atlas Version Check Script]] ![[Atlas Version Check Script#^status]] 🎯 [[Dev Foundations]]
+25. [[Database Backup and Restore]] ![[Database Backup and Restore#^status]] 🎯 [[Dev Foundations]]
+26. [[E2E Tests in CI]] ![[E2E Tests in CI#^status]] 🎯 [[Dev Foundations]]
+27. [[Sentry Error Reporting]] ![[Sentry Error Reporting#^status]] 🎯 [[Dev Foundations]]
+28. [[Sentry Root Cause Analysis]] ![[Sentry Root Cause Analysis#^status]] 🎯 [[Dev Foundations]]
+29. [[Auth E2E Tests]] ![[Auth E2E Tests#^status]] 🎯 [[Dev Foundations]]
+30. [[Current Calendar E2E Tests]] ![[Current Calendar E2E Tests#^status]] 🎯 [[Dev Foundations]] 🎯 [[Calendar Page]]
+31. [[Recipes E2E Tests]] ![[Recipes E2E Tests#^status]] 🎯 [[Dev Foundations]]
+32. [[Settings E2E Tests]] ![[Settings E2E Tests#^status]] 🎯 [[Dev Foundations]]
+33. [[Sharing E2E Tests]] ![[Sharing E2E Tests#^status]] 🎯 [[Dev Foundations]]
+34. [[When Stories Need E2E Tests]] ![[When Stories Need E2E Tests#^status]] 🎯 [[Dev Foundations]]
+35. [[Docs Audit]] ![[Docs Audit#^status]] 🎯 [[Dev Foundations]]
 # Planning
 1. [[Planner Access Audit]] ![[Planner Access Audit#^status]] 🎯 [[Calendar Page]]
 2. [[Calendar and Recipes Data Refresh]] ![[Calendar and Recipes Data Refresh#^status]] 🎯 [[Calendar Page]] 🎯 [[App Health]] 🎯 [[Recipes Page]]
