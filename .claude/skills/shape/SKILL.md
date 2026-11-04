@@ -34,7 +34,6 @@ A change to how the app is built rather than what it does, such as a skill, a ho
 - **If the idea changes what the app does,** go on to step 3.
 - **If it changes how the app is built:**
   - **If it builds new infrastructure,** such as CI or a test setup, it's an infra story. Go on to step 3.
-  - **If it's too big for one session,** it's a story of whichever type fits. Go on to step 3. A note `/tooling` spun off is always this case, as its Notes say, since the user has already agreed it's a story.
   - **Otherwise,** it's a workflow note. Tell the user why. If they agree, rewrite it from `notes/templates/Workflow.md`, keeping their content under Notes, write it as step 7 describes, and stop.
 
 ## 3. Understand the idea
@@ -80,6 +79,7 @@ Go by the first case that fits:
 - **The user agreed in step 3 that the idea is a whole area:** check whether it serves a goal, as the `roadmap-placement` skill describes:
   - **It does:** it becomes an exploration hub. Follow `making-a-hub.md` in this skill's folder.
   - **It doesn't:** tell the user it needs a goal from `/roadmap` first, because deciding what's in this release needs a release to compare against. Then stop.
+- **Step 3 found no signs of several stories, or the user settled on one there:** it's one story. Say so in passing and go on to step 5, because the user has nothing to weigh.
 - **The decisions still open after step 3 would decide how many stories there are:** it's one story for now. Go on to step 5.
 - **Otherwise:** tell the user which of these it is, and why, and wait for them to agree or change it:
   - **One story.** Go on to step 5.
