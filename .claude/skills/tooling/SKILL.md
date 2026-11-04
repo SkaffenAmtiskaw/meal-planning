@@ -23,7 +23,6 @@ If the Roadmap's "How this file works" says under "Goals" that the note or item 
 Some changes need the story lifecycle, whichever note they came from. Once you've read the files the change touches, check for these cases:
 - **It changes what the app does for its users.**
 - **It builds new infrastructure,** such as CI, a test setup or a hosted service.
-- **It might be too big for one session.** Needing research, several decisions or a design doesn't make it so, because step 2 settles those.
 
 If one applies, tell the user which and why, and ask whether to spin the change off into a story. If they say yes, read `spinning-off-a-story.md`, follow it and stop.
 

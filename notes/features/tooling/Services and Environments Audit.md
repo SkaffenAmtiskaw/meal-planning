@@ -11,6 +11,7 @@ Shaped 2026-10-05 as a cleanup. `/audit`'s Current State is the audit itself, re
 
 # Inbox
 - [Sarah] - I suspect some of the white-listed IPs on the Atlas cluster are for my old address, but I don't know which one(s).
+- From Large Workflow Changes (`/tooling`, 2026-11-03): this note is typed cleanup but changes no code. It reads settings from dashboards and produces a doc and Roadmap lines, so the running-app click-through checks in `.claude/skills/writing-implementation-steps/checks.md` may not fit its steps.
 - What's known so far: production is on Vercel and doesn't use the same data as local, but Sarah isn't sure whether it's a different database or something else. Its Resend domain is also different. `docs/seed.md` says production is "a different database on the same Atlas cluster" as the dev `test` database. The scan should confirm that, since [[Atlas Version Check Script]] waits on it. Found by `/shape` 2026-10-05.
 
 # Purpose
