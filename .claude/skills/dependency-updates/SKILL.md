@@ -199,7 +199,7 @@ Find the package's repository with `pnpm view "<package>" repository --json`. It
 - a URL on `github.com`, such as `git+https://github.com/microsoft/TypeScript.git`
 - `github:<owner>/<repo>`, or a bare `<owner>/<repo>`, which npm reads as GitHub
 
-The link is the repository's releases page, `https://github.com/<owner>/<repo>/releases`. A new major is the package's newest version, so it's usually the first release there. A security fix's major may be further down the page.
+The link is the repository's releases page, `https://github.com/<owner>/<repo>/releases`.
 
 If the package has no repository, its repository isn't on GitHub, or it's `DefinitelyTyped/DefinitelyTyped` (where the `@types/*` packages live), it has no releases page of its own. Link its npm page instead, `https://www.npmjs.com/package/<package>`, and say it has no GitHub releases page.
 
@@ -348,10 +348,5 @@ End with a summary for Sarah, in this order. Leave out a group or section with n
 5. **Not fixed:** each new advisory step 3 didn't fix, as `<package>`: advisory `<ID>` (`<severity>`), and why: already fixed, no fix released yet, or no fix cleared it, with what was tried.
 6. **Majors:** each major that step 5 listed with no sweep item or Roadmap line, as `<package>` `<version>`: not applied, with its release notes link from step 5. A security major here is listed as `<package>` `<version>`: security fix for advisory `<ID>` (`<severity>`), not applied, with its link. A major of an assessed library's `@types/*` package is listed beside its library, as part of that upgrade.
 7. **Sweep items:** each item this run added or updated, as `<package>` `<old>` → `<new>`: added to or updated on `<sweep>`, with the work in one sentence. If the sweep wasn't at the path in `sweep-rule.md`, say where it was. If an item went on the Roadmap because its sweep is missing, list it here and say the sweep is missing. If a package's item is in a kicked-off copy, list the package here, naming the copy and the newer version.
-8. **Roadmap lines:** each flagged package, as `<package>` `<old>` → `<new>`: the heading its line is under, then why it's flagged, one of these:
-   - a security fix, with its advisory ID and severity, as an upgrade to plan on its own
-   - a possible story, naming the site you couldn't reach
-   - why it looks like a story of its own, with each breaking change and its file count
-
-   Name any unchecked sweep item for the package beside it.
+8. **Roadmap lines:** each flagged package, as `<package>` `<old>` → `<new>`: the heading its line is under, then the reason its line gives. Name any unchecked sweep item for the package beside it.
 9. **Reminders:** each advisory that's still unfixed, as `<package>`: advisory `<ID>` (`<severity>`).

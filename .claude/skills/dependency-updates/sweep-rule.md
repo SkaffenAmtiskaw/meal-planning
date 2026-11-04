@@ -13,9 +13,10 @@ Take each major through these steps, in order:
      - **If that finds it:** use it.
      - **If it finds nothing:** go on with no sweep, and "Write the item" writes a line instead. Don't create the note, since a missing one may mean Sarah stopped it collecting.
    - **If the package's item is in a kicked-off copy** (`<sweep> YYYY-MM-DD`): write no item and leave the copy alone, since a copy's items are a fixed set, so that it can be finished. Go on to the next major.
-3. **Read its breaking changes,** from its GitHub releases, changelog or migration guide. Where to read them, and what to do if you can't:
-   - **Where to read:** read `github.com` pages through WebFetch, since `gh` and `curl` reach only this repo from this session. Read `raw.githubusercontent.com` through WebFetch or `curl`. A `CHANGELOG.md` can be a symlink that returns only its target's path, so fetch that path.
-   - **If a release only links to a guide on a site you can't reach:** look for the guide's source on GitHub, in the package's repo and then in its GitHub org's docs or website repo.
+3. **Read its breaking changes,** from the first release of its new major, its changelog or its migration guide. Where to read them, and what to do if you can't:
+   - **Where to read:** read `github.com` pages through WebFetch, since `gh` and `curl` reach only this repo there. Read `raw.githubusercontent.com` through WebFetch or `curl`. A `CHANGELOG.md` can be a symlink that returns only its target's path, so fetch that path.
+   - **If the new major's first release isn't on the first page of releases:** a page shows only the newest releases, of every package in the repo, so go on to the next pages (`?page=2`). Or read the changelog, which in a repo of several packages sits in the package's folder, such as `packages/plugin-react/CHANGELOG.md`.
+   - **If a release only links to a guide on a site you can't reach:** look for the guide's source on GitHub, in the package's repo and then in its GitHub org's docs or website repo. For example, `preactjs.com/guide/v11/upgrade-guide` is `content/en/guide/v11/upgrade-guide.md` in `preactjs/preact-www`.
    - **If you still can't read them:** write its Roadmap line, and go on to the next major.
 4. **Judge its size.** Search the code for each breaking change, to see whether the app hits it and in how many files. A sweep holds only small work with nothing to decide. If the work isn't small, or needs a decision, write its Roadmap line and go on to the next major.
 5. **Write the item.** The cases, in the order to check them:
@@ -24,9 +25,16 @@ Take each major through these steps, in order:
    - **Otherwise:** add an item, as the sweep's What Belongs Here says.
 
 ## The Roadmap Line
-A flagged package, meaning one that step 1, 3 or 4 writes a Roadmap line for, gets one plain line in Later in `notes/Roadmap.md`, so something on the Roadmap pulls it into a release. It follows this shape, with why it's flagged in the middle:
+A flagged package, meaning one that step 1, 3 or 4 writes a Roadmap line for, gets one plain line in Later in `notes/Roadmap.md`, so something on the Roadmap pulls it into a release. It follows this shape:
 
-``- `typescript` 5.9.3 → 7.0.2: needs a decision on the compiler options in `tsconfig.json`. [Release notes](https://github.com/microsoft/TypeScript/releases). Found by the dependency-updates routine, 2026-11-03.``
+``- `<package>` <old> → <new>: <why it's flagged>. [Release notes](<link>). Found by the dependency-updates routine, <date>.``
+
+`<why it's flagged>` is one of these:
+- a security fix, with its advisory ID and severity, as an upgrade to plan on its own
+- a possible story, since you couldn't read its breaking changes. Name the site you couldn't reach and where on GitHub you looked, so Sarah can tell what's been tried.
+- why it looks like a story of its own, with each breaking change and its file count
+
+Name a file in the line only if you've seen that the file uses the package, since Sarah plans the upgrade from what the line says.
 
 Where it goes, in the order to check:
 - **If a line for the package is already on the Roadmap,** wherever it sits: update that line.
