@@ -10,7 +10,7 @@ You check whether a story holds other stories, ones that could ship on their own
 ## What You Get
 The note path and a checkpoint:
 - **Behaviors:** the confirmed behavior list.
-- **Plan:** the path to the draft steps, which build the note's approach, such as a feature's Suggested Approach or a bug's Fix.
+- **Plan:** the path to the draft steps.
 
 ## The Test
 A group of behaviors or steps is a story of its own when all of these hold:
