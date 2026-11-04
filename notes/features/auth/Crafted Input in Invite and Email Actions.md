@@ -7,7 +7,7 @@ confirmed: 2026-11-02
 # Where It Stands
 Next: /investigate ^status
 
-Split from the Roadmap line "security - string validation on inputs". Crafted requests may be able to take over accounts and send HTML in invite emails. Neither is reproduced yet.
+Split from the Roadmap line "security - string validation on inputs". Crafted requests may be able to take over accounts. Not reproduced yet.
 
 # Inbox
 
@@ -22,14 +22,8 @@ Found by reading code on 2026-11-02. **Not reproduced in the running app.** Mong
 
 `acceptInvite` has the same query, but it checks the invite's email against the signed-in user's, so it doesn't let anyone take another person's invite.
 
-**HTML in invite emails.** `src/_auth/emails/sendInviteEmail.ts` puts the inviter's name into the email's HTML unescaped. The name isn't checked on the server:
-- At sign-up, only `SignInFlow.tsx` checks it, in the browser. `src/app/page.tsx:39` then copies it into the app's user record.
-- `signUpWithInvite` stores its `name` unchecked.
-
-So someone could sign up with HTML as their name and invite any address. The recipient would get an email from the app's domain containing that HTML, such as a link to another site.
-
 # Who Can Hit This
-Anyone who can reach the app, with no account for the database operator problems and a new account for the invite emails. The people affected are those with a pending invite or email change, and anyone a crafted invite email is sent to.
+Anyone who can reach the app, with no account. The people affected are those with a pending invite or email change.
 
 # Root Cause
 
