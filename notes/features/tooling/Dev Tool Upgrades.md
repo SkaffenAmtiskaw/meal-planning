@@ -21,6 +21,8 @@ A small upgrade with no decision to make, of one of two kinds: a major of any pa
 - Never here: a major of an assessed library's `@types/*` package, and any security fix.
 
 # Items
+- [ ] `jsdom` 29.0.1 → 30.1.3 and `@types/jsdom` 28.0.1 → 30.0.0: [release notes](https://github.com/jsdom/jsdom/releases/tag/v30.0.0). The only breaking change is the minimum Node version, `^22.22.2 || ^24.15.0 || >=26.0.0`, which `mise.toml`'s `node = 'latest'` meets. No file imports `jsdom`; `vitest.config.ts` sets `environment: 'jsdom'`. Bump both. On a trial bump `pnpm check:types` and `pnpm test:coverage` passed. Found by the dependency-updates routine, 2026-11-04.
+- [ ] `@types/node` 24.3.3 → 26.6.6: [npm page](https://www.npmjs.com/package/@types/node) (no GitHub releases page). Node here is `latest` (26) per `mise.toml`, so the types should match it. Bump it. On a trial bump `pnpm check:types` passed. Found by the dependency-updates routine, 2026-11-04.
 
 # Out of Scope
 - Majors of the assessed libraries: [[Dependency Release Analysis]].
