@@ -96,7 +96,7 @@
 - [[Calendar Keyboard and Focus]] ![[Calendar Keyboard and Focus#^status]]
 - [[Meal Color from Name and Description]] ![[Meal Color from Name and Description#^status]]
 - [[Add Meal from Month Cell]] ![[Add Meal from Month Cell#^status]]
-- default to week view on desktop - list view on mobile
+- [[Default To Week View on Desktop]] ![[Default To Week View on Desktop#^status]]
 - calendar list view infinite scroll
 - a11y audit of the calendar page against WCAG 2.2 AA - the app-wide a11y audit stays in Ideas for the other pages
 - audit that the calendar page works fully on phones - the app-wide mobile audit stays in Ideas for the other pages
