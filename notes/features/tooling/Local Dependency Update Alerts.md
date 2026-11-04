@@ -5,7 +5,7 @@ confirmed: 2026-10-04
 # Where It Stands
 Next: its child stories ^status
 
-Split 2026-10-04 during /plan-steps into Dependency Update PRs, [[Dependency Release Analysis]] and [[Major Upgrade Sweeps]]. The design is approved. Dependency Update PRs is built and closed: the check, the workflow, the routine and the PR for small updates. [[Major Upgrade Sweeps]] has its Build Order and is ready to build. [[Dependency Release Analysis]] has its Build Order and is ready to build too.
+Split 2026-10-04 during /plan-steps into Dependency Update PRs, [[Dependency Release Analysis]] and [[Major Upgrade Sweeps]]. The design is approved. Dependency Update PRs is built and closed: the check, the workflow, the routine and the PR for small updates. [[Major Upgrade Sweeps]] has its first step built. [[Dependency Release Analysis]] has its Build Order and is ready to build too.
 
 # Inbox
 
@@ -134,7 +134,7 @@ Before planning or implementing any story linked from this note, read this note 
            - **If the search finds nothing,** the item becomes a line in Later in `notes/Roadmap.md`, placed as in step 6, holding what the item would have said. If such a line for the package is already there, the session updates it instead. The summary flags that the collecting sweep is missing. (Sarah's call)
            - **If the package's item has moved into a kicked-off copy** (`<sweep> YYYY-MM-DD`), no item. The session leaves the copy alone, and the summary names the copy and the newer version.
         3. **Read the work.**
-           - **A major:** its breaking changes, from its GitHub releases, changelog or migration guide. The session reads `github.com` pages through WebFetch, and `raw.githubusercontent.com` through WebFetch or `curl`, following a `CHANGELOG.md` that's a symlink to its target. Where a release only links to a guide on a site that isn't on the allowed list, it looks for the guide's source on GitHub, in the package's repo and then in its GitHub org's docs or website repo. Then it searches the code for each breaking change the app hits.
+           - **A major:** its breaking changes, from the first release of its new major, its changelog or its migration guide, going past the first page of releases when it has to. The session reads `github.com` pages through WebFetch, and `raw.githubusercontent.com` through WebFetch or `curl`, following a `CHANGELOG.md` that's a symlink to its target. Where a release only links to a guide on a site that isn't on the allowed list, it looks for the guide's source on GitHub, in the package's repo and then in its GitHub org's docs or website repo. Then it searches the code for each breaking change the app hits.
            - **A dropped update:** what broke, meaning each finding or failure, with its file.
 
            If the session still can't read a major's breaking changes, no item. The summary flags it as a possible story and names the site it couldn't reach, and it gets a Roadmap line (step 6). There are no new allowed domains (Sarah's call, 2026-10-04).
@@ -224,7 +224,7 @@ Before planning or implementing any story linked from this note, read this note 
 |---|---|---|---|
 | Dependency Update PRs | done | The check, the workflow, the routine, and the one PR for patches, minors and security fixes | |
 | [[Dependency Release Analysis]] | ready | Minor release summaries, and the `upgrade-assessor` for the assessed libraries | |
-| [[Major Upgrade Sweeps]] | ready | The Library Upgrades and Dev Tool Upgrades sweeps, for other packages' majors and for updates the session drops | |
+| [[Major Upgrade Sweeps]] | in-progress | The Library Upgrades and Dev Tool Upgrades sweeps, for other packages' majors and for updates the session drops | |
 
 # Build Order
 - **Stated:** Dependency Update PRs first, since the other two extend the session it built. It's built and closed.
