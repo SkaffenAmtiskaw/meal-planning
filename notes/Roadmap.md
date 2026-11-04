@@ -148,6 +148,8 @@
 - [[Form Pattern]] ![[Form Pattern#^status]]
 - [[Google Button Styling]] ![[Google Button Styling#^status]]
 - [[Mantine Color and Variant Usage]] ![[Mantine Color and Variant Usage#^status]]
+- `preact` 10.29.0 → 11.1.1: needs a decision, since the Schedule-X packages that use it allow only Preact 10 (`@schedule-x/calendar` has `preact ^10.19.2`), and no file in the app imports `preact` or `@preact/signals`. The v11 upgrade guide's breaking changes (ESM-only, refs as props, `useRef` needs an initial value) aren't hit by app code. [Release notes](https://github.com/preactjs/preact/releases). Found by the dependency-updates routine, 2026-11-04.
+- `temporal-polyfill` 0.3.2 → 1.0.6: needs a decision, since `@schedule-x/calendar@4.9.1` pins `temporal-polyfill` to exactly 0.3.2. The breaking changes (calendars other than ISO and Gregorian need the `/full` entry; `/global` may move to `/full/global`) hit 3 files that import `temporal-polyfill/global`: `src/app/layout.tsx`, `seed/seed.ts` and `src/app/[planner]/calendar/_utils/toScheduleXEvents.ts`. [Release notes](https://github.com/fullcalendar/temporal-polyfill/releases). Found by the dependency-updates routine, 2026-11-04.
 
 ## Bugs
 - [[Zero Planners Crash]] ![[Zero Planners Crash#^status]]
@@ -172,6 +174,9 @@
 - I want a way to watch certain libraries and tools to see if they have new releases or features that are worth implementing
 - Add PostHog for analytics
 - build a Design System from the app (colors, type and components) that design canvases use, in place of following `docs/style_guidelines.md` and `docs/theme.md` - weigh it after a real design or two with `/design-feature`. Found 2026-11-01 while adding that skill
+- `typescript` 5.9.3 → 7.0.2: a possible story, since I couldn't read its breaking changes. The 7.0.2 release page only links to devblogs.microsoft.com/typescript/announcing-typescript-7-0/, which isn't reachable from the session, and the only list I found on GitHub was `CHANGES.md` in microsoft/typescript-go, which may not be current. That file calls the JS API and language service not ready, and `next build`'s type check calls `createProgram` from the `typescript` package. [Release notes](https://github.com/microsoft/typescript-go/releases/tag/typescript%2Fv7.0.2). Found by the dependency-updates routine, 2026-11-04.
+- `vitest` 4.1.12 → 5.1.0 with `@vitest/coverage-v8` 4.1.2 → 5.1.0 and `@vitejs/plugin-react` 5.1.4 → 6.2.1: looks like a story of its own. `@vitejs/plugin-react` 6 needs Vite 8 and the lockfile has Vite 7.3.7 (`pnpm-workspace.yaml` has a Vite 7 override), so Vite becomes a direct dependency or is bumped. Vitest 5 clears mocks before each test (184 test files call a clear, reset or restore themselves), throws on `vi.hoisted` below the top level (`src/_actions/user/deleteAccount.test.ts`, `verifyEmailChangeAndSetPassword.test.ts`) and applies coverage `include`/`exclude` globs more eagerly (100% thresholds). [Release notes](https://github.com/vitest-dev/vitest/releases/tag/v5.0.0). Found by the dependency-updates routine, 2026-11-04.
+- `minimatch` 3.1.5 → 11.0.1: a security fix for advisory 1244012 (moderate, pattern amplification DoS), as an upgrade to plan on its own. It's installed only through `@vitejs/plugin-react>vite>stylus>glob`, and no fix exists below 11. Planning it together with the Vite bump above may clear it. [Release notes](https://github.com/isaacs/minimatch/releases). Found by the dependency-updates routine, 2026-11-04.
 
 ## Unaffiliated
 - [[Delete Planner|allow user to delete a planner]] ![[Delete Planner#^status]]
