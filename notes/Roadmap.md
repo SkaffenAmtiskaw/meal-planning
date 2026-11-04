@@ -151,6 +151,8 @@
 - [[Form Pattern]] ![[Form Pattern#^status]]
 - [[Google Button Styling]] ![[Google Button Styling#^status]]
 - [[Mantine Color and Variant Usage]] ![[Mantine Color and Variant Usage#^status]]
+- `preact` 10.29.0 → 11.1.1: possible story; I couldn't read the [upgrade guide](https://preactjs.com/guide/v11/upgrade-guide), and the app uses it in `src/app/layout.tsx` and `toScheduleXEvents.ts`. [Release notes](https://github.com/preactjs/preact/releases). Found by the dependency-updates routine, 2026-11-04.
+- `temporal-polyfill` 0.3.2 → 1.0.6: possible story; I couldn't find the 1.0.0 breaking changes, and the calendar code imports it in several files. [Release notes](https://github.com/fullcalendar/temporal-polyfill/releases). Found by the dependency-updates routine, 2026-11-04.
 
 ## Bugs
 - [[Zero Planners Crash]] ![[Zero Planners Crash#^status]]
@@ -175,6 +177,10 @@
 - I want a way to watch certain libraries and tools to see if they have new releases or features that are worth implementing
 - Add PostHog for analytics
 - build a Design System from the app (colors, type and components) that design canvases use, in place of following `docs/style_guidelines.md` and `docs/theme.md` - weigh it after a real design or two with `/design-feature`. Found 2026-11-01 while adding that skill
+- `minimatch` (reached through `@vitejs/plugin-react` > `vite` > `stylus` > `glob`) 3.1.5 → 11.0.1: security fix for advisory 1244012 (moderate), an upgrade to plan on its own; its only fix is a new major. [Release notes](https://github.com/isaacs/minimatch/releases). Found by the dependency-updates routine, 2026-11-04.
+- `typescript` 5.9.3 → 7.0.2: needs a decision on the compiler options in `tsconfig.json`; I couldn't read the breaking changes (the 7.0 announcement is on a site I can't reach). [Release notes](https://github.com/microsoft/TypeScript/releases). Found by the dependency-updates routine, 2026-11-04.
+- `vitest` and `@vitest/coverage-v8` 4.1.x → 5.1.0: looks like a story of its own; 5.0 changes mocks to clear before each test, changes coverage `include`/`exclude` matching and requires Node 22 and Vite 6.4. [Release notes](https://github.com/vitest-dev/vitest/releases). Found by the dependency-updates routine, 2026-11-04.
+- `@vitejs/plugin-react` 5.1.4 → 6.2.1: possible story; I couldn't read the 6.0.0 release notes. Upgrading it may also clear the `minimatch` advisory above. [Release notes](https://github.com/vitejs/vite-plugin-react/releases). Found by the dependency-updates routine, 2026-11-04.
 
 ## Unaffiliated
 - [[Delete Planner|allow user to delete a planner]] ![[Delete Planner#^status]]

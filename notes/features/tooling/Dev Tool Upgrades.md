@@ -21,6 +21,9 @@ A small upgrade with no decision to make, of one of two kinds: a major of any pa
 - Never here: a major of an assessed library's `@types/*` package, and any security fix.
 
 # Items
+- [ ] `jsdom` 29.0.1 → 30.1.3 with `@types/jsdom` 28.0.1 → 30.0.0: the only breaking change is the minimum Node, now `^22.22.2 || ^24.15.0 || >=26.0.0`. Work: confirm the Node used by CI and Vercel meets it, then bump both. [Release notes](https://github.com/jsdom/jsdom/releases), found by the dependency-updates routine, 2026-11-04.
+- [ ] `@types/node` 24.3.3 → 26.6.6: work: match it to the Node major CI and Vercel run, then fix any type errors `pnpm check:types` reports. [npm page](https://www.npmjs.com/package/@types/node) (no GitHub releases page), found by the dependency-updates routine, 2026-11-04.
+- [ ] `@biomejs/biome` 2.4.6 → 2.6.4: dropped because it breaks `pnpm lint:ci` with 9 errors. Work: fix the errors, including 7 `lint/correctness/noComponentHookFactories` errors in `CalendarContext.test.tsx`, `CalendarProvider.test.tsx`, `PlannerProvider.test.tsx`, `ToggleProvider.test.tsx` and `CalendarModalContext.test.tsx`, and 1 `lint/complexity/noExtraBooleanCast` error in `src/app/[planner]/recipes/[recipeId]/page.tsx:39`. 2.6.4 also warns that `linter.rules.recommended` in `biome.jsonc` is deprecated in favor of `preset`, which is a config change for Sarah to ask for. [Release notes](https://github.com/biomejs/biome/releases), found by the dependency-updates routine, 2026-11-04.
 
 # Out of Scope
 - Majors of the assessed libraries: [[Dependency Release Analysis]].
