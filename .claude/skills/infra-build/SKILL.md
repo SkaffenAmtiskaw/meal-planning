@@ -35,7 +35,7 @@ Triage the out-of-scope list first. For each item the user pulls in:
 - **If it belongs in a later step or needs a new one:** add it to the Build Order.
 - **Otherwise:** build it in this step before you report.
 
-Then report in one table, with one row per changed file. Its columns are the file as a markdown link, a one-line summary of its change, and any choice you made in that file without asking, with what settles that choice. If anything differs from the step as written, say so in a line or two under the table, as the draft of its As built note. Then open the Code tab's diff pane, so the full diff is at hand. Don't ask the user to review the diff, since for an infra story they care more that it works than how it's built.
+Then show the table of changed files, with a column for any choice you made in that file without asking and what settles it. If anything differs from the step as written, say so in a line or two under the table, as the draft of its As built note. Then open the Code tab's diff pane, so the full diff is at hand. Don't ask the user to review the diff, since for an infra story they care more that it works than how it's built.
 
 After the report:
 1. **Sarah checks your runs already cover:** ask the user whether to drop each one.

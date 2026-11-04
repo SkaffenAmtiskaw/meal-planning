@@ -40,7 +40,7 @@ What the change needs depends on what it touches:
 - **Project config:** by asking for this change, the user has asked for any config edit it names.
 
 ## 4. Get the Change Approved
-Triage the out-of-scope list. An item the user pulls in becomes part of this change. Then show a table with one row per changed file: the file as a markdown link the user can click, and a one-line summary of its change. Files with the same change can share a row. Ask the user whether they approve.
+Triage the out-of-scope list. An item the user pulls in becomes part of this change. Then show the table of changed files and ask the user whether they approve.
 
 ## 5. Clean Up the Notes
 Once the user approves, search all of `notes/` for:
@@ -54,6 +54,6 @@ In the note or item this session worked from, and in each item you found, remove
 Handle text the change made wrong as you would any note that's wrong or out of date. A note that only follows a convention this change replaced stays as it is, because it's updated when it's next worked on.
 
 ## 6. Report and Stop
-Route the out-of-scope list. Then show the user a table in the same format as step 4, with each file changed and each note edited or deleted.
+Route the out-of-scope list. Then show the table of changed files, including each note you deleted.
 
 Stop there, because each change gets its own session.

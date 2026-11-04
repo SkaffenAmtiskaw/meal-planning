@@ -39,7 +39,7 @@ Triage the out-of-scope list first. For each item the user pulls in:
 - **Otherwise:** build it in this step before you report.
 
 Then report, in these sections, in this order:
-1. **Files:** a table with one row per changed file: the file as a markdown link, and a one-line summary of its change. Mark any file that isn't in the step's Files list.
+1. **Files:** the table of changed files. Mark any file that isn't in the step's Files list.
 2. **Choices:** a table of each choice you made without asking: what you picked, and what settles it, with a link to its source where it has one.
 3. **Tests:** each test and the branch or logic it covers.
 4. **Acceptance checks:** each one, and what you saw or why you couldn't run it.
