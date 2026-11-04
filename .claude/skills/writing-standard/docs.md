@@ -9,7 +9,7 @@ A doc describes the codebase: how it's built, where things go and why. It's writ
 
 If what you're drafting is a rule only agents follow, such as when to use `pnpm test:agent`, place it as the `rule-placement` skill describes.
 
-A doc that grows from a pattern's Rules is still a guide: what to do, where things go and why, not a numbered list of rules with their checks. Enforcement, such as a Biome ban or a type check, gets at most one short closing paragraph, for anyone who needs to change it. Even there, name only enforcement whose location isn't obvious. A TypeScript error that names the problem and points at the file explains itself, while a test that happens to guard unrelated code is worth naming.
+A doc that grows from a pattern's Convention is still a guide: what to do, where things go and why, not a numbered list of rules with their checks. Enforcement, such as a Biome ban or a type check, gets at most one short closing paragraph, for anyone who needs to change it. Even there, name only enforcement whose location isn't obvious. A TypeScript error that names the problem and points at the file explains itself, while a test that happens to guard unrelated code is worth naming.
 
 ## Keep Each Doc to One Kind
 Each doc is one kind of document:

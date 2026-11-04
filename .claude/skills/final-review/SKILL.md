@@ -36,7 +36,7 @@ Back every finding with evidence the user can check: `file:line` for code that's
 
 **For a feature,** check 2 runs on a fresh target design, as `target-design.md` in this skill's folder describes.
 
-**For any other type,** there are no behaviors to design a target from, so you do check 2 yourself. Read the conventions the story was meant to apply, such as a pattern's Rules section or the `docs/` file a cleanup aligns code with. Then read the story's files, and check each change against those conventions, the rest of the project's conventions and best practice.
+**For any other type,** there are no behaviors to design a target from, so you do check 2 yourself. Read the conventions the story was meant to apply, such as a pattern's Convention section or the `docs/` file a cleanup aligns code with. Then read the story's files, and check each change against those conventions, the rest of the project's conventions and best practice.
 
 **On an infra story,** also read each change for bugs.
 

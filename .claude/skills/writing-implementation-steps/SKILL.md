@@ -10,7 +10,7 @@ Each step carries one idea and ends in checks that show progress the user can se
 ## One Idea per Step
 - **The idea sentence.** A step opens with one sentence saying what it does. If it needs "and", or "and" in disguise such as "with" or "plus", it's two steps.
 - **Size.** Steps are sized by idea, not file count: eighteen files serving one new context provider are one step, and six files making unrelated changes aren't. In a sweep, unrelated items get separate steps, however small. In a pattern, places that migrate to one rule in the same way can share a step, since they're one idea.
-- **A pattern's Docs items.** A rule's Docs item goes in the step that builds its Enforcement, since both keep future code to the rule.
+- **A pattern's Docs item.** If the checklist has an Enforcement item, the Docs item goes in the step that builds it, since both keep future code to the Convention. Otherwise, it's a step of its own.
 - **Files.** Each file the step creates or changes is listed with a reason tied to the idea. A file whose reason doesn't serve the idea belongs in another step.
 
 ## Something to See in Every Step

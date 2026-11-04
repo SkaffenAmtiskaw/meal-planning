@@ -37,7 +37,7 @@ Write the note's footprint to a scratch file, from the remaining work:
 
 Then run the `code-drift-checker` and `note-drift-checker` subagents in parallel. Give each one the note path, the `confirmed` date, the footprint file and the remaining work: which steps, or "the whole approach" for a `spec` note. Don't tell them what you expect them to find, because a checker that knows what you expect tends to find that and miss the rest.
 
-If the note is a pattern, also run the `rule-auditor` subagent alongside them, as `pattern.md` in this skill's folder describes.
+If the note is a pattern, also run the `convention-auditor` subagent alongside them, as `pattern.md` in this skill's folder describes.
 
 ## 4. Sort the checkers' findings
 If one of the user's comments already settles a checker's finding, merge it into the finding from that comment. It needs no decision. Drop any finding that an earlier ⚠️ Check Drift callout already settled.
@@ -51,7 +51,7 @@ For example, "From Sarah's comment" or "Found by reading GitHub's docs, not veri
 **If the note is a sweep,** sort its findings and triage the out-of-scope list as `sweep.md` in this skill's folder describes, then go on to step 5.
 
 **Otherwise:**
-1. If the note is a pattern, compare `rule-auditor`'s report with the note's Migration Checklist, as `pattern.md` describes.
+1. If the note is a pattern, compare `convention-auditor`'s report with the note's Migration Checklist, as `pattern.md` describes.
 2. Sort each finding:
    - **A place in a cleanup's scope is new or gone, and its approach still holds:** correct Current State without asking, because it only records what's there. Beside each new place, record the search that found it, because the next re-check repeats the searches recorded there.
    - **Needs a decision:** anything else that changes what gets built or how, such as a conflict with another story's design, project docs that disagree with recent code, or a piece another story already built.
@@ -73,7 +73,7 @@ Some answers need more than a callout:
 **Otherwise,** route it by what its findings mean for it once the user has answered. If more than one case applies, the biggest wins: **Approach** beats **Steps**, and **Steps** beats **Plan holds**. **Blocked** can go with any of them.
 - **Plan holds:** `status` stays as it is, and the next step is the one its type and status call for, such as `/implement` for a `ready` note.
 - **Steps:** the approach holds but the remaining steps don't, such as when a pattern's Migration Checklist or a cleanup's Current State gains places its steps don't cover. Set `status` to `spec`. The next step is `/plan-steps`, or `/infra-design` for infra.
-- **Approach:** the approach, or part of it, no longer holds, such as a pattern's Rule that the re-audit reported as Unclear. Set `status` to `spec`. The next step is the skill that settled the approach:
+- **Approach:** the approach, or part of it, no longer holds, such as a pattern's Convention that the code has moved past. Set `status` to `spec`. The next step is the skill that settled the approach:
   - **Feature:** `/assess`.
   - **Bug:** `/investigate`.
   - **Cleanup:** `/audit`.

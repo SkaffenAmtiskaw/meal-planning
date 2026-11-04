@@ -30,7 +30,7 @@ Run `sh scripts/note-refs.sh "<note name>"`. Sort the matches it lists into the 
 - **Kept-for:** an archived note with this story in its `kept-for`.
 - **Hub list:** a row for this story in a hub's Child Stories table.
 - **The user's comment:** a line tagged or signed with the user's name, whether or not the script labels it as the user's comment.
-- **Passing mention:** any other line in the vault, like "unblocks [[X]]", "follow-up to [[X]]" or "Depends on: [[X]]". This includes a line that relies on content now in `docs/`, such as a done pattern's Rules, because the reader no longer needs this note for it.
+- **Passing mention:** any other line in the vault, like "unblocks [[X]]", "follow-up to [[X]]" or "Depends on: [[X]]". This includes a line that relies on content now in `docs/`, such as a done pattern's Convention, because the reader no longer needs this note for it.
 - **Outside the vault:** code comments, docs, skills and agents.
 - **Archived with no `kept-for`:** each note the script lists in its last section.
 

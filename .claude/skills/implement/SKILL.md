@@ -28,8 +28,9 @@ Build the step as the `building-code` skill describes, through "Do the Acceptanc
 As you build, a change or addition to the plan can turn up, or come from the user at review. Sort where each one goes, so this step builds only the work that belongs in it. The cases, in the order to check them:
 - **If it's new work for a later step or another story, or new work unrelated to this step:** put it on the out-of-scope list.
 - **If a bug story's planned fix leaves the symptom and you find the cause isn't the one Root Cause names:** send the story back to `/investigate`, as `sending-back.md` in the `building-code` skill's folder describes. The user approved the Fix for the cause the note gives, so a fix for another cause is theirs to choose.
-- **If a place can't follow a pattern's Rule as written, or the Rule turns out wrong:** send the story back to `/architect`, as that file describes. Changing a Rule can change its Enforcement and which places break it, and `/architect` re-audits the code.
-- **If another part of the plan has to change,** such as the step's idea sentence, the order of the steps or a check's wording: change it in the note and keep building. A bug's Root Cause and a pattern's Rule are the only parts of a plan that need an earlier skill to rework them.
+- **If you can't tell whether a place breaks a pattern's Convention:** decide as `unclear-places.md` in the `settling-a-decision` skill's folder describes. If the user's answer settles that place only, record it as an **As built:** note. If it changes the Convention, take the next case.
+- **If a pattern's Convention has to change:** send the story back to `/architect`, as `sending-back.md` describes. Changing the Convention can change which places break it, and `/architect` re-audits the code.
+- **If another part of the plan has to change,** such as the step's idea sentence, the order of the steps or a check's wording: change it in the note and keep building. A bug's Root Cause and a pattern's Convention are the only parts of a plan that need an earlier skill to rework them.
 - **Otherwise:** it goes in this step. This includes behaviors the user assumed but the plan never said, like a button that should focus a field.
 
 ## 3. Report

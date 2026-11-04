@@ -1,14 +1,14 @@
 # Writing Checks
 Which kind of check a step gets depends on what it changes:
-- **If it changes only what enforces a pattern's rule or where the rule is written, such as a Biome ban, a conventions test or a doc:** the Enforcement and doc checks below.
+- **If it changes only what enforces a pattern's Convention or where the Convention is written, such as a Biome ban, a conventions test or a doc:** the Enforcement and doc checks below.
 - **Otherwise, if it changes only test files:** break-it checks, plus at least one run-and-see check if any of the files are E2E code, as `docs/e2e_tests.md` lists under "Where E2E Code Lives". Write them as `test-only-checks.md` in this skill's folder describes.
 - **Otherwise:** click-throughs in the running app, "Go to [view], [do something], see [result]", naming the screen size (phone or desktop), the data needed, such as a day with two meals, and any signed-in user, as `.claude/skills/running-the-app/which-user.md` describes.
 
 Some steps also need a particular check, on top of the kind above:
 - **If its Source names a Symptom:** follow the Symptom's repro steps, which should no longer show the bug.
 - **If it builds a failure, empty or read-only behavior:** check that behavior.
-- **If it builds a rule's Enforcement:** break the rule. "Temporarily add `<code>` to `<file>`, run `<command>`, see it fail with `<the error or rule it reports>`. Revert. Proves: <what the Enforcement catches>."
-- **If it writes a rule into a doc:** open the doc at the rule's section and read the rule there.
+- **If it builds an Enforcement item:** break what it enforces. "Temporarily add `<code>` to `<file>`, run `<command>`, see it fail with `<the error or rule it reports>`. Revert. Proves: <what the item catches>."
+- **If it writes a Convention into a doc:** open the doc at its section and read it there.
 
 Each check:
 - **Proves what the step built.** "Tests pass" and "types compile" aren't checks, since they hold for every step, and neither is a library's default behavior, such as a Mantine Popover flipping above its trigger, which the user trusts without checking.

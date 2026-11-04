@@ -35,7 +35,7 @@ Get each Goal approved, then write the Goals under `# Goals` as checkboxes.
 
 ## 3. Design
 ### Draft
-Read what the story changes or builds on, and the docs its conventions will land in. Also read the Conventions of other `type: infra` notes and the Rules of `type: pattern` notes that cover the same ground.
+Read what the story changes or builds on, and the docs its conventions will land in. Also read the Conventions of other `type: infra` notes and the Convention of `type: pattern` notes that cover the same ground.
 
 Then draft the whole Design before showing any of it, so you can see where Pieces overlap or should split before the user approves one. The Design has:
 - **Pieces:** each thing that gets built or changed, such as a workflow, a script, a config file, a skill or a service. For each: its path, or where it lives outside the repo, its one purpose, any requirement it has to meet, and a block ID (` ^piece-N`) that the Flow and the Build Order link to.

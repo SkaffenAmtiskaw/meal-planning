@@ -15,9 +15,7 @@ Next: /shape ^status
 
 # Open Decisions
 
-# Rules
-
-# Enforcement
+# Convention
 
 # Migration Checklist
 

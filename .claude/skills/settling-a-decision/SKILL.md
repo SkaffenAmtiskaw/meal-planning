@@ -28,7 +28,7 @@ How you record a decision depends on where the answer came from:
 
 Where you write it depends on what the decision settles:
 - **A question under Open Decisions:** under that question, in the formats below.
-- **Something a section you're drafting needs,** such as a rule or a piece of a design: into that section. If it isn't an answer the user already had in mind, also write the question under `# Open Decisions` with its Decided and Rejected lines, so later agents don't propose the options the user turned down.
+- **Something a section you're drafting needs,** such as a Convention or a piece of a design: into that section. If it isn't an answer the user already had in mind, also write the question under `# Open Decisions` with its Decided and Rejected lines, so later agents don't propose the options the user turned down.
 
 **Decided.** Under the question in Open Decisions:
 ```
