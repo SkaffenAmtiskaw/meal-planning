@@ -7,7 +7,7 @@ Handle the findings described in the `routine-fire-payload` block.
 
 This session is a routine's session, so it follows the `routine-sessions` skill: read it first.
 
-It puts the patches, minors and security fixes in one pull request into `develop`, from the `claude/dependency-updates` branch, and sees the pull request's checks through on GitHub. Only one such pull request is ever open: while it is, each run adds to it. It applies no major or reminder, but a major of most packages goes in that pull request as a sweep item or a Roadmap line (step 5). It ends with the summary in step 8. When the weekly run's check itself failed, it looks into that instead, as step 1 describes.
+It puts the patches, minors and security fixes in one pull request into `develop`, from the `claude/dependency-updates` branch, and sees the pull request's checks through on GitHub. Only one such pull request is ever open: while it is, each run adds to it. It applies no major or reminder. A major of most packages goes in that pull request as a sweep item or a Roadmap line (step 5). So does an update that breaks a check, which the session drops. It ends with the summary in step 8. When the weekly run's check itself failed, it looks into that instead, as step 1 describes.
 
 ## 1. Read the payload
 The block names the run and its findings in this shape, one finding per line:
@@ -177,21 +177,20 @@ pnpm install --frozen-lockfile
   pnpm install --frozen-lockfile
   ```
 
-  The first bad commit is the update that breaks it. Take it off the branch: cut the branch again from the base with `git checkout -B claude/dependency-updates "<base>"`, and apply every other update from this run again as above, each as its own commit. Keep the dropped update, the check it broke and the line of its output that shows why, for the summary.
+  The first bad commit is the update that breaks it. Run the check on that commit and keep each finding or failure it prints, with its file, for the sweep rule. Then take the update off the branch: cut the branch again from the base with `git checkout -B claude/dependency-updates "<base>"`, and apply every other update from this run again as above, each as its own commit. Keep the dropped update, the check it broke and the line of its output that shows why, for the summary.
 
 Then run the four checks again. Repeat until every check passes, or fails on the base too.
 
 ## 4. Minors
-List each minor in the summary (step 8): under **In the pull request**, under **Dropped** if step 3 took it off the branch, or under **Not applied** if step 2 aborted the merge or a push was rejected.
+List each minor in the summary (step 8): under **In the pull request**, under **Dropped** if step 3 or 7 took it off the branch, or under **Not applied** if step 2 aborted the merge or a push was rejected.
 
-## 5. Majors
-A major is never applied. A small one becomes a sweep item, anything bigger gets a Roadmap line, and one of an assessed library is listed for Sarah to plan. An advisory whose only fix is a major (step 3) counts as a major of the package with the advisory, at its lowest fixed version. This skill calls it a **security major**.
+## 5. Majors and Dropped Updates
+A major is never applied, and an update that step 3 dropped is already off the branch. A small one of either becomes a sweep item and anything bigger gets a Roadmap line, except that a major of an assessed library is listed for Sarah to plan. An advisory whose only fix is a major (step 3) counts as a major of the package with the advisory, at its lowest fixed version. This skill calls it a **security major**.
 
 **The assessed libraries** are React (`react`, `react-dom`), Next (`next`), Mantine (`@mantine/*`), better-auth (`better-auth`), luxon (`luxon`) and Zod (`zod`). The app leans on them most, so a major of one is listed for Sarah to plan rather than swept.
 
-The cases, and what to do with each major:
-- **If step 2 aborted the merge of `develop`:** this run pushes nothing, so an item or line wouldn't reach the pull request. List the major in the summary.
-- **If it's one of the assessed libraries:** list it in the summary.
+The cases, and what to do with each major or dropped update:
+- **If it's a major of one of the assessed libraries:** list it in the summary.
 - **Otherwise:** read `.claude/skills/dependency-updates/sweep-rule.md` and follow it.
 
 ### The Release Notes Link
@@ -207,7 +206,7 @@ If the package has no repository, its repository isn't on GitHub, or it's `Defin
 List each reminder in the summary, apart from the new findings, as an advisory that's still unfixed. A reminder is never applied.
 
 ## 7. Push and open or update the pull request
-If steps 3 and 5 made no commit, skip this step.
+If steps 3 and 5 left no commit on the branch, skip this step.
 
 If a push is rejected, the branch changed on GitHub during this session, such as when another run's session pushed to it. Don't push again or force it, and open or edit no pull request. The summary says the push was rejected (step 8).
 
@@ -276,7 +275,7 @@ When it finishes:
   gh run view "<run ID>" --json jobs --jq '.jobs[] | select(.conclusion == "failure") | .name'
   ```
 
-  - **Step 3 ran no checks, because it made no commit:** this run changed only notes, so no update from it is to blame. Drop nothing, and the summary says which jobs failed on GitHub.
+  - **This run left no update on the branch:** it changed only notes, so no update from it is to blame. Drop nothing, and the summary says which jobs failed on GitHub.
   - **A script that failed on the base in step 3:** that failure is already explained, so do nothing more for it. The summary says it failed on GitHub too.
   - **A script that passed in step 3:** step 3 ran it on this same code, so it either flaked or fails only on GitHub's runner. Go on to "A check that fails only on GitHub" with those jobs.
 
@@ -301,6 +300,8 @@ Run the failed script on the base from step 2, reproducing the failure the same 
   pnpm install --frozen-lockfile
   ```
 
+  Run the failed script on the first bad commit, reproducing the failure the same way, and keep each finding or failure it prints, with its file, for the sweep rule. Then drop any merge that took, and go back with `git checkout claude/dependency-updates` and `pnpm install --frozen-lockfile`, since a revert acts on `HEAD`.
+
   The branch is already on GitHub, so take the first bad commit off with a revert, not by cutting the branch again, and nothing is force-pushed:
 
   ```bash
@@ -318,7 +319,7 @@ Run the failed script on the base from step 2, reproducing the failure the same 
 
   Run the failed script again the way you reproduced the failure. Repeat until it passes, or fails on the base too.
 
-If you reverted an update, push the branch with `git push origin claude/dependency-updates`, and rewrite the pull request's body as "An open pull request" describes, whether this run opened it or not, so it lists the dropped update under **Dropped**. Then wait for the new run once more, as in "Wait for the pull request's checks", and keep its result and link for the summary. Whatever it shows, don't re-run it or drop anything more.
+If you reverted an update, take it through `.claude/skills/dependency-updates/sweep-rule.md`, which commits its item or line, so the revert and the record of the work go up in one push. Then push the branch with `git push origin claude/dependency-updates`, and rewrite the pull request's body as "An open pull request" describes, whether this run opened it or not, so it lists the dropped update under **Dropped**. Then wait for the new run once more, as in "Wait for the pull request's checks", and keep its result and link for the summary. Whatever it shows, don't re-run it or drop anything more.
 
 ## 8. The summary
 End with a summary for Sarah, in this order. Leave out a group or section with nothing in it. If the block's `new:` part is `none`, say there were no new findings.
@@ -326,8 +327,8 @@ End with a summary for Sarah, in this order. Leave out a group or section with n
 1. **The pull request,** by how the run went:
    - **Step 2 aborted the merge of `develop`:** the open pull request's link, the files that conflicted, and that nothing from this run was applied. List this run's patches, minors and advisories under **Not applied** instead of **In the pull request**.
    - **A push was rejected (step 7):** that it was, and that no pull request was opened or changed. List what this run would have put in the pull request under **Not applied**.
-   - **Neither step 3 nor step 5 made a commit:** that there was nothing to apply, that nothing was pushed, and that no pull request was opened or changed.
-   - **Only step 5 made a commit:** its link, whether this run opened it or added to the one that was open, that there was nothing to apply, and that the four checks didn't run in this session.
+   - **Neither step 3 nor step 5 left a commit on the branch:** that no update went in, that nothing was pushed, and that no pull request was opened or changed.
+   - **Only step 5 left a commit on the branch:** its link, whether this run opened it or added to the one that was open, that no update went in, and the four checks' result in this session, or that they didn't run because step 3 applied nothing.
    - **Otherwise:** its link, whether this run opened it or added to the one that was open, and the four checks' result in this session: all passed, or which fail on the base (step 3) and why, with the line of output that shows it.
 
    If the run pushed, also give **the checks on GitHub** (step 7), with the run's link: they passed, or which failed and what came of each:
@@ -343,8 +344,8 @@ End with a summary for Sarah, in this order. Leave out a group or section with n
    - patches: each as `<package>` `<old>` → `<new>`
    - minors: each as `<package>` `<old>` → `<new>`
    - overrides removed: each override's key, as `'<package>@<range>'`, that no longer did anything
-3. **Not applied:** when step 2 aborted the merge or a push was rejected, each patch, minor and advisory from this run, as above.
-4. **Dropped:** each update taken off the branch, as above, with the check it broke and the line of its output that shows why. For one dropped in step 7, also say it broke the check only on GitHub's runner, and what differs there.
+3. **Not applied:** when step 2 aborted the merge or a push was rejected, each patch, minor and advisory from this run, as above. Also give the full text of each sweep item and Roadmap line this run would have written, and where it would have gone. This is its only record, since the reported list keeps those versions quiet until a newer one comes out. Leave these out of **Sweep items** and **Roadmap lines**.
+4. **Dropped:** each update taken off the branch, as above, with the check it broke, the line of its output that shows why, and the sweep its item went to or the heading of its Roadmap line. If a push was rejected, say its item or line is under **Not applied** instead. For one dropped in step 7, also say it broke the check only on GitHub's runner, and what differs there.
 5. **Not fixed:** each new advisory step 3 didn't fix, as `<package>`: advisory `<ID>` (`<severity>`), and why: already fixed, no fix released yet, or no fix cleared it, with what was tried.
 6. **Majors:** each major that step 5 listed with no sweep item or Roadmap line, as `<package>` `<version>`: not applied, with its release notes link from step 5. A security major here is listed as `<package>` `<version>`: security fix for advisory `<ID>` (`<severity>`), not applied, with its link. A major of an assessed library's `@types/*` package is listed beside its library, as part of that upgrade.
 7. **Sweep items:** each item this run added or updated, as `<package>` `<old>` → `<new>`: added to or updated on `<sweep>`, with the work in one sentence. If the sweep wasn't at the path in `sweep-rule.md`, say where it was. If an item went on the Roadmap because its sweep is missing, list it here and say the sweep is missing. If a package's item is in a kicked-off copy, list the package here, naming the copy and the newer version.
