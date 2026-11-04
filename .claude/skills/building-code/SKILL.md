@@ -21,7 +21,7 @@ Ask the user about each open choice before you build that part. Give each reason
 ## 2. Write the Code
 How you build each part of the change depends on what it does:
 - **If it adds or changes behavior:** one piece of logic at a time, write the test, run it and see it fail for the right reason, then write the code that makes it pass. "Test Logic, Not Rendering" in `docs/unit_tests.md` says which tests a change gets and what each one covers.
-- **If it only moves, removes or tidies code:** it has no new logic for a test to fail on, and its existing tests show the behavior didn't change. So change only what it forces in them, such as an import path. Delete a test only when you delete the code it covers.
+- **If it only moves, removes or tidies code:** it has no new logic for a test to fail on, and its existing tests show the behavior didn't change.
 
 As you build, you'll make decisions the plan doesn't, such as a button's wording, what happens when a save fails or a new component's props. If one is an open choice, stop and ask the user, as step 1 describes, before writing the code it affects, rather than putting in a placeholder to fix later. Otherwise, make it, and name it in your report, so the user can catch one that was theirs to make.
 
