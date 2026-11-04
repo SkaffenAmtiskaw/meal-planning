@@ -6,7 +6,7 @@ user-invocable: false
 
 # Keeping Sessions Lean
 Each session should load only the instructions it uses, because instructions a session doesn't use still take attention from the ones it does. Agent instructions load into a session at different times:
-- AGENTS.md loads into every session and every subagent, and the memory index into every session.
+- AGENTS.md and the memory index load into every session. The agents in `.claude/agents/` don't load AGENTS.md.
 - Most skill and agent descriptions load into every session.
 - A skill's body loads on each run, and its supporting files and the files it reads load when it reads them.
 - A shared-rule skill loads when a session invokes it, or when an agent preloads it or reads it.

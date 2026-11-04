@@ -1,10 +1,12 @@
 ---
 name: reviewing-a-draft
-description: How to run the writing-reviewer agent on a draft of a doc or agent instruction, and handle its findings. Use when a draft needs a writing review before the user sees it.
+description: Whether a draft of a doc or agent instruction needs a writing review, how to run the writing-reviewer agent on it, and how to handle its findings. Use before showing such a draft or naming a written change to one in a summary.
 user-invocable: false
 ---
 
 # Reviewing a Draft
+If the user has settled the draft's exact form, or it's mechanical, skip the review. Otherwise, including each draft you revise after feedback, follow these steps, because a writer anchors on its own draft and misses where it breaks the standard.
+
 1. Run the `writing-reviewer` agent for its passes, Cuts, Structure, Clarity, Placement and The rest, sized to the change:
    - **If it's a small edit, a few lines in a file that otherwise stays as it is:** run it once, for all its passes.
    - **Otherwise,** such as a new file, a rewritten section, a large edit across several sections or a whole file put under review: run it in parallel, once for each pass. On a long draft, one reviewer checking every pass catches what stands out and misses the rest. Give Cuts and Structure a second run, because one run catches their judgment calls only some of the time.

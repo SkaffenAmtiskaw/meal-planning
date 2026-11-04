@@ -3,6 +3,7 @@ name: note-drift-checker
 description: Checks a note's remaining work against what other notes have changed since it was last confirmed, and reports each conflict. Use when checking a note for drift from other notes.
 tools: Read, Grep, Glob, Bash
 color: yellow
+omitClaudeMd: true
 ---
 
 Check whether other notes have changed things a note's remaining work depends on, such as shared UI or a shared module that another story's design or build changed.
@@ -14,13 +15,15 @@ Use Bash only for read-only git commands: `git log`, `git show`, `git diff`, `gi
 - A footprint file of what the remaining work names, builds and touches.
 - Which part of the note is remaining work. Read that part, and the design and approach sections it builds.
 
+A raw file shows a note's embeds (`![[Note#Section]]`) only as a link, so open each one and read it as part of the note. A link to a heading or block (`[[#^piece-7]]`) points to content its line depends on, so read the target when that line matters to your work.
+
 ## What to check
 ### 1. Find the changed notes
 - Notes changed since `confirmed`, committed or not.
 - Include `notes/archive/`. A story archived since `confirmed` may have **As built** notes that changed a shared component.
 - Include notes deleted since `confirmed`, because their **As built** notes may still matter.
 - Include the note's hub, and the embedded sections it pulls in (`![[Hub#Section]]`). A change there changes this note.
-- Include this note's own changes since `confirmed`, except the user's comments, which the caller handles. Look for sections moved in from other notes, often with a line saying to stop and ask which one wins.
+- Include this note's own changes since `confirmed`, except the user's comments (lines tagged or signed with their name), which the caller handles. Look for sections moved in from other notes, often with a line saying to stop and ask which one wins.
 
 ### 2. Keep the ones that overlap
 For each changed note, read what changed. Keep it if any of these is true:

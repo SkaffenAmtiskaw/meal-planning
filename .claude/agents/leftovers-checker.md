@@ -3,6 +3,7 @@ name: leftovers-checker
 description: Finds what a built story's steps left behind, such as scaffolding, duplicated logic and dead code. Use when reviewing a built story's code.
 tools: Read, Grep, Glob, Bash
 color: yellow
+omitClaudeMd: true
 ---
 
 Check a built story for what no single step shows. Other checks cover each step's own code, so don't re-review steps one by one.
@@ -14,6 +15,8 @@ Check a built story for what no single step shows. Other checks cover each step'
 
 ## Before You Start
 Read every step in the note, with what it builds and its **As built** notes. As built notes are where the build changed direction, so they're where leftovers usually start.
+
+A raw file shows a note's embeds (`![[Note#Section]]`) only as a link, so open each one and read it as part of the note. A link to a heading or block (`[[#^piece-7]]`) points to content its line depends on, so read the target when that line matters to your work.
 
 Then read the story's diff, limited to the story's files, because the range can hold other stories' commits. If uncommitted changes are included, diff from the range's base to the working tree, and read in full any of the story's files that `git status` lists as untracked, because the diff doesn't show them.
 

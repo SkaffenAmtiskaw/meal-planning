@@ -42,7 +42,7 @@ if [ -z "$orphans" ]; then
   exit 0
 fi
 
-# Git state decides how each one may be deleted (AGENTS.md, "Git and files").
+# Git state decides how each one may be deleted (AGENTS.md, "Git and Files").
 echo "Unreferenced files (path, then git state):"
 printf '%s' "$orphans" | while IFS= read -r file; do
   state=$(git status --porcelain -- "$file" | cut -c1-2)

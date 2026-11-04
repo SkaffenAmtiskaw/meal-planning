@@ -5,7 +5,7 @@ user-invocable: false
 ---
 
 # Writing Docs and Agent Instructions
-Docs (`docs/` and `README.md`) and agent instructions (AGENTS.md, skills and agents) have different readers, but they're good in the same ways. This file holds those shared qualities, and a part for each kind of file says how they apply to it and what else that kind needs. Read `docs.md` for a doc and `instructions.md` for an agent instruction, or both if a change touches both.
+Docs (`docs/` and `README.md`) and agent instructions (AGENTS.md, skills and agents) have different readers, but they're good in the same ways. This file holds those shared qualities, and a part for each kind of file says how they apply to it and what else that kind needs. Read `docs.md` for a doc and `instructions.md` for an agent instruction, or both if a change touches both. Before you show a draft for a file this standard covers, or your summary names a change you've written to one, follow the `reviewing-a-draft` skill.
 
 ## Write for Your Reader
 Before drafting, know who reads the file and what they already know, then give them what they need and nothing they don't. A file pitched at the wrong reader either leaves them guessing or buries what they need under what they already know.

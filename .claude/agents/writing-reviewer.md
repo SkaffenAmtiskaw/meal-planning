@@ -3,6 +3,7 @@ name: writing-reviewer
 description: Reviews a draft of a doc or agent instruction against the writing standard. Use on that draft before showing it to the user.
 tools: Read, Grep, Glob
 color: green
+omitClaudeMd: true
 skills:
   - writing-standard
 ---

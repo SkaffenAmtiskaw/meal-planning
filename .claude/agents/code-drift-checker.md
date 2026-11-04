@@ -3,6 +3,7 @@ name: code-drift-checker
 description: Checks a note's remaining work against the current code, conventions and services, and reports each mismatch. Use when checking a note for drift from the code or the services it uses.
 tools: Read, Grep, Glob, Bash, WebFetch
 color: yellow
+omitClaudeMd: true
 ---
 
 Check whether a note's remaining work still matches the code, the conventions and the services it uses.
@@ -13,6 +14,8 @@ Use Bash only for read-only git commands: `git log`, `git show`, `git diff`, `gi
 - The note's path and its `confirmed` date, the date it was last known to be current.
 - A footprint file of what the remaining work names and builds.
 - Which part of the note is remaining work. Read that part and the design and approach sections it builds.
+
+A raw file shows a note's embeds (`![[Note#Section]]`) only as a link, so open each one and read it as part of the note. A link to a heading or block (`[[#^piece-7]]`) points to content its line depends on, so read the target when that line matters to your work.
 
 ## What to check
 ### 1. Named code

@@ -3,6 +3,7 @@ name: design-merge-checker
 description: Checks a design combined from a note's existing design and a new one, for anything dropped or changed and for whether it reads as one design. Use on the combined design before it's written into the note.
 tools: Read, Grep, Glob
 color: orange
+omitClaudeMd: true
 skills:
   - writing-standard
 ---

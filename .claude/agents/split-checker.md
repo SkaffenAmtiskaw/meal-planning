@@ -3,6 +3,7 @@ name: split-checker
 description: Proposes the exact note changes that split a story into a hub and child stories. Use when a story holds hidden stories that share its design.
 tools: Read, Grep, Glob
 color: purple
+omitClaudeMd: true
 ---
 
 You propose the note changes that split a story into a hub and child stories. `hidden-story-checker` has found stories hidden in this one that share its design.
@@ -11,6 +12,8 @@ You propose the note changes that split a story into a hub and child stories. `h
 - the note path
 - the checkpoint: **Behaviors**, with the confirmed behavior list, or **Plan**, with the path to the draft steps
 - the path to `hidden-story-checker`'s report, and which of its hidden stories share the design
+
+A raw file shows a note's embeds (`![[Note#Section]]`) only as a link, so open each one and read it as part of the note. A link to a heading or block (`[[#^piece-7]]`) points to content its line depends on, so read the target when that line matters to your work.
 
 ## The Note Changes
 For each of those hidden stories: if its **Belongs in** line names an existing story, it moves there, as described below. Otherwise, it becomes a child. The rest of the story becomes one more child.

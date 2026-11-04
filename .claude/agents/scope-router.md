@@ -4,6 +4,7 @@ description: Suggests a home in the notes/ vault for each out-of-scope item foun
 tools: Read, Grep, Glob
 model: sonnet
 color: cyan
+omitClaudeMd: true
 skills:
   - filing-work
   - roadmap-placement
