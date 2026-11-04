@@ -59,10 +59,10 @@ After the report:
 2. Check the step's acceptance boxes, remove any check the user dropped, and add `**Status:** ✅ Complete`.
 3. If anything differs from the plan, was added at review or dropped, add an **As built:** note under the step. For a dropped check, it says which of your runs covered it.
 4. If this was the last step, set `status`:
-   - **A tweak:** `done`.
+   - **A tweak or sweep:** `done`.
    - **Any other type:** `in-review`.
 5. Update Where It Stands, with a `^status` line such as "In progress. Next: /implement Step 4". After the last step, the line depends on the type:
-   - **A tweak:** "Built. Next: /close".
+   - **A tweak or sweep:** "Built. Next: /close".
    - **Any other type:** "All steps implemented. Next: /final-review".
 
 ## 6. Stop
