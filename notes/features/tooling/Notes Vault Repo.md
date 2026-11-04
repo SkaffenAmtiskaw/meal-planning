@@ -93,7 +93,7 @@ Move the notes vault out of the code repo into its own git repo, so notes are ne
    - "Templates are in `templates/`" becomes `.claude/note-templates/`.
    - The comment line about the symlink goes, along with wording that places it in the vault.
    - Files says its folder paths (`features/<area>/`, `goals/`, `archive/`, `assets/`) are in the notes repo.
-   - Every path to it changes with the move: `scripts/note-section.sh` (its `file` and comment), AGENTS.md "Anything bigger, outside a skill", `/shape` step 1, `scope-router`, and any other a grep finds. `/tooling` step 2's search list drops it, since `.claude/` covers it.
+   - Every path to it changes with the move: `scripts/note-section.sh` (its `file` and comment), the `editing-notes` skill, `/shape` step 1, `scope-router`, and any other a grep finds. `/tooling` step 2's search list drops it, since `.claude/` covers it.
 8. **The templates, at `.claude/note-templates/`** - the 12 note templates, moved with `git mv` from `notes/templates/`. Under `.claude/` with the rest of the workflow, but not in `.claude/rules/`, which would load all 12. The skills and agents that read a template keep reading the one they need by path.
    - Every path to them changes with the move: the skills and agents that read a template (`/shape`, `/decide`, `/roadmap`, `/tooling`, `/check-drift`, `split-checker`, `scope-router` and any other a grep finds), AGENTS.md "Template comments" and Note Conventions' Templates line. `/tooling` step 2's search list drops `notes/templates/`, and `/close` steps 2 and 8 drop their mentions of the `templates/` exclusion.
    - The Feature template's "Put images in `assets/<story-name>/`", and any other vault folder path in a template, names the notes repo.

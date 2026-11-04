@@ -24,16 +24,17 @@ A rule is about the codebase itself, about how the notes vault is organized, or 
 
 ## Referring to a Rule Kept Elsewhere
 If a skill or agent needs only one fact from a long shared file it would otherwise read, such as Note Conventions, it states that fact, because loading the whole file for one fact costs more than a one-line copy. Otherwise, it never restates a rule kept elsewhere, because two copies drift apart. How it refers to the rule depends on where the rule is kept:
-- **If it's in AGENTS.md,** the skill or agent doesn't point to it, because AGENTS.md loads into every session and its rules already apply. If AGENTS.md leaves it to each skill to say when its rule applies, as it does for triaging out-of-scope work, the skill's step says to do it, such as "triage the out-of-scope list", without naming AGENTS.md.
+- **If it's in AGENTS.md,** the skill or agent doesn't point to it, because AGENTS.md loads into every session and its rules already apply.
+- **If AGENTS.md names a shared-rule skill and leaves each skill to say when it applies,** as it does for triaging out-of-scope work: the skill's step says to do it, such as "triage the out-of-scope list", without naming either file.
 - **If it's kept anywhere else,** such as a doc or a shared-rule skill, the skill or agent names where the rule lives at the point it applies: "as `unit_tests.md` describes", "as the `running-the-app` skill describes". How a skill or agent loads a shared-rule skill depends on how much of the shared-rule skill it needs, and in which runs:
   - **If it needs only part of the skill:** if that part is still in `SKILL.md`, first move it into a supporting file, as "Where a Rule Goes" describes. Then it reads that file where the part applies.
   - **Otherwise, if only runs that take one branch need it,** it reads the skill's `SKILL.md` where that branch starts, so runs that don't take the branch never load it.
-  - **Otherwise,** an agent preloads it with `skills:` in its frontmatter.
+  - **Otherwise,** an agent preloads it with `skills:` in its frontmatter, and a skill invokes it where the rule first applies, even if AGENTS.md also names it for sessions with no skill.
 
 The reverse holds too: a shared-rule skill holds only the shared rule. Which skill uses it, at which step, and who does what go in each skill that uses it, never in the shared-rule skill, because each skill knows its own steps and a list kept in the shared rule goes stale as skills change.
 
 ## Repeats and Differences
 When a skill or agent covers a rule that's kept elsewhere, how to handle it depends on its wording:
 - **If it's the one fact a skill or agent needs from a long shared file it would otherwise read,** keep it, as "Referring to a Rule Kept Elsewhere" describes.
-- **If it's a plain repeat,** remove it without asking the user. This includes procedure lines, such as a step that says to go through approvals "one at a time", which only repeats AGENTS.md's rule on questions.
+- **If it's a plain repeat,** remove it without asking the user. This includes procedure lines, such as a step that says to go through approvals "one at a time", which only repeats the rule on questions.
 - **If its wording differs from the rule,** ask the user whether the difference is a deliberate exception or drift. Keep an exception in the skill or agent, and remove drift.

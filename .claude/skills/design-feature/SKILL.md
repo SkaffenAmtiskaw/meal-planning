@@ -13,6 +13,8 @@ hooks:
 
 Design **$ARGUMENTS** with the user on a canvas, then save the approved design in the vault.
 
+Invoke the `editing-notes` skill first, since this run changes notes.
+
 ## Why This Skill Works the Way It Does
 The artboards are the design. They're saved in the vault because subagents read only local files. Which stories the design belongs to, and where it disagrees with older designs, are `/place-design`'s job.
 

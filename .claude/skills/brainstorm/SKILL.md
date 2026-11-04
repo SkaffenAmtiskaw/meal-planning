@@ -13,6 +13,8 @@ hooks:
 
 Find what could be done in the exploration hub **$ARGUMENTS**, and sort the options.
 
+Invoke the `editing-notes` skill first, since this run changes notes.
+
 ## 1. Read the Hub
 Read all of the hub and the note of the goal it serves. The hub's Child Stories table says what's already scoped, so offer no options for that work. Look at the code, or at the running app as the `running-the-app` skill describes, only enough to know what exists today.
 

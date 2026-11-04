@@ -13,6 +13,8 @@ hooks:
 
 Work through the open decisions on **$ARGUMENTS**. This skill settles decisions, not design: don't design the story, write steps, pick implementation details or change code, because each belongs to a later step with its own process and checks.
 
+Invoke the `editing-notes` skill first, since this run changes notes.
+
 ## 1. Read the note
 Find the note in `notes/features/` and read all of it.
 

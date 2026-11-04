@@ -13,6 +13,8 @@ hooks:
 
 Place the design from **$ARGUMENTS** into the stories it belongs to.
 
+Invoke the `editing-notes` skill first, since this run changes notes.
+
 ## Why this skill works the way it does
 A design often reaches beyond one story. A handoff can touch several stories, some of which already have a design, and parts of it may belong to no story yet. So each design is kept in one copy, in its story's note or in a hub when several stories build it, and those stories embed the parts they build. When a new design disagrees with an older one, the user picks the answer and the losing text is rewritten, so every story that embeds it reads one answer.
 

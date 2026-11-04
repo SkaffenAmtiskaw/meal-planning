@@ -13,6 +13,8 @@ hooks:
 
 Gather the work for the goal **$ARGUMENTS**, clean it up, and put work into hubs where it needs exploring, shares design or decisions, or should share a design.
 
+Invoke the `editing-notes` skill first, since this run changes notes.
+
 ## 1. Read the Goal's Work
 Read the goal's note and `notes/Roadmap.md`. Collecting-note items stay out of this skill, because they're built with their collecting note. Read every other line that serves the goal, and the note each one links.
 

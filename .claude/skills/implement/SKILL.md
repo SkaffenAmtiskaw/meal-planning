@@ -13,6 +13,8 @@ hooks:
 
 Implement the next step of the note **$ARGUMENTS**.
 
+Invoke the `editing-notes` skill first, since this run changes notes.
+
 ## 1. Find the Step
 Find the note. If its `status` isn't `ready` or `in-progress`, tell the user what you found, and stop. If the Roadmap's "How this file works" says under "Goals" that the story can't be built yet, tell them which goal it waits on, and stop.
 

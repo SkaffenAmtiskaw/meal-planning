@@ -13,6 +13,8 @@ hooks:
 
 Write the Convention and Migration Checklist for the pattern note **$ARGUMENTS**. A pattern note introduces a convention ("everything should work this way") and moves the existing code over to it. Once the convention exists, agents and reviewers judge code against it.
 
+Invoke the `editing-notes` skill first, since this run changes notes.
+
 ## 1. Read the Note
 Find the note in `notes/features/` and read all of it. Also read each linked note that its Convention or Open Decisions depend on.
 

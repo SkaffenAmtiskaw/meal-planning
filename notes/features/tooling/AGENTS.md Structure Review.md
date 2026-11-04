@@ -1,10 +1,8 @@
 ---
 type: workflow
-blocked-by:
-  - "[[AGENTS.md Note and Scope Rules]]"
 ---
 # Where It Stands
-Blocked by [[AGENTS.md Note and Scope Rules]]; then /tooling ^status
+Next: /tooling ^status
 
 # Inbox
 - Sarah, on this review: "I think this is where the overly prescriptive instructions will be really critical. Agent instructions are too brittle, causing context bloat and agents to do things even when they don't make sense. Fixing that issue needs to be a priority in this story. For every change you make, defend it to me in the chat how it is not overly prescriptive."

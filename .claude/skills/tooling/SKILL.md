@@ -9,6 +9,8 @@ Make this workflow or tooling change: **$ARGUMENTS**
 
 A tooling change skips the story lifecycle, which exists so product code is built and reviewed in small pieces. The user can take in a whole change to a skill or a convention and review it directly.
 
+Invoke the `editing-notes` skill first, since this run changes notes.
+
 ## 1. Find Out What's Changing
 If the argument is a description, search `notes/` for notes and items about the same thing, because they may already hold details or decisions. Tell the user what you found.
 
@@ -18,6 +20,8 @@ If it names a note or an item in one, the note's `type` says what the change is:
 - **Any other type, or none:** it's story work, so this skill doesn't take it.
 
 If the Roadmap's "How this file works" says under "Goals" that the note or item can't be built yet, tell the user which goal it waits on, and stop.
+
+Leave the note's Roadmap line where it is, because the change finishes in one session.
 
 ### Is It a Story?
 Some changes need the story lifecycle, whichever note they came from. Once you've read the files the change touches, check for these cases:

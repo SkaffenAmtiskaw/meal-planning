@@ -15,6 +15,8 @@ Assess the feature note **$ARGUMENTS** against the codebase and write its Sugges
 
 Past planning agents started from the existing code, reused it because it was there, and piled new behavior into modules that already had a job, which broke Single Concern in `docs/project_conventions.md`. So this skill has a target designed before anyone reads the existing modules, then judges those modules against it, and "use as-is" is the verdict that needs evidence.
 
+Invoke the `editing-notes` skill first, since this run changes notes.
+
 ## 1. Read the note
 Find the note in `notes/features/` and read all of it. Check that it's ready for this skill:
 - **`type: feature`.**

@@ -11,10 +11,6 @@ Work is planned and tracked as notes in the Obsidian vault in `notes/`.
   - **Only a low-level detail,** such as a file's location, how a file loads, or which API or command flags a script uses: make the call and name it in your summary, because the user doesn't want to decide these.
 - **Questions.** Put what a question is about inside it, such as the note, the file or the step, because the user may see only the question. Use the question dialog (AskUserQuestion) only for a short choice whose full context fits in the question and its options, because it hides the chat text before it and its option previews don't show for them.
 - **Recommendations:** if the user asks for a recommendation, always give one. Otherwise, give one when best practice supports it, and name the practice. When a choice comes down to their preference, say so and don't guess.
-- **Open questions in notes.** A note holds only the open questions the user wants to think over or research, such as an Open Decisions question or a `decision needed` entry. What you do with a question depends on what can settle it:
-  - **If the code or docs can answer it:** look it up.
-  - **If you aren't sure what the user meant or what they'd pick:** ask them right then.
-  - **If they say they want to think it over or research it:** write it under the note's Open Decisions. If the note is a story with no `decision needed` entry in `blocked-by` yet, add one, so `/decide` picks up the note.
 - **Drafts.** If the user has to approve a draft, such as note text, a file or a template, show it in the chat. At the end of the same message, ask in plain text whether they approve. How much you show depends on its size:
   - **If it's short:** show all of it.
   - **If it's long or holds many changes:** give a summary and a table of the changes, and show the text only for the parts they ask to see, because they miss things in a long draft.
@@ -30,112 +26,31 @@ Work is planned and tracked as notes in the Obsidian vault in `notes/`.
   When you have a reason to change a choice, what you do depends on whose choice it is and what it affects:
   - **Only a low-level detail, even one marked "Sarah's call":** make the change and name it in your summary.
   - **Their call, what the app does or shows, or architecture:** stop and ask them. Tell them what the change solves, what it costs, and the decision, rule or line it would change. For example, if a line says "[Sarah] When we start using [tool] we need to remember to do X" and a later session finds a better tool, show them the better tool. The line doesn't tie the project to the first one.
-  - **Otherwise, it's only approved:** make the change, and record it where the choice lives. For a **Decided** line, rewrite it with the new answer and today's date, and add the old answer as a **Rejected** line saying why. How you tell them depends on its size:
+  - **Otherwise, it's only approved:** make the change, and record it where the choice lives. How you tell them depends on its size:
     - **Big:** it changes what tooling, CI or a routine does for them, drops a piece from an approved Design, or reverses a **Decided** line. Open your summary with a bold ⚠️ line for it, saying what they approved, what it is now and why.
     - **Small:** anything else, such as order, structure or wording. Name it in your summary.
 
-  **Marking a choice:** later agents stop and ask before changing a choice that's the user's call, so mark one when you record it. Mark a **Decided** line as the `settling-a-decision` skill describes, and end a piece of a Design, Convention or plan with whose call it is, such as "(Sarah's call)". A line they wrote and a story's scope need no mark. Every other unmarked choice is only approved.
 - **Setup outside the repo.** If work needs something the user sets up by hand outside the repo, such as a GitHub setting or a claude.ai routine, walk them through it at the point it's needed, because a list of setup at the end of a summary reads as reference, not as a prompt to act. Give one piece at a time, and wait for them to say it's done, or to tell you what they saw, before you give the next. In the same way, walk them through any check only they can do, saying what they should see and what it proves.
 - **A problem's size.** If the user says a problem is large or keeps coming back, work from that size rather than arguing it down, because agents have kept offering narrow fixes while the user had to insist on a large-scale change. If the problem is outside the session's work, record their account of its size in its out-of-scope item. Otherwise, work out where it comes from and propose the fix that would end it, even if that means replacing what's there.
-- **Rare cases:** once a story is past `/shape`, you or a subagent may find a case that would add a piece to it or raise a question for the user. Weigh what goes wrong if the story doesn't handle the case, for whom and how often, because each piece added for a case makes a story harder to follow. If the case is rare and the harm small, add nothing and don't ask. Name the case in your summary, so they can ask to have it handled. An example is a viewer who changes time zones while the two zones are on different dates, and sees the wrong day as today for one load.
 - **Security risks:** weigh a security risk against what the work actually exposes. If it could reach production (code that ships in the app's build, production data or secrets), raise it. Do the same if the story is about that risk, such as a story that secures sign-in. Otherwise, leave it out, along with any hardening against it. Dev tooling that only runs on the user's machine against their dev database is the usual case: at worst it reaches dev data. Before you pass on a risk a subagent reports, weigh it the same way.
 - **Doc gaps:** if you notice something that belongs in `docs/`, such as a convention the docs don't cover or a rule that's wrong or out of date, deal with it right then, because docs that wait for later rarely get updated. What you do depends on the gap:
-  - **A wrong or out-of-date rule with one right fix, in a doc this story already edits:** it's a Boy Scout fix, as "Out-of-scope work" describes. Don't ask.
+  - **A wrong or out-of-date rule with one right fix, in a doc this story already edits:** it's a Boy Scout fix, as the `triaging-out-of-scope-work` skill describes. Don't ask.
   - **Anything else:** stop and ask whether it belongs in `docs/`. If it does and it's a lot of work, give them a neutral choice between drafting it now and adding it to `notes/features/tooling/Docs Updates.md`. Otherwise, recommend drafting it now, and add it there if they say later.
 - **Summaries.** If you changed files and your skill's report doesn't already list them, your summary includes a table, so the user can open each one. Give each file a row, or each group of files with the same change. Each row holds the file as a markdown link and a one-line description of its change.
 
-## Editing notes
-Any change to a note in `notes/` follows these rules:
-- **Sarah's comments:** a line where her name is a tag or a signature (`[Sarah] I want X instead.`, `Change this to Y - Sarah`) is her own words. Never write in her voice or sign as her, and record her decisions in the third person ("Sarah decided 2026-09-25 that ..."). What you may do with one of her lines depends on the case:
-  - **It's done or out of date:** show it to her and ask whether to remove it.
-  - **It needs a workflow marker:** add a `🎯 [[Goal]]` link to its end or a `**Blocked by [[Story]]:**` prefix to its start, without asking. They sit outside her words, so adding one isn't editing them.
-  - **Otherwise:** never edit it.
-- **What a note says Sarah said:** write that she decided, agreed to or asked for something only if she did, because later sessions build on such a line. If you aren't sure she meant it that way, ask her. The cases that can pass for something she said, and what to do with each:
-  - **A yes, a "looks fine" or no objection to an agent's text, other than a story's scope:** the text is only approved, so don't write that she agreed or mark it as hers. If it's an assumption the note needs, say it's an agent's assumption.
-  - **An agent's own account,** such as its list of what went wrong: keep it apart from her quotes and say it's the agent's, even if she said yes to it.
-- **A note that's wrong or out of date** is handled by where the mistake is and what it changes. ⚠️ Check Drift callouts are only for drift: a story waited while the code, the conventions, the services it uses or other stories moved on, so parts of it no longer hold. Only `/check-drift` writes them, and it says how. No other session writes one or offers to, unless Sarah tells it to.
-  - **The story you're working on has a mistake that changes its remaining work** (what gets built, or how), such as a wrong assumption in its approach, a detail an earlier skill got wrong, or wording that conflicts with a choice Sarah just made:
-    - **If the mistake is in a choice that's her call, such as the story's scope:** stop and ask her.
-    - **Otherwise:** fix the text directly, and name the fix in your summary.
-  - **The build differs from a step:** add an **As built:** note under the step.
-  - **A change you've built affects another story's remaining work beyond a name or path:** leave its text alone, and add an Inbox item to it, as "Out-of-scope work" describes.
-  - **Only a name or path changed,** and the plan still works as written, such as a moved file or a renamed function: correct the name or path in place. Sarah approved the intent, not the path.
-  - **It changes nothing about the work,** such as a wrong detail in a finding: if it's a line an agent wrote in a note you're working on, and not plan text, correct it. Otherwise, leave it.
-- **Where It Stands** is the first section of every note except a goal or standing goal, right after the frontmatter, in its template's format. If a note has none, add it. It's a summary Sarah can read at a glance, and it holds at most two things:
-  - **The `^status` line** (the line ending in ` ^status`) says what the story needs next, so Sarah can tell from the Roadmap without opening the note. It always names the next skill as a command, or links what the story is blocked by:
-    - **It can move now:** `Next: /plan-steps` or `Next: /implement Step 4`. If the next step isn't a skill, name it, then the skill after it.
-    - **It can move now, but a later step waits on another story:** name the skill that can run now, then the step that waits and its blockers, as in `Next: /plan-steps. Building waits on [[A]] and [[B]]` or `Next: /decide. Architecting waits on [[A]]`. This tells Sarah what she can do now and what has to wait, which affects how she prioritizes it.
-    - **It's blocked by another story:** link the blocker and name the skill after it, as in `Blocked by [[A]] and [[B]]; then /plan-steps`.
-    - **It waits on Sarah's decisions:** `Next: /decide`.
-    - **A collecting note:** `Collecting items. Next: /roadmap when a goal starts building`, or `Next: /tooling` for a workflow note.
-
-    It may start with a state word or two, such as `Design approved.` or `In progress.`, and holds nothing else. Never describe the story there. Other context, such as what the story was split from, goes in the summary below it. The story's line in `notes/Roadmap.md` embeds the `^status` line after the link, `[[Note]] ![[Note#^status]]`. Add the embed if it's missing.
-  - **Below it, a short summary,** if there's something worth noting that the `^status` line doesn't say, such as what work has been done and what remains. Keep it to a few sentences. It doesn't describe the story, because Purpose does that.
-
-  Whoever moves a story forward updates the `^status` line. They also update the summary below it, or remove that summary if nothing is left worth noting. When the next step is settled, make these changes without asking and mention them in your summary. When there's a real choice, such as what the story is blocked on, show Sarah the line and wait for her approval.
-
-  In an older note, Where It Stands may hold other things, such as background, findings or a list of questions. When you work on the note, rather than just editing it in passing, move each one where it belongs: a question or finding for a later step to the top of the section that step writes, and anything else to the Inbox.
-- **The Inbox** comes right after Where It Stands in every story, hub and workflow note. It holds what reaches a note from outside its usual flow from one skill to the next:
-  - **Sarah's items,** added when something occurs to her.
-  - **Items from another note's work,** such as background that a session working on another story found for this one.
-  - **Why a note was sent back** to an earlier step, such as a new piece `/plan-steps` found for a redesign, or a problem that sends an infra story from `/infra-build` back to `/infra-design`.
-
-  In the usual flow, a step doesn't leave the next one an Inbox item. A finding or question for a later step goes at the top of the section that step writes.
-  - **Adding an item:** say what it is. If the note has no Inbox, add one right after Where It Stands.
-  - **Working on a note:** read its Inbox, and decide which items are your step's to act on. Act on each one. Then, if it's one of Sarah's lines, handle it as "Sarah's comments" above describes. Otherwise, delete it. Leave items that belong to a later step.
-- **A note whose type doesn't fit its work, or the skill you're running:**
-  - **If its type doesn't fit its work,** tell Sarah which type fits and why, and ask how she wants to handle it, since retypes are rare and each one is different.
-  - **If it fits, but the skill you're running doesn't take it,** tell her which skill the note needs, and stop, since a skill's steps are written for the types it takes.
-- **Roadmap order is Sarah's call.** Never reorder `notes/Roadmap.md`. A new line's spot follows from its work:
-  - **It's a bug the Roadmap's "How this file works" puts under Bugs:** it goes under that heading in Later.
-  - **It serves a goal:** it's committed, so it goes under that goal's heading in Later.
-  - **It serves no goal:** it's uncommitted, so it goes in Ideas.
-
-  If something about the work makes that spot look wrong, ask her where it goes, such as when she's said in the session that it needs prioritizing, or when a line in Next or Planning waits on it, as "A blocker outside the queue" describes. Otherwise, don't ask. Next and Planning are ordered queues, so when a line goes into one, ask her where in it. If the notes or the Roadmap make the spot clear, suggest it and say why. Otherwise, ask without a suggestion. Never guess one.
-- **A blocker outside the queue.** If a story in Next gets a story in its `blocked-by` that isn't in Now or Next, or a story in Planning gets one that isn't in Now, Next or Planning, propose pulling that story into the blocked story's section directly ahead of it, with the same markers, and say why.
-- **Starting on a story in the backlog.** Sarah running a skill on a story means she's moving forward with it. It also means she wants it worked, whether it's a problem to fix or an idea she wants to weigh before deciding. So don't set out to check whether it's still needed, and don't recommend dropping it out of hand. Do the skill's own job on it, and leave whether it's worth doing to her. If the story's Roadmap line is in Later or Ideas when a skill starts on it, what you do depends on the skill and the line:
-  - **`/implement` or `/infra-build`:** leave it, because they move the line into Now themselves.
-  - **`/tooling`:** leave it, because it finishes its change in one session.
-  - **A line under the Bugs heading:** leave it, because a bug is shaped, investigated and planned ahead of the release that picks it up.
-  - **Otherwise:** ask her whether it moves into Next or Planning. If it does:
-    - check its goals as the `roadmap-placement` skill describes
-    - give it a 🎯 link for each goal she names. If one of them is the building goal, it goes in Next. Otherwise, if one is the planning goal, it goes in Planning. If neither, ask her whether it goes in Next with 📌, and with what reason
-    - ask her where in that section it goes, as "Roadmap order" above describes
-- **A `ready` note goes back to `spec`** when its design or steps change, until Sarah re-reviews it. Three changes don't count. Two leave the plan as she approved it: a corrected name or path and a Boy Scout fix (see "Out-of-scope work"). The third, a change to a choice she only approved, reaches her through the summary, as "Decisions can change" describes.
-- **Template comments** (the `%% ... %%` guidance in `notes/templates/`) never stay in a note. The template keeps them, and the skill that writes each section carries its rules.
-  - When you create a note from a template, leave out every comment, along with any line that held only a comment, such as an empty checkbox. A section a later step writes stays as a bare heading.
-  - When you work on a note that still has template comments, rather than just editing it in passing, remove them.
+## Notes
+Before you change a note in `notes/`, invoke the `editing-notes` skill. These rules hold for every session:
+- **The user's lines:** a line where their name is a tag or a signature (`[Sarah] I want X instead.`, `Change this to Y - Sarah`) is their own words. Never edit one or write in their voice.
+- **Roadmap order** is the user's call, so never reorder `notes/Roadmap.md`.
+- **⚠️ Check Drift callouts:** only `/check-drift` writes them, unless the user tells another session to.
 - **Embedded sections** (`![[Note#Section]]`) are part of the note. A raw file shows only the link, so open each one and read it as part of the note.
-- **Before you finish** a session that changed any note, run `sh scripts/vault-lint.sh`. It checks the notes changed since the last commit, and the whole vault, for the rules above that a script can check, such as a missing `^status` line or status embed, a broken link or a `blocked-by` entry for a closed story. Fix what it reports in the notes this session changed, following the rules above. If it reports something in a note this session didn't change, tell Sarah instead of fixing it.
-- **Anything bigger, outside a skill:** a skill carries what it needs for the notes it changes. Without one, read `notes/Note Conventions.md` before creating, moving, closing or deleting a note, or changing its `status`.
+- **Links to a heading or block** (`[[#^piece-7]]`, `[[Note#Section]]`) point to content the line depends on, so read the target when that line matters to your work.
+- **Before you finish** a session that changed a note, run `sh scripts/vault-lint.sh`. Fix what it reports in the notes this session changed. Tell the user about anything it reports in other notes, because another session may be working on them.
 
 ## Out-of-scope work
-Keep a running list of anything that looks like it belongs outside the story or step you're working on, whether you, a subagent or Sarah found it. If Sarah gives feedback on how a skill, subagent or the workflow itself behaves, and this session isn't working on that same skill or subagent, it always goes on the list, even when it's also saved as a memory. Don't stop to deal with items as they come up.
+Keep a running list of anything that looks outside the story or step you're working on, whether you, a subagent or the user found it. Also list any case that would add a piece or a question to a story past `/shape`. If the user gives feedback on how a skill, subagent or the workflow behaves, and this session isn't working on that same skill or subagent, it goes on the list, even when it's also saved as a memory. Don't stop to deal with items as they come up, because they'd pull the session away from its work.
 
-**Work the story needs isn't an item.** If the story can't meet its own Purpose without some piece of work, such as gitignoring the output of a tool the story adds, that work is part of the story, even when a subagent reports it as outside its rules or no rule covers it. If the story's steps are written, add it to the step that needs it. Otherwise, add it to the section that lists what the story changes, such as its Suggested Approach, Fix, Migration Checklist or Design. Name it in your summary.
-
-**An effect your change has on another story isn't an item either,** such as a tooling change that alters what one of its steps needs. Handle only the effects you notice while working, and don't go looking for them. What you do depends on whether the change is built:
-- **If it's built,** and it changes more than a name or path in that story's remaining work: add an Inbox item to that story saying what changed and what it means there. Leave out how to handle it, because that story's own skills work that out against the code as it stands then. Don't ask Sarah first, but name the story in your summary.
-- **If it's only decided or planned,** such as a decision or design recorded in a note: if it would majorly affect another story, such as one of the two stories having to wait on the other through a `blocked-by` entry, ask Sarah about it. Otherwise, leave it alone, because the other story's own checks, such as `/check-drift`, catch it once the change is built.
-
-**Immature stories aren't items.** A note or Roadmap line that isn't shaped yet, such as Sarah's jotted thoughts with no frontmatter or Where It Stands, a Roadmap line with a description after its status embed, or a story that is only a Roadmap line, stays off the list. `/shape` and the skills after it turn it into a unit of work and format it. If something is wrong with it beyond that, such as a wrong fact or a real conflict, it goes on the list.
-
-**Boy Scout fixes aren't items either.** A story leaves the files it edits a little cleaner than it found them. If a problem that you, a subagent or Sarah has found is small, needs no decision and sits in a file this story already edits (production code, tests or docs alike), the fix joins the story on its own. Don't go looking for problems to fix. This is only for ones found while working. Where the fix goes depends on how far the story has got:
-- **Its steps are written:** the fix goes with the step that edits the file. If that step isn't built yet, add "Boy Scout fix: <the problem>" to its **Source:** line, or its **Builds:** line in a Build Order. Otherwise, make the fix now and record it the way your skill records its other changes, such as an As built note in `/implement`.
-- **Otherwise:** add it, starting "Boy Scout fix:", to the section that lists what the story changes, such as its Suggested Approach, Fix, Migration Checklist or Design, so the skill that writes the steps puts it in the step that edits the file.
-
-Name each Boy Scout fix in your summary, so Sarah can take one out.
-
-**Sarah decides what's out of scope.** Before you show her the result she approves, go through the list so far with her, **one item at a time**. Each skill names the point where this happens. For each item, show what it is, where it was found and why it looks outside this work. Then offer the choices below. If the skill has no story to pull into, offer only route or drop. Otherwise, offer all three:
-- **Pull it in:** it becomes part of this story. She may have thought it was in scope, or want it done while this work is here. The skill says how it enters the story.
-- **Route it:** it belongs somewhere else. If she names where, put it there now, without the router, written as the `filing-work` skill describes for that kind of home.
-- **Drop it:** take it off the list and don't record it anywhere.
-
-Triage items that turn up after that point the same way, at the end.
-
-Then route the items she routed without naming a home:
-1. Send them to the `scope-router` subagent. For each item, include what it is, where it was found (`file:line`, or the note and section) and why it's outside this work. The router suggests a home for each item. It doesn't change anything.
-2. Go through its suggestions with Sarah **one item at a time**: show the item and the suggested home with its reason, wait for her to approve, change or drop it, apply that one change to the notes, then move to the next.
+Before you show the user the result they approve, triage the list, as the `triaging-out-of-scope-work` skill describes. Route it at the end. Each skill names the points where these happen.
 
 ## Subagent reports and scratch files
 Save each subagent's report, unedited, in `.scratch/`. When you show the user its findings, put them in the chat and link the report. Scratch files are your working files, so anything else the user needs to read goes in the chat too. Each commit deletes the files in `.scratch/` that haven't been written to for a day, so anything a later session needs goes in the note you're working on. A note never links to a scratch file.

@@ -13,6 +13,8 @@ hooks:
 
 Close the story **$ARGUMENTS**: keep its note in `archive/` while an open story needs it, or delete it, and bring the notes around it up to date.
 
+Invoke the `editing-notes` skill first, since this run changes notes.
+
 ## 1. Read the Note
 Find the note in `notes/` and read all of it. Where it is and its `status` decide the kind of close:
 - **`done`, in `notes/features/`:** a done close. Check that every step is marked ✅ Complete, ❌ Will Not Do or 🚛 Moved, and that each 🚛 target note holds the moved work in full, with its image embeds and handoff text. If anything is missing, tell the user what you found and stop.

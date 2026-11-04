@@ -13,6 +13,8 @@ hooks:
 
 Investigate the bug note **$ARGUMENTS** and take it to `spec`.
 
+Invoke the `editing-notes` skill first, since this run changes notes.
+
 ## 1. Read the note
 Read all of the note. If its `status` is `ready` or later, tell the user what you found and stop, because changes to a planned story go through `/check-drift`. If it's `spec`, this run is a re-investigation: do steps 2 to 4 fresh rather than working from the old sections, because that anchors you to their conclusions.
 

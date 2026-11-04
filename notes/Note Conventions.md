@@ -3,7 +3,7 @@ paths:
   - ".claude/skills/**"
   - ".claude/agents/**"
 ---
-%% `paths` makes Claude Code load this note whenever a session reads a skill or agent file, through the symlink `.claude/rules/note-conventions.md`. The rules for editing any note live in AGENTS.md under "Editing notes". %%
+%% `paths` makes Claude Code load this note whenever a session reads a skill or agent file, through the symlink `.claude/rules/note-conventions.md`. The rules for editing any note live in the `editing-notes` skill. %%
 
 How notes in this vault are organized and move through their lifecycle. The [[Roadmap]] decides order; everything else about a story lives in its note.
 

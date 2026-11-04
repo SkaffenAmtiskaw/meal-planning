@@ -13,6 +13,8 @@ hooks:
 
 If no goal was named, re-rank the goals. Otherwise, shape the goal or standing goal **$ARGUMENTS**.
 
+Invoke the `editing-notes` skill first, since this run changes notes.
+
 ## A Goal's Own Instructions
 A goal or standing goal can hold instructions for this skill under its Roadmap Instructions heading, in any wording. Whenever you work with a goal or standing goal, read its instructions and follow each where it applies. An instruction is the user's decision, so ask only if you can't tell what it wants or when it applies.
 

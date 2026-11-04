@@ -13,6 +13,8 @@ hooks:
 
 Plan the implementation steps for the note **$ARGUMENTS**. When this skill ends, give the user the command for the next skill, to run in a new session, since this session's reading and draft would bloat or anchor it.
 
+Invoke the `editing-notes` skill first, since this run changes notes.
+
 ## 1. Read the note
 Read all of the note. If its status isn't `spec`, or its `^status` line doesn't say `/plan-steps` can run now, tell the user what you found and stop.
 

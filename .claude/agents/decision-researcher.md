@@ -56,7 +56,7 @@ Being sent a decision to research counts as the user asking for a recommendation
 - **Otherwise:** the option and why, naming the best practice it rests on and how it applies.
 
 ### New questions
-Blocking questions you found that aren't on the note yet, written as questions, with why each one blocks. "None" if there aren't any.
+Blocking questions you found that aren't on the note yet, written as questions, with why each one blocks. A story that could ship on the existing code, with another story correcting it later, isn't blocked. "None" if there aren't any.
 
 ### Sources
 Files, notes and URLs you relied on.

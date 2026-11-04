@@ -15,6 +15,8 @@ Check the note **$ARGUMENTS** for drift.
 
 Find where the note's remaining work no longer holds, mark each place with a ⚠️ Check Drift callout and send the note to the skill that fixes it. Make only the changes the steps below name, and correct any name or path that moved. Don't rewrite anything else, because the skill that wrote each section settled it with the user and is the one to re-settle it.
 
+Invoke the `editing-notes` skill first, since this run changes notes.
+
 ## 1. Read the note
 If the note's status isn't `spec`, `ready` or `in-progress`, tell the user what you found and stop.
 

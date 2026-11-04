@@ -13,6 +13,8 @@ hooks:
 
 Write the design for the infra note **$ARGUMENTS**.
 
+Invoke the `editing-notes` skill first, since this run changes notes.
+
 ## 1. Read the Note
 Read all of the note, and the notes it links to when its Goals, Design or Open Decisions depend on them.
 

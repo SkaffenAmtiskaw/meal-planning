@@ -13,6 +13,8 @@ hooks:
 
 Review the story **$ARGUMENTS** now that every step is built.
 
+Invoke the `editing-notes` skill first, since this run changes notes.
+
 ## Why This Skill Works the Way It Does
 This review looks across the steps, at what no single step shows, because the user reviewed each step's diff as it was built. On an infra story they weren't asked to, so step 3 also reads each change for bugs. The review checks three things:
 1. **Purpose:** whether the built story does what its note set out to do.

@@ -1,6 +1,8 @@
 # The Sweep Rule
 A small update the session can't apply goes on a sweep for the next release, and anything bigger gets its own Roadmap line. An update is reported as new only once, so this keeps each one from being forgotten.
 
+Each change below is given exactly, so this routine doesn't need the `editing-notes` skill.
+
 If step 2 of the skill aborted the merge of `develop`, this run pushes nothing, so an item or line wouldn't reach the pull request. Change no note, and keep what each item and line would have said for the summary's **Not applied**.
 
 A **security update** is a security major, a dropped fix for an advisory or an advisory no fix cleared.

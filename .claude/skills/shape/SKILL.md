@@ -13,6 +13,8 @@ hooks:
 
 Shape **$ARGUMENTS** into a story with a type, a direction and a next step.
 
+Invoke the `editing-notes` skill first, since this run changes notes.
+
 ## Why this skill works the way it does
 The user jots ideas down fast, as an idea note or a single Roadmap line. Before anything can be planned, someone has to decide what kind of story it is and which way to take it. That's all this skill does: it gives the idea a direction, then stops. A Design Handoff, a Suggested Approach, a root cause, a Current State scan, a pattern's Convention and an infra Design each belong to a later step with its own process and checks. An answer worked out here would skip those checks and anchor that step to a guess. If you catch yourself tracing a call chain or sketching components, stop. That's the next step's job.
 
