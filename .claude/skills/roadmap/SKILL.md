@@ -22,8 +22,8 @@ If the user asks for a new instruction during a run, write what they meant under
 Read `notes/Roadmap.md`. In a re-shape, show the user what the note or Roadmap already says at each step, and ask only what's changed. What happens next depends on the argument:
 - **A name:** look for it in `notes/goals/`. What you find decides the path:
   - **A goal** (`type: goal`): this is a re-shape.
-  - **A standing goal** (`type: standing-goal`): ask the user whether to re-shape it or draw a goal from it. To re-shape it, follow "Shaping a Standing Goal". To draw a goal, read `drawing-a-goal.md` in this skill's folder and follow it.
-  - **Nothing:** ask the user whether it's a goal or a standing goal. For a goal, go on to step 2. For a standing goal, follow "Shaping a Standing Goal".
+  - **A standing goal** (`type: standing-goal`): ask the user whether to re-shape it or draw a goal from it. To re-shape it, read `shaping-a-standing-goal.md` in this skill's folder and follow it. To draw a goal, read `drawing-a-goal.md` in this skill's folder and follow it.
+  - **Nothing:** ask the user whether it's a goal or a standing goal. For a goal, go on to step 2. For a standing goal, read `shaping-a-standing-goal.md` in this skill's folder and follow it.
 - **No argument:** go to step 6.
 
 ## 2. Purpose and Done When
@@ -61,13 +61,6 @@ Put the Goals list and the Later headings in the order they give.
 
 ## 7. Next and Planning
 If a goal just became the building or planning goal, read its Roadmap Instructions, then read `filling-the-queues.md` in this skill's folder and follow it.
-
-## Shaping a Standing Goal
-1. **Purpose and What Belongs Here.** Ask the user what kind of work it collects, why no goal would take it, and what looks close but doesn't belong. Draft Purpose, What Belongs Here and Out of Scope from its template, keeping what they meant. Once they approve the draft, write the note.
-2. **The Roadmap.** For a new standing goal, add it to the Goals section's Standing Goals list and give it a heading in Later.
-3. **Scope.** Follow step 3, judging candidates against Purpose and What Belongs Here instead of Purpose and Done When.
-
-Then go to step 8.
 
 ## 8. Report and Stop
 Triage the out-of-scope list. Then tell the user what changed, along with:

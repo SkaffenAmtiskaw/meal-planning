@@ -1,6 +1,5 @@
 ---
 type: goal
-confirmed: {{date:YYYY-MM-DD}}
 ---
 
 # Purpose

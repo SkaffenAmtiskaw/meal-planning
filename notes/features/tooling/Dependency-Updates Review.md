@@ -14,7 +14,7 @@ Part of [[Agent Instructions Audit]].
 
 **Full review here,** as the first story that uses them: `dependency-updates`.
 
-**Re-checks for this step:** `routine-sessions`, `ci-failure` (reviewed in [[CI-Failure Review]]).
+**Re-checks for this step:** `routine-sessions`, with its `fixing-a-failure.md` and `rerunning-a-failure.md`.
 
 **Decisions that apply:**
 
@@ -27,14 +27,14 @@ Part of [[Agent Instructions Audit]].
 ## Issues Found
 From the audit's scan on 2026-10-06. Line numbers are as of that day.
 - **Decision 15:** the path for a check that fails only on GitHub (`:270-308`) moves, unchanged, to a supporting file the skill reads only when a check passes locally but fails on GitHub.
-- The failed-weekly-check mode (:30-37, :43-67, about 560 words) moves to a supporting file, or shrinks once the CI-fix procedure is shared.
+- The failed-weekly-check mode (:30-37, :43-67) could move to a supporting file. It's shorter now that the CI-fix procedure is shared.
 - "Base" means the branch as the merge left it (:92) and also the pull request's base branch (:273); :92's term is renamed.
 - Steps 4 and 6 (:181, :197) repeat step 8, and :184 repeats :10.
 - :188-194, an edge-case list for parsing `repository`, becomes one sentence.
 - The pull request body is described in two places (:209-219, :239-240); one section before the two pushes.
 - :110 (commit message names the old and new versions) needs its reason: step 7 builds the body from the messages. :197 ("A reminder is never applied") has no reason; ask the user for it.
 - :321-322 repeat :328; :237 and :133 put their condition after the command; :44 and :57 both list the job's commands; :113-117's glossary trims to `paths` and `patched_versions`.
-- `dependency-updates:261` names the four job-to-script pairs inline (`lint`→`lint:ci`, `type-check`→`check:types`, `unit-tests`→`test:coverage`, `build`→`build`), and its citation of `docs/ci.md` at `:44` goes.
+- The citation of `docs/ci.md` at `:44` goes.
 - Split check: no command split, since the routine's prompt is fixed to `/dependency-updates`.
 
 Moved from Agent Workflow Changes on 2026-10-06:

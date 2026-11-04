@@ -1,6 +1,5 @@
 # The `ci-failure` Routine
-The routine's configuration on claude.ai (https://claude.ai/code/routines). When the routine changes there, change this file in the same change. `SKILL.md` doesn't point here, so the routine's session never reads it.
-
+The routine's configuration on claude.ai (https://claude.ai/code/routines).
 - **Name:** `ci-failure`
 - **Prompt:** `Run /ci-failure on the failed run described in the routine-fire-payload block.`
 - **Model:** Sonnet

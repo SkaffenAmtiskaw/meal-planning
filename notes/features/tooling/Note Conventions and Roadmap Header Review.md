@@ -31,7 +31,7 @@ From the audit's scan on 2026-10-06. Line numbers are as of that day.
 - **The Roadmap's line 1** ("These should ALWAYS be planned and implemented individually …") is deleted, by Sarah's answer 2026-10-06, since sweeps, roundups and goal releases build items together. **Line 3** ("DO NOT delete this file …") is reworded without capitals and with its reason.
 - **Note Conventions:46-69:** the Next Step table's padding (about 1,300 tokens); rows 48, 49 and 64 describe how a skill works rather than what it produces, and become a short "produces X" (`rule-placement` says Note Conventions is only a map).
 - **The collecting workflow note and the kicked-off copy** are described at Note Conventions:37 and :65, Roadmap:28, `tooling:11` and `roadmap:21`; the definition stays at :37, trimmed, and the mechanics stay with `/tooling` and `/roadmap`.
-- **The standing goal** is defined at Note Conventions:41, Roadmap:10 and `Standing Goal.md:5`; Note Conventions keeps it.
+- **The standing goal** is defined at Note Conventions:41 and Roadmap:10; Note Conventions keeps it.
 - **Infra** is described at Note Conventions:22, :33 and row 58; :33 keeps it.
 - **Note Conventions:39** ("It holds no priority; goals do") repeats Roadmap:22. **:22** puts "**not**" in bold.
 - **Note Conventions:1-6:** the `paths` frontmatter goes (decision 2); the comment's last sentence, which says where the rules for editing notes live, stays as body text pointing to `editing-notes`.

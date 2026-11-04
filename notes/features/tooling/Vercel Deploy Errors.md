@@ -10,6 +10,7 @@ Ready. Next: /infra-build ^status
 Shaped as an infra story: a workflow, a script, a routine and a skill that diagnose a failed Vercel deployment and fix it where they can. /infra-design wrote the Design on 2026-10-05 and revised it on 2026-10-06, adding a three-step Build Order. Nothing is built yet. Sarah decided building doesn't wait on [[Branching and Releases]]: until its back-merge exists, she merges `main` into `develop` herself after a production fix.
 
 # Inbox
+- From CI-Failure Review (2026-11-03): the procedure `ci-failure` follows to fix a failure is now `.claude/skills/routine-sessions/fixing-a-failure.md`, which any routine's skill can follow by naming the pull request's title and links. The rules for writing a routine's skill are in `routine-sessions/writing-a-routine.md`.
 
 # Purpose
 "We also need a routine to handle Vercel deploy failures, just like the planned ones for CI failures and Sentry errors." When a Vercel deployment fails, a routine starts a cloud session that works out why, so the result is waiting for Sarah in the Code tab under **Routines**, following `docs/ci.md` "Starting a Routine".
