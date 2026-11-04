@@ -85,6 +85,6 @@ Moved from Agent Workflow Changes 2026-10-02 on 2026-10-06:
 - [Sarah] - agents should only ask for approval for the "Where It Stands" status updates if there's genuine ambiguity.
 
 Moved from Agent Workflow Changes on 2026-10-06:
-- **Skills that change files end with a per-file table** - every skill that changes files ends its summary with a table: one row per changed file, the file as a markdown link Sarah can click, and a one-line summary of its change, as `/tooling` step 3 and `/implement`'s Build Order report already do. Sarah wants it standard after `/infra-design`'s closing summary on Major Upgrade Sweeps (2026-10-06) wasn't one.
+- **Skills that change files end with a per-file table** - every skill that changes files ends its summary with a table: one row per changed file, the file as a markdown link Sarah can click, and a one-line summary of its change, as `/tooling` step 4 and `/implement`'s Build Order report already do. Sarah wants it standard after `/infra-design`'s closing summary on Major Upgrade Sweeps (2026-10-06) wasn't one.
 
 # Questions

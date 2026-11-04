@@ -43,34 +43,33 @@
 # Now
 
 # Next
-1. [[Workflow Tooling Review]] ![[Workflow Tooling Review#^status]] 🎯 [[Dev Foundations]]
-2. [[Large Workflow Changes]] ![[Large Workflow Changes#^status]] 🎯 [[Dev Foundations]]
-3. [[Goal Roadmap Review]] ![[Goal Roadmap Review#^status]] 🎯 [[Dev Foundations]]
-4. [[Standing Goal Roadmap Review]] ![[Standing Goal Roadmap Review#^status]] 🎯 [[Dev Foundations]]
-5. [[CI-Failure Review]] ![[CI-Failure Review#^status]] 🎯 [[Dev Foundations]]
-6. [[Dependency-Updates Review]] ![[Dependency-Updates Review#^status]] 🎯 [[Dev Foundations]]
-7. [[AGENTS.md Review]] ![[AGENTS.md Review#^status]] 🎯 [[Dev Foundations]]
-8. [[Memory Folder Review]] ![[Memory Folder Review#^status]] 🎯 [[Dev Foundations]]
-9. [[Note Conventions and Roadmap Header Review]] ![[Note Conventions and Roadmap Header Review#^status]] 🎯 [[Dev Foundations]]
-10. [[Conventions Review]] ![[Conventions Review#^status]] 🎯 [[Dev Foundations]]
-11. [[Agent Workflow Changes 2026-10-02]] ![[Agent Workflow Changes 2026-10-02#^status]] 🎯 [[Dev Foundations]]
-12. [[Dependency Release Analysis]] ![[Dependency Release Analysis#^status]] 🎯 [[Dev Foundations]]
-13. [[Notes Vault Repo]] ![[Notes Vault Repo#^status]] 🎯 [[Dev Foundations]]
-14. [[Branching and Releases]] ![[Branching and Releases#^status]] 🎯 [[Dev Foundations]]
-15. [[Vercel Deploy Errors]] ![[Vercel Deploy Errors#^status]] 🎯 [[Dev Foundations]]
-16. [[Services and Environments Audit]] ![[Services and Environments Audit#^status]] 🎯 [[Dev Foundations]]
-17. [[Atlas Version Check Script]] ![[Atlas Version Check Script#^status]] 🎯 [[Dev Foundations]]
-18. [[Database Backup and Restore]] ![[Database Backup and Restore#^status]] 🎯 [[Dev Foundations]]
-19. [[E2E Tests in CI]] ![[E2E Tests in CI#^status]] 🎯 [[Dev Foundations]]
-20. [[Sentry Error Reporting]] ![[Sentry Error Reporting#^status]] 🎯 [[Dev Foundations]]
-21. [[Sentry Root Cause Analysis]] ![[Sentry Root Cause Analysis#^status]] 🎯 [[Dev Foundations]]
-22. [[Auth E2E Tests]] ![[Auth E2E Tests#^status]] 🎯 [[Dev Foundations]]
-23. [[Current Calendar E2E Tests]] ![[Current Calendar E2E Tests#^status]] 🎯 [[Dev Foundations]] 🎯 [[Calendar Page]]
-24. [[Recipes E2E Tests]] ![[Recipes E2E Tests#^status]] 🎯 [[Dev Foundations]]
-25. [[Settings E2E Tests]] ![[Settings E2E Tests#^status]] 🎯 [[Dev Foundations]]
-26. [[Sharing E2E Tests]] ![[Sharing E2E Tests#^status]] 🎯 [[Dev Foundations]]
-27. [[When Stories Need E2E Tests]] ![[When Stories Need E2E Tests#^status]] 🎯 [[Dev Foundations]]
-28. [[Docs Audit]] ![[Docs Audit#^status]] 🎯 [[Dev Foundations]]
+1. [[Large Workflow Changes]] ![[Large Workflow Changes#^status]] 🎯 [[Dev Foundations]]
+2. [[Goal Roadmap Review]] ![[Goal Roadmap Review#^status]] 🎯 [[Dev Foundations]]
+3. [[Standing Goal Roadmap Review]] ![[Standing Goal Roadmap Review#^status]] 🎯 [[Dev Foundations]]
+4. [[CI-Failure Review]] ![[CI-Failure Review#^status]] 🎯 [[Dev Foundations]]
+5. [[Dependency-Updates Review]] ![[Dependency-Updates Review#^status]] 🎯 [[Dev Foundations]]
+6. [[AGENTS.md Review]] ![[AGENTS.md Review#^status]] 🎯 [[Dev Foundations]]
+7. [[Memory Folder Review]] ![[Memory Folder Review#^status]] 🎯 [[Dev Foundations]]
+8. [[Note Conventions and Roadmap Header Review]] ![[Note Conventions and Roadmap Header Review#^status]] 🎯 [[Dev Foundations]]
+9. [[Conventions Review]] ![[Conventions Review#^status]] 🎯 [[Dev Foundations]]
+10. [[Agent Workflow Changes 2026-10-02]] ![[Agent Workflow Changes 2026-10-02#^status]] 🎯 [[Dev Foundations]]
+11. [[Dependency Release Analysis]] ![[Dependency Release Analysis#^status]] 🎯 [[Dev Foundations]]
+12. [[Notes Vault Repo]] ![[Notes Vault Repo#^status]] 🎯 [[Dev Foundations]]
+13. [[Branching and Releases]] ![[Branching and Releases#^status]] 🎯 [[Dev Foundations]]
+14. [[Vercel Deploy Errors]] ![[Vercel Deploy Errors#^status]] 🎯 [[Dev Foundations]]
+15. [[Services and Environments Audit]] ![[Services and Environments Audit#^status]] 🎯 [[Dev Foundations]]
+16. [[Atlas Version Check Script]] ![[Atlas Version Check Script#^status]] 🎯 [[Dev Foundations]]
+17. [[Database Backup and Restore]] ![[Database Backup and Restore#^status]] 🎯 [[Dev Foundations]]
+18. [[E2E Tests in CI]] ![[E2E Tests in CI#^status]] 🎯 [[Dev Foundations]]
+19. [[Sentry Error Reporting]] ![[Sentry Error Reporting#^status]] 🎯 [[Dev Foundations]]
+20. [[Sentry Root Cause Analysis]] ![[Sentry Root Cause Analysis#^status]] 🎯 [[Dev Foundations]]
+21. [[Auth E2E Tests]] ![[Auth E2E Tests#^status]] 🎯 [[Dev Foundations]]
+22. [[Current Calendar E2E Tests]] ![[Current Calendar E2E Tests#^status]] 🎯 [[Dev Foundations]] 🎯 [[Calendar Page]]
+23. [[Recipes E2E Tests]] ![[Recipes E2E Tests#^status]] 🎯 [[Dev Foundations]]
+24. [[Settings E2E Tests]] ![[Settings E2E Tests#^status]] 🎯 [[Dev Foundations]]
+25. [[Sharing E2E Tests]] ![[Sharing E2E Tests#^status]] 🎯 [[Dev Foundations]]
+26. [[When Stories Need E2E Tests]] ![[When Stories Need E2E Tests#^status]] 🎯 [[Dev Foundations]]
+27. [[Docs Audit]] ![[Docs Audit#^status]] 🎯 [[Dev Foundations]]
 # Planning
 1. [[Planner Access Audit]] ![[Planner Access Audit#^status]] 🎯 [[Calendar Page]]
 2. [[Calendar and Recipes Data Refresh]] ![[Calendar and Recipes Data Refresh#^status]] 🎯 [[Calendar Page]] 🎯 [[App Health]] 🎯 [[Recipes Page]]
@@ -126,7 +125,7 @@
 - [[Grocery List Wish List Research]] ![[Grocery List Wish List Research#^status]]
 
 ## [[App Health]]
-- [Sarah] investigate replacing unit test environment for performance improvements - happy-dom and/or defaulting to node and only using happy-dom or jsdom in tests that need them. We should benchmark the options as part of researching options.
+
 - [[Unit Testing - New Centralized Mocks]] ![[Unit Testing - New Centralized Mocks#^status]]
 - [[Drop Mongoose]] ![[Drop Mongoose#^status]]
 - [[Better-Auth Reads Env Directly]] ![[Better-Auth Reads Env Directly#^status]]
@@ -144,7 +143,7 @@
 - [[Form Pattern]] ![[Form Pattern#^status]]
 - [[Google Button Styling]] ![[Google Button Styling#^status]]
 - [[Mantine Color and Variant Usage]] ![[Mantine Color and Variant Usage#^status]]
-- `preact` 10.29.0 → 11.1.1: needs a decision, since the Schedule-X packages that use it allow only Preact 10 (`@schedule-x/calendar` has `preact ^10.19.2`), and no file in the app imports `preact` or `@preact/signals`. The v11 upgrade guide's breaking changes (ESM-only, refs as props, `useRef` needs an initial value) aren't hit by app code. [Release notes](https://github.com/preactjs/preact/releases). Found by the dependency-updates routine, 2026-11-04.
+- `preact` 10.29.0 → 11.1.1: needs a decision, since the Schedule-X packages that use it allow only Preact 10 (`@schedule-x/calendar` has `preact ^10.19.2`), and no file in the app imports `preact` or `@preact/signals`. The v11 upgrade guide's breaking changes (ESM-only, refs as props, `useRef` needs an initial value) aren't hit by app code. [Release notes](https://github.com/preactjs/preact/releases). Found by the dependency-updates routine, 2026-11-04. [Sarah] We're removing `schedule-x` we shouldn't do this unless we have to.
 - `temporal-polyfill` 0.3.2 → 1.0.6: needs a decision, since `@schedule-x/calendar@4.9.1` pins `temporal-polyfill` to exactly 0.3.2. The breaking changes (calendars other than ISO and Gregorian need the `/full` entry; `/global` may move to `/full/global`) hit 3 files that import `temporal-polyfill/global`: `src/app/layout.tsx`, `seed/seed.ts` and `src/app/[planner]/calendar/_utils/toScheduleXEvents.ts`. [Release notes](https://github.com/fullcalendar/temporal-polyfill/releases). Found by the dependency-updates routine, 2026-11-04.
 
 ## Bugs
@@ -164,6 +163,7 @@
 - [[Invite Sign-Up While Signed In as Someone Else]] ![[Invite Sign-Up While Signed In as Someone Else#^status]]
 
 ## [[Dev Tooling]]
+- [Sarah] investigate replacing unit test environment for performance improvements - happy-dom and/or defaulting to node and only using happy-dom or jsdom in tests that need them. We should benchmark the options as part of researching options.
 - a way to load extra seed data that one story's checks need, on top of `pnpm seed`'s generic data (today the `building-code` skill's acceptance checks create it through the app's screens). Found 2026-10-01 while designing the dev seed (`docs/seed.md`) 🎯 [[Grocery List Creation]] 🎯 [[Recipes Page]]
 - switch testing library to `vitest-browser-react` - needs research to determine if this is worth doing 🎯 [[App Health]]
 - [[Vercel Plugin]]

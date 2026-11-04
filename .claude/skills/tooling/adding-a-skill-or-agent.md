@@ -1,0 +1,6 @@
+# Adding or Renaming a Skill or Agent
+What a new or renamed skill or agent needs:
+- **A skill's name:** check the name, and any alias it has, against the names and aliases in two sources: your own skill list, and the built-in commands and bundled skills on the current Claude Code [commands page](https://code.claude.com/docs/en/commands). If it matches one, pick another name. Otherwise, ask the user to type `/<name>` in the Code tab and say whether anything built in comes up. The docs can miss an alias: the desktop app's `/workflows` has a `workflow` alias they don't list.
+- **A skill's model:** a skill never sets `model`. That setting lasts only until the user's next message, so an interactive skill would run just its first turn on that model.
+- **A reviewing agent's standard:** an agent that reviews docs or agent instructions loads the `writing-standard` skill with `skills:` in its frontmatter, so it reviews against the same standard the writer drafted to.
+- **An agent's model:** if a new agent's work is scripted or rule-following and its output is reviewed before anything acts on it, give it `model: sonnet`, as `bug-reproducer` has. Otherwise, such as when its work takes design, critique or weighing options, leave `model` out so it runs on the session's model.

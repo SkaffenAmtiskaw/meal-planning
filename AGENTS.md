@@ -70,7 +70,7 @@ Any change to a note in `notes/` follows these rules:
   Whoever moves a story forward updates the `^status` line. They also update the summary below it, or remove that summary if nothing is left worth noting. When the next step is settled, make these changes without asking and mention them in your summary. When there's a real choice, such as what the story is blocked on, show Sarah the line and wait for her approval.
 
   In an older note, Where It Stands may hold other things, such as background, findings or a list of questions. When you work on the note, rather than just editing it in passing, move each one where it belongs: a question or finding for a later step to the top of the section that step writes, and anything else to the Inbox.
-- **The Inbox** comes right after Where It Stands in every story and hub. It holds what reaches a note from outside its usual flow from one skill to the next:
+- **The Inbox** comes right after Where It Stands in every story, hub and workflow note. It holds what reaches a note from outside its usual flow from one skill to the next:
   - **Sarah's items,** added when something occurs to her.
   - **Items from another note's work,** such as background that a session working on another story found for this one.
   - **Why a note was sent back** to an earlier step, such as a new piece `/plan-steps` found for a redesign, or a problem that sends an infra story from `/infra-build` back to `/infra-design`.

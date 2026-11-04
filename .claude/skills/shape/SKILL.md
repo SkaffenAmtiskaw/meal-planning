@@ -34,7 +34,7 @@ A change to how the app is built rather than what it does, such as a skill, a ho
 - **If the idea changes what the app does,** go on to step 3.
 - **If it changes how the app is built:**
   - **If it builds new infrastructure,** such as CI or a test setup, it's an infra story. Go on to step 3.
-  - **If it's too big for one session,** because it needs research, several decisions or a design before it can be made, it's a story of whichever type fits. Go on to step 3. A note `/tooling` spun off is always this case, as its Notes say, since the user has already agreed it's a story.
+  - **If it's too big for one session,** it's a story of whichever type fits. Go on to step 3. A note `/tooling` spun off is always this case, as its Notes say, since the user has already agreed it's a story.
   - **Otherwise,** it's a workflow note. Tell the user why. If they agree, rewrite it from `notes/templates/Workflow.md`, keeping their content under Notes, write it as step 7 describes, and stop.
 
 ## 3. Understand the idea

@@ -1,99 +1,60 @@
 ---
 name: tooling
-description: Make one change to the agent workflow or dev tooling (skills, subagents, hooks, AGENTS.md, Note Conventions, templates, docs, tooling config) in a single session, then clean up every note that refers to it. Tooling only; product stories use the story lifecycle.
+description: Makes one change to the agent workflow or dev tooling in a single session and cleans up the notes it reaches. Use for a change to how the app is built.
 argument-hint: "[note name, an item in a note, or a description of the change]"
 disable-model-invocation: true
 ---
 
 Make this workflow or tooling change: **$ARGUMENTS**
 
-## Why this skill works the way it does
-The agent workflow is being overhauled, and tooling changes skip the story lifecycle (`/shape`, `/decide`, `/plan-steps`, `/implement`, `/final-review`, `/close`). That lifecycle exists so product code is built and reviewed in small pieces. A change to a skill or a convention is small enough to understand whole, and Sarah reviews it directly. A task too big for that, or one that isn't a tooling change at all, is a story, even when it sits in a workflow note, so step 1 checks for that and spins it off. Workflow notes (`type: workflow`, usually in `notes/features/tooling/`) are only a place to keep track of ideas until she gets to them. They have no `status`: `/tooling` does the change and deletes the note. A workflow note with a What Belongs Here section is different: it collects items over time, like Docs Updates. `/tooling` does one of its items per session, or a group of logically related items when Sarah agrees, and the note stays.
+A tooling change skips the story lifecycle, which exists so product code is built and reviewed in small pieces. The user can take in a whole change to a skill or a convention and review it directly.
 
-So one session does it all: find out what Sarah wants, make the change everywhere it reaches, then leave the notes matching what now exists. One change per session. When it's done, stop.
+## 1. Find Out What's Changing
+If the argument is a description, search `notes/` for notes and items about the same thing, because they may already hold details or decisions. Tell the user what you found.
 
-Sarah decides what changes. Your job is to understand it fully and carry it through, not to redesign it. If you think another approach would work better, say so once with the reason, then do what she decides.
+If it names a note or an item in one, the note's `type` says what the change is:
+- **`workflow` with a What Belongs Here section:** a collecting note. If it has a kicked-off copy (`<name> YYYY-MM-DD`), work the copy instead. If the argument names no item, list the items and point out any that are logically grouped, such as several rules that all land in the same doc. Ask the user which item or group this session does.
+- **`workflow` without one:** the whole note is the change.
+- **Any other type, or none:** it's story work, so this skill doesn't take it.
 
-## 1. Find out what's changing
-This skill is for changes to how the app is built (skills, subagents, hooks, AGENTS.md, Note Conventions, templates, docs or tooling config), never to what the app does. App code changed only as a side effect, such as files reformatted by a new lint rule, is fine.
+If the Roadmap's "How this file works" says under "Goals" that the note or item can't be built yet, tell the user which goal it waits on, and stop.
 
-The argument is one of:
-- **A note name:** find it in `notes/`. If it's a collecting note and a kicked-off copy of it (`<name> YYYY-MM-DD`) serves the building goal, work the copy instead. Check the note's `type`:
-  - `workflow` with a What Belongs Here section: a collecting note. List its items, one line each, and point out any that are logically grouped, such as several rules that all land in the same doc. Ask Sarah which item or group this session does. That item or group is the change.
-  - `workflow` without one: read all of it. The whole note is the change unless Sarah says otherwise.
-  - blank, in `notes/features/tooling/`: a tooling note from before the workflow type existed. Ask Sarah whether it's a workflow note. If it is, give it `type: workflow`, remove its `status`, set its `^status` line to "Next: /tooling", and go on.
-- **An item in a note:** find it and read the note around it. Check the note's `type` the same way.
-- **A description:** Sarah's own words. Search `notes/` for notes and items about the same thing and tell her what you found. They may already hold details or decisions.
-
-If the note or item serves a ranked goal but not the building goal, and its Roadmap line has no 🚨 or 📌, it can't be built yet, as the Roadmap's "How this file works" describes under "Goals". Tell Sarah which goal it waits on, and stop.
-
-Then read the files the change touches: the skills, agents, hooks, docs or config it names, plus Note Conventions or AGENTS.md if it changes how notes or sessions work. Read only what it touches.
-
-### Is it a story?
-Some tasks are stories, whichever note they came from. Check the change against these cases once you've read what it touches, and again in step 2 if settling it turns one up:
+### Is It a Story?
+Some changes need the story lifecycle, whichever note they came from. Once you've read the files the change touches, check for these cases:
 - **It changes what the app does for its users.**
 - **It builds new infrastructure,** such as CI, a test setup or a hosted service.
-- **It's too big for one session,** such as a change that needs research, several decisions or a design before it can be made.
+- **It might be too big for one session.** Needing research, several decisions or a design doesn't make it so, because step 2 settles those.
 
-If none of these applies, go on to step 2. Otherwise, tell Sarah which case applies and why, and ask whether to spin the task off into a story. If she says no, go on to step 2. If she says yes:
-1. **The note.** It becomes a blank-type idea note, and `/shape` picks its type. How depends on where it came from:
-   - **A workflow note without a What Belongs Here section:** rewrite it in place from `notes/templates/Idea.md`, so links to it keep working.
-   - **An item in a collecting note, or a description:** create the note from `notes/templates/Idea.md` in `notes/features/<area>/`, with a plain filename. If the area isn't obvious, ask Sarah which folder. Remove the item from the collecting note, and update that note's Roadmap line as the Roadmap's "How this file works" describes under "Collecting notes".
+If one applies, tell the user which and why, and ask whether to spin the change off into a story. If they say yes, read `spinning-off-a-story.md`, follow it and stop.
 
-   Either way, under Notes, put the task in Sarah's wording, with her `[Sarah]` lines moved word for word, and a line saying which case made it a story and why.
-2. **Its Roadmap line.** It links to the note and embeds its status (`[[Note]] ![[Note#^status]]`). A new note gets a new line. A rewritten workflow note's line moves. Ask Sarah these one at a time:
-   - **Is it committed?**
-     - **Yes:** if the task had 🎯 goal links, those are its goals. Otherwise, check its goals as the `roadmap-placement` skill describes. Then place the line as that skill describes under "Placing a Story's Line", ending with its 🎯 links.
-     - **No:** the line goes in Ideas, which holds uncommitted work. If the task had 🎯 goal links, ask whether to remove them. If she says to remove them, the line goes in Ideas without them. If she says to keep them, it's committed after all, so place it as "Yes" describes.
-   - **If it's committed: does it go into Next or Planning?** A line in Next needs a 🎯 link to the building goal, or 📌, and a line in Planning needs one to the planning goal, as the Roadmap's "How this file works" describes under "Markers". If she says Next and none of its goals is the building goal, ask her whether it gets 📌, and with what reason. Then ask her where in that section, as AGENTS.md describes under "Roadmap order".
-3. **Stop.** Tell Sarah to run `/shape <note name>` in a new session.
+## 2. Settle the Change
+Settle with the user what the change is. If it adds or moves a rule, decide where it goes as the `rule-placement` skill describes. If it adds or renames a skill or agent, read `adding-a-skill-or-agent.md`.
 
-## 2. Settle it with Sarah
-Ask what you need to make the change without guessing. Skip anything the note or Sarah has already answered. What often needs asking:
-- where the change belongs, when it could go in more than one place (a skill, an agent, AGENTS.md, Note Conventions, `docs/`). If the change adds or moves a rule, decide where it goes as the `rule-placement` skill describes, and ask only if that leaves more than one place.
-- the note's open questions
+Then find everything the change reaches. Search the repo, including `notes/Note Conventions.md` and `notes/templates/`, for the skill, agent, rule or term being changed, because each reference is part of this change. Step 5 handles the rest of `notes/`.
 
-Then find everything the change reaches. Search `.claude/`, `AGENTS.md`, `notes/Note Conventions.md`, `notes/templates/`, `docs/` and `scripts/` for the skill, agent, rule or term being changed. A renamed skill, a new note type or a changed rule is usually referenced in several places, and each reference is part of this change.
+If settling the change or the search opens more work, check "Is It a Story?" again.
 
-## 3. Make the change
-Size decides whether to draft first:
-- **Small, clear edits:** a line or a few, where the wording follows directly from what Sarah said. Write them.
-- **Anything larger:** rewriting a section, or a new skill, agent, hook, template or doc. Show Sarah the draft of each file and wait for her approval.
+## 3. Make the Change
+What the change needs depends on what it touches:
+- **A Claude Code feature,** such as skill frontmatter, hooks, subagents or rules: check the current Claude Code docs, never memory.
+- **A skill or agent:** follow the `keeping-sessions-lean` skill.
+- **Project config:** by asking for this change, the user has asked for any config edit it names.
 
-While making it:
-- **Claude Code features** (skill frontmatter, hooks, subagents, rules): check the current Claude Code docs, never memory.
-- **New skills and agents** follow the shape of the existing ones in `.claude/skills/` and `.claude/agents/`. An agent that reviews docs or agent instructions loads the `writing-standard` skill with `skills:` in its frontmatter, so it reviews against the same standard the writer drafted to.
-- **Skills and agents, new or changed,** are written so each session loads only the instructions it uses, as the `keeping-sessions-lean` skill describes.
-- **Model:** if a new agent's work is scripted or rule-following and its output is reviewed before anything acts on it, give it `model: sonnet`, as `bug-reproducer` and `scope-router` have. Otherwise, when its work takes judgment such as design, critique or weighing options, leave `model` out so it runs on the session's model. Skills never set `model`: the override ends when Sarah sends her next message, so an interactive skill would run only its first turn on it.
-- **Naming a new or renamed skill:** check the name, and each alias, against the skills in your own skill list and the built-in commands and bundled skills on the current Claude Code [commands page](https://code.claude.com/docs/en/commands). If it matches one, pick another name. Otherwise, ask Sarah to type `/<name>` in the Code tab and say whether anything built in comes up, because the docs can miss an alias: the desktop app's `/workflows` has a `workflow` alias the docs don't list, and it caught the old `/workflow` skill.
-- **Project config:** Sarah asking for this change is the explicit instruction AGENTS.md requires, but only for the config it names.
-- **Code, config or scripts:** run `pnpm lint` and `pnpm check:types`. Test a hook or script by running it with sample input.
+## 4. Get the Change Approved
+Triage the out-of-scope list. An item the user pulls in becomes part of this change. Then show a table with one row per changed file: the file as a markdown link the user can click, and a one-line summary of its change. Files with the same change can share a row. Ask the user whether they approve.
 
-When everything is written, triage the out-of-scope list as AGENTS.md describes under "Out-of-scope work". An item Sarah pulls in becomes part of this change: make it the same way. Then show a table with one row per changed file: the file as a markdown link she can click, and a one-line summary of its change. Files with the same change can share a row. Ask Sarah whether she approves.
+## 5. Clean Up the Notes
+Once the user approves, search all of `notes/` for:
+- items that this change does or settles, such as a sweep item, a Docs Updates item or another note's open question
+- text the change made wrong, such as a `^status` line naming a renamed skill or a note describing the old workflow
 
-## 4. Clean up the notes
-Once she approves, bring the notes in line with the change. Search all of `notes/`, including `archive/` and the Roadmap, for:
-- the note or item this session worked from
-- items elsewhere that this change does or settles, such as a sweep item, a Docs Updates item or another note's open question
-- text the change made wrong, such as a `^status` line naming a renamed skill, or a note describing the old workflow. This search covers other stories' remaining work too, not only the effects you notice there.
+Decide how hard to search other stories' remaining work from how widely the change reaches.
 
-Handle each one:
-- **Sarah's comments:** if one is now done or out of date, handle it as AGENTS.md describes under "Editing notes". The bullets below are for everything else.
-- **Done in full:** remove it, with no line recording that it was removed. How depends on what it is:
-  - **An item in a collecting note:** remove only the item. The note stays. If that leaves the note this session worked from with no items, what happens depends on the note. If it's a kicked-off copy (`<name> YYYY-MM-DD`), handle it as a whole note (next bullet). Otherwise, ask Sarah whether it should keep collecting or be deleted, and if it's deleted, handle it as a whole note.
-  - **A whole note:** delete it as the `deleting-a-note` skill describes.
-  - **Anything else,** such as an item in a story note: remove it.
-- **Partly done:** remove the done parts and keep the rest.
-- **Out of date:** if it's in a story note, handle it as AGENTS.md describes under "Editing notes" for a note that's wrong or out of date. Otherwise, if there's one right fix, make it. If there's a real choice, propose the wording and wait.
+In the note or item this session worked from, and in each item you found, remove the text for what this change did and keep the rest. The user's own lines are the exception. If that finishes a note that isn't collecting, or empties the kicked-off copy this session worked from, delete it as the `deleting-a-note` skill describes.
 
-Don't bring other notes up to a convention this change introduced. They're updated when next worked on.
+Handle text the change made wrong as you would any note that's wrong or out of date. A note that only follows a convention this change replaced stays as it is, because it's updated when it's next worked on.
 
-Last, delete the files nothing references anymore, as the `deleting-a-note` skill describes in step 6.
+## 6. Report and Stop
+Route the out-of-scope list. Then show the user a table in the same format as step 4, with each file changed and each note edited or deleted.
 
-## 5. Report and stop
-Route the out-of-scope list as AGENTS.md describes. Then tell Sarah, in the same table format as step 3:
-- each file changed, and why
-- each note edited or deleted
-- each unused file deleted
-
-Stop there, and don't start another change.
+Stop there, because each change gets its own session.
