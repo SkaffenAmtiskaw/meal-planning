@@ -26,7 +26,7 @@ Find the note in `notes/` and read all of it. Where it is and its `status` decid
 ## 2. Find Everything That Points to It
 Run `sh scripts/note-refs.sh "<note name>"`. Sort the matches it lists into the kinds below, leaving out this story's own Roadmap line, which step 7 removes.
 - **Content:** a note that relies on content that only this note holds. It embeds a section or image, or sends the reader here for a design, a decision or a rationale ("as the approved design in the archived [[Mobile Month View]] note specifies").
-- **Blocker:** an entry in another story's `blocked-by`, a sweep item's `**Blocked by [[Name]]:**` marker, or a Roadmap line that says it waits on this story.
+- **Blocker:** an entry in another story's `blocked-by`, a collecting note item's `**Blocked by [[Name]]:**` marker, or a Roadmap line that says it waits on this story.
 - **Kept-for:** an archived note with this story in its `kept-for`.
 - **Hub list:** a hub that lists this story as one of its stories.
 - **The user's comment:** a line tagged or signed with the user's name, whether or not the script labels it as the user's comment.
@@ -37,19 +37,18 @@ Run `sh scripts/note-refs.sh "<note name>"`. Sort the matches it lists into the 
 Save the list, and mark each match as you handle it.
 
 ## 3. Keep or Delete
-The note is needed by every open story with a Content match. If a Content match is in an archived note, the stories in that note's `kept-for` need this note. An archived note with no `kept-for` doesn't say which stories need it, so settle those notes first. Take each archived note the script listed with no `kept-for`. Ask the user which open stories it's kept for, and write their answer into its `kept-for`. If they name none, that note needs its own `/close`, which the end of step 5 sets up.
+The note is needed by every open story with a Content match. If a Content match is in an archived note, the stories in that note's `kept-for` need this note.
 
-Then go through the open stories that need this note. What to do depends on the case:
-- **If another open story needs the same content,** the content can't move, because a design stays in one copy. Keep this note for the story without asking.
-- **Otherwise,** ask the user which they want: keep this note for the story, or move the content the story relies on into the story's own note, so the story no longer needs this one. Step 5 makes the move.
-
-If the note is kept for no story, it will be deleted. First, check it for anything worth keeping, as the `deleting-a-note` skill describes in step 1.
-
-Then tell the user the outcome in one line: which stories the note is kept for, or that it will be deleted. This lets them catch a wrong one before step 7 acts on it. Go on without waiting for a reply.
+1. Settle each archived note the script listed with no `kept-for`, since it doesn't say which stories need this note. Ask the user which open stories it's kept for, and write their answer into its `kept-for`. If they name none, that note needs its own `/close`, which the end of step 5 sets up.
+2. Go through the open stories that need this note. What to do depends on the case:
+   - **If another open story needs the same content,** the content can't move, because a design stays in one copy. Keep this note for the story without asking.
+   - **Otherwise,** ask the user which they want: keep this note for the story, or move the content the story relies on into the story's own note, so the story no longer needs this one. Step 5 makes the move.
+3. If the note is kept for no story, it will be deleted. Check it for anything worth keeping, as the `deleting-a-note` skill describes in step 1.
+4. Tell the user the outcome in one line: which stories the note is kept for, or that it will be deleted. This lets them catch a wrong one before step 7 acts on it. Go on without waiting for a reply.
 
 ## 4. Handle the Stories That Waited on It
 Skip this for a re-close. Otherwise, handle each Blocker match by what it is:
-- **A sweep item's `**Blocked by [[Name]]:**` marker:** for a done close, remove the marker. For a dropped close, ask the user whether the item still stands, now waits on something else, or should be removed.
+- **A collecting note item's `**Blocked by [[Name]]:**` marker:** for a done close, remove the marker. For a dropped close, ask the user whether the item still stands, now waits on something else, or should be removed.
 - **Anything else:** the story it's in is a waiting story. Take each waiting story in turn:
   1. **For a dropped close,** ask the user what the waiting story waits on now: nothing, another story or a decision. If something still blocks it, update its `blocked-by`, its `^status` line and its Roadmap line to match, and go on to the next story.
   2. Remove this story from the waiting story's `blocked-by` list, and from any "waiting on" wording on its `^status` line and Roadmap line. If its `blocked-by` still has entries, go on to the next story.
@@ -80,7 +79,7 @@ Handle the out-of-scope list now, before step 7 deletes the note and step 8 dele
 2. Keep or delete the note, as step 3 settled:
    - **Keep:**
      1. For a dropped close, set `status` to `dropped`.
-     2. Set the `^status` line to "Done." or "Dropped.", and leave `confirmed` as it is.
+     2. Set the `^status` line to "Done." or "Dropped.".
      3. Add `kept-for` to the frontmatter with the stories it's kept for, each as a `"[[link]]"`.
      4. If the note is in `notes/features/`, move it to `notes/archive/`. Leave its files where they are, since Obsidian finds embeds by name.
    - **Delete:** delete the note.
