@@ -26,12 +26,12 @@ Triage the out-of-scope list first. An item the user pulls in joins the list as 
 
 1. **Show the list.** Show it whole, grouped by which options would be designed together, with an answer suggested for each: yes in this release, no, needs thought, or worth doing but not in this release. Suggest "needs thought" only where an option truly needs it, because each one becomes a decision, and a decision can cost a research session. Ask which answers or groups to change. This is a deliberate exception to asking one question at a time, because a hub can hold 20 or 30 options and the pass is meant to be quick.
 2. **Confirm the suggested noes.** The user only skims the options, and a no leaves no record. So list the suggested noes they left alone, and ask them to confirm. A suggested no they don't confirm takes the answer "needs thought". Every other answer they didn't change stands.
-3. **Write each option where its answer sends it:**
-   - **Yes, in this release:** the hub's Requirements.
-   - **No:** nowhere. It leaves the notes with no record, because the user is sure and nothing later needs it.
+3. **Give the hub a `# Requirements` section,** even if no option is a yes, because `/decide` recognizes an exploration hub by it. Start it with a line that gives the date and says the list below it comes from a first pass the user skimmed. The line also says the list is a starting point the user is tentatively OK with, not decisions, so later steps check with the user before relying on an item that looks doubtful.
+4. **Write each option where its answer sends it:**
+   - **Yes, in this release:** the Requirements.
+   - **No:** nowhere, because the user is sure and nothing later needs it.
    - **Needs thought, or the user is unsure:** a question under Open Decisions, asking whether it's worth doing and whether it's in this release.
    - **Worth doing, but not in this release:** a new Roadmap line in Ideas.
-4. **Mark the Requirements.** Start them with a line saying the list below it comes from a first pass the user skimmed, with its date. The line also says the list is a starting point they're tentatively OK with, not decisions. Later steps check with them before relying on an item that looks doubtful. Keep the Requirements heading even if no option is a yes, because `/decide` recognizes an exploration hub by it.
 
 ## 4. Divide the Hub
 If the groups look like parts that would be designed separately, ask the user whether each should be its own exploration hub, because a hub is designed and cut into stories as one. For each one they split off, these are the steps, in order:

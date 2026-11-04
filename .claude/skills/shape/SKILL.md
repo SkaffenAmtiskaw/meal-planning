@@ -76,24 +76,15 @@ Settle them now, so steps 4 and 5 rest on answers rather than guesses and the st
 Settle each one they pick, in the order they give, as the `settling-a-decision` skill describes. The note isn't drafted yet, so where that skill says to write an answer under its question, keep it for the draft instead. Step 6 puts it under its question in Open Decisions. If the user decides the idea isn't worth doing, skip the other decisions and go to step 7 to drop it.
 
 ## 4. One story or several
-If the user agreed in step 3 that the idea is a whole area, what happens depends on whether it serves a goal, checked as the `roadmap-placement` skill describes:
-- **It does:** it becomes an exploration hub. Draft it as "Drafting a hub" below describes, then skip to step 7.
-- **It doesn't:** tell the user it needs a goal from `/roadmap` first, because deciding what's in this release needs a release to compare against. Then stop.
-
-Otherwise, if the decisions still open after step 3 would decide how many stories there are, it's one story for now. It can be shaped again once `/decide` settles them. Otherwise, tell the user which of these it is, and why, and wait for them to agree or change it:
-- **One story.** Go on to step 5.
-- **Several stories.** Give each one a one-line scope. Once the user agrees, follow `splitting.md` in this skill's folder. That ends this session.
-- **Several stories that overlap substantially,** so they need one shared place for their design and decisions. It becomes a hub. Draft it as "Drafting a hub" below describes, then skip to step 7.
-
-### Drafting a hub
-Draft the note from `notes/templates/Hub.md`:
-- **Where It Stands:** for an exploration hub, "Next: /brainstorm ^status". Otherwise, e.g. "Not split yet. Next: /decide ^status"
-- **Purpose:** what the idea is, in the user's words.
-- **Open Decisions:** as step 6 describes.
-- **Child Stories:** leave the table empty. In a hub that isn't an exploration hub, children get their own `/shape` run once the decisions make them clear.
-- **Frontmatter:** `type: hub` and `confirmed` set to today. Hubs have no `status` or `blocked-by`.
-
-Show the user the draft and wait for their approval.
+Go by the first case that fits:
+- **The user agreed in step 3 that the idea is a whole area:** check whether it serves a goal, as the `roadmap-placement` skill describes:
+  - **It does:** it becomes an exploration hub. Follow `making-a-hub.md` in this skill's folder.
+  - **It doesn't:** tell the user it needs a goal from `/roadmap` first, because deciding what's in this release needs a release to compare against. Then stop.
+- **The decisions still open after step 3 would decide how many stories there are:** it's one story for now. Go on to step 5.
+- **Otherwise:** tell the user which of these it is, and why, and wait for them to agree or change it:
+  - **One story.** Go on to step 5.
+  - **Several stories.** Give each one a one-line scope. Once the user agrees, follow `splitting.md` in this skill's folder.
+  - **Several stories that overlap substantially,** so they need one shared place for their design and decisions. Give each one a one-line scope. Once the user agrees, follow `making-a-hub.md` in this skill's folder.
 
 ## 5. Choose a direction
 Pick the type by the shape of the fix, not by where the idea came from. A user report can turn out to be a missing pattern, and a "cleanup" can turn out to be a feature.
@@ -119,11 +110,10 @@ What you draft depends on the direction the user picked:
 - **A story:** draft the note from the template in `notes/templates/` for its type, as below.
 
 A story's note:
-- **Where It Stands:** the `^status` line and the summary, as AGENTS.md describes under "Editing notes". At this stage, the summary is the chosen direction in a sentence or two.
+- **Where It Stands:** the `^status` line and the summary. At this stage, the summary is the chosen direction in a sentence or two.
 - **Open Decisions:** each blocking decision from step 3 on its own line, written as a question, not a proposal, with the lines step 3 recorded under it. Delete the section if step 3 found no blocking decisions.
 - **The user's content:** move everything from the idea into the template's sections. Keep their wording. If something fits no section, put it in the Inbox rather than dropping it.
 - **Scope:** the scope from the overview, with the user's corrections, goes in the template's sections that say what the story covers.
-- **Sections a later step writes,** such as Suggested Approach, Root Cause, Rules or Design: if the user said something for a later step while shaping, it goes at the top of the section that step writes, as AGENTS.md describes under "Editing notes".
 - **Frontmatter:** set `type`, set `confirmed` to today, and fill `blocked-by` as Note Conventions describes. Then set `status`:
   - **A tweak with no open decision:** `status: ready`, because a tweak has no steps to plan.
   - **Any other story:** leave `status: idea`.
@@ -134,6 +124,7 @@ Show the user the draft and wait for their approval.
 Once the user approves the draft, or picks "drop it", what you write depends on what the idea became:
 - **Dropped:** if it's a Roadmap line with no note, remove the line. If it's an idea note, run `sh scripts/note-refs.sh "<note name>"`. If its vault or outside-the-vault sections list anything other than its own Roadmap line, tell the user it needs `/close` in a new session. Otherwise, delete it as the `deleting-a-note` skill describes.
 - **Folded into an existing note or a sweep:** apply the addition there. Then, if the idea was an idea note, delete it as the `deleting-a-note` skill describes, pointing each link to the note it was folded into. If it was a Roadmap line with no note, remove the line.
-- **A story, a hub or a workflow note:** if the idea was an idea note, rewrite it in place, so links to it keep working, and don't rename or move it without asking. If it was a Roadmap line with no note, create the note in `notes/features/<area>/`, and if the area isn't obvious, ask the user which folder. Then make the Roadmap line link to the note and embed its status, as AGENTS.md describes under "Editing notes", and place it:
-  - **A hub that isn't an exploration hub, or a story whose "Is this worth doing?" decision is still open:** keep the line where it is. Neither is committed yet. `/decide` moves the story's line once the user decides it's worth doing.
-  - **An exploration hub, any other story, or a workflow note:** shaping commits it. Check its goals and place its line as the `roadmap-placement` skill describes.
+- **A story, a hub or a workflow note:** if the idea was an idea note, rewrite it in place, so links to it keep working. Don't rename or move it without asking. If it was a Roadmap line with no note, create the note in `notes/features/<area>/`, and if the area isn't obvious, ask the user which folder. Make the line link to the note. Either way, what happens to its Roadmap line depends on the first case that fits:
+  - **A hub whose `^status` line says `Next: its child stories`:** remove the line, as the Roadmap's "Hubs" rule says.
+  - **A story whose "Is this worth doing?" decision is still open:** keep the line where it is, because the story isn't committed yet.
+  - **Anything else:** shaping commits it. Check its goals and place its line as the `roadmap-placement` skill describes.

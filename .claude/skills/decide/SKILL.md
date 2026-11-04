@@ -37,7 +37,7 @@ If a story's question is "Is this worth doing?" and the user decides it isn't, t
 ### Knock-on effects
 After recording each answer, look at what it changes:
 - **An exploration hub's option:** if the answer puts it in this release, add it to the hub's Requirements, below the first-pass list and with its date. Add it without drafting it, because the answer settles it. If it's worth doing but not in this release, give it a new Roadmap line in Ideas.
-- **The rest of this note:** other sections the answer lands in, such as a section the question says to record it in, a bug's Fix section, or a hub's Coverage or Child Stories table. Draft each change and go through them with the user.
+- **The rest of this note:** other sections the answer lands in, such as a section the question says to record it in, a bug's Fix section, or a hub's Coverage or Child Stories table. Draft each change and go through them with the user. A hub's Coverage is a table of what's planned where, such as actions × views. It links the story covering each combination and marks with ❓ each one no note plans.
 - **New stories:** if the answer implies other work no note covers yet, and this note is a hub but not an exploration hub, add the work to a list of new child stories for step 5. Otherwise, add it to the out-of-scope list.
 - **New questions:** if `decision-researcher` found a blocking question that isn't on the note, or the answer raised one, tell the user what needs deciding, add it to Open Decisions, and ask whether they already have an answer in mind:
   - **They have one:** go on from their answer as the `settling-a-decision` skill describes.
