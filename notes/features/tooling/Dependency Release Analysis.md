@@ -10,6 +10,7 @@ Ready. Next: /infra-build ^status
 Split from [[Local Dependency Update Alerts]] on 2026-10-04. `/infra-design` revised it on 2026-10-06: the assessed libraries are named in one place, minors get a summary only when they're in the PR, the old steps' details moved into the Design, and a three-step Build Order replaces them, its checks using stand-ins rather than waiting for real releases. Nothing is built yet.
 
 # Inbox
+- From [[Major Upgrade Sweeps]]' Step 1 (2026-11-03): the `dependency-updates` skill's step 5 now names the assessed libraries in one place, with their package names, and lists an assessed library's major in the summary. Other packages' majors go through a new supporting file, `sweep-rule.md`, which handles an assessed library's `@types/*` major by listing it beside its library. Step 8's **Majors** group now holds only what has no sweep item or Roadmap line, and **Sweep items** and **Roadmap lines** follow it.
 - From [[Major Upgrade Sweeps]]' cloud read checks (2026-11-02), on the `Meal Planning Routines` environment:
   - WebFetch reads `github.com` release pages in full, without each change's author and PR details. `curl` to `github.com` and `gh api` on another repo get a 403 from the session's GitHub proxy, which reaches only the attached repo.
   - WebFetch and `curl` both read `raw.githubusercontent.com`. A root `CHANGELOG.md` can be a symlink, as `biomejs/biome`'s is, which returns only its target's path, so the session has to fetch that path.

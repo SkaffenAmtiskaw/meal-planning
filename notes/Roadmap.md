@@ -187,6 +187,8 @@
 - [[Dev Tooling Tidy-Ups]] ![[Dev Tooling Tidy-Ups#^status]]
 - [[Agent Workflow Changes]] ![[Agent Workflow Changes#^status]]
 - [[Notes Vault Changes]] ![[Notes Vault Changes#^status]]
+- [[Library Upgrades]] ![[Library Upgrades#^status]]
+- [[Dev Tool Upgrades]] ![[Dev Tool Upgrades#^status]]
 
 # Ideas
 - [Sarah] a place to jot down what ingredients I have that I need to use up

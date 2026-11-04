@@ -1,13 +1,13 @@
 ---
 type: infra
-status: ready
+status: in-progress
 blocked-by: []
 confirmed: 2026-11-03
 ---
 # Where It Stands
-Ready. Next: /infra-build ^status
+In progress. Next: /infra-build Step 1 ^status
 
-Split from [[Local Dependency Update Alerts]] on 2026-10-04. `/infra-design` revised it on 2026-11-03, after `/infra-build` stopped at Step 1's read check: a flagged update now leaves a Roadmap line, the session looks for a linked guide's source on GitHub, and both sweeps join every release. Nothing is built yet.
+Split from [[Local Dependency Update Alerts]] on 2026-10-04. `/infra-design` revised it on 2026-11-03, after `/infra-build` stopped at Step 1's read check: a flagged update now leaves a Roadmap line, the session looks for a linked guide's source on GitHub, and both sweeps join every release. Step 1 is built and passes its local checks, and waits on the real run's PR for Sarah's check.
 
 # Inbox
 
