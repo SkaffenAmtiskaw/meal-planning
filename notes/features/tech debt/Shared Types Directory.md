@@ -1,10 +1,11 @@
 ---
 type: pattern
 status: spec
+blocked-by: ["[[How Architect Makes Rules]]"]
 confirmed: 2026-04-22
 ---
 # Where It Stands
-Next: /architect ^status
+Blocked by [[How Architect Makes Rules]]; then /architect ^status
 
 # Inbox
 
