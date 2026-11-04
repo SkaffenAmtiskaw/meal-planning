@@ -5,7 +5,7 @@ confirmed: 2026-10-04
 # Where It Stands
 Next: its child stories ^status
 
-Split 2026-10-04 during /plan-steps into Dependency Update PRs, [[Dependency Release Analysis]] and [[Major Upgrade Sweeps]]. The design is approved. Dependency Update PRs is built and closed: the check, the workflow, the routine and the PR for small updates. [[Major Upgrade Sweeps]] has its first step built. [[Dependency Release Analysis]] has its Build Order and is ready to build too.
+Split 2026-10-04 during /plan-steps into Dependency Update PRs, [[Dependency Release Analysis]] and [[Major Upgrade Sweeps]]. The design is approved. Dependency Update PRs is built and closed: the check, the workflow, the routine and the PR for small updates. [[Major Upgrade Sweeps]] has both its steps built, and waits on `/final-review`. [[Dependency Release Analysis]] has its Build Order and is ready to build too.
 
 # Inbox
 
@@ -224,7 +224,7 @@ Before planning or implementing any story linked from this note, read this note 
 |---|---|---|---|
 | Dependency Update PRs | done | The check, the workflow, the routine, and the one PR for patches, minors and security fixes | |
 | [[Dependency Release Analysis]] | ready | Minor release summaries, and the `upgrade-assessor` for the assessed libraries | |
-| [[Major Upgrade Sweeps]] | in-progress | The Library Upgrades and Dev Tool Upgrades sweeps, for other packages' majors and for updates the session drops | |
+| [[Major Upgrade Sweeps]] | in-review | The Library Upgrades and Dev Tool Upgrades sweeps, for other packages' majors and for updates the session drops | |
 
 # Build Order
 - **Stated:** Dependency Update PRs first, since the other two extend the session it built. It's built and closed.

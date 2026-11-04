@@ -1,13 +1,13 @@
 ---
 type: infra
-status: in-progress
+status: in-review
 blocked-by: []
 confirmed: 2026-11-03
 ---
 # Where It Stands
-In progress. Next: /infra-build Step 2 ^status
+All steps implemented. Next: /final-review ^status
 
-Split from [[Local Dependency Update Alerts]] on 2026-10-04. `/infra-design` revised it on 2026-11-03, after `/infra-build` stopped at Step 1's read check: a flagged update now leaves a Roadmap line, the session looks for a linked guide's source on GitHub, and both sweeps join every release. Step 1 is built and checked, so majors reach the sweeps and the Roadmap. Step 2 sends dropped updates the same way.
+Split from [[Local Dependency Update Alerts]] on 2026-10-04. Both steps are built, so majors and dropped updates reach the sweeps and the Roadmap.
 
 # Inbox
 
@@ -16,8 +16,8 @@ A major update of a package other than the assessed libraries, or a patch or min
 
 # Goals
 - [x] A major of a package other than the assessed libraries that's small and needs no decision becomes an item on the Library Upgrades or Dev Tool Upgrades sweep.
-- [ ] A patch or minor that the `dependency-updates` session drops from its PR because it breaks a check, and whose fix is small and needs no decision, becomes an item on the Library Upgrades or Dev Tool Upgrades sweep.
-- [ ] A major of a package other than the assessed libraries, or a dropped patch or minor, that can't become a sweep item gets its own Roadmap line. Step 1 proved this for majors, and Step 2 proves it for dropped updates. That covers an update whose breaking changes can't be read, that's too big, that needs a decision, or that's a security fix.
+- [x] A patch or minor that the `dependency-updates` session drops from its PR because it breaks a check, and whose fix is small and needs no decision, becomes an item on the Library Upgrades or Dev Tool Upgrades sweep.
+- [x] A major of a package other than the assessed libraries, or a dropped patch or minor, that can't become a sweep item gets its own Roadmap line. Step 1 proved this for majors, and Step 2 proves it for dropped updates. That covers an update whose breaking changes can't be read, that's too big, that needs a decision, or that's a security fix.
 
 # Design
 The design lives in [[Local Dependency Update Alerts]]. The sections embedded below are part of this note.
@@ -86,7 +86,17 @@ The design's Pieces are in [[Local Dependency Update Alerts]], embedded above.
 - **After the check:** once Sarah's check shows the Biome item in the PR, delete the Biome item from [[Dev Tooling Tidy-Ups]].
 
 **Sarah checks:**
-- [ ] Open the PR link `/infra-build` gives you in chat. See a Dev Tool Upgrades item for `@biomejs/biome`, naming the `pnpm lint:ci` findings with their files, with no 🎯 link. See each backlog major's item or Roadmap line updated in place, with no second item or line for any of them. Then open the session in the Code tab under **Routines**, and see its summary list Biome under **Dropped**, with the check it broke and the sweep its item went to. Merge the PR once it looks right. Goal: a patch or minor dropped because it breaks a check, with a small fix, becomes a sweep item.
+- [x] Open the PR link `/infra-build` gives you in chat. See a Roadmap line for `@biomejs/biome` under Dev Tooling, naming the `pnpm lint:ci` findings with their files, with no 🎯 link. See no second item or line for any backlog major. Then open the session in the Code tab under **Routines**, and see its summary list Biome under **Dropped**, with the check it broke and the heading of its line. Merge the PR once it looks right. Goal: a dropped update that can't become a sweep item gets its own Roadmap line.
+
+**Status:** ✅ Complete
+
+**As built:**
+- The real run ([PR #31](https://github.com/SkaffenAmtiskaw/meal-planning/pull/31)) made Biome a Roadmap line, not the Dev Tool Upgrades item the check expected, so Sarah's check was reworded to match. The session judged the fix not small because `biome.jsonc` needs migrating, though that deprecation and `noExtraBooleanCast` are infos that don't fail `pnpm lint:ci`. Sarah decided 2026-11-03 not to re-run: she doesn't mind whether Biome lands on a sweep or as a line, as long as it's on the Roadmap, so the rule stays as it is, with no line saying a config change is fine in a sweep and no line limiting the work to what fails a check.
+- That leaves Goal 2 proved only by local runs against a throwaway origin. `zod` with a made-up one-line type error became a Library Upgrades item, and real Biome 2.6.4 became a Dev Tool Upgrades item.
+- A dropped update takes the sweep rule's path through `sweep-rule.md`, with each finding from the first bad commit as its work. A step 7 drop commits its item separately, right after its revert, and both go up in one push, since a revert keeps git's message.
+- A dropped fix for an advisory's Roadmap line also gives each finding or failure and its file count, so Sarah can plan from the line.
+- The summary's "nothing to apply" wording became "no update went in", and step 7's "changed only notes" case now also covers a run whose updates were all dropped. Boy Scout fix: step 4 says step 7 can drop a minor too.
+- With the Roadmap line covering 2.6.4, Sarah had the old 2.5.15 item deleted from [[Dev Tooling Tidy-Ups]].
 
 # Out of Scope
 - Assessments of the six libraries' majors: [[Dependency Release Analysis]].
