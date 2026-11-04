@@ -34,7 +34,7 @@ The kinds of text you add, change or remove in a note, and the rule for each:
   - **If the code or docs can answer it:** look it up.
   - **If you aren't sure what the user meant or what they'd pick:** ask them.
   - **If they want to think it over:** write it under Open Decisions. If the note is a story with no `decision needed` entry in `blocked-by`, add one, so `/decide` picks up the note.
-- **Something dropped from a note:** delete it, with no line saying it was removed or why, because a note says what's true now.
+- **Something dropped or replaced:** delete it and say only what's true now, because a later reader never saw the old way. Cut lines about what it used to do, such as "no longer", "instead of" or "no X step". If a reader with no history would do the wrong thing without a negative, keep it.
 - **A story added to `blocked-by`:** if the blocked story is in Next and the blocker isn't in Now or Next, or the blocked story is in Planning and the blocker isn't in Now, Next or Planning, propose moving the blocker's line into the blocked story's section. It goes directly ahead of the blocked line, with the same markers. Say why, because if the blocker's line stays where it is, the blocked line waits on work no queue will reach.
 
 If you add or move a Roadmap line, follow the `roadmap-placement` skill, unless your skill says where it goes.

@@ -10,14 +10,16 @@ Every check a workflow runs is a `package.json` script, called as `pnpm <script>
 
 No script CI runs writes fixes. CI would pass on code it had silently fixed, then throw the fix away. That's why the lint job runs `pnpm lint:ci` (`biome ci`, which only reports) and not `pnpm lint` (`biome check --write`).
 
-## Tools Come from `mise.toml`
-A workflow installs Node, pnpm and any other tool it needs with [`jdx/mise-action`](https://github.com/jdx/mise-action), which runs `mise install` against `mise.toml`. So CI runs the same versions as your machine. `mise.toml` asks for `latest`, so a new release reaches CI and your machine alike, without anyone updating a version.
+## The Repo Declares Its Tools
+Apart from what every machine and runner comes with, such as `git`, `curl` and `jq`, the repo declares every tool its workflows, hooks and scripts need, so they work from a fresh clone, whatever is already on your PATH. A tool that runs from the repo's `node_modules`, such as Biome or lefthook, is a pnpm dependency. Any other command-line tool, such as `rtk`, goes in `mise.toml`.
+
+A workflow installs Node, pnpm and any other `mise.toml` tool it needs with [`jdx/mise-action`](https://github.com/jdx/mise-action), which runs `mise install` against `mise.toml`. So CI runs the same versions as your machine. `mise.toml` asks for `latest`, so a new release reaches CI and your machine alike, without anyone updating a version.
 
 A routine's cloud session gets its tools the same way: the cloud environment's setup script installs mise, then runs `mise install node pnpm` against the repo's `mise.toml`, and the session runs those rather than the Node and pnpm that come in the cloud image (see "The Cloud Environment").
 
 No workflow or setup script names a Node or pnpm version of its own, or uses `actions/setup-node` or the cloud image's Node.
 
-CI and the cloud environment install only `node` and `pnpm` (the action's `install_args`, and the setup script's `mise install`), since they don't need the other tools in `mise.toml`. If a workflow needs another tool, add it to `mise.toml` and to that workflow's `install_args`, and to the setup script if routine sessions need it too. If they don't, add it to `MISE_DISABLE_TOOLS` in the setup script and in the file the script writes, as `rtk` is, or mise may look up its latest version on GitHub and get a 403.
+CI and the cloud environment install only `node` and `pnpm` (the action's `install_args`, and the setup script's `mise install`), since they don't need the other tools in `mise.toml`. When you add a tool to `mise.toml`, add it to the `install_args` of any workflow that needs it. If routine sessions need it too, add it to the setup script. If they don't, add it to `MISE_DISABLE_TOOLS`, as `rtk` is, in both the setup script and the file the script writes. Without that, mise may look up the tool's latest version on GitHub and get a 403.
 
 # Checks on PRs
 `checks.yml` runs on every PR, whatever its base branch. It has four check jobs:
