@@ -167,6 +167,7 @@
 - [[Blank Dish Row Blocks Saving a Meal]] ![[Blank Dish Row Blocks Saving a Meal#^status]]
 - [[Invite Sign-Up Rollback Fails]] ![[Invite Sign-Up Rollback Fails#^status]]
 - [[404 Page Has No Way Out]] ![[404 Page Has No Way Out#^status]]
+- [[Invite Sign-Up While Signed In as Someone Else]] ![[Invite Sign-Up While Signed In as Someone Else#^status]]
 
 ## [[Dev Tooling]]
 - a way to load extra seed data that one story's checks need, on top of `pnpm seed`'s generic data (today the `building-code` skill's acceptance checks create it through the app's screens). Found 2026-10-01 while designing the dev seed (`docs/seed.md`) 🎯 [[Grocery List Creation]] 🎯 [[Recipes Page]]
@@ -177,7 +178,7 @@
 - build a Design System from the app (colors, type and components) that design canvases use, in place of following `docs/style_guidelines.md` and `docs/theme.md` - weigh it after a real design or two with `/design-feature`. Found 2026-11-01 while adding that skill
 
 ## Unaffiliated
-- [[Delete Planner|allow user to delete a planner]] - idea. Waiting on the [[Zero Planners Crash]] decision.
+- [[Delete Planner|allow user to delete a planner]] ![[Delete Planner#^status]]
 - [[Transfer Ownership of Planner|transfer ownership of planner]]
 - [[Tag Management|tag management - edit/delete]] - Spec last reviewed April - tag creation with palette cycling already exists (`TagCombobox` → `addTag`), so reconcile before planning.
 - [[Unit Test Tidy-Ups]] ![[Unit Test Tidy-Ups#^status]]
@@ -208,3 +209,5 @@
 - [[Planner Settings Leave Button]] ![[Planner Settings Leave Button#^status]]
 - [[Nicer No Planners Page Design]] ![[Nicer No Planners Page Design#^status]]
 - [[Nicer 404 Page Design]] ![[Nicer 404 Page Design#^status]]
+- [[Invite Sign-Up Gives No Confirmation]] ![[Invite Sign-Up Gives No Confirmation#^status]]
+- the two invite lists on Settings show expiry differently: `InvitesSection.tsx:58-60,73-80` says nothing until an invite is within 24 hours of expiring, then "Expires soon" (or "Expired"), while `PendingInvitesList.tsx:61-71` always says "Expires <date>" (or "Expired"). Found 2026-11-02 during `/investigate` of [[Zero Planners Crash]]. The date-utility item in [[Code Tidy-Ups]] touches the same expiry checks but not the wording.

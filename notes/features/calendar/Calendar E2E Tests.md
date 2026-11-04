@@ -11,6 +11,9 @@ confirmed: 2026-09-28
 
 Next: /shape ^status
 
+# Inbox
+- [Sarah] Probably this needs to be removed or changed - I want E2E tests to be built alongside the stories they test. At the end of a goal, when a release is cut, I expect a few stories to be spawned as part of the release process, and one of them will be an audit to make sure E2E tests cover everything relevant in the release.
+
 # Notes
 The [[Calendar Page]] goal's Done When says E2E tests cover the calendar's major flows, including the ones this goal adds: editing meals, drag and drop, clicking a day to add a meal, and the phone workflows.
 
