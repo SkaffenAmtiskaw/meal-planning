@@ -17,7 +17,7 @@ Part of [[Agent Instructions Audit]].
 
 **Full review here,** as the first story that uses them: `notes/templates/Standing Goal.md`.
 
-**Re-checks for this step:** `/roadmap` (reviewed in [[Goal Roadmap Review]]); the `notes-only-edits.sh` hook (reviewed in Feature Shape Review).
+**Re-checks for this step:** `/roadmap` (reviewed in Goal Roadmap Review); the `notes-only-edits.sh` hook (reviewed in Feature Shape Review).
 
 **Decisions that apply:**
 

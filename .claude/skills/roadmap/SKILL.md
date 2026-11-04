@@ -1,6 +1,6 @@
 ---
 name: roadmap
-description: Shape a goal (an epic Sarah ranks and ships as one release) or a standing goal (one that collects work no goal would take, and never ships), draw a goal from a standing goal, or re-rank the goals, then keep Next, Planning and Later in line with the building and planning goals.
+description: Shapes a goal or standing goal, draws a goal from a standing goal, or re-ranks the goals, then keeps Next, Planning and Later in line with the ranking. Use when a goal needs shaping or the goals' order changes.
 argument-hint: "[goal or standing goal name, or nothing to re-rank]"
 disable-model-invocation: true
 hooks:
@@ -11,118 +11,68 @@ hooks:
           command: '"$CLAUDE_PROJECT_DIR"/.claude/hooks/notes-only-edits.sh'
 ---
 
-Shape the goal **$ARGUMENTS**, or re-rank the goals if no goal was named.
+If no goal was named, re-rank the goals. Otherwise, shape the goal or standing goal **$ARGUMENTS**.
 
-## Why this skill works the way it does
-Goals are how Sarah decides what matters. Each one is an epic she ships as one release, and the top two on the Roadmap are the building goal, whose stories fill Next, and the planning goal, whose stories fill Planning and are planned but not built until the building goal is released. They often start out only in her head. This skill gets a goal into a note and onto the Roadmap, and keeps Next honest when the ranking changes.
+## A Goal's Own Instructions
+A goal or standing goal can hold instructions for this skill under its Roadmap Instructions heading, in any wording. Whenever you work with a goal or standing goal, read its instructions and follow each where it applies. An instruction is the user's decision, so ask only if you can't tell what it wants or when it applies.
 
-Some work never serves a goal, because it never blocks a feature: a library upgrade, or a piece of tech debt. A standing goal collects it. It's never ranked, building or planning, and it never ships. When Sarah wants to take on some of that work, this skill draws a goal from it: an ordinary goal, named `<standing goal> YYYY-MM-DD`, that takes the work she picks and ships as one release, while the standing goal keeps collecting.
+If the user asks for a new instruction during a run, write what they meant under the goal note's Roadmap Instructions.
 
-This skill gathers facts and writes what Sarah decides. It makes almost no decisions: what the goal is for, what's in it, which gaps get filled, which tooling goes under it, its rank and the order of Next are all hers. Your own judgment covers only dependencies you can point to in the notes or code, and recommendations as AGENTS.md describes under "Recommendations".
-
-The Roadmap is the single place that says which work serves which goal. The goal note never lists its stories.
-
-This is notes work only. A hook blocks edits outside `notes/` and `.scratch/`.
-
-## A goal's own instructions
-A goal or standing goal can hold instructions for this skill under its Roadmap Instructions heading, such as a story to add each time a goal is drawn from a standing goal. They have no set format, and Sarah may write them herself in any wording. Whenever you work with a goal or standing goal, read its Roadmap Instructions and follow each one where it applies. An instruction is Sarah's decision, so for what it covers, don't ask her again. Ask only when you can't tell what an instruction wants or when it applies.
-
-If Sarah asks for a new instruction during a run, write it under the goal note's Roadmap Instructions in her words, adding the heading if it's missing. It's part of this skill's work, not out of scope.
-
-## 1. Find the goal
-Read `notes/Roadmap.md`, including "How this file works", `notes/templates/Goal.md` and `notes/templates/Standing Goal.md`.
-
-- **A name:** look for it in `notes/goals/`. What happens next depends on what's there:
-  - **A goal** (`type: goal`): this is a re-shape. In each step below, show Sarah what the note or Roadmap already says and ask only what's changed.
-  - **A standing goal** (`type: standing-goal`): ask Sarah whether she wants to re-shape it or draw a goal from it. To re-shape it, follow "Shaping a standing goal", showing what the note or Roadmap already says and asking only what's changed. To draw a goal, follow "Drawing a goal from a standing goal".
-  - **Nothing:** ask Sarah whether it's a goal, which ships as one release, or a standing goal, which collects work and never ships. For a goal, go on to step 2. For a standing goal, follow "Shaping a standing goal".
+## 1. Find the Goal
+Read `notes/Roadmap.md`. In a re-shape, show the user what the note or Roadmap already says at each step, and ask only what's changed. What happens next depends on the argument:
+- **A name:** look for it in `notes/goals/`. What you find decides the path:
+  - **A goal** (`type: goal`): this is a re-shape.
+  - **A standing goal** (`type: standing-goal`): ask the user whether to re-shape it or draw a goal from it. To re-shape it, follow "Shaping a Standing Goal". To draw a goal, read `drawing-a-goal.md` in this skill's folder and follow it.
+  - **Nothing:** ask the user whether it's a goal or a standing goal. For a goal, go on to step 2. For a standing goal, follow "Shaping a Standing Goal".
 - **No argument:** go to step 6.
 
 ## 2. Purpose and Done When
-Ask Sarah what the goal is for and what shipping it means, in her words. If she names work that's out of scope for it, note that too. Draft Purpose, Done When and Out of Scope from the template, keeping her wording. Show her the draft and wait for her approval, then write the note to `notes/goals/<name>.md`, with `confirmed` set to today.
+Ask the user what the goal is for and what shipping it means, noting any work they name as out of scope and why. Draft Purpose, Done When and Out of Scope from its template, keeping what they meant. Each Done When item is something the user can check in the running app, or a named piece of work being finished. Once they approve the draft, write the note.
 
 ## 3. Scope
-Search the Roadmap, including Ideas, and `notes/features/` for work that looks related to the goal's Purpose and Done When: story lines and hubs with a next step of their own. Lines under the Bugs heading, sweeps and collecting workflow notes join every release, so they stay out. Skip anything already under the goal's Out of Scope, whether it was added in step 2 or by an earlier run. Skip anything already under the goal's heading or carrying its 🎯 link, unless this is a re-shape and Sarah asks to review it.
+Search the Roadmap, including Ideas, and `notes/features/` for stories and hubs that look related to the goal's Purpose and Done When. A hub counts only if it has a next step of its own. These stay out:
+- lines under the Bugs heading, sweeps and collecting workflow notes, because they join every release
+- anything already under the goal's Out of Scope
+- tooling, unless the goal is about how the app is built, because step 5 handles it
 
-Leave tooling out of this step, and offer it in step 5. The exception is a goal about how the app is built, where tooling is the scope: offer it here and skip step 5.
-
-Go through the candidates one at a time. For each, show the line, note or item, why it looks related, and any goals it already serves. Sarah says:
+For each candidate, show its line or note, why it looks related, and any goals it already serves. The user's answer decides what happens to it:
 - **In:**
-  - **A line in Unaffiliated or Ideas:** move it under the goal's heading in Later. Add the heading, `## [[<goal>]]`, if it's missing, placed as "How this file works" describes under Later.
-  - **A line under another goal's heading, or in Now, Next or Planning:** leave it there, and add `🎯 [[<goal>]]` at its end.
-- **Out:** add it to Out of Scope with her reason.
-- **Not related:** nothing is recorded.
+  - **A line in Unaffiliated or Ideas:** move it under the goal's heading in Later.
+  - **Any other line:** leave it where it is, and add the goal's 🎯 link.
+- **Out:** add it to Out of Scope with their reason.
+- **Not related:** record nothing.
 
 ## 4. Gaps
-Compare Done When with the in-scope work, and list each Done When item that nothing covers. Go through them one at a time. For each, draft a note for `notes/features/<area>/`:
-- **If the item is a whole area, where what to build isn't known yet:** an exploration hub from `notes/templates/Hub.md`, with `Next: /brainstorm` as its `^status` line.
-- **Otherwise:** an idea note from `notes/templates/Idea.md`.
+Compare Done When with the in-scope work. For each Done When item that nothing covers, draft a note and show it to the user. The item decides the kind of note:
+- **If the item covers a whole area and what to build there isn't known yet:** an exploration hub, with `Next: /brainstorm` as its `^status` line.
+- **Otherwise:** an idea note.
 
-Show it to Sarah. Her answer decides what happens next:
-- **She approves it,** with any changes she asks for: write the note, and add its line under the goal's heading.
-- **She says the gap doesn't fit a note:** ask whether it gets a Roadmap line under the goal's heading instead or comes out of Done When, and do what she says.
-
-Then list the in-scope stories and hubs whose next step is `/design-feature`. These are the designs the goal is waiting on. Report them; nothing is written.
+Once they approve it, write the note and add its line under the goal's heading.
 
 ## 5. Tooling
-Find the tooling that would make this goal's stories easier: tooling lines anywhere in Later (in Unaffiliated or under another goal) or in Ideas, and workflow and tooling notes other than collecting ones. Read what the in-scope stories will touch (their areas, their next steps, what their checks need) and match them up.
+If the goal is about how the app is built, skip this step, because step 3 covered its tooling. Otherwise, find the tooling that would make this goal's stories easier. Look at tooling lines in Later and Ideas, and at workflow and tooling notes other than collecting ones.
 
-Give Sarah a shortlist, most helpful first, each with what it would make easier and for which stories, and any goal it already serves. A tooling line or note stays where it is unless she says to put it under this goal. If she does, handle it the same way as "In" in step 3.
+Give the user a shortlist, most helpful first. For each entry, say what it would make easier, for which stories, and any goal it already serves. If they put one under this goal, handle it as "In" in step 3.
 
 ## 6. Rank
-Show the Goals list with the building and planning goals marked. Name any dependencies you can point to, such as an in-scope story whose `blocked-by` names a story under another goal. Ask Sarah where this goal goes. With no argument, ask what moves. Recommend a spot only from those dependencies. Standing goals are never ranked. They stay under the Standing Goals subheading, unnumbered, and never become the building or planning goal.
+Show the Goals list, and name any dependencies you can point to in the notes or code, such as an in-scope story whose `blocked-by` names a story under another goal. If you're shaping a goal, ask the user where it goes. Otherwise, ask which goals move. If those dependencies point to a spot, recommend it.
 
-Write the order she gives. Each Goals line is `1. [[<goal>]]`, with ` - building` on the first and ` - planning` on the second. Put the goal headings in Later in the same order, followed by the standing goals' headings.
+Put the Goals list and the Later headings in the order they give.
 
-## 7. Next, Planning and Kickoffs
-**If a goal just became the building or planning goal,** sort the lines already in Next and Planning:
-- **Next:** a line stays if it serves the building goal or has 🚨, 📌 or 🔁. Otherwise, it moves to Planning if it serves the planning goal, or back to Later.
-- **Planning:** a line moves into Next if it serves the building goal, stays if it serves the planning goal, and otherwise goes back to Later.
-- **A line moved into Next or Planning** keeps its order among the lines moved with it.
-- **A line moved back to Later** goes under the heading of a goal it serves, and loses that goal's 🎯 link. Its other 🎯 links stay. Later isn't ordered, so there's nothing to ask.
+## 7. Next and Planning
+If a goal just became the building or planning goal, read its Roadmap Instructions, then read `filling-the-queues.md` in this skill's folder and follow it.
 
-Then fill that goal's queue. Go through every Later line that serves it, one at a time, whether it sits under the goal's heading or carries its 🎯 link. Judge each one by where the goal stands now, not by the goal it's filed under. Sarah says which move into the goal's queue: Next for the building goal, Planning for the planning goal. A moved line keeps its 🎯 links, and gets one for the goal whose heading it leaves.
+## Shaping a Standing Goal
+1. **Purpose and What Belongs Here.** Ask the user what kind of work it collects, why no goal would take it, and what looks close but doesn't belong. Draft Purpose, What Belongs Here and Out of Scope from its template, keeping what they meant. Once they approve the draft, write the note.
+2. **The Roadmap.** For a new standing goal, add it to the Goals section's Standing Goals list and give it a heading in Later.
+3. **Scope.** Follow step 3, judging candidates against Purpose and What Belongs Here instead of Purpose and Done When.
 
-**If a goal just became the building goal,** the bug lines and collecting notes also join the release. Handle them in this order, because a freeze reads Next to see which stories are in the release:
-1. For each line under the Bugs heading whose `^status` line doesn't say it's blocked, move it into Next and end it with 🔁.
-2. For each sweep and collecting workflow note that isn't a dated copy and has an item a frozen copy would keep, freeze a dated copy as `freezing-a-copy.md` in this skill's folder describes. The copy is the kicked-off note, and its Roadmap line goes where "How this file works" describes under "Collecting notes".
-3. Check every collecting note's own line, and fix any that doesn't match that part of "How this file works".
+Then go to step 8.
 
-Then ask her where the lines that just joined each queue go. They're the lines moved from another section, the ones she picked and, in Next, the kicked-off notes and bug lines.
-
-List the lines you moved.
-
-**Always:** check every Now, Next and Planning line for its marker, as "How this file works" describes. Raise each line that's out of place, one at a time. Sarah says whether it gets the marker its section needs, moves to the section whose marker it has, or goes back to Later, under a goal's heading or in Unaffiliated. Never add 🚨 or 📌 yourself. If you think a line is urgent, say so and ask.
-
-## Shaping a standing goal
-1. **Purpose and What Belongs Here.** Ask Sarah what kind of work it collects and why no goal would take it, in her words, and what looks close but doesn't belong. Draft Purpose, What Belongs Here and Out of Scope from the Standing Goal template, keeping her wording. Show her the draft and wait for her approval, then write the note to `notes/goals/<name>.md`, with `confirmed` set to today.
-2. **The Roadmap.** For a new standing goal, add `- [[<name>]]` under `## Standing Goals` at the end of the Goals section, adding the subheading if it's missing. Add its heading, `## [[<name>]]`, placed as "How this file works" describes under Later.
-3. **Scope.** Follow step 3, judging candidates against Purpose and What Belongs Here instead of Purpose and Done When. Offer tooling here like any other work when What Belongs Here covers it.
-
-Then go to step 8. Steps 4 to 7 don't apply: a standing goal has no Done When and is never ranked.
-
-## Drawing a goal from a standing goal
-The drawn goal is an ordinary goal, named `<standing goal> YYYY-MM-DD` with today's date. It goes through steps 2 to 7 like any new goal, with two differences:
-- **Step 2:** its Purpose starts with "Drawn from [[<standing goal>]]."
-- **Step 3:** before searching, offer the work that serves the standing goal: the lines under its heading in Later, and the lines elsewhere that carry its 🎯 link. Go through the candidates one at a time. Sarah says:
-  - **In:** the work moves to the drawn goal. A line under the standing goal's heading moves under the drawn goal's heading. Anywhere else, the standing goal's 🎯 link on the line becomes the drawn goal's.
-  - **Not this time:** it stays with the standing goal, and nothing is recorded.
-
-  Then go on with step 3's search for other related work.
-
-If Sarah takes work out of a drawn goal in a later re-shape, it goes back to its standing goal: under the standing goal's heading, or ending with its 🎯 link.
-
-## 8. Report and stop
-Triage the out-of-scope list as AGENTS.md describes under "Out-of-scope work". There's no story to pull into, so offer route or drop only.
-
-Then tell Sarah:
-- the goal or standing goal note, created or updated
-- each line moved or linked, grouped by where it went
-- each note created for a gap
-- each collecting note kicked off, where its Roadmap line went, and the command for its next step
-- the designs the goal is waiting on
-- the tooling shortlist, and what she put under the goal
-- the Goals order, and which lines moved into or out of Next and Planning
+## 8. Report and Stop
+Triage the out-of-scope list. Then tell the user what changed, along with:
+- the command for each dated copy's next step
+- the designs the goal is waiting on, which are the in-scope stories and hubs whose next step is `/design-feature`
 - if the goal's lines and notes overlap or look scattered, `/gather-goal <goal>` as the next step
 
 Stop there, and don't start work on any story.
