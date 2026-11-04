@@ -8,6 +8,7 @@ Next: /shape ^status
 
 # Inbox
 - Two sections of `docs/unit_tests.md` contradict each other on state in mocks. "Permissible Complexity" (line 52) allows state in a mock only when a test in the current file needs it, while "Stateful Mocks Using React Hooks" (line 154) recommends a shared `useAsyncStatus` mock that always holds state, so every file using it gets that state. The first was probably written for mocks defined inside a test file, but the doc doesn't say so. Found 2026-10-06 by a headless session that read the doc during `/implement` Step 3 of What Makes a Good Doc.
+- Sarah decided 2026-11-03 that how an outside service behaves doesn't belong in the docs, which are about the repo she owns, since a service can change without anyone knowing the doc is out of date. `docs/ci.md:145`, on where GitHub redirects a run's logs, is one such line, and there may be others. Found during `/infra-design` of [[Major Upgrade Sweeps]].
 - [Sarah] - A lot of times agent write huge paragraphs of information where a human reader is only going to want the highlights. Perhaps we can make use of asides or something similar to provide detail for someone who's truly curious but make sure the main rule is what a reader sees first.
 
 # Notes

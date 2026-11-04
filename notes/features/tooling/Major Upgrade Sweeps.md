@@ -1,41 +1,28 @@
 ---
 type: infra
-status: spec
+status: ready
 blocked-by: []
-confirmed: 2026-10-06
+confirmed: 2026-11-03
 ---
 # Where It Stands
-Needs re-plan. Next: /infra-design (revision) ^status
+Ready. Next: /infra-build ^status
 
-Split from [[Local Dependency Update Alerts]] on 2026-10-04. `/infra-build` stopped at Step 1's read check on 2026-11-02 and sent the story back, as the Inbox says. Nothing is built yet.
+Split from [[Local Dependency Update Alerts]] on 2026-10-04. `/infra-design` revised it on 2026-11-03, after `/infra-build` stopped at Step 1's read check: a flagged update now leaves a Roadmap line, the session looks for a linked guide's source on GitHub, and both sweeps join every release. Nothing is built yet.
 
 # Inbox
-- From Sweep Kickoff Review (`/tooling`, 2026-11-02): `/kickoff` is retired. A collecting sweep's status line is now `Collecting items. Next: /roadmap when a goal starts building`, and the general paragraph in the Sweep template's What Belongs Here moved to `filing-work`'s sweep home. Piece 6's wording for writing Library Upgrades and Dev Tool Upgrades, in [[Local Dependency Update Alerts]], still uses both.
-- **Sent back by `/infra-build` on 2026-11-02, from Step 1's read check.** Two cloud sessions on `Meal Planning Routines` tested the sweep rule's reading, and Sarah then asked for a change to what a flag leaves behind. Both change Piece 4.
-  - **What the session can read:**
-    - **GitHub pages:** WebFetch reads `github.com` release pages in full. Vitest 5's page gave all 43 breaking changes, without their author and PR details. `curl` to `github.com` and `gh api` on another repo get a 403 from the session's GitHub proxy, which reaches only the attached repo.
-    - **Raw files:** WebFetch and `curl` both read `raw.githubusercontent.com`. A root `CHANGELOG.md` can be a symlink, as `biomejs/biome`'s is, which returns only its target's path, so the session has to fetch that path. WebFetch read the first 100k of Biome's 1M characters, which is enough while the newest versions come first.
-    - **Other sites:** `vitest.dev` and `preactjs.com` are blocked for WebFetch and `curl` alike. Piece 4's "the session follows the link" works only for a site already on the allowed list.
-  - **What that does to the Step 1 check:** two of the five majors it expects as items only link elsewhere for their breaking changes: `preact` (`preactjs.com`) and `typescript` (`devblogs.microsoft.com`). As designed, both would be flagged instead. `temporal-polyfill`'s 1.0.0 notes weren't found under the tag tried, so it's unconfirmed.
-  - **What Sarah asked for:** a flag that leaves a Roadmap item or an item in a collecting note to check on the update, rather than only a line in the summary, since a summary can be overlooked, especially in a run with a lot in it. Once a version is reported it stays quiet, so a missed flag has no second chance until a newer version comes out.
-  - **Open for `/infra-design` to settle with Sarah:**
-    - **Where the record goes.** The agent's recommendation is a Roadmap line under App Health or Dev Tooling in Later, updated in place, since the Sweep template sends work that needs a decision to its own Roadmap line and Piece 4 already writes such a line when a sweep is missing. A flag-only run would then commit and open or update the PR, and closing that PR without merging loses the line.
-    - **Which flags get one:** unreadable, too big or needing a decision, and security fixes. The agent's recommendation is all three, with a security fix keeping its summary flag too, since Sarah decided those shouldn't wait for a goal.
-    - **Whether the session looks for a linked guide's source on GitHub before flagging.** Preact's guide is in `preactjs/preact-www` (`content/en/guide/v11/upgrade-guide.md` on `master`), Vitest's is under `docs/guide/migration/` in its own repo, and TypeScript's breaking-changes wiki page is on `github.com`. The agent's recommendation is yes, which keeps Sarah's "no new domains" decision. The alternatives are to flag these as designed, or to add domains, which reverses that decision.
-  - **What the revision has to change:** Goals 1 and 2 ("flagged in the session"), Piece 4's sub-steps 2 and 5, the Flow, and both steps' checks. The skill names WebFetch as the way to read GitHub pages.
-- From [[Dependency Release Analysis]]'s `/infra-design` revision (2026-10-06): Sarah wants the assessed libraries (React, Next, Mantine, better-auth, luxon and Zod) listed in one place, so adding or removing one changes one line. The hub now defines them once, in Piece 5, and Piece 4 requires the built skill to name them in one place. This story's parts still repeat the list: its Goal 1, the hub's sweep rule step 1 (`@types/react`, `@types/react-dom`, `@types/luxon`, which could become "an assessed library's `@types/*` package") and the hub's Piece 6 (Library Upgrades' description and its What Belongs Here line "Never here: …"), so the built sweeps and the sweep rule would each keep their own copy.
 
 # Purpose
-A major update of a package other than the six assessed libraries, or a patch or minor that the `dependency-updates` session drops from its PR because it breaks a check, lands where a goal can pick it up: an item on the new Library Upgrades or Dev Tool Upgrades sweep when the work is small, or a flag in the session that it looks like a story of its own. Without this, a dropped update goes quiet until a newer version comes out. It extends the session Dependency Update PRs built. Split from [[Local Dependency Update Alerts]] on 2026-10-04.
+A major update of a package other than the assessed libraries, or a patch or minor that the `dependency-updates` session drops from its PR because it breaks a check, lands where it gets picked up: an item on the new Library Upgrades or Dev Tool Upgrades sweep when the work is small, or its own Roadmap line when it isn't. Without this, a dropped update goes quiet until a newer version comes out. It extends the session Dependency Update PRs built. Split from [[Local Dependency Update Alerts]] on 2026-10-04.
 
 # Goals
-- [ ] A major update of a package other than React, Next, Mantine, better-auth, luxon and Zod becomes an item on the Library Upgrades or Dev Tool Upgrades sweep when it's small and needs no decision, or is flagged in the session as a story of its own.
-- [ ] A patch or minor that the `dependency-updates` session drops from its PR because it breaks a check becomes an item on the Library Upgrades or Dev Tool Upgrades sweep when the fix is small and needs no decision, or is flagged in the session as a story of its own.
+- [ ] A major of a package other than the assessed libraries that's small and needs no decision becomes an item on the Library Upgrades or Dev Tool Upgrades sweep.
+- [ ] A patch or minor that the `dependency-updates` session drops from its PR because it breaks a check, and whose fix is small and needs no decision, becomes an item on the Library Upgrades or Dev Tool Upgrades sweep.
+- [ ] A major of a package other than the assessed libraries, or a dropped patch or minor, that can't become a sweep item gets its own Roadmap line. That covers an update whose breaking changes can't be read, that's too big, that needs a decision, or that's a security fix.
 
 # Design
 The design lives in [[Local Dependency Update Alerts]]. The sections embedded below are part of this note.
 
-This story builds Piece 6 whole, and Piece 4's sweep rule in sub-step 5, with the changes to sub-steps 2, 3, 7 and 8 that feed it or carry its result. Piece 4's skill is already built by Dependency Update PRs. Of the Decisions, it builds Mongoose getting no assessment, a smaller library's major going on a sweep linked to App Health, a dev tool's major going on its own sweep, the four decisions Sarah made while planning it on 2026-10-04 (Dev Tool Upgrades items' goal link, the three assessed libraries' `@types` majors going with their library, a major that's the only fix for an advisory always flagged as a story, and a major whose breaking changes can't be read flagged with the site it couldn't reach), what happens to an update the session drops, and what happens when the collecting sweep can't be found. From Open Decision 2, it relies on the one fixed `claude/` branch.
+This story builds Piece 6 whole, and Piece 4's sweep rule in sub-step 5, with the changes to sub-steps 2, 3, 7 and 8 that feed it or carry its result. Piece 4's skill is already built by Dependency Update PRs. Of the Decisions, it builds Mongoose getting no assessment, a smaller library's major going on a sweep, a dev tool's major going on its own sweep, the three decisions Sarah made while planning it on 2026-10-04 (the assessed libraries' `@types` majors going with their library, a major that's the only fix for an advisory always flagged as a story, and a major whose breaking changes can't be read flagged with the site it couldn't reach), what happens to an update the session drops, what a flag leaves behind, a linked guide on a site the session can't reach, and what happens when the collecting sweep can't be found. From Open Decision 2, it relies on the one fixed `claude/` branch.
 
 ![[Local Dependency Update Alerts#^piece-4]]
 ![[Local Dependency Update Alerts#^piece-6]]
@@ -46,49 +33,51 @@ This story builds Piece 6 whole, and Piece 4's sweep rule in sub-step 5, with th
 ## Build Order
 The design's Pieces are in [[Local Dependency Update Alerts]], embedded above.
 
-- **Decided 2026-10-06 (/infra-design):** each step's check clears the reported list and starts the weekly Dependency Updates run with `gh`, so the real workflow re-reports everything outstanding, the backlog majors and `@biomejs/biome` 2.5.15 included. Sarah's call: it leaves her nothing to do but look at the PR and the session's summary, and needs no token.
+- **Decided 2026-10-06 (/infra-design):** each step's check clears the reported list and starts the weekly Dependency Updates run with `gh`, so the real workflow re-reports everything outstanding, the backlog majors and `@biomejs/biome` included. Sarah's call: it leaves her nothing to do but look at the PR and the session's summary, and needs no token.
   - Rejected: firing the routine with `curl` and a regenerated token, Sarah's call while planning on 2026-10-04 - it needs a copy of the token, and skips the workflow
 
-### Step 1: Majors of other packages become sweep items or story flags
-**Builds:** Piece 6 (Library Upgrades, Dev Tool Upgrades and their Roadmap lines), and Piece 4 for majors: sub-step 5's sweep rule, sub-step 2's branch for a run with only majors, and sub-step 8's summary of sweep items and flags.
+### Step 1: Majors of other packages become sweep items or Roadmap lines
+**Builds:** [[Local Dependency Update Alerts#^piece-6|Piece 6]] (both sweeps and their Roadmap lines), and [[Local Dependency Update Alerts#^piece-4|Piece 4]] for majors: sub-step 5's sweep rule, sub-step 2's branch for a run with only majors and its `notes/Roadmap.md` conflict handling, and sub-step 8's summary of items, lines and flags. If the skill doesn't name the assessed libraries in one place yet, this step adds that, since the sweep rule refers to them by that name.
 **Setup first:** none
 **Implementer checks:**
-- **Before building the sweep rule's reading:** a session on the `Meal Planning Routines` cloud environment can read a backlog major's GitHub release page and its raw `CHANGELOG.md`, such as `vitest-dev/vitest`'s, the way the skill will read them. If the implementer can't start such a session, `/infra-build` gives Sarah the prompt in chat to start one at https://claude.ai/code with that environment, and she pastes back the result. If the reads are blocked, stop and bring it to Sarah, since it changes the trade-off behind her "no new domains" decision.
-- `sh scripts/vault-lint.sh` passes once the two sweeps and their Roadmap lines are written. Ask Sarah where in Unaffiliated each line goes.
+- `sh scripts/vault-lint.sh` passes once the two sweeps and their Roadmap lines are written.
 - In a local session on a throwaway branch that's never pushed, the skill's sweep rule, run on payloads the implementer picks, does each of these:
-  - a major whose breaking changes need a decision gets no item, and the summary says why, with file counts
-  - a major that's the only fix for an advisory gets no item and a security-fix flag with its advisory ID
-  - an `@types/react` major gets no item and is listed beside React
+  - a major whose breaking changes need a decision gets no item and a Roadmap line under its heading, and the summary says why, with file counts
+  - a later run with a newer version of that package updates its line, with no second line
+  - a major that's the only fix for an advisory gets no item and a security-fix flag with its advisory ID, with its line under Bugs when the app's `dependencies` use the package, and under Dev Tooling when they don't
+  - an `@types/react` major gets no item and no line, and is listed beside React
   - a `mongoose` major is handled like any other package
-  - two real releases of one swept package, run one after the other (such as an earlier `vitest` 5.x, then 5.0.3), leave one item, updated to the newer version
-  - the package's item moved into a scratch kicked-off copy leaves the copy unchanged, and the summary names it
+  - two real releases of one swept package, run one after the other (such as an earlier `vitest` 5.x, then the newest), leave one item, updated to the newer version
+  - the package's item moved into a scratch dated copy leaves the copy unchanged, and the summary names it
   - the sweep moved to another folder is found by the search, and the summary says where it was
-  - with no collecting sweep anywhere in `notes/`, the item becomes a line under the sweep's goal heading in Later, and the summary flags the missing sweep
-  - a run with only majors that writes an item commits it on `claude/dependency-updates`, and one that writes none commits nothing
+  - with no collecting sweep anywhere in `notes/`, the item becomes a line under its heading in Later, and the summary flags the missing sweep
+  - a major whose release links to a guide on a blocked site finds the guide's source on GitHub (such as `preact`'s in `preactjs/preact-www`), and a made-up one with no source gets a line, with the summary naming the site
+  - a run with only majors that writes an item or a line commits it on `claude/dependency-updates`, and one that writes neither commits nothing
+  - a merge of `develop` that conflicts only in `notes/Roadmap.md` keeps both sides' lines
 - If `docs/ci.md` describes what happens to majors, it says what the sweep rule does.
 - **Before the check:** with Sarah's OK, commit and push the notes and the skill to `develop`. If a dependency PR is open, ask Sarah to merge or close it. Then delete the `dependency-alerts-reported-*` cache entries with `gh cache delete`, start the weekly run with `gh workflow run`, and give Sarah the run's link and, once the session has opened it, the PR's link.
+- **Before Sarah looks at the PR:** if the run left no sweep item or no Roadmap line, tell her, since that leaves Goal 1 or Goal 3 unproved, and let her decide how to cover it.
 
 **Sarah checks:**
-- [ ] Open the PR link `/infra-build` gives you in chat. See new items in Library Upgrades and Dev Tool Upgrades for the backlog majors that are small (`typescript`, `vitest`, `jsdom`, `preact` and `temporal-polyfill`), and no major's version changed in `package.json`. Any other changes are real patches, minors or security fixes still outstanding. See each Library Upgrades item end 🎯 [[App Health]] and each Dev Tool Upgrades item end 🎯 [[Dev Tooling]], each naming its versions, a release notes link, and the breaking changes the app hits with their files. Then open the session in the Code tab under **Routines**, and see its summary name each backlog major with the sweep it went to, or why it looks like a story of its own. Merge the PR once it looks right. Goal: a major of a package other than the six becomes a sweep item or a flagged story.
+- [ ] Open the PR link `/infra-build` gives you in chat. For each backlog major (`typescript`, `vitest` with `@vitest/coverage-v8`, `jsdom`, `@types/jsdom`, `@types/node`, `@vitejs/plugin-react`, `preact` and `temporal-polyfill`), see either an item in Library Upgrades or Dev Tool Upgrades, or a line in `notes/Roadmap.md` under App Health, Dev Tooling or Bugs. See no major's version changed in `package.json`. Any other changes are real patches, minors or security fixes still outstanding. See each item name its versions, a release notes link and the breaking changes the app hits with their files, with no 🎯 link, and each line name its versions, why it was flagged and a release notes link. Then open the session in the Code tab under **Routines**, and see its summary name each backlog major with where it went. Merge the PR once it looks right. Goals: a small major of a package other than the assessed libraries becomes a sweep item, and one that can't gets its own Roadmap line.
 
-**As built:** not built. The first Implementer check, the cloud read, ran twice on 2026-11-02, and its results sent the story back to `/infra-design`, as the Inbox says. The sweeps, their Roadmap lines and the skill's changes are all still to do.
-
-### Step 2: Dropped updates become sweep items or story flags
-**Builds:** Piece 4 for dropped updates: sub-steps 3 and 7 sending a dropped update through the sweep rule, the rule's reading of what broke, and sub-step 8's **Not applied** record when nothing is pushed.
+### Step 2: Dropped updates become sweep items or Roadmap lines
+**Builds:** [[Local Dependency Update Alerts#^piece-4|Piece 4]] for dropped updates: sub-steps 3 and 7 sending a dropped update through the sweep rule, the rule's reading of what broke, and sub-step 8's **Not applied** record when nothing is pushed.
 **Setup first:** none
 **Implementer checks:**
 - In a local session on a throwaway branch that's never pushed, with payloads the implementer picks:
-  - a dropped update whose fix needs a decision gets no item, and the summary says why, with each failure and its file count
-  - a dropped fix for an advisory gets no item and a security-fix flag with its advisory ID
-  - a dropped minor of one of the six libraries becomes a Library Upgrades item
-  - an update dropped in sub-step 7 has its item committed with its revert
-  - when the merge of `develop` conflicts, the summary's **Not applied** lists what each item would have said
+  - a dropped update whose fix needs a decision gets no item and a Roadmap line, and the summary says why, with each failure and its file count
+  - a dropped fix for an advisory gets no item, a security-fix flag with its advisory ID, and a line placed as in Step 1
+  - a dropped minor of an assessed library becomes a Library Upgrades item
+  - an update dropped in sub-step 7 has its item or line committed with its revert
+  - when the merge of `develop` conflicts in a file other than `pnpm-lock.yaml` or `notes/Roadmap.md`, the summary's **Not applied** lists what each item and line would have said
 - **Before the check:** the `@biomejs/biome` version `pnpm outdated` lists still fails `pnpm lint:ci` on `develop`. If Biome has been upgraded since, or that version no longer breaks a check, tell Sarah and let her decide how to cover it.
 - **Before the check:** with Sarah's OK, commit and push the skill to `develop`. If a dependency PR is open, ask Sarah to merge or close it. Then clear the reported list and start the weekly run as in Step 1, and give Sarah the run's link and the PR's link.
+- **Before Sarah looks at the PR:** if Biome became a Roadmap line rather than an item, tell her, since that leaves Goal 2 unproved, and let her decide how to cover it.
 - **After the check:** once Sarah's check shows the Biome item in the PR, delete the Biome item from [[Dev Tooling Tidy-Ups]].
 
 **Sarah checks:**
-- [ ] Open the PR link `/infra-build` gives you in chat. See a Dev Tool Upgrades item for `@biomejs/biome`, ending 🎯 [[Dev Tooling]] and naming the `pnpm lint:ci` findings with their files. See the backlog majors' items (`typescript`, `vitest`, `jsdom`, `preact`, `temporal-polyfill`) updated in place, with no second item for any of them. Then open the session in the Code tab under **Routines**, and see its summary list Biome under **Dropped**, with the check it broke and the sweep its item went to. Merge the PR once it looks right. Goal: a patch or minor dropped because it breaks a check becomes a sweep item or a flagged story.
+- [ ] Open the PR link `/infra-build` gives you in chat. See a Dev Tool Upgrades item for `@biomejs/biome`, naming the `pnpm lint:ci` findings with their files, with no 🎯 link. See each backlog major's item or Roadmap line updated in place, with no second item or line for any of them. Then open the session in the Code tab under **Routines**, and see its summary list Biome under **Dropped**, with the check it broke and the sweep its item went to. Merge the PR once it looks right. Goal: a patch or minor dropped because it breaks a check, with a small fix, becomes a sweep item.
 
 # Out of Scope
 - Assessments of the six libraries' majors: [[Dependency Release Analysis]].
