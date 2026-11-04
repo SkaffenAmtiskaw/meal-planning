@@ -10,8 +10,8 @@ Ready. Next: /infra-build ^status
 Split from [[Local Dependency Update Alerts]] on 2026-10-04. `/infra-design` revised it on 2026-10-06: the assessed libraries are named in one place, minors get a summary only when they're in the PR, the old steps' details moved into the Design, and a three-step Build Order replaces them, its checks using stand-ins rather than waiting for real releases. Nothing is built yet.
 
 # Inbox
-- From [[Major Upgrade Sweeps]]' Step 1 (2026-11-03): the `dependency-updates` skill's step 5 now names the assessed libraries in one place, with their package names, and lists an assessed library's major in the summary. Other packages' majors go through a new supporting file, `sweep-rule.md`, which handles an assessed library's `@types/*` major by listing it beside its library. Step 8's **Majors** group now holds only what has no sweep item or Roadmap line, and **Sweep items** and **Roadmap lines** follow it.
-- From [[Major Upgrade Sweeps]]' cloud read checks (2026-11-02), on the `Meal Planning Routines` environment:
+- From Major Upgrade Sweeps' Step 1 (2026-11-03): the `dependency-updates` skill's step 5 now names the assessed libraries in one place, with their package names, and lists an assessed library's major in the summary. Other packages' majors go through a new supporting file, `sweep-rule.md`, which handles an assessed library's `@types/*` major by listing it beside its library. Step 8's **Majors** group now holds only what has no sweep item or Roadmap line, and **Sweep items** and **Roadmap lines** follow it.
+- From Major Upgrade Sweeps' cloud read checks (2026-11-02), on the `Meal Planning Routines` environment:
   - WebFetch reads `github.com` release pages in full, without each change's author and PR details. `curl` to `github.com` and `gh api` on another repo get a 403 from the session's GitHub proxy, which reaches only the attached repo.
   - WebFetch and `curl` both read `raw.githubusercontent.com`. A root `CHANGELOG.md` can be a symlink, as `biomejs/biome`'s is, which returns only its target's path, so the session has to fetch that path.
   - WebFetch obeys the allowed domains. `vitest.dev` and `preactjs.com`, which aren't on the list, failed with `getaddrinfo ENOTFOUND` through WebFetch and with a 403 from the proxy through `curl`. This answers what the hub's Piece 5 says the docs don't, so the six docs domains should work once they're added, and a site not on the list stays out of reach.
@@ -61,7 +61,7 @@ The design's Pieces are in [[Local Dependency Update Alerts]], embedded above.
 **Builds:** Piece 4 sub-step 4 for any other package, including release notes it can't read, and sub-step 8's minor summaries.
 **Setup first:** none
 **Implementer checks:**
-- **Before building:** a session on the `Meal Planning Routines` cloud environment can read a package's GitHub release page and its raw `CHANGELOG.md` for a repo the session isn't attached to, such as `resend/resend-node`, the way the skill will read them. If [[Major Upgrade Sweeps]] has been built, use what its implementer found. If the implementer can't start such a session, `/infra-build` gives Sarah the prompt in chat to start one at https://claude.ai/code with that environment, and she pastes back the result. If the reads are blocked, stop and bring it to Sarah, since it changes sub-step 4.
+- **Before building:** a session on the `Meal Planning Routines` cloud environment can read a package's GitHub release page and its raw `CHANGELOG.md` for a repo the session isn't attached to, such as `resend/resend-node`, the way the skill will read them. Use what the cloud read checks in this note's Inbox found. If the implementer can't start such a session, `/infra-build` gives Sarah the prompt in chat to start one at https://claude.ai/code with that environment, and she pastes back the result. If the reads are blocked, stop and bring it to Sarah, since it changes sub-step 4.
 - In a local session on a throwaway branch that's never pushed, the skill's step 4, run on made-up payloads, does each of these:
   - a minor of another package in the PR gets a summary of every release since the version on `develop`, with links, and an adoption line naming files where a feature would apply
   - a made-up minor whose release notes don't exist gets a summary that says it couldn't read them and names the site
@@ -89,5 +89,5 @@ The design's Pieces are in [[Local Dependency Update Alerts]], embedded above.
 
 # Out of Scope
 - The check, the workflow, the routine and the PR for small updates: built, as `docs/ci.md` ("Dependency Updates") describes.
-- Majors of other packages: [[Major Upgrade Sweeps]].
+- Majors of other packages: built, as `.claude/skills/dependency-updates/sweep-rule.md` describes.
 

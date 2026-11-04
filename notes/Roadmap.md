@@ -41,7 +41,6 @@
 - [[Dev Tooling]]
 
 # Now
-- [[Major Upgrade Sweeps]] ![[Major Upgrade Sweeps#^status]] 🎯 [[Dev Foundations]]
 
 # Next
 1. [[Workflow Tooling Review]] ![[Workflow Tooling Review#^status]] 🎯 [[Dev Foundations]]

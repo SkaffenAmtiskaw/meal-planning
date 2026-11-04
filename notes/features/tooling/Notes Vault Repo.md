@@ -6,7 +6,7 @@ confirmed: 2026-10-06
 ---
 # Where It Stands
 
-Ready. Next: /infra-build. Steps 6 and 7 wait on [[Major Upgrade Sweeps]] ^status
+Ready. Next: /check-drift ^status
 
 Shaped 2026-10-04, with five decisions settled on 2026-10-04 and 2026-10-05. `/infra-design` revised it on 2026-10-06: three Goals became requirements on their Pieces, and an 8-step Build Order replaced the 11 planned steps. Nothing is built yet. Steps 1-5 can be built now, while the notes are still in `notes/`.
 
@@ -114,7 +114,7 @@ Move the notes vault out of the code repo into its own git repo, so notes are ne
     - Boy Scout fix: "a push to any other branch is checked first and can be rejected" goes. The routines docs say nothing on Claude's side limits which branch a push updates; only GitHub's rules do. Found by /decide on decision 2, 2026-10-04.
     - What the Session Does: a routine that edits notes has both repos selected, its session starts above the two clones, and its skill `cd`s into the code clone before running scripts, which find the notes clone beside it through `notes-dir.sh`.
     - `docs/ci.md`, "The Claude GitHub App": the app has access to both repos; routines push `claude/` branches in `meal-planning` and `main` in `meal-planning-notes`.
-14. **The `dependency-updates` skill and its `routine.md`** - as [[Major Upgrade Sweeps]] leaves the skill, every note the sweep rule writes goes in the notes clone, not on `claude/dependency-updates`:
+14. **The `dependency-updates` skill and its `routine.md`** - every note the sweep rule writes goes in the notes clone, not on `claude/dependency-updates`:
     - **Finding the sweep:** it looks at the sweep's path in the notes repo, then searches the notes repo. If there's no collecting sweep, the Roadmap line it writes in its place goes in the notes repo's Roadmap.
     - **Committing:** once every update has been through the sweep rule, including any dropped after its PR's checks, it runs `vault-lint.sh` naming each note it changed, commits in the notes repo and pushes to `main` as `routine-sessions` says. An item for an update dropped after the checks is no longer committed with the revert.
     - **No PR for notes alone:** a run whose only changes are notes cuts no branch and opens no PR. The skill's "a run with only majors still gets its branch" and "a run with only sweep items still pushes and opens or updates the PR" go.
@@ -158,9 +158,9 @@ Move the notes vault out of the code repo into its own git repo, so notes are ne
 6. **Reconnect:** Obsidian opens the new folder and gets the plugin, and the GitHub App and the `dependency-updates` routine get the notes repo (Setup Outside the Repo). Pieces 13 and 14 are pushed to `develop` before the next scheduled `dependency-updates` run. If they can't be, Sarah disables that workflow in GitHub Actions until they are, for the same reason as not firing it by hand.
 
 ## Build Order
-Steps 1 to 5 change the code repo while the notes are still in `notes/`, and each leaves everything working, so each is committed on its own. Sarah decided 2026-10-05 that they can be built before [[Major Upgrade Sweeps]] is done. Steps 6 and 7 wait on it: Step 6 moves the sweep notes that story's skill writes, and Step 7 changes that skill. Sarah decided 2026-10-05 that Pieces 13 and 14 get a step of their own rather than joining the cutover's commit, and that it comes right after the cutover, since it needs nothing from Step 8 and it closes the gap in which a `dependency-updates` run flags majors instead of adding sweep items. She also decided that `/tooling`'s "Note paths in instructions" and "Agents with no Bash" bullets go in with the cutover, so no `/tooling` change after it writes `notes/` paths again.
+Steps 1 to 5 change the code repo while the notes are still in `notes/`, and each leaves everything working, so each is committed on its own. Step 6 moves the sweep notes the `dependency-updates` skill writes, and Step 7 changes that skill. Sarah decided 2026-10-05 that Pieces 13 and 14 get a step of their own rather than joining the cutover's commit, and that it comes right after the cutover, since it needs nothing from Step 8 and it closes the gap in which a `dependency-updates` run flags majors instead of adding sweep items. She also decided that `/tooling`'s "Note paths in instructions" and "Agents with no Bash" bullets go in with the cutover, so no `/tooling` change after it writes `notes/` paths again.
 
-- **Decided 2026-10-06 (/infra-design):** Step 7's check clears the reported list and starts the weekly Dependency Updates run with `gh`, as [[Major Upgrade Sweeps]]' checks do. Re-reported majors refresh their sweep items, so the run's notes reach `main`. Whether it opens a PR depends on whether a patch or minor is outstanding then, so the implementer checks the notes-only case on its own. Sarah's call.
+- **Decided 2026-10-06 (/infra-design):** Step 7's check clears the reported list and starts the weekly Dependency Updates run with `gh`. Re-reported majors refresh their sweep items, so the run's notes reach `main`. Whether it opens a PR depends on whether a patch or minor is outstanding then, so the implementer checks the notes-only case on its own. Sarah's call.
   - Rejected: firing the routine with `curl` and a crafted one-major payload - it needs the routine's token regenerated and the Actions secret that holds it updated.
 
 ### Step 1: A cloud session clones the notes repo beside the code repo

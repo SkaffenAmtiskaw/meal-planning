@@ -5,7 +5,7 @@ confirmed: 2026-10-04
 # Where It Stands
 Next: its child stories ^status
 
-Split 2026-10-04 during /plan-steps into Dependency Update PRs, [[Dependency Release Analysis]] and [[Major Upgrade Sweeps]]. The design is approved. Dependency Update PRs is built and closed: the check, the workflow, the routine and the PR for small updates. [[Major Upgrade Sweeps]] has both its steps built, and waits on `/final-review`. [[Dependency Release Analysis]] has its Build Order and is ready to build too.
+Split 2026-10-04 during /plan-steps into Dependency Update PRs, [[Dependency Release Analysis]] and Major Upgrade Sweeps. The design is approved. Dependency Update PRs is built and closed: the check, the workflow, the routine and the PR for small updates. Major Upgrade Sweeps is built and closed too: the sweep rule and the two sweeps. [[Dependency Release Analysis]] has its Build Order and is ready to build.
 
 # Inbox
 
@@ -215,19 +215,17 @@ Before planning or implementing any story linked from this note, read this note 
 | A major update never gets a PR without Sarah's say-so | Dependency Update PRs |
 | A minor of another package in the PR gets a release summary and whether it's worth a story | [[Dependency Release Analysis]] |
 | A minor of an assessed library in the PR gets an analysis of the code each new feature would improve | [[Dependency Release Analysis]] |
-| A small major of any other package becomes a sweep item | [[Major Upgrade Sweeps]] |
-| A patch or minor dropped because it breaks a check, with a small fix, becomes a sweep item | [[Major Upgrade Sweeps]] |
-| A major of any other package or a dropped update that can't become a sweep item gets its own Roadmap line | [[Major Upgrade Sweeps]] |
+| A small major of any other package becomes a sweep item | Major Upgrade Sweeps |
+| A patch or minor dropped because it breaks a check, with a small fix, becomes a sweep item | Major Upgrade Sweeps |
+| A major of any other package or a dropped update that can't become a sweep item gets its own Roadmap line | Major Upgrade Sweeps |
 
 # Child Stories
 | Story | Status | Scope in this area | Blocked by |
 |---|---|---|---|
-| Dependency Update PRs | done | The check, the workflow, the routine, and the one PR for patches, minors and security fixes | |
 | [[Dependency Release Analysis]] | ready | Minor release summaries, and the `upgrade-assessor` for the assessed libraries | |
-| [[Major Upgrade Sweeps]] | done | The Library Upgrades and Dev Tool Upgrades sweeps, for other packages' majors and for updates the session drops | |
 
 # Build Order
 - **Stated:** Dependency Update PRs first, since the other two extend the session it built. It's built and closed.
-- **Inferred from the draft plan:** [[Dependency Release Analysis]] and [[Major Upgrade Sweeps]] don't depend on each other and can come in either order. Both edit steps 5 and 8 of the `dependency-updates` skill, but different branches of each.
+- **Inferred from the draft plan:** [[Dependency Release Analysis]] doesn't depend on Major Upgrade Sweeps, which is built and closed. Both edit steps 5 and 8 of the `dependency-updates` skill, but different branches of each.
 
 # Deferred Work
