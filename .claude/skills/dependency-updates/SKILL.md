@@ -67,7 +67,7 @@ Then run the check as the job does, and keep its output: `pnpm install --frozen-
 Wherever you stop, also say that this week's findings and reminders weren't sent, unless a re-run sent them. New advisories still come from the hourly runs. The rest comes with next Monday's run, or sooner if Sarah runs the workflow weekly by hand once any fix is merged.
 
 ## 2. Check out the branch
-If `new:` is `none`, a run with only reminders, skip steps 2, 3 and 7.
+If `new:` is `none`, a run with only reminders, skip this step.
 
 Otherwise, fetch the latest `develop` and look for an open pull request from `claude/dependency-updates`. Every pull request call goes through `gh api`, as `routine-sessions` describes:
 

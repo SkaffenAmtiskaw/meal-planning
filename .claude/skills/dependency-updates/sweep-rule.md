@@ -10,8 +10,8 @@ Take each update through these steps, in order:
 1. **Rule out what's never an item.** The cases, and what to do with each before going on to the next update:
    - **A security fix:** write its Roadmap line, since a sweep holds work that can wait for a goal, and a security fix shouldn't.
    - **A major of an assessed library's `@types/*` package,** with `@types/react-dom` counting as React's: nothing more, since it's part of that library's upgrade.
-2. **Find its sweep.** A package in `dependencies` goes to Library Upgrades (`notes/features/tech debt/Library Upgrades.md`), and one in `devDependencies` goes to Dev Tool Upgrades (`notes/features/tooling/Dev Tool Upgrades.md`). An `@types/*` package follows its library. The cases, in the order to check them:
-   - **If the note isn't at that path:** search all of `notes/` for a `type: sweep` note with `status: idea` and no date in its name, whose Purpose says the `dependency-updates` routine adds its items and names the package's section of `package.json`.
+2. **Find its sweep.** The sweep depends on a section of `package.json`. For an `@types/*` package whose library is in that file, it's the library's section. For any other package, including `@types/node`, it's the package's own. `dependencies` goes to Library Upgrades (`notes/features/tech debt/Library Upgrades.md`), and `devDependencies` goes to Dev Tool Upgrades (`notes/features/tooling/Dev Tool Upgrades.md`). The cases, in the order to check them:
+   - **If the note isn't at that path:** search all of `notes/` for a `type: sweep` note with `status: idea` and no date in its name, whose Purpose says the `dependency-updates` routine adds its items and names that section.
      - **If that finds it:** use it.
      - **If it finds nothing:** go on with no sweep, and "Write the item" writes a line instead. Don't create the note, since a missing one may mean Sarah stopped it collecting.
    - **If the package's item is in a kicked-off copy** (`<sweep> YYYY-MM-DD`): write no item and leave the copy alone, since a copy's items are a fixed set, so that it can be finished. Go on to the next update.

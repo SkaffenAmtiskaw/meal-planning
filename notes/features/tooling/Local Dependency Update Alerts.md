@@ -224,7 +224,7 @@ Before planning or implementing any story linked from this note, read this note 
 |---|---|---|---|
 | Dependency Update PRs | done | The check, the workflow, the routine, and the one PR for patches, minors and security fixes | |
 | [[Dependency Release Analysis]] | ready | Minor release summaries, and the `upgrade-assessor` for the assessed libraries | |
-| [[Major Upgrade Sweeps]] | in-review | The Library Upgrades and Dev Tool Upgrades sweeps, for other packages' majors and for updates the session drops | |
+| [[Major Upgrade Sweeps]] | done | The Library Upgrades and Dev Tool Upgrades sweeps, for other packages' majors and for updates the session drops | |
 
 # Build Order
 - **Stated:** Dependency Update PRs first, since the other two extend the session it built. It's built and closed.

@@ -1,13 +1,11 @@
 ---
 type: infra
-status: in-review
+status: done
 blocked-by: []
 confirmed: 2026-11-03
 ---
 # Where It Stands
-All steps implemented. Next: /final-review ^status
-
-Split from [[Local Dependency Update Alerts]] on 2026-10-04. Both steps are built, so majors and dropped updates reach the sweeps and the Roadmap.
+Reviewed. Next: /close ^status
 
 # Inbox
 
