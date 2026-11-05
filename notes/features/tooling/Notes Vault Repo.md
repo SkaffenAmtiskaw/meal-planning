@@ -1,14 +1,14 @@
 ---
 type: infra
-status: ready
+status: in-progress
 blocked-by: []
 confirmed: 2026-11-04
 ---
 # Where It Stands
 
-Ready. Next: /infra-build ^status
+In progress. Next: /infra-build Step 2 ^status
 
-Shaped 2026-10-04, with five decisions settled on 2026-10-04 and 2026-10-05. `/infra-design` revised it on 2026-10-06 and again on 2026-11-04, after `/check-drift`. The second revision moved Note Conventions' home outside `.claude/rules/`, reworked the `dependency-updates` Piece for Roadmap lines and notes that don't wait on the code, and kept the 8-step Build Order. Nothing is built yet.
+Shaped 2026-10-04, with five decisions settled on 2026-10-04 and 2026-10-05. `/infra-design` revised it on 2026-10-06 and again on 2026-11-04, after `/check-drift`. The second revision moved Note Conventions' home outside `.claude/rules/`, reworked the `dependency-updates` Piece for Roadmap lines and notes that don't wait on the code, and kept the 8-step Build Order. Step 1 is built: the empty `meal-planning-notes` GitHub repo exists and a cloud session clones it beside the code repo. Steps 2 to 8 remain.
 
 # Inbox
 
@@ -113,6 +113,7 @@ Move the notes vault out of the code repo into its own git repo, so notes are ne
 12. **`/tooling`** (`.claude/skills/tooling/SKILL.md`) - step 1 searches the notes repo and names `roadmap-rules` in place of "How this file works". Step 2 searches the repo, including `.claude/note-conventions.md` and `.claude/note-templates/`, and step 5's "all of `notes/`" becomes the notes repo. Holding Roadmap edits (decision 4): an edit to existing Roadmap lines or sections that the change causes, such as renaming a section, isn't made with the rest of step 3. `/tooling` lists each one in its step 6 report under "Roadmap edits to apply after the commit", and when Sarah asks that session to commit, it commits the code repo change first, then makes those edits and runs `vault-lint.sh`. Until [[Branching and Releases]] gives `/tooling` a branch and a PR, the commit to `develop` is when the skills go live; that story moves this to "after its PR merges". Story progress still updates the Roadmap right away. `vault-lint.sh` changes in the same commit as the skills. ^piece-12
 13. **The `routine-sessions` skill and `docs/ci.md`** - the shared rules for a routine's session, and the record of the GitHub setup. ^piece-13
     - Branches: "In the code repo, commit and push only to branches whose names start with `claude/`. Never merge one branch into another on GitHub, such as by merging a pull request, because a session's code reaches another branch only after the user has reviewed it. In the notes repo, commit and push only to `main`, since nothing there goes through a pull request. Run `git pull --rebase` before pushing. If the push is rejected because Obsidian Git pushed in between, pull and push again. If the rebase conflicts, look at what each side changed. If both changes can stand together, such as both sides adding lines or a list that needs renumbering, resolve it and go on. If they say different things about the same content, stop without pushing and say which notes conflicted." The conflict rule is Sarah's call. The docs say the proxy doesn't limit which branches a push can update, so the old reason about pushes being rejected goes.
+    - Starting branch: a cloud session can start each clone on a branch named for the session, as Step 1's test session did in both clones. So before it edits a note, a session checks out `main` in the notes clone.
     - What the Session Can Use: "The session has only the repos its routine selects, as last pushed, and its cloud environment. A routine that edits notes selects both repos. Its session starts above the two clones, so its skill `cd`s into the code clone before running scripts, which find the notes clone through `notes-dir.sh`."
     - `writing-a-routine.md`'s "the repo as last pushed" changes to match.
     - `docs/ci.md`, "The Claude GitHub App": the app has access to both repos; routines push `claude/` branches in `meal-planning` and `main` in `meal-planning-notes`.
@@ -135,9 +136,9 @@ Move the notes vault out of the code repo into its own git repo, so notes are ne
 4. A checkout of another branch, or a worktree, in the code repo touches none of it.
 
 **A note edited by a routine:**
-1. The trigger fires. The session clones `meal-planning` and `meal-planning-notes` on their default branches and starts above them.
+1. The trigger fires. The session clones `meal-planning` and `meal-planning-notes` and starts above them. Each clone can start on a branch named for the session.
 2. It `cd`s into the code clone and does its code work there, on a `claude/` branch if it changes code.
-3. It edits notes in the notes clone (found through [[#^piece-4|Piece 4]]), runs `vault-lint.sh` naming them, and commits in the notes repo.
+3. It checks out `main` in the notes clone (found through [[#^piece-4|Piece 4]]), edits notes there, runs `vault-lint.sh` naming them, and commits in the notes repo.
 4. It runs `git pull --rebase` and pushes to the notes repo's `main`, as [[#^piece-13|Piece 13]] says. A PR is opened only if it changed code.
 5. Within five minutes, the plugin's auto pull brings the change into Sarah's vault, or at Obsidian's next startup if it's closed.
 
@@ -180,7 +181,14 @@ Steps 1 to 5 change the code repo while the notes are still in `notes/`, and eac
 - The two clone paths and `$CLAUDE_PROJECT_DIR` are recorded in this step's As built note, for Steps 6 and 7.
 
 **Sarah checks:**
-- [ ] Start a session at https://claude.ai/code on the `Meal Planning Routines` environment with `meal-planning` and `meal-planning-notes` selected, and paste the prompt `/infra-build` gives you in chat. If the form takes only one repo, `/infra-build` walks you through a throwaway routine instead. See the clones of the two repos listed as two folders under one parent, and the `dependency-updates` skill in its list of skills, and paste the output back into the `/infra-build` session. Goal: any note a routine's session adds or changes reaches the notes repo's `main` (the clone layout and skill it relies on).
+- [x] Start a session at https://claude.ai/code on the `Meal Planning Routines` environment with `meal-planning` and `meal-planning-notes` selected, and paste the prompt `/infra-build` gives you in chat. If the form takes only one repo, `/infra-build` walks you through a throwaway routine instead. See the clones of the two repos listed as two folders under one parent, and the `dependency-updates` skill in its list of skills, and paste the output back into the `/infra-build` session. Goal: any note a routine's session adds or changes reaches the notes repo's `main` (the clone layout and skill it relies on).
+
+**Status:** ✅ Complete
+
+**As built:**
+- The session started in `/home/user`, with clones at `/home/user/meal-planning` and `/home/user/meal-planning-notes`, and `$CLAUDE_PROJECT_DIR` empty in its shell. `mise.toml` is at `/home/user/meal-planning/mise.toml`, within the setup script's `find`. It listed `dependency-updates` and quoted AGENTS.md from above the clones.
+- Both clones started on a session-named `claude/` branch, so [[#^piece-13|Piece 13]], the routine Flow and the "Routines that change notes" convention now say to check out `main` in the notes clone first. The test used an empty notes repo and a regular session, so a routine run with a filled repo may start differently.
+- The first two test sessions cloned only `meal-planning`. The third, opened from a link that preselected both repos (`https://claude.ai/code?repositories=<owner>/meal-planning,<owner>/meal-planning-notes&environment=Meal%20Planning%20Routines`), cloned both. Whether the link or finishing the GitHub connection fixed it wasn't established.
 
 ### Step 2: Note Conventions, the templates and the Roadmap's rules move into the code repo
 **Builds:** [[#^piece-7|Pieces 7]], [[#^piece-8|8]] and [[#^piece-9|9]], apart from the notes repo's folder paths (Step 6)
@@ -265,7 +273,7 @@ Steps 1 to 5 change the code repo while the notes are still in `notes/`, and eac
 - **Agents that read notes:** when a skill sends an agent work that reads notes, it puts the notes repo's path in the agent's prompt, whatever tools the agent has. Lands in the `writing-standard` skill's `instructions.md`.
 - **Committing notes:** a local session never commits or pushes the notes repo; Obsidian Git does. Lands in AGENTS.md's Project line.
 - **Linting changed notes:** a session that changed notes runs `sh scripts/vault-lint.sh` naming each note it changed before it finishes, routines included. Lands in AGENTS.md, "Before you finish".
-- **Routines that change notes:** the routine selects both repos. It pushes its note changes straight to the notes repo's `main`, pulling with rebase first and retrying if rejected. It resolves a rebase conflict whose changes can stand together, such as added lines or a list that needs renumbering, and stops without pushing if they say different things about the same content. It opens a PR only for code changes. Lands in the `routine-sessions` skill, Branches.
+- **Routines that change notes:** the routine selects both repos. It checks out `main` in the notes clone before editing a note. It pushes its note changes straight to the notes repo's `main`, pulling with rebase first and retrying if rejected. It resolves a rebase conflict whose changes can stand together, such as added lines or a list that needs renumbering, and stops without pushing if they say different things about the same content. It opens a PR only for code changes. Lands in the `routine-sessions` skill, Branches.
 - **Roadmap edits from a workflow change:** when a workflow change also edits existing Roadmap lines or sections, such as renaming a section, those edits are made only once the change is committed to `develop` (after its PR merges, once [[Branching and Releases]] adds one). Story progress updates the Roadmap right away. Lands in `/tooling`, step 3 and its step 6 report.
 
 # Setup Outside the Repo

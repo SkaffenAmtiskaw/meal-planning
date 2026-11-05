@@ -131,7 +131,7 @@ The ruleset covers only `main`, so you can still push straight to `develop`.
 When a check job in `checks.yml` is renamed, added or removed, change the ruleset's required checks and this record in the same change. That way every check job is required, and every required check has a job to report it. A required check with no job never reports, and blocks every merge.
 
 ## The Claude GitHub App
-The [Claude GitHub App](https://github.com/apps/claude) is installed on the repo, with access to only `meal-planning`. It lets routines clone the repo and push their `claude/` branches. A cloud session reaches GitHub through the cloud GitHub proxy, which authenticates `git` and `gh` with the app's access, so no GitHub token is stored anywhere.
+The [Claude GitHub App](https://github.com/apps/claude) is installed with access to `meal-planning` and `meal-planning-notes`. It lets routines clone both repos and push their `claude/` branches. A cloud session reaches GitHub through the cloud GitHub proxy, which authenticates `git` and `gh` with the app's access, so no GitHub token is stored anywhere.
 
 The app's access covers what the `ci-failure` and `dependency-updates` sessions do on GitHub: opening and editing a PR (`gh api`), finding a run (`gh run list`), reading one (`gh run view`), re-running its failed jobs (`gh run rerun --failed`) and reading their logs (`gh run view --log-failed`). The logs need one more allowed host in the cloud environment (see "The Cloud Environment").
 
