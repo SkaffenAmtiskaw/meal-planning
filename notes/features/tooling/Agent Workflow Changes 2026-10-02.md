@@ -5,7 +5,7 @@ confirmed: 2026-09-27
 # Where It Stands
 Kicked off. Next: /tooling ^status
 
-Kicked off 2026-10-02 from [[Agent Workflow Changes]] with the items that serve [[Dev Foundations]]. Sarah pulled nine more items in on 2026-10-05. The three rules that contradicted other rules were fixed on 2026-10-06, and two groups of items became their own stories the same day: "Skill and doc edits read as a whole" became What Makes a Good Doc, and the slimming pass became [[Agent Instructions Audit]]. "Notes copy a story's status instead of embedding it" moved into Agent Instructions Audit later that day, and the other items about specific skills and files moved into its review notes. One item remains.
+Kicked off 2026-10-02 from [[Agent Workflow Changes]] with the items that serve [[Dev Foundations]]. Sarah pulled nine more items in on 2026-10-05. The three rules that contradicted other rules were fixed on 2026-10-06, and two groups of items became their own stories the same day: "Skill and doc edits read as a whole" became What Makes a Good Doc, and the slimming pass became Agent Instructions Audit. "Notes copy a story's status instead of embedding it" moved into Agent Instructions Audit later that day, and the other items about specific skills and files moved into its review notes. One item remains.
 
 # Purpose
 Changes to how agents work in this repo: skills (`.claude/skills/`), subagents (`.claude/agents/`), AGENTS.md and agent conventions. This includes Sarah's feedback on how they behave. The planning skills block edits outside `notes/`, so an agent that spots a fix mid-run adds an item here instead.
