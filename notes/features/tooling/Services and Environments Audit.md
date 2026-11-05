@@ -7,7 +7,7 @@ confirmed: 2026-11-04
 # Where It Stands
 Audited. Next: /plan-steps ^status
 
-The readings are in Current State. What remains is writing the new doc in `docs/`, splitting `docs/ci.md`'s "Setup Outside the Repo", and adding a Roadmap line for each of Open Decision 2's ten findings, with Sarah picking each one's goal.
+The readings are in Current State. What remains is writing the new doc in `docs/` and splitting `docs/ci.md`'s "Setup Outside the Repo". Open Decision 2's ten findings have their Roadmap lines.
 
 # Inbox
 - From Large Workflow Changes (`/tooling`, 2026-11-03): this note is typed cleanup but changes no code. It reads settings from dashboards and produces a doc and Roadmap lines, so the running-app click-through checks in `.claude/skills/writing-implementation-steps/checks.md` may not fit its steps.
@@ -110,7 +110,7 @@ Sarah read these out on 2026-11-04.
      - Rejected: keep all of it in `docs/ci.md`, with one link from the services doc - it gives later stories no rule for setup that isn't CI.
      - Rejected: split by vendor (GitHub and claude.ai in `docs/ci.md`, everything else in the services doc) - it splits one feature across two docs, such as the Vercel token and the workflow that uses it.
 2. Which of the audit's findings become changes? Found by `/audit` (2026-11-04).
-   - **Decided 2026-11-04:** all of them, each with its own Roadmap line. Sarah's call. The findings are:
+   - **Decided 2026-11-04:** all of them, each with its own Roadmap line. Sarah's call. Findings 1, 4 and 9 are under [[Dev Foundations]] and the rest under [[App Health]], which she approved from an agent's recommendations. The findings are:
      1. Previews use production's database, Resend key, Google client and better-auth secret.
      2. Atlas's IP access list allows `0.0.0.0/0`.
      3. The allowlist has three unlabelled addresses, probably including Sarah's old ones.
@@ -133,7 +133,6 @@ Sarah read these out on 2026-11-04.
 - [ ] One doc in `docs/` records every service and account the app and its development use, for each environment, including where each secret lives and who Sarah pays for what.
 - [ ] The doc says how to set up a new environment, such as a new MongoDB one.
 - [ ] The doc records how production on Vercel differs from local.
-- [ ] Each of Open Decision 2's ten findings has its own Roadmap line, placed under the goal Sarah picks for it.
 - [ ] `docs/ci.md`'s "Setup Outside the Repo" is split with the doc as Open Decision 1 settles, and both docs state the rule for which one records a new setting.
 
 # Implementation
