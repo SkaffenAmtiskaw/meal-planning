@@ -7,6 +7,8 @@ The reader is a capable agent that already knows general practice. Add only what
 ## Make Every Line Earn Its Place
 Instructions load into an agent's context, and the longer they are, the less closely it follows each one. So every line has to earn its place, and a line that tells the agent what it already knows costs attention the lines that matter need. Before keeping a line, or a whole step, ask whether an agent would do the wrong thing without it. Giving a reason, or being the only place something is said, doesn't make it needed.
 
+If the agent or the user would notice a case when it comes up, write no procedure for it if it's either of two kinds: one that's rare and differs each time, such as a note that turns out to need a different type, or one that hasn't happened yet. A procedure for it loads on every run and may not fit when the case comes up, and the agent can raise it with the user then.
+
 ## Match Freedom to How Fragile the Task Is
 If a task breaks when it's done slightly differently, such as a sequence of commands or a format a script checks, give exact steps. If it takes judgment, give the goal and its reason, and leave the how to the agent. Exact steps for a judgment task make the agent follow them where they don't fit, and a bare goal for a fragile task lets it improvise where it can't.
 

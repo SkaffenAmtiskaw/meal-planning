@@ -28,7 +28,7 @@ Write each step's checks as `checks.md` in this skill's folder describes.
 ## Coverage
 Everything in the approach lands in a step. A step builds only what the approach holds, plus anything its Source labels an item the user pulled in or a Boy Scout fix.
 
-The approach can miss things, so the steps' Source lines also claim every part of the note that says what the story must build, fix or keep working, such as Requirements bullets, Design Handoff sections (by heading), Symptoms, Acceptance Criteria, or a `> [!warning]` callout another story routed in.
+The approach can miss things, so the steps' Source lines also claim every part of the note that says what the story must build, fix or keep working, such as Requirements bullets, Design Handoff sections (by heading) or a `> [!warning]` callout another story routed in.
 
 ## Format
 ```

@@ -17,7 +17,7 @@ Invoke the `editing-notes` skill first, since this run changes notes.
 
 ## 1. Read the Note
 Find the note in `notes/` and read all of it. Where it is and its `status` decide the kind of close:
-- **`done`, in `notes/features/`:** a done close. Check that every step is marked ✅ Complete, ❌ Will Not Do or 🚛 Moved, and that each 🚛 target note holds the moved work in full, with its image embeds and handoff text. If anything is missing, tell the user what you found and stop.
+- **`done`, in `notes/features/`:** a done close. Check that every step is marked ✅ Complete, ❌ Will Not Do or 🚛 Moved, and that each 🚛 target note holds the moved work as `.claude/skills/filing-work/content-from-another-note.md` describes. If anything is missing, tell the user what you found and stop.
 - **A hub, in `notes/features/`:** check each story it lists. If any is still open (its note is in `notes/features/`), tell the user which ones and stop. Otherwise, it's a done close.
 - **`dropped`, in `notes/features/`:** a dropped close. Ask the user whether any part of the story is still wanted somewhere else, such as a step or a piece of its design. Each part they name goes on the out-of-scope list.
 - **Any other status, in `notes/features/`:** ask the user whether they're dropping the story. If they are, it's a dropped close, so ask about its parts as the case above describes. Otherwise, stop.

@@ -18,5 +18,4 @@ In the files below, the failed job is `check`, its script is the check you just 
 - **The check fails:** follow `.claude/skills/routine-sessions/fixing-a-failure.md`. The pull request's title is `Fix the weekly dependency check on <branch>`, and its body links the failed run.
 - **The check passes:** follow `.claude/skills/routine-sessions/rerunning-a-failure.md`, with these changes:
   - When attempt 2 passes, also say what its `start-dependency-updates` job did, since the re-run also re-runs it. Read it with `gh run view "<run ID>" --attempt 2 --json jobs --jq '.jobs[] | "\(.name) \(.conclusion)"'`. If it passed, it sent the week's findings and reminders, which start a session of their own. If it was skipped, there was nothing to send.
-  - When you diagnose a failure only GitHub's runner has, another difference is the reported list the run restored, which you don't have. If the log shows `pnpm deps:check` rejecting it, say so, and point the user to clearing it, as `docs/ci.md` describes under "The Reported List".
   - Where it says to fix the failure, fix it as "The check fails" above describes.

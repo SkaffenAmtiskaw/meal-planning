@@ -41,7 +41,7 @@ How goals order the work, what each section and kind of note holds, and the rule
 # Now
 
 # Next
-1. [[Conventions Review]] ![[Conventions Review#^status]] 🎯 [[Dev Foundations]]
+1. [[Agent Instructions Audit]] ![[Agent Instructions Audit#^status]] 🎯 [[Dev Foundations]]
 2. [[Agent Workflow Changes 2026-10-02]] ![[Agent Workflow Changes 2026-10-02#^status]] 🎯 [[Dev Foundations]]
 3. [[Dependency Release Analysis]] ![[Dependency Release Analysis#^status]] 🎯 [[Dev Foundations]]
 4. [[Notes Vault Repo]] ![[Notes Vault Repo#^status]] 🎯 [[Dev Foundations]]

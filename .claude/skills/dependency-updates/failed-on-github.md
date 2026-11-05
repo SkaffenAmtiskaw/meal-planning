@@ -21,7 +21,7 @@ Follow `.claude/skills/routine-sessions/rerunning-a-failure.md`. The head branch
 - Where it says to fix the failure, don't fix the code. Go to "A Failure That Reproduces".
 
 ## A Failure That Reproduces
-Take the jobs one at a time. For each, first find out whether the script fails without this run's updates: check out the starting point from step 2 of the skill and run `pnpm install --frozen-lockfile`. Then run the script. If it failed only with a variable set or on a throwaway merge, run it the same way here. What to do depends on the result:
+Take the jobs one at a time. For each, first find out whether the script fails without this run's updates: check out the starting point from step 2 of the skill and run `pnpm install --frozen-lockfile`. Then run the script. If it failed only with a variable set, run it the same way here. What to do depends on the result:
 - **The script fails on the starting point too:** no update from this run is to blame, so drop nothing. Keep the reason and the line of output that shows it, for the body and the summary. The reason depends on the starting point:
   - **It's `origin/develop`:** `develop` fails that job without any update.
   - **It's the open pull request's merge:** check out `origin/develop`, install and run the script the same way.
@@ -30,24 +30,14 @@ Take the jobs one at a time. For each, first find out whether the script fails w
 
   Then go back with `git checkout claude/dependency-updates` and `pnpm install --frozen-lockfile`, and take the next job. If none is left, go to "Finish".
 - **The script passes on the starting point:** an update from this run breaks it. Take these steps, in order:
-  1. Use `git bisect` to find the first commit that fails it, even when the cause looks obvious. A guess can drop the wrong update, since a library's minor can break lint through its types. Which command to use, by how the failure reproduces:
-     - **With nothing extra:** the first block.
-     - **With a variable set:** the first block, with the variable set on the script, as in `GITHUB_ACTIONS=true pnpm <script>`.
-     - **Only with `develop` merged in:** the second block.
+  1. Use `git bisect` to find the first commit that fails it, even when the cause looks obvious. A guess can drop the wrong update, since a library's minor can break lint through its types. If the failure needs a variable set, set it on the script, as in `GITHUB_ACTIONS=true pnpm <script>`.
 
      ```bash
      git bisect start claude/dependency-updates "<starting point>"
      git bisect run sh -c 'pnpm install --frozen-lockfile && pnpm <script>'
      git bisect reset
      ```
-
-     ```bash
-     git fetch origin develop
-     git bisect start claude/dependency-updates "<starting point>"
-     git bisect run sh -c 'c=$(git rev-parse HEAD); git merge --no-edit --quiet origin/develop || { git merge --abort; exit 125; }; pnpm install --frozen-lockfile && pnpm <script>; r=$?; git reset --hard --quiet "$c"; exit $r'
-     git bisect reset
-     ```
-  2. Check out the first bad commit, install and run the script, reproducing the failure the same way. If you merged `develop` to reproduce it, undo that merge. Keep each error or failure it prints, with its file, for the sweep rule. Keep the dropped update, the job it broke and the line of its output that shows why, for the summary. If the failure showed up here only after you recreated a difference from GitHub's runner, also keep what that difference is.
+  2. Check out the first bad commit, install and run the script, reproducing the failure the same way. Keep each error or failure it prints, with its file, for the sweep rule. Keep the dropped update, the job it broke and the line of its output that shows why, for the summary. If the failure showed up here only after you recreated a difference from GitHub's runner, also keep what that difference is.
   3. Note the hash of each commit on the branch that changes only notes, since cutting the branch again removes them.
   4. Cut the branch again from the starting point with `git checkout -B claude/dependency-updates "<starting point>"`, then run `pnpm install --frozen-lockfile`.
   5. Run step 3 of the skill again, leaving out the updates you've dropped. Then `git cherry-pick` each of those notes commits, in order.

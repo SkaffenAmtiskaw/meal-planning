@@ -23,7 +23,7 @@ The ways to keep a session to the instructions it uses each fit a different shap
 A skill or agent reads a file only if one of its steps needs it, because each file it says to read loads in every run of it.
 
 Invoking a skill, preloading it with `skills:` and reading a file with Read each load the whole file, even when a skill names only one section of the file. So when a skill or agent needs only part of a shared file:
-- **If it needs one fact from a long shared file:** it states the fact, as `rule-placement` allows.
+- **If `rule-placement` lets it copy the part:** it copies the part at the step that uses it.
 - **Otherwise, if the file is a shared-rule skill:** the part goes in a supporting file in that skill's folder, and the skill or agent that needs the part reads only that file, as `rule-placement` describes.
 - **Otherwise,** such as for Note Conventions or a doc: it reads the whole file. These files are laid out for the people who read them, so they aren't split up for agents.
 
