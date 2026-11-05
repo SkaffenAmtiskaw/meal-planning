@@ -13,6 +13,7 @@ Next: /decide. Decision 3 waits on [[Services and Environments Audit]] ^status
 Shaped 2026-10-06 as an infra story: a backup of production's database, a tested restore and a routine that re-tests it. Three decisions are open for /decide. Decision 3, the backup method, waits on the Audit confirming what production's database runs on. Then /infra-design writes the Goals, Design and Build Order.
 
 # Inbox
+- From [[Services and Environments Audit]] (`/audit`, 2026-11-04), for decision 3: production's database is `staging`, on a Free tier Atlas cluster running MongoDB 8.0.36, the same cluster as the dev `test` database. Atlas's docs say standard cloud backups aren't available on Free clusters, and that a daily-snapshot subscription for them is in private preview. Nobody checked this cluster's Backup page.
 
 # Purpose
 Set up a known, tested way to back up and restore the production database. It's a Done When item of [[Dev Foundations]]. It's standard practice before shipping releases regularly, since a bad migration or deploy can't be undone without it.

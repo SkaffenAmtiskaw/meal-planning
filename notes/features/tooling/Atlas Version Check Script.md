@@ -9,6 +9,9 @@ confirmed: 2026-09-29
 
 Blocked by [[Services and Environments Audit]]; then /shape ^status
 
+# Inbox
+- From [[Services and Environments Audit]] (`/audit`, 2026-11-04): the dev database in `.env.local` and production's are on the same Atlas cluster, running MongoDB 8.0.36. Finding 10 of that note's Open Decision 2 and finding 9, on the shared Free cluster, each get a Roadmap line, and could change this.
+
 # Notes
 If [[Services and Environments Audit]] finds that the dev database in `.env.local` runs on the same Atlas cluster as production, add a `pnpm` script that reads `db.version()` from the dev database and checks that its release series (major.minor) matches the MongoDB version pinned for the E2E memory server. If they're on different clusters, the script can't tell what production runs, so it isn't worth building.
 
