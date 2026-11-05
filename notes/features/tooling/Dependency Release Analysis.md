@@ -1,17 +1,17 @@
 ---
 type: infra
-status: ready
+status: in-progress
 blocked-by: []
 confirmed: 2026-10-06
 ---
 # Where It Stands
-Ready. Next: /infra-build ^status
+In progress. Next: /infra-build Step 2 ^status
 
-Split from [[Local Dependency Update Alerts]] on 2026-10-04. `/infra-design` revised it on 2026-10-06: the assessed libraries are named in one place, minors get a summary only when they're in the PR, the old steps' details moved into the Design, and a three-step Build Order replaces them, its checks using stand-ins rather than waiting for real releases. Nothing is built yet.
+Step 1 is built, uncommitted when it finished: majors of the assessed libraries go to `upgrade-assessor`. Steps 2 and 3 remain, for minors. The Inbox's step numbers for the `dependency-updates` skill are what Steps 2 and 3 need, since their wording still says the skill's step 4 and step 8.
 
 # Inbox
 - From Dependency-Updates Review (2026-11-03): the `dependency-updates` skill now has six steps. Its Minors step is gone, so minors are only listed in the summary. Majors and uncleared advisories are step 4, push and wait are step 5, and the summary is step 6. The session no longer runs the checks before it pushes. The advisory steps moved to `security-fixes.md`, and a failed job's path is `failed-on-github.md`. An advisory on an assessed library that only a major fixes no longer goes to the summary alone: it gets a Roadmap line first in Next with 🚨, through `sweep-rule.md`.
-- From Major Upgrade Sweeps' Step 1 (2026-11-03): the `dependency-updates` skill's step 5 now names the assessed libraries in one place, with their package names, and lists an assessed library's major in the summary. Other packages' majors go through a new supporting file, `sweep-rule.md`, which handles an assessed library's `@types/*` major by listing it beside its library. Step 8's **Majors** group now holds only what has no sweep item or Roadmap line, and **Sweep items** and **Roadmap lines** follow it.
+- From Step 1's checks (2026-11-04): an `upgrade-assessor` run fetched `moment.github.io/luxon/#/upgrading` and `#/support` and got back only the page title, since the site renders its pages in the browser. It read the upgrade guide from `docs/upgrading.md` in `moment/luxon` on GitHub, and found no support page text. This matters for Step 3, which adds `moment.github.io` to the allowed domains.
 - From Major Upgrade Sweeps' cloud read checks (2026-11-02), on the `Meal Planning Routines` environment:
   - WebFetch reads `github.com` release pages in full, without each change's author and PR details. `curl` to `github.com` and `gh api` on another repo get a 403 from the session's GitHub proxy, which reaches only the attached repo.
   - WebFetch and `curl` both read `raw.githubusercontent.com`. A root `CHANGELOG.md` can be a symlink, as `biomejs/biome`'s is, which returns only its target's path, so the session has to fetch that path.
@@ -21,7 +21,7 @@ Split from [[Local Dependency Update Alerts]] on 2026-10-04. `/infra-design` rev
 Each minor update the `dependency-updates` routine finds gets a summary of what its release adds and whether the app should adopt any of it. React, Next, Mantine, better-auth, luxon and Zod are **the assessed libraries**: a minor or major of one goes to the Opus `upgrade-assessor` subagent, which ties new features to the app's code and, for a major, weighs gain and urgency against effort. It extends the session Dependency Update PRs built. Split from [[Local Dependency Update Alerts]] on 2026-10-04.
 
 # Goals
-- [ ] A major of one of the assessed libraries gets an assessment in the session that weighs how much the app would gain and how urgent the upgrade is against how much effort it would take.
+- [x] A major of one of the assessed libraries gets an assessment in the session that weighs how much the app would gain and how urgent the upgrade is against how much effort it would take.
 - [ ] Each minor of a package other than the assessed libraries that goes into the PR gets a summary in the session of what the release adds, and whether anything in it is worth a story to adopt.
 - [ ] Each minor of one of the assessed libraries that goes into the PR gets an analysis in the session naming the code in the app each new feature would improve, and whether anything in it is worth a story to adopt.
 
@@ -49,41 +49,46 @@ The design's Pieces are in [[Local Dependency Update Alerts]], embedded above.
 **Setup first:** none
 **Implementer checks:**
 - The skill names the assessed libraries in one place, and its other steps and `upgrade-assessor.md` refer to them by that name.
-- In a local session on a throwaway branch that's never pushed, the skill's step 5, run on made-up payloads, does each of these:
+- In a local session on a throwaway branch that's never pushed, the skill's step 4, run on made-up payloads, does each of these:
   - a major of an assessed library goes to the subagent, and the summary shows the report unedited, marked "not applied", with the offer to create a note
-  - an advisory on an assessed library that only a major fixes goes to the subagent, and the summary flags it as a security fix with its advisory ID
+  - an advisory on an assessed library that only a major fixes goes to the subagent, and the summary flags it as a security fix with its advisory ID. It also gets its Roadmap line, through `sweep-rule.md`
   - a React major and an `@types/react` major in the same run go to the subagent together, and the summary lists the type package's major beside the report
-- **Before the check:** if `temporal-polyfill` has been upgraded since 2026-10-06, pick another major that `pnpm outdated` lists on `develop`, and give Sarah the prompt below with it filled in.
 
-**Sarah checks:**
-- [ ] None of the assessed libraries has a major out, so `temporal-polyfill` stands in for one. Open a new Claude Code session in the folder `/infra-build` names in chat, and paste `Have the upgrade-assessor subagent assess temporal-polyfill 0.3.2 → 1.0.5.` (or the prompt `/infra-build` gives you in chat, if it picked another major). See a report with each breaking change the app hits and its file counts, how long the current major keeps getting fixes (or that no support policy is stated, and where it looked), the features the app could use with files and an example of each, the pages it read, and a verdict weighing gain and urgency against effort that says how soon the upgrade is worth planning. Goal: a major of an assessed library gets an assessment weighing gain and urgency against effort.
+**Status:** ✅ Complete
+
+**As built:**
+- A security major of an assessed library gets its report and also a 🚨 Roadmap line through `sweep-rule.md`, which Dependency-Updates Review added after the Design.
+- An `@types/*` major with no major of its library in the run is listed on its own in **Majors**.
+- The skill makes one subagent call per library, and **Majors** is the summary's last group, so long reports don't bury the short groups.
+- Sarah's check is dropped: the implementer's `upgrade-assessor` run on `temporal-polyfill` 0.3.2 → 1.0.5, in the session that built the step, returned every part the check listed.
+- Boy Scout fix: the `temporal-polyfill` Roadmap line now names the types break that run found, in place of the `/full` entry, which doesn't apply.
 
 ### Step 2: Minors of other packages get a summary
 **Builds:** Piece 4 sub-step 4 for any other package, including release notes it can't read, and sub-step 8's minor summaries.
 **Setup first:** none
 **Implementer checks:**
 - **Before building:** a session on the `Meal Planning Routines` cloud environment can read a package's GitHub release page and its raw `CHANGELOG.md` for a repo the session isn't attached to, such as `resend/resend-node`, the way the skill will read them. Use what the cloud read checks in this note's Inbox found. If the implementer can't start such a session, `/infra-build` gives Sarah the prompt in chat to start one at https://claude.ai/code with that environment, and she pastes back the result. If the reads are blocked, stop and bring it to Sarah, since it changes sub-step 4.
-- In a local session on a throwaway branch that's never pushed, the skill's step 4, run on made-up payloads, does each of these:
+- In a local session on a throwaway branch that's never pushed, the skill's step 6, run on made-up payloads, does each of these:
   - a minor of another package in the PR gets a summary of every release since the version on `develop`, with links, and an adoption line naming files where a feature would apply
   - a made-up minor whose release notes don't exist gets a summary that says it couldn't read them and names the site
   - a minor dropped for breaking a check gets no summary
 - **Before the check:** with Sarah's OK, commit and push the skill to `develop`, since a cloud session reads the skill from there.
 
 **Sarah checks:**
-- [ ] At https://claude.ai/code, start a session on the `Meal Planning Routines` environment with the `meal-planning` repo, and paste: `Follow step 4 of the dependency-updates skill for the finding "minor resend@6.32.0", as if 6.31.0 were the version on develop and the update were in the PR. Change nothing, and show me the summary step 8 would give for it.` See what `resend` 6.32.0 adds, with links to its release notes on GitHub, and whether anything in it is worth a story to adopt, naming the files if so. Goal: a minor of a package other than the assessed libraries gets a summary.
+- [ ] At https://claude.ai/code, start a session on the `Meal Planning Routines` environment with the `meal-planning` repo, and paste: `Follow step 6 of the dependency-updates skill for the finding "minor resend@6.32.0", as if 6.31.0 were the version on develop and the update were in the PR. Change nothing, and show me the summary step 7 would give for it.` See what `resend` 6.32.0 adds, with links to its release notes on GitHub, and whether anything in it is worth a story to adopt, naming the files if so. Goal: a minor of a package other than the assessed libraries gets a summary.
 
 ### Step 3: Minors of the assessed libraries go to the assessor
 **Builds:** Piece 4 sub-step 4 for the assessed libraries, and Piece 7's "The Cloud Environment" (the six docs domains).
 **Setup first:** Six allowed domains on the `Meal Planning Routines` cloud environment.
 **Implementer checks:**
-- In a local session on a throwaway branch that's never pushed, the skill's step 4, run on made-up payloads, does each of these:
+- In a local session on a throwaway branch that's never pushed, the skill's step 6, run on made-up payloads, does each of these:
   - a minor of an assessed library in the PR goes to the subagent, and the summary lists it in the PR and shows the report unedited
   - a minor of an assessed library dropped for breaking a check gets no subagent call
 - **Before the check:** with Sarah's OK, commit and push the skill to `develop`.
 - **After the check:** if the report names a page on one of the six docs domains it couldn't reach, stop and bring it to Sarah, since `WebFetch` not going through the allowlist changes Piece 5.
 
 **Sarah checks:**
-- [ ] At https://claude.ai/code, start a session on the `Meal Planning Routines` environment with the `meal-planning` repo, and paste: `Follow step 4 of the dependency-updates skill for the finding "minor @mantine/core@9.7.0", as if 9.6.3 were the version on develop and the update were in the PR. Change nothing, and show me the summary step 8 would give for it.` See an `upgrade-assessor` call, then its report shown unedited: each feature the app could use with files and an example, pages cited on `mantine.dev`, no page it couldn't reach, and whether anything is worth a story to adopt. Goal: a minor of an assessed library gets an analysis naming the code each new feature would improve.
+- [ ] At https://claude.ai/code, start a session on the `Meal Planning Routines` environment with the `meal-planning` repo, and paste: `Follow step 6 of the dependency-updates skill for the finding "minor @mantine/core@9.7.0", as if 9.6.3 were the version on develop and the update were in the PR. Change nothing, and show me the summary step 7 would give for it.` See an `upgrade-assessor` call, then its report shown unedited: each feature the app could use with files and an example, pages cited on `mantine.dev`, no page it couldn't reach, and whether anything is worth a story to adopt. Goal: a minor of an assessed library gets an analysis naming the code each new feature would improve.
 
 # Setup Outside the Repo
 ![[Local Dependency Update Alerts#^setup-domains]]

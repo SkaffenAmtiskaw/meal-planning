@@ -39,26 +39,26 @@ How goals order the work, what each section and kind of note holds, and the rule
 - [[Dev Tooling]]
 
 # Now
+- [[Dependency Release Analysis]] ![[Dependency Release Analysis#^status]] 🎯 [[Dev Foundations]]
 
 # Next
 1. [[Agent Workflow Changes 2026-10-02]] ![[Agent Workflow Changes 2026-10-02#^status]] 🎯 [[Dev Foundations]]
-2. [[Dependency Release Analysis]] ![[Dependency Release Analysis#^status]] 🎯 [[Dev Foundations]]
-3. [[Notes Vault Repo]] ![[Notes Vault Repo#^status]] 🎯 [[Dev Foundations]]
-4. [[Branching and Releases]] ![[Branching and Releases#^status]] 🎯 [[Dev Foundations]]
-5. [[Vercel Deploy Errors]] ![[Vercel Deploy Errors#^status]] 🎯 [[Dev Foundations]]
-6. [[Services and Environments Audit]] ![[Services and Environments Audit#^status]] 🎯 [[Dev Foundations]]
-7. [[Atlas Version Check Script]] ![[Atlas Version Check Script#^status]] 🎯 [[Dev Foundations]]
-8. [[Database Backup and Restore]] ![[Database Backup and Restore#^status]] 🎯 [[Dev Foundations]]
-9. [[E2E Tests in CI]] ![[E2E Tests in CI#^status]] 🎯 [[Dev Foundations]]
-10. [[Sentry Error Reporting]] ![[Sentry Error Reporting#^status]] 🎯 [[Dev Foundations]]
-11. [[Sentry Root Cause Analysis]] ![[Sentry Root Cause Analysis#^status]] 🎯 [[Dev Foundations]]
-12. [[Auth E2E Tests]] ![[Auth E2E Tests#^status]] 🎯 [[Dev Foundations]]
-13. [[Current Calendar E2E Tests]] ![[Current Calendar E2E Tests#^status]] 🎯 [[Dev Foundations]] 🎯 [[Calendar Page]]
-14. [[Recipes E2E Tests]] ![[Recipes E2E Tests#^status]] 🎯 [[Dev Foundations]]
-15. [[Settings E2E Tests]] ![[Settings E2E Tests#^status]] 🎯 [[Dev Foundations]]
-16. [[Sharing E2E Tests]] ![[Sharing E2E Tests#^status]] 🎯 [[Dev Foundations]]
-17. [[When Stories Need E2E Tests]] ![[When Stories Need E2E Tests#^status]] 🎯 [[Dev Foundations]]
-18. [[Docs Audit]] ![[Docs Audit#^status]] 🎯 [[Dev Foundations]]
+2. [[Notes Vault Repo]] ![[Notes Vault Repo#^status]] 🎯 [[Dev Foundations]]
+3. [[Branching and Releases]] ![[Branching and Releases#^status]] 🎯 [[Dev Foundations]]
+4. [[Vercel Deploy Errors]] ![[Vercel Deploy Errors#^status]] 🎯 [[Dev Foundations]]
+5. [[Services and Environments Audit]] ![[Services and Environments Audit#^status]] 🎯 [[Dev Foundations]]
+6. [[Atlas Version Check Script]] ![[Atlas Version Check Script#^status]] 🎯 [[Dev Foundations]]
+7. [[Database Backup and Restore]] ![[Database Backup and Restore#^status]] 🎯 [[Dev Foundations]]
+8. [[E2E Tests in CI]] ![[E2E Tests in CI#^status]] 🎯 [[Dev Foundations]]
+9. [[Sentry Error Reporting]] ![[Sentry Error Reporting#^status]] 🎯 [[Dev Foundations]]
+10. [[Sentry Root Cause Analysis]] ![[Sentry Root Cause Analysis#^status]] 🎯 [[Dev Foundations]]
+11. [[Auth E2E Tests]] ![[Auth E2E Tests#^status]] 🎯 [[Dev Foundations]]
+12. [[Current Calendar E2E Tests]] ![[Current Calendar E2E Tests#^status]] 🎯 [[Dev Foundations]] 🎯 [[Calendar Page]]
+13. [[Recipes E2E Tests]] ![[Recipes E2E Tests#^status]] 🎯 [[Dev Foundations]]
+14. [[Settings E2E Tests]] ![[Settings E2E Tests#^status]] 🎯 [[Dev Foundations]]
+15. [[Sharing E2E Tests]] ![[Sharing E2E Tests#^status]] 🎯 [[Dev Foundations]]
+16. [[When Stories Need E2E Tests]] ![[When Stories Need E2E Tests#^status]] 🎯 [[Dev Foundations]]
+17. [[Docs Audit]] ![[Docs Audit#^status]] 🎯 [[Dev Foundations]]
 # Planning
 1. [[Calendar and Recipes Data Refresh]] ![[Calendar and Recipes Data Refresh#^status]] 🎯 [[Calendar Page]] 🎯 [[App Health]] 🎯 [[Recipes Page]]
 2. [[Server-Only Creation and Pure Reads]] ![[Server-Only Creation and Pure Reads#^status]] 🎯 [[Calendar Page]] 🎯 [[App Health]]
@@ -132,7 +132,7 @@ How goals order the work, what each section and kind of note holds, and the rule
 - [[Google Button Styling]] ![[Google Button Styling#^status]]
 - [[Mantine Color and Variant Usage]] ![[Mantine Color and Variant Usage#^status]]
 - `preact` 10.29.0 → 11.1.1: needs a decision, since the Schedule-X packages that use it allow only Preact 10 (`@schedule-x/calendar` has `preact ^10.19.2`), and no file in the app imports `preact` or `@preact/signals`. The v11 upgrade guide's breaking changes (ESM-only, refs as props, `useRef` needs an initial value) aren't hit by app code. [Release notes](https://github.com/preactjs/preact/releases). Found by the dependency-updates routine, 2026-11-04. [Sarah] We're removing `schedule-x` we shouldn't do this unless we have to.
-- `temporal-polyfill` 0.3.2 → 1.0.6: needs a decision, since `@schedule-x/calendar@4.9.1` pins `temporal-polyfill` to exactly 0.3.2. The breaking changes (calendars other than ISO and Gregorian need the `/full` entry; `/global` may move to `/full/global`) hit 3 files that import `temporal-polyfill/global`: `src/app/layout.tsx`, `seed/seed.ts` and `src/app/[planner]/calendar/_utils/toScheduleXEvents.ts`. [Release notes](https://github.com/fullcalendar/temporal-polyfill/releases). Found by the dependency-updates routine, 2026-11-04.
+- `temporal-polyfill` 0.3.2 → 1.0.6: needs a decision, since `@schedule-x/calendar@4.9.1` pins `temporal-polyfill` to exactly 0.3.2. The breaking change the app hits is that `temporal-polyfill/global` no longer declares the types on TypeScript 5.9, which affects each of the 8 files that name `Temporal` and takes one `temporal-polyfill/types/global` import to fix. The `/full` entry doesn't apply, since the app uses only ISO dates. [Release notes](https://github.com/fullcalendar/temporal-polyfill/releases). Found by the dependency-updates routine, 2026-11-04.
 
 ## Bugs
 - [[Zero Planners Crash]] ![[Zero Planners Crash#^status]]

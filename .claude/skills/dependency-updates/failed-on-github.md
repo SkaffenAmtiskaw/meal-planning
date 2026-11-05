@@ -49,7 +49,7 @@ Take the jobs one at a time. For each, first find out whether the script fails w
 ## Finish
 If a script fails on the starting point and the body doesn't say why yet, rewrite the body as step 5 of the skill describes for an open pull request.
 
-Then go to step 6 of the skill. Its summary gives the last run's link, then what came of each failed job:
+Then go to step 6 of the skill. The summary in step 7 gives the last run's link, then what came of each failed job:
 - fails here too, and an update was dropped for it: the update (under **Dropped**), and the result of the next run, with its link
 - fails on the starting point: why, with the line of output that shows it
 - flaked: passed when re-run, with both attempts' links
