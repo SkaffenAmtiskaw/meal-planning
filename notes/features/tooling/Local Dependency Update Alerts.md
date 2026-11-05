@@ -89,6 +89,9 @@ Before planning or implementing any story linked from this note, read this note 
   - **Decided 2026-10-04:** the assessment of a React, Next, Mantine, better-auth, luxon or Zod major mainly helps Sarah decide when to next draw a goal from [[App Health]], and how much to prioritize the upgrade. It almost always ends with Sarah asking the session to create a note for the upgrade. Sarah's call.
 - Does a minor release of one of the assessed libraries get more than the quick analysis?
   - **Decided 2026-10-04:** yes. A minor of React, Next, Mantine, better-auth, luxon or Zod goes to the Opus subagent for the benefit part of an assessment: the code in the app each new feature would improve, such as the dependency-array workarounds `useEffectEvent` (a React minor) replaced. Minors of other packages keep the quick analysis. Sarah's call: a picked-up minor should still call a feature worth adopting to her attention.
+- Which docs sites go on the environment's allowed domains?
+  - **Decided 2026-11-04 (/infra-build):** `react.dev`, `nextjs.org`, `mantine.dev`, `better-auth.com` and `zod.dev`. Sarah's call.
+    - Rejected: `moment.github.io` too, with `upgrade-assessor` told where its raw files are - the site builds its pages in the browser, so WebFetch gets only their titles, and the same files are in `docs/` in `moment/luxon` on GitHub, which the session can already read
 - Which model does the routine run on?
   - **Decided 2026-10-04:** the routine runs on Sonnet, since most of its work is mechanical, and a subagent set to Opus writes each major assessment. Sarah's call. A cloud session picks up the repo's `.claude/agents/`, and a subagent's `model` frontmatter sets its model whatever the session runs on.
 - What happens when the PR's checks fail on GitHub? `start-ci-failure` skips `claude/` branches.
@@ -158,7 +161,7 @@ Before planning or implementing any story linked from this note, read this note 
    - Verdict: for a major, the benefit and urgency weighed against the effort, not a ranking on security alone, saying how soon the upgrade is worth planning: for deciding when to next draw a goal from [[App Health]], and how high to rank it among other work. For a minor, whether anything is worth a story to adopt.
    - **Sources:** it cites the pages it read, and names any page it couldn't reach rather than falling back on what it already knows. Requirement: without this, a report can't show whether the docs domains are reachable (below).
    - Read-only tools: `Read`, `Grep`, `Glob`, `WebFetch`, `WebSearch`. It returns its report to the session.
-   - The release notes and guides live on `react.dev`, `nextjs.org`, `mantine.dev`, `better-auth.com`, `zod.dev` and `moment.github.io` (luxon), none of them on the Trusted list, so they're added to the environment's allowed domains (see Setup Outside the Repo). The docs don't say whether `WebFetch` goes through that allowlist, so the Build Order checks that the first assessment can read them.
+   - The release notes and guides live on `react.dev`, `nextjs.org`, `mantine.dev`, `better-auth.com` and `zod.dev`, none of them on the Trusted list, so they're added to the environment's allowed domains (see Setup Outside the Repo). Luxon's are in `docs/` in `moment/luxon` on GitHub, which the session can already read. `WebFetch` obeys the allowed domains, as cloud sessions showed on 2026-11-02, and the Build Order checks that the first assessment can read them.
 6. **Two new sweep notes,** from the Sweep template. They collect upgrades the `dependency-updates` session can't apply, until a goal picks them up. ^piece-6
    - **Library Upgrades** (`notes/features/tech debt/Library Upgrades.md`) collects packages in `dependencies`. It takes small majors of any package other than the assessed libraries, Mongoose included. It also takes small fixes for an update of any package, the assessed libraries included, that the session dropped because it broke a check.
    - **Dev Tool Upgrades** (`notes/features/tooling/Dev Tool Upgrades.md`) takes the same two kinds for packages in `devDependencies`.
@@ -176,7 +179,7 @@ Before planning or implementing any story linked from this note, read this note 
    - A new section, "Dependency Updates": the two schedules, the two jobs, when `start-dependency-updates` fires, the shape of its `text`, the reported list in the Actions cache and how to clear it (deleting the cache entries re-reports everything), and what happens when a call fails.
    - "Every Check Is a `package.json` Script": the cache restore and save steps join setup and the routine call as the only steps that aren't a script.
    - "Routines": a `dependency-updates` entry pointing to its skill.
-   - "The Cloud Environment": the six docs domains in the allowed list, and why.
+   - "The Cloud Environment": the five docs domains in the allowed list, and why.
    - GitHub turns off a public repo's scheduled workflows after 60 days with no activity in the repo.
 
 ## Flow
@@ -197,7 +200,7 @@ Before planning or implementing any story linked from this note, read this note 
 # Setup Outside the Repo
 - **The `dependency-updates` routine** on claude.ai (https://claude.ai/code/routines → New routine): its prompt, Sonnet, the `meal-planning` repo, an API trigger (remove the default "Pull request: Opened" trigger), the `Meal Planning Routines` environment and no connectors. Recorded in `.claude/skills/dependency-updates/routine.md`. ^setup-routine
 - **Two Actions secrets** (repo Settings → Secrets and variables → Actions): `ROUTINE_DEPENDENCY_UPDATES_URL` and `ROUTINE_DEPENDENCY_UPDATES_TOKEN`, from the routine's API trigger. Only their names are recorded, in `routine.md` and `docs/ci.md`. ^setup-secrets
-- **Six allowed domains** on the `Meal Planning Routines` cloud environment (Network access, Custom): `react.dev`, `nextjs.org`, `mantine.dev`, `better-auth.com`, `zod.dev` and `moment.github.io` (luxon's docs). Recorded in `docs/ci.md`, "The Cloud Environment". ^setup-domains
+- **Five allowed domains** on the `Meal Planning Routines` cloud environment (Network access, Custom): `react.dev`, `nextjs.org`, `mantine.dev`, `better-auth.com` and `zod.dev`. Recorded in `docs/ci.md`, "The Cloud Environment". ^setup-domains
 
 # Out of Scope
 - The tools in `mise.toml`: they ask for `latest`, so they update themselves.

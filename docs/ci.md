@@ -138,13 +138,20 @@ The app's access covers what the `ci-failure` and `dependency-updates` sessions 
 ## The Cloud Environment
 Routines run in a claude.ai cloud environment named `Meal Planning Routines` (at https://claude.ai/code, the cloud button above the message box). A new session starts from a snapshot of what its setup script installed, which claude.ai rebuilds about every seven days, or when the script changes.
 
-**Network access:** Custom, with **Also include default list of common package managers** checked, and one allowed domain:
+**Network access:** Custom, with **Also include default list of common package managers** checked, and these allowed domains:
 
 ```text
 results-receiver.actions.githubusercontent.com
+react.dev
+nextjs.org
+mantine.dev
+better-auth.com
+zod.dev
 ```
 
 The default (Trusted) list allows the npm registry, `nodejs.org` (where mise gets Node) and Google Fonts (which `pnpm build` downloads). GitHub's API goes through its own proxy whatever the level, but a run's logs don't: `gh run view --log-failed` asks the API, which redirects to a signed download on `results-receiver.actions.githubusercontent.com`, and that host isn't on the Trusted list.
+
+The other five domains hold the release notes and guides of the libraries that the `dependency-updates` routine's `upgrade-assessor` subagent assesses. It also assesses Luxon, but Luxon's docs site isn't allowed, because `moment.github.io` builds its pages in the browser and `WebFetch` gets only their titles. The same docs are in `docs/` in `moment/luxon` on GitHub, which the session can already read.
 
 **Variables:** the dummy values from `checks.yml` (see "Secrets and Environment Values"), plus `CLAUDE_ENV_FILE`, a file Claude Code runs before each command in the session, which the setup script writes. There's no `GH_TOKEN` or `GITHUB_TOKEN`: a token set here would pass into the session, where Claude and its commands could read it, and the GitHub proxy needs none.
 

@@ -10,8 +10,6 @@ In progress. Next: /infra-build Step 3 ^status
 Steps 1 and 2 are built: majors of the assessed libraries go to `upgrade-assessor`, and minors of other packages get a summary from step 6 of the `dependency-updates` skill. Step 3 remains, for the assessed libraries' minors, which join that same step.
 
 # Inbox
-- From Step 1's checks (2026-11-04): an `upgrade-assessor` run fetched `moment.github.io/luxon/#/upgrading` and `#/support` and got back only the page title, since the site renders its pages in the browser. It read the upgrade guide from `docs/upgrading.md` in `moment/luxon` on GitHub, and found no support page text. This matters for Step 3, which adds `moment.github.io` to the allowed domains.
-- From Major Upgrade Sweeps' cloud read checks (2026-11-02), on the `Meal Planning Routines` environment: WebFetch obeys the allowed domains. `vitest.dev` and `preactjs.com`, which aren't on the list, failed with `getaddrinfo ENOTFOUND` through WebFetch and with a 403 from the proxy through `curl`. This answers what the hub's Piece 5 says the docs don't, so the six docs domains should work once they're added, and a site not on the list stays out of reach.
 
 # Purpose
 Each minor update the `dependency-updates` routine finds gets a summary of what its release adds and whether the app should adopt any of it. React, Next, Mantine, better-auth, luxon and Zod are **the assessed libraries**: a minor or major of one goes to the Opus `upgrade-assessor` subagent, which ties new features to the app's code and, for a major, weighs gain and urgency against effort. It extends the session Dependency Update PRs built. Split from [[Local Dependency Update Alerts]] on 2026-10-04.
@@ -35,7 +33,7 @@ This story builds Piece 5 whole; Piece 4's requirement on the assessed libraries
 ## Build Order
 The design's Pieces are in [[Local Dependency Update Alerts]], embedded above.
 
-- **Decided 2026-10-06 (/infra-design):** the checks for minors run as stand-ins on past releases, in a cloud session on the `Meal Planning Routines` environment, rather than waiting for a real minor, and nothing reminds Sarah to look at the first real run. Sarah's call: she won't hold the story open for a release, the cloud session proves what a real run would (reaching GitHub and the six docs sites), and a first real run that can't reach a site names it in its summary.
+- **Decided 2026-10-06 (/infra-design):** the checks for minors run as stand-ins on past releases, in a cloud session on the `Meal Planning Routines` environment, rather than waiting for a real minor, and nothing reminds Sarah to look at the first real run. Sarah's call: she won't hold the story open for a release, the cloud session proves what a real run would (reaching GitHub and the five docs sites), and a first real run that can't reach a site names it in its summary.
   - Rejected: waiting for a real minor and running the weekly workflow - it can hold the story open indefinitely
   - Rejected: a local stand-in - it can't show the cloud session reaching GitHub and the docs sites
   - Rejected: firing the routine with `curl` and a regenerated token, Sarah's call while planning on 2026-10-04 - with stand-ins, no check fires the routine
@@ -80,14 +78,14 @@ The design's Pieces are in [[Local Dependency Update Alerts]], embedded above.
 - A package that publishes no release notes, such as one from `DefinitelyTyped`, says it has none.
 
 ### Step 3: Minors of the assessed libraries go to the assessor
-**Builds:** Piece 4 sub-step 4 for the assessed libraries, and Piece 7's "The Cloud Environment" (the six docs domains).
-**Setup first:** Six allowed domains on the `Meal Planning Routines` cloud environment.
+**Builds:** Piece 4 sub-step 4 for the assessed libraries, and Piece 7's "The Cloud Environment" (the five docs domains).
+**Setup first:** Five allowed domains on the `Meal Planning Routines` cloud environment.
 **Implementer checks:**
 - In a local session on a throwaway branch that's never pushed, the skill's step 6, run on made-up payloads, does each of these:
   - a minor of an assessed library in the PR goes to the subagent, and the summary lists it in the PR and shows the report unedited
   - a minor of an assessed library dropped for breaking a check gets no subagent call
 - **Before the check:** with Sarah's OK, commit and push the skill to `develop`.
-- **After the check:** if the report names a page on one of the six docs domains it couldn't reach, stop and bring it to Sarah, since `WebFetch` not going through the allowlist changes Piece 5.
+- **After the check:** if the report names a page on one of the five docs domains it couldn't reach, stop and bring it to Sarah, since `WebFetch` not going through the allowlist changes Piece 5.
 
 **Sarah checks:**
 - [ ] At https://claude.ai/code, start a session on the `Meal Planning Routines` environment with the `meal-planning` repo, and paste: `Follow step 6 of the dependency-updates skill for the finding "minor @mantine/core@9.7.0", as if 9.6.3 were the version on develop and the update were in the PR. Change nothing, and show me the summary step 7 would give for it.` See an `upgrade-assessor` call, then its report shown unedited: each feature the app could use with files and an example, pages cited on `mantine.dev`, no page it couldn't reach, and whether anything is worth a story to adopt. Goal: a minor of an assessed library gets an analysis naming the code each new feature would improve.

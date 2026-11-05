@@ -99,7 +99,7 @@ For each entry under `overrides`, remove it and run `pnpm install --no-frozen-lo
 ## 4. Majors and Uncleared Advisories
 This step takes what the session couldn't put in the pull request: each major, and each advisory no fix cleared. An advisory whose only fix is a major counts as a major of the package with the advisory, at its lowest fixed version. This skill calls it a **security major**.
 
-**The assessed libraries** are React (`react`, `react-dom`), Next (`next`), Mantine (`@mantine/*`), better-auth (`better-auth`), luxon (`luxon`) and Zod (`zod`). The app leans on them most, so a major of one gets an assessment for the user to plan from.
+**The assessed libraries** are React (`react`, `react-dom`), Next (`next`), Mantine (`@mantine/*`), better-auth (`better-auth`), luxon (`luxon`) and Zod (`zod`). The app leans on them most, so a major or minor of one gets an assessment from the `upgrade-assessor` subagent.
 
 **The release notes link** is the package's GitHub releases page. If it has none, as with a package from `DefinitelyTyped`, link its npm page and say it has no GitHub releases page.
 
@@ -167,12 +167,14 @@ If step 2 aborted the merge of `develop` or a push was rejected, skip this step,
 
 A version bump doesn't show what a minor adds, so the summary tells the user what it adds and whether the app should adopt any of it.
 
-For each minor from this run that's still on the branch, unless its package is one of the assessed libraries:
-1. Read the release notes for every version after the one in `package.json` on `origin/develop`, up to the new one, as "Reading release notes" in step 4 describes. The cases with nothing to read, and what to do in each before going on to the next minor:
-   - **The package publishes none,** as with a package from `DefinitelyTyped`: keep for the summary that it has none.
-   - **You can't read them:** keep for the summary that you couldn't, and name the site you couldn't reach.
-2. Search the code for where anything those versions add would apply.
-3. Keep what those versions add, with links, for the summary. Also keep a line or two on whether anything is worth a story to adopt, naming the files where it would apply.
+What to do with each minor from this run that's still on the branch, by case:
+- **If its package is one of the assessed libraries:** have the `upgrade-assessor` subagent assess it, with one call per library, even when several of its packages have a minor. Give the subagent each package's version in `package.json` on `origin/develop` and its new version. Keep its report for the summary.
+- **Otherwise:**
+  1. Read the release notes for every version after the one in `package.json` on `origin/develop`, up to the new one, as "Reading release notes" in step 4 describes. The cases with nothing to read, and what to do in each before going on to the next minor:
+     - **The package publishes none,** as with a package from `DefinitelyTyped`: keep for the summary that it has none.
+     - **You can't read them:** keep for the summary that you couldn't, and name the site you couldn't reach.
+  2. Search the code for where anything those versions add would apply.
+  3. Keep what those versions add, with links, for the summary. Also keep a line or two on whether anything is worth a story to adopt, naming the files where it would apply.
 
 ## 7. The Summary
 End with a summary for the user, in this order. Leave out a group or section with nothing in it. If the block's `new:` part is `none`, say there were no new findings.
@@ -199,7 +201,7 @@ End with a summary for the user, in this order. Leave out a group or section wit
 5. **Sweep items:** each item this run added or updated, as `<package>` `<old>` → `<new>`: added to or updated on `<sweep>`, with the work in one sentence. If an item went on the Roadmap because its sweep is missing, list it here and say the sweep is missing. If a package's item is in a kicked-off copy, list the package here, naming the copy and the newer version.
 6. **Roadmap lines:** each flagged package, as `<package>` `<old>` → `<new>`: the section or heading its line is in, then the reason its line gives. Name any unchecked sweep item for the package beside it.
 7. **Reminders:** each reminder the session didn't fix, as `<package>`: advisory `<ID>` (`<severity>`), and why: no fix released yet, its Roadmap line, or already fixed in the open pull request.
-8. **Minors:** each minor from step 6, as `<package>` `<old>` → `<new>`, then what step 6 kept for it.
+8. **Minors:** each minor from step 6, as `<package>` `<old>` → `<new>`, then what step 6 kept for it. Put the assessed libraries' minors after the others, because a report is long. Show each report unedited.
 9. **Majors:** the assessed libraries' majors from step 4, last because a report is long, by kind:
    - **A major with a report:** `<package>` `<old>` → `<new>`. If it's a security major, flag it as a security fix, with its advisory ID. Otherwise, mark it "not applied". Beside it, list any major of the library's `@types/*` package in this run, as part of that upgrade. Then show the report unedited, and offer to create a note for the upgrade.
    - **A major of an assessed library's `@types/*` package, with no major of its library in this run:** `<package>` `<old>` → `<new>`: not applied, with its release notes link and the library it belongs to.
