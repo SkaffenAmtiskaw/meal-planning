@@ -1,12 +1,14 @@
 #!/bin/sh
 # Proposes a story's commit range for /final-review, so it doesn't work the
 # range out from git log by hand. Commit messages don't name the story, so the
-# range starts at the first commit that marked one of the note's steps
-# "**Status:** ✅ Complete", or at the commit given as the second argument, and
-# runs to HEAD, plus any uncommitted changes. Lists the files changed in it
-# outside notes/, split into those the note's text names and the rest, and the
-# commits just before the range, in case one of them built part of the story.
-# Changes nothing.
+# range starts at the last code commit at or before the time the note first
+# marked a step "**Status:** ✅ Complete", or at the commit given as the second
+# argument, and runs to HEAD, plus any uncommitted changes. Lists the files
+# changed in it outside notes/, split into those the note's text names and the
+# rest, and the commits just before the range, in case one of them built part
+# of the story. Changes nothing.
+# The date method is interim, until Branching and Releases replaces it with the
+# story branch's range.
 # Usage: sh scripts/story-range.sh "<note name>" [first commit of the story]
 
 cd "$(dirname "$0")/.." || exit 1
@@ -33,11 +35,14 @@ if [ -n "$2" ]; then
   first=$(git rev-parse --verify --quiet "$2^{commit}") || { echo "Not a commit: $2"; exit 1; }
 else
   # --follow doesn't work with --reverse, so the oldest match is the last line.
-  first=$(git log --follow -S'**Status:** ✅ Complete' --format=%H -- "$note" | tail -1)
-  if [ -z "$first" ]; then
+  # %cI because --before filters on the committer date, and a day alone would
+  # depend on the time of day the script runs.
+  marked=$(git log --follow -S'**Status:** ✅ Complete' --format=%cI -- "$note" | tail -1)
+  if [ -z "$marked" ]; then
     echo "No commit marks a step of $note ✅ Complete."
     exit 1
   fi
+  first=$(git log -1 --before="$marked" --format=%H)
 fi
 base=$(git rev-parse --verify --quiet "$first^") || { echo "$first has no parent commit."; exit 1; }
 
