@@ -1,5 +1,5 @@
 # .claude/
-Claude Code skills, subagents, hooks and rules
+Claude Code skills, subagents and hooks
 # .github/
 GitHub Actions workflows (see `docs/ci.md`)
 # docs/

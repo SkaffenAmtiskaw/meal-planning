@@ -94,7 +94,7 @@ Pick the type by the shape of the fix, not by where the idea came from. A user r
 Give the user two or three directions, each with:
 - **Type:** feature, bug, pattern, infra, cleanup or tweak.
 - **Direction:** one or two sentences on which way to take it.
-- **Next step:** what happens next and who does it, from the Next Step by Note State table in Note Conventions, e.g. "`/design-feature`, then `/place-design`" or "blocked until [[X]] lands". If any blocking decisions are still open, `/decide` comes first.
+- **Next step:** if any blocking decisions are still open, `/decide` comes first. Otherwise, it's the next step and its skill, from the Next Step by Note State table in Note Conventions, e.g. "`/design-feature`, then `/place-design`", "`/assess`, for a feature with nothing visual to design" or "blocked until [[X]] lands".
 - **Why:** what you found in step 3 that supports it.
 
 These are also directions, when they fit:
@@ -118,6 +118,7 @@ A story's note:
 - **Scope:** the scope from the overview, with the user's corrections, goes in the template's sections that say what the story covers.
 - **Frontmatter:** set `type`, set `confirmed` to today, and fill `blocked-by` as Note Conventions describes. Then set `status`:
   - **A tweak with no open decision:** `status: ready`, because a tweak has no steps to plan.
+  - **A feature with nothing visual to design:** `status: spec`, with its behavior under Requirements, because its Requirements are its whole spec.
   - **Any other story:** leave `status: idea`.
 
 Show the user the draft and wait for their approval.

@@ -1,34 +1,32 @@
-*Note: These should ALWAYS be planned and implemented individually. They are discrete units of work.*
-
-**AI Instructions** - DO NOT delete this file. You may remove lines, but under no circumstances may you delete the file.
+**For agents:** you may remove lines, but never delete this file, because the order of all work lives here.
 
 ## How this file works
-- **Goals** - ranked epics, each a note in `goals/`, shaped and ranked with `/roadmap`. Only Sarah changes the order. Only one goal is built at a time, so `develop` never holds another goal's unfinished work and a finished goal releases all at once:
-	- **The building goal** is the top one, marked `- building`. A story or collecting-note item is built (`/implement`, `/infra-build`, `/tooling`) only when it serves the building goal, serves no ranked goal, or its line has 🚨 or 📌. A line under the Bugs heading isn't built until a release picks it up.
+How goals order the work, what each section and kind of note holds, and the rules for lines:
+- **Goals** - ranked epics, each a note in `goals/`, shaped and ranked with `/roadmap`. Only the user changes the order. Only one goal is built at a time, so `develop` never holds another goal's unfinished work and a finished goal releases all at once:
+	- **The building goal** is the top one, marked `- building`. A line under the Bugs heading waits until a release picks it up. Any other story or collecting-note item is built (`/implement`, `/infra-build`, `/tooling`) only when it serves the building goal, serves no ranked goal, has 📌 on its line, or has 🚨 on a line in Now or Next.
 	- **The planning goal** is the second, marked `- planning`. Its stories can be shaped, decided, designed and planned down to steps, but they aren't built until the building goal is released. Collecting notes aren't kicked off for it.
 	- **The rest** organize the backlog. Their lines sit under their headings in Later, and their stories can be shaped and decided ahead of their turn.
-	- **Standing Goals** - listed under their own subheading below the ranked goals. Each collects work that no ranked goal would take, such as library upgrades, and never ships itself, so it's never ranked, building or planning. When Sarah wants to take on some of that work, `/roadmap` draws a goal from it, named `<standing goal> YYYY-MM-DD`, which takes the work she picks and is ranked like any other goal.
+- **Standing Goals** - listed under their own subheading below the ranked goals, because they're never ranked, building or planning. A goal drawn from one is ranked like any other.
 - **What joins every release** - sweeps, collecting workflow notes and bugs rarely fit a goal, so if they waited for one they might wait forever. So when any goal starts building, `/roadmap` kicks off every sweep and collecting workflow note and moves every bug line into Next. A sweep item blocked by a story in this release, meaning its line is in Now or Next, joins the release, and the sweep waits for the story through `blocked-by`. Other blocked work waits for the next release. The goal ships once this work is done too.
-- **Now** - in progress. Keep this to 2-3 items.
+- **Now** - in progress.
 - **Next** - the building goal's queue, in order. The first line not waiting on anything is the next one to plan or build. A line that's waiting keeps its place, and its status embed says what it waits on. A line that serves both the building and planning goals goes here.
 - **Planning** - the planning goal's queue, in order. The first line not waiting on anything is the next one to plan. When the planning goal starts building, its lines move into Next in the same order.
-- **Later** - committed, not ordered. One heading per goal, in rank order, then one per standing goal, then **Bugs**, then **Unaffiliated** for other lines that serve no goal and for every collecting note's line. A line that serves more than one goal sits under one of their headings and ends with a `🎯 [[Goal]]` link for each other goal. A re-rank doesn't move it to another heading. Dev tooling and agent work sits under [[Dev Tooling]]'s heading unless Sarah puts it under a ranked goal.
+- **Later** - committed, not ordered. One heading per goal, in rank order, then one per standing goal, then **Bugs**, then **Unaffiliated** for other lines that serve no goal and for every collecting note's line. A line that serves more than one goal sits under one of their headings and ends with a `🎯 [[Goal]]` link for each other goal. A re-rank doesn't move it to another heading, because the 🎯 links, not the heading, say which goals it serves. Dev tooling and agent work sits under [[Dev Tooling]]'s heading unless the user puts it under a ranked goal.
 - **Bugs** - the heading in Later where bugs in the shipped app, security issues included, wait for the next release. They belong to no goal, because they're just work that needs doing, and the next goal to start building picks them up. Until then, a bug can be shaped, investigated and planned down to steps, so it's ready when its release starts, but it isn't built. An urgent bug gets 🚨 and moves into Next. A bug in a story still being built belongs to that story, and one in dev tooling or CI belongs to [[Dev Tooling]]. Code that works but needs changing belongs to [[App Health]].
-- **Ideas** - not committed. A story's line moves to Later once it's committed: when `/shape` shapes it, or when `/decide` settles that it's worth doing.
-- **Markers:** every Now and Next line ends, after its status embed, with a 🎯 link for each goal it serves, one of them the building goal, or with 🚨, 📌 or 🔁. Every Planning line ends with a 🎯 link for each goal it serves, one of them the planning goal:
+- **Ideas** - not committed. A story's line moves to Later once it's committed.
+- **Status embeds** - each line with a note, except a goal's or standing goal's, embeds that note's status line from Where It Stands after the link, e.g. `[[Stale Data Issues]] ![[Stale Data Issues#^status]]`. It shows only what the story needs next, the next skill or a link to what blocks it, not what the story is. Edit it in the note, not here.
+- **Markers** - every Now and Next line ends, after its status embed, with a marker: a 🎯 link for each goal it serves, one of them the building goal, or 🚨, 📌 or 🔁. Every Planning line ends with a 🎯 link for each goal it serves, one of them the planning goal:
 	- `🎯 [[Goal]]` - serves that goal.
-	- `🚨 <reason>` - urgent, such as a security fix or a bug a user reported. The `dependency-updates` routine adds it to its security lines, which Sarah sees in its pull request. Other agents may suggest it, but only Sarah adds it.
-	- `📌 <reason>` - Sarah scheduled it outside the goals. Only Sarah adds it.
+	- `🚨 <reason>` - something serious enough to show on the line, such as a security risk or a bug a user reported. In Now or Next, the story is built ahead of the goals. Anywhere else, it only flags the problem, and the story waits its turn. Only the user adds it, apart from the `dependency-updates` routine's security lines, which the user sees in its pull request. Other agents may suggest it.
+	- `📌 <reason>` - the user scheduled it outside the goals. Only the user adds it.
 	- `🔁` - joined this release without belonging to a goal: a bug, or a kicked-off sweep or collecting workflow note. `/roadmap` adds it when the line moves into Next.
 
-	A Now, Next or Planning line without its marker is out of place. Raise it with Sarah.
+	A Now, Next or Planning line without its marker is out of place. Raise it with the user.
 - **Hubs** hold shared design, not priority. A hub has a line only while it has a next step of its own, such as `/brainstorm`, `/decide` or `/close`. Once its `^status` line says `Next: its child stories`, it has none.
 - **Archived notes** have no line while an open story still relies on them. Once none does, an archived note gets a line until `/close` deletes it.
-- A story's status (`idea` / `spec` / `ready` / `in-progress` / `in-review` / `done`) lives in its note's frontmatter. This file only decides order.
-- Each line with a note, except a goal's, embeds that note's status line from Where It Stands after the link, e.g. `[[Stale Data Issues]] ![[Stale Data Issues#^status]]`. It shows only what the story needs next, the next skill or a link to what blocks it, not what the story is. Edit it in the note, not here.
-- **Collecting notes** gather items until they're handled together: sweeps (`type: sweep`) for small, decided fixes that share a group, such as [[Unit Test Tidy-Ups]], and collecting workflow notes for tooling and agent changes, such as [[Agent Workflow Changes]]. An item that fits one, and belongs to no story or hub, goes there, not onto its own line here. When several related items sit here as separate lines and none covers them, flag to Sarah that they could become a new one. Never create one without her.
-	- **The note's line** carries no 🎯 links and always sits in Unaffiliated in Later. A collecting note keeps getting new items, so it never finishes. A kickoff freezes some of its items into a dated copy, `<note> YYYY-MM-DD`, which can finish, and the note keeps collecting.
-	- **Their items** have no goal links, because they join whichever release comes next. The copy's line ends with 🔁 and sits in Next.
+- **Collecting notes** gather items until they're handled together: sweeps (`type: sweep`) for small, decided fixes that share a group, such as [[Unit Test Tidy-Ups]], and collecting workflow notes for tooling and agent changes, such as [[Agent Workflow Changes]]. If several related items have their own lines here and no collecting note covers them, tell the user they could become a new collecting note. Leave creating it to them, because every collecting note joins every release.
+	- **The note's line** carries no 🎯 links, because a collecting note keeps getting new items, so it never finishes. A kickoff freezes some of its items into a dated copy, `<note> YYYY-MM-DD`, which can finish, and the note keeps collecting.
+	- **A collecting note's items** have no goal links, because they join whichever release comes next.
 
 # Goals
 1. [[Dev Foundations]] - building
@@ -43,26 +41,25 @@
 # Now
 
 # Next
-1. [[Note Conventions and Roadmap Header Review]] ![[Note Conventions and Roadmap Header Review#^status]] 🎯 [[Dev Foundations]]
-2. [[Conventions Review]] ![[Conventions Review#^status]] 🎯 [[Dev Foundations]]
-3. [[Agent Workflow Changes 2026-10-02]] ![[Agent Workflow Changes 2026-10-02#^status]] 🎯 [[Dev Foundations]]
-4. [[Dependency Release Analysis]] ![[Dependency Release Analysis#^status]] 🎯 [[Dev Foundations]]
-5. [[Notes Vault Repo]] ![[Notes Vault Repo#^status]] 🎯 [[Dev Foundations]]
-6. [[Branching and Releases]] ![[Branching and Releases#^status]] 🎯 [[Dev Foundations]]
-7. [[Vercel Deploy Errors]] ![[Vercel Deploy Errors#^status]] 🎯 [[Dev Foundations]]
-8. [[Services and Environments Audit]] ![[Services and Environments Audit#^status]] 🎯 [[Dev Foundations]]
-9. [[Atlas Version Check Script]] ![[Atlas Version Check Script#^status]] 🎯 [[Dev Foundations]]
-10. [[Database Backup and Restore]] ![[Database Backup and Restore#^status]] 🎯 [[Dev Foundations]]
-11. [[E2E Tests in CI]] ![[E2E Tests in CI#^status]] 🎯 [[Dev Foundations]]
-12. [[Sentry Error Reporting]] ![[Sentry Error Reporting#^status]] 🎯 [[Dev Foundations]]
-13. [[Sentry Root Cause Analysis]] ![[Sentry Root Cause Analysis#^status]] 🎯 [[Dev Foundations]]
-14. [[Auth E2E Tests]] ![[Auth E2E Tests#^status]] 🎯 [[Dev Foundations]]
-15. [[Current Calendar E2E Tests]] ![[Current Calendar E2E Tests#^status]] 🎯 [[Dev Foundations]] 🎯 [[Calendar Page]]
-16. [[Recipes E2E Tests]] ![[Recipes E2E Tests#^status]] 🎯 [[Dev Foundations]]
-17. [[Settings E2E Tests]] ![[Settings E2E Tests#^status]] 🎯 [[Dev Foundations]]
-18. [[Sharing E2E Tests]] ![[Sharing E2E Tests#^status]] 🎯 [[Dev Foundations]]
-19. [[When Stories Need E2E Tests]] ![[When Stories Need E2E Tests#^status]] 🎯 [[Dev Foundations]]
-20. [[Docs Audit]] ![[Docs Audit#^status]] 🎯 [[Dev Foundations]]
+1. [[Conventions Review]] ![[Conventions Review#^status]] 🎯 [[Dev Foundations]]
+2. [[Agent Workflow Changes 2026-10-02]] ![[Agent Workflow Changes 2026-10-02#^status]] 🎯 [[Dev Foundations]]
+3. [[Dependency Release Analysis]] ![[Dependency Release Analysis#^status]] 🎯 [[Dev Foundations]]
+4. [[Notes Vault Repo]] ![[Notes Vault Repo#^status]] 🎯 [[Dev Foundations]]
+5. [[Branching and Releases]] ![[Branching and Releases#^status]] 🎯 [[Dev Foundations]]
+6. [[Vercel Deploy Errors]] ![[Vercel Deploy Errors#^status]] 🎯 [[Dev Foundations]]
+7. [[Services and Environments Audit]] ![[Services and Environments Audit#^status]] 🎯 [[Dev Foundations]]
+8. [[Atlas Version Check Script]] ![[Atlas Version Check Script#^status]] 🎯 [[Dev Foundations]]
+9. [[Database Backup and Restore]] ![[Database Backup and Restore#^status]] 🎯 [[Dev Foundations]]
+10. [[E2E Tests in CI]] ![[E2E Tests in CI#^status]] 🎯 [[Dev Foundations]]
+11. [[Sentry Error Reporting]] ![[Sentry Error Reporting#^status]] 🎯 [[Dev Foundations]]
+12. [[Sentry Root Cause Analysis]] ![[Sentry Root Cause Analysis#^status]] 🎯 [[Dev Foundations]]
+13. [[Auth E2E Tests]] ![[Auth E2E Tests#^status]] 🎯 [[Dev Foundations]]
+14. [[Current Calendar E2E Tests]] ![[Current Calendar E2E Tests#^status]] 🎯 [[Dev Foundations]] 🎯 [[Calendar Page]]
+15. [[Recipes E2E Tests]] ![[Recipes E2E Tests#^status]] 🎯 [[Dev Foundations]]
+16. [[Settings E2E Tests]] ![[Settings E2E Tests#^status]] 🎯 [[Dev Foundations]]
+17. [[Sharing E2E Tests]] ![[Sharing E2E Tests#^status]] 🎯 [[Dev Foundations]]
+18. [[When Stories Need E2E Tests]] ![[When Stories Need E2E Tests#^status]] 🎯 [[Dev Foundations]]
+19. [[Docs Audit]] ![[Docs Audit#^status]] 🎯 [[Dev Foundations]]
 # Planning
 1. [[Calendar and Recipes Data Refresh]] ![[Calendar and Recipes Data Refresh#^status]] 🎯 [[Calendar Page]] 🎯 [[App Health]] 🎯 [[Recipes Page]]
 2. [[Server-Only Creation and Pure Reads]] ![[Server-Only Creation and Pure Reads#^status]] 🎯 [[Calendar Page]] 🎯 [[App Health]]
@@ -146,7 +143,7 @@
 - [[Crafted Input in Invite and Email Actions]] ![[Crafted Input in Invite and Email Actions#^status]]
 - [[Name Validation Rejects Real Names]] ![[Name Validation Rejects Real Names#^status]]
 - [[One Source of Today]] ![[One Source of Today#^status]]
-- [[Unchecked Planner Reads]] ![[Unchecked Planner Reads#^status]] ⚠️ Security: any planner's data may be readable by id without a membership check.
+- [[Unchecked Planner Reads]] ![[Unchecked Planner Reads#^status]] 🚨 Security: any planner's data may be readable by id without a membership check.
 - [[Mantine Date Picker Setup]] ![[Mantine Date Picker Setup#^status]]
 - [[Long Reference URLs Shrink the Name Input]] ![[Long Reference URLs Shrink the Name Input#^status]]
 - [[Blank Dish Row Blocks Saving a Meal]] ![[Blank Dish Row Blocks Saving a Meal#^status]]
