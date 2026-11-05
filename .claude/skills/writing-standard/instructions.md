@@ -13,11 +13,17 @@ If the agent or the user would notice a case when it comes up, write no procedur
 If a task breaks when it's done slightly differently, such as a sequence of commands or a format a script checks, give exact steps. If it takes judgment, give the goal and its reason, and leave the how to the agent. Exact steps for a judgment task make the agent follow them where they don't fit, and a bare goal for a fragile task lets it improvise where it can't.
 
 The same goes for each exact detail, such as a path or a file name. How exact to make it depends on the case:
-- **If a hook or script stops the agent as soon as it gets the detail wrong, and says what's allowed:** leave the detail out, because the agent learns it at the moment it acts. For example, a skill doesn't need to say to write its reproducing test in `.scratch/`, because a hook blocks edits outside `notes/` and `.scratch/`.
+- **If a hook or script stops the agent as soon as it gets the detail wrong, and says what's allowed:** leave the detail out, because the agent learns it at the moment it acts. For example, a skill doesn't need to say to write its reproducing test in `.scratch/`, because a hook blocks edits outside the notes repo and `.scratch/`.
 - **Otherwise, if something depends on it on every run,** such as a script that reads it or a choice the user made: keep it exact.
 - **Otherwise:** leave its exact form to the agent.
 
 Before showing a draft, go through its exact details one by one, and ask of each which case it falls in. A detail that's too exact reads as precise writing, so it's easy to miss.
+
+## Reaching Notes
+The notes live in their own repo, so a path alone doesn't say where to look. The cases, and what to do in each:
+- **An instruction that names a note path:** write it from the notes repo's root and name the repo, such as "`features/` in the notes repo".
+- **A script or hook that needs the notes repo's path:** get it from `sh scripts/notes-dir.sh`, the one place that finds the repo from every checkout and in a routine.
+- **A skill that sends an agent work involving notes:** put the notes repo's path in the agent's prompt, whatever tools the agent has. Most agents can't run a script, and none loads the AGENTS.md line that names it, so the prompt is the one way that reaches them all.
 
 ## Show a Few Good Examples
 One or two well-chosen examples teach a pattern better than a list of edge cases. An agent generalizes from a good example, but treats a list of cases as the whole space and misses what it leaves out.

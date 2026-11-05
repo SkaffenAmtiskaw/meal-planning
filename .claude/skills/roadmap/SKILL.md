@@ -21,8 +21,8 @@ A goal or standing goal can hold instructions for this skill under its Roadmap I
 If the user asks for a new instruction during a run, write what they meant under the goal note's Roadmap Instructions.
 
 ## 1. Find the Goal
-Read `notes/Roadmap.md` and invoke the `roadmap-rules` skill. In a re-shape, show the user what the note or Roadmap already says at each step, and ask only what's changed. What happens next depends on the argument:
-- **A name:** look for it in `notes/goals/`. What you find decides the path:
+Read `Roadmap.md` in the notes repo and invoke the `roadmap-rules` skill. In a re-shape, show the user what the note or Roadmap already says at each step, and ask only what's changed. What happens next depends on the argument:
+- **A name:** look for it in `goals/` in the notes repo. What you find decides the path:
   - **A goal** (`type: goal`): this is a re-shape.
   - **A standing goal** (`type: standing-goal`): ask the user whether to re-shape it or draw a goal from it. To re-shape it, read `shaping-a-standing-goal.md` in this skill's folder and follow it. To draw a goal, read `drawing-a-goal.md` in this skill's folder and follow it.
   - **Nothing:** ask the user whether it's a goal or a standing goal. For a goal, go on to step 2. For a standing goal, read `shaping-a-standing-goal.md` in this skill's folder and follow it.
@@ -32,7 +32,7 @@ Read `notes/Roadmap.md` and invoke the `roadmap-rules` skill. In a re-shape, sho
 Ask the user what the goal is for and what shipping it means, noting any work they name as out of scope and why. Draft Purpose, Done When and Out of Scope from its template, keeping what they meant. Each Done When item is something the user can check in the running app, or a named piece of work being finished. Once they approve the draft, write the note.
 
 ## 3. Scope
-Search the Roadmap, including Ideas, and `notes/features/` for stories and hubs that look related to the goal's Purpose and Done When. A hub counts only if it has a next step of its own. These stay out:
+Search the Roadmap, including Ideas, and `features/` in the notes repo for stories and hubs that look related to the goal's Purpose and Done When. A hub counts only if it has a next step of its own. These stay out:
 - lines under the Bugs heading, sweeps and collecting workflow notes, because they join every release
 - anything already under the goal's Out of Scope
 - tooling, unless the goal is about how the app is built, because step 5 handles it

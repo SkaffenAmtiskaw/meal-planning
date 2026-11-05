@@ -17,7 +17,7 @@ What happens next depends on their reply. Use the first case that fits. If you c
 - **Hedged,** such as "I think it should probably be X" or "maybe X": have the researcher check it.
 
 ## Check or Research
-Send the `decision-researcher` subagent the note path, the question as written with its constraints, any Partly answered lines under it, and the answers the user has given earlier in this session. What else you send, and what you do with its report, depends on why you're sending it:
+Send the `decision-researcher` subagent the notes repo's path, the note path, the question as written with its constraints, any Partly answered lines under it, and the answers the user has given earlier in this session. What else you send, and what you do with its report, depends on why you're sending it:
 - **To check a hedged answer:** send that answer too. If the researcher finds no problems, record the answer. Otherwise, show the user each problem, and let them keep their answer, change it or ask for full research.
 - **To research:** don't tell the researcher which answer you expect. Walk the user through its brief. If they want more research, send it a follow-up with what they want researched further and the earlier brief's path.
 

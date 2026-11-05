@@ -11,19 +11,19 @@ hooks:
           command: '"$CLAUDE_PROJECT_DIR"/.claude/hooks/notes-only-edits.sh docs'
 ---
 
-Close the story **$ARGUMENTS**: keep its note in `archive/` while an open story needs it, or delete it, and bring the notes around it up to date.
+Close the story **$ARGUMENTS**: keep its note in `archive/` in the notes repo while an open story needs it, or delete it, and bring the notes around it up to date.
 
 Invoke the `editing-notes` skill first, since this run changes notes.
 
 ## 1. Read the Note
-Find the note in `notes/` and read all of it. Where it is and its `status` decide the kind of close:
-- **`done`, in `notes/features/`:** a done close. Check that every step is marked ✅ Complete, ❌ Will Not Do or 🚛 Moved, and that each 🚛 target note holds the moved work as `.claude/skills/filing-work/content-from-another-note.md` describes. If anything is missing, tell the user what you found and stop.
-- **A hub, in `notes/features/`:** check each story it lists. If any is still open (its note is in `notes/features/`), tell the user which ones and stop. Otherwise, it's a done close.
-- **`dropped`, in `notes/features/`:** a dropped close. Ask the user whether any part of the story is still wanted somewhere else, such as a step or a piece of its design. Each part they name goes on the out-of-scope list.
-- **Any other status, in `notes/features/`:** ask the user whether they're dropping the story. If they are, it's a dropped close, so ask about its parts as the case above describes. Otherwise, stop.
-- **In `notes/archive/`, with an empty or missing `kept-for`:** a re-close, since the story itself closed earlier.
-- **In `notes/archive/`, with stories in `kept-for`:** tell the user which stories it's kept for, and stop.
-- **A goal or standing goal, in `notes/goals/`:** tell the user `/close` doesn't close these, and stop.
+Find the note in the notes repo and read all of it. Where it is and its `status` decide the kind of close:
+- **`done`, in `features/`:** a done close. Check that every step is marked ✅ Complete, ❌ Will Not Do or 🚛 Moved, and that each 🚛 target note holds the moved work as `.claude/skills/filing-work/content-from-another-note.md` describes. If anything is missing, tell the user what you found and stop.
+- **A hub, in `features/`:** check each story it lists. If any is still open (its note is in `features/`), tell the user which ones and stop. Otherwise, it's a done close.
+- **`dropped`, in `features/`:** a dropped close. Ask the user whether any part of the story is still wanted somewhere else, such as a step or a piece of its design. Each part they name goes on the out-of-scope list.
+- **Any other status, in `features/`:** ask the user whether they're dropping the story. If they are, it's a dropped close, so ask about its parts as the case above describes. Otherwise, stop.
+- **In `archive/`, with an empty or missing `kept-for`:** a re-close, since the story itself closed earlier.
+- **In `archive/`, with stories in `kept-for`:** tell the user which stories it's kept for, and stop.
+- **A goal or standing goal, in `goals/`:** tell the user `/close` doesn't close these, and stop.
 
 ## 2. Find Everything That Points to It
 Run `sh scripts/note-refs.sh "<note name>"`. Sort the matches it lists into the kinds below, leaving out this story's own Roadmap line, which step 7 removes.
@@ -83,7 +83,7 @@ Handle the out-of-scope list now, before step 7 deletes the note and step 8 dele
      1. For a dropped close, set `status` to `dropped`.
      2. Set the `^status` line to "Done." or "Dropped.".
      3. Add `kept-for` to the frontmatter with the stories it's kept for, each as a `"[[link]]"`.
-     4. If the note is in `notes/features/`, move it to `notes/archive/`. Leave its files where they are, since Obsidian finds embeds by name.
+     4. If the note is in `features/` in the notes repo, move it to `archive/`. Leave its files where they are, since Obsidian finds embeds by name.
    - **Delete:** delete the note.
 
 ## 8. Delete Unused Files

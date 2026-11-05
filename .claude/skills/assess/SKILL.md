@@ -18,7 +18,7 @@ Past planning agents started from the existing code, reused it because it was th
 Invoke the `editing-notes` skill first, since this run changes notes.
 
 ## 1. Read the note
-Find the note in `notes/features/` and read all of it. Check that it's ready for this skill:
+Find the note in `features/` in the notes repo and read all of it. Check that it's ready for this skill:
 - **`type: feature`.**
 - **`status: spec`.** If it's `idea`, tell the user that `/place-design` moves it to `spec` once its design is placed, and stop. If it has any other status, tell the user what you found and stop.
 
@@ -32,7 +32,7 @@ Write the story's footprint to a scratch file:
 - **Kinds of things it builds:** e.g. a modal form, a list grouped by day.
 - **Named code:** only what the note itself names. Don't search the code for more, since that's step 4.
 
-Send the `note-drift-checker` subagent the note path, its `confirmed` date, the footprint file and "the whole design and behaviors" as the remaining work.
+Send the `note-drift-checker` subagent the notes repo's path, the note path, its `confirmed` date, the footprint file and "the whole design and behaviors" as the remaining work.
 
 If it found nothing, tell the user in one line and go on. Otherwise, settle each finding before step 2:
 - **If it blocks the story** until another story lands, tell the user and ask whether to go on anyway. If they say no, add that story to `blocked-by` and stop.
@@ -49,11 +49,11 @@ Show the list and wait for the user to confirm it before going on.
 ### Check whether it's several stories
 Skip this check if you started from a `# From the Split` section and its behaviors haven't changed since.
 
-Send the note path and the confirmed behaviors to the `hidden-story-checker` subagent, as the **Behaviors** checkpoint.
+Send the notes repo's path, the note path and the confirmed behaviors to the `hidden-story-checker` subagent, as the **Behaviors** checkpoint.
 - **One story:** tell the user in one line, and go on to step 3.
 - **Hidden stories:**
   1. Put each one whose Shared design is "none" on the out-of-scope list with its behaviors, and triage it right away. The rest of this run works from the behavior list. If the user doesn't pull it in, take its behaviors out of the list.
-  2. If no hidden story shares design, go on to step 3. Otherwise, they need a hub to keep the shared design whole, so send `split-checker` the note path, the confirmed behaviors as the **Behaviors** checkpoint, the path of `hidden-story-checker`'s report and the hidden stories that share design. Then go through the split with the user as the `splitting-a-story` skill describes.
+  2. If no hidden story shares design, go on to step 3. Otherwise, they need a hub to keep the shared design whole, so send `split-checker` the notes repo's path, the note path, the confirmed behaviors as the **Behaviors** checkpoint, the path of `hidden-story-checker`'s report and the hidden stories that share design. Then go through the split with the user as the `splitting-a-story` skill describes.
   3. If they don't split the story, go on to step 3. If they split it:
      1. Triage the out-of-scope list. An item the user pulls in becomes one or more behaviors in the `# From the Split` section of each child they belong to.
      2. Check that each child's `# From the Split` section holds its full share of the confirmed behaviors, including any changes the user made while approving the children, since the child's own `/assess` starts from it.
@@ -61,7 +61,7 @@ Send the note path and the confirmed behaviors to the `hidden-story-checker` sub
      4. Stop, and tell the user the split is done. Give `/assess <child name>` for each child, to run in a new session, since this one has read the whole design and the split report, and carrying them into a child's assessment bloats it.
 
 ## 3. Design the target
-Send the `target-designer` subagent the confirmed behaviors, numbered, and the paths to the note's Meta-Instructions, its Design Handoff sections, its images and its artboards. Give it nothing else, and don't describe the existing code or an old approach to it, so its design isn't anchored to what's already there.
+Send the `target-designer` subagent the confirmed behaviors, numbered, the notes repo's path and the paths to the note's Meta-Instructions, its Design Handoff sections, its images and its artboards. Give it nothing else, and don't describe the existing code or an old approach to it, so its design isn't anchored to what's already there.
 
 When its design comes back, show the user its Assumptions and ask about each one the note doesn't settle, since each fills a gap that step 2 leaves to the user. If an answer adds or changes a behavior, update the list and run this step again.
 

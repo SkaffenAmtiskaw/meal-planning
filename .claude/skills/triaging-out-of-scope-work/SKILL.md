@@ -8,7 +8,7 @@ user-invocable: false
 The user decides what's out of scope. Each item costs them a decision, so sort the list first and bring them only what's really theirs to decide.
 
 ## 1. Sort the List
-Before step 2, search `notes/` for each item, including notes that word it differently. If a note or Roadmap line covers it, take it off the list. Then check each remaining item against these cases, which say what to do with it. An item they don't take off stays on the list for step 2:
+Before step 2, search the notes repo for each item, including notes that word it differently. If a note or Roadmap line covers it, take it off the list. Then check each remaining item against these cases, which say what to do with it. An item they don't take off stays on the list for step 2:
 - **The story can't meet its own Purpose without it,** such as gitignoring the output of a tool the story adds: it's part of the story, even when a subagent reports it as outside its rules. If the steps are written, add it to the step that needs it. Otherwise, add it to the section that lists what the story changes, such as its Suggested Approach. Name it in your summary.
 - **It's small, needs no decision and sits in a file this story already edits:** it's a Boy Scout fix, which joins the story so each story leaves its files a little cleaner. Name each one in your summary, so the user can take it out. Where it goes depends on how far the story has got:
   - **Its steps are written, and the step that edits the file isn't built:** add "Boy Scout fix: <the problem>" to that step's **Source:** line, or its **Builds:** line in a Build Order.
@@ -28,7 +28,7 @@ For each item, show what it is, where it was found and why it looks outside this
 
 ## 3. Route What's Left
 If your skill has a later step for routing, do this there. Otherwise, do it right after triage.
-1. Send the `scope-router` subagent each item the user routed without naming a home. For each one, include what it is, where it was found and why it's outside this work.
+1. Send the `scope-router` subagent the notes repo's path and each item the user routed without naming a home. For each one, include what it is, where it was found and why it's outside this work.
 2. Show the user each item with its suggested home and reason. Wait for them to approve, change or drop it, then apply their answer to the notes.
 
 If an item turns up after triage, sort it, triage it and route it the same way, at the end.

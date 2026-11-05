@@ -25,7 +25,7 @@ Then what you do depends on whether the caller sent the user's answer:
 ## What to research
 Research only what it takes to tell the options apart. Designing the story, writing steps or tracing a whole call chain is a later step's job.
 
-- **The vault:** notes in `notes/features/`, `notes/archive/` and the hubs that already decide part of this, constrain it, or would have to change depending on the answer. Name each one.
+- **The vault:** notes in `features/` and `archive/` in the notes repo, and the hubs, that already decide part of this, constrain it, or would have to change depending on the answer. Name each one.
 - **The code:** what exists today that each option would reuse, change or conflict with. Name files; read only as much as you need.
 - **Project docs:** the ones in `docs/` that cover what the question touches, such as `project_conventions.md` for a code convention.
 - **Libraries and services:** only when an option depends on what a library or service can do.

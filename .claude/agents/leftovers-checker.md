@@ -20,7 +20,7 @@ A raw file shows a note's embeds (`![[Note#Section]]`) only as a link, so open e
 
 Then read the story's diff, limited to the story's files, because the range can hold other stories' commits. If uncommitted changes are included, diff from the range's base to the working tree, and read in full any of the story's files that `git status` lists as untracked, because the diff doesn't show them.
 
-Use Bash only for read-only git commands: `git log`, `git show`, `git diff`, `git blame` and `git status`. Never change a file.
+Use Bash only for read-only git commands: `git log`, `git show`, `git diff`, `git blame` and `git status`. For the notes repo, run them as `git -C "<notes repo path>"`, with the path your prompt gives. Never change a file.
 
 ## What to Check
 Prove each finding from the code, such as by showing what imports, calls, passes or reaches something. "Looks unused" isn't a finding. "Exported from `x.ts:12`, and nothing in `src/` or `test/` imports it" is.

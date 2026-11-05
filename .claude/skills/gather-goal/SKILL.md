@@ -16,7 +16,7 @@ Gather the work for the goal **$ARGUMENTS**, clean it up, and put work into hubs
 Invoke the `editing-notes` skill first, since this run changes notes.
 
 ## 1. Read the Goal's Work
-Read the goal's note and `notes/Roadmap.md`. Collecting-note items stay out of this skill, because they're built with their collecting note. Read every other line that serves the goal, and the note each one links.
+Read the goal's note and `Roadmap.md` in the notes repo. Collecting-note items stay out of this skill, because they're built with their collecting note. Read every other line that serves the goal, and the note each one links.
 
 ## 2. Clean Up
 Find the lines and notes that are already done, out of date or duplicated. Look at the code only enough to tell, because `/check-drift` checks a story's details when it next moves. Go through them with the user, and do what they decide for each. If a note goes, delete it as the `deleting-a-note` skill describes.
@@ -38,7 +38,7 @@ Show the whole proposal at once: each hub's name, its scope, what goes in it, wh
 ## 4. Write It
 For each approved hub, these are the steps, in order:
 
-1. **The note.** If the hub is new, write it from `.claude/note-templates/Hub.md`, in `notes/features/<area>/`, asking the user which folder if the area isn't clear. Its Purpose gives the hub's scope.
+1. **The note.** If the hub is new, write it from `.claude/note-templates/Hub.md`, in `features/<area>/` in the notes repo, asking the user which folder if the area isn't clear. Its Purpose gives the hub's scope.
 2. **What moves in or out.** How each line or note moves depends on what it is:
    - **A note that hasn't been shaped, meaning its `^status` line names `/shape` or it holds rough ideas with no `^status` line:** its content moves to the hub's Inbox, keeping what the user meant.
    - **A line with no note:** it moves to the hub's Inbox, keeping what the user meant, and leaves the Roadmap.

@@ -8,7 +8,7 @@ omitClaudeMd: true
 
 Check whether a note's remaining work still matches the code, the conventions and the services it uses.
 
-Use Bash only for read-only git commands: `git log`, `git show`, `git diff`, `git blame` and `git status`. Never change a file.
+Use Bash only for read-only git commands: `git log`, `git show`, `git diff`, `git blame` and `git status`. For the notes repo, run them as `git -C "<notes repo path>"`, with the path your prompt gives. Never change a file.
 
 ## What you'll get
 - The note's path and its `confirmed` date, the date it was last known to be current.
@@ -29,7 +29,7 @@ Search by pattern, not just by name, for code that already does part of the rema
 ### 3. Conventions
 The docs in `docs/` may lag behind the code, so for each kind of thing in the footprint, compare the plan with three sources:
 - **Recent code:** the few most recently added or rewritten examples of the same kind, going by git history rather than file dates. If they agree with each other and differ from the plan, that's a finding. If they disagree with each other, say so, since the convention is in flux.
-- **Pattern and infra notes:** in `notes/features/` and `notes/archive/`, a pattern's Convention or an infra note's Conventions that cover this kind of thing. These apply, even if the story's note predates them, in two cases: the pattern or infra note is in progress or done, or a pattern's Migration Checklist lists code the story touches.
+- **Pattern and infra notes:** in `features/` and `archive/` in the notes repo, a pattern's Convention or an infra note's Conventions that cover this kind of thing. These apply, even if the story's note predates them, in two cases: the pattern or infra note is in progress or done, or a pattern's Migration Checklist lists code the story touches.
 - **The docs:** the doc that covers this kind of thing, and its changes since `confirmed`.
 
 When they don't all agree, don't pick a winner, because the user decides which one wins.

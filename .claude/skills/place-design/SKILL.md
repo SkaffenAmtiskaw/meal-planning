@@ -31,9 +31,9 @@ The argument is one of:
 Read the whole design, images and artboards included.
 
 ## 2. Find the stories it belongs to
-Search `notes/features/` and the Roadmap, hubs included, for stories before `in-review` that build the screens, components or behaviors the design covers, and read each one. A story `in-review` or later has all its steps built, so it takes no design.
+Search `features/` in the notes repo and the Roadmap, hubs included, for stories before `in-review` that build the screens, components or behaviors the design covers, and read each one. A story `in-review` or later has all its steps built, so it takes no design.
 
-If the handoff text names another handoff, such as "implement this after `design_handoff_date_picker`", search `notes/` for that folder name to find the note that holds it, since each design this skill places names its handoffs' folders in its first line. Step 3 checks its design for conflicts along with the stories' designs, because a design that builds on another may change it, and step 4 links to it. If no note names the folder, ask the user which note holds that handoff.
+If the handoff text names another handoff, such as "implement this after `design_handoff_date_picker`", search the notes repo for that folder name to find the note that holds it, since each design this skill places names its handoffs' folders in its first line. Step 3 checks its design for conflicts along with the stories' designs, because a design that builds on another may change it, and step 4 links to it. If no note names the folder, ask the user which note holds that handoff.
 
 For each story, show the user the design sections it would build and why, and wait for them to confirm or change the list. Then propose new feature stories for the sections no story covers, each with a name and a one-line scope, and wait for the user to approve, change or drop each one.
 
@@ -50,11 +50,11 @@ Write each answer into each design it changes. If that includes the new design, 
 - **An image or an artboard:** add a callout directly under it saying what in it no longer holds and what replaces it, such as `> [!note] This popover now has square corners.` An image can't be edited, and an edited artboard would no longer match the canvas the user approved.
 
 ## 4. Write it into the notes
-1. **A new hub,** if step 2 made one: from `.claude/note-templates/Hub.md`, in the `notes/features/<area>/` folder of its stories, asking the user which one if they're in more than one. Give its `^status` line its child stories as the next step, write a Purpose of a sentence or two on what the design covers, and copy the `## Meta-Instructions` under `# Design Handoff` from `.claude/note-templates/Feature.md` into its `# Design Handoff`. It gets no Roadmap line, because a hub has one only while it has a next step of its own.
-2. **Each new story:** from `.claude/note-templates/Feature.md`, in `notes/features/<area>/`, asking the user which folder if the area isn't clear. Set `status: spec`, give its `^status` line `/assess` as the next step, and draft its Purpose from the design. Then add its Roadmap line, checking its goals as the `roadmap-placement` skill describes.
-3. **A zip's files:** if `notes/assets/<the handoff's folder name>/` already exists, another handoff's files are in it, so ask the user what to name this one. Then copy every file except the handoff text into that folder, keeping the layout the zip gives them, because the prototypes and the handoff text find other files by their relative path.
+1. **A new hub,** if step 2 made one: from `.claude/note-templates/Hub.md`, in the `features/<area>/` folder of its stories in the notes repo, asking the user which one if they're in more than one. Give its `^status` line its child stories as the next step, write a Purpose of a sentence or two on what the design covers, and copy the `## Meta-Instructions` under `# Design Handoff` from `.claude/note-templates/Feature.md` into its `# Design Handoff`. It gets no Roadmap line, because a hub has one only while it has a next step of its own.
+2. **Each new story:** from `.claude/note-templates/Feature.md`, in `features/<area>/` in the notes repo, asking the user which folder if the area isn't clear. Set `status: spec`, give its `^status` line `/assess` as the next step, and draft its Purpose from the design. Then add its Roadmap line, checking its goals as the `roadmap-placement` skill describes.
+3. **A zip's files:** if `assets/<the handoff's folder name>/` already exists in the notes repo, another handoff's files are in it, so ask the user what to name this one. Then copy every file except the handoff text into that folder, keeping the layout the zip gives them, because the prototypes and the handoff text find other files by their relative path.
 4. **A zip's handoff text:** copy it into `.scratch/` for item 6, then make these changes in the copy:
-   - Its first line names the `notes/assets/` folder its files are in.
+   - Its first line names the `assets/` folder its files are in.
    - Its title heading is dropped, since `# Design Handoff` stands in for it.
    - Image links point to `assets/<folder>/<the image's path in that folder>`.
    - A reference to another handoff by its folder name becomes a link to the note that holds it.
@@ -66,7 +66,7 @@ Write each answer into each design it changes. If that includes the new design, 
    - **If the home is a story or hub with a design of its own:** combine the two into one design, so its readers find everything about each element in one place. The user approves its outline, and `design-merge-checker` reads the whole of it in their place:
      1. Show the user an outline of the combined design: each section, what it covers and which design it comes from, with an element both designs cover in one section. Wait for their approval.
      2. Write the combined design in `.scratch/`, following the outline, with a first line naming every handoff folder the design's files are in.
-     3. Send the `design-merge-checker` subagent the home's note path, the new design's path and the combined design's path.
+     3. Send the `design-merge-checker` subagent the notes repo's path, the home's note path, the new design's path and the combined design's path.
      4. Fix what it finds, asking the user where a fix needs a choice.
      5. Replace the home's own design with the combined one, without asking the user to approve its wording.
 7. **Each story that builds part of a hub's design:** embed the sections it builds as `.claude/skills/filing-work/content-from-another-note.md` describes. Its own design stays apart from the hub sections, because combining them would copy the hub's design into one story.

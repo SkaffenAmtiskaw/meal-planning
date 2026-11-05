@@ -26,8 +26,8 @@ This is planning only. Don't change code.
 Read `.claude/note-conventions.md` first. It explains the frontmatter, the note types and what step comes next for each note.
 
 The idea is one of these:
-- **A note name:** find it in `notes/features/`. If `type` is already set, this is a re-shape: confirm the type in step 5 rather than assuming it.
-- **A Roadmap line:** find it in `notes/Roadmap.md`. If it links to a note, use that note. Otherwise the line is the whole idea, and step 7 creates its note.
+- **A note name:** find it in `features/` in the notes repo. If `type` is already set, this is a re-shape: confirm the type in step 5 rather than assuming it.
+- **A Roadmap line:** find it in `Roadmap.md` in the notes repo. If it links to a note, use that note. Otherwise the line is the whole idea, and step 7 creates its note.
 
 If you can't find it, or more than one thing matches, ask the user which they mean. If the note's status is `spec` or later, or it's `type: workflow`, it's past shaping: tell the user which skill comes next (`/tooling` for a workflow note), and stop.
 
@@ -41,7 +41,7 @@ A change to how the app is built rather than what it does, such as a skill, a ho
 ## 3. Understand the idea
 ### Look around, briefly
 Look just enough to tell the directions apart:
-- **The vault:** search `notes/features/`, `notes/archive/` and the Roadmap for stories that already cover this, overlap it or block it. Check the hubs too.
+- **The vault:** search `features/` and `archive/` in the notes repo, and the Roadmap, for stories that already cover this, overlap it or block it. Check the hubs too.
 - **The code:** find the area the idea touches, meaning which files or modules. Also check whether the behavior already exists in some form. Name files; don't trace them.
 - **Whether it's a pattern:** this depends on where the problem comes from, not on how many places it's in. The cases:
   - **If code written separately has already gone wrong the same way more than once, or every new file of some kind, such as a new mutation, faces the same choice:** it's a pattern, because the problem comes from how code keeps getting written.
@@ -127,7 +127,7 @@ Show the user the draft and wait for their approval.
 Once the user approves the draft, or picks "drop it", what you write depends on what the idea became:
 - **Dropped:** if it's a Roadmap line with no note, remove the line. If it's an idea note, run `sh scripts/note-refs.sh "<note name>"`. If its vault or outside-the-vault sections list anything other than its own Roadmap line, tell the user it needs `/close` in a new session. Otherwise, delete it as the `deleting-a-note` skill describes.
 - **Folded into an existing note or a sweep:** apply the addition there. Then, if the idea was an idea note, delete it as the `deleting-a-note` skill describes, pointing each link to the note it was folded into. If it was a Roadmap line with no note, remove the line.
-- **A story, a hub or a workflow note:** if the idea was an idea note, rewrite it in place, so links to it keep working. Don't rename or move it without asking. If it was a Roadmap line with no note, create the note in `notes/features/<area>/`, and if the area isn't obvious, ask the user which folder. Make the line link to the note. Either way, what happens to its Roadmap line depends on the first case that fits:
+- **A story, a hub or a workflow note:** if the idea was an idea note, rewrite it in place, so links to it keep working. Don't rename or move it without asking. If it was a Roadmap line with no note, create the note in `features/<area>/` in the notes repo, and if the area isn't obvious, ask the user which folder. Make the line link to the note. Either way, what happens to its Roadmap line depends on the first case that fits:
   - **A hub whose `^status` line says `Next: its child stories`:** remove the line, as the `roadmap-rules` skill's "Hubs" rule says.
   - **A story whose "Is this worth doing?" decision is still open:** keep the line where it is, because the story isn't committed yet.
   - **Anything else:** shaping commits it. Check its goals and place its line as the `roadmap-placement` skill describes.

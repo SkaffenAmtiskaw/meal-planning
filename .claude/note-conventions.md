@@ -69,5 +69,5 @@ A note's state, usually its `type` and `status`, says what should happen to it n
 
 # Files
 - Filenames are plain names, with no emoji or status prefixes, because links use the filename and a prefix would go stale.
-- Stories live in `features/<area>/`, goals and standing goals in `goals/`; closed stories that other stories still rely on live in `archive/`.
-- A design's files go in `assets/<its folder name>/`. Other images go in `assets/<story-name>/`.
+- In the notes repo, stories live in `features/<area>/`, goals and standing goals in `goals/`; closed stories that other stories still rely on live in `archive/`.
+- In the notes repo, a design's files go in `assets/<its folder name>/`. Other images go in `assets/<story-name>/`.

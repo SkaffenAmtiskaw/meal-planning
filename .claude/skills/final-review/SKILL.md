@@ -34,7 +34,7 @@ Show the user the range (first and last commit, with their subjects), whether un
 ## 3. Run the Checks
 Back every finding with evidence the user can check: `file:line` for code that's there, or, for something the story doesn't do, where you looked for it. Name the rule, note line or plan line it breaks, such as a Purpose or Symptoms line. A clear bug you come across inside a single step is a finding too.
 
-**For every story:** send the `leftovers-checker` subagent the note path, the confirmed range in the `<base>..HEAD` form the script's `Range:` line prints, whether uncommitted changes are part of it, and the confirmed files. Start it in the background, so it runs while you do the rest of this step.
+**For every story:** send the `leftovers-checker` subagent the notes repo's path, the note path, the confirmed range in the `<base>..HEAD` form the script's `Range:` line prints, whether uncommitted changes are part of it, and the confirmed files. Start it in the background, so it runs while you do the rest of this step.
 
 **For a feature,** check 2 runs on a fresh target design, as `target-design.md` in this skill's folder describes.
 

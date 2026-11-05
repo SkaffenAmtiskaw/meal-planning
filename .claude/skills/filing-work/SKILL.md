@@ -1,6 +1,6 @@
 ---
 name: filing-work
-description: How to choose where a piece of work goes in the notes/ vault and how to write it there. Use when routing out-of-scope work, or when folding an idea into an existing note or a collecting note.
+description: How to choose where a piece of work goes in the notes repo and how to write it there. Use when routing out-of-scope work, or when folding an idea into an existing note or a collecting note.
 user-invocable: false
 ---
 
@@ -24,7 +24,7 @@ Unless a story waits on the work, take the first open home that fits:
    - **If it asks for a workflow behavior for one case,** as opposed to a pattern's Convention, which covers only the cases the code has: write it as the general capability that would let this case, and the next one like it, be set up without changing the skill again, with this case as its first use. A skill full of one-off cases is harder to maintain than one mechanism that each note configures.
    - **If it's the user's feedback** on a skill, subagent or the workflow: quote their words.
 5. **A new Roadmap line,** if a line or two describes the work.
-6. **A new idea note** in `notes/features/<area>/`, from `.claude/note-templates/Idea.md`, with the work under Notes and a Roadmap line that links to it.
+6. **A new idea note** in `features/<area>/` in the notes repo, from `.claude/note-templates/Idea.md`, with the work under Notes and a Roadmap line that links to it.
 
 Write the work as the problem. For a workflow note, the problem can be that an agent isn't doing what the user wants. The cases where the work comes with a fix, and what to do in each:
 - **If the user's own words name it:** keep them, because whether to drop a fix they named is their call.

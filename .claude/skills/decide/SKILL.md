@@ -16,7 +16,7 @@ Work through the open decisions on **$ARGUMENTS**. This skill settles decisions,
 Invoke the `editing-notes` skill first, since this run changes notes.
 
 ## 1. Read the note
-Find the note in `notes/features/` and read all of it.
+Find the note in `features/` in the notes repo and read all of it.
 
 A decision is open if it's an item under `# Open Decisions` with no **Decided** line under it, including one with only a **Partly answered** line. A story with open decisions has one `"decision needed: ..."` entry in `blocked-by` that covers them all. A hub has no `blocked-by`. An exploration hub is a hub with a Requirements section.
 
@@ -58,7 +58,7 @@ If the user decided a story is worth doing and its Roadmap line is in Ideas, the
 
 ## 5. New child stories
 If the hub's list of new child stories is empty, skip this step. Otherwise, propose the child stories, each with a one-line scope and the decisions it comes from, and wait for the user to approve, change or drop each one. For each one they approve:
-1. Create an idea note in `notes/features/<area>/` from `.claude/note-templates/Idea.md`. Under Notes, give the one-line scope, quote the Decided lines it comes from, and add `![[<hub>#Purpose]]`. The embed brings the hub's Meta-Instructions to whoever works on the note.
+1. Create an idea note in `features/<area>/` in the notes repo from `.claude/note-templates/Idea.md`. Under Notes, give the one-line scope, quote the Decided lines it comes from, and add `![[<hub>#Purpose]]`. The embed brings the hub's Meta-Instructions to whoever works on the note.
 2. Add it to the hub's Child Stories table.
 3. Add a Roadmap line for it, with its siblings' lines and their 🎯 links, so it's worked as part of the same effort. If the hub has no other children, the line goes where the hub's own line is or was, with that line's 🎯 links.
 

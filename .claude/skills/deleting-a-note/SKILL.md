@@ -1,6 +1,6 @@
 ---
 name: deleting-a-note
-description: How to delete a note in notes/ and clean up what it leaves behind. Use when deleting a note, or when removing a story's Roadmap line.
+description: How to delete a note in the notes repo and clean up what it leaves behind. Use when deleting a note, or when removing a story's Roadmap line.
 user-invocable: false
 ---
 

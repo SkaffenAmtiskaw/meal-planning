@@ -8,7 +8,7 @@ omitClaudeMd: true
 
 Check whether other notes have changed things a note's remaining work depends on, such as shared UI or a shared module that another story's design or build changed.
 
-Use Bash only for read-only git commands: `git log`, `git show`, `git diff`, `git blame` and `git status`. Never change a file.
+Use Bash only for read-only git commands: `git log`, `git show`, `git diff`, `git blame` and `git status`. For the notes repo, run them as `git -C "<notes repo path>"`, with the path your prompt gives. Never change a file.
 
 ## What you'll get
 - The note's path and its `confirmed` date: the date it was last known to be current.
@@ -20,7 +20,7 @@ A raw file shows a note's embeds (`![[Note#Section]]`) only as a link, so open e
 ## What to check
 ### 1. Find the changed notes
 - Notes changed since `confirmed`, committed or not.
-- Include `notes/archive/`. A story archived since `confirmed` may have **As built** notes that changed a shared component.
+- Include `archive/` in the notes repo. A story archived since `confirmed` may have **As built** notes that changed a shared component.
 - Include notes deleted since `confirmed`, because their **As built** notes may still matter.
 - Include the note's hub, and the embedded sections it pulls in (`![[Hub#Section]]`). A change there changes this note.
 - Include this note's own changes since `confirmed`, except the user's comments (lines tagged or signed with their name), which the caller handles. Look for sections moved in from other notes, often with a line saying to stop and ask which one wins.

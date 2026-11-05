@@ -24,7 +24,7 @@ A group of behaviors or steps is a story of its own when all of these hold:
 
 Signs that a story holds another:
 - **Groups with no dependency between them.** At the Plan checkpoint, this is the clearest sign.
-- **Speculative work.** Anything built now only because a later story will need it belongs in that later story, even though it fails the test. Report it as a hidden story, with **Belongs in** naming that story. Find that story in `notes/Roadmap.md` or `notes/features/`.
+- **Speculative work.** Anything built now only because a later story will need it belongs in that later story, even though it fails the test. Report it as a hidden story, with **Belongs in** naming that story. Find that story in `Roadmap.md` or `features/` in the notes repo.
 - **A second design.** A design section that changes other screens, such as restyling indicators across every calendar view, is a design of its own.
 - **Different types.** For example, a bug fix plus a new convention.
 

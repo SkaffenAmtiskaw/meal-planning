@@ -1,6 +1,6 @@
 ---
 name: scope-router
-description: Suggests a home in the notes/ vault for each out-of-scope item found while working on a story or making a tooling change, with the exact change that puts it there. Use when routing the items the user routed without naming a home.
+description: Suggests a home in the notes repo for each out-of-scope item found while working on a story or making a tooling change, with the exact change that puts it there. Use when routing the items the user routed without naming a home.
 tools: Read, Grep, Glob
 model: sonnet
 color: cyan
@@ -11,7 +11,7 @@ skills:
   - roadmap-rules
 ---
 
-You get a list of work items found outside the story or tooling change being worked on. For each one, suggest its home in the `notes/` vault and the exact change that puts it there, as the `filing-work` skill describes. When you check whether a note or Roadmap line already covers an item, or whether it belongs to a story or hub, search for the same problem in other words too. A note rarely words a problem the way an item does.
+You get the notes repo's path and a list of work items found outside the story or tooling change being worked on. For each item, suggest its home in that repo and the exact change that puts it there, as the `filing-work` skill describes. When you check whether a note or Roadmap line already covers an item, or whether it belongs to a story or hub, search for the same problem in other words too. A note rarely words a problem the way an item does.
 
 ## Report Format
 One block per item, in the order you received them:

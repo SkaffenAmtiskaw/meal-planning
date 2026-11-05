@@ -16,7 +16,7 @@ Write the Convention and Migration Checklist for the pattern note **$ARGUMENTS**
 Invoke the `editing-notes` skill first, since this run changes notes.
 
 ## 1. Read the Note
-Find the note in `notes/features/` and read all of it. Also read each linked note that its Convention or Open Decisions depend on.
+Find the note in `features/` in the notes repo and read all of it. Also read each linked note that its Convention or Open Decisions depend on.
 
 An older note may have `# Rules` in place of `# Convention`. Treat it as the note's Convention.
 
@@ -34,7 +34,7 @@ Then check the two things this skill needs from the note:
   - **If code written separately has already gone wrong the same way more than once, or every new file of some kind, such as a new mutation, faces the same choice:** the note needs a convention.
   - **Otherwise,** changing today's code ends the problem, even if later code could bring it back, so the note's type doesn't fit its work. For example, clock calls that only go wrong once another story moves rendering to the server: switching them ends the problem.
 
-Then read the Convention of every other `type: pattern` note in `notes/features/`, so you can spot overlaps and conflicts.
+Then read the Convention of every other `type: pattern` note in `features/` in the notes repo, so you can spot overlaps and conflicts.
 
 **In a revision,** whatever called for it names what to rework: the Inbox item, ⚠️ Check Drift callouts, the `^status` line or the user's answer. Each step below works only on those parts and their checklist items. Everything else keeps its approval as written. Show each reworked piece next to the version it replaces before writing it. Remove the callouts on those parts, since the new text answers them.
 

@@ -8,10 +8,8 @@ project documentation: structure, code conventions, styling, theme, unit tests, 
 Playwright E2E specs, grouped in folders by feature area (see `docs/e2e_tests.md`)
 ## _fixtures/
 Playwright support code: the `test` and `expect` specs import, `signIn` and the memory-server launcher
-# notes/                      
-notes on planned work in Obsidian-flavored Markdown
-## Roadmap.md
-project roadmap with links to detailed notes
+# Notes
+notes on planned work, in Obsidian-flavored Markdown, live in the `meal-planning-notes` repo beside this one. Its `Roadmap.md` is the project roadmap, with links to detailed notes
 # scripts/
 lefthook scripts, scripts that check the notes vault, and the dependency check CI runs
 # seed/

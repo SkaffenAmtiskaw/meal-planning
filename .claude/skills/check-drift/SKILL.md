@@ -37,7 +37,7 @@ Write the note's footprint to a scratch file, from the remaining work:
 - **UI areas,** such as the mobile day section header.
 - **Services:** every service, config key and Claude Code feature it uses.
 
-Then run the `code-drift-checker` and `note-drift-checker` subagents in parallel. Give each one the note path, the `confirmed` date, the footprint file and the remaining work: which steps, or "the whole approach" for a `spec` note. Don't tell them what you expect them to find, because a checker that knows what you expect tends to find that and miss the rest.
+Then run the `code-drift-checker` and `note-drift-checker` subagents in parallel. Give each one the notes repo's path, the note path, the `confirmed` date, the footprint file and the remaining work: which steps, or "the whole approach" for a `spec` note. Don't tell them what you expect them to find, because a checker that knows what you expect tends to find that and miss the rest.
 
 If the note is a pattern, also run the `convention-auditor` subagent alongside them, as `pattern.md` in this skill's folder describes.
 

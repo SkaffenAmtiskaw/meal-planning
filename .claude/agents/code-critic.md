@@ -25,7 +25,7 @@ Read each file in full, plus enough of its callers to see how it's used. If the 
 - **Duplication.** Note any case of two or more existing modules doing the same thing.
 
 ## Examples from this codebase
-These are the mistakes this review exists to catch. Both come from the Add Meal modal work in `notes/archive/Add Meal UX Changes.md`:
+These are the mistakes this review exists to catch. Both come from the Add Meal modal work in `archive/Add Meal UX Changes.md` in the notes repo:
 
 - **`AddMealFormModalWrapper`:** The plan made it dual-mode, with a trigger render prop *and* controlled `opened`/`onClose` props. That's one component with two jobs. It duplicated the modal shell and was replaced during the build.
 - **`CalendarModalProvider`:** It ended up rendering Add Meal's own header, subtitle state and styling. A provider's job is managing which modal is open, so a later review had to pull the Add Meal content out into `AddMealModal`.

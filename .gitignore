@@ -42,9 +42,6 @@ next-env.d.ts
 # WebStorm
 /.idea
 
-# Obsidian Notes
-/notes/.obsidian/
-
 # Git worktrees
 .worktrees/
 

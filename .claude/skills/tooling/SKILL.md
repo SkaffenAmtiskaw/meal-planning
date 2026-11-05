@@ -12,7 +12,7 @@ A tooling change skips the story lifecycle, which exists so product code is buil
 Invoke the `editing-notes` skill first, since this run changes notes.
 
 ## 1. Find Out What's Changing
-If the argument is a description, search `notes/` for notes and items about the same thing, because they may already hold details or decisions. Tell the user what you found.
+If the argument is a description, search the notes repo for notes and items about the same thing, because they may already hold details or decisions. Tell the user what you found.
 
 If it names a note or an item in one, the note's `type` says what the change is:
 - **`workflow` with a What Belongs Here section:** a collecting note. If it has a kicked-off copy (`<name> YYYY-MM-DD`), work the copy instead. If the argument names no item, list the items and point out any that are logically grouped, such as several rules that all land in the same doc. Ask the user which item or group this session does.
@@ -33,7 +33,7 @@ If one applies, tell the user which and why, and ask whether to spin the change 
 ## 2. Settle the Change
 Settle with the user what the change is. If it adds or moves a rule, decide where it goes as the `rule-placement` skill describes. If it adds or renames a skill or agent, read `adding-a-skill-or-agent.md`.
 
-Then find everything the change reaches. Search the repo, including `.claude/note-conventions.md` and `.claude/note-templates/`, for the skill, agent, rule or term being changed, because each reference is part of this change. Step 5 handles the rest of `notes/`.
+Then find everything the change reaches. Search the repo, including `.claude/note-conventions.md` and `.claude/note-templates/`, for the skill, agent, rule or term being changed, because each reference is part of this change. Step 5 handles the notes repo.
 
 If settling the change or the search opens more work, check "Is It a Story?" again.
 
@@ -50,7 +50,7 @@ What the change needs depends on what it touches:
 Triage the out-of-scope list. An item the user pulls in becomes part of this change. Then show the table of changed files and ask the user whether they approve.
 
 ## 5. Clean Up the Notes
-Once the user approves, search all of `notes/` for:
+Once the user approves, search the whole notes repo for:
 - items that this change does or settles, such as a sweep item, a Docs Updates item or another note's open question
 - text the change made wrong, such as a `^status` line naming a renamed skill or a note describing the old workflow
 

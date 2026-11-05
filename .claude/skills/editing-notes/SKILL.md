@@ -1,6 +1,6 @@
 ---
 name: editing-notes
-description: The rules for changing a note in notes/. Use before changing a note.
+description: The rules for changing a note in the notes repo. Use before changing a note.
 user-invocable: false
 ---
 

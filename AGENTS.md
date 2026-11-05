@@ -1,7 +1,7 @@
 # Agent Instructions
 
 ## Project
-A full-stack meal planning web app. Work is planned and tracked as notes in the Obsidian vault in `notes/`.
+A full-stack meal planning web app. Work is planned and tracked as notes in the Obsidian vault in the `meal-planning-notes` repo beside this one, and `sh scripts/notes-dir.sh` prints its path. Obsidian Git commits and pushes that repo, so a local session never does.
 
 ## Following Instructions
 The user wants instructions followed for what they're for, not to the letter. If a case matches a line's words but not its point, or following it would make no sense, work out what the line is for and do that. Bring it to the user only if the case still conflicts with that purpose, because a question about a case the line was never meant for gives them nothing to decide. Before you pass on a subagent's finding that cites a line, judge it the same way.
@@ -32,11 +32,11 @@ The user wants instructions followed for what they're for, not to the letter. If
 - **Summaries.** If you changed files and your skill's report doesn't list them, your summary includes a table, so the user can open each file. Give each file a row, or each group of files with the same change. A row holds the file as a markdown link and a one-line description of its change.
 
 ## Notes
-Before you change a note in `notes/`, invoke the `editing-notes` skill. These rules hold for every session:
+Before you change a note in the notes repo, invoke the `editing-notes` skill. These rules hold for every session:
 - **Embedded sections** (`![[Note#Section]]`) are part of the note. A raw file shows only the link, so open each one.
 - **Links to a heading or block** (`[[#^piece-7]]`, `[[Note#Section]]`) point to content the line depends on, so read the target when that line matters to your work.
 - **The user's lines:** a line where their name is a tag or a signature (`[Sarah] I want X instead.`, `Change this to Y - Sarah`) is their own words. Never edit one or write in their voice.
-- **Roadmap order** is the user's call, so never reorder `notes/Roadmap.md`.
+- **Roadmap order** is the user's call, so never reorder `Roadmap.md` in the notes repo.
 - **⚠️ Check Drift callouts:** only `/check-drift` writes them.
 - **A Roadmap line with no note:** once you finish its work, run the check jobs that `ci.md` lists under "Checks on PRs", then remove the line as the `deleting-a-note` skill describes in step 4. The pre-commit hook runs only what the staged files trigger, so a dependency bump would get Biome and nothing else.
 - **Before you finish** a session that changed a note, run `sh scripts/vault-lint.sh "<note>" …`, naming each note it changed. Fix what it reports in those notes. Tell the user about anything it reports in other notes, because another session may be working on them.

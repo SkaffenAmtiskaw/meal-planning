@@ -7,17 +7,18 @@
 # a line really is a user's comment is still the reader's call. Changes nothing.
 # Usage: sh scripts/user-comments.sh "<note name>"
 
-cd "$(dirname "$0")/.." || exit 1
+notes_repo=$(sh "$(dirname "$0")/notes-dir.sh") || exit 1
+cd "$notes_repo" || exit 1
 name="$1"
 if [ -z "$name" ]; then
   echo "Usage: sh scripts/user-comments.sh \"<note name>\""
   exit 1
 fi
 
-matches=$(find notes -type f -name "$name.md" ! -path 'notes/templates/*')
+matches=$(find . \( -name .git -o -name .obsidian \) -prune -o -type f -name "$name.md" -print | sed 's|^\./||')
 count=$(printf '%s' "$matches" | grep -c .)
 if [ "$count" -eq 0 ]; then
-  echo "No note named \"$name\" in notes/."
+  echo "No note named \"$name\" in the notes repo."
   exit 1
 fi
 if [ "$count" -gt 1 ]; then
