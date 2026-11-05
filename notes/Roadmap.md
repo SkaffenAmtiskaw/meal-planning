@@ -57,7 +57,7 @@ How goals order the work, what each section and kind of note holds, and the rule
 14. [[Sharing E2E Tests]] ![[Sharing E2E Tests#^status]] 🎯 [[Dev Foundations]]
 15. [[When Stories Need E2E Tests]] ![[When Stories Need E2E Tests#^status]] 🎯 [[Dev Foundations]]
 16. [[Preview Environment]] ![[Preview Environment#^status]] 🎯 [[Dev Foundations]]
-17. local's `DB_URL` signs in as an `atlasAdmin` user, so local credentials can reach production's `staging` database, and only the database name and the seed's guard keep local work off it. [[Branching and Releases]] plans to create and drop `test-<slug>` databases from local, so it depends on what this user can do. Found 2026-11-04 by [[Services and Environments Audit]]. 🎯 [[Dev Foundations]]
+17. [[Narrow Local Database User]] ![[Narrow Local Database User#^status]] 🎯 [[Dev Foundations]]
 18. production shares a Free tier Atlas cluster with dev, so they share its limits and any change to it. [[Database Backup and Restore]] covers the backups themselves. Found 2026-11-04 by [[Services and Environments Audit]]. 🎯 [[Dev Foundations]]
 19. [[Docs Audit]] ![[Docs Audit#^status]] 🎯 [[Dev Foundations]]
 # Planning
