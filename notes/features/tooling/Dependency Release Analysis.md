@@ -5,24 +5,20 @@ blocked-by: []
 confirmed: 2026-10-06
 ---
 # Where It Stands
-In progress. Next: /infra-build Step 2 ^status
+In progress. Next: /infra-build Step 3 ^status
 
-Step 1 is built, uncommitted when it finished: majors of the assessed libraries go to `upgrade-assessor`. Steps 2 and 3 remain, for minors. The Inbox's step numbers for the `dependency-updates` skill are what Steps 2 and 3 need, since their wording still says the skill's step 4 and step 8.
+Steps 1 and 2 are built: majors of the assessed libraries go to `upgrade-assessor`, and minors of other packages get a summary from step 6 of the `dependency-updates` skill. Step 3 remains, for the assessed libraries' minors, which join that same step.
 
 # Inbox
-- From Dependency-Updates Review (2026-11-03): the `dependency-updates` skill now has six steps. Its Minors step is gone, so minors are only listed in the summary. Majors and uncleared advisories are step 4, push and wait are step 5, and the summary is step 6. The session no longer runs the checks before it pushes. The advisory steps moved to `security-fixes.md`, and a failed job's path is `failed-on-github.md`. An advisory on an assessed library that only a major fixes no longer goes to the summary alone: it gets a Roadmap line first in Next with 🚨, through `sweep-rule.md`.
 - From Step 1's checks (2026-11-04): an `upgrade-assessor` run fetched `moment.github.io/luxon/#/upgrading` and `#/support` and got back only the page title, since the site renders its pages in the browser. It read the upgrade guide from `docs/upgrading.md` in `moment/luxon` on GitHub, and found no support page text. This matters for Step 3, which adds `moment.github.io` to the allowed domains.
-- From Major Upgrade Sweeps' cloud read checks (2026-11-02), on the `Meal Planning Routines` environment:
-  - WebFetch reads `github.com` release pages in full, without each change's author and PR details. `curl` to `github.com` and `gh api` on another repo get a 403 from the session's GitHub proxy, which reaches only the attached repo.
-  - WebFetch and `curl` both read `raw.githubusercontent.com`. A root `CHANGELOG.md` can be a symlink, as `biomejs/biome`'s is, which returns only its target's path, so the session has to fetch that path.
-  - WebFetch obeys the allowed domains. `vitest.dev` and `preactjs.com`, which aren't on the list, failed with `getaddrinfo ENOTFOUND` through WebFetch and with a 403 from the proxy through `curl`. This answers what the hub's Piece 5 says the docs don't, so the six docs domains should work once they're added, and a site not on the list stays out of reach.
+- From Major Upgrade Sweeps' cloud read checks (2026-11-02), on the `Meal Planning Routines` environment: WebFetch obeys the allowed domains. `vitest.dev` and `preactjs.com`, which aren't on the list, failed with `getaddrinfo ENOTFOUND` through WebFetch and with a 403 from the proxy through `curl`. This answers what the hub's Piece 5 says the docs don't, so the six docs domains should work once they're added, and a site not on the list stays out of reach.
 
 # Purpose
 Each minor update the `dependency-updates` routine finds gets a summary of what its release adds and whether the app should adopt any of it. React, Next, Mantine, better-auth, luxon and Zod are **the assessed libraries**: a minor or major of one goes to the Opus `upgrade-assessor` subagent, which ties new features to the app's code and, for a major, weighs gain and urgency against effort. It extends the session Dependency Update PRs built. Split from [[Local Dependency Update Alerts]] on 2026-10-04.
 
 # Goals
 - [x] A major of one of the assessed libraries gets an assessment in the session that weighs how much the app would gain and how urgent the upgrade is against how much effort it would take.
-- [ ] Each minor of a package other than the assessed libraries that goes into the PR gets a summary in the session of what the release adds, and whether anything in it is worth a story to adopt.
+- [x] Each minor of a package other than the assessed libraries that goes into the PR gets a summary in the session of what the release adds, and whether anything in it is worth a story to adopt.
 - [ ] Each minor of one of the assessed libraries that goes into the PR gets an analysis in the session naming the code in the app each new feature would improve, and whether anything in it is worth a story to adopt.
 
 # Design
@@ -75,7 +71,13 @@ The design's Pieces are in [[Local Dependency Update Alerts]], embedded above.
 - **Before the check:** with Sarah's OK, commit and push the skill to `develop`, since a cloud session reads the skill from there.
 
 **Sarah checks:**
-- [ ] At https://claude.ai/code, start a session on the `Meal Planning Routines` environment with the `meal-planning` repo, and paste: `Follow step 6 of the dependency-updates skill for the finding "minor resend@6.32.0", as if 6.31.0 were the version on develop and the update were in the PR. Change nothing, and show me the summary step 7 would give for it.` See what `resend` 6.32.0 adds, with links to its release notes on GitHub, and whether anything in it is worth a story to adopt, naming the files if so. Goal: a minor of a package other than the assessed libraries gets a summary.
+- [x] At https://claude.ai/code, start a session on the `Meal Planning Routines` environment with the `meal-planning` repo, and paste: `Follow step 6 of the dependency-updates skill for the finding "minor resend@6.32.0", as if 6.31.0 were the version on develop and the update were in the PR. Change nothing, and show me the summary step 7 would give for it.` See what `resend` 6.32.0 adds, with links to its release notes on GitHub, and whether anything in it is worth a story to adopt, naming the files if so. Goal: a minor of a package other than the assessed libraries gets a summary.
+
+**Status:** ✅ Complete
+
+**As built:**
+- The minor summaries are a new step 6 of the skill, after the checks, since a minor can still be dropped until they finish. The summary moves to step 7, with **Minors** as a group of its own before **Majors**.
+- A package that publishes no release notes, such as one from `DefinitelyTyped`, says it has none.
 
 ### Step 3: Minors of the assessed libraries go to the assessor
 **Builds:** Piece 4 sub-step 4 for the assessed libraries, and Piece 7's "The Cloud Environment" (the six docs domains).
