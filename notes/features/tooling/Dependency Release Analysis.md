@@ -1,13 +1,11 @@
 ---
 type: infra
-status: in-progress
+status: in-review
 blocked-by: []
 confirmed: 2026-10-06
 ---
 # Where It Stands
-In progress. Next: /infra-build Step 3 ^status
-
-Steps 1 and 2 are built: majors of the assessed libraries go to `upgrade-assessor`, and minors of other packages get a summary from step 6 of the `dependency-updates` skill. Step 3 remains, for the assessed libraries' minors, which join that same step.
+All steps implemented. Next: /final-review ^status
 
 # Inbox
 
@@ -17,7 +15,7 @@ Each minor update the `dependency-updates` routine finds gets a summary of what 
 # Goals
 - [x] A major of one of the assessed libraries gets an assessment in the session that weighs how much the app would gain and how urgent the upgrade is against how much effort it would take.
 - [x] Each minor of a package other than the assessed libraries that goes into the PR gets a summary in the session of what the release adds, and whether anything in it is worth a story to adopt.
-- [ ] Each minor of one of the assessed libraries that goes into the PR gets an analysis in the session naming the code in the app each new feature would improve, and whether anything in it is worth a story to adopt.
+- [x] Each minor of one of the assessed libraries that goes into the PR gets an analysis in the session naming the code in the app each new feature would improve, and whether anything in it is worth a story to adopt.
 
 # Design
 The design lives in [[Local Dependency Update Alerts]]. The sections embedded below are part of this note.
@@ -88,7 +86,14 @@ The design's Pieces are in [[Local Dependency Update Alerts]], embedded above.
 - **After the check:** if the report names a page on one of the five docs domains it couldn't reach, stop and bring it to Sarah, since `WebFetch` not going through the allowlist changes Piece 5.
 
 **Sarah checks:**
-- [ ] At https://claude.ai/code, start a session on the `Meal Planning Routines` environment with the `meal-planning` repo, and paste: `Follow step 6 of the dependency-updates skill for the finding "minor @mantine/core@9.7.0", as if 9.6.3 were the version on develop and the update were in the PR. Change nothing, and show me the summary step 7 would give for it.` See an `upgrade-assessor` call, then its report shown unedited: each feature the app could use with files and an example, pages cited on `mantine.dev`, no page it couldn't reach, and whether anything is worth a story to adopt. Goal: a minor of an assessed library gets an analysis naming the code each new feature would improve.
+- [x] At https://claude.ai/code, start a session on the `Meal Planning Routines` environment with the `meal-planning` repo, and paste: `Follow step 6 of the dependency-updates skill for the finding "minor @mantine/core@9.7.0", as if 9.6.3 were the version on develop and the update were in the PR. Change nothing, and show me the summary step 7 would give for it.` See an `upgrade-assessor` call, then its report shown unedited: each feature the app could use with files and an example, pages cited on `mantine.dev`, no page it couldn't reach, and whether anything is worth a story to adopt. Goal: a minor of an assessed library gets an analysis naming the code each new feature would improve.
+
+**Status:** ✅ Complete
+
+**As built:**
+- The environment allows five docs domains. `moment.github.io` is left out, since WebFetch gets only its pages' titles and luxon's docs are in `docs/` in `moment/luxon` on GitHub. Sarah's call; the hub's Decisions hold it.
+- From Sarah's feedback: the environment also allows `tuf-repo-cdn.sigstore.dev`, recorded in `docs/ci.md`. This step's check found `mise install` failing on pnpm's provenance check without it, which stopped the setup script. A fresh session then showed the script finishing, with mise's Node and pnpm on its `PATH`.
+- The implementer's checks ran with no throwaway branch, since they changed nothing: a real `upgrade-assessor` run on Mantine 9.6.3 → 9.7.0, and a separate session reading steps 4, 6 and 7 for made-up findings, including a dropped `zod` minor.
 
 # Setup Outside the Repo
 ![[Local Dependency Update Alerts#^setup-domains]]

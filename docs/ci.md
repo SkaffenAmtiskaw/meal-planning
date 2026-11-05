@@ -142,6 +142,7 @@ Routines run in a claude.ai cloud environment named `Meal Planning Routines` (at
 
 ```text
 results-receiver.actions.githubusercontent.com
+tuf-repo-cdn.sigstore.dev
 react.dev
 nextjs.org
 mantine.dev
@@ -150,6 +151,8 @@ zod.dev
 ```
 
 The default (Trusted) list allows the npm registry, `nodejs.org` (where mise gets Node) and Google Fonts (which `pnpm build` downloads). GitHub's API goes through its own proxy whatever the level, but a run's logs don't: `gh run view --log-failed` asks the API, which redirects to a signed download on `results-receiver.actions.githubusercontent.com`, and that host isn't on the Trusted list.
+
+When mise installs pnpm from npm, it verifies pnpm's provenance, and that check needs `tuf-repo-cdn.sigstore.dev`. Without that domain, `mise install` fails and stops the setup script, so sessions don't get mise's Node and pnpm.
 
 The other five domains hold the release notes and guides of the libraries that the `dependency-updates` routine's `upgrade-assessor` subagent assesses. It also assesses Luxon, but Luxon's docs site isn't allowed, because `moment.github.io` builds its pages in the browser and `WebFetch` gets only their titles. The same docs are in `docs/` in `moment/luxon` on GitHub, which the session can already read.
 
