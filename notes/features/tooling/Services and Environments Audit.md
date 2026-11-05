@@ -110,7 +110,7 @@ Sarah read these out on 2026-11-04.
      - Rejected: keep all of it in `docs/ci.md`, with one link from the services doc - it gives later stories no rule for setup that isn't CI.
      - Rejected: split by vendor (GitHub and claude.ai in `docs/ci.md`, everything else in the services doc) - it splits one feature across two docs, such as the Vercel token and the workflow that uses it.
 2. Which of the audit's findings become changes? Found by `/audit` (2026-11-04).
-   - **Decided 2026-11-04:** all of them, each with its own Roadmap line. Sarah's call. Findings 1, 4 and 9 are under [[Dev Foundations]] and the rest under [[App Health]], which she approved from an agent's recommendations. The findings are:
+   - **Decided 2026-11-04:** all of them, each with its own Roadmap line. Sarah's call. Findings 1 and 4 are under [[Dev Foundations]] and the rest, other than 9, under [[App Health]], which she approved from an agent's recommendations. Finding 9's line is the uncommitted idea [[Paid Atlas Clusters]], Sarah's call: she might need it eventually, but not yet. The findings are:
      1. Previews use production's database, Resend key, Google client and better-auth secret.
      2. Atlas's IP access list allows `0.0.0.0/0`.
      3. The allowlist has three unlabelled addresses, probably including Sarah's old ones.
@@ -121,6 +121,7 @@ Sarah read these out on 2026-11-04.
      8. Google OAuth is in Testing with no test users.
      9. Production shares a Free cluster with dev and likely has no backups.
      10. Production's database is named `staging`, on a host starting `dev.`.
+     - Rejected: finding 9 under [[Dev Foundations]] - she isn't ready to pay and hasn't come close to any limits.
 3. How does the scan read the settings that live only in dashboards (Vercel, Atlas, Resend, Cloudflare, Google Cloud)?
    - **Decided 2026-10-05:** Sarah reads them out. The agent asks for one setting at a time, and she looks it up and tells it. Sarah's call.
 

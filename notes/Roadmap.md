@@ -58,8 +58,7 @@ How goals order the work, what each section and kind of note holds, and the rule
 15. [[When Stories Need E2E Tests]] ![[When Stories Need E2E Tests#^status]] 🎯 [[Dev Foundations]]
 16. [[Preview Environment]] ![[Preview Environment#^status]] 🎯 [[Dev Foundations]]
 17. [[Narrow Local Database User]] ![[Narrow Local Database User#^status]] 🎯 [[Dev Foundations]]
-18. production shares a Free tier Atlas cluster with dev, so they share its limits and any change to it. [[Database Backup and Restore]] covers the backups themselves. Found 2026-11-04 by [[Services and Environments Audit]]. 🎯 [[Dev Foundations]]
-19. [[Docs Audit]] ![[Docs Audit#^status]] 🎯 [[Dev Foundations]]
+18. [[Docs Audit]] ![[Docs Audit#^status]] 🎯 [[Dev Foundations]]
 # Planning
 1. [[Calendar and Recipes Data Refresh]] ![[Calendar and Recipes Data Refresh#^status]] 🎯 [[Calendar Page]] 🎯 [[App Health]] 🎯 [[Recipes Page]]
 2. [[Server-Only Creation and Pure Reads]] ![[Server-Only Creation and Pure Reads#^status]] 🎯 [[Calendar Page]] 🎯 [[App Health]]
@@ -202,6 +201,7 @@ How goals order the work, what each section and kind of note holds, and the rule
 - audit app works fully in mobile
 - toggle light/dark mode
 - [[What's Changed Notification]] ![[What's Changed Notification#^status]]
+- [[Paid Atlas Clusters]] ![[Paid Atlas Clusters#^status]]
 - have a Vercel Deploy Errors session watch Vercel's status page and say when an incident ends, such as with a cron job, if checking it by hand becomes a problem ([[Vercel Deploy Errors]] decision 5)
 - [[Replace Schedule-X]] ![[Replace Schedule-X#^status]]
 - [[Planner Settings Access Badge]] ![[Planner Settings Access Badge#^status]]
