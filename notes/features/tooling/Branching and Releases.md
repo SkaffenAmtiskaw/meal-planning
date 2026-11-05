@@ -235,6 +235,9 @@ Built after [[Notes Vault Repo]], so paths below are the ones it leaves: notes i
 **Routines**
 37. **The `routine-sessions` skill** - "The routine runs the skill as it is on `develop`" says a change to a routine's skill reaches the routine once its PR merges into `develop`, not once it's pushed there.
 
+**Reference search**
+38. **`scripts/note-refs.sh`** - its "Outside the vault" search skips `.claude/worktrees/`. `/close` runs it in the main checkout with every open story's worktree nested there (decision 17), and the story's own worktree is removed only after the note closes, so without this each close lists every worktree's copy of a file that names the note. The copies aren't references anyone has to update, and they bury the real ones.
+
 ## Flow
 **A story:**
 1. `/shape`, `/decide`, the design skills and `/plan-steps` run in the main checkout, which the hook keeps on the latest `develop`, and edit only notes.
