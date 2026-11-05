@@ -6,9 +6,9 @@ confirmed: 2026-11-04
 ---
 # Where It Stands
 
-In progress. Next: /infra-build Step 3 ^status
+In progress. Next: /infra-build Step 4 ^status
 
-Shaped 2026-10-04, with five decisions settled on 2026-10-04 and 2026-10-05. `/infra-design` revised it on 2026-10-06 and again on 2026-11-04, after `/check-drift`. The second revision moved Note Conventions' home outside `.claude/rules/`, reworked the `dependency-updates` Piece for Roadmap lines and notes that don't wait on the code, and kept the 8-step Build Order. Steps 1 and 2 are built: the empty `meal-planning-notes` GitHub repo exists and a cloud session clones it beside the code repo, and Note Conventions, the templates and the Roadmap's rules live in the code repo. Steps 3 to 8 remain.
+Shaped 2026-10-04, with five decisions settled on 2026-10-04 and 2026-10-05. `/infra-design` revised it on 2026-10-06 and again on 2026-11-04, after `/check-drift`. The second revision moved Note Conventions' home outside `.claude/rules/`, reworked the `dependency-updates` Piece for Roadmap lines and notes that don't wait on the code, and kept the 8-step Build Order. Steps 1 to 3 are built: the empty `meal-planning-notes` GitHub repo exists and a cloud session clones it beside the code repo, Note Conventions, the templates and the Roadmap's rules live in the code repo, and `vault-lint.sh` checks the notes it's named and reports merge conflicts. Steps 4 to 8 remain.
 
 # Inbox
 
@@ -221,6 +221,13 @@ Steps 1 to 5 change the code repo while the notes are still in `notes/`, and eac
 - A line `<<<<<<< HEAD` added to a note is reported with its file and line as a merge conflict for Sarah to resolve in Obsidian. Remove the line.
 
 **Sarah checks:** none
+
+**Status:** ✅ Complete
+
+**As built:**
+- `sweep-rule.md`'s lint call names each note it changed in this step, not Step 7, because the routine would otherwise have no per-note checks until then.
+- A name that matches no note is reported as "not found", because naming is the only way to get per-note checks, so a typo would otherwise pass silently.
+- Every run lists its findings first and ends with a line saying what it checked.
 
 ### Step 4: `story-range.sh` finds a story's start by date
 **Builds:** [[#^piece-11|Piece 11]]'s date method, while the notes are still in `notes/`

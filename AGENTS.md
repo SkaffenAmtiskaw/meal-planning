@@ -39,7 +39,7 @@ Before you change a note in `notes/`, invoke the `editing-notes` skill. These ru
 - **Roadmap order** is the user's call, so never reorder `notes/Roadmap.md`.
 - **⚠️ Check Drift callouts:** only `/check-drift` writes them.
 - **A Roadmap line with no note:** once you finish its work, run the check jobs that `ci.md` lists under "Checks on PRs", then remove the line as the `deleting-a-note` skill describes in step 4. The pre-commit hook runs only what the staged files trigger, so a dependency bump would get Biome and nothing else.
-- **Before you finish** a session that changed a note, run `sh scripts/vault-lint.sh`. Fix what it reports in the notes this session changed. Tell the user about anything it reports in other notes, because another session may be working on them.
+- **Before you finish** a session that changed a note, run `sh scripts/vault-lint.sh "<note>" …`, naming each note it changed. Fix what it reports in those notes. Tell the user about anything it reports in other notes, because another session may be working on them.
 
 ## Out-of-Scope Work
 Keep a running list of anything that looks outside the story or step you're working on, whether you, a subagent or the user found it. Also list anything that would add a piece or a question to a story that's already been through `/shape`. If the user gives feedback on how a skill, subagent or the workflow behaves, and this session isn't working on that same skill or subagent, put the feedback on the list too, even when it's also saved as a memory. Don't stop to deal with items as they come up, because they'd pull the session away from its work.

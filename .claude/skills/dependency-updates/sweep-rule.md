@@ -46,4 +46,4 @@ Take each update through these steps, in order:
    - **Otherwise:** add an item, as the sweep's What Belongs Here says.
 
 ## Commit the Items and Lines
-Once every update has been through the rule, check whether any note changed. If one did, run `sh scripts/vault-lint.sh` and fix what it reports in those notes. Then commit them, so the fixes go up in the push.
+Once every update has been through the rule, check whether any note changed. If one did, run `sh scripts/vault-lint.sh "<note>" …`, naming each one, and fix what it reports in those notes. Then commit them, so the fixes go up in the push.

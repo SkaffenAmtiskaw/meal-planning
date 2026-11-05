@@ -1,11 +1,12 @@
 #!/bin/sh
 # Checks the notes vault for the rules in the editing-notes and roadmap-rules
 # skills that can be checked mechanically.
-# - Per note: only notes changed since the last commit (git status), or the
-#   notes named as arguments. Older notes are brought up to spec when they're
-#   worked on, so unchanged ones aren't checked.
-# - Whole vault: broken links, blocked-by entries, Roadmap status embeds, and
-#   Now, Next and Planning markers.
+# - Per note: only the notes named as arguments, so a session names each note
+#   it changed. Older notes are brought up to spec when they're worked on, so
+#   unnamed ones aren't checked. The Roadmap gets no per-note checks, because it
+#   has no ^status line or Where It Stands and the whole-vault checks cover it.
+# - Whole vault: merge conflicts, broken links, blocked-by entries, Roadmap
+#   status embeds, and Now, Next and Planning markers.
 # Changes nothing. Exits 1 if it reports anything.
 # Usage: sh scripts/vault-lint.sh [note name or path ...]
 
@@ -19,18 +20,14 @@ find notes -type f ! -name '*.md' ! -path 'notes/.obsidian/*' | while IFS= read 
 while IFS= read -r n; do basename "$n" .md; done < "$tmp/notes" | sort -u > "$tmp/names"
 
 # Notes to check one by one.
-if [ $# -gt 0 ]; then
-  for arg in "$@"; do
-    case "$arg" in
-      (*.md) echo "$arg" ;;
-      (*) grep -F "/$arg.md" "$tmp/notes" | grep -E "/$(printf '%s' "$arg" | sed 's/[][\.*^$()+?{}|/]/\\&/g')\.md$" ;;
-    esac
-  done > "$tmp/changed"
-else
-  git status --porcelain --untracked-files=all -- notes | cut -c4- | sed 's/^"//; s/"$//; s/.* -> //' |
-    grep -E '\.md$' | grep -vE '^notes/(templates/|Roadmap\.md$|Note Conventions\.md$)' |
-    while IFS= read -r f; do [ -f "$f" ] && echo "$f"; done > "$tmp/changed"
-fi
+for arg in "$@"; do
+  [ "$(basename "$arg" .md)" = "Roadmap" ] && continue
+  case "$arg" in
+    (*.md) echo "$arg" ;;
+    # A name that matches no note goes through, so the per-note loop reports it.
+    (*) grep -F "/$arg.md" "$tmp/notes" | grep -E "/$(printf '%s' "$arg" | sed 's/[][\.*^$()+?{}|/]/\\&/g')\.md$" || echo "$arg" ;;
+  esac
+done > "$tmp/named"
 
 report="$tmp/report"
 : > "$report"
@@ -92,9 +89,13 @@ while IFS= read -r note; do
   if [ "$comments" -gt 0 ]; then
     add "$note: $comments line(s) with %% template comments. Remove them if this session worked on the note, not if it only edited it in passing"
   fi
-done < "$tmp/changed"
+done < "$tmp/named"
 
 # --- Whole vault ---
+# Merge conflicts Obsidian Git left in a note.
+tr '\n' '\0' < "$tmp/notes" | xargs -0 grep -Hn '^<<<<<<<' |
+  sed 's/:<<<<<<<.*$/: a merge conflict from Obsidian Git, for Sarah to resolve in Obsidian. Tell her rather than resolving it, even in a note this session changed/' >> "$report"
+
 # Broken links, skipping code spans, fenced blocks and %% comments, where links
 # are examples.
 grep -vE '^notes/(Note Conventions\.md)$' "$tmp/notes" | tr '\n' '\0' |
@@ -169,10 +170,17 @@ awk '
     else if (!ok) printf "%s:%d: a %s line with no 🎯 link to the building goal, 🚨, 📌 or 🔁\n", FILENAME, NR, section
   }' "$roadmap" >> "$report"
 
-checked=$(grep -c . "$tmp/changed")
 if [ -s "$report" ]; then
-  echo "Checked $checked changed note(s) and the whole vault. Found:"
+  echo "Found:"
   sed 's/^/- /' "$report"
-  exit 1
+  status=1
+else
+  echo "No issues."
+  status=0
 fi
-echo "Checked $checked changed note(s) and the whole vault. No issues."
+if [ $# -gt 0 ]; then
+  echo "Checked $(grep -c . "$tmp/named") named note(s) and the whole vault."
+else
+  echo "No notes were named, so only the whole-vault checks ran."
+fi
+exit "$status"
