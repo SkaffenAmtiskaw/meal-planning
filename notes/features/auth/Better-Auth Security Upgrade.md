@@ -12,7 +12,7 @@ better-auth is upgraded from 1.5.6 to 1.6.33, and the lockfile's `defu` from 6.1
 # Inbox
 
 # Notes
-Found 2026-10-02 by `pnpm audit` during `/infra-design` on [[Local Dependency Update Alerts]]. Sarah routed it to Next with 🚨, since better-auth ships in the app's build. Sarah had the upgrade done directly on 2026-10-04, without `/shape` and the steps after it.
+Found 2026-10-02 by `pnpm audit`. Sarah routed it to Next with 🚨, since better-auth ships in the app's build. Sarah had the upgrade done directly on 2026-10-04, without `/shape` and the steps after it.
 
 - **The advisories:** `better-auth` 1.5.6 has a critical advisory fixed in 1.6.11, and several high ones, the latest fixed in 1.6.22. Its transitive `defu` (fixed in 6.1.5) and `kysely` (fixed in 0.28.17) have high advisories too, and both fixes are inside the ranges better-auth asks for. So the upgrade is to 1.6.22 or later. The latest is 1.7.7.
 - **A breaking change in 1.6** ([release post](https://better-auth.com/blog/1-6)): session freshness now uses the session's `createdAt` instead of `updatedAt`. It doesn't reach the app: in 1.6.33 only `/unlink-account` and `/delete-user` check freshness, and the app calls neither. Change password and reset password only need a valid session. The other 1.6 breaking change, SAML `InResponseTo` validation, doesn't apply, since the app has no SAML.

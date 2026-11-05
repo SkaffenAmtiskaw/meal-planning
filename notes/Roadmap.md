@@ -73,7 +73,6 @@ How goals order the work, what each section and kind of note holds, and the rule
 
 # Later
 ## [[Dev Foundations]]
-- [[Local Dependency Update Alerts]] ![[Local Dependency Update Alerts#^status]]
 
 
 ## [[Calendar Page]]
