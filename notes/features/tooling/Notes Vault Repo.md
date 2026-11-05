@@ -6,9 +6,9 @@ confirmed: 2026-11-04
 ---
 # Where It Stands
 
-In progress. Next: /infra-build Step 2 ^status
+In progress. Next: /infra-build Step 3 ^status
 
-Shaped 2026-10-04, with five decisions settled on 2026-10-04 and 2026-10-05. `/infra-design` revised it on 2026-10-06 and again on 2026-11-04, after `/check-drift`. The second revision moved Note Conventions' home outside `.claude/rules/`, reworked the `dependency-updates` Piece for Roadmap lines and notes that don't wait on the code, and kept the 8-step Build Order. Step 1 is built: the empty `meal-planning-notes` GitHub repo exists and a cloud session clones it beside the code repo. Steps 2 to 8 remain.
+Shaped 2026-10-04, with five decisions settled on 2026-10-04 and 2026-10-05. `/infra-design` revised it on 2026-10-06 and again on 2026-11-04, after `/check-drift`. The second revision moved Note Conventions' home outside `.claude/rules/`, reworked the `dependency-updates` Piece for Roadmap lines and notes that don't wait on the code, and kept the 8-step Build Order. Steps 1 and 2 are built: the empty `meal-planning-notes` GitHub repo exists and a cloud session clones it beside the code repo, and Note Conventions, the templates and the Roadmap's rules live in the code repo. Steps 3 to 8 remain.
 
 # Inbox
 
@@ -200,9 +200,17 @@ Steps 1 to 5 change the code repo while the notes are still in `notes/`, and eac
 - Once the Note Conventions move is committed, `git log --follow --oneline -- .claude/note-conventions.md` shows commits from before the move that changed `notes/Note Conventions.md`.
 
 **Sarah checks:**
-- [ ] In a new Code-tab session, ask: "What does a note's `confirmed` property record, and when isn't it bumped?" See it read `.claude/note-conventions.md` and answer, including that moves, renames and link fixes don't bump it. Goal: Note Conventions, the templates and the Roadmap's rules live in the code repo (Note Conventions).
-- [ ] In a new Code-tab session, ask: "Send the scope-router subagent this one item: Let users export a week's meal plan as a PDF: pick the week, choose whether to include recipes and shopping lists, and decide whether it's generated in the browser or on the server, which is still open. Found while planning Notes Vault Repo; it's new app behavior, outside a tooling story." See it suggest a new idea note drafted from a template, and in the agent's tool calls a read of a file in `.claude/note-templates/`. Goal: Note Conventions, the templates and the Roadmap's rules live in the code repo (the templates).
-- [ ] In a new Code-tab session, ask: "A new sweep note was just created. Where does its Roadmap line go?" See it load the `roadmap-rules` skill and answer: in Unaffiliated in Later, with no 🎯 links. Goal: Note Conventions, the templates and the Roadmap's rules live in the code repo (the Roadmap's rules).
+- [x] In a new Code-tab session, ask: "What does a note's `confirmed` property record, and when isn't it bumped?" See it read `.claude/note-conventions.md` and answer, including that moves, renames and link fixes don't bump it. Goal: Note Conventions, the templates and the Roadmap's rules live in the code repo (Note Conventions).
+- [x] In a new Code-tab session, ask: "Send the scope-router subagent this one item: Let the members of a shared planner say who's cooking each meal: pick a member on the meal, show their name on the calendar, and decide whether it sends them a reminder, which is still open. Found while planning Notes Vault Repo; it's new app behavior, outside a tooling story." See it suggest a new idea note drafted from a template, and in the agent's tool calls a read of a file in `.claude/note-templates/`. Goal: Note Conventions, the templates and the Roadmap's rules live in the code repo (the templates).
+- [x] In a new Code-tab session, ask: "A new sweep note was just created. Where does its Roadmap line go?" See it load the `roadmap-rules` skill and answer: in Unaffiliated in Later, with no 🎯 links. Goal: Note Conventions, the templates and the Roadmap's rules live in the code repo (the Roadmap's rules).
+
+**Status:** ✅ Complete
+
+**As built:**
+- `freezing-a-copy.md` and `/shape` also relied on the Roadmap's rules, so they point to `roadmap-rules` too. `/implement`, `/infra-build` and `/tooling` invoke the skill and read the story's Roadmap line, since the answer depends on that line.
+- The templates check's item changed from a PDF export to who's cooking each meal, because the Roadmap already has a "printable meal plan" line, so scope-router filed the PDF item there and read no template.
+- `roadmap-placement` gained a case for a collecting note's own line under "Checking the Goals" and "Placing a New Line", because "It serves no goal" would have sent a new sweep to Ideas (Boy Scout fix). The Roadmap's-rules check ran before this, so a session may now answer it from `roadmap-placement` alone.
+- `.obsidian/templates.json` is deleted, with Sarah's OK. Obsidian's core Templates plugin stays on, with no folder set.
 
 ### Step 3: `vault-lint.sh` checks the notes it's named and reports merge conflicts
 **Builds:** [[#^piece-5|Piece 5]]'s named notes and merge-conflict check in `vault-lint.sh`, and the "Linting changed notes" convention in AGENTS.md's "Before you finish"
