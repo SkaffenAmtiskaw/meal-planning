@@ -23,7 +23,7 @@ Blocking decisions are the user's to make, so this skill never answers one itsel
 This is planning only. Don't change code.
 
 ## 1. Find the idea
-Read `notes/Note Conventions.md` first. It explains the frontmatter, the note types and what step comes next for each note.
+Read `.claude/note-conventions.md` first. It explains the frontmatter, the note types and what step comes next for each note.
 
 The idea is one of these:
 - **A note name:** find it in `notes/features/`. If `type` is already set, this is a re-shape: confirm the type in step 5 rather than assuming it.
@@ -36,7 +36,7 @@ A change to how the app is built rather than what it does, such as a skill, a ho
 - **If the idea changes what the app does,** go on to step 3.
 - **If it changes how the app is built:**
   - **If it builds new infrastructure,** such as CI or a test setup, it's an infra story. Go on to step 3.
-  - **Otherwise,** it's a workflow note. Tell the user why. If they agree, rewrite it from `notes/templates/Workflow.md`, keeping their content under Notes, write it as step 7 describes, and stop.
+  - **Otherwise,** it's a workflow note. Tell the user why. If they agree, rewrite it from `.claude/note-templates/Workflow.md`, keeping their content under Notes, write it as step 7 describes, and stop.
 
 ## 3. Understand the idea
 ### Look around, briefly
@@ -109,7 +109,7 @@ What you draft depends on the direction the user picked:
 - **Drop it:** there's nothing to draft. Go on to step 7.
 - **Fold it into an existing note:** draft the addition to that note, as the `filing-work` skill describes.
 - **Fold it into a sweep:** draft the item for the collecting note, as the `filing-work` skill describes.
-- **A story:** draft the note from the template in `notes/templates/` for its type, as below.
+- **A story:** draft the note from the template in `.claude/note-templates/` for its type, as below.
 
 A story's note:
 - **Where It Stands:** the `^status` line and the summary. At this stage, the summary is the chosen direction in a sentence or two.
@@ -128,6 +128,6 @@ Once the user approves the draft, or picks "drop it", what you write depends on 
 - **Dropped:** if it's a Roadmap line with no note, remove the line. If it's an idea note, run `sh scripts/note-refs.sh "<note name>"`. If its vault or outside-the-vault sections list anything other than its own Roadmap line, tell the user it needs `/close` in a new session. Otherwise, delete it as the `deleting-a-note` skill describes.
 - **Folded into an existing note or a sweep:** apply the addition there. Then, if the idea was an idea note, delete it as the `deleting-a-note` skill describes, pointing each link to the note it was folded into. If it was a Roadmap line with no note, remove the line.
 - **A story, a hub or a workflow note:** if the idea was an idea note, rewrite it in place, so links to it keep working. Don't rename or move it without asking. If it was a Roadmap line with no note, create the note in `notes/features/<area>/`, and if the area isn't obvious, ask the user which folder. Make the line link to the note. Either way, what happens to its Roadmap line depends on the first case that fits:
-  - **A hub whose `^status` line says `Next: its child stories`:** remove the line, as the Roadmap's "Hubs" rule says.
+  - **A hub whose `^status` line says `Next: its child stories`:** remove the line, as the `roadmap-rules` skill's "Hubs" rule says.
   - **A story whose "Is this worth doing?" decision is still open:** keep the line where it is, because the story isn't committed yet.
   - **Anything else:** shaping commits it. Check its goals and place its line as the `roadmap-placement` skill describes.

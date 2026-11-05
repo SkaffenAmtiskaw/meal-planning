@@ -19,7 +19,7 @@ If it names a note or an item in one, the note's `type` says what the change is:
 - **`workflow` without one:** the whole note is the change.
 - **Any other type, or none:** it's story work, so this skill doesn't take it.
 
-If the Roadmap's "How this file works" says under "Goals" that the note or item can't be built yet, tell the user which goal it waits on, and stop.
+If the change comes from a note or item, invoke the `roadmap-rules` skill and read its line on the Roadmap. If, by the skill's "Goals" rules, it can't be built yet, tell the user which goal it waits on, and stop.
 
 Leave the note's Roadmap line where it is, because the change finishes in one session.
 
@@ -33,7 +33,7 @@ If one applies, tell the user which and why, and ask whether to spin the change 
 ## 2. Settle the Change
 Settle with the user what the change is. If it adds or moves a rule, decide where it goes as the `rule-placement` skill describes. If it adds or renames a skill or agent, read `adding-a-skill-or-agent.md`.
 
-Then find everything the change reaches. Search the repo, including `notes/Note Conventions.md` and `notes/templates/`, for the skill, agent, rule or term being changed, because each reference is part of this change. Step 5 handles the rest of `notes/`.
+Then find everything the change reaches. Search the repo, including `.claude/note-conventions.md` and `.claude/note-templates/`, for the skill, agent, rule or term being changed, because each reference is part of this change. Step 5 handles the rest of `notes/`.
 
 If settling the change or the search opens more work, check "Is It a Story?" again.
 

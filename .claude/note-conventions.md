@@ -1,4 +1,4 @@
-How notes in this vault are organized and move through their lifecycle. The [[Roadmap]] decides order; everything else about a story lives in its note.
+How notes are organized and move through their lifecycle. The Roadmap decides order; everything else about a story lives in its note.
 
 # Frontmatter
 | Property | Values | Meaning |
@@ -19,7 +19,7 @@ How notes in this vault are organized and move through their lifecycle. The [[Ro
 - **dropped** - won't be built.
 
 # Templates
-Each note type's template is in `templates/`. For a story, pick by the shape of the fix, not where the work came from:
+Each note type's template is in `.claude/note-templates/`. For a story, pick by the shape of the fix, not where the work came from:
 - **Feature** - new user-facing behavior, often with a design handoff.
 - **Bug** - something is broken and the fix is local.
 - **Pattern** - introduce or standardize a convention and migrate code to it.
@@ -29,7 +29,7 @@ Each note type's template is in `templates/`. For a story, pick by the shape of 
 - **Sweep** - a rolling checklist of small fixes that share a logical grouping (e.g. unit test fixes, style fixes), collected until a goal starts building. Every item must be small, with no ambiguity and no open decisions. It skips `/final-review`, because its items are unrelated by design, which leaves no parts to review together.
 - **Workflow** - a change to how the app is built, not what it does: skills, subagents, hooks, AGENTS.md, these conventions, templates, docs or tooling config. It skips the lifecycle. If the change builds new infrastructure, such as CI or a test setup, it's a story instead. A workflow note with a What Belongs Here section is a collecting note: it gathers items over time and stays.
 - **Idea** - jot something down quickly.
-- **Hub** - the single home for design or decisions that several stories share. It can hold the design of a story that was split, or a design `/place-design` places there. It can also hold the design and decisions of stories that overlap substantially, such as [[Meal Editing]], or of stories that `/design-feature` designs together. Part of a goal that's still being explored is an exploration hub, which also holds that part's Requirements. Not implemented directly.
+- **Hub** - the single home for design or decisions that several stories share. It can hold the design of a story that was split, or a design `/place-design` places there. It can also hold the design and decisions of stories that overlap substantially, such as `Meal Editing`, or of stories that `/design-feature` designs together. Part of a goal that's still being explored is an exploration hub, which also holds that part's Requirements. Not implemented directly.
 - **Goal** - an epic: work the user ranks and ships together as one release. The Roadmap, not the note, lists the work that serves it. It has no Where It Stands. Not implemented directly.
 - **Standing Goal** - collects work that no goal would take on its own, such as library upgrades and tech debt, which never block a feature. It never ships and is never ranked, building or planning. It has no Where It Stands and no Done When.
 

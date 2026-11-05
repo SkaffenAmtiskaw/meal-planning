@@ -38,7 +38,7 @@ Triage the out-of-scope list first. An item the user pulls in joins the list as 
 ## 4. Divide the Hub
 If the groups look like parts that would be designed separately, ask the user whether each should be its own exploration hub, because a hub is designed and cut into stories as one. For each one they split off, these are the steps, in order:
 
-1. **The note.** Write a new hub from `notes/templates/Hub.md` in the original's folder, with a Purpose giving its scope and a Roadmap line under the same heading as the original's.
+1. **The note.** Write a new hub from `.claude/note-templates/Hub.md` in the original's folder, with a Purpose giving its scope and a Roadmap line under the same heading as the original's.
 2. **What moves in.** Move that group's Requirements into the new hub, under a copy of the first-pass line. Move the group's questions and child stories there too, pointing each child's `![[<hub>#Purpose]]` embed at the new hub.
 3. **The original.** If it's left with nothing, delete it as the `deleting-a-note` skill describes.
 

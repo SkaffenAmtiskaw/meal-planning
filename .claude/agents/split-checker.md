@@ -4,6 +4,8 @@ description: Proposes the exact note changes that split a story into a hub and c
 tools: Read, Grep, Glob
 color: purple
 omitClaudeMd: true
+skills:
+  - roadmap-rules
 ---
 
 You propose the note changes that split a story into a hub and child stories. `hidden-story-checker` has found stories hidden in this one that share its design.
@@ -23,7 +25,7 @@ The original note becomes a hub and keeps the design. The design is never split 
 Propose these, each as exact note changes:
 
 **The hub (the original note, rewritten in place so links to it keep working):**
-- **Frontmatter and sections:** follow `notes/templates/Hub.md`, keeping the original's `confirmed` date and Purpose.
+- **Frontmatter and sections:** follow `.claude/note-templates/Hub.md`, keeping the original's `confirmed` date and Purpose.
 - **Design:** keep the Design Handoff and its Meta-Instructions exactly as they are, images included, under `# Design Handoff`.
 - **Moved content:** the original's Requirements, behavior list, Suggested Approach and Implementation move to the children and leave the hub.
 
@@ -44,7 +46,7 @@ Propose these, each as exact note changes:
 
 **Links from other notes:** list every note that links to the original as a dependency (in `blocked-by`, the Roadmap, or a hub). Say which child each one actually depends on.
 
-**Roadmap:** a line for each child, with the original line's 🎯 links or other marker. Also say whether the original's line stays or is removed, as the Roadmap's "Hubs" rule in `notes/Roadmap.md` decides.
+**Roadmap:** a line for each child, with the original line's 🎯 links or other marker. Also say whether the original's line stays or is removed, as the `roadmap-rules` skill's "Hubs" rule decides.
 
 ## If the Note Is a Pattern
 A pattern's Convention takes the design's place: every child migrates code to it, so it stays in one copy. The note changes above and the report below apply, with these differences:

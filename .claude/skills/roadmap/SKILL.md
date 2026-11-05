@@ -21,7 +21,7 @@ A goal or standing goal can hold instructions for this skill under its Roadmap I
 If the user asks for a new instruction during a run, write what they meant under the goal note's Roadmap Instructions.
 
 ## 1. Find the Goal
-Read `notes/Roadmap.md`. In a re-shape, show the user what the note or Roadmap already says at each step, and ask only what's changed. What happens next depends on the argument:
+Read `notes/Roadmap.md` and invoke the `roadmap-rules` skill. In a re-shape, show the user what the note or Roadmap already says at each step, and ask only what's changed. What happens next depends on the argument:
 - **A name:** look for it in `notes/goals/`. What you find decides the path:
   - **A goal** (`type: goal`): this is a re-shape.
   - **A standing goal** (`type: standing-goal`): ask the user whether to re-shape it or draw a goal from it. To re-shape it, read `shaping-a-standing-goal.md` in this skill's folder and follow it. To draw a goal, read `drawing-a-goal.md` in this skill's folder and follow it.

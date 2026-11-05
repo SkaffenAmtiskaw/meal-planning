@@ -1,6 +1,6 @@
 #!/bin/sh
-# Checks the notes vault for the rules in the editing-notes skill and the
-# Roadmap's "How this file works" that can be checked mechanically.
+# Checks the notes vault for the rules in the editing-notes and roadmap-rules
+# skills that can be checked mechanically.
 # - Per note: only notes changed since the last commit (git status), or the
 #   notes named as arguments. Older notes are brought up to spec when they're
 #   worked on, so unchanged ones aren't checked.

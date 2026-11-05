@@ -1,10 +1,10 @@
 #!/bin/sh
-# Prints one top-level section of notes/Note Conventions.md, so a skill can
+# Prints one top-level section of .claude/note-conventions.md, so a skill can
 # inject just the part it needs with !`sh scripts/note-section.sh "<Heading>"`.
 # Usage: sh scripts/note-section.sh "Next Step by Note State"
 
 cd "$(dirname "$0")/.." || exit 1
-file="notes/Note Conventions.md"
+file=".claude/note-conventions.md"
 heading="$1"
 
 section=$(awk -v h="# $heading" '

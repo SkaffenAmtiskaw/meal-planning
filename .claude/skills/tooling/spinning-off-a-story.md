@@ -1,5 +1,5 @@
 # Spinning Off a Story
-The change becomes a blank-type idea note from `notes/templates/Idea.md`, and `/shape` picks its type. The steps, in order:
+The change becomes a blank-type idea note from `.claude/note-templates/Idea.md`, and `/shape` picks its type. The steps, in order:
 
 1. **Write the note.** How depends on where the change came from:
    - **A workflow note without a What Belongs Here section:** rewrite it in place, so links to it keep working.

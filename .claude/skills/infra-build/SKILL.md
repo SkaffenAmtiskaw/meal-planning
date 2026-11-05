@@ -16,7 +16,7 @@ Build the next step of the infra note **$ARGUMENTS**.
 Invoke the `editing-notes` skill first, since this run changes notes.
 
 ## 1. Find the Step
-Find the note. If its `status` isn't `ready` or `in-progress`, tell the user what you found, and stop. If the Roadmap's "How this file works" says under "Goals" that the story can't be built yet, tell them which goal it waits on, and stop.
+Find the note. If its `status` isn't `ready` or `in-progress`, tell the user what you found, and stop. Invoke the `roadmap-rules` skill and read the story's line on the Roadmap. If, by the skill's "Goals" rules, the story can't be built yet, tell the user which goal it waits on, and stop.
 
 Read the whole note. The step to build is the first one under `## Build Order` with no `**Status:**` line. Tell the user in one line which step you're building. If `status` is `ready`, set it to `in-progress`, and move the story's Roadmap line into Now.
 

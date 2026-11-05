@@ -1,6 +1,6 @@
 # Freezing a Dated Copy
 What happens to an item that starts with a `**Blocked by [[Story]]:**` marker depends on the note and the story:
-- **If the note is a sweep and the story is in this release, as the Roadmap's "What joins every release" describes:** the copy keeps it.
+- **If the note is a sweep and the story is in this release, as the `roadmap-rules` skill's "What joins every release" describes:** the copy keeps it.
 - **Otherwise:** it's held back for the next kickoff, because its story isn't in this release or the note has no `blocked-by` to wait through.
 
 Copy the note to `<name> YYYY-MM-DD` (today's date), then edit both:

@@ -38,7 +38,7 @@ Show the whole proposal at once: each hub's name, its scope, what goes in it, wh
 ## 4. Write It
 For each approved hub, these are the steps, in order:
 
-1. **The note.** If the hub is new, write it from `notes/templates/Hub.md`, in `notes/features/<area>/`, asking the user which folder if the area isn't clear. Its Purpose gives the hub's scope.
+1. **The note.** If the hub is new, write it from `.claude/note-templates/Hub.md`, in `notes/features/<area>/`, asking the user which folder if the area isn't clear. Its Purpose gives the hub's scope.
 2. **What moves in or out.** How each line or note moves depends on what it is:
    - **A note that hasn't been shaped, meaning its `^status` line names `/shape` or it holds rough ideas with no `^status` line:** its content moves to the hub's Inbox, keeping what the user meant.
    - **A line with no note:** it moves to the hub's Inbox, keeping what the user meant, and leaves the Roadmap.

@@ -7,7 +7,7 @@ user-invocable: false
 # Editing Notes
 Later sessions build on what a note says, so a note says what is true now, and says the user decided something only if they did.
 
-If no skill's steps cover what you're doing, read `notes/Note Conventions.md` before creating, moving, closing or deleting a note, or changing its `status`.
+If no skill's steps cover what you're doing, read `.claude/note-conventions.md` before creating, moving, closing or deleting a note, or changing its `status`.
 
 ## Working on a Note
 What to do once your skill has read the note and hasn't stopped, or when you start work on a note with no skill, rather than just editing it in passing, in order:

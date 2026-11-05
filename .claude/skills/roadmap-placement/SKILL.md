@@ -10,15 +10,15 @@ Where a line goes follows from its work and the goals it serves, and the user de
 ## Checking the Goals
 Whether to read the goal notes depends on the work. The cases:
 - **The user has already named the goals,** such as by placing the line under a goal's heading or giving it 🎯 links: go on to where the line goes, below.
-- **It's a bug the Roadmap's "How this file works" puts under Bugs:** its line goes under that heading, so go on to where the line goes, below.
+- **It's a bug the `roadmap-rules` skill puts under Bugs:** its line goes under that heading, so go on to where the line goes, below.
 - **Otherwise:** read the notes in `notes/goals/`. If a goal's Roadmap Instructions say the work belongs to it, it does, so don't ask about that goal. Another goal fits when a line in its Purpose, Done When or What Belongs Here could include the work, and dev tooling also fits a goal it would make easier. If no other goal fits, don't ask. Otherwise, ask the user which ones the work serves, naming each goal that fits and quoting that line. Don't recommend one for tooling, because whether tooling joins a ranked goal is the user's priority call.
 
 ## Moving an Existing Line
-If the story is committed and its line is in Ideas or Unaffiliated, move it. The Later and Bugs entries in the Roadmap's "How this file works" say where it goes. A line goes into Next or Planning only if the user says so.
+If the story is committed and its line is in Ideas or Unaffiliated, move it. The Later and Bugs entries in the `roadmap-rules` skill say where it goes. A line goes into Next or Planning only if the user says so.
 
 ## Placing a New Line
 If something about the work makes its usual spot look wrong, such as when the user has said in the session that it needs prioritizing, or when a line in Next or Planning waits on it, ask them. Otherwise, the spot follows from its work:
-- **It's a bug the Roadmap's "How this file works" puts under Bugs:** it goes under that heading in Later.
+- **It's a bug the `roadmap-rules` skill puts under Bugs:** it goes under that heading in Later.
 - **It serves a goal:** it's committed, so it goes under that goal's heading in Later.
 - **It serves no goal:** it's uncommitted, so it goes in Ideas.
 
