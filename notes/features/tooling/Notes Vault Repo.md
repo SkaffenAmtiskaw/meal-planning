@@ -6,9 +6,9 @@ confirmed: 2026-11-04
 ---
 # Where It Stands
 
-In progress. Next: /infra-build Step 5 ^status
+In progress. Next: /infra-build Step 6 ^status
 
-Shaped 2026-10-04, with five decisions settled on 2026-10-04 and 2026-10-05. `/infra-design` revised it on 2026-10-06 and again on 2026-11-04, after `/check-drift`. The second revision moved Note Conventions' home outside `.claude/rules/`, reworked the `dependency-updates` Piece for Roadmap lines and notes that don't wait on the code, and kept the 8-step Build Order. Steps 1 to 4 are built: the empty `meal-planning-notes` GitHub repo exists and a cloud session clones it beside the code repo, Note Conventions, the templates and the Roadmap's rules live in the code repo, `vault-lint.sh` checks the notes it's named and reports merge conflicts, and `story-range.sh` finds a story's start by date. Steps 5 to 8 remain.
+Shaped 2026-10-04, with five decisions settled on 2026-10-04 and 2026-10-05. `/infra-design` revised it on 2026-10-06 and again on 2026-11-04, after `/check-drift`. The second revision moved Note Conventions' home outside `.claude/rules/`, reworked the `dependency-updates` Piece for Roadmap lines and notes that don't wait on the code, and kept the 8-step Build Order. Steps 1 to 5 are built: the empty `meal-planning-notes` GitHub repo exists and a cloud session clones it beside the code repo, Note Conventions, the templates and the Roadmap's rules live in the code repo, `vault-lint.sh` checks the notes it's named and reports merge conflicts, `story-range.sh` finds a story's start by date, and `/tooling` holds a workflow change's Roadmap edits until it's committed. Steps 6 to 8 remain.
 
 # Inbox
 
@@ -246,6 +246,13 @@ Steps 1 to 5 change the code repo while the notes are still in `notes/`, and eac
 - Read as a session would: step 3 leaves an edit to existing Roadmap lines or sections out of the change, step 6's report lists it under "Roadmap edits to apply after the commit", and when Sarah asks for the commit, the session commits the code-repo change first, then makes those edits and runs `vault-lint.sh` naming the notes it changed. Story progress still updates the Roadmap right away. The new text puts the condition first, as the `writing-standard` skill asks.
 
 **Sarah checks:** none
+
+**Status:** ✅ Complete
+
+**As built:**
+- "Story progress still updates the Roadmap right away" is written in the skill as its one `/tooling` case: what deleting a finished note does to the Roadmap isn't held. Step 1 sends story work away, so `/tooling` has no other story progress to apply it to.
+- Step 5 of `/tooling` also holds wrong Roadmap text it finds, because its cleanup would otherwise make the edit early.
+- Until Step 6's cutover, held edits made after the commit stay uncommitted in `notes/`, since the skill describes the Obsidian Git setup.
 
 ### Step 6: The vault moves into the notes repo
 **Builds:** [[#^piece-1|Pieces 1]], [[#^piece-3|3]], [[#^piece-4|4]], [[#^piece-6|6]] and [[#^piece-10|10]], and the rest of [[#^piece-5|Pieces 5]], [[#^piece-7|7]], [[#^piece-8|8]], [[#^piece-9|9]], [[#^piece-11|11]] and [[#^piece-12|12]]: where the six scripts look, the notes repo's folder paths in the moved files, `story-range.sh`'s `git log` in the notes repo and `/tooling`'s searches. Also the "Note paths in instructions", "Agents that read notes" and "Committing notes" conventions

@@ -42,6 +42,9 @@ What the change needs depends on what it touches:
 - **A Claude Code feature,** such as skill frontmatter, hooks, subagents or rules: check the current Claude Code docs, never memory.
 - **A skill or agent:** follow the `keeping-sessions-lean` skill.
 - **Project config:** by asking for this change, the user has asked for any config edit it names.
+- **An existing Roadmap line or section:** what to do depends on the edit:
+  - **What deleting a finished note does to the Roadmap:** leave it to step 5. It isn't held, because it records progress that's true under both the old skills and the new ones.
+  - **Any other edit,** such as a section's name: hold it until the change is committed, as step 6 describes. Other sessions run the new skills only once they're committed, so until then the edited Roadmap wouldn't match the workflow they follow.
 
 ## 4. Get the Change Approved
 Triage the out-of-scope list. An item the user pulls in becomes part of this change. Then show the table of changed files and ask the user whether they approve.
@@ -55,9 +58,12 @@ Decide how hard to search other stories' remaining work from how widely the chan
 
 In the note or item this session worked from, and in each item you found, remove the text for what this change did and keep the rest. The user's own lines are the exception. If that finishes a note that isn't collecting, or empties the kicked-off copy this session worked from, delete it as the `deleting-a-note` skill describes.
 
-Handle text the change made wrong as you would any note that's wrong or out of date. A note that only follows a convention this change replaced stays as it is, because it's updated when it's next worked on.
+How to handle text the change made wrong depends on what it is:
+- **An existing Roadmap line or section:** hold the edit as step 3 describes.
+- **A note that only follows a convention this change replaced:** leave it as it is, because it's updated when it's next worked on.
+- **Anything else:** handle it as the `editing-notes` skill's "A Note That's Wrong or Out of Date" describes.
 
 ## 6. Report and Stop
-Route the out-of-scope list. Then show the table of changed files, including each note you deleted.
+Route the out-of-scope list. Then show the table of changed files, including each note you deleted. If you held any Roadmap edits, list each one under "Roadmap edits to apply after the commit".
 
-Stop there, because each change gets its own session.
+Stop there, because each change gets its own session. If the user then asks you to commit and you listed Roadmap edits, commit the change first, then make those edits and run `sh scripts/vault-lint.sh` naming each note you changed.
