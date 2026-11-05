@@ -99,14 +99,14 @@ For each entry under `overrides`, remove it and run `pnpm install --no-frozen-lo
 ## 4. Majors and Uncleared Advisories
 This step takes what the session couldn't put in the pull request: each major, and each advisory no fix cleared. An advisory whose only fix is a major counts as a major of the package with the advisory, at its lowest fixed version. This skill calls it a **security major**.
 
-**The assessed libraries** are React (`react`, `react-dom`), Next (`next`), Mantine (`@mantine/*`), better-auth (`better-auth`), luxon (`luxon`) and Zod (`zod`). The app leans on them most, so a major or minor of one gets an assessment from the `upgrade-assessor` subagent.
+**The assessed libraries** are React (`react`, `react-dom`), Next (`next`), Mantine (`@mantine/*`), better-auth (`better-auth`), luxon (`luxon`) and Zod (`zod`). The app leans on them most, so a major or minor of one gets an assessment from the `upgrade-assessor` subagent. This step and step 6 each make one call per library, even when several of its packages have an update, and keep the report for the summary.
 
 **The release notes link** is the package's GitHub releases page. If it has none, as with a package from `DefinitelyTyped`, link its npm page and say it has no GitHub releases page.
 
 **Reading release notes:** read `github.com` pages through WebFetch, since `gh` and `curl` reach only this repo there. Read `raw.githubusercontent.com` through WebFetch or `curl`. A `CHANGELOG.md` can be a symlink that returns only its target's path, so fetch that path. A releases page shows only the newest releases, of every package in the repo, so if the version you need isn't there, go on to the next pages (`?page=2`). Or read the changelog, which in a repo of several packages sits in the package's folder, such as `packages/plugin-react/CHANGELOG.md`.
 
 What to do with each major and uncleared advisory, by case:
-- **If it's a major of one of the assessed libraries:** have the `upgrade-assessor` subagent assess it, with one call per library, even when several of its packages have a major. Give the subagent each package's version in `package.json` and its new version, any major of the library's `@types/*` package in this run, and a security major's advisory ID. Keep its report for the summary. If it's a security major, also follow `sweep-rule.md` in this folder, which writes its Roadmap line.
+- **If it's a major of one of the assessed libraries:** have the `upgrade-assessor` subagent assess it. Give the subagent each package's version in `package.json` and its new version, any major of the library's `@types/*` package in this run, and a security major's advisory ID. If it's a security major, also follow `sweep-rule.md` in this folder, which writes its Roadmap line.
 - **Otherwise:** follow `sweep-rule.md`.
 
 ## 5. Push and Open or Update the Pull Request
@@ -168,7 +168,7 @@ If step 2 aborted the merge of `develop` or a push was rejected, skip this step,
 A version bump doesn't show what a minor adds, so the summary tells the user what it adds and whether the app should adopt any of it.
 
 What to do with each minor from this run that's still on the branch, by case:
-- **If its package is one of the assessed libraries:** have the `upgrade-assessor` subagent assess it, with one call per library, even when several of its packages have a minor. Give the subagent each package's version in `package.json` on `origin/develop` and its new version. Keep its report for the summary.
+- **If its package is one of the assessed libraries:** have the `upgrade-assessor` subagent assess it, as "The assessed libraries" in step 4 describes. Give the subagent each package's version in `package.json` on `origin/develop` and its new version.
 - **Otherwise:**
   1. Read the release notes for every version after the one in `package.json` on `origin/develop`, up to the new one, as "Reading release notes" in step 4 describes. The cases with nothing to read, and what to do in each before going on to the next minor:
      - **The package publishes none,** as with a package from `DefinitelyTyped`: keep for the summary that it has none.

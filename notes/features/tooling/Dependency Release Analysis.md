@@ -1,11 +1,11 @@
 ---
 type: infra
-status: in-review
+status: done
 blocked-by: []
 confirmed: 2026-10-06
 ---
 # Where It Stands
-All steps implemented. Next: /final-review ^status
+Reviewed. Next: /close ^status
 
 # Inbox
 
