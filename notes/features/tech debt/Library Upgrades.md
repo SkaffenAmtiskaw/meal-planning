@@ -23,7 +23,7 @@ A small upgrade with no decision to make, of one of two kinds: a major of any pa
 # Items
 
 # Out of Scope
-- Majors of the assessed libraries: [[Dependency Release Analysis]].
+- Majors of the assessed libraries: step 4 of the `dependency-updates` skill sends each to the `upgrade-assessor` subagent.
 - An upgrade too big for a sweep, or one that fixes an advisory: it gets its own Roadmap line.
 
 # Acceptance Criteria

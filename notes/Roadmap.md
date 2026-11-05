@@ -39,7 +39,6 @@ How goals order the work, what each section and kind of note holds, and the rule
 - [[Dev Tooling]]
 
 # Now
-- [[Dependency Release Analysis]] ![[Dependency Release Analysis#^status]] 🎯 [[Dev Foundations]]
 
 # Next
 1. [[Notes Vault Repo]] ![[Notes Vault Repo#^status]] 🎯 [[Dev Foundations]]
@@ -72,6 +71,7 @@ How goals order the work, what each section and kind of note holds, and the rule
 
 # Later
 ## [[Dev Foundations]]
+- [[Local Dependency Update Alerts]] ![[Local Dependency Update Alerts#^status]]
 - preview deployments use all of production's Vercel values: its database, Resend key, sender address, Google client and better-auth secret, plus its `BETTER_AUTH_URL`. So unmerged code runs against real data, and a preview's invite and email-change links open production. Found 2026-11-04 by [[Services and Environments Audit]].
 - local's `DB_URL` signs in as an `atlasAdmin` user, so local credentials can reach production's `staging` database, and only the database name and the seed's guard keep local work off it. [[Branching and Releases]] plans to create and drop `test-<slug>` databases from local, so it depends on what this user can do. Found 2026-11-04 by [[Services and Environments Audit]].
 - production shares a Free tier Atlas cluster with dev, so they share its limits and any change to it. [[Database Backup and Restore]] covers the backups themselves. Found 2026-11-04 by [[Services and Environments Audit]].
@@ -135,7 +135,7 @@ How goals order the work, what each section and kind of note holds, and the rule
 - [[Mantine Color and Variant Usage]] ![[Mantine Color and Variant Usage#^status]]
 - `preact` 10.29.0 → 11.1.1: needs a decision, since the Schedule-X packages that use it allow only Preact 10 (`@schedule-x/calendar` has `preact ^10.19.2`), and no file in the app imports `preact` or `@preact/signals`. The v11 upgrade guide's breaking changes (ESM-only, refs as props, `useRef` needs an initial value) aren't hit by app code. [Release notes](https://github.com/preactjs/preact/releases). Found by the dependency-updates routine, 2026-11-04. [Sarah] We're removing `schedule-x` we shouldn't do this unless we have to.
 - `temporal-polyfill` 0.3.2 → 1.0.6: needs a decision, since `@schedule-x/calendar@4.9.1` pins `temporal-polyfill` to exactly 0.3.2. The breaking change the app hits is that `temporal-polyfill/global` no longer declares the types on TypeScript 5.9, which affects each of the 8 files that name `Temporal` and takes one `temporal-polyfill/types/global` import to fix. The `/full` entry doesn't apply, since the app uses only ISO dates. [Release notes](https://github.com/fullcalendar/temporal-polyfill/releases). Found by the dependency-updates routine, 2026-11-04.
-- no `resend.emails.send(...)` call has a timeout, and each caller waits for it, so a hung Resend request hangs the request waiting on it. The callers are the better-auth sign-up and password-reset hooks, account deletion, email change and invites, in `src/_auth/emails/sendVerificationEmail.ts`, `sendResetPasswordEmail.ts`, `sendEmailChangeEmail.ts`, `sendAccountDeletionEmail.ts` and `sendInviteEmail.ts`. Since `resend` 6.32.0, `emails.send` takes a `signal`. Nothing has gone wrong yet. Found 2026-11-04 in a cloud session's summary of `resend` 6.32.0, during the Step 2 check of [[Dependency Release Analysis]].
+- no `resend.emails.send(...)` call has a timeout, and each caller waits for it, so a hung Resend request hangs the request waiting on it. The callers are the better-auth sign-up and password-reset hooks, account deletion, email change and invites, in `src/_auth/emails/sendVerificationEmail.ts`, `sendResetPasswordEmail.ts`, `sendEmailChangeEmail.ts`, `sendAccountDeletionEmail.ts` and `sendInviteEmail.ts`. Since `resend` 6.32.0, `emails.send` takes a `signal`. Nothing has gone wrong yet. Found 2026-11-04 in a cloud session's summary of `resend` 6.32.0.
 - Atlas's IP access list allows `0.0.0.0/0` (commented "Vercel Dynamic IP"), so the database password is the only thing keeping anyone out. Vercel's Hobby plan has dynamic IPs, so this needs research into what can replace it. Found 2026-11-04 by [[Services and Environments Audit]].
 - Atlas's IP access list has three unlabelled single addresses that aren't Sarah's current one, probably including her old ones. They change nothing while `0.0.0.0/0` is there. Found 2026-11-04 by [[Services and Environments Audit]].
 - Resend has one API key, named `meal-planning-test`, used by local, production and previews, so rotating it changes all three at once. Found 2026-11-04 by [[Services and Environments Audit]].

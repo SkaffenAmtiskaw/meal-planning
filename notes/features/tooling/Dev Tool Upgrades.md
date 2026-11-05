@@ -25,7 +25,7 @@ A small upgrade with no decision to make, of one of two kinds: a major of any pa
 - [ ] `@types/node` 24.3.3 → 26.6.6: [npm page](https://www.npmjs.com/package/@types/node) (no GitHub releases page). Node here is `latest` (26) per `mise.toml`, so the types should match it. Bump it. On a trial bump `pnpm check:types` passed. Found by the dependency-updates routine, 2026-11-04.
 
 # Out of Scope
-- Majors of the assessed libraries: [[Dependency Release Analysis]].
+- Majors of the assessed libraries: step 4 of the `dependency-updates` skill sends each to the `upgrade-assessor` subagent.
 - An upgrade too big for a sweep, or one that fixes an advisory: it gets its own Roadmap line.
 
 # Acceptance Criteria

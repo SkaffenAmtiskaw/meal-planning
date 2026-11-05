@@ -32,7 +32,7 @@ Sarah's notes from E2E Testing:
 1. How does a hard E2E failure's diagnosis get a stronger model? A routine has one model for every run, and `ci-failure` runs on Sonnet (`.claude/skills/ci-failure/routine.md`). The two ways found while planning CI Failure Sessions 2026-09-30:
    - the skill hands a hard failure's diagnosis to a subagent set to a stronger model, such as Opus
    - a second routine with its own model, which the workflow fires instead of `ci-failure` when the E2E job fails
-   - **Decided 2026-10-06:** the skill hands a hard failure's diagnosis to a subagent set to a stronger model, following the pattern [[Dependency Release Analysis]] uses: the routine stays on Sonnet, and a subagent whose `model` frontmatter is `opus` does the work that needs more reasoning (its `upgrade-assessor`, decided in [[Local Dependency Update Alerts]]). Sarah's call: follow the pattern already established.
+   - **Decided 2026-10-06:** the skill hands a hard failure's diagnosis to a subagent set to a stronger model, following the pattern the `dependency-updates` skill uses: the routine stays on Sonnet, and a subagent whose `model` frontmatter is `opus` does the work that needs more reasoning (its `upgrade-assessor`, decided in [[Local Dependency Update Alerts]]). Sarah's call: follow the pattern already established.
      - Rejected: a second routine with its own model, fired instead of `ci-failure` when the E2E job fails - the established pattern keeps one Sonnet routine and moves the hard work to an Opus subagent
 2. Is the `e2e` job a required check in the ruleset on `main`?
    - **Decided 2026-10-02:** yes. Sarah's call.

@@ -3,9 +3,9 @@ type: hub
 confirmed: 2026-10-04
 ---
 # Where It Stands
-Next: its child stories ^status
+Next: /close ^status
 
-Split 2026-10-04 during /plan-steps into Dependency Update PRs, [[Dependency Release Analysis]] and Major Upgrade Sweeps. The design is approved. Dependency Update PRs is built and closed: the check, the workflow, the routine and the PR for small updates. Major Upgrade Sweeps is built and closed too: the sweep rule and the two sweeps. [[Dependency Release Analysis]] has its Build Order and is ready to build.
+Split 2026-10-04 during /plan-steps into Dependency Update PRs, Dependency Release Analysis and Major Upgrade Sweeps. The design is approved, and all three are built and closed.
 
 # Inbox
 
@@ -172,7 +172,7 @@ Before planning or implementing any story linked from this note, read this note 
        - Each item names the package, its current and new versions, and a link to its release notes or migration guide. It also names the work, with its files: each breaking change the app hits, or each finding or failure that got the update dropped. It ends "found by the dependency-updates routine" and the date.
        - An `@types/*` package goes where its library goes. If its library isn't in `package.json`, it goes by its own section, so `@types/node` goes to Dev Tool Upgrades.
        - Never here: a major of an assessed library's `@types/*` package, and any security fix.
-     - **Out of Scope:** majors of the assessed libraries ([[Dependency Release Analysis]]), and an upgrade too big for a sweep or one that fixes an advisory, which gets its own Roadmap line.
+     - **Out of Scope:** majors of the assessed libraries ([[#^piece-5]]), and an upgrade too big for a sweep or one that fixes an advisory, which gets its own Roadmap line.
      - **Acceptance Criteria:** "The flows each upgraded package is used in behave as before."
    - Both Roadmap lines go at the end of Unaffiliated with their status embeds and no 🎯 links.
 7. **`docs/ci.md`** records how the dependency check works. ^piece-7
@@ -214,10 +214,10 @@ Before planning or implementing any story linked from this note, read this note 
 | A run that finds something starts a session under **Routines** | Dependency Update PRs |
 | A run that finds nothing new starts no session (except the weekly reminder) | Dependency Update PRs |
 | Small updates, security fixes first, get a PR into `develop` | Dependency Update PRs |
-| A major of an assessed library gets an assessment weighing gain and urgency against effort | [[Dependency Release Analysis]] |
+| A major of an assessed library gets an assessment weighing gain and urgency against effort | Dependency Release Analysis |
 | A major update never gets a PR without Sarah's say-so | Dependency Update PRs |
-| A minor of another package in the PR gets a release summary and whether it's worth a story | [[Dependency Release Analysis]] |
-| A minor of an assessed library in the PR gets an analysis of the code each new feature would improve | [[Dependency Release Analysis]] |
+| A minor of another package in the PR gets a release summary and whether it's worth a story | Dependency Release Analysis |
+| A minor of an assessed library in the PR gets an analysis of the code each new feature would improve | Dependency Release Analysis |
 | A small major of any other package becomes a sweep item | Major Upgrade Sweeps |
 | A patch or minor dropped because it breaks a check, with a small fix, becomes a sweep item | Major Upgrade Sweeps |
 | A major of any other package or a dropped update that can't become a sweep item gets its own Roadmap line | Major Upgrade Sweeps |
@@ -225,10 +225,9 @@ Before planning or implementing any story linked from this note, read this note 
 # Child Stories
 | Story | Status | Scope in this area | Blocked by |
 |---|---|---|---|
-| [[Dependency Release Analysis]] | ready | Minor release summaries, and the `upgrade-assessor` for the assessed libraries | |
 
 # Build Order
 - **Stated:** Dependency Update PRs first, since the other two extend the session it built. It's built and closed.
-- **Inferred from the draft plan:** [[Dependency Release Analysis]] doesn't depend on Major Upgrade Sweeps, which is built and closed. Both edit steps 5 and 8 of the `dependency-updates` skill, but different branches of each.
+- **Inferred from the draft plan:** Dependency Release Analysis didn't depend on Major Upgrade Sweeps. Both edit steps 5 and 8 of the `dependency-updates` skill, but different branches of each.
 
 # Deferred Work
