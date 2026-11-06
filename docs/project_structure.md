@@ -10,6 +10,8 @@ Playwright E2E specs, grouped in folders by feature area (see `docs/e2e_tests.md
 Playwright support code: the `test` and `expect` specs import, `signIn` and the memory-server launcher
 # Notes
 notes on planned work, in Obsidian-flavored Markdown, live in the `meal-planning-notes` repo beside this one. Its `Roadmap.md` is the project roadmap, with links to detailed notes
+
+The Obsidian Git plugin keeps that repo in sync with its `main` on GitHub: it commits and pushes changes five minutes after edits stop, and pulls every five minutes and when Obsidian opens. Routines and cloud sessions read the notes from GitHub, not from the copy on Sarah's Mac. So when one needs edits the plugin hasn't pushed yet, Sarah runs Obsidian Git's Commit-and-sync command by hand. Edits stay unpushed for five minutes after they stop, or until Obsidian next opens if it was closed before then.
 # scripts/
 lefthook scripts, scripts that check the notes vault, and the dependency check CI runs
 # seed/
