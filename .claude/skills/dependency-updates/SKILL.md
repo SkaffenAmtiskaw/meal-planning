@@ -5,7 +5,9 @@ description: Handles the new dependency versions and security advisories the dep
 
 Handle the findings described in the `routine-fire-payload` block. This session is a routine's session, so read the `routine-sessions` skill first.
 
-The session puts the patches, minors and security fixes in one pull request into `develop`, from the `claude/dependency-updates` branch, and sees the pull request's checks through on GitHub. Only one such pull request is ever open, and each run adds to it. A major is never applied, and an update that breaks a check is dropped.
+The session puts the patches, minors and security fixes in one pull request into `develop`, from the `claude/dependency-updates` branch, and sees the pull request's checks through on GitHub. Only one such pull request is ever open, and each run adds to it. A major is never applied, and an update that breaks a check is dropped. The sweep items and Roadmap lines the session writes go straight to the notes repo's `main`, whatever happens to the code.
+
+The session starts above the `meal-planning` and `meal-planning-notes` clones, so `cd` into the `meal-planning` clone before anything else. Every command in this skill runs there.
 
 ## 1. Read the Payload
 The block names the run and its findings in this shape, one finding per line:
@@ -36,8 +38,10 @@ Then follow `failed-weekly-check.md` in this folder, instead of steps 2 to 7.
 
 If the block is missing a part, or has a line in none of these shapes, such as a reminder that isn't an advisory, stop. Say which part or line it was and what the block held.
 
-## 2. Check Out the Branch
-Fetch the latest `develop` and look for an open pull request from `claude/dependency-updates`:
+## 2. Check Out the Branches
+Check out `main` in the notes clone, as "Branches" in the `routine-sessions` skill describes.
+
+Then fetch the latest `develop` and look for an open pull request from `claude/dependency-updates`:
 
 ```bash
 git fetch origin develop
@@ -54,9 +58,7 @@ git merge --no-edit origin/develop
 ```
 
 If the merge conflicts, what to do depends on which files conflict:
-- **Only `pnpm-lock.yaml`, `notes/Roadmap.md` or both:** resolve each file as its bullet says and `git add` it. Once they're all added, run `git commit --no-edit` to finish the merge.
-  - **`pnpm-lock.yaml`:** run `pnpm install --no-frozen-lockfile`, which resolves a conflict in the lockfile.
-  - **`notes/Roadmap.md`:** keep both sides' lines, since each side's lines are separate work. If both sides hold the same line, keep one copy, as `develop` has it, since `develop` renumbers Next's lines.
+- **Only `pnpm-lock.yaml`:** run `pnpm install --no-frozen-lockfile`, which resolves a conflict in the lockfile. Then run `git add pnpm-lock.yaml` and `git commit --no-edit` to finish the merge.
 - **Any other file:** run `git merge --abort`. Skip steps 3 and 5, and leave the pull request as it is.
 
 The branch as the merge left it is the **starting point** for step 3: the open pull request's updates on top of the latest `develop`. Keep its commit, from `git rev-parse HEAD`.
@@ -110,20 +112,19 @@ What to do with each major and uncleared advisory, by case:
 - **Otherwise:** follow `sweep-rule.md`.
 
 ## 5. Push and Open or Update the Pull Request
-If steps 3 and 4 left no commit on the branch, skip this step.
+If step 3 left no commit on the branch, skip this step.
 
 ### The Body
-The body starts with `From dependency check run <run URL>.`, then lists what's in the pull request and what was dropped, in the same groups and shapes as the summary's **In the pull request**, **Dropped**, **Sweep items** and **Roadmap lines**. If a check fails on the starting point, the body says why, with the line of its output.
+The body starts with `From dependency check run <run URL>.`, then lists what's in the pull request and what was dropped, in the same groups and shapes as the summary's **In the pull request** and **Dropped**. If a check fails on the starting point, the body says why, with the line of its output.
 
 If a pull request is already open, the body lists everything in it, not only what this run added. Build it from these sources:
 - **Updates:** the commits on the branch that aren't on `develop`: `git log --no-merges --reverse --format=%B origin/develop..claude/dependency-updates`. A package two runs both updated is one line, from its version before the first update to its version after the last.
 - **Advisories' severity:** for an earlier advisory, the current body, read with `gh api "repos/{owner}/{repo}/pulls/<number>" --jq .body`.
-- **Sweep items and Roadmap lines:** `git diff origin/develop...claude/dependency-updates -- notes`.
 - **Dropped:** only this run's dropped updates.
 - **The end:** leave out everything the current body has after its lists, such as an earlier session's link and Claude Code's footers. Claude Code's footer on an edit has no session link, so end the body with `Session: <link>`. Read this session's link from the latest commit with a `Claude-Session` trailer: `git log --no-merges --format='%(trailers:key=Claude-Session,valueonly)' | grep -m1 .`
 
 ### A Rejected Push
-If a push is rejected, the branch changed on GitHub during this session, such as when another run's session pushed to it. Don't push again or force it, and open or edit no pull request.
+If a push of the branch is rejected, the branch changed on GitHub during this session, such as when another run's session pushed to it. Don't push again or force it, and open or edit no pull request.
 
 ### An Open Pull Request
 Push the branch, then rewrite the pull request's body:
@@ -144,7 +145,7 @@ EOF
 ```
 
 ### Wait for the Pull Request's Checks
-If nothing was pushed, skip this. Otherwise, find the run for the commit you pushed (`git rev-parse HEAD`). Run this loop as one command with a 10-minute timeout. Run it at most three times, about 30 minutes in all:
+If the branch wasn't pushed, skip this. Otherwise, find the run for the commit you pushed (`git rev-parse HEAD`). Run this loop as one command with a 10-minute timeout. Run it at most three times, about 30 minutes in all:
 
 ```bash
 for i in $(seq 9); do
@@ -163,7 +164,7 @@ When it finishes, what to do depends on its result:
 - **It was cancelled,** such as by another session's push to the branch: don't re-run it. Keep its link for the summary.
 
 ## 6. Minors in the Pull Request
-If step 2 aborted the merge of `develop` or a push was rejected, skip this step, since this run's updates go under **Not applied**.
+If step 2 aborted the merge of `develop` or a push of the branch was rejected, skip this step, since this run's updates go under **Not applied**.
 
 A version bump doesn't show what a minor adds, so the summary tells the user what it adds and whether the app should adopt any of it.
 
@@ -181,25 +182,26 @@ End with a summary for the user, in this order. Leave out a group or section wit
 
 1. **The pull request,** by how the run went:
    - **Step 2 aborted the merge of `develop`:** the open pull request's link, the files that conflicted, and that nothing from this run was applied.
-   - **A push was rejected:** that it was, and that no pull request was opened or changed. If an earlier push in this run went through, give the pull request's link instead, and say it still holds the update that breaks the check.
-   - **Neither step 3 nor step 4 left a commit on the branch:** that no update went in, that nothing was pushed, and that no pull request was opened or changed.
-   - **Only step 4 left a commit on the branch:** its link, whether this run opened it or added to the one that was open, and that no update went in.
+   - **A push of the branch was rejected:** that it was, and that no pull request was opened or changed. If an earlier push in this run went through, give the pull request's link instead, and say it still holds the update that breaks the check.
+   - **Step 3 left no commit on the branch:** that no update went in, that the branch wasn't pushed, and that no pull request was opened or changed.
    - **Otherwise:** its link, and whether this run opened it or added to the one that was open.
 
-   If this run pushed, also give **the checks on GitHub**, by how they went:
+   If this run pushed the branch, also give **the checks on GitHub**, by how they went:
    - **Still going when you stopped waiting, or never started:** say so.
    - **Finished:** the last run's link, then either that they passed, or which failed and what came of each, as `failed-on-github.md` describes.
-2. **What this run applied,** by whether it reached the pull request:
-   - **If step 2 aborted the merge or a push was rejected: Not applied.** Give each patch, minor and advisory from this run, in the shapes below. Also give the full text of each sweep item and Roadmap line this run would have written, and where it would have gone. This is its only record, since the check won't report those versions again until a newer one comes out. Leave these out of **Sweep items** and **Roadmap lines**.
-   - **Otherwise: In the pull request.** Group them by kind, in these shapes:
+2. **What this run applied,** in two groups:
+   - **In the pull request,** unless step 2 aborted the merge or a push of the branch was rejected. Group them by kind, in these shapes:
      - security fixes: each package once, as `<package>`: advisory `<ID>` (`<severity>`), repeating the advisory part for each one it fixes. Then say how it was fixed, as one of `<package>` `<old>` → `<new>`, a lockfile bump to `<version>`, `<parent>` `<old>` → `<new>`, or an override to `^<version>`
      - patches: each as `<package>` `<old>` → `<new>`
      - minors: each as `<package>` `<old>` → `<new>`
      - overrides removed: each override's key, as `'<package>@<range>'`
-3. **Dropped:** each update taken off the branch, as above, with the check it broke, the line of its output that shows why, and the sweep its item went to or where its Roadmap line is. If a push was rejected, say its item or line is under **Not applied** instead.
+   - **Not applied:** what didn't reach GitHub, by case:
+     - **If step 2 aborted the merge or a push of the branch was rejected:** each patch, minor and advisory from this run, in the shapes above.
+     - **If a rebase conflict kept the notes from being pushed:** which notes conflicted. For each sweep item and Roadmap line that didn't reach the notes repo, give its full text and where it would have gone. This is the item's only record, because the check won't report that version of the package again until a newer one comes out. Leave these out of **Sweep items** and **Roadmap lines**.
+3. **Dropped:** each update taken off the branch, as above, with the check it broke, the line of its output that shows why, and where its item or line went: the sweep or the Roadmap heading it's under, or, if it didn't reach the notes repo, that it's under **Not applied**.
 4. **Not fixed:** each new advisory the session didn't fix, as `<package>`: advisory `<ID>` (`<severity>`), and why: already fixed, no fix released yet, or no fix cleared it, with what was tried.
-5. **Sweep items:** each item this run added or updated, as `<package>` `<old>` → `<new>`: added to or updated on `<sweep>`, with the work in one sentence. If an item went on the Roadmap because its sweep is missing, list it here and say the sweep is missing. If a package's item is in a kicked-off copy, list the package here, naming the copy and the newer version.
-6. **Roadmap lines:** each flagged package, as `<package>` `<old>` → `<new>`: the section or heading its line is in, then the reason its line gives. Name any unchecked sweep item for the package beside it.
+5. **Sweep items:** each item this run added or updated, as `<package>` `<old>` → `<new>`: added to or updated on `<sweep>`, with the work in one sentence and a link to the notes commit that holds it. If an item went on the Roadmap because its sweep is missing, list it here and say the sweep is missing. If a package's item is in a kicked-off copy, list the package here, naming the copy and the newer version.
+6. **Roadmap lines:** each flagged package, as `<package>` `<old>` → `<new>`: the section or heading its line is in, then the reason its line gives, with any unchecked sweep item for the package beside it. End with a link to the notes commit that holds the line.
 7. **Reminders:** each reminder the session didn't fix, as `<package>`: advisory `<ID>` (`<severity>`), and why: no fix released yet, its Roadmap line, or already fixed in the open pull request.
 8. **Minors:** each minor from step 6, as `<package>` `<old>` → `<new>`, then what step 6 kept for it. Put the assessed libraries' minors after the others, because a report is long. Show each report unedited.
 9. **Majors:** the assessed libraries' majors from step 4, last because a report is long, by kind:

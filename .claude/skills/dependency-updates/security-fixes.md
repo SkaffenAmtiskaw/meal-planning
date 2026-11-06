@@ -5,7 +5,7 @@ Run `pnpm audit --json`, and find each advisory in its `advisories` object by ID
 
 The advisories that need no fix from this session, in the order to check them:
 - **The ID isn't in the audit:** it's already fixed, on `develop` or by an earlier update in the open pull request. Apply nothing, and list it as already fixed.
-- **It's a reminder, and `notes/Roadmap.md` has a line for its package:** apply nothing, and list it with that line. The line holds the work, and retrying each week would only repeat what the earlier run tried.
+- **It's a reminder, and the notes repo's `Roadmap.md` has a line for its package:** apply nothing, and list it with that line. The line holds the work, and retrying each week would only repeat what the earlier run tried.
 - **`patched_versions` is `<0.0.0`:** no fixed version has been released. Apply nothing, and list it as having no fix yet.
 - **Its lowest fixed version is in a later major than the installed version:** its only fix is a major. A minor of a version below 1.0 counts as a major here, as in `0.3.2` → `0.4.0`. Apply nothing, and handle it with the majors in step 4 of the skill.
 

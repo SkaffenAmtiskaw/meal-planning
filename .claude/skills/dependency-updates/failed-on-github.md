@@ -9,11 +9,9 @@ List the jobs that failed:
 gh run view "<run ID>" --json jobs --jq '.jobs[] | select(.conclusion == "failure") | .name'
 ```
 
-Each one's script is the last `run:` line of that job in `.github/workflows/checks.yml`. What to do depends on the run:
-- **This run left no update on the branch:** it changed only notes, so no update from it is to blame. Drop nothing, and go to "Finish".
-- **Otherwise:** run every one of those scripts here, on the commit you pushed, before you choose a path.
-  - **Any fails here:** go to "A Failure That Reproduces" with those jobs. The next run re-tests the others, so don't re-run them.
-  - **All pass here:** go to "Re-Run the Failed Jobs".
+Each one's script is the last `run:` line of that job in `.github/workflows/checks.yml`. Run every one of those scripts here, on the commit you pushed. Then choose a path by the results:
+- **Any fails here:** go to "A Failure That Reproduces" with those jobs. The next run re-tests the others, so don't re-run them.
+- **All pass here:** go to "Re-Run the Failed Jobs".
 
 ## Re-Run the Failed Jobs
 Follow `.claude/skills/routine-sessions/rerunning-a-failure.md`. The head branch is `claude/dependency-updates`, and the failed commit is the one you pushed. Two of that file's instructions change:
@@ -38,13 +36,12 @@ Take the jobs one at a time. For each, first find out whether the script fails w
      git bisect reset
      ```
   2. Check out the first bad commit, install and run the script, reproducing the failure the same way. Keep each error or failure it prints, with its file, for the sweep rule. Keep the dropped update, the job it broke and the line of its output that shows why, for the summary. If the failure showed up here only after you recreated a difference from GitHub's runner, also keep what that difference is.
-  3. Note the hash of each commit on the branch that changes only notes, since cutting the branch again removes them.
-  4. Cut the branch again from the starting point with `git checkout -B claude/dependency-updates "<starting point>"`, then run `pnpm install --frozen-lockfile`.
-  5. Run step 3 of the skill again, leaving out the updates you've dropped. Then `git cherry-pick` each of those notes commits, in order.
-  6. Take the dropped update through `sweep-rule.md`, which commits its item or line.
-  7. Push over the branch, with a lease on the commit you last pushed, so you never overwrite another session's push: `git push --force-with-lease="claude/dependency-updates:<pushed commit>" origin claude/dependency-updates`. If it's rejected, go to step 6 of the skill.
-  8. Rewrite the pull request's body as step 5 of the skill describes for an open pull request, even if this run opened it.
-  9. Wait for the new run, as step 5 of the skill describes under "Wait for the Pull Request's Checks". It replaces the old run, so leave the old run's other jobs. If it fails, start this file again with it. Otherwise, go to "Finish".
+  3. Cut the branch again from the starting point with `git checkout -B claude/dependency-updates "<starting point>"`, then run `pnpm install --frozen-lockfile`.
+  4. Run step 3 of the skill again, leaving out the updates you've dropped.
+  5. Take the dropped update through `sweep-rule.md`, which pushes its item or line to the notes repo.
+  6. Push over the branch, with a lease on the commit you last pushed, so you never overwrite another session's push: `git push --force-with-lease="claude/dependency-updates:<pushed commit>" origin claude/dependency-updates`. If it's rejected, go to step 6 of the skill.
+  7. Rewrite the pull request's body as step 5 of the skill describes for an open pull request, even if this run opened it.
+  8. Wait for the new run, as step 5 of the skill describes under "Wait for the Pull Request's Checks". It replaces the old run, so leave the old run's other jobs. If it fails, start this file again with it. Otherwise, go to "Finish".
 
 ## Finish
 If a script fails on the starting point and the body doesn't say why yet, rewrite the body as step 5 of the skill describes for an open pull request.
@@ -58,4 +55,3 @@ Then go to step 6 of the skill. The summary in step 7 gives the last run's link,
   - **The starting point fails it too:** say so
   - **You couldn't reproduce it:** what you found and tried
 - not looked into, because the branch moved on or the run was cancelled, with the newer run's link if there is one
-- failed, though this run changed only notes: which jobs
