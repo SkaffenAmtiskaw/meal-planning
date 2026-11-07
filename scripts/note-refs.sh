@@ -113,7 +113,10 @@ if [ -n "$hits" ]; then printf '%s\n' "$hits"; else echo "  none"; fi
 echo
 
 echo "Outside the vault (file:line, text):"
+# Worktrees nest under .claude/worktrees/, each with its own copy of the code,
+# so their hits would repeat every file once per open worktree.
 outside=$(cd "$code_repo" && grep -rnIF -e "$name" -e "$note" src test docs scripts .github .claude AGENTS.md CLAUDE.md 2>/dev/null |
+  grep -v '^\.claude/worktrees/' |
   while IFS= read -r hit; do
     where=${hit%%:*}; rest=${hit#*:}; line=${rest%%:*}; text=${rest#*:}
     text=$(printf '%s' "$text" | sed -E 's/^[[:space:]]+//' | cut -c1-160)

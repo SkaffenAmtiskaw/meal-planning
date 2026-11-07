@@ -22,14 +22,14 @@ This review looks across the steps, at what no single step shows, because the us
 3. **The plan:** the code against the note's plan.
 
 ## 1. Read the Note
-If the note's `status` isn't `in-review`, tell the user what you found and stop.
+If the note's `status` isn't `in-review`, or its `^status` line already names a PR, tell the user what you found and stop. A PR on the `^status` line means the review is done. Then run the checks in `starting-on-a-branch.md`, in the `building-code` skill's folder, and stop wherever they say to.
 
 Read the note, but not the story's code until step 3 says to. For a feature, step 3 gets a target design before you read the code. A review that reads the code first ends up favoring it.
 
 ## 2. Find the Story's Code
-Run `sh scripts/story-range.sh "<note name>"`. The script also lists the commits just before the range. If one of them built part of the story, run the script again with that commit as the second argument, so the range starts there.
+Run `sh scripts/story-range.sh "<note name>"`.
 
-Show the user the range (first and last commit, with their subjects), whether uncommitted changes are included, and both groups of files. Wait for them to confirm or correct the range, and to say which of the other files belong to the story. This one confirmation covers the range and the files together.
+Show the user the range (first and last commit, with their subjects), whether uncommitted changes are included, and both groups of files. A file the note doesn't name can still be the story's, such as one edited while resolving a merge. Wait for them to confirm the range and to say which of the other files belong to the story.
 
 ## 3. Run the Checks
 Back every finding with evidence the user can check: `file:line` for code that's there, or, for something the story doesn't do, where you looked for it. Name the rule, note line or plan line it breaks, such as a Purpose or Symptoms line. A clear bug you come across inside a single step is a finding too.
@@ -91,12 +91,22 @@ Show a table with one row per fix: its files as markdown links the user can clic
 ## 8. Triage the Late Out-of-Scope Items
 Triage the out-of-scope items that turned up after step 5. Build each one the user pulls in as step 6 describes, and show it as step 7 does.
 
-## 9. Update the Note
-1. Set `status` to `done`.
-2. Set the `^status` line to "Reviewed. Next: /close". The fixes and routed findings aren't worth noting in the summary below it, since the fixes live in the commits and routed findings in the notes they went to.
+## 9. Open the PR
+Open the story's PR as `opening-the-pr.md`, in the `building-code` skill's folder, describes.
 
-## 10. Route the Out-of-Scope Items
+## 10. Update the Note
+Leave `status` at `in-review`, since `/close` sets `done` once the PR has merged. Set the `^status` line by the base, with the PR's number:
+- **`develop`:** "Reviewed. PR #12 merges once its checks pass. Next: /close once it merges".
+- **`main`:** "Reviewed. Next: merge PR #12, then /close".
+
+The fixes and routed findings aren't worth noting in the summary below it, since the fixes live in the commits and routed findings in the notes they went to.
+
+## 11. Route the Out-of-Scope Items
 Route the out-of-scope list.
 
-## 11. Stop
-Tell the user the review is done. Closing the story with `/close`, in a new session, comes next and isn't part of this skill.
+## 12. Stop
+Tell the user the review is done and give them the PR's link. What happens to the PR depends on its base:
+- **`develop`:** GitHub merges it on its own once its required checks pass.
+- **`main`:** tell them to merge it on GitHub once its checks pass, since that merge deploys.
+
+Closing the story with `/close`, in a new session once the PR has merged, comes next and isn't part of this skill.

@@ -14,8 +14,8 @@ How notes are organized and move through their lifecycle. The Roadmap decides or
 - **spec** - a detailed design or technical approach exists, but it has no approved steps yet, or its remaining steps need re-planning. A story sent back to `spec` keeps its steps marked ✅ Complete.
 - **ready** - can be built. A tweak is ready once it has no open decision, because it has no steps. Any other story needs implementation steps first, however settled its design, because steps are what make the work reviewable in small pieces. An infra story's steps are its Build Order.
 - **in-progress** - work has started.
-- **in-review** - every step is implemented and confirmed. The code is waiting for a review of how the whole story fits together.
-- **done** - finished.
+- **in-review** - every step is implemented and confirmed. The code is waiting for a review of how the whole story fits together, or, once its `^status` line names a PR, for that PR to merge.
+- **done** - finished, with its PR merged. `/close` sets it after checking the merge on GitHub.
 - **dropped** - won't be built.
 
 # Templates
@@ -55,11 +55,12 @@ A note's state, usually its `type` and `status`, says what should happen to it n
 | `cleanup` · `spec` | Implementation steps, since `/audit` already settled the cleanup's decisions | `ready` | `/plan-steps` |
 | `sweep` · `spec` | Every item re-checked against the code, any already fixed dropped, then steps planned | `ready` | `/check-drift`, then `/plan-steps` |
 | `infra` · `ready` | Its Build Order built one step at a time | `in-progress` → `in-review` | `/infra-build` |
-| `tweak` · `ready` | Built from its Purpose and any **Decided** line, as one step | `in-progress` → `done` | `/implement` |
-| `sweep` · `ready` | Built one step at a time | `in-progress` → `done` | `/implement` |
+| `tweak` · `ready` | Built from its Purpose and any **Decided** line, as one step, then its PR opened into `develop` | `in-progress` → `in-review` | `/implement` |
+| `sweep` · `ready` | Built one step at a time, then its PR opened into `develop` | `in-progress` → `in-review` | `/implement` |
 | `ready`, any other type | Built one step at a time | `in-progress` → `in-review` | `/implement` |
 | `spec` · `ready` · `in-progress`, when `/plan-steps` finds code changes since `confirmed` that could touch the story, or when `/close` unblocks the story and the story's next step wouldn't check its planned work against the code | ⚠️ Check Drift callouts where the remaining work no longer matches the code, conventions, the services it uses, other notes or the user's comments, and an updated `confirmed` | unchanged, back to `spec` for `/plan-steps` or the skill that re-settles its approach (`/assess`, `/investigate`, `/audit`, `/architect`, `/infra-design` or `/decide`), or add `blocked-by` | `/check-drift` |
-| `in-review` | The code reviewed across the whole story, for what no single step shows | `done` | `/final-review` |
+| `in-review`, with no PR on its `^status` line | The code reviewed across the whole story, for what no single step shows, then its PR opened into its base | unchanged, with the PR on its `^status` line | `/final-review` |
+| `in-review`, with a PR on its `^status` line | The PR's merge confirmed on GitHub, then closed as a `done` note is, and its worktree, branch and database removed | `done`, then archived or deleted | `/close` |
 | `done` · `dropped` · a hub whose `^status` line names `/close` | The note kept in `archive/` for the stories that still rely on it, or deleted, and the notes around it updated | archived or deleted | `/close` |
 | `workflow` | The change settled with the user and made everywhere it reaches, and every note that refers to it cleaned up | deleted · a collecting note loses the items it did and stays · a kicked-off copy is deleted once its last item is done | `/tooling` |
 | `goal` | Shaped with the user: purpose, Done When, scope, gaps, supporting tooling and rank | unchanged · Roadmap lines moved under it, into Next or into Planning · once it's building, collecting notes kicked off and bug lines moved into Next | `/roadmap` |

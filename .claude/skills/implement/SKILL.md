@@ -63,12 +63,11 @@ After the report:
 1. If the story is a pattern, confirm in the code that each Migration Checklist item this step took on is done, because the acceptance checks cover a place or two, not every place the step migrated. If an item isn't done, build it, report it as step 4's item 2 describes, and wait for the user to confirm the step again. Once every item is done, check each item's box.
 2. Check the step's acceptance boxes, remove any check the user dropped, and add `**Status:** ✅ Complete`.
 3. If anything differs from the plan, was added at review or dropped, add an **As built:** note under the step. For a dropped check, it says which of your runs covered it.
-4. If this was the last step, set `status`:
-   - **A tweak or sweep:** `done`.
-   - **Any other type:** `in-review`.
-5. Update Where It Stands, with a `^status` line such as "In progress. Next: /implement Step 4". After the last step, the line depends on the type:
-   - **A tweak or sweep:** "Built. Next: /close".
+4. If this was the last step of a tweak or sweep, open its PR as `opening-the-pr.md`, in the `building-code` skill's folder, describes, because a tweak or sweep has no `/final-review` to open one.
+5. If this was the last step, set `status` to `in-review`.
+6. Update Where It Stands, with a `^status` line such as "In progress. Next: /implement Step 4". After the last step, the line depends on the type:
+   - **A tweak or sweep:** "Built. PR #12 merges once its checks pass. Next: /close once it merges", with its PR's number.
    - **Any other type:** "All steps implemented. Next: /final-review".
 
 ## 6. Stop
-Route the out-of-scope list. Then tell the user the step is done, and give them the next command from the `^status` line to run in a new session, because this session has already read the note, the docs and the whole step, and carrying that into the next step bloats the context.
+Route the out-of-scope list. Then tell the user the step is done, give them the PR's link if step 5 opened one, and give them the next command from the `^status` line to run in a new session, because this session has already read the note, the docs and the whole step, and carrying that into the next step bloats the context.
