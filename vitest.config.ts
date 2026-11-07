@@ -18,7 +18,8 @@ export default defineConfig({
         '#fixtures': new URL('./test/fixtures', import.meta.url).pathname,
     },
     include: ['**/*.test.{ts,tsx}'],
-    exclude: [...configDefaults.exclude, 'e2e/**'],
+    // .claude/** holds worktrees, each with its own copy of the tests
+    exclude: [...configDefaults.exclude, 'e2e/**', '.claude/**'],
     environment: 'jsdom',
     setupFiles: ['./test/setup.ts'],
     coverage: {

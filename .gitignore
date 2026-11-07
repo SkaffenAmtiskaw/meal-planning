@@ -42,8 +42,11 @@ next-env.d.ts
 # WebStorm
 /.idea
 
-# Git worktrees
-.worktrees/
+# Git worktrees the Claude desktop app makes
+.claude/worktrees/
+
+# Each checkout writes its own preview config (scripts/worktree-slot.sh)
+.claude/launch.json
 
 # pnpm
 .pnpm-store
