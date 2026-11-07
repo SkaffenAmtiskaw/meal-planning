@@ -1,5 +1,5 @@
-# The checks every PR runs. Each check is its own job, so the PR shows which one failed and the ruleset on main
-# can require each by name. When a check fails, the start-ci-failure job starts the ci-failure routine, a cloud
+# The checks every PR runs. Each check is its own job, so the PR shows which one failed and the rulesets on develop
+# and main can require each by name. When a check fails, the start-ci-failure job starts the ci-failure routine, a cloud
 # session that looks into the failure. See docs/ci.md.
 name: Checks
 

@@ -6,7 +6,9 @@
 			"e2e/**/*",
 			"seed/**/*",
 			"scripts/**/*.ts",
-			"playwright.config.ts"
+			"playwright.config.ts",
+			// A worktree nested here is its own project with its own biome.jsonc.
+			"!!.claude/worktrees"
 		]
 	},
 	"linter": {

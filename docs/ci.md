@@ -2,11 +2,12 @@
 - CI runs on [GitHub Actions](https://docs.github.com/en/actions). The workflows live in `.github/workflows/`.
 - `checks.yml` runs lint, type check, unit tests and build on every PR, and starts the `ci-failure` routine when one of them fails.
 - `dependency-updates.yml` checks the dependencies for security advisories every hour and for new versions every week, and starts the `dependency-updates` routine when it finds something new.
+- `back-merge.yml` brings a hotfix on `main` back into `develop`, so the next release doesn't undo it.
 
 # Workflows
 
 ## Every Check Is a `package.json` Script
-Every check a workflow runs is a `package.json` script, called as `pnpm <script>`. The only other steps are setup (checking out the code, installing tools and dependencies), the step that starts a routine, and the steps that restore and save `dependency-updates.yml`'s reported list in the Actions cache. That way you, or a cloud session looking into a failure, can rerun exactly what CI ran with the same command.
+Every check a workflow runs is a `package.json` script, called as `pnpm <script>`. The only other steps are setup (checking out the code, installing tools and dependencies), the step that starts a routine, the steps that restore and save `dependency-updates.yml`'s reported list in the Actions cache, and `back-merge.yml`'s git steps, which check nothing. That way you, or a cloud session looking into a failure, can rerun exactly what CI ran with the same command.
 
 No script CI runs writes fixes. CI would pass on code it had silently fixed, then throw the fix away. That's why the lint job runs `pnpm lint:ci` (`biome ci`, which only reports) and not `pnpm lint` (`biome check --write`).
 
@@ -33,7 +34,7 @@ CI and the cloud environment install only `node` and `pnpm` (the action's `insta
 
 Each check is its own job, so:
 - the PR shows which check failed
-- the ruleset on `main` can require each check by its job name (see "Setup Outside the Repo")
+- the rulesets on `develop` and `main` can require each check by its job name (see "Setup Outside the Repo")
 - each job runs in its own checkout, so the build never shares a `.next` folder with another job
 
 Each check job checks out the code, installs Node and pnpm from `mise.toml`, runs `pnpm install --frozen-lockfile`, then runs its one script.
@@ -90,6 +91,17 @@ With no entry to restore, every finding is new, and the next run that finds some
 ## When the Call Fails
 If `/fire` fails (a wrong secret, the API down, or the routine's limit of 30 calls an hour), `start-dependency-updates` fails, no session starts and the list isn't saved. The next run finds the same findings and sends them again. The job's log shows the error `/fire` returned, such as a 401 for a wrong token. On success, the log shows the new session's link. Like `start-ci-failure`, it never retries.
 
+# Back-Merge
+A hotfix reaches `main` through its own PR, without going through `develop`. If nothing brought it back, the next release from `develop` into `main` could undo it. `back-merge.yml` brings it back on every push to `main`: it merges `main` into `develop` and pushes the merge straight to `develop`, with no PR. Both sides already passed their checks, so the merge runs none.
+
+The workflow first lists the commits on `main` that `develop` lacks, leaving out merge commits (`git rev-list --no-merges origin/develop..origin/main`). If the list is empty, the run stops and pushes nothing. That's the case after a release, when the only commit `develop` lacks is the release's merge commit. Otherwise it merges `main` into `develop` and pushes the merge as the back-merge App (see "The Back-Merge App").
+
+The `develop` ruleset refuses every direct push except the App's, so the push goes out with the App's token. The workflow's own token stays `contents: read`. The App's token asks only for Contents and Workflows write. It needs Workflows because GitHub refuses an App's push of any commit that changes `.github/workflows/` unless the token has that permission.
+
+**When the merge conflicts,** the job fails and pushes nothing. Bring the hotfix back by hand: in a worktree session, merge `origin/main` into a branch from `develop`, resolve the conflict and open a PR into `develop`. Merge it with a merge commit, not a squash. A squash would leave `main`'s commits out of `develop`'s history, so git would still count them as missing from `develop`.
+
+**When `develop` moves during a run,** such as a PR merging between the checkout and the push, GitHub refuses the push as not a fast-forward, and the job fails. Rerun it, and it merges again onto the new `develop`. Another back-merge never causes this, since runs wait their turn.
+
 # Starting a Routine
 Results that happen away from your machine, such as a failed check, reach you as a Claude Code cloud session: a routine starts it, and it waits for you in the Code tab of the Claude desktop app, under **Routines**. Nothing in the repo delivers a result any other way: no `anthropics/claude-code-action`, no email, chat or push-notification step, and no bot comment on a PR or issue. GitHub's own check status on a PR doesn't count, since it isn't a delivery. Neither does a step that only passes the result along to start a routine, such as a Sentry alert opening an issue that a workflow then picks up.
 
@@ -116,24 +128,48 @@ Both come from the routine's API trigger on claude.ai (open the routine → Edit
 Some of what CI and the routines need lives in GitHub's and claude.ai's settings, not in the repo. This section is its record.
 
 ## `develop` Is the Default Branch
-The repo's default branch on GitHub (Settings → General → Default branch) is `develop`. A routine clones the default branch and runs the skills committed there, so a change to a routine's skill reaches the routine once it's pushed to `develop`.
+The repo's default branch on GitHub (Settings → General → Default branch) is `develop`. A routine clones the default branch and runs the skills committed there, so a change to a routine's skill reaches the routine once its PR merges into `develop`.
 
-The default branch changes nothing else here: the ruleset below targets `main` by name, and Vercel's production branch (Settings → Environments → Production → Branch Tracking) is its own setting, which stays `main`.
+The default branch changes nothing else here: neither ruleset below targets it, and Vercel's production branch (Settings → Environments → Production → Branch Tracking) is its own setting, which stays `main`.
 
-## The Ruleset on `main`
-A branch ruleset named `main` (Settings → Rules → Rulesets) targets `main` by name, not the default branch, with enforcement active and no bypass list. It has three rules:
-- **Require status checks to pass:** `lint`, `type-check`, `unit-tests` and `build`, the four check jobs in `checks.yml`. A PR into `main` can't be merged while any of them is failing. `start-ci-failure` isn't a check, so it isn't required. "Require branches to be up to date before merging" is off, since merging `develop` into `main` leaves merge commits on `main` that would make `develop` look out of date.
-- **Restrict deletions:** `main` can't be deleted.
-- **Block force pushes:** nobody can force-push to `main`.
+## The Rulesets on `develop` and `main`
+Every change reaches `develop` and `main` through a PR whose checks passed, so neither branch can go red, and nothing reaches production except through a PR. The one exception is `back-merge.yml`'s push of a hotfix from `main` straight to `develop`, which merges two sides that each passed (see "Back-Merge").
 
-The ruleset covers only `main`, so you can still push straight to `develop`.
+Two branch rulesets (Settings → Rules → Rulesets) hold this, with enforcement active. Each is named after its branch and targets it by name, not as the default branch. Both have these rules:
+- **Require a pull request before merging,** with 0 approvals, since the review happens in the story's sessions, not on GitHub. A direct push is refused, from your account and so from a routine, which pushes as you.
+- **Require status checks to pass:** `lint`, `type-check`, `unit-tests` and `build`, the four check jobs in `checks.yml`. `start-ci-failure` isn't a check, so it isn't required.
+- **Restrict deletions** and **Block force pushes.**
 
-When a check job in `checks.yml` is renamed, added or removed, change the ruleset's required checks and this record in the same change. That way every check job is required, and every required check has a job to report it. A required check with no job never reports, and blocks every merge.
+The settings that differ between the two rulesets, with each one's value and why:
 
+| | `develop` | `main` |
+|---|---|---|
+| Merge methods | Squash, for a story or `/tooling` PR, so each lands as one commit dated when it lands. Merge commit, for a hotfix brought back by hand. | Merge commit only, so `main`'s history shows each release and hotfix as it shipped. |
+| "Require branches to be up to date before merging" | On, so every PR is tested against the latest `develop` and two PRs that each pass alone can't break it together. After a merge into `develop`, each other open PR needs **Update branch** (or `gh pr update-branch`) and another check run before it can merge. | Off, since merging `develop` into `main` leaves merge commits on `main` that would make `develop` look out of date. |
+| Bypass list | The back-merge App only, so `back-merge.yml` can push (see "Back-Merge"). | Empty. |
+
+No ruleset setting stops a routine from merging a PR as you, so the `routine-sessions` skill's rule that a routine never merges is the only guard there.
+
+When a check job in `checks.yml` is renamed, added or removed, change both rulesets' required checks and this record in the same change. That way every PR, into either branch, is held to the same checks, every check job is required, and every required check has a job to report it. A required check with no job never reports, and blocks every merge.
+
+## Pull Request Settings
+The settings in Settings → General → Pull Requests, with their values and why:
+- **Merge methods:** merge commits and squash allowed, rebase off, to match the rulesets' merge methods.
+- **Default commit messages:** a merge commit's message is the PR title, so `main`'s history lists the goals shipped. A squash's is the PR title with its commit details, so a story's step messages survive on `develop`.
+- **Allow auto-merge:** on, so a story's PR into `develop` merges by itself once its checks pass.
+- **Automatically delete head branches:** on, so `/close` only has to remove a story's local branch and worktree.
+
+## The Back-Merge App
+`back-merge.yml` pushes as a GitHub App of your own, `meal-planning-back-merge` (your Settings → Developer settings → GitHub Apps), the one actor on the `develop` ruleset's bypass list. Your account mustn't be on the list, because routines push as you and would get through too. GitHub doesn't let a workflow's built-in token be on a bypass list at all. That leaves an App as the only actor that can be on the list by itself.
+
+The App has no webhook, is installed on `meal-planning` only, and has Contents and Workflows read and write. Its Client ID and private key are the Actions secrets `BACK_MERGE_APP_CLIENT_ID` and `BACK_MERGE_APP_PRIVATE_KEY`. If the key is lost or leaked, generate a new one on the App's page, replace the secret's value and delete the old key there.
 ## The Claude GitHub App
 The [Claude GitHub App](https://github.com/apps/claude) is installed with access to `meal-planning` and `meal-planning-notes`. It lets routines clone both repos, push `claude/` branches in `meal-planning` and push to `main` in `meal-planning-notes`. A cloud session reaches GitHub through the cloud GitHub proxy, which authenticates `git` and `gh` with the app's access, so no GitHub token is stored anywhere.
 
 The app's access covers what the `ci-failure` and `dependency-updates` sessions do on GitHub: opening and editing a PR (`gh api`), finding a run (`gh run list`), reading one (`gh run view`), re-running its failed jobs (`gh run rerun --failed`) and reading their logs (`gh run view --log-failed`). The logs need one more allowed host in the cloud environment (see "The Cloud Environment").
+
+## The Desktop App's Branch Prefix
+The Claude desktop app names each worktree branch from its branch prefix (Settings → Claude Code), which is `feature/`, so a story's or `/tooling` change's branch is `feature/<generated name>`. It isn't the app's default, `claude/`. With that default, a story's branch would start with `claude/`. `start-ci-failure` treats a `claude/` branch as a routine's own fix and starts no session for it, so a story's failed check would start nothing.
 
 ## The Cloud Environment
 Routines run in a claude.ai cloud environment named `Meal Planning Routines` (at https://claude.ai/code, the cloud button above the message box). A new session starts from a snapshot of what its setup script installed, which claude.ai rebuilds about every seven days, or when the script changes.
