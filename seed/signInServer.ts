@@ -7,8 +7,12 @@ import { env } from '@/env';
 
 import { SEEDED_USERS } from './users';
 
-const PORT = 3001;
-const ORIGIN = `http://localhost:${PORT}`;
+// A worktree's .env.local sets its own port, and its BETTER_AUTH_URL names its own host
+// (`<worktree>.localhost`), so the session cookie lands on that host rather than on `localhost`,
+// where it would replace the main checkout's.
+const PORT = Number(process.env.SIGN_IN_PORT ?? 3001);
+const { hostname } = new URL(env.BETTER_AUTH_URL);
+const ORIGIN = `http://${hostname}:${PORT}`;
 
 const linkFor = (key: string) => `${ORIGIN}/${key}`;
 
@@ -67,7 +71,8 @@ const server = createServer(async (request, response) => {
 
 	const [session] = await test.getCookies({ userId: found.user.id });
 
-	// No Domain, so the cookie belongs to localhost and reaches the dev server on its own port.
+	// No Domain, so the cookie belongs to the host the link was opened on and reaches the dev server
+	// on its own port.
 	const sessionCookie = [
 		`${session.name}=${session.value}`,
 		`Path=${session.path}`,

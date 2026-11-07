@@ -28,7 +28,7 @@ CI and the cloud environment install only `node` and `pnpm` (the action's `insta
 |-----|------|
 | `lint` | `pnpm lint:ci` |
 | `type-check` | `pnpm check:types`, which generates Next's route types (`next typegen`) before running `tsc`, since a fresh checkout has none |
-| `unit-tests` | `pnpm test:coverage`, so the 100% coverage thresholds in `vitest.config.ts` hold across the whole codebase. The pre-commit hook checks only staged files. |
+| `unit-tests` | `pnpm test:coverage`, so the 100% coverage thresholds in `vitest.config.ts` hold across `src/`. The pre-commit hook checks only staged files. |
 | `build` | `pnpm build` |
 
 Each check is its own job, so:

@@ -1,10 +1,28 @@
+import { createServer } from 'node:net';
+
 import { defineConfig, devices } from '@playwright/test';
 
 import type { env } from '@/env';
 
 import packageJson from './package.json' with { type: 'json' };
 
-const baseURL = 'http://localhost:3100';
+// A port the OS has free right now, so two checkouts can run E2E at once.
+const freePort = () =>
+	new Promise<string>((resolve, reject) => {
+		const server = createServer();
+		server.on('error', reject);
+		server.listen(0, () => {
+			const address = server.address();
+			const port = typeof address === 'object' && address ? address.port : 0;
+			server.close(() => resolve(String(port)));
+		});
+	});
+
+// Picked once per run: the main process picks it, and each worker loads this file again and finds
+// it in process.env.
+process.env.E2E_PORT ??= await freePort();
+const port = process.env.E2E_PORT;
+const baseURL = `http://localhost:${port}`;
 
 // Every app variable gets an E2E value here, so none falls back to .env.local. DB_URL comes from the memory server.
 const e2eEnv = {
@@ -43,7 +61,7 @@ export default defineConfig({
 		},
 		{
 			name: 'Next',
-			command: 'next build && next start -p 3100',
+			command: `next build && next start -p ${port}`,
 			url: baseURL,
 			reuseExistingServer: false,
 			timeout: 120_000,

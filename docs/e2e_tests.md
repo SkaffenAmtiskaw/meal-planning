@@ -171,15 +171,17 @@ No other file imports `testUtils`, re-exports it, or reaches it through a namesp
 
 ## How a Run Works
 1. `e2e/_fixtures/memoryServer.ts` starts a MongoDB memory server on a random port, and Playwright passes its URI to the app and the tests as `DB_URL`.
-2. `next build && next start -p 3100` builds the app and serves it on `http://localhost:3100`.
+2. `next build && next start` builds the app and serves it on `localhost`, on a free port that `playwright.config.ts` picks once per run.
 3. The tests run against that server.
 
-E2E tests always run against this production build, never `next dev` and never a server that's already running. A production build is what users get, and it doesn't compile pages on demand while parallel workers wait. Your own `pnpm dev` on port 3000 can keep running during an E2E run. The build writes to the same `.next` folder as `pnpm build`, so don't run both at once in the same checkout.
+E2E tests always run against this production build, never `next dev` and never a server that's already running. A production build is what users get, and it doesn't compile pages on demand while parallel workers wait.
+
+Because each run picks a free port, your own `pnpm dev` can keep running during an E2E run, and two checkouts can run E2E at the same time. Every build in a checkout writes to the same `.next` folder, so don't run two at once there, whether they're E2E runs or `pnpm build`.
 
 ## Environment Variables
 Nothing in an E2E run comes from `.env.local`. At the top of `playwright.config.ts`, every variable in `src/env.ts` gets a value meant for E2E:
 - `DB_URL` is the memory server's URI.
-- `BETTER_AUTH_URL` is `http://localhost:3100`. The session cookies `signIn` adds take their domain from it.
+- `BETTER_AUTH_URL` is the run's own `http://localhost:<port>`. The session cookies `signIn` adds take their domain from it.
 - `BETTER_AUTH_SECRET` is a dummy secret.
 - Everything else gets a dummy value that passes `src/env.ts`'s validation, such as a valid email for `RESEND_FROM_EMAIL`.
 

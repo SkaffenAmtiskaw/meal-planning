@@ -1,3 +1,6 @@
+# What Gets Unit Tests
+Unit tests cover the app's code in `src/`. Dev tooling typically has none: the seed in `seed/`, the scripts in `scripts/`, config files at the repo root, such as `vitest.config.ts`, and the test support code in `test/`, mocks included. Tooling runs only on a developer's machine or in CI, so a fault in it never reaches the app's users, and it shows up the next time someone runs the tool. Running a tool after a change usually checks that change, so a unit test would add upkeep without catching anything sooner.
+
 # Unit Test Tooling
 - Unit tests use [`vitest`](https://vitest.dev/api/) and [`@testing-library/react`](https://testing-library.com/docs/).
 
@@ -145,9 +148,6 @@ vi.mock('@mantine/core', async () => await import('#mocks/@mantine/core'));
 // ❌ INCORRECT - inline factory with hoisting issues
 vi.mock('@mantine/core', () => ({ Button: vi.fn() }));
 ```
-
-## Mock Files Do Not Have Tests
-Files in `test/mocks/` are test infrastructure, not code under test. They do not have associated `.test.ts` files.
 
 ## Stateful Mocks Using React Hooks
 When mocking React hooks that manage state, use React's `useState` inside the mock factory to create stateful mocks that trigger component re-renders:
@@ -313,7 +313,7 @@ it('shows loading state', async () => {
 The stateful mock's `run()` function sets `loading=true` immediately, before awaiting the async function. This means the loading state is visible right away, regardless of how quickly the promise resolves.
 
 # Code Coverage
-- All modules should have 100% code coverage (with a few narrowly defined exceptions listed in `vitest.config.ts`).
+- All modules in `src/` should have 100% code coverage (with a few narrowly defined exceptions listed in `vitest.config.ts`).
 - You should NEVER exclude code from unit test coverage unless EXPLICITLY instructed to do so by the user.
 
 # Test Patterns
