@@ -1,5 +1,18 @@
 {
   "permissions": {
     "additionalDirectories": ["~/repos/meal-planning-notes"]
+  },
+  "hooks": {
+    "SessionStart": [
+      {
+        "matcher": "startup",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "cwd=$(jq -r '.cwd // empty'); sh \"$CLAUDE_PROJECT_DIR/scripts/sync-develop.sh\" \"${cwd:-$CLAUDE_PROJECT_DIR}\"; sh \"$CLAUDE_PROJECT_DIR/scripts/worktree-setup.sh\" \"${cwd:-$CLAUDE_PROJECT_DIR}\""
+          }
+        ]
+      }
+    ]
   }
 }
