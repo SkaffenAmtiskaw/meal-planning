@@ -30,6 +30,9 @@ Some changes need the story lifecycle, whichever note they came from. Once you'v
 
 If one applies, tell the user which and why, and ask whether to spin the change off into a story. If they say yes, read `spinning-off-a-story.md`, follow it and stop.
 
+### Where the Change Is Made
+Run checks 1 and 2 in `starting-on-a-branch.md`, in the `building-code` skill's folder, and stop wherever they say to. Give the freeze check no note name, because a release refuses every change that isn't one of its stories.
+
 ## 2. Settle the Change
 Settle with the user what the change is. If it adds or moves a rule, decide where it goes as the `rule-placement` skill describes. If it adds or renames a skill or agent, read `adding-a-skill-or-agent.md`.
 
@@ -42,9 +45,7 @@ What the change needs depends on what it touches:
 - **A Claude Code feature,** such as skill frontmatter, hooks, subagents or rules: check the current Claude Code docs, never memory.
 - **A skill or agent:** follow the `keeping-sessions-lean` skill.
 - **Project config:** by asking for this change, the user has asked for any config edit it names.
-- **An existing Roadmap line or section:** what to do depends on the edit:
-  - **What deleting a finished note does to the Roadmap:** leave it to step 5. It isn't held, because it records progress that's true under both the old skills and the new ones.
-  - **Any other edit,** such as a section's name: hold it until the change is committed, as step 6 describes. Other sessions run the new skills only once they're committed, so until then the edited Roadmap wouldn't match the workflow they follow.
+- **An existing Roadmap line or section,** such as a section's name: hold the edit until the change's PR merges, as step 7 describes. Other sessions run the new skills only once they're on `develop`, so until then the edited Roadmap wouldn't match the workflow they follow.
 
 ## 4. Get the Change Approved
 Triage the out-of-scope list. An item the user pulls in becomes part of this change. Then show the table of changed files and ask the user whether they approve.
@@ -56,14 +57,27 @@ Once the user approves, search the whole notes repo for:
 
 Decide how hard to search other stories' remaining work from how widely the change reaches.
 
-In the note or item this session worked from, and in each item you found, remove the text for what this change did and keep the rest. The user's own lines are the exception. If that finishes a note that isn't collecting, or empties the kicked-off copy this session worked from, delete it as the `deleting-a-note` skill describes.
+In the note or item this session worked from, and in each item you found, remove the text for what this change did and keep the rest. The user's own lines are the exception. If removing that text finishes a note that isn't collecting, or empties the kicked-off copy this session worked from, hold the note's deletion until the PR merges, as step 7 describes. Deleting it removes its Roadmap line, which stays until the change is on `develop`.
 
 How to handle text the change made wrong depends on what it is:
 - **An existing Roadmap line or section:** hold the edit as step 3 describes.
 - **A note that only follows a convention this change replaced:** leave it as it is, because it's updated when it's next worked on.
 - **Anything else:** handle it as the `editing-notes` skill's "A Note That's Wrong or Out of Date" describes.
 
-## 6. Report and Stop
-Route the out-of-scope list. Then show the table of changed files, including each note you deleted. If you held any Roadmap edits, list each one under "Roadmap edits to apply after the commit".
+## 6. Report and Open the PR
+Route the out-of-scope list. Then show the table of changed files. If you held any Roadmap edits or a note's deletion, list each one under "Held until the merge".
 
-Stop there, because each change gets its own session. If the user then asks you to commit and you listed Roadmap edits, commit the change first, then make those edits and run `sh scripts/vault-lint.sh` naming each note you changed.
+Open the change's PR as `opening-the-pr.md`, in the `building-code` skill's folder, describes.
+
+## 7. Make the Held Edits
+The held edits are the Roadmap edits and note deletions from steps 3 and 5. If you held none, skip this step. Otherwise, wait for the PR to merge. The steps, in order:
+1. Run `gh pr checks <number> --watch` in the background.
+2. What to do depends on how the checks went:
+   - **A check failed:** tell the user which one, and that the held edits wait until a fix merges. List each held edit, so the user or a later session can make it then.
+   - **They passed:** run `gh pr view <number> --json state,mergeStateStatus`, and go by what it shows:
+     - **`state` is `MERGED`:** make the Roadmap edits, and delete each held note as the `deleting-a-note` skill describes.
+     - **`mergeStateStatus` is `BEHIND`:** `develop` moved since the checks ran, and the PR can't merge until it's up to date. Run `gh pr update-branch <number>`, then go back to item 1.
+     - **`mergeStateStatus` is `DIRTY` or `BLOCKED`:** auto-merge can't merge it, such as when it conflicts with `develop`. Tell the user why, and list the held edits, as for a failed check.
+     - **Otherwise:** auto-merge hasn't merged it yet, so check again in a minute.
+
+Stop there, because each change gets its own session.

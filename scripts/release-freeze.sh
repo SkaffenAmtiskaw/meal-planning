@@ -36,7 +36,9 @@ case "$goal_line" in
 esac
 
 if [ -z "$reason" ]; then
-  if ! prs=$(gh pr list --base main --head develop --state open --json url --jq '.[].url' 2>&1); then
+  # gh api, not gh pr list: a routine's cloud session reaches GitHub's REST API
+  # but not the GraphQL API the gh pr commands use.
+  if ! prs=$(gh api -X GET "repos/{owner}/{repo}/pulls" -f base=main -F head="{owner}:develop" -f state=open --jq '.[].html_url' 2>&1); then
     echo "release-freeze.sh: couldn't check GitHub for an open PR from develop into main, so it can't tell whether a release is under way:"
     echo "$prs"
     exit 2

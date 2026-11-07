@@ -15,7 +15,7 @@ Close the story **$ARGUMENTS**: keep its note in `archive/` in the notes repo wh
 
 Invoke the `editing-notes` skill first, since this run changes notes.
 
-This session runs in the main checkout and edits only notes. If you find a doc gap, draft the fix and get the user's approval on the spot. Then offer to start a worktree session that writes it, with the approved draft in its brief. If the user would rather wait, add the draft to the Docs Updates note.
+This session runs in the main checkout and can't edit the code repo.
 
 ## 1. Read the Note
 Find the note in the notes repo and read all of it. Where it is and its `status` decide the kind of close:

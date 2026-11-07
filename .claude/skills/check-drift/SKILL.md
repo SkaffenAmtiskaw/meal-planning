@@ -8,7 +8,7 @@ hooks:
     - matcher: "Edit|Write|MultiEdit|NotebookEdit"
       hooks:
         - type: command
-          command: '"$CLAUDE_PROJECT_DIR"/.claude/hooks/notes-only-edits.sh docs'
+          command: '"$CLAUDE_PROJECT_DIR"/.claude/hooks/notes-only-edits.sh'
 ---
 
 Check the note **$ARGUMENTS** for drift.
@@ -16,6 +16,8 @@ Check the note **$ARGUMENTS** for drift.
 Find where the note's remaining work no longer holds, mark each place with a ⚠️ Check Drift callout and send the note to the skill that fixes it. Make only the changes the steps below name, and correct any name or path that moved. Don't rewrite anything else, because the skill that wrote each section settled it with the user and is the one to re-settle it.
 
 Invoke the `editing-notes` skill first, since this run changes notes.
+
+This session runs in the main checkout and can't edit the code repo.
 
 ## 1. Read the note
 If the note's status isn't `spec`, `ready` or `in-progress`, tell the user what you found and stop.
@@ -90,7 +92,7 @@ Then update Where It Stands, with a `^status` line such as "Drift found. Next: /
 Show the user:
 1. **Changes made without asking:** a table with one row per change, saying where it is and what changed.
 2. **Decisions:** one line per answer they gave, and where it was recorded.
-3. **Doc updates:** each doc changed, with a one-line summary.
+3. **Doc gaps:** each approved draft, with a one-line summary, and whether a worktree session is writing it or it's in the Docs Updates note.
 4. **Where the note goes next:** any change to `status` or `blocked-by`, and the new `^status` line.
 
 Then triage any items added to the out-of-scope list since step 4, and route the list. Last, give the user the command for the note's next step, such as `/plan-steps <note name>`, to run in a new session, and stop. This session's context is full of the checkers' reports, which the next skill doesn't need.
