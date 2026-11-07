@@ -70,8 +70,9 @@ jobs:
   # A cancelled run starts nothing.
   start-ci-failure:
     needs: [lint, type-check, unit-tests, build]
+    # Throwaway PR: its lint failure is on purpose, so it starts no ci-failure session.
     if: >-
-      failure() && !cancelled()
+      false && failure() && !cancelled()
       && github.run_attempt == 1
       && !startsWith(github.head_ref, 'claude/')
       && github.event.pull_request.head.repo.full_name == github.repository
