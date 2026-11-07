@@ -1,0 +1,64 @@
+# Brings a hotfix on main back into develop, so the next release doesn't undo it. On a push to main that brings
+# commits develop doesn't have, it merges main into develop and pushes the merge straight to develop as the
+# back-merge GitHub App, the only actor on the develop ruleset's bypass list. After a release, develop lacks only the
+# release's merge commit, which --no-merges leaves out, so it stops. A merge that conflicts fails the job and pushes nothing. See docs/ci.md, "Back-Merge".
+name: Back-Merge
+
+on:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+# Pushes to main wait their turn, so two back-merges never race to push develop.
+concurrency:
+  group: ${{ github.workflow }}
+
+jobs:
+  back-merge:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+          # The push below uses the App's token, not this workflow's read-only one.
+          persist-credentials: false
+
+      - name: Find commits develop doesn't have
+        id: needed
+        run: |
+          missing=$(git rev-list --no-merges origin/develop..origin/main)
+          if [ -z "$missing" ]; then
+            echo "main has nothing develop lacks, as after a release merge, so there's nothing to bring back."
+            echo "needed=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "Commits on main that develop lacks:"
+            git log --oneline --no-merges origin/develop..origin/main
+            echo "needed=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - uses: actions/create-github-app-token@v3
+        if: steps.needed.outputs.needed == 'true'
+        id: app-token
+        with:
+          client-id: ${{ secrets.BACK_MERGE_APP_CLIENT_ID }}
+          private-key: ${{ secrets.BACK_MERGE_APP_PRIVATE_KEY }}
+          permission-contents: write
+          # A hotfix that changes a workflow file can only be pushed with this one.
+          permission-workflows: write
+
+      # The runner has no git identity, so the merge commit is the App's bot's.
+      - name: Merge main into develop and push
+        if: steps.needed.outputs.needed == 'true'
+        env:
+          GH_TOKEN: ${{ steps.app-token.outputs.token }}
+          APP_SLUG: ${{ steps.app-token.outputs.app-slug }}
+        run: |
+          user_id=$(gh api "/users/${APP_SLUG}[bot]" --jq .id)
+          git config user.name "${APP_SLUG}[bot]"
+          git config user.email "${user_id}+${APP_SLUG}[bot]@users.noreply.github.com"
+          gh auth setup-git
+          git checkout -B develop origin/develop
+          git merge --no-edit origin/main
+          git push origin develop
