@@ -16,7 +16,9 @@ Implement the next step of the note **$ARGUMENTS**.
 Invoke the `editing-notes` skill first, since this run changes notes.
 
 ## 1. Find the Step
-Find the note. If its `status` isn't `ready` or `in-progress`, tell the user what you found, and stop. Invoke the `roadmap-rules` skill and read the story's line on the Roadmap. If, by the skill's "Goals" rules, the story can't be built yet, tell the user which goal it waits on, and stop.
+Find the note. If its `status` isn't `ready` or `in-progress`, tell the user what you found, and stop. Then run the checks in `starting-on-a-branch.md`, in the `building-code` skill's folder, and stop wherever they say to.
+
+Invoke the `roadmap-rules` skill and read the story's line on the Roadmap. If, by the skill's "Goals" rules, the story can't be built yet, tell the user which goal it waits on, and stop.
 
 Read the whole note. Which step you build depends on the type:
 - **A tweak:** the note is one step. Its Purpose and any **Decided** line say what to build, and its Acceptance Criteria are the checks. If they're empty, write them first, as `checks.md` in the `writing-implementation-steps` skill's folder describes.
