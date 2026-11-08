@@ -117,7 +117,7 @@ The code repo, `SkaffenAmtiskaw/meal-planning`, is public, and its default branc
 The notes repo, `meal-planning-notes`, is private, with default branch `main`. It holds the Obsidian vault, and the Obsidian Git plugin commits and pushes it from your machine (see `docs/project_structure.md`, "Notes").
 
 ## claude.ai
-Your Claude Max subscription runs Claude Code, both on your machine and in the routines' cloud sessions. The cloud environment and the routines are in `docs/ci.md`, "The Cloud Environment" and "Routines".
+Your Claude Max subscription runs Claude Code, both on your machine and in the routines' cloud sessions. The cloud environment and the routines are in `docs/ci.md`, "The Cloud Environment" and "Routines". The Claude desktop app's branch prefix, which names each worktree's branch, is in "The Desktop App's Branch Prefix" there.
 
 # Who You Pay
 - **Cloudflare:** the domain, renewing 2027-03-02 with auto-renew on.
