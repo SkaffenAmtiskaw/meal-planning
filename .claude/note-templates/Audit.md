@@ -5,7 +5,7 @@ blocked-by: []
 confirmed: {{date:YYYY-MM-DD}}
 ---
 # Where It Stands
-Next: /run-audit ^status
+Next: /audit-release ^status
 
 # Inbox
 
