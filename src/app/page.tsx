@@ -32,7 +32,7 @@ const Page = async ({
 			user.planners.some(({ planner }) => String(planner) === lastPlannerId);
 		const plannerId = validLast
 			? lastPlannerId
-			: String(user.planners[0].planner);
+			: String(user.planners[0].accessLevel);
 		redirect(`${plannerId}/calendar`);
 	}
 
