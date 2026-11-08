@@ -157,7 +157,12 @@ The settings in Settings → General → Pull Requests, with their values and wh
 - **Merge methods:** merge commits and squash allowed, rebase off, to match the rulesets' merge methods.
 - **Default commit messages:** a merge commit's message is the PR title, so `main`'s history lists the goals shipped. A squash's is the PR title with its commit details, so a story's step messages survive on `develop`.
 - **Allow auto-merge:** on, so a story's PR into `develop` merges by itself once its checks pass.
-- **Automatically delete head branches:** on, so `/close` only has to remove a story's local branch and worktree.
+- **Automatically delete head branches:** on, so after a merge only the local branch and worktree are left, which the SessionStart hook's sweep (`scripts/worktree-sweep.sh`) removes.
+
+## The `notes-pending` Label
+The repo has a `notes-pending` label, made once with `gh label create notes-pending --description "Merged PR with notes work still to do"`, since `gh pr create --label` fails on a label that doesn't exist.
+
+While notes work waits on a PR's merge, such as a `/tooling` change's Roadmap edits, the PR carries the label, and its body lists that work under "Held until the merge". While a merged PR still has the label, the SessionStart hook's sweep (`scripts/worktree-sweep.sh`) leaves its worktree in place and names the PR at each session start. The sweep finds merged PRs only through the worktrees still on disk, so keeping the worktree is what keeps the PR named at each session start until the work is done and the label comes off.
 
 ## The Back-Merge App
 `back-merge.yml` pushes as a GitHub App of your own, `meal-planning-back-merge` (your Settings → Developer settings → GitHub Apps), the one actor on the `develop` ruleset's bypass list. Your account mustn't be on the list, because routines push as you and would get through too. GitHub doesn't let a workflow's built-in token be on a bypass list at all. That leaves an App as the only actor that can be on the list by itself.

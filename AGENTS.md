@@ -28,7 +28,8 @@ The user wants instructions followed for what they're for, not to the letter. If
 - **Security risks.** If a risk you or a subagent found could reach production, or the story is about that risk, raise it. Otherwise, leave it out, along with any hardening against it. Dev tooling that runs on the user's machine against their dev database is the usual case, because at worst it reaches dev data.
 - **Doc gaps.** If you notice something that belongs in `docs/`, deal with it right then, rather than putting it on the out-of-scope list, because docs that wait for later rarely get updated. What you do depends on the gap:
   - **A wrong or out-of-date rule with one right fix, in a doc this story already edits:** it's a Boy Scout fix, as the `triaging-out-of-scope-work` skill describes, so don't ask.
-  - **Anything else:** raise it and offer to draft it now. If the user wants it later, add it to the Docs Updates note.
+  - **Anything else, in a session that can edit the code repo:** raise it and offer to draft it now. If the user wants it later, add it to the Docs Updates note.
+  - **Anything else, in a session that can't,** such as a planning session in the main checkout: draft the fix and get the user's approval on the spot. Then offer to start a worktree session that writes it, with the approved draft in its brief. If the user would rather wait, add the draft to the Docs Updates note.
 - **Summaries.** If you changed files and your skill's report doesn't list them, your summary includes a table, so the user can open each file. Give each file a row, or each group of files with the same change. A row holds the file as a markdown link and a one-line description of its change.
 
 ## Notes
@@ -38,7 +39,8 @@ Before you change a note in the notes repo, invoke the `editing-notes` skill. Th
 - **The user's lines:** a line where their name is a tag or a signature (`[Sarah] I want X instead.`, `Change this to Y - Sarah`) is their own words. Never edit one or write in their voice.
 - **Roadmap order** is the user's call, so never reorder `Roadmap.md` in the notes repo.
 - **⚠️ Check Drift callouts:** only `/check-drift` writes them.
-- **A Roadmap line with no note:** once you finish its work, run the check jobs that `ci.md` lists under "Checks on PRs", then remove the line as the `deleting-a-note` skill describes in step 4. The pre-commit hook runs only what the staged files trigger, so a dependency bump would get Biome and nothing else.
+- **A Roadmap line with no note:** remove the line only once its work's PR merges, because until then the work isn't on `develop`. Hold the removal as held notes work, as `opening-the-pr.md` and `waiting-for-the-merge.md` in the `building-code` skill's folder describe. When you remove the line, follow step 4 of the `deleting-a-note` skill.
+- **Held notes work at session start:** if the session-start output names a merged PR with held notes work, tell the user and offer a new session in the main checkout that runs `/tooling #<PR>`. Do nothing else about it, because the new session does that work.
 - **Before you finish** a session that changed a note, run `sh scripts/vault-lint.sh "<note>" …`, naming each note it changed. Fix what it reports in those notes. Tell the user about anything it reports in other notes, because another session may be working on them.
 
 ## Out-of-Scope Work
@@ -70,6 +72,7 @@ The commands that need explaining:
 - `pnpm lint` writes fixes to the files. `pnpm lint:ci` only reports, as CI does.
 
 ## Git and Files
+- **Checkouts:** planning sessions run in the main checkout, which stays on `develop` and is never edited, so the SessionStart hook can keep it on the latest `develop`. Every change to the code repo is made in a worktree session on its own branch, and reaches `develop` through a PR, because `develop` accepts nothing else.
 - **Commits:** commit only this session's files, by path, since other sessions' changes may be staged too. Whether the user has to ask first depends on the branch:
   - **If it will be merged:** commit only when they ask.
   - **If it's a throwaway that will never be merged:** commit and push freely, since nothing on it reaches the app.

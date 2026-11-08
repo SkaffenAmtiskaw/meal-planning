@@ -6,7 +6,7 @@ import { databaseNameOf, isWorktreeDatabase } from './databaseNames';
 
 // Empties a worktree's slot database by dropping each of its collections, since local's Atlas user
 // has readWrite there and no dropDatabase. scripts/worktree-slot.sh runs it when a worktree takes a
-// slot, and /close when it removes the worktree. It refuses every database but `test-<n>`, so the
+// slot, and scripts/worktree-sweep.sh when it removes the worktree. It refuses every database but `test-<n>`, so the
 // main checkout's `test` and production's `staging` are never touched.
 const databaseName = databaseNameOf(env.DB_URL);
 if (!isWorktreeDatabase(databaseName)) {

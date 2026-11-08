@@ -41,6 +41,11 @@ If the block is missing a part, or has a line in none of these shapes, such as a
 ## 2. Check Out the Branches
 Check out `main` in the notes clone, as "Branches" in the `routine-sessions` skill describes.
 
+While a release is under way, only its audits and their fixes may reach `develop`, so this run's updates wait until the release ships. Run `sh scripts/release-freeze.sh`, which reads the Roadmap in the notes clone. What to do depends on how it exits:
+- **0:** no release is under way, so go on.
+- **1:** a release is under way, so skip the rest of this step.
+- **2:** it couldn't tell, so stop and say what it printed.
+
 Then fetch the latest `develop` and look for an open pull request from `claude/dependency-updates`:
 
 ```bash
@@ -77,7 +82,7 @@ Keep the commit `git ls-remote` prints for step 5. If it prints nothing, keep th
 Run `pnpm install --frozen-lockfile`, then `pnpm lefthook install`.
 
 ## 3. Apply the Updates
-If the payload holds no patch, minor or advisory, skip this step.
+If a release is under way, or the payload holds no patch, minor or advisory, skip this step.
 
 Apply the security fixes first, then the patches, then the minors. Each update is its own commit, so the user can revert one alone and `git bisect` can find one that breaks a check.
 
@@ -100,6 +105,8 @@ For each entry under `overrides`, remove it and run `pnpm install --no-frozen-lo
 
 ## 4. Majors and Uncleared Advisories
 This step takes what the session couldn't put in the pull request: each major, and each advisory no fix cleared. An advisory whose only fix is a major counts as a major of the package with the advisory, at its lowest fixed version. This skill calls it a **security major**.
+
+If a release is under way, handle only the payload's majors. This run's advisories are uncleared only because step 3 was skipped, and a later run's reminders bring them back.
 
 **The assessed libraries** are React (`react`, `react-dom`), Next (`next`), Mantine (`@mantine/*`), better-auth (`better-auth`), luxon (`luxon`) and Zod (`zod`). The app leans on them most, so a major or minor of one gets an assessment from the `upgrade-assessor` subagent. This step and step 6 each make one call per library, even when several of its packages have an update, and keep the report for the summary.
 
@@ -164,7 +171,7 @@ When it finishes, what to do depends on its result:
 - **It was cancelled,** such as by another session's push to the branch: don't re-run it. Keep its link for the summary.
 
 ## 6. Minors in the Pull Request
-If step 2 aborted the merge of `develop` or a push of the branch was rejected, skip this step, since this run's updates go under **Not applied**.
+If a release is under way, step 2 aborted the merge of `develop` or a push of the branch was rejected, skip this step, since this run's updates go under **Not applied**.
 
 A version bump doesn't show what a minor adds, so the summary tells the user what it adds and whether the app should adopt any of it.
 
@@ -181,6 +188,7 @@ What to do with each minor from this run that's still on the branch, by case:
 End with a summary for the user, in this order. Leave out a group or section with nothing in it. If the block's `new:` part is `none`, say there were no new findings.
 
 1. **The pull request,** by how the run went:
+   - **A release was under way:** what `release-freeze.sh` printed, and that nothing from this run was applied.
    - **Step 2 aborted the merge of `develop`:** the open pull request's link, the files that conflicted, and that nothing from this run was applied.
    - **A push of the branch was rejected:** that it was, and that no pull request was opened or changed. If an earlier push in this run went through, give the pull request's link instead, and say it still holds the update that breaks the check.
    - **Step 3 left no commit on the branch:** that no update went in, that the branch wasn't pushed, and that no pull request was opened or changed.
@@ -190,13 +198,13 @@ End with a summary for the user, in this order. Leave out a group or section wit
    - **Still going when you stopped waiting, or never started:** say so.
    - **Finished:** the last run's link, then either that they passed, or which failed and what came of each, as `failed-on-github.md` describes.
 2. **What this run applied,** in two groups:
-   - **In the pull request,** unless step 2 aborted the merge or a push of the branch was rejected. Group them by kind, in these shapes:
+   - **In the pull request,** unless a release was under way, step 2 aborted the merge or a push of the branch was rejected. Group them by kind, in these shapes:
      - security fixes: each package once, as `<package>`: advisory `<ID>` (`<severity>`), repeating the advisory part for each one it fixes. Then say how it was fixed, as one of `<package>` `<old>` → `<new>`, a lockfile bump to `<version>`, `<parent>` `<old>` → `<new>`, or an override to `^<version>`
      - patches: each as `<package>` `<old>` → `<new>`
      - minors: each as `<package>` `<old>` → `<new>`
      - overrides removed: each override's key, as `'<package>@<range>'`
    - **Not applied:** what didn't reach GitHub, by case:
-     - **If step 2 aborted the merge or a push of the branch was rejected:** each patch, minor and advisory from this run, in the shapes above.
+     - **If a release was under way, step 2 aborted the merge or a push of the branch was rejected:** each patch, minor and advisory from this run, in the shapes above.
      - **If a rebase conflict kept the notes from being pushed:** which notes conflicted. For each sweep item and Roadmap line that didn't reach the notes repo, give its full text and where it would have gone. This is the item's only record, because the check won't report that version of the package again until a newer one comes out. Leave these out of **Sweep items** and **Roadmap lines**.
 3. **Dropped:** each update taken off the branch, as above, with the check it broke, the line of its output that shows why, and where its item or line went: the sweep or the Roadmap heading it's under, or, if it didn't reach the notes repo, that it's under **Not applied**.
 4. **Not fixed:** each new advisory the session didn't fix, as `<package>`: advisory `<ID>` (`<severity>`), and why: already fixed, no fix released yet, or no fix cleared it, with what was tried.
