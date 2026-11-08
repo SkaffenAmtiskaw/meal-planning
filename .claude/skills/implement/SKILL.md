@@ -70,4 +70,4 @@ After the report:
    - **Any other type:** "All steps implemented. Next: /final-review".
 
 ## 6. Stop
-Route the out-of-scope list. Then tell the user the step is done, give them the PR's link if step 5 opened one, and give them the next command from the `^status` line to run in a new session, because this session has already read the note, the docs and the whole step, and carrying that into the next step bloats the context.
+Route the out-of-scope list. Then tell the user the step is done, and give them the PR's link if step 5 opened one. Then hand on the next command from the `^status` line. `offering-the-next-session.md`, in the `building-code` skill's folder, says how.

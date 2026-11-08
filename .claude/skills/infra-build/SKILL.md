@@ -59,4 +59,4 @@ After the report:
 5. Update Where It Stands, with a `^status` line such as "In progress. Next: /infra-build Step 4", or "All steps implemented. Next: /final-review" after the last step.
 
 ## 6. Stop
-Route the out-of-scope list. Then tell the user the step is done, and give them the next command from the `^status` line to run in a new session, because this session has already read the note, the docs and the whole step, and carrying that into the next step bloats the context.
+Route the out-of-scope list. Then tell the user the step is done, and hand on the next command from the `^status` line. `offering-the-next-session.md`, in the `building-code` skill's folder, says how.
