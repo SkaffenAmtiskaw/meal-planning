@@ -2,12 +2,13 @@
 - CI runs on [GitHub Actions](https://docs.github.com/en/actions). The workflows live in `.github/workflows/`.
 - `checks.yml` runs lint, type check, unit tests and build on every PR, and starts the `ci-failure` routine when one of them fails.
 - `dependency-updates.yml` checks the dependencies for security advisories every hour and for new versions every week, and starts the `dependency-updates` routine when it finds something new.
+- `vercel-deploy-errors.yml` starts the `vercel-deploy-errors` routine when a Vercel deployment you should hear about fails.
 - `back-merge.yml` brings a hotfix on `main` back into `develop`, so the next release doesn't undo it.
 
 # Workflows
 
 ## Every Check Is a `package.json` Script
-Every check a workflow runs is a `package.json` script, called as `pnpm <script>`. The only other steps are setup (checking out the code, installing tools and dependencies), the step that starts a routine, the steps that restore and save `dependency-updates.yml`'s reported list in the Actions cache, and `back-merge.yml`'s git steps, which check nothing. That way you, or a cloud session looking into a failure, can rerun exactly what CI ran with the same command.
+Every check a workflow runs is a `package.json` script, called as `pnpm <script>`. That covers `checks.yml`'s four checks and the two checks that decide whether to start a routine, `deps:check` and `vercel:check`. The only other steps are setup (checking out the code, installing tools and dependencies), the step that starts a routine, the steps that restore and save `dependency-updates.yml`'s reported list in the Actions cache, and `back-merge.yml`'s git steps, which check nothing. That way you, or a cloud session looking into a failure, can rerun exactly what CI ran with the same command.
 
 No script CI runs writes fixes. CI would pass on code it had silently fixed, then throw the fix away. That's why the lint job runs `pnpm lint:ci` (`biome ci`, which only reports) and not `pnpm lint` (`biome check --write`).
 
@@ -91,6 +92,58 @@ With no entry to restore, every finding is new, and the next run that finds some
 ## When the Call Fails
 If `/fire` fails (a wrong secret, the API down, or the routine's limit of 30 calls an hour), `start-dependency-updates` fails, no session starts and the list isn't saved. The next run finds the same findings and sends them again. The job's log shows the error `/fire` returned, such as a 401 for a wrong token. On success, the log shows the new session's link. Like `start-ci-failure`, it never retries.
 
+# Vercel Deploy Errors
+`vercel-deploy-errors.yml` starts the [`vercel-deploy-errors` routine](#routines) when a Vercel deployment fails and the failure is one you should hear about. Vercel sends GitHub a `repository_dispatch` event of type `vercel.deployment.failed` for each failed deployment, and GitHub runs `develop`'s copy of the workflow for it, whatever branch the deployment came from. So no branch can change the code that runs with the Vercel token ([GitHub's security guide](https://docs.github.com/en/actions/reference/security/secure-use)).
+
+To run it by hand, open Actions → **Vercel Deploy Errors** → **Run workflow** and give the failed deployment's environment, branch and full commit SHA.
+
+The workflow's token can read the repo, its check runs and its PRs (`contents: read`, `checks: read` and `pull-requests: read`), since the check looks up a preview's open PR and its commit's `build` check.
+
+## When It Stays Quiet
+The check, `pnpm -s vercel:check` (`scripts/vercelDeployCheck.ts`), decides whether a failure starts a session. It stays quiet in these cases, in the order it checks them, and the `check` job's log says which one:
+- **A `claude/` branch:** it's a routine's own fix, and skipping it keeps a failing fix from starting session after session. `start-ci-failure` skips these branches for the same reason. The fix's session watches its own deployment.
+- **A preview of a branch other than `develop` with no open PR from this repo:** nobody is waiting on it. A fork's PR falls here too, since its branch isn't one of this repo's. Vercel doesn't deploy it at all until you authorize it.
+- **A preview of a PR's branch whose commit's `build` check ended as failed, cancelled or timed out (GitHub's conclusions for a job):** a code cause that breaks `pnpm build` fails both the deployment and the `build` check. `ci-failure` already has it, so one cause starts one session.
+- **A repeat failure:** the commit already has a failed deployment in that environment, such as when you press **Redeploy** and it fails again. Only a commit's first failure in an environment fires, just as a re-run never starts another `ci-failure` session.
+
+For the third case, `vercel:check` waits for the `build` check run, looking every 30 seconds for up to 20 minutes. If the `build` check hasn't finished by then, it starts a session anyway, and in the rare case `ci-failure` also runs, you get two sessions. None of the first three cases applies to a failed production deployment, so it always starts a session unless it's a repeat.
+
+## The Two Jobs
+The workflow has two jobs, split as `dependency-updates.yml`'s are, so each secret sits in one job:
+- **`check`** installs Node and pnpm from `mise.toml` and runs `pnpm -s vercel:check` with the Vercel token. The script uses only Node's built-in modules, so the job runs no `pnpm install`, and no package's install script runs beside the token. Its outputs are whether to fire and the `text`.
+- **`start-vercel-deploy-errors`** runs only when `check` says to fire. It calls the routine's `/fire` once, and holds the routine's two secrets and nothing else.
+
+A branch name and the build log are untrusted input, so the event's values reach the check only through its step's `env:`, and `start-vercel-deploy-errors` builds the `/fire` body with `jq`.
+
+## The Text
+The other routines' `text` names only identifiers, but this one carries the evidence too, because the session has no Vercel access to fetch it (see "The Vercel Token"). It opens with one line of identifiers (the environment, the deployment's ID and inspector link, the branch and the commit). Then come Vercel's status and any unresolved incidents, from https://www.vercel-status.com, and the build log's error lines and its last 100 lines. The check drops the oldest of those log lines until the whole `text` fits in `/fire`'s limit of 65,536 characters.
+
+If Vercel's API refuses one of the check's requests, such as once the token has expired, the `text` carries the error where the log would be. The session still starts, and its summary says to renew the token.
+
+Its exact shape is in step 1 of the [`vercel-deploy-errors` skill](../.claude/skills/vercel-deploy-errors/SKILL.md), which reads it, so a change to the shape changes the script and the skill together.
+
+## When the Call Fails
+If `/fire` fails (a wrong secret, the API down, or the routine's limit of 30 calls an hour), `start-vercel-deploy-errors` fails and no session starts. The failed run shows in Actions, and Vercel's failed status stays on the commit. The job's log shows the error `/fire` returned, such as a 401 for a wrong token. Once the cause is fixed, run the workflow by hand to start the session. Like `start-ci-failure`, the job never retries. On success, its log shows the new session's link.
+
+## The Session's Fix PRs
+When the cause is in the repo, the session opens a fix PR from a `claude/vercel-fix-<deployment ID>` branch into the deployment's branch: `main` for production, and `develop` or the PR's branch for a preview.
+
+A routine never merges, so you merge each fix PR once its checks pass, with the merge method of its base branch:
+- **`main`:** with a merge commit, as for a hotfix (see `docs/branching.md`, "A Hotfix"). It deploys, and back-merge carries the fix into `develop`.
+- **`develop`:** with a squash, like a story's PR.
+- **A PR's branch:** with any method, as for a `ci-failure` fix, since no ruleset covers the branch. The PR then runs its checks again (see `docs/branching.md`, "When Something Goes Wrong").
+
+## The Vercel Token
+`check` reads the project's deployments and build logs with a Vercel access token, kept in the Actions secret `VERCEL_TOKEN`. It's made at Vercel → Account Tokens (https://vercel.com/account/tokens) and expires a year after it's made. It's scoped to the meal-planning project only, so its API calls need no team ID.
+
+Vercel has no read-only token: even a project-scoped one can deploy to production and read and change environment variables. So the workflow holds it, not the session, as "Starting a Routine" describes. It's never in the cloud environment or the routine.
+
+## Renewing the Vercel Token
+You'll know the token has expired when a session's summary says Vercel refused the workflow's log fetch, or when the Account Tokens page shows its expiry date has passed. To renew it, in order:
+1. At https://vercel.com/account/tokens, create a token scoped to the meal-planning project, with a one-year expiry.
+2. In GitHub → Settings → Secrets and variables → Actions, replace `VERCEL_TOKEN`'s value with it.
+3. Delete the old token on the Account Tokens page.
+
 # Back-Merge
 A hotfix reaches `main` through its own PR, without going through `develop`. If nothing brought it back, the next release from `develop` into `main` could undo it. `back-merge.yml` brings it back on every push to `main`: it merges `main` into `develop` and pushes the merge straight to `develop`, with no PR. Both sides already passed their checks, so the merge runs none.
 
@@ -109,6 +162,8 @@ A routine starts only on an event that is itself a result for you: a failed chec
 
 A failed check can't start a routine directly, so a workflow job calls the routine's `/fire` endpoint, as `start-ci-failure` does (see "The Job That Starts `ci-failure`"). The [`/fire` API reference](https://platform.claude.com/docs/en/api/claude-code/routines-fire) has the request's shape. The routine's saved prompt runs its skill on the `text`, which arrives in the session wrapped in a `routine-fire-payload` block.
 
+By default, a credential that can't be made read-only stays with the workflow. When a session needs data from a service whose narrowest credential can still write, such as deploy or change settings, the workflow that starts the routine holds the credential as an Actions secret, fetches the data and sends it in the `text`. The session gets no credential. This follows least privilege for LLM agents ([OWASP Top 10 for LLM Applications, LLM06:2025 Excessive Agency](https://genai.owasp.org/llmrisk/llm062025-excessive-agency/)): a session runs without permission prompts while it reads untrusted text, so a line of a log could steer it into anything its credential allows. It's a default, not a rule. A story that finds a good reason to do otherwise, such as a session that has to dig through far more than a workflow could send, lays out the trade-off, and you decide. `vercel-deploy-errors.yml`'s Vercel token is held this way (see "The Vercel Token").
+
 # Secrets and Environment Values
 ## The App's Variables
 Wherever a workflow or the routines' cloud environment sets a variable from `src/env.ts`, the value is a dummy that passes the schema, such as `mongodb://localhost:27017/ci` for `DB_URL`. It's never a real value, such as the production database URL or a Resend API key, and never read from an Actions secret. The checks only need values that pass validation, and a routine's session runs without permission prompts while it reads untrusted text, such as CI logs. `docs/services.md`, "The Environments", says where each environment's real values are stored.
@@ -117,7 +172,7 @@ The dummies live in two places, with the same values:
 - the `env:` block at the top of `checks.yml`, so every job sees them
 - the cloud environment's variables (see "The Cloud Environment")
 
-When you add a variable to `src/env.ts`, give it a dummy in both, beside the unit-test value in `test/mocks/env.ts` and the E2E value in `playwright.config.ts` (see `docs/e2e_tests.md`, "Environment Variables"). For the cloud environment, that means its variables on claude.ai and their record in this doc.
+When you add a variable to `src/env.ts`, give it a dummy in both, beside the unit-test value in `test/mocks/env.ts` and the E2E value in `playwright.config.ts` (see `docs/e2e_tests.md`, "Environment Variables"). For the cloud environment, that means its variables on claude.ai and their record in this doc. It also needs a value in Vercel (Settings → Environment Variables), for Production and for Preview. A variable missing from either can fail that environment's deploy, since `src/env.ts` checks every variable.
 
 ## A Routine's URL and Token
 A workflow that starts a routine reads its `/fire` URL and bearer token from two Actions secrets (Settings → Secrets and variables → Actions), named after the routine: `ROUTINE_<NAME>_URL` and `ROUTINE_<NAME>_TOKEN`, such as `ROUTINE_CI_FAILURE_URL`. Neither value is written anywhere in the repo. Each routine's `routine.md` names its two secrets.
@@ -125,7 +180,7 @@ A workflow that starts a routine reads its `/fire` URL and bearer token from two
 Both come from the routine's API trigger on claude.ai (open the routine → Edit → **Select a trigger** → **API**). The token is shown only once, when it's generated, so it goes straight into the secret. If it's lost, **Regenerate** makes a new one, which revokes the old one, and the new one replaces the secret's value.
 
 # Setup Outside the Repo
-Some of what CI and the routines need lives in settings outside the repo, on GitHub, on claude.ai and in the Claude desktop app. Most of it is recorded in this section, and some beside the workflow or routine it serves, such as the routines' Actions secrets in "A Routine's URL and Token". The rest of what the app relies on outside the repo, such as Vercel, Atlas and the domain, is in `docs/services.md`.
+Some of what CI and the routines need lives in settings outside the repo, on GitHub, on claude.ai and in the Claude desktop app. Most of it is recorded in this section. Some is recorded beside the workflow or routine it serves: the routines' Actions secrets in "A Routine's URL and Token", and the Vercel access token and its `VERCEL_TOKEN` secret in "The Vercel Token". The rest of what the app relies on outside the repo, such as Vercel, Atlas and the domain, is in `docs/services.md`.
 
 When you set up something outside the repo, record it where it'll be found when it next needs changing. Which doc that is depends on what the setting is for:
 - **If it exists only so a workflow or routine works,** such as an Actions secret: record it in this doc, beside that workflow or routine, and link it from its service's entry in `docs/services.md`.
@@ -181,7 +236,7 @@ The [Claude GitHub App](https://github.com/apps/claude) is installed with access
 The app's access covers what the `ci-failure` and `dependency-updates` sessions do on GitHub: opening and editing a PR (`gh api`), finding a run (`gh run list`), reading one (`gh run view`), re-running its failed jobs (`gh run rerun --failed`) and reading their logs (`gh run view --log-failed`). The logs need one more allowed host in the cloud environment (see "The Cloud Environment").
 
 ## The Desktop App's Branch Prefix
-The Claude desktop app names each worktree branch from its branch prefix (Settings → Claude Code), which is `feature/`, so a story's or `/tooling` change's branch is `feature/<generated name>`. It isn't the app's default, `claude/`. With that default, a story's branch would start with `claude/`. `start-ci-failure` treats a `claude/` branch as a routine's own fix and starts no session for it, so a story's failed check would start nothing.
+The Claude desktop app names each worktree branch from its branch prefix (Settings → Claude Code), which is `feature/`, so a story's or `/tooling` change's branch is `feature/<generated name>`. It isn't the app's default, `claude/`. With that default, a story's branch would start with `claude/`. `start-ci-failure` and `vercel-deploy-errors.yml` treat a `claude/` branch as a routine's own fix and start no session for it, so a story's failed check or failed preview would start nothing.
 
 ## The Cloud Environment
 Routines run in a claude.ai cloud environment named `Meal Planning Routines` (at https://claude.ai/code, the cloud button above the message box). A new session starts from a snapshot of what its setup script installed, which claude.ai rebuilds about every seven days, or when the script changes.
@@ -271,5 +326,6 @@ When you change the network access, the variables or the script on claude.ai, ch
 Each routine's configuration on claude.ai (its prompt, trigger, model and environment) is in the `routine.md` beside its skill. This list says only what each one is for:
 - **`ci-failure`:** looks into a failed check on a PR, so the result reaches you as a session in the Code tab, under **Routines** in the sidebar. Its skill is [`.claude/skills/ci-failure/`](../.claude/skills/ci-failure/SKILL.md).
 - **`dependency-updates`:** handles the new dependency versions and security advisories the dependency check finds, so they reach you as a session in the Code tab, under **Routines**. Its skill is [`.claude/skills/dependency-updates/`](../.claude/skills/dependency-updates/SKILL.md).
+- **`vercel-deploy-errors`:** works out why a Vercel deployment failed, then fixes it or says what you need to change in Vercel, so the result reaches you as a session in the Code tab, under **Routines**. Its skill is [`.claude/skills/vercel-deploy-errors/`](../.claude/skills/vercel-deploy-errors/SKILL.md).
 
 To add a routine, go to https://claude.ai/code/routines → **New routine**. The form adds a **Pull request: Opened** GitHub trigger by default. Remove it with ✕, then add the trigger the routine needs with **+ Add another trigger**. To try a routine that reads the `text` it's sent, call its API trigger with `curl`, as the trigger's sample command shows. **Run now** has no text field.
