@@ -118,7 +118,7 @@ A branch name and the build log are untrusted input, so the event's values reach
 ## The Text
 The other routines' `text` names only identifiers, but this one carries the evidence too, because the session has no Vercel access to fetch it (see "The Vercel Token"). It opens with one line of identifiers (the environment, the deployment's ID and inspector link, the branch and the commit). Then come Vercel's status and any unresolved incidents, from https://www.vercel-status.com, and the build log's error lines and its last 100 lines. The check drops the oldest of those log lines until the whole `text` fits in `/fire`'s limit of 65,536 characters.
 
-If Vercel's API refuses one of the check's requests, such as once the token has expired, the `text` carries the error where the log would be. The session still starts, and its summary says to renew the token.
+If one of the check's Vercel requests fails, the `text` carries the error where the log would be, and the session still starts. If Vercel refused the request (a 401 or 403), such as once the token has expired, the session's summary says to renew the token.
 
 Its exact shape is in step 1 of the [`vercel-deploy-errors` skill](../.claude/skills/vercel-deploy-errors/SKILL.md), which reads it, so a change to the shape changes the script and the skill together.
 

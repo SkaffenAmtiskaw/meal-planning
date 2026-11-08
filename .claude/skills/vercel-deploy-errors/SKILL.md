@@ -50,7 +50,7 @@ The causes, and what to do for each:
 - **You can't tell:** go to step 4.
 
 ## 4. End With the Summary
-End every session with a summary for the user. If the block carried `Build log: Vercel API error ...`, open it by saying that Vercel refused the workflow's log fetch, and quote the error. Then tell the user to renew the Vercel token, as "Renewing the Vercel Token" in `docs/ci.md` describes.
+End every session with a summary for the user. If the block carried `Build log: Vercel API error ...`, open the summary with the error, quoted. Say that the workflow couldn't fetch the log, so the cause rests on the repo and Vercel's status alone. If the error's HTTP status is 401 or 403, Vercel refused the workflow's log fetch, so also tell the user to renew the token, as "Renewing the Vercel Token" in `docs/ci.md` describes. Only a refusal means the token needs renewing.
 
 Then name the failed deployment (its environment, branch, commit and inspector URL), and give:
 1. **The cause,** as step 3 sorted it out.

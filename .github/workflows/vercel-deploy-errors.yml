@@ -49,8 +49,6 @@ jobs:
       # has no project ID, so it names the project.
       - id: check
         env:
-          EVENT_TYPE: ${{ github.event.action || github.event_name }}
-          CLIENT_PAYLOAD: ${{ toJSON(github.event.client_payload) }}
           ENVIRONMENT: ${{ github.event.client_payload.environment || inputs.environment }}
           BRANCH: ${{ github.event.client_payload.git.ref || inputs.branch }}
           SHA: ${{ github.event.client_payload.git.sha || inputs.sha }}
@@ -58,8 +56,6 @@ jobs:
           VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
           GITHUB_TOKEN: ${{ github.token }}
         run: |
-          echo "Event: $EVENT_TYPE"
-          echo "Payload: $CLIENT_PAYLOAD"
           result=$(pnpm -s vercel:check)
           if [ "$(jq .fire <<< "$result")" = true ]; then
             echo "Starting the routine."
