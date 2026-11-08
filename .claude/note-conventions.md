@@ -3,7 +3,7 @@ How notes are organized and move through their lifecycle. The Roadmap decides or
 # Frontmatter
 | Property | Values | Meaning |
 |---|---|---|
-| `type` | `feature` · `bug` · `pattern` · `infra` · `cleanup` · `tweak` · `sweep` · `workflow` · `hub` · `goal` · `standing-goal` | Which template the note follows. Blank on an `idea` note until its kind is clear. |
+| `type` | `feature` · `bug` · `pattern` · `infra` · `cleanup` · `tweak` · `sweep` · `audit` · `workflow` · `hub` · `goal` · `standing-goal` | Which template the note follows. Blank on an `idea` note until its kind is clear. |
 | `status` | `idea` · `spec` · `ready` · `in-progress` · `in-review` · `done` · `dropped` | See lifecycle below. Hubs, goals, standing goals and workflow notes have no status. Not the ` ^status` line under Where It Stands: this says which lifecycle stage the note is in, that line says what's happening right now. |
 | `blocked-by` | list | Why the story can't move forward: another story or a hub whose shared design it waits on (as a `"[[link]]"`), open decisions (one `"decision needed: ..."` entry for all of them), or an outside release. Empty when nothing blocks it. Work a story waits on gets its own note, not an item in a sweep or collecting workflow note. Such work usually has to be done on its own before the waiting story can move, and a blocker inside a collecting note makes the Roadmap harder to read. |
 | `confirmed` | date | When the note was last confirmed to match reality. The user shaping or re-shaping a note counts, since they only do that for issues they believe are still relevant. Don't bump it for moves, renames or link fixes. |
@@ -12,7 +12,7 @@ How notes are organized and move through their lifecycle. The Roadmap decides or
 # Lifecycle
 - **idea** - rough notes. Nobody builds from this.
 - **spec** - a detailed design or technical approach exists, but it has no approved steps yet, or its remaining steps need re-planning. A story sent back to `spec` keeps its steps marked ✅ Complete.
-- **ready** - can be built. A tweak is ready once it has no open decision, because it has no steps. Any other story needs implementation steps first, however settled its design, because steps are what make the work reviewable in small pieces. An infra story's steps are its Build Order.
+- **ready** - can be built or, for an audit, run. A tweak is ready once it has no open decision, because it has no steps. An audit is written at `ready` by `/finish-goal`, since it has nothing to plan. Any other story needs implementation steps first, however settled its design, because steps are what make the work reviewable in small pieces. An infra story's steps are its Build Order.
 - **in-progress** - work has started.
 - **in-review** - every step is implemented and confirmed. The code is waiting for a review of how the whole story fits together, or, once its `^status` line names a PR, for that PR to merge.
 - **done** - finished, with its PR merged. `/close` sets it after checking the merge on GitHub.
@@ -27,10 +27,11 @@ Each note type's template is in `.claude/note-templates/`. For a story, pick by 
 - **Cleanup** - remove or tidy code without a new convention.
 - **Tweak** - a quick one-off with at most one decision, such as which of two styles a pair of similar links should share. It skips `/plan-steps` and `/final-review`, because one fix leaves nothing to plan and no parts to review together. A story is too big for a tweak if its fix would take more than one implementation step, or if settling it needs `/design-feature`, a root-cause investigation or a new convention that code must migrate to.
 - **Sweep** - a rolling checklist of small fixes that share a logical grouping (e.g. unit test fixes, style fixes), collected until a goal starts building. Every item must be small, with no ambiguity and no open decisions. It skips `/final-review`, because its items are unrelated by design, which leaves no parts to review together.
+- **Audit** - one of a release's audits of a finished goal, such as security or UX. Only `/finish-goal` writes one, when a goal's release starts, so a story is never shaped into an audit.
 - **Workflow** - a change to how the app is built, not what it does: skills, subagents, hooks, AGENTS.md, these conventions, templates, docs or tooling config. It skips the lifecycle. If the change builds new infrastructure, such as CI or a test setup, it's a story instead. A workflow note with a What Belongs Here section is a collecting note: it gathers items over time and stays.
 - **Idea** - jot something down quickly.
 - **Hub** - the single home for design or decisions that several stories share. It can hold the design of a story that was split, or a design `/place-design` places there. It can also hold the design and decisions of stories that overlap substantially, such as `Meal Editing`, or of stories that `/design-feature` designs together. Part of a goal that's still being explored is an exploration hub, which also holds that part's Requirements. Not implemented directly.
-- **Goal** - an epic: work the user ranks and ships together as one release. The Roadmap, not the note, lists the work that serves it. It has no Where It Stands. Not implemented directly.
+- **Goal** - an epic: work the user ranks and ships together as one release. The Roadmap, not the note, lists the work that serves it. It has no Where It Stands. Not implemented directly. Once its release starts, its `# Release` section links the release's audits and fix stories. Only `/finish-goal`, `/run-audit` and `/roadmap` write that section, so nothing else gets into the release.
 - **Standing Goal** - collects work that no goal would take on its own, such as library upgrades and tech debt, which never block a feature. It never ships and is never ranked, building or planning. It has no Where It Stands and no Done When.
 
 # Next Step by Note State
@@ -57,6 +58,7 @@ A note's state, usually its `type` and `status`, says what should happen to it n
 | `infra` · `ready` | Its Build Order built one step at a time | `in-progress` → `in-review` | `/infra-build` |
 | `tweak` · `ready` | Built from its Purpose and any **Decided** line, as one step, then its PR opened into `develop` | `in-progress` → `in-review` | `/implement` |
 | `sweep` · `ready` | Built one step at a time, then its PR opened into `develop` | `in-progress` → `in-review` | `/implement` |
+| `audit` · `ready` | The audit run, then a fix story for the release filed for each finding the user keeps | deleted | `/run-audit` |
 | `ready`, any other type | Built one step at a time | `in-progress` → `in-review` | `/implement` |
 | `spec` · `ready` · `in-progress`, when `/plan-steps` finds code changes since `confirmed` that could touch the story, or when `/close` unblocks the story and the story's next step wouldn't check its planned work against the code | ⚠️ Check Drift callouts where the remaining work no longer matches the code, conventions, the services it uses, other notes or the user's comments, and an updated `confirmed` | unchanged, back to `spec` for `/plan-steps` or the skill that re-settles its approach (`/assess`, `/investigate`, `/audit`, `/architect`, `/infra-design` or `/decide`), or add `blocked-by` | `/check-drift` |
 | `in-review`, with no PR on its `^status` line | The code reviewed across the whole story, for what no single step shows, then its PR opened into its base | unchanged, with the PR on its `^status` line | `/final-review` |
@@ -65,7 +67,8 @@ A note's state, usually its `type` and `status`, says what should happen to it n
 | `workflow` | The change settled with the user and made everywhere it reaches, and every note that refers to it cleaned up | deleted · a collecting note loses the items it did and stays · a kicked-off copy is deleted once its last item is done | `/tooling` |
 | `goal` | Shaped with the user: purpose, Done When, scope, gaps, supporting tooling and rank | unchanged · Roadmap lines moved under it, into Next or into Planning · once it's building, collecting notes kicked off and bug lines moved into Next | `/roadmap` |
 | a `goal` whose lines and notes are scattered or messy | Cleaned up with the user, with work put into hubs where it needs exploring, shares design or decisions, or should share a design | unchanged · any new hubs, with `/brainstorm`, `/design-feature` or their child stories next | `/gather-goal` |
-| a goal with no open stories or 🔁 lines | Released. The release process isn't built yet, so the goal waits, marked on its Roadmap line | - | none yet |
+| a goal whose line under Goals says ` · Next: /finish-goal` | Its release started: the audits that apply confirmed with the user, an audit story written for each, and the release freeze begun | its line under Goals says ` · releasing` | `/finish-goal` |
+| a goal whose line under Goals says ` · releasing · Next: /ship-goal` | Its Done When gone through with the user, the goal note and its Roadmap lines closed out, and the PR from `develop` into `main` opened, which the user merges | deleted | `/ship-goal` |
 | `standing-goal` | Shaped with the user: purpose, what belongs in it and scope, or a goal drawn from it | unchanged · Roadmap lines moved under it · a new goal `<name> YYYY-MM-DD`, with the work the user picks moved to it | `/roadmap` |
 
 # Files

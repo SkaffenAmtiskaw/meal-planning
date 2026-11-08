@@ -98,7 +98,7 @@ Report these to the user:
 - each mechanical edit, grouped by note
 - each file deleted as unused
 - the stories that were unblocked, and where their Roadmap lines went
-- each goal now waiting on a release process
+- each goal whose line under Goals now names `/finish-goal` or `/ship-goal`
 - the follow-ups: each note that needs `/close` in a new session, why, and where its Roadmap line went
 
 Stop there, and don't start on any other note. A session that has worked through one note's references has too little room left to work another one well.

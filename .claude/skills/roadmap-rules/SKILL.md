@@ -7,7 +7,10 @@ user-invocable: false
 # How the Roadmap Works
 How goals order the work, what each section and kind of note holds, and the rules for lines:
 - **Goals** - ranked epics, each a note in `goals/` in the notes repo, shaped and ranked with `/roadmap`. Only the user changes the order. Only one goal is built at a time, so `develop` never holds another goal's unfinished work and a finished goal releases all at once:
-	- **The building goal** is the top one, marked `- building`. A line under the Bugs heading waits until a release picks it up. Any other story or collecting-note item is built (`/implement`, `/infra-build`, `/tooling`) only when it serves the building goal, serves no ranked goal, has 📌 on its line, or has 🚨 on a line in Now or Next.
+	- **The building goal** is the top one, marked `- building`. Once its last line and the last 🔁 line have closed, its release shows after that marker: ` · Next: /finish-goal`, then ` · releasing` once `/finish-goal` starts its audits, then ` · releasing · Next: /ship-goal` once the audits and their fixes have closed. What may be built (`/implement`, `/infra-build`, `/tooling`) depends on whether a release is under way:
+		- **If its line under Goals includes ` · releasing`:** only the stories the goal note's `# Release` section links, which are its audits and their fixes. Holding everything else back keeps unaudited work out of the release.
+		- **If a PR from `develop` into `main` is open:** nothing, until it merges, since `/ship-goal` has already closed out the release's goal.
+		- **Otherwise:** a line under the Bugs heading waits until a release picks it up. Any other story or collecting-note item is built only when it serves the building goal, serves no ranked goal, has 📌 on its line, or has 🚨 on a line in Now or Next.
 	- **The planning goal** is the second, marked `- planning`. Its stories can be shaped, decided, designed and planned down to steps, but they aren't built until the building goal is released. Collecting notes aren't kicked off for it.
 	- **The rest** organize the backlog. Their lines sit under their headings in Later, and their stories can be shaped and decided ahead of their turn.
 - **Standing Goals** - listed under their own subheading below the ranked goals, because they're never ranked, building or planning. A goal drawn from one is ranked like any other.
