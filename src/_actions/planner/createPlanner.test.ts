@@ -4,6 +4,7 @@ import { Types } from 'mongoose';
 
 import { User } from '@/_models/user';
 import { catchify } from '@/_utils/catchify';
+import { reportError } from '@/_utils/reportError';
 
 import { addPlanner } from './addPlanner';
 import { createPlanner } from './createPlanner';
@@ -18,6 +19,10 @@ vi.mock('./addPlanner', async () => ({
 vi.mock('@/_utils/catchify', async () => ({
 	catchify: vi.fn(),
 }));
+vi.mock(
+	'@/_utils/reportError',
+	async () => await import('#mocks/@/_utils/reportError'),
+);
 vi.mock('@/_utils/zSafeString', async () => ({
 	zSafeString: vi.fn(() => ({
 		safeParse: mockSafeParse,
@@ -72,6 +77,21 @@ describe('createPlanner', () => {
 		const result = await createPlanner('My Planner');
 
 		expect(result).toEqual({ ok: false, error: 'Not authenticated.' });
+		expect(reportError).not.toHaveBeenCalled();
+	});
+
+	it('returns the same error, and reports, when getting the user fails', async () => {
+		const error = new Error('DB connection timeout');
+		mockSafeParse.mockReturnValue({
+			success: true,
+			data: 'My Planner',
+		});
+		vi.mocked(catchify).mockResolvedValue([undefined, error]);
+
+		const result = await createPlanner('My Planner');
+
+		expect(result).toEqual({ ok: false, error: 'Not authenticated.' });
+		expect(reportError).toHaveBeenCalledWith(error);
 	});
 
 	it('creates a planner and links it to the user by their ObjectId', async () => {

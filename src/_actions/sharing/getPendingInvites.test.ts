@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 // Mocks must be hoisted before imports
-vi.mock('@/_actions/auth', () => ({
+vi.mock('@/_actions/auth/checkAuth', () => ({
 	checkAuth: vi.fn(),
 }));
 
@@ -14,9 +14,14 @@ vi.mock(
 	'@/_utils/serialize',
 	async () => await import('#mocks/@/_utils/serialize'),
 );
+vi.mock(
+	'@/_utils/reportError',
+	async () => await import('#mocks/@/_utils/reportError'),
+);
 
-import { checkAuth } from '@/_actions/auth';
+import { checkAuth } from '@/_actions/auth/checkAuth';
 import { PendingInvite } from '@/_models/sharing';
+import { reportError } from '@/_utils/reportError';
 import { serialize } from '@/_utils/serialize';
 
 import { getPendingInvites } from './getPendingInvites';
@@ -183,8 +188,9 @@ describe('getPendingInvites', () => {
 				planners: [],
 			},
 		} as never);
+		const error = new Error('Database connection failed');
 		mockPendingInviteFind.mockReturnValue({
-			sort: vi.fn().mockRejectedValue(new Error('Database connection failed')),
+			sort: vi.fn().mockRejectedValue(error),
 		} as unknown as ReturnType<typeof PendingInvite.find>);
 
 		const result = await getPendingInvites(VALID_PLANNER_ID);
@@ -193,10 +199,12 @@ describe('getPendingInvites', () => {
 			invites: [],
 			error: 'Failed to fetch pending invites',
 		});
+		expect(reportError).toHaveBeenCalledWith(error);
 	});
 
-	it('returns error when checkAuth throws', async () => {
-		mockCheckAuth.mockRejectedValue(new Error('Unexpected error'));
+	it('returns error and reports when checkAuth throws', async () => {
+		const error = new Error('Unexpected error');
+		mockCheckAuth.mockRejectedValue(error);
 
 		const result = await getPendingInvites(VALID_PLANNER_ID);
 
@@ -204,9 +212,10 @@ describe('getPendingInvites', () => {
 			invites: [],
 			error: 'Failed to fetch pending invites',
 		});
+		expect(reportError).toHaveBeenCalledWith(error);
 	});
 
-	it('returns error when checkAuth returns error type', async () => {
+	it('returns error without reporting again when checkAuth returns error type', async () => {
 		mockCheckAuth.mockResolvedValue({
 			type: 'error',
 			error: new Error('Auth service error'),
@@ -220,6 +229,7 @@ describe('getPendingInvites', () => {
 		});
 		expect(mockCheckAuth).toHaveBeenCalledWith(expect.anything(), 'admin');
 		expect(mockPendingInviteFind).not.toHaveBeenCalled();
+		expect(reportError).not.toHaveBeenCalled();
 	});
 
 	it('returns error for invalid plannerId format', async () => {

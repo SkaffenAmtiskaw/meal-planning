@@ -4,11 +4,16 @@ import { Types } from 'mongoose';
 
 import { getUser } from '@/_actions/user';
 import { catchify } from '@/_utils/catchify';
+import { reportError } from '@/_utils/reportError';
 
 import { checkAuth } from './checkAuth';
 
 vi.mock('@/_actions/user', () => ({ getUser: vi.fn() }));
 vi.mock('@/_utils/catchify', { spy: true });
+vi.mock(
+	'@/_utils/reportError',
+	async () => await import('#mocks/@/_utils/reportError'),
+);
 
 const mockPlannerId = new Types.ObjectId();
 
@@ -26,6 +31,7 @@ describe('check auth', () => {
 		expect(await checkAuth(mockPlannerId, 'read')).toEqual({
 			type: 'unauthenticated',
 		});
+		expect(reportError).not.toHaveBeenCalled();
 	});
 
 	test('should return error if there is a non-auth error getting the user', async () => {
@@ -36,6 +42,7 @@ describe('check auth', () => {
 			type: 'error',
 			error: dbError,
 		});
+		expect(reportError).toHaveBeenCalledWith(dbError);
 	});
 
 	test('should return unauthenticated if there is no user', async () => {

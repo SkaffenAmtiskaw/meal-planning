@@ -2,12 +2,12 @@ import { afterEach, describe, expect, test, vi } from 'vitest';
 
 import { Types } from 'mongoose';
 
-import { checkAuth } from '@/_actions/auth';
+import { checkAuth } from '@/_actions/auth/checkAuth';
 import { Planner } from '@/_models/planner';
 
 import { editBookmark } from './editBookmark';
 
-vi.mock('@/_actions/auth', () => ({
+vi.mock('@/_actions/auth/checkAuth', () => ({
 	checkAuth: vi.fn(),
 }));
 

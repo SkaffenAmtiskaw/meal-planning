@@ -7,6 +7,7 @@ import { Indicator } from '@mantine/core';
 import { getUserInvites } from '@/_actions/sharing/getUserInvites';
 import { getUser } from '@/_actions/user';
 import { THEME_COLORS } from '@/_theme/colors';
+import { reportError } from '@/_utils/reportError';
 
 export interface InviteBadgeProps {
 	children: React.ReactNode;
@@ -48,7 +49,10 @@ export async function InviteBadgeWithData({ children }: InviteBadgeProps) {
 			</Indicator>
 		);
 	} catch (error) {
-		console.error('InviteBadge: Exception:', error);
+		// getUser throws 'No Valid Session' for a signed-out visitor, which is expected
+		if (!(error instanceof Error && error.message === 'No Valid Session')) {
+			await reportError(error);
+		}
 		return <>{children}</>;
 	}
 }

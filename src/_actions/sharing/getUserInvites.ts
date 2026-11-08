@@ -3,6 +3,7 @@ import 'server-only';
 import { Planner } from '@/_models/planner';
 import { PendingInvite } from '@/_models/sharing';
 import { User } from '@/_models/user';
+import { reportError } from '@/_utils/reportError';
 import { serialize } from '@/_utils/serialize';
 
 import type { GetUserInvitesResult, UserInvite } from './invite.types';
@@ -45,7 +46,8 @@ export const getUserInvites = async (
 		);
 
 		return serialize({ invites: userInvites });
-	} catch {
+	} catch (error) {
+		await reportError(error);
 		return { invites: [], error: 'Failed to fetch invites' };
 	}
 };

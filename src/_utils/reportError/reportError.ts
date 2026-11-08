@@ -1,5 +1,3 @@
-import 'server-only';
-
 import { PostHog } from 'posthog-node';
 
 import { getReportingToken, POSTHOG_HOST } from '@/_utils/errorReporting';

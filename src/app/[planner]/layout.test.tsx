@@ -17,7 +17,7 @@ vi.mock('@/_utils/zObjectId', async () => {
 	};
 });
 
-vi.mock('@/_actions/auth', () => ({
+vi.mock('@/_actions/auth/checkAuth', () => ({
 	checkAuth: (...args: unknown[]) => mockCheckAuth(...args),
 }));
 

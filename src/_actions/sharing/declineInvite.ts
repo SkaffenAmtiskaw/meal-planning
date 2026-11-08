@@ -5,6 +5,7 @@ import { Types } from 'mongoose';
 import { getUser } from '@/_actions/user';
 import { PendingInvite } from '@/_models/sharing';
 import type { ActionResult } from '@/_utils/actionResult/ActionResult';
+import { reportError } from '@/_utils/reportError';
 import { serialize } from '@/_utils/serialize';
 
 export interface DeclineInviteInput {
@@ -53,6 +54,10 @@ export const declineInvite = async (
 		// 8. Return success
 		return serialize({ ok: true, data: undefined });
 	} catch (error) {
+		// getUser throws 'No Valid Session' for a signed-out caller, which is expected
+		if (!(error instanceof Error && error.message === 'No Valid Session')) {
+			await reportError(error);
+		}
 		return {
 			ok: false,
 			error: error instanceof Error ? error.message : 'An error occurred',

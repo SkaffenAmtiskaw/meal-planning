@@ -5,6 +5,7 @@ import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
 
 import { getUser } from '@/_actions/user';
+import { reportError } from '@/_utils/reportError';
 
 import Layout from './layout';
 
@@ -25,6 +26,11 @@ vi.mock('@/_utils/catchify', () => ({
 		}
 	}),
 }));
+
+vi.mock(
+	'@/_utils/reportError',
+	async () => await import('#mocks/@/_utils/reportError'),
+);
 
 vi.mock('@/_utils/zObjectId', () => ({
 	zObjectId: {
@@ -62,6 +68,17 @@ describe('settings layout', () => {
 		await Layout({ children: null });
 
 		expect(vi.mocked(redirect)).toHaveBeenCalledWith('/');
+		expect(reportError).not.toHaveBeenCalled();
+	});
+
+	it('redirects to /, and reports, when getting the user fails', async () => {
+		const error = new Error('DB connection timeout');
+		vi.mocked(getUser).mockRejectedValueOnce(error);
+
+		await Layout({ children: null });
+
+		expect(vi.mocked(redirect)).toHaveBeenCalledWith('/');
+		expect(reportError).toHaveBeenCalledWith(error);
 	});
 
 	it('redirects to / when user has no planners', async () => {

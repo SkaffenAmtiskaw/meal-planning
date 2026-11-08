@@ -5,6 +5,7 @@ import { PendingInvite } from '@/_models/sharing';
 import type { AccessLevel } from '@/_models/user';
 import { User } from '@/_models/user';
 import type { ActionResult } from '@/_utils/actionResult/ActionResult';
+import { reportError } from '@/_utils/reportError';
 
 export interface AcceptInviteInput {
 	token: string;
@@ -82,6 +83,10 @@ export const acceptInvite = async (
 		// Return success
 		return { ok: true, data: { plannerId } };
 	} catch (error) {
+		// getUser throws 'No Valid Session' for a signed-out caller, which is expected
+		if (!(error instanceof Error && error.message === 'No Valid Session')) {
+			await reportError(error);
+		}
 		return {
 			ok: false,
 			error: error instanceof Error ? error.message : 'An error occurred',

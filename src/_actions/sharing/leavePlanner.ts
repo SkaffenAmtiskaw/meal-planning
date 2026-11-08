@@ -2,7 +2,7 @@
 
 import { Types } from 'mongoose';
 
-import { checkAuth } from '@/_actions/auth';
+import { checkAuth } from '@/_actions/auth/checkAuth';
 import type { ActionResult } from '@/_utils/actionResult';
 
 import { removePlannerMembership } from './_utils/removePlannerMembership';

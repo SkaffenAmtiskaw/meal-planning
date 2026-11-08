@@ -2,12 +2,16 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { Types } from 'mongoose';
 
-import { checkAuth } from '@/_actions/auth';
+import { checkAuth } from '@/_actions/auth/checkAuth';
 import { PendingInvite } from '@/_models/sharing';
+import { reportError } from '@/_utils/reportError';
 
 import { type CancelInviteInput, cancelInvite } from './cancelInvite';
 
-vi.mock('@/_actions/auth', async () => await import('#mocks/@/_actions/auth'));
+vi.mock(
+	'@/_actions/auth/checkAuth',
+	async () => await import('#mocks/@/_actions/auth/checkAuth'),
+);
 
 vi.mock(
 	'@/_models/sharing',
@@ -16,6 +20,10 @@ vi.mock(
 vi.mock(
 	'@/_utils/serialize',
 	async () => await import('#mocks/@/_utils/serialize'),
+);
+vi.mock(
+	'@/_utils/reportError',
+	async () => await import('#mocks/@/_utils/reportError'),
 );
 
 describe('cancelInvite', () => {
@@ -129,30 +137,37 @@ describe('cancelInvite', () => {
 		});
 	});
 
-	it('returns error on database failure during find', async () => {
-		vi.mocked(PendingInvite.findOne).mockRejectedValue(
-			new Error('Database connection failed'),
-		);
+	it('returns error without reporting when plannerId is invalid', async () => {
+		const result = await cancelInvite({ inviteId, plannerId: 'invalid-id' });
+
+		expect(result.success).toBe(false);
+		expect(reportError).not.toHaveBeenCalled();
+	});
+
+	it('returns error and reports on database failure during find', async () => {
+		const error = new Error('Database connection failed');
+		vi.mocked(PendingInvite.findOne).mockRejectedValue(error);
 
 		const result = await cancelInvite(input);
 
 		expect(result.success).toBe(false);
 		expect(result.error).toContain('Database connection failed');
 		expect(PendingInvite.deleteOne).not.toHaveBeenCalled();
+		expect(reportError).toHaveBeenCalledWith(error);
 	});
 
-	it('returns error on database failure during delete', async () => {
+	it('returns error and reports on database failure during delete', async () => {
+		const error = new Error('Delete operation failed');
 		vi.mocked(PendingInvite.findOne).mockResolvedValue({
 			_id: inviteId,
 		} as never);
-		vi.mocked(PendingInvite.deleteOne).mockRejectedValue(
-			new Error('Delete operation failed'),
-		);
+		vi.mocked(PendingInvite.deleteOne).mockRejectedValue(error);
 
 		const result = await cancelInvite(input);
 
 		expect(result.success).toBe(false);
 		expect(result.error).toContain('Delete operation failed');
+		expect(reportError).toHaveBeenCalledWith(error);
 	});
 
 	it('returns generic error when non-Error is thrown', async () => {

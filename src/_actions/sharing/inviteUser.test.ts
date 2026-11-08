@@ -10,16 +10,20 @@ import {
 
 import { Types } from 'mongoose';
 
-import { checkAuth } from '@/_actions/auth';
+import { checkAuth } from '@/_actions/auth/checkAuth';
 import { sendInviteEmail } from '@/_auth/emails/sendInviteEmail';
 import { Planner } from '@/_models/planner';
 import { PendingInvite } from '@/_models/sharing';
 import type { AccessLevel } from '@/_models/user';
 import { User } from '@/_models/user';
+import { reportError } from '@/_utils/reportError';
 
 import { inviteUser } from './inviteUser';
 
-vi.mock('@/_actions/auth', async () => await import('#mocks/@/_actions/auth'));
+vi.mock(
+	'@/_actions/auth/checkAuth',
+	async () => await import('#mocks/@/_actions/auth/checkAuth'),
+);
 vi.mock('@/_auth/emails/sendInviteEmail', async () => ({
 	sendInviteEmail: vi.fn(),
 }));
@@ -45,6 +49,10 @@ vi.mock('@/_utils/catchify', async () => ({
 vi.mock(
 	'@/_utils/serialize',
 	async () => await import('#mocks/@/_utils/serialize'),
+);
+vi.mock(
+	'@/_utils/reportError',
+	async () => await import('#mocks/@/_utils/reportError'),
 );
 vi.mock('node:crypto', () => ({
 	default: {
@@ -138,7 +146,7 @@ describe('inviteUser', () => {
 			});
 		});
 
-		it('returns unauthorized when auth check returns error type', async () => {
+		it('returns unauthorized when auth check returns error type, which checkAuth has already reported', async () => {
 			vi.mocked(checkAuth).mockResolvedValueOnce({
 				type: 'error' as const,
 				error: new Error('Auth check failed'),
@@ -153,12 +161,12 @@ describe('inviteUser', () => {
 				ok: false,
 				error: 'Unauthorized',
 			});
+			expect(reportError).not.toHaveBeenCalled();
 		});
 
-		it('returns unauthorized when auth check throws', async () => {
-			vi.mocked(checkAuth).mockRejectedValueOnce(
-				new Error('Auth service error'),
-			);
+		it('returns unauthorized and reports when auth check throws', async () => {
+			const error = new Error('Auth service error');
+			vi.mocked(checkAuth).mockRejectedValueOnce(error);
 
 			const result = await inviteUser({
 				plannerId,
@@ -169,6 +177,20 @@ describe('inviteUser', () => {
 				ok: false,
 				error: 'Unauthorized',
 			});
+			expect(reportError).toHaveBeenCalledWith(error);
+		});
+
+		it('returns unauthorized without reporting when plannerId is invalid', async () => {
+			const result = await inviteUser({
+				plannerId: 'not-an-object-id',
+				email: inviteEmail,
+			});
+
+			expect(result).toEqual({
+				ok: false,
+				error: 'Unauthorized',
+			});
+			expect(reportError).not.toHaveBeenCalled();
 		});
 	});
 
@@ -210,6 +232,7 @@ describe('inviteUser', () => {
 				ok: false,
 				error: 'User is already a member',
 			});
+			expect(reportError).not.toHaveBeenCalled();
 		});
 
 		it('creates invite for existing user who is not a member', async () => {
@@ -260,6 +283,7 @@ describe('inviteUser', () => {
 				ok: false,
 				error: 'Pending invite already exists',
 			});
+			expect(reportError).not.toHaveBeenCalled();
 		});
 	});
 
@@ -301,10 +325,9 @@ describe('inviteUser', () => {
 			);
 		});
 
-		it('returns error when user lookup fails', async () => {
-			vi.mocked(User.findOne).mockRejectedValueOnce(
-				new Error('Database connection failed'),
-			);
+		it('returns error and reports when user lookup fails', async () => {
+			const error = new Error('Database connection failed');
+			vi.mocked(User.findOne).mockRejectedValueOnce(error);
 
 			const result = await inviteUser({
 				plannerId,
@@ -315,12 +338,12 @@ describe('inviteUser', () => {
 				ok: false,
 				error: 'Database connection failed',
 			});
+			expect(reportError).toHaveBeenCalledWith(error);
 		});
 
-		it('returns error when pending invite lookup fails', async () => {
-			vi.mocked(PendingInvite.findOne).mockRejectedValueOnce(
-				new Error('Database error'),
-			);
+		it('returns error and reports when pending invite lookup fails', async () => {
+			const error = new Error('Database error');
+			vi.mocked(PendingInvite.findOne).mockRejectedValueOnce(error);
 
 			const result = await inviteUser({
 				plannerId,
@@ -331,12 +354,12 @@ describe('inviteUser', () => {
 				ok: false,
 				error: 'Database error',
 			});
+			expect(reportError).toHaveBeenCalledWith(error);
 		});
 
-		it('returns error when planner lookup fails', async () => {
-			vi.mocked(Planner.findById).mockRejectedValueOnce(
-				new Error('Planner lookup failed'),
-			);
+		it('returns error and reports when planner lookup fails', async () => {
+			const error = new Error('Planner lookup failed');
+			vi.mocked(Planner.findById).mockRejectedValueOnce(error);
 
 			const result = await inviteUser({
 				plannerId,
@@ -347,12 +370,12 @@ describe('inviteUser', () => {
 				ok: false,
 				error: 'Planner lookup failed',
 			});
+			expect(reportError).toHaveBeenCalledWith(error);
 		});
 
-		it('returns error when invite creation fails', async () => {
-			vi.mocked(PendingInvite.create).mockRejectedValueOnce(
-				new Error('Create failed'),
-			);
+		it('returns error and reports when invite creation fails', async () => {
+			const error = new Error('Create failed');
+			vi.mocked(PendingInvite.create).mockRejectedValueOnce(error);
 
 			const result = await inviteUser({
 				plannerId,
@@ -363,6 +386,7 @@ describe('inviteUser', () => {
 				ok: false,
 				error: 'Create failed',
 			});
+			expect(reportError).toHaveBeenCalledWith(error);
 		});
 
 		it('returns default error when invite creation returns null', async () => {
@@ -381,10 +405,9 @@ describe('inviteUser', () => {
 	});
 
 	describe('email sending', () => {
-		it('returns error when sendInviteEmail throws', async () => {
-			vi.mocked(sendInviteEmail).mockRejectedValueOnce(
-				new Error('Email service failed'),
-			);
+		it('returns error and reports when sendInviteEmail throws', async () => {
+			const error = new Error('Email service failed');
+			vi.mocked(sendInviteEmail).mockRejectedValueOnce(error);
 
 			const result = await inviteUser({
 				plannerId,
@@ -395,6 +418,7 @@ describe('inviteUser', () => {
 				ok: false,
 				error: 'Email service failed',
 			});
+			expect(reportError).toHaveBeenCalledWith(error);
 		});
 
 		it('uses default name when caller has no name', async () => {

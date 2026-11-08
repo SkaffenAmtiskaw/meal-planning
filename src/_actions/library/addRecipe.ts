@@ -2,7 +2,7 @@
 
 import { Types } from 'mongoose';
 
-import { checkAuth } from '@/_actions/auth';
+import { checkAuth } from '@/_actions/auth/checkAuth';
 import type { RecipeInterface } from '@/_models/library';
 import { zRecipeFormSchema } from '@/_models/library';
 import { Planner } from '@/_models/planner';
