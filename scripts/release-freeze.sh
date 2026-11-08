@@ -66,6 +66,6 @@ fi
 if [ -n "$story" ]; then
   echo "A release is under way ($reason), and $goal's Release section doesn't link $story, so it can't be built until the release PR merges into main."
 else
-  echo "A release is under way ($reason), so only the release's audits and their fixes may change develop until the release PR merges into main."
+  echo "A release is under way ($reason), so only the release's own work may change develop until the release PR merges into main."
 fi
 exit 1
