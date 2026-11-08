@@ -13,7 +13,7 @@ There are four kinds of branch, each with its own job:
 - **`feature/<generated name>`** holds one story, `/tooling` change or other piece of work, from start to finish. The desktop app names it when it makes the worktree.
 - **`hotfix/<slug>`** holds an urgent fix, cut from `main` by hand, so the fix ships without anything else that's on `develop`.
 
-GitHub's rulesets on `develop` and `main` refuse a direct push to either branch, and a PR can't merge while any of the four checks fails. The one exception is the back-merge, which brings a hotfix from `main` into `develop` (see "A Hotfix"). The rulesets' settings and reasons are in `docs/ci.md`, "The Rulesets on `develop` and `main`".
+GitHub's rulesets on `develop` and `main` refuse a direct push to either branch, and a PR can't merge while any of its required checks fails. The one exception is the back-merge, which brings a hotfix from `main` into `develop` (see "A Hotfix"). The rulesets' settings and reasons are in `docs/ci.md`, "The Rulesets on `develop` and `main`".
 
 ## Checkouts
 The main checkout is the `meal-planning` folder itself. It stays on `develop` and is never edited, so the SessionStart hook can fast-forward it to the latest `develop` at every session start. Planning skills, such as `/shape`, `/plan-steps` and `/close`, run there and edit only notes. Notes live in their own repo and are never branched. Skills that change code stop if you run them there, and tell you to start a worktree session.

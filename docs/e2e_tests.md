@@ -164,6 +164,7 @@ better-auth's `testUtils` plugin creates sessions without a password, so it must
 No other file imports `testUtils`, re-exports it, or reaches it through a namespace import, `export *` or a dynamic `import()` of `better-auth/plugins`. Nothing imports from `better-auth/test`.
 
 # Running E2E Tests
+You run the E2E tests yourself with the commands below. CI also runs them, as the `e2e` check, on every PR into a protected branch, `develop` or `main` (see `docs/ci.md`, "Checks on PRs").
 
 ## Commands
 - `pnpm test:e2e`: builds the app and runs every spec in `desktop` and `phone`. Pass a spec file or folder to run only those, such as `pnpm test:e2e e2e/auth`. It installs Playwright's Chromium first, which only downloads on the first run.
