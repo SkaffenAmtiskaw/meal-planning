@@ -48,7 +48,9 @@ The workflow's token can only read the repo (`permissions: contents: read`), sin
 ## The Job That Starts `ci-failure`
 A sixth job, `start-ci-failure`, runs after the check jobs. When at least one of them failed, it starts the [`ci-failure` routine](#routines) by calling its `/fire` endpoint once (see "Starting a Routine"). The session that starts checks out the commit the failed run tested on the PR's head branch, reruns the failed checks and either fixes the failure or tells a flake from a real failure.
 
-It fires only when all of these hold:
+An `e2e` failure is sorted before anything is fixed. If a spec wasn't updated for a change the PR meant to make, the session updates the spec and opens a fix PR, as it would for a failure in any other check. If the app is broken, or the session can't tell, it hands the failure to the `root-cause-analyst` subagent. The analyst runs on Opus, a stronger model than the routine's Sonnet, because a bug note builds on the root cause it writes. The session then makes no fix and offers to turn the analyst's report into a bug note, because every fix to the app goes through the bug workflow. The routine selects the notes repo for that note, and so the session can read the story a commit names, which says whether a change was meant.
+
+`start-ci-failure` fires only when all of these hold:
 - at least one check failed, and the run wasn't cancelled. A new push that cancels a run starts nothing, even if a check had already failed, since the new push's run gets its own chance.
 - it's the run's first attempt. A re-run, whether the `ci-failure` session starts it or you do, never starts another session. The session watches its own re-run.
 - the PR's head branch doesn't start with `claude/`. That's a routine's own fix, so a failing fix doesn't start session after session, and you see its checks when you open it to merge.
