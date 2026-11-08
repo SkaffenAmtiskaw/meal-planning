@@ -3,7 +3,7 @@ This doc records everything the app and its development rely on outside the repo
 
 It records only where each secret lives, never its value. The repo is public, so it also leaves out the IP addresses on Atlas's access list and the cluster's host name.
 
-`docs/ci.md`, "Setup Outside the Repo", records the setup that exists only so CI or a routine works, such as the Actions secrets and the claude.ai cloud environment. This doc links to each piece from the service it belongs to. "Which Doc Records a New Setting" at the end says how the two divide.
+`docs/ci.md` records the setup that exists only so a workflow or routine works, such as the Actions secrets and the claude.ai cloud environment. This doc links to each piece from the service it belongs to. "Which Doc Records a New Setting" at the end says how the two divide.
 
 # The Environments
 The app runs in five places, and each gets the variables in `src/env.ts` from its own source:
@@ -112,7 +112,7 @@ Its DNS records are all set to "DNS only", so Cloudflare proxies none of the tra
 The domain has no `_dmarc` record.
 
 ## GitHub
-The code repo, `SkaffenAmtiskaw/meal-planning`, is public, and its default branch is `develop`. Vercel's GitHub integration and its environments are under "Vercel". What CI and the routines need from the code repo is in `docs/ci.md`, "Setup Outside the Repo": what the default branch means for routines, the rulesets on `develop` and `main`, the pull request settings, the Claude GitHub App, the back-merge App and the Actions secrets.
+The code repo, `SkaffenAmtiskaw/meal-planning`, is public, and its default branch is `develop`. Vercel's GitHub integration and its environments are under "Vercel". What CI and the routines need from the code repo is in `docs/ci.md`: what the default branch means for routines and scheduled workflows, the rulesets on `develop` and `main`, the pull request settings, the `notes-pending` label, the Claude GitHub App, the back-merge App and the Actions secrets.
 
 The notes repo, `meal-planning-notes`, is private, with default branch `main`. It holds the Obsidian vault, and the Obsidian Git plugin commits and pushes it from your machine (see `docs/project_structure.md`, "Notes").
 
@@ -144,5 +144,7 @@ The steps go service by service, in the order they depend on each other, startin
 # Which Doc Records a New Setting
 When you set up something outside the repo, record it where it'll be found when it next needs changing. Which doc that is depends on what the setting is for:
 - **If it exists only so a workflow or routine works,** such as an Actions secret: record it in `docs/ci.md`, beside that workflow or routine, and link it from its service's entry here.
-- **If it serves both the app and CI:** record it in the doc that covers the repo files it has to stay in step with. Then a change to those files and the update to its record land in the same commit.
+- **If it serves both the app and a workflow or routine:** record it in the doc that covers the repo files it has to stay in step with. Then a change to those files and the update to its record land in the same commit.
 - **Otherwise,** such as a setting the app or your machine depends on in any environment, an account or a bill: record it here, in its service's entry.
+
+`docs/ci.md` gives the same rule at the opening of "Setup Outside the Repo", so a change to the rule goes in both docs.

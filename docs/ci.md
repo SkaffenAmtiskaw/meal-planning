@@ -111,7 +111,7 @@ A failed check can't start a routine directly, so a workflow job calls the routi
 
 # Secrets and Environment Values
 ## The App's Variables
-Wherever a workflow or the routines' cloud environment sets a variable from `src/env.ts`, the value is a dummy that passes the schema, such as `mongodb://localhost:27017/ci` for `DB_URL`. It's never a real value, such as the production database URL or a Resend API key, and never read from an Actions secret. The checks only need values that pass validation, and a routine's session runs without permission prompts while it reads untrusted text, such as CI logs.
+Wherever a workflow or the routines' cloud environment sets a variable from `src/env.ts`, the value is a dummy that passes the schema, such as `mongodb://localhost:27017/ci` for `DB_URL`. It's never a real value, such as the production database URL or a Resend API key, and never read from an Actions secret. The checks only need values that pass validation, and a routine's session runs without permission prompts while it reads untrusted text, such as CI logs. `docs/services.md`, "The Environments", says where each environment's real values are stored.
 
 The dummies live in two places, with the same values:
 - the `env:` block at the top of `checks.yml`, so every job sees them
@@ -125,12 +125,19 @@ A workflow that starts a routine reads its `/fire` URL and bearer token from two
 Both come from the routine's API trigger on claude.ai (open the routine → Edit → **Select a trigger** → **API**). The token is shown only once, when it's generated, so it goes straight into the secret. If it's lost, **Regenerate** makes a new one, which revokes the old one, and the new one replaces the secret's value.
 
 # Setup Outside the Repo
-Some of what CI and the routines need lives in GitHub's and claude.ai's settings, not in the repo. This section is its record.
+Some of what CI and the routines need lives in settings outside the repo, on GitHub, on claude.ai and in the Claude desktop app. Most of it is recorded in this section, and some beside the workflow or routine it serves, such as the routines' Actions secrets in "A Routine's URL and Token". The rest of what the app relies on outside the repo, such as Vercel, Atlas and the domain, is in `docs/services.md`.
+
+When you set up something outside the repo, record it where it'll be found when it next needs changing. Which doc that is depends on what the setting is for:
+- **If it exists only so a workflow or routine works,** such as an Actions secret: record it in this doc, beside that workflow or routine, and link it from its service's entry in `docs/services.md`.
+- **If it serves both the app and a workflow or routine:** record it in the doc that covers the repo files it has to stay in step with. Then a change to those files and the update to its record land in the same commit.
+- **Otherwise,** such as a setting the app or your machine depends on in any environment, an account or a bill: record it in `docs/services.md`, in its service's entry.
+
+`docs/services.md` gives the same rule in "Which Doc Records a New Setting", so a change to the rule goes in both docs.
 
 ## `develop` Is the Default Branch
 The repo's default branch on GitHub (Settings → General → Default branch) is `develop`. A routine clones the default branch and runs the skills committed there, so a change to a routine's skill reaches the routine once its PR merges into `develop`.
 
-The default branch changes nothing else here: neither ruleset below targets it, and Vercel's production branch (Settings → Environments → Production → Branch Tracking) is its own setting, which stays `main`.
+Scheduled workflows run on the default branch too, so `dependency-updates.yml` runs on `develop` (see "Dependency Updates"). The rulesets below name their branches, so they don't change with it. Vercel's production branch is a separate setting (see `docs/services.md`, "Vercel").
 
 ## The Rulesets on `develop` and `main`
 Every change reaches `develop` and `main` through a PR whose checks passed, so neither branch can go red, and nothing reaches production except through a PR. The one exception is `back-merge.yml`'s push of a hotfix from `main` straight to `develop`, which merges two sides that each passed (see "Back-Merge"). How work flows between the branches is in `docs/branching.md`.
