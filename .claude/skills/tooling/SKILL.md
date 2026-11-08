@@ -1,7 +1,7 @@
 ---
 name: tooling
 description: Makes one change to the agent workflow or dev tooling in a single session and cleans up the notes it reaches. Use for a change to how the app is built.
-argument-hint: "[note name, an item in a note, or a description of the change]"
+argument-hint: "[note name, an item in a note, a description of the change, or #<PR> to finish a merged PR's held notes work]"
 disable-model-invocation: true
 ---
 
@@ -10,6 +10,8 @@ Make this workflow or tooling change: **$ARGUMENTS**
 A tooling change skips the story lifecycle, which exists so product code is built and reviewed in small pieces. The user can take in a whole change to a skill or a convention and review it directly.
 
 Invoke the `editing-notes` skill first, since this run changes notes.
+
+If the argument is a PR number, such as `#41`, the change has already merged and only its held notes work is left. Follow `finishing-held-work.md` in this skill's folder instead of the steps below.
 
 ## 1. Find Out What's Changing
 If the argument is a description, search the notes repo for notes and items about the same thing, because they may already hold details or decisions. Tell the user what you found.
@@ -67,17 +69,9 @@ How to handle text the change made wrong depends on what it is:
 ## 6. Report and Open the PR
 Route the out-of-scope list. Then show the table of changed files. If you held any Roadmap edits or a note's deletion, list each one under "Held until the merge".
 
-Open the change's PR as `opening-the-pr.md`, in the `building-code` skill's folder, describes.
+Open the change's PR as `opening-the-pr.md`, in the `building-code` skill's folder, describes. The same held edits are its held notes work.
 
 ## 7. Make the Held Edits
-The held edits are the Roadmap edits and note deletions from steps 3 and 5. If you held none, skip this step. Otherwise, wait for the PR to merge. The steps, in order:
-1. Run `gh pr checks <number> --watch` in the background.
-2. What to do depends on how the checks went:
-   - **A check failed:** tell the user which one, and that the held edits wait until a fix merges. List each held edit, so the user or a later session can make it then.
-   - **They passed:** run `gh pr view <number> --json state,mergeStateStatus`, and go by what it shows:
-     - **`state` is `MERGED`:** make the Roadmap edits, and delete each held note as the `deleting-a-note` skill describes.
-     - **`mergeStateStatus` is `BEHIND`:** `develop` moved since the checks ran, and the PR can't merge until it's up to date. Run `gh pr update-branch <number>`, then go back to item 1.
-     - **`mergeStateStatus` is `DIRTY` or `BLOCKED`:** auto-merge can't merge it, such as when it conflicts with `develop`. Tell the user why, and list the held edits, as for a failed check.
-     - **Otherwise:** auto-merge hasn't merged it yet, so check again in a minute.
+The held edits are the Roadmap edits and note deletions from steps 3 and 5. If you held none, skip this step. Otherwise, wait for the PR to merge and make them, as `waiting-for-the-merge.md` in the `building-code` skill's folder describes, deleting each held note as the `deleting-a-note` skill describes.
 
 Stop there, because each change gets its own session.

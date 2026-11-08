@@ -39,7 +39,8 @@ Before you change a note in the notes repo, invoke the `editing-notes` skill. Th
 - **The user's lines:** a line where their name is a tag or a signature (`[Sarah] I want X instead.`, `Change this to Y - Sarah`) is their own words. Never edit one or write in their voice.
 - **Roadmap order** is the user's call, so never reorder `Roadmap.md` in the notes repo.
 - **⚠️ Check Drift callouts:** only `/check-drift` writes them.
-- **A Roadmap line with no note:** once its work's PR merges, remove the line as the `deleting-a-note` skill describes in step 4, because until then the work isn't on `develop`. If the session ends before the merge, tell the user which line to remove once it merges.
+- **A Roadmap line with no note:** remove the line only once its work's PR merges, because until then the work isn't on `develop`. Hold the removal as held notes work, as `opening-the-pr.md` and `waiting-for-the-merge.md` in the `building-code` skill's folder describe. When you remove the line, follow step 4 of the `deleting-a-note` skill.
+- **Held notes work at session start:** if the session-start output names a merged PR with held notes work, tell the user and offer a new session in the main checkout that runs `/tooling #<PR>`. Do nothing else about it, because the new session does that work.
 - **Before you finish** a session that changed a note, run `sh scripts/vault-lint.sh "<note>" …`, naming each note it changed. Fix what it reports in those notes. Tell the user about anything it reports in other notes, because another session may be working on them.
 
 ## Out-of-Scope Work

@@ -7,7 +7,7 @@
 #   worktree's .env.local holds. Slot n gives ports 3000+10n and 3001+10n, the host
 #   <worktree folder>.localhost and the database test-<n>. It writes PORT, SIGN_IN_PORT,
 #   BETTER_AUTH_URL and DB_URL into the worktree's .env.local and writes its launch.json, then
-#   empties test-<n>, in case the last worktree on the slot was never closed with /close.
+#   empties test-<n>, in case the last worktree on the slot was removed without worktree-sweep.sh.
 # - A worktree that has a slot keeps it, and its launch.json is written only if it's missing.
 # On success it prints one line naming a new slot. On failure it prints what went wrong to stdout,
 # where the SessionStart hook passes it to the session, and still exits 0, so the session starts.

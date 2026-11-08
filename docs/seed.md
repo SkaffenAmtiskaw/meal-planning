@@ -67,7 +67,7 @@ The main checkout has no slot. It keeps ports 3000 and 3001, `localhost` and `te
 
 The host is what keeps sign-ins apart. Browsers keep cookies per host, not per port. A worktree's link server runs on the worktree's own host, so it sets its session cookie there and leaves the main checkout's `localhost` session alone. Browsers send every `*.localhost` name to your own machine, so the host needs no setup.
 
-A worktree's database starts empty, because taking a slot drops every collection in the slot's database. That way it starts clean even if the last worktree in the slot was removed some other way than `/close`, which empties the database when it removes a worktree after its PR merges. The emptying is `pnpm db:empty-worktree`, which refuses any database but `test-<n>`, so it can't touch `test` or production. If it fails when a slot is taken, the start-up message says so, and you run `pnpm db:empty-worktree` yourself once the cause is fixed. Either way, run `pnpm seed` in the worktree to fill it.
+A worktree's database starts empty, because taking a slot drops every collection in the slot's database. That way a worktree starts clean even if the last one in its slot was removed by hand or by the Claude desktop app. The SessionStart hook's sweep (`scripts/worktree-sweep.sh`) also empties a worktree's database when it removes the worktree after its PR merges. The emptying is `pnpm db:empty-worktree`, which refuses any database but `test-<n>`, so it can't touch `test` or production. If it fails when a slot is taken, the start-up message says so, and you run `pnpm db:empty-worktree` yourself once the cause is fixed. Either way, run `pnpm seed` in the worktree to fill it.
 
 # Changing the Seed
 

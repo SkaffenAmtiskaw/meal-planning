@@ -19,7 +19,7 @@ This session runs in the main checkout and can't edit the code repo.
 
 ## 1. Read the Note
 Find the note in the notes repo and read all of it. Where it is and its `status` decide the kind of close:
-- **`in-review`, in `features/`, with a PR on its `^status` line:** a story is done only once its PR has merged, so check the PR with `gh pr view <number> --json state,headRefName`. If its `state` is `MERGED`, set `status` to `done`, keep the head branch's name for step 9, and go on as the next case describes. Otherwise, tell the user the PR is still open, or closed without merging, and stop.
+- **`in-review`, in `features/`, with a PR on its `^status` line:** a story is done only once its PR has merged, so check the PR with `gh pr view <number> --json state`. If its `state` is `MERGED`, set `status` to `done` and go on as the next case describes. Otherwise, tell the user the PR is still open, or closed without merging, and stop.
 - **`done`, in `features/`:** a done close. Check that every step is marked ✅ Complete, ❌ Will Not Do or 🚛 Moved, and that each 🚛 target note holds the moved work as `.claude/skills/filing-work/content-from-another-note.md` describes. If anything is missing, tell the user what you found and stop.
 - **A hub, in `features/`:** check each story it lists. If any is still open (its note is in `features/`), tell the user which ones and stop. Otherwise, it's a done close.
 - **`dropped`, in `features/`:** a dropped close. Ask the user whether any part of the story is still wanted somewhere else, such as a step or a piece of its design. Each part they name goes on the out-of-scope list.
@@ -92,18 +92,9 @@ Handle the out-of-scope list now, before step 7 deletes the note and step 8 dele
 ## 8. Delete Unused Files
 Delete the files nothing references anymore, as the `deleting-a-note` skill describes in step 6.
 
-## 9. Remove the Worktree
-Skip this if step 1 found no merged PR. Otherwise, the story's branch has merged, so its worktree, its local branch and its slot's database are left over. Leave the branch on GitHub alone, since GitHub deleted it at the merge. In the main checkout:
-1. Find the worktree with `git worktree list --porcelain`: it's the one whose `branch` line is `refs/heads/<head branch>`. If there's none, it was already removed, such as by the Claude desktop app, so go to item 5.
-2. Run `git -C "<worktree path>" status --porcelain`. If it lists anything, show the user what, and ask whether to throw it away, because removing the worktree deletes it for good. If they say no, leave the worktree, branch and database in place and go to step 10.
-3. Run `pnpm --dir "<worktree path>" db:empty-worktree`, which empties the worktree's `test-<n>` database. If it fails, tell the user what it printed and go on, since the next worktree to take that slot empties it again.
-4. Run `git worktree remove "<worktree path>"`, adding `--force` only if the user agreed in item 2 to throw its changes away.
-5. If the local branch still exists, delete it with `git branch -D "<head branch>"`. It needs `-D`, because a squash merge leaves the branch's commits off `develop`.
-
-## 10. Report and Stop
+## 9. Report and Stop
 Report these to the user:
 - whether the note was kept, and for which stories, or deleted
-- the worktree, branch and database removed in step 9, or why they weren't
 - each mechanical edit, grouped by note
 - each file deleted as unused
 - the stories that were unblocked, and where their Roadmap lines went
