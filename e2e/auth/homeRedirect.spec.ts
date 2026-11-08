@@ -3,7 +3,7 @@ import { createUser } from '#factories/user';
 
 import { expect, signIn, test } from '../_fixtures';
 
-test('signed-in user lands on their planner calendar', async ({
+test('signed-in user lands on the planner recipes page', async ({
 	context,
 	page,
 }) => {
@@ -15,6 +15,5 @@ test('signed-in user lands on their planner calendar', async ({
 
 	await page.goto('/');
 
-	await expect(page).toHaveURL(`/${planner._id}/calendar`);
-	await expect(page.getByRole('grid')).toBeVisible();
+	await expect(page).toHaveURL(`/${planner._id}/recipes`);
 });
