@@ -32,6 +32,8 @@ Read `Roadmap.md` in the notes repo and invoke the `roadmap-rules` skill. In a r
 Ask the user what the goal is for and what shipping it means, noting any work they name as out of scope and why. Draft Purpose, Done When and Out of Scope from its template, keeping what they meant. Each Done When item is something the user can check in the running app, or a named piece of work being finished. Once they approve the draft, write the note.
 
 ## 3. Scope
+If the goal's line under Goals says ` · releasing`, skip this step and step 5. Work added to the goal now would be held back by the release freeze and stop `/ship-goal`, and step 4 files what the release still needs.
+
 Search the Roadmap, including Ideas, and `features/` in the notes repo for stories and hubs that look related to the goal's Purpose and Done When. A hub counts only if it has a next step of its own. These stay out:
 - lines under the Bugs heading, sweeps and collecting workflow notes, because they join every release
 - anything already under the goal's Out of Scope
@@ -45,11 +47,21 @@ For each candidate, show its line or note, why it looks related, and any goals i
 - **Not related:** record nothing.
 
 ## 4. Gaps
-Compare Done When with the in-scope work. For each Done When item that nothing covers, draft a note and show it to the user. The item decides the kind of note:
+Find the Done When items that are gaps. How depends on the goal's line under Goals:
+- **If it says ` · releasing`:** `/ship-goal` sent the user here with the gaps it found. The goal's stories have closed and their lines are gone, so comparing would show almost every item as a gap. Ask the user which items `/ship-goal` named.
+- **Otherwise:** compare Done When with the in-scope work. Each item that nothing covers is a gap.
+
+For each gap, draft a note and show it to the user. The kind of note depends on the case:
+- **If the goal is releasing:** an idea note, because only a story the `# Release` section links can be built, and a hub's later child stories wouldn't be linked.
 - **If the item covers a whole area and what to build there isn't known yet:** an exploration hub, with `Next: /brainstorm` as its `^status` line.
 - **Otherwise:** an idea note.
 
-Once they approve it, write the note and add its line under the goal's heading.
+Once they approve it, write the note. Where its line goes, and what else changes, depends on the goal's line under Goals:
+- **If it says ` · releasing`:** the release waits for the gap.
+  1. Add `[[<note>]] ![[<note>#^status]] 🎯 [[<goal>]]` to Next, above every line except those for notes the goal note's `# Release` section already links, and renumber the lines below it.
+  2. In the goal note's `# Release` section, add a bullet that links the note, so the release freeze lets it be built.
+  3. Remove ` · Next: /ship-goal` from the goal's line, since the goal has work left again.
+- **Otherwise:** add its line under the goal's heading.
 
 ## 5. Tooling
 If the goal is about how the app is built, skip this step, because step 3 covered its tooling. Otherwise, find the tooling that would make this goal's stories easier. Look at tooling lines in Later and Ideas, and at workflow and tooling notes other than collecting ones.
@@ -59,7 +71,10 @@ Give the user a shortlist, most helpful first. For each entry, say what it would
 ## 6. Rank
 Show the Goals list, and name any dependencies you can point to in the notes or code, such as an in-scope story whose `blocked-by` names a story under another goal. If you're shaping a goal, ask the user where it goes. Otherwise, ask which goals move. If those dependencies point to a spot, recommend it.
 
-Put the Goals list and the Later headings in the order they give.
+Put the Goals list and the Later headings in the order they give. The top goal is the building goal and the second the planning goal. If the order means either marker moves, first run `sh scripts/release-freeze.sh`. What to do depends on how it exits:
+- **1, a release is under way:** building the next goal now would add its work to that release. Tell the user the markers move once the release PR merges, with another `/roadmap` run. Leave both markers where they are.
+- **2, it can't tell:** tell the user what it printed, and leave both markers where they are.
+- **0:** mark the top goal `- building` and the second `- planning`.
 
 ## 7. Next and Planning
 If a goal just became the building or planning goal, read its Roadmap Instructions, then read `filling-the-queues.md` in this skill's folder and follow it.

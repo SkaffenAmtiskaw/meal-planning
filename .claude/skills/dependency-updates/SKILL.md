@@ -41,7 +41,7 @@ If the block is missing a part, or has a line in none of these shapes, such as a
 ## 2. Check Out the Branches
 Check out `main` in the notes clone, as "Branches" in the `routine-sessions` skill describes.
 
-While a release is under way, only its audits and their fixes may reach `develop`, so this run's updates wait until the release ships. Run `sh scripts/release-freeze.sh`, which reads the Roadmap in the notes clone. What to do depends on how it exits:
+While a release is under way, only the release's own work, such as its audits and their fixes, may reach `develop`, so this run's updates wait until the release ships. Run `sh scripts/release-freeze.sh`, which reads the Roadmap in the notes clone. What to do depends on how it exits:
 - **0:** no release is under way, so go on.
 - **1:** a release is under way, so skip the rest of this step.
 - **2:** it couldn't tell, so stop and say what it printed.

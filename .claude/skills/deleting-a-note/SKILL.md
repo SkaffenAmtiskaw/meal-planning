@@ -13,7 +13,7 @@ user-invocable: false
    - No other line ends with 🔁.
 
    If it has none left, add the release's next command to the end of its line under Goals. Which command depends on the line:
-   - **If it says ` · releasing`:** its audits and their fixes have closed, so add ` · Next: /ship-goal`.
+   - **If it says ` · releasing`:** the release's own work has closed, so add ` · Next: /ship-goal`.
    - **Otherwise:** its own work is done and its release hasn't started, so add ` · Next: /finish-goal`.
 5. **Delete the note.**
 6. **Delete files nothing references anymore.** Run `sh scripts/vault-orphans.sh` after step 5, so the deleted note's references don't count. Delete each file it lists, then remove each folder it says is left empty.
