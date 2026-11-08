@@ -33,7 +33,7 @@ const Page = async ({
 		const plannerId = validLast
 			? lastPlannerId
 			: String(user.planners[0].planner);
-		redirect(`${plannerId}/calendar`);
+		redirect(`${plannerId}/recipes`);
 	}
 
 	const newUser = await addUser(
@@ -41,7 +41,7 @@ const Page = async ({
 		undefined,
 		session.user.name,
 	);
-	redirect(`${String(newUser.planners[0].planner)}/calendar`);
+	redirect(`${String(newUser.planners[0].planner)}/recipes`);
 };
 
 export default Page;

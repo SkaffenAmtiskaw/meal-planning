@@ -66,7 +66,7 @@ describe('page', () => {
 	it('redirects to first planner when no last-opened cookie', async () => {
 		await Page({ searchParams: Promise.resolve({}) });
 
-		expect(vi.mocked(redirect)).toHaveBeenCalledWith(`${plannerId}/calendar`);
+		expect(vi.mocked(redirect)).toHaveBeenCalledWith(`${plannerId}/recipes`);
 	});
 
 	it('redirects to last-opened planner when cookie matches a planner', async () => {
@@ -89,7 +89,7 @@ describe('page', () => {
 		await Page({ searchParams: Promise.resolve({}) });
 
 		expect(vi.mocked(redirect)).toHaveBeenCalledWith(
-			`${lastPlannerId}/calendar`,
+			`${lastPlannerId}/recipes`,
 		);
 	});
 
@@ -104,7 +104,7 @@ describe('page', () => {
 
 		await Page({ searchParams: Promise.resolve({}) });
 
-		expect(vi.mocked(redirect)).toHaveBeenCalledWith(`${plannerId}/calendar`);
+		expect(vi.mocked(redirect)).toHaveBeenCalledWith(`${plannerId}/recipes`);
 	});
 
 	it('creates a new user and redirects when no user exists', async () => {
@@ -115,6 +115,6 @@ describe('page', () => {
 		await Page({ searchParams: Promise.resolve({}) });
 
 		expect(addUser).toHaveBeenCalledWith('ariel@sea.com', undefined, 'Ariel');
-		expect(vi.mocked(redirect)).toHaveBeenCalledWith(`${plannerId}/calendar`);
+		expect(vi.mocked(redirect)).toHaveBeenCalledWith(`${plannerId}/recipes`);
 	});
 });
