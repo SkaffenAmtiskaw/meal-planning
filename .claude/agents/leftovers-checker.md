@@ -28,7 +28,7 @@ What to read depends on the mode:
 
   A raw file shows a note's embeds (`![[Note#Section]]`) only as a link, so open each one and read it as part of the note. A link to a heading or block (`[[#^piece-7]]`) points to content its line depends on, so read the target when that line matters to your work.
 
-  Then read the story's diff, limited to the story's files, because the range can hold other stories' commits. If uncommitted changes are included, diff from the range's base to the working tree, and read in full any of the story's files that `git status` lists as untracked, because the diff doesn't show them.
+  Then read the story's diff. If uncommitted changes are included, diff from the range's base to the working tree, and read in full any of the story's files that `git status` lists as untracked, because the diff doesn't show them.
 - **In goal mode:** the stories' notes are closed, so read each story merge's message and files with `git show --stat`. Its message lists its steps' commits. Then read the range's whole diff, and use `git show` on a merge when you need to see which story a change came from.
 
 ## What to Check

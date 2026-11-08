@@ -16,7 +16,7 @@ Ship the goal **$ARGUMENTS**: check with the user that its Done When is met, clo
 Invoke the `editing-notes` skill first, since this run changes notes.
 
 ## 1. Check the Goal Is Ready
-Run `git rev-parse --path-format=absolute --git-dir --git-common-dir`. If the two paths differ, this is a worktree. Stop, and tell the user to run `/ship-goal` in a session in the main checkout. This run commits nothing to a worktree's own branch, so that branch never gets a PR, and the worktree sweep at session start never removes it.
+Run `git rev-parse --path-format=absolute --git-dir --git-common-dir`. If the two paths differ, this is a worktree. Stop, and tell the user to run `/ship-goal` in a session in the main checkout. This run commits nothing to a worktree's own branch, so the worktree would only hold a slot until the sweep at session start removes it a day later.
 
 Read `Roadmap.md` and the goal's note in `goals/`, both in the notes repo, and invoke the `roadmap-rules` skill. Then the checks, in order:
 1. **The goal's line under Goals ends with ` · releasing · Next: /ship-goal`.** If it doesn't, tell the user what the line says, and stop.
