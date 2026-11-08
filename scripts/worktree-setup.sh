@@ -1,7 +1,6 @@
 #!/bin/sh
 # Makes a worktree buildable. In a worktree, it copies the main checkout's
-# .env.local if the worktree has none (a hand-made worktree, which
-# .worktreeinclude doesn't cover), trusts its mise.toml, then runs
+# .env.local if the worktree has none, trusts its mise.toml, then runs
 # pnpm install --frozen-lockfile, which also reinstalls lefthook's hook.
 # In the main checkout it does nothing. Quiet on success. On failure it prints
 # what went wrong to stdout, where the SessionStart hook passes it to the

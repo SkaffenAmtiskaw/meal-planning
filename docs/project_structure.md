@@ -2,8 +2,6 @@
 Claude Code skills, subagents and hooks
 # .github/
 GitHub Actions workflows: the PR checks, the dependency check and the hotfix back-merge (see `docs/ci.md`)
-# .worktreeinclude
-the gitignored files, such as `.env.local`, that the Claude desktop app copies into each new worktree (see `docs/branching.md`)
 # docs/
 project documentation: structure, code conventions, styling, theme, unit tests, E2E tests, CI, the dev seed, and branching and releases
 # e2e/

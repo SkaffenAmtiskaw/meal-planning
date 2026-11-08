@@ -18,14 +18,14 @@ GitHub's rulesets on `develop` and `main` refuse a direct push to either branch,
 ## Checkouts
 The main checkout is the `meal-planning` folder itself. It stays on `develop` and is never edited, so the SessionStart hook can fast-forward it to the latest `develop` at every session start. Planning skills, such as `/shape`, `/plan-steps` and `/close`, run there and edit only notes. Notes live in their own repo and are never branched. Skills that change code stop if you run them there, and tell you to start a worktree session.
 
-A worktree is a second folder checked out from the same repo, on its own branch. The desktop app makes each one in `.claude/worktrees/<name>`, inside the main checkout. It copies into it each gitignored file that `.worktreeinclude` lists, which is only `.env.local`. Each worktree gets a slot from 1 to 5, which gives it its own ports, hostname and database, so two worktrees can run the app side by side without touching each other's data or sign-in. The slot's URLs and database are in `docs/seed.md`, "Worktrees".
+A worktree is a second folder checked out from the same repo, on its own branch. The desktop app makes each one in `.claude/worktrees/<name>`, inside the main checkout, and the SessionStart hook sets it up (see "What Each Session Start Does"). Each worktree gets a slot from 1 to 5, which gives it its own ports, hostname and database, so two worktrees can run the app side by side without touching each other's data or sign-in. The slot's URLs and database are in `docs/seed.md`, "Worktrees".
 
 A worktree session loads its skills and hooks from the main checkout. So a change to a skill reaches worktree sessions once its PR merges into `develop` and the next session start fast-forwards the main checkout.
 
 ## What Each Session Start Does
 At the start of every local session, the SessionStart hook runs four scripts, in order. Their messages appear in the session, and the agent passes on anything that needs you:
 1. **`sync-develop.sh`** fetches from GitHub, and in the main checkout fast-forwards `develop`.
-2. **`worktree-sweep.sh`** removes each worktree whose PR has merged, with its local branch and database (see "Cleaning Up After a Merge").
+2. **`worktree-sweep.sh`** removes each worktree whose PR has merged, or that never got work of its own, with its local branch and database (see "Cleaning Up After a Merge").
 3. **`worktree-setup.sh`**, in a worktree, copies the main checkout's `.env.local` if the worktree has none, trusts its `mise.toml` and installs its dependencies, which also installs the pre-commit hook.
 4. **`worktree-slot.sh`**, in a worktree, gives it a slot if it has none and prints its URLs and database.
 
@@ -93,6 +93,8 @@ The sweep leaves a merged worktree in place in three cases. For the last two, it
 - **It's the worktree the session runs in.** The next session that starts in a different folder removes it.
 - **It has uncommitted changes.** Commit them on a new branch for a new PR, or throw them away. Once the folder is clean, the next session start removes it.
 - **Its PR carries `notes-pending`,** so its held notes work isn't done. The sweep finds merged PRs only through the worktrees still on disk, so keeping the worktree is what keeps the PR named at each session start until the work is done. The session offers you a new session in the main checkout that runs `/tooling #<PR>`. That session does the work the PR lists and takes the label off, and the next session start removes the worktree.
+
+The sweep also removes a worktree that never got work of its own, once it's clean, its branch has no commits beyond `develop` (or `main`, for a `hotfix/` branch) and it was made more than a day ago. Such a worktree, like one made by mistake for a planning session, never gets a PR to merge, so the merged-PR rule never removes it. Waiting a day spares a worktree whose session is still working but hasn't changed anything yet.
 
 You archive the story's sessions in the sidebar when you like.
 
