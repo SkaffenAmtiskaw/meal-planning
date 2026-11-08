@@ -6,7 +6,9 @@ name: Vercel Deploy Errors
 
 on:
   repository_dispatch:
-    types: [vercel.deployment.error]
+    # Both, until a run shows which one a failed build sends. Vercel's schema has a failed state with a
+    # deployment_failed detail, and an error state whose only detail is deployment_deleted.
+    types: [vercel.deployment.failed, vercel.deployment.error]
   # To run it by hand from Actions → Run workflow, for a failed deployment you name.
   workflow_dispatch:
     inputs:
