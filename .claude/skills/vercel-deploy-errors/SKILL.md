@@ -24,7 +24,7 @@ Build log tail:
 
 If the workflow couldn't fetch a part, the block carries an error in its place:
 - `Vercel status: unavailable (<error>)`, with no `Unresolved incidents:` line.
-- `Build log: Vercel API error <HTTP status> <message>`, in place of both log parts.
+- `Build log: Vercel API error <HTTP status> <message>`, in place of both log parts. The first line's deployment ID and inspector URL are then `unknown` if the workflow couldn't look them up.
 
 If the block is missing any other part, or the first line is missing a value, stop. Say which ones are missing and what the block held.
 

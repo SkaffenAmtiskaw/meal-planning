@@ -1,0 +1,93 @@
+# Starts the vercel-deploy-errors routine, a cloud session that works out why a Vercel deployment failed, when the
+# failure is one you should hear about. Vercel sends GitHub a repository_dispatch event for each failed deployment, and
+# GitHub runs develop's copy of this workflow for it, so no branch can change what runs with the secrets. The check job
+# decides and gathers the build log; the start job calls the routine. See docs/ci.md, "Vercel Deploy Errors".
+name: Vercel Deploy Errors
+
+on:
+  repository_dispatch:
+    types: [vercel.deployment.error]
+  # To run it by hand from Actions → Run workflow, for a failed deployment you name.
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: The failed deployment's environment
+        type: choice
+        options: [preview, production]
+        default: preview
+      branch:
+        description: The failed deployment's branch
+        type: string
+        required: true
+      sha:
+        description: The failed deployment's full commit SHA
+        type: string
+        required: true
+
+permissions:
+  contents: read
+  # The commit's build check, which tells whether ci-failure already has the commit.
+  checks: read
+  # Whether a preview's branch has an open PR.
+  pull-requests: read
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    outputs:
+      fire: ${{ steps.check.outputs.fire }}
+      text: ${{ steps.check.outputs.text }}
+    steps:
+      - uses: actions/checkout@v7
+      # No pnpm install: the script needs only Node's built-in modules, so no package's install script runs beside
+      # the Vercel token.
+      - uses: jdx/mise-action@v4
+        with:
+          install_args: node pnpm
+      # The payload's values reach the script only through env, since a branch name is untrusted input. A manual run
+      # has no project ID, so it names the project.
+      - id: check
+        env:
+          EVENT_TYPE: ${{ github.event.action || github.event_name }}
+          CLIENT_PAYLOAD: ${{ toJSON(github.event.client_payload) }}
+          ENVIRONMENT: ${{ github.event.client_payload.environment || inputs.environment }}
+          BRANCH: ${{ github.event.client_payload.git.ref || inputs.branch }}
+          SHA: ${{ github.event.client_payload.git.sha || inputs.sha }}
+          VERCEL_PROJECT: ${{ github.event.client_payload.project.id || 'meal-planning' }}
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+          GITHUB_TOKEN: ${{ github.token }}
+        run: |
+          echo "Event: $EVENT_TYPE"
+          echo "Payload: $CLIENT_PAYLOAD"
+          result=$(pnpm -s vercel:check)
+          if [ "$(jq .fire <<< "$result")" = true ]; then
+            echo "Starting the routine."
+          else
+            echo "Staying quiet: $(jq -r .reason <<< "$result")"
+          fi
+          {
+            echo "fire=$(jq .fire <<< "$result")"
+            echo "text=$(jq -c .text <<< "$result")"
+          } >> "$GITHUB_OUTPUT"
+
+  # Starts the vercel-deploy-errors routine once. It holds the routine's two secrets and nothing else.
+  start-vercel-deploy-errors:
+    needs: check
+    if: needs.check.outputs.fire == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      # The text reaches the script only through env, and jq builds the body, since it holds the build's own output.
+      # The text's shape is in step 1 of the vercel-deploy-errors skill, which reads it.
+      # No --retry: /fire doesn't dedupe, so a retry could start two sessions.
+      - env:
+          ROUTINE_URL: ${{ secrets.ROUTINE_VERCEL_DEPLOY_ERRORS_URL }}
+          ROUTINE_TOKEN: ${{ secrets.ROUTINE_VERCEL_DEPLOY_ERRORS_TOKEN }}
+          TEXT: ${{ needs.check.outputs.text }}
+        run: |
+          body=$(jq -n --argjson text "$TEXT" '{text: $text}')
+          curl --fail-with-body --silent --show-error -X POST "$ROUTINE_URL" \
+            -H "Authorization: Bearer $ROUTINE_TOKEN" \
+            -H "anthropic-beta: experimental-cc-routine-2026-04-01" \
+            -H "anthropic-version: 2023-06-01" \
+            -H "Content-Type: application/json" \
+            --data "$body"

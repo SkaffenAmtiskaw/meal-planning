@@ -19,7 +19,8 @@
     "test:agent": "sh -c 'vitest run ${1:-src} --coverage --coverage.include ${1:-src} --reporter=agent' --",
     "test:coverage": "vitest run --coverage src",
     "test:e2e": "playwright install chromium && playwright test",
-    "test:e2e:trace": "sh -c 'pnpm test:e2e --trace on \"$@\"; playwright show-report' --"
+    "test:e2e:trace": "sh -c 'pnpm test:e2e --trace on \"$@\"; playwright show-report' --",
+    "vercel:check": "node scripts/vercelDeployCheck.ts"
   },
   "config": {
     "mongodbMemoryServer": {
