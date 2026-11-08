@@ -13,7 +13,7 @@ notes on planned work, in Obsidian-flavored Markdown, live in the `meal-planning
 
 The Obsidian Git plugin keeps that repo in sync with its `main` on GitHub: it commits and pushes changes five minutes after edits stop, and pulls every five minutes and when Obsidian opens. Routines and cloud sessions read the notes from GitHub, not from the copy on Sarah's Mac. So when one needs edits the plugin hasn't pushed yet, Sarah runs Obsidian Git's Commit-and-sync command by hand. Edits stay unpushed for five minutes after they stop, or until Obsidian next opens if it was closed before then.
 # scripts/
-lefthook scripts, scripts that check the notes vault, the dependency check that CI runs, the release freeze check, and the SessionStart hook's scripts, which keep `develop` current and set up and remove worktrees (see `docs/branching.md`)
+lefthook scripts, scripts that check the notes vault, the two checks that decide whether CI starts a routine (the dependency check and the Vercel deployment check), the release freeze check, and the SessionStart hook's scripts, which keep `develop` current and set up and remove worktrees (see `docs/branching.md`)
 # seed/
 `pnpm seed`, which fills the dev database with seeded users and sample data, the sign-in link server, and the script that empties a worktree's database (see `docs/seed.md`)
 # src/

@@ -96,7 +96,9 @@ const github = async <T>(path: string): Promise<T> => {
 };
 
 // A Vercel call that fails is reported in the text rather than stopping the
-// script, so the session can say to renew the token.
+// script, so the session still starts. It can then say why the log is missing,
+// and tell the user to renew the token if Vercel refused the call (a 401 or
+// 403).
 class VercelError extends Error {}
 
 const vercel = async <T>(path: string): Promise<T> => {
@@ -138,10 +140,11 @@ const finishedBuildCheck = async (): Promise<CheckRun | undefined> => {
 			return newest;
 		}
 		if (Date.now() + CHECK_POLL_MS > deadline) {
+			const minutes = CHECK_WAIT_MS / 60_000;
 			console.error(
 				newest
-					? `vercel:check: the build check is still ${newest.status} after 20 minutes`
-					: 'vercel:check: no build check showed up within 20 minutes',
+					? `vercel:check: the build check is still ${newest.status} after ${minutes} minutes`
+					: `vercel:check: no build check showed up within ${minutes} minutes`,
 			);
 			return undefined;
 		}

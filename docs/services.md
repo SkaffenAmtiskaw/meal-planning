@@ -58,6 +58,8 @@ Deployment Protection has Vercel Authentication on, set to Standard Protection, 
 
 **Secrets:** every app variable, in the project's Settings → Environment Variables, each set for both Production and Preview with one value. A changed value reaches only deployments made after the change, so redeploy to pick it up.
 
+`docs/ci.md`, "The Vercel Token", records the access token `vercel-deploy-errors.yml` uses to read failed deployments' build logs.
+
 ## MongoDB Atlas
 Atlas holds the app's data, on one Free cluster running MongoDB 8.0.36. The E2E tests' memory server runs the same 8.0 series (see `docs/e2e_tests.md`).
 
