@@ -3,7 +3,7 @@ Claude Code skills, subagents and hooks
 # .github/
 GitHub Actions workflows: the PR checks, the dependency check and the hotfix back-merge (see `docs/ci.md`)
 # docs/
-project documentation: structure, code conventions, styling, theme, unit tests, E2E tests, CI, the dev seed, and branching and releases
+project documentation: structure, code conventions, styling, theme, unit tests, E2E tests, CI, the dev seed, branching and releases, and the services and environments the app runs on
 # e2e/
 Playwright E2E specs, grouped in folders by feature area (see `docs/e2e_tests.md`)
 ## _fixtures/
