@@ -1,6 +1,6 @@
 # CI
 - CI runs on [GitHub Actions](https://docs.github.com/en/actions). The workflows live in `.github/workflows/`.
-- `checks.yml` runs lint, type check, unit tests and build on every PR, and starts the `ci-failure` routine when one of them fails.
+- `checks.yml` runs lint, type check, unit tests and build on every PR, and the E2E tests on every PR into `develop` or `main`. It starts the `ci-failure` routine when one of them fails.
 - `dependency-updates.yml` checks the dependencies for security advisories every hour and for new versions every week, and starts the `dependency-updates` routine when it finds something new.
 - `vercel-deploy-errors.yml` starts the `vercel-deploy-errors` routine when a Vercel deployment you should hear about fails.
 - `back-merge.yml` brings a hotfix on `main` back into `develop`, so the next release doesn't undo it.
@@ -8,7 +8,7 @@
 # Workflows
 
 ## Every Check Is a `package.json` Script
-Every check a workflow runs is a `package.json` script, called as `pnpm <script>`. That covers `checks.yml`'s four checks and the two checks that decide whether to start a routine, `deps:check` and `vercel:check`. The only other steps are setup (checking out the code, installing tools and dependencies), the step that starts a routine, the steps that restore and save `dependency-updates.yml`'s reported list in the Actions cache, and `back-merge.yml`'s git steps, which check nothing. That way you, or a cloud session looking into a failure, can rerun exactly what CI ran with the same command.
+Every check a workflow runs is a `package.json` script, called as `pnpm <script>`. That covers `checks.yml`'s five checks and the two checks that decide whether to start a routine, `deps:check` and `vercel:check`. The only other steps are setup (checking out the code, installing tools and dependencies, and the `e2e` job's install of Chromium), the step that starts a routine, the steps that restore and save `dependency-updates.yml`'s reported list in the Actions cache, and `back-merge.yml`'s git steps, which check nothing. That way you, or a cloud session looking into a failure, can rerun exactly what CI ran with the same command.
 
 No script CI runs writes fixes. CI would pass on code it had silently fixed, then throw the fix away. That's why the lint job runs `pnpm lint:ci` (`biome ci`, which only reports) and not `pnpm lint` (`biome check --write`).
 
@@ -24,7 +24,7 @@ No workflow or setup script names a Node or pnpm version of its own, or uses `ac
 CI and the cloud environment install only `node` and `pnpm` (the action's `install_args`, and the setup script's `mise install`), since they don't need the other tools in `mise.toml`. When you add a tool to `mise.toml`, add it to the `install_args` of any workflow that needs it. If routine sessions need it too, add it to the setup script. If they don't, add it to `MISE_DISABLE_TOOLS`, as `rtk` is, in both the setup script and the file the script writes. Without that, mise may look up the tool's latest version on GitHub and get a 403.
 
 # Checks on PRs
-`checks.yml` runs on every PR, whatever its base branch. It has four check jobs:
+`checks.yml` runs on every PR, whatever its base branch. It has five check jobs. Four run on every PR, and `e2e` runs only on a PR into a protected branch, meaning one with a ruleset: `develop` or `main`.
 
 | Job | Runs |
 |-----|------|
@@ -32,18 +32,21 @@ CI and the cloud environment install only `node` and `pnpm` (the action's `insta
 | `type-check` | `pnpm check:types`, which generates Next's route types (`next typegen`) before running `tsc`, since a fresh checkout has none |
 | `unit-tests` | `pnpm test:coverage`, so the 100% coverage thresholds in `vitest.config.ts` hold across `src/`. The pre-commit hook checks only staged files. |
 | `build` | `pnpm build` |
+| `e2e` | `pnpm test:e2e`, which builds the app and runs every spec against it (see `docs/e2e_tests.md`, "Running E2E Tests"). Both of the E2E projects, desktop and phone, run in Chromium. |
 
 Each check is its own job, so:
 - the PR shows which check failed
 - the rulesets on `develop` and `main` can require each check by its job name (see "Setup Outside the Repo")
-- each job runs in its own checkout, so the build never shares a `.next` folder with another job
+- each job runs in its own checkout, so the `e2e` job's build never shares a `.next` folder with the `build` job's
 
-Each check job checks out the code, installs Node and pnpm from `mise.toml`, runs `pnpm install --frozen-lockfile`, then runs its one script.
+Each check job checks out the code, installs Node and pnpm from `mise.toml`, runs `pnpm install --frozen-lockfile`, then runs its one script. `e2e` has one more setup step before its script, `pnpm exec playwright install --with-deps chromium`, as [Playwright's CI guide](https://playwright.dev/docs/ci-intro) does. `pnpm test:e2e` installs Chromium itself, but not the system libraries a fresh runner lacks, which `--with-deps` adds.
+
+The E2E tests take several minutes, so `e2e` runs only on PRs into protected branches. Its `if` lists those branches. On a PR into any other branch, such as a `ci-failure` fix PR into a story's branch, the job shows as skipped. The fix still gets the E2E tests once the story's PR into `develop` runs. How the list stays in step with the rulesets is in "The Rulesets on `develop` and `main`".
 
 The workflow's token can only read the repo (`permissions: contents: read`), since no check needs more. A new push to a PR cancels that PR's run still in progress, so the PR shows only the newest commit's results.
 
 ## The Job That Starts `ci-failure`
-A fifth job, `start-ci-failure`, runs after the four checks. When at least one of them failed, it starts the [`ci-failure` routine](#routines) by calling its `/fire` endpoint once (see "Starting a Routine"). The session that starts checks out the commit the failed run tested on the PR's head branch, reruns the failed checks and either fixes the failure or tells a flake from a real failure.
+A sixth job, `start-ci-failure`, runs after the check jobs. When at least one of them failed, it starts the [`ci-failure` routine](#routines) by calling its `/fire` endpoint once (see "Starting a Routine"). The session that starts checks out the commit the failed run tested on the PR's head branch, reruns the failed checks and either fixes the failure or tells a flake from a real failure.
 
 It fires only when all of these hold:
 - at least one check failed, and the run wasn't cancelled. A new push that cancels a run starts nothing, even if a check had already failed, since the new push's run gets its own chance.
@@ -199,7 +202,7 @@ Every change reaches `develop` and `main` through a PR whose checks passed, so n
 
 Two branch rulesets (Settings → Rules → Rulesets) hold this, with enforcement active. Each is named after its branch and targets it by name, not as the default branch. Both have these rules:
 - **Require a pull request before merging,** with 0 approvals, since the review happens in the story's sessions, not on GitHub. A direct push is refused, from your account and so from a routine, which pushes as you.
-- **Require status checks to pass:** `lint`, `type-check`, `unit-tests` and `build`, the four check jobs in `checks.yml`. `start-ci-failure` isn't a check, so it isn't required.
+- **Require status checks to pass:** `lint`, `type-check`, `unit-tests`, `build` and `e2e`, the five check jobs in `checks.yml`. `start-ci-failure` isn't a check, so it isn't required.
 - **Restrict deletions** and **Block force pushes.**
 
 The settings that differ between the two rulesets, with each one's value and why:
@@ -212,7 +215,9 @@ The settings that differ between the two rulesets, with each one's value and why
 
 No ruleset setting stops a routine from merging a PR as you, so the `routine-sessions` skill's rule that a routine never merges is the only guard there.
 
-When a check job in `checks.yml` is renamed, added or removed, change both rulesets' required checks and this record in the same change. That way every PR, into either branch, is held to the same checks, every check job is required, and every required check has a job to report it. A required check with no job never reports, and blocks every merge.
+When a check job in `checks.yml` is renamed, added or removed, change both rulesets' required checks and this record to match. That way every PR, into either branch, is held to the same checks, every check job is required, and every required check has a job to report it. A required check with no job never reports, and blocks every merge. So when a job's name is added, by a new job or a rename, it goes into both rulesets once the PR that adds the job shows it passing, just before that PR merges. Until the next release brings the job to `main`, a hotfix PR into `main` comes from a branch without the job, so it would wait on a check that never reports. If a hotfix comes up in that window, take the name off `main`'s ruleset until the hotfix merges.
+
+`e2e`'s `if` lists the protected branches. When a branch gets a ruleset, add it to the list, and add `e2e` to its required checks once PRs into it run the job, as above. When a branch loses its ruleset, take it off the list. A protected branch missing from the list would skip `e2e`, and GitHub counts a skipped check as a pass.
 
 ## Pull Request Settings
 The settings in Settings → General → Pull Requests, with their values and why:
