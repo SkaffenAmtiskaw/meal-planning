@@ -133,7 +133,7 @@ The repo's default branch on GitHub (Settings → General → Default branch) is
 The default branch changes nothing else here: neither ruleset below targets it, and Vercel's production branch (Settings → Environments → Production → Branch Tracking) is its own setting, which stays `main`.
 
 ## The Rulesets on `develop` and `main`
-Every change reaches `develop` and `main` through a PR whose checks passed, so neither branch can go red, and nothing reaches production except through a PR. The one exception is `back-merge.yml`'s push of a hotfix from `main` straight to `develop`, which merges two sides that each passed (see "Back-Merge").
+Every change reaches `develop` and `main` through a PR whose checks passed, so neither branch can go red, and nothing reaches production except through a PR. The one exception is `back-merge.yml`'s push of a hotfix from `main` straight to `develop`, which merges two sides that each passed (see "Back-Merge"). How work flows between the branches is in `docs/branching.md`.
 
 Two branch rulesets (Settings → Rules → Rulesets) hold this, with enforcement active. Each is named after its branch and targets it by name, not as the default branch. Both have these rules:
 - **Require a pull request before merging,** with 0 approvals, since the review happens in the story's sessions, not on GitHub. A direct push is refused, from your account and so from a routine, which pushes as you.
@@ -162,7 +162,7 @@ The settings in Settings → General → Pull Requests, with their values and wh
 ## The `notes-pending` Label
 The repo has a `notes-pending` label, made once with `gh label create notes-pending --description "Merged PR with notes work still to do"`, since `gh pr create --label` fails on a label that doesn't exist.
 
-While notes work waits on a PR's merge, such as a `/tooling` change's Roadmap edits, the PR carries the label, and its body lists that work under "Held until the merge". While a merged PR still has the label, the SessionStart hook's sweep (`scripts/worktree-sweep.sh`) leaves its worktree in place and names the PR at each session start. The sweep finds merged PRs only through the worktrees still on disk, so keeping the worktree is what keeps the PR named at each session start until the work is done and the label comes off.
+While notes work waits on a PR's merge, such as a `/tooling` change's Roadmap edits, the PR carries the label, and its body lists that work under "Held until the merge". What the SessionStart hook's sweep does with a merged PR that still has the label is in `docs/branching.md`, "Cleaning Up After a Merge".
 
 ## The Back-Merge App
 `back-merge.yml` pushes as a GitHub App of your own, `meal-planning-back-merge` (your Settings → Developer settings → GitHub Apps), the one actor on the `develop` ruleset's bypass list. Your account mustn't be on the list, because routines push as you and would get through too. GitHub doesn't let a workflow's built-in token be on a bypass list at all. That leaves an App as the only actor that can be on the list by itself.

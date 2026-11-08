@@ -1,9 +1,11 @@
 # .claude/
 Claude Code skills, subagents and hooks
 # .github/
-GitHub Actions workflows (see `docs/ci.md`)
+GitHub Actions workflows: the PR checks, the dependency check and the hotfix back-merge (see `docs/ci.md`)
+# .worktreeinclude
+the gitignored files, such as `.env.local`, that the Claude desktop app copies into each new worktree (see `docs/branching.md`)
 # docs/
-project documentation: structure, code conventions, styling, theme, unit tests, E2E tests, CI and the dev seed
+project documentation: structure, code conventions, styling, theme, unit tests, E2E tests, CI, the dev seed, and branching and releases
 # e2e/
 Playwright E2E specs, grouped in folders by feature area (see `docs/e2e_tests.md`)
 ## _fixtures/
@@ -13,9 +15,9 @@ notes on planned work, in Obsidian-flavored Markdown, live in the `meal-planning
 
 The Obsidian Git plugin keeps that repo in sync with its `main` on GitHub: it commits and pushes changes five minutes after edits stop, and pulls every five minutes and when Obsidian opens. Routines and cloud sessions read the notes from GitHub, not from the copy on Sarah's Mac. So when one needs edits the plugin hasn't pushed yet, Sarah runs Obsidian Git's Commit-and-sync command by hand. Edits stay unpushed for five minutes after they stop, or until Obsidian next opens if it was closed before then.
 # scripts/
-lefthook scripts, scripts that check the notes vault, and the dependency check CI runs
+lefthook scripts, scripts that check the notes vault, the dependency check that CI runs, the release freeze check, and the SessionStart hook's scripts, which keep `develop` current and set up and remove worktrees (see `docs/branching.md`)
 # seed/
-`pnpm seed`, which fills the dev database with seeded users and sample data, and the sign-in link server (see `docs/seed.md`)
+`pnpm seed`, which fills the dev database with seeded users and sample data, the sign-in link server, and the script that empties a worktree's database (see `docs/seed.md`)
 # src/
 project source code
 ## _actions/
