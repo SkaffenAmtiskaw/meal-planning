@@ -38,7 +38,7 @@ Go through them with the user one at a time. For each, propose whether it applie
 
 ## 3. Write the Audit Notes
 For each audit the user confirmed, in step 2's order:
-1. **The note:** create it in `features/releases/` in the notes repo from `.claude/note-templates/Audit.md`, named for the goal and the audit, such as `Dev Foundations Security Audit`. Write its kind exactly as step 2 lists it, because `/run-audit` picks its instructions by the kind.
+1. **The note:** create it in `features/releases/` in the notes repo from `.claude/note-templates/Audit.md`, named for the goal and the audit, such as `Dev Foundations Security Audit`. Write its kind exactly as step 2 lists it, because `/audit-release` picks its instructions by the kind.
 2. **Its Roadmap line:** add `[[<note>]] ![[<note>#^status]] 🎯 [[<goal>]]` to Next, below the audit lines already added and above every other line, so the audit lines sit at the top of Next in step 2's order. Renumber the lines below them.
 
 ## 4. Start the Release Freeze
@@ -47,7 +47,7 @@ The steps, in order:
 2. **The goal's line:** change ` · Next: /finish-goal` on the goal's line under Goals to ` · releasing`. This starts the freeze.
 
 ## 5. Put Up the Cards
-For each audit note, put up a New session card with `start_session`, with `initiation` "own_initiative", `context` "fresh", `use_worktree` false, `/run-audit <note name>` as its `prompt` and a sentence on the goal's release as its `background`.
+For each audit note, put up a New session card with `start_session`, with `initiation` "own_initiative", `context` "fresh", `use_worktree` false, `/audit-release <note name>` as its `prompt` and a sentence on the goal's release as its `background`.
 
 ## 6. Report
 Tell the user which audit notes you wrote and that the release freeze has started, so only the audits and their fix stories can be built until the release PR merges into `main`. If both the UX and the accessibility audits were written, tell the user to run them one after another, because they walk the running app and share the main checkout's server and database. The other audits can run at the same time.
