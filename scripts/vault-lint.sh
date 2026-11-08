@@ -154,12 +154,13 @@ grep -oE '!\[\[[^]#]+#\^status\]\]' "$roadmap" | sed -E 's/^!\[\[//; s/#\^status
   done
 
 # Every Now and Next line needs a 🎯 link to the building goal, 🚨, 📌 or 🔁, and
-# every Planning line a 🎯 link to the planning goal.
+# every Planning line a 🎯 link to the planning goal. A goal's release markers,
+# such as " · releasing · Next: /ship-goal", can follow "- building".
 awk '
   /^# / { section = substr($0, 3); next }
-  section == "Goals" && /- (building|planning)$/ {
+  section == "Goals" && /- (building|planning)( ·|$)/ {
     g = $0; sub(/.*\[\[/, "", g); sub(/[]|].*/, "", g)
-    if (/- building$/) building[g] = 1; else planning[g] = 1
+    if (/- building( ·|$)/) building[g] = 1; else planning[g] = 1
     next
   }
   (section == "Now" || section == "Next" || section == "Planning") && /^[ \t]*([-*]|[0-9]+\.)[ \t]+/ {
