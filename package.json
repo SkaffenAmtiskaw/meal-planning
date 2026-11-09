@@ -40,7 +40,7 @@
     "@schedule-x/react": "4.1.0",
     "@schedule-x/theme-default": "4.9.1",
     "@t3-oss/env-nextjs": "0.13.11",
-    "@tabler/icons-react": "3.50.0",
+    "@tabler/icons-react": "3.51.0",
     "better-auth": "1.7.18",
     "luxon": "3.7.2",
     "mongodb": "^7.8.0",
