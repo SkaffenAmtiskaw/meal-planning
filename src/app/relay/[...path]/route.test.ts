@@ -112,6 +112,35 @@ describe('relay route', () => {
 		expect(headers.get('content-type')).toBe('text/plain');
 	});
 
+	describe('caps a POST body at 1 MB', () => {
+		const CAP = 1024 * 1024;
+
+		const post = (body: string, headers: Record<string, string> = {}) =>
+			POST(sameOrigin('/relay/i/v0/e', { method: 'POST', body, headers }));
+
+		it('forwards a body at the cap', async () => {
+			await post('x'.repeat(CAP));
+
+			expect((forwarded().init?.body as ArrayBuffer).byteLength).toBe(CAP);
+		});
+
+		it('refuses a body whose Content-Length is over the cap with an empty 413', async () => {
+			const response = await post('x', { 'Content-Length': `${CAP + 1}` });
+
+			expect(response.status).toBe(413);
+			expect(await response.text()).toBe('');
+			expect(fetchMock).not.toHaveBeenCalled();
+		});
+
+		it('refuses a body over the cap that has no Content-Length with an empty 413', async () => {
+			const response = await post('x'.repeat(CAP + 1));
+
+			expect(response.status).toBe(413);
+			expect(await response.text()).toBe('');
+			expect(fetchMock).not.toHaveBeenCalled();
+		});
+	});
+
 	it('sends a GET with no body and no headers', async () => {
 		await GET(
 			sameOrigin('/relay/i/v0/e', {

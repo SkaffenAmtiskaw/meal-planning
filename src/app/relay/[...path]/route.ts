@@ -5,9 +5,20 @@ import {
 	RELAY_PATH,
 } from '@/_utils/errorReporting';
 
+/** Paths PostHog serves from its assets host (https://posthog.com/docs/advanced/proxy/proxy-reference). */
 const ASSET_PATHS = ['/static/', '/array/'];
 
+/**
+ * PostHog's events endpoint (https://posthog.com/docs/api/capture). Its docs name it `/i/v0/e` and
+ * send to `/i/v0/e/`. In the browser, `posthog-js` 1.447.3 posted to `/i/v0/e`, and the project's
+ * config gave the endpoint as `/i/v0/e/`, so both forms pass.
+ */
 const EVENTS_PATHS = ['/i/v0/e', '/i/v0/e/'];
+
+/** Well above a `$exception` event of a few KB, and below Vercel's 4.5 MB request limit. */
+const MAX_BODY_BYTES = 1024 * 1024;
+
+const tooLarge = () => new Response(null, { status: 413 });
 
 /**
  * Whether `posthog-js` uses the path: its scripts under `/static/`, this project's config under
@@ -54,10 +65,19 @@ const relay = async (request: Request) => {
 		? POSTHOG_ASSETS_HOST
 		: POSTHOG_HOST;
 
+	let body: ArrayBuffer | undefined;
+	if (request.method === 'POST') {
+		if (Number(request.headers.get('content-length')) > MAX_BODY_BYTES)
+			return tooLarge();
+		// A chunked body has no Content-Length, so the size read is checked too.
+		body = await request.arrayBuffer();
+		if (body.byteLength > MAX_BODY_BYTES) return tooLarge();
+	}
+
 	const response = await fetch(`${host}${path}${search}`, {
 		method: request.method,
 		headers: contentTypeOnly(request.headers),
-		body: request.method === 'POST' ? await request.arrayBuffer() : undefined,
+		body,
 	});
 
 	return new Response(response.body, {
