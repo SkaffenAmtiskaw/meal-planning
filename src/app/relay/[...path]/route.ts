@@ -13,10 +13,22 @@ const contentTypeOnly = (headers: Headers) => {
 };
 
 /**
+ * Whether a request comes from the app's own pages, so other sites can't use the relay. Browsers send
+ * `Sec-Fetch-Site` on every request; `Origin` is the fallback for one that doesn't.
+ */
+const isFromAppPages = (request: Request) => {
+	const fetchSite = request.headers.get('sec-fetch-site');
+	if (fetchSite) return fetchSite === 'same-origin';
+	return request.headers.get('origin') === new URL(request.url).origin;
+};
+
+/**
  * Passes `posthog-js`'s requests to PostHog through the app's own domain, so ad blockers that block
  * PostHog's hosts let them through. A rewrite would forward the request's headers, cookies included.
  */
 const relay = async (request: Request) => {
+	if (!isFromAppPages(request)) return new Response(null, { status: 403 });
+
 	const { pathname, search } = new URL(request.url);
 	const path = pathname.slice(RELAY_PATH.length);
 	const host = ASSET_PATHS.some((prefix) => path.startsWith(prefix))
