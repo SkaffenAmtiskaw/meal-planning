@@ -67,3 +67,12 @@ Before adding 'use client', ask yourself:
 1. Can this be an async server component?
 2. Can I use Suspense for loading states?
 3. Is there a simpler server-side solution?
+
+# Error Reporting
+Production reports its errors to PostHog. An error that's thrown and never caught reports itself, on the server through `onRequestError` in `src/instrumentation.ts` and in the browser through `posthog-js`. The code has to report only what never reaches those two. Everywhere outside production, reporting is off, so none of the calls below send anything locally or in tests.
+
+**Caught failures.** When server code catches a failure and returns it as a value rather than throwing it, whether it reports depends on whether the failure was expected. If it wasn't, such as a failed database query or a send that Resend refused, the code awaits `reportError` from `@/_utils/reportError`. If it was, such as a missing session, a user error from better-auth or invalid input, the code doesn't report it, because each report can open a PostHog issue that someone then has to look into. Browser code doesn't call `reportError`: a server action that fails has already reported on the server.
+
+**Error boundaries.** An `error.tsx` or `global-error.tsx` reports the error it catches with `posthog.captureException` from `posthog-js`, in a `useEffect` that depends on `error`. An error a boundary catches never reaches `posthog-js`'s global handler, so without that call it goes unreported.
+
+**The relay and `proxy.ts`.** `src/app/relay/` passes `posthog-js`'s requests on to PostHog through the app's own domain, so ad blockers don't stop them. If the app adds a `proxy.ts`, its matcher should leave out `/relay`, because a matcher that includes it runs the proxy on every request `posthog-js` sends, including the script it loads.

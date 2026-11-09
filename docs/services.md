@@ -23,14 +23,20 @@ Where each variable's value comes from in each one:
 | `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`, `NEXT_PUBLIC_GOOGLE_CLIENT_ID` | `.env.local` | Vercel | Production's value | dummy | `test/mocks/env.ts` | dummy in `playwright.config.ts` |
 | `RESEND_API_KEY` | `.env.local` | Vercel | Production's value | dummy | `test/mocks/env.ts` | dummy in `playwright.config.ts` |
 | `RESEND_FROM_EMAIL` | `.env.local` | Vercel | Production's value | dummy | `test/mocks/env.ts` | dummy in `playwright.config.ts` |
+| `NEXT_PUBLIC_POSTHOG_PROJECT_TOKEN` | `.env.local` | Vercel | not set | not set | not set | dummy in `playwright.config.ts` |
+| `NEXT_PUBLIC_VERCEL_ENV` | not set | Vercel's system variable, `production` | Vercel's system variable, `preview` | not set | not set | `development` in `playwright.config.ts` |
 
-Every variable on Vercel applies to both Production and Preview with one shared value, so a preview runs with production's database, Resend key, sender address, Google client and better-auth secret. Because `BETTER_AUTH_URL` is shared too, a link in an email sent from a preview, such as an invite, opens production.
+Every variable set on Vercel's Environment Variables page, except PostHog's three, applies to both Production and Preview with one shared value, so a preview runs with production's database, Resend key, sender address, Google client and better-auth secret. Because `BETTER_AUTH_URL` is shared too, a link in an email sent from a preview, such as an invite, opens production.
+
+PostHog's three variables, `NEXT_PUBLIC_POSTHOG_PROJECT_TOKEN` and the build's `POSTHOG_API_KEY` and `POSTHOG_PROJECT_ID` (see below), are set on Vercel for Production only, because only production reports errors (see "PostHog"). `NEXT_PUBLIC_VERCEL_ENV` isn't set by hand: Vercel provides it as a system variable. The app reports only when `NEXT_PUBLIC_VERCEL_ENV` is `production` and the project token is set. Local leaves `NEXT_PUBLIC_VERCEL_ENV` unset, so a token in `.env.local` sends nothing.
 
 CI's dummies live in `checks.yml` and the cloud environment's variables, as `docs/ci.md` records. The E2E values are set at the top of `playwright.config.ts` (see `docs/e2e_tests.md`, "Environment Variables").
 
 `BETTER_AUTH_SECRET` is the app's own secret rather than a service's: it signs better-auth's sessions and tokens.
 
 `.env.local` also holds `PORT` and `SIGN_IN_PORT`, which aren't app variables: they set the ports `pnpm dev` and `pnpm sign-in` listen on.
+
+`POSTHOG_API_KEY` and `POSTHOG_PROJECT_ID` aren't app variables either. `next.config.mjs` reads them at build time to upload source maps to PostHog, and skips the upload unless both are set. The main checkout's `.env.local` holds them, and `scripts/worktree-setup.sh` copies that file into each new worktree, so a local `pnpm build` uploads source maps too. The app it builds still reports nothing, because `NEXT_PUBLIC_VERCEL_ENV` isn't `production` there.
 
 # How Production Differs From Local
 Production and local use the same Atlas cluster, the same Resend API key and the same Google OAuth client. What differs:
@@ -56,7 +62,9 @@ Production's domain is `www.meal-planning.net`. The bare `meal-planning.net` red
 
 Deployment Protection has Vercel Authentication on, set to Standard Protection, so opening a preview needs a Vercel login. Production's domain stays public.
 
-**Secrets:** every app variable, in the project's Settings → Environment Variables, each set for both Production and Preview with one value. A changed value reaches only deployments made after the change, so redeploy to pick it up.
+The project's Environment Variables page has **Enable access to System Environment Variables** ticked. That gives each deployment Vercel's system variables, such as `NEXT_PUBLIC_VERCEL_ENV`, which turns error reporting on in production. With the setting off, production silently reports nothing: no build or check fails.
+
+**Secrets:** every app variable, and the build's two PostHog variables, in the project's Settings → Environment Variables. PostHog's three, `NEXT_PUBLIC_POSTHOG_PROJECT_TOKEN`, `POSTHOG_API_KEY` and `POSTHOG_PROJECT_ID`, are set for Production only, with `POSTHOG_API_KEY` marked Sensitive. Every other one is set for both Production and Preview with one value. A changed value reaches only deployments made after the change, so redeploy to pick it up.
 
 `docs/ci.md`, "The Vercel Token", records the access token `vercel-deploy-errors.yml` uses to read failed deployments' build logs.
 
@@ -101,6 +109,13 @@ It has one API key, named `meal-planning-test`, with sending permission. Local, 
 
 **Secrets:** the key is `RESEND_API_KEY`, in `.env.local` and Vercel. Resend shows a key's value only when it's created.
 
+## PostHog
+PostHog's error tracking collects the app's errors, on the free plan. The account is on US Cloud and has one project, which the app reports to only from production. Previews send nothing, because the free plan's one project would group their errors with production's. PostHog sends no alert of its own when a new issue opens. What the app reports, and why the browser's reports go through the app's own `/relay` route, is in `docs/project_conventions.md`, "Error Reporting".
+
+The project has a personal API key, scoped to this project with write access on error tracking only. Production's build uses it to upload source maps, so a reported stack trace points at the original source.
+
+**Secrets:** the personal API key is `POSTHOG_API_KEY`, in the main checkout's `.env.local` and Vercel's Production, where it's marked Sensitive. The project token, `NEXT_PUBLIC_POSTHOG_PROJECT_TOKEN`, and the project ID, `POSTHOG_PROJECT_ID`, are in the same places but aren't secret: the browser bundle carries the token, and the ID only identifies the project.
+
 ## Google Fonts
 `next/font/google` in `src/app/layout.tsx` downloads the app's fonts from Google Fonts when the app builds. It needs no account or secret.
 
@@ -125,7 +140,7 @@ Your Claude Max subscription runs Claude Code, both on your machine and in the r
 - **Cloudflare:** the domain, renewing 2027-03-02 with auto-renew on.
 - **Anthropic:** the Claude Max subscription.
 
-Nothing else is known to be paid: Vercel is on its Hobby plan, Atlas on a Free cluster and Resend on its free plan.
+Nothing else is known to be paid: Vercel is on its Hobby plan, Atlas on a Free cluster, and Resend and PostHog on their free plans.
 
 # Setting Up a New Environment
 A new environment, such as one for previews apart from production, needs its own database user, `DB_URL`, `BETTER_AUTH_SECRET`, `BETTER_AUTH_URL` and Resend key. It shares the Google OAuth client: you add the environment's URLs to the client, and it uses the same client ID and secret.
@@ -140,7 +155,7 @@ The steps go service by service, in the order they depend on each other, startin
 6. **Create its Resend API key** on Resend's API Keys page, with sending access, which can be limited to `meal-planning.net`. Copy the value then, because Resend never shows it again ([Resend: API Keys](https://resend.com/docs/dashboard/api-keys/introduction)). Choose a sender address at `meal-planning.net` for `RESEND_FROM_EMAIL`.
 7. **Put the values where the environment reads them,** along with the Google client's ID and secret.
    - **If it's local:** put them in its `.env.local`.
-   - **If it's deployed:** put them in Vercel's Settings → Environment Variables. If the new environment is Preview, first edit each existing variable so it applies to Production only, because today each one is set for both. Then set each new variable for the new environment only, and redeploy ([Vercel: Managing Environment Variables](https://vercel.com/docs/environment-variables/managing-environment-variables)).
+   - **If it's deployed:** put them in Vercel's Settings → Environment Variables. If the new environment is Preview, first edit each existing variable so it applies to Production only, because today every one except PostHog's three is set for both. Then set each new variable for the new environment only, and redeploy ([Vercel: Managing Environment Variables](https://vercel.com/docs/environment-variables/managing-environment-variables)).
 8. **Record it here.** Add the environment to "The Environments", and its users, keys and URLs to each service's entry.
 
 # Which Doc Records a New Setting
