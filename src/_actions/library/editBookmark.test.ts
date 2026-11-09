@@ -7,9 +7,10 @@ import { Planner } from '@/_models/planner';
 
 import { editBookmark } from './editBookmark';
 
-vi.mock('@/_actions/auth/checkAuth', () => ({
-	checkAuth: vi.fn(),
-}));
+vi.mock(
+	'@/_actions/auth/checkAuth',
+	async () => await import('#mocks/@/_actions/auth/checkAuth'),
+);
 
 vi.mock('next/cache', () => ({
 	revalidatePath: vi.fn(),

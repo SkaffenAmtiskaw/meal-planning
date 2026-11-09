@@ -40,10 +40,6 @@ const e2eEnv = {
 
 Object.assign(process.env, e2eEnv);
 
-// Next fills a variable from .env.local only when it's unset, so an empty key keeps `next build` from
-// uploading source maps to PostHog
-process.env.POSTHOG_API_KEY = '';
-
 export default defineConfig({
 	testDir: 'e2e',
 	reporter: [['list'], ['html', { open: 'never' }]],

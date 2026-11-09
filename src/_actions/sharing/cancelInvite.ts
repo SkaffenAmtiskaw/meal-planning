@@ -23,6 +23,10 @@ export const cancelInvite = async (
 	try {
 		const { inviteId, plannerId } = input;
 
+		if (!Types.ObjectId.isValid(plannerId)) {
+			return { success: false, error: 'Invalid planner ID' };
+		}
+
 		// 1. Verify caller is authenticated and has 'admin' access to the planner
 		const authResult = await checkAuth(new Types.ObjectId(plannerId), 'admin');
 
@@ -54,8 +58,7 @@ export const cancelInvite = async (
 		// 6. Return success
 		return serialize({ success: true });
 	} catch (error) {
-		// An invalid plannerId throws from new Types.ObjectId, and is bad input
-		if (Types.ObjectId.isValid(input.plannerId)) await reportError(error);
+		await reportError(error);
 		return {
 			success: false,
 			error: error instanceof Error ? error.message : 'An error occurred',

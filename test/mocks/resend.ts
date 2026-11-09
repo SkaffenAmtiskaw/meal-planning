@@ -8,7 +8,7 @@
  *
  * `mockSend` is the spy on `emails.send`, and resolves a successful send by default. Use
  * `mockSend.mockResolvedValueOnce(...)` to control the return value for a single test, such as
- * `{ data: null, error: { name, message, statusCode }, headers: null }` for a send Resend refuses.
+ * `makeRefusedSend()` from `test/fixtures/resend.ts` for a send Resend refuses.
  *
  * `resendConstructor` is the spy called with the API key when `new Resend(key)` is invoked.
  */

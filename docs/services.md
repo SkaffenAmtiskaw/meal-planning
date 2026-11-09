@@ -36,7 +36,7 @@ CI's dummies live in `checks.yml` and the cloud environment's variables, as `doc
 
 `.env.local` also holds `PORT` and `SIGN_IN_PORT`, which aren't app variables: they set the ports `pnpm dev` and `pnpm sign-in` listen on.
 
-`POSTHOG_API_KEY` and `POSTHOG_PROJECT_ID` aren't app variables either. `next.config.mjs` reads them at build time to upload source maps to PostHog, and skips the upload unless both are set. The main checkout's `.env.local` holds them, and `scripts/worktree-setup.sh` copies that file into each new worktree, so a local `pnpm build` uploads source maps too. The app it builds still reports nothing, because `NEXT_PUBLIC_VERCEL_ENV` isn't `production` there.
+`POSTHOG_API_KEY` and `POSTHOG_PROJECT_ID` aren't app variables either. `next.config.mjs` reads them at build time to upload source maps to PostHog, and skips the upload unless both are set. Only Vercel's Production sets them, so every other build skips it. Keep them out of `.env.local`. With them there, every local `pnpm build` and the lefthook `build` hook would upload source maps to PostHog, and `pnpm check:types` would contact PostHog too. `scripts/worktree-setup.sh` copies `.env.local` into every new worktree, so they'd reach every worktree as well.
 
 # How Production Differs From Local
 Production and local use the same Atlas cluster, the same Resend API key and the same Google OAuth client. What differs:
@@ -114,7 +114,7 @@ PostHog's error tracking collects the app's errors, on the free plan. The accoun
 
 The project has a personal API key, scoped to this project with write access on error tracking only. Production's build uses it to upload source maps, so a reported stack trace points at the original source.
 
-**Secrets:** the personal API key is `POSTHOG_API_KEY`, in the main checkout's `.env.local` and Vercel's Production, where it's marked Sensitive. The project token, `NEXT_PUBLIC_POSTHOG_PROJECT_TOKEN`, and the project ID, `POSTHOG_PROJECT_ID`, are in the same places but aren't secret: the browser bundle carries the token, and the ID only identifies the project.
+**Secrets:** the personal API key is `POSTHOG_API_KEY`, in Vercel's Production only. It's marked Sensitive there, so Vercel never shows its value again, and replacing it means creating a new key in PostHog. The project ID, `POSTHOG_PROJECT_ID`, is in Vercel's Production too. The project token, `NEXT_PUBLIC_POSTHOG_PROJECT_TOKEN`, is in Vercel's Production and the main checkout's `.env.local`. Neither is secret: the browser bundle carries the token, and the ID only identifies the project.
 
 ## Google Fonts
 `next/font/google` in `src/app/layout.tsx` downloads the app's fonts from Google Fonts when the app builds. It needs no account or secret.

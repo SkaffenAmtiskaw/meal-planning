@@ -39,15 +39,17 @@ export const inviteUser = async (
 	}
 
 	// 2. Verify caller is authenticated and has 'admin' access to the planner
+	if (!Types.ObjectId.isValid(plannerId)) {
+		return { ok: false, error: 'Unauthorized' };
+	}
+
 	const [authResult, authError] = await catchify(() =>
 		checkAuth(new Types.ObjectId(plannerId), 'admin'),
 	);
 
 	if (authError || !authResult || authResult.type !== 'authorized') {
-		// An invalid plannerId is bad input, and checkAuth reports its own 'error' result
-		if (authError && Types.ObjectId.isValid(plannerId)) {
-			await reportError(authError);
-		}
+		// checkAuth reports its own 'error' result
+		if (authError) await reportError(authError);
 		return { ok: false, error: 'Unauthorized' };
 	}
 

@@ -1,9 +1,10 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 // Mocks must be hoisted before imports
-vi.mock('@/_actions/auth/checkAuth', () => ({
-	checkAuth: vi.fn(),
-}));
+vi.mock(
+	'@/_actions/auth/checkAuth',
+	async () => await import('#mocks/@/_actions/auth/checkAuth'),
+);
 
 vi.mock('@/_models/sharing', () => ({
 	PendingInvite: {

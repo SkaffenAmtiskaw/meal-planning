@@ -16,17 +16,8 @@ vi.mock('@/_utils/errorReporting', () => ({
 const loadOptions = async () => {
 	await import('./instrumentation');
 	const options = vi.mocked(createOnRequestError).mock.calls[0][0];
-	if (!options?.beforeCapture) {
-		throw new Error('onRequestError was created without beforeCapture');
-	}
-	return { ...options, beforeCapture: options.beforeCapture };
-};
-
-const captureContext = {
-	error: new Error('boom'),
-	request: {},
-	context: {},
-	properties: {},
+	if (!options) throw new Error('onRequestError was created without options');
+	return options;
 };
 
 describe('onRequestError', () => {
@@ -42,16 +33,16 @@ describe('onRequestError', () => {
 		expect(host).toBe('https://posthog.example.com');
 	});
 
-	it('captures when reporting is on', async () => {
-		const { beforeCapture } = await loadOptions();
+	it('is enabled when reporting is on', async () => {
+		const { disabled } = await loadOptions();
 
-		expect(await beforeCapture(captureContext)).toBeUndefined();
+		expect(disabled).toBe(false);
 	});
 
-	it('skips the capture when reporting is off', async () => {
-		const { beforeCapture } = await loadOptions();
+	it('is disabled when reporting is off', async () => {
 		vi.mocked(isReportingOn).mockReturnValueOnce(false);
+		const { disabled } = await loadOptions();
 
-		expect(await beforeCapture(captureContext)).toBe(false);
+		expect(disabled).toBe(true);
 	});
 });

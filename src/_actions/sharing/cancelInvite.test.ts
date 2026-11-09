@@ -140,7 +140,8 @@ describe('cancelInvite', () => {
 	it('returns error without reporting when plannerId is invalid', async () => {
 		const result = await cancelInvite({ inviteId, plannerId: 'invalid-id' });
 
-		expect(result.success).toBe(false);
+		expect(result).toEqual({ success: false, error: 'Invalid planner ID' });
+		expect(checkAuth).not.toHaveBeenCalled();
 		expect(reportError).not.toHaveBeenCalled();
 	});
 
