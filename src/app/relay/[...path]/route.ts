@@ -1,10 +1,27 @@
 import {
+	getReportingToken,
 	POSTHOG_ASSETS_HOST,
 	POSTHOG_HOST,
 	RELAY_PATH,
 } from '@/_utils/errorReporting';
 
 const ASSET_PATHS = ['/static/', '/array/'];
+
+const EVENTS_PATHS = ['/i/v0/e', '/i/v0/e/'];
+
+/**
+ * Whether `posthog-js` uses the path: its scripts under `/static/`, this project's config under
+ * `/array/<token>/`, and its events at `/i/v0/e`. With reporting off there's no token, so no
+ * `/array/` path passes.
+ */
+const isPosthogJsPath = (path: string) => {
+	const token = getReportingToken();
+	return (
+		path.startsWith('/static/') ||
+		(token !== undefined && path.startsWith(`/array/${token}/`)) ||
+		EVENTS_PATHS.includes(path)
+	);
+};
 
 /** Copies only Content-Type, so no other header, such as the session cookie, passes through. */
 const contentTypeOnly = (headers: Headers) => {
@@ -31,6 +48,8 @@ const relay = async (request: Request) => {
 
 	const { pathname, search } = new URL(request.url);
 	const path = pathname.slice(RELAY_PATH.length);
+	if (!isPosthogJsPath(path)) return new Response(null, { status: 404 });
+
 	const host = ASSET_PATHS.some((prefix) => path.startsWith(prefix))
 		? POSTHOG_ASSETS_HOST
 		: POSTHOG_HOST;

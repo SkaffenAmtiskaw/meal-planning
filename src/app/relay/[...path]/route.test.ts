@@ -1,8 +1,11 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
+import { getReportingToken } from '@/_utils/errorReporting';
+
 import { GET, POST } from './route';
 
 vi.mock('@/_utils/errorReporting', () => ({
+	getReportingToken: vi.fn(() => 'phc_token'),
 	POSTHOG_HOST: 'https://ingest.example.com',
 	POSTHOG_ASSETS_HOST: 'https://assets.example.com',
 	RELAY_PATH: '/relay',
@@ -52,9 +55,8 @@ describe('relay route', () => {
 	});
 
 	it.each([
-		'/relay/e/?compression=gzip-js&ver=1',
-		'/relay/flags/?v=2',
-		'/relay/statics/x',
+		'/relay/i/v0/e?compression=gzip-js&ver=1',
+		'/relay/i/v0/e/?ver=1',
 	])('sends %s to the ingestion host', async (path) => {
 		await GET(sameOrigin(path));
 
@@ -63,9 +65,36 @@ describe('relay route', () => {
 		);
 	});
 
+	describe("refuses paths posthog-js doesn't use", () => {
+		it.each([
+			['an unlisted path', '/relay/api/projects'],
+			['a path that only starts like an allowed one', '/relay/statics/x'],
+			['a path that extends the events path', '/relay/i/v0/e/x'],
+			["another project's config", '/relay/array/phc_OTHER/config.js'],
+			['a token with no file after it', '/relay/array/phc_token'],
+		])('refuses %s with an empty 404', async (_case, path) => {
+			const response = await GET(sameOrigin(path));
+
+			expect(response.status).toBe(404);
+			expect(await response.text()).toBe('');
+			expect(fetchMock).not.toHaveBeenCalled();
+		});
+
+		it('refuses every /array/ path when reporting is off', async () => {
+			vi.mocked(getReportingToken).mockReturnValueOnce(undefined);
+
+			const response = await GET(
+				sameOrigin('/relay/array/phc_token/config.js'),
+			);
+
+			expect(response.status).toBe(404);
+			expect(fetchMock).not.toHaveBeenCalled();
+		});
+	});
+
 	it('forwards a POST body and its Content-Type, and never the cookies', async () => {
 		await POST(
-			sameOrigin('/relay/e/', {
+			sameOrigin('/relay/i/v0/e', {
 				method: 'POST',
 				body: 'payload',
 				headers: {
@@ -85,7 +114,7 @@ describe('relay route', () => {
 
 	it('sends a GET with no body and no headers', async () => {
 		await GET(
-			sameOrigin('/relay/flags/', {
+			sameOrigin('/relay/i/v0/e', {
 				headers: { Cookie: 'better-auth.session_token=secret' },
 			}),
 		);
@@ -104,7 +133,7 @@ describe('relay route', () => {
 			}),
 		);
 
-		const response = await GET(sameOrigin('/relay/e/'));
+		const response = await GET(sameOrigin('/relay/i/v0/e'));
 
 		expect(response.status).toBe(429);
 		expect(await response.text()).toBe('rate limited');
@@ -115,7 +144,7 @@ describe('relay route', () => {
 	it('returns no Content-Type when PostHog sends none', async () => {
 		fetchMock.mockResolvedValueOnce(new Response(null, { status: 204 }));
 
-		const response = await GET(sameOrigin('/relay/e/'));
+		const response = await GET(sameOrigin('/relay/i/v0/e'));
 
 		expect(response.status).toBe(204);
 		expect(response.headers.get('content-type')).toBeNull();
@@ -133,7 +162,7 @@ describe('relay route', () => {
 			['a request with neither header', {}],
 		])('refuses %s with an empty 403', async (_case, headers) => {
 			const response = await POST(
-				new Request('https://app.example.com/relay/e/', {
+				new Request('https://app.example.com/relay/i/v0/e', {
 					method: 'POST',
 					body: 'payload',
 					headers,
@@ -147,14 +176,14 @@ describe('relay route', () => {
 
 		it("forwards a request with no Sec-Fetch-Site whose Origin is the app's own", async () => {
 			await POST(
-				new Request('https://app.example.com/relay/e/', {
+				new Request('https://app.example.com/relay/i/v0/e', {
 					method: 'POST',
 					body: 'payload',
 					headers: { Origin: 'https://app.example.com' },
 				}),
 			);
 
-			expect(forwarded().url).toBe('https://ingest.example.com/e/');
+			expect(forwarded().url).toBe('https://ingest.example.com/i/v0/e');
 		});
 	});
 });
