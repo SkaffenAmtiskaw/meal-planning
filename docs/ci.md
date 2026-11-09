@@ -48,7 +48,9 @@ The workflow's token can only read the repo (`permissions: contents: read`), sin
 ## The Job That Starts `ci-failure`
 A sixth job, `start-ci-failure`, runs after the check jobs. When at least one of them failed, it starts the [`ci-failure` routine](#routines) by calling its `/fire` endpoint once (see "Starting a Routine"). The session that starts checks out the commit the failed run tested on the PR's head branch, reruns the failed checks and either fixes the failure or tells a flake from a real failure.
 
-It fires only when all of these hold:
+An `e2e` failure is sorted before anything is fixed. If a spec wasn't updated for a change the PR meant to make, the session updates the spec and opens a fix PR, as it would for a failure in any other check. If the app is broken, or the session can't tell, it hands the failure to the `root-cause-analyst` subagent. The analyst runs on Opus, a stronger model than the routine's Sonnet, because a bug note builds on the root cause it writes. The session then makes no fix and offers to turn the analyst's report into a bug note, because every fix to the app goes through the bug workflow. The routine selects the notes repo for that note, and so the session can read the story a commit names, which says whether a change was meant.
+
+`start-ci-failure` fires only when all of these hold:
 - at least one check failed, and the run wasn't cancelled. A new push that cancels a run starts nothing, even if a check had already failed, since the new push's run gets its own chance.
 - it's the run's first attempt. A re-run, whether the `ci-failure` session starts it or you do, never starts another session. The session watches its own re-run.
 - the PR's head branch doesn't start with `claude/`. That's a routine's own fix, so a failing fix doesn't start session after session, and you see its checks when you open it to merge.
@@ -251,6 +253,8 @@ Routines run in a claude.ai cloud environment named `Meal Planning Routines` (at
 ```text
 results-receiver.actions.githubusercontent.com
 tuf-repo-cdn.sigstore.dev
+cdn.playwright.dev
+fastdl.mongodb.org
 react.dev
 nextjs.org
 mantine.dev
@@ -261,6 +265,8 @@ zod.dev
 The default (Trusted) list allows the npm registry, `nodejs.org` (where mise gets Node) and Google Fonts (which `pnpm build` downloads). GitHub's API goes through its own proxy whatever the level, but a run's logs don't: `gh run view --log-failed` asks the API, which redirects to a signed download on `results-receiver.actions.githubusercontent.com`, and that host isn't on the Trusted list.
 
 When mise installs pnpm from npm, it verifies pnpm's provenance, and that check needs `tuf-repo-cdn.sigstore.dev`. Without that domain, `mise install` fails and stops the setup script, so sessions don't get mise's Node and pnpm.
+
+The next two domains let a session run `pnpm test:e2e`, as the `ci-failure` routine does when the `e2e` check fails. Playwright downloads Chromium, its headless shell and ffmpeg from `cdn.playwright.dev`, and `mongodb-memory-server` downloads `mongod` from `fastdl.mongodb.org`. Neither host is on the Trusted list. The setup script makes both downloads, so Chromium and `mongod` are in the snapshot. A session fetches them only if the script's download failed.
 
 The other five domains hold the release notes and guides of the libraries that the `dependency-updates` routine's `upgrade-assessor` subagent assesses. It also assesses Luxon, but Luxon's docs site isn't allowed, because `moment.github.io` builds its pages in the browser and `WebFetch` gets only their titles. The same docs are in `docs/` in `moment/luxon` on GitHub, which the session can already read.
 
@@ -321,8 +327,13 @@ export PATH="$shims:\$PATH"
 EOF
 
 # Warms the pnpm store for the cached snapshot. Each session installs again after its checkout.
+# The install also downloads mongod for the E2E tests' database, through mongodb-memory-server's postinstall.
 export PATH="$shims:$PATH"
 pnpm install --frozen-lockfile || echo "setup: pnpm install failed; each session installs on its own" >&2
+
+# pnpm test:e2e downloads Chromium itself, but not the system libraries it needs, which --with-deps installs
+# through apt. Installing both here puts them in the snapshot. apt needs root, and this script runs as root.
+pnpm exec playwright install --with-deps chromium || echo "setup: Chromium install failed, so sessions may lack the system libraries pnpm test:e2e needs" >&2
 ```
 
 When you change the network access, the variables or the script on claude.ai, change this record in the same change.
