@@ -5,8 +5,16 @@ import {
 	RELAY_PATH,
 } from '@/_utils/errorReporting';
 
-/** Paths PostHog serves from its assets host (https://posthog.com/docs/advanced/proxy/proxy-reference). */
-const ASSET_PATHS = ['/static/', '/array/'];
+/**
+ * The path prefixes `posthog-js` loads from PostHog's assets host
+ * (https://posthog.com/docs/advanced/proxy/proxy-reference): its scripts under `/static/`, and this
+ * project's config under `/array/<token>/`. With reporting off there's no token, so no `/array/` path
+ * passes.
+ */
+const getAssetPrefixes = () => {
+	const token = getReportingToken();
+	return token === undefined ? ['/static/'] : ['/static/', `/array/${token}/`];
+};
 
 /**
  * PostHog's events endpoint (https://posthog.com/docs/api/capture). Its docs name it `/i/v0/e` and
@@ -19,20 +27,6 @@ const EVENTS_PATHS = ['/i/v0/e', '/i/v0/e/'];
 const MAX_BODY_BYTES = 1024 * 1024;
 
 const tooLarge = () => new Response(null, { status: 413 });
-
-/**
- * Whether `posthog-js` uses the path: its scripts under `/static/`, this project's config under
- * `/array/<token>/`, and its events at `/i/v0/e`. With reporting off there's no token, so no
- * `/array/` path passes.
- */
-const isPosthogJsPath = (path: string) => {
-	const token = getReportingToken();
-	return (
-		path.startsWith('/static/') ||
-		(token !== undefined && path.startsWith(`/array/${token}/`)) ||
-		EVENTS_PATHS.includes(path)
-	);
-};
 
 /** Copies only Content-Type, so no other header, such as the session cookie, passes through. */
 const contentTypeOnly = (headers: Headers) => {
@@ -59,9 +53,10 @@ const relay = async (request: Request) => {
 
 	const { pathname, search } = new URL(request.url);
 	const path = pathname.slice(RELAY_PATH.length);
-	if (!isPosthogJsPath(path)) return new Response(null, { status: 404 });
+	const isAsset = getAssetPrefixes().some((prefix) => path.startsWith(prefix));
+	if (!isAsset && !EVENTS_PATHS.includes(path))
+		return new Response(null, { status: 404 });
 
-	const isAsset = ASSET_PATHS.some((prefix) => path.startsWith(prefix));
 	const host = isAsset ? POSTHOG_ASSETS_HOST : POSTHOG_HOST;
 
 	let body: ArrayBuffer | undefined;

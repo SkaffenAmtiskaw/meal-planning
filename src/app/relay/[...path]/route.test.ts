@@ -21,6 +21,9 @@ const fetchMock = vi.fn(
 
 const SAME_ORIGIN = { 'Sec-Fetch-Site': 'same-origin' };
 
+/** The relay's cap on a POST body. */
+const CAP = 1024 * 1024;
+
 /** A request from the app's own pages, which the relay forwards. */
 const sameOrigin = (path: string, init: RequestInit = {}) =>
 	new Request(`https://app.example.com${path}`, {
@@ -113,8 +116,6 @@ describe('relay route', () => {
 	});
 
 	describe('caps a POST body at 1 MB', () => {
-		const CAP = 1024 * 1024;
-
 		const post = (body: string, headers: Record<string, string> = {}) =>
 			POST(sameOrigin('/relay/i/v0/e', { method: 'POST', body, headers }));
 
@@ -223,7 +224,7 @@ describe('relay route', () => {
 				sameOrigin('/relay/i/v0/e', {
 					method: 'POST',
 					body: 'x',
-					headers: { 'Content-Length': `${1024 * 1024 + 1}` },
+					headers: { 'Content-Length': `${CAP + 1}` },
 				}),
 			],
 		])('adds no cache headers to its own %i', async (status, request) => {
