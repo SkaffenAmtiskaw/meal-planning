@@ -61,9 +61,8 @@ const relay = async (request: Request) => {
 	const path = pathname.slice(RELAY_PATH.length);
 	if (!isPosthogJsPath(path)) return new Response(null, { status: 404 });
 
-	const host = ASSET_PATHS.some((prefix) => path.startsWith(prefix))
-		? POSTHOG_ASSETS_HOST
-		: POSTHOG_HOST;
+	const isAsset = ASSET_PATHS.some((prefix) => path.startsWith(prefix));
+	const host = isAsset ? POSTHOG_ASSETS_HOST : POSTHOG_HOST;
 
 	let body: ArrayBuffer | undefined;
 	if (request.method === 'POST') {
@@ -80,10 +79,16 @@ const relay = async (request: Request) => {
 		body,
 	});
 
-	return new Response(response.body, {
-		status: response.status,
-		headers: contentTypeOnly(response.headers),
-	});
+	const headers = contentTypeOnly(response.headers);
+	const cacheControl = response.headers.get('cache-control');
+	if (isAsset && cacheControl) {
+		headers.set('Cache-Control', cacheControl);
+		// Vercel's CDN caches a function's response only with `s-maxage` or this header, and PostHog
+		// sends neither, so without it every fetch of a script runs the function.
+		headers.set('Vercel-CDN-Cache-Control', cacheControl);
+	}
+
+	return new Response(response.body, { status: response.status, headers });
 };
 
 export const GET = relay;

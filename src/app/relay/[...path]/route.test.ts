@@ -170,6 +170,70 @@ describe('relay route', () => {
 		expect(response.headers.get('content-type')).toBe('text/plain');
 	});
 
+	describe("passes PostHog's Cache-Control on asset responses", () => {
+		const withCacheControl = () =>
+			fetchMock.mockResolvedValueOnce(
+				new Response('script', {
+					status: 200,
+					headers: {
+						'Content-Type': 'application/javascript',
+						'Cache-Control': 'public, max-age=300',
+					},
+				}),
+			);
+
+		it.each([
+			'/relay/static/exception-autocapture.js',
+			'/relay/array/phc_token/config.js',
+		])('returns it on %s, also as Vercel-CDN-Cache-Control', async (path) => {
+			withCacheControl();
+
+			const response = await GET(sameOrigin(path));
+
+			expect(response.headers.get('cache-control')).toBe('public, max-age=300');
+			expect(response.headers.get('vercel-cdn-cache-control')).toBe(
+				'public, max-age=300',
+			);
+		});
+
+		it('adds no cache headers to an asset response that has no Cache-Control', async () => {
+			const response = await GET(sameOrigin('/relay/static/x.js'));
+
+			expect([...response.headers.keys()]).toEqual(['content-type']);
+		});
+
+		it('adds no cache headers to an events response', async () => {
+			withCacheControl();
+
+			const response = await GET(sameOrigin('/relay/i/v0/e'));
+
+			expect([...response.headers.keys()]).toEqual(['content-type']);
+		});
+
+		it.each([
+			[
+				403,
+				new Request('https://app.example.com/relay/static/x.js', {
+					headers: { 'Sec-Fetch-Site': 'cross-site' },
+				}),
+			],
+			[404, sameOrigin('/relay/static')],
+			[
+				413,
+				sameOrigin('/relay/i/v0/e', {
+					method: 'POST',
+					body: 'x',
+					headers: { 'Content-Length': `${1024 * 1024 + 1}` },
+				}),
+			],
+		])('adds no cache headers to its own %i', async (status, request) => {
+			const response = await POST(request);
+
+			expect(response.status).toBe(status);
+			expect([...response.headers.keys()]).toEqual([]);
+		});
+	});
+
 	it('returns no Content-Type when PostHog sends none', async () => {
 		fetchMock.mockResolvedValueOnce(new Response(null, { status: 204 }));
 
