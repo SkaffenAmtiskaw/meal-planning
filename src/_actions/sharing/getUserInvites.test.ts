@@ -14,10 +14,15 @@ vi.mock(
 	'@/_utils/serialize',
 	async () => await import('#mocks/@/_utils/serialize'),
 );
+vi.mock(
+	'@/_utils/reportError',
+	async () => await import('#mocks/@/_utils/reportError'),
+);
 
 import { Planner } from '@/_models/planner';
 import { PendingInvite } from '@/_models/sharing';
 import { User } from '@/_models/user';
+import { reportError } from '@/_utils/reportError';
 
 import { getUserInvites } from './getUserInvites';
 
@@ -38,6 +43,7 @@ describe('getUserInvites', () => {
 			error: 'Unauthorized',
 		});
 		expect(mockPendingInviteFind).not.toHaveBeenCalled();
+		expect(reportError).not.toHaveBeenCalled();
 	});
 
 	it('should return empty array when user has no pending invites', async () => {
@@ -238,8 +244,9 @@ describe('getUserInvites', () => {
 	});
 
 	it('should return error on database failure', async () => {
+		const error = new Error('Database connection failed');
 		mockPendingInviteFind.mockReturnValue({
-			sort: vi.fn().mockRejectedValue(new Error('Database connection failed')),
+			sort: vi.fn().mockRejectedValue(error),
 		} as unknown as ReturnType<typeof PendingInvite.find>);
 
 		const result = await getUserInvites('user@example.com');
@@ -248,6 +255,7 @@ describe('getUserInvites', () => {
 			invites: [],
 			error: 'Failed to fetch invites',
 		});
+		expect(reportError).toHaveBeenCalledWith(error);
 	});
 
 	it('should handle multiple invites with mixed missing data', async () => {

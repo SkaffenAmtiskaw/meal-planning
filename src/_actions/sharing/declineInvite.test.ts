@@ -2,10 +2,15 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { getUser } from '@/_actions/user';
 import { PendingInvite } from '@/_models/sharing';
+import { reportError } from '@/_utils/reportError';
 
 import { type DeclineInviteInput, declineInvite } from './declineInvite';
 
 vi.mock('@/_actions/user', async () => await import('#mocks/@/_actions/user'));
+vi.mock(
+	'@/_utils/reportError',
+	async () => await import('#mocks/@/_utils/reportError'),
+);
 
 vi.mock('@/_models/sharing', () => ({
 	PendingInvite: {
@@ -70,10 +75,18 @@ describe('declineInvite', () => {
 		expect(result).toEqual({ ok: false, error: 'Unauthorized' });
 	});
 
-	it('returns error on database failure during find', async () => {
-		vi.mocked(PendingInvite.findOne).mockRejectedValueOnce(
-			new Error('Database connection failed'),
-		);
+	it('returns the session error without reporting when there is no valid session', async () => {
+		vi.mocked(getUser).mockRejectedValueOnce(new Error('No Valid Session'));
+
+		const result = await declineInvite(input);
+
+		expect(result).toEqual({ ok: false, error: 'No Valid Session' });
+		expect(reportError).not.toHaveBeenCalled();
+	});
+
+	it('returns error and reports on database failure during find', async () => {
+		const error = new Error('Database connection failed');
+		vi.mocked(PendingInvite.findOne).mockRejectedValueOnce(error);
 
 		const result = await declineInvite(input);
 
@@ -81,15 +94,15 @@ describe('declineInvite', () => {
 		if (!result.ok) {
 			expect(result.error).toContain('Database connection failed');
 		}
+		expect(reportError).toHaveBeenCalledWith(error);
 	});
 
-	it('returns error on database failure during delete', async () => {
+	it('returns error and reports on database failure during delete', async () => {
+		const error = new Error('Delete operation failed');
 		vi.mocked(PendingInvite.findOne).mockResolvedValueOnce({
 			email: 'user@example.com',
 		} as never);
-		vi.mocked(PendingInvite.deleteOne).mockRejectedValueOnce(
-			new Error('Delete operation failed'),
-		);
+		vi.mocked(PendingInvite.deleteOne).mockRejectedValueOnce(error);
 
 		const result = await declineInvite(input);
 
@@ -97,6 +110,7 @@ describe('declineInvite', () => {
 		if (!result.ok) {
 			expect(result.error).toContain('Delete operation failed');
 		}
+		expect(reportError).toHaveBeenCalledWith(error);
 	});
 
 	it('returns generic error when non-Error is thrown', async () => {

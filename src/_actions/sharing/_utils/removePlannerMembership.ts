@@ -1,6 +1,7 @@
 import type { Types } from 'mongoose';
 
 import { User } from '@/_models/user';
+import { reportError } from '@/_utils/reportError';
 
 export interface RemoveMembershipResult {
 	ok: boolean;
@@ -27,6 +28,7 @@ export const removePlannerMembership = async (
 
 		return { ok: true };
 	} catch (error) {
+		await reportError(error);
 		return {
 			ok: false,
 			error: error instanceof Error ? error.message : String(error),

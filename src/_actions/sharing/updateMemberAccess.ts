@@ -1,6 +1,6 @@
 'use server';
 
-import { checkAuth } from '@/_actions/auth';
+import { checkAuth } from '@/_actions/auth/checkAuth';
 import type { AccessLevel } from '@/_models/user';
 import { User } from '@/_models/user';
 

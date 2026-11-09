@@ -7,6 +7,8 @@ import { Indicator } from '@mantine/core';
 import { getUserInvites } from '@/_actions/sharing/getUserInvites';
 import { getUser } from '@/_actions/user';
 import { THEME_COLORS } from '@/_theme/colors';
+import { isNoSessionError } from '@/_utils/noSessionError';
+import { reportError } from '@/_utils/reportError';
 
 export interface InviteBadgeProps {
 	children: React.ReactNode;
@@ -48,7 +50,7 @@ export async function InviteBadgeWithData({ children }: InviteBadgeProps) {
 			</Indicator>
 		);
 	} catch (error) {
-		console.error('InviteBadge: Exception:', error);
+		if (!isNoSessionError(error)) await reportError(error);
 		return <>{children}</>;
 	}
 }

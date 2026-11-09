@@ -5,6 +5,8 @@ import { AppShell, AppShellMain } from '@mantine/core';
 
 import { getUser } from '@/_actions/user';
 import { catchify } from '@/_utils/catchify';
+import { isNoSessionError } from '@/_utils/noSessionError';
+import { reportError } from '@/_utils/reportError';
 import { zObjectId } from '@/_utils/zObjectId';
 import { Header } from '@/app/_components/Header';
 import { HEADER_HEIGHT } from '@/app/_constants';
@@ -12,7 +14,8 @@ import { HEADER_HEIGHT } from '@/app/_constants';
 import { BackButton } from './_components/BackButton';
 
 const Layout = async ({ children }: { children: React.ReactNode }) => {
-	const [user] = await catchify(getUser);
+	const [user, userError] = await catchify(getUser);
+	if (userError && !isNoSessionError(userError)) await reportError(userError);
 	const planners = user?.planners ?? [];
 
 	if (!planners.length) return redirect('/');

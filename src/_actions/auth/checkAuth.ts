@@ -3,6 +3,8 @@ import type { Types } from 'mongoose';
 import { getUser } from '@/_actions/user';
 import type { AccessLevel } from '@/_models/user';
 import { catchify } from '@/_utils/catchify';
+import { isNoSessionError } from '@/_utils/noSessionError';
+import { reportError } from '@/_utils/reportError';
 
 type UserDocument = Awaited<ReturnType<typeof getUser>>;
 
@@ -30,8 +32,8 @@ export const checkAuth = async (
 	const [user, error] = await catchify(getUser);
 
 	if (error) {
-		if (error.message === 'No Valid Session')
-			return { type: 'unauthenticated' };
+		if (isNoSessionError(error)) return { type: 'unauthenticated' };
+		await reportError(error);
 		return { type: 'error', error };
 	}
 

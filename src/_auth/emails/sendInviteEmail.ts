@@ -1,6 +1,9 @@
 import { Resend } from 'resend';
 
+import { reportError } from '@/_utils/reportError';
 import { env } from '@/env';
+
+import { resendError } from './_utils/resendError';
 
 type InviteEmailType = 'existing_user' | 'new_user';
 
@@ -34,10 +37,12 @@ export const sendInviteEmail = async ({
 <p>Click <a href="${acceptUrl}">here</a> to sign up and accept the invitation.</p>`;
 	}
 
-	await resend.emails.send({
+	const { error } = await resend.emails.send({
 		from: env.RESEND_FROM_EMAIL,
 		to: email,
 		subject,
 		html,
 	});
+
+	if (error) await reportError(resendError(error));
 };

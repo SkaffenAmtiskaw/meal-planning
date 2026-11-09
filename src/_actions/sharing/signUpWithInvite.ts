@@ -1,9 +1,12 @@
 'use server';
 
+import { isAPIError } from 'better-auth/api';
+
 import { addUser } from '@/_actions/user';
 import { auth } from '@/_auth';
 import { PendingInvite } from '@/_models/sharing';
 import { catchify } from '@/_utils/catchify';
+import { reportError } from '@/_utils/reportError';
 
 import { validateInviteToken } from './validateInviteToken';
 
@@ -33,6 +36,7 @@ export const signUpWithInvite = async (
 		PendingInvite.findOne({ token: input.token }),
 	);
 	if (inviteError || !invite) {
+		if (inviteError) await reportError(inviteError);
 		return { success: false, error: 'Invite not found' };
 	}
 
@@ -54,6 +58,9 @@ export const signUpWithInvite = async (
 	);
 
 	if (createError || !betterAuthUser) {
+		// A 4xx APIError is a user error, such as an email that's already registered
+		const isUserError = isAPIError(createError) && createError.statusCode < 500;
+		if (createError && !isUserError) await reportError(createError);
 		return {
 			success: false,
 			error:
@@ -76,10 +83,12 @@ export const signUpWithInvite = async (
 	);
 
 	if (addUserError) {
+		await reportError(addUserError);
 		// Rollback: Delete Better Auth user
-		await catchify(() =>
+		const [, rollbackError] = await catchify(() =>
 			auth.api.removeUser({ body: { userId: betterAuthUser.user.id } }),
 		);
+		if (rollbackError) await reportError(rollbackError);
 		return {
 			success: false,
 			error:
@@ -90,7 +99,10 @@ export const signUpWithInvite = async (
 	}
 
 	// Step 5: Delete the invite
-	await catchify(() => PendingInvite.deleteOne({ _id: invite._id }));
+	const [, deleteError] = await catchify(() =>
+		PendingInvite.deleteOne({ _id: invite._id }),
+	);
+	if (deleteError) await reportError(deleteError);
 
 	// Step 6: Return success
 	return {

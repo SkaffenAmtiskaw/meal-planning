@@ -33,6 +33,9 @@ const e2eEnv = {
 	RESEND_API_KEY: 'e2e-resend-api-key',
 	RESEND_FROM_EMAIL: 'e2e@example.com',
 	NEXT_PUBLIC_GOOGLE_CLIENT_ID: 'e2e-google-client-id',
+	// Reporting is on only in production, so the token is never used
+	NEXT_PUBLIC_POSTHOG_PROJECT_TOKEN: 'e2e-posthog-project-token',
+	NEXT_PUBLIC_VERCEL_ENV: 'development',
 } satisfies Record<Exclude<keyof typeof env, 'DB_URL'>, string>;
 
 Object.assign(process.env, e2eEnv);

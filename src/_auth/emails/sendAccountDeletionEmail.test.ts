@@ -1,10 +1,16 @@
-import { describe, expect, test, vi } from 'vitest';
+import { beforeEach, describe, expect, test, vi } from 'vitest';
 
+import { makeRefusedSend } from '#fixtures/resend';
 import { mockSend, resendConstructor } from '#mocks/resend';
+import { reportError } from '@/_utils/reportError';
 
 import { sendAccountDeletionEmail } from './sendAccountDeletionEmail';
 
 vi.mock('resend', async () => await import('#mocks/resend'));
+vi.mock(
+	'@/_utils/reportError',
+	async () => await import('#mocks/@/_utils/reportError'),
+);
 
 describe('sendAccountDeletionEmail', () => {
 	test('initializes Resend with the API key', () => {
@@ -20,5 +26,31 @@ describe('sendAccountDeletionEmail', () => {
 				to: 'user@example.com',
 			}),
 		);
+	});
+
+	describe('reporting', () => {
+		beforeEach(() => {
+			vi.mocked(reportError).mockClear();
+		});
+
+		test('reports the error Resend returns, and resolves', async () => {
+			mockSend.mockResolvedValueOnce(makeRefusedSend());
+
+			await expect(
+				sendAccountDeletionEmail({ email: 'user@example.com' }),
+			).resolves.toBeUndefined();
+
+			expect(reportError).toHaveBeenCalledWith(
+				expect.objectContaining({
+					message: 'invalid_api_key: API key is invalid',
+				}),
+			);
+		});
+
+		test('reports nothing when the send succeeds', async () => {
+			await sendAccountDeletionEmail({ email: 'user@example.com' });
+
+			expect(reportError).not.toHaveBeenCalled();
+		});
 	});
 });
