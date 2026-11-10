@@ -3,12 +3,13 @@
 - `checks.yml` runs lint, type check, unit tests and build on every PR, and the E2E tests on every PR into `develop` or `main`. It starts the `ci-failure` routine when one of them fails.
 - `dependency-updates.yml` checks the dependencies for security advisories every hour and for new versions every week, and starts the `dependency-updates` routine when it finds something new.
 - `vercel-deploy-errors.yml` starts the `vercel-deploy-errors` routine when a Vercel deployment you should hear about fails.
+- `production-errors.yml` checks PostHog for new and reopened error issues every hour, and starts the `production-errors` routine for each one.
 - `back-merge.yml` brings a hotfix on `main` back into `develop`, so the next release doesn't undo it.
 
 # Workflows
 
 ## Every Check Is a `package.json` Script
-Every check a workflow runs is a `package.json` script, called as `pnpm <script>`. That covers `checks.yml`'s five checks and the two checks that decide whether to start a routine, `deps:check` and `vercel:check`. The only other steps are setup (checking out the code, installing tools and dependencies, and the `e2e` job's install of Chromium), the step that starts a routine, the steps that restore and save `dependency-updates.yml`'s reported list in the Actions cache, and `back-merge.yml`'s git steps, which check nothing. That way you, or a cloud session looking into a failure, can rerun exactly what CI ran with the same command.
+Every check a workflow runs is a `package.json` script, called as `pnpm <script>`. That covers `checks.yml`'s five checks and the three checks that decide whether to start a routine, `deps:check`, `vercel:check` and `errors:check`. The only other steps are setup (checking out the code, installing tools and dependencies, and the `e2e` job's install of Chromium), the step that starts a routine, the steps that restore and save `dependency-updates.yml`'s and `production-errors.yml`'s reported lists in the Actions cache, and `back-merge.yml`'s git steps, which check nothing. That way you, or a cloud session looking into a failure, can rerun exactly what CI ran with the same command.
 
 No script CI runs writes fixes. CI would pass on code it had silently fixed, then throw the fix away. That's why the lint job runs `pnpm lint:ci` (`biome ci`, which only reports) and not `pnpm lint` (`biome check --write`).
 
@@ -141,13 +142,63 @@ A routine never merges, so you merge each fix PR once its checks pass, with the 
 ## The Vercel Token
 `check` reads the project's deployments and build logs with a Vercel access token, kept in the Actions secret `VERCEL_TOKEN`. It's made at Vercel → Account Tokens (https://vercel.com/account/tokens) and expires a year after it's made. It's scoped to the meal-planning project only, so its API calls need no team ID.
 
-Vercel has no read-only token: even a project-scoped one can deploy to production and read and change environment variables. So the workflow holds it, not the session, as "Starting a Routine" describes. It's never in the cloud environment or the routine.
+Even a project-scoped token can deploy to production and read and change environment variables. The workflow holds it, not the session, as "Starting a Routine" describes. It's never in the cloud environment or the routine.
 
 ## Renewing the Vercel Token
 You'll know the token has expired when a session's summary says Vercel refused the workflow's log fetch, or when the Account Tokens page shows its expiry date has passed. To renew it, in order:
 1. At https://vercel.com/account/tokens, create a token scoped to the meal-planning project, with a one-year expiry.
 2. In GitHub → Settings → Secrets and variables → Actions, replace `VERCEL_TOKEN`'s value with it.
 3. Delete the old token on the Account Tokens page.
+
+# Production Errors
+`production-errors.yml` checks PostHog's error tracking every hour, at minute 37, off the top of the hour as `dependency-updates.yml` is, and starts the [`production-errors` routine](#routines) once for each new or reopened issue. The workflow runs on `develop`, the default branch, like every scheduled workflow. Each session writes a bug note with a root cause analysis from `root-cause-analyst`, and puts its line on the Roadmap.
+
+To run it by hand, open Actions → **Production Errors** → **Run workflow**.
+
+The workflow's token can only read the repo (`permissions: contents: read`). Runs wait their turn rather than cancelling each other, so two never read the same reported list. Like `dependency-updates.yml`, it's turned off after 60 days with no activity in the repo, and you turn it back on from its page in Actions.
+
+## What Starts a Session
+The check, `pnpm -s errors:check` (`scripts/productionErrorCheck.ts`), reads every issue with an occurrence in the last 7 days, whatever its status. The 7 days are PostHog's default range, since the check sets none. It compares each issue with the reported list, and chooses an issue that's active and either new or reopened. An issue is new when the list has no entry for it, and reopened when the list last recorded it as resolved. PostHog reopens the same issue when a resolved error comes back, and keeps its old first-seen time. So an issue starts one session, and starts another only if it's resolved and comes back.
+
+Two cases hold back issues the check would otherwise choose:
+- **No reported list:** on the first run, or after the cache is lost, the check records every current issue and chooses none. Without that, every error already in PostHog, such as the test errors from setting up error reporting, would start a session.
+- **More than 5 issues at once:** a run chooses the 5 oldest by first-seen time, and the rest wait for the next run. That keeps a burst of errors well under the routine's limit of 30 calls an hour.
+
+## The Two Jobs
+The workflow has two jobs, split as `dependency-updates.yml`'s are, so each secret sits in one job:
+- **`check`** installs Node and pnpm from `mise.toml`, restores the reported list and runs `pnpm -s errors:check` with the PostHog read key. The script uses only Node's built-in modules, so the job runs no `pnpm install`, and no package's install script runs beside the key. Its outputs are a `text` for each chosen issue and the updated list.
+- **`start-production-errors`** runs whenever `check` succeeds, even with nothing chosen, so the list keeps up with each issue's status. It calls the routine's `/fire` once per `text`, then saves the list. It holds the routine's two secrets and nothing else.
+
+## The Text
+Like `vercel-deploy-errors.yml`'s, the `text` carries the evidence, because the session has no PostHog access (see "The PostHog Read Key"). It opens with one line of identifiers: whether the issue is new or reopened, its ID and its PostHog link. Then come the issue's details, its latest event, and each exception with its stack frames. The frames run from the one that raised the error outward. If the text is longer than `/fire`'s limit of 65,536 characters, the check drops frames from the bottom until it fits.
+
+Error messages are untrusted input: the app reports whatever text an error holds. So the texts reach the `/fire` call only through its step's `env:`, and `jq` builds each body. The check also puts each value on one line, so a newline in a message can't pass for a line of the text.
+
+Its exact shape is in step 1 of the [`production-errors` skill](../.claude/skills/production-errors/SKILL.md), which reads it, so a change to the shape changes the script and the skill together.
+
+## The Reported List
+The Actions cache holds each issue's last known status, keyed by issue ID. Each run records the status of every issue it read, except the ones it would choose. A chosen issue is recorded once its `/fire` call succeeds, and one held back by the limit of 5 keeps the entry it had, or still has none, until a later run chooses it. The list keeps an issue's entry after the issue has gone 7 days without an occurrence. So if it occurs again, it isn't taken for new: it starts nothing if it was active, and counts as reopened if it was resolved.
+
+`check` restores the newest cache entry whose key starts with `production-errors-reported-`, and `start-production-errors` saves the updated list as `production-errors-reported-<run ID>`, since a cache entry can't be changed once saved. GitHub deletes an entry no run has read in 7 days, so the list is lost only when the workflow has been off that long. To clear it on purpose, delete the entries, from Actions → Caches or with `gh cache delete <key>`. The next run then records the current issues and starts nothing.
+
+## When PostHog Fails
+If PostHog refuses the read key (a 401 or 403), such as once the key is revoked, the check chooses no issues. It sends one text in their place: `PostHog refused the read key: HTTP <status> <message>`. Its session writes no note, and its summary tells you to replace the key. The list records that the refusal was reported, so the runs after it stay quiet until the key works again, rather than starting a session every hour.
+
+Any other PostHog failure, such as an outage, fails `check` before any `/fire` call. Nothing is saved, so the next run tries again.
+
+## When the Call Fails
+If a `/fire` call fails (a wrong secret, the API down, or the routine's limit of 30 calls an hour), `start-production-errors` still tries the rest. It then saves the list. An issue whose call failed keeps the entry it had, or still has none, so the next run sends it again. Then the job fails, so the run shows in Actions. The job's log shows the error `/fire` returned, such as a 401 for a wrong token, and on success it shows the new session's link. Like `start-ci-failure`, it never retries a call.
+
+## The PostHog Read Key
+`check` reads issues and events with a PostHog personal API key that has only the `error_tracking:read` scope, limited to the project. It's kept in the Actions secret `POSTHOG_READ_KEY`. The project's ID is in the Actions variable `POSTHOG_PROJECT_ID`, since it isn't secret. Both are set in GitHub → Settings → Secrets and variables → Actions. The key is separate from the build's source-map key, which can write (see `docs/services.md`, "PostHog").
+
+The key can only read, but it reads every error the app reports, and errors can hold users' data. So the workflow holds it, as "Starting a Routine" describes, and the session gets no PostHog access.
+
+## Replacing the PostHog Read Key
+You'll know the key needs replacing when a session's summary says PostHog refused it. To replace it, in order:
+1. In PostHog → account settings → Personal API keys, create a key with only the `error_tracking:read` scope, limited to the project.
+2. In GitHub → Settings → Secrets and variables → Actions, replace `POSTHOG_READ_KEY`'s value with it.
+3. Delete the old key in PostHog.
 
 # Back-Merge
 A hotfix reaches `main` through its own PR, without going through `develop`. If nothing brought it back, the next release from `develop` into `main` could undo it. `back-merge.yml` brings it back on every push to `main`: it merges `main` into `develop` and pushes the merge straight to `develop`, with no PR. Both sides already passed their checks, so the merge runs none.
@@ -167,7 +218,7 @@ A routine starts only on an event that is itself a result for you: a failed chec
 
 A failed check can't start a routine directly, so a workflow job calls the routine's `/fire` endpoint, as `start-ci-failure` does (see "The Job That Starts `ci-failure`"). The [`/fire` API reference](https://platform.claude.com/docs/en/api/claude-code/routines-fire) has the request's shape. The routine's saved prompt runs its skill on the `text`, which arrives in the session wrapped in a `routine-fire-payload` block.
 
-By default, a credential that can't be made read-only stays with the workflow. When a session needs data from a service whose narrowest credential can still write, such as deploy or change settings, the workflow that starts the routine holds the credential as an Actions secret, fetches the data and sends it in the `text`. The session gets no credential. This follows least privilege for LLM agents ([OWASP Top 10 for LLM Applications, LLM06:2025 Excessive Agency](https://genai.owasp.org/llmrisk/llm062025-excessive-agency/)): a session runs without permission prompts while it reads untrusted text, so a line of a log could steer it into anything its credential allows. It's a default, not a rule. A story that finds a good reason to do otherwise, such as a session that has to dig through far more than a workflow could send, lays out the trade-off, and you decide. `vercel-deploy-errors.yml`'s Vercel token is held this way (see "The Vercel Token").
+A routine's credentials follow least privilege ([OWASP Top 10 for LLM Applications, LLM06:2025 Excessive Agency](https://genai.owasp.org/llmrisk/llm062025-excessive-agency/)). A session needs the data, not the service, so by default it gets no credential: the workflow that starts the routine holds the credential as an Actions secret, fetches the data and sends it in the `text`. A story with a good reason for a session to hold a credential lays out the trade-off, and you decide. `vercel-deploy-errors.yml`'s Vercel token and `production-errors.yml`'s PostHog read key are held this way (see "The Vercel Token" and "The PostHog Read Key").
 
 # Secrets and Environment Values
 ## The App's Variables
@@ -181,7 +232,7 @@ When you add a variable to `src/env.ts`, where it needs a value depends on wheth
 - **If it's required:** give it a dummy in both, beside the unit-test value in `test/mocks/env.ts` and the E2E value in `playwright.config.ts` (see `docs/e2e_tests.md`, "Environment Variables"). For the cloud environment, that means its variables on claude.ai and their record in this doc. It also needs a value in Vercel (Settings → Environment Variables), for Production and for Preview. A variable missing from either can fail that environment's deploy, since `src/env.ts` checks every variable.
 - **If it's optional:** it gets no dummy in either, because the checks pass without it. Error reporting's two, `NEXT_PUBLIC_POSTHOG_PROJECT_TOKEN` and `NEXT_PUBLIC_VERCEL_ENV`, are like this. Each still gets an E2E value in `playwright.config.ts`, which lists every app variable. `docs/services.md`, "The Environments", says where each one is set on Vercel.
 
-The build's own PostHog variables, `POSTHOG_API_KEY` and `POSTHOG_PROJECT_ID`, aren't in `src/env.ts`. CI and the cloud environment leave them unset, so the build skips its source-map upload there (see `docs/services.md`, "PostHog").
+The build's own PostHog variables, `POSTHOG_API_KEY` and `POSTHOG_PROJECT_ID`, aren't in `src/env.ts`. CI's builds and the cloud environment leave them unset, so the build skips its source-map upload there (see `docs/services.md`, "PostHog"). `production-errors.yml`'s `check` job sets a `POSTHOG_PROJECT_ID` of its own, from an Actions variable, but runs no build (see "The PostHog Read Key").
 
 ## A Routine's URL and Token
 A workflow that starts a routine reads its `/fire` URL and bearer token from two Actions secrets (Settings → Secrets and variables → Actions), named after the routine: `ROUTINE_<NAME>_URL` and `ROUTINE_<NAME>_TOKEN`, such as `ROUTINE_CI_FAILURE_URL`. Neither value is written anywhere in the repo. Each routine's `routine.md` names its two secrets.
@@ -189,7 +240,7 @@ A workflow that starts a routine reads its `/fire` URL and bearer token from two
 Both come from the routine's API trigger on claude.ai (open the routine → Edit → **Select a trigger** → **API**). The token is shown only once, when it's generated, so it goes straight into the secret. If it's lost, **Regenerate** makes a new one, which revokes the old one, and the new one replaces the secret's value.
 
 # Setup Outside the Repo
-Some of what CI and the routines need lives in settings outside the repo, on GitHub, on claude.ai and in the Claude desktop app. Most of it is recorded in this section. Some is recorded beside the workflow or routine it serves: the routines' Actions secrets in "A Routine's URL and Token", and the Vercel access token and its `VERCEL_TOKEN` secret in "The Vercel Token". The rest of what the app relies on outside the repo, such as Vercel, Atlas and the domain, is in `docs/services.md`.
+Some of what CI and the routines need lives in settings outside the repo, on GitHub, on claude.ai and in the Claude desktop app. Most of it is recorded in this section. Some is recorded beside the workflow or routine it serves: the routines' Actions secrets in "A Routine's URL and Token", the Vercel access token and its `VERCEL_TOKEN` secret in "The Vercel Token", and the PostHog read key and project ID in "The PostHog Read Key". The rest of what the app relies on outside the repo, such as Vercel, Atlas and the domain, is in `docs/services.md`.
 
 When you set up something outside the repo, record it where it'll be found when it next needs changing. Which doc that is depends on what the setting is for:
 - **If it exists only so a workflow or routine works,** such as an Actions secret: record it in this doc, beside that workflow or routine, and link it from its service's entry in `docs/services.md`.
@@ -347,5 +398,6 @@ Each routine's configuration on claude.ai (its prompt, trigger, model and enviro
 - **`ci-failure`:** looks into a failed check on a PR, so the result reaches you as a session in the Code tab, under **Routines** in the sidebar. Its skill is [`.claude/skills/ci-failure/`](../.claude/skills/ci-failure/SKILL.md).
 - **`dependency-updates`:** handles the new dependency versions and security advisories the dependency check finds, so they reach you as a session in the Code tab, under **Routines**. Its skill is [`.claude/skills/dependency-updates/`](../.claude/skills/dependency-updates/SKILL.md).
 - **`vercel-deploy-errors`:** works out why a Vercel deployment failed, then fixes it or says what you need to change in Vercel, so the result reaches you as a session in the Code tab, under **Routines**. Its skill is [`.claude/skills/vercel-deploy-errors/`](../.claude/skills/vercel-deploy-errors/SKILL.md).
+- **`production-errors`:** turns a new or reopened PostHog error issue into a bug note with a root cause analysis, so the analysis waits for you as a session in the Code tab, under **Routines**. Its skill is [`.claude/skills/production-errors/`](../.claude/skills/production-errors/SKILL.md).
 
 To add a routine, go to https://claude.ai/code/routines → **New routine**. The form adds a **Pull request: Opened** GitHub trigger by default. Remove it with ✕, then add the trigger the routine needs with **+ Add another trigger**. To try a routine that reads the `text` it's sent, call its API trigger with `curl`, as the trigger's sample command shows. **Run now** has no text field.
