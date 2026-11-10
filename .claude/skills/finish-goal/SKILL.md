@@ -39,7 +39,7 @@ Go through them with the user one at a time. For each, propose whether it applie
 ## 3. Write the Audit Notes
 For each audit the user confirmed, in step 2's order:
 1. **The note:** create it in `features/releases/` in the notes repo from `.claude/note-templates/Audit.md`, named for the goal and the audit, such as `Dev Foundations Security Audit`. Write its kind exactly as step 2 lists it, because `/audit-release` picks its instructions by the kind.
-2. **Its Roadmap line:** add `[[<note>]] ![[<note>#^status]] 🎯 [[<goal>]]` to Next, below the audit lines already added and above every other line, so the audit lines sit at the top of Next in step 2's order. Renumber the lines below them.
+2. **Its Roadmap line:** add `[[<note>]] ![[<note>#^status]] 🎯 [[<goal>]]` to Next, below any 🔥 lines and the audit lines already added, and above every other line. That keeps the audit lines in step 2's order. Renumber the lines below them.
 
 ## 4. Start the Release Freeze
 The steps, in order:

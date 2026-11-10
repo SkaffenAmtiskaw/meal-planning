@@ -33,7 +33,7 @@ Some changes need the story lifecycle, whichever note they came from. Once you'v
 If one applies, tell the user which and why, and ask whether to spin the change off into a story. If they say yes, read `spinning-off-a-story.md`, follow it and stop.
 
 ### Where the Change Is Made
-Run checks 1 and 2 in `starting-on-a-branch.md`, in the `building-code` skill's folder, and stop wherever they say to. Give the freeze check no note name, because a release refuses every change that isn't one of its stories.
+Run checks 1 and 3 in `starting-on-a-branch.md`, in the `building-code` skill's folder, and stop wherever they say to. Give the freeze check no note name, because a release refuses every change that isn't one of its stories.
 
 ## 2. Settle the Change
 Settle with the user what the change is. If it adds or moves a rule, decide where it goes as the `rule-placement` skill describes. If it adds or renames a skill or agent, read `adding-a-skill-or-agent.md`.

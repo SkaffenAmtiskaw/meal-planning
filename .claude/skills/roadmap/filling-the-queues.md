@@ -1,7 +1,7 @@
 # Filling the Queues
 The steps to bring Next and Planning in line when a goal has just become the building or planning goal, in order:
 
-1. **Sort the lines already in Next and Planning.** Each line goes where its goals and markers now put it, as the `roadmap-rules` skill describes. A line that fits neither queue goes back to Later.
+1. **Sort the lines already in Next and Planning.** Each line goes where its goals and markers now put it, as the `roadmap-rules` skill describes. A line that fits neither queue, by its goals or its marker, goes back to Later.
 2. **Fill the queue of each goal that just became the building or planning goal.** Go through every Later line that serves the goal: the lines under its heading and the lines carrying its 🎯 link. Ask the user which lines move into its queue.
 3. **If a goal just became the building goal, add what joins the release.** Handle these in order, because freezing a dated copy reads Next to see which stories are in the release:
    1. For each line under the Bugs heading whose `^status` line doesn't say it's blocked, move it into Next and end it with 🔁.
