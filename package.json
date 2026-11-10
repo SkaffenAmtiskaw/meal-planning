@@ -10,6 +10,7 @@
     "db:empty-worktree": "tsx --env-file=.env.local seed/emptyWorktreeDatabase.ts",
     "dev": "sh scripts/dev.sh",
     "dev:sign-in": "pnpm run \"/^(dev|sign-in)$/\"",
+    "errors:check": "node scripts/productionErrorCheck.ts",
     "lint": "biome check --write",
     "lint:ci": "biome ci",
     "seed": "tsx --env-file=.env.local seed/seed.ts",
