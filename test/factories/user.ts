@@ -7,6 +7,7 @@ interface CreateUserOptions {
 	email?: string;
 	password?: string;
 	name?: string;
+	emailVerified?: boolean;
 }
 
 // Creates the better-auth user and the app's User doc together, with the same email.
@@ -15,9 +16,10 @@ export const createUser = async ({
 	email = `e2e-${crypto.randomUUID()}@example.com`,
 	password,
 	name = 'New User',
+	emailVerified = true,
 }: CreateUserOptions) => {
 	const { user } = await auth.api.createUser({
-		body: { email, password, name, data: { emailVerified: true } },
+		body: { email, password, name, data: { emailVerified } },
 	});
 	await User.create({ email, name, planners });
 
