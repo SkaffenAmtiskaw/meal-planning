@@ -107,6 +107,8 @@ Resend sends the app's emails, such as invites and email-change links, on the fr
 
 It has one API key, named `meal-planning-test`, with sending permission. Local, production and previews all use it, so revoking or rotating it changes all three at once.
 
+E2E runs never reach Resend. Playwright starts a fake Resend API and passes its URL to the app as `RESEND_BASE_URL`. The Resend SDK reads that variable on its own, so the app's emails go to the fake, where the tests read them. `docs/e2e_tests.md`, "Environment Variables", says how, and what an SDK upgrade could break.
+
 **Secrets:** the key is `RESEND_API_KEY`, in `.env.local` and Vercel. Resend shows a key's value only when it's created.
 
 ## PostHog
