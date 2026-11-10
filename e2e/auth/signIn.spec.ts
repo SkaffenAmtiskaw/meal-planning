@@ -2,7 +2,13 @@ import { linkGoogleAccount } from '#factories/account';
 import { createPlanner } from '#factories/planner';
 import { createUser } from '#factories/user';
 
-import { emailsTo, expect, test } from '../_fixtures';
+import {
+	emailsTo,
+	enterEmail,
+	expect,
+	signInWithPassword,
+	test,
+} from '../_fixtures';
 
 test('the right password lands the user on their planner', async ({ page }) => {
 	const planner = await createPlanner();
@@ -12,10 +18,7 @@ test('the right password lands the user on their planner', async ({ page }) => {
 	});
 
 	await page.goto('/');
-	await page.getByRole('textbox', { name: 'Email' }).fill(user.email);
-	await page.getByRole('button', { name: 'Continue' }).click();
-	await page.getByLabel('Password', { exact: true }).fill('e2e-password');
-	await page.getByRole('button', { name: 'Sign In' }).click();
+	await signInWithPassword(page, user.email, 'e2e-password');
 
 	await expect(page).toHaveURL(`/${planner._id}/calendar`);
 	await expect(page.getByRole('grid')).toBeVisible();
@@ -27,12 +30,11 @@ test('a wrong password shows an error and keeps the user signed out', async ({
 	const user = await createUser({ planners: [], password: 'e2e-password' });
 
 	await page.goto('/');
-	await page.getByRole('textbox', { name: 'Email' }).fill(user.email);
-	await page.getByRole('button', { name: 'Continue' }).click();
-	await page.getByLabel('Password', { exact: true }).fill('wrong-password');
-	await page.getByRole('button', { name: 'Sign In' }).click();
+	await signInWithPassword(page, user.email, 'wrong-password');
 
-	await expect(page.getByTestId('signin-error-alert')).toBeVisible();
+	await expect(
+		page.getByRole('alert').filter({ hasText: 'Invalid email or password' }),
+	).toBeVisible();
 	await page.reload();
 	await expect(page.getByRole('textbox', { name: 'Email' })).toBeVisible();
 });
@@ -45,12 +47,11 @@ test("an unverified user can't sign in", async ({ page }) => {
 	});
 
 	await page.goto('/');
-	await page.getByRole('textbox', { name: 'Email' }).fill(user.email);
-	await page.getByRole('button', { name: 'Continue' }).click();
-	await page.getByLabel('Password', { exact: true }).fill('e2e-password');
-	await page.getByRole('button', { name: 'Sign In' }).click();
+	await signInWithPassword(page, user.email, 'e2e-password');
 
-	await expect(page.getByTestId('signin-error-alert')).toBeVisible();
+	await expect(
+		page.getByRole('alert').filter({ hasText: 'Email not verified' }),
+	).toBeVisible();
 	await page.reload();
 	await expect(page.getByRole('textbox', { name: 'Email' })).toBeVisible();
 	expect(await emailsTo(user.email)).toEqual([]);
@@ -61,8 +62,7 @@ test('a Google-only email shows the Google alert', async ({ page }) => {
 	await linkGoogleAccount(user);
 
 	await page.goto('/');
-	await page.getByRole('textbox', { name: 'Email' }).fill(user.email);
-	await page.getByRole('button', { name: 'Continue' }).click();
+	await enterEmail(page, user.email);
 
 	await expect(
 		page.getByText('This email is linked to a Google account'),

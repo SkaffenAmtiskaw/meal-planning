@@ -7,7 +7,7 @@ project documentation: structure, code conventions, styling, theme, unit tests, 
 # e2e/
 Playwright E2E specs, grouped in folders by feature area (see `docs/e2e_tests.md`)
 ## _fixtures/
-Playwright support code: what specs import (the `test` fixture, `expect`, `signIn` and the email helpers), the launchers for the memory server and the fake Resend API, and the free-port utility `playwright.config.ts` uses
+Playwright support code: what specs import (the `test` fixture and the fixtures it's built from, `expect`, `signIn`, shared form steps and the email helpers), the launchers for the memory server and the fake Resend API, and the free-port utility `playwright.config.ts` uses
 # Notes
 notes on planned work, in Obsidian-flavored Markdown, live in the `meal-planning-notes` repo beside this one. Its `Roadmap.md` is the project roadmap, with links to detailed notes
 

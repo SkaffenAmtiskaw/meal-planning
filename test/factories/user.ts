@@ -2,6 +2,8 @@ import { auth } from '#auth';
 import type { PlannerMembership } from '@/_models/user';
 import { User } from '@/_models/user';
 
+import { uniqueEmail } from './uniqueEmail';
+
 interface CreateUserOptions {
 	planners: PlannerMembership[];
 	email?: string;
@@ -13,7 +15,7 @@ interface CreateUserOptions {
 // Creates the better-auth user and the app's User doc together, with the same email.
 export const createUser = async ({
 	planners,
-	email = `e2e-${crypto.randomUUID()}@example.com`,
+	email = uniqueEmail(),
 	password,
 	name = 'New User',
 	emailVerified = true,

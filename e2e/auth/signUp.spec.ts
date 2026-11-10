@@ -1,13 +1,20 @@
-import { expect, latestEmailTo, linkInEmail, test } from '../_fixtures';
+import { uniqueEmail } from '#factories/uniqueEmail';
+
+import {
+	enterEmail,
+	expect,
+	latestEmailTo,
+	linkInEmail,
+	test,
+} from '../_fixtures';
 
 test('a new email creates an account and shows Check your inbox', async ({
 	page,
 }) => {
-	const email = `e2e-${crypto.randomUUID()}@example.com`;
+	const email = uniqueEmail();
 
 	await page.goto('/');
-	await page.getByRole('textbox', { name: 'Email' }).fill(email);
-	await page.getByRole('button', { name: 'Continue' }).click();
+	await enterEmail(page, email);
 	await page.getByLabel('Create a password').fill('e2e-password');
 	await page.getByRole('button', { name: 'Create Account' }).click();
 
@@ -17,10 +24,9 @@ test('a new email creates an account and shows Check your inbox', async ({
 test('following the verification link signs the new user in', async ({
 	page,
 }) => {
-	const email = `e2e-${crypto.randomUUID()}@example.com`;
+	const email = uniqueEmail();
 	await page.goto('/');
-	await page.getByRole('textbox', { name: 'Email' }).fill(email);
-	await page.getByRole('button', { name: 'Continue' }).click();
+	await enterEmail(page, email);
 	await page.getByLabel('Create a password').fill('e2e-password');
 	await page.getByRole('button', { name: 'Create Account' }).click();
 	await expect(page.getByText('Check your inbox')).toBeVisible();

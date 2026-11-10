@@ -8,7 +8,7 @@
 | Path | What it holds |
 |------|---------------|
 | `e2e/<area>/*.spec.ts` | the specs, grouped by feature area |
-| `e2e/_fixtures/` | Playwright support code. Specs import the `test` fixture (in `test.ts`), `expect`, `signIn` and the email helpers `emailsTo`, `latestEmailTo` and `linkInEmail` from here. It also holds `freePort.ts`, which picks the free port the app serves on. The two launchers Playwright starts before the tests are there too: `memoryServer.ts` for the throwaway database and `fakeResend.ts` for the fake Resend API |
+| `e2e/_fixtures/` | Playwright support code. Specs import the `test` fixture, `expect`, `signIn`, the form steps that more than one spec takes (`enterEmail`, `signInWithPassword`, `requestPasswordReset` and `submitNewPassword`) and the email helpers `emailsTo`, `latestEmailTo` and `linkInEmail` from here. `test.ts` builds `test` from the fixtures in `clientIp.ts` and `databaseConnections.ts`. It also holds `freePort.ts`, which picks the free port the app serves on. The two launchers Playwright starts before the tests are there too: `memoryServer.ts` for the throwaway database and `fakeResend.ts` for the fake Resend API |
 | `test/factories/` | plain functions that create test data, and the database connection they use, imported through `#factories` |
 | `test/auth.ts` | the test-only better-auth instance, imported through `#auth` |
 | `playwright.config.ts` | the Playwright config, at the repo root |
@@ -36,7 +36,7 @@ If a spec's first route isn't in the table, add the route in the same change, ei
 # Writing Specs
 
 ## Import from `e2e/_fixtures/`
-Specs import `test`, `expect`, `signIn` and the email helpers from `e2e/_fixtures/`, never from `@playwright/test`. The `test` there opens each worker's database connections for the factories and `signIn`, and closes them when the worker ends. A spec that imports Playwright's own `test` gets no connections. Everything else a spec takes from Playwright comes through `e2e/_fixtures/` too, even the `Page` type, so a single Biome ban on `@playwright/test` in specs catches a stray `test` import.
+Specs import `test`, `expect`, `signIn`, the shared form steps and the email helpers from `e2e/_fixtures/`, never from `@playwright/test`. The `test` there opens each worker's database connections for the factories and `signIn`, and closes them when the worker ends. A spec that imports Playwright's own `test` gets no connections. Everything else a spec takes from Playwright comes through `e2e/_fixtures/` too, even the `Page` type, so a single Biome ban on `@playwright/test` in specs catches a stray `test` import.
 
 ```typescript
 // ✅ CORRECT
@@ -141,7 +141,7 @@ The better-auth user's email is verified unless you pass `emailVerified: false`.
 Never use better-auth `testUtils`' `saveUser`. Its users have no password, so they can't test signing in with the form.
 
 ## Emails Are Unique and Lowercase
-Unless you pass one, `createUser` generates an email that is unique on every call and all lowercase: `` `e2e-${crypto.randomUUID()}@example.com` ``. If you pass your own, it has to be unique and lowercase too:
+Unless you pass one, `createUser` generates an email that is unique on every call and all lowercase, from `uniqueEmail()` in `test/factories/uniqueEmail.ts`. A spec or factory that needs a fresh email of its own, such as one to sign up with, calls `uniqueEmail()` too. If you pass your own, it has to be unique and lowercase too:
 - better-auth rejects an email that already exists, so a fixed email fails on the second test or retry that uses it.
 - The home page looks users up by the email in the session, which better-auth stores in lowercase. A mixed-case email in the `User` doc isn't found.
 

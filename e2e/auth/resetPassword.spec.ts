@@ -4,26 +4,10 @@ import {
 	expect,
 	latestEmailTo,
 	linkInEmail,
-	type Page,
+	requestPasswordReset,
+	submitNewPassword,
 	test,
 } from '../_fixtures';
-
-const submitNewPassword = async (page: Page) => {
-	await page.getByLabel('New password', { exact: true }).fill('new-password');
-	await page
-		.getByLabel('Confirm new password', { exact: true })
-		.fill('new-password');
-	await page.getByRole('button', { name: 'Reset password' }).click();
-};
-
-const requestResetLink = async (page: Page, email: string) => {
-	await page.goto('/');
-	await page.getByRole('textbox', { name: 'Email' }).fill(email);
-	await page.getByRole('button', { name: 'Continue' }).click();
-	await page.getByRole('button', { name: 'Forgot password?' }).click();
-	await expect(page.getByText('Check your inbox')).toContainText(email);
-	return linkInEmail(await latestEmailTo(email));
-};
 
 test('no token shows Invalid reset link', async ({ page }) => {
 	await page.goto('/reset-password');
@@ -35,9 +19,11 @@ test('no token shows Invalid reset link', async ({ page }) => {
 
 test('a made-up token shows an error', async ({ page }) => {
 	await page.goto('/reset-password?token=made-up-token');
-	await submitNewPassword(page);
+	await submitNewPassword(page, 'new-password');
 
-	await expect(page.getByTestId('error-alert')).toBeVisible();
+	await expect(
+		page.getByRole('alert').filter({ hasText: 'Invalid token' }),
+	).toBeVisible();
 });
 
 test('an already-used link shows Invalid reset link', async ({ page }) => {
@@ -45,10 +31,11 @@ test('an already-used link shows Invalid reset link', async ({ page }) => {
 		planners: [],
 		password: 'old-password',
 	});
-	const link = await requestResetLink(page, user.email);
+	await requestPasswordReset(page, user.email);
+	const link = linkInEmail(await latestEmailTo(user.email));
 
 	await page.goto(link);
-	await submitNewPassword(page);
+	await submitNewPassword(page, 'new-password');
 	await expect(page).toHaveURL('/');
 	await expect(page.getByRole('textbox', { name: 'Email' })).toBeVisible();
 

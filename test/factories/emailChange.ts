@@ -1,6 +1,8 @@
 import type { UserInterface } from '@/_models/user';
 import { User } from '@/_models/user';
 
+import { uniqueEmail } from './uniqueEmail';
+
 type PendingEmailChange = NonNullable<UserInterface['pendingEmailChange']>;
 
 interface CreateEmailChangeRequestOptions {
@@ -15,7 +17,7 @@ export const createEmailChangeRequest = async (
 	}: CreateEmailChangeRequestOptions = {},
 ) => {
 	const pendingEmailChange: PendingEmailChange = {
-		email: `e2e-${crypto.randomUUID()}@example.com`,
+		email: uniqueEmail(),
 		token: crypto.randomUUID(),
 		expiresAt,
 	};
