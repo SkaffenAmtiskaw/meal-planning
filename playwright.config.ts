@@ -14,6 +14,7 @@ const port = process.env.E2E_PORT;
 const baseURL = `http://localhost:${port}`;
 
 // Every app variable gets an E2E value here, so none falls back to .env.local. DB_URL comes from the memory server.
+// RESEND_BASE_URL comes from the fake Resend server. It isn't in src/env.ts: the Resend SDK reads it on its own.
 const e2eEnv = {
 	BETTER_AUTH_SECRET: 'e2e-dummy-secret-at-least-32-characters',
 	BETTER_AUTH_URL: baseURL,
@@ -49,6 +50,14 @@ export default defineConfig({
 				MONGOMS_ARCHIVE_NAME: '',
 			},
 			wait: { stdout: /Memory server ready at (?<db_url>mongodb:\/\/\S+)/ },
+			stdout: 'pipe',
+		},
+		{
+			name: 'FakeResend',
+			command: 'node e2e/_fixtures/fakeResend.ts',
+			wait: {
+				stdout: /Fake Resend ready at (?<resend_base_url>http:\/\/\S+)/,
+			},
 			stdout: 'pipe',
 		},
 		{
