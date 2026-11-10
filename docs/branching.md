@@ -11,7 +11,7 @@ There are four kinds of branch, each with its own job:
 - **`develop`** is where finished work collects. It's the default branch on GitHub, and every story branch starts from it.
 - **`main`** is production. Vercel deploys every merge into it. You merge each PR into it yourself, so every deploy is your click.
 - **`feature/<generated name>`** holds one story, `/tooling` change or other piece of work, from start to finish. The desktop app names it when it makes the worktree.
-- **`hotfix/<slug>`** holds an urgent fix, cut from `main` by hand, so the fix ships without anything else that's on `develop`.
+- **`hotfix/<slug>`** holds an urgent fix, cut from `main`, so the fix ships without anything else that's on `develop`.
 
 GitHub's rulesets on `develop` and `main` refuse a direct push to either branch, and a PR can't merge while any of its required checks fails. The one exception is the back-merge, which brings a hotfix from `main` into `develop` (see "A Hotfix"). The rulesets' settings and reasons are in `docs/ci.md`, "The Rulesets on `develop` and `main`".
 
@@ -61,21 +61,16 @@ Some `/tooling` changes come with notes work that has to wait for the merge, suc
 A quick fix can also go through GitHub's web editor. Edit the file on `develop`, choose **Create a new branch for this commit and start a pull request**, and turn on auto-merge on the PR.
 
 # A Hotfix
-A hotfix is an ordinary bug story, built on a branch from `main` instead of `develop`. The steps, in order:
-1. **Make the worktree by hand,** since the app only branches from `develop`. In a terminal in the main checkout, run:
+A hotfix is an ordinary bug story, built on a branch from `main` instead of `develop`, so its fix reaches production without waiting for a release. Its Roadmap line ends with `🔥 Hotfix: <reason>` and sits first in Next. You add 🔥 yourself. A routine adds it only in the cases its skill sets out.
 
-   ```bash
-   git fetch origin
-   ```
+Each skill that investigates, builds or reviews a 🔥 story first checks that its session is on a `hotfix/` branch holding nothing from `develop` that isn't on `main`. A branch cut from `develop` would carry unreleased work into `main`, whatever it's named. If the session isn't on such a branch, the skill makes a hotfix worktree from `main` and moves the work to a new session there. It makes the worktree itself because the app only branches from `develop`.
 
-   ```bash
-   git worktree add -b hotfix/<slug> .claude/worktrees/hotfix-<slug> origin/main
-   ```
-2. **Start a session in it,** as "Opening an Existing Worktree" describes. Name its `hotfix/<slug>` branch, since it has no sessions yet to match by title, and have the session run `/investigate <note>`. The hook copies `.env.local` into it, installs its dependencies and gives it a slot.
-3. **Run the bug through its skills there:** `/investigate`, `/plan-steps`, `/implement` and `/final-review`. On a `hotfix/` branch, each skill merges in `main` rather than `develop`. The release freeze doesn't hold up a hotfix, since it covers only `develop`.
-4. **Merge the PR yourself.** `/final-review` opens it into `main` without auto-merge. Once its checks pass, merge it with a merge commit, which deploys. A production fix PR that a routine opens into `main` takes the same path from here.
-5. **Let the back-merge bring it into `develop`.** When `main` has commits that `develop` lacks, `back-merge.yml` merges `main` into `develop` and pushes. That keeps the next release from undoing the fix. Any story branch still open picks it up at its next session's merge of `develop`.
-6. **Run `/close`** in the main checkout.
+The steps, in order:
+1. **Run `/investigate <note>` where you usually would,** such as in the main checkout. It makes a `hotfix/<slug>` worktree from `main` in `.claude/worktrees/hotfix-<slug>`, starts a session there that runs `/investigate <note>`, and links it. Open that session from the link or the sidebar. Its hook copies `.env.local` into the worktree, installs its dependencies and gives it a slot.
+2. **Run the rest of the bug's skills there:** once `/investigate` finishes, `/plan-steps`, `/implement` and `/final-review`. On a `hotfix/` branch, each skill merges in `main` rather than `develop`. The release freeze doesn't hold up a hotfix, since it covers only `develop`.
+3. **Merge the PR yourself.** `/final-review` opens it into `main` without auto-merge. Once its checks pass, merge it with a merge commit, which deploys. A production fix PR that a routine opens into `main` takes the same path from here.
+4. **Let the back-merge bring it into `develop`.** When `main` has commits that `develop` lacks, `back-merge.yml` merges `main` into `develop` and pushes. That keeps the next release from undoing the fix. Any story branch still open picks it up at its next session's merge of `develop`.
+5. **Run `/close`** in the main checkout.
 
 # A Release
 A release ships one finished goal. While it's under way, the release freeze lets only the release's own audits and fixes change `develop`, so nothing unaudited ships. The points in a release, in order, and what you do at each:
