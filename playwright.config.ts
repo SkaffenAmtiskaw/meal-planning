@@ -1,22 +1,11 @@
-import { createServer } from 'node:net';
-
 import { defineConfig, devices } from '@playwright/test';
 
 import type { env } from '@/env';
 
 import packageJson from './package.json' with { type: 'json' };
 
-// A port the OS has free right now, so two checkouts can run E2E at once.
-const freePort = () =>
-	new Promise<string>((resolve, reject) => {
-		const server = createServer();
-		server.on('error', reject);
-		server.listen(0, () => {
-			const address = server.address();
-			const port = typeof address === 'object' && address ? address.port : 0;
-			server.close(() => resolve(String(port)));
-		});
-	});
+// Not the barrel: it loads #auth, which reads @/env before the E2E values below are set.
+import { freePort } from './e2e/_fixtures/freePort';
 
 // Picked once per run: the main process picks it, and each worker loads this file again and finds
 // it in process.env.
