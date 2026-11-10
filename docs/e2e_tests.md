@@ -8,7 +8,7 @@
 | Path | What it holds |
 |------|---------------|
 | `e2e/<area>/*.spec.ts` | the specs, grouped by feature area |
-| `e2e/_fixtures/` | Playwright support code: the `test` and `expect` specs import, `signIn`, and `memoryServer.ts`, the launcher that starts the throwaway database |
+| `e2e/_fixtures/` | Playwright support code. Specs import the `test` fixture, `expect`, `signIn`, the form steps that more than one spec takes (`enterEmail`, `signInWithPassword`, `requestPasswordReset` and `submitNewPassword`) and the email helpers `emailsTo`, `latestEmailTo` and `linkInEmail` from here. `test.ts` builds `test` from the fixtures in `clientIp.ts` and `databaseConnections.ts`. It also holds `freePort.ts`, which picks the free port the app serves on. The two launchers Playwright starts before the tests are there too: `memoryServer.ts` for the throwaway database and `fakeResend.ts` for the fake Resend API |
 | `test/factories/` | plain functions that create test data, and the database connection they use, imported through `#factories` |
 | `test/auth.ts` | the test-only better-auth instance, imported through `#auth` |
 | `playwright.config.ts` | the Playwright config, at the repo root |
@@ -36,7 +36,7 @@ If a spec's first route isn't in the table, add the route in the same change, ei
 # Writing Specs
 
 ## Import from `e2e/_fixtures/`
-Specs import `test`, `expect` and `signIn` from `e2e/_fixtures/`, never from `@playwright/test`. The `test` there opens each worker's database connections for the factories and `signIn`, and closes them when the worker ends. A spec that imports Playwright's own `test` gets no connections.
+Specs import `test`, `expect`, `signIn`, the shared form steps and the email helpers from `e2e/_fixtures/`, never from `@playwright/test`. The `test` there opens each worker's database connections for the factories and `signIn`, and closes them when the worker ends. A spec that imports Playwright's own `test` gets no connections. Everything else a spec takes from Playwright comes through `e2e/_fixtures/` too, even the `Page` type, so a single Biome ban on `@playwright/test` in specs catches a stray `test` import.
 
 ```typescript
 // ✅ CORRECT
@@ -46,6 +46,11 @@ import { expect, signIn, test } from '../_fixtures';
 // ❌ INCORRECT - no database connections
 import { expect, test } from '@playwright/test';
 ```
+
+The email helpers read the emails the app has sent, as the fake Resend API kept them:
+- `latestEmailTo(address)` waits until at least one email has reached that address, then returns the newest. If none arrives, it fails with "No email reached ‹address›", so a missing email isn't mistaken for a broken page. It returns as soon as any email is there. So if the address already has one, wait for the new one first, such as with `expect.poll(async () => (await emailsTo(address)).length).toBe(2)`, then call it.
+- `linkInEmail(email)` returns the link in an email that `latestEmailTo` or `emailsTo` returned, such as the one in a verification or reset password email.
+- `emailsTo(address)` returns every email sent to that address so far, oldest first, which lets a test check that none was sent.
 
 ## Locate Elements in the Spec
 Specs use Playwright locators directly. There are no page-object classes: each spec reads top to bottom in one file, which makes it easy to review and to debug from a trace.
@@ -121,18 +126,22 @@ await page.goto('/64b7f0c2a1e4d93f8c2b1a70/calendar');
 ```
 
 ## The Factories
-- `createUser({ planners, email?, password?, name? })` creates a user with the planners and access levels it's given. It returns `{ id, email, name, password, planners }`, where `id` is the better-auth user ID that `signIn` needs. `name` defaults to `'New User'`, and there's no password unless you pass one.
+- `createUser({ planners, email?, password?, name?, emailVerified? })` creates a user with the planners and access levels it's given. It returns `{ id, email, name, password, planners }`, where `id` is the better-auth user ID that `signIn` needs. `name` defaults to `'New User'`, `emailVerified` to `true`, and there's no password unless you pass one.
 - `createPlanner(overrides?)` creates a planner. It takes any `PlannerInterface` fields, with empty `calendar`, `saved` and `tags` by default, and returns the saved `Planner` document.
+- `linkGoogleAccount(user)` adds a Google account to a user from `createUser`, as signing in with Google would. A user created with no password and then linked is a Google-only user.
+- `createEmailChangeRequest(user, { expiresAt? })` writes a pending email change onto the user's `User` doc, as requesting one in Settings would. It returns `{ token, email }`: the token for `/verify-email-change?token=…` and the new email. `expiresAt` defaults to an hour from now, and a past date makes an expired link.
 
 When a test needs a kind of data no factory creates yet, add a factory. Files in `e2e/` never write to the database themselves, and never import `mongoose`, `mongodb` or `@/_models`.
 
 ## Users
-Only `createUser` creates users. A user needs two records with the same email: the better-auth user, which signing in needs, and the app's `User` doc, which holds the user's planners. `createUser` creates both in one call, through the test-only instance's `auth.api.createUser` (with `emailVerified: true`) and `User.create`. If a test ends up with only one of them, the home page doesn't find the user and creates a new user and planner, so the test lands on the wrong planner.
+Only `createUser` creates users. A user needs two records with the same email: the better-auth user, which signing in needs, and the app's `User` doc, which holds the user's planners. `createUser` creates both in one call, through the test-only instance's `auth.api.createUser` and `User.create`. If a test ends up with only one of them, the home page doesn't find the user and creates a new user and planner, so the test lands on the wrong planner.
+
+The better-auth user's email is verified unless you pass `emailVerified: false`. An unverified user can't sign in with a password until they follow a verification link, which is the case the sign-in and `/verify-email` specs test.
 
 Never use better-auth `testUtils`' `saveUser`. Its users have no password, so they can't test signing in with the form.
 
 ## Emails Are Unique and Lowercase
-Unless you pass one, `createUser` generates an email that is unique on every call and all lowercase: `` `e2e-${crypto.randomUUID()}@example.com` ``. If you pass your own, it has to be unique and lowercase too:
+Unless you pass one, `createUser` generates an email that is unique on every call and all lowercase, from `uniqueEmail()` in `test/factories/uniqueEmail.ts`. A spec or factory that needs a fresh email of its own, such as one to sign up with, calls `uniqueEmail()` too. If you pass your own, it has to be unique and lowercase too:
 - better-auth rejects an email that already exists, so a fixed email fails on the second test or retry that uses it.
 - The home page looks users up by the email in the session, which better-auth stores in lowercase. A mixed-case email in the `User` doc isn't found.
 
@@ -142,7 +151,9 @@ Factories write through the models in `@/_models` and the test-only auth instanc
 ## Fixtures Hold Connections, Not Data
 A `test.extend` fixture in `e2e/_fixtures/` only opens, provides or closes a resource, such as a database connection or a browser context. It opens and closes connections only through `test/factories/connection.ts` and `test/auth.ts`, never through `mongoose` or `mongodb` directly, and it never creates users, planners or other documents.
 
-Keeping data out of fixtures keeps everything a test depends on visible in the spec. `signIn` is a plain function the spec calls, not a fixture, for the same reason. `memoryServer.ts` sits in `e2e/_fixtures/` too, but it's the launcher Playwright runs before the tests, not a fixture.
+Keeping data out of fixtures keeps everything a test depends on visible in the spec. `signIn` and the email helpers are plain functions the spec calls, not fixtures, for the same reason. `memoryServer.ts` and `fakeResend.ts` sit in `e2e/_fixtures/` too, but they're launchers Playwright runs before the tests, not fixtures.
+
+The `test` fixture also gives each test its own random client IP, by adding an `X-Forwarded-For` header through Playwright's `extraHTTPHeaders`. A production build turns on better-auth's rate limit, such as three sign-ups in 10 seconds. The limit counts requests by client IP. With no header, Next gives every request the same IP, so tests would share one count and run into the limit. Next keeps a header the client sends, so each test gets its own count.
 
 ## Nothing Cleans Up
 Nothing in `e2e/` or `test/factories/` deletes data: no `deleteOne`, `deleteMany`, `drop`, better-auth's `removeUser` or `deleteUser`, or anything like them, and no `afterEach`, `afterAll` or `globalTeardown` that removes data.
@@ -172,8 +183,9 @@ You run the E2E tests yourself with the commands below. CI also runs them, as th
 
 ## How a Run Works
 1. `e2e/_fixtures/memoryServer.ts` starts a MongoDB memory server on a random port, and Playwright passes its URI to the app and the tests as `DB_URL`.
-2. `next build && next start` builds the app and serves it on `localhost`, on a free port that `playwright.config.ts` picks once per run.
-3. The tests run against that server.
+2. `e2e/_fixtures/fakeResend.ts` starts the fake Resend API on a random port, and Playwright passes its URL to the app and the tests as `RESEND_BASE_URL`. It keeps every email the app sends, by recipient, for the email helpers to read.
+3. `next build && next start` builds the app and serves it on `localhost`, on a free port that `playwright.config.ts` picks once per run.
+4. The tests run against that server.
 
 E2E tests always run against this production build, never `next dev` and never a server that's already running. A production build is what users get, and it doesn't compile pages on demand while parallel workers wait.
 
@@ -190,6 +202,8 @@ Nothing in an E2E run comes from `.env.local`. At the top of `playwright.config.
 
 When you add a variable to `src/env.ts`, add an E2E value for it to `playwright.config.ts`. CI needs a dummy for it too: `docs/ci.md`, "Secrets and Environment Values", says where. Give it its real values in `.env.local` and on Vercel, and add its row to the table in `docs/services.md`, "The Environments", which records where each variable's values live.
 
+One variable outside `src/env.ts` gets an E2E value too: `RESEND_BASE_URL`, the fake Resend API's URL, which Playwright sets the way it sets `DB_URL`. The email senders in `src/_auth/emails/` create their Resend client without a `baseUrl`, so the Resend SDK reads `RESEND_BASE_URL` from `process.env` on its own. That sends the app's emails to the fake with no test-only code, and no E2E run sends a real email. The email helpers read the variable from `process.env` too, since `@/env` doesn't have it. Resend's docs don't mention the variable. If an SDK upgrade stops reading it, `latestEmailTo` fails with "No email reached ‹address›".
+
 A few variables are read by better-auth on its own, because `src/_auth/auth.ts` and `src/_utils/auth/client.ts` don't pass them in. They're set nowhere, neither in `.env.local` nor in the E2E config, until they go through `src/env.ts`: `BETTER_AUTH_SECRETS`, `AUTH_SECRET`, `NEXT_PUBLIC_BETTER_AUTH_URL`, `BASE_URL`, `BETTER_AUTH_TRUSTED_ORIGINS`, `NEXT_PUBLIC_AUTH_URL` and `NEXTAUTH_URL`.
 
 ## MongoDB Version
@@ -200,4 +214,4 @@ The version is pinned in `package.json`, in `config.mongodbMemoryServer.version`
 When Atlas moves to a new release series, change the pin and this section together.
 
 # How These Conventions Are Enforced
-For anyone changing these conventions: most of them are checked in review. The first spec, `e2e/auth/homeRedirect.spec.ts`, also guards the factories and `signIn`. It fails if `createUser` stops creating either of its two records, gives them different emails, or generates a fixed or mixed-case email, and if `signIn` stops adding the session cookie.
+For anyone changing these conventions: most of them are checked in review. The first spec, `e2e/auth/homeRedirect.spec.ts`, also guards the factories and `signIn`. It fails if `createUser` stops creating either of its two records, gives them different emails, or generates a fixed or mixed-case email, and if `signIn` stops adding the session cookie. `e2e/auth/signIn.spec.ts`'s main path guards `createUser`'s `emailVerified` default: it signs in through the form as a user created without the option, so it fails if the default stops being `true`. `homeRedirect.spec.ts` can't catch that, because `signIn`'s cookie skips the verification check.
