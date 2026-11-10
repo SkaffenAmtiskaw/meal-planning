@@ -1,4 +1,4 @@
-export { expect } from '@playwright/test';
+export { expect, type Page } from '@playwright/test';
 
 export { emailsTo } from './emailsTo';
 export { latestEmailTo } from './latestEmailTo';
