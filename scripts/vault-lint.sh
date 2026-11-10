@@ -153,7 +153,7 @@ grep -oE '!\[\[[^]#]+#\^status\]\]' "$roadmap" | sed -E 's/^!\[\[//; s/#\^status
     [ -n "$target" ] && ! grep -q ' \^status$' "$target" && add "$roadmap: embeds [[$t#^status]], but $target has no ^status line"
   done
 
-# Every Now and Next line needs a 🎯 link to the building goal, 🚨, 📌 or 🔁, and
+# Every Now and Next line needs a 🎯 link to the building goal, 🚨, 🔥, 📌 or 🔁, and
 # every Planning line a 🎯 link to the planning goal. A goal's release markers,
 # such as " · releasing · Next: /ship-goal", can follow "- building".
 awk '
@@ -164,7 +164,7 @@ awk '
     next
   }
   (section == "Now" || section == "Next" || section == "Planning") && /^[ \t]*([-*]|[0-9]+\.)[ \t]+/ {
-    if (section != "Planning" && (index($0, "🚨") || index($0, "📌") || index($0, "🔁"))) next
+    if (section != "Planning" && (index($0, "🚨") || index($0, "🔥 Hotfix:") || index($0, "📌") || index($0, "🔁"))) next
     rest = $0; ok = 0
     while (match(rest, /🎯 \[\[[^]|]+/)) {
       g = substr(rest, RSTART, RLENGTH); sub(/^🎯 \[\[/, "", g)
@@ -172,7 +172,7 @@ awk '
       rest = substr(rest, RSTART + RLENGTH)
     }
     if (!ok && section == "Planning") printf "%s:%d: a Planning line with no 🎯 link to the planning goal\n", FILENAME, NR
-    else if (!ok) printf "%s:%d: a %s line with no 🎯 link to the building goal, 🚨, 📌 or 🔁\n", FILENAME, NR, section
+    else if (!ok) printf "%s:%d: a %s line with no 🎯 link to the building goal, 🚨, 🔥, 📌 or 🔁\n", FILENAME, NR, section
   }' "$roadmap" >> "$report"
 
 if [ -s "$report" ]; then

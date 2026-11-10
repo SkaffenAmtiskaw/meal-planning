@@ -32,7 +32,7 @@ One root cause is one finding, with every place it shows up. Before you show the
 
 Go through the rest with the user one at a time. For each, show what it is, where it is and its evidence, then ask whether to keep it as a fix story or drop it. If they keep it:
 1. **The fix story's note:** a new idea note in `features/<area>/` in the notes repo, from `.claude/note-templates/Idea.md`. Under Notes, write the finding as the problem, with its evidence and a line saying this audit found it. Leave out any fix the finding suggests, from the Notes and from the note's name, unless the user names or settles one, because a later session builds a fix it finds written there without weighing it. `/shape` then gives it its type.
-2. **Its Roadmap line:** `[[<fix story>]] ![[<fix story>#^status]] 🎯 [[<goal>]]` in Next. Put it above every line except those for notes the goal note's `# Release` section already links, so the release's work stays at the top of Next. Renumber the lines below it.
+2. **Its Roadmap line:** `[[<fix story>]] ![[<fix story>#^status]] 🎯 [[<goal>]]` in Next. Put it above every line except 🔥 lines and those for notes the goal note's `# Release` section already links, so the release's work stays ahead of everything but hotfixes. Renumber the lines below it.
 3. **The `# Release` section:** in the goal note's `# Release` section, add a bullet that links the fix story's note, so the release freeze lets it be built.
 
 ## 4. Delete the Audit Note

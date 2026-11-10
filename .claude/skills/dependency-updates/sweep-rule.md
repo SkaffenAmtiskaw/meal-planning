@@ -18,7 +18,7 @@ A package that the steps below write a Roadmap line for is a flagged package. It
 Name a file in the line only if a check's output names it or you've seen that it uses the package, since the user plans the upgrade from what the line says.
 
 Where it goes, in the order to check:
-- **If it's a security update:** as the first line of Next, numbered `1.`, so it's the next work unless the user moves it. Renumber the rest of Next, so its numbers run in order. If the package already has a line in Next with 🚨, update that line where it is. If it has a line anywhere else on the Roadmap, this line replaces it.
+- **If it's a security update:** as the first line of Next below any 🔥 lines, so it's the next work after any hotfix unless the user moves it. Renumber the rest of Next, so its numbers run in order. If the package already has a line in Next with 🚨, update that line where it is. If it has a line anywhere else on the Roadmap, this line replaces it.
 - **If a line for the package is already on the Roadmap,** wherever it sits: update that line.
 - **If the package is in `dependencies`:** at the end of the `[[App Health]]` heading in Later.
 - **If it's in `devDependencies`:** at the end of the `[[Dev Tooling]]` heading in Later.

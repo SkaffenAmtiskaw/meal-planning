@@ -18,6 +18,8 @@ Invoke the `editing-notes` skill first, since this run changes notes.
 ## 1. Read the note
 Read all of the note. If its `status` is `ready` or later, tell the user what you found and stop, because changes to a planned story go through `/check-drift`. If it's `spec`, this run is a re-investigation: do steps 2 to 4 fresh rather than working from the old sections, because that anchors you to their conclusions.
 
+Run check 2 in `starting-on-a-branch.md`, in the `building-code` skill's folder, and stop wherever it says to. A hotfix has to be diagnosed against `main`'s code, which production runs, and `/investigate` usually runs in the main checkout on `develop`.
+
 In each of these cases, tell the user and ask whether to go on anyway:
 - **`blocked-by` has a `decision needed` entry:** those decisions come first with `/decide`.
 - **Another story blocks the note:** the investigation may be wasted until that story lands.

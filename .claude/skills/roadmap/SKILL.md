@@ -58,7 +58,7 @@ For each gap, draft a note and show it to the user. The kind of note depends on 
 
 Once they approve it, write the note. Where its line goes, and what else changes, depends on the goal's line under Goals:
 - **If it says ` · releasing`:** the release waits for the gap.
-  1. Add `[[<note>]] ![[<note>#^status]] 🎯 [[<goal>]]` to Next, above every line except those for notes the goal note's `# Release` section already links, and renumber the lines below it.
+  1. Add `[[<note>]] ![[<note>#^status]] 🎯 [[<goal>]]` to Next, above every line except 🔥 lines and those for notes the goal note's `# Release` section already links, and renumber the lines below it.
   2. In the goal note's `# Release` section, add a bullet that links the note, so the release freeze lets it be built.
   3. Remove ` · Next: /ship-goal` from the goal's line, since the goal has work left again.
 - **Otherwise:** add its line under the goal's heading.
