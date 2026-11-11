@@ -9,8 +9,3 @@ The command is `pnpm vitest run` for a unit test and `pnpm test:e2e` for an E2E 
 - **Break behavior, not imports.** Changing a shared mock's default `ok: true` to `ok: false` shows which tests rely on success. Renaming its export fails every importer at once, which proves nothing.
 
 To prove a test file no longer reaches a dependency, add `throw new Error('x')` to the dependency and see every test in the file still pass.
-
-## Run-and-See Checks
-An E2E trace records the browser as the test runs, so watching one shows the user that a test does what it claims:
-
-"Run `pnpm test:e2e:trace <spec file>`, open the trace for `<test name>` in `<project>`, see <what the browser does>. Proves: <what the test shows>."
