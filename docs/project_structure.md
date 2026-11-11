@@ -5,7 +5,7 @@ GitHub Actions workflows: the PR checks, the dependency check and the hotfix bac
 # docs/
 project documentation: structure, code conventions, styling, theme, unit tests, E2E tests, CI, the dev seed, branching and releases, and the services and environments the app runs on
 # e2e/
-Playwright E2E specs, grouped in folders by feature area. An area whose specs share setup that calls the factories keeps it in its own `_helpers/` folder (see `docs/e2e_tests.md`)
+Playwright E2E specs, grouped in folders by feature area. Each area's `_helpers/` folder holds what its specs share: setup that calls the factories, and the app's text and test data (see `docs/e2e_tests.md`)
 ## _fixtures/
 Playwright support code: what specs import (the `test` fixture and the fixtures it's built from, `expect`, `signIn`, shared form steps and the email helpers), the launchers for the memory server and the fake Resend API, and the free-port utility `playwright.config.ts` uses
 # Notes

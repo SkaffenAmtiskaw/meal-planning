@@ -9,6 +9,7 @@ import {
 	type Page,
 	test,
 } from '../_fixtures';
+import { monthCellName } from './_helpers/calendarLabels';
 import { openPlannerCalendar } from './_helpers/openPlannerCalendar';
 
 const MEAL_NAME = "Persephone's Spring Supper";
@@ -65,9 +66,6 @@ const expectMealDetails = async (details: Locator, recipeHref: string) => {
 	).toHaveAttribute('href', recipeHref);
 };
 
-const dayCellLabel = (date: DateTime) =>
-	`${date.toFormat('MMMM d', { locale: 'en-US' })}, 1 meals`;
-
 test('meal details show the meal and link its dishes on desktop', {
 	tag: '@desktop-only',
 }, async ({ context, page }) => {
@@ -75,7 +73,7 @@ test('meal details show the meal and link its dishes on desktop', {
 	const recipeHref = await openCalendarWithMeal(page, context, now);
 
 	await page
-		.getByRole('gridcell', { name: dayCellLabel(now) })
+		.getByRole('gridcell', { name: monthCellName(now, 1) })
 		.getByText(MEAL_NAME)
 		.click();
 
@@ -93,7 +91,7 @@ test('meal details show the meal and link its dishes on phone', {
 		now.day === 1 ? now.plus({ days: 1 }) : now.minus({ days: 1 });
 	const recipeHref = await openCalendarWithMeal(page, context, mealDay);
 
-	await page.getByRole('button', { name: dayCellLabel(mealDay) }).click();
+	await page.getByRole('button', { name: monthCellName(mealDay, 1) }).click();
 
 	await expect(
 		page.getByText(mealDay.toFormat('EEEE, MMMM d', { locale: 'en-US' }), {

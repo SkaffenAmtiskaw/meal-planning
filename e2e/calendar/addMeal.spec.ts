@@ -1,6 +1,7 @@
 import { DateTime } from 'luxon';
 
-import { expect, fillMealForm, test } from '../_fixtures';
+import { expect, fillMealForm, saveMealForm, test } from '../_fixtures';
+import { monthCellName } from './_helpers/calendarLabels';
 import { openPlannerCalendar } from './_helpers/openPlannerCalendar';
 
 const MEAL_NAME = "Ariadne's Labyrinth Lasagna";
@@ -22,14 +23,9 @@ test('adds a meal from the Add Meal form', { tag: '@desktop-only' }, async ({
 		name: MEAL_NAME,
 		description: DESCRIPTION,
 	});
-	await page
-		.getByRole('dialog')
-		.getByRole('button', { name: 'Add Meal' })
-		.click();
+	await saveMealForm(page);
 
-	const today = page.getByRole('gridcell', {
-		name: `${now.toFormat('MMMM d', { locale: 'en-US' })}, 1 meals`,
-	});
+	const today = page.getByRole('gridcell', { name: monthCellName(now, 1) });
 	await expect(today).toContainText(MEAL_NAME);
 
 	await today.getByText(MEAL_NAME).click();

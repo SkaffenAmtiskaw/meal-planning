@@ -1,6 +1,6 @@
 import { DateTime } from 'luxon';
 
-import { expect, fillMealForm, test } from '../_fixtures';
+import { expect, fillMealForm, saveMealForm, test } from '../_fixtures';
 import { openPlannerCalendar } from './_helpers/openPlannerCalendar';
 
 const MEAL_NAME = "Persephone's Spring Risotto";
@@ -21,13 +21,8 @@ test('adds a meal from the phone add button', { tag: '@phone-only' }, async ({
 		name: MEAL_NAME,
 		description: DESCRIPTION,
 	});
-	await page
-		.getByRole('dialog')
-		.getByRole('button', { name: 'Add Meal' })
-		.click();
+	await saveMealForm(page);
 
-	// The agenda card has no role or name to find it by.
-	await expect(
-		page.getByTestId('meal-card').filter({ hasText: MEAL_NAME }),
-	).toBeVisible();
+	// The phone grid marks a day's meals with dots, so the meal's name shows on its own only in the agenda. It's exact because the form's subtitle, "<day> · <meal name>", holds it too.
+	await expect(page.getByText(MEAL_NAME, { exact: true })).toBeVisible();
 });

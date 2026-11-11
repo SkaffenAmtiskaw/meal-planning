@@ -14,7 +14,16 @@ export const fillMealForm = async (
 ) => {
 	// Scoped to the dialog, because the desktop header has a "Date" picker of its own.
 	const form = page.getByRole('dialog');
+	// A date input has no textbox role, so it's found by its label.
 	await form.getByLabel('Date').fill(date);
-	await form.getByLabel('Meal name').fill(name);
-	await form.getByLabel('Description').fill(description);
+	await form.getByRole('textbox', { name: 'Meal name' }).fill(name);
+	await form.getByRole('textbox', { name: 'Description' }).fill(description);
+};
+
+// Saves the open Add Meal form.
+export const saveMealForm = async (page: Page) => {
+	await page
+		.getByRole('dialog')
+		.getByRole('button', { name: 'Add Meal' })
+		.click();
 };

@@ -2,7 +2,14 @@ import { DateTime } from 'luxon';
 
 import { newObjectId } from '#factories/objectId';
 
-import { expect, fillMealForm, type Page, test } from '../_fixtures';
+import {
+	expect,
+	fillMealForm,
+	type Page,
+	saveMealForm,
+	test,
+} from '../_fixtures';
+import { monthCellName } from './_helpers/calendarLabels';
 import { openPlannerCalendar } from './_helpers/openPlannerCalendar';
 
 const MEAL_NAME = "Odysseus's Homecoming Feast";
@@ -19,7 +26,7 @@ const startMealWithDish = async (page: Page, now: DateTime<true>) => {
 		description: 'Served on the return voyage',
 	});
 	const form = page.getByRole('dialog');
-	await form.getByLabel('Dish name').fill(DISH_NAME);
+	await form.getByRole('textbox', { name: 'Dish name' }).fill(DISH_NAME);
 	await form.getByRole('button', { name: 'Expand dish' }).click();
 
 	return form;
@@ -27,14 +34,9 @@ const startMealWithDish = async (page: Page, now: DateTime<true>) => {
 
 // Saves the open form, then opens the saved meal's details from today in month view.
 const saveAndOpenMeal = async (page: Page, now: DateTime<true>) => {
-	await page
-		.getByRole('dialog')
-		.getByRole('button', { name: 'Add Meal' })
-		.click();
+	await saveMealForm(page);
 
-	const today = page.getByRole('gridcell', {
-		name: `${now.toFormat('MMMM d', { locale: 'en-US' })}, 1 meals`,
-	});
+	const today = page.getByRole('gridcell', { name: monthCellName(now, 1) });
 	await today.getByText(MEAL_NAME).click();
 
 	return page.getByRole('dialog');
@@ -48,6 +50,7 @@ test('saves a dish with a URL source', { tag: '@desktop-only' }, async ({
 	await openPlannerCalendar(page, context);
 
 	const form = await startMealWithDish(page, now);
+	// The source switcher's radio inputs are hidden, so a user clicks, and the spec finds, each option's text.
 	await form.getByText('Reference', { exact: true }).click();
 	await form.getByPlaceholder('https://…').fill(SOURCE_URL);
 

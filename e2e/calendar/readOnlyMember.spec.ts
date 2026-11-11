@@ -1,36 +1,30 @@
 import { DateTime } from 'luxon';
 
 import { expect, test } from '../_fixtures';
+import { monthCellName, weekCellName } from './_helpers/calendarLabels';
+import { mealOn } from './_helpers/mealOn';
 import { openPlannerCalendar } from './_helpers/openPlannerCalendar';
 
 const MEAL_NAME = "Cinderella's Pumpkin Soup";
 
-const calendarWithMealToday = () => [
-	{
-		date: DateTime.now().toISODate(),
-		meals: [{ name: MEAL_NAME, dishes: [] }],
-	},
-];
-
 test('read-only member sees meals and no add controls on desktop', {
 	tag: '@desktop-only',
 }, async ({ context, page }) => {
+	const now = DateTime.now();
 	await openPlannerCalendar(page, context, {
 		accessLevel: 'read',
-		calendar: calendarWithMealToday(),
+		calendar: mealOn(now, MEAL_NAME),
 	});
-	const now = DateTime.now();
 
 	const monthToday = page.getByRole('gridcell', {
-		name: `${now.toFormat('MMMM d', { locale: 'en-US' })}, 1 meals`,
+		name: monthCellName(now, 1),
 	});
 	await expect(monthToday).toContainText(MEAL_NAME);
 	await expect(page.getByRole('button', { name: 'Add Meal' })).toHaveCount(0);
 
+	// The switcher's radio inputs are hidden, so a user clicks, and the spec finds, each option's text.
 	await page.getByText('Week', { exact: true }).click();
-	const weekToday = page.getByRole('gridcell', {
-		name: `${now.toFormat('ccc', { locale: 'en-US' })} ${now.month}/${now.day}, 1 meals`,
-	});
+	const weekToday = page.getByRole('gridcell', { name: weekCellName(now, 1) });
 	await expect(weekToday).toContainText(MEAL_NAME);
 
 	await page.getByText('List', { exact: true }).click();
@@ -38,6 +32,8 @@ test('read-only member sees meals and no add controls on desktop', {
 	await expect(todayRow).toBeVisible();
 	// The row's add control has no accessible name and shows only on hover, so a count of all buttons is what catches it.
 	await expect(todayRow.getByRole('button')).toHaveCount(0);
+	// A day with no meals offers an "Add meal" row instead, which isn't a button.
+	await expect(page.getByText('Add meal', { exact: true })).toHaveCount(0);
 });
 
 test('read-only member sees meals and no add controls on phone', {
@@ -45,12 +41,9 @@ test('read-only member sees meals and no add controls on phone', {
 }, async ({ context, page }) => {
 	await openPlannerCalendar(page, context, {
 		accessLevel: 'read',
-		calendar: calendarWithMealToday(),
+		calendar: mealOn(DateTime.now(), MEAL_NAME),
 	});
 
-	// The agenda card has no role or name to find it by.
-	await expect(
-		page.getByTestId('meal-card').filter({ hasText: MEAL_NAME }),
-	).toBeVisible();
+	await expect(page.getByText(MEAL_NAME)).toBeVisible();
 	await expect(page.getByRole('button', { name: 'Add Meal' })).toHaveCount(0);
 });
