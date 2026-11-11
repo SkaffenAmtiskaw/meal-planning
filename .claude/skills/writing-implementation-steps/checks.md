@@ -1,7 +1,7 @@
 # Writing Checks
 Which kind of check a step gets depends on what it changes:
 - **If it changes only what enforces a pattern's Convention or where the Convention is written, such as a Biome ban, a conventions test or a doc:** the Enforcement and doc checks below.
-- **Otherwise, if it changes only test files:** break-it checks, plus at least one run-and-see check if any of the files are E2E code, as `docs/e2e_tests.md` lists under "Where E2E Code Lives". Write them as `test-only-checks.md` in this skill's folder describes.
+- **Otherwise, if it changes only test files:** break-it checks, written as `test-only-checks.md` in this skill's folder describes.
 - **Otherwise:** click-throughs in the running app, "Go to [view], [do something], see [result]", naming the screen size (phone or desktop), the data needed, such as a day with two meals, and any signed-in user, as `.claude/skills/running-the-app/which-user.md` describes.
 
 Some steps also need a particular check, on top of the kind above:
