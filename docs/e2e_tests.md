@@ -1,14 +1,15 @@
 # E2E Test Tooling
 - E2E tests use [Playwright](https://playwright.dev/docs/intro) (`@playwright/test`).
 - They run against a production build of the app, backed by a throwaway MongoDB database from [`mongodb-memory-server`](https://typegoose.github.io/mongodb-memory-server/). Every run starts with an empty database.
-- Almost every test runs twice: in the `desktop` project (Desktop Chrome) and in the `phone` project (an emulated Pixel 7, with touch). Only tests that cover a workflow specific to one form factor run in that project only.
+- Almost every test runs twice: in the `desktop` project (Desktop Chrome) and in the `phone` project (an emulated Pixel 7, with touch). A test that covers a workflow specific to one form factor runs only in that form factor's project. It's tagged `@desktop-only` or `@phone-only`, as in `test('<name>', { tag: '@phone-only' }, …)`, and the other project's `grepInvert` in `playwright.config.ts` skips it.
 
 # Where E2E Code Lives
 
 | Path | What it holds |
 |------|---------------|
 | `e2e/<area>/*.spec.ts` | the specs, grouped by feature area |
-| `e2e/_fixtures/` | Playwright support code. Specs import the `test` fixture, `expect`, `signIn`, the form steps that more than one spec takes (`enterEmail`, `signInWithPassword`, `requestPasswordReset` and `submitNewPassword`) and the email helpers `emailsTo`, `latestEmailTo` and `linkInEmail` from here. `test.ts` builds `test` from the fixtures in `clientIp.ts` and `databaseConnections.ts`. It also holds `freePort.ts`, which picks the free port the app serves on. The two launchers Playwright starts before the tests are there too: `memoryServer.ts` for the throwaway database and `fakeResend.ts` for the fake Resend API |
+| `e2e/<area>/_helpers/` | what one area's specs share: functions that call the factories, and the app's text and test data, such as `openPlannerCalendar` in `e2e/calendar/_helpers/`, which creates a planner before opening its calendar |
+| `e2e/_fixtures/` | Playwright support code. Specs import the `test` fixture, `expect`, `signIn`, the form steps that more than one spec takes (`enterEmail`, `signInWithPassword`, `requestPasswordReset`, `submitNewPassword`, `fillMealForm` and `saveMealForm`) and the email helpers `emailsTo`, `latestEmailTo` and `linkInEmail` from here. `test.ts` builds `test` from the fixtures in `clientIp.ts` and `databaseConnections.ts`. It also holds `freePort.ts`, which picks the free port the app serves on. The two launchers Playwright starts before the tests are there too: `memoryServer.ts` for the throwaway database and `fakeResend.ts` for the fake Resend API |
 | `test/factories/` | plain functions that create test data, and the database connection they use, imported through `#factories` |
 | `test/auth.ts` | the test-only better-auth instance, imported through `#auth` |
 | `playwright.config.ts` | the Playwright config, at the repo root |
@@ -55,8 +56,6 @@ The email helpers read the emails the app has sent, as the fake Resend API kept 
 ## Locate Elements in the Spec
 Specs use Playwright locators directly. There are no page-object classes: each spec reads top to bottom in one file, which makes it easy to review and to debug from a trace.
 
-When the same run of two or more UI actions (clicks, fills, drags, gestures) turns up in a second spec, move it into a function in `e2e/_fixtures/` that takes `page` or a `Locator`, and have both specs call it. Don't extract steps before a second spec needs them.
-
 ## Use User-Facing Locators
 Find elements the way a user would, with Playwright's built-in locators, in this order of preference:
 
@@ -81,6 +80,11 @@ await expect(page.getByRole('grid')).toBeVisible();
 await page.locator('.mantine-Button-root').click();
 await page.getByTestId('save-button').click();
 ```
+
+## Share What a Second Spec Repeats
+Each spec reads top to bottom in one file (see "Locate Elements in the Spec"), so only what a second spec repeats moves out of it. Once a second spec repeats something, move it into a function and have both specs call it, so a change in the app needs one edit rather than one in every spec. That holds for the same setup (factory calls, signing in, opening a page), the same run of two or more UI actions (clicks, fills, drags, gestures), and the same text or test data, such as a day cell's accessible name or the meals a planner is created with. Where the function goes depends on what it holds:
+- **If it calls the factories, or it builds the app's text or test data:** it goes in `_helpers/` in the folder of the area whose specs share it. A function that calls the factories can't go in `e2e/_fixtures/`, because nothing there imports the factories other than `connection.ts` (see "Fixtures Hold Connections, Not Data"). The app's text and test data go there too, because they belong to one area's screens, so a change to that area's UI is edited in one folder.
+- **Otherwise,** such as a run of UI actions: it goes in `e2e/_fixtures/`, beside the form steps that specs already import from there.
 
 ## Example
 The first spec, `e2e/auth/homeRedirect.spec.ts`, shows the whole shape: create the data, sign in, act, assert.
@@ -107,6 +111,23 @@ test('signed-in user lands on their planner calendar', async ({
 	await expect(page.getByRole('grid')).toBeVisible();
 });
 ```
+
+## Tests a Known Bug Breaks
+A known bug is one with its own note in the notes repo (see `docs/project_structure.md`, "Notes"). Sometimes a known bug breaks a flow a spec covers. Write that test for the right behavior anyway, and make Playwright's `test.fail()` marker the first line of its body, so it's in effect before any step can fail. A comment beside it names the bug's note. Playwright reports a marked test as passing when it fails, and as failing when it passes. So the run stays green while the bug is open, and the fix has to take the marker out.
+
+```typescript
+test('adds a meal from the Add Meal form', async ({ context, page }) => {
+	// Expected to fail until "Blank Dish Row Blocks Saving a Meal" is fixed.
+	test.fail();
+	// ...
+});
+```
+
+A marked test passes however it fails, even when a locator stops finding its element, so a run can't show that it fails because of the bug. When you write one, run it once without the marker, and check that it fails at the assertion the bug breaks rather than at an earlier step.
+
+Whoever fixes the bug needs to know the test is waiting on them, so the bug's note says so in its `# Inbox` section. If the Inbox already has an item for the bug's marked tests, add the test to it. Otherwise, add an item that names the test and says to remove its `test.fail()` line in the fix.
+
+A marked test is marked for only one known bug, though one bug can have several marked tests. A test that two bugs break still fails after the first fix, so that fix can't take the marker out.
 
 # Test Data
 
@@ -151,7 +172,7 @@ Factories write through the models in `@/_models` and the test-only auth instanc
 ## Fixtures Hold Connections, Not Data
 A `test.extend` fixture in `e2e/_fixtures/` only opens, provides or closes a resource, such as a database connection or a browser context. It opens and closes connections only through `test/factories/connection.ts` and `test/auth.ts`, never through `mongoose` or `mongodb` directly, and it never creates users, planners or other documents.
 
-Keeping data out of fixtures keeps everything a test depends on visible in the spec. `signIn` and the email helpers are plain functions the spec calls, not fixtures, for the same reason. `memoryServer.ts` and `fakeResend.ts` sit in `e2e/_fixtures/` too, but they're launchers Playwright runs before the tests, not fixtures.
+Keeping data out of fixtures keeps everything a test depends on visible in the spec. `signIn` and the email helpers are plain functions the spec calls, not fixtures, for the same reason. Biome holds every file in `e2e/_fixtures/` to this by barring imports of the factories other than `connection.ts`. `memoryServer.ts` and `fakeResend.ts` sit in `e2e/_fixtures/` too, but they're launchers Playwright runs before the tests, not fixtures.
 
 The `test` fixture also gives each test its own random client IP, by adding an `X-Forwarded-For` header through Playwright's `extraHTTPHeaders`. A production build turns on better-auth's rate limit, such as three sign-ups in 10 seconds. The limit counts requests by client IP. With no header, Next gives every request the same IP, so tests would share one count and run into the limit. Next keeps a header the client sends, so each test gets its own count.
 
