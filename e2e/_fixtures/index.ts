@@ -1,4 +1,4 @@
-export { expect, type Page } from '@playwright/test';
+export { type BrowserContext, expect, type Page } from '@playwright/test';
 
 export { emailsTo } from './emailsTo';
 export { enterEmail } from './enterEmail';
