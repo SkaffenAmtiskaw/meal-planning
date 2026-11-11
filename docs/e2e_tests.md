@@ -8,6 +8,7 @@
 | Path | What it holds |
 |------|---------------|
 | `e2e/<area>/*.spec.ts` | the specs, grouped by feature area |
+| `e2e/<area>/_helpers/` | setup that calls the factories and is shared by specs in one area, such as `openPlannerCalendar` in `e2e/calendar/_helpers/`, which creates a planner before opening its calendar |
 | `e2e/_fixtures/` | Playwright support code. Specs import the `test` fixture, `expect`, `signIn`, the form steps that more than one spec takes (`enterEmail`, `signInWithPassword`, `requestPasswordReset` and `submitNewPassword`) and the email helpers `emailsTo`, `latestEmailTo` and `linkInEmail` from here. `test.ts` builds `test` from the fixtures in `clientIp.ts` and `databaseConnections.ts`. It also holds `freePort.ts`, which picks the free port the app serves on. The two launchers Playwright starts before the tests are there too: `memoryServer.ts` for the throwaway database and `fakeResend.ts` for the fake Resend API |
 | `test/factories/` | plain functions that create test data, and the database connection they use, imported through `#factories` |
 | `test/auth.ts` | the test-only better-auth instance, imported through `#auth` |
@@ -55,7 +56,11 @@ The email helpers read the emails the app has sent, as the fake Resend API kept 
 ## Locate Elements in the Spec
 Specs use Playwright locators directly. There are no page-object classes: each spec reads top to bottom in one file, which makes it easy to review and to debug from a trace.
 
-When the same run of two or more UI actions (clicks, fills, drags, gestures) turns up in a second spec, move it into a function in `e2e/_fixtures/` that takes `page` or a `Locator`, and have both specs call it. Don't extract steps before a second spec needs them.
+When the same setup (factory calls, signing in, opening a page) or the same run of two or more UI actions (clicks, fills, drags, gestures) turns up in a second spec, move it into a function that takes `page` or a `Locator`, and have both specs call it. Where it goes depends on whether it calls the factories:
+- **If it calls the factories,** such as to create a planner to open: it goes in `_helpers/` in the area's folder, because nothing in `e2e/_fixtures/` imports the factories other than `connection.ts` (see "Fixtures Hold Connections, Not Data").
+- **Otherwise:** it goes in `e2e/_fixtures/`.
+
+Don't extract steps before a second spec needs them.
 
 ## Use User-Facing Locators
 Find elements the way a user would, with Playwright's built-in locators, in this order of preference:
@@ -151,7 +156,7 @@ Factories write through the models in `@/_models` and the test-only auth instanc
 ## Fixtures Hold Connections, Not Data
 A `test.extend` fixture in `e2e/_fixtures/` only opens, provides or closes a resource, such as a database connection or a browser context. It opens and closes connections only through `test/factories/connection.ts` and `test/auth.ts`, never through `mongoose` or `mongodb` directly, and it never creates users, planners or other documents.
 
-Keeping data out of fixtures keeps everything a test depends on visible in the spec. `signIn` and the email helpers are plain functions the spec calls, not fixtures, for the same reason. `memoryServer.ts` and `fakeResend.ts` sit in `e2e/_fixtures/` too, but they're launchers Playwright runs before the tests, not fixtures.
+Keeping data out of fixtures keeps everything a test depends on visible in the spec. `signIn` and the email helpers are plain functions the spec calls, not fixtures, for the same reason. Biome holds every file in `e2e/_fixtures/` to this by barring imports of the factories other than `connection.ts`, so a plain helper that calls the factories lives in its area's `_helpers/` folder. `memoryServer.ts` and `fakeResend.ts` sit in `e2e/_fixtures/` too, but they're launchers Playwright runs before the tests, not fixtures.
 
 The `test` fixture also gives each test its own random client IP, by adding an `X-Forwarded-For` header through Playwright's `extraHTTPHeaders`. A production build turns on better-auth's rate limit, such as three sign-ups in 10 seconds. The limit counts requests by client IP. With no header, Next gives every request the same IP, so tests would share one count and run into the limit. Next keeps a header the client sends, so each test gets its own count.
 

@@ -1,27 +1,17 @@
 import { DateTime } from 'luxon';
 
-import { createPlanner } from '#factories/planner';
-import { createUser } from '#factories/user';
-
-import { expect, signIn, test } from '../_fixtures';
+import { expect, test } from '../_fixtures';
+import { openPlannerCalendar } from './_helpers/openPlannerCalendar';
 
 const MEAL_NAME = "Persephone's Spring Risotto";
 
 test('Today returns to the current month', async ({ context, page }) => {
 	const now = DateTime.now();
-	const planner = await createPlanner({
+	await openPlannerCalendar(page, context, {
 		calendar: [
-			{
-				date: now.toISODate(),
-				meals: [{ name: MEAL_NAME, dishes: [] }],
-			},
+			{ date: now.toISODate(), meals: [{ name: MEAL_NAME, dishes: [] }] },
 		],
 	});
-	const user = await createUser({
-		planners: [{ planner: planner._id, accessLevel: 'write' }],
-	});
-	await signIn(context, user);
-	await page.goto(`/${planner._id}/calendar`);
 
 	const thisMonth = now.toFormat('MMMM yyyy', { locale: 'en-US' });
 	const nextMonth = now

@@ -1,38 +1,14 @@
 import { DateTime } from 'luxon';
 
-import { createPlanner } from '#factories/planner';
-import { createUser } from '#factories/user';
-
-import {
-	type BrowserContext,
-	expect,
-	type Page,
-	signIn,
-	test,
-} from '../_fixtures';
+import { expect, type Page, test } from '../_fixtures';
+import { openPlannerCalendar } from './_helpers/openPlannerCalendar';
 
 const MEAL_NAME = "Hades' Pomegranate Salad";
 
-// Creates a planner with one meal on the given date, signs in a member with write access, and opens its calendar.
-const openCalendarWithMealOn = async (
-	page: Page,
-	context: BrowserContext,
-	date: DateTime<true>,
-) => {
-	const planner = await createPlanner({
-		calendar: [
-			{
-				date: date.toISODate(),
-				meals: [{ name: MEAL_NAME, dishes: [] }],
-			},
-		],
-	});
-	const user = await createUser({
-		planners: [{ planner: planner._id, accessLevel: 'write' }],
-	});
-	await signIn(context, user);
-	await page.goto(`/${planner._id}/calendar`);
-};
+// One day holding the meal, for openPlannerCalendar's calendar override.
+const mealOn = (date: DateTime<true>) => [
+	{ date: date.toISODate(), meals: [{ name: MEAL_NAME, dishes: [] }] },
+];
 
 // The header's label as a user reads it: plain text on desktop, the date picker button's text on phone.
 const headerLabel = (page: Page, label: string) =>
@@ -59,7 +35,7 @@ test('previous and next move the month and its label', async ({
 	const now = DateTime.now();
 	// Next moves the selected date by exactly a month, and phone month view lists only the selected day's meals.
 	const nextMonth = now.plus({ months: 1 });
-	await openCalendarWithMealOn(page, context, nextMonth);
+	await openPlannerCalendar(page, context, { calendar: mealOn(nextMonth) });
 	await expect(headerLabel(page, monthLabel(now))).toBeVisible();
 
 	await page.getByRole('button', { name: 'Next' }).click();
@@ -77,7 +53,7 @@ test('previous and next move the week and its label', {
 }, async ({ context, page }) => {
 	const now = DateTime.now();
 	const nextWeek = now.plus({ days: 7 });
-	await openCalendarWithMealOn(page, context, nextWeek);
+	await openPlannerCalendar(page, context, { calendar: mealOn(nextWeek) });
 
 	await page.getByText('Week', { exact: true }).click();
 	await expect(headerLabel(page, weekLabel(now))).toBeVisible();
