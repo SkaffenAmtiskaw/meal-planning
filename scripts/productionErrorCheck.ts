@@ -2,8 +2,8 @@
 // builds each one's text, for the production-errors workflow. Prints JSON with
 // two parts:
 // - `chosen`: the texts to send, each with the record the workflow adds to the
-//   reported list once its /fire call succeeds. `issue` is the issue's ID, or
-//   null for the text that says PostHog refused the key.
+//   reported list once its /fire call succeeds: the issue's ID and status. The
+//   text that says PostHog refused the key has a null `issue` and no status.
 // - `reported`: the updated list, without the chosen issues, so an issue goes
 //   into it only after its call succeeds.
 // The text's exact shape is in step 1 of the production-errors skill, which
@@ -27,7 +27,9 @@ type Reported = {
 	refusalReported: boolean;
 };
 
-type Chosen = { issue: string | null; status: string; text: string };
+type Chosen =
+	| { issue: string; status: string; text: string }
+	| { issue: null; text: string };
 
 type Issue = {
 	id: string;
@@ -72,6 +74,11 @@ type IssueEvent = {
 const HOST = 'https://us.posthog.com';
 // /fire takes a text of up to 65,536 characters.
 const TEXT_LIMIT = 65_536;
+// The workflow passes the chosen texts to its start step as one JSON array in
+// an env var, and Linux refuses to start a process with an env var over
+// 128 KiB. So the array's UTF-8 JSON stays under this many bytes, leaving room
+// for jq's re-encoding, and each text fits it on its own.
+const ENV_BUDGET = 100_000;
 const MAX_CHOSEN = 5;
 const PAGE_SIZE = 100;
 
@@ -233,6 +240,16 @@ const exceptionLines = (event: IssueEvent | undefined): string[][] => {
 	]);
 };
 
+// The bytes a value adds to the chosen array's JSON.
+const jsonBytes = (value: unknown): number =>
+	Buffer.byteLength(JSON.stringify(value), 'utf8');
+
+// Room for the item's other fields and the array's commas.
+const ITEM_OVERHEAD = 200;
+
+const fits = (text: string): boolean =>
+	text.length <= TEXT_LIMIT && jsonBytes(text) <= ENV_BUDGET - ITEM_OVERHEAD;
+
 // Drops frames from the bottom until the text fits. An exception's own line
 // is never dropped.
 const fitText = (head: string[], exceptions: string[][]): string => {
@@ -245,7 +262,7 @@ const fitText = (head: string[], exceptions: string[][]): string => {
 			...(dropped > 0 ? [`${dropped} frames dropped to fit`] : []),
 		].join('\n');
 	let text = build();
-	while (text.length > TEXT_LIMIT) {
+	while (!fits(text)) {
 		const last = blocks.findLast((lines) => lines.length > 1);
 		if (!last) {
 			break;
@@ -254,7 +271,13 @@ const fitText = (head: string[], exceptions: string[][]): string => {
 		dropped += 1;
 		text = build();
 	}
-	return text.slice(0, TEXT_LIMIT);
+	// With every frame dropped, the head or the exception lines can still be
+	// too long, so the text is cut.
+	text = text.slice(0, TEXT_LIMIT);
+	while (!fits(text)) {
+		text = text.slice(0, Math.floor(text.length * 0.9));
+	}
+	return text;
 };
 
 const issueText = (
@@ -296,7 +319,6 @@ try {
 			[
 				{
 					issue: null,
-					status: 'refused',
 					text: `PostHog refused the read key: ${oneLine(error.message)}`,
 				},
 			],
@@ -326,11 +348,11 @@ const candidates = issues
 			(known[id] === undefined || known[id] === 'resolved'),
 	)
 	.sort((a, b) => (a.first_seen ?? '').localeCompare(b.first_seen ?? ''));
-const picked = candidates.slice(0, MAX_CHOSEN);
 const candidateIds = new Set(candidates.map(({ id }) => id));
 
 // The candidates keep their old record: a chosen one is added once its call
-// succeeds, and the rest wait for the next run.
+// succeeds, and the rest wait for the next run. That covers the ones past the
+// limit of 5 and the ones past the env budget.
 const updated: Record<string, string> = { ...known };
 for (const { id, status } of issues) {
 	if (!candidateIds.has(id)) {
@@ -339,7 +361,10 @@ for (const { id, status } of issues) {
 }
 
 const chosen: Chosen[] = [];
-for (const issue of picked) {
+for (const issue of candidates) {
+	if (chosen.length === MAX_CHOSEN) {
+		break;
+	}
 	let event: IssueEvent | undefined;
 	try {
 		event = await latestEvent(issue.id);
@@ -351,7 +376,7 @@ for (const issue of picked) {
 			`PostHog refused the event query after the issues query: ${error.message}`,
 		);
 	}
-	chosen.push({
+	const item: Chosen = {
 		issue: issue.id,
 		status: 'active',
 		text: issueText(
@@ -359,7 +384,13 @@ for (const issue of picked) {
 			issue,
 			event,
 		),
-	});
+	};
+	// Oldest first, so a text that doesn't fit ends the run's choosing rather
+	// than letting a newer issue jump ahead of it.
+	if (jsonBytes([...chosen, item]) > ENV_BUDGET) {
+		break;
+	}
+	chosen.push(item);
 }
 
 print(chosen, { issues: updated, refusalReported: false });

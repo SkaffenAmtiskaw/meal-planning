@@ -117,6 +117,7 @@ PostHog's error tracking collects the app's errors, on the free plan. The accoun
 The project has two personal API keys, each limited to the project. The source-map key has write access on error tracking only. Production's build uses it to upload source maps, so a reported stack trace points at the original source. The read key has only the `error_tracking:read` scope, and `production-errors.yml` uses it to read new and reopened issues. `docs/ci.md`, "The PostHog Read Key", records it.
 
 **Secrets:** the source-map key is `POSTHOG_API_KEY`, in Vercel's Production only. It's marked Sensitive there, so Vercel never shows its value again, and replacing it means creating a new key in PostHog. The project ID, `POSTHOG_PROJECT_ID`, is in Vercel's Production too. The project token, `NEXT_PUBLIC_POSTHOG_PROJECT_TOKEN`, is in Vercel's Production and the main checkout's `.env.local`. Neither is secret: the browser bundle carries the token, and the ID only identifies the project.
+
 ## Google Fonts
 `next/font/google` in `src/app/layout.tsx` downloads the app's fonts from Google Fonts when the app builds. It needs no account or secret.
 
