@@ -1,8 +1,7 @@
 ---
 name: investigate
-description: Reproduces a bug, finds its root cause and settles the fix. Use to take a bug note to spec, or to redo one whose approach no longer holds.
+description: Reproduces a bug, finds its root cause and settles the fix. Use when the user or a session's brief asks for /investigate.
 argument-hint: "[note name]"
-disable-model-invocation: true
 hooks:
   PreToolUse:
     - matcher: "Edit|Write|MultiEdit|NotebookEdit"

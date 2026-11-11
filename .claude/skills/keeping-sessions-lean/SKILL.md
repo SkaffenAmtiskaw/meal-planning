@@ -7,7 +7,7 @@ user-invocable: false
 # Keeping Sessions Lean
 Each session should load only the instructions it uses, because instructions a session doesn't use still take attention from the ones it does. Agent instructions load into a session at different times:
 - AGENTS.md and the memory index load into every session. The agents in `.claude/agents/` don't load AGENTS.md.
-- Most skill and agent descriptions load into every session.
+- Most skill and agent descriptions load into every session. A skill with `disable-model-invocation: true` is the exception: its description never loads, and a session runs it only when the user types its command.
 - A skill's body loads on each run, and its supporting files and the files it reads load when it reads them.
 - A shared-rule skill loads when a session invokes it, or when an agent preloads it or reads it.
 
@@ -18,6 +18,7 @@ The ways to keep a session to the instructions it uses each fit a different shap
 - A skill or agent reads only the files its steps need, since each one loads whole, as "What a Skill Reads" describes.
 - A step that reads a lot to reach a short answer goes to a subagent, as "When to Hand Work to a Subagent" describes.
 - A skill whose modes share little splits into separate commands, as "When to Split a Skill" describes.
+- If a skill's command goes in a `start_session` prompt, the skill leaves `disable-model-invocation: true` off. Otherwise, it can set the flag. The prompt reaches the new session as text, so the command doesn't expand, and the Skill tool refuses a flagged skill.
 
 ## What a Skill Reads
 A skill or agent reads a file only if one of its steps needs it, because each file it says to read loads in every run of it.

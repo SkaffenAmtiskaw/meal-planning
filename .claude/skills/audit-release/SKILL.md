@@ -1,8 +1,7 @@
 ---
 name: audit-release
-description: Runs one of a release's audits, files a fix story for each finding the user keeps, then deletes the audit note. Use when an audit note's next step is /audit-release.
+description: Runs one of a release's audits, files a fix story for each finding the user keeps, then deletes the audit note. Use when the user or a session's brief asks for /audit-release.
 argument-hint: "[audit note name]"
-disable-model-invocation: true
 hooks:
   PreToolUse:
     - matcher: "Edit|Write|MultiEdit|NotebookEdit"

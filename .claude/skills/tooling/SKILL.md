@@ -1,8 +1,7 @@
 ---
 name: tooling
-description: Makes one change to the agent workflow or dev tooling in a single session and cleans up the notes it reaches. Use for a change to how the app is built.
+description: Makes one change to the agent workflow or dev tooling in a single session and cleans up the notes it reaches. Use when the user or a session's brief asks for /tooling.
 argument-hint: "[note name, an item in a note, a description of the change, or #<PR> to finish a merged PR's held notes work]"
-disable-model-invocation: true
 ---
 
 Make this workflow or tooling change: **$ARGUMENTS**
