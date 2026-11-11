@@ -1,7 +1,7 @@
 # E2E Test Tooling
 - E2E tests use [Playwright](https://playwright.dev/docs/intro) (`@playwright/test`).
 - They run against a production build of the app, backed by a throwaway MongoDB database from [`mongodb-memory-server`](https://typegoose.github.io/mongodb-memory-server/). Every run starts with an empty database.
-- Almost every test runs twice: in the `desktop` project (Desktop Chrome) and in the `phone` project (an emulated Pixel 7, with touch). Only tests that cover a workflow specific to one form factor run in that project only.
+- Almost every test runs twice: in the `desktop` project (Desktop Chrome) and in the `phone` project (an emulated Pixel 7, with touch). A test that covers a workflow specific to one form factor runs only in that form factor's project. It's tagged `@desktop-only` or `@phone-only`, as in `test('<name>', { tag: '@phone-only' }, …)`, and the other project's `grepInvert` in `playwright.config.ts` skips it.
 
 # Where E2E Code Lives
 

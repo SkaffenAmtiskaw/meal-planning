@@ -35,8 +35,16 @@ export default defineConfig({
 	reporter: [['list'], ['html', { open: 'never' }]],
 	use: { baseURL },
 	projects: [
-		{ name: 'desktop', use: { ...devices['Desktop Chrome'] } },
-		{ name: 'phone', use: { ...devices['Pixel 7'] } },
+		{
+			name: 'desktop',
+			use: { ...devices['Desktop Chrome'] },
+			grepInvert: /@phone-only/,
+		},
+		{
+			name: 'phone',
+			use: { ...devices['Pixel 7'] },
+			grepInvert: /@desktop-only/,
+		},
 	],
 	webServer: [
 		{
