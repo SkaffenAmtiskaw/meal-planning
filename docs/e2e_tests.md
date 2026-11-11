@@ -9,7 +9,7 @@
 |------|---------------|
 | `e2e/<area>/*.spec.ts` | the specs, grouped by feature area |
 | `e2e/<area>/_helpers/` | setup that calls the factories and is shared by specs in one area, such as `openPlannerCalendar` in `e2e/calendar/_helpers/`, which creates a planner before opening its calendar |
-| `e2e/_fixtures/` | Playwright support code. Specs import the `test` fixture, `expect`, `signIn`, the form steps that more than one spec takes (`enterEmail`, `signInWithPassword`, `requestPasswordReset` and `submitNewPassword`) and the email helpers `emailsTo`, `latestEmailTo` and `linkInEmail` from here. `test.ts` builds `test` from the fixtures in `clientIp.ts` and `databaseConnections.ts`. It also holds `freePort.ts`, which picks the free port the app serves on. The two launchers Playwright starts before the tests are there too: `memoryServer.ts` for the throwaway database and `fakeResend.ts` for the fake Resend API |
+| `e2e/_fixtures/` | Playwright support code. Specs import the `test` fixture, `expect`, `signIn`, the form steps that more than one spec takes (`enterEmail`, `signInWithPassword`, `requestPasswordReset`, `submitNewPassword` and `fillMealForm`) and the email helpers `emailsTo`, `latestEmailTo` and `linkInEmail` from here. `test.ts` builds `test` from the fixtures in `clientIp.ts` and `databaseConnections.ts`. It also holds `freePort.ts`, which picks the free port the app serves on. The two launchers Playwright starts before the tests are there too: `memoryServer.ts` for the throwaway database and `fakeResend.ts` for the fake Resend API |
 | `test/factories/` | plain functions that create test data, and the database connection they use, imported through `#factories` |
 | `test/auth.ts` | the test-only better-auth instance, imported through `#auth` |
 | `playwright.config.ts` | the Playwright config, at the repo root |
@@ -112,6 +112,23 @@ test('signed-in user lands on their planner calendar', async ({
 	await expect(page.getByRole('grid')).toBeVisible();
 });
 ```
+
+## Tests a Known Bug Breaks
+A known bug is one with its own note in the notes repo (see `docs/project_structure.md`, "Notes"). Sometimes a known bug breaks a flow a spec covers. Write that test for the right behavior anyway, and make Playwright's `test.fail()` marker the first line of its body, so it's in effect before any step can fail. A comment beside it names the bug's note. Playwright reports a marked test as passing when it fails, and as failing when it passes. So the run stays green while the bug is open, and the fix has to take the marker out.
+
+```typescript
+test('adds a meal from the Add Meal form', async ({ context, page }) => {
+	// Expected to fail until "Blank Dish Row Blocks Saving a Meal" is fixed.
+	test.fail();
+	// ...
+});
+```
+
+A marked test passes however it fails, even when a locator stops finding its element, so a run can't show that it fails because of the bug. When you write one, run it once without the marker, and check that it fails at the assertion the bug breaks rather than at an earlier step.
+
+Whoever fixes the bug needs to know the test is waiting on them, so the bug's note says so in its `# Inbox` section. If the Inbox already has an item for the bug's marked tests, add the test to it. Otherwise, add an item that names the test and says to remove its `test.fail()` line in the fix.
+
+A marked test is marked for only one known bug, though one bug can have several marked tests. A test that two bugs break still fails after the first fix, so that fix can't take the marker out.
 
 # Test Data
 
