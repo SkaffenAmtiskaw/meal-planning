@@ -160,9 +160,10 @@ The workflow's token can only read the repo (`permissions: contents: read`). Run
 ## What Starts a Session
 The check, `pnpm -s errors:check` (`scripts/productionErrorCheck.ts`), reads every issue with an occurrence in the last 7 days, whatever its status. The 7 days are PostHog's default range, since the check sets none. It compares each issue with the reported list, and chooses an issue that's active and either new or reopened. An issue is new when the list has no entry for it, and reopened when the list last recorded it as resolved. PostHog reopens the same issue when a resolved error comes back, and keeps its old first-seen time. So an issue starts one session, and starts another only if it's resolved and comes back.
 
-Two cases hold back issues the check would otherwise choose:
+These cases hold back issues the check would otherwise choose:
 - **No reported list:** on the first run, or after the cache is lost, the check records every current issue and chooses none. Without that, every error already in PostHog, such as the test errors from setting up error reporting, would start a session.
-- **More than 5 issues at once:** a run chooses the 5 oldest by first-seen time, and the rest wait for the next run. That keeps a burst of errors well under the routine's limit of 30 calls an hour.
+- **More than 5 issues at once:** a run chooses at most the 5 oldest by first-seen time, and the rest wait for the next run. That keeps a burst of errors well under the routine's limit of 30 calls an hour.
+- **Texts too big to pass on together:** the step that calls `/fire` reads the chosen texts from one env var, as a JSON array. Linux won't start a step with an env var over 128 KiB. So a run stops choosing once the array would pass 100,000 bytes, and the rest wait for the next run, so a newer issue never jumps ahead of an older one. The gap below 128 KiB leaves room for `jq` to re-encode the array. Each text is shortened to fit on its own, as "The Text" describes.
 
 ## The Two Jobs
 The workflow has two jobs, split as `dependency-updates.yml`'s are, so each secret sits in one job:
@@ -170,14 +171,14 @@ The workflow has two jobs, split as `dependency-updates.yml`'s are, so each secr
 - **`start-production-errors`** runs whenever `check` succeeds, even with nothing chosen, so the list keeps up with each issue's status. It calls the routine's `/fire` once per `text`, then saves the list. It holds the routine's two secrets and nothing else.
 
 ## The Text
-Like `vercel-deploy-errors.yml`'s, the `text` carries the evidence, because the session has no PostHog access (see "The PostHog Read Key"). It opens with one line of identifiers: whether the issue is new or reopened, its ID and its PostHog link. Then come the issue's details, its latest event, and each exception with its stack frames. The frames run from the one that raised the error outward. If the text is longer than `/fire`'s limit of 65,536 characters, the check drops frames from the bottom until it fits.
+Like `vercel-deploy-errors.yml`'s, the `text` carries the evidence, because the session has no PostHog access (see "The PostHog Read Key"). It opens with one line of identifiers: whether the issue is new or reopened, its ID and its PostHog link. Then come the issue's details, its latest event, and each exception with its stack frames. The frames run from the one that raised the error outward. If the text is longer than `/fire`'s limit of 65,536 characters, or its JSON is over the 100,000-byte budget in "What Starts a Session", the check drops frames from the bottom until it fits.
 
 Error messages are untrusted input: the app reports whatever text an error holds. So the texts reach the `/fire` call only through its step's `env:`, and `jq` builds each body. The check also puts each value on one line, so a newline in a message can't pass for a line of the text.
 
 Its exact shape is in step 1 of the [`production-errors` skill](../.claude/skills/production-errors/SKILL.md), which reads it, so a change to the shape changes the script and the skill together.
 
 ## The Reported List
-The Actions cache holds each issue's last known status, keyed by issue ID. Each run records the status of every issue it read, except the ones it would choose. A chosen issue is recorded once its `/fire` call succeeds, and one held back by the limit of 5 keeps the entry it had, or still has none, until a later run chooses it. The list keeps an issue's entry after the issue has gone 7 days without an occurrence. So if it occurs again, it isn't taken for new: it starts nothing if it was active, and counts as reopened if it was resolved.
+The Actions cache holds each issue's last known status, keyed by issue ID. Each run records the status of every issue it read, except the ones it would choose. A chosen issue is recorded once its `/fire` call succeeds, and one held back by the limit of 5 or the 100,000-byte budget keeps the entry it had, or still has none, until a later run chooses it. The list keeps an issue's entry after the issue has gone 7 days without an occurrence. So if it occurs again, it isn't taken for new: it starts nothing if it was active, and counts as reopened if it was resolved.
 
 `check` restores the newest cache entry whose key starts with `production-errors-reported-`, and `start-production-errors` saves the updated list as `production-errors-reported-<run ID>`, since a cache entry can't be changed once saved. GitHub deletes an entry no run has read in 7 days, so the list is lost only when the workflow has been off that long. To clear it on purpose, delete the entries, from Actions → Caches or with `gh cache delete <key>`. The next run then records the current issues and starts nothing.
 
