@@ -1,8 +1,7 @@
 ---
 name: final-review
-description: Reviews a built story's code and settles each finding with the user. Use once every step is built.
+description: Reviews a built story's code and settles each finding with the user. Use when the user or a session's brief asks for /final-review.
 argument-hint: "[note name]"
-disable-model-invocation: true
 hooks:
   PreToolUse:
     - matcher: "Edit|Write|MultiEdit|NotebookEdit"

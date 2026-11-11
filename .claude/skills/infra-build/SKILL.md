@@ -1,8 +1,7 @@
 ---
 name: infra-build
-description: Builds the next step of an infra story's Build Order. Use when an infra note's next step is /infra-build.
+description: Builds the next step of an infra story's Build Order. Use when the user or a session's brief asks for /infra-build.
 argument-hint: "[note name]"
-disable-model-invocation: true
 hooks:
   PreToolUse:
     - matcher: "Edit|Write|MultiEdit|NotebookEdit"
