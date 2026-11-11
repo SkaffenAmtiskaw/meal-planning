@@ -1,8 +1,7 @@
 ---
 name: implement
-description: Builds the next step of a story's plan. Use when a note's next step is /implement.
+description: Builds the next step of a story's plan. Use when the user or a session's brief asks for /implement.
 argument-hint: "[note name]"
-disable-model-invocation: true
 hooks:
   PreToolUse:
     - matcher: "Edit|Write|MultiEdit|NotebookEdit"
