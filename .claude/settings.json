@@ -3,6 +3,18 @@
     "additionalDirectories": ["~/repos/meal-planning-notes"]
   },
   "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "if": "Bash(git -C *)",
+            "command": "\"$CLAUDE_PROJECT_DIR\"/.claude/hooks/allow-story-branch-ff.sh"
+          }
+        ]
+      }
+    ],
     "SessionStart": [
       {
         "matcher": "startup",
