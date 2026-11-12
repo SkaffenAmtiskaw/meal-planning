@@ -1,7 +1,8 @@
 import { MongoClient } from 'mongodb';
 
-// The databases the seed's tools may touch, told apart by name: production is a different database
-// on the same Atlas cluster (`staging`), so the name is what keeps them off it.
+// The databases the seed's tools may touch, told apart by name. Production's database, `staging`,
+// is on the same Atlas cluster. Local's Atlas user has no role there, and the name check keeps the
+// tools off it as well.
 
 const MAIN_CHECKOUT_DATABASE = 'test';
 
