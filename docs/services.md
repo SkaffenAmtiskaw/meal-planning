@@ -44,14 +44,14 @@ Production and local use the same Atlas cluster, the same Resend API key and the
 | | Local (main checkout) | Production |
 |---|---|---|
 | Database | `test` | `staging` |
-| Database user | `seadams` (`atlasAdmin`) | `staging` (`readWrite` on `staging`) |
+| Database user | `local` (`readWrite` on `test` and `test-1` to `test-5`) | `staging` (`readWrite` on `staging`) |
 | `BETTER_AUTH_SECRET` | its own value | a different value |
 | `BETTER_AUTH_URL` | `http://localhost:3000` | `https://www.meal-planning.net` |
 | Sender address | `tester@meal-planning.net` | `noreply@meal-planning.net` |
 
 Previews have every production value in this table.
 
-Because local signs in as an admin user, it could reach production's `staging` database. What keeps local work off production's data is the database name in `DB_URL`, and the seed's check of that name before it connects (see `docs/seed.md`).
+Because `local` has no role on `staging`, nothing run locally can read or change production's database, whichever database `DB_URL` names.
 
 # The Services
 
@@ -78,16 +78,16 @@ The cluster holds these databases:
 - **`test`:** the main checkout's dev data and seed.
 - **`test-1` to `test-5`:** one for each worktree slot.
 
-Its database users, both signing in with a password (SCRAM):
+The app's database users, each signing in with a password (SCRAM):
 
 | User | Role | Who signs in as it |
 |---|---|---|
-| `seadams` | `atlasAdmin`, on every database | local dev, from the main checkout and every worktree |
+| `local` | `readWrite` on `test` and on `test-1` to `test-5` only | local dev, from the main checkout and every worktree |
 | `staging` | `readWrite` on `staging` only | production and previews |
 
 The IP access list (Database & Network Access → IP Access List) has five entries. One is `0.0.0.0/0`, commented "Vercel Dynamic IP". It lets Vercel's deployments in, because a Hobby deployment has no fixed address. It also allows every other address, so the database user's password is the only thing keeping anyone out. The other four are single addresses with no comment. When the list was read on 2026-11-04, one of them was your address, and whose the other three are isn't known.
 
-**Secrets:** each user's password is part of `DB_URL`, so local's is in `.env.local` and production's is in Vercel.
+**Secrets:** each user's password is part of `DB_URL`, so `local`'s is in `.env.local` and `staging`'s is in Vercel.
 
 ## Google Cloud
 Google sign-in and One Tap (`oneTap()` in `src/_auth/auth.ts`) go through one OAuth client, `meal-planning-web-app`, on the Google Auth Platform's Clients page. It's a web application, and local, production and previews all use it.

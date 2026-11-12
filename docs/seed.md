@@ -18,7 +18,7 @@ To get from a terminal to signed in as a seeded user:
 
 `pnpm dev` stays on its own, for testing auth flows with no link server running.
 
-`pnpm seed` and `pnpm sign-in` load only `.env.local`. `pnpm seed` checks the database name in `DB_URL` before it connects, and stops with an error unless it's `test` or a worktree's `test-<n>`. Production is a different database, `staging`, on the same Atlas cluster, so the name is what tells them apart.
+`pnpm seed` and `pnpm sign-in` load only `.env.local`. `pnpm seed` checks the database name in `DB_URL` before it connects, and stops with an error unless it's `test` or a worktree's `test-<n>`. Production is a different database, `staging`, on the same Atlas cluster, and local's database user has no access to it (see `docs/services.md`, "MongoDB Atlas").
 
 # The Seeded Users
 There's one seeded user per access level, and each one's key is their access level: `owner`, `admin`, `write` and `read`. Their names and emails, and the one dev password they share, are in `seed/users.ts`. `pnpm seed`'s printout and the link server's front page list them too.
