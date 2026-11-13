@@ -7,9 +7,9 @@ export {
 
 export { emailsTo } from './emailsTo';
 export { enterEmail } from './enterEmail';
-export { fillMealForm, saveMealForm } from './fillMealForm';
 export { latestEmailTo } from './latestEmailTo';
 export { linkInEmail } from './linkInEmail';
+export { fillMealForm, saveMealForm } from './mealForm';
 export { requestPasswordReset } from './requestPasswordReset';
 export { signIn } from './signIn';
 export { signInWithPassword } from './signInWithPassword';
