@@ -9,12 +9,13 @@ The user wants instructions followed for what they're for, not to the letter. If
 ## Working with the User
 - **When to ask.** Whether you ask depends on what a choice affects:
   - **What the app does or shows, what tooling, CI or a routine does for the user, or architecture:** if there are two reasonable options and nothing written picks one, ask.
-  - **Only a low-level detail,** such as a file's location or a command's flags: make the call and name it in your summary, because the user doesn't want to decide these.
+  - **Only a low-level detail,** such as a command's flags, or how code is organised: where a file or helper goes, how code is split or what something is called. Make the call and name it in your summary, because the user doesn't want to decide these. Don't mark it as their call or write it down as a rule unless breaking it would cause a real problem, as "Problems You Find" describes, because a later session would then have to work around it or ask.
 - **Questions.** Put what a question is about inside it, because the user may see only the question. Use AskUserQuestion only for a short choice whose full context fits in the dialog, because it hides the chat text before it and the user doesn't see its option previews.
 - **Buttons.** Make every button in the next-step box a reply button, meaning a `wrap_up` button with no `action` field. For a commit, that's one labelled "Commit" rather than the commit action. A reply button sends its label, so the user knows what they're sending. An app-action button sends the app's own text, which can say more than the label.
 - **Recommendations.** If the user asks for one, give one. Otherwise, give one when best practice supports it, and name the practice. When a choice comes down to their preference, say so.
-- **Approval.** What happens to a change depends on whether the user has settled it, and on its length:
+- **Approval.** What happens to a change depends on whether the user has settled it, whether it's a small fix, and its length:
   - **If they've settled its exact form, or it's mechanical:** make it and name it in your summary, even where a skill has an approval step, because approving what they've decided costs a review and adds nothing. A change is mechanical when it follows from one already made and leaves the meaning unchanged.
+  - **If it's a small fix, as "Problems You Find" describes:** make it without asking. The table of changed files is enough.
   - **If it's short:** show them the code or wording they haven't seen, and end that message by asking in plain text whether they approve.
   - **If it's long:** do the same with a summary and a table of the changes, and show the text only for the parts they ask to see, because they miss things in a long draft.
 - **When the user changes an earlier choice.** They've already decided, so update the note that holds it, without asking about the earlier one or warning them.
@@ -43,8 +44,15 @@ Before you change a note in the notes repo, invoke the `editing-notes` skill. Th
 - **Held notes work at session start:** if the session-start output names a merged PR with held notes work, tell the user and offer a new session in the main checkout that runs `/tooling #<PR>`. Do nothing else about it, because the new session does that work.
 - **Before you finish** a session that changed a note, run `sh scripts/vault-lint.sh "<note>" …`, naming each note it changed. Fix what it reports in those notes. Tell the user about anything it reports in other notes, because another session may be working on them.
 
+## Problems You Find
+Whether you, a subagent or a check found a problem, what happens to it depends on whether it matters:
+- **If leaving it would cause a real problem,** such as a bug, a failing or flaky test, a security risk that could reach production, lost data, code a later change would struggle with, or work that goes against a story's Purpose or a choice that's the user's call: it matters, so bring it to the user as your skill describes. A doc gap is handled as "Doc gaps" describes.
+- **Otherwise, it's small,** such as a tidy-up, an inconsistency or a wording fix. If it needs no decision and sits in a file your work already changes, fix it without asking the user or reporting it as a finding: now, or, if a later step of the story's plan edits the file, as a Boy Scout fix in that step, as the `triaging-out-of-scope-work` skill describes. Otherwise, drop it, with no note, out-of-scope item or mention.
+
+Each problem that reaches the user costs them a decision, and a small one isn't worth it, now or in a later session.
+
 ## Out-of-Scope Work
-Keep a running list of anything that looks outside the story or step you're working on, whether you, a subagent or the user found it. Also list anything that would add a piece or a question to a story that's already been through `/shape`. If the user gives feedback on how a skill, subagent or the workflow behaves, and this session isn't working on that same skill or subagent, put the feedback on the list too, even when it's also saved as a memory. Don't stop to deal with items as they come up, because they'd pull the session away from its work.
+Keep a running list of anything that looks outside the story or step you're working on and matters, as "Problems You Find" describes, whether you, a subagent or the user found it. Also list anything that would add a piece or a question to a story that's already been through `/shape`. If the user gives feedback on how a skill, subagent or the workflow behaves, and this session isn't working on that same skill or subagent, put the feedback on the list too, even when it's also saved as a memory. Don't stop to deal with items as they come up, because they'd pull the session away from its work.
 
 Before you show the user the result they approve, triage the list, as the `triaging-out-of-scope-work` skill describes. Then route what's left, as that skill describes.
 

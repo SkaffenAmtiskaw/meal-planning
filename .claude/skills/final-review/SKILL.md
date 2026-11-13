@@ -52,9 +52,8 @@ Back every finding with evidence the user can check: `file:line` for code that's
 ## 4. Collect the Findings
 Sort what the checks and the agents found:
 - **A check 2 or check 3 item that an As built note explains,** with a reason that holds up, isn't a finding.
-- **An item outside the story that is a Boy Scout fix** isn't a finding. Add it to the fixes for step 6.
+- **A small item, as AGENTS.md's "Problems You Find" describes,** isn't a finding. If it's in the story's files, add it to the fixes for step 6. Otherwise, drop it.
 - **Any other item outside the story** is a finding, and you propose routing it, so the user triages it with the rest in step 5. Such items come from the "Outside this story" section of each agent's report, from code-critic's "Duplication" section on a feature, when none of its places are in the story's files, and from the rest of the out-of-scope list.
-- **Any other small item on an infra story that changes only how the code is written, not what the tooling does for the user,** isn't a finding. Add it to the fixes for step 6, because the user cares more that an infra story works than how it's written.
 - **Anything else** is a finding.
 
 If the sort leaves no findings and no fixes, tell the user in one line and go to step 9. Otherwise, write the fixes to a file in `.scratch/`, and merge the findings into one list in the same file. One root cause is one finding, with every place it shows up, even when two sources found it separately. Order them by check: Purpose first, then best practice and conventions (on a feature, code-critic's verdicts, then other convention breaks, then the leftovers), then the plan, then the items from outside the story. For each finding from the story, propose one of:

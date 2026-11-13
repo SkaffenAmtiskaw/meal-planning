@@ -1,3 +1,5 @@
+This doc is for anyone writing, reviewing or running E2E tests. It says where E2E code lives and how a run works. It also gives the rules that keep tests reliable and keep test-only code, real data and real email apart from them, each with what goes wrong if you break it. Everything else about how E2E code is organised, such as what specs share, where a helper lives or how a spec is split, is left to whoever writes it.
+
 # E2E Test Tooling
 - E2E tests use [Playwright](https://playwright.dev/docs/intro) (`@playwright/test`).
 - They run against a production build of the app, backed by a throwaway MongoDB database from [`mongodb-memory-server`](https://typegoose.github.io/mongodb-memory-server/). Every run starts with an empty database.
@@ -7,37 +9,21 @@
 
 | Path | What it holds |
 |------|---------------|
-| `e2e/<area>/*.spec.ts` | the specs, grouped by feature area |
-| `e2e/<area>/_helpers/` | what one area's specs share: functions that call the factories, and the app's text and test data, such as `openPlannerCalendar` in `e2e/calendar/_helpers/`, which creates a planner before opening its calendar |
-| `e2e/_fixtures/` | Playwright support code. Specs import the `test` fixture, `expect`, `signIn`, the form steps that more than one spec takes (`enterEmail`, `signInWithPassword`, `requestPasswordReset`, `submitNewPassword`, `fillMealForm` and `saveMealForm`) and the email helpers `emailsTo`, `latestEmailTo` and `linkInEmail` from here. `test.ts` builds `test` from the fixtures in `clientIp.ts` and `databaseConnections.ts`. It also holds `freePort.ts`, which picks the free port the app serves on. The two launchers Playwright starts before the tests are there too: `memoryServer.ts` for the throwaway database and `fakeResend.ts` for the fake Resend API |
-| `test/factories/` | plain functions that create test data, and the database connection they use, imported through `#factories` |
+| `e2e/<area>/*.spec.ts` | the specs, in a folder for each feature area, such as `auth` or `calendar` |
+| `e2e/<area>/_helpers/` | code that an area's specs share |
+| `e2e/_fixtures/` | Playwright support code: what specs import, such as the `test` fixture, `signIn`, shared form steps and the email helpers, and the launchers Playwright starts for the memory server and the fake Resend API |
+| `test/factories/` | plain functions that create test data, and their database connection, imported through `#factories/<name>` |
 | `test/auth.ts` | the test-only better-auth instance, imported through `#auth` |
 | `playwright.config.ts` | the Playwright config, at the repo root |
 
-Every file that imports `@playwright/test` is in `e2e/`, apart from `playwright.config.ts`. Keeping Playwright code out of `src/` and `test/` means Vitest never picks up a spec, and Playwright never picks up a unit test.
+Playwright code stays in `e2e/`, apart from `playwright.config.ts`, so the app and the unit tests never load Playwright. Playwright runs only what's in `e2e/`, and Vitest runs only `*.test.ts[x]` files outside it, so a spec anywhere else never runs. A file that defines tests ends in `.spec.ts`, and no other file in `e2e/` ends in `.spec.ts` or `.test.ts`, because Playwright runs any such file as a spec.
 
 The factories and the test-only auth instance sit in `test/`, not `e2e/`, because they don't use Playwright. They're plain functions, so the dev seed in `seed/` reuses them too (see `docs/seed.md`).
-
-## Naming Specs
-A file that defines Playwright tests is named `<flow>.spec.ts`, such as `homeRedirect.spec.ts`. No other file in `e2e/` ends in `.spec.ts`. `*.test.ts[x]` is the unit-test naming convention (see `docs/unit_tests.md`), so a name tells you at a glance which runner a file belongs to. (Unit tests are also colocated with the module they test.)
-
-## Feature Areas
-Each spec goes in the folder for the route its first `page.goto` opens:
-
-| Area | Routes |
-|------|--------|
-| `auth` | `/`, `/reset-password`, `/verify-email`, `/verify-email-change` |
-| `calendar` | `/[planner]/calendar` |
-| `recipes` | `/[planner]/recipes`, `/[planner]/recipes/[recipeId]` |
-| `settings` | `/settings` |
-| `sharing` | `/invite` |
-
-If a spec's first route isn't in the table, add the route in the same change, either to an existing area or to a new one.
 
 # Writing Specs
 
 ## Import from `e2e/_fixtures/`
-Specs import `test`, `expect`, `signIn`, the shared form steps and the email helpers from `e2e/_fixtures/`, never from `@playwright/test`. The `test` there opens each worker's database connections for the factories and `signIn`, and closes them when the worker ends. A spec that imports Playwright's own `test` gets no connections. Everything else a spec takes from Playwright comes through `e2e/_fixtures/` too, even the `Page` type, so a single Biome ban on `@playwright/test` in specs catches a stray `test` import.
+Specs import `test`, `expect` and anything else of Playwright's through `e2e/_fixtures/`, never from `@playwright/test`. The `test` there opens each worker's database connections for the factories and `signIn`, and closes them when the worker ends, so a spec that imports Playwright's own `test` gets no connections. Even types such as `Page` come through `e2e/_fixtures/`, so a single Biome ban on `@playwright/test` in specs catches a stray `test` import.
 
 ```typescript
 // ✅ CORRECT
@@ -48,46 +34,26 @@ import { expect, signIn, test } from '../_fixtures';
 import { expect, test } from '@playwright/test';
 ```
 
-The email helpers read the emails the app has sent, as the fake Resend API kept them:
-- `latestEmailTo(address)` waits until at least one email has reached that address, then returns the newest. If none arrives, it fails with "No email reached ‹address›", so a missing email isn't mistaken for a broken page. It returns as soon as any email is there. So if the address already has one, wait for the new one first, such as with `expect.poll(async () => (await emailsTo(address)).length).toBe(2)`, then call it.
-- `linkInEmail(email)` returns the link in an email that `latestEmailTo` or `emailsTo` returned, such as the one in a verification or reset password email.
-- `emailsTo(address)` returns every email sent to that address so far, oldest first, which lets a test check that none was sent.
+## Each Test Gets Its Own Client IP
+The `test` fixture gives each test its own random client IP, through an `X-Forwarded-For` header in Playwright's `extraHTTPHeaders`. A production build turns on better-auth's rate limit, such as three sign-ups in 10 seconds, and the limit counts requests by client IP. With no header, Next gives every request the same IP, so tests would share one count and run into the limit.
 
-## Locate Elements in the Spec
-Specs use Playwright locators directly. There are no page-object classes: each spec reads top to bottom in one file, which makes it easy to review and to debug from a trace.
+## Waiting for a Second Email
+The email helpers in `e2e/_fixtures/` read the emails the app has sent, as the fake Resend API kept them. `latestEmailTo` returns as soon as any email has reached the address, so if the address already has one, it can return the old one. Wait for the new one first, such as with `expect.poll(async () => (await emailsTo(address)).length).toBe(2)`.
 
 ## Use User-Facing Locators
-Find elements the way a user would, with Playwright's built-in locators, in this order of preference:
-
-1. `getByRole`
-2. `getByText`
-3. `getByLabel`
-4. `getByPlaceholder`
-5. `getByAltText`
-6. `getByTitle`
-
-Use `getByTestId` only when none of these can pick out the element, even after narrowing with `.filter()` or chaining from a parent locator. Never use CSS or XPath selectors.
-
-Unit tests find elements by test ID (see `docs/unit_tests.md`). That stays right for unit tests, but specs don't copy it.
+Find elements the way a user would, with Playwright's user-facing locators, such as `getByRole`, `getByText` and `getByLabel`. They also check what a user sees, such as a button's accessible name. If none of them can pick an element out, use `getByTestId`. Never use CSS or XPath selectors, because they break whenever the markup changes, even when nothing a user sees has changed.
 
 ```typescript
 // ✅ CORRECT
 await page.getByRole('button', { name: 'Save' }).click();
-await expect(page.getByRole('grid')).toBeVisible();
 ```
 ```typescript
 // ❌ INCORRECT - breaks when the markup changes, and a user never sees it
 await page.locator('.mantine-Button-root').click();
-await page.getByTestId('save-button').click();
 ```
 
-## Share What a Second Spec Repeats
-Each spec reads top to bottom in one file (see "Locate Elements in the Spec"), so only what a second spec repeats moves out of it. Once a second spec repeats something, move it into a function and have both specs call it, so a change in the app needs one edit rather than one in every spec. That holds for the same setup (factory calls, signing in, opening a page), the same run of two or more UI actions (clicks, fills, drags, gestures), and the same text or test data, such as a day cell's accessible name or the meals a planner is created with. Where the function goes depends on what it holds:
-- **If it calls the factories, or it builds the app's text or test data:** it goes in `_helpers/` in the folder of the area whose specs share it. A function that calls the factories can't go in `e2e/_fixtures/`, because nothing there imports the factories other than `connection.ts` (see "Fixtures Hold Connections, Not Data"). The app's text and test data go there too, because they belong to one area's screens, so a change to that area's UI is edited in one folder.
-- **Otherwise,** such as a run of UI actions: it goes in `e2e/_fixtures/`, beside the form steps that specs already import from there.
-
 ## Example
-The first spec, `e2e/auth/homeRedirect.spec.ts`, shows the whole shape: create the data, sign in, act, assert.
+`e2e/auth/homeRedirect.spec.ts` shows the shape of a spec: create the data, sign in, act, assert.
 
 ```typescript
 import { createPlanner } from '#factories/planner';
@@ -132,9 +98,9 @@ A marked test is marked for only one known bug, though one bug can have several 
 # Test Data
 
 ## Each Test Creates Its Own Data
-Every user, planner and other document a test uses is created in that test, by calling the factories in `test/factories/`. Never hard-code an email or ID for data the test didn't create, and never create data in `beforeAll` or at module level.
+Every user, planner and other document a test uses is created in that test, with the factories in `test/factories/`. Never hard-code an email or ID for data the test didn't create, and never create data in `beforeAll` or at module level. Biome bars specs and helpers from importing `mongoose`, `mongodb` or `@/_models`, so data that no factory creates yet comes from a factory's overrides or a new factory, whichever fits.
 
-Tests run in parallel and can be retried, so data that one test shares with another, or that a test changes, makes results depend on run order. Data a test creates for itself can't be touched by any other test.
+Tests run in parallel and can be retried, so when tests share data and one of them changes it, results depend on run order. Data a test creates for itself can't be touched by any other test.
 
 ```typescript
 // ✅ CORRECT - the planner ID comes from what the factory returned
@@ -146,35 +112,19 @@ await page.goto(`/${planner._id}/calendar`);
 await page.goto('/64b7f0c2a1e4d93f8c2b1a70/calendar');
 ```
 
-## The Factories
-- `createUser({ planners, email?, password?, name?, emailVerified? })` creates a user with the planners and access levels it's given. It returns `{ id, email, name, password, planners }`, where `id` is the better-auth user ID that `signIn` needs. `name` defaults to `'New User'`, `emailVerified` to `true`, and there's no password unless you pass one.
-- `createPlanner(overrides?)` creates a planner. It takes any `PlannerInterface` fields, with empty `calendar`, `saved` and `tags` by default, and returns the saved `Planner` document.
-- `linkGoogleAccount(user)` adds a Google account to a user from `createUser`, as signing in with Google would. A user created with no password and then linked is a Google-only user.
-- `createEmailChangeRequest(user, { expiresAt? })` writes a pending email change onto the user's `User` doc, as requesting one in Settings would. It returns `{ token, email }`: the token for `/verify-email-change?token=…` and the new email. `expiresAt` defaults to an hour from now, and a past date makes an expired link.
+## Users Come from `createUser`
+A user needs two records with the same email: the better-auth user, which signing in needs, and the app's `User` doc, which holds the user's planners. `createUser` creates both in one call. If a test ends up with only one of them, the home page doesn't find the user and creates a new user and planner, so the test lands on the wrong planner.
 
-When a test needs a kind of data no factory creates yet, add a factory. Files in `e2e/` never write to the database themselves, and never import `mongoose`, `mongodb` or `@/_models`.
-
-## Users
-Only `createUser` creates users. A user needs two records with the same email: the better-auth user, which signing in needs, and the app's `User` doc, which holds the user's planners. `createUser` creates both in one call, through the test-only instance's `auth.api.createUser` and `User.create`. If a test ends up with only one of them, the home page doesn't find the user and creates a new user and planner, so the test lands on the wrong planner.
-
-The better-auth user's email is verified unless you pass `emailVerified: false`. An unverified user can't sign in with a password until they follow a verification link, which is the case the sign-in and `/verify-email` specs test.
-
-Never use better-auth `testUtils`' `saveUser`. Its users have no password, so they can't test signing in with the form.
+The better-auth user's email is verified unless you pass `emailVerified: false`. An unverified user can't sign in with a password until they follow a verification link.
 
 ## Emails Are Unique and Lowercase
-Unless you pass one, `createUser` generates an email that is unique on every call and all lowercase, from `uniqueEmail()` in `test/factories/uniqueEmail.ts`. A spec or factory that needs a fresh email of its own, such as one to sign up with, calls `uniqueEmail()` too. If you pass your own, it has to be unique and lowercase too:
-- better-auth rejects an email that already exists, so a fixed email fails on the second test or retry that uses it.
-- The home page looks users up by the email in the session, which better-auth stores in lowercase. A mixed-case email in the `User` doc isn't found.
+Unless you pass one, `createUser` generates an email that is unique on every call and all lowercase, from `uniqueEmail()` in `test/factories/uniqueEmail.ts`. A spec or factory that needs a fresh email of its own, such as one to sign up with, calls `uniqueEmail()` too. An email you pass yourself has to be unique and lowercase too. better-auth rejects an email that already exists, so a fixed email fails on the second test or retry that uses it. And the home page looks users up by the email in the session, which better-auth stores in lowercase, so a mixed-case email in the `User` doc isn't found.
 
-## Writing a Factory
-Factories write through the models in `@/_models` and the test-only auth instance in `test/auth.ts`. They never import `@/_actions`, `@/_auth`, anything in `e2e/`, or any module that imports `server-only`. Factories run in Playwright's worker, outside Next.js, where `server-only` throws. Going straight to the models also keeps them free of app logic, so the dev seed in `seed/` can use them too.
+## Factories Stay Out of Next.js
+Factories run in Playwright's worker, outside Next.js, where `server-only` throws. So they write through the models in `@/_models` and the test-only auth instance in `test/auth.ts`, and never import `@/_actions`, `@/_auth` or any other module that imports `server-only`.
 
 ## Fixtures Hold Connections, Not Data
-A `test.extend` fixture in `e2e/_fixtures/` only opens, provides or closes a resource, such as a database connection or a browser context. It opens and closes connections only through `test/factories/connection.ts` and `test/auth.ts`, never through `mongoose` or `mongodb` directly, and it never creates users, planners or other documents.
-
-Keeping data out of fixtures keeps everything a test depends on visible in the spec. `signIn` and the email helpers are plain functions the spec calls, not fixtures, for the same reason. Biome holds every file in `e2e/_fixtures/` to this by barring imports of the factories other than `connection.ts`. `memoryServer.ts` and `fakeResend.ts` sit in `e2e/_fixtures/` too, but they're launchers Playwright runs before the tests, not fixtures.
-
-The `test` fixture also gives each test its own random client IP, by adding an `X-Forwarded-For` header through Playwright's `extraHTTPHeaders`. A production build turns on better-auth's rate limit, such as three sign-ups in 10 seconds. The limit counts requests by client IP. With no header, Next gives every request the same IP, so tests would share one count and run into the limit. Next keeps a header the client sends, so each test gets its own count.
+A `test.extend` fixture in `e2e/_fixtures/` only opens, provides or closes a resource, such as a database connection or a browser context. It opens and closes connections only through `test/factories/connection.ts` and `test/auth.ts`, the connections the factories and `signIn` use, and it never creates users, planners or other documents. A fixture can be shared by every test in a worker, so data it created would be data tests share, which "Each Test Creates Its Own Data" rules out. Keeping data out of fixtures also keeps everything a test depends on visible in the spec, so `signIn` and the email helpers are plain functions the spec calls, not fixtures.
 
 ## Nothing Cleans Up
 Nothing in `e2e/` or `test/factories/` deletes data: no `deleteOne`, `deleteMany`, `drop`, better-auth's `removeUser` or `deleteUser`, or anything like them, and no `afterEach`, `afterAll` or `globalTeardown` that removes data.
@@ -186,14 +136,12 @@ The database is thrown away after every run, so there's nothing to clean up. Cle
 ## Use `signIn`, Not the Form
 A test that needs a signed-in user calls `signIn(context, user)` from `e2e/_fixtures/`, after creating the user with `createUser`. It adds a fresh session cookie for that user to the browser context, so the test skips the sign-in form.
 
-Only tests about signing in itself fill in the sign-in form: the form, its errors or where it redirects. Those live in `e2e/auth/`. Signing in through the form in every other test is slow, and every test would break whenever the sign-in screen changes.
+Only tests about signing in itself fill in the sign-in form: the form, its errors or where it redirects. Those live in `e2e/auth/`. Signing in through the form in every other test is slow, and every test would break whenever the sign-in form changes.
 
 Never share a signed-in session between tests with Playwright's `storageState`. It needs users that several tests share, which "Each Test Creates Its Own Data" rules out.
 
 ## `testUtils` Stays in `test/auth.ts`
-better-auth's `testUtils` plugin creates sessions without a password, so it must never reach the app. It's used only in the test-only auth instance, `test/auth.ts`, which also carries `admin()` for `auth.api.createUser`. The app's own instance in `src/_auth/auth.ts` never has it.
-
-No other file imports `testUtils`, re-exports it, or reaches it through a namespace import, `export *` or a dynamic `import()` of `better-auth/plugins`. Nothing imports from `better-auth/test`.
+better-auth's `testUtils` plugin creates sessions without a password, so it must never reach the app. It's used only in the test-only auth instance, `test/auth.ts`. The app's own instance in `src/_auth/auth.ts` never has it. No other file imports or re-exports it in any form, and nothing imports from `better-auth/test`.
 
 # Running E2E Tests
 You run the E2E tests yourself with the commands below. CI also runs them, as the `e2e` check, on every PR into a protected branch, `develop` or `main` (see `docs/ci.md`, "Checks on PRs").
@@ -234,5 +182,5 @@ The version is pinned in `package.json`, in `config.mongodbMemoryServer.version`
 
 When Atlas moves to a new release series, change the pin and this section together.
 
-# How These Conventions Are Enforced
-For anyone changing these conventions: most of them are checked in review. The first spec, `e2e/auth/homeRedirect.spec.ts`, also guards the factories and `signIn`. It fails if `createUser` stops creating either of its two records, gives them different emails, or generates a fixed or mixed-case email, and if `signIn` stops adding the session cookie. `e2e/auth/signIn.spec.ts`'s main path guards `createUser`'s `emailVerified` default: it signs in through the form as a user created without the option, so it fails if the default stops being `true`. `homeRedirect.spec.ts` can't catch that, because `signIn`'s cookie skips the verification check.
+# How These Rules Are Enforced
+For anyone changing these rules: `biome.jsonc` bans the imports they rule out, and the ones "Each Test Creates Its Own Data" names. Two specs also guard the factories and `signIn`. `e2e/auth/homeRedirect.spec.ts` checks `createUser`'s two records and its emails, and `signIn`'s session cookie. `e2e/auth/signIn.spec.ts` signs in through the form as a user created without `emailVerified`, so it checks that `createUser`'s users are verified by default. `homeRedirect.spec.ts` can't, because `signIn`'s cookie skips the verification check.

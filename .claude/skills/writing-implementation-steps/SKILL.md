@@ -11,7 +11,7 @@ Each step carries one idea and ends in checks that show progress the user can se
 - **The idea sentence.** A step opens with one sentence saying what it does. If it needs "and", or "and" in disguise such as "with" or "plus", it's two steps.
 - **Size.** Steps are sized by idea, not file count: eighteen files serving one new context provider are one step, and six files making unrelated changes aren't. In a sweep, unrelated items get separate steps, however small. In a pattern, places that migrate to one rule in the same way can share a step, since they're one idea.
 - **A pattern's Docs item.** If the checklist has an Enforcement item, the Docs item goes in the step that builds it, since both keep future code to the Convention. Otherwise, it's a step of its own.
-- **Files.** Each file the step creates or changes is listed with a reason tied to the idea. A file whose reason doesn't serve the idea belongs in another step.
+- **Files.** Each file the step creates or changes is listed with a reason tied to the idea. A file whose reason doesn't serve the idea belongs in another step. The list is the planner's best guess, which the build can change, as "What the Builder Decides" describes.
 
 ## Something to See in Every Step
 - **Slices, not layers.** A step that builds one layer, such as the types or the hook, has nothing to see. The first step of new UI puts something on screen, even hardcoded or unstyled, and each later step makes one fake part real or adds one behavior.
@@ -21,6 +21,9 @@ Each step carries one idea and ends in checks that show progress the user can se
 ## Existing Code
 - **Refactors.** Each refactor, replacement or extraction in the approach gets its own step, before the step that builds on it. Its checks are click-throughs of the existing flows that use the changed code, which should look and work exactly as before.
 - **No second job.** If a step adds behavior to an existing module, check that it's the job the module already does. If it's a different job, it needs a piece of its own, as Single Concern in `docs/project_conventions.md` requires.
+
+## What the Builder Decides
+A step says what to build and any choice that changes what the app or the tooling does. How the code inside it is organised, such as its helper functions, their names and which file each sits in, is left to whoever builds the step. Those are low-level details, and a plan that fixes them holds the builder to guesses made before the code existed.
 
 ## Checks
 Write each step's checks as `checks.md` in this skill's folder describes.
