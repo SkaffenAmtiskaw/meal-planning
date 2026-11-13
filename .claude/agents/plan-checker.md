@@ -21,7 +21,7 @@ Check each step against every rule in `writing-implementation-steps`. Some rules
 - **Files:** flag a file not marked "(new)" that doesn't exist at the path given.
 
 ## Check the Plan as a Whole
-Check the whole plan against the skill's Coverage and Scaffolding rules. For source coverage, work from the note down, not from the plan up, and flag a step whose Source is empty or vague.
+Check the whole plan against the skill's Coverage and Scaffolding rules. For the E2E tests Coverage asks for, read `docs/e2e_coverage.md`. For source coverage, work from the note down, not from the plan up, and flag a step whose Source is empty or vague.
 
 ## Report Format
 For each step:
