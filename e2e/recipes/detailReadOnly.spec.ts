@@ -16,7 +16,6 @@ test("read-only member sees no edit or delete controls on a recipe's page", asyn
 	await openRecipeDetail(page, context, recipe, {
 		accessLevel: 'read',
 		tags,
-		saved: [recipe],
 	});
 
 	// The title first, so a page that failed to load doesn't pass as having no controls.

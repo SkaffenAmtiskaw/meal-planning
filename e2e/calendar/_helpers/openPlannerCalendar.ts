@@ -1,23 +1,16 @@
-import { createPlanner } from '#factories/planner';
-import { type AccessLevel, createUser } from '#factories/user';
+import type { BrowserContext, Page } from '../../_fixtures';
+import {
+	type SignInToNewPlannerOptions,
+	signInToNewPlanner,
+} from '../../_helpers/signInToNewPlanner';
 
-import { type BrowserContext, type Page, signIn } from '../../_fixtures';
-
-type OpenPlannerCalendarOptions = Parameters<typeof createPlanner>[0] & {
-	accessLevel?: AccessLevel;
-};
-
-// Creates a planner from the overrides, signs in a member with the access level, and opens the planner's calendar.
+// Signs in a member of a new planner made from the options, and opens the planner's calendar.
 export const openPlannerCalendar = async (
 	page: Page,
 	context: BrowserContext,
-	{ accessLevel = 'write', ...overrides }: OpenPlannerCalendarOptions = {},
+	options: SignInToNewPlannerOptions = {},
 ) => {
-	const planner = await createPlanner(overrides);
-	const user = await createUser({
-		planners: [{ planner: planner._id, accessLevel }],
-	});
-	await signIn(context, user);
+	const planner = await signInToNewPlanner(context, options);
 	await page.goto(`/${planner._id}/calendar`);
 
 	return planner;

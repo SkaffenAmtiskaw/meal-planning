@@ -5,7 +5,7 @@ import { recipesSeed } from './_helpers/recipesSeed';
 
 test('saves notes changed with the notes editor', async ({ context, page }) => {
 	const { tags, recipe } = recipesSeed();
-	await openRecipeDetail(page, context, recipe, { tags, saved: [recipe] });
+	await openRecipeDetail(page, context, recipe, { tags });
 	const newNotes = 'Serve with whipped cream';
 
 	await page.getByTestId(notesEditButtonTestId).click();

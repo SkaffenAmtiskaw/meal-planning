@@ -4,10 +4,7 @@ import { recipesSeed } from './_helpers/recipesSeed';
 
 test("shows a recipe's details", async ({ context, page }) => {
 	const { tags, recipe } = recipesSeed();
-	await openRecipeDetail(page, context, recipe, {
-		tags,
-		saved: [recipe],
-	});
+	await openRecipeDetail(page, context, recipe, { tags });
 
 	await expect(page.getByRole('heading', { name: recipe.name })).toBeVisible();
 	await expect(
@@ -28,4 +25,6 @@ test("shows a recipe's details", async ({ context, page }) => {
 	]) {
 		await expect(page.getByText(value, { exact: true })).toBeVisible();
 	}
+	// The planner's other tag isn't the recipe's, so the page doesn't show it.
+	await expect(page.getByText(tags[1].name, { exact: true })).toHaveCount(0);
 });

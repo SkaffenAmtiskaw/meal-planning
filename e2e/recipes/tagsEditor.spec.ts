@@ -6,7 +6,7 @@ import { recipesSeed } from './_helpers/recipesSeed';
 test('saves a tag added with the tags editor', async ({ context, page }) => {
 	// The recipe has the first tag, and the planner has both.
 	const { tags, recipe } = recipesSeed();
-	await openRecipeDetail(page, context, recipe, { tags, saved: [recipe] });
+	await openRecipeDetail(page, context, recipe, { tags });
 
 	await page.getByTestId(tagsEditButtonTestId).click();
 	await page.getByPlaceholder('Search or create tags').click();

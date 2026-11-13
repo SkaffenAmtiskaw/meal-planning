@@ -1,6 +1,6 @@
 import { expect, test } from '../_fixtures';
 import { openPlannerRecipes } from './_helpers/openPlannerRecipes';
-import { recipePath } from './_helpers/recipesLabels';
+import { recipePath } from './_helpers/recipesPaths';
 import { recipesSeed } from './_helpers/recipesSeed';
 
 test("lists the planner's recipes and bookmarks with their tags", async ({

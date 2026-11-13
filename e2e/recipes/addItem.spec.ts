@@ -17,7 +17,10 @@ test('adds a recipe from the Add Item dropdown', async ({ context, page }) => {
 	await page.getByRole('button', { name: 'Add Item' }).click();
 	await page.getByRole('menuitem', { name: 'Recipe' }).click();
 	const dialog = page.getByRole('dialog');
-	await fillRecipeForm(dialog, { name, ingredients: ['1 cup jasmine rice'] });
+	await fillRecipeForm(dialog, {
+		name,
+		addIngredients: ['1 cup jasmine rice'],
+	});
 	await saveRecipeForm(dialog);
 
 	await expect(page.getByRole('link', { name })).toBeVisible();

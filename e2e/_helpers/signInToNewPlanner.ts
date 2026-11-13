@@ -1,7 +1,7 @@
 import { createPlanner } from '#factories/planner';
 import { type AccessLevel, createUser } from '#factories/user';
 
-import { type BrowserContext, signIn } from '../../_fixtures';
+import { type BrowserContext, signIn } from '../_fixtures';
 
 export type SignInToNewPlannerOptions = Parameters<typeof createPlanner>[0] & {
 	accessLevel?: AccessLevel;
