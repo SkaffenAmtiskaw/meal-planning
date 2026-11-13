@@ -24,7 +24,11 @@ Read the whole note. The step to build is the first one under `## Build Order` w
 ## 2. Build It
 If the step's **Setup first:** line names an item from Setup Outside the Repo, walk the user through it before you build.
 
-Build the step as the `building-code` skill describes, through "Do the Acceptance Checks". When you reach that section, first do the step's Implementer checks, which are yours alone and never go to the user, because they cover requirements the user doesn't look at. Then do its Sarah checks as the acceptance checks.
+Build the step as the `building-code` skill describes, through "Do the Acceptance Checks". When you reach that section, do the step's Implementer checks, then its Sarah checks as the acceptance checks. For each Sarah check, first try to see its result with what you have, such as a CLI or API that's already signed in, the browser pane where the user is already signed in, or a screenshot through computer use. What you do next depends on what you found:
+- **If you can see the result, or one of your runs covers the check as "Do the Acceptance Checks" describes:** take the check over without asking. The user wants infra work done, not handed back to them.
+- **Otherwise:** leave it to the user for now, such as a check that needs them to sign in for you, a judgment only they can make, or a push you can't make yet.
+
+For each check that proves a Goal, keep its evidence, such as its output or a screenshot. The report shows it.
 
 As you build, a change or addition to the Design or the Build Order can turn up, or come from the user's feedback. Sort where each one goes, so this step builds only the work that belongs in it. The cases, in the order to check them:
 - **If it's new work for a later step or another story, or new work unrelated to this step:** put it on the out-of-scope list.
@@ -38,12 +42,11 @@ Triage the out-of-scope list first. For each item the user pulls in:
 - **If it belongs in a later step or needs a new one:** add it to the Build Order.
 - **Otherwise:** build it in this step before you report.
 
-Then show the table of changed files, with a column for any choice you made in that file without asking and what settles it. If anything differs from the step as written, say so in a line or two under the table, as the draft of its As built note. Then open the Code tab's diff pane, so the full diff is at hand. Don't ask the user to review the diff, since for an infra story they care more that it works than how it's built.
+Then show the evidence from each check that proved a Goal, so the user sees each Goal proved without opening anything. Below it, show the table of changed files, with a column for any choice you made in that file without asking and what settles it. If anything differs from the step as written, such as a Sarah check you took over, say so in a line or two under the table, as the draft of its As built note. Then open the Code tab's diff pane, so the full diff is at hand. Don't ask the user to review the diff, since for an infra story they care more that it works than how it's built.
 
 After the report:
-1. **Sarah checks your runs already cover:** ask the user whether to drop each one.
-2. **Sarah checks only the user can do:** if one needs this step committed and pushed to a branch that will be merged, first ask the user to commit and push it. Then walk them through each check.
-3. **End by handing the step to the user:** if it has Sarah checks the user hasn't done, ask the user to do those checks. Otherwise, ask whether the step is done.
+1. **Walk the user through their Sarah checks:** if one needs this step committed and pushed to a branch that will be merged, first ask the user to commit and push it. Then take over each check whose result you can now see, as step 2 describes, and walk them through the rest.
+2. **End by handing the step to the user:** if it has Sarah checks the user hasn't done, ask the user to do those checks. Otherwise, ask whether the step is done.
 
 ## 4. Handle the User's Feedback
 1. **If a piece of feedback is a change or addition,** sort where it goes, as step 2 describes.
@@ -51,9 +54,9 @@ After the report:
 3. **Triage the items added to the out-of-scope list since step 3's triage.** Handle each item the user pulls in as step 3 describes. If one goes in this step, report it as item 2 describes, then wait for the user to confirm the step again.
 
 ## 5. Update the Note
-1. Check the step's Sarah check boxes, remove any check the user dropped, and add `**Status:** ✅ Complete`.
-2. Under `# Goals`, check each box that the step's Sarah checks proved.
-3. If anything differs from the step as written, was added from the user's feedback or dropped, add an **As built:** note under the step. For a dropped check, it says which of your runs covered it.
+1. Check the step's Sarah check boxes, including the ones you took over, remove any check the user dropped, and add `**Status:** ✅ Complete`.
+2. Under `# Goals`, check each box that the step's checks proved.
+3. If anything differs from the step as written, was added from the user's feedback, taken over or dropped, add an **As built:** note under the step. For a check you took over, it says how you saw the result, such as the command, the screenshot or the run that covers it.
 4. If this was the last step, set `status` to `in-review`.
 5. Update Where It Stands, with a `^status` line such as "In progress. Next: /infra-build Step 4", or "All steps implemented. Next: /final-review" after the last step.
 
