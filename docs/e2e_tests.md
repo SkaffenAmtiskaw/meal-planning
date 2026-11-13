@@ -1,4 +1,4 @@
-This doc is for anyone writing, reviewing or running E2E tests. It says where E2E code lives and how a run works. It also gives the rules that keep tests reliable and keep test-only code, real data and real email apart from them, each with what goes wrong if you break it. Everything else about how E2E code is organised, such as what specs share, where a helper lives or how a spec is split, is left to whoever writes it.
+This doc is for anyone writing, reviewing or running E2E tests. It says where E2E code lives and how a run works. It also gives the rules that keep tests reliable and keep test-only code, real data and real email apart from them, each with what goes wrong if you break it. Which E2E tests a change needs is in `docs/e2e_coverage.md`. Everything else about how E2E code is organised, such as what specs share, where a helper lives or how a spec is split, is left to whoever writes it.
 
 # E2E Test Tooling
 - E2E tests use [Playwright](https://playwright.dev/docs/intro) (`@playwright/test`).
