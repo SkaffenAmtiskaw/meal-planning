@@ -74,8 +74,9 @@ In a revision, steps marked ✅ Complete stay exactly as they are. Draft each st
 ### Step 1: <title>
 **Builds:** [[#^piece-2|Piece 2]] and [[#^piece-3|Piece 3]]
 **Setup first:** <a Setup Outside the Repo item, or none>
-**Implementer checks:** <how the step's requirements and failure paths get checked, or none>
-**Sarah checks:**
+**Implementer checks:** <a list, or none>
+- <how a requirement, failure path or Goal gets checked>. Goal: <which Goal it proves, if any>.
+**Sarah checks:** <a list, or none>
 - [ ] <what the implementer kicks off, if anything>. <What the user runs, opens or reads>, see <result>. Goal: <which Goal it proves, if any>.
 ```
 
@@ -83,17 +84,17 @@ Each step follows these rules:
 - **Size:** it fits one session. The implementer reads the docs and files for every Piece the step builds, so the Pieces in one step share an area: the same files, docs or library. If two Pieces sit in unrelated areas, such as a GitHub workflow and a skill, and each can be checked on its own, they're separate steps.
 - **Order:** its checks work with only what's built through that step.
 - **Setup first:** each Setup Outside the Repo item goes in the first step whose checks need it.
-- **Implementer checks:** each says only what the Design doesn't: how a requirement or failure path gets checked, and what to do if the check fails. A check about one Piece links it rather than restating it, so the note keeps one copy of it. A failure path gets a check only if the Design already names that path and it's worth checking, because an invented one proves nothing.
+- **Whose check it is:** a check is the user's only in two cases: the implementer can't see the result without them, such as a page it could reach only if they signed in for it, or the check needs a judgment only they can make. Every other check is the implementer's. Before giving a check to the user, work out how the implementer could see the result with what it has, such as a CLI or API that's already signed in, the browser pane where the user is already signed in, or a screenshot through computer use. The user wants infra work done, and opening windows for checks the implementer could have run is what they mind most (Sarah's call).
+- **Implementer checks:** each says only what the Design doesn't: how a requirement, failure path or Goal gets checked, and what to do if the check fails. A check about one Piece links it rather than restating it, so the note keeps one copy of it. A failure path gets a check only if the Design already names that path and it's worth checking, because an invented one proves nothing.
 - **Sarah checks:**
-  - **When a step has them:** if the step proves a Goal, or needs something only the user can do, such as a check in the claude.ai UI. Otherwise, it has "Sarah checks: none". If a check doesn't prove a Goal and a run on the implementer's own machine can show what it would prove, it's an Implementer check.
   - **What each one proves:** that something the story builds works, not that its code matches what the user expected.
-  - **Who does what:** the implementer kicks off everything it can, such as pushing a throwaway branch, opening a PR or running a skill locally. The user's part is verifying the results, plus what needs their access or their eyes, because they want as few manual steps as possible.
+  - **Who does what:** the implementer kicks off everything it can, such as pushing a throwaway branch, opening a PR or running a skill locally.
   - **Usable as written:** each one spells out the exact command the user runs, the text they paste or the screen they open. If that can only be known at build time, such as a token or a generated URL, the check says the implementer gives it to them in chat, ready to paste. A check never sends them to another part of the note, such as "Step 1's token" or "the command from the Design".
 
-Across the Build Order, every Piece and Convention is built by some step, and every Goal is proved by a Sarah check in some step.
+Across the Build Order, every Piece and Convention is built by some step, and every Goal is proved by a check in some step.
 
 ### Approve
-Show the outline, not the whole Build Order, because a whole one is too detailed to review closely (Sarah's call). The outline has the numbered step titles. Each title comes with the Pieces the step builds, its **Setup first** line and a one-line summary of its Sarah checks or "none". In a revision, the outline marks which steps changed.
+Show the outline, not the whole Build Order, because a whole one is too detailed to review closely (Sarah's call). The outline has the numbered step titles. Each title comes with the Pieces the step builds, its **Setup first** line, the Goals its checks prove and a one-line summary of its Sarah checks or "none". In a revision, the outline marks which steps changed.
 
 Then ask whether the user approves the Build Order as a whole. They may first ask to see a step in full, or change one.
 
