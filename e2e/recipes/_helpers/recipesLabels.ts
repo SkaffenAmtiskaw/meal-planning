@@ -12,6 +12,9 @@ export const deleteBookmarkButtonTestId = 'delete-bookmark-button';
 // The tags editor's edit button test ID on a recipe's page, since it has no accessible name.
 export const tagsEditButtonTestId = 'tags-edit-button';
 
+// The notes editor's edit button test ID on a recipe's page, since it has no accessible name.
+export const notesEditButtonTestId = 'notes-edit-button';
+
 // A recipe's detail page path, like "/<planner>/recipes/<recipe>".
 export const recipePath = (plannerId: ObjectId, recipeId: ObjectId) =>
 	`/${plannerId}/recipes/${recipeId}`;
