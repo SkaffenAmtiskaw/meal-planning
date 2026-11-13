@@ -7,6 +7,10 @@ A doc's reader may be a person new to this codebase, or an agent, and either may
 ## Describe the Codebase in a Guide's Voice
 A doc describes the codebase: how it's built, where things go and why. It's written in a guide's voice for anyone working on the code, not as instructions to an agent. It explains what's normal and why, and leaves judgment to the reader, the way a reviewer would call out messy mocks in a PR, rather than setting a hard rule such as moving a mock to `test/mocks/` once 3 test files use it. A rule applied by rote misfires on the cases it didn't foresee, while a reader who understands the aim can make the right call.
 
+So a doc states something as a rule only when breaking it causes a real problem, such as a bug, a failing or flaky test, a security hole, lost data or code that later changes struggle with. The rule says what that problem is. Otherwise, how code is laid out, named or split is left to whoever writes it.
+
+A doc says where things live rather than listing them: a folder and what it holds, not each helper, file or signature in it. A reader finds those by looking, and a list of them goes wrong at the next rename.
+
 If what you're drafting is a rule only agents follow, such as when to use `pnpm test:agent`, place it as the `rule-placement` skill describes.
 
 A doc that grows from a pattern's Convention is still a guide: what to do, where things go and why, not a numbered list of rules with their checks. Enforcement, such as a Biome ban or a type check, gets at most one short closing paragraph, for anyone who needs to change it. Even there, name only enforcement whose location isn't obvious. A TypeScript error that names the problem and points at the file explains itself, while a test that happens to guard unrelated code is worth naming.

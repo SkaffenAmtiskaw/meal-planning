@@ -18,8 +18,10 @@ A raw file shows an embed (`![[Note#Section]]`) only as a link. If one of those 
 Don't open anything under `src/` or `test/`, and don't search them. Don't read the story's note beyond the Meta-Instructions and Design Handoff sections you're given, because its Suggested Approach, steps and As built notes all describe the code or a plan for it, and would anchor your design.
 
 ## How to Design It
+A piece is something a behavior depends on. Helpers that live inside a piece aren't pieces of their own, because whoever builds the piece decides them.
+
 Follow Single Concern in `docs/project_conventions.md`. For each piece, give:
-- **Kind:** component, hook, utility, server action or model.
+- **Kind:** component, hook, utility, server action, model or test spec.
 - **Job:** one sentence. If it holds two jobs that Single Concern counts as separate, it's two pieces.
 - **Server or client:** follow "Prefer Server Components" in `docs/project_conventions.md`.
 - **Where it lives:** the folder, following `project_structure.md`.
