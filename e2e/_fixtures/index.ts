@@ -6,6 +6,7 @@ export {
 } from '@playwright/test';
 
 export { fillBookmarkForm, saveBookmarkForm } from './bookmarkForm';
+export { confirmDelete } from './confirmDelete';
 export { emailsTo } from './emailsTo';
 export { enterEmail } from './enterEmail';
 export { latestEmailTo } from './latestEmailTo';
