@@ -4,6 +4,9 @@ import { User } from '@/_models/user';
 
 import { uniqueEmail } from './uniqueEmail';
 
+// Re-exported for E2E code, which can't import @/_models.
+export type { AccessLevel } from '@/_models/user';
+
 interface CreateUserOptions {
 	planners: PlannerMembership[];
 	email?: string;
