@@ -1,11 +1,7 @@
 import { createPlanner } from '#factories/planner';
-import { createUser } from '#factories/user';
+import { type AccessLevel, createUser } from '#factories/user';
 
 import { type BrowserContext, type Page, signIn } from '../../_fixtures';
-
-type AccessLevel = Parameters<
-	typeof createUser
->[0]['planners'][number]['accessLevel'];
 
 type OpenPlannerCalendarOptions = Parameters<typeof createPlanner>[0] & {
 	accessLevel?: AccessLevel;
