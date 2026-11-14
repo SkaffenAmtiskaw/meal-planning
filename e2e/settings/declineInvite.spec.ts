@@ -1,34 +1,19 @@
-import { createPendingInvite } from '#factories/invite';
-import { createPlanner } from '#factories/planner';
-import { createUser } from '#factories/user';
-
 import { expect, test } from '../_fixtures';
-import { openSettings } from './_helpers/openSettings';
+import { signInToNewPlanner } from '../_helpers/signInToNewPlanner';
+import { inviteToNewPlanner } from './_helpers/inviteToNewPlanner';
 
 test('a user who declines an invite no longer has it pending', async ({
 	context,
 	page,
 }) => {
-	const invitedPlanner = await createPlanner({ name: 'Family Meals' });
-	const owner = await createUser({
-		name: 'Olivia Owner',
-		planners: [{ planner: invitedPlanner._id, accessLevel: 'owner' }],
-	});
 	// The invitee owns a planner too, so Settings loads for them.
-	const { user: invitee } = await openSettings(
-		page,
-		context,
-		{ name: 'Ivy Invitee' },
-		{ name: 'Solo Lunches' },
-	);
-	// getUserInvites matches the email exactly, so use it as createUser returned it.
-	await createPendingInvite({
-		planner: invitedPlanner._id,
-		invitedBy: owner._id,
-		email: invitee.email,
+	const { user: invitee } = await signInToNewPlanner(context, {
+		accessLevel: 'owner',
+		name: 'Solo Lunches',
+		user: { name: 'Ivy Invitee' },
 	});
-	// The invite was written after Settings loaded, so reload to list it.
-	await page.reload();
+	await inviteToNewPlanner(invitee.email);
+	await page.goto('/settings');
 
 	await page
 		.getByRole('button', { name: 'Decline invitation to join Family Meals' })

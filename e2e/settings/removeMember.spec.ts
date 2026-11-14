@@ -1,25 +1,12 @@
-import { createUser } from '#factories/user';
-
-import { expect, test } from '../_fixtures';
-import { openSettings } from './_helpers/openSettings';
+import { expect, signIn, test } from '../_fixtures';
+import { createSharedPlanner } from './_helpers/createSharedPlanner';
+import { openPlannerSettings } from './_helpers/openPlannerSettings';
 
 test('the owner removes a member', async ({ context, page }) => {
-	const { planner, user: owner } = await openSettings(
-		page,
-		context,
-		{ name: 'Olivia Owner' },
-		{ name: 'Family Meals' },
-	);
-	const member = await createUser({
-		name: 'Max Member',
-		planners: [{ planner: planner._id, accessLevel: 'write' }],
-	});
-	// The member was added after Settings loaded, so reload to list them.
-	await page.reload();
-
-	await page.getByRole('tab', { name: 'Planner Settings' }).click();
-	await page.getByRole('button', { name: 'Family Meals' }).click();
-	const panel = page.getByRole('tabpanel', { name: 'Planner Settings' });
+	const { owner, member } = await createSharedPlanner();
+	await signIn(context, owner);
+	await page.goto('/settings');
+	const panel = await openPlannerSettings(page, 'Family Meals');
 	await expect(panel.getByText(member.email)).toBeVisible();
 
 	// The trash icon has no accessible name. The owner's row shows no actions,
@@ -30,6 +17,6 @@ test('the owner removes a member', async ({ context, page }) => {
 		.getByRole('button', { name: 'Remove', exact: true })
 		.click();
 
-	await expect(page.getByText(member.email)).toHaveCount(0);
+	await expect(panel.getByText(member.email)).toHaveCount(0);
 	await expect(panel.getByText(owner.email)).toBeVisible();
 });

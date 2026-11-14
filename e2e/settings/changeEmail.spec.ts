@@ -1,7 +1,7 @@
 import { uniqueEmail } from '#factories/uniqueEmail';
 
 import { expect, latestEmailTo, linkInEmail, signIn, test } from '../_fixtures';
-import { openSettings } from './_helpers/openSettings';
+import { signInToNewPlanner } from '../_helpers/signInToNewPlanner';
 
 test('following the email change link changes the email on Settings', async ({
 	context,
@@ -9,9 +9,11 @@ test('following the email change link changes the email on Settings', async ({
 }) => {
 	const newEmail = uniqueEmail();
 	// The link page asks a user with no password to set one first.
-	const { user } = await openSettings(page, context, {
-		password: 'e2e-password',
+	const { user } = await signInToNewPlanner(context, {
+		accessLevel: 'owner',
+		user: { password: 'e2e-password' },
 	});
+	await page.goto('/settings');
 
 	await page.getByRole('button', { name: 'Change email' }).click();
 	await page.getByLabel('New email address').fill(newEmail);

@@ -16,7 +16,7 @@ export const openRecipeDetail = async (
 	recipe: SeedRecipe,
 	{ saved = [], ...options }: SignInToNewPlannerOptions = {},
 ) => {
-	const planner = await signInToNewPlanner(context, {
+	const { planner } = await signInToNewPlanner(context, {
 		...options,
 		saved: [recipe, ...saved],
 	});

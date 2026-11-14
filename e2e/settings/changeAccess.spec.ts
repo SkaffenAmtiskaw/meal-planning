@@ -1,24 +1,12 @@
-import { createUser } from '#factories/user';
-
-import { expect, test } from '../_fixtures';
-import { openSettings } from './_helpers/openSettings';
+import { expect, signIn, test } from '../_fixtures';
+import { createSharedPlanner } from './_helpers/createSharedPlanner';
+import { openPlannerSettings } from './_helpers/openPlannerSettings';
 
 test("the owner changes a member's access level", async ({ context, page }) => {
-	const { planner } = await openSettings(
-		page,
-		context,
-		{ name: 'Olivia Owner' },
-		{ name: 'Family Meals' },
-	);
-	await createUser({
-		name: 'Max Member',
-		planners: [{ planner: planner._id, accessLevel: 'write' }],
-	});
-	// The member was added after Settings loaded, so reload to list them.
-	await page.reload();
-
-	await page.getByRole('tab', { name: 'Planner Settings' }).click();
-	await page.getByRole('button', { name: 'Family Meals' }).click();
+	const { owner } = await createSharedPlanner();
+	await signIn(context, owner);
+	await page.goto('/settings');
+	await openPlannerSettings(page, 'Family Meals');
 
 	// The pencil, the select and the save tick have no accessible names. The
 	// owner's row shows no actions, so these IDs pick out the member's controls.

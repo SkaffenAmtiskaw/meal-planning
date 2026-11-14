@@ -1,11 +1,14 @@
 import { expect, test } from '../_fixtures';
-import { openSettings } from './_helpers/openSettings';
+import { signInToNewPlanner } from '../_helpers/signInToNewPlanner';
+import { openPlannerSettings } from './_helpers/openPlannerSettings';
 
 test('a renamed planner shows its new name', async ({ context, page }) => {
-	await openSettings(page, context, {}, { name: 'Weeknight Dinners' });
-
-	await page.getByRole('tab', { name: 'Planner Settings' }).click();
-	await page.getByRole('button', { name: 'Weeknight Dinners' }).click();
+	await signInToNewPlanner(context, {
+		accessLevel: 'owner',
+		name: 'Weeknight Dinners',
+	});
+	await page.goto('/settings');
+	await openPlannerSettings(page, 'Weeknight Dinners');
 
 	await page.getByRole('button', { name: 'Rename', exact: true }).click();
 	await page.getByLabel('Planner name').fill('Family Meals');

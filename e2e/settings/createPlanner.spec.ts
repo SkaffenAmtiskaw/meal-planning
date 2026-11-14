@@ -1,11 +1,15 @@
 import { expect, test } from '../_fixtures';
-import { openSettings } from './_helpers/openSettings';
+import { signInToNewPlanner } from '../_helpers/signInToNewPlanner';
 
 test('a planner made from New Planner shows in the list', async ({
 	context,
 	page,
 }) => {
-	await openSettings(page, context, {}, { name: 'Weeknight Dinners' });
+	await signInToNewPlanner(context, {
+		accessLevel: 'owner',
+		name: 'Weeknight Dinners',
+	});
+	await page.goto('/settings');
 
 	await page.getByRole('tab', { name: 'Planner Settings' }).click();
 	// Desktop and phone each show one of two buttons named "New Planner".

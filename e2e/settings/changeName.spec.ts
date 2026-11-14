@@ -1,12 +1,16 @@
 import { expect, test } from '../_fixtures';
-import { openSettings } from './_helpers/openSettings';
+import { signInToNewPlanner } from '../_helpers/signInToNewPlanner';
 
 test('saves a changed name and shows it on Settings', async ({
 	context,
 	page,
 }) => {
 	const newName = 'Grace Hopper';
-	await openSettings(page, context, { name: 'Ada Lovelace' });
+	await signInToNewPlanner(context, {
+		accessLevel: 'owner',
+		user: { name: 'Ada Lovelace' },
+	});
+	await page.goto('/settings');
 
 	await page.getByRole('button', { name: 'Change name' }).click();
 	await page.getByLabel('New name').fill(newName);
