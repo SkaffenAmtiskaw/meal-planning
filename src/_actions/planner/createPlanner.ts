@@ -23,8 +23,15 @@ export const createPlanner = async (name: string): Promise<ActionResult> => {
 
 	const planner = await addPlanner(parsedName.data);
 
+	// A raw collection call adds no _id, unlike a push through Mongoose.
 	const update: Record<string, unknown> = {
-		$push: { planners: { planner: planner._id, accessLevel: 'owner' } },
+		$push: {
+			planners: {
+				_id: new Types.ObjectId(),
+				planner: planner._id,
+				accessLevel: 'owner',
+			},
+		},
 	};
 
 	// getUser returns a serialized user, and a raw collection call doesn't cast its string _id.
