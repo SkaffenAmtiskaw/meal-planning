@@ -1,6 +1,5 @@
-import { recipesListPath } from './recipesPaths';
-
 import type { BrowserContext, Page } from '../../_fixtures';
+import { recipesListPath } from '../../_helpers/plannerPaths';
 import {
 	type SignInToNewPlannerOptions,
 	signInToNewPlanner,

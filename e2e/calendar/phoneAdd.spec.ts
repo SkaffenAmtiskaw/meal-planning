@@ -1,8 +1,8 @@
 import { DateTime } from 'luxon';
 
 import { expect, test } from '../_fixtures';
+import { openPlannerCalendar } from '../_helpers/openPlannerCalendar';
 import { fillMealForm, saveMealForm } from './_helpers/mealForm';
-import { openPlannerCalendar } from './_helpers/openPlannerCalendar';
 
 const MEAL_NAME = "Persephone's Spring Risotto";
 const DESCRIPTION = 'Studded with six pomegranate seeds';

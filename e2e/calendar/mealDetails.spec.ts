@@ -9,8 +9,9 @@ import {
 	type Page,
 	test,
 } from '../_fixtures';
+import { openPlannerCalendar } from '../_helpers/openPlannerCalendar';
+import { recipePath } from '../_helpers/plannerPaths';
 import { monthCellName } from './_helpers/calendarLabels';
-import { openPlannerCalendar } from './_helpers/openPlannerCalendar';
 
 const MEAL_NAME = "Persephone's Spring Supper";
 const DESCRIPTION = 'Six seeds, and not one more';
@@ -51,7 +52,7 @@ const openCalendarWithMeal = async (
 		],
 	});
 
-	return `/${planner._id}/recipes/${recipeId}`;
+	return recipePath(planner._id, recipeId);
 };
 
 // Checks a meal's description and that each of its dishes links where it should.

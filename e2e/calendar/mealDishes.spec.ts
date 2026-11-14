@@ -3,9 +3,10 @@ import { DateTime } from 'luxon';
 import { newObjectId } from '#factories/objectId';
 
 import { expect, type Page, test } from '../_fixtures';
+import { openPlannerCalendar } from '../_helpers/openPlannerCalendar';
+import { recipePath } from '../_helpers/plannerPaths';
 import { monthCellName } from './_helpers/calendarLabels';
 import { fillMealForm, saveMealForm } from './_helpers/mealForm';
-import { openPlannerCalendar } from './_helpers/openPlannerCalendar';
 
 const MEAL_NAME = "Odysseus's Homecoming Feast";
 const DISH_NAME = 'Ithacan Olive Bread';
@@ -79,6 +80,6 @@ test('saves a dish with a saved recipe source', {
 	const details = await saveAndOpenMeal(page, now);
 	await expect(details.getByRole('link', { name: DISH_NAME })).toHaveAttribute(
 		'href',
-		`/${planner._id}/recipes/${recipeId}`,
+		recipePath(planner._id, recipeId),
 	);
 });

@@ -1,8 +1,10 @@
-import type { BrowserContext, Page } from '../../_fixtures';
+import { calendarPath } from './plannerPaths';
 import {
 	type SignInToNewPlannerOptions,
 	signInToNewPlanner,
-} from '../../_helpers/signInToNewPlanner';
+} from './signInToNewPlanner';
+
+import type { BrowserContext, Page } from '../_fixtures';
 
 // Signs in a member of a new planner made from the options, and opens the planner's calendar.
 export const openPlannerCalendar = async (
@@ -11,7 +13,7 @@ export const openPlannerCalendar = async (
 	options: SignInToNewPlannerOptions = {},
 ) => {
 	const { planner } = await signInToNewPlanner(context, options);
-	await page.goto(`/${planner._id}/calendar`);
+	await page.goto(calendarPath(planner._id));
 
 	return planner;
 };

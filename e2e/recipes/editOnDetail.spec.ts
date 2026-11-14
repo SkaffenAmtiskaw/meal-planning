@@ -1,7 +1,7 @@
 import { expect, test } from '../_fixtures';
+import { recipePath } from '../_helpers/plannerPaths';
 import { openRecipeDetail } from './_helpers/openRecipeDetail';
 import { fillRecipeForm, saveRecipeForm } from './_helpers/recipeForm';
-import { recipePath } from './_helpers/recipesPaths';
 import { recipesSeed } from './_helpers/recipesSeed';
 
 test('saves changes made with Edit', async ({ context, page }) => {
