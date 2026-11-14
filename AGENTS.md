@@ -45,7 +45,7 @@ Before you change a note in the notes repo, invoke the `editing-notes` skill. Th
 - **Before you finish** a session that changed a note, run `sh scripts/vault-lint.sh "<note>" …`, naming each note it changed. Fix what it reports in those notes. Tell the user about anything it reports in other notes, because another session may be working on them.
 
 ## Problems You Find
-Whether you, a subagent or a check found a problem, what happens to it depends on whether it matters:
+Whether you, a subagent or a check found a problem, first make sure it's real: that the code and notes bear it out, and that it's a problem with what the user actually meant rather than with a misreading of it. A subagent states a problem that isn't real as confidently as one that is. If it's real, what happens to it depends on whether it matters:
 - **If leaving it would cause a real problem,** such as a bug, a failing or flaky test, a security risk that could reach production, lost data, code a later change would struggle with, or work that goes against a story's Purpose or a choice that's the user's call: it matters, so bring it to the user as your skill describes. A doc gap is handled as "Doc gaps" describes.
 - **Otherwise, it's small,** such as a tidy-up, an inconsistency or a wording fix. If it needs no decision and sits in a file your work already changes, fix it without asking the user or reporting it as a finding: now, or, if a later step of the story's plan edits the file, as a Boy Scout fix in that step, as the `triaging-out-of-scope-work` skill describes. Otherwise, drop it, with no note, out-of-scope item or mention.
 
