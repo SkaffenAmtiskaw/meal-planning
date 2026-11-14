@@ -302,7 +302,7 @@ npm install -g @jdxcode/mise
 export MISE_DISABLE_BACKENDS=aqua
 # Sessions need only node and pnpm. Without this, mise looks up the other tools' latest versions on hosts the
 # session can't reach, such as GitHub, which returns a 403.
-export MISE_DISABLE_TOOLS=rtk,age,rclone,http:mongodb-database-tools
+export MISE_DISABLE_TOOLS=age,rclone,http:mongodb-database-tools
 
 # Find the cloned repo, to install the versions its mise.toml names.
 repo=""
@@ -326,7 +326,7 @@ mise install node pnpm
 shims="${MISE_DATA_DIR:-$HOME/.local/share/mise}/shims"
 cat > /opt/mise-session-env.sh <<EOF
 export MISE_DISABLE_BACKENDS=aqua
-export MISE_DISABLE_TOOLS=rtk,age,rclone,http:mongodb-database-tools
+export MISE_DISABLE_TOOLS=age,rclone,http:mongodb-database-tools
 export PATH="$shims:\$PATH"
 EOF
 
