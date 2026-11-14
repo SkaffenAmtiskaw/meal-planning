@@ -3,8 +3,13 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { Types } from 'mongoose';
 
 vi.mock('@/_models/user', async () => await import('#mocks/@/_models/user'));
+vi.mock(
+	'@/_utils/reportError',
+	async () => await import('#mocks/@/_utils/reportError'),
+);
 
 import { User } from '@/_models/user';
+import { reportError } from '@/_utils/reportError';
 
 import { removePlannerMembership } from './removePlannerMembership';
 
@@ -27,11 +32,13 @@ describe('removePlannerMembership', () => {
 			});
 		});
 
-		it('returns ok: true on successful removal', async () => {
+		it('returns ok: true on successful removal, and reports nothing', async () => {
 			const userId = new Types.ObjectId().toString();
 			const plannerId = new Types.ObjectId().toString();
 
 			const result = await removePlannerMembership(userId, plannerId);
+
+			expect(reportError).not.toHaveBeenCalled();
 
 			expect(result).toEqual({ ok: true });
 		});
@@ -56,9 +63,8 @@ describe('removePlannerMembership', () => {
 			const userId = new Types.ObjectId().toString();
 			const plannerId = new Types.ObjectId().toString();
 
-			vi.mocked(User.findByIdAndUpdate).mockRejectedValue(
-				new Error('Database connection failed'),
-			);
+			const error = new Error('Database connection failed');
+			vi.mocked(User.findByIdAndUpdate).mockRejectedValue(error);
 
 			const result = await removePlannerMembership(userId, plannerId);
 
@@ -66,6 +72,7 @@ describe('removePlannerMembership', () => {
 				ok: false,
 				error: 'Database connection failed',
 			});
+			expect(reportError).toHaveBeenCalledWith(error);
 		});
 
 		it('returns ok: false with error message when database throws a non-Error value', async () => {

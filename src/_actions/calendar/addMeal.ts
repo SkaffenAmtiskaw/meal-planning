@@ -3,7 +3,7 @@
 import { Types } from 'mongoose';
 import { z } from 'zod';
 
-import { checkAuth } from '@/_actions/auth';
+import { checkAuth } from '@/_actions/auth/checkAuth';
 import { zMealFormSchema } from '@/_models/calendar';
 import { Planner } from '@/_models/planner';
 import type { ActionResult } from '@/_utils/actionResult';

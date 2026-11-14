@@ -1,0 +1,47 @@
+---
+name: rule-placement
+description: Where a rule or convention in this repo lives and how other files refer to it. Use when deciding where a new or changed rule goes, or when writing a skill or agent that relies on a rule kept elsewhere.
+user-invocable: false
+---
+
+# Placing Rules
+Each rule has one home, chosen by who needs it and when it loads, so a rule doesn't take attention from sessions that never use it. A short rule can also be copied where it's used, as "Referring to a Rule Kept Elsewhere" describes.
+
+## Where a Rule Goes
+A rule is about the codebase itself, about how the notes vault is organized, or about how agents work, called an agent rule here. The places differ in what they hold and when they load:
+- **A rule about the codebase itself,** such as its structure, code conventions, styling or tests: a doc in `docs/`. The docs describe the codebase for anyone working on it, and they're read when a task needs them. An agent rule never goes in a doc, even when it concerns code, such as how a story treats the files it touches or how an agent reports back.
+- **A rule about how the notes vault is organized,** which the user reads as well as agents:
+  - **What each note type is, the frontmatter, the lifecycle, which skill comes next in each state and where files go:** Note Conventions. It's only a map, so a session that reads it loads no procedures it won't use. A procedure goes in the skill that carries it out, and Note Conventions gets at most the note type's one-line description and its rows in the next-step table.
+  - **The format of a note section the user fills in by hand:** that section's comment in its template, the one home for that format. A rule an agent follows when it writes a section goes in its skill.
+  - **How the Roadmap is laid out, how goals order its work and what its markers mean:** the `roadmap-rules` skill, because several skills and agents use these rules but most sessions don't.
+- **An agent rule every session needs:** AGENTS.md, which loads into every session.
+- **An agent rule several skills or agents use, but not every session:** a shared-rule skill with `user-invocable: false`, like `running-the-app`. It loads only when a session invokes it or an agent preloads or reads it, so sessions that don't need it pay only for its description. Where in the skill depends on who needs the rule:
+  - **If some skills or agents need the rule but not the rest of the skill:** a supporting file in the skill's folder, like `running-the-app/which-user.md`, which they read on its own, so they don't load the rest. Unlike a separate skill for the rule, a supporting file has no description to load into every session. If the skill's own steps use the rule, its `SKILL.md` reads the file where the rule applies.
+  - **Otherwise:** the skill's `SKILL.md`.
+- **An agent rule only one skill or agent uses:** that skill or agent, because anywhere else loads it for sessions that never use it. Where in the skill depends on which runs need it:
+  - **If only runs that take one branch need it,** such as how `/shape` splits an idea into several stories: a supporting file in the skill's folder, like `shape/splitting.md`, which the skill reads where that branch starts, so runs that don't take the branch never load it.
+  - **Otherwise:** the skill's own file, even when the rule is narrow, such as a threshold that applies at a single step.
+
+## Referring to a Rule Kept Elsewhere
+If a rule kept elsewhere is more than a few lines, or one of these cases holds, a skill or agent refers to the rule rather than copying it:
+- **Drift between copies would let a mistake through unnoticed,** such as a checker working from a stale copy of the rules it checks.
+- **The home costs about what a copy would,** such as a small supporting file that's read only in the runs that need it.
+- **The session already has the home loaded at that point,** such as AGENTS.md in a skill's session or a file the skill opens anyway.
+
+Otherwise, the skill or agent copies the rule, such as one fact from a long shared file, at the step that uses it. Reading the home would cost more than the copy, and drift would at worst change some wording or cost the user one more question. A copy of a test, such as the three cases above, keeps its full wording, because a shortened copy lets through a case the test rules out.
+
+When a skill or agent doesn't copy a rule, how it refers to the rule depends on where the rule is kept:
+- **If it's in AGENTS.md:** a skill doesn't refer to it, because AGENTS.md loads into every session and its rules already apply. An agent doesn't load AGENTS.md, so the rule goes in a shared-rule skill the agent preloads.
+- **If AGENTS.md names a shared-rule skill and leaves each skill to say when it applies,** as it does for triaging out-of-scope work: the skill's step says to do it, such as "triage the out-of-scope list", without naming either file.
+- **If it's kept anywhere else,** such as a doc or a shared-rule skill, the skill or agent names where the rule lives at the point it applies: "as `unit_tests.md` describes", "as the `running-the-app` skill describes". How a skill or agent loads a shared-rule skill depends on how much of the shared-rule skill it needs, and in which runs:
+  - **If it needs only part of the skill:** if that part is still in `SKILL.md`, first move it into a supporting file, as "Where a Rule Goes" describes. Then it reads that file where the part applies.
+  - **Otherwise, if only runs that take one branch need it,** it reads the skill's `SKILL.md` where that branch starts, so runs that don't take the branch never load it.
+  - **Otherwise,** an agent preloads it with `skills:` in its frontmatter, and a skill invokes it where the rule first applies, even if AGENTS.md also names it for sessions with no skill.
+
+The reverse holds too: a shared-rule skill holds only the shared rule. Which skill uses it, at which step, and who does what go in each skill that uses it, never in the shared-rule skill, because each skill knows its own steps and a list kept in the shared rule goes stale as skills change.
+
+## Repeats and Differences
+When a skill or agent covers a rule that's kept elsewhere, what to do with its passage depends on what the passage says and whether the rule may be copied:
+- **If the passage says something the rule doesn't:** ask the user whether the difference is a deliberate exception or drift. Keep an exception in the skill or agent, and remove drift.
+- **Otherwise, if "Referring to a Rule Kept Elsewhere" lets the skill or agent copy the rule:** keep the copy.
+- **Otherwise,** it's a plain repeat, so remove it without asking the user. This includes procedure lines, such as a step that says to go through approvals "one at a time", which only repeats the rule on questions.

@@ -3,12 +3,15 @@ import { beforeEach, describe, expect, test, vi } from 'vitest';
 
 import { notFound, redirect } from 'next/navigation';
 
+import { checkAuth } from '@/_actions/auth/checkAuth';
+
 import { PlannerProvider } from './_components';
 
-const { mockCheckAuth, mockGetUser } = vi.hoisted(() => ({
-	mockCheckAuth: vi.fn(),
+const { mockGetUser } = vi.hoisted(() => ({
 	mockGetUser: vi.fn(),
 }));
+
+const mockCheckAuth = vi.mocked(checkAuth);
 
 vi.mock('@/_utils/zObjectId', async () => {
 	const { z } = await import('zod');
@@ -17,9 +20,10 @@ vi.mock('@/_utils/zObjectId', async () => {
 	};
 });
 
-vi.mock('@/_actions/auth', () => ({
-	checkAuth: (...args: unknown[]) => mockCheckAuth(...args),
-}));
+vi.mock(
+	'@/_actions/auth/checkAuth',
+	async () => await import('#mocks/@/_actions/auth/checkAuth'),
+);
 
 vi.mock('@/_actions/user', () => ({
 	getUser: () => mockGetUser(),
@@ -85,7 +89,7 @@ describe('planner layout', () => {
 		mockCheckAuth.mockResolvedValue({
 			type: 'authorized',
 			accessLevel: 'owner',
-		});
+		} as never);
 
 		await Layout({ children: null, params });
 
@@ -96,7 +100,7 @@ describe('planner layout', () => {
 		mockCheckAuth.mockResolvedValue({
 			type: 'authorized',
 			accessLevel: 'owner',
-		});
+		} as never);
 
 		render(await Layout({ children: null, params }));
 

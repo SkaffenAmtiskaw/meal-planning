@@ -1,8 +1,7 @@
 ---
 name: final-review
-description: Review how an in-review story's code fits together across all its steps, against a fresh target design, then go through the findings with Sarah, fix the small ones here and route the rest to the notes.
+description: Reviews a built story's code and settles each finding with the user. Use when the user or a session's brief asks for /final-review.
 argument-hint: "[note name]"
-disable-model-invocation: true
 hooks:
   PreToolUse:
     - matcher: "Edit|Write|MultiEdit|NotebookEdit"
@@ -11,100 +10,101 @@ hooks:
           command: '"$CLAUDE_PROJECT_DIR"/.claude/hooks/protect-config.sh'
 ---
 
-Review the story **$ARGUMENTS** now that every step is implemented.
+Review the story **$ARGUMENTS** now that every step is built.
 
-## Why this skill works the way it does
-Sarah already reviewed each step's diff as it was built, so re-reviewing steps adds little. This review is for what no single step shows:
-- scaffolding a step planned to remove that is still there
-- helpers or logic duplicated across two steps
-- a module that picked up a second job gradually, one reasonable step at a time
-- dead code left by **As built** changes: unused exports or props, branches nothing reaches
-- a piece that made sense early in the story but doesn't once the later steps exist
+Invoke the `editing-notes` skill first, since this run changes notes.
 
-Most of these can be proven mechanically, and that's where most of the value is. Architecture findings are rarer, but they're the kind that get expensive later.
+## Why This Skill Works the Way It Does
+This review looks across the steps, at what no single step shows, because the user reviewed each step's diff as it was built. On an infra story they weren't asked to, so step 3 also reads each change for bugs. The review checks three things:
+1. **Purpose:** whether the built story does what its note set out to do.
+2. **Best practice and conventions:** the code against best practice and the project's conventions.
+3. **The plan:** the code against the note's plan.
 
-**The bias this skill is built against.** The review agent this replaces strongly favored whatever had been built. It read the diff first, so the code became the frame, and it had no target of its own to compare against. So here the target design comes first, from an agent that never sees the code. Where the code and the target differ, that's a finding for Sarah to decide. The code doesn't win by default. "It works" and "it's already there" aren't reasons to keep it.
+## 1. Read the Note
+If the note's `status` isn't `in-review`, or its `^status` line already names a PR, tell the user what you found and stop. A PR on the `^status` line means the review is done. Then run the checks in `starting-on-a-branch.md`, in the `building-code` skill's folder, and stop wherever they say to.
 
-## 1. Read the note
-Find the note in `notes/features/`. It needs `status: in-review`. If it has a different status, tell Sarah what you found and stop.
+Read the note, but not the story's code until step 3 says to. For a feature, step 3 gets a target design before you read the code. A review that reads the code first ends up favoring it.
 
-Read the note. Don't open the story's code yet.
+## 2. Find the Story's Code
+Run `sh scripts/story-range.sh "<note name>"`.
 
-The review depends on `type`:
-- **feature:** the full review, steps 2 to 8.
-- **pattern, infra, bug, cleanup, sweep or roundup:** there's no behavior list to design a target from, so skip the fresh design and `code-critic`. Step 3 explains what runs instead.
+Show the user the range (first and last commit, with their subjects), whether uncommitted changes are included, and both groups of files. A file the note doesn't name can still be the story's, such as one edited while resolving a merge. Wait for them to confirm the range and to say which of the other files belong to the story.
 
-## 2. Find the story's code
-Commit messages don't name the story, and commits often mix code with notes changes, so work the range out from the note's history and have Sarah confirm it.
+## 3. Run the Checks
+Back every finding with evidence the user can check: `file:line` for code that's there, or, for something the story doesn't do, where you looked for it. Name the rule, note line or plan line it breaks, such as a Purpose or Symptoms line. A clear bug you come across inside a single step is a finding too.
 
-1. Find the first commit that marked a step complete: `git log --follow -S'**Status:** ✅ Complete' --format='%h %ad %s' --date=short -- "<note path>"`, and take the last line (`--follow` doesn't work with `--reverse`). Its parent is the proposed start. Check the few commits before it for changes to step 1's files, in case the code was committed separately, and move the start back if so.
-2. The range runs to `HEAD`. If `git status` shows uncommitted changes to code files, include them too.
-3. List the code and test files changed in the range, leaving out `notes/` and `.opencode/`. Split them into two groups: files named in a step's Files list or an As built note, and everything else. The second group may come from other stories committed in between.
+**For every story:** send the `leftovers-checker` subagent the notes repo's path, the note path, the confirmed range in the `<base>..HEAD` form the script's `Range:` line prints, whether uncommitted changes are part of it, and the confirmed files. Start it in the background, so it runs while you do the rest of this step.
 
-Show Sarah the range (first and last commit, with their subjects), whether uncommitted changes are included, and both groups of files. Wait for her to confirm or correct them. This one confirmation covers the range and the file list together.
+**For a feature,** check 2 runs on a fresh target design, as `target-design.md` in this skill's folder describes.
 
-## 3. Build the target and run the checks
-Save each agent's report to `.scratch/<note name> - <agent name>.md`.
+**For any other type,** there are no behaviors to design a target from, so you do check 2 yourself. Read the conventions the story was meant to apply, such as a pattern's Convention section or the `docs/` file a cleanup aligns code with. Then read the story's files, and check each change against those conventions, the rest of the project's conventions and best practice.
 
-**For every story:** send the note path, the confirmed range and the confirmed files to the `leftovers-checker` subagent. Start it now, in the background, so it runs while you do the rest of this step.
+**On an infra story,** also read each change for bugs.
 
-**For a feature:**
-1. Send the `target-designer` subagent the story's behaviors, numbered, from the Suggested Approach or wherever the note lists them, and the paths to the Design Handoff sections and images. Give it nothing else, and don't describe the built code or the approved approach to it.
-2. When its design comes back, read the story's files. Map each file to the target piece it fills. Files that fill no piece still go on the list, marked "no target piece". A job the fresh design didn't need is worth asking about.
-3. Send the list to the `code-critic` subagent: each target piece with its job and the files mapped to it. Tell it this is a review of a finished story, so every file on the list has already been changed by the story. Don't pre-judge the code for it.
-4. Compare the fresh design with the approved Suggested Approach table. Each place they differ is a finding: what the approach planned, what a fresh design has, and what the code does. These are where the approach may have gone wrong once the later steps existed.
+**Then, for every story,** do checks 1 and 3 yourself:
+- **Purpose:** check the built story against what it set out to do. Each place it falls short is a finding.
+- **The plan:** compare the code with the note's approach and its steps. The approach is whatever the note says to build or change, in whichever sections hold it. Whether a difference is a finding depends on what it changes:
+  - **If it changes what the app does or shows or what the tooling does for the user, or goes against a choice that's the user's call:** it's a finding.
+  - **Otherwise,** the difference is only in how the code is written, so it's a finding only if check 2 flags it.
 
-**For a pattern, infra, bug, cleanup, sweep or roundup:** read the conventions the story was meant to apply, such as a pattern's Rules section, an infra story's Design and Conventions, a roundup's **Decided** lines or the `docs/` file a cleanup aligns code with (for example `unit_tests.md`). Then read the story's files and check each change against them. Findings need `file:line` evidence and the rule they break.
+  Keep the finding even when an **As built** note records the difference, because step 4 weighs the note's reason.
 
-If an agent's item is a Boy Scout fix, as AGENTS.md describes under "Out-of-scope work", it isn't a finding: add it to the approved fixes for step 6, and say it's a Boy Scout fix when you get to it. Every other "Outside this story" and "Duplication" item that falls outside the story becomes a finding in step 4, proposed as route to the notes, instead of going straight to the out-of-scope list. Step 5 is their triage: fix here pulls one into the story, and skip drops it.
+## 4. Collect the Findings
+Sort what the checks and the agents found:
+- **A check 2 or check 3 item that an As built note explains,** with a reason that holds up, isn't a finding.
+- **A small item, as AGENTS.md's "Problems You Find" describes,** isn't a finding. If it's in the story's files, add it to the fixes for step 6. Otherwise, drop it.
+- **Any other item outside the story** is a finding, and you propose routing it, so the user triages it with the rest in step 5. Such items come from the "Outside this story" section of each agent's report, from code-critic's "Duplication" section on a feature, when none of its places are in the story's files, and from the rest of the out-of-scope list.
+- **Anything else** is a finding.
 
-## 4. Collect the findings
-Merge everything into one list, in `.scratch/<note name> - review findings.md`:
-- One root cause is one finding, with every place it shows up, even when two sources found it separately.
-- Order: architecture findings first (the critic's verdicts, differences from the approach, convention breaks), then the leftovers.
-- For each finding, propose one of:
-  - **Fix here:** it's small, and any decision it needs can be settled in a question or two.
-  - **Route to the notes:** it's bigger, needs design work, or reaches well outside the story's files.
+If the sort leaves no findings and no fixes, tell the user in one line and go to step 9. Otherwise, write the fixes to a file in `.scratch/`, and merge the findings into one list in the same file. One root cause is one finding, with every place it shows up, even when two sources found it separately. Order them by check: Purpose first, then best practice and conventions (on a feature, code-critic's verdicts, then other convention breaks, then the leftovers), then the plan, then the items from outside the story. For each finding from the story, propose one of:
+- **Fix it here:** it's small, and any decision it needs can be settled in a question or two.
+- **Route it:** it's bigger, needs design work, or reaches well outside the story's files.
 
-Don't review steps one by one. If you trip over a clear bug, include it. Otherwise, don't hunt for issues inside a single step.
-
-If there are no findings, tell Sarah in one line and go to step 8.
-
-## 5. Go through the findings with Sarah
-First, tell her in one line how many findings there are. Then show each one:
+## 5. Go Through the Findings With the User
+Show each finding in this form:
 
 ```
 F[n] of [total]: [title]
-[what's wrong, with file:line locations and the evidence]
+[what's wrong, with the evidence]
 Found by: [agent or check]
-Proposed: [fix here, with the fix in a sentence or two / route to the notes, and why]
+Proposed: [fix it here, with the fix in a sentence or two / route it, and why]
 ```
 
-Wait for her answer: fix here, route to the notes, skip, or something else. If she chooses fix here and the fix has open choices, settle them now, following "Settle the open choices" in `.claude/skills/implement/SKILL.md`. By the end of this step, every fix must be fully decided.
+The user answers each one with fix it here, route it or drop it. Fix it here pulls the finding into the story. Don't start any fix until every finding has an answer. The fixes go in dependency order, and you can't order them until you know them all. Act on each answer as it comes:
+- **Fix it here:** if the fix has open choices, settle them now, as step 1 of the `building-code` skill describes.
+- **Route it:** the finding joins the out-of-scope list.
 
-Record each answer in the findings file as you go. Routed findings join the out-of-scope list. Skipped findings are dropped and never recorded anywhere.
+Record each answer in the findings file, with any choices settled for the fix, before you show the next finding. Step 6 builds the fix from that record.
 
-Don't start fixing until every finding has an answer.
+## 6. Make the Fixes
+Put the fixes in dependency order, and build them one at a time. Don't ask the user to approve each one, because each was settled in step 4 or by their answer in step 5. For each fix:
+1. Make it as the `building-code` skill describes in steps 2 and 3, "Write the Code" and "Clean Up and Run the Checks". If the fix turns out bigger than it looked, stop and ask the user whether to route it instead.
+2. Redo the checks the fix could affect, as `building-code` describes in step 4, "Do the Acceptance Checks". Which checks depends on the story:
+   - **If it's infra:** the Implementer and Sarah checks in its Build Order that cover what the fix changed, because these checks are what prove the fix works.
+   - **Otherwise:** if the fix changes anything the user could see in the app, the story's acceptance checks that cover it.
 
-## 6. Make the fixes, one at a time
-Put the approved fixes in dependency order. For each one:
-1. Tell Sarah in one line which fix you're on.
-2. Make it following `.claude/skills/implement/SKILL.md`: "Use current library APIs", "Write the tests first, then the code", and "Run the checks", including its `cleanup.md`. The open choices were settled in step 5. If a new one comes up, stop and ask. If the fix turns out bigger than it looked, stop and ask Sarah whether to route it to the notes instead.
-3. If the fix changes anything she could see in the app, redo the story's acceptance checks that cover it, as `first-pass.md` in the implement skill's folder describes.
-4. Leave it unstaged, so her unstaged changes show just this fix.
-5. Report: the files changed, the tests and the logic each covers, the checks run, and the acceptance checks redone with what you saw.
-6. Ask her whether she approves the fix, and wait. Handle any feedback as "Handle her feedback" in the implement skill describes, using its `bugs.md` for bugs. Once she approves, stage the files the fix changed, and go on to the next approved fix in the order.
+## 7. Show the Fixes
+Show a table with one row per fix: its files as markdown links the user can click, a one-line summary, the tests it added or changed, and any checks redone in step 6, with what you saw. Ask whether they want any fix changed, and handle their feedback as `building-code` describes in step 5, "Handle the User's Feedback".
 
-## 7. Find a home for out-of-scope items
-If the out-of-scope list is empty, skip this.
+## 8. Triage the Late Out-of-Scope Items
+Triage the out-of-scope items that turned up after step 5. Build each one the user pulls in as step 6 describes, and show it as step 7 does.
 
-Otherwise, route it as AGENTS.md describes under "Out-of-scope work".
+## 9. Open the PR
+Open the story's PR as `opening-the-pr.md`, in the `building-code` skill's folder, describes.
 
-## 8. Update the note
-1. Set `status` to `done`.
-2. Update the `^status` line to "Reviewed. Next: /close".
+## 10. Update the Note
+Leave `status` at `in-review`, since `/close` sets `done` once the PR has merged. Set the `^status` line by the base, with the PR's number:
+- **`develop`:** "Reviewed. PR #12 merges once its checks pass. Next: /close once it merges".
+- **`main`:** "Reviewed. Next: merge PR #12, then /close".
 
-Write nothing else to the note. The fixes live in the commits, and routed findings live in the notes they went to. Leave the note changes unstaged.
+The fixes and routed findings aren't worth noting in the summary below it, since the fixes live in the commits and routed findings in the notes they went to.
 
-## 9. Stop
-Tell Sarah the review is done. Closing the story with `/close`, in a new session, comes next and isn't part of this skill.
+## 11. Route the Out-of-Scope Items
+Route the out-of-scope list.
+
+## 12. Stop
+Tell the user the review is done and give them the PR's link. What happens to the PR depends on its base:
+- **`develop`:** GitHub merges it on its own once its required checks pass.
+- **`main`:** tell them to merge it on GitHub once its checks pass, since that merge deploys.
+
+Closing the story with `/close`, in a new session once the PR has merged, comes next and isn't part of this skill.

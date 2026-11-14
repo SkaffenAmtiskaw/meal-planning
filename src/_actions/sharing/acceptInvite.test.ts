@@ -11,10 +11,15 @@ import {
 import { getUser } from '@/_actions/user';
 import { PendingInvite } from '@/_models/sharing';
 import { User } from '@/_models/user';
+import { reportError } from '@/_utils/reportError';
 
 import { acceptInvite } from './acceptInvite';
 
 vi.mock('@/_actions/user', async () => await import('#mocks/@/_actions/user'));
+vi.mock(
+	'@/_utils/reportError',
+	async () => await import('#mocks/@/_utils/reportError'),
+);
 
 vi.mock('@/_models/user', () => ({
 	User: {
@@ -142,10 +147,18 @@ describe('acceptInvite', () => {
 		expect(invite.deleteOne).toHaveBeenCalled();
 	});
 
-	it('should handle database errors gracefully', async () => {
-		vi.mocked(PendingInvite.findOne).mockRejectedValue(
-			new Error('Database connection failed'),
-		);
+	it('should return the session error without reporting when there is no valid session', async () => {
+		vi.mocked(getUser).mockRejectedValueOnce(new Error('No Valid Session'));
+
+		const result = await acceptInvite({ token });
+
+		expect(result).toEqual({ ok: false, error: 'No Valid Session' });
+		expect(reportError).not.toHaveBeenCalled();
+	});
+
+	it('should handle database errors gracefully, and report them', async () => {
+		const error = new Error('Database connection failed');
+		vi.mocked(PendingInvite.findOne).mockRejectedValue(error);
 
 		const result = await acceptInvite({ token });
 
@@ -153,6 +166,7 @@ describe('acceptInvite', () => {
 		if (!result.ok) {
 			expect(result.error).toBe('Database connection failed');
 		}
+		expect(reportError).toHaveBeenCalledWith(error);
 	});
 
 	it('should handle non-Error exceptions gracefully', async () => {

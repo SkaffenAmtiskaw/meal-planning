@@ -14,6 +14,9 @@ export const env = createEnv({
 	},
 	client: {
 		NEXT_PUBLIC_GOOGLE_CLIENT_ID: z.string().min(1),
+		// Only Vercel's Production environment sets these, so they're optional everywhere else
+		NEXT_PUBLIC_POSTHOG_PROJECT_TOKEN: z.string().min(1).optional(),
+		NEXT_PUBLIC_VERCEL_ENV: z.string().min(1).optional(),
 	},
 	runtimeEnv: {
 		DB_URL: process.env.DB_URL,
@@ -24,5 +27,8 @@ export const env = createEnv({
 		RESEND_API_KEY: process.env.RESEND_API_KEY,
 		RESEND_FROM_EMAIL: process.env.RESEND_FROM_EMAIL,
 		NEXT_PUBLIC_GOOGLE_CLIENT_ID: process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID,
+		NEXT_PUBLIC_POSTHOG_PROJECT_TOKEN:
+			process.env.NEXT_PUBLIC_POSTHOG_PROJECT_TOKEN,
+		NEXT_PUBLIC_VERCEL_ENV: process.env.NEXT_PUBLIC_VERCEL_ENV,
 	},
 });

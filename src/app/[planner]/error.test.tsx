@@ -1,23 +1,31 @@
-import { fireEvent, render, screen } from '@testing-library/react';
-import { describe, expect, test, vi } from 'vitest';
+import { render } from '@testing-library/react';
+import { beforeEach, describe, expect, test, vi } from 'vitest';
+
+import posthog from 'posthog-js';
 
 import PlannerError from './error';
 
 vi.mock('@mantine/core', async () => await import('#mocks/@mantine/core'));
+vi.mock('posthog-js', async () => await import('#mocks/posthog-js'));
 
 describe('PlannerError', () => {
-	test('renders error message', () => {
-		render(<PlannerError error={new Error('test')} reset={() => undefined} />);
-
-		expect(screen.getByText('Something went wrong')).toBeDefined();
+	beforeEach(() => {
+		vi.clearAllMocks();
 	});
 
-	test('calls reset when try again is clicked', () => {
-		const reset = vi.fn();
-		render(<PlannerError error={new Error('test')} reset={reset} />);
+	test('reports each error once', () => {
+		const error = new Error('test');
+		const { rerender } = render(
+			<PlannerError error={error} reset={() => undefined} />,
+		);
+		rerender(<PlannerError error={error} reset={() => undefined} />);
 
-		fireEvent.click(screen.getByText('Try again'));
+		expect(posthog.captureException).toHaveBeenCalledExactlyOnceWith(error);
 
-		expect(reset).toHaveBeenCalled();
+		const next = new Error('next');
+		rerender(<PlannerError error={next} reset={() => undefined} />);
+
+		expect(posthog.captureException).toHaveBeenLastCalledWith(next);
+		expect(posthog.captureException).toHaveBeenCalledTimes(2);
 	});
 });

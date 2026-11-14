@@ -2,7 +2,7 @@
 
 import { Types } from 'mongoose';
 
-import { checkAuth } from '@/_actions/auth';
+import { checkAuth } from '@/_actions/auth/checkAuth';
 import { User } from '@/_models/user';
 import { serialize } from '@/_utils/serialize';
 

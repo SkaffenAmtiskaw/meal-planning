@@ -1,0 +1,103 @@
+# Checks PostHog for new and reopened error issues each hour, and starts the production-errors routine, a cloud session
+# that writes a bug note with a root cause analysis, once for each one it hasn't reported before. The check job holds
+# the PostHog read key and chooses the issues; the start job calls the routine. See docs/ci.md, "Production Errors".
+name: Production Errors
+
+on:
+  schedule:
+    # Hourly at minute 37, off the top of the hour, when GitHub drops scheduled runs most often
+    - cron: '37 * * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+# Runs wait their turn, so two never read the same reported list.
+concurrency:
+  group: ${{ github.workflow }}
+
+env:
+  # Each issue's last known status, kept in the Actions cache between runs.
+  REPORTED: production-errors-reported.json
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    outputs:
+      chosen: ${{ steps.check.outputs.chosen }}
+      reported: ${{ steps.check.outputs.reported }}
+    steps:
+      - uses: actions/checkout@v7
+      # No pnpm install: the script needs only Node's built-in modules, so no package's install script runs beside
+      # the PostHog key.
+      - uses: jdx/mise-action@v4
+        with:
+          install_args: node pnpm
+      # Each run saves its list under its own key, so the prefix restores the newest one.
+      - uses: actions/cache/restore@v6
+        with:
+          path: ${{ env.REPORTED }}
+          key: production-errors-reported-${{ github.run_id }}
+          restore-keys: production-errors-reported-
+      - id: check
+        env:
+          POSTHOG_READ_KEY: ${{ secrets.POSTHOG_READ_KEY }}
+          POSTHOG_PROJECT_ID: ${{ vars.POSTHOG_PROJECT_ID }}
+        run: |
+          args=()
+          # With no list, as on the first run or after the cache is cleared, the check records every current issue
+          # and chooses none.
+          if [ -f "$REPORTED" ]; then args+=(--reported "$REPORTED"); fi
+          result=$(pnpm -s errors:check "${args[@]}")
+          echo "Chosen: $(jq '.chosen | length' <<< "$result")"
+          {
+            echo "chosen=$(jq -c .chosen <<< "$result")"
+            echo "reported=$(jq -c .reported <<< "$result")"
+          } >> "$GITHUB_OUTPUT"
+
+  # Calls the routine's /fire once per chosen text, then saves the list with the issues whose calls succeeded. It runs
+  # whenever check succeeds, even with nothing chosen, so the list keeps up with each issue's status. It holds the
+  # routine's two secrets and nothing else.
+  start-production-errors:
+    needs: check
+    runs-on: ubuntu-latest
+    steps:
+      # The texts reach the script only through env, and jq builds each body, since error messages are untrusted
+      # input. The text's shape is in step 1 of the production-errors skill, which reads it.
+      # No --retry: /fire doesn't dedupe, so a retry could start two sessions. A failed call leaves its issue out of
+      # the list, so the next run sends it again, and fails the job once every call has been tried.
+      - env:
+          ROUTINE_URL: ${{ secrets.ROUTINE_PRODUCTION_ERRORS_URL }}
+          ROUTINE_TOKEN: ${{ secrets.ROUTINE_PRODUCTION_ERRORS_TOKEN }}
+          CHOSEN: ${{ needs.check.outputs.chosen }}
+          REPORTED_LIST: ${{ needs.check.outputs.reported }}
+        run: |
+          reported="$REPORTED_LIST"
+          failed=0
+          while IFS= read -r item; do
+            body=$(jq -c '{text: .text}' <<< "$item")
+            if curl --fail-with-body --silent --show-error -X POST "$ROUTINE_URL" \
+              -H "Authorization: Bearer $ROUTINE_TOKEN" \
+              -H "anthropic-beta: experimental-cc-routine-2026-04-01" \
+              -H "anthropic-version: 2023-06-01" \
+              -H "Content-Type: application/json" \
+              --data "$body"; then
+              echo
+              # A refusal's text has no issue, so its success records that the refusal was reported.
+              reported=$(jq -c --argjson item "$item" '
+                if $item.issue == null then .refusalReported = true
+                else .issues[$item.issue] = $item.status end' <<< "$reported")
+            else
+              echo
+              echo "::error::/fire failed for $(jq -r '.issue // "the refusal"' <<< "$item")"
+              failed=1
+            fi
+          done < <(jq -c '.[]' <<< "$CHOSEN")
+          jq . <<< "$reported" > "$REPORTED"
+          echo "failed=$failed" >> "$GITHUB_ENV"
+      - uses: actions/cache/save@v6
+        with:
+          path: ${{ env.REPORTED }}
+          key: production-errors-reported-${{ github.run_id }}
+      - if: env.failed == '1'
+        run: exit 1

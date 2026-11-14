@@ -2,9 +2,14 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { Planner } from '@/_models/planner';
 import { PendingInvite } from '@/_models/sharing';
+import { reportError } from '@/_utils/reportError';
 
 import { validateInviteToken } from './validateInviteToken';
 
+vi.mock(
+	'@/_utils/reportError',
+	async () => await import('#mocks/@/_utils/reportError'),
+);
 vi.mock(
 	'@/_models/planner',
 	async () => await import('#mocks/@/_models/planner'),
@@ -30,6 +35,7 @@ describe('validateInviteToken', () => {
 			});
 			expect(Planner.findById).not.toHaveBeenCalled();
 			expect(result).toEqual({ valid: false, reason: 'invalid' });
+			expect(reportError).not.toHaveBeenCalled();
 		});
 
 		it('returns invalid for an empty token', async () => {
@@ -42,8 +48,9 @@ describe('validateInviteToken', () => {
 			expect(result).toEqual({ valid: false, reason: 'invalid' });
 		});
 
-		it('returns invalid when the database query fails', async () => {
-			vi.mocked(PendingInvite.findOne).mockRejectedValue(new Error('DB Error'));
+		it('returns invalid and reports when the database query fails', async () => {
+			const error = new Error('DB Error');
+			vi.mocked(PendingInvite.findOne).mockRejectedValue(error);
 
 			const result = await validateInviteToken('valid-token');
 
@@ -52,6 +59,7 @@ describe('validateInviteToken', () => {
 			});
 			expect(Planner.findById).not.toHaveBeenCalled();
 			expect(result).toEqual({ valid: false, reason: 'invalid' });
+			expect(reportError).toHaveBeenCalledWith(error);
 		});
 	});
 
@@ -132,16 +140,17 @@ describe('validateInviteToken', () => {
 			});
 		});
 
-		it('returns valid with default planner name when planner lookup fails', async () => {
+		it('returns valid with default planner name, and reports, when planner lookup fails', async () => {
 			const mockInvite = {
 				email: 'test@example.com',
 				planner: 'planner123',
 				expiresAt: new Date(Date.now() + 86400000),
 				deleteOne: vi.fn(),
 			};
+			const error = new Error('DB Error');
 
 			vi.mocked(PendingInvite.findOne).mockResolvedValue(mockInvite as never);
-			vi.mocked(Planner.findById).mockRejectedValue(new Error('DB Error'));
+			vi.mocked(Planner.findById).mockRejectedValue(error);
 
 			const result = await validateInviteToken('valid-token');
 
@@ -151,6 +160,7 @@ describe('validateInviteToken', () => {
 				email: 'test@example.com',
 				plannerName: 'Meal Planner',
 			});
+			expect(reportError).toHaveBeenCalledWith(error);
 		});
 	});
 });

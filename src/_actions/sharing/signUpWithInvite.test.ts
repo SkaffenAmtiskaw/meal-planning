@@ -1,13 +1,20 @@
 import { beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
 
+import { APIError } from 'better-auth/api';
+
 import { addUser } from '@/_actions/user';
 import { auth } from '@/_auth';
 import { PendingInvite } from '@/_models/sharing';
+import { reportError } from '@/_utils/reportError';
 
 import { signUpWithInvite } from './signUpWithInvite';
 import { validateInviteToken } from './validateInviteToken';
 
 vi.mock('@/_actions/user', async () => await import('#mocks/@/_actions/user'));
+vi.mock(
+	'@/_utils/reportError',
+	async () => await import('#mocks/@/_utils/reportError'),
+);
 
 vi.mock('@/_auth', () => ({
 	auth: {
@@ -101,10 +108,9 @@ describe('signUpWithInvite', () => {
 		expect(auth.api.createUser).not.toHaveBeenCalled();
 	});
 
-	it('should return error when database lookup fails', async () => {
-		vi.mocked(PendingInvite.findOne).mockRejectedValueOnce(
-			new Error('Connection failed'),
-		);
+	it('should return error and report when database lookup fails', async () => {
+		const error = new Error('Connection failed');
+		vi.mocked(PendingInvite.findOne).mockRejectedValueOnce(error);
 
 		const result = await signUpWithInvite({ token, password, name });
 
@@ -113,6 +119,23 @@ describe('signUpWithInvite', () => {
 			error: 'Invite not found',
 		});
 		expect(auth.api.createUser).not.toHaveBeenCalled();
+		expect(reportError).toHaveBeenCalledWith(error);
+	});
+
+	it('should report nothing when the sign-up succeeds', async () => {
+		await signUpWithInvite({ token, password, name });
+
+		expect(reportError).not.toHaveBeenCalled();
+	});
+
+	it('should report when deleting the used invite fails', async () => {
+		const error = new Error('Delete failed');
+		vi.mocked(PendingInvite.deleteOne).mockRejectedValueOnce(error);
+
+		const result = await signUpWithInvite({ token, password, name });
+
+		expect(result.success).toBe(true);
+		expect(reportError).toHaveBeenCalledWith(error);
 	});
 
 	it('should create user, add to planner, delete invite, and return redirect URL for valid token', async () => {
@@ -167,10 +190,9 @@ describe('signUpWithInvite', () => {
 		);
 	});
 
-	it('should return error when Better Auth user creation fails', async () => {
-		vi.mocked(auth.api.createUser).mockRejectedValueOnce(
-			new Error('Better Auth creation failed'),
-		);
+	it('should return error and report when Better Auth user creation fails', async () => {
+		const error = new Error('Better Auth creation failed');
+		vi.mocked(auth.api.createUser).mockRejectedValueOnce(error);
 
 		const result = await signUpWithInvite({ token, password, name });
 
@@ -178,6 +200,30 @@ describe('signUpWithInvite', () => {
 		expect(result.error).toBe('Better Auth creation failed');
 		expect(auth.api.removeUser).not.toHaveBeenCalled();
 		expect(PendingInvite.deleteOne).not.toHaveBeenCalled();
+		expect(reportError).toHaveBeenCalledWith(error);
+	});
+
+	it("should return Better Auth's user error without reporting it", async () => {
+		vi.mocked(auth.api.createUser).mockRejectedValueOnce(
+			new APIError('BAD_REQUEST', { message: 'User already exists' }),
+		);
+
+		const result = await signUpWithInvite({ token, password, name });
+
+		expect(result.success).toBe(false);
+		expect(result.error).toBe('User already exists');
+		expect(reportError).not.toHaveBeenCalled();
+	});
+
+	it("should report Better Auth's server error", async () => {
+		const error = new APIError('INTERNAL_SERVER_ERROR', {
+			message: 'Failed to create user',
+		});
+		vi.mocked(auth.api.createUser).mockRejectedValueOnce(error);
+
+		await signUpWithInvite({ token, password, name });
+
+		expect(reportError).toHaveBeenCalledWith(error);
 	});
 
 	it('should return error when Better Auth user creation returns empty result', async () => {
@@ -190,8 +236,9 @@ describe('signUpWithInvite', () => {
 		expect(auth.api.removeUser).not.toHaveBeenCalled();
 	});
 
-	it('should rollback Better Auth user when adding user to planner fails', async () => {
-		vi.mocked(addUser).mockRejectedValueOnce(new Error('Database error'));
+	it('should rollback Better Auth user and report when adding user to planner fails', async () => {
+		const error = new Error('Database error');
+		vi.mocked(addUser).mockRejectedValueOnce(error);
 
 		const result = await signUpWithInvite({ token, password, name });
 
@@ -201,6 +248,18 @@ describe('signUpWithInvite', () => {
 			body: { userId: mockBetterAuthUser.user.id },
 		});
 		expect(PendingInvite.deleteOne).not.toHaveBeenCalled();
+		expect(reportError).toHaveBeenCalledWith(error);
+	});
+
+	it('should report when the rollback fails too', async () => {
+		const rollbackError = new Error('Remove failed');
+		vi.mocked(addUser).mockRejectedValueOnce(new Error('Database error'));
+		vi.mocked(auth.api.removeUser).mockRejectedValueOnce(rollbackError);
+
+		const result = await signUpWithInvite({ token, password, name });
+
+		expect(result.error).toBe('Database error');
+		expect(reportError).toHaveBeenCalledWith(rollbackError);
 	});
 
 	it('should rollback with generic message when addUser throws non-Error', async () => {

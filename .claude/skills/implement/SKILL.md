@@ -1,8 +1,7 @@
 ---
 name: implement
-description: Implement the next step of a ready note's implementation plan, asking Sarah about each real choice the plan leaves open, then stop for her review. One step per session.
+description: Builds the next step of a story's plan. Use when the user or a session's brief asks for /implement.
 argument-hint: "[note name]"
-disable-model-invocation: true
 hooks:
   PreToolUse:
     - matcher: "Edit|Write|MultiEdit|NotebookEdit"
@@ -13,145 +12,61 @@ hooks:
 
 Implement the next step of the note **$ARGUMENTS**.
 
-## Why this skill works the way it does
-Sarah reviews every step by hand, in the diff and in the running app, before the next one starts. The plan is how she makes sure what gets built is what she expected.
+Invoke the `editing-notes` skill first, since this run changes notes.
 
-The agent this skill replaces failed her in three ways, and most rules below exist because of one of them:
-- **It settled questions itself.** When the plan was silent, it picked an answer instead of asking, and the answers were often wrong.
-- **Its tests were worthless.** They checked that a class was applied or a prop was passed, not the logic.
-- **It used APIs from memory.**
+## 1. Find the Step
+Find the note. If its `status` isn't `ready` or `in-progress`, tell the user what you found, and stop. Then run the checks in `starting-on-a-branch.md`, in the `building-code` skill's folder, and stop wherever they say to.
 
-When the plan leaves a real choice open, Sarah decides it, not you. A choice that the note, the docs or the existing code already settle isn't a question: make it and list it in your report, where she can check it without being asked about every detail.
+Invoke the `roadmap-rules` skill and read the story's line on the Roadmap. If, by the skill's "Goals" rules, the story can't be built yet, tell the user which goal it waits on, and stop.
 
-## 1. Find the step
-Find the note in `notes/features/`. It needs `status: ready` or `in-progress`. If it has neither, tell Sarah what you found and stop.
+Read the whole note. Which step you build depends on the type:
+- **A tweak:** the note is one step. Its Purpose and any **Decided** line say what to build, and its Acceptance Criteria are the checks. If they're empty, write them first, as `checks.md` in the `writing-implementation-steps` skill's folder describes.
+- **Any other type:** the first step under `# Implementation` with no `**Status:**` line.
 
-Read the whole note, including:
-- the Design Handoff and its images in `notes/assets/<story>/`
-- ⚠️ Check Drift callouts, and **As built** notes on earlier steps
+Tell the user in one line which step you're building. If `status` is `ready`, set it to `in-progress`, and move the story's Roadmap line into Now.
 
-The step to implement is the first one under `# Implementation` with no `**Status:**` line. Tell Sarah in one line which step you're implementing. If `status` is `ready`, set it to `in-progress` and move the story's line in `notes/Roadmap.md` into **Now**, following that file's rules for what a line holds.
+## 2. Build It
+Build the step as the `building-code` skill describes, through "Do the Acceptance Checks".
 
-Read the project docs AGENTS.md lists when the work needs them, not all up front.
+As you build, a change or addition to the plan can turn up, or come from the user at review. Sort where each one goes, so this step builds only the work that belongs in it. The cases, in the order to check them:
+- **If it's new work for a later step or another story, or new work unrelated to this step:** put it on the out-of-scope list.
+- **If a bug story's planned fix leaves the symptom and you find the cause isn't the one Root Cause names:** send the story back to `/investigate`, as `sending-back.md` in the `building-code` skill's folder describes. The user approved the Fix for the cause the note gives, so a fix for another cause is theirs to choose.
+- **If you can't tell whether a place breaks a pattern's Convention:** decide as `unclear-places.md` in the `settling-a-decision` skill's folder describes. If the user's answer settles that place only, record it as an **As built:** note. If it changes the Convention, take the next case.
+- **If a pattern's Convention has to change:** send the story back to `/architect`, as `sending-back.md` describes. Changing the Convention can change which places break it, and `/architect` re-audits the code.
+- **If another part of the plan has to change,** such as the step's idea sentence, the order of the steps or a check's wording: change it in the note and keep building. A bug's Root Cause and a pattern's Convention are the only parts of a plan that need an earlier skill to rework them.
+- **Otherwise:** it goes in this step. This includes behaviors the user assumed but the plan never said, like a button that should focus a field.
 
-## 2. Settle the open choices
-**The rule:** a choice is open as AGENTS.md describes under "Open choices are hers": it has more than one reasonable answer, and nothing written picks one. Here, the written sources are:
-- the note: the step, the approach, the Design Handoff and its images
-- Sarah's answers in this session
-- the project docs in `docs/`
-- current library docs (see step 3)
-- the existing code, when it leaves only one answer that works, such as an argument that has to be required because a caller breaks without it
+## 3. Report
+Triage the out-of-scope list first. For each item the user pulls in:
+- **If it belongs in a later step, needs a new step or would change this step's idea sentence:** change the plan in the note, as step 2 describes.
+- **Otherwise:** build it in this step before you report.
 
-Your own sense of what's obvious, or what you'd prefer, is never a source. If you can't point to the file and line, the note section or the doc that rules out the other answers, the choice is open.
+Then report, in these sections, in this order:
+1. **Files:** the table of changed files. Mark any file that isn't in the step's Files list.
+2. **Choices:** a table of each choice you made without asking: what you picked, and what settles it, with a link to its source where it has one.
+3. **Tests:** each test and the branch or logic it covers.
+4. **Acceptance checks:** each one, and what you saw or why you couldn't run it.
+5. **As built:** a draft of anything that differs from the step's plan.
 
-Choices that are often open:
-- anything she'd see in the app: layout, wording, what happens on an edge case or an error
-- the shape of the code: a new module or reusing one, where it lives, its props or arguments
-- anywhere the plan and the code disagree, such as a file that isn't what the plan assumed or a file the step needs that isn't in its Files list
+After the report:
+1. **Checks your runs already cover:** ask the user whether to drop each one.
+2. **Checks only the user can do:** if one needs this step committed and pushed, first ask the user to review its changes and then to commit and push it. Then walk them through each check.
+3. **End by handing the step to the user:** ask them to do the acceptance checks they haven't done yet, and to review the step's changes if they haven't.
 
-Things the conventions settle, like local variable names or file naming, aren't open choices.
+## 4. Handle the User's Feedback
+1. **If a piece of feedback is a change or addition,** sort where it goes, as step 2 describes.
+2. **Handle the feedback that stays in this step** as the `building-code` skill describes under "Handle the User's Feedback", and report each change again in step 3's form, covering only what changed. Repeat items 1 and 2 until the user confirms the step is done.
+3. **Triage the items added to the out-of-scope list since step 3's triage.** Handle each item the user pulls in as step 3 describes. If one goes in this step, report it as item 2 describes, then wait for the user to confirm the step again.
 
-Keep a list of every choice you make without asking, each with its source. It goes in your report. If a choice has no source, it should have been a question.
+## 5. Update the Note
+1. If the story is a pattern, confirm in the code that each Migration Checklist item this step took on is done, because the acceptance checks cover a place or two, not every place the step migrated. If an item isn't done, build it, report it as step 4's item 2 describes, and wait for the user to confirm the step again. Once every item is done, check each item's box.
+2. Check the step's acceptance boxes, remove any check the user dropped, and add `**Status:** ✅ Complete`.
+3. If anything differs from the plan, was added at review or dropped, add an **As built:** note under the step. For a dropped check, it says which of your runs covered it.
+4. If this was the last step of a tweak or sweep, open its PR as `opening-the-pr.md`, in the `building-code` skill's folder, describes, because a tweak or sweep has no `/final-review` to open one.
+5. If this was the last step, set `status` to `in-review`.
+6. Update Where It Stands, with a `^status` line such as "In progress. Next: /implement Step 4". After the last step, the line depends on the type:
+   - **A tweak or sweep:** "Built. PR #12 merges once its checks pass. Next: /close once it merges", with its PR's number.
+   - **Any other type:** "All steps implemented. Next: /final-review".
 
-### Asking about an open choice
-Ask about one choice at a time, even when several belong to the same function or component. Leave the parts the sources already settle out of the question: they go in the report. For each open choice, give:
-- each reasonable approach, and what it changes: what she'd see in the app, which code it touches, and what later work it makes easier or harder
-- a recommendation, as AGENTS.md describes under "Recommendations"
-
-### Before writing any code
-1. If the step's Approach asks you to record the state before the change, such as test counts, record it now, before you change anything.
-2. Read every file the step lists. Note anywhere the code isn't what the plan assumes.
-3. If the step adds behavior to an existing module, name the job that module already does. If the new behavior isn't that same job, it's an open choice.
-4. For UI work, go through each element in the design sections the step cites. For each one, name the Mantine component or theme value you'll use. If the nearest Mantine option would look clearly different from the design or wouldn't fit, that element was probably meant to be custom. Ask Sarah whether to build it custom or use a Mantine approximation.
-5. Write the open choices to `.scratch/<note name> - step <N> choices.md`, then ask Sarah about each one, as "Asking about an open choice" describes.
-
-### While writing code
-When a new open choice comes up, stop and ask right then. Don't save it for the end, and don't put in a placeholder to fix later.
-
-## 3. Use current library APIs
-Follow "Library APIs" in AGENTS.md for every API you use.
-
-When you use custom CSS instead of a Mantine component, theme setting or variant, put a one-line comment directly above it saying why Mantine didn't fit.
-
-## 4. Write the tests first, then the code
-Every test follows "Test Logic, Not Rendering" in `docs/unit_tests.md`.
-
-For each piece of logic:
-1. Write the test.
-2. Run it with `pnpm test:agent <path>` and see it fail for the right reason.
-3. Write the code that makes it pass.
-
-A change that adds no logic (a type fix, lint fix, rename or import change) gets no new tests. The existing tests just have to keep passing. If a fix does add a branch, like a null guard, it needs a test. Say so in your report so it doesn't look like padding.
-
-Change files only with Edit and Write, never through Bash. The hook that protects the project config only sees Edit and Write.
-
-## 5. Run the checks
-Run `pnpm lint`, `pnpm check:types` and `pnpm test:agent` on the files you changed. Fix what they find. A hook asks Sarah before you add an ignore comment or change project config.
-
-Then read `cleanup.md` in this skill's folder and do what it says.
-
-## 6. First pass in the app
-Read `first-pass.md` in this skill's folder and do what it says.
-
-## 7. Stage and report
-First, triage the out-of-scope list as AGENTS.md describes under "Out-of-scope work". An item Sarah pulls in is handled like a change or addition in step 8: if the step's idea sentence still holds, build it now and record it as As built. Otherwise, follow "Stopping to re-plan".
-
-Stage the files this step changed.
-
-Then report, in this order:
-1. **Files:** a table with one row per changed file: the file as a markdown link she can click, and a one-line summary of its change. Mark any file that isn't in the step's Files list.
-2. **Choices:** a table of each choice you made without asking her: what you picked, and its source as a link (`file:line`, the note section or the doc). Leave out the choices she answered in this session.
-3. **Tests:** each test and the branch or logic it covers. List coverage-only tests as such. Mark tests added for a branch that a fix introduced.
-4. **First pass:** each acceptance check, and what you saw or why you couldn't run it. If you recorded the state before the change, give it first, since her checks compare against it. Then any differences from the design.
-5. **As built:** anything that differs from the step's plan. This is a draft; it goes into the note in step 9.
-6. **Out of scope:** each item triaged, and what Sarah chose for it.
-
-After the report, go through these one at a time:
-1. **Checks your runs already cover,** as `first-pass.md` describes: for each, say which of your runs shows what it would prove, and ask Sarah whether to drop it.
-2. **Checks only Sarah can do,** such as ones that need a push or the claude.ai UI: walk her through them, as AGENTS.md describes under "Setup outside the repo". If one needs this step committed and pushed, first ask her to review the staged diff, then to commit and push it.
-
-End with: "Please check the acceptance criteria you haven't done yet, and review the staged diff if you haven't."
-
-Then stop and wait. The step isn't done until Sarah says it is.
-
-## 8. Handle her feedback
-Sort each piece of feedback:
-- **A bug:** it doesn't do what the step or the design says. Read `bugs.md` in this skill's folder and follow it.
-- **A change or addition:** it works as specified, but she wants something different or more. Her feedback at review is often quick and loosely worded, so it's where the most ambiguity is. Settle the open choices in it (step 2) before changing any code. Then write tests first, run the checks and redo the first-pass checks it affects.
-
-Where a change or addition goes:
-- **Same step, recorded as As built:** the step's idea sentence still holds. This includes behaviors she assumed but the spec never said, like a button that should focus a field.
-- **Re-plan:** the idea sentence would have to change, or the work pulls in a later step or another story. Follow "Stopping to re-plan" below.
-- **Out of scope:** new work unrelated to this step goes on the out-of-scope list.
-
-**Corrections to how it's built.** Some feedback changes how the code is built rather than what it does: where a file lives, how data is fetched, which pattern to use. If the docs in `docs/` already say it, you missed it, and there's nothing to ask. Otherwise, ask her whether it's a one-off for this step or the convention from now on. If it's the convention, handle it as AGENTS.md describes under "Doc gaps".
-
-Leave feedback changes unstaged, so her unstaged changes show just the fix. Report again with the same sections, covering only what changed, and ask her whether she approves them. Once she does, stage the files they changed.
-
-Repeat until she confirms the step is done.
-
-## 9. Update the note
-Once she confirms:
-1. Check the step's acceptance boxes and add `**Status:** ✅ Complete`. Remove any check she dropped. Its As built note says which of your runs covered it.
-2. If anything differs from the plan, or was added at review, add an **As built:** note under the step.
-3. If this was the last step, set `status` to `in-review`. The review of the whole story (`/final-review`), archiving, and unblocking the stories that waited on it all come later, not in this skill.
-4. Update the `^status` line as AGENTS.md describes under "Editing notes", e.g. "In progress. Next: /implement Step 4", or "All steps implemented. Next: /final-review" after the last step.
-
-Leave the note changes unstaged.
-
-## 10. Find a home for out-of-scope items
-If the out-of-scope list is empty, skip this.
-
-Otherwise, route it as AGENTS.md describes under "Out-of-scope work".
-
-## 11. Stop
-Don't start the next step in this session. By now it has read the note, the docs and the whole step, and carrying that into the next step bloats the context. Tell Sarah the step is done and give her the command for a new session: `/implement <note name>`.
-
-## Stopping to re-plan
-When the plan itself has to change:
-1. Stop coding. Leave the work as it is, staged or not.
-2. Add an **As built:** note under the step saying what's done, what isn't, and why the plan needs to change.
-3. Set `status` to `spec`, since any change to a ready note's steps sends it back.
-4. Update the `^status` line as AGENTS.md describes under "Editing notes", e.g. "Needs re-plan. Next: /plan-steps".
-5. Route any out-of-scope items (step 10).
-6. Tell her to run `/plan-steps <note name>` in a new session.
+## 6. Stop
+Route the out-of-scope list. Then tell the user the step is done, and give them the PR's link if step 5 opened one. Then hand on the next command from the `^status` line. `offering-the-next-session.md`, in the `building-code` skill's folder, says how.

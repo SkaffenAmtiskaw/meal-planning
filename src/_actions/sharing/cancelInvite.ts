@@ -2,8 +2,9 @@
 
 import { Types } from 'mongoose';
 
-import { checkAuth } from '@/_actions/auth';
+import { checkAuth } from '@/_actions/auth/checkAuth';
 import { PendingInvite } from '@/_models/sharing';
+import { reportError } from '@/_utils/reportError';
 import { serialize } from '@/_utils/serialize';
 
 export interface CancelInviteInput {
@@ -21,6 +22,10 @@ export const cancelInvite = async (
 ): Promise<CancelInviteResult> => {
 	try {
 		const { inviteId, plannerId } = input;
+
+		if (!Types.ObjectId.isValid(plannerId)) {
+			return { success: false, error: 'Invalid planner ID' };
+		}
 
 		// 1. Verify caller is authenticated and has 'admin' access to the planner
 		const authResult = await checkAuth(new Types.ObjectId(plannerId), 'admin');
@@ -53,6 +58,7 @@ export const cancelInvite = async (
 		// 6. Return success
 		return serialize({ success: true });
 	} catch (error) {
+		await reportError(error);
 		return {
 			success: false,
 			error: error instanceof Error ? error.message : 'An error occurred',

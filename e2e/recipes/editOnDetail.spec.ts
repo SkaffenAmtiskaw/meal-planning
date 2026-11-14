@@ -1,0 +1,21 @@
+import { expect, test } from '../_fixtures';
+import { recipePath } from '../_helpers/plannerPaths';
+import { openRecipeDetail } from './_helpers/openRecipeDetail';
+import { fillRecipeForm, saveRecipeForm } from './_helpers/recipeForm';
+import { recipesSeed } from './_helpers/recipesSeed';
+
+test('saves changes made with Edit', async ({ context, page }) => {
+	const { tags, recipe } = recipesSeed();
+	const name = "Tiana's Gumbo";
+	const servings = 8;
+	const planner = await openRecipeDetail(page, context, recipe, { tags });
+
+	await page.getByRole('button', { name: 'Edit', exact: true }).click();
+	// The Edit form renders in the page, not in a dialog.
+	await fillRecipeForm(page, { name, servings });
+	await saveRecipeForm(page);
+
+	await expect(page).toHaveURL(recipePath(planner._id, recipe._id));
+	await expect(page.getByRole('heading', { name })).toBeVisible();
+	await expect(page.getByText(String(servings), { exact: true })).toBeVisible();
+});

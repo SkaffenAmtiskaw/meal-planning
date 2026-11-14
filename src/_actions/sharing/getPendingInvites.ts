@@ -2,8 +2,9 @@
 
 import { Types } from 'mongoose';
 
-import { checkAuth } from '@/_actions/auth';
+import { checkAuth } from '@/_actions/auth/checkAuth';
 import { PendingInvite as PendingInviteModel } from '@/_models/sharing';
+import { reportError } from '@/_utils/reportError';
 import { serialize } from '@/_utils/serialize';
 
 import type { PendingInvite } from './invite.types';
@@ -50,7 +51,8 @@ export const getPendingInvites = async (
 		}));
 
 		return serialize({ invites: pendingInvites });
-	} catch {
+	} catch (error) {
+		await reportError(error);
 		return { invites: [], error: 'Failed to fetch pending invites' };
 	}
 };

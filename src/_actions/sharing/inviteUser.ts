@@ -5,7 +5,7 @@ import { randomUUID } from 'node:crypto';
 import { Types } from 'mongoose';
 import { z } from 'zod';
 
-import { checkAuth } from '@/_actions/auth';
+import { checkAuth } from '@/_actions/auth/checkAuth';
 import { sendInviteEmail } from '@/_auth/emails/sendInviteEmail';
 import { Planner } from '@/_models/planner';
 import { PendingInvite } from '@/_models/sharing';
@@ -13,6 +13,7 @@ import type { AccessLevel } from '@/_models/user';
 import { User } from '@/_models/user';
 import type { ActionResult } from '@/_utils/actionResult';
 import { catchify } from '@/_utils/catchify';
+import { reportError } from '@/_utils/reportError';
 import { serialize } from '@/_utils/serialize';
 import { env } from '@/env';
 
@@ -38,11 +39,17 @@ export const inviteUser = async (
 	}
 
 	// 2. Verify caller is authenticated and has 'admin' access to the planner
+	if (!Types.ObjectId.isValid(plannerId)) {
+		return { ok: false, error: 'Unauthorized' };
+	}
+
 	const [authResult, authError] = await catchify(() =>
 		checkAuth(new Types.ObjectId(plannerId), 'admin'),
 	);
 
 	if (authError || !authResult || authResult.type !== 'authorized') {
+		// checkAuth reports its own 'error' result
+		if (authError) await reportError(authError);
 		return { ok: false, error: 'Unauthorized' };
 	}
 
@@ -55,6 +62,7 @@ export const inviteUser = async (
 	);
 
 	if (userError) {
+		await reportError(userError);
 		return { ok: false, error: userError.message };
 	}
 
@@ -77,6 +85,7 @@ export const inviteUser = async (
 	);
 
 	if (inviteError) {
+		await reportError(inviteError);
 		return { ok: false, error: inviteError.message };
 	}
 
@@ -97,6 +106,7 @@ export const inviteUser = async (
 	);
 
 	if (plannerError) {
+		await reportError(plannerError);
 		return { ok: false, error: plannerError.message };
 	}
 
@@ -115,6 +125,7 @@ export const inviteUser = async (
 	);
 
 	if (createError || !invite) {
+		if (createError) await reportError(createError);
 		return {
 			ok: false,
 			error: createError?.message ?? 'Failed to create invite',
@@ -145,6 +156,7 @@ export const inviteUser = async (
 	);
 
 	if (emailError) {
+		await reportError(emailError);
 		return { ok: false, error: emailError.message };
 	}
 

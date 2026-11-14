@@ -7,9 +7,14 @@ vi.mock(
 	async () => await import('#mocks/@/_actions/sharing/getUserInvites'),
 );
 vi.mock('@/_actions/user', async () => await import('#mocks/@/_actions/user'));
+vi.mock(
+	'@/_utils/reportError',
+	async () => await import('#mocks/@/_utils/reportError'),
+);
 
 import { getUserInvites } from '@/_actions/sharing/getUserInvites';
 import { getUser } from '@/_actions/user';
+import { reportError } from '@/_utils/reportError';
 
 import { InviteBadge, InviteBadgeWithData } from './InviteBadge';
 
@@ -133,10 +138,7 @@ describe('InviteBadge', () => {
 			expect(screen.queryByTestId('invite-badge')).toBeNull();
 		});
 
-		it('renders children and logs error when getUserInvites throws', async () => {
-			const consoleSpy = vi
-				.spyOn(console, 'error')
-				.mockImplementation(() => {});
+		it('renders children and reports when getUserInvites throws', async () => {
 			const error = new Error('Network error');
 
 			mockGetUser.mockResolvedValue(mockUser);
@@ -148,11 +150,23 @@ describe('InviteBadge', () => {
 				}),
 			);
 
-			expect(consoleSpy).toHaveBeenCalledWith('InviteBadge: Exception:', error);
+			expect(reportError).toHaveBeenCalledWith(error);
 			expect(screen.getByTestId('child')).toBeTruthy();
 			expect(screen.queryByTestId('invite-badge')).toBeNull();
+		});
 
-			consoleSpy.mockRestore();
+		it('renders children without reporting when there is no valid session', async () => {
+			mockGetUser.mockRejectedValue(new Error('No Valid Session'));
+
+			render(
+				await InviteBadgeWithData({
+					children: <div data-testid="child">Child</div>,
+				}),
+			);
+
+			expect(reportError).not.toHaveBeenCalled();
+			expect(screen.getByTestId('child')).toBeTruthy();
+			expect(screen.queryByTestId('invite-badge')).toBeNull();
 		});
 	});
 

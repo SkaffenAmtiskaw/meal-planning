@@ -1,9 +1,13 @@
 'use server';
 
+import { Types } from 'mongoose';
+
 import { getUser } from '@/_actions/user';
 import { User } from '@/_models/user';
 import type { ActionResult } from '@/_utils/actionResult';
 import { catchify } from '@/_utils/catchify';
+import { isNoSessionError } from '@/_utils/noSessionError';
+import { reportError } from '@/_utils/reportError';
 import { zSafeString } from '@/_utils/zSafeString';
 
 import { addPlanner } from './addPlanner';
@@ -13,7 +17,8 @@ export const createPlanner = async (name: string): Promise<ActionResult> => {
 	if (!parsedName.success)
 		return { ok: false, error: parsedName.error.issues[0].message };
 
-	const [user] = await catchify(getUser);
+	const [user, userError] = await catchify(getUser);
+	if (userError && !isNoSessionError(userError)) await reportError(userError);
 	if (!user) return { ok: false, error: 'Not authenticated.' };
 
 	const planner = await addPlanner(parsedName.data);
@@ -22,7 +27,11 @@ export const createPlanner = async (name: string): Promise<ActionResult> => {
 		$push: { planners: { planner: planner._id, accessLevel: 'owner' } },
 	};
 
-	await User.collection.updateOne({ _id: user._id }, update);
+	// getUser returns a serialized user, and a raw collection call doesn't cast its string _id.
+	await User.collection.updateOne(
+		{ _id: new Types.ObjectId(user._id) },
+		update,
+	);
 
 	return { ok: true, data: undefined };
 };

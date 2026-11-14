@@ -1,7 +1,10 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
+import { Types } from 'mongoose';
+
 import { User } from '@/_models/user';
 import { catchify } from '@/_utils/catchify';
+import { reportError } from '@/_utils/reportError';
 
 import { addPlanner } from './addPlanner';
 import { createPlanner } from './createPlanner';
@@ -16,13 +19,19 @@ vi.mock('./addPlanner', async () => ({
 vi.mock('@/_utils/catchify', async () => ({
 	catchify: vi.fn(),
 }));
+vi.mock(
+	'@/_utils/reportError',
+	async () => await import('#mocks/@/_utils/reportError'),
+);
 vi.mock('@/_utils/zSafeString', async () => ({
 	zSafeString: vi.fn(() => ({
 		safeParse: mockSafeParse,
 	})),
 }));
 
-const mockUser = { _id: 'user-id-123', planners: [] };
+// getUser returns a serialized user, so its _id is a string.
+const userId = '6ac2c11f3206463befe44de0';
+const mockUser = { _id: userId, planners: [] };
 const mockPlanner = { _id: 'planner-id-456', name: 'My Planner' };
 
 describe('createPlanner', () => {
@@ -68,9 +77,24 @@ describe('createPlanner', () => {
 		const result = await createPlanner('My Planner');
 
 		expect(result).toEqual({ ok: false, error: 'Not authenticated.' });
+		expect(reportError).not.toHaveBeenCalled();
 	});
 
-	it('creates a planner and links it to the user', async () => {
+	it('returns the same error, and reports, when getting the user fails', async () => {
+		const error = new Error('DB connection timeout');
+		mockSafeParse.mockReturnValue({
+			success: true,
+			data: 'My Planner',
+		});
+		vi.mocked(catchify).mockResolvedValue([undefined, error]);
+
+		const result = await createPlanner('My Planner');
+
+		expect(result).toEqual({ ok: false, error: 'Not authenticated.' });
+		expect(reportError).toHaveBeenCalledWith(error);
+	});
+
+	it('creates a planner and links it to the user by their ObjectId', async () => {
 		mockSafeParse.mockReturnValue({
 			success: true,
 			data: 'My Planner',
@@ -83,7 +107,8 @@ describe('createPlanner', () => {
 
 		expect(addPlanner).toHaveBeenCalledWith('My Planner');
 		expect(User.collection.updateOne).toHaveBeenCalledWith(
-			{ _id: 'user-id-123' },
+			// A raw collection call doesn't cast, so a string _id would match no user.
+			{ _id: new Types.ObjectId(userId) },
 			{
 				$push: {
 					planners: { planner: 'planner-id-456', accessLevel: 'owner' },

@@ -10,5 +10,5 @@ interface BurgerToggleProps {
 
 export const BurgerToggle = ({ color }: BurgerToggleProps) => {
 	const { toggle } = useToggleContext();
-	return <Burger onClick={toggle} color={color} />;
+	return <Burger onClick={toggle} color={color} data-testid="burger-toggle" />;
 };

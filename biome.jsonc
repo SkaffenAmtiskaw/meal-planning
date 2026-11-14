@@ -1,6 +1,15 @@
 {
 	"files": {
-		"includes": ["src/**/*", "test/**/*", "e2e/**/*", "playwright.config.ts"]
+		"includes": [
+			"src/**/*",
+			"test/**/*",
+			"e2e/**/*",
+			"seed/**/*",
+			"scripts/**/*.ts",
+			"playwright.config.ts",
+			// A worktree nested here is its own project with its own biome.jsonc.
+			"!!.claude/worktrees"
+		]
 	},
 	"linter": {
 		"enabled": true,
@@ -167,6 +176,7 @@
 		{
 			"includes": [
 				"test/**/*",
+				"seed/**/*",
 				"**/*/*.test.ts*",
 				"!test/auth.ts",
 				"!test/factories/**/*",

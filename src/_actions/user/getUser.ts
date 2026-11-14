@@ -4,6 +4,7 @@ import { headers } from 'next/headers';
 
 import { auth } from '@/_auth';
 import { User } from '@/_models/user';
+import { NO_SESSION_MESSAGE } from '@/_utils/noSessionError';
 import { serialize } from '@/_utils/serialize';
 
 export const getUser = async () => {
@@ -11,7 +12,7 @@ export const getUser = async () => {
 		headers: await headers(),
 	});
 
-	if (!session) throw new Error('No Valid Session');
+	if (!session) throw new Error(NO_SESSION_MESSAGE);
 
 	const user = await User.findOne({ email: session.user.email }).lean().exec();
 	if (!user) return null;

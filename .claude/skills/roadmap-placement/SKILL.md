@@ -1,36 +1,40 @@
 ---
 name: roadmap-placement
-description: How to check which goals a committed story or a new collecting-note item serves, then place the story's Roadmap line in Later or link the item. Use when a skill commits a story, such as /shape after shaping it or /decide after Sarah decides it's worth doing, or when an item is added to a collecting note.
+description: How to place or move a story's Roadmap line. Use when adding or moving a Roadmap line, or when working on a story whose line is in Later or Ideas.
 user-invocable: false
 ---
 
-# Checking the goals
-If Sarah already named the story's goals, use them and go on to placing the line. She has named them if she answered this session, such as when its line moved into Next as the skill started, or if its Roadmap line already sits under a goal's heading in Later or ends with 🎯 links, as when `/tooling` spun it off. Otherwise, read each note in `notes/goals/`: a goal's Purpose, Done When and Out of Scope, and a standing goal's Purpose, What Belongs Here and Out of Scope. Which goals are plausible depends on the work, a story or an item:
-- **Dev tooling or agent work:** a goal is plausible when a line in its Purpose, Done When or What Belongs Here could reasonably include the work, or when the work could make the goal's work easier. Judge that from the goal's Done When and the Roadmap lines that serve it.
-- **Otherwise:** a goal is plausible when a line in its Purpose, Done When or What Belongs Here could reasonably include the work.
+# Placing a Roadmap Line
+Where a line goes follows from its work and the goals it serves, and the user decides its place in an ordered queue. If you're starting on a story whose line is in Later or Ideas, follow "Starting on a Story in the Backlog".
 
-A goal whose Out of Scope lists the story or item is never plausible. For an item, an active goal (one of the top two under the Roadmap's Goals) is plausible only when you see a compelling case that the goal can't be complete without it, as the Roadmap's "How this file works" describes under "Collecting notes".
+## Checking the Goals
+Whether to read the goal notes depends on the work. The cases:
+- **The user has already named the goals,** such as by placing the line under a goal's heading or giving it 🎯 links: go on to where the line goes, below.
+- **It's a bug the `roadmap-rules` skill puts in Bugs:** bugs belong to no goal, so go on to where the line goes, below.
+- **It's a collecting note's own line:** it carries no 🎯 links, because the note keeps getting new items and so never finishes. So go on to where the line goes, below.
+- **Otherwise:** read the notes in `goals/` in the notes repo. If a goal's Roadmap Instructions say the work belongs to it, it does, so don't ask about that goal. Another goal fits when a line in its Purpose, Done When or What Belongs Here could include the work, and dev tooling also fits a goal it would make easier. If no other goal fits, don't ask. Otherwise, ask the user which ones the work serves, naming each goal that fits and quoting that line. Don't recommend one for tooling, because whether tooling joins a ranked goal is the user's priority call.
 
-If no goal is plausible, don't ask. Place a story's line with no goal, or leave an item with no 🎯 link, and mention it in your summary. Otherwise, ask Sarah which goals the story or item serves:
-- **Dev tooling or agent work:** name each plausible goal, and the line that includes the work or the work it would make easier. Don't recommend one. The Roadmap's "How this file works" says tooling stays in Unaffiliated unless Sarah puts it under a goal.
-- **Otherwise:** suggest each plausible goal, and quote the line that covers it.
+## Moving an Existing Line
+Whether to move the line, and where, depends on the line:
+- **If it gets 🔥:** move it to the top of Next, above a release's own lines, and renumber the lines below it. Its fix ships without waiting for the release.
+- **Otherwise, if it serves the building or planning goal and isn't in Now or the queue the `roadmap-rules` skill puts it in:** move it there, as "Placing a Line in Next or Planning" describes. If it leaves another goal's heading, give it that goal's 🎯 link, so it still shows that it serves that goal.
+- **Otherwise, if the story is committed and its line is in Ideas or Unaffiliated:** move it. The Later and Bugs entries in the `roadmap-rules` skill say where it goes.
 
-For an item, ask which one goal it fits best, and give the compelling case for any active goal. It serves two only when neither goal can be done without it.
+## Placing a New Line
+If something about the work makes its usual spot look wrong, such as when the user has said in the session that it needs prioritizing, or when a line in Next or Planning waits on it, ask them. Otherwise, the spot follows from its work:
+- **It's a bug with 🔥:** it goes first in Next, above a release's own lines. Renumber the lines below it.
+- **It's a bug the `roadmap-rules` skill puts in Bugs:** it goes in Bugs.
+- **It's a collecting note's own line:** every collecting note joins every release, so it's committed. It goes under Unaffiliated in Later.
+- **It serves the building or planning goal:** it goes in that goal's queue, as "Placing a Line in Next or Planning" describes.
+- **It serves another goal:** it's committed, so it goes under that goal's heading in Later.
+- **It serves no goal:** it's uncommitted, so it goes in Ideas.
 
-"None" is an answer too.
+## Placing a Line in Next or Planning
+Next and Planning are ordered queues, so ask the user where a line goes. If the notes or the Roadmap make the spot clear, suggest it and say why. Otherwise, ask without a suggestion.
 
-# Placing a story's line
-Where the line goes depends on where it sits now:
-- **In Ideas or Unaffiliated:** if Sarah named a goal, move the line under that goal's heading in Later. Add the heading, `## [[<goal>]]`, if it's missing, placed as the Roadmap's "How this file works" describes under Later. If she named no goal, the line goes in Unaffiliated.
-- **Under a goal's heading, or in Now or Next:** leave it where it is. If she says it doesn't serve the goal it sits under, ask her where it goes.
+## Starting on a Story in the Backlog
+The user running a skill on a story means they want it worked, whether it's a problem to fix or an idea to weigh. So don't set out to check whether it's still needed, and don't recommend dropping it out of hand.
 
-Then end the line with `🎯 [[<goal>]]` for each goal she named that its heading doesn't already cover. A line in Later stays there, even under an active goal, unless Sarah says it goes into Next. If she does, ask her where in Next, as AGENTS.md describes under "Roadmap order".
-
-# Linking a collecting-note item
-End the item with `🎯 [[<goal>]]` for each goal Sarah named. The note's own Roadmap line doesn't change: it carries no 🎯 links, as the Roadmap's "How this file works" describes under "Collecting notes".
-
-If a goal she named is active, the item is kicked off for it now. How depends on what the goal already has:
-- **An open kicked-off copy of this note** (`<note> YYYY-MM-DD`, under the goal's heading or ending with its 🎯 link): move the item into the copy, and add any of the item's 🎯 links that the copy's line doesn't have yet.
-- **No such copy:** read `.claude/skills/kickoff/SKILL.md` and follow it as its "Kicking off for active goals" section describes.
-
-If the copy's line is in Later, ask Sarah whether it moves into Next. If it does, ask her where in Next, as AGENTS.md describes under "Roadmap order".
+If the story's line is in Later or Ideas when a skill starts on it, check its goals, as "Checking the Goals" describes, and move it as "Moving an Existing Line" describes. Give it a 🎯 link for each goal it serves, other than the one whose heading it sits under. If it's still in Later or Ideas, ask the user whether to give it 📌, and if so, for which release and with what reason. The releases it can join, and what to do for each:
+- **In Next,** to build it in this release: ask where in Next it goes, as "Placing a Line in Next or Planning" describes.
+- **In Later,** to build it in the next release: if it's in Ideas, move it where the `roadmap-rules` skill's Later entry puts it.

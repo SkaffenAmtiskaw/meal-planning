@@ -4,12 +4,15 @@ import { revalidatePath } from 'next/cache';
 
 import { Types } from 'mongoose';
 
-import { checkAuth } from '@/_actions/auth';
+import { checkAuth } from '@/_actions/auth/checkAuth';
 import { Planner } from '@/_models/planner';
 
 import { updateRecipeNotes } from './updateRecipeNotes';
 
-vi.mock('@/_actions/auth', async () => await import('#mocks/@/_actions/auth'));
+vi.mock(
+	'@/_actions/auth/checkAuth',
+	async () => await import('#mocks/@/_actions/auth/checkAuth'),
+);
 
 vi.mock('next/cache', async () => ({
 	revalidatePath: vi.fn(),

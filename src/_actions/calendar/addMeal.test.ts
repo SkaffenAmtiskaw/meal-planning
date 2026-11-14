@@ -2,13 +2,16 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { Types } from 'mongoose';
 
-import { checkAuth } from '@/_actions/auth';
+import { checkAuth } from '@/_actions/auth/checkAuth';
 import { zMealFormSchema } from '@/_models/calendar';
 import { Planner } from '@/_models/planner';
 
 import { addMeal } from './addMeal';
 
-vi.mock('@/_actions/auth', async () => await import('#mocks/@/_actions/auth'));
+vi.mock(
+	'@/_actions/auth/checkAuth',
+	async () => await import('#mocks/@/_actions/auth/checkAuth'),
+);
 vi.mock(
 	'@/_models/calendar',
 	async () => await import('#mocks/@/_models/calendar'),

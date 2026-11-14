@@ -1,123 +1,27 @@
-# Weeknight — UI Theme Reference
+# Theme
+This doc is for anyone building or changing the app's UI. It describes the app's colors and what each one is for, so a new screen looks like the rest of the app. It assumes you know Mantine's theme. How a component gets its look, such as when custom CSS is fine, is in `docs/style_guidelines.md`.
 
-## Stack
+The theme lives in `src/_theme/`. `colors.ts` holds the color values, including the tag palette, and `theme.ts` builds the Mantine theme from them and sets each component's defaults.
 
-- **UI components:** `Mantine`
-- **Calendar:** `schedule-x` (requires separate CSS variable theming, does not inherit Mantine theme)
+# The Main Colors
+The app has five main colors, each kept for the uses below. The tag palette is separate (see "Tag Colors").
 
----
+| Color | What it's for |
+|---|---|
+| Navy | The header's background, dark text such as headings, and the ring that marks today on the calendar |
+| Forest green | The primary color: links, tabs, selected controls, focus rings and everything else interactive that isn't a main action |
+| Sage | The navbar's background, and the circle that marks a selected day on the calendar |
+| Ember | Main actions only |
+| Chalk | Light surfaces that need a tint, such as the sign-in card |
 
-## Color palette
+# Ember Is for Main Actions
+Ember marks only a button that creates or commits something, such as adding a meal or saving a new password. The theme's `cta` button variant applies it. Nothing else uses ember, including links, tabs, badges, focus rings and the calendar's day marks. It's the brightest of the main colors, so keeping it for main actions gives each screen one obvious next step.
 
-| Token | Hex | Role |
-|---|---|---|
-| Navy | `#1C3144` | App header background, planner name text |
-| Forest green | `#44633F` | Sidebar active state, links, tab underlines, segmented controls, input focus rings |
-| Sage | `#B1BA95` | Sidebar/navbar background, surface accents |
-| Ember | `#FF6542` | CTA buttons only (see below) |
-| Chalk | `#EFE7E9` | Login card background, light surface tint |
+# Text on Sage
+Text and icons on the sage navbar are dark, in forest green or navy, except on the active nav item, whose forest green background takes white text. Sage is a mid-tone, so light text on it is hard to read.
 
----
+# Tag Colors
+Tags, and meals on the calendar, use the tag palette of ten tinted colors, `TAG_COLORS` in `colors.ts`. Each color has a light background, dark text from the same family, and a border. Meals on the calendar use the border, because they sit on a white cell and need an edge.
 
-## Color role rules
-
-### Ember is reserved for CTAs and the calendar today badge
-
-Ember (`#FF6542`) must only appear on buttons that create or commit something, and on the calendar today badge:
-
-- "+ Add Meal" button
-- "Add Meal" submit button in modal
-- "Continue" on login
-- "Update password" on settings
-- Calendar today badge (red circle behind the current day number)
-
-Ember must NOT be used for links, tab underlines, segmented controls, focus rings, badges, or any secondary element.
-
-### Forest green is the interactive color
-
-Use forest green (`#44633F`) for all interactive UI that is not a primary CTA:
-
-- All text links (Change name, Change email, Forgot password, Add dish, Add note)
-- Settings tab active underline
-- SegmentedControl active state (white text on forest green)
-- Input focus rings (forest green at 40% opacity)
-
-### Sage background requires dark text
-
-The sidebar background is sage (`#B1BA95`), which is a mid-tone. Always use dark colors on it — never white or light text on sage except inside the active NavLink (which has a forest green background).
-
-- Inactive nav item text + icons: forest green (`#44633F`), full opacity
-- Active nav item: forest green background (`#44633F`), white text and icon
-- Hover state: `rgba(68, 99, 63, 0.12)`
-- Planner name / context label: navy (`#1C3144`), `font-weight: 600`
-
----
-
-## Mantine theme config
-
-- `primaryColor` should be the registered forest green key
-- Ember is registered as a color but only applied manually via `color="ember"` on specific CTA Button components
-- `defaultRadius: 'md'`
-- Tabs default color: forest green
-- Anchor/link default color: forest green
-
----
-
-## AppShell layout
-
-- **Header:** navy (`#1C3144`) background, chalk/white text and icons
-- **Sidebar/navbar:** sage (`#B1BA95`) background
-
----
-
-## Schedule-x calendar theming
-
-Schedule-x uses its own CSS custom properties and does not inherit Mantine. Override on the calendar wrapper element:
-
-```css
-.sx-cal-wrapper {
-  --sx-color-primary: #44633F;          /* forest green — selected states */
-  --sx-color-primary-container: rgba(68, 99, 63, 0.12);
-  --sx-color-surface: #FFFFFF;
-  --sx-color-surface-variant: #EFE7E9;  /* chalk */
-  --sx-color-on-surface: #1C3144;       /* navy */
-  --sx-color-on-surface-variant: #5A6A7A;
-  --sx-color-outline: #DDD8DA;
-  --sx-color-today-bg: rgba(255, 101, 66, 0.08); /* faint ember tint */
-}
-```
-
-Confirm variable names against your installed schedule-x version using devtools — names may vary slightly by release.
-
----
-
-## Tag and calendar event colors
-
-Tags and calendar events use a fixed palette of 10 tinted colors. Each has a background, text, and border value. Store as named tokens, not raw hex, so palette changes propagate easily.
-
-| Name | Background | Text | Border |
-|---|---|---|---|
-| Tangerine | `#FDEBD6` | `#7A3410` | `#F5B47A` |
-| Rosewood | `#FDE8E8` | `#7A1F1F` | `#F0A8A8` |
-| Honey | `#FDF3D6` | `#6B4A0D` | `#EAC96A` |
-| Fern | `#E4F2E4` | `#1E4D1E` | `#87C287` |
-| Seafoam | `#D6EDE8` | `#0E3D32` | `#72C2AF` |
-| Steel | `#D9E8F5` | `#0E2E4D` | `#7AAFD4` |
-| Lavender | `#E8E0F0` | `#3A1F6B` | `#B09DD4` |
-| Mauve | `#F0E0EE` | `#5C1A4A` | `#CE8DC0` |
-| Sage mist | `#E8EDE0` | `#2E3D1A` | `#A8BA8A` |
-| Slate | `#E0E4ED` | `#1C2744` | `#8D99BE` |
-
-All use a light tinted background with dark same-family text. Use the border value on calendar event chips specifically, as they sit on a white cell and need definition.
-
----
-
-## Dark mode
-
-Dark mode is not currently supported. Lock to light mode explicitly:
-
-```jsx
-<MantineProvider theme={theme} defaultColorScheme="light">
-```
-
-Revisit as a deliberate feature later. Key considerations when adding dark mode: chalk (`#EFE7E9`) is a light surface and will need a dark-mode alternative; schedule-x CSS variables will need a separate `[data-mantine-color-scheme="dark"]` block.
+# Light Mode Only
+The app has only a light mode. Its colors are chosen for light surfaces, so dark mode would need its own version of each one.

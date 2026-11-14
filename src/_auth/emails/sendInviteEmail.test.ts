@@ -1,10 +1,16 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
+import { makeRefusedSend } from '#fixtures/resend';
 import { mockSend } from '#mocks/resend';
+import { reportError } from '@/_utils/reportError';
 
 import { sendInviteEmail } from './sendInviteEmail';
 
 vi.mock('resend', async () => await import('#mocks/resend'));
+vi.mock(
+	'@/_utils/reportError',
+	async () => await import('#mocks/@/_utils/reportError'),
+);
 
 const MOCK_EMAIL = 'invite@example.com';
 const MOCK_PLANNER_NAME = 'My Meal Plan';
@@ -82,5 +88,37 @@ describe('sendInviteEmail', () => {
 				type: 'existing_user',
 			}),
 		).rejects.toThrow('Resend API error');
+	});
+
+	it('reports the error Resend returns, and resolves', async () => {
+		mockSend.mockResolvedValueOnce(makeRefusedSend());
+
+		await expect(
+			sendInviteEmail({
+				email: MOCK_EMAIL,
+				plannerName: MOCK_PLANNER_NAME,
+				inviterName: MOCK_INVITER_NAME,
+				acceptUrl: MOCK_ACCEPT_URL,
+				type: 'existing_user',
+			}),
+		).resolves.toBeUndefined();
+
+		expect(reportError).toHaveBeenCalledWith(
+			expect.objectContaining({
+				message: 'invalid_api_key: API key is invalid',
+			}),
+		);
+	});
+
+	it('reports nothing when the send succeeds', async () => {
+		await sendInviteEmail({
+			email: MOCK_EMAIL,
+			plannerName: MOCK_PLANNER_NAME,
+			inviterName: MOCK_INVITER_NAME,
+			acceptUrl: MOCK_ACCEPT_URL,
+			type: 'existing_user',
+		});
+
+		expect(reportError).not.toHaveBeenCalled();
 	});
 });

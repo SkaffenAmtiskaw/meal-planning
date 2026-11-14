@@ -1,36 +1,37 @@
 #!/bin/sh
-# Checks the notes vault for the rules in AGENTS.md ("Editing notes") and the
-# Roadmap's "How this file works" that can be checked mechanically.
-# - Per note: only notes changed since the last commit (git status), or the
-#   notes named as arguments. Older notes are brought up to spec when they're
-#   worked on, so unchanged ones aren't checked.
-# - Whole vault: broken links, blocked-by entries, Roadmap status embeds, and
-#   Now and Next markers.
+# Checks the notes repo for the rules in the editing-notes and roadmap-rules
+# skills that can be checked mechanically. Reports paths from the notes repo's
+# root.
+# - Per note: only the notes named as arguments, so a session names each note
+#   it changed. Older notes are brought up to spec when they're worked on, so
+#   unnamed ones aren't checked. The Roadmap gets no per-note checks, because it
+#   has no ^status line or Where It Stands and the whole-vault checks cover it.
+# - Whole vault: merge conflicts, broken links, blocked-by entries, Roadmap
+#   status embeds, and Now, Next and Planning markers.
 # Changes nothing. Exits 1 if it reports anything.
 # Usage: sh scripts/vault-lint.sh [note name or path ...]
 
-cd "$(dirname "$0")/.." || exit 1
-roadmap="notes/Roadmap.md"
+notes_repo=$(sh "$(dirname "$0")/notes-dir.sh") || exit 1
+cd "$notes_repo" || exit 1
+roadmap="Roadmap.md"
 tmp=$(mktemp -d) || exit 1
 trap 'rm -rf "$tmp"' EXIT
 
-find notes -name '*.md' ! -path 'notes/templates/*' ! -path 'notes/.obsidian/*' | sort > "$tmp/notes"
-find notes -type f ! -name '*.md' ! -path 'notes/.obsidian/*' | while IFS= read -r f; do basename "$f"; done | sort -u > "$tmp/files"
+find . \( -name .git -o -name .obsidian \) -prune -o -type f -print | sed 's|^\./||' > "$tmp/all"
+grep '\.md$' "$tmp/all" | sort > "$tmp/notes"
+grep -v '\.md$' "$tmp/all" | while IFS= read -r f; do basename "$f"; done | sort -u > "$tmp/files"
 while IFS= read -r n; do basename "$n" .md; done < "$tmp/notes" | sort -u > "$tmp/names"
 
 # Notes to check one by one.
-if [ $# -gt 0 ]; then
-  for arg in "$@"; do
-    case "$arg" in
-      (*.md) echo "$arg" ;;
-      (*) grep -F "/$arg.md" "$tmp/notes" | grep -E "/$(printf '%s' "$arg" | sed 's/[][\.*^$()+?{}|/]/\\&/g')\.md$" ;;
-    esac
-  done > "$tmp/changed"
-else
-  git status --porcelain --untracked-files=all -- notes | cut -c4- | sed 's/^"//; s/"$//; s/.* -> //' |
-    grep -E '\.md$' | grep -vE '^notes/(templates/|Roadmap\.md$|Note Conventions\.md$)' |
-    while IFS= read -r f; do [ -f "$f" ] && echo "$f"; done > "$tmp/changed"
-fi
+for arg in "$@"; do
+  [ "$(basename "$arg" .md)" = "Roadmap" ] && continue
+  case "$arg" in
+    ("$notes_repo"/*) echo "${arg#"$notes_repo"/}" ;;
+    (*.md) echo "$arg" ;;
+    # A name that matches no note goes through, so the per-note loop reports it.
+    (*) grep -E "(^|/)$(printf '%s' "$arg" | sed 's/[][\.*^$()+?{}|/]/\\&/g')\.md$" "$tmp/notes" || echo "$arg" ;;
+  esac
+done > "$tmp/named"
 
 report="$tmp/report"
 : > "$report"
@@ -52,7 +53,7 @@ while IFS= read -r note; do
   [ -f "$note" ] || { add "$note: not found"; continue; }
   name=$(basename "$note" .md)
   case "$note" in
-    (notes/goals/*) ;;
+    (goals/*) ;;
     (*)
       grep -q ' \^status$' "$note" || add "$note: no ^status line under Where It Stands"
       grep -q '^# Where It Stands' "$note" || add "$note: no # Where It Stands section"
@@ -60,7 +61,7 @@ while IFS= read -r note; do
   esac
   line=$(awk -F '\t' -v n="$name" '$1 == n' "$tmp/lines" | head -1)
   case "$note" in
-    (notes/features/*|notes/archive/*)
+    (features/*|archive/*)
       if [ -n "$line" ] && ! printf '%s' "$line" | grep -qF "![[$name#^status]]"; then
         add "$note: its Roadmap line ($roadmap:$(printf '%s' "$line" | cut -f2)) doesn't embed ![[$name#^status]]"
       fi
@@ -76,28 +77,12 @@ while IFS= read -r note; do
     at="$roadmap:$(printf '%s' "$line" | cut -f2)"
     section=$(printf '%s' "$line" | cut -f3); heading=$(printf '%s' "$line" | cut -f4)
     case "$name" in
-      (*\ [0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9])
-        # A kicked-off copy: its line carries its items' goal links. The goal
-        # heading it sits under counts as one.
-        case "$heading" in
-          ('[['*']]') onLine=$(printf '%s\n%s' "$onLine" "$(printf '%s' "$heading" | sed 's/^\[\[//; s/]]$//')" | grep -v '^$' | sort -u) ;;
-        esac
-        items=$(awk 'FNR == 1 && $0 == "---" { fm = 1; next } fm && $0 == "---" { fm = 0; next } !fm' "$note" |
-          grep -oE '🎯 \[\[[^]|]+' | sed 's/^🎯 \[\[//' | sort -u)
-        for g in $(printf '%s\n' "$items" | tr ' ' '\001'); do
-          g=$(printf '%s' "$g" | tr '\001' ' ')
-          printf '%s\n' "$onLine" | grep -qxF -- "$g" || add "$note: an item links 🎯 [[$g]], but its Roadmap line ($at) doesn't"
-        done
-        for g in $(printf '%s\n' "$onLine" | tr ' ' '\001'); do
-          g=$(printf '%s' "$g" | tr '\001' ' ')
-          printf '%s\n' "$items" | grep -qxF -- "$g" || add "$note: its Roadmap line ($at) links 🎯 [[$g]], but no item does"
-        done
-        ;;
+      (*\ [0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]) ;;
       (*)
         # A collecting note's own line carries no goal links and sits in Unaffiliated.
         [ -n "$onLine" ] && add "$note: its Roadmap line ($at) carries 🎯 links, but a collecting note's own line carries none"
         case "$section" in
-          (Now|Next) add "$note: its Roadmap line ($at) sits in $section, but a collecting note's own line goes in Unaffiliated in Later" ;;
+          (Now|Next|Planning) add "$note: its Roadmap line ($at) sits in $section, but a collecting note's own line goes in Unaffiliated in Later" ;;
           (Later) [ -n "$heading" ] && [ "$heading" != "Unaffiliated" ] &&
             add "$note: its Roadmap line ($at) sits under \"$heading\", but a collecting note's own line goes in Unaffiliated" ;;
         esac
@@ -108,12 +93,16 @@ while IFS= read -r note; do
   if [ "$comments" -gt 0 ]; then
     add "$note: $comments line(s) with %% template comments. Remove them if this session worked on the note, not if it only edited it in passing"
   fi
-done < "$tmp/changed"
+done < "$tmp/named"
 
 # --- Whole vault ---
+# Merge conflicts Obsidian Git left in a note.
+tr '\n' '\0' < "$tmp/notes" | xargs -0 grep -Hn '^<<<<<<<' |
+  sed 's/:<<<<<<<.*$/: a merge conflict from Obsidian Git, for Sarah to resolve in Obsidian. Tell her rather than resolving it, even in a note this session changed/' >> "$report"
+
 # Broken links, skipping code spans, fenced blocks and %% comments, where links
 # are examples.
-grep -vE '^notes/(Note Conventions\.md)$' "$tmp/notes" | tr '\n' '\0' |
+tr '\n' '\0' < "$tmp/notes" |
   xargs -0 awk -v names="$tmp/names" -v files="$tmp/files" '
     BEGIN {
       while ((getline n < names) > 0) note[n] = 1
@@ -141,16 +130,17 @@ grep -vE '^notes/(Note Conventions\.md)$' "$tmp/notes" | tr '\n' '\0' |
       }
     }' >> "$report"
 
-# blocked-by entries must point at open stories.
-grep '^notes/features/' "$tmp/notes" | while IFS= read -r n; do
+# blocked-by entries must not point at closed stories. A done or dropped story
+# stays in features/ until /close removes it from the notes that wait on it, so
+# only an archived one is reported here.
+grep '^features/' "$tmp/notes" | while IFS= read -r n; do
   awk 'FNR == 1 && $0 != "---" { exit } FNR > 1 && $0 == "---" { exit }
     /^[A-Za-z_-]+:/ { on = ($0 ~ /^blocked-by:/) } on' "$n" | grep -oE '\[\[[^]|#]+' | sed 's/^\[\[//' |
     while IFS= read -r t; do
-      target=$(grep -F "/$t.md" "$tmp/notes" | while IFS= read -r c; do [ "$(basename "$c" .md)" = "$t" ] && echo "$c"; done | head -1)
+      target=$(grep -F "$t.md" "$tmp/notes" | while IFS= read -r c; do [ "$(basename "$c" .md)" = "$t" ] && echo "$c"; done | head -1)
       case "$target" in
-        ("") ;; # a missing note is already reported as a broken link
-        (notes/features/*)
-          grep -qE '^status: (done|dropped)' "$target" && add "$n: blocked-by [[$t]], which is $(grep -oE '^status: (done|dropped)' "$target" | cut -c9-)" ;;
+        ("") ;; # a deleted note is already reported as a broken link
+        (features/*) ;;
         (*) add "$n: blocked-by [[$t]], which is closed ($target)" ;;
       esac
     done
@@ -159,29 +149,43 @@ done
 # Roadmap status embeds must point at a note with a ^status line.
 grep -oE '!\[\[[^]#]+#\^status\]\]' "$roadmap" | sed -E 's/^!\[\[//; s/#\^status\]\]$//' | sort -u |
   while IFS= read -r t; do
-    target=$(grep -F "/$t.md" "$tmp/notes" | while IFS= read -r c; do [ "$(basename "$c" .md)" = "$t" ] && echo "$c"; done | head -1)
+    target=$(grep -F "$t.md" "$tmp/notes" | while IFS= read -r c; do [ "$(basename "$c" .md)" = "$t" ] && echo "$c"; done | head -1)
     [ -n "$target" ] && ! grep -q ' \^status$' "$target" && add "$roadmap: embeds [[$t#^status]], but $target has no ^status line"
   done
 
-# Every Now and Next line needs a 🎯 link to an active goal, 🚨 or 📌.
+# Every Now and Next line needs a 🎯 link to the building goal, 🚨, 🔥, 📌 or 🔁, and
+# every Planning line a 🎯 link to the planning goal. A goal's release markers,
+# such as " · releasing · Next: /ship-goal", can follow "- building".
 awk '
   /^# / { section = substr($0, 3); next }
-  section == "Goals" && /- active/ { g = $0; sub(/.*\[\[/, "", g); sub(/[]|].*/, "", g); active[g] = 1; next }
-  (section == "Now" || section == "Next") && /^[ \t]*([-*]|[0-9]+\.)[ \t]+/ {
-    if (index($0, "🚨") || index($0, "📌")) next
+  section == "Goals" && /- (building|planning)( ·|$)/ {
+    g = $0; sub(/.*\[\[/, "", g); sub(/[]|].*/, "", g)
+    if (/- building( ·|$)/) building[g] = 1; else planning[g] = 1
+    next
+  }
+  (section == "Now" || section == "Next" || section == "Planning") && /^[ \t]*([-*]|[0-9]+\.)[ \t]+/ {
+    if (section != "Planning" && (index($0, "🚨") || index($0, "🔥 Hotfix:") || index($0, "📌") || index($0, "🔁"))) next
     rest = $0; ok = 0
     while (match(rest, /🎯 \[\[[^]|]+/)) {
       g = substr(rest, RSTART, RLENGTH); sub(/^🎯 \[\[/, "", g)
-      if (g in active) ok = 1
+      if (section == "Planning" ? (g in planning) : (g in building)) ok = 1
       rest = substr(rest, RSTART + RLENGTH)
     }
-    if (!ok) printf "%s:%d: a %s line with no 🎯 link to an active goal, 🚨 or 📌\n", FILENAME, NR, section
+    if (!ok && section == "Planning") printf "%s:%d: a Planning line with no 🎯 link to the planning goal\n", FILENAME, NR
+    else if (!ok) printf "%s:%d: a %s line with no 🎯 link to the building goal, 🚨, 🔥, 📌 or 🔁\n", FILENAME, NR, section
   }' "$roadmap" >> "$report"
 
-checked=$(grep -c . "$tmp/changed")
 if [ -s "$report" ]; then
-  echo "Checked $checked changed note(s) and the whole vault. Found:"
+  echo "Found:"
   sed 's/^/- /' "$report"
-  exit 1
+  status=1
+else
+  echo "No issues."
+  status=0
 fi
-echo "Checked $checked changed note(s) and the whole vault. No issues."
+if [ $# -gt 0 ]; then
+  echo "Checked $(grep -c . "$tmp/named") named note(s) and the whole vault."
+else
+  echo "No notes were named, so only the whole-vault checks ran."
+fi
+exit "$status"
