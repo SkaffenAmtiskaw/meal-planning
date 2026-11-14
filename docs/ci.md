@@ -1,10 +1,5 @@
 # CI
-- CI runs on [GitHub Actions](https://docs.github.com/en/actions). The workflows live in `.github/workflows/`.
-- `checks.yml` runs lint, type check, unit tests and build on every PR, and the E2E tests on every PR into `develop` or `main`. It starts the `ci-failure` routine when one of them fails.
-- `dependency-updates.yml` checks the dependencies for security advisories every hour and for new versions every week, and starts the `dependency-updates` routine when it finds something new.
-- `vercel-deploy-errors.yml` starts the `vercel-deploy-errors` routine when a Vercel deployment you should hear about fails.
-- `production-errors.yml` checks PostHog for new and reopened error issues every hour, and starts the `production-errors` routine for each one.
-- `back-merge.yml` brings a hotfix on `main` back into `develop`, so the next release doesn't undo it.
+CI runs on [GitHub Actions](https://docs.github.com/en/actions). The workflows live in `.github/workflows/`, and each one's header comment says what it does. This doc covers what a workflow file can't show: why the workflows are built the way they are, and the settings outside the repo they rely on.
 
 # Workflows
 
@@ -16,13 +11,13 @@ No script CI runs writes fixes. CI would pass on code it had silently fixed, the
 ## The Repo Declares Its Tools
 Apart from what every machine and runner comes with, such as `git`, `curl` and `jq`, the repo declares every tool its workflows, hooks and scripts need, so they work from a fresh clone, whatever is already on your PATH. A tool that runs from the repo's `node_modules`, such as Biome or lefthook, is a pnpm dependency. Any other command-line tool, such as `rtk`, goes in `mise.toml`.
 
-A workflow installs Node, pnpm and any other `mise.toml` tool it needs with [`jdx/mise-action`](https://github.com/jdx/mise-action), which runs `mise install` against `mise.toml`. So CI runs the same versions as your machine. `mise.toml` asks for `latest`, so a new release reaches CI and your machine alike, without anyone updating a version.
+A workflow installs only the `mise.toml` tools it uses, so a run doesn't spend time on the rest. It installs them with [`jdx/mise-action`](https://github.com/jdx/mise-action), which runs `mise install` for the tools in the step's `install_args`. Most install only `node` and `pnpm`, and `backup.yml` adds the backup's tools (see "Database Backup"). Either way, CI runs the same versions as your machine. `mise.toml` asks for `latest`, so a new release reaches CI and your machine alike, without anyone updating a version.
 
 A routine's cloud session gets its tools the same way: the cloud environment's setup script installs mise, then runs `mise install node pnpm` against the repo's `mise.toml`, and the session runs those rather than the Node and pnpm that come in the cloud image (see "The Cloud Environment").
 
 No workflow or setup script names a Node or pnpm version of its own, or uses `actions/setup-node` or the cloud image's Node.
 
-CI and the cloud environment install only `node` and `pnpm` (the action's `install_args`, and the setup script's `mise install`), since they don't need the other tools in `mise.toml`. When you add a tool to `mise.toml`, add it to the `install_args` of any workflow that needs it. If routine sessions need it too, add it to the setup script. If they don't, add it to `MISE_DISABLE_TOOLS`, as `rtk` is, in both the setup script and the file the script writes. Without that, mise may look up the tool's latest version on GitHub and get a 403.
+When you add a tool to `mise.toml`, add it to the `install_args` of any workflow that needs it. If routine sessions need it too, add it to the setup script. If they don't, add it to `MISE_DISABLE_TOOLS`, as `rtk` is, in both the setup script and the file the script writes. Without that, mise may look up the tool's latest version on a host the session can't reach, such as GitHub, which returns a 403.
 
 # Checks on PRs
 `checks.yml` runs on every PR, whatever its base branch. It has five check jobs. Four run on every PR, and `e2e` runs only on a PR into a protected branch, meaning one with a ruleset: `develop` or `main`.
@@ -212,14 +207,37 @@ The `develop` ruleset refuses every direct push except the App's, so the push go
 
 **When `develop` moves during a run,** such as a PR merging between the checkout and the push, GitHub refuses the push as not a fast-forward, and the job fails. Rerun it, and it merges again onto the new `develop`. Another back-merge never causes this, since runs wait their turn.
 
+# Database Backup
+`backup.yml` backs up production's database to a private R2 bucket. `docs/backups.md` covers when it runs, what the backups hold, how to restore one and what to do when a run fails. This section records the settings the workflow reads, all in GitHub → Settings → Secrets and variables → Actions:
+
+| Name | Kind | What it holds |
+|---|---|---|
+| `BACKUP_DB_URL` | secret | the Atlas `backup` user's connection string, with no database in its path (see `docs/services.md`, "MongoDB Atlas") |
+| `R2_ACCESS_KEY_ID`, `R2_SECRET_ACCESS_KEY` | secrets | the workflow's R2 token, with Object Read & Write on the `meal-planning-db-backups` bucket only. The bucket's other token is recorded in `docs/services.md`, "Cloudflare". |
+| `R2_ENDPOINT` | secret | the account's R2 endpoint, `https://<account ID>.r2.cloudflarestorage.com` |
+| `R2_BUCKET` | variable | the bucket's name, `meal-planning-db-backups` |
+| `BACKUP_AGE_RECIPIENT` | variable | the `age` public key each dump is encrypted to. It isn't secret: it can only encrypt. Its private key is in Proton Pass (see `docs/services.md`, "Proton Pass"). |
+
+The workflow needs no `pnpm install`, since `scripts/db-backup.sh` uses only the tools mise installs (`age`, `rclone` and `mongodump`). Skipping it means no package's install script runs beside the `backup` user's connection string and the workflow's R2 token.
+
+## Replacing the Backup Secrets
+You'll know one needs replacing when a backup run fails, as `docs/backups.md`, "When a Backup Fails", describes. How to replace each:
+- **The R2 token:** in the Cloudflare dashboard, open R2 → **Manage API tokens** → **Create Account API token**, with **Object Read & Write** permission scoped to the `meal-planning-db-backups` bucket only. Replace `R2_ACCESS_KEY_ID` and `R2_SECRET_ACCESS_KEY` with its Access Key ID and Secret Access Key, then delete the old token on the same page.
+- **The `backup` user's password:** in Atlas, Database & Network Access → Database Users, edit `backup` and use **Autogenerate Secure Password**. Replace `BACKUP_DB_URL` with the new connection string, keeping it free of a database name, since the script names `staging` itself.
+- **The `age` key pair:** it spans Proton Pass and `BACKUP_AGE_RECIPIENT`, so `docs/backups.md`, "The `age` Key Pair", covers it.
+
+Once you've replaced one, take a backup by hand from Actions → **Database Backup** → **Run workflow**, and check that it passes.
+
 # Starting a Routine
-Results that happen away from your machine, such as a failed check, reach you as a Claude Code cloud session: a routine starts it, and it waits for you in the Code tab of the Claude desktop app, under **Routines**. Nothing in the repo delivers a result any other way: no `anthropics/claude-code-action`, no email, chat or push-notification step, and no bot comment on a PR or issue. GitHub's own check status on a PR doesn't count, since it isn't a delivery. Neither does a step that only passes the result along to start a routine, such as an alert opening an issue that a workflow then picks up.
+Results that happen away from your machine, such as a failed check, reach you as a Claude Code cloud session, except a failed backup (see the end of this section). A routine starts the session, and it waits for you in the Code tab of the Claude desktop app, under **Routines**. Nothing in the repo delivers a result any other way: no `anthropics/claude-code-action`, no email, chat or push-notification step, and no bot comment on a PR or issue. GitHub's own check status on a PR doesn't count, since it isn't a delivery. Neither does a step that only passes the result along to start a routine, such as an alert opening an issue that a workflow then picks up.
 
 A routine starts only on an event that is itself a result for you: a failed check, a new production error, an update found. No routine has a schedule trigger, since a scheduled run leaves a session even when it finds nothing. A scheduled check that runs somewhere else, such as a workflow on a `schedule`, is fine, as long as it starts the routine only when it finds something.
 
 A failed check can't start a routine directly, so a workflow job calls the routine's `/fire` endpoint, as `start-ci-failure` does (see "The Job That Starts `ci-failure`"). The [`/fire` API reference](https://platform.claude.com/docs/en/api/claude-code/routines-fire) has the request's shape. The routine's saved prompt runs its skill on the `text`, which arrives in the session wrapped in a `routine-fire-payload` block.
 
 A routine's credentials follow least privilege ([OWASP Top 10 for LLM Applications, LLM06:2025 Excessive Agency](https://genai.owasp.org/llmrisk/llm062025-excessive-agency/)). A session needs the data, not the service, so by default it gets no credential: the workflow that starts the routine holds the credential as an Actions secret, fetches the data and sends it in the `text`. A story with a good reason for a session to hold a credential lays out the trade-off, and you decide. `vercel-deploy-errors.yml`'s Vercel token and `production-errors.yml`'s PostHog read key are held this way (see "The Vercel Token" and "The PostHog Read Key").
+
+A failed backup is the one result that reaches you another way, through GitHub's own email for a failed workflow run. It starts no session. GitHub sends that email already, so nothing in the repo is built for it. `docs/backups.md`, "When a Backup Fails", says what to do when one arrives.
 
 # Secrets and Environment Values
 ## The App's Variables
@@ -241,7 +259,7 @@ A workflow that starts a routine reads its `/fire` URL and bearer token from two
 Both come from the routine's API trigger on claude.ai (open the routine → Edit → **Select a trigger** → **API**). The token is shown only once, when it's generated, so it goes straight into the secret. If it's lost, **Regenerate** makes a new one, which revokes the old one, and the new one replaces the secret's value.
 
 # Setup Outside the Repo
-Some of what CI and the routines need lives in settings outside the repo, on GitHub, on claude.ai and in the Claude desktop app. Most of it is recorded in this section. Some is recorded beside the workflow or routine it serves: the routines' Actions secrets in "A Routine's URL and Token", the Vercel access token and its `VERCEL_TOKEN` secret in "The Vercel Token", and the PostHog read key and project ID in "The PostHog Read Key". The rest of what the app relies on outside the repo, such as Vercel, Atlas and the domain, is in `docs/services.md`.
+Some of what CI and the routines need lives in settings outside the repo, on GitHub, on claude.ai and in the Claude desktop app. Most of it is recorded in this section. Some is recorded beside the workflow or routine it serves: the routines' Actions secrets in "A Routine's URL and Token", the Vercel access token and its `VERCEL_TOKEN` secret in "The Vercel Token", the PostHog read key and project ID in "The PostHog Read Key", and the backup's secrets and variables in "Database Backup". The rest of what the app relies on outside the repo, such as Vercel, Atlas and the domain, is in `docs/services.md`.
 
 When you set up something outside the repo, record it where it'll be found when it next needs changing. Which doc that is depends on what the setting is for:
 - **If it exists only so a workflow or routine works,** such as an Actions secret: record it in this doc, beside that workflow or routine, and link it from its service's entry in `docs/services.md`.
