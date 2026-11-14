@@ -1,18 +1,11 @@
-import { createPendingInvite } from '#factories/invite';
-import { createPlanner } from '#factories/planner';
-import { createUser } from '#factories/user';
-
 import { expect, test } from '../_fixtures';
+import { createOwnersInvite } from './_helpers/createOwnersInvite';
 
 // Viewing an expired invite deletes it (validateInviteToken), so the test opens the link only once.
 test('an expired invite says it has expired', async ({ page }) => {
-	const planner = await createPlanner({ name: 'Family Meals' });
-	const owner = await createUser({
-		planners: [{ planner: planner._id, accessLevel: 'owner' }],
-	});
-	const { token, email } = await createPendingInvite({
-		planner: planner._id,
-		invitedBy: owner._id,
+	const {
+		invite: { token, email },
+	} = await createOwnersInvite({
 		expiresAt: new Date(Date.now() - 60 * 1000),
 	});
 
