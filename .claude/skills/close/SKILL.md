@@ -58,7 +58,6 @@ Skip this for a re-close. Otherwise, handle each Blocker match by what it is:
   1. **For a dropped close,** ask the user what the waiting story waits on now: nothing, another story or a decision. If something still blocks it, update its `blocked-by`, its `^status` line and its Roadmap line to match, and go on to the next story.
   2. Remove this story from the waiting story's `blocked-by` list, and from any "waiting on" wording on its `^status` line and Roadmap line. If its `blocked-by` still has entries, go on to the next story.
   3. Check the waiting story's next step. If it would build on work planned while this story was open, such as an approach or steps, and wouldn't check that work against the code first, make `/check-drift` the next step on its `^status` line. That work may not fit the code once this story closes: a done story's changes have landed, and a dropped story's never will. For example, `/plan-steps` checks the note against the commits since it was confirmed, so it catches a done story's changes but not the ones a dropped story never made.
-  4. If its Roadmap line is in Later and the story serves the building or planning goal, show the user the story and that goal's queue, and ask whether it moves there.
 
 ## 5. Update the Other Notes
 Go through the rest of the matches. What to do depends on the kind:
