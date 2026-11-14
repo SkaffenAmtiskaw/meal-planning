@@ -31,7 +31,7 @@ Write each step's checks as `checks.md` in this skill's folder describes.
 ## Coverage
 Everything in the approach lands in a step. A step builds only what the approach holds, plus the E2E tests the story needs. It can also build anything its Source labels as an item the user pulled in or a Boy Scout fix.
 
-The E2E tests a story needs are the ones `docs/e2e_coverage.md` asks for, even when the note doesn't list them. A failure's E2E test is among them only if the approach marks the failure "(E2E test)", because whether a failure gets one is the user's call for each story. A test the note doesn't list has the Source "E2E test: <the flow>".
+The E2E tests a story needs are the ones the "What Gets E2E Tests" section of `docs/e2e_tests.md` asks for, even when the note doesn't list them. Read only that section: find its heading with Grep, then Read from there to the next `# ` heading. The rest of the doc is for writing and running the tests. A failure's E2E test is among them only if the approach marks the failure "(E2E test)", because whether a failure gets one is the user's call for each story. A test the note doesn't list has the Source "E2E test: <the flow>".
 
 The approach can miss things, so the steps' Source lines also claim every part of the note that says what the story must build, fix or keep working, such as Requirements bullets, Design Handoff sections (by heading) or a `> [!warning]` callout another story routed in.
 
