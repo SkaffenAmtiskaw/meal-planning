@@ -5,6 +5,7 @@ import {
 	POSTHOG_UI_HOST,
 	RELAY_PATH,
 } from '@/_utils/errorReporting';
+import { stripUrlQueries } from '@/_utils/stripUrlQueries';
 
 const token = getReportingToken();
 
@@ -13,6 +14,9 @@ if (token) {
 		api_host: RELAY_PATH,
 		ui_host: POSTHOG_UI_HOST,
 		capture_exceptions: true,
+		// Some pages carry secret tokens in their query strings, and posthog-js puts page URLs in
+		// properties such as $current_url and $session_entry_url
+		before_send: stripUrlQueries,
 		// Exceptions only: analytics is out of scope for error reporting
 		person_profiles: 'never',
 		capture_pageview: false,
