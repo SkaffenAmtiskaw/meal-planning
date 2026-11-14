@@ -21,7 +21,7 @@ Run `git rev-parse --path-format=absolute --git-dir --git-common-dir`. If the tw
 Read `Roadmap.md` and the goal's note in `goals/`, both in the notes repo, and invoke the `roadmap-rules` skill. Then the checks, in order:
 1. **The goal's line under Goals ends with ` · releasing · Next: /ship-goal`.** If it doesn't, tell the user what the line says, and stop.
 2. **Nothing on `main` is missing from `develop`.** Run `git fetch origin`, then `git rev-list --no-merges origin/develop..origin/main`. If it lists a commit, a hotfix's back-merge failed, and the release would undo the hotfix. Tell the user which commits are missing and that `docs/ci.md`'s "Back-Merge" section says how to bring them back by hand, and stop.
-3. **Nothing in the goal is left undone.** No open line sits under the goal's heading in Later or carries its 🎯 link. No line ends with 🔁. Such a line is work the release would ship without. If one is there, tell the user which lines, and stop.
+3. **Nothing in the goal is left undone.** No open line carries the goal's 🎯 link. No line ends with 🔁. Such a line is work the release would ship without. If one is there, tell the user which lines, and stop.
 
 ## 2. Go Through the Done When
 Read the release's range, `git log --first-parent origin/main..origin/develop`. Each story and audit fix landed there as one commit titled with its name.
@@ -33,10 +33,10 @@ If there's any gap, tell the user to run `/roadmap <goal>` in a new session, nam
 ## 3. Close Out the Goal
 The steps, in order:
 1. **What's worth keeping:** check the goal note for anything worth keeping, as the `deleting-a-note` skill describes in step 1.
-2. **Its references:** run `sh scripts/note-refs.sh "<goal>"`. Leave out the goal's line under Goals and its heading in Later, since item 3 below removes them. The other matches, by kind:
+2. **Its references:** run `sh scripts/note-refs.sh "<goal>"`. Leave out the goal's line under Goals, since item 3 below removes it. The other matches, by kind:
    - **In the vault:** if an open story relies on content only the goal note holds, copy that content into the story's note first. Then reword or remove the link, as the `deleting-a-note` skill describes in step 3.
    - **Outside the vault,** such as a doc or a skill: add it to the out-of-scope list.
-3. **The Roadmap:** remove the goal's line under Goals and renumber the lines below it. Remove its heading in Later, which has no open lines under it, as section 1's check 3 found. Leave the planning goal's marker as it is, because `/roadmap` promotes it once the release PR merges.
+3. **The Roadmap:** remove the goal's line under Goals and renumber the lines below it. Leave the planning goal's marker as it is, because `/roadmap` promotes it once the release PR merges.
 4. **The out-of-scope list:** triage and route it, as the `triaging-out-of-scope-work` skill describes.
 5. **The note:** delete the goal note.
 6. **Unused files:** delete the files nothing references anymore, as the `deleting-a-note` skill describes in step 6.

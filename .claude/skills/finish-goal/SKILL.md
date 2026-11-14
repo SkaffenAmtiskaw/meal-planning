@@ -21,7 +21,7 @@ Run `git rev-parse --path-format=absolute --git-dir --git-common-dir`. If the tw
 Read `Roadmap.md` and the goal's note in `goals/`, both in the notes repo, and invoke the `roadmap-rules` skill. Then the checks, in order:
 1. **The goal's line under Goals ends with ` · Next: /finish-goal`.** If it doesn't, tell the user what the line says, and stop.
 2. **Nothing on `main` is missing from `develop`.** Run `git fetch origin`, then `git rev-list --no-merges origin/develop..origin/main`. If it lists a commit, a hotfix's back-merge failed, and the release would undo the hotfix. Tell the user which commits are missing and that `docs/ci.md`'s "Back-Merge" section says how to bring them back by hand, and stop.
-3. **Nothing in the goal is left undone.** No open line sits under the goal's heading in Later or carries its 🎯 link. No line ends with 🔁. Such a line was added after the goal's line got ` · Next: /finish-goal`. If the release started now, the freeze would hold the line back, and the goal would ship without it. If one is there, tell the user which lines, and stop.
+3. **Nothing in the goal is left undone.** No open line carries the goal's 🎯 link. No line ends with 🔁. Such a line was added after the goal's line got ` · Next: /finish-goal`. If the release started now, the freeze would hold the line back, and the goal would ship without it. If one is there, tell the user which lines, and stop.
 
 ## 2. Confirm Which Audits Apply
 Read the release's range, `origin/main..origin/develop`: which stories it merges and what it changes. Then read the goal's Done When.

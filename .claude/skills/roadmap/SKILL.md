@@ -40,9 +40,9 @@ Search the Roadmap, including Ideas, and `features/` in the notes repo for stori
 - tooling, unless the goal is about how the app is built, because step 5 handles it
 
 For each candidate, show its line or note, why it looks related, and any goals it already serves. The user's answer decides what happens to it:
-- **In:**
-  - **A line in Unaffiliated or Ideas:** move it under the goal's heading in Later.
-  - **Any other line:** leave it where it is, and add the goal's 🎯 link.
+- **In:** what happens depends on the goal:
+  - **The building or planning goal:** add the goal's 🎯 link. If the line is in Now or Next, leave it there. Otherwise, move it into the goal's queue and ask the user where it goes. If it leaves another goal's heading, give it that goal's 🎯 link too.
+  - **Any other goal:** if the line is in Unaffiliated or Ideas, move it under the goal's heading in Later. Otherwise, leave it where it is, and add the goal's 🎯 link.
 - **Out:** add it to Out of Scope with their reason.
 - **Not related:** record nothing.
 
@@ -61,6 +61,7 @@ Once they approve it, write the note. Where its line goes, and what else changes
   1. Add `[[<note>]] ![[<note>#^status]] 🎯 [[<goal>]]` to Next, above every line except 🔥 lines and those for notes the goal note's `# Release` section already links, and renumber the lines below it.
   2. In the goal note's `# Release` section, add a bullet that links the note, so the release freeze lets it be built.
   3. Remove ` · Next: /ship-goal` from the goal's line, since the goal has work left again.
+- **Otherwise, if it's marked `- building` or `- planning`:** add `[[<note>]] ![[<note>#^status]] 🎯 [[<goal>]]` to the goal's queue, and ask the user where it goes.
 - **Otherwise:** add its line under the goal's heading.
 
 ## 5. Tooling

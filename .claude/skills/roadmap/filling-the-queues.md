@@ -1,8 +1,8 @@
 # Filling the Queues
 The steps to bring Next and Planning in line when a goal has just become the building or planning goal, in order:
 
-1. **Sort the lines already in Next and Planning.** Each line goes where its goals and markers now put it, as the `roadmap-rules` skill describes. A line that fits neither queue, by its goals or its marker, goes back to Later.
-2. **Fill the queue of each goal that just became the building or planning goal.** Go through every Later line that serves the goal: the lines under its heading and the lines carrying its 🎯 link. Ask the user which lines move into its queue.
+1. **Sort the lines already in Next and Planning.** Each line goes where its goals and markers now put it, as the `roadmap-rules` skill describes. A line that fits neither queue, by its goals or its marker, goes back to Later, under the heading of a goal it serves. If that goal has no heading, add one in its rank order.
+2. **Fill the queue of each goal that just became the building or planning goal.** Move every Later line that serves the goal into its queue: the lines under its heading and the lines carrying its 🎯 link. Give each line that sat under the goal's heading the goal's 🎯 link. Give each line that sat under another goal's heading that goal's 🎯 link as well, so every line still shows each goal it serves. Then remove the goal's heading, because the `roadmap-rules` skill keeps every line that serves the building or planning goal in that goal's queue.
 3. **If a goal just became the building goal, add what joins the release.** Handle these in order, because freezing a dated copy reads Next to see which stories are in the release:
    1. For each line under the Bugs heading whose `^status` line doesn't say it's blocked, move it into Next and end it with 🔁.
    2. Go through each sweep and collecting workflow note that isn't a dated copy. For each one, work out which items `freezing-a-copy.md` in this folder would keep in a copy. If it would keep any, freeze a dated copy as that file describes. Give the copy its Roadmap line as the `roadmap-rules` skill describes under "Collecting notes".
