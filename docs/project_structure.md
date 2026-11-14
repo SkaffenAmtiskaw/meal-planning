@@ -13,7 +13,7 @@ Playwright support code, and what `playwright.config.ts` uses to start a run
 # Notes
 notes on planned work, in Obsidian-flavored Markdown, live in the `meal-planning-notes` repo beside this one. Its `Roadmap.md` is the project roadmap, with links to detailed notes (see `docs/services.md`, "The Notes Repo", for how it's kept in sync)
 # scripts/
-scripts that the git hooks, the workflows and the SessionStart hook run, such as the notes vault checks, the database backups (see `docs/backups.md`) and the worktree scripts (see `docs/branching.md`)
+scripts that the git hooks, the workflows and the SessionStart hook run, such as the notes vault checks, the database backups (see `docs/backups.md`) and the worktree scripts (see `docs/branching.md`). `release-tasks/` holds the one-off changes to production's data that the next release runs (see `docs/release_tasks.md`)
 # seed/
 `pnpm seed`, which fills the dev database with seeded users and sample data, the sign-in link server, and the script that empties a worktree's database (see `docs/seed.md`)
 # src/

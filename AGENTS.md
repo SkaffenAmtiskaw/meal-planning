@@ -65,6 +65,7 @@ Read a doc in `docs/` when the task needs it, not all of them up front. Each is 
 - `style_guidelines.md` and `theme.md`: before UI work
 - `ci.md`: also before changing a routine
 - `seed.md`: also before adding a model
+- `release_tasks.md`: before planning or writing a change that needs production's stored data changed, such as a model's new or changed fields
 - `branching.md`: before work that touches branches, worktrees, PRs, releases or hotfixes
 
 Before you plan, draft or change a file in `docs/`, `README.md`, AGENTS.md, a skill or an agent, read the `writing-standard` skill.
