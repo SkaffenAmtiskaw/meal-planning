@@ -29,13 +29,13 @@ A restore replaces production's data with a backup's. Everything written after t
 
 # When a Backup Fails
 A failed backup run reaches you as GitHub's own email for a failed workflow run. Its subject names the **Database Backup** workflow. Open the run from the email and read the failed step's log. The usual causes:
-- **`403 Forbidden` from rclone:** the workflow's R2 token was revoked or has expired. Replace it (see `docs/ci.md`, "Replacing the Backup Secrets").
-- **An authentication error from `mongodump`:** the Atlas `backup` user's password changed, or the user was removed. Replace `BACKUP_DB_URL` (see `docs/ci.md`, "Replacing the Backup Secrets").
+- **`403 Forbidden` from rclone:** the workflow's R2 token was revoked or has expired. Replace it (see `docs/services.md`, "Replacing the Workflow's R2 Token").
+- **An authentication error from `mongodump`:** the Atlas `backup` user's password changed, or the user was removed. Replace its password, or add the user again (see `docs/services.md`, "Replacing the `backup` User's Password").
 - **A failure while installing tools:** usually a short outage at GitHub or a tool's download site.
 
 Once the cause is fixed, take a backup by hand from Actions → **Database Backup** → **Run workflow**, so the bucket doesn't wait a day for a good one.
 
-GitHub turns off a public repo's scheduled workflows after 60 days with no activity in the repo, and sends no email when it does. The restore test catches it, because the newest backup grows too old. Turn the workflow back on from its page in Actions.
+GitHub can turn off a scheduled workflow when the repo has had no activity for a while, and no email says so. The restore test catches it, because the newest backup grows too old. Turn the workflow back on from its page in Actions.
 
 # The Restore Test
 `pnpm db:restore-test` (`scripts/restoreTest.ts`) restores the newest backup into a throwaway MongoDB on your Mac. It uses the same `pnpm db:restore` a real restore does, so the restore you'd run in an emergency is the one that was tested. Your Mac runs it every 90 days, and again the next day after a failure (see "The Daily Job"). The test passes only when:
@@ -74,7 +74,7 @@ The notification gives the first problem, and the log gives them all. The causes
 Once the cause is fixed, run `pnpm -s db:restore-test --now` from the main checkout, and check that it passes.
 
 # Replacing a Key or Token
-The backups depend on four credentials outside the repo. GitHub holds two of them, the workflow's R2 token and the `backup` user's connection string. Replace those as `docs/ci.md`, "Replacing the Backup Secrets", describes. Replace the other two as below.
+The backups depend on four credentials outside the repo. GitHub holds two of them, the workflow's R2 token and the `backup` user's connection string. Replace those as `docs/services.md`, "Replacing the Workflow's R2 Token" and "Replacing the `backup` User's Password", describe. Replace the other two as below.
 
 ## The `age` Key Pair
 Replace the key pair if the private key is lost or has leaked, meaning anyone else may have seen it. The steps, in order:
@@ -96,4 +96,4 @@ The settings outside the repo that the backups rely on are recorded with their s
 - the Atlas `backup` user, in `docs/services.md`, "MongoDB Atlas".
 - the R2 bucket, its lifecycle rule and both R2 tokens, in `docs/services.md`, "Cloudflare".
 - the private key and your Mac's R2 read token, in `docs/services.md`, "Proton Pass".
-- the workflow's Actions secrets and variables, in `docs/ci.md`, "Database Backup".
+- the workflow's Actions secrets and variables, in `docs/services.md`, "Actions Secrets and Variables".

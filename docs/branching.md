@@ -13,7 +13,7 @@ There are four kinds of branch, each with its own job:
 - **`feature/<generated name>`** holds one story, `/tooling` change or other piece of work, from start to finish. The desktop app names it when it makes the worktree.
 - **`hotfix/<slug>`** holds an urgent fix, cut from `main`, so the fix ships without anything else that's on `develop`.
 
-GitHub's rulesets on `develop` and `main` refuse a direct push to either branch, and a PR can't merge while any of its required checks fails. The one exception is the back-merge, which brings a hotfix from `main` into `develop` (see "A Hotfix"). The rulesets' settings and reasons are in `docs/ci.md`, "The Rulesets on `develop` and `main`".
+GitHub's rulesets on `develop` and `main` refuse a direct push to either branch, and a PR can't merge while any of its required checks fails. The one exception is the back-merge, which brings a hotfix from `main` into `develop` (see "A Hotfix"). The rulesets' settings and reasons are in `docs/services.md`, "The Rulesets on `develop` and `main`".
 
 ## Checkouts
 The main checkout is the `meal-planning` folder itself. It stays on `develop` and is never edited, so the SessionStart hook can fast-forward it to the latest `develop` at every session start. Planning skills, such as `/shape`, `/plan-steps` and `/close`, run there and edit only notes. Notes live in their own repo and are never branched. Skills that change code stop if you run them there, and tell you to start a worktree session.
@@ -27,7 +27,7 @@ At the start of every local session, the SessionStart hook runs four scripts, in
 1. **`sync-develop.sh`** fetches from GitHub, and in the main checkout fast-forwards `develop`.
 2. **`worktree-sweep.sh`** removes each worktree whose PR has merged, or that never got work of its own, with its local branch and database (see "Cleaning Up After a Merge").
 3. **`worktree-setup.sh`**, in a worktree, copies the main checkout's `.env.local` if the worktree has none, trusts its `mise.toml` and installs its dependencies, which also installs the pre-commit hook.
-4. **`worktree-slot.sh`**, in a worktree, gives it a slot if it has none and prints its URLs and database.
+4. **`worktree-slot.sh`**, in a worktree, gives it a slot if it has none, and prints the new slot's URLs and database.
 
 # A Story
 These are the points where you act, from planning to cleanup:
@@ -46,7 +46,7 @@ A worktree outlives its sessions, so a later session can pick up where the last 
 
 The session finds the worktree from its branch name, which the app often builds from the first session's command, and from the titles of the sessions already in it. If more than one worktree matches, it asks you which. The project folder control can't do this, because the app lists each worktree under the `meal-planning` project rather than as a folder of its own.
 
-The new session opens in the worktree's folder, on its branch, and appears in the sidebar for you to open. Its hook output gives the worktree's slot and its hostname, so you can confirm it's in the right one.
+The new session opens in the worktree's folder, on its branch, and appears in the sidebar for you to open. Its folder and branch show it's in the right one.
 
 Several sessions can use one worktree, but only one at a time should edit code or commit. They share one folder and one git index, so two at once would mix their changes and commits.
 
