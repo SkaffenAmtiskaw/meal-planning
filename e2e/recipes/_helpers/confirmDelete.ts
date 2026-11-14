@@ -1,4 +1,4 @@
-import type { Locator } from '@playwright/test';
+import type { Locator } from '../../_fixtures';
 
 // Clicks the delete trigger, then Delete in the confirm dialog it opens.
 // It doesn't wait for the dialog to close, since a failed delete keeps it open.

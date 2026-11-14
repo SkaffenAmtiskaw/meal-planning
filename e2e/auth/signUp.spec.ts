@@ -1,12 +1,7 @@
 import { uniqueEmail } from '#factories/uniqueEmail';
 
-import {
-	enterEmail,
-	expect,
-	latestEmailTo,
-	linkInEmail,
-	test,
-} from '../_fixtures';
+import { expect, latestEmailTo, linkInEmail, test } from '../_fixtures';
+import { enterEmail } from './_helpers/enterEmail';
 
 test('a new email creates an account and shows Check your inbox', async ({
 	page,

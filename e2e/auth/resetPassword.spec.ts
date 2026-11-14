@@ -1,13 +1,8 @@
 import { createUser } from '#factories/user';
 
-import {
-	expect,
-	latestEmailTo,
-	linkInEmail,
-	requestPasswordReset,
-	submitNewPassword,
-	test,
-} from '../_fixtures';
+import { expect, latestEmailTo, linkInEmail, test } from '../_fixtures';
+import { requestPasswordReset } from './_helpers/requestPasswordReset';
+import { submitNewPassword } from './_helpers/submitNewPassword';
 
 test('no token shows Invalid reset link', async ({ page }) => {
 	await page.goto('/reset-password');

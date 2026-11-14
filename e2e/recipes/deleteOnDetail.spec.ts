@@ -1,5 +1,6 @@
-import { confirmDelete, expect, test } from '../_fixtures';
+import { expect, test } from '../_fixtures';
 import { recipesListPath } from '../_helpers/plannerPaths';
+import { confirmDelete } from './_helpers/confirmDelete';
 import { openRecipeDetail } from './_helpers/openRecipeDetail';
 import { recipesSeed } from './_helpers/recipesSeed';
 

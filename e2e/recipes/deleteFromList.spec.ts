@@ -1,4 +1,5 @@
-import { confirmDelete, expect, test } from '../_fixtures';
+import { expect, test } from '../_fixtures';
+import { confirmDelete } from './_helpers/confirmDelete';
 import { openPlannerRecipes } from './_helpers/openPlannerRecipes';
 import {
 	deleteBookmarkButtonTestId,
