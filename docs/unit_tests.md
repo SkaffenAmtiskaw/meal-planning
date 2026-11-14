@@ -1,156 +1,116 @@
+This doc is for anyone writing or reviewing unit tests. It assumes you know Vitest and Testing Library, which the tests use.
+
 # What Gets Unit Tests
-Unit tests cover the app's code in `src/`. Dev tooling typically has none: the seed in `seed/`, the scripts in `scripts/`, config files at the repo root, such as `vitest.config.ts`, and the test support code in `test/`, mocks included. Tooling runs only on a developer's machine or in CI, so a fault in it never reaches the app's users, and it shows up the next time someone runs the tool. Running a tool after a change usually checks that change, so a unit test would add upkeep without catching anything sooner.
+Unit tests cover the app's code in `src/`, and every module there has 100% coverage. A gap in coverage is logic that no test checks, so it can break with nothing to say so. `vitest.config.ts` enforces the threshold. The few files it leaves out, such as barrel files, constants and type definitions, are ones that hold no logic. Leaving a file out of coverage hides whatever logic it has, so if one of those files gains logic, the logic moves to a module that can be tested.
 
-# Unit Test Tooling
-- Unit tests use [`vitest`](https://vitest.dev/api/) and [`@testing-library/react`](https://testing-library.com/docs/).
+Dev tooling typically has no unit tests. That covers the seed in `seed/`, the scripts in `scripts/`, the config files at the repo root (such as `vitest.config.ts`) and the test support code in `test/`, including the mocks. Tooling runs only on a developer's machine or in CI, so a fault in it never reaches the app's users. The fault shows up the next time someone runs the tool, and running a tool after a change usually checks that change, so a unit test would add upkeep without catching anything sooner.
 
-# Conventions
-- Unit tests are co-located with the module they test.
-- The naming convention for unit tests is `*.test.ts[x]`
+# Test Logic, Not Rendering
+Every test covers a branch or a piece of logic: a conditional, a calculation, a state change, or what an interaction causes. If a test would still pass after the code it claims to cover is deleted, it doesn't count.
 
-# Mocks
-- Almost all dependencies should be mocked using `vi.mock` (exceptions are listed below)
-- `test/mocks/` contains mocks for libraries and modules which are mocked frequently - vitest provides an alias for it to be accessed in unit tests
-- If a reusable mock is available in `test/mocks/`, it should ALWAYS be preferred over writing a custom mock implementation
+Never test that JSX renders to spec: that a class is applied, that a prop is passed to a child, or that text from a prop shows up. Those tests check React, not this code, and they break whenever the markup changes. In a component, what's worth testing is what it decides: an empty or error state that depends on props, what appears or goes away after a state change, what an interaction causes, and its business logic, such as a date calculation or a permission check.
 
-## Libraries That Should Not Be Mocked
-
-| Library | Why Not Mock                                                                                                                                                                                    |
-|---------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| `react` | Underpins the entire application; mocking it can create false confidence that hooks/components work when they do not.                                                                           |
-| `@tabler/icons-react` | Pure presentational components with no logic. Mocking adds indirection for zero benefit.                                                                                                        |
-| `zod` | Schema definitions are part of the implementation under test. Mocking zod means not testing validation boundaries. It is a synchronous, side-effect-free library with negligible test overhead. |
-
-**Clarification:** Modules that *use* these libraries internally should still be mocked (e.g., `@/_models`, form validation utilities) so that tests are not coupled to schema changes. Only the library is an exception; its consumers should not be.
-
-## Creating Centralized Mocks
-Create a centralized mock as soon as the same mock starts being duplicated: when 3 or more test files mock the same module with the same factory body, move it to `test/mocks/` and have those files import it. The threshold applies only to creating a mock. An existing centralized mock stays centralized no matter how few files use it, and when the module it mocks moves, the mock moves to the matching path under `test/mocks/`.
-
-### Naming Conventions
-Mocks at `test/mocks/` must export the actual module names they replace. Do not export `MockFoo` variants that tests then have to map back to real names.
-
-**Why:** This keeps test files clean. Tests import from the real module (`import { useForm } from '@mantine/form'`) and vitest's mocking system substitutes the mock automatically. The test author never sees or thinks about mock internals.
-
-```typescript
-// ✅ CORRECT in test/mocks/@mantine/form.ts
-export const useForm = vi.fn(() => ({...}));
-```
-```typescript
-// ❌ INCORRECT - forces tests to know about mock internals
-export const mockUseForm = vi.fn();
-export const useForm = () => mockUseForm();
-```
-
-## What Good Mock Defaults Look Like
-
-Mocks are stubs, not implementations. They exist to isolate the module under test, not to recreate the behavior of dependencies.
-
-A good mock:
-
-1. **Returns minimal valid data** — not complex logic or real implementation details
-2. **Represents the success path** — tests override only when testing error/edge cases
-3. **Is configurable per-test** — use `mockReturnValueOnce` for specific test needs
-4. **Is as simple as possible** — a mock component renders a static placeholder; a mock function returns a static value
-
-### Permissible Complexity
-
-State and async behavior inside a mock are allowed **only when a test in the current file explicitly needs it** to verify dynamic UI state. Examples:
-
-- A mock hook that toggles `loading` to `true` so the test can assert a spinner appears
-- A mock hook that sets `error` so the test can assert an error message renders
-
-If no test in the file asserts the state transition, **do not include it in the mock.** Never add state or async behavior "just in case."
-
-### Component Example
+A component with no branches still needs coverage. Give it one test named `renders (coverage only, no logic)` that renders it and asserts nothing about the JSX. The name tells a reviewer the missing assertion is deliberate.
 
 ```tsx
-// ✅ CORRECT - dumb placeholder component
-export const InviteForm = vi.fn(() => <div data-testid="invite-form" />);
+// ✅ Tests what an interaction causes
+it('calls onDelete when the delete button is clicked', () => {
+  render(<PlannerListItem name="Test" onDelete={mockDelete} />);
+  fireEvent.click(screen.getByTestId('delete-button'));
+  expect(mockDelete).toHaveBeenCalledWith('test-id');
+});
 ```
-
-### Utility Example
-
-```typescript
-// ✅ CORRECT - simple stub
-export const validateEmail = vi.fn(() => ({ success: true }));
-```
-
-**Antipattern to avoid:**
-
-```typescript
-// ❌ WRONG - Mock implements real validation logic
-vi.mock('@/_utils/validator', () => ({
-  validateEmail: vi.fn((email) => {
-    const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!EMAIL_REGEX.test(email)) {
-      return { success: false, error: 'Invalid email' };
-    }
-    return { success: true };
-  }),
-}));
-```
-
 ```tsx
-// ❌ WRONG - Mock recreates real component behavior
-vi.mock('./InviteForm', () => ({
-  InviteForm: ({ status, error, onInvite }: InviteFormProps) => {
-    const [email, setEmail] = useState('');
-    return (
-      <div>
-        {status === 'error' && <div data-testid="error">{error}</div>}
-        <input value={email} onChange={(e) => setEmail(e.target.value)} />
-        <button onClick={() => onInvite(email)}>Invite</button>
-      </div>
-    );
-  },
-}));
+// ✅ Coverage only, for a component with no branches
+it('renders (coverage only, no logic)', () => {
+  render(<PlannerHeader name="Test" />);
+});
 ```
-
-If you find yourself writing more than a few lines inside a mock, you are recreating the real module. Stop. Reduce it to a static stub. The test that needs the real behavior belongs in the dependency's own test file, not in the consumer's test file.
-
-**Why this matters:**
-- Tests should verify behavior, not implementation details
-- Mocks with real logic couple tests to code internals and silently drift when the real code changes
-- Simple defaults are easier to understand and maintain
-- Explicit overrides in tests make intent clear
-- Complex mocks hide what the test is actually verifying
-
-**Guideline:** The default mock implementations should work for the majority of tests. If you find yourself overriding the same mock behavior repeatedly across multiple test files, the default mock implementation probably needs to be improved rather than forcing every test to override it.
-
-## Extending Mocks for New Imports
-When a component imports a new module from a library that already has a mock at `test/mocks/`, add that module to the existing mock file. Do not create ad-hoc mocks in individual test files.
-
-**Why:** Centralized mocks ensure consistency. If `@mantine/core` adds a new component and your feature uses it, add it to `test/mocks/@mantine/core.tsx` so all tests benefit.
-
 ```tsx
-// ✅ CORRECT - extend the existing mock
-// In test/mocks/@mantine/core.tsx:
-export const NewComponent = vi.fn(({ children }) => <div>{children}</div>);
-
-// ❌ INCORRECT - creates inconsistency
-// In individual test file:
-vi.mock('@mantine/core', async (importOriginal) => {
-  const actual = await importOriginal<typeof import('@mantine/core')>();
-  return {
-    ...actual,
-    NewComponent: vi.fn(),
-  };
+// ❌ Checks that a prop renders, not any logic
+it('displays the planner name', () => {
+  render(<Component name="Test" />);
+  expect(screen.getByText('Test')).toBeDefined();
 });
 ```
 
-## Use Async Import Pattern for All Mocks
-Always use the **async** factory pattern for reusable mocks. This is consistent and handles hoisting correctly.
+# Writing Tests
+A test is easiest to read when it holds only what it checks. The habits below keep it that way.
 
-```typescript
-// ✅ CORRECT - async factory
-vi.mock('@mantine/core', async () => await import('#mocks/@mantine/core'));
+## Use the Test Libraries' Own Tools
+When Vitest or Testing Library already has a tool for the job, use it rather than hand-rolling an equivalent. The libraries' tools are documented and familiar to anyone reading the test. A hand-rolled version is extra code each reader has to work out, and it can quietly differ from what the library does. For example, test a hook on its own with `renderHook`, and give it any provider it needs through the `wrapper` option, rather than writing a throwaway component that calls the hook.
 
-// ❌ INCORRECT - inline factory with hoisting issues
-vi.mock('@mantine/core', () => ({ Button: vi.fn() }));
+```tsx
+const wrapper = ({ children }: { children: ReactNode }) => (
+	<ToggleContext.Provider value={value}>{children}</ToggleContext.Provider>
+);
+const { result } = renderHook(() => useToggleContext(), { wrapper });
+expect(result.current).toBe(value);
 ```
 
-## Stateful Mocks Using React Hooks
-When mocking React hooks that manage state, use React's `useState` inside the mock factory to create stateful mocks that trigger component re-renders:
+## Set Up Only What the Test Checks
+Set a mock's return value only when the test checks what that value leads to, such as a success path against a failure path. A test that only checks that a handler was called leaves the mock's default alone, so a reader doesn't go looking for what the value does.
+
+In the same way, a test that only checks a call can be synchronous. `vi.fn()` records calls as they happen, so an assertion right after the triggering event sees the call. Making the test `async` and wrapping the assertion in `waitFor` only suggests there's something to wait for.
+
+```typescript
+it('calls the handler when clicked', () => {
+  fireEvent.click(button);
+  expect(mockHandler).toHaveBeenCalledWith(expectedArgs);
+});
+```
+
+## Loading States
+A test of a loading state just triggers the action and checks what shows, with no promise resolved by hand. That works because a shared mock that holds state, such as `useAsyncStatus` (see "State in a Mock"), sets its status to `'loading'` as soon as `run()` is called, before it awaits anything.
+
+```tsx
+it('shows the loading state', async () => {
+  render(<Component />);
+  fireEvent.click(screen.getByText('Submit'));
+
+  await waitFor(() => {
+    expect(screen.getByTestId('loading')).toBeDefined();
+  });
+});
+```
+
+# Mocks
+Nearly every dependency of the module under test is mocked with `vi.mock`, so a test checks only that module and fails only when it breaks. Three libraries are the exception:
+
+| Library | Why it isn't mocked |
+|---------|---------------------|
+| `react` | It underpins the whole app, and a mock of it can make hooks and components look as if they work when they don't. |
+| `@tabler/icons-react` | Its icons are presentational components with no logic, so a mock adds indirection for no benefit. |
+| `zod` | Schemas are part of the code under test, so mocking `zod` would leave validation untested. It's synchronous and has no side effects, so it costs a test nothing. |
+
+Modules that use these libraries are still mocked, such as `@/_models` or a form's validation helpers, so a test doesn't break when a schema changes. Only the library itself is the exception.
+
+Two modules are swapped for their mocks in every test through aliases in `vitest.config.ts`: `@/env` resolves to `test/mocks/env.ts`, and `server-only` to `test/mocks/server-only.ts`. So a test file doesn't need to mock them, and the app's real environment never reaches a test. A test that needs a different env value mocks `@/env` with its own object, as `src/_utils/errorReporting/errorReporting.test.ts` does.
+
+## Keep Mocks Simple
+A mock is a stub, not a second implementation. Its default is the success path with minimal valid data: a mock component renders a static placeholder, and a mock function returns a static value. A test that needs a failure or an edge case overrides the default for itself, such as with `mockReturnValueOnce`, so what each test is about shows in the test. If several test files override a shared mock's default in the same way, the default is probably wrong, and changing it is better than repeating the override.
+
+A mock with real logic in it recreates the module it replaces. An example is a mock that validates an email with a regex. Its logic drifts from the real code without anything failing, and it hides what the test is checking. A test that needs the real behavior belongs in the dependency's own test file.
+
+```typescript
+// ✅ A stub
+export const validateEmail = vi.fn(() => ({ success: true }));
+```
+```typescript
+// ❌ Reimplements the real validation
+vi.mock('@/_utils/validator', () => ({
+  validateEmail: vi.fn((email) =>
+    /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)
+      ? { success: true }
+      : { success: false, error: 'Invalid email' },
+  ),
+}));
+```
+
+## State in a Mock
+A mock holds state only when a test needs it, such as a test that checks a spinner appears while an action runs or an error message after it fails. State added in case a test might need it is logic no test checks.
+
+When a mocked hook does need state, the mock holds it with React's `useState`, so a change to it re-renders the component under test the way the real hook would.
 
 ```typescript
 export const useAsyncStatus = vi.fn(() => {
@@ -179,245 +139,75 @@ export const useAsyncStatus = vi.fn(() => {
 });
 ```
 
-**Benefits:**
-- Tests dynamic UI states (loading spinners, error messages) without manually mocking hook state
-- State changes trigger React re-renders automatically
-- More realistic component behavior
+## Shared Mocks
+A module that many test files mock gets one shared mock in `test/mocks/`, at the path that matches the module's import path, such as `test/mocks/@mantine/form.ts` for `@mantine/form`. Copies of the same mock drift apart, and a change to the module then means editing every one. Where a mock lives depends on whether one is shared yet:
+- **If the module already has a shared mock:** every test file that mocks the module loads the shared one, so every test sees the same version of the module. The mock stays shared however few files use it, because moving it back into a test file means the next file to mock the module starts copying again.
+- **Otherwise:** a module mocked in only one or two files usually keeps its mock in the test file. Once the same mock is being copied from file to file, it's worth sharing.
 
-## Testing Access Level Conditional Behavior
+A test file loads a shared mock with an async factory, which works however `vi.mock` is hoisted:
 
-When a component renders different UI based on user access levels, use `it.byAccessLevels` from `#test` to run the same test for all access levels in a single declaration.
+```typescript
+vi.mock('@mantine/core', async () => await import('#mocks/@mantine/core'));
+```
 
-### Usage
+A shared mock exports the same names as the module it replaces, so a test imports from the real module, such as `import { useForm } from '@mantine/form'`, and never has to know about the mock. A `mockUseForm` that tests then map back to `useForm` puts the mock's internals in every test. If a test needs a spy the real module has no name for, such as `emails.send` on a Resend client, the mock exports it under a name of its own.
+
+```typescript
+// ✅ In test/mocks/@mantine/form.ts
+export const useForm = vi.fn(() => ({...}));
+```
+```typescript
+// ❌ Tests have to know about the mock's internals
+export const mockUseForm = vi.fn();
+export const useForm = () => mockUseForm();
+```
+
+When a component uses a part of a library that its shared mock doesn't have yet, such as a new `@mantine/core` component, add it to the shared mock. A test file that mocks the library again for itself, such as with `importOriginal`, gives that test a different version of the library from every other test.
+
+# Testing by Access Level
+When a component shows different UI at different access levels, `it.byAccessLevels` from `#test` runs one test at every level: `read`, `write`, `admin` and `owner`, in that order. Use it only when the assertion varies by level. Behavior that's the same at every level, such as an interaction or a state change, gets a plain `it()`.
 
 ```tsx
 import { it } from '#test';
 
-it.byAccessLevels('shows member list for admins and owners', ({ accessLevel, expect }) => {
-    render(<PlannerItem id={id} name={name} accessLevel={accessLevel} />);
+it.byAccessLevels('shows the member list to admins and owners', ({ accessLevel, expect }) => {
+  render(<PlannerItem id={id} name={name} accessLevel={accessLevel} />);
 
-    const memberList = screen.queryByTestId('member-list');
-
-    expect(memberList).atMinLevel('admin').toBeTruthy();
+  expect(screen.queryByTestId('member-list')).atMinLevel('admin').toBeTruthy();
 });
 ```
 
-This generates four tests:
-- `shows member list for admins and owners - read`
-- `shows member list for admins and owners - write`
-- `shows member list for admins and owners - admin` ✅
-- `shows member list for admins and owners - owner` ✅
+This generates one test per level, named `shows the member list to admins and owners - read` and so on. The `expect` that `it.byAccessLevels` passes to the test has three modifiers. Each one applies the assertion at the levels it names, and the opposite assertion at the other levels:
 
-### Assertion Modifiers
+| Modifier | Asserts at |
+|----------|------------|
+| `.onlyAtLevel('admin')` | `admin` only |
+| `.atMinLevel('admin')` | `admin` and above: `admin` and `owner` |
+| `.atMaxLevel('write')` | `write` and below: `read` and `write` |
 
-The custom `expect` injected by `it.byAccessLevels` provides three level-aware modifiers:
-
-| Modifier | Behavior |
-|----------|----------|
-| `.onlyAtLevel('admin')` | Passes only when `accessLevel === 'admin'` |
-| `.atMinLevel('admin')` | Passes when `accessLevel >= admin` (admin, owner) |
-| `.atMaxLevel('write')` | Passes when `accessLevel <= write` (read, write) |
-
-**Access level order:** `read < write < admin < owner`
-
-### Examples
-
-**Show element only for owners:**
-```tsx
-expect(button).onlyAtLevel('owner').toBeDefined();
-```
-
-**Show element for admins and owners:**
-```tsx
-expect(memberList).atMinLevel('admin').toBeTruthy();
-```
-
-**Show element for read and write only:**
-```tsx
-expect(infoText).atMaxLevel('write').toBeTruthy();
-```
-
-### Negation Caution
-
-**Do not use negation with level modifiers.** When a modifier returns `.not`, chaining `.not` again produces a double-negative that does not resolve back to the original assertion.
+Assert that something is present, such as with `.toBeTruthy()`, and never add `.not` after a modifier. At the other levels the modifier has already negated the assertion, and a second `.not` doesn't undo it. So the assertion is negated at every level, and the test no longer checks what differs between them.
 
 ```tsx
-// ❌ WRONG - .onlyAtLevel returns .not at other levels, then .not flips it again
-expect(button).onlyAtLevel('owner').not.toBeDefined();
-
-// ✅ CORRECT - test the positive presence instead
-expect(button).onlyAtLevel('owner').toBeDefined();
-```
-
-Test the positive presence of elements rather than their absence. If you need to assert something is hidden at certain levels, structure the test so the element is present and you assert against that.
-
-### When NOT to use
-
-Do not use `it.byAccessLevels` for behavior that is the same across all access levels. Use regular `it()` for:
-- Testing interactions (clicks, form submissions)
-- Testing state transitions
-- Testing hook integration
-
-Only use `it.byAccessLevels` when the assertion varies by access level.
-
-## Testing Loading States
-
-When testing loading states with stateful mocks, **no special mock setup is required.**
-
-### ❌ ANTI-PATTERN: Deferred Promises
-
-Do NOT create promises with stored resolve functions:
-
-```tsx
-// ❌ WRONG - overly complex
-it('shows loading state', async () => {
-  let resolvePromise!: (value: Result) => void;
-  const deferredPromise = new Promise<Result>((resolve) => {
-    resolvePromise = resolve;
-  });
-  mockAction.mockReturnValueOnce(deferredPromise);
-
-  render(<Component />);
-  fireEvent.click(screen.getByText('Submit'));
-
-  await waitFor(() => {
-    expect(screen.getByTestId('loading')).toBeDefined();
-  });
-
-  resolvePromise?.({ success: true }); // Manual resolution
-});
-```
-
-This pattern:
-- Creates hard-to-read test code
-- Requires manual promise resolution
-- Is unnecessary with stateful mocks
-
-### ✅ CORRECT: No Mock Setup Needed
-
-Stateful mocks set `loading=true` synchronously when `run()` is called. Just trigger the action and check the loading state:
-
-```tsx
-// ✅ CORRECT - no mock setup needed
-it('shows loading state', async () => {
-  render(<Component />);
-  fireEvent.click(screen.getByText('Submit'));
-
-  await waitFor(() => {
-    expect(screen.getByTestId('loading')).toBeDefined();
-  });
-});
-```
-
-**Why this works:**
-The stateful mock's `run()` function sets `loading=true` immediately, before awaiting the async function. This means the loading state is visible right away, regardless of how quickly the promise resolves.
-
-# Code Coverage
-- All modules in `src/` should have 100% code coverage (with a few narrowly defined exceptions listed in `vitest.config.ts`).
-- You should NEVER exclude code from unit test coverage unless EXPLICITLY instructed to do so by the user.
-
-# Test Patterns
-
-## Test Logic, Not Rendering
-Every test covers a branch or a piece of logic: a conditional, a calculation, a state change, or what an interaction causes. If a test would still pass after the code it claims to cover is deleted, it doesn't count.
-
-Never test that JSX renders to spec: that a class is applied, that a prop is passed to a child, or that text from a prop shows up. Those tests check React, not this code, and they break whenever the markup changes.
-
-**What to test in a component:**
-- Conditional rendering logic:
-  - Empty states and error states based on props
-  - Presence of elements after state transitions
-  - Absence of elements from previous states (verify cleanup with `queryByTestId` + `toBeNull()`)
-- User interactions and their effects
-- Business logic (date calculations, permission checks)
-- Integration with hooks and side effects
-- State transitions (loading → success → error)
-
-A component with no branches still needs coverage. Give it one test named `renders (coverage only, no logic)` that renders it and asserts nothing about the JSX.
-
-```tsx
-// ❌ DON'T WRITE - checks that a prop renders, not any logic
-it('should display planner name', () => {
-  render(<Component name="Test" />);
-  expect(screen.getByText('Test')).toBeDefined();
-});
+// ✅
+expect(button).onlyAtLevel('owner').toBeTruthy();
 ```
 ```tsx
-// ✅ TEST BEHAVIOR - what happens when user interacts
-it('should call onDelete when delete button clicked', () => {
-  render(<PlannerListItem name="Test" onDelete={mockDelete} />);
-  fireEvent.click(screen.getByTestId('delete-button'));
-  expect(mockDelete).toHaveBeenCalledWith('test-id');
-});
-```
-```tsx
-// ✅ COVERAGE ONLY - a component with no branches
-it('renders (coverage only, no logic)', () => {
-  render(<PlannerHeader name="Test" />);
-});
+// ❌ Asserts the button is missing at every level, not only for owners
+expect(button).onlyAtLevel('owner').not.toBeTruthy();
 ```
 
-## Use the Testing Library's Own Tools
-When a testing library already has a tool for the job, use it instead of hand-rolling an equivalent. For example, test a hook on its own with `renderHook`, and give it any provider the hook needs through the `wrapper` option, instead of writing a throwaway component that calls the hook.
+# Where Test Code Lives
+A unit test sits beside the module it tests, in a file named `<module>.test.ts` or `<module>.test.tsx`. Vitest runs every `*.test.ts[x]` file outside `e2e/`.
 
-```tsx
-// ✅ CORRECT - renderHook with a wrapper
-const wrapper = ({ children }: { children: ReactNode }) => (
-	<ToggleContext.Provider value={value}>{children}</ToggleContext.Provider>
-);
-const { result } = renderHook(() => useToggleContext(), { wrapper });
-expect(result.current).toBe(value);
-```
-```tsx
-// ❌ INCORRECT - hand-rolled component just to reach the hook
-let hookValue = null;
-const TestComponent = () => {
-	hookValue = useToggleContext();
-	return null;
-};
-render(
-	<ToggleContext.Provider value={value}>
-		<TestComponent />
-	</ToggleContext.Provider>,
-);
-expect(hookValue).toBe(value);
-```
+Support code shared by unit tests is in `test/`:
 
-**Why:** The library's tools are documented and familiar to anyone reading the test. A hand-rolled version is extra code each reader has to work out, and it can quietly differ from what the library does.
+| Path | What it holds |
+|------|---------------|
+| `test/mocks/` | the shared mocks, imported through `#mocks` (see "Shared Mocks") |
+| `test/fixtures/` | fixtures, imported through `#fixtures` |
+| `test/utils/` | test helpers, such as `it.byAccessLevels`, imported through `#test` |
+| `test/setup.ts` | runs before every test file, and stubs the browser APIs jsdom doesn't have |
 
-## Only Mock Return Values When Testing Outcomes
-Don't mock return values when you're only testing that a handler was called:
+A fixture is a function that builds test data, such as a meal form's dish or a refused Resend send, with defaults that any test can override. A fixture joins `test/fixtures/` once several test files build the same kind of data. Until then, a test builds its data inline, where the reader can see it.
 
-```typescript
-// ❌ UNNECESSARY - we don't care about the return value here
-mockHandler.mockResolvedValue({ ok: true });
-fireEvent.click(button);
-expect(mockHandler).toHaveBeenCalled();
-
-// ✅ CORRECT - let default mock handle it
-fireEvent.click(button);
-expect(mockHandler).toHaveBeenCalled();
-```
-
-Only mock return values when the test explicitly verifies the outcome of that return value (e.g., testing success vs. failure paths).
-
-## Synchronous Handler Tests
-Tests that only verify handlers are called (not their async completion) can be synchronous:
-
-```typescript
-// ✅ CORRECT - synchronous when just verifying call
-it('calls handler when clicked', () => {
-  fireEvent.click(button);
-  expect(mockHandler).toHaveBeenCalledWith(expectedArgs);
-});
-
-// ❌ OVERKILL - unnecessary async/waitFor
-it('calls handler when clicked', async () => {
-  fireEvent.click(button);
-  await waitFor(() => {
-    expect(mockHandler).toHaveBeenCalledWith(expectedArgs);
-  });
-});
-```
-
-`vi.fn()` records calls synchronously, so assertions work immediately after the triggering event.
+`test/factories/` and `test/auth.ts` hold the E2E tests' and the dev seed's code, which writes to a real database. Unit tests don't use them (see `docs/e2e_tests.md`).
