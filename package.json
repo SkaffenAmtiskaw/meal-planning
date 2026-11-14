@@ -10,7 +10,7 @@
     "db:backup": "bash scripts/db-backup.sh",
     "db:restore": "bash scripts/db-restore.sh",
     "db:restore-test": "node scripts/restoreTest.ts",
-    "db:empty-worktree":"tsx --env-file=.env.local seed/emptyWorktreeDatabase.ts",
+    "db:empty-worktree": "tsx --env-file=.env.local seed/emptyWorktreeDatabase.ts",
     "dev": "sh scripts/dev.sh",
     "dev:sign-in": "pnpm run \"/^(dev|sign-in)$/\"",
     "errors:check": "node scripts/productionErrorCheck.ts",
