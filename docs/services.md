@@ -180,9 +180,7 @@ Your Proton Pass account holds the two secrets a restore needs, so neither sits 
 The restore reads both items by name, so renaming one or moving it out of the vault breaks the restore and the restore test.
 
 ## GitHub
-The code repo, `SkaffenAmtiskaw/meal-planning`, is public. Vercel's GitHub integration and its environments are under "Vercel".
-
-The notes repo, `meal-planning-notes`, is private, with default branch `main`. It holds the Obsidian vault, and the Obsidian Git plugin commits and pushes it from your machine (see `docs/project_structure.md`, "Notes").
+The code repo, `SkaffenAmtiskaw/meal-planning`, is public. The notes repo is under "The Notes Repo". Vercel's GitHub integration and its environments are under "Vercel".
 
 ### The Default Branch
 The code repo's default branch (Settings → General → Default branch) is `develop`. A routine clones the default branch and runs the skills committed there, so a change to a routine's skill reaches the routine once its PR merges into `develop`. Scheduled workflows run on the default branch too, such as `dependency-updates.yml`. The rulesets name their branches, so they don't change with it, and Vercel's production branch is a separate setting (see "Vercel").
@@ -245,6 +243,9 @@ The App has no webhook, is installed on `meal-planning` only, and has Contents a
 The [Claude GitHub App](https://github.com/apps/claude) is installed with access to `meal-planning` and `meal-planning-notes`. It lets routines clone both repos, push `claude/` branches in `meal-planning` and push to `main` in `meal-planning-notes`. A cloud session reaches GitHub through the cloud GitHub proxy, which authenticates `git` and `gh` with the App's access, so no GitHub token is stored anywhere.
 
 The App's access also covers what the routines' sessions do with PRs and runs on GitHub. A run's logs need one more allowed host in the cloud environment (see "The Cloud Environment").
+
+### The Notes Repo
+The notes repo, `SkaffenAmtiskaw/meal-planning-notes`, is private, with default branch `main`. It holds the Obsidian vault. On your Mac, the Obsidian Git plugin keeps the repo in sync with `main`. The plugin commits and pushes changes five minutes after edits stop, and pulls every five minutes and when Obsidian opens. Routines and cloud sessions read the notes from GitHub, so an edit reaches them only once the plugin has pushed it. When a routine or cloud session needs an edit sooner, run Obsidian Git's Commit-and-sync command by hand.
 
 ## claude.ai
 Your Claude Max subscription runs Claude Code, both on your machine and in the routines' cloud sessions.

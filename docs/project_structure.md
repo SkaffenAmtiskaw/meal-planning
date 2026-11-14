@@ -1,19 +1,19 @@
+This doc is a map of the repo for anyone new to it: each top-level folder, the main folders and files inside `src/`, `test/` and `e2e/`, and the separate notes repo. Each entry says what it holds and, where there is one, the doc that covers it. It assumes nothing about the project.
+
 # .claude/
 Claude Code skills, subagents and hooks
 # .github/
-GitHub Actions workflows: the PR checks, the dependency check and the hotfix back-merge (see `docs/ci.md`)
+GitHub Actions workflows (see `docs/ci.md`)
 # docs/
-project documentation: structure, code conventions, styling, theme, unit tests, E2E tests, CI, the dev seed, branching and releases, and the services and environments the app runs on
+project documentation, one doc for each part of the codebase or its setup
 # e2e/
 Playwright E2E specs, grouped in folders by feature area, with what an area's specs share in its `_helpers/` folder (see `docs/e2e_tests.md`)
 ## _fixtures/
 Playwright support code that specs import, and what `playwright.config.ts` uses to start a run
 # Notes
-notes on planned work, in Obsidian-flavored Markdown, live in the `meal-planning-notes` repo beside this one. Its `Roadmap.md` is the project roadmap, with links to detailed notes
-
-The Obsidian Git plugin keeps that repo in sync with its `main` on GitHub: it commits and pushes changes five minutes after edits stop, and pulls every five minutes and when Obsidian opens. Routines and cloud sessions read the notes from GitHub, not from the copy on Sarah's Mac. So when one needs edits the plugin hasn't pushed yet, Sarah runs Obsidian Git's Commit-and-sync command by hand. Edits stay unpushed for five minutes after they stop, or until Obsidian next opens if it was closed before then.
+notes on planned work, in Obsidian-flavored Markdown, live in the `meal-planning-notes` repo beside this one. Its `Roadmap.md` is the project roadmap, with links to detailed notes (see `docs/services.md`, "The Notes Repo", for how it's kept in sync)
 # scripts/
-lefthook scripts, scripts that check the notes vault, the two checks that decide whether CI starts a routine (the dependency check and the Vercel deployment check), the release freeze check, and the SessionStart hook's scripts, which keep `develop` current and set up and remove worktrees (see `docs/branching.md`)
+scripts that the git hooks, the workflows and the SessionStart hook run, such as the notes vault checks, the database backups (see `docs/backups.md`) and the worktree scripts (see `docs/branching.md`)
 # seed/
 `pnpm seed`, which fills the dev database with seeded users and sample data, the sign-in link server, and the script that empties a worktree's database (see `docs/seed.md`)
 # src/
@@ -25,17 +25,19 @@ better-auth config and email actions
 ## _components/
 reusable React components
 ## _hooks/
-reusable React hooks
+reusable React hooks, each with any component that only supports it (see `docs/project_conventions.md`)
 ## _models/
 Mongoose schemas + Zod types
 ## _theme/
-Mantine theme
+the Mantine theme and the app's color values (see `docs/theme.md`)
 ## _utils/
 reusable utilities for global use in application
 ## app/
 Next.js app directory
 ## env.ts
 environment variables typed with Zod
+## instrumentation.ts, instrumentation-client.ts
+error reporting setup for the server and the browser (see `docs/project_conventions.md`, "Error Reporting")
 # test/
 test support code shared by unit tests, E2E tests and the seed
 ## auth.ts
