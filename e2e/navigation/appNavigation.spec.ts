@@ -9,17 +9,27 @@ import {
 	test,
 } from '../_fixtures';
 import { openPlannerCalendar } from '../_helpers/openPlannerCalendar';
-import { calendarPath } from '../_helpers/plannerPaths';
+import { calendarPath, recipesListPath } from '../_helpers/plannerPaths';
 
 const SIGN_IN_PROMPT = 'In order to use the meal planner, you must sign in.';
 
-// Logs out from the user menu. Until the invite badge's Suspense boundary streams in, the page holds a
-// second, hidden copy of the avatar, so the helper waits for there to be one before clicking it.
-const logOut = async (page: Page) => {
+// Opens the user menu from a planner's calendar. Until the invite badge's Suspense boundary streams in,
+// the page holds a second, hidden copy of the avatar, so the helper waits for there to be one before
+// clicking it.
+const openUserMenu = async (page: Page) => {
 	await expect(page.getByRole('grid')).toBeVisible();
 	await expect(page.getByTestId('user-avatar')).toHaveCount(1);
 	await page.getByTestId('user-avatar').click();
+};
+
+const logOut = async (page: Page) => {
+	await openUserMenu(page);
 	await page.getByRole('menuitem', { name: 'Log Out' }).click();
+};
+
+const openSettings = async (page: Page) => {
+	await openUserMenu(page);
+	await page.getByRole('menuitem', { name: 'Settings' }).click();
 };
 
 test('logs out from the user menu', async ({ context, page }) => {
@@ -89,6 +99,43 @@ test('opening the app returns to the planner switched to', async ({
 	await expect(page.getByRole('grid')).toBeVisible();
 
 	await page.goto('/');
+
+	await expect(page).toHaveURL(calendarPath(second._id));
+});
+
+test('moves between the calendar and recipes from the navbar', async ({
+	context,
+	page,
+}) => {
+	const planner = await openPlannerCalendar(page, context);
+	await expect(page.getByRole('grid')).toBeVisible();
+
+	await page.getByTestId('burger-toggle').click();
+	await page.getByRole('link', { name: 'Recipes' }).click();
+	await expect(page).toHaveURL(recipesListPath(planner._id));
+
+	await page.getByRole('link', { name: 'Calendar' }).click();
+	await expect(page).toHaveURL(calendarPath(planner._id));
+});
+
+test('opens Settings from the user menu', async ({ context, page }) => {
+	await openPlannerCalendar(page, context);
+
+	await openSettings(page);
+
+	await expect(page).toHaveURL('/settings');
+});
+
+test('Settings back arrow returns to the last opened planner', async ({
+	context,
+	page,
+}) => {
+	const { second } = await openFirstOfTwoPlanners(page, context);
+	await page.goto(calendarPath(second._id));
+	await openSettings(page);
+	await expect(page).toHaveURL('/settings');
+
+	await page.getByTestId('back-button').click();
 
 	await expect(page).toHaveURL(calendarPath(second._id));
 });
