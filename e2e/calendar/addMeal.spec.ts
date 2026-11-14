@@ -1,7 +1,8 @@
 import { DateTime } from 'luxon';
 
-import { expect, fillMealForm, saveMealForm, test } from '../_fixtures';
+import { expect, test } from '../_fixtures';
 import { monthCellName } from './_helpers/calendarLabels';
+import { fillMealForm, saveMealForm } from './_helpers/mealForm';
 import { openPlannerCalendar } from './_helpers/openPlannerCalendar';
 
 const MEAL_NAME = "Ariadne's Labyrinth Lasagna";

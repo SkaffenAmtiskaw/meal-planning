@@ -2,13 +2,9 @@ import { linkGoogleAccount } from '#factories/account';
 import { createPlanner } from '#factories/planner';
 import { createUser } from '#factories/user';
 
-import {
-	emailsTo,
-	enterEmail,
-	expect,
-	signInWithPassword,
-	test,
-} from '../_fixtures';
+import { emailsTo, expect, test } from '../_fixtures';
+import { enterEmail } from './_helpers/enterEmail';
+import { signInWithPassword } from './_helpers/signInWithPassword';
 
 test('the right password lands the user on their planner', async ({ page }) => {
 	const planner = await createPlanner();

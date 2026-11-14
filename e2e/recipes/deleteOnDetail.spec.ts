@@ -1,4 +1,5 @@
-import { confirmDelete, expect, test } from '../_fixtures';
+import { expect, test } from '../_fixtures';
+import { confirmDelete } from './_helpers/confirmDelete';
 import { openRecipeDetail } from './_helpers/openRecipeDetail';
 import { recipesListPath } from './_helpers/recipesPaths';
 import { recipesSeed } from './_helpers/recipesSeed';

@@ -1,4 +1,4 @@
-import type { Page } from '@playwright/test';
+import type { Page } from '../../_fixtures';
 
 // Fills the sign-in page's email step and continues, leaving the page on whichever step comes next.
 export const enterEmail = async (page: Page, email: string) => {
