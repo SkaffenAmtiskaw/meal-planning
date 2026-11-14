@@ -1,6 +1,6 @@
 import { expect, signIn, test } from '../_fixtures';
+import { openPlannerSettings } from '../_helpers/openPlannerSettings';
 import { createSharedPlanner } from './_helpers/createSharedPlanner';
-import { openPlannerSettings } from './_helpers/openPlannerSettings';
 
 test('a member who leaves a planner no longer has it in their list', async ({
 	context,

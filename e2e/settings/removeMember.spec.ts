@@ -1,6 +1,6 @@
 import { expect, signIn, test } from '../_fixtures';
+import { openPlannerSettings } from '../_helpers/openPlannerSettings';
 import { createSharedPlanner } from './_helpers/createSharedPlanner';
-import { openPlannerSettings } from './_helpers/openPlannerSettings';
 
 test('the owner removes a member', async ({ context, page }) => {
 	const { owner, member } = await createSharedPlanner();

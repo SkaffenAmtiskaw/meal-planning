@@ -11,6 +11,7 @@ This doc is for anyone writing, reviewing or running E2E tests. It says where E2
 |------|---------------|
 | `e2e/<area>/*.spec.ts` | the specs, in a folder for each feature area, such as `auth` or `calendar` |
 | `e2e/<area>/_helpers/` | code that an area's specs share |
+| `e2e/_helpers/` | code that specs in more than one area share |
 | `e2e/_fixtures/` | Playwright support code: what specs import, such as the `test` fixture, `signIn`, shared form steps and the email helpers, and the launchers Playwright starts for the memory server and the fake Resend API |
 | `test/factories/` | plain functions that create test data, and their database connection, imported through `#factories/<name>` |
 | `test/auth.ts` | the test-only better-auth instance, imported through `#auth` |

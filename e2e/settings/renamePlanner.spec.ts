@@ -1,6 +1,6 @@
 import { expect, test } from '../_fixtures';
+import { openPlannerSettings } from '../_helpers/openPlannerSettings';
 import { signInToNewPlanner } from '../_helpers/signInToNewPlanner';
-import { openPlannerSettings } from './_helpers/openPlannerSettings';
 
 test('a renamed planner shows its new name', async ({ context, page }) => {
 	await signInToNewPlanner(context, {

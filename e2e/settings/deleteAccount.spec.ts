@@ -1,6 +1,6 @@
 import { emailsTo, expect, latestEmailTo, test } from '../_fixtures';
 import { signInToNewPlanner } from '../_helpers/signInToNewPlanner';
-import { trySignInWithPassword } from './_helpers/trySignInWithPassword';
+import { trySignInWithPassword } from '../_helpers/trySignInWithPassword';
 
 const PASSWORD = 'e2e-password';
 

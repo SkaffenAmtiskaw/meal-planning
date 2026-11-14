@@ -1,6 +1,6 @@
 import { expect, test } from '../_fixtures';
 import { signInToNewPlanner } from '../_helpers/signInToNewPlanner';
-import { trySignInWithPassword } from './_helpers/trySignInWithPassword';
+import { trySignInWithPassword } from '../_helpers/trySignInWithPassword';
 
 const OLD_PASSWORD = 'old-password';
 const NEW_PASSWORD = 'new-password';

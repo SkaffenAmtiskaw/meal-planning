@@ -1,6 +1,6 @@
 import { expect, test } from '../_fixtures';
+import { inviteToNewPlanner } from '../_helpers/inviteToNewPlanner';
 import { signInToNewPlanner } from '../_helpers/signInToNewPlanner';
-import { inviteToNewPlanner } from './_helpers/inviteToNewPlanner';
 
 test('a user who declines an invite no longer has it pending', async ({
 	context,
@@ -12,7 +12,7 @@ test('a user who declines an invite no longer has it pending', async ({
 		name: 'Solo Lunches',
 		user: { name: 'Ivy Invitee' },
 	});
-	await inviteToNewPlanner(invitee.email);
+	await inviteToNewPlanner({ email: invitee.email });
 	await page.goto('/settings');
 
 	await page
