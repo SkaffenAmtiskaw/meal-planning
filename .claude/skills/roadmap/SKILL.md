@@ -35,7 +35,7 @@ Ask the user what the goal is for and what shipping it means, noting any work th
 If the goal's line under Goals says ` · releasing`, skip this step and step 5. Work added to the goal now would be held back by the release freeze and stop `/ship-goal`, and step 4 files what the release still needs.
 
 Search the Roadmap, including Ideas, and `features/` in the notes repo for stories and hubs that look related to the goal's Purpose and Done When. A hub counts only if it has a next step of its own. These stay out:
-- lines under the Bugs heading, sweeps and collecting workflow notes, because they join every release
+- lines in Bugs, sweeps and collecting workflow notes, because they join every release
 - anything already under the goal's Out of Scope
 - tooling, unless the goal is about how the app is built, because step 5 handles it
 
