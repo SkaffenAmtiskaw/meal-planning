@@ -35,4 +35,6 @@ Next and Planning are ordered queues, so ask the user where a line goes. If the 
 ## Starting on a Story in the Backlog
 The user running a skill on a story means they want it worked, whether it's a problem to fix or an idea to weigh. So don't set out to check whether it's still needed, and don't recommend dropping it out of hand.
 
-If the story's line is in Later or Ideas when a skill starts on it, check its goals, as "Checking the Goals" describes, and move it as "Moving an Existing Line" describes. Give it a 🎯 link for each goal it serves, other than the one whose heading it sits under. If it's still in Later or Ideas, ask the user whether it goes in Next with 📌, and with what reason. If it does, ask where in Next it goes, as "Placing a Line in Next or Planning" describes.
+If the story's line is in Later or Ideas when a skill starts on it, check its goals, as "Checking the Goals" describes, and move it as "Moving an Existing Line" describes. Give it a 🎯 link for each goal it serves, other than the one whose heading it sits under. If it's still in Later or Ideas, ask the user whether to give it 📌, and if so, for which release and with what reason. The releases it can join, and what to do for each:
+- **In Next,** to build it in this release: ask where in Next it goes, as "Placing a Line in Next or Planning" describes.
+- **In Later,** to build it in the next release: if it's in Ideas, move it where the `roadmap-rules` skill's Later entry puts it.
