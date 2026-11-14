@@ -11,7 +11,7 @@ hooks:
           command: '"$CLAUDE_PROJECT_DIR"/.claude/hooks/notes-only-edits.sh'
 ---
 
-Ship the goal **$ARGUMENTS**: check with the user that its Done When is met, close out its note and its Roadmap lines, and open the release PR from `develop` into `main`, which the user merges.
+Ship the goal **$ARGUMENTS**: check with the user that its Done When is met, close out its note and its Roadmap lines, open the release PR from `develop` into `main` for the user to merge, then see the release's tasks and After Deploy checks through.
 
 Invoke the `editing-notes` skill first, since this run changes notes.
 
@@ -32,17 +32,20 @@ If there's any gap, tell the user to run `/roadmap <goal>` in a new session, nam
 
 ## 3. Close Out the Goal
 The steps, in order:
-1. **What's worth keeping:** check the goal note for anything worth keeping, as the `deleting-a-note` skill describes in step 1.
-2. **Its references:** run `sh scripts/note-refs.sh "<goal>"`. Leave out the goal's line under Goals, since item 3 below removes it. The other matches, by kind:
+1. **What the release runs:** run `git ls-tree --name-only origin/develop scripts/release-tasks/` to list the release tasks, and read each one's opening comment. Then read the goal note's `# After Deploy` section, if it lists any checks. Keep both for section 4, because item 6 deletes the goal note before the release PR merges.
+2. **What's worth keeping:** check the goal note for anything worth keeping, as the `deleting-a-note` skill describes in step 1.
+3. **Its references:** run `sh scripts/note-refs.sh "<goal>"`. Leave out the goal's line under Goals, since item 4 below removes it. The other matches, by kind:
    - **In the vault:** if an open story relies on content only the goal note holds, copy that content into the story's note first. Then reword or remove the link, as the `deleting-a-note` skill describes in step 3.
    - **Outside the vault,** such as a doc or a skill: add it to the out-of-scope list.
-3. **The Roadmap:** remove the goal's line under Goals and renumber the lines below it. Leave the planning goal's marker as it is, because `/roadmap` promotes it once the release PR merges.
-4. **The out-of-scope list:** triage and route it, as the `triaging-out-of-scope-work` skill describes.
-5. **The note:** delete the goal note.
-6. **Unused files:** delete the files nothing references anymore, as the `deleting-a-note` skill describes in step 6.
+4. **The Roadmap:** remove the goal's line under Goals and renumber the lines below it. Leave the planning goal's marker as it is, because `/roadmap` promotes it once the release PR merges.
+5. **The out-of-scope list:** triage and route it, as the `triaging-out-of-scope-work` skill describes.
+6. **The note:** delete the goal note.
+7. **Unused files:** delete the files nothing references anymore, as the `deleting-a-note` skill describes in step 6.
 
 ## 4. Open the Release PR
-Run `gh pr create --base main --head develop --title "<goal>"`, with a body of a sentence or two on what the goal set out to do. Don't turn on auto-merge, because merging into `main` deploys, and every deploy is the user's click.
+Run `gh pr create --base main --head develop --title "<goal>"`, with a body of a sentence or two on what the goal set out to do. If section 3 found release tasks or After Deploy checks, add a `## Release Tasks` list naming each task and when it runs, and a `## After Deploy` list of the checks, so they're on record after the goal note is gone. Don't turn on auto-merge, because merging into `main` deploys, and every deploy is the user's click.
 
-## 5. Report
-Give the user the PR's link, and tell them to merge it on GitHub once its checks pass. Merging deploys the release and ends the freeze. Tell them to run `/roadmap` in a new session once it has merged, which makes the planning goal the building goal. Also report each edit section 3 made to other notes, grouped by note.
+## 5. See the Release Through
+Give the user the PR's link, and report each edit section 3 made to other notes, grouped by note. What happens next depends on what section 3 found:
+- **If it found release tasks or After Deploy checks:** read `release-tasks.md` in this skill's folder and follow it.
+- **Otherwise:** tell the user to merge the PR on GitHub once its checks pass, and to run `/roadmap` in a new session once it has merged, which makes the planning goal the building goal.

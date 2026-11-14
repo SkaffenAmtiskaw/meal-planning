@@ -68,7 +68,7 @@ A note's state, usually its `type` and `status`, says what should happen to it n
 | `goal` | Shaped with the user: purpose, Done When, scope, gaps, supporting tooling and rank | unchanged · Roadmap lines moved under it, into Next or into Planning · once it's building, collecting notes kicked off and bug lines moved into Next | `/roadmap` |
 | a `goal` whose lines and notes are scattered or messy | Cleaned up with the user, with work put into hubs where it needs exploring, shares design or decisions, or should share a design | unchanged · any new hubs, with `/brainstorm`, `/design-feature` or their child stories next | `/gather-goal` |
 | a goal whose line under Goals says ` · Next: /finish-goal` | Its release started: the audits that apply confirmed with the user, an audit story written for each, and the release freeze begun | its line under Goals says ` · releasing` | `/finish-goal` |
-| a goal whose line under Goals says ` · releasing · Next: /ship-goal` | Its Done When gone through with the user, the goal note and its Roadmap lines closed out, and the PR from `develop` into `main` opened, which the user merges | deleted | `/ship-goal` |
+| a goal whose line under Goals says ` · releasing · Next: /ship-goal` | Its Done When gone through with the user, the goal note and its Roadmap lines closed out, the PR from `develop` into `main` opened, which the user merges, and the release's tasks and After Deploy checks seen through | deleted | `/ship-goal` |
 | `standing-goal` | Shaped with the user: purpose, what belongs in it and scope, or a goal drawn from it | unchanged · Roadmap lines moved under it · a new goal `<name> YYYY-MM-DD`, with the work the user picks moved to it | `/roadmap` |
 
 # Files
