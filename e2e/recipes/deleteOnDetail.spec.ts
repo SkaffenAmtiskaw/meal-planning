@@ -1,6 +1,6 @@
 import { confirmDelete, expect, test } from '../_fixtures';
+import { recipesListPath } from '../_helpers/plannerPaths';
 import { openRecipeDetail } from './_helpers/openRecipeDetail';
-import { recipesListPath } from './_helpers/recipesPaths';
 import { recipesSeed } from './_helpers/recipesSeed';
 
 test('deletes a recipe from its page', async ({ context, page }) => {
