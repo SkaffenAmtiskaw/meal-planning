@@ -12,6 +12,7 @@ import { openPlannerCalendar } from '../_helpers/openPlannerCalendar';
 import { calendarPath, recipesListPath } from '../_helpers/plannerPaths';
 
 const SIGN_IN_PROMPT = 'In order to use the meal planner, you must sign in.';
+const SECOND_PLANNER_NAME = 'Solo Lunches';
 
 // Opens the user menu from a planner's calendar. Until the invite badge's Suspense boundary streams in,
 // the page holds a second, hidden copy of the avatar, so the helper waits for there to be one before
@@ -59,7 +60,7 @@ test("a logged-out user can't open their planner", async ({
 // Signs in a user in two named planners, opens the first one's calendar, and returns both planners.
 const openFirstOfTwoPlanners = async (page: Page, context: BrowserContext) => {
 	const first = await createPlanner({ name: 'Family Meals' });
-	const second = await createPlanner({ name: 'Solo Lunches' });
+	const second = await createPlanner({ name: SECOND_PLANNER_NAME });
 	const user = await createUser({
 		planners: [
 			{ planner: first._id, accessLevel: 'owner' },
@@ -83,7 +84,7 @@ const switchToPlanner = async (page: Page, name: string) => {
 test('switches planners from the navbar', async ({ context, page }) => {
 	const { second } = await openFirstOfTwoPlanners(page, context);
 
-	await switchToPlanner(page, 'Solo Lunches');
+	await switchToPlanner(page, SECOND_PLANNER_NAME);
 
 	await expect(page).toHaveURL(calendarPath(second._id));
 });
@@ -93,7 +94,7 @@ test('opening the app returns to the planner switched to', async ({
 	page,
 }) => {
 	const { second } = await openFirstOfTwoPlanners(page, context);
-	await switchToPlanner(page, 'Solo Lunches');
+	await switchToPlanner(page, SECOND_PLANNER_NAME);
 	await expect(page).toHaveURL(calendarPath(second._id));
 	// The last opened planner's cookie is written in an effect once the calendar renders.
 	await expect(page.getByRole('grid')).toBeVisible();
@@ -132,6 +133,8 @@ test('Settings back arrow returns to the last opened planner', async ({
 }) => {
 	const { second } = await openFirstOfTwoPlanners(page, context);
 	await page.goto(calendarPath(second._id));
+	// The last opened planner's cookie is written in an effect once the calendar renders.
+	await expect(page.getByRole('grid')).toBeVisible();
 	await openSettings(page);
 	await expect(page).toHaveURL('/settings');
 
