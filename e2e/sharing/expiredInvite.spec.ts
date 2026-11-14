@@ -1,11 +1,11 @@
 import { expect, test } from '../_fixtures';
-import { createOwnersInvite } from './_helpers/createOwnersInvite';
+import { inviteToNewPlanner } from '../_helpers/inviteToNewPlanner';
 
 // Viewing an expired invite deletes it (validateInviteToken), so the test opens the link only once.
 test('an expired invite says it has expired', async ({ page }) => {
 	const {
 		invite: { token, email },
-	} = await createOwnersInvite({
+	} = await inviteToNewPlanner({
 		expiresAt: new Date(Date.now() - 60 * 1000),
 	});
 

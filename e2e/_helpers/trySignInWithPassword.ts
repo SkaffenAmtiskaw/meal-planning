@@ -1,7 +1,7 @@
-import type { Page } from '../../_fixtures';
+import type { Page } from '../_fixtures';
 
 // Sends an email-and-password sign-in straight to better-auth, without the sign-in form, and says whether
-// it was accepted. A Settings spec checks credentials with it, so a change to the sign-in page doesn't break it.
+// it was accepted. Specs outside e2e/auth/ check credentials with it, so a change to the sign-in page doesn't break them.
 export const trySignInWithPassword = async (
 	page: Page,
 	email: string,

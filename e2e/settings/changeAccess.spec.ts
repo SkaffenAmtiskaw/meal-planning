@@ -1,6 +1,6 @@
 import { expect, signIn, test } from '../_fixtures';
+import { openPlannerSettings } from '../_helpers/openPlannerSettings';
 import { createSharedPlanner } from './_helpers/createSharedPlanner';
-import { openPlannerSettings } from './_helpers/openPlannerSettings';
 
 test("the owner changes a member's access level", async ({ context, page }) => {
 	const { owner } = await createSharedPlanner();

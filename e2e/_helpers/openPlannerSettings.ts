@@ -1,4 +1,4 @@
-import type { Page } from '../../_fixtures';
+import type { Page } from '../_fixtures';
 
 // Opens the planner's accordion on the Planner Settings tab, and returns the tab's panel.
 export const openPlannerSettings = async (page: Page, plannerName: string) => {

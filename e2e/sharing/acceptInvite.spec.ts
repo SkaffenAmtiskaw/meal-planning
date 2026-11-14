@@ -6,10 +6,14 @@ import {
 	latestEmailTo,
 	linkInEmail,
 	type Page,
-	signInWithPassword,
 	test,
 } from '../_fixtures';
+import { openPlannerSettings } from '../_helpers/openPlannerSettings';
 import { signInToNewPlanner } from '../_helpers/signInToNewPlanner';
+import { trySignInWithPassword } from '../_helpers/trySignInWithPassword';
+import { signUpFromInvite } from './_helpers/signUpFromInvite';
+
+const PASSWORD = 'e2e-password';
 
 // The owner of "Family Meals" invites a new address on Settings, then the invitee opens the emailed link
 // signed out. signUpWithInvite sets no session, so a leftover owner cookie would land on the owner's planner.
@@ -20,10 +24,9 @@ const openInviteFromEmail = async (context: BrowserContext, page: Page) => {
 		name: 'Family Meals',
 	});
 	await page.goto('/settings');
-	await page.getByRole('tab', { name: 'Planner Settings' }).click();
-	await page.getByRole('button', { name: 'Family Meals', exact: true }).click();
-	await page.getByLabel('Email address').fill(inviteeEmail);
-	await page.getByRole('button', { name: 'Invite', exact: true }).click();
+	const panel = await openPlannerSettings(page, 'Family Meals');
+	await panel.getByLabel('Email address').fill(inviteeEmail);
+	await panel.getByRole('button', { name: 'Invite', exact: true }).click();
 
 	const link = linkInEmail(await latestEmailTo(inviteeEmail));
 	await context.clearCookies();
@@ -49,14 +52,12 @@ test('the invite link opens sign-up for the planner', async ({
 test('signing up adds the user to the planner', async ({ context, page }) => {
 	const { inviteeEmail, planner } = await openInviteFromEmail(context, page);
 
-	await page.getByLabel('Name').fill('Ivy Invitee');
-	await page.getByLabel('Create a password').fill('e2e-password');
-	await page.getByRole('button', { name: 'Create Account' }).click();
-
-	await expect(page).toHaveURL(`/?invite_success=true&planner=${planner._id}`);
+	await signUpFromInvite(page, planner._id.toString(), PASSWORD);
 	await expect(page.getByRole('textbox', { name: 'Email' })).toBeVisible();
 
-	await signInWithPassword(page, inviteeEmail, 'e2e-password');
+	// Signing in through the request shares the page's cookies, so the session carries over to the next page.
+	expect(await trySignInWithPassword(page, inviteeEmail, PASSWORD)).toBe(true);
+	await page.goto('/');
 
 	await expect(page).toHaveURL(`/${planner._id}/calendar`);
 });

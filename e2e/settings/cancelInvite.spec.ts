@@ -1,8 +1,8 @@
 import { createPendingInvite } from '#factories/invite';
 
 import { expect, test } from '../_fixtures';
+import { openPlannerSettings } from '../_helpers/openPlannerSettings';
 import { signInToNewPlanner } from '../_helpers/signInToNewPlanner';
-import { openPlannerSettings } from './_helpers/openPlannerSettings';
 
 test('the owner cancels a pending invite', async ({ context, page }) => {
 	const { planner, user: owner } = await signInToNewPlanner(context, {

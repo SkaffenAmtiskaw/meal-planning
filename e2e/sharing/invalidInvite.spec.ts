@@ -1,5 +1,6 @@
 import { expect, type Page, test } from '../_fixtures';
-import { createOwnersInvite } from './_helpers/createOwnersInvite';
+import { inviteToNewPlanner } from '../_helpers/inviteToNewPlanner';
+import { signUpFromInvite } from './_helpers/signUpFromInvite';
 
 const expectInvalidInviteLeadsToSignIn = async (page: Page) => {
 	await expect(
@@ -15,13 +16,10 @@ test('a used invite shows Invalid Invite', async ({ page }) => {
 	const {
 		invite: { token },
 		planner,
-	} = await createOwnersInvite();
+	} = await inviteToNewPlanner();
 
 	await page.goto(`/invite?token=${token}`);
-	await page.getByLabel('Create a password').fill('e2e-password');
-	await page.getByRole('button', { name: 'Create Account' }).click();
-	// Waiting for the redirect means signUpWithInvite has finished and deleted the invite
-	await expect(page).toHaveURL(`/?invite_success=true&planner=${planner._id}`);
+	await signUpFromInvite(page, planner._id.toString(), 'e2e-password');
 
 	await page.goto(`/invite?token=${token}`);
 
