@@ -13,7 +13,7 @@ Some steps also need a particular check, on top of the kind above:
 Each check:
 - **Proves what the step built.** "Tests pass" and "types compile" aren't checks, since they hold for every step, and neither is a library's default behavior, such as a Mantine Popover flipping above its trigger, which the user trusts without checking.
 - **Ends with "Proves: <what it shows>",** so the user knows what it will teach them before spending time on it.
-- **Is usable as written.** It spells out the command the user runs, the text they paste or the screen they open, or, if that's only known at build time, such as a token, says the implementer gives it to them in chat. It never sends them elsewhere in the note, such as to "Step 1's token".
+- **Is usable as written.** It spells out the command the user runs, the text they paste or the screen they open, or, if that's only known at build time, such as a token, says the implementer gives it to them. It never sends them elsewhere in the note, such as to "Step 1's token".
 
 ## The User's Checks and the Implementer's
 Each check costs the user time, so the user's checks stay within the limits below, and anything else the step needs verified goes in its Approach, for the implementer:
