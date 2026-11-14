@@ -11,7 +11,7 @@ How goals order the work, what each section and kind of note holds, and the rule
 		- **If the story's line has 🔥:** it may be built in every case below, because it's built on a `hotfix/` branch from `main`, and the release freeze covers only `develop`.
 		- **If its line under Goals includes ` · releasing`:** only the stories the goal note's `# Release` section links, which are its audits, their fixes and any Done When gaps `/ship-goal` found. Holding everything else back keeps work the release didn't plan for out of it.
 		- **If a PR from `develop` into `main` is open:** nothing, until it merges, since `/ship-goal` has already closed out the release's goal.
-		- **Otherwise:** a line in Bugs waits until a release picks it up. Any other story or collecting-note item is built only when it serves the building goal, serves no ranked goal, has 📌 on its line, or has 🚨 on a line in Now or Next.
+		- **Otherwise:** a line in Bugs waits until a release picks it up. Any other story or collecting-note item is built only when it serves the building goal, serves no ranked goal, or has 📌 or 🚨 on a line in Now or Next.
 	- **The planning goal** is the second, marked `- planning`. Its stories can be shaped, decided, designed and planned down to steps, but they aren't built until the building goal is released. Collecting notes aren't kicked off for it.
 	- **The rest** organize the backlog. Their lines sit under their headings in Later, and their stories can be shaped and decided ahead of their turn.
 - **Standing Goals** - listed under their own subheading below the ranked goals, because they're never ranked, building or planning. A goal drawn from one is ranked like any other.
@@ -29,7 +29,9 @@ How goals order the work, what each section and kind of note holds, and the rule
 	- `🎯 [[Goal]]` - serves that goal.
 	- `🚨 <reason>` - something serious enough to show on the line, such as a security risk or a bug a user reported. In Now or Next, the story is built ahead of the goals. Anywhere else, it only flags the problem, and the story waits its turn. Only the user adds it, apart from the `dependency-updates` routine's security lines. Other agents may suggest it.
 	- `🔥 Hotfix: <reason>` - a bug in production that can't wait for the release. The story is built on a `hotfix/<slug>` branch from `main` and ships on its own, as "A Hotfix" in `docs/branching.md` describes. It never gets 🔁 or a 🎯 link, and a goal that starts building leaves it where it is, so it never joins a release and closing it never sets off `/finish-goal`. Only the user adds it, apart from a routine, in the cases its skill sets out. Other agents may suggest it.
-	- `📌 <reason>` - the user scheduled it outside the goals. Only the user adds it.
+	- `📌 <reason>` - the user scheduled it outside the goals. Only the user adds it. Where the line sits says which release it joins:
+		- **In Now or Next:** it's in this release, so it may be built now.
+		- **In Later:** it joins the next release. When a goal next starts building, `/roadmap` moves it into Next, and it keeps its 📌.
 	- `🔁` - joined this release without belonging to a goal: a bug, or a kicked-off sweep or collecting workflow note. `/roadmap` adds it when the line moves into Next.
 
 	A Now, Next or Planning line without its marker is out of place. Raise it with the user.
