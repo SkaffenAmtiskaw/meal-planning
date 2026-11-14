@@ -1,4 +1,4 @@
-import type { Page } from '@playwright/test';
+import type { Page } from '../../_fixtures';
 
 type MealFormFields = {
 	// An ISO date, YYYY-MM-DD, since the field is a native date input.

@@ -6,11 +6,11 @@ import {
 	latestEmailTo,
 	linkInEmail,
 	type Page,
-	requestPasswordReset,
-	signInWithPassword,
-	submitNewPassword,
 	test,
 } from '../_fixtures';
+import { requestPasswordReset } from './_helpers/requestPasswordReset';
+import { signInWithPassword } from './_helpers/signInWithPassword';
+import { submitNewPassword } from './_helpers/submitNewPassword';
 
 const createUserWithPlanner = async () => {
 	const planner = await createPlanner();

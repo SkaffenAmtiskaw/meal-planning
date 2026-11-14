@@ -1,5 +1,6 @@
-import { expect, fillRecipeForm, saveRecipeForm, test } from '../_fixtures';
+import { expect, test } from '../_fixtures';
 import { openRecipeDetail } from './_helpers/openRecipeDetail';
+import { fillRecipeForm, saveRecipeForm } from './_helpers/recipeForm';
 import { recipePath } from './_helpers/recipesPaths';
 import { recipesSeed } from './_helpers/recipesSeed';
 

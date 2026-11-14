@@ -1,6 +1,6 @@
-import type { Page } from '@playwright/test';
-
 import { enterEmail } from './enterEmail';
+
+import type { Page } from '../../_fixtures';
 
 // Signs in through the sign-in page's form, from the email step to submitting the password.
 export const signInWithPassword = async (

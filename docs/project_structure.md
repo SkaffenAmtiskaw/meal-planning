@@ -9,7 +9,7 @@ project documentation, one doc for each part of the codebase or its setup
 # e2e/
 Playwright E2E specs, grouped in folders by feature area, with what an area's specs share in its `_helpers/` folder (see `docs/e2e_tests.md`)
 ## _fixtures/
-Playwright support code that specs import, and what `playwright.config.ts` uses to start a run
+Playwright support code, and what `playwright.config.ts` uses to start a run
 # Notes
 notes on planned work, in Obsidian-flavored Markdown, live in the `meal-planning-notes` repo beside this one. Its `Roadmap.md` is the project roadmap, with links to detailed notes (see `docs/services.md`, "The Notes Repo", for how it's kept in sync)
 # scripts/

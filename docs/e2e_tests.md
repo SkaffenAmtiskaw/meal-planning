@@ -149,7 +149,7 @@ A marked test is marked for only one known bug, though one bug can have several 
 | `e2e/<area>/*.spec.ts` | the specs, in a folder for each feature area, such as `auth` or `calendar` |
 | `e2e/<area>/_helpers/` | code that an area's specs share |
 | `e2e/_helpers/` | code that specs in more than one area share |
-| `e2e/_fixtures/` | Playwright support code: what specs import, such as the `test` fixture and `signIn`, and the launchers for the services a run starts |
+| `e2e/_fixtures/` | Playwright support code, such as the `test` fixture and `signIn`, and the launchers for the services a run starts |
 | `test/factories/` | the factories (plain functions that create test data), their database connection, and helpers E2E code can't get from the app's own modules, such as a new object ID. All are imported through `#factories/<name>`. |
 | `test/auth.ts` | the test-only better-auth instance, imported through `#auth` |
 | `playwright.config.ts` | the Playwright config, at the repo root |
