@@ -9,8 +9,8 @@ import {
 	type Page,
 	test,
 } from '../_fixtures';
+import { openPlannerCalendar } from '../_helpers/openPlannerCalendar';
 import { monthCellName } from './_helpers/calendarLabels';
-import { openPlannerCalendar } from './_helpers/openPlannerCalendar';
 
 const MEAL_NAME = "Persephone's Spring Supper";
 const DESCRIPTION = 'Six seeds, and not one more';

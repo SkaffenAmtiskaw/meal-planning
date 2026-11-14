@@ -1,9 +1,9 @@
 import { DateTime } from 'luxon';
 
 import { expect, test } from '../_fixtures';
+import { openPlannerCalendar } from '../_helpers/openPlannerCalendar';
 import { monthCellName, weekCellName } from './_helpers/calendarLabels';
 import { mealOn } from './_helpers/mealOn';
-import { openPlannerCalendar } from './_helpers/openPlannerCalendar';
 
 const MEAL_NAME = "Maleficent's Thorn Stew";
 

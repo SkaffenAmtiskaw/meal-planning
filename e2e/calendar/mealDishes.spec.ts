@@ -3,9 +3,9 @@ import { DateTime } from 'luxon';
 import { newObjectId } from '#factories/objectId';
 
 import { expect, type Page, test } from '../_fixtures';
+import { openPlannerCalendar } from '../_helpers/openPlannerCalendar';
 import { monthCellName } from './_helpers/calendarLabels';
 import { fillMealForm, saveMealForm } from './_helpers/mealForm';
-import { openPlannerCalendar } from './_helpers/openPlannerCalendar';
 
 const MEAL_NAME = "Odysseus's Homecoming Feast";
 const DISH_NAME = 'Ithacan Olive Bread';
