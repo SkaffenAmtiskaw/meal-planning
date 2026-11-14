@@ -101,12 +101,12 @@ The **evidence** is the issue's first line, its name and description, the page's
   2. Under `# Root Cause`, add a `## From PostHog Issue <issue ID> (<date>)` subheading with the analyst's report, and the test if there is one, as a new note's Root Cause gives them.
 
 ## 7. Place Its Roadmap Line
-Decide whether the line gets 🔥, as `hotfix-rule.md` in this folder describes. A line has the shape `[[<note>]] ![[<note>#^status]]`, after `- ` in Later or after its number in Next, and a 🔥 line ends with ` 🔥 Hotfix: <reason>`.
+Decide whether the line gets 🔥, as `hotfix-rule.md` in this folder describes. A line has the shape `[[<note>]] ![[<note>#^status]]`, after `- ` in Bugs or after its number in Next, and a 🔥 line ends with ` 🔥 Hotfix: <reason>`.
 
 Where it goes in `Roadmap.md` in the notes clone, by the cases:
 - **If the note has no line yet:**
   - **With 🔥:** first in Next, above every line without 🔥.
-  - **Without:** at the end of the Bugs heading in Later.
+  - **Without:** at the end of Bugs.
 - **If it has a line:**
   - **If it gets 🔥 and the line has none:** move it first in Next, above every line without 🔥. Replace any marker it had with ` 🔥 Hotfix: <reason>`, because a 🔥 line carries no other marker.
   - **Otherwise:** leave it where it is.

@@ -10,7 +10,7 @@ Where a line goes follows from its work and the goals it serves, and the user de
 ## Checking the Goals
 Whether to read the goal notes depends on the work. The cases:
 - **The user has already named the goals,** such as by placing the line under a goal's heading or giving it 🎯 links: go on to where the line goes, below.
-- **It's a bug the `roadmap-rules` skill puts under Bugs:** its line goes under that heading, so go on to where the line goes, below.
+- **It's a bug the `roadmap-rules` skill puts in Bugs:** bugs belong to no goal, so go on to where the line goes, below.
 - **It's a collecting note's own line:** it carries no 🎯 links, because the note keeps getting new items and so never finishes. So go on to where the line goes, below.
 - **Otherwise:** read the notes in `goals/` in the notes repo. If a goal's Roadmap Instructions say the work belongs to it, it does, so don't ask about that goal. Another goal fits when a line in its Purpose, Done When or What Belongs Here could include the work, and dev tooling also fits a goal it would make easier. If no other goal fits, don't ask. Otherwise, ask the user which ones the work serves, naming each goal that fits and quoting that line. Don't recommend one for tooling, because whether tooling joins a ranked goal is the user's priority call.
 
@@ -23,7 +23,7 @@ Whether to move the line, and where, depends on the line:
 ## Placing a New Line
 If something about the work makes its usual spot look wrong, such as when the user has said in the session that it needs prioritizing, or when a line in Next or Planning waits on it, ask them. Otherwise, the spot follows from its work:
 - **It's a bug with 🔥:** it goes first in Next, above a release's own lines. Renumber the lines below it.
-- **It's a bug the `roadmap-rules` skill puts under Bugs:** it goes under that heading in Later.
+- **It's a bug the `roadmap-rules` skill puts in Bugs:** it goes in Bugs.
 - **It's a collecting note's own line:** every collecting note joins every release, so it's committed. It goes under Unaffiliated in Later.
 - **It serves the building or planning goal:** it goes in that goal's queue, as "Placing a Line in Next or Planning" describes.
 - **It serves another goal:** it's committed, so it goes under that goal's heading in Later.
@@ -35,6 +35,4 @@ Next and Planning are ordered queues, so ask the user where a line goes. If the 
 ## Starting on a Story in the Backlog
 The user running a skill on a story means they want it worked, whether it's a problem to fix or an idea to weigh. So don't set out to check whether it's still needed, and don't recommend dropping it out of hand.
 
-If the story's line is in Later or Ideas when a skill starts on it, what you do depends on the line:
-- **A line under the Bugs heading:** leave it, because a bug is shaped, investigated and planned ahead of the release that picks it up.
-- **Otherwise:** check its goals, as "Checking the Goals" describes, and move it as "Moving an Existing Line" describes. Give it a 🎯 link for each goal it serves, other than the one whose heading it sits under. If it's still in Later or Ideas, ask the user whether it goes in Next with 📌, and with what reason. If it does, ask where in Next it goes, as "Placing a Line in Next or Planning" describes.
+If the story's line is in Later or Ideas when a skill starts on it, check its goals, as "Checking the Goals" describes, and move it as "Moving an Existing Line" describes. Give it a 🎯 link for each goal it serves, other than the one whose heading it sits under. If it's still in Later or Ideas, ask the user whether it goes in Next with 📌, and with what reason. If it does, ask where in Next it goes, as "Placing a Line in Next or Planning" describes.
