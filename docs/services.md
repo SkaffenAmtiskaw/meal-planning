@@ -71,7 +71,7 @@ The project's Environment Variables page has **Enable access to System Environme
 ## MongoDB Atlas
 Atlas holds the app's data, on one Free cluster running MongoDB 8.0.36. The E2E tests' memory server runs the same 8.0 series (see `docs/e2e_tests.md`).
 
-Free clusters get no standard cloud backups, and the cluster's Backup page hasn't been checked, so assume production's data has no backups.
+Free clusters get no standard cloud backups, so production's data is backed up by a workflow of the repo's own, as `docs/backups.md` describes.
 
 The cluster holds these databases:
 - **`staging`:** production's data, which previews share.
@@ -84,10 +84,11 @@ The app's database users, each signing in with a password (SCRAM):
 |---|---|---|
 | `local` | `readWrite` on `test` and on `test-1` to `test-5` only | local dev, from the main checkout and every worktree |
 | `staging` | `readWrite` on `staging` only | production and previews |
+| `backup` | `read` on `staging` only, set under Specific Privileges | `backup.yml`, to dump production's data (see `docs/ci.md`, "Database Backup") |
 
 The IP access list (Database & Network Access → IP Access List) has five entries. One is `0.0.0.0/0`, commented "Vercel Dynamic IP". It lets Vercel's deployments in, because a Hobby deployment has no fixed address. It also allows every other address, so the database user's password is the only thing keeping anyone out. The other four are single addresses with no comment. When the list was read on 2026-11-04, one of them was your address, and whose the other three are isn't known.
 
-**Secrets:** each user's password is part of `DB_URL`, so `local`'s is in `.env.local` and `staging`'s is in Vercel.
+**Secrets:** each user's password is part of its connection string. `local`'s is `DB_URL` in `.env.local`, `staging`'s is `DB_URL` in Vercel, and `backup`'s is the Actions secret `BACKUP_DB_URL`.
 
 ## Google Cloud
 Google sign-in and One Tap (`oneTap()` in `src/_auth/auth.ts`) go through one OAuth client, `meal-planning-web-app`, on the Google Auth Platform's Clients page. It's a web application, and local, production and previews all use it.
@@ -122,13 +123,28 @@ The project has two personal API keys, each limited to the project. The source-m
 `next/font/google` in `src/app/layout.tsx` downloads the app's fonts from Google Fonts when the app builds. It needs no account or secret.
 
 ## Cloudflare
-Cloudflare is the registrar for `meal-planning.net` and serves its DNS. The domain renews on 2027-03-02, with auto-renew on.
+Cloudflare is the registrar for `meal-planning.net`, serves its DNS, and stores the database backups in R2. The domain renews on 2027-03-02, with auto-renew on.
 
 Its DNS records are all set to "DNS only", so Cloudflare proxies none of the traffic:
 - **Vercel:** an `A` record on the bare domain to `216.198.79.1`, a `CNAME` on `www` to a `vercel-dns` target, and two `_vercel` `TXT` records that verify the bare and `www` domains.
 - **Resend:** a `resend._domainkey` `TXT` record (DKIM), and an `MX` and an SPF `TXT` record on `send`, pointing at Amazon SES.
 
 The domain has no `_dmarc` record.
+
+R2 is Cloudflare's object storage (see `docs/backups.md`). Its one bucket, `meal-planning-db-backups`, is private. A lifecycle rule on the bucket, with no prefix, deletes each object 7 days after it's uploaded, so the bucket holds about a week of backups.
+
+The bucket has two R2 API tokens. Each is scoped to the bucket alone and has only the access its user needs, so a leaked Mac token can't change or delete a backup. The two tokens:
+- **The workflow's token,** which `backup.yml` uses to upload, recorded in `docs/ci.md`, "Database Backup".
+- **Your Mac's token,** with Object Read only, which `pnpm db:restore` uses to download. It's kept in Proton Pass (see "Proton Pass").
+
+**Secrets:** Cloudflare shows an R2 token's secret only when it's created. `docs/ci.md`, "Replacing the Backup Secrets", says how to replace the workflow's token. `docs/backups.md`, "Your Mac's R2 Read Token", says how to replace your Mac's.
+
+## Proton Pass
+Your Proton Pass account holds the two secrets a restore needs, so neither sits in a file. `scripts/db-restore.sh` reads them with the `pass-cli` command-line tool. `pass-cli`'s signed-in session has no PIN lock, so `pass-cli` reads them without asking. That lets the restore test run with no step from you. Both items are in the Development vault:
+- **"Meal Planning backup key (age)":** the `age` private key that decrypts the backups, in the item's note. Its public key is the Actions variable `BACKUP_AGE_RECIPIENT`. Without the private key, no backup in the bucket can be read.
+- **"Meal Planning backup R2 read token":** your Mac's R2 read token, as a login. Its username is the token's Access Key ID, its password is the Secret Access Key, and its website is the account's R2 endpoint.
+
+The restore reads both items by name, so renaming one or moving it out of the vault breaks the restore and the restore test.
 
 ## GitHub
 The code repo, `SkaffenAmtiskaw/meal-planning`, is public, and its default branch is `develop`. Vercel's GitHub integration and its environments are under "Vercel". What CI and the routines need from the code repo is in `docs/ci.md`: what the default branch means for routines and scheduled workflows, the rulesets on `develop` and `main`, the pull request settings, the `notes-pending` label, the Claude GitHub App, the back-merge App and the Actions secrets.
@@ -139,7 +155,7 @@ The notes repo, `meal-planning-notes`, is private, with default branch `main`. I
 Your Claude Max subscription runs Claude Code, both on your machine and in the routines' cloud sessions. The cloud environment and the routines are in `docs/ci.md`, "The Cloud Environment" and "Routines". The Claude desktop app's branch prefix, which names each worktree's branch, is in "The Desktop App's Branch Prefix" there.
 
 # Who You Pay
-- **Cloudflare:** the domain, renewing 2027-03-02 with auto-renew on.
+- **Cloudflare:** the domain, renewing 2027-03-02 with auto-renew on. R2 bills only beyond its free allowance of 10 GB stored, which a week of the database's backups stays far below.
 - **Anthropic:** the Claude Max subscription.
 
 Nothing else is known to be paid: Vercel is on its Hobby plan, Atlas on a Free cluster, and Resend and PostHog on their free plans.

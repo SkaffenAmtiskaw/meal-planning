@@ -1,0 +1,49 @@
+# Backs up production's database to the R2 bucket: daily, when a release PR from develop merges into main, and by hand.
+# A failed run reaches Sarah through GitHub's own email for a failed workflow run. See docs/backups.md.
+name: Database Backup
+
+on:
+  schedule:
+    # Daily at 04:23 UTC, off the top of the hour, when GitHub drops scheduled runs most often
+    - cron: '23 4 * * *'
+  pull_request:
+    types: [closed]
+    branches: [main]
+  workflow_dispatch:
+    inputs:
+      kind:
+        description: Which kind of backup the object's name says it is
+        type: choice
+        options: [daily, release]
+        default: daily
+
+permissions:
+  contents: read
+
+jobs:
+  backup:
+    # A PR into main takes a backup only when it's a merged release: its head is this repo's develop. A hotfix merge
+    # takes none, and neither does a fork's branch that happens to be named develop.
+    if: >-
+      github.event_name != 'pull_request' || (
+        github.event.pull_request.merged &&
+        github.event.pull_request.head.ref == 'develop' &&
+        github.event.pull_request.head.repo.full_name == github.repository
+      )
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v7
+      # No pnpm install: the script needs only the mise tools, so no package's install script runs beside the secrets.
+      - uses: jdx/mise-action@v4
+        with:
+          install_args: node pnpm age rclone http:mongodb-database-tools
+      - env:
+          BACKUP_DB_URL: ${{ secrets.BACKUP_DB_URL }}
+          BACKUP_AGE_RECIPIENT: ${{ vars.BACKUP_AGE_RECIPIENT }}
+          R2_BUCKET: ${{ vars.R2_BUCKET }}
+          R2_ENDPOINT: ${{ secrets.R2_ENDPOINT }}
+          R2_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
+          R2_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
+          KIND: ${{ github.event_name == 'pull_request' && 'release' || inputs.kind || 'daily' }}
+        run: pnpm -s db:backup "$KIND"
