@@ -28,10 +28,17 @@ export const addMeal = async (
 			const isUrl = z.url().safeParse(dish.sourceText).success;
 			source = isUrl ? { url: dish.sourceText } : { ref: dish.sourceText };
 		}
-		return { name: dish.name, source, note: dish.note || undefined };
+		return {
+			_id: new Types.ObjectId(),
+			name: dish.name,
+			source,
+			note: dish.note || undefined,
+		};
 	});
 
+	// The driver adds no subdocument ids, so the meal and its dishes get theirs here.
 	const meal = {
+		_id: new Types.ObjectId(),
 		name: mealName,
 		description: description || undefined,
 		dishes: mealDishes,

@@ -109,6 +109,31 @@ describe('addMeal', () => {
 				});
 			});
 
+			it('gives the meal and each dish an ObjectId _id', async () => {
+				await callAddMeal({
+					...validData,
+					dishes: [
+						{ name: 'Toast', sourceType: 'none' },
+						{ name: 'Tea', sourceType: 'none' },
+					],
+				});
+
+				expect(Planner.collection.updateOne).toHaveBeenCalledWith(
+					expect.anything(),
+					{
+						$push: {
+							'calendar.$.meals': expect.objectContaining({
+								_id: expect.any(Types.ObjectId),
+								dishes: [
+									expect.objectContaining({ _id: expect.any(Types.ObjectId) }),
+									expect.objectContaining({ _id: expect.any(Types.ObjectId) }),
+								],
+							}),
+						},
+					},
+				);
+			});
+
 			it('adds new day when date is not in calendar', async () => {
 				vi.mocked(Planner.collection.updateOne).mockResolvedValueOnce({
 					matchedCount: 0,

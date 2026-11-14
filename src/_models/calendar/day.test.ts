@@ -1,6 +1,6 @@
 import { describe, expect, test } from 'vitest';
 
-import { Types } from 'mongoose';
+import { model, Schema, Types } from 'mongoose';
 
 import { daySchema, zDayInterface } from './day';
 
@@ -154,11 +154,38 @@ describe('day interface', () => {
 });
 
 describe('day schema', () => {
+	test('stores an _id on meals and dishes but not on the day', () => {
+		const Parent = model(
+			'DaySchemaTestParent',
+			new Schema({ calendar: [daySchema] }),
+		);
+		const [day] = new Parent({
+			calendar: [
+				{
+					date: '2026-03-27',
+					meals: [
+						{ name: "Hades' Power Lunch", dishes: [{ name: 'Flaming Ribs' }] },
+					],
+				},
+			],
+		}).toObject().calendar;
+
+		expect(day).not.toHaveProperty('_id');
+		expect(day).toMatchObject({
+			meals: [
+				{
+					_id: expect.any(Types.ObjectId),
+					dishes: [{ _id: expect.any(Types.ObjectId) }],
+				},
+			],
+		});
+	});
+
 	// SchemaTypes.Union does not traverse nested validators via validateSync(), so
 	// we access the validator function directly from the schema definition object.
 	const dishSourceDef =
 		// biome-ignore lint/suspicious/noExplicitAny: accessing internal Mongoose schema definition
-		((daySchema.obj.meals as any)[0].dishes[0].source as any).of[1];
+		((daySchema.obj.meals as any)[0].obj.dishes[0].obj.source as any).of[1];
 	const urlValidator: (v: unknown) => boolean = dishSourceDef.url.validate[0];
 
 	test('dish source URL validator accepts a valid URL', () => {
