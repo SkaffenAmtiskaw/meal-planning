@@ -79,7 +79,7 @@ A release ships one finished goal. While it's under way, the release freeze lets
 3. **Start each audit's card.** `/audit-release` runs the audit and goes through its findings with you, and each finding you keep becomes a fix story. Run the two in-app audits (UX and accessibility) one after another, since they share the main checkout's server and database. Each fix goes through the story steps above.
 4. **Once the audits and fixes have closed,** the goal's line shows `Next: /ship-goal`.
 5. **Run `/ship-goal <goal>` in the main checkout.** It checks that nothing is left undone, goes through the goal's Done When with you, closes out the goal note and opens the PR from `develop` into `main`, named after the goal, without auto-merge.
-6. **Merge the PR,** which deploys and ends the freeze. Then run `/roadmap` in a new session, which makes the next goal the building goal.
+6. **Merge the PR,** which deploys, takes a backup of production's database (see `docs/backups.md`) and ends the freeze. Then run `/roadmap` in a new session, which makes the next goal the building goal.
 
 # Cleaning Up After a Merge
 At the next session start, the sweep removes each worktree whose PR has merged, with its local branch and its database, and prints a line for each. GitHub has already deleted the branch on GitHub at the merge.

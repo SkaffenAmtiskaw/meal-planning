@@ -4,3 +4,20 @@ node = 'latest'
 # Only the routines' cloud environment installs pnpm from npm (see docs/ci.md, "The Cloud Environment").
 pnpm = { version = 'latest', allow_builds = ['pnpm'] }
 rtk = 'latest'
+# The database backups' tools (see docs/backups.md): age encrypts each dump, rclone moves it to and from R2.
+age = 'latest'
+rclone = 'latest'
+
+# mongodump and mongorestore. MongoDB publishes its Database Tools only on its own download site, so they come from
+# its release list, which runs newest first.
+[tools."http:mongodb-database-tools"]
+version = 'latest'
+version_list_url = 'https://downloads.mongodb.org/tools/db/release.json'
+version_json_path = '.versions[].version'
+version_order = 'semver'
+
+[tools."http:mongodb-database-tools".platforms]
+macos-arm64 = { url = 'https://fastdl.mongodb.org/tools/db/mongodb-database-tools-macos-arm64-{{ version }}.zip' }
+macos-x64 = { url = 'https://fastdl.mongodb.org/tools/db/mongodb-database-tools-macos-x86_64-{{ version }}.zip' }
+linux-x64 = { url = 'https://fastdl.mongodb.org/tools/db/mongodb-database-tools-ubuntu2404-x86_64-{{ version }}.tgz' }
+linux-arm64 = { url = 'https://fastdl.mongodb.org/tools/db/mongodb-database-tools-ubuntu2404-arm64-{{ version }}.tgz' }

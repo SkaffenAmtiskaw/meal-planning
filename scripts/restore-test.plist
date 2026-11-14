@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<!--
+  The restore test's daily job on Sarah's Mac: starts `pnpm db:restore-test` (scripts/restoreTest.ts) from the main
+  checkout once a day, and appends its output to ~/Library/Logs/meal-planning-restore-test.log. The test itself decides
+  whether it's due. If the Mac is asleep at the set time, launchd runs the job on wake. It runs only while Sarah is
+  logged in. See docs/backups.md for installing it.
+  A LaunchAgent starts with a bare environment, so the command puts mise's shims (pnpm, node, age, rclone,
+  mongorestore) and ~/.local/bin (pass-cli) on its PATH. launchd doesn't expand ~ or $HOME, so the shell does.
+-->
+<plist version="1.0">
+<dict>
+	<key>Label</key>
+	<string>net.meal-planning.restore-test</string>
+	<key>ProgramArguments</key>
+	<array>
+		<string>/bin/sh</string>
+		<string>-c</string>
+		<string>export PATH="$HOME/.local/share/mise/shims:$HOME/.local/bin:/usr/bin:/bin:/usr/sbin:/sbin" &amp;&amp; cd "$HOME/repos/meal-planning" &amp;&amp; exec pnpm -s db:restore-test &gt;&gt; "$HOME/Library/Logs/meal-planning-restore-test.log" 2&gt;&amp;1</string>
+	</array>
+	<key>StartCalendarInterval</key>
+	<dict>
+		<key>Hour</key>
+		<integer>12</integer>
+		<key>Minute</key>
+		<integer>0</integer>
+	</dict>
+</dict>
+</plist>
