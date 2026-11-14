@@ -89,7 +89,7 @@ Each step follows these rules:
 - **Sarah checks:**
   - **What each one proves:** that something the story builds works, not that its code matches what the user expected.
   - **Who does what:** the implementer kicks off everything it can, such as pushing a throwaway branch, opening a PR or running a skill locally.
-  - **Usable as written:** each one spells out the exact command the user runs, the text they paste or the screen they open. If that can only be known at build time, such as a token or a generated URL, the check says the implementer gives it to them in chat, ready to paste. A check never sends them to another part of the note, such as "Step 1's token" or "the command from the Design".
+  - **Usable as written:** each one spells out the exact command the user runs, the text they paste or the screen they open. If that can only be known at build time, such as a token or a generated URL, the check says the implementer gives it to them, ready to paste. A check never sends them to another part of the note, such as "Step 1's token" or "the command from the Design".
 
 Across the Build Order, every Piece and Convention is built by some step, and every Goal is proved by a check in some step.
 
