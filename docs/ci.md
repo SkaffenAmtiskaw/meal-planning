@@ -353,8 +353,9 @@ npm install -g @jdxcode/mise
 # mise's default backend for pnpm downloads from GitHub releases, which the GitHub proxy blocks for
 # repos not attached to the session. With it off, mise installs pnpm from npm.
 export MISE_DISABLE_BACKENDS=aqua
-# Sessions need only node and pnpm. Without this, mise looks up rtk's latest version on GitHub, and gets a 403.
-export MISE_DISABLE_TOOLS=rtk
+# Sessions need only node and pnpm. Without this, mise looks up the other tools' latest versions on hosts the
+# session can't reach, such as GitHub, which returns a 403.
+export MISE_DISABLE_TOOLS=rtk,age,rclone,http:mongodb-database-tools
 
 # Find the cloned repo, to install the versions its mise.toml names.
 repo=""
@@ -378,7 +379,7 @@ mise install node pnpm
 shims="${MISE_DATA_DIR:-$HOME/.local/share/mise}/shims"
 cat > /opt/mise-session-env.sh <<EOF
 export MISE_DISABLE_BACKENDS=aqua
-export MISE_DISABLE_TOOLS=rtk
+export MISE_DISABLE_TOOLS=rtk,age,rclone,http:mongodb-database-tools
 export PATH="$shims:\$PATH"
 EOF
 

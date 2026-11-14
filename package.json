@@ -7,6 +7,7 @@
     "build": "next build",
     "check:types": "next typegen && tsc --noEmit",
     "deps:check": "node scripts/dependencyCheck.ts",
+    "db:backup": "bash scripts/db-backup.sh",
     "db:empty-worktree": "tsx --env-file=.env.local seed/emptyWorktreeDatabase.ts",
     "dev": "sh scripts/dev.sh",
     "dev:sign-in": "pnpm run \"/^(dev|sign-in)$/\"",
