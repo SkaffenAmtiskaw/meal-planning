@@ -197,7 +197,7 @@ One variable outside `src/env.ts` gets an E2E value too: `RESEND_BASE_URL`, the 
 > [!NOTE]
 > The email senders in `src/_auth/emails/` create their Resend client without a `baseUrl`, so the Resend SDK reads `RESEND_BASE_URL` from `process.env` on its own. The email helpers read the variable from `process.env` too, since `@/env` doesn't have it. Resend's docs don't mention the variable. If an SDK upgrade stops reading it, `latestEmailTo` fails with "No email reached ‹address›".
 
-When you add a variable to `src/env.ts`, add an E2E value for it to `playwright.config.ts`. Where else it needs a value, such as CI, `test/mocks/env.ts` and Vercel, depends on whether the schema requires it, as `docs/ci.md`, "Secrets and Environment Values", describes. Add its row to the table in `docs/services.md`, "The Environments", which records where each variable's values live.
+When you add a variable to `src/env.ts`, add an E2E value for it to `playwright.config.ts`. Where else it needs a value, such as CI, `test/mocks/env.ts` and Vercel, depends on whether the schema requires it, as `docs/ci.md`, "The App's Variables", describes. Add its row to the table in `docs/services.md`, "The Environments", which records where each variable's values live.
 
 ## MongoDB Version
 The memory server runs the same MongoDB release series as the Atlas cluster, **8.0**, so the tests run against the database production uses. The version is pinned in `package.json`, in `config.mongodbMemoryServer.version`. When Atlas moves to a new release series, change the pin and this section together.

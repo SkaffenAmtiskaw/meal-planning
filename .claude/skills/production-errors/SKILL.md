@@ -118,7 +118,7 @@ Run `sh scripts/vault-lint.sh "<note>"`, and fix what it reports in the note and
 
 ## 9. End With the Summary
 End every session with a summary for the user. What it holds depends on the block:
-- **If it held PostHog's refusal:** quote the line, and tell the user to replace the key, as `docs/ci.md`, "Production Errors", describes.
+- **If it held PostHog's refusal:** quote the line, and tell the user to replace the key, as `docs/services.md`, "Replacing the PostHog Read Key", describes.
 - **Otherwise,** in this order:
   1. **The issue:** whether it's new or reopened, its name and its PostHog link.
   2. **The root cause:** the analyst's findings in a few lines, and that `root-cause-analyst` wrote them. Say whether a test reproduced the error, and if it didn't, that the analysis is unconfirmed. If the verdict is that an outside service failed, say the service is the cause.
