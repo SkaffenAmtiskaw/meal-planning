@@ -28,7 +28,7 @@ The kinds of text you add, change or remove in a note, and the rule for each:
 - **What the user said:** write that they decided, agreed to or asked for something only if they did. Write that they will do something only if they've committed to it. Record their decisions in the third person ("Sarah decided 2026-09-25 that ..."). If you aren't sure they meant it that way, ask them. These can pass for something they said:
   - **If they said yes to an agent's text, other than a story's scope, or didn't object to it:** they've only approved it, so don't write that they agreed. If the note needs the text as an assumption, say it's an agent's assumption.
   - **If it's an agent's own account,** such as its list of what went wrong: keep it apart from the user's quotes and say it's the agent's.
-- **A choice that's the user's call:** mark it, because later agents stop and ask before changing one. Mark a **Decided** line as the `settling-a-decision` skill describes, and end a piece of a Design, Convention or plan with whose call it is, such as "(Sarah's call)". A line they wrote and a story's scope need no mark.
+- **A choice that's the user's call:** mark it, so a later agent asks them before changing it rather than changing it alone. Mark a **Decided** line as the `settling-a-decision` skill describes, and end a piece of a Design, Convention or plan with whose call it is, such as "(Sarah's call)". A line they wrote and a story's scope need no mark.
 - **A changed Decided line:** rewrite it with the new answer and today's date, and add the old answer as a **Rejected** line saying why, so a later session doesn't propose it again.
 - **An open question:** a note holds only the questions the user wants to think over or research.
   - **If the code or docs can answer it:** look it up.
@@ -58,7 +58,7 @@ The Inbox comes right after Where It Stands in every story, hub and workflow not
 
 ## A Note That's Wrong or Out of Date
 What you do depends on where the mistake is and what it changes:
-- **The story you're working on has a mistake that changes its remaining work,** such as a wrong assumption in its approach: if the mistake is in a choice that's the user's call, stop and ask them. Otherwise, fix the text and name the fix in your summary.
+- **The story you're working on has a mistake that changes its remaining work,** such as a wrong assumption in its approach: if the mistake isn't in a choice that's the user's call, fix the text and name the fix in your summary.
 - **Only a name or path changed,** and the plan still works as written: correct it in place, because the user approved the intent, not the path.
 - **A built change affects another story's remaining work:** handle it as the `triaging-out-of-scope-work` skill describes.
 - **It changes nothing about the work,** such as a wrong detail in a finding: if it's a line an agent wrote in a note you're working on, and not plan text, correct it. Otherwise, leave it, because changing plan text or another note costs a review and changes nothing.
