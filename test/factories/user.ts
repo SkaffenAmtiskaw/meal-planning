@@ -26,7 +26,8 @@ export const createUser = async ({
 	const { user } = await auth.api.createUser({
 		body: { email, password, name, data: { emailVerified } },
 	});
-	await User.create({ email, name, planners });
+	const userDoc = await User.create({ email, name, planners });
 
-	return { id: user.id, email, name, password, planners };
+	// `id` is the better-auth user's; `_id` is the app's User doc's, which refs such as an invite's `invitedBy` point to.
+	return { id: user.id, _id: userDoc._id, email, name, password, planners };
 };

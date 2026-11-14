@@ -10,7 +10,7 @@ export const openPlannerCalendar = async (
 	context: BrowserContext,
 	options: SignInToNewPlannerOptions = {},
 ) => {
-	const planner = await signInToNewPlanner(context, options);
+	const { planner } = await signInToNewPlanner(context, options);
 	await page.goto(`/${planner._id}/calendar`);
 
 	return planner;

@@ -12,7 +12,7 @@ export const openPlannerRecipes = async (
 	context: BrowserContext,
 	options: SignInToNewPlannerOptions = {},
 ) => {
-	const planner = await signInToNewPlanner(context, options);
+	const { planner } = await signInToNewPlanner(context, options);
 	await page.goto(recipesListPath(planner._id));
 
 	return planner;
