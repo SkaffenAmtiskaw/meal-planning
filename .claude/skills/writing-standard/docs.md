@@ -11,9 +11,14 @@ So a doc states something as a rule only when breaking it causes a real problem,
 
 A doc says where things live rather than listing them: a folder and what it holds, not each helper, file or signature in it. A reader finds those by looking, and a list of them goes wrong at the next rename.
 
+A doc leaves out how an outside service behaves, such as where GitHub sends a run's logs or a limit on its API, because the service can change without anyone noticing that the doc is out of date. What this project sets up in a service, such as a secret's name or a ruleset, is part of the repo's setup, so a doc records it.
+
 If what you're drafting is a rule only agents follow, such as when to use `pnpm test:agent`, place it as the `rule-placement` skill describes.
 
 A doc that grows from a pattern's Convention is still a guide: what to do, where things go and why, not a numbered list of rules with their checks. Enforcement, such as a Biome ban or a type check, gets at most one short closing paragraph, for anyone who needs to change it. Even there, name only enforcement whose location isn't obvious. A TypeScript error that names the problem and points at the file explains itself, while a test that happens to guard unrelated code is worth naming.
+
+## Set Detail Apart in a Callout
+A person reading a doc usually wants a section's main point, so it's the first thing they see. If what follows the point runs longer than a sentence or two, such as the reasoning behind a choice, background or a rare case, put it in a `> [!NOTE]` callout after the point. Otherwise the reader has to dig through a long paragraph for the rule. The callout keeps the detail for a reader who wants it and lets the rest skip it.
 
 ## Keep Each Doc to One Kind
 Each doc is one kind of document:
