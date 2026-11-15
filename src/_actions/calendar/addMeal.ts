@@ -20,6 +20,8 @@ export const addMeal = async (
 	const planner = await Planner.findById(plannerId);
 	if (!planner) return { ok: false, error: 'Planner not found' };
 
+	// The driver stores an undefined field as null, so an empty optional field
+	// gets no key at all.
 	const mealDishes = dishes.map((dish) => {
 		let source: unknown;
 		if (dish.sourceType === 'saved' && dish.savedId) {
@@ -31,8 +33,8 @@ export const addMeal = async (
 		return {
 			_id: new Types.ObjectId(),
 			name: dish.name,
-			source,
-			note: dish.note || undefined,
+			...(source ? { source } : {}),
+			...(dish.note ? { note: dish.note } : {}),
 		};
 	});
 
@@ -40,7 +42,7 @@ export const addMeal = async (
 	const meal = {
 		_id: new Types.ObjectId(),
 		name: mealName,
-		description: description || undefined,
+		...(description ? { description } : {}),
 		dishes: mealDishes,
 	};
 

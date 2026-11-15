@@ -99,6 +99,32 @@ describe('addRecipe', () => {
 		}
 	});
 
+	test('leaves out notes and storage when they are empty', async () => {
+		const planner = makePlanner();
+		vi.mocked(Planner.findById).mockResolvedValueOnce(planner as never);
+
+		await addRecipe({ ...validData, notes: '', storage: '' });
+
+		expect(planner.saved[0]).not.toHaveProperty('notes');
+		expect(planner.saved[0]).not.toHaveProperty('storage');
+	});
+
+	test('keeps notes and storage when they are filled in', async () => {
+		const planner = makePlanner();
+		vi.mocked(Planner.findById).mockResolvedValueOnce(planner as never);
+
+		await addRecipe({
+			...validData,
+			notes: 'Best served warm',
+			storage: 'Fridge, 3 days',
+		});
+
+		expect(planner.saved[0]).toMatchObject({
+			notes: 'Best served warm',
+			storage: 'Fridge, 3 days',
+		});
+	});
+
 	test('accepts optional fields', async () => {
 		const planner = makePlanner();
 		vi.mocked(Planner.findById).mockResolvedValueOnce(planner as never);

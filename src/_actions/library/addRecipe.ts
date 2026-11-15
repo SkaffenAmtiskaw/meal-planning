@@ -14,7 +14,14 @@ export const addRecipe = async (
 	data: unknown,
 ): Promise<ActionResult<{ _id: string; name: string }>> => {
 	const parsed = zRecipeFormSchema.parse(data);
-	const { plannerId, ...recipeFields } = transformRecipeForm(parsed);
+	const { plannerId, notes, storage, ...requiredFields } =
+		transformRecipeForm(parsed);
+	// The form starts notes and storage at '', which would be stored as empty strings.
+	const recipeFields = {
+		...requiredFields,
+		...(notes ? { notes } : {}),
+		...(storage ? { storage } : {}),
+	};
 
 	const auth = await checkAuth(new Types.ObjectId(plannerId), 'write');
 	if (auth.type !== 'authorized') return { ok: false, error: 'Unauthorized' };
