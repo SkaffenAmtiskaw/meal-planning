@@ -145,4 +145,16 @@ describe('transformRecipeForm', () => {
 			expect(result.storage).toBe(input.storage);
 		});
 	});
+	describe('notes and storage', () => {
+		it('removes empty notes and storage', () => {
+			const result = transformRecipeForm({
+				...baseInput,
+				notes: '',
+				storage: '',
+			});
+
+			expect(result).not.toHaveProperty('notes');
+			expect(result).not.toHaveProperty('storage');
+		});
+	});
 });

@@ -36,5 +36,9 @@ export const transformRecipeForm = <T extends RecipeFormData>(data: T): T => {
 		}
 	}
 
+	// The form starts notes and storage at '', which would be stored as empty strings.
+	if (!result.notes) delete result.notes;
+	if (!result.storage) delete result.storage;
+
 	return result;
 };

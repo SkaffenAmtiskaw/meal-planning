@@ -128,20 +128,13 @@ describe('addMeal', () => {
 					],
 				});
 
-				expect(Planner.collection.updateOne).toHaveBeenCalledWith(
-					expect.anything(),
-					{
-						$push: {
-							'calendar.$.meals': expect.objectContaining({
-								_id: expect.any(Types.ObjectId),
-								dishes: [
-									expect.objectContaining({ _id: expect.any(Types.ObjectId) }),
-									expect.objectContaining({ _id: expect.any(Types.ObjectId) }),
-								],
-							}),
-						},
-					},
-				);
+				expect(pushedMeal()).toMatchObject({
+					_id: expect.any(Types.ObjectId),
+					dishes: [
+						{ _id: expect.any(Types.ObjectId) },
+						{ _id: expect.any(Types.ObjectId) },
+					],
+				});
 			});
 
 			it('adds new day when date is not in calendar', async () => {
