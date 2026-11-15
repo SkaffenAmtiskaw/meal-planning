@@ -2,6 +2,7 @@ import type { PendingInviteInterface } from '@/_models/sharing';
 import { PendingInvite } from '@/_models/sharing';
 
 import { uniqueEmail } from './uniqueEmail';
+import { withoutUndefined } from './withoutUndefined';
 
 type CreatePendingInviteOptions = Pick<
 	PendingInviteInterface,
@@ -24,5 +25,5 @@ export const createPendingInvite = async ({
 		accessLevel,
 		token,
 		expiresAt,
-		...rest,
+		...withoutUndefined(rest),
 	});

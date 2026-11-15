@@ -110,6 +110,19 @@ describe('recipe form schema', () => {
 	test('rejects a form submission missing plannerId', () => {
 		expect(zRecipeFormSchema.safeParse(recipeWithoutId).success).toBe(false);
 	});
+
+	test('accepts optional fields set to empty strings, which the form starts at', () => {
+		expect(
+			zRecipeFormSchema.safeParse({
+				...recipeWithoutId,
+				plannerId,
+				notes: '',
+				storage: '',
+				source: { name: '', url: '' },
+				time: { prep: '', cook: '', total: '', actual: '' },
+			}).success,
+		).toBe(true);
+	});
 });
 
 describe('recipe schema', () => {

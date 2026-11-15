@@ -1,6 +1,7 @@
 import { z } from 'zod';
 
 import { zObjectId } from '@/_utils/zObjectId';
+import { zOptionalNonEmptyString } from '@/_utils/zOptionalNonEmptyString';
 
 export const zDishFormInput = z.object({
 	name: z.string().min(1, { error: 'Dish name is required' }),
@@ -30,12 +31,12 @@ const zDishInterface = z.object({
 			zObjectId,
 		])
 		.optional(),
-	note: z.string().optional(),
+	note: zOptionalNonEmptyString,
 });
 
 const zMealInterface = z.object({
 	name: z.string(),
-	description: z.string().optional(),
+	description: zOptionalNonEmptyString,
 	dishes: z.array(zDishInterface),
 });
 

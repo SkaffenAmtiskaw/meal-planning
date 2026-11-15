@@ -20,8 +20,7 @@ describe('addPlanner', () => {
 
 		const result = await addPlanner();
 
-		expect(Planner.create).toHaveBeenCalledWith({
-			name: undefined,
+		expect(vi.mocked(Planner.create).mock.calls[0][0]).toStrictEqual({
 			calendar: [],
 			saved: [],
 			tags: [],

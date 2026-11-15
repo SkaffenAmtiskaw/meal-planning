@@ -1,6 +1,8 @@
 import type { PlannerInterface } from '@/_models/planner';
 import { Planner } from '@/_models/planner';
 
+import { withoutUndefined } from './withoutUndefined';
+
 export const createPlanner = async (
 	overrides: Partial<PlannerInterface> = {},
 ) =>
@@ -8,5 +10,5 @@ export const createPlanner = async (
 		calendar: [],
 		saved: [],
 		tags: [],
-		...overrides,
+		...withoutUndefined(overrides),
 	});

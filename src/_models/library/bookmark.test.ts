@@ -134,4 +134,10 @@ describe('zBookmarkFormSchema', () => {
 	test('accepts form without notes', () => {
 		expect(zBookmarkFormSchema.safeParse(validForm).success).toBe(true);
 	});
+
+	test('accepts notes set to an empty string, which the form starts at', () => {
+		expect(
+			zBookmarkFormSchema.safeParse({ ...validForm, notes: '' }).success,
+		).toBe(true);
+	});
 });

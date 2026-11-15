@@ -1,13 +1,14 @@
 import { z } from 'zod';
 
 import { zObjectId } from '@/_utils/zObjectId';
+import { zOptionalNonEmptyString } from '@/_utils/zOptionalNonEmptyString';
 
 export const zRecipeInterface = z.object({
 	_id: zObjectId,
 	ingredients: z.array(z.string()),
 	instructions: z.array(z.string()),
 	name: z.string().min(1, { error: 'Name is required' }),
-	notes: z.string().optional(),
+	notes: zOptionalNonEmptyString,
 	servings: z.number().optional(),
 	source: z
 		.object({
@@ -15,8 +16,29 @@ export const zRecipeInterface = z.object({
 			url: z.url().optional(),
 		})
 		.optional(),
-	storage: z.string().optional(),
+	storage: zOptionalNonEmptyString,
 	tags: z.array(zObjectId).optional(),
+	time: z
+		.object({
+			prep: zOptionalNonEmptyString,
+			cook: zOptionalNonEmptyString,
+			total: zOptionalNonEmptyString,
+			actual: zOptionalNonEmptyString,
+		})
+		.optional(),
+});
+
+// The form starts its optional fields at '', and the action leaves them out before it writes.
+export const zRecipeFormSchema = zRecipeInterface.omit({ _id: true }).extend({
+	plannerId: z.string(),
+	notes: z.string().optional(),
+	storage: z.string().optional(),
+	source: z
+		.object({
+			name: z.string(),
+			url: z.union([z.url(), z.literal('')]).optional(),
+		})
+		.optional(),
 	time: z
 		.object({
 			prep: z.string().optional(),
@@ -25,10 +47,6 @@ export const zRecipeInterface = z.object({
 			actual: z.string().optional(),
 		})
 		.optional(),
-});
-
-export const zRecipeFormSchema = zRecipeInterface.omit({ _id: true }).extend({
-	plannerId: z.string(),
 });
 
 export type RecipeInterface = z.infer<typeof zRecipeInterface>;
