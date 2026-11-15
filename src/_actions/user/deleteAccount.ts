@@ -2,8 +2,9 @@
 
 import { headers } from 'next/headers';
 
-import { auth, mongoClient } from '@/_auth';
+import { auth } from '@/_auth';
 import { sendAccountDeletionEmail } from '@/_auth/emails';
+import { deleteAuthUser } from '@/_auth/users';
 import { Planner } from '@/_models/planner';
 import { User } from '@/_models/user';
 import type { ActionResult } from '@/_utils/actionResult';
@@ -28,14 +29,7 @@ export const deleteAccount = async (): Promise<ActionResult> => {
 
 	await User.deleteOne({ email }).exec();
 
-	const db = mongoClient.db();
-	const baUser = await db.collection('user').findOne({ email });
-	if (baUser) {
-		await db.collection('account').deleteMany({ userId: baUser._id });
-		await db.collection('session').deleteMany({ userId: baUser._id });
-		await db.collection('verification').deleteMany({ userId: baUser._id });
-		await db.collection('user').deleteOne({ _id: baUser._id });
-	}
+	await deleteAuthUser(auth, email);
 
 	await sendAccountDeletionEmail({ email });
 

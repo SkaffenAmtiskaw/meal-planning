@@ -4,6 +4,15 @@ This doc is for anyone writing code in `src/`. It explains how the code is organ
 # Naming Conventions
 Files that Next.js names, such as `page.tsx` and `global-error.tsx`, keep the names Next.js gives them. Every other file name is camelCase, or UpperCamelCase for a React component's file, as is usual in JavaScript and TypeScript.
 
+Except in the two kinds of file below, a file's name leaves out what its directory already says, such as `users.ts` rather than `authUsers.ts` for the better-auth functions in `src/_auth/`. The directory already shows what area a file belongs to, so repeating it only makes the name longer. The two kinds of file that keep their directory's name:
+- **A module's main file in a directory of its own,** such as `src/_hooks/useEditMode/useEditMode.ts`, because the directory exists to hold that one module with its tests and parts.
+- **A React component's file,** such as `AuthLayout/AuthLayoutHeader.tsx`, because it shares its component's name. A component's name has to say what it is wherever the component is rendered, where its directory isn't shown.
+
+The names a file exports are a separate choice. They're read at the call site, without the path. So an export such as `findAuthUser` keeps "Auth", which tells better-auth's users apart from the app's own.
+
+# Comments
+A comment longer than one line is a `/** */` block, because an editor can fold the block away. A one-line comment uses `//`.
+
 # Imports
 When a path alias is shorter than the relative path, import through it, such as `@/_components` rather than `../../../../_components`. The aliases are in `tsconfig.json`, such as `@/` for `src/` and `#mocks/` for `test/mocks/`. An alias reads the same from any file, and doesn't break when the importing file moves.
 

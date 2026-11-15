@@ -1,9 +1,9 @@
 'use server';
 
-import { hashPassword } from 'better-auth/crypto';
 import { z } from 'zod';
 
-import { mongoClient } from '@/_auth';
+import { auth } from '@/_auth';
+import { addAuthUserPassword, changeAuthUserEmail } from '@/_auth/users';
 import { User } from '@/_models/user';
 import type { ActionResult } from '@/_utils/actionResult';
 
@@ -27,25 +27,11 @@ export const verifyEmailChangeAndSetPassword = async (
 
 	const currentEmail = user.email;
 	const newEmail = pendingChange.email;
-	const db = mongoClient.db();
 
-	const baUser = await db.collection('user').findOne({ email: currentEmail });
-	if (!baUser) return { ok: false, error: 'User not found.' };
+	if (!(await addAuthUserPassword(auth, currentEmail, password)))
+		return { ok: false, error: 'User not found.' };
 
-	const hash = await hashPassword(password);
-
-	await db.collection('account').insertOne({
-		userId: baUser._id,
-		providerId: 'credential',
-		accountId: String(baUser._id),
-		password: hash,
-		createdAt: new Date(),
-		updatedAt: new Date(),
-	});
-
-	await db
-		.collection('user')
-		.updateOne({ _id: baUser._id }, { $set: { email: newEmail } });
+	await changeAuthUserEmail(auth, currentEmail, newEmail);
 
 	await User.updateOne(
 		{ email: currentEmail },

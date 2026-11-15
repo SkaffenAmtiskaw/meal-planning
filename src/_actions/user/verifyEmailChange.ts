@@ -1,6 +1,7 @@
 'use server';
 
-import { mongoClient } from '@/_auth';
+import { auth } from '@/_auth';
+import { changeAuthUserEmail } from '@/_auth/users';
 import { User } from '@/_models/user';
 import type { ActionResult } from '@/_utils/actionResult';
 
@@ -19,11 +20,8 @@ export const verifyEmailChange = async (
 
 	const currentEmail = user.email;
 	const newEmail = pendingChange.email;
-	const db = mongoClient.db();
 
-	await db
-		.collection('user')
-		.updateOne({ email: currentEmail }, { $set: { email: newEmail } });
+	await changeAuthUserEmail(auth, currentEmail, newEmail);
 
 	await User.updateOne(
 		{ email: currentEmail },

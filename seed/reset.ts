@@ -1,4 +1,5 @@
 import { auth } from '#auth';
+import { deleteAuthUser } from '@/_auth/users';
 import { Planner } from '@/_models/planner';
 import { PendingInvite } from '@/_models/sharing';
 import { User } from '@/_models/user';
@@ -30,12 +31,7 @@ export const resetSeed = async () => {
 		$or: [{ planner: { $in: ownedPlanners } }, { email: { $in: emails } }],
 	});
 
-	const { internalAdapter, test } = await auth.$context;
-	for (const email of emails) {
-		const found = await internalAdapter.findUserByEmail(email);
-		// deleteUser also removes the user's sessions and accounts.
-		if (found) await test.deleteUser(found.user.id);
-	}
+	for (const email of emails) await deleteAuthUser(auth, email);
 
 	// Their memberships in other users' planners go with the doc.
 	await User.deleteMany({ email: { $in: emails } });

@@ -3,6 +3,7 @@ import { createServer, type ServerResponse } from 'node:http';
 import { parseCookies } from 'better-auth/cookies';
 
 import { auth, connectAuth } from '#auth';
+import { findAuthUser } from '@/_auth/users';
 import { env } from '@/env';
 
 import { SEEDED_USERS } from './users';
@@ -57,8 +58,8 @@ const server = createServer(async (request, response) => {
 		return;
 	}
 
-	const { internalAdapter, test, authCookies } = await auth.$context;
-	const found = await internalAdapter.findUserByEmail(seeded.email);
+	const { test, authCookies } = await auth.$context;
+	const found = await findAuthUser(auth, seeded.email);
 	if (!found) {
 		sendPage(
 			response,

@@ -2,12 +2,11 @@ import { afterEach, describe, expect, test, vi } from 'vitest';
 
 import { auth } from '@/_auth';
 import { sendEmailChangeEmail } from '@/_auth/emails';
+import { findAuthUser } from '@/_auth/users';
 import { User } from '@/_models/user';
 import { env } from '@/env';
 
 import { requestEmailChange } from './requestEmailChange';
-
-const mockDbFindOne = vi.hoisted(() => vi.fn());
 
 vi.mock('next/headers', async () => await import('#mocks/next/headers'));
 
@@ -17,14 +16,9 @@ vi.mock('@/_auth', () => ({
 			getSession: vi.fn(),
 		},
 	},
-	mongoClient: {
-		db: vi.fn(() => ({
-			collection: vi.fn(() => ({
-				findOne: mockDbFindOne,
-			})),
-		})),
-	},
 }));
+
+vi.mock('@/_auth/users', async () => await import('#mocks/@/_auth/users'));
 
 vi.mock('@/_models/user', async () => await import('#mocks/@/_models/user'));
 
@@ -99,7 +93,10 @@ describe('requestEmailChange', () => {
 			vi.mocked(auth.api.getSession).mockResolvedValueOnce(
 				mockSession as never,
 			);
-			mockDbFindOne.mockResolvedValueOnce({ _id: 'other-user' });
+			vi.mocked(findAuthUser).mockResolvedValueOnce({
+				user: {},
+				accounts: [],
+			} as never);
 
 			const result = await requestEmailChange('taken@example.com');
 
@@ -107,6 +104,7 @@ describe('requestEmailChange', () => {
 				ok: false,
 				error: 'An account with that email already exists.',
 			});
+			expect(findAuthUser).toHaveBeenCalledWith(auth, 'taken@example.com');
 		});
 	});
 
@@ -115,7 +113,6 @@ describe('requestEmailChange', () => {
 			vi.mocked(auth.api.getSession).mockResolvedValueOnce(
 				mockSession as never,
 			);
-			mockDbFindOne.mockResolvedValueOnce(null);
 			vi.mocked(User.findOne).mockReturnValueOnce({
 				exec: vi.fn().mockResolvedValue(null),
 			} as never);
@@ -131,7 +128,6 @@ describe('requestEmailChange', () => {
 			vi.mocked(auth.api.getSession).mockResolvedValueOnce(
 				mockSession as never,
 			);
-			mockDbFindOne.mockResolvedValueOnce(null);
 			const mockUser = makeMockUser({ pendingEmailChange: null });
 			vi.mocked(User.findOne).mockReturnValueOnce({
 				exec: vi.fn().mockResolvedValue(mockUser),
@@ -146,7 +142,6 @@ describe('requestEmailChange', () => {
 			vi.mocked(auth.api.getSession).mockResolvedValueOnce(
 				mockSession as never,
 			);
-			mockDbFindOne.mockResolvedValueOnce(null);
 			const mockUser = makeMockUser({
 				pendingEmailChange: {
 					email: 'old-pending@example.com',
@@ -169,7 +164,6 @@ describe('requestEmailChange', () => {
 			vi.mocked(auth.api.getSession).mockResolvedValueOnce(
 				mockSession as never,
 			);
-			mockDbFindOne.mockResolvedValueOnce(null);
 			const mockUser = makeMockUser();
 			vi.mocked(User.findOne).mockReturnValueOnce({
 				exec: vi.fn().mockResolvedValue(mockUser),
@@ -195,7 +189,6 @@ describe('requestEmailChange', () => {
 			vi.mocked(auth.api.getSession).mockResolvedValueOnce(
 				mockSession as never,
 			);
-			mockDbFindOne.mockResolvedValueOnce(null);
 			const mockUser = makeMockUser();
 			vi.mocked(User.findOne).mockReturnValueOnce({
 				exec: vi.fn().mockResolvedValue(mockUser),

@@ -6,8 +6,9 @@ import { headers } from 'next/headers';
 
 import { z } from 'zod';
 
-import { auth, mongoClient } from '@/_auth';
+import { auth } from '@/_auth';
 import { sendEmailChangeEmail } from '@/_auth/emails';
+import { findAuthUser } from '@/_auth/users';
 import { User } from '@/_models/user';
 import type { ActionResult } from '@/_utils/actionResult';
 import { env } from '@/env';
@@ -32,9 +33,7 @@ export const requestEmailChange = async (
 			error: 'New email must be different from your current email.',
 		};
 
-	const db = mongoClient.db();
-	const existing = await db.collection('user').findOne({ email: newEmail });
-	if (existing)
+	if (await findAuthUser(auth, newEmail))
 		return { ok: false, error: 'An account with that email already exists.' };
 
 	const user = await User.findOne({ email: currentEmail }).exec();

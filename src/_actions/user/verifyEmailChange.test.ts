@@ -1,22 +1,14 @@
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
 
+import { auth } from '@/_auth';
+import { changeAuthUserEmail } from '@/_auth/users';
 import { User } from '@/_models/user';
 
 import { verifyEmailChange } from './verifyEmailChange';
 
-const { mockUpdateOne, mockCollection } = vi.hoisted(() => {
-	const mockUpdateOne = vi.fn();
-	return {
-		mockUpdateOne,
-		mockCollection: vi.fn(() => ({ updateOne: mockUpdateOne })),
-	};
-});
+vi.mock('@/_auth', () => ({ auth: {} }));
 
-vi.mock('@/_auth', async () => ({
-	mongoClient: {
-		db: vi.fn(() => ({ collection: mockCollection })),
-	},
-}));
+vi.mock('@/_auth/users', async () => await import('#mocks/@/_auth/users'));
 
 vi.mock('@/_models/user', async () => await import('#mocks/@/_models/user'));
 
@@ -37,7 +29,6 @@ const setupValidUser = () => {
 	vi.mocked(User.findOne).mockReturnValueOnce({
 		exec: vi.fn().mockResolvedValue(makeMockUser()),
 	} as never);
-	mockUpdateOne.mockResolvedValueOnce({});
 	vi.mocked(User.updateOne).mockResolvedValueOnce({} as never);
 };
 
@@ -102,13 +93,13 @@ describe('verifyEmailChange', () => {
 			setupValidUser();
 		});
 
-		test('updates the email in the better-auth user collection', async () => {
+		test("changes the better-auth user's email", async () => {
 			await verifyEmailChange('valid-token');
 
-			expect(mockCollection).toHaveBeenCalledWith('user');
-			expect(mockUpdateOne).toHaveBeenCalledWith(
-				{ email: 'user@example.com' },
-				{ $set: { email: 'new@example.com' } },
+			expect(changeAuthUserEmail).toHaveBeenCalledWith(
+				auth,
+				'user@example.com',
+				'new@example.com',
 			);
 		});
 

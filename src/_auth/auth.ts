@@ -7,7 +7,7 @@ import { env } from '@/env';
 
 import { sendResetPasswordEmail, sendVerificationEmail } from './emails';
 
-export const mongoClient = new MongoClient(env.DB_URL);
+const mongoClient = new MongoClient(env.DB_URL);
 
 export const auth = betterAuth({
 	database: mongodbAdapter(mongoClient.db()),

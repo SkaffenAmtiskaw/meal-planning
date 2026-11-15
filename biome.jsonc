@@ -240,7 +240,7 @@
 								},
 								"patterns": [
 									{
-										"group": ["@/_actions/**", "@/_auth/**"],
+										"group": ["@/_actions/**", "@/_auth/**", "!@/_auth/users"],
 										"message": "Factories write only through @/_models and the test-only auth instance in test/auth.ts. See docs/e2e_tests.md."
 									}
 								]

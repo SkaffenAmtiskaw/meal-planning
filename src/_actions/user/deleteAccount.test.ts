@@ -2,22 +2,11 @@ import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import { auth } from '@/_auth';
 import { sendAccountDeletionEmail } from '@/_auth/emails';
+import { deleteAuthUser } from '@/_auth/users';
 import { Planner } from '@/_models/planner';
 import { User } from '@/_models/user';
 
 import { deleteAccount } from './deleteAccount';
-
-const { mockCollection, mockBaFindOne, mockBaDeleteMany, mockBaDeleteOne } =
-	vi.hoisted(() => ({
-		mockBaFindOne: vi.fn(),
-		mockBaDeleteMany: vi.fn(),
-		mockBaDeleteOne: vi.fn(),
-		mockCollection: vi.fn(() => ({
-			findOne: mockBaFindOne,
-			deleteMany: mockBaDeleteMany,
-			deleteOne: mockBaDeleteOne,
-		})),
-	}));
 
 vi.mock('next/headers', async () => await import('#mocks/next/headers'));
 
@@ -34,10 +23,9 @@ vi.mock('@/_auth', () => ({
 			getSession: vi.fn(),
 		},
 	},
-	mongoClient: {
-		db: vi.fn(() => ({ collection: mockCollection })),
-	},
 }));
+
+vi.mock('@/_auth/users', async () => await import('#mocks/@/_auth/users'));
 
 vi.mock('@/_auth/emails', () => ({
 	sendAccountDeletionEmail: vi.fn(),
@@ -46,8 +34,6 @@ vi.mock('@/_auth/emails', () => ({
 const mockSession = {
 	user: { id: 'ba-user-id', email: 'user@example.com' },
 };
-
-const baUser = { _id: 'ba-mongo-id' };
 
 const makeAppUser = (plannerIds: string[] = []) => ({
 	email: 'user@example.com',
@@ -62,7 +48,6 @@ const setupSuccess = (plannerIds: string[] = []) => {
 	vi.mocked(User.deleteOne).mockReturnValueOnce({
 		exec: vi.fn().mockResolvedValue({}),
 	} as never);
-	mockBaFindOne.mockResolvedValueOnce(baUser);
 };
 
 describe('deleteAccount', () => {
@@ -114,7 +99,6 @@ describe('deleteAccount', () => {
 			vi.mocked(Planner.deleteOne).mockReturnValue({
 				exec: vi.fn().mockResolvedValue({}),
 			} as never);
-			mockBaFindOne.mockResolvedValueOnce(baUser);
 
 			await deleteAccount();
 
@@ -135,7 +119,6 @@ describe('deleteAccount', () => {
 			vi.mocked(User.deleteOne).mockReturnValueOnce({
 				exec: vi.fn().mockResolvedValue({}),
 			} as never);
-			mockBaFindOne.mockResolvedValueOnce(baUser);
 
 			await deleteAccount();
 
@@ -154,50 +137,12 @@ describe('deleteAccount', () => {
 			});
 		});
 
-		it('looks up the better-auth user by email', async () => {
+		it('deletes the better-auth user by email', async () => {
 			setupSuccess();
 
 			await deleteAccount();
 
-			expect(mockBaFindOne).toHaveBeenCalledWith({ email: 'user@example.com' });
-		});
-
-		it('deletes better-auth account, session, and verification records', async () => {
-			setupSuccess();
-
-			await deleteAccount();
-
-			expect(mockCollection).toHaveBeenCalledWith('account');
-			expect(mockCollection).toHaveBeenCalledWith('session');
-			expect(mockCollection).toHaveBeenCalledWith('verification');
-			expect(mockBaDeleteMany).toHaveBeenCalledWith({ userId: baUser._id });
-		});
-
-		it('deletes the better-auth user record', async () => {
-			setupSuccess();
-
-			await deleteAccount();
-
-			expect(mockCollection).toHaveBeenCalledWith('user');
-			expect(mockBaDeleteOne).toHaveBeenCalledWith({ _id: baUser._id });
-		});
-
-		it('skips better-auth cleanup when no better-auth user exists', async () => {
-			vi.mocked(auth.api.getSession).mockResolvedValueOnce(
-				mockSession as never,
-			);
-			vi.mocked(User.findOne).mockReturnValueOnce({
-				exec: vi.fn().mockResolvedValue(makeAppUser([])),
-			} as never);
-			vi.mocked(User.deleteOne).mockReturnValueOnce({
-				exec: vi.fn().mockResolvedValue({}),
-			} as never);
-			mockBaFindOne.mockResolvedValueOnce(null);
-
-			await deleteAccount();
-
-			expect(mockBaDeleteMany).not.toHaveBeenCalled();
-			expect(mockBaDeleteOne).not.toHaveBeenCalled();
+			expect(deleteAuthUser).toHaveBeenCalledWith(auth, 'user@example.com');
 		});
 	});
 
