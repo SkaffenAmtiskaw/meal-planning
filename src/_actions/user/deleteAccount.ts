@@ -18,11 +18,12 @@ export const deleteAccount = async (): Promise<ActionResult> => {
 	const user = await User.findOne({ email }).exec();
 	if (!user) return { ok: false, error: 'User not found.' };
 
-	for (const plannerId of user.planners) {
-		const ownerCount = await User.countDocuments({
-			planners: plannerId,
+	// A planner the user was the only member of goes with them; a planner shared with others stays.
+	for (const { planner: plannerId } of user.planners) {
+		const memberCount = await User.countDocuments({
+			'planners.planner': plannerId,
 		}).exec();
-		if (ownerCount === 1) {
+		if (memberCount === 1) {
 			await Planner.deleteOne({ _id: plannerId }).exec();
 		}
 	}

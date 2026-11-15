@@ -1,6 +1,6 @@
 import { DateTime } from 'luxon';
 
-import { newObjectId } from '#factories/objectId';
+import { newId } from '#factories/id';
 
 import {
 	type BrowserContext,
@@ -25,7 +25,7 @@ const openCalendarWithMeal = async (
 	context: BrowserContext,
 	date: DateTime<true>,
 ) => {
-	const recipeId = newObjectId();
+	const recipeId = newId();
 	const planner = await openPlannerCalendar(page, context, {
 		saved: [
 			{

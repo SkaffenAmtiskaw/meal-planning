@@ -1,7 +1,6 @@
 import { afterEach, describe, expect, test, vi } from 'vitest';
 
-import { Types } from 'mongoose';
-
+import { newId } from '@/_models/database/newId';
 import { Planner } from '@/_models/planner';
 
 import { getPlanner } from './getPlanner';
@@ -12,7 +11,7 @@ vi.mock('@/_models/planner', () => ({
 	},
 }));
 describe('getPlanner', () => {
-	const mockId = new Types.ObjectId();
+	const mockId = newId();
 
 	afterEach(() => {
 		vi.resetAllMocks();

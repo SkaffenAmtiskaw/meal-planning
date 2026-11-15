@@ -1,8 +1,7 @@
 import { afterEach, describe, expect, test, vi } from 'vitest';
 
-import { Types } from 'mongoose';
-
 import { getPlanner } from '@/_actions/planner';
+import { newId } from '@/_models/database/newId';
 import { matchesId } from '@/_utils/matchesId';
 
 import { getSavedItem } from './getSavedItem';
@@ -16,8 +15,8 @@ vi.mock('@/_utils/matchesId', () => ({
 }));
 
 describe('getSavedItem', () => {
-	const plannerId = new Types.ObjectId();
-	const itemId = new Types.ObjectId();
+	const plannerId = newId();
+	const itemId = newId();
 	const mockItem = { _id: itemId, name: 'Maleficent Mushroom Soup' };
 
 	afterEach(() => {

@@ -1,10 +1,7 @@
 import { afterEach, describe, expect, test, vi } from 'vitest';
 
-import { Types } from 'mongoose';
-
 import { checkAuth } from '@/_actions/auth/checkAuth';
 import { Planner } from '@/_models/planner';
-import { zObjectId } from '@/_utils/zObjectId';
 
 import { updatePlannerName } from './updatePlannerName';
 
@@ -21,12 +18,6 @@ vi.mock('@/_models/planner', () => ({
 	},
 }));
 
-vi.mock('@/_utils/zObjectId', () => ({
-	zObjectId: {
-		safeParse: vi.fn(() => ({ success: true })),
-	},
-}));
-
 const validId = '507f1f77bcf86cd799439011';
 
 describe('updatePlannerName', () => {
@@ -35,11 +26,6 @@ describe('updatePlannerName', () => {
 	});
 
 	test('returns error when planner ID is invalid', async () => {
-		vi.mocked(zObjectId.safeParse).mockReturnValueOnce({
-			success: false,
-			error: { issues: [{ message: 'Invalid ObjectId' }] },
-		} as never);
-
 		const result = await updatePlannerName('not-an-id', 'New Name');
 
 		expect(result).toEqual({ ok: false, error: 'Invalid planner ID.' });
@@ -87,9 +73,9 @@ describe('updatePlannerName', () => {
 	test('updates planner name when authorized', async () => {
 		const result = await updatePlannerName(validId, 'New Name');
 
-		expect(checkAuth).toHaveBeenCalledWith(expect.any(Types.ObjectId), 'admin');
+		expect(checkAuth).toHaveBeenCalledWith(validId, 'admin');
 		expect(Planner.collection.updateOne).toHaveBeenCalledWith(
-			{ _id: expect.objectContaining({}) },
+			{ _id: validId },
 			{ $set: { name: 'New Name' } },
 		);
 		expect(result).toEqual({ ok: true, data: undefined });

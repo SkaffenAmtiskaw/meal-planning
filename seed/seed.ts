@@ -1,10 +1,9 @@
 import 'temporal-polyfill/global';
 
-import { Types } from 'mongoose';
-
 import { createPlanner } from '#factories/planner';
 import { createUser } from '#factories/user';
 import type { DayInterface } from '@/_models/calendar';
+import { newId } from '@/_models/database/newId';
 import type { BookmarkInterface, RecipeInterface } from '@/_models/library';
 import { TAG_COLOR_NAMES } from '@/_theme/colors';
 
@@ -13,9 +12,9 @@ import { resetSeed } from './reset';
 import { DEV_PASSWORD, SEEDED_USERS } from './users';
 
 const tagIds = {
-	quick: new Types.ObjectId(),
-	vegetarian: new Types.ObjectId(),
-	familyFavorite: new Types.ObjectId(),
+	quick: newId(),
+	vegetarian: newId(),
+	familyFavorite: newId(),
 };
 
 // Colors in the order the app's addTag assigns them.
@@ -30,10 +29,10 @@ const tags = [
 ];
 
 const recipeIds = {
-	chicken: new Types.ObjectId(),
-	tacos: new Types.ObjectId(),
-	risotto: new Types.ObjectId(),
-	oats: new Types.ObjectId(),
+	chicken: newId(),
+	tacos: newId(),
+	risotto: newId(),
+	oats: newId(),
 };
 
 const recipes: RecipeInterface[] = [
@@ -118,13 +117,13 @@ const recipes: RecipeInterface[] = [
 
 const bookmarks: BookmarkInterface[] = [
 	{
-		_id: new Types.ObjectId(),
+		_id: newId(),
 		name: 'Weeknight Pasta Ideas',
 		url: 'https://example.com/weeknight-pasta',
 		tags: [tagIds.quick],
 	},
 	{
-		_id: new Types.ObjectId(),
+		_id: newId(),
 		name: 'Sheet Pan Dinners',
 		url: 'https://example.com/sheet-pan-dinners',
 		tags: [],

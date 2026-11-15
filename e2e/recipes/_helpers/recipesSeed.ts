@@ -1,4 +1,4 @@
-import { newObjectId } from '#factories/objectId';
+import { newId } from '#factories/id';
 import type { createPlanner } from '#factories/planner';
 import { TAG_COLOR_NAMES } from '@/_theme/colors';
 
@@ -10,13 +10,13 @@ type SeedTag = NonNullable<PlannerOverrides['tags']>[number];
 export const recipesSeed = () => {
 	// Coloured in the order addTag assigns colours.
 	const tags = [
-		{ _id: newObjectId(), name: 'Enchanted Supper', color: TAG_COLOR_NAMES[0] },
-		{ _id: newObjectId(), name: 'Royal Feast', color: TAG_COLOR_NAMES[1] },
+		{ _id: newId(), name: 'Enchanted Supper', color: TAG_COLOR_NAMES[0] },
+		{ _id: newId(), name: 'Royal Feast', color: TAG_COLOR_NAMES[1] },
 	] satisfies SeedTag[];
 
 	// No url, which is how the app tells a recipe from a bookmark.
 	const recipe = {
-		_id: newObjectId(),
+		_id: newId(),
 		name: "Tiana's Beignets",
 		source: { name: 'Bayou Kitchen', url: 'https://example.com/beignets' },
 		time: {
@@ -34,7 +34,7 @@ export const recipesSeed = () => {
 	} satisfies SavedItem;
 
 	const bookmark = {
-		_id: newObjectId(),
+		_id: newId(),
 		name: "Ratatouille from Gusteau's",
 		url: 'https://example.com/ratatouille',
 		tags: [tags[1]._id],

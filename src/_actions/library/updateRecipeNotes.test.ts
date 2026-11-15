@@ -2,9 +2,8 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { revalidatePath } from 'next/cache';
 
-import { Types } from 'mongoose';
-
 import { checkAuth } from '@/_actions/auth/checkAuth';
+import { newId } from '@/_models/database/newId';
 import { Planner } from '@/_models/planner';
 
 import { updateRecipeNotes } from './updateRecipeNotes';
@@ -23,8 +22,8 @@ vi.mock(
 	async () => await import('#mocks/@/_models/planner'),
 );
 
-const plannerId = new Types.ObjectId().toString();
-const recipeId = new Types.ObjectId().toString();
+const plannerId = newId();
+const recipeId = newId();
 
 const validData = { plannerId, recipeId, notes: 'Great recipe' };
 
@@ -74,7 +73,7 @@ describe('updateRecipeNotes', () => {
 	it('calls checkAuth with write access', async () => {
 		await updateRecipeNotes(validData);
 
-		expect(checkAuth).toHaveBeenCalledWith(expect.any(Types.ObjectId), 'write');
+		expect(checkAuth).toHaveBeenCalledWith(plannerId, 'write');
 	});
 
 	it('returns recipe not found error when recipe is not found', async () => {
@@ -92,8 +91,8 @@ describe('updateRecipeNotes', () => {
 
 		expect(Planner.collection.updateOne).toHaveBeenCalledWith(
 			expect.objectContaining({
-				_id: expect.any(Types.ObjectId),
-				'saved._id': expect.any(Types.ObjectId),
+				_id: plannerId,
+				'saved._id': recipeId,
 			}),
 			{ $set: { 'saved.$.notes': 'Great recipe' } },
 		);
@@ -104,8 +103,8 @@ describe('updateRecipeNotes', () => {
 
 		expect(Planner.collection.updateOne).toHaveBeenCalledWith(
 			expect.objectContaining({
-				_id: expect.any(Types.ObjectId),
-				'saved._id': expect.any(Types.ObjectId),
+				_id: plannerId,
+				'saved._id': recipeId,
 			}),
 			{ $unset: { 'saved.$.notes': '' } },
 		);

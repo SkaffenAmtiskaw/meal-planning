@@ -1,7 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-import { Types } from 'mongoose';
-
 import { checkAuth } from '@/_actions/auth/checkAuth';
 import { PendingInvite } from '@/_models/sharing';
 import { reportError } from '@/_utils/reportError';
@@ -49,7 +47,7 @@ describe('cancelInvite', () => {
 			success: false,
 			error: 'Unauthorized',
 		});
-		expect(checkAuth).toHaveBeenCalledWith(expect.any(Types.ObjectId), 'admin');
+		expect(checkAuth).toHaveBeenCalledWith(plannerId, 'admin');
 		expect(PendingInvite.findOne).not.toHaveBeenCalled();
 		expect(PendingInvite.deleteOne).not.toHaveBeenCalled();
 	});
@@ -109,8 +107,8 @@ describe('cancelInvite', () => {
 			error: 'Invite not found',
 		});
 		expect(PendingInvite.findOne).toHaveBeenCalledWith({
-			_id: expect.any(Types.ObjectId),
-			planner: expect.any(Types.ObjectId),
+			_id: inviteId,
+			planner: plannerId,
 		});
 		expect(PendingInvite.deleteOne).not.toHaveBeenCalled();
 	});
@@ -129,11 +127,11 @@ describe('cancelInvite', () => {
 			success: true,
 		});
 		expect(PendingInvite.findOne).toHaveBeenCalledWith({
-			_id: expect.any(Types.ObjectId),
-			planner: expect.any(Types.ObjectId),
+			_id: inviteId,
+			planner: plannerId,
 		});
 		expect(PendingInvite.deleteOne).toHaveBeenCalledWith({
-			_id: expect.any(Types.ObjectId),
+			_id: inviteId,
 		});
 	});
 

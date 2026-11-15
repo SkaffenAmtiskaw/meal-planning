@@ -19,7 +19,7 @@ test('a used invite shows Invalid Invite', async ({ page }) => {
 	} = await inviteToNewPlanner();
 
 	await page.goto(`/invite?token=${token}`);
-	await signUpFromInvite(page, planner._id.toString(), 'e2e-password');
+	await signUpFromInvite(page, planner._id, 'e2e-password');
 
 	await page.goto(`/invite?token=${token}`);
 

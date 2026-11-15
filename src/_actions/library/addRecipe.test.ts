@@ -1,8 +1,7 @@
 import { afterEach, describe, expect, test, vi } from 'vitest';
 
-import { Types } from 'mongoose';
-
 import { checkAuth } from '@/_actions/auth/checkAuth';
+import { newId } from '@/_models/database/newId';
 import { zRecipeFormSchema } from '@/_models/library';
 import { Planner } from '@/_models/planner';
 
@@ -28,7 +27,7 @@ vi.mock('@/_models/planner', () => ({
 		findById: vi.fn(),
 	},
 }));
-const plannerId = new Types.ObjectId().toString();
+const plannerId = newId();
 
 const validData = {
 	plannerId,
@@ -43,12 +42,10 @@ describe('addRecipe', () => {
 	});
 
 	const makePlanner = () => {
-		const saved: Array<{ _id: Types.ObjectId } & Record<string, unknown>> = [];
+		const saved: Array<{ _id: string } & Record<string, unknown>> = [];
 		const originalPush = Array.prototype.push.bind(saved);
 		saved.push = (...items: Record<string, unknown>[]) =>
-			originalPush(
-				...items.map((item) => ({ _id: new Types.ObjectId(), ...item })),
-			);
+			originalPush(...items.map((item) => ({ _id: newId(), ...item })));
 		return { saved, save: vi.fn().mockResolvedValue(undefined) };
 	};
 
@@ -110,7 +107,7 @@ describe('addRecipe', () => {
 			servings: 12,
 			source: { name: 'Bakery Blog', url: 'https://example.com' },
 			time: { prep: '30m', cook: '20m', total: '50m', actual: '55m' },
-			tags: [new Types.ObjectId().toString()],
+			tags: [newId()],
 		});
 
 		expect(result.ok).toBe(true);

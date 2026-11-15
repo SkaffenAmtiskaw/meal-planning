@@ -1,11 +1,10 @@
 'use server';
 
-import { Types } from 'mongoose';
-
 import { checkAuth } from '@/_actions/auth/checkAuth';
 import { PendingInvite as PendingInviteModel } from '@/_models/sharing';
 import { reportError } from '@/_utils/reportError';
 import { serialize } from '@/_utils/serialize';
+import { zId } from '@/_utils/zId';
 
 import type { PendingInvite } from './invite.types';
 
@@ -20,13 +19,13 @@ export const getPendingInvites = async (
 	plannerId: string,
 ): Promise<GetPendingInvitesResult> => {
 	try {
-		// Validate plannerId is a valid ObjectId
-		if (!Types.ObjectId.isValid(plannerId)) {
+		// Validate plannerId has the shape of an id
+		if (!zId.safeParse(plannerId).success) {
 			return { invites: [], error: 'Unauthorized' };
 		}
 
 		// Verify caller is authenticated and has admin access
-		const authResult = await checkAuth(new Types.ObjectId(plannerId), 'admin');
+		const authResult = await checkAuth(plannerId, 'admin');
 
 		if (
 			authResult.type === 'unauthenticated' ||

@@ -2,7 +2,6 @@
 
 import { revalidatePath } from 'next/cache';
 
-import { Types } from 'mongoose';
 import { z } from 'zod';
 
 import { checkAuth } from '@/_actions/auth/checkAuth';
@@ -24,13 +23,13 @@ export const editBookmark = async (
 		notes,
 	} = zEditBookmarkSchema.parse(data);
 
-	const auth = await checkAuth(new Types.ObjectId(plannerId), 'write');
+	const auth = await checkAuth(plannerId, 'write');
 	if (auth.type !== 'authorized') return { ok: false, error: 'Unauthorized' };
 
 	const $set: Record<string, unknown> = {
 		'saved.$.name': name,
 		'saved.$.url': url,
-		'saved.$.tags': tags.map((t) => new Types.ObjectId(String(t))),
+		'saved.$.tags': tags,
 	};
 	const updateOp: Record<string, unknown> = { $set };
 	if (notes) {
@@ -40,10 +39,7 @@ export const editBookmark = async (
 	}
 
 	const result = await Planner.collection.updateOne(
-		{
-			_id: new Types.ObjectId(plannerId),
-			'saved._id': new Types.ObjectId(bookmarkId),
-		},
+		{ _id: plannerId, 'saved._id': bookmarkId } as object,
 		updateOp,
 	);
 

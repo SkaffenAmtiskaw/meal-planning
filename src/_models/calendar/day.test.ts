@@ -1,10 +1,13 @@
 import { describe, expect, test } from 'vitest';
 
-import { model, Schema, Types } from 'mongoose';
+import { model, Schema } from 'mongoose';
 
 import { daySchema, zDayInterface } from './day';
 
-const recipeId = new Types.ObjectId().toString();
+import { newId } from '../database/newId';
+
+const recipeId = newId();
+const idPattern = /^[0-9a-f]{24}$/;
 
 describe('day interface', () => {
 	test('accepts a valid day with no meals', () => {
@@ -46,7 +49,7 @@ describe('day interface', () => {
 		).toBe(true);
 	});
 
-	test('accepts a dish with a plain string source', () => {
+	test('rejects a dish with a plain text source that is not an id', () => {
 		expect(
 			zDayInterface.safeParse({
 				date: '2026-03-27',
@@ -57,7 +60,7 @@ describe('day interface', () => {
 					},
 				],
 			}).success,
-		).toBe(true);
+		).toBe(false);
 	});
 
 	test('accepts a dish with a URL source', () => {
@@ -98,7 +101,7 @@ describe('day interface', () => {
 		).toBe(true);
 	});
 
-	test('accepts a dish with an ObjectId source referencing a saved recipe', () => {
+	test('accepts a dish with an id source referencing a saved recipe', () => {
 		expect(
 			zDayInterface.safeParse({
 				date: '2026-03-27',
@@ -174,8 +177,8 @@ describe('day schema', () => {
 		expect(day).toMatchObject({
 			meals: [
 				{
-					_id: expect.any(Types.ObjectId),
-					dishes: [{ _id: expect.any(Types.ObjectId) }],
+					_id: expect.stringMatching(idPattern),
+					dishes: [{ _id: expect.stringMatching(idPattern) }],
 				},
 			],
 		});

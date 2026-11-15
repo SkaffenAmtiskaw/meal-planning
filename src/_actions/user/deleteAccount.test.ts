@@ -37,7 +37,7 @@ const mockSession = {
 
 const makeAppUser = (plannerIds: string[] = []) => ({
 	email: 'user@example.com',
-	planners: plannerIds,
+	planners: plannerIds.map((planner) => ({ planner, accessLevel: 'owner' })),
 });
 
 const setupSuccess = (plannerIds: string[] = []) => {
@@ -80,49 +80,62 @@ describe('deleteAccount', () => {
 		});
 	});
 
-	describe('planner cleanup', () => {
-		it('deletes planners that are solely owned by the user', async () => {
-			vi.mocked(auth.api.getSession).mockResolvedValueOnce(
-				mockSession as never,
-			);
-			vi.mocked(User.findOne).mockReturnValueOnce({
-				exec: vi
-					.fn()
-					.mockResolvedValue(makeAppUser(['planner-1', 'planner-2'])),
-			} as never);
-			vi.mocked(User.countDocuments)
-				.mockReturnValueOnce({ exec: vi.fn().mockResolvedValue(1) } as never)
-				.mockReturnValueOnce({ exec: vi.fn().mockResolvedValue(1) } as never);
-			vi.mocked(User.deleteOne).mockReturnValueOnce({
-				exec: vi.fn().mockResolvedValue({}),
-			} as never);
+	describe("the deleted user's planners", () => {
+		/**
+		 * Sets up the deleting user and every other stored user by their planner memberships. The count of a
+		 * planner's members is worked out from them, as the database would, so each test reads as who belongs where.
+		 */
+		const givenMembers = ({
+			deletingUser,
+			otherUsers = [],
+		}: {
+			deletingUser: string[];
+			otherUsers?: string[][];
+		}) => {
+			setupSuccess(deletingUser);
+			const everyone = [deletingUser, ...otherUsers];
+			vi.mocked(User.countDocuments).mockImplementation(((filter: {
+				'planners.planner': string;
+			}) => ({
+				exec: async () =>
+					everyone.filter((planners) =>
+						planners.includes(filter['planners.planner']),
+					).length,
+			})) as never);
 			vi.mocked(Planner.deleteOne).mockReturnValue({
 				exec: vi.fn().mockResolvedValue({}),
 			} as never);
+		};
+
+		it('deletes a planner the user was the only member of', async () => {
+			givenMembers({ deletingUser: ['solo-planner'] });
 
 			await deleteAccount();
 
-			expect(Planner.deleteOne).toHaveBeenCalledWith({ _id: 'planner-1' });
-			expect(Planner.deleteOne).toHaveBeenCalledWith({ _id: 'planner-2' });
+			expect(Planner.deleteOne).toHaveBeenCalledWith({ _id: 'solo-planner' });
 		});
 
-		it('does not delete planners shared with other users', async () => {
-			vi.mocked(auth.api.getSession).mockResolvedValueOnce(
-				mockSession as never,
-			);
-			vi.mocked(User.findOne).mockReturnValueOnce({
-				exec: vi.fn().mockResolvedValue(makeAppUser(['shared-planner'])),
-			} as never);
-			vi.mocked(User.countDocuments).mockReturnValueOnce({
-				exec: vi.fn().mockResolvedValue(2),
-			} as never);
-			vi.mocked(User.deleteOne).mockReturnValueOnce({
-				exec: vi.fn().mockResolvedValue({}),
-			} as never);
+		it('keeps a planner that another user is also a member of', async () => {
+			givenMembers({
+				deletingUser: ['shared-planner'],
+				otherUsers: [['shared-planner']],
+			});
 
 			await deleteAccount();
 
 			expect(Planner.deleteOne).not.toHaveBeenCalled();
+		});
+
+		it('deletes only the planners no one else is a member of', async () => {
+			givenMembers({
+				deletingUser: ['solo-planner', 'shared-planner'],
+				otherUsers: [['shared-planner'], ['unrelated-planner']],
+			});
+
+			await deleteAccount();
+
+			expect(Planner.deleteOne).toHaveBeenCalledTimes(1);
+			expect(Planner.deleteOne).toHaveBeenCalledWith({ _id: 'solo-planner' });
 		});
 	});
 

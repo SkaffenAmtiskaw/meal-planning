@@ -1,14 +1,12 @@
 'use server';
 
-import type { Types } from 'mongoose';
-
 import { addPlanner } from '@/_actions/planner';
 import type { AccessLevel } from '@/_models/user';
 import { User } from '@/_models/user';
 
 export interface AddUserOptions {
 	email: string;
-	plannerId?: Types.ObjectId;
+	plannerId?: string;
 	name?: string;
 	skipPlannerCreation?: boolean;
 	accessLevel?: AccessLevel;
@@ -22,25 +20,25 @@ function isAddUserOptions(arg: unknown): arg is AddUserOptions {
 export async function addUser(options: AddUserOptions): Promise<{
 	email: string;
 	name: string;
-	planners: { planner: Types.ObjectId; accessLevel: AccessLevel }[];
+	planners: { planner: string; accessLevel: AccessLevel }[];
 }>;
 export async function addUser(
 	email: string,
-	plannerId?: Types.ObjectId,
+	plannerId?: string,
 	name?: string,
 ): Promise<{
 	email: string;
 	name: string;
-	planners: { planner: Types.ObjectId; accessLevel: AccessLevel }[];
+	planners: { planner: string; accessLevel: AccessLevel }[];
 }>;
 export async function addUser(
 	arg1: AddUserOptions | string,
-	arg2?: Types.ObjectId,
+	arg2?: string,
 	arg3?: string,
 ): Promise<{
 	email: string;
 	name: string;
-	planners: { planner: Types.ObjectId; accessLevel: AccessLevel }[];
+	planners: { planner: string; accessLevel: AccessLevel }[];
 }> {
 	// Normalize to options object
 	let options: AddUserOptions;
@@ -67,7 +65,7 @@ export async function addUser(
 	} = options;
 
 	// Determine planner to use
-	let id: Types.ObjectId;
+	let id: string;
 	let isNewPlanner: boolean;
 
 	if (plannerId) {
@@ -90,7 +88,7 @@ export async function addUser(
 	const userData: {
 		email: string;
 		name: string;
-		planners: { planner: Types.ObjectId; accessLevel: AccessLevel }[];
+		planners: { planner: string; accessLevel: AccessLevel }[];
 		emailVerified?: boolean;
 	} = {
 		email,

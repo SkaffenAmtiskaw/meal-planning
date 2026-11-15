@@ -10,13 +10,6 @@ import RecipePage from './page';
 import { RecipeForm } from '../_components/Modal/RecipeForm';
 import { RecipeDetail } from './_components/RecipeDetail';
 
-vi.mock('@/_utils/zObjectId', async () => {
-	const { z } = await import('zod');
-	return {
-		zObjectId: z.string(),
-	};
-});
-
 vi.mock('@/_utils/matchesId', () => ({
 	matchesId: vi.fn(
 		(id: string) => (item: { _id: { toString: () => string } }) =>

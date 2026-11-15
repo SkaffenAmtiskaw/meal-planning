@@ -1,6 +1,6 @@
 import { describe, expect, test, vi } from 'vitest';
 
-import { Types } from 'mongoose';
+import { model } from 'mongoose';
 
 // vite resolves the full importer graph when bookmark.ts is loaded, which causes planner.ts
 // to be executed. planner.ts then imports '@/_models/library' (the same bookmark.ts
@@ -14,8 +14,10 @@ import {
 	zBookmarkInterface,
 } from './bookmark';
 
-const bookmarkId = new Types.ObjectId().toString();
-const tagId = new Types.ObjectId().toString();
+import { newId } from '../database/newId';
+
+const bookmarkId = newId();
+const tagId = newId();
 
 const validBookmark = {
 	_id: bookmarkId,
@@ -42,7 +44,7 @@ describe('bookmark interface', () => {
 		).toBe(false);
 	});
 
-	test('rejects a bookmark with an invalid tag ObjectId', () => {
+	test('rejects a bookmark with an invalid tag id', () => {
 		expect(
 			zBookmarkInterface.safeParse({
 				...validBookmark,
@@ -82,13 +84,16 @@ describe('bookmark interface', () => {
 });
 
 describe('bookmark schema', () => {
-	test('_id is not explicitly defined (Mongoose auto-adds it)', () => {
-		expect((bookmarkSchema.obj as Record<string, unknown>)._id).toBeUndefined();
+	test('gives a new bookmark a string _id', () => {
+		const Bookmark = model('BookmarkSchemaTest', bookmarkSchema);
+		const { _id } = new Bookmark({ name: "Ursula's Sea Spells" }).toObject();
+
+		expect(_id).toMatch(/^[0-9a-f]{24}$/);
 	});
 });
 
 describe('zBookmarkFormSchema', () => {
-	const plannerId = new Types.ObjectId().toString();
+	const plannerId = newId();
 
 	const validForm = {
 		name: "Ursula's Sea Spell Collection",

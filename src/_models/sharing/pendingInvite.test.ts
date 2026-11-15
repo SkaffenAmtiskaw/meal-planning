@@ -1,7 +1,5 @@
 import { describe, expect, test, vi } from 'vitest';
 
-import { Types } from 'mongoose';
-
 vi.mock('mongoose', async (importOriginal) => {
 	const actual = await importOriginal<typeof import('mongoose')>();
 	return { ...actual, models: {}, model: vi.fn().mockReturnValue({}) };
@@ -9,8 +7,10 @@ vi.mock('mongoose', async (importOriginal) => {
 
 import { zPendingInvite } from './pendingInvite';
 
-const plannerId = new Types.ObjectId().toString();
-const invitedById = new Types.ObjectId().toString();
+import { newId } from '../database/newId';
+
+const plannerId = newId();
+const invitedById = newId();
 
 describe('pendingInvite interface', () => {
 	test('accepts a valid pending invite', () => {
@@ -79,7 +79,7 @@ describe('pendingInvite interface', () => {
 		).toBe(false);
 	});
 
-	test('rejects invalid planner ObjectId', () => {
+	test('rejects invalid planner id', () => {
 		expect(
 			zPendingInvite.safeParse({
 				email: 'guest@villainslair.example.com',
@@ -92,7 +92,7 @@ describe('pendingInvite interface', () => {
 		).toBe(false);
 	});
 
-	test('rejects invalid invitedBy ObjectId', () => {
+	test('rejects invalid invitedBy id', () => {
 		expect(
 			zPendingInvite.safeParse({
 				email: 'guest@villainslair.example.com',

@@ -1,12 +1,19 @@
 import type { Model } from 'mongoose';
 // mongoose doesn't export `models` to ES modules, so it's read from the default export.
-import mongoose, { model, Schema, SchemaTypes } from 'mongoose';
+import mongoose, { model, Schema } from 'mongoose';
 
 import type { UserInterface } from './user.types';
 
+import { newId } from '../database/newId';
+
 export * from './user.types';
 
-export const userSchema = new Schema<UserInterface>({
+// The zod schema gets its required `_id` once each creator sets one.
+type StoredUser = UserInterface & { _id: string };
+
+// Mongoose won't save a String `_id` it isn't given, so each `_id` defaults to a new one until its creator sets it.
+export const userSchema = new Schema<StoredUser>({
+	_id: { type: String, default: newId },
 	email: {
 		type: String,
 		required: true,
@@ -18,9 +25,9 @@ export const userSchema = new Schema<UserInterface>({
 	},
 	planners: [
 		{
+			_id: { type: String, default: newId },
 			planner: {
-				type: SchemaTypes.ObjectId,
-				ref: 'Planner',
+				type: String,
 				required: true,
 			},
 			accessLevel: {
@@ -39,5 +46,5 @@ export const userSchema = new Schema<UserInterface>({
 
 userSchema.index({ 'planners.planner': 1 });
 
-export const User: Model<UserInterface> =
-	mongoose.models.User || model<UserInterface>('User', userSchema);
+export const User: Model<StoredUser> =
+	mongoose.models.User || model<StoredUser>('User', userSchema);

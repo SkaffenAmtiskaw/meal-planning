@@ -2,7 +2,6 @@
 
 import { randomUUID } from 'node:crypto';
 
-import { Types } from 'mongoose';
 import { z } from 'zod';
 
 import { checkAuth } from '@/_actions/auth/checkAuth';
@@ -15,6 +14,7 @@ import type { ActionResult } from '@/_utils/actionResult';
 import { catchify } from '@/_utils/catchify';
 import { reportError } from '@/_utils/reportError';
 import { serialize } from '@/_utils/serialize';
+import { zId } from '@/_utils/zId';
 import { env } from '@/env';
 
 export interface InviteUserInput {
@@ -39,12 +39,12 @@ export const inviteUser = async (
 	}
 
 	// 2. Verify caller is authenticated and has 'admin' access to the planner
-	if (!Types.ObjectId.isValid(plannerId)) {
+	if (!zId.safeParse(plannerId).success) {
 		return { ok: false, error: 'Unauthorized' };
 	}
 
 	const [authResult, authError] = await catchify(() =>
-		checkAuth(new Types.ObjectId(plannerId), 'admin'),
+		checkAuth(plannerId, 'admin'),
 	);
 
 	if (authError || !authResult || authResult.type !== 'authorized') {
@@ -80,7 +80,7 @@ export const inviteUser = async (
 	const [existingInvite, inviteError] = await catchify(() =>
 		PendingInvite.findOne({
 			email,
-			planner: new Types.ObjectId(plannerId),
+			planner: plannerId,
 		}),
 	);
 
@@ -116,7 +116,7 @@ export const inviteUser = async (
 	const [invite, createError] = await catchify(() =>
 		PendingInvite.create({
 			email,
-			planner: new Types.ObjectId(plannerId),
+			planner: plannerId,
 			invitedBy: callerUser._id,
 			accessLevel,
 			token,

@@ -1,14 +1,12 @@
 'use server';
 
-import { Types } from 'mongoose';
-
 import { getUser } from '@/_actions/user';
 import { Planner } from '@/_models/planner';
 import type { AccessLevel } from '@/_models/user';
 
 export type PlannerWithAccess = {
 	planner: {
-		_id: Types.ObjectId;
+		_id: string;
 		name: string;
 		calendar: unknown[];
 		saved: unknown[];
@@ -30,7 +28,7 @@ export const getPlanners = async (): Promise<PlannerWithAccess[]> => {
 	const planners = await Planner.find({
 		_id: {
 			$in: (user.planners as unknown as SerializedPlannerMembership[]).map(
-				(p) => new Types.ObjectId(p.planner),
+				(p) => p.planner,
 			),
 		},
 	});
@@ -39,10 +37,9 @@ export const getPlanners = async (): Promise<PlannerWithAccess[]> => {
 
 	await Promise.all(
 		unnamed.map((p) =>
-			Planner.collection.updateOne(
-				{ _id: p._id },
-				{ $set: { name: `${user.name}'s Planner` } },
-			),
+			Planner.collection.updateOne({ _id: p._id } as object, {
+				$set: { name: `${user.name}'s Planner` },
+			}),
 		),
 	);
 

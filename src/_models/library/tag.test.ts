@@ -1,13 +1,13 @@
 import { describe, expect, test } from 'vitest';
 
-import { Types } from 'mongoose';
-
 import { TAG_COLOR_NAMES } from '@/_theme/colors';
 
 import { zTagInterface } from './tag';
 
+import { newId } from '../database/newId';
+
 describe('tag interface', () => {
-	const tagId = new Types.ObjectId().toString();
+	const tagId = newId();
 
 	test('accepts a valid tag', () => {
 		expect(

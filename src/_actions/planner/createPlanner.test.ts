@@ -1,7 +1,5 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
-import { Types } from 'mongoose';
-
 import { User } from '@/_models/user';
 import { catchify } from '@/_utils/catchify';
 import { reportError } from '@/_utils/reportError';
@@ -94,7 +92,7 @@ describe('createPlanner', () => {
 		expect(reportError).toHaveBeenCalledWith(error);
 	});
 
-	it('creates a planner and links it to the user by their ObjectId, with an ObjectId _id on the membership', async () => {
+	it('creates a planner and links it to the user by their id, with a new id on the membership', async () => {
 		mockSafeParse.mockReturnValue({
 			success: true,
 			data: 'My Planner',
@@ -107,13 +105,12 @@ describe('createPlanner', () => {
 
 		expect(addPlanner).toHaveBeenCalledWith('My Planner');
 		expect(User.collection.updateOne).toHaveBeenCalledWith(
-			// A raw collection call doesn't cast, so a string _id would match no user.
-			{ _id: new Types.ObjectId(userId) },
+			{ _id: userId },
 			{
 				$push: {
 					// A raw collection call adds no _id, unlike a push through Mongoose.
 					planners: {
-						_id: expect.any(Types.ObjectId),
+						_id: expect.stringMatching(/^[0-9a-f]{24}$/),
 						planner: 'planner-id-456',
 						accessLevel: 'owner',
 					},

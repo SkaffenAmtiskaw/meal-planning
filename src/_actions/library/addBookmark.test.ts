@@ -1,8 +1,7 @@
 import { afterEach, describe, expect, test, vi } from 'vitest';
 
-import { Types } from 'mongoose';
-
 import { checkAuth } from '@/_actions/auth/checkAuth';
+import { newId } from '@/_models/database/newId';
 import { Planner } from '@/_models/planner';
 
 import { addBookmark } from './addBookmark';
@@ -17,7 +16,7 @@ vi.mock('@/_models/planner', () => ({
 		findById: vi.fn(),
 	},
 }));
-const plannerId = new Types.ObjectId().toString();
+const plannerId = newId();
 
 const validData = {
 	plannerId,
@@ -35,7 +34,7 @@ describe('addBookmark', () => {
 		const saved: Array<Record<string, unknown>> = [];
 		const originalPush = saved.push.bind(saved);
 		saved.push = vi.fn((item: Record<string, unknown>) =>
-			originalPush({ _id: new Types.ObjectId().toString(), ...item }),
+			originalPush({ _id: newId(), ...item }),
 		) as never;
 		return { saved, save: vi.fn().mockResolvedValue(undefined) };
 	};
@@ -117,7 +116,7 @@ describe('addBookmark', () => {
 
 		const result = await addBookmark({
 			...validData,
-			tags: [new Types.ObjectId().toString()],
+			tags: [newId()],
 		});
 
 		expect(result.ok).toBe(true);

@@ -1,13 +1,13 @@
 import { z } from 'zod';
 
-import { zObjectId } from '@/_utils/zObjectId';
+import { zId } from '@/_utils/zId';
 import { zOptionalNonEmptyString } from '@/_utils/zOptionalNonEmptyString';
 
 export const zBookmarkInterface = z.object({
-	_id: zObjectId,
+	_id: zId,
 	name: z.string().min(1, { error: 'Name is required' }),
 	url: z.url({ error: 'URL is required' }),
-	tags: z.array(zObjectId),
+	tags: z.array(zId),
 	notes: zOptionalNonEmptyString,
 });
 

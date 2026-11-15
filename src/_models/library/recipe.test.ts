@@ -1,12 +1,14 @@
 import { describe, expect, test } from 'vitest';
 
-import { Types } from 'mongoose';
+import { model } from 'mongoose';
 
 import { recipeSchema, zRecipeFormSchema, zRecipeInterface } from './recipe';
 
-const recipeId = new Types.ObjectId().toString();
-const tagId = new Types.ObjectId().toString();
-const plannerId = new Types.ObjectId().toString();
+import { newId } from '../database/newId';
+
+const recipeId = newId();
+const tagId = newId();
+const plannerId = newId();
 
 const validRecipe = {
 	_id: recipeId,
@@ -84,7 +86,7 @@ describe('recipe interface', () => {
 		).toBe(false);
 	});
 
-	test('rejects a recipe with an invalid tag ObjectId', () => {
+	test('rejects a recipe with an invalid tag id', () => {
 		expect(
 			zRecipeInterface.safeParse({ ...validRecipe, tags: ['not-an-id'] })
 				.success,
@@ -140,7 +142,10 @@ describe('recipe schema', () => {
 		expect(urlValidator('not-a-url')).toBe(false);
 	});
 
-	test('_id is not explicitly defined (Mongoose auto-adds it)', () => {
-		expect((recipeSchema.obj as Record<string, unknown>)._id).toBeUndefined();
+	test('gives a new recipe a string _id', () => {
+		const Recipe = model('RecipeSchemaTest', recipeSchema);
+		const { _id } = new Recipe({ name: "Ursula's Sea Bisque" }).toObject();
+
+		expect(_id).toMatch(/^[0-9a-f]{24}$/);
 	});
 });

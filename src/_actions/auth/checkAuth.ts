@@ -1,5 +1,3 @@
-import type { Types } from 'mongoose';
-
 import { getUser } from '@/_actions/user';
 import type { AccessLevel } from '@/_models/user';
 import { catchify } from '@/_utils/catchify';
@@ -26,7 +24,7 @@ const ACCESS_LEVEL_ORDER: Record<AccessLevel, number> = {
 };
 
 export const checkAuth = async (
-	id: Types.ObjectId,
+	id: string,
 	required: AccessLevel,
 ): Promise<AuthResult> => {
 	const [user, error] = await catchify(getUser);
@@ -39,9 +37,7 @@ export const checkAuth = async (
 
 	if (!user) return { type: 'unauthenticated' };
 
-	const membership = user.planners.find(
-		(p) => (p.planner as unknown as string) === id.toString(),
-	);
+	const membership = user.planners.find((p) => p.planner === id);
 	if (!membership) return { type: 'unauthorized' };
 
 	if (

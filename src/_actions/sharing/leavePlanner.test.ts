@@ -1,7 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-import { Types } from 'mongoose';
-
 import { checkAuth } from '@/_actions/auth/checkAuth';
 import type { AccessLevel } from '@/_models/user';
 
@@ -23,7 +21,7 @@ describe('leavePlanner', () => {
 	const userId = '507f1f77bcf86cd799439012';
 
 	const mockUser = {
-		_id: new Types.ObjectId(userId),
+		_id: userId,
 		email: 'member@example.com',
 		name: 'Member User',
 		planners: [],

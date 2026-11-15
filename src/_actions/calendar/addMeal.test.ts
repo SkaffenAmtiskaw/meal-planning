@@ -1,9 +1,8 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-import { Types } from 'mongoose';
-
 import { checkAuth } from '@/_actions/auth/checkAuth';
 import { zMealFormSchema } from '@/_models/calendar';
+import { newId } from '@/_models/database/newId';
 import { Planner } from '@/_models/planner';
 
 import { addMeal } from './addMeal';
@@ -21,8 +20,8 @@ vi.mock(
 	async () => await import('#mocks/@/_models/planner'),
 );
 
-const plannerId = new Types.ObjectId().toString();
-const savedItemId = new Types.ObjectId().toString();
+const plannerId = newId();
+const savedItemId = newId();
 
 const validData = {
 	plannerId,
@@ -32,7 +31,7 @@ const validData = {
 };
 
 const makePlanner = () => ({
-	_id: new Types.ObjectId(plannerId),
+	_id: plannerId,
 	calendar: [],
 });
 
@@ -106,7 +105,7 @@ describe('addMeal', () => {
 				const result = await addMeal(validData);
 
 				expect(Planner.collection.updateOne).toHaveBeenCalledWith(
-					{ _id: expect.any(Types.ObjectId), 'calendar.date': '2024-06-15' },
+					{ _id: plannerId, 'calendar.date': '2024-06-15' },
 					{
 						$push: {
 							'calendar.$.meals': expect.objectContaining({ name: 'Lunch' }),
@@ -119,7 +118,7 @@ describe('addMeal', () => {
 				});
 			});
 
-			it('gives the meal and each dish an ObjectId _id', async () => {
+			it('gives the meal and each dish an _id', async () => {
 				await callAddMeal({
 					...validData,
 					dishes: [
@@ -129,10 +128,10 @@ describe('addMeal', () => {
 				});
 
 				expect(pushedMeal()).toMatchObject({
-					_id: expect.any(Types.ObjectId),
+					_id: expect.stringMatching(/^[0-9a-f]{24}$/),
 					dishes: [
-						{ _id: expect.any(Types.ObjectId) },
-						{ _id: expect.any(Types.ObjectId) },
+						{ _id: expect.stringMatching(/^[0-9a-f]{24}$/) },
+						{ _id: expect.stringMatching(/^[0-9a-f]{24}$/) },
 					],
 				});
 			});
@@ -146,7 +145,7 @@ describe('addMeal', () => {
 
 				expect(Planner.collection.updateOne).toHaveBeenCalledTimes(2);
 				expect(Planner.collection.updateOne).toHaveBeenCalledWith(
-					{ _id: expect.any(Types.ObjectId) },
+					{ _id: plannerId },
 					{
 						$push: {
 							calendar: expect.objectContaining({
@@ -160,7 +159,7 @@ describe('addMeal', () => {
 		});
 
 		describe('dish source mapping', () => {
-			it('maps saved source type to ObjectId', async () => {
+			it('maps saved source type to the saved item id', async () => {
 				await callAddMeal({
 					...validData,
 					dishes: [
@@ -175,7 +174,7 @@ describe('addMeal', () => {
 							'calendar.$.meals': expect.objectContaining({
 								dishes: [
 									expect.objectContaining({
-										source: expect.any(Types.ObjectId),
+										source: savedItemId,
 									}),
 								],
 							}),

@@ -1,8 +1,7 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
-import { Types } from 'mongoose';
-
 import { addPlanner } from '@/_actions/planner';
+import { newId } from '@/_models/database/newId';
 import { User } from '@/_models/user';
 
 import { addUser } from './addUser';
@@ -21,7 +20,7 @@ describe('addUser', () => {
 
 	describe('with options object', () => {
 		it('creates a new planner and assigns owner access when no plannerId is provided', async () => {
-			const mockPlannerId = new Types.ObjectId();
+			const mockPlannerId = newId();
 			vi.mocked(addPlanner).mockResolvedValue({ _id: mockPlannerId } as never);
 
 			await addUser({ email: 'cruella@deVil.com' });
@@ -35,7 +34,7 @@ describe('addUser', () => {
 		});
 
 		it('uses the provided plannerId and assigns read access', async () => {
-			const existingPlannerId = new Types.ObjectId();
+			const existingPlannerId = newId();
 
 			await addUser({
 				email: 'cruella@deVil.com',
@@ -51,7 +50,7 @@ describe('addUser', () => {
 		});
 
 		it('uses a custom name when provided', async () => {
-			const mockPlannerId = new Types.ObjectId();
+			const mockPlannerId = newId();
 			vi.mocked(addPlanner).mockResolvedValue({ _id: mockPlannerId } as never);
 
 			await addUser({ email: 'cruella@deVil.com', name: 'Cruella' });
@@ -64,7 +63,7 @@ describe('addUser', () => {
 		});
 
 		it('uses a custom accessLevel when provided', async () => {
-			const mockPlannerId = new Types.ObjectId();
+			const mockPlannerId = newId();
 			vi.mocked(addPlanner).mockResolvedValue({ _id: mockPlannerId } as never);
 
 			await addUser({ email: 'cruella@deVil.com', accessLevel: 'admin' });
@@ -77,7 +76,7 @@ describe('addUser', () => {
 		});
 
 		it('includes emailVerified when provided', async () => {
-			const mockPlannerId = new Types.ObjectId();
+			const mockPlannerId = newId();
 			vi.mocked(addPlanner).mockResolvedValue({ _id: mockPlannerId } as never);
 
 			await addUser({ email: 'cruella@deVil.com', emailVerified: true });
@@ -91,7 +90,7 @@ describe('addUser', () => {
 		});
 
 		it('excludes emailVerified when not provided', async () => {
-			const mockPlannerId = new Types.ObjectId();
+			const mockPlannerId = newId();
 			vi.mocked(addPlanner).mockResolvedValue({ _id: mockPlannerId } as never);
 
 			await addUser({ email: 'cruella@deVil.com' });
@@ -117,7 +116,7 @@ describe('addUser', () => {
 
 	describe('with positional arguments', () => {
 		it('normalizes positional arguments and creates a new planner', async () => {
-			const mockPlannerId = new Types.ObjectId();
+			const mockPlannerId = newId();
 			vi.mocked(addPlanner).mockResolvedValue({ _id: mockPlannerId } as never);
 
 			await addUser('cruella@deVil.com');
@@ -131,7 +130,7 @@ describe('addUser', () => {
 		});
 
 		it('normalizes positional arguments with a provided plannerId', async () => {
-			const existingPlannerId = new Types.ObjectId();
+			const existingPlannerId = newId();
 
 			await addUser('cruella@deVil.com', existingPlannerId);
 
@@ -144,7 +143,7 @@ describe('addUser', () => {
 		});
 
 		it('normalizes positional arguments with a custom name', async () => {
-			const mockPlannerId = new Types.ObjectId();
+			const mockPlannerId = newId();
 			vi.mocked(addPlanner).mockResolvedValue({ _id: mockPlannerId } as never);
 
 			await addUser('cruella@deVil.com', undefined, 'Cruella');
@@ -159,7 +158,7 @@ describe('addUser', () => {
 
 	describe('return value', () => {
 		it('returns the created user', async () => {
-			const mockPlannerId = new Types.ObjectId();
+			const mockPlannerId = newId();
 			const mockUser = {
 				email: 'cruella@deVil.com',
 				name: 'New User',
@@ -177,7 +176,7 @@ describe('addUser', () => {
 
 	describe('error handling', () => {
 		it('propagates errors from User.create', async () => {
-			const mockPlannerId = new Types.ObjectId();
+			const mockPlannerId = newId();
 			vi.mocked(addPlanner).mockResolvedValue({ _id: mockPlannerId } as never);
 			vi.mocked(User.create).mockRejectedValue(new Error('DB error'));
 

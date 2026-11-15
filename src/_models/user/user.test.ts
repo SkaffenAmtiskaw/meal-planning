@@ -1,7 +1,5 @@
 import { describe, expect, test, vi } from 'vitest';
 
-import { Types } from 'mongoose';
-
 vi.mock('mongoose', async (importOriginal) => {
 	const actual = await importOriginal<typeof import('mongoose')>();
 	return { ...actual, models: {}, model: vi.fn().mockReturnValue({}) };
@@ -9,7 +7,9 @@ vi.mock('mongoose', async (importOriginal) => {
 
 import { userSchema, zUserInterface } from './user';
 
-const plannerId = new Types.ObjectId().toString();
+import { newId } from '../database/newId';
+
+const plannerId = newId();
 const membership = { planner: plannerId, accessLevel: 'owner' as const };
 
 describe('user interface', () => {
@@ -66,7 +66,7 @@ describe('user interface', () => {
 		).toBe(false);
 	});
 
-	test('rejects a planner membership with an invalid planner ObjectId', () => {
+	test('rejects a planner membership with an invalid planner id', () => {
 		expect(
 			zUserInterface.safeParse({
 				email: 'gaston@villainslair.example.com',

@@ -2,9 +2,8 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { revalidatePath } from 'next/cache';
 
-import { Types } from 'mongoose';
-
 import { checkAuth } from '@/_actions/auth/checkAuth';
+import { newId } from '@/_models/database/newId';
 import { Planner } from '@/_models/planner';
 
 import { updateRecipeTags } from './updateRecipeTags';
@@ -23,9 +22,9 @@ vi.mock(
 	async () => await import('#mocks/@/_models/planner'),
 );
 
-const plannerId = new Types.ObjectId().toString();
-const recipeId = new Types.ObjectId().toString();
-const tagId = new Types.ObjectId().toString();
+const plannerId = newId();
+const recipeId = newId();
+const tagId = newId();
 
 const validData = { plannerId, recipeId, tags: [tagId] };
 
@@ -47,10 +46,7 @@ describe('updateRecipeTags', () => {
 		it('calls checkAuth with write access', async () => {
 			await updateRecipeTags(validData);
 
-			expect(checkAuth).toHaveBeenCalledWith(
-				expect.any(Types.ObjectId),
-				'write',
-			);
+			expect(checkAuth).toHaveBeenCalledWith(plannerId, 'write');
 		});
 
 		it('returns unauthorized when session is missing', async () => {
@@ -92,15 +88,15 @@ describe('updateRecipeTags', () => {
 	});
 
 	describe('on success', () => {
-		it('updates the recipe tags as ObjectIds', async () => {
+		it('updates the recipe tags to the given ids', async () => {
 			await updateRecipeTags(validData);
 
 			expect(Planner.collection.updateOne).toHaveBeenCalledWith(
 				expect.objectContaining({
-					_id: expect.any(Types.ObjectId),
-					'saved._id': expect.any(Types.ObjectId),
+					_id: plannerId,
+					'saved._id': recipeId,
 				}),
-				{ $set: { 'saved.$.tags': [expect.any(Types.ObjectId)] } },
+				{ $set: { 'saved.$.tags': [tagId] } },
 			);
 		});
 
@@ -109,8 +105,8 @@ describe('updateRecipeTags', () => {
 
 			expect(Planner.collection.updateOne).toHaveBeenCalledWith(
 				expect.objectContaining({
-					_id: expect.any(Types.ObjectId),
-					'saved._id': expect.any(Types.ObjectId),
+					_id: plannerId,
+					'saved._id': recipeId,
 				}),
 				{ $set: { 'saved.$.tags': [] } },
 			);

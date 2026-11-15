@@ -1,6 +1,6 @@
 import { afterEach, describe, expect, test, vi } from 'vitest';
 
-import { Types } from 'mongoose';
+import { newId } from '@/_models/database/newId';
 
 import { getPlannerClient } from './getPlannerClient';
 
@@ -16,8 +16,8 @@ describe('getPlannerClient', () => {
 		vi.resetAllMocks();
 	});
 
-	test('returns serialized plain object with ObjectIds converted to strings', async () => {
-		const id = new Types.ObjectId();
+	test('returns serialized plain object', async () => {
+		const id = newId();
 		const rawPlanner = {
 			calendar: [],
 			saved: [],

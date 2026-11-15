@@ -1,8 +1,7 @@
 import { afterEach, describe, expect, test, vi } from 'vitest';
 
-import { Types } from 'mongoose';
-
 import { checkAuth } from '@/_actions/auth/checkAuth';
+import { newId } from '@/_models/database/newId';
 import { Planner } from '@/_models/planner';
 import { matchesId } from '@/_utils/matchesId';
 
@@ -22,8 +21,8 @@ vi.mock('@/_utils/matchesId', () => ({
 	matchesId: vi.fn(),
 }));
 
-const plannerId = new Types.ObjectId().toString();
-const bookmarkId = new Types.ObjectId().toString();
+const plannerId = newId();
+const bookmarkId = newId();
 
 const validData = { plannerId, bookmarkId };
 

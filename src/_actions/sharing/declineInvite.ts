@@ -1,13 +1,12 @@
 'use server';
 
-import { Types } from 'mongoose';
-
 import { getUser } from '@/_actions/user';
 import { PendingInvite } from '@/_models/sharing';
 import type { ActionResult } from '@/_utils/actionResult/ActionResult';
 import { isNoSessionError } from '@/_utils/noSessionError';
 import { reportError } from '@/_utils/reportError';
 import { serialize } from '@/_utils/serialize';
+import { zId } from '@/_utils/zId';
 
 export interface DeclineInviteInput {
 	inviteId: string;
@@ -27,14 +26,14 @@ export const declineInvite = async (
 			return { ok: false, error: 'Unauthorized' };
 		}
 
-		// 3. Validate inviteId is a valid MongoDB ObjectId
-		if (!Types.ObjectId.isValid(inviteId)) {
+		// 3. Validate inviteId has the shape of an id
+		if (!zId.safeParse(inviteId).success) {
 			return { ok: false, error: 'Invalid invite ID' };
 		}
 
 		// 4. Find the pending invite by _id
 		const invite = await PendingInvite.findOne({
-			_id: new Types.ObjectId(inviteId),
+			_id: inviteId,
 		});
 
 		// 5. If invite not found, return error
@@ -49,7 +48,7 @@ export const declineInvite = async (
 
 		// 7. Delete the pending invite
 		await PendingInvite.deleteOne({
-			_id: new Types.ObjectId(inviteId),
+			_id: inviteId,
 		});
 
 		// 8. Return success

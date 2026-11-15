@@ -1,7 +1,5 @@
 import { describe, expect, test, vi } from 'vitest';
 
-import { Types } from 'mongoose';
-
 vi.mock('mongoose', async (importOriginal) => {
 	const actual = await importOriginal<typeof import('mongoose')>();
 	return { ...actual, models: {}, model: vi.fn().mockReturnValue({}) };
@@ -9,9 +7,11 @@ vi.mock('mongoose', async (importOriginal) => {
 
 import { zPlannerInterface } from './planner';
 
-const bookmarkId = new Types.ObjectId().toString();
-const recipeId = new Types.ObjectId().toString();
-const tagId = new Types.ObjectId().toString();
+import { newId } from '../database/newId';
+
+const bookmarkId = newId();
+const recipeId = newId();
+const tagId = newId();
 
 const validBookmark = {
 	_id: bookmarkId,

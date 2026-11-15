@@ -1,24 +1,29 @@
 import type { Model } from 'mongoose';
 // mongoose doesn't export `models` to ES modules, so it's read from the default export.
-import mongoose, { model, Schema, SchemaTypes } from 'mongoose';
+import mongoose, { model, Schema } from 'mongoose';
 
 import type { PendingInviteInterface } from './pendingInvite.types';
 
+import { newId } from '../database/newId';
+
 export * from './pendingInvite.types';
 
-const pendingInviteSchema = new Schema<PendingInviteInterface>({
+// The zod schema gets its required `_id` once each creator sets one.
+type StoredPendingInvite = PendingInviteInterface & { _id: string };
+
+const pendingInviteSchema = new Schema<StoredPendingInvite>({
+	// Mongoose won't save a String `_id` it isn't given, so it defaults to a new one until its creator sets it.
+	_id: { type: String, default: newId },
 	email: {
 		type: String,
 		required: true,
 	},
 	planner: {
-		type: SchemaTypes.ObjectId,
-		ref: 'Planner',
+		type: String,
 		required: true,
 	},
 	invitedBy: {
-		type: SchemaTypes.ObjectId,
-		ref: 'User',
+		type: String,
 		required: true,
 	},
 	accessLevel: {
@@ -40,6 +45,6 @@ const pendingInviteSchema = new Schema<PendingInviteInterface>({
 	},
 });
 
-export const PendingInvite: Model<PendingInviteInterface> =
+export const PendingInvite: Model<StoredPendingInvite> =
 	mongoose.models.PendingInvite ||
-	model<PendingInviteInterface>('PendingInvite', pendingInviteSchema);
+	model<StoredPendingInvite>('PendingInvite', pendingInviteSchema);

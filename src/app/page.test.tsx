@@ -7,7 +7,6 @@ import { redirect } from 'next/navigation';
 import { addUser } from '@/_actions/user';
 import { auth } from '@/_auth';
 import { User } from '@/_models/user';
-import { zObjectId } from '@/_utils/zObjectId';
 
 import Page from './page';
 
@@ -37,12 +36,6 @@ vi.mock('@/_models/user', () => ({
 		findOne: vi.fn().mockReturnValue({
 			exec: vi.fn().mockResolvedValue({ planners: [membership] }),
 		}),
-	},
-}));
-
-vi.mock('@/_utils/zObjectId', () => ({
-	zObjectId: {
-		safeParse: vi.fn().mockReturnValue({ success: false }),
 	},
 }));
 
@@ -82,9 +75,6 @@ describe('page', () => {
 		vi.mocked(cookies).mockResolvedValueOnce({
 			get: vi.fn().mockReturnValueOnce({ value: lastPlannerId }),
 		} as never);
-		vi.mocked(zObjectId.safeParse).mockReturnValueOnce({
-			success: true,
-		} as never);
 
 		await Page({ searchParams: Promise.resolve({}) });
 
@@ -97,9 +87,6 @@ describe('page', () => {
 		const foreignPlannerId = '507f1f77bcf86cd799439099';
 		vi.mocked(cookies).mockResolvedValueOnce({
 			get: vi.fn().mockReturnValueOnce({ value: foreignPlannerId }),
-		} as never);
-		vi.mocked(zObjectId.safeParse).mockReturnValueOnce({
-			success: true,
 		} as never);
 
 		await Page({ searchParams: Promise.resolve({}) });

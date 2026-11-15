@@ -1,8 +1,7 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
-import { Types } from 'mongoose';
-
 import { checkAuth } from '@/_actions/auth/checkAuth';
+import { newId } from '@/_models/database/newId';
 import { Planner } from '@/_models/planner';
 
 import { addTag } from './addTag';
@@ -21,7 +20,7 @@ vi.mock('@/_theme/colors', async () => ({
 	TAG_COLOR_NAMES: ['red', 'green', 'blue'],
 }));
 
-const plannerId = new Types.ObjectId().toString();
+const plannerId = newId();
 
 const makePlanner = (tagCount = 0) => ({
 	tags: Array.from({ length: tagCount }),
@@ -84,11 +83,11 @@ describe('addTag', () => {
 		await addTag(plannerId, 'Quick');
 
 		expect(Planner.collection.updateOne).toHaveBeenCalledWith(
-			{ _id: expect.any(Types.ObjectId) },
+			{ _id: plannerId },
 			{
 				$push: {
 					tags: expect.objectContaining({
-						_id: expect.any(Types.ObjectId),
+						_id: expect.any(String),
 						name: 'Quick',
 						color: 'red',
 					}),

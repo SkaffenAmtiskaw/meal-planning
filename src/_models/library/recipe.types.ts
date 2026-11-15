@@ -1,10 +1,10 @@
 import { z } from 'zod';
 
-import { zObjectId } from '@/_utils/zObjectId';
+import { zId } from '@/_utils/zId';
 import { zOptionalNonEmptyString } from '@/_utils/zOptionalNonEmptyString';
 
 export const zRecipeInterface = z.object({
-	_id: zObjectId,
+	_id: zId,
 	ingredients: z.array(z.string()),
 	instructions: z.array(z.string()),
 	name: z.string().min(1, { error: 'Name is required' }),
@@ -17,7 +17,7 @@ export const zRecipeInterface = z.object({
 		})
 		.optional(),
 	storage: zOptionalNonEmptyString,
-	tags: z.array(zObjectId).optional(),
+	tags: z.array(zId).optional(),
 	time: z
 		.object({
 			prep: zOptionalNonEmptyString,

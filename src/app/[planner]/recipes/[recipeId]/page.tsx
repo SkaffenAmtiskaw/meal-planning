@@ -11,14 +11,14 @@ import type {
 	TagInterface,
 } from '@/_models/types';
 import { matchesId } from '@/_utils/matchesId';
-import { zObjectId } from '@/_utils/zObjectId';
+import { zId } from '@/_utils/zId';
 
 import { RecipeForm } from '../_components/Modal/RecipeForm';
 import { RecipeDetail } from './_components/RecipeDetail';
 
 const zParams = z.object({
-	planner: zObjectId,
-	recipeId: zObjectId,
+	planner: zId,
+	recipeId: zId,
 });
 
 const zSearchParams = z.object({

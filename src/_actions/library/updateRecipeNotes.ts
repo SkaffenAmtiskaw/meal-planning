@@ -2,7 +2,6 @@
 
 import { revalidatePath } from 'next/cache';
 
-import { Types } from 'mongoose';
 import { z } from 'zod';
 
 import { checkAuth } from '@/_actions/auth/checkAuth';
@@ -20,7 +19,7 @@ export const updateRecipeNotes = async (
 ): Promise<ActionResult> => {
 	const { plannerId, recipeId, notes } = zUpdateRecipeNotesSchema.parse(data);
 
-	const auth = await checkAuth(new Types.ObjectId(plannerId), 'write');
+	const auth = await checkAuth(plannerId, 'write');
 	if (auth.type !== 'authorized') return { ok: false, error: 'Unauthorized' };
 
 	const update = notes
@@ -28,10 +27,7 @@ export const updateRecipeNotes = async (
 		: { $unset: { 'saved.$.notes': '' } };
 
 	const result = await Planner.collection.updateOne(
-		{
-			_id: new Types.ObjectId(plannerId),
-			'saved._id': new Types.ObjectId(recipeId),
-		},
+		{ _id: plannerId, 'saved._id': recipeId } as object,
 		update,
 	);
 

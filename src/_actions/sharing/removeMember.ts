@@ -1,7 +1,5 @@
 'use server';
 
-import { Types } from 'mongoose';
-
 import { checkAuth } from '@/_actions/auth/checkAuth';
 import { User } from '@/_models/user';
 
@@ -17,7 +15,7 @@ export const removeMember = async (
 	memberEmail: string,
 ): Promise<RemoveMemberResult> => {
 	// 1. Verify caller is authenticated and has admin+ access to the planner
-	const authResult = await checkAuth(new Types.ObjectId(plannerId), 'admin');
+	const authResult = await checkAuth(plannerId, 'admin');
 
 	if (authResult.type !== 'authorized') {
 		return { ok: false, error: 'Unauthorized' };

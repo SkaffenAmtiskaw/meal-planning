@@ -1,7 +1,5 @@
 'use server';
 
-import { Types } from 'mongoose';
-
 import { checkAuth } from '@/_actions/auth/checkAuth';
 import type { ActionResult } from '@/_utils/actionResult';
 
@@ -11,7 +9,7 @@ export const leavePlanner = async (
 	plannerId: string,
 ): Promise<ActionResult> => {
 	// 1. Verify caller is authenticated and is a member of the planner
-	const authResult = await checkAuth(new Types.ObjectId(plannerId), 'read');
+	const authResult = await checkAuth(plannerId, 'read');
 
 	if (authResult.type !== 'authorized') {
 		return { ok: false, error: 'Unauthorized' };

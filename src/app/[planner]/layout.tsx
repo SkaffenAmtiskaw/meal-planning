@@ -6,7 +6,7 @@ import { z } from 'zod';
 
 import { checkAuth } from '@/_actions/auth/checkAuth';
 import { THEME_COLORS } from '@/_theme/colors';
-import { zObjectId } from '@/_utils/zObjectId';
+import { zId } from '@/_utils/zId';
 import { Header } from '@/app/_components/Header';
 
 import { BurgerToggle, PlannerLayout, PlannerProvider } from './_components';
@@ -14,7 +14,7 @@ import { BurgerToggle, PlannerLayout, PlannerProvider } from './_components';
 import { NavbarServer } from './_components/NavbarServer';
 
 const zParams = z.object({
-	planner: zObjectId,
+	planner: zId,
 });
 
 const Layout = async ({ children, params }: LayoutProps<'/[planner]'>) => {

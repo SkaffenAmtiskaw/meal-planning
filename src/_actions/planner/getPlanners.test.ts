@@ -40,7 +40,7 @@ describe('getPlanners', () => {
 			await getPlanners();
 
 			expect(Planner.find).toHaveBeenCalledWith({
-				_id: { $in: [expect.any(Object)] },
+				_id: { $in: ['507f1f77bcf86cd799439011'] },
 			});
 		});
 

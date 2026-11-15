@@ -7,7 +7,6 @@ import { getUser } from '@/_actions/user';
 import { catchify } from '@/_utils/catchify';
 import { isNoSessionError } from '@/_utils/noSessionError';
 import { reportError } from '@/_utils/reportError';
-import { zObjectId } from '@/_utils/zObjectId';
 import { Header } from '@/app/_components/Header';
 import { HEADER_HEIGHT } from '@/app/_constants';
 
@@ -22,9 +21,7 @@ const Layout = async ({ children }: { children: React.ReactNode }) => {
 
 	const cookieStore = await cookies();
 	const lastPlannerId = cookieStore.get('lastOpenedPlanner')?.value;
-	const parsed = zObjectId.safeParse(lastPlannerId);
 	const plannerId =
-		parsed.success &&
 		planners.some((p) => p.planner.toString() === lastPlannerId) &&
 		lastPlannerId
 			? lastPlannerId

@@ -13,13 +13,6 @@ const { mockGetUser } = vi.hoisted(() => ({
 
 const mockCheckAuth = vi.mocked(checkAuth);
 
-vi.mock('@/_utils/zObjectId', async () => {
-	const { z } = await import('zod');
-	return {
-		zObjectId: z.string(),
-	};
-});
-
 vi.mock(
 	'@/_actions/auth/checkAuth',
 	async () => await import('#mocks/@/_actions/auth/checkAuth'),
@@ -83,6 +76,17 @@ describe('planner layout', () => {
 		await expect(Layout({ children: null, params })).rejects.toThrow(
 			'DB connection timeout',
 		);
+	});
+
+	test('rejects a malformed planner id without checking auth', async () => {
+		await expect(
+			Layout({
+				children: null,
+				params: Promise.resolve({ planner: 'zzzzzzzzzzzzzzzzzzzzzzzz' }),
+			}),
+		).rejects.toThrow('Id is invalid');
+
+		expect(mockCheckAuth).not.toHaveBeenCalled();
 	});
 
 	test('passes planner id to checkAuth', async () => {

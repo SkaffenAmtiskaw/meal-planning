@@ -1,5 +1,3 @@
-import type { Types } from 'mongoose';
-
 import { User } from '@/_models/user';
 import { reportError } from '@/_utils/reportError';
 
@@ -9,20 +7,14 @@ export interface RemoveMembershipResult {
 }
 
 export const removePlannerMembership = async (
-	userId: string | Types.ObjectId,
-	plannerId: string | Types.ObjectId,
+	userId: string,
+	plannerId: string,
 ): Promise<RemoveMembershipResult> => {
 	try {
-		// Convert plannerId to ObjectId if it's a string
-		const plannerObjectId =
-			typeof plannerId === 'string'
-				? new (await import('mongoose')).Types.ObjectId(plannerId)
-				: plannerId;
-
 		// Use $pull to atomically remove the membership
 		await User.findByIdAndUpdate(userId, {
 			$pull: {
-				planners: { planner: plannerObjectId },
+				planners: { planner: plannerId },
 			},
 		});
 

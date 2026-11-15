@@ -2,9 +2,8 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { revalidatePath } from 'next/cache';
 
-import { Types } from 'mongoose';
-
 import { checkAuth } from '@/_actions/auth/checkAuth';
+import { newId } from '@/_models/database/newId';
 import { zRecipeFormSchema } from '@/_models/library';
 import { Planner } from '@/_models/planner';
 
@@ -27,8 +26,8 @@ vi.mock('./_utils/transformRecipeForm', async () => ({
 	transformRecipeForm: vi.fn((data) => data),
 }));
 
-const plannerId = new Types.ObjectId().toString();
-const recipeId = new Types.ObjectId().toString();
+const plannerId = newId();
+const recipeId = newId();
 
 const validData = {
 	plannerId,
@@ -114,8 +113,8 @@ describe('editRecipe', () => {
 
 			expect(Planner.collection.updateOne).toHaveBeenCalledWith(
 				expect.objectContaining({
-					_id: expect.any(Types.ObjectId),
-					'saved._id': expect.any(Types.ObjectId),
+					_id: plannerId,
+					'saved._id': recipeId,
 				}),
 				expect.objectContaining({
 					$set: expect.objectContaining({
@@ -154,7 +153,7 @@ describe('editRecipe', () => {
 				matchedCount: 1,
 			} as never);
 
-			const tagId = new Types.ObjectId().toString();
+			const tagId = newId();
 			await editRecipe({
 				...validData,
 				source: { name: 'Bakery Blog', url: 'https://example.com' },
@@ -182,7 +181,7 @@ describe('editRecipe', () => {
 						'saved.$.servings': 12,
 						'saved.$.notes': 'Best served warm',
 						'saved.$.storage': 'Room temp up to 2 days',
-						'saved.$.tags': [expect.any(Types.ObjectId)],
+						'saved.$.tags': [tagId],
 					}),
 				}),
 			);

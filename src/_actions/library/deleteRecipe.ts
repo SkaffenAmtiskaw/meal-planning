@@ -1,6 +1,5 @@
 'use server';
 
-import { Types } from 'mongoose';
 import { z } from 'zod';
 
 import { checkAuth } from '@/_actions/auth/checkAuth';
@@ -16,7 +15,7 @@ const zDeleteRecipeSchema = z.object({
 export const deleteRecipe = async (data: unknown): Promise<ActionResult> => {
 	const { plannerId, recipeId } = zDeleteRecipeSchema.parse(data);
 
-	const auth = await checkAuth(new Types.ObjectId(plannerId), 'write');
+	const auth = await checkAuth(plannerId, 'write');
 	if (auth.type !== 'authorized') return { ok: false, error: 'Unauthorized' };
 
 	const planner = await Planner.findById(plannerId);

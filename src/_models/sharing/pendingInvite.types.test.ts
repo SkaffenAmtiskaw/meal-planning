@@ -1,15 +1,10 @@
-import { describe, expect, test, vi } from 'vitest';
-
-import { Types } from 'mongoose';
-
-vi.mock('mongoose', async (importOriginal) => {
-	const actual = await importOriginal<typeof import('mongoose')>();
-	return { ...actual, models: {}, model: vi.fn().mockReturnValue({}) };
-});
+import { describe, expect, test } from 'vitest';
 
 import { zPendingInvite } from './pendingInvite.types';
 
-const validObjectId = new Types.ObjectId().toString();
+import { newId } from '../database/newId';
+
+const validObjectId = newId();
 const now = new Date();
 const expiresAt = new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000);
 
@@ -56,7 +51,7 @@ describe('pending invite', () => {
 		).toBe(false);
 	});
 
-	test('rejects a pending invite with an invalid planner ObjectId', () => {
+	test('rejects a pending invite with an invalid planner id', () => {
 		expect(
 			zPendingInvite.safeParse({
 				email: 'guest@example.com',
@@ -69,7 +64,7 @@ describe('pending invite', () => {
 		).toBe(false);
 	});
 
-	test('rejects a pending invite with an invalid invitedBy ObjectId', () => {
+	test('rejects a pending invite with an invalid invitedBy id', () => {
 		expect(
 			zPendingInvite.safeParse({
 				email: 'guest@example.com',

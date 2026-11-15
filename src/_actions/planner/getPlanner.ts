@@ -1,10 +1,8 @@
 'use server';
 
-import type { Types } from 'mongoose';
-
 import { Planner } from '@/_models/planner';
 
-export const getPlanner = async (id: Types.ObjectId | string) => {
+export const getPlanner = async (id: string) => {
 	const planner = await Planner.findById(id);
 
 	if (!planner) {

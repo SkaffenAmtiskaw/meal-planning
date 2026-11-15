@@ -8,8 +8,6 @@ import {
 	vi,
 } from 'vitest';
 
-import { Types } from 'mongoose';
-
 import { checkAuth } from '@/_actions/auth/checkAuth';
 import { sendInviteEmail } from '@/_auth/emails/sendInviteEmail';
 import { Planner } from '@/_models/planner';
@@ -67,9 +65,9 @@ describe('inviteUser', () => {
 	const inviteEmail = 'invitee@example.com';
 	const mockInviteIdStr = '507f1f77bcf86cd799439013';
 
-	const mockCallerUserId = new Types.ObjectId(callerUserId);
-	const mockPlannerId = new Types.ObjectId(plannerId);
-	const mockInviteId = new Types.ObjectId(mockInviteIdStr);
+	const mockCallerUserId = callerUserId;
+	const mockPlannerId = plannerId;
+	const mockInviteId = mockInviteIdStr;
 
 	const mockInvite = {
 		_id: mockInviteId,
@@ -302,8 +300,8 @@ describe('inviteUser', () => {
 			expect(PendingInvite.create).toHaveBeenCalledWith(
 				expect.objectContaining({
 					email: inviteEmail,
-					planner: expect.any(Types.ObjectId),
-					invitedBy: expect.any(Types.ObjectId),
+					planner: plannerId,
+					invitedBy: callerUserId,
 					accessLevel: 'read',
 					token: 'mock-uuid-12345',
 					expiresAt: new Date('2024-01-08T00:00:00.000Z'),

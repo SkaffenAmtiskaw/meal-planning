@@ -3,11 +3,15 @@ import { z } from 'zod';
 
 import type { DayInterface } from './day.types';
 
+import { newId } from '../database/newId';
+
 export * from './day.types';
 
 // Meals and dishes are their own schemas, rather than defined inline in the day,
 // so they keep their stored `_id`: inline arrays would take the day's `_id: false`.
+// Mongoose won't save a String `_id` it isn't given, so each `_id` defaults to a new one until its creator sets it.
 const dishSchema = new Schema({
+	_id: { type: String, default: newId },
 	name: { type: String, required: true },
 	source: {
 		type: SchemaTypes.Union,
@@ -25,15 +29,13 @@ const dishSchema = new Schema({
 			{
 				ref: { type: String },
 			},
-			{
-				type: SchemaTypes.ObjectId,
-			},
 		],
 	},
 	note: String,
 });
 
 const mealSchema = new Schema({
+	_id: { type: String, default: newId },
 	name: { type: String, required: true },
 	description: String,
 	dishes: [dishSchema],

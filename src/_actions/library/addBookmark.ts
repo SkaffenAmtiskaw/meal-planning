@@ -1,7 +1,5 @@
 'use server';
 
-import { Types } from 'mongoose';
-
 import { checkAuth } from '@/_actions/auth/checkAuth';
 import type { BookmarkInterface } from '@/_models/library';
 import { zBookmarkFormSchema } from '@/_models/library';
@@ -16,7 +14,7 @@ export const addBookmark = async (
 	// The form starts notes at '', which would be stored as an empty string.
 	const bookmarkFields = { ...requiredFields, ...(notes ? { notes } : {}) };
 
-	const auth = await checkAuth(new Types.ObjectId(plannerId), 'write');
+	const auth = await checkAuth(plannerId, 'write');
 	if (auth.type !== 'authorized') return { ok: false, error: 'Unauthorized' };
 
 	const planner = await Planner.findById(plannerId);

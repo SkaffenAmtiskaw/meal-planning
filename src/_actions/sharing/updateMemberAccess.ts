@@ -10,10 +10,7 @@ export const updateMemberAccess = async (
 	newAccessLevel: AccessLevel,
 ): Promise<{ ok: true } | { ok: false; error: string }> => {
 	// 1. Validate caller is authenticated and has access to this planner
-	const authResult = await checkAuth(
-		plannerId as unknown as import('mongoose').Types.ObjectId,
-		'read',
-	);
+	const authResult = await checkAuth(plannerId, 'read');
 	if (authResult.type !== 'authorized') {
 		return { ok: false, error: 'Unauthorized' };
 	}

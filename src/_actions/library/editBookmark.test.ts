@@ -1,8 +1,7 @@
 import { afterEach, describe, expect, test, vi } from 'vitest';
 
-import { Types } from 'mongoose';
-
 import { checkAuth } from '@/_actions/auth/checkAuth';
+import { newId } from '@/_models/database/newId';
 import { Planner } from '@/_models/planner';
 
 import { editBookmark } from './editBookmark';
@@ -24,8 +23,8 @@ vi.mock('@/_models/planner', () => ({
 	},
 }));
 
-const plannerId = new Types.ObjectId().toString();
-const bookmarkId = new Types.ObjectId().toString();
+const plannerId = newId();
+const bookmarkId = newId();
 
 const validData = {
 	plannerId,
@@ -111,19 +110,19 @@ describe('editBookmark', () => {
 			matchedCount: 1,
 		} as never);
 
-		const tagId = new Types.ObjectId().toString();
+		const tagId = newId();
 		await editBookmark({ ...validData, tags: [tagId] });
 
 		expect(Planner.collection.updateOne).toHaveBeenCalledWith(
 			expect.objectContaining({
-				_id: expect.any(Types.ObjectId),
-				'saved._id': expect.any(Types.ObjectId),
+				_id: plannerId,
+				'saved._id': bookmarkId,
 			}),
 			expect.objectContaining({
 				$set: expect.objectContaining({
 					'saved.$.name': 'Ursula Sea Spells',
 					'saved.$.url': 'https://undersea.example.com/spells',
-					'saved.$.tags': [expect.any(Types.ObjectId)],
+					'saved.$.tags': [tagId],
 				}),
 			}),
 		);

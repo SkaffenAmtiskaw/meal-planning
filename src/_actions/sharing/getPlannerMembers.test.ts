@@ -1,7 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-import { Types } from 'mongoose';
-
 vi.mock(
 	'@/_actions/auth/checkAuth',
 	async () => await import('#mocks/@/_actions/auth/checkAuth'),
@@ -23,7 +21,6 @@ import { getPlannerMembers } from './getPlannerMembers';
 
 describe('getPlannerMembers', () => {
 	const plannerId = '507f1f77bcf86cd799439011';
-	const objectId = new Types.ObjectId(plannerId);
 
 	const mockFindUsers = (users: unknown[]) =>
 		vi.mocked(User.find).mockReturnValue({
@@ -67,7 +64,7 @@ describe('getPlannerMembers', () => {
 					email: 'alice@example.com',
 					planners: [
 						{
-							planner: { toString: () => plannerId },
+							planner: plannerId,
 							accessLevel: 'owner',
 						},
 					],
@@ -77,7 +74,7 @@ describe('getPlannerMembers', () => {
 					email: 'bob@example.com',
 					planners: [
 						{
-							planner: { toString: () => plannerId },
+							planner: plannerId,
 							accessLevel: 'write',
 						},
 					],
@@ -86,7 +83,7 @@ describe('getPlannerMembers', () => {
 
 			const result = await getPlannerMembers(plannerId);
 
-			expect(checkAuth).toHaveBeenCalledWith(objectId, 'admin');
+			expect(checkAuth).toHaveBeenCalledWith(plannerId, 'admin');
 			expect(User.find).toHaveBeenCalledWith({
 				'planners.planner': plannerId,
 			});
@@ -116,7 +113,7 @@ describe('getPlannerMembers', () => {
 					email: 'alice@example.com',
 					planners: [
 						{
-							planner: { toString: () => plannerId },
+							planner: plannerId,
 							accessLevel: 'owner',
 						},
 					],
@@ -125,33 +122,6 @@ describe('getPlannerMembers', () => {
 
 			const result = await getPlannerMembers(plannerId);
 
-			expect(result).toEqual({
-				members: [
-					{ name: 'Alice', email: 'alice@example.com', accessLevel: 'owner' },
-				],
-			});
-		});
-
-		it('accepts ObjectId as plannerId', async () => {
-			mockFindUsers([
-				{
-					name: 'Alice',
-					email: 'alice@example.com',
-					planners: [
-						{
-							planner: { toString: () => plannerId },
-							accessLevel: 'owner',
-						},
-					],
-				},
-			]);
-
-			const result = await getPlannerMembers(objectId);
-
-			expect(checkAuth).toHaveBeenCalledWith(objectId, 'admin');
-			expect(User.find).toHaveBeenCalledWith({
-				'planners.planner': objectId,
-			});
 			expect(result).toEqual({
 				members: [
 					{ name: 'Alice', email: 'alice@example.com', accessLevel: 'owner' },
@@ -191,7 +161,7 @@ describe('getPlannerMembers', () => {
 					email: undefined,
 					planners: [
 						{
-							planner: { toString: () => plannerId },
+							planner: plannerId,
 							accessLevel: 'admin',
 						},
 					],
@@ -212,7 +182,7 @@ describe('getPlannerMembers', () => {
 					email: 'charlie@example.com',
 					planners: [
 						{
-							planner: { toString: () => 'other-planner-id' },
+							planner: 'other-planner-id',
 							accessLevel: 'owner',
 						},
 					],
@@ -241,7 +211,7 @@ describe('getPlannerMembers', () => {
 					email: 'alice@example.com',
 					planners: [
 						{
-							planner: { toString: () => plannerId },
+							planner: plannerId,
 							accessLevel: 'owner',
 							_id: 'membership-id',
 						},
