@@ -1,6 +1,5 @@
 import { test as base } from '@playwright/test';
 
-import { closeAuth, connectAuth } from '#auth';
 import { connectDatabase, disconnectDatabase } from '#factories/connection';
 
 export const test = base.extend<object, { databaseConnections: undefined }>({
@@ -8,9 +7,9 @@ export const test = base.extend<object, { databaseConnections: undefined }>({
 	databaseConnections: [
 		// biome-ignore lint/correctness/noEmptyPattern: Playwright reads a fixture's dependencies from this destructuring, and this fixture has none.
 		async ({}, use) => {
-			await Promise.all([connectDatabase(), connectAuth()]);
+			await connectDatabase();
 			await use(undefined);
-			await Promise.all([disconnectDatabase(), closeAuth()]);
+			await disconnectDatabase();
 		},
 		{ scope: 'worker', auto: true },
 	],

@@ -1,4 +1,3 @@
-import { closeAuth, connectAuth } from '#auth';
 import { connectDatabase, disconnectDatabase } from '#factories/connection';
 import { env } from '@/env';
 
@@ -16,10 +15,8 @@ export const connectDevDatabase = async () => {
 	}
 
 	await connectDatabase();
-	await connectAuth();
 };
 
 export const closeDevDatabase = async () => {
 	await disconnectDatabase();
-	await closeAuth();
 };

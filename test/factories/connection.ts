@@ -1,11 +1,15 @@
 import mongoose from 'mongoose';
 
+import {
+	closeDatabase,
+	connectDatabase as connectDataModule,
+} from '@/_models/database/connection';
 import { env } from '@/env';
 
 export const connectDatabase = async () => {
-	await mongoose.connect(env.DB_URL);
+	await Promise.all([mongoose.connect(env.DB_URL), connectDataModule()]);
 };
 
 export const disconnectDatabase = async () => {
-	await mongoose.disconnect();
+	await Promise.all([mongoose.disconnect(), closeDatabase()]);
 };

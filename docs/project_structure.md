@@ -4,6 +4,8 @@ This doc is a map of the repo for anyone new to it: each top-level folder, the m
 Claude Code skills, subagents and hooks
 # .github/
 GitHub Actions workflows (see `docs/ci.md`)
+# biome-plugins/
+Biome lint rules written as GritQL plugins, which `biome.jsonc` loads
 # docs/
 project documentation, one doc for each part of the codebase or its setup
 # e2e/

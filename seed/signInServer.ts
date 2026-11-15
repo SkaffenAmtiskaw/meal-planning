@@ -2,8 +2,9 @@ import { createServer, type ServerResponse } from 'node:http';
 
 import { parseCookies } from 'better-auth/cookies';
 
-import { auth, connectAuth } from '#auth';
+import { auth } from '#auth';
 import { findAuthUser } from '@/_auth/users';
+import { connectDatabase } from '@/_models/database/connection';
 import { env } from '@/env';
 
 import { SEEDED_USERS } from './users';
@@ -110,7 +111,7 @@ const server = createServer(async (request, response) => {
 	response.end();
 });
 
-await connectAuth();
+await connectDatabase();
 
 server.listen(PORT, () => {
 	const keyWidth = Math.max(...SEEDED_USERS.map(({ key }) => key.length));

@@ -28,6 +28,19 @@
 		}
 	},
 	"overrides": [
+		/**
+		 *  tsconfig.json allows imports with a .ts extension, because node can't find a file without its extension. So
+		 *  only the files that plain node runs may use one: the scripts, and the E2E servers playwright.config.ts starts.
+		 */
+		{
+			"includes": [
+				"**",
+				"!scripts/**",
+				"!e2e/_fixtures/memoryServer.ts",
+				"!e2e/_fixtures/fakeResend.ts"
+			],
+			"plugins": ["./biome-plugins/noTsExtensionImports.grit"]
+		},
 		{
 			"includes": ["test/**/*", "**/*/*.test.ts*"],
 			"linter": {

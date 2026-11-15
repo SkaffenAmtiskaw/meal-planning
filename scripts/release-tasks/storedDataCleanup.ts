@@ -17,7 +17,9 @@
 
 import { parseArgs } from 'node:util';
 
-import { type Db, type Document, MongoClient, ObjectId } from 'mongodb';
+import { type Db, type Document, ObjectId } from 'mongodb';
+
+import { openDatabase } from '../../src/_models/database/openDatabase.ts';
 
 const PRODUCTION_DB = 'staging';
 
@@ -50,16 +52,15 @@ if (databaseName === PRODUCTION_DB && !production && !dryRun && !check) {
 	);
 }
 
-const client = await MongoClient.connect(to);
+const { database, close } = await openDatabase(to, databaseName);
 try {
-	const db = client.db(databaseName);
 	if (check) {
-		await runCheck(db);
+		await runCheck(database);
 	} else {
-		await migrate(db, dryRun);
+		await migrate(database, dryRun);
 	}
 } finally {
-	await client.close();
+	await close();
 }
 
 function fail(message: string): never {
