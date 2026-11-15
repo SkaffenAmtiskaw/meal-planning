@@ -1,6 +1,7 @@
 'use server';
 
 import { checkAuth } from '@/_actions/auth/checkAuth';
+import { newId } from '@/_models/database/newId';
 import type { RecipeInterface } from '@/_models/library';
 import { zRecipeFormSchema } from '@/_models/library';
 import { Planner } from '@/_models/planner';
@@ -20,15 +21,9 @@ export const addRecipe = async (
 	const planner = await Planner.findById(plannerId);
 	if (!planner) return { ok: false, error: 'Planner not found' };
 
-	const insertIndex = planner.saved.length;
-	planner.saved.push({ ...recipeFields } as unknown as RecipeInterface);
+	const recipe: RecipeInterface = { _id: newId(), ...recipeFields };
+	planner.saved.push(recipe);
 	await planner.save();
 
-	return {
-		ok: true,
-		data: {
-			_id: String(planner.saved[insertIndex]._id),
-			name: recipeFields.name,
-		},
-	};
+	return { ok: true, data: { _id: recipe._id, name: recipe.name } };
 };

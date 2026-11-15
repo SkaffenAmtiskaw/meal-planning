@@ -2,6 +2,7 @@
 
 import { getUser } from '@/_actions/user';
 import { newId } from '@/_models/database/newId';
+import type { PlannerMembership } from '@/_models/user';
 import { User } from '@/_models/user';
 import type { ActionResult } from '@/_utils/actionResult';
 import { catchify } from '@/_utils/catchify';
@@ -22,15 +23,13 @@ export const createPlanner = async (name: string): Promise<ActionResult> => {
 
 	const planner = await addPlanner(parsedName.data);
 
-	// A raw collection call adds no _id, unlike a push through Mongoose.
+	const membership: PlannerMembership = {
+		_id: newId(),
+		planner: planner._id,
+		accessLevel: 'owner',
+	};
 	const update: Record<string, unknown> = {
-		$push: {
-			planners: {
-				_id: newId(),
-				planner: planner._id,
-				accessLevel: 'owner',
-			},
-		},
+		$push: { planners: membership },
 	};
 
 	await User.collection.updateOne({ _id: user._id } as object, update);

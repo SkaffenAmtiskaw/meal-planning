@@ -4,16 +4,10 @@ import mongoose, { model, Schema } from 'mongoose';
 
 import type { UserInterface } from './user.types';
 
-import { newId } from '../database/newId';
-
 export * from './user.types';
 
-// The zod schema gets its required `_id` once each creator sets one.
-type StoredUser = UserInterface & { _id: string };
-
-// Mongoose won't save a String `_id` it isn't given, so each `_id` defaults to a new one until its creator sets it.
-export const userSchema = new Schema<StoredUser>({
-	_id: { type: String, default: newId },
+export const userSchema = new Schema<UserInterface>({
+	_id: { type: String, required: true },
 	email: {
 		type: String,
 		required: true,
@@ -25,7 +19,7 @@ export const userSchema = new Schema<StoredUser>({
 	},
 	planners: [
 		{
-			_id: { type: String, default: newId },
+			_id: { type: String, required: true },
 			planner: {
 				type: String,
 				required: true,
@@ -46,5 +40,5 @@ export const userSchema = new Schema<StoredUser>({
 
 userSchema.index({ 'planners.planner': 1 });
 
-export const User: Model<StoredUser> =
-	mongoose.models.User || model<StoredUser>('User', userSchema);
+export const User: Model<UserInterface> =
+	mongoose.models.User || model<UserInterface>('User', userSchema);

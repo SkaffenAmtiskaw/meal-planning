@@ -1,18 +1,12 @@
 import { describe, expect, test, vi } from 'vitest';
 
-import { model } from 'mongoose';
-
 // vite resolves the full importer graph when bookmark.ts is loaded, which causes planner.ts
 // to be executed. planner.ts then imports '@/_models/library' (the same bookmark.ts
 // still being loaded), producing a partial module where zBookmarkInterface is undefined.
 // Mocking planner.ts prevents its body from executing in this test's context.
 vi.mock('./planner', () => ({}));
 
-import {
-	bookmarkSchema,
-	zBookmarkFormSchema,
-	zBookmarkInterface,
-} from './bookmark';
+import { zBookmarkFormSchema, zBookmarkInterface } from './bookmark';
 
 import { newId } from '../database/newId';
 
@@ -80,15 +74,6 @@ describe('bookmark interface', () => {
 
 	test('accepts a bookmark without notes', () => {
 		expect(zBookmarkInterface.safeParse(validBookmark).success).toBe(true);
-	});
-});
-
-describe('bookmark schema', () => {
-	test('gives a new bookmark a string _id', () => {
-		const Bookmark = model('BookmarkSchemaTest', bookmarkSchema);
-		const { _id } = new Bookmark({ name: "Ursula's Sea Spells" }).toObject();
-
-		expect(_id).toMatch(/^[0-9a-f]{24}$/);
 	});
 });
 

@@ -8,12 +8,14 @@ export type AccessLevel = (typeof ACCESS_LEVELS)[number];
 export const zAccessLevel = z.enum(ACCESS_LEVELS);
 
 export const zPlannerMembership = z.object({
+	_id: zId,
 	planner: zId,
 	accessLevel: zAccessLevel,
 });
 export type PlannerMembership = z.infer<typeof zPlannerMembership>;
 
 export const zUserInterface = z.object({
+	_id: zId,
 	email: z.string(),
 	name: zSafeString().default('New User'),
 	planners: z.array(zPlannerMembership),

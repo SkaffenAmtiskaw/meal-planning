@@ -22,6 +22,7 @@ export const zMealFormSchema = z.object({
 export type MealFormData = z.infer<typeof zMealFormSchema>;
 
 const zDishInterface = z.object({
+	_id: zId,
 	name: z.string(),
 	// A bare string is always a saved item's id; free text is `{ ref }`.
 	source: z
@@ -31,6 +32,7 @@ const zDishInterface = z.object({
 });
 
 const zMealInterface = z.object({
+	_id: zId,
 	name: z.string(),
 	description: zOptionalNonEmptyString,
 	dishes: z.array(zDishInterface),
@@ -38,7 +40,9 @@ const zMealInterface = z.object({
 
 export const zDayInterface = z.object({
 	date: z.iso.date(),
-	meals: z.array(zMealInterface).optional(),
+	meals: z.array(zMealInterface),
 });
 
+export type DishInterface = z.infer<typeof zDishInterface>;
+export type MealInterface = z.infer<typeof zMealInterface>;
 export type DayInterface = z.infer<typeof zDayInterface>;

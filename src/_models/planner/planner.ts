@@ -3,18 +3,13 @@ import type { Model } from 'mongoose';
 import mongoose, { model, Schema, SchemaTypes } from 'mongoose';
 
 import { daySchema } from '@/_models/calendar';
-import { newId } from '@/_models/database/newId';
 import { bookmarkSchema, recipeSchema, tagSchema } from '@/_models/library';
 import type { PlannerInterface } from '@/_models/planner';
 
 export * from './planner.types';
 
-// The zod schema gets its required `_id` once each creator sets one.
-type StoredPlanner = PlannerInterface & { _id: string };
-
-const plannerSchema = new Schema<StoredPlanner>({
-	// Mongoose won't save a String `_id` it isn't given, so it defaults to a new one until its creator sets it.
-	_id: { type: String, default: newId },
+const plannerSchema = new Schema<PlannerInterface>({
+	_id: { type: String, required: true },
 	name: {
 		type: String,
 	},
@@ -39,5 +34,5 @@ const plannerSchema = new Schema<StoredPlanner>({
 	],
 });
 
-export const Planner: Model<StoredPlanner> =
-	mongoose.models.Planner || model<StoredPlanner>('Planner', plannerSchema);
+export const Planner: Model<PlannerInterface> =
+	mongoose.models.Planner || model<PlannerInterface>('Planner', plannerSchema);

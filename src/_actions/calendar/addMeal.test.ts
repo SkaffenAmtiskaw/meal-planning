@@ -20,8 +20,13 @@ vi.mock(
 	async () => await import('#mocks/@/_models/planner'),
 );
 
-const plannerId = newId();
-const savedItemId = newId();
+vi.mock(
+	'@/_models/database/newId',
+	async () => await import('#mocks/@/_models/database/newId'),
+);
+
+const plannerId = '507f1f77bcf86cd799439011';
+const savedItemId = '507f1f77bcf86cd799439012';
 
 const validData = {
 	plannerId,
@@ -118,7 +123,12 @@ describe('addMeal', () => {
 				});
 			});
 
-			it('gives the meal and each dish an _id', async () => {
+			it('gives the meal and each dish a new id', async () => {
+				vi.mocked(newId)
+					.mockReturnValueOnce('toast-id')
+					.mockReturnValueOnce('tea-id')
+					.mockReturnValueOnce('meal-id');
+
 				await callAddMeal({
 					...validData,
 					dishes: [
@@ -128,10 +138,10 @@ describe('addMeal', () => {
 				});
 
 				expect(pushedMeal()).toMatchObject({
-					_id: expect.stringMatching(/^[0-9a-f]{24}$/),
+					_id: 'meal-id',
 					dishes: [
-						{ _id: expect.stringMatching(/^[0-9a-f]{24}$/) },
-						{ _id: expect.stringMatching(/^[0-9a-f]{24}$/) },
+						{ _id: 'toast-id', name: 'Toast' },
+						{ _id: 'tea-id', name: 'Tea' },
 					],
 				});
 			});

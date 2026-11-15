@@ -7,11 +7,13 @@ import { daySchema, zDayInterface } from './day';
 import { newId } from '../database/newId';
 
 const recipeId = newId();
-const idPattern = /^[0-9a-f]{24}$/;
+
+const dish = (fields: object) => ({ _id: newId(), ...fields });
+const meal = (fields: object) => ({ _id: newId(), ...fields });
 
 describe('day interface', () => {
-	test('accepts a valid day with no meals', () => {
-		expect(zDayInterface.safeParse({ date: '2026-03-27' }).success).toBe(true);
+	test('rejects a day with no meals array', () => {
+		expect(zDayInterface.safeParse({ date: '2026-03-27' }).success).toBe(false);
 	});
 
 	test('accepts a valid day with an empty meals array', () => {
@@ -25,10 +27,10 @@ describe('day interface', () => {
 			zDayInterface.safeParse({
 				date: '2026-03-27',
 				meals: [
-					{
+					meal({
 						name: "Hades' Power Lunch",
-						dishes: [{ name: 'Flaming Ribs' }],
-					},
+						dishes: [dish({ name: 'Flaming Ribs' })],
+					}),
 				],
 			}).success,
 		).toBe(true);
@@ -39,11 +41,11 @@ describe('day interface', () => {
 			zDayInterface.safeParse({
 				date: '2026-03-27',
 				meals: [
-					{
+					meal({
 						name: "Hades' Power Lunch",
 						description: 'High-energy underworld cuisine',
-						dishes: [{ name: 'Flaming Ribs' }],
-					},
+						dishes: [dish({ name: 'Flaming Ribs' })],
+					}),
 				],
 			}).success,
 		).toBe(true);
@@ -54,10 +56,10 @@ describe('day interface', () => {
 			zDayInterface.safeParse({
 				date: '2026-03-27',
 				meals: [
-					{
+					meal({
 						name: "Hades' Power Lunch",
-						dishes: [{ name: 'Flaming Ribs', source: 'Olympus Kitchen' }],
-					},
+						dishes: [dish({ name: 'Flaming Ribs', source: 'Olympus Kitchen' })],
+					}),
 				],
 			}).success,
 		).toBe(false);
@@ -68,15 +70,15 @@ describe('day interface', () => {
 			zDayInterface.safeParse({
 				date: '2026-03-27',
 				meals: [
-					{
+					meal({
 						name: "Hades' Power Lunch",
 						dishes: [
-							{
+							dish({
 								name: 'Flaming Ribs',
 								source: { url: 'https://olympus.example.com' },
-							},
+							}),
 						],
-					},
+					}),
 				],
 			}).success,
 		).toBe(true);
@@ -87,15 +89,15 @@ describe('day interface', () => {
 			zDayInterface.safeParse({
 				date: '2026-03-27',
 				meals: [
-					{
+					meal({
 						name: "Hades' Power Lunch",
 						dishes: [
-							{
+							dish({
 								name: 'Flaming Ribs',
 								source: { ref: 'Olympus Kitchen Cookbook' },
-							},
+							}),
 						],
-					},
+					}),
 				],
 			}).success,
 		).toBe(true);
@@ -106,10 +108,10 @@ describe('day interface', () => {
 			zDayInterface.safeParse({
 				date: '2026-03-27',
 				meals: [
-					{
+					meal({
 						name: "Hades' Power Lunch",
-						dishes: [{ name: 'Flaming Ribs', source: recipeId }],
-					},
+						dishes: [dish({ name: 'Flaming Ribs', source: recipeId })],
+					}),
 				],
 			}).success,
 		).toBe(true);
@@ -120,10 +122,12 @@ describe('day interface', () => {
 			zDayInterface.safeParse({
 				date: '2026-03-27',
 				meals: [
-					{
+					meal({
 						name: "Hades' Power Lunch",
-						dishes: [{ name: 'Flaming Ribs', note: 'Substituted lava sauce' }],
-					},
+						dishes: [
+							dish({ name: 'Flaming Ribs', note: 'Substituted lava sauce' }),
+						],
+					}),
 				],
 			}).success,
 		).toBe(true);
@@ -141,7 +145,7 @@ describe('day interface', () => {
 		expect(
 			zDayInterface.safeParse({
 				date: '2026-03-27',
-				meals: [{ dishes: [{ name: 'Flaming Ribs' }] }],
+				meals: [meal({ dishes: [dish({ name: 'Flaming Ribs' })] })],
 			}).success,
 		).toBe(false);
 	});
@@ -150,14 +154,44 @@ describe('day interface', () => {
 		expect(
 			zDayInterface.safeParse({
 				date: '2026-03-27',
-				meals: [{ name: "Hades' Power Lunch", dishes: [{}] }],
+				meals: [meal({ name: "Hades' Power Lunch", dishes: [dish({})] })],
+			}).success,
+		).toBe(false);
+	});
+
+	test('rejects a meal missing _id', () => {
+		expect(
+			zDayInterface.safeParse({
+				date: '2026-03-27',
+				meals: [
+					{
+						name: "Hades' Power Lunch",
+						dishes: [dish({ name: 'Flaming Ribs' })],
+					},
+				],
+			}).success,
+		).toBe(false);
+	});
+
+	test('rejects a dish missing _id', () => {
+		expect(
+			zDayInterface.safeParse({
+				date: '2026-03-27',
+				meals: [
+					meal({
+						name: "Hades' Power Lunch",
+						dishes: [{ name: 'Flaming Ribs' }],
+					}),
+				],
 			}).success,
 		).toBe(false);
 	});
 });
 
 describe('day schema', () => {
-	test('stores an _id on meals and dishes but not on the day', () => {
+	test('keeps the ids its creator gives meals and dishes, and stores none on the day', () => {
+		const mealId = newId();
+		const dishId = newId();
 		const Parent = model(
 			'DaySchemaTestParent',
 			new Schema({ calendar: [daySchema] }),
@@ -167,7 +201,11 @@ describe('day schema', () => {
 				{
 					date: '2026-03-27',
 					meals: [
-						{ name: "Hades' Power Lunch", dishes: [{ name: 'Flaming Ribs' }] },
+						{
+							_id: mealId,
+							name: "Hades' Power Lunch",
+							dishes: [{ _id: dishId, name: 'Flaming Ribs' }],
+						},
 					],
 				},
 			],
@@ -175,12 +213,7 @@ describe('day schema', () => {
 
 		expect(day).not.toHaveProperty('_id');
 		expect(day).toMatchObject({
-			meals: [
-				{
-					_id: expect.stringMatching(idPattern),
-					dishes: [{ _id: expect.stringMatching(idPattern) }],
-				},
-			],
+			meals: [{ _id: mealId, dishes: [{ _id: dishId }] }],
 		});
 	});
 

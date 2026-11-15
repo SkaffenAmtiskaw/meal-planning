@@ -6,6 +6,7 @@ import { z } from 'zod';
 
 import { checkAuth } from '@/_actions/auth/checkAuth';
 import { sendInviteEmail } from '@/_auth/emails/sendInviteEmail';
+import { newId } from '@/_models/database/newId';
 import { Planner } from '@/_models/planner';
 import { PendingInvite } from '@/_models/sharing';
 import type { AccessLevel } from '@/_models/user';
@@ -115,6 +116,7 @@ export const inviteUser = async (
 	// 9. Create PendingInvite document
 	const [invite, createError] = await catchify(() =>
 		PendingInvite.create({
+			_id: newId(),
 			email,
 			planner: plannerId,
 			invitedBy: callerUser._id,

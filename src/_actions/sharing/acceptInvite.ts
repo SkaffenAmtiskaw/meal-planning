@@ -1,8 +1,9 @@
 'use server';
 
 import { getUser } from '@/_actions/user';
+import { newId } from '@/_models/database/newId';
 import { PendingInvite } from '@/_models/sharing';
-import type { AccessLevel } from '@/_models/user';
+import type { PlannerMembership } from '@/_models/user';
 import { User } from '@/_models/user';
 import type { ActionResult } from '@/_utils/actionResult/ActionResult';
 import { isNoSessionError } from '@/_utils/noSessionError';
@@ -66,16 +67,14 @@ export const acceptInvite = async (
 		}
 
 		// Add the planner to user's planners array with the accessLevel from the invite
+		const membership: PlannerMembership = {
+			_id: newId(),
+			planner: plannerId,
+			accessLevel: invite.accessLevel,
+		};
 		await User.updateOne(
 			{ _id: user._id },
-			{
-				$push: {
-					planners: {
-						planner: plannerId,
-						accessLevel: invite.accessLevel as AccessLevel,
-					},
-				},
-			},
+			{ $push: { planners: membership } },
 		);
 
 		// Delete the pending invite

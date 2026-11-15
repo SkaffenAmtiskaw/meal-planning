@@ -10,12 +10,18 @@ import { userSchema, zUserInterface } from './user';
 import { newId } from '../database/newId';
 
 const plannerId = newId();
-const membership = { planner: plannerId, accessLevel: 'owner' as const };
+const userId = newId();
+const membership = {
+	_id: newId(),
+	planner: plannerId,
+	accessLevel: 'owner' as const,
+};
 
 describe('user interface', () => {
 	test('accepts a valid user with a name', () => {
 		expect(
 			zUserInterface.safeParse({
+				_id: userId,
 				email: 'gaston@villainslair.example.com',
 				name: 'Gaston',
 				planners: [membership],
@@ -25,6 +31,7 @@ describe('user interface', () => {
 
 	test('defaults name to "New User" when omitted', () => {
 		const result = zUserInterface.safeParse({
+			_id: userId,
 			email: 'gaston@villainslair.example.com',
 			planners: [membership],
 		});
@@ -37,6 +44,7 @@ describe('user interface', () => {
 	test('rejects a user with an invalid name', () => {
 		expect(
 			zUserInterface.safeParse({
+				_id: userId,
 				email: 'gaston@villainslair.example.com',
 				name: '$evil',
 				planners: [membership],
@@ -47,6 +55,7 @@ describe('user interface', () => {
 	test('accepts a user with no planners', () => {
 		expect(
 			zUserInterface.safeParse({
+				_id: userId,
 				email: 'gaston@villainslair.example.com',
 				planners: [],
 			}).success,
@@ -54,23 +63,26 @@ describe('user interface', () => {
 	});
 
 	test('rejects a user missing email', () => {
-		expect(zUserInterface.safeParse({ planners: [membership] }).success).toBe(
-			false,
-		);
+		expect(
+			zUserInterface.safeParse({ _id: userId, planners: [membership] }).success,
+		).toBe(false);
 	});
 
 	test('rejects a user missing planners', () => {
 		expect(
-			zUserInterface.safeParse({ email: 'gaston@villainslair.example.com' })
-				.success,
+			zUserInterface.safeParse({
+				_id: userId,
+				email: 'gaston@villainslair.example.com',
+			}).success,
 		).toBe(false);
 	});
 
 	test('rejects a planner membership with an invalid planner id', () => {
 		expect(
 			zUserInterface.safeParse({
+				_id: userId,
 				email: 'gaston@villainslair.example.com',
-				planners: [{ planner: 'bad-id', accessLevel: 'owner' }],
+				planners: [{ ...membership, planner: 'bad-id' }],
 			}).success,
 		).toBe(false);
 	});
@@ -78,8 +90,28 @@ describe('user interface', () => {
 	test('rejects a planner membership with an invalid access level', () => {
 		expect(
 			zUserInterface.safeParse({
+				_id: userId,
 				email: 'gaston@villainslair.example.com',
-				planners: [{ planner: plannerId, accessLevel: 'superuser' }],
+				planners: [{ ...membership, accessLevel: 'superuser' }],
+			}).success,
+		).toBe(false);
+	});
+
+	test('rejects a user missing _id', () => {
+		expect(
+			zUserInterface.safeParse({
+				email: 'gaston@villainslair.example.com',
+				planners: [membership],
+			}).success,
+		).toBe(false);
+	});
+
+	test('rejects a planner membership missing _id', () => {
+		expect(
+			zUserInterface.safeParse({
+				_id: userId,
+				email: 'gaston@villainslair.example.com',
+				planners: [{ planner: plannerId, accessLevel: 'owner' }],
 			}).success,
 		).toBe(false);
 	});

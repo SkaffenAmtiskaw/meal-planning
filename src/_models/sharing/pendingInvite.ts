@@ -4,16 +4,10 @@ import mongoose, { model, Schema } from 'mongoose';
 
 import type { PendingInviteInterface } from './pendingInvite.types';
 
-import { newId } from '../database/newId';
-
 export * from './pendingInvite.types';
 
-// The zod schema gets its required `_id` once each creator sets one.
-type StoredPendingInvite = PendingInviteInterface & { _id: string };
-
-const pendingInviteSchema = new Schema<StoredPendingInvite>({
-	// Mongoose won't save a String `_id` it isn't given, so it defaults to a new one until its creator sets it.
-	_id: { type: String, default: newId },
+const pendingInviteSchema = new Schema<PendingInviteInterface>({
+	_id: { type: String, required: true },
 	email: {
 		type: String,
 		required: true,
@@ -45,6 +39,6 @@ const pendingInviteSchema = new Schema<StoredPendingInvite>({
 	},
 });
 
-export const PendingInvite: Model<StoredPendingInvite> =
+export const PendingInvite: Model<PendingInviteInterface> =
 	mongoose.models.PendingInvite ||
-	model<StoredPendingInvite>('PendingInvite', pendingInviteSchema);
+	model<PendingInviteInterface>('PendingInvite', pendingInviteSchema);

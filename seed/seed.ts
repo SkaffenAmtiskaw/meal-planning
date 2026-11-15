@@ -2,7 +2,11 @@ import 'temporal-polyfill/global';
 
 import { createPlanner } from '#factories/planner';
 import { createUser } from '#factories/user';
-import type { DayInterface } from '@/_models/calendar';
+import type {
+	DayInterface,
+	DishInterface,
+	MealInterface,
+} from '@/_models/calendar';
 import { newId } from '@/_models/database/newId';
 import type { BookmarkInterface, RecipeInterface } from '@/_models/library';
 import { TAG_COLOR_NAMES } from '@/_theme/colors';
@@ -130,10 +134,19 @@ const bookmarks: BookmarkInterface[] = [
 	},
 ];
 
-type Meals = NonNullable<DayInterface['meals']>;
+// A meal as the week repeats it. Each day builds its own copy, so no meal or dish id repeats across weeks.
+type MealTemplate = Omit<MealInterface, '_id' | 'dishes'> & {
+	dishes: Omit<DishInterface, '_id'>[];
+};
+
+const buildMeal = ({ dishes, ...meal }: MealTemplate): MealInterface => ({
+	_id: newId(),
+	...meal,
+	dishes: dishes.map((dish) => ({ _id: newId(), ...dish })),
+});
 
 // Indexed by day of the week, Sunday first, as the calendar's weeks run.
-const weeklyMeals: Meals[] = [
+const weeklyMeals: MealTemplate[][] = [
 	[
 		{
 			name: 'Brunch',
@@ -193,7 +206,8 @@ for (
 	date = date.add({ days: 1 })
 ) {
 	const meals = weeklyMeals[date.dayOfWeek % 7];
-	if (meals.length > 0) calendar.push({ date: date.toString(), meals });
+	if (meals.length > 0)
+		calendar.push({ date: date.toString(), meals: meals.map(buildMeal) });
 }
 
 await connectDevDatabase();

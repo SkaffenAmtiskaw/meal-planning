@@ -11,6 +11,10 @@ const mockSafeParse = vi.hoisted(() => vi.fn());
 
 vi.mock('@/_actions/user', async () => await import('#mocks/@/_actions/user'));
 vi.mock('@/_models/user', async () => await import('#mocks/@/_models/user'));
+vi.mock(
+	'@/_models/database/newId',
+	async () => await import('#mocks/@/_models/database/newId'),
+);
 vi.mock('./addPlanner', async () => ({
 	addPlanner: vi.fn(),
 }));
@@ -108,9 +112,8 @@ describe('createPlanner', () => {
 			{ _id: userId },
 			{
 				$push: {
-					// A raw collection call adds no _id, unlike a push through Mongoose.
 					planners: {
-						_id: expect.stringMatching(/^[0-9a-f]{24}$/),
+						_id: 'new-id',
 						planner: 'planner-id-456',
 						accessLevel: 'owner',
 					},

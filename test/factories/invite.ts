@@ -1,3 +1,4 @@
+import { newId } from '@/_models/database/newId';
 import type { PendingInviteInterface } from '@/_models/sharing';
 import { PendingInvite } from '@/_models/sharing';
 
@@ -21,6 +22,7 @@ export const createPendingInvite = async ({
 	...rest
 }: CreatePendingInviteOptions) =>
 	await PendingInvite.create({
+		_id: newId(),
 		email,
 		accessLevel,
 		token,

@@ -1,7 +1,5 @@
 import { describe, expect, test } from 'vitest';
 
-import { model } from 'mongoose';
-
 import { recipeSchema, zRecipeFormSchema, zRecipeInterface } from './recipe';
 
 import { newId } from '../database/newId';
@@ -140,12 +138,5 @@ describe('recipe schema', () => {
 
 	test('source URL validator rejects an invalid URL', () => {
 		expect(urlValidator('not-a-url')).toBe(false);
-	});
-
-	test('gives a new recipe a string _id', () => {
-		const Recipe = model('RecipeSchemaTest', recipeSchema);
-		const { _id } = new Recipe({ name: "Ursula's Sea Bisque" }).toObject();
-
-		expect(_id).toMatch(/^[0-9a-f]{24}$/);
 	});
 });

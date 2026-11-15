@@ -1,7 +1,6 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import { checkAuth } from '@/_actions/auth/checkAuth';
-import { newId } from '@/_models/database/newId';
 import { Planner } from '@/_models/planner';
 
 import { addTag } from './addTag';
@@ -20,7 +19,12 @@ vi.mock('@/_theme/colors', async () => ({
 	TAG_COLOR_NAMES: ['red', 'green', 'blue'],
 }));
 
-const plannerId = newId();
+vi.mock(
+	'@/_models/database/newId',
+	async () => await import('#mocks/@/_models/database/newId'),
+);
+
+const plannerId = '507f1f77bcf86cd799439011';
 
 const makePlanner = (tagCount = 0) => ({
 	tags: Array.from({ length: tagCount }),
@@ -87,7 +91,7 @@ describe('addTag', () => {
 			{
 				$push: {
 					tags: expect.objectContaining({
-						_id: expect.any(String),
+						_id: 'new-id',
 						name: 'Quick',
 						color: 'red',
 					}),
@@ -105,7 +109,7 @@ describe('addTag', () => {
 		if (result.ok) {
 			expect(result.data.name).toBe('Quick');
 			expect(result.data.color).toBe('red');
-			expect(result.data._id).toMatch(/^[0-9a-f]{24}$/);
+			expect(result.data._id).toBe('new-id');
 		}
 	});
 });

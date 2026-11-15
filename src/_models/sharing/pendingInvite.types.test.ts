@@ -5,6 +5,7 @@ import { zPendingInvite } from './pendingInvite.types';
 import { newId } from '../database/newId';
 
 const validObjectId = newId();
+const inviteId = newId();
 const now = new Date();
 const expiresAt = new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000);
 
@@ -12,6 +13,7 @@ describe('pending invite', () => {
 	test('accepts a valid pending invite with all required fields', () => {
 		expect(
 			zPendingInvite.safeParse({
+				_id: inviteId,
 				email: 'guest@example.com',
 				planner: validObjectId,
 				invitedBy: validObjectId,
@@ -25,6 +27,7 @@ describe('pending invite', () => {
 
 	test('accepts a pending invite without createdAt (should default to current date)', () => {
 		const result = zPendingInvite.safeParse({
+			_id: inviteId,
 			email: 'guest@example.com',
 			planner: validObjectId,
 			invitedBy: validObjectId,
@@ -41,6 +44,7 @@ describe('pending invite', () => {
 	test('rejects a pending invite with an invalid email', () => {
 		expect(
 			zPendingInvite.safeParse({
+				_id: inviteId,
 				email: 'not-an-email',
 				planner: validObjectId,
 				invitedBy: validObjectId,
@@ -54,6 +58,7 @@ describe('pending invite', () => {
 	test('rejects a pending invite with an invalid planner id', () => {
 		expect(
 			zPendingInvite.safeParse({
+				_id: inviteId,
 				email: 'guest@example.com',
 				planner: 'invalid-id',
 				invitedBy: validObjectId,
@@ -67,6 +72,7 @@ describe('pending invite', () => {
 	test('rejects a pending invite with an invalid invitedBy id', () => {
 		expect(
 			zPendingInvite.safeParse({
+				_id: inviteId,
 				email: 'guest@example.com',
 				planner: validObjectId,
 				invitedBy: 'invalid-id',
@@ -80,6 +86,7 @@ describe('pending invite', () => {
 	test('rejects a pending invite with an invalid accessLevel', () => {
 		expect(
 			zPendingInvite.safeParse({
+				_id: inviteId,
 				email: 'guest@example.com',
 				planner: validObjectId,
 				invitedBy: validObjectId,
@@ -93,6 +100,7 @@ describe('pending invite', () => {
 	test('rejects a pending invite missing the email field', () => {
 		expect(
 			zPendingInvite.safeParse({
+				_id: inviteId,
 				planner: validObjectId,
 				invitedBy: validObjectId,
 				accessLevel: 'read',
@@ -105,6 +113,7 @@ describe('pending invite', () => {
 	test('rejects a pending invite missing the token field', () => {
 		expect(
 			zPendingInvite.safeParse({
+				_id: inviteId,
 				email: 'guest@example.com',
 				planner: validObjectId,
 				invitedBy: validObjectId,
@@ -117,11 +126,25 @@ describe('pending invite', () => {
 	test('rejects a pending invite missing the expiresAt field', () => {
 		expect(
 			zPendingInvite.safeParse({
+				_id: inviteId,
 				email: 'guest@example.com',
 				planner: validObjectId,
 				invitedBy: validObjectId,
 				accessLevel: 'read',
 				token: 'abc123-uuid-token',
+			}).success,
+		).toBe(false);
+	});
+
+	test('rejects a pending invite missing _id', () => {
+		expect(
+			zPendingInvite.safeParse({
+				email: 'guest@example.com',
+				planner: validObjectId,
+				invitedBy: validObjectId,
+				accessLevel: 'read',
+				token: 'abc123-uuid-token',
+				expiresAt: new Date(),
 			}).success,
 		).toBe(false);
 	});

@@ -40,11 +40,12 @@ const openCalendarWithMeal = async (
 				date: date.toISODate(),
 				meals: [
 					{
+						_id: newId(),
 						name: MEAL_NAME,
 						description: DESCRIPTION,
 						dishes: [
-							{ name: URL_DISH, source: { url: SOURCE_URL } },
-							{ name: RECIPE_DISH, source: recipeId },
+							{ _id: newId(), name: URL_DISH, source: { url: SOURCE_URL } },
+							{ _id: newId(), name: RECIPE_DISH, source: recipeId },
 						],
 					},
 				],

@@ -1,7 +1,8 @@
 'use server';
 
 import { addPlanner } from '@/_actions/planner';
-import type { AccessLevel } from '@/_models/user';
+import { newId } from '@/_models/database/newId';
+import type { AccessLevel, UserInterface } from '@/_models/user';
 import { User } from '@/_models/user';
 
 export interface AddUserOptions {
@@ -85,15 +86,11 @@ export async function addUser(
 	const finalAccessLevel = accessLevel ?? (isNewPlanner ? 'owner' : 'read');
 
 	// Build user data object
-	const userData: {
-		email: string;
-		name: string;
-		planners: { planner: string; accessLevel: AccessLevel }[];
-		emailVerified?: boolean;
-	} = {
+	const userData: UserInterface & { emailVerified?: boolean } = {
+		_id: newId(),
 		email,
 		name,
-		planners: [{ planner: id, accessLevel: finalAccessLevel }],
+		planners: [{ _id: newId(), planner: id, accessLevel: finalAccessLevel }],
 	};
 
 	// Only add emailVerified if it was provided

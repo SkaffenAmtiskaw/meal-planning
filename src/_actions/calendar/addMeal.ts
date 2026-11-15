@@ -3,6 +3,7 @@
 import { z } from 'zod';
 
 import { checkAuth } from '@/_actions/auth/checkAuth';
+import type { DishInterface, MealInterface } from '@/_models/calendar';
 import { zMealFormSchema } from '@/_models/calendar';
 import { newId } from '@/_models/database/newId';
 import { Planner } from '@/_models/planner';
@@ -22,8 +23,8 @@ export const addMeal = async (
 
 	// The driver stores an undefined field as null, so an empty optional field
 	// gets no key at all.
-	const mealDishes = dishes.map((dish) => {
-		let source: unknown;
+	const mealDishes = dishes.map((dish): DishInterface => {
+		let source: DishInterface['source'];
 		if (dish.sourceType === 'saved' && dish.savedId) {
 			source = dish.savedId;
 		} else if (dish.sourceType === 'text' && dish.sourceText) {
@@ -38,8 +39,7 @@ export const addMeal = async (
 		};
 	});
 
-	// The driver adds no subdocument ids, so the meal and its dishes get theirs here.
-	const meal = {
+	const meal: MealInterface = {
 		_id: newId(),
 		name: mealName,
 		...(description ? { description } : {}),

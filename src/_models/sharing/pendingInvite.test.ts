@@ -9,6 +9,7 @@ import { zPendingInvite } from './pendingInvite';
 
 import { newId } from '../database/newId';
 
+const inviteId = newId();
 const plannerId = newId();
 const invitedById = newId();
 
@@ -16,6 +17,7 @@ describe('pendingInvite interface', () => {
 	test('accepts a valid pending invite', () => {
 		expect(
 			zPendingInvite.safeParse({
+				_id: inviteId,
 				email: 'guest@villainslair.example.com',
 				planner: plannerId,
 				invitedBy: invitedById,
@@ -30,6 +32,7 @@ describe('pendingInvite interface', () => {
 		const accessLevels = ['owner', 'admin', 'write', 'read'] as const;
 		for (const accessLevel of accessLevels) {
 			const result = zPendingInvite.safeParse({
+				_id: inviteId,
 				email: 'guest@villainslair.example.com',
 				planner: plannerId,
 				invitedBy: invitedById,
@@ -44,6 +47,7 @@ describe('pendingInvite interface', () => {
 	test('rejects invalid access level', () => {
 		expect(
 			zPendingInvite.safeParse({
+				_id: inviteId,
 				email: 'guest@villainslair.example.com',
 				planner: plannerId,
 				invitedBy: invitedById,
@@ -57,6 +61,7 @@ describe('pendingInvite interface', () => {
 	test('rejects missing email', () => {
 		expect(
 			zPendingInvite.safeParse({
+				_id: inviteId,
 				planner: plannerId,
 				invitedBy: invitedById,
 				accessLevel: 'read',
@@ -69,6 +74,7 @@ describe('pendingInvite interface', () => {
 	test('rejects invalid email format', () => {
 		expect(
 			zPendingInvite.safeParse({
+				_id: inviteId,
 				email: 'not-an-email',
 				planner: plannerId,
 				invitedBy: invitedById,
@@ -82,6 +88,7 @@ describe('pendingInvite interface', () => {
 	test('rejects invalid planner id', () => {
 		expect(
 			zPendingInvite.safeParse({
+				_id: inviteId,
 				email: 'guest@villainslair.example.com',
 				planner: 'bad-id',
 				invitedBy: invitedById,
@@ -95,6 +102,7 @@ describe('pendingInvite interface', () => {
 	test('rejects invalid invitedBy id', () => {
 		expect(
 			zPendingInvite.safeParse({
+				_id: inviteId,
 				email: 'guest@villainslair.example.com',
 				planner: plannerId,
 				invitedBy: 'bad-id',
@@ -108,6 +116,7 @@ describe('pendingInvite interface', () => {
 	test('rejects missing token', () => {
 		expect(
 			zPendingInvite.safeParse({
+				_id: inviteId,
 				email: 'guest@villainslair.example.com',
 				planner: plannerId,
 				invitedBy: invitedById,
@@ -120,11 +129,25 @@ describe('pendingInvite interface', () => {
 	test('rejects missing expiresAt', () => {
 		expect(
 			zPendingInvite.safeParse({
+				_id: inviteId,
 				email: 'guest@villainslair.example.com',
 				planner: plannerId,
 				invitedBy: invitedById,
 				accessLevel: 'read',
 				token: 'abc123token',
+			}).success,
+		).toBe(false);
+	});
+
+	test('rejects a pending invite missing _id', () => {
+		expect(
+			zPendingInvite.safeParse({
+				email: 'guest@example.com',
+				planner: plannerId,
+				invitedBy: invitedById,
+				accessLevel: 'read',
+				token: 'abc123-uuid-token',
+				expiresAt: new Date(),
 			}).success,
 		).toBe(false);
 	});

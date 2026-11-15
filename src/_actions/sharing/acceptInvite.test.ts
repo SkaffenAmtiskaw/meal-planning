@@ -17,6 +17,10 @@ import { acceptInvite } from './acceptInvite';
 
 vi.mock('@/_actions/user', async () => await import('#mocks/@/_actions/user'));
 vi.mock(
+	'@/_models/database/newId',
+	async () => await import('#mocks/@/_models/database/newId'),
+);
+vi.mock(
 	'@/_utils/reportError',
 	async () => await import('#mocks/@/_utils/reportError'),
 );
@@ -65,7 +69,7 @@ describe('acceptInvite', () => {
 		...overrides,
 	});
 
-	it('should accept a valid invite and add user to planner', async () => {
+	it('should accept a valid invite and add user to planner with a new membership id', async () => {
 		vi.mocked(getUser).mockResolvedValue({
 			_id: userId,
 			email: userEmail,
@@ -86,6 +90,7 @@ describe('acceptInvite', () => {
 			{
 				$push: {
 					planners: {
+						_id: 'new-id',
 						planner: plannerId,
 						accessLevel: 'write',
 					},

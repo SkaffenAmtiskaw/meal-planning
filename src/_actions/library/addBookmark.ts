@@ -1,6 +1,7 @@
 'use server';
 
 import { checkAuth } from '@/_actions/auth/checkAuth';
+import { newId } from '@/_models/database/newId';
 import type { BookmarkInterface } from '@/_models/library';
 import { zBookmarkFormSchema } from '@/_models/library';
 import { Planner } from '@/_models/planner';
@@ -20,15 +21,9 @@ export const addBookmark = async (
 	const planner = await Planner.findById(plannerId);
 	if (!planner) return { ok: false, error: 'Planner not found' };
 
-	const insertIndex = planner.saved.length;
-	planner.saved.push({ ...bookmarkFields } as unknown as BookmarkInterface);
+	const bookmark: BookmarkInterface = { _id: newId(), ...bookmarkFields };
+	planner.saved.push(bookmark);
 	await planner.save();
 
-	return {
-		ok: true,
-		data: {
-			_id: String(planner.saved[insertIndex]._id),
-			name: bookmarkFields.name,
-		},
-	};
+	return { ok: true, data: { _id: bookmark._id, name: bookmark.name } };
 };

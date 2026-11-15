@@ -27,6 +27,10 @@ vi.mock('@/_auth/emails/sendInviteEmail', async () => ({
 }));
 vi.mock('@/env', async () => await import('#mocks/env'));
 vi.mock(
+	'@/_models/database/newId',
+	async () => await import('#mocks/@/_models/database/newId'),
+);
+vi.mock(
 	'@/_models/planner',
 	async () => await import('#mocks/@/_models/planner'),
 );
@@ -286,7 +290,7 @@ describe('inviteUser', () => {
 	});
 
 	describe('invite creation', () => {
-		it('creates pending invite with secure token and 7-day expiration', async () => {
+		it('creates pending invite with a new id, secure token and 7-day expiration', async () => {
 			const result = await inviteUser({
 				plannerId,
 				email: inviteEmail,
@@ -299,6 +303,7 @@ describe('inviteUser', () => {
 
 			expect(PendingInvite.create).toHaveBeenCalledWith(
 				expect.objectContaining({
+					_id: 'new-id',
 					email: inviteEmail,
 					planner: plannerId,
 					invitedBy: callerUserId,
