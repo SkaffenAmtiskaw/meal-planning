@@ -41,6 +41,16 @@ const callAddMeal = (data: unknown) => {
 	return addMeal(data);
 };
 
+const pushedMeal = () => {
+	const [, update] = vi.mocked(Planner.collection.updateOne).mock.calls[0];
+	return (update as { $push: Record<string, Record<string, unknown>> }).$push[
+		'calendar.$.meals'
+	];
+};
+
+const pushedDish = () =>
+	(pushedMeal().dishes as Array<Record<string, unknown>>)[0];
+
 describe('addMeal', () => {
 	beforeEach(() => {
 		vi.resetAllMocks();
@@ -106,6 +116,24 @@ describe('addMeal', () => {
 				expect(result).toEqual({
 					ok: true,
 					data: { calendar: expect.any(Array) },
+				});
+			});
+
+			it('gives the meal and each dish an ObjectId _id', async () => {
+				await callAddMeal({
+					...validData,
+					dishes: [
+						{ name: 'Toast', sourceType: 'none' },
+						{ name: 'Tea', sourceType: 'none' },
+					],
+				});
+
+				expect(pushedMeal()).toMatchObject({
+					_id: expect.any(Types.ObjectId),
+					dishes: [
+						{ _id: expect.any(Types.ObjectId) },
+						{ _id: expect.any(Types.ObjectId) },
+					],
 				});
 			});
 
@@ -212,55 +240,28 @@ describe('addMeal', () => {
 				);
 			});
 
-			it('sets source to undefined when sourceType is none', async () => {
+			it('leaves out source when sourceType is none', async () => {
 				await addMeal(validData);
 
-				expect(Planner.collection.updateOne).toHaveBeenCalledWith(
-					expect.anything(),
-					{
-						$push: {
-							'calendar.$.meals': expect.objectContaining({
-								dishes: [expect.objectContaining({ source: undefined })],
-							}),
-						},
-					},
-				);
+				expect(pushedDish()).not.toHaveProperty('source');
 			});
 
-			it('sets source to undefined when saved sourceType has no savedId', async () => {
+			it('leaves out source when saved sourceType has no savedId', async () => {
 				await callAddMeal({
 					...validData,
 					dishes: [{ name: 'Pasta', sourceType: 'saved' }],
 				});
 
-				expect(Planner.collection.updateOne).toHaveBeenCalledWith(
-					expect.anything(),
-					{
-						$push: {
-							'calendar.$.meals': expect.objectContaining({
-								dishes: [expect.objectContaining({ source: undefined })],
-							}),
-						},
-					},
-				);
+				expect(pushedDish()).not.toHaveProperty('source');
 			});
 
-			it('sets source to undefined when text sourceType has no sourceText', async () => {
+			it('leaves out source when text sourceType has empty sourceText', async () => {
 				await callAddMeal({
 					...validData,
-					dishes: [{ name: 'Pasta', sourceType: 'text' }],
+					dishes: [{ name: 'Pasta', sourceType: 'text', sourceText: '' }],
 				});
 
-				expect(Planner.collection.updateOne).toHaveBeenCalledWith(
-					expect.anything(),
-					{
-						$push: {
-							'calendar.$.meals': expect.objectContaining({
-								dishes: [expect.objectContaining({ source: undefined })],
-							}),
-						},
-					},
-				);
+				expect(pushedDish()).not.toHaveProperty('source');
 			});
 		});
 
@@ -280,19 +281,19 @@ describe('addMeal', () => {
 				);
 			});
 
-			it('omits description when not provided', async () => {
-				await addMeal(validData);
+			it('leaves out description when it is empty', async () => {
+				await callAddMeal({ ...validData, description: '' });
 
-				expect(Planner.collection.updateOne).toHaveBeenCalledWith(
-					expect.anything(),
-					{
-						$push: {
-							'calendar.$.meals': expect.objectContaining({
-								description: undefined,
-							}),
-						},
-					},
-				);
+				expect(pushedMeal()).not.toHaveProperty('description');
+			});
+
+			it('leaves out dish note when it is empty', async () => {
+				await callAddMeal({
+					...validData,
+					dishes: [{ name: 'Pasta', sourceType: 'none', note: '' }],
+				});
+
+				expect(pushedDish()).not.toHaveProperty('note');
 			});
 
 			it('includes dish note when provided', async () => {

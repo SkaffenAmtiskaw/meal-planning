@@ -93,6 +93,24 @@ describe('addBookmark', () => {
 		}
 	});
 
+	test('leaves out notes when they are empty', async () => {
+		const planner = makePlanner();
+		vi.mocked(Planner.findById).mockResolvedValue(planner as never);
+
+		await addBookmark({ ...validData, notes: '' });
+
+		expect(planner.saved[0]).not.toHaveProperty('notes');
+	});
+
+	test('keeps notes when they are filled in', async () => {
+		const planner = makePlanner();
+		vi.mocked(Planner.findById).mockResolvedValue(planner as never);
+
+		await addBookmark({ ...validData, notes: 'Read later' });
+
+		expect(planner.saved[0]).toHaveProperty('notes', 'Read later');
+	});
+
 	test('accepts optional tags', async () => {
 		const planner = makePlanner();
 		vi.mocked(Planner.findById).mockResolvedValue(planner as never);

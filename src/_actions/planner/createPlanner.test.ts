@@ -94,7 +94,7 @@ describe('createPlanner', () => {
 		expect(reportError).toHaveBeenCalledWith(error);
 	});
 
-	it('creates a planner and links it to the user by their ObjectId', async () => {
+	it('creates a planner and links it to the user by their ObjectId, with an ObjectId _id on the membership', async () => {
 		mockSafeParse.mockReturnValue({
 			success: true,
 			data: 'My Planner',
@@ -111,7 +111,12 @@ describe('createPlanner', () => {
 			{ _id: new Types.ObjectId(userId) },
 			{
 				$push: {
-					planners: { planner: 'planner-id-456', accessLevel: 'owner' },
+					// A raw collection call adds no _id, unlike a push through Mongoose.
+					planners: {
+						_id: expect.any(Types.ObjectId),
+						planner: 'planner-id-456',
+						accessLevel: 'owner',
+					},
 				},
 			},
 		);

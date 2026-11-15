@@ -11,7 +11,10 @@ import type { ActionResult } from '@/_utils/actionResult';
 export const addBookmark = async (
 	data: unknown,
 ): Promise<ActionResult<{ _id: string; name: string }>> => {
-	const { plannerId, ...bookmarkFields } = zBookmarkFormSchema.parse(data);
+	const { plannerId, notes, ...requiredFields } =
+		zBookmarkFormSchema.parse(data);
+	// The form starts notes at '', which would be stored as an empty string.
+	const bookmarkFields = { ...requiredFields, ...(notes ? { notes } : {}) };
 
 	const auth = await checkAuth(new Types.ObjectId(plannerId), 'write');
 	if (auth.type !== 'authorized') return { ok: false, error: 'Unauthorized' };
