@@ -1,6 +1,6 @@
 import { test as base } from '@playwright/test';
 
-import { connectDatabase, disconnectDatabase } from '#factories/connection';
+import { closeDatabase, connectDatabase } from '#factories/connection';
 
 export const test = base.extend<object, { databaseConnections: undefined }>({
 	// Opens each worker's connections for the factories and signIn, and closes them when the worker ends.
@@ -9,7 +9,7 @@ export const test = base.extend<object, { databaseConnections: undefined }>({
 		async ({}, use) => {
 			await connectDatabase();
 			await use(undefined);
-			await disconnectDatabase();
+			await closeDatabase();
 		},
 		{ scope: 'worker', auto: true },
 	],

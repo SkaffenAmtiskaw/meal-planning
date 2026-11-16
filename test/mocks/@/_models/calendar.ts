@@ -12,23 +12,11 @@ import { vi } from 'vitest';
 
 // ─── Zod Schemas ──────────────────────────────────────────────────────────────
 
-export const zDayInterface = {
-	safeParse: vi.fn(() => ({ success: true, data: {} })),
-	parse: vi.fn(() => ({})),
-};
-
 export const zMealFormSchema = {
-	safeParse: vi.fn(() => ({ success: true, data: {} })),
-	parse: vi.fn(() => ({})),
-};
-
-export const zDishFormInput = {
 	safeParse: vi.fn(() => ({ success: true, data: {} })),
 	parse: vi.fn(() => ({})),
 };
 
 // ─── Types (runtime stubs for destructuring) ──────────────────────────────────
 
-export type DayInterface = Record<string, unknown>;
 export type MealFormData = Record<string, unknown>;
-export type DishFormInput = Record<string, unknown>;

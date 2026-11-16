@@ -1,4 +1,5 @@
-import { connectDatabase, disconnectDatabase } from '#factories/connection';
+import { connectDatabase } from '@/_models/database/connectDatabase';
+import { closeDatabase } from '@/_models/database/connection';
 import { env } from '@/env';
 
 import { databaseNameOf, isDevDatabase } from './databaseNames';
@@ -20,5 +21,5 @@ export const connectDevDatabase = async () => {
 };
 
 export const closeDevDatabase = async () => {
-	await disconnectDatabase();
+	await closeDatabase();
 };

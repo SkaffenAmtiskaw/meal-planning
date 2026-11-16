@@ -20,5 +20,3 @@ export const users = {
 	updateMany: vi.fn(async () => ({ matchedCount: 0 })),
 	updateOne: vi.fn(async () => ({ matchedCount: 1 })),
 };
-
-export const createUsersIndexes = vi.fn();

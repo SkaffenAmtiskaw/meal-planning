@@ -10,7 +10,7 @@ The entry points are the files every user goes through to get in:
 - any `layout.tsx` under `src/app/`
 - `src/app/page.tsx`
 - the page that sign-in lands on, `src/app/[planner]/calendar/page.tsx`
-- the auth check and user lookup: `checkAuth` (`src/_actions/auth/checkAuth.ts`), `getUser` and `addUser` (`src/_actions/user/getUser.ts` and `src/_actions/user/addUser.ts`), and `getPlannerClient` (`src/_actions/planner/getPlannerClient.ts`)
+- the auth check and user lookup: `checkAuth` (`src/_actions/auth/checkAuth.ts`), `getUser` and `addUser` (`src/_actions/user/getUser.ts` and `src/_actions/user/addUser.ts`), and `getPlanner` (`src/_actions/planner/getPlanner.ts`)
 - sign-in: `src/_auth/` and `src/app/api/auth/[...all]/route.ts`
 
 Any one of these pieces of evidence puts the error in an entry point:
