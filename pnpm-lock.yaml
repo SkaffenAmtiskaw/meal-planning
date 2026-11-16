@@ -27,8 +27,8 @@ importers:
         specifier: 0.11.0
         version: 0.11.0(@opentelemetry/api@1.9.1)(@types/react@19.3.0)(next@16.4.6(@babel/core@7.29.7)(@opentelemetry/api@1.9.1)(@playwright/test@1.65.1)(@types/node@24.3.3)(react-dom@19.3.1(react@19.3.1))(react@19.3.1)(sass@1.106.1))(react-dom@19.3.1(react@19.3.1))(react@19.3.1)
       '@posthog/nextjs-config':
-        specifier: 1.12.1
-        version: 1.12.1(next@16.4.6(@babel/core@7.29.7)(@opentelemetry/api@1.9.1)(@playwright/test@1.65.1)(@types/node@24.3.3)(react-dom@19.3.1(react@19.3.1))(react@19.3.1)(sass@1.106.1))(posthog-js@1.447.5(@types/react@19.3.0)(react@19.3.1))(webpack@5.112.2(postcss@8.5.32))
+        specifier: 1.12.2
+        version: 1.12.2(next@16.4.6(@babel/core@7.29.7)(@opentelemetry/api@1.9.1)(@playwright/test@1.65.1)(@types/node@24.3.3)(react-dom@19.3.1(react@19.3.1))(react@19.3.1)(sass@1.106.1))(posthog-js@1.447.5(@types/react@19.3.0)(react@19.3.1))(webpack@5.112.2(postcss@8.5.32))
       '@preact/signals':
         specifier: 2.11.4
         version: 2.11.4(preact@10.29.0)
@@ -984,8 +984,8 @@ packages:
   '@posthog/browser-common@0.10.7':
     resolution: {integrity: sha512-1V2SBu7gxVbroZk49YsCM++K9qy3qcrOaylemjkkTPvACgAGwm0Y/AkJN2eRZO1YME0FnagF6QKBaXmq3o0e8g==}
 
-  '@posthog/cli@0.18.12':
-    resolution: {integrity: sha512-/eT9riWOkBb9uwsdOxQgW3fan/T3hwT8rvwZCzPl3DAgSBEhzpP59usD0fyFS++X2967E5AQe74nrBw1rywf6A==}
+  '@posthog/cli@0.19.4':
+    resolution: {integrity: sha512-wDS1yNMfKYEVpWJNX0DVdmQA9//zQV6+I7Eq2NcgRL30g2TKzN/wAzob0iAI/ysibcON7D6o/LtBxfh+8JTGDw==}
     engines: {node: '>=14.14', npm: '>=6'}
     hasBin: true
 
@@ -994,6 +994,9 @@ packages:
 
   '@posthog/core@1.65.0':
     resolution: {integrity: sha512-eXbEpErslRjNLbOWx2GdBiYmJ70Yzq2JPuuQaFGJHNv//5DwbsVVF4R0yPCOIT1AqUrd4cW0faamrN8ijnPMTw==}
+
+  '@posthog/core@1.68.0':
+    resolution: {integrity: sha512-5kjPcLquzj47qBGn52+7RRXrJJvrTHaRKgxV9izYPFzoVFEftFqSXYZF/ug+yialxDU73dR9apyi+mSaAeaXPw==}
 
   '@posthog/next@0.11.0':
     resolution: {integrity: sha512-2KGgAulIfkG07noWCVN5Or3h62OogCGjFRovo0jnxcmqcMxBls2rOdCoX5ce4AHdZbn3xD/yvrw+CvrH1DMhVw==}
@@ -1009,8 +1012,8 @@ packages:
       '@vercel/functions':
         optional: true
 
-  '@posthog/nextjs-config@1.12.1':
-    resolution: {integrity: sha512-5hBbYe1Q5U/Gh+pwJmy2SeR9HUIk6fl2BSlL5O30+x/DduWQ7jp3SQv3W9WWC2DFPVdq0P+XpYgSbxQAeGfyfA==}
+  '@posthog/nextjs-config@1.12.2':
+    resolution: {integrity: sha512-U5aZcbUn7onR87MWyAaET52HZtOiMWWIMNYZPsPGzOx8nslCdXyMpQId2B98kkrJN0J7KzXThjKZgEXVr/fPDA==}
     engines: {node: ^20.20.0 || >=22.22.0}
     peerDependencies:
       next: '>12.1.0'
@@ -1035,8 +1038,11 @@ packages:
   '@posthog/types@1.422.0':
     resolution: {integrity: sha512-65cWefuvAiyTNe+cv8btywtdXLPwmM0ATggoH4l9rJkam0n2kJCIb5HeaLJ9GQ6dSs5MAbney2QgW0MVeBtiOg==}
 
-  '@posthog/webpack-plugin@1.8.0':
-    resolution: {integrity: sha512-vFQChMvbaT77kMcPyFYTVhN3JlicIIW4wwDLRgm4wPp+GT9gQjYqws9LkczaWO02OmVE08cPCfMyezJ2er+X8Q==}
+  '@posthog/types@1.425.1':
+    resolution: {integrity: sha512-mh7jyQ5lN+XCeOnMdYkBEFtO/G0TxeLOKTWNH6E6OZjxS4nVM0Tb2xQt+FG5DCFM9qzL2HmuX6A793TwlJVDvw==}
+
+  '@posthog/webpack-plugin@1.8.1':
+    resolution: {integrity: sha512-dV91fUcS41iAKXLiP1Dk/H9qHwE2v+RflfoMT6HVZ69pBY2aoLiW53DcKy1r75cx2KXWEpQhstUiy3G0w4kJwg==}
     peerDependencies:
       webpack: ^5
 
@@ -2634,11 +2640,6 @@ packages:
     resolution: {integrity: sha512-GYrCADwpu6yV5OAvchkQ27Z5wwMxWAEMg5NNWjyHh/5DboFFqbdbvYNIvZouQpxXyeMPoTOh0vdPYKlf0ZswdQ==}
     hasBin: true
 
-  semver@7.7.4:
-    resolution: {integrity: sha512-vFKC2IEtQnVhpT78h1Yp8wzwrf8CM+MzKMHGJZfBtzhZNycRFnXsHk6E5TxIkkMsgNS7mdX3AGB7x2QM2di4lA==}
-    engines: {node: '>=10'}
-    hasBin: true
-
   semver@7.8.5:
     resolution: {integrity: sha512-Y7/KDsb8LjooZpwaqGyulO6DQlksgCncchHGk+sZIY4SBvUocMBEFH5Ur1fI4dV+Jvl0w6cjvucaIi40puRioA==}
     engines: {node: '>=10'}
@@ -3716,7 +3717,7 @@ snapshots:
     transitivePeerDependencies:
       - preact-render-to-string
 
-  '@posthog/cli@0.18.12':
+  '@posthog/cli@0.19.4':
     dependencies:
       detect-libc: 2.1.2
 
@@ -3727,6 +3728,10 @@ snapshots:
   '@posthog/core@1.65.0':
     dependencies:
       '@posthog/types': 1.422.0
+
+  '@posthog/core@1.68.0':
+    dependencies:
+      '@posthog/types': 1.425.1
 
   '@posthog/next@0.11.0(@opentelemetry/api@1.9.1)(@types/react@19.3.0)(next@16.4.6(@babel/core@7.29.7)(@opentelemetry/api@1.9.1)(@playwright/test@1.65.1)(@types/node@24.3.3)(react-dom@19.3.1(react@19.3.1))(react@19.3.1)(sass@1.106.1))(react-dom@19.3.1(react@19.3.1))(react@19.3.1)':
     dependencies:
@@ -3745,11 +3750,11 @@ snapshots:
       - preact-render-to-string
       - rxjs
 
-  '@posthog/nextjs-config@1.12.1(next@16.4.6(@babel/core@7.29.7)(@opentelemetry/api@1.9.1)(@playwright/test@1.65.1)(@types/node@24.3.3)(react-dom@19.3.1(react@19.3.1))(react@19.3.1)(sass@1.106.1))(posthog-js@1.447.5(@types/react@19.3.0)(react@19.3.1))(webpack@5.112.2(postcss@8.5.32))':
+  '@posthog/nextjs-config@1.12.2(next@16.4.6(@babel/core@7.29.7)(@opentelemetry/api@1.9.1)(@playwright/test@1.65.1)(@types/node@24.3.3)(react-dom@19.3.1(react@19.3.1))(react@19.3.1)(sass@1.106.1))(posthog-js@1.447.5(@types/react@19.3.0)(react@19.3.1))(webpack@5.112.2(postcss@8.5.32))':
     dependencies:
-      '@posthog/cli': 0.18.12
+      '@posthog/cli': 0.19.4
       '@posthog/plugin-utils': 2.0.1
-      '@posthog/webpack-plugin': 1.8.0(webpack@5.112.2(postcss@8.5.32))
+      '@posthog/webpack-plugin': 1.8.1(webpack@5.112.2(postcss@8.5.32))
       next: 16.4.6(@babel/core@7.29.7)(@opentelemetry/api@1.9.1)(@playwright/test@1.65.1)(@types/node@24.3.3)(react-dom@19.3.1(react@19.3.1))(react@19.3.1)(sass@1.106.1)
       posthog-js: 1.447.5(@types/react@19.3.0)(react@19.3.1)
       semver: 7.8.6
@@ -3771,10 +3776,12 @@ snapshots:
 
   '@posthog/types@1.422.0': {}
 
-  '@posthog/webpack-plugin@1.8.0(webpack@5.112.2(postcss@8.5.32))':
+  '@posthog/types@1.425.1': {}
+
+  '@posthog/webpack-plugin@1.8.1(webpack@5.112.2(postcss@8.5.32))':
     dependencies:
-      '@posthog/cli': 0.18.12
-      '@posthog/core': 1.64.1
+      '@posthog/cli': 0.19.4
+      '@posthog/core': 1.68.0
       '@posthog/plugin-utils': 2.0.1
       webpack: 5.112.2(postcss@8.5.32)
 
@@ -4733,7 +4740,7 @@ snapshots:
 
   make-dir@4.0.0:
     dependencies:
-      semver: 7.7.4
+      semver: 7.8.6
 
   make-dir@5.1.0:
     optional: true
@@ -5205,8 +5212,6 @@ snapshots:
   semver@6.3.1: {}
 
   semver@6.3.2: {}
-
-  semver@7.7.4: {}
 
   semver@7.8.5: {}
 

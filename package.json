@@ -37,7 +37,7 @@
     "@mantine/form": "9.8.1",
     "@mantine/hooks": "9.8.1",
     "@posthog/next": "0.11.0",
-    "@posthog/nextjs-config": "1.12.1",
+    "@posthog/nextjs-config": "1.12.2",
     "@preact/signals": "2.11.4",
     "@schedule-x/calendar": "4.9.1",
     "@schedule-x/events-service": "4.9.1",
