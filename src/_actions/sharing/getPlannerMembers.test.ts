@@ -8,10 +8,6 @@ vi.mock(
 	'@/_models/database/users',
 	async () => await import('#mocks/@/_models/database/users'),
 );
-vi.mock(
-	'@/_utils/serialize',
-	async () => await import('#mocks/@/_utils/serialize'),
-);
 
 import { checkAuth } from '@/_actions/auth/checkAuth';
 import { users } from '@/_models/database/users';

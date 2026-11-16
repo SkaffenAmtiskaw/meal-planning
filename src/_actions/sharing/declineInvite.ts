@@ -5,7 +5,6 @@ import { pendingInvites } from '@/_models/database/pendingInvites';
 import type { ActionResult } from '@/_utils/actionResult/ActionResult';
 import { isNoSessionError } from '@/_utils/noSessionError';
 import { reportError } from '@/_utils/reportError';
-import { serialize } from '@/_utils/serialize';
 import { zId } from '@/_utils/zId';
 
 export interface DeclineInviteInput {
@@ -52,7 +51,7 @@ export const declineInvite = async (
 		});
 
 		// 8. Return success
-		return serialize({ ok: true, data: undefined });
+		return { ok: true, data: undefined };
 	} catch (error) {
 		if (!isNoSessionError(error)) await reportError(error);
 		return {

@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import type { ReactNode } from 'react';
 
-import { getPlannerClient } from '@/_actions/planner';
+import { getPlanner } from '@/_actions/planner';
 import type { AccessLevel, PlannerInterface } from '@/_models/types';
 
 import { PlannerContext } from './PlannerContext';
@@ -18,7 +18,7 @@ export const PlannerProvider = ({ accessLevel, children, id }: Props) => {
 	const [planner, setPlanner] = useState<PlannerInterface | null>(null);
 
 	useEffect(() => {
-		getPlannerClient(id)
+		getPlanner(id)
 			.then(setPlanner)
 			.catch((err: unknown) => {
 				throw err;

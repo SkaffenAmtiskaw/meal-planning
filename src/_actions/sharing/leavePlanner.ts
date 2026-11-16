@@ -27,10 +27,7 @@ export const leavePlanner = async (
 	const user = authResult.user;
 
 	// 4. Call removePlannerMembership to remove the user's membership from the planner
-	const removalResult = await removePlannerMembership(
-		user._id.toString(),
-		plannerId,
-	);
+	const removalResult = await removePlannerMembership(user._id, plannerId);
 
 	// 5. Return appropriate result
 	if (!removalResult.ok) {

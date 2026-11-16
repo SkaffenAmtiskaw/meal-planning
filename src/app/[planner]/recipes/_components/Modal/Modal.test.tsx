@@ -112,7 +112,7 @@ describe('Modal', () => {
 		const [[bookmarkFormProps]] = vi.mocked(BookmarkForm).mock.calls;
 		expect(bookmarkFormProps).toEqual(
 			expect.objectContaining({
-				plannerId: planner._id.toString(),
+				plannerId: planner._id,
 				tags: [],
 			}),
 		);
@@ -136,7 +136,7 @@ describe('Modal', () => {
 		const [[recipeFormProps]] = vi.mocked(RecipeForm).mock.calls;
 		expect(recipeFormProps).toEqual(
 			expect.objectContaining({
-				plannerId: planner._id.toString(),
+				plannerId: planner._id,
 				tags: [{ _id: tagId, name: 'Spicy', color: 'red' }],
 			}),
 		);
@@ -175,7 +175,7 @@ describe('Modal', () => {
 		expect(bookmarkFormProps).toEqual(
 			expect.objectContaining({
 				item: expect.objectContaining({ name: "Gaston's Golden Goose" }),
-				plannerId: planner._id.toString(),
+				plannerId: planner._id,
 				tags: [],
 			}),
 		);
@@ -215,7 +215,7 @@ describe('Modal', () => {
 		expect(recipeFormProps).toEqual(
 			expect.objectContaining({
 				item: expect.objectContaining({ name: "Ursula's Sea Bisque" }),
-				plannerId: planner._id.toString(),
+				plannerId: planner._id,
 				tags: [],
 			}),
 		);

@@ -11,13 +11,6 @@ import { RecipeForm } from './RecipeForm';
 
 type Planner = PlannerInterface;
 
-const serializeTags = (planner: Planner) =>
-	planner.tags.map((t) => ({
-		_id: t._id.toString(),
-		name: t.name,
-		color: t.color,
-	}));
-
 type Props = {
 	planner: Planner;
 	item?: string;
@@ -29,19 +22,13 @@ const CONTENT_TYPES = {
 	add: {
 		bookmark: {
 			getForm: (planner: Planner) => (
-				<BookmarkForm
-					plannerId={planner._id.toString()}
-					tags={serializeTags(planner)}
-				/>
+				<BookmarkForm plannerId={planner._id} tags={planner.tags} />
 			),
 			getHeader: () => 'Add New Bookmark',
 		},
 		recipe: {
 			getForm: (planner: Planner) => (
-				<RecipeForm
-					plannerId={planner._id.toString()}
-					tags={serializeTags(planner)}
-				/>
+				<RecipeForm plannerId={planner._id} tags={planner.tags} />
 			),
 			getHeader: () => 'Add New Recipe',
 		},
@@ -51,19 +38,15 @@ const CONTENT_TYPES = {
 			getForm: (planner: Planner, bookmark: BookmarkInterface) => (
 				<BookmarkForm
 					item={bookmark}
-					plannerId={planner._id.toString()}
-					tags={serializeTags(planner)}
+					plannerId={planner._id}
+					tags={planner.tags}
 				/>
 			),
 			getHeader: ({ name }: BookmarkInterface) => `Update ${name}`,
 		},
 		recipe: {
 			getForm: (planner: Planner, recipe: RecipeInterface) => (
-				<RecipeForm
-					item={recipe}
-					plannerId={planner._id.toString()}
-					tags={serializeTags(planner)}
-				/>
+				<RecipeForm item={recipe} plannerId={planner._id} tags={planner.tags} />
 			),
 			getHeader: ({ name }: RecipeInterface) => `Update ${name}`,
 		},
@@ -77,22 +60,20 @@ export const Modal = async ({ item: itemId, planner, status, type }: Props) => {
 		const item = await getSavedItem(planner._id, itemId);
 		if (!item) return null;
 
-		if (type === 'bookmark') {
+		if (type === 'bookmark' && 'url' in item) {
 			const { getForm, getHeader } = CONTENT_TYPES.edit.bookmark;
-			const bookmark = JSON.parse(JSON.stringify(item)) as BookmarkInterface;
 			return (
-				<ModalWrapper opened title={getHeader(bookmark)}>
-					{getForm(planner, bookmark)}
+				<ModalWrapper opened title={getHeader(item)}>
+					{getForm(planner, item)}
 				</ModalWrapper>
 			);
 		}
 
-		if (type === 'recipe') {
+		if (type === 'recipe' && !('url' in item)) {
 			const { getForm, getHeader } = CONTENT_TYPES.edit.recipe;
-			const recipe = JSON.parse(JSON.stringify(item)) as RecipeInterface;
 			return (
-				<ModalWrapper opened size="xl" title={getHeader(recipe)}>
-					{getForm(planner, recipe)}
+				<ModalWrapper opened size="xl" title={getHeader(item)}>
+					{getForm(planner, item)}
 				</ModalWrapper>
 			);
 		}

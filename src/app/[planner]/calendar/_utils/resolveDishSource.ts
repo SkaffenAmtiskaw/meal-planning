@@ -1,15 +1,17 @@
-import type { SavedItem, SerializedDish } from './toScheduleXEvents';
+import type { DishInterface } from '@/_models/types';
+
+import type { ResolvedDish, SavedItem } from './toScheduleXEvents';
 
 export const resolveDishSource = (
-	dish: SerializedDish,
+	dish: DishInterface,
 	savedMap: Map<string, SavedItem>,
-): SerializedDish => {
+): ResolvedDish => {
 	if (typeof dish.source === 'string') {
 		const saved = savedMap.get(dish.source);
 		if (saved) {
 			return {
 				...dish,
-				source: saved.url ? { url: saved.url } : { _id: saved._id },
+				source: 'url' in saved ? { url: saved.url } : { _id: saved._id },
 			};
 		}
 	}

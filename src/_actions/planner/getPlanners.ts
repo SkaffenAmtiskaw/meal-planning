@@ -2,21 +2,11 @@
 
 import { getUser } from '@/_actions/user';
 import { planners } from '@/_models/database/planners';
+import type { PlannerInterface } from '@/_models/planner';
 import type { AccessLevel } from '@/_models/user';
 
 export type PlannerWithAccess = {
-	planner: {
-		_id: string;
-		name: string;
-		calendar: unknown[];
-		saved: unknown[];
-		tags: unknown[];
-	};
-	accessLevel: AccessLevel;
-};
-
-type SerializedPlannerMembership = {
-	planner: string;
+	planner: PlannerInterface & { name: string };
 	accessLevel: AccessLevel;
 };
 
@@ -26,13 +16,7 @@ export const getPlanners = async (): Promise<PlannerWithAccess[]> => {
 	if (!user) throw new Error('No user found');
 
 	const found = await planners
-		.find({
-			_id: {
-				$in: (user.planners as unknown as SerializedPlannerMembership[]).map(
-					(p) => p.planner,
-				),
-			},
-		})
+		.find({ _id: { $in: user.planners.map((p) => p.planner) } })
 		.toArray();
 
 	const defaultName = `${user.name}'s Planner`;
@@ -46,10 +30,7 @@ export const getPlanners = async (): Promise<PlannerWithAccess[]> => {
 	);
 
 	const plannerAccessMap = new Map(
-		(user.planners as unknown as SerializedPlannerMembership[]).map((p) => [
-			p.planner,
-			p.accessLevel,
-		]),
+		user.planners.map((p) => [p.planner, p.accessLevel]),
 	);
 
 	return found.map((planner) => ({
@@ -60,7 +41,6 @@ export const getPlanners = async (): Promise<PlannerWithAccess[]> => {
 			saved: planner.saved,
 			tags: planner.tags,
 		},
-		accessLevel: (plannerAccessMap.get(planner._id.toString()) ??
-			'read') as AccessLevel,
+		accessLevel: plannerAccessMap.get(planner._id) ?? 'read',
 	}));
 };

@@ -64,9 +64,7 @@ export const RecipeForm = ({ item, plannerId, tags, redirectTo }: Props) => {
 	const [instructions, setInstructions] = useState<string[]>(
 		item?.instructions ?? [],
 	);
-	const [selectedTags, setSelectedTags] = useState<string[]>(
-		item?.tags?.map(String) ?? [],
-	);
+	const [selectedTags, setSelectedTags] = useState<string[]>(item?.tags ?? []);
 
 	const { status, countdown, errorMessage, wrap } = useFormFeedback();
 
@@ -103,7 +101,7 @@ export const RecipeForm = ({ item, plannerId, tags, redirectTo }: Props) => {
 				};
 
 				if (item) {
-					return editRecipe({ ...payload, _id: String(item._id) });
+					return editRecipe({ ...payload, _id: item._id });
 				}
 
 				return addRecipe(payload);

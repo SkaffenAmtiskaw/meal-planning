@@ -26,12 +26,10 @@ const Page = async ({
 		const cookieStore = await cookies();
 		const lastPlannerId = cookieStore.get('lastOpenedPlanner')?.value;
 		const isMember = user.planners.some(
-			({ planner }) => String(planner) === lastPlannerId,
+			({ planner }) => planner === lastPlannerId,
 		);
 		const plannerId =
-			isMember && lastPlannerId
-				? lastPlannerId
-				: String(user.planners[0].planner);
+			isMember && lastPlannerId ? lastPlannerId : user.planners[0].planner;
 		redirect(`${plannerId}/calendar`);
 	}
 
@@ -40,7 +38,7 @@ const Page = async ({
 		undefined,
 		session.user.name,
 	);
-	redirect(`${String(newUser.planners[0].planner)}/calendar`);
+	redirect(`${newUser.planners[0].planner}/calendar`);
 };
 
 export default Page;

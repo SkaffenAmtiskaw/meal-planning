@@ -106,6 +106,6 @@ export const signUpWithInvite = async (
 	// Step 6: Return success
 	return {
 		success: true,
-		redirectUrl: `/?invite_success=true&planner=${invite.planner.toString()}`,
+		redirectUrl: `/?invite_success=true&planner=${invite.planner}`,
 	};
 };

@@ -3,7 +3,6 @@
 import { checkAuth } from '@/_actions/auth/checkAuth';
 import { pendingInvites } from '@/_models/database/pendingInvites';
 import { reportError } from '@/_utils/reportError';
-import { serialize } from '@/_utils/serialize';
 import { zId } from '@/_utils/zId';
 
 import type { PendingInvite } from './invite.types';
@@ -43,14 +42,14 @@ export const getPendingInvites = async (
 
 		// Map to PendingInvite with only the required fields
 		const result: PendingInvite[] = invites.map((invite) => ({
-			id: invite._id.toString(),
+			id: invite._id,
 			email: invite.email,
 			accessLevel: invite.accessLevel,
 			invitedAt: invite.createdAt.toISOString(),
 			expiresAt: invite.expiresAt.toISOString(),
 		}));
 
-		return serialize({ invites: result });
+		return { invites: result };
 	} catch (error) {
 		await reportError(error);
 		return { invites: [], error: 'Failed to fetch pending invites' };

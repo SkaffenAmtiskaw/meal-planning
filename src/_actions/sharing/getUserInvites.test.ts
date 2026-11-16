@@ -14,10 +14,6 @@ vi.mock(
 	async () => await import('#mocks/@/_models/database/pendingInvites'),
 );
 vi.mock(
-	'@/_utils/serialize',
-	async () => await import('#mocks/@/_utils/serialize'),
-);
-vi.mock(
 	'@/_utils/reportError',
 	async () => await import('#mocks/@/_utils/reportError'),
 );

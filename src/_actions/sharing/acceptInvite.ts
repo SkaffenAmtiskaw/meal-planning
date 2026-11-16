@@ -53,11 +53,11 @@ export const acceptInvite = async (
 			};
 		}
 
-		const plannerId = invite.planner.toString();
+		const plannerId = invite.planner;
 
 		// Check if user is already a member of this planner
 		const isAlreadyMember = user.planners?.some(
-			(membership) => membership.planner.toString() === plannerId,
+			(membership) => membership.planner === plannerId,
 		);
 
 		// If already a member, delete the invite and return success (idempotent)

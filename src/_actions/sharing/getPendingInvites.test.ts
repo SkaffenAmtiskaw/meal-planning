@@ -11,10 +11,6 @@ vi.mock(
 	async () => await import('#mocks/@/_models/database/pendingInvites'),
 );
 vi.mock(
-	'@/_utils/serialize',
-	async () => await import('#mocks/@/_utils/serialize'),
-);
-vi.mock(
 	'@/_utils/reportError',
 	async () => await import('#mocks/@/_utils/reportError'),
 );
@@ -22,13 +18,11 @@ vi.mock(
 import { checkAuth } from '@/_actions/auth/checkAuth';
 import { pendingInvites } from '@/_models/database/pendingInvites';
 import { reportError } from '@/_utils/reportError';
-import { serialize } from '@/_utils/serialize';
 
 import { getPendingInvites } from './getPendingInvites';
 
 const mockCheckAuth = vi.mocked(checkAuth);
 const mockPendingInviteFind = vi.mocked(pendingInvites.find);
-const mockSerialize = vi.mocked(serialize);
 
 // The find's cursor, sorted, resolves its documents through `toArray`
 const findReturning = (toArray: () => Promise<unknown>) => {
@@ -174,7 +168,6 @@ describe('getPendingInvites', () => {
 		// Ensure sensitive fields are NOT exposed
 		expect(result.invites[0]).not.toHaveProperty('token');
 		expect(result.invites[0]).not.toHaveProperty('invitedBy');
-		expect(mockSerialize).toHaveBeenCalled();
 	});
 
 	it('returns error on database failure', async () => {

@@ -3,7 +3,6 @@
 import { checkAuth } from '@/_actions/auth/checkAuth';
 import { pendingInvites } from '@/_models/database/pendingInvites';
 import { reportError } from '@/_utils/reportError';
-import { serialize } from '@/_utils/serialize';
 import { zId } from '@/_utils/zId';
 
 export interface CancelInviteInput {
@@ -55,7 +54,7 @@ export const cancelInvite = async (
 		});
 
 		// 6. Return success
-		return serialize({ success: true });
+		return { success: true };
 	} catch (error) {
 		await reportError(error);
 		return {

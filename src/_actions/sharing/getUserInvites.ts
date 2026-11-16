@@ -4,7 +4,6 @@ import { pendingInvites } from '@/_models/database/pendingInvites';
 import { planners } from '@/_models/database/planners';
 import { users } from '@/_models/database/users';
 import { reportError } from '@/_utils/reportError';
-import { serialize } from '@/_utils/serialize';
 
 import type { GetUserInvitesResult, UserInvite } from './invite.types';
 
@@ -34,8 +33,8 @@ export const getUserInvites = async (
 				]);
 
 				return {
-					id: invite._id.toString(),
-					plannerId: invite.planner.toString(),
+					id: invite._id,
+					plannerId: invite.planner,
 					plannerName: planner?.name ?? 'Unknown Planner',
 					invitedBy: inviter?.name ?? 'Unknown User',
 					accessLevel: invite.accessLevel,
@@ -46,7 +45,7 @@ export const getUserInvites = async (
 			}),
 		);
 
-		return serialize({ invites: userInvites });
+		return { invites: userInvites };
 	} catch (error) {
 		await reportError(error);
 		return { invites: [], error: 'Failed to fetch invites' };

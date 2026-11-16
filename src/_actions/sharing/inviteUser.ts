@@ -67,9 +67,7 @@ export const inviteUser = async (
 	}
 
 	if (existingUser) {
-		const isMember = existingUser.planners.some(
-			(p) => p.planner.toString() === plannerId,
-		);
+		const isMember = existingUser.planners.some((p) => p.planner === plannerId);
 
 		if (isMember) {
 			return { ok: false, error: 'User is already a member' };

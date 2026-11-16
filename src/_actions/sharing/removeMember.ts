@@ -31,7 +31,7 @@ export const removeMember = async (
 
 	// 4. Verify target user is actually a member of this planner
 	const targetMembership = targetUser.planners.find(
-		(p) => p.planner.toString() === plannerId,
+		(p) => p.planner === plannerId,
 	);
 
 	if (!targetMembership) {
@@ -45,7 +45,7 @@ export const removeMember = async (
 
 	// 6. Call removePlannerMembership utility to remove the membership
 	const removalResult = await removePlannerMembership(
-		targetUser._id.toString(),
+		targetUser._id,
 		plannerId,
 	);
 

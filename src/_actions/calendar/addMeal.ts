@@ -3,7 +3,11 @@
 import { z } from 'zod';
 
 import { checkAuth } from '@/_actions/auth/checkAuth';
-import type { DishInterface, MealInterface } from '@/_models/calendar';
+import type {
+	DayInterface,
+	DishInterface,
+	MealInterface,
+} from '@/_models/calendar';
 import { zMealFormSchema } from '@/_models/calendar';
 import { newId } from '@/_models/database/newId';
 import { planners } from '@/_models/database/planners';
@@ -11,7 +15,7 @@ import type { ActionResult } from '@/_utils/actionResult';
 
 export const addMeal = async (
 	data: unknown,
-): Promise<ActionResult<{ calendar: unknown }>> => {
+): Promise<ActionResult<{ calendar: DayInterface[] }>> => {
 	const { plannerId, date, mealName, description, dishes } =
 		zMealFormSchema.parse(data);
 

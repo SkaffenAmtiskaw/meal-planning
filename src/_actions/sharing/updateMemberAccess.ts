@@ -30,7 +30,7 @@ export const updateMemberAccess = async (
 
 	// 4. Get target's current access level in this planner
 	const targetMembership = targetUser.planners.find(
-		(p) => p.planner.toString() === plannerId,
+		(p) => p.planner === plannerId,
 	);
 
 	if (!targetMembership) {

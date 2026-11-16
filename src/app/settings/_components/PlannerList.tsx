@@ -16,9 +16,9 @@ export const PlannerList = async () => {
 			</Group>
 			{planners.map(({ planner, accessLevel }) => (
 				<PlannerItem
-					key={String(planner._id)}
-					id={String(planner._id)}
-					name={planner.name ?? ''}
+					key={planner._id}
+					id={planner._id}
+					name={planner.name}
 					accessLevel={accessLevel}
 				/>
 			))}

@@ -8,7 +8,7 @@ export const usePlannerSavedItems = () => {
 	return useMemo(
 		() =>
 			planner.saved.map((item) => ({
-				_id: String(item._id),
+				_id: item._id,
 				name: item.name,
 				url: 'url' in item ? item.url : undefined,
 			})),

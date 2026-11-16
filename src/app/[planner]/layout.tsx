@@ -32,9 +32,9 @@ const Layout = async ({ children, params }: LayoutProps<'/[planner]'>) => {
 			header={
 				<Header leftSection={<BurgerToggle color={THEME_COLORS.chalk} />} />
 			}
-			navbar={<NavbarServer id={String(id)} />}
+			navbar={<NavbarServer id={id} />}
 		>
-			<PlannerProvider id={String(id)} accessLevel={result.accessLevel}>
+			<PlannerProvider id={id} accessLevel={result.accessLevel}>
 				{children}
 			</PlannerProvider>
 		</PlannerLayout>

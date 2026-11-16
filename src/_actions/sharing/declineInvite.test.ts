@@ -16,10 +16,6 @@ vi.mock(
 	'@/_models/database/pendingInvites',
 	async () => await import('#mocks/@/_models/database/pendingInvites'),
 );
-vi.mock(
-	'@/_utils/serialize',
-	async () => await import('#mocks/@/_utils/serialize'),
-);
 
 describe('declineInvite', () => {
 	const inviteId = '507f1f77bcf86cd799439012';

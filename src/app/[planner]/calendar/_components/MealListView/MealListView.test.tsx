@@ -3,6 +3,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import type { CalendarDish, CalendarMeal } from '@/_components/Calendar';
 import { useIsMobile } from '@/_hooks';
+import type { DayInterface } from '@/_models/types';
 import { getMealColor, TAG_COLORS } from '@/_theme/colors';
 
 import { MealListView } from './MealListView';
@@ -11,7 +12,7 @@ import {
 	type CalendarEvent,
 	toCalendarEvents,
 } from '../../_utils/toCalendarEvents';
-import type { SavedItem, SerializedDay } from '../../_utils/toScheduleXEvents';
+import type { SavedItem } from '../../_utils/toScheduleXEvents';
 import { DishLink } from '../DishLink/DishLink';
 
 vi.mock('@mantine/core', async () => await import('#mocks/@mantine/core'));
@@ -62,7 +63,7 @@ const savedItems: SavedItem[] = [
 	{ _id: 'saved-1', name: 'Saved Dish', url: 'http://example.com' },
 ];
 
-const calendar: SerializedDay[] = [
+const calendar: DayInterface[] = [
 	{
 		date: '2024-06-15',
 		meals: [
@@ -70,7 +71,7 @@ const calendar: SerializedDay[] = [
 				_id: 'meal-1',
 				name: 'Breakfast',
 				description: 'Morning meal',
-				dishes: [{ name: 'Eggs' }],
+				dishes: [{ _id: 'dish-1', name: 'Eggs' }],
 			},
 		],
 	},

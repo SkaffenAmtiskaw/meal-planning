@@ -33,11 +33,7 @@ const RecipesPage = async ({
 				<Group justify="flex-end">
 					<AddItemDropdown />
 				</Group>
-				<SavedList
-					items={planner.saved}
-					plannerId={String(id)}
-					tags={planner.tags}
-				/>
+				<SavedList items={planner.saved} plannerId={id} tags={planner.tags} />
 			</Container>
 		</>
 	);

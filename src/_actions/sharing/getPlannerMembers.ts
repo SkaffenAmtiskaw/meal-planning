@@ -2,7 +2,6 @@
 
 import { checkAuth } from '@/_actions/auth/checkAuth';
 import { users } from '@/_models/database/users';
-import { serialize } from '@/_utils/serialize';
 
 import type { PlannerMember } from './getPlannerMembers.types';
 
@@ -16,7 +15,7 @@ export const getPlannerMembers = async (
 		authResult.type === 'unauthenticated' ||
 		authResult.type === 'unauthorized'
 	) {
-		return serialize({ members: [], error: 'Unauthorized' });
+		return { members: [], error: 'Unauthorized' };
 	}
 
 	if (authResult.type === 'error') {
@@ -39,5 +38,5 @@ export const getPlannerMembers = async (
 		};
 	});
 
-	return serialize({ members });
+	return { members };
 };

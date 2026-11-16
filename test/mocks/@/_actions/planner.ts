@@ -31,14 +31,6 @@ export const getPlanner = vi.fn(async () => ({
 	tags: [],
 }));
 
-export const getPlannerClient = vi.fn(async () => ({
-	_id: '507f1f77bcf86cd799439011',
-	name: "Test User's Planner",
-	calendar: [],
-	saved: [],
-	tags: [],
-}));
-
 export const getPlanners = vi.fn(async () => [
 	{
 		planner: {

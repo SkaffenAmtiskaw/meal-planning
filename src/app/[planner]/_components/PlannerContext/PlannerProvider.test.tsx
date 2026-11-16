@@ -3,7 +3,7 @@ import { describe, expect, it, vi } from 'vitest';
 
 import { useContext } from 'react';
 
-import { getPlannerClient } from '@/_actions/planner';
+import { getPlanner } from '@/_actions/planner';
 
 import { PlannerContext } from './PlannerContext';
 import { PlannerProvider } from './PlannerProvider';
@@ -19,8 +19,8 @@ const accessLevel = 'owner' as const;
 const maleficentsPlanner = { _id: id, calendar: [], saved: [], tags: [] };
 
 describe('PlannerProvider', () => {
-	it('calls getPlannerClient with the provided id', async () => {
-		vi.mocked(getPlannerClient).mockResolvedValueOnce(maleficentsPlanner);
+	it('calls getPlanner with the provided id', async () => {
+		vi.mocked(getPlanner).mockResolvedValueOnce(maleficentsPlanner);
 
 		render(
 			<PlannerProvider id={id} accessLevel={accessLevel}>
@@ -29,12 +29,12 @@ describe('PlannerProvider', () => {
 		);
 
 		await waitFor(() => {
-			expect(getPlannerClient).toHaveBeenCalledWith(id);
+			expect(getPlanner).toHaveBeenCalledWith(id);
 		});
 	});
 
 	it('provides planner data to context', async () => {
-		vi.mocked(getPlannerClient).mockResolvedValueOnce(maleficentsPlanner);
+		vi.mocked(getPlanner).mockResolvedValueOnce(maleficentsPlanner);
 
 		let contextValue: unknown;
 		const ContextReader = () => {
@@ -54,7 +54,7 @@ describe('PlannerProvider', () => {
 	});
 
 	it('renders children', async () => {
-		vi.mocked(getPlannerClient).mockResolvedValueOnce(maleficentsPlanner);
+		vi.mocked(getPlanner).mockResolvedValueOnce(maleficentsPlanner);
 
 		render(
 			<PlannerProvider id={id} accessLevel={accessLevel}>
@@ -65,9 +65,9 @@ describe('PlannerProvider', () => {
 		expect(await screen.findByText("Maleficent's Kitchen")).toBeDefined();
 	});
 
-	it('rethrows errors from getPlannerClient', async () => {
+	it('rethrows errors from getPlanner', async () => {
 		const error = new Error('fetch failed');
-		vi.mocked(getPlannerClient).mockRejectedValueOnce(error);
+		vi.mocked(getPlanner).mockRejectedValueOnce(error);
 
 		const noop = () => {};
 		process.on('unhandledRejection', noop);
@@ -79,7 +79,7 @@ describe('PlannerProvider', () => {
 		);
 
 		await waitFor(() => {
-			expect(getPlannerClient).toHaveBeenCalledWith(id);
+			expect(getPlanner).toHaveBeenCalledWith(id);
 		});
 
 		process.off('unhandledRejection', noop);

@@ -13,11 +13,12 @@ import {
 } from '@/_components/Calendar/MobileAgenda/MobileAgenda';
 import type { MobileMonthGridEvent } from '@/_components/Calendar/MobileMonthGrid/MobileMonthGrid';
 import { MobileMonthGrid } from '@/_components/Calendar/MobileMonthGrid/MobileMonthGrid';
+import type { DayInterface } from '@/_models/types';
 import { getMealColor, TAG_COLORS } from '@/_theme/colors';
 
 import { MealMonthAgenda } from './MealMonthAgenda';
 
-import type { SavedItem, SerializedDay } from '../../_utils/toScheduleXEvents';
+import type { SavedItem } from '../../_utils/toScheduleXEvents';
 import { DishLink } from '../DishLink/DishLink';
 
 vi.mock('@mantine/core', async () => await import('#mocks/@mantine/core'));
@@ -89,7 +90,7 @@ const defaultProps = {
 					_id: 'meal-1',
 					name: 'Breakfast Bowl',
 					description: 'A hearty breakfast',
-					dishes: [{ name: 'Oats' }],
+					dishes: [{ _id: 'dish-1', name: 'Oats' }],
 				},
 				{ _id: 'meal-2', name: 'Grilled Salmon', dishes: [] },
 			],
@@ -98,8 +99,8 @@ const defaultProps = {
 			date: '2024-06-16',
 			meals: [{ _id: 'meal-3', name: 'Veggie Stir Fry', dishes: [] }],
 		},
-		{ date: '2024-06-17' },
-	] as SerializedDay[],
+		{ date: '2024-06-17', meals: [] },
+	] as DayInterface[],
 	savedItems: [{ _id: 'item-1', name: 'Item 1' }] as SavedItem[],
 };
 

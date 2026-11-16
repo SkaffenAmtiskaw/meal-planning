@@ -10,13 +10,6 @@ import RecipePage from './page';
 import { RecipeForm } from '../_components/Modal/RecipeForm';
 import { RecipeDetail } from './_components/RecipeDetail';
 
-vi.mock('@/_utils/matchesId', () => ({
-	matchesId: vi.fn(
-		(id: string) => (item: { _id: { toString: () => string } }) =>
-			item._id.toString() === id,
-	),
-}));
-
 vi.mock(
 	'@/_actions/planner',
 	async () => await import('#mocks/@/_actions/planner'),
@@ -37,8 +30,10 @@ vi.mock('../_components/Modal/RecipeForm', () => ({
 const plannerId = '507f1f77bcf86cd799439011';
 const recipeId = '507f1f77bcf86cd799439012';
 
+const tags = [{ _id: 'tag-1', name: 'Spicy', color: 'red' }];
+
 const makeRecipe = (overrides = {}) => ({
-	_id: { toString: () => recipeId },
+	_id: recipeId,
 	name: "Maleficent's Dragon Roast",
 	ingredients: ['dragon scales'],
 	instructions: ['heat cauldron'],
@@ -46,7 +41,7 @@ const makeRecipe = (overrides = {}) => ({
 });
 
 const makePlanner = (saved: unknown[] = []) => ({
-	_id: { toString: () => plannerId },
+	_id: plannerId,
 	saved,
 	tags: [],
 });
@@ -77,20 +72,15 @@ describe('RecipePage', () => {
 		expect(vi.mocked(RecipeForm)).not.toHaveBeenCalled();
 	});
 
-	it('passes resolved tags to RecipeDetail', async () => {
+	it("passes the planner's tags to RecipeDetail", async () => {
 		const recipe = makeRecipe();
-		const planner = {
-			...makePlanner([recipe]),
-			tags: [{ _id: { toString: () => 'tag-1' }, name: 'Spicy', color: 'red' }],
-		};
+		const planner = { ...makePlanner([recipe]), tags };
 		vi.mocked(getPlanner).mockResolvedValueOnce(planner as never);
 
 		render(await RecipePage({ params, searchParams }));
 
 		expect(vi.mocked(RecipeDetail)).toHaveBeenCalledWith(
-			expect.objectContaining({
-				tags: [{ _id: 'tag-1', name: 'Spicy', color: 'red' }],
-			}),
+			expect.objectContaining({ tags }),
 			undefined,
 		);
 	});
@@ -105,7 +95,7 @@ describe('RecipePage', () => {
 
 	it('calls notFound when item is a bookmark', async () => {
 		const bookmark = {
-			_id: { toString: () => recipeId },
+			_id: recipeId,
 			name: 'Some Bookmark',
 			url: 'https://example.com',
 		};
@@ -142,12 +132,9 @@ describe('RecipePage', () => {
 		expect(vi.mocked(RecipeDetail)).not.toHaveBeenCalled();
 	});
 
-	it('passes tags to RecipeForm in edit mode', async () => {
+	it("passes the planner's tags to RecipeForm in edit mode", async () => {
 		const recipe = makeRecipe();
-		const planner = {
-			...makePlanner([recipe]),
-			tags: [{ _id: { toString: () => 'tag-1' }, name: 'Spicy', color: 'red' }],
-		};
+		const planner = { ...makePlanner([recipe]), tags };
 		vi.mocked(getPlanner).mockResolvedValueOnce(planner as never);
 
 		render(
@@ -158,9 +145,7 @@ describe('RecipePage', () => {
 		);
 
 		expect(vi.mocked(RecipeForm)).toHaveBeenCalledWith(
-			expect.objectContaining({
-				tags: [{ _id: 'tag-1', name: 'Spicy', color: 'red' }],
-			}),
+			expect.objectContaining({ tags }),
 			undefined,
 		);
 	});

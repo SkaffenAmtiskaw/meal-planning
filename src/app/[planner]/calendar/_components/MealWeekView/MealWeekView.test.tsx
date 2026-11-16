@@ -2,13 +2,14 @@ import { fireEvent, render, screen } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { WeekView } from '@/_components/Calendar';
+import type { DayInterface } from '@/_models/types';
 
 import { MealWeekView } from './MealWeekView';
 import { WeekMealCard } from './WeekMealCard';
 
 import type { CalendarEvent } from '../../_utils/toCalendarEvents';
 import { toCalendarEvents } from '../../_utils/toCalendarEvents';
-import type { SavedItem, SerializedDay } from '../../_utils/toScheduleXEvents';
+import type { SavedItem } from '../../_utils/toScheduleXEvents';
 
 vi.mock('@/_components/Calendar', async () => ({
 	WeekView: vi.fn(({ meals, renderMeal, onMealClick }) => (
@@ -57,7 +58,7 @@ describe('MealWeekView', () => {
 		vi.resetAllMocks();
 	});
 
-	const mockCalendar: SerializedDay[] = [
+	const mockCalendar: DayInterface[] = [
 		{
 			date: '2024-01-15',
 			meals: [{ _id: 'meal-1', name: 'Breakfast', dishes: [] }],

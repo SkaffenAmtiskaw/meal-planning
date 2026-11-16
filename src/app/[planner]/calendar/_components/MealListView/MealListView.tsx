@@ -5,17 +5,18 @@ import type { ReactElement } from 'react';
 
 import type { CalendarDish, CalendarMeal } from '@/_components/Calendar';
 import { useIsMobile } from '@/_hooks';
+import type { DayInterface } from '@/_models/types';
 
 import { toCalendarEvents } from '../../_utils/toCalendarEvents';
 import { toCalendarMeals } from '../../_utils/toCalendarMeals';
-import type { SavedItem, SerializedDay } from '../../_utils/toScheduleXEvents';
+import type { SavedItem } from '../../_utils/toScheduleXEvents';
 import { DishLink } from '../DishLink/DishLink';
 import { ListView } from '../ListView/ListView';
 import { MobileListViewPlaceholder } from '../MobileListViewPlaceholder/MobileListViewPlaceholder';
 
 export interface MealListViewProps {
 	plannerId: string;
-	calendar: SerializedDay[];
+	calendar: DayInterface[];
 	savedItems?: SavedItem[];
 }
 
