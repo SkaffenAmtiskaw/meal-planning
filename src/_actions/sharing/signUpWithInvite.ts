@@ -4,7 +4,7 @@ import { isAPIError } from 'better-auth/api';
 
 import { addUser } from '@/_actions/user';
 import { auth } from '@/_auth';
-import { PendingInvite } from '@/_models/sharing';
+import { pendingInvites } from '@/_models/database/pendingInvites';
 import { catchify } from '@/_utils/catchify';
 import { reportError } from '@/_utils/reportError';
 
@@ -33,7 +33,7 @@ export const signUpWithInvite = async (
 
 	// Step 2: Get invite details
 	const [invite, inviteError] = await catchify(() =>
-		PendingInvite.findOne({ token: input.token }),
+		pendingInvites.findOne({ token: input.token }),
 	);
 	if (inviteError || !invite) {
 		if (inviteError) await reportError(inviteError);
@@ -99,7 +99,7 @@ export const signUpWithInvite = async (
 
 	// Step 5: Delete the invite
 	const [, deleteError] = await catchify(() =>
-		PendingInvite.deleteOne({ _id: invite._id }),
+		pendingInvites.deleteOne({ _id: invite._id }),
 	);
 	if (deleteError) await reportError(deleteError);
 

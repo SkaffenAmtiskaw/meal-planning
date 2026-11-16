@@ -1,7 +1,7 @@
 'use server';
 
 import { checkAuth } from '@/_actions/auth/checkAuth';
-import { PendingInvite as PendingInviteModel } from '@/_models/sharing';
+import { pendingInvites } from '@/_models/database/pendingInvites';
 import { reportError } from '@/_utils/reportError';
 import { serialize } from '@/_utils/serialize';
 import { zId } from '@/_utils/zId';
@@ -36,12 +36,13 @@ export const getPendingInvites = async (
 		}
 
 		// Query pending invites for this planner, sorted by createdAt descending
-		const invites = await PendingInviteModel.find({ planner: plannerId }).sort({
-			createdAt: -1,
-		});
+		const invites = await pendingInvites
+			.find({ planner: plannerId })
+			.sort({ createdAt: -1 })
+			.toArray();
 
 		// Map to PendingInvite with only the required fields
-		const pendingInvites: PendingInvite[] = invites.map((invite) => ({
+		const result: PendingInvite[] = invites.map((invite) => ({
 			id: invite._id.toString(),
 			email: invite.email,
 			accessLevel: invite.accessLevel,
@@ -49,7 +50,7 @@ export const getPendingInvites = async (
 			expiresAt: invite.expiresAt.toISOString(),
 		}));
 
-		return serialize({ invites: pendingInvites });
+		return serialize({ invites: result });
 	} catch (error) {
 		await reportError(error);
 		return { invites: [], error: 'Failed to fetch pending invites' };

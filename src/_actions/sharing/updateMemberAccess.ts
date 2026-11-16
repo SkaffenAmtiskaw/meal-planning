@@ -1,8 +1,8 @@
 'use server';
 
 import { checkAuth } from '@/_actions/auth/checkAuth';
+import { users } from '@/_models/database/users';
 import type { AccessLevel } from '@/_models/user';
-import { User } from '@/_models/user';
 
 export const updateMemberAccess = async (
 	plannerId: string,
@@ -23,7 +23,7 @@ export const updateMemberAccess = async (
 	}
 
 	// 3. Find target user
-	const targetUser = await User.findOne({ email: targetUserEmail });
+	const targetUser = await users.findOne({ email: targetUserEmail });
 	if (!targetUser) {
 		return { ok: false, error: 'User not found' };
 	}
@@ -50,7 +50,7 @@ export const updateMemberAccess = async (
 	}
 
 	// 7. Update the access level
-	await User.updateOne(
+	await users.updateOne(
 		{ _id: targetUser._id, 'planners.planner': plannerId },
 		{ $set: { 'planners.$.accessLevel': newAccessLevel } },
 	);

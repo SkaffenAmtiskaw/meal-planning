@@ -1,7 +1,7 @@
 'use server';
 
 import { checkAuth } from '@/_actions/auth/checkAuth';
-import { PendingInvite } from '@/_models/sharing';
+import { pendingInvites } from '@/_models/database/pendingInvites';
 import { reportError } from '@/_utils/reportError';
 import { serialize } from '@/_utils/serialize';
 import { zId } from '@/_utils/zId';
@@ -39,7 +39,7 @@ export const cancelInvite = async (
 		}
 
 		// 3. Find the pending invite by _id and planner (to ensure it's for this planner)
-		const invite = await PendingInvite.findOne({
+		const invite = await pendingInvites.findOne({
 			_id: inviteId,
 			planner: plannerId,
 		});
@@ -50,7 +50,7 @@ export const cancelInvite = async (
 		}
 
 		// 5. Delete the pending invite
-		await PendingInvite.deleteOne({
+		await pendingInvites.deleteOne({
 			_id: inviteId,
 		});
 

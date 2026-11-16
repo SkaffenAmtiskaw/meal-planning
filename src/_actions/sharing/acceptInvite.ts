@@ -2,9 +2,9 @@
 
 import { getUser } from '@/_actions/user';
 import { newId } from '@/_models/database/newId';
-import { PendingInvite } from '@/_models/sharing';
+import { pendingInvites } from '@/_models/database/pendingInvites';
+import { users } from '@/_models/database/users';
 import type { PlannerMembership } from '@/_models/user';
-import { User } from '@/_models/user';
 import type { ActionResult } from '@/_utils/actionResult/ActionResult';
 import { isNoSessionError } from '@/_utils/noSessionError';
 import { reportError } from '@/_utils/reportError';
@@ -30,7 +30,7 @@ export const acceptInvite = async (
 		}
 
 		// Find the pending invite by token
-		const invite = await PendingInvite.findOne({ token: input.token });
+		const invite = await pendingInvites.findOne({ token: input.token });
 
 		// If invite not found, return error
 		if (!invite) {
@@ -41,7 +41,7 @@ export const acceptInvite = async (
 		const now = new Date();
 		if (invite.expiresAt < now) {
 			// Delete the expired invite
-			await invite.deleteOne();
+			await pendingInvites.deleteOne({ _id: invite._id });
 			return { ok: false, error: 'Invite has expired' };
 		}
 
@@ -62,7 +62,7 @@ export const acceptInvite = async (
 
 		// If already a member, delete the invite and return success (idempotent)
 		if (isAlreadyMember) {
-			await invite.deleteOne();
+			await pendingInvites.deleteOne({ _id: invite._id });
 			return { ok: true, data: { plannerId } };
 		}
 
@@ -72,13 +72,13 @@ export const acceptInvite = async (
 			planner: plannerId,
 			accessLevel: invite.accessLevel,
 		};
-		await User.updateOne(
+		await users.updateOne(
 			{ _id: user._id },
 			{ $push: { planners: membership } },
 		);
 
 		// Delete the pending invite
-		await invite.deleteOne();
+		await pendingInvites.deleteOne({ _id: invite._id });
 
 		// Return success
 		return { ok: true, data: { plannerId } };

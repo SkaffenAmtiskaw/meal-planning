@@ -1,4 +1,4 @@
-import { User } from '@/_models/user';
+import { users } from '@/_models/database/users';
 import { reportError } from '@/_utils/reportError';
 
 export interface RemoveMembershipResult {
@@ -12,11 +12,10 @@ export const removePlannerMembership = async (
 ): Promise<RemoveMembershipResult> => {
 	try {
 		// Use $pull to atomically remove the membership
-		await User.findByIdAndUpdate(userId, {
-			$pull: {
-				planners: { planner: plannerId },
-			},
-		});
+		await users.updateOne(
+			{ _id: userId },
+			{ $pull: { planners: { planner: plannerId } } },
+		);
 
 		return { ok: true };
 	} catch (error) {

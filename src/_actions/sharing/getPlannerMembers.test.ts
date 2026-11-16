@@ -4,27 +4,26 @@ vi.mock(
 	'@/_actions/auth/checkAuth',
 	async () => await import('#mocks/@/_actions/auth/checkAuth'),
 );
-vi.mock('@/_models/user', async () => ({
-	User: {
-		find: vi.fn(),
-	},
-}));
+vi.mock(
+	'@/_models/database/users',
+	async () => await import('#mocks/@/_models/database/users'),
+);
 vi.mock(
 	'@/_utils/serialize',
 	async () => await import('#mocks/@/_utils/serialize'),
 );
 
 import { checkAuth } from '@/_actions/auth/checkAuth';
-import { User } from '@/_models/user';
+import { users } from '@/_models/database/users';
 
 import { getPlannerMembers } from './getPlannerMembers';
 
 describe('getPlannerMembers', () => {
 	const plannerId = '507f1f77bcf86cd799439011';
 
-	const mockFindUsers = (users: unknown[]) =>
-		vi.mocked(User.find).mockReturnValue({
-			lean: vi.fn().mockResolvedValue(users),
+	const mockFindUsers = (found: unknown[]) =>
+		vi.mocked(users.find).mockReturnValue({
+			toArray: vi.fn().mockResolvedValue(found),
 		} as never);
 
 	beforeEach(() => {
@@ -41,7 +40,7 @@ describe('getPlannerMembers', () => {
 			const result = await getPlannerMembers(plannerId);
 
 			expect(result).toEqual({ members: [], error: 'Unauthorized' });
-			expect(User.find).not.toHaveBeenCalled();
+			expect(users.find).not.toHaveBeenCalled();
 		});
 
 		it('throws when checkAuth returns error', async () => {
@@ -84,7 +83,7 @@ describe('getPlannerMembers', () => {
 			const result = await getPlannerMembers(plannerId);
 
 			expect(checkAuth).toHaveBeenCalledWith(plannerId, 'admin');
-			expect(User.find).toHaveBeenCalledWith({
+			expect(users.find).toHaveBeenCalledWith({
 				'planners.planner': plannerId,
 			});
 			expect(result).toEqual({
@@ -231,7 +230,7 @@ describe('getPlannerMembers', () => {
 
 	describe('errors', () => {
 		it('throws on database error', async () => {
-			vi.mocked(User.find).mockImplementation(() => {
+			vi.mocked(users.find).mockImplementation(() => {
 				throw new Error('DB connection failed');
 			});
 

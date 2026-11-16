@@ -4,7 +4,7 @@ import { APIError } from 'better-auth/api';
 
 import { addUser } from '@/_actions/user';
 import { auth } from '@/_auth';
-import { PendingInvite } from '@/_models/sharing';
+import { pendingInvites } from '@/_models/database/pendingInvites';
 import { reportError } from '@/_utils/reportError';
 
 import { signUpWithInvite } from './signUpWithInvite';
@@ -30,12 +30,11 @@ vi.mock(
 	async () => await import('#mocks/@/_actions/sharing'),
 );
 
-vi.mock('@/_models/sharing', () => ({
-	PendingInvite: {
-		findOne: vi.fn(),
-		deleteOne: vi.fn(),
-	},
-}));
+vi.mock(
+	'@/_models/database/pendingInvites',
+	async () => await import('#mocks/@/_models/database/pendingInvites'),
+);
+
 describe('signUpWithInvite', () => {
 	const token = 'valid-token-123';
 	const inviteId = 'invite-id-456';
@@ -47,7 +46,7 @@ describe('signUpWithInvite', () => {
 	const mockInvite = {
 		_id: inviteId,
 		email,
-		planner: { toString: () => plannerId },
+		planner: plannerId,
 		accessLevel: 'write',
 		token,
 		expiresAt: new Date(Date.now() + 86400000),
@@ -67,13 +66,10 @@ describe('signUpWithInvite', () => {
 			email,
 			plannerName: 'Test Planner',
 		});
-		vi.mocked(PendingInvite.findOne).mockResolvedValue(mockInvite as never);
+		vi.mocked(pendingInvites.findOne).mockResolvedValue(mockInvite as never);
 		vi.mocked(auth.api.createUser).mockResolvedValue(
 			mockBetterAuthUser as never,
 		);
-		vi.mocked(PendingInvite.deleteOne).mockResolvedValue({
-			deletedCount: 1,
-		} as never);
 	});
 
 	beforeEach(() => {
@@ -92,12 +88,12 @@ describe('signUpWithInvite', () => {
 			success: false,
 			error: 'Invalid or expired invite',
 		});
-		expect(PendingInvite.findOne).not.toHaveBeenCalled();
+		expect(pendingInvites.findOne).not.toHaveBeenCalled();
 		expect(auth.api.createUser).not.toHaveBeenCalled();
 	});
 
 	it('should return error when invite is not found', async () => {
-		vi.mocked(PendingInvite.findOne).mockResolvedValueOnce(null);
+		vi.mocked(pendingInvites.findOne).mockResolvedValueOnce(null);
 
 		const result = await signUpWithInvite({ token, password, name });
 
@@ -110,7 +106,7 @@ describe('signUpWithInvite', () => {
 
 	it('should return error and report when database lookup fails', async () => {
 		const error = new Error('Connection failed');
-		vi.mocked(PendingInvite.findOne).mockRejectedValueOnce(error);
+		vi.mocked(pendingInvites.findOne).mockRejectedValueOnce(error);
 
 		const result = await signUpWithInvite({ token, password, name });
 
@@ -130,7 +126,7 @@ describe('signUpWithInvite', () => {
 
 	it('should report when deleting the used invite fails', async () => {
 		const error = new Error('Delete failed');
-		vi.mocked(PendingInvite.deleteOne).mockRejectedValueOnce(error);
+		vi.mocked(pendingInvites.deleteOne).mockRejectedValueOnce(error);
 
 		const result = await signUpWithInvite({ token, password, name });
 
@@ -150,7 +146,7 @@ describe('signUpWithInvite', () => {
 			`/?invite_success=true&planner=${plannerId}`,
 		);
 		expect(validateInviteToken).toHaveBeenCalledWith(token);
-		expect(PendingInvite.findOne).toHaveBeenCalledWith({ token });
+		expect(pendingInvites.findOne).toHaveBeenCalledWith({ token });
 		expect(auth.api.createUser).toHaveBeenCalledWith({
 			body: {
 				email,
@@ -163,12 +159,12 @@ describe('signUpWithInvite', () => {
 		});
 		expect(addUser).toHaveBeenCalledWith({
 			email,
-			plannerId: expect.any(Object),
+			plannerId,
 			name: 'Test User',
 			skipPlannerCreation: true,
 			accessLevel: 'write',
 		});
-		expect(PendingInvite.deleteOne).toHaveBeenCalledWith({ _id: inviteId });
+		expect(pendingInvites.deleteOne).toHaveBeenCalledWith({ _id: inviteId });
 	});
 
 	it('should default name to "New User" when not provided', async () => {
@@ -198,7 +194,7 @@ describe('signUpWithInvite', () => {
 		expect(result.success).toBe(false);
 		expect(result.error).toBe('Better Auth creation failed');
 		expect(auth.api.removeUser).not.toHaveBeenCalled();
-		expect(PendingInvite.deleteOne).not.toHaveBeenCalled();
+		expect(pendingInvites.deleteOne).not.toHaveBeenCalled();
 		expect(reportError).toHaveBeenCalledWith(error);
 	});
 
@@ -246,7 +242,7 @@ describe('signUpWithInvite', () => {
 		expect(auth.api.removeUser).toHaveBeenCalledWith({
 			body: { userId: mockBetterAuthUser.user.id },
 		});
-		expect(PendingInvite.deleteOne).not.toHaveBeenCalled();
+		expect(pendingInvites.deleteOne).not.toHaveBeenCalled();
 		expect(reportError).toHaveBeenCalledWith(error);
 	});
 

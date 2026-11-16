@@ -1,7 +1,7 @@
 'use server';
 
 import { checkAuth } from '@/_actions/auth/checkAuth';
-import { User } from '@/_models/user';
+import { users } from '@/_models/database/users';
 import { serialize } from '@/_utils/serialize';
 
 import type { PlannerMember } from './getPlannerMembers.types';
@@ -24,10 +24,12 @@ export const getPlannerMembers = async (
 	}
 
 	// Query users who have access to this planner
-	const users = await User.find({ 'planners.planner': plannerId }).lean();
+	const memberUsers = await users
+		.find({ 'planners.planner': plannerId })
+		.toArray();
 
 	// Map to sanitized member data
-	const members: PlannerMember[] = users.map((user) => {
+	const members: PlannerMember[] = memberUsers.map((user) => {
 		const membership = user.planners.find((p) => p.planner === plannerId);
 
 		return {

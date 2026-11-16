@@ -1,7 +1,7 @@
 'use server';
 
 import { checkAuth } from '@/_actions/auth/checkAuth';
-import { User } from '@/_models/user';
+import { users } from '@/_models/database/users';
 
 import { removePlannerMembership } from './_utils/removePlannerMembership';
 
@@ -22,7 +22,7 @@ export const removeMember = async (
 	}
 
 	// 2. Find the target user by email
-	const targetUser = await User.findOne({ email: memberEmail });
+	const targetUser = await users.findOne({ email: memberEmail });
 
 	// 3. Verify target user exists
 	if (!targetUser) {

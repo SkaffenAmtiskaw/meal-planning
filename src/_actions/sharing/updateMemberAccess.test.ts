@@ -1,8 +1,8 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { checkAuth } from '@/_actions/auth/checkAuth';
+import { users } from '@/_models/database/users';
 import type { AccessLevel } from '@/_models/user';
-import { User } from '@/_models/user';
 
 import { updateMemberAccess } from './updateMemberAccess';
 
@@ -10,7 +10,10 @@ vi.mock(
 	'@/_actions/auth/checkAuth',
 	async () => await import('#mocks/@/_actions/auth/checkAuth'),
 );
-vi.mock('@/_models/user', async () => await import('#mocks/@/_models/user'));
+vi.mock(
+	'@/_models/database/users',
+	async () => await import('#mocks/@/_models/database/users'),
+);
 
 describe('updateMemberAccess', () => {
 	const plannerId = '507f1f77bcf86cd799439011';
@@ -38,7 +41,7 @@ describe('updateMemberAccess', () => {
 			name: 'Target User',
 			planners: [
 				{
-					planner: { toString: () => plannerIdOverride ?? plannerId },
+					planner: plannerIdOverride ?? plannerId,
 					accessLevel,
 				},
 			],
@@ -59,7 +62,7 @@ describe('updateMemberAccess', () => {
 			);
 
 			expect(result).toEqual({ ok: false, error: 'Unauthorized' });
-			expect(User.findOne).not.toHaveBeenCalled();
+			expect(users.findOne).not.toHaveBeenCalled();
 		});
 
 		it('returns unauthorized for unauthorized users', async () => {
@@ -72,7 +75,7 @@ describe('updateMemberAccess', () => {
 			);
 
 			expect(result).toEqual({ ok: false, error: 'Unauthorized' });
-			expect(User.findOne).not.toHaveBeenCalled();
+			expect(users.findOne).not.toHaveBeenCalled();
 		});
 
 		it('returns unauthorized when checkAuth returns error', async () => {
@@ -88,7 +91,7 @@ describe('updateMemberAccess', () => {
 			);
 
 			expect(result).toEqual({ ok: false, error: 'Unauthorized' });
-			expect(User.findOne).not.toHaveBeenCalled();
+			expect(users.findOne).not.toHaveBeenCalled();
 		});
 	});
 
@@ -103,7 +106,7 @@ describe('updateMemberAccess', () => {
 			);
 
 			expect(result).toEqual({ ok: false, error: 'Insufficient permissions' });
-			expect(User.findOne).not.toHaveBeenCalled();
+			expect(users.findOne).not.toHaveBeenCalled();
 		});
 
 		it('prevents write access users from changing access', async () => {
@@ -116,14 +119,14 @@ describe('updateMemberAccess', () => {
 			);
 
 			expect(result).toEqual({ ok: false, error: 'Insufficient permissions' });
-			expect(User.findOne).not.toHaveBeenCalled();
+			expect(users.findOne).not.toHaveBeenCalled();
 		});
 	});
 
 	describe('when target user is invalid', () => {
 		it('returns error when target user is not found', async () => {
 			vi.mocked(checkAuth).mockResolvedValue(mockAuthorizedUser('owner'));
-			vi.mocked(User.findOne).mockResolvedValue(null);
+			vi.mocked(users.findOne).mockResolvedValue(null);
 
 			const result = await updateMemberAccess(
 				plannerId,
@@ -132,12 +135,12 @@ describe('updateMemberAccess', () => {
 			);
 
 			expect(result).toEqual({ ok: false, error: 'User not found' });
-			expect(User.updateOne).not.toHaveBeenCalled();
+			expect(users.updateOne).not.toHaveBeenCalled();
 		});
 
 		it('prevents changing non-member access', async () => {
 			vi.mocked(checkAuth).mockResolvedValue(mockAuthorizedUser('owner'));
-			vi.mocked(User.findOne).mockResolvedValue(
+			vi.mocked(users.findOne).mockResolvedValue(
 				mockTargetUser('admin', 'other-planner-id'),
 			);
 
@@ -151,14 +154,14 @@ describe('updateMemberAccess', () => {
 				ok: false,
 				error: 'User is not a member of this planner',
 			});
-			expect(User.updateOne).not.toHaveBeenCalled();
+			expect(users.updateOne).not.toHaveBeenCalled();
 		});
 	});
 
 	describe('when target access level cannot be changed', () => {
 		it('prevents changing owner access', async () => {
 			vi.mocked(checkAuth).mockResolvedValue(mockAuthorizedUser('owner'));
-			vi.mocked(User.findOne).mockResolvedValue(mockTargetUser('owner'));
+			vi.mocked(users.findOne).mockResolvedValue(mockTargetUser('owner'));
 
 			const result = await updateMemberAccess(
 				plannerId,
@@ -170,12 +173,12 @@ describe('updateMemberAccess', () => {
 				ok: false,
 				error: 'Cannot change owner access',
 			});
-			expect(User.updateOne).not.toHaveBeenCalled();
+			expect(users.updateOne).not.toHaveBeenCalled();
 		});
 
 		it('prevents admin from changing other admin access', async () => {
 			vi.mocked(checkAuth).mockResolvedValue(mockAuthorizedUser('admin'));
-			vi.mocked(User.findOne).mockResolvedValue(mockTargetUser('admin'));
+			vi.mocked(users.findOne).mockResolvedValue(mockTargetUser('admin'));
 
 			const result = await updateMemberAccess(
 				plannerId,
@@ -187,12 +190,12 @@ describe('updateMemberAccess', () => {
 				ok: false,
 				error: 'Admins cannot modify other admins',
 			});
-			expect(User.updateOne).not.toHaveBeenCalled();
+			expect(users.updateOne).not.toHaveBeenCalled();
 		});
 
 		it('prevents admin from changing owner access', async () => {
 			vi.mocked(checkAuth).mockResolvedValue(mockAuthorizedUser('admin'));
-			vi.mocked(User.findOne).mockResolvedValue(mockTargetUser('owner'));
+			vi.mocked(users.findOne).mockResolvedValue(mockTargetUser('owner'));
 
 			const result = await updateMemberAccess(
 				plannerId,
@@ -204,14 +207,14 @@ describe('updateMemberAccess', () => {
 				ok: false,
 				error: 'Cannot change owner access',
 			});
-			expect(User.updateOne).not.toHaveBeenCalled();
+			expect(users.updateOne).not.toHaveBeenCalled();
 		});
 	});
 
 	describe('when caller has sufficient permissions', () => {
 		it('allows owner to change admin access to write', async () => {
 			vi.mocked(checkAuth).mockResolvedValue(mockAuthorizedUser('owner'));
-			vi.mocked(User.findOne).mockResolvedValue(mockTargetUser('admin'));
+			vi.mocked(users.findOne).mockResolvedValue(mockTargetUser('admin'));
 
 			const result = await updateMemberAccess(
 				plannerId,
@@ -220,7 +223,7 @@ describe('updateMemberAccess', () => {
 			);
 
 			expect(result).toEqual({ ok: true });
-			expect(User.updateOne).toHaveBeenCalledWith(
+			expect(users.updateOne).toHaveBeenCalledWith(
 				{ _id: targetUserId, 'planners.planner': plannerId },
 				{ $set: { 'planners.$.accessLevel': 'write' } },
 			);
@@ -228,7 +231,7 @@ describe('updateMemberAccess', () => {
 
 		it('allows owner to change write access to admin', async () => {
 			vi.mocked(checkAuth).mockResolvedValue(mockAuthorizedUser('owner'));
-			vi.mocked(User.findOne).mockResolvedValue(mockTargetUser('write'));
+			vi.mocked(users.findOne).mockResolvedValue(mockTargetUser('write'));
 
 			const result = await updateMemberAccess(
 				plannerId,
@@ -237,7 +240,7 @@ describe('updateMemberAccess', () => {
 			);
 
 			expect(result).toEqual({ ok: true });
-			expect(User.updateOne).toHaveBeenCalledWith(
+			expect(users.updateOne).toHaveBeenCalledWith(
 				{ _id: targetUserId, 'planners.planner': plannerId },
 				{ $set: { 'planners.$.accessLevel': 'admin' } },
 			);
@@ -245,7 +248,7 @@ describe('updateMemberAccess', () => {
 
 		it('allows admin to change write access to read', async () => {
 			vi.mocked(checkAuth).mockResolvedValue(mockAuthorizedUser('admin'));
-			vi.mocked(User.findOne).mockResolvedValue(mockTargetUser('write'));
+			vi.mocked(users.findOne).mockResolvedValue(mockTargetUser('write'));
 
 			const result = await updateMemberAccess(
 				plannerId,
@@ -254,7 +257,7 @@ describe('updateMemberAccess', () => {
 			);
 
 			expect(result).toEqual({ ok: true });
-			expect(User.updateOne).toHaveBeenCalledWith(
+			expect(users.updateOne).toHaveBeenCalledWith(
 				{ _id: targetUserId, 'planners.planner': plannerId },
 				{ $set: { 'planners.$.accessLevel': 'read' } },
 			);
@@ -262,7 +265,7 @@ describe('updateMemberAccess', () => {
 
 		it('allows admin to change read access to write', async () => {
 			vi.mocked(checkAuth).mockResolvedValue(mockAuthorizedUser('admin'));
-			vi.mocked(User.findOne).mockResolvedValue(mockTargetUser('read'));
+			vi.mocked(users.findOne).mockResolvedValue(mockTargetUser('read'));
 
 			const result = await updateMemberAccess(
 				plannerId,
@@ -271,7 +274,7 @@ describe('updateMemberAccess', () => {
 			);
 
 			expect(result).toEqual({ ok: true });
-			expect(User.updateOne).toHaveBeenCalledWith(
+			expect(users.updateOne).toHaveBeenCalledWith(
 				{ _id: targetUserId, 'planners.planner': plannerId },
 				{ $set: { 'planners.$.accessLevel': 'write' } },
 			);

@@ -1,7 +1,7 @@
 'use server';
 
 import { getUser } from '@/_actions/user';
-import { PendingInvite } from '@/_models/sharing';
+import { pendingInvites } from '@/_models/database/pendingInvites';
 import type { ActionResult } from '@/_utils/actionResult/ActionResult';
 import { isNoSessionError } from '@/_utils/noSessionError';
 import { reportError } from '@/_utils/reportError';
@@ -32,7 +32,7 @@ export const declineInvite = async (
 		}
 
 		// 4. Find the pending invite by _id
-		const invite = await PendingInvite.findOne({
+		const invite = await pendingInvites.findOne({
 			_id: inviteId,
 		});
 
@@ -47,7 +47,7 @@ export const declineInvite = async (
 		}
 
 		// 7. Delete the pending invite
-		await PendingInvite.deleteOne({
+		await pendingInvites.deleteOne({
 			_id: inviteId,
 		});
 
