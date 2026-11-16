@@ -6,7 +6,7 @@ import { checkAuth } from '@/_actions/auth/checkAuth';
 import type { DishInterface, MealInterface } from '@/_models/calendar';
 import { zMealFormSchema } from '@/_models/calendar';
 import { newId } from '@/_models/database/newId';
-import { Planner } from '@/_models/planner';
+import { planners } from '@/_models/database/planners';
 import type { ActionResult } from '@/_utils/actionResult';
 
 export const addMeal = async (
@@ -17,9 +17,6 @@ export const addMeal = async (
 
 	const auth = await checkAuth(plannerId, 'write');
 	if (auth.type !== 'authorized') return { ok: false, error: 'Unauthorized' };
-
-	const planner = await Planner.findById(plannerId);
-	if (!planner) return { ok: false, error: 'Planner not found' };
 
 	// The driver stores an undefined field as null, so an empty optional field
 	// gets no key at all.
@@ -46,22 +43,22 @@ export const addMeal = async (
 		dishes: mealDishes,
 	};
 
-	const result = await Planner.collection.updateOne(
-		{ _id: plannerId, 'calendar.date': date } as object,
-		{ $push: { 'calendar.$.meals': meal } } as object,
+	const onExistingDay = await planners.updateOne(
+		{ _id: plannerId, 'calendar.date': date },
+		{ $push: { 'calendar.$.meals': meal } },
 	);
 
-	if (result.matchedCount === 0) {
-		await Planner.collection.updateOne(
-			{ _id: plannerId } as object,
-			{
-				$push: { calendar: { date, meals: [meal] } },
-			} as object,
+	if (onExistingDay.matchedCount === 0) {
+		// A day's date is unique within a planner, so the new day goes in only if no day has that date.
+		const onNewDay = await planners.updateOne(
+			{ _id: plannerId, 'calendar.date': { $ne: date } },
+			{ $push: { calendar: { date, meals: [meal] } } },
 		);
+		if (onNewDay.matchedCount === 0)
+			return { ok: false, error: 'Planner not found' };
 	}
 
-	const updated = await Planner.findById(plannerId);
-	const calendar = JSON.parse(JSON.stringify(updated?.calendar ?? []));
+	const updated = await planners.findOne({ _id: plannerId });
 
-	return { ok: true, data: { calendar } };
+	return { ok: true, data: { calendar: updated?.calendar ?? [] } };
 };

@@ -3,7 +3,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { checkAuth } from '@/_actions/auth/checkAuth';
 import { zMealFormSchema } from '@/_models/calendar';
 import { newId } from '@/_models/database/newId';
-import { Planner } from '@/_models/planner';
+import { planners } from '@/_models/database/planners';
 
 import { addMeal } from './addMeal';
 
@@ -16,10 +16,9 @@ vi.mock(
 	async () => await import('#mocks/@/_models/calendar'),
 );
 vi.mock(
-	'@/_models/planner',
-	async () => await import('#mocks/@/_models/planner'),
+	'@/_models/database/planners',
+	async () => await import('#mocks/@/_models/database/planners'),
 );
-
 vi.mock(
 	'@/_models/database/newId',
 	async () => await import('#mocks/@/_models/database/newId'),
@@ -35,22 +34,17 @@ const validData = {
 	dishes: [{ name: 'Soup', sourceType: 'none' as const }],
 };
 
-const makePlanner = () => ({
-	_id: plannerId,
-	calendar: [],
-});
-
 const callAddMeal = (data: unknown) => {
 	vi.mocked(zMealFormSchema.parse).mockReturnValue(data as never);
 	return addMeal(data);
 };
 
-const pushedMeal = () => {
-	const [, update] = vi.mocked(Planner.collection.updateOne).mock.calls[0];
-	return (update as { $push: Record<string, Record<string, unknown>> }).$push[
+const noMatch = { matchedCount: 0 } as never;
+
+const pushedMeal = () =>
+	vi.mocked(planners.updateOne).mock.calls[0][1].$push?.[
 		'calendar.$.meals'
-	];
-};
+	] as Record<string, unknown>;
 
 const pushedDish = () =>
 	(pushedMeal().dishes as Array<Record<string, unknown>>)[0];
@@ -59,10 +53,6 @@ describe('addMeal', () => {
 	beforeEach(() => {
 		vi.resetAllMocks();
 		vi.mocked(zMealFormSchema.parse).mockReturnValue(validData);
-		vi.mocked(Planner.findById).mockResolvedValue(makePlanner());
-		vi.mocked(Planner.collection.updateOne).mockResolvedValue({
-			matchedCount: 1,
-		} as never);
 	});
 
 	describe('validation', () => {
@@ -82,7 +72,7 @@ describe('addMeal', () => {
 			const result = await addMeal(validData);
 
 			expect(result).toEqual({ ok: false, error: 'Unauthorized' });
-			expect(Planner.findById).not.toHaveBeenCalled();
+			expect(planners.updateOne).not.toHaveBeenCalled();
 		});
 
 		it('returns Unauthorized when user does not own the planner', async () => {
@@ -91,25 +81,17 @@ describe('addMeal', () => {
 			const result = await addMeal(validData);
 
 			expect(result).toEqual({ ok: false, error: 'Unauthorized' });
+			expect(planners.updateOne).not.toHaveBeenCalled();
 		});
 	});
 
 	describe('when authorized', () => {
-		describe('planner lookup', () => {
-			it('returns Planner not found when planner does not exist', async () => {
-				vi.mocked(Planner.findById).mockResolvedValueOnce(null);
-
-				const result = await addMeal(validData);
-
-				expect(result).toEqual({ ok: false, error: 'Planner not found' });
-			});
-		});
-
 		describe('adding meal to calendar', () => {
-			it('pushes to existing day when date already in calendar', async () => {
-				const result = await addMeal(validData);
+			it('pushes the meal onto the day when the date is already in the calendar', async () => {
+				await addMeal(validData);
 
-				expect(Planner.collection.updateOne).toHaveBeenCalledWith(
+				expect(planners.updateOne).toHaveBeenCalledOnce();
+				expect(planners.updateOne).toHaveBeenCalledWith(
 					{ _id: plannerId, 'calendar.date': '2024-06-15' },
 					{
 						$push: {
@@ -117,10 +99,36 @@ describe('addMeal', () => {
 						},
 					},
 				);
-				expect(result).toEqual({
-					ok: true,
-					data: { calendar: expect.any(Array) },
-				});
+			});
+
+			it('pushes a new day holding the meal when the date is not in the calendar', async () => {
+				vi.mocked(planners.updateOne).mockResolvedValueOnce(noMatch);
+
+				await addMeal(validData);
+
+				expect(planners.updateOne).toHaveBeenCalledTimes(2);
+				expect(planners.updateOne).toHaveBeenLastCalledWith(
+					{ _id: plannerId, 'calendar.date': { $ne: '2024-06-15' } },
+					{
+						$push: {
+							calendar: {
+								date: '2024-06-15',
+								meals: [pushedMeal()],
+							},
+						},
+					},
+				);
+			});
+
+			it('returns Planner not found when neither update matches a planner', async () => {
+				vi.mocked(planners.updateOne)
+					.mockResolvedValueOnce(noMatch)
+					.mockResolvedValueOnce(noMatch);
+
+				const result = await addMeal(validData);
+
+				expect(result).toEqual({ ok: false, error: 'Planner not found' });
+				expect(planners.findOne).not.toHaveBeenCalled();
 			});
 
 			it('gives the meal and each dish a new id', async () => {
@@ -145,27 +153,6 @@ describe('addMeal', () => {
 					],
 				});
 			});
-
-			it('adds new day when date is not in calendar', async () => {
-				vi.mocked(Planner.collection.updateOne).mockResolvedValueOnce({
-					matchedCount: 0,
-				} as never);
-
-				await addMeal(validData);
-
-				expect(Planner.collection.updateOne).toHaveBeenCalledTimes(2);
-				expect(Planner.collection.updateOne).toHaveBeenCalledWith(
-					{ _id: plannerId },
-					{
-						$push: {
-							calendar: expect.objectContaining({
-								date: '2024-06-15',
-								meals: [expect.objectContaining({ name: 'Lunch' })],
-							}),
-						},
-					},
-				);
-			});
 		});
 
 		describe('dish source mapping', () => {
@@ -177,20 +164,7 @@ describe('addMeal', () => {
 					],
 				});
 
-				expect(Planner.collection.updateOne).toHaveBeenCalledWith(
-					expect.anything(),
-					{
-						$push: {
-							'calendar.$.meals': expect.objectContaining({
-								dishes: [
-									expect.objectContaining({
-										source: savedItemId,
-									}),
-								],
-							}),
-						},
-					},
-				);
+				expect(pushedDish().source).toBe(savedItemId);
 			});
 
 			it('maps text source type to url object when a URL is provided', async () => {
@@ -205,20 +179,7 @@ describe('addMeal', () => {
 					],
 				});
 
-				expect(Planner.collection.updateOne).toHaveBeenCalledWith(
-					expect.anything(),
-					{
-						$push: {
-							'calendar.$.meals': expect.objectContaining({
-								dishes: [
-									expect.objectContaining({
-										source: { url: 'https://example.com' },
-									}),
-								],
-							}),
-						},
-					},
-				);
+				expect(pushedDish().source).toEqual({ url: 'https://example.com' });
 			});
 
 			it('maps text source type to ref object when a plain string is provided', async () => {
@@ -233,20 +194,7 @@ describe('addMeal', () => {
 					],
 				});
 
-				expect(Planner.collection.updateOne).toHaveBeenCalledWith(
-					expect.anything(),
-					{
-						$push: {
-							'calendar.$.meals': expect.objectContaining({
-								dishes: [
-									expect.objectContaining({
-										source: { ref: 'The Flavor Bible' },
-									}),
-								],
-							}),
-						},
-					},
-				);
+				expect(pushedDish().source).toEqual({ ref: 'The Flavor Bible' });
 			});
 
 			it('leaves out source when sourceType is none', async () => {
@@ -278,22 +226,22 @@ describe('addMeal', () => {
 			it('includes description when provided', async () => {
 				await callAddMeal({ ...validData, description: 'A hearty lunch' });
 
-				expect(Planner.collection.updateOne).toHaveBeenCalledWith(
-					expect.anything(),
-					{
-						$push: {
-							'calendar.$.meals': expect.objectContaining({
-								description: 'A hearty lunch',
-							}),
-						},
-					},
-				);
+				expect(pushedMeal().description).toBe('A hearty lunch');
 			});
 
 			it('leaves out description when it is empty', async () => {
 				await callAddMeal({ ...validData, description: '' });
 
 				expect(pushedMeal()).not.toHaveProperty('description');
+			});
+
+			it('includes dish note when provided', async () => {
+				await callAddMeal({
+					...validData,
+					dishes: [{ name: 'Pasta', sourceType: 'none', note: 'Extra cheese' }],
+				});
+
+				expect(pushedDish().note).toBe('Extra cheese');
 			});
 
 			it('leaves out dish note when it is empty', async () => {
@@ -304,44 +252,26 @@ describe('addMeal', () => {
 
 				expect(pushedDish()).not.toHaveProperty('note');
 			});
-
-			it('includes dish note when provided', async () => {
-				await callAddMeal({
-					...validData,
-					dishes: [{ name: 'Pasta', sourceType: 'none', note: 'Extra cheese' }],
-				});
-
-				expect(Planner.collection.updateOne).toHaveBeenCalledWith(
-					expect.anything(),
-					{
-						$push: {
-							'calendar.$.meals': expect.objectContaining({
-								dishes: [expect.objectContaining({ note: 'Extra cheese' })],
-							}),
-						},
-					},
-				);
-			});
 		});
 
 		describe('result', () => {
-			it('returns the updated calendar on success', async () => {
+			it('returns the planner calendar read after the update', async () => {
 				const calendar = [
 					{ date: '2024-06-15', meals: [{ name: 'Lunch', dishes: [] }] },
 				];
-				vi.mocked(Planner.findById)
-					.mockResolvedValueOnce(makePlanner())
-					.mockResolvedValueOnce({ calendar });
+				vi.mocked(planners.findOne).mockResolvedValueOnce({
+					_id: plannerId,
+					calendar,
+				} as never);
 
 				const result = await addMeal(validData);
 
+				expect(planners.findOne).toHaveBeenCalledWith({ _id: plannerId });
 				expect(result).toEqual({ ok: true, data: { calendar } });
 			});
 
-			it('falls back to empty calendar when updated planner is null', async () => {
-				vi.mocked(Planner.findById)
-					.mockResolvedValueOnce(makePlanner())
-					.mockResolvedValueOnce(null);
+			it('returns an empty calendar when the planner is gone by the read', async () => {
+				vi.mocked(planners.findOne).mockResolvedValueOnce(null);
 
 				const result = await addMeal(validData);
 
