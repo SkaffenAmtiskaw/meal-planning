@@ -3,7 +3,7 @@ import { redirect } from 'next/navigation';
 
 import { addUser } from '@/_actions/user';
 import { auth } from '@/_auth';
-import { User } from '@/_models/user';
+import { users } from '@/_models/database/users';
 
 import { SignInPrompt } from './_components/SignInPrompt';
 
@@ -20,7 +20,7 @@ const Page = async ({
 		return <SignInPrompt />;
 	}
 
-	const user = await User.findOne({ email: session.user.email }).exec();
+	const user = await users.findOne({ email: session.user.email });
 
 	if (user) {
 		const cookieStore = await cookies();

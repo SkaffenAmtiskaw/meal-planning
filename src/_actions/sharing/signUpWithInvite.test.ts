@@ -167,7 +167,6 @@ describe('signUpWithInvite', () => {
 			name: 'Test User',
 			skipPlannerCreation: true,
 			accessLevel: 'write',
-			emailVerified: true,
 		});
 		expect(PendingInvite.deleteOne).toHaveBeenCalledWith({ _id: inviteId });
 	});

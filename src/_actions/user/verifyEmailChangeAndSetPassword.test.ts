@@ -2,7 +2,7 @@ import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import { auth } from '@/_auth';
 import { addAuthUserPassword, changeAuthUserEmail } from '@/_auth/users';
-import { User } from '@/_models/user';
+import { users } from '@/_models/database/users';
 
 import { verifyEmailChangeAndSetPassword } from './verifyEmailChangeAndSetPassword';
 
@@ -10,12 +10,10 @@ vi.mock('@/_auth', () => ({ auth: {} }));
 
 vi.mock('@/_auth/users', async () => await import('#mocks/@/_auth/users'));
 
-vi.mock('@/_models/user', async () => ({
-	User: {
-		findOne: vi.fn(() => ({ exec: vi.fn() })),
-		updateOne: vi.fn(),
-	},
-}));
+vi.mock(
+	'@/_models/database/users',
+	async () => await import('#mocks/@/_models/database/users'),
+);
 
 const futureDate = new Date(Date.now() + 1000 * 60 * 60 * 24);
 const pastDate = new Date(Date.now() - 1000 * 60 * 60);
@@ -31,9 +29,7 @@ const makeMockUser = (overrides = {}) => ({
 });
 
 const mockUserFindOneResult = (user: unknown) => {
-	vi.mocked(User.findOne).mockReturnValueOnce({
-		exec: vi.fn().mockResolvedValue(user),
-	} as never);
+	vi.mocked(users.findOne).mockResolvedValueOnce(user as never);
 };
 
 const setupHappyPath = () => {
@@ -120,7 +116,7 @@ describe('verifyEmailChangeAndSetPassword', () => {
 
 			expect(result).toEqual({ ok: false, error: 'User not found.' });
 			expect(changeAuthUserEmail).not.toHaveBeenCalled();
-			expect(User.updateOne).not.toHaveBeenCalled();
+			expect(users.updateOne).not.toHaveBeenCalled();
 		});
 	});
 
@@ -149,12 +145,12 @@ describe('verifyEmailChangeAndSetPassword', () => {
 			);
 		});
 
-		it('updates the app User model and clears the pending change', async () => {
+		it("updates the app user's email and clears the pending change", async () => {
 			setupHappyPath();
 
 			await verifyEmailChangeAndSetPassword('valid-token', 'password123');
 
-			expect(User.updateOne).toHaveBeenCalledWith(
+			expect(users.updateOne).toHaveBeenCalledWith(
 				{ email: 'user@example.com' },
 				{
 					$set: { email: 'new@example.com' },

@@ -3,7 +3,7 @@ import { afterEach, describe, expect, test, vi } from 'vitest';
 import { auth } from '@/_auth';
 import { sendEmailChangeEmail } from '@/_auth/emails';
 import { findAuthUser } from '@/_auth/users';
-import { User } from '@/_models/user';
+import { users } from '@/_models/database/users';
 import { env } from '@/env';
 
 import { requestEmailChange } from './requestEmailChange';
@@ -20,7 +20,10 @@ vi.mock('@/_auth', () => ({
 
 vi.mock('@/_auth/users', async () => await import('#mocks/@/_auth/users'));
 
-vi.mock('@/_models/user', async () => await import('#mocks/@/_models/user'));
+vi.mock(
+	'@/_models/database/users',
+	async () => await import('#mocks/@/_models/database/users'),
+);
 
 vi.mock('@/_auth/emails', () => ({
 	sendEmailChangeEmail: vi.fn(),
@@ -43,9 +46,22 @@ const makeMockUser = (
 		token: string;
 		expiresAt: Date;
 	} | null,
-	save: vi.fn().mockResolvedValue(undefined),
 	...overrides,
 });
+
+const givenUser = (user: unknown) => {
+	vi.mocked(users.findOne).mockResolvedValueOnce(user as never);
+};
+
+/** The pending change the action stored, read from its update. */
+const storedChange = () => {
+	const update = vi.mocked(users.updateOne).mock.calls[0][1] as {
+		$set: {
+			pendingEmailChange: { email: string; token: string; expiresAt: Date };
+		};
+	};
+	return update.$set.pendingEmailChange;
+};
 
 describe('requestEmailChange', () => {
 	afterEach(() => {
@@ -113,9 +129,7 @@ describe('requestEmailChange', () => {
 			vi.mocked(auth.api.getSession).mockResolvedValueOnce(
 				mockSession as never,
 			);
-			vi.mocked(User.findOne).mockReturnValueOnce({
-				exec: vi.fn().mockResolvedValue(null),
-			} as never);
+			givenUser(null);
 
 			const result = await requestEmailChange('new@example.com');
 
@@ -128,10 +142,7 @@ describe('requestEmailChange', () => {
 			vi.mocked(auth.api.getSession).mockResolvedValueOnce(
 				mockSession as never,
 			);
-			const mockUser = makeMockUser({ pendingEmailChange: null });
-			vi.mocked(User.findOne).mockReturnValueOnce({
-				exec: vi.fn().mockResolvedValue(mockUser),
-			} as never);
+			givenUser(makeMockUser({ pendingEmailChange: null }));
 
 			const result = await requestEmailChange('new@example.com');
 
@@ -142,16 +153,15 @@ describe('requestEmailChange', () => {
 			vi.mocked(auth.api.getSession).mockResolvedValueOnce(
 				mockSession as never,
 			);
-			const mockUser = makeMockUser({
-				pendingEmailChange: {
-					email: 'old-pending@example.com',
-					token: 'old-token',
-					expiresAt: new Date(),
-				},
-			});
-			vi.mocked(User.findOne).mockReturnValueOnce({
-				exec: vi.fn().mockResolvedValue(mockUser),
-			} as never);
+			givenUser(
+				makeMockUser({
+					pendingEmailChange: {
+						email: 'old-pending@example.com',
+						token: 'old-token',
+						expiresAt: new Date(),
+					},
+				}),
+			);
 
 			const result = await requestEmailChange('new@example.com');
 
@@ -164,40 +174,36 @@ describe('requestEmailChange', () => {
 			vi.mocked(auth.api.getSession).mockResolvedValueOnce(
 				mockSession as never,
 			);
-			const mockUser = makeMockUser();
-			vi.mocked(User.findOne).mockReturnValueOnce({
-				exec: vi.fn().mockResolvedValue(mockUser),
-			} as never);
+			givenUser(makeMockUser());
 
 			const before = Date.now();
 			await requestEmailChange('new@example.com');
 			const after = Date.now();
 
-			expect(mockUser.pendingEmailChange).toBeDefined();
-			// biome-ignore lint/style/noNonNullAssertion: asserted defined above
-			expect(mockUser.pendingEmailChange!.email).toBe('new@example.com');
-			// biome-ignore lint/style/noNonNullAssertion: asserted defined above
-			expect(mockUser.pendingEmailChange!.token).toMatch(/^[0-9a-f]{64}$/);
-			// biome-ignore lint/style/noNonNullAssertion: asserted defined above
-			const expiresAt = mockUser.pendingEmailChange!.expiresAt.getTime();
-			expect(expiresAt).toBeGreaterThanOrEqual(before + 24 * 60 * 60 * 1000);
-			expect(expiresAt).toBeLessThanOrEqual(after + 24 * 60 * 60 * 1000);
-			expect(mockUser.save).toHaveBeenCalledOnce();
+			expect(users.updateOne).toHaveBeenCalledOnce();
+			expect(vi.mocked(users.updateOne).mock.calls[0][0]).toEqual({
+				email: 'current@example.com',
+			});
+			const { email, token, expiresAt } = storedChange();
+			expect(email).toBe('new@example.com');
+			expect(token).toMatch(/^[0-9a-f]{64}$/);
+			expect(expiresAt.getTime()).toBeGreaterThanOrEqual(
+				before + 24 * 60 * 60 * 1000,
+			);
+			expect(expiresAt.getTime()).toBeLessThanOrEqual(
+				after + 24 * 60 * 60 * 1000,
+			);
 		});
 
 		test('sends verification email to the new address with the stored token in the url', async () => {
 			vi.mocked(auth.api.getSession).mockResolvedValueOnce(
 				mockSession as never,
 			);
-			const mockUser = makeMockUser();
-			vi.mocked(User.findOne).mockReturnValueOnce({
-				exec: vi.fn().mockResolvedValue(mockUser),
-			} as never);
+			givenUser(makeMockUser());
 
 			await requestEmailChange('new@example.com');
 
-			// biome-ignore lint/style/noNonNullAssertion: set by requestEmailChange
-			const storedToken = mockUser.pendingEmailChange!.token;
+			const storedToken = storedChange().token;
 			expect(vi.mocked(sendEmailChangeEmail)).toHaveBeenCalledWith({
 				newEmail: 'new@example.com',
 				url: `${env.BETTER_AUTH_URL}/verify-email-change?token=${storedToken}`,

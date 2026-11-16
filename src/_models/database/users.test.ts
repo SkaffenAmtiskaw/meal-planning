@@ -22,6 +22,18 @@ describe('users', () => {
 		expect(collection.insertOne).not.toHaveBeenCalled();
 	});
 
+	it('stores the default name for a user inserted without one', () => {
+		const _id = '507f1f77bcf86cd799439011';
+		users.insertOne({ _id, email: 'new@example.com', planners: [] });
+
+		expect(collection.insertOne).toHaveBeenCalledWith({
+			_id,
+			email: 'new@example.com',
+			name: 'New User',
+			planners: [],
+		});
+	});
+
 	it('creates the unique email index and the index on membership planners', async () => {
 		await createUsersIndexes();
 

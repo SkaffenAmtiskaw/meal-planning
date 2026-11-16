@@ -29,3 +29,5 @@ export const zUserInterface = z.object({
 });
 
 export type UserInterface = z.infer<typeof zUserInterface>;
+/** A user before its insert, which may leave out the fields the schema gives a default. */
+export type NewUser = z.input<typeof zUserInterface>;

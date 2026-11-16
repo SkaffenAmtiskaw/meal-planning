@@ -6,7 +6,7 @@ import { redirect } from 'next/navigation';
 
 import { addUser } from '@/_actions/user';
 import { auth } from '@/_auth';
-import { User } from '@/_models/user';
+import { users } from '@/_models/database/users';
 
 import Page from './page';
 
@@ -31,13 +31,10 @@ vi.mock('@/_auth', () => ({
 	},
 }));
 
-vi.mock('@/_models/user', () => ({
-	User: {
-		findOne: vi.fn().mockReturnValue({
-			exec: vi.fn().mockResolvedValue({ planners: [membership] }),
-		}),
-	},
-}));
+vi.mock(
+	'@/_models/database/users',
+	async () => await import('#mocks/@/_models/database/users'),
+);
 
 vi.mock('./_components/SignInPrompt', () => ({
 	SignInPrompt: vi.fn(() => <div data-testid="sign-in-prompt" />),
@@ -46,6 +43,9 @@ vi.mock('./_components/SignInPrompt', () => ({
 describe('page', () => {
 	beforeEach(() => {
 		vi.clearAllMocks();
+		vi.mocked(users.findOne).mockResolvedValue({
+			planners: [membership],
+		} as never);
 	});
 
 	it('renders sign in prompt when there is no session', async () => {
@@ -64,13 +64,8 @@ describe('page', () => {
 
 	it('redirects to last-opened planner when cookie matches a planner', async () => {
 		const lastPlannerId = '507f1f77bcf86cd799439022';
-		vi.mocked(User.findOne).mockReturnValueOnce({
-			exec: vi.fn().mockResolvedValue({
-				planners: [
-					membership,
-					{ planner: lastPlannerId, accessLevel: 'owner' },
-				],
-			}),
+		vi.mocked(users.findOne).mockResolvedValueOnce({
+			planners: [membership, { planner: lastPlannerId, accessLevel: 'owner' }],
 		} as never);
 		vi.mocked(cookies).mockResolvedValueOnce({
 			get: vi.fn().mockReturnValueOnce({ value: lastPlannerId }),
@@ -95,9 +90,7 @@ describe('page', () => {
 	});
 
 	it('creates a new user and redirects when no user exists', async () => {
-		vi.mocked(User.findOne).mockReturnValueOnce({
-			exec: vi.fn().mockResolvedValue(null),
-		} as never);
+		vi.mocked(users.findOne).mockResolvedValueOnce(null as never);
 
 		await Page({ searchParams: Promise.resolve({}) });
 

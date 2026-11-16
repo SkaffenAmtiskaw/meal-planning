@@ -1,7 +1,7 @@
 import { afterEach, describe, expect, test, vi } from 'vitest';
 
 import { auth } from '@/_auth';
-import { User } from '@/_models/user';
+import { users } from '@/_models/database/users';
 
 import { getUser } from './getUser';
 
@@ -15,11 +15,11 @@ vi.mock('@/_auth', () => ({
 	},
 }));
 
-vi.mock('@/_models/user', () => ({
-	User: {
-		findOne: vi.fn(),
-	},
-}));
+vi.mock(
+	'@/_models/database/users',
+	async () => await import('#mocks/@/_models/database/users'),
+);
+
 const mockSession = {
 	user: { email: 'maleficent@evil.com' },
 };
@@ -42,25 +42,19 @@ describe('get user', () => {
 
 	test('should return the user matching the session email', async () => {
 		vi.mocked(auth.api.getSession).mockResolvedValue(mockSession as never);
-		vi.mocked(User.findOne).mockReturnValue({
-			lean: vi.fn().mockReturnValue({
-				exec: vi.fn().mockResolvedValue(mockUser),
-			}),
-		} as never);
+		vi.mocked(users.findOne).mockResolvedValue(mockUser as never);
 
 		const result = await getUser();
 
-		expect(User.findOne).toHaveBeenCalledWith({ email: 'maleficent@evil.com' });
+		expect(users.findOne).toHaveBeenCalledWith({
+			email: 'maleficent@evil.com',
+		});
 		expect(result).toEqual(mockUser);
 	});
 
 	test('should return null if no user exists for the session email', async () => {
 		vi.mocked(auth.api.getSession).mockResolvedValue(mockSession as never);
-		vi.mocked(User.findOne).mockReturnValue({
-			lean: vi.fn().mockReturnValue({
-				exec: vi.fn().mockResolvedValue(null),
-			}),
-		} as never);
+		vi.mocked(users.findOne).mockResolvedValue(null as never);
 
 		const result = await getUser();
 

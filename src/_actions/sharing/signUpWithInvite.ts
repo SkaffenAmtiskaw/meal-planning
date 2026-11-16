@@ -78,7 +78,6 @@ export const signUpWithInvite = async (
 			name: normalizedName,
 			skipPlannerCreation: true,
 			accessLevel: invite.accessLevel,
-			emailVerified: true,
 		}),
 	);
 

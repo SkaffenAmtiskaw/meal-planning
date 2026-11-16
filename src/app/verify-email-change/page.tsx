@@ -2,7 +2,7 @@ import { Anchor, Center, Stack, Text, Title } from '@mantine/core';
 
 import { checkEmailStatus } from '@/_actions/auth';
 import { verifyEmailChange } from '@/_actions/user';
-import { User } from '@/_models/user';
+import { users } from '@/_models/database/users';
 
 import { SetPasswordForm } from './_components/SetPasswordForm';
 import { SignInWithNewEmailButton } from './_components/SignInWithNewEmailButton';
@@ -51,7 +51,7 @@ const VerifyEmailChangePage = async ({
 		return invalidLinkContent;
 	}
 
-	const user = await User.findOne({ 'pendingEmailChange.token': token }).exec();
+	const user = await users.findOne({ 'pendingEmailChange.token': token });
 	const pendingChange = user?.pendingEmailChange;
 
 	if (

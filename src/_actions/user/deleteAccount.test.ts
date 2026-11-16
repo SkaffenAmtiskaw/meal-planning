@@ -3,18 +3,21 @@ import { afterEach, describe, expect, it, vi } from 'vitest';
 import { auth } from '@/_auth';
 import { sendAccountDeletionEmail } from '@/_auth/emails';
 import { deleteAuthUser } from '@/_auth/users';
-import { Planner } from '@/_models/planner';
-import { User } from '@/_models/user';
+import { planners } from '@/_models/database/planners';
+import { users } from '@/_models/database/users';
 
 import { deleteAccount } from './deleteAccount';
 
 vi.mock('next/headers', async () => await import('#mocks/next/headers'));
 
-vi.mock('@/_models/user', async () => await import('#mocks/@/_models/user'));
+vi.mock(
+	'@/_models/database/users',
+	async () => await import('#mocks/@/_models/database/users'),
+);
 
 vi.mock(
-	'@/_models/planner',
-	async () => await import('#mocks/@/_models/planner'),
+	'@/_models/database/planners',
+	async () => await import('#mocks/@/_models/database/planners'),
 );
 
 vi.mock('@/_auth', () => ({
@@ -42,12 +45,9 @@ const makeAppUser = (plannerIds: string[] = []) => ({
 
 const setupSuccess = (plannerIds: string[] = []) => {
 	vi.mocked(auth.api.getSession).mockResolvedValueOnce(mockSession as never);
-	vi.mocked(User.findOne).mockReturnValueOnce({
-		exec: vi.fn().mockResolvedValue(makeAppUser(plannerIds)),
-	} as never);
-	vi.mocked(User.deleteOne).mockReturnValueOnce({
-		exec: vi.fn().mockResolvedValue({}),
-	} as never);
+	vi.mocked(users.findOne).mockResolvedValueOnce(
+		makeAppUser(plannerIds) as never,
+	);
 };
 
 describe('deleteAccount', () => {
@@ -70,9 +70,7 @@ describe('deleteAccount', () => {
 			vi.mocked(auth.api.getSession).mockResolvedValueOnce(
 				mockSession as never,
 			);
-			vi.mocked(User.findOne).mockReturnValueOnce({
-				exec: vi.fn().mockResolvedValue(null),
-			} as never);
+			vi.mocked(users.findOne).mockResolvedValueOnce(null as never);
 
 			const result = await deleteAccount();
 
@@ -94,17 +92,12 @@ describe('deleteAccount', () => {
 		}) => {
 			setupSuccess(deletingUser);
 			const everyone = [deletingUser, ...otherUsers];
-			vi.mocked(User.countDocuments).mockImplementation(((filter: {
-				'planners.planner': string;
-			}) => ({
-				exec: async () =>
-					everyone.filter((planners) =>
-						planners.includes(filter['planners.planner']),
-					).length,
-			})) as never);
-			vi.mocked(Planner.deleteOne).mockReturnValue({
-				exec: vi.fn().mockResolvedValue({}),
-			} as never);
+			vi.mocked(users.countDocuments).mockImplementation(
+				(async (filter: { 'planners.planner': string }) =>
+					everyone.filter((memberships) =>
+						memberships.includes(filter['planners.planner']),
+					).length) as never,
+			);
 		};
 
 		it('deletes a planner the user was the only member of', async () => {
@@ -112,7 +105,7 @@ describe('deleteAccount', () => {
 
 			await deleteAccount();
 
-			expect(Planner.deleteOne).toHaveBeenCalledWith({ _id: 'solo-planner' });
+			expect(planners.deleteOne).toHaveBeenCalledWith({ _id: 'solo-planner' });
 		});
 
 		it('keeps a planner that another user is also a member of', async () => {
@@ -123,7 +116,7 @@ describe('deleteAccount', () => {
 
 			await deleteAccount();
 
-			expect(Planner.deleteOne).not.toHaveBeenCalled();
+			expect(planners.deleteOne).not.toHaveBeenCalled();
 		});
 
 		it('deletes only the planners no one else is a member of', async () => {
@@ -134,8 +127,8 @@ describe('deleteAccount', () => {
 
 			await deleteAccount();
 
-			expect(Planner.deleteOne).toHaveBeenCalledTimes(1);
-			expect(Planner.deleteOne).toHaveBeenCalledWith({ _id: 'solo-planner' });
+			expect(planners.deleteOne).toHaveBeenCalledTimes(1);
+			expect(planners.deleteOne).toHaveBeenCalledWith({ _id: 'solo-planner' });
 		});
 	});
 
@@ -145,7 +138,7 @@ describe('deleteAccount', () => {
 
 			await deleteAccount();
 
-			expect(User.deleteOne).toHaveBeenCalledWith({
+			expect(users.deleteOne).toHaveBeenCalledWith({
 				email: 'user@example.com',
 			});
 		});

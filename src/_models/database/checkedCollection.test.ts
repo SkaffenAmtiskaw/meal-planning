@@ -11,6 +11,8 @@ const zDocument = z.object({
 });
 
 const collection = {
+	countDocuments: vi.fn(),
+	deleteOne: vi.fn(),
 	find: vi.fn(),
 	findOne: vi.fn(),
 	insertOne: vi.fn(),
@@ -39,6 +41,18 @@ describe('checkedCollection', () => {
 		documents.findOne({ _id: 'doc-1' });
 
 		expect(collection.findOne).toHaveBeenCalledWith({ _id: 'doc-1' });
+	});
+
+	it('counts without a check', () => {
+		documents.countDocuments({ name: 'Named' });
+
+		expect(collection.countDocuments).toHaveBeenCalledWith({ name: 'Named' });
+	});
+
+	it('deletes without a check', () => {
+		documents.deleteOne({ _id: 'doc-1' });
+
+		expect(collection.deleteOne).toHaveBeenCalledWith({ _id: 'doc-1' });
 	});
 
 	it('inserts the parsed document', () => {

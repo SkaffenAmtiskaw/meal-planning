@@ -3,7 +3,7 @@
 import { headers } from 'next/headers';
 
 import { auth } from '@/_auth';
-import { User } from '@/_models/user';
+import { users } from '@/_models/database/users';
 import type { ActionResult } from '@/_utils/actionResult';
 import { zSafeString } from '@/_utils/zSafeString';
 
@@ -15,11 +15,11 @@ export const updateUserName = async (name: string): Promise<ActionResult> => {
 	if (!parsed.success)
 		return { ok: false, error: parsed.error.issues[0].message };
 
-	const user = await User.findOne({ email: session.user.email }).exec();
-	if (!user) return { ok: false, error: 'User not found.' };
-
-	user.name = parsed.data;
-	await user.save();
+	const { matchedCount } = await users.updateOne(
+		{ email: session.user.email },
+		{ $set: { name: parsed.data } },
+	);
+	if (!matchedCount) return { ok: false, error: 'User not found.' };
 
 	return { ok: true, data: undefined };
 };

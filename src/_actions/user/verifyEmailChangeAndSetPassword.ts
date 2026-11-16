@@ -4,7 +4,7 @@ import { z } from 'zod';
 
 import { auth } from '@/_auth';
 import { addAuthUserPassword, changeAuthUserEmail } from '@/_auth/users';
-import { User } from '@/_models/user';
+import { users } from '@/_models/database/users';
 import type { ActionResult } from '@/_utils/actionResult';
 
 export const verifyEmailChangeAndSetPassword = async (
@@ -15,7 +15,7 @@ export const verifyEmailChangeAndSetPassword = async (
 	if (!parsed.success)
 		return { ok: false, error: 'Password must be at least 8 characters.' };
 
-	const user = await User.findOne({ 'pendingEmailChange.token': token }).exec();
+	const user = await users.findOne({ 'pendingEmailChange.token': token });
 	const pendingChange = user?.pendingEmailChange;
 
 	if (
@@ -33,7 +33,7 @@ export const verifyEmailChangeAndSetPassword = async (
 
 	await changeAuthUserEmail(auth, currentEmail, newEmail);
 
-	await User.updateOne(
+	await users.updateOne(
 		{ email: currentEmail },
 		{ $set: { email: newEmail }, $unset: { pendingEmailChange: '' } },
 	);

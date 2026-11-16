@@ -3,7 +3,7 @@
 import { headers } from 'next/headers';
 
 import { auth } from '@/_auth';
-import { User } from '@/_models/user';
+import { users } from '@/_models/database/users';
 import { NO_SESSION_MESSAGE } from '@/_utils/noSessionError';
 import { serialize } from '@/_utils/serialize';
 
@@ -14,7 +14,7 @@ export const getUser = async () => {
 
 	if (!session) throw new Error(NO_SESSION_MESSAGE);
 
-	const user = await User.findOne({ email: session.user.email }).lean().exec();
+	const user = await users.findOne({ email: session.user.email });
 	if (!user) return null;
 	return serialize(user);
 };
