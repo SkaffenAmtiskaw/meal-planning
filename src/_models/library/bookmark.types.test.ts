@@ -1,12 +1,6 @@
-import { describe, expect, test, vi } from 'vitest';
+import { describe, expect, test } from 'vitest';
 
-// vite resolves the full importer graph when bookmark.ts is loaded, which causes planner.ts
-// to be executed. planner.ts then imports '@/_models/library' (the same bookmark.ts
-// still being loaded), producing a partial module where zBookmarkInterface is undefined.
-// Mocking planner.ts prevents its body from executing in this test's context.
-vi.mock('./planner', () => ({}));
-
-import { zBookmarkFormSchema, zBookmarkInterface } from './bookmark';
+import { zBookmarkFormSchema, zBookmarkInterface } from './bookmark.types';
 
 import { newId } from '../database/newId';
 

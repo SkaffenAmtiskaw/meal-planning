@@ -272,7 +272,6 @@
 							"level": "error",
 							"options": {
 								"paths": {
-									"mongoose": "E2E code creates data only through the factories in test/factories/. See docs/e2e_tests.md.",
 									"mongodb": "E2E code creates data only through the factories in test/factories/. See docs/e2e_tests.md.",
 									"@/_models": "E2E code creates data only through the factories in test/factories/. See docs/e2e_tests.md.",
 									"better-auth/plugins": {
@@ -307,7 +306,6 @@
 							"options": {
 								"paths": {
 									"@playwright/test": "Specs import test and expect from e2e/_fixtures/, not @playwright/test. See docs/e2e_tests.md.",
-									"mongoose": "E2E code creates data only through the factories in test/factories/. See docs/e2e_tests.md.",
 									"mongodb": "E2E code creates data only through the factories in test/factories/. See docs/e2e_tests.md.",
 									"@/_models": "E2E code creates data only through the factories in test/factories/. See docs/e2e_tests.md.",
 									"better-auth/plugins": {

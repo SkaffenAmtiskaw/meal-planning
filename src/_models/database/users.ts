@@ -8,7 +8,6 @@ const collection = rawDatabase.collection<UserInterface>('users');
 
 export const users = checkedCollection(collection, zUserInterface);
 
-// The same keys and options Mongoose builds from the User schema, so both can create them.
 export const createUsersIndexes = async () => {
 	await Promise.all([
 		collection.createIndex({ email: 1 }, { unique: true }),

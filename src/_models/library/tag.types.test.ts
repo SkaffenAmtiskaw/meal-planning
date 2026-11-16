@@ -2,7 +2,7 @@ import { describe, expect, test } from 'vitest';
 
 import { TAG_COLOR_NAMES } from '@/_theme/colors';
 
-import { zTagInterface } from './tag';
+import { zTagInterface } from './tag.types';
 
 import { newId } from '../database/newId';
 

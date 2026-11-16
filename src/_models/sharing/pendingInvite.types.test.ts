@@ -25,6 +25,22 @@ describe('pending invite', () => {
 		).toBe(true);
 	});
 
+	test('accepts every access level', () => {
+		for (const accessLevel of ['owner', 'admin', 'write', 'read']) {
+			expect(
+				zPendingInvite.safeParse({
+					_id: inviteId,
+					email: 'guest@example.com',
+					planner: validObjectId,
+					invitedBy: validObjectId,
+					accessLevel,
+					token: 'abc123-uuid-token',
+					expiresAt,
+				}).success,
+			).toBe(true);
+		}
+	});
+
 	test('accepts a pending invite without createdAt (should default to current date)', () => {
 		const result = zPendingInvite.safeParse({
 			_id: inviteId,

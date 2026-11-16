@@ -4,11 +4,9 @@ import { createOnRequestError } from '@posthog/next';
 
 import { isReportingOn } from '@/_utils/errorReporting';
 
-vi.mock('mongoose', () => ({ default: { connect: vi.fn() } }));
 vi.mock('@/_models/database/connectDatabase', () => ({
 	connectDatabase: vi.fn(),
 }));
-vi.mock('./env', async () => await import('#mocks/env'));
 vi.mock('@posthog/next', () => ({ createOnRequestError: vi.fn() }));
 vi.mock('@/_utils/errorReporting', () => ({
 	getReportingToken: vi.fn(() => 'phc_token'),

@@ -1,11 +1,6 @@
-import { describe, expect, test, vi } from 'vitest';
+import { describe, expect, test } from 'vitest';
 
-vi.mock('mongoose', async (importOriginal) => {
-	const actual = await importOriginal<typeof import('mongoose')>();
-	return { ...actual, models: {}, model: vi.fn().mockReturnValue({}) };
-});
-
-import { zPlannerInterface } from './planner';
+import { zPlannerInterface } from './planner.types';
 
 import { newId } from '../database/newId';
 

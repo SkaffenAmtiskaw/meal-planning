@@ -1,11 +1,6 @@
-import { describe, expect, test, vi } from 'vitest';
+import { describe, expect, test } from 'vitest';
 
-vi.mock('mongoose', async (importOriginal) => {
-	const actual = await importOriginal<typeof import('mongoose')>();
-	return { ...actual, models: {}, model: vi.fn().mockReturnValue({}) };
-});
-
-import { userSchema, zUserInterface } from './user';
+import { zUserInterface } from './user.types';
 
 import { newId } from '../database/newId';
 
@@ -114,13 +109,5 @@ describe('user interface', () => {
 				planners: [{ planner: plannerId, accessLevel: 'owner' }],
 			}).success,
 		).toBe(false);
-	});
-
-	test('defines an index on planners.planner', () => {
-		const indexes = userSchema.indexes();
-		const plannerIndex = indexes.find(
-			([fields]) => fields['planners.planner'] === 1,
-		);
-		expect(plannerIndex).toBeDefined();
 	});
 });

@@ -1,6 +1,6 @@
 import { describe, expect, test } from 'vitest';
 
-import { recipeSchema, zRecipeFormSchema, zRecipeInterface } from './recipe';
+import { zRecipeFormSchema, zRecipeInterface } from './recipe.types';
 
 import { newId } from '../database/newId';
 
@@ -122,21 +122,5 @@ describe('recipe form schema', () => {
 				time: { prep: '', cook: '', total: '', actual: '' },
 			}).success,
 		).toBe(true);
-	});
-});
-
-describe('recipe schema', () => {
-	// SchemaTypes.Union does not traverse nested validators via validateSync(), so
-	// we access the validator function directly from the schema definition object.
-	// biome-ignore lint/suspicious/noExplicitAny: accessing internal Mongoose schema definition
-	const sourceOfDef = (recipeSchema.obj.source as any).of[1];
-	const urlValidator: (v: unknown) => boolean = sourceOfDef.url.validate[0];
-
-	test('source URL validator accepts a valid URL', () => {
-		expect(urlValidator('https://villains.example.com')).toBe(true);
-	});
-
-	test('source URL validator rejects an invalid URL', () => {
-		expect(urlValidator('not-a-url')).toBe(false);
 	});
 });

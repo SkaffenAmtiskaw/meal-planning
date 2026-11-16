@@ -5,14 +5,10 @@
  *   vi.mock('@/_models/calendar', async () => await import('#mocks/@/_models/calendar'))
  *
  * Default implementations survive `vi.resetAllMocks()`. Use
- * `vi.mocked(daySchema).mockReturnValueOnce(...)` etc. to override for a single test.
+ * `vi.mocked(zMealFormSchema.parse).mockReturnValueOnce(...)` etc. to override for a single test.
  */
 
 import { vi } from 'vitest';
-
-// ─── Schema ───────────────────────────────────────────────────────────────────
-
-export const daySchema = {};
 
 // ─── Zod Schemas ──────────────────────────────────────────────────────────────
 

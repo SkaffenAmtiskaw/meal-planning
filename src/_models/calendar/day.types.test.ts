@@ -1,8 +1,6 @@
 import { describe, expect, test } from 'vitest';
 
-import { model, Schema } from 'mongoose';
-
-import { daySchema, zDayInterface } from './day';
+import { zDayInterface } from './day.types';
 
 import { newId } from '../database/newId';
 
@@ -82,6 +80,22 @@ describe('day interface', () => {
 				],
 			}).success,
 		).toBe(true);
+	});
+
+	test('rejects a dish whose URL source is not a URL', () => {
+		expect(
+			zDayInterface.safeParse({
+				date: '2026-03-27',
+				meals: [
+					meal({
+						name: "Hades' Power Lunch",
+						dishes: [
+							dish({ name: 'Flaming Ribs', source: { url: 'not-a-url' } }),
+						],
+					}),
+				],
+			}).success,
+		).toBe(false);
 	});
 
 	test('accepts a dish with a ref source', () => {
@@ -185,50 +199,5 @@ describe('day interface', () => {
 				],
 			}).success,
 		).toBe(false);
-	});
-});
-
-describe('day schema', () => {
-	test('keeps the ids its creator gives meals and dishes, and stores none on the day', () => {
-		const mealId = newId();
-		const dishId = newId();
-		const Parent = model(
-			'DaySchemaTestParent',
-			new Schema({ calendar: [daySchema] }),
-		);
-		const [day] = new Parent({
-			calendar: [
-				{
-					date: '2026-03-27',
-					meals: [
-						{
-							_id: mealId,
-							name: "Hades' Power Lunch",
-							dishes: [{ _id: dishId, name: 'Flaming Ribs' }],
-						},
-					],
-				},
-			],
-		}).toObject().calendar;
-
-		expect(day).not.toHaveProperty('_id');
-		expect(day).toMatchObject({
-			meals: [{ _id: mealId, dishes: [{ _id: dishId }] }],
-		});
-	});
-
-	// SchemaTypes.Union does not traverse nested validators via validateSync(), so
-	// we access the validator function directly from the schema definition object.
-	const dishSourceDef =
-		// biome-ignore lint/suspicious/noExplicitAny: accessing internal Mongoose schema definition
-		((daySchema.obj.meals as any)[0].obj.dishes[0].obj.source as any).of[1];
-	const urlValidator: (v: unknown) => boolean = dishSourceDef.url.validate[0];
-
-	test('dish source URL validator accepts a valid URL', () => {
-		expect(urlValidator('https://olympus.example.com')).toBe(true);
-	});
-
-	test('dish source URL validator rejects an invalid URL', () => {
-		expect(urlValidator('not-a-url')).toBe(false);
 	});
 });

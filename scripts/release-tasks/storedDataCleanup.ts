@@ -3,8 +3,9 @@
 // - unsets every `null` meal `description`, dish `note` and dish `source`,
 // - unsets every `""` saved-item `notes` and recipe `storage`,
 // - gives an `_id` to every user planner membership that has none.
-// It runs after the release PR merges. No code of the story handles the old shape: Mongoose makes up a missing `_id`
-// on load, and the readers already treat `null` and `""` as absent. So deleting this task leaves no code to remove.
+// It runs after the release PR merges. No code of the story handles the old shape: it ships with the release task
+// that converts stored ids to strings, which leaves the app down until it has run, so this task runs straight after
+// the deploy too, before anyone uses the app. So deleting this task leaves no code to remove.
 // It selects only fields still in the old shape, so a second run changes nothing. See docs/release_tasks.md.
 // Usage: node scripts/release-tasks/storedDataCleanup.ts --to <connection string> [--db <database>]
 //          [--production | --dry-run | --check]

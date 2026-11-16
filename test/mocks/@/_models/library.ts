@@ -5,16 +5,10 @@
  *   vi.mock('@/_models/library', async () => await import('#mocks/@/_models/library'))
  *
  * Default implementations survive `vi.resetAllMocks()`. Use
- * `vi.mocked(tagSchema).mockReturnValueOnce(...)` etc. to override for a single test.
+ * `vi.mocked(zRecipeFormSchema.parse).mockReturnValueOnce(...)` etc. to override for a single test.
  */
 
 import { vi } from 'vitest';
-
-// ─── Schemas ──────────────────────────────────────────────────────────────────
-
-export const bookmarkSchema = {};
-export const recipeSchema = {};
-export const tagSchema = {};
 
 // ─── Zod Schemas ──────────────────────────────────────────────────────────────
 

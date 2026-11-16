@@ -1,7 +1,5 @@
 import { createOnRequestError } from '@posthog/next';
 
-import mongoose from 'mongoose';
-
 import { connectDatabase } from '@/_models/database/connectDatabase';
 import {
 	getReportingToken,
@@ -9,10 +7,7 @@ import {
 	POSTHOG_HOST,
 } from '@/_utils/errorReporting';
 
-import { env } from './env';
-
 export const register = async () => {
-	mongoose.connect(env.DB_URL);
 	await connectDatabase();
 };
 
