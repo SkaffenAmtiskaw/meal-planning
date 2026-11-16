@@ -17,6 +17,7 @@ export const checkedCollection = <Schema extends z.ZodType<Document>>(
 	collection: Collection<z.output<Schema>>,
 	schema: Schema,
 ) => ({
+	find: (filter: Filter<z.output<Schema>>) => collection.find(filter),
 	findOne: (filter: Filter<z.output<Schema>>) => collection.findOne(filter),
 	insertOne: (document: z.input<Schema>) =>
 		collection.insertOne(

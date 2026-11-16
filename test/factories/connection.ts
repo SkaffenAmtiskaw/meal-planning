@@ -1,9 +1,7 @@
 import mongoose from 'mongoose';
 
-import {
-	closeDatabase,
-	connectDatabase as connectDataModule,
-} from '@/_models/database/connection';
+import { connectDatabase as connectDataModule } from '@/_models/database/connectDatabase';
+import { closeDatabase } from '@/_models/database/connection';
 import { env } from '@/env';
 
 export const connectDatabase = async () => {

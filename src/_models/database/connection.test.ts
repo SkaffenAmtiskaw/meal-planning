@@ -2,10 +2,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { MongoClient } from 'mongodb';
 
-const { users, database } = vi.hoisted(() => {
-	const users = { createIndex: vi.fn() };
-	return { users, database: { collection: vi.fn(() => users) } };
-});
+const { database } = vi.hoisted(() => ({ database: {} }));
 
 vi.mock('mongodb', () => ({
 	MongoClient: vi.fn(
@@ -46,19 +43,6 @@ describe('connection', () => {
 		await loadConnection();
 
 		expect(globalWithClient.mongoClient).toBeUndefined();
-	});
-
-	it('creates the users indexes when it connects', async () => {
-		const { connectDatabase } = await loadConnection();
-
-		await connectDatabase();
-
-		expect(database.collection).toHaveBeenCalledWith('users');
-		expect(users.createIndex).toHaveBeenCalledWith(
-			{ email: 1 },
-			{ unique: true },
-		);
-		expect(users.createIndex).toHaveBeenCalledWith({ 'planners.planner': 1 });
 	});
 
 	it('closes the one client', async () => {

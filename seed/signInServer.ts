@@ -4,7 +4,7 @@ import { parseCookies } from 'better-auth/cookies';
 
 import { auth } from '#auth';
 import { findAuthUser } from '@/_auth/users';
-import { connectDatabase } from '@/_models/database/connection';
+import { connectDatabase } from '@/_models/database/connectDatabase';
 import { env } from '@/env';
 
 import { SEEDED_USERS } from './users';

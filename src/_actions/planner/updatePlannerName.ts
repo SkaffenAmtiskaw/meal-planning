@@ -1,7 +1,7 @@
 'use server';
 
 import { checkAuth } from '@/_actions/auth/checkAuth';
-import { Planner } from '@/_models/planner';
+import { planners } from '@/_models/database/planners';
 import type { ActionResult } from '@/_utils/actionResult';
 import { zId } from '@/_utils/zId';
 import { zSafeString } from '@/_utils/zSafeString';
@@ -23,9 +23,10 @@ export const updatePlannerName = async (
 	if (auth.type !== 'authorized')
 		return { ok: false, error: 'Not authorized.' };
 
-	await Planner.collection.updateOne({ _id: parsedId.data } as object, {
-		$set: { name: parsedName.data },
-	});
+	await planners.updateOne(
+		{ _id: parsedId.data },
+		{ $set: { name: parsedName.data } },
+	);
 
 	return { ok: true, data: undefined };
 };

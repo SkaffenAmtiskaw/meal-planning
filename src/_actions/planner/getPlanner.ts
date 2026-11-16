@@ -1,9 +1,9 @@
 'use server';
 
-import { Planner } from '@/_models/planner';
+import { planners } from '@/_models/database/planners';
 
 export const getPlanner = async (id: string) => {
-	const planner = await Planner.findById(id);
+	const planner = await planners.findOne({ _id: id });
 
 	if (!planner) {
 		throw new Error(`Planner ${id} not found`);

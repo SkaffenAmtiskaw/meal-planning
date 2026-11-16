@@ -2,7 +2,7 @@ import { createOnRequestError } from '@posthog/next';
 
 import mongoose from 'mongoose';
 
-import { connectDatabase } from '@/_models/database/connection';
+import { connectDatabase } from '@/_models/database/connectDatabase';
 import {
 	getReportingToken,
 	isReportingOn,

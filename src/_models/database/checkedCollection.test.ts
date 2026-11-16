@@ -11,6 +11,7 @@ const zDocument = z.object({
 });
 
 const collection = {
+	find: vi.fn(),
 	findOne: vi.fn(),
 	insertOne: vi.fn(),
 	updateOne: vi.fn(),
@@ -24,6 +25,14 @@ const documents = checkedCollection(
 describe('checkedCollection', () => {
 	afterEach(() => {
 		vi.clearAllMocks();
+	});
+
+	it('reads many without a check', () => {
+		documents.find({ _id: { $in: ['doc-1', 'doc-2'] } });
+
+		expect(collection.find).toHaveBeenCalledWith({
+			_id: { $in: ['doc-1', 'doc-2'] },
+		});
 	});
 
 	it('reads without a check', () => {

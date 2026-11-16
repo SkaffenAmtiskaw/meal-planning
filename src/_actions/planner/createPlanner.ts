@@ -2,8 +2,8 @@
 
 import { getUser } from '@/_actions/user';
 import { newId } from '@/_models/database/newId';
+import { users } from '@/_models/database/users';
 import type { PlannerMembership } from '@/_models/user';
-import { User } from '@/_models/user';
 import type { ActionResult } from '@/_utils/actionResult';
 import { catchify } from '@/_utils/catchify';
 import { isNoSessionError } from '@/_utils/noSessionError';
@@ -28,11 +28,7 @@ export const createPlanner = async (name: string): Promise<ActionResult> => {
 		planner: planner._id,
 		accessLevel: 'owner',
 	};
-	const update: Record<string, unknown> = {
-		$push: { planners: membership },
-	};
-
-	await User.collection.updateOne({ _id: user._id } as object, update);
+	await users.updateOne({ _id: user._id }, { $push: { planners: membership } });
 
 	return { ok: true, data: undefined };
 };

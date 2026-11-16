@@ -1,6 +1,6 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
-import { User } from '@/_models/user';
+import { users } from '@/_models/database/users';
 import { catchify } from '@/_utils/catchify';
 import { reportError } from '@/_utils/reportError';
 
@@ -10,7 +10,10 @@ import { createPlanner } from './createPlanner';
 const mockSafeParse = vi.hoisted(() => vi.fn());
 
 vi.mock('@/_actions/user', async () => await import('#mocks/@/_actions/user'));
-vi.mock('@/_models/user', async () => await import('#mocks/@/_models/user'));
+vi.mock(
+	'@/_models/database/users',
+	async () => await import('#mocks/@/_models/database/users'),
+);
 vi.mock(
 	'@/_models/database/newId',
 	async () => await import('#mocks/@/_models/database/newId'),
@@ -103,12 +106,11 @@ describe('createPlanner', () => {
 		});
 		vi.mocked(catchify).mockResolvedValue([mockUser]);
 		vi.mocked(addPlanner).mockResolvedValue(mockPlanner as never);
-		vi.mocked(User.collection.updateOne).mockResolvedValue({} as never);
 
 		const result = await createPlanner('My Planner');
 
 		expect(addPlanner).toHaveBeenCalledWith('My Planner');
-		expect(User.collection.updateOne).toHaveBeenCalledWith(
+		expect(users.updateOne).toHaveBeenCalledWith(
 			{ _id: userId },
 			{
 				$push: {

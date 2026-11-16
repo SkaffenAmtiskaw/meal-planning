@@ -12,6 +12,7 @@
 import { vi } from 'vitest';
 
 export const planners = {
+	find: vi.fn(() => ({ toArray: async () => [] })),
 	findOne: vi.fn(),
 	insertOne: vi.fn(),
 	updateOne: vi.fn(async () => ({ matchedCount: 1 })),

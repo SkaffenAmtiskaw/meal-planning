@@ -1,7 +1,7 @@
 import { afterEach, describe, expect, test, vi } from 'vitest';
 
 import { checkAuth } from '@/_actions/auth/checkAuth';
-import { Planner } from '@/_models/planner';
+import { planners } from '@/_models/database/planners';
 
 import { updatePlannerName } from './updatePlannerName';
 
@@ -9,14 +9,10 @@ vi.mock(
 	'@/_actions/auth/checkAuth',
 	async () => await import('#mocks/@/_actions/auth/checkAuth'),
 );
-
-vi.mock('@/_models/planner', () => ({
-	Planner: {
-		collection: {
-			updateOne: vi.fn(),
-		},
-	},
-}));
+vi.mock(
+	'@/_models/database/planners',
+	async () => await import('#mocks/@/_models/database/planners'),
+);
 
 const validId = '507f1f77bcf86cd799439011';
 
@@ -74,7 +70,7 @@ describe('updatePlannerName', () => {
 		const result = await updatePlannerName(validId, 'New Name');
 
 		expect(checkAuth).toHaveBeenCalledWith(validId, 'admin');
-		expect(Planner.collection.updateOne).toHaveBeenCalledWith(
+		expect(planners.updateOne).toHaveBeenCalledWith(
 			{ _id: validId },
 			{ $set: { name: 'New Name' } },
 		);
@@ -82,9 +78,7 @@ describe('updatePlannerName', () => {
 	});
 
 	test('propagates error when DB update throws', async () => {
-		vi.mocked(Planner.collection.updateOne).mockRejectedValue(
-			new Error('DB error'),
-		);
+		vi.mocked(planners.updateOne).mockRejectedValue(new Error('DB error'));
 
 		await expect(updatePlannerName(validId, 'New Name')).rejects.toThrow(
 			'DB error',

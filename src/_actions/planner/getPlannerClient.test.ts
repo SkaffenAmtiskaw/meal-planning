@@ -1,7 +1,5 @@
 import { afterEach, describe, expect, test, vi } from 'vitest';
 
-import { newId } from '@/_models/database/newId';
-
 import { getPlannerClient } from './getPlannerClient';
 
 const mockGetPlanner = vi.fn();
@@ -10,30 +8,28 @@ vi.mock('./getPlanner', () => ({
 }));
 
 describe('getPlannerClient', () => {
-	const mockId = '507f1f77bcf86cd799439011';
+	const mockId = 'planner-1';
 
 	afterEach(() => {
 		vi.resetAllMocks();
 	});
 
-	test('returns serialized plain object', async () => {
-		const id = newId();
-		const rawPlanner = {
-			calendar: [],
+	test('returns the planner', async () => {
+		mockGetPlanner.mockResolvedValue({
+			_id: mockId,
+			calendar: [{ date: '2026-11-17', meals: [] }],
 			saved: [],
-			tags: [{ _id: id, name: 'tag', color: 'red' }],
-		};
-		const mockDocument = { toObject: vi.fn().mockReturnValue(rawPlanner) };
-		mockGetPlanner.mockResolvedValue(mockDocument);
+			tags: [{ _id: 'tag-1', name: 'tag', color: 'red' }],
+		});
 
 		const result = await getPlannerClient(mockId);
 
 		expect(mockGetPlanner).toHaveBeenCalledWith(mockId);
-		expect(mockDocument.toObject).toHaveBeenCalled();
 		expect(result).toEqual({
-			calendar: [],
+			_id: mockId,
+			calendar: [{ date: '2026-11-17', meals: [] }],
 			saved: [],
-			tags: [{ _id: id.toString(), name: 'tag', color: 'red' }],
+			tags: [{ _id: 'tag-1', name: 'tag', color: 'red' }],
 		});
 	});
 

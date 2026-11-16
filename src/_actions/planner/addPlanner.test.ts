@@ -1,12 +1,12 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
-import { Planner } from '@/_models/planner';
+import { planners } from '@/_models/database/planners';
 
 import { addPlanner } from './addPlanner';
 
 vi.mock(
-	'@/_models/planner',
-	async () => await import('#mocks/@/_models/planner'),
+	'@/_models/database/planners',
+	async () => await import('#mocks/@/_models/database/planners'),
 );
 vi.mock(
 	'@/_models/database/newId',
@@ -15,47 +15,35 @@ vi.mock(
 
 describe('addPlanner', () => {
 	afterEach(() => {
-		vi.resetAllMocks();
+		vi.clearAllMocks();
 	});
 
-	it('creates and returns a new planner with a new id, empty arrays and no name', async () => {
-		const mockPlanner = { calendar: [], saved: [], tags: [] };
-		vi.mocked(Planner.create).mockResolvedValue(mockPlanner as never);
-
+	it('inserts and returns a new planner with a new id, empty arrays and no name', async () => {
 		const result = await addPlanner();
 
-		expect(vi.mocked(Planner.create).mock.calls[0][0]).toStrictEqual({
-			_id: 'new-id',
-			calendar: [],
-			saved: [],
-			tags: [],
-		});
-		expect(result).toBe(mockPlanner);
+		const planner = { _id: 'new-id', calendar: [], saved: [], tags: [] };
+		expect(vi.mocked(planners.insertOne).mock.calls[0][0]).toStrictEqual(
+			planner,
+		);
+		expect(result).toStrictEqual(planner);
 	});
 
-	it('creates a planner with the provided name', async () => {
-		const mockPlanner = {
+	it('inserts a planner with the provided name', async () => {
+		const result = await addPlanner("Ursula's Planner");
+
+		const planner = {
+			_id: 'new-id',
 			name: "Ursula's Planner",
 			calendar: [],
 			saved: [],
 			tags: [],
 		};
-		vi.mocked(Planner.create).mockResolvedValue(mockPlanner as never);
-
-		const result = await addPlanner("Ursula's Planner");
-
-		expect(Planner.create).toHaveBeenCalledWith({
-			_id: 'new-id',
-			name: "Ursula's Planner",
-			calendar: [],
-			saved: [],
-			tags: [],
-		});
-		expect(result).toBe(mockPlanner);
+		expect(planners.insertOne).toHaveBeenCalledWith(planner);
+		expect(result).toStrictEqual(planner);
 	});
 
-	it('throws when Planner.create fails', async () => {
-		vi.mocked(Planner.create).mockRejectedValue(new Error('DB error'));
+	it('throws when the insert fails', async () => {
+		vi.mocked(planners.insertOne).mockRejectedValueOnce(new Error('DB error'));
 
 		await expect(addPlanner()).rejects.toThrow('DB error');
 	});

@@ -26,20 +26,6 @@ const client = createClient();
  */
 export const rawDatabase = client.db();
 
-// The same keys and options Mongoose builds from the User schema, so both can create them.
-const createIndexes = async () => {
-	const users = rawDatabase.collection('users');
-	await Promise.all([
-		users.createIndex({ email: 1 }, { unique: true }),
-		users.createIndex({ 'planners.planner': 1 }),
-	]);
-};
-
-export const connectDatabase = async () => {
-	await client.connect();
-	await createIndexes();
-};
-
 export const closeDatabase = async () => {
 	await client.close();
 };

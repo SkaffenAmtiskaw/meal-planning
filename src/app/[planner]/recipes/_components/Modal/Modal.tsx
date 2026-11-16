@@ -1,5 +1,3 @@
-import type { HydratedDocument } from 'mongoose';
-
 import { getSavedItem } from '@/_actions/library';
 import type {
 	BookmarkInterface,
@@ -11,7 +9,7 @@ import { BookmarkForm } from './BookmarkForm';
 import { ModalWrapper } from './ModalWrapper';
 import { RecipeForm } from './RecipeForm';
 
-type Planner = HydratedDocument<PlannerInterface & { _id: string }>;
+type Planner = PlannerInterface;
 
 const serializeTags = (planner: Planner) =>
 	planner.tags.map((t) => ({

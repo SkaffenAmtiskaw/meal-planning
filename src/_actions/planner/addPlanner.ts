@@ -1,8 +1,8 @@
 'use server';
 
 import { newId } from '@/_models/database/newId';
+import { planners } from '@/_models/database/planners';
 import type { PlannerInterface } from '@/_models/planner';
-import { Planner } from '@/_models/planner';
 
 export const addPlanner = async (name?: string) => {
 	const planner: PlannerInterface = {
@@ -12,5 +12,6 @@ export const addPlanner = async (name?: string) => {
 		saved: [],
 		tags: [],
 	};
-	return await Planner.create(planner);
+	await planners.insertOne(planner);
+	return planner;
 };

@@ -9,5 +9,5 @@ export const getPlannerClient = async (
 ): Promise<PlannerInterface> => {
 	const planner = await getPlanner(id);
 
-	return JSON.parse(JSON.stringify(planner.toObject()));
+	return JSON.parse(JSON.stringify(planner));
 };
