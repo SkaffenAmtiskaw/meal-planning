@@ -4,8 +4,8 @@ import { revalidatePath } from 'next/cache';
 
 import { checkAuth } from '@/_actions/auth/checkAuth';
 import { newId } from '@/_models/database/newId';
+import { planners } from '@/_models/database/planners';
 import { zRecipeFormSchema } from '@/_models/library';
-import { Planner } from '@/_models/planner';
 
 import { editRecipe } from './editRecipe';
 
@@ -18,8 +18,8 @@ vi.mock(
 	async () => await import('#mocks/@/_models/library'),
 );
 vi.mock(
-	'@/_models/planner',
-	async () => await import('#mocks/@/_models/planner'),
+	'@/_models/database/planners',
+	async () => await import('#mocks/@/_models/database/planners'),
 );
 vi.mock('next/cache', async () => ({ revalidatePath: vi.fn() }));
 vi.mock('./_utils/transformRecipeForm', async () => ({
@@ -89,13 +89,13 @@ describe('editRecipe', () => {
 
 			await editRecipe(validData);
 
-			expect(Planner.collection.updateOne).not.toHaveBeenCalled();
+			expect(planners.updateOne).not.toHaveBeenCalled();
 		});
 	});
 
 	describe('database update', () => {
 		it('returns Recipe not found when no document matches', async () => {
-			vi.mocked(Planner.collection.updateOne).mockResolvedValueOnce({
+			vi.mocked(planners.updateOne).mockResolvedValueOnce({
 				matchedCount: 0,
 			} as never);
 
@@ -105,13 +105,9 @@ describe('editRecipe', () => {
 		});
 
 		it('sets required fields on the matched recipe', async () => {
-			vi.mocked(Planner.collection.updateOne).mockResolvedValueOnce({
-				matchedCount: 1,
-			} as never);
-
 			await editRecipe(validData);
 
-			expect(Planner.collection.updateOne).toHaveBeenCalledWith(
+			expect(planners.updateOne).toHaveBeenCalledWith(
 				expect.objectContaining({
 					_id: plannerId,
 					'saved._id': recipeId,
@@ -128,13 +124,9 @@ describe('editRecipe', () => {
 		});
 
 		it('unsets optional fields when they are absent', async () => {
-			vi.mocked(Planner.collection.updateOne).mockResolvedValueOnce({
-				matchedCount: 1,
-			} as never);
-
 			await editRecipe(validData);
 
-			expect(Planner.collection.updateOne).toHaveBeenCalledWith(
+			expect(planners.updateOne).toHaveBeenCalledWith(
 				expect.anything(),
 				expect.objectContaining({
 					$unset: {
@@ -149,10 +141,6 @@ describe('editRecipe', () => {
 		});
 
 		it('sets optional fields when they are present', async () => {
-			vi.mocked(Planner.collection.updateOne).mockResolvedValueOnce({
-				matchedCount: 1,
-			} as never);
-
 			const tagId = newId();
 			await editRecipe({
 				...validData,
@@ -164,7 +152,7 @@ describe('editRecipe', () => {
 				tags: [tagId],
 			});
 
-			expect(Planner.collection.updateOne).toHaveBeenCalledWith(
+			expect(planners.updateOne).toHaveBeenCalledWith(
 				expect.anything(),
 				expect.objectContaining({
 					$set: expect.objectContaining({
@@ -188,17 +176,13 @@ describe('editRecipe', () => {
 		});
 
 		it('only unsets optional fields that are absent', async () => {
-			vi.mocked(Planner.collection.updateOne).mockResolvedValueOnce({
-				matchedCount: 1,
-			} as never);
-
 			await editRecipe({
 				...validData,
 				source: { name: 'Bakery Blog' },
 				notes: 'Best served warm',
 			});
 
-			expect(Planner.collection.updateOne).toHaveBeenCalledWith(
+			expect(planners.updateOne).toHaveBeenCalledWith(
 				expect.anything(),
 				expect.objectContaining({
 					$set: expect.objectContaining({
@@ -215,10 +199,6 @@ describe('editRecipe', () => {
 		});
 
 		it('omits $unset when all optional fields are present', async () => {
-			vi.mocked(Planner.collection.updateOne).mockResolvedValueOnce({
-				matchedCount: 1,
-			} as never);
-
 			await editRecipe({
 				...validData,
 				source: { name: 'Blog' },
@@ -228,18 +208,16 @@ describe('editRecipe', () => {
 				storage: '3 days',
 			});
 
-			const call = vi.mocked(Planner.collection.updateOne).mock
-				.calls[0][1] as Record<string, unknown>;
+			const call = vi.mocked(planners.updateOne).mock.calls[0][1] as Record<
+				string,
+				unknown
+			>;
 			expect(call.$unset).toBeUndefined();
 		});
 	});
 
 	describe('cache revalidation', () => {
 		it('revalidates the list and detail paths on success', async () => {
-			vi.mocked(Planner.collection.updateOne).mockResolvedValueOnce({
-				matchedCount: 1,
-			} as never);
-
 			await editRecipe(validData);
 
 			expect(revalidatePath).toHaveBeenCalledWith(`/${plannerId}/recipes`);
@@ -249,7 +227,7 @@ describe('editRecipe', () => {
 		});
 
 		it('does not revalidate when the recipe is not found', async () => {
-			vi.mocked(Planner.collection.updateOne).mockResolvedValueOnce({
+			vi.mocked(planners.updateOne).mockResolvedValueOnce({
 				matchedCount: 0,
 			} as never);
 
@@ -261,10 +239,6 @@ describe('editRecipe', () => {
 
 	describe('success', () => {
 		it('returns the recipe _id and name', async () => {
-			vi.mocked(Planner.collection.updateOne).mockResolvedValueOnce({
-				matchedCount: 1,
-			} as never);
-
 			const result = await editRecipe(validData);
 
 			expect(result).toEqual({

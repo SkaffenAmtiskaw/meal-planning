@@ -5,7 +5,7 @@ import { revalidatePath } from 'next/cache';
 import { z } from 'zod';
 
 import { checkAuth } from '@/_actions/auth/checkAuth';
-import { Planner } from '@/_models/planner';
+import { planners } from '@/_models/database/planners';
 import type { ActionResult } from '@/_utils/actionResult';
 
 const zUpdateRecipeNotesSchema = z.object({
@@ -22,13 +22,11 @@ export const updateRecipeNotes = async (
 	const auth = await checkAuth(plannerId, 'write');
 	if (auth.type !== 'authorized') return { ok: false, error: 'Unauthorized' };
 
-	const update = notes
-		? { $set: { 'saved.$.notes': notes } }
-		: { $unset: { 'saved.$.notes': '' } };
-
-	const result = await Planner.collection.updateOne(
-		{ _id: plannerId, 'saved._id': recipeId } as object,
-		update,
+	const result = await planners.updateOne(
+		{ _id: plannerId, 'saved._id': recipeId },
+		notes
+			? { $set: { 'saved.$.notes': notes } }
+			: { $unset: { 'saved.$.notes': '' } },
 	);
 
 	if (result.matchedCount === 0)

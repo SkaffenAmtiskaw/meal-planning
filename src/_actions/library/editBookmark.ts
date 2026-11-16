@@ -5,8 +5,8 @@ import { revalidatePath } from 'next/cache';
 import { z } from 'zod';
 
 import { checkAuth } from '@/_actions/auth/checkAuth';
+import { planners } from '@/_models/database/planners';
 import { zBookmarkFormSchema } from '@/_models/library';
-import { Planner } from '@/_models/planner';
 import type { ActionResult } from '@/_utils/actionResult';
 
 const zEditBookmarkSchema = zBookmarkFormSchema.extend({ _id: z.string() });
@@ -38,8 +38,8 @@ export const editBookmark = async (
 		updateOp.$unset = { 'saved.$.notes': '' };
 	}
 
-	const result = await Planner.collection.updateOne(
-		{ _id: plannerId, 'saved._id': bookmarkId } as object,
+	const result = await planners.updateOne(
+		{ _id: plannerId, 'saved._id': bookmarkId },
 		updateOp,
 	);
 

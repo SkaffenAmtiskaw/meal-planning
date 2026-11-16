@@ -2,8 +2,8 @@
 
 import { checkAuth } from '@/_actions/auth/checkAuth';
 import { newId } from '@/_models/database/newId';
+import { planners } from '@/_models/database/planners';
 import type { TagInterface } from '@/_models/library';
-import { Planner } from '@/_models/planner';
 import { TAG_COLOR_NAMES } from '@/_theme/colors';
 import type { ActionResult } from '@/_utils/actionResult';
 
@@ -14,7 +14,7 @@ export const addTag = async (
 	const auth = await checkAuth(plannerId, 'write');
 	if (auth.type !== 'authorized') return { ok: false, error: 'Unauthorized' };
 
-	const planner = await Planner.findById(plannerId);
+	const planner = await planners.findOne({ _id: plannerId });
 	if (!planner) return { ok: false, error: 'Planner not found' };
 
 	const tag: TagInterface = {
@@ -23,9 +23,7 @@ export const addTag = async (
 		color: TAG_COLOR_NAMES[planner.tags.length % TAG_COLOR_NAMES.length],
 	};
 
-	const update: Record<string, unknown> = { $push: { tags: tag } };
-
-	await Planner.collection.updateOne({ _id: plannerId } as object, update);
+	await planners.updateOne({ _id: plannerId }, { $push: { tags: tag } });
 
 	return { ok: true, data: tag };
 };

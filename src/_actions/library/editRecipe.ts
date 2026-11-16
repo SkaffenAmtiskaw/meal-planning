@@ -5,8 +5,8 @@ import { revalidatePath } from 'next/cache';
 import { z } from 'zod';
 
 import { checkAuth } from '@/_actions/auth/checkAuth';
+import { planners } from '@/_models/database/planners';
 import { zRecipeFormSchema } from '@/_models/library';
-import { Planner } from '@/_models/planner';
 import type { ActionResult } from '@/_utils/actionResult';
 
 import { transformRecipeForm } from './_utils/transformRecipeForm';
@@ -78,8 +78,8 @@ export const editRecipe = async (
 		update.$unset = unsetFields;
 	}
 
-	const result = await Planner.collection.updateOne(
-		{ _id: plannerId, 'saved._id': recipeId } as object,
+	const result = await planners.updateOne(
+		{ _id: plannerId, 'saved._id': recipeId },
 		update,
 	);
 

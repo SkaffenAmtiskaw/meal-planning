@@ -2,8 +2,7 @@ import { afterEach, describe, expect, test, vi } from 'vitest';
 
 import { checkAuth } from '@/_actions/auth/checkAuth';
 import { newId } from '@/_models/database/newId';
-import { Planner } from '@/_models/planner';
-import { matchesId } from '@/_utils/matchesId';
+import { planners } from '@/_models/database/planners';
 
 import { deleteBookmark } from './deleteBookmark';
 
@@ -11,15 +10,10 @@ vi.mock(
 	'@/_actions/auth/checkAuth',
 	async () => await import('#mocks/@/_actions/auth/checkAuth'),
 );
-
-vi.mock('@/_models/planner', () => ({
-	Planner: {
-		findById: vi.fn(),
-	},
-}));
-vi.mock('@/_utils/matchesId', () => ({
-	matchesId: vi.fn(),
-}));
+vi.mock(
+	'@/_models/database/planners',
+	async () => await import('#mocks/@/_models/database/planners'),
+);
 
 const plannerId = newId();
 const bookmarkId = newId();
@@ -31,14 +25,6 @@ describe('deleteBookmark', () => {
 		vi.resetAllMocks();
 	});
 
-	const makePlanner = (includeBookmark = true) => {
-		const saved = includeBookmark ? [{ _id: bookmarkId }] : [];
-		return {
-			saved,
-			save: vi.fn().mockResolvedValue(undefined),
-		};
-	};
-
 	test('throws ZodError on invalid input', async () => {
 		await expect(deleteBookmark({})).rejects.toThrow();
 	});
@@ -49,7 +35,7 @@ describe('deleteBookmark', () => {
 		const result = await deleteBookmark(validData);
 
 		expect(result).toEqual({ ok: false, error: 'Unauthorized' });
-		expect(Planner.findById).not.toHaveBeenCalled();
+		expect(planners.updateOne).not.toHaveBeenCalled();
 	});
 
 	test('returns Unauthorized error when user does not own the planner', async () => {
@@ -60,34 +46,23 @@ describe('deleteBookmark', () => {
 		expect(result).toEqual({ ok: false, error: 'Unauthorized' });
 	});
 
-	test('returns Planner not found error when planner does not exist', async () => {
-		vi.mocked(Planner.findById).mockResolvedValue(null);
-
-		const result = await deleteBookmark(validData);
-
-		expect(result).toEqual({ ok: false, error: 'Planner not found' });
-	});
-
-	test('returns Bookmark not found error when bookmarkId is not in saved', async () => {
-		const planner = makePlanner(false);
-		vi.mocked(Planner.findById).mockResolvedValue(planner as never);
-		vi.mocked(matchesId).mockReturnValue(() => false);
+	test('returns Bookmark not found error when no planner has the bookmark', async () => {
+		vi.mocked(planners.updateOne).mockResolvedValueOnce({
+			matchedCount: 0,
+		} as never);
 
 		const result = await deleteBookmark(validData);
 
 		expect(result).toEqual({ ok: false, error: 'Bookmark not found' });
-		expect(planner.save).not.toHaveBeenCalled();
 	});
 
-	test('removes the bookmark and returns ok', async () => {
-		const planner = makePlanner();
-		vi.mocked(Planner.findById).mockResolvedValue(planner as never);
-		vi.mocked(matchesId).mockReturnValue(() => true);
-
+	test('pulls the bookmark from the planner and returns ok', async () => {
 		const result = await deleteBookmark(validData);
 
-		expect(planner.saved).toHaveLength(0);
-		expect(planner.save).toHaveBeenCalledOnce();
+		expect(planners.updateOne).toHaveBeenCalledWith(
+			{ _id: plannerId, 'saved._id': bookmarkId },
+			{ $pull: { saved: { _id: bookmarkId } } },
+		);
 		expect(result).toEqual({ ok: true, data: undefined });
 	});
 });
