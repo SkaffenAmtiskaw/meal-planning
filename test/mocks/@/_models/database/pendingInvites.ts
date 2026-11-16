@@ -12,6 +12,7 @@ import { vi } from 'vitest';
 
 export const pendingInvites = {
 	countDocuments: vi.fn(async () => 0),
+	deleteMany: vi.fn(async () => ({ deletedCount: 0 })),
 	deleteOne: vi.fn(async () => ({ deletedCount: 1 })),
 	find: vi.fn(() => ({
 		sort: () => ({ toArray: async () => [] }),
@@ -19,5 +20,6 @@ export const pendingInvites = {
 	})),
 	findOne: vi.fn(),
 	insertOne: vi.fn(),
+	updateMany: vi.fn(async () => ({ matchedCount: 0 })),
 	updateOne: vi.fn(async () => ({ matchedCount: 1 })),
 };

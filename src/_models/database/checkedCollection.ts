@@ -19,6 +19,8 @@ export const checkedCollection = <Schema extends z.ZodType<Document>>(
 ) => ({
 	countDocuments: (filter: Filter<z.output<Schema>>) =>
 		collection.countDocuments(filter),
+	deleteMany: (filter: Filter<z.output<Schema>>) =>
+		collection.deleteMany(filter),
 	deleteOne: (filter: Filter<z.output<Schema>>) => collection.deleteOne(filter),
 	find: (filter: Filter<z.output<Schema>>) => collection.find(filter),
 	findOne: (filter: Filter<z.output<Schema>>) => collection.findOne(filter),
@@ -28,6 +30,10 @@ export const checkedCollection = <Schema extends z.ZodType<Document>>(
 				z.output<Schema>
 			>,
 		),
+	updateMany: (
+		filter: Filter<z.output<Schema>>,
+		update: UpdateFilter<z.output<Schema>>,
+	) => collection.updateMany(filter, checkUpdate(schema, update)),
 	updateOne: (
 		filter: Filter<z.output<Schema>>,
 		update: UpdateFilter<z.output<Schema>>,

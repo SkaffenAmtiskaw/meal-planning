@@ -1,7 +1,7 @@
 import { auth } from '#auth';
 import { newId } from '@/_models/database/newId';
+import { users } from '@/_models/database/users';
 import type { PlannerMembership } from '@/_models/user';
-import { User } from '@/_models/user';
 
 import { uniqueEmail } from './uniqueEmail';
 
@@ -32,8 +32,9 @@ export const createUser = async ({
 		_id: newId(),
 		...membership,
 	}));
-	const userDoc = await User.create({ _id: newId(), email, name, planners });
+	const _id = newId();
+	await users.insertOne({ _id, email, name, planners });
 
 	// `id` is the better-auth user's; `_id` is the app's User doc's, which refs such as an invite's `invitedBy` point to.
-	return { id: user.id, _id: userDoc._id, email, name, password, planners };
+	return { id: user.id, _id, email, name, password, planners };
 };

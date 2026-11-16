@@ -12,10 +12,12 @@ const zDocument = z.object({
 
 const collection = {
 	countDocuments: vi.fn(),
+	deleteMany: vi.fn(),
 	deleteOne: vi.fn(),
 	find: vi.fn(),
 	findOne: vi.fn(),
 	insertOne: vi.fn(),
+	updateMany: vi.fn(),
 	updateOne: vi.fn(),
 };
 
@@ -55,6 +57,14 @@ describe('checkedCollection', () => {
 		expect(collection.deleteOne).toHaveBeenCalledWith({ _id: 'doc-1' });
 	});
 
+	it('deletes many without a check', () => {
+		documents.deleteMany({ _id: { $in: ['doc-1', 'doc-2'] } });
+
+		expect(collection.deleteMany).toHaveBeenCalledWith({
+			_id: { $in: ['doc-1', 'doc-2'] },
+		});
+	});
+
 	it('inserts the parsed document', () => {
 		documents.insertOne({ _id: 'doc-1' });
 
@@ -85,5 +95,23 @@ describe('checkedCollection', () => {
 			documents.updateOne({ _id: 'doc-1' }, { $set: { name: 1 } } as never),
 		).toThrow('The update to name fails its schema');
 		expect(collection.updateOne).not.toHaveBeenCalled();
+	});
+
+	it('updates many with the checked update', () => {
+		documents.updateMany({ name: 'Unnamed' }, { $set: { name: 'Named' } });
+
+		expect(collection.updateMany).toHaveBeenCalledWith(
+			{ name: 'Unnamed' },
+			{ $set: { name: 'Named' } },
+		);
+	});
+
+	it('throws before an update of many that breaks the schema reaches the collection', () => {
+		expect(() =>
+			documents.updateMany({ name: 'Unnamed' }, {
+				$set: { name: 1 },
+			} as never),
+		).toThrow('The update to name fails its schema');
+		expect(collection.updateMany).not.toHaveBeenCalled();
 	});
 });

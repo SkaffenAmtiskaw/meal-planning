@@ -1,8 +1,8 @@
 import { auth } from '#auth';
 import { deleteAuthUser } from '@/_auth/users';
-import { Planner } from '@/_models/planner';
-import { PendingInvite } from '@/_models/sharing';
-import { User } from '@/_models/user';
+import { pendingInvites } from '@/_models/database/pendingInvites';
+import { planners } from '@/_models/database/planners';
+import { users } from '@/_models/database/users';
 
 import { SEEDED_USERS } from './users';
 
@@ -12,27 +12,27 @@ import { SEEDED_USERS } from './users';
 export const resetSeed = async () => {
 	const emails = SEEDED_USERS.map(({ email }) => email);
 
-	const seededUsers = await User.find({ email: { $in: emails } });
-	const ownedPlanners = seededUsers.flatMap(({ planners }) =>
-		planners
+	const seededUsers = await users.find({ email: { $in: emails } }).toArray();
+	const ownedPlanners = seededUsers.flatMap((user) =>
+		user.planners
 			.filter(({ accessLevel }) => accessLevel === 'owner')
 			.map(({ planner }) => planner),
 	);
 
-	await Planner.deleteMany({ _id: { $in: ownedPlanners } });
+	await planners.deleteMany({ _id: { $in: ownedPlanners } });
 
 	// Only the membership goes, so the navbar has no dead link and the rest of their doc stays.
-	await User.updateMany(
+	await users.updateMany(
 		{ email: { $nin: emails } },
 		{ $pull: { planners: { planner: { $in: ownedPlanners } } } },
 	);
 
-	await PendingInvite.deleteMany({
+	await pendingInvites.deleteMany({
 		$or: [{ planner: { $in: ownedPlanners } }, { email: { $in: emails } }],
 	});
 
 	for (const email of emails) await deleteAuthUser(auth, email);
 
 	// Their memberships in other users' planners go with the doc.
-	await User.deleteMany({ email: { $in: emails } });
+	await users.deleteMany({ email: { $in: emails } });
 };
