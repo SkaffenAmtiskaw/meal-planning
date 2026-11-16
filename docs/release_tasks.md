@@ -12,6 +12,8 @@ A task is run by hand, from your Mac, against production. The script is the only
 
 A task runs after the merge unless its comment says otherwise. The merge takes the release backup (see `docs/backups.md`), so a task that goes wrong can be undone by restoring a backup from just before it ran. A task that has to run before the merge says why in its comment, and you take a backup by hand before running it.
 
+A task opens its own raw database handle on the URI it's given, with `openDatabase` from `src/_models/database/openDatabase.ts`. It doesn't use the checked collection wrappers, because the data it reads doesn't match the schemas until it's moved, so a checked write would refuse it (see `docs/project_conventions.md`, "Stored Data"). The task runs under plain `node`, so it imports that file by its relative path, with its `.ts` extension.
+
 ## The Code Around a Task
 A task's data change and its story's code never ship at the same moment. Previews share production's database, so from the story's merge into `develop` until the task runs, previews run the new code against data in the old shape. Production does the same between the deploy and the task. So the story's code has to read both shapes until the task has run. A task that runs before the merge reverses this: production's current code meets the new shape until the deploy, so either that code already reads it or the task waits for the merge. This is the parallel change pattern (Martin Fowler, "ParallelChange"). Once the task has run, the code that handles the old shape is dead, and it's removed in the same PR that deletes the task.
 

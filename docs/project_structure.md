@@ -29,7 +29,7 @@ reusable React components
 ## _hooks/
 reusable React hooks, each with any component that only supports it (see `docs/project_conventions.md`)
 ## _models/
-Mongoose schemas + Zod types
+the zod schemas of the stored data, and in `database/` the data module that reads and writes it (see `docs/project_conventions.md`, "Stored Data")
 ## _theme/
 the Mantine theme and the app's color values (see `docs/theme.md`)
 ## _utils/
@@ -45,7 +45,7 @@ test support code shared by unit tests, E2E tests and the seed
 ## auth.ts
 test-only better-auth instance, used by the E2E factories, `signIn` and the seed, imported through `#auth`
 ## factories/
-plain functions that create test data in the database for E2E tests and the seed, and their connection, imported through `#factories/<name>`
+plain functions that create test data for E2E tests and the seed, writing through the data module, and the functions that open and close the module's database connection. All are imported through `#factories/<name>`
 ## fixtures/
 unit-test data builders, imported through `#fixtures`
 ## mocks/

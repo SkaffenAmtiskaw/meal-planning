@@ -63,3 +63,35 @@ Production reports its errors to PostHog. An error that's thrown and never caugh
 **Error boundaries.** An `error.tsx` or `global-error.tsx` reports the error it catches with `posthog.captureException` from `posthog-js`, in a `useEffect` that depends on `error`. An error a boundary catches never reaches `posthog-js`'s global handler, so without that call it goes unreported.
 
 **The relay and `proxy.ts`.** `src/app/relay/` passes `posthog-js`'s requests on to PostHog through the app's own domain, so ad blockers don't stop them. If the app adds a `proxy.ts`, its matcher should leave out `/relay`, because a matcher that includes it runs the proxy on every request `posthog-js` sends, including its request for the PostHog script.
+
+# Stored Data
+The app stores its data in MongoDB. Each stored document's shape is defined once, as a zod schema in `src/_models/`, and its TypeScript type is inferred from that schema. With one definition, a change to a shape is one edit, and the type can't drift from the schema that writes are checked against.
+
+**The app's code reads and writes its collections only through the data module in `src/_models/database/`.** The module owns the MongoDB client and gives out a wrapper for each collection, whose inserts and updates check what they write against the schema. So a new action gets the check without doing anything, and can't leave it out. Reads aren't checked. The few kinds of code that have to work below the schemas use the module's raw database handle instead, as described below.
+
+> [!NOTE]
+> An insert checks the whole document. An update checks each value it sets, pushes or unsets against the part of the schema at that path, and this holds for a nested path such as `'calendar.$.meals'` too. Reads skip the check because what's stored was checked on the way in, and checking it again would only let one bad document break a whole page.
+
+**A failed check is a bug.** If the data module's check fails, the action's code is wrong, so the module throws. The error is then reported as "Error Reporting" describes, like any other unexpected failure. The check is a backstop: an action parses its own input with zod before it writes, as `addMeal` does.
+
+**The E2E factories and the dev seed write through the same module,** so test data follows the same rules as the app's, and a test can't pass on data the app would refuse to store. The factories and the seed run outside Next.js, so the module doesn't import `server-only`. It does import `mongodb`, so it stays out of any barrel that client code imports, as "Barrel Files" describes.
+
+**Indexes live in the data module.** Each is defined beside its collection, and the module's setup creates it. The app and the factories both run that setup, because the E2E database starts empty.
+
+**Some code works below the schemas, through the module's raw database handle.** better-auth's setup gets the raw handle rather than a client of its own, so the app keeps one connection. Without a client, better-auth runs no transactions, which the E2E tests' standalone MongoDB server can't run. Tools that clear a database use the raw handle too, and so does a release task that moves stored data from one shape to another, because the data it reads doesn't match the schema until it's moved.
+
+**better-auth's data goes through one file in `src/_auth/`.** better-auth owns its collections (`user`, `account`, `session` and `verification`) and their shape. App code reaches them only through that file's functions, which wrap better-auth's internal adapter, so better-auth stays the only code that knows how its data is stored. Its collections keep the ObjectIds better-auth gives them. The app never handles those ids, because it links each of its users to a better-auth user by email.
+
+> [!NOTE]
+> The internal adapter, `auth.$context.internalAdapter`, isn't part of better-auth's public API, so an upgrade may change it. Keeping every use in that one file means an upgrade touches only that file.
+
+**Ids are strings.** Every `_id` in the app's own collections, and every reference to one, is a string. It's the same value in a URL, an action, a query, the database and the browser, so nothing converts an id from one form to another. A missed conversion fails quietly: MongoDB never treats a string as equal to an ObjectId, so the query just matches nothing.
+
+**A new subdocument carries its own id.** Each stored subdocument except a calendar day has a required `_id` in its schema, with no default. Meals, dishes, saved items, tags and planner memberships are all subdocuments. The code that creates one builds it as a value of its stored type, and sets `_id` to a new id from the data module. A calendar day has no `_id`, and is found by its `date`, which is unique within a planner. A day stays when its last meal is removed, so its `meals` may be empty.
+
+> [!NOTE]
+> The driver's types don't check a value pushed onto a nested path, so building the new value as its stored type is what makes a missing id fail to compile. A zod default would fill in a new id whenever a value without one is written. Then an update that writes a whole subdocument and leaves out its `_id` would quietly give it a new one, and break whatever refers to it.
+
+**An empty optional field is left out.** A writer never stores an optional field as `null` or `""`, so a field is either there with a value or not there at all, and code that reads it has one case to handle. Zod's `.optional()` alone accepts `""`, so an optional string's schema also rejects the empty string.
+
+A Biome rule in `biome.jsonc` lets only the data module and the release tasks import `mongodb`. It also lets only the code that works below the schemas, listed above, use the module's raw database handle.
