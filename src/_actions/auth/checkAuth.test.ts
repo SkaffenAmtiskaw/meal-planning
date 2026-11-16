@@ -1,8 +1,7 @@
 import { afterEach, describe, expect, test, vi } from 'vitest';
 
-import { Types } from 'mongoose';
-
 import { getUser } from '@/_actions/user';
+import { newId } from '@/_models/database/newId';
 import { catchify } from '@/_utils/catchify';
 import { reportError } from '@/_utils/reportError';
 
@@ -15,7 +14,7 @@ vi.mock(
 	async () => await import('#mocks/@/_utils/reportError'),
 );
 
-const mockPlannerId = new Types.ObjectId();
+const mockPlannerId = newId();
 
 describe('check auth', () => {
 	afterEach(() => {
@@ -54,10 +53,10 @@ describe('check auth', () => {
 	});
 
 	test('should return unauthorized if the user does not have access to the planner', async () => {
-		const otherPlannerId = new Types.ObjectId();
+		const otherPlannerId = newId();
 		vi.mocked(getUser).mockResolvedValue({
 			email: 'test@example.com',
-			planners: [{ planner: otherPlannerId.toString(), accessLevel: 'owner' }],
+			planners: [{ planner: otherPlannerId, accessLevel: 'owner' }],
 		} as unknown as Awaited<ReturnType<typeof getUser>>);
 
 		expect(await checkAuth(mockPlannerId, 'read')).toEqual({
@@ -66,12 +65,10 @@ describe('check auth', () => {
 	});
 
 	test('should return authorized with actual accessLevel and user when user has read access and requires read', async () => {
-		const authorizedPlannerId = new Types.ObjectId();
+		const authorizedPlannerId = newId();
 		const mockUser = {
 			email: 'test@example.com',
-			planners: [
-				{ planner: authorizedPlannerId.toString(), accessLevel: 'read' },
-			],
+			planners: [{ planner: authorizedPlannerId, accessLevel: 'read' }],
 		} as unknown as Awaited<ReturnType<typeof getUser>>;
 
 		vi.mocked(getUser).mockResolvedValue(mockUser);
@@ -86,7 +83,7 @@ describe('check auth', () => {
 	test('should return unauthorized when access level is below required', async () => {
 		vi.mocked(getUser).mockResolvedValue({
 			email: 'test@example.com',
-			planners: [{ planner: mockPlannerId.toString(), accessLevel: 'read' }],
+			planners: [{ planner: mockPlannerId, accessLevel: 'read' }],
 		} as unknown as Awaited<ReturnType<typeof getUser>>);
 
 		expect(await checkAuth(mockPlannerId, 'write')).toEqual({
@@ -97,7 +94,7 @@ describe('check auth', () => {
 	test('should return authorized with actual accessLevel and user when access level meets required', async () => {
 		const mockUser = {
 			email: 'test@example.com',
-			planners: [{ planner: mockPlannerId.toString(), accessLevel: 'write' }],
+			planners: [{ planner: mockPlannerId, accessLevel: 'write' }],
 		} as unknown as Awaited<ReturnType<typeof getUser>>;
 
 		vi.mocked(getUser).mockResolvedValue(mockUser);
@@ -112,7 +109,7 @@ describe('check auth', () => {
 	test('should return authorized with actual accessLevel and user when owner accesses with admin required', async () => {
 		const mockUser = {
 			email: 'test@example.com',
-			planners: [{ planner: mockPlannerId.toString(), accessLevel: 'owner' }],
+			planners: [{ planner: mockPlannerId, accessLevel: 'owner' }],
 		} as unknown as Awaited<ReturnType<typeof getUser>>;
 
 		vi.mocked(getUser).mockResolvedValue(mockUser);

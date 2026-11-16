@@ -3,7 +3,6 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { getPlanners } from '@/_actions/planner';
 
-import { PlannerItem } from './PlannerItem';
 import { PlannerList } from './PlannerList';
 
 vi.mock(
@@ -53,31 +52,5 @@ describe('PlannerList', () => {
 		render(await PlannerList());
 
 		expect(screen.getAllByTestId('planner-item')).toHaveLength(2);
-	});
-
-	it('uses empty string when planner name is null', async () => {
-		vi.mocked(getPlanners).mockResolvedValueOnce([
-			{
-				planner: {
-					_id: 'p1',
-					name: null,
-					calendar: [],
-					saved: [],
-					tags: [],
-				},
-				accessLevel: 'owner',
-			},
-		] as unknown as Awaited<ReturnType<typeof getPlanners>>);
-
-		render(await PlannerList());
-
-		expect(vi.mocked(PlannerItem)).toHaveBeenCalledWith(
-			expect.objectContaining({
-				id: 'p1',
-				name: '',
-				accessLevel: 'owner',
-			}),
-			undefined,
-		);
 	});
 });

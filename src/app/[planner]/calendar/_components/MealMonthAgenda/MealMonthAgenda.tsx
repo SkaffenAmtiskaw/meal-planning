@@ -11,18 +11,19 @@ import {
 	MobileMonthGrid,
 	type MobileMonthGridEvent,
 } from '@/_components/Calendar/MobileMonthGrid/MobileMonthGrid';
+import type { DayInterface } from '@/_models/types';
 import { getMealColor, TAG_COLORS } from '@/_theme/colors';
 import { MobileAddMealButton } from '@/app/[planner]/calendar/_components/AddMealButton';
 
 import type { CalendarEvent } from '../../_utils/toCalendarEvents';
 import { toCalendarEvents } from '../../_utils/toCalendarEvents';
 import { toCalendarMeals } from '../../_utils/toCalendarMeals';
-import type { SavedItem, SerializedDay } from '../../_utils/toScheduleXEvents';
+import type { SavedItem } from '../../_utils/toScheduleXEvents';
 import { DishLink } from '../DishLink/DishLink';
 
 export interface MealMonthAgendaProps {
 	plannerId: string;
-	calendar: SerializedDay[];
+	calendar: DayInterface[];
 	savedItems?: SavedItem[];
 }
 

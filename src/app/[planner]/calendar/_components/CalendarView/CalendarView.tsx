@@ -7,10 +7,11 @@ import { Flex, Stack } from '@mantine/core';
 
 import { CalendarProvider, useCalendarContext } from '@/_components/Calendar';
 import { useIsMobile } from '@/_hooks';
+import type { DayInterface } from '@/_models/types';
 
 import { CalendarModalProvider } from '../CalendarModal';
 import type { CalendarEvent } from '../../_utils/toCalendarEvents';
-import type { SavedItem, SerializedDay } from '../../_utils/toScheduleXEvents';
+import type { SavedItem } from '../../_utils/toScheduleXEvents';
 import {
 	CalendarHeaderDesktop,
 	CalendarHeaderMobile,
@@ -23,14 +24,14 @@ import { MealWeekView } from '../MealWeekView/MealWeekView';
 
 type Props = {
 	plannerId: string;
-	calendar: SerializedDay[];
+	calendar: DayInterface[];
 	savedItems: SavedItem[];
 };
 
 type CalendarViewContentProps = {
 	plannerId: string;
 	savedItems: SavedItem[];
-	calendar: SerializedDay[];
+	calendar: DayInterface[];
 	clickedEvent: CalendarEvent | null;
 	onClose: () => void;
 	onMealClick: (meal: CalendarEvent) => void;

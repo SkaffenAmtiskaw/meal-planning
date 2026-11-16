@@ -1,11 +1,10 @@
 'use server';
 
-import { Types } from 'mongoose';
-
 import { checkAuth } from '@/_actions/auth/checkAuth';
+import { newId } from '@/_models/database/newId';
+import { planners } from '@/_models/database/planners';
 import type { BookmarkInterface } from '@/_models/library';
 import { zBookmarkFormSchema } from '@/_models/library';
-import { Planner } from '@/_models/planner';
 import type { ActionResult } from '@/_utils/actionResult';
 
 export const addBookmark = async (
@@ -16,21 +15,16 @@ export const addBookmark = async (
 	// The form starts notes at '', which would be stored as an empty string.
 	const bookmarkFields = { ...requiredFields, ...(notes ? { notes } : {}) };
 
-	const auth = await checkAuth(new Types.ObjectId(plannerId), 'write');
+	const auth = await checkAuth(plannerId, 'write');
 	if (auth.type !== 'authorized') return { ok: false, error: 'Unauthorized' };
 
-	const planner = await Planner.findById(plannerId);
-	if (!planner) return { ok: false, error: 'Planner not found' };
+	const bookmark: BookmarkInterface = { _id: newId(), ...bookmarkFields };
+	const result = await planners.updateOne(
+		{ _id: plannerId },
+		{ $push: { saved: bookmark } },
+	);
+	if (result.matchedCount === 0)
+		return { ok: false, error: 'Planner not found' };
 
-	const insertIndex = planner.saved.length;
-	planner.saved.push({ ...bookmarkFields } as unknown as BookmarkInterface);
-	await planner.save();
-
-	return {
-		ok: true,
-		data: {
-			_id: String(planner.saved[insertIndex]._id),
-			name: bookmarkFields.name,
-		},
-	};
+	return { ok: true, data: { _id: bookmark._id, name: bookmark.name } };
 };

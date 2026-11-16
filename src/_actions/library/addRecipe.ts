@@ -1,11 +1,10 @@
 'use server';
 
-import { Types } from 'mongoose';
-
 import { checkAuth } from '@/_actions/auth/checkAuth';
+import { newId } from '@/_models/database/newId';
+import { planners } from '@/_models/database/planners';
 import type { RecipeInterface } from '@/_models/library';
 import { zRecipeFormSchema } from '@/_models/library';
-import { Planner } from '@/_models/planner';
 import type { ActionResult } from '@/_utils/actionResult';
 
 import { transformRecipeForm } from './_utils/transformRecipeForm';
@@ -16,21 +15,16 @@ export const addRecipe = async (
 	const parsed = zRecipeFormSchema.parse(data);
 	const { plannerId, ...recipeFields } = transformRecipeForm(parsed);
 
-	const auth = await checkAuth(new Types.ObjectId(plannerId), 'write');
+	const auth = await checkAuth(plannerId, 'write');
 	if (auth.type !== 'authorized') return { ok: false, error: 'Unauthorized' };
 
-	const planner = await Planner.findById(plannerId);
-	if (!planner) return { ok: false, error: 'Planner not found' };
+	const recipe: RecipeInterface = { _id: newId(), ...recipeFields };
+	const result = await planners.updateOne(
+		{ _id: plannerId },
+		{ $push: { saved: recipe } },
+	);
+	if (result.matchedCount === 0)
+		return { ok: false, error: 'Planner not found' };
 
-	const insertIndex = planner.saved.length;
-	planner.saved.push({ ...recipeFields } as unknown as RecipeInterface);
-	await planner.save();
-
-	return {
-		ok: true,
-		data: {
-			_id: String(planner.saved[insertIndex]._id),
-			name: recipeFields.name,
-		},
-	};
+	return { ok: true, data: { _id: recipe._id, name: recipe.name } };
 };

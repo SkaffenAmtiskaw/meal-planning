@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { checkAuth } from '@/_actions/auth/checkAuth';
-import { User } from '@/_models/user';
+import { users } from '@/_models/database/users';
 
 import { removeMember } from './removeMember';
 
@@ -12,11 +12,10 @@ vi.mock(
 	async () => await import('#mocks/@/_actions/auth/checkAuth'),
 );
 
-vi.mock('@/_models/user', () => ({
-	User: {
-		findOne: vi.fn(),
-	},
-}));
+vi.mock(
+	'@/_models/database/users',
+	async () => await import('#mocks/@/_models/database/users'),
+);
 vi.mock('./_utils/removePlannerMembership', () => ({
 	removePlannerMembership: vi.fn(),
 }));
@@ -32,7 +31,7 @@ describe('removeMember', () => {
 		name: 'Target User',
 		planners: [
 			{
-				planner: { toString: () => plannerId },
+				planner: plannerId,
 				accessLevel: 'write',
 			},
 		],
@@ -43,14 +42,14 @@ describe('removeMember', () => {
 	});
 
 	it('removes member when caller is authorized', async () => {
-		vi.mocked(User.findOne).mockResolvedValue(targetUser as never);
+		vi.mocked(users.findOne).mockResolvedValue(targetUser as never);
 		vi.mocked(removePlannerMembership).mockResolvedValue({ ok: true });
 
 		const result = await removeMember(plannerId, memberEmail);
 
 		expect(result).toEqual({ ok: true });
 		expect(checkAuth).toHaveBeenCalledWith(expect.anything(), 'admin');
-		expect(User.findOne).toHaveBeenCalledWith({ email: memberEmail });
+		expect(users.findOne).toHaveBeenCalledWith({ email: memberEmail });
 		expect(removePlannerMembership).toHaveBeenCalledWith(
 			targetUserId,
 			plannerId,
@@ -67,12 +66,12 @@ describe('removeMember', () => {
 		const result = await removeMember(plannerId, memberEmail);
 
 		expect(result).toEqual({ ok: false, error: 'Unauthorized' });
-		expect(User.findOne).not.toHaveBeenCalled();
+		expect(users.findOne).not.toHaveBeenCalled();
 		expect(removePlannerMembership).not.toHaveBeenCalled();
 	});
 
 	it('returns error when target user not found', async () => {
-		vi.mocked(User.findOne).mockResolvedValue(null);
+		vi.mocked(users.findOne).mockResolvedValue(null);
 
 		const result = await removeMember(plannerId, memberEmail);
 
@@ -85,13 +84,13 @@ describe('removeMember', () => {
 			...targetUser,
 			planners: [
 				{
-					planner: { toString: () => 'other-planner-id' },
+					planner: 'other-planner-id',
 					accessLevel: 'admin',
 				},
 			],
 		};
 
-		vi.mocked(User.findOne).mockResolvedValue(nonMember as never);
+		vi.mocked(users.findOne).mockResolvedValue(nonMember as never);
 
 		const result = await removeMember(plannerId, memberEmail);
 
@@ -107,13 +106,13 @@ describe('removeMember', () => {
 			...targetUser,
 			planners: [
 				{
-					planner: { toString: () => plannerId },
+					planner: plannerId,
 					accessLevel: 'owner',
 				},
 			],
 		};
 
-		vi.mocked(User.findOne).mockResolvedValue(owner as never);
+		vi.mocked(users.findOne).mockResolvedValue(owner as never);
 
 		const result = await removeMember(plannerId, memberEmail);
 
@@ -122,7 +121,7 @@ describe('removeMember', () => {
 	});
 
 	it('returns error when removePlannerMembership fails', async () => {
-		vi.mocked(User.findOne).mockResolvedValue(targetUser as never);
+		vi.mocked(users.findOne).mockResolvedValue(targetUser as never);
 		vi.mocked(removePlannerMembership).mockResolvedValue({
 			ok: false,
 			error: 'Membership removal failed',

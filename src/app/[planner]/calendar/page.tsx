@@ -1,24 +1,23 @@
 import { z } from 'zod';
 
-import { getPlannerClient } from '@/_actions/planner';
-import { zObjectId } from '@/_utils/zObjectId';
+import { getPlanner } from '@/_actions/planner';
+import { zId } from '@/_utils/zId';
 
 import { CalendarView } from './_components/CalendarView/CalendarView';
-import type { SavedItem, SerializedDay } from './_utils/toScheduleXEvents';
 
 const zParams = z.object({
-	planner: zObjectId,
+	planner: zId,
 });
 
 const CalendarPage = async ({ params }: PageProps<'/[planner]/calendar'>) => {
 	const { planner: id } = zParams.parse(await params);
-	const planner = await getPlannerClient(String(id));
+	const planner = await getPlanner(id);
 
 	return (
 		<CalendarView
-			plannerId={String(id)}
-			calendar={planner.calendar as unknown as SerializedDay[]}
-			savedItems={planner.saved as unknown as SavedItem[]}
+			plannerId={id}
+			calendar={planner.calendar}
+			savedItems={planner.saved}
 		/>
 	);
 };

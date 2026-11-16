@@ -3,10 +3,10 @@ import type { ReactElement } from 'react';
 
 import { Anchor, Text } from '@mantine/core';
 
-import type { SerializedDish } from '../../_utils/toScheduleXEvents';
+import type { ResolvedDish } from '../../_utils/toScheduleXEvents';
 
 export interface DishLinkProps {
-	dish: SerializedDish;
+	dish: ResolvedDish;
 	plannerId: string;
 	tabIndex?: number;
 	size?: 'xs' | 'sm';

@@ -1,11 +1,12 @@
 import { z } from 'zod';
 
-import { zObjectId } from '@/_utils/zObjectId';
+import { zId } from '@/_utils/zId';
+import { zOptionalNonEmptyString } from '@/_utils/zOptionalNonEmptyString';
 
 export const zDishFormInput = z.object({
 	name: z.string().min(1, { error: 'Dish name is required' }),
 	sourceType: z.enum(['none', 'saved', 'text']),
-	savedId: z.string().optional(),
+	savedId: zId.optional(),
 	sourceText: z.string().optional(),
 	note: z.string().optional(),
 });
@@ -21,27 +22,27 @@ export const zMealFormSchema = z.object({
 export type MealFormData = z.infer<typeof zMealFormSchema>;
 
 const zDishInterface = z.object({
+	_id: zId,
 	name: z.string(),
+	// A bare string is always a saved item's id; free text is `{ ref }`.
 	source: z
-		.union([
-			z.string(),
-			z.object({ url: z.url() }),
-			z.object({ ref: z.string() }),
-			zObjectId,
-		])
+		.union([zId, z.object({ url: z.url() }), z.object({ ref: z.string() })])
 		.optional(),
-	note: z.string().optional(),
+	note: zOptionalNonEmptyString,
 });
 
 const zMealInterface = z.object({
+	_id: zId,
 	name: z.string(),
-	description: z.string().optional(),
+	description: zOptionalNonEmptyString,
 	dishes: z.array(zDishInterface),
 });
 
 export const zDayInterface = z.object({
 	date: z.iso.date(),
-	meals: z.array(zMealInterface).optional(),
+	meals: z.array(zMealInterface),
 });
 
+export type DishInterface = z.infer<typeof zDishInterface>;
+export type MealInterface = z.infer<typeof zMealInterface>;
 export type DayInterface = z.infer<typeof zDayInterface>;

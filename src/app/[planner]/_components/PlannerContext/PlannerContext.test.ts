@@ -16,6 +16,7 @@ describe('planner context', () => {
 
 	test('context value includes accessLevel property', () => {
 		const mockValue = {
+			_id: '507f1f77bcf86cd799439011',
 			name: 'Test Planner',
 			calendar: [],
 			saved: [],

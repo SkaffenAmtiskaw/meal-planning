@@ -1,9 +1,7 @@
+import type { DayInterface } from '@/_models/types';
+
 import { resolveDishSource } from './resolveDishSource';
-import type {
-	SavedItem,
-	SerializedDay,
-	SerializedDish,
-} from './toScheduleXEvents';
+import type { ResolvedDish, SavedItem } from './toScheduleXEvents';
 
 export interface CalendarEvent {
 	id: string;
@@ -11,18 +9,18 @@ export interface CalendarEvent {
 	end: string;
 	title: string;
 	description?: string;
-	dishes: SerializedDish[];
+	dishes: ResolvedDish[];
 }
 
 export const toCalendarEvents = (
-	calendar: SerializedDay[],
+	calendar: DayInterface[],
 	savedItems: SavedItem[] = [],
 ): CalendarEvent[] => {
 	const savedMap = new Map(savedItems.map((item) => [item._id, item]));
 	const events: CalendarEvent[] = [];
 
 	for (const day of calendar) {
-		for (const meal of day.meals ?? []) {
+		for (const meal of day.meals) {
 			events.push({
 				id: meal._id,
 				start: day.date,

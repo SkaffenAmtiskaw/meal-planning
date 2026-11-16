@@ -32,15 +32,6 @@ vi.mock(
 	async () => await import('#mocks/@/_utils/reportError'),
 );
 
-vi.mock('@/_utils/zObjectId', () => ({
-	zObjectId: {
-		safeParse: (value: unknown) => ({
-			success: typeof value === 'string',
-			data: value,
-		}),
-	},
-}));
-
 vi.mock('@/app/_components/Header', () => ({
 	Header: ({ leftSection }: { leftSection?: React.ReactNode }) =>
 		leftSection || null,

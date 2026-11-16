@@ -1,8 +1,6 @@
 import { render } from '@testing-library/react';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
-import { Types } from 'mongoose';
-
 import { getSavedItem } from '@/_actions/library';
 
 import { BookmarkForm } from './BookmarkForm';
@@ -33,11 +31,14 @@ vi.mock('./RecipeForm', async () => ({
 	RecipeForm: vi.fn(() => <div data-testid="recipe-form" />),
 }));
 
+const plannerId = '507f1f77bcf86cd799439011';
+const itemId = '507f1f77bcf86cd799439012';
+
 const makePlanner = (
-	tags: { _id: Types.ObjectId; name: string; color: string }[] = [],
+	tags: { _id: string; name: string; color: string }[] = [],
 ) =>
 	({
-		_id: new Types.ObjectId(),
+		_id: plannerId,
 		saved: [],
 		calendar: [],
 		tags,
@@ -68,8 +69,6 @@ describe('Modal', () => {
 	});
 
 	it('returns null for edit status with an unrecognized type', async () => {
-		const itemId = new Types.ObjectId();
-
 		const { container } = render(
 			await Modal({
 				planner: makePlanner(),
@@ -90,7 +89,7 @@ describe('Modal', () => {
 				planner: makePlanner(),
 				status: 'edit',
 				type: 'bookmark',
-				item: new Types.ObjectId(),
+				item: itemId,
 			}),
 		);
 		expect(container.firstChild).toBeNull();
@@ -113,14 +112,14 @@ describe('Modal', () => {
 		const [[bookmarkFormProps]] = vi.mocked(BookmarkForm).mock.calls;
 		expect(bookmarkFormProps).toEqual(
 			expect.objectContaining({
-				plannerId: planner._id.toString(),
+				plannerId: planner._id,
 				tags: [],
 			}),
 		);
 	});
 
 	it('renders add recipe modal with correct props', async () => {
-		const tagId = new Types.ObjectId();
+		const tagId = '507f1f77bcf86cd799439013';
 		const planner = makePlanner([{ _id: tagId, name: 'Spicy', color: 'red' }]);
 
 		render(await Modal({ planner, status: 'add', type: 'recipe' }));
@@ -137,14 +136,13 @@ describe('Modal', () => {
 		const [[recipeFormProps]] = vi.mocked(RecipeForm).mock.calls;
 		expect(recipeFormProps).toEqual(
 			expect.objectContaining({
-				plannerId: planner._id.toString(),
-				tags: [{ _id: tagId.toString(), name: 'Spicy', color: 'red' }],
+				plannerId: planner._id,
+				tags: [{ _id: tagId, name: 'Spicy', color: 'red' }],
 			}),
 		);
 	});
 
 	it('renders edit bookmark modal with correct props', async () => {
-		const itemId = new Types.ObjectId();
 		const planner = makePlanner();
 		const bookmark = {
 			_id: itemId,
@@ -177,14 +175,13 @@ describe('Modal', () => {
 		expect(bookmarkFormProps).toEqual(
 			expect.objectContaining({
 				item: expect.objectContaining({ name: "Gaston's Golden Goose" }),
-				plannerId: planner._id.toString(),
+				plannerId: planner._id,
 				tags: [],
 			}),
 		);
 	});
 
 	it('renders edit recipe modal with correct props', async () => {
-		const itemId = new Types.ObjectId();
 		const planner = makePlanner();
 		const recipe = {
 			_id: itemId,
@@ -218,7 +215,7 @@ describe('Modal', () => {
 		expect(recipeFormProps).toEqual(
 			expect.objectContaining({
 				item: expect.objectContaining({ name: "Ursula's Sea Bisque" }),
-				plannerId: planner._id.toString(),
+				plannerId: planner._id,
 				tags: [],
 			}),
 		);

@@ -4,15 +4,16 @@ import { useCallback, useMemo } from 'react';
 
 import type { MonthGridMeal, MonthGridProps } from '@/_components/Calendar';
 import { MonthGrid } from '@/_components/Calendar';
+import type { DayInterface } from '@/_models/types';
 
 import { MealEventCard } from './MealEventCard';
 
 import type { CalendarEvent } from '../../_utils/toCalendarEvents';
 import { toCalendarEvents } from '../../_utils/toCalendarEvents';
-import type { SavedItem, SerializedDay } from '../../_utils/toScheduleXEvents';
+import type { SavedItem } from '../../_utils/toScheduleXEvents';
 
 export interface MealCalendarProps {
-	calendar: SerializedDay[];
+	calendar: DayInterface[];
 	savedItems?: SavedItem[];
 	onMealClick?: (meal: CalendarEvent) => void;
 }

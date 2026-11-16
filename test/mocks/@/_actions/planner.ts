@@ -11,7 +11,7 @@
 import { vi } from 'vitest';
 
 export const addPlanner = vi.fn(async () => ({
-	_id: { toString: () => '507f1f77bcf86cd799439011' },
+	_id: '507f1f77bcf86cd799439011',
 	name: "Test User's Planner",
 	calendar: [],
 	saved: [],
@@ -24,14 +24,6 @@ export const createPlanner = vi.fn(async () => ({
 }));
 
 export const getPlanner = vi.fn(async () => ({
-	_id: { toString: () => '507f1f77bcf86cd799439011' },
-	name: "Test User's Planner",
-	calendar: [],
-	saved: [],
-	tags: [],
-}));
-
-export const getPlannerClient = vi.fn(async () => ({
 	_id: '507f1f77bcf86cd799439011',
 	name: "Test User's Planner",
 	calendar: [],
@@ -42,7 +34,7 @@ export const getPlannerClient = vi.fn(async () => ({
 export const getPlanners = vi.fn(async () => [
 	{
 		planner: {
-			_id: { toString: () => '507f1f77bcf86cd799439011' },
+			_id: '507f1f77bcf86cd799439011',
 			name: "Test User's Planner",
 			calendar: [],
 			saved: [],

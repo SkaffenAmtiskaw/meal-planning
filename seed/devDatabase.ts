@@ -1,12 +1,14 @@
-import { closeAuth, connectAuth } from '#auth';
-import { connectDatabase, disconnectDatabase } from '#factories/connection';
+import { connectDatabase } from '@/_models/database/connectDatabase';
+import { closeDatabase } from '@/_models/database/connection';
 import { env } from '@/env';
 
 import { databaseNameOf, isDevDatabase } from './databaseNames';
 
-// Opens the seed's connections, only to a dev database: `test`, or a worktree's `test-<n>`. The name
-// is checked before connecting, because mongoose creates each imported model's collections and
-// indexes as soon as it connects.
+/**
+ * Opens the seed's connection, only to a dev database: `test`, or a worktree's `test-<n>`. The name
+ * is checked before connecting, because connecting creates the data module's indexes, and
+ * better-auth's adapter creates its collections, in whatever database `DB_URL` names.
+ */
 export const connectDevDatabase = async () => {
 	const databaseName = databaseNameOf(env.DB_URL);
 	if (!isDevDatabase(databaseName)) {
@@ -16,10 +18,8 @@ export const connectDevDatabase = async () => {
 	}
 
 	await connectDatabase();
-	await connectAuth();
 };
 
 export const closeDevDatabase = async () => {
-	await disconnectDatabase();
-	await closeAuth();
+	await closeDatabase();
 };

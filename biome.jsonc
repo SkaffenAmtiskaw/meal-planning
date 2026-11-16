@@ -28,6 +28,19 @@
 		}
 	},
 	"overrides": [
+		/**
+		 *  tsconfig.json allows imports with a .ts extension, because node can't find a file without its extension. So
+		 *  only the files that plain node runs may use one: the scripts, and the E2E servers playwright.config.ts starts.
+		 */
+		{
+			"includes": [
+				"**",
+				"!scripts/**",
+				"!e2e/_fixtures/memoryServer.ts",
+				"!e2e/_fixtures/fakeResend.ts"
+			],
+			"plugins": ["./biome-plugins/noTsExtensionImports.grit"]
+		},
 		{
 			"includes": ["test/**/*", "**/*/*.test.ts*"],
 			"linter": {
@@ -147,12 +160,62 @@
 			}
 		},
 		/**
-		 *  Import bans from docs/e2e_tests.md. Biome applies every override that matches a file, and a later
-		 *  override's options for a rule replace an earlier one's, so each file set below lists every ban that
-		 *  applies to it and no two of them match the same file.
+		 *  Import bans from docs/e2e_tests.md and docs/project_conventions.md, "Stored Data". Biome applies every
+		 *  override that matches a file, and a later override's options for a rule replace an earlier one's, so each
+		 *  file set below lists every ban that applies to it and no two of them match the same file.
+		 *
+		 *  Only the data module in src/_models/database/ and the release tasks import mongodb. The raw database
+		 *  handle (rawDatabase, and openDatabase for another URI) is used only by better-auth's two instances,
+		 *  seed/emptyWorktreeDatabase.ts, scripts/restoreTest.ts and the release tasks, which each have a file set of
+		 *  their own below. The release tasks are in no file set, because no ban applies to them.
 		 */
 		{
-			"includes": ["src/**/*", "!**/*/*.test.ts*"],
+			"includes": [
+				"src/**/*",
+				"!**/*/*.test.ts*",
+				"!src/_models/database/**/*",
+				"!src/_auth/auth.ts"
+			],
+			"linter": {
+				"rules": {
+					"style": {
+						"noRestrictedImports": {
+							"level": "error",
+							"options": {
+								"paths": {
+									"@playwright/test": "Playwright code lives in e2e/. See docs/e2e_tests.md.",
+									"better-auth/plugins": {
+										"message": "testUtils is used only in test/auth.ts, the test-only auth instance. See docs/e2e_tests.md.",
+										"importNames": ["testUtils"]
+									},
+									"better-auth/test": "testUtils is used only in test/auth.ts, the test-only auth instance. See docs/e2e_tests.md.",
+									"mongodb": "Code outside the data module in src/_models/database/ doesn't import mongodb. Read and write through its collection wrappers. See docs/project_conventions.md, \"Stored Data\"."
+								},
+								"patterns": [
+									{
+										"group": [
+											"**/_models/database/connection",
+											"**/_models/database/connection.ts"
+										],
+										"importNamePattern": "rawDatabase",
+										"message": "The raw database handle is only for code that works below the schemas. Read and write through the data module's collection wrappers. See docs/project_conventions.md, \"Stored Data\"."
+									},
+									{
+										"group": [
+											"**/_models/database/openDatabase",
+											"**/_models/database/openDatabase.ts"
+										],
+										"message": "The raw database handle is only for code that works below the schemas. Read and write through the data module's collection wrappers. See docs/project_conventions.md, \"Stored Data\"."
+									}
+								]
+							}
+						}
+					}
+				}
+			}
+		},
+		{
+			"includes": ["src/_models/database/**/*"],
 			"linter": {
 				"rules": {
 					"style": {
@@ -174,13 +237,38 @@
 			}
 		},
 		{
+			"includes": ["src/_auth/auth.ts", "seed/emptyWorktreeDatabase.ts"],
+			"linter": {
+				"rules": {
+					"style": {
+						"noRestrictedImports": {
+							"level": "error",
+							"options": {
+								"paths": {
+									"@playwright/test": "Playwright code lives in e2e/. See docs/e2e_tests.md.",
+									"better-auth/plugins": {
+										"message": "testUtils is used only in test/auth.ts, the test-only auth instance. See docs/e2e_tests.md.",
+										"importNames": ["testUtils"]
+									},
+									"better-auth/test": "testUtils is used only in test/auth.ts, the test-only auth instance. See docs/e2e_tests.md.",
+									"mongodb": "Code outside the data module in src/_models/database/ doesn't import mongodb. Use its raw database handle. See docs/project_conventions.md, \"Stored Data\"."
+								}
+							}
+						}
+					}
+				}
+			}
+		},
+		{
 			"includes": [
 				"test/**/*",
 				"seed/**/*",
 				"**/*/*.test.ts*",
 				"!test/auth.ts",
 				"!test/factories/**/*",
-				"!e2e/**/*"
+				"!e2e/**/*",
+				"!src/_models/database/**/*",
+				"!seed/emptyWorktreeDatabase.ts"
 			],
 			"linter": {
 				"rules": {
@@ -194,8 +282,26 @@
 										"message": "testUtils is used only in test/auth.ts, the test-only auth instance. See docs/e2e_tests.md.",
 										"importNames": ["testUtils"]
 									},
-									"better-auth/test": "testUtils is used only in test/auth.ts, the test-only auth instance. See docs/e2e_tests.md."
-								}
+									"better-auth/test": "testUtils is used only in test/auth.ts, the test-only auth instance. See docs/e2e_tests.md.",
+									"mongodb": "Code outside the data module in src/_models/database/ doesn't import mongodb. Read and write through its collection wrappers. See docs/project_conventions.md, \"Stored Data\"."
+								},
+								"patterns": [
+									{
+										"group": [
+											"**/_models/database/connection",
+											"**/_models/database/connection.ts"
+										],
+										"importNamePattern": "rawDatabase",
+										"message": "The raw database handle is only for code that works below the schemas. Read and write through the data module's collection wrappers. See docs/project_conventions.md, \"Stored Data\"."
+									},
+									{
+										"group": [
+											"**/_models/database/openDatabase",
+											"**/_models/database/openDatabase.ts"
+										],
+										"message": "The raw database handle is only for code that works below the schemas. Read and write through the data module's collection wrappers. See docs/project_conventions.md, \"Stored Data\"."
+									}
+								]
 							}
 						}
 					}
@@ -211,7 +317,8 @@
 							"level": "error",
 							"options": {
 								"paths": {
-									"@playwright/test": "Playwright code lives in e2e/. See docs/e2e_tests.md."
+									"@playwright/test": "Playwright code lives in e2e/. See docs/e2e_tests.md.",
+									"mongodb": "Code outside the data module in src/_models/database/ doesn't import mongodb. Use its raw database handle. See docs/project_conventions.md, \"Stored Data\"."
 								}
 							}
 						}
@@ -234,14 +341,30 @@
 										"importNames": ["testUtils"]
 									},
 									"better-auth/test": "testUtils is used only in test/auth.ts, the test-only auth instance. See docs/e2e_tests.md.",
-									"@/_actions": "Factories write only through @/_models and the test-only auth instance in test/auth.ts. See docs/e2e_tests.md.",
-									"@/_auth": "Factories write only through @/_models and the test-only auth instance in test/auth.ts. See docs/e2e_tests.md.",
-									"server-only": "Factories write only through @/_models and the test-only auth instance in test/auth.ts. See docs/e2e_tests.md."
+									"@/_actions": "Factories write through the data module's collection wrappers in @/_models/database, and reach better-auth only through test/auth.ts and @/_auth/users. See docs/e2e_tests.md.",
+									"@/_auth": "Factories write through the data module's collection wrappers in @/_models/database, and reach better-auth only through test/auth.ts and @/_auth/users. See docs/e2e_tests.md.",
+									"server-only": "Factories write through the data module's collection wrappers in @/_models/database, and reach better-auth only through test/auth.ts and @/_auth/users. See docs/e2e_tests.md.",
+									"mongodb": "Factories write through the data module's collection wrappers in @/_models/database. See docs/e2e_tests.md."
 								},
 								"patterns": [
 									{
-										"group": ["@/_actions/**", "@/_auth/**"],
-										"message": "Factories write only through @/_models and the test-only auth instance in test/auth.ts. See docs/e2e_tests.md."
+										"group": ["@/_actions/**", "@/_auth/**", "!@/_auth/users"],
+										"message": "Factories write through the data module's collection wrappers in @/_models/database, and reach better-auth only through test/auth.ts and @/_auth/users. See docs/e2e_tests.md."
+									},
+									{
+										"group": [
+											"**/_models/database/connection",
+											"**/_models/database/connection.ts"
+										],
+										"importNamePattern": "rawDatabase",
+										"message": "Factories write through the data module's collection wrappers in @/_models/database. See docs/e2e_tests.md."
+									},
+									{
+										"group": [
+											"**/_models/database/openDatabase",
+											"**/_models/database/openDatabase.ts"
+										],
+										"message": "Factories write through the data module's collection wrappers in @/_models/database. See docs/e2e_tests.md."
 									}
 								]
 							}
@@ -259,7 +382,6 @@
 							"level": "error",
 							"options": {
 								"paths": {
-									"mongoose": "E2E code creates data only through the factories in test/factories/. See docs/e2e_tests.md.",
 									"mongodb": "E2E code creates data only through the factories in test/factories/. See docs/e2e_tests.md.",
 									"@/_models": "E2E code creates data only through the factories in test/factories/. See docs/e2e_tests.md.",
 									"better-auth/plugins": {
@@ -294,7 +416,6 @@
 							"options": {
 								"paths": {
 									"@playwright/test": "Specs import test and expect from e2e/_fixtures/, not @playwright/test. See docs/e2e_tests.md.",
-									"mongoose": "E2E code creates data only through the factories in test/factories/. See docs/e2e_tests.md.",
 									"mongodb": "E2E code creates data only through the factories in test/factories/. See docs/e2e_tests.md.",
 									"@/_models": "E2E code creates data only through the factories in test/factories/. See docs/e2e_tests.md.",
 									"better-auth/plugins": {
@@ -309,6 +430,62 @@
 										"message": "E2E code creates data only through the factories in test/factories/. See docs/e2e_tests.md."
 									}
 								]
+							}
+						}
+					}
+				}
+			}
+		},
+		{
+			"includes": [
+				"scripts/**/*.ts",
+				"playwright.config.ts",
+				"!scripts/release-tasks/**/*",
+				"!scripts/restoreTest.ts"
+			],
+			"linter": {
+				"rules": {
+					"style": {
+						"noRestrictedImports": {
+							"level": "error",
+							"options": {
+								"paths": {
+									"mongodb": "Only the data module in src/_models/database/ and the release tasks import mongodb. See docs/project_conventions.md, \"Stored Data\"."
+								},
+								"patterns": [
+									{
+										"group": [
+											"**/_models/database/connection",
+											"**/_models/database/connection.ts"
+										],
+										"importNamePattern": "rawDatabase",
+										"message": "The raw database handle is only for code that works below the schemas. See docs/project_conventions.md, \"Stored Data\"."
+									},
+									{
+										"group": [
+											"**/_models/database/openDatabase",
+											"**/_models/database/openDatabase.ts"
+										],
+										"message": "The raw database handle is only for code that works below the schemas. See docs/project_conventions.md, \"Stored Data\"."
+									}
+								]
+							}
+						}
+					}
+				}
+			}
+		},
+		{
+			"includes": ["scripts/restoreTest.ts"],
+			"linter": {
+				"rules": {
+					"style": {
+						"noRestrictedImports": {
+							"level": "error",
+							"options": {
+								"paths": {
+									"mongodb": "Only the data module in src/_models/database/ and the release tasks import mongodb. Use the module's openDatabase. See docs/project_conventions.md, \"Stored Data\"."
+								}
 							}
 						}
 					}

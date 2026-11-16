@@ -27,18 +27,9 @@ export const useCurrentUserMembership = (
 			const currentUser = await getUser();
 
 			if (currentUser) {
-				// Type assertion for currentUser since getUser() returns serialized user
-				const typedUser = currentUser as unknown as {
-					email: string;
-					planners: Array<{
-						planner: { toString(): string };
-						accessLevel: string;
-					}>;
-				};
-
-				setEmail(typedUser.email);
-				const currentUserMembership = typedUser.planners.find(
-					(p) => p.planner.toString() === plannerId,
+				setEmail(currentUser.email);
+				const currentUserMembership = currentUser.planners.find(
+					(p) => p.planner === plannerId,
 				);
 				setIsOwner(currentUserMembership?.accessLevel === 'owner');
 			} else {

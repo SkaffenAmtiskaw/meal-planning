@@ -1,44 +1,49 @@
 import type { z } from 'zod';
 
-import type { zRecipeFormSchema } from '@/_models/library';
+import type { RecipeInterface, zRecipeFormSchema } from '@/_models/library';
 
 type RecipeFormData = z.infer<typeof zRecipeFormSchema>;
 
-export const transformRecipeForm = <T extends RecipeFormData>(data: T): T => {
-	const result = { ...data };
+type StoredOptionalFields = Pick<
+	RecipeInterface,
+	'source' | 'time' | 'notes' | 'storage'
+>;
 
-	// Handle source transformation
-	if (result.source?.name) {
-		// Name exists - keep source but clean up url (empty string -> undefined)
+/** Leaves out each key whose value is empty, so an empty field isn't stored. */
+const withoutEmpty = <T extends Record<string, string | undefined>>(
+	fields: T,
+): Partial<T> =>
+	Object.fromEntries(
+		Object.entries(fields).filter(([, value]) => value),
+	) as Partial<T>;
+
+/**
+ * The form starts its optional fields at ''. This leaves each empty one out,
+ * so the result has the stored shape of those fields.
+ */
+export const transformRecipeForm = <T extends RecipeFormData>({
+	source,
+	time,
+	notes,
+	storage,
+	...rest
+}: T): Omit<T, keyof StoredOptionalFields> & StoredOptionalFields => {
+	const result: Omit<T, keyof StoredOptionalFields> & StoredOptionalFields =
+		rest;
+
+	// A source without a name is no source, even with a url.
+	if (source?.name)
 		result.source = {
-			name: result.source.name,
-			url: result.source.url || undefined,
+			name: source.name,
+			...(source.url && { url: source.url }),
 		};
-	} else if (result.source) {
-		// Source exists but name is empty - remove source entirely
-		delete (result as { source?: unknown }).source;
-	}
 
-	// Handle time transformation
-	if (result.time) {
-		const hasNonEmptyTime = Object.values(result.time).some(Boolean);
-		if (hasNonEmptyTime) {
-			// Some fields have values - convert empty strings to undefined
-			result.time = {
-				prep: result.time.prep || undefined,
-				cook: result.time.cook || undefined,
-				total: result.time.total || undefined,
-				actual: result.time.actual || undefined,
-			};
-		} else {
-			// All fields are empty - remove time entirely
-			delete (result as { time?: unknown }).time;
-		}
-	}
+	const filledTime = time && withoutEmpty(time);
+	if (filledTime && Object.keys(filledTime).length > 0)
+		result.time = filledTime;
 
-	// The form starts notes and storage at '', which would be stored as empty strings.
-	if (!result.notes) delete result.notes;
-	if (!result.storage) delete result.storage;
+	if (notes) result.notes = notes;
+	if (storage) result.storage = storage;
 
 	return result;
 };

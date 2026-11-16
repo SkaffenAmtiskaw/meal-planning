@@ -13,8 +13,9 @@ import { homedir } from 'node:os';
 import path from 'node:path';
 import { parseArgs } from 'node:util';
 
-import { MongoClient } from 'mongodb';
 import { MongoMemoryServer } from 'mongodb-memory-server';
+
+import { openDatabase } from '../src/_models/database/openDatabase.ts';
 
 const RUN_EVERY_DAYS = 90;
 // A daily backup is at most a day old, so an older newest backup means the backups have stopped, such as when GitHub
@@ -160,9 +161,8 @@ async function checkCollections(
 	}
 
 	const problems: string[] = [];
-	const client = await MongoClient.connect(uri);
+	const { database, close } = await openDatabase(uri, DATABASE);
 	try {
-		const database = client.db(DATABASE);
 		for (const collection of inDump) {
 			const result = restored.get(collection);
 			if (!result) {
@@ -185,7 +185,7 @@ async function checkCollections(
 			}
 		}
 	} finally {
-		await client.close();
+		await close();
 	}
 	return problems;
 }

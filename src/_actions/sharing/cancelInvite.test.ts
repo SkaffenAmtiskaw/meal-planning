@@ -1,9 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-import { Types } from 'mongoose';
-
 import { checkAuth } from '@/_actions/auth/checkAuth';
-import { PendingInvite } from '@/_models/sharing';
+import { pendingInvites } from '@/_models/database/pendingInvites';
 import { reportError } from '@/_utils/reportError';
 
 import { type CancelInviteInput, cancelInvite } from './cancelInvite';
@@ -14,12 +12,8 @@ vi.mock(
 );
 
 vi.mock(
-	'@/_models/sharing',
-	async () => await import('#mocks/@/_models/sharing'),
-);
-vi.mock(
-	'@/_utils/serialize',
-	async () => await import('#mocks/@/_utils/serialize'),
+	'@/_models/database/pendingInvites',
+	async () => await import('#mocks/@/_models/database/pendingInvites'),
 );
 vi.mock(
 	'@/_utils/reportError',
@@ -49,9 +43,9 @@ describe('cancelInvite', () => {
 			success: false,
 			error: 'Unauthorized',
 		});
-		expect(checkAuth).toHaveBeenCalledWith(expect.any(Types.ObjectId), 'admin');
-		expect(PendingInvite.findOne).not.toHaveBeenCalled();
-		expect(PendingInvite.deleteOne).not.toHaveBeenCalled();
+		expect(checkAuth).toHaveBeenCalledWith(plannerId, 'admin');
+		expect(pendingInvites.findOne).not.toHaveBeenCalled();
+		expect(pendingInvites.deleteOne).not.toHaveBeenCalled();
 	});
 
 	it('returns error when caller lacks admin access', async () => {
@@ -65,8 +59,8 @@ describe('cancelInvite', () => {
 			success: false,
 			error: 'Unauthorized',
 		});
-		expect(PendingInvite.findOne).not.toHaveBeenCalled();
-		expect(PendingInvite.deleteOne).not.toHaveBeenCalled();
+		expect(pendingInvites.findOne).not.toHaveBeenCalled();
+		expect(pendingInvites.deleteOne).not.toHaveBeenCalled();
 	});
 
 	it('returns error when checkAuth returns error type', async () => {
@@ -81,8 +75,8 @@ describe('cancelInvite', () => {
 			success: false,
 			error: 'Unauthorized',
 		});
-		expect(PendingInvite.findOne).not.toHaveBeenCalled();
-		expect(PendingInvite.deleteOne).not.toHaveBeenCalled();
+		expect(pendingInvites.findOne).not.toHaveBeenCalled();
+		expect(pendingInvites.deleteOne).not.toHaveBeenCalled();
 	});
 
 	it('returns error when inviteId is invalid', async () => {
@@ -95,12 +89,12 @@ describe('cancelInvite', () => {
 			success: false,
 			error: 'Invalid invite ID',
 		});
-		expect(PendingInvite.findOne).not.toHaveBeenCalled();
-		expect(PendingInvite.deleteOne).not.toHaveBeenCalled();
+		expect(pendingInvites.findOne).not.toHaveBeenCalled();
+		expect(pendingInvites.deleteOne).not.toHaveBeenCalled();
 	});
 
 	it('returns error when invite not found for this planner', async () => {
-		vi.mocked(PendingInvite.findOne).mockResolvedValue(null);
+		vi.mocked(pendingInvites.findOne).mockResolvedValue(null);
 
 		const result = await cancelInvite(input);
 
@@ -108,18 +102,18 @@ describe('cancelInvite', () => {
 			success: false,
 			error: 'Invite not found',
 		});
-		expect(PendingInvite.findOne).toHaveBeenCalledWith({
-			_id: expect.any(Types.ObjectId),
-			planner: expect.any(Types.ObjectId),
+		expect(pendingInvites.findOne).toHaveBeenCalledWith({
+			_id: inviteId,
+			planner: plannerId,
 		});
-		expect(PendingInvite.deleteOne).not.toHaveBeenCalled();
+		expect(pendingInvites.deleteOne).not.toHaveBeenCalled();
 	});
 
 	it('successfully deletes the pending invite', async () => {
-		vi.mocked(PendingInvite.findOne).mockResolvedValue({
+		vi.mocked(pendingInvites.findOne).mockResolvedValue({
 			_id: inviteId,
 		} as never);
-		vi.mocked(PendingInvite.deleteOne).mockResolvedValue({
+		vi.mocked(pendingInvites.deleteOne).mockResolvedValue({
 			deletedCount: 1,
 		} as never);
 
@@ -128,12 +122,12 @@ describe('cancelInvite', () => {
 		expect(result).toEqual({
 			success: true,
 		});
-		expect(PendingInvite.findOne).toHaveBeenCalledWith({
-			_id: expect.any(Types.ObjectId),
-			planner: expect.any(Types.ObjectId),
+		expect(pendingInvites.findOne).toHaveBeenCalledWith({
+			_id: inviteId,
+			planner: plannerId,
 		});
-		expect(PendingInvite.deleteOne).toHaveBeenCalledWith({
-			_id: expect.any(Types.ObjectId),
+		expect(pendingInvites.deleteOne).toHaveBeenCalledWith({
+			_id: inviteId,
 		});
 	});
 
@@ -147,22 +141,22 @@ describe('cancelInvite', () => {
 
 	it('returns error and reports on database failure during find', async () => {
 		const error = new Error('Database connection failed');
-		vi.mocked(PendingInvite.findOne).mockRejectedValue(error);
+		vi.mocked(pendingInvites.findOne).mockRejectedValue(error);
 
 		const result = await cancelInvite(input);
 
 		expect(result.success).toBe(false);
 		expect(result.error).toContain('Database connection failed');
-		expect(PendingInvite.deleteOne).not.toHaveBeenCalled();
+		expect(pendingInvites.deleteOne).not.toHaveBeenCalled();
 		expect(reportError).toHaveBeenCalledWith(error);
 	});
 
 	it('returns error and reports on database failure during delete', async () => {
 		const error = new Error('Delete operation failed');
-		vi.mocked(PendingInvite.findOne).mockResolvedValue({
+		vi.mocked(pendingInvites.findOne).mockResolvedValue({
 			_id: inviteId,
 		} as never);
-		vi.mocked(PendingInvite.deleteOne).mockRejectedValue(error);
+		vi.mocked(pendingInvites.deleteOne).mockRejectedValue(error);
 
 		const result = await cancelInvite(input);
 
@@ -172,7 +166,7 @@ describe('cancelInvite', () => {
 	});
 
 	it('returns generic error when non-Error is thrown', async () => {
-		vi.mocked(PendingInvite.findOne).mockRejectedValue('String error');
+		vi.mocked(pendingInvites.findOne).mockRejectedValue('String error');
 
 		const result = await cancelInvite(input);
 

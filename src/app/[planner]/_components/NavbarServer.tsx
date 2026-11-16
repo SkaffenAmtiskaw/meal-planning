@@ -12,8 +12,8 @@ export const NavbarServer = async ({ id }: Props) => {
 		<Navbar
 			id={id}
 			planners={planners.map(({ planner }) => ({
-				id: String(planner._id),
-				name: planner.name ?? '',
+				id: planner._id,
+				name: planner.name,
 			}))}
 		/>
 	);

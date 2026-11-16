@@ -1,16 +1,11 @@
 import { render } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-import { getPlannerClient } from '@/_actions/planner';
+import { getPlanner } from '@/_actions/planner';
 
 import CalendarPage from './page';
 
 import { CalendarView } from './_components/CalendarView/CalendarView';
-
-vi.mock('@/_utils/zObjectId', async () => {
-	const { z } = await import('zod');
-	return { zObjectId: z.string() };
-});
 
 vi.mock(
 	'@/_actions/planner',
@@ -51,17 +46,17 @@ describe('CalendarPage', () => {
 			},
 		];
 
-		vi.mocked(getPlannerClient).mockResolvedValueOnce({
+		vi.mocked(getPlanner).mockResolvedValueOnce({
 			_id: plannerId,
 			name: "Test User's Planner",
 			calendar,
 			saved,
 			tags: [],
-		} as unknown as Awaited<ReturnType<typeof getPlannerClient>>);
+		} as unknown as Awaited<ReturnType<typeof getPlanner>>);
 
 		render(await CalendarPage({ params, searchParams }));
 
-		expect(getPlannerClient).toHaveBeenCalledWith(plannerId);
+		expect(getPlanner).toHaveBeenCalledWith(plannerId);
 
 		expect(vi.mocked(CalendarView)).toHaveBeenCalledWith(
 			expect.objectContaining({

@@ -9,29 +9,31 @@ import {
 } from 'vitest';
 
 import { getUser } from '@/_actions/user';
-import { PendingInvite } from '@/_models/sharing';
-import { User } from '@/_models/user';
+import { pendingInvites } from '@/_models/database/pendingInvites';
+import { users } from '@/_models/database/users';
 import { reportError } from '@/_utils/reportError';
 
 import { acceptInvite } from './acceptInvite';
 
 vi.mock('@/_actions/user', async () => await import('#mocks/@/_actions/user'));
 vi.mock(
+	'@/_models/database/newId',
+	async () => await import('#mocks/@/_models/database/newId'),
+);
+vi.mock(
 	'@/_utils/reportError',
 	async () => await import('#mocks/@/_utils/reportError'),
 );
 
-vi.mock('@/_models/user', () => ({
-	User: {
-		updateOne: vi.fn(),
-	},
-}));
+vi.mock(
+	'@/_models/database/users',
+	async () => await import('#mocks/@/_models/database/users'),
+);
+vi.mock(
+	'@/_models/database/pendingInvites',
+	async () => await import('#mocks/@/_models/database/pendingInvites'),
+);
 
-vi.mock('@/_models/sharing', () => ({
-	PendingInvite: {
-		findOne: vi.fn(),
-	},
-}));
 describe('acceptInvite', () => {
 	const token = 'valid-token-123';
 	const userId = 'user-id';
@@ -57,15 +59,14 @@ describe('acceptInvite', () => {
 	const createInvite = (overrides: Record<string, unknown> = {}) => ({
 		_id: 'invite-id',
 		email: userEmail,
-		planner: { toString: () => plannerId },
+		planner: plannerId,
 		accessLevel: 'write',
 		token,
 		expiresAt: futureDate,
-		deleteOne: vi.fn(),
 		...overrides,
 	});
 
-	it('should accept a valid invite and add user to planner', async () => {
+	it('should accept a valid invite and add user to planner with a new membership id', async () => {
 		vi.mocked(getUser).mockResolvedValue({
 			_id: userId,
 			email: userEmail,
@@ -74,25 +75,28 @@ describe('acceptInvite', () => {
 		} as never);
 
 		const invite = createInvite();
-		vi.mocked(PendingInvite.findOne).mockResolvedValue(invite as never);
+		vi.mocked(pendingInvites.findOne).mockResolvedValue(invite as never);
 
 		const result = await acceptInvite({ token });
 
 		expect(result).toEqual({ ok: true, data: { plannerId } });
 		expect(getUser).toHaveBeenCalled();
-		expect(PendingInvite.findOne).toHaveBeenCalledWith({ token });
-		expect(User.updateOne).toHaveBeenCalledWith(
+		expect(pendingInvites.findOne).toHaveBeenCalledWith({ token });
+		expect(users.updateOne).toHaveBeenCalledWith(
 			{ _id: userId },
 			{
 				$push: {
 					planners: {
+						_id: 'new-id',
 						planner: plannerId,
 						accessLevel: 'write',
 					},
 				},
 			},
 		);
-		expect(invite.deleteOne).toHaveBeenCalled();
+		expect(pendingInvites.deleteOne).toHaveBeenCalledWith({
+			_id: 'invite-id',
+		});
 	});
 
 	it('should return error when user is not authenticated', async () => {
@@ -101,11 +105,11 @@ describe('acceptInvite', () => {
 		const result = await acceptInvite({ token });
 
 		expect(result).toEqual({ ok: false, error: 'Unauthorized' });
-		expect(PendingInvite.findOne).not.toHaveBeenCalled();
+		expect(pendingInvites.findOne).not.toHaveBeenCalled();
 	});
 
 	it('should return error when invite token is invalid', async () => {
-		vi.mocked(PendingInvite.findOne).mockResolvedValue(null);
+		vi.mocked(pendingInvites.findOne).mockResolvedValue(null);
 
 		const result = await acceptInvite({ token });
 
@@ -114,18 +118,20 @@ describe('acceptInvite', () => {
 
 	it('should return error when invite has expired', async () => {
 		const invite = createInvite({ expiresAt: pastDate });
-		vi.mocked(PendingInvite.findOne).mockResolvedValue(invite as never);
+		vi.mocked(pendingInvites.findOne).mockResolvedValue(invite as never);
 
 		const result = await acceptInvite({ token });
 
 		expect(result).toEqual({ ok: false, error: 'Invite has expired' });
-		expect(invite.deleteOne).toHaveBeenCalled();
-		expect(User.updateOne).not.toHaveBeenCalled();
+		expect(pendingInvites.deleteOne).toHaveBeenCalledWith({
+			_id: 'invite-id',
+		});
+		expect(users.updateOne).not.toHaveBeenCalled();
 	});
 
 	it('should return error when invite email does not match user email', async () => {
 		const invite = createInvite({ email: 'different@example.com' });
-		vi.mocked(PendingInvite.findOne).mockResolvedValue(invite as never);
+		vi.mocked(pendingInvites.findOne).mockResolvedValue(invite as never);
 
 		const result = await acceptInvite({ token });
 
@@ -133,18 +139,20 @@ describe('acceptInvite', () => {
 			ok: false,
 			error: 'This invite is for a different email address',
 		});
-		expect(User.updateOne).not.toHaveBeenCalled();
+		expect(users.updateOne).not.toHaveBeenCalled();
 	});
 
 	it('should succeed idempotently when user is already a member', async () => {
 		const invite = createInvite({ accessLevel: 'read' });
-		vi.mocked(PendingInvite.findOne).mockResolvedValue(invite as never);
+		vi.mocked(pendingInvites.findOne).mockResolvedValue(invite as never);
 
 		const result = await acceptInvite({ token });
 
 		expect(result).toEqual({ ok: true, data: { plannerId } });
-		expect(User.updateOne).not.toHaveBeenCalled();
-		expect(invite.deleteOne).toHaveBeenCalled();
+		expect(users.updateOne).not.toHaveBeenCalled();
+		expect(pendingInvites.deleteOne).toHaveBeenCalledWith({
+			_id: 'invite-id',
+		});
 	});
 
 	it('should return the session error without reporting when there is no valid session', async () => {
@@ -158,7 +166,7 @@ describe('acceptInvite', () => {
 
 	it('should handle database errors gracefully, and report them', async () => {
 		const error = new Error('Database connection failed');
-		vi.mocked(PendingInvite.findOne).mockRejectedValue(error);
+		vi.mocked(pendingInvites.findOne).mockRejectedValue(error);
 
 		const result = await acceptInvite({ token });
 
@@ -170,7 +178,7 @@ describe('acceptInvite', () => {
 	});
 
 	it('should handle non-Error exceptions gracefully', async () => {
-		vi.mocked(PendingInvite.findOne).mockRejectedValue('String error');
+		vi.mocked(pendingInvites.findOne).mockRejectedValue('String error');
 
 		const result = await acceptInvite({ token });
 

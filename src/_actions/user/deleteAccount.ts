@@ -2,10 +2,11 @@
 
 import { headers } from 'next/headers';
 
-import { auth, mongoClient } from '@/_auth';
+import { auth } from '@/_auth';
 import { sendAccountDeletionEmail } from '@/_auth/emails';
-import { Planner } from '@/_models/planner';
-import { User } from '@/_models/user';
+import { deleteAuthUser } from '@/_auth/users';
+import { planners } from '@/_models/database/planners';
+import { users } from '@/_models/database/users';
 import type { ActionResult } from '@/_utils/actionResult';
 
 export const deleteAccount = async (): Promise<ActionResult> => {
@@ -14,28 +15,22 @@ export const deleteAccount = async (): Promise<ActionResult> => {
 
 	const { email } = session.user;
 
-	const user = await User.findOne({ email }).exec();
+	const user = await users.findOne({ email });
 	if (!user) return { ok: false, error: 'User not found.' };
 
-	for (const plannerId of user.planners) {
-		const ownerCount = await User.countDocuments({
-			planners: plannerId,
-		}).exec();
-		if (ownerCount === 1) {
-			await Planner.deleteOne({ _id: plannerId }).exec();
+	// A planner the user was the only member of goes with them; a planner shared with others stays.
+	for (const { planner: plannerId } of user.planners) {
+		const memberCount = await users.countDocuments({
+			'planners.planner': plannerId,
+		});
+		if (memberCount === 1) {
+			await planners.deleteOne({ _id: plannerId });
 		}
 	}
 
-	await User.deleteOne({ email }).exec();
+	await users.deleteOne({ email });
 
-	const db = mongoClient.db();
-	const baUser = await db.collection('user').findOne({ email });
-	if (baUser) {
-		await db.collection('account').deleteMany({ userId: baUser._id });
-		await db.collection('session').deleteMany({ userId: baUser._id });
-		await db.collection('verification').deleteMany({ userId: baUser._id });
-		await db.collection('user').deleteOne({ _id: baUser._id });
-	}
+	await deleteAuthUser(auth, email);
 
 	await sendAccountDeletionEmail({ email });
 

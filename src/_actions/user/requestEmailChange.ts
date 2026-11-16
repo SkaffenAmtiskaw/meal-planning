@@ -6,9 +6,10 @@ import { headers } from 'next/headers';
 
 import { z } from 'zod';
 
-import { auth, mongoClient } from '@/_auth';
+import { auth } from '@/_auth';
 import { sendEmailChangeEmail } from '@/_auth/emails';
-import { User } from '@/_models/user';
+import { findAuthUser } from '@/_auth/users';
+import { users } from '@/_models/database/users';
 import type { ActionResult } from '@/_utils/actionResult';
 import { env } from '@/env';
 
@@ -32,12 +33,10 @@ export const requestEmailChange = async (
 			error: 'New email must be different from your current email.',
 		};
 
-	const db = mongoClient.db();
-	const existing = await db.collection('user').findOne({ email: newEmail });
-	if (existing)
+	if (await findAuthUser(auth, newEmail))
 		return { ok: false, error: 'An account with that email already exists.' };
 
-	const user = await User.findOne({ email: currentEmail }).exec();
+	const user = await users.findOne({ email: currentEmail });
 	if (!user) return { ok: false, error: 'User not found.' };
 
 	const hadPreviousRequest = !!user.pendingEmailChange;
@@ -45,8 +44,10 @@ export const requestEmailChange = async (
 	const token = randomBytes(32).toString('hex');
 	const expiresAt = new Date(Date.now() + EXPIRY_MS);
 
-	user.pendingEmailChange = { email: newEmail, token, expiresAt };
-	await user.save();
+	await users.updateOne(
+		{ email: currentEmail },
+		{ $set: { pendingEmailChange: { email: newEmail, token, expiresAt } } },
+	);
 
 	const url = `${env.BETTER_AUTH_URL}/verify-email-change?token=${token}`;
 	await sendEmailChangeEmail({ newEmail, url });

@@ -1,10 +1,10 @@
 'use server';
 
-import { hashPassword } from 'better-auth/crypto';
 import { z } from 'zod';
 
-import { mongoClient } from '@/_auth';
-import { User } from '@/_models/user';
+import { auth } from '@/_auth';
+import { addAuthUserPassword, changeAuthUserEmail } from '@/_auth/users';
+import { users } from '@/_models/database/users';
 import type { ActionResult } from '@/_utils/actionResult';
 
 export const verifyEmailChangeAndSetPassword = async (
@@ -15,7 +15,7 @@ export const verifyEmailChangeAndSetPassword = async (
 	if (!parsed.success)
 		return { ok: false, error: 'Password must be at least 8 characters.' };
 
-	const user = await User.findOne({ 'pendingEmailChange.token': token }).exec();
+	const user = await users.findOne({ 'pendingEmailChange.token': token });
 	const pendingChange = user?.pendingEmailChange;
 
 	if (
@@ -27,27 +27,13 @@ export const verifyEmailChangeAndSetPassword = async (
 
 	const currentEmail = user.email;
 	const newEmail = pendingChange.email;
-	const db = mongoClient.db();
 
-	const baUser = await db.collection('user').findOne({ email: currentEmail });
-	if (!baUser) return { ok: false, error: 'User not found.' };
+	if (!(await addAuthUserPassword(auth, currentEmail, password)))
+		return { ok: false, error: 'User not found.' };
 
-	const hash = await hashPassword(password);
+	await changeAuthUserEmail(auth, currentEmail, newEmail);
 
-	await db.collection('account').insertOne({
-		userId: baUser._id,
-		providerId: 'credential',
-		accountId: String(baUser._id),
-		password: hash,
-		createdAt: new Date(),
-		updatedAt: new Date(),
-	});
-
-	await db
-		.collection('user')
-		.updateOne({ _id: baUser._id }, { $set: { email: newEmail } });
-
-	await User.updateOne(
+	await users.updateOne(
 		{ email: currentEmail },
 		{ $set: { email: newEmail }, $unset: { pendingEmailChange: '' } },
 	);

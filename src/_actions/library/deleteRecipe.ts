@@ -1,12 +1,10 @@
 'use server';
 
-import { Types } from 'mongoose';
 import { z } from 'zod';
 
 import { checkAuth } from '@/_actions/auth/checkAuth';
-import { Planner } from '@/_models/planner';
+import { planners } from '@/_models/database/planners';
 import type { ActionResult } from '@/_utils/actionResult';
-import { matchesId } from '@/_utils/matchesId';
 
 const zDeleteRecipeSchema = z.object({
 	plannerId: z.string(),
@@ -16,17 +14,15 @@ const zDeleteRecipeSchema = z.object({
 export const deleteRecipe = async (data: unknown): Promise<ActionResult> => {
 	const { plannerId, recipeId } = zDeleteRecipeSchema.parse(data);
 
-	const auth = await checkAuth(new Types.ObjectId(plannerId), 'write');
+	const auth = await checkAuth(plannerId, 'write');
 	if (auth.type !== 'authorized') return { ok: false, error: 'Unauthorized' };
 
-	const planner = await Planner.findById(plannerId);
-	if (!planner) return { ok: false, error: 'Planner not found' };
-
-	const index = planner.saved.findIndex(matchesId(recipeId));
-	if (index === -1) return { ok: false, error: 'Recipe not found' };
-
-	planner.saved.splice(index, 1);
-	await planner.save();
+	const result = await planners.updateOne(
+		{ _id: plannerId, 'saved._id': recipeId },
+		{ $pull: { saved: { _id: recipeId } } },
+	);
+	if (result.matchedCount === 0)
+		return { ok: false, error: 'Recipe not found' };
 
 	return { ok: true, data: undefined };
 };
