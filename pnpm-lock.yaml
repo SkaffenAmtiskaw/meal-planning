@@ -66,8 +66,8 @@ importers:
         specifier: 1.450.0
         version: 1.450.0(@types/react@19.3.0)(react@19.3.1)
       posthog-node:
-        specifier: 5.64.0
-        version: 5.64.0(@opentelemetry/api@1.9.1)
+        specifier: 5.74.0
+        version: 5.74.0(@opentelemetry/api@1.9.1)
       preact:
         specifier: 10.29.0
         version: 10.29.0
@@ -991,9 +991,6 @@ packages:
 
   '@posthog/core@1.64.1':
     resolution: {integrity: sha512-2ziryOLWTxftHrTLhGYQzLHDpPughaRRi/+L1vhg4cQFHJfgTevMzAz21R1zR7MKFDkyJ9lCJD/K2jxIkGbnfg==}
-
-  '@posthog/core@1.65.0':
-    resolution: {integrity: sha512-eXbEpErslRjNLbOWx2GdBiYmJ70Yzq2JPuuQaFGJHNv//5DwbsVVF4R0yPCOIT1AqUrd4cW0faamrN8ijnPMTw==}
 
   '@posthog/core@1.68.0':
     resolution: {integrity: sha512-5kjPcLquzj47qBGn52+7RRXrJJvrTHaRKgxV9izYPFzoVFEftFqSXYZF/ug+yialxDU73dR9apyi+mSaAeaXPw==}
@@ -2467,14 +2464,17 @@ packages:
       react:
         optional: true
 
-  posthog-node@5.64.0:
-    resolution: {integrity: sha512-io0NI/qqWvpxxHUyIg9GeZrt092Q6jRwqFOC/+ir98AiDG3T+xNgNrfxtz85GVfVcVCLs1BT40WlHjipxJZv8Q==}
+  posthog-node@5.74.0:
+    resolution: {integrity: sha512-lAnGzPVobruQ7rZe45kzcXKZAcCK3J+1dMNS3WOOdx9mnM4ECRc2WRxBdS1ncBO/h/vDtHIEmcuIr/LUxxze5w==}
     engines: {node: ^20.20.0 || >=22.22.0}
     peerDependencies:
       '@opentelemetry/api': ^1.2.0
+      '@react-email/render': ^2.1.0
       rxjs: ^7.0.0
     peerDependenciesMeta:
       '@opentelemetry/api':
+        optional: true
+      '@react-email/render':
         optional: true
       rxjs:
         optional: true
@@ -3710,10 +3710,6 @@ snapshots:
     dependencies:
       '@posthog/types': 1.421.1
 
-  '@posthog/core@1.65.0':
-    dependencies:
-      '@posthog/types': 1.425.1
-
   '@posthog/core@1.68.0':
     dependencies:
       '@posthog/types': 1.425.1
@@ -3724,13 +3720,14 @@ snapshots:
       '@posthog/react': 1.11.3(@types/react@19.3.0)(posthog-js@1.450.0(@types/react@19.3.0)(react@19.3.1))(react@19.3.1)
       next: 16.4.6(@babel/core@7.29.7)(@opentelemetry/api@1.9.1)(@playwright/test@1.65.1)(@types/node@24.3.3)(react-dom@19.3.1(react@19.3.1))(react@19.3.1)(sass@1.106.1)
       posthog-js: 1.450.0(@types/react@19.3.0)(react@19.3.1)
-      posthog-node: 5.64.0(@opentelemetry/api@1.9.1)
+      posthog-node: 5.74.0(@opentelemetry/api@1.9.1)
       react: 19.3.1
       react-dom: 19.3.1(react@19.3.1)
       server-only: 0.0.1
     optionalDependencies:
       '@opentelemetry/api': 1.9.1
     transitivePeerDependencies:
+      - '@react-email/render'
       - '@types/react'
       - preact-render-to-string
       - rxjs
@@ -5030,9 +5027,9 @@ snapshots:
     transitivePeerDependencies:
       - preact-render-to-string
 
-  posthog-node@5.64.0(@opentelemetry/api@1.9.1):
+  posthog-node@5.74.0(@opentelemetry/api@1.9.1):
     dependencies:
-      '@posthog/core': 1.65.0
+      '@posthog/core': 1.68.0
     optionalDependencies:
       '@opentelemetry/api': 1.9.1
 
