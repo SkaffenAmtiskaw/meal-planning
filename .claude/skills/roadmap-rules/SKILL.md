@@ -32,7 +32,7 @@ How goals order the work, what each section and kind of note holds, and the rule
 	- `📌 <reason>` - the user scheduled it outside the goals. Only the user adds it. Where the line sits says which release it joins:
 		- **In Now or Next:** it's in this release, so it may be built now.
 		- **In Later:** it joins the next release. When a goal next starts building, `/roadmap` moves it into Next, and it keeps its 📌.
-	- `🔁` - joined this release without belonging to a goal: a bug, or a kicked-off sweep or collecting workflow note. `/roadmap` adds it when the line moves into Next.
+	- `🔁` - joined this release without belonging to a goal: a bug, a kicked-off sweep or collecting workflow note, or a `/tooling` change. `/roadmap` adds it when the line moves into Next.
 
 	A Now, Next or Planning line without its marker is out of place. Raise it with the user.
 - **Hubs** hold shared design, not priority. A hub has a line only while it has a next step of its own, such as `/brainstorm`, `/decide` or `/close`. Once its `^status` line says `Next: its child stories`, it has none.
