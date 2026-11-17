@@ -88,7 +88,9 @@ The commands that need explaining:
   - **If it's a throwaway that will never be merged:** commit and push freely, since nothing on it reaches the app.
 - **Changes you didn't make:** the user often runs several sessions at once and edits notes by hand. What you do depends on when you find one:
   - **When you commit:** if it doesn't look like another session's work, ask about it.
-  - **When you need to edit a note that has one:** don't edit the note. Tell the user what edit it needed.
+  - **When you need to edit a note that has one:** what you do depends on whether your edit overlaps or conflicts with the change:
+    - **If it leaves the change's lines as they are and doesn't undo what it did,** such as an edit to another section or to the line next to them: make it. An edit made from the note's current text keeps the other change, and Obsidian Git commits both together.
+    - **If it would change, move or remove those lines, rewrite the whole note, or undo what the change did, such as by writing a link under the name the change replaced:** don't make it, because whoever made the change may still be working on it. Tell the user what edit the note needed.
   - **When you're about to delete a file that has one, or an untracked file that isn't yours:** ask first, because git can't bring it back.
 - **Checks:** if the user hasn't asked you to, don't edit the config that sets the repo's checks, such as `biome.jsonc` or `lefthook.yml`, or add a comment that switches off a check. Getting past one error that way loosens the check or hides the error. If they ask for an ignore comment, put it on that one line only.
 - **Memory:** a project rule lives in a checked-in file, because memory exists only on the user's machine and other agents never see it. Memory holds how to work with the user and how outside services behave. Once a rule is checked in, delete the memory that carried it.
