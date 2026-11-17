@@ -28,7 +28,7 @@ Read the release's range, `git log --first-parent origin/main..origin/develop`. 
 
 Go through the goal's Done When with the user one item at a time. For each, show what covered it, such as the stories in the range that built it, and ask whether it's met. If nothing covers an item, or the user says it isn't met, it's a gap. Go on through the rest, so every gap is found in one run.
 
-If there's any gap, tell the user to run `/roadmap <goal>` in a new session, naming each gap, and stop.
+If there's any gap, tell the user to run `/shape-goal <goal>` in a new session, naming each gap, and stop.
 
 ## 3. Close Out the Goal
 The steps, in order:
@@ -37,7 +37,7 @@ The steps, in order:
 3. **Its references:** run `sh scripts/note-refs.sh "<goal>"`. Leave out the goal's line under Goals, since item 4 below removes it. The other matches, by kind:
    - **In the vault:** if an open story relies on content only the goal note holds, copy that content into the story's note first. Then reword or remove the link, as the `deleting-a-note` skill describes in step 3.
    - **Outside the vault,** such as a doc or a skill: add it to the out-of-scope list.
-4. **The Roadmap:** remove the goal's line under Goals. Leave the planning goal's marker as it is, because `/roadmap` promotes it once the release PR merges.
+4. **The Roadmap:** remove the goal's line under Goals. End the planning goal's line with ` · Next: /roadmap once the release PR merges`, so the Roadmap shows what starts it building. Leave its `- planning` marker as it is, because `/roadmap` promotes it.
 5. **The out-of-scope list:** triage and route it, as the `triaging-out-of-scope-work` skill describes.
 6. **The note:** delete the goal note.
 7. **Unused files:** delete the files nothing references anymore, as the `deleting-a-note` skill describes in step 6.
