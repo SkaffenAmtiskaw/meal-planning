@@ -24,7 +24,7 @@ A worktree session loads its skills and hooks from the main checkout. So a chang
 
 ## What Each Session Start Does
 At the start of every local session, the SessionStart hook runs four scripts, in order. Their messages appear in the session, and the agent passes on anything that needs you:
-1. **`sync-develop.sh`** fetches from GitHub, and in the main checkout fast-forwards `develop`.
+1. **`sync-develop.sh`** fetches from GitHub. In the main checkout it fast-forwards `develop`, then runs the release tasks on the `test` database (see `docs/release_tasks.md`, "The Dev Database").
 2. **`worktree-sweep.sh`** removes each worktree whose PR has merged, or that never got work of its own, with its local branch and database (see "Cleaning Up After a Merge").
 3. **`worktree-setup.sh`**, in a worktree, copies the main checkout's `.env.local` if the worktree has none, trusts its `mise.toml` and installs its dependencies, which also installs the pre-commit hook.
 4. **`worktree-slot.sh`**, in a worktree, gives it a slot if it has none, and prints the new slot's URLs and database.
