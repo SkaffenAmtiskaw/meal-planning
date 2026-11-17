@@ -8,7 +8,7 @@
 // that converts stored ids to strings, which leaves the app down until it has run, so this task runs straight after
 // the deploy too, before anyone uses the app. So deleting this task leaves no code to remove.
 // It selects only fields still in the old shape, so a second run changes nothing. See docs/release_tasks.md.
-// Usage: node scripts/release-tasks/storedDataCleanup.ts --to <connection string> [--db <database>]
+// Usage: node scripts/release-tasks/2026-11-15-storedDataCleanup.ts --to <connection string> [--db <database>]
 //          [--production | --dry-run | --check]
 //   --to           the server holding the database, as a connection string whose user can write to it
 //   --db           the database to change. Defaults to staging, production's database.
@@ -39,7 +39,7 @@ const dryRun = values['dry-run'];
 
 if (!to) {
 	fail(
-		'Usage: node scripts/release-tasks/storedDataCleanup.ts --to <connection string> [--db <database>] [--production | --dry-run | --check]',
+		'Usage: node scripts/release-tasks/2026-11-15-storedDataCleanup.ts --to <connection string> [--db <database>] [--production | --dry-run | --check]',
 	);
 }
 if (production && databaseName !== PRODUCTION_DB) {
