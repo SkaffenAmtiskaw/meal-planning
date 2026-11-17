@@ -1,4 +1,5 @@
 // Release task for Stored Data Cleanup: moves the stored planners and users to the clean shape. It:
+// - unsets the `_id` of every calendar day that has one,
 // - gives an `_id` to every calendar meal and dish that has none,
 // - unsets every `null` meal `description`, dish `note` and dish `source`,
 // - unsets every `""` saved-item `notes` and recipe `storage`,
@@ -71,6 +72,7 @@ function fail(message: string): never {
 
 async function migrate(db: Db, dryRun: boolean) {
 	const counts = {
+		'days to unset an _id from': 0,
 		'meals to give an _id': 0,
 		'dishes to give an _id': 0,
 		'meal descriptions to unset (null)': 0,
@@ -90,6 +92,10 @@ async function migrate(db: Db, dryRun: boolean) {
 		const set: Document = {};
 		const unset: Document = {};
 		planner.calendar?.forEach((day: Document, d: number) => {
+			if (day._id !== undefined) {
+				unset[`calendar.${d}._id`] = '';
+				counts['days to unset an _id from']++;
+			}
 			day.meals?.forEach((meal: Document, m: number) => {
 				const mealPath = `calendar.${d}.meals.${m}`;
 				if (meal._id === undefined) {
