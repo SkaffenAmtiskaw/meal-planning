@@ -1,14 +1,16 @@
 #!/bin/sh
 # Keeps the main checkout's develop and its dev data current after PRs merge on
-# GitHub. Fetches origin in the folder it's given. In the main checkout, on
-# develop with no uncommitted changes, it also fast-forwards develop and runs
-# each release task in scripts/release-tasks/ on the `test` database, in
-# filename order, so the dev data has the shape develop's code reads (see
-# docs/release_tasks.md, "The Dev Database"). A task changes only data still in
-# the old shape, so after the first run, later runs change nothing. Quiet on
-# success. On failure it prints what went wrong to stdout,
-# where the SessionStart hook passes it to the session, and still exits 0, so
-# the session starts anyway.
+# GitHub. Fetches origin in the folder it's given, the main checkout or a
+# worktree. Then, if the main checkout is on develop with no uncommitted
+# changes, it fast-forwards develop there and runs each release task in
+# scripts/release-tasks/ on the `test` database, in filename order, so the dev
+# data has the shape develop's code reads (see docs/release_tasks.md, "The Dev
+# Database"). It does this from a worktree too, because worktree sessions load
+# their skills and hooks from the main checkout. A task changes only data still
+# in the old shape, so after the first run, later runs change nothing. Quiet on
+# success. On failure it prints what went wrong to stdout, where the
+# SessionStart hook passes it to the session, and still exits 0, so the
+# session starts anyway.
 # Usage: sh scripts/sync-develop.sh <checkout folder>
 
 [ "$CLAUDE_CODE_REMOTE" = "true" ] && exit 0
@@ -21,9 +23,9 @@ if ! out=$(git -C "$dir" fetch --quiet origin 2>&1); then
   exit 0
 fi
 
-git_dir=$(git -C "$dir" rev-parse --path-format=absolute --git-dir)
-common_dir=$(git -C "$dir" rev-parse --path-format=absolute --git-common-dir)
-[ "$git_dir" = "$common_dir" ] || exit 0
+# The main checkout is the folder that holds the .git directory every worktree
+# shares.
+dir=$(dirname "$(git -C "$dir" rev-parse --path-format=absolute --git-common-dir)")
 [ "$(git -C "$dir" branch --show-current)" = "develop" ] || exit 0
 [ -z "$(git -C "$dir" status --porcelain --untracked-files=no)" ] || exit 0
 
