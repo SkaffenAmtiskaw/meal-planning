@@ -6,8 +6,9 @@
 #   it changed. Older notes are brought up to spec when they're worked on, so
 #   unnamed ones aren't checked. The Roadmap gets no per-note checks, because it
 #   has no ^status line or Where It Stands and the whole-vault checks cover it.
-# - Whole vault: merge conflicts, broken links, blocked-by entries, Roadmap
-#   status embeds, and Now, Next and Planning markers.
+# - Whole vault: merge conflicts, broken links, blocked-by entries and Roadmap
+#   status embeds. On the Roadmap, also the markers on Now, Next and Planning
+#   lines, and that the Goals, Next and Planning lists are numbered in order.
 # Changes nothing. Exits 1 if it reports anything.
 # Usage: sh scripts/vault-lint.sh [note name or path ...]
 
@@ -173,6 +174,16 @@ awk '
     }
     if (!ok && section == "Planning") printf "%s:%d: a Planning line with no 🎯 link to the planning goal\n", FILENAME, NR
     else if (!ok) printf "%s:%d: a %s line with no 🎯 link to the building goal, 🚨, 🔥, 📌 or 🔁\n", FILENAME, NR, section
+  }' "$roadmap" >> "$report"
+
+# Goals, Next and Planning are numbered lists whose numbers run 1, 2, 3 in order.
+awk '
+  /^# / { section = substr($0, 3); prev = 0; next }
+  (section == "Goals" || section == "Next" || section == "Planning") && /^[0-9]+\. / {
+    num = $0; sub(/\..*/, "", num); num += 0
+    if (num != prev + 1 && prev == 0) printf "%s:%d: the %s list starts at %d, so it needs renumbering\n", FILENAME, NR, section, num
+    else if (num != prev + 1) printf "%s:%d: a %s line numbered %d follows %d, so the list needs renumbering\n", FILENAME, NR, section, num, prev
+    prev = num
   }' "$roadmap" >> "$report"
 
 if [ -s "$report" ]; then
