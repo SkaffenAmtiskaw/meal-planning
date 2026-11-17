@@ -52,7 +52,11 @@ Whether you, a subagent or a check found a problem, first make sure it's real: t
 Each problem that reaches the user costs them a decision, and a small one isn't worth it, now or in a later session.
 
 ## Out-of-Scope Work
-Keep a running list of anything that looks outside the story or step you're working on and matters, as "Problems You Find" describes, whether you, a subagent or the user found it. Also list anything that would add a piece or a question to a story that's already been through `/shape`. If the user gives feedback on how a skill, subagent or the workflow behaves, and this session isn't working on that same skill or subagent, put the feedback on the list too, even when it's also saved as a memory. Don't stop to deal with items as they come up, because they'd pull the session away from its work.
+Keep a running list of anything that looks outside the story or step you're working on and matters, as "Problems You Find" describes, whether you, a subagent or the user found it. Also list anything that would add a piece or a question to a story that's already been through `/shape`. Don't stop to deal with items as they come up, because they'd pull the session away from its work.
+
+If the user gives feedback on how a skill, subagent or the workflow behaves, and this session isn't working on that same skill or subagent, what you do depends on the feedback:
+- **If an agent did something it shouldn't have, or didn't do what it should,** in this session or another: offer `/debrief`, even if you've already put this case right. `/debrief` works out whether the cause could come back, and fixes it if so. Leave the feedback off the list, whether or not the user takes the offer, because the offer is where they decide whether to deal with it.
+- **Otherwise,** such as a capability they'd like added: put it on the list, even when it's also saved as a memory.
 
 Before you show the user the result they approve, triage the list, as the `triaging-out-of-scope-work` skill describes. Then route what's left, as that skill describes.
 
