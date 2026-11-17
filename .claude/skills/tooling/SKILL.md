@@ -39,6 +39,8 @@ Now shows the work in flight in a session, so the user can see it on the Roadmap
 - **A change from a description:** add a line to Now that names the change in one short sentence. End it with 🔁, because the change joins the release without belonging to a goal.
 
 ## 2. Settle the Change
+If the change is meant to fix how agents behave, and this session hasn't yet worked out with the user what caused the behavior, work that out first, as `diagnosing.md` in this skill's folder describes. A fix shaped before its cause is known tends to patch the one case that was reported. If the diagnosis settles on no change, undo what step 1 did in Now: remove the line you added, or move the note's line back. If the work came from an item, ask the user whether to remove it. Then stop.
+
 Settle with the user what the change is. If it adds or moves a rule, decide where it goes as the `rule-placement` skill describes. If it adds or renames a skill or agent, read `adding-a-skill-or-agent.md`.
 
 Then find everything the change reaches. Search the repo, including `.claude/note-conventions.md` and `.claude/note-templates/`, for the skill, agent, rule or term being changed, because each reference is part of this change. Step 5 handles the notes repo.
