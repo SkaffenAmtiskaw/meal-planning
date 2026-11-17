@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { getUser } from '@/_actions/user';
-import { PendingInvite } from '@/_models/sharing';
+import { pendingInvites } from '@/_models/database/pendingInvites';
 import { reportError } from '@/_utils/reportError';
 
 import { type DeclineInviteInput, declineInvite } from './declineInvite';
@@ -12,15 +12,9 @@ vi.mock(
 	async () => await import('#mocks/@/_utils/reportError'),
 );
 
-vi.mock('@/_models/sharing', () => ({
-	PendingInvite: {
-		findOne: vi.fn(),
-		deleteOne: vi.fn(),
-	},
-}));
 vi.mock(
-	'@/_utils/serialize',
-	async () => await import('#mocks/@/_utils/serialize'),
+	'@/_models/database/pendingInvites',
+	async () => await import('#mocks/@/_models/database/pendingInvites'),
 );
 
 describe('declineInvite', () => {
@@ -34,7 +28,7 @@ describe('declineInvite', () => {
 	});
 
 	it('declines and deletes a valid invite', async () => {
-		vi.mocked(PendingInvite.findOne).mockResolvedValueOnce({
+		vi.mocked(pendingInvites.findOne).mockResolvedValueOnce({
 			email: 'user@example.com',
 		} as never);
 
@@ -58,7 +52,7 @@ describe('declineInvite', () => {
 	});
 
 	it('returns error when invite not found', async () => {
-		vi.mocked(PendingInvite.findOne).mockResolvedValueOnce(null);
+		vi.mocked(pendingInvites.findOne).mockResolvedValueOnce(null);
 
 		const result = await declineInvite(input);
 
@@ -66,7 +60,7 @@ describe('declineInvite', () => {
 	});
 
 	it('returns error when invite email does not match user email', async () => {
-		vi.mocked(PendingInvite.findOne).mockResolvedValueOnce({
+		vi.mocked(pendingInvites.findOne).mockResolvedValueOnce({
 			email: 'different@example.com',
 		} as never);
 
@@ -86,7 +80,7 @@ describe('declineInvite', () => {
 
 	it('returns error and reports on database failure during find', async () => {
 		const error = new Error('Database connection failed');
-		vi.mocked(PendingInvite.findOne).mockRejectedValueOnce(error);
+		vi.mocked(pendingInvites.findOne).mockRejectedValueOnce(error);
 
 		const result = await declineInvite(input);
 
@@ -99,10 +93,10 @@ describe('declineInvite', () => {
 
 	it('returns error and reports on database failure during delete', async () => {
 		const error = new Error('Delete operation failed');
-		vi.mocked(PendingInvite.findOne).mockResolvedValueOnce({
+		vi.mocked(pendingInvites.findOne).mockResolvedValueOnce({
 			email: 'user@example.com',
 		} as never);
-		vi.mocked(PendingInvite.deleteOne).mockRejectedValueOnce(error);
+		vi.mocked(pendingInvites.deleteOne).mockRejectedValueOnce(error);
 
 		const result = await declineInvite(input);
 
@@ -114,7 +108,7 @@ describe('declineInvite', () => {
 	});
 
 	it('returns generic error when non-Error is thrown', async () => {
-		vi.mocked(PendingInvite.findOne).mockRejectedValueOnce('String error');
+		vi.mocked(pendingInvites.findOne).mockRejectedValueOnce('String error');
 
 		const result = await declineInvite(input);
 

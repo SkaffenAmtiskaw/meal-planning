@@ -2,10 +2,9 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { revalidatePath } from 'next/cache';
 
-import { Types } from 'mongoose';
-
 import { checkAuth } from '@/_actions/auth/checkAuth';
-import { Planner } from '@/_models/planner';
+import { newId } from '@/_models/database/newId';
+import { planners } from '@/_models/database/planners';
 
 import { updateRecipeTags } from './updateRecipeTags';
 
@@ -19,22 +18,19 @@ vi.mock('next/cache', async () => ({
 }));
 
 vi.mock(
-	'@/_models/planner',
-	async () => await import('#mocks/@/_models/planner'),
+	'@/_models/database/planners',
+	async () => await import('#mocks/@/_models/database/planners'),
 );
 
-const plannerId = new Types.ObjectId().toString();
-const recipeId = new Types.ObjectId().toString();
-const tagId = new Types.ObjectId().toString();
+const plannerId = newId();
+const recipeId = newId();
+const tagId = newId();
 
 const validData = { plannerId, recipeId, tags: [tagId] };
 
 describe('updateRecipeTags', () => {
 	beforeEach(() => {
 		vi.resetAllMocks();
-		vi.mocked(Planner.collection.updateOne).mockResolvedValue({
-			matchedCount: 1,
-		} as never);
 	});
 
 	describe('input validation', () => {
@@ -47,10 +43,7 @@ describe('updateRecipeTags', () => {
 		it('calls checkAuth with write access', async () => {
 			await updateRecipeTags(validData);
 
-			expect(checkAuth).toHaveBeenCalledWith(
-				expect.any(Types.ObjectId),
-				'write',
-			);
+			expect(checkAuth).toHaveBeenCalledWith(plannerId, 'write');
 		});
 
 		it('returns unauthorized when session is missing', async () => {
@@ -59,7 +52,7 @@ describe('updateRecipeTags', () => {
 			const result = await updateRecipeTags(validData);
 
 			expect(result).toEqual({ ok: false, error: 'Unauthorized' });
-			expect(Planner.collection.updateOne).not.toHaveBeenCalled();
+			expect(planners.updateOne).not.toHaveBeenCalled();
 		});
 
 		it('returns unauthorized when user does not own the planner', async () => {
@@ -73,7 +66,7 @@ describe('updateRecipeTags', () => {
 
 	describe('when recipe is not found', () => {
 		beforeEach(() => {
-			vi.mocked(Planner.collection.updateOne).mockResolvedValueOnce({
+			vi.mocked(planners.updateOne).mockResolvedValueOnce({
 				matchedCount: 0,
 			} as never);
 		});
@@ -92,25 +85,25 @@ describe('updateRecipeTags', () => {
 	});
 
 	describe('on success', () => {
-		it('updates the recipe tags as ObjectIds', async () => {
+		it('updates the recipe tags to the given ids', async () => {
 			await updateRecipeTags(validData);
 
-			expect(Planner.collection.updateOne).toHaveBeenCalledWith(
+			expect(planners.updateOne).toHaveBeenCalledWith(
 				expect.objectContaining({
-					_id: expect.any(Types.ObjectId),
-					'saved._id': expect.any(Types.ObjectId),
+					_id: plannerId,
+					'saved._id': recipeId,
 				}),
-				{ $set: { 'saved.$.tags': [expect.any(Types.ObjectId)] } },
+				{ $set: { 'saved.$.tags': [tagId] } },
 			);
 		});
 
 		it('updates the recipe tags to an empty array when tags is empty', async () => {
 			await updateRecipeTags({ plannerId, recipeId, tags: [] });
 
-			expect(Planner.collection.updateOne).toHaveBeenCalledWith(
+			expect(planners.updateOne).toHaveBeenCalledWith(
 				expect.objectContaining({
-					_id: expect.any(Types.ObjectId),
-					'saved._id': expect.any(Types.ObjectId),
+					_id: plannerId,
+					'saved._id': recipeId,
 				}),
 				{ $set: { 'saved.$.tags': [] } },
 			);

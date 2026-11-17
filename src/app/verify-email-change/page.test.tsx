@@ -3,11 +3,14 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { checkEmailStatus } from '@/_actions/auth';
 import { verifyEmailChange } from '@/_actions/user';
-import { User } from '@/_models/user';
+import { users } from '@/_models/database/users';
 
 import VerifyEmailChangePage from './page';
 
-vi.mock('@/_models/user', async () => await import('#mocks/@/_models/user'));
+vi.mock(
+	'@/_models/database/users',
+	async () => await import('#mocks/@/_models/database/users'),
+);
 
 vi.mock('@/_actions/auth', async () => await import('#mocks/@/_actions/auth'));
 
@@ -44,9 +47,7 @@ const makeMockUser = (overrides = {}) => ({
 });
 
 const givenUserFindOneReturns = (user: unknown) => {
-	vi.mocked(User.findOne).mockReturnValueOnce({
-		exec: vi.fn().mockResolvedValue(user),
-	} as never);
+	vi.mocked(users.findOne).mockResolvedValueOnce(user as never);
 };
 
 describe('VerifyEmailChangePage', () => {

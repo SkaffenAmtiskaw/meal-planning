@@ -52,7 +52,7 @@ test('the invite link opens sign-up for the planner', async ({
 test('signing up adds the user to the planner', async ({ context, page }) => {
 	const { inviteeEmail, planner } = await openInviteFromEmail(context, page);
 
-	await signUpFromInvite(page, planner._id.toString(), PASSWORD);
+	await signUpFromInvite(page, planner._id, PASSWORD);
 	await expect(page.getByRole('textbox', { name: 'Email' })).toBeVisible();
 
 	// Signing in through the request shares the page's cookies, so the session carries over to the next page.

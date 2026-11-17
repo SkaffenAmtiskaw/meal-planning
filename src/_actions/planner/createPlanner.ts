@@ -1,9 +1,9 @@
 'use server';
 
-import { Types } from 'mongoose';
-
 import { getUser } from '@/_actions/user';
-import { User } from '@/_models/user';
+import { newId } from '@/_models/database/newId';
+import { users } from '@/_models/database/users';
+import type { PlannerMembership } from '@/_models/user';
 import type { ActionResult } from '@/_utils/actionResult';
 import { catchify } from '@/_utils/catchify';
 import { isNoSessionError } from '@/_utils/noSessionError';
@@ -23,15 +23,12 @@ export const createPlanner = async (name: string): Promise<ActionResult> => {
 
 	const planner = await addPlanner(parsedName.data);
 
-	const update: Record<string, unknown> = {
-		$push: { planners: { planner: planner._id, accessLevel: 'owner' } },
+	const membership: PlannerMembership = {
+		_id: newId(),
+		planner: planner._id,
+		accessLevel: 'owner',
 	};
-
-	// getUser returns a serialized user, and a raw collection call doesn't cast its string _id.
-	await User.collection.updateOne(
-		{ _id: new Types.ObjectId(user._id) },
-		update,
-	);
+	await users.updateOne({ _id: user._id }, { $push: { planners: membership } });
 
 	return { ok: true, data: undefined };
 };

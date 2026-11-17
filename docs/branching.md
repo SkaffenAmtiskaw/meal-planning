@@ -24,7 +24,7 @@ A worktree session loads its skills and hooks from the main checkout. So a chang
 
 ## What Each Session Start Does
 At the start of every local session, the SessionStart hook runs four scripts, in order. Their messages appear in the session, and the agent passes on anything that needs you:
-1. **`sync-develop.sh`** fetches from GitHub, and in the main checkout fast-forwards `develop`.
+1. **`sync-develop.sh`** fetches from GitHub. In the main checkout it fast-forwards `develop`, then runs the release tasks on the `test` database (see `docs/release_tasks.md`, "The Dev Database").
 2. **`worktree-sweep.sh`** removes each worktree whose PR has merged, or that never got work of its own, with its local branch and database (see "Cleaning Up After a Merge").
 3. **`worktree-setup.sh`**, in a worktree, copies the main checkout's `.env.local` if the worktree has none, trusts its `mise.toml` and installs its dependencies, which also installs the pre-commit hook.
 4. **`worktree-slot.sh`**, in a worktree, gives it a slot if it has none, and prints the new slot's URLs and database.
@@ -78,8 +78,9 @@ A release ships one finished goal. While it's under way, the release freeze lets
 2. **Run `/finish-goal <goal>` in the main checkout.** You confirm which audits apply and each one's scope. It writes a story for each audit, marks the goal ` · releasing`, which starts the freeze, and puts up a **New session** card for each audit.
 3. **Start each audit's card.** `/audit-release` runs the audit and goes through its findings with you, and each finding you keep becomes a fix story. Run the two in-app audits (UX and accessibility) one after another, since they share the main checkout's server and database. Each fix goes through the story steps above.
 4. **Once the audits and fixes have closed,** the goal's line shows `Next: /ship-goal`.
-5. **Run `/ship-goal <goal>` in the main checkout.** It checks that nothing is left undone, goes through the goal's Done When with you, closes out the goal note and opens the PR from `develop` into `main`, named after the goal, without auto-merge.
-6. **Merge the PR,** which deploys, takes a backup of production's database (see `docs/backups.md`) and ends the freeze. Then run `/roadmap` in a new session, which makes the next goal the building goal.
+5. **Run `/ship-goal <goal>` in the main checkout.** It checks that nothing is left undone, goes through the goal's Done When with you, closes out the goal note and opens the PR from `develop` into `main`, named after the goal, without auto-merge. The PR's description lists the goal's After Deploy checks and the release's tasks, which are the one-off changes to production's data in `scripts/release-tasks/` (see `docs/release_tasks.md`). If a task runs before the merge, the session first has you take a backup by hand and walks you through that task.
+6. **Merge the PR,** which deploys, takes a backup of production's database (see `docs/backups.md`) and ends the freeze. If the release has tasks that run after the merge, the session waits for that backup and walks you through each one. Then it walks you through any After Deploy checks. Once the tasks have run, it puts up a **New session** card that deletes them, and the code that handled the data's old shape, through a PR.
+7. **Run `/roadmap` in a new session,** which makes the next goal the building goal.
 
 # Cleaning Up After a Merge
 At the next session start, the sweep removes each worktree whose PR has merged, with its local branch and its database, and prints a line for each. GitHub has already deleted the branch on GitHub at the merge.

@@ -6,14 +6,9 @@ vi.mock(
 	async () => await import('#mocks/@/_actions/auth/checkAuth'),
 );
 
-vi.mock('@/_models/sharing', () => ({
-	PendingInvite: {
-		find: vi.fn(),
-	},
-}));
 vi.mock(
-	'@/_utils/serialize',
-	async () => await import('#mocks/@/_utils/serialize'),
+	'@/_models/database/pendingInvites',
+	async () => await import('#mocks/@/_models/database/pendingInvites'),
 );
 vi.mock(
 	'@/_utils/reportError',
@@ -21,15 +16,20 @@ vi.mock(
 );
 
 import { checkAuth } from '@/_actions/auth/checkAuth';
-import { PendingInvite } from '@/_models/sharing';
+import { pendingInvites } from '@/_models/database/pendingInvites';
 import { reportError } from '@/_utils/reportError';
-import { serialize } from '@/_utils/serialize';
 
 import { getPendingInvites } from './getPendingInvites';
 
 const mockCheckAuth = vi.mocked(checkAuth);
-const mockPendingInviteFind = vi.mocked(PendingInvite.find);
-const mockSerialize = vi.mocked(serialize);
+const mockPendingInviteFind = vi.mocked(pendingInvites.find);
+
+// The find's cursor, sorted, resolves its documents through `toArray`
+const findReturning = (toArray: () => Promise<unknown>) => {
+	const sort = vi.fn(() => ({ toArray }));
+	mockPendingInviteFind.mockReturnValue({ sort } as never);
+	return sort;
+};
 
 const VALID_PLANNER_ID = '507f1f77bcf86cd799439011';
 
@@ -75,9 +75,7 @@ describe('getPendingInvites', () => {
 				planners: [],
 			},
 		} as never);
-		mockPendingInviteFind.mockReturnValue({
-			sort: vi.fn().mockResolvedValue([]),
-		} as unknown as ReturnType<typeof PendingInvite.find>);
+		findReturning(async () => []);
 
 		const result = await getPendingInvites(VALID_PLANNER_ID);
 
@@ -103,7 +101,7 @@ describe('getPendingInvites', () => {
 
 		const mockInvites = [
 			{
-				_id: { toString: () => 'invite1' },
+				_id: 'invite1',
 				email: 'user1@example.com',
 				accessLevel: 'write',
 				createdAt: new Date('2024-01-01'),
@@ -112,7 +110,7 @@ describe('getPendingInvites', () => {
 				invitedBy: 'user123',
 			},
 			{
-				_id: { toString: () => 'invite2' },
+				_id: 'invite2',
 				email: 'user2@example.com',
 				accessLevel: 'read',
 				createdAt: new Date('2024-01-15'),
@@ -122,10 +120,7 @@ describe('getPendingInvites', () => {
 			},
 		];
 
-		const sortMock = vi.fn().mockResolvedValue(mockInvites);
-		mockPendingInviteFind.mockReturnValue({
-			sort: sortMock,
-		} as unknown as ReturnType<typeof PendingInvite.find>);
+		const sortMock = findReturning(async () => mockInvites);
 
 		const result = await getPendingInvites(VALID_PLANNER_ID);
 
@@ -149,7 +144,7 @@ describe('getPendingInvites', () => {
 		} as never);
 
 		const mockInvite = {
-			_id: { toString: () => 'invite123' },
+			_id: 'invite123',
 			email: 'user@example.com',
 			accessLevel: 'admin',
 			createdAt: new Date('2024-01-01T10:00:00.000Z'),
@@ -158,9 +153,7 @@ describe('getPendingInvites', () => {
 			invitedBy: 'user456',
 		};
 
-		mockPendingInviteFind.mockReturnValue({
-			sort: vi.fn().mockResolvedValue([mockInvite]),
-		} as unknown as ReturnType<typeof PendingInvite.find>);
+		findReturning(async () => [mockInvite]);
 
 		const result = await getPendingInvites(VALID_PLANNER_ID);
 
@@ -175,7 +168,6 @@ describe('getPendingInvites', () => {
 		// Ensure sensitive fields are NOT exposed
 		expect(result.invites[0]).not.toHaveProperty('token');
 		expect(result.invites[0]).not.toHaveProperty('invitedBy');
-		expect(mockSerialize).toHaveBeenCalled();
 	});
 
 	it('returns error on database failure', async () => {
@@ -190,9 +182,9 @@ describe('getPendingInvites', () => {
 			},
 		} as never);
 		const error = new Error('Database connection failed');
-		mockPendingInviteFind.mockReturnValue({
-			sort: vi.fn().mockRejectedValue(error),
-		} as unknown as ReturnType<typeof PendingInvite.find>);
+		findReturning(async () => {
+			throw error;
+		});
 
 		const result = await getPendingInvites(VALID_PLANNER_ID);
 

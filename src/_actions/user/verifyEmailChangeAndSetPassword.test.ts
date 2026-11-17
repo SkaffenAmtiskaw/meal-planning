@@ -1,44 +1,19 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
-import { hashPassword } from 'better-auth/crypto';
-
-import { User } from '@/_models/user';
+import { auth } from '@/_auth';
+import { addAuthUserPassword, changeAuthUserEmail } from '@/_auth/users';
+import { users } from '@/_models/database/users';
 
 import { verifyEmailChangeAndSetPassword } from './verifyEmailChangeAndSetPassword';
 
-const { mockFindOne, mockInsertOne, mockUpdateOne, mockCollection } =
-	vi.hoisted(() => {
-		const mockFindOne = vi.fn();
-		const mockInsertOne = vi.fn();
-		const mockUpdateOne = vi.fn();
-		return {
-			mockFindOne,
-			mockInsertOne,
-			mockUpdateOne,
-			mockCollection: vi.fn(() => ({
-				findOne: mockFindOne,
-				insertOne: mockInsertOne,
-				updateOne: mockUpdateOne,
-			})),
-		};
-	});
+vi.mock('@/_auth', () => ({ auth: {} }));
 
-vi.mock('@/_auth', async () => ({
-	mongoClient: {
-		db: vi.fn(() => ({ collection: mockCollection })),
-	},
-}));
+vi.mock('@/_auth/users', async () => await import('#mocks/@/_auth/users'));
 
-vi.mock('@/_models/user', async () => ({
-	User: {
-		findOne: vi.fn(() => ({ exec: vi.fn() })),
-		updateOne: vi.fn(),
-	},
-}));
-
-vi.mock('better-auth/crypto', async () => ({
-	hashPassword: vi.fn(),
-}));
+vi.mock(
+	'@/_models/database/users',
+	async () => await import('#mocks/@/_models/database/users'),
+);
 
 const futureDate = new Date(Date.now() + 1000 * 60 * 60 * 24);
 const pastDate = new Date(Date.now() - 1000 * 60 * 60);
@@ -54,15 +29,11 @@ const makeMockUser = (overrides = {}) => ({
 });
 
 const mockUserFindOneResult = (user: unknown) => {
-	vi.mocked(User.findOne).mockReturnValueOnce({
-		exec: vi.fn().mockResolvedValue(user),
-	} as never);
+	vi.mocked(users.findOne).mockResolvedValueOnce(user as never);
 };
 
 const setupHappyPath = () => {
 	mockUserFindOneResult(makeMockUser());
-	mockFindOne.mockResolvedValueOnce({ _id: 'ba-user-id' });
-	vi.mocked(hashPassword).mockResolvedValueOnce('hashed-password');
 };
 
 describe('verifyEmailChangeAndSetPassword', () => {
@@ -136,7 +107,7 @@ describe('verifyEmailChangeAndSetPassword', () => {
 	describe('user lookup', () => {
 		it('returns an error when the better-auth user is not found', async () => {
 			mockUserFindOneResult(makeMockUser());
-			mockFindOne.mockResolvedValueOnce(null);
+			vi.mocked(addAuthUserPassword).mockResolvedValueOnce(false);
 
 			const result = await verifyEmailChangeAndSetPassword(
 				'valid-token',
@@ -144,42 +115,42 @@ describe('verifyEmailChangeAndSetPassword', () => {
 			);
 
 			expect(result).toEqual({ ok: false, error: 'User not found.' });
+			expect(changeAuthUserEmail).not.toHaveBeenCalled();
+			expect(users.updateOne).not.toHaveBeenCalled();
 		});
 	});
 
 	describe('success', () => {
-		it('inserts a credential account with the hashed password', async () => {
+		it('adds the password to the better-auth user found by the current email', async () => {
 			setupHappyPath();
 
 			await verifyEmailChangeAndSetPassword('valid-token', 'password123');
 
-			expect(hashPassword).toHaveBeenCalledWith('password123');
-			expect(mockInsertOne).toHaveBeenCalledWith(
-				expect.objectContaining({
-					userId: 'ba-user-id',
-					providerId: 'credential',
-					password: 'hashed-password',
-				}),
+			expect(addAuthUserPassword).toHaveBeenCalledWith(
+				auth,
+				'user@example.com',
+				'password123',
 			);
 		});
 
-		it('updates the email in the better-auth user collection', async () => {
+		it("changes the better-auth user's email", async () => {
 			setupHappyPath();
 
 			await verifyEmailChangeAndSetPassword('valid-token', 'password123');
 
-			expect(mockUpdateOne).toHaveBeenCalledWith(
-				{ _id: 'ba-user-id' },
-				{ $set: { email: 'new@example.com' } },
+			expect(changeAuthUserEmail).toHaveBeenCalledWith(
+				auth,
+				'user@example.com',
+				'new@example.com',
 			);
 		});
 
-		it('updates the app User model and clears the pending change', async () => {
+		it("updates the app user's email and clears the pending change", async () => {
 			setupHappyPath();
 
 			await verifyEmailChangeAndSetPassword('valid-token', 'password123');
 
-			expect(User.updateOne).toHaveBeenCalledWith(
+			expect(users.updateOne).toHaveBeenCalledWith(
 				{ email: 'user@example.com' },
 				{
 					$set: { email: 'new@example.com' },

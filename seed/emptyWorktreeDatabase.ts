@@ -1,5 +1,4 @@
-import { MongoClient } from 'mongodb';
-
+import { closeDatabase, rawDatabase } from '@/_models/database/connection';
 import { env } from '@/env';
 
 import { databaseNameOf, isWorktreeDatabase } from './databaseNames';
@@ -15,18 +14,16 @@ if (!isWorktreeDatabase(databaseName)) {
 	);
 }
 
-const client = new MongoClient(env.DB_URL);
 try {
-	const db = client.db();
-	const collections = await db
+	const collections = await rawDatabase
 		.listCollections({}, { nameOnly: true })
 		.toArray();
 	for (const { name } of collections) {
-		await db.dropCollection(name);
+		await rawDatabase.dropCollection(name);
 	}
 	console.log(
 		`Emptied ${databaseName}: dropped ${collections.length} collection(s).`,
 	);
 } finally {
-	await client.close();
+	await closeDatabase();
 }

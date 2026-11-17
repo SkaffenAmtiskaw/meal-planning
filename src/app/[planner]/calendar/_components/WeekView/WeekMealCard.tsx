@@ -4,6 +4,7 @@ import Link from 'next/link';
 
 import { Anchor, Box, Card, Text } from '@mantine/core';
 
+import type { MealInterface } from '@/_models/types';
 import { getMealColor, TAG_COLORS } from '@/_theme/colors';
 
 import styles from './WeekView.module.css';
@@ -11,13 +12,12 @@ import styles from './WeekView.module.css';
 import { resolveDishSource } from '../../_utils/resolveDishSource';
 import type {
 	MealEvent,
+	ResolvedDish,
 	SavedItem,
-	SerializedDish,
-	SerializedMeal,
 } from '../../_utils/toScheduleXEvents';
 
 type Props = {
-	meal: SerializedMeal;
+	meal: MealInterface;
 	day: Temporal.PlainDate;
 	onMealClick: (event: MealEvent) => void;
 	plannerId: string;
@@ -25,7 +25,7 @@ type Props = {
 };
 
 const getDishNode = (
-	dish: SerializedDish,
+	dish: ResolvedDish,
 	plannerId: string,
 ): React.ReactNode => {
 	const { source } = dish;

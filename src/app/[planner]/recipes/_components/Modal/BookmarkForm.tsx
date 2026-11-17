@@ -30,9 +30,7 @@ export const BookmarkForm = ({ item, plannerId, tags }: Props) => {
 	const router = useRouter();
 	const pathname = usePathname();
 
-	const [selectedTags, setSelectedTags] = useState<string[]>(
-		item?.tags?.map(String) ?? [],
-	);
+	const [selectedTags, setSelectedTags] = useState<string[]>(item?.tags ?? []);
 
 	const { status, countdown, errorMessage, wrap } = useFormFeedback();
 
@@ -52,7 +50,7 @@ export const BookmarkForm = ({ item, plannerId, tags }: Props) => {
 				const payload = { ...values, tags: selectedTags, plannerId };
 
 				if (item) {
-					return editBookmark({ ...payload, _id: String(item._id) });
+					return editBookmark({ ...payload, _id: item._id });
 				}
 
 				return addBookmark(payload);

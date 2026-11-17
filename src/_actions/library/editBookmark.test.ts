@@ -1,9 +1,10 @@
 import { afterEach, describe, expect, test, vi } from 'vitest';
 
-import { Types } from 'mongoose';
+import { revalidatePath } from 'next/cache';
 
 import { checkAuth } from '@/_actions/auth/checkAuth';
-import { Planner } from '@/_models/planner';
+import { newId } from '@/_models/database/newId';
+import { planners } from '@/_models/database/planners';
 
 import { editBookmark } from './editBookmark';
 
@@ -16,16 +17,13 @@ vi.mock('next/cache', () => ({
 	revalidatePath: vi.fn(),
 }));
 
-vi.mock('@/_models/planner', () => ({
-	Planner: {
-		collection: {
-			updateOne: vi.fn(),
-		},
-	},
-}));
+vi.mock(
+	'@/_models/database/planners',
+	async () => await import('#mocks/@/_models/database/planners'),
+);
 
-const plannerId = new Types.ObjectId().toString();
-const bookmarkId = new Types.ObjectId().toString();
+const plannerId = newId();
+const bookmarkId = newId();
 
 const validData = {
 	plannerId,
@@ -65,7 +63,7 @@ describe('editBookmark', () => {
 		const result = await editBookmark(validData);
 
 		expect(result).toEqual({ ok: false, error: 'Unauthorized' });
-		expect(Planner.collection.updateOne).not.toHaveBeenCalled();
+		expect(planners.updateOne).not.toHaveBeenCalled();
 	});
 
 	test('returns Unauthorized error when user does not own the planner', async () => {
@@ -76,102 +74,37 @@ describe('editBookmark', () => {
 		expect(result).toEqual({ ok: false, error: 'Unauthorized' });
 	});
 
-	test('returns Bookmark not found error when matchedCount is 0', async () => {
-		vi.mocked(checkAuth).mockResolvedValue({
-			type: 'authorized',
-			accessLevel: 'write',
-			user: {
-				_id: 'user-id',
-				email: 'test@example.com',
-				name: 'Test User',
-				planners: [],
-			},
-		} as never);
-		vi.mocked(Planner.collection.updateOne).mockResolvedValue({
+	test('returns Bookmark not found error and does not revalidate when matchedCount is 0', async () => {
+		vi.mocked(planners.updateOne).mockResolvedValueOnce({
 			matchedCount: 0,
 		} as never);
 
 		const result = await editBookmark(validData);
 
 		expect(result).toEqual({ ok: false, error: 'Bookmark not found' });
+		expect(revalidatePath).not.toHaveBeenCalled();
 	});
 
-	test('$sets name, url and tags', async () => {
-		vi.mocked(checkAuth).mockResolvedValue({
-			type: 'authorized',
-			accessLevel: 'write',
-			user: {
-				_id: 'user-id',
-				email: 'test@example.com',
-				name: 'Test User',
-				planners: [],
-			},
-		} as never);
-		vi.mocked(Planner.collection.updateOne).mockResolvedValue({
-			matchedCount: 1,
-		} as never);
-
-		const tagId = new Types.ObjectId().toString();
+	test('$sets name, url and tags on the matched bookmark', async () => {
+		const tagId = newId();
 		await editBookmark({ ...validData, tags: [tagId] });
 
-		expect(Planner.collection.updateOne).toHaveBeenCalledWith(
-			expect.objectContaining({
-				_id: expect.any(Types.ObjectId),
-				'saved._id': expect.any(Types.ObjectId),
-			}),
+		expect(planners.updateOne).toHaveBeenCalledWith(
+			{ _id: plannerId, 'saved._id': bookmarkId },
 			expect.objectContaining({
 				$set: expect.objectContaining({
 					'saved.$.name': 'Ursula Sea Spells',
 					'saved.$.url': 'https://undersea.example.com/spells',
-					'saved.$.tags': [expect.any(Types.ObjectId)],
+					'saved.$.tags': [tagId],
 				}),
 			}),
 		);
 	});
 
-	test('$sets empty tags array when tags is absent', async () => {
-		vi.mocked(checkAuth).mockResolvedValue({
-			type: 'authorized',
-			accessLevel: 'write',
-			user: {
-				_id: 'user-id',
-				email: 'test@example.com',
-				name: 'Test User',
-				planners: [],
-			},
-		} as never);
-		vi.mocked(Planner.collection.updateOne).mockResolvedValue({
-			matchedCount: 1,
-		} as never);
-
-		await editBookmark(validData);
-
-		expect(Planner.collection.updateOne).toHaveBeenCalledWith(
-			expect.anything(),
-			expect.objectContaining({
-				$set: expect.objectContaining({ 'saved.$.tags': [] }),
-			}),
-		);
-	});
-
 	test('$sets notes when notes is provided', async () => {
-		vi.mocked(checkAuth).mockResolvedValue({
-			type: 'authorized',
-			accessLevel: 'write',
-			user: {
-				_id: 'user-id',
-				email: 'test@example.com',
-				name: 'Test User',
-				planners: [],
-			},
-		} as never);
-		vi.mocked(Planner.collection.updateOne).mockResolvedValue({
-			matchedCount: 1,
-		} as never);
-
 		await editBookmark({ ...validData, notes: 'Great source' });
 
-		expect(Planner.collection.updateOne).toHaveBeenCalledWith(
+		expect(planners.updateOne).toHaveBeenCalledWith(
 			expect.anything(),
 			expect.objectContaining({
 				$set: expect.objectContaining({ 'saved.$.notes': 'Great source' }),
@@ -179,24 +112,13 @@ describe('editBookmark', () => {
 		);
 	});
 
-	test('$unsets notes when notes is absent', async () => {
-		vi.mocked(checkAuth).mockResolvedValue({
-			type: 'authorized',
-			accessLevel: 'write',
-			user: {
-				_id: 'user-id',
-				email: 'test@example.com',
-				name: 'Test User',
-				planners: [],
-			},
-		} as never);
-		vi.mocked(Planner.collection.updateOne).mockResolvedValue({
-			matchedCount: 1,
-		} as never);
+	test.each([
+		['absent', undefined],
+		['an empty string', ''],
+	])('$unsets notes when notes is %s', async (_, notes) => {
+		await editBookmark({ ...validData, notes });
 
-		await editBookmark(validData);
-
-		expect(Planner.collection.updateOne).toHaveBeenCalledWith(
+		expect(planners.updateOne).toHaveBeenCalledWith(
 			expect.anything(),
 			expect.objectContaining({
 				$unset: { 'saved.$.notes': '' },
@@ -204,90 +126,10 @@ describe('editBookmark', () => {
 		);
 	});
 
-	test('$unsets notes when notes is empty string', async () => {
-		vi.mocked(checkAuth).mockResolvedValue({
-			type: 'authorized',
-			accessLevel: 'write',
-			user: {
-				_id: 'user-id',
-				email: 'test@example.com',
-				name: 'Test User',
-				planners: [],
-			},
-		} as never);
-		vi.mocked(Planner.collection.updateOne).mockResolvedValue({
-			matchedCount: 1,
-		} as never);
-
-		await editBookmark({ ...validData, notes: '' });
-
-		expect(Planner.collection.updateOne).toHaveBeenCalledWith(
-			expect.anything(),
-			expect.objectContaining({
-				$unset: { 'saved.$.notes': '' },
-			}),
-		);
-	});
-
-	test('revalidates list path on success', async () => {
-		const { revalidatePath } = await import('next/cache');
-		vi.mocked(checkAuth).mockResolvedValue({
-			type: 'authorized',
-			accessLevel: 'write',
-			user: {
-				_id: 'user-id',
-				email: 'test@example.com',
-				name: 'Test User',
-				planners: [],
-			},
-		} as never);
-		vi.mocked(Planner.collection.updateOne).mockResolvedValue({
-			matchedCount: 1,
-		} as never);
-
-		await editBookmark(validData);
-
-		expect(revalidatePath).toHaveBeenCalledWith(`/${plannerId}/recipes`);
-	});
-
-	test('does not revalidate when bookmark is not found', async () => {
-		const { revalidatePath } = await import('next/cache');
-		vi.mocked(checkAuth).mockResolvedValue({
-			type: 'authorized',
-			accessLevel: 'write',
-			user: {
-				_id: 'user-id',
-				email: 'test@example.com',
-				name: 'Test User',
-				planners: [],
-			},
-		} as never);
-		vi.mocked(Planner.collection.updateOne).mockResolvedValue({
-			matchedCount: 0,
-		} as never);
-
-		await editBookmark(validData);
-
-		expect(revalidatePath).not.toHaveBeenCalled();
-	});
-
-	test('returns _id and name on success', async () => {
-		vi.mocked(checkAuth).mockResolvedValue({
-			type: 'authorized',
-			accessLevel: 'write',
-			user: {
-				_id: 'user-id',
-				email: 'test@example.com',
-				name: 'Test User',
-				planners: [],
-			},
-		} as never);
-		vi.mocked(Planner.collection.updateOne).mockResolvedValue({
-			matchedCount: 1,
-		} as never);
-
+	test('revalidates the list path and returns _id and name on success', async () => {
 		const result = await editBookmark(validData);
 
+		expect(revalidatePath).toHaveBeenCalledWith(`/${plannerId}/recipes`);
 		expect(result).toEqual({
 			ok: true,
 			data: { _id: bookmarkId, name: 'Ursula Sea Spells' },

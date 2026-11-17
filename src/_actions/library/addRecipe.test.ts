@@ -1,10 +1,8 @@
 import { afterEach, describe, expect, test, vi } from 'vitest';
 
-import { Types } from 'mongoose';
-
 import { checkAuth } from '@/_actions/auth/checkAuth';
+import { planners } from '@/_models/database/planners';
 import { zRecipeFormSchema } from '@/_models/library';
-import { Planner } from '@/_models/planner';
 
 import { addRecipe } from './addRecipe';
 
@@ -23,12 +21,16 @@ vi.mock('./_utils/transformRecipeForm', () => ({
 	transformRecipeForm: vi.fn((data) => data),
 }));
 
-vi.mock('@/_models/planner', () => ({
-	Planner: {
-		findById: vi.fn(),
-	},
-}));
-const plannerId = new Types.ObjectId().toString();
+vi.mock(
+	'@/_models/database/planners',
+	async () => await import('#mocks/@/_models/database/planners'),
+);
+vi.mock(
+	'@/_models/database/newId',
+	async () => await import('#mocks/@/_models/database/newId'),
+);
+
+const plannerId = '507f1f77bcf86cd799439011';
 
 const validData = {
 	plannerId,
@@ -41,16 +43,6 @@ describe('addRecipe', () => {
 	afterEach(() => {
 		vi.resetAllMocks();
 	});
-
-	const makePlanner = () => {
-		const saved: Array<{ _id: Types.ObjectId } & Record<string, unknown>> = [];
-		const originalPush = Array.prototype.push.bind(saved);
-		saved.push = (...items: Record<string, unknown>[]) =>
-			originalPush(
-				...items.map((item) => ({ _id: new Types.ObjectId(), ...item })),
-			);
-		return { saved, save: vi.fn().mockResolvedValue(undefined) };
-	};
 
 	test('throws when schema validation fails', async () => {
 		vi.mocked(zRecipeFormSchema.parse).mockImplementationOnce(() => {
@@ -66,7 +58,7 @@ describe('addRecipe', () => {
 		const result = await addRecipe(validData);
 
 		expect(result).toEqual({ ok: false, error: 'Unauthorized' });
-		expect(Planner.findById).not.toHaveBeenCalled();
+		expect(planners.updateOne).not.toHaveBeenCalled();
 	});
 
 	test('returns Unauthorized error when user does not own the planner', async () => {
@@ -78,42 +70,27 @@ describe('addRecipe', () => {
 	});
 
 	test('returns Planner not found error when planner does not exist', async () => {
-		vi.mocked(Planner.findById).mockResolvedValueOnce(null);
+		vi.mocked(planners.updateOne).mockResolvedValueOnce({
+			matchedCount: 0,
+		} as never);
 
 		const result = await addRecipe(validData);
 
 		expect(result).toEqual({ ok: false, error: 'Planner not found' });
 	});
 
-	test('persists the recipe and returns _id and name', async () => {
-		const planner = makePlanner();
-		vi.mocked(Planner.findById).mockResolvedValueOnce(planner as never);
+	test('pushes the recipe with a new id and returns that id and its name', async () => {
+		const { plannerId: _, ...recipeFields } = validData;
 
 		const result = await addRecipe(validData);
 
-		expect(planner.save).toHaveBeenCalledOnce();
-		expect(result.ok).toBe(true);
-		if (result.ok) {
-			expect(result.data.name).toBe('Croissant');
-			expect(result.data._id).toMatch(/^[0-9a-f]{24}$/);
-		}
-	});
-
-	test('accepts optional fields', async () => {
-		const planner = makePlanner();
-		vi.mocked(Planner.findById).mockResolvedValueOnce(planner as never);
-
-		const result = await addRecipe({
-			...validData,
-			notes: 'Best served warm',
-			storage: 'Room temp up to 2 days',
-			servings: 12,
-			source: { name: 'Bakery Blog', url: 'https://example.com' },
-			time: { prep: '30m', cook: '20m', total: '50m', actual: '55m' },
-			tags: [new Types.ObjectId().toString()],
+		expect(planners.updateOne).toHaveBeenCalledWith(
+			{ _id: plannerId },
+			{ $push: { saved: { _id: 'new-id', ...recipeFields } } },
+		);
+		expect(result).toEqual({
+			ok: true,
+			data: { _id: 'new-id', name: 'Croissant' },
 		});
-
-		expect(result.ok).toBe(true);
-		if (result.ok) expect(result.data.name).toBe('Croissant');
 	});
 });

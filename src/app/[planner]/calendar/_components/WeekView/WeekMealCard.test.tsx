@@ -47,7 +47,10 @@ describe('WeekMealCard', () => {
 		const meal = {
 			_id: 'meal-1',
 			name: 'Lunch',
-			dishes: [{ name: 'Soup' }, { name: 'Bread' }],
+			dishes: [
+				{ _id: 'dish-1', name: 'Soup' },
+				{ _id: 'dish-2', name: 'Bread' },
+			],
 		};
 		render(<WeekMealCard {...defaultProps} meal={meal} />);
 		expect(screen.getByText('Soup')).toBeDefined();
@@ -58,7 +61,13 @@ describe('WeekMealCard', () => {
 		const meal = {
 			_id: 'meal-1',
 			name: 'Lunch',
-			dishes: [{ name: 'Pasta', source: { url: 'https://example.com' } }],
+			dishes: [
+				{
+					_id: 'dish-1',
+					name: 'Pasta',
+					source: { url: 'https://example.com' },
+				},
+			],
 		};
 		render(<WeekMealCard {...defaultProps} meal={meal} />);
 		const link = screen.getByRole('link', { name: 'Pasta' });
@@ -66,22 +75,17 @@ describe('WeekMealCard', () => {
 		expect(link.getAttribute('target')).toBe('_blank');
 	});
 
-	test('dish with _id source renders as internal Anchor link', () => {
-		const meal = {
-			_id: 'meal-1',
-			name: 'Lunch',
-			dishes: [{ name: 'Carbonara', source: { _id: 'recipe-123' } }],
-		};
-		render(<WeekMealCard {...defaultProps} meal={meal} />);
-		const link = screen.getByRole('link', { name: 'Carbonara' });
-		expect(link.getAttribute('href')).toBe('/planner-1/recipes/recipe-123');
-	});
-
 	test('dish with ref source renders as plain text', () => {
 		const meal = {
 			_id: 'meal-1',
 			name: 'Lunch',
-			dishes: [{ name: 'Roast Chicken', source: { ref: 'The Flavor Bible' } }],
+			dishes: [
+				{
+					_id: 'dish-1',
+					name: 'Roast Chicken',
+					source: { ref: 'The Flavor Bible' },
+				},
+			],
 		};
 		render(<WeekMealCard {...defaultProps} meal={meal} />);
 		expect(screen.getByText('Roast Chicken')).toBeDefined();
@@ -92,7 +96,7 @@ describe('WeekMealCard', () => {
 		const meal = {
 			_id: 'meal-1',
 			name: 'Lunch',
-			dishes: [{ name: 'Soup', source: 'unknown-id' }],
+			dishes: [{ _id: 'dish-1', name: 'Soup', source: 'unknown-id' }],
 		};
 		render(<WeekMealCard {...defaultProps} meal={meal} />);
 		expect(screen.getByText('Soup')).toBeDefined();
@@ -103,7 +107,7 @@ describe('WeekMealCard', () => {
 		const meal = {
 			_id: 'meal-1',
 			name: 'Lunch',
-			dishes: [{ name: 'Salad' }],
+			dishes: [{ _id: 'dish-1', name: 'Salad' }],
 		};
 		render(<WeekMealCard {...defaultProps} meal={meal} />);
 		expect(screen.getByText('Salad')).toBeDefined();
@@ -124,7 +128,7 @@ describe('WeekMealCard', () => {
 		const meal = {
 			_id: 'meal-1',
 			name: 'Lunch',
-			dishes: [{ name: 'Tasty Pasta', source: 'saved-1' }],
+			dishes: [{ _id: 'dish-1', name: 'Tasty Pasta', source: 'saved-1' }],
 		};
 		render(<WeekMealCard {...defaultProps} meal={meal} savedMap={savedMap} />);
 		const link = screen.getByRole('link', { name: 'Tasty Pasta' });
@@ -139,7 +143,7 @@ describe('WeekMealCard', () => {
 		const meal = {
 			_id: 'meal-1',
 			name: 'Dinner',
-			dishes: [{ name: 'Carbonara', source: 'recipe-abc' }],
+			dishes: [{ _id: 'dish-1', name: 'Carbonara', source: 'recipe-abc' }],
 		};
 		render(<WeekMealCard {...defaultProps} meal={meal} savedMap={savedMap} />);
 		const link = screen.getByRole('link', { name: 'Carbonara' });
@@ -156,7 +160,14 @@ describe('WeekMealCard', () => {
 		const meal = {
 			_id: 'meal-1',
 			name: 'Lunch',
-			dishes: [{ name: 'Dish', source: 'saved-1', note: 'cook extra crispy' }],
+			dishes: [
+				{
+					_id: 'dish-1',
+					name: 'Dish',
+					source: 'saved-1',
+					note: 'cook extra crispy',
+				},
+			],
 		};
 		render(<WeekMealCard {...defaultProps} meal={meal} savedMap={savedMap} />);
 		const link = screen.getByRole('link', { name: 'Dish' });
@@ -169,7 +180,7 @@ describe('WeekMealCard', () => {
 			_id: 'meal-1',
 			name: 'Breakfast',
 			description: 'Good morning',
-			dishes: [{ name: 'Eggs' }],
+			dishes: [{ _id: 'dish-1', name: 'Eggs' }],
 		};
 		render(
 			<WeekMealCard {...defaultProps} meal={meal} onMealClick={onMealClick} />,
@@ -181,7 +192,7 @@ describe('WeekMealCard', () => {
 				id: 'meal-1',
 				title: 'Breakfast',
 				description: 'Good morning',
-				dishes: [{ name: 'Eggs' }],
+				dishes: [{ _id: 'dish-1', name: 'Eggs' }],
 			}),
 		);
 	});
@@ -197,7 +208,7 @@ describe('WeekMealCard', () => {
 		const meal = {
 			_id: 'meal-1',
 			name: 'Lunch',
-			dishes: [{ name: 'Dish', source: 'saved-1' }],
+			dishes: [{ _id: 'dish-1', name: 'Dish', source: 'saved-1' }],
 		};
 		render(
 			<WeekMealCard
@@ -210,7 +221,13 @@ describe('WeekMealCard', () => {
 		fireEvent.click(screen.getByTestId('week-meal-card'));
 		expect(onMealClick).toHaveBeenCalledWith(
 			expect.objectContaining({
-				dishes: [{ name: 'Dish', source: { url: 'https://example.com' } }],
+				dishes: [
+					{
+						_id: 'dish-1',
+						name: 'Dish',
+						source: { url: 'https://example.com' },
+					},
+				],
 			}),
 		);
 	});

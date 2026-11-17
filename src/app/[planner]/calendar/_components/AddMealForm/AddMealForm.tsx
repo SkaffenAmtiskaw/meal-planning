@@ -19,14 +19,13 @@ import { z } from 'zod';
 import { addMeal } from '@/_actions/calendar';
 import { FormFeedbackAlert, SubmitButton } from '@/_components';
 import { useFormFeedback, useIsMobile } from '@/_hooks';
+import type { DayInterface } from '@/_models/types';
 
 import { DishList } from './DishList';
 import { MealFields } from './MealFields';
 import { useDishes } from './useDishes';
 import type { MealFormValues } from './types';
 import classes from './AddMealForm.module.css';
-
-import type { SerializedDay } from '../../_utils/toScheduleXEvents';
 
 const zFormFields = z.object({
 	date: z.string().min(1, { error: 'Date is required' }),
@@ -48,7 +47,7 @@ export type Props = {
 	plannerId: string;
 	initialDate?: string;
 	onCancel: () => void;
-	onSuccess?: (calendar: SerializedDay[]) => void;
+	onSuccess?: (calendar: DayInterface[]) => void;
 	onSubtitleChange?: (subtitle: string) => void;
 };
 
@@ -101,7 +100,7 @@ export const AddMealForm = ({
 					})),
 				}),
 			(data) => {
-				onSuccess?.(data.calendar as SerializedDay[]);
+				onSuccess?.(data.calendar);
 			},
 		),
 	);

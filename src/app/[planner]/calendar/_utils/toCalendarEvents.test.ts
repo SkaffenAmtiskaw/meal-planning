@@ -1,7 +1,8 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
+import type { DayInterface } from '@/_models/types';
+
 import { toCalendarEvents } from './toCalendarEvents';
-import type { SerializedDay } from './toScheduleXEvents';
 
 vi.mock('./resolveDishSource', () => ({
 	resolveDishSource: vi.fn((dish) => dish),
@@ -19,18 +20,13 @@ describe('toCalendarEvents', () => {
 		expect(toCalendarEvents([])).toEqual([]);
 	});
 
-	it('returns empty array for days with no meals', () => {
-		const calendar: SerializedDay[] = [{ date: '2024-01-15' }];
-		expect(toCalendarEvents(calendar)).toEqual([]);
-	});
-
 	it('returns empty array for days with empty meals array', () => {
-		const calendar: SerializedDay[] = [{ date: '2024-01-15', meals: [] }];
+		const calendar: DayInterface[] = [{ date: '2024-01-15', meals: [] }];
 		expect(toCalendarEvents(calendar)).toEqual([]);
 	});
 
 	it('maps a meal to a calendar event with string start/end dates', () => {
-		const calendar: SerializedDay[] = [
+		const calendar: DayInterface[] = [
 			{
 				date: '2024-01-15',
 				meals: [
@@ -38,7 +34,7 @@ describe('toCalendarEvents', () => {
 						_id: 'meal-1',
 						name: 'Breakfast',
 						description: 'Morning meal',
-						dishes: [{ name: 'Eggs' }],
+						dishes: [{ _id: 'dish-1', name: 'Eggs' }],
 					},
 				],
 			},
@@ -49,11 +45,11 @@ describe('toCalendarEvents', () => {
 		expect(event.description).toBe('Morning meal');
 		expect(event.start).toBe('2024-01-15');
 		expect(event.end).toBe('2024-01-15');
-		expect(event.dishes).toEqual([{ name: 'Eggs' }]);
+		expect(event.dishes).toEqual([{ _id: 'dish-1', name: 'Eggs' }]);
 	});
 
 	it('maps meal without description', () => {
-		const calendar: SerializedDay[] = [
+		const calendar: DayInterface[] = [
 			{
 				date: '2024-01-15',
 				meals: [{ _id: 'meal-1', name: 'Lunch', dishes: [] }],
@@ -64,7 +60,7 @@ describe('toCalendarEvents', () => {
 	});
 
 	it('maps multiple meals on the same day to separate events', () => {
-		const calendar: SerializedDay[] = [
+		const calendar: DayInterface[] = [
 			{
 				date: '2024-01-15',
 				meals: [
@@ -80,7 +76,7 @@ describe('toCalendarEvents', () => {
 	});
 
 	it('maps meals across multiple days', () => {
-		const calendar: SerializedDay[] = [
+		const calendar: DayInterface[] = [
 			{
 				date: '2024-01-15',
 				meals: [{ _id: 'meal-1', name: 'Breakfast', dishes: [] }],
@@ -97,7 +93,7 @@ describe('toCalendarEvents', () => {
 	});
 
 	it('uses same date string for both start and end', () => {
-		const calendar: SerializedDay[] = [
+		const calendar: DayInterface[] = [
 			{
 				date: '2024-03-20',
 				meals: [{ _id: 'meal-1', name: 'Dinner', dishes: [] }],
@@ -110,10 +106,10 @@ describe('toCalendarEvents', () => {
 
 	it('calls resolveDishSource for each dish', () => {
 		const dishes = [
-			{ name: 'Pasta', source: 'saved-1' as string | { url: string } },
-			{ name: 'Salad' },
+			{ _id: 'dish-1', name: 'Pasta', source: 'saved-1' },
+			{ _id: 'dish-2', name: 'Salad' },
 		];
-		const calendar: SerializedDay[] = [
+		const calendar: DayInterface[] = [
 			{
 				date: '2024-01-15',
 				meals: [{ _id: 'meal-1', name: 'Dinner', dishes }],
@@ -143,14 +139,14 @@ describe('toCalendarEvents', () => {
 		};
 		mockResolveDishSource.mockReturnValueOnce(resolvedDish);
 
-		const calendar: SerializedDay[] = [
+		const calendar: DayInterface[] = [
 			{
 				date: '2024-01-15',
 				meals: [
 					{
 						_id: 'meal-1',
 						name: 'Dinner',
-						dishes: [{ name: 'Pasta', source: 'saved-1' }],
+						dishes: [{ _id: 'dish-1', name: 'Pasta', source: 'saved-1' }],
 					},
 				],
 			},

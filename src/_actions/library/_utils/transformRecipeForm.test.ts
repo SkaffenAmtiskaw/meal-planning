@@ -13,7 +13,7 @@ const baseInput = {
 
 describe('transformRecipeForm', () => {
 	describe('source transformation', () => {
-		it('removes source when source name is empty', () => {
+		it('removes source when source name is an empty string', () => {
 			const input: RecipeFormInput = {
 				...baseInput,
 				source: { name: '', url: '' },
@@ -24,7 +24,7 @@ describe('transformRecipeForm', () => {
 			expect(result.source).toBeUndefined();
 		});
 
-		it('removes source when source name is empty but url is present', () => {
+		it('removes source when source name is an empty string but url is present', () => {
 			const input: RecipeFormInput = {
 				...baseInput,
 				source: { name: '', url: 'https://example.com' },
@@ -35,7 +35,7 @@ describe('transformRecipeForm', () => {
 			expect(result.source).toBeUndefined();
 		});
 
-		it('converts empty source url to undefined when source name is present', () => {
+		it('leaves out the source url key when it is an empty string', () => {
 			const input: RecipeFormInput = {
 				...baseInput,
 				source: { name: 'Recipe Blog', url: '' },
@@ -43,7 +43,7 @@ describe('transformRecipeForm', () => {
 
 			const result = transformRecipeForm(input);
 
-			expect(result.source).toEqual({ name: 'Recipe Blog', url: undefined });
+			expect(result.source).toStrictEqual({ name: 'Recipe Blog' });
 		});
 
 		it('preserves source when both name and url have values', () => {
@@ -81,7 +81,7 @@ describe('transformRecipeForm', () => {
 			expect(result.time).toBeUndefined();
 		});
 
-		it('converts empty time fields to undefined when some fields have values', () => {
+		it('leaves out the time fields that are empty strings when others have values', () => {
 			const input: RecipeFormInput = {
 				...baseInput,
 				time: { prep: '30m', cook: '', total: '50m', actual: '' },
@@ -89,12 +89,7 @@ describe('transformRecipeForm', () => {
 
 			const result = transformRecipeForm(input);
 
-			expect(result.time).toEqual({
-				prep: '30m',
-				cook: undefined,
-				total: '50m',
-				actual: undefined,
-			});
+			expect(result.time).toStrictEqual({ prep: '30m', total: '50m' });
 		});
 
 		it('does not add time when it is undefined', () => {
@@ -113,12 +108,7 @@ describe('transformRecipeForm', () => {
 
 			const result = transformRecipeForm(input);
 
-			expect(result.time).toEqual({
-				prep: undefined,
-				cook: '20m',
-				total: undefined,
-				actual: undefined,
-			});
+			expect(result.time).toStrictEqual({ cook: '20m' });
 		});
 	});
 
@@ -143,6 +133,18 @@ describe('transformRecipeForm', () => {
 			expect(result.notes).toBe(input.notes);
 			expect(result.servings).toBe(input.servings);
 			expect(result.storage).toBe(input.storage);
+		});
+	});
+	describe('notes and storage', () => {
+		it('leaves out the notes and storage keys when they are empty strings', () => {
+			const result = transformRecipeForm({
+				...baseInput,
+				notes: '',
+				storage: '',
+			});
+
+			expect(result).not.toHaveProperty('notes');
+			expect(result).not.toHaveProperty('storage');
 		});
 	});
 });

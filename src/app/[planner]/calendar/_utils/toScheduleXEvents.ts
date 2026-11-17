@@ -1,23 +1,17 @@
 import 'temporal-polyfill/global';
 
+import type {
+	BookmarkInterface,
+	DayInterface,
+	DishInterface,
+	RecipeInterface,
+} from '@/_models/types';
+
 import { resolveDishSource } from './resolveDishSource';
 
-export type SerializedDish = {
-	name: string;
-	source?: string | { url: string } | { ref: string } | { _id: string };
-	note?: string;
-};
-
-export type SerializedMeal = {
-	_id: string;
-	name: string;
-	description?: string;
-	dishes: SerializedDish[];
-};
-
-export type SerializedDay = {
-	date: string;
-	meals?: SerializedMeal[];
+/** A dish to show, with a saved-item source resolved to the item's url, or to its `_id` when it has none. */
+export type ResolvedDish = Omit<DishInterface, '_id' | 'source'> & {
+	source?: DishInterface['source'] | { _id: string };
 };
 
 export type MealEvent = {
@@ -26,20 +20,23 @@ export type MealEvent = {
 	end: Temporal.PlainDate;
 	title: string;
 	description?: string;
-	dishes: SerializedDish[];
+	dishes: ResolvedDish[];
 };
 
-export type SavedItem = { _id: string; name: string; url?: string };
+/** The parts of a planner's saved item that the calendar reads. */
+export type SavedItem =
+	| Pick<BookmarkInterface, '_id' | 'name' | 'url'>
+	| Pick<RecipeInterface, '_id' | 'name'>;
 
 export const toScheduleXEvents = (
-	calendar: SerializedDay[],
+	calendar: DayInterface[],
 	savedItems: SavedItem[] = [],
 ): MealEvent[] => {
 	const savedMap = new Map(savedItems.map((item) => [item._id, item]));
 	const events: MealEvent[] = [];
 	for (const day of calendar) {
 		const date = Temporal.PlainDate.from(day.date);
-		for (const meal of day.meals ?? []) {
+		for (const meal of day.meals) {
 			events.push({
 				id: meal._id,
 				start: date,

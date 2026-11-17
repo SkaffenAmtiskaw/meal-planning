@@ -1,23 +1,29 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { getUser } from '@/_actions/user';
-import { Planner } from '@/_models/planner';
+import { planners } from '@/_models/database/planners';
 
 import { getPlanners } from './getPlanners';
 
 vi.mock(
-	'@/_models/planner',
-	async () => await import('#mocks/@/_models/planner'),
+	'@/_models/database/planners',
+	async () => await import('#mocks/@/_models/database/planners'),
 );
 vi.mock('@/_actions/user', async () => await import('#mocks/@/_actions/user'));
 
 const makePlanner = (overrides: { name?: string; id?: string } = {}) => ({
 	_id: overrides.id ?? '507f1f77bcf86cd799439011',
-	name: overrides.name,
+	...(overrides.name && { name: overrides.name }),
 	calendar: [],
 	saved: [],
 	tags: [],
 });
+
+const findReturns = (found: ReturnType<typeof makePlanner>[]) => {
+	vi.mocked(planners.find).mockReturnValueOnce({
+		toArray: async () => found,
+	} as never);
+};
 
 describe('getPlanners', () => {
 	beforeEach(() => {
@@ -34,97 +40,64 @@ describe('getPlanners', () => {
 
 	describe('when user is authenticated', () => {
 		it('fetches planners by the user planner IDs', async () => {
-			const planner = makePlanner({ name: "Test User's Planner" });
-			vi.mocked(Planner.find).mockResolvedValueOnce([planner] as never);
+			findReturns([makePlanner({ name: "Test User's Planner" })]);
 
 			await getPlanners();
 
-			expect(Planner.find).toHaveBeenCalledWith({
-				_id: { $in: [expect.any(Object)] },
+			expect(planners.find).toHaveBeenCalledWith({
+				_id: { $in: ['507f1f77bcf86cd799439011'] },
 			});
 		});
 
 		it('returns the fetched planners with their access levels', async () => {
 			const planner = makePlanner({ name: "Test User's Planner" });
-			vi.mocked(Planner.find).mockResolvedValueOnce([planner] as never);
+			findReturns([planner]);
 
 			const result = await getPlanners();
 
 			expect(result).toEqual([{ planner, accessLevel: 'owner' }]);
 		});
 
-		describe('seeding planner names', () => {
+		describe('naming planners', () => {
 			it('does not update planners that already have names', async () => {
-				const planner = makePlanner({ name: "Test User's Planner" });
-				vi.mocked(Planner.find).mockResolvedValueOnce([planner] as never);
+				findReturns([makePlanner({ name: "Test User's Planner" })]);
 
 				await getPlanners();
 
-				expect(Planner.collection.updateOne).not.toHaveBeenCalled();
+				expect(planners.updateOne).not.toHaveBeenCalled();
 			});
 
-			it('seeds the name for planners without names via collection.updateOne', async () => {
-				const planner = makePlanner();
-				vi.mocked(Planner.find).mockResolvedValueOnce([planner] as never);
-				vi.mocked(Planner.collection.updateOne).mockResolvedValueOnce(
-					{} as never,
-				);
-
-				await getPlanners();
-
-				expect(Planner.collection.updateOne).toHaveBeenCalledWith(
-					{ _id: '507f1f77bcf86cd799439011' },
-					{ $set: { name: "Test User's Planner" } },
-				);
-				expect(planner.name).toBe("Test User's Planner");
-			});
-
-			it('only seeds planners that have no name', async () => {
-				const named = makePlanner({
-					name: "Test User's Planner",
-					id: '507f1f77bcf86cd799439021',
-				});
-				const unnamed = makePlanner({ id: '507f1f77bcf86cd799439022' });
-				vi.mocked(Planner.find).mockResolvedValueOnce([
-					named,
-					unnamed,
-				] as never);
-				vi.mocked(Planner.collection.updateOne).mockResolvedValueOnce(
-					{} as never,
-				);
-
-				await getPlanners();
-
-				expect(Planner.collection.updateOne).toHaveBeenCalledTimes(1);
-				expect(Planner.collection.updateOne).toHaveBeenCalledWith(
-					{ _id: '507f1f77bcf86cd799439022' },
-					{ $set: { name: "Test User's Planner" } },
-				);
-				expect(unnamed.name).toBe("Test User's Planner");
-				expect(named.name).toBe("Test User's Planner");
-			});
-
-			it('falls back to a default name when planner name is still undefined', async () => {
-				const planner = {
-					_id: '507f1f77bcf86cd799439011',
-					get name() {
-						return undefined;
-					},
-					set name(_: string | undefined) {
-						// no-op
-					},
-					calendar: [],
-					saved: [],
-					tags: [],
-				};
-				vi.mocked(Planner.find).mockResolvedValueOnce([planner] as never);
-				vi.mocked(Planner.collection.updateOne).mockResolvedValueOnce(
-					{} as never,
-				);
+			it('stores and returns a default name for a planner without one', async () => {
+				findReturns([makePlanner()]);
 
 				const result = await getPlanners();
 
+				expect(planners.updateOne).toHaveBeenCalledWith(
+					{ _id: '507f1f77bcf86cd799439011' },
+					{ $set: { name: "Test User's Planner" } },
+				);
 				expect(result[0].planner.name).toBe("Test User's Planner");
+			});
+
+			it('only names planners that have no name', async () => {
+				const named = makePlanner({
+					name: 'Named Planner',
+					id: '507f1f77bcf86cd799439021',
+				});
+				const unnamed = makePlanner({ id: '507f1f77bcf86cd799439022' });
+				findReturns([named, unnamed]);
+
+				const result = await getPlanners();
+
+				expect(planners.updateOne).toHaveBeenCalledTimes(1);
+				expect(planners.updateOne).toHaveBeenCalledWith(
+					{ _id: '507f1f77bcf86cd799439022' },
+					{ $set: { name: "Test User's Planner" } },
+				);
+				expect(result.map(({ planner }) => planner.name)).toEqual([
+					'Named Planner',
+					"Test User's Planner",
+				]);
 			});
 		});
 
@@ -163,11 +136,7 @@ describe('getPlanners', () => {
 				vi.mocked(getUser).mockResolvedValueOnce(
 					mockUserWithMultiplePlanners as never,
 				);
-				vi.mocked(Planner.find).mockResolvedValueOnce([
-					planner1,
-					planner2,
-					planner3,
-				] as never);
+				findReturns([planner1, planner2, planner3]);
 
 				const result = await getPlanners();
 
@@ -188,14 +157,15 @@ describe('getPlanners', () => {
 						},
 					],
 				};
-				const planner = makePlanner({
-					id: '507f1f77bcf86cd799439011',
-					name: "Test User's Planner",
-				});
 				vi.mocked(getUser).mockResolvedValueOnce(
 					mockUserWithMissingAccess as never,
 				);
-				vi.mocked(Planner.find).mockResolvedValueOnce([planner] as never);
+				findReturns([
+					makePlanner({
+						id: '507f1f77bcf86cd799439011',
+						name: "Test User's Planner",
+					}),
+				]);
 
 				const result = await getPlanners();
 

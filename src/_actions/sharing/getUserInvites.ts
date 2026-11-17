@@ -1,10 +1,9 @@
 import 'server-only';
 
-import { Planner } from '@/_models/planner';
-import { PendingInvite } from '@/_models/sharing';
-import { User } from '@/_models/user';
+import { pendingInvites } from '@/_models/database/pendingInvites';
+import { planners } from '@/_models/database/planners';
+import { users } from '@/_models/database/users';
 import { reportError } from '@/_utils/reportError';
-import { serialize } from '@/_utils/serialize';
 
 import type { GetUserInvitesResult, UserInvite } from './invite.types';
 
@@ -19,22 +18,23 @@ export const getUserInvites = async (
 		}
 
 		// Query pending invites for this user's email, sorted by createdAt descending
-		const invites = await PendingInvite.find({ email }).sort({
-			createdAt: -1,
-		});
+		const invites = await pendingInvites
+			.find({ email })
+			.sort({ createdAt: -1 })
+			.toArray();
 
 		// For each invite, populate planner name and inviter name
 		const userInvites: UserInvite[] = await Promise.all(
 			invites.map(async (invite) => {
 				// Fetch planner and inviter in parallel
 				const [planner, inviter] = await Promise.all([
-					Planner.findById(invite.planner.toString()),
-					User.findById(invite.invitedBy.toString()),
+					planners.findOne({ _id: invite.planner }),
+					users.findOne({ _id: invite.invitedBy }),
 				]);
 
 				return {
-					id: invite._id.toString(),
-					plannerId: invite.planner.toString(),
+					id: invite._id,
+					plannerId: invite.planner,
 					plannerName: planner?.name ?? 'Unknown Planner',
 					invitedBy: inviter?.name ?? 'Unknown User',
 					accessLevel: invite.accessLevel,
@@ -45,7 +45,7 @@ export const getUserInvites = async (
 			}),
 		);
 
-		return serialize({ invites: userInvites });
+		return { invites: userInvites };
 	} catch (error) {
 		await reportError(error);
 		return { invites: [], error: 'Failed to fetch invites' };

@@ -1,15 +1,11 @@
-import { describe, expect, test, vi } from 'vitest';
-
-import { Types } from 'mongoose';
-
-vi.mock('mongoose', async (importOriginal) => {
-	const actual = await importOriginal<typeof import('mongoose')>();
-	return { ...actual, models: {}, model: vi.fn().mockReturnValue({}) };
-});
+import { describe, expect, test } from 'vitest';
 
 import { zPendingInvite } from './pendingInvite.types';
 
-const validObjectId = new Types.ObjectId().toString();
+import { newId } from '../database/newId';
+
+const validObjectId = newId();
+const inviteId = newId();
 const now = new Date();
 const expiresAt = new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000);
 
@@ -17,6 +13,7 @@ describe('pending invite', () => {
 	test('accepts a valid pending invite with all required fields', () => {
 		expect(
 			zPendingInvite.safeParse({
+				_id: inviteId,
 				email: 'guest@example.com',
 				planner: validObjectId,
 				invitedBy: validObjectId,
@@ -28,8 +25,25 @@ describe('pending invite', () => {
 		).toBe(true);
 	});
 
+	test('accepts every access level', () => {
+		for (const accessLevel of ['owner', 'admin', 'write', 'read']) {
+			expect(
+				zPendingInvite.safeParse({
+					_id: inviteId,
+					email: 'guest@example.com',
+					planner: validObjectId,
+					invitedBy: validObjectId,
+					accessLevel,
+					token: 'abc123-uuid-token',
+					expiresAt,
+				}).success,
+			).toBe(true);
+		}
+	});
+
 	test('accepts a pending invite without createdAt (should default to current date)', () => {
 		const result = zPendingInvite.safeParse({
+			_id: inviteId,
 			email: 'guest@example.com',
 			planner: validObjectId,
 			invitedBy: validObjectId,
@@ -46,6 +60,7 @@ describe('pending invite', () => {
 	test('rejects a pending invite with an invalid email', () => {
 		expect(
 			zPendingInvite.safeParse({
+				_id: inviteId,
 				email: 'not-an-email',
 				planner: validObjectId,
 				invitedBy: validObjectId,
@@ -56,9 +71,10 @@ describe('pending invite', () => {
 		).toBe(false);
 	});
 
-	test('rejects a pending invite with an invalid planner ObjectId', () => {
+	test('rejects a pending invite with an invalid planner id', () => {
 		expect(
 			zPendingInvite.safeParse({
+				_id: inviteId,
 				email: 'guest@example.com',
 				planner: 'invalid-id',
 				invitedBy: validObjectId,
@@ -69,9 +85,10 @@ describe('pending invite', () => {
 		).toBe(false);
 	});
 
-	test('rejects a pending invite with an invalid invitedBy ObjectId', () => {
+	test('rejects a pending invite with an invalid invitedBy id', () => {
 		expect(
 			zPendingInvite.safeParse({
+				_id: inviteId,
 				email: 'guest@example.com',
 				planner: validObjectId,
 				invitedBy: 'invalid-id',
@@ -85,6 +102,7 @@ describe('pending invite', () => {
 	test('rejects a pending invite with an invalid accessLevel', () => {
 		expect(
 			zPendingInvite.safeParse({
+				_id: inviteId,
 				email: 'guest@example.com',
 				planner: validObjectId,
 				invitedBy: validObjectId,
@@ -98,6 +116,7 @@ describe('pending invite', () => {
 	test('rejects a pending invite missing the email field', () => {
 		expect(
 			zPendingInvite.safeParse({
+				_id: inviteId,
 				planner: validObjectId,
 				invitedBy: validObjectId,
 				accessLevel: 'read',
@@ -110,6 +129,7 @@ describe('pending invite', () => {
 	test('rejects a pending invite missing the token field', () => {
 		expect(
 			zPendingInvite.safeParse({
+				_id: inviteId,
 				email: 'guest@example.com',
 				planner: validObjectId,
 				invitedBy: validObjectId,
@@ -122,11 +142,25 @@ describe('pending invite', () => {
 	test('rejects a pending invite missing the expiresAt field', () => {
 		expect(
 			zPendingInvite.safeParse({
+				_id: inviteId,
 				email: 'guest@example.com',
 				planner: validObjectId,
 				invitedBy: validObjectId,
 				accessLevel: 'read',
 				token: 'abc123-uuid-token',
+			}).success,
+		).toBe(false);
+	});
+
+	test('rejects a pending invite missing _id', () => {
+		expect(
+			zPendingInvite.safeParse({
+				email: 'guest@example.com',
+				planner: validObjectId,
+				invitedBy: validObjectId,
+				accessLevel: 'read',
+				token: 'abc123-uuid-token',
+				expiresAt: new Date(),
 			}).success,
 		).toBe(false);
 	});

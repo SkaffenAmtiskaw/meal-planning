@@ -3,13 +3,14 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import type { MonthGridMeal } from '@/_components/Calendar';
 import { MonthGrid } from '@/_components/Calendar';
+import type { DayInterface } from '@/_models/types';
 
 import { MealCalendar } from './MealCalendar';
 import { MealEventCard } from './MealEventCard';
 
 import type { CalendarEvent } from '../../_utils/toCalendarEvents';
 import { toCalendarEvents } from '../../_utils/toCalendarEvents';
-import type { SavedItem, SerializedDay } from '../../_utils/toScheduleXEvents';
+import type { SavedItem } from '../../_utils/toScheduleXEvents';
 
 vi.mock('@/_components/Calendar', async () => ({
 	MonthGrid: vi.fn(({ meals, renderMeal }) => (
@@ -52,7 +53,7 @@ describe('MealCalendar', () => {
 		vi.resetAllMocks();
 	});
 
-	const mockCalendar: SerializedDay[] = [
+	const mockCalendar: DayInterface[] = [
 		{
 			date: '2024-01-15',
 			meals: [{ _id: 'meal-1', name: 'Breakfast', dishes: [] }],

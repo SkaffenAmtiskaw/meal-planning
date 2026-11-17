@@ -1,0 +1,12 @@
+language js
+
+or {
+	JsModuleSource() as $source,
+	`import($source)`
+} where {
+	$source <: r"['\"].*\.tsx?['\"]",
+	register_diagnostic(
+		span = $source,
+		message = "Leave the .ts extension off an import. Only the files that plain node runs need it, because node can't find a file without its extension."
+	)
+}

@@ -1,13 +1,14 @@
 'use server';
 
-import { mongoClient } from '@/_auth';
-import { User } from '@/_models/user';
+import { auth } from '@/_auth';
+import { changeAuthUserEmail } from '@/_auth/users';
+import { users } from '@/_models/database/users';
 import type { ActionResult } from '@/_utils/actionResult';
 
 export const verifyEmailChange = async (
 	token: string,
 ): Promise<ActionResult> => {
-	const user = await User.findOne({ 'pendingEmailChange.token': token }).exec();
+	const user = await users.findOne({ 'pendingEmailChange.token': token });
 	const pendingChange = user?.pendingEmailChange;
 
 	if (
@@ -19,13 +20,10 @@ export const verifyEmailChange = async (
 
 	const currentEmail = user.email;
 	const newEmail = pendingChange.email;
-	const db = mongoClient.db();
 
-	await db
-		.collection('user')
-		.updateOne({ email: currentEmail }, { $set: { email: newEmail } });
+	await changeAuthUserEmail(auth, currentEmail, newEmail);
 
-	await User.updateOne(
+	await users.updateOne(
 		{ email: currentEmail },
 		{ $set: { email: newEmail }, $unset: { pendingEmailChange: '' } },
 	);

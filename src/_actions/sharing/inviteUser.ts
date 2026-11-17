@@ -2,19 +2,19 @@
 
 import { randomUUID } from 'node:crypto';
 
-import { Types } from 'mongoose';
 import { z } from 'zod';
 
 import { checkAuth } from '@/_actions/auth/checkAuth';
 import { sendInviteEmail } from '@/_auth/emails/sendInviteEmail';
-import { Planner } from '@/_models/planner';
-import { PendingInvite } from '@/_models/sharing';
+import { newId } from '@/_models/database/newId';
+import { pendingInvites } from '@/_models/database/pendingInvites';
+import { planners } from '@/_models/database/planners';
+import { users } from '@/_models/database/users';
 import type { AccessLevel } from '@/_models/user';
-import { User } from '@/_models/user';
 import type { ActionResult } from '@/_utils/actionResult';
 import { catchify } from '@/_utils/catchify';
 import { reportError } from '@/_utils/reportError';
-import { serialize } from '@/_utils/serialize';
+import { zId } from '@/_utils/zId';
 import { env } from '@/env';
 
 export interface InviteUserInput {
@@ -39,12 +39,12 @@ export const inviteUser = async (
 	}
 
 	// 2. Verify caller is authenticated and has 'admin' access to the planner
-	if (!Types.ObjectId.isValid(plannerId)) {
+	if (!zId.safeParse(plannerId).success) {
 		return { ok: false, error: 'Unauthorized' };
 	}
 
 	const [authResult, authError] = await catchify(() =>
-		checkAuth(new Types.ObjectId(plannerId), 'admin'),
+		checkAuth(plannerId, 'admin'),
 	);
 
 	if (authError || !authResult || authResult.type !== 'authorized') {
@@ -58,7 +58,7 @@ export const inviteUser = async (
 
 	// 4. Check if email is already a member of this planner
 	const [existingUser, userError] = await catchify(() =>
-		User.findOne({ email }),
+		users.findOne({ email }),
 	);
 
 	if (userError) {
@@ -67,9 +67,7 @@ export const inviteUser = async (
 	}
 
 	if (existingUser) {
-		const isMember = existingUser.planners.some(
-			(p) => p.planner.toString() === plannerId,
-		);
+		const isMember = existingUser.planners.some((p) => p.planner === plannerId);
 
 		if (isMember) {
 			return { ok: false, error: 'User is already a member' };
@@ -78,9 +76,9 @@ export const inviteUser = async (
 
 	// 5. Check if there's already a pending invite for this email/planner combo
 	const [existingInvite, inviteError] = await catchify(() =>
-		PendingInvite.findOne({
+		pendingInvites.findOne({
 			email,
-			planner: new Types.ObjectId(plannerId),
+			planner: plannerId,
 		}),
 	);
 
@@ -102,7 +100,7 @@ export const inviteUser = async (
 
 	// 8. Fetch planner to get the name
 	const [planner, plannerError] = await catchify(() =>
-		Planner.findById(plannerId),
+		planners.findOne({ _id: plannerId }),
 	);
 
 	if (plannerError) {
@@ -113,10 +111,12 @@ export const inviteUser = async (
 	const plannerName = planner?.name ?? 'Meal Planner';
 
 	// 9. Create PendingInvite document
-	const [invite, createError] = await catchify(() =>
-		PendingInvite.create({
+	const inviteId = newId();
+	const [, createError] = await catchify(() =>
+		pendingInvites.insertOne({
+			_id: inviteId,
 			email,
-			planner: new Types.ObjectId(plannerId),
+			planner: plannerId,
 			invitedBy: callerUser._id,
 			accessLevel,
 			token,
@@ -124,12 +124,9 @@ export const inviteUser = async (
 		}),
 	);
 
-	if (createError || !invite) {
-		if (createError) await reportError(createError);
-		return {
-			ok: false,
-			error: createError?.message ?? 'Failed to create invite',
-		};
+	if (createError) {
+		await reportError(createError);
+		return { ok: false, error: createError.message };
 	}
 
 	// 10. Determine email type and URL based on whether user exists
@@ -161,8 +158,5 @@ export const inviteUser = async (
 	}
 
 	// 13. Return success with inviteId
-	return {
-		ok: true,
-		data: { inviteId: serialize(invite)._id.toString() },
-	};
+	return { ok: true, data: { inviteId } };
 };

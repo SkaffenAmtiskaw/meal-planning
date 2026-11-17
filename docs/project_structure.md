@@ -4,6 +4,8 @@ This doc is a map of the repo for anyone new to it: each top-level folder, the m
 Claude Code skills, subagents and hooks
 # .github/
 GitHub Actions workflows (see `docs/ci.md`)
+# biome-plugins/
+Biome lint rules written as GritQL plugins, which `biome.jsonc` loads
 # docs/
 project documentation, one doc for each part of the codebase or its setup
 # e2e/
@@ -13,7 +15,7 @@ Playwright support code, and what `playwright.config.ts` uses to start a run
 # Notes
 notes on planned work, in Obsidian-flavored Markdown, live in the `meal-planning-notes` repo beside this one. Its `Roadmap.md` is the project roadmap, with links to detailed notes (see `docs/services.md`, "The Notes Repo", for how it's kept in sync)
 # scripts/
-scripts that the git hooks, the workflows and the SessionStart hook run, such as the notes vault checks, the database backups (see `docs/backups.md`) and the worktree scripts (see `docs/branching.md`)
+scripts that the git hooks, the workflows and the SessionStart hook run, such as the notes vault checks, the database backups (see `docs/backups.md`) and the worktree scripts (see `docs/branching.md`). `release-tasks/` holds the one-off changes to production's data that the next release runs (see `docs/release_tasks.md`)
 # seed/
 `pnpm seed`, which fills the dev database with seeded users and sample data, the sign-in link server, and the script that empties a worktree's database (see `docs/seed.md`)
 # src/
@@ -27,7 +29,7 @@ reusable React components
 ## _hooks/
 reusable React hooks, each with any component that only supports it (see `docs/project_conventions.md`)
 ## _models/
-Mongoose schemas + Zod types
+the zod schemas of the stored data, and in `database/` the data module that reads and writes it (see `docs/project_conventions.md`, "Stored Data")
 ## _theme/
 the Mantine theme and the app's color values (see `docs/theme.md`)
 ## _utils/
@@ -43,7 +45,7 @@ test support code shared by unit tests, E2E tests and the seed
 ## auth.ts
 test-only better-auth instance, used by the E2E factories, `signIn` and the seed, imported through `#auth`
 ## factories/
-plain functions that create test data in the database for E2E tests and the seed, and their connection, imported through `#factories/<name>`
+plain functions that create test data for E2E tests and the seed, writing through the data module, and the functions that open and close the module's database connection. All are imported through `#factories/<name>`
 ## fixtures/
 unit-test data builders, imported through `#fixtures`
 ## mocks/

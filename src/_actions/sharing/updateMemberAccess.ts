@@ -1,8 +1,8 @@
 'use server';
 
 import { checkAuth } from '@/_actions/auth/checkAuth';
+import { users } from '@/_models/database/users';
 import type { AccessLevel } from '@/_models/user';
-import { User } from '@/_models/user';
 
 export const updateMemberAccess = async (
 	plannerId: string,
@@ -10,10 +10,7 @@ export const updateMemberAccess = async (
 	newAccessLevel: AccessLevel,
 ): Promise<{ ok: true } | { ok: false; error: string }> => {
 	// 1. Validate caller is authenticated and has access to this planner
-	const authResult = await checkAuth(
-		plannerId as unknown as import('mongoose').Types.ObjectId,
-		'read',
-	);
+	const authResult = await checkAuth(plannerId, 'read');
 	if (authResult.type !== 'authorized') {
 		return { ok: false, error: 'Unauthorized' };
 	}
@@ -26,14 +23,14 @@ export const updateMemberAccess = async (
 	}
 
 	// 3. Find target user
-	const targetUser = await User.findOne({ email: targetUserEmail });
+	const targetUser = await users.findOne({ email: targetUserEmail });
 	if (!targetUser) {
 		return { ok: false, error: 'User not found' };
 	}
 
 	// 4. Get target's current access level in this planner
 	const targetMembership = targetUser.planners.find(
-		(p) => p.planner.toString() === plannerId,
+		(p) => p.planner === plannerId,
 	);
 
 	if (!targetMembership) {
@@ -53,7 +50,7 @@ export const updateMemberAccess = async (
 	}
 
 	// 7. Update the access level
-	await User.updateOne(
+	await users.updateOne(
 		{ _id: targetUser._id, 'planners.planner': plannerId },
 		{ $set: { 'planners.$.accessLevel': newAccessLevel } },
 	);

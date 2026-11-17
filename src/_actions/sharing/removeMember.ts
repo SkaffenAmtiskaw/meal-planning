@@ -1,9 +1,7 @@
 'use server';
 
-import { Types } from 'mongoose';
-
 import { checkAuth } from '@/_actions/auth/checkAuth';
-import { User } from '@/_models/user';
+import { users } from '@/_models/database/users';
 
 import { removePlannerMembership } from './_utils/removePlannerMembership';
 
@@ -17,14 +15,14 @@ export const removeMember = async (
 	memberEmail: string,
 ): Promise<RemoveMemberResult> => {
 	// 1. Verify caller is authenticated and has admin+ access to the planner
-	const authResult = await checkAuth(new Types.ObjectId(plannerId), 'admin');
+	const authResult = await checkAuth(plannerId, 'admin');
 
 	if (authResult.type !== 'authorized') {
 		return { ok: false, error: 'Unauthorized' };
 	}
 
 	// 2. Find the target user by email
-	const targetUser = await User.findOne({ email: memberEmail });
+	const targetUser = await users.findOne({ email: memberEmail });
 
 	// 3. Verify target user exists
 	if (!targetUser) {
@@ -33,7 +31,7 @@ export const removeMember = async (
 
 	// 4. Verify target user is actually a member of this planner
 	const targetMembership = targetUser.planners.find(
-		(p) => p.planner.toString() === plannerId,
+		(p) => p.planner === plannerId,
 	);
 
 	if (!targetMembership) {
@@ -47,7 +45,7 @@ export const removeMember = async (
 
 	// 6. Call removePlannerMembership utility to remove the membership
 	const removalResult = await removePlannerMembership(
-		targetUser._id.toString(),
+		targetUser._id,
 		plannerId,
 	);
 

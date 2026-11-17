@@ -50,7 +50,7 @@ export const RecipeDetail = ({ plannerId, recipe, tags }: Props) => {
 							onConfirm={async () => {
 								await deleteRecipe({
 									plannerId,
-									recipeId: String(recipe._id),
+									recipeId: recipe._id,
 								});
 								return { ok: true, data: undefined };
 							}}
@@ -184,7 +184,7 @@ export const RecipeDetail = ({ plannerId, recipe, tags }: Props) => {
 				<InlineNotesEditor
 					notes={recipe.notes}
 					plannerId={plannerId}
-					recipeId={String(recipe._id)}
+					recipeId={recipe._id}
 				/>
 
 				{recipe.storage && (
@@ -197,10 +197,10 @@ export const RecipeDetail = ({ plannerId, recipe, tags }: Props) => {
 				)}
 
 				<InlineTagsEditor
-					availableTags={tags.map((t) => ({ ...t, _id: String(t._id) }))}
+					availableTags={tags}
 					plannerId={plannerId}
-					recipeId={String(recipe._id)}
-					tagIds={(recipe.tags ?? []).map((id) => String(id))}
+					recipeId={recipe._id}
+					tagIds={recipe.tags ?? []}
 				/>
 			</Stack>
 		</Container>

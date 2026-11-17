@@ -1,25 +1,21 @@
 import { describe, expect, test } from 'vitest';
 
+import type { DayInterface } from '@/_models/types';
+
 import { toScheduleXEvents } from './toScheduleXEvents';
-import type { SerializedDay } from './toScheduleXEvents';
 
 describe('toScheduleXEvents', () => {
 	test('returns empty array for empty calendar', () => {
 		expect(toScheduleXEvents([])).toEqual([]);
 	});
 
-	test('returns empty array for days with no meals', () => {
-		const calendar: SerializedDay[] = [{ date: '2024-01-15' }];
-		expect(toScheduleXEvents(calendar)).toEqual([]);
-	});
-
 	test('returns empty array for days with empty meals array', () => {
-		const calendar: SerializedDay[] = [{ date: '2024-01-15', meals: [] }];
+		const calendar: DayInterface[] = [{ date: '2024-01-15', meals: [] }];
 		expect(toScheduleXEvents(calendar)).toEqual([]);
 	});
 
 	test('maps a meal to a schedule-x event with PlainDate start/end', () => {
-		const calendar: SerializedDay[] = [
+		const calendar: DayInterface[] = [
 			{
 				date: '2024-01-15',
 				meals: [
@@ -27,7 +23,7 @@ describe('toScheduleXEvents', () => {
 						_id: 'meal-1',
 						name: 'Breakfast',
 						description: 'Morning meal',
-						dishes: [{ name: 'Eggs' }],
+						dishes: [{ _id: 'dish-1', name: 'Eggs' }],
 					},
 				],
 			},
@@ -38,11 +34,11 @@ describe('toScheduleXEvents', () => {
 		expect(event.description).toBe('Morning meal');
 		expect(event.start.toString()).toBe('2024-01-15');
 		expect(event.end.toString()).toBe('2024-01-15');
-		expect(event.dishes).toEqual([{ name: 'Eggs' }]);
+		expect(event.dishes).toEqual([{ _id: 'dish-1', name: 'Eggs' }]);
 	});
 
 	test('maps meal without description', () => {
-		const calendar: SerializedDay[] = [
+		const calendar: DayInterface[] = [
 			{
 				date: '2024-01-15',
 				meals: [{ _id: 'meal-1', name: 'Lunch', dishes: [] }],
@@ -53,7 +49,7 @@ describe('toScheduleXEvents', () => {
 	});
 
 	test('maps multiple meals on the same day to separate events', () => {
-		const calendar: SerializedDay[] = [
+		const calendar: DayInterface[] = [
 			{
 				date: '2024-01-15',
 				meals: [
@@ -69,7 +65,7 @@ describe('toScheduleXEvents', () => {
 	});
 
 	test('maps meals across multiple days', () => {
-		const calendar: SerializedDay[] = [
+		const calendar: DayInterface[] = [
 			{
 				date: '2024-01-15',
 				meals: [{ _id: 'meal-1', name: 'Breakfast', dishes: [] }],
@@ -86,7 +82,7 @@ describe('toScheduleXEvents', () => {
 	});
 
 	test('uses same PlainDate for both start and end', () => {
-		const calendar: SerializedDay[] = [
+		const calendar: DayInterface[] = [
 			{
 				date: '2024-03-20',
 				meals: [{ _id: 'meal-1', name: 'Dinner', dishes: [] }],
@@ -98,8 +94,8 @@ describe('toScheduleXEvents', () => {
 	});
 
 	test('preserves dish data on the event', () => {
-		const dishes = [{ name: 'Pasta', note: 'al dente' }];
-		const calendar: SerializedDay[] = [
+		const dishes = [{ _id: 'dish-1', name: 'Pasta', note: 'al dente' }];
+		const calendar: DayInterface[] = [
 			{
 				date: '2024-01-15',
 				meals: [{ _id: 'meal-1', name: 'Dinner', dishes }],
@@ -112,14 +108,14 @@ describe('toScheduleXEvents', () => {
 		const savedItems = [
 			{ _id: 'saved-1', name: 'My Bookmark', url: 'https://example.com' },
 		];
-		const calendar: SerializedDay[] = [
+		const calendar: DayInterface[] = [
 			{
 				date: '2024-01-15',
 				meals: [
 					{
 						_id: 'meal-1',
 						name: 'Dinner',
-						dishes: [{ name: 'Pasta', source: 'saved-1' }],
+						dishes: [{ _id: 'dish-1', name: 'Pasta', source: 'saved-1' }],
 					},
 				],
 			},
@@ -130,14 +126,14 @@ describe('toScheduleXEvents', () => {
 
 	test('resolves a recipe string source to its _id', () => {
 		const savedItems = [{ _id: 'saved-1', name: 'My Recipe' }];
-		const calendar: SerializedDay[] = [
+		const calendar: DayInterface[] = [
 			{
 				date: '2024-01-15',
 				meals: [
 					{
 						_id: 'meal-1',
 						name: 'Dinner',
-						dishes: [{ name: 'Pasta', source: 'saved-1' }],
+						dishes: [{ _id: 'dish-1', name: 'Pasta', source: 'saved-1' }],
 					},
 				],
 			},
@@ -148,14 +144,14 @@ describe('toScheduleXEvents', () => {
 
 	test('leaves string source unchanged when not found in savedItems', () => {
 		const savedItems = [{ _id: 'saved-99', name: 'Other' }];
-		const calendar: SerializedDay[] = [
+		const calendar: DayInterface[] = [
 			{
 				date: '2024-01-15',
 				meals: [
 					{
 						_id: 'meal-1',
 						name: 'Dinner',
-						dishes: [{ name: 'Pasta', source: 'saved-1' }],
+						dishes: [{ _id: 'dish-1', name: 'Pasta', source: 'saved-1' }],
 					},
 				],
 			},
@@ -165,15 +161,15 @@ describe('toScheduleXEvents', () => {
 	});
 
 	test('does not alter object sources', () => {
-		const source = { name: 'Blog', url: 'https://blog.com' };
-		const calendar: SerializedDay[] = [
+		const source = { url: 'https://blog.com' };
+		const calendar: DayInterface[] = [
 			{
 				date: '2024-01-15',
 				meals: [
 					{
 						_id: 'meal-1',
 						name: 'Dinner',
-						dishes: [{ name: 'Pasta', source }],
+						dishes: [{ _id: 'dish-1', name: 'Pasta', source }],
 					},
 				],
 			},

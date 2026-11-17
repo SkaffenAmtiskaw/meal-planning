@@ -1,6 +1,6 @@
 import { DateTime } from 'luxon';
 
-import { newObjectId } from '#factories/objectId';
+import { newId } from '#factories/id';
 
 import { expect, type Page, test } from '../_fixtures';
 import { openPlannerCalendar } from '../_helpers/openPlannerCalendar';
@@ -61,7 +61,7 @@ test('saves a dish with a saved recipe source', {
 	tag: '@desktop-only',
 }, async ({ context, page }) => {
 	const now = DateTime.now();
-	const recipeId = newObjectId();
+	const recipeId = newId();
 	const recipe = {
 		_id: recipeId,
 		name: RECIPE_NAME,

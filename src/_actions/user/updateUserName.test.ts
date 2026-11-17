@@ -1,7 +1,7 @@
 import { afterEach, describe, expect, test, vi } from 'vitest';
 
 import { auth } from '@/_auth';
-import { User } from '@/_models/user';
+import { users } from '@/_models/database/users';
 
 import { updateUserName } from './updateUserName';
 
@@ -15,19 +15,16 @@ vi.mock('@/_auth', () => ({
 
 vi.mock('next/headers', async () => await import('#mocks/next/headers'));
 
-vi.mock('@/_models/user', () => ({
-	User: {
-		findOne: vi.fn(),
-	},
-}));
-const mockSession = { user: { email: 'ariel@sea.com' } };
+vi.mock(
+	'@/_models/database/users',
+	async () => await import('#mocks/@/_models/database/users'),
+);
 
-const mockSave = vi.fn();
-const mockUser = () => ({ name: 'Old Name', save: mockSave });
+const mockSession = { user: { email: 'ariel@sea.com' } };
 
 describe('updateUserName', () => {
 	afterEach(() => {
-		vi.resetAllMocks();
+		vi.clearAllMocks();
 	});
 
 	test('returns error when not authenticated', async () => {
@@ -44,6 +41,7 @@ describe('updateUserName', () => {
 		const result = await updateUserName('');
 
 		expect(result.ok).toBe(false);
+		expect(users.updateOne).not.toHaveBeenCalled();
 	});
 
 	test('returns error when name contains invalid characters', async () => {
@@ -64,8 +62,8 @@ describe('updateUserName', () => {
 
 	test('returns error when user is not found', async () => {
 		vi.mocked(auth.api.getSession).mockResolvedValueOnce(mockSession as never);
-		vi.mocked(User.findOne).mockReturnValueOnce({
-			exec: vi.fn().mockResolvedValueOnce(null),
+		vi.mocked(users.updateOne).mockResolvedValueOnce({
+			matchedCount: 0,
 		} as never);
 
 		const result = await updateUserName('Ariel');
@@ -73,30 +71,27 @@ describe('updateUserName', () => {
 		expect(result).toEqual({ ok: false, error: 'User not found.' });
 	});
 
-	test('updates the user name and returns ok', async () => {
-		const user = mockUser();
+	test("sets the session user's name and returns ok", async () => {
 		vi.mocked(auth.api.getSession).mockResolvedValueOnce(mockSession as never);
-		vi.mocked(User.findOne).mockReturnValueOnce({
-			exec: vi.fn().mockResolvedValueOnce(user),
-		} as never);
 
 		const result = await updateUserName('Ariel');
 
-		expect(user.name).toBe('Ariel');
-		expect(mockSave).toHaveBeenCalledOnce();
+		expect(users.updateOne).toHaveBeenCalledWith(
+			{ email: 'ariel@sea.com' },
+			{ $set: { name: 'Ariel' } },
+		);
 		expect(result).toEqual({ ok: true, data: undefined });
 	});
 
 	test('accepts names with apostrophes, hyphens, and periods', async () => {
-		const user = mockUser();
 		vi.mocked(auth.api.getSession).mockResolvedValueOnce(mockSession as never);
-		vi.mocked(User.findOne).mockReturnValueOnce({
-			exec: vi.fn().mockResolvedValueOnce(user),
-		} as never);
 
 		const result = await updateUserName("O'Brien-Smith Jr.");
 
 		expect(result.ok).toBe(true);
-		expect(user.name).toBe("O'Brien-Smith Jr.");
+		expect(users.updateOne).toHaveBeenCalledWith(
+			{ email: 'ariel@sea.com' },
+			{ $set: { name: "O'Brien-Smith Jr." } },
+		);
 	});
 });

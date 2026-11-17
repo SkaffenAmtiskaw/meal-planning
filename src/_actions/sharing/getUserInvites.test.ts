@@ -1,34 +1,52 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 // Mocks must be hoisted before imports
-vi.mock('@/_models/user', async () => await import('#mocks/@/_models/user'));
 vi.mock(
-	'@/_models/planner',
-	async () => await import('#mocks/@/_models/planner'),
+	'@/_models/database/users',
+	async () => await import('#mocks/@/_models/database/users'),
 );
 vi.mock(
-	'@/_models/sharing',
-	async () => await import('#mocks/@/_models/sharing'),
+	'@/_models/database/planners',
+	async () => await import('#mocks/@/_models/database/planners'),
 );
 vi.mock(
-	'@/_utils/serialize',
-	async () => await import('#mocks/@/_utils/serialize'),
+	'@/_models/database/pendingInvites',
+	async () => await import('#mocks/@/_models/database/pendingInvites'),
 );
 vi.mock(
 	'@/_utils/reportError',
 	async () => await import('#mocks/@/_utils/reportError'),
 );
 
-import { Planner } from '@/_models/planner';
-import { PendingInvite } from '@/_models/sharing';
-import { User } from '@/_models/user';
+import { pendingInvites } from '@/_models/database/pendingInvites';
+import { planners } from '@/_models/database/planners';
+import { users } from '@/_models/database/users';
 import { reportError } from '@/_utils/reportError';
 
 import { getUserInvites } from './getUserInvites';
 
-const mockPendingInviteFind = vi.mocked(PendingInvite.find);
-const mockPlannerFindById = vi.mocked(Planner.findById);
-const mockUserFindById = vi.mocked(User.findById);
+const mockPendingInviteFind = vi.mocked(pendingInvites.find);
+const mockPlannerFindOne = vi.mocked(planners.findOne);
+const mockUserFindOne = vi.mocked(users.findOne);
+
+// The find's cursor, sorted, resolves its documents through `toArray`
+const findReturning = (toArray: () => Promise<unknown>) => {
+	const sort = vi.fn(() => ({ toArray }));
+	mockPendingInviteFind.mockReturnValue({ sort } as never);
+	return sort;
+};
+
+const invite = (overrides: Record<string, unknown> = {}) => ({
+	_id: 'invite123',
+	email: 'user@example.com',
+	planner: 'planner123',
+	invitedBy: 'inviter123',
+	accessLevel: 'read',
+	createdAt: new Date('2024-01-15T10:00:00.000Z'),
+	expiresAt: new Date('2024-02-15T10:00:00.000Z'),
+	token: 'token123',
+	...overrides,
+});
 
 describe('getUserInvites', () => {
 	beforeEach(() => {
@@ -47,9 +65,7 @@ describe('getUserInvites', () => {
 	});
 
 	it('should return empty array when user has no pending invites', async () => {
-		mockPendingInviteFind.mockReturnValue({
-			sort: vi.fn().mockResolvedValue([]),
-		} as unknown as ReturnType<typeof PendingInvite.find>);
+		findReturning(async () => []);
 
 		const result = await getUserInvites('user@example.com');
 
@@ -62,28 +78,20 @@ describe('getUserInvites', () => {
 	});
 
 	it('should return invites for authenticated user', async () => {
-		const mockInvite = {
-			_id: { toString: () => 'invite123' },
-			email: 'user@example.com',
-			planner: { toString: () => 'planner123' } as never,
-			invitedBy: { toString: () => 'inviter123' } as never,
-			accessLevel: 'write',
-			createdAt: new Date('2024-01-01T10:00:00.000Z'),
-			expiresAt: new Date('2024-02-01T10:00:00.000Z'),
-			token: 'secret-token',
-		};
-
-		mockPendingInviteFind.mockReturnValue({
-			sort: vi.fn().mockResolvedValue([mockInvite]),
-		} as unknown as ReturnType<typeof PendingInvite.find>);
-
-		mockPlannerFindById.mockResolvedValue({
-			_id: { toString: () => 'planner123' } as never,
+		findReturning(async () => [
+			invite({
+				accessLevel: 'write',
+				createdAt: new Date('2024-01-01T10:00:00.000Z'),
+				expiresAt: new Date('2024-02-01T10:00:00.000Z'),
+				token: 'secret-token',
+			}),
+		]);
+		mockPlannerFindOne.mockResolvedValue({
+			_id: 'planner123',
 			name: 'My Planner',
 		} as never);
-
-		mockUserFindById.mockResolvedValue({
-			_id: { toString: () => 'inviter123' } as never,
+		mockUserFindOne.mockResolvedValue({
+			_id: 'inviter123',
 			name: 'John Doe',
 		} as never);
 
@@ -103,60 +111,30 @@ describe('getUserInvites', () => {
 	});
 
 	it('should populate planner name and inviter name', async () => {
-		const mockInvite = {
-			_id: { toString: () => 'invite123' },
-			email: 'user@example.com',
-			planner: { toString: () => 'planner123' } as never,
-			invitedBy: { toString: () => 'inviter123' } as never,
-			accessLevel: 'read',
-			createdAt: new Date('2024-01-15T10:00:00.000Z'),
-			expiresAt: new Date('2024-02-15T10:00:00.000Z'),
-			token: 'token123',
-		};
-
-		mockPendingInviteFind.mockReturnValue({
-			sort: vi.fn().mockResolvedValue([mockInvite]),
-		} as unknown as ReturnType<typeof PendingInvite.find>);
-
-		mockPlannerFindById.mockResolvedValue({
-			_id: { toString: () => 'planner123' } as never,
+		findReturning(async () => [invite()]);
+		mockPlannerFindOne.mockResolvedValue({
+			_id: 'planner123',
 			name: 'Family Meal Plan',
 		} as never);
-
-		mockUserFindById.mockResolvedValue({
-			_id: { toString: () => 'inviter123' } as never,
+		mockUserFindOne.mockResolvedValue({
+			_id: 'inviter123',
 			name: 'Jane Smith',
 		} as never);
 
 		const result = await getUserInvites('user@example.com');
 
-		expect(mockPlannerFindById).toHaveBeenCalledWith('planner123');
-		expect(mockUserFindById).toHaveBeenCalledWith('inviter123');
+		expect(mockPlannerFindOne).toHaveBeenCalledWith({ _id: 'planner123' });
+		expect(mockUserFindOne).toHaveBeenCalledWith({ _id: 'inviter123' });
 		expect(result.invites[0].plannerName).toBe('Family Meal Plan');
 		expect(result.invites[0].invitedBy).toBe('Jane Smith');
 	});
 
 	it('should handle missing planner gracefully', async () => {
-		const mockInvite = {
-			_id: { toString: () => 'invite123' },
-			email: 'user@example.com',
-			planner: { toString: () => 'deleted-planner' } as never,
-			invitedBy: { toString: () => 'inviter123' } as never,
-			accessLevel: 'read',
-			createdAt: new Date('2024-01-15T10:00:00.000Z'),
-			expiresAt: new Date('2024-02-15T10:00:00.000Z'),
-			token: 'token123',
-		};
-
-		mockPendingInviteFind.mockReturnValue({
-			sort: vi.fn().mockResolvedValue([mockInvite]),
-		} as unknown as ReturnType<typeof PendingInvite.find>);
-
+		findReturning(async () => [invite({ planner: 'deleted-planner' })]);
 		// Planner no longer exists
-		mockPlannerFindById.mockResolvedValue(null);
-
-		mockUserFindById.mockResolvedValue({
-			_id: { toString: () => 'inviter123' } as never,
+		mockPlannerFindOne.mockResolvedValue(null as never);
+		mockUserFindOne.mockResolvedValue({
+			_id: 'inviter123',
 			name: 'Jane Smith',
 		} as never);
 
@@ -167,28 +145,13 @@ describe('getUserInvites', () => {
 	});
 
 	it('should handle missing inviter gracefully', async () => {
-		const mockInvite = {
-			_id: { toString: () => 'invite123' },
-			email: 'user@example.com',
-			planner: { toString: () => 'planner123' } as never,
-			invitedBy: { toString: () => 'deleted-user' } as never,
-			accessLevel: 'read',
-			createdAt: new Date('2024-01-15T10:00:00.000Z'),
-			expiresAt: new Date('2024-02-15T10:00:00.000Z'),
-			token: 'token123',
-		};
-
-		mockPendingInviteFind.mockReturnValue({
-			sort: vi.fn().mockResolvedValue([mockInvite]),
-		} as unknown as ReturnType<typeof PendingInvite.find>);
-
-		mockPlannerFindById.mockResolvedValue({
-			_id: { toString: () => 'planner123' } as never,
+		findReturning(async () => [invite({ invitedBy: 'deleted-user' })]);
+		mockPlannerFindOne.mockResolvedValue({
+			_id: 'planner123',
 			name: 'My Planner',
 		} as never);
-
 		// Inviter no longer exists
-		mockUserFindById.mockResolvedValue(null);
+		mockUserFindOne.mockResolvedValue(null as never);
 
 		const result = await getUserInvites('user@example.com');
 
@@ -197,41 +160,16 @@ describe('getUserInvites', () => {
 	});
 
 	it('should sort invites by createdAt descending', async () => {
-		const mockInvites = [
-			{
-				_id: { toString: () => 'invite1' },
-				email: 'user@example.com',
-				planner: { toString: () => 'planner1' } as never,
-				invitedBy: { toString: () => 'inviter1' } as never,
-				accessLevel: 'read',
-				createdAt: new Date('2024-01-01T10:00:00.000Z'),
-				expiresAt: new Date('2024-02-01T10:00:00.000Z'),
-				token: 'token1',
-			},
-			{
-				_id: { toString: () => 'invite2' },
-				email: 'user@example.com',
-				planner: { toString: () => 'planner2' } as never,
-				invitedBy: { toString: () => 'inviter2' } as never,
-				accessLevel: 'write',
-				createdAt: new Date('2024-01-15T10:00:00.000Z'),
-				expiresAt: new Date('2024-02-15T10:00:00.000Z'),
-				token: 'token2',
-			},
-		];
-
-		const sortMock = vi.fn().mockResolvedValue(mockInvites);
-		mockPendingInviteFind.mockReturnValue({
-			sort: sortMock,
-		} as unknown as ReturnType<typeof PendingInvite.find>);
-
-		mockPlannerFindById.mockResolvedValue({
-			_id: { toString: () => 'planner1' } as never,
+		const sortMock = findReturning(async () => [
+			invite({ _id: 'invite1', planner: 'planner1', invitedBy: 'inviter1' }),
+			invite({ _id: 'invite2', planner: 'planner2', invitedBy: 'inviter2' }),
+		]);
+		mockPlannerFindOne.mockResolvedValue({
+			_id: 'planner1',
 			name: 'Planner 1',
 		} as never);
-
-		mockUserFindById.mockResolvedValue({
-			_id: { toString: () => 'inviter1' } as never,
+		mockUserFindOne.mockResolvedValue({
+			_id: 'inviter1',
 			name: 'Inviter 1',
 		} as never);
 
@@ -245,9 +183,9 @@ describe('getUserInvites', () => {
 
 	it('should return error on database failure', async () => {
 		const error = new Error('Database connection failed');
-		mockPendingInviteFind.mockReturnValue({
-			sort: vi.fn().mockRejectedValue(error),
-		} as unknown as ReturnType<typeof PendingInvite.find>);
+		findReturning(async () => {
+			throw error;
+		});
 
 		const result = await getUserInvites('user@example.com');
 
@@ -259,48 +197,30 @@ describe('getUserInvites', () => {
 	});
 
 	it('should handle multiple invites with mixed missing data', async () => {
-		const mockInvites = [
-			{
-				_id: { toString: () => 'invite1' },
-				email: 'user@example.com',
-				planner: { toString: () => 'planner1' } as never,
-				invitedBy: { toString: () => 'inviter1' } as never,
-				accessLevel: 'admin',
-				createdAt: new Date('2024-01-01T10:00:00.000Z'),
-				expiresAt: new Date('2024-02-01T10:00:00.000Z'),
-				token: 'token1',
-			},
-			{
-				_id: { toString: () => 'invite2' },
-				email: 'user@example.com',
-				planner: { toString: () => 'deleted-planner' } as never,
-				invitedBy: { toString: () => 'deleted-inviter' } as never,
-				accessLevel: 'read',
-				createdAt: new Date('2024-01-10T10:00:00.000Z'),
-				expiresAt: new Date('2024-02-10T10:00:00.000Z'),
-				token: 'token2',
-			},
-		];
-
-		mockPendingInviteFind.mockReturnValue({
-			sort: vi.fn().mockResolvedValue(mockInvites),
-		} as unknown as ReturnType<typeof PendingInvite.find>);
+		findReturning(async () => [
+			invite({ _id: 'invite1', planner: 'planner1', invitedBy: 'inviter1' }),
+			invite({
+				_id: 'invite2',
+				planner: 'deleted-planner',
+				invitedBy: 'deleted-inviter',
+			}),
+		]);
 
 		// First planner exists, second is null
-		mockPlannerFindById
+		mockPlannerFindOne
 			.mockResolvedValueOnce({
-				_id: { toString: () => 'planner1' } as never,
+				_id: 'planner1',
 				name: 'Valid Planner',
 			} as never)
-			.mockResolvedValueOnce(null);
+			.mockResolvedValueOnce(null as never);
 
 		// First inviter exists, second is null
-		mockUserFindById
+		mockUserFindOne
 			.mockResolvedValueOnce({
-				_id: { toString: () => 'inviter1' } as never,
+				_id: 'inviter1',
 				name: 'Valid Inviter',
 			} as never)
-			.mockResolvedValueOnce(null);
+			.mockResolvedValueOnce(null as never);
 
 		const result = await getUserInvites('user@example.com');
 

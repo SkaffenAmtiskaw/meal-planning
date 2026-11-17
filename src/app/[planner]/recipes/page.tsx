@@ -3,16 +3,16 @@ import { Container, Group } from '@mantine/core';
 import { z } from 'zod';
 
 import { getPlanner } from '@/_actions/planner';
-import { zObjectId } from '@/_utils/zObjectId';
+import { zId } from '@/_utils/zId';
 
 import { AddItemDropdown, Modal, SavedList } from './_components';
 
 const zParams = z.object({
-	planner: zObjectId,
+	planner: zId,
 });
 
 const zSearchParams = z.object({
-	item: zObjectId.optional(),
+	item: zId.optional(),
 	status: z.union([z.literal('add'), z.literal('edit')]).optional(),
 	type: z.union([z.literal('bookmark'), z.literal('recipe')]).optional(),
 });
@@ -33,11 +33,7 @@ const RecipesPage = async ({
 				<Group justify="flex-end">
 					<AddItemDropdown />
 				</Group>
-				<SavedList
-					items={planner.saved}
-					plannerId={String(id)}
-					tags={planner.tags}
-				/>
+				<SavedList items={planner.saved} plannerId={id} tags={planner.tags} />
 			</Container>
 		</>
 	);

@@ -5,7 +5,7 @@ import { Anchor, Text } from '@mantine/core';
 
 import { DishLink } from './DishLink';
 
-import type { SerializedDish } from '../../_utils/toScheduleXEvents';
+import type { ResolvedDish } from '../../_utils/toScheduleXEvents';
 
 vi.mock('@mantine/core', async () => await import('#mocks/@mantine/core'));
 vi.mock('next/link', () => ({
@@ -18,7 +18,7 @@ describe('DishLink', () => {
 	});
 
 	it('forwards tabIndex to the Anchor', () => {
-		const dish: SerializedDish = {
+		const dish: ResolvedDish = {
 			name: 'Tab Dish',
 			source: { url: 'https://example.com/recipe' },
 		};
@@ -31,7 +31,7 @@ describe('DishLink', () => {
 	});
 
 	it('renders an external anchor for url sources', () => {
-		const dish: SerializedDish = {
+		const dish: ResolvedDish = {
 			name: 'External Dish',
 			source: { url: 'https://example.com/recipe' },
 			note: 'Should not appear',
@@ -49,7 +49,7 @@ describe('DishLink', () => {
 	});
 
 	it('renders an internal recipe link for _id sources', () => {
-		const dish: SerializedDish = {
+		const dish: ResolvedDish = {
 			name: 'Saved Dish',
 			source: { _id: 'recipe-123' },
 			note: 'Should not appear',
@@ -63,17 +63,17 @@ describe('DishLink', () => {
 	});
 
 	it('renders plain text for ref, string, or missing sources', () => {
-		const refDish: SerializedDish = {
+		const refDish: ResolvedDish = {
 			name: 'Ref Dish',
 			source: { ref: 'some-ref' },
 			note: 'Should not appear',
 		};
-		const stringDish: SerializedDish = {
+		const stringDish: ResolvedDish = {
 			name: 'String Dish',
 			source: 'some-source',
 			note: 'Should not appear',
 		};
-		const missingDish: SerializedDish = {
+		const missingDish: ResolvedDish = {
 			name: 'Missing Dish',
 			note: 'Should not appear',
 		};
@@ -99,7 +99,7 @@ describe('DishLink', () => {
 	});
 
 	it('defaults size to xs', () => {
-		const dish: SerializedDish = {
+		const dish: ResolvedDish = {
 			name: 'Default Size Dish',
 			source: { url: 'https://example.com/recipe' },
 		};
@@ -112,7 +112,7 @@ describe('DishLink', () => {
 	});
 
 	it('passes size="sm" to the anchor for url sources', () => {
-		const dish: SerializedDish = {
+		const dish: ResolvedDish = {
 			name: 'Sm Url Dish',
 			source: { url: 'https://example.com/recipe' },
 		};
@@ -125,7 +125,7 @@ describe('DishLink', () => {
 	});
 
 	it('passes size="sm" to the anchor for _id sources', () => {
-		const dish: SerializedDish = {
+		const dish: ResolvedDish = {
 			name: 'Sm Saved Dish',
 			source: { _id: 'recipe-123' },
 		};
@@ -138,7 +138,7 @@ describe('DishLink', () => {
 	});
 
 	it('passes size="sm" to Text for non-link sources', () => {
-		const dish: SerializedDish = {
+		const dish: ResolvedDish = {
 			name: 'Sm Text Dish',
 			source: { ref: 'some-ref' },
 		};

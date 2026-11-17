@@ -1,24 +1,19 @@
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
 
-import { User } from '@/_models/user';
+import { auth } from '@/_auth';
+import { changeAuthUserEmail } from '@/_auth/users';
+import { users } from '@/_models/database/users';
 
 import { verifyEmailChange } from './verifyEmailChange';
 
-const { mockUpdateOne, mockCollection } = vi.hoisted(() => {
-	const mockUpdateOne = vi.fn();
-	return {
-		mockUpdateOne,
-		mockCollection: vi.fn(() => ({ updateOne: mockUpdateOne })),
-	};
-});
+vi.mock('@/_auth', () => ({ auth: {} }));
 
-vi.mock('@/_auth', async () => ({
-	mongoClient: {
-		db: vi.fn(() => ({ collection: mockCollection })),
-	},
-}));
+vi.mock('@/_auth/users', async () => await import('#mocks/@/_auth/users'));
 
-vi.mock('@/_models/user', async () => await import('#mocks/@/_models/user'));
+vi.mock(
+	'@/_models/database/users',
+	async () => await import('#mocks/@/_models/database/users'),
+);
 
 const futureDate = new Date(Date.now() + 1000 * 60 * 60 * 24);
 const pastDate = new Date(Date.now() - 1000 * 60 * 60);
@@ -33,13 +28,11 @@ const makeMockUser = (overrides = {}) => ({
 	...overrides,
 });
 
-const setupValidUser = () => {
-	vi.mocked(User.findOne).mockReturnValueOnce({
-		exec: vi.fn().mockResolvedValue(makeMockUser()),
-	} as never);
-	mockUpdateOne.mockResolvedValueOnce({});
-	vi.mocked(User.updateOne).mockResolvedValueOnce({} as never);
+const givenUserWithToken = (user: unknown) => {
+	vi.mocked(users.findOne).mockResolvedValueOnce(user as never);
 };
+
+const setupValidUser = () => givenUserWithToken(makeMockUser());
 
 describe('verifyEmailChange', () => {
 	afterEach(() => {
@@ -48,9 +41,7 @@ describe('verifyEmailChange', () => {
 
 	describe('validation', () => {
 		test('returns an invalid link error when no user has the given token', async () => {
-			vi.mocked(User.findOne).mockReturnValueOnce({
-				exec: vi.fn().mockResolvedValue(null),
-			} as never);
+			givenUserWithToken(null);
 
 			const result = await verifyEmailChange('bad-token');
 
@@ -61,11 +52,7 @@ describe('verifyEmailChange', () => {
 		});
 
 		test('returns an invalid link error when the user has no pending email change', async () => {
-			vi.mocked(User.findOne).mockReturnValueOnce({
-				exec: vi
-					.fn()
-					.mockResolvedValue(makeMockUser({ pendingEmailChange: null })),
-			} as never);
+			givenUserWithToken(makeMockUser({ pendingEmailChange: null }));
 
 			const result = await verifyEmailChange('valid-token');
 
@@ -76,17 +63,15 @@ describe('verifyEmailChange', () => {
 		});
 
 		test('returns an invalid link error when the token has expired', async () => {
-			vi.mocked(User.findOne).mockReturnValueOnce({
-				exec: vi.fn().mockResolvedValue(
-					makeMockUser({
-						pendingEmailChange: {
-							email: 'new@example.com',
-							token: 'expired-token',
-							expiresAt: pastDate,
-						},
-					}),
-				),
-			} as never);
+			givenUserWithToken(
+				makeMockUser({
+					pendingEmailChange: {
+						email: 'new@example.com',
+						token: 'expired-token',
+						expiresAt: pastDate,
+					},
+				}),
+			);
 
 			const result = await verifyEmailChange('expired-token');
 
@@ -102,20 +87,20 @@ describe('verifyEmailChange', () => {
 			setupValidUser();
 		});
 
-		test('updates the email in the better-auth user collection', async () => {
+		test("changes the better-auth user's email", async () => {
 			await verifyEmailChange('valid-token');
 
-			expect(mockCollection).toHaveBeenCalledWith('user');
-			expect(mockUpdateOne).toHaveBeenCalledWith(
-				{ email: 'user@example.com' },
-				{ $set: { email: 'new@example.com' } },
+			expect(changeAuthUserEmail).toHaveBeenCalledWith(
+				auth,
+				'user@example.com',
+				'new@example.com',
 			);
 		});
 
-		test('updates the app User model and clears the pending change', async () => {
+		test("updates the app user's email and clears the pending change", async () => {
 			await verifyEmailChange('valid-token');
 
-			expect(User.updateOne).toHaveBeenCalledWith(
+			expect(users.updateOne).toHaveBeenCalledWith(
 				{ email: 'user@example.com' },
 				{
 					$set: { email: 'new@example.com' },

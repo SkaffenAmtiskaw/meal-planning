@@ -29,7 +29,7 @@ const SavedList = ({ items, plannerId, tags }: Props) => (
 	<Stack gap={0}>
 		{items.map((item, index) => {
 			const itemTags = (item.tags ?? [])
-				.map((id) => tags.find((t) => String(t._id) === String(id)))
+				.map((id) => tags.find((t) => t._id === id))
 				.filter((t): t is TagInterface => t !== undefined);
 
 			return (

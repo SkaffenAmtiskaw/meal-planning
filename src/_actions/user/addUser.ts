@@ -1,47 +1,33 @@
 'use server';
 
-import type { Types } from 'mongoose';
-
 import { addPlanner } from '@/_actions/planner';
-import type { AccessLevel } from '@/_models/user';
-import { User } from '@/_models/user';
+import { newId } from '@/_models/database/newId';
+import { users } from '@/_models/database/users';
+import type { AccessLevel, NewUser } from '@/_models/user';
 
 export interface AddUserOptions {
 	email: string;
-	plannerId?: Types.ObjectId;
+	plannerId?: string;
 	name?: string;
 	skipPlannerCreation?: boolean;
 	accessLevel?: AccessLevel;
-	emailVerified?: boolean;
 }
 
 function isAddUserOptions(arg: unknown): arg is AddUserOptions {
 	return typeof arg === 'object' && arg !== null && 'email' in arg;
 }
 
-export async function addUser(options: AddUserOptions): Promise<{
-	email: string;
-	name: string;
-	planners: { planner: Types.ObjectId; accessLevel: AccessLevel }[];
-}>;
+export async function addUser(options: AddUserOptions): Promise<NewUser>;
 export async function addUser(
 	email: string,
-	plannerId?: Types.ObjectId,
+	plannerId?: string,
 	name?: string,
-): Promise<{
-	email: string;
-	name: string;
-	planners: { planner: Types.ObjectId; accessLevel: AccessLevel }[];
-}>;
+): Promise<NewUser>;
 export async function addUser(
 	arg1: AddUserOptions | string,
-	arg2?: Types.ObjectId,
+	arg2?: string,
 	arg3?: string,
-): Promise<{
-	email: string;
-	name: string;
-	planners: { planner: Types.ObjectId; accessLevel: AccessLevel }[];
-}> {
+): Promise<NewUser> {
 	// Normalize to options object
 	let options: AddUserOptions;
 
@@ -60,14 +46,13 @@ export async function addUser(
 	const {
 		email,
 		plannerId,
-		name = 'New User',
+		name,
 		skipPlannerCreation = false,
 		accessLevel,
-		emailVerified,
 	} = options;
 
 	// Determine planner to use
-	let id: Types.ObjectId;
+	let id: string;
 	let isNewPlanner: boolean;
 
 	if (plannerId) {
@@ -86,22 +71,14 @@ export async function addUser(
 	// Determine access level
 	const finalAccessLevel = accessLevel ?? (isNewPlanner ? 'owner' : 'read');
 
-	// Build user data object
-	const userData: {
-		email: string;
-		name: string;
-		planners: { planner: Types.ObjectId; accessLevel: AccessLevel }[];
-		emailVerified?: boolean;
-	} = {
+	// A user with no name gets the schema's default name when it's inserted.
+	const user: NewUser = {
+		_id: newId(),
 		email,
-		name,
-		planners: [{ planner: id, accessLevel: finalAccessLevel }],
+		...(name && { name }),
+		planners: [{ _id: newId(), planner: id, accessLevel: finalAccessLevel }],
 	};
 
-	// Only add emailVerified if it was provided
-	if (emailVerified !== undefined) {
-		userData.emailVerified = emailVerified;
-	}
-
-	return await User.create(userData);
+	await users.insertOne(user);
+	return user;
 }

@@ -51,7 +51,7 @@ better-auth rejects an email that already exists, so a fixed email fails on the 
 ## Fixtures Hold Connections, Not Data
 A `test.extend` fixture in `e2e/_fixtures/` only opens, provides or closes a resource, such as a database connection or a browser context, and never creates users, planners or other documents. A fixture can be shared by every test in a worker, so data it created would be data tests share. Keeping data out of fixtures also keeps everything a test depends on visible in the spec, so `signIn` and the email helpers are plain functions the spec calls, not fixtures.
 
-A fixture opens and closes connections only through `test/factories/connection.ts` and `test/auth.ts`, the modules whose connections the factories and `signIn` use.
+A fixture opens and closes the database connection only through `test/factories/connection.ts`. It's the data module's one connection, which the factories, `signIn` and the test-only auth instance in `test/auth.ts` all use.
 
 ## Nothing Cleans Up
 Nothing in `e2e/` or `test/factories/` deletes data. No code there calls `deleteOne`, `deleteMany`, `drop`, better-auth's `removeUser` or `deleteUser`, or anything like them, and no `afterEach`, `afterAll` or `globalTeardown` removes data. The database is thrown away after every run, so there's nothing to clean up. Cleanup steps don't run when a test fails partway, and a cleanup in one test can delete data another test running in parallel still needs.
@@ -100,14 +100,14 @@ test('signed-in user lands on their planner calendar', async ({
 ```
 
 ## Import from `e2e/_fixtures/`
-Specs import `test`, `expect` and anything else of Playwright's through `e2e/_fixtures/`, never from `@playwright/test`. The `test` there opens each worker's database connections for the factories and `signIn`, and closes them when the worker ends, so a spec that imports Playwright's own `test` gets no connections. Even types such as `Page` come through `e2e/_fixtures/`, so a single Biome ban on `@playwright/test` in specs catches a stray `test` import.
+Specs import `test`, `expect` and anything else of Playwright's through `e2e/_fixtures/`, never from `@playwright/test`. The `test` there opens each worker's database connection for the factories and `signIn`, and closes it when the worker ends, so a spec that imports Playwright's own `test` gets no connection. Even types such as `Page` come through `e2e/_fixtures/`, so a single Biome ban on `@playwright/test` in specs catches a stray `test` import.
 
 ```typescript
 // ✅ CORRECT
 import { expect, signIn, test } from '../_fixtures';
 ```
 ```typescript
-// ❌ INCORRECT - no database connections
+// ❌ INCORRECT - no database connection
 import { expect, test } from '@playwright/test';
 ```
 
@@ -150,7 +150,7 @@ A marked test is marked for only one known bug, though one bug can have several 
 | `e2e/<area>/_helpers/` | code that an area's specs share |
 | `e2e/_helpers/` | code that specs in more than one area share |
 | `e2e/_fixtures/` | Playwright support code, such as the `test` fixture and `signIn`, and the launchers for the services a run starts |
-| `test/factories/` | the factories (plain functions that create test data), their database connection, and helpers E2E code can't get from the app's own modules, such as a new object ID. All are imported through `#factories/<name>`. |
+| `test/factories/` | the factories (plain functions that create test data), their database connection, and helpers E2E code can't get from the app's own modules, such as a new id. All are imported through `#factories/<name>`. |
 | `test/auth.ts` | the test-only better-auth instance, imported through `#auth` |
 | `playwright.config.ts` | the Playwright config, at the repo root |
 
@@ -159,7 +159,9 @@ Playwright code stays in `e2e/`, apart from `playwright.config.ts`, so the app a
 The factories and the test-only auth instance sit in `test/`, not `e2e/`, because they don't use Playwright. They're plain functions, so the dev seed in `seed/` reuses them too (see `docs/seed.md`).
 
 ## Factories Stay Out of Next.js
-Factories run in Playwright's worker, outside Next.js, where `server-only` throws. So they write through the models in `@/_models` and the test-only auth instance in `test/auth.ts`, and never import `@/_actions`, `@/_auth` or any other module that imports `server-only`.
+Factories run in Playwright's worker, outside Next.js, where `server-only` throws, so they never import `@/_actions`, any of `@/_auth` but `@/_auth/users`, or any other module that imports `server-only`. The modules they use don't import it. They write the app's data through the data module's collection wrappers in `@/_models/database/`, and reach better-auth through the test-only auth instance in `test/auth.ts` and the better-auth functions in `@/_auth/users`.
+
+Writing through the wrappers gives test data the same checks and defaults as the app's data, so a test can't pass on data the app would refuse to store (see `docs/project_conventions.md`, "Stored Data").
 
 ## `testUtils` Stays in `test/auth.ts`
 better-auth's `testUtils` plugin creates sessions without a password, so it must never reach the app. It's used only in the test-only auth instance, `test/auth.ts`. The app's own instance in `src/_auth/auth.ts` never has it. No other file imports or re-exports it in any form, and nothing imports from `better-auth/test`.
@@ -206,4 +208,4 @@ The memory server runs the same MongoDB release series as the Atlas cluster, **8
 > The download at `pnpm install` reads only that setting, so the launcher sets no version of its own (no `binary.version`). The memory-server entry in `playwright.config.ts` sets `MONGOMS_VERSION` from the pin, and sets `MONGOMS_SYSTEM_BINARY`, `MONGOMS_DOWNLOAD_URL` and `MONGOMS_ARCHIVE_NAME` to empty strings, so nothing set in your shell can swap in another `mongod`.
 
 # How These Rules Are Enforced
-For anyone changing these rules: `biome.jsonc` bans the imports they rule out, including `mongoose`, `mongodb` and `@/_models` in specs and helpers. Two specs also guard the factories and `signIn`. `e2e/auth/homeRedirect.spec.ts` fails if `createUser` leaves out either record, or if `signIn`'s session cookie doesn't work, because the redirect needs both records and a working cookie. `e2e/auth/signIn.spec.ts` signs in through the form as a user created without `emailVerified`, so it checks that `createUser`'s users are verified by default. `homeRedirect.spec.ts` can't, because `signIn`'s cookie skips the verification check.
+For anyone changing these rules: `biome.jsonc` bans the imports they rule out, including `mongodb` and `@/_models` in specs and helpers. Two specs also guard the factories and `signIn`. `e2e/auth/homeRedirect.spec.ts` fails if `createUser` leaves out either record, or if `signIn`'s session cookie doesn't work, because the redirect needs both records and a working cookie. `e2e/auth/signIn.spec.ts` signs in through the form as a user created without `emailVerified`, so it checks that `createUser`'s users are verified by default. `homeRedirect.spec.ts` can't, because `signIn`'s cookie skips the verification check.

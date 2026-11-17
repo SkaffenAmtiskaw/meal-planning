@@ -1,19 +1,16 @@
 'use server';
 
-import { mongoClient } from '@/_auth';
+import { auth } from '@/_auth';
+import { findAuthUser } from '@/_auth/users';
 
 export type EmailStatus = 'new' | 'has-password' | 'social-only';
 
 export const checkEmailStatus = async (email: string): Promise<EmailStatus> => {
-	const db = mongoClient.db();
+	const found = await findAuthUser(auth, email);
 
-	const user = await db.collection('user').findOne({ email });
+	if (!found) return 'new';
 
-	if (!user) return 'new';
-
-	const credentialAccount = await db
-		.collection('account')
-		.findOne({ userId: user._id, providerId: 'credential' });
-
-	return credentialAccount ? 'has-password' : 'social-only';
+	return found.accounts.some(({ providerId }) => providerId === 'credential')
+		? 'has-password'
+		: 'social-only';
 };

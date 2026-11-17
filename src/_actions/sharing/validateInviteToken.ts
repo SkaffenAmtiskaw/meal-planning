@@ -1,7 +1,7 @@
 'use server';
 
-import { Planner } from '@/_models/planner';
-import { PendingInvite } from '@/_models/sharing';
+import { pendingInvites } from '@/_models/database/pendingInvites';
+import { planners } from '@/_models/database/planners';
 import { catchify } from '@/_utils/catchify';
 import { reportError } from '@/_utils/reportError';
 
@@ -17,7 +17,7 @@ export const validateInviteToken = async (
 ): Promise<ValidateInviteTokenResult> => {
 	// Use catchify for findOne
 	const [invite, findError] = await catchify(() =>
-		PendingInvite.findOne({ token }),
+		pendingInvites.findOne({ token }),
 	);
 
 	if (findError || !invite) {
@@ -29,13 +29,13 @@ export const validateInviteToken = async (
 	const now = new Date();
 	if (invite.expiresAt < now) {
 		// Delete the expired invite - don't wait for result
-		catchify(() => invite.deleteOne());
+		catchify(() => pendingInvites.deleteOne({ _id: invite._id }));
 		return { valid: false, reason: 'expired', email: invite.email };
 	}
 
 	// Invite is valid - look up the planner
 	const [planner, plannerError] = await catchify(() =>
-		Planner.findById(invite.planner),
+		planners.findOne({ _id: invite.planner }),
 	);
 	if (plannerError) await reportError(plannerError);
 

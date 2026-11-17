@@ -7,15 +7,16 @@ import {
 	type WeekViewMeal,
 	type WeekViewProps,
 } from '@/_components/Calendar';
+import type { DayInterface } from '@/_models/types';
 
 import { WeekMealCard } from './WeekMealCard';
 
 import type { CalendarEvent } from '../../_utils/toCalendarEvents';
 import { toCalendarEvents } from '../../_utils/toCalendarEvents';
-import type { SavedItem, SerializedDay } from '../../_utils/toScheduleXEvents';
+import type { SavedItem } from '../../_utils/toScheduleXEvents';
 
 export interface MealWeekViewProps {
-	calendar: SerializedDay[];
+	calendar: DayInterface[];
 	savedItems?: SavedItem[];
 	plannerId: string;
 	onMealClick?: (meal: CalendarEvent) => void;

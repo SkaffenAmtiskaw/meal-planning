@@ -1,8 +1,6 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
-import { Types } from 'mongoose';
-
-import { User } from '@/_models/user';
+import { users } from '@/_models/database/users';
 import { catchify } from '@/_utils/catchify';
 import { reportError } from '@/_utils/reportError';
 
@@ -12,7 +10,14 @@ import { createPlanner } from './createPlanner';
 const mockSafeParse = vi.hoisted(() => vi.fn());
 
 vi.mock('@/_actions/user', async () => await import('#mocks/@/_actions/user'));
-vi.mock('@/_models/user', async () => await import('#mocks/@/_models/user'));
+vi.mock(
+	'@/_models/database/users',
+	async () => await import('#mocks/@/_models/database/users'),
+);
+vi.mock(
+	'@/_models/database/newId',
+	async () => await import('#mocks/@/_models/database/newId'),
+);
 vi.mock('./addPlanner', async () => ({
 	addPlanner: vi.fn(),
 }));
@@ -94,24 +99,26 @@ describe('createPlanner', () => {
 		expect(reportError).toHaveBeenCalledWith(error);
 	});
 
-	it('creates a planner and links it to the user by their ObjectId', async () => {
+	it('creates a planner and links it to the user by their id, with a new id on the membership', async () => {
 		mockSafeParse.mockReturnValue({
 			success: true,
 			data: 'My Planner',
 		});
 		vi.mocked(catchify).mockResolvedValue([mockUser]);
 		vi.mocked(addPlanner).mockResolvedValue(mockPlanner as never);
-		vi.mocked(User.collection.updateOne).mockResolvedValue({} as never);
 
 		const result = await createPlanner('My Planner');
 
 		expect(addPlanner).toHaveBeenCalledWith('My Planner');
-		expect(User.collection.updateOne).toHaveBeenCalledWith(
-			// A raw collection call doesn't cast, so a string _id would match no user.
-			{ _id: new Types.ObjectId(userId) },
+		expect(users.updateOne).toHaveBeenCalledWith(
+			{ _id: userId },
 			{
 				$push: {
-					planners: { planner: 'planner-id-456', accessLevel: 'owner' },
+					planners: {
+						_id: 'new-id',
+						planner: 'planner-id-456',
+						accessLevel: 'owner',
+					},
 				},
 			},
 		);

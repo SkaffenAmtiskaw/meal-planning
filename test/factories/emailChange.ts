@@ -1,5 +1,5 @@
+import { users } from '@/_models/database/users';
 import type { UserInterface } from '@/_models/user';
-import { User } from '@/_models/user';
 
 import { uniqueEmail } from './uniqueEmail';
 
@@ -22,7 +22,7 @@ export const createEmailChangeRequest = async (
 		expiresAt,
 	};
 
-	const result = await User.updateOne(
+	const result = await users.updateOne(
 		{ email: user.email },
 		{ $set: { pendingEmailChange } },
 	);

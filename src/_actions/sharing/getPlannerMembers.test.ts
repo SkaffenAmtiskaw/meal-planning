@@ -1,33 +1,25 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-import { Types } from 'mongoose';
-
 vi.mock(
 	'@/_actions/auth/checkAuth',
 	async () => await import('#mocks/@/_actions/auth/checkAuth'),
 );
-vi.mock('@/_models/user', async () => ({
-	User: {
-		find: vi.fn(),
-	},
-}));
 vi.mock(
-	'@/_utils/serialize',
-	async () => await import('#mocks/@/_utils/serialize'),
+	'@/_models/database/users',
+	async () => await import('#mocks/@/_models/database/users'),
 );
 
 import { checkAuth } from '@/_actions/auth/checkAuth';
-import { User } from '@/_models/user';
+import { users } from '@/_models/database/users';
 
 import { getPlannerMembers } from './getPlannerMembers';
 
 describe('getPlannerMembers', () => {
 	const plannerId = '507f1f77bcf86cd799439011';
-	const objectId = new Types.ObjectId(plannerId);
 
-	const mockFindUsers = (users: unknown[]) =>
-		vi.mocked(User.find).mockReturnValue({
-			lean: vi.fn().mockResolvedValue(users),
+	const mockFindUsers = (found: unknown[]) =>
+		vi.mocked(users.find).mockReturnValue({
+			toArray: vi.fn().mockResolvedValue(found),
 		} as never);
 
 	beforeEach(() => {
@@ -44,7 +36,7 @@ describe('getPlannerMembers', () => {
 			const result = await getPlannerMembers(plannerId);
 
 			expect(result).toEqual({ members: [], error: 'Unauthorized' });
-			expect(User.find).not.toHaveBeenCalled();
+			expect(users.find).not.toHaveBeenCalled();
 		});
 
 		it('throws when checkAuth returns error', async () => {
@@ -67,7 +59,7 @@ describe('getPlannerMembers', () => {
 					email: 'alice@example.com',
 					planners: [
 						{
-							planner: { toString: () => plannerId },
+							planner: plannerId,
 							accessLevel: 'owner',
 						},
 					],
@@ -77,7 +69,7 @@ describe('getPlannerMembers', () => {
 					email: 'bob@example.com',
 					planners: [
 						{
-							planner: { toString: () => plannerId },
+							planner: plannerId,
 							accessLevel: 'write',
 						},
 					],
@@ -86,8 +78,8 @@ describe('getPlannerMembers', () => {
 
 			const result = await getPlannerMembers(plannerId);
 
-			expect(checkAuth).toHaveBeenCalledWith(objectId, 'admin');
-			expect(User.find).toHaveBeenCalledWith({
+			expect(checkAuth).toHaveBeenCalledWith(plannerId, 'admin');
+			expect(users.find).toHaveBeenCalledWith({
 				'planners.planner': plannerId,
 			});
 			expect(result).toEqual({
@@ -116,7 +108,7 @@ describe('getPlannerMembers', () => {
 					email: 'alice@example.com',
 					planners: [
 						{
-							planner: { toString: () => plannerId },
+							planner: plannerId,
 							accessLevel: 'owner',
 						},
 					],
@@ -125,33 +117,6 @@ describe('getPlannerMembers', () => {
 
 			const result = await getPlannerMembers(plannerId);
 
-			expect(result).toEqual({
-				members: [
-					{ name: 'Alice', email: 'alice@example.com', accessLevel: 'owner' },
-				],
-			});
-		});
-
-		it('accepts ObjectId as plannerId', async () => {
-			mockFindUsers([
-				{
-					name: 'Alice',
-					email: 'alice@example.com',
-					planners: [
-						{
-							planner: { toString: () => plannerId },
-							accessLevel: 'owner',
-						},
-					],
-				},
-			]);
-
-			const result = await getPlannerMembers(objectId);
-
-			expect(checkAuth).toHaveBeenCalledWith(objectId, 'admin');
-			expect(User.find).toHaveBeenCalledWith({
-				'planners.planner': objectId,
-			});
 			expect(result).toEqual({
 				members: [
 					{ name: 'Alice', email: 'alice@example.com', accessLevel: 'owner' },
@@ -191,7 +156,7 @@ describe('getPlannerMembers', () => {
 					email: undefined,
 					planners: [
 						{
-							planner: { toString: () => plannerId },
+							planner: plannerId,
 							accessLevel: 'admin',
 						},
 					],
@@ -212,7 +177,7 @@ describe('getPlannerMembers', () => {
 					email: 'charlie@example.com',
 					planners: [
 						{
-							planner: { toString: () => 'other-planner-id' },
+							planner: 'other-planner-id',
 							accessLevel: 'owner',
 						},
 					],
@@ -241,7 +206,7 @@ describe('getPlannerMembers', () => {
 					email: 'alice@example.com',
 					planners: [
 						{
-							planner: { toString: () => plannerId },
+							planner: plannerId,
 							accessLevel: 'owner',
 							_id: 'membership-id',
 						},
@@ -261,7 +226,7 @@ describe('getPlannerMembers', () => {
 
 	describe('errors', () => {
 		it('throws on database error', async () => {
-			vi.mocked(User.find).mockImplementation(() => {
+			vi.mocked(users.find).mockImplementation(() => {
 				throw new Error('DB connection failed');
 			});
 

@@ -2,12 +2,11 @@
 
 import { revalidatePath } from 'next/cache';
 
-import { Types } from 'mongoose';
 import { z } from 'zod';
 
 import { checkAuth } from '@/_actions/auth/checkAuth';
+import { planners } from '@/_models/database/planners';
 import { zRecipeFormSchema } from '@/_models/library';
-import { Planner } from '@/_models/planner';
 import type { ActionResult } from '@/_utils/actionResult';
 
 import { transformRecipeForm } from './_utils/transformRecipeForm';
@@ -32,14 +31,14 @@ export const editRecipe = async (
 		storage,
 	} = transformRecipeForm(parsed);
 
-	const auth = await checkAuth(new Types.ObjectId(plannerId), 'write');
+	const auth = await checkAuth(plannerId, 'write');
 	if (auth.type !== 'authorized') return { ok: false, error: 'Unauthorized' };
 
 	const setFields: Record<string, unknown> = {
 		'saved.$.name': name,
 		'saved.$.ingredients': ingredients,
 		'saved.$.instructions': instructions,
-		'saved.$.tags': (tags ?? []).map((t) => new Types.ObjectId(String(t))),
+		'saved.$.tags': tags ?? [],
 	};
 
 	const unsetFields: Record<string, string> = {};
@@ -79,11 +78,8 @@ export const editRecipe = async (
 		update.$unset = unsetFields;
 	}
 
-	const result = await Planner.collection.updateOne(
-		{
-			_id: new Types.ObjectId(plannerId),
-			'saved._id': new Types.ObjectId(recipeId),
-		},
+	const result = await planners.updateOne(
+		{ _id: plannerId, 'saved._id': recipeId },
 		update,
 	);
 

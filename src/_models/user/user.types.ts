@@ -1,6 +1,6 @@
 import { z } from 'zod';
 
-import { zObjectId } from '@/_utils/zObjectId';
+import { zId } from '@/_utils/zId';
 import { zSafeString } from '@/_utils/zSafeString';
 
 export const ACCESS_LEVELS = ['owner', 'admin', 'write', 'read'] as const;
@@ -8,12 +8,14 @@ export type AccessLevel = (typeof ACCESS_LEVELS)[number];
 export const zAccessLevel = z.enum(ACCESS_LEVELS);
 
 export const zPlannerMembership = z.object({
-	planner: zObjectId,
+	_id: zId,
+	planner: zId,
 	accessLevel: zAccessLevel,
 });
 export type PlannerMembership = z.infer<typeof zPlannerMembership>;
 
 export const zUserInterface = z.object({
+	_id: zId,
 	email: z.string(),
 	name: zSafeString().default('New User'),
 	planners: z.array(zPlannerMembership),
@@ -27,3 +29,5 @@ export const zUserInterface = z.object({
 });
 
 export type UserInterface = z.infer<typeof zUserInterface>;
+/** A user before its insert, which may leave out the fields the schema gives a default. */
+export type NewUser = z.input<typeof zUserInterface>;

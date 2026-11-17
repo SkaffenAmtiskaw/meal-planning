@@ -4,8 +4,6 @@ import { openPlannerRecipes } from './_helpers/openPlannerRecipes';
 import { fillRecipeForm, saveRecipeForm } from './_helpers/recipeForm';
 
 test('adds a recipe from the Add Item dropdown', async ({ context, page }) => {
-	// Expected to fail until "Empty Source URL Blocks Saving a Recipe" is fixed.
-	test.fail();
 	const name = "Mulan's Congee";
 	await openPlannerRecipes(page, context);
 

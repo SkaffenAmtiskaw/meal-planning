@@ -1,18 +1,16 @@
 import { Box, Divider, SimpleGrid, Stack, Text } from '@mantine/core';
 
+import type { DayInterface } from '@/_models/types';
+
 import { WeekMealCard } from './WeekMealCard';
 import styles from './WeekView.module.css';
 
-import type {
-	MealEvent,
-	SavedItem,
-	SerializedDay,
-} from '../../_utils/toScheduleXEvents';
+import type { MealEvent, SavedItem } from '../../_utils/toScheduleXEvents';
 
 const DAY_LABELS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 
 type Props = {
-	calendar: SerializedDay[];
+	calendar: DayInterface[];
 	currentWeekStart: Temporal.PlainDate;
 	onMealClick: (event: MealEvent) => void;
 	plannerId: string;

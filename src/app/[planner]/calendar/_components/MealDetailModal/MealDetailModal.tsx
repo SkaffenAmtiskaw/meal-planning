@@ -1,12 +1,12 @@
 import { Modal, Stack, Text } from '@mantine/core';
 
-import type { SerializedDish } from '../../_utils/toScheduleXEvents';
+import type { ResolvedDish } from '../../_utils/toScheduleXEvents';
 import { DishLink } from '../DishLink/DishLink';
 
 type MealDetail = {
 	title: string;
 	description?: string;
-	dishes: SerializedDish[];
+	dishes: ResolvedDish[];
 };
 
 type Props = {

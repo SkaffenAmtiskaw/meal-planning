@@ -5,20 +5,14 @@ import { Container } from '@mantine/core';
 import { z } from 'zod';
 
 import { getPlanner } from '@/_actions/planner';
-import type {
-	BookmarkInterface,
-	RecipeInterface,
-	TagInterface,
-} from '@/_models/types';
-import { matchesId } from '@/_utils/matchesId';
-import { zObjectId } from '@/_utils/zObjectId';
+import { zId } from '@/_utils/zId';
 
 import { RecipeForm } from '../_components/Modal/RecipeForm';
 import { RecipeDetail } from './_components/RecipeDetail';
 
 const zParams = z.object({
-	planner: zObjectId,
-	recipeId: zObjectId,
+	planner: zId,
+	recipeId: zId,
 });
 
 const zSearchParams = z.object({
@@ -34,39 +28,27 @@ const RecipePage = async ({
 
 	const planner = await getPlanner(plannerId);
 
-	const item = planner.saved.find(matchesId(recipeId));
+	const recipe = planner.saved.find((item) => item._id === recipeId);
 
-	if (!item || !!(item as unknown as BookmarkInterface).url) {
+	if (!recipe || 'url' in recipe) {
 		return notFound();
 	}
-
-	const recipe = JSON.parse(JSON.stringify(item)) as RecipeInterface;
-
-	const tags = planner.tags.map((t) => ({
-		_id: String(t._id),
-		name: t.name,
-		color: t.color,
-	}));
 
 	if (status === 'edit') {
 		return (
 			<Container size="md" py={16}>
 				<RecipeForm
 					item={recipe}
-					plannerId={String(plannerId)}
-					redirectTo={`/${String(plannerId)}/recipes/${String(recipeId)}`}
-					tags={tags}
+					plannerId={plannerId}
+					redirectTo={`/${plannerId}/recipes/${recipeId}`}
+					tags={planner.tags}
 				/>
 			</Container>
 		);
 	}
 
 	return (
-		<RecipeDetail
-			plannerId={String(plannerId)}
-			recipe={recipe}
-			tags={tags as unknown as TagInterface[]}
-		/>
+		<RecipeDetail plannerId={plannerId} recipe={recipe} tags={planner.tags} />
 	);
 };
 

@@ -5,11 +5,12 @@ import { DateTime } from 'luxon';
 
 import { useCalendarContext } from '@/_components/Calendar';
 import { useIsMobile } from '@/_hooks';
+import type { DayInterface } from '@/_models/types';
 
 import { CalendarView } from './CalendarView';
 
 import type { CalendarEvent } from '../../_utils/toCalendarEvents';
-import type { SavedItem, SerializedDay } from '../../_utils/toScheduleXEvents';
+import type { SavedItem } from '../../_utils/toScheduleXEvents';
 import { MealCalendar } from '../MealCalendar/MealCalendar';
 import { MealDetailModal } from '../MealDetailModal/MealDetailModal';
 import { MealListView } from '../MealListView/MealListView';
@@ -106,7 +107,7 @@ const mockMealMonthAgenda = vi.mocked(MealMonthAgenda);
 
 const defaultProps = {
 	plannerId: 'planner-1',
-	calendar: [{ date: '2024-01-01', meals: [] }] as SerializedDay[],
+	calendar: [{ date: '2024-01-01', meals: [] }] as DayInterface[],
 	savedItems: [{ _id: 'item-1', name: 'Item 1' }] as SavedItem[],
 };
 
