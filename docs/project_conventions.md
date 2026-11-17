@@ -78,7 +78,10 @@ The app stores its data in MongoDB. Each stored document's shape is defined once
 
 **Indexes live in the data module.** Each is defined beside its collection, and the module's setup creates it. The app and the factories both run that setup, because the E2E database starts empty.
 
-**Some code works below the schemas, through the module's raw database handle.** better-auth's setup gets the raw handle rather than a client of its own, so the app keeps one connection. Without a client, better-auth runs no transactions, which the E2E tests' standalone MongoDB server can't run. Tools that clear a database use the raw handle too, and so does a release task that moves stored data from one shape to another, because the data it reads doesn't match the schema until it's moved.
+**Some code works below the schemas, through the module's raw database handle.** It's code the collection wrappers can't serve, for one of three reasons. The data it handles may not match the schemas, as with a release task that moves stored data from one shape to another, because the data doesn't match until it's moved. A library may own the data's shape, as better-auth does. Or the code may work on whole collections rather than on the app's documents, as a tool that clears a database or checks a restored backup does.
+
+> [!NOTE]
+> better-auth's setup gets the raw handle rather than a client of its own, so the app keeps one connection. Without a client, better-auth runs no transactions, which the E2E tests' standalone MongoDB server can't run.
 
 **better-auth's data goes through one file in `src/_auth/`.** better-auth owns its collections (`user`, `account`, `session` and `verification`) and their shape. App code reaches them only through that file's functions, which wrap better-auth's internal adapter, so better-auth stays the only code that knows how its data is stored. Its collections keep the ObjectIds better-auth gives them. The app never handles those ids, because it links each of its users to a better-auth user by email.
 
@@ -94,4 +97,4 @@ The app stores its data in MongoDB. Each stored document's shape is defined once
 
 **An empty optional field is left out.** A writer never stores an optional field as `null` or `""`, so a field is either there with a value or not there at all, and code that reads it has one case to handle. Zod's `.optional()` alone accepts `""`, so an optional string's schema also rejects the empty string.
 
-A Biome rule in `biome.jsonc` lets only the data module and the release tasks import `mongodb`. It also lets only the code that works below the schemas, listed above, use the module's raw database handle.
+A Biome rule in `biome.jsonc` lets only the data module and the release tasks import `mongodb`. Its overrides are also the list of files that may use the module's raw database handle, so a new file that works below the schemas is added there.
