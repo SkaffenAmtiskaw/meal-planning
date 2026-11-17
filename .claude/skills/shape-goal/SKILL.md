@@ -38,7 +38,7 @@ Find the Done When items that nothing covers, and get each one covered. How depe
 - **If it says ` · releasing`:** `/ship-goal` sent the user here with the gaps it found, and the release waits for them.
   1. Ask the user which items `/ship-goal` named. The goal's stories have closed and their lines are gone, so comparing would show almost every item as a gap.
   2. For each gap, draft an idea note and show it to the user. It's an idea note rather than a hub, because only a story the `# Release` section links can be built, and a hub's later child stories wouldn't be linked. Once they approve it, write the note.
-  3. Add `[[<note>]] ![[<note>#^status]] 🎯 [[<goal>]]` to Next. Put it below the 🔥 lines and below the lines for notes the goal note's `# Release` section already links, and above every other line. Then renumber the lines below it.
+  3. Add `[[<note>]] ![[<note>#^status]] 🎯 [[<goal>]]` to Next. Put it below the 🔥 lines and below the lines for notes the goal note's `# Release` section already links, and above every other line.
   4. In the goal note's `# Release` section, add a bullet that links the note, so the release freeze lets it be built.
   5. Remove ` · Next: /ship-goal` from the goal's line, since the goal has work left again.
 - **Otherwise:**
