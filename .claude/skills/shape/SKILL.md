@@ -84,7 +84,7 @@ What happens next depends on the questions left open:
 Go by the first case that fits:
 - **The user agreed in step 3 that the idea is a whole area:** check whether it serves a goal, as the `roadmap-placement` skill describes:
   - **It does:** it becomes an exploration hub. Follow `making-a-hub.md` in this skill's folder.
-  - **It doesn't:** tell the user it needs a goal from `/roadmap` first, because deciding what's in this release needs a release to compare against. Then stop.
+  - **It doesn't:** tell the user it needs a goal from `/shape-goal` first, because deciding what's in this release needs a release to compare against. Then stop.
 - **Step 3 found no signs of several stories, or the user settled on one there:** it's one story. Say so in passing and go on to step 5, because the user has nothing to weigh.
 - **Otherwise:** tell the user which of these it is, and why, and wait for them to agree or change it:
   - **One story.** Go on to step 5.
