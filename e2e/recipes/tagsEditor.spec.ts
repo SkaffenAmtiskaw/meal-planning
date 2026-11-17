@@ -21,3 +21,23 @@ test('saves a tag added with the tags editor', async ({ context, page }) => {
 	await expect(shownTags.getByText(tags[0].name)).toBeVisible();
 	await expect(shownTags.getByText(tags[1].name)).toBeVisible();
 });
+
+test('saves a tag created with the tags editor', async ({ context, page }) => {
+	const { tags, recipe } = recipesSeed();
+	await openRecipeDetail(page, context, recipe, { tags });
+	// The planner has only the seed's tags.
+	const newTagName = 'Midnight Snack';
+
+	await page.getByTestId(tagsEditButtonTestId).click();
+	await page.getByPlaceholder('Search or create tags').fill(newTagName);
+	await page.getByRole('option', { name: `+ Create “${newTagName}”` }).click();
+	// The save button has no accessible name.
+	await page.getByTestId('tags-save-button').click();
+	const shownTags = page.getByTestId('tags');
+	await expect(shownTags.getByText(newTagName)).toBeVisible();
+
+	// Reloading shows the tag was stored on the planner and the recipe, not only kept in the editor's state.
+	await page.reload();
+	await expect(shownTags.getByText(tags[0].name)).toBeVisible();
+	await expect(shownTags.getByText(newTagName)).toBeVisible();
+});
