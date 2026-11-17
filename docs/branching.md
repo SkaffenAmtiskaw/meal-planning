@@ -51,7 +51,7 @@ The new session opens in the worktree's folder, on its branch, and appears in th
 Several sessions can use one worktree, but only one at a time should edit code or commit. They share one folder and one git index, so two at once would mix their changes and commits.
 
 ## Checking a Worktree's App in the Browser
-The `running-the-app` skill opens the worktree's own URLs, on its own host and ports. In a worktree, you sign in only through the seed's sign-in links. Google sign-in and One Tap work only on `localhost:3000` and production, since those are the only origins Google's OAuth client accepts.
+The `running-the-app` skill opens the worktree's own URLs, on its own host and ports. In a worktree, you sign in through the seed's sign-in links, or through the sign-in form with an email and the dev password (see `docs/seed.md`). Google sign-in and One Tap work only on `localhost:3000` and production, since those are the only origins Google's OAuth client accepts.
 
 # Work Outside a Story: `/tooling` Changes, Quick Fixes and Other Work
 Work outside a story also gets its own worktree session, branch and PR. Start it as you would a story's first session, with **Worktree** on. Once you've committed the change, the session merges in the latest `develop`, pushes the branch and opens a PR into `develop` with auto-merge, and the next session start after the merge removes the worktree.

@@ -13,6 +13,7 @@ import { TAG_COLOR_NAMES } from '@/_theme/colors';
 
 import { closeDevDatabase, connectDevDatabase } from './devDatabase';
 import { resetSeed } from './reset';
+import { findStory, storyUserEmails } from './storyData';
 import { DEV_PASSWORD, SEEDED_USERS } from './users';
 
 const tagIds = {
@@ -210,6 +211,11 @@ for (
 		calendar.push({ date: date.toString(), meals: meals.map(buildMeal) });
 }
 
+// `pnpm seed <story>` also loads seed/stories/<story>.ts. Its file is found before connecting, so a
+// wrong name touches nothing.
+const story = process.argv[2];
+const seedStory = story ? await findStory(story) : undefined;
+
 await connectDevDatabase();
 await resetSeed();
 
@@ -238,6 +244,13 @@ for (const { name, email, accessLevel } of SEEDED_USERS) {
 	});
 }
 
+// The story's data builds on the seeded users and planners, so it goes in after them.
+let storyEmails: string[] = [];
+if (story && seedStory) {
+	await seedStory();
+	storyEmails = await storyUserEmails(story);
+}
+
 await closeDevDatabase();
 
 const nameWidth = Math.max(...SEEDED_USERS.map(({ name }) => name.length));
@@ -252,3 +265,11 @@ for (const { name, email, accessLevel } of SEEDED_USERS) {
 	);
 }
 console.log('Run `pnpm sign-in` for their sign-in links.');
+
+if (story) {
+	console.log(
+		`\nUsers from seed/stories/${story}.ts (same password, sign in through the sign-in form):`,
+	);
+	if (storyEmails.length === 0) console.log('  none');
+	for (const email of storyEmails) console.log(`  ${email}`);
+}

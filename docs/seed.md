@@ -14,6 +14,7 @@ To get from a terminal to signed in as a seeded user:
 | Command | What it does |
 |---------|--------------|
 | `pnpm seed` | removes everything seeded before, then creates the seeded users and their planners fresh |
+| `pnpm seed <story>` | does what `pnpm seed` does, then loads one story's data (see "Story Data") |
 | `pnpm sign-in` | the link server, on `http://localhost:3001` in the main checkout |
 | `pnpm dev:sign-in` | `pnpm dev` and `pnpm sign-in` at once |
 | `pnpm db:empty-worktree` | drops every collection in a worktree's database (see "Worktrees") |
@@ -36,16 +37,23 @@ The link server's front page lists every seeded user with their link. A key that
 
 You can also sign in through the sign-in form with a seeded user's email and the dev password.
 
+# Story Data
+Some checks need data the generic seed doesn't have, such as a user with no planners. A story's data file adds that data for one story (see `docs/branching.md`, "A Story"), so the story's checks can start from it rather than building it through the app's screens each time. The file lives only on its story's branch, and is deleted when the story's PR opens, so `develop` holds no story's data.
+
+`pnpm seed <story>` runs the reset and the generic seed, then the story's data file, so running it again gives the same result. After printing the seeded users, it prints the email of each story user, meaning each user the file created. Story users share the dev password. The link server only knows the seeded users, so you sign in as a story user through the sign-in form. If there's no data file by the name you give, the command stops before connecting to the database, with an error listing the story names in `seed/stories/`.
+
+The file is `seed/stories/<story>.ts`, where `<story>` is the file name of the story's note in the notes vault, in kebab-case, such as `seed/stories/zero-planners-crash.ts`. It exports a `seedStory` function, which `pnpm seed <story>` runs. Like `seed/seed.ts`, it builds its data with the factories in `test/factories/` and passes its own values to them as overrides. It finds the seeded users by the emails in `seed/users.ts`, and their planners through them. Everything it creates has to trace back to a seeded user or to a story user, because that's how the reset finds it (see "The Reset Only Deletes Seeded Data"). Give each story user the dev password and an email of the form `delivered+seed-<story>-<label>@resend.dev`, which a helper in `seed/users.ts` builds.
+
 # Seeding Again
-Running `pnpm seed` again puts the seeded users and their planners back as a fresh seed makes them. Your own data is left alone, apart from your users' memberships in seeded planners and seeded users' memberships in your planners. If a run fails partway, run it again: the reset deletes whatever it finds.
+Running `pnpm seed` again puts the seeded users and their planners back as a fresh seed makes them, and removes any story's data. Your own data is left alone, apart from your users' memberships in planners the reset deletes, and seeded or story users' memberships in your planners. If a run fails partway, run it again: the reset deletes whatever it finds.
 
-`seed/reset.ts` runs first, and deletes, in order:
-1. every planner a seeded user owns: the shared planner, the personal planners and any planner made while signed in as one
+`seed/reset.ts` runs first. It finds the seeded users and any story users by email (see "The Reset Only Deletes Seeded Data"), then deletes, in order:
+1. every planner one of those users owns: the shared planner, the personal planners and any planner made while signed in as one
 2. other users' memberships in those planners, and nothing else from their `User` doc, so your navbar has no dead links
-3. pending invites to those planners, and invites sent to a seeded email
-4. each seeded better-auth user with their sessions and accounts, then their `User` doc, which takes their memberships in your planners with it
+3. pending invites to those planners, and invites sent to one of those users' emails
+4. each of those users' better-auth user, sessions and accounts, then their `User` doc, which takes their memberships in your planners with it
 
-The reset finds seeded users by email, so a seeded user whose email was changed in the app isn't found, and is left behind with their planners. To try out changing an email, sign up a new user through the app instead.
+A seeded or story user whose email was changed in the app isn't found, and is left behind with their planners. To try out changing an email, sign up a new user through the app instead.
 
 # Worktrees
 Each worktree the Claude desktop app makes runs its own copy of the app beside the main checkout's, so two checkouts never share ports, sign-ins or data. Each worktree gets a slot from 1 to 5, and the slot's values go in the worktree's `.env.local`:
@@ -71,12 +79,12 @@ A worktree's database starts empty, so run `pnpm seed` in the worktree to fill i
 > Taking a slot drops every collection in the slot's database, so a worktree starts clean even if the last one in its slot was removed by hand or by the Claude desktop app. The SessionStart hook's sweep (`scripts/worktree-sweep.sh`) also empties a worktree's database when it removes the worktree after its PR merges. The emptying is `pnpm db:empty-worktree`, which refuses any database but `test-<n>`, so it can't touch `test` or production. If it fails when a slot is taken, the start-up message says so, and you run `pnpm db:empty-worktree` yourself once the cause is fixed.
 
 # Changing the Seed
-The seed's code is in `seed/`: the seeded users and the dev password in `seed/users.ts`, what `pnpm seed` runs in `seed/seed.ts`, the reset in `seed/reset.ts`, and the link server, the dev-database checks and the worktree emptying beside them. The seed creates its data with the factories in `test/factories/`, and reaches better-auth through the test-only instance in `test/auth.ts`, so `testUtils` stays out of the app (see `docs/e2e_tests.md`). The factories and the test-only instance both use the data module's connection, so seed code reaches the database through the module rather than opening a client of its own. The deleting lives in `seed/reset.ts`, not `test/factories/`, because nothing in `test/factories/` deletes data.
+The seed's code is in `seed/`: the seeded users and the dev password in `seed/users.ts`, what `pnpm seed` runs in `seed/seed.ts`, the reset in `seed/reset.ts`, and the link server, the loading of story data files, the dev-database checks and the worktree emptying beside them. The seed creates its data with the factories in `test/factories/`, and reaches better-auth through the test-only instance in `test/auth.ts`, so `testUtils` stays out of the app (see `docs/e2e_tests.md`). The factories and the test-only instance both use the data module's connection, so seed code reaches the database through the module rather than opening a client of its own. The deleting lives in `seed/reset.ts`, not `test/factories/`, because nothing in `test/factories/` deletes data.
 
 ## The Reset Only Deletes Seeded Data
-Your own dev data shares the database with the seed, so `seed/reset.ts` deletes only what it can trace back to the seeded emails in `seed/users.ts`. That means the seeded users themselves and the planners and invites they lead to.
+Your own dev data shares the database with the seed, so `seed/reset.ts` deletes only what it can trace back to an email starting with `delivered+seed-`, the prefix that seeded users' and story users' emails share. That means those users themselves and the planners and invites they lead to.
 
 When you add a new kind of record tied to a user or a planner, such as a shopping list per planner, add it to `seed/reset.ts` in the same change, so seeded users' records aren't left behind on every reseed. The reset finds them through the seeded users or the planners they own. Add it to the list under "Seeding Again" too, so the list still says everything a reseed deletes.
 
 ## Sample Data Stays Generic
-The sample data is written inline in `seed/seed.ts` and passed to the factories as overrides. It's a general set any check can work with, not data shaped for one feature's checks, so it doesn't grow with every feature. A recipe or tag factory joins `test/factories/` only when an E2E test needs one.
+The sample data is written inline in `seed/seed.ts` and passed to the factories as overrides. It's a general set any check can work with, not data shaped for one feature's checks, so it doesn't grow with every feature. Data shaped for one story's checks goes in that story's data file (see "Story Data"). A recipe or tag factory joins `test/factories/` only when an E2E test needs one.
