@@ -22,8 +22,6 @@ If it names a note or an item in one, the note's `type` says what the change is:
 
 If the change comes from a note or item, invoke the `roadmap-rules` skill and read its line on the Roadmap. If, by the skill's "Goals" rules, it can't be built yet, tell the user which goal it waits on, and stop.
 
-Leave the note's Roadmap line where it is, because the change finishes in one session.
-
 ### Is It a Story?
 Some changes need the story lifecycle, whichever note they came from. Once you've read the files the change touches, check for these cases:
 - **It changes what the app does for its users.**
@@ -32,7 +30,13 @@ Some changes need the story lifecycle, whichever note they came from. Once you'v
 If one applies, tell the user which and why, and ask whether to spin the change off into a story. If they say yes, read `spinning-off-a-story.md`, follow it and stop.
 
 ### Where the Change Is Made
-Run checks 1 and 3 in `starting-on-a-branch.md`, in the `building-code` skill's folder, and stop wherever they say to. Give the freeze check no note name, because a release refuses every change that isn't one of its stories.
+Run checks 1 and 3 in `starting-on-a-branch.md`, in the `building-code` skill's folder, and stop wherever they say to. If the change comes from a note, give the freeze check the note's name, so that during a release it lets through a note the goal's `# Release` section links. Otherwise, give it none.
+
+### Showing the Work in Now
+Now shows the work in flight in a session, so the user can see it on the Roadmap at a glance. So once the checks pass, put this session's work in Now. How depends on what it takes on:
+- **A whole note,** meaning a workflow note without a What Belongs Here section, or every item left in a kicked-off copy: move the note's line into Now. If the line has no marker, end it with 🔁, because every Now line needs one and the change joins the release without belonging to a goal.
+- **Some of a note's items:** leave the note's line where it is, because the rest of its items aren't in flight. Add a line to Now that names this session's items in one short sentence and links the note. End it with the marker from the note's line, or with 🔁 if that line has none. For example: `` `/tooling` moves its work into Now, from [[Agent Workflow Changes 2026-11-16]] 🔁``. The items stay in the note until step 5.
+- **A change from a description:** add a line to Now that names the change in one short sentence. End it with 🔁, because the change joins the release without belonging to a goal.
 
 ## 2. Settle the Change
 Settle with the user what the change is. If it adds or moves a rule, decide where it goes as the `rule-placement` skill describes. If it adds or renames a skill or agent, read `adding-a-skill-or-agent.md`.
@@ -58,7 +62,7 @@ Once the user approves, search the whole notes repo for:
 
 Decide how hard to search other stories' remaining work from how widely the change reaches.
 
-In the note or item this session worked from, and in each item you found, remove the text for what this change did and keep the rest. The user's own lines are the exception. If removing that text finishes a note that isn't collecting, or empties the kicked-off copy this session worked from, hold the note's deletion until the PR merges, as step 7 describes. Deleting it removes its Roadmap line, which stays until the change is on `develop`.
+In the note or item this session worked from, and in each item you found, remove the text for what this change did and keep the rest. The user's own lines are the exception. If removing that text finishes a note that isn't collecting, or empties the kicked-off copy this session worked from, hold the note's deletion until the PR merges, as step 7 describes. Deleting it removes its Roadmap line, which stays until the change is on `develop`. Deleting a note doesn't remove a Now line you added, so hold that line's removal as well, for the same reason.
 
 How to handle text the change made wrong depends on what it is:
 - **An existing Roadmap line or section:** hold the edit as step 3 describes.
@@ -66,11 +70,11 @@ How to handle text the change made wrong depends on what it is:
 - **Anything else:** handle it as the `editing-notes` skill's "A Note That's Wrong or Out of Date" describes.
 
 ## 6. Report and Open the PR
-Route the out-of-scope list. Then show the table of changed files. If you held any Roadmap edits or a note's deletion, list each one under "Held until the merge".
+Route the out-of-scope list. Then show the table of changed files. If you held any Roadmap edits, Now line removals or note deletions, list each one under "Held until the merge".
 
 Open the change's PR as `opening-the-pr.md`, in the `building-code` skill's folder, describes. The same held edits are its held notes work.
 
 ## 7. Make the Held Edits
-The held edits are the Roadmap edits and note deletions from steps 3 and 5. If you held none, skip this step. Otherwise, wait for the PR to merge and make them, as `waiting-for-the-merge.md` in the `building-code` skill's folder describes, deleting each held note as the `deleting-a-note` skill describes.
+The held edits are the Roadmap edits, Now line removals and note deletions from steps 3 and 5. If you held none, skip this step. Otherwise, wait for the PR to merge and make them, as `waiting-for-the-merge.md` in the `building-code` skill's folder describes. Delete each held note as the `deleting-a-note` skill describes, and remove each held Now line as step 4 of that skill describes, so the building goal gets its next command if the line was its last work.
 
 Stop there, because each change gets its own session.

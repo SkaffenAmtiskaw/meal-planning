@@ -9,7 +9,7 @@ How goals order the work, what each section and kind of note holds, and the rule
 - **Goals** - ranked epics, each a note in `goals/` in the notes repo, shaped and ranked with `/roadmap`. Only the user changes the order. Only one goal is built at a time, so `develop` never holds another goal's unfinished work and a finished goal releases all at once:
 	- **The building goal** is the top one, marked `- building`. Once its last line and the last 🔁 line have closed, its release shows after that marker: ` · Next: /finish-goal`, then ` · releasing` once `/finish-goal` starts its audits, then ` · releasing · Next: /ship-goal` once the stories its goal note's `# Release` section links have closed. What may be built (`/implement`, `/infra-build`, `/tooling`) depends on the line's marker and whether a release is under way:
 		- **If the story's line has 🔥:** it may be built in every case below, because it's built on a `hotfix/` branch from `main`, and the release freeze covers only `develop`.
-		- **If its line under Goals includes ` · releasing`:** only the stories the goal note's `# Release` section links, which are its audits, their fixes and any Done When gaps `/ship-goal` found. Holding everything else back keeps work the release didn't plan for out of it.
+		- **If its line under Goals includes ` · releasing`:** only the notes the goal note's `# Release` section links, which are its audits, their fixes and any Done When gaps `/ship-goal` found. Holding everything else back keeps work the release didn't plan for out of it.
 		- **If a PR from `develop` into `main` is open:** nothing, until it merges, since `/ship-goal` has already closed out the release's goal.
 		- **Otherwise:** a line in Bugs waits until a release picks it up. Any other story or collecting-note item is built only when it serves the building goal, serves no ranked goal, or has 📌 or 🚨 on a line in Now or Next.
 	- **The planning goal** is the second, marked `- planning`. Its stories can be shaped, decided, designed and planned down to steps, but they aren't built until the building goal is released. Collecting notes aren't kicked off for it.
@@ -32,7 +32,7 @@ How goals order the work, what each section and kind of note holds, and the rule
 	- `📌 <reason>` - the user scheduled it outside the goals. Only the user adds it. Where the line sits says which release it joins:
 		- **In Now or Next:** it's in this release, so it may be built now.
 		- **In Later:** it joins the next release. When a goal next starts building, `/roadmap` moves it into Next, and it keeps its 📌.
-	- `🔁` - joined this release without belonging to a goal: a bug, or a kicked-off sweep or collecting workflow note. `/roadmap` adds it when the line moves into Next.
+	- `🔁` - joined this release without belonging to a goal: a bug, a kicked-off sweep or collecting workflow note, or a `/tooling` change. `/roadmap` adds it when the line moves into Next.
 
 	A Now, Next or Planning line without its marker is out of place. Raise it with the user.
 - **Hubs** hold shared design, not priority. A hub has a line only while it has a next step of its own, such as `/brainstorm`, `/decide` or `/close`. Once its `^status` line says `Next: its child stories`, it has none.

@@ -3,14 +3,14 @@
 # changes code checks it the same way. A release is under way when the building
 # goal's Goals line on the Roadmap says " · releasing", or a PR from develop
 # into main is open, which covers the time between /ship-goal's close-out and
-# the merge. While one is, only a story that the building goal's "# Release"
+# the merge. While one is, only a note that the building goal's "# Release"
 # section links may be built. A hotfix/ branch is never refused, since the
 # freeze covers develop.
 # Prints why, and exits 0 if the work may go ahead and 1 if it's refused. If it
 # can't tell, such as when gh can't reach GitHub, it says so and exits 2.
-# Usage: sh scripts/release-freeze.sh [story note name]
-# Leave out the story for work that isn't a story, such as a /tooling change,
-# which a release always refuses.
+# Usage: sh scripts/release-freeze.sh [note name]
+# Leave out the note name for work that comes from no note, such as a /tooling
+# change made from a description.
 
 story="$1"
 

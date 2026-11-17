@@ -43,7 +43,7 @@ The steps, in order:
 7. **Unused files:** delete the files nothing references anymore, as the `deleting-a-note` skill describes in step 6.
 
 ## 4. Open the Release PR
-Run `gh pr create --base main --head develop --title "<goal>"`, with a body of a sentence or two on what the goal set out to do. If section 3 found release tasks or After Deploy checks, add a `## Release Tasks` list naming each task and when it runs, and a `## After Deploy` list of the checks, so they're on record after the goal note is gone. Don't turn on auto-merge, because merging into `main` deploys, and every deploy is the user's click.
+Run `gh pr create --base main --head develop --title "<goal>"`, with a body of a sentence or two on what the goal set out to do. If section 3 found release tasks or After Deploy checks, add a `## Release Tasks` list naming each task and when it runs, in filename order, and a `## After Deploy` list of the checks, so they're on record after the goal note is gone. Don't turn on auto-merge, because merging into `main` deploys, and every deploy is the user's click.
 
 ## 5. See the Release Through
 Give the user the PR's link, and report each edit section 3 made to other notes, grouped by note. What happens next depends on what section 3 found:
