@@ -38,7 +38,7 @@ The link server's front page lists every seeded user with their link. A key that
 You can also sign in through the sign-in form with a seeded user's email and the dev password.
 
 # Story Data
-Some checks need data the generic seed doesn't have, such as a user with no planners. A story's data file adds that data for one story (see `docs/branching.md`, "A Story"), so the story's checks can start from it rather than building it through the app's screens each time. The file lives only on its story's branch, and is deleted when the story's PR opens, so `develop` holds no story's data.
+Some checks need data the generic seed doesn't have, such as a user with no planners. A story's data file adds that data for one story (see `docs/branching.md`, "A Story"), so the story's checks can start from it rather than building it through the app's screens each time. Git ignores `seed/stories/`, so a data file stays in the checkout that wrote it and never reaches a commit.
 
 `pnpm seed <story>` runs the reset and the generic seed, then the story's data file, so running it again gives the same result. After printing the seeded users, it prints the email of each story user, meaning each user the file created. Story users share the dev password. The link server only knows the seeded users, so you sign in as a story user through the sign-in form. If there's no data file by the name you give, the command stops before connecting to the database, with an error listing the story names in `seed/stories/`.
 

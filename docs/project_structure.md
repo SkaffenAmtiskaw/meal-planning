@@ -17,7 +17,7 @@ notes on planned work, in Obsidian-flavored Markdown, live in the `meal-planning
 # scripts/
 scripts that the git hooks, the workflows and the SessionStart hook run, such as the notes vault checks, the database backups (see `docs/backups.md`) and the worktree scripts (see `docs/branching.md`). `release-tasks/` holds the one-off changes to production's data that the next release runs (see `docs/release_tasks.md`)
 # seed/
-`pnpm seed`, which fills the dev database with seeded users and sample data, the sign-in link server, and the script that empties a worktree's database (see `docs/seed.md`). On a story's branch, `stories/` holds the story's data file, which `pnpm seed <story>` loads on top of the seed
+`pnpm seed`, which fills the dev database with seeded users and sample data, the sign-in link server, and the script that empties a worktree's database (see `docs/seed.md`). In a story's worktree, `stories/` holds the story's data file, which git ignores and `pnpm seed <story>` loads on top of the seed
 # src/
 project source code
 ## _actions/

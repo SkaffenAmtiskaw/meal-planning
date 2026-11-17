@@ -42,8 +42,12 @@ Before handing the change to the user, do its acceptance checks yourself, so the
 How you do the checks depends on the change:
 - **If the change touches only tests:** do its checks as `test-only-checks.md` in this skill's folder describes.
 - **Otherwise:**
-  1. If a check needs the running app, start it and sign in as the `running-the-app` skill describes.
-  2. If a check needs data that doesn't exist yet, like a day with two meals, create it through the app's own screens, so the check runs on data the app itself could produce. When you report that check, say what data you created for it.
+  1. If a check needs data the seed doesn't have, like a day with two meals or a user with no planners, how you make it depends on the data:
+     - **Data the check is about creating,** such as the meal in a check that adds a meal: create it through the app's screens as the check runs, because that's what the check tests.
+     - **Any other data:** add it to the story's data file and load it with `pnpm seed <story>`, as "Story Data" in `docs/seed.md` describes. Do this before you sign in, because the command signs out every seeded and story user. Leave the data loaded, so the user's checks find the same data. If the command can't load the data, create the data through the screens as the check runs, and carry on. The command is only a shortcut, so its failing doesn't block the check.
+
+     When you report the check, say how you made its data. If you loaded it with the command, name the command and the email of each story user it printed, so the user can sign in as them. If you made it through the screens, say what you made, and if that's because the command failed, say so.
+  2. If a check needs the running app, start it and sign in as the `running-the-app` skill describes.
   3. Go through each check, in one of these two ways:
      - **If you can run it:** do it as it's written, including the signed-in user, the screen size and the data it names. Record what you saw in concrete terms: "the modal closed and the meal appeared on Tuesday", not "works".
      - **If you can't,** such as one only the user can do, or one that needs a commit or a push you can't make yet:
