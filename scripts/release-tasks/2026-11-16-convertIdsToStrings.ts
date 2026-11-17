@@ -5,15 +5,13 @@
 //   saved-item `source`, user memberships and their `planner`, and an invite's `planner` and `invitedBy`,
 // - unsets `__v`, the version key Mongoose added, on every planner, user and pending invite.
 // better-auth's own collections (`user`, `account`, `session`, `verification`) keep their ObjectIds.
-// It runs after the release PR merges, straight after the deploy, and after storedDataCleanup.ts, whose new meal,
-// dish and membership ids it converts. No code of the story reads the old shape, as an exception to the parallel
-// change in docs/release_tasks.md: Sarah accepted that production's code can't match the stored ObjectIds, so the app
-// is down from the deploy until this task has run. So deleting this task leaves no code to remove.
-// It also runs on the main checkout's `test` database straight after the story's PR merges, since local runs on
-// `develop` use it: `--db test`, a dry run, the run, then `--check`.
+// It runs after the release PR merges, straight after the deploy, and after 2026-11-15-storedDataCleanup.ts, whose
+// new meal, dish and membership ids it converts. No code of the story reads the old shape, as an exception to the
+// parallel change in docs/release_tasks.md: Sarah accepted that production's code can't match the stored ObjectIds,
+// so the app is down from the deploy until this task has run. So deleting this task leaves no code to remove.
 // It changes only documents that still hold an ObjectId or `__v`, so a second run changes nothing.
 // See docs/release_tasks.md.
-// Usage: node scripts/release-tasks/convertIdsToStrings.ts --to <connection string> [--db <database>]
+// Usage: node scripts/release-tasks/2026-11-16-convertIdsToStrings.ts --to <connection string> [--db <database>]
 //          [--production | --dry-run | --check]
 //   --to           the server holding the database, as a connection string whose user can write to it
 //   --db           the database to change. Defaults to staging, production's database.
@@ -45,7 +43,7 @@ const dryRun = values['dry-run'];
 
 if (!to) {
 	fail(
-		'Usage: node scripts/release-tasks/convertIdsToStrings.ts --to <connection string> [--db <database>] [--production | --dry-run | --check]',
+		'Usage: node scripts/release-tasks/2026-11-16-convertIdsToStrings.ts --to <connection string> [--db <database>] [--production | --dry-run | --check]',
 	);
 }
 if (production && databaseName !== PRODUCTION_DB) {
