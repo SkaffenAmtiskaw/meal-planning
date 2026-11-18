@@ -10,94 +10,63 @@
 
 import { vi } from 'vitest';
 
-export const acceptInvite = vi.fn(async () => ({
-	ok: true as const,
+import type * as Sharing from '@/_actions/sharing';
+
+export const acceptInvite = vi.fn<typeof Sharing.acceptInvite>(async () => ({
+	ok: true,
 	data: { plannerId: '507f1f77bcf86cd799439011' },
 }));
 
-export const cancelInvite = vi.fn(async () => ({ success: true as const }));
+export const cancelInvite = vi.fn<typeof Sharing.cancelInvite>(async () => ({
+	success: true,
+}));
 
-export const declineInvite = vi.fn(async () => ({
-	ok: true as const,
+export const declineInvite = vi.fn<typeof Sharing.declineInvite>(async () => ({
+	ok: true,
 	data: undefined,
 }));
 
-export const getPendingInvites = vi.fn(async () => ({
-	invites: [] as PendingInvite[],
-}));
+export const getPendingInvites = vi.fn<typeof Sharing.getPendingInvites>(
+	async () => ({
+		invites: [],
+	}),
+);
 
-export const getPlannerMembers = vi.fn(async () => ({
-	members: [] as PlannerMember[],
-}));
+export const getPlannerMembers = vi.fn<typeof Sharing.getPlannerMembers>(
+	async () => ({
+		members: [],
+	}),
+);
 
-export const inviteUser = vi.fn(async () => ({
-	ok: true as const,
+export const inviteUser = vi.fn<typeof Sharing.inviteUser>(async () => ({
+	ok: true,
 	data: { inviteId: '507f1f77bcf86cd799439012' },
 }));
 
-export const leavePlanner = vi.fn(async () => ({
-	ok: true as const,
+export const leavePlanner = vi.fn<typeof Sharing.leavePlanner>(async () => ({
+	ok: true,
 	data: undefined,
 }));
 
-export const removeMember = vi.fn(async () => ({ ok: true as const }));
-
-export const signUpWithInvite = vi.fn(async () => ({
-	success: true as const,
-	redirectUrl: '/',
+export const removeMember = vi.fn<typeof Sharing.removeMember>(async () => ({
+	ok: true,
 }));
 
-export const updateMemberAccess = vi.fn(async () => ({ ok: true as const }));
+export const signUpWithInvite = vi.fn<typeof Sharing.signUpWithInvite>(
+	async () => ({
+		success: true,
+		redirectUrl: '/',
+	}),
+);
 
-export const validateInviteToken = vi.fn(async () => ({
-	valid: true as const,
-	email: 'user@example.com',
-	plannerName: "Test User's Planner",
-}));
+export const updateMemberAccess = vi.fn<typeof Sharing.updateMemberAccess>(
+	async () => ({ ok: true }),
+);
 
-// ─── Types ────────────────────────────────────────────────────────────────────
-
-export interface PendingInvite {
-	id: string;
-	email: string;
-	accessLevel: 'read' | 'write' | 'admin' | 'owner';
-	invitedAt: string;
-	expiresAt: string;
-}
-
-export interface PlannerMember {
-	name: string;
-	email: string;
-	accessLevel: 'read' | 'write' | 'admin' | 'owner';
-}
-
-export interface AcceptInviteResult {
-	plannerId: string;
-}
-
-export interface InviteUserResult {
-	inviteId: string;
-}
-
-export interface CancelInviteResult {
-	success: boolean;
-	error?: string;
-}
-
-export interface ValidateInviteTokenResult {
-	valid: boolean;
-	email?: string;
-	plannerName?: string;
-	reason?: 'expired' | 'invalid';
-}
-
-export interface SignUpWithInviteResult {
-	success: boolean;
-	error?: string;
-	redirectUrl?: string;
-}
-
-export interface RemoveMemberResult {
-	ok: boolean;
-	error?: string;
-}
+export const validateInviteToken = vi.fn<typeof Sharing.validateInviteToken>(
+	async () => ({
+		valid: true,
+		email: 'user@example.com',
+		plannerName: "Test User's Planner",
+	}),
+);

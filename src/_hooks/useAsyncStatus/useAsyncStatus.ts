@@ -5,7 +5,7 @@ import { useCallback, useState } from 'react';
 import type { ActionResult } from '@/_utils/actionResult/ActionResult';
 import { catchify } from '@/_utils/catchify';
 
-export type AsyncStatus = 'idle' | 'loading' | 'success' | 'error';
+import type { AsyncStatus } from './useAsyncStatus.types';
 
 export interface UseAsyncStatusResult {
 	status: AsyncStatus;

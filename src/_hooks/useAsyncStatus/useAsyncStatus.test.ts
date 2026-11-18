@@ -3,7 +3,8 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import type { ActionResult } from '@/_utils/actionResult/ActionResult';
 
-import { type AsyncStatus, useAsyncStatus } from './useAsyncStatus';
+import { useAsyncStatus } from './useAsyncStatus';
+import type { AsyncStatus } from './useAsyncStatus.types';
 
 const mockCatchify = vi.fn();
 

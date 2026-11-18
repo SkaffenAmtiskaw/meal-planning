@@ -18,7 +18,3 @@ export const zRecipeFormSchema = {
 	omit: vi.fn(() => zRecipeFormSchema),
 	extend: vi.fn(() => zRecipeFormSchema),
 };
-
-// ─── Types (runtime stubs for destructuring) ──────────────────────────────────
-
-export type RecipeFormData = Record<string, unknown>;
