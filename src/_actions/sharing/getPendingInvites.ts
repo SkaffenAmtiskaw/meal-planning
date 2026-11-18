@@ -7,7 +7,7 @@ import { zId } from '@/_utils/zId';
 
 import type { PendingInvite } from './getPendingInvites.types';
 
-export interface GetPendingInvitesResult {
+interface GetPendingInvitesResult {
 	invites: PendingInvite[];
 	error?: string;
 }

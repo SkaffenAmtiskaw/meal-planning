@@ -16,7 +16,7 @@ import styles from './DayRow.module.css';
 
 import { useCalendarModal } from '../../CalendarModal';
 
-export interface DayRowProps {
+interface DayRowProps {
 	date: DateTime;
 	today: DateTime;
 	meals?: CalendarMeal[];

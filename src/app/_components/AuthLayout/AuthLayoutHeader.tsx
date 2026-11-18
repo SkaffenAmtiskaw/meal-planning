@@ -2,7 +2,7 @@ import type { ReactNode } from 'react';
 
 import { Text } from '@mantine/core';
 
-export interface AuthLayoutHeaderProps {
+interface AuthLayoutHeaderProps {
 	children: ReactNode;
 }
 

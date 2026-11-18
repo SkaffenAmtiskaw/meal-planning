@@ -5,21 +5,21 @@ import { DateTime } from 'luxon';
 import type { MealKeyboardProps } from './useWeekViewKeyboard.types';
 import type { WeekViewMeal } from './WeekView.types';
 
-export interface UseWeekViewKeyboardOptions {
+interface UseWeekViewKeyboardOptions {
 	days: DateTime[];
 	mealsByDate: Map<string, WeekViewMeal[]>;
 	onMealClick?: (meal: WeekViewMeal) => void;
 	selectedDate: DateTime;
 }
 
-export interface DayKeyboardProps {
+interface DayKeyboardProps {
 	tabIndex: 0 | -1;
 	onClick: () => void;
 	onKeyDown: (e: React.KeyboardEvent<HTMLElement>) => void;
 	ref: (el: HTMLElement | null) => void;
 }
 
-export interface UseWeekViewKeyboardResult {
+interface UseWeekViewKeyboardResult {
 	getDayProps: (dayIndex: number) => DayKeyboardProps;
 	getMealProps: (
 		dayIndex: number,

@@ -5,7 +5,7 @@ import { users } from '@/_models/database/users';
 
 import { removePlannerMembership } from './_utils/removePlannerMembership';
 
-export interface RemoveMemberResult {
+interface RemoveMemberResult {
 	ok: boolean;
 	error?: string;
 }

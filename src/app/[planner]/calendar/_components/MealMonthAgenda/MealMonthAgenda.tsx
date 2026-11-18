@@ -19,7 +19,7 @@ import type { CalendarEvent } from '../../_utils/toCalendarEvents.types';
 import { toCalendarMeals } from '../../_utils/toCalendarMeals';
 import { DishLink } from '../DishLink/DishLink';
 
-export interface MealMonthAgendaProps {
+interface MealMonthAgendaProps {
 	plannerId: string;
 	calendar: DayInterface[];
 	savedItems?: SavedItem[];

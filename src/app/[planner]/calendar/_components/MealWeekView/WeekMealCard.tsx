@@ -8,7 +8,7 @@ import focusClasses from '@/_theme/focus.module.css';
 import type { CalendarEvent } from '../../_utils/toCalendarEvents.types';
 import { DishLink } from '../DishLink/DishLink';
 
-export interface WeekMealCardProps {
+interface WeekMealCardProps {
 	event: CalendarEvent;
 	plannerId: string;
 	onClick?: () => void;

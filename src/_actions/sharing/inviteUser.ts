@@ -18,13 +18,13 @@ import { reportError } from '@/_utils/reportError';
 import { zId } from '@/_utils/zId';
 import { env } from '@/env';
 
-export interface InviteUserInput {
+interface InviteUserInput {
 	plannerId: string;
 	email: string;
 	accessLevel?: AccessLevel;
 }
 
-export interface InviteUserResult {
+interface InviteUserResult {
 	inviteId: string;
 }
 

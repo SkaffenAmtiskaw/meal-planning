@@ -7,7 +7,7 @@ import type { MealCardProps } from '@/_components/Calendar/MealCard/MealCard.typ
 
 import styles from './MealCardWithDragHandle.module.css';
 
-export type MealCardWithDragHandleProps = MealCardProps;
+type MealCardWithDragHandleProps = MealCardProps;
 
 const DRAG_HANDLE_POSITIONS = [
 	'top-left',

@@ -15,7 +15,7 @@ import type { SavedItem } from '../../_types/savedItem';
 import { toCalendarEvents } from '../../_utils/toCalendarEvents';
 import type { CalendarEvent } from '../../_utils/toCalendarEvents.types';
 
-export interface MealWeekViewProps {
+interface MealWeekViewProps {
 	calendar: DayInterface[];
 	savedItems?: SavedItem[];
 	plannerId: string;

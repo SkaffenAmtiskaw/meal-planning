@@ -17,7 +17,7 @@ import { isPastDate, isWithinHours, toLocaleDateString } from '@/_utils/date';
 import type { InviteStatus } from '../_hooks/useInvites.types';
 import { getAccessLevelColor } from '../_utils/getAccessLevelColor';
 
-export interface PendingInvitesListProps {
+interface PendingInvitesListProps {
 	invites: PendingInvite[];
 	loading: boolean;
 	cancelStatus: InviteStatus;

@@ -8,7 +8,7 @@ import { FormFeedbackAlert } from '@/_components';
 
 import type { InviteStatus } from '../_hooks/useInvites.types';
 
-export interface InviteFormProps {
+interface InviteFormProps {
 	status: InviteStatus;
 	error: string | null;
 	onInvite: (email: string) => void;

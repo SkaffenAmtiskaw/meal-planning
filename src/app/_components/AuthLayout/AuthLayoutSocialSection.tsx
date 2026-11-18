@@ -2,7 +2,7 @@ import type { ReactNode } from 'react';
 
 import { Stack } from '@mantine/core';
 
-export interface AuthLayoutSocialSectionProps {
+interface AuthLayoutSocialSectionProps {
 	children: ReactNode;
 }
 

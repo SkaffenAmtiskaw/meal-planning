@@ -2,7 +2,7 @@ import type { ReactNode } from 'react';
 
 import { Box, Center, Image, Stack } from '@mantine/core';
 
-export interface AuthLayoutRootProps {
+interface AuthLayoutRootProps {
 	children: ReactNode;
 }
 

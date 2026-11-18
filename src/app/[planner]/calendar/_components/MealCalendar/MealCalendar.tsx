@@ -12,7 +12,7 @@ import type { SavedItem } from '../../_types/savedItem';
 import { toCalendarEvents } from '../../_utils/toCalendarEvents';
 import type { CalendarEvent } from '../../_utils/toCalendarEvents.types';
 
-export interface MealCalendarProps {
+interface MealCalendarProps {
 	calendar: DayInterface[];
 	savedItems?: SavedItem[];
 	onMealClick?: (meal: CalendarEvent) => void;

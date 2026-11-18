@@ -5,7 +5,7 @@ import { Anchor, Text } from '@mantine/core';
 
 import type { ResolvedDish } from '../../_utils/resolveDishSource.types';
 
-export interface DishLinkProps {
+interface DishLinkProps {
 	dish: ResolvedDish;
 	plannerId: string;
 	tabIndex?: number;

@@ -9,7 +9,7 @@ export interface WeekViewMeal {
 	description?: string;
 }
 
-export type WeekViewMealRenderProps = MealKeyboardProps;
+type WeekViewMealRenderProps = MealKeyboardProps;
 
 export interface WeekViewProps {
 	meals?: WeekViewMeal[];

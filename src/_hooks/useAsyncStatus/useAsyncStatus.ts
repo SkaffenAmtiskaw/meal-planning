@@ -7,7 +7,7 @@ import { catchify } from '@/_utils/catchify';
 
 import type { AsyncStatus } from './useAsyncStatus.types';
 
-export interface UseAsyncStatusResult {
+interface UseAsyncStatusResult {
 	status: AsyncStatus;
 	error: string | null;
 	run: <T>(

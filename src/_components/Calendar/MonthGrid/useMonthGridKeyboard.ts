@@ -7,21 +7,21 @@ import type { MealKeyboardProps } from './useMonthGridKeyboard.types';
 
 import { useRovingGridFocus } from '../_hooks/useRovingGridFocus';
 
-export interface UseMonthGridKeyboardOptions {
+interface UseMonthGridKeyboardOptions {
 	days: DateTime[];
 	mealsByDate: Map<string, MonthGridMeal[]>;
 	onMealClick?: (meal: MonthGridMeal) => void;
 	selectedDate: DateTime;
 }
 
-export interface DayKeyboardProps {
+interface DayKeyboardProps {
 	tabIndex: 0 | -1;
 	onClick: () => void;
 	onKeyDown: (e: React.KeyboardEvent<HTMLElement>) => void;
 	ref: (el: HTMLElement | null) => void;
 }
 
-export interface UseMonthGridKeyboardResult {
+interface UseMonthGridKeyboardResult {
 	getDayProps: (dayIndex: number) => DayKeyboardProps;
 	getMealProps: (
 		dayIndex: number,

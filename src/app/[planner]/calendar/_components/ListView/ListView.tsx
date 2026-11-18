@@ -16,7 +16,7 @@ import { useScrolledDate } from './_hooks/useScrolledDate';
 import { useScrollToDate } from './_hooks/useScrollToDate';
 import { getListDayRange } from './_utils/getListDayRange';
 
-export interface ListViewProps {
+interface ListViewProps {
 	today?: DateTime;
 	events?: CalendarMeal[];
 	renderDish?: MealCardProps['renderDish'];

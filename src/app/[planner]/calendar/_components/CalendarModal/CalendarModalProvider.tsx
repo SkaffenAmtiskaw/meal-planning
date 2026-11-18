@@ -16,7 +16,7 @@ import type {
 import { AddMealModal } from '../AddMealForm/AddMealModal';
 import type { AddMealModalProps } from '../AddMealForm/AddMealModal.types';
 
-export interface CalendarModalProviderProps {
+interface CalendarModalProviderProps {
 	plannerId: string;
 	children: ReactNode;
 }

@@ -5,7 +5,7 @@ import { planners } from '@/_models/database/planners';
 import type { PlannerInterface } from '@/_models/planner';
 import type { AccessLevel } from '@/_models/user';
 
-export type PlannerWithAccess = {
+type PlannerWithAccess = {
 	planner: PlannerInterface & { name: string };
 	accessLevel: AccessLevel;
 };

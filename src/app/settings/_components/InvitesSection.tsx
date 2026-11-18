@@ -17,7 +17,7 @@ import { isPastDate, isWithinHours, toLocaleDateString } from '@/_utils/date';
 
 import { getAccessLevelColor } from '../_utils/getAccessLevelColor';
 
-export interface InvitesSectionProps {
+interface InvitesSectionProps {
 	invites: UserInvite[];
 	onAccept: (
 		input: AcceptInviteInput,
