@@ -10,11 +10,7 @@ export const CreatePlannerButton = () => {
 
 	return (
 		<>
-			<Button
-				variant="cta"
-				onClick={open}
-				data-testid="no-planners-create-button"
-			>
+			<Button variant="cta" onClick={open}>
 				Create Planner
 			</Button>
 			<CreatePlannerForm opened={opened} onClose={close} />

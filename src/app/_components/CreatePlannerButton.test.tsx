@@ -30,7 +30,7 @@ describe('CreatePlannerButton', () => {
 	it('opens the form when the button is clicked', () => {
 		render(<CreatePlannerButton />);
 
-		fireEvent.click(screen.getByTestId('no-planners-create-button'));
+		fireEvent.click(screen.getByRole('button', { name: 'Create Planner' }));
 
 		expect(mockOpen).toHaveBeenCalled();
 	});
