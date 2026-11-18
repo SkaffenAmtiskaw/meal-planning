@@ -3,7 +3,9 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { Group, Stack, Text } from '@mantine/core';
 
-import { type CalendarDish, DishListItem } from './DishListItem';
+import { DishListItem } from './DishListItem';
+
+import type { CalendarDish } from '../../_types/CalendarMeal.types';
 
 vi.mock('@mantine/core', async () => await import('#mocks/@mantine/core'));
 

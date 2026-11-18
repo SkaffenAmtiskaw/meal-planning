@@ -5,11 +5,12 @@ import { type ReactNode, useContext } from 'react';
 
 import { DateTime } from 'luxon';
 
-import { CalendarContext, type CalendarViewType } from './CalendarContext';
+import { CalendarContext } from './CalendarContext';
 import {
 	CalendarProvider,
 	type CalendarProviderProps,
 } from './CalendarProvider';
+import type { CalendarViewType } from './CalendarContext.types';
 
 // Wrapper component to capture context updates
 function createTestWrapper(

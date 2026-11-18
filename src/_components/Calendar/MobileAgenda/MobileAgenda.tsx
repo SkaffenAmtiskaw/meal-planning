@@ -1,25 +1,17 @@
 'use client';
 
 import { useEffect, useMemo, useRef } from 'react';
-import type { ReactElement, ReactNode } from 'react';
+import type { ReactElement } from 'react';
 
 import { Group, Paper, ScrollArea, Stack, Text } from '@mantine/core';
 
 import { DateTime } from 'luxon';
 
 import { useCalendarContext } from '@/_components/Calendar';
-import type {
-	CalendarDish,
-	CalendarMeal,
-} from '@/_components/Calendar/_types/CalendarMeal.types';
 import { MealCard } from '@/_components/Calendar/MealCard/MealCard';
 
+import type { MobileAgendaProps } from './MobileAgenda.types';
 import styles from './MobileAgenda.module.css';
-
-export interface MobileAgendaProps {
-	events?: CalendarMeal[];
-	renderDish?: (dish: CalendarDish) => ReactNode;
-}
 
 export function MobileAgenda({
 	events = [],

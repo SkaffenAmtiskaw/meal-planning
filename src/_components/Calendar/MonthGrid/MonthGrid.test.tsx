@@ -4,7 +4,10 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { DateTime } from 'luxon';
 
 import { MonthGrid } from './MonthGrid';
-import type { MonthGridMeal, MonthGridMealRenderProps } from './MonthGrid';
+import type {
+	MonthGridMeal,
+	MonthGridMealRenderProps,
+} from './MonthGrid.types';
 
 import { useCalendarContext } from '../CalendarContext';
 import { CalendarProvider } from '../CalendarProvider';

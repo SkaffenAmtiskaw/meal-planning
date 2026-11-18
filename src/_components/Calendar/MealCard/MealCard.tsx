@@ -1,17 +1,12 @@
-import type { ReactElement, ReactNode } from 'react';
+import type { ReactElement } from 'react';
 
 import { Box, Stack, Text } from '@mantine/core';
 
+import type { MealCardProps } from './MealCard.types';
 import styles from './MealCard.module.css';
 
 import { DishListItem } from '../_components/DishListItem/DishListItem';
-import type { CalendarDish, CalendarMeal } from '../_types/CalendarMeal.types';
-
-export interface MealCardProps {
-	event: CalendarMeal;
-	renderDish?: (dish: CalendarDish) => ReactNode;
-	renderActions?: ReactNode;
-}
+import type { CalendarDish } from '../_types/CalendarMeal.types';
 
 export function MealCard({
 	event,

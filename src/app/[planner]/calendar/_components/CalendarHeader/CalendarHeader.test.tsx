@@ -9,11 +9,11 @@ import { DatePicker } from '@mantine/dates';
 import { DateTime } from 'luxon';
 
 import { formatWeekRange } from '@/_components/Calendar/_utils/formatWeekRange';
-import {
-	type CalendarContextValue,
-	type CalendarViewType,
-	useCalendarContext,
-} from '@/_components/Calendar/CalendarContext';
+import { useCalendarContext } from '@/_components/Calendar/CalendarContext';
+import type {
+	CalendarContextValue,
+	CalendarViewType,
+} from '@/_components/Calendar/CalendarContext.types';
 import { AddMealButton } from '@/app/[planner]/calendar/_components/AddMealButton';
 
 import { CalendarHeaderDesktop, CalendarHeaderMobile } from './CalendarHeader';

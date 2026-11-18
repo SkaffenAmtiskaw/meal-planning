@@ -10,7 +10,7 @@ import {
 	type CalendarMeal,
 	useCalendarContext,
 } from '@/_components/Calendar';
-import type { CalendarContextValue } from '@/_components/Calendar/CalendarContext';
+import type { CalendarContextValue } from '@/_components/Calendar/CalendarContext.types';
 
 import { ListView } from './ListView';
 

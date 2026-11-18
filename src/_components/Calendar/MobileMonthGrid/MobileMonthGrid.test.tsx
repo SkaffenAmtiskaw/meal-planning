@@ -5,7 +5,8 @@ import { DateTime } from 'luxon';
 
 import { useCalendarContext } from '@/_components/Calendar';
 
-import { MobileMonthGrid, type MobileMonthGridEvent } from './MobileMonthGrid';
+import { MobileMonthGrid } from './MobileMonthGrid';
+import type { MobileMonthGridEvent } from './MobileMonthGrid.types';
 
 vi.mock('@mantine/core', async () => await import('#mocks/@mantine/core'));
 vi.mock('@/_components/Calendar', async () => ({
