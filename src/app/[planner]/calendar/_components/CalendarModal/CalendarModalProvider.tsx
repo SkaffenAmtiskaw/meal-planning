@@ -6,12 +6,12 @@ import { Modal } from '@mantine/core';
 
 import { useIsMobile } from '@/_hooks';
 
-import {
-	CalendarModalContext,
-	type CalendarModalData,
-	type CalendarModalState,
-	type CalendarModalType,
-} from './CalendarModalContext';
+import { CalendarModalContext } from './CalendarModalContext';
+import type {
+	CalendarModalData,
+	CalendarModalState,
+	CalendarModalType,
+} from './CalendarModalContext.types';
 
 import { AddMealModal } from '../AddMealForm/AddMealModal';
 

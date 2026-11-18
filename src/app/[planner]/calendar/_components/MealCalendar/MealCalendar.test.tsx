@@ -9,8 +9,8 @@ import { MealCalendar } from './MealCalendar';
 import { MealEventCard } from './MealEventCard';
 
 import type { SavedItem } from '../../_types/savedItem';
-import type { CalendarEvent } from '../../_utils/toCalendarEvents';
 import { toCalendarEvents } from '../../_utils/toCalendarEvents';
+import type { CalendarEvent } from '../../_utils/toCalendarEvents.types';
 
 vi.mock('@/_components/Calendar', async () => ({
 	MonthGrid: vi.fn(({ meals, renderMeal }) => (

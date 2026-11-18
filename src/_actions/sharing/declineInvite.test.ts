@@ -4,7 +4,8 @@ import { getUser } from '@/_actions/user';
 import { pendingInvites } from '@/_models/database/pendingInvites';
 import { reportError } from '@/_utils/reportError';
 
-import { type DeclineInviteInput, declineInvite } from './declineInvite';
+import { declineInvite } from './declineInvite';
+import type { DeclineInviteInput } from './declineInvite.types';
 
 vi.mock('@/_actions/user', async () => await import('#mocks/@/_actions/user'));
 vi.mock(

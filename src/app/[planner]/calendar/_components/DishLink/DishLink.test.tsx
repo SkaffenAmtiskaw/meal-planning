@@ -5,7 +5,7 @@ import { Anchor, Text } from '@mantine/core';
 
 import { DishLink } from './DishLink';
 
-import type { ResolvedDish } from '../../_utils/resolveDishSource';
+import type { ResolvedDish } from '../../_utils/resolveDishSource.types';
 
 vi.mock('@mantine/core', async () => await import('#mocks/@mantine/core'));
 vi.mock('next/link', () => ({

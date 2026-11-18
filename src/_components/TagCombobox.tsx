@@ -5,14 +5,11 @@ import { useState } from 'react';
 import { Combobox, Pill, PillsInput, Text, useCombobox } from '@mantine/core';
 
 import { addTag } from '@/_actions/library';
-import { TAG_COLORS, type TagColor } from '@/_theme/colors';
+import { TAG_COLORS } from '@/_theme/colors';
+import type { TagColor } from '@/_theme/colors.types';
 import { catchify } from '@/_utils/catchify';
 
-export interface TagOption {
-	_id: string;
-	name: string;
-	color: string;
-}
+import type { TagOption } from './TagCombobox.types';
 
 interface Props {
 	plannerId: string;

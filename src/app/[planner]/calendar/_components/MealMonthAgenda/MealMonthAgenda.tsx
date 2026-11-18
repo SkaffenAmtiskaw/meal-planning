@@ -14,8 +14,8 @@ import { getMealColor, TAG_COLORS } from '@/_theme/colors';
 import { MobileAddMealButton } from '@/app/[planner]/calendar/_components/AddMealButton';
 
 import type { SavedItem } from '../../_types/savedItem';
-import type { CalendarEvent } from '../../_utils/toCalendarEvents';
 import { toCalendarEvents } from '../../_utils/toCalendarEvents';
+import type { CalendarEvent } from '../../_utils/toCalendarEvents.types';
 import { toCalendarMeals } from '../../_utils/toCalendarMeals';
 import { DishLink } from '../DishLink/DishLink';
 

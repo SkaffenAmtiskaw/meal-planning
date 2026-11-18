@@ -11,7 +11,7 @@ import { InviteForm } from './InviteForm';
 import { PendingInvitesList } from './PendingInvitesList';
 import { PlannerItem } from './PlannerItem';
 
-import type { UseInvitesResult } from '../_hooks/useInvites';
+import type { UseInvitesResult } from '../_hooks/useInvites.types';
 
 vi.mock('next/navigation', async () => await import('#mocks/next/navigation'));
 

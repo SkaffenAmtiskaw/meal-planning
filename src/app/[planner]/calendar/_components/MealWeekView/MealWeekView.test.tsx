@@ -8,8 +8,8 @@ import { MealWeekView } from './MealWeekView';
 import { WeekMealCard } from './WeekMealCard';
 
 import type { SavedItem } from '../../_types/savedItem';
-import type { CalendarEvent } from '../../_utils/toCalendarEvents';
 import { toCalendarEvents } from '../../_utils/toCalendarEvents';
+import type { CalendarEvent } from '../../_utils/toCalendarEvents.types';
 
 vi.mock('@/_components/Calendar', async () => ({
 	WeekView: vi.fn(({ meals, renderMeal, onMealClick }) => (

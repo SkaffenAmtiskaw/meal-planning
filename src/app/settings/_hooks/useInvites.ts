@@ -10,20 +10,7 @@ import {
 } from '@/_actions/sharing';
 import type { AccessLevel } from '@/_models/types';
 
-type InviteStatus = 'idle' | 'loading' | 'success' | 'error';
-
-export interface UseInvitesResult {
-	invites: PendingInvite[];
-	loading: boolean;
-	error: string | null;
-	inviteStatus: InviteStatus;
-	inviteError: string | null;
-	cancelStatus: InviteStatus;
-	cancelError: string | null;
-	refresh: () => Promise<void>;
-	inviteUser: (email: string, accessLevel?: AccessLevel) => Promise<boolean>;
-	cancelInvite: (inviteId: string) => Promise<boolean>;
-}
+import type { InviteStatus, UseInvitesResult } from './useInvites.types';
 
 export const useInvites = (plannerId: string): UseInvitesResult => {
 	const [invites, setInvites] = useState<PendingInvite[]>([]);

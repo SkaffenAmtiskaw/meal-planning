@@ -7,9 +7,7 @@ import { isNoSessionError } from '@/_utils/noSessionError';
 import { reportError } from '@/_utils/reportError';
 import { zId } from '@/_utils/zId';
 
-export interface DeclineInviteInput {
-	inviteId: string;
-}
+import type { DeclineInviteInput } from './declineInvite.types';
 
 export const declineInvite = async (
 	input: DeclineInviteInput,

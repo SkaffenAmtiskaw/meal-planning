@@ -6,7 +6,8 @@ import { ActionIcon, Button } from '@mantine/core';
 import { IconChevronLeft, IconChevronRight } from '@tabler/icons-react';
 import type { ActionIconProps, ButtonProps } from '@mantine/core';
 
-import { PillButton, type PillButtonProps } from '@/_components/PillButton';
+import type { PillButtonProps } from '@/_components/PillButton';
+import { PillButton } from '@/_components/PillButton';
 
 import { useCalendarContext } from '../CalendarContext';
 

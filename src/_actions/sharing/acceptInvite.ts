@@ -9,13 +9,10 @@ import type { ActionResult } from '@/_utils/actionResult/ActionResult';
 import { isNoSessionError } from '@/_utils/noSessionError';
 import { reportError } from '@/_utils/reportError';
 
-export interface AcceptInviteInput {
-	token: string;
-}
-
-export interface AcceptInviteResult {
-	plannerId: string;
-}
+import type {
+	AcceptInviteInput,
+	AcceptInviteResult,
+} from './acceptInvite.types';
 
 export const acceptInvite = async (
 	input: AcceptInviteInput,

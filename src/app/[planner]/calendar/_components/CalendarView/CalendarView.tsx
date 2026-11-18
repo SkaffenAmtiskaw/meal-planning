@@ -11,7 +11,7 @@ import type { DayInterface } from '@/_models/types';
 
 import { CalendarModalProvider } from '../CalendarModal';
 import type { SavedItem } from '../../_types/savedItem';
-import type { CalendarEvent } from '../../_utils/toCalendarEvents';
+import type { CalendarEvent } from '../../_utils/toCalendarEvents.types';
 import {
 	CalendarHeaderDesktop,
 	CalendarHeaderMobile,

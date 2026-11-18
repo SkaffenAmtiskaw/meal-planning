@@ -2,7 +2,7 @@ import { render } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
 
 import { CalendarModalContext, useCalendarModal } from './CalendarModalContext';
-import type { CalendarModalContextValue } from './CalendarModalContext';
+import type { CalendarModalContextValue } from './CalendarModalContext.types';
 
 describe('useCalendarModal', () => {
 	it('throws when used outside provider', () => {

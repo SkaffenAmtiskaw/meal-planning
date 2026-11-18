@@ -2,7 +2,8 @@ import 'temporal-polyfill/global';
 
 import type { DayInterface } from '@/_models/types';
 
-import { type ResolvedDish, resolveDishSource } from './resolveDishSource';
+import { resolveDishSource } from './resolveDishSource';
+import type { ResolvedDish } from './resolveDishSource.types';
 
 import type { SavedItem } from '../_types/savedItem';
 
