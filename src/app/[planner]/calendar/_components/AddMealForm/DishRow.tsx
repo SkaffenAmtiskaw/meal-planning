@@ -16,7 +16,7 @@ import { useIsMobile } from '@/_hooks';
 import { DishNoteChip } from './DishNoteChip';
 import { DishRowExpanded } from './DishRowExpanded';
 import { DishSourceChip } from './DishSourceChip';
-import type { DishState } from './types';
+import type { DishState } from './useDishes.types';
 import classes from './DishRow.module.css';
 
 import { usePlannerSavedItems } from '../../_hooks/usePlannerSavedItems';

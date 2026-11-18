@@ -9,9 +9,3 @@ export type DishState = {
 	note: string;
 	expanded: boolean;
 };
-
-export type MealFormValues = {
-	date: string;
-	mealName: string;
-	description: string;
-};

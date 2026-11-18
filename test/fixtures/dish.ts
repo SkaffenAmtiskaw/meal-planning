@@ -1,4 +1,4 @@
-import type { DishState } from '@/app/[planner]/calendar/_components/AddMealForm/types';
+import type { DishState } from '@/app/[planner]/calendar/_components/AddMealForm/useDishes.types';
 
 export const makeDish = (overrides: Partial<DishState> = {}): DishState => ({
 	id: overrides.id ?? 'dish-1',

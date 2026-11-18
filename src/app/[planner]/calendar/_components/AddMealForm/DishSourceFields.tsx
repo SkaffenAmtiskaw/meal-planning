@@ -9,7 +9,7 @@ import {
 	TextInput,
 } from '@mantine/core';
 
-import type { DishState, SourceType } from './types';
+import type { DishState, SourceType } from './useDishes.types';
 import classes from './DishRow.module.css';
 
 import { usePlannerSavedItems } from '../../_hooks/usePlannerSavedItems';
