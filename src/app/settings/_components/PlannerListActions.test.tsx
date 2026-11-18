@@ -3,12 +3,13 @@ import { beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { useDisclosure } from '@mantine/hooks';
 
-import { CreatePlannerForm } from './CreatePlannerForm';
+import { CreatePlannerForm } from '@/app/_components/CreatePlannerForm';
+
 import { PlannerListActions } from './PlannerListActions';
 
 vi.mock('@mantine/core', async () => await import('#mocks/@mantine/core'));
 vi.mock('@mantine/hooks', async () => await import('#mocks/@mantine/hooks'));
-vi.mock('./CreatePlannerForm', () => ({
+vi.mock('@/app/_components/CreatePlannerForm', () => ({
 	CreatePlannerForm: vi.fn(() => <div data-testid="create-planner-form" />),
 }));
 
