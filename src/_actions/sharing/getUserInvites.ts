@@ -5,7 +5,7 @@ import { planners } from '@/_models/database/planners';
 import { users } from '@/_models/database/users';
 import { reportError } from '@/_utils/reportError';
 
-import type { GetUserInvitesResult, UserInvite } from './invite.types';
+import type { GetUserInvitesResult, UserInvite } from './getUserInvites.types';
 
 // Main function
 export const getUserInvites = async (
