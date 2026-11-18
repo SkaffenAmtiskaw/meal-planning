@@ -21,11 +21,12 @@ import { getMonthGridDates } from '@/_components/Calendar/_utils/getMonthGridDat
 import { WEEKDAY_LABELS } from '@/_components/Calendar/_utils/weekdays';
 import focusClasses from '@/_theme/focus.module.css';
 
-import type {
-	MobileMonthGridEvent,
-	MobileMonthGridProps,
-} from './MobileMonthGrid.types';
+import type { MobileMonthGridEvent } from './MobileMonthGrid.types';
 import styles from './MobileMonthGrid.module.css';
+
+interface MobileMonthGridProps {
+	events?: MobileMonthGridEvent[];
+}
 
 export function MobileMonthGrid({
 	events = [],

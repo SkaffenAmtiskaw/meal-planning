@@ -21,10 +21,7 @@ export {
 export { MobileAgenda } from './MobileAgenda/MobileAgenda';
 export type { MobileAgendaProps } from './MobileAgenda/MobileAgenda.types';
 export { MobileMonthGrid } from './MobileMonthGrid/MobileMonthGrid';
-export type {
-	MobileMonthGridEvent,
-	MobileMonthGridProps,
-} from './MobileMonthGrid/MobileMonthGrid.types';
+export type { MobileMonthGridEvent } from './MobileMonthGrid/MobileMonthGrid.types';
 export { MonthGrid } from './MonthGrid/MonthGrid';
 export type {
 	MonthGridMeal,

@@ -11,8 +11,3 @@ export interface UserInvite {
 	expiresAt: string;
 	token: string;
 }
-
-export interface GetUserInvitesResult {
-	invites: UserInvite[];
-	error?: string;
-}

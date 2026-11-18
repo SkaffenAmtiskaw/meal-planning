@@ -14,12 +14,3 @@ export type CalendarModalState =
 				data: CalendarModalData[K];
 			};
 	  }[CalendarModalType];
-
-export interface CalendarModalContextValue {
-	state: CalendarModalState;
-	open: <T extends CalendarModalType>(
-		type: T,
-		data: CalendarModalData[T],
-	) => void;
-	close: () => void;
-}

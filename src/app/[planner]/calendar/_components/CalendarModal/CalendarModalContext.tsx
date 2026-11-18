@@ -2,7 +2,20 @@
 
 import { createContext, useContext } from 'react';
 
-import type { CalendarModalContextValue } from './CalendarModalContext.types';
+import type {
+	CalendarModalData,
+	CalendarModalState,
+	CalendarModalType,
+} from './CalendarModalContext.types';
+
+export interface CalendarModalContextValue {
+	state: CalendarModalState;
+	open: <T extends CalendarModalType>(
+		type: T,
+		data: CalendarModalData[T],
+	) => void;
+	close: () => void;
+}
 
 export const CalendarModalContext =
 	createContext<CalendarModalContextValue | null>(null);
