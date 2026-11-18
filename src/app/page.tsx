@@ -1,4 +1,4 @@
-import { cookies, headers } from 'next/headers';
+import { headers } from 'next/headers';
 import { redirect } from 'next/navigation';
 
 import { addUser } from '@/_actions/user';
@@ -6,6 +6,7 @@ import { auth } from '@/_auth';
 import { users } from '@/_models/database/users';
 
 import { SignInPrompt } from './_components/SignInPrompt';
+import { getLastOpenedPlannerId } from './_utils/getLastOpenedPlannerId';
 
 const Page = async ({
 	searchParams: _searchParams,
@@ -23,13 +24,7 @@ const Page = async ({
 	const user = await users.findOne({ email: session.user.email });
 
 	if (user) {
-		const cookieStore = await cookies();
-		const lastPlannerId = cookieStore.get('lastOpenedPlanner')?.value;
-		const isMember = user.planners.some(
-			({ planner }) => planner === lastPlannerId,
-		);
-		const plannerId =
-			isMember && lastPlannerId ? lastPlannerId : user.planners[0].planner;
+		const plannerId = await getLastOpenedPlannerId(user.planners);
 		redirect(`${plannerId}/calendar`);
 	}
 
