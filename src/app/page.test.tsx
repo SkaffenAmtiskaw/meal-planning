@@ -31,6 +31,10 @@ vi.mock('./_components/SignInPrompt', () => ({
 	SignInPrompt: vi.fn(() => <div data-testid="sign-in-prompt" />),
 }));
 
+vi.mock('./_components/NoPlannersPrompt', () => ({
+	NoPlannersPrompt: vi.fn(() => <div data-testid="no-planners-prompt" />),
+}));
+
 vi.mock('./_utils/getLastOpenedPlannerId', () => ({
 	getLastOpenedPlannerId: vi.fn(async () => lastOpenedPlannerId),
 }));
@@ -51,6 +55,16 @@ describe('page', () => {
 
 		expect(screen.getByTestId('sign-in-prompt')).toBeDefined();
 		expect(getOrCreateUser).not.toHaveBeenCalled();
+	});
+
+	it('renders the no planners prompt when the user has no planners', async () => {
+		vi.mocked(getOrCreateUser).mockResolvedValueOnce({ planners: [] } as never);
+
+		render(await Page());
+
+		expect(screen.getByTestId('no-planners-prompt')).toBeDefined();
+		expect(getLastOpenedPlannerId).not.toHaveBeenCalled();
+		expect(vi.mocked(redirect)).not.toHaveBeenCalled();
 	});
 
 	it("redirects the user to the planner chosen from the user's planners", async () => {
