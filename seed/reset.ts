@@ -4,15 +4,24 @@ import { pendingInvites } from '@/_models/database/pendingInvites';
 import { planners } from '@/_models/database/planners';
 import { users } from '@/_models/database/users';
 
-import { SEEDED_USERS } from './users';
+import { emailStartingWith, SEED_EMAIL_PREFIX, SEEDED_USERS } from './users';
 
-// Removes everything the seed made, and what was later done as a seeded user, found from the
-// seeded emails so nothing else in the dev database is touched. A seeded user who isn't there
-// is skipped, so a run after a partial failure cleans up whatever is left.
+const seededEmail = emailStartingWith(SEED_EMAIL_PREFIX);
+
+// Removes everything the seed and story data files made, and what was later done as one of their
+// users, found by the seeded email prefix so nothing else in the dev database is touched. A seeded
+// user who isn't there is skipped, so a run after a partial failure cleans up whatever is left.
 export const resetSeed = async () => {
-	const emails = SEEDED_USERS.map(({ email }) => email);
+	const seededUsers = await users.find({ email: seededEmail }).toArray();
+	// The generic seed's emails are listed too, so a better-auth user left without a User doc by a
+	// failed run still goes.
+	const emails = [
+		...new Set([
+			...SEEDED_USERS.map(({ email }) => email),
+			...seededUsers.map(({ email }) => email),
+		]),
+	];
 
-	const seededUsers = await users.find({ email: { $in: emails } }).toArray();
 	const ownedPlanners = seededUsers.flatMap((user) =>
 		user.planners
 			.filter(({ accessLevel }) => accessLevel === 'owner')
@@ -28,7 +37,7 @@ export const resetSeed = async () => {
 	);
 
 	await pendingInvites.deleteMany({
-		$or: [{ planner: { $in: ownedPlanners } }, { email: { $in: emails } }],
+		$or: [{ planner: { $in: ownedPlanners } }, { email: seededEmail }],
 	});
 
 	for (const email of emails) await deleteAuthUser(auth, email);

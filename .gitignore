@@ -53,3 +53,6 @@ next-env.d.ts
 
 # agent tooling
 .scratch/
+
+# A story's seed data file stays in the checkout that wrote it (docs/seed.md, "Story Data")
+seed/stories/
