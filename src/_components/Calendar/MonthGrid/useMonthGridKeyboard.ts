@@ -3,6 +3,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { DateTime } from 'luxon';
 
 import type { MonthGridMeal } from './MonthGrid.types';
+import type { MealKeyboardProps } from './useMonthGridKeyboard.types';
 
 import { useRovingGridFocus } from '../_hooks/useRovingGridFocus';
 
@@ -18,11 +19,6 @@ export interface DayKeyboardProps {
 	onClick: () => void;
 	onKeyDown: (e: React.KeyboardEvent<HTMLElement>) => void;
 	ref: (el: HTMLElement | null) => void;
-}
-
-export interface MealKeyboardProps {
-	tabIndex: 0 | -1;
-	ref: React.RefCallback<HTMLElement>;
 }
 
 export interface UseMonthGridKeyboardResult {

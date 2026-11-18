@@ -6,7 +6,7 @@ import { Alert, Button, Group, Stack, TextInput } from '@mantine/core';
 
 import { FormFeedbackAlert } from '@/_components';
 
-export type InviteStatus = 'idle' | 'loading' | 'success' | 'error';
+import type { InviteStatus } from '../_hooks/useInvites.types';
 
 export interface InviteFormProps {
 	status: InviteStatus;

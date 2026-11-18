@@ -3,7 +3,7 @@
 import { Alert } from '@mantine/core';
 import { IconAlertCircle } from '@tabler/icons-react';
 
-type Status = 'idle' | 'submitting' | 'success' | 'error';
+import type { Status } from '@/_hooks/useFormFeedback';
 
 interface Props {
 	status: Status;

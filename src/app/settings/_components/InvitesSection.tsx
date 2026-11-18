@@ -5,7 +5,12 @@ import { useRouter } from 'next/navigation';
 import { Alert, Badge, Button, Grid, Group, Stack, Text } from '@mantine/core';
 import { IconCheck, IconClock, IconX } from '@tabler/icons-react';
 
-import type { AcceptInviteResult, UserInvite } from '@/_actions/sharing';
+import type {
+	AcceptInviteInput,
+	AcceptInviteResult,
+	DeclineInviteInput,
+	UserInvite,
+} from '@/_actions/sharing';
 import { useAsyncStatus } from '@/_hooks';
 import type { ActionResult } from '@/_utils/actionResult/ActionResult';
 import { isPastDate, isWithinHours, toLocaleDateString } from '@/_utils/date';
@@ -14,10 +19,10 @@ import { getAccessLevelColor } from '../_utils/getAccessLevelColor';
 
 export interface InvitesSectionProps {
 	invites: UserInvite[];
-	onAccept: (input: {
-		token: string;
-	}) => Promise<ActionResult<AcceptInviteResult>>;
-	onDecline: (input: { inviteId: string }) => Promise<ActionResult<void>>;
+	onAccept: (
+		input: AcceptInviteInput,
+	) => Promise<ActionResult<AcceptInviteResult>>;
+	onDecline: (input: DeclineInviteInput) => Promise<ActionResult<void>>;
 }
 
 export const InvitesSection = ({

@@ -6,13 +6,8 @@ import { useState } from 'react';
 import { Modal, Stack, Text } from '@mantine/core';
 
 import { AddMealForm } from './AddMealForm';
+import type { AddMealModalProps } from './AddMealModal.types';
 import classes from './AddMealModal.module.css';
-
-export interface AddMealModalProps {
-	data: { initialDate?: string };
-	close: () => void;
-	plannerId: string;
-}
 
 export function AddMealModal({ data, close, plannerId }: AddMealModalProps) {
 	const router = useRouter();

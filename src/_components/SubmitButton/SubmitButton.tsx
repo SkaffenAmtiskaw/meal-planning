@@ -2,7 +2,7 @@
 
 import { Button } from '@mantine/core';
 
-type Status = 'idle' | 'submitting' | 'success' | 'error';
+import type { Status } from '@/_hooks/useFormFeedback';
 
 interface Props {
 	status: Status;

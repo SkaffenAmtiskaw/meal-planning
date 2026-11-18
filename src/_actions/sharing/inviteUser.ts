@@ -6,6 +6,7 @@ import { z } from 'zod';
 
 import { checkAuth } from '@/_actions/auth/checkAuth';
 import { sendInviteEmail } from '@/_auth/emails/sendInviteEmail';
+import type { InviteEmailType } from '@/_auth/emails/sendInviteEmail.types';
 import { newId } from '@/_models/database/newId';
 import { pendingInvites } from '@/_models/database/pendingInvites';
 import { planners } from '@/_models/database/planners';
@@ -130,7 +131,7 @@ export const inviteUser = async (
 	}
 
 	// 10. Determine email type and URL based on whether user exists
-	const emailType: 'existing_user' | 'new_user' = existingUser
+	const emailType: InviteEmailType = existingUser
 		? 'existing_user'
 		: 'new_user';
 

@@ -14,6 +14,7 @@ import type {
 } from './CalendarModalContext.types';
 
 import { AddMealModal } from '../AddMealForm/AddMealModal';
+import type { AddMealModalProps } from '../AddMealForm/AddMealModal.types';
 
 export interface CalendarModalProviderProps {
 	plannerId: string;
@@ -21,11 +22,9 @@ export interface CalendarModalProviderProps {
 }
 
 const MODAL_CONTENT: {
-	[K in CalendarModalType]: React.FC<{
-		data: CalendarModalData[K];
-		close: () => void;
-		plannerId: string;
-	}>;
+	[K in CalendarModalType]: React.FC<
+		Omit<AddMealModalProps, 'data'> & { data: CalendarModalData[K] }
+	>;
 } = {
 	add_meal: AddMealModal,
 };

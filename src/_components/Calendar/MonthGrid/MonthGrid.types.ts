@@ -1,3 +1,5 @@
+import type { MealKeyboardProps } from './useMonthGridKeyboard.types';
+
 export interface MonthGridMeal {
 	id: string;
 	date: string; // ISO date YYYY-MM-DD
@@ -5,10 +7,7 @@ export interface MonthGridMeal {
 	description?: string;
 }
 
-export interface MonthGridMealRenderProps {
-	tabIndex: 0 | -1;
-	ref: React.RefCallback<HTMLElement>;
-}
+export type MonthGridMealRenderProps = MealKeyboardProps;
 
 export interface MonthGridProps {
 	meals?: MonthGridMeal[];
