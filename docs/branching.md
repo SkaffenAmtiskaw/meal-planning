@@ -61,7 +61,7 @@ Some `/tooling` changes come with notes work that has to wait for the merge, suc
 A quick fix can also go through GitHub's web editor. Edit the file on `develop`, choose **Create a new branch for this commit and start a pull request**, and turn on auto-merge on the PR.
 
 # A Hotfix
-A hotfix is an ordinary bug story, built on a branch from `main` instead of `develop`, so its fix reaches production without waiting for a release. Its Roadmap line ends with `🔥 Hotfix: <reason>` and sits first in Next. You add 🔥 yourself. A routine adds it only in the cases its skill sets out.
+A hotfix is an ordinary bug story, built on a branch from `main` instead of `develop`, so its fix reaches production without waiting for a release. Its Roadmap line ends with `🔥 Hotfix: <reason>` and sits first in Next. You add 🔥 yourself. The `production-errors` routine also adds it, in the narrow cases its skill sets out.
 
 Each skill that investigates, builds or reviews a 🔥 story first checks that its session is on a `hotfix/` branch holding nothing from `develop` that isn't on `main`. A branch cut from `develop` would carry unreleased work into `main`, whatever it's named. If the session isn't on such a branch, the skill makes a hotfix worktree from `main` and moves the work to a new session there. It makes the worktree itself because the app only branches from `develop`.
 

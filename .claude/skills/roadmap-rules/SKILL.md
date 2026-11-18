@@ -29,12 +29,14 @@ How goals order the work, what each section and kind of note holds, and the rule
 - **Status embeds** - each line with a note, except a goal's or standing goal's, embeds that note's status line from Where It Stands after the link, e.g. `[[Stale Data Issues]] ![[Stale Data Issues#^status]]`. It shows only what the story needs next, the next skill or a link to what blocks it, not what the story is. Edit it in the note, not on the Roadmap.
 - **Markers** - every Now and Next line ends, after its status embed, with a marker: a 🎯 link for each goal it serves, one of them the building goal, or 🚨, 🔥, 📌 or 🔁. Every Planning line ends with a 🎯 link for each goal it serves, one of them the planning goal:
 	- `🎯 [[Goal]]` - serves that goal.
-	- `🚨 <reason>` - something serious enough to show on the line, such as a security risk or a bug a user reported. In Now or Next, the story is built ahead of the goals. Anywhere else, it only flags the problem, and the story waits its turn. Only the user adds it, apart from the `dependency-updates` routine's security lines. Other agents may suggest it.
-	- `🔥 Hotfix: <reason>` - a bug in production that can't wait for the release. The story is built on a `hotfix/<slug>` branch from `main` and ships on its own, as "A Hotfix" in `docs/branching.md` describes. It never gets 🔁 or a 🎯 link, and a goal that starts building leaves it where it is, so it never joins a release and closing it never sets off `/finish-goal`. Only the user adds it, apart from a routine, in the cases its skill sets out. Other agents may suggest it.
+	- `🚨 <reason>` - something serious enough to show on the line, such as a security risk or a bug a user reported. In Now or Next, the story is built ahead of the goals. Anywhere else, it only flags the problem, and the story waits its turn.
+	- `🔥 Hotfix: <reason>` - a bug in production that can't wait for the release. The story is built on a `hotfix/<slug>` branch from `main` and ships on its own, as "A Hotfix" in `docs/branching.md` describes. It never gets 🔁 or a 🎯 link, and a goal that starts building leaves it where it is, so it never joins a release and closing it never sets off `/finish-goal`.
 	- `📌 <reason>` - the user scheduled it outside the goals. Only the user adds it. Where the line sits says which release it joins:
 		- **In Now or Next:** it's in this release, so it may be built now.
 		- **In Later:** it joins the next release. When a goal next starts building, `/roadmap` moves it into Next, and it keeps its 📌.
 	- `🔁` - joined this release without belonging to a goal: a bug, a kicked-off sweep or collecting workflow note, or a `/tooling` change. `/roadmap` adds it when the line moves into Next.
+
+	If an agent's skill sets out a case for adding 🚨 or 🔥, the agent adds it in that case. Otherwise, only the user adds them, and an agent may suggest one. Both markers move a story ahead of the goals' work, which is the user's call.
 
 	A Now, Next or Planning line without its marker is out of place. Raise it with the user.
 - **Hubs** hold shared design, not priority. A hub has a line only while it has a next step of its own, such as `/brainstorm`, `/decide` or `/close`. Once its `^status` line says `Next: its child stories`, it has none.
