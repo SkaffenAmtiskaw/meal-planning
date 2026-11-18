@@ -39,9 +39,16 @@ export const findStory = async (story: string): Promise<SeedStory> => {
 	const { seedStory } = (await import(
 		new URL(`${story}.ts`, STORIES_DIR).href
 	)) as {
-		seedStory: SeedStory;
+		seedStory?: unknown;
 	};
-	return seedStory;
+	// Without this, a file missing the export would load nothing and the seed would look as if it
+	// worked.
+	if (typeof seedStory !== 'function') {
+		throw new Error(
+			`seed/stories/${story}.ts doesn't export a seedStory function (see docs/seed.md, "Story Data").`,
+		);
+	}
+	return seedStory as SeedStory;
 };
 
 // The emails of the users a story's data file created, found by the story's email prefix.

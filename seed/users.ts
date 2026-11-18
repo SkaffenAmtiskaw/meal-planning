@@ -31,25 +31,25 @@ export const SEEDED_USERS: SeededUser[] = [
 	{
 		key: 'owner',
 		name: 'Olive Owner',
-		email: 'delivered+seed-owner@resend.dev',
+		email: `${SEED_EMAIL_PREFIX}owner@resend.dev`,
 		accessLevel: 'owner',
 	},
 	{
 		key: 'admin',
 		name: 'Adam Admin',
-		email: 'delivered+seed-admin@resend.dev',
+		email: `${SEED_EMAIL_PREFIX}admin@resend.dev`,
 		accessLevel: 'admin',
 	},
 	{
 		key: 'write',
 		name: 'Wren Writer',
-		email: 'delivered+seed-write@resend.dev',
+		email: `${SEED_EMAIL_PREFIX}write@resend.dev`,
 		accessLevel: 'write',
 	},
 	{
 		key: 'read',
 		name: 'Reid Reader',
-		email: 'delivered+seed-read@resend.dev',
+		email: `${SEED_EMAIL_PREFIX}read@resend.dev`,
 		accessLevel: 'read',
 	},
 ];
