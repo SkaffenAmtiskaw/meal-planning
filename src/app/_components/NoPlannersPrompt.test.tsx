@@ -11,6 +11,9 @@ vi.mock('./AuthLayout', () => ({
 		<div>{children}</div>
 	),
 }));
+vi.mock('./CreatePlannerButton', () => ({
+	CreatePlannerButton: () => <div />,
+}));
 
 describe('no planners prompt', () => {
 	it('renders (coverage only, no logic)', () => {
