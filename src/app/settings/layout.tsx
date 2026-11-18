@@ -1,4 +1,3 @@
-import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
 
 import { AppShell, AppShellMain } from '@mantine/core';
@@ -9,6 +8,7 @@ import { isNoSessionError } from '@/_utils/noSessionError';
 import { reportError } from '@/_utils/reportError';
 import { Header } from '@/app/_components/Header';
 import { HEADER_HEIGHT } from '@/app/_constants';
+import { getLastOpenedPlannerId } from '@/app/_utils/getLastOpenedPlannerId';
 
 import { BackButton } from './_components/BackButton';
 
@@ -19,12 +19,7 @@ const Layout = async ({ children }: { children: React.ReactNode }) => {
 
 	if (!planners.length) return redirect('/');
 
-	const cookieStore = await cookies();
-	const lastPlannerId = cookieStore.get('lastOpenedPlanner')?.value;
-	const plannerId =
-		planners.some((p) => p.planner === lastPlannerId) && lastPlannerId
-			? lastPlannerId
-			: planners[0].planner;
+	const plannerId = await getLastOpenedPlannerId(planners);
 
 	return (
 		<AppShell header={{ height: HEADER_HEIGHT }}>
