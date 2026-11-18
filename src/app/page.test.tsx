@@ -1,27 +1,23 @@
 import { render, screen } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
 
-import { addUser } from '@/_actions/user';
 import { auth } from '@/_auth';
-import { users } from '@/_models/database/users';
 
 import Page from './page';
 
+import { getLastOpenedPlannerId } from './_utils/getLastOpenedPlannerId';
+import { getOrCreateUser } from './_utils/getOrCreateUser';
+
 vi.mock('next/headers', async () => await import('#mocks/next/headers'));
 vi.mock('next/navigation', async () => await import('#mocks/next/navigation'));
-vi.mock('@/_actions/user', async () => await import('#mocks/@/_actions/user'));
 
-const { mockSession, plannerId, membership } = vi.hoisted(() => {
-	const plannerId = '507f1f77bcf86cd799439011';
-	return {
-		mockSession: { user: { email: 'ariel@sea.com', name: 'Ariel' } },
-		plannerId,
-		membership: { planner: plannerId, accessLevel: 'owner' },
-	};
-});
+const { mockSession, lastOpenedPlannerId, membership } = vi.hoisted(() => ({
+	mockSession: { user: { email: 'ariel@sea.com', name: 'Ariel' } },
+	lastOpenedPlannerId: '507f1f77bcf86cd799439022',
+	membership: { planner: '507f1f77bcf86cd799439011', accessLevel: 'owner' },
+}));
 
 vi.mock('@/_auth', () => ({
 	auth: {
@@ -31,70 +27,53 @@ vi.mock('@/_auth', () => ({
 	},
 }));
 
-vi.mock(
-	'@/_models/database/users',
-	async () => await import('#mocks/@/_models/database/users'),
-);
-
 vi.mock('./_components/SignInPrompt', () => ({
 	SignInPrompt: vi.fn(() => <div data-testid="sign-in-prompt" />),
+}));
+
+vi.mock('./_components/NoPlannersPrompt', () => ({
+	NoPlannersPrompt: vi.fn(() => <div data-testid="no-planners-prompt" />),
+}));
+
+vi.mock('./_utils/getLastOpenedPlannerId', () => ({
+	getLastOpenedPlannerId: vi.fn(async () => lastOpenedPlannerId),
+}));
+
+vi.mock('./_utils/getOrCreateUser', () => ({
+	getOrCreateUser: vi.fn(async () => ({ planners: [membership] })),
 }));
 
 describe('page', () => {
 	beforeEach(() => {
 		vi.clearAllMocks();
-		vi.mocked(users.findOne).mockResolvedValue({
-			planners: [membership],
-		} as never);
 	});
 
 	it('renders sign in prompt when there is no session', async () => {
 		vi.mocked(auth.api.getSession).mockResolvedValueOnce(null as never);
 
-		render(await Page({ searchParams: Promise.resolve({}) }));
+		render(await Page());
 
 		expect(screen.getByTestId('sign-in-prompt')).toBeDefined();
+		expect(getOrCreateUser).not.toHaveBeenCalled();
 	});
 
-	it('redirects to first planner when no last-opened cookie', async () => {
-		await Page({ searchParams: Promise.resolve({}) });
+	it('renders the no planners prompt when the user has no planners', async () => {
+		vi.mocked(getOrCreateUser).mockResolvedValueOnce({ planners: [] } as never);
 
-		expect(vi.mocked(redirect)).toHaveBeenCalledWith(`${plannerId}/calendar`);
+		render(await Page());
+
+		expect(screen.getByTestId('no-planners-prompt')).toBeDefined();
+		expect(getLastOpenedPlannerId).not.toHaveBeenCalled();
+		expect(vi.mocked(redirect)).not.toHaveBeenCalled();
 	});
 
-	it('redirects to last-opened planner when cookie matches a planner', async () => {
-		const lastPlannerId = '507f1f77bcf86cd799439022';
-		vi.mocked(users.findOne).mockResolvedValueOnce({
-			planners: [membership, { planner: lastPlannerId, accessLevel: 'owner' }],
-		} as never);
-		vi.mocked(cookies).mockResolvedValueOnce({
-			get: vi.fn().mockReturnValueOnce({ value: lastPlannerId }),
-		} as never);
+	it("redirects the user to the planner chosen from the user's planners", async () => {
+		await Page();
 
-		await Page({ searchParams: Promise.resolve({}) });
-
+		expect(getOrCreateUser).toHaveBeenCalledWith('ariel@sea.com', 'Ariel');
+		expect(getLastOpenedPlannerId).toHaveBeenCalledWith([membership]);
 		expect(vi.mocked(redirect)).toHaveBeenCalledWith(
-			`${lastPlannerId}/calendar`,
+			`/${lastOpenedPlannerId}/calendar`,
 		);
-	});
-
-	it('falls back to first planner when cookie planner is not in user planners', async () => {
-		const foreignPlannerId = '507f1f77bcf86cd799439099';
-		vi.mocked(cookies).mockResolvedValueOnce({
-			get: vi.fn().mockReturnValueOnce({ value: foreignPlannerId }),
-		} as never);
-
-		await Page({ searchParams: Promise.resolve({}) });
-
-		expect(vi.mocked(redirect)).toHaveBeenCalledWith(`${plannerId}/calendar`);
-	});
-
-	it('creates a new user and redirects when no user exists', async () => {
-		vi.mocked(users.findOne).mockResolvedValueOnce(null as never);
-
-		await Page({ searchParams: Promise.resolve({}) });
-
-		expect(addUser).toHaveBeenCalledWith('ariel@sea.com', undefined, 'Ariel');
-		expect(vi.mocked(redirect)).toHaveBeenCalledWith(`${plannerId}/calendar`);
 	});
 });

@@ -4,7 +4,7 @@ import { ActionIcon, Affix, Button } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import { IconPlus } from '@tabler/icons-react';
 
-import { CreatePlannerForm } from './CreatePlannerForm';
+import { CreatePlannerForm } from '@/app/_components/CreatePlannerForm';
 
 export const PlannerListActions = () => {
 	const [opened, { open, close }] = useDisclosure(false);

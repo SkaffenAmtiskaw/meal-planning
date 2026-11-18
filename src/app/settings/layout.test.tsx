@@ -1,15 +1,13 @@
 import { render, screen } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
 
 import { getUser } from '@/_actions/user';
 import { reportError } from '@/_utils/reportError';
+import { getLastOpenedPlannerId } from '@/app/_utils/getLastOpenedPlannerId';
 
 import Layout from './layout';
-
-vi.mock('next/headers', async () => await import('#mocks/next/headers'));
 
 vi.mock('next/navigation', async () => await import('#mocks/next/navigation'));
 
@@ -45,8 +43,15 @@ vi.mock('./_components/BackButton', () => ({
 	),
 }));
 
+const { lastOpenedPlannerId } = vi.hoisted(() => ({
+	lastOpenedPlannerId: '507f1f77bcf86cd799439022',
+}));
+
+vi.mock('@/app/_utils/getLastOpenedPlannerId', () => ({
+	getLastOpenedPlannerId: vi.fn(async () => lastOpenedPlannerId),
+}));
+
 const plannerId = '507f1f77bcf86cd799439011';
-const otherPlannerId = '507f1f77bcf86cd799439022';
 
 describe('settings layout', () => {
 	beforeEach(() => {
@@ -80,51 +85,15 @@ describe('settings layout', () => {
 		expect(vi.mocked(redirect)).toHaveBeenCalledWith('/');
 	});
 
-	it('back button uses first planner when no last-opened cookie', async () => {
-		vi.mocked(getUser).mockResolvedValueOnce({
-			planners: [{ planner: plannerId, accessLevel: 'owner' }],
-		} as never);
+	it("back button goes to the planner chosen from the user's planners", async () => {
+		const planners = [{ planner: plannerId, accessLevel: 'owner' }];
+		vi.mocked(getUser).mockResolvedValueOnce({ planners } as never);
 
 		render(await Layout({ children: null }));
 
+		expect(getLastOpenedPlannerId).toHaveBeenCalledWith(planners);
 		expect(screen.getByTestId('back-button').getAttribute('href')).toBe(
-			`/${plannerId}/calendar`,
-		);
-	});
-
-	it('back button uses last-opened planner when cookie matches a planner', async () => {
-		vi.mocked(getUser).mockResolvedValueOnce({
-			planners: [
-				{ planner: plannerId, accessLevel: 'owner' },
-				{ planner: otherPlannerId, accessLevel: 'owner' },
-			],
-		} as never);
-
-		vi.mocked(cookies).mockResolvedValueOnce({
-			get: vi.fn().mockReturnValue({ value: otherPlannerId }),
-		} as never);
-
-		render(await Layout({ children: null }));
-
-		expect(screen.getByTestId('back-button').getAttribute('href')).toBe(
-			`/${otherPlannerId}/calendar`,
-		);
-	});
-
-	it('back button falls back to first planner when cookie planner not in user planners', async () => {
-		const foreignPlannerId = '507f1f77bcf86cd799439099';
-		vi.mocked(getUser).mockResolvedValueOnce({
-			planners: [{ planner: plannerId, accessLevel: 'owner' }],
-		} as never);
-
-		vi.mocked(cookies).mockResolvedValueOnce({
-			get: vi.fn().mockReturnValue({ value: foreignPlannerId }),
-		} as never);
-
-		render(await Layout({ children: null }));
-
-		expect(screen.getByTestId('back-button').getAttribute('href')).toBe(
-			`/${plannerId}/calendar`,
+			`/${lastOpenedPlannerId}/calendar`,
 		);
 	});
 });

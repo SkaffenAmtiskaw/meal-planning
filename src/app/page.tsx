@@ -1,17 +1,14 @@
-import { cookies, headers } from 'next/headers';
+import { headers } from 'next/headers';
 import { redirect } from 'next/navigation';
 
-import { addUser } from '@/_actions/user';
 import { auth } from '@/_auth';
-import { users } from '@/_models/database/users';
 
+import { NoPlannersPrompt } from './_components/NoPlannersPrompt';
 import { SignInPrompt } from './_components/SignInPrompt';
+import { getLastOpenedPlannerId } from './_utils/getLastOpenedPlannerId';
+import { getOrCreateUser } from './_utils/getOrCreateUser';
 
-const Page = async ({
-	searchParams: _searchParams,
-}: {
-	searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
-}) => {
+const Page = async () => {
 	const session = await auth.api.getSession({
 		headers: await headers(),
 	});
@@ -20,25 +17,14 @@ const Page = async ({
 		return <SignInPrompt />;
 	}
 
-	const user = await users.findOne({ email: session.user.email });
+	const user = await getOrCreateUser(session.user.email, session.user.name);
 
-	if (user) {
-		const cookieStore = await cookies();
-		const lastPlannerId = cookieStore.get('lastOpenedPlanner')?.value;
-		const isMember = user.planners.some(
-			({ planner }) => planner === lastPlannerId,
-		);
-		const plannerId =
-			isMember && lastPlannerId ? lastPlannerId : user.planners[0].planner;
-		redirect(`${plannerId}/calendar`);
+	if (user.planners.length === 0) {
+		return <NoPlannersPrompt />;
 	}
 
-	const newUser = await addUser(
-		session.user.email,
-		undefined,
-		session.user.name,
-	);
-	redirect(`${newUser.planners[0].planner}/calendar`);
+	const plannerId = await getLastOpenedPlannerId(user.planners);
+	redirect(`/${plannerId}/calendar`);
 };
 
 export default Page;
