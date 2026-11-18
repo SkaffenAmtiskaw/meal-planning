@@ -8,9 +8,9 @@ import type { DayInterface } from '@/_models/types';
 
 import { MealEventCard } from './MealEventCard';
 
+import type { SavedItem } from '../../_types/savedItem';
 import type { CalendarEvent } from '../../_utils/toCalendarEvents';
 import { toCalendarEvents } from '../../_utils/toCalendarEvents';
-import type { SavedItem } from '../../_utils/toScheduleXEvents';
 
 export interface MealCalendarProps {
 	calendar: DayInterface[];

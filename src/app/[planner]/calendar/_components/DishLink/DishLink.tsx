@@ -3,7 +3,7 @@ import type { ReactElement } from 'react';
 
 import { Anchor, Text } from '@mantine/core';
 
-import type { ResolvedDish } from '../../_utils/toScheduleXEvents';
+import type { ResolvedDish } from '../../_utils/resolveDishSource';
 
 export interface DishLinkProps {
 	dish: ResolvedDish;

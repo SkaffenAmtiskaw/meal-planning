@@ -18,7 +18,7 @@ import { getMealColor, TAG_COLORS } from '@/_theme/colors';
 
 import { MealMonthAgenda } from './MealMonthAgenda';
 
-import type { SavedItem } from '../../_utils/toScheduleXEvents';
+import type { SavedItem } from '../../_types/savedItem';
 import { DishLink } from '../DishLink/DishLink';
 
 vi.mock('@mantine/core', async () => await import('#mocks/@mantine/core'));

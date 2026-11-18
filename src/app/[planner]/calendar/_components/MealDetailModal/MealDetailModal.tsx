@@ -1,6 +1,6 @@
 import { Modal, Stack, Text } from '@mantine/core';
 
-import type { ResolvedDish } from '../../_utils/toScheduleXEvents';
+import type { ResolvedDish } from '../../_utils/resolveDishSource';
 import { DishLink } from '../DishLink/DishLink';
 
 type MealDetail = {

@@ -1,7 +1,8 @@
 import type { DayInterface } from '@/_models/types';
 
-import { resolveDishSource } from './resolveDishSource';
-import type { ResolvedDish, SavedItem } from './toScheduleXEvents';
+import { type ResolvedDish, resolveDishSource } from './resolveDishSource';
+
+import type { SavedItem } from '../_types/savedItem';
 
 export interface CalendarEvent {
 	id: string;
