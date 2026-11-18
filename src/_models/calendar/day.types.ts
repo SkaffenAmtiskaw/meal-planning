@@ -19,8 +19,6 @@ export const zMealFormSchema = z.object({
 	dishes: z.array(zDishFormInput),
 });
 
-export type MealFormData = z.infer<typeof zMealFormSchema>;
-
 const zDishInterface = z.object({
 	_id: zId,
 	name: z.string(),

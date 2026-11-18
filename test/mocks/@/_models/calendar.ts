@@ -16,7 +16,3 @@ export const zMealFormSchema = {
 	safeParse: vi.fn(() => ({ success: true, data: {} })),
 	parse: vi.fn(() => ({})),
 };
-
-// ─── Types (runtime stubs for destructuring) ──────────────────────────────────
-
-export type MealFormData = Record<string, unknown>;
