@@ -2,12 +2,12 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import posthog from 'posthog-js';
 
-import { getReportingToken } from '@/_utils/errorReporting';
+import { getReportingToken } from '@/_reporting/errorReporting';
 import { stripUrlQueries } from '@/_utils/stripUrlQueries';
 
 vi.mock('posthog-js', async () => await import('#mocks/posthog-js'));
 vi.mock('@/_utils/stripUrlQueries', () => ({ stripUrlQueries: vi.fn() }));
-vi.mock('@/_utils/errorReporting', () => ({
+vi.mock('@/_reporting/errorReporting', () => ({
 	getReportingToken: vi.fn(() => 'phc_token'),
 	POSTHOG_UI_HOST: 'https://ui.example.com',
 	RELAY_PATH: '/relay',

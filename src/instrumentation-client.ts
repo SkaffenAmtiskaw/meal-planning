@@ -4,7 +4,7 @@ import {
 	getReportingToken,
 	POSTHOG_UI_HOST,
 	RELAY_PATH,
-} from '@/_utils/errorReporting';
+} from '@/_reporting/errorReporting';
 import { stripUrlQueries } from '@/_utils/stripUrlQueries';
 
 const token = getReportingToken();

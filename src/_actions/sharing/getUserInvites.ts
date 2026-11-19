@@ -3,7 +3,7 @@ import 'server-only';
 import { pendingInvites } from '@/_models/database/pendingInvites';
 import { planners } from '@/_models/database/planners';
 import { users } from '@/_models/database/users';
-import { reportError } from '@/_utils/reportError';
+import { reportError } from '@/_reporting/reportError';
 
 import type { UserInvite } from './types';
 

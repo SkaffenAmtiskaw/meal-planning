@@ -5,15 +5,14 @@ import type { ReactNode } from 'react';
 
 import { DateTime } from 'luxon';
 
+import { ListView } from './ListView';
+
 import {
 	type CalendarDish,
 	type CalendarMeal,
 	useCalendarContext,
-} from '@/_components/Calendar';
-import type { CalendarContextValue } from '@/_components/Calendar/types';
-
-import { ListView } from './ListView';
-
+} from '../Calendar';
+import type { CalendarContextValue } from '../Calendar/types';
 import { DayRow } from './_components/DayRow';
 import { useScrolledDate } from './_hooks/useScrolledDate';
 import { useScrollToDate } from './_hooks/useScrollToDate';
@@ -63,8 +62,8 @@ vi.mock('./ListView.module.css', () => ({
 	},
 }));
 
-vi.mock('@/_components/Calendar', async () => ({
-	...(await vi.importActual('@/_components/Calendar')),
+vi.mock('../Calendar', async () => ({
+	...(await vi.importActual('../Calendar')),
 	useCalendarContext: vi.fn(),
 }));
 

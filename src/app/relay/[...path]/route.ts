@@ -3,7 +3,7 @@ import {
 	POSTHOG_ASSETS_HOST,
 	POSTHOG_HOST,
 	RELAY_PATH,
-} from '@/_utils/errorReporting';
+} from '@/_reporting/errorReporting';
 
 /**
  * The path prefixes `posthog-js` loads from PostHog's assets host

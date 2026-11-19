@@ -4,7 +4,7 @@ import { useRouter } from 'next/navigation';
 
 import { Anchor } from '@mantine/core';
 
-import { client } from '@/_utils/auth';
+import { client } from '@/_auth/client';
 
 export const SignInWithNewEmailButton = () => {
 	const router = useRouter();

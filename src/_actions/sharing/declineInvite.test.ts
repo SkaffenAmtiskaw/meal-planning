@@ -2,15 +2,15 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { getUser } from '@/_actions/user';
 import { pendingInvites } from '@/_models/database/pendingInvites';
-import { reportError } from '@/_utils/reportError';
+import { reportError } from '@/_reporting/reportError';
 
 import { declineInvite } from './declineInvite';
 import type { DeclineInviteInput } from './types';
 
 vi.mock('@/_actions/user', async () => await import('#mocks/@/_actions/user'));
 vi.mock(
-	'@/_utils/reportError',
-	async () => await import('#mocks/@/_utils/reportError'),
+	'@/_reporting/reportError',
+	async () => await import('#mocks/@/_reporting/reportError'),
 );
 
 vi.mock(

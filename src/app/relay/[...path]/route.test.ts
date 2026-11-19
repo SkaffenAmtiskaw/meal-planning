@@ -1,10 +1,10 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
-import { getReportingToken } from '@/_utils/errorReporting';
+import { getReportingToken } from '@/_reporting/errorReporting';
 
 import { GET, POST } from './route';
 
-vi.mock('@/_utils/errorReporting', () => ({
+vi.mock('@/_reporting/errorReporting', () => ({
 	getReportingToken: vi.fn(() => 'phc_token'),
 	POSTHOG_HOST: 'https://ingest.example.com',
 	POSTHOG_ASSETS_HOST: 'https://assets.example.com',

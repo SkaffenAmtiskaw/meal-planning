@@ -1,8 +1,8 @@
 import { afterEach, describe, expect, test, vi } from 'vitest';
 
 import { auth } from '@/_auth';
-import { sendEmailChangeEmail } from '@/_auth/emails';
 import { findAuthUser } from '@/_auth/users';
+import { sendEmailChangeEmail } from '@/_email';
 import { users } from '@/_models/database/users';
 import { env } from '@/env';
 
@@ -25,7 +25,7 @@ vi.mock(
 	async () => await import('#mocks/@/_models/database/users'),
 );
 
-vi.mock('@/_auth/emails', () => ({
+vi.mock('@/_email', () => ({
 	sendEmailChangeEmail: vi.fn(),
 }));
 

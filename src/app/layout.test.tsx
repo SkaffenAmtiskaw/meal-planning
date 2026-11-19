@@ -16,7 +16,7 @@ vi.mock('@mantine/core/styles.css', () => ({}));
 
 vi.mock('@mantine/core', async () => await import('#mocks/@mantine/core'));
 
-vi.mock('@/_components', () => ({
+vi.mock('./_hooks/useOneTap/OneTapSignInWrapper', () => ({
 	OneTapSignInWrapper: ({ children }: { children: React.ReactNode }) => (
 		<>{children}</>
 	),

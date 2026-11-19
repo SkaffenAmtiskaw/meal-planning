@@ -2,7 +2,6 @@ import Link from 'next/link';
 
 import { Anchor, Divider, Group, Stack } from '@mantine/core';
 
-import { Tag } from '@/_components';
 import type {
 	BookmarkInterface,
 	RecipeInterface,
@@ -14,6 +13,8 @@ import { DeleteBookmarkButton } from './DeleteBookmarkButton';
 import { DeleteRecipeButton } from './DeleteRecipeButton';
 import { EditRecipeButton } from './EditRecipeButton';
 import classes from './SavedList.module.css';
+
+import { Tag } from './Tag/Tag';
 
 type Props = {
 	items: Array<RecipeInterface | BookmarkInterface>;

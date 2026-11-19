@@ -1,6 +1,6 @@
 import { AppShellHeader, Group, Image } from '@mantine/core';
 
-import { UserMenu } from '@/_components/UserMenu';
+import { UserMenu } from './UserMenu';
 
 interface Props {
 	leftSection?: React.ReactNode;

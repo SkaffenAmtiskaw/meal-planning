@@ -1,13 +1,13 @@
 import { render, screen } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-import { MealCard } from '@/_components/Calendar/MealCard/MealCard';
-
 import { MealCardWithDragHandle } from './MealCardWithDragHandle';
+
+import { MealCard } from '../../Calendar/MealCard/MealCard';
 
 vi.mock('@mantine/core', async () => await import('#mocks/@mantine/core'));
 
-vi.mock('@/_components/Calendar/MealCard/MealCard', () => ({
+vi.mock('../../Calendar/MealCard/MealCard', () => ({
 	MealCard: vi.fn(({ event, renderActions }) => (
 		<div data-testid="meal-card" data-event-name={event.name}>
 			{renderActions}

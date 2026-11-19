@@ -5,23 +5,23 @@ import type { ReactElement } from 'react';
 
 import { DateTime } from 'luxon';
 
-import type { CalendarDish, CalendarMeal } from '@/_components/Calendar';
-import { useCalendarContext } from '@/_components/Calendar';
-import { MobileAgenda } from '@/_components/Calendar/MobileAgenda/MobileAgenda';
-import type { MobileAgendaProps } from '@/_components/Calendar/MobileAgenda/types';
-import { MobileMonthGrid } from '@/_components/Calendar/MobileMonthGrid/MobileMonthGrid';
-import type { MobileMonthGridEvent } from '@/_components/Calendar/MobileMonthGrid/types';
 import type { DayInterface } from '@/_models/types';
 import { getMealColor, TAG_COLORS } from '@/_theme/colors';
 
 import { MealMonthAgenda } from './MealMonthAgenda';
 
+import { useCalendarContext } from '../Calendar';
+import type { CalendarDish, CalendarMeal } from '../Calendar';
 import type { SavedItem } from '../../types';
+import { MobileAgenda } from '../Calendar/MobileAgenda/MobileAgenda';
+import type { MobileAgendaProps } from '../Calendar/MobileAgenda/types';
+import { MobileMonthGrid } from '../Calendar/MobileMonthGrid/MobileMonthGrid';
+import type { MobileMonthGridEvent } from '../Calendar/MobileMonthGrid/types';
 import { DishLink } from '../DishLink/DishLink';
 
 vi.mock('@mantine/core', async () => await import('#mocks/@mantine/core'));
 
-vi.mock('@/_components/Calendar', async () => ({
+vi.mock('../Calendar', async () => ({
 	useCalendarContext: vi.fn(),
 }));
 
@@ -29,7 +29,7 @@ vi.mock('../../_utils/resolveDishSource', () => ({
 	resolveDishSource: vi.fn((dish) => dish),
 }));
 
-vi.mock('@/_components/Calendar/MobileMonthGrid/MobileMonthGrid', async () => ({
+vi.mock('../Calendar/MobileMonthGrid/MobileMonthGrid', async () => ({
 	MobileMonthGrid: vi.fn(({ events }: { events?: MobileMonthGridEvent[] }) => (
 		<div data-testid="mobile-month-grid">
 			{(events ?? []).map((event) => (
@@ -46,7 +46,7 @@ vi.mock('@/_components/Calendar/MobileMonthGrid/MobileMonthGrid', async () => ({
 	)),
 }));
 
-vi.mock('@/_components/Calendar/MobileAgenda/MobileAgenda', async () => ({
+vi.mock('../Calendar/MobileAgenda/MobileAgenda', async () => ({
 	MobileAgenda: vi.fn(({ events }: MobileAgendaProps) => (
 		<div data-testid="mobile-agenda">
 			{(events ?? []).map((event) => (

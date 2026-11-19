@@ -6,11 +6,10 @@ import { Box } from '@mantine/core';
 
 import { DateTime } from 'luxon';
 
-import { type CalendarMeal, useCalendarContext } from '@/_components/Calendar';
-import type { MealCardProps } from '@/_components/Calendar/MealCard/types';
-
 import styles from './ListView.module.css';
 
+import { type CalendarMeal, useCalendarContext } from '../Calendar';
+import type { MealCardProps } from '../Calendar/MealCard/types';
 import { DayRow } from './_components/DayRow';
 import { useScrolledDate } from './_hooks/useScrolledDate';
 import { useScrollToDate } from './_hooks/useScrollToDate';

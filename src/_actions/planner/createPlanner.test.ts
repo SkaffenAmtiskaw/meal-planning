@@ -1,8 +1,8 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import { users } from '@/_models/database/users';
+import { reportError } from '@/_reporting/reportError';
 import { catchify } from '@/_utils/catchify';
-import { reportError } from '@/_utils/reportError';
 
 import { addPlanner } from './addPlanner';
 import { createPlanner } from './createPlanner';
@@ -25,8 +25,8 @@ vi.mock('@/_utils/catchify', async () => ({
 	catchify: vi.fn(),
 }));
 vi.mock(
-	'@/_utils/reportError',
-	async () => await import('#mocks/@/_utils/reportError'),
+	'@/_reporting/reportError',
+	async () => await import('#mocks/@/_reporting/reportError'),
 );
 vi.mock('@/_utils/zSafeString', async () => ({
 	zSafeString: vi.fn(() => ({

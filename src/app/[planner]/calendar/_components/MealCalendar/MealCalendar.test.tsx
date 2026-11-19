@@ -1,18 +1,18 @@
 import { fireEvent, render, screen } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-import type { MonthGridMeal } from '@/_components/Calendar';
-import { MonthGrid } from '@/_components/Calendar';
 import type { DayInterface } from '@/_models/types';
 
 import { MealCalendar } from './MealCalendar';
 import { MealEventCard } from './MealEventCard';
 
+import { MonthGrid } from '../Calendar';
+import type { MonthGridMeal } from '../Calendar';
 import { toCalendarEvents } from '../../_utils/toCalendarEvents';
 import type { CalendarEvent } from '../../_utils/types';
 import type { SavedItem } from '../../types';
 
-vi.mock('@/_components/Calendar', async () => ({
+vi.mock('../Calendar', async () => ({
 	MonthGrid: vi.fn(({ meals, renderMeal }) => (
 		<div data-testid="month-grid">
 			{meals?.map((meal: MonthGridMeal, index: number) => (

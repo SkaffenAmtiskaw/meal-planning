@@ -7,8 +7,8 @@ import { headers } from 'next/headers';
 import { z } from 'zod';
 
 import { auth } from '@/_auth';
-import { sendEmailChangeEmail } from '@/_auth/emails';
 import { findAuthUser } from '@/_auth/users';
+import { sendEmailChangeEmail } from '@/_email';
 import { users } from '@/_models/database/users';
 import type { ActionResult } from '@/_utils/actionResult';
 import { env } from '@/env';

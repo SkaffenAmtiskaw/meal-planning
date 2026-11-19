@@ -1,17 +1,17 @@
 import { fireEvent, render, screen } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-import { WeekView } from '@/_components/Calendar';
 import type { DayInterface } from '@/_models/types';
 
 import { MealWeekView } from './MealWeekView';
 import { WeekMealCard } from './WeekMealCard';
 
+import { WeekView } from '../Calendar';
 import { toCalendarEvents } from '../../_utils/toCalendarEvents';
 import type { CalendarEvent } from '../../_utils/types';
 import type { SavedItem } from '../../types';
 
-vi.mock('@/_components/Calendar', async () => ({
+vi.mock('../Calendar', async () => ({
 	WeekView: vi.fn(({ meals, renderMeal, onMealClick }) => (
 		<div data-testid="week-view">
 			{meals?.map((event: { id: string; date: string; title: string }) => (

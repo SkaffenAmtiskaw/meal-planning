@@ -3,12 +3,12 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { DateTime } from 'luxon';
 
-import { useCalendarContext } from '@/_components/Calendar';
 import { useIsMobile } from '@/_hooks';
 import type { DayInterface } from '@/_models/types';
 
 import { CalendarView } from './CalendarView';
 
+import { useCalendarContext } from '../Calendar';
 import type { CalendarEvent } from '../../_utils/types';
 import type { SavedItem } from '../../types';
 import { MealCalendar } from '../MealCalendar/MealCalendar';
@@ -21,36 +21,10 @@ vi.mock('@mantine/core', async () => await import('#mocks/@mantine/core'));
 vi.mock('@mantine/hooks', async () => await import('#mocks/@mantine/hooks'));
 vi.mock('@/_hooks', async () => await import('#mocks/@/_hooks'));
 
-vi.mock('@/_components/Calendar', async () => ({
+vi.mock('../Calendar', async () => ({
 	CalendarProvider: vi.fn(({ children }) => (
 		<div data-testid="calendar-provider">{children}</div>
 	)),
-	CalendarTodayButton: vi.fn(({ size }) => (
-		<button data-testid="today-button" data-size={size} aria-label="Today">
-			Today
-		</button>
-	)),
-	CalendarPreviousButton: vi.fn(({ size }) => (
-		<button
-			data-testid="previous-button"
-			data-size={size}
-			aria-label="Previous"
-		>
-			Previous
-		</button>
-	)),
-	CalendarNextButton: vi.fn(({ size }) => (
-		<button data-testid="next-button" data-size={size} aria-label="Next">
-			Next
-		</button>
-	)),
-	DEFAULT_VIEWS: ['month', 'week', 'list'],
-	VIEW_LABELS: { month: 'Month', week: 'Week', list: 'List' },
-	LABEL_FORMATTERS: {
-		month: () => 'Month',
-		week: () => 'Week',
-		list: () => 'Month',
-	},
 	useCalendarContext: vi.fn(() => ({
 		selectedDate: DateTime.now(),
 		viewType: 'month',

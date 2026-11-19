@@ -14,14 +14,14 @@ vi.mock(
 	async () => await import('#mocks/@/_models/database/pendingInvites'),
 );
 vi.mock(
-	'@/_utils/reportError',
-	async () => await import('#mocks/@/_utils/reportError'),
+	'@/_reporting/reportError',
+	async () => await import('#mocks/@/_reporting/reportError'),
 );
 
 import { pendingInvites } from '@/_models/database/pendingInvites';
 import { planners } from '@/_models/database/planners';
 import { users } from '@/_models/database/users';
-import { reportError } from '@/_utils/reportError';
+import { reportError } from '@/_reporting/reportError';
 
 import { getUserInvites } from './getUserInvites';
 

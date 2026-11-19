@@ -1,8 +1,8 @@
 import { getUser } from '@/_actions/user';
+import { isNoSessionError } from '@/_actions/user/noSessionError';
 import type { AccessLevel } from '@/_models/user';
+import { reportError } from '@/_reporting/reportError';
 import { catchify } from '@/_utils/catchify';
-import { isNoSessionError } from '@/_utils/noSessionError';
-import { reportError } from '@/_utils/reportError';
 
 type UserDocument = Awaited<ReturnType<typeof getUser>>;
 

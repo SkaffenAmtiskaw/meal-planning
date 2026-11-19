@@ -5,15 +5,15 @@ import { APIError } from 'better-auth/api';
 import { addUser } from '@/_actions/user';
 import { auth } from '@/_auth';
 import { pendingInvites } from '@/_models/database/pendingInvites';
-import { reportError } from '@/_utils/reportError';
+import { reportError } from '@/_reporting/reportError';
 
 import { signUpWithInvite } from './signUpWithInvite';
 import { validateInviteToken } from './validateInviteToken';
 
 vi.mock('@/_actions/user', async () => await import('#mocks/@/_actions/user'));
 vi.mock(
-	'@/_utils/reportError',
-	async () => await import('#mocks/@/_utils/reportError'),
+	'@/_reporting/reportError',
+	async () => await import('#mocks/@/_reporting/reportError'),
 );
 
 vi.mock('@/_auth', () => ({

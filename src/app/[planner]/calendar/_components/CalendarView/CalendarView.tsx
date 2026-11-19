@@ -5,10 +5,10 @@ import type { ReactElement } from 'react';
 
 import { Flex, Stack } from '@mantine/core';
 
-import { CalendarProvider, useCalendarContext } from '@/_components/Calendar';
 import { useIsMobile } from '@/_hooks';
 import type { DayInterface } from '@/_models/types';
 
+import { CalendarProvider, useCalendarContext } from '../Calendar';
 import { CalendarModalProvider } from '../CalendarModal';
 import type { CalendarEvent } from '../../_utils/types';
 import type { SavedItem } from '../../types';

@@ -2,8 +2,8 @@ import { render } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { getPlanners } from '@/_actions/planner';
-import { Navbar } from '@/_components';
 
+import { Navbar } from './Navbar';
 import { NavbarServer } from './NavbarServer';
 
 vi.mock(
@@ -11,7 +11,7 @@ vi.mock(
 	async () => await import('#mocks/@/_actions/planner'),
 );
 
-vi.mock('@/_components', () => ({
+vi.mock('./Navbar', () => ({
 	Navbar: vi.fn(() => null),
 }));
 
