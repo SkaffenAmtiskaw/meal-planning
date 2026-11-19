@@ -1,12 +1,12 @@
 'use server';
 
 import { getUser } from '@/_actions/user';
+import { isNoSessionError } from '@/_actions/user/noSessionError';
 import { newId } from '@/_models/database/newId';
 import { users } from '@/_models/database/users';
 import type { PlannerMembership } from '@/_models/user';
 import type { ActionResult } from '@/_utils/actionResult';
 import { catchify } from '@/_utils/catchify';
-import { isNoSessionError } from '@/_utils/noSessionError';
 import { reportError } from '@/_utils/reportError';
 import { zSafeString } from '@/_utils/zSafeString';
 

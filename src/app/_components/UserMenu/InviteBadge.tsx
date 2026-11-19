@@ -6,8 +6,8 @@ import { Indicator } from '@mantine/core';
 
 import { getUserInvites } from '@/_actions/sharing/getUserInvites';
 import { getUser } from '@/_actions/user';
+import { isNoSessionError } from '@/_actions/user/noSessionError';
 import { THEME_COLORS } from '@/_theme/colors';
-import { isNoSessionError } from '@/_utils/noSessionError';
 import { reportError } from '@/_utils/reportError';
 
 interface InviteBadgeProps {

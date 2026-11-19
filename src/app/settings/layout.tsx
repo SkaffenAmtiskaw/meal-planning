@@ -3,8 +3,8 @@ import { redirect } from 'next/navigation';
 import { AppShell, AppShellMain } from '@mantine/core';
 
 import { getUser } from '@/_actions/user';
+import { isNoSessionError } from '@/_actions/user/noSessionError';
 import { catchify } from '@/_utils/catchify';
-import { isNoSessionError } from '@/_utils/noSessionError';
 import { reportError } from '@/_utils/reportError';
 import { Header } from '@/app/_components/Header';
 import { HEADER_HEIGHT } from '@/app/_constants';

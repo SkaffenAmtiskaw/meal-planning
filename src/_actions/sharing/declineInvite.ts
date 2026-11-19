@@ -1,9 +1,9 @@
 'use server';
 
 import { getUser } from '@/_actions/user';
+import { isNoSessionError } from '@/_actions/user/noSessionError';
 import { pendingInvites } from '@/_models/database/pendingInvites';
 import type { ActionResult } from '@/_utils/actionResult';
-import { isNoSessionError } from '@/_utils/noSessionError';
 import { reportError } from '@/_utils/reportError';
 import { zId } from '@/_utils/zId';
 
