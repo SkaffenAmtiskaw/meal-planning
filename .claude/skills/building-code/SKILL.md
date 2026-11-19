@@ -53,7 +53,11 @@ How you do the checks depends on the change:
      - **If you can't,** such as one only the user can do, or one that needs a commit or a push you can't make yet:
        - **If another run of yours already shows everything it would prove:** report which run covers it. For example, a check might break a CI job's secret on GitHub to see the job fail. Running the job's script against a local server that returns 401 shows the same failure, so it covers the check.
        - **Otherwise:** report it as not run, with the reason.
-  4. If a check fails, fix the code until it passes, because the check is part of the change's spec. Then rerun the tests and the acceptance checks the fix could affect.
+  4. If a check fails, what you fix depends on why:
+     - **If the check would fail even on correct code,** such as a search that also matches unrelated code: fix the check in the note so it still proves what it was written to prove, because the user approved what it proves, not its wording. Name the change in your report.
+     - **Otherwise:** fix the code until it passes, because the check is part of the change's spec.
+
+     Then rerun the tests and the acceptance checks the fix could affect.
   5. If the plan cites Design Handoff sections or images, compare what you built with them, as `design-comparison.md` in this skill's folder describes. After a fix from the comparison, rerun the tests and the acceptance checks it could affect.
 
 ## 5. Handle the User's Feedback
