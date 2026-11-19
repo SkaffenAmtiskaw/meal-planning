@@ -16,7 +16,7 @@ What to do once your skill has read the note and hasn't stopped, or when you sta
    - **If the type fits but your skill doesn't take it:** tell them which skill the note needs, and stop, because a skill's steps are written for the types it takes.
 2. **The Inbox:** decide which items are your step's to act on, and act on each one where it fits in your work. Once you have, if it's one of the user's lines, handle it as "The User's Lines" describes. Otherwise, delete it. Leave items that belong to a later step.
 3. **A note behind the current conventions:** add a missing Inbox. If Where It Stands holds anything other than its `^status` line and summary, move it: a question or finding for a later step to the top of the section that step writes, and anything else to the Inbox.
-4. **The story's Roadmap line:** if your skill moves the line into Now, leaves it or removes it, follow your skill. Otherwise, if the line is in Later or Ideas, follow the `roadmap-placement` skill.
+4. **The story's Roadmap line:** if your skill moves the line into Now, leaves it or removes it, follow your skill. Otherwise, if the line is in Later or Uncommitted, follow the `roadmap-placement` skill.
 
 ## The User's Lines
 You may do two things with one of the user's lines:

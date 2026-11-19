@@ -33,7 +33,7 @@ Triage the out-of-scope list first. An item the user pulls in joins the list as 
    - **Yes, in this release:** the Requirements.
    - **No:** nowhere, because the user is sure and nothing later needs it.
    - **Needs thought, or the user is unsure:** a question under Open Decisions, asking whether it's worth doing and whether it's in this release.
-   - **Worth doing, but not in this release:** a new Roadmap line in Ideas.
+   - **Worth doing, but not in this release:** a new Roadmap line, placed as the `roadmap-placement` skill describes.
 
 ## 4. Divide the Hub
 If the groups look like parts that would be designed separately, ask the user whether each should be its own exploration hub, because a hub is designed and cut into stories as one. For each one they split off, these are the steps, in order:

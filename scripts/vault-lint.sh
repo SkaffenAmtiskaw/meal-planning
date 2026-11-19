@@ -80,12 +80,12 @@ while IFS= read -r note; do
     case "$name" in
       (*\ [0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]) ;;
       (*)
-        # A collecting note's own line carries no goal links and sits in Unaffiliated.
+        # A collecting note's own line carries no goal links and sits in Collecting Notes.
         [ -n "$onLine" ] && add "$note: its Roadmap line ($at) carries 🎯 links, but a collecting note's own line carries none"
         case "$section" in
-          (Now|Next|Planning) add "$note: its Roadmap line ($at) sits in $section, but a collecting note's own line goes in Unaffiliated in Later" ;;
-          (Later) [ -n "$heading" ] && [ "$heading" != "Unaffiliated" ] &&
-            add "$note: its Roadmap line ($at) sits under \"$heading\", but a collecting note's own line goes in Unaffiliated" ;;
+          (Now|Next|Planning) add "$note: its Roadmap line ($at) sits in $section, but a collecting note's own line goes in Collecting Notes in Later" ;;
+          (Later) [ -n "$heading" ] && [ "$heading" != "Collecting Notes" ] &&
+            add "$note: its Roadmap line ($at) sits under \"$heading\", but a collecting note's own line goes in Collecting Notes" ;;
         esac
         ;;
     esac

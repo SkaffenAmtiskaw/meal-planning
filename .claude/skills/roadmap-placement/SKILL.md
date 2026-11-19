@@ -1,15 +1,16 @@
 ---
 name: roadmap-placement
-description: How to place or move a story's Roadmap line. Use when adding or moving a Roadmap line, or when working on a story whose line is in Later or Ideas.
+description: How to place or move a story's Roadmap line. Use when adding or moving a Roadmap line, or when working on a story whose line is in Later or Uncommitted.
 user-invocable: false
 ---
 
 # Placing a Roadmap Line
-Where a line goes follows from its work and the goals it serves, and the user decides its place in an ordered queue. If you're starting on a story whose line is in Later or Ideas, follow "Starting on a Story in the Backlog".
+Where a line goes follows from its work and the goals it serves, and the user decides its place in an ordered queue. If you're starting on a story whose line is in Later or Uncommitted, follow "Starting on a Story in the Backlog".
 
 ## Checking the Goals
 Whether to read the goal notes depends on the work. The cases:
 - **The user has already named the goals,** such as by placing the line under a goal's heading or giving it 🎯 links: go on to where the line goes, below.
+- **It's an exploration hub's option the user put outside this release:** check the other goals as "Otherwise" describes, leaving out the hub's goal, because the user has ruled that release out for it.
 - **It's a bug the `roadmap-rules` skill puts in Bugs:** bugs belong to no goal, so go on to where the line goes, below.
 - **It's a collecting note's own line:** it carries no 🎯 links, because the note keeps getting new items and so never finishes. So go on to where the line goes, below.
 - **Otherwise:** read the notes in `goals/` in the notes repo. If a goal's Roadmap Instructions say the work belongs to it, it does, so don't ask about that goal. Another goal fits when a line in its Purpose, Done When or What Belongs Here could include the work, and dev tooling also fits a goal it would make easier. If no other goal fits, don't ask. Otherwise, ask the user which ones the work serves, naming each goal that fits and quoting that line. Don't recommend one for tooling, because whether tooling joins a ranked goal is the user's priority call.
@@ -18,16 +19,16 @@ Whether to read the goal notes depends on the work. The cases:
 Whether to move the line, and where, depends on the line:
 - **If it gets 🔥:** move it to the top of Next, above a release's own lines, and renumber the lines below it. Its fix ships without waiting for the release.
 - **Otherwise, if it serves the building or planning goal and isn't in Now or the queue the `roadmap-rules` skill puts it in:** move it there, as "Placing a Line in Next or Planning" describes. If it leaves another goal's heading, give it that goal's 🎯 link, so it still shows that it serves that goal.
-- **Otherwise, if the story is committed and its line is in Ideas or Unaffiliated:** move it. The Later and Bugs entries in the `roadmap-rules` skill say where it goes.
+- **Otherwise, if the story now serves a goal and its line is in Uncommitted:** move it. The Later entry in the `roadmap-rules` skill says where it goes.
 
 ## Placing a New Line
 If something about the work makes its usual spot look wrong, such as when the user has said in the session that it needs prioritizing, or when a line in Next or Planning waits on it, ask them. Otherwise, the spot follows from its work:
 - **It's a bug with 🔥:** it goes first in Next, above a release's own lines. Renumber the lines below it.
 - **It's a bug the `roadmap-rules` skill puts in Bugs:** it goes in Bugs.
-- **It's a collecting note's own line:** every collecting note joins every release, so it's committed. It goes under Unaffiliated in Later.
+- **It's a collecting note's own line:** every collecting note joins every release, so it's committed. It goes under Collecting Notes in Later.
 - **It serves the building or planning goal:** it goes in that goal's queue, as "Placing a Line in Next or Planning" describes.
 - **It serves another goal:** it's committed, so it goes under that goal's heading in Later.
-- **It serves no goal:** it's uncommitted, so it goes in Ideas.
+- **It serves no goal:** it's uncommitted, so it goes in Uncommitted.
 
 ## Placing a Line in Next or Planning
 Next and Planning are ordered queues, so ask the user where a line goes. If the notes or the Roadmap make the spot clear, suggest it and say why. Otherwise, ask without a suggestion.
@@ -35,6 +36,6 @@ Next and Planning are ordered queues, so ask the user where a line goes. If the 
 ## Starting on a Story in the Backlog
 The user running a skill on a story means they want it worked, whether it's a problem to fix or an idea to weigh. So don't set out to check whether it's still needed, and don't recommend dropping it out of hand.
 
-If the story's line is in Later or Ideas when a skill starts on it, check its goals, as "Checking the Goals" describes, and move it as "Moving an Existing Line" describes. Give it a 🎯 link for each goal it serves, other than the one whose heading it sits under. If it's still in Later or Ideas, ask the user whether to give it 📌, and if so, for which release and with what reason. The releases it can join, and what to do for each:
-- **In Next,** to build it in this release: ask where in Next it goes, as "Placing a Line in Next or Planning" describes.
-- **In Later,** to build it in the next release: if it's in Ideas, move it where the `roadmap-rules` skill's Later entry puts it.
+If the story's line is in Later or Uncommitted when a skill starts on it, check its goals, as "Checking the Goals" describes, and move it as "Moving an Existing Line" describes. Give it a 🎯 link for each goal it serves, other than the one whose heading it sits under. If it's still in Later or Uncommitted, ask the user whether to give it 📌, and if so, for which release and with what reason. The releases it can join, and what to do for each:
+- **This release:** ask where in Next it goes, as "Placing a Line in Next or Planning" describes. If it leaves a goal's heading, give it that goal's 🎯 link.
+- **The next release:** leave the line where it is, because a 📌 line joins the next release from wherever it sits.
