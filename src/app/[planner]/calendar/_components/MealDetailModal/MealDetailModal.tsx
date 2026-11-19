@@ -1,16 +1,10 @@
 import { Modal, Stack, Text } from '@mantine/core';
 
-import type { ResolvedDish } from '../../_utils/types';
+import type { CalendarMeal } from '../Calendar';
 import { DishLink } from '../DishLink/DishLink';
 
-type MealDetail = {
-	title: string;
-	description?: string;
-	dishes: ResolvedDish[];
-};
-
 type Props = {
-	event: MealDetail | null;
+	event: CalendarMeal | null;
 	plannerId: string;
 	onClose: () => void;
 };
@@ -24,7 +18,7 @@ export const MealDetailModal = ({ event, plannerId, onClose }: Props) => (
 		title={
 			<Stack gap={2}>
 				<Text fw={700} size="lg">
-					{event?.title ?? ''}
+					{event?.name ?? ''}
 				</Text>
 				{event?.description && (
 					<Text size="sm" c="dimmed">

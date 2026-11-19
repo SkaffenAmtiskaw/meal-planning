@@ -10,7 +10,7 @@ import type { DayInterface } from '@/_models/types';
 
 import { CalendarProvider, useCalendarContext } from '../Calendar';
 import { CalendarModalProvider } from '../CalendarModal';
-import type { CalendarEvent } from '../../_utils/types';
+import type { CalendarMeal } from '../Calendar';
 import type { SavedItem } from '../../types';
 import {
 	CalendarHeaderDesktop,
@@ -32,9 +32,9 @@ type CalendarViewContentProps = {
 	plannerId: string;
 	savedItems: SavedItem[];
 	calendar: DayInterface[];
-	clickedEvent: CalendarEvent | null;
+	clickedEvent: CalendarMeal | null;
 	onClose: () => void;
-	onMealClick: (meal: CalendarEvent) => void;
+	onMealClick: (meal: CalendarMeal) => void;
 };
 
 function CalendarViewContent({
@@ -96,7 +96,7 @@ export function CalendarView({
 	calendar,
 	savedItems,
 }: Props): ReactElement {
-	const [clickedEvent, setClickedEvent] = useState<CalendarEvent | null>(null);
+	const [clickedEvent, setClickedEvent] = useState<CalendarMeal | null>(null);
 
 	return (
 		<CalendarProvider>

@@ -6,12 +6,12 @@ import type { ReactElement } from 'react';
 import { DateTime } from 'luxon';
 
 import type { DayInterface } from '@/_models/types';
-import { getMealColor, TAG_COLORS } from '@/_theme/colors';
 
 import { MealMonthAgenda } from './MealMonthAgenda';
 
 import { useCalendarContext } from '../Calendar';
 import type { CalendarDish, CalendarMeal } from '../Calendar';
+import { toCalendarMeals } from '../../_utils/toCalendarMeals';
 import type { SavedItem } from '../../types';
 import { MobileAgenda } from '../Calendar/MobileAgenda/MobileAgenda';
 import type { MobileAgendaProps } from '../Calendar/MobileAgenda/types';
@@ -25,9 +25,11 @@ vi.mock('../Calendar', async () => ({
 	useCalendarContext: vi.fn(),
 }));
 
-vi.mock('../../_utils/resolveDishSource', () => ({
-	resolveDishSource: vi.fn((dish) => dish),
-}));
+vi.mock(
+	'../../_utils/toCalendarMeals',
+	async () =>
+		await import('#mocks/@app/[planner]/calendar/_utils/toCalendarMeals'),
+);
 
 vi.mock('../Calendar/MobileMonthGrid/MobileMonthGrid', async () => ({
 	MobileMonthGrid: vi.fn(({ events }: { events?: MobileMonthGridEvent[] }) => (
@@ -77,30 +79,35 @@ const mockUseCalendarContext = vi.mocked(useCalendarContext);
 const mockMobileMonthGrid = vi.mocked(MobileMonthGrid);
 const mockMobileAgenda = vi.mocked(MobileAgenda);
 const mockDishLink = vi.mocked(DishLink);
+const mockToCalendarMeals = vi.mocked(toCalendarMeals);
 
 const defaultProps = {
 	plannerId: 'planner-1',
 	calendar: [
 		{
 			date: '2024-06-15',
-			meals: [
-				{
-					_id: 'meal-1',
-					name: 'Breakfast Bowl',
-					description: 'A hearty breakfast',
-					dishes: [{ _id: 'dish-1', name: 'Oats' }],
-				},
-				{ _id: 'meal-2', name: 'Grilled Salmon', dishes: [] },
-			],
+			meals: [{ _id: 'meal-1', name: 'Breakfast Bowl', dishes: [] }],
 		},
-		{
-			date: '2024-06-16',
-			meals: [{ _id: 'meal-3', name: 'Veggie Stir Fry', dishes: [] }],
-		},
-		{ date: '2024-06-17', meals: [] },
 	] as DayInterface[],
 	savedItems: [{ _id: 'item-1', name: 'Item 1' }] as SavedItem[],
 };
+
+const calendarMeals: CalendarMeal[] = [
+	{
+		id: 'meal-1',
+		date: '2024-06-15',
+		name: 'Breakfast Bowl',
+		borderColor: '#111',
+		dishes: [],
+	},
+	{
+		id: 'meal-2',
+		date: '2024-06-16',
+		name: 'Grilled Salmon',
+		borderColor: '#222',
+		dishes: [],
+	},
+];
 
 function renderAgenda(
 	selectedDate = DateTime.fromObject({ year: 2024, month: 6, day: 15 }),
@@ -123,63 +130,33 @@ function renderAgenda(
 describe('MealMonthAgenda', () => {
 	beforeEach(() => {
 		vi.resetAllMocks();
+		mockToCalendarMeals.mockReturnValue(calendarMeals);
 	});
 
-	it('renders MobileMonthGrid with mapped dot events', () => {
+	it('builds meals from the calendar and saved items', () => {
 		renderAgenda();
 
-		expect(screen.getByTestId('mobile-month-grid')).toBeDefined();
-		expect(screen.getAllByTestId('mobile-month-grid-event')).toHaveLength(3);
+		expect(mockToCalendarMeals).toHaveBeenCalledWith(
+			defaultProps.calendar,
+			defaultProps.savedItems,
+		);
+	});
+
+	it('gives MobileMonthGrid one dot per meal, on its date and in its border colour', () => {
+		renderAgenda();
 
 		const calls = mockMobileMonthGrid.mock.calls;
-		expect(calls[calls.length - 1][0].events).toHaveLength(3);
-	});
-
-	it('uses the tag-color mapping for dot colors', () => {
-		renderAgenda();
-
-		const events = screen.getAllByTestId('mobile-month-grid-event');
-		const expectedColor = TAG_COLORS[getMealColor('Breakfast Bowl')].border;
-
-		expect(events[0].getAttribute('data-date')).toBe('2024-06-15');
-		expect(events[0].getAttribute('data-color')).toBe(expectedColor);
-	});
-
-	it('renders MobileAgenda with mapped meal events', () => {
-		renderAgenda();
-
-		expect(screen.getByTestId('mobile-agenda')).toBeDefined();
-		expect(screen.getAllByTestId('mobile-agenda-event')).toHaveLength(3);
-
-		const calls = mockMobileAgenda.mock.calls;
-		const passedEvents = calls[calls.length - 1][0].events as CalendarMeal[];
-		expect(passedEvents).toHaveLength(3);
-		expect(passedEvents.map((event) => event.name)).toEqual([
-			'Breakfast Bowl',
-			'Grilled Salmon',
-			'Veggie Stir Fry',
+		expect(calls[calls.length - 1][0].events).toEqual([
+			{ id: 'meal-1', date: '2024-06-15', color: '#111' },
+			{ id: 'meal-2', date: '2024-06-16', color: '#222' },
 		]);
 	});
 
-	it('computes the correct borderColor for each meal event', () => {
+	it('passes the meals to MobileAgenda', () => {
 		renderAgenda();
 
-		const events = screen.getAllByTestId('mobile-agenda-event');
-
-		expect(events[0].getAttribute('data-date')).toBe('2024-06-15');
-		expect(events[0].getAttribute('data-border-color')).toBe(
-			TAG_COLORS[getMealColor('Breakfast Bowl')].border,
-		);
-
-		expect(events[1].getAttribute('data-date')).toBe('2024-06-15');
-		expect(events[1].getAttribute('data-border-color')).toBe(
-			TAG_COLORS[getMealColor('Grilled Salmon')].border,
-		);
-
-		expect(events[2].getAttribute('data-date')).toBe('2024-06-16');
-		expect(events[2].getAttribute('data-border-color')).toBe(
-			TAG_COLORS[getMealColor('Veggie Stir Fry')].border,
-		);
+		const calls = mockMobileAgenda.mock.calls;
+		expect(calls[calls.length - 1][0].events).toEqual(calendarMeals);
 	});
 
 	it('passes a renderDish function that uses DishLink', () => {
@@ -232,6 +209,7 @@ describe('MealMonthAgenda', () => {
 	});
 
 	it('handles an empty calendar without errors', () => {
+		mockToCalendarMeals.mockReturnValue([]);
 		mockUseCalendarContext.mockReturnValue({
 			selectedDate: DateTime.fromObject({ year: 2024, month: 6, day: 15 }),
 			viewType: 'month',

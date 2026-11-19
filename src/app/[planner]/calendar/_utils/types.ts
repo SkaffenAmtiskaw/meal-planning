@@ -4,12 +4,3 @@ import type { DishInterface } from '@/_models/types';
 export type ResolvedDish = Omit<DishInterface, '_id' | 'source'> & {
 	source?: DishInterface['source'] | { _id: string };
 };
-
-export interface CalendarEvent {
-	id: string;
-	start: string;
-	end: string;
-	title: string;
-	description?: string;
-	dishes: ResolvedDish[];
-}

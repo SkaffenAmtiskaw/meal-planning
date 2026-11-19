@@ -7,7 +7,7 @@ import { getMealColor } from '@/_theme/colors';
 
 import { WeekMealCard } from './WeekMealCard';
 
-import type { CalendarEvent } from '../../_utils/types';
+import type { CalendarMeal } from '../Calendar';
 import { DishLink } from '../DishLink/DishLink';
 
 vi.mock('@mantine/core', async () => await import('#mocks/@mantine/core'));
@@ -33,15 +33,15 @@ describe('WeekMealCard', () => {
 		vi.resetAllMocks();
 	});
 
-	const baseEvent: CalendarEvent = {
+	const baseEvent: CalendarMeal = {
 		id: 'meal-1',
-		start: '2024-01-01',
-		end: '2024-01-01',
-		title: 'Dinner',
+		date: '2024-01-01',
+		name: 'Dinner',
+		borderColor: '#F5B47A',
 		dishes: [],
 	};
 
-	it('calls getMealColor with event title', () => {
+	it('calls getMealColor with the meal name', () => {
 		render(<WeekMealCard event={baseEvent} plannerId="planner-1" />);
 		expect(getMealColor).toHaveBeenCalledWith('Dinner');
 	});
@@ -63,7 +63,7 @@ describe('WeekMealCard', () => {
 	});
 
 	it('renders a DishLink for each dish', () => {
-		const event: CalendarEvent = {
+		const event: CalendarMeal = {
 			...baseEvent,
 			dishes: [
 				{ name: 'Soup', source: { url: 'https://example.com/soup' } },
@@ -78,7 +78,7 @@ describe('WeekMealCard', () => {
 	});
 
 	it('removes dish links from the tab order', () => {
-		const event: CalendarEvent = {
+		const event: CalendarMeal = {
 			...baseEvent,
 			dishes: [{ name: 'Soup', source: { url: 'https://example.com/soup' } }],
 		};

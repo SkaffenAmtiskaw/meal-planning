@@ -5,11 +5,11 @@ import { Box, Paper, Text } from '@mantine/core';
 import { getMealColor, TAG_COLORS } from '@/_theme/colors';
 import focusClasses from '@/_theme/focus.module.css';
 
-import type { CalendarEvent } from '../../_utils/types';
+import type { CalendarMeal } from '../Calendar';
 import { DishLink } from '../DishLink/DishLink';
 
 interface WeekMealCardProps {
-	event: CalendarEvent;
+	event: CalendarMeal;
 	plannerId: string;
 	onClick?: () => void;
 	tabIndex?: number;
@@ -23,7 +23,7 @@ export function WeekMealCard({
 	tabIndex,
 	ref,
 }: WeekMealCardProps): ReactElement {
-	const tagColor = getMealColor(event.title);
+	const tagColor = getMealColor(event.name);
 	const { bg, text, border } = TAG_COLORS[tagColor];
 
 	return (
@@ -46,7 +46,7 @@ export function WeekMealCard({
 			ref={ref}
 		>
 			<Text fw={700} size="sm" style={{ color: text }}>
-				{event.title}
+				{event.name}
 			</Text>
 			{event.description && (
 				<Text size="xs" style={{ color: text }}>

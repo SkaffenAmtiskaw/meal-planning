@@ -3,6 +3,7 @@ import { beforeEach, describe, expect, test, vi } from 'vitest';
 
 import { MealDetailModal } from './MealDetailModal';
 
+import type { CalendarMeal } from '../Calendar';
 import { DishLink } from '../DishLink/DishLink';
 
 vi.mock('@mantine/core', async () => await import('#mocks/@mantine/core'));
@@ -12,9 +13,11 @@ vi.mock('../DishLink/DishLink', () => ({
 	)),
 }));
 
-const baseEvent = {
+const baseEvent: CalendarMeal = {
 	id: 'meal-1',
-	title: 'Breakfast',
+	date: '2024-01-01',
+	name: 'Breakfast',
+	borderColor: '#000',
 	dishes: [],
 };
 
