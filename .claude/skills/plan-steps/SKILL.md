@@ -44,7 +44,7 @@ The cases for `hidden-story-checker`, and what to do in each:
 Then send `plan-checker` the notes repo's path, the note path, the draft path, where the approach and source material are, and what to leave out: anything a ⚠️ Check Drift callout drops, anything the ✅ Complete steps already cover, and the hidden stories the user didn't pull in. If you agree with any findings, fix them and run it once more.
 
 ## 4. Review with the user
-1. **The outline.** Show each step's title, idea sentence and a one-line summary of its checks: a regression check ("everything looks the same as before") or the new behavior it tests. In a re-plan, show what changed from the old steps. Name any place you added to the Migration Checklist or Current State in step 2.
+1. **The outline.** Show each step's title, idea sentence and a one-line summary of its checks: a regression check ("everything looks the same as before"), the new behavior it tests, or none for the user. In a re-plan, show what changed from the old steps. Name any place you added to the Migration Checklist or Current State in step 2.
 
    The steps' order and size are settled when all of these hold:
    - `hidden-story-checker` was skipped, found one story, or found only hidden stories the user has triaged.
