@@ -44,16 +44,13 @@ The cases for `hidden-story-checker`, and what to do in each:
 Then send `plan-checker` the notes repo's path, the note path, the draft path, where the approach and source material are, and what to leave out: anything a ⚠️ Check Drift callout drops, anything the ✅ Complete steps already cover, and the hidden stories the user didn't pull in. If you agree with any findings, fix them and run it once more.
 
 ## 4. Review with the user
-1. **The outline.** Show each step's title, idea sentence and a one-line summary of its checks: a regression check ("everything looks the same as before"), the new behavior it tests, or none for the user. In a re-plan, show what changed from the old steps. Name any place you added to the Migration Checklist or Current State in step 2.
+The user approves the plan as a whole, from its outline. The note has already settled the approach, so most of a plan holds no choice for them.
 
-   The steps' order and size are settled when all of these hold:
-   - `hidden-story-checker` was skipped, found one story, or found only hidden stories the user has triaged.
-   - No finding you disagree with is about order or size.
-   - No step's position was your own pick between two orders that would both work.
-
-   If they're settled, say why in one line and go on. Otherwise, ask whether they're right.
-2. **Findings you disagree with.** Raise each one with why you disagree.
-3. **The steps.** Show each step in full for the user to approve or change. If a change affects a later step, update that step before you get there.
+Show these in one message, ending with the approval:
+1. **The outline.** Show each step's title, idea sentence and a one-line summary of its checks: a regression check ("everything looks the same as before"), the new behavior it tests, or that it has no check for the user. In a re-plan, show what changed from the old steps. Name any place you added to the Migration Checklist or Current State in step 2.
+2. **The user's choices.** If a step makes a choice that's the user's call and the user hasn't settled it yet, show that part of the step in full and say what it picks. If the order or size of the steps makes a difference to the user, such as which behavior they can try first, raise it too. If neither applies, say so in one line.
+3. **Findings you disagree with.** Raise each one with why you disagree.
+4. **The approval.** Ask whether the user approves the plan. If they change a step, update any other step the change affects.
 
 ## 5. Write it to the note
-Once the user has approved every step, write the plan under `# Implementation`, delete any `# From the Split` section, set `status` to `ready` and the `^status` line to something like "Ready. Next: /implement Step 1", and route the out-of-scope list.
+Once the user approves the plan, write the plan under `# Implementation`, delete any `# From the Split` section, set `status` to `ready` and the `^status` line to something like "Ready. Next: /implement Step 1", and route the out-of-scope list.

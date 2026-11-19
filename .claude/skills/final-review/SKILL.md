@@ -26,14 +26,18 @@ If the note's `status` isn't `in-review`, or its `^status` line already names a 
 Read the note, but not the story's code until step 3 says to. For a feature, step 3 gets a target design before you read the code. A review that reads the code first ends up favoring it.
 
 ## 2. Find the Story's Code
-Run `sh scripts/story-range.sh "<note name>"`.
+Run `sh scripts/story-range.sh "<note name>"`. Its range holds only commits made on this branch, so it's the story's code unless the branch also carries other work.
 
-Show the user the range (first and last commit, with their subjects), whether uncommitted changes are included, and both groups of files. A file the note doesn't name can still be the story's, such as one edited while resolving a merge. Wait for them to confirm the range and to say which of the other files belong to the story.
+Then tie each file the note doesn't name to the story's work where you can, such as one edited while resolving a merge or one created by a move. The story's files are the ones the note names, plus each file you tied.
+
+Tell the user, in a line or two, the range's first and last commit, whether it includes uncommitted changes, and how many files the note doesn't name. What you do next depends on what you find:
+- **If something looks off,** such as a commit that isn't the story's work, uncommitted changes the story didn't make or a file you couldn't tie to it: ask the user about just that, and wait for their answer.
+- **Otherwise:** go on to step 3 without waiting, because there's nothing for them to decide.
 
 ## 3. Run the Checks
 Back every finding with evidence the user can check: `file:line` for code that's there, or, for something the story doesn't do, where you looked for it. Name the rule, note line or plan line it breaks, such as a Purpose or Symptoms line. A clear bug you come across inside a single step is a finding too.
 
-**For every story:** send the `leftovers-checker` subagent the notes repo's path, the note path, the confirmed range in the `<base>..HEAD` form the script's `Range:` line prints, whether uncommitted changes are part of it, and the confirmed files. Start it in the background, so it runs while you do the rest of this step.
+**For every story:** send the `leftovers-checker` subagent the notes repo's path, the note path, the range in the `<base>..HEAD` form the script's `Range:` line prints, whether uncommitted changes are part of it, and the story's files. Start it in the background, so it runs while you do the rest of this step.
 
 **For a feature,** check 2 runs on a fresh target design, as `target-design.md` in this skill's folder describes.
 

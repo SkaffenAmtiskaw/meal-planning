@@ -41,7 +41,7 @@ Show the Goals together and ask whether they capture what the user wants from th
 ### Draft
 Read what the story changes or builds on, and the docs its conventions will land in. Also read the Conventions of other `type: infra` notes and the Convention of `type: pattern` notes that cover the same ground.
 
-Then draft the whole Design before showing any of it, so you can see where Pieces overlap or should split before the user approves one. The Design has:
+Then draft the whole Design, and check where Pieces overlap or should split. The Design has:
 - **Pieces:** each thing that gets built or changed, such as a workflow, a script, a config file, a skill or a service. For each: its path, or where it lives outside the repo, its one purpose, any requirement it has to meet, and a block ID (` ^piece-N`) that the Flow and the Build Order link to.
 - **The Flow:** only what no single Piece holds: what starts a run, the hand-offs between Pieces and failure paths that cross Pieces. It links each Piece it mentions, as in `[[#^piece-7|Piece 7]]`.
 
@@ -52,7 +52,13 @@ Also check each service's docs for tooling of its own, such as an MCP server, a 
 Where the note's decisions and the user's comments don't settle something the Design or Build Order needs, settle it with the user as the `settling-a-decision` skill describes.
 
 ### Approve
-Get each Piece approved, then the Flow. Once all are approved, write them under `# Design`, so they survive if the session ends.
+The user approves the Design as a whole, because most of it carries out what the Goals and the note's decisions already settle. Show these in one message, ending with the approval:
+1. **The Pieces,** as a table with each Piece's path and its one purpose.
+2. **The Flow,** in full.
+3. **The user's choices.** If a Piece makes a choice that's the user's call and the user hasn't settled it yet, show that part of the Piece in full and say what it picks. If no Piece does, say so in one line.
+4. **The approval.** Ask whether the user approves the Design. If they change a Piece, update the Flow and any other Piece the change affects.
+
+Once they approve, write the Design under `# Design`, so it survives if the session ends.
 
 ## 4. Conventions
 Draft what later work must follow once this exists, such as how a routine added later starts its session. Cover only what the decisions and the Design settle, because a convention stretched to cases no story has asked for can bind later work in ways nobody chose. Each convention names where it lands, as the `rule-placement` skill describes.
