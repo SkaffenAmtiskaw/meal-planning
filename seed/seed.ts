@@ -1,4 +1,4 @@
-import 'temporal-polyfill/global';
+import { DateTime } from 'luxon';
 
 import { createPlanner } from '#factories/planner';
 import { createUser } from '#factories/user';
@@ -192,23 +192,23 @@ const weeklyMeals: MealTemplate[][] = [
 
 // Whole weeks from the start of last week through next month's first full week,
 // so the range covers the current week and a month boundary whatever day it runs.
-const today = Temporal.Now.plainDateISO();
-const firstDay = today.subtract({ days: (today.dayOfWeek % 7) + 7 });
-const nextMonthStart = today.with({ day: 1 }).add({ months: 1 });
-const nextMonthFirstSunday = nextMonthStart.add({
-	days: (7 - (nextMonthStart.dayOfWeek % 7)) % 7,
+// Luxon's weekday runs Monday 1 to Sunday 7, so `% 7` makes Sunday 0.
+const today = DateTime.now().startOf('day');
+const firstDay = today.minus({ days: (today.weekday % 7) + 7 });
+const nextMonthStart = today.startOf('month').plus({ months: 1 });
+const nextMonthFirstSunday = nextMonthStart.plus({
+	days: (7 - (nextMonthStart.weekday % 7)) % 7,
 });
-const lastDay = nextMonthFirstSunday.add({ days: 6 });
+const lastDay = nextMonthFirstSunday.plus({ days: 6 });
 
 const calendar: DayInterface[] = [];
-for (
-	let date = firstDay;
-	Temporal.PlainDate.compare(date, lastDay) <= 0;
-	date = date.add({ days: 1 })
-) {
-	const meals = weeklyMeals[date.dayOfWeek % 7];
+for (let date = firstDay; date <= lastDay; date = date.plus({ days: 1 })) {
+	const meals = weeklyMeals[date.weekday % 7];
 	if (meals.length > 0)
-		calendar.push({ date: date.toString(), meals: meals.map(buildMeal) });
+		calendar.push({
+			date: date.toFormat('yyyy-MM-dd'),
+			meals: meals.map(buildMeal),
+		});
 }
 
 // `pnpm seed <story>` also loads seed/stories/<story>.ts. Its file is found before connecting, so a
