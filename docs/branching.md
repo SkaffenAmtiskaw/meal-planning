@@ -25,7 +25,7 @@ A worktree session loads its skills and hooks from the main checkout. So a chang
 ## What Each Session Start Does
 At the start of every local session, the SessionStart hook runs four scripts, in order. Their messages appear in the session, and the agent passes on anything that needs you:
 1. **`sync-develop.sh`** fetches from GitHub. In a worktree whose branch has no commits of its own and no uncommitted changes, it fast-forwards the branch to the latest `develop`, or `main` on a `hotfix/` branch. That way a new session starts from the latest merge, even if the app cut its branch from an older fetch of `develop`. Then, if the main checkout is on `develop` with no uncommitted changes, it fast-forwards the main checkout and runs the release tasks on the `test` database (see `docs/release_tasks.md`, "The Dev Database"). It updates the main checkout even from a worktree session, because worktree sessions load their skills and hooks from it (see "Checkouts").
-2. **`worktree-sweep.sh`** removes each worktree whose PR has merged, or that never got work of its own, with its local branch and database (see "Cleaning Up After a Merge").
+2. **`held-notes-check.sh`** names each merged PR that still has held notes work (see "Work Outside a Story").
 3. **`worktree-setup.sh`**, in a worktree, copies the main checkout's `.env.local` if the worktree has none, trusts its `mise.toml` and installs its dependencies, which also installs the pre-commit hook.
 4. **`worktree-slot.sh`**, in a worktree, gives it a slot if it has none, and prints the new slot's URLs and database.
 
@@ -35,12 +35,11 @@ These are the points where you act, from planning to cleanup:
 2. **Start the first build session in a new worktree.** In the Code tab, pick the `meal-planning` folder with the project folder control under the prompt box, turn on **Worktree**, and run `/implement <note>`, or `/infra-build <note>` for an infra story. The app makes the branch and folder, and the hook sets the worktree up and prints its slot.
 3. **Review and commit each step.** Each skill first merges `develop` into the branch. That way the branch picks up other merged work, including any hotfix, while conflicts are still small. If the merge is clean, the skill commits it. If it conflicts, the skill stops and resolves it with you. Then it builds the step, and you review the changes and commit them.
 4. **Run each later step in the same session.** When a step finishes and you've committed it, the session renames itself to show the next step, such as "Implement - Drop Mongoose (Step 5)", so its title in the sidebar tells you where the story stands. It gives you that step's command, such as the next `/implement` or `/final-review`, and clears its conversation. Type the command there when you're ready, now or after a break. "Resume previous session" brings back the step before's conversation. Keeping the story in one session stops its steps from nesting under each other in the sidebar. It also keeps every step in the session that made the worktree, which is the only session that can edit the worktree's `.claude/` folder.
-5. **Get the PR opened.** Tweaks and sweeps are kinds of story small enough to skip the review step. If the story is one of them, `/implement` opens the PR at its last step. Otherwise, run `/final-review` in the story's session, as step 4 describes. It reviews the branch's own changes. Once you've committed its fixes, it merges in the latest `develop`, pushes the branch and opens a PR into `develop`, titled with the story's name, with auto-merge on. GitHub then squashes the PR into `develop` once its checks pass.
+5. **Get the PR opened.** Tweaks and sweeps are kinds of story small enough to skip the review step. If the story is one of them, `/implement` opens the PR at its last step. Otherwise, run `/final-review` in the story's session, as step 4 describes. It reviews the branch's own changes. Once you've committed its fixes, it merges in the latest `develop`, pushes the branch and opens a PR into `develop`, titled with the story's name, with auto-merge on, and then offers to archive itself, which removes the worktree (see "Removing a Worktree"). GitHub squashes the PR into `develop` once its checks pass.
 6. **Run `/close` in the main checkout once the PR has merged.** It checks on GitHub that the PR merged, then marks the story done and closes its note.
-7. **Let the next session start clean up.** See "Cleaning Up After a Merge".
 
 ## Opening an Existing Worktree
-To carry on with a story, open its session in the sidebar. Its title names the next step's skill, the note and the step. A worktree outlives its sessions. If the story's session is gone, ask any session, such as one in the main checkout, to start a new one in the worktree. Name the story rather than the folder:
+To carry on with a story, open its session in the sidebar. Its title names the next step's skill, the note and the step. If the story's session was archived, reopen it from the Archived list. Reopening it checks its branch out again in a new worktree. If the session was deleted but the worktree is still there, ask any session, such as one in the main checkout, to start a new one in the worktree. Name the story rather than the folder:
 
 > Start a session in the worktree for <story>, with no new worktree, that runs `/implement <note>`.
 
@@ -54,9 +53,11 @@ Several sessions can use one worktree, but only one at a time should edit code o
 The `running-the-app` skill opens the worktree's own URLs, on its own host and ports. In a worktree, you sign in through the seed's sign-in links, or through the sign-in form with an email and the dev password (see `docs/seed.md`). Google sign-in and One Tap work only on `localhost:3000` and production, since those are the only origins Google's OAuth client accepts.
 
 # Work Outside a Story: `/tooling` Changes, Quick Fixes and Other Work
-Work outside a story also gets its own worktree session, branch and PR. Start it as you would a story's first session, with **Worktree** on. Once you've committed the change, the session merges in the latest `develop`, pushes the branch and opens a PR into `develop` with auto-merge, and the next session start after the merge removes the worktree.
+Work outside a story also gets its own worktree session, branch and PR. Start it as you would a story's first session, with **Worktree** on. Once you've committed the change, the session merges in the latest `develop`, pushes the branch and opens a PR into `develop` with auto-merge. Then, once it has nothing left to do, it offers to archive itself, which removes the worktree.
 
-Some `/tooling` changes come with notes work that has to wait for the merge, such as a Roadmap edit. Notes aren't branched, so an edit made earlier would record the change as done before it reaches `develop`. The PR lists that work under "Held until the merge" and carries the `notes-pending` label. The session waits for the merge, then does the work and takes the label off. If the session ends first, see "Cleaning Up After a Merge".
+Some `/tooling` changes come with notes work that has to wait for the merge, such as a Roadmap edit. Notes aren't branched, so an edit made earlier would record the change as done before it reaches `develop`. The PR lists that work under "Held until the merge" and carries the `notes-pending` label. The session waits for the merge, does the work, takes the label off and then offers to archive itself.
+
+If a session ends before its held notes work is done, the merged PR still carries `notes-pending`, so `held-notes-check.sh` names it at each session start. The agent then offers you a new session in the main checkout that runs `/tooling #<PR>`. The new session does the work the PR lists and takes the label off. If the first session is still in the sidebar, archive it, since its work has moved to the new one.
 
 A quick fix can also go through GitHub's web editor. Edit the file on `develop`, choose **Create a new branch for this commit and start a pull request**, and turn on auto-merge on the PR.
 
@@ -82,17 +83,12 @@ A release ships one finished goal. While it's under way, the release freeze lets
 6. **Merge the PR,** which deploys, takes a backup of production's database (see `docs/backups.md`) and ends the freeze. If the release has tasks that run after the merge, the session waits for that backup and walks you through each one. Then it walks you through any After Deploy checks. Once the tasks have run, it puts up a **New session** card that deletes them, and the code that handled the data's old shape, through a PR.
 7. **Run `/roadmap` in a new session,** which makes the next goal the building goal.
 
-# Cleaning Up After a Merge
-At the next session start, the sweep removes each worktree whose PR has merged, with its local branch and its database, and prints a line for each. GitHub has already deleted the branch on GitHub at the merge.
+# Removing a Worktree
+A worktree lasts as long as its session. Archiving a session removes the worktree the app made for it and frees its slot. Each worktree session offers to archive itself once it has nothing left to do, since only the session knows when that is. For most, that's right after it opens its PR. A session that still has work once the PR merges, such as held notes work or an infra step's checks that need its code on `develop`, offers once that work is done. You can also archive a session in the sidebar whenever you like.
 
-The sweep leaves a merged worktree in place in three cases. For the last two, it prints a line saying which:
-- **It's the worktree the session runs in.** The next session that starts in a different folder removes it.
-- **It has uncommitted changes.** Commit them on a new branch for a new PR, or throw them away. Once the folder is clean, the next session start removes it.
-- **Its PR carries `notes-pending`,** so its held notes work isn't done. The sweep finds merged PRs only through the worktrees still on disk, so keeping the worktree is what keeps the PR named at each session start until the work is done. The session offers you a new session in the main checkout that runs `/tooling #<PR>`. That session does the work the PR lists and takes the label off, and the next session start removes the worktree.
+If the worktree has uncommitted changes when you archive its session, the app keeps it on disk. To keep the changes, reopen the session and commit them: to its branch if its PR is still open, or to a new branch for a new PR if it has merged. Otherwise, ask a session to discard the worktree.
 
-The sweep also removes a worktree that never got work of its own, once it's clean, its branch has no commits beyond `develop` (or `main`, for a `hotfix/` branch) and it was made more than a day ago. Such a worktree, like one made by mistake for a planning session, never gets a PR to merge, so the merged-PR rule never removes it. Waiting a day spares a worktree whose session is still working but hasn't changed anything yet.
-
-You archive the story's sessions in the sidebar when you like.
+A hotfix's worktree is made with git rather than by the app, so archiving doesn't remove it. `/close` removes it once the hotfix's story is closed, as long as no open session is still using it.
 
 # When Something Goes Wrong
 Each entry is a failure you might meet, grouped by when it comes up, with what happens and what you do.
@@ -100,7 +96,7 @@ Each entry is a failure you might meet, grouped by when it comes up, with what h
 ## Starting a Session
 **A worktree's install fails,** such as when a merge leaves the lockfile out of date. The hook prints the error into the session. Until it's fixed, the worktree has no dependencies, and commits skip the pre-commit checks. Once the lockfile is right, have the session run `pnpm install`.
 
-**All five slots are taken.** The hook says so, and the new worktree has no ports or database, so it can't run the app. The sweep has already removed every merged worktree it could. A slot frees up once another worktree's PR merges and the sweep removes it.
+**All five slots are taken.** The hook says so, and the new worktree has no ports or database, so it can't run the app. Archive a session whose work is done to free its slot. The new worktree takes the slot at its next session start.
 
 **A story's worktree is missing or broken,** such as when its folder was deleted. Ask a session to rebuild it on the story's branch. It first checks the old worktree for uncommitted changes and tells you of any, since removing it loses them. Then it removes the old worktree, or clears git's record of one whose folder is gone, makes a new one on the same branch with `git worktree add .claude/worktrees/<name> <branch>`, and starts a session there. The branch, its commits and its PR carry over, since only the folder is new.
 
@@ -118,12 +114,12 @@ Each entry is a failure you might meet, grouped by when it comes up, with what h
 
 **A PR says it's out of date with `develop`.** Another PR merged since its checks ran, and the `develop` ruleset holds every PR to the latest `develop`. Click **Update branch** on the PR, or ask a session to run `gh pr update-branch <number>`. The checks run again, and auto-merge goes ahead once they pass.
 
+**An archived session's worktree has uncommitted changes.** The app keeps it on disk. What to do is in "Removing a Worktree".
+
 ## After the Merge
 **`/close` says the PR hasn't merged.** Wait for the PR to merge, then run `/close` again. A failed check or an out-of-date branch can hold the merge up (see "The PR").
 
-**A merged worktree has uncommitted changes.** The sweep leaves it in place and says so. What to do is in "Cleaning Up After a Merge".
-
-**A session ends before its held notes work is done.** The `notes-pending` label stays on the merged PR, and the next session start offers you a session that does the work. "Cleaning Up After a Merge" says more.
+**A session ends before its held notes work is done.** The `notes-pending` label stays on the merged PR, and the next session start offers you a session that does the work. "Work Outside a Story" says more.
 
 ## Hotfixes and Releases
 **The back-merge fails with a conflict.** It pushes nothing, so the hotfix isn't on `develop` yet. Until it is, `/finish-goal` and `/ship-goal` won't start. Bring it back by hand in a worktree session, as `docs/ci.md`, "Back-Merge", describes.
