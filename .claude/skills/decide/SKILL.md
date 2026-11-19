@@ -38,7 +38,7 @@ If a story's question is "Is this worth doing?" and the user decides it isn't, t
 
 ### Knock-on effects
 After recording each answer, look at what it changes:
-- **An exploration hub's option:** if the answer puts it in this release, add it to the hub's Requirements, below the first-pass list and with its date. Add it without drafting it, because the answer settles it. If it's worth doing but not in this release, give it a new Roadmap line in Ideas.
+- **An exploration hub's option:** if the answer puts it in this release, add it to the hub's Requirements, below the first-pass list and with its date. Add it without drafting it, because the answer settles it. If it's worth doing but not in this release, give it a new Roadmap line, placed as the `roadmap-placement` skill describes.
 - **The rest of this note:** other sections the answer lands in, such as a section the question says to record it in, a bug's Fix section, or a hub's Coverage or Child Stories table. Draft each change and go through them with the user. A hub's Coverage is a table of what's planned where, such as actions × views. It links the story covering each combination and marks with ❓ each one no note plans.
 - **New stories:** if the answer implies other work no note covers yet, and this note is a hub but not an exploration hub, add the work to a list of new child stories for step 5. Otherwise, add it to the out-of-scope list.
 - **New questions:** if `decision-researcher` found a blocking question that isn't on the note, or the answer raised one, tell the user what needs deciding, add it to Open Decisions, and ask whether they already have an answer in mind:
@@ -53,8 +53,6 @@ Once the picked decisions are done, set `confirmed` to today, since the user mak
 - **A hub with none left, no design in its `# Design Handoff` yet and something to design, meaning an Inbox item for `/design-feature` or at least one option in its Requirements:** set its `^status` line to "Next: /design-feature".
 - **Any other hub with none left:** set its `^status` line to "Next: its child stories" and remove its Roadmap line, since a hub has a line only while it has a next step of its own.
 - **Any other story with none left:** remove the `decision needed` entry from `blocked-by`. Run `sh scripts/note-section.sh "Next Step by Note State"`, which prints Note Conventions' table of what each note state does next, and set the `^status` line to the story's next step from it, such as "Decisions made. Next: /assess".
-
-If the user decided a story is worth doing and its Roadmap line is in Ideas, the story is now committed. Check its goals and place its line as the `roadmap-placement` skill describes.
 
 ## 5. New child stories
 If the hub's list of new child stories is empty, skip this step. Otherwise, propose the child stories, each with a one-line scope and the decisions it comes from, and wait for the user to approve, change or drop each one. For each one they approve:
