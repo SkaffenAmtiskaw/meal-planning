@@ -26,14 +26,16 @@ Check that it's ready for this skill:
 - **`ready` or later:** stop. Changes to a planned story go through `/check-drift`.
 - **No open decisions.** The note isn't ready if it has a `decision needed` entry in `blocked-by`, or an item under `# Open Decisions` with no **Decided** line. An item with only a **Partly answered** line still counts as open. List the open decisions, one line each, tell the user the next step is `/decide <note name>`, and stop.
 
-**In a revision,** find what to rework in whatever called for it: the Inbox item, the ⚠️ Check Drift callouts, the `^status` line or the user's answer. Each step below works only on that, apart from the Goals check in step 2, which every revision runs. Everything else keeps its approval as written unless the rework changes it. Where step 2, 3 or 4 shows a part for approval, show the reworked part next to the version it replaces. Remove the callouts on the parts you rework, since the new text answers them.
+**In a revision,** find what to rework in whatever called for it: the Inbox item, the ⚠️ Check Drift callouts, the `^status` line or the user's answer. If it's something the Design missed, work out where the Design falls short of what the Goals and Purpose say the user wants from the story, and rework the Design there. The Goals change only if what the user wants has changed. They record what the user wants, so a miss in the Design isn't a flaw in their wording. Each step below works only on the parts the revision calls for. Everything else keeps its approval as written unless the rework changes it. Where step 2, 3 or 4 shows a part for approval, show the reworked part next to the version it replaces. Remove the callouts on the parts you rework, since the new text answers them.
 
 ## 2. Goals
-Draft the Goals. The user wants an infra story to work, and cares little about how it's built. So each Goal names something they want to get out of the story: something that must be true when it's done, and that they can see for themselves, such as "a PR into `main` shows four check jobs". If a Goal needs "and" to join two things that can fail separately, it's two Goals.
+The Goals say what the user wants from the story. Later steps weigh the Design, the research and the checks against the Goals, so a Goal the user doesn't care about steers the work wrong.
 
-A requirement that only serves a Goal isn't a Goal, however sensible it is. To tell them apart, take each line that might be a Goal and ask whether the user would mind if the story met its Goals without it. If they wouldn't, it's a requirement. It goes in the Design, under the Piece it belongs to, and the implementer checks it. For example, "the vault scripts work from the main checkout, from a worktree or in a routine" is a requirement of moving the notes into their own repo, not something the user wants from the move. Every revision checks the existing Goals against this rule, and moves each requirement it finds into the Design.
+Before drafting, work out what the user wants from the story, from the Purpose and their own words in the note. If it's unclear, ask them. Their settled decisions say how the work gets done, not what they want from it.
 
-Get each Goal approved, then write the Goals under `# Goals` as checkboxes.
+Then draft the Goals from what they want, so there are usually only a few. Each one is something that must be true when the story is done and that the user can see for themselves, such as "a PR into `main` shows four check jobs". The user wants an infra story to work and cares little about how it's built, so each Goal is a result they can see. Anything that only serves what they want is a requirement, however sensible it is. To tell them apart, ask of each line whether the user would mind if the story gave them what they want without it. If they wouldn't, it's a requirement, and it goes in the Design, under the Piece it belongs to. For example, "the vault scripts work from the main checkout, from a worktree or in a routine" is a requirement of moving the notes into their own repo, not something the user wants from the move.
+
+Show the Goals together and ask whether they capture what the user wants from the story. Asked about one Goal at a time, the user judges whether that line does any harm, not whether it's what they want, so they approve lines that aren't. Once they agree, write the Goals under `# Goals` as checkboxes.
 
 ## 3. Design
 ### Draft
@@ -44,6 +46,8 @@ Then draft the whole Design before showing any of it, so you can see where Piece
 - **The Flow:** only what no single Piece holds: what starts a run, the hand-offs between Pieces and failure paths that cross Pieces. It links each Piece it mentions, as in `[[#^piece-7|Piece 7]]`.
 
 Check each service, config key and Claude Code feature the Design uses against its current docs, because what a service offers changes. Check each Piece against the project docs and the other notes' Conventions and Rules.
+
+Also check each service's docs for tooling of its own, such as an MCP server, a CLI, a setup wizard or a marketplace integration. Look for tooling that would do a Piece's work, or take over an item the user would otherwise set up by hand under Setup Outside the Repo. Use it, or say why not in the Piece it would replace, or in the Setup Outside the Repo item (step 5). A service's own tooling leaves less for the project to build and maintain, and the user wants as little setup by hand as possible.
 
 Where the note's decisions and the user's comments don't settle something the Design or Build Order needs, settle it with the user as the `settling-a-decision` skill describes.
 
@@ -58,7 +62,7 @@ Never propose a test, lint rule or hook to check a convention. These conventions
 If the story sets none, delete the section and say so. Otherwise, get each one approved, then write them under `# Conventions`.
 
 ## 5. Setup Outside the Repo
-List everything set up by hand outside the repo, such as an app install, a GitHub setting, a hosted service's configuration or a secret. For each, say what it is, where it's set up, and which doc or file records it.
+List everything set up by hand outside the repo, such as an app install, a GitHub setting, a hosted service's configuration or a secret. For each, say what it is, where it's set up, and which doc or file records it. If a service's own tooling could take over an item, and step 3 found a reason not to use it, give the reason in the item.
 
 If an item depends on a fact about the user's setup that only they know, such as whether they already have an account or which plan they're on, ask them about that fact first.
 
