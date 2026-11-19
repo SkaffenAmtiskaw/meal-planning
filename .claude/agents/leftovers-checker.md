@@ -16,7 +16,7 @@ Use Bash only for read-only git commands: `git log`, `git show`, `git diff`, `gi
 In story mode:
 - the story's note path
 - the commit range for the story, and whether uncommitted changes are part of it
-- the story's files, confirmed by the user
+- the story's files
 
 In goal mode:
 - the release's range, such as `origin/main..origin/develop`
