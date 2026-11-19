@@ -1,6 +1,5 @@
 export { CalendarContext, useCalendarContext } from './CalendarContext';
 export { CalendarProvider } from './CalendarProvider';
-export type { CalendarProviderProps } from './CalendarProvider';
 export type {
 	CalendarDish,
 	CalendarMeal,
@@ -19,9 +18,7 @@ export {
 	VIEW_LABELS,
 } from './_utils/formatCalendarLabel';
 export { MobileAgenda } from './MobileAgenda/MobileAgenda';
-export type { MobileAgendaProps } from './MobileAgenda/types';
 export { MobileMonthGrid } from './MobileMonthGrid/MobileMonthGrid';
-export type { MobileMonthGridEvent } from './MobileMonthGrid/types';
 export { MonthGrid } from './MonthGrid/MonthGrid';
 export type {
 	MonthGridMeal,

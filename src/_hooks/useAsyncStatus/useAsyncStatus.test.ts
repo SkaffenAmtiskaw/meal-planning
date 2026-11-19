@@ -1,7 +1,7 @@
 import { act, renderHook } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-import type { ActionResult } from '@/_utils/actionResult/types';
+import type { ActionResult } from '@/_utils/actionResult';
 
 import { useAsyncStatus } from './useAsyncStatus';
 import type { AsyncStatus } from './types';

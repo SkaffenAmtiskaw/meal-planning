@@ -2,7 +2,7 @@
 
 import { useCallback, useState } from 'react';
 
-import type { ActionResult } from '@/_utils/actionResult/types';
+import type { ActionResult } from '@/_utils/actionResult';
 import { catchify } from '@/_utils/catchify';
 
 import type { AsyncStatus } from './types';

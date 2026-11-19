@@ -12,7 +12,7 @@ import type {
 	UserInvite,
 } from '@/_actions/sharing';
 import { useAsyncStatus } from '@/_hooks';
-import type { ActionResult } from '@/_utils/actionResult/types';
+import type { ActionResult } from '@/_utils/actionResult';
 import { isPastDate, isWithinHours, toLocaleDateString } from '@/_utils/date';
 
 import { getAccessLevelColor } from '../_utils/getAccessLevelColor';

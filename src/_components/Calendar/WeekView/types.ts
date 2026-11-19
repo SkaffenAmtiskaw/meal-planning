@@ -12,13 +12,8 @@ export interface WeekViewMeal {
 	description?: string;
 }
 
-type WeekViewMealRenderProps = MealKeyboardProps;
-
 export interface WeekViewProps {
 	meals?: WeekViewMeal[];
-	renderMeal?: (
-		meal: WeekViewMeal,
-		props: WeekViewMealRenderProps,
-	) => ReactNode;
+	renderMeal?: (meal: WeekViewMeal, props: MealKeyboardProps) => ReactNode;
 	onMealClick?: (meal: WeekViewMeal) => void;
 }

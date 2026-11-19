@@ -2,7 +2,7 @@
 
 import { getUser } from '@/_actions/user';
 import { pendingInvites } from '@/_models/database/pendingInvites';
-import type { ActionResult } from '@/_utils/actionResult/types';
+import type { ActionResult } from '@/_utils/actionResult';
 import { isNoSessionError } from '@/_utils/noSessionError';
 import { reportError } from '@/_utils/reportError';
 import { zId } from '@/_utils/zId';
