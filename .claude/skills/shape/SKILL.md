@@ -133,5 +133,4 @@ Once the user approves the draft, or picks "drop it", what you write depends on 
 - **Folded into an existing note or a sweep:** apply the addition there. Then, if the idea was an idea note, delete it as the `deleting-a-note` skill describes, pointing each link to the note it was folded into. If it was a Roadmap line with no note, remove the line.
 - **A story, a hub, a workflow note or a note waiting on `/decide`:** if the idea was an idea note, rewrite it in place, so links to it keep working. Don't rename or move it without asking. If it was a Roadmap line with no note, create the note in `features/<area>/` in the notes repo, and if the area isn't obvious, ask the user which folder. Make the line link to the note. Either way, what happens to its Roadmap line depends on the first case that fits:
   - **A hub whose `^status` line says `Next: its child stories`:** remove the line, as the `roadmap-rules` skill's "Hubs" rule says.
-  - **A note waiting on `/decide`, or a story whose "Is this worth doing?" decision is still open:** keep the line where it is, because the story isn't committed yet.
-  - **Anything else:** shaping commits it. Check its goals and place its line as the `roadmap-placement` skill describes.
+  - **Anything else:** check its goals and place its line as the `roadmap-placement` skill describes.

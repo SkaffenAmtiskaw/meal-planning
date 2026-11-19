@@ -43,10 +43,10 @@ Find the Done When items that nothing covers, and get each one covered. How depe
   5. Remove ` · Next: /ship-goal` from the goal's line, since the goal has work left again.
 - **Otherwise:**
   1. Compare Done When with the work that serves the goal: the lines in its queue or under its heading, and the lines that carry its 🎯 link. Each item that nothing covers is a gap.
-  2. For each gap, look for existing work that would cover it, so no note is drafted for work that already has one. Search the Roadmap, including Ideas, and `features/` in the notes repo for a story or hub. A hub counts only if it has a next step of its own, because otherwise its child stories hold its work. Leave out bugs, sweeps and collecting workflow notes, because they join every release anyway. Leave out anything under the goal's Out of Scope too.
+  2. For each gap, look for existing work that would cover it, so no note is drafted for work that already has one. Search the Roadmap, including Uncommitted, and `features/` in the notes repo for a story or hub. A hub counts only if it has a next step of its own, because otherwise its child stories hold its work. Leave out bugs, sweeps and collecting workflow notes, because they join every release anyway. Leave out anything under the goal's Out of Scope too.
   3. If you find one, show its line or note and ask whether it serves this goal. If they say no, the gap is still open. What a yes does depends on the goal:
      - **The building or planning goal:** add the goal's 🎯 link. If the line is in Now or Next, leave it there. Otherwise, move it into the goal's queue and ask the user where it goes. If it leaves another goal's heading, give it that goal's 🎯 link too.
-     - **Any other goal:** if the line is in Unaffiliated or Ideas, move it under the goal's heading in Later. Otherwise, leave it where it is, and add the goal's 🎯 link.
+     - **Any other goal:** if the line is in Uncommitted, move it under the goal's heading in Later. Otherwise, leave it where it is, and add the goal's 🎯 link.
   4. For each gap still open, draft a note and show it to the user. If the item covers a whole area and what to build there isn't known yet, make it an exploration hub, with `Next: /brainstorm` as its `^status` line. Otherwise, make it an idea note. Once they approve it, write the note.
   5. Place the note's line. If the goal is marked `- building` or `- planning`, add `[[<note>]] ![[<note>#^status]] 🎯 [[<goal>]]` to the goal's queue, and ask the user where it goes. Otherwise, add its line under the goal's heading.
 
