@@ -2,7 +2,7 @@
 
 import { checkAuth } from '@/_actions/auth/checkAuth';
 import { pendingInvites } from '@/_models/database/pendingInvites';
-import { reportError } from '@/_utils/reportError';
+import { reportError } from '@/_reporting/reportError';
 import { zId } from '@/_utils/zId';
 
 import type { PendingInvite } from './types';

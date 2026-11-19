@@ -1,16 +1,11 @@
 import { renderHook } from '@testing-library/react';
 import { afterEach, describe, expect, test, vi } from 'vitest';
 
-import { client } from '@/_utils/auth';
+import { client } from '@/_auth/client';
 
 import { useOneTap } from './useOneTap';
 
-vi.mock('@/_utils/auth', () => ({
-	client: {
-		useSession: vi.fn(),
-		oneTap: vi.fn(),
-	},
-}));
+vi.mock('@/_auth/client', async () => await import('#mocks/@/_auth/client'));
 
 describe('use one tap', () => {
 	afterEach(() => {

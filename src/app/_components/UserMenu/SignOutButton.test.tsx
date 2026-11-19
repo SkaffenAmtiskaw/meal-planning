@@ -3,7 +3,7 @@ import { beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { useRouter } from 'next/navigation';
 
-import { client } from '@/_utils/auth';
+import { client } from '@/_auth/client';
 
 import { SignOutButton } from './SignOutButton';
 
@@ -13,9 +13,7 @@ vi.mock('next/navigation', async () => await import('#mocks/next/navigation'));
 
 vi.mock('@mantine/core', async () => await import('#mocks/@mantine/core'));
 
-vi.mock('@/_utils/auth', () => ({
-	client: { signOut: vi.fn() },
-}));
+vi.mock('@/_auth/client', async () => await import('#mocks/@/_auth/client'));
 
 describe('SignOutButton', () => {
 	beforeAll(() => {

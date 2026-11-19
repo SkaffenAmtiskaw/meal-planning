@@ -5,7 +5,7 @@ import { useState } from 'react';
 
 import { Alert, Anchor, Button, PasswordInput, Stack } from '@mantine/core';
 
-import { client } from '@/_utils/auth';
+import { client } from '@/_auth/client';
 
 type Props = {
 	token: string;

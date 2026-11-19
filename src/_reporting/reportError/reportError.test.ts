@@ -2,7 +2,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { PostHog } from 'posthog-node';
 
-import { getReportingToken } from '@/_utils/errorReporting';
+import { getReportingToken } from '@/_reporting/errorReporting';
 
 const captureExceptionImmediate = vi.hoisted(() => vi.fn());
 
@@ -12,7 +12,7 @@ vi.mock('posthog-node', () => ({
 		return { captureExceptionImmediate };
 	}),
 }));
-vi.mock('@/_utils/errorReporting', () => ({
+vi.mock('@/_reporting/errorReporting', () => ({
 	getReportingToken: vi.fn(() => 'phc_token'),
 	POSTHOG_HOST: 'https://posthog.example.com',
 }));

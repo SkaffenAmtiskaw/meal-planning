@@ -4,7 +4,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { ReadonlyURLSearchParams, useSearchParams } from 'next/navigation';
 
 import { checkEmailStatus } from '@/_actions/auth';
-import { client } from '@/_utils/auth';
+import { client } from '@/_auth/client';
 import { zSafeString } from '@/_utils/zSafeString';
 
 import { SignInFlow } from './SignInFlow';
@@ -54,20 +54,7 @@ vi.mock('@/_hooks', async () => await import('#mocks/@/_hooks'));
 
 vi.mock('@/_actions/auth', async () => await import('#mocks/@/_actions/auth'));
 
-vi.mock('@/_utils/auth', () => ({
-	client: {
-		signIn: {
-			social: vi.fn(),
-			email: vi.fn().mockResolvedValue({ data: null, error: null }),
-		},
-		signUp: {
-			email: vi.fn().mockResolvedValue({ data: null, error: null }),
-		},
-		requestPasswordReset: vi
-			.fn()
-			.mockResolvedValue({ data: null, error: null }),
-	},
-}));
+vi.mock('@/_auth/client', async () => await import('#mocks/@/_auth/client'));
 
 vi.mock('@/_utils/zSafeString', () => ({
 	zSafeString: vi.fn(),

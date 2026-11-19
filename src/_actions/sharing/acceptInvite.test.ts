@@ -11,7 +11,7 @@ import {
 import { getUser } from '@/_actions/user';
 import { pendingInvites } from '@/_models/database/pendingInvites';
 import { users } from '@/_models/database/users';
-import { reportError } from '@/_utils/reportError';
+import { reportError } from '@/_reporting/reportError';
 
 import { acceptInvite } from './acceptInvite';
 
@@ -21,8 +21,8 @@ vi.mock(
 	async () => await import('#mocks/@/_models/database/newId'),
 );
 vi.mock(
-	'@/_utils/reportError',
-	async () => await import('#mocks/@/_utils/reportError'),
+	'@/_reporting/reportError',
+	async () => await import('#mocks/@/_reporting/reportError'),
 );
 
 vi.mock(

@@ -7,8 +7,8 @@ import { Indicator } from '@mantine/core';
 import { getUserInvites } from '@/_actions/sharing/getUserInvites';
 import { getUser } from '@/_actions/user';
 import { isNoSessionError } from '@/_actions/user/noSessionError';
+import { reportError } from '@/_reporting/reportError';
 import { THEME_COLORS } from '@/_theme/colors';
-import { reportError } from '@/_utils/reportError';
 
 interface InviteBadgeProps {
 	children: React.ReactNode;

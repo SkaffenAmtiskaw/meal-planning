@@ -1,6 +1,6 @@
 import { PostHog } from 'posthog-node';
 
-import { getReportingToken, POSTHOG_HOST } from '@/_utils/errorReporting';
+import { getReportingToken, POSTHOG_HOST } from '@/_reporting/errorReporting';
 
 let client: PostHog | undefined;
 

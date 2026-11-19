@@ -3,8 +3,8 @@
 import { getUser } from '@/_actions/user';
 import { isNoSessionError } from '@/_actions/user/noSessionError';
 import { pendingInvites } from '@/_models/database/pendingInvites';
+import { reportError } from '@/_reporting/reportError';
 import type { ActionResult } from '@/_utils/actionResult';
-import { reportError } from '@/_utils/reportError';
 import { zId } from '@/_utils/zId';
 
 import type { DeclineInviteInput } from './types';

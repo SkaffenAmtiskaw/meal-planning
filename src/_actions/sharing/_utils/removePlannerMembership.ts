@@ -1,5 +1,5 @@
 import { users } from '@/_models/database/users';
-import { reportError } from '@/_utils/reportError';
+import { reportError } from '@/_reporting/reportError';
 
 interface RemoveMembershipResult {
 	ok: boolean;

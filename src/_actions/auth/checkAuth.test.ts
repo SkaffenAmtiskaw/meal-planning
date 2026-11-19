@@ -2,16 +2,16 @@ import { afterEach, describe, expect, test, vi } from 'vitest';
 
 import { getUser } from '@/_actions/user';
 import { newId } from '@/_models/database/newId';
+import { reportError } from '@/_reporting/reportError';
 import { catchify } from '@/_utils/catchify';
-import { reportError } from '@/_utils/reportError';
 
 import { checkAuth } from './checkAuth';
 
 vi.mock('@/_actions/user', () => ({ getUser: vi.fn() }));
 vi.mock('@/_utils/catchify', { spy: true });
 vi.mock(
-	'@/_utils/reportError',
-	async () => await import('#mocks/@/_utils/reportError'),
+	'@/_reporting/reportError',
+	async () => await import('#mocks/@/_reporting/reportError'),
 );
 
 const mockPlannerId = newId();

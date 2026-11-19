@@ -1,6 +1,6 @@
 import { Resend } from 'resend';
 
-import { reportError } from '@/_utils/reportError';
+import { reportError } from '@/_reporting/reportError';
 import { env } from '@/env';
 
 import { resendError } from './_utils/resendError';

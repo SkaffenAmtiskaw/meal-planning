@@ -5,13 +5,13 @@ vi.mock(
 	async () => await import('#mocks/@/_models/database/users'),
 );
 vi.mock(
-	'@/_utils/reportError',
-	async () => await import('#mocks/@/_utils/reportError'),
+	'@/_reporting/reportError',
+	async () => await import('#mocks/@/_reporting/reportError'),
 );
 
 import { newId } from '@/_models/database/newId';
 import { users } from '@/_models/database/users';
-import { reportError } from '@/_utils/reportError';
+import { reportError } from '@/_reporting/reportError';
 
 import { removePlannerMembership } from './removePlannerMembership';
 

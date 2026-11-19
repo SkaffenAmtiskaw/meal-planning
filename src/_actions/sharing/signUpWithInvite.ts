@@ -5,8 +5,8 @@ import { isAPIError } from 'better-auth/api';
 import { addUser } from '@/_actions/user';
 import { auth } from '@/_auth';
 import { pendingInvites } from '@/_models/database/pendingInvites';
+import { reportError } from '@/_reporting/reportError';
 import { catchify } from '@/_utils/catchify';
-import { reportError } from '@/_utils/reportError';
 
 import { validateInviteToken } from './validateInviteToken';
 

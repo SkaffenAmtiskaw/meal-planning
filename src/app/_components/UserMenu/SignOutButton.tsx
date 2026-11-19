@@ -5,8 +5,8 @@ import { useRouter } from 'next/navigation';
 import { MenuItem } from '@mantine/core';
 import { IconLogout } from '@tabler/icons-react';
 
+import { client } from '@/_auth/client';
 import { THEME_COLORS } from '@/_theme/colors';
-import { client } from '@/_utils/auth';
 
 const SignOutButton = () => {
 	const router = useRouter();

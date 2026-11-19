@@ -4,7 +4,7 @@ import { useState } from 'react';
 
 import { Alert, Button, Stack, TextInput } from '@mantine/core';
 
-import { client } from '@/_utils/auth';
+import { client } from '@/_auth/client';
 
 export const ResendVerificationForm = () => {
 	const [email, setEmail] = useState('');

@@ -1,8 +1,8 @@
 /**
- * Shared mock for @/_utils/reportError.
+ * Shared mock for @/_reporting/reportError.
  *
  * Usage in a test file:
- *   vi.mock('@/_utils/reportError', async () => await import('#mocks/@/_utils/reportError'));
+ *   vi.mock('@/_reporting/reportError', async () => await import('#mocks/@/_reporting/reportError'));
  *
  * Assert with `expect(reportError).toHaveBeenCalledWith(error)` for an unexpected failure, and
  * `expect(reportError).not.toHaveBeenCalled()` for an expected one.

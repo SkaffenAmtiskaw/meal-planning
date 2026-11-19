@@ -2,14 +2,14 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { makeRefusedSend } from '#fixtures/resend';
 import { mockSend } from '#mocks/resend';
-import { reportError } from '@/_utils/reportError';
+import { reportError } from '@/_reporting/reportError';
 
 import { sendInviteEmail } from './sendInviteEmail';
 
 vi.mock('resend', async () => await import('#mocks/resend'));
 vi.mock(
-	'@/_utils/reportError',
-	async () => await import('#mocks/@/_utils/reportError'),
+	'@/_reporting/reportError',
+	async () => await import('#mocks/@/_reporting/reportError'),
 );
 
 const MOCK_EMAIL = 'invite@example.com';

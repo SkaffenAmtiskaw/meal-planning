@@ -6,7 +6,7 @@ import { useState } from 'react';
 import { Alert, Button, Stack, Text, TextInput } from '@mantine/core';
 
 import { deleteAccount } from '@/_actions/user';
-import { client } from '@/_utils/auth';
+import { client } from '@/_auth/client';
 
 export const DeleteAccountForm = () => {
 	const router = useRouter();
