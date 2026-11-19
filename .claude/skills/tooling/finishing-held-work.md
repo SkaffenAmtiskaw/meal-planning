@@ -6,5 +6,5 @@ A PR labelled `notes-pending` merged before its session did the held notes work,
    - **It has no `notes-pending` label:** tell the user its held notes work is already done, and stop.
    - **Otherwise:** go on.
 2. **Do the work:** do each piece the body's "Held until the merge" list names, deleting a note as the `deleting-a-note` skill describes, and removing a Now line as step 4 of that skill describes.
-3. **Take the label off:** run `gh pr edit <number> --remove-label notes-pending`, so the next session start's sweep removes the PR's worktree.
+3. **Take the label off:** run `gh pr edit <number> --remove-label notes-pending`, so `held-notes-check.sh` stops naming the PR.
 4. **Report:** list each piece and what you did with it, then stop.

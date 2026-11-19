@@ -91,7 +91,13 @@ Handle the out-of-scope list now, before step 7 deletes the note and step 8 dele
 ## 8. Delete Unused Files
 Delete the files nothing references anymore, as the `deleting-a-note` skill describes in step 6.
 
-## 9. Report and Stop
+## 9. Remove a Hotfix's Worktree
+A hotfix's worktree was made with git, not by the desktop app, so archiving its session doesn't remove it. The story's branch is the head branch of the PR step 1 checked, from `gh pr view <number> --json headRefName`. If it doesn't start with `hotfix/`, or the story has no PR, skip this step. Otherwise, run `git worktree list` and `list_sessions`, and go by what they show for that branch:
+- **No worktree on that branch:** there's nothing to remove.
+- **A session in `list_sessions` has the worktree as its `cwd`:** that session may still be working there, so leave the worktree. Tell the user to archive the session, then ask any session to run `git worktree remove <path>` and `git branch -D <branch>`.
+- **Otherwise:** run `git worktree remove <path>`, then `git branch -D <branch>`. If git refuses because the worktree has uncommitted changes, tell the user, and leave it.
+
+## 10. Report and Stop
 Report these to the user:
 - whether the note was kept, and for which stories, or deleted
 - each mechanical edit, grouped by note
@@ -99,5 +105,6 @@ Report these to the user:
 - the stories that were unblocked, and where their Roadmap lines went
 - each goal whose line under Goals now names `/finish-goal` or `/ship-goal`
 - the follow-ups: each note that needs `/close` in a new session, why, and where its Roadmap line went
+- for a hotfix, whether its worktree and branch were removed, and if not, why
 
 Stop there, and don't start on any other note. A session that has worked through one note's references has too little room left to work another one well.
