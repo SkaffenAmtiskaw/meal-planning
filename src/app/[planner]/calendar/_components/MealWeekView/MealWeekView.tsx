@@ -33,21 +33,10 @@ export function MealWeekView({
 		[calendar, savedItems],
 	);
 
-	const { weekMeals, mealMap } = useMemo(() => {
-		const weekMeals: WeekViewMeal[] = meals.map((meal) => ({
-			id: meal.id,
-			date: meal.date,
-			name: meal.name,
-			description: meal.description,
-		}));
-
-		const mealMap = new Map<string, CalendarMeal>();
-		for (const meal of meals) {
-			mealMap.set(meal.id, meal);
-		}
-
-		return { weekMeals, mealMap };
-	}, [meals]);
+	const mealMap = useMemo(
+		() => new Map(meals.map((meal) => [meal.id, meal])),
+		[meals],
+	);
 
 	const handleMealClick = useCallback(
 		(meal: WeekViewMeal) => {
@@ -82,7 +71,7 @@ export function MealWeekView({
 
 	return (
 		<WeekView
-			meals={weekMeals}
+			meals={meals}
 			renderMeal={renderMeal}
 			onMealClick={handleMealClick}
 		/>

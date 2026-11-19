@@ -79,43 +79,8 @@ describe('MealCalendar', () => {
 		render(<MealCalendar calendar={mockCalendar} />);
 
 		expect(toCalendarMeals).toHaveBeenCalledWith(mockCalendar, undefined);
-		expect(MonthGrid).toHaveBeenCalled();
-
 		const monthGridCall = vi.mocked(MonthGrid).mock.calls[0][0];
-		expect(monthGridCall.meals).toEqual([
-			{
-				id: 'meal-1',
-				date: '2024-01-15',
-				name: 'Breakfast',
-				description: undefined,
-			},
-		]);
-	});
-
-	it('maps CalendarMeal date and name to MonthGridMeal date and name', () => {
-		const meals: CalendarMeal[] = [
-			{
-				id: 'meal-1',
-				date: '2024-06-01',
-				name: 'Lunch',
-				description: 'Test description',
-				borderColor: '#000',
-				dishes: [],
-			},
-		];
-		vi.mocked(toCalendarMeals).mockReturnValue(meals);
-
-		render(<MealCalendar calendar={mockCalendar} />);
-
-		const monthGridCall = vi.mocked(MonthGrid).mock.calls[0][0];
-		expect(monthGridCall.meals).toEqual([
-			{
-				id: 'meal-1',
-				date: '2024-06-01',
-				name: 'Lunch',
-				description: 'Test description',
-			},
-		]);
+		expect(monthGridCall.meals).toBe(mockCalendarMeals);
 	});
 
 	it('renders MonthMealCard via renderMeal prop', () => {

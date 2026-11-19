@@ -85,17 +85,8 @@ describe('MealWeekView', () => {
 		render(<MealWeekView calendar={mockCalendar} plannerId="planner-1" />);
 
 		expect(toCalendarMeals).toHaveBeenCalledWith(mockCalendar, undefined);
-		expect(WeekView).toHaveBeenCalled();
-
 		const weekViewCall = vi.mocked(WeekView).mock.calls[0][0];
-		expect(weekViewCall.meals).toEqual([
-			{
-				id: 'meal-1',
-				date: '2024-01-15',
-				name: 'Breakfast',
-				description: undefined,
-			},
-		]);
+		expect(weekViewCall.meals).toBe(mockCalendarMeals);
 	});
 
 	it('passes savedItems to toCalendarMeals', () => {

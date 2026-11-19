@@ -3,13 +3,11 @@ import { Paper, Text } from '@mantine/core';
 import { getMealColor, TAG_COLORS } from '@/_theme/colors';
 import focusClasses from '@/_theme/focus.module.css';
 
+import type { MonthGridMeal } from '../Calendar';
+
 interface MonthMealCardProps {
-	meal: {
-		id: string;
-		name: string;
-		description?: string;
-	};
-	onClick?: (meal: { id: string; name: string; description?: string }) => void;
+	meal: MonthGridMeal;
+	onClick?: () => void;
 	tabIndex?: number;
 	ref?: React.Ref<HTMLButtonElement>;
 }
@@ -39,7 +37,7 @@ export function MonthMealCard({
 				border: `1px solid ${border}`,
 				cursor: 'pointer',
 			}}
-			onClick={() => onClick?.(meal)}
+			onClick={onClick}
 		>
 			<Text fw={700} size="sm" truncate="end" c={text}>
 				{meal.name}

@@ -27,21 +27,10 @@ export function MealCalendar({
 		[calendar, savedItems],
 	);
 
-	const { monthGridMeals, mealMap } = useMemo(() => {
-		const monthGridMeals: MonthGridMeal[] = meals.map((meal) => ({
-			id: meal.id,
-			date: meal.date,
-			name: meal.name,
-			description: meal.description,
-		}));
-
-		const mealMap = new Map<string, CalendarMeal>();
-		for (const meal of meals) {
-			mealMap.set(meal.id, meal);
-		}
-
-		return { monthGridMeals, mealMap };
-	}, [meals]);
+	const mealMap = useMemo(
+		() => new Map(meals.map((meal) => [meal.id, meal])),
+		[meals],
+	);
 
 	const handleMealClick = useCallback(
 		(meal: MonthGridMeal) => {
@@ -77,7 +66,7 @@ export function MealCalendar({
 
 	return (
 		<MonthGrid
-			meals={monthGridMeals}
+			meals={meals}
 			renderMeal={renderMeal}
 			onMealClick={handleMealClick}
 		/>
