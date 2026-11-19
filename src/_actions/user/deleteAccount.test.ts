@@ -1,8 +1,8 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import { auth } from '@/_auth';
-import { sendAccountDeletionEmail } from '@/_auth/emails';
 import { deleteAuthUser } from '@/_auth/users';
+import { sendAccountDeletionEmail } from '@/_email';
 import { planners } from '@/_models/database/planners';
 import { users } from '@/_models/database/users';
 
@@ -30,7 +30,7 @@ vi.mock('@/_auth', () => ({
 
 vi.mock('@/_auth/users', async () => await import('#mocks/@/_auth/users'));
 
-vi.mock('@/_auth/emails', () => ({
+vi.mock('@/_email', () => ({
 	sendAccountDeletionEmail: vi.fn(),
 }));
 

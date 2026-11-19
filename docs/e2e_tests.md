@@ -197,7 +197,7 @@ The test code reads these through `@/env` too, so the tests and the app get the 
 One variable outside `src/env.ts` gets an E2E value too: `RESEND_BASE_URL`, the fake Resend API's URL, which Playwright sets the way it sets `DB_URL`. Setting it sends the app's emails to the fake with no test-only code, so no E2E run sends a real email.
 
 > [!NOTE]
-> The email senders in `src/_auth/emails/` create their Resend client without a `baseUrl`, so the Resend SDK reads `RESEND_BASE_URL` from `process.env` on its own. The email helpers read the variable from `process.env` too, since `@/env` doesn't have it. Resend's docs don't mention the variable. If an SDK upgrade stops reading it, `latestEmailTo` fails with "No email reached ‹address›".
+> The email senders in `src/_email/` create their Resend client without a `baseUrl`, so the Resend SDK reads `RESEND_BASE_URL` from `process.env` on its own. The email helpers read the variable from `process.env` too, since `@/env` doesn't have it. Resend's docs don't mention the variable. If an SDK upgrade stops reading it, `latestEmailTo` fails with "No email reached ‹address›".
 
 When you add a variable to `src/env.ts`, add an E2E value for it to `playwright.config.ts`. Where else it needs a value, such as CI, `test/mocks/env.ts` and Vercel, depends on whether the schema requires it, as `docs/ci.md`, "The App's Variables", describes. Add its row to the table in `docs/services.md`, "The Environments", which records where each variable's values live.
 

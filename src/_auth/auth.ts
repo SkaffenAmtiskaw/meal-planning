@@ -2,10 +2,9 @@ import { betterAuth } from 'better-auth';
 import { mongodbAdapter } from 'better-auth/adapters/mongodb';
 import { admin, oneTap } from 'better-auth/plugins';
 
+import { sendResetPasswordEmail, sendVerificationEmail } from '@/_email';
 import { rawDatabase } from '@/_models/database/connection';
 import { env } from '@/env';
-
-import { sendResetPasswordEmail, sendVerificationEmail } from './emails';
 
 export const auth = betterAuth({
 	database: mongodbAdapter(rawDatabase),
