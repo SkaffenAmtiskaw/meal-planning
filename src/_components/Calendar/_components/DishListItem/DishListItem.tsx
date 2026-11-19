@@ -7,7 +7,7 @@ import { IconExternalLink } from '@tabler/icons-react';
 
 import styles from './DishListItem.module.css';
 
-import type { CalendarDish } from '../../_types/CalendarMeal.types';
+import type { CalendarDish } from '../../types';
 
 interface DishListItemProps {
 	dish: CalendarDish;

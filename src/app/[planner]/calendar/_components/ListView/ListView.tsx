@@ -7,7 +7,7 @@ import { Box } from '@mantine/core';
 import { DateTime } from 'luxon';
 
 import { type CalendarMeal, useCalendarContext } from '@/_components/Calendar';
-import type { MealCardProps } from '@/_components/Calendar/MealCard/MealCard.types';
+import type { MealCardProps } from '@/_components/Calendar/MealCard/types';
 
 import styles from './ListView.module.css';
 

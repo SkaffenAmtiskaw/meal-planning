@@ -3,9 +3,9 @@ import 'temporal-polyfill/global';
 import type { DayInterface } from '@/_models/types';
 
 import { resolveDishSource } from './resolveDishSource';
-import type { ResolvedDish } from './resolveDishSource.types';
+import type { ResolvedDish } from './types';
 
-import type { SavedItem } from '../_types/savedItem';
+import type { SavedItem } from '../types';
 
 export type MealEvent = {
 	id: string;

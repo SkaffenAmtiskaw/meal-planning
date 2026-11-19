@@ -1,6 +1,6 @@
 import { useState } from 'react';
 
-import type { DishState } from './useDishes.types';
+import type { DishState } from './types';
 
 const makeDish = (): DishState => ({
 	id: crypto.randomUUID(),

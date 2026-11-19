@@ -1,2 +1,2 @@
+export * from './types';
 export * from './useFormFeedback';
-export * from './useFormFeedback.types';

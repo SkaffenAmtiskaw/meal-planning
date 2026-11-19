@@ -2,11 +2,11 @@ import type { ReactElement } from 'react';
 
 import { Box, Stack, Text } from '@mantine/core';
 
-import type { MealCardProps } from './MealCard.types';
+import type { MealCardProps } from './types';
 import styles from './MealCard.module.css';
 
+import type { CalendarDish } from '../types';
 import { DishListItem } from '../_components/DishListItem/DishListItem';
-import type { CalendarDish } from '../_types/CalendarMeal.types';
 
 export function MealCard({
 	event,

@@ -6,7 +6,7 @@ import { useDisclosure } from '@mantine/hooks';
 
 import { ConfirmModal } from '@/_components';
 import { useAsyncStatus } from '@/_hooks';
-import type { ActionResult } from '@/_utils/actionResult/ActionResult';
+import type { ActionResult } from '@/_utils/actionResult/types';
 
 interface ConfirmButtonProps {
 	onConfirm: () => Promise<ActionResult>;

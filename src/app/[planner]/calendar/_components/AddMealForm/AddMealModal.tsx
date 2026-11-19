@@ -6,7 +6,7 @@ import { useState } from 'react';
 import { Modal, Stack, Text } from '@mantine/core';
 
 import { AddMealForm } from './AddMealForm';
-import type { AddMealModalProps } from './AddMealModal.types';
+import type { AddMealModalProps } from './types';
 import classes from './AddMealModal.module.css';
 
 export function AddMealModal({ data, close, plannerId }: AddMealModalProps) {

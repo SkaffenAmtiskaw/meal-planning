@@ -8,9 +8,9 @@ import type { DayInterface } from '@/_models/types';
 import { MealCalendar } from './MealCalendar';
 import { MealEventCard } from './MealEventCard';
 
-import type { SavedItem } from '../../_types/savedItem';
 import { toCalendarEvents } from '../../_utils/toCalendarEvents';
-import type { CalendarEvent } from '../../_utils/toCalendarEvents.types';
+import type { CalendarEvent } from '../../_utils/types';
+import type { SavedItem } from '../../types';
 
 vi.mock('@/_components/Calendar', async () => ({
 	MonthGrid: vi.fn(({ meals, renderMeal }) => (

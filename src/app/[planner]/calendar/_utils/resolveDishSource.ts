@@ -1,8 +1,8 @@
 import type { DishInterface } from '@/_models/types';
 
-import type { ResolvedDish } from './resolveDishSource.types';
+import type { ResolvedDish } from './types';
 
-import type { SavedItem } from '../_types/savedItem';
+import type { SavedItem } from '../types';
 
 export const resolveDishSource = (
 	dish: DishInterface,

@@ -24,7 +24,7 @@ import type { DayInterface } from '@/_models/types';
 import { DishList } from './DishList';
 import { MealFields } from './MealFields';
 import { useDishes } from './useDishes';
-import type { MealFormValues } from './AddMealForm.types';
+import type { MealFormValues } from './types';
 import classes from './AddMealForm.module.css';
 
 const zFormFields = z.object({

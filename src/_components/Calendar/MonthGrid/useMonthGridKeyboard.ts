@@ -2,8 +2,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 
 import { DateTime } from 'luxon';
 
-import type { MonthGridMeal } from './MonthGrid.types';
-import type { MealKeyboardProps } from './useMonthGridKeyboard.types';
+import type { MealKeyboardProps, MonthGridMeal } from './types';
 
 import { useRovingGridFocus } from '../_hooks/useRovingGridFocus';
 

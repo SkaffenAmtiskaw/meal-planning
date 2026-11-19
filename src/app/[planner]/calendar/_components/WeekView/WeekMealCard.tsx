@@ -9,10 +9,10 @@ import { getMealColor, TAG_COLORS } from '@/_theme/colors';
 
 import styles from './WeekView.module.css';
 
-import type { SavedItem } from '../../_types/savedItem';
 import { resolveDishSource } from '../../_utils/resolveDishSource';
-import type { ResolvedDish } from '../../_utils/resolveDishSource.types';
 import type { MealEvent } from '../../_utils/toScheduleXEvents';
+import type { ResolvedDish } from '../../_utils/types';
+import type { SavedItem } from '../../types';
 
 type Props = {
 	meal: MealInterface;

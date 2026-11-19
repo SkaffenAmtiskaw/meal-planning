@@ -1,4 +1,4 @@
-import type { AddMealModalProps } from '../AddMealForm/AddMealModal.types';
+import type { AddMealModalProps } from '../AddMealForm/types';
 
 export interface CalendarModalData {
 	add_meal: AddMealModalProps['data'];

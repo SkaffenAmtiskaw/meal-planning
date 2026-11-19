@@ -1,4 +1,7 @@
-import type { MealKeyboardProps } from './useMonthGridKeyboard.types';
+export interface MealKeyboardProps {
+	tabIndex: 0 | -1;
+	ref: React.RefCallback<HTMLElement>;
+}
 
 export interface MonthGridMeal {
 	id: string;

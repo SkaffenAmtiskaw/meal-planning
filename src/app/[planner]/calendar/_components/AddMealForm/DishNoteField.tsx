@@ -4,7 +4,7 @@ import { forwardRef } from 'react';
 
 import { Stack, Textarea } from '@mantine/core';
 
-import type { DishState } from './useDishes.types';
+import type { DishState } from './types';
 import classes from './DishRow.module.css';
 
 type Props = {

@@ -6,11 +6,8 @@ import type { ReactNode } from 'react';
 import { DateTime } from 'luxon';
 
 import { useCalendarContext } from '@/_components/Calendar';
-import type {
-	CalendarDish,
-	CalendarMeal,
-} from '@/_components/Calendar/_types/CalendarMeal.types';
 import { MealCard } from '@/_components/Calendar/MealCard/MealCard';
+import type { CalendarDish, CalendarMeal } from '@/_components/Calendar/types';
 
 import { MobileAgenda } from './MobileAgenda';
 

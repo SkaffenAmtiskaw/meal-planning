@@ -1,10 +1,10 @@
 import { act, renderHook } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-import type { ActionResult } from '@/_utils/actionResult/ActionResult';
+import type { ActionResult } from '@/_utils/actionResult/types';
 
 import { useAsyncStatus } from './useAsyncStatus';
-import type { AsyncStatus } from './useAsyncStatus.types';
+import type { AsyncStatus } from './types';
 
 const mockCatchify = vi.fn();
 

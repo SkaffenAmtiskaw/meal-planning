@@ -10,6 +10,6 @@ export * from './PillButton';
 export * from './StringArrayInput';
 export * from './SubmitButton';
 export * from './TagCombobox';
-export * from './TagCombobox.types';
+export * from './types';
 
 export * from './Tag/Tag';

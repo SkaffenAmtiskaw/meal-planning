@@ -3,7 +3,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { getMealColor, TAG_COLORS } from '@/_theme/colors';
 
 import { toCalendarMeals } from './toCalendarMeals';
-import type { CalendarEvent } from './toCalendarEvents.types';
+import type { CalendarEvent } from './types';
 
 vi.mock('@/_theme/colors', async (importOriginal) => {
 	const actual = await importOriginal<typeof import('@/_theme/colors')>();

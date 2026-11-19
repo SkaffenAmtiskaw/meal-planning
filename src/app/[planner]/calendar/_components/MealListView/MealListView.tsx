@@ -7,9 +7,9 @@ import type { CalendarDish, CalendarMeal } from '@/_components/Calendar';
 import { useIsMobile } from '@/_hooks';
 import type { DayInterface } from '@/_models/types';
 
-import type { SavedItem } from '../../_types/savedItem';
 import { toCalendarEvents } from '../../_utils/toCalendarEvents';
 import { toCalendarMeals } from '../../_utils/toCalendarMeals';
+import type { SavedItem } from '../../types';
 import { DishLink } from '../DishLink/DishLink';
 import { ListView } from '../ListView/ListView';
 import { MobileListViewPlaceholder } from '../MobileListViewPlaceholder/MobileListViewPlaceholder';

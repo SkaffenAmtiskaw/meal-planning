@@ -5,7 +5,7 @@ import { Box, Paper, Text } from '@mantine/core';
 import { getMealColor, TAG_COLORS } from '@/_theme/colors';
 import focusClasses from '@/_theme/focus.module.css';
 
-import type { CalendarEvent } from '../../_utils/toCalendarEvents.types';
+import type { CalendarEvent } from '../../_utils/types';
 import { DishLink } from '../DishLink/DishLink';
 
 interface WeekMealCardProps {

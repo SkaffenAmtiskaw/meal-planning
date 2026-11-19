@@ -7,7 +7,7 @@ import { getMealColor } from '@/_theme/colors';
 
 import { WeekMealCard } from './WeekMealCard';
 
-import type { CalendarEvent } from '../../_utils/toCalendarEvents.types';
+import type { CalendarEvent } from '../../_utils/types';
 import { DishLink } from '../DishLink/DishLink';
 
 vi.mock('@mantine/core', async () => await import('#mocks/@mantine/core'));

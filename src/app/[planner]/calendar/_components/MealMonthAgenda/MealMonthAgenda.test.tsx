@@ -8,15 +8,15 @@ import { DateTime } from 'luxon';
 import type { CalendarDish, CalendarMeal } from '@/_components/Calendar';
 import { useCalendarContext } from '@/_components/Calendar';
 import { MobileAgenda } from '@/_components/Calendar/MobileAgenda/MobileAgenda';
-import type { MobileAgendaProps } from '@/_components/Calendar/MobileAgenda/MobileAgenda.types';
+import type { MobileAgendaProps } from '@/_components/Calendar/MobileAgenda/types';
 import { MobileMonthGrid } from '@/_components/Calendar/MobileMonthGrid/MobileMonthGrid';
-import type { MobileMonthGridEvent } from '@/_components/Calendar/MobileMonthGrid/MobileMonthGrid.types';
+import type { MobileMonthGridEvent } from '@/_components/Calendar/MobileMonthGrid/types';
 import type { DayInterface } from '@/_models/types';
 import { getMealColor, TAG_COLORS } from '@/_theme/colors';
 
 import { MealMonthAgenda } from './MealMonthAgenda';
 
-import type { SavedItem } from '../../_types/savedItem';
+import type { SavedItem } from '../../types';
 import { DishLink } from '../DishLink/DishLink';
 
 vi.mock('@mantine/core', async () => await import('#mocks/@mantine/core'));

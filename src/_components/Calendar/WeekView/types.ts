@@ -1,6 +1,9 @@
 import type { ReactNode } from 'react';
 
-import type { MealKeyboardProps } from './useWeekViewKeyboard.types';
+export interface MealKeyboardProps {
+	tabIndex: 0 | -1;
+	ref: React.RefCallback<HTMLElement>;
+}
 
 export interface WeekViewMeal {
 	id: string;

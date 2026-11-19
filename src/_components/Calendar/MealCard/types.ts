@@ -1,6 +1,6 @@
 import type { ReactNode } from 'react';
 
-import type { CalendarDish, CalendarMeal } from '../_types/CalendarMeal.types';
+import type { CalendarDish, CalendarMeal } from '../types';
 
 export interface MealCardProps {
 	event: CalendarMeal;

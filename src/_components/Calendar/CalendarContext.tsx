@@ -2,7 +2,7 @@
 
 import { createContext, useContext } from 'react';
 
-import type { CalendarContextValue } from './CalendarContext.types';
+import type { CalendarContextValue } from './types';
 
 // Context object
 export const CalendarContext = createContext<CalendarContextValue | undefined>(

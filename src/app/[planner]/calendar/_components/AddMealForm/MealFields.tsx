@@ -1,7 +1,7 @@
 import { Card, Stack, Text, Textarea, TextInput } from '@mantine/core';
 import type { UseFormReturnType } from '@mantine/form';
 
-import type { MealFormValues } from './AddMealForm.types';
+import type { MealFormValues } from './types';
 
 type MealFieldsProps = {
 	form: Pick<UseFormReturnType<MealFormValues>, 'key' | 'getInputProps'>;

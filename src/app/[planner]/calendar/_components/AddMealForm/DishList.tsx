@@ -4,7 +4,7 @@ import { Button, Group, Stack, Text, UnstyledButton } from '@mantine/core';
 import { IconPlus } from '@tabler/icons-react';
 
 import { DishRow } from './DishRow';
-import type { DishState } from './useDishes.types';
+import type { DishState } from './types';
 import classes from './DishList.module.css';
 
 type DishListProps = {

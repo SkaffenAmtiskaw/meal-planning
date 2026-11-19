@@ -13,7 +13,7 @@ import { useCalendarContext } from '@/_components/Calendar/CalendarContext';
 import type {
 	CalendarContextValue,
 	CalendarViewType,
-} from '@/_components/Calendar/CalendarContext.types';
+} from '@/_components/Calendar/types';
 import { AddMealButton } from '@/app/[planner]/calendar/_components/AddMealButton';
 
 import { CalendarHeaderDesktop, CalendarHeaderMobile } from './CalendarHeader';

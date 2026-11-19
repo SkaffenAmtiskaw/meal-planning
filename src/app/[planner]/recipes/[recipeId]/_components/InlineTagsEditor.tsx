@@ -10,7 +10,7 @@ import { updateRecipeTags } from '@/_actions/library';
 import type { TagOption } from '@/_components';
 import { Tag, TagCombobox } from '@/_components';
 import { useEditMode } from '@/_hooks/useEditMode';
-import type { TagColor } from '@/_theme/colors.types';
+import type { TagColor } from '@/_theme/types';
 import { catchify } from '@/_utils/catchify';
 
 type Props = {

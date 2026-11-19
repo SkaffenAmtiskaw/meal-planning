@@ -7,7 +7,7 @@ import { IconBook, IconCalendarWeek } from '@tabler/icons-react';
 import { NavLink } from '@/_components/NavLink';
 
 import { PlannerContextSection } from './PlannerContextSection';
-import type { PlannerItem } from './PlannerContextSection.types';
+import type { PlannerItem } from './types';
 
 type Props = {
 	id: string;

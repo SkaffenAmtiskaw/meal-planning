@@ -17,7 +17,7 @@ import { DateTime } from 'luxon';
 import focusClasses from '@/_theme/focus.module.css';
 
 import { useMonthGridKeyboard } from './useMonthGridKeyboard';
-import type { MonthGridMeal, MonthGridProps } from './MonthGrid.types';
+import type { MonthGridMeal, MonthGridProps } from './types';
 
 import { useCalendarContext } from '../CalendarContext';
 import { getMonthGridDates } from '../_utils/getMonthGridDates';

@@ -8,9 +8,9 @@ import { getMealColor, TAG_COLORS } from '@/_theme/colors';
 
 import { MealListView } from './MealListView';
 
-import type { SavedItem } from '../../_types/savedItem';
 import { toCalendarEvents } from '../../_utils/toCalendarEvents';
-import type { CalendarEvent } from '../../_utils/toCalendarEvents.types';
+import type { CalendarEvent } from '../../_utils/types';
+import type { SavedItem } from '../../types';
 import { DishLink } from '../DishLink/DishLink';
 
 vi.mock('@mantine/core', async () => await import('#mocks/@mantine/core'));

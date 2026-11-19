@@ -5,7 +5,7 @@ import { planners } from '@/_models/database/planners';
 import { users } from '@/_models/database/users';
 import { reportError } from '@/_utils/reportError';
 
-import type { UserInvite } from './getUserInvites.types';
+import type { UserInvite } from './types';
 
 interface GetUserInvitesResult {
 	invites: UserInvite[];

@@ -11,9 +11,9 @@ import type { DayInterface } from '@/_models/types';
 
 import { WeekMealCard } from './WeekMealCard';
 
-import type { SavedItem } from '../../_types/savedItem';
 import { toCalendarEvents } from '../../_utils/toCalendarEvents';
-import type { CalendarEvent } from '../../_utils/toCalendarEvents.types';
+import type { CalendarEvent } from '../../_utils/types';
+import type { SavedItem } from '../../types';
 
 interface MealWeekViewProps {
 	calendar: DayInterface[];

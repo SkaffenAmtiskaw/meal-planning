@@ -1,1 +1,1 @@
-export * from './ActionResult';
+export * from './types';

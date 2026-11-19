@@ -1,7 +1,7 @@
 'use client';
 
 import { BaseDishChip } from './BaseDishChip';
-import type { SourceType } from './useDishes.types';
+import type { SourceType } from './types';
 import classes from './DishSourceChip.module.css';
 
 type DishSourceChipProps = {

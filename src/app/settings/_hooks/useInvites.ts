@@ -10,7 +10,7 @@ import {
 } from '@/_actions/sharing';
 import type { AccessLevel } from '@/_models/types';
 
-import type { InviteStatus, UseInvitesResult } from './useInvites.types';
+import type { InviteStatus, UseInvitesResult } from './types';
 
 export const useInvites = (plannerId: string): UseInvitesResult => {
 	const [invites, setInvites] = useState<PendingInvite[]>([]);

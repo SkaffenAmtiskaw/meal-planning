@@ -2,7 +2,7 @@ import { forwardRef } from 'react';
 
 import { UnstyledButton } from '@mantine/core';
 
-import type { PillButtonProps } from './PillButton.types';
+import type { PillButtonProps } from './types';
 import classes from './PillButton.module.css';
 
 export const PillButton = forwardRef<HTMLButtonElement, PillButtonProps>(

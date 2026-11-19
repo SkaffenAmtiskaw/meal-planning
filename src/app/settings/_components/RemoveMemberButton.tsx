@@ -3,7 +3,7 @@ import { IconTrash } from '@tabler/icons-react';
 
 import { removeMember } from '@/_actions/sharing';
 import { ConfirmButton } from '@/_components';
-import type { ActionResult } from '@/_utils/actionResult/ActionResult';
+import type { ActionResult } from '@/_utils/actionResult/types';
 
 interface RemoveMemberButtonProps {
 	plannerId: string;

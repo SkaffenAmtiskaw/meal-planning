@@ -9,7 +9,7 @@ import { DateTime } from 'luxon';
 import focusClasses from '@/_theme/focus.module.css';
 
 import { useWeekViewKeyboard } from './useWeekViewKeyboard';
-import type { WeekViewMeal, WeekViewProps } from './WeekView.types';
+import type { WeekViewMeal, WeekViewProps } from './types';
 import styles from './WeekView.module.css';
 
 import { useCalendarContext } from '../CalendarContext';

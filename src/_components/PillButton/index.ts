@@ -1,2 +1,2 @@
 export { PillButton } from './PillButton';
-export type { PillButtonProps } from './PillButton.types';
+export type { PillButtonProps } from './types';

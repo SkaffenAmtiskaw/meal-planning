@@ -10,7 +10,7 @@ import { DateTime } from 'luxon';
 import { useCalendarContext } from '@/_components/Calendar';
 import { MealCard } from '@/_components/Calendar/MealCard/MealCard';
 
-import type { MobileAgendaProps } from './MobileAgenda.types';
+import type { MobileAgendaProps } from './types';
 import styles from './MobileAgenda.module.css';
 
 export function MobileAgenda({

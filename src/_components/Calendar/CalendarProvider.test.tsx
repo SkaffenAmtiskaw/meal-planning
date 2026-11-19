@@ -10,7 +10,7 @@ import {
 	CalendarProvider,
 	type CalendarProviderProps,
 } from './CalendarProvider';
-import type { CalendarViewType } from './CalendarContext.types';
+import type { CalendarViewType } from './types';
 
 // Wrapper component to capture context updates
 function createTestWrapper(

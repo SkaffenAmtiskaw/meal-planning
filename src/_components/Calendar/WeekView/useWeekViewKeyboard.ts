@@ -2,8 +2,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 
 import { DateTime } from 'luxon';
 
-import type { MealKeyboardProps } from './useWeekViewKeyboard.types';
-import type { WeekViewMeal } from './WeekView.types';
+import type { MealKeyboardProps, WeekViewMeal } from './types';
 
 interface UseWeekViewKeyboardOptions {
 	days: DateTime[];

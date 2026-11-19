@@ -6,10 +6,10 @@ import { Combobox, Pill, PillsInput, Text, useCombobox } from '@mantine/core';
 
 import { addTag } from '@/_actions/library';
 import { TAG_COLORS } from '@/_theme/colors';
-import type { TagColor } from '@/_theme/colors.types';
+import type { TagColor } from '@/_theme/types';
 import { catchify } from '@/_utils/catchify';
 
-import type { TagOption } from './TagCombobox.types';
+import type { TagOption } from './types';
 
 interface Props {
 	plannerId: string;

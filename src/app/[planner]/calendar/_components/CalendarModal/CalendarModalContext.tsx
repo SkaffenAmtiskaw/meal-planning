@@ -6,7 +6,7 @@ import type {
 	CalendarModalData,
 	CalendarModalState,
 	CalendarModalType,
-} from './CalendarModalContext.types';
+} from './types';
 
 export interface CalendarModalContextValue {
 	state: CalendarModalState;

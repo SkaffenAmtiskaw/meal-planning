@@ -8,7 +8,7 @@ import type {
 	RecipeInterface,
 	TagInterface,
 } from '@/_models/types';
-import type { TagColor } from '@/_theme/colors.types';
+import type { TagColor } from '@/_theme/types';
 
 import { DeleteBookmarkButton } from './DeleteBookmarkButton';
 import { DeleteRecipeButton } from './DeleteRecipeButton';

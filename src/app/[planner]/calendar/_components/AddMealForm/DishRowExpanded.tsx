@@ -6,7 +6,7 @@ import { SimpleGrid, Stack } from '@mantine/core';
 
 import { DishNoteField } from './DishNoteField';
 import { DishSourceFields } from './DishSourceFields';
-import type { DishState } from './useDishes.types';
+import type { DishState } from './types';
 import classes from './DishRow.module.css';
 
 type Props = {

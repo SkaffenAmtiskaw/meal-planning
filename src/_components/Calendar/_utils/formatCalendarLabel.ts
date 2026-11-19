@@ -2,7 +2,7 @@ import type { DateTime } from 'luxon';
 
 import { formatWeekRange } from './formatWeekRange';
 
-import type { CalendarViewType } from '../CalendarContext.types';
+import type { CalendarViewType } from '../types';
 
 export const VIEW_LABELS: Record<CalendarViewType, string> = {
 	list: 'List',

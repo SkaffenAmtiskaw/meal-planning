@@ -14,7 +14,7 @@ import { IconClock, IconX } from '@tabler/icons-react';
 import type { PendingInvite } from '@/_actions/sharing';
 import { isPastDate, isWithinHours, toLocaleDateString } from '@/_utils/date';
 
-import type { InviteStatus } from '../_hooks/useInvites.types';
+import type { InviteStatus } from '../_hooks/types';
 import { getAccessLevelColor } from '../_utils/getAccessLevelColor';
 
 interface PendingInvitesListProps {

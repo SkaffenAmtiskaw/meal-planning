@@ -7,7 +7,7 @@ import { Badge, Box, Flex, rgba, Stack, Text } from '@mantine/core';
 import type { DateTime } from 'luxon';
 
 import type { CalendarMeal } from '@/_components/Calendar';
-import type { MealCardProps } from '@/_components/Calendar/MealCard/MealCard.types';
+import type { MealCardProps } from '@/_components/Calendar/MealCard/types';
 import { useCanWrite } from '@/app/[planner]/_components';
 
 import { ListViewAddMealTrigger } from './ListViewAddMealTrigger';

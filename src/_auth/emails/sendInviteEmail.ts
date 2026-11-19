@@ -3,7 +3,7 @@ import { Resend } from 'resend';
 import { reportError } from '@/_utils/reportError';
 import { env } from '@/env';
 
-import type { InviteEmailType } from './sendInviteEmail.types';
+import type { InviteEmailType } from './types';
 
 import { resendError } from './_utils/resendError';
 

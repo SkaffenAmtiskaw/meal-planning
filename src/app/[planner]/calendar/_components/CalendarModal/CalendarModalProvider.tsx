@@ -11,10 +11,10 @@ import type {
 	CalendarModalData,
 	CalendarModalState,
 	CalendarModalType,
-} from './CalendarModalContext.types';
+} from './types';
 
 import { AddMealModal } from '../AddMealForm/AddMealModal';
-import type { AddMealModalProps } from '../AddMealForm/AddMealModal.types';
+import type { AddMealModalProps } from '../AddMealForm/types';
 
 interface CalendarModalProviderProps {
 	plannerId: string;

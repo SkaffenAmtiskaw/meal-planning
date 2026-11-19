@@ -4,7 +4,7 @@ import type { DishInterface } from '@/_models/types';
 
 import { resolveDishSource } from './resolveDishSource';
 
-import type { SavedItem } from '../_types/savedItem';
+import type { SavedItem } from '../types';
 
 describe('resolveDishSource', () => {
 	const makeMap = (items: SavedItem[]) =>

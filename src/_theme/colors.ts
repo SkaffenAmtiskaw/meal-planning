@@ -1,4 +1,4 @@
-import type { TagColor } from './colors.types';
+import type { TagColor } from './types';
 
 export const TAG_COLORS: Record<
 	TagColor,

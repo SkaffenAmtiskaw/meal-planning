@@ -4,7 +4,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import type { ActionResult } from '@/_utils/actionResult';
 
-import type { Status } from './useFormFeedback.types';
+import type { Status } from './types';
 
 import { useAsyncStatus } from '../useAsyncStatus';
 

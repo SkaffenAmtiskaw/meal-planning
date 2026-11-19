@@ -3,7 +3,7 @@ import type { ReactElement } from 'react';
 import { Box, Flex } from '@mantine/core';
 
 import { MealCard } from '@/_components/Calendar/MealCard/MealCard';
-import type { MealCardProps } from '@/_components/Calendar/MealCard/MealCard.types';
+import type { MealCardProps } from '@/_components/Calendar/MealCard/types';
 
 import styles from './MealCardWithDragHandle.module.css';
 

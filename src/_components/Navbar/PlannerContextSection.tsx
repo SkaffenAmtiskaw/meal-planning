@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { NavLink as MantineNavLink, Menu } from '@mantine/core';
 import { IconChevronDown } from '@tabler/icons-react';
 
-import type { PlannerItem } from './PlannerContextSection.types';
+import type { PlannerItem } from './types';
 import styles from './PlannerContextSection.module.css';
 
 type Props = {

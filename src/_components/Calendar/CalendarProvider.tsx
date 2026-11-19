@@ -6,7 +6,7 @@ import type { DurationLike } from 'luxon';
 import { DateTime } from 'luxon';
 
 import { CalendarContext } from './CalendarContext';
-import type { CalendarViewType } from './CalendarContext.types';
+import type { CalendarViewType } from './types';
 
 const NAVIGATION_STEPS: Record<CalendarViewType, DurationLike> = {
 	month: { months: 1 },
