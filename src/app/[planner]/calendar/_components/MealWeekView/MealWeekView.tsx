@@ -6,16 +6,20 @@ import type { DayInterface } from '@/_models/types';
 
 import { WeekMealCard } from './WeekMealCard';
 
-import { WeekView, type WeekViewMeal, type WeekViewProps } from '../Calendar';
-import { toCalendarEvents } from '../../_utils/toCalendarEvents';
-import type { CalendarEvent } from '../../_utils/types';
+import {
+	type CalendarMeal,
+	WeekView,
+	type WeekViewMeal,
+	type WeekViewProps,
+} from '../Calendar';
+import { toCalendarMeals } from '../../_utils/toCalendarMeals';
 import type { SavedItem } from '../../types';
 
 interface MealWeekViewProps {
 	calendar: DayInterface[];
 	savedItems?: SavedItem[];
 	plannerId: string;
-	onMealClick?: (meal: CalendarEvent) => void;
+	onMealClick?: (meal: CalendarMeal) => void;
 }
 
 export function MealWeekView({
@@ -25,31 +29,20 @@ export function MealWeekView({
 	onMealClick,
 }: MealWeekViewProps) {
 	const meals = useMemo(
-		() => toCalendarEvents(calendar, savedItems),
+		() => toCalendarMeals(calendar, savedItems),
 		[calendar, savedItems],
 	);
 
-	const { weekMeals, mealMap } = useMemo(() => {
-		const weekMeals: WeekViewMeal[] = meals.map((meal) => ({
-			id: meal.id,
-			date: meal.start,
-			title: meal.title,
-			description: meal.description,
-		}));
-
-		const mealMap = new Map<string, CalendarEvent>();
-		for (const meal of meals) {
-			mealMap.set(meal.id, meal);
-		}
-
-		return { weekMeals, mealMap };
-	}, [meals]);
+	const mealMap = useMemo(
+		() => new Map(meals.map((meal) => [meal.id, meal])),
+		[meals],
+	);
 
 	const handleMealClick = useCallback(
 		(meal: WeekViewMeal) => {
-			const calendarEvent = mealMap.get(meal.id);
-			if (calendarEvent) {
-				onMealClick?.(calendarEvent);
+			const calendarMeal = mealMap.get(meal.id);
+			if (calendarMeal) {
+				onMealClick?.(calendarMeal);
 			}
 		},
 		[mealMap, onMealClick],
@@ -60,14 +53,14 @@ export function MealWeekView({
 			meal: WeekViewMeal,
 			props: Parameters<NonNullable<WeekViewProps['renderMeal']>>[1],
 		) => {
-			const calendarEvent = mealMap.get(meal.id);
-			if (!calendarEvent) return null;
+			const calendarMeal = mealMap.get(meal.id);
+			if (!calendarMeal) return null;
 
 			return (
 				<WeekMealCard
-					event={calendarEvent}
+					meal={calendarMeal}
 					plannerId={plannerId}
-					onClick={() => onMealClick?.(calendarEvent)}
+					onClick={() => onMealClick?.(calendarMeal)}
 					tabIndex={props.tabIndex}
 					ref={props.ref}
 				/>
@@ -78,7 +71,7 @@ export function MealWeekView({
 
 	return (
 		<WeekView
-			meals={weekMeals}
+			meals={meals}
 			renderMeal={renderMeal}
 			onMealClick={handleMealClick}
 		/>

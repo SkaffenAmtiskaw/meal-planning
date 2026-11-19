@@ -8,7 +8,7 @@ export interface MealKeyboardProps {
 export interface WeekViewMeal {
 	id: string;
 	date: string; // ISO date YYYY-MM-DD
-	title: string;
+	name: string;
 	description?: string;
 }
 

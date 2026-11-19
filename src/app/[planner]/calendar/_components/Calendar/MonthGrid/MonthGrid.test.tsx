@@ -174,13 +174,13 @@ describe('MonthGrid', () => {
 		]);
 
 		const meals: MonthGridMeal[] = [
-			{ id: '1', date: '2024-03-15', title: 'Meal A' },
+			{ id: '1', date: '2024-03-15', name: 'Meal A' },
 		];
 
 		const renderMeal = vi.fn(
 			(meal: MonthGridMeal, props: MonthGridMealRenderProps) => (
 				<span key={meal.id} tabIndex={props.tabIndex} ref={props.ref}>
-					{meal.title} custom
+					{meal.name} custom
 				</span>
 			),
 		);
@@ -207,9 +207,9 @@ describe('MonthGrid', () => {
 		vi.mocked(getMonthGridDates).mockReturnValue([DateTime.local(2024, 3, 15)]);
 
 		const meals: MonthGridMeal[] = [
-			{ id: '1', date: '2024-03-15', title: 'Meal A' },
-			{ id: '2', date: '2024-03-15', title: 'Meal B' },
-			{ id: '3', date: '2024-03-15', title: 'Meal C' },
+			{ id: '1', date: '2024-03-15', name: 'Meal A' },
+			{ id: '2', date: '2024-03-15', name: 'Meal B' },
+			{ id: '3', date: '2024-03-15', name: 'Meal C' },
 		];
 
 		render(
@@ -230,8 +230,8 @@ describe('MonthGrid', () => {
 		vi.mocked(getMonthGridDates).mockReturnValue([DateTime.local(2024, 3, 15)]);
 
 		const meals: MonthGridMeal[] = [
-			{ id: '1', date: '2024-03-15', title: 'Meal A' },
-			{ id: '2', date: '2024-03-15', title: 'Meal B' },
+			{ id: '1', date: '2024-03-15', name: 'Meal A' },
+			{ id: '2', date: '2024-03-15', name: 'Meal B' },
 		];
 
 		render(
@@ -254,8 +254,8 @@ describe('MonthGrid', () => {
 		]);
 
 		const meals: MonthGridMeal[] = [
-			{ id: '1', date: '2024-03-15', title: 'Meal A' },
-			{ id: '2', date: '2024-03-15', title: 'Meal B' },
+			{ id: '1', date: '2024-03-15', name: 'Meal A' },
+			{ id: '2', date: '2024-03-15', name: 'Meal B' },
 		];
 
 		render(
@@ -306,7 +306,7 @@ describe('MonthGrid keyboard navigation', () => {
 					tabIndex={props.tabIndex}
 					ref={props.ref}
 				>
-					{meal.title}
+					{meal.name}
 				</div>
 			),
 		);
@@ -371,7 +371,7 @@ describe('MonthGrid keyboard navigation', () => {
 		]);
 
 		const meals: MonthGridMeal[] = [
-			{ id: '1', date: '2024-03-15', title: 'Event A' },
+			{ id: '1', date: '2024-03-15', name: 'MealA' },
 		];
 
 		const onMealClick = vi.fn();
@@ -400,8 +400,8 @@ describe('MonthGrid keyboard navigation', () => {
 		]);
 
 		const meals: MonthGridMeal[] = [
-			{ id: '1', date: '2024-03-15', title: 'Event A' },
-			{ id: '2', date: '2024-03-15', title: 'Event B' },
+			{ id: '1', date: '2024-03-15', name: 'MealA' },
+			{ id: '2', date: '2024-03-15', name: 'MealB' },
 		];
 
 		const renderMeal = createRenderMealMock();
@@ -434,8 +434,8 @@ describe('MonthGrid keyboard navigation', () => {
 		]);
 
 		const meals: MonthGridMeal[] = [
-			{ id: '1', date: '2024-03-15', title: 'Event A' },
-			{ id: '2', date: '2024-03-15', title: 'Event B' },
+			{ id: '1', date: '2024-03-15', name: 'MealA' },
+			{ id: '2', date: '2024-03-15', name: 'MealB' },
 		];
 
 		const renderMeal = createRenderMealMock();
@@ -473,8 +473,8 @@ describe('MonthGrid keyboard navigation', () => {
 		]);
 
 		const meals: MonthGridMeal[] = [
-			{ id: '1', date: '2024-03-15', title: 'Event A' },
-			{ id: '2', date: '2024-03-15', title: 'Event B' },
+			{ id: '1', date: '2024-03-15', name: 'MealA' },
+			{ id: '2', date: '2024-03-15', name: 'MealB' },
 		];
 
 		const renderMeal = createRenderMealMock();
@@ -508,8 +508,8 @@ describe('MonthGrid keyboard navigation', () => {
 		]);
 
 		const meals: MonthGridMeal[] = [
-			{ id: '1', date: '2024-03-15', title: 'Event A' },
-			{ id: '2', date: '2024-03-15', title: 'Event B' },
+			{ id: '1', date: '2024-03-15', name: 'MealA' },
+			{ id: '2', date: '2024-03-15', name: 'MealB' },
 		];
 
 		const renderMeal = createRenderMealMock();
@@ -674,8 +674,8 @@ describe('MonthGrid keyboard navigation', () => {
 		]);
 
 		const meals: MonthGridMeal[] = [
-			{ id: '1', date: '2024-03-15', title: 'Event A' },
-			{ id: '2', date: '2024-03-15', title: 'Event B' },
+			{ id: '1', date: '2024-03-15', name: 'MealA' },
+			{ id: '2', date: '2024-03-15', name: 'MealB' },
 		];
 
 		const renderMeal = createRenderMealMock();
@@ -712,8 +712,8 @@ describe('MonthGrid keyboard navigation', () => {
 		]);
 
 		const meals: MonthGridMeal[] = [
-			{ id: '1', date: '2024-03-15', title: 'Event A' },
-			{ id: '2', date: '2024-03-15', title: 'Event B' },
+			{ id: '1', date: '2024-03-15', name: 'MealA' },
+			{ id: '2', date: '2024-03-15', name: 'MealB' },
 		];
 
 		const onMealClick = vi.fn();

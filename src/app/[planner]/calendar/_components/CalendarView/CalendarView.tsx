@@ -10,7 +10,7 @@ import type { DayInterface } from '@/_models/types';
 
 import { CalendarProvider, useCalendarContext } from '../Calendar';
 import { CalendarModalProvider } from '../CalendarModal';
-import type { CalendarEvent } from '../../_utils/types';
+import type { CalendarMeal } from '../Calendar';
 import type { SavedItem } from '../../types';
 import {
 	CalendarHeaderDesktop,
@@ -32,16 +32,16 @@ type CalendarViewContentProps = {
 	plannerId: string;
 	savedItems: SavedItem[];
 	calendar: DayInterface[];
-	clickedEvent: CalendarEvent | null;
+	clickedMeal: CalendarMeal | null;
 	onClose: () => void;
-	onMealClick: (meal: CalendarEvent) => void;
+	onMealClick: (meal: CalendarMeal) => void;
 };
 
 function CalendarViewContent({
 	plannerId,
 	savedItems,
 	calendar,
-	clickedEvent,
+	clickedMeal,
 	onClose,
 	onMealClick,
 }: CalendarViewContentProps): ReactElement {
@@ -51,7 +51,7 @@ function CalendarViewContent({
 	return (
 		<Stack gap={0} h="100%">
 			<MealDetailModal
-				event={clickedEvent}
+				meal={clickedMeal}
 				plannerId={plannerId}
 				onClose={onClose}
 			/>
@@ -96,7 +96,7 @@ export function CalendarView({
 	calendar,
 	savedItems,
 }: Props): ReactElement {
-	const [clickedEvent, setClickedEvent] = useState<CalendarEvent | null>(null);
+	const [clickedMeal, setClickedMeal] = useState<CalendarMeal | null>(null);
 
 	return (
 		<CalendarProvider>
@@ -105,9 +105,9 @@ export function CalendarView({
 					plannerId={plannerId}
 					savedItems={savedItems}
 					calendar={calendar}
-					clickedEvent={clickedEvent}
-					onClose={() => setClickedEvent(null)}
-					onMealClick={setClickedEvent}
+					clickedMeal={clickedMeal}
+					onClose={() => setClickedMeal(null)}
+					onMealClick={setClickedMeal}
 				/>
 			</CalendarModalProvider>
 		</CalendarProvider>

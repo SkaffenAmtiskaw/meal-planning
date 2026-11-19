@@ -3,6 +3,7 @@ import { beforeEach, describe, expect, test, vi } from 'vitest';
 
 import { MealDetailModal } from './MealDetailModal';
 
+import type { CalendarMeal } from '../Calendar';
 import { DishLink } from '../DishLink/DishLink';
 
 vi.mock('@mantine/core', async () => await import('#mocks/@mantine/core'));
@@ -12,9 +13,11 @@ vi.mock('../DishLink/DishLink', () => ({
 	)),
 }));
 
-const baseEvent = {
+const baseMeal: CalendarMeal = {
 	id: 'meal-1',
-	title: 'Breakfast',
+	date: '2024-01-01',
+	name: 'Breakfast',
+	borderColor: '#000',
 	dishes: [],
 };
 
@@ -23,17 +26,17 @@ describe('MealDetailModal', () => {
 		vi.resetAllMocks();
 	});
 
-	test('is not visible when event is null', () => {
+	test('is not visible when meal is null', () => {
 		render(
-			<MealDetailModal event={null} plannerId="planner-1" onClose={() => {}} />,
+			<MealDetailModal meal={null} plannerId="planner-1" onClose={() => {}} />,
 		);
 		expect(screen.queryByRole('dialog')).toBeNull();
 	});
 
-	test('is visible when event is provided', () => {
+	test('is visible when meal is provided', () => {
 		render(
 			<MealDetailModal
-				event={baseEvent}
+				meal={baseMeal}
 				plannerId="planner-1"
 				onClose={() => {}}
 			/>,
@@ -44,7 +47,7 @@ describe('MealDetailModal', () => {
 	test('shows the meal title', () => {
 		render(
 			<MealDetailModal
-				event={baseEvent}
+				meal={baseMeal}
 				plannerId="planner-1"
 				onClose={() => {}}
 			/>,
@@ -53,13 +56,9 @@ describe('MealDetailModal', () => {
 	});
 
 	test('shows the description when present', () => {
-		const event = { ...baseEvent, description: 'Morning meal' };
+		const meal = { ...baseMeal, description: 'Morning meal' };
 		render(
-			<MealDetailModal
-				event={event}
-				plannerId="planner-1"
-				onClose={() => {}}
-			/>,
+			<MealDetailModal meal={meal} plannerId="planner-1" onClose={() => {}} />,
 		);
 		expect(screen.getByText('Morning meal')).toBeDefined();
 	});
@@ -67,7 +66,7 @@ describe('MealDetailModal', () => {
 	test('does not show description when absent', () => {
 		render(
 			<MealDetailModal
-				event={baseEvent}
+				meal={baseMeal}
 				plannerId="planner-1"
 				onClose={() => {}}
 			/>,
@@ -76,59 +75,43 @@ describe('MealDetailModal', () => {
 	});
 
 	test('shows dish names', () => {
-		const event = {
-			...baseEvent,
+		const meal = {
+			...baseMeal,
 			dishes: [{ name: 'Eggs' }, { name: 'Toast' }],
 		};
 		render(
-			<MealDetailModal
-				event={event}
-				plannerId="planner-1"
-				onClose={() => {}}
-			/>,
+			<MealDetailModal meal={meal} plannerId="planner-1" onClose={() => {}} />,
 		);
 		expect(screen.getByText('Eggs')).toBeDefined();
 		expect(screen.getByText('Toast')).toBeDefined();
 	});
 
 	test('shows dish note when present', () => {
-		const event = {
-			...baseEvent,
+		const meal = {
+			...baseMeal,
 			dishes: [{ name: 'Pasta', note: 'al dente' }],
 		};
 		render(
-			<MealDetailModal
-				event={event}
-				plannerId="planner-1"
-				onClose={() => {}}
-			/>,
+			<MealDetailModal meal={meal} plannerId="planner-1" onClose={() => {}} />,
 		);
 		expect(screen.getByText('al dente')).toBeDefined();
 	});
 
 	test('does not show note section when note is absent', () => {
-		const event = { ...baseEvent, dishes: [{ name: 'Salad' }] };
+		const meal = { ...baseMeal, dishes: [{ name: 'Salad' }] };
 		render(
-			<MealDetailModal
-				event={event}
-				plannerId="planner-1"
-				onClose={() => {}}
-			/>,
+			<MealDetailModal meal={meal} plannerId="planner-1" onClose={() => {}} />,
 		);
 		expect(screen.queryByText('al dente')).toBeNull();
 	});
 
 	test('renders a DishLink for each dish', () => {
-		const event = {
-			...baseEvent,
+		const meal = {
+			...baseMeal,
 			dishes: [{ name: 'Eggs' }, { name: 'Toast' }],
 		};
 		render(
-			<MealDetailModal
-				event={event}
-				plannerId="planner-1"
-				onClose={() => {}}
-			/>,
+			<MealDetailModal meal={meal} plannerId="planner-1" onClose={() => {}} />,
 		);
 		expect(screen.getAllByTestId('dish-link')).toHaveLength(2);
 		expect(vi.mocked(DishLink)).toHaveBeenCalledTimes(2);
@@ -147,16 +130,12 @@ describe('MealDetailModal', () => {
 	});
 
 	test('shows ref text below dish name when source has a ref', () => {
-		const event = {
-			...baseEvent,
+		const meal = {
+			...baseMeal,
 			dishes: [{ name: 'Roast Chicken', source: { ref: 'The Flavor Bible' } }],
 		};
 		render(
-			<MealDetailModal
-				event={event}
-				plannerId="planner-1"
-				onClose={() => {}}
-			/>,
+			<MealDetailModal meal={meal} plannerId="planner-1" onClose={() => {}} />,
 		);
 		expect(screen.getByText('The Flavor Bible')).toBeDefined();
 	});

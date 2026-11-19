@@ -4,7 +4,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { DateTime } from 'luxon';
 
 import { MobileMonthGrid } from './MobileMonthGrid';
-import type { MobileMonthGridEvent } from './types';
+import type { MobileMonthGridMeal } from './types';
 
 import { useCalendarContext } from '../CalendarContext';
 
@@ -15,13 +15,13 @@ vi.mock('../CalendarContext', async () => ({
 
 interface RenderOptions {
 	selectedDate?: DateTime;
-	events?: MobileMonthGridEvent[];
+	meals?: MobileMonthGridMeal[];
 	setSelectedDate?: (date: DateTime) => void;
 }
 
 function renderGrid({
 	selectedDate = DateTime.local(2024, 3, 15),
-	events = [],
+	meals = [],
 	setSelectedDate = vi.fn(),
 }: RenderOptions = {}) {
 	vi.mocked(useCalendarContext).mockReturnValue({
@@ -36,7 +36,7 @@ function renderGrid({
 		goToNext: vi.fn(),
 	} as ReturnType<typeof useCalendarContext>);
 
-	return render(<MobileMonthGrid events={events} />);
+	return render(<MobileMonthGrid meals={meals} />);
 }
 
 describe('MobileMonthGrid', () => {
@@ -132,14 +132,14 @@ describe('MobileMonthGrid', () => {
 	});
 
 	it('renders up to 3 colored dots for days that have meals', () => {
-		const events: MobileMonthGridEvent[] = [
+		const meals: MobileMonthGridMeal[] = [
 			{ id: '1', date: '2024-03-15', color: '#FF0000' },
 			{ id: '2', date: '2024-03-15', color: '#00FF00' },
 			{ id: '3', date: '2024-03-15', color: '#0000FF' },
 			{ id: '4', date: '2024-03-15', color: '#FFFF00' },
 		];
 
-		renderGrid({ selectedDate: DateTime.local(2024, 3, 15), events });
+		renderGrid({ selectedDate: DateTime.local(2024, 3, 15), meals });
 
 		const cells = screen.getAllByTestId('mobile-day-cell');
 		const dots = cells[19].querySelectorAll('[aria-hidden="true"]');
@@ -157,11 +157,11 @@ describe('MobileMonthGrid', () => {
 	});
 
 	it('does not render dots for days without meals', () => {
-		const events: MobileMonthGridEvent[] = [
+		const meals: MobileMonthGridMeal[] = [
 			{ id: '1', date: '2024-03-10', color: '#FF0000' },
 		];
 
-		renderGrid({ selectedDate: DateTime.local(2024, 3, 15), events });
+		renderGrid({ selectedDate: DateTime.local(2024, 3, 15), meals });
 
 		const cells = screen.getAllByTestId('mobile-day-cell');
 		const dots = cells[19].querySelectorAll('[aria-hidden="true"]');
@@ -297,11 +297,11 @@ describe('MobileMonthGrid', () => {
 	});
 
 	it('exposes an accessible name with the meal count', () => {
-		const events: MobileMonthGridEvent[] = [
+		const meals: MobileMonthGridMeal[] = [
 			{ id: '1', date: '2024-03-15', color: '#FF0000' },
 		];
 
-		renderGrid({ selectedDate: DateTime.local(2024, 3, 15), events });
+		renderGrid({ selectedDate: DateTime.local(2024, 3, 15), meals });
 
 		const cells = screen.getAllByTestId('mobile-day-cell');
 

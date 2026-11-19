@@ -27,13 +27,13 @@ vi.mock('./MobileAgenda.module.css', () => ({
 
 interface RenderOptions {
 	selectedDate?: DateTime;
-	events?: CalendarMeal[];
+	meals?: CalendarMeal[];
 	renderDish?: (dish: CalendarDish) => ReactNode;
 }
 
 function renderAgenda({
 	selectedDate = DateTime.local(2024, 3, 15),
-	events = [],
+	meals = [],
 	renderDish,
 }: RenderOptions = {}) {
 	vi.mocked(useCalendarContext).mockReturnValue({
@@ -48,7 +48,7 @@ function renderAgenda({
 		goToNext: vi.fn(),
 	} as ReturnType<typeof useCalendarContext>);
 
-	return render(<MobileAgenda events={events} renderDish={renderDish} />);
+	return render(<MobileAgenda meals={meals} renderDish={renderDish} />);
 }
 
 describe('MobileAgenda', () => {
@@ -89,7 +89,7 @@ describe('MobileAgenda', () => {
 	});
 
 	it('renders the singular meal count', () => {
-		const events: CalendarMeal[] = [
+		const meals: CalendarMeal[] = [
 			{
 				id: '1',
 				date: '2024-03-15',
@@ -99,13 +99,13 @@ describe('MobileAgenda', () => {
 			},
 		];
 
-		renderAgenda({ selectedDate: DateTime.local(2024, 3, 15), events });
+		renderAgenda({ selectedDate: DateTime.local(2024, 3, 15), meals });
 
 		expect(screen.getByText('1 MEAL')).toBeDefined();
 	});
 
 	it('renders the plural meal count', () => {
-		const events: CalendarMeal[] = [
+		const meals: CalendarMeal[] = [
 			{
 				id: '1',
 				date: '2024-03-15',
@@ -122,13 +122,13 @@ describe('MobileAgenda', () => {
 			},
 		];
 
-		renderAgenda({ selectedDate: DateTime.local(2024, 3, 15), events });
+		renderAgenda({ selectedDate: DateTime.local(2024, 3, 15), meals });
 
 		expect(screen.getByText('2 MEALS')).toBeDefined();
 	});
 
 	it('renders a MealCard for each meal on the selected date', () => {
-		const events: CalendarMeal[] = [
+		const meals: CalendarMeal[] = [
 			{
 				id: '1',
 				date: '2024-03-15',
@@ -145,13 +145,13 @@ describe('MobileAgenda', () => {
 			},
 		];
 
-		renderAgenda({ selectedDate: DateTime.local(2024, 3, 15), events });
+		renderAgenda({ selectedDate: DateTime.local(2024, 3, 15), meals });
 
 		expect(screen.getAllByTestId('meal-card')).toHaveLength(2);
 	});
 
 	it('passes renderDish to each MealCard', () => {
-		const events: CalendarMeal[] = [
+		const meals: CalendarMeal[] = [
 			{
 				id: '1',
 				date: '2024-03-15',
@@ -171,23 +171,23 @@ describe('MobileAgenda', () => {
 
 		renderAgenda({
 			selectedDate: DateTime.local(2024, 3, 15),
-			events,
+			meals,
 			renderDish,
 		});
 
 		expect(vi.mocked(MealCard)).toHaveBeenCalledTimes(2);
 		expect(vi.mocked(MealCard)).toHaveBeenCalledWith(
-			expect.objectContaining({ event: events[0], renderDish }),
+			expect.objectContaining({ meal: meals[0], renderDish }),
 			undefined,
 		);
 		expect(vi.mocked(MealCard)).toHaveBeenCalledWith(
-			expect.objectContaining({ event: events[1], renderDish }),
+			expect.objectContaining({ meal: meals[1], renderDish }),
 			undefined,
 		);
 	});
 
 	it('does not render meals from other dates', () => {
-		const events: CalendarMeal[] = [
+		const meals: CalendarMeal[] = [
 			{
 				id: '1',
 				date: '2024-03-14',
@@ -204,7 +204,7 @@ describe('MobileAgenda', () => {
 			},
 		];
 
-		renderAgenda({ selectedDate: DateTime.local(2024, 3, 15), events });
+		renderAgenda({ selectedDate: DateTime.local(2024, 3, 15), meals });
 
 		expect(screen.queryByTestId('meal-card')).toBeNull();
 	});
@@ -248,7 +248,7 @@ describe('MobileAgenda', () => {
 				goToNext: vi.fn(),
 			} as ReturnType<typeof useCalendarContext>);
 
-			rerender(<MobileAgenda events={[]} />);
+			rerender(<MobileAgenda meals={[]} />);
 
 			expect(scrollTo).toHaveBeenCalledWith({ top: 0 });
 		} finally {

@@ -90,14 +90,14 @@ export function WeekView({
 												renderMeal(meal, mealProps)
 											) : (
 												<Paper
-													data-testid="week-event"
+													data-testid="week-meal"
 													className={focusClasses.focusRing}
 													tabIndex={mealProps.tabIndex}
 													ref={mealProps.ref}
 													role="button"
 													onClick={() => onMealClick?.(meal)}
 												>
-													{meal.title}
+													{meal.name}
 												</Paper>
 											)}
 										</Box>

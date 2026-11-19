@@ -150,10 +150,10 @@ export function useMonthGridKeyboard(
 	const getDayProps = useCallback(
 		(dayIndex: number): DayKeyboardProps => {
 			const rovingProps = getRovingDayProps(dayIndex);
-			const isEventModeDay = mealMode?.dayIndex === dayIndex;
+			const isMealModeDay = mealMode?.dayIndex === dayIndex;
 
 			return {
-				tabIndex: isEventModeDay ? -1 : rovingProps.tabIndex,
+				tabIndex: isMealModeDay ? -1 : rovingProps.tabIndex,
 				onClick: handleDayClick(dayIndex),
 				onKeyDown: handleDayKeyDown(dayIndex),
 				ref: rovingProps.ref,
@@ -168,9 +168,9 @@ export function useMonthGridKeyboard(
 			mealIndex: number,
 			isoDate: string,
 		): MealKeyboardProps => {
-			const isEventModeDay = mealMode?.dayIndex === dayIndex;
+			const isMealModeDay = mealMode?.dayIndex === dayIndex;
 			const tabIndex =
-				isEventModeDay && mealMode?.mealIndex === mealIndex ? 0 : -1;
+				isMealModeDay && mealMode?.mealIndex === mealIndex ? 0 : -1;
 
 			return {
 				tabIndex: tabIndex as 0 | -1,

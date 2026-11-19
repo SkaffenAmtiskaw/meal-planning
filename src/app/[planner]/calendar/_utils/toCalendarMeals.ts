@@ -1,16 +1,25 @@
+import type { DayInterface } from '@/_models/types';
 import { getMealColor, TAG_COLORS } from '@/_theme/colors';
 
-import type { CalendarEvent } from './types';
+import { resolveDishSource } from './resolveDishSource';
 
+import type { SavedItem } from '../types';
 import type { CalendarMeal } from '../_components/Calendar';
 
-export function toCalendarMeals(events: CalendarEvent[]): CalendarMeal[] {
-	return events.map((event) => ({
-		id: event.id,
-		date: event.start,
-		name: event.title,
-		description: event.description,
-		borderColor: TAG_COLORS[getMealColor(event.title)].border,
-		dishes: event.dishes,
-	}));
+export function toCalendarMeals(
+	calendar: DayInterface[],
+	savedItems: SavedItem[] = [],
+): CalendarMeal[] {
+	const savedMap = new Map(savedItems.map((item) => [item._id, item]));
+
+	return calendar.flatMap((day) =>
+		day.meals.map((meal) => ({
+			id: meal._id,
+			date: day.date,
+			name: meal.name,
+			description: meal.description,
+			borderColor: TAG_COLORS[getMealColor(meal.name)].border,
+			dishes: meal.dishes.map((dish) => resolveDishSource(dish, savedMap)),
+		})),
+	);
 }

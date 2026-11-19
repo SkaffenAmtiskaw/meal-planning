@@ -1,41 +1,35 @@
 import { Modal, Stack, Text } from '@mantine/core';
 
-import type { ResolvedDish } from '../../_utils/types';
+import type { CalendarMeal } from '../Calendar';
 import { DishLink } from '../DishLink/DishLink';
 
-type MealDetail = {
-	title: string;
-	description?: string;
-	dishes: ResolvedDish[];
-};
-
 type Props = {
-	event: MealDetail | null;
+	meal: CalendarMeal | null;
 	plannerId: string;
 	onClose: () => void;
 };
 
-export const MealDetailModal = ({ event, plannerId, onClose }: Props) => (
+export const MealDetailModal = ({ meal, plannerId, onClose }: Props) => (
 	<Modal
 		centered
-		opened={event !== null}
+		opened={meal !== null}
 		onClose={onClose}
 		removeScrollProps={{ removeScrollBar: false }}
 		title={
 			<Stack gap={2}>
 				<Text fw={700} size="lg">
-					{event?.title ?? ''}
+					{meal?.name ?? ''}
 				</Text>
-				{event?.description && (
+				{meal?.description && (
 					<Text size="sm" c="dimmed">
-						{event.description}
+						{meal.description}
 					</Text>
 				)}
 			</Stack>
 		}
 	>
 		<Stack gap="xs">
-			{event?.dishes.map((dish, i) => (
+			{meal?.dishes.map((dish, i) => (
 				// biome-ignore lint/suspicious/noArrayIndexKey: dishes have no stable id
 				<div key={i}>
 					<DishLink dish={dish} plannerId={plannerId} />

@@ -8,8 +8,8 @@ import { MealCard } from '../../Calendar/MealCard/MealCard';
 vi.mock('@mantine/core', async () => await import('#mocks/@mantine/core'));
 
 vi.mock('../../Calendar/MealCard/MealCard', () => ({
-	MealCard: vi.fn(({ event, renderActions }) => (
-		<div data-testid="meal-card" data-event-name={event.name}>
+	MealCard: vi.fn(({ meal, renderActions }) => (
+		<div data-testid="meal-card" data-meal-name={meal.name}>
 			{renderActions}
 		</div>
 	)),
@@ -28,8 +28,8 @@ describe('MealCardWithDragHandle', () => {
 		vi.resetAllMocks();
 	});
 
-	const baseEvent = {
-		id: 'event-1',
+	const baseMeal = {
+		id: 'meal-1',
 		date: '2024-06-15',
 		name: 'Grilled Salmon',
 		borderColor: '#F5B47A',
@@ -37,28 +37,26 @@ describe('MealCardWithDragHandle', () => {
 	};
 
 	it('renders six drag handle dots', () => {
-		render(<MealCardWithDragHandle event={baseEvent} />);
+		render(<MealCardWithDragHandle meal={baseMeal} />);
 
 		expect(screen.getAllByTestId('drag-handle-dot')).toHaveLength(6);
 	});
 
-	it('renders the MealCard with the event', () => {
-		render(<MealCardWithDragHandle event={baseEvent} />);
+	it('renders the MealCard with the meal', () => {
+		render(<MealCardWithDragHandle meal={baseMeal} />);
 
-		expect(
-			screen.getByTestId('meal-card').getAttribute('data-event-name'),
-		).toBe('Grilled Salmon');
+		expect(screen.getByTestId('meal-card').getAttribute('data-meal-name')).toBe(
+			'Grilled Salmon',
+		);
 	});
 
 	it('passes renderDish to MealCard', () => {
 		const renderDish = vi.fn(() => <span>Custom dish</span>);
 
-		render(
-			<MealCardWithDragHandle event={baseEvent} renderDish={renderDish} />,
-		);
+		render(<MealCardWithDragHandle meal={baseMeal} renderDish={renderDish} />);
 
 		expect(vi.mocked(MealCard)).toHaveBeenCalledWith(
-			expect.objectContaining({ event: baseEvent, renderDish }),
+			expect.objectContaining({ meal: baseMeal, renderDish }),
 			undefined,
 		);
 	});
@@ -71,10 +69,7 @@ describe('MealCardWithDragHandle', () => {
 		);
 
 		render(
-			<MealCardWithDragHandle
-				event={baseEvent}
-				renderActions={renderActions}
-			/>,
+			<MealCardWithDragHandle meal={baseMeal} renderActions={renderActions} />,
 		);
 
 		expect(screen.getByTestId('action-button')).toBeDefined();

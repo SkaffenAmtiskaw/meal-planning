@@ -7,7 +7,6 @@ import { useIsMobile } from '@/_hooks';
 import type { DayInterface } from '@/_models/types';
 
 import type { CalendarDish, CalendarMeal } from '../Calendar';
-import { toCalendarEvents } from '../../_utils/toCalendarEvents';
 import { toCalendarMeals } from '../../_utils/toCalendarMeals';
 import type { SavedItem } from '../../types';
 import { DishLink } from '../DishLink/DishLink';
@@ -27,8 +26,8 @@ export function MealListView({
 }: MealListViewProps): ReactElement {
 	const isMobile = useIsMobile();
 
-	const events: CalendarMeal[] = useMemo(
-		() => toCalendarMeals(toCalendarEvents(calendar, savedItems)),
+	const meals: CalendarMeal[] = useMemo(
+		() => toCalendarMeals(calendar, savedItems),
 		[calendar, savedItems],
 	);
 
@@ -40,5 +39,5 @@ export function MealListView({
 		<DishLink dish={dish} plannerId={plannerId} size="sm" />
 	);
 
-	return <ListView events={events} renderDish={renderDish} />;
+	return <ListView meals={meals} renderDish={renderDish} />;
 }

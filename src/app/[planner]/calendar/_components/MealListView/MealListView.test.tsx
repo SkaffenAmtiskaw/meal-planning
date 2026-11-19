@@ -3,13 +3,11 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { useIsMobile } from '@/_hooks';
 import type { DayInterface } from '@/_models/types';
-import { getMealColor, TAG_COLORS } from '@/_theme/colors';
 
 import { MealListView } from './MealListView';
 
 import type { CalendarDish, CalendarMeal } from '../Calendar';
-import { toCalendarEvents } from '../../_utils/toCalendarEvents';
-import type { CalendarEvent } from '../../_utils/types';
+import { toCalendarMeals } from '../../_utils/toCalendarMeals';
 import type { SavedItem } from '../../types';
 import { DishLink } from '../DishLink/DishLink';
 
@@ -19,12 +17,12 @@ vi.mock('@mantine/hooks', async () => await import('#mocks/@mantine/hooks'));
 vi.mock('@/_hooks', async () => await import('#mocks/@/_hooks'));
 
 vi.mock('../ListView/ListView', async () => ({
-	ListView: vi.fn(({ events, renderDish }) => (
-		<div data-testid="list-view" data-events={JSON.stringify(events)}>
-			{events.map((event: CalendarMeal) => (
-				<div key={event.id} data-testid={`event-${event.id}`}>
-					{event.dishes.map((dish) => (
-						<div key={dish.name} data-testid={`dish-${event.id}-${dish.name}`}>
+	ListView: vi.fn(({ meals, renderDish }) => (
+		<div data-testid="list-view" data-meals={JSON.stringify(meals)}>
+			{meals.map((meal: CalendarMeal) => (
+				<div key={meal.id} data-testid={`meal-${meal.id}`}>
+					{meal.dishes.map((dish) => (
+						<div key={dish.name} data-testid={`dish-${meal.id}-${dish.name}`}>
 							{renderDish?.(dish)}
 						</div>
 					))}
@@ -38,20 +36,13 @@ vi.mock('../DishLink/DishLink', async () => ({
 	DishLink: vi.fn(() => <div data-testid="dish-link" />),
 }));
 
-vi.mock('../../_utils/toCalendarEvents', async () => ({
-	toCalendarEvents: vi.fn(() => []),
-}));
+vi.mock(
+	'../../_utils/toCalendarMeals',
+	async () =>
+		await import('#mocks/@app/[planner]/calendar/_utils/toCalendarMeals'),
+);
 
-vi.mock('@/_theme/colors', async (importOriginal) => {
-	const actual = await importOriginal<typeof import('@/_theme/colors')>();
-	return {
-		...actual,
-		getMealColor: vi.fn(() => 'fern'),
-	};
-});
-
-const mockToCalendarEvents = vi.mocked(toCalendarEvents);
-const mockGetMealColor = vi.mocked(getMealColor);
+const mockToCalendarMeals = vi.mocked(toCalendarMeals);
 const mockDishLink = vi.mocked(DishLink);
 const mockUseIsMobile = vi.mocked(useIsMobile);
 
@@ -75,13 +66,13 @@ const calendar: DayInterface[] = [
 	},
 ];
 
-const calendarEvents: CalendarEvent[] = [
+const calendarMeals: CalendarMeal[] = [
 	{
 		id: 'meal-1',
-		start: '2024-06-15',
-		end: '2024-06-15',
-		title: 'Breakfast',
+		date: '2024-06-15',
+		name: 'Breakfast',
 		description: 'Morning meal',
+		borderColor: '#000',
 		dishes: [{ name: 'Resolved Eggs', source: { _id: 'saved-1' } }],
 	},
 ];
@@ -90,6 +81,7 @@ describe('MealListView', () => {
 	beforeEach(() => {
 		vi.resetAllMocks();
 		mockUseIsMobile.mockReturnValue(false);
+		mockToCalendarMeals.mockReturnValue([]);
 	});
 
 	it('renders ListView', () => {
@@ -137,12 +129,12 @@ describe('MealListView', () => {
 			name: 'Rendered Dish',
 			source: { _id: 'recipe-1' },
 		};
-		mockToCalendarEvents.mockReturnValue([
+		mockToCalendarMeals.mockReturnValue([
 			{
 				id: 'meal-1',
-				start: '2024-06-15',
-				end: '2024-06-15',
-				title: 'Breakfast',
+				date: '2024-06-15',
+				name: 'Breakfast',
+				borderColor: '#000',
 				dishes: [dish],
 			},
 		]);
@@ -166,8 +158,8 @@ describe('MealListView', () => {
 		);
 	});
 
-	it('passes calendar-derived events to ListView', () => {
-		mockToCalendarEvents.mockReturnValue(calendarEvents);
+	it('passes the meals built from the calendar and saved items to ListView', () => {
+		mockToCalendarMeals.mockReturnValue(calendarMeals);
 
 		render(
 			<MealListView
@@ -177,71 +169,17 @@ describe('MealListView', () => {
 			/>,
 		);
 
-		expect(mockToCalendarEvents).toHaveBeenCalledWith(calendar, savedItems);
+		expect(mockToCalendarMeals).toHaveBeenCalledWith(calendar, savedItems);
 
 		const listView = screen.getByTestId('list-view');
-		const events = JSON.parse(listView.getAttribute('data-events') ?? '[]');
+		const meals = JSON.parse(listView.getAttribute('data-meals') ?? '[]');
 
-		expect(events).toEqual([
-			{
-				id: 'meal-1',
-				date: '2024-06-15',
-				name: 'Breakfast',
-				description: 'Morning meal',
-				borderColor: TAG_COLORS.fern.border,
-				dishes: [{ name: 'Resolved Eggs', source: { _id: 'saved-1' } }],
-			},
-		]);
+		expect(meals).toEqual(calendarMeals);
 	});
 
-	it('computes the correct border color for each meal from TAG_COLORS', () => {
-		mockGetMealColor.mockImplementation((title) =>
-			title === 'Breakfast' ? 'fern' : 'seafoam',
-		);
-		mockToCalendarEvents.mockReturnValue([
-			{
-				id: 'meal-1',
-				start: '2024-06-15',
-				end: '2024-06-15',
-				title: 'Breakfast',
-				dishes: [],
-			},
-			{
-				id: 'meal-2',
-				start: '2024-06-15',
-				end: '2024-06-15',
-				title: 'Dinner',
-				dishes: [],
-			},
-		]);
-
+	it('builds meals with no saved items when none are passed', () => {
 		render(<MealListView plannerId={plannerId} calendar={calendar} />);
 
-		const events = JSON.parse(
-			screen.getByTestId('list-view').getAttribute('data-events') ?? '[]',
-		);
-
-		expect(events[0].borderColor).toBe(TAG_COLORS.fern.border);
-		expect(events[1].borderColor).toBe(TAG_COLORS.seafoam.border);
-	});
-
-	it('resolves dish sources using savedItems before passing events', () => {
-		mockToCalendarEvents.mockReturnValue(calendarEvents);
-
-		render(
-			<MealListView
-				plannerId={plannerId}
-				calendar={calendar}
-				savedItems={savedItems}
-			/>,
-		);
-
-		expect(mockToCalendarEvents).toHaveBeenCalledWith(calendar, savedItems);
-
-		const events = JSON.parse(
-			screen.getByTestId('list-view').getAttribute('data-events') ?? '[]',
-		);
-
-		expect(events[0].dishes).toEqual(calendarEvents[0].dishes);
+		expect(mockToCalendarMeals).toHaveBeenCalledWith(calendar, []);
 	});
 });

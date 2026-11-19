@@ -321,7 +321,7 @@ describe('ListView', () => {
 			{ name: 'Pasta Primavera' },
 			{ name: 'Caesar Salad' },
 		];
-		const events: CalendarMeal[] = [
+		const meals: CalendarMeal[] = [
 			{
 				id: 'lunch',
 				date: '2024-06-10',
@@ -337,7 +337,7 @@ describe('ListView', () => {
 
 		const mockRenderDish = vi.fn((dish: CalendarDish) => dish.name);
 
-		render(<ListView events={events} renderDish={mockRenderDish} />);
+		render(<ListView meals={meals} renderDish={mockRenderDish} />);
 
 		expect(mockRenderDish).toHaveBeenCalledTimes(2);
 		expect(mockRenderDish).toHaveBeenCalledWith(dishes[0]);
@@ -352,7 +352,7 @@ describe('ListView', () => {
 			DateTime.local(2024, 6, 11),
 			DateTime.local(2024, 6, 12),
 		];
-		const events: CalendarMeal[] = [
+		const meals: CalendarMeal[] = [
 			{
 				id: 'a',
 				date: '2024-06-10',
@@ -380,7 +380,7 @@ describe('ListView', () => {
 			createMockContextValue({ rangeAnchor: DateTime.local(2024, 6, 11) }),
 		);
 
-		render(<ListView events={events} />);
+		render(<ListView meals={meals} />);
 
 		const rows = screen.getAllByTestId('day-row');
 		expect(rows[0].getAttribute('data-meals-count')).toBe('2');
@@ -390,14 +390,14 @@ describe('ListView', () => {
 		expect(rows[2].getAttribute('data-meal-ids')).toBe('c');
 	});
 
-	it('passes an empty meals array to DayRow for dates with no events', () => {
+	it('passes an empty meals array to DayRow for dates with no meals', () => {
 		const dates = [DateTime.local(2024, 6, 10), DateTime.local(2024, 6, 11)];
 		vi.mocked(getListDayRange).mockReturnValue(dates);
 		vi.mocked(useCalendarContext).mockReturnValue(
 			createMockContextValue({ rangeAnchor: DateTime.local(2024, 6, 10) }),
 		);
 
-		render(<ListView events={[]} />);
+		render(<ListView meals={[]} />);
 
 		for (const call of vi.mocked(DayRow).mock.calls) {
 			expect(call[0].meals).toEqual([]);

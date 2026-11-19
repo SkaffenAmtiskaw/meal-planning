@@ -121,7 +121,7 @@ export function MonthGrid({ meals, renderMeal, onMealClick }: MonthGridProps) {
 														ref={mealProps.ref}
 														className={focusClasses.focusRing}
 													>
-														<Text size="xs">{meal.title}</Text>
+														<Text size="xs">{meal.name}</Text>
 													</div>
 												)}
 											</div>

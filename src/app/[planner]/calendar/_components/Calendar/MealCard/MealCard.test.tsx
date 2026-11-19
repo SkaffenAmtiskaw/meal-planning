@@ -25,8 +25,8 @@ describe('MealCard', () => {
 		vi.resetAllMocks();
 	});
 
-	const baseEvent = {
-		id: 'event-1',
+	const baseMeal = {
+		id: 'meal-1',
 		date: '2024-06-15',
 		name: 'Grilled Salmon',
 		borderColor: '#F5B47A',
@@ -34,21 +34,21 @@ describe('MealCard', () => {
 	};
 
 	it('renders the description when provided', () => {
-		const event = { ...baseEvent, description: 'With lemon and herbs' };
+		const meal = { ...baseMeal, description: 'With lemon and herbs' };
 
-		render(<MealCard event={event} />);
+		render(<MealCard meal={meal} />);
 
 		expect(screen.getByText('With lemon and herbs')).toBeDefined();
 	});
 
 	it('does not render a description when omitted', () => {
-		render(<MealCard event={baseEvent} />);
+		render(<MealCard meal={baseMeal} />);
 
 		expect(screen.queryByText('With lemon and herbs')).toBeNull();
 	});
 
-	it('applies the correct left rail border color from the event', () => {
-		render(<MealCard event={baseEvent} />);
+	it('applies the correct left rail border color from the meal', () => {
+		render(<MealCard meal={baseMeal} />);
 
 		const card = screen.getByTestId('meal-card');
 
@@ -60,12 +60,12 @@ describe('MealCard', () => {
 	});
 
 	it('renders a DishListItem for each dish', () => {
-		const event = {
-			...baseEvent,
+		const meal = {
+			...baseMeal,
 			dishes: [{ name: 'Salmon' }, { name: 'Asparagus' }],
 		};
 
-		render(<MealCard event={event} />);
+		render(<MealCard meal={meal} />);
 
 		const items = screen.getAllByTestId('dish-list-item');
 
@@ -75,31 +75,31 @@ describe('MealCard', () => {
 	});
 
 	it('passes renderDish to DishListItem as renderName', () => {
-		const event = {
-			...baseEvent,
+		const meal = {
+			...baseMeal,
 			dishes: [{ name: 'Salmon' }],
 		};
 		const renderDish = vi.fn(() => <span>Custom rendered salmon</span>);
 
-		render(<MealCard event={event} renderDish={renderDish} />);
+		render(<MealCard meal={meal} renderDish={renderDish} />);
 
-		expect(renderDish).toHaveBeenCalledWith(event.dishes[0]);
+		expect(renderDish).toHaveBeenCalledWith(meal.dishes[0]);
 		expect(screen.getByText('Custom rendered salmon')).toBeDefined();
 	});
 
 	it('defaults to rendering dish names as plain Text when renderDish is omitted', () => {
-		const event = {
-			...baseEvent,
+		const meal = {
+			...baseMeal,
 			dishes: [{ name: 'Salmon' }],
 		};
 
-		render(<MealCard event={event} />);
+		render(<MealCard meal={meal} />);
 
 		expect(screen.getByText('Salmon')).toBeDefined();
 	});
 
 	it('does not render the dish list when there are no dishes', () => {
-		render(<MealCard event={baseEvent} />);
+		render(<MealCard meal={baseMeal} />);
 
 		expect(screen.queryByTestId('dish-list-item')).toBeNull();
 	});
@@ -107,7 +107,7 @@ describe('MealCard', () => {
 	it('renders renderActions when provided', () => {
 		render(
 			<MealCard
-				event={baseEvent}
+				meal={baseMeal}
 				renderActions={<button type="button">Edit</button>}
 			/>,
 		);
@@ -116,13 +116,13 @@ describe('MealCard', () => {
 	});
 
 	it('does not render renderActions when omitted', () => {
-		render(<MealCard event={baseEvent} />);
+		render(<MealCard meal={baseMeal} />);
 
 		expect(screen.queryByText('Edit')).toBeNull();
 	});
 
 	it('contains no drag-handle markup', () => {
-		render(<MealCard event={baseEvent} />);
+		render(<MealCard meal={baseMeal} />);
 
 		expect(screen.queryByTestId('drag-handle-dot')).toBeNull();
 	});

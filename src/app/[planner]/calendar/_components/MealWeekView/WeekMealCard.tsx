@@ -5,11 +5,11 @@ import { Box, Paper, Text } from '@mantine/core';
 import { getMealColor, TAG_COLORS } from '@/_theme/colors';
 import focusClasses from '@/_theme/focus.module.css';
 
-import type { CalendarEvent } from '../../_utils/types';
+import type { CalendarMeal } from '../Calendar';
 import { DishLink } from '../DishLink/DishLink';
 
 interface WeekMealCardProps {
-	event: CalendarEvent;
+	meal: CalendarMeal;
 	plannerId: string;
 	onClick?: () => void;
 	tabIndex?: number;
@@ -17,13 +17,13 @@ interface WeekMealCardProps {
 }
 
 export function WeekMealCard({
-	event,
+	meal,
 	plannerId,
 	onClick,
 	tabIndex,
 	ref,
 }: WeekMealCardProps): ReactElement {
-	const tagColor = getMealColor(event.title);
+	const tagColor = getMealColor(meal.name);
 	const { bg, text, border } = TAG_COLORS[tagColor];
 
 	return (
@@ -46,14 +46,14 @@ export function WeekMealCard({
 			ref={ref}
 		>
 			<Text fw={700} size="sm" style={{ color: text }}>
-				{event.title}
+				{meal.name}
 			</Text>
-			{event.description && (
+			{meal.description && (
 				<Text size="xs" style={{ color: text }}>
-					{event.description}
+					{meal.description}
 				</Text>
 			)}
-			{event.dishes.map((dish, index) => (
+			{meal.dishes.map((dish, index) => (
 				// biome-ignore lint/suspicious/noArrayIndexKey: dishes have no stable id
 				<Box key={index} style={{ color: text }}>
 					<DishLink dish={dish} plannerId={plannerId} tabIndex={-1} />
