@@ -208,10 +208,10 @@ The settings in Settings → General → Pull Requests, with their values and wh
 - **Merge methods:** merge commits and squash allowed, rebase off, to match the rulesets' merge methods.
 - **Default commit messages:** a merge commit's message is the PR title, so `main`'s history lists the goals shipped. A squash's is the PR title with its commit details, so a story's step messages survive on `develop`.
 - **Allow auto-merge:** on, so a story's PR into `develop` merges by itself once its checks pass.
-- **Automatically delete head branches:** on, so after a merge only the local branch and worktree are left, which the SessionStart hook's sweep (`scripts/worktree-sweep.sh`) removes.
+- **Automatically delete head branches:** on, so after a merge only the local branch and worktree are left. Archiving the session removes the worktree, as `docs/branching.md`, "Removing a Worktree", describes.
 
 ### The `notes-pending` Label
-While notes work waits on a PR's merge, such as a `/tooling` change's Roadmap edits, the PR carries the repo's `notes-pending` label, and its body lists that work under "Held until the merge". What the SessionStart hook's sweep does with a merged PR that still has the label is in `docs/branching.md`, "Cleaning Up After a Merge".
+While notes work waits on a PR's merge, such as a `/tooling` change's Roadmap edits, the PR carries the repo's `notes-pending` label, and its body lists that work under "Held until the merge". At each session start, `scripts/held-notes-check.sh` names every merged PR that still has the label, as `docs/branching.md`, "Work Outside a Story", describes.
 
 The label was made once with `gh label create notes-pending --description "Merged PR with notes work still to do"`, since `gh pr create --label` fails on a label that doesn't exist.
 
