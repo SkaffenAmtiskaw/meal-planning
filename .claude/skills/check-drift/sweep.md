@@ -1,5 +1,5 @@
 # Sorting a Sweep's Findings
-1. Sort the checkers' findings for each item. A sweep's items must stay small and decided, so a finding changes the item and leaves no callout. The cases where a finding changes more than a name, path or line number, and what to do in each:
+1. Sort the checkers' findings for each item. A sweep's items must stay small and decided, so a finding changes the item and leaves no callout. Step 4 of `SKILL.md` corrects text that has one obvious fix without asking. The cases where a finding needs more than that, and what to do in each:
    - **Already fixed, or built by another story:** delete the item.
    - **Now needs a decision:** delete the item and put it on the out-of-scope list. Don't ask whether to settle it yet, because triage is where the user chooses to pull it back in, route it or drop it.
    - **Now waits on another story:** what you do depends on whether that story is in this release, meaning its Roadmap line is in Now or Next:
