@@ -1,4 +1,4 @@
-export { CalendarContext, useCalendarContext } from './CalendarContext';
+export { useCalendarContext } from './CalendarContext';
 export { CalendarProvider } from './CalendarProvider';
 export type {
 	CalendarDish,
@@ -6,8 +6,6 @@ export type {
 	CalendarViewType,
 } from './types';
 
-export { MobileAgenda } from './MobileAgenda/MobileAgenda';
-export { MobileMonthGrid } from './MobileMonthGrid/MobileMonthGrid';
 export { MonthGrid } from './MonthGrid/MonthGrid';
 export type {
 	MonthGridMeal,

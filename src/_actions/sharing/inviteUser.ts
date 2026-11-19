@@ -5,8 +5,7 @@ import { randomUUID } from 'node:crypto';
 import { z } from 'zod';
 
 import { checkAuth } from '@/_actions/auth/checkAuth';
-import { sendInviteEmail } from '@/_email/sendInviteEmail';
-import type { InviteEmailType } from '@/_email/types';
+import { type InviteEmailType, sendInviteEmail } from '@/_email';
 import { newId } from '@/_models/database/newId';
 import { pendingInvites } from '@/_models/database/pendingInvites';
 import { planners } from '@/_models/database/planners';

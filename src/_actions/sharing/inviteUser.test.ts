@@ -9,7 +9,7 @@ import {
 } from 'vitest';
 
 import { checkAuth } from '@/_actions/auth/checkAuth';
-import { sendInviteEmail } from '@/_email/sendInviteEmail';
+import { sendInviteEmail } from '@/_email';
 import { pendingInvites } from '@/_models/database/pendingInvites';
 import { planners } from '@/_models/database/planners';
 import { users } from '@/_models/database/users';
@@ -22,7 +22,7 @@ vi.mock(
 	'@/_actions/auth/checkAuth',
 	async () => await import('#mocks/@/_actions/auth/checkAuth'),
 );
-vi.mock('@/_email/sendInviteEmail', async () => ({
+vi.mock('@/_email', async () => ({
 	sendInviteEmail: vi.fn(),
 }));
 vi.mock('@/env', async () => await import('#mocks/env'));
