@@ -46,7 +46,7 @@ A note's state, usually its `type` and `status`, says what should happen to it n
 | a story or hub whose `^status` line names `/place-design` | The design placed in the stories it belongs to, with any disagreement with their older designs settled, and feature notes for the parts no story covers | a story: `spec` · a hub: unchanged, with its child stories next | `/place-design` |
 | `bug` · `idea`, or a `bug` · `spec` whose `^status` line names `/investigate` | The bug reproduced, its root cause found and the fix settled with the user | `spec` | `/investigate` |
 | `pattern` · `idea`, no open decisions, or a `pattern` · `spec` whose `^status` line names `/architect` | Its convention if none is chosen, written as a short guide, then an audited Migration Checklist, approved with the user | `spec` | `/architect` |
-| `infra` · `idea`, no open decisions | Goals, Design and Conventions, approved with the user one piece at a time, the Setup Outside the Repo, and a Build Order they approve as a whole | `ready` | `/infra-design` |
+| `infra` · `idea`, no open decisions | Goals, a Design, Conventions, the Setup Outside the Repo and a Build Order, settled with the user | `ready` | `/infra-design` |
 | `cleanup` · `idea`, or a `cleanup` · `spec` whose `^status` line names `/audit` | Current State filled in from a scan of the code, and its decisions settled with the user | `spec` | `/audit` |
 | a collecting note: `sweep` · `idea` or `workflow` | Items collected until a goal starts building, then a dated copy frozen from them | a sweep's copy to `spec` · the original stays as it is | `/roadmap` |
 | `feature` · `spec` | Suggested Approach, then implementation steps | `ready` | `/assess`, then `/plan-steps` |
