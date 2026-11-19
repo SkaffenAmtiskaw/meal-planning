@@ -12,9 +12,9 @@ import { AddMealButton } from '@/app/[planner]/calendar/_components/AddMealButto
 
 import { CalendarHeaderDesktop, CalendarHeaderMobile } from './CalendarHeader';
 
-import { formatWeekRange } from '../Calendar/_utils/formatWeekRange';
 import { useCalendarContext } from '../Calendar/CalendarContext';
 import type { CalendarContextValue, CalendarViewType } from '../Calendar/types';
+import { formatWeekRange } from './_utils/formatWeekRange';
 
 vi.mock('@mantine/core', async () => await import('#mocks/@mantine/core'));
 
@@ -41,7 +41,7 @@ vi.mock('@mantine/dates', () => ({
 	)),
 }));
 
-vi.mock('../Calendar/_components/CalendarNavButtons', async () => ({
+vi.mock('./CalendarNavButtons', async () => ({
 	CalendarTodayButton: vi.fn(({ size }) => (
 		<button data-testid="today-button" data-size={size} aria-label="Today">
 			Today

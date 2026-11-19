@@ -9,7 +9,7 @@ import type { ActionIconProps, ButtonProps } from '@mantine/core';
 import type { PillButtonProps } from '@/_components/PillButton';
 import { PillButton } from '@/_components/PillButton';
 
-import { useCalendarContext } from '../CalendarContext';
+import { useCalendarContext } from '../Calendar';
 
 export function CalendarTodayButton(props: ButtonProps): ReactElement {
 	const { goToToday } = useCalendarContext();

@@ -25,32 +25,6 @@ vi.mock('../Calendar', async () => ({
 	CalendarProvider: vi.fn(({ children }) => (
 		<div data-testid="calendar-provider">{children}</div>
 	)),
-	CalendarTodayButton: vi.fn(({ size }) => (
-		<button data-testid="today-button" data-size={size} aria-label="Today">
-			Today
-		</button>
-	)),
-	CalendarPreviousButton: vi.fn(({ size }) => (
-		<button
-			data-testid="previous-button"
-			data-size={size}
-			aria-label="Previous"
-		>
-			Previous
-		</button>
-	)),
-	CalendarNextButton: vi.fn(({ size }) => (
-		<button data-testid="next-button" data-size={size} aria-label="Next">
-			Next
-		</button>
-	)),
-	DEFAULT_VIEWS: ['month', 'week', 'list'],
-	VIEW_LABELS: { month: 'Month', week: 'Week', list: 'List' },
-	LABEL_FORMATTERS: {
-		month: () => 'Month',
-		week: () => 'Week',
-		list: () => 'Month',
-	},
 	useCalendarContext: vi.fn(() => ({
 		selectedDate: DateTime.now(),
 		viewType: 'month',

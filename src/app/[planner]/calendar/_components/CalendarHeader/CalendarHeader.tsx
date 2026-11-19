@@ -22,19 +22,20 @@ import { DateTime } from 'luxon';
 
 import { AddMealButton } from '@/app/[planner]/calendar/_components/AddMealButton';
 
-import styles from './CalendarHeader.module.css';
-
 import {
 	CalendarNextButton,
 	CalendarPreviousButton,
 	CalendarTodayButton,
 	CalendarTodayPillButton,
-	type CalendarViewType,
+} from './CalendarNavButtons';
+import styles from './CalendarHeader.module.css';
+
+import { type CalendarViewType, useCalendarContext } from '../Calendar';
+import {
 	DEFAULT_VIEWS,
 	LABEL_FORMATTERS,
-	useCalendarContext,
 	VIEW_LABELS,
-} from '../Calendar';
+} from './_utils/formatCalendarLabel';
 
 const MOBILE_VIEWS: CalendarViewType[] = ['month', 'list'];
 

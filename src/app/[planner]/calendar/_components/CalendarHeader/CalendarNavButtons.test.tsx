@@ -10,7 +10,7 @@ import {
 	CalendarTodayPillButton,
 } from './CalendarNavButtons';
 
-import { useCalendarContext } from '../CalendarContext';
+import { useCalendarContext } from '../Calendar';
 
 vi.mock('@mantine/core', async () => await import('#mocks/@mantine/core'));
 
@@ -42,7 +42,7 @@ vi.mock('@/_components/PillButton', () => ({
 	),
 }));
 
-vi.mock('../CalendarContext', () => ({
+vi.mock('../Calendar', () => ({
 	useCalendarContext: vi.fn(),
 }));
 
