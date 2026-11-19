@@ -1,5 +1,9 @@
 import { describe, expect, test } from 'vitest';
 
+import { DynamicServerError } from 'next/dist/client/components/hooks-server-context';
+import { isRedirectError } from 'next/dist/client/components/redirect-error';
+import { redirect } from 'next/navigation';
+
 import { catchify } from './catchify';
 
 describe('catchify', () => {
@@ -17,5 +21,17 @@ describe('catchify', () => {
 			);
 
 		expect(await catchify(test)).toEqual([undefined, new Error('boom')]);
+	});
+
+	test("it should rethrow Next's dynamic-usage error instead of returning it", async () => {
+		const error = new DynamicServerError('used `headers`');
+
+		await expect(catchify(() => Promise.reject(error))).rejects.toBe(error);
+	});
+
+	test("it should rethrow Next's redirect error instead of returning it", async () => {
+		await expect(catchify(async () => redirect('/'))).rejects.toSatisfy(
+			isRedirectError,
+		);
 	});
 });

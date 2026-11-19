@@ -27,3 +27,5 @@ export const notFound = vi.fn();
 export const permanentRedirect = vi.fn();
 
 export class ReadonlyURLSearchParams extends URLSearchParams {}
+
+export { unstable_rethrow } from 'next/dist/client/components/unstable-rethrow';
