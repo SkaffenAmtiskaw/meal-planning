@@ -13,7 +13,7 @@ hooks:
 
 Check the note **$ARGUMENTS** for drift.
 
-Find where the note's remaining work no longer holds, mark each place with a ⚠️ Check Drift callout and send the note to the skill that fixes it. Make only the changes the steps below name, and correct any name or path that moved. Don't rewrite anything else, because the skill that wrote each section settled it with the user and is the one to re-settle it.
+Find where the note's remaining work no longer holds, mark each place with a ⚠️ Check Drift callout and send the note to the skill that fixes it. Make only the changes the steps below name. Don't rewrite anything else, because the skill that wrote each section settled it with the user and is the one to re-settle it.
 
 Invoke the `editing-notes` skill first, since this run changes notes.
 
@@ -46,6 +46,8 @@ If the note is a pattern, also run the `convention-auditor` subagent alongside t
 ## 4. Sort the checkers' findings
 If one of the user's comments already settles a checker's finding, merge it into the finding from that comment. It needs no decision. Drop any finding that an earlier ⚠️ Check Drift callout already settled.
 
+If a checker's finding has one obvious fix, and the fix keeps what the text is for, correct the text without asking and write no callout. For example, a name or path that moved, or a check whose search would also match unrelated code. The user approved what each line is for, not its exact wording, so a correction like this needs no decision.
+
 Write each callout directly above the text it's about, in this form:
 
 `> ⚠️ **Check Drift YYYY-MM-DD:** what no longer matches, and what it means for this note. How it was found, and anything it wasn't verified against.`
@@ -58,7 +60,7 @@ For example, "From Sarah's comment" or "Found by reading GitHub's docs, not veri
 1. If the note is a pattern, compare `convention-auditor`'s report with the note's Migration Checklist, as `pattern.md` describes.
 2. Sort each finding:
    - **A place in a cleanup's scope is new or gone, and its approach still holds:** correct Current State without asking, because it only records what's there. Beside each new place, record the search that found it, because the next re-check repeats the searches recorded there.
-   - **Needs a decision:** anything else that changes what gets built or how, such as a conflict with another story's design, project docs that disagree with recent code, or a piece another story already built.
+   - **Needs a decision:** anything else, because it changes what gets built, how it's built or what a check proves. For example, a conflict with another story's design, project docs that disagree with recent code, or a piece another story already built.
 3. Triage the out-of-scope list. An item the user pulls in becomes a finding that needs a decision.
 
 ## 5. Settle the findings and write the callouts
