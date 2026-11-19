@@ -5,7 +5,7 @@ user-invocable: false
 ---
 
 # Writing Implementation Steps
-Each step carries one idea and ends in checks that show progress the user can see, because the user reviews each step's diff and checks it in the running app before the next one is built.
+Each step carries one idea and ends in checks that show its progress, because the user reviews each step's diff, and checks what it changes in the running app, before the next one is built.
 
 ## One Idea per Step
 - **The idea sentence.** A step opens with one sentence saying what it does. If it needs "and", or "and" in disguise such as "with" or "plus", it's two steps.
@@ -19,7 +19,7 @@ Each step carries one idea and ends in checks that show progress the user can se
 - **Scaffolding.** A temporary page or hardcoded value is fine if it shows progress, as long as a later step removes it.
 
 ## Existing Code
-- **Refactors.** Each refactor, replacement or extraction in the approach gets its own step, before the step that builds on it. Its checks are click-throughs of the existing flows that use the changed code, which should look and work exactly as before.
+- **Refactors.** Each refactor, replacement or extraction in the approach gets its own step, before the step that builds on it. The existing flows that use the changed code should look and work exactly as before, and `checks.md` says who checks them.
 - **No second job.** If a step adds behavior to an existing module, check that it's the job the module already does. If it's a different job, it needs a piece of its own, as Single Concern in `docs/project_conventions.md` requires.
 
 ## What the Builder Decides
