@@ -26,7 +26,7 @@ export function MealListView({
 }: MealListViewProps): ReactElement {
 	const isMobile = useIsMobile();
 
-	const events: CalendarMeal[] = useMemo(
+	const meals: CalendarMeal[] = useMemo(
 		() => toCalendarMeals(calendar, savedItems),
 		[calendar, savedItems],
 	);
@@ -39,5 +39,5 @@ export function MealListView({
 		<DishLink dish={dish} plannerId={plannerId} size="sm" />
 	);
 
-	return <ListView events={events} renderDish={renderDish} />;
+	return <ListView meals={meals} renderDish={renderDish} />;
 }

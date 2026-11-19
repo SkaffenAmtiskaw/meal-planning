@@ -4,7 +4,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 import type { DayInterface } from '@/_models/types';
 
 import { MealCalendar } from './MealCalendar';
-import { MealEventCard } from './MealEventCard';
+import { MonthMealCard } from './MonthMealCard';
 
 import { MonthGrid } from '../Calendar';
 import type { CalendarMeal, MonthGridMeal } from '../Calendar';
@@ -28,17 +28,17 @@ vi.mock('../Calendar', async () => ({
 	)),
 }));
 
-vi.mock('./MealEventCard', async () => ({
-	MealEventCard: vi.fn(({ event, onClick, tabIndex, ref }) => (
+vi.mock('./MonthMealCard', async () => ({
+	MonthMealCard: vi.fn(({ meal, onClick, tabIndex, ref }) => (
 		<button
-			data-testid="meal-event-card"
-			data-event-id={event.id}
+			data-testid="month-meal-card"
+			data-meal-id={meal.id}
 			data-tabindex={tabIndex}
 			data-has-ref={ref ? 'true' : 'false'}
 			onClick={onClick}
 			type="button"
 		>
-			{event.name}
+			{meal.name}
 		</button>
 	)),
 }));
@@ -118,17 +118,17 @@ describe('MealCalendar', () => {
 		]);
 	});
 
-	it('renders MealEventCard via renderMeal prop', () => {
+	it('renders MonthMealCard via renderMeal prop', () => {
 		vi.mocked(toCalendarMeals).mockReturnValue(mockCalendarMeals);
 
 		render(<MealCalendar calendar={mockCalendar} />);
 
-		const mealCards = screen.getAllByTestId('meal-event-card');
+		const mealCards = screen.getAllByTestId('month-meal-card');
 		expect(mealCards).toHaveLength(1);
-		expect(mealCards[0].getAttribute('data-event-id')).toBe('meal-1');
-		expect(vi.mocked(MealEventCard).mock.calls[0][0]).toEqual(
+		expect(mealCards[0].getAttribute('data-meal-id')).toBe('meal-1');
+		expect(vi.mocked(MonthMealCard).mock.calls[0][0]).toEqual(
 			expect.objectContaining({
-				event: expect.objectContaining({
+				meal: expect.objectContaining({
 					id: 'meal-1',
 					name: 'Breakfast',
 				}),
@@ -142,7 +142,7 @@ describe('MealCalendar', () => {
 
 		render(<MealCalendar calendar={mockCalendar} onMealClick={onMealClick} />);
 
-		fireEvent.click(screen.getByTestId('meal-event-card'));
+		fireEvent.click(screen.getByTestId('month-meal-card'));
 
 		expect(onMealClick).toHaveBeenCalledTimes(1);
 		expect(onMealClick).toHaveBeenCalledWith(mockCalendarMeals[0]);
@@ -154,7 +154,7 @@ describe('MealCalendar', () => {
 		render(<MealCalendar calendar={mockCalendar} />);
 
 		expect(() => {
-			fireEvent.click(screen.getByTestId('meal-event-card'));
+			fireEvent.click(screen.getByTestId('month-meal-card'));
 		}).not.toThrow();
 	});
 

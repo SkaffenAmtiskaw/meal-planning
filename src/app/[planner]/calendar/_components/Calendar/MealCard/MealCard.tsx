@@ -9,7 +9,7 @@ import type { CalendarDish } from '../types';
 import { DishListItem } from '../_components/DishListItem/DishListItem';
 
 export function MealCard({
-	event,
+	meal,
 	renderDish,
 	renderActions,
 }: MealCardProps): ReactElement {
@@ -21,19 +21,19 @@ export function MealCard({
 		<Box
 			className={styles.mealCard}
 			data-testid="meal-card"
-			style={{ borderLeft: `4px solid ${event.borderColor}` }}
+			style={{ borderLeft: `4px solid ${meal.borderColor}` }}
 		>
 			<Text size="sm" fw={600} c="navy">
-				{event.name}
+				{meal.name}
 			</Text>
-			{event.description && (
+			{meal.description && (
 				<Text size="xs" c="navy.4">
-					{event.description}
+					{meal.description}
 				</Text>
 			)}
-			{event.dishes.length > 0 && (
+			{meal.dishes.length > 0 && (
 				<Stack className={styles.dishList} gap="5px">
-					{event.dishes.map((dish) => (
+					{meal.dishes.map((dish) => (
 						<DishListItem
 							key={dish.name}
 							dish={dish}

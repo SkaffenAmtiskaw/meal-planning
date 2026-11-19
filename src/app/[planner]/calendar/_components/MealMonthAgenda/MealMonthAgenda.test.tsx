@@ -16,7 +16,7 @@ import type { SavedItem } from '../../types';
 import { MobileAgenda } from '../Calendar/MobileAgenda/MobileAgenda';
 import type { MobileAgendaProps } from '../Calendar/MobileAgenda/types';
 import { MobileMonthGrid } from '../Calendar/MobileMonthGrid/MobileMonthGrid';
-import type { MobileMonthGridEvent } from '../Calendar/MobileMonthGrid/types';
+import type { MobileMonthGridMeal } from '../Calendar/MobileMonthGrid/types';
 import { DishLink } from '../DishLink/DishLink';
 
 vi.mock('@mantine/core', async () => await import('#mocks/@mantine/core'));
@@ -32,16 +32,16 @@ vi.mock(
 );
 
 vi.mock('../Calendar/MobileMonthGrid/MobileMonthGrid', async () => ({
-	MobileMonthGrid: vi.fn(({ events }: { events?: MobileMonthGridEvent[] }) => (
+	MobileMonthGrid: vi.fn(({ meals }: { meals?: MobileMonthGridMeal[] }) => (
 		<div data-testid="mobile-month-grid">
-			{(events ?? []).map((event) => (
+			{(meals ?? []).map((meal) => (
 				<span
-					key={event.id}
-					data-testid="mobile-month-grid-event"
-					data-date={event.date}
-					data-color={event.color}
+					key={meal.id}
+					data-testid="mobile-month-grid-meal"
+					data-date={meal.date}
+					data-color={meal.color}
 				>
-					{event.date}
+					{meal.date}
 				</span>
 			))}
 		</div>
@@ -49,16 +49,16 @@ vi.mock('../Calendar/MobileMonthGrid/MobileMonthGrid', async () => ({
 }));
 
 vi.mock('../Calendar/MobileAgenda/MobileAgenda', async () => ({
-	MobileAgenda: vi.fn(({ events }: MobileAgendaProps) => (
+	MobileAgenda: vi.fn(({ meals }: MobileAgendaProps) => (
 		<div data-testid="mobile-agenda">
-			{(events ?? []).map((event) => (
+			{(meals ?? []).map((meal) => (
 				<span
-					key={event.id}
-					data-testid="mobile-agenda-event"
-					data-date={event.date}
-					data-border-color={event.borderColor}
+					key={meal.id}
+					data-testid="mobile-agenda-meal"
+					data-date={meal.date}
+					data-border-color={meal.borderColor}
 				>
-					{event.name}
+					{meal.name}
 				</span>
 			))}
 		</div>
@@ -146,7 +146,7 @@ describe('MealMonthAgenda', () => {
 		renderAgenda();
 
 		const calls = mockMobileMonthGrid.mock.calls;
-		expect(calls[calls.length - 1][0].events).toEqual([
+		expect(calls[calls.length - 1][0].meals).toEqual([
 			{ id: 'meal-1', date: '2024-06-15', color: '#111' },
 			{ id: 'meal-2', date: '2024-06-16', color: '#222' },
 		]);
@@ -156,7 +156,7 @@ describe('MealMonthAgenda', () => {
 		renderAgenda();
 
 		const calls = mockMobileAgenda.mock.calls;
-		expect(calls[calls.length - 1][0].events).toEqual(calendarMeals);
+		expect(calls[calls.length - 1][0].meals).toEqual(calendarMeals);
 	});
 
 	it('passes a renderDish function that uses DishLink', () => {
@@ -226,8 +226,8 @@ describe('MealMonthAgenda', () => {
 			render(<MealMonthAgenda plannerId="planner-1" calendar={[]} />),
 		).not.toThrow();
 
-		expect(screen.queryAllByTestId('mobile-month-grid-event')).toHaveLength(0);
+		expect(screen.queryAllByTestId('mobile-month-grid-meal')).toHaveLength(0);
 		expect(screen.getByTestId('mobile-agenda')).toBeDefined();
-		expect(screen.queryAllByTestId('mobile-agenda-event')).toHaveLength(0);
+		expect(screen.queryAllByTestId('mobile-agenda-meal')).toHaveLength(0);
 	});
 });

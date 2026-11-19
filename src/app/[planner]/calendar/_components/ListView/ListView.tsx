@@ -17,31 +17,31 @@ import { getListDayRange } from './_utils/getListDayRange';
 
 interface ListViewProps {
 	today?: DateTime;
-	events?: CalendarMeal[];
+	meals?: CalendarMeal[];
 	renderDish?: MealCardProps['renderDish'];
 }
 
 export function ListView({
 	today,
-	events = [],
+	meals = [],
 	renderDish,
 }: ListViewProps): ReactElement {
 	const { rangeAnchor, selectedDate, setSelectedDate } = useCalendarContext();
 	const days = getListDayRange(rangeAnchor);
 	const todayDate = today ?? DateTime.now().startOf('day');
 
-	const eventsByDate = useMemo(() => {
+	const mealsByDate = useMemo(() => {
 		const map = new Map<string, CalendarMeal[]>();
-		for (const event of events) {
-			const list = map.get(event.date);
+		for (const meal of meals) {
+			const list = map.get(meal.date);
 			if (list) {
-				list.push(event);
+				list.push(meal);
 			} else {
-				map.set(event.date, [event]);
+				map.set(meal.date, [meal]);
 			}
 		}
 		return map;
-	}, [events]);
+	}, [meals]);
 
 	const scrollRef = useRef<HTMLDivElement>(null);
 	const scrollToDate = useScrollToDate(scrollRef);
@@ -85,7 +85,7 @@ export function ListView({
 						<DayRow
 							date={date}
 							today={todayDate}
-							meals={eventsByDate.get(date.toISODate() ?? '') ?? []}
+							meals={mealsByDate.get(date.toISODate() ?? '') ?? []}
 							renderDish={renderDish}
 						/>
 					</li>

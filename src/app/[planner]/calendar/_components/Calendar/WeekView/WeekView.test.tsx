@@ -154,9 +154,9 @@ describe('WeekView', () => {
 		]);
 
 		const meals = [
-			{ id: '1', date: '2024-09-16', name: 'Monday Event' },
-			{ id: '2', date: '2024-09-18', name: 'Wednesday Event' },
-			{ id: '3', date: '2024-09-18', name: 'Another Wednesday Event' },
+			{ id: '1', date: '2024-09-16', name: 'Monday Meal' },
+			{ id: '2', date: '2024-09-18', name: 'Wednesday Meal' },
+			{ id: '3', date: '2024-09-18', name: 'Another Wednesday Meal' },
 		];
 
 		render(
@@ -166,16 +166,16 @@ describe('WeekView', () => {
 		);
 
 		const columns = screen.getAllByTestId('week-day-column');
-		expect(within(columns[1]).getByText('Monday Event')).toBeDefined();
-		expect(within(columns[3]).getByText('Wednesday Event')).toBeDefined();
+		expect(within(columns[1]).getByText('Monday Meal')).toBeDefined();
+		expect(within(columns[3]).getByText('Wednesday Meal')).toBeDefined();
 		expect(
-			within(columns[3]).getByText('Another Wednesday Event'),
+			within(columns[3]).getByText('Another Wednesday Meal'),
 		).toBeDefined();
-		expect(within(columns[0]).queryByTestId('week-event')).toBeNull();
-		expect(within(columns[2]).queryByTestId('week-event')).toBeNull();
-		expect(within(columns[4]).queryByTestId('week-event')).toBeNull();
-		expect(within(columns[5]).queryByTestId('week-event')).toBeNull();
-		expect(within(columns[6]).queryByTestId('week-event')).toBeNull();
+		expect(within(columns[0]).queryByTestId('week-meal')).toBeNull();
+		expect(within(columns[2]).queryByTestId('week-meal')).toBeNull();
+		expect(within(columns[4]).queryByTestId('week-meal')).toBeNull();
+		expect(within(columns[5]).queryByTestId('week-meal')).toBeNull();
+		expect(within(columns[6]).queryByTestId('week-meal')).toBeNull();
 	});
 
 	it('uses renderMeal when provided', () => {
@@ -190,9 +190,9 @@ describe('WeekView', () => {
 			DateTime.local(2024, 9, 21),
 		]);
 
-		const meals = [{ id: '1', date: '2024-09-18', name: 'Custom Event' }];
+		const meals = [{ id: '1', date: '2024-09-18', name: 'Custom Meal' }];
 		const renderMeal = vi.fn((meal, props) => (
-			<div data-testid="custom-event" data-tab-index={props.tabIndex}>
+			<div data-testid="custom-meal" data-tab-index={props.tabIndex}>
 				{meal.name}
 			</div>
 		));
@@ -203,7 +203,7 @@ describe('WeekView', () => {
 			</CalendarProvider>,
 		);
 
-		expect(screen.getByTestId('custom-event')).toBeDefined();
+		expect(screen.getByTestId('custom-meal')).toBeDefined();
 		expect(renderMeal).toHaveBeenCalledWith(
 			meals[0],
 			expect.objectContaining({
@@ -225,7 +225,7 @@ describe('WeekView', () => {
 			DateTime.local(2024, 9, 21),
 		]);
 
-		const meal = { id: '1', date: '2024-09-18', name: 'Clickable Event' };
+		const meal = { id: '1', date: '2024-09-18', name: 'Clickable Meal' };
 		const onMealClick = vi.fn();
 
 		render(
@@ -234,7 +234,7 @@ describe('WeekView', () => {
 			</CalendarProvider>,
 		);
 
-		fireEvent.click(screen.getByTestId('week-event'));
+		fireEvent.click(screen.getByTestId('week-meal'));
 		expect(onMealClick).toHaveBeenCalledWith(meal);
 	});
 
@@ -252,11 +252,11 @@ describe('WeekView', () => {
 
 		render(
 			<CalendarProvider initialDate={initialDate} initialView="week">
-				<WeekView meals={[{ id: '1', date: '2024-09-18', name: 'Event' }]} />
+				<WeekView meals={[{ id: '1', date: '2024-09-18', name: 'Meal' }]} />
 			</CalendarProvider>,
 		);
 
-		expect(screen.getByRole('button', { name: 'Event' })).toBeDefined();
+		expect(screen.getByRole('button', { name: 'Meal' })).toBeDefined();
 	});
 
 	it('renders nothing for days without meals', () => {
@@ -277,6 +277,6 @@ describe('WeekView', () => {
 			</CalendarProvider>,
 		);
 
-		expect(screen.queryAllByTestId('week-event')).toHaveLength(0);
+		expect(screen.queryAllByTestId('week-meal')).toHaveLength(0);
 	});
 });

@@ -1,7 +1,7 @@
 import { fireEvent, render, screen } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-import { MealEventCard } from './MealEventCard';
+import { MonthMealCard } from './MonthMealCard';
 
 vi.mock('@mantine/core', async () => await import('#mocks/@mantine/core'));
 vi.mock('@/_theme/colors', () => ({
@@ -13,36 +13,36 @@ vi.mock('@/_theme/colors', () => ({
 
 import { getMealColor } from '@/_theme/colors';
 
-describe('MealEventCard', () => {
+describe('MonthMealCard', () => {
 	beforeEach(() => {
 		vi.resetAllMocks();
 	});
 
-	it('calls getMealColor with event name', () => {
-		const event = { id: '1', name: 'Breakfast' };
-		render(<MealEventCard event={event} />);
+	it('calls getMealColor with meal name', () => {
+		const meal = { id: '1', name: 'Breakfast' };
+		render(<MonthMealCard meal={meal} />);
 		expect(getMealColor).toHaveBeenCalledWith('Breakfast');
 	});
 
 	it('calls onClick when clicked', () => {
-		const event = { id: '1', name: 'Breakfast' };
+		const meal = { id: '1', name: 'Breakfast' };
 		const onClick = vi.fn();
-		render(<MealEventCard event={event} onClick={onClick} />);
+		render(<MonthMealCard meal={meal} onClick={onClick} />);
 		fireEvent.click(screen.getByText('Breakfast'));
-		expect(onClick).toHaveBeenCalledWith(event);
+		expect(onClick).toHaveBeenCalledWith(meal);
 	});
 
 	it('renders description when present and omits it when absent', () => {
-		const eventWithDescription = {
+		const mealWithDescription = {
 			id: '1',
 			name: 'Breakfast',
 			description: 'Eggs and toast',
 		};
-		const { rerender } = render(<MealEventCard event={eventWithDescription} />);
+		const { rerender } = render(<MonthMealCard meal={mealWithDescription} />);
 		expect(screen.getByText('Eggs and toast')).toBeDefined();
 
-		const eventWithoutDescription = { id: '1', name: 'Breakfast' };
-		rerender(<MealEventCard event={eventWithoutDescription} />);
+		const mealWithoutDescription = { id: '1', name: 'Breakfast' };
+		rerender(<MonthMealCard meal={mealWithoutDescription} />);
 		expect(screen.queryByText('Eggs and toast')).toBeNull();
 	});
 });

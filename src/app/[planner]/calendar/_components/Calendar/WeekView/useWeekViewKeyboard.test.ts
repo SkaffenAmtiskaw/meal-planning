@@ -222,7 +222,7 @@ describe('useWeekViewKeyboard', () => {
 			const days = createWeek(DateTime.local(2025, 8, 31));
 			const isoDate = days[3].toISODate() as string;
 			const meals = new Map<string, WeekViewMeal[]>([
-				[isoDate, [{ id: '1', date: isoDate, name: 'Event 1' }]],
+				[isoDate, [{ id: '1', date: isoDate, name: 'Meal1' }]],
 			]);
 
 			const { result } = renderHook(() =>
@@ -233,9 +233,9 @@ describe('useWeekViewKeyboard', () => {
 				}),
 			);
 
-			const eventEl = { focus: vi.fn() } as unknown as HTMLElement;
+			const mealEl = { focus: vi.fn() } as unknown as HTMLElement;
 			act(() => {
-				result.current.getMealProps(3, 0, isoDate).ref(eventEl);
+				result.current.getMealProps(3, 0, isoDate).ref(mealEl);
 			});
 
 			act(() => {
@@ -246,7 +246,7 @@ describe('useWeekViewKeyboard', () => {
 
 			expect(result.current.getDayProps(3).tabIndex).toBe(-1);
 			expect(result.current.getMealProps(3, 0, isoDate).tabIndex).toBe(0);
-			expect(eventEl.focus).toHaveBeenCalled();
+			expect(mealEl.focus).toHaveBeenCalled();
 		});
 
 		it('enters meal mode on Enter for a day with meals', () => {
@@ -255,7 +255,7 @@ describe('useWeekViewKeyboard', () => {
 			const days = createWeek(DateTime.local(2025, 8, 31));
 			const isoDate = days[3].toISODate() as string;
 			const meals = new Map<string, WeekViewMeal[]>([
-				[isoDate, [{ id: '1', date: isoDate, name: 'Event 1' }]],
+				[isoDate, [{ id: '1', date: isoDate, name: 'Meal1' }]],
 			]);
 
 			const { result } = renderHook(() =>
@@ -266,9 +266,9 @@ describe('useWeekViewKeyboard', () => {
 				}),
 			);
 
-			const eventEl = { focus: vi.fn() } as unknown as HTMLElement;
+			const mealEl = { focus: vi.fn() } as unknown as HTMLElement;
 			act(() => {
-				result.current.getMealProps(3, 0, isoDate).ref(eventEl);
+				result.current.getMealProps(3, 0, isoDate).ref(mealEl);
 			});
 
 			act(() => {
@@ -277,7 +277,7 @@ describe('useWeekViewKeyboard', () => {
 
 			expect(result.current.getDayProps(3).tabIndex).toBe(-1);
 			expect(result.current.getMealProps(3, 0, isoDate).tabIndex).toBe(0);
-			expect(eventEl.focus).toHaveBeenCalled();
+			expect(mealEl.focus).toHaveBeenCalled();
 		});
 
 		it('does nothing on ArrowDown for an empty day', () => {
@@ -308,7 +308,7 @@ describe('useWeekViewKeyboard', () => {
 			const isoDate = days[3].toISODate() as string;
 			const onMealClick = vi.fn();
 			const meals = new Map<string, WeekViewMeal[]>([
-				[isoDate, [{ id: '1', date: isoDate, name: 'Event 1' }]],
+				[isoDate, [{ id: '1', date: isoDate, name: 'Meal1' }]],
 			]);
 
 			const { result } = renderHook(() =>
@@ -346,8 +346,8 @@ describe('useWeekViewKeyboard', () => {
 				[
 					isoDate,
 					[
-						{ id: '1', date: isoDate, name: 'Event 1' },
-						{ id: '2', date: isoDate, name: 'Event 2' },
+						{ id: '1', date: isoDate, name: 'Meal1' },
+						{ id: '2', date: isoDate, name: 'Meal2' },
 					],
 				],
 			]);
@@ -360,11 +360,11 @@ describe('useWeekViewKeyboard', () => {
 				}),
 			);
 
-			const event0 = { focus: vi.fn() } as unknown as HTMLElement;
-			const event1 = { focus: vi.fn() } as unknown as HTMLElement;
+			const meal0 = { focus: vi.fn() } as unknown as HTMLElement;
+			const meal1 = { focus: vi.fn() } as unknown as HTMLElement;
 			act(() => {
-				result.current.getMealProps(3, 0, isoDate).ref(event0);
-				result.current.getMealProps(3, 1, isoDate).ref(event1);
+				result.current.getMealProps(3, 0, isoDate).ref(meal0);
+				result.current.getMealProps(3, 1, isoDate).ref(meal1);
 			});
 
 			act(() => {
@@ -382,7 +382,7 @@ describe('useWeekViewKeyboard', () => {
 
 			expect(result.current.getMealProps(3, 0, isoDate).tabIndex).toBe(-1);
 			expect(result.current.getMealProps(3, 1, isoDate).tabIndex).toBe(0);
-			expect(event1.focus).toHaveBeenCalled();
+			expect(meal1.focus).toHaveBeenCalled();
 		});
 
 		it('navigates meals with ArrowUp', () => {
@@ -394,9 +394,9 @@ describe('useWeekViewKeyboard', () => {
 				[
 					isoDate,
 					[
-						{ id: '1', date: isoDate, name: 'Event 1' },
-						{ id: '2', date: isoDate, name: 'Event 2' },
-						{ id: '3', date: isoDate, name: 'Event 3' },
+						{ id: '1', date: isoDate, name: 'Meal1' },
+						{ id: '2', date: isoDate, name: 'Meal2' },
+						{ id: '3', date: isoDate, name: 'Meal3' },
 					],
 				],
 			]);
@@ -409,9 +409,9 @@ describe('useWeekViewKeyboard', () => {
 				}),
 			);
 
-			const event1 = { focus: vi.fn() } as unknown as HTMLElement;
+			const meal1 = { focus: vi.fn() } as unknown as HTMLElement;
 			act(() => {
-				result.current.getMealProps(3, 1, isoDate).ref(event1);
+				result.current.getMealProps(3, 1, isoDate).ref(meal1);
 			});
 
 			act(() => {
@@ -437,7 +437,7 @@ describe('useWeekViewKeyboard', () => {
 
 			expect(result.current.getMealProps(3, 2, isoDate).tabIndex).toBe(-1);
 			expect(result.current.getMealProps(3, 1, isoDate).tabIndex).toBe(0);
-			expect(event1.focus).toHaveBeenCalled();
+			expect(meal1.focus).toHaveBeenCalled();
 		});
 
 		it('stops at the first meal with ArrowUp', () => {
@@ -449,8 +449,8 @@ describe('useWeekViewKeyboard', () => {
 				[
 					isoDate,
 					[
-						{ id: '1', date: isoDate, name: 'Event 1' },
-						{ id: '2', date: isoDate, name: 'Event 2' },
+						{ id: '1', date: isoDate, name: 'Meal1' },
+						{ id: '2', date: isoDate, name: 'Meal2' },
 					],
 				],
 			]);
@@ -485,8 +485,8 @@ describe('useWeekViewKeyboard', () => {
 				[
 					isoDate,
 					[
-						{ id: '1', date: isoDate, name: 'Event 1' },
-						{ id: '2', date: isoDate, name: 'Event 2' },
+						{ id: '1', date: isoDate, name: 'Meal1' },
+						{ id: '2', date: isoDate, name: 'Meal2' },
 					],
 				],
 			]);
@@ -529,10 +529,10 @@ describe('useWeekViewKeyboard', () => {
 			const meal: WeekViewMeal = {
 				id: '2',
 				date: isoDate,
-				name: 'Event 2',
+				name: 'Meal2',
 			};
 			const meals = new Map<string, WeekViewMeal[]>([
-				[isoDate, [{ id: '1', date: isoDate, name: 'Event 1' }, meal]],
+				[isoDate, [{ id: '1', date: isoDate, name: 'Meal1' }, meal]],
 			]);
 			const onMealClick = vi.fn();
 
@@ -572,8 +572,8 @@ describe('useWeekViewKeyboard', () => {
 				[
 					isoDate,
 					[
-						{ id: '1', date: isoDate, name: 'Event 1' },
-						{ id: '2', date: isoDate, name: 'Event 2' },
+						{ id: '1', date: isoDate, name: 'Meal1' },
+						{ id: '2', date: isoDate, name: 'Meal2' },
 					],
 				],
 			]);
@@ -623,11 +623,11 @@ describe('useWeekViewKeyboard', () => {
 				[
 					activeIsoDate,
 					[
-						{ id: '1', date: activeIsoDate, name: 'Active event 1' },
-						{ id: '2', date: activeIsoDate, name: 'Active event 2' },
+						{ id: '1', date: activeIsoDate, name: 'Active meal 1' },
+						{ id: '2', date: activeIsoDate, name: 'Active meal 2' },
 					],
 				],
-				[otherIsoDate, [{ id: '3', date: otherIsoDate, name: 'Other event' }]],
+				[otherIsoDate, [{ id: '3', date: otherIsoDate, name: 'Other meal' }]],
 			]);
 
 			const { result } = renderHook(() =>
@@ -663,8 +663,8 @@ describe('useWeekViewKeyboard', () => {
 				[
 					isoDate,
 					[
-						{ id: '1', date: isoDate, name: 'Event 1' },
-						{ id: '2', date: isoDate, name: 'Event 2' },
+						{ id: '1', date: isoDate, name: 'Meal1' },
+						{ id: '2', date: isoDate, name: 'Meal2' },
 					],
 				],
 			]);
@@ -678,9 +678,9 @@ describe('useWeekViewKeyboard', () => {
 				}),
 			);
 
-			const event0 = { focus: vi.fn() } as unknown as HTMLElement;
+			const meal0 = { focus: vi.fn() } as unknown as HTMLElement;
 			act(() => {
-				result.current.getMealProps(3, 0, isoDate).ref(event0);
+				result.current.getMealProps(3, 0, isoDate).ref(meal0);
 			});
 
 			act(() => {
@@ -690,7 +690,7 @@ describe('useWeekViewKeyboard', () => {
 			});
 			expect(result.current.getDayProps(3).tabIndex).toBe(-1);
 			expect(result.current.getMealProps(3, 0, isoDate).tabIndex).toBe(0);
-			expect(event0.focus).toHaveBeenCalledOnce();
+			expect(meal0.focus).toHaveBeenCalledOnce();
 
 			act(() => {
 				result.current.getDayProps(3).onKeyDown(createKeyboardEvent('a'));
@@ -698,7 +698,7 @@ describe('useWeekViewKeyboard', () => {
 
 			expect(result.current.getDayProps(3).tabIndex).toBe(-1);
 			expect(result.current.getMealProps(3, 0, isoDate).tabIndex).toBe(0);
-			expect(event0.focus).toHaveBeenCalledOnce();
+			expect(meal0.focus).toHaveBeenCalledOnce();
 			expect(onMealClick).not.toHaveBeenCalled();
 		});
 	});
@@ -710,7 +710,7 @@ describe('useWeekViewKeyboard', () => {
 			const days = createWeek(DateTime.local(2025, 8, 31));
 			const isoDate = days[3].toISODate() as string;
 			const meals = new Map<string, WeekViewMeal[]>([
-				[isoDate, [{ id: '1', date: isoDate, name: 'Event 1' }]],
+				[isoDate, [{ id: '1', date: isoDate, name: 'Meal1' }]],
 			]);
 
 			const { result } = renderHook(() =>
@@ -748,7 +748,7 @@ describe('useWeekViewKeyboard', () => {
 			const days = createWeek(DateTime.local(2025, 8, 31));
 			const isoDate = days[3].toISODate() as string;
 			const meals = new Map<string, WeekViewMeal[]>([
-				[isoDate, [{ id: '1', date: isoDate, name: 'Event 1' }]],
+				[isoDate, [{ id: '1', date: isoDate, name: 'Meal1' }]],
 			]);
 
 			const { result } = renderHook(() =>
@@ -825,7 +825,7 @@ describe('useWeekViewKeyboard', () => {
 			const days = createWeek(DateTime.local(2025, 8, 31)); // Aug 31 - Sep 6
 			const isoDate = days[3].toISODate() as string;
 			const meals = new Map<string, WeekViewMeal[]>([
-				[isoDate, [{ id: '1', date: isoDate, name: 'Event 1' }]],
+				[isoDate, [{ id: '1', date: isoDate, name: 'Meal1' }]],
 			]);
 
 			const { result, rerender } = renderHook(
@@ -840,9 +840,9 @@ describe('useWeekViewKeyboard', () => {
 				},
 			);
 
-			const oldEvent = { focus: vi.fn() } as unknown as HTMLElement;
+			const oldMeal = { focus: vi.fn() } as unknown as HTMLElement;
 			act(() => {
-				result.current.getMealProps(3, 0, isoDate).ref(oldEvent);
+				result.current.getMealProps(3, 0, isoDate).ref(oldMeal);
 			});
 
 			act(() => {
@@ -850,7 +850,7 @@ describe('useWeekViewKeyboard', () => {
 					.getDayProps(3)
 					.onKeyDown(createKeyboardEvent('ArrowDown'));
 			});
-			expect(oldEvent.focus).toHaveBeenCalledOnce();
+			expect(oldMeal.focus).toHaveBeenCalledOnce();
 
 			const newDays = createWeek(DateTime.local(2025, 8, 31)); // same dates, new array
 			rerender({ days: newDays });
@@ -860,7 +860,7 @@ describe('useWeekViewKeyboard', () => {
 					.getDayProps(3)
 					.onKeyDown(createKeyboardEvent('ArrowDown'));
 			});
-			expect(oldEvent.focus).toHaveBeenCalledOnce();
+			expect(oldMeal.focus).toHaveBeenCalledOnce();
 		});
 
 		it('exits meal mode when days change', () => {
@@ -869,7 +869,7 @@ describe('useWeekViewKeyboard', () => {
 			const days = createWeek(DateTime.local(2025, 8, 31)); // Aug 31 - Sep 6
 			const isoDate = days[3].toISODate() as string;
 			const meals = new Map<string, WeekViewMeal[]>([
-				[isoDate, [{ id: '1', date: isoDate, name: 'Event 1' }]],
+				[isoDate, [{ id: '1', date: isoDate, name: 'Meal1' }]],
 			]);
 
 			const { result, rerender } = renderHook(

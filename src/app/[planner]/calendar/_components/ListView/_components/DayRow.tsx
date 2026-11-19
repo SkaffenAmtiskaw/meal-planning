@@ -94,7 +94,7 @@ export function DayRow({
 							? meals.map((meal) => (
 									<MealCardWithDragHandle
 										key={meal.id}
-										event={meal}
+										meal={meal}
 										renderDish={renderDish}
 									/>
 								))

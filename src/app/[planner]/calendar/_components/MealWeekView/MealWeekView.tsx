@@ -51,9 +51,9 @@ export function MealWeekView({
 
 	const handleMealClick = useCallback(
 		(meal: WeekViewMeal) => {
-			const calendarEvent = mealMap.get(meal.id);
-			if (calendarEvent) {
-				onMealClick?.(calendarEvent);
+			const calendarMeal = mealMap.get(meal.id);
+			if (calendarMeal) {
+				onMealClick?.(calendarMeal);
 			}
 		},
 		[mealMap, onMealClick],
@@ -64,14 +64,14 @@ export function MealWeekView({
 			meal: WeekViewMeal,
 			props: Parameters<NonNullable<WeekViewProps['renderMeal']>>[1],
 		) => {
-			const calendarEvent = mealMap.get(meal.id);
-			if (!calendarEvent) return null;
+			const calendarMeal = mealMap.get(meal.id);
+			if (!calendarMeal) return null;
 
 			return (
 				<WeekMealCard
-					event={calendarEvent}
+					meal={calendarMeal}
 					plannerId={plannerId}
-					onClick={() => onMealClick?.(calendarEvent)}
+					onClick={() => onMealClick?.(calendarMeal)}
 					tabIndex={props.tabIndex}
 					ref={props.ref}
 				/>

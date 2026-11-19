@@ -3,24 +3,24 @@ import { Paper, Text } from '@mantine/core';
 import { getMealColor, TAG_COLORS } from '@/_theme/colors';
 import focusClasses from '@/_theme/focus.module.css';
 
-interface MealEventCardProps {
-	event: {
+interface MonthMealCardProps {
+	meal: {
 		id: string;
 		name: string;
 		description?: string;
 	};
-	onClick?: (event: { id: string; name: string; description?: string }) => void;
+	onClick?: (meal: { id: string; name: string; description?: string }) => void;
 	tabIndex?: number;
 	ref?: React.Ref<HTMLButtonElement>;
 }
 
-export function MealEventCard({
-	event,
+export function MonthMealCard({
+	meal,
 	onClick,
 	tabIndex,
 	ref,
-}: MealEventCardProps) {
-	const tagColor = getMealColor(event.name);
+}: MonthMealCardProps) {
+	const tagColor = getMealColor(meal.name);
 	const { bg, text, border } = TAG_COLORS[tagColor];
 
 	return (
@@ -39,14 +39,14 @@ export function MealEventCard({
 				border: `1px solid ${border}`,
 				cursor: 'pointer',
 			}}
-			onClick={() => onClick?.(event)}
+			onClick={() => onClick?.(meal)}
 		>
 			<Text fw={700} size="sm" truncate="end" c={text}>
-				{event.name}
+				{meal.name}
 			</Text>
-			{event.description && (
+			{meal.description && (
 				<Text size="xs" truncate="end" c={text} style={{ opacity: 0.8 }}>
-					{event.description}
+					{meal.description}
 				</Text>
 			)}
 		</Paper>

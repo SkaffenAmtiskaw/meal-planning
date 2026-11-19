@@ -4,7 +4,7 @@ import { useCallback, useMemo } from 'react';
 
 import type { DayInterface } from '@/_models/types';
 
-import { MealEventCard } from './MealEventCard';
+import { MonthMealCard } from './MonthMealCard';
 
 import { MonthGrid } from '../Calendar';
 import type { CalendarMeal, MonthGridMeal, MonthGridProps } from '../Calendar';
@@ -45,9 +45,9 @@ export function MealCalendar({
 
 	const handleMealClick = useCallback(
 		(meal: MonthGridMeal) => {
-			const calendarEvent = mealMap.get(meal.id);
-			if (calendarEvent) {
-				onMealClick?.(calendarEvent);
+			const calendarMeal = mealMap.get(meal.id);
+			if (calendarMeal) {
+				onMealClick?.(calendarMeal);
 			}
 		},
 		[mealMap, onMealClick],
@@ -58,16 +58,16 @@ export function MealCalendar({
 			meal: MonthGridMeal,
 			props: Parameters<NonNullable<MonthGridProps['renderMeal']>>[1],
 		) => {
-			const calendarEvent = mealMap.get(meal.id);
-			if (!calendarEvent) return null;
+			const calendarMeal = mealMap.get(meal.id);
+			if (!calendarMeal) return null;
 
 			return (
-				<MealEventCard
-					event={meal}
+				<MonthMealCard
+					meal={meal}
 					tabIndex={props.tabIndex}
 					ref={props.ref}
 					onClick={() => {
-						onMealClick?.(calendarEvent);
+						onMealClick?.(calendarMeal);
 					}}
 				/>
 			);

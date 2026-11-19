@@ -13,7 +13,7 @@ import { toCalendarMeals } from '../../_utils/toCalendarMeals';
 import type { SavedItem } from '../../types';
 import { MobileAgenda } from '../Calendar/MobileAgenda/MobileAgenda';
 import { MobileMonthGrid } from '../Calendar/MobileMonthGrid/MobileMonthGrid';
-import type { MobileMonthGridEvent } from '../Calendar/MobileMonthGrid/types';
+import type { MobileMonthGridMeal } from '../Calendar/MobileMonthGrid/types';
 import { DishLink } from '../DishLink/DishLink';
 
 interface MealMonthAgendaProps {
@@ -27,19 +27,19 @@ export function MealMonthAgenda({
 	calendar,
 	savedItems,
 }: MealMonthAgendaProps): ReactElement {
-	const mealEvents = useMemo<CalendarMeal[]>(
+	const meals = useMemo<CalendarMeal[]>(
 		() => toCalendarMeals(calendar, savedItems),
 		[calendar, savedItems],
 	);
 
-	const dotEvents = useMemo<MobileMonthGridEvent[]>(
+	const dots = useMemo<MobileMonthGridMeal[]>(
 		() =>
-			mealEvents.map((meal) => ({
+			meals.map((meal) => ({
 				id: meal.id,
 				date: meal.date,
 				color: meal.borderColor,
 			})),
-		[mealEvents],
+		[meals],
 	);
 
 	const renderDish = useCallback(
@@ -51,8 +51,8 @@ export function MealMonthAgenda({
 
 	return (
 		<Stack flex={1} mih={0} gap="md">
-			<MobileMonthGrid events={dotEvents} />
-			<MobileAgenda events={mealEvents} renderDish={renderDish} />
+			<MobileMonthGrid meals={dots} />
+			<MobileAgenda meals={meals} renderDish={renderDish} />
 			<MobileAddMealButton />
 		</Stack>
 	);

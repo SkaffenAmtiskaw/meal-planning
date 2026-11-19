@@ -25,15 +25,15 @@ vi.mock('../../CalendarModal', () => ({
 vi.mock('./MealCardWithDragHandle', () => ({
 	MealCardWithDragHandle: vi.fn(
 		({
-			event,
+			meal,
 			renderDish,
 		}: {
-			event: CalendarMeal;
+			meal: CalendarMeal;
 			renderDish?: (dish: CalendarDish) => ReactNode;
 		}) => (
 			<div
 				data-testid="meal-card"
-				data-event-id={event.id}
+				data-meal-id={meal.id}
 				data-render-dish={renderDish ? 'provided' : 'omitted'}
 			/>
 		),
@@ -155,8 +155,8 @@ describe('DayRow', () => {
 
 		const cards = screen.getAllByTestId('meal-card');
 		expect(cards).toHaveLength(2);
-		expect(cards[0].getAttribute('data-event-id')).toBe('meal-1');
-		expect(cards[1].getAttribute('data-event-id')).toBe('meal-2');
+		expect(cards[0].getAttribute('data-meal-id')).toBe('meal-1');
+		expect(cards[1].getAttribute('data-meal-id')).toBe('meal-2');
 	});
 
 	it('does not render MealCards when no meals are provided', () => {

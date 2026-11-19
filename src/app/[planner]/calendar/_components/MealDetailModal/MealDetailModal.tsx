@@ -4,32 +4,32 @@ import type { CalendarMeal } from '../Calendar';
 import { DishLink } from '../DishLink/DishLink';
 
 type Props = {
-	event: CalendarMeal | null;
+	meal: CalendarMeal | null;
 	plannerId: string;
 	onClose: () => void;
 };
 
-export const MealDetailModal = ({ event, plannerId, onClose }: Props) => (
+export const MealDetailModal = ({ meal, plannerId, onClose }: Props) => (
 	<Modal
 		centered
-		opened={event !== null}
+		opened={meal !== null}
 		onClose={onClose}
 		removeScrollProps={{ removeScrollBar: false }}
 		title={
 			<Stack gap={2}>
 				<Text fw={700} size="lg">
-					{event?.name ?? ''}
+					{meal?.name ?? ''}
 				</Text>
-				{event?.description && (
+				{meal?.description && (
 					<Text size="sm" c="dimmed">
-						{event.description}
+						{meal.description}
 					</Text>
 				)}
 			</Stack>
 		}
 	>
 		<Stack gap="xs">
-			{event?.dishes.map((dish, i) => (
+			{meal?.dishes.map((dish, i) => (
 				// biome-ignore lint/suspicious/noArrayIndexKey: dishes have no stable id
 				<div key={i}>
 					<DishLink dish={dish} plannerId={plannerId} />

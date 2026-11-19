@@ -14,18 +14,18 @@ import type { SavedItem } from '../../types';
 vi.mock('../Calendar', async () => ({
 	WeekView: vi.fn(({ meals, renderMeal, onMealClick }) => (
 		<div data-testid="week-view">
-			{meals?.map((event: { id: string; date: string; name: string }) => (
-				<div key={event.id} data-testid="week-view-event">
+			{meals?.map((meal: { id: string; date: string; name: string }) => (
+				<div key={meal.id} data-testid="week-view-meal">
 					{renderMeal
-						? renderMeal(event, {
+						? renderMeal(meal, {
 								tabIndex: 0,
 								ref: vi.fn(),
 							})
-						: event.name}
+						: meal.name}
 					<button
 						type="button"
-						data-testid={`week-view-event-${event.id}`}
-						onClick={() => onMealClick?.(event)}
+						data-testid={`week-view-meal-${meal.id}`}
+						onClick={() => onMealClick?.(meal)}
 					>
 						Trigger
 					</button>
@@ -36,15 +36,15 @@ vi.mock('../Calendar', async () => ({
 }));
 
 vi.mock('./WeekMealCard', async () => ({
-	WeekMealCard: vi.fn(({ event, onClick, plannerId }) => (
+	WeekMealCard: vi.fn(({ meal, onClick, plannerId }) => (
 		<button
 			type="button"
 			data-testid="week-meal-card"
-			data-event-id={event.id}
+			data-meal-id={meal.id}
 			data-planner-id={plannerId}
 			onClick={onClick}
 		>
-			{event.name}
+			{meal.name}
 		</button>
 	)),
 }));
@@ -119,7 +119,7 @@ describe('MealWeekView', () => {
 
 		const mealCards = screen.getAllByTestId('week-meal-card');
 		expect(mealCards).toHaveLength(1);
-		expect(mealCards[0].getAttribute('data-event-id')).toBe('meal-1');
+		expect(mealCards[0].getAttribute('data-meal-id')).toBe('meal-1');
 		expect(mealCards[0].getAttribute('data-planner-id')).toBe('planner-1');
 	});
 
@@ -135,7 +135,7 @@ describe('MealWeekView', () => {
 			/>,
 		);
 
-		fireEvent.click(screen.getByTestId('week-view-event-meal-1'));
+		fireEvent.click(screen.getByTestId('week-view-meal-meal-1'));
 
 		expect(onMealClick).toHaveBeenCalledTimes(1);
 		expect(onMealClick).toHaveBeenCalledWith(mockCalendarMeals[0]);

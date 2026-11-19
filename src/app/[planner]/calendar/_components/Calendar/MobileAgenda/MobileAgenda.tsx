@@ -14,7 +14,7 @@ import { useCalendarContext } from '../CalendarContext';
 import { MealCard } from '../MealCard/MealCard';
 
 export function MobileAgenda({
-	events = [],
+	meals = [],
 	renderDish,
 }: MobileAgendaProps): ReactElement {
 	const { selectedDate } = useCalendarContext();
@@ -24,9 +24,9 @@ export function MobileAgenda({
 	const isToday = selectedDate.hasSame(today, 'day');
 	const isoDate = selectedDate.toISODate() as string;
 
-	const dayEvents = useMemo(
-		() => events.filter((event) => event.date === isoDate),
-		[events, isoDate],
+	const dayMeals = useMemo(
+		() => meals.filter((meal) => meal.date === isoDate),
+		[meals, isoDate],
 	);
 
 	// biome-ignore lint/correctness/useExhaustiveDependencies: effect must re-run when the selected date changes to reset the agenda scroll position.
@@ -38,7 +38,7 @@ export function MobileAgenda({
 		? `Today · ${selectedDate.toFormat('EEEE, MMMM d')}`
 		: selectedDate.toFormat('EEEE, MMMM d');
 	const mealCountLabel =
-		dayEvents.length === 1 ? '1 MEAL' : `${dayEvents.length} MEALS`;
+		dayMeals.length === 1 ? '1 MEAL' : `${dayMeals.length} MEALS`;
 
 	return (
 		<Paper bg="chalk.0" flex={1} mih={0}>
@@ -53,9 +53,9 @@ export function MobileAgenda({
 						</Text>
 					</Group>
 
-					{dayEvents.length > 0 ? (
-						dayEvents.map((event) => (
-							<MealCard key={event.id} event={event} renderDish={renderDish} />
+					{dayMeals.length > 0 ? (
+						dayMeals.map((meal) => (
+							<MealCard key={meal.id} meal={meal} renderDish={renderDish} />
 						))
 					) : (
 						<Paper bg="white" radius="md" p="md" className={styles.emptyCard}>

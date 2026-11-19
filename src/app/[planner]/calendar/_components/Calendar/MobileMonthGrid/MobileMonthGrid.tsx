@@ -17,7 +17,7 @@ import { DateTime } from 'luxon';
 
 import focusClasses from '@/_theme/focus.module.css';
 
-import type { MobileMonthGridEvent } from './types';
+import type { MobileMonthGridMeal } from './types';
 import styles from './MobileMonthGrid.module.css';
 
 import { useCalendarContext } from '../CalendarContext';
@@ -26,11 +26,11 @@ import { getMonthGridDates } from '../_utils/getMonthGridDates';
 import { WEEKDAY_LABELS } from '../_utils/weekdays';
 
 interface MobileMonthGridProps {
-	events?: MobileMonthGridEvent[];
+	meals?: MobileMonthGridMeal[];
 }
 
 export function MobileMonthGrid({
-	events = [],
+	meals = [],
 }: MobileMonthGridProps): ReactElement {
 	const { selectedDate, setSelectedDate } = useCalendarContext();
 	const days = useMemo(() => getMonthGridDates(selectedDate), [selectedDate]);
@@ -41,17 +41,17 @@ export function MobileMonthGrid({
 	);
 	const { getDayProps } = useRovingGridFocus({ days, initialFocusIndex });
 
-	const eventsByDate = useMemo(() => {
-		const map = new Map<string, MobileMonthGridEvent[]>();
+	const mealsByDate = useMemo(() => {
+		const map = new Map<string, MobileMonthGridMeal[]>();
 
-		for (const event of events) {
-			const list = map.get(event.date) ?? [];
-			list.push(event);
-			map.set(event.date, list);
+		for (const meal of meals) {
+			const list = map.get(meal.date) ?? [];
+			list.push(meal);
+			map.set(meal.date, list);
 		}
 
 		return map;
-	}, [events]);
+	}, [meals]);
 
 	return (
 		<Box>
@@ -78,9 +78,9 @@ export function MobileMonthGrid({
 					const isSelected = day.hasSame(selectedDate, 'day');
 					const dayNumber = day.day;
 
-					const dayEvents = eventsByDate.get(isoDate) ?? [];
-					const visibleEvents = dayEvents.slice(0, 3);
-					const mealCount = dayEvents.length;
+					const dayMeals = mealsByDate.get(isoDate) ?? [];
+					const visibleMeals = dayMeals.slice(0, 3);
+					const mealCount = dayMeals.length;
 
 					const dayIndex = days.findIndex((d) => d.hasSame(day, 'day'));
 					const dayProps = getDayProps(dayIndex);
@@ -114,11 +114,11 @@ export function MobileMonthGrid({
 								</Center>
 
 								<Group gap={4} justify="center" wrap="nowrap" aria-hidden>
-									{visibleEvents.map((event) => (
+									{visibleMeals.map((meal) => (
 										<Box
-											key={event.id}
+											key={meal.id}
 											className={styles.dot}
-											style={{ backgroundColor: event.color }}
+											style={{ backgroundColor: meal.color }}
 											aria-hidden
 										/>
 									))}

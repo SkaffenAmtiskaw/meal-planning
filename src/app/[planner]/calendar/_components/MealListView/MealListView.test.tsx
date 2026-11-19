@@ -17,12 +17,12 @@ vi.mock('@mantine/hooks', async () => await import('#mocks/@mantine/hooks'));
 vi.mock('@/_hooks', async () => await import('#mocks/@/_hooks'));
 
 vi.mock('../ListView/ListView', async () => ({
-	ListView: vi.fn(({ events, renderDish }) => (
-		<div data-testid="list-view" data-events={JSON.stringify(events)}>
-			{events.map((event: CalendarMeal) => (
-				<div key={event.id} data-testid={`event-${event.id}`}>
-					{event.dishes.map((dish) => (
-						<div key={dish.name} data-testid={`dish-${event.id}-${dish.name}`}>
+	ListView: vi.fn(({ meals, renderDish }) => (
+		<div data-testid="list-view" data-meals={JSON.stringify(meals)}>
+			{meals.map((meal: CalendarMeal) => (
+				<div key={meal.id} data-testid={`meal-${meal.id}`}>
+					{meal.dishes.map((dish) => (
+						<div key={dish.name} data-testid={`dish-${meal.id}-${dish.name}`}>
 							{renderDish?.(dish)}
 						</div>
 					))}
@@ -172,9 +172,9 @@ describe('MealListView', () => {
 		expect(mockToCalendarMeals).toHaveBeenCalledWith(calendar, savedItems);
 
 		const listView = screen.getByTestId('list-view');
-		const events = JSON.parse(listView.getAttribute('data-events') ?? '[]');
+		const meals = JSON.parse(listView.getAttribute('data-meals') ?? '[]');
 
-		expect(events).toEqual(calendarMeals);
+		expect(meals).toEqual(calendarMeals);
 	});
 
 	it('builds meals with no saved items when none are passed', () => {
