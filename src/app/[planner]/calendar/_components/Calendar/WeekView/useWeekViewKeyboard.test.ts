@@ -222,7 +222,7 @@ describe('useWeekViewKeyboard', () => {
 			const days = createWeek(DateTime.local(2025, 8, 31));
 			const isoDate = days[3].toISODate() as string;
 			const meals = new Map<string, WeekViewMeal[]>([
-				[isoDate, [{ id: '1', date: isoDate, title: 'Event 1' }]],
+				[isoDate, [{ id: '1', date: isoDate, name: 'Event 1' }]],
 			]);
 
 			const { result } = renderHook(() =>
@@ -255,7 +255,7 @@ describe('useWeekViewKeyboard', () => {
 			const days = createWeek(DateTime.local(2025, 8, 31));
 			const isoDate = days[3].toISODate() as string;
 			const meals = new Map<string, WeekViewMeal[]>([
-				[isoDate, [{ id: '1', date: isoDate, title: 'Event 1' }]],
+				[isoDate, [{ id: '1', date: isoDate, name: 'Event 1' }]],
 			]);
 
 			const { result } = renderHook(() =>
@@ -308,7 +308,7 @@ describe('useWeekViewKeyboard', () => {
 			const isoDate = days[3].toISODate() as string;
 			const onMealClick = vi.fn();
 			const meals = new Map<string, WeekViewMeal[]>([
-				[isoDate, [{ id: '1', date: isoDate, title: 'Event 1' }]],
+				[isoDate, [{ id: '1', date: isoDate, name: 'Event 1' }]],
 			]);
 
 			const { result } = renderHook(() =>
@@ -346,8 +346,8 @@ describe('useWeekViewKeyboard', () => {
 				[
 					isoDate,
 					[
-						{ id: '1', date: isoDate, title: 'Event 1' },
-						{ id: '2', date: isoDate, title: 'Event 2' },
+						{ id: '1', date: isoDate, name: 'Event 1' },
+						{ id: '2', date: isoDate, name: 'Event 2' },
 					],
 				],
 			]);
@@ -394,9 +394,9 @@ describe('useWeekViewKeyboard', () => {
 				[
 					isoDate,
 					[
-						{ id: '1', date: isoDate, title: 'Event 1' },
-						{ id: '2', date: isoDate, title: 'Event 2' },
-						{ id: '3', date: isoDate, title: 'Event 3' },
+						{ id: '1', date: isoDate, name: 'Event 1' },
+						{ id: '2', date: isoDate, name: 'Event 2' },
+						{ id: '3', date: isoDate, name: 'Event 3' },
 					],
 				],
 			]);
@@ -449,8 +449,8 @@ describe('useWeekViewKeyboard', () => {
 				[
 					isoDate,
 					[
-						{ id: '1', date: isoDate, title: 'Event 1' },
-						{ id: '2', date: isoDate, title: 'Event 2' },
+						{ id: '1', date: isoDate, name: 'Event 1' },
+						{ id: '2', date: isoDate, name: 'Event 2' },
 					],
 				],
 			]);
@@ -485,8 +485,8 @@ describe('useWeekViewKeyboard', () => {
 				[
 					isoDate,
 					[
-						{ id: '1', date: isoDate, title: 'Event 1' },
-						{ id: '2', date: isoDate, title: 'Event 2' },
+						{ id: '1', date: isoDate, name: 'Event 1' },
+						{ id: '2', date: isoDate, name: 'Event 2' },
 					],
 				],
 			]);
@@ -529,10 +529,10 @@ describe('useWeekViewKeyboard', () => {
 			const meal: WeekViewMeal = {
 				id: '2',
 				date: isoDate,
-				title: 'Event 2',
+				name: 'Event 2',
 			};
 			const meals = new Map<string, WeekViewMeal[]>([
-				[isoDate, [{ id: '1', date: isoDate, title: 'Event 1' }, meal]],
+				[isoDate, [{ id: '1', date: isoDate, name: 'Event 1' }, meal]],
 			]);
 			const onMealClick = vi.fn();
 
@@ -572,8 +572,8 @@ describe('useWeekViewKeyboard', () => {
 				[
 					isoDate,
 					[
-						{ id: '1', date: isoDate, title: 'Event 1' },
-						{ id: '2', date: isoDate, title: 'Event 2' },
+						{ id: '1', date: isoDate, name: 'Event 1' },
+						{ id: '2', date: isoDate, name: 'Event 2' },
 					],
 				],
 			]);
@@ -623,11 +623,11 @@ describe('useWeekViewKeyboard', () => {
 				[
 					activeIsoDate,
 					[
-						{ id: '1', date: activeIsoDate, title: 'Active event 1' },
-						{ id: '2', date: activeIsoDate, title: 'Active event 2' },
+						{ id: '1', date: activeIsoDate, name: 'Active event 1' },
+						{ id: '2', date: activeIsoDate, name: 'Active event 2' },
 					],
 				],
-				[otherIsoDate, [{ id: '3', date: otherIsoDate, title: 'Other event' }]],
+				[otherIsoDate, [{ id: '3', date: otherIsoDate, name: 'Other event' }]],
 			]);
 
 			const { result } = renderHook(() =>
@@ -663,8 +663,8 @@ describe('useWeekViewKeyboard', () => {
 				[
 					isoDate,
 					[
-						{ id: '1', date: isoDate, title: 'Event 1' },
-						{ id: '2', date: isoDate, title: 'Event 2' },
+						{ id: '1', date: isoDate, name: 'Event 1' },
+						{ id: '2', date: isoDate, name: 'Event 2' },
 					],
 				],
 			]);
@@ -710,7 +710,7 @@ describe('useWeekViewKeyboard', () => {
 			const days = createWeek(DateTime.local(2025, 8, 31));
 			const isoDate = days[3].toISODate() as string;
 			const meals = new Map<string, WeekViewMeal[]>([
-				[isoDate, [{ id: '1', date: isoDate, title: 'Event 1' }]],
+				[isoDate, [{ id: '1', date: isoDate, name: 'Event 1' }]],
 			]);
 
 			const { result } = renderHook(() =>
@@ -748,7 +748,7 @@ describe('useWeekViewKeyboard', () => {
 			const days = createWeek(DateTime.local(2025, 8, 31));
 			const isoDate = days[3].toISODate() as string;
 			const meals = new Map<string, WeekViewMeal[]>([
-				[isoDate, [{ id: '1', date: isoDate, title: 'Event 1' }]],
+				[isoDate, [{ id: '1', date: isoDate, name: 'Event 1' }]],
 			]);
 
 			const { result } = renderHook(() =>
@@ -825,7 +825,7 @@ describe('useWeekViewKeyboard', () => {
 			const days = createWeek(DateTime.local(2025, 8, 31)); // Aug 31 - Sep 6
 			const isoDate = days[3].toISODate() as string;
 			const meals = new Map<string, WeekViewMeal[]>([
-				[isoDate, [{ id: '1', date: isoDate, title: 'Event 1' }]],
+				[isoDate, [{ id: '1', date: isoDate, name: 'Event 1' }]],
 			]);
 
 			const { result, rerender } = renderHook(
@@ -869,7 +869,7 @@ describe('useWeekViewKeyboard', () => {
 			const days = createWeek(DateTime.local(2025, 8, 31)); // Aug 31 - Sep 6
 			const isoDate = days[3].toISODate() as string;
 			const meals = new Map<string, WeekViewMeal[]>([
-				[isoDate, [{ id: '1', date: isoDate, title: 'Event 1' }]],
+				[isoDate, [{ id: '1', date: isoDate, name: 'Event 1' }]],
 			]);
 
 			const { result, rerender } = renderHook(

@@ -6,14 +6,10 @@ import focusClasses from '@/_theme/focus.module.css';
 interface MealEventCardProps {
 	event: {
 		id: string;
-		title: string;
+		name: string;
 		description?: string;
 	};
-	onClick?: (event: {
-		id: string;
-		title: string;
-		description?: string;
-	}) => void;
+	onClick?: (event: { id: string; name: string; description?: string }) => void;
 	tabIndex?: number;
 	ref?: React.Ref<HTMLButtonElement>;
 }
@@ -24,7 +20,7 @@ export function MealEventCard({
 	tabIndex,
 	ref,
 }: MealEventCardProps) {
-	const tagColor = getMealColor(event.title);
+	const tagColor = getMealColor(event.name);
 	const { bg, text, border } = TAG_COLORS[tagColor];
 
 	return (
@@ -46,7 +42,7 @@ export function MealEventCard({
 			onClick={() => onClick?.(event)}
 		>
 			<Text fw={700} size="sm" truncate="end" c={text}>
-				{event.title}
+				{event.name}
 			</Text>
 			{event.description && (
 				<Text size="xs" truncate="end" c={text} style={{ opacity: 0.8 }}>

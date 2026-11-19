@@ -154,9 +154,9 @@ describe('WeekView', () => {
 		]);
 
 		const meals = [
-			{ id: '1', date: '2024-09-16', title: 'Monday Event' },
-			{ id: '2', date: '2024-09-18', title: 'Wednesday Event' },
-			{ id: '3', date: '2024-09-18', title: 'Another Wednesday Event' },
+			{ id: '1', date: '2024-09-16', name: 'Monday Event' },
+			{ id: '2', date: '2024-09-18', name: 'Wednesday Event' },
+			{ id: '3', date: '2024-09-18', name: 'Another Wednesday Event' },
 		];
 
 		render(
@@ -190,10 +190,10 @@ describe('WeekView', () => {
 			DateTime.local(2024, 9, 21),
 		]);
 
-		const meals = [{ id: '1', date: '2024-09-18', title: 'Custom Event' }];
+		const meals = [{ id: '1', date: '2024-09-18', name: 'Custom Event' }];
 		const renderMeal = vi.fn((meal, props) => (
 			<div data-testid="custom-event" data-tab-index={props.tabIndex}>
-				{meal.title}
+				{meal.name}
 			</div>
 		));
 
@@ -225,7 +225,7 @@ describe('WeekView', () => {
 			DateTime.local(2024, 9, 21),
 		]);
 
-		const meal = { id: '1', date: '2024-09-18', title: 'Clickable Event' };
+		const meal = { id: '1', date: '2024-09-18', name: 'Clickable Event' };
 		const onMealClick = vi.fn();
 
 		render(
@@ -252,7 +252,7 @@ describe('WeekView', () => {
 
 		render(
 			<CalendarProvider initialDate={initialDate} initialView="week">
-				<WeekView meals={[{ id: '1', date: '2024-09-18', title: 'Event' }]} />
+				<WeekView meals={[{ id: '1', date: '2024-09-18', name: 'Event' }]} />
 			</CalendarProvider>,
 		);
 

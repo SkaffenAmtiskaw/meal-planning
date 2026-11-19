@@ -21,7 +21,7 @@ vi.mock('../Calendar', async () => ({
 								tabIndex: index === 0 ? 0 : -1,
 								ref: vi.fn(),
 							})
-						: meal.title}
+						: meal.name}
 				</div>
 			))}
 		</div>
@@ -38,7 +38,7 @@ vi.mock('./MealEventCard', async () => ({
 			onClick={onClick}
 			type="button"
 		>
-			{event.title}
+			{event.name}
 		</button>
 	)),
 }));
@@ -86,13 +86,13 @@ describe('MealCalendar', () => {
 			{
 				id: 'meal-1',
 				date: '2024-01-15',
-				title: 'Breakfast',
+				name: 'Breakfast',
 				description: undefined,
 			},
 		]);
 	});
 
-	it('maps CalendarMeal date and name to MonthGridMeal date and title', () => {
+	it('maps CalendarMeal date and name to MonthGridMeal date and name', () => {
 		const meals: CalendarMeal[] = [
 			{
 				id: 'meal-1',
@@ -112,7 +112,7 @@ describe('MealCalendar', () => {
 			{
 				id: 'meal-1',
 				date: '2024-06-01',
-				title: 'Lunch',
+				name: 'Lunch',
 				description: 'Test description',
 			},
 		]);
@@ -130,7 +130,7 @@ describe('MealCalendar', () => {
 			expect.objectContaining({
 				event: expect.objectContaining({
 					id: 'meal-1',
-					title: 'Breakfast',
+					name: 'Breakfast',
 				}),
 			}),
 		);
@@ -181,7 +181,7 @@ describe('MealCalendar', () => {
 			{
 				id: 'non-existent',
 				date: '2024-01-15',
-				title: 'Missing',
+				name: 'Missing',
 			},
 			{ tabIndex: -1, ref: vi.fn() },
 		);
@@ -199,7 +199,7 @@ describe('MealCalendar', () => {
 		const monthGridMeal = {
 			id: 'meal-1',
 			date: '2024-01-15',
-			title: 'Breakfast',
+			name: 'Breakfast',
 		};
 		monthGridCall.onMealClick?.(monthGridMeal);
 
@@ -217,7 +217,7 @@ describe('MealCalendar', () => {
 		monthGridCall.onMealClick?.({
 			id: 'non-existent',
 			date: '2024-01-15',
-			title: 'Missing',
+			name: 'Missing',
 		});
 
 		expect(handleClick).not.toHaveBeenCalled();

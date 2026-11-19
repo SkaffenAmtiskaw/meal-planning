@@ -97,7 +97,7 @@ export function WeekView({
 													role="button"
 													onClick={() => onMealClick?.(meal)}
 												>
-													{meal.title}
+													{meal.name}
 												</Paper>
 											)}
 										</Box>

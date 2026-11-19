@@ -152,8 +152,8 @@ describe('useMonthGridKeyboard', () => {
 			[
 				'2025-09-15',
 				[
-					{ id: '1', date: '2025-09-15', title: 'Event 1' },
-					{ id: '2', date: '2025-09-15', title: 'Event 2' },
+					{ id: '1', date: '2025-09-15', name: 'Event 1' },
+					{ id: '2', date: '2025-09-15', name: 'Event 2' },
 				],
 			],
 		]);
@@ -194,8 +194,8 @@ describe('useMonthGridKeyboard', () => {
 			[
 				'2025-09-15',
 				[
-					{ id: '1', date: '2025-09-15', title: 'Event 1' },
-					{ id: '2', date: '2025-09-15', title: 'Event 2' },
+					{ id: '1', date: '2025-09-15', name: 'Event 1' },
+					{ id: '2', date: '2025-09-15', name: 'Event 2' },
 				],
 			],
 		]);
@@ -235,8 +235,8 @@ describe('useMonthGridKeyboard', () => {
 			[
 				'2025-10-16',
 				[
-					{ id: '3', date: '2025-10-16', title: 'Event 3' },
-					{ id: '4', date: '2025-10-16', title: 'Event 4' },
+					{ id: '3', date: '2025-10-16', name: 'Event 3' },
+					{ id: '4', date: '2025-10-16', name: 'Event 4' },
 				],
 			],
 		]);
@@ -537,7 +537,7 @@ describe('useMonthGridKeyboard', () => {
 		const meal: MonthGridMeal = {
 			id: '1',
 			date: '2025-09-15',
-			title: 'Event 1',
+			name: 'Event 1',
 		};
 		const meals = new Map<string, MonthGridMeal[]>([['2025-09-15', [meal]]]);
 
@@ -584,8 +584,8 @@ describe('useMonthGridKeyboard', () => {
 			[
 				'2025-09-15',
 				[
-					{ id: '1', date: '2025-09-15', title: 'Event 1' },
-					{ id: '2', date: '2025-09-15', title: 'Event 2' },
+					{ id: '1', date: '2025-09-15', name: 'Event 1' },
+					{ id: '2', date: '2025-09-15', name: 'Event 2' },
 				],
 			],
 		]);
@@ -613,8 +613,8 @@ describe('useMonthGridKeyboard', () => {
 			[
 				'2025-09-15',
 				[
-					{ id: '1', date: '2025-09-15', title: 'Event 1' },
-					{ id: '2', date: '2025-09-15', title: 'Event 2' },
+					{ id: '1', date: '2025-09-15', name: 'Event 1' },
+					{ id: '2', date: '2025-09-15', name: 'Event 2' },
 				],
 			],
 		]);
@@ -672,8 +672,8 @@ describe('useMonthGridKeyboard', () => {
 			[
 				'2025-09-15',
 				[
-					{ id: '1', date: '2025-09-15', title: 'Event 1' },
-					{ id: '2', date: '2025-09-15', title: 'Event 2' },
+					{ id: '1', date: '2025-09-15', name: 'Event 1' },
+					{ id: '2', date: '2025-09-15', name: 'Event 2' },
 				],
 			],
 		]);
@@ -707,9 +707,9 @@ describe('useMonthGridKeyboard', () => {
 			[
 				'2025-09-15',
 				[
-					{ id: '1', date: '2025-09-15', title: 'Event 1' },
-					{ id: '2', date: '2025-09-15', title: 'Event 2' },
-					{ id: '3', date: '2025-09-15', title: 'Event 3' },
+					{ id: '1', date: '2025-09-15', name: 'Event 1' },
+					{ id: '2', date: '2025-09-15', name: 'Event 2' },
+					{ id: '3', date: '2025-09-15', name: 'Event 3' },
 				],
 			],
 		]);
@@ -744,9 +744,9 @@ describe('useMonthGridKeyboard', () => {
 			[
 				'2025-09-15',
 				[
-					{ id: '1', date: '2025-09-15', title: 'Event 1' },
-					{ id: '2', date: '2025-09-15', title: 'Event 2' },
-					{ id: '3', date: '2025-09-15', title: 'Event 3' },
+					{ id: '1', date: '2025-09-15', name: 'Event 1' },
+					{ id: '2', date: '2025-09-15', name: 'Event 2' },
+					{ id: '3', date: '2025-09-15', name: 'Event 3' },
 				],
 			],
 		]);
@@ -791,8 +791,8 @@ describe('useMonthGridKeyboard', () => {
 			[
 				'2025-09-15',
 				[
-					{ id: '1', date: '2025-09-15', title: 'Event 1' },
-					{ id: '2', date: '2025-09-15', title: 'Event 2' },
+					{ id: '1', date: '2025-09-15', name: 'Event 1' },
+					{ id: '2', date: '2025-09-15', name: 'Event 2' },
 				],
 			],
 		]);
@@ -824,8 +824,8 @@ describe('useMonthGridKeyboard', () => {
 			[
 				'2025-09-15',
 				[
-					{ id: '1', date: '2025-09-15', title: 'Event 1' },
-					{ id: '2', date: '2025-09-15', title: 'Event 2' },
+					{ id: '1', date: '2025-09-15', name: 'Event 1' },
+					{ id: '2', date: '2025-09-15', name: 'Event 2' },
 				],
 			],
 		]);
@@ -866,13 +866,10 @@ describe('useMonthGridKeyboard', () => {
 		const meal2: MonthGridMeal = {
 			id: '2',
 			date: '2025-09-15',
-			title: 'Event 2',
+			name: 'Event 2',
 		};
 		const meals = new Map<string, MonthGridMeal[]>([
-			[
-				'2025-09-15',
-				[{ id: '1', date: '2025-09-15', title: 'Event 1' }, meal2],
-			],
+			['2025-09-15', [{ id: '1', date: '2025-09-15', name: 'Event 1' }, meal2]],
 		]);
 
 		const days = createDays(DateTime.local(2025, 9, 1));
@@ -912,8 +909,8 @@ describe('useMonthGridKeyboard', () => {
 			[
 				'2025-09-15',
 				[
-					{ id: '1', date: '2025-09-15', title: 'Event 1' },
-					{ id: '2', date: '2025-09-15', title: 'Event 2' },
+					{ id: '1', date: '2025-09-15', name: 'Event 1' },
+					{ id: '2', date: '2025-09-15', name: 'Event 2' },
 				],
 			],
 		]);
@@ -959,8 +956,8 @@ describe('useMonthGridKeyboard', () => {
 			[
 				'2025-09-15',
 				[
-					{ id: '1', date: '2025-09-15', title: 'Event 1' },
-					{ id: '2', date: '2025-09-15', title: 'Event 2' },
+					{ id: '1', date: '2025-09-15', name: 'Event 1' },
+					{ id: '2', date: '2025-09-15', name: 'Event 2' },
 				],
 			],
 		]);
@@ -1017,8 +1014,8 @@ describe('useMonthGridKeyboard', () => {
 			[
 				'2025-09-15',
 				[
-					{ id: '1', date: '2025-09-15', title: 'Event 1' },
-					{ id: '2', date: '2025-09-15', title: 'Event 2' },
+					{ id: '1', date: '2025-09-15', name: 'Event 1' },
+					{ id: '2', date: '2025-09-15', name: 'Event 2' },
 				],
 			],
 		]);
@@ -1052,8 +1049,8 @@ describe('useMonthGridKeyboard', () => {
 			[
 				'2025-09-15',
 				[
-					{ id: '1', date: '2025-09-15', title: 'Event 1' },
-					{ id: '2', date: '2025-09-15', title: 'Event 2' },
+					{ id: '1', date: '2025-09-15', name: 'Event 1' },
+					{ id: '2', date: '2025-09-15', name: 'Event 2' },
 				],
 			],
 		]);
@@ -1083,8 +1080,8 @@ describe('useMonthGridKeyboard', () => {
 			[
 				'2025-09-15',
 				[
-					{ id: '1', date: '2025-09-15', title: 'Event 1' },
-					{ id: '2', date: '2025-09-15', title: 'Event 2' },
+					{ id: '1', date: '2025-09-15', name: 'Event 1' },
+					{ id: '2', date: '2025-09-15', name: 'Event 2' },
 				],
 			],
 		]);
@@ -1122,8 +1119,8 @@ describe('useMonthGridKeyboard', () => {
 			[
 				'2025-09-15',
 				[
-					{ id: '1', date: '2025-09-15', title: 'Event 1' },
-					{ id: '2', date: '2025-09-15', title: 'Event 2' },
+					{ id: '1', date: '2025-09-15', name: 'Event 1' },
+					{ id: '2', date: '2025-09-15', name: 'Event 2' },
 				],
 			],
 		]);

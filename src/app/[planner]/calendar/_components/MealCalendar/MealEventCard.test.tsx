@@ -18,14 +18,14 @@ describe('MealEventCard', () => {
 		vi.resetAllMocks();
 	});
 
-	it('calls getMealColor with event title', () => {
-		const event = { id: '1', title: 'Breakfast' };
+	it('calls getMealColor with event name', () => {
+		const event = { id: '1', name: 'Breakfast' };
 		render(<MealEventCard event={event} />);
 		expect(getMealColor).toHaveBeenCalledWith('Breakfast');
 	});
 
 	it('calls onClick when clicked', () => {
-		const event = { id: '1', title: 'Breakfast' };
+		const event = { id: '1', name: 'Breakfast' };
 		const onClick = vi.fn();
 		render(<MealEventCard event={event} onClick={onClick} />);
 		fireEvent.click(screen.getByText('Breakfast'));
@@ -35,13 +35,13 @@ describe('MealEventCard', () => {
 	it('renders description when present and omits it when absent', () => {
 		const eventWithDescription = {
 			id: '1',
-			title: 'Breakfast',
+			name: 'Breakfast',
 			description: 'Eggs and toast',
 		};
 		const { rerender } = render(<MealEventCard event={eventWithDescription} />);
 		expect(screen.getByText('Eggs and toast')).toBeDefined();
 
-		const eventWithoutDescription = { id: '1', title: 'Breakfast' };
+		const eventWithoutDescription = { id: '1', name: 'Breakfast' };
 		rerender(<MealEventCard event={eventWithoutDescription} />);
 		expect(screen.queryByText('Eggs and toast')).toBeNull();
 	});

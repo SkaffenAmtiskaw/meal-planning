@@ -37,7 +37,7 @@ export function MealWeekView({
 		const weekMeals: WeekViewMeal[] = meals.map((meal) => ({
 			id: meal.id,
 			date: meal.date,
-			title: meal.name,
+			name: meal.name,
 			description: meal.description,
 		}));
 

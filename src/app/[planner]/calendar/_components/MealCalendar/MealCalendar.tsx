@@ -31,7 +31,7 @@ export function MealCalendar({
 		const monthGridMeals: MonthGridMeal[] = meals.map((meal) => ({
 			id: meal.id,
 			date: meal.date,
-			title: meal.name,
+			name: meal.name,
 			description: meal.description,
 		}));
 

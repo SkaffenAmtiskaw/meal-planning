@@ -14,14 +14,14 @@ import type { SavedItem } from '../../types';
 vi.mock('../Calendar', async () => ({
 	WeekView: vi.fn(({ meals, renderMeal, onMealClick }) => (
 		<div data-testid="week-view">
-			{meals?.map((event: { id: string; date: string; title: string }) => (
+			{meals?.map((event: { id: string; date: string; name: string }) => (
 				<div key={event.id} data-testid="week-view-event">
 					{renderMeal
 						? renderMeal(event, {
 								tabIndex: 0,
 								ref: vi.fn(),
 							})
-						: event.title}
+						: event.name}
 					<button
 						type="button"
 						data-testid={`week-view-event-${event.id}`}
@@ -92,7 +92,7 @@ describe('MealWeekView', () => {
 			{
 				id: 'meal-1',
 				date: '2024-01-15',
-				title: 'Breakfast',
+				name: 'Breakfast',
 				description: undefined,
 			},
 		]);
@@ -169,7 +169,7 @@ describe('MealWeekView', () => {
 
 		const ref = vi.fn();
 		const node = weekViewCall.renderMeal?.(
-			{ id: 'meal-1', date: '2024-01-15', title: 'Breakfast' },
+			{ id: 'meal-1', date: '2024-01-15', name: 'Breakfast' },
 			{ tabIndex: -1, ref },
 		);
 
@@ -192,7 +192,7 @@ describe('MealWeekView', () => {
 			{
 				id: 'non-existent',
 				date: '2024-01-15',
-				title: 'Missing',
+				name: 'Missing',
 			},
 			{ tabIndex: 0, ref: vi.fn() },
 		);
@@ -218,7 +218,7 @@ describe('MealWeekView', () => {
 		weekViewCall.onMealClick?.({
 			id: 'non-existent',
 			date: '2024-01-15',
-			title: 'Missing',
+			name: 'Missing',
 		});
 
 		expect(onMealClick).not.toHaveBeenCalled();
