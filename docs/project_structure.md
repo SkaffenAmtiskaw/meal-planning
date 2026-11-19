@@ -23,17 +23,21 @@ project source code
 ## _actions/
 Next.js server functions
 ## _auth/
-better-auth config and email actions
+better-auth's server setup, and the browser client the app signs users in with
 ## _components/
-reusable React components
+generic React components that know nothing about the app's domain (see `docs/project_conventions.md`, "Generic vs Domain-Specific Code")
+## _email/
+the email senders, which send the app's emails through Resend
 ## _hooks/
-reusable React hooks, each with any component that only supports it (see `docs/project_conventions.md`)
+generic React hooks, each with any component that only supports it (see `docs/project_conventions.md`, "Generic vs Domain-Specific Code" and "Hooks and Their Supporting Components")
 ## _models/
 the zod schemas of the stored data, and in `database/` the data module that reads and writes it (see `docs/project_conventions.md`, "Stored Data")
+## _reporting/
+the PostHog error reporting (see `docs/project_conventions.md`, "Error Reporting")
 ## _theme/
 the Mantine theme and the app's color values (see `docs/theme.md`)
 ## _utils/
-reusable utilities for global use in application
+generic utilities that know nothing about the app's domain (see `docs/project_conventions.md`, "Generic vs Domain-Specific Code")
 ## app/
 Next.js app directory
 ## env.ts

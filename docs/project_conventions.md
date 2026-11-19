@@ -19,15 +19,28 @@ When a path alias is shorter than the relative path, import through it, such as 
 # Barrel Files
 A barrel file only re-exports. Coverage leaves barrel files out (see `docs/unit_tests.md`), so logic in one has no tests.
 
+A barrel never makes code available further than it already is, as "Generic vs Domain-Specific Code" below describes.
+
 A file of server code that isn't a `'use server'` action, such as one that imports `server-only` or a package that runs only on the server, stays out of any barrel that client code imports. Client code pulls in everything a barrel re-exports, and server code there fails `pnpm build` in client code. Server code imports the file itself instead. The types other files import from it go in its directory's `types.ts`, which the barrel can re-export (see "Where Types Live" below). This interim rule holds until server-only code moves to the planned data access layer.
 
 # Test Mocks
 Shared unit-test mocks live in `test/mocks/` (see `docs/unit_tests.md`, "Shared Mocks"), never in `src/`. Coverage counts every file in `src/` as app code, so a mock there would need tests of its own.
 
-# Generic vs Domain-Specific Utilities
-`src/_utils` holds generic utilities that know nothing about the app's domain. Each is named for what it does, such as `catchify`, rather than for a purpose in the app. A name tied to one use makes a utility look domain-specific, so the next person who needs it won't think to look for it there.
+# Generic vs Domain-Specific Code
+`src/_components`, `src/_hooks` and `src/_utils` hold only generic code, meaning small, reusable pieces that know nothing about the app's domain, such as meals, planners, invites or tags. Generic code is named for what it does, such as `catchify` or `ConfirmButton`, rather than for a purpose in the app. A name tied to one use makes code look domain-specific, so the next person who needs it won't think to look in the generic folders.
 
-A utility that knows about the domain lives in a `_utils` directory beside the code that uses it. If several modules use it, the directory goes in the lowest common parent of all of them. A reader then finds the utility near the code that uses it, and its place shows which modules depend on it.
+The app's machinery isn't generic, even when it knows nothing about the domain. Machinery is the code that sets up and runs a part of the app, such as its connection to an outside service. A reader looking for how the app reports errors or signs users in looks for a folder named for that job, and a reader looking for a reusable piece shouldn't have to sort through the app's machinery to find it. So machinery goes where the rules below put domain code, with its job, such as error reporting or auth, treated as its domain. The PostHog error reporting is in `src/_reporting/`, and the better-auth client is in `src/_auth/`.
+
+Code that knows about the domain lives near the code that uses it, so its place shows which code depends on it. A `_`-prefixed folder's contents can be used from anywhere inside its parent folder. So where domain code goes depends on how widely it's used, in these cases:
+- **If every file using it is inside one folder below `src/`,** it goes under the deepest folder that contains them all, in a `_`-prefixed folder there such as `_components`, `_hooks` or `_utils`. `TagCombobox` is used only by the recipe pages, so it belongs in `src/app/[planner]/recipes/_components/`. `Header` is used across the app's pages, so it's in `src/app/_components/`.
+- **If it's used from across `src/`:**
+  - **If the code that produces it has a domain folder,** it goes there as a plain file, so a reader looking at that code finds what it produces beside it. `noSessionError` holds the error `getUser` throws, and both actions and pages check for it, so it belongs beside `getUser` in `src/_actions/user/`.
+  - **Otherwise,** create a src-level folder named for the code's domain, such as `src/_<domain>/`, when the first such file is written. One shared folder for all such code would be reached into from every part of the app, so where a file sits would no longer show which code depends on it.
+
+> [!NOTE]
+> The `_`-prefixed folders in `src/`, such as `_actions/`, `_auth/` and `_models/`, can each be used from anywhere in `src/`. A domain folder inside one of them, such as `_actions/sharing/`, isn't `_`-prefixed, so it has the same scope as the folder it's in. A file there is as available to a page as to another action. Only a `_`-prefixed folder nested inside it, such as `_actions/sharing/_utils/`, narrows the scope to that domain folder.
+
+A barrel re-exports only code that its importers could already import directly, so it never widens that code's scope. Re-exporting code from a nested `_`-prefixed folder to importers outside it would hide which code depends on it.
 
 # Where Types Live
 A type lives with the module that owns it, so it's found where that code is and changes along with it. Placing types this way keeps a type from being visible further than the code that uses it, and keeps types from piling up in one file that every part of the app reaches into. Two kinds of type have fixed homes instead, described at the end.
@@ -36,12 +49,12 @@ When a type passes between modules, it belongs to the one that decides its shape
 
 If only the owning module's file uses a type, it stays in that file, unexported. A module's own test doesn't count, so a type that only its test also imports stays in the module's file, exported. If other files import it, it goes in the `types.ts` of the module's directory, with the imported types of the directory's other modules, so a reader looking for a type has one file per directory to check. `PlannerMember` is what `getPlannerMembers` returns, and the settings page imports it, so it lives in `src/_actions/sharing/types.ts`.
 
-If no single module decides a type's shape, it goes in the `types.ts` of the lowest common parent of every file that uses it. `SavedItem` holds the parts of a saved item the calendar reads, and the calendar route's components, hooks and utilities each read it without deciding its shape. Only files under `src/app/[planner]/calendar/` use it, so it lives in `src/app/[planner]/calendar/types.ts`.
+If no single module decides a type's shape, where it goes depends on which files use it. If they're all inside one folder below `src/`, it goes in the `types.ts` of the deepest folder that contains them all. If they're spread across `src/`, it goes where "Generic vs Domain-Specific Code" puts domain code used across `src/`. `SavedItem` holds the parts of a saved item the calendar reads, and the calendar route's components, hooks and utilities each read it without deciding its shape. Only files under `src/app/[planner]/calendar/` use it, so it lives in `src/app/[planner]/calendar/types.ts`.
 
 The two fixed homes are for types whose home doesn't depend on who uses them. A generic helper type with no domain knowledge, such as `Optionalize`, belongs in `src/_utils/` with the other generic utilities. A database document type stays in `src/_models/` beside the Zod schema it's inferred from, so the type and the schema that checks stored data can't drift apart.
 
 # Hooks and Their Supporting Components
-Some components exist only to support a hook, such as a context provider or a Client Component wrapper that runs a hook for a Server Component. Such a component lives with its hook, in a directory named after the hook inside a `_hooks` directory. The two are only ever used together, so keeping them in one place means nobody has to search several directories for them. Other hooks built on the same context go in that directory too, because they need the same provider. As with utilities, the `_hooks` directory sits in the lowest common parent of the modules that use the hook.
+Some components exist only to support a hook, such as a context provider or a Client Component wrapper that runs a hook for a Server Component. Such a component lives with its hook, in a directory named after the hook inside a `_hooks` directory. The two are only ever used together, so keeping them in one place means nobody has to search several directories for them. Other hooks built on the same context go in that directory too, because they need the same provider. Where the `_hooks` directory goes is set by "Generic vs Domain-Specific Code" above.
 
 # Architecture
 ## Single Concern
