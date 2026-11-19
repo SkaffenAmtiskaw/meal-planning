@@ -10,8 +10,8 @@ import { useIsMobile } from '@/_hooks';
 import type { DayInterface } from '@/_models/types';
 
 import { CalendarModalProvider } from '../CalendarModal';
-import type { CalendarEvent } from '../../_utils/toCalendarEvents';
-import type { SavedItem } from '../../_utils/toScheduleXEvents';
+import type { CalendarEvent } from '../../_utils/types';
+import type { SavedItem } from '../../types';
 import {
 	CalendarHeaderDesktop,
 	CalendarHeaderMobile,

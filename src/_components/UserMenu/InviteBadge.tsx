@@ -10,7 +10,7 @@ import { THEME_COLORS } from '@/_theme/colors';
 import { isNoSessionError } from '@/_utils/noSessionError';
 import { reportError } from '@/_utils/reportError';
 
-export interface InviteBadgeProps {
+interface InviteBadgeProps {
 	children: React.ReactNode;
 }
 

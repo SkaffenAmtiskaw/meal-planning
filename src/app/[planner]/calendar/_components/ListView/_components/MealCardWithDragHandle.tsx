@@ -2,12 +2,12 @@ import type { ReactElement } from 'react';
 
 import { Box, Flex } from '@mantine/core';
 
-import type { MealCardProps } from '@/_components/Calendar/MealCard/MealCard';
 import { MealCard } from '@/_components/Calendar/MealCard/MealCard';
+import type { MealCardProps } from '@/_components/Calendar/MealCard/types';
 
 import styles from './MealCardWithDragHandle.module.css';
 
-export type MealCardWithDragHandleProps = MealCardProps;
+type MealCardWithDragHandleProps = MealCardProps;
 
 const DRAG_HANDLE_POSITIONS = [
 	'top-left',

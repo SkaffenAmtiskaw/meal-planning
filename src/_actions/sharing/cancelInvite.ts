@@ -10,7 +10,7 @@ export interface CancelInviteInput {
 	plannerId: string;
 }
 
-export interface CancelInviteResult {
+interface CancelInviteResult {
 	success: boolean;
 	error?: string;
 }

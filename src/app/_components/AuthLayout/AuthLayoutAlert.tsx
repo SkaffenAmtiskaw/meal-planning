@@ -2,7 +2,7 @@ import type { ReactNode } from 'react';
 
 import { Alert } from '@mantine/core';
 
-export interface AuthLayoutAlertProps {
+interface AuthLayoutAlertProps {
 	children: ReactNode;
 	color?: 'red' | 'green' | 'yellow';
 	'data-testid'?: string;

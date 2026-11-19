@@ -24,7 +24,7 @@ import './GoogleButton.css';
 
 // No props needed - component is self-contained
 
-export type Step =
+type Step =
 	| { type: 'idle' }
 	| { type: 'new'; email: string }
 	| { type: 'has-password'; email: string }

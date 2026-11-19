@@ -10,13 +10,13 @@ import { reportError } from '@/_utils/reportError';
 
 import { validateInviteToken } from './validateInviteToken';
 
-export interface SignUpWithInviteInput {
+interface SignUpWithInviteInput {
 	token: string;
 	password: string;
 	name?: string;
 }
 
-export interface SignUpWithInviteResult {
+interface SignUpWithInviteResult {
 	success: boolean;
 	error?: string;
 	redirectUrl?: string;

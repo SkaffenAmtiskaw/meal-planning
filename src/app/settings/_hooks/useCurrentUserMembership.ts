@@ -4,7 +4,7 @@ import { useCallback, useEffect, useState } from 'react';
 
 import { getUser } from '@/_actions/user';
 
-export interface UseCurrentUserMembershipResult {
+interface UseCurrentUserMembershipResult {
 	email: string | null;
 	isOwner: boolean;
 	loading: boolean;

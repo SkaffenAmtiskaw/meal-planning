@@ -43,7 +43,7 @@ const formatSubtitle = (values: Pick<MealFormValues, 'date' | 'mealName'>) => {
 		: dateText;
 };
 
-export type Props = {
+type Props = {
 	plannerId: string;
 	initialDate?: string;
 	onCancel: () => void;

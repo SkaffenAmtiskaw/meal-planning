@@ -3,7 +3,7 @@
 import { auth } from '@/_auth';
 import { findAuthUser } from '@/_auth/users';
 
-export type EmailStatus = 'new' | 'has-password' | 'social-only';
+type EmailStatus = 'new' | 'has-password' | 'social-only';
 
 export const checkEmailStatus = async (email: string): Promise<EmailStatus> => {
 	const found = await findAuthUser(auth, email);

@@ -4,7 +4,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { DateTime } from 'luxon';
 
 import { useWeekViewKeyboard } from './useWeekViewKeyboard';
-import type { WeekViewMeal } from './WeekView';
+import type { WeekViewMeal } from './types';
 
 function createWeek(startDate: DateTime): DateTime[] {
 	return Array.from({ length: 7 }, (_, i) => startDate.plus({ days: i }));

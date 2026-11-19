@@ -2,7 +2,7 @@
 
 import { createContext } from 'react';
 
-export interface ToggleContextValue {
+interface ToggleContextValue {
 	opened: boolean;
 	toggle: () => void;
 }

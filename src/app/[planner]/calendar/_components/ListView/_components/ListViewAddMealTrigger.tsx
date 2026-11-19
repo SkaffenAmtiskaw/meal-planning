@@ -5,9 +5,9 @@ import { IconPlus } from '@tabler/icons-react';
 
 import styles from './DayRow.module.css';
 
-export type ListViewAddMealTriggerVariant = 'gutter' | 'ghost';
+type ListViewAddMealTriggerVariant = 'gutter' | 'ghost';
 
-export interface ListViewAddMealTriggerProps {
+interface ListViewAddMealTriggerProps {
 	variant: ListViewAddMealTriggerVariant;
 	onClick: () => void;
 }

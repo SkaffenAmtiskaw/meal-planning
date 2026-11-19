@@ -1,16 +1,9 @@
 import type { DayInterface } from '@/_models/types';
 
 import { resolveDishSource } from './resolveDishSource';
-import type { ResolvedDish, SavedItem } from './toScheduleXEvents';
+import type { CalendarEvent } from './types';
 
-export interface CalendarEvent {
-	id: string;
-	start: string;
-	end: string;
-	title: string;
-	description?: string;
-	dishes: ResolvedDish[];
-}
+import type { SavedItem } from '../types';
 
 export const toCalendarEvents = (
 	calendar: DayInterface[],

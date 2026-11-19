@@ -19,7 +19,7 @@ When a path alias is shorter than the relative path, import through it, such as 
 # Barrel Files
 A barrel file only re-exports. Coverage leaves barrel files out (see `docs/unit_tests.md`), so logic in one has no tests.
 
-A file of server code that isn't a `'use server'` action, such as one that imports `server-only` or a package that runs only on the server, stays out of any barrel that client code imports. Client code pulls in everything a barrel re-exports, and server code there fails `pnpm build` in client code. Server code imports the file itself instead. Its types go in a `*.types.ts` file, which the barrel can re-export. This interim rule holds until server-only code moves to the planned data access layer.
+A file of server code that isn't a `'use server'` action, such as one that imports `server-only` or a package that runs only on the server, stays out of any barrel that client code imports. Client code pulls in everything a barrel re-exports, and server code there fails `pnpm build` in client code. Server code imports the file itself instead. The types other files import from it go in its directory's `types.ts`, which the barrel can re-export (see "Where Types Live" below). This interim rule holds until server-only code moves to the planned data access layer.
 
 # Test Mocks
 Shared unit-test mocks live in `test/mocks/` (see `docs/unit_tests.md`, "Shared Mocks"), never in `src/`. Coverage counts every file in `src/` as app code, so a mock there would need tests of its own.
@@ -28,6 +28,17 @@ Shared unit-test mocks live in `test/mocks/` (see `docs/unit_tests.md`, "Shared 
 `src/_utils` holds generic utilities that know nothing about the app's domain. Each is named for what it does, such as `catchify`, rather than for a purpose in the app. A name tied to one use makes a utility look domain-specific, so the next person who needs it won't think to look for it there.
 
 A utility that knows about the domain lives in a `_utils` directory beside the code that uses it. If several modules use it, the directory goes in the lowest common parent of all of them. A reader then finds the utility near the code that uses it, and its place shows which modules depend on it.
+
+# Where Types Live
+A type lives with the module that owns it, so it's found where that code is and changes along with it. Placing types this way keeps a type from being visible further than the code that uses it, and keeps types from piling up in one file that every part of the app reaches into. Two kinds of type have fixed homes instead, described at the end.
+
+When a type passes between modules, it belongs to the one that decides its shape. So a type that describes one module's input or output belongs to that module, and a component's input belongs to the component, even when a route builds the value it's given. `useFormFeedback` decides which states a form's `Status` can have, so the type belongs to the hook, not to `SubmitButton` and `FormFeedbackAlert`, which take it.
+
+If only the owning module's file uses a type, it stays in that file, unexported. A module's own test doesn't count, so a type that only its test also imports stays in the module's file, exported. If other files import it, it goes in the `types.ts` of the module's directory, with the imported types of the directory's other modules, so a reader looking for a type has one file per directory to check. `PlannerMember` is what `getPlannerMembers` returns, and the settings page imports it, so it lives in `src/_actions/sharing/types.ts`.
+
+If no single module decides a type's shape, it goes in the `types.ts` of the lowest common parent of every file that uses it. `SavedItem` holds the parts of a saved item the calendar reads, and the calendar route's components, hooks and utilities each read it without deciding its shape. Only files under `src/app/[planner]/calendar/` use it, so it lives in `src/app/[planner]/calendar/types.ts`.
+
+The two fixed homes are for types whose home doesn't depend on who uses them. A generic helper type with no domain knowledge, such as `Optionalize`, belongs in `src/_utils/` with the other generic utilities. A database document type stays in `src/_models/` beside the Zod schema it's inferred from, so the type and the schema that checks stored data can't drift apart.
 
 # Hooks and Their Supporting Components
 Some components exist only to support a hook, such as a context provider or a Client Component wrapper that runs a hook for a Server Component. Such a component lives with its hook, in a directory named after the hook inside a `_hooks` directory. The two are only ever used together, so keeping them in one place means nobody has to search several directories for them. Other hooks built on the same context go in that directory too, because they need the same provider. As with utilities, the `_hooks` directory sits in the lowest common parent of the modules that use the hook.

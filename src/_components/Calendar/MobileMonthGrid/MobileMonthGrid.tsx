@@ -21,15 +21,10 @@ import { getMonthGridDates } from '@/_components/Calendar/_utils/getMonthGridDat
 import { WEEKDAY_LABELS } from '@/_components/Calendar/_utils/weekdays';
 import focusClasses from '@/_theme/focus.module.css';
 
+import type { MobileMonthGridEvent } from './types';
 import styles from './MobileMonthGrid.module.css';
 
-export interface MobileMonthGridEvent {
-	id: string;
-	date: string; // ISO date YYYY-MM-DD
-	color: string; // tag-color border value to use for the dot
-}
-
-export interface MobileMonthGridProps {
+interface MobileMonthGridProps {
 	events?: MobileMonthGridEvent[];
 }
 

@@ -2,14 +2,12 @@
 
 import { getUser } from '@/_actions/user';
 import { pendingInvites } from '@/_models/database/pendingInvites';
-import type { ActionResult } from '@/_utils/actionResult/ActionResult';
+import type { ActionResult } from '@/_utils/actionResult';
 import { isNoSessionError } from '@/_utils/noSessionError';
 import { reportError } from '@/_utils/reportError';
 import { zId } from '@/_utils/zId';
 
-export interface DeclineInviteInput {
-	inviteId: string;
-}
+import type { DeclineInviteInput } from './types';
 
 export const declineInvite = async (
 	input: DeclineInviteInput,

@@ -4,7 +4,7 @@ import { describe, expect, it, vi } from 'vitest';
 import { DateTime } from 'luxon';
 
 import { CalendarContext, useCalendarContext } from './CalendarContext';
-import type { CalendarContextValue } from './CalendarContext';
+import type { CalendarContextValue } from './types';
 
 describe('useCalendarContext', () => {
 	it('throws when used outside provider', () => {

@@ -5,7 +5,7 @@ import { newId } from '@/_models/database/newId';
 import { users } from '@/_models/database/users';
 import type { AccessLevel, NewUser } from '@/_models/user';
 
-export interface AddUserOptions {
+interface AddUserOptions {
 	email: string;
 	plannerId?: string;
 	name?: string;

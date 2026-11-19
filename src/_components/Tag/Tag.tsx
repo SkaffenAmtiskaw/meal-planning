@@ -1,6 +1,7 @@
 import { Badge } from '@mantine/core';
 
-import { TAG_COLORS, type TagColor } from '@/_theme/colors';
+import { TAG_COLORS } from '@/_theme/colors';
+import type { TagColor } from '@/_theme/types';
 
 type Props = {
 	color: TagColor;

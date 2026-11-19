@@ -5,7 +5,8 @@ import { type ReactNode, useCallback, useState } from 'react';
 import type { DurationLike } from 'luxon';
 import { DateTime } from 'luxon';
 
-import { CalendarContext, type CalendarViewType } from './CalendarContext';
+import { CalendarContext } from './CalendarContext';
+import type { CalendarViewType } from './types';
 
 const NAVIGATION_STEPS: Record<CalendarViewType, DurationLike> = {
 	month: { months: 1 },

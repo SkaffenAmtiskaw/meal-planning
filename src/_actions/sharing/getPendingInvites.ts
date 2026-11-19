@@ -5,11 +5,9 @@ import { pendingInvites } from '@/_models/database/pendingInvites';
 import { reportError } from '@/_utils/reportError';
 import { zId } from '@/_utils/zId';
 
-import type { PendingInvite } from './invite.types';
+import type { PendingInvite } from './types';
 
-export type { PendingInvite } from './invite.types';
-
-export interface GetPendingInvitesResult {
+interface GetPendingInvitesResult {
 	invites: PendingInvite[];
 	error?: string;
 }

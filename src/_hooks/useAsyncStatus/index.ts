@@ -1,2 +1,2 @@
 export { useAsyncStatus } from './useAsyncStatus';
-export type { AsyncStatus, UseAsyncStatusResult } from './useAsyncStatus';
+export type { AsyncStatus } from './types';

@@ -5,7 +5,7 @@ import { planners } from '@/_models/database/planners';
 import { catchify } from '@/_utils/catchify';
 import { reportError } from '@/_utils/reportError';
 
-export interface ValidateInviteTokenResult {
+interface ValidateInviteTokenResult {
 	valid: boolean;
 	email?: string;
 	plannerName?: string;

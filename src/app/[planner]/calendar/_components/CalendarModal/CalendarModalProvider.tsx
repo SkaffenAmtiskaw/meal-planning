@@ -6,26 +6,25 @@ import { Modal } from '@mantine/core';
 
 import { useIsMobile } from '@/_hooks';
 
-import {
-	CalendarModalContext,
-	type CalendarModalData,
-	type CalendarModalState,
-	type CalendarModalType,
-} from './CalendarModalContext';
+import { CalendarModalContext } from './CalendarModalContext';
+import type {
+	CalendarModalData,
+	CalendarModalState,
+	CalendarModalType,
+} from './types';
 
 import { AddMealModal } from '../AddMealForm/AddMealModal';
+import type { AddMealModalProps } from '../AddMealForm/types';
 
-export interface CalendarModalProviderProps {
+interface CalendarModalProviderProps {
 	plannerId: string;
 	children: ReactNode;
 }
 
 const MODAL_CONTENT: {
-	[K in CalendarModalType]: React.FC<{
-		data: CalendarModalData[K];
-		close: () => void;
-		plannerId: string;
-	}>;
+	[K in CalendarModalType]: React.FC<
+		Omit<AddMealModalProps, 'data'> & { data: CalendarModalData[K] }
+	>;
 } = {
 	add_meal: AddMealModal,
 };

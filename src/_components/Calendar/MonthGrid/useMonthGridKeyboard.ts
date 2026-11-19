@@ -2,30 +2,25 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 
 import { DateTime } from 'luxon';
 
-import type { MonthGridMeal } from './MonthGrid';
+import type { MealKeyboardProps, MonthGridMeal } from './types';
 
 import { useRovingGridFocus } from '../_hooks/useRovingGridFocus';
 
-export interface UseMonthGridKeyboardOptions {
+interface UseMonthGridKeyboardOptions {
 	days: DateTime[];
 	mealsByDate: Map<string, MonthGridMeal[]>;
 	onMealClick?: (meal: MonthGridMeal) => void;
 	selectedDate: DateTime;
 }
 
-export interface DayKeyboardProps {
+interface DayKeyboardProps {
 	tabIndex: 0 | -1;
 	onClick: () => void;
 	onKeyDown: (e: React.KeyboardEvent<HTMLElement>) => void;
 	ref: (el: HTMLElement | null) => void;
 }
 
-export interface MealKeyboardProps {
-	tabIndex: 0 | -1;
-	ref: React.RefCallback<HTMLElement>;
-}
-
-export interface UseMonthGridKeyboardResult {
+interface UseMonthGridKeyboardResult {
 	getDayProps: (dayIndex: number) => DayKeyboardProps;
 	getMealProps: (
 		dayIndex: number,

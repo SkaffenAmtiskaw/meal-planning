@@ -12,10 +12,13 @@ import { vi } from 'vitest';
 
 import { useState } from 'react';
 
-type FeedbackStatus = 'idle' | 'submitting' | 'success' | 'error';
+import type { AsyncStatus } from '@/_hooks/useAsyncStatus';
+import type { Status } from '@/_hooks/useFormFeedback';
+
+const idle: Status = 'idle';
 
 export const useFormFeedback = vi.fn(() => ({
-	status: 'idle' as FeedbackStatus,
+	status: idle,
 	countdown: 0,
 	errorMessage: undefined as string | undefined,
 	wrap:
@@ -35,9 +38,7 @@ export const useFormFeedback = vi.fn(() => ({
 }));
 
 export const useAsyncStatus = vi.fn(() => {
-	const [status, setStatus] = useState<
-		'idle' | 'loading' | 'success' | 'error'
-	>('idle');
+	const [status, setStatus] = useState<AsyncStatus>('idle');
 	const [error, setError] = useState<string | null>(null);
 
 	const run = async (fn: () => Promise<unknown>) => {

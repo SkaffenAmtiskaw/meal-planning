@@ -2,7 +2,7 @@ import type { ReactNode } from 'react';
 
 import { Button } from '@mantine/core';
 
-export interface AuthLayoutSubmitButtonProps {
+interface AuthLayoutSubmitButtonProps {
 	children: ReactNode;
 	loading?: boolean;
 	onClick?: () => void;
