@@ -85,7 +85,7 @@ Nearly every dependency of the module under test is mocked with `vi.mock`, so a 
 
 Modules that use these libraries are still mocked, such as `@/_models` or a form's validation helpers, so a test doesn't break when a schema changes. Only the library itself is the exception.
 
-Two modules are swapped for their mocks in every test through aliases in `vitest.config.ts`: `@/env` resolves to `test/mocks/env.ts`, and `server-only` to `test/mocks/server-only.ts`. So a test file doesn't need to mock them, and the app's real environment never reaches a test. A test that needs a different env value mocks `@/env` with its own object, as `src/_utils/errorReporting/errorReporting.test.ts` does.
+Two modules are swapped for their mocks in every test through aliases in `vitest.config.ts`: `@/env` resolves to `test/mocks/env.ts`, and `server-only` to `test/mocks/server-only.ts`. So a test file doesn't need to mock them, and the app's real environment never reaches a test. A test that needs a different env value mocks `@/env` with its own object, as `src/_reporting/errorReporting/errorReporting.test.ts` does.
 
 ## Keep Mocks Simple
 A mock is a stub, not a second implementation. Its default is the success path with minimal valid data: a mock component renders a static placeholder, and a mock function returns a static value. A test that needs a failure or an edge case overrides the default for itself, such as with `mockReturnValueOnce`, so what each test is about shows in the test. If several test files override a shared mock's default in the same way, the default is probably wrong, and changing it is better than repeating the override.

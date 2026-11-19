@@ -5,7 +5,7 @@ import {
 	getReportingToken,
 	isReportingOn,
 	POSTHOG_HOST,
-} from '@/_utils/errorReporting';
+} from '@/_reporting/errorReporting';
 
 export const register = async () => {
 	await connectDatabase();

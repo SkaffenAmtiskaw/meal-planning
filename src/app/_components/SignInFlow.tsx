@@ -6,9 +6,9 @@ import { useEffect, useState } from 'react';
 import { Button, PasswordInput, TextInput } from '@mantine/core';
 
 import { checkEmailStatus } from '@/_actions/auth';
+import { client } from '@/_auth/client';
 import { GoogleLogoSVG } from '@/_components/GoogleLogoSVG';
 import { useAsyncButton } from '@/_hooks';
-import { client } from '@/_utils/auth';
 import { zSafeString } from '@/_utils/zSafeString';
 
 import {

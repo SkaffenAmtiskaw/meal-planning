@@ -5,16 +5,15 @@ import { randomUUID } from 'node:crypto';
 import { z } from 'zod';
 
 import { checkAuth } from '@/_actions/auth/checkAuth';
-import { sendInviteEmail } from '@/_auth/emails/sendInviteEmail';
-import type { InviteEmailType } from '@/_auth/emails/types';
+import { type InviteEmailType, sendInviteEmail } from '@/_email';
 import { newId } from '@/_models/database/newId';
 import { pendingInvites } from '@/_models/database/pendingInvites';
 import { planners } from '@/_models/database/planners';
 import { users } from '@/_models/database/users';
 import type { AccessLevel } from '@/_models/user';
+import { reportError } from '@/_reporting/reportError';
 import type { ActionResult } from '@/_utils/actionResult';
 import { catchify } from '@/_utils/catchify';
-import { reportError } from '@/_utils/reportError';
 import { zId } from '@/_utils/zId';
 import { env } from '@/env';
 

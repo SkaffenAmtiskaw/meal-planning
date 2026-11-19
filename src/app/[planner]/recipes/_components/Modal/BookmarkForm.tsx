@@ -9,10 +9,12 @@ import { schemaResolver, useForm } from '@mantine/form';
 import { z } from 'zod';
 
 import { addBookmark, editBookmark } from '@/_actions/library';
-import type { TagOption } from '@/_components';
-import { FormFeedbackAlert, SubmitButton, TagCombobox } from '@/_components';
+import { FormFeedbackAlert, SubmitButton } from '@/_components';
 import { useFormFeedback } from '@/_hooks';
 import type { BookmarkInterface } from '@/_models/types';
+
+import { TagCombobox } from '../TagCombobox';
+import type { TagOption } from '../types';
 
 const zFormFields = z.object({
 	name: z.string().min(1, { error: 'Name is required' }),

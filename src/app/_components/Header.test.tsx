@@ -5,7 +5,7 @@ import { Header } from './Header';
 
 vi.mock('@mantine/core', async () => await import('#mocks/@mantine/core'));
 
-vi.mock('@/_components/UserMenu', () => ({
+vi.mock('./UserMenu', () => ({
 	UserMenu: () => <div data-testid="user-menu" />,
 }));
 

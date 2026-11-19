@@ -2,13 +2,13 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { createOnRequestError } from '@posthog/next';
 
-import { isReportingOn } from '@/_utils/errorReporting';
+import { isReportingOn } from '@/_reporting/errorReporting';
 
 vi.mock('@/_models/database/connectDatabase', () => ({
 	connectDatabase: vi.fn(),
 }));
 vi.mock('@posthog/next', () => ({ createOnRequestError: vi.fn() }));
-vi.mock('@/_utils/errorReporting', () => ({
+vi.mock('@/_reporting/errorReporting', () => ({
 	getReportingToken: vi.fn(() => 'phc_token'),
 	isReportingOn: vi.fn(() => true),
 	POSTHOG_HOST: 'https://posthog.example.com',

@@ -2,8 +2,8 @@
 
 import { pendingInvites } from '@/_models/database/pendingInvites';
 import { planners } from '@/_models/database/planners';
+import { reportError } from '@/_reporting/reportError';
 import { catchify } from '@/_utils/catchify';
-import { reportError } from '@/_utils/reportError';
 
 interface ValidateInviteTokenResult {
 	valid: boolean;

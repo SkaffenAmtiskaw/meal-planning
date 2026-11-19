@@ -3,8 +3,9 @@ import type { ReactNode } from 'react';
 
 import { MantineProvider, mantineHtmlProps } from '@mantine/core';
 
-import { OneTapSignInWrapper } from '@/_components';
 import { theme } from '@/_theme';
+
+import { OneTapSignInWrapper } from './_hooks/useOneTap/OneTapSignInWrapper';
 
 import '@mantine/core/styles.css';
 import '@schedule-x/theme-default/dist/index.css';

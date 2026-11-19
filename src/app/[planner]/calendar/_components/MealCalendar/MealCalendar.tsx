@@ -2,12 +2,12 @@
 
 import { useCallback, useMemo } from 'react';
 
-import type { MonthGridMeal, MonthGridProps } from '@/_components/Calendar';
-import { MonthGrid } from '@/_components/Calendar';
 import type { DayInterface } from '@/_models/types';
 
 import { MealEventCard } from './MealEventCard';
 
+import { MonthGrid } from '../Calendar';
+import type { MonthGridMeal, MonthGridProps } from '../Calendar';
 import { toCalendarEvents } from '../../_utils/toCalendarEvents';
 import type { CalendarEvent } from '../../_utils/types';
 import type { SavedItem } from '../../types';

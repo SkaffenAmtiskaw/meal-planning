@@ -34,6 +34,9 @@ vi.mock('@/_components', () => ({
 	SubmitButton: ({ label }: { label: string }) => (
 		<button type="submit">{label}</button>
 	),
+}));
+
+vi.mock('../TagCombobox', () => ({
 	TagCombobox: vi.fn(() => <div data-testid="tag-combobox">Tags</div>),
 }));
 

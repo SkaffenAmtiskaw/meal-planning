@@ -2,13 +2,13 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { pendingInvites } from '@/_models/database/pendingInvites';
 import { planners } from '@/_models/database/planners';
-import { reportError } from '@/_utils/reportError';
+import { reportError } from '@/_reporting/reportError';
 
 import { validateInviteToken } from './validateInviteToken';
 
 vi.mock(
-	'@/_utils/reportError',
-	async () => await import('#mocks/@/_utils/reportError'),
+	'@/_reporting/reportError',
+	async () => await import('#mocks/@/_reporting/reportError'),
 );
 vi.mock(
 	'@/_models/database/planners',

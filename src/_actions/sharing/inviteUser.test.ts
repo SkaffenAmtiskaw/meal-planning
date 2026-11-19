@@ -9,12 +9,12 @@ import {
 } from 'vitest';
 
 import { checkAuth } from '@/_actions/auth/checkAuth';
-import { sendInviteEmail } from '@/_auth/emails/sendInviteEmail';
+import { sendInviteEmail } from '@/_email';
 import { pendingInvites } from '@/_models/database/pendingInvites';
 import { planners } from '@/_models/database/planners';
 import { users } from '@/_models/database/users';
 import type { AccessLevel } from '@/_models/user';
-import { reportError } from '@/_utils/reportError';
+import { reportError } from '@/_reporting/reportError';
 
 import { inviteUser } from './inviteUser';
 
@@ -22,7 +22,7 @@ vi.mock(
 	'@/_actions/auth/checkAuth',
 	async () => await import('#mocks/@/_actions/auth/checkAuth'),
 );
-vi.mock('@/_auth/emails/sendInviteEmail', async () => ({
+vi.mock('@/_email', async () => ({
 	sendInviteEmail: vi.fn(),
 }));
 vi.mock('@/env', async () => await import('#mocks/env'));
@@ -52,8 +52,8 @@ vi.mock('@/_utils/catchify', async () => ({
 	}),
 }));
 vi.mock(
-	'@/_utils/reportError',
-	async () => await import('#mocks/@/_utils/reportError'),
+	'@/_reporting/reportError',
+	async () => await import('#mocks/@/_reporting/reportError'),
 );
 vi.mock('node:crypto', () => ({
 	default: {

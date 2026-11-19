@@ -1,7 +1,8 @@
-import type { CalendarMeal } from '@/_components/Calendar';
 import { getMealColor, TAG_COLORS } from '@/_theme/colors';
 
 import type { CalendarEvent } from './types';
+
+import type { CalendarMeal } from '../_components/Calendar';
 
 export function toCalendarMeals(events: CalendarEvent[]): CalendarMeal[] {
 	return events.map((event) => ({

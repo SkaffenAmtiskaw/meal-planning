@@ -4,7 +4,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { redirect } from 'next/navigation';
 
 import { getUser } from '@/_actions/user';
-import { reportError } from '@/_utils/reportError';
+import { reportError } from '@/_reporting/reportError';
 import { getLastOpenedPlannerId } from '@/app/_utils/getLastOpenedPlannerId';
 
 import Layout from './layout';
@@ -26,8 +26,8 @@ vi.mock('@/_utils/catchify', () => ({
 }));
 
 vi.mock(
-	'@/_utils/reportError',
-	async () => await import('#mocks/@/_utils/reportError'),
+	'@/_reporting/reportError',
+	async () => await import('#mocks/@/_reporting/reportError'),
 );
 
 vi.mock('@/app/_components/Header', () => ({

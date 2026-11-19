@@ -4,9 +4,10 @@ import { beforeAll, beforeEach, describe, expect, test, vi } from 'vitest';
 import { usePathname, useRouter } from 'next/navigation';
 
 import { addBookmark, editBookmark } from '@/_actions/library';
-import { TagCombobox } from '@/_components';
 
 import { BookmarkForm } from './BookmarkForm';
+
+import { TagCombobox } from '../TagCombobox';
 
 vi.mock('next/navigation', async () => await import('#mocks/next/navigation'));
 
@@ -22,6 +23,9 @@ vi.mock('@/_hooks', async () => await import('#mocks/@/_hooks'));
 vi.mock('@/_components', () => ({
 	FormFeedbackAlert: vi.fn(),
 	SubmitButton: vi.fn(() => null),
+}));
+
+vi.mock('../TagCombobox', () => ({
 	TagCombobox: vi.fn(() => null),
 }));
 

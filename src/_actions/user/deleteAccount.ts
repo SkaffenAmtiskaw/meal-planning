@@ -3,8 +3,8 @@
 import { headers } from 'next/headers';
 
 import { auth } from '@/_auth';
-import { sendAccountDeletionEmail } from '@/_auth/emails';
 import { deleteAuthUser } from '@/_auth/users';
+import { sendAccountDeletionEmail } from '@/_email';
 import { planners } from '@/_models/database/planners';
 import { users } from '@/_models/database/users';
 import type { ActionResult } from '@/_utils/actionResult';

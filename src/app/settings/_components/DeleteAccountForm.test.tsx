@@ -4,7 +4,7 @@ import { beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
 import { useRouter } from 'next/navigation';
 
 import { deleteAccount } from '@/_actions/user';
-import { client } from '@/_utils/auth';
+import { client } from '@/_auth/client';
 
 import { DeleteAccountForm } from './DeleteAccountForm';
 
@@ -16,11 +16,7 @@ vi.mock('next/navigation', async () => await import('#mocks/next/navigation'));
 
 vi.mock('@/_actions/user', async () => await import('#mocks/@/_actions/user'));
 
-vi.mock('@/_utils/auth', async () => ({
-	client: {
-		signOut: vi.fn(),
-	},
-}));
+vi.mock('@/_auth/client', async () => await import('#mocks/@/_auth/client'));
 
 describe('DeleteAccountForm', () => {
 	beforeAll(() => {

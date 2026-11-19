@@ -2,7 +2,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { checkAuth } from '@/_actions/auth/checkAuth';
 import { pendingInvites } from '@/_models/database/pendingInvites';
-import { reportError } from '@/_utils/reportError';
+import { reportError } from '@/_reporting/reportError';
 
 import { type CancelInviteInput, cancelInvite } from './cancelInvite';
 
@@ -16,8 +16,8 @@ vi.mock(
 	async () => await import('#mocks/@/_models/database/pendingInvites'),
 );
 vi.mock(
-	'@/_utils/reportError',
-	async () => await import('#mocks/@/_utils/reportError'),
+	'@/_reporting/reportError',
+	async () => await import('#mocks/@/_reporting/reportError'),
 );
 
 describe('cancelInvite', () => {

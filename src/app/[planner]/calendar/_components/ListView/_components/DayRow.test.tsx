@@ -5,11 +5,11 @@ import type { ReactNode } from 'react';
 
 import { DateTime } from 'luxon';
 
-import type { CalendarDish, CalendarMeal } from '@/_components/Calendar';
 import { useCanWrite } from '@/app/[planner]/_components';
 
 import { DayRow } from './DayRow';
 
+import type { CalendarDish, CalendarMeal } from '../../Calendar';
 import { useCalendarModal } from '../../CalendarModal';
 
 vi.mock('@mantine/core', async () => await import('#mocks/@mantine/core'));

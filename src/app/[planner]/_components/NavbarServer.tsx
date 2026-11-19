@@ -1,7 +1,8 @@
 import 'server-only';
 
 import { getPlanners } from '@/_actions/planner';
-import { Navbar } from '@/_components';
+
+import { Navbar } from './Navbar';
 
 type Props = { id: string };
 

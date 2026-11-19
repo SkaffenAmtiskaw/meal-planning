@@ -6,14 +6,14 @@ import { Badge, Box, Flex, rgba, Stack, Text } from '@mantine/core';
 
 import type { DateTime } from 'luxon';
 
-import type { CalendarMeal } from '@/_components/Calendar';
-import type { MealCardProps } from '@/_components/Calendar/MealCard/types';
 import { useCanWrite } from '@/app/[planner]/_components';
 
 import { ListViewAddMealTrigger } from './ListViewAddMealTrigger';
 import { MealCardWithDragHandle } from './MealCardWithDragHandle';
 import styles from './DayRow.module.css';
 
+import type { CalendarMeal } from '../../Calendar';
+import type { MealCardProps } from '../../Calendar/MealCard/types';
 import { useCalendarModal } from '../../CalendarModal';
 
 interface DayRowProps {
