@@ -3,12 +3,12 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { DateTime } from 'luxon';
 
-import { useCalendarContext } from '@/_components/Calendar';
 import { useIsMobile } from '@/_hooks';
 import type { DayInterface } from '@/_models/types';
 
 import { CalendarView } from './CalendarView';
 
+import { useCalendarContext } from '../Calendar';
 import type { CalendarEvent } from '../../_utils/types';
 import type { SavedItem } from '../../types';
 import { MealCalendar } from '../MealCalendar/MealCalendar';
@@ -21,7 +21,7 @@ vi.mock('@mantine/core', async () => await import('#mocks/@mantine/core'));
 vi.mock('@mantine/hooks', async () => await import('#mocks/@mantine/hooks'));
 vi.mock('@/_hooks', async () => await import('#mocks/@/_hooks'));
 
-vi.mock('@/_components/Calendar', async () => ({
+vi.mock('../Calendar', async () => ({
 	CalendarProvider: vi.fn(({ children }) => (
 		<div data-testid="calendar-provider">{children}</div>
 	)),

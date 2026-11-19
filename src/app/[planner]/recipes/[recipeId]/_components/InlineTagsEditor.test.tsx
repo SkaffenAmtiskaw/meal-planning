@@ -25,8 +25,11 @@ vi.mock('@/_actions/library', () => ({
 
 let capturedOnChange: ((value: string[]) => void) | undefined;
 
-vi.mock('@/_components', () => ({
+vi.mock('../../_components/Tag/Tag', () => ({
 	Tag: vi.fn(({ children }) => <span>{children}</span>),
+}));
+
+vi.mock('../../_components/TagCombobox', () => ({
 	TagCombobox: vi.fn(({ value, onChange, plannerId, initialTags }) => {
 		capturedOnChange = onChange;
 		return (

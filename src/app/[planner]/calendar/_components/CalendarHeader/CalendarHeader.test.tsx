@@ -8,15 +8,13 @@ import { DatePicker } from '@mantine/dates';
 
 import { DateTime } from 'luxon';
 
-import { formatWeekRange } from '@/_components/Calendar/_utils/formatWeekRange';
-import { useCalendarContext } from '@/_components/Calendar/CalendarContext';
-import type {
-	CalendarContextValue,
-	CalendarViewType,
-} from '@/_components/Calendar/types';
 import { AddMealButton } from '@/app/[planner]/calendar/_components/AddMealButton';
 
 import { CalendarHeaderDesktop, CalendarHeaderMobile } from './CalendarHeader';
+
+import { formatWeekRange } from '../Calendar/_utils/formatWeekRange';
+import { useCalendarContext } from '../Calendar/CalendarContext';
+import type { CalendarContextValue, CalendarViewType } from '../Calendar/types';
 
 vi.mock('@mantine/core', async () => await import('#mocks/@mantine/core'));
 
@@ -43,7 +41,7 @@ vi.mock('@mantine/dates', () => ({
 	)),
 }));
 
-vi.mock('@/_components/Calendar/_components/CalendarNavButtons', async () => ({
+vi.mock('../Calendar/_components/CalendarNavButtons', async () => ({
 	CalendarTodayButton: vi.fn(({ size }) => (
 		<button data-testid="today-button" data-size={size} aria-label="Today">
 			Today
@@ -82,7 +80,7 @@ vi.mock('@/app/[planner]/calendar/_components/AddMealButton', () => ({
 	)),
 }));
 
-vi.mock('@/_components/Calendar/CalendarContext', () => ({
+vi.mock('../Calendar/CalendarContext', () => ({
 	useCalendarContext: vi.fn(),
 }));
 

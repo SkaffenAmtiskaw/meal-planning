@@ -3,10 +3,10 @@
 import { useMemo } from 'react';
 import type { ReactElement } from 'react';
 
-import type { CalendarDish, CalendarMeal } from '@/_components/Calendar';
 import { useIsMobile } from '@/_hooks';
 import type { DayInterface } from '@/_models/types';
 
+import type { CalendarDish, CalendarMeal } from '../Calendar';
 import { toCalendarEvents } from '../../_utils/toCalendarEvents';
 import { toCalendarMeals } from '../../_utils/toCalendarMeals';
 import type { SavedItem } from '../../types';

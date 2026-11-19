@@ -7,11 +7,11 @@ import { Group, Paper, ScrollArea, Stack, Text } from '@mantine/core';
 
 import { DateTime } from 'luxon';
 
-import { useCalendarContext } from '@/_components/Calendar';
-import { MealCard } from '@/_components/Calendar/MealCard/MealCard';
-
 import type { MobileAgendaProps } from './types';
 import styles from './MobileAgenda.module.css';
+
+import { useCalendarContext } from '../CalendarContext';
+import { MealCard } from '../MealCard/MealCard';
 
 export function MobileAgenda({
 	events = [],

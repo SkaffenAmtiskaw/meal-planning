@@ -20,6 +20,10 @@ import {
 
 import { DateTime } from 'luxon';
 
+import { AddMealButton } from '@/app/[planner]/calendar/_components/AddMealButton';
+
+import styles from './CalendarHeader.module.css';
+
 import {
 	CalendarNextButton,
 	CalendarPreviousButton,
@@ -30,10 +34,7 @@ import {
 	LABEL_FORMATTERS,
 	useCalendarContext,
 	VIEW_LABELS,
-} from '@/_components/Calendar';
-import { AddMealButton } from '@/app/[planner]/calendar/_components/AddMealButton';
-
-import styles from './CalendarHeader.module.css';
+} from '../Calendar';
 
 const MOBILE_VIEWS: CalendarViewType[] = ['month', 'list'];
 

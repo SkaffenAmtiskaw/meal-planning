@@ -3,13 +3,13 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { DateTime } from 'luxon';
 
-import { useCalendarContext } from '@/_components/Calendar';
-
 import { MobileMonthGrid } from './MobileMonthGrid';
 import type { MobileMonthGridEvent } from './types';
 
+import { useCalendarContext } from '../CalendarContext';
+
 vi.mock('@mantine/core', async () => await import('#mocks/@mantine/core'));
-vi.mock('@/_components/Calendar', async () => ({
+vi.mock('../CalendarContext', async () => ({
 	useCalendarContext: vi.fn(),
 }));
 

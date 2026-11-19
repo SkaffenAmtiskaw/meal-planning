@@ -15,14 +15,15 @@ import {
 
 import { DateTime } from 'luxon';
 
-import { useCalendarContext } from '@/_components/Calendar';
-import { useRovingGridFocus } from '@/_components/Calendar/_hooks/useRovingGridFocus';
-import { getMonthGridDates } from '@/_components/Calendar/_utils/getMonthGridDates';
-import { WEEKDAY_LABELS } from '@/_components/Calendar/_utils/weekdays';
 import focusClasses from '@/_theme/focus.module.css';
 
 import type { MobileMonthGridEvent } from './types';
 import styles from './MobileMonthGrid.module.css';
+
+import { useCalendarContext } from '../CalendarContext';
+import { useRovingGridFocus } from '../_hooks/useRovingGridFocus';
+import { getMonthGridDates } from '../_utils/getMonthGridDates';
+import { WEEKDAY_LABELS } from '../_utils/weekdays';
 
 interface MobileMonthGridProps {
 	events?: MobileMonthGridEvent[];

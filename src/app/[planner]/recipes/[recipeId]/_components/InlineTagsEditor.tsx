@@ -7,11 +7,13 @@ import { ActionIcon, Group, Stack, Text } from '@mantine/core';
 import { IconCheck, IconPencil, IconX } from '@tabler/icons-react';
 
 import { updateRecipeTags } from '@/_actions/library';
-import type { TagOption } from '@/_components';
-import { Tag, TagCombobox } from '@/_components';
 import { useEditMode } from '@/_hooks/useEditMode';
 import type { TagColor } from '@/_theme/types';
 import { catchify } from '@/_utils/catchify';
+
+import { Tag } from '../../_components/Tag/Tag';
+import { TagCombobox } from '../../_components/TagCombobox';
+import type { TagOption } from '../../_components/types';
 
 type Props = {
 	plannerId: string;

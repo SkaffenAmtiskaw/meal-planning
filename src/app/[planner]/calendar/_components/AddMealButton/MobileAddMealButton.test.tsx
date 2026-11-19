@@ -3,10 +3,9 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { DateTime } from 'luxon';
 
-import { useCalendarContext } from '@/_components/Calendar';
-
 import { MobileAddMealButton } from './MobileAddMealButton';
 
+import { useCalendarContext } from '../Calendar';
 import { useCalendarModal } from '../CalendarModal';
 
 vi.mock('@mantine/core', async () => await import('#mocks/@mantine/core'));
@@ -20,7 +19,7 @@ vi.mock('@/app/[planner]/_components', () => ({
 	useCanWrite: mockUseCanWrite,
 }));
 
-vi.mock('@/_components/Calendar', () => ({
+vi.mock('../Calendar', () => ({
 	useCalendarContext: vi.fn(),
 }));
 

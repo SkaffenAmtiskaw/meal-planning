@@ -1,11 +1,10 @@
 import { render, screen } from '@testing-library/react';
 import { afterEach, describe, expect, test, vi } from 'vitest';
 
-import { useOneTap } from '@/_hooks';
-
 import { OneTapSignInWrapper } from './OneTapSignInWrapper';
+import { useOneTap } from './useOneTap';
 
-vi.mock('@/_hooks', async () => await import('#mocks/@/_hooks'));
+vi.mock('./useOneTap', () => ({ useOneTap: vi.fn() }));
 
 describe('one tap sign in wrapper', () => {
 	afterEach(() => {

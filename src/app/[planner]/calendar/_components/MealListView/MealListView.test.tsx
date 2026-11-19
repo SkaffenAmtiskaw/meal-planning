@@ -1,13 +1,13 @@
 import { render, screen } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-import type { CalendarDish, CalendarMeal } from '@/_components/Calendar';
 import { useIsMobile } from '@/_hooks';
 import type { DayInterface } from '@/_models/types';
 import { getMealColor, TAG_COLORS } from '@/_theme/colors';
 
 import { MealListView } from './MealListView';
 
+import type { CalendarDish, CalendarMeal } from '../Calendar';
 import { toCalendarEvents } from '../../_utils/toCalendarEvents';
 import type { CalendarEvent } from '../../_utils/types';
 import type { SavedItem } from '../../types';

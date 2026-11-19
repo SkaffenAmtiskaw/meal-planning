@@ -2,10 +2,10 @@ import type { ReactElement } from 'react';
 
 import { Box, Flex } from '@mantine/core';
 
-import { MealCard } from '@/_components/Calendar/MealCard/MealCard';
-import type { MealCardProps } from '@/_components/Calendar/MealCard/types';
-
 import styles from './MealCardWithDragHandle.module.css';
+
+import { MealCard } from '../../Calendar/MealCard/MealCard';
+import type { MealCardProps } from '../../Calendar/MealCard/types';
 
 type MealCardWithDragHandleProps = MealCardProps;
 

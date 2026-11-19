@@ -7,7 +7,7 @@ import { SavedList } from './SavedList';
 
 vi.mock('@mantine/core', async () => await import('#mocks/@mantine/core'));
 
-vi.mock('@/_components', () => ({
+vi.mock('./Tag/Tag', () => ({
 	Tag: ({ children, color }: { children: React.ReactNode; color: string }) => (
 		<span data-testid="badge" data-color={color}>
 			{children}

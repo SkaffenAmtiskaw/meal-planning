@@ -2,15 +2,11 @@
 
 import { useCallback, useMemo } from 'react';
 
-import {
-	WeekView,
-	type WeekViewMeal,
-	type WeekViewProps,
-} from '@/_components/Calendar';
 import type { DayInterface } from '@/_models/types';
 
 import { WeekMealCard } from './WeekMealCard';
 
+import { WeekView, type WeekViewMeal, type WeekViewProps } from '../Calendar';
 import { toCalendarEvents } from '../../_utils/toCalendarEvents';
 import type { CalendarEvent } from '../../_utils/types';
 import type { SavedItem } from '../../types';

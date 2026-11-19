@@ -5,17 +5,17 @@ import type { ReactNode } from 'react';
 
 import { DateTime } from 'luxon';
 
-import { useCalendarContext } from '@/_components/Calendar';
-import { MealCard } from '@/_components/Calendar/MealCard/MealCard';
-import type { CalendarDish, CalendarMeal } from '@/_components/Calendar/types';
-
 import { MobileAgenda } from './MobileAgenda';
 
+import { useCalendarContext } from '../CalendarContext';
+import type { CalendarDish, CalendarMeal } from '../types';
+import { MealCard } from '../MealCard/MealCard';
+
 vi.mock('@mantine/core', async () => await import('#mocks/@mantine/core'));
-vi.mock('@/_components/Calendar', async () => ({
+vi.mock('../CalendarContext', async () => ({
 	useCalendarContext: vi.fn(),
 }));
-vi.mock('@/_components/Calendar/MealCard/MealCard', () => ({
+vi.mock('../MealCard/MealCard', () => ({
 	MealCard: vi.fn(() => <div data-testid="meal-card" />),
 }));
 vi.mock('./MobileAgenda.module.css', () => ({

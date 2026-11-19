@@ -5,18 +5,18 @@ import type { ReactElement } from 'react';
 
 import { Stack } from '@mantine/core';
 
-import type { CalendarDish, CalendarMeal } from '@/_components/Calendar';
-import { MobileAgenda } from '@/_components/Calendar/MobileAgenda/MobileAgenda';
-import { MobileMonthGrid } from '@/_components/Calendar/MobileMonthGrid/MobileMonthGrid';
-import type { MobileMonthGridEvent } from '@/_components/Calendar/MobileMonthGrid/types';
 import type { DayInterface } from '@/_models/types';
 import { getMealColor, TAG_COLORS } from '@/_theme/colors';
 import { MobileAddMealButton } from '@/app/[planner]/calendar/_components/AddMealButton';
 
+import type { CalendarDish, CalendarMeal } from '../Calendar';
 import { toCalendarEvents } from '../../_utils/toCalendarEvents';
 import { toCalendarMeals } from '../../_utils/toCalendarMeals';
 import type { CalendarEvent } from '../../_utils/types';
 import type { SavedItem } from '../../types';
+import { MobileAgenda } from '../Calendar/MobileAgenda/MobileAgenda';
+import { MobileMonthGrid } from '../Calendar/MobileMonthGrid/MobileMonthGrid';
+import type { MobileMonthGridEvent } from '../Calendar/MobileMonthGrid/types';
 import { DishLink } from '../DishLink/DishLink';
 
 interface MealMonthAgendaProps {

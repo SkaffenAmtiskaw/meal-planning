@@ -1,6 +1,6 @@
 'use client';
 
-import { useOneTap } from '@/_hooks';
+import { useOneTap } from './useOneTap';
 
 type Props = {
 	children: React.ReactNode;

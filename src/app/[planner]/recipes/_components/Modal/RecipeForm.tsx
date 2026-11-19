@@ -18,16 +18,17 @@ import { schemaResolver, useForm } from '@mantine/form';
 import { z } from 'zod';
 
 import { addRecipe, editRecipe } from '@/_actions/library';
-import type { TagOption } from '@/_components';
 import {
 	FormFeedbackAlert,
 	StringArrayInput,
 	SubmitButton,
-	TagCombobox,
 } from '@/_components';
 import { useFormFeedback } from '@/_hooks';
 import type { RecipeInterface } from '@/_models/types';
 import { zRecipeFormSchema } from '@/_models/types';
+
+import { TagCombobox } from '../TagCombobox';
+import type { TagOption } from '../types';
 
 // Resolver only validates fields Mantine manages; ingredients/instructions/tags
 // are controlled via useState and merged in handleSubmit.

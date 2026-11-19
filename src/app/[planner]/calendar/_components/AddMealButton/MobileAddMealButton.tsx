@@ -5,9 +5,9 @@ import type { ReactElement } from 'react';
 import { Affix, Button } from '@mantine/core';
 import { IconPlus } from '@tabler/icons-react';
 
-import { useCalendarContext } from '@/_components/Calendar';
 import { useCanWrite } from '@/app/[planner]/_components';
 
+import { useCalendarContext } from '../Calendar';
 import { useCalendarModal } from '../CalendarModal';
 
 export function MobileAddMealButton(): ReactElement | null {
