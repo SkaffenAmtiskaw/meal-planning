@@ -9,8 +9,8 @@ import type { DayInterface } from '@/_models/types';
 
 import { CalendarView } from './CalendarView';
 
-import type { CalendarEvent } from '../../_utils/toCalendarEvents';
-import type { SavedItem } from '../../_utils/toScheduleXEvents';
+import type { CalendarEvent } from '../../_utils/types';
+import type { SavedItem } from '../../types';
 import { MealCalendar } from '../MealCalendar/MealCalendar';
 import { MealDetailModal } from '../MealDetailModal/MealDetailModal';
 import { MealListView } from '../MealListView/MealListView';

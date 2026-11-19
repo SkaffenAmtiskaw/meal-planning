@@ -1,9 +1,9 @@
 import { it as baseIt } from 'vitest';
 import type { Assertion, TestContext } from 'vitest';
 
-const ACCESS_LEVELS = ['read', 'write', 'admin', 'owner'] as const;
+import type { AccessLevel as Level } from '@/_models/user';
 
-type Level = (typeof ACCESS_LEVELS)[number];
+const ACCESS_LEVELS = ['read', 'write', 'admin', 'owner'] as const;
 
 type EnhancedAssertion<T> = Assertion<T> & {
 	onlyAtLevel: (assertionLevel: Level) => EnhancedAssertion<T>;

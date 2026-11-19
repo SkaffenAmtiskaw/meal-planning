@@ -1,22 +1,13 @@
 'use client';
 
-import {
-	type ReactElement,
-	type ReactNode,
-	useEffect,
-	useMemo,
-	useRef,
-} from 'react';
+import { type ReactElement, useEffect, useMemo, useRef } from 'react';
 
 import { Box } from '@mantine/core';
 
 import { DateTime } from 'luxon';
 
-import {
-	type CalendarDish,
-	type CalendarMeal,
-	useCalendarContext,
-} from '@/_components/Calendar';
+import { type CalendarMeal, useCalendarContext } from '@/_components/Calendar';
+import type { MealCardProps } from '@/_components/Calendar/MealCard/types';
 
 import styles from './ListView.module.css';
 
@@ -25,10 +16,10 @@ import { useScrolledDate } from './_hooks/useScrolledDate';
 import { useScrollToDate } from './_hooks/useScrollToDate';
 import { getListDayRange } from './_utils/getListDayRange';
 
-export interface ListViewProps {
+interface ListViewProps {
 	today?: DateTime;
 	events?: CalendarMeal[];
-	renderDish?: (dish: CalendarDish) => ReactNode;
+	renderDish?: MealCardProps['renderDish'];
 }
 
 export function ListView({

@@ -10,19 +10,10 @@
 
 import { vi } from 'vitest';
 
-export const getUserInvites = vi.fn(async () => ({
-	invites: [] as UserInvite[],
-}));
+import type * as GetUserInvites from '@/_actions/sharing/getUserInvites';
 
-// ─── Types ────────────────────────────────────────────────────────────────────
-
-interface UserInvite {
-	id: string;
-	plannerId: string;
-	plannerName: string;
-	invitedBy: string;
-	accessLevel: 'read' | 'write' | 'admin' | 'owner';
-	invitedAt: string;
-	expiresAt: string;
-	token: string;
-}
+export const getUserInvites = vi.fn<typeof GetUserInvites.getUserInvites>(
+	async () => ({
+		invites: [],
+	}),
+);

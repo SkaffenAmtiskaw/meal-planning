@@ -2,6 +2,8 @@ import type React from 'react';
 
 import { Text, Title } from '@mantine/core';
 
+import { z } from 'zod';
+
 import { validateInviteToken } from '@/_actions/sharing';
 import { LinkButton } from '@/_components';
 
@@ -9,17 +11,18 @@ import { AuthLayoutHeader, AuthLayoutRoot } from '../_components/AuthLayout';
 import { ExpiredInviteView } from './_components/ExpiredInviteView';
 import { InviteRegistrationFlow } from './_components/InviteRegistrationFlow';
 
-interface PageProps {
-	searchParams: Promise<{ token?: string }>;
-}
+// A missing or repeated token reads as '', which no invite has.
+const zSearchParams = z.object({
+	token: z.string().catch(''),
+});
 
 export default async function Page({
 	searchParams,
-}: PageProps): Promise<React.JSX.Element> {
-	const { token } = await searchParams;
+}: PageProps<'/invite'>): Promise<React.JSX.Element> {
+	const { token } = zSearchParams.parse(await searchParams);
 
 	// Validate the token server-side
-	const result = await validateInviteToken(token ?? '');
+	const result = await validateInviteToken(token);
 
 	// Token is valid - render registration form
 	if (result.valid && result.email && result.plannerName) {
@@ -28,7 +31,7 @@ export default async function Page({
 				<AuthLayoutHeader>
 					In order to join {result.plannerName} you must create an account.
 				</AuthLayoutHeader>
-				<InviteRegistrationFlow email={result.email} token={token ?? ''} />
+				<InviteRegistrationFlow email={result.email} token={token} />
 			</AuthLayoutRoot>
 		);
 	}

@@ -1,7 +1,7 @@
 import { users } from '@/_models/database/users';
 import { reportError } from '@/_utils/reportError';
 
-export interface RemoveMembershipResult {
+interface RemoveMembershipResult {
 	ok: boolean;
 	error?: string;
 }

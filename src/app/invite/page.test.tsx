@@ -56,6 +56,7 @@ describe('Invite Accept Page', () => {
 		});
 
 		const PageComponent = await Page({
+			params: Promise.resolve({}),
 			searchParams: Promise.resolve({ token: 'valid-token-123' }),
 		});
 		render(PageComponent);
@@ -76,6 +77,7 @@ describe('Invite Accept Page', () => {
 		});
 
 		const PageComponent = await Page({
+			params: Promise.resolve({}),
 			searchParams: Promise.resolve({ token: 'expired-token' }),
 		});
 		render(PageComponent);
@@ -90,6 +92,7 @@ describe('Invite Accept Page', () => {
 		});
 
 		const PageComponent = await Page({
+			params: Promise.resolve({}),
 			searchParams: Promise.resolve({ token: 'expired-token' }),
 		});
 		render(PageComponent);
@@ -104,6 +107,7 @@ describe('Invite Accept Page', () => {
 		});
 
 		const PageComponent = await Page({
+			params: Promise.resolve({}),
 			searchParams: Promise.resolve({ token: 'invalid-token' }),
 		});
 		render(PageComponent);
@@ -122,7 +126,10 @@ describe('Invite Accept Page', () => {
 			reason: 'invalid',
 		});
 
-		const PageComponent = await Page({ searchParams: Promise.resolve({}) });
+		const PageComponent = await Page({
+			params: Promise.resolve({}),
+			searchParams: Promise.resolve({}),
+		});
 		render(PageComponent);
 
 		expect(screen.getByText('Invalid Invite')).toBeDefined();
@@ -137,10 +144,27 @@ describe('Invite Accept Page', () => {
 			reason: 'invalid',
 		});
 
-		await Page({ searchParams: Promise.resolve({ token: 'my-test-token' }) });
+		await Page({
+			params: Promise.resolve({}),
+			searchParams: Promise.resolve({ token: 'my-test-token' }),
+		});
 
 		expect(mockValidateInviteToken).toHaveBeenCalledTimes(1);
 		expect(mockValidateInviteToken).toHaveBeenCalledWith('my-test-token');
+	});
+
+	it('validates an empty token when the token is repeated', async () => {
+		mockValidateInviteToken.mockResolvedValue({
+			valid: false,
+			reason: 'invalid',
+		});
+
+		await Page({
+			params: Promise.resolve({}),
+			searchParams: Promise.resolve({ token: ['first', 'second'] }),
+		});
+
+		expect(mockValidateInviteToken).toHaveBeenCalledWith('');
 	});
 
 	it('passes empty token to InviteRegistrationFlow when token is missing', async () => {
@@ -150,7 +174,10 @@ describe('Invite Accept Page', () => {
 			plannerName: 'Test Planner',
 		});
 
-		const PageComponent = await Page({ searchParams: Promise.resolve({}) });
+		const PageComponent = await Page({
+			params: Promise.resolve({}),
+			searchParams: Promise.resolve({}),
+		});
 		render(PageComponent);
 
 		expect(screen.getByTestId('invite-registration-flow')).toBeDefined();

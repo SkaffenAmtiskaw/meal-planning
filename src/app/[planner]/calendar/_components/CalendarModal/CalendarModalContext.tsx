@@ -2,20 +2,11 @@
 
 import { createContext, useContext } from 'react';
 
-export interface CalendarModalData {
-	add_meal: { initialDate?: string };
-}
-
-export type CalendarModalType = keyof CalendarModalData;
-
-export type CalendarModalState =
-	| { type: null; data: null }
-	| {
-			[K in CalendarModalType]: {
-				type: K;
-				data: CalendarModalData[K];
-			};
-	  }[CalendarModalType];
+import type {
+	CalendarModalData,
+	CalendarModalState,
+	CalendarModalType,
+} from './types';
 
 export interface CalendarModalContextValue {
 	state: CalendarModalState;

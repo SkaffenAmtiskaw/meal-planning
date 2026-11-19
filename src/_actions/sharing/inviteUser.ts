@@ -6,6 +6,7 @@ import { z } from 'zod';
 
 import { checkAuth } from '@/_actions/auth/checkAuth';
 import { sendInviteEmail } from '@/_auth/emails/sendInviteEmail';
+import type { InviteEmailType } from '@/_auth/emails/types';
 import { newId } from '@/_models/database/newId';
 import { pendingInvites } from '@/_models/database/pendingInvites';
 import { planners } from '@/_models/database/planners';
@@ -17,13 +18,13 @@ import { reportError } from '@/_utils/reportError';
 import { zId } from '@/_utils/zId';
 import { env } from '@/env';
 
-export interface InviteUserInput {
+interface InviteUserInput {
 	plannerId: string;
 	email: string;
 	accessLevel?: AccessLevel;
 }
 
-export interface InviteUserResult {
+interface InviteUserResult {
 	inviteId: string;
 }
 
@@ -130,7 +131,7 @@ export const inviteUser = async (
 	}
 
 	// 10. Determine email type and URL based on whether user exists
-	const emailType: 'existing_user' | 'new_user' = existingUser
+	const emailType: InviteEmailType = existingUser
 		? 'existing_user'
 		: 'new_user';
 

@@ -4,7 +4,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { DateTime } from 'luxon';
 
 import { useMonthGridKeyboard } from './useMonthGridKeyboard';
-import type { MonthGridMeal } from './MonthGrid';
+import type { MonthGridMeal } from './types';
 
 function createDays(startDate: DateTime, count: number = 42): DateTime[] {
 	return Array.from({ length: count }, (_, i) => startDate.plus({ days: i }));

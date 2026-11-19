@@ -1,12 +1,13 @@
 'use client';
 
-import type { ReactElement, ReactNode } from 'react';
+import type { ReactElement } from 'react';
 
 import { Badge, Box, Flex, rgba, Stack, Text } from '@mantine/core';
 
 import type { DateTime } from 'luxon';
 
-import type { CalendarDish, CalendarMeal } from '@/_components/Calendar';
+import type { CalendarMeal } from '@/_components/Calendar';
+import type { MealCardProps } from '@/_components/Calendar/MealCard/types';
 import { useCanWrite } from '@/app/[planner]/_components';
 
 import { ListViewAddMealTrigger } from './ListViewAddMealTrigger';
@@ -15,11 +16,11 @@ import styles from './DayRow.module.css';
 
 import { useCalendarModal } from '../../CalendarModal';
 
-export interface DayRowProps {
+interface DayRowProps {
 	date: DateTime;
 	today: DateTime;
 	meals?: CalendarMeal[];
-	renderDish?: (dish: CalendarDish) => ReactNode;
+	renderDish?: MealCardProps['renderDish'];
 }
 
 export function DayRow({

@@ -5,7 +5,7 @@ import { useCallback, useEffect, useState } from 'react';
 import type { PlannerMember } from '@/_actions/sharing';
 import { getPlannerMembers } from '@/_actions/sharing';
 
-export interface UsePlannerMembersResult {
+interface UsePlannerMembersResult {
 	members: PlannerMember[];
 	loading: boolean;
 	error: string | null;

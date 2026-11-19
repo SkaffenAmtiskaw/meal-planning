@@ -10,7 +10,7 @@ import { MemberActions } from './MemberActions';
 import { canModifyMember } from '../_utils/canModifyMember';
 import { getAvailableAccessLevels } from '../_utils/getAvailableAccessLevels';
 
-export interface MemberListProps {
+interface MemberListProps {
 	members: PlannerMember[];
 	currentUserEmail: string | null;
 	currentUserIsOwner: boolean;

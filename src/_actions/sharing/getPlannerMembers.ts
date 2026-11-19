@@ -3,7 +3,7 @@
 import { checkAuth } from '@/_actions/auth/checkAuth';
 import { users } from '@/_models/database/users';
 
-import type { PlannerMember } from './getPlannerMembers.types';
+import type { PlannerMember } from './types';
 
 export const getPlannerMembers = async (
 	plannerId: string,

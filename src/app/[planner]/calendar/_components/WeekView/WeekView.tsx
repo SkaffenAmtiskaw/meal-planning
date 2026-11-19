@@ -5,7 +5,8 @@ import type { DayInterface } from '@/_models/types';
 import { WeekMealCard } from './WeekMealCard';
 import styles from './WeekView.module.css';
 
-import type { MealEvent, SavedItem } from '../../_utils/toScheduleXEvents';
+import type { MealEvent } from '../../_utils/toScheduleXEvents';
+import type { SavedItem } from '../../types';
 
 const DAY_LABELS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 

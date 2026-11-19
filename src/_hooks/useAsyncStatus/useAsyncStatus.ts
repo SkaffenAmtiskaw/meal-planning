@@ -2,12 +2,12 @@
 
 import { useCallback, useState } from 'react';
 
-import type { ActionResult } from '@/_utils/actionResult/ActionResult';
+import type { ActionResult } from '@/_utils/actionResult';
 import { catchify } from '@/_utils/catchify';
 
-export type AsyncStatus = 'idle' | 'loading' | 'success' | 'error';
+import type { AsyncStatus } from './types';
 
-export interface UseAsyncStatusResult {
+interface UseAsyncStatusResult {
 	status: AsyncStatus;
 	error: string | null;
 	run: <T>(

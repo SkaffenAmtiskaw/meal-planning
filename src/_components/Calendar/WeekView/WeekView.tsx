@@ -1,6 +1,6 @@
 'use client';
 
-import { type ReactElement, type ReactNode, useMemo } from 'react';
+import { type ReactElement, useMemo } from 'react';
 
 import { Badge, Box, Divider, Flex, Paper, Stack, Text } from '@mantine/core';
 
@@ -8,33 +8,13 @@ import { DateTime } from 'luxon';
 
 import focusClasses from '@/_theme/focus.module.css';
 
-import {
-	type MealKeyboardProps,
-	useWeekViewKeyboard,
-} from './useWeekViewKeyboard';
+import { useWeekViewKeyboard } from './useWeekViewKeyboard';
+import type { WeekViewMeal, WeekViewProps } from './types';
 import styles from './WeekView.module.css';
 
 import { useCalendarContext } from '../CalendarContext';
 import { getWeekDates } from '../_utils/getWeekDates';
 import { WEEKDAY_LABELS } from '../_utils/weekdays';
-
-export interface WeekViewMeal {
-	id: string;
-	date: string; // ISO date YYYY-MM-DD
-	title: string;
-	description?: string;
-}
-
-export type WeekViewMealRenderProps = MealKeyboardProps;
-
-export interface WeekViewProps {
-	meals?: WeekViewMeal[];
-	renderMeal?: (
-		meal: WeekViewMeal,
-		props: WeekViewMealRenderProps,
-	) => ReactNode;
-	onMealClick?: (meal: WeekViewMeal) => void;
-}
 
 export function WeekView({
 	meals = [],

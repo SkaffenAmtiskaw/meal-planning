@@ -16,7 +16,7 @@ import {
 	AuthLayoutSubmitButton,
 } from '../../_components/AuthLayout';
 
-export interface InviteRegistrationFlowProps {
+interface InviteRegistrationFlowProps {
 	email: string;
 	token: string;
 }

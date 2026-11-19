@@ -3,7 +3,8 @@ import { describe, expect, test } from 'vitest';
 import type { DishInterface } from '@/_models/types';
 
 import { resolveDishSource } from './resolveDishSource';
-import type { SavedItem } from './toScheduleXEvents';
+
+import type { SavedItem } from '../types';
 
 describe('resolveDishSource', () => {
 	const makeMap = (items: SavedItem[]) =>

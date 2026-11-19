@@ -1,7 +1,7 @@
 import { render, screen } from '@testing-library/react';
 import { describe, expect, test, vi } from 'vitest';
 
-import type { TagColor } from '@/_theme/colors';
+import type { TagColor } from '@/_theme/types';
 
 import { SavedList } from './SavedList';
 

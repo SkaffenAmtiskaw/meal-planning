@@ -4,9 +4,9 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import type { ActionResult } from '@/_utils/actionResult';
 
-import { useAsyncStatus } from '../useAsyncStatus';
+import type { Status } from './types';
 
-type Status = 'idle' | 'submitting' | 'success' | 'error';
+import { useAsyncStatus } from '../useAsyncStatus';
 
 type Options = {
 	successDuration?: number;

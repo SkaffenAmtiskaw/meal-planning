@@ -2,18 +2,18 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 
 import type { DateTime } from 'luxon';
 
-export interface UseRovingGridFocusOptions {
+interface UseRovingGridFocusOptions {
 	days: DateTime[];
 	initialFocusIndex: number;
 }
 
-export interface RovingGridFocusDayProps {
+interface RovingGridFocusDayProps {
 	tabIndex: 0 | -1;
 	onKeyDown: (e: React.KeyboardEvent<HTMLElement>) => void;
 	ref: (el: HTMLElement | null) => void;
 }
 
-export interface UseRovingGridFocusResult {
+interface UseRovingGridFocusResult {
 	getDayProps: (dayIndex: number) => RovingGridFocusDayProps;
 	setFocusedDayIndex: (index: number) => void;
 	focusDay: (dayIndex: number) => void;

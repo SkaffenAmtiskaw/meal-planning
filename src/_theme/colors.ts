@@ -1,14 +1,4 @@
-export type TagColor =
-	| 'tangerine'
-	| 'rosewood'
-	| 'honey'
-	| 'fern'
-	| 'seafoam'
-	| 'steel'
-	| 'lavender'
-	| 'mauve'
-	| 'sageMist'
-	| 'slate';
+import type { TagColor } from './types';
 
 export const TAG_COLORS: Record<
 	TagColor,

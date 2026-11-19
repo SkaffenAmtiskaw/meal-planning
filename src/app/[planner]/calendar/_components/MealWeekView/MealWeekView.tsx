@@ -11,11 +11,11 @@ import type { DayInterface } from '@/_models/types';
 
 import { WeekMealCard } from './WeekMealCard';
 
-import type { CalendarEvent } from '../../_utils/toCalendarEvents';
 import { toCalendarEvents } from '../../_utils/toCalendarEvents';
-import type { SavedItem } from '../../_utils/toScheduleXEvents';
+import type { CalendarEvent } from '../../_utils/types';
+import type { SavedItem } from '../../types';
 
-export interface MealWeekViewProps {
+interface MealWeekViewProps {
 	calendar: DayInterface[];
 	savedItems?: SavedItem[];
 	plannerId: string;

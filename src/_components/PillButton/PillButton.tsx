@@ -1,13 +1,9 @@
-import { type ButtonHTMLAttributes, forwardRef } from 'react';
+import { forwardRef } from 'react';
 
 import { UnstyledButton } from '@mantine/core';
 
+import type { PillButtonProps } from './types';
 import classes from './PillButton.module.css';
-
-export type PillButtonProps = ButtonHTMLAttributes<HTMLButtonElement> & {
-	variant?: 'outline' | 'dashed';
-	size?: 'sm' | 'md';
-};
 
 export const PillButton = forwardRef<HTMLButtonElement, PillButtonProps>(
 	({ children, variant = 'outline', size = 'sm', className, ...rest }, ref) => {

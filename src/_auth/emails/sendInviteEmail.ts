@@ -3,9 +3,9 @@ import { Resend } from 'resend';
 import { reportError } from '@/_utils/reportError';
 import { env } from '@/env';
 
-import { resendError } from './_utils/resendError';
+import type { InviteEmailType } from './types';
 
-type InviteEmailType = 'existing_user' | 'new_user';
+import { resendError } from './_utils/resendError';
 
 interface SendInviteEmailOptions {
 	email: string;

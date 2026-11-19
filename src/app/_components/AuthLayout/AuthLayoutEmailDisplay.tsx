@@ -1,6 +1,6 @@
 import { Button, Stack, Text } from '@mantine/core';
 
-export interface AuthLayoutEmailDisplayProps {
+interface AuthLayoutEmailDisplayProps {
 	email: string;
 	onChangeEmail?: () => void;
 	'data-testid'?: string;

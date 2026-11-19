@@ -1,6 +1,8 @@
 import type { DishInterface } from '@/_models/types';
 
-import type { ResolvedDish, SavedItem } from './toScheduleXEvents';
+import type { ResolvedDish } from './types';
+
+import type { SavedItem } from '../types';
 
 export const resolveDishSource = (
 	dish: DishInterface,

@@ -1,6 +1,6 @@
 import { Divider } from '@mantine/core';
 
-export interface AuthLayoutDividerProps {
+interface AuthLayoutDividerProps {
 	label?: string;
 }
 

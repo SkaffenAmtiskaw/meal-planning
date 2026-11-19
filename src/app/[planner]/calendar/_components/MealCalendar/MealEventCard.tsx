@@ -3,7 +3,7 @@ import { Paper, Text } from '@mantine/core';
 import { getMealColor, TAG_COLORS } from '@/_theme/colors';
 import focusClasses from '@/_theme/focus.module.css';
 
-export interface MealEventCardProps {
+interface MealEventCardProps {
 	event: {
 		id: string;
 		title: string;

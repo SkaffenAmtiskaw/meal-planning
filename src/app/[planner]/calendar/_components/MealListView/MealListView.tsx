@@ -9,12 +9,12 @@ import type { DayInterface } from '@/_models/types';
 
 import { toCalendarEvents } from '../../_utils/toCalendarEvents';
 import { toCalendarMeals } from '../../_utils/toCalendarMeals';
-import type { SavedItem } from '../../_utils/toScheduleXEvents';
+import type { SavedItem } from '../../types';
 import { DishLink } from '../DishLink/DishLink';
 import { ListView } from '../ListView/ListView';
 import { MobileListViewPlaceholder } from '../MobileListViewPlaceholder/MobileListViewPlaceholder';
 
-export interface MealListViewProps {
+interface MealListViewProps {
 	plannerId: string;
 	calendar: DayInterface[];
 	savedItems?: SavedItem[];
