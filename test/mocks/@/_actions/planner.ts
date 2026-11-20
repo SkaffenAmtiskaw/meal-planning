@@ -10,14 +10,6 @@
 
 import { vi } from 'vitest';
 
-export const addPlanner = vi.fn(async () => ({
-	_id: '507f1f77bcf86cd799439011',
-	name: "Test User's Planner",
-	calendar: [],
-	saved: [],
-	tags: [],
-}));
-
 export const createPlanner = vi.fn(async () => ({
 	ok: true as const,
 	data: undefined,

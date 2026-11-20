@@ -13,7 +13,7 @@ vi.mock('@/_actions/user', async () => await import('#mocks/@/_actions/user'));
 
 const makePlanner = (overrides: { name?: string; id?: string } = {}) => ({
 	_id: overrides.id ?? '507f1f77bcf86cd799439011',
-	...(overrides.name && { name: overrides.name }),
+	name: overrides.name ?? "Test User's Planner",
 	calendar: [],
 	saved: [],
 	tags: [],
@@ -40,7 +40,7 @@ describe('getPlanners', () => {
 
 	describe('when user is authenticated', () => {
 		it('fetches planners by the user planner IDs', async () => {
-			findReturns([makePlanner({ name: "Test User's Planner" })]);
+			findReturns([makePlanner()]);
 
 			await getPlanners();
 
@@ -50,55 +50,12 @@ describe('getPlanners', () => {
 		});
 
 		it('returns the fetched planners with their access levels', async () => {
-			const planner = makePlanner({ name: "Test User's Planner" });
+			const planner = makePlanner();
 			findReturns([planner]);
 
 			const result = await getPlanners();
 
 			expect(result).toEqual([{ planner, accessLevel: 'owner' }]);
-		});
-
-		describe('naming planners', () => {
-			it('does not update planners that already have names', async () => {
-				findReturns([makePlanner({ name: "Test User's Planner" })]);
-
-				await getPlanners();
-
-				expect(planners.updateOne).not.toHaveBeenCalled();
-			});
-
-			it('stores and returns a default name for a planner without one', async () => {
-				findReturns([makePlanner()]);
-
-				const result = await getPlanners();
-
-				expect(planners.updateOne).toHaveBeenCalledWith(
-					{ _id: '507f1f77bcf86cd799439011' },
-					{ $set: { name: "Test User's Planner" } },
-				);
-				expect(result[0].planner.name).toBe("Test User's Planner");
-			});
-
-			it('only names planners that have no name', async () => {
-				const named = makePlanner({
-					name: 'Named Planner',
-					id: '507f1f77bcf86cd799439021',
-				});
-				const unnamed = makePlanner({ id: '507f1f77bcf86cd799439022' });
-				findReturns([named, unnamed]);
-
-				const result = await getPlanners();
-
-				expect(planners.updateOne).toHaveBeenCalledTimes(1);
-				expect(planners.updateOne).toHaveBeenCalledWith(
-					{ _id: '507f1f77bcf86cd799439022' },
-					{ $set: { name: "Test User's Planner" } },
-				);
-				expect(result.map(({ planner }) => planner.name)).toEqual([
-					'Named Planner',
-					"Test User's Planner",
-				]);
-			});
 		});
 
 		describe('access levels', () => {
@@ -160,12 +117,7 @@ describe('getPlanners', () => {
 				vi.mocked(getUser).mockResolvedValueOnce(
 					mockUserWithMissingAccess as never,
 				);
-				findReturns([
-					makePlanner({
-						id: '507f1f77bcf86cd799439011',
-						name: "Test User's Planner",
-					}),
-				]);
+				findReturns([makePlanner({ id: '507f1f77bcf86cd799439011' })]);
 
 				const result = await getPlanners();
 

@@ -2,7 +2,7 @@ import { beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { APIError } from 'better-auth/api';
 
-import { addUser } from '@/_actions/user';
+import { addUser } from '@/_actions/user/addUser';
 import { auth } from '@/_auth';
 import { pendingInvites } from '@/_models/database/pendingInvites';
 import { reportError } from '@/_reporting/reportError';
@@ -10,7 +10,10 @@ import { reportError } from '@/_reporting/reportError';
 import { signUpWithInvite } from './signUpWithInvite';
 import { validateInviteToken } from './validateInviteToken';
 
-vi.mock('@/_actions/user', async () => await import('#mocks/@/_actions/user'));
+vi.mock(
+	'@/_actions/user/addUser',
+	async () => await import('#mocks/@/_actions/user/addUser'),
+);
 vi.mock(
 	'@/_reporting/reportError',
 	async () => await import('#mocks/@/_reporting/reportError'),

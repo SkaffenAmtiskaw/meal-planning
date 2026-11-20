@@ -10,14 +10,6 @@
 
 import { vi } from 'vitest';
 
-export const addUser = vi.fn(async () => ({
-	email: 'user@example.com',
-	name: 'Test User',
-	planners: [
-		{ planner: '507f1f77bcf86cd799439011', accessLevel: 'owner' as const },
-	],
-}));
-
 export const deleteAccount = vi.fn(async () => ({
 	ok: true as const,
 	data: undefined,

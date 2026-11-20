@@ -16,7 +16,13 @@ vi.mock(
 const id = '507f1f77bcf86cd799439011';
 const accessLevel = 'owner' as const;
 
-const maleficentsPlanner = { _id: id, calendar: [], saved: [], tags: [] };
+const maleficentsPlanner = {
+	_id: id,
+	name: "Maleficent's Planner",
+	calendar: [],
+	saved: [],
+	tags: [],
+};
 
 describe('PlannerProvider', () => {
 	it('calls getPlanner with the provided id', async () => {
