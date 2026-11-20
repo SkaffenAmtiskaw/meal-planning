@@ -84,11 +84,11 @@ A release ships one finished goal. While it's under way, the release freeze lets
 7. **Run `/roadmap` in a new session,** which makes the next goal the building goal.
 
 # Removing a Worktree
-A worktree lasts as long as its session. Archiving a session removes the worktree the app made for it and frees its slot. Each worktree session offers to archive itself once it has nothing left to do, since only the session knows when that is. For most, that's right after it opens its PR. A session that still has work once the PR merges, such as held notes work or an infra step's checks that need its code on `develop`, offers once that work is done. You can also archive a session in the sidebar whenever you like.
+A worktree lasts as long as its session. Archiving a session removes the worktree the app made for it and frees its slot. Each worktree session offers to archive itself once it has nothing left to do, since only the session knows when that is. For most, that's right after it opens its PR. A session that still has work once the PR merges, such as held notes work or an infra step's checks that need its code on `develop`, offers once that work is done. If a story's session is still open when `/close` runs, `/close` offers to archive it. You can also archive a session in the sidebar whenever you like.
 
 If the worktree has uncommitted changes when you archive its session, the app keeps it on disk. To keep the changes, reopen the session and commit them: to its branch if its PR is still open, or to a new branch for a new PR if it has merged. Otherwise, ask a session to discard the worktree.
 
-A hotfix's worktree is made with git rather than by the app, so archiving doesn't remove it. `/close` removes it once the hotfix's story is closed, as long as no open session is still using it.
+A hotfix's worktree is made with git rather than by the app, so archiving doesn't remove it. Once the hotfix's story is closed, `/close` removes it. If the hotfix's session is still open, `/close` asks whether to archive it first, and removes the worktree only if you agree.
 
 # When Something Goes Wrong
 Each entry is a failure you might meet, grouped by when it comes up, with what happens and what you do.

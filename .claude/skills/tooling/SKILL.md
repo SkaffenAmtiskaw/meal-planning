@@ -71,12 +71,13 @@ How to handle text the change made wrong depends on what it is:
 - **A note that only follows a convention this change replaced:** leave it as it is, because it's updated when it's next worked on.
 - **Anything else:** handle it as the `editing-notes` skill's "A Note That's Wrong or Out of Date" describes.
 
-## 6. Report and Open the PR
-Route the out-of-scope list. Then show the table of changed files. If you held any Roadmap edits, Now line removals or note deletions, list each one under "Held until the merge".
-
-Open the change's PR as `opening-the-pr.md`, in the `building-code` skill's folder, describes. The same held edits are its held notes work.
+## 6. Open the PR
+Route the out-of-scope list. Then open the change's PR as `opening-the-pr.md`, in the `building-code` skill's folder, describes. Its held notes work is the Roadmap edits, Now line removals and note deletions you held.
 
 ## 7. Make the Held Edits
 The held edits are the Roadmap edits, Now line removals and note deletions from steps 3 and 5. If you held none, skip this step. Otherwise, wait for the PR to merge and make them, as `waiting-for-the-merge.md` in the `building-code` skill's folder describes. Delete each held note as the `deleting-a-note` skill describes, and remove each held Now line as step 4 of that skill describes, so the building goal gets its next command if the line was its last work.
 
-Stop there, because each change gets its own session.
+## 8. Stop
+Each change gets its own session, so this session has nothing left to do. End the turn by asking in `wrap_up` whether to archive it.
+
+In the message after `wrap_up`, give the user the PR's link and show the table of changed files. Under "Held until the merge", list each held edit, and say whether you've made it.

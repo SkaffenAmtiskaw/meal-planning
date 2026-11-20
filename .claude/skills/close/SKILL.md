@@ -91,14 +91,18 @@ Handle the out-of-scope list now, before step 7 deletes the note and step 8 dele
 ## 8. Delete Unused Files
 Delete the files nothing references anymore, as the `deleting-a-note` skill describes in step 6.
 
-## 9. Remove a Hotfix's Worktree
-A hotfix's worktree was made with git, not by the desktop app, so archiving its session doesn't remove it. The story's branch is the head branch of the PR step 1 checked, from `gh pr view <number> --json headRefName`. If it doesn't start with `hotfix/`, or the story has no PR, skip this step. Otherwise, run `git worktree list` and `list_sessions`, and go by what they show for that branch:
-- **No worktree on that branch:** there's nothing to remove.
-- **A session in `list_sessions` has the worktree as its `cwd`:** that session may still be working there, so leave the worktree. Tell the user to archive the session, then ask any session to run `git worktree remove <path>` and `git branch -D <branch>`.
-- **Otherwise:** run `git worktree remove <path>`, then `git branch -D <branch>`. If git refuses because the worktree has uncommitted changes, tell the user, and leave it.
+## 9. Find the Story's Session and Worktree
+The story's session offers to archive itself once its work is done. If that offer was missed or turned down, the session still holds a worktree slot, and this close is the last point anyone looks. If the story has no PR, skip this step. Otherwise, its branch is the head branch of the PR step 1 checked, from `gh pr view <number> --json headRefName`. Run `list_sessions` and find any session on that branch. What to do depends on the branch:
+- **Not `hotfix/`:** if a session is on it, step 10 asks the user whether to archive it.
+- **`hotfix/`:** its worktree was made with git, not by the desktop app, so archiving doesn't remove it. Run `git worktree list`, and go by what it shows for that branch:
+  - **No worktree on that branch:** there's nothing to remove.
+  - **A session is on that branch:** that session may still be working there, so leave the worktree for now. Step 10 asks the user whether to archive the session, and on a yes, removes the worktree as the next case describes.
+  - **Otherwise:** run `git worktree remove <path>`, then `git branch -D <branch>`. If git refuses because the worktree has uncommitted changes, tell the user, and leave it.
 
 ## 10. Report and Stop
-Report these to the user:
+If step 9 found a session on the story's branch, end the turn by asking in `wrap_up` whether to archive it, naming the session.
+
+In the message after `wrap_up`, report these to the user:
 - whether the note was kept, and for which stories, or deleted
 - each mechanical edit, grouped by note
 - each file deleted as unused
@@ -106,5 +110,7 @@ Report these to the user:
 - each goal whose line under Goals now names `/finish-goal` or `/ship-goal`
 - the follow-ups: each note that needs `/close` in a new session, why, and where its Roadmap line went
 - for a hotfix, whether its worktree and branch were removed, and if not, why
+
+If the user says yes to archiving the session, call `archive_session` with its id. For a hotfix, then remove its worktree and branch as step 9's last case describes.
 
 Stop there, and don't start on any other note. A session that has worked through one note's references has too little room left to work another one well.
