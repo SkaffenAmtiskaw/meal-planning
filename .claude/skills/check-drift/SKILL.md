@@ -82,7 +82,7 @@ Some answers need more than a callout:
 - **Approach:** the approach, or part of it, no longer holds, such as a pattern's Convention that the code has moved past. Set `status` to `spec`. The next step is the skill that settled the approach:
   - **Feature:** `/assess`.
   - **Bug:** `/investigate`.
-  - **Cleanup:** `/audit`.
+  - **Cleanup:** `/survey`.
   - **Pattern:** `/architect`.
   - **Infra:** `/infra-design`.
   - **Tweak:** `/decide`. First add what needs re-deciding to Open Decisions as a new question, and add a `decision needed` entry to `blocked-by`, because `/decide` only works on open questions.

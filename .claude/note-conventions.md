@@ -47,20 +47,20 @@ A note's state, usually its `type` and `status`, says what should happen to it n
 | `bug` · `idea`, or a `bug` · `spec` whose `^status` line names `/investigate` | The bug reproduced, its root cause found and the fix settled with the user | `spec` | `/investigate` |
 | `pattern` · `idea`, no open decisions, or a `pattern` · `spec` whose `^status` line names `/architect` | Its convention if none is chosen, written as a short guide, then an audited Migration Checklist, approved with the user | `spec` | `/architect` |
 | `infra` · `idea`, no open decisions | Goals, a Design, Conventions, the Setup Outside the Repo and a Build Order, settled with the user | `ready` | `/infra-design` |
-| `cleanup` · `idea`, or a `cleanup` · `spec` whose `^status` line names `/audit` | Current State filled in from a scan of the code, and its decisions settled with the user | `spec` | `/audit` |
+| `cleanup` · `idea`, or a `cleanup` · `spec` whose `^status` line names `/survey` | Current State filled in from a scan of the code, and its decisions settled with the user | `spec` | `/survey` |
 | a collecting note: `sweep` · `idea` or `workflow` | Items collected until a goal starts building, then a dated copy frozen from them | a sweep's copy to `spec` · the original stays as it is | `/roadmap` |
 | `feature` · `spec` | Suggested Approach, then implementation steps | `ready` | `/assess`, then `/plan-steps` |
 | `bug` · `spec` | Implementation steps, since `/investigate` already settled the fix | `ready` | `/plan-steps` |
 | `pattern` · `spec` | Implementation steps, since `/architect` already settled the Convention and every place to migrate | `ready` | `/plan-steps` |
 | `infra` · `spec` | The Design and the Build Order's remaining steps revised | `ready` | `/infra-design` |
-| `cleanup` · `spec` | Implementation steps, since `/audit` already settled the cleanup's decisions | `ready` | `/plan-steps` |
+| `cleanup` · `spec` | Implementation steps, since `/survey` already settled the cleanup's decisions | `ready` | `/plan-steps` |
 | `sweep` · `spec` | Every item re-checked against the code, any already fixed dropped, then steps planned | `ready` | `/check-drift`, then `/plan-steps` |
 | `infra` · `ready` | Its Build Order built one step at a time | `in-progress` → `in-review` | `/infra-build` |
 | `tweak` · `ready` | Built from its Purpose and any **Decided** line, as one step, then its PR opened into `develop` | `in-progress` → `in-review` | `/implement` |
 | `sweep` · `ready` | Built one step at a time, then its PR opened into `develop` | `in-progress` → `in-review` | `/implement` |
 | `audit` · `ready` | The audit run, then a fix story for the release filed for each finding the user keeps | deleted | `/audit-release` |
 | `ready`, any other type | Built one step at a time | `in-progress` → `in-review` | `/implement` |
-| `spec` · `ready` · `in-progress`, when `/plan-steps` finds code changes since `confirmed` that could touch the story, or when `/close` unblocks the story and the story's next step wouldn't check its planned work against the code | ⚠️ Check Drift callouts where the remaining work no longer matches the code, conventions, the services it uses, other notes or the user's comments, and an updated `confirmed` | unchanged, back to `spec` for `/plan-steps` or the skill that re-settles its approach (`/assess`, `/investigate`, `/audit`, `/architect`, `/infra-design` or `/decide`), or add `blocked-by` | `/check-drift` |
+| `spec` · `ready` · `in-progress`, when `/plan-steps` finds code changes since `confirmed` that could touch the story, or when `/close` unblocks the story and the story's next step wouldn't check its planned work against the code | ⚠️ Check Drift callouts where the remaining work no longer matches the code, conventions, the services it uses, other notes or the user's comments, and an updated `confirmed` | unchanged, back to `spec` for `/plan-steps` or the skill that re-settles its approach (`/assess`, `/investigate`, `/survey`, `/architect`, `/infra-design` or `/decide`), or add `blocked-by` | `/check-drift` |
 | `in-review`, with no PR on its `^status` line | The code reviewed across the whole story, for what no single step shows, then its PR opened into its base | unchanged, with the PR on its `^status` line | `/final-review` |
 | `in-review`, with a PR on its `^status` line | The PR's merge confirmed on GitHub, then closed as a `done` note is | `done`, then archived or deleted | `/close` |
 | `done` · `dropped` · a hub whose `^status` line names `/close` | The note kept in `archive/` for the stories that still rely on it, or deleted, and the notes around it updated | archived or deleted | `/close` |
