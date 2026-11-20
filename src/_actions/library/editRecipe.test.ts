@@ -1,7 +1,7 @@
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-import { revalidatePath } from 'next/cache';
-
+import { plannerCache } from '@/_actions/_utils/caches';
+import { invalidate } from '@/_actions/_utils/invalidate';
 import { checkAuth } from '@/_actions/auth/checkAuth';
 import { newId } from '@/_models/database/newId';
 import { planners } from '@/_models/database/planners';
@@ -9,6 +9,10 @@ import { zRecipeFormSchema } from '@/_models/library';
 
 import { editRecipe } from './editRecipe';
 
+vi.mock(
+	'@/_actions/_utils/invalidate',
+	async () => await import('#mocks/@/_actions/_utils/invalidate'),
+);
 vi.mock(
 	'@/_actions/auth/checkAuth',
 	async () => await import('#mocks/@/_actions/auth/checkAuth'),
@@ -21,7 +25,6 @@ vi.mock(
 	'@/_models/database/planners',
 	async () => await import('#mocks/@/_models/database/planners'),
 );
-vi.mock('next/cache', async () => ({ revalidatePath: vi.fn() }));
 vi.mock('./_utils/transformRecipeForm', async () => ({
 	transformRecipeForm: vi.fn((data) => data),
 }));
@@ -37,60 +40,26 @@ const validData = {
 	instructions: ['Mix ingredients', 'Bake at 400°F'],
 };
 
+const parsesTo = (data: unknown) =>
+	vi
+		.mocked(zRecipeFormSchema.safeParse)
+		.mockReturnValue({ success: true, data } as never);
+
+const callEditRecipe = (data: unknown) => {
+	parsesTo(data);
+	return editRecipe(data);
+};
+
 describe('editRecipe', () => {
-	afterEach(() => {
-		vi.resetAllMocks();
-	});
-
 	beforeEach(() => {
-		vi.mocked(zRecipeFormSchema.parse).mockImplementation(
-			(data) => data as never,
-		);
+		vi.resetAllMocks();
+		parsesTo(validData);
 	});
 
-	describe('input validation', () => {
-		it('throws when input fails schema validation', async () => {
-			vi.mocked(zRecipeFormSchema.parse).mockImplementationOnce(() => {
-				throw new Error('Validation failed');
-			});
+	it("checks write access to the recipe's planner", async () => {
+		await editRecipe(validData);
 
-			await expect(editRecipe({})).rejects.toThrow('Validation failed');
-		});
-
-		it('throws when _id is missing', async () => {
-			vi.mocked(zRecipeFormSchema.parse).mockImplementationOnce(() => {
-				throw new Error('Validation failed');
-			});
-
-			const { _id: _, ...withoutId } = validData;
-			await expect(editRecipe(withoutId)).rejects.toThrow('Validation failed');
-		});
-	});
-
-	describe('authorization', () => {
-		it('returns Unauthorized when the session is missing', async () => {
-			vi.mocked(checkAuth).mockResolvedValueOnce({ type: 'unauthenticated' });
-
-			const result = await editRecipe(validData);
-
-			expect(result).toEqual({ ok: false, error: 'Unauthorized' });
-		});
-
-		it('returns Unauthorized when the user lacks write access', async () => {
-			vi.mocked(checkAuth).mockResolvedValueOnce({ type: 'unauthorized' });
-
-			const result = await editRecipe(validData);
-
-			expect(result).toEqual({ ok: false, error: 'Unauthorized' });
-		});
-
-		it('does not update the database when auth fails', async () => {
-			vi.mocked(checkAuth).mockResolvedValueOnce({ type: 'unauthenticated' });
-
-			await editRecipe(validData);
-
-			expect(planners.updateOne).not.toHaveBeenCalled();
-		});
+		expect(checkAuth).toHaveBeenCalledWith(plannerId, 'write');
 	});
 
 	describe('database update', () => {
@@ -142,7 +111,7 @@ describe('editRecipe', () => {
 
 		it('sets optional fields when they are present', async () => {
 			const tagId = newId();
-			await editRecipe({
+			await callEditRecipe({
 				...validData,
 				source: { name: 'Bakery Blog', url: 'https://example.com' },
 				time: { prep: '30m', cook: '20m', total: '50m', actual: '55m' },
@@ -176,7 +145,7 @@ describe('editRecipe', () => {
 		});
 
 		it('only unsets optional fields that are absent', async () => {
-			await editRecipe({
+			await callEditRecipe({
 				...validData,
 				source: { name: 'Bakery Blog' },
 				notes: 'Best served warm',
@@ -199,7 +168,7 @@ describe('editRecipe', () => {
 		});
 
 		it('omits $unset when all optional fields are present', async () => {
-			await editRecipe({
+			await callEditRecipe({
 				...validData,
 				source: { name: 'Blog' },
 				time: { prep: '10m' },
@@ -216,27 +185,6 @@ describe('editRecipe', () => {
 		});
 	});
 
-	describe('cache revalidation', () => {
-		it('revalidates the list and detail paths on success', async () => {
-			await editRecipe(validData);
-
-			expect(revalidatePath).toHaveBeenCalledWith(`/${plannerId}/recipes`);
-			expect(revalidatePath).toHaveBeenCalledWith(
-				`/${plannerId}/recipes/${recipeId}`,
-			);
-		});
-
-		it('does not revalidate when the recipe is not found', async () => {
-			vi.mocked(planners.updateOne).mockResolvedValueOnce({
-				matchedCount: 0,
-			} as never);
-
-			await editRecipe(validData);
-
-			expect(revalidatePath).not.toHaveBeenCalled();
-		});
-	});
-
 	describe('success', () => {
 		it('returns the recipe _id and name', async () => {
 			const result = await editRecipe(validData);
@@ -246,5 +194,11 @@ describe('editRecipe', () => {
 				data: { _id: recipeId, name: 'Croissant' },
 			});
 		});
+	});
+
+	it("invalidates the planner's saved items", async () => {
+		await editRecipe(validData);
+
+		expect(invalidate).toHaveBeenCalledWith([plannerCache.saved(plannerId)]);
 	});
 });

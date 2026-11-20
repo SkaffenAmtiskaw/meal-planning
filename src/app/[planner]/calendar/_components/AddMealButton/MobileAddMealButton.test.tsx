@@ -3,6 +3,8 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { DateTime } from 'luxon';
 
+import { useCanWrite } from '@/app/[planner]/_components';
+
 import { MobileAddMealButton } from './MobileAddMealButton';
 
 import { useCalendarContext } from '../Calendar';
@@ -10,14 +12,14 @@ import { useCalendarModal } from '../CalendarModal';
 
 vi.mock('@mantine/core', async () => await import('#mocks/@mantine/core'));
 
-const { mockUseCanWrite, mockOpen } = vi.hoisted(() => ({
-	mockUseCanWrite: vi.fn(),
+const { mockOpen } = vi.hoisted(() => ({
 	mockOpen: vi.fn(),
 }));
 
-vi.mock('@/app/[planner]/_components', () => ({
-	useCanWrite: mockUseCanWrite,
-}));
+vi.mock(
+	'@/app/[planner]/_components',
+	async () => await import('#mocks/@/app/[planner]/_components'),
+);
 
 vi.mock('../Calendar', () => ({
 	useCalendarContext: vi.fn(),
@@ -35,7 +37,6 @@ describe('MobileAddMealButton', () => {
 
 	beforeEach(() => {
 		vi.resetAllMocks();
-		mockUseCanWrite.mockReturnValue(true);
 		vi.mocked(useCalendarContext).mockReturnValue({
 			selectedDate,
 		} as ReturnType<typeof useCalendarContext>);
@@ -79,7 +80,7 @@ describe('MobileAddMealButton', () => {
 	});
 
 	it('does not render for read-only users', () => {
-		mockUseCanWrite.mockReturnValue(false);
+		vi.mocked(useCanWrite).mockReturnValue(false);
 
 		render(<MobileAddMealButton />);
 

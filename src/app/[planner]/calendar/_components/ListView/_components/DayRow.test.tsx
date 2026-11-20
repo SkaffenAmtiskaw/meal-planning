@@ -14,9 +14,10 @@ import { useCalendarModal } from '../../CalendarModal';
 
 vi.mock('@mantine/core', async () => await import('#mocks/@mantine/core'));
 
-vi.mock('@/app/[planner]/_components', () => ({
-	useCanWrite: vi.fn(),
-}));
+vi.mock(
+	'@/app/[planner]/_components',
+	async () => await import('#mocks/@/app/[planner]/_components'),
+);
 
 vi.mock('../../CalendarModal', () => ({
 	useCalendarModal: vi.fn(),
@@ -73,7 +74,6 @@ function createMeal(id: string): CalendarMeal {
 describe('DayRow', () => {
 	beforeEach(() => {
 		vi.resetAllMocks();
-		vi.mocked(useCanWrite).mockReturnValue(true);
 		vi.mocked(useCalendarModal).mockReturnValue({
 			state: { type: null, data: null },
 			open,

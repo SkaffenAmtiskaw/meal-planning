@@ -22,4 +22,5 @@ export const zRecipeFormSchema = {
 export const zBookmarkFormSchema = {
 	safeParse: vi.fn(() => ({ success: true, data: {} })),
 	parse: vi.fn(() => ({})),
+	extend: vi.fn(() => zBookmarkFormSchema),
 };

@@ -3,17 +3,18 @@ import { beforeAll, beforeEach, describe, expect, test, vi } from 'vitest';
 
 import { usePathname, useRouter } from 'next/navigation';
 
-import { AddItemDropdown } from './AddItemDropdown';
+import { useCanWrite } from '@/app/[planner]/_components';
 
-const { mockUseCanWrite } = vi.hoisted(() => ({ mockUseCanWrite: vi.fn() }));
+import { AddItemDropdown } from './AddItemDropdown';
 
 vi.mock('next/navigation', async () => await import('#mocks/next/navigation'));
 
 vi.mock('@mantine/core', async () => await import('#mocks/@mantine/core'));
 
-vi.mock('@/app/[planner]/_components', () => ({
-	useCanWrite: () => mockUseCanWrite(),
-}));
+vi.mock(
+	'@/app/[planner]/_components',
+	async () => await import('#mocks/@/app/[planner]/_components'),
+);
 
 describe('add item dropdown', () => {
 	const mockPush = vi.fn();
@@ -29,7 +30,7 @@ describe('add item dropdown', () => {
 
 	beforeEach(() => {
 		vi.clearAllMocks();
-		mockUseCanWrite.mockReturnValue(true);
+		vi.mocked(useCanWrite).mockReturnValue(true);
 	});
 
 	test('clicking bookmark navigates to the add bookmark URL', () => {
@@ -53,7 +54,7 @@ describe('add item dropdown', () => {
 	});
 
 	test('does not render when user has read-only access', () => {
-		mockUseCanWrite.mockReturnValue(false);
+		vi.mocked(useCanWrite).mockReturnValue(false);
 
 		render(<AddItemDropdown />);
 
@@ -62,8 +63,6 @@ describe('add item dropdown', () => {
 	});
 
 	test('renders when user has write access', () => {
-		mockUseCanWrite.mockReturnValue(true);
-
 		render(<AddItemDropdown />);
 
 		expect(screen.getByTestId('add-bookmark')).not.toBeNull();
