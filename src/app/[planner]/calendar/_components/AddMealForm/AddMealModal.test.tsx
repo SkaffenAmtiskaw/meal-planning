@@ -1,15 +1,12 @@
 import { fireEvent, render, screen } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-import { useRouter } from 'next/navigation';
-
 import { Stack } from '@mantine/core';
 
 import { AddMealForm } from './AddMealForm';
 import { AddMealModal } from './AddMealModal';
 
 vi.mock('@mantine/core', async () => await import('#mocks/@mantine/core'));
-vi.mock('next/navigation', async () => await import('#mocks/next/navigation'));
 vi.mock('./AddMealForm', () => ({
 	AddMealForm: vi.fn(({ onCancel, onSuccess, onSubtitleChange }) => (
 		<div data-testid="add-meal-form">
@@ -29,7 +26,6 @@ vi.mock('./AddMealForm', () => ({
 	)),
 }));
 
-const mockUseRouter = vi.mocked(useRouter);
 const mockStack = vi.mocked(Stack);
 
 describe('AddMealModal', () => {
@@ -117,24 +113,12 @@ describe('AddMealModal', () => {
 		expect(close).toHaveBeenCalledTimes(1);
 	});
 
-	it('closes the modal and calls router.refresh when AddMealForm onSuccess is triggered', () => {
-		const refresh = vi.fn();
-		mockUseRouter.mockReturnValue({
-			push: vi.fn(),
-			replace: vi.fn(),
-			refresh,
-			back: vi.fn(),
-			forward: vi.fn(),
-			prefetch: vi.fn(),
-			bfcacheId: '',
-		});
-
+	it('closes the modal when AddMealForm onSuccess is triggered', () => {
 		const close = vi.fn();
 		render(<AddMealModal {...defaultProps} close={close} />);
 
 		fireEvent.click(screen.getByTestId('success-button'));
 
-		expect(refresh).toHaveBeenCalledTimes(1);
 		expect(close).toHaveBeenCalledTimes(1);
 	});
 });

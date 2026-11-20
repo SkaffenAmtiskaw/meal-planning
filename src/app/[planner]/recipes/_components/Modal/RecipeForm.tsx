@@ -212,7 +212,7 @@ export const RecipeForm = ({ item, plannerId, tags, redirectTo }: Props) => {
 					<TagCombobox
 						label="Tags"
 						plannerId={plannerId}
-						initialTags={tags}
+						tags={tags}
 						value={selectedTags}
 						onChange={setSelectedTags}
 					/>

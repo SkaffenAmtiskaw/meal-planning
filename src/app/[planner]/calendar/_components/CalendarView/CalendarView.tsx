@@ -11,6 +11,7 @@ import type { DayInterface } from '@/_models/types';
 import { CalendarProvider, useCalendarContext } from '../Calendar';
 import { CalendarModalProvider } from '../CalendarModal';
 import type { CalendarMeal } from '../Calendar';
+import { PlannerSavedItemsProvider } from '../../_hooks/usePlannerSavedItems';
 import type { SavedItem } from '../../types';
 import {
 	CalendarHeaderDesktop,
@@ -99,17 +100,19 @@ export function CalendarView({
 	const [clickedMeal, setClickedMeal] = useState<CalendarMeal | null>(null);
 
 	return (
-		<CalendarProvider>
-			<CalendarModalProvider plannerId={plannerId}>
-				<CalendarViewContent
-					plannerId={plannerId}
-					savedItems={savedItems}
-					calendar={calendar}
-					clickedMeal={clickedMeal}
-					onClose={() => setClickedMeal(null)}
-					onMealClick={setClickedMeal}
-				/>
-			</CalendarModalProvider>
-		</CalendarProvider>
+		<PlannerSavedItemsProvider savedItems={savedItems}>
+			<CalendarProvider>
+				<CalendarModalProvider plannerId={plannerId}>
+					<CalendarViewContent
+						plannerId={plannerId}
+						savedItems={savedItems}
+						calendar={calendar}
+						clickedMeal={clickedMeal}
+						onClose={() => setClickedMeal(null)}
+						onMealClick={setClickedMeal}
+					/>
+				</CalendarModalProvider>
+			</CalendarProvider>
+		</PlannerSavedItemsProvider>
 	);
 }

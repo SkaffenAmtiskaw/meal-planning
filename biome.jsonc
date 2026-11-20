@@ -158,15 +158,58 @@
 		 *  Only the data module in src/_models/database/ and the release tasks import mongodb. The raw database
 		 *  handle (rawDatabase, and openDatabase for another URI) is used only by better-auth's two instances,
 		 *  seed/emptyWorktreeDatabase.ts, scripts/restoreTest.ts and the release tasks, which each have a file set of
-		 *  their own below. The release tasks are in no file set, because no ban applies to them.
+		 *  their own below. Only src/_actions/_utils/invalidate.ts imports next/cache, so it has a file set of its own
+		 *  too. The release tasks are in no file set, because no ban applies to them.
 		 */
 		{
 			"includes": [
 				"src/**/*",
 				"!**/*/*.test.ts*",
 				"!src/_models/database/**/*",
-				"!src/_auth/auth.ts"
+				"!src/_auth/auth.ts",
+				"!src/_actions/_utils/invalidate.ts"
 			],
+			"linter": {
+				"rules": {
+					"style": {
+						"noRestrictedImports": {
+							"level": "error",
+							"options": {
+								"paths": {
+									"@playwright/test": "Playwright code lives in e2e/. See docs/e2e_tests.md.",
+									"better-auth/plugins": {
+										"message": "testUtils is used only in test/auth.ts, the test-only auth instance. See docs/e2e_tests.md.",
+										"importNames": ["testUtils"]
+									},
+									"better-auth/test": "testUtils is used only in test/auth.ts, the test-only auth instance. See docs/e2e_tests.md.",
+									"mongodb": "Code outside the data module in src/_models/database/ doesn't import mongodb. Read and write through its collection wrappers. See docs/project_conventions.md, \"Stored Data\".",
+									"next/cache": "Only src/_actions/_utils/invalidate.ts imports next/cache. A mutation refreshes data through invalidate(), by listing its tags in defineMutation's invalidates."
+								},
+								"patterns": [
+									{
+										"group": [
+											"**/_models/database/connection",
+											"**/_models/database/connection.ts"
+										],
+										"importNamePattern": "rawDatabase",
+										"message": "The raw database handle is only for code that works below the schemas. Read and write through the data module's collection wrappers. See docs/project_conventions.md, \"Stored Data\"."
+									},
+									{
+										"group": [
+											"**/_models/database/openDatabase",
+											"**/_models/database/openDatabase.ts"
+										],
+										"message": "The raw database handle is only for code that works below the schemas. Read and write through the data module's collection wrappers. See docs/project_conventions.md, \"Stored Data\"."
+									}
+								]
+							}
+						}
+					}
+				}
+			}
+		},
+		{
+			"includes": ["src/_actions/_utils/invalidate.ts"],
 			"linter": {
 				"rules": {
 					"style": {
@@ -219,7 +262,8 @@
 										"message": "testUtils is used only in test/auth.ts, the test-only auth instance. See docs/e2e_tests.md.",
 										"importNames": ["testUtils"]
 									},
-									"better-auth/test": "testUtils is used only in test/auth.ts, the test-only auth instance. See docs/e2e_tests.md."
+									"better-auth/test": "testUtils is used only in test/auth.ts, the test-only auth instance. See docs/e2e_tests.md.",
+									"next/cache": "Only src/_actions/_utils/invalidate.ts imports next/cache. A mutation refreshes data through invalidate(), by listing its tags in defineMutation's invalidates."
 								}
 							}
 						}
@@ -242,7 +286,8 @@
 										"importNames": ["testUtils"]
 									},
 									"better-auth/test": "testUtils is used only in test/auth.ts, the test-only auth instance. See docs/e2e_tests.md.",
-									"mongodb": "Code outside the data module in src/_models/database/ doesn't import mongodb. Use its raw database handle. See docs/project_conventions.md, \"Stored Data\"."
+									"mongodb": "Code outside the data module in src/_models/database/ doesn't import mongodb. Use its raw database handle. See docs/project_conventions.md, \"Stored Data\".",
+									"next/cache": "Only src/_actions/_utils/invalidate.ts imports next/cache. A mutation refreshes data through invalidate(), by listing its tags in defineMutation's invalidates."
 								}
 							}
 						}
@@ -274,7 +319,8 @@
 										"importNames": ["testUtils"]
 									},
 									"better-auth/test": "testUtils is used only in test/auth.ts, the test-only auth instance. See docs/e2e_tests.md.",
-									"mongodb": "Code outside the data module in src/_models/database/ doesn't import mongodb. Read and write through its collection wrappers. See docs/project_conventions.md, \"Stored Data\"."
+									"mongodb": "Code outside the data module in src/_models/database/ doesn't import mongodb. Read and write through its collection wrappers. See docs/project_conventions.md, \"Stored Data\".",
+									"next/cache": "Only src/_actions/_utils/invalidate.ts imports next/cache. A mutation refreshes data through invalidate(), by listing its tags in defineMutation's invalidates."
 								},
 								"patterns": [
 									{
@@ -309,7 +355,8 @@
 							"options": {
 								"paths": {
 									"@playwright/test": "Playwright code lives in e2e/. See docs/e2e_tests.md.",
-									"mongodb": "Code outside the data module in src/_models/database/ doesn't import mongodb. Use its raw database handle. See docs/project_conventions.md, \"Stored Data\"."
+									"mongodb": "Code outside the data module in src/_models/database/ doesn't import mongodb. Use its raw database handle. See docs/project_conventions.md, \"Stored Data\".",
+									"next/cache": "Only src/_actions/_utils/invalidate.ts imports next/cache. A mutation refreshes data through invalidate(), by listing its tags in defineMutation's invalidates."
 								}
 							}
 						}
@@ -335,7 +382,8 @@
 									"@/_actions": "Factories write through the data module's collection wrappers in @/_models/database, and reach better-auth only through test/auth.ts and @/_auth/users. See docs/e2e_tests.md.",
 									"@/_auth": "Factories write through the data module's collection wrappers in @/_models/database, and reach better-auth only through test/auth.ts and @/_auth/users. See docs/e2e_tests.md.",
 									"server-only": "Factories write through the data module's collection wrappers in @/_models/database, and reach better-auth only through test/auth.ts and @/_auth/users. See docs/e2e_tests.md.",
-									"mongodb": "Factories write through the data module's collection wrappers in @/_models/database. See docs/e2e_tests.md."
+									"mongodb": "Factories write through the data module's collection wrappers in @/_models/database. See docs/e2e_tests.md.",
+									"next/cache": "Only src/_actions/_utils/invalidate.ts imports next/cache. A mutation refreshes data through invalidate(), by listing its tags in defineMutation's invalidates."
 								},
 								"patterns": [
 									{
@@ -379,7 +427,8 @@
 										"message": "testUtils is used only in test/auth.ts, the test-only auth instance. See docs/e2e_tests.md.",
 										"importNames": ["testUtils"]
 									},
-									"better-auth/test": "testUtils is used only in test/auth.ts, the test-only auth instance. See docs/e2e_tests.md."
+									"better-auth/test": "testUtils is used only in test/auth.ts, the test-only auth instance. See docs/e2e_tests.md.",
+									"next/cache": "Only src/_actions/_utils/invalidate.ts imports next/cache. A mutation refreshes data through invalidate(), by listing its tags in defineMutation's invalidates."
 								},
 								"patterns": [
 									{
@@ -413,7 +462,8 @@
 										"message": "testUtils is used only in test/auth.ts, the test-only auth instance. See docs/e2e_tests.md.",
 										"importNames": ["testUtils"]
 									},
-									"better-auth/test": "testUtils is used only in test/auth.ts, the test-only auth instance. See docs/e2e_tests.md."
+									"better-auth/test": "testUtils is used only in test/auth.ts, the test-only auth instance. See docs/e2e_tests.md.",
+									"next/cache": "Only src/_actions/_utils/invalidate.ts imports next/cache. A mutation refreshes data through invalidate(), by listing its tags in defineMutation's invalidates."
 								},
 								"patterns": [
 									{
@@ -441,7 +491,8 @@
 							"level": "error",
 							"options": {
 								"paths": {
-									"mongodb": "Only the data module in src/_models/database/ and the release tasks import mongodb. See docs/project_conventions.md, \"Stored Data\"."
+									"mongodb": "Only the data module in src/_models/database/ and the release tasks import mongodb. See docs/project_conventions.md, \"Stored Data\".",
+									"next/cache": "Only src/_actions/_utils/invalidate.ts imports next/cache. A mutation refreshes data through invalidate(), by listing its tags in defineMutation's invalidates."
 								},
 								"patterns": [
 									{
@@ -475,7 +526,8 @@
 							"level": "error",
 							"options": {
 								"paths": {
-									"mongodb": "Only the data module in src/_models/database/ and the release tasks import mongodb. Use the module's openDatabase. See docs/project_conventions.md, \"Stored Data\"."
+									"mongodb": "Only the data module in src/_models/database/ and the release tasks import mongodb. Use the module's openDatabase. See docs/project_conventions.md, \"Stored Data\".",
+									"next/cache": "Only src/_actions/_utils/invalidate.ts imports next/cache. A mutation refreshes data through invalidate(), by listing its tags in defineMutation's invalidates."
 								}
 							}
 						}

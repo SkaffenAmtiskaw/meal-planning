@@ -1,6 +1,5 @@
 'use client';
 
-import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 
 import { ActionIcon, Group, Stack, Text } from '@mantine/core';
@@ -28,15 +27,21 @@ export const InlineTagsEditor = ({
 	tagIds,
 	availableTags,
 }: Props) => {
-	const router = useRouter();
 	const [editing, { enterEditing, exitEditing }] = useEditMode();
+	// The edit in progress. View mode draws from `tagIds`, so a server refresh
+	// shows there, and each edit starts from the tags as they are then.
 	const [value, setValue] = useState(tagIds);
 	const [saving, setSaving] = useState(false);
 	const [saveError, setSaveError] = useState<string | null>(null);
 
-	const selectedTags = value
+	const selectedTags = tagIds
 		.map((id) => availableTags.find((t) => t._id === id))
 		.filter((t): t is TagOption => t !== undefined);
+
+	const handleEdit = () => {
+		setValue(tagIds);
+		enterEditing();
+	};
 
 	const handleSave = async () => {
 		setSaving(true);
@@ -54,11 +59,9 @@ export const InlineTagsEditor = ({
 			return;
 		}
 		exitEditing();
-		router.refresh();
 	};
 
 	const handleCancel = () => {
-		setValue(tagIds);
 		exitEditing();
 		setSaveError(null);
 	};
@@ -72,7 +75,7 @@ export const InlineTagsEditor = ({
 				{!editing && (
 					<ActionIcon
 						data-testid="tags-edit-button"
-						onClick={enterEditing}
+						onClick={handleEdit}
 						size="xs"
 						variant="subtle"
 					>
@@ -110,7 +113,7 @@ export const InlineTagsEditor = ({
 			{editing ? (
 				<TagCombobox
 					plannerId={plannerId}
-					initialTags={availableTags}
+					tags={availableTags}
 					value={value}
 					onChange={setValue}
 				/>

@@ -1,11 +1,17 @@
-import { afterEach, describe, expect, test, vi } from 'vitest';
+import { beforeEach, describe, expect, test, vi } from 'vitest';
 
+import { plannerCache } from '@/_actions/_utils/caches';
+import { invalidate } from '@/_actions/_utils/invalidate';
 import { checkAuth } from '@/_actions/auth/checkAuth';
 import { newId } from '@/_models/database/newId';
 import { planners } from '@/_models/database/planners';
 
 import { deleteBookmark } from './deleteBookmark';
 
+vi.mock(
+	'@/_actions/_utils/invalidate',
+	async () => await import('#mocks/@/_actions/_utils/invalidate'),
+);
 vi.mock(
 	'@/_actions/auth/checkAuth',
 	async () => await import('#mocks/@/_actions/auth/checkAuth'),
@@ -21,29 +27,14 @@ const bookmarkId = newId();
 const validData = { plannerId, bookmarkId };
 
 describe('deleteBookmark', () => {
-	afterEach(() => {
+	beforeEach(() => {
 		vi.resetAllMocks();
 	});
 
-	test('throws ZodError on invalid input', async () => {
-		await expect(deleteBookmark({})).rejects.toThrow();
-	});
+	test("checks write access to the bookmark's planner", async () => {
+		await deleteBookmark(validData);
 
-	test('returns Unauthorized error when session is missing', async () => {
-		vi.mocked(checkAuth).mockResolvedValueOnce({ type: 'unauthenticated' });
-
-		const result = await deleteBookmark(validData);
-
-		expect(result).toEqual({ ok: false, error: 'Unauthorized' });
-		expect(planners.updateOne).not.toHaveBeenCalled();
-	});
-
-	test('returns Unauthorized error when user does not own the planner', async () => {
-		vi.mocked(checkAuth).mockResolvedValueOnce({ type: 'unauthorized' });
-
-		const result = await deleteBookmark(validData);
-
-		expect(result).toEqual({ ok: false, error: 'Unauthorized' });
+		expect(checkAuth).toHaveBeenCalledWith(plannerId, 'write');
 	});
 
 	test('returns Bookmark not found error when no planner has the bookmark', async () => {
@@ -64,5 +55,11 @@ describe('deleteBookmark', () => {
 			{ $pull: { saved: { _id: bookmarkId } } },
 		);
 		expect(result).toEqual({ ok: true, data: undefined });
+	});
+
+	test("invalidates the planner's saved items", async () => {
+		await deleteBookmark(validData);
+
+		expect(invalidate).toHaveBeenCalledWith([plannerCache.saved(plannerId)]);
 	});
 });

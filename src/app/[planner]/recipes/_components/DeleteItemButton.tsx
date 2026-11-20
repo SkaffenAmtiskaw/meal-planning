@@ -1,7 +1,5 @@
 'use client';
 
-import { useRouter } from 'next/navigation';
-
 import { ActionIcon } from '@mantine/core';
 import { IconTrash } from '@tabler/icons-react';
 
@@ -22,7 +20,6 @@ const DeleteItemButton = ({
 	message,
 	'data-testid': testId,
 }: Props) => {
-	const router = useRouter();
 	const canWrite = useCanWrite();
 
 	if (!canWrite) {
@@ -32,7 +29,6 @@ const DeleteItemButton = ({
 	return (
 		<ConfirmButton
 			onConfirm={onDelete}
-			onSuccess={() => router.refresh()}
 			title={title}
 			message={message}
 			confirmButtonText="Delete"

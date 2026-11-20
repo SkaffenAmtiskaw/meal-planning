@@ -1,5 +1,7 @@
-import { afterEach, describe, expect, test, vi } from 'vitest';
+import { beforeEach, describe, expect, test, vi } from 'vitest';
 
+import { plannerCache } from '@/_actions/_utils/caches';
+import { invalidate } from '@/_actions/_utils/invalidate';
 import { checkAuth } from '@/_actions/auth/checkAuth';
 import { planners } from '@/_models/database/planners';
 import { zRecipeFormSchema } from '@/_models/library';
@@ -7,20 +9,20 @@ import { zRecipeFormSchema } from '@/_models/library';
 import { addRecipe } from './addRecipe';
 
 vi.mock(
+	'@/_actions/_utils/invalidate',
+	async () => await import('#mocks/@/_actions/_utils/invalidate'),
+);
+vi.mock(
 	'@/_actions/auth/checkAuth',
 	async () => await import('#mocks/@/_actions/auth/checkAuth'),
 );
-
-vi.mock('@/_models/library', () => ({
-	zRecipeFormSchema: {
-		parse: vi.fn((data) => data),
-	},
-}));
-
+vi.mock(
+	'@/_models/library',
+	async () => await import('#mocks/@/_models/library'),
+);
 vi.mock('./_utils/transformRecipeForm', () => ({
 	transformRecipeForm: vi.fn((data) => data),
 }));
-
 vi.mock(
 	'@/_models/database/planners',
 	async () => await import('#mocks/@/_models/database/planners'),
@@ -40,33 +42,18 @@ const validData = {
 };
 
 describe('addRecipe', () => {
-	afterEach(() => {
+	beforeEach(() => {
 		vi.resetAllMocks();
+		vi.mocked(zRecipeFormSchema.safeParse).mockReturnValue({
+			success: true,
+			data: validData,
+		} as never);
 	});
 
-	test('throws when schema validation fails', async () => {
-		vi.mocked(zRecipeFormSchema.parse).mockImplementationOnce(() => {
-			throw new Error('Validation failed');
-		});
+	test("checks write access to the recipe's planner", async () => {
+		await addRecipe(validData);
 
-		await expect(addRecipe({})).rejects.toThrow('Validation failed');
-	});
-
-	test('returns Unauthorized error when session is missing', async () => {
-		vi.mocked(checkAuth).mockResolvedValueOnce({ type: 'unauthenticated' });
-
-		const result = await addRecipe(validData);
-
-		expect(result).toEqual({ ok: false, error: 'Unauthorized' });
-		expect(planners.updateOne).not.toHaveBeenCalled();
-	});
-
-	test('returns Unauthorized error when user does not own the planner', async () => {
-		vi.mocked(checkAuth).mockResolvedValueOnce({ type: 'unauthorized' });
-
-		const result = await addRecipe(validData);
-
-		expect(result).toEqual({ ok: false, error: 'Unauthorized' });
+		expect(checkAuth).toHaveBeenCalledWith(plannerId, 'write');
 	});
 
 	test('returns Planner not found error when planner does not exist', async () => {
@@ -92,5 +79,11 @@ describe('addRecipe', () => {
 			ok: true,
 			data: { _id: 'new-id', name: 'Croissant' },
 		});
+	});
+
+	test("invalidates the planner's saved items", async () => {
+		await addRecipe(validData);
+
+		expect(invalidate).toHaveBeenCalledWith([plannerCache.saved(plannerId)]);
 	});
 });

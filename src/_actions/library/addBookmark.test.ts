@@ -1,13 +1,24 @@
-import { afterEach, describe, expect, test, vi } from 'vitest';
+import { beforeEach, describe, expect, test, vi } from 'vitest';
 
+import { plannerCache } from '@/_actions/_utils/caches';
+import { invalidate } from '@/_actions/_utils/invalidate';
 import { checkAuth } from '@/_actions/auth/checkAuth';
 import { planners } from '@/_models/database/planners';
+import { zBookmarkFormSchema } from '@/_models/library';
 
 import { addBookmark } from './addBookmark';
 
 vi.mock(
+	'@/_actions/_utils/invalidate',
+	async () => await import('#mocks/@/_actions/_utils/invalidate'),
+);
+vi.mock(
 	'@/_actions/auth/checkAuth',
 	async () => await import('#mocks/@/_actions/auth/checkAuth'),
+);
+vi.mock(
+	'@/_models/library',
+	async () => await import('#mocks/@/_models/library'),
 );
 vi.mock(
 	'@/_models/database/planners',
@@ -27,43 +38,29 @@ const validData = {
 	tags: [],
 };
 
+const parsesTo = (data: unknown) =>
+	vi
+		.mocked(zBookmarkFormSchema.safeParse)
+		.mockReturnValue({ success: true, data } as never);
+
+const callAddBookmark = (data: unknown) => {
+	parsesTo(data);
+	return addBookmark(data);
+};
+
 const pushedBookmark = () =>
 	vi.mocked(planners.updateOne).mock.calls[0][1].$push?.saved;
 
 describe('addBookmark', () => {
-	afterEach(() => {
+	beforeEach(() => {
 		vi.resetAllMocks();
+		parsesTo(validData);
 	});
 
-	test('throws ZodError on invalid input', async () => {
-		await expect(addBookmark({})).rejects.toThrow();
-	});
+	test("checks write access to the bookmark's planner", async () => {
+		await addBookmark(validData);
 
-	test('throws ZodError when name is empty string', async () => {
-		await expect(addBookmark({ ...validData, name: '' })).rejects.toThrow();
-	});
-
-	test('throws ZodError when url is invalid', async () => {
-		await expect(
-			addBookmark({ ...validData, url: 'not-a-url' }),
-		).rejects.toThrow();
-	});
-
-	test('returns Unauthorized error when session is missing', async () => {
-		vi.mocked(checkAuth).mockResolvedValue({ type: 'unauthenticated' });
-
-		const result = await addBookmark(validData);
-
-		expect(result).toEqual({ ok: false, error: 'Unauthorized' });
-		expect(planners.updateOne).not.toHaveBeenCalled();
-	});
-
-	test('returns Unauthorized error when user does not own the planner', async () => {
-		vi.mocked(checkAuth).mockResolvedValue({ type: 'unauthorized' });
-
-		const result = await addBookmark(validData);
-
-		expect(result).toEqual({ ok: false, error: 'Unauthorized' });
+		expect(checkAuth).toHaveBeenCalledWith(plannerId, 'write');
 	});
 
 	test('returns Planner not found error when planner does not exist', async () => {
@@ -99,14 +96,20 @@ describe('addBookmark', () => {
 	});
 
 	test('leaves out notes when they are empty', async () => {
-		await addBookmark({ ...validData, notes: '' });
+		await callAddBookmark({ ...validData, notes: '' });
 
 		expect(pushedBookmark()).not.toHaveProperty('notes');
 	});
 
 	test('keeps notes when they are filled in', async () => {
-		await addBookmark({ ...validData, notes: 'Read later' });
+		await callAddBookmark({ ...validData, notes: 'Read later' });
 
 		expect(pushedBookmark()).toHaveProperty('notes', 'Read later');
+	});
+
+	test("invalidates the planner's saved items", async () => {
+		await addBookmark(validData);
+
+		expect(invalidate).toHaveBeenCalledWith([plannerCache.saved(plannerId)]);
 	});
 });

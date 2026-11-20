@@ -13,7 +13,7 @@ import type { TagOption } from './types';
 
 interface Props {
 	plannerId: string;
-	initialTags: TagOption[];
+	tags: TagOption[];
 	value: string[];
 	onChange: (value: string[]) => void;
 	label?: string;
@@ -21,12 +21,11 @@ interface Props {
 
 export const TagCombobox = ({
 	plannerId,
-	initialTags,
+	tags,
 	value,
 	onChange,
 	label,
 }: Props) => {
-	const [availableTags, setAvailableTags] = useState<TagOption[]>(initialTags);
 	const [search, setSearch] = useState('');
 	const [createError, setCreateError] = useState<string | null>(null);
 
@@ -47,14 +46,14 @@ export const TagCombobox = ({
 		onDropdownOpen: () => combobox.updateSelectedOptionIndex('active'),
 	});
 
-	const selectedTags = availableTags.filter((t) => value.includes(t._id));
-	const filteredOptions = availableTags.filter(
+	const selectedTags = tags.filter((t) => value.includes(t._id));
+	const filteredOptions = tags.filter(
 		(t) =>
 			!value.includes(t._id) &&
 			t.name.toLowerCase().includes(search.toLowerCase().trim()),
 	);
 
-	const exactMatch = availableTags.some(
+	const exactMatch = tags.some(
 		(t) => t.name.toLowerCase() === search.toLowerCase().trim(),
 	);
 	const showCreate = search.trim().length > 0 && !exactMatch;
@@ -67,7 +66,7 @@ export const TagCombobox = ({
 
 	const handleCreate = async () => {
 		const name = search.trim();
-		const [result, error] = await catchify(() => addTag(plannerId, name));
+		const [result, error] = await catchify(() => addTag({ plannerId, name }));
 		if (error || !result) {
 			setCreateError('Failed to create tag');
 			return;
@@ -76,7 +75,6 @@ export const TagCombobox = ({
 			setCreateError(result.error);
 			return;
 		}
-		setAvailableTags((prev) => [...prev, result.data]);
 		onChange([...value, result.data._id]);
 		setSearch('');
 		combobox.closeDropdown();

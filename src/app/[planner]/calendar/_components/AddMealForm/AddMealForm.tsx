@@ -19,7 +19,6 @@ import { z } from 'zod';
 import { addMeal } from '@/_actions/calendar';
 import { FormFeedbackAlert, SubmitButton } from '@/_components';
 import { useFormFeedback, useIsMobile } from '@/_hooks';
-import type { DayInterface } from '@/_models/types';
 
 import { DishList } from './DishList';
 import { MealFields } from './MealFields';
@@ -47,7 +46,7 @@ type Props = {
 	plannerId: string;
 	initialDate?: string;
 	onCancel: () => void;
-	onSuccess?: (calendar: DayInterface[]) => void;
+	onSuccess: () => void;
 	onSubtitleChange?: (subtitle: string) => void;
 };
 
@@ -99,9 +98,7 @@ export const AddMealForm = ({
 						note: d.note || undefined,
 					})),
 				}),
-			(data) => {
-				onSuccess?.(data.calendar);
-			},
+			() => onSuccess(),
 		),
 	);
 
