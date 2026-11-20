@@ -6,7 +6,7 @@ import type { PlannerInterface } from '@/_models/planner';
 import type { AccessLevel } from '@/_models/user';
 
 type PlannerWithAccess = {
-	planner: PlannerInterface & { name: string };
+	planner: PlannerInterface;
 	accessLevel: AccessLevel;
 };
 
@@ -19,8 +19,6 @@ export const getPlanners = async (): Promise<PlannerWithAccess[]> => {
 		.find({ _id: { $in: user.planners.map((p) => p.planner) } })
 		.toArray();
 
-	const defaultName = `${user.name}'s Planner`;
-
 	const plannerAccessMap = new Map(
 		user.planners.map((p) => [p.planner, p.accessLevel]),
 	);
@@ -28,7 +26,7 @@ export const getPlanners = async (): Promise<PlannerWithAccess[]> => {
 	return found.map((planner) => ({
 		planner: {
 			_id: planner._id,
-			name: planner.name ?? defaultName,
+			name: planner.name,
 			calendar: planner.calendar,
 			saved: planner.saved,
 			tags: planner.tags,

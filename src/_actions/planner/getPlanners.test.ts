@@ -13,7 +13,7 @@ vi.mock('@/_actions/user', async () => await import('#mocks/@/_actions/user'));
 
 const makePlanner = (overrides: { name?: string; id?: string } = {}) => ({
 	_id: overrides.id ?? '507f1f77bcf86cd799439011',
-	...(overrides.name && { name: overrides.name }),
+	name: overrides.name ?? "Test User's Planner",
 	calendar: [],
 	saved: [],
 	tags: [],
@@ -56,24 +56,6 @@ describe('getPlanners', () => {
 			const result = await getPlanners();
 
 			expect(result).toEqual([{ planner, accessLevel: 'owner' }]);
-		});
-
-		describe('naming planners', () => {
-			it('returns a default name only for planners without one', async () => {
-				const named = makePlanner({
-					name: 'Named Planner',
-					id: '507f1f77bcf86cd799439021',
-				});
-				const unnamed = makePlanner({ id: '507f1f77bcf86cd799439022' });
-				findReturns([named, unnamed]);
-
-				const result = await getPlanners();
-
-				expect(result.map(({ planner }) => planner.name)).toEqual([
-					'Named Planner',
-					"Test User's Planner",
-				]);
-			});
 		});
 
 		describe('access levels', () => {

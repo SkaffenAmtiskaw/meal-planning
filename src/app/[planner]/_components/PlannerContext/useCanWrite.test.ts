@@ -17,6 +17,7 @@ describe('useCanWrite', () => {
 		vi.mocked(usePlannerContext).mockReturnValue({
 			accessLevel: 'read',
 			_id: '507f1f77bcf86cd799439011',
+			name: "Ursula's Planner",
 			calendar: [],
 			saved: [],
 			tags: [],
@@ -31,6 +32,7 @@ describe('useCanWrite', () => {
 		vi.mocked(usePlannerContext).mockReturnValue({
 			accessLevel: 'write',
 			_id: '507f1f77bcf86cd799439011',
+			name: "Ursula's Planner",
 			calendar: [],
 			saved: [],
 			tags: [],
@@ -45,6 +47,7 @@ describe('useCanWrite', () => {
 		vi.mocked(usePlannerContext).mockReturnValue({
 			accessLevel: 'admin',
 			_id: '507f1f77bcf86cd799439011',
+			name: "Ursula's Planner",
 			calendar: [],
 			saved: [],
 			tags: [],
@@ -59,6 +62,7 @@ describe('useCanWrite', () => {
 		vi.mocked(usePlannerContext).mockReturnValue({
 			accessLevel: 'owner',
 			_id: '507f1f77bcf86cd799439011',
+			name: "Ursula's Planner",
 			calendar: [],
 			saved: [],
 			tags: [],
