@@ -64,7 +64,7 @@ describe('validateInviteToken', () => {
 	});
 
 	describe('when the invite is expired', () => {
-		it('returns expired with email and deletes the invite', async () => {
+		it('returns expired with email and leaves the invite in place', async () => {
 			const mockInvite = {
 				_id: 'invite123',
 				email: 'test@example.com',
@@ -85,9 +85,7 @@ describe('validateInviteToken', () => {
 				reason: 'expired',
 				email: 'test@example.com',
 			});
-			expect(pendingInvites.deleteOne).toHaveBeenCalledWith({
-				_id: 'invite123',
-			});
+			expect(pendingInvites.deleteOne).not.toHaveBeenCalled();
 		});
 	});
 

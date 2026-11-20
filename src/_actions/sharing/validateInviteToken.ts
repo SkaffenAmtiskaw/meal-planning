@@ -25,11 +25,8 @@ export const validateInviteToken = async (
 		return { valid: false, reason: 'invalid' };
 	}
 
-	// Check if invite is expired
-	const now = new Date();
-	if (invite.expiresAt < now) {
-		// Delete the expired invite - don't wait for result
-		catchify(() => pendingInvites.deleteOne({ _id: invite._id }));
+	// acceptInvite removes an expired invite, so this read leaves it in place.
+	if (invite.expiresAt < new Date()) {
 		return { valid: false, reason: 'expired', email: invite.email };
 	}
 
