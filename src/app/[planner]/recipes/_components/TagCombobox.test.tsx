@@ -140,7 +140,7 @@ describe('TagCombobox', () => {
 
 	it('creates a new tag and adds it to selection on __create__ submit', async () => {
 		const onChange = vi.fn();
-		const newTag = { _id: 'tag-3', name: 'Umami', color: 'green' };
+		const newTag = { _id: 'tag-3', name: 'Umami', color: 'fern' as const };
 		vi.mocked(addTag).mockResolvedValueOnce({
 			ok: true as const,
 			data: newTag,
@@ -155,8 +155,47 @@ describe('TagCombobox', () => {
 			onOptionSubmit?.('__create__');
 		});
 
-		expect(addTag).toHaveBeenCalledWith('planner-123', 'Umami');
+		expect(addTag).toHaveBeenCalledWith({
+			plannerId: 'planner-123',
+			name: 'Umami',
+		});
 		expect(onChange).toHaveBeenCalledWith(['tag-3']);
+	});
+
+	it('offers a tag that arrives in new initialTags', () => {
+		const { rerender } = render(<TagCombobox {...defaultProps} />);
+
+		rerender(
+			<TagCombobox
+				{...defaultProps}
+				initialTags={[
+					...defaultProps.initialTags,
+					{ _id: 'tag-3', name: 'Zesty', color: 'red' },
+				]}
+			/>,
+		);
+
+		expect(screen.getByTestId('option-tag-3')).toBeDefined();
+	});
+
+	it('shows a pill for a selected tag once initialTags includes it', () => {
+		const { rerender } = render(
+			<TagCombobox {...defaultProps} value={['tag-3']} />,
+		);
+		expect(screen.queryByText('Zesty')).toBeNull();
+
+		rerender(
+			<TagCombobox
+				{...defaultProps}
+				value={['tag-3']}
+				initialTags={[
+					...defaultProps.initialTags,
+					{ _id: 'tag-3', name: 'Zesty', color: 'red' },
+				]}
+			/>,
+		);
+
+		expect(screen.getByText('Zesty')).toBeDefined();
 	});
 
 	it('shows error message when addTag returns an error result', async () => {

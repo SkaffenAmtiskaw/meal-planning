@@ -1,29 +1,36 @@
 'use server';
 
-import { checkAuth } from '@/_actions/auth/checkAuth';
+import { z } from 'zod';
+
+import { plannerCache } from '@/_actions/_utils/caches';
+import { defineMutation } from '@/_actions/_utils/defineMutation';
 import { newId } from '@/_models/database/newId';
 import { planners } from '@/_models/database/planners';
 import type { TagInterface } from '@/_models/library';
 import { TAG_COLOR_NAMES } from '@/_theme/colors';
-import type { ActionResult } from '@/_utils/actionResult';
+import { zId } from '@/_utils/zId';
 
-export const addTag = async (
-	plannerId: string,
-	name: string,
-): Promise<ActionResult<{ _id: string; name: string; color: string }>> => {
-	const auth = await checkAuth(plannerId, 'write');
-	if (auth.type !== 'authorized') return { ok: false, error: 'Unauthorized' };
+const zAddTagSchema = z.object({
+	plannerId: zId,
+	name: z.string(),
+});
 
-	const planner = await planners.findOne({ _id: plannerId });
-	if (!planner) return { ok: false, error: 'Planner not found' };
+export const addTag = defineMutation({
+	schema: zAddTagSchema,
+	access: { planner: (input) => input.plannerId, level: 'write' },
+	invalidates: (input) => [plannerCache.tags(input.plannerId)],
+	handler: async ({ plannerId, name }) => {
+		const planner = await planners.findOne({ _id: plannerId });
+		if (!planner) return { ok: false, error: 'Planner not found' };
 
-	const tag: TagInterface = {
-		_id: newId(),
-		name,
-		color: TAG_COLOR_NAMES[planner.tags.length % TAG_COLOR_NAMES.length],
-	};
+		const tag: TagInterface = {
+			_id: newId(),
+			name,
+			color: TAG_COLOR_NAMES[planner.tags.length % TAG_COLOR_NAMES.length],
+		};
 
-	await planners.updateOne({ _id: plannerId }, { $push: { tags: tag } });
+		await planners.updateOne({ _id: plannerId }, { $push: { tags: tag } });
 
-	return { ok: true, data: tag };
-};
+		return { ok: true, data: tag };
+	},
+});
