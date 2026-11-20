@@ -8,8 +8,16 @@
  *
  * Default return value is an empty array. Override in specific tests with:
  *   vi.mocked(usePlannerSavedItems).mockReturnValueOnce([...])
+ *
+ * The provider only renders its children.
  */
 
 import { vi } from 'vitest';
 
+import type { ReactNode } from 'react';
+
 export const usePlannerSavedItems = vi.fn(() => []);
+
+export const PlannerSavedItemsProvider = vi.fn(
+	({ children }: { children: ReactNode }) => children,
+);
