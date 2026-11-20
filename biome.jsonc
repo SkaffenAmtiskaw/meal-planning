@@ -112,15 +112,6 @@
 									":BLANK_LINE:",
 									{
 										"type": false,
-										"source": ["@schedule-x/*", "temporal-polyfill/global"]
-									},
-									{
-										"type": true,
-										"source": ["@schedule-x/*", "temporal-polyfill/global"]
-									},
-									":BLANK_LINE:",
-									{
-										"type": false,
 										"source": ["@*/**", "!@/**"]
 									},
 									{
@@ -546,15 +537,6 @@
 							{
 								"type": true,
 								"source": ["@mantine/*", "@tabler/*"]
-							},
-							":BLANK_LINE:",
-							{
-								"type": false,
-								"source": ["@schedule-x/*", "temporal-polyfill/global"]
-							},
-							{
-								"type": true,
-								"source": ["@schedule-x/*", "temporal-polyfill/global"]
 							},
 							":BLANK_LINE:",
 							{
