@@ -2,7 +2,7 @@
 
 import { isAPIError } from 'better-auth/api';
 
-import { addUser } from '@/_actions/user';
+import { addUser } from '@/_actions/user/addUser';
 import { auth } from '@/_auth';
 import { pendingInvites } from '@/_models/database/pendingInvites';
 import { reportError } from '@/_reporting/reportError';

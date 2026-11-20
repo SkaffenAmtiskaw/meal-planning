@@ -1,13 +1,13 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
-import { addPlanner } from '@/_actions/planner';
+import { addPlanner } from '@/_actions/_utils/addPlanner';
 import { users } from '@/_models/database/users';
 
 import { addUser } from './addUser';
 
 vi.mock(
-	'@/_actions/planner',
-	async () => await import('#mocks/@/_actions/planner'),
+	'@/_actions/_utils/addPlanner',
+	async () => await import('#mocks/@/_actions/_utils/addPlanner'),
 );
 vi.mock(
 	'@/_models/database/users',

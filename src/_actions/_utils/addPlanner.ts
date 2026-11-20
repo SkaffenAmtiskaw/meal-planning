@@ -1,4 +1,4 @@
-'use server';
+import 'server-only';
 
 import { newId } from '@/_models/database/newId';
 import { planners } from '@/_models/database/planners';

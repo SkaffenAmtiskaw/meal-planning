@@ -1,10 +1,10 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
+import { addPlanner } from '@/_actions/_utils/addPlanner';
 import { users } from '@/_models/database/users';
 import { reportError } from '@/_reporting/reportError';
 import { catchify } from '@/_utils/catchify';
 
-import { addPlanner } from './addPlanner';
 import { createPlanner } from './createPlanner';
 
 const mockSafeParse = vi.hoisted(() => vi.fn());
@@ -18,9 +18,10 @@ vi.mock(
 	'@/_models/database/newId',
 	async () => await import('#mocks/@/_models/database/newId'),
 );
-vi.mock('./addPlanner', async () => ({
-	addPlanner: vi.fn(),
-}));
+vi.mock(
+	'@/_actions/_utils/addPlanner',
+	async () => await import('#mocks/@/_actions/_utils/addPlanner'),
+);
 vi.mock('@/_utils/catchify', async () => ({
 	catchify: vi.fn(),
 }));

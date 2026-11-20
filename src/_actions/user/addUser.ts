@@ -1,6 +1,6 @@
-'use server';
+import 'server-only';
 
-import { addPlanner } from '@/_actions/planner';
+import { addPlanner } from '@/_actions/_utils/addPlanner';
 import { newId } from '@/_models/database/newId';
 import { users } from '@/_models/database/users';
 import type { AccessLevel, NewUser } from '@/_models/user';

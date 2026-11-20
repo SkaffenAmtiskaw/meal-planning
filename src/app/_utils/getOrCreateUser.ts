@@ -1,4 +1,4 @@
-import { addUser } from '@/_actions/user';
+import { addUser } from '@/_actions/user/addUser';
 import { users } from '@/_models/database/users';
 
 /**
