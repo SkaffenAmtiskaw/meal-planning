@@ -29,21 +29,6 @@ importers:
       '@posthog/nextjs-config':
         specifier: 1.12.2
         version: 1.12.2(next@16.4.6(@babel/core@7.29.7)(@opentelemetry/api@1.9.1)(@playwright/test@1.65.1)(@types/node@24.3.3)(react-dom@19.3.1(react@19.3.1))(react@19.3.1)(sass@1.106.1))(posthog-js@1.450.0(@types/react@19.3.0)(react@19.3.1))(webpack@5.112.2(postcss@8.5.33))
-      '@preact/signals':
-        specifier: 2.11.4
-        version: 2.11.4(preact@10.29.0)
-      '@schedule-x/calendar':
-        specifier: 4.9.1
-        version: 4.9.1(@preact/signals@2.11.4(preact@10.29.0))(preact@10.29.0)(temporal-polyfill@0.3.2)
-      '@schedule-x/events-service':
-        specifier: 4.9.1
-        version: 4.9.1
-      '@schedule-x/react':
-        specifier: 4.1.0
-        version: 4.1.0(@schedule-x/calendar@4.9.1(@preact/signals@2.11.4(preact@10.29.0))(preact@10.29.0)(temporal-polyfill@0.3.2))(react-dom@19.3.1(react@19.3.1))(react@19.3.1)
-      '@schedule-x/theme-default':
-        specifier: 4.9.1
-        version: 4.9.1
       '@t3-oss/env-nextjs':
         specifier: 0.13.11
         version: 0.13.11(typescript@5.9.3)(zod@4.6.7)
@@ -68,9 +53,6 @@ importers:
       posthog-node:
         specifier: 5.74.0
         version: 5.74.0(@opentelemetry/api@1.9.1)
-      preact:
-        specifier: 10.29.0
-        version: 10.29.0
       react:
         specifier: 19.3.1
         version: 19.3.1
@@ -86,9 +68,6 @@ importers:
       server-only:
         specifier: 0.0.1
         version: 0.0.1
-      temporal-polyfill:
-        specifier: 0.3.2
-        version: 0.3.2
       zod:
         specifier: 4.6.7
         version: 4.6.7
@@ -1040,14 +1019,6 @@ packages:
     peerDependencies:
       webpack: ^5
 
-  '@preact/signals-core@1.14.5':
-    resolution: {integrity: sha512-vcRv7Ityz5JVmeiVqIluLFzT/PDS/AlhHUpw3/aUWqcVUs6bDGIPXE/6RSC4evBNWYvnniozg5Syfj33al3gkg==}
-
-  '@preact/signals@2.11.4':
-    resolution: {integrity: sha512-Rb+5RPo9gWSaHtzJeauhHxiC8KP/IF2DEPkHPEOGOnuy2wnJzRqyeLRankUCYd6ADqtxS6GnWGv6Ie343d8aYw==}
-    peerDependencies:
-      preact: '>= 10.25.0 || >=11.0.0-0'
-
   '@rolldown/pluginutils@1.0.0-rc.3':
     resolution: {integrity: sha512-eybk3TjzzzV97Dlj5c+XrBFW57eTNhzod66y9HrBlzJ6NsCrWCp/2kaPS3K9wJmurBC0Tdw4yPjXKZqlznim3Q==}
 
@@ -1180,26 +1151,6 @@ packages:
     resolution: {integrity: sha512-/eMzhxPPUGd5vjHdaNtvxHbblmoe+DyvPnJkZ4uQrDlVq9PQSd8br4pWwamycwRcLoNEzXwFy2mzcGoZTYqU5A==}
     cpu: [x64]
     os: [win32]
-
-  '@schedule-x/calendar@4.9.1':
-    resolution: {integrity: sha512-/Zsn49BqOklOZmftsh2B5QyqF/hMf8tUqpcBbg+W0xv7FFrYd1qsYeJfdEVPVKTa42hybyswLJvtglnKgaqC+Q==}
-    peerDependencies:
-      '@preact/signals': ^2.0.2
-      preact: ^10.19.2
-      temporal-polyfill: 0.3.2
-
-  '@schedule-x/events-service@4.9.1':
-    resolution: {integrity: sha512-7pZMC6Khh4/i5PwTkCJzYb4qxVuFHKi+ho5xmkLu0Kv7HNO9z06rkcJw4Kc88bsbMJLkLXi6vTnHFClROIEZVg==}
-
-  '@schedule-x/react@4.1.0':
-    resolution: {integrity: sha512-l2hn1kdTModk4Lbt+nEr/VAcuNMA+w+hAAtgz8VLOj5UeieM7PWoK+cDapzPHCjUKisCSPd8QZfAX966Ma82kQ==}
-    peerDependencies:
-      '@schedule-x/calendar': ^3.1.0 || ^4.0.0
-      react: ^16.7.0 || ^17 || ^18 || ^19
-      react-dom: ^16.7.0 || ^17 || ^18 || ^19
-
-  '@schedule-x/theme-default@4.9.1':
-    resolution: {integrity: sha512-mCe0Ly9ZEBc1nsEDq2vTVvASSmM6oO5a4Nt+ogeYBnsZIBk3w9pk2IcaJHcXqHIS0uA1b8TzmjlpgvorvMtZ7w==}
 
   '@stablelib/base64@1.0.1':
     resolution: {integrity: sha512-1bnPQqSxSuc3Ii6MhBysoWCg58j97aUjuCSZrGSmDxNqtytIi0k8utUenAwTZN4V5mXXYGsVUI9zeBqy+jBOSQ==}
@@ -2479,9 +2430,6 @@ packages:
       rxjs:
         optional: true
 
-  preact@10.29.0:
-    resolution: {integrity: sha512-wSAGyk2bYR1c7t3SZ3jHcM6xy0lcBcDel6lODcs9ME6Th++Dx2KU+6D3HD8wMMKGA8Wpw7OMd3/4RGzYRpzwRg==}
-
   preact@10.29.8:
     resolution: {integrity: sha512-ej2aVZ+vZ8WO7tvlQWRM9N63A0KzF9q4mWJfDUHgYaIofWY9hu74QdnQrjoPMmZi2/nZ5gN0bJCQF49xQqx09Q==}
     peerDependencies:
@@ -2759,12 +2707,6 @@ packages:
 
   teex@1.0.1:
     resolution: {integrity: sha512-eYE6iEI62Ni1H8oIa7KlDU6uQBtqr4Eajni3wX7rpfXD8ysFx8z0+dri+KWEPWpBsxXfxu58x/0jvTVT1ekOSg==}
-
-  temporal-polyfill@0.3.2:
-    resolution: {integrity: sha512-TzHthD/heRK947GNiSu3Y5gSPpeUDH34+LESnfsq8bqpFhsB79HFBX8+Z834IVX68P3EUyRPZK5bL/1fh437Eg==}
-
-  temporal-spec@0.3.1:
-    resolution: {integrity: sha512-B4TUhezh9knfSIMwt7RVggApDRJZo73uZdj8AacL2mZ8RP5KtLianh2MXxL06GN9ESYiIsiuoLQhgVfwe55Yhw==}
 
   terser@5.51.2:
     resolution: {integrity: sha512-bWnjSNscmuI+GJze6ZupnHP8G/cTcsJF+bXCeQknk2SHQsgbNJnLrqiH9jZ2W4STPVXH2mDKKRX3iwPhc9Cn/Q==}
@@ -3765,13 +3707,6 @@ snapshots:
       '@posthog/plugin-utils': 2.0.1
       webpack: 5.112.2(postcss@8.5.33)
 
-  '@preact/signals-core@1.14.5': {}
-
-  '@preact/signals@2.11.4(preact@10.29.0)':
-    dependencies:
-      '@preact/signals-core': 1.14.5
-      preact: 10.29.0
-
   '@rolldown/pluginutils@1.0.0-rc.3': {}
 
   '@rollup/rollup-android-arm-eabi@4.68.4':
@@ -3851,22 +3786,6 @@ snapshots:
 
   '@rollup/rollup-win32-x64-msvc@4.68.4':
     optional: true
-
-  '@schedule-x/calendar@4.9.1(@preact/signals@2.11.4(preact@10.29.0))(preact@10.29.0)(temporal-polyfill@0.3.2)':
-    dependencies:
-      '@preact/signals': 2.11.4(preact@10.29.0)
-      preact: 10.29.0
-      temporal-polyfill: 0.3.2
-
-  '@schedule-x/events-service@4.9.1': {}
-
-  '@schedule-x/react@4.1.0(@schedule-x/calendar@4.9.1(@preact/signals@2.11.4(preact@10.29.0))(preact@10.29.0)(temporal-polyfill@0.3.2))(react-dom@19.3.1(react@19.3.1))(react@19.3.1)':
-    dependencies:
-      '@schedule-x/calendar': 4.9.1(@preact/signals@2.11.4(preact@10.29.0))(preact@10.29.0)(temporal-polyfill@0.3.2)
-      react: 19.3.1
-      react-dom: 19.3.1(react@19.3.1)
-
-  '@schedule-x/theme-default@4.9.1': {}
 
   '@stablelib/base64@1.0.1': {}
 
@@ -5033,8 +4952,6 @@ snapshots:
     optionalDependencies:
       '@opentelemetry/api': 1.9.1
 
-  preact@10.29.0: {}
-
   preact@10.29.8: {}
 
   pretty-format@27.5.1:
@@ -5337,12 +5254,6 @@ snapshots:
     transitivePeerDependencies:
       - bare-abort-controller
       - react-native-b4a
-
-  temporal-polyfill@0.3.2:
-    dependencies:
-      temporal-spec: 0.3.1
-
-  temporal-spec@0.3.1: {}
 
   terser@5.51.2:
     dependencies:

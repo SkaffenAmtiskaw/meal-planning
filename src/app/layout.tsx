@@ -8,8 +8,6 @@ import { theme } from '@/_theme';
 import { OneTapSignInWrapper } from './_hooks/useOneTap/OneTapSignInWrapper';
 
 import '@mantine/core/styles.css';
-import '@schedule-x/theme-default/dist/index.css';
-import 'temporal-polyfill/global';
 
 const inter = Inter({
 	subsets: ['latin'],
