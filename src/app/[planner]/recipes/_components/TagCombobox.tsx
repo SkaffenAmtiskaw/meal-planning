@@ -13,7 +13,7 @@ import type { TagOption } from './types';
 
 interface Props {
 	plannerId: string;
-	initialTags: TagOption[];
+	tags: TagOption[];
 	value: string[];
 	onChange: (value: string[]) => void;
 	label?: string;
@@ -21,7 +21,7 @@ interface Props {
 
 export const TagCombobox = ({
 	plannerId,
-	initialTags,
+	tags,
 	value,
 	onChange,
 	label,
@@ -46,14 +46,14 @@ export const TagCombobox = ({
 		onDropdownOpen: () => combobox.updateSelectedOptionIndex('active'),
 	});
 
-	const selectedTags = initialTags.filter((t) => value.includes(t._id));
-	const filteredOptions = initialTags.filter(
+	const selectedTags = tags.filter((t) => value.includes(t._id));
+	const filteredOptions = tags.filter(
 		(t) =>
 			!value.includes(t._id) &&
 			t.name.toLowerCase().includes(search.toLowerCase().trim()),
 	);
 
-	const exactMatch = initialTags.some(
+	const exactMatch = tags.some(
 		(t) => t.name.toLowerCase() === search.toLowerCase().trim(),
 	);
 	const showCreate = search.trim().length > 0 && !exactMatch;

@@ -113,7 +113,7 @@ export const InlineTagsEditor = ({
 			{editing ? (
 				<TagCombobox
 					plannerId={plannerId}
-					initialTags={availableTags}
+					tags={availableTags}
 					value={value}
 					onChange={setValue}
 				/>

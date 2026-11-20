@@ -85,7 +85,7 @@ export const BookmarkForm = ({ item, plannerId, tags }: Props) => {
 				<TagCombobox
 					label="Tags"
 					plannerId={plannerId}
-					initialTags={tags}
+					tags={tags}
 					value={selectedTags}
 					onChange={setSelectedTags}
 				/>

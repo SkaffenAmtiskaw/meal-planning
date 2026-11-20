@@ -30,14 +30,14 @@ vi.mock('../../_components/Tag/Tag', () => ({
 }));
 
 vi.mock('../../_components/TagCombobox', () => ({
-	TagCombobox: vi.fn(({ value, onChange, plannerId, initialTags }) => {
+	TagCombobox: vi.fn(({ value, onChange, plannerId, tags }) => {
 		capturedOnChange = onChange;
 		return (
 			<div
 				data-testid="tag-combobox"
 				data-planner-id={plannerId}
 				data-value={value.join(',')}
-				data-initial-tags-count={initialTags.length}
+				data-tags-count={tags.length}
 			/>
 		);
 	}),

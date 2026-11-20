@@ -40,6 +40,7 @@ vi.mock('./useDishes', async () => ({
 const defaultProps = {
 	plannerId: 'planner-1',
 	onCancel: vi.fn(),
+	onSuccess: vi.fn(),
 };
 
 describe('AddMealForm', () => {
@@ -291,14 +292,5 @@ describe('AddMealForm', () => {
 		});
 		render(<AddMealForm {...defaultProps} />);
 		expect(screen.getByText('2 dishes on this meal')).toBeDefined();
-	});
-
-	it('does not throw when onSuccess is not provided', async () => {
-		render(<AddMealForm {...defaultProps} />);
-		await act(async () => {
-			fireEvent.submit(screen.getByTestId('add-meal-form'));
-		});
-
-		expect(addMeal).toHaveBeenCalledOnce();
 	});
 });

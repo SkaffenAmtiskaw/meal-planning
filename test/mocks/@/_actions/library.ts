@@ -22,7 +22,7 @@ export const addRecipe = vi.fn(async () => ({
 
 export const addTag = vi.fn(async () => ({
 	ok: true as const,
-	data: { _id: '507f1f77bcf86cd799439012', name: 'New Tag', color: 'blue' },
+	data: { _id: '507f1f77bcf86cd799439012', name: 'New Tag', color: 'fern' },
 }));
 
 export const deleteBookmark = vi.fn(async () => ({

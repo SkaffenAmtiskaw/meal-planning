@@ -46,7 +46,7 @@ type Props = {
 	plannerId: string;
 	initialDate?: string;
 	onCancel: () => void;
-	onSuccess?: () => void;
+	onSuccess: () => void;
 	onSubtitleChange?: (subtitle: string) => void;
 };
 
@@ -98,7 +98,7 @@ export const AddMealForm = ({
 						note: d.note || undefined,
 					})),
 				}),
-			() => onSuccess?.(),
+			() => onSuccess(),
 		),
 	);
 

@@ -45,7 +45,7 @@ vi.mock('@/_utils/catchify', () => ({
 
 const defaultProps = {
 	plannerId: 'planner-123',
-	initialTags: [
+	tags: [
 		{ _id: 'tag-1', name: 'Spicy', color: 'red' },
 		{ _id: 'tag-2', name: 'Sweet', color: 'blue' },
 	],
@@ -162,14 +162,14 @@ describe('TagCombobox', () => {
 		expect(onChange).toHaveBeenCalledWith(['tag-3']);
 	});
 
-	it('offers a tag that arrives in new initialTags', () => {
+	it('offers a tag that arrives in new tags', () => {
 		const { rerender } = render(<TagCombobox {...defaultProps} />);
 
 		rerender(
 			<TagCombobox
 				{...defaultProps}
-				initialTags={[
-					...defaultProps.initialTags,
+				tags={[
+					...defaultProps.tags,
 					{ _id: 'tag-3', name: 'Zesty', color: 'red' },
 				]}
 			/>,
@@ -178,7 +178,7 @@ describe('TagCombobox', () => {
 		expect(screen.getByTestId('option-tag-3')).toBeDefined();
 	});
 
-	it('shows a pill for a selected tag once initialTags includes it', () => {
+	it('shows a pill for a selected tag once tags includes it', () => {
 		const { rerender } = render(
 			<TagCombobox {...defaultProps} value={['tag-3']} />,
 		);
@@ -188,8 +188,8 @@ describe('TagCombobox', () => {
 			<TagCombobox
 				{...defaultProps}
 				value={['tag-3']}
-				initialTags={[
-					...defaultProps.initialTags,
+				tags={[
+					...defaultProps.tags,
 					{ _id: 'tag-3', name: 'Zesty', color: 'red' },
 				]}
 			/>,
@@ -235,7 +235,7 @@ describe('TagCombobox', () => {
 		render(
 			<TagCombobox
 				{...defaultProps}
-				initialTags={[{ _id: 'tag-fern', name: 'Fern', color: 'fern' }]}
+				tags={[{ _id: 'tag-fern', name: 'Fern', color: 'fern' }]}
 				value={['tag-fern']}
 			/>,
 		);
@@ -255,7 +255,7 @@ describe('TagCombobox', () => {
 		render(
 			<TagCombobox
 				{...defaultProps}
-				initialTags={[{ _id: 'tag-x', name: 'Custom', color: 'turquoise' }]}
+				tags={[{ _id: 'tag-x', name: 'Custom', color: 'turquoise' }]}
 				value={['tag-x']}
 			/>,
 		);
