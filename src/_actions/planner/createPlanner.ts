@@ -1,5 +1,6 @@
 'use server';
 
+import { addPlanner } from '@/_actions/_utils/addPlanner';
 import { getUser } from '@/_actions/user';
 import { isNoSessionError } from '@/_actions/user/noSessionError';
 import { newId } from '@/_models/database/newId';
@@ -9,8 +10,6 @@ import { reportError } from '@/_reporting/reportError';
 import type { ActionResult } from '@/_utils/actionResult';
 import { catchify } from '@/_utils/catchify';
 import { zSafeString } from '@/_utils/zSafeString';
-
-import { addPlanner } from './addPlanner';
 
 export const createPlanner = async (name: string): Promise<ActionResult> => {
 	const parsedName = zSafeString().safeParse(name);

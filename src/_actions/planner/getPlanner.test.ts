@@ -17,7 +17,13 @@ describe('getPlanner', () => {
 	});
 
 	test('should return the planner when found', async () => {
-		const mockPlanner = { _id: mockId, calendar: [], saved: [], tags: [] };
+		const mockPlanner = {
+			_id: mockId,
+			name: "Ursula's Planner",
+			calendar: [],
+			saved: [],
+			tags: [],
+		};
 		vi.mocked(planners.findOne).mockResolvedValue(mockPlanner);
 
 		const result = await getPlanner(mockId);

@@ -18,17 +18,7 @@ describe('addPlanner', () => {
 		vi.clearAllMocks();
 	});
 
-	it('inserts and returns a new planner with a new id, empty arrays and no name', async () => {
-		const result = await addPlanner();
-
-		const planner = { _id: 'new-id', calendar: [], saved: [], tags: [] };
-		expect(vi.mocked(planners.insertOne).mock.calls[0][0]).toStrictEqual(
-			planner,
-		);
-		expect(result).toStrictEqual(planner);
-	});
-
-	it('inserts a planner with the provided name', async () => {
+	it('inserts and returns a new planner with a new id, the given name and empty arrays', async () => {
 		const result = await addPlanner("Ursula's Planner");
 
 		const planner = {
@@ -38,13 +28,15 @@ describe('addPlanner', () => {
 			saved: [],
 			tags: [],
 		};
-		expect(planners.insertOne).toHaveBeenCalledWith(planner);
+		expect(vi.mocked(planners.insertOne).mock.calls[0][0]).toStrictEqual(
+			planner,
+		);
 		expect(result).toStrictEqual(planner);
 	});
 
 	it('throws when the insert fails', async () => {
 		vi.mocked(planners.insertOne).mockRejectedValueOnce(new Error('DB error'));
 
-		await expect(addPlanner()).rejects.toThrow('DB error');
+		await expect(addPlanner("Ursula's Planner")).rejects.toThrow('DB error');
 	});
 });

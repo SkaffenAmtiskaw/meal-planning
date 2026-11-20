@@ -9,6 +9,7 @@ export const createPlanner = async (
 ) => {
 	const planner: PlannerInterface = {
 		_id: newId(),
+		name: 'Test Planner',
 		calendar: [],
 		saved: [],
 		tags: [],

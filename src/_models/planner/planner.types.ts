@@ -1,7 +1,6 @@
 import { z } from 'zod';
 
 import { zId } from '@/_utils/zId';
-import { zOptionalNonEmptyString } from '@/_utils/zOptionalNonEmptyString';
 
 import { zDayInterface } from '../calendar/day.types';
 import { zBookmarkInterface } from '../library/bookmark.types';
@@ -10,7 +9,7 @@ import { zTagInterface } from '../library/tag.types';
 
 export const zPlannerInterface = z.object({
 	_id: zId,
-	name: zOptionalNonEmptyString,
+	name: z.string().min(1),
 	calendar: z.array(zDayInterface),
 	saved: z.array(z.union([zBookmarkInterface, zRecipeInterface])),
 	tags: z.array(zTagInterface),

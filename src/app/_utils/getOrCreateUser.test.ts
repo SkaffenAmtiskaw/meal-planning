@@ -1,11 +1,14 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-import { addUser } from '@/_actions/user';
+import { addUser } from '@/_actions/user/addUser';
 import { users } from '@/_models/database/users';
 
 import { getOrCreateUser } from './getOrCreateUser';
 
-vi.mock('@/_actions/user', async () => await import('#mocks/@/_actions/user'));
+vi.mock(
+	'@/_actions/user/addUser',
+	async () => await import('#mocks/@/_actions/user/addUser'),
+);
 vi.mock(
 	'@/_models/database/users',
 	async () => await import('#mocks/@/_models/database/users'),
@@ -37,7 +40,10 @@ describe('getOrCreateUser', () => {
 
 		const user = await getOrCreateUser('ariel@sea.com', 'Ariel');
 
-		expect(addUser).toHaveBeenCalledWith('ariel@sea.com', undefined, 'Ariel');
+		expect(addUser).toHaveBeenCalledWith({
+			email: 'ariel@sea.com',
+			name: 'Ariel',
+		});
 		expect(user).toBe(await vi.mocked(addUser).mock.results[0].value);
 	});
 });

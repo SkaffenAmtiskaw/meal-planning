@@ -1,13 +1,13 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
-import { addPlanner } from '@/_actions/planner';
+import { addPlanner } from '@/_actions/_utils/addPlanner';
 import { users } from '@/_models/database/users';
 
 import { addUser } from './addUser';
 
 vi.mock(
-	'@/_actions/planner',
-	async () => await import('#mocks/@/_actions/planner'),
+	'@/_actions/_utils/addPlanner',
+	async () => await import('#mocks/@/_actions/_utils/addPlanner'),
 );
 vi.mock(
 	'@/_models/database/users',
@@ -51,6 +51,22 @@ describe('addUser', () => {
 			expect(vi.mocked(users.insertOne).mock.calls[0][0]).not.toHaveProperty(
 				'name',
 			);
+		});
+
+		it("names the new planner after the user's name", async () => {
+			givenNewPlanner();
+
+			await addUser({ email: 'cruella@deVil.com', name: 'Cruella' });
+
+			expect(addPlanner).toHaveBeenCalledWith("Cruella's Planner");
+		});
+
+		it("names the new planner after the default user name when there's no name", async () => {
+			givenNewPlanner();
+
+			await addUser({ email: 'cruella@deVil.com' });
+
+			expect(addPlanner).toHaveBeenCalledWith("New User's Planner");
 		});
 
 		it('uses the provided plannerId and assigns read access', async () => {
@@ -109,53 +125,6 @@ describe('addUser', () => {
 			).rejects.toThrow(
 				'plannerId is required when skipPlannerCreation is true',
 			);
-		});
-	});
-
-	describe('with positional arguments', () => {
-		it('normalizes positional arguments and creates a new planner', async () => {
-			givenNewPlanner();
-
-			await addUser('cruella@deVil.com');
-
-			expect(addPlanner).toHaveBeenCalledOnce();
-			expect(users.insertOne).toHaveBeenCalledWith({
-				_id: 'new-id',
-				email: 'cruella@deVil.com',
-				planners: [
-					{ _id: 'new-id', planner: mockPlannerId, accessLevel: 'owner' },
-				],
-			});
-		});
-
-		it('normalizes positional arguments with a provided plannerId', async () => {
-			const existingPlannerId = 'existing-planner-id';
-
-			await addUser('cruella@deVil.com', existingPlannerId);
-
-			expect(addPlanner).not.toHaveBeenCalled();
-			expect(users.insertOne).toHaveBeenCalledWith({
-				_id: 'new-id',
-				email: 'cruella@deVil.com',
-				planners: [
-					{ _id: 'new-id', planner: existingPlannerId, accessLevel: 'read' },
-				],
-			});
-		});
-
-		it('normalizes positional arguments with a custom name', async () => {
-			givenNewPlanner();
-
-			await addUser('cruella@deVil.com', undefined, 'Cruella');
-
-			expect(users.insertOne).toHaveBeenCalledWith({
-				_id: 'new-id',
-				email: 'cruella@deVil.com',
-				name: 'Cruella',
-				planners: [
-					{ _id: 'new-id', planner: mockPlannerId, accessLevel: 'owner' },
-				],
-			});
 		});
 	});
 

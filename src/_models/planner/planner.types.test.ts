@@ -8,6 +8,7 @@ const plannerId = newId();
 const bookmarkId = newId();
 const recipeId = newId();
 const tagId = newId();
+const name = "Ursula's Planner";
 
 const validBookmark = {
 	_id: bookmarkId,
@@ -30,6 +31,7 @@ describe('planner interface', () => {
 		expect(
 			zPlannerInterface.safeParse({
 				_id: plannerId,
+				name,
 				calendar: [],
 				saved: [],
 				tags: [],
@@ -37,33 +39,34 @@ describe('planner interface', () => {
 		).toBe(true);
 	});
 
-	test('accepts a planner with a name', () => {
+	test('rejects a planner without a name', () => {
 		expect(
 			zPlannerInterface.safeParse({
 				_id: plannerId,
-				name: "Ursula's Planner",
 				calendar: [],
 				saved: [],
 				tags: [],
 			}).success,
-		).toBe(true);
+		).toBe(false);
 	});
 
-	test('accepts a planner without a name', () => {
+	test('rejects a planner with an empty name', () => {
 		expect(
 			zPlannerInterface.safeParse({
 				_id: plannerId,
+				name: '',
 				calendar: [],
 				saved: [],
 				tags: [],
 			}).success,
-		).toBe(true);
+		).toBe(false);
 	});
 
 	test('accepts a planner with a bookmark in saved', () => {
 		expect(
 			zPlannerInterface.safeParse({
 				_id: plannerId,
+				name,
 				calendar: [],
 				saved: [validBookmark],
 				tags: [],
@@ -75,6 +78,7 @@ describe('planner interface', () => {
 		expect(
 			zPlannerInterface.safeParse({
 				_id: plannerId,
+				name,
 				calendar: [],
 				saved: [validRecipe],
 				tags: [],
@@ -86,6 +90,7 @@ describe('planner interface', () => {
 		expect(
 			zPlannerInterface.safeParse({
 				_id: plannerId,
+				name,
 				calendar: [],
 				saved: [validBookmark, validRecipe],
 				tags: [],
@@ -97,6 +102,7 @@ describe('planner interface', () => {
 		expect(
 			zPlannerInterface.safeParse({
 				_id: plannerId,
+				name,
 				calendar: [],
 				saved: [],
 				tags: [validTag],
@@ -108,6 +114,7 @@ describe('planner interface', () => {
 		expect(
 			zPlannerInterface.safeParse({
 				_id: plannerId,
+				name,
 				calendar: [{ date: '2026-03-27', meals: [] }],
 				saved: [],
 				tags: [],
@@ -117,22 +124,30 @@ describe('planner interface', () => {
 
 	test('rejects a planner missing calendar', () => {
 		expect(
-			zPlannerInterface.safeParse({ _id: plannerId, saved: [], tags: [] })
+			zPlannerInterface.safeParse({ _id: plannerId, name, saved: [], tags: [] })
 				.success,
 		).toBe(false);
 	});
 
 	test('rejects a planner missing saved', () => {
 		expect(
-			zPlannerInterface.safeParse({ _id: plannerId, calendar: [], tags: [] })
-				.success,
+			zPlannerInterface.safeParse({
+				_id: plannerId,
+				name,
+				calendar: [],
+				tags: [],
+			}).success,
 		).toBe(false);
 	});
 
 	test('rejects a planner missing tags', () => {
 		expect(
-			zPlannerInterface.safeParse({ _id: plannerId, calendar: [], saved: [] })
-				.success,
+			zPlannerInterface.safeParse({
+				_id: plannerId,
+				name,
+				calendar: [],
+				saved: [],
+			}).success,
 		).toBe(false);
 	});
 
@@ -140,6 +155,7 @@ describe('planner interface', () => {
 		expect(
 			zPlannerInterface.safeParse({
 				_id: plannerId,
+				name,
 				calendar: [{ date: 'not-a-date' }],
 				saved: [],
 				tags: [],
@@ -151,6 +167,7 @@ describe('planner interface', () => {
 		expect(
 			zPlannerInterface.safeParse({
 				_id: plannerId,
+				name,
 				calendar: [],
 				saved: [],
 				tags: [{ name: 'Villain Cuisine' }],
@@ -162,6 +179,7 @@ describe('planner interface', () => {
 		expect(
 			zPlannerInterface.safeParse({
 				_id: plannerId,
+				name,
 				calendar: [],
 				saved: [{ _id: bookmarkId, name: 'Mystery Item' }],
 				tags: [],
@@ -171,7 +189,7 @@ describe('planner interface', () => {
 
 	test('rejects a planner missing _id', () => {
 		expect(
-			zPlannerInterface.safeParse({ calendar: [], saved: [], tags: [] })
+			zPlannerInterface.safeParse({ name, calendar: [], saved: [], tags: [] })
 				.success,
 		).toBe(false);
 	});
