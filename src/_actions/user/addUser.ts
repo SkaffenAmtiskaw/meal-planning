@@ -3,7 +3,11 @@ import 'server-only';
 import { addPlanner } from '@/_actions/_utils/addPlanner';
 import { newId } from '@/_models/database/newId';
 import { users } from '@/_models/database/users';
-import type { AccessLevel, NewUser } from '@/_models/user';
+import {
+	type AccessLevel,
+	DEFAULT_USER_NAME,
+	type NewUser,
+} from '@/_models/user';
 
 interface AddUserOptions {
 	email: string;
@@ -63,8 +67,8 @@ export async function addUser(
 		// Error: must have plannerId if skipPlannerCreation is true
 		throw new Error('plannerId is required when skipPlannerCreation is true');
 	} else {
-		// Create new planner
-		id = (await addPlanner())._id;
+		// A user with no name gets the schema's default only at its insert, so the planner uses that default too.
+		id = (await addPlanner(`${name || DEFAULT_USER_NAME}'s Planner`))._id;
 		isNewPlanner = true;
 	}
 

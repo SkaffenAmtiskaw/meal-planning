@@ -14,10 +14,12 @@ export const zPlannerMembership = z.object({
 });
 export type PlannerMembership = z.infer<typeof zPlannerMembership>;
 
+export const DEFAULT_USER_NAME = 'New User';
+
 export const zUserInterface = z.object({
 	_id: zId,
 	email: z.string(),
-	name: zSafeString().default('New User'),
+	name: zSafeString().default(DEFAULT_USER_NAME),
 	planners: z.array(zPlannerMembership),
 	pendingEmailChange: z
 		.object({

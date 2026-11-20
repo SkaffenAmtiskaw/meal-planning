@@ -21,14 +21,6 @@ export const getPlanners = async (): Promise<PlannerWithAccess[]> => {
 
 	const defaultName = `${user.name}'s Planner`;
 
-	await Promise.all(
-		found
-			.filter((p) => !p.name)
-			.map((p) =>
-				planners.updateOne({ _id: p._id }, { $set: { name: defaultName } }),
-			),
-	);
-
 	const plannerAccessMap = new Map(
 		user.planners.map((p) => [p.planner, p.accessLevel]),
 	);

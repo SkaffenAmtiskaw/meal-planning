@@ -53,6 +53,22 @@ describe('addUser', () => {
 			);
 		});
 
+		it("names the new planner after the user's name", async () => {
+			givenNewPlanner();
+
+			await addUser({ email: 'cruella@deVil.com', name: 'Cruella' });
+
+			expect(addPlanner).toHaveBeenCalledWith("Cruella's Planner");
+		});
+
+		it("names the new planner after the default user name when there's no name", async () => {
+			givenNewPlanner();
+
+			await addUser({ email: 'cruella@deVil.com' });
+
+			expect(addPlanner).toHaveBeenCalledWith("New User's Planner");
+		});
+
 		it('uses the provided plannerId and assigns read access', async () => {
 			const existingPlannerId = 'existing-planner-id';
 

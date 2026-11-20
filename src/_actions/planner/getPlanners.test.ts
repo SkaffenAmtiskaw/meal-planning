@@ -59,27 +59,7 @@ describe('getPlanners', () => {
 		});
 
 		describe('naming planners', () => {
-			it('does not update planners that already have names', async () => {
-				findReturns([makePlanner({ name: "Test User's Planner" })]);
-
-				await getPlanners();
-
-				expect(planners.updateOne).not.toHaveBeenCalled();
-			});
-
-			it('stores and returns a default name for a planner without one', async () => {
-				findReturns([makePlanner()]);
-
-				const result = await getPlanners();
-
-				expect(planners.updateOne).toHaveBeenCalledWith(
-					{ _id: '507f1f77bcf86cd799439011' },
-					{ $set: { name: "Test User's Planner" } },
-				);
-				expect(result[0].planner.name).toBe("Test User's Planner");
-			});
-
-			it('only names planners that have no name', async () => {
+			it('returns a default name only for planners without one', async () => {
 				const named = makePlanner({
 					name: 'Named Planner',
 					id: '507f1f77bcf86cd799439021',
@@ -89,11 +69,6 @@ describe('getPlanners', () => {
 
 				const result = await getPlanners();
 
-				expect(planners.updateOne).toHaveBeenCalledTimes(1);
-				expect(planners.updateOne).toHaveBeenCalledWith(
-					{ _id: '507f1f77bcf86cd799439022' },
-					{ $set: { name: "Test User's Planner" } },
-				);
 				expect(result.map(({ planner }) => planner.name)).toEqual([
 					'Named Planner',
 					"Test User's Planner",
