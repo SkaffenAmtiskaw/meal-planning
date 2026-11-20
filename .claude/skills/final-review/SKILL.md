@@ -107,8 +107,8 @@ The fixes and routed findings aren't worth noting in the summary below it, since
 Route the out-of-scope list.
 
 ## 12. Stop
-Tell the user the review is done and give them the PR's link. What happens to the PR depends on its base:
+Closing the story with `/close`, in a new session once the PR has merged, comes next and isn't part of this skill. So this session has nothing left to do: end the turn by asking in `wrap_up` whether to archive it.
+
+In the message after `wrap_up`, tell the user the review is done and give them the PR's link. What happens to the PR depends on its base:
 - **`develop`:** GitHub merges it on its own once its required checks pass.
 - **`main`:** tell them to merge it on GitHub once its checks pass, since that merge deploys.
-
-Closing the story with `/close`, in a new session once the PR has merged, comes next and isn't part of this skill.
