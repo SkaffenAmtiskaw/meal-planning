@@ -1,12 +1,15 @@
 import { fireEvent, render, screen } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-import { Stack } from '@mantine/core';
+import { Modal, Stack } from '@mantine/core';
+
+import { useIsMobile } from '@/_hooks';
 
 import { AddMealForm } from './AddMealForm';
 import { AddMealModal } from './AddMealModal';
 
 vi.mock('@mantine/core', async () => await import('#mocks/@mantine/core'));
+vi.mock('@/_hooks', async () => await import('#mocks/@/_hooks'));
 vi.mock('./AddMealForm', () => ({
 	AddMealForm: vi.fn(({ onCancel, onSuccess, onSubtitleChange }) => (
 		<div data-testid="add-meal-form">
@@ -27,10 +30,13 @@ vi.mock('./AddMealForm', () => ({
 }));
 
 const mockStack = vi.mocked(Stack);
+const mockModalRoot = vi.mocked(Modal.Root);
+const mockUseIsMobile = vi.mocked(useIsMobile);
 
 describe('AddMealModal', () => {
 	beforeEach(() => {
 		vi.resetAllMocks();
+		mockUseIsMobile.mockReturnValue(false);
 	});
 
 	const defaultProps = {
@@ -38,6 +44,42 @@ describe('AddMealModal', () => {
 		close: vi.fn(),
 		plannerId: 'planner-123',
 	};
+
+	it('is closed and renders no form while it has no data', () => {
+		render(<AddMealModal {...defaultProps} data={null} />);
+
+		expect(screen.queryByTestId('add-meal-form')).toBeNull();
+	});
+
+	it('is not full screen on desktop', () => {
+		render(<AddMealModal {...defaultProps} />);
+
+		expect(mockModalRoot).toHaveBeenCalledWith(
+			expect.objectContaining({ fullScreen: false }),
+			undefined,
+		);
+	});
+
+	it('is full screen on mobile', () => {
+		mockUseIsMobile.mockReturnValue(true);
+
+		render(<AddMealModal {...defaultProps} />);
+
+		expect(mockModalRoot).toHaveBeenCalledWith(
+			expect.objectContaining({ fullScreen: true }),
+			undefined,
+		);
+	});
+
+	it('clears the subtitle once it closes, so the next open starts without it', () => {
+		const { rerender } = render(<AddMealModal {...defaultProps} />);
+		fireEvent.click(screen.getByTestId('subtitle-button'));
+
+		rerender(<AddMealModal {...defaultProps} data={null} />);
+		rerender(<AddMealModal {...defaultProps} />);
+
+		expect(screen.queryByTestId('modal-subtitle')).toBeNull();
+	});
 
 	it('renders AddMealForm inside Modal.Body', () => {
 		render(<AddMealModal {...defaultProps} />);

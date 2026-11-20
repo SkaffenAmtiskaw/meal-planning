@@ -1,29 +1,22 @@
-import { act, render, renderHook, screen } from '@testing-library/react';
+import { act, renderHook } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import type { ReactNode } from 'react';
 
-import { Modal } from '@mantine/core';
-
-import { useIsMobile } from '@/_hooks';
-
 import { useCalendarModal } from './CalendarModalContext';
 import { CalendarModalProvider } from './CalendarModalProvider';
 
-vi.mock('@mantine/core', async () => await import('#mocks/@mantine/core'));
-vi.mock('@mantine/hooks', async () => await import('#mocks/@mantine/hooks'));
-vi.mock('@/_hooks', async () => await import('#mocks/@/_hooks'));
+import { AddMealModal } from '../AddMealForm/AddMealModal';
+
 vi.mock('../AddMealForm/AddMealModal', () => ({
-	AddMealModal: vi.fn(() => <div data-testid="add-meal-modal" />),
+	AddMealModal: vi.fn(() => null),
 }));
 
-const mockUseIsMobile = vi.mocked(useIsMobile);
-const mockModalRoot = vi.mocked(Modal.Root);
+const mockAddMealModal = vi.mocked(AddMealModal);
 
 describe('CalendarModalProvider', () => {
 	beforeEach(() => {
 		vi.resetAllMocks();
-		mockUseIsMobile.mockReturnValue(false);
 	});
 
 	const wrapper = ({ children }: { children: ReactNode }) => (
@@ -32,105 +25,54 @@ describe('CalendarModalProvider', () => {
 		</CalendarModalProvider>
 	);
 
-	it('renders its children', () => {
-		render(
-			<CalendarModalProvider plannerId="planner-123">
-				<div data-testid="child">Child</div>
-			</CalendarModalProvider>,
-		);
+	it('renders each frame closed while no modal is open', () => {
+		renderHook(() => useCalendarModal(), { wrapper });
 
-		expect(screen.getByTestId('child')).toBeDefined();
-	});
-
-	it('renders Modal.Root/Overlay/Content when a modal is open', () => {
-		const { result } = renderHook(() => useCalendarModal(), { wrapper });
-
-		act(() => {
-			result.current.open('add_meal', {});
-		});
-
-		expect(screen.getByTestId('modal-root')).toBeDefined();
-		expect(screen.getByTestId('modal-overlay')).toBeDefined();
-		expect(screen.getByTestId('add-meal-modal')).toBeDefined();
-	});
-
-	it('does not render modal content when no modal is open', () => {
-		render(
-			<CalendarModalProvider plannerId="planner-123">
-				<div data-testid="child">Child</div>
-			</CalendarModalProvider>,
-		);
-
-		expect(screen.queryByTestId('modal-root')).toBeNull();
-	});
-
-	it('returns null from modal content mapping when no modal type is active', () => {
-		vi.mocked(Modal.Root).mockImplementation(({ children }) => (
-			<div data-testid="modal-root">{children}</div>
-		));
-
-		render(
-			<CalendarModalProvider plannerId="planner-123">
-				<div data-testid="child">Child</div>
-			</CalendarModalProvider>,
-		);
-
-		expect(screen.getByTestId('modal-root')).toBeDefined();
-		expect(screen.queryByTestId('add-meal-modal')).toBeNull();
-	});
-
-	it('opens the modal when open is called with a modal type', () => {
-		const { result } = renderHook(() => useCalendarModal(), { wrapper });
-
-		act(() => {
-			result.current.open('add_meal', {});
-		});
-
-		expect(mockModalRoot).toHaveBeenCalledWith(
-			expect.objectContaining({
-				opened: true,
-				onClose: expect.any(Function),
-				size: 'xl',
-				fullScreen: false,
-			}),
+		expect(mockAddMealModal).toHaveBeenLastCalledWith(
+			expect.objectContaining({ data: null }),
 			undefined,
 		);
 	});
 
-	it('renders the modal full screen on mobile', () => {
-		mockUseIsMobile.mockReturnValue(true);
-
+	it("gives the open type's frame its data", () => {
 		const { result } = renderHook(() => useCalendarModal(), { wrapper });
 
 		act(() => {
-			result.current.open('add_meal', {});
+			result.current.open('add_meal', { initialDate: '2024-01-15' });
 		});
 
-		expect(mockModalRoot).toHaveBeenCalledWith(
-			expect.objectContaining({
-				opened: true,
-				size: 'xl',
-				fullScreen: true,
-				radius: 0,
-				transitionProps: { transition: 'fade', duration: 200 },
-			}),
+		expect(mockAddMealModal).toHaveBeenLastCalledWith(
+			expect.objectContaining({ data: { initialDate: '2024-01-15' } }),
 			undefined,
 		);
 	});
 
-	it('closes the modal when close is called', () => {
+	it('closes the frame when close is called', () => {
 		const { result } = renderHook(() => useCalendarModal(), { wrapper });
 
 		act(() => {
 			result.current.open('add_meal', {});
 		});
-
-		expect(screen.queryByTestId('modal-root')).toBeDefined();
-
 		act(() => {
 			result.current.close();
 		});
 
-		expect(screen.queryByTestId('modal-root')).toBeNull();
+		expect(mockAddMealModal).toHaveBeenLastCalledWith(
+			expect.objectContaining({ data: null }),
+			undefined,
+		);
+	});
+
+	it("closes the frame through the close it's given", () => {
+		const { result } = renderHook(() => useCalendarModal(), { wrapper });
+
+		act(() => {
+			result.current.open('add_meal', {});
+		});
+		act(() => {
+			mockAddMealModal.mock.lastCall?.[0].close();
+		});
+
+		expect(result.current.state).toEqual({ type: null, data: null });
 	});
 });
