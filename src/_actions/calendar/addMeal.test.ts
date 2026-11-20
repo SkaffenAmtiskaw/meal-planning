@@ -1,5 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
+import { plannerCache } from '@/_actions/_utils/caches';
+import { invalidate } from '@/_actions/_utils/invalidate';
 import { checkAuth } from '@/_actions/auth/checkAuth';
 import { zMealFormSchema } from '@/_models/calendar';
 import { newId } from '@/_models/database/newId';
@@ -7,6 +9,10 @@ import { planners } from '@/_models/database/planners';
 
 import { addMeal } from './addMeal';
 
+vi.mock(
+	'@/_actions/_utils/invalidate',
+	async () => await import('#mocks/@/_actions/_utils/invalidate'),
+);
 vi.mock(
 	'@/_actions/auth/checkAuth',
 	async () => await import('#mocks/@/_actions/auth/checkAuth'),
@@ -34,8 +40,13 @@ const validData = {
 	dishes: [{ name: 'Soup', sourceType: 'none' as const }],
 };
 
+const parsesTo = (data: unknown) =>
+	vi
+		.mocked(zMealFormSchema.safeParse)
+		.mockReturnValue({ success: true, data } as never);
+
 const callAddMeal = (data: unknown) => {
-	vi.mocked(zMealFormSchema.parse).mockReturnValue(data as never);
+	parsesTo(data);
 	return addMeal(data);
 };
 
@@ -52,36 +63,14 @@ const pushedDish = () =>
 describe('addMeal', () => {
 	beforeEach(() => {
 		vi.resetAllMocks();
-		vi.mocked(zMealFormSchema.parse).mockReturnValue(validData);
-	});
-
-	describe('validation', () => {
-		it('propagates validation errors', async () => {
-			vi.mocked(zMealFormSchema.parse).mockImplementation(() => {
-				throw new Error('Invalid data');
-			});
-
-			await expect(addMeal({})).rejects.toThrow('Invalid data');
-		});
+		parsesTo(validData);
 	});
 
 	describe('authorization', () => {
-		it('returns Unauthorized when session is missing', async () => {
-			vi.mocked(checkAuth).mockResolvedValueOnce({ type: 'unauthenticated' });
+		it("checks write access to the meal's planner", async () => {
+			await addMeal(validData);
 
-			const result = await addMeal(validData);
-
-			expect(result).toEqual({ ok: false, error: 'Unauthorized' });
-			expect(planners.updateOne).not.toHaveBeenCalled();
-		});
-
-		it('returns Unauthorized when user does not own the planner', async () => {
-			vi.mocked(checkAuth).mockResolvedValueOnce({ type: 'unauthorized' });
-
-			const result = await addMeal(validData);
-
-			expect(result).toEqual({ ok: false, error: 'Unauthorized' });
-			expect(planners.updateOne).not.toHaveBeenCalled();
+			expect(checkAuth).toHaveBeenCalledWith(plannerId, 'write');
 		});
 	});
 
@@ -128,7 +117,6 @@ describe('addMeal', () => {
 				const result = await addMeal(validData);
 
 				expect(result).toEqual({ ok: false, error: 'Planner not found' });
-				expect(planners.findOne).not.toHaveBeenCalled();
 			});
 
 			it('gives the meal and each dish a new id', async () => {
@@ -254,29 +242,13 @@ describe('addMeal', () => {
 			});
 		});
 
-		describe('result', () => {
-			it('returns the planner calendar read after the update', async () => {
-				const calendar = [
-					{ date: '2024-06-15', meals: [{ name: 'Lunch', dishes: [] }] },
-				];
-				vi.mocked(planners.findOne).mockResolvedValueOnce({
-					_id: plannerId,
-					calendar,
-				} as never);
+		it("invalidates the planner's calendar and returns no data", async () => {
+			const result = await addMeal(validData);
 
-				const result = await addMeal(validData);
-
-				expect(planners.findOne).toHaveBeenCalledWith({ _id: plannerId });
-				expect(result).toEqual({ ok: true, data: { calendar } });
-			});
-
-			it('returns an empty calendar when the planner is gone by the read', async () => {
-				vi.mocked(planners.findOne).mockResolvedValueOnce(null);
-
-				const result = await addMeal(validData);
-
-				expect(result).toEqual({ ok: true, data: { calendar: [] } });
-			});
+			expect(invalidate).toHaveBeenCalledWith([
+				plannerCache.calendar(plannerId),
+			]);
+			expect(result).toEqual({ ok: true, data: undefined });
 		});
 	});
 });

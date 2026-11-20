@@ -1,6 +1,5 @@
 'use client';
 
-import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 
 import { Modal, Stack, Text } from '@mantine/core';
@@ -10,7 +9,6 @@ import type { AddMealModalProps } from './types';
 import classes from './AddMealModal.module.css';
 
 export function AddMealModal({ data, close, plannerId }: AddMealModalProps) {
-	const router = useRouter();
 	const [subtitle, setSubtitle] = useState('');
 
 	return (
@@ -24,17 +22,14 @@ export function AddMealModal({ data, close, plannerId }: AddMealModalProps) {
 						</Text>
 					)}
 				</Stack>
-				<Modal.CloseButton />
+				<Modal.CloseButton aria-label="Close" />
 			</Modal.Header>
 			<Modal.Body className={classes.modalBody}>
 				<AddMealForm
 					plannerId={plannerId}
 					initialDate={data.initialDate}
 					onCancel={close}
-					onSuccess={() => {
-						close();
-						router.refresh();
-					}}
+					onSuccess={close}
 					onSubtitleChange={setSubtitle}
 				/>
 			</Modal.Body>

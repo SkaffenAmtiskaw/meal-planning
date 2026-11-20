@@ -12,5 +12,5 @@ import { vi } from 'vitest';
 
 export const addMeal = vi.fn(async () => ({
 	ok: true as const,
-	data: { calendar: [] },
+	data: undefined,
 }));
