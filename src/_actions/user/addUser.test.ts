@@ -128,53 +128,6 @@ describe('addUser', () => {
 		});
 	});
 
-	describe('with positional arguments', () => {
-		it('normalizes positional arguments and creates a new planner', async () => {
-			givenNewPlanner();
-
-			await addUser('cruella@deVil.com');
-
-			expect(addPlanner).toHaveBeenCalledOnce();
-			expect(users.insertOne).toHaveBeenCalledWith({
-				_id: 'new-id',
-				email: 'cruella@deVil.com',
-				planners: [
-					{ _id: 'new-id', planner: mockPlannerId, accessLevel: 'owner' },
-				],
-			});
-		});
-
-		it('normalizes positional arguments with a provided plannerId', async () => {
-			const existingPlannerId = 'existing-planner-id';
-
-			await addUser('cruella@deVil.com', existingPlannerId);
-
-			expect(addPlanner).not.toHaveBeenCalled();
-			expect(users.insertOne).toHaveBeenCalledWith({
-				_id: 'new-id',
-				email: 'cruella@deVil.com',
-				planners: [
-					{ _id: 'new-id', planner: existingPlannerId, accessLevel: 'read' },
-				],
-			});
-		});
-
-		it('normalizes positional arguments with a custom name', async () => {
-			givenNewPlanner();
-
-			await addUser('cruella@deVil.com', undefined, 'Cruella');
-
-			expect(users.insertOne).toHaveBeenCalledWith({
-				_id: 'new-id',
-				email: 'cruella@deVil.com',
-				name: 'Cruella',
-				planners: [
-					{ _id: 'new-id', planner: mockPlannerId, accessLevel: 'owner' },
-				],
-			});
-		});
-	});
-
 	describe('return value', () => {
 		it('returns the inserted user', async () => {
 			givenNewPlanner();

@@ -5,6 +5,7 @@ import { isAPIError } from 'better-auth/api';
 import { addUser } from '@/_actions/user/addUser';
 import { auth } from '@/_auth';
 import { pendingInvites } from '@/_models/database/pendingInvites';
+import { DEFAULT_USER_NAME } from '@/_models/user';
 import { reportError } from '@/_reporting/reportError';
 import { catchify } from '@/_utils/catchify';
 
@@ -41,7 +42,7 @@ export const signUpWithInvite = async (
 	}
 
 	// Normalize name
-	const normalizedName = (input.name || 'New User').trim();
+	const normalizedName = (input.name || DEFAULT_USER_NAME).trim();
 
 	// Step 3: Create Better Auth user using Admin API
 	const [betterAuthUser, createError] = await catchify(() =>

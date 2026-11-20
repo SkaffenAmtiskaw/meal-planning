@@ -17,36 +17,7 @@ interface AddUserOptions {
 	accessLevel?: AccessLevel;
 }
 
-function isAddUserOptions(arg: unknown): arg is AddUserOptions {
-	return typeof arg === 'object' && arg !== null && 'email' in arg;
-}
-
-export async function addUser(options: AddUserOptions): Promise<NewUser>;
-export async function addUser(
-	email: string,
-	plannerId?: string,
-	name?: string,
-): Promise<NewUser>;
-export async function addUser(
-	arg1: AddUserOptions | string,
-	arg2?: string,
-	arg3?: string,
-): Promise<NewUser> {
-	// Normalize to options object
-	let options: AddUserOptions;
-
-	if (isAddUserOptions(arg1)) {
-		// New style: options object
-		options = arg1;
-	} else {
-		// Old style: positional args
-		options = {
-			email: arg1,
-			plannerId: arg2,
-			name: arg3,
-		};
-	}
-
+export async function addUser(options: AddUserOptions): Promise<NewUser> {
 	const {
 		email,
 		plannerId,
@@ -67,7 +38,7 @@ export async function addUser(
 		// Error: must have plannerId if skipPlannerCreation is true
 		throw new Error('plannerId is required when skipPlannerCreation is true');
 	} else {
-		// A user with no name gets the schema's default only at its insert, so the planner uses that default too.
+		// The user's insert gives a missing name the schema's default, so the planner is named with that default too.
 		id = (await addPlanner(`${name || DEFAULT_USER_NAME}'s Planner`))._id;
 		isNewPlanner = true;
 	}
@@ -75,7 +46,6 @@ export async function addUser(
 	// Determine access level
 	const finalAccessLevel = accessLevel ?? (isNewPlanner ? 'owner' : 'read');
 
-	// A user with no name gets the schema's default name when it's inserted.
 	const user: NewUser = {
 		_id: newId(),
 		email,

@@ -40,7 +40,10 @@ describe('getOrCreateUser', () => {
 
 		const user = await getOrCreateUser('ariel@sea.com', 'Ariel');
 
-		expect(addUser).toHaveBeenCalledWith('ariel@sea.com', undefined, 'Ariel');
+		expect(addUser).toHaveBeenCalledWith({
+			email: 'ariel@sea.com',
+			name: 'Ariel',
+		});
 		expect(user).toBe(await vi.mocked(addUser).mock.results[0].value);
 	});
 });

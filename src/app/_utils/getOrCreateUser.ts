@@ -6,4 +6,4 @@ import { users } from '@/_models/database/users';
  * creates one, with a new planner the user owns.
  */
 export const getOrCreateUser = async (email: string, name: string) =>
-	(await users.findOne({ email })) ?? (await addUser(email, undefined, name));
+	(await users.findOne({ email })) ?? (await addUser({ email, name }));

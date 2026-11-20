@@ -40,7 +40,7 @@ describe('getPlanners', () => {
 
 	describe('when user is authenticated', () => {
 		it('fetches planners by the user planner IDs', async () => {
-			findReturns([makePlanner({ name: "Test User's Planner" })]);
+			findReturns([makePlanner()]);
 
 			await getPlanners();
 
@@ -50,7 +50,7 @@ describe('getPlanners', () => {
 		});
 
 		it('returns the fetched planners with their access levels', async () => {
-			const planner = makePlanner({ name: "Test User's Planner" });
+			const planner = makePlanner();
 			findReturns([planner]);
 
 			const result = await getPlanners();
@@ -117,12 +117,7 @@ describe('getPlanners', () => {
 				vi.mocked(getUser).mockResolvedValueOnce(
 					mockUserWithMissingAccess as never,
 				);
-				findReturns([
-					makePlanner({
-						id: '507f1f77bcf86cd799439011',
-						name: "Test User's Planner",
-					}),
-				]);
+				findReturns([makePlanner({ id: '507f1f77bcf86cd799439011' })]);
 
 				const result = await getPlanners();
 

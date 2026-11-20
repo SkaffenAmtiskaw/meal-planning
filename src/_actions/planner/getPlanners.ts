@@ -24,13 +24,7 @@ export const getPlanners = async (): Promise<PlannerWithAccess[]> => {
 	);
 
 	return found.map((planner) => ({
-		planner: {
-			_id: planner._id,
-			name: planner.name,
-			calendar: planner.calendar,
-			saved: planner.saved,
-			tags: planner.tags,
-		},
+		planner,
 		accessLevel: plannerAccessMap.get(planner._id) ?? 'read',
 	}));
 };
