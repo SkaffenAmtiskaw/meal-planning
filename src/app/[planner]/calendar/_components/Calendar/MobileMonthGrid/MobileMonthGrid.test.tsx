@@ -261,15 +261,15 @@ describe('MobileMonthGrid', () => {
 	});
 
 	it('does not move focus down from the last row', () => {
-		renderGrid({ selectedDate: DateTime.local(2024, 4, 30) });
+		renderGrid({ selectedDate: DateTime.local(2024, 3, 31) });
 
 		const cells = screen.getAllByTestId('mobile-day-cell');
 
-		expect(cells[30].getAttribute('tabindex')).toBe('0');
+		expect(cells[35].getAttribute('tabindex')).toBe('0');
 
-		fireEvent.keyDown(cells[30], { key: 'ArrowDown' });
+		fireEvent.keyDown(cells[35], { key: 'ArrowDown' });
 
-		expect(cells[30].getAttribute('tabindex')).toBe('0');
+		expect(cells[35].getAttribute('tabindex')).toBe('0');
 	});
 
 	it('does not move focus up from the first row', () => {
