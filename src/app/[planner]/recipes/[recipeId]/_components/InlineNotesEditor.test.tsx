@@ -1,16 +1,10 @@
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
-import { beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
-
-import { useRouter } from 'next/navigation';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { updateRecipeNotes } from '@/_actions/library';
 import { catchify } from '@/_utils/catchify';
 
 import { InlineNotesEditor } from './InlineNotesEditor';
-
-const mockRefresh = vi.fn();
-
-vi.mock('next/navigation', async () => await import('#mocks/next/navigation'));
 
 vi.mock('@mantine/core', async () => await import('#mocks/@mantine/core'));
 
@@ -35,14 +29,6 @@ const defaultProps = {
 };
 
 describe('InlineNotesEditor', () => {
-	beforeAll(() => {
-		const defaultRouter = vi.mocked(useRouter)();
-		vi.mocked(useRouter).mockReturnValue({
-			...defaultRouter,
-			refresh: mockRefresh,
-		});
-	});
-
 	beforeEach(() => {
 		vi.clearAllMocks();
 	});
@@ -71,7 +57,17 @@ describe('InlineNotesEditor', () => {
 		expect(screen.queryByTestId('notes-edit-button')).toBeNull();
 	});
 
-	it('cancel restores original notes and exits editing mode', () => {
+	it('editing starts from the current notes prop', () => {
+		const { rerender } = render(<InlineNotesEditor {...defaultProps} />);
+		rerender(<InlineNotesEditor {...defaultProps} notes="Now with lime" />);
+		fireEvent.click(screen.getByTestId('notes-edit-button'));
+		const textarea = screen.getByTestId(
+			'notes-textarea',
+		) as HTMLTextAreaElement;
+		expect(textarea.value).toBe('Now with lime');
+	});
+
+	it('cancel exits editing mode and shows the saved notes', () => {
 		render(<InlineNotesEditor {...defaultProps} />);
 		fireEvent.click(screen.getByTestId('notes-edit-button'));
 		fireEvent.change(screen.getByTestId('notes-textarea'), {
@@ -84,7 +80,7 @@ describe('InlineNotesEditor', () => {
 		);
 	});
 
-	it('save calls updateRecipeNotes with correct args then refreshes', async () => {
+	it('save calls updateRecipeNotes with the edited notes', async () => {
 		render(<InlineNotesEditor {...defaultProps} />);
 		fireEvent.click(screen.getByTestId('notes-edit-button'));
 		fireEvent.change(screen.getByTestId('notes-textarea'), {
@@ -98,7 +94,6 @@ describe('InlineNotesEditor', () => {
 				recipeId: 'recipe-1',
 				notes: 'Updated notes',
 			});
-			expect(mockRefresh).toHaveBeenCalledOnce();
 		});
 	});
 
@@ -125,7 +120,6 @@ describe('InlineNotesEditor', () => {
 			expect(screen.getByTestId('save-error').textContent).toBe('Unauthorized');
 			expect(screen.getByTestId('notes-textarea')).toBeDefined();
 		});
-		expect(mockRefresh).not.toHaveBeenCalled();
 	});
 
 	it('cancel clears save error', async () => {
@@ -145,14 +139,27 @@ describe('InlineNotesEditor', () => {
 		expect(screen.queryByTestId('save-error')).toBeNull();
 	});
 
-	it('cancel when notes is undefined resets value to empty string', () => {
+	it('editing starts empty when there are no notes', () => {
 		render(<InlineNotesEditor {...defaultProps} notes={undefined} />);
+		fireEvent.click(screen.getByTestId('notes-edit-button'));
+		const textarea = screen.getByTestId(
+			'notes-textarea',
+		) as HTMLTextAreaElement;
+		expect(textarea.value).toBe('');
+	});
+
+	it('reopening after cancel drops the cancelled edit', () => {
+		render(<InlineNotesEditor {...defaultProps} />);
 		fireEvent.click(screen.getByTestId('notes-edit-button'));
 		fireEvent.change(screen.getByTestId('notes-textarea'), {
 			target: { value: 'something' },
 		});
 		fireEvent.click(screen.getByTestId('notes-cancel-button'));
-		expect(screen.queryByTestId('notes-textarea')).toBeNull();
+		fireEvent.click(screen.getByTestId('notes-edit-button'));
+		const textarea = screen.getByTestId(
+			'notes-textarea',
+		) as HTMLTextAreaElement;
+		expect(textarea.value).toBe('Best served at midnight');
 	});
 
 	it('shows generic error when catchify returns an error', async () => {
@@ -170,6 +177,5 @@ describe('InlineNotesEditor', () => {
 			);
 			expect(screen.getByTestId('notes-textarea')).toBeDefined();
 		});
-		expect(mockRefresh).not.toHaveBeenCalled();
 	});
 });

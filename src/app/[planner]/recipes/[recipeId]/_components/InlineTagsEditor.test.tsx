@@ -5,23 +5,23 @@ import {
 	screen,
 	waitFor,
 } from '@testing-library/react';
-import { beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
-
-import { useRouter } from 'next/navigation';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { updateRecipeTags } from '@/_actions/library';
 
 import { InlineTagsEditor } from './InlineTagsEditor';
 
-const mockRefresh = vi.fn();
-
-vi.mock('next/navigation', async () => await import('#mocks/next/navigation'));
-
 vi.mock('@mantine/core', async () => await import('#mocks/@mantine/core'));
 
-vi.mock('@/_actions/library', () => ({
-	updateRecipeTags: vi.fn(),
-}));
+vi.mock(
+	'@/_actions/library',
+	async () => await import('#mocks/@/_actions/library'),
+);
+
+vi.mock('@/_hooks/useEditMode', async () => {
+	const { useEditMode } = await import('#mocks/@/_hooks');
+	return { useEditMode };
+});
 
 let capturedOnChange: ((value: string[]) => void) | undefined;
 
@@ -54,14 +54,6 @@ const defaultProps = {
 };
 
 describe('InlineTagsEditor', () => {
-	beforeAll(() => {
-		const defaultRouter = vi.mocked(useRouter)();
-		vi.mocked(useRouter).mockReturnValue({
-			...defaultRouter,
-			refresh: mockRefresh,
-		});
-	});
-
 	beforeEach(() => {
 		vi.clearAllMocks();
 		capturedOnChange = undefined;
@@ -91,6 +83,32 @@ describe('InlineTagsEditor', () => {
 		expect(screen.queryByText('Spicy')).toBeNull();
 	});
 
+	it('pills follow a new tagIds prop', () => {
+		const { rerender } = render(<InlineTagsEditor {...defaultProps} />);
+		rerender(<InlineTagsEditor {...defaultProps} tagIds={['tag-2']} />);
+		expect(screen.getByText('Sweet')).toBeDefined();
+		expect(screen.queryByText('Spicy')).toBeNull();
+	});
+
+	it('editing starts from the current tagIds prop', () => {
+		const { rerender } = render(<InlineTagsEditor {...defaultProps} />);
+		rerender(<InlineTagsEditor {...defaultProps} tagIds={['tag-2']} />);
+		fireEvent.click(screen.getByTestId('tags-edit-button'));
+		const combobox = screen.getByTestId('tag-combobox');
+		expect(combobox.getAttribute('data-value')).toBe('tag-2');
+	});
+
+	it('an edit in progress survives a tagIds prop change', () => {
+		const { rerender } = render(<InlineTagsEditor {...defaultProps} />);
+		fireEvent.click(screen.getByTestId('tags-edit-button'));
+		act(() => {
+			capturedOnChange?.([]);
+		});
+		rerender(<InlineTagsEditor {...defaultProps} tagIds={['tag-2']} />);
+		const combobox = screen.getByTestId('tag-combobox');
+		expect(combobox.getAttribute('data-value')).toBe('');
+	});
+
 	it('clicking edit button switches to edit mode', () => {
 		render(<InlineTagsEditor {...defaultProps} />);
 		fireEvent.click(screen.getByTestId('tags-edit-button'));
@@ -110,7 +128,7 @@ describe('InlineTagsEditor', () => {
 		expect(combobox.getAttribute('data-value')).toBe('tag-1,tag-2');
 	});
 
-	it('cancel resets value and exits edit mode', () => {
+	it('cancel drops the edit and exits edit mode', () => {
 		render(<InlineTagsEditor {...defaultProps} />);
 		fireEvent.click(screen.getByTestId('tags-edit-button'));
 		act(() => {
@@ -122,7 +140,7 @@ describe('InlineTagsEditor', () => {
 		expect(screen.queryByText('Sweet')).toBeNull();
 	});
 
-	it('save calls updateRecipeTags with correct args then refreshes', async () => {
+	it('save calls updateRecipeTags with the edited tags', async () => {
 		vi.mocked(updateRecipeTags).mockResolvedValueOnce({
 			ok: true,
 			data: undefined,
@@ -140,7 +158,6 @@ describe('InlineTagsEditor', () => {
 				recipeId: 'recipe-1',
 				tags: ['tag-1', 'tag-2'],
 			});
-			expect(mockRefresh).toHaveBeenCalledOnce();
 		});
 	});
 
@@ -171,7 +188,6 @@ describe('InlineTagsEditor', () => {
 			expect(screen.getByTestId('save-error').textContent).toBe('Unauthorized');
 			expect(screen.getByTestId('tag-combobox')).toBeDefined();
 		});
-		expect(mockRefresh).not.toHaveBeenCalled();
 	});
 
 	it('cancel clears save error', async () => {
@@ -205,6 +221,5 @@ describe('InlineTagsEditor', () => {
 			);
 			expect(screen.getByTestId('tag-combobox')).toBeDefined();
 		});
-		expect(mockRefresh).not.toHaveBeenCalled();
 	});
 });

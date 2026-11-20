@@ -1,6 +1,5 @@
 'use client';
 
-import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 
 import { ActionIcon, Group, Stack, Text, Textarea } from '@mantine/core';
@@ -17,11 +16,17 @@ type Props = {
 };
 
 export const InlineNotesEditor = ({ plannerId, recipeId, notes }: Props) => {
-	const router = useRouter();
 	const [editing, { enterEditing, exitEditing }] = useEditMode();
+	// The edit in progress. View mode draws from `notes`, so a server refresh
+	// shows there, and each edit starts from the notes as they are then.
 	const [value, setValue] = useState(notes ?? '');
 	const [saving, setSaving] = useState(false);
 	const [saveError, setSaveError] = useState<string | null>(null);
+
+	const handleEdit = () => {
+		setValue(notes ?? '');
+		enterEditing();
+	};
 
 	const handleSave = async () => {
 		setSaving(true);
@@ -39,11 +44,9 @@ export const InlineNotesEditor = ({ plannerId, recipeId, notes }: Props) => {
 			return;
 		}
 		exitEditing();
-		router.refresh();
 	};
 
 	const handleCancel = () => {
-		setValue(notes ?? '');
 		exitEditing();
 		setSaveError(null);
 	};
@@ -57,7 +60,7 @@ export const InlineNotesEditor = ({ plannerId, recipeId, notes }: Props) => {
 				{!editing && (
 					<ActionIcon
 						data-testid="notes-edit-button"
-						onClick={enterEditing}
+						onClick={handleEdit}
 						size="xs"
 						variant="subtle"
 					>
