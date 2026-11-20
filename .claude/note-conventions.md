@@ -20,7 +20,7 @@ How notes are organized and move through their lifecycle. The Roadmap decides or
 
 # Templates
 Each note type's template is in `.claude/note-templates/`. For a story, pick by the shape of the fix, not where the work came from:
-- **Feature** - new user-facing behavior, often with a design handoff.
+- **Feature** - work planned from what the app does for its users, often with a design handoff.
 - **Bug** - something is broken and the fix is local.
 - **Pattern** - introduce or standardize a convention and migrate code to it.
 - **Infra** - build something new that the app is built, tested or run with, such as CI, a test setup or a hosted service, whether or not it sets conventions for later work.
