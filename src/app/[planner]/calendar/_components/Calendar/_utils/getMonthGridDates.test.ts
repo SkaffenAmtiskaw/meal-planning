@@ -5,11 +5,11 @@ import { DateTime } from 'luxon';
 import { getMonthGridDates } from './getMonthGridDates';
 
 describe('getMonthGridDates', () => {
-	it('returns complete weeks for a standard month', () => {
+	it('returns six full weeks for a standard month', () => {
 		const september2024 = DateTime.local(2024, 9, 15);
 		const result = getMonthGridDates(september2024);
 
-		expect(result.length % 7).toBe(0);
+		expect(result).toHaveLength(42);
 	});
 
 	it('starts the grid on Sunday', () => {
@@ -32,7 +32,7 @@ describe('getMonthGridDates', () => {
 		const result = getMonthGridDates(september2024);
 
 		expect(result[result.length - 1].month).toBe(10);
-		expect(result[result.length - 1].day).toBe(5);
+		expect(result[result.length - 1].day).toBe(12);
 	});
 
 	it('handles a month that starts on Sunday', () => {
@@ -47,8 +47,17 @@ describe('getMonthGridDates', () => {
 		const august2024 = DateTime.local(2024, 8, 15);
 		const result = getMonthGridDates(august2024);
 
-		expect(result[result.length - 1].month).toBe(8);
-		expect(result[result.length - 1].day).toBe(31);
+		expect(result[result.length - 1].month).toBe(9);
+		expect(result[result.length - 1].day).toBe(7);
+	});
+
+	it('gives a month that fits in exactly four weeks six rows', () => {
+		const february2026 = DateTime.local(2026, 2, 15);
+		const result = getMonthGridDates(february2026);
+
+		expect(result).toHaveLength(42);
+		expect(result[0].toISODate()).toBe('2026-02-01');
+		expect(result[result.length - 1].toISODate()).toBe('2026-03-14');
 	});
 
 	it('does not mutate input', () => {
