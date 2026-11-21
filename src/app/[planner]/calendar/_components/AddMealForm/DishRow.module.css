@@ -9,7 +9,7 @@
 /* Use the closest existing chalk surface token for the expanded background tint. */
 .expanded {
 	background-color: var(--mantine-color-chalk-0);
-	border-color: var(--mantine-color-forest-2);
+	border-color: var(--mantine-primary-color-2);
 }
 
 /* Mantine ActionIcon has no hover-background-color prop. */

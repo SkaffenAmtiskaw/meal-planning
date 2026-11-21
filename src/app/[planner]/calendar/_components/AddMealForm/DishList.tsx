@@ -32,7 +32,6 @@ export const DishList = ({
 
 				<Button
 					variant="outline"
-					color="forest"
 					size="sm"
 					leftSection={<IconPlus size={14} />}
 					onClick={onAddDish}
