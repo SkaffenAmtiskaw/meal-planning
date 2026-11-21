@@ -1,7 +1,6 @@
 import { act, render, screen } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-vi.mock('@mantine/core', async () => await import('#mocks/@mantine/core'));
 vi.mock(
 	'@/_actions/sharing/getUserInvites',
 	async () => await import('#mocks/@/_actions/sharing/getUserInvites'),
@@ -11,8 +10,22 @@ vi.mock(
 	'@/_reporting/reportError',
 	async () => await import('#mocks/@/_reporting/reportError'),
 );
+vi.mock('./InviteCountBadge', () => ({
+	InviteCountBadge: ({
+		count,
+		children,
+	}: {
+		count: number;
+		children: React.ReactNode;
+	}) => (
+		<div data-testid="invite-badge" data-count={count}>
+			{children}
+		</div>
+	),
+}));
 
 import { getUserInvites } from '@/_actions/sharing/getUserInvites';
+import type { UserInvite } from '@/_actions/sharing/types';
 import { getUser } from '@/_actions/user';
 import { reportError } from '@/_reporting/reportError';
 
@@ -27,112 +40,63 @@ const mockUser = {
 	planners: [],
 } as unknown as Awaited<ReturnType<typeof getUser>>;
 
+// The badge only counts the invites, so their contents don't matter.
+const twoInvites = [{}, {}] as UserInvite[];
+
+const renderWithData = async () =>
+	render(
+		await InviteBadgeWithData({
+			children: <div data-testid="child">Child</div>,
+		}),
+	);
+
 describe('InviteBadge', () => {
 	beforeEach(() => {
 		vi.resetAllMocks();
 	});
 
 	describe('InviteBadgeWithData', () => {
-		it('renders invite indicator with count when user has invites', async () => {
+		it('passes the invite count to the badge when the user has invites', async () => {
 			mockGetUser.mockResolvedValue(mockUser);
-			mockGetUserInvites.mockResolvedValue({
-				invites: [
-					{
-						id: '1',
-						plannerId: 'p1',
-						plannerName: 'Planner 1',
-						invitedBy: 'User A',
-						accessLevel: 'write',
-						invitedAt: '2024-01-01T00:00:00Z',
-						expiresAt: '2024-01-15T00:00:00Z',
-						token: 't1',
-					},
-					{
-						id: '2',
-						plannerId: 'p2',
-						plannerName: 'Planner 2',
-						invitedBy: 'User B',
-						accessLevel: 'read',
-						invitedAt: '2024-01-02T00:00:00Z',
-						expiresAt: '2024-01-16T00:00:00Z',
-						token: 't2',
-					},
-				],
-			});
+			mockGetUserInvites.mockResolvedValue({ invites: twoInvites });
 
-			render(
-				await InviteBadgeWithData({
-					children: <div data-testid="child">Child</div>,
-				}),
-			);
+			await renderWithData();
 
 			expect(mockGetUserInvites).toHaveBeenCalledWith('test@example.com');
 			expect(
-				screen.getByTestId('invite-badge').getAttribute('data-label'),
+				screen.getByTestId('invite-badge').getAttribute('data-count'),
 			).toBe('2');
 			expect(screen.getByTestId('child')).toBeTruthy();
 		});
 
-		it('renders children without indicator when user is not authenticated', async () => {
+		it('renders children without the badge when no user is found', async () => {
 			mockGetUser.mockResolvedValue(null);
 
-			render(
-				await InviteBadgeWithData({
-					children: <div data-testid="child">Child</div>,
-				}),
-			);
+			await renderWithData();
 
-			expect(mockGetUser).toHaveBeenCalled();
 			expect(mockGetUserInvites).not.toHaveBeenCalled();
 			expect(screen.getByTestId('child')).toBeTruthy();
 			expect(screen.queryByTestId('invite-badge')).toBeNull();
 		});
 
-		it('renders children without indicator when user has no email', async () => {
-			mockGetUser.mockResolvedValue({
-				email: undefined,
-				name: 'Test User',
-				planners: [],
-			} as unknown as Awaited<ReturnType<typeof getUser>>);
-
-			render(
-				await InviteBadgeWithData({
-					children: <div data-testid="child">Child</div>,
-				}),
-			);
-
-			expect(mockGetUser).toHaveBeenCalled();
-			expect(mockGetUserInvites).not.toHaveBeenCalled();
-			expect(screen.getByTestId('child')).toBeTruthy();
-			expect(screen.queryByTestId('invite-badge')).toBeNull();
-		});
-
-		it('renders children when getUserInvites returns an error', async () => {
+		it('renders children without the badge when getUserInvites returns an error', async () => {
 			mockGetUser.mockResolvedValue(mockUser);
 			mockGetUserInvites.mockResolvedValue({
 				invites: [],
 				error: 'Failed to fetch invites',
 			});
 
-			render(
-				await InviteBadgeWithData({
-					children: <div data-testid="child">Child</div>,
-				}),
-			);
+			await renderWithData();
 
 			expect(screen.getByTestId('child')).toBeTruthy();
 			expect(screen.queryByTestId('invite-badge')).toBeNull();
 		});
 
-		it('renders children without indicator when user has no invites', async () => {
+		it('renders children without the badge when the user has no invites', async () => {
 			mockGetUser.mockResolvedValue(mockUser);
 			mockGetUserInvites.mockResolvedValue({ invites: [] });
 
-			render(
-				await InviteBadgeWithData({
-					children: <div data-testid="child">Child</div>,
-				}),
-			);
+			await renderWithData();
 
 			expect(screen.getByTestId('child')).toBeTruthy();
 			expect(screen.queryByTestId('invite-badge')).toBeNull();
@@ -144,11 +108,7 @@ describe('InviteBadge', () => {
 			mockGetUser.mockResolvedValue(mockUser);
 			mockGetUserInvites.mockRejectedValue(error);
 
-			render(
-				await InviteBadgeWithData({
-					children: <div data-testid="child">Child</div>,
-				}),
-			);
+			await renderWithData();
 
 			expect(reportError).toHaveBeenCalledWith(error);
 			expect(screen.getByTestId('child')).toBeTruthy();
@@ -158,11 +118,7 @@ describe('InviteBadge', () => {
 		it('renders children without reporting when there is no valid session', async () => {
 			mockGetUser.mockRejectedValue(new Error('No Valid Session'));
 
-			render(
-				await InviteBadgeWithData({
-					children: <div data-testid="child">Child</div>,
-				}),
-			);
+			await renderWithData();
 
 			expect(reportError).not.toHaveBeenCalled();
 			expect(screen.getByTestId('child')).toBeTruthy();
@@ -172,14 +128,15 @@ describe('InviteBadge', () => {
 
 	describe('InviteBadge', () => {
 		it('renders children as Suspense fallback while loading', async () => {
-			// Rendering an async server component in a client test env makes React
-			// log its "async Client Component" warning; it is expected here.
+			/**
+			 * Rendering an async server component in a client test env makes React
+			 * log its "async Client Component" warning; it is expected here.
+			 */
 			const consoleSpy = vi
 				.spyOn(console, 'error')
 				.mockImplementation(() => {});
 
 			mockGetUser.mockImplementation(() => new Promise(() => {}));
-			mockGetUserInvites.mockImplementation(() => new Promise(() => {}));
 
 			await act(async () => {
 				render(

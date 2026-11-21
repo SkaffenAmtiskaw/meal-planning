@@ -1,3 +1,5 @@
+import type { MantineColorsTuple } from '@mantine/core';
+
 import type { TagColor } from './types';
 
 export const TAG_COLORS: Record<
@@ -16,27 +18,13 @@ export const TAG_COLORS: Record<
 	slate: { bg: '#E0E4ED', text: '#1C2744', border: '#8D99BE' },
 };
 
-export const THEME_COLORS = {
-	navy: '#1C3144',
-	forest: '#44633F',
-	sage: '#B1BA95',
-	ember: '#FF6542',
-	chalk: '#EFE7E9',
-	sageLight: '#F2F3EE',
-} as const;
+/** The navbar's background. No forest shade matches it. */
+export const SAGE = '#B1BA95';
 
-export const EMBER_RAMPS: [
-	string,
-	string,
-	string,
-	string,
-	string,
-	string,
-	string,
-	string,
-	string,
-	string,
-] = [
+/** The border of text inputs. No chalk shade matches it. */
+export const INPUT_BORDER = '#C8C0C3';
+
+export const EMBER_RAMPS: MantineColorsTuple = [
 	'#FFF0EB',
 	'#FFE0D6',
 	'#FFD0BF',
@@ -49,18 +37,7 @@ export const EMBER_RAMPS: [
 	'#993A28',
 ];
 
-export const FOREST_RAMPS: [
-	string,
-	string,
-	string,
-	string,
-	string,
-	string,
-	string,
-	string,
-	string,
-	string,
-] = [
+export const FOREST_RAMPS: MantineColorsTuple = [
 	'#EFF3EF',
 	'#DFE7DF',
 	'#CFDBCE',
@@ -73,42 +50,23 @@ export const FOREST_RAMPS: [
 	'#24361E',
 ];
 
-export const NAVY_RAMPS: [
-	string,
-	string,
-	string,
-	string,
-	string,
-	string,
-	string,
-	string,
-	string,
-	string,
-] = [
+export const NAVY_RAMPS: MantineColorsTuple = [
 	'#E8EBEE',
 	'#D1D7DD',
 	'#BAC3CC',
 	'#A3AFBB',
 	'#8C9BAA',
 	'#1C3144',
-	'#192C3D',
-	'#162736',
-	'#132230',
+	// Shade 6 is the hover on a filled navy control, so most of the drop from shade 5 to
+	// shade 9 comes before it, where the hover shows. Shade 9 is the text of the light and
+	// subtle variants, so it stays navy rather than going near-black.
+	'#152635',
+	'#142331',
+	'#12202D',
 	'#101D29',
 ];
 
-export const CHALK_RAMPS: [
-	string,
-	string,
-	string,
-	string,
-	string,
-	string,
-	string,
-	string,
-	string,
-	string,
-] = [
+export const CHALK_RAMPS: MantineColorsTuple = [
 	'#FAF8F9',
 	'#F5F3F4',
 	'#F0EDEE',

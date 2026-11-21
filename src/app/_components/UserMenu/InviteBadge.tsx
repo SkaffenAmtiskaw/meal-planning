@@ -2,60 +2,40 @@ import 'server-only';
 
 import { Suspense } from 'react';
 
-import { Indicator } from '@mantine/core';
-
 import { getUserInvites } from '@/_actions/sharing/getUserInvites';
 import { getUser } from '@/_actions/user';
 import { isNoSessionError } from '@/_actions/user/noSessionError';
 import { reportError } from '@/_reporting/reportError';
-import { THEME_COLORS } from '@/_theme/colors';
+
+import { InviteCountBadge } from './InviteCountBadge';
 
 interface InviteBadgeProps {
 	children: React.ReactNode;
 }
 
-// Async server component that fetches data - exported for testing
+// Exported so the tests can await it directly rather than through Suspense.
 export async function InviteBadgeWithData({ children }: InviteBadgeProps) {
 	try {
 		const user = await getUser();
-		const email = user?.email;
 
-		if (!email) {
+		if (!user) {
 			return <>{children}</>;
 		}
 
-		const result = await getUserInvites(email);
-
-		if (result.error) {
-			return <>{children}</>;
-		}
-
+		const result = await getUserInvites(user.email);
 		const count = result.invites.length;
 
-		if (count === 0) {
+		if (result.error || count === 0) {
 			return <>{children}</>;
 		}
 
-		return (
-			<Indicator
-				data-testid="invite-badge"
-				color={THEME_COLORS.ember}
-				size={16}
-				label={count}
-				maxValue={99}
-				inline
-				showZero={false}
-			>
-				{children}
-			</Indicator>
-		);
+		return <InviteCountBadge count={count}>{children}</InviteCountBadge>;
 	} catch (error) {
 		if (!isNoSessionError(error)) await reportError(error);
 		return <>{children}</>;
 	}
 }
 
-// Main component with Suspense
 export function InviteBadge({ children }: InviteBadgeProps) {
 	return (
 		<Suspense fallback={children}>

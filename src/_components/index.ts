@@ -3,6 +3,7 @@ export * from './ConfirmModal';
 export * from './FormFeedbackAlert';
 export * from './FullWidthListItem';
 export * from './GoogleLogoSVG';
+export * from './LinkAnchor';
 export * from './LinkButton';
 export * from './PillButton';
 export * from './StringArrayInput';

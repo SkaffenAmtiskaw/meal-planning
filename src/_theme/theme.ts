@@ -1,35 +1,29 @@
+/**
+ * The theme holds the cta variant's resolver, a function, and the root layout passes the theme to
+ * MantineProvider. A server component can't pass a function to a client one, so the theme is client code.
+ */
 'use client';
 
+import { createTheme, type MantineTheme } from '@mantine/core';
+
 import {
-	createTheme,
-	defaultVariantColorsResolver,
-	type MantineTheme,
-	type VariantColorsResolver,
-} from '@mantine/core';
+	CHALK_RAMPS,
+	EMBER_RAMPS,
+	FOREST_RAMPS,
+	INPUT_BORDER,
+	NAVY_RAMPS,
+	SAGE,
+} from './colors';
 
-import { CHALK_RAMPS, EMBER_RAMPS, FOREST_RAMPS, NAVY_RAMPS } from './colors';
-
-const variantColorResolver: VariantColorsResolver = (input) => {
-	const defaultResolvedColors = defaultVariantColorsResolver(input);
-
-	if (input.variant === 'cta') {
-		return {
-			...defaultResolvedColors,
-			background: input.theme.colors.ember[5],
-			hover: input.theme.colors.ember[6],
-			color: input.theme.white,
-			border: 'none',
-		};
-	}
-
-	return defaultResolvedColors;
-};
+import { indicatorDefaults } from './components/Indicator/Indicator';
+import { navLinkDefaults } from './components/NavLink/NavLink';
+import { variantColorResolver } from './variantColorResolver/variantColorResolver';
 
 export const theme = createTheme({
 	fontFamily: 'Inter, sans-serif',
 	fontFamilyMonospace: 'JetBrains Mono, monospace',
-	primaryColor: 'forest',
-	primaryShade: { light: 5, dark: 6 },
+	primaryColor: 'navy',
+	primaryShade: 5,
 	defaultRadius: 'md',
 	variantColorResolver,
 	colors: {
@@ -40,44 +34,29 @@ export const theme = createTheme({
 	},
 	components: {
 		AppShell: {
-			styles: {
+			styles: (theme: MantineTheme) => ({
 				header: {
-					backgroundColor: '#1C3144',
+					backgroundColor: theme.colors.navy[5],
 					borderBottom: 'none',
 				},
 				navbar: {
-					backgroundColor: '#B1BA95',
+					backgroundColor: SAGE,
 					borderRight: 'none',
 				},
-			},
-		},
-		Button: {
-			defaultProps: { radius: 'md' },
+			}),
 		},
 		Input: {
 			styles: (theme: MantineTheme) => ({
 				input: {
-					backgroundColor: '#FFFFFF',
-					borderColor: '#C8C0C3',
+					backgroundColor: theme.white,
+					borderColor: INPUT_BORDER,
 					color: theme.colors.navy[5],
-					'&:focus': {
-						borderColor: 'rgba(68, 99, 63, 0.4)',
-					},
 				},
 			}),
 		},
-		InputWrapper: {
-			styles: {
-				input: {
-					'&:focus-within': {
-						borderColor: 'rgba(68, 99, 63, 0.4)',
-					},
-				},
-			},
-		},
+		Indicator: indicatorDefaults,
 		Modal: {
 			defaultProps: {
-				radius: 'md',
 				overlayProps: { blur: 2 },
 			},
 			vars: () => ({
@@ -86,14 +65,11 @@ export const theme = createTheme({
 				},
 			}),
 		},
+		NavLink: navLinkDefaults,
 		Anchor: {
+			// Links and text are both navy, so the underline is what marks a link.
 			defaultProps: {
-				c: 'forest',
-			},
-		},
-		Tabs: {
-			defaultProps: {
-				color: 'forest',
+				underline: 'always',
 			},
 		},
 		Text: {
@@ -102,9 +78,13 @@ export const theme = createTheme({
 			},
 		},
 		SegmentedControl: {
-			defaultProps: {
-				color: 'forest',
-			},
+			/**
+			 * Without a color, the selected option is a white pill with black text. Mantine's
+			 * grey track and labels stay.
+			 */
+			defaultProps: (theme: MantineTheme) => ({
+				color: theme.primaryColor,
+			}),
 		},
 	},
 });

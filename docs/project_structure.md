@@ -35,7 +35,9 @@ the zod schemas of the stored data, and in `database/` the data module that read
 ## _reporting/
 the PostHog error reporting (see `docs/project_conventions.md`, "Error Reporting")
 ## _theme/
-the Mantine theme and the app's color values (see `docs/theme.md`)
+the Mantine theme and the app's color values (see `docs/theme.md`). Most component defaults sit in `theme.ts`. A default gets a folder of its own, `components/<Component>/`, in two cases:
+- **It needs a CSS module,** such as for a hover rule the theme can't set. The folder keeps the default and its CSS module together, so everything that sets the component's look is in one place.
+- **It has a branch,** such as one on the component's variant. Coverage skips the files directly in `src/_theme/`, though not its subfolders, so a branch in `theme.ts` would go uncounted. One in a subfolder counts toward the 100% coverage threshold, so it needs a test beside it (see `docs/unit_tests.md`).
 ## _utils/
 generic utilities that know nothing about the app's domain (see `docs/project_conventions.md`, "Generic vs Domain-Specific Code")
 ## app/

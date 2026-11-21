@@ -1,6 +1,6 @@
 'use client';
 
-import { Button, Group, Stack, Text, UnstyledButton } from '@mantine/core';
+import { Button, Group, Stack, Text } from '@mantine/core';
 import { IconPlus } from '@tabler/icons-react';
 
 import { DishRow } from './DishRow';
@@ -32,7 +32,6 @@ export const DishList = ({
 
 				<Button
 					variant="outline"
-					color="forest"
 					size="sm"
 					leftSection={<IconPlus size={14} />}
 					onClick={onAddDish}
@@ -53,10 +52,15 @@ export const DishList = ({
 				/>
 			))}
 
-			<UnstyledButton onClick={onAddDish} className={classes.addAnother}>
-				<IconPlus size={16} />
-				<Text c="inherit">Add another dish</Text>
-			</UnstyledButton>
+			<Button
+				variant="subtle"
+				fullWidth
+				leftSection={<IconPlus size={16} />}
+				onClick={onAddDish}
+				className={classes.addAnother}
+			>
+				Add another dish
+			</Button>
 		</Stack>
 	);
 };
