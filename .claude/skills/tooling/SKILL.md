@@ -75,7 +75,7 @@ How to handle text the change made wrong depends on what it is:
 Route the out-of-scope list. Then open the change's PR as `opening-the-pr.md`, in the `building-code` skill's folder, describes. Its held notes work is the Roadmap edits, Now line removals and note deletions you held.
 
 ## 7. Make the Held Edits
-The held edits are the Roadmap edits, Now line removals and note deletions from steps 3 and 5. If you held none, skip this step. Otherwise, wait for the PR to merge and make them, as `waiting-for-the-merge.md` in the `building-code` skill's folder describes. Delete each held note as the `deleting-a-note` skill describes, and remove each held Now line as step 4 of that skill describes, so the building goal gets its next command if the line was its last work.
+The held edits are the Roadmap edits, Now line removals and note deletions from steps 3 and 5. If you held none, skip this step. Otherwise, wait for the PR to merge and make them, as `waiting-for-the-merge.md` in the `building-code` skill's folder describes. Delete each held note as the `deleting-a-note` skill describes, and remove each held Now line as step 3 of that skill describes, so the building goal gets its next command if the line was its last work.
 
 ## 8. Stop
 Each change gets its own session, so this session has nothing left to do. End the turn by asking in `wrap_up` whether to archive it.

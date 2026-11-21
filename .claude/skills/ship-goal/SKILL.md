@@ -32,15 +32,14 @@ If there's any gap, tell the user to run `/shape-goal <goal>` in a new session, 
 
 ## 3. Close Out the Goal
 The steps, in order:
-1. **What the release runs:** run `git ls-tree --name-only origin/develop scripts/release-tasks/` to list the release tasks, and read each one's opening comment. Then read the goal note's `# After Deploy` section, if it lists any checks. Keep both for section 4, because item 6 deletes the goal note before the release PR merges.
-2. **What's worth keeping:** check the goal note for anything worth keeping, as the `deleting-a-note` skill describes in step 1.
-3. **Its references:** run `sh scripts/note-refs.sh "<goal>"`. Leave out the goal's line under Goals, since item 4 below removes it. The other matches, by kind:
-   - **In the vault:** if an open story relies on content only the goal note holds, copy that content into the story's note first. Then reword or remove the link, as the `deleting-a-note` skill describes in step 3.
+1. **What the release runs:** run `git ls-tree --name-only origin/develop scripts/release-tasks/` to list the release tasks, and read each one's opening comment. Then read the goal note's `# After Deploy` section, if it lists any checks. Keep both for section 4, because item 5 deletes the goal note before the release PR merges.
+2. **Its references:** run `sh scripts/note-refs.sh "<goal>"`. Leave out the goal's line under Goals, since item 3 below removes it. The other matches, by kind:
+   - **In the vault:** if an open story relies on content only the goal note holds, copy that content into the story's note first. Then reword or remove the link, as the `deleting-a-note` skill describes in step 2.
    - **Outside the vault,** such as a doc or a skill: add it to the out-of-scope list.
-4. **The Roadmap:** remove the goal's line under Goals. End the planning goal's line with ` · Next: /roadmap once the release PR merges`, so the Roadmap shows what starts it building. Leave its `- planning` marker as it is, because `/roadmap` promotes it.
-5. **The out-of-scope list:** triage and route it, as the `triaging-out-of-scope-work` skill describes.
-6. **The note:** delete the goal note.
-7. **Unused files:** delete the files nothing references anymore, as the `deleting-a-note` skill describes in step 6.
+3. **The Roadmap:** remove the goal's line under Goals. End the planning goal's line with ` · Next: /roadmap once the release PR merges`, so the Roadmap shows what starts it building. Leave its `- planning` marker as it is, because `/roadmap` promotes it.
+4. **The out-of-scope list:** triage and route it, as the `triaging-out-of-scope-work` skill describes.
+5. **The note:** delete the goal note.
+6. **Unused files:** delete the files nothing references anymore, as the `deleting-a-note` skill describes in step 5.
 
 ## 4. Open the Release PR
 Run `gh pr create --base main --head develop --title "<goal>"`, with a body of a sentence or two on what the goal set out to do. If section 3 found release tasks or After Deploy checks, add a `## Release Tasks` list naming each task and when it runs, in filename order, and a `## After Deploy` list of the checks, so they're on record after the goal note is gone.

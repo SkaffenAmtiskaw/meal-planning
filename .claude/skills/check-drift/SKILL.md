@@ -94,7 +94,6 @@ Then update Where It Stands, with a `^status` line such as "Drift found. Next: /
 Show the user:
 1. **Changes made without asking:** a table with one row per change, saying where it is and what changed.
 2. **Decisions:** one line per answer they gave, and where it was recorded.
-3. **Doc gaps:** each approved draft, with a one-line summary, and whether a worktree session is writing it or it's in the Docs Updates note.
-4. **Where the note goes next:** any change to `status` or `blocked-by`, and the new `^status` line.
+3. **Where the note goes next:** any change to `status` or `blocked-by`, and the new `^status` line.
 
 Then triage any items added to the out-of-scope list since step 4, and route the list. Last, give the user the command for the note's next step, such as `/plan-steps <note name>`, to run in a new session, and stop. This session's context is full of the checkers' reports, which the next skill doesn't need.
