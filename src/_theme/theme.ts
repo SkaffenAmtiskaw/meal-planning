@@ -46,20 +46,8 @@ export const theme = createTheme({
 					backgroundColor: '#FFFFFF',
 					borderColor: '#C8C0C3',
 					color: theme.colors.navy[5],
-					'&:focus': {
-						borderColor: 'rgba(68, 99, 63, 0.4)',
-					},
 				},
 			}),
-		},
-		InputWrapper: {
-			styles: {
-				input: {
-					'&:focus-within': {
-						borderColor: 'rgba(68, 99, 63, 0.4)',
-					},
-				},
-			},
 		},
 		Modal: {
 			defaultProps: {
