@@ -1,30 +1,15 @@
+/**
+ * The theme holds the cta variant's resolver, a function, and the root layout passes the theme to
+ * MantineProvider. A server component can't pass a function to a client one, so the theme is client code.
+ */
 'use client';
 
-import {
-	createTheme,
-	defaultVariantColorsResolver,
-	type MantineTheme,
-	type VariantColorsResolver,
-} from '@mantine/core';
+import { createTheme, type MantineTheme } from '@mantine/core';
 
 import { CHALK_RAMPS, EMBER_RAMPS, FOREST_RAMPS, NAVY_RAMPS } from './colors';
 import navLinkClasses from './NavLink.module.css';
 
-const variantColorResolver: VariantColorsResolver = (input) => {
-	const defaultResolvedColors = defaultVariantColorsResolver(input);
-
-	if (input.variant === 'cta') {
-		return {
-			...defaultResolvedColors,
-			background: input.theme.colors.ember[5],
-			hover: input.theme.colors.ember[6],
-			color: input.theme.white,
-			border: 'none',
-		};
-	}
-
-	return defaultResolvedColors;
-};
+import { variantColorResolver } from './variantColorResolver/variantColorResolver';
 
 export const theme = createTheme({
 	fontFamily: 'Inter, sans-serif',

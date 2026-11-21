@@ -29,8 +29,8 @@ export default defineConfig({
       // Excluded files are either test files or files that should NEVER have logic - any logic should be
       // pulled into separate testable modules.
       exclude: [
-          // Mantine theme config
-          'src/_theme/*',
+          // Mantine theme config. Only the folder's own files: '*' alone also drops its subfolders, which hold its logic
+          'src/_theme/*.{ts,tsx}',
           // better-auth config
           'src/_auth/auth.ts',
           // env variable definitions
