@@ -5,15 +5,14 @@ user-invocable: false
 ---
 
 # Deleting a Note
-1. **Check for anything worth keeping.** A note is never kept just as a record, since git history keeps it. If it holds something worth keeping for reference, such as a convention or the reason the code is the way it is, handle it as a doc gap before going on.
-2. **Find every link to it** with `sh scripts/note-refs.sh "<note name>"`.
-3. **Reword or remove each link,** even one that's still true, since it would point at nothing. Never add a line saying the note was removed.
-4. **Remove its Roadmap line,** and if it was in Goals, Next or Planning, renumber that list so its numbers run in order. A building goal with no work left is ready for the next step of its release, and nothing else flags it. The line served the building goal if it carried its 🎯 link or ended with 🔁. If it did, check what the goal has left once the line is gone. It has no work left if both of these hold:
+1. **Find every link to it** with `sh scripts/note-refs.sh "<note name>"`.
+2. **Reword or remove each link,** even one that's still true, since it would point at nothing. Never add a line saying the note was removed.
+3. **Remove its Roadmap line,** and if it was in Goals, Next or Planning, renumber that list so its numbers run in order. A building goal with no work left is ready for the next step of its release, and nothing else flags it. The line served the building goal if it carried its 🎯 link or ended with 🔁. If it did, check what the goal has left once the line is gone. It has no work left if both of these hold:
    - No other open line carries its 🎯 link.
    - No other line ends with 🔁.
 
    If it has none left, add the release's next command to the end of its line under Goals. Which command depends on the line:
    - **If it says ` · releasing`:** the release's own work has closed, so add ` · Next: /ship-goal`.
    - **Otherwise:** its own work is done and its release hasn't started, so add ` · Next: /finish-goal`.
-5. **Delete the note.**
-6. **Delete files nothing references anymore.** Run `sh scripts/vault-orphans.sh` after step 5, so the deleted note's references don't count. Delete each file it lists, then remove each folder it says is left empty.
+4. **Delete the note.**
+5. **Delete files nothing references anymore.** Run `sh scripts/vault-orphans.sh` after step 4, so the deleted note's references don't count. Delete each file it lists, then remove each folder it says is left empty.

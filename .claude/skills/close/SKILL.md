@@ -15,7 +15,7 @@ Close the story **$ARGUMENTS**: keep its note in `archive/` in the notes repo wh
 
 Invoke the `editing-notes` skill first, since this run changes notes.
 
-This session runs in the main checkout and can't edit the code repo.
+This session runs in the main checkout and can't edit the code repo. Its work is mechanical. If it finds something that needs judgment and that its steps don't cover, such as a decision no doc records or work that looks overlooked, put the facts on the out-of-scope list for step 6 to route. Don't draft, fix or settle it. Decisions about the story belonged to its own steps, and whatever they missed is for the skill that takes up the routed item.
 
 ## 1. Read the Note
 Find the note in the notes repo and read all of it. Where it is and its `status` decide the kind of close:
@@ -48,8 +48,7 @@ The note is needed by every open story with a Content match. If a Content match 
 2. Go through the open stories that need this note. What to do depends on the case:
    - **If another open story needs the same content,** the content can't move, because a design stays in one copy. Keep this note for the story without asking.
    - **Otherwise,** ask the user which they want: keep this note for the story, or move the content the story relies on into the story's own note, so the story no longer needs this one. Step 5 makes the move.
-3. If the note is kept for no story, it will be deleted. Check it for anything worth keeping, as the `deleting-a-note` skill describes in step 1.
-4. Tell the user the outcome in one line: which stories the note is kept for, or that it will be deleted. This lets them catch a wrong one before step 7 acts on it. Go on without waiting for a reply.
+3. Tell the user the outcome in one line: which stories the note is kept for, or that it will be deleted. This lets them catch a wrong one before step 7 acts on it. Go on without waiting for a reply.
 
 ## 4. Handle the Stories That Waited on It
 Skip this for a re-close. Otherwise, handle each Blocker match by what it is:
@@ -67,7 +66,7 @@ Go through the rest of the matches. What to do depends on the kind:
 - **The user's comment:** if it's now done or out of date, follow the rule for the user's comments.
 - **Passing mention:** what to do depends on what the line relies on and what happens to this note:
   - **If it relies on content that now lives in `docs/`:** swap the link to this note for one to the `docs/` section that holds the content.
-  - **Otherwise, if this note is being deleted:** reword or remove the mention, as the `deleting-a-note` skill describes in step 3.
+  - **Otherwise, if this note is being deleted:** reword or remove the mention, as the `deleting-a-note` skill describes in step 2.
   - **Otherwise:** reword the mention only if it's out of date.
 - **Outside the vault:** add it to the out-of-scope list.
 
@@ -79,7 +78,7 @@ Handle the out-of-scope list now, before step 7 deletes the note and step 8 dele
 - **Everything else:** triage and route it.
 
 ## 7. Close the Note
-1. Remove the note's own line from the Roadmap, as the `deleting-a-note` skill describes in step 4.
+1. Remove the note's own line from the Roadmap, as the `deleting-a-note` skill describes in step 3.
 2. Keep or delete the note, as step 3 settled:
    - **Keep:**
      1. For a dropped close, set `status` to `dropped`.
@@ -89,7 +88,7 @@ Handle the out-of-scope list now, before step 7 deletes the note and step 8 dele
    - **Delete:** delete the note.
 
 ## 8. Delete Unused Files
-Delete the files nothing references anymore, as the `deleting-a-note` skill describes in step 6.
+Delete the files nothing references anymore, as the `deleting-a-note` skill describes in step 5.
 
 ## 9. Find the Story's Session and Worktree
 The story's session offers to archive itself once its work is done. If that offer was missed or turned down, the session still holds a worktree slot, and this close is the last point anyone looks. If the story has no PR, skip this step. Otherwise, its branch is the head branch of the PR step 1 checked, from `gh pr view <number> --json headRefName`. Run `list_sessions` and find any session on that branch. What to do depends on the branch:
