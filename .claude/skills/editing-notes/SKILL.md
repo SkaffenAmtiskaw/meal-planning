@@ -47,6 +47,8 @@ Its `^status` line says what the story needs next, so the user can tell from the
 - `Next: /plan-steps. Building waits on [[A]] and [[B]]`, which tells the user what they can do now and what has to wait.
 - `Blocked by [[A]]; then /plan-steps`
 
+If the story waits on one step of another note rather than the whole note, such as a hub's design, name that step, as in `Blocked by [[Hub]]'s design (/design-feature); then /assess`, because a bare link reads as waiting until everything in that note is done.
+
 If the next step needs a skill or agent that isn't built, mark the note blocked on building it, and offer no manual stopgap, because a blocker is how the user sees which skill to build next.
 
 Below the line goes a summary of a few sentences, only if the line leaves out something worth noting, such as what work remains. It doesn't describe the story, because Purpose does.
