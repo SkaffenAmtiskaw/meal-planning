@@ -69,6 +69,23 @@ A component needs `'use client'` when it uses state, event handlers such as `onC
 
 **Keep the client boundary small:** add `'use client'` to the smallest component that needs it, not to a parent that only contains it, because everything a Client Component imports is sent to the browser too. For example, a mostly static layout with a search bar stays a Server Component, and only the search bar is a Client Component. (Next.js docs, Server and Client Components: "Reducing JS bundle size".)
 
+## Modals
+A modal splits into three parts with separate jobs: what owns its open state, what it's opened with, and a frame that draws the content inside it. Keeping them apart lets the same content show outside a modal, and lets a modal show the latest data after a save.
+
+**What owns a modal's open state depends on what the modal needs.** The cases, from the strongest need to the weakest:
+- **If someone should be able to link to it or close it with Back,** the URL owns it. A server page reads the search params and renders the modal, as the recipes page does with `?status=edit&type=recipe&item=…`.
+- **If it opens from several places on one page,** that page's modal context owns it, as `CalendarModalProvider` does on the calendar. The page renders the modal once, and every trigger opens that same one through `useCalendarModal`, so month view and week view open one meal detail modal. The URL could own it too, but then every open would wait on a round trip to the server.
+- **Otherwise,** the button that opens it owns it, with Mantine's `useDisclosure`, as `ConfirmButton` does.
+
+**A modal opens with an id or a starting value, never a copy of the data.** The meal detail modal opens with `{ mealId }`, and Add Meal with `{ initialDate }`. The modal reads the record itself from the data the page renders. A server action re-renders the page after a save, so a modal that reads from the page shows the change. A copy taken when the modal opened goes stale: a meal moved to another day would still show its old date.
+
+That page data reaches the modal through a separate context for the data, such as `CalendarDaysProvider`, which the meal detail modal reads through `useCalendarDays`. The modal context holds only which modal is open and what it opened with, because page data in the modal context would give that context a second job.
+
+**The frame owns how the modal looks and what happens after a save.** It holds the modal's title, close button and size, so each is set in one place. After a save, a URL-owned modal navigates to the same page without the modal's search params, and any other modal closes. If nothing else would show a modal's content, as with `ConfirmModal`'s message and buttons, frame and content can be one component, with a callback for each button, such as `onClose` and `onConfirm`, so its caller decides what they do. Otherwise, the content is its own component, which takes `onCancel` and `onSuccess` and never closes the modal or navigates itself. `AddMealModal` is the frame around `AddMealForm`, and on the recipes page `ModalWrapper` is the frame around `RecipeForm` and `BookmarkForm`.
+
+> [!NOTE]
+> Content that knows it's in a modal can't be used anywhere else, and the steps after a save end up spread between the content and its frame. `RecipeForm` shows why: a single recipe's page (`/[planner]/recipes/[recipeId]`) renders it outside any modal, inside `RecipeEditForm`, whose callbacks go back to that recipe's page.
+
 # Planner Access in Server Actions and Reads
 A server action or read that touches a planner's data, such as its meals, saved recipes, tags or members, checks the signed-in user's access before it reads or writes. Pages and layouts that load a planner's data count as reads. Without the check, anyone with a planner's id could read or change it.
 
