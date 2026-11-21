@@ -6,9 +6,16 @@
 
 import { createTheme, type MantineTheme } from '@mantine/core';
 
-import { CHALK_RAMPS, EMBER_RAMPS, FOREST_RAMPS, NAVY_RAMPS } from './colors';
-import navLinkClasses from './NavLink.module.css';
+import {
+	CHALK_RAMPS,
+	EMBER_RAMPS,
+	FOREST_RAMPS,
+	INPUT_BORDER,
+	NAVY_RAMPS,
+	SAGE,
+} from './colors';
 
+import { navLinkDefaults } from './components/NavLink/NavLink';
 import { variantColorResolver } from './variantColorResolver/variantColorResolver';
 
 export const theme = createTheme({
@@ -26,16 +33,16 @@ export const theme = createTheme({
 	},
 	components: {
 		AppShell: {
-			styles: {
+			styles: (theme: MantineTheme) => ({
 				header: {
-					backgroundColor: '#1C3144',
+					backgroundColor: theme.colors.navy[5],
 					borderBottom: 'none',
 				},
 				navbar: {
-					backgroundColor: '#B1BA95',
+					backgroundColor: SAGE,
 					borderRight: 'none',
 				},
-			},
+			}),
 		},
 		Button: {
 			defaultProps: { radius: 'md' },
@@ -43,8 +50,8 @@ export const theme = createTheme({
 		Input: {
 			styles: (theme: MantineTheme) => ({
 				input: {
-					backgroundColor: '#FFFFFF',
-					borderColor: '#C8C0C3',
+					backgroundColor: theme.white,
+					borderColor: INPUT_BORDER,
 					color: theme.colors.navy[5],
 				},
 			}),
@@ -60,16 +67,7 @@ export const theme = createTheme({
 				},
 			}),
 		},
-		NavLink: {
-			classNames: navLinkClasses,
-			vars: (theme: MantineTheme) => ({
-				root: {
-					'--nl-bg': theme.colors.forest[5],
-					'--nl-hover': theme.colors.forest[6],
-					'--nl-color': theme.white,
-				},
-			}),
-		},
+		NavLink: navLinkDefaults,
 		Anchor: {
 			defaultProps: {
 				c: 'forest',

@@ -1,9 +1,7 @@
 import { describe, expect, it } from 'vitest';
 
 import {
-	EMBER_RAMPS,
 	getMealColor,
-	NAVY_RAMPS,
 	TAG_COLOR_NAMES,
 	TAG_COLORS,
 	THEME_COLORS,
@@ -20,24 +18,6 @@ describe('THEME_COLORS', () => {
 
 	it('all values are valid hex colors', () => {
 		for (const value of Object.values(THEME_COLORS)) {
-			expect(value).toMatch(/^#[0-9A-Fa-f]{6}$/);
-		}
-	});
-});
-
-describe('EMBER_RAMPS', () => {
-	it('is an array of 10 hex values', () => {
-		expect(EMBER_RAMPS).toHaveLength(10);
-		for (const value of EMBER_RAMPS) {
-			expect(value).toMatch(/^#[0-9A-Fa-f]{6}$/);
-		}
-	});
-});
-
-describe('NAVY_RAMPS', () => {
-	it('is an array of 10 hex values', () => {
-		expect(NAVY_RAMPS).toHaveLength(10);
-		for (const value of NAVY_RAMPS) {
 			expect(value).toMatch(/^#[0-9A-Fa-f]{6}$/);
 		}
 	});

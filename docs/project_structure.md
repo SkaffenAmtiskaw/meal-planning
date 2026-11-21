@@ -35,7 +35,7 @@ the zod schemas of the stored data, and in `database/` the data module that read
 ## _reporting/
 the PostHog error reporting (see `docs/project_conventions.md`, "Error Reporting")
 ## _theme/
-the Mantine theme and the app's color values (see `docs/theme.md`)
+the Mantine theme and the app's color values (see `docs/theme.md`). If a component's theme default needs a CSS module, such as for a hover rule the theme can't set, the default and its CSS module share a folder, `components/<Component>/`. Otherwise the default sits in `theme.ts`. The folder keeps everything that sets the component's look in one place
 ## _utils/
 generic utilities that know nothing about the app's domain (see `docs/project_conventions.md`, "Generic vs Domain-Specific Code")
 ## app/

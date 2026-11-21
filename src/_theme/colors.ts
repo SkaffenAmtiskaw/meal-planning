@@ -1,3 +1,5 @@
+import type { MantineColorsTuple } from '@mantine/core';
+
 import type { TagColor } from './types';
 
 export const TAG_COLORS: Record<
@@ -25,18 +27,13 @@ export const THEME_COLORS = {
 	sageLight: '#F2F3EE',
 } as const;
 
-export const EMBER_RAMPS: [
-	string,
-	string,
-	string,
-	string,
-	string,
-	string,
-	string,
-	string,
-	string,
-	string,
-] = [
+/** The navbar's background. No forest shade matches it. */
+export const SAGE = '#B1BA95';
+
+/** The border of text inputs. No chalk shade matches it. */
+export const INPUT_BORDER = '#C8C0C3';
+
+export const EMBER_RAMPS: MantineColorsTuple = [
 	'#FFF0EB',
 	'#FFE0D6',
 	'#FFD0BF',
@@ -49,18 +46,7 @@ export const EMBER_RAMPS: [
 	'#993A28',
 ];
 
-export const FOREST_RAMPS: [
-	string,
-	string,
-	string,
-	string,
-	string,
-	string,
-	string,
-	string,
-	string,
-	string,
-] = [
+export const FOREST_RAMPS: MantineColorsTuple = [
 	'#EFF3EF',
 	'#DFE7DF',
 	'#CFDBCE',
@@ -73,18 +59,7 @@ export const FOREST_RAMPS: [
 	'#24361E',
 ];
 
-export const NAVY_RAMPS: [
-	string,
-	string,
-	string,
-	string,
-	string,
-	string,
-	string,
-	string,
-	string,
-	string,
-] = [
+export const NAVY_RAMPS: MantineColorsTuple = [
 	'#E8EBEE',
 	'#D1D7DD',
 	'#BAC3CC',
@@ -97,18 +72,7 @@ export const NAVY_RAMPS: [
 	'#101D29',
 ];
 
-export const CHALK_RAMPS: [
-	string,
-	string,
-	string,
-	string,
-	string,
-	string,
-	string,
-	string,
-	string,
-	string,
-] = [
+export const CHALK_RAMPS: MantineColorsTuple = [
 	'#FAF8F9',
 	'#F5F3F4',
 	'#F0EDEE',

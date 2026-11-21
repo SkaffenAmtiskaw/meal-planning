@@ -5,7 +5,7 @@ The UI is built from Mantine components and hooks, used the way Mantine's docs d
 
 # Changing How a Component Looks
 A style change goes in the first of these places that can make it:
-1. **The Mantine theme,** in `src/_theme/theme.ts`, if the change applies everywhere the component appears.
+1. **The Mantine theme,** in `src/_theme/`, if the change applies everywhere the component appears.
 2. **A custom variant** registered in the theme, if only some uses need it.
 3. **A CSS module,** if neither of those can make the change.
 
