@@ -9,6 +9,7 @@ import type { DayInterface } from '@/_models/types';
 
 import { CalendarProvider, useCalendarContext } from '../Calendar';
 import { CalendarModalProvider } from '../CalendarModal';
+import { CalendarDaysProvider } from '../../_hooks/useCalendarDays';
 import { PlannerSavedItemsProvider } from '../../_hooks/usePlannerSavedItems';
 import type { SavedItem } from '../../types';
 import {
@@ -74,15 +75,17 @@ export function CalendarView({
 }: Props): ReactElement {
 	return (
 		<PlannerSavedItemsProvider savedItems={savedItems}>
-			<CalendarProvider>
-				<CalendarModalProvider plannerId={plannerId}>
-					<CalendarViewContent
-						plannerId={plannerId}
-						savedItems={savedItems}
-						calendar={calendar}
-					/>
-				</CalendarModalProvider>
-			</CalendarProvider>
+			<CalendarDaysProvider calendar={calendar}>
+				<CalendarProvider>
+					<CalendarModalProvider plannerId={plannerId}>
+						<CalendarViewContent
+							plannerId={plannerId}
+							savedItems={savedItems}
+							calendar={calendar}
+						/>
+					</CalendarModalProvider>
+				</CalendarProvider>
+			</CalendarDaysProvider>
 		</PlannerSavedItemsProvider>
 	);
 }

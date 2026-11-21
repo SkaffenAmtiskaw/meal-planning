@@ -6,12 +6,7 @@ import type { DayInterface } from '@/_models/types';
 
 import { WeekMealCard } from './WeekMealCard';
 
-import {
-	type CalendarMeal,
-	WeekView,
-	type WeekViewMeal,
-	type WeekViewProps,
-} from '../Calendar';
+import { WeekView, type WeekViewMeal, type WeekViewProps } from '../Calendar';
 import { useCalendarModal } from '../CalendarModal';
 import { toCalendarMeals } from '../../_utils/toCalendarMeals';
 import type { SavedItem } from '../../types';
@@ -40,15 +35,14 @@ export function MealWeekView({
 	);
 
 	const openMeal = useCallback(
-		(meal: CalendarMeal) => open('meal_detail', { meal }),
+		(mealId: string) => open('meal_detail', { mealId }),
 		[open],
 	);
 
 	const handleMealClick = useCallback(
 		(meal: WeekViewMeal) => {
-			const calendarMeal = mealMap.get(meal.id);
-			if (calendarMeal) {
-				openMeal(calendarMeal);
+			if (mealMap.has(meal.id)) {
+				openMeal(meal.id);
 			}
 		},
 		[mealMap, openMeal],
@@ -66,7 +60,7 @@ export function MealWeekView({
 				<WeekMealCard
 					meal={calendarMeal}
 					plannerId={plannerId}
-					onClick={() => openMeal(calendarMeal)}
+					onClick={() => openMeal(calendarMeal.id)}
 					tabIndex={props.tabIndex}
 					ref={props.ref}
 				/>

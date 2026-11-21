@@ -128,7 +128,7 @@ describe('MealWeekView', () => {
 		expect(mealCards[0].getAttribute('data-planner-id')).toBe('planner-1');
 	});
 
-	it('opens the meal detail modal with the full CalendarMeal when WeekView onMealClick fires', () => {
+	it('opens the meal detail modal with the meal id when WeekView onMealClick fires', () => {
 		vi.mocked(toCalendarMeals).mockReturnValue(mockCalendarMeals);
 
 		render(<MealWeekView calendar={mockCalendar} plannerId="planner-1" />);
@@ -136,12 +136,10 @@ describe('MealWeekView', () => {
 		fireEvent.click(screen.getByTestId('week-view-meal-meal-1'));
 
 		expect(open).toHaveBeenCalledTimes(1);
-		expect(open).toHaveBeenCalledWith('meal_detail', {
-			meal: mockCalendarMeals[0],
-		});
+		expect(open).toHaveBeenCalledWith('meal_detail', { mealId: 'meal-1' });
 	});
 
-	it('opens the meal detail modal with the full CalendarMeal when WeekMealCard is clicked', () => {
+	it('opens the meal detail modal with the meal id when WeekMealCard is clicked', () => {
 		vi.mocked(toCalendarMeals).mockReturnValue(mockCalendarMeals);
 
 		render(<MealWeekView calendar={mockCalendar} plannerId="planner-1" />);
@@ -149,9 +147,7 @@ describe('MealWeekView', () => {
 		fireEvent.click(screen.getByTestId('week-meal-card'));
 
 		expect(open).toHaveBeenCalledTimes(1);
-		expect(open).toHaveBeenCalledWith('meal_detail', {
-			meal: mockCalendarMeals[0],
-		});
+		expect(open).toHaveBeenCalledWith('meal_detail', { mealId: 'meal-1' });
 	});
 
 	it('passes tabIndex and ref to WeekMealCard via renderMeal', () => {

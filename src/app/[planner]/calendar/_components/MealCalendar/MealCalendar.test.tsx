@@ -115,7 +115,7 @@ describe('MealCalendar', () => {
 		);
 	});
 
-	it('opens the meal detail modal with the full CalendarMeal when a card is clicked', () => {
+	it('opens the meal detail modal with the meal id when a card is clicked', () => {
 		vi.mocked(toCalendarMeals).mockReturnValue(mockCalendarMeals);
 
 		render(<MealCalendar calendar={mockCalendar} />);
@@ -123,9 +123,7 @@ describe('MealCalendar', () => {
 		fireEvent.click(screen.getByTestId('month-meal-card'));
 
 		expect(open).toHaveBeenCalledTimes(1);
-		expect(open).toHaveBeenCalledWith('meal_detail', {
-			meal: mockCalendarMeals[0],
-		});
+		expect(open).toHaveBeenCalledWith('meal_detail', { mealId: 'meal-1' });
 	});
 
 	it('passes savedItems to toCalendarMeals', () => {
@@ -159,7 +157,7 @@ describe('MealCalendar', () => {
 		expect(result).toBeNull();
 	});
 
-	it('opens the meal detail modal with the full CalendarMeal when MonthGrid onMealClick fires', () => {
+	it('opens the meal detail modal with the meal id when MonthGrid onMealClick fires', () => {
 		vi.mocked(toCalendarMeals).mockReturnValue(mockCalendarMeals);
 
 		render(<MealCalendar calendar={mockCalendar} />);
@@ -173,9 +171,7 @@ describe('MealCalendar', () => {
 		monthGridCall.onMealClick?.(monthGridMeal);
 
 		expect(open).toHaveBeenCalledTimes(1);
-		expect(open).toHaveBeenCalledWith('meal_detail', {
-			meal: mockCalendarMeals[0],
-		});
+		expect(open).toHaveBeenCalledWith('meal_detail', { mealId: 'meal-1' });
 	});
 
 	it('opens no modal when MonthGrid onMealClick fires for a missing meal', () => {

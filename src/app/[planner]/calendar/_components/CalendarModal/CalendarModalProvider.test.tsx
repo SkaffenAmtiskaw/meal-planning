@@ -6,7 +6,6 @@ import type { ReactNode } from 'react';
 import { useCalendarModal } from './CalendarModalContext';
 import { CalendarModalProvider } from './CalendarModalProvider';
 
-import type { CalendarMeal } from '../Calendar';
 import { AddMealModal } from '../AddMealForm/AddMealModal';
 import { MealDetailModal } from '../MealDetailModal/MealDetailModal';
 
@@ -20,14 +19,6 @@ vi.mock('../MealDetailModal/MealDetailModal', () => ({
 
 const mockAddMealModal = vi.mocked(AddMealModal);
 const mockMealDetailModal = vi.mocked(MealDetailModal);
-
-const meal: CalendarMeal = {
-	id: 'meal-1',
-	date: '2024-01-15',
-	name: 'Dinner',
-	borderColor: '#000',
-	dishes: [],
-};
 
 describe('CalendarModalProvider', () => {
 	beforeEach(() => {
@@ -66,11 +57,11 @@ describe('CalendarModalProvider', () => {
 		const { result } = renderHook(() => useCalendarModal(), { wrapper });
 
 		act(() => {
-			result.current.open('meal_detail', { meal });
+			result.current.open('meal_detail', { mealId: 'meal-1' });
 		});
 
 		expect(mockMealDetailModal).toHaveBeenLastCalledWith(
-			expect.objectContaining({ data: { meal } }),
+			expect.objectContaining({ data: { mealId: 'meal-1' } }),
 			undefined,
 		);
 		expect(mockAddMealModal).toHaveBeenLastCalledWith(
