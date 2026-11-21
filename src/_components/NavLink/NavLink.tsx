@@ -9,22 +9,14 @@ type Props = {
 	active?: boolean;
 	href: string;
 	leftSection?: React.ReactNode;
-	onClick?: () => void;
 };
 
-export const NavLink = ({
-	label,
-	active,
-	href,
-	leftSection,
-	onClick,
-}: Props) => (
+export const NavLink = ({ label, active, href, leftSection }: Props) => (
 	<MantineNavLink
 		component={Link}
 		active={active}
 		href={href}
 		leftSection={leftSection}
-		onClick={onClick}
 		label={label}
 	/>
 );

@@ -24,6 +24,7 @@ export const PlannerContextSection = ({
 		return (
 			<Text
 				size="sm"
+				truncate
 				className={`${styles.row} ${styles.plannerName}`}
 				data-testid="planner-context-static"
 			>
@@ -39,7 +40,7 @@ export const PlannerContextSection = ({
 					className={`${styles.row} ${styles.trigger}`}
 					data-testid="planner-context-trigger"
 				>
-					<Text size="sm" span className={styles.plannerName}>
+					<Text size="sm" span truncate className={styles.plannerName}>
 						{currentPlannerName}
 					</Text>
 					<IconChevronDown

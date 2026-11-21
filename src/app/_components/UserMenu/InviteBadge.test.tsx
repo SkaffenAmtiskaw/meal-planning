@@ -128,8 +128,10 @@ describe('InviteBadge', () => {
 
 	describe('InviteBadge', () => {
 		it('renders children as Suspense fallback while loading', async () => {
-			// Rendering an async server component in a client test env makes React
-			// log its "async Client Component" warning; it is expected here.
+			/**
+			 * Rendering an async server component in a client test env makes React
+			 * log its "async Client Component" warning; it is expected here.
+			 */
 			const consoleSpy = vi
 				.spyOn(console, 'error')
 				.mockImplementation(() => {});

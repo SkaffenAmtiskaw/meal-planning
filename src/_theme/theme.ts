@@ -4,12 +4,7 @@
  */
 'use client';
 
-import {
-	createTheme,
-	getThemeColor,
-	Indicator,
-	type MantineTheme,
-} from '@mantine/core';
+import { createTheme, type MantineTheme } from '@mantine/core';
 
 import {
 	CHALK_RAMPS,
@@ -20,6 +15,7 @@ import {
 	SAGE,
 } from './colors';
 
+import { indicatorDefaults } from './components/Indicator/Indicator';
 import { navLinkDefaults } from './components/NavLink/NavLink';
 import { variantColorResolver } from './variantColorResolver/variantColorResolver';
 
@@ -49,9 +45,6 @@ export const theme = createTheme({
 				},
 			}),
 		},
-		Button: {
-			defaultProps: { radius: 'md' },
-		},
 		Input: {
 			styles: (theme: MantineTheme) => ({
 				input: {
@@ -61,25 +54,9 @@ export const theme = createTheme({
 				},
 			}),
 		},
-		Indicator: Indicator.extend({
-			// Mantine's white variant, which Indicator lacks: a white badge with its number in
-			// the badge's color, for a badge on the navy header, where a navy one would disappear.
-			vars: (theme, props) => ({
-				root:
-					props.variant === 'white'
-						? {
-								'--indicator-color': theme.white,
-								'--indicator-text-color': getThemeColor(
-									props.color ?? theme.primaryColor,
-									theme,
-								),
-							}
-						: {},
-			}),
-		}),
+		Indicator: indicatorDefaults,
 		Modal: {
 			defaultProps: {
-				radius: 'md',
 				overlayProps: { blur: 2 },
 			},
 			vars: () => ({
@@ -101,8 +78,10 @@ export const theme = createTheme({
 			},
 		},
 		SegmentedControl: {
-			// Without a color, the selected option is a white pill with black text. Mantine's
-			// grey track and labels stay.
+			/**
+			 * Without a color, the selected option is a white pill with black text. Mantine's
+			 * grey track and labels stay.
+			 */
 			defaultProps: (theme: MantineTheme) => ({
 				color: theme.primaryColor,
 			}),

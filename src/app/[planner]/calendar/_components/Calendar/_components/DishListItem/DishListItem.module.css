@@ -1,7 +1,6 @@
-/* Mantine props cannot express the combined underline color, thickness, and offset for dish links, so the anchor styles live here. */
+/* The theme's Anchor default underlines dish links, but Mantine props cannot set the underline's color, thickness and offset, so those live here. */
 .dishName a {
 	font-weight: 600;
-	text-decoration: underline;
 	text-decoration-color: var(--mantine-primary-color-4);
 	text-decoration-thickness: 1px;
 	text-underline-offset: 3px;

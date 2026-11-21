@@ -132,8 +132,10 @@ describe('PlannerContextSection', () => {
 				/>,
 			);
 
-			// Menu items are rendered in the DOM (even if visually hidden by Mantine)
-			// Check via testid instead of text since text appears in trigger too
+			/**
+			 * Menu items are rendered in the DOM (even if visually hidden by Mantine).
+			 * Check via testid instead of text since text appears in trigger too.
+			 */
 			expect(screen.getByTestId('planner-menu-item-planner-1')).toBeDefined();
 			expect(screen.getByTestId('planner-menu-item-planner-2')).toBeDefined();
 		});

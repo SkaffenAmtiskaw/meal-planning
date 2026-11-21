@@ -7,6 +7,7 @@ import { Anchor, type AnchorProps } from '@mantine/core';
 
 interface LinkAnchorProps extends Omit<AnchorProps, 'component'> {
 	href: string;
+	tabIndex?: number;
 	children: ReactNode;
 }
 

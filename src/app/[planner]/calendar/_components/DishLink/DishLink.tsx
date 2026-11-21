@@ -1,7 +1,8 @@
-import Link from 'next/link';
 import type { ReactElement } from 'react';
 
 import { Anchor, Text } from '@mantine/core';
+
+import { LinkAnchor } from '@/_components';
 
 import type { ResolvedDish } from '../../_utils/types';
 import { isSavedSource, isUrlSource } from '../_utils/dishSource';
@@ -35,14 +36,13 @@ export function DishLink({
 
 	if (isSavedSource(dish.source)) {
 		return (
-			<Anchor
-				component={Link}
+			<LinkAnchor
 				href={`/${plannerId}/recipes/${dish.source._id}`}
 				size={size}
 				tabIndex={tabIndex}
 			>
 				{dish.name}
-			</Anchor>
+			</LinkAnchor>
 		);
 	}
 

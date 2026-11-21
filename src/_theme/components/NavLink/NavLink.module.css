@@ -1,10 +1,9 @@
-/* The theme's NavLink vars color only the active item, so the inactive
-   items' forest text and hover tint live here. `:not([data-active])` keeps
-   these rules off the active item, whose colors come from the vars. */
+/* The theme's NavLink vars color only the active item, so the inactive items' forest text is set here. */
 .root:not([data-active]) {
 	color: var(--mantine-color-forest-5);
 }
 
+/* Mantine hard-codes the inactive items' grey hover, with no var to change it, so the forest tint is set here. */
 .root:not([data-active]):hover {
 	background-color: color-mix(
 		in srgb,

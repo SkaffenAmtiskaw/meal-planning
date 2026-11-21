@@ -4,11 +4,11 @@ This doc is for anyone building or changing the app's UI. It describes the app's
 The theme lives in `src/_theme/`. `colors.ts` holds the color values, including the tag palette. `theme.ts` builds the Mantine theme from them and sets most component defaults. Where the rest live is in `docs/project_structure.md`.
 
 # The Main Colors
-The app has five main colors, each kept for the uses below. Navy is the primary color, so a component that names no color is navy. White isn't one of the main colors: a design uses it for surfaces, and for text on a dark fill (see "Content on Fills"). The tag palette is separate (see "Tag Colors").
+The app has five main colors, each kept for the uses below. Navy is the primary color, so a component that names no color is navy. White isn't one of the main colors: a design uses it for surfaces, and for text on a dark fill (see "Content on Fills"). The tag palette is separate (see "Tag Colors"), and so are the colors for deleting and for messages (see "Status Colors").
 
 | Color | What it's for |
 |---|---|
-| Navy | Every control that isn't a main action, such as links, tabs, selected controls and focus rings. Also the header's background, and text, such as body text and headings |
+| Navy | Every control that isn't a main action or one that deletes or removes something (see "Status Colors"), such as links, tabs, selected controls and focus rings. Also the header's background, and text, such as body text and headings |
 | Ember | Main actions only |
 | Forest green | The navbar, and small marks that describe a piece of content but aren't controls |
 | Sage | The navbar's background, and a soft fill behind a selected or current piece of content |
@@ -23,6 +23,11 @@ The focus ring is navy on every control, ember buttons included. If a component 
 # Ember Is for Main Actions
 Ember marks only a button that creates or commits something, such as adding a meal or saving a new password. The theme's `cta` button variant applies it. Nothing else uses ember, including links, tabs, badges, focus rings and the calendar's day marks. It's the brightest of the main colors, so keeping it for main actions gives each screen one obvious next step.
 
+# Status Colors
+Mantine's red, green and blue are status colors, kept apart from the main colors. Red marks an error message. It also marks a control that deletes or removes something, even when it's the screen's main action, such as a recipe's Delete button or the confirm button in a delete dialog. Green marks a success message, such as the one saying a reset link was sent, and blue marks an information message. Mantine's green is brighter than forest green. It never marks the navbar or content.
+
+Every other control is navy, or ember if it's a main action, even where red or green would look natural, such as a pair of ✓ and ✗ buttons. That way each status color always means the same thing, and a screen with nothing to delete or report shows none of them.
+
 # Green Is for the Navbar and Content
 Forest green and sage mark the navbar and content, and controls take navy. In the navbar, the items are forest green, and the active item has a forest green fill. Elsewhere, a small mark that describes a piece of content is forest green, such as the dots that show where a dish came from. A selected or current piece of content in a set, such as a day on the calendar or a row in a list, gets a soft sage fill behind it. The one exception is the ring that marks today on the calendar. It's navy so it stands apart from the selected day's sage fill, which can sit on the same date.
 
@@ -32,7 +37,7 @@ Controls stay navy even where green would look natural, such as a selected tab, 
 Content takes a tone that contrasts with its fill, so it can be read. On a dark fill, such as the navy header or the active navbar item, text is white and icons are chalk, because the primary color would disappear there. A badge or button on a dark fill takes Mantine's `white` variant: a white background with its number or label in the component's color, which is navy unless it sets one.
 
 > [!NOTE]
-> Mantine's `Indicator`, the count badge that sits on an icon, has no `white` variant, so the theme adds one in `theme.ts`.
+> Mantine's `Indicator`, the count badge that sits on an icon, has no `white` variant, so the theme adds one in `src/_theme/components/Indicator/`.
 
 Content on sage is dark. Sage is a mid-tone, so light text on it is hard to read. Text on the navbar that isn't an item, such as the planner name, is navy like the rest of the app's text.
 

@@ -18,33 +18,6 @@ describe('theme', () => {
 		).toEqual({ color: 'navy' });
 	});
 
-	describe('Indicator', () => {
-		const merged = mergeMantineTheme(DEFAULT_THEME, theme);
-		const vars = theme.components?.Indicator?.vars;
-
-		it('draws the white variant white with a number in the primary color', () => {
-			expect(vars?.(merged, { variant: 'white' }, {})).toEqual({
-				root: {
-					'--indicator-color': merged.white,
-					'--indicator-text-color': 'var(--mantine-color-navy-filled)',
-				},
-			});
-		});
-
-		it("draws the white variant's number in the Indicator's color when it has one", () => {
-			expect(vars?.(merged, { variant: 'white', color: 'ember' }, {})).toEqual({
-				root: {
-					'--indicator-color': merged.white,
-					'--indicator-text-color': 'var(--mantine-color-ember-filled)',
-				},
-			});
-		});
-
-		it("leaves other variants to Mantine's colors", () => {
-			expect(vars?.(merged, {}, {})).toEqual({ root: {} });
-		});
-	});
-
 	it('has ember, forest, and navy in color ramps', () => {
 		expect(theme.colors).toHaveProperty('ember');
 		expect(theme.colors).toHaveProperty('forest');
@@ -60,7 +33,7 @@ describe('theme', () => {
 	it('has component overrides configured', () => {
 		expect(theme.components).toBeDefined();
 		expect(theme.components).toHaveProperty('AppShell');
-		expect(theme.components).toHaveProperty('Button');
+		expect(theme.components).toHaveProperty('Indicator');
 	});
 
 	it('has default radius set to md', () => {
