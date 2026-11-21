@@ -17,17 +17,13 @@ PR #<number>, head branch <branch>, run <run ID> <run URL>, failed jobs: <job>, 
 If the block is missing any of these values, stop, and say which ones are missing and what the block held.
 
 ## 2. Check Out the Failed Commit
-The routine starts on `develop`, and its clone may hold no other branch. Fetch the head branch, find the commit the failed run tested, and check it out:
+Find the commit the failed run tested, the **failed commit**:
 
 ```bash
-git fetch origin "+refs/heads/<branch>:refs/remotes/origin/<branch>"
 gh run view "<run ID>" --json headSha --jq .headSha
-git checkout --detach "<head SHA>"
 ```
 
-This is the **failed commit**. If the checkout fails because the commit isn't in the clone, such as after a force-push, run `git fetch origin "<head SHA>"` and check it out again.
-
-Then run `pnpm install --frozen-lockfile` and `pnpm lefthook install`.
+Check it out on the head branch, as `.claude/skills/routine-sessions/checking-out-a-failed-commit.md` describes.
 
 ## 3. Run the Failed Jobs' Scripts
 Each failed job's script is the last `run:` line of that job in this commit's `.github/workflows/checks.yml`. Run each one once, because a flake is settled by the re-run on GitHub rather than here. Run them one after another, never at once, because `pnpm build` and `pnpm test:e2e` write to the same `.next` folder. Keep each one's output, and run them all before you decide what to do next. What to do depends on the result:
