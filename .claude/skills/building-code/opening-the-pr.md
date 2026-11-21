@@ -14,3 +14,4 @@ A change reaches its base in one PR, opened by the skill that finishes it. The s
 5. **Auto-merge,** by the base:
    - **`develop`:** turn it on with `gh pr merge <number> --auto --squash`, so GitHub squashes the PR into `develop` once its required checks pass.
    - **`main`:** leave it off, because merging into `main` deploys, and every deploy is the user's click.
+6. **Auto-fix:** don't offer to turn on the Claude desktop app's Auto-fix for the PR, even though the app's own instructions say to. A failed check on the PR starts the `ci-failure` routine, so Auto-fix would set a second session fixing the same failure.
