@@ -3,14 +3,14 @@ import { beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { useDisclosure } from '@mantine/hooks';
 
-import { CreatePlannerForm } from '@/app/_components/CreatePlannerForm';
+import { CreatePlannerModal } from '@/app/_components/CreatePlannerModal';
 
 import { PlannerListActions } from './PlannerListActions';
 
 vi.mock('@mantine/core', async () => await import('#mocks/@mantine/core'));
 vi.mock('@mantine/hooks', async () => await import('#mocks/@mantine/hooks'));
-vi.mock('@/app/_components/CreatePlannerForm', () => ({
-	CreatePlannerForm: vi.fn(() => <div data-testid="create-planner-form" />),
+vi.mock('@/app/_components/CreatePlannerModal', () => ({
+	CreatePlannerModal: vi.fn(() => null),
 }));
 
 describe('PlannerListActions', () => {
@@ -44,10 +44,10 @@ describe('PlannerListActions', () => {
 		expect(mockOpen).toHaveBeenCalled();
 	});
 
-	it('calls close when CreatePlannerForm requests close', () => {
+	it('calls close when CreatePlannerModal requests close', () => {
 		render(<PlannerListActions />);
 
-		const onClose = vi.mocked(CreatePlannerForm).mock.calls[0][0].onClose;
+		const onClose = vi.mocked(CreatePlannerModal).mock.calls[0][0].onClose;
 
 		onClose();
 

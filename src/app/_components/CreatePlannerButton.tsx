@@ -3,7 +3,7 @@
 import { Button } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 
-import { CreatePlannerForm } from './CreatePlannerForm';
+import { CreatePlannerModal } from './CreatePlannerModal';
 
 export const CreatePlannerButton = () => {
 	const [opened, { open, close }] = useDisclosure(false);
@@ -13,7 +13,7 @@ export const CreatePlannerButton = () => {
 			<Button variant="cta" onClick={open}>
 				Create Planner
 			</Button>
-			<CreatePlannerForm opened={opened} onClose={close} />
+			<CreatePlannerModal opened={opened} onClose={close} />
 		</>
 	);
 };
