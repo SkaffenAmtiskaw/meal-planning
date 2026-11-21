@@ -32,12 +32,13 @@ Propose these, each as exact note changes:
 **Each child (a new note in the same folder):**
 - **Name:** a plain filename.
 - **Type and status:** the template for its type. `status: spec`, since the design exists.
+- **`confirmed`:** today. The run that splits the story has just checked it for drift, so the child's next drift check needs to cover only what changes after the split.
 - **`blocked-by`:** the siblings and other stories it waits on, including any of the original's `blocked-by` entries that apply to it.
 - **Where It Stands:** its `^status` line is "Next: /assess" at the Behaviors checkpoint or "Next: /plan-steps" at the Plan checkpoint.
 - **As the hub's child:** make it one of the hub's children, embedding the design sections it builds, as `.claude/skills/filing-work/content-from-another-note.md` describes. If more than one child builds a design section, such as anatomy or states, embed it in each of them.
 - **Purpose:** its one-line scope, expanded to a short paragraph, above the hub's Purpose embed.
 - **Requirements:** its share of the original's Requirements bullets.
-- **At the Behaviors checkpoint:** a `# From the Split` section right before `# Suggested Approach`, holding its share of the confirmed behaviors, in full, not summarized. It opens with "%% Handed over when this story was split from [[Hub]]. Not approved yet. /assess starts from it and deletes this section when it writes Suggested Approach. %%"
+- **At the Behaviors checkpoint:** a `# From the Split` section right before `# Suggested Approach`, holding its share of the confirmed behaviors, in full, not summarized. It opens with "%% Handed over when this story was split from [[Hub]]. The user confirmed these behaviors before the split and approved this story's share during it. /assess starts from them and deletes this section when it writes Suggested Approach. %%"
 - **At the Plan checkpoint:**
   - **Approach:** its behaviors and approach pieces, in full, not summarized, under its own `# Suggested Approach`. If more than one child uses a piece, it belongs to the first child that builds it, and later children list it as already built by that sibling.
   - **Draft steps:** a `# From the Split` section right before `# Suggested Approach`, naming its steps by number from the draft, because the calling skill copies their full text in. It opens with "%% Draft handed over when this story was split from [[Hub]]. Not approved yet. /plan-steps starts from it and deletes this section when it writes Implementation. %%" Never put draft steps under `# Implementation`, because `/plan-steps` reads that section as approved steps.

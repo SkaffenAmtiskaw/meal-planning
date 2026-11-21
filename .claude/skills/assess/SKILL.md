@@ -40,18 +40,18 @@ If it found nothing, tell the user in one line and go on. Otherwise, settle each
 - **Otherwise,** such as another story having built or changed a module this one will use: tell the user in one line, and keep it for step 4.
 
 ## 2. Confirm the behaviors
-If the note has a `# From the Split` section because this story was split from a larger one, start from its behaviors. Show them and ask the user to confirm they still hold.
+If the note has a `# From the Split` section, start from its behaviors. The user confirmed them before the split and approved this story's share during it, so asking again only repeats that review. The parent's `/assess` also settled their E2E marks, so keep those as they are. What happens next depends on step 1:
+- **If step 1 changed none of them:** go on to step 3, since the split already checked them for hidden stories.
+- **Otherwise:** show the behaviors step 1 changed, with an E2E recommendation for any failure among them, as the next paragraphs describe. Wait for the user to confirm them, then check whether it's several stories.
 
-Otherwise, list the story as numbered behaviors, one line each. Cover what a person using the app does and every way the app can respond: success, each kind of failure, empty states, and differences for people with read-only access. Where the note doesn't say, ask the user rather than filling the gap yourself.
+If there's no `# From the Split` section, list the story as numbered behaviors, one line each. Cover what a person using the app does and every way the app can respond: success, each kind of failure, empty states, and differences for people with read-only access. Where the note doesn't say, ask the user rather than filling the gap yourself.
 
-Either way, some failures may need the user's call on an E2E test. "Failures the User Sees" in `docs/e2e_tests.md` says which ones. Read only that section: find its heading with Grep, then Read from there to the next heading. If the behaviors came from a `# From the Split` section, the parent's `/assess` already settled those failures, so keep their marks as they are. Otherwise, for each of those failures, add your recommendation on whether it gets an E2E test, so the user settles it as they confirm the list. Mark each one they want "(E2E test)", because `/plan-steps` plans a failure's E2E test only if the approach marks it. A failure added to the list later in this run gets a recommendation too.
+Some failures may need the user's call on an E2E test. "Failures the User Sees" in `docs/e2e_tests.md` says which ones. Read only that section: find its heading with Grep, then Read from there to the next heading. For each of those failures, add your recommendation on whether it gets an E2E test, so the user settles it as they confirm the list. Mark each one they want "(E2E test)", because `/plan-steps` plans a failure's E2E test only if the approach marks it. A failure added to the list later in this run gets a recommendation too.
 
 Show the list and wait for the user to confirm it before going on.
 
 ### Check whether it's several stories
-The cases where you skip this check, because the work has already been checked for hidden stories:
-- **You started from a `# From the Split` section,** and its behaviors haven't changed since.
-- **Open Decisions records that the user kept the story whole,** and the story hasn't taken on any work that the decision didn't cover. Rewording or splitting up behaviors it already held isn't new work.
+If Open Decisions records that the user kept the story whole, and the story hasn't taken on any work that the decision didn't cover, skip this check, because the work has already been checked for hidden stories. Rewording or splitting up behaviors it already held isn't new work.
 
 Otherwise, send the `hidden-story-checker` subagent the notes repo's path, the note path, the confirmed behaviors as the **Behaviors** checkpoint and, if Open Decisions records that the user kept the story whole, the behaviors the story took on since. Then, depending on its verdict:
 - **One story:** tell the user in one line, and go on to step 3.
