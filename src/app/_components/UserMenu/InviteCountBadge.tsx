@@ -9,7 +9,7 @@ export function InviteCountBadge({ count, children }: InviteCountBadgeProps) {
 	return (
 		<Indicator
 			data-testid="invite-badge"
-			color="ember"
+			variant="white"
 			size={16}
 			label={count}
 			maxValue={99}

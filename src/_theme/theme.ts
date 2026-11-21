@@ -4,7 +4,12 @@
  */
 'use client';
 
-import { createTheme, type MantineTheme } from '@mantine/core';
+import {
+	createTheme,
+	getThemeColor,
+	Indicator,
+	type MantineTheme,
+} from '@mantine/core';
 
 import {
 	CHALK_RAMPS,
@@ -56,6 +61,22 @@ export const theme = createTheme({
 				},
 			}),
 		},
+		Indicator: Indicator.extend({
+			// Mantine's white variant, which Indicator lacks: a white badge with its number in
+			// the badge's color, for a badge on the navy header, where a navy one would disappear.
+			vars: (theme, props) => ({
+				root:
+					props.variant === 'white'
+						? {
+								'--indicator-color': theme.white,
+								'--indicator-text-color': getThemeColor(
+									props.color ?? theme.primaryColor,
+									theme,
+								),
+							}
+						: {},
+			}),
+		}),
 		Modal: {
 			defaultProps: {
 				radius: 'md',
