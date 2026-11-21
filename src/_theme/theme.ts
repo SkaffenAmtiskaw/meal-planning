@@ -8,6 +8,7 @@ import {
 } from '@mantine/core';
 
 import { CHALK_RAMPS, EMBER_RAMPS, FOREST_RAMPS, NAVY_RAMPS } from './colors';
+import navLinkClasses from './NavLink.module.css';
 
 const variantColorResolver: VariantColorsResolver = (input) => {
 	const defaultResolvedColors = defaultVariantColorsResolver(input);
@@ -83,6 +84,16 @@ export const theme = createTheme({
 			vars: () => ({
 				root: {
 					'--modal-size-xl': '80%',
+				},
+			}),
+		},
+		NavLink: {
+			classNames: navLinkClasses,
+			vars: (theme: MantineTheme) => ({
+				root: {
+					'--nl-bg': theme.colors.forest[5],
+					'--nl-hover': theme.colors.forest[6],
+					'--nl-color': theme.white,
 				},
 			}),
 		},

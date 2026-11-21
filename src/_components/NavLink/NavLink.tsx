@@ -4,8 +4,6 @@ import Link from 'next/link';
 
 import { NavLink as MantineNavLink } from '@mantine/core';
 
-import styles from './NavLink.module.css';
-
 type Props = {
 	label: string;
 	active?: boolean;
@@ -20,18 +18,13 @@ export const NavLink = ({
 	href,
 	leftSection,
 	onClick,
-	...others
 }: Props) => (
 	<MantineNavLink
 		component={Link}
-		classNames={{
-			root: styles.navLink,
-		}}
 		active={active}
 		href={href}
 		leftSection={leftSection}
 		onClick={onClick}
 		label={label}
-		{...others}
 	/>
 );
