@@ -49,9 +49,11 @@ Either way, some failures may need the user's call on an E2E test. "Failures the
 Show the list and wait for the user to confirm it before going on.
 
 ### Check whether it's several stories
-Skip this check if you started from a `# From the Split` section and its behaviors haven't changed since.
+The cases where you skip this check, because the work has already been checked for hidden stories:
+- **You started from a `# From the Split` section,** and its behaviors haven't changed since.
+- **Open Decisions records that the user kept the story whole,** and the story hasn't taken on any work that the decision didn't cover. Rewording or splitting up behaviors it already held isn't new work.
 
-Send the notes repo's path, the note path and the confirmed behaviors to the `hidden-story-checker` subagent, as the **Behaviors** checkpoint.
+Otherwise, send the `hidden-story-checker` subagent the notes repo's path, the note path, the confirmed behaviors as the **Behaviors** checkpoint and, if Open Decisions records that the user kept the story whole, the behaviors the story took on since. Then, depending on its verdict:
 - **One story:** tell the user in one line, and go on to step 3.
 - **Hidden stories:**
   1. Put each one whose Shared design is "none" on the out-of-scope list with its behaviors, and triage it right away. The rest of this run works from the behavior list. If the user doesn't pull it in, take its behaviors out of the list.
