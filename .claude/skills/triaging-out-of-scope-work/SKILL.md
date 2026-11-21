@@ -21,14 +21,17 @@ Before step 2, search the notes repo for each item, including notes that word it
   - **If it's only decided or planned:** work out whether one story has to wait on the other. A story that could ship on the existing code, with the other story correcting that code later, doesn't have to wait. If one has to wait, ask the user whether to add a `blocked-by` entry, then take the item off the list. Otherwise, take it off the list, because the other story's own checks, such as `/check-drift`, catch the effect once the change is built.
 
 ## 2. Triage With the User
-For each item, show what it is, where it was found and why it looks outside this work. Then offer the choices below. If your skill has no story to pull into, offer only route or drop. Otherwise, offer all three:
-- **Pull it in:** your skill says how it enters this story.
-- **Route it:** if the user names where, put it there now, written as the `filing-work` skill describes for that kind of home.
-- **Drop it:** take it off the list and don't record it anywhere.
+The choices, and when each applies. If your skill offers only some of them, only those can apply:
+- **Pull it in,** if your skill has a story to pull into: your skill says how it enters this story.
+- **Route it,** for any item: if the user names where, put it there now, written as the `filing-work` skill describes for that kind of home.
+- **Drop it,** unless the user raised the item: take it off the list and don't record it anywhere. If the user raised it, such as their feedback on a skill or a problem they pointed out, they've already said it matters.
+
+If only Route it applies to an item, don't ask about it. Treat it as an item the user routed without naming a home, for step 3. Otherwise, show what it is, where it was found and why it looks outside this work, then offer the choices that apply to it.
 
 ## 3. Route What's Left
 If your skill has a later step for routing, do this there. Otherwise, do it right after triage.
 1. Send the `scope-router` subagent the notes repo's path and each item the user routed without naming a home. For each one, include what it is, where it was found and why it's outside this work.
-2. Show the user each item with its suggested home and reason. Wait for them to approve, change or drop it, then apply their answer to the notes.
+2. Check each suggestion against the `filing-work` skill, and correct any that doesn't follow it, because the subagent can misread it.
+3. Group the items by their suggested home. For each home, show its items, each with its reason, and ask once whether the user approves, changes or drops them, because items going to one home are one decision. Then apply their answer to the notes.
 
 If an item turns up after triage, sort it, triage it and route it the same way, at the end.
