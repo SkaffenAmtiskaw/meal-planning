@@ -8,7 +8,8 @@ import type { DateTime } from 'luxon';
 
 import { useCanWrite } from '@/app/[planner]/_components';
 
-import { ListViewAddMealTrigger } from './ListViewAddMealTrigger';
+import { AddMealGutterButton } from './AddMealGutterButton';
+import { AddMealRow } from './AddMealRow';
 import { MealCardWithDragHandle } from './MealCardWithDragHandle';
 import styles from './DayRow.module.css';
 
@@ -43,11 +44,9 @@ export function DayRow({
 		<Flex
 			className={styles.row}
 			data-iso={date.toISODate()}
-			style={
-				isToday
-					? { backgroundColor: rgba('var(--mantine-color-ember-0)', 0.5) }
-					: undefined
-			}
+			// AddMealGutterButton's stylesheet shows the button while this row is hovered or focused.
+			data-day-row
+			bg={isToday ? rgba('var(--mantine-color-ember-0)', 0.5) : undefined}
 		>
 			<Box className={styles.gutter}>
 				<Box className={styles.gutterContent}>
@@ -82,9 +81,7 @@ export function DayRow({
 							{date.toFormat('MMM').toUpperCase()}
 						</Text>
 					)}
-					{canWrite && (
-						<ListViewAddMealTrigger variant="gutter" onClick={handleAddMeal} />
-					)}
+					{canWrite && <AddMealGutterButton onClick={handleAddMeal} />}
 				</Box>
 			</Box>
 			<Box flex={1} miw={0} mih={40}>
@@ -98,12 +95,7 @@ export function DayRow({
 										renderDish={renderDish}
 									/>
 								))
-							: canWrite && (
-									<ListViewAddMealTrigger
-										variant="ghost"
-										onClick={handleAddMeal}
-									/>
-								)}
+							: canWrite && <AddMealRow onClick={handleAddMeal} />}
 					</Stack>
 				) : null}
 			</Box>

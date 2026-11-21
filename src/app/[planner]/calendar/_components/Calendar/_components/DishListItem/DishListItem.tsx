@@ -7,6 +7,7 @@ import { IconExternalLink } from '@tabler/icons-react';
 
 import styles from './DishListItem.module.css';
 
+import { isRefSource, isUrlSource } from '../../../_utils/dishSource';
 import type { CalendarDish } from '../../types';
 
 interface DishListItemProps {
@@ -18,17 +19,6 @@ export function DishListItem({
 	dish,
 	renderName,
 }: DishListItemProps): ReactElement {
-	const hasUrl =
-		typeof dish.source === 'object' &&
-		dish.source !== null &&
-		'url' in dish.source;
-	const sourceRef =
-		typeof dish.source === 'object' &&
-		dish.source !== null &&
-		'ref' in dish.source
-			? String(dish.source.ref)
-			: undefined;
-
 	return (
 		<Stack
 			data-testid="dish-list-item"
@@ -37,12 +27,15 @@ export function DishListItem({
 		>
 			<Group align="baseline" gap="xs" wrap="wrap">
 				<span className={styles.dishName}>{renderName(dish)}</span>
-				{hasUrl && (
-					<IconExternalLink size={9} color="var(--mantine-color-forest-5)" />
+				{isUrlSource(dish.source) && (
+					<IconExternalLink
+						size={9}
+						color="var(--mantine-primary-color-filled)"
+					/>
 				)}
-				{sourceRef !== undefined && (
+				{isRefSource(dish.source) && (
 					<Text size="xs" c="navy.4" fs="italic" span>
-						{String(sourceRef)}
+						{dish.source.ref}
 					</Text>
 				)}
 			</Group>

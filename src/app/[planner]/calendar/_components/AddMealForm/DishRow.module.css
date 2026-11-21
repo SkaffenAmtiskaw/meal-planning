@@ -9,17 +9,7 @@
 /* Use the closest existing chalk surface token for the expanded background tint. */
 .expanded {
 	background-color: var(--mantine-color-chalk-0);
-	border-color: var(--mantine-color-forest-2);
-}
-
-/* Mantine ActionIcon has no hover-background-color prop. */
-.expandButton:hover {
-	background-color: var(--mantine-color-chalk-2);
-}
-
-/* Use the closest existing default Mantine red tint for the destructive hover background. */
-.removeButton:hover {
-	background-color: var(--mantine-color-red-1);
+	border-color: var(--mantine-primary-color-2);
 }
 
 /* Mantine Input.Label / Textarea label cannot express 12px uppercase letter-spaced text via props. */

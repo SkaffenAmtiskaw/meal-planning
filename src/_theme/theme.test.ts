@@ -1,10 +1,21 @@
 import { describe, expect, it } from 'vitest';
 
+import { DEFAULT_THEME, mergeMantineTheme } from '@mantine/core';
+
 import { theme } from './theme';
 
 describe('theme', () => {
-	it('has forest as primary color', () => {
-		expect(theme.primaryColor).toBe('forest');
+	it('has navy as primary color', () => {
+		expect(theme.primaryColor).toBe('navy');
+	});
+
+	it('colors the selected SegmentedControl option with the primary color', () => {
+		const merged = mergeMantineTheme(DEFAULT_THEME, theme);
+		const defaultProps = theme.components?.SegmentedControl?.defaultProps;
+
+		expect(
+			typeof defaultProps === 'function' ? defaultProps(merged) : defaultProps,
+		).toEqual({ color: 'navy' });
 	});
 
 	it('has ember, forest, and navy in color ramps', () => {
@@ -22,7 +33,7 @@ describe('theme', () => {
 	it('has component overrides configured', () => {
 		expect(theme.components).toBeDefined();
 		expect(theme.components).toHaveProperty('AppShell');
-		expect(theme.components).toHaveProperty('Button');
+		expect(theme.components).toHaveProperty('Indicator');
 	});
 
 	it('has default radius set to md', () => {

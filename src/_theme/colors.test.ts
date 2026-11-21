@@ -1,47 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import {
-	EMBER_RAMPS,
-	getMealColor,
-	NAVY_RAMPS,
-	TAG_COLOR_NAMES,
-	TAG_COLORS,
-	THEME_COLORS,
-} from './colors';
-
-describe('THEME_COLORS', () => {
-	it('has navy, forest, sage, ember, chalk properties', () => {
-		expect(THEME_COLORS).toHaveProperty('navy');
-		expect(THEME_COLORS).toHaveProperty('forest');
-		expect(THEME_COLORS).toHaveProperty('sage');
-		expect(THEME_COLORS).toHaveProperty('ember');
-		expect(THEME_COLORS).toHaveProperty('chalk');
-	});
-
-	it('all values are valid hex colors', () => {
-		for (const value of Object.values(THEME_COLORS)) {
-			expect(value).toMatch(/^#[0-9A-Fa-f]{6}$/);
-		}
-	});
-});
-
-describe('EMBER_RAMPS', () => {
-	it('is an array of 10 hex values', () => {
-		expect(EMBER_RAMPS).toHaveLength(10);
-		for (const value of EMBER_RAMPS) {
-			expect(value).toMatch(/^#[0-9A-Fa-f]{6}$/);
-		}
-	});
-});
-
-describe('NAVY_RAMPS', () => {
-	it('is an array of 10 hex values', () => {
-		expect(NAVY_RAMPS).toHaveLength(10);
-		for (const value of NAVY_RAMPS) {
-			expect(value).toMatch(/^#[0-9A-Fa-f]{6}$/);
-		}
-	});
-});
+import { getMealColor, TAG_COLOR_NAMES, TAG_COLORS } from './colors';
 
 describe('TAG_COLORS', () => {
 	it('has 10 tag colors', () => {

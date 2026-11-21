@@ -1,5 +1,3 @@
-'use client';
-
 import type { ReactElement } from 'react';
 
 import { Center, Stack, Text } from '@mantine/core';
@@ -12,7 +10,7 @@ export function MobileListViewPlaceholder(): ReactElement {
 				<IconListDetails
 					size={48}
 					stroke={1.5}
-					color="var(--mantine-color-forest-6)"
+					color="var(--mantine-primary-color-6)"
 				/>
 				<Text c="navy.4" size="lg" fw={500}>
 					Coming soon
