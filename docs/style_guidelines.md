@@ -14,4 +14,4 @@ A Mantine `Button` or `ActionIcon` gets its hover colors from its variant and co
 Custom CSS, whether a rule in a CSS module or an inline style, gets a one-line comment directly above it saying why Mantine didn't fit. Without the comment, the next reader can't tell a deliberate workaround from one that a theme setting would now replace.
 
 # Colors Come From the Theme
-A component or CSS module takes each color from the theme: a theme color by name, or its CSS variable, such as `var(--mantine-color-forest-5)`. A hex code written into a component doesn't change when the palette does, so the screen drifts away from the rest of the app. The hex values belong only in `src/_theme/colors.ts`. For a tint or shade of a theme color, Mantine provides color functions.
+A component or CSS module takes each color from the theme: a theme color by name, or its CSS variable, such as `var(--mantine-color-navy-5)`. A hex code written into a component doesn't change when the palette does, so the screen drifts away from the rest of the app. The hex values belong only in `src/_theme/colors.ts`. For a tint or shade of a theme color, Mantine provides color functions.
