@@ -65,7 +65,7 @@ If the user gives feedback on how a skill, subagent or the workflow behaves, and
 Before you show the user the result they approve, triage the list, as the `triaging-out-of-scope-work` skill describes. Then route what's left, as that skill describes.
 
 ## Subagent Reports and Scratch Files
-Save each subagent's report, unedited, in `.scratch/`. When you show the user its findings, put them in the chat, as "What the user sees" describes, and link the report. Each commit deletes the files in `.scratch/` that haven't been written to for a day, so anything a later session needs goes in the note you're working on. A note never links to a scratch file.
+Save each subagent's report, unedited, in `.scratch/`, so the user can open it whole. Skip the file in a session whose files they can't open, such as a routine's cloud session. When you show the user its findings, put them in the chat, as "What the user sees" describes, and link the report if you saved one. Each commit deletes the files in `.scratch/` that haven't been written to for a day, so anything a later session needs goes in the note you're working on. A note never links to a scratch file.
 
 ## Docs
 Read a doc in `docs/` when the task needs it, not all of them up front. Each is named for what it covers. These have triggers their names don't show:

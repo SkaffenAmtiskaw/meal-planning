@@ -1,16 +1,14 @@
 # A Failed Weekly Check
 The run's `check` job failed. Find out why it failed, and fix it or explain it.
 
-Find the branch and the commit the run tested, read the log of the step that failed, and check out that commit:
+Find the branch and the commit the run tested, and read the log of the step that failed:
 
 ```bash
 gh run view "<run ID>" --json headBranch,headSha --jq '"\(.headBranch) \(.headSha)"'
 gh run view "<run ID>" --log-failed
-git fetch origin "+refs/heads/<branch>:refs/remotes/origin/<branch>"
-git checkout --detach "<head SHA>"
 ```
 
-Then run the check, and keep its output: `pnpm install --frozen-lockfile`, then `pnpm lefthook install`, then `pnpm deps:check --weekly`.
+Check out that commit on its branch, as `.claude/skills/routine-sessions/checking-out-a-failed-commit.md` describes. Then run `pnpm deps:check --weekly`, and keep its output.
 
 Wherever you stop below, also tell the user that this week's findings and reminders weren't sent, unless a re-run sent them. New advisories still come from the hourly runs. Once any fix is merged, the rest comes with next Monday's run, or sooner if the user runs the workflow by hand with its weekly option.
 
