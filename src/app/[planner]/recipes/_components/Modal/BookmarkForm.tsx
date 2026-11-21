@@ -1,6 +1,5 @@
 'use client';
 
-import { usePathname, useRouter } from 'next/navigation';
 import { useState } from 'react';
 
 import { Button, Group, Stack, Textarea, TextInput } from '@mantine/core';
@@ -26,12 +25,17 @@ type Props = {
 	plannerId: string;
 	tags: TagOption[];
 	item?: BookmarkInterface;
+	onCancel: () => void;
+	onSuccess: () => void;
 };
 
-export const BookmarkForm = ({ item, plannerId, tags }: Props) => {
-	const router = useRouter();
-	const pathname = usePathname();
-
+export const BookmarkForm = ({
+	item,
+	plannerId,
+	tags,
+	onCancel,
+	onSuccess,
+}: Props) => {
 	const [selectedTags, setSelectedTags] = useState<string[]>(item?.tags ?? []);
 
 	const { status, countdown, errorMessage, wrap } = useFormFeedback();
@@ -47,18 +51,15 @@ export const BookmarkForm = ({ item, plannerId, tags }: Props) => {
 	});
 
 	const handleSubmit = form.onSubmit(
-		wrap(
-			async (values) => {
-				const payload = { ...values, tags: selectedTags, plannerId };
+		wrap(async (values) => {
+			const payload = { ...values, tags: selectedTags, plannerId };
 
-				if (item) {
-					return editBookmark({ ...payload, _id: item._id });
-				}
+			if (item) {
+				return editBookmark({ ...payload, _id: item._id });
+			}
 
-				return addBookmark(payload);
-			},
-			() => router.push(pathname),
-		),
+			return addBookmark(payload);
+		}, onSuccess),
 	);
 
 	return (
@@ -90,7 +91,7 @@ export const BookmarkForm = ({ item, plannerId, tags }: Props) => {
 					onChange={setSelectedTags}
 				/>
 				<Group justify="flex-end">
-					<Button variant="subtle" onClick={() => router.push(pathname)}>
+					<Button variant="subtle" onClick={onCancel}>
 						Cancel
 					</Button>
 					<SubmitButton

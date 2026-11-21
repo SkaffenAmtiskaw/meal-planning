@@ -1,13 +1,23 @@
 'use client';
 
 import { usePathname, useRouter } from 'next/navigation';
-import type { ReactNode } from 'react';
 
 import { Modal } from '@mantine/core';
 
+import { BookmarkForm } from './BookmarkForm';
+import { RecipeForm } from './RecipeForm';
 import type { RecipesModal } from './types';
 
-type Props = RecipesModal & { children: ReactNode };
+import type { TagOption } from '../types';
+
+type FormProps = {
+	plannerId: string;
+	tags: TagOption[];
+	onCancel: () => void;
+	onSuccess: () => void;
+};
+
+type Props = RecipesModal & Omit<FormProps, 'onCancel' | 'onSuccess'>;
 
 const SIZES = { bookmark: 'md', recipe: 'xl' } as const;
 
@@ -19,18 +29,36 @@ const ADD_TITLES = {
 const getTitle = (modal: RecipesModal) =>
 	modal.status === 'add' ? ADD_TITLES[modal.type] : `Update ${modal.item.name}`;
 
-export const ModalWrapper = ({ children, ...modal }: Props) => {
+const renderForm = (modal: RecipesModal, formProps: FormProps) => {
+	if (modal.type === 'bookmark') {
+		const item = modal.status === 'edit' ? modal.item : undefined;
+		return <BookmarkForm item={item} {...formProps} />;
+	}
+
+	const item = modal.status === 'edit' ? modal.item : undefined;
+	return <RecipeForm item={item} {...formProps} />;
+};
+
+export const ModalWrapper = ({ plannerId, tags, ...modal }: Props) => {
 	const router = useRouter();
 	const pathname = usePathname();
+
+	// Closing goes to the same page without the modal's search params.
+	const close = () => router.push(pathname);
 
 	return (
 		<Modal
 			opened
 			size={SIZES[modal.type]}
 			title={getTitle(modal)}
-			onClose={() => router.push(pathname)}
+			onClose={close}
 		>
-			{children}
+			{renderForm(modal, {
+				plannerId,
+				tags,
+				onCancel: close,
+				onSuccess: close,
+			})}
 		</Modal>
 	);
 };

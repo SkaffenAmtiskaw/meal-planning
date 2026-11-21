@@ -7,8 +7,8 @@ import { getPlanner } from '@/_actions/planner';
 
 import RecipePage from './page';
 
-import { RecipeForm } from '../_components/Modal/RecipeForm';
 import { RecipeDetail } from './_components/RecipeDetail';
+import { RecipeEditForm } from './_components/RecipeEditForm';
 
 vi.mock(
 	'@/_actions/planner',
@@ -23,8 +23,8 @@ vi.mock('./_components/RecipeDetail', () => ({
 	RecipeDetail: vi.fn(() => null),
 }));
 
-vi.mock('../_components/Modal/RecipeForm', () => ({
-	RecipeForm: vi.fn(() => null),
+vi.mock('./_components/RecipeEditForm', () => ({
+	RecipeEditForm: vi.fn(() => null),
 }));
 
 const plannerId = '507f1f77bcf86cd799439011';
@@ -69,7 +69,7 @@ describe('RecipePage', () => {
 			}),
 			undefined,
 		);
-		expect(vi.mocked(RecipeForm)).not.toHaveBeenCalled();
+		expect(vi.mocked(RecipeEditForm)).not.toHaveBeenCalled();
 	});
 
 	it("passes the planner's tags to RecipeDetail", async () => {
@@ -108,7 +108,7 @@ describe('RecipePage', () => {
 		expect(vi.mocked(notFound)).toHaveBeenCalled();
 	});
 
-	it('renders RecipeForm when status is edit', async () => {
+	it('renders RecipeEditForm when status is edit', async () => {
 		const recipe = makeRecipe();
 		vi.mocked(getPlanner).mockResolvedValueOnce(makePlanner([recipe]) as never);
 
@@ -119,20 +119,19 @@ describe('RecipePage', () => {
 			}),
 		);
 
-		expect(vi.mocked(RecipeForm)).toHaveBeenCalledWith(
+		expect(vi.mocked(RecipeEditForm)).toHaveBeenCalledWith(
 			expect.objectContaining({
 				plannerId,
-				item: expect.objectContaining({
+				recipe: expect.objectContaining({
 					name: "Maleficent's Dragon Roast",
 				}),
-				redirectTo: `/${plannerId}/recipes/${recipeId}`,
 			}),
 			undefined,
 		);
 		expect(vi.mocked(RecipeDetail)).not.toHaveBeenCalled();
 	});
 
-	it("passes the planner's tags to RecipeForm in edit mode", async () => {
+	it("passes the planner's tags to RecipeEditForm in edit mode", async () => {
 		const recipe = makeRecipe();
 		const planner = { ...makePlanner([recipe]), tags };
 		vi.mocked(getPlanner).mockResolvedValueOnce(planner as never);
@@ -144,7 +143,7 @@ describe('RecipePage', () => {
 			}),
 		);
 
-		expect(vi.mocked(RecipeForm)).toHaveBeenCalledWith(
+		expect(vi.mocked(RecipeEditForm)).toHaveBeenCalledWith(
 			expect.objectContaining({ tags }),
 			undefined,
 		);

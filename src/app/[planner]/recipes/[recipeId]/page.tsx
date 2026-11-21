@@ -7,8 +7,8 @@ import { z } from 'zod';
 import { getPlanner } from '@/_actions/planner';
 import { zId } from '@/_utils/zId';
 
-import { RecipeForm } from '../_components/Modal/RecipeForm';
 import { RecipeDetail } from './_components/RecipeDetail';
+import { RecipeEditForm } from './_components/RecipeEditForm';
 
 const zParams = z.object({
 	planner: zId,
@@ -37,10 +37,9 @@ const RecipePage = async ({
 	if (status === 'edit') {
 		return (
 			<Container size="md" py={16}>
-				<RecipeForm
-					item={recipe}
+				<RecipeEditForm
 					plannerId={plannerId}
-					redirectTo={`/${plannerId}/recipes/${recipeId}`}
+					recipe={recipe}
 					tags={planner.tags}
 				/>
 			</Container>

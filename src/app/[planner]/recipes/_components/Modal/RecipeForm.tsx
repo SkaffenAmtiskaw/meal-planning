@@ -1,6 +1,5 @@
 'use client';
 
-import { usePathname, useRouter } from 'next/navigation';
 import { useState } from 'react';
 
 import {
@@ -51,14 +50,17 @@ type Props = {
 	plannerId: string;
 	item?: RecipeInterface;
 	tags: TagOption[];
-	redirectTo?: string;
+	onCancel: () => void;
+	onSuccess: () => void;
 };
 
-export const RecipeForm = ({ item, plannerId, tags, redirectTo }: Props) => {
-	const router = useRouter();
-	const pathname = usePathname();
-	const destination = redirectTo ?? pathname;
-
+export const RecipeForm = ({
+	item,
+	plannerId,
+	tags,
+	onCancel,
+	onSuccess,
+}: Props) => {
 	const [ingredients, setIngredients] = useState<string[]>(
 		item?.ingredients ?? [],
 	);
@@ -91,24 +93,21 @@ export const RecipeForm = ({ item, plannerId, tags, redirectTo }: Props) => {
 	});
 
 	const handleSubmit = form.onSubmit(
-		wrap(
-			async (values) => {
-				const payload = {
-					...values,
-					ingredients,
-					instructions,
-					tags: selectedTags,
-					plannerId,
-				};
+		wrap(async (values) => {
+			const payload = {
+				...values,
+				ingredients,
+				instructions,
+				tags: selectedTags,
+				plannerId,
+			};
 
-				if (item) {
-					return editRecipe({ ...payload, _id: item._id });
-				}
+			if (item) {
+				return editRecipe({ ...payload, _id: item._id });
+			}
 
-				return addRecipe(payload);
-			},
-			() => router.push(destination),
-		),
+			return addRecipe(payload);
+		}, onSuccess),
 	);
 
 	return (
@@ -219,7 +218,7 @@ export const RecipeForm = ({ item, plannerId, tags, redirectTo }: Props) => {
 				</Grid.Col>
 				<Grid.Col span={12}>
 					<Group justify="flex-end">
-						<Button variant="subtle" onClick={() => router.push(destination)}>
+						<Button variant="subtle" onClick={onCancel}>
 							Cancel
 						</Button>
 						<SubmitButton

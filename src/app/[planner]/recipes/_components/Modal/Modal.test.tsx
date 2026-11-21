@@ -3,28 +3,16 @@ import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import { getSavedItem } from '@/_actions/library';
 
-import { BookmarkForm } from './BookmarkForm';
 import { Modal } from './Modal';
 import { ModalWrapper } from './ModalWrapper';
-import { RecipeForm } from './RecipeForm';
 
 vi.mock(
 	'@/_actions/library',
 	async () => await import('#mocks/@/_actions/library'),
 );
 
-vi.mock('./BookmarkForm', async () => ({
-	BookmarkForm: vi.fn(() => <div data-testid="bookmark-form" />),
-}));
-
 vi.mock('./ModalWrapper', async () => ({
-	ModalWrapper: vi.fn(({ children }: { children: React.ReactNode }) => (
-		<div data-testid="modal-wrapper">{children}</div>
-	)),
-}));
-
-vi.mock('./RecipeForm', async () => ({
-	RecipeForm: vi.fn(() => <div data-testid="recipe-form" />),
+	ModalWrapper: vi.fn(() => <div data-testid="modal-wrapper" />),
 }));
 
 const plannerId = '507f1f77bcf86cd799439011';
@@ -91,128 +79,99 @@ describe('Modal', () => {
 		expect(container.firstChild).toBeNull();
 	});
 
-	it('renders add bookmark modal with correct props', async () => {
-		const planner = makePlanner();
+	it.each([
+		'bookmark',
+		'recipe',
+	] as const)('opens the add %s modal with the planner', async (type) => {
+		const tags = [
+			{ _id: '507f1f77bcf86cd799439013', name: 'Spicy', color: 'red' },
+		];
+		const planner = makePlanner(tags);
 
-		render(await Modal({ planner, status: 'add', type: 'bookmark' }));
+		render(await Modal({ planner, status: 'add', type }));
 
 		const [[modalWrapperProps]] = vi.mocked(ModalWrapper).mock.calls;
-		expect(modalWrapperProps).toEqual(
-			expect.objectContaining({
-				status: 'add',
-				type: 'bookmark',
-			}),
-		);
+		expect(modalWrapperProps).toEqual({
+			status: 'add',
+			type,
+			plannerId,
+			tags,
+		});
+	});
 
-		const [[bookmarkFormProps]] = vi.mocked(BookmarkForm).mock.calls;
-		expect(bookmarkFormProps).toEqual(
-			expect.objectContaining({
-				plannerId: planner._id,
+	it.each([
+		{
+			type: 'bookmark',
+			item: {
+				_id: itemId,
+				name: "Gaston's Golden Goose",
+				url: 'https://example.com',
 				tags: [],
-			}),
-		);
-	});
+			},
+		},
+		{
+			type: 'recipe',
+			item: {
+				_id: itemId,
+				name: "Ursula's Sea Bisque",
+				ingredients: [],
+				instructions: [],
+			},
+		},
+	] as const)('opens the edit $type modal with the saved item', async ({
+		type,
+		item,
+	}) => {
+		const planner = makePlanner();
+		vi.mocked(getSavedItem).mockResolvedValueOnce(item as never);
 
-	it('renders add recipe modal with correct props', async () => {
-		const tagId = '507f1f77bcf86cd799439013';
-		const planner = makePlanner([{ _id: tagId, name: 'Spicy', color: 'red' }]);
+		render(await Modal({ planner, status: 'edit', type, item: itemId }));
 
-		render(await Modal({ planner, status: 'add', type: 'recipe' }));
+		expect(vi.mocked(getSavedItem)).toHaveBeenCalledWith(plannerId, itemId);
 
 		const [[modalWrapperProps]] = vi.mocked(ModalWrapper).mock.calls;
-		expect(modalWrapperProps).toEqual(
-			expect.objectContaining({
-				status: 'add',
-				type: 'recipe',
-			}),
-		);
-
-		const [[recipeFormProps]] = vi.mocked(RecipeForm).mock.calls;
-		expect(recipeFormProps).toEqual(
-			expect.objectContaining({
-				plannerId: planner._id,
-				tags: [{ _id: tagId, name: 'Spicy', color: 'red' }],
-			}),
-		);
-	});
-
-	it('renders edit bookmark modal with correct props', async () => {
-		const planner = makePlanner();
-		const bookmark = {
-			_id: itemId,
-			name: "Gaston's Golden Goose",
-			url: 'https://example.com',
+		expect(modalWrapperProps).toEqual({
+			status: 'edit',
+			type,
+			item,
+			plannerId,
 			tags: [],
-		};
-		vi.mocked(getSavedItem).mockResolvedValueOnce(bookmark as never);
-
-		render(
-			await Modal({
-				planner,
-				status: 'edit',
-				type: 'bookmark',
-				item: itemId,
-			}),
-		);
-
-		expect(vi.mocked(getSavedItem)).toHaveBeenCalledWith(planner._id, itemId);
-
-		const [[modalWrapperProps]] = vi.mocked(ModalWrapper).mock.calls;
-		expect(modalWrapperProps).toEqual(
-			expect.objectContaining({
-				status: 'edit',
-				type: 'bookmark',
-				item: bookmark,
-			}),
-		);
-
-		const [[bookmarkFormProps]] = vi.mocked(BookmarkForm).mock.calls;
-		expect(bookmarkFormProps).toEqual(
-			expect.objectContaining({
-				item: expect.objectContaining({ name: "Gaston's Golden Goose" }),
-				plannerId: planner._id,
-				tags: [],
-			}),
-		);
+		});
 	});
 
-	it('renders edit recipe modal with correct props', async () => {
-		const planner = makePlanner();
-		const recipe = {
-			_id: itemId,
-			name: "Ursula's Sea Bisque",
-			ingredients: [],
-			instructions: [],
-		};
-		vi.mocked(getSavedItem).mockResolvedValueOnce(recipe as never);
+	it.each([
+		{
+			type: 'bookmark',
+			item: {
+				_id: itemId,
+				name: "Ursula's Sea Bisque",
+				ingredients: [],
+				instructions: [],
+			},
+		},
+		{
+			type: 'recipe',
+			item: {
+				_id: itemId,
+				name: "Gaston's Golden Goose",
+				url: 'https://example.com',
+				tags: [],
+			},
+		},
+	] as const)('returns null when the edit $type id names the other kind of item', async ({
+		type,
+		item,
+	}) => {
+		vi.mocked(getSavedItem).mockResolvedValueOnce(item as never);
 
-		render(
+		const { container } = render(
 			await Modal({
-				planner,
+				planner: makePlanner(),
 				status: 'edit',
-				type: 'recipe',
+				type,
 				item: itemId,
 			}),
 		);
-
-		expect(vi.mocked(getSavedItem)).toHaveBeenCalledWith(planner._id, itemId);
-
-		const [[modalWrapperProps]] = vi.mocked(ModalWrapper).mock.calls;
-		expect(modalWrapperProps).toEqual(
-			expect.objectContaining({
-				status: 'edit',
-				type: 'recipe',
-				item: recipe,
-			}),
-		);
-
-		const [[recipeFormProps]] = vi.mocked(RecipeForm).mock.calls;
-		expect(recipeFormProps).toEqual(
-			expect.objectContaining({
-				item: expect.objectContaining({ name: "Ursula's Sea Bisque" }),
-				plannerId: planner._id,
-				tags: [],
-			}),
-		);
+		expect(container.firstChild).toBeNull();
 	});
 });

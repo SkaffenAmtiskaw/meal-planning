@@ -1,14 +1,10 @@
 import { fireEvent, render, screen } from '@testing-library/react';
-import { beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
-
-import { usePathname, useRouter } from 'next/navigation';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { addRecipe, editRecipe } from '@/_actions/library';
 import { useFormFeedback } from '@/_hooks';
 
 import { RecipeForm } from './RecipeForm';
-
-vi.mock('next/navigation', async () => await import('#mocks/next/navigation'));
 
 vi.mock(
 	'@/_actions/library',
@@ -44,23 +40,17 @@ vi.mock('@mantine/form', async () => await import('#mocks/@mantine/form'));
 
 vi.mock('@mantine/core', async () => await import('#mocks/@mantine/core'));
 
-const mockPush = vi.fn();
+const onCancel = vi.fn();
+const onSuccess = vi.fn();
 
 const defaultProps = {
 	plannerId: 'planner-1',
 	tags: [{ _id: 'tag-1', name: 'Spicy', color: 'red' }],
+	onCancel,
+	onSuccess,
 };
 
 describe('RecipeForm', () => {
-	beforeAll(() => {
-		const defaultRouter = vi.mocked(useRouter)();
-		vi.mocked(useRouter).mockReturnValue({
-			...defaultRouter,
-			push: mockPush,
-		});
-		vi.mocked(usePathname).mockReturnValue('/planner-1/recipes');
-	});
-
 	beforeEach(() => {
 		vi.clearAllMocks();
 	});
@@ -81,10 +71,11 @@ describe('RecipeForm', () => {
 		expect(screen.getByRole('button', { name: 'Save' })).toBeDefined();
 	});
 
-	it('Cancel navigates back to pathname', () => {
+	it('calls onCancel when Cancel is clicked', () => {
 		render(<RecipeForm {...defaultProps} />);
 		fireEvent.click(screen.getByRole('button', { name: 'Cancel' }));
-		expect(mockPush).toHaveBeenCalledWith('/planner-1/recipes');
+		expect(onCancel).toHaveBeenCalled();
+		expect(onSuccess).not.toHaveBeenCalled();
 	});
 
 	it('submitting the form calls addRecipe with plannerId', async () => {
@@ -98,13 +89,14 @@ describe('RecipeForm', () => {
 		});
 	});
 
-	it('navigates away after successful submission', async () => {
+	it('calls onSuccess after a successful save', async () => {
 		render(<RecipeForm {...defaultProps} />);
 		fireEvent.submit(screen.getByTestId('recipe-form'));
 
 		await vi.waitFor(() => {
-			expect(mockPush).toHaveBeenCalledWith('/planner-1/recipes');
+			expect(onSuccess).toHaveBeenCalled();
 		});
+		expect(onCancel).not.toHaveBeenCalled();
 	});
 
 	it('shows error alert when status is error', () => {
@@ -135,24 +127,5 @@ describe('RecipeForm', () => {
 			);
 			expect(addRecipe).not.toHaveBeenCalled();
 		});
-	});
-
-	it('navigates to redirectTo after successful submission', async () => {
-		render(
-			<RecipeForm {...defaultProps} redirectTo="/planner-1/recipes/recipe-1" />,
-		);
-		fireEvent.submit(screen.getByTestId('recipe-form'));
-
-		await vi.waitFor(() => {
-			expect(mockPush).toHaveBeenCalledWith('/planner-1/recipes/recipe-1');
-		});
-	});
-
-	it('Cancel navigates to redirectTo when provided', () => {
-		render(
-			<RecipeForm {...defaultProps} redirectTo="/planner-1/recipes/recipe-1" />,
-		);
-		fireEvent.click(screen.getByRole('button', { name: 'Cancel' }));
-		expect(mockPush).toHaveBeenCalledWith('/planner-1/recipes/recipe-1');
 	});
 });
