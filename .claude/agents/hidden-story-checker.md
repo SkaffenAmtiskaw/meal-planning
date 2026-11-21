@@ -13,6 +13,8 @@ The note path and a checkpoint:
 - **Behaviors:** the confirmed behavior list.
 - **Plan:** the path to the draft steps.
 
+If the prompt names work the story took on since the user kept it whole, the rest is one story by the user's call, so report only hidden stories that hold some of that newer work.
+
 A raw file shows a note's embeds (`![[Note#Section]]`) only as a link, so open each one and read it as part of the note. A link to a heading or block (`[[#^piece-7]]`) points to content its line depends on, so read the target when that line matters to your work.
 
 ## The Test
