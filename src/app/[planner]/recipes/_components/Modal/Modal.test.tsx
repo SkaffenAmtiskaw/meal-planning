@@ -18,13 +18,9 @@ vi.mock('./BookmarkForm', async () => ({
 }));
 
 vi.mock('./ModalWrapper', async () => ({
-	ModalWrapper: vi.fn(
-		({ children, title }: { children: React.ReactNode; title: string }) => (
-			<div data-testid="modal-wrapper" data-title={title}>
-				{children}
-			</div>
-		),
-	),
+	ModalWrapper: vi.fn(({ children }: { children: React.ReactNode }) => (
+		<div data-testid="modal-wrapper">{children}</div>
+	)),
 }));
 
 vi.mock('./RecipeForm', async () => ({
@@ -103,9 +99,8 @@ describe('Modal', () => {
 		const [[modalWrapperProps]] = vi.mocked(ModalWrapper).mock.calls;
 		expect(modalWrapperProps).toEqual(
 			expect.objectContaining({
-				opened: true,
-				size: 'md',
-				title: 'Add New Bookmark',
+				status: 'add',
+				type: 'bookmark',
 			}),
 		);
 
@@ -127,9 +122,8 @@ describe('Modal', () => {
 		const [[modalWrapperProps]] = vi.mocked(ModalWrapper).mock.calls;
 		expect(modalWrapperProps).toEqual(
 			expect.objectContaining({
-				opened: true,
-				size: 'xl',
-				title: 'Add New Recipe',
+				status: 'add',
+				type: 'recipe',
 			}),
 		);
 
@@ -166,8 +160,9 @@ describe('Modal', () => {
 		const [[modalWrapperProps]] = vi.mocked(ModalWrapper).mock.calls;
 		expect(modalWrapperProps).toEqual(
 			expect.objectContaining({
-				opened: true,
-				title: "Update Gaston's Golden Goose",
+				status: 'edit',
+				type: 'bookmark',
+				item: bookmark,
 			}),
 		);
 
@@ -205,9 +200,9 @@ describe('Modal', () => {
 		const [[modalWrapperProps]] = vi.mocked(ModalWrapper).mock.calls;
 		expect(modalWrapperProps).toEqual(
 			expect.objectContaining({
-				opened: true,
-				size: 'xl',
-				title: "Update Ursula's Sea Bisque",
+				status: 'edit',
+				type: 'recipe',
+				item: recipe,
 			}),
 		);
 

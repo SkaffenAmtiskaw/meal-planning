@@ -1,97 +1,66 @@
+import type { ReactNode } from 'react';
+
 import { getSavedItem } from '@/_actions/library';
-import type {
-	BookmarkInterface,
-	PlannerInterface,
-	RecipeInterface,
-} from '@/_models/types';
+import type { PlannerInterface } from '@/_models/types';
 
 import { BookmarkForm } from './BookmarkForm';
 import { ModalWrapper } from './ModalWrapper';
 import { RecipeForm } from './RecipeForm';
-
-type Planner = PlannerInterface;
+import type { RecipesModal } from './types';
 
 type Props = {
-	planner: Planner;
+	planner: PlannerInterface;
 	item?: string;
 	status?: 'add' | 'edit';
 	type?: 'bookmark' | 'recipe';
 };
 
-const CONTENT_TYPES = {
-	add: {
-		bookmark: {
-			getForm: (planner: Planner) => (
-				<BookmarkForm plannerId={planner._id} tags={planner.tags} />
-			),
-			getHeader: () => 'Add New Bookmark',
-		},
-		recipe: {
-			getForm: (planner: Planner) => (
-				<RecipeForm plannerId={planner._id} tags={planner.tags} />
-			),
-			getHeader: () => 'Add New Recipe',
-		},
-	},
-	edit: {
-		bookmark: {
-			getForm: (planner: Planner, bookmark: BookmarkInterface) => (
-				<BookmarkForm
-					item={bookmark}
-					plannerId={planner._id}
-					tags={planner.tags}
-				/>
-			),
-			getHeader: ({ name }: BookmarkInterface) => `Update ${name}`,
-		},
-		recipe: {
-			getForm: (planner: Planner, recipe: RecipeInterface) => (
-				<RecipeForm item={recipe} plannerId={planner._id} tags={planner.tags} />
-			),
-			getHeader: ({ name }: RecipeInterface) => `Update ${name}`,
-		},
-	},
-};
+type Content = { modal: RecipesModal; form: ReactNode };
 
-export const Modal = async ({ item: itemId, planner, status, type }: Props) => {
-	if (!status || !type) return null;
+const getContent = async ({
+	item: itemId,
+	planner,
+	status,
+	type,
+}: Props): Promise<Content | null> => {
+	const formProps = { plannerId: planner._id, tags: planner.tags };
+
+	if (status === 'add') {
+		if (type === 'bookmark') {
+			return {
+				modal: { status, type },
+				form: <BookmarkForm {...formProps} />,
+			};
+		}
+		if (type === 'recipe') {
+			return { modal: { status, type }, form: <RecipeForm {...formProps} /> };
+		}
+	}
 
 	if (status === 'edit' && itemId) {
 		const item = await getSavedItem(planner._id, itemId);
 		if (!item) return null;
 
 		if (type === 'bookmark' && 'url' in item) {
-			const { getForm, getHeader } = CONTENT_TYPES.edit.bookmark;
-			return (
-				<ModalWrapper opened title={getHeader(item)}>
-					{getForm(planner, item)}
-				</ModalWrapper>
-			);
+			return {
+				modal: { status, type, item },
+				form: <BookmarkForm item={item} {...formProps} />,
+			};
 		}
-
 		if (type === 'recipe' && !('url' in item)) {
-			const { getForm, getHeader } = CONTENT_TYPES.edit.recipe;
-			return (
-				<ModalWrapper opened size="xl" title={getHeader(item)}>
-					{getForm(planner, item)}
-				</ModalWrapper>
-			);
+			return {
+				modal: { status, type, item },
+				form: <RecipeForm item={item} {...formProps} />,
+			};
 		}
-	}
-
-	if (status === 'add') {
-		const { getForm, getHeader } = CONTENT_TYPES.add[type];
-
-		return (
-			<ModalWrapper
-				opened
-				size={type === 'recipe' ? 'xl' : 'md'}
-				title={getHeader()}
-			>
-				{getForm(planner)}
-			</ModalWrapper>
-		);
 	}
 
 	return null;
+};
+
+export const Modal = async (props: Props) => {
+	const content = await getContent(props);
+	if (!content) return null;
+
+	return <ModalWrapper {...content.modal}>{content.form}</ModalWrapper>;
 };
