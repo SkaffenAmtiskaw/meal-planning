@@ -12,16 +12,6 @@
 	border-color: var(--mantine-primary-color-2);
 }
 
-/* Mantine ActionIcon has no hover-background-color prop. */
-.expandButton:hover {
-	background-color: var(--mantine-color-chalk-2);
-}
-
-/* Use the closest existing default Mantine red tint for the destructive hover background. */
-.removeButton:hover {
-	background-color: var(--mantine-color-red-1);
-}
-
 /* Mantine Input.Label / Textarea label cannot express 12px uppercase letter-spaced text via props. */
 .label {
 	font-size: 12px;

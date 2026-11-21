@@ -182,7 +182,6 @@ export const DishRow = ({
 			data-testid={`dish-expand-${index}`}
 			aria-label={dish.expanded ? 'Collapse dish' : 'Expand dish'}
 			onClick={toggleExpanded}
-			className={classes.expandButton}
 		>
 			{dish.expanded ? <IconChevronUp /> : <IconChevronDown />}
 		</ActionIcon>
@@ -196,7 +195,6 @@ export const DishRow = ({
 			data-testid={`dish-remove-${index}`}
 			aria-label="Remove dish"
 			onClick={onRemove}
-			className={classes.removeButton}
 		>
 			<IconTrash />
 		</ActionIcon>
