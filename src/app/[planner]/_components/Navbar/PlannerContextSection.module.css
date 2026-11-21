@@ -1,8 +1,12 @@
+/* The same box as the navbar items below it, so the planner name lines up with them. */
+.row {
+	width: 100%;
+	padding: 8px var(--mantine-spacing-sm);
+}
+
 .trigger {
-	/* biome-ignore lint/complexity/noImportantStyles: Mantine UnstyledButton applies high-specificity
-	   color; navy (navy-5) is required per theme.md planner context styling */
-	color: var(--mantine-color-navy-5) !important;
-	font-weight: 600;
+	display: flex;
+	align-items: center;
 }
 
 .trigger:hover {
@@ -10,32 +14,26 @@
 		in srgb,
 		var(--mantine-color-forest-5) 12%,
 		transparent
-		/* biome-ignore lint/complexity/noImportantStyles: Mantine UnstyledButton hover applies high-specificity
-	   bg; 12% forest tint is required per theme.md hover styling */
-	) !important;
+	);
 }
 
+/* The body's line height, which the navbar items' labels inherit, so the rows match their height. */
 .plannerName {
 	color: var(--mantine-color-navy-5);
 	font-weight: 600;
+	line-height: var(--mantine-line-height);
 	overflow: hidden;
 	text-overflow: ellipsis;
 	white-space: nowrap;
 }
 
+/* The name takes the trigger's free width, which pushes the chevron to the right edge. */
+.trigger .plannerName {
+	flex: 1;
+}
+
 .chevron {
+	flex-shrink: 0;
+	margin-inline-start: var(--mantine-spacing-sm);
 	color: var(--mantine-color-forest-5);
-}
-
-.staticLabel {
-	/* biome-ignore lint/complexity/noImportantStyles: Mantine UnstyledButton applies high-specificity
-	   color; navy (navy-5) is required per theme.md static label styling */
-	color: var(--mantine-color-navy-5) !important;
-	font-weight: 600;
-	cursor: default;
-}
-
-.staticLabelText {
-	color: var(--mantine-color-navy-5);
-	font-weight: 600;
 }

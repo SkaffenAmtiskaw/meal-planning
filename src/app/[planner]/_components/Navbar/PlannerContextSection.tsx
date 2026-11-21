@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 
-import { NavLink as MantineNavLink, Menu } from '@mantine/core';
+import { Menu, Text, UnstyledButton } from '@mantine/core';
 import { IconChevronDown } from '@tabler/icons-react';
 
 import type { PlannerItem } from './types';
@@ -21,30 +21,32 @@ export const PlannerContextSection = ({
 	const currentPlannerName = currentPlanner?.name ?? 'Unknown Planner';
 
 	if (planners.length === 1) {
-		// Single planner mode - static NavLink (non-interactive)
 		return (
-			<MantineNavLink
-				label={currentPlannerName}
-				classNames={{ root: styles.staticLabel }}
+			<Text
+				size="sm"
+				className={`${styles.row} ${styles.plannerName}`}
 				data-testid="planner-context-static"
-			/>
+			>
+				{currentPlannerName}
+			</Text>
 		);
 	}
 
-	// Multi-planner mode - interactive dropdown
 	return (
 		<Menu width="target">
 			<Menu.Target>
-				<MantineNavLink
-					label={currentPlannerName}
-					rightSection={<IconChevronDown data-testid="icon-chevron-down" />}
-					classNames={{
-						root: styles.trigger,
-						label: styles.plannerName,
-						section: styles.chevron,
-					}}
+				<UnstyledButton
+					className={`${styles.row} ${styles.trigger}`}
 					data-testid="planner-context-trigger"
-				/>
+				>
+					<Text size="sm" span className={styles.plannerName}>
+						{currentPlannerName}
+					</Text>
+					<IconChevronDown
+						className={styles.chevron}
+						data-testid="icon-chevron-down"
+					/>
+				</UnstyledButton>
 			</Menu.Target>
 			<Menu.Dropdown>
 				{planners.map((planner) => (

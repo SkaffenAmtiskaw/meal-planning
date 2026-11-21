@@ -1,4 +1,4 @@
-import { render, screen } from '@testing-library/react';
+import { render, screen, within } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 vi.mock('@mantine/core', async () => await import('#mocks/@mantine/core'));
@@ -43,7 +43,7 @@ describe('PlannerContextSection', () => {
 			expect(screen.getByText('My Planner')).toBeDefined();
 		});
 
-		it('renders NavLink (not a button)', () => {
+		it('renders the name as plain text, not a link or a button', () => {
 			render(
 				<PlannerContextSection
 					currentId="planner-1"
@@ -52,8 +52,9 @@ describe('PlannerContextSection', () => {
 			);
 
 			const element = screen.getByTestId('planner-context-static');
-			expect(element.tagName).toBe('A');
-			expect(element.tagName).not.toBe('BUTTON');
+			expect(element.textContent).toBe('My Planner');
+			expect(screen.queryByRole('link')).toBeNull();
+			expect(screen.queryByRole('button')).toBeNull();
 		});
 
 		it('does not render a chevron icon', () => {
@@ -79,7 +80,7 @@ describe('PlannerContextSection', () => {
 			expect(screen.queryByRole('menu')).toBeNull();
 		});
 
-		it('applies staticLabel class to the root element', () => {
+		it('applies the plannerName class to the label', () => {
 			render(
 				<PlannerContextSection
 					currentId="planner-1"
@@ -88,7 +89,7 @@ describe('PlannerContextSection', () => {
 			);
 
 			const element = screen.getByTestId('planner-context-static');
-			expect(element.className).toContain('staticLabel');
+			expect(element.className).toContain('plannerName');
 		});
 	});
 
@@ -108,7 +109,7 @@ describe('PlannerContextSection', () => {
 
 			// Use getByTestId for the trigger since text appears multiple times
 			const trigger = screen.getByTestId('planner-context-trigger');
-			expect(trigger).toBeDefined();
+			expect(trigger.tagName).toBe('BUTTON');
 			expect(trigger.textContent).toContain('Planner One');
 		});
 
@@ -164,7 +165,7 @@ describe('PlannerContextSection', () => {
 			expect(trigger.className).toContain('trigger');
 		});
 
-		it('applies plannerName class for truncation', () => {
+		it('applies the plannerName class to the name inside the trigger', () => {
 			render(
 				<PlannerContextSection
 					currentId="planner-1"
@@ -172,13 +173,12 @@ describe('PlannerContextSection', () => {
 				/>,
 			);
 
-			// The plannerName class is applied to the label via classNames
-			// The trigger itself has the trigger class, and the label has plannerName
 			const trigger = screen.getByTestId('planner-context-trigger');
-			expect(trigger.className).toContain('trigger');
+			const name = within(trigger).getByText('Planner One');
+			expect(name.className).toContain('plannerName');
 		});
 
-		it('applies chevron class to the chevron icon wrapper', () => {
+		it('applies the chevron class to the chevron icon', () => {
 			render(
 				<PlannerContextSection
 					currentId="planner-1"
@@ -187,8 +187,7 @@ describe('PlannerContextSection', () => {
 			);
 
 			const chevron = screen.getByTestId('icon-chevron-down');
-			// The chevron class is on the wrapper span (classNames.section), not on the icon itself
-			expect(chevron.parentElement?.className).toContain('chevron');
+			expect(chevron.className).toContain('chevron');
 		});
 
 		it('current planner item is rendered in the dropdown', () => {
@@ -204,30 +203,6 @@ describe('PlannerContextSection', () => {
 				'planner-menu-item-planner-1',
 			);
 			expect(currentPlannerItem).toBeDefined();
-		});
-	});
-
-	describe('planner name truncation', () => {
-		// Use multi-planner array to test truncation in multi-planner mode
-		const longNamedPlanners = [
-			{
-				id: 'planner-long',
-				name: 'This Is A Very Long Planner Name That Should Truncate',
-			},
-			{ id: 'planner-short', name: 'Short' },
-		];
-
-		it('applies plannerName class with truncation styles', () => {
-			render(
-				<PlannerContextSection
-					currentId="planner-long"
-					planners={longNamedPlanners}
-				/>,
-			);
-
-			// The trigger should have the trigger class
-			const trigger = screen.getByTestId('planner-context-trigger');
-			expect(trigger.className).toContain('trigger');
 		});
 	});
 
