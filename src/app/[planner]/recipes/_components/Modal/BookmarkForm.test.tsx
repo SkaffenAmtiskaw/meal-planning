@@ -1,17 +1,11 @@
 import { act, fireEvent, render, screen } from '@testing-library/react';
-import { beforeAll, beforeEach, describe, expect, test, vi } from 'vitest';
-
-import { usePathname, useRouter } from 'next/navigation';
+import { beforeEach, describe, expect, test, vi } from 'vitest';
 
 import { addBookmark, editBookmark } from '@/_actions/library';
 
 import { BookmarkForm } from './BookmarkForm';
 
 import { TagCombobox } from '../TagCombobox';
-
-vi.mock('next/navigation', async () => await import('#mocks/next/navigation'));
-
-const mockPush = vi.fn();
 
 vi.mock(
 	'@/_actions/library',
@@ -33,21 +27,17 @@ vi.mock('@mantine/form', async () => await import('#mocks/@mantine/form'));
 
 vi.mock('@mantine/core', async () => await import('#mocks/@mantine/core'));
 
+const onCancel = vi.fn();
+const onSuccess = vi.fn();
+
 const defaultProps = {
 	plannerId: 'planner-1',
 	tags: [{ _id: 'tag-1', name: 'Quick', color: 'blue' }],
+	onCancel,
+	onSuccess,
 };
 
 describe('BookmarkForm', () => {
-	beforeAll(() => {
-		const defaultRouter = vi.mocked(useRouter)();
-		vi.mocked(useRouter).mockReturnValue({
-			...defaultRouter,
-			push: mockPush,
-		});
-		vi.mocked(usePathname).mockReturnValue('/planner-1/recipes');
-	});
-
 	beforeEach(() => {
 		vi.clearAllMocks();
 	});
@@ -61,13 +51,14 @@ describe('BookmarkForm', () => {
 		);
 	});
 
-	test('navigates to pathname after successful add', async () => {
+	test('calls onSuccess after a successful save', async () => {
 		render(<BookmarkForm {...defaultProps} />);
 		await act(async () => {
 			fireEvent.submit(screen.getByTestId('bookmark-form'));
 		});
 
-		expect(mockPush).toHaveBeenCalledWith('/planner-1/recipes');
+		expect(onSuccess).toHaveBeenCalled();
+		expect(onCancel).not.toHaveBeenCalled();
 	});
 
 	test('submits with selected tags included', async () => {
@@ -109,9 +100,10 @@ describe('BookmarkForm', () => {
 		expect(addBookmark).not.toHaveBeenCalled();
 	});
 
-	test('navigates to pathname on cancel', () => {
+	test('calls onCancel when Cancel is clicked', () => {
 		render(<BookmarkForm {...defaultProps} />);
 		fireEvent.click(screen.getByRole('button', { name: 'Cancel' }));
-		expect(mockPush).toHaveBeenCalledWith('/planner-1/recipes');
+		expect(onCancel).toHaveBeenCalled();
+		expect(onSuccess).not.toHaveBeenCalled();
 	});
 });

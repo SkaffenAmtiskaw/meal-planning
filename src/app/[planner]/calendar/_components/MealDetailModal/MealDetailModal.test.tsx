@@ -1,17 +1,21 @@
-import { render, screen } from '@testing-library/react';
+import { fireEvent, render, screen } from '@testing-library/react';
 import { beforeEach, describe, expect, test, vi } from 'vitest';
 
 import { MealDetailModal } from './MealDetailModal';
+import { MealDetails } from './MealDetails';
 
 import type { CalendarMeal } from '../Calendar';
-import { DishLink } from '../DishLink/DishLink';
+import { useCalendarMeals } from '../../_hooks/useCalendarMeals';
 
 vi.mock('@mantine/core', async () => await import('#mocks/@mantine/core'));
-vi.mock('../DishLink/DishLink', () => ({
-	DishLink: vi.fn(({ dish }) => (
-		<span data-testid="dish-link">{dish.name}</span>
-	)),
+vi.mock('./MealDetails', () => ({
+	MealDetails: vi.fn(() => <div data-testid="meal-details" />),
 }));
+vi.mock(
+	'../../_hooks/useCalendarMeals',
+	async () =>
+		await import('#mocks/@app/[planner]/calendar/_hooks/useCalendarMeals'),
+);
 
 const baseMeal: CalendarMeal = {
 	id: 'meal-1',
@@ -21,122 +25,67 @@ const baseMeal: CalendarMeal = {
 	dishes: [],
 };
 
+const renderModal = (mealId: string | null, close = vi.fn()) =>
+	render(
+		<MealDetailModal
+			data={mealId === null ? null : { mealId }}
+			close={close}
+			plannerId="p-1"
+		/>,
+	);
+
 describe('MealDetailModal', () => {
 	beforeEach(() => {
 		vi.resetAllMocks();
+		vi.mocked(useCalendarMeals).mockReturnValue([baseMeal]);
 	});
 
-	test('is not visible when meal is null', () => {
-		render(
-			<MealDetailModal meal={null} plannerId="planner-1" onClose={() => {}} />,
-		);
+	test('is not visible while it has no data', () => {
+		renderModal(null);
 		expect(screen.queryByRole('dialog')).toBeNull();
 	});
 
-	test('is visible when meal is provided', () => {
-		render(
-			<MealDetailModal
-				meal={baseMeal}
-				plannerId="planner-1"
-				onClose={() => {}}
-			/>,
-		);
+	test("finds the meal by id in the calendar's meals", () => {
+		renderModal('meal-1');
+
 		expect(screen.getByRole('dialog')).toBeDefined();
+		expect(vi.mocked(MealDetails).mock.calls[0][0]).toEqual({
+			meal: baseMeal,
+			plannerId: 'p-1',
+		});
+	});
+
+	test("renders no modal when the id is not in the calendar's meals", () => {
+		renderModal('meal-missing');
+
+		expect(screen.queryByRole('dialog')).toBeNull();
+		expect(MealDetails).not.toHaveBeenCalled();
+	});
+
+	test('closes through the close it is given', () => {
+		const close = vi.fn();
+		renderModal('meal-1', close);
+
+		fireEvent.click(screen.getByLabelText('close'));
+
+		expect(close).toHaveBeenCalledTimes(1);
 	});
 
 	test('shows the meal title', () => {
-		render(
-			<MealDetailModal
-				meal={baseMeal}
-				plannerId="planner-1"
-				onClose={() => {}}
-			/>,
-		);
+		renderModal('meal-1');
 		expect(screen.getByText('Breakfast')).toBeDefined();
 	});
 
 	test('shows the description when present', () => {
-		const meal = { ...baseMeal, description: 'Morning meal' };
-		render(
-			<MealDetailModal meal={meal} plannerId="planner-1" onClose={() => {}} />,
-		);
+		vi.mocked(useCalendarMeals).mockReturnValue([
+			{ ...baseMeal, description: 'Morning meal' },
+		]);
+		renderModal('meal-1');
 		expect(screen.getByText('Morning meal')).toBeDefined();
 	});
 
 	test('does not show description when absent', () => {
-		render(
-			<MealDetailModal
-				meal={baseMeal}
-				plannerId="planner-1"
-				onClose={() => {}}
-			/>,
-		);
+		renderModal('meal-1');
 		expect(screen.queryByText('Morning meal')).toBeNull();
-	});
-
-	test('shows dish names', () => {
-		const meal = {
-			...baseMeal,
-			dishes: [{ name: 'Eggs' }, { name: 'Toast' }],
-		};
-		render(
-			<MealDetailModal meal={meal} plannerId="planner-1" onClose={() => {}} />,
-		);
-		expect(screen.getByText('Eggs')).toBeDefined();
-		expect(screen.getByText('Toast')).toBeDefined();
-	});
-
-	test('shows dish note when present', () => {
-		const meal = {
-			...baseMeal,
-			dishes: [{ name: 'Pasta', note: 'al dente' }],
-		};
-		render(
-			<MealDetailModal meal={meal} plannerId="planner-1" onClose={() => {}} />,
-		);
-		expect(screen.getByText('al dente')).toBeDefined();
-	});
-
-	test('does not show note section when note is absent', () => {
-		const meal = { ...baseMeal, dishes: [{ name: 'Salad' }] };
-		render(
-			<MealDetailModal meal={meal} plannerId="planner-1" onClose={() => {}} />,
-		);
-		expect(screen.queryByText('al dente')).toBeNull();
-	});
-
-	test('renders a DishLink for each dish', () => {
-		const meal = {
-			...baseMeal,
-			dishes: [{ name: 'Eggs' }, { name: 'Toast' }],
-		};
-		render(
-			<MealDetailModal meal={meal} plannerId="planner-1" onClose={() => {}} />,
-		);
-		expect(screen.getAllByTestId('dish-link')).toHaveLength(2);
-		expect(vi.mocked(DishLink)).toHaveBeenCalledTimes(2);
-		expect(vi.mocked(DishLink).mock.calls[0][0]).toEqual(
-			expect.objectContaining({
-				dish: { name: 'Eggs' },
-				plannerId: 'planner-1',
-			}),
-		);
-		expect(vi.mocked(DishLink).mock.calls[1][0]).toEqual(
-			expect.objectContaining({
-				dish: { name: 'Toast' },
-				plannerId: 'planner-1',
-			}),
-		);
-	});
-
-	test('shows ref text below dish name when source has a ref', () => {
-		const meal = {
-			...baseMeal,
-			dishes: [{ name: 'Roast Chicken', source: { ref: 'The Flavor Bible' } }],
-		};
-		render(
-			<MealDetailModal meal={meal} plannerId="planner-1" onClose={() => {}} />,
-		);
-		expect(screen.getByText('The Flavor Bible')).toBeDefined();
 	});
 });

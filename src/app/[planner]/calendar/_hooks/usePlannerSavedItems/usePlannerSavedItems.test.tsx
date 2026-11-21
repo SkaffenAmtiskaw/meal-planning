@@ -43,6 +43,12 @@ describe('usePlannerSavedItems', () => {
 		]);
 	});
 
+	test('gives a recipe no url, so it still reads as a recipe', () => {
+		const { result } = renderHook(() => usePlannerSavedItems(), { wrapper });
+
+		expect(result.current[0]).not.toHaveProperty('url');
+	});
+
 	test('throws outside the provider', () => {
 		expect(() => renderHook(() => usePlannerSavedItems())).toThrow(
 			'usePlannerSavedItems must be used inside PlannerSavedItemsProvider',

@@ -1,7 +1,5 @@
-export interface AddMealModalProps {
-	data: { initialDate?: string };
-	close: () => void;
-	plannerId: string;
+export interface AddMealModalData {
+	initialDate?: string;
 }
 
 export type MealFormValues = {

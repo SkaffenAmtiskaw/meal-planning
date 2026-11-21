@@ -2,50 +2,37 @@
 
 import { useCallback, useMemo } from 'react';
 
-import type { DayInterface } from '@/_models/types';
-
 import { WeekMealCard } from './WeekMealCard';
 
-import {
-	type CalendarMeal,
-	WeekView,
-	type WeekViewMeal,
-	type WeekViewProps,
-} from '../Calendar';
-import { toCalendarMeals } from '../../_utils/toCalendarMeals';
-import type { SavedItem } from '../../types';
+import { WeekView, type WeekViewMeal, type WeekViewProps } from '../Calendar';
+import { useCalendarModal } from '../CalendarModal';
+import { useCalendarMeals } from '../../_hooks/useCalendarMeals';
 
 interface MealWeekViewProps {
-	calendar: DayInterface[];
-	savedItems?: SavedItem[];
 	plannerId: string;
-	onMealClick?: (meal: CalendarMeal) => void;
 }
 
-export function MealWeekView({
-	calendar,
-	savedItems,
-	plannerId,
-	onMealClick,
-}: MealWeekViewProps) {
-	const meals = useMemo(
-		() => toCalendarMeals(calendar, savedItems),
-		[calendar, savedItems],
-	);
+export function MealWeekView({ plannerId }: MealWeekViewProps) {
+	const { open } = useCalendarModal();
+	const meals = useCalendarMeals();
 
 	const mealMap = useMemo(
 		() => new Map(meals.map((meal) => [meal.id, meal])),
 		[meals],
 	);
 
+	const openMeal = useCallback(
+		(mealId: string) => open('meal_detail', { mealId }),
+		[open],
+	);
+
 	const handleMealClick = useCallback(
 		(meal: WeekViewMeal) => {
-			const calendarMeal = mealMap.get(meal.id);
-			if (calendarMeal) {
-				onMealClick?.(calendarMeal);
+			if (mealMap.has(meal.id)) {
+				openMeal(meal.id);
 			}
 		},
-		[mealMap, onMealClick],
+		[mealMap, openMeal],
 	);
 
 	const renderMeal = useCallback(
@@ -60,13 +47,13 @@ export function MealWeekView({
 				<WeekMealCard
 					meal={calendarMeal}
 					plannerId={plannerId}
-					onClick={() => onMealClick?.(calendarMeal)}
+					onClick={() => openMeal(calendarMeal.id)}
 					tabIndex={props.tabIndex}
 					ref={props.ref}
 				/>
 			);
 		},
-		[mealMap, onMealClick, plannerId],
+		[mealMap, openMeal, plannerId],
 	);
 
 	return (

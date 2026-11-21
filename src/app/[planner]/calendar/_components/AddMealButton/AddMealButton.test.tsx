@@ -5,24 +5,31 @@ import { useCanWrite } from '@/app/[planner]/_components';
 
 import { AddMealButton } from './AddMealButton';
 
+import { useCalendarModal } from '../CalendarModal';
+
 vi.mock('@mantine/core', async () => await import('#mocks/@mantine/core'));
 
-const { mockOpen } = vi.hoisted(() => ({
-	mockOpen: vi.fn(),
-}));
+const mockOpen = vi.fn();
 
 vi.mock(
 	'@/app/[planner]/_components',
 	async () => await import('#mocks/@/app/[planner]/_components'),
 );
 
-vi.mock('../CalendarModal', () => ({
-	useCalendarModal: vi.fn(() => ({ open: mockOpen })),
-}));
+vi.mock(
+	'../CalendarModal',
+	async () =>
+		await import('#mocks/@app/[planner]/calendar/_components/CalendarModal'),
+);
 
 describe('AddMealButton', () => {
 	beforeEach(() => {
 		vi.resetAllMocks();
+		vi.mocked(useCalendarModal).mockReturnValue({
+			state: { type: null, data: null },
+			open: mockOpen,
+			close: vi.fn(),
+		});
 	});
 
 	afterEach(() => {

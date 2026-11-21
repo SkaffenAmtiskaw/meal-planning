@@ -1,52 +1,48 @@
+import { useMemo } from 'react';
+
 import { Modal, Stack, Text } from '@mantine/core';
 
-import type { CalendarMeal } from '../Calendar';
-import { DishLink } from '../DishLink/DishLink';
+import { MealDetails } from './MealDetails';
 
-type Props = {
-	meal: CalendarMeal | null;
-	plannerId: string;
-	onClose: () => void;
-};
+import { useCalendarMeals } from '../../_hooks/useCalendarMeals';
+import type { CalendarModalFrameProps } from '../CalendarModal/types';
 
-export const MealDetailModal = ({ meal, plannerId, onClose }: Props) => (
-	<Modal
-		centered
-		opened={meal !== null}
-		onClose={onClose}
-		removeScrollProps={{ removeScrollBar: false }}
-		title={
-			<Stack gap={2}>
-				<Text fw={700} size="lg">
-					{meal?.name ?? ''}
-				</Text>
-				{meal?.description && (
-					<Text size="sm" c="dimmed">
-						{meal.description}
+export const MealDetailModal = ({
+	data,
+	close,
+	plannerId,
+}: CalendarModalFrameProps<'meal_detail'>) => {
+	const meals = useCalendarMeals();
+	const mealId = data?.mealId ?? null;
+
+	const meal = useMemo(
+		() =>
+			mealId === null
+				? null
+				: (meals.find((calendarMeal) => calendarMeal.id === mealId) ?? null),
+		[meals, mealId],
+	);
+
+	return (
+		<Modal
+			centered
+			opened={meal !== null}
+			onClose={close}
+			removeScrollProps={{ removeScrollBar: false }}
+			title={
+				<Stack gap={2}>
+					<Text fw={700} size="lg">
+						{meal?.name ?? ''}
 					</Text>
-				)}
-			</Stack>
-		}
-	>
-		<Stack gap="xs">
-			{meal?.dishes.map((dish, i) => (
-				// biome-ignore lint/suspicious/noArrayIndexKey: dishes have no stable id
-				<div key={i}>
-					<DishLink dish={dish} plannerId={plannerId} />
-					{typeof dish.source === 'object' &&
-						dish.source !== null &&
-						'ref' in dish.source && (
-							<Text size="xs" c="dimmed">
-								{dish.source.ref}
-							</Text>
-						)}
-					{dish.note && (
-						<Text size="xs" c="dimmed">
-							{dish.note}
+					{meal?.description && (
+						<Text size="sm" c="dimmed">
+							{meal.description}
 						</Text>
 					)}
-				</div>
-			))}
-		</Stack>
-	</Modal>
-);
+				</Stack>
+			}
+		>
+			{meal && <MealDetails meal={meal} plannerId={plannerId} />}
+		</Modal>
+	);
+};

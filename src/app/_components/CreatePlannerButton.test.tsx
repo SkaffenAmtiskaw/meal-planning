@@ -4,12 +4,12 @@ import { beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
 import { useDisclosure } from '@mantine/hooks';
 
 import { CreatePlannerButton } from './CreatePlannerButton';
-import { CreatePlannerForm } from './CreatePlannerForm';
+import { CreatePlannerModal } from './CreatePlannerModal';
 
 vi.mock('@mantine/core', async () => await import('#mocks/@mantine/core'));
 vi.mock('@mantine/hooks', async () => await import('#mocks/@mantine/hooks'));
-vi.mock('./CreatePlannerForm', () => ({
-	CreatePlannerForm: vi.fn(() => <div data-testid="create-planner-form" />),
+vi.mock('./CreatePlannerModal', () => ({
+	CreatePlannerModal: vi.fn(() => null),
 }));
 
 describe('CreatePlannerButton', () => {
@@ -27,7 +27,7 @@ describe('CreatePlannerButton', () => {
 		vi.clearAllMocks();
 	});
 
-	it('opens the form when the button is clicked', () => {
+	it('opens the modal when the button is clicked', () => {
 		render(<CreatePlannerButton />);
 
 		fireEvent.click(screen.getByRole('button', { name: 'Create Planner' }));
@@ -35,10 +35,10 @@ describe('CreatePlannerButton', () => {
 		expect(mockOpen).toHaveBeenCalled();
 	});
 
-	it('calls close when CreatePlannerForm requests close', () => {
+	it('calls close when CreatePlannerModal requests close', () => {
 		render(<CreatePlannerButton />);
 
-		const onClose = vi.mocked(CreatePlannerForm).mock.calls[0][0].onClose;
+		const onClose = vi.mocked(CreatePlannerModal).mock.calls[0][0].onClose;
 
 		onClose();
 

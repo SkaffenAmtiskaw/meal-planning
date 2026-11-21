@@ -1,6 +1,5 @@
 'use client';
 
-import { useState } from 'react';
 import type { ReactElement } from 'react';
 
 import { Flex, Stack } from '@mantine/core';
@@ -10,7 +9,7 @@ import type { DayInterface } from '@/_models/types';
 
 import { CalendarProvider, useCalendarContext } from '../Calendar';
 import { CalendarModalProvider } from '../CalendarModal';
-import type { CalendarMeal } from '../Calendar';
+import { CalendarDaysProvider } from '../../_hooks/useCalendarMeals';
 import { PlannerSavedItemsProvider } from '../../_hooks/usePlannerSavedItems';
 import type { SavedItem } from '../../types';
 import {
@@ -18,7 +17,6 @@ import {
 	CalendarHeaderMobile,
 } from '../CalendarHeader/CalendarHeader';
 import { MealCalendar } from '../MealCalendar/MealCalendar';
-import { MealDetailModal } from '../MealDetailModal/MealDetailModal';
 import { MealListView } from '../MealListView/MealListView';
 import { MealMonthAgenda } from '../MealMonthAgenda/MealMonthAgenda';
 import { MealWeekView } from '../MealWeekView/MealWeekView';
@@ -29,64 +27,26 @@ type Props = {
 	savedItems: SavedItem[];
 };
 
-type CalendarViewContentProps = {
-	plannerId: string;
-	savedItems: SavedItem[];
-	calendar: DayInterface[];
-	clickedMeal: CalendarMeal | null;
-	onClose: () => void;
-	onMealClick: (meal: CalendarMeal) => void;
-};
-
 function CalendarViewContent({
 	plannerId,
-	savedItems,
-	calendar,
-	clickedMeal,
-	onClose,
-	onMealClick,
-}: CalendarViewContentProps): ReactElement {
+}: {
+	plannerId: string;
+}): ReactElement {
 	const { viewType } = useCalendarContext();
 	const isMobile = useIsMobile();
 
 	return (
 		<Stack gap={0} h="100%">
-			<MealDetailModal
-				meal={clickedMeal}
-				plannerId={plannerId}
-				onClose={onClose}
-			/>
 			{isMobile ? <CalendarHeaderMobile /> : <CalendarHeaderDesktop />}
 			<Flex flex={1} mih={0} direction="column">
 				{viewType === 'month' &&
 					(isMobile ? (
-						<MealMonthAgenda
-							plannerId={plannerId}
-							calendar={calendar}
-							savedItems={savedItems}
-						/>
+						<MealMonthAgenda plannerId={plannerId} />
 					) : (
-						<MealCalendar
-							calendar={calendar}
-							savedItems={savedItems}
-							onMealClick={onMealClick}
-						/>
+						<MealCalendar />
 					))}
-				{viewType === 'week' && (
-					<MealWeekView
-						calendar={calendar}
-						savedItems={savedItems}
-						plannerId={plannerId}
-						onMealClick={onMealClick}
-					/>
-				)}
-				{viewType === 'list' && (
-					<MealListView
-						plannerId={plannerId}
-						calendar={calendar}
-						savedItems={savedItems}
-					/>
-				)}
+				{viewType === 'week' && <MealWeekView plannerId={plannerId} />}
+				{viewType === 'list' && <MealListView plannerId={plannerId} />}
 			</Flex>
 		</Stack>
 	);
@@ -97,22 +57,15 @@ export function CalendarView({
 	calendar,
 	savedItems,
 }: Props): ReactElement {
-	const [clickedMeal, setClickedMeal] = useState<CalendarMeal | null>(null);
-
 	return (
 		<PlannerSavedItemsProvider savedItems={savedItems}>
-			<CalendarProvider>
-				<CalendarModalProvider plannerId={plannerId}>
-					<CalendarViewContent
-						plannerId={plannerId}
-						savedItems={savedItems}
-						calendar={calendar}
-						clickedMeal={clickedMeal}
-						onClose={() => setClickedMeal(null)}
-						onMealClick={setClickedMeal}
-					/>
-				</CalendarModalProvider>
-			</CalendarProvider>
+			<CalendarDaysProvider calendar={calendar}>
+				<CalendarProvider>
+					<CalendarModalProvider plannerId={plannerId}>
+						<CalendarViewContent plannerId={plannerId} />
+					</CalendarModalProvider>
+				</CalendarProvider>
+			</CalendarDaysProvider>
 		</PlannerSavedItemsProvider>
 	);
 }

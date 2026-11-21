@@ -1,19 +1,17 @@
 'use client';
 
-import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 
-import { Alert, Button, Group, Modal, Stack, TextInput } from '@mantine/core';
+import { Alert, Button, Group, Stack, TextInput } from '@mantine/core';
 
 import { createPlanner } from '@/_actions/planner';
 
 type Props = {
-	opened: boolean;
-	onClose: () => void;
+	onCancel: () => void;
+	onSuccess: () => void;
 };
 
-export const CreatePlannerForm = ({ opened, onClose }: Props) => {
-	const router = useRouter();
+export const CreatePlannerForm = ({ onCancel, onSuccess }: Props) => {
 	const [name, setName] = useState('');
 	const [loading, setLoading] = useState(false);
 	const [error, setError] = useState<string | null>(null);
@@ -27,50 +25,40 @@ export const CreatePlannerForm = ({ opened, onClose }: Props) => {
 			setError(result.error);
 			return;
 		}
-		setName('');
-		onClose();
-		router.refresh();
-	};
-
-	const handleClose = () => {
-		setName('');
-		setError(null);
-		onClose();
+		onSuccess();
 	};
 
 	return (
-		<Modal opened={opened} onClose={handleClose} title="New Planner">
-			<Stack>
-				<TextInput
-					data-testid="new-planner-name-input"
-					label="Planner name"
-					placeholder="e.g. Weekend Meals"
-					value={name}
-					onChange={(e) => setName(e.currentTarget.value)}
-				/>
-				{error && (
-					<Alert color="red" data-testid="create-planner-error">
-						{error}
-					</Alert>
-				)}
-				<Group justify="flex-end">
-					<Button
-						variant="subtle"
-						data-testid="cancel-create-button"
-						onClick={handleClose}
-					>
-						Cancel
-					</Button>
-					<Button
-						variant="cta"
-						loading={loading}
-						data-testid="create-planner-button"
-						onClick={handleCreate}
-					>
-						Create
-					</Button>
-				</Group>
-			</Stack>
-		</Modal>
+		<Stack>
+			<TextInput
+				data-testid="new-planner-name-input"
+				label="Planner name"
+				placeholder="e.g. Weekend Meals"
+				value={name}
+				onChange={(e) => setName(e.currentTarget.value)}
+			/>
+			{error && (
+				<Alert color="red" data-testid="create-planner-error">
+					{error}
+				</Alert>
+			)}
+			<Group justify="flex-end">
+				<Button
+					variant="subtle"
+					data-testid="cancel-create-button"
+					onClick={onCancel}
+				>
+					Cancel
+				</Button>
+				<Button
+					variant="cta"
+					loading={loading}
+					data-testid="create-planner-button"
+					onClick={handleCreate}
+				>
+					Create
+				</Button>
+			</Group>
+		</Stack>
 	);
 };

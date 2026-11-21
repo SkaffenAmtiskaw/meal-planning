@@ -4,7 +4,7 @@ import { ActionIcon, Affix, Button } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import { IconPlus } from '@tabler/icons-react';
 
-import { CreatePlannerForm } from '@/app/_components/CreatePlannerForm';
+import { CreatePlannerModal } from '@/app/_components/CreatePlannerModal';
 
 export const PlannerListActions = () => {
 	const [opened, { open, close }] = useDisclosure(false);
@@ -31,7 +31,7 @@ export const PlannerListActions = () => {
 					<IconPlus />
 				</ActionIcon>
 			</Affix>
-			<CreatePlannerForm opened={opened} onClose={close} />
+			<CreatePlannerModal opened={opened} onClose={close} />
 		</>
 	);
 };

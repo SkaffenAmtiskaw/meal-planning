@@ -12,9 +12,7 @@ import { useCalendarModal } from '../CalendarModal';
 
 vi.mock('@mantine/core', async () => await import('#mocks/@mantine/core'));
 
-const { mockOpen } = vi.hoisted(() => ({
-	mockOpen: vi.fn(),
-}));
+const mockOpen = vi.fn();
 
 vi.mock(
 	'@/app/[planner]/_components',
@@ -25,18 +23,22 @@ vi.mock('../Calendar', () => ({
 	useCalendarContext: vi.fn(),
 }));
 
-vi.mock('../CalendarModal', () => ({
-	useCalendarModal: vi.fn(() => ({
-		open: mockOpen,
-		state: { type: null, data: null },
-	})),
-}));
+vi.mock(
+	'../CalendarModal',
+	async () =>
+		await import('#mocks/@app/[planner]/calendar/_components/CalendarModal'),
+);
 
 describe('MobileAddMealButton', () => {
 	const selectedDate = DateTime.local(2024, 6, 15);
 
 	beforeEach(() => {
 		vi.resetAllMocks();
+		vi.mocked(useCalendarModal).mockReturnValue({
+			state: { type: null, data: null },
+			open: mockOpen,
+			close: vi.fn(),
+		});
 		vi.mocked(useCalendarContext).mockReturnValue({
 			selectedDate,
 		} as ReturnType<typeof useCalendarContext>);

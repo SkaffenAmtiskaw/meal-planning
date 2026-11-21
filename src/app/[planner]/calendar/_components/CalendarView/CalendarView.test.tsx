@@ -1,4 +1,4 @@
-import { act, render, screen } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { DateTime } from 'luxon';
@@ -9,10 +9,11 @@ import type { DayInterface } from '@/_models/types';
 import { CalendarView } from './CalendarView';
 
 import { useCalendarContext } from '../Calendar';
-import type { CalendarMeal } from '../Calendar';
+import { CalendarModalProvider } from '../CalendarModal';
+import { CalendarDaysProvider } from '../../_hooks/useCalendarMeals';
+import { PlannerSavedItemsProvider } from '../../_hooks/usePlannerSavedItems';
 import type { SavedItem } from '../../types';
 import { MealCalendar } from '../MealCalendar/MealCalendar';
-import { MealDetailModal } from '../MealDetailModal/MealDetailModal';
 import { MealListView } from '../MealListView/MealListView';
 import { MealMonthAgenda } from '../MealMonthAgenda/MealMonthAgenda';
 import { MealWeekView } from '../MealWeekView/MealWeekView';
@@ -63,17 +64,23 @@ vi.mock('../MealListView/MealListView', async () => ({
 	MealListView: vi.fn(() => <div data-testid="meal-list-view" />),
 }));
 
-vi.mock('../MealDetailModal/MealDetailModal', async () => ({
-	MealDetailModal: vi.fn(() => <div data-testid="meal-detail-modal" />),
-}));
+vi.mock(
+	'../CalendarModal',
+	async () =>
+		await import('#mocks/@app/[planner]/calendar/_components/CalendarModal'),
+);
 
-vi.mock('../CalendarModal', async () => ({
-	CalendarModalProvider: vi.fn(({ children, plannerId }) => (
-		<div data-testid="calendar-modal-provider" data-planner-id={plannerId}>
-			{children}
-		</div>
-	)),
-}));
+vi.mock(
+	'../../_hooks/useCalendarMeals',
+	async () =>
+		await import('#mocks/@app/[planner]/calendar/_hooks/useCalendarMeals'),
+);
+
+vi.mock(
+	'../../_hooks/usePlannerSavedItems',
+	async () =>
+		await import('#mocks/@app/[planner]/calendar/_hooks/usePlannerSavedItems'),
+);
 
 const mockUseCalendarContext = vi.mocked(useCalendarContext);
 const mockUseIsMobile = vi.mocked(useIsMobile);
@@ -117,9 +124,10 @@ describe('CalendarView', () => {
 	it('renders CalendarModalProvider with plannerId', () => {
 		render(<CalendarView {...defaultProps} />);
 
-		const provider = screen.getByTestId('calendar-modal-provider');
-		expect(provider).toBeDefined();
-		expect(provider.dataset.plannerId).toBe('planner-1');
+		expect(vi.mocked(CalendarModalProvider)).toHaveBeenCalledWith(
+			expect.objectContaining({ plannerId: 'planner-1' }),
+			undefined,
+		);
 	});
 
 	it('renders MealWeekView when viewType is week', () => {
@@ -134,22 +142,16 @@ describe('CalendarView', () => {
 		expect(screen.queryByTestId('meal-list-view')).toBeNull();
 	});
 
-	it('passes calendar, savedItems, plannerId, and onMealClick to MealWeekView', () => {
+	it('passes only plannerId to MealWeekView', () => {
 		mockUseCalendarContext.mockReturnValue({
 			...defaultCalendarContext,
 			viewType: 'week',
 		});
 		render(<CalendarView {...defaultProps} />);
 
-		expect(vi.mocked(MealWeekView)).toHaveBeenCalledWith(
-			expect.objectContaining({
-				calendar: defaultProps.calendar,
-				savedItems: defaultProps.savedItems,
-				plannerId: 'planner-1',
-				onMealClick: expect.any(Function),
-			}),
-			undefined,
-		);
+		expect(vi.mocked(MealWeekView).mock.calls[0][0]).toEqual({
+			plannerId: 'planner-1',
+		});
 	});
 
 	it('renders MealListView when viewType is list', () => {
@@ -164,24 +166,16 @@ describe('CalendarView', () => {
 		expect(screen.queryByTestId('meal-week-view')).toBeNull();
 	});
 
-	it('passes calendar, savedItems, and plannerId to MealListView without onMealAdded', () => {
+	it('passes only plannerId to MealListView', () => {
 		mockUseCalendarContext.mockReturnValue({
 			...defaultCalendarContext,
 			viewType: 'list',
 		});
 		render(<CalendarView {...defaultProps} />);
 
-		expect(vi.mocked(MealListView)).toHaveBeenCalledWith(
-			expect.objectContaining({
-				plannerId: 'planner-1',
-				calendar: defaultProps.calendar,
-				savedItems: defaultProps.savedItems,
-			}),
-			undefined,
-		);
-		expect(vi.mocked(MealListView).mock.calls[0][0]).not.toHaveProperty(
-			'onMealAdded',
-		);
+		expect(vi.mocked(MealListView).mock.calls[0][0]).toEqual({
+			plannerId: 'planner-1',
+		});
 	});
 
 	it('renders CalendarHeaderMobile on mobile', () => {
@@ -199,96 +193,23 @@ describe('CalendarView', () => {
 		expect(screen.getByTestId('calendar-header-desktop')).toBeDefined();
 	});
 
-	it('uses the calendar prop directly without local state mutation', () => {
+	it('gives the calendar days and saved items to their providers', () => {
 		render(<CalendarView {...defaultProps} />);
 
-		expect(vi.mocked(MealCalendar)).toHaveBeenCalledWith(
-			expect.objectContaining({
-				calendar: defaultProps.calendar,
-			}),
+		expect(vi.mocked(CalendarDaysProvider)).toHaveBeenCalledWith(
+			expect.objectContaining({ calendar: defaultProps.calendar }),
+			undefined,
+		);
+		expect(vi.mocked(PlannerSavedItemsProvider)).toHaveBeenCalledWith(
+			expect.objectContaining({ savedItems: defaultProps.savedItems }),
 			undefined,
 		);
 	});
 
-	it('passes calendar, savedItems, and onMealClick to MealCalendar', () => {
+	it('renders MealCalendar without props, since it reads its meals from context', () => {
 		render(<CalendarView {...defaultProps} />);
 
-		expect(vi.mocked(MealCalendar)).toHaveBeenCalledWith(
-			expect.objectContaining({
-				calendar: defaultProps.calendar,
-				savedItems: defaultProps.savedItems,
-				onMealClick: expect.any(Function),
-			}),
-			undefined,
-		);
-	});
-
-	it('opens MealDetailModal when MealCalendar onMealClick is triggered', () => {
-		render(<CalendarView {...defaultProps} />);
-
-		const fakeMeal: CalendarMeal = {
-			id: 'meal-1',
-			date: '2024-01-01',
-			name: 'Test Meal',
-			borderColor: '#000',
-			dishes: [],
-		};
-		const { onMealClick } = vi.mocked(MealCalendar).mock.calls[0][0];
-		act(() => {
-			onMealClick?.(fakeMeal);
-		});
-
-		expect(vi.mocked(MealDetailModal)).toHaveBeenLastCalledWith(
-			expect.objectContaining({ meal: fakeMeal }),
-			undefined,
-		);
-	});
-
-	it('opens MealDetailModal when MealWeekView onMealClick is triggered', () => {
-		mockUseCalendarContext.mockReturnValue({
-			...defaultCalendarContext,
-			viewType: 'week',
-		});
-		render(<CalendarView {...defaultProps} />);
-
-		const fakeMeal: CalendarMeal = {
-			id: 'meal-1',
-			date: '2024-01-01',
-			name: 'Test Meal',
-			borderColor: '#000',
-			dishes: [],
-		};
-		const { onMealClick } = vi.mocked(MealWeekView).mock.calls[0][0];
-		act(() => {
-			onMealClick?.(fakeMeal);
-		});
-
-		expect(vi.mocked(MealDetailModal)).toHaveBeenLastCalledWith(
-			expect.objectContaining({ meal: fakeMeal }),
-			undefined,
-		);
-	});
-
-	it('renders MealDetailModal with null meal initially', () => {
-		render(<CalendarView {...defaultProps} />);
-
-		expect(screen.getByTestId('meal-detail-modal')).toBeDefined();
-		expect(vi.mocked(MealDetailModal)).toHaveBeenCalledWith(
-			expect.objectContaining({ meal: null, plannerId: 'planner-1' }),
-			undefined,
-		);
-	});
-
-	it('clears clickedMeal when MealDetailModal onClose is called', () => {
-		render(<CalendarView {...defaultProps} />);
-
-		const { onClose } = vi.mocked(MealDetailModal).mock.calls[0][0];
-		onClose?.();
-
-		expect(vi.mocked(MealDetailModal)).toHaveBeenLastCalledWith(
-			expect.objectContaining({ meal: null }),
-			undefined,
-		);
+		expect(vi.mocked(MealCalendar)).toHaveBeenCalledWith({}, undefined);
 	});
 
 	describe('mobile month view', () => {
@@ -306,21 +227,13 @@ describe('CalendarView', () => {
 			expect(screen.queryByTestId('meal-calendar')).toBeNull();
 		});
 
-		it('passes plannerId, calendar, and savedItems to MealMonthAgenda without onMealAdded', () => {
+		it('passes only plannerId to MealMonthAgenda', () => {
 			mockUseIsMobile.mockReturnValue(true);
 			render(<CalendarView {...defaultProps} />);
 
-			expect(mockMealMonthAgenda).toHaveBeenCalledWith(
-				expect.objectContaining({
-					plannerId: 'planner-1',
-					calendar: defaultProps.calendar,
-					savedItems: defaultProps.savedItems,
-				}),
-				undefined,
-			);
-			expect(vi.mocked(MealMonthAgenda).mock.calls[0][0]).not.toHaveProperty(
-				'onMealAdded',
-			);
+			expect(mockMealMonthAgenda.mock.calls[0][0]).toEqual({
+				plannerId: 'planner-1',
+			});
 		});
 	});
 

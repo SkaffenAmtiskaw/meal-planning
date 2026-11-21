@@ -2,44 +2,31 @@
 
 import { useCallback, useMemo } from 'react';
 
-import type { DayInterface } from '@/_models/types';
-
 import { MonthMealCard } from './MonthMealCard';
 
 import { MonthGrid } from '../Calendar';
-import type { CalendarMeal, MonthGridMeal, MonthGridProps } from '../Calendar';
-import { toCalendarMeals } from '../../_utils/toCalendarMeals';
-import type { SavedItem } from '../../types';
+import { useCalendarModal } from '../CalendarModal';
+import type { MonthGridMeal, MonthGridProps } from '../Calendar';
+import { useCalendarMeals } from '../../_hooks/useCalendarMeals';
 
-interface MealCalendarProps {
-	calendar: DayInterface[];
-	savedItems?: SavedItem[];
-	onMealClick?: (meal: CalendarMeal) => void;
-}
+export function MealCalendar() {
+	const { open } = useCalendarModal();
+	const meals = useCalendarMeals();
 
-export function MealCalendar({
-	calendar,
-	savedItems,
-	onMealClick,
-}: MealCalendarProps) {
-	const meals = useMemo(
-		() => toCalendarMeals(calendar, savedItems),
-		[calendar, savedItems],
-	);
+	const mealIds = useMemo(() => new Set(meals.map((meal) => meal.id)), [meals]);
 
-	const mealMap = useMemo(
-		() => new Map(meals.map((meal) => [meal.id, meal])),
-		[meals],
+	const openMeal = useCallback(
+		(mealId: string) => open('meal_detail', { mealId }),
+		[open],
 	);
 
 	const handleMealClick = useCallback(
 		(meal: MonthGridMeal) => {
-			const calendarMeal = mealMap.get(meal.id);
-			if (calendarMeal) {
-				onMealClick?.(calendarMeal);
+			if (mealIds.has(meal.id)) {
+				openMeal(meal.id);
 			}
 		},
-		[mealMap, onMealClick],
+		[mealIds, openMeal],
 	);
 
 	const renderMeal = useCallback(
@@ -47,21 +34,18 @@ export function MealCalendar({
 			meal: MonthGridMeal,
 			props: Parameters<NonNullable<MonthGridProps['renderMeal']>>[1],
 		) => {
-			const calendarMeal = mealMap.get(meal.id);
-			if (!calendarMeal) return null;
+			if (!mealIds.has(meal.id)) return null;
 
 			return (
 				<MonthMealCard
 					meal={meal}
 					tabIndex={props.tabIndex}
 					ref={props.ref}
-					onClick={() => {
-						onMealClick?.(calendarMeal);
-					}}
+					onClick={() => openMeal(meal.id)}
 				/>
 			);
 		},
-		[mealMap, onMealClick],
+		[mealIds, openMeal],
 	);
 
 	return (

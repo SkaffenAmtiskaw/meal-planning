@@ -2,46 +2,47 @@
 
 import { type ReactNode, useCallback, useState } from 'react';
 
-import { Modal } from '@mantine/core';
-
-import { useIsMobile } from '@/_hooks';
-
 import { CalendarModalContext } from './CalendarModalContext';
 import type {
 	CalendarModalData,
+	CalendarModalFrame,
+	CalendarModalFrames,
 	CalendarModalState,
 	CalendarModalType,
 } from './types';
 
 import { AddMealModal } from '../AddMealForm/AddMealModal';
-import type { AddMealModalProps } from '../AddMealForm/types';
+import { MealDetailModal } from '../MealDetailModal/MealDetailModal';
+import { dataIfOpen } from './_utils/dataIfOpen';
 
 interface CalendarModalProviderProps {
 	plannerId: string;
 	children: ReactNode;
 }
 
-const MODAL_CONTENT: {
-	[K in CalendarModalType]: React.FC<
-		Omit<AddMealModalProps, 'data'> & { data: CalendarModalData[K] }
-	>;
-} = {
+const MODAL_FRAMES: CalendarModalFrames = {
 	add_meal: AddMealModal,
+	meal_detail: MealDetailModal,
 };
 
-function ModalContent({
+const MODAL_TYPES = Object.keys(MODAL_FRAMES) as CalendarModalType[];
+
+function ModalFrame<K extends CalendarModalType>({
+	type,
 	state,
 	close,
 	plannerId,
 }: {
+	type: K;
 	state: CalendarModalState;
 	close: () => void;
 	plannerId: string;
 }) {
-	if (state.type === null) return null;
+	const Frame: CalendarModalFrame<K> = MODAL_FRAMES[type];
 
-	const Content = MODAL_CONTENT[state.type];
-	return <Content data={state.data} close={close} plannerId={plannerId} />;
+	return (
+		<Frame data={dataIfOpen(state, type)} close={close} plannerId={plannerId} />
+	);
 }
 
 export function CalendarModalProvider({
@@ -64,24 +65,18 @@ export function CalendarModalProvider({
 		setState({ type: null, data: null });
 	}, []);
 
-	const isMobile = useIsMobile();
-
 	return (
 		<CalendarModalContext.Provider value={{ state, open, close }}>
 			{children}
-			<Modal.Root
-				opened={state.type !== null}
-				onClose={close}
-				size="xl"
-				fullScreen={isMobile}
-				radius={isMobile ? 0 : undefined}
-				transitionProps={
-					isMobile ? { transition: 'fade', duration: 200 } : undefined
-				}
-			>
-				<Modal.Overlay />
-				<ModalContent state={state} close={close} plannerId={plannerId} />
-			</Modal.Root>
+			{MODAL_TYPES.map((type) => (
+				<ModalFrame
+					key={type}
+					type={type}
+					state={state}
+					close={close}
+					plannerId={plannerId}
+				/>
+			))}
 		</CalendarModalContext.Provider>
 	);
 }
