@@ -6,7 +6,6 @@ import { MenuItem } from '@mantine/core';
 import { IconLogout } from '@tabler/icons-react';
 
 import { client } from '@/_auth/client';
-import { THEME_COLORS } from '@/_theme/colors';
 
 const SignOutButton = () => {
 	const router = useRouter();
@@ -19,7 +18,7 @@ const SignOutButton = () => {
 	return (
 		<MenuItem
 			data-testid="sign-out-button"
-			leftSection={<IconLogout size={16} color={THEME_COLORS.navy} />}
+			leftSection={<IconLogout size={16} color="var(--mantine-color-navy-5)" />}
 			onClick={handleSignOut}
 		>
 			Log Out

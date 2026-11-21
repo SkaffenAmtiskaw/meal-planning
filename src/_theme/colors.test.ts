@@ -1,27 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import {
-	getMealColor,
-	TAG_COLOR_NAMES,
-	TAG_COLORS,
-	THEME_COLORS,
-} from './colors';
-
-describe('THEME_COLORS', () => {
-	it('has navy, forest, sage, ember, chalk properties', () => {
-		expect(THEME_COLORS).toHaveProperty('navy');
-		expect(THEME_COLORS).toHaveProperty('forest');
-		expect(THEME_COLORS).toHaveProperty('sage');
-		expect(THEME_COLORS).toHaveProperty('ember');
-		expect(THEME_COLORS).toHaveProperty('chalk');
-	});
-
-	it('all values are valid hex colors', () => {
-		for (const value of Object.values(THEME_COLORS)) {
-			expect(value).toMatch(/^#[0-9A-Fa-f]{6}$/);
-		}
-	});
-});
+import { getMealColor, TAG_COLOR_NAMES, TAG_COLORS } from './colors';
 
 describe('TAG_COLORS', () => {
 	it('has 10 tag colors', () => {

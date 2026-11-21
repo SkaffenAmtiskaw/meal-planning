@@ -5,7 +5,6 @@ import { notFound, redirect } from 'next/navigation';
 import { z } from 'zod';
 
 import { checkAuth } from '@/_actions/auth/checkAuth';
-import { THEME_COLORS } from '@/_theme/colors';
 import { zId } from '@/_utils/zId';
 import { Header } from '@/app/_components/Header';
 
@@ -30,7 +29,9 @@ const Layout = async ({ children, params }: LayoutProps<'/[planner]'>) => {
 	return (
 		<PlannerLayout
 			header={
-				<Header leftSection={<BurgerToggle color={THEME_COLORS.chalk} />} />
+				<Header
+					leftSection={<BurgerToggle color="var(--mantine-color-chalk-5)" />}
+				/>
 			}
 			navbar={<NavbarServer id={id} />}
 		>

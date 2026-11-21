@@ -18,15 +18,6 @@ export const TAG_COLORS: Record<
 	slate: { bg: '#E0E4ED', text: '#1C2744', border: '#8D99BE' },
 };
 
-export const THEME_COLORS = {
-	navy: '#1C3144',
-	forest: '#44633F',
-	sage: '#B1BA95',
-	ember: '#FF6542',
-	chalk: '#EFE7E9',
-	sageLight: '#F2F3EE',
-} as const;
-
 /** The navbar's background. No forest shade matches it. */
 export const SAGE = '#B1BA95';
 
