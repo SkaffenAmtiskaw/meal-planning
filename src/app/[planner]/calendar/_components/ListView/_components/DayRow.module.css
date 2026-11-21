@@ -41,37 +41,3 @@
 	align-items: center;
 	width: 100%;
 }
-
-.addButton {
-	border: 1px solid var(--mantine-color-forest-2);
-	color: var(--mantine-color-forest-9);
-	opacity: 0;
-	transform: translateX(-4px) scale(0.9);
-	transition:
-		opacity 130ms ease,
-		transform 130ms ease;
-}
-
-.addButton:hover {
-	background-color: var(--mantine-color-forest-0);
-	border-color: var(--mantine-color-forest-9);
-}
-
-.row:hover .addButton,
-.row:focus-within .addButton,
-.addButton:focus-visible {
-	opacity: 1;
-	transform: translateX(0) scale(1);
-}
-
-.ghostRow {
-	margin-left: 22px;
-	padding: 9px 12px;
-	border-radius: 8px;
-	cursor: pointer;
-	width: fit-content;
-}
-
-.ghostRow:hover {
-	background-color: var(--mantine-color-forest-0);
-}

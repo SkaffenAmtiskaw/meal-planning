@@ -3,6 +3,8 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import type { ReactNode } from 'react';
 
+import { Flex } from '@mantine/core';
+
 import { DateTime } from 'luxon';
 
 import { useCanWrite } from '@/app/[planner]/_components';
@@ -43,10 +45,16 @@ vi.mock('./MealCardWithDragHandle', () => ({
 	),
 }));
 
-vi.mock('./ListViewAddMealTrigger', () => ({
-	ListViewAddMealTrigger: vi.fn(({ variant, onClick }) => (
-		<button type="button" data-testid={`${variant}-trigger`} onClick={onClick}>
-			{variant === 'ghost' ? 'Add meal' : null}
+vi.mock('./AddMealGutterButton', () => ({
+	AddMealGutterButton: vi.fn(({ onClick }) => (
+		<button type="button" data-testid="gutter-trigger" onClick={onClick} />
+	)),
+}));
+
+vi.mock('./AddMealRow', () => ({
+	AddMealRow: vi.fn(({ onClick }) => (
+		<button type="button" data-testid="ghost-trigger" onClick={onClick}>
+			Add meal
 		</button>
 	)),
 }));
@@ -130,10 +138,13 @@ describe('DayRow', () => {
 	it('applies the today-row tint when date is today', () => {
 		const date = DateTime.local(2024, 6, 15);
 
-		const { container } = render(<DayRow date={date} today={date} />);
+		render(<DayRow date={date} today={date} />);
 
-		expect((container.firstChild as HTMLElement)?.style.backgroundColor).toBe(
-			'rgba(var(--mantine-color-ember-0), 0.5)',
+		expect(vi.mocked(Flex)).toHaveBeenCalledWith(
+			expect.objectContaining({
+				bg: 'rgba(var(--mantine-color-ember-0), 0.5)',
+			}),
+			undefined,
 		);
 	});
 
@@ -141,10 +152,11 @@ describe('DayRow', () => {
 		const date = DateTime.local(2024, 6, 15);
 		const today = DateTime.local(2024, 6, 10);
 
-		const { container } = render(<DayRow date={date} today={today} />);
+		render(<DayRow date={date} today={today} />);
 
-		expect((container.firstChild as HTMLElement)?.style.backgroundColor).toBe(
-			'',
+		expect(vi.mocked(Flex)).toHaveBeenCalledWith(
+			expect.objectContaining({ bg: undefined }),
+			undefined,
 		);
 	});
 

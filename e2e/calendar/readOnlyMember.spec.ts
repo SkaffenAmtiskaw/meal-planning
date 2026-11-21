@@ -32,7 +32,7 @@ test('read-only member sees meals and no add controls on desktop', {
 	await expect(todayRow).toBeVisible();
 	// The row's add control has no accessible name and shows only on hover, so a count of all buttons is what catches it.
 	await expect(todayRow.getByRole('button')).toHaveCount(0);
-	// A day with no meals offers an "Add meal" row instead, which isn't a button.
+	// A day with no meals offers an "Add meal" button instead.
 	await expect(page.getByText('Add meal', { exact: true })).toHaveCount(0);
 });
 

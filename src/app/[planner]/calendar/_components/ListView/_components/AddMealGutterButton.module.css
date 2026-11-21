@@ -1,0 +1,16 @@
+/* Mantine has no prop that hides a button until its parent is hovered, so the reveal is set here. */
+.button {
+	opacity: 0;
+	transform: translateX(-4px) scale(0.9);
+	transition:
+		opacity 130ms ease,
+		transform 130ms ease;
+}
+
+/* The button shows while the pointer or focus is anywhere in its day's row, which DayRow marks with data-day-row. */
+[data-day-row]:hover .button,
+[data-day-row]:focus-within .button,
+.button:focus-visible {
+	opacity: 1;
+	transform: translateX(0) scale(1);
+}
