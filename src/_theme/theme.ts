@@ -21,8 +21,8 @@ import { variantColorResolver } from './variantColorResolver/variantColorResolve
 export const theme = createTheme({
 	fontFamily: 'Inter, sans-serif',
 	fontFamilyMonospace: 'JetBrains Mono, monospace',
-	primaryColor: 'forest',
-	primaryShade: { light: 5, dark: 6 },
+	primaryColor: 'navy',
+	primaryShade: 5,
 	defaultRadius: 'md',
 	variantColorResolver,
 	colors: {
@@ -69,13 +69,9 @@ export const theme = createTheme({
 		},
 		NavLink: navLinkDefaults,
 		Anchor: {
+			// Links and text are both navy, so the underline is what marks a link.
 			defaultProps: {
-				c: 'forest',
-			},
-		},
-		Tabs: {
-			defaultProps: {
-				color: 'forest',
+				underline: 'always',
 			},
 		},
 		Text: {
@@ -84,9 +80,11 @@ export const theme = createTheme({
 			},
 		},
 		SegmentedControl: {
-			defaultProps: {
-				color: 'forest',
-			},
+			// Without a color, the selected option is a white pill with black text. Mantine's
+			// grey track and labels stay.
+			defaultProps: (theme: MantineTheme) => ({
+				color: theme.primaryColor,
+			}),
 		},
 	},
 });

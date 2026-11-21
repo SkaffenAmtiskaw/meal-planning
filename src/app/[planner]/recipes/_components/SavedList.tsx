@@ -1,7 +1,6 @@
-import Link from 'next/link';
-
 import { Anchor, Divider, Group, Stack } from '@mantine/core';
 
+import { LinkAnchor } from '@/_components';
 import type {
 	BookmarkInterface,
 	RecipeInterface,
@@ -47,9 +46,9 @@ const SavedList = ({ items, plannerId, tags }: Props) => (
 									{item.name}
 								</Anchor>
 							) : (
-								<Link href={`/${plannerId}/recipes/${item._id}`}>
+								<LinkAnchor href={`/${plannerId}/recipes/${item._id}`}>
 									{item.name}
-								</Link>
+								</LinkAnchor>
 							)}
 							{itemTags.length > 0 && (
 								<Group gap="xs">

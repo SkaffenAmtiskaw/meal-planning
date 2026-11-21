@@ -57,9 +57,12 @@ export const NAVY_RAMPS: MantineColorsTuple = [
 	'#A3AFBB',
 	'#8C9BAA',
 	'#1C3144',
-	'#192C3D',
-	'#162736',
-	'#132230',
+	// Shade 6 is the hover on a filled navy control, so most of the drop from shade 5 to
+	// shade 9 comes before it, where the hover shows. Shade 9 is the text of the light and
+	// subtle variants, so it stays navy rather than going near-black.
+	'#152635',
+	'#142331',
+	'#12202D',
 	'#101D29',
 ];
 
