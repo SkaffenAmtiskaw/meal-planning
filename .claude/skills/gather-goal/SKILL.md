@@ -43,7 +43,7 @@ For each approved hub, these are the steps, in order:
    - **A note that hasn't been shaped, meaning its `^status` line names `/shape` or it holds rough ideas with no `^status` line:** its content moves to the hub's Inbox, keeping what the user meant.
    - **A line with no note:** it moves to the hub's Inbox, keeping what the user meant, and leaves the Roadmap.
    - **Any other story going in:** make it a child story of the hub, as `.claude/skills/filing-work/content-from-another-note.md` describes. What else changes depends on the story:
-     - **If it should share a design with the others but doesn't:** add the hub to its `blocked-by` and link the hub in its `^status` line, such as `Blocked by [[Hub]]; then /assess`, so it isn't built on a design that's about to change.
+     - **If it should share a design with the others but doesn't:** add the hub to its `blocked-by` and its `^status` line as a wait on the hub's design, so it isn't built on a design that's about to change.
      - **Otherwise:** its line, next step and decisions stay as they are, because it doesn't need exploring again.
    - **A story coming out of an existing hub:** take it off Child Stories, and remove its embeds of the hub.
 3. **A shared design to make.** If the hub has stories that should share a design but don't, add an Inbox item starting "For `/design-feature`:", so the design session has a starting point and each story stops carrying a design that's about to be replaced. The item names each story, says where their designs disagree, and holds each story's design, moved in full with its image and artboard links.
