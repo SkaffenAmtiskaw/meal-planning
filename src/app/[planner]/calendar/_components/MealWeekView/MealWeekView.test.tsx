@@ -7,9 +7,16 @@ import { MealWeekView } from './MealWeekView';
 import { WeekMealCard } from './WeekMealCard';
 
 import { WeekView } from '../Calendar';
+import { useCalendarModal } from '../CalendarModal';
 import type { CalendarMeal } from '../Calendar';
 import { toCalendarMeals } from '../../_utils/toCalendarMeals';
 import type { SavedItem } from '../../types';
+
+vi.mock(
+	'../CalendarModal',
+	async () =>
+		await import('#mocks/@app/[planner]/calendar/_components/CalendarModal'),
+);
 
 vi.mock('../Calendar', async () => ({
 	WeekView: vi.fn(({ meals, renderMeal, onMealClick }) => (
@@ -55,9 +62,16 @@ vi.mock(
 		await import('#mocks/@app/[planner]/calendar/_utils/toCalendarMeals'),
 );
 
+const open = vi.fn();
+
 describe('MealWeekView', () => {
 	beforeEach(() => {
 		vi.resetAllMocks();
+		vi.mocked(useCalendarModal).mockReturnValue({
+			state: { type: null, data: null },
+			open,
+			close: vi.fn(),
+		});
 	});
 
 	const mockCalendar: DayInterface[] = [
@@ -114,40 +128,30 @@ describe('MealWeekView', () => {
 		expect(mealCards[0].getAttribute('data-planner-id')).toBe('planner-1');
 	});
 
-	it('calls onMealClick with the full CalendarMeal when WeekView onMealClick fires', () => {
-		const onMealClick = vi.fn();
+	it('opens the meal detail modal with the full CalendarMeal when WeekView onMealClick fires', () => {
 		vi.mocked(toCalendarMeals).mockReturnValue(mockCalendarMeals);
 
-		render(
-			<MealWeekView
-				calendar={mockCalendar}
-				plannerId="planner-1"
-				onMealClick={onMealClick}
-			/>,
-		);
+		render(<MealWeekView calendar={mockCalendar} plannerId="planner-1" />);
 
 		fireEvent.click(screen.getByTestId('week-view-meal-meal-1'));
 
-		expect(onMealClick).toHaveBeenCalledTimes(1);
-		expect(onMealClick).toHaveBeenCalledWith(mockCalendarMeals[0]);
+		expect(open).toHaveBeenCalledTimes(1);
+		expect(open).toHaveBeenCalledWith('meal_detail', {
+			meal: mockCalendarMeals[0],
+		});
 	});
 
-	it('calls onMealClick with the full CalendarMeal when WeekMealCard is clicked', () => {
-		const onMealClick = vi.fn();
+	it('opens the meal detail modal with the full CalendarMeal when WeekMealCard is clicked', () => {
 		vi.mocked(toCalendarMeals).mockReturnValue(mockCalendarMeals);
 
-		render(
-			<MealWeekView
-				calendar={mockCalendar}
-				plannerId="planner-1"
-				onMealClick={onMealClick}
-			/>,
-		);
+		render(<MealWeekView calendar={mockCalendar} plannerId="planner-1" />);
 
 		fireEvent.click(screen.getByTestId('week-meal-card'));
 
-		expect(onMealClick).toHaveBeenCalledTimes(1);
-		expect(onMealClick).toHaveBeenCalledWith(mockCalendarMeals[0]);
+		expect(open).toHaveBeenCalledTimes(1);
+		expect(open).toHaveBeenCalledWith('meal_detail', {
+			meal: mockCalendarMeals[0],
+		});
 	});
 
 	it('passes tabIndex and ref to WeekMealCard via renderMeal', () => {
@@ -191,17 +195,10 @@ describe('MealWeekView', () => {
 		expect(result).toBeNull();
 	});
 
-	it('does not call onMealClick when WeekView fires onMealClick with an unknown meal id', () => {
-		const onMealClick = vi.fn();
+	it('opens no modal when WeekView fires onMealClick with an unknown meal id', () => {
 		vi.mocked(toCalendarMeals).mockReturnValue(mockCalendarMeals);
 
-		render(
-			<MealWeekView
-				calendar={mockCalendar}
-				plannerId="planner-1"
-				onMealClick={onMealClick}
-			/>,
-		);
+		render(<MealWeekView calendar={mockCalendar} plannerId="planner-1" />);
 
 		const weekViewCall = vi.mocked(WeekView).mock.calls[0][0];
 		expect(weekViewCall.onMealClick).toBeDefined();
@@ -212,6 +209,6 @@ describe('MealWeekView', () => {
 			name: 'Missing',
 		});
 
-		expect(onMealClick).not.toHaveBeenCalled();
+		expect(open).not.toHaveBeenCalled();
 	});
 });

@@ -1,9 +1,11 @@
 import type { ComponentType } from 'react';
 
 import type { AddMealModalData } from '../AddMealForm/types';
+import type { MealDetailModalData } from '../MealDetailModal/types';
 
 export interface CalendarModalData {
 	add_meal: AddMealModalData;
+	meal_detail: MealDetailModalData;
 }
 
 export type CalendarModalType = keyof CalendarModalData;

@@ -1,4 +1,4 @@
-import { render, screen } from '@testing-library/react';
+import { fireEvent, render, screen } from '@testing-library/react';
 import { beforeEach, describe, expect, test, vi } from 'vitest';
 
 import { MealDetailModal } from './MealDetailModal';
@@ -23,30 +23,43 @@ describe('MealDetailModal', () => {
 		vi.resetAllMocks();
 	});
 
-	test('is not visible when meal is null', () => {
-		render(
-			<MealDetailModal meal={null} plannerId="planner-1" onClose={() => {}} />,
-		);
+	test('is not visible while it has no data', () => {
+		render(<MealDetailModal data={null} close={vi.fn()} plannerId="p-1" />);
 		expect(screen.queryByRole('dialog')).toBeNull();
 	});
 
-	test('is visible when meal is provided', () => {
+	test('is visible when opened with a meal', () => {
 		render(
 			<MealDetailModal
-				meal={baseMeal}
-				plannerId="planner-1"
-				onClose={() => {}}
+				data={{ meal: baseMeal }}
+				close={vi.fn()}
+				plannerId="p-1"
 			/>,
 		);
 		expect(screen.getByRole('dialog')).toBeDefined();
 	});
 
+	test('closes through the close it is given', () => {
+		const close = vi.fn();
+		render(
+			<MealDetailModal
+				data={{ meal: baseMeal }}
+				close={close}
+				plannerId="p-1"
+			/>,
+		);
+
+		fireEvent.click(screen.getByLabelText('close'));
+
+		expect(close).toHaveBeenCalledTimes(1);
+	});
+
 	test('shows the meal title', () => {
 		render(
 			<MealDetailModal
-				meal={baseMeal}
-				plannerId="planner-1"
-				onClose={() => {}}
+				data={{ meal: baseMeal }}
+				close={vi.fn()}
+				plannerId="p-1"
 			/>,
 		);
 		expect(screen.getByText('Breakfast')).toBeDefined();
@@ -54,18 +67,16 @@ describe('MealDetailModal', () => {
 
 	test('shows the description when present', () => {
 		const meal = { ...baseMeal, description: 'Morning meal' };
-		render(
-			<MealDetailModal meal={meal} plannerId="planner-1" onClose={() => {}} />,
-		);
+		render(<MealDetailModal data={{ meal }} close={vi.fn()} plannerId="p-1" />);
 		expect(screen.getByText('Morning meal')).toBeDefined();
 	});
 
 	test('does not show description when absent', () => {
 		render(
 			<MealDetailModal
-				meal={baseMeal}
-				plannerId="planner-1"
-				onClose={() => {}}
+				data={{ meal: baseMeal }}
+				close={vi.fn()}
+				plannerId="p-1"
 			/>,
 		);
 		expect(screen.queryByText('Morning meal')).toBeNull();

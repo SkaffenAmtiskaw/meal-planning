@@ -6,13 +6,28 @@ import type { ReactNode } from 'react';
 import { useCalendarModal } from './CalendarModalContext';
 import { CalendarModalProvider } from './CalendarModalProvider';
 
+import type { CalendarMeal } from '../Calendar';
 import { AddMealModal } from '../AddMealForm/AddMealModal';
+import { MealDetailModal } from '../MealDetailModal/MealDetailModal';
 
 vi.mock('../AddMealForm/AddMealModal', () => ({
 	AddMealModal: vi.fn(() => null),
 }));
 
+vi.mock('../MealDetailModal/MealDetailModal', () => ({
+	MealDetailModal: vi.fn(() => null),
+}));
+
 const mockAddMealModal = vi.mocked(AddMealModal);
+const mockMealDetailModal = vi.mocked(MealDetailModal);
+
+const meal: CalendarMeal = {
+	id: 'meal-1',
+	date: '2024-01-15',
+	name: 'Dinner',
+	borderColor: '#000',
+	dishes: [],
+};
 
 describe('CalendarModalProvider', () => {
 	beforeEach(() => {
@@ -43,6 +58,23 @@ describe('CalendarModalProvider', () => {
 
 		expect(mockAddMealModal).toHaveBeenLastCalledWith(
 			expect.objectContaining({ data: { initialDate: '2024-01-15' } }),
+			undefined,
+		);
+	});
+
+	it("keeps the other types' frames closed while one type is open", () => {
+		const { result } = renderHook(() => useCalendarModal(), { wrapper });
+
+		act(() => {
+			result.current.open('meal_detail', { meal });
+		});
+
+		expect(mockMealDetailModal).toHaveBeenLastCalledWith(
+			expect.objectContaining({ data: { meal } }),
+			undefined,
+		);
+		expect(mockAddMealModal).toHaveBeenLastCalledWith(
+			expect.objectContaining({ data: null }),
 			undefined,
 		);
 	});

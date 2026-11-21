@@ -2,33 +2,35 @@ import { Modal, Stack, Text } from '@mantine/core';
 
 import { MealDetails } from './MealDetails';
 
-import type { CalendarMeal } from '../Calendar';
+import type { CalendarModalFrameProps } from '../CalendarModal/types';
 
-type Props = {
-	meal: CalendarMeal | null;
-	plannerId: string;
-	onClose: () => void;
-};
+export const MealDetailModal = ({
+	data,
+	close,
+	plannerId,
+}: CalendarModalFrameProps<'meal_detail'>) => {
+	const meal = data?.meal ?? null;
 
-export const MealDetailModal = ({ meal, plannerId, onClose }: Props) => (
-	<Modal
-		centered
-		opened={meal !== null}
-		onClose={onClose}
-		removeScrollProps={{ removeScrollBar: false }}
-		title={
-			<Stack gap={2}>
-				<Text fw={700} size="lg">
-					{meal?.name ?? ''}
-				</Text>
-				{meal?.description && (
-					<Text size="sm" c="dimmed">
-						{meal.description}
+	return (
+		<Modal
+			centered
+			opened={meal !== null}
+			onClose={close}
+			removeScrollProps={{ removeScrollBar: false }}
+			title={
+				<Stack gap={2}>
+					<Text fw={700} size="lg">
+						{meal?.name ?? ''}
 					</Text>
-				)}
-			</Stack>
-		}
-	>
-		{meal && <MealDetails meal={meal} plannerId={plannerId} />}
-	</Modal>
-);
+					{meal?.description && (
+						<Text size="sm" c="dimmed">
+							{meal.description}
+						</Text>
+					)}
+				</Stack>
+			}
+		>
+			{meal && <MealDetails meal={meal} plannerId={plannerId} />}
+		</Modal>
+	);
+};

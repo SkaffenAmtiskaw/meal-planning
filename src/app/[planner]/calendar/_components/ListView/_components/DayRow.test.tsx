@@ -19,9 +19,11 @@ vi.mock(
 	async () => await import('#mocks/@/app/[planner]/_components'),
 );
 
-vi.mock('../../CalendarModal', () => ({
-	useCalendarModal: vi.fn(),
-}));
+vi.mock(
+	'../../CalendarModal',
+	async () =>
+		await import('#mocks/@app/[planner]/calendar/_components/CalendarModal'),
+);
 
 vi.mock('./MealCardWithDragHandle', () => ({
 	MealCardWithDragHandle: vi.fn(

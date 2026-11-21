@@ -12,6 +12,7 @@ import type {
 } from './types';
 
 import { AddMealModal } from '../AddMealForm/AddMealModal';
+import { MealDetailModal } from '../MealDetailModal/MealDetailModal';
 import { dataIfOpen } from './_utils/dataIfOpen';
 
 interface CalendarModalProviderProps {
@@ -21,6 +22,7 @@ interface CalendarModalProviderProps {
 
 const MODAL_FRAMES: CalendarModalFrames = {
 	add_meal: AddMealModal,
+	meal_detail: MealDetailModal,
 };
 
 const MODAL_TYPES = Object.keys(MODAL_FRAMES) as CalendarModalType[];
