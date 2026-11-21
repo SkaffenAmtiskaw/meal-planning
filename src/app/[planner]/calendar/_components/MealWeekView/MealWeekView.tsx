@@ -2,32 +2,19 @@
 
 import { useCallback, useMemo } from 'react';
 
-import type { DayInterface } from '@/_models/types';
-
 import { WeekMealCard } from './WeekMealCard';
 
 import { WeekView, type WeekViewMeal, type WeekViewProps } from '../Calendar';
 import { useCalendarModal } from '../CalendarModal';
-import { toCalendarMeals } from '../../_utils/toCalendarMeals';
-import type { SavedItem } from '../../types';
+import { useCalendarMeals } from '../../_hooks/useCalendarMeals';
 
 interface MealWeekViewProps {
-	calendar: DayInterface[];
-	savedItems?: SavedItem[];
 	plannerId: string;
 }
 
-export function MealWeekView({
-	calendar,
-	savedItems,
-	plannerId,
-}: MealWeekViewProps) {
+export function MealWeekView({ plannerId }: MealWeekViewProps) {
 	const { open } = useCalendarModal();
-
-	const meals = useMemo(
-		() => toCalendarMeals(calendar, savedItems),
-		[calendar, savedItems],
-	);
+	const meals = useCalendarMeals();
 
 	const mealMap = useMemo(
 		() => new Map(meals.map((meal) => [meal.id, meal])),

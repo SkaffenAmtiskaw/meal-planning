@@ -2,33 +2,18 @@
 
 import { useCallback, useMemo } from 'react';
 
-import type { DayInterface } from '@/_models/types';
-
 import { MonthMealCard } from './MonthMealCard';
 
 import { MonthGrid } from '../Calendar';
 import { useCalendarModal } from '../CalendarModal';
 import type { MonthGridMeal, MonthGridProps } from '../Calendar';
-import { toCalendarMeals } from '../../_utils/toCalendarMeals';
-import type { SavedItem } from '../../types';
+import { useCalendarMeals } from '../../_hooks/useCalendarMeals';
 
-interface MealCalendarProps {
-	calendar: DayInterface[];
-	savedItems?: SavedItem[];
-}
-
-export function MealCalendar({ calendar, savedItems }: MealCalendarProps) {
+export function MealCalendar() {
 	const { open } = useCalendarModal();
+	const meals = useCalendarMeals();
 
-	const meals = useMemo(
-		() => toCalendarMeals(calendar, savedItems),
-		[calendar, savedItems],
-	);
-
-	const mealMap = useMemo(
-		() => new Map(meals.map((meal) => [meal.id, meal])),
-		[meals],
-	);
+	const mealIds = useMemo(() => new Set(meals.map((meal) => meal.id)), [meals]);
 
 	const openMeal = useCallback(
 		(mealId: string) => open('meal_detail', { mealId }),
@@ -37,11 +22,11 @@ export function MealCalendar({ calendar, savedItems }: MealCalendarProps) {
 
 	const handleMealClick = useCallback(
 		(meal: MonthGridMeal) => {
-			if (mealMap.has(meal.id)) {
+			if (mealIds.has(meal.id)) {
 				openMeal(meal.id);
 			}
 		},
-		[mealMap, openMeal],
+		[mealIds, openMeal],
 	);
 
 	const renderMeal = useCallback(
@@ -49,7 +34,7 @@ export function MealCalendar({ calendar, savedItems }: MealCalendarProps) {
 			meal: MonthGridMeal,
 			props: Parameters<NonNullable<MonthGridProps['renderMeal']>>[1],
 		) => {
-			if (!mealMap.has(meal.id)) return null;
+			if (!mealIds.has(meal.id)) return null;
 
 			return (
 				<MonthMealCard
@@ -60,7 +45,7 @@ export function MealCalendar({ calendar, savedItems }: MealCalendarProps) {
 				/>
 			);
 		},
-		[mealMap, openMeal],
+		[mealIds, openMeal],
 	);
 
 	return (

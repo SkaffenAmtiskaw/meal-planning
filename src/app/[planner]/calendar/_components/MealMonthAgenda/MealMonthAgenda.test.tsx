@@ -5,14 +5,11 @@ import type { ReactElement } from 'react';
 
 import { DateTime } from 'luxon';
 
-import type { DayInterface } from '@/_models/types';
-
 import { MealMonthAgenda } from './MealMonthAgenda';
 
 import { useCalendarContext } from '../Calendar';
 import type { CalendarDish, CalendarMeal } from '../Calendar';
-import { toCalendarMeals } from '../../_utils/toCalendarMeals';
-import type { SavedItem } from '../../types';
+import { useCalendarMeals } from '../../_hooks/useCalendarMeals';
 import { MobileAgenda } from '../Calendar/MobileAgenda/MobileAgenda';
 import type { MobileAgendaProps } from '../Calendar/MobileAgenda/types';
 import { MobileMonthGrid } from '../Calendar/MobileMonthGrid/MobileMonthGrid';
@@ -26,9 +23,9 @@ vi.mock('../Calendar', async () => ({
 }));
 
 vi.mock(
-	'../../_utils/toCalendarMeals',
+	'../../_hooks/useCalendarMeals',
 	async () =>
-		await import('#mocks/@app/[planner]/calendar/_utils/toCalendarMeals'),
+		await import('#mocks/@app/[planner]/calendar/_hooks/useCalendarMeals'),
 );
 
 vi.mock('../Calendar/MobileMonthGrid/MobileMonthGrid', async () => ({
@@ -79,17 +76,10 @@ const mockUseCalendarContext = vi.mocked(useCalendarContext);
 const mockMobileMonthGrid = vi.mocked(MobileMonthGrid);
 const mockMobileAgenda = vi.mocked(MobileAgenda);
 const mockDishLink = vi.mocked(DishLink);
-const mockToCalendarMeals = vi.mocked(toCalendarMeals);
+const mockUseCalendarMeals = vi.mocked(useCalendarMeals);
 
 const defaultProps = {
 	plannerId: 'planner-1',
-	calendar: [
-		{
-			date: '2024-06-15',
-			meals: [{ _id: 'meal-1', name: 'Breakfast Bowl', dishes: [] }],
-		},
-	] as DayInterface[],
-	savedItems: [{ _id: 'item-1', name: 'Item 1' }] as SavedItem[],
 };
 
 const calendarMeals: CalendarMeal[] = [
@@ -130,16 +120,7 @@ function renderAgenda(
 describe('MealMonthAgenda', () => {
 	beforeEach(() => {
 		vi.resetAllMocks();
-		mockToCalendarMeals.mockReturnValue(calendarMeals);
-	});
-
-	it('builds meals from the calendar and saved items', () => {
-		renderAgenda();
-
-		expect(mockToCalendarMeals).toHaveBeenCalledWith(
-			defaultProps.calendar,
-			defaultProps.savedItems,
-		);
+		mockUseCalendarMeals.mockReturnValue(calendarMeals);
 	});
 
 	it('gives MobileMonthGrid one dot per meal, on its date and in its border colour', () => {
@@ -209,7 +190,7 @@ describe('MealMonthAgenda', () => {
 	});
 
 	it('handles an empty calendar without errors', () => {
-		mockToCalendarMeals.mockReturnValue([]);
+		mockUseCalendarMeals.mockReturnValue([]);
 		mockUseCalendarContext.mockReturnValue({
 			selectedDate: DateTime.fromObject({ year: 2024, month: 6, day: 15 }),
 			viewType: 'month',
@@ -223,7 +204,7 @@ describe('MealMonthAgenda', () => {
 		});
 
 		expect(() =>
-			render(<MealMonthAgenda plannerId="planner-1" calendar={[]} />),
+			render(<MealMonthAgenda plannerId="planner-1" />),
 		).not.toThrow();
 
 		expect(screen.queryAllByTestId('mobile-month-grid-meal')).toHaveLength(0);

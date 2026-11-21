@@ -9,7 +9,7 @@ import type { DayInterface } from '@/_models/types';
 
 import { CalendarProvider, useCalendarContext } from '../Calendar';
 import { CalendarModalProvider } from '../CalendarModal';
-import { CalendarDaysProvider } from '../../_hooks/useCalendarDays';
+import { CalendarDaysProvider } from '../../_hooks/useCalendarMeals';
 import { PlannerSavedItemsProvider } from '../../_hooks/usePlannerSavedItems';
 import type { SavedItem } from '../../types';
 import {
@@ -29,9 +29,9 @@ type Props = {
 
 function CalendarViewContent({
 	plannerId,
-	savedItems,
-	calendar,
-}: Props): ReactElement {
+}: {
+	plannerId: string;
+}): ReactElement {
 	const { viewType } = useCalendarContext();
 	const isMobile = useIsMobile();
 
@@ -41,28 +41,12 @@ function CalendarViewContent({
 			<Flex flex={1} mih={0} direction="column">
 				{viewType === 'month' &&
 					(isMobile ? (
-						<MealMonthAgenda
-							plannerId={plannerId}
-							calendar={calendar}
-							savedItems={savedItems}
-						/>
+						<MealMonthAgenda plannerId={plannerId} />
 					) : (
-						<MealCalendar calendar={calendar} savedItems={savedItems} />
+						<MealCalendar />
 					))}
-				{viewType === 'week' && (
-					<MealWeekView
-						calendar={calendar}
-						savedItems={savedItems}
-						plannerId={plannerId}
-					/>
-				)}
-				{viewType === 'list' && (
-					<MealListView
-						plannerId={plannerId}
-						calendar={calendar}
-						savedItems={savedItems}
-					/>
-				)}
+				{viewType === 'week' && <MealWeekView plannerId={plannerId} />}
+				{viewType === 'list' && <MealListView plannerId={plannerId} />}
 			</Flex>
 		</Stack>
 	);
@@ -78,11 +62,7 @@ export function CalendarView({
 			<CalendarDaysProvider calendar={calendar}>
 				<CalendarProvider>
 					<CalendarModalProvider plannerId={plannerId}>
-						<CalendarViewContent
-							plannerId={plannerId}
-							savedItems={savedItems}
-							calendar={calendar}
-						/>
+						<CalendarViewContent plannerId={plannerId} />
 					</CalendarModalProvider>
 				</CalendarProvider>
 			</CalendarDaysProvider>

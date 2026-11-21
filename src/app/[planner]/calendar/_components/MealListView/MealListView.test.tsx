@@ -2,13 +2,11 @@ import { render, screen } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { useIsMobile } from '@/_hooks';
-import type { DayInterface } from '@/_models/types';
 
 import { MealListView } from './MealListView';
 
 import type { CalendarDish, CalendarMeal } from '../Calendar';
-import { toCalendarMeals } from '../../_utils/toCalendarMeals';
-import type { SavedItem } from '../../types';
+import { useCalendarMeals } from '../../_hooks/useCalendarMeals';
 import { DishLink } from '../DishLink/DishLink';
 
 vi.mock('@mantine/core', async () => await import('#mocks/@mantine/core'));
@@ -37,34 +35,16 @@ vi.mock('../DishLink/DishLink', async () => ({
 }));
 
 vi.mock(
-	'../../_utils/toCalendarMeals',
+	'../../_hooks/useCalendarMeals',
 	async () =>
-		await import('#mocks/@app/[planner]/calendar/_utils/toCalendarMeals'),
+		await import('#mocks/@app/[planner]/calendar/_hooks/useCalendarMeals'),
 );
 
-const mockToCalendarMeals = vi.mocked(toCalendarMeals);
+const mockUseCalendarMeals = vi.mocked(useCalendarMeals);
 const mockDishLink = vi.mocked(DishLink);
 const mockUseIsMobile = vi.mocked(useIsMobile);
 
 const plannerId = 'planner-123';
-
-const savedItems: SavedItem[] = [
-	{ _id: 'saved-1', name: 'Saved Dish', url: 'http://example.com' },
-];
-
-const calendar: DayInterface[] = [
-	{
-		date: '2024-06-15',
-		meals: [
-			{
-				_id: 'meal-1',
-				name: 'Breakfast',
-				description: 'Morning meal',
-				dishes: [{ _id: 'dish-1', name: 'Eggs' }],
-			},
-		],
-	},
-];
 
 const calendarMeals: CalendarMeal[] = [
 	{
@@ -81,11 +61,11 @@ describe('MealListView', () => {
 	beforeEach(() => {
 		vi.resetAllMocks();
 		mockUseIsMobile.mockReturnValue(false);
-		mockToCalendarMeals.mockReturnValue([]);
+		mockUseCalendarMeals.mockReturnValue([]);
 	});
 
 	it('renders ListView', () => {
-		render(<MealListView plannerId={plannerId} calendar={[]} />);
+		render(<MealListView plannerId={plannerId} />);
 
 		expect(screen.getByTestId('list-view')).toBeDefined();
 	});
@@ -93,7 +73,7 @@ describe('MealListView', () => {
 	it('renders MobileListViewPlaceholder on mobile', () => {
 		mockUseIsMobile.mockReturnValue(true);
 
-		render(<MealListView plannerId={plannerId} calendar={[]} />);
+		render(<MealListView plannerId={plannerId} />);
 
 		expect(screen.getByText('Coming soon')).toBeDefined();
 		expect(screen.queryByTestId('list-view')).toBeNull();
@@ -102,7 +82,7 @@ describe('MealListView', () => {
 	it('renders ListView on desktop', () => {
 		mockUseIsMobile.mockReturnValue(false);
 
-		render(<MealListView plannerId={plannerId} calendar={[]} />);
+		render(<MealListView plannerId={plannerId} />);
 
 		expect(screen.getByTestId('list-view')).toBeDefined();
 		expect(screen.queryByText('Coming soon')).toBeNull();
@@ -111,7 +91,7 @@ describe('MealListView', () => {
 	it('does not render ListView on mobile', () => {
 		mockUseIsMobile.mockReturnValue(true);
 
-		render(<MealListView plannerId={plannerId} calendar={[]} />);
+		render(<MealListView plannerId={plannerId} />);
 
 		expect(screen.queryByTestId('list-view')).toBeNull();
 	});
@@ -119,7 +99,7 @@ describe('MealListView', () => {
 	it('does not render MobileListViewPlaceholder on desktop', () => {
 		mockUseIsMobile.mockReturnValue(false);
 
-		render(<MealListView plannerId={plannerId} calendar={[]} />);
+		render(<MealListView plannerId={plannerId} />);
 
 		expect(screen.queryByText('Coming soon')).toBeNull();
 	});
@@ -129,7 +109,7 @@ describe('MealListView', () => {
 			name: 'Rendered Dish',
 			source: { _id: 'recipe-1' },
 		};
-		mockToCalendarMeals.mockReturnValue([
+		mockUseCalendarMeals.mockReturnValue([
 			{
 				id: 'meal-1',
 				date: '2024-06-15',
@@ -139,13 +119,7 @@ describe('MealListView', () => {
 			},
 		]);
 
-		render(
-			<MealListView
-				plannerId={plannerId}
-				calendar={calendar}
-				savedItems={savedItems}
-			/>,
-		);
+		render(<MealListView plannerId={plannerId} />);
 
 		expect(screen.getByTestId('dish-link')).toBeDefined();
 		expect(mockDishLink).toHaveBeenCalledWith(
@@ -158,28 +132,14 @@ describe('MealListView', () => {
 		);
 	});
 
-	it('passes the meals built from the calendar and saved items to ListView', () => {
-		mockToCalendarMeals.mockReturnValue(calendarMeals);
+	it("passes the calendar's meals to ListView", () => {
+		mockUseCalendarMeals.mockReturnValue(calendarMeals);
 
-		render(
-			<MealListView
-				plannerId={plannerId}
-				calendar={calendar}
-				savedItems={savedItems}
-			/>,
-		);
-
-		expect(mockToCalendarMeals).toHaveBeenCalledWith(calendar, savedItems);
+		render(<MealListView plannerId={plannerId} />);
 
 		const listView = screen.getByTestId('list-view');
 		const meals = JSON.parse(listView.getAttribute('data-meals') ?? '[]');
 
 		expect(meals).toEqual(calendarMeals);
-	});
-
-	it('builds meals with no saved items when none are passed', () => {
-		render(<MealListView plannerId={plannerId} calendar={calendar} />);
-
-		expect(mockToCalendarMeals).toHaveBeenCalledWith(calendar, []);
 	});
 });

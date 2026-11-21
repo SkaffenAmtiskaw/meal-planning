@@ -1,2 +1,2 @@
 export * from './CalendarDaysProvider';
-export * from './useCalendarDays';
+export * from './useCalendarMeals';
