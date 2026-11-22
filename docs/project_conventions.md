@@ -31,6 +31,8 @@ Shared unit-test mocks live in `test/mocks/` (see `docs/unit_tests.md`, "Shared 
 
 The app's machinery isn't generic, even when it knows nothing about the domain. Machinery is the code that sets up and runs a part of the app, such as its connection to an outside service. A reader looking for how the app reports errors or signs users in looks for a folder named for that job, and a reader looking for a reusable piece shouldn't have to sort through the app's machinery to find it. So machinery goes where the rules below put domain code, with its job, such as error reporting or auth, treated as its domain. The PostHog error reporting is in `src/_reporting/`, and the better-auth client is in `src/_auth/`.
 
+The rules below don't apply to the theme's styling. It stays in `src/_theme/` even when only one area uses it (see `docs/style_guidelines.md`, "Theme Styling Stays in the Theme").
+
 Code that knows about the domain lives near the code that uses it, so its place shows which code depends on it. A `_`-prefixed folder's contents can be used from anywhere inside its parent folder. So where domain code goes depends on how widely it's used, in these cases:
 - **If every file using it is inside one folder below `src/`,** it goes under the deepest folder that contains them all, in a `_`-prefixed folder there such as `_components`, `_hooks` or `_utils`. `TagCombobox` is used only by the recipe pages, so it belongs in `src/app/[planner]/recipes/_components/`. `Header` is used across the app's pages, so it's in `src/app/_components/`.
 - **If it's used from across `src/`:**

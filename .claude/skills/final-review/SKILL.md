@@ -8,6 +8,11 @@ hooks:
       hooks:
         - type: command
           command: '"$CLAUDE_PROJECT_DIR"/.claude/hooks/protect-config.sh'
+  PostToolUse:
+    - matcher: "Edit|Write|MultiEdit|NotebookEdit"
+      hooks:
+        - type: command
+          command: '"$CLAUDE_PROJECT_DIR"/.claude/hooks/protect-config.sh'
 ---
 
 Review the story **$ARGUMENTS** now that every step is built.
