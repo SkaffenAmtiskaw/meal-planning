@@ -6,7 +6,7 @@ user-invocable: false
 
 # Splitting a Story
 `split-checker` proposes a split. Go through it with the user in this order, then apply what they approve:
-1. **Whether to split.** Show each child's name and scope line from `split-checker`'s report. Then show why each hidden story that shares the design passes the test, from the **Passes the test because** lines in `hidden-story-checker`'s report, and ask whether to split. If the user keeps the story whole, skip the rest of these steps. Later runs skip the hidden-story check when the note records that decision, unless the story has taken on new work since, so record it under the note's `# Open Decisions`:
+1. **Whether to split.** Show each child's name and scope line from `split-checker`'s report. Then show why each hidden story that shares the design passes the test, from the **Passes the test because** lines in `hidden-story-checker`'s report, and ask whether to split. If the user keeps the story whole, skip the rest of these steps. Later runs skip the hidden-story check while the note's scope decisions cover all the story's work, so record it under the note's `# Open Decisions`:
    ```
    - Split into several stories?
       - **Decided YYYY-MM-DD:** one story. <their name>'s call<: their reason, if they gave one>.
