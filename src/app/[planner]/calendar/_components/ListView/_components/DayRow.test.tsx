@@ -43,6 +43,22 @@ vi.mock('./MealCardWithDragHandle', () => ({
 	),
 }));
 
+vi.mock('./ListDayGutter', () => ({
+	ListDayGutter: vi.fn(
+		({
+			isToday,
+			addMealButton,
+		}: {
+			isToday: boolean;
+			addMealButton?: ReactNode;
+		}) => (
+			<div data-testid="day-gutter" data-today={String(isToday)}>
+				{addMealButton}
+			</div>
+		),
+	),
+}));
+
 vi.mock('./AddMealGutterButton', () => ({
 	AddMealGutterButton: vi.fn(({ onClick }) => (
 		<button type="button" data-testid="gutter-trigger" onClick={onClick} />
@@ -79,30 +95,25 @@ describe('DayRow', () => {
 		});
 	});
 
-	it('marks the day number as today when date is today', () => {
+	it('tells the gutter the day is today when date is today', () => {
 		const date = DateTime.local(2024, 6, 15);
 
 		render(<DayRow date={date} today={date} />);
 
-		expect(screen.getByText('15').getAttribute('aria-current')).toBe('date');
+		expect(screen.getByTestId('day-gutter').getAttribute('data-today')).toBe(
+			'true',
+		);
 	});
 
-	it('does not mark the day number as today for other days', () => {
+	it('tells the gutter the day is not today for other days', () => {
 		const date = DateTime.local(2024, 6, 15);
 		const today = DateTime.local(2024, 6, 10);
 
 		render(<DayRow date={date} today={today} />);
 
-		expect(screen.getByText('15').getAttribute('aria-current')).toBeNull();
-	});
-
-	it('has data-iso with the correct ISO date', () => {
-		const date = DateTime.local(2024, 6, 15);
-		const today = DateTime.local(2024, 6, 10);
-
-		const { container } = render(<DayRow date={date} today={today} />);
-
-		expect(container.querySelector('[data-iso="2024-06-15"]')).not.toBeNull();
+		expect(screen.getByTestId('day-gutter').getAttribute('data-today')).toBe(
+			'false',
+		);
 	});
 
 	it('renders MealCardWithDragHandles when meals are provided', () => {

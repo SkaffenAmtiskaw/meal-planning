@@ -31,6 +31,9 @@ Every other control is navy, or ember if it's a main action, even where red or g
 # Green Is for the Navbar and Content
 Forest green and sage mark the navbar and content, and controls take navy. In the navbar, the items are forest green, and the active item has a forest green fill. Elsewhere, a small mark that describes a piece of content is forest green, such as the dots that show where a dish came from. A selected or current piece of content in a set, such as a day on the calendar or a row in a list, gets a soft sage fill behind it. The one exception is the ring that marks today on the calendar. It's navy so it stands apart from the selected day's sage fill, which can sit on the same date.
 
+> [!NOTE]
+> The today ring is already drawn for you, so every today ring matches. The theme's `ring` badge variant draws it around a label, such as the week view's today pill, and the `NumberMark` component draws it around a day number. Both take their width from the theme's `--ring-width` CSS variable.
+
 Controls stay navy even where green would look natural, such as a selected tab, switch, checkbox or segmented option, or navigation within a page. Forest green next to the ember buttons reads as red and green, so a screen where green does more than mark the navbar and content starts to look like a holiday card.
 
 # Content on Fills

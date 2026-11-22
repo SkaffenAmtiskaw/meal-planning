@@ -2,23 +2,12 @@
 
 import { type ReactElement, useMemo } from 'react';
 
-import {
-	Box,
-	Center,
-	Group,
-	SimpleGrid,
-	Stack,
-	Text,
-	UnstyledButton,
-} from '@mantine/core';
+import { Box, SimpleGrid, Text } from '@mantine/core';
 
 import { DateTime } from 'luxon';
 
-import { NumberMark } from '@/_components';
-import focusClasses from '@/_theme/focus.module.css';
-
+import { MobileMonthGridDayCell } from './MobileMonthGridDayCell';
 import type { MobileMonthGridMeal } from './types';
-import styles from './MobileMonthGrid.module.css';
 
 import { useCalendarContext } from '../CalendarContext';
 import { useRovingGridFocus } from '../_hooks/useRovingGridFocus';
@@ -73,56 +62,18 @@ export function MobileMonthGrid({
 			<SimpleGrid cols={7} spacing="1px" role="grid">
 				{days.map((day, dayIndex) => {
 					const isoDate = day.toISODate() as string;
-					const isToday = day.hasSame(today, 'day');
-					const isCurrentMonth = day.hasSame(selectedDate, 'month');
-					const isSelected = day.hasSame(selectedDate, 'day');
-
-					const dayMeals = mealsByDate.get(isoDate) ?? [];
-					const visibleMeals = dayMeals.slice(0, 3);
-					const mealCount = dayMeals.length;
-
-					const dayProps = getDayProps(dayIndex);
 
 					return (
-						<UnstyledButton
+						<MobileMonthGridDayCell
 							key={isoDate}
-							data-testid="mobile-day-cell"
-							className={`${focusClasses.focusRing} ${styles.dayCell}`}
-							aria-label={`${day.toFormat('MMMM d')}, ${mealCount} meals`}
-							aria-pressed={isSelected}
-							{...dayProps}
-							onClick={() => setSelectedDate(day)}
-						>
-							<Stack gap={3} align="center">
-								<Center>
-									<NumberMark
-										ring={isToday}
-										filled={isSelected}
-										muted={!isCurrentMonth}
-										aria-current={isToday ? 'date' : undefined}
-									>
-										{day.day}
-									</NumberMark>
-								</Center>
-
-								<Group
-									gap={4}
-									justify="center"
-									wrap="nowrap"
-									className={styles.dots}
-									aria-hidden
-								>
-									{visibleMeals.map((meal) => (
-										<Box
-											key={meal.id}
-											className={styles.dot}
-											style={{ backgroundColor: meal.color }}
-											aria-hidden
-										/>
-									))}
-								</Group>
-							</Stack>
-						</UnstyledButton>
+							day={day}
+							isToday={day.hasSame(today, 'day')}
+							isSelected={day.hasSame(selectedDate, 'day')}
+							isCurrentMonth={day.hasSame(selectedDate, 'month')}
+							meals={mealsByDate.get(isoDate) ?? []}
+							dayProps={getDayProps(dayIndex)}
+							onSelect={() => setSelectedDate(day)}
+						/>
 					);
 				})}
 			</SimpleGrid>

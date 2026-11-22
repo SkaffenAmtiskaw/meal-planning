@@ -50,16 +50,13 @@ export function MonthGridDayCell({
 			p="xs"
 			radius={0}
 			className={focusClasses.focusRing}
-			style={{ minHeight: '100px' }}
+			mih={100}
 			aria-label={ariaLabel}
+			aria-current={isToday ? 'date' : undefined}
 			{...dayProps}
 		>
 			<Center>
-				<NumberMark
-					ring={isToday}
-					muted={!isCurrentMonth}
-					aria-current={isToday ? 'date' : undefined}
-				>
+				<NumberMark ring={isToday} muted={!isCurrentMonth}>
 					{day.day}
 				</NumberMark>
 			</Center>

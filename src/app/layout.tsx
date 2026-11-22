@@ -4,7 +4,7 @@ import type { ReactNode } from 'react';
 import { MantineProvider, mantineHtmlProps } from '@mantine/core';
 import { DatesProvider } from '@mantine/dates';
 
-import { theme } from '@/_theme';
+import { cssVariablesResolver, theme } from '@/_theme';
 import { WEEK_START } from '@/_utils/weekStart';
 
 import { OneTapSignInWrapper } from './_hooks/useOneTap/OneTapSignInWrapper';
@@ -42,7 +42,11 @@ export default function RootLayout({ children }: { children: ReactNode }) {
 				className={`${inter.className} ${roboto.variable}`}
 				style={{ height: '100vh' }}
 			>
-				<MantineProvider defaultColorScheme="light" theme={theme}>
+				<MantineProvider
+					defaultColorScheme="light"
+					theme={theme}
+					cssVariablesResolver={cssVariablesResolver}
+				>
 					<DatesProvider
 						settings={{ firstDayOfWeek: WEEK_START, consistentWeeks: true }}
 					>

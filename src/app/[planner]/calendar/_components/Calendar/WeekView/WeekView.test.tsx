@@ -11,6 +11,14 @@ import { getWeekDates } from '../_utils/getWeekDates';
 
 vi.mock('@mantine/core', async () => await import('#mocks/@mantine/core'));
 
+vi.mock('./WeekDayLabel', () => ({
+	WeekDayLabel: ({ label, isToday }: { label: string; isToday: boolean }) => (
+		<span data-testid="week-day-label" data-today={String(isToday)}>
+			{label}
+		</span>
+	),
+}));
+
 vi.mock('../_utils/getWeekDates', () => ({
 	getWeekDates: vi.fn(),
 }));
@@ -74,7 +82,7 @@ describe('WeekView', () => {
 		expect(screen.getByText('Sat 9/21')).toBeDefined();
 	});
 
-	it('marks today with a navy outline badge', () => {
+	it("marks today's column as the current date", () => {
 		const today = DateTime.local(2024, 9, 18);
 		vi.useFakeTimers();
 		vi.setSystemTime(today.toJSDate());
@@ -95,16 +103,14 @@ describe('WeekView', () => {
 			</CalendarProvider>,
 		);
 
-		const todayBadge = screen.getByTestId('week-day-today');
-		expect(todayBadge.getAttribute('data-variant')).toBe('outline');
-		expect(todayBadge.getAttribute('aria-current')).toBe('date');
-		expect(todayBadge.textContent).toBe('Wed 9/18');
-		expect(screen.getAllByTestId('week-day-label')).toHaveLength(6);
-		for (const label of screen.getAllByTestId('week-day-label')) {
-			expect(label.getAttribute('aria-current')).toBeNull();
+		const columns = screen.getAllByTestId('week-day-column');
+		const labels = screen.getAllByTestId('week-day-label');
+		expect(columns[3].getAttribute('aria-current')).toBe('date');
+		expect(labels[3].getAttribute('data-today')).toBe('true');
+		for (const index of [0, 1, 2, 4, 5, 6]) {
+			expect(columns[index].getAttribute('aria-current')).toBeNull();
+			expect(labels[index].getAttribute('data-today')).toBe('false');
 		}
-
-		vi.useRealTimers();
 	});
 
 	it('updates the week when selectedDate changes', () => {

@@ -7,8 +7,13 @@
 	width: 2em;
 	height: 2em;
 	padding: 0.1em;
-	border: 1.5px solid transparent;
+	border: var(--ring-width) solid transparent;
 	border-radius: 50%;
+}
+
+/* Mantine has no ring around text; this colours the transparent border navy. */
+.ring {
+	border-color: var(--mantine-color-navy-5);
 }
 
 /* The selected day's soft sage circle, clipped to the content box so it sits inside the border and padding. */

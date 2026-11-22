@@ -7,7 +7,7 @@ import GlobalError from './global-error';
 
 vi.mock('@mantine/core', async () => await import('#mocks/@mantine/core'));
 vi.mock('posthog-js', async () => await import('#mocks/posthog-js'));
-vi.mock('@/_theme', () => ({ theme: {} }));
+vi.mock('@/_theme', () => ({ theme: {}, cssVariablesResolver: vi.fn() }));
 
 describe('GlobalError', () => {
 	test('reports the error', () => {

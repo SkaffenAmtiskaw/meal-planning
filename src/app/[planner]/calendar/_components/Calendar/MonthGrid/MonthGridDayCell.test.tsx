@@ -11,6 +11,10 @@ import type {
 } from './types';
 
 vi.mock('@mantine/core', async () => await import('#mocks/@mantine/core'));
+vi.mock(
+	'@/_components',
+	async () => await import('#mocks/@/_components/NumberMark'),
+);
 
 const DAY = DateTime.local(2024, 3, 15);
 
@@ -47,16 +51,42 @@ function meals(count: number): MonthGridMeal[] {
 }
 
 describe('MonthGridDayCell', () => {
-	it('marks today as the current date', () => {
+	it('rings today and marks the cell as the current date', () => {
 		renderCell({ isToday: true });
 
-		expect(screen.getByText('15').getAttribute('aria-current')).toBe('date');
+		expect(screen.getByTestId('number-mark-15').getAttribute('data-ring')).toBe(
+			'true',
+		);
+		expect(screen.getByTestId('day-cell').getAttribute('aria-current')).toBe(
+			'date',
+		);
 	});
 
-	it('does not mark another day as the current date', () => {
+	it('neither rings nor marks another day as the current date', () => {
 		renderCell();
 
-		expect(screen.getByText('15').getAttribute('aria-current')).toBeNull();
+		expect(screen.getByTestId('number-mark-15').getAttribute('data-ring')).toBe(
+			'false',
+		);
+		expect(
+			screen.getByTestId('day-cell').getAttribute('aria-current'),
+		).toBeNull();
+	});
+
+	it('mutes a day outside the month', () => {
+		renderCell({ isCurrentMonth: false });
+
+		expect(
+			screen.getByTestId('number-mark-15').getAttribute('data-muted'),
+		).toBe('true');
+	});
+
+	it('never fills the number', () => {
+		renderCell({ isToday: true });
+
+		expect(
+			screen.getByTestId('number-mark-15').getAttribute('data-filled'),
+		).toBe('false');
 	});
 
 	it('limits visible meals to 2 and shows +N more', () => {

@@ -43,6 +43,7 @@ export function DayRow({
 	return (
 		<Flex
 			className={styles.row}
+			py={14}
 			data-iso={date.toISODate()}
 			// AddMealGutterButton's stylesheet shows the button while this row is hovered or focused.
 			data-day-row
@@ -54,20 +55,22 @@ export function DayRow({
 					canWrite && <AddMealGutterButton onClick={handleAddMeal} />
 				}
 			/>
-			<Box className={styles.meals} flex={1} miw={0} mih={40}>
-				{hasMeals || canWrite ? (
+			<Box className={styles.meals} flex={1} miw={0} mih={40} pl={14}>
+				{(hasMeals || canWrite) && (
 					<Stack gap="xs">
-						{hasMeals
-							? meals.map((meal) => (
-									<MealCardWithDragHandle
-										key={meal.id}
-										meal={meal}
-										renderDish={renderDish}
-									/>
-								))
-							: canWrite && <AddMealRow onClick={handleAddMeal} />}
+						{hasMeals ? (
+							meals.map((meal) => (
+								<MealCardWithDragHandle
+									key={meal.id}
+									meal={meal}
+									renderDish={renderDish}
+								/>
+							))
+						) : (
+							<AddMealRow onClick={handleAddMeal} />
+						)}
 					</Stack>
-				) : null}
+				)}
 			</Box>
 		</Flex>
 	);

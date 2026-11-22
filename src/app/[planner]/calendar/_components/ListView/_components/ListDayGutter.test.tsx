@@ -6,34 +6,50 @@ import { DateTime } from 'luxon';
 import { ListDayGutter } from './ListDayGutter';
 
 vi.mock('@mantine/core', async () => await import('#mocks/@mantine/core'));
+vi.mock(
+	'@/_components',
+	async () => await import('#mocks/@/_components/NumberMark'),
+);
 
 describe('ListDayGutter', () => {
-	it('renders the weekday label in capitals', () => {
+	it('shows the weekday', () => {
 		render(
 			<ListDayGutter date={DateTime.local(2024, 6, 15)} isToday={false} />,
 		);
 
-		expect(screen.getByText('SAT')).toBeDefined();
+		expect(screen.getByText('Sat')).toBeDefined();
 	});
 
-	it('does not mark another day as the current date', () => {
+	it('neither rings nor marks another day as the current date', () => {
 		render(
 			<ListDayGutter date={DateTime.local(2024, 6, 15)} isToday={false} />,
 		);
 
-		expect(screen.getByText('15').getAttribute('aria-current')).toBeNull();
+		const mark = screen.getByTestId('number-mark-15');
+		expect(mark.getAttribute('data-ring')).toBe('false');
+		expect(mark.getAttribute('aria-current')).toBeNull();
 	});
 
-	it('marks today as the current date', () => {
+	it('rings today and marks it as the current date', () => {
 		render(<ListDayGutter date={DateTime.local(2024, 6, 15)} isToday />);
 
-		expect(screen.getByText('15').getAttribute('aria-current')).toBe('date');
+		const mark = screen.getByTestId('number-mark-15');
+		expect(mark.getAttribute('data-ring')).toBe('true');
+		expect(mark.getAttribute('aria-current')).toBe('date');
+	});
+
+	it('never fills the number', () => {
+		render(<ListDayGutter date={DateTime.local(2024, 6, 15)} isToday />);
+
+		expect(
+			screen.getByTestId('number-mark-15').getAttribute('data-filled'),
+		).toBe('false');
 	});
 
 	it('shows the month abbreviation on the first of the month', () => {
 		render(<ListDayGutter date={DateTime.local(2024, 6, 1)} isToday={false} />);
 
-		expect(screen.getByText('JUN')).toBeDefined();
+		expect(screen.getByText('Jun')).toBeDefined();
 	});
 
 	it('does not show the month abbreviation on other days', () => {
@@ -41,18 +57,6 @@ describe('ListDayGutter', () => {
 			<ListDayGutter date={DateTime.local(2024, 6, 15)} isToday={false} />,
 		);
 
-		expect(screen.queryByText('JUN')).toBeNull();
-	});
-
-	it('renders the add meal button it is given', () => {
-		render(
-			<ListDayGutter
-				date={DateTime.local(2024, 6, 15)}
-				isToday={false}
-				addMealButton={<button type="button">Add</button>}
-			/>,
-		);
-
-		expect(screen.getByRole('button', { name: 'Add' })).toBeDefined();
+		expect(screen.queryByText('Jun')).toBeNull();
 	});
 });

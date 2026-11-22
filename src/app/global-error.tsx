@@ -6,7 +6,7 @@ import { MantineProvider, mantineHtmlProps } from '@mantine/core';
 
 import posthog from 'posthog-js';
 
-import { theme } from '@/_theme';
+import { cssVariablesResolver, theme } from '@/_theme';
 import { ErrorMessage } from '@/app/_components/ErrorMessage';
 
 import '@mantine/core/styles.css';
@@ -27,7 +27,11 @@ export default function GlobalError({
 	return (
 		<html lang="en" {...mantineHtmlProps}>
 			<body>
-				<MantineProvider defaultColorScheme="light" theme={theme}>
+				<MantineProvider
+					defaultColorScheme="light"
+					theme={theme}
+					cssVariablesResolver={cssVariablesResolver}
+				>
 					<ErrorMessage reset={reset} />
 				</MantineProvider>
 			</body>

@@ -13,6 +13,18 @@ describe('NumberMark', () => {
 		expect(screen.getByText('24').getAttribute('fw')).toBe('700');
 	});
 
+	it('rings a ringed number', () => {
+		render(<NumberMark ring>24</NumberMark>);
+
+		expect(screen.getByText('24').className).toContain(classes.ring);
+	});
+
+	it('does not ring a plain number', () => {
+		render(<NumberMark>24</NumberMark>);
+
+		expect(screen.getByText('24').className).not.toContain(classes.ring);
+	});
+
 	it('does not bold a plain number', () => {
 		render(<NumberMark>24</NumberMark>);
 

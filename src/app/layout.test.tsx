@@ -24,6 +24,7 @@ vi.mock('./_hooks/useOneTap/OneTapSignInWrapper', () => ({
 
 vi.mock('@/_theme', () => ({
 	theme: {},
+	cssVariablesResolver: vi.fn(),
 }));
 
 describe('root layout', () => {

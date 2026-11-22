@@ -2,8 +2,6 @@ import type { AriaAttributes, ReactNode } from 'react';
 
 import { type MantineSize, Text } from '@mantine/core';
 
-import ringClasses from '@/_theme/ring.module.css';
-
 import classes from './NumberMark.module.css';
 
 interface NumberMarkProps extends AriaAttributes {
@@ -24,7 +22,7 @@ export function NumberMark({
 }: NumberMarkProps) {
 	const className = [
 		classes.mark,
-		ring && ringClasses.ring,
+		ring && classes.ring,
 		filled && classes.filled,
 	]
 		.filter(Boolean)
