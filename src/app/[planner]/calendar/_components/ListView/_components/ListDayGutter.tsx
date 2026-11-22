@@ -5,6 +5,7 @@ import { Box, Text } from '@mantine/core';
 import type { DateTime } from 'luxon';
 
 import { NumberMark } from '@/_components';
+import { formatDate } from '@/_utils/formatDate';
 
 import styles from './ListDayGutter.module.css';
 
@@ -46,7 +47,7 @@ export function ListDayGutter({
 			pr={12}
 		>
 			<Box className={styles.gutterContent}>
-				<GutterLabel>{date.toFormat('ccc')}</GutterLabel>
+				<GutterLabel>{formatDate(date, 'shortWeekday')}</GutterLabel>
 				<Box className={styles.dateColumn} ta="right">
 					<NumberMark
 						size="xl"
@@ -56,7 +57,9 @@ export function ListDayGutter({
 						{date.day}
 					</NumberMark>
 				</Box>
-				{date.day === 1 && <GutterLabel>{date.toFormat('MMM')}</GutterLabel>}
+				{date.day === 1 && (
+					<GutterLabel>{formatDate(date, 'shortMonth')}</GutterLabel>
+				)}
 				{addMealButton}
 			</Box>
 		</Box>

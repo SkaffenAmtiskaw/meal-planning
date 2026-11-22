@@ -6,6 +6,7 @@ import type { DateTime } from 'luxon';
 
 import { NumberMark } from '@/_components';
 import focusClasses from '@/_theme/focus.module.css';
+import { formatDate } from '@/_utils/formatDate';
 
 import type {
 	DayKeyboardProps,
@@ -40,7 +41,7 @@ export function MonthGridDayCell({
 
 	const ariaLabel =
 		meals.length > 0
-			? `${day.toFormat('MMMM d')}, ${meals.length} meals`
+			? `${formatDate(day, 'monthDay')}, ${meals.length} meals`
 			: undefined;
 
 	return (

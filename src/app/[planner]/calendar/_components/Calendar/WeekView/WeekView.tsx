@@ -8,6 +8,7 @@ import clsx from 'clsx';
 import { DateTime } from 'luxon';
 
 import focusClasses from '@/_theme/focus.module.css';
+import { formatDate } from '@/_utils/formatDate';
 
 import { useWeekViewKeyboard } from './useWeekViewKeyboard';
 import { WeekDayLabel } from './WeekDayLabel';
@@ -16,7 +17,6 @@ import styles from './WeekView.module.css';
 
 import { useCalendarContext } from '../CalendarContext';
 import { getWeekDates } from '../_utils/getWeekDates';
-import { WEEKDAY_LABELS } from '../_utils/weekdays';
 
 export function WeekView({
 	meals = [],
@@ -52,7 +52,7 @@ export function WeekView({
 				{days.map((day, index) => {
 					const isoDate = day.toISODate() as string;
 					const isToday = day.hasSame(today, 'day');
-					const label = `${WEEKDAY_LABELS[index]} ${day.month}/${day.day}`;
+					const label = formatDate(day, 'shortWeekdayNumericDate');
 					const dayMeals = mealsByDate.get(isoDate) ?? [];
 					const ariaLabel =
 						dayMeals.length > 0

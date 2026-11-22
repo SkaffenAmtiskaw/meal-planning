@@ -1,5 +1,6 @@
 import type { DateTime } from 'luxon';
 
+import { formatDate } from '@/_utils/formatDate';
 import { getWeekStart } from '@/_utils/weekStart';
 
 /**
@@ -10,8 +11,8 @@ export function formatWeekRange(date: DateTime): string {
 	const start = getWeekStart(date);
 	const end = start.plus({ days: 6 });
 
-	const startLabel = start.toFormat('MMM d');
-	const endLabel = end.toFormat('MMM d');
+	const startLabel = formatDate(start, 'shortMonthDay');
+	const endLabel = formatDate(end, 'shortMonthDay');
 
 	if (start.year === end.year) {
 		return `${startLabel} – ${endLabel}, ${start.year}`;
