@@ -1,0 +1,27 @@
+/* Mantine has no circle sized to its text, and a Badge circle cuts off two-digit numbers. Sizing in em fits two digits at any text size, and every number gets the same box so a ring doesn't shift its row. The transparent border is the ring's width, so a fill is the same size with or without a ring, and the padding is the gap that keeps a fill inside a ring. */
+.mark {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	box-sizing: border-box;
+	width: 2em;
+	height: 2em;
+	padding: 0.1em;
+	border: var(--ring-width) solid transparent;
+	border-radius: 50%;
+}
+
+/* Mantine has no ring around text; this colours the transparent border navy. */
+.ring {
+	border-color: var(--mantine-color-navy-5);
+}
+
+/* The selected day's soft sage circle, clipped to the content box so it sits inside the border and padding. */
+.filled {
+	background-color: color-mix(
+		in srgb,
+		var(--mantine-color-sage-5) 45%,
+		transparent
+	);
+	background-clip: content-box;
+}

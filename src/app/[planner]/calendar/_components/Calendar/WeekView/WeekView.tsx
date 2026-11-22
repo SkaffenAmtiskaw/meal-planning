@@ -2,13 +2,14 @@
 
 import { type ReactElement, useMemo } from 'react';
 
-import { Badge, Box, Divider, Flex, Paper, Stack, Text } from '@mantine/core';
+import { Box, Divider, Flex, Paper, Stack } from '@mantine/core';
 
 import { DateTime } from 'luxon';
 
 import focusClasses from '@/_theme/focus.module.css';
 
 import { useWeekViewKeyboard } from './useWeekViewKeyboard';
+import { WeekDayLabel } from './WeekDayLabel';
 import type { WeekViewMeal, WeekViewProps } from './types';
 import styles from './WeekView.module.css';
 
@@ -66,18 +67,11 @@ export function WeekView({
 							className={`${styles.dayColumn} ${focusClasses.focusRing}`}
 							data-testid="week-day-column"
 							aria-label={ariaLabel}
+							aria-current={isToday ? 'date' : undefined}
 							{...dayProps}
 						>
 							<Box className={styles.dayHeader}>
-								{isToday ? (
-									<Badge color="ember" data-testid="week-day-today">
-										{label}
-									</Badge>
-								) : (
-									<Text fw={700} size="sm" data-testid="week-day-label">
-										{label}
-									</Text>
-								)}
+								<WeekDayLabel label={label} isToday={isToday} />
 							</Box>
 							<Divider my="xs" />
 							<Stack gap="xs">

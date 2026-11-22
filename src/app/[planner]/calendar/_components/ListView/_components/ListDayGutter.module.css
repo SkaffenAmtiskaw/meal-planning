@@ -1,0 +1,22 @@
+/* Mantine's style props have no align-self or flex-basis. The gutter keeps its fixed width and sits at the top of its row instead of stretching, so its sticky position has room to keep the date in view while a tall day scrolls. */
+.gutter {
+	flex: 0 0 82px;
+	align-self: flex-start;
+	box-sizing: border-box;
+}
+
+/* A two-column grid puts the date right-aligned in the first column and the add button in a fixed 22px second column, which Mantine's layout props cannot express. */
+.gutterContent {
+	display: grid;
+	grid-template-columns: 1fr 22px;
+	column-gap: 4px;
+	row-gap: 2px;
+	align-items: center;
+	width: 100%;
+	padding-right: 30px;
+}
+
+/* Mantine has no grid-column prop; this keeps the labels and the day number in the date column. */
+.dateColumn {
+	grid-column: 1;
+}

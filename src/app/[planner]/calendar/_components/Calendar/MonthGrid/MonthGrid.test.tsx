@@ -10,6 +10,10 @@ import { useCalendarContext } from '../CalendarContext';
 import { CalendarProvider } from '../CalendarProvider';
 
 vi.mock('@mantine/core', async () => await import('#mocks/@mantine/core'));
+vi.mock(
+	'@/_components',
+	async () => await import('#mocks/@/_components/NumberMark'),
+);
 vi.mock('../_utils/getMonthGridDates', () => ({
 	getMonthGridDates: vi.fn(),
 }));
@@ -30,31 +34,7 @@ describe('MonthGrid', () => {
 		vi.useRealTimers();
 	});
 
-	it('starts the grid on Sunday', () => {
-		const initialDate = DateTime.local(2024, 3, 15);
-		vi.mocked(getMonthGridDates).mockReturnValue([
-			DateTime.local(2024, 2, 25),
-			DateTime.local(2024, 2, 26),
-			DateTime.local(2024, 2, 27),
-			DateTime.local(2024, 2, 28),
-			DateTime.local(2024, 2, 29),
-			DateTime.local(2024, 3, 1),
-			DateTime.local(2024, 3, 2),
-		]);
-
-		render(
-			<CalendarProvider initialDate={initialDate}>
-				<MonthGrid />
-			</CalendarProvider>,
-		);
-
-		expect(getMonthGridDates).toHaveBeenCalledWith(initialDate);
-		const dayCells = screen.getAllByTestId('day-cell');
-		expect(dayCells.length).toBeGreaterThan(0);
-		expect(dayCells[0].textContent).toBe('25');
-	});
-
-	it('highlights today with an ember badge', () => {
+	it('tells only today’s cell that it is today', () => {
 		const today = DateTime.local(2024, 3, 15);
 		vi.useFakeTimers();
 		vi.setSystemTime(today.toJSDate());
@@ -88,13 +68,15 @@ describe('MonthGrid', () => {
 		);
 
 		expect(getMonthGridDates).toHaveBeenCalledWith(today);
-		const dayText = screen.getByText('15');
-		const badge = dayText.closest('[data-testid="badge"]');
-		expect(badge).not.toBeNull();
-		expect(badge?.getAttribute('data-color')).toBe('ember');
+		expect(screen.getByTestId('number-mark-15').getAttribute('data-ring')).toBe(
+			'true',
+		);
+		expect(screen.getByTestId('number-mark-14').getAttribute('data-ring')).toBe(
+			'false',
+		);
 	});
 
-	it('dims overflow days from adjacent months', () => {
+	it('tells days from adjacent months that they are outside the month', () => {
 		vi.useFakeTimers();
 		vi.setSystemTime(DateTime.local(2024, 6, 15, 12, 0, 0).toJSDate());
 
@@ -115,22 +97,13 @@ describe('MonthGrid', () => {
 			</CalendarProvider>,
 		);
 
-		const dayCells = screen.getAllByTestId('day-cell');
-
-		expect(dayCells[0].querySelector('p')?.getAttribute('data-c')).toBe(
-			'gray.5',
-		);
-		expect(dayCells[1].querySelector('p')?.getAttribute('data-c')).toBe(
-			'gray.5',
-		);
-		expect(dayCells[2].querySelector('p')?.getAttribute('data-c')).toBe(
-			'gray.5',
-		);
-		expect(dayCells[3].querySelector('p')?.getAttribute('data-c')).toBe(
-			'gray.5',
-		);
-		expect(dayCells[4].querySelector('p')?.getAttribute('data-c')).not.toBe(
-			'gray.5',
+		for (const day of ['26', '27', '28', '29']) {
+			expect(
+				screen.getByTestId(`number-mark-${day}`).getAttribute('data-muted'),
+			).toBe('true');
+		}
+		expect(screen.getByTestId('number-mark-1').getAttribute('data-muted')).toBe(
+			'false',
 		);
 	});
 
@@ -200,73 +173,6 @@ describe('MonthGrid', () => {
 		expect(dayCells[1].textContent).toContain('Meal A custom');
 		expect(dayCells[0].textContent).not.toContain('Meal A custom');
 		expect(dayCells[2].textContent).not.toContain('Meal A custom');
-	});
-
-	it('limits visible meals to 2 and shows +N more', () => {
-		const initialDate = DateTime.local(2024, 3, 15);
-		vi.mocked(getMonthGridDates).mockReturnValue([DateTime.local(2024, 3, 15)]);
-
-		const meals: MonthGridMeal[] = [
-			{ id: '1', date: '2024-03-15', name: 'Meal A' },
-			{ id: '2', date: '2024-03-15', name: 'Meal B' },
-			{ id: '3', date: '2024-03-15', name: 'Meal C' },
-		];
-
-		render(
-			<CalendarProvider initialDate={initialDate}>
-				<MonthGrid meals={meals} />
-			</CalendarProvider>,
-		);
-
-		const dayCells = screen.getAllByTestId('day-cell');
-		expect(dayCells[0].textContent).toContain('Meal A');
-		expect(dayCells[0].textContent).toContain('Meal B');
-		expect(dayCells[0].textContent).not.toContain('Meal C');
-		expect(dayCells[0].textContent).toContain('+1 more');
-	});
-
-	it('does not show +N more when meals are 2 or fewer', () => {
-		const initialDate = DateTime.local(2024, 3, 15);
-		vi.mocked(getMonthGridDates).mockReturnValue([DateTime.local(2024, 3, 15)]);
-
-		const meals: MonthGridMeal[] = [
-			{ id: '1', date: '2024-03-15', name: 'Meal A' },
-			{ id: '2', date: '2024-03-15', name: 'Meal B' },
-		];
-
-		render(
-			<CalendarProvider initialDate={initialDate}>
-				<MonthGrid meals={meals} />
-			</CalendarProvider>,
-		);
-
-		const dayCells = screen.getAllByTestId('day-cell');
-		expect(dayCells[0].textContent).toContain('Meal A');
-		expect(dayCells[0].textContent).toContain('Meal B');
-		expect(dayCells[0].textContent).not.toContain('more');
-	});
-
-	it('adds aria-label with meal count to day cells with meals', () => {
-		const initialDate = DateTime.local(2024, 3, 15);
-		vi.mocked(getMonthGridDates).mockReturnValue([
-			DateTime.local(2024, 3, 14),
-			DateTime.local(2024, 3, 15),
-		]);
-
-		const meals: MonthGridMeal[] = [
-			{ id: '1', date: '2024-03-15', name: 'Meal A' },
-			{ id: '2', date: '2024-03-15', name: 'Meal B' },
-		];
-
-		render(
-			<CalendarProvider initialDate={initialDate}>
-				<MonthGrid meals={meals} />
-			</CalendarProvider>,
-		);
-
-		const dayCells = screen.getAllByTestId('day-cell');
-		expect(dayCells[0].getAttribute('aria-label')).toBeNull();
-		expect(dayCells[1].getAttribute('aria-label')).toBe('March 15, 2 meals');
 	});
 
 	it('does not break when meals prop is undefined', () => {

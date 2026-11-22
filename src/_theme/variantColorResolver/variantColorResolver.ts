@@ -16,5 +16,15 @@ export const variantColorResolver: VariantColorsResolver = (input) => {
 		};
 	}
 
+	if (input.variant === 'ring') {
+		return {
+			...defaultResolvedColors,
+			background: 'transparent',
+			hover: 'transparent',
+			color: input.theme.colors.navy[5],
+			border: `var(--ring-width) solid ${input.theme.colors.navy[5]}`,
+		};
+	}
+
 	return defaultResolvedColors;
 };

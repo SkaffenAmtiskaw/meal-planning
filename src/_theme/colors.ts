@@ -57,13 +57,32 @@ export const NAVY_RAMPS: MantineColorsTuple = [
 	'#A3AFBB',
 	'#8C9BAA',
 	'#1C3144',
-	// Shade 6 is the hover on a filled navy control, so most of the drop from shade 5 to
-	// shade 9 comes before it, where the hover shows. Shade 9 is the text of the light and
-	// subtle variants, so it stays navy rather than going near-black.
+	/**
+	 * Shade 6 is the hover on a filled navy control, so most of the drop from shade 5 to
+	 * shade 9 comes before it, where the hover shows. Shade 9 is the text of the light and
+	 * subtle variants, so it stays navy rather than going near-black.
+	 */
 	'#152635',
 	'#142331',
 	'#12202D',
 	'#101D29',
+];
+
+/**
+ * Built like the ember ramp: shades 0-4 go from white toward the main shade in 10% steps, and
+ * shades 6-9 darken it by 10-40%.
+ */
+export const SAGE_RAMPS: MantineColorsTuple = [
+	'#F7F8F4',
+	'#EFF1EA',
+	'#E8EADF',
+	'#E0E3D5',
+	'#D8DCCA',
+	SAGE,
+	'#9FA786',
+	'#8E9577',
+	'#7C8268',
+	'#6A7059',
 ];
 
 export const CHALK_RAMPS: MantineColorsTuple = [

@@ -13,6 +13,7 @@ import {
 	INPUT_BORDER,
 	NAVY_RAMPS,
 	SAGE,
+	SAGE_RAMPS,
 } from './colors';
 
 import { indicatorDefaults } from './components/Indicator/Indicator';
@@ -31,6 +32,7 @@ export const theme = createTheme({
 		forest: FOREST_RAMPS,
 		navy: NAVY_RAMPS,
 		chalk: CHALK_RAMPS,
+		sage: SAGE_RAMPS,
 	},
 	components: {
 		AppShell: {

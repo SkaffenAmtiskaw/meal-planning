@@ -347,16 +347,19 @@ export const Badge = vi.fn(
 		children,
 		'data-testid': testId,
 		color,
+		variant,
 		style,
 		className,
 	}: WithChildren & {
 		color?: string;
+		variant?: string;
 		style?: React.CSSProperties;
 		className?: string;
 	}) => (
 		<span
 			data-testid={testId ?? 'badge'}
 			data-color={color}
+			data-variant={variant}
 			className={className}
 			style={style}
 		>

@@ -5,6 +5,7 @@ export * from './FullWidthListItem';
 export * from './GoogleLogoSVG';
 export * from './LinkAnchor';
 export * from './LinkButton';
+export * from './NumberMark';
 export * from './PillButton';
 export * from './StringArrayInput';
 export * from './SubmitButton';

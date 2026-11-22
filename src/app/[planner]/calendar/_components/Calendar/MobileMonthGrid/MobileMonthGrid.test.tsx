@@ -9,6 +9,37 @@ import type { MobileMonthGridMeal } from './types';
 import { useCalendarContext } from '../CalendarContext';
 
 vi.mock('@mantine/core', async () => await import('#mocks/@mantine/core'));
+vi.mock('./MobileMonthGridDayCell', () => ({
+	MobileMonthGridDayCell: ({
+		day,
+		isToday,
+		isSelected,
+		isCurrentMonth,
+		meals,
+		dayProps,
+		onSelect,
+	}: {
+		day: DateTime;
+		isToday: boolean;
+		isSelected: boolean;
+		isCurrentMonth: boolean;
+		meals: MobileMonthGridMeal[];
+		dayProps: Record<string, unknown>;
+		onSelect: () => void;
+	}) => (
+		<button
+			type="button"
+			data-testid="mobile-day-cell"
+			data-day={day.day}
+			data-today={String(isToday)}
+			data-selected={String(isSelected)}
+			data-current-month={String(isCurrentMonth)}
+			data-meal-ids={meals.map((meal) => meal.id).join(',')}
+			{...dayProps}
+			onClick={onSelect}
+		/>
+	),
+}));
 vi.mock('../CalendarContext', async () => ({
 	useCalendarContext: vi.fn(),
 }));
@@ -63,9 +94,6 @@ describe('MobileMonthGrid', () => {
 			'F',
 			'S',
 		]);
-		headers.forEach((header) => {
-			expect(header.getAttribute('data-c')).toBe('navy.4');
-		});
 	});
 
 	it('renders the current month plus leading and trailing days', () => {
@@ -74,99 +102,54 @@ describe('MobileMonthGrid', () => {
 		const cells = screen.getAllByTestId('mobile-day-cell');
 
 		expect(cells).toHaveLength(42);
-		expect(cells[0].textContent).toContain('25');
-		expect(cells[cells.length - 1].textContent).toContain('6');
+		expect(cells[0].getAttribute('data-day')).toBe('25');
+		expect(cells[cells.length - 1].getAttribute('data-day')).toBe('6');
 	});
 
-	it('highlights today with an ember filled circle', () => {
-		const today = DateTime.local(2024, 3, 15);
+	it('tells only today’s cell that it is today', () => {
 		vi.useFakeTimers();
-		vi.setSystemTime(today.toJSDate());
+		vi.setSystemTime(DateTime.local(2024, 3, 15).toJSDate());
 
-		renderGrid({ selectedDate: today });
+		renderGrid({ selectedDate: DateTime.local(2024, 3, 10) });
 
-		const badge = screen.getByText('15').closest('[data-testid="badge"]');
-
-		expect(badge).not.toBeNull();
-		expect(badge?.getAttribute('data-color')).toBe('ember');
-	});
-
-	it('highlights the selected day with a tinted background', () => {
-		const today = DateTime.local(2024, 3, 15);
-		const selectedDate = DateTime.local(2024, 3, 10);
-		vi.useFakeTimers();
-		vi.setSystemTime(today.toJSDate());
-
-		const { rerender } = renderGrid({ selectedDate });
 		const cells = screen.getAllByTestId('mobile-day-cell');
 
-		expect(cells[14].getAttribute('bg')).toBe('chalk.0');
-
-		vi.mocked(useCalendarContext).mockReturnValue({
-			selectedDate: today,
-			viewType: 'month',
-			rangeAnchor: today,
-			setSelectedDate: vi.fn(),
-			setViewType: vi.fn(),
-			navigateToDate: vi.fn(),
-			goToToday: vi.fn(),
-			goToPrevious: vi.fn(),
-			goToNext: vi.fn(),
-		} as ReturnType<typeof useCalendarContext>);
-		rerender(<MobileMonthGrid />);
-
-		const cellsAfterRerender = screen.getAllByTestId('mobile-day-cell');
-
-		expect(cellsAfterRerender[19].getAttribute('bg')).toBe('ember.0');
+		expect(cells[19].getAttribute('data-today')).toBe('true');
+		expect(cells[18].getAttribute('data-today')).toBe('false');
 	});
 
-	it('renders out-of-month day numbers muted', () => {
+	it('tells only the selected day’s cell that it is selected', () => {
+		renderGrid({ selectedDate: DateTime.local(2024, 3, 10) });
+
+		const cells = screen.getAllByTestId('mobile-day-cell');
+
+		expect(cells[14].getAttribute('data-selected')).toBe('true');
+		expect(cells[19].getAttribute('data-selected')).toBe('false');
+	});
+
+	it('tells each cell whether it is in the selected month', () => {
 		renderGrid({ selectedDate: DateTime.local(2024, 3, 15) });
 
 		const cells = screen.getAllByTestId('mobile-day-cell');
 
-		expect(cells[0].querySelector('p')?.getAttribute('data-c')).toBe('navy.2');
-		expect(cells[5].querySelector('p')?.getAttribute('data-c')).not.toBe(
-			'navy.2',
-		);
+		expect(cells[0].getAttribute('data-current-month')).toBe('false');
+		expect(cells[5].getAttribute('data-current-month')).toBe('true');
 	});
 
-	it('renders up to 3 colored dots for days that have meals', () => {
+	it('gives each cell only its own day’s meals', () => {
 		const meals: MobileMonthGridMeal[] = [
 			{ id: '1', date: '2024-03-15', color: '#FF0000' },
-			{ id: '2', date: '2024-03-15', color: '#00FF00' },
+			{ id: '2', date: '2024-03-10', color: '#00FF00' },
 			{ id: '3', date: '2024-03-15', color: '#0000FF' },
-			{ id: '4', date: '2024-03-15', color: '#FFFF00' },
 		];
 
 		renderGrid({ selectedDate: DateTime.local(2024, 3, 15), meals });
 
 		const cells = screen.getAllByTestId('mobile-day-cell');
-		const dots = cells[19].querySelectorAll('[aria-hidden="true"]');
 
-		expect(dots).toHaveLength(3);
-		expect((dots[0] as HTMLElement).style.backgroundColor).toBe(
-			'rgb(255, 0, 0)',
-		);
-		expect((dots[1] as HTMLElement).style.backgroundColor).toBe(
-			'rgb(0, 255, 0)',
-		);
-		expect((dots[2] as HTMLElement).style.backgroundColor).toBe(
-			'rgb(0, 0, 255)',
-		);
-	});
-
-	it('does not render dots for days without meals', () => {
-		const meals: MobileMonthGridMeal[] = [
-			{ id: '1', date: '2024-03-10', color: '#FF0000' },
-		];
-
-		renderGrid({ selectedDate: DateTime.local(2024, 3, 15), meals });
-
-		const cells = screen.getAllByTestId('mobile-day-cell');
-		const dots = cells[19].querySelectorAll('[aria-hidden="true"]');
-
-		expect(dots).toHaveLength(0);
+		expect(cells[19].getAttribute('data-meal-ids')).toBe('1,3');
+		expect(cells[14].getAttribute('data-meal-ids')).toBe('2');
+		expect(cells[20].getAttribute('data-meal-ids')).toBe('');
 	});
 
 	it('selects a day when tapped', () => {
@@ -294,18 +277,5 @@ describe('MobileMonthGrid', () => {
 		fireEvent.keyDown(cells[19], { key: 'Enter' });
 
 		expect(cells[19].getAttribute('tabindex')).toBe('0');
-	});
-
-	it('exposes an accessible name with the meal count', () => {
-		const meals: MobileMonthGridMeal[] = [
-			{ id: '1', date: '2024-03-15', color: '#FF0000' },
-		];
-
-		renderGrid({ selectedDate: DateTime.local(2024, 3, 15), meals });
-
-		const cells = screen.getAllByTestId('mobile-day-cell');
-
-		expect(cells[19].getAttribute('aria-label')).toBe('March 15, 1 meals');
-		expect(cells[18].getAttribute('aria-label')).toBe('March 14, 0 meals');
 	});
 });

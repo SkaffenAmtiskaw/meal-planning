@@ -8,10 +8,10 @@ import {
 
 import { variantColorResolver } from './variantColorResolver';
 
-import { EMBER_RAMPS } from '../colors';
+import { EMBER_RAMPS, NAVY_RAMPS } from '../colors';
 
 const theme = mergeMantineTheme(DEFAULT_THEME, {
-	colors: { ember: EMBER_RAMPS },
+	colors: { ember: EMBER_RAMPS, navy: NAVY_RAMPS },
 });
 
 describe('variantColorResolver', () => {
@@ -24,6 +24,18 @@ describe('variantColorResolver', () => {
 				hover: EMBER_RAMPS[6],
 				color: theme.white,
 				border: 'none',
+			}),
+		);
+	});
+
+	it('resolves the ring variant to a navy ring at the shared width with no fill', () => {
+		expect(
+			variantColorResolver({ color: 'blue', theme, variant: 'ring' }),
+		).toEqual(
+			expect.objectContaining({
+				background: 'transparent',
+				color: NAVY_RAMPS[5],
+				border: `var(--ring-width) solid ${NAVY_RAMPS[5]}`,
 			}),
 		);
 	});

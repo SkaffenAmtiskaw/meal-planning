@@ -2,7 +2,7 @@
 
 import type { ReactElement } from 'react';
 
-import { Badge, Box, Flex, rgba, Stack, Text } from '@mantine/core';
+import { Box, Flex, Stack } from '@mantine/core';
 
 import type { DateTime } from 'luxon';
 
@@ -10,6 +10,7 @@ import { useCanWrite } from '@/app/[planner]/_components';
 
 import { AddMealGutterButton } from './AddMealGutterButton';
 import { AddMealRow } from './AddMealRow';
+import { ListDayGutter } from './ListDayGutter';
 import { MealCardWithDragHandle } from './MealCardWithDragHandle';
 import styles from './DayRow.module.css';
 
@@ -33,7 +34,6 @@ export function DayRow({
 	const canWrite = useCanWrite();
 	const { open } = useCalendarModal();
 	const isToday = date.hasSame(today, 'day');
-	const isFirstOfMonth = date.day === 1;
 	const hasMeals = meals.length > 0;
 
 	const handleAddMeal = (): void => {
@@ -43,61 +43,34 @@ export function DayRow({
 	return (
 		<Flex
 			className={styles.row}
+			py={14}
 			data-iso={date.toISODate()}
 			// AddMealGutterButton's stylesheet shows the button while this row is hovered or focused.
 			data-day-row
-			bg={isToday ? rgba('var(--mantine-color-ember-0)', 0.5) : undefined}
 		>
-			<Box className={styles.gutter}>
-				<Box className={styles.gutterContent}>
-					<Text
-						className={styles.gutterText}
-						size="xs"
-						fw={700}
-						c="navy.4"
-						tt="uppercase"
-					>
-						{date.toFormat('ccc').toUpperCase()}
-					</Text>
-					<Flex className={styles.dateLine} align="center" gap={4}>
-						{isToday ? (
-							<Badge circle color="ember" size="lg">
-								{date.day}
-							</Badge>
-						) : (
-							<Text size="xl" fw={500}>
-								{date.day}
-							</Text>
-						)}
-					</Flex>
-					{isFirstOfMonth && (
-						<Text
-							className={styles.gutterText}
-							size="xs"
-							fw={600}
-							c="ember.5"
-							tt="uppercase"
-						>
-							{date.toFormat('MMM').toUpperCase()}
-						</Text>
-					)}
-					{canWrite && <AddMealGutterButton onClick={handleAddMeal} />}
-				</Box>
-			</Box>
-			<Box flex={1} miw={0} mih={40}>
-				{hasMeals || canWrite ? (
+			<ListDayGutter
+				date={date}
+				isToday={isToday}
+				addMealButton={
+					canWrite && <AddMealGutterButton onClick={handleAddMeal} />
+				}
+			/>
+			<Box className={styles.meals} flex={1} miw={0} mih={40} pl={14}>
+				{(hasMeals || canWrite) && (
 					<Stack gap="xs">
-						{hasMeals
-							? meals.map((meal) => (
-									<MealCardWithDragHandle
-										key={meal.id}
-										meal={meal}
-										renderDish={renderDish}
-									/>
-								))
-							: canWrite && <AddMealRow onClick={handleAddMeal} />}
+						{hasMeals ? (
+							meals.map((meal) => (
+								<MealCardWithDragHandle
+									key={meal.id}
+									meal={meal}
+									renderDish={renderDish}
+								/>
+							))
+						) : (
+							<AddMealRow onClick={handleAddMeal} />
+						)}
 					</Stack>
-				) : null}
+				)}
 			</Box>
 		</Flex>
 	);

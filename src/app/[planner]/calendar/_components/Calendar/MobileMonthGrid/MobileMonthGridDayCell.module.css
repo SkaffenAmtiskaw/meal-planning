@@ -1,0 +1,17 @@
+/* 52px is a specific touch-target requirement not represented by a Mantine spacing step. The meal dot size is set once here for the dot row and its dots. */
+.dayCell {
+	height: 52px;
+	--dot-size: 6px;
+}
+
+/* A day with no meals keeps the dot row's height, so its number lines up with the rest of its week. */
+.dots {
+	min-height: var(--dot-size);
+}
+
+/* Mantine has no component that accepts an arbitrary tag-color hex and renders only a small dot; the tag palette is a domain token, so the dot background uses it directly. */
+.dot {
+	width: var(--dot-size);
+	height: var(--dot-size);
+	border-radius: 50%;
+}
