@@ -55,7 +55,7 @@ The parts of the note to update:
 - **Symptoms:** add the repro steps below what's already there, with the date.
 - **Who Can Hit This:** fill it in, or correct it from what you found.
 - **Root Cause:** the diagnosis from step 3, with file paths. If you wrote a unit test to reproduce the bug, say what it runs and what it gets, then remove the test. The pre-commit hook's test run picks up a failing test anywhere in the repo, `.scratch/` included, and blocks commits.
-- **Fix:** the chosen fix, where it goes and why. If there were other reasonable options, add one line on why this one won. If the choice was left for `/decide`, put the options under its question in Open Decisions, and say here which Open Decision it waits on.
+- **Fix:** the chosen fix, where it goes and why. If there were other reasonable options, add one line on why this one won. If the choice was left for `/decide`, say here which Open Decision it waits on.
 - **Acceptance Criteria:** the repro steps, ending in the symptom being gone, checked in the running app. Add any nearby flows the fix could break, named so the user can click through them.
 - **Check Drift callouts:** in a re-investigation, remove the ones on the sections you replaced, since the new sections answer them.
 - **Questions the note left for `/investigate`:** remove them from where they were, now that the note answers them.
