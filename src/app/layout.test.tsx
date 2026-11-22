@@ -22,6 +22,12 @@ vi.mock('./_hooks/useOneTap/OneTapSignInWrapper', () => ({
 	),
 }));
 
+vi.mock('./_hooks/useSaveTimeZone', () => ({
+	SaveTimeZoneWrapper: ({ children }: { children: React.ReactNode }) => (
+		<>{children}</>
+	),
+}));
+
 vi.mock('@/_theme', () => ({
 	theme: {},
 	cssVariablesResolver: vi.fn(),
