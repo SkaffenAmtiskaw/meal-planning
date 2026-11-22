@@ -3,7 +3,6 @@
 import { type ReactElement, useMemo } from 'react';
 
 import {
-	Badge,
 	Box,
 	Center,
 	Group,
@@ -15,6 +14,7 @@ import {
 
 import { DateTime } from 'luxon';
 
+import { NumberMark } from '@/_components';
 import focusClasses from '@/_theme/focus.module.css';
 
 import type { MobileMonthGridMeal } from './types';
@@ -71,18 +71,16 @@ export function MobileMonthGrid({
 			</SimpleGrid>
 
 			<SimpleGrid cols={7} spacing="1px" role="grid">
-				{days.map((day) => {
+				{days.map((day, dayIndex) => {
 					const isoDate = day.toISODate() as string;
 					const isToday = day.hasSame(today, 'day');
 					const isCurrentMonth = day.hasSame(selectedDate, 'month');
 					const isSelected = day.hasSame(selectedDate, 'day');
-					const dayNumber = day.day;
 
 					const dayMeals = mealsByDate.get(isoDate) ?? [];
 					const visibleMeals = dayMeals.slice(0, 3);
 					const mealCount = dayMeals.length;
 
-					const dayIndex = days.findIndex((d) => d.hasSame(day, 'day'));
 					const dayProps = getDayProps(dayIndex);
 
 					return (
@@ -92,28 +90,28 @@ export function MobileMonthGrid({
 							className={`${focusClasses.focusRing} ${styles.dayCell}`}
 							aria-label={`${day.toFormat('MMMM d')}, ${mealCount} meals`}
 							aria-pressed={isSelected}
-							bg={isSelected ? (isToday ? 'ember.0' : 'chalk.0') : undefined}
 							{...dayProps}
 							onClick={() => setSelectedDate(day)}
 						>
 							<Stack gap={3} align="center">
 								<Center>
-									{isToday ? (
-										<Badge circle color="ember">
-											{dayNumber}
-										</Badge>
-									) : (
-										<Text
-											size="xs"
-											c={isCurrentMonth ? undefined : 'navy.2'}
-											fw={isSelected ? 700 : undefined}
-										>
-											{dayNumber}
-										</Text>
-									)}
+									<NumberMark
+										ring={isToday}
+										filled={isSelected}
+										muted={!isCurrentMonth}
+										aria-current={isToday ? 'date' : undefined}
+									>
+										{day.day}
+									</NumberMark>
 								</Center>
 
-								<Group gap={4} justify="center" wrap="nowrap" aria-hidden>
+								<Group
+									gap={4}
+									justify="center"
+									wrap="nowrap"
+									className={styles.dots}
+									aria-hidden
+								>
 									{visibleMeals.map((meal) => (
 										<Box
 											key={meal.id}

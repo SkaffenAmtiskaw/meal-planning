@@ -9,6 +9,30 @@ import type { MobileMonthGridMeal } from './types';
 import { useCalendarContext } from '../CalendarContext';
 
 vi.mock('@mantine/core', async () => await import('#mocks/@mantine/core'));
+vi.mock('@/_components', () => ({
+	NumberMark: ({
+		children,
+		ring = false,
+		filled = false,
+		muted = false,
+		...ariaProps
+	}: {
+		children: React.ReactNode;
+		ring?: boolean;
+		filled?: boolean;
+		muted?: boolean;
+	}) => (
+		<span
+			data-testid={`number-mark-${children}`}
+			data-ring={String(ring)}
+			data-filled={String(filled)}
+			data-muted={String(muted)}
+			{...ariaProps}
+		>
+			{children}
+		</span>
+	),
+}));
 vi.mock('../CalendarContext', async () => ({
 	useCalendarContext: vi.fn(),
 }));
@@ -78,57 +102,60 @@ describe('MobileMonthGrid', () => {
 		expect(cells[cells.length - 1].textContent).toContain('6');
 	});
 
-	it('highlights today with an ember filled circle', () => {
+	it('rings today and marks it as the current date', () => {
+		const today = DateTime.local(2024, 3, 15);
+		vi.useFakeTimers();
+		vi.setSystemTime(today.toJSDate());
+
+		renderGrid({ selectedDate: DateTime.local(2024, 3, 10) });
+
+		const todayMark = screen.getByTestId('number-mark-15');
+		const otherMark = screen.getByTestId('number-mark-14');
+
+		expect(todayMark.getAttribute('data-ring')).toBe('true');
+		expect(todayMark.getAttribute('aria-current')).toBe('date');
+		expect(otherMark.getAttribute('data-ring')).toBe('false');
+		expect(otherMark.getAttribute('aria-current')).toBeNull();
+	});
+
+	it('fills the selected day only', () => {
+		vi.useFakeTimers();
+		vi.setSystemTime(DateTime.local(2024, 3, 15).toJSDate());
+
+		renderGrid({ selectedDate: DateTime.local(2024, 3, 10) });
+
+		expect(
+			screen.getByTestId('number-mark-10').getAttribute('data-filled'),
+		).toBe('true');
+		expect(
+			screen.getByTestId('number-mark-15').getAttribute('data-filled'),
+		).toBe('false');
+	});
+
+	it('fills and rings today when it is selected', () => {
 		const today = DateTime.local(2024, 3, 15);
 		vi.useFakeTimers();
 		vi.setSystemTime(today.toJSDate());
 
 		renderGrid({ selectedDate: today });
 
-		const badge = screen.getByText('15').closest('[data-testid="badge"]');
+		const todayMark = screen.getByTestId('number-mark-15');
 
-		expect(badge).not.toBeNull();
-		expect(badge?.getAttribute('data-color')).toBe('ember');
+		expect(todayMark.getAttribute('data-filled')).toBe('true');
+		expect(todayMark.getAttribute('data-ring')).toBe('true');
 	});
 
-	it('highlights the selected day with a tinted background', () => {
-		const today = DateTime.local(2024, 3, 15);
-		const selectedDate = DateTime.local(2024, 3, 10);
-		vi.useFakeTimers();
-		vi.setSystemTime(today.toJSDate());
-
-		const { rerender } = renderGrid({ selectedDate });
-		const cells = screen.getAllByTestId('mobile-day-cell');
-
-		expect(cells[14].getAttribute('bg')).toBe('chalk.0');
-
-		vi.mocked(useCalendarContext).mockReturnValue({
-			selectedDate: today,
-			viewType: 'month',
-			rangeAnchor: today,
-			setSelectedDate: vi.fn(),
-			setViewType: vi.fn(),
-			navigateToDate: vi.fn(),
-			goToToday: vi.fn(),
-			goToPrevious: vi.fn(),
-			goToNext: vi.fn(),
-		} as ReturnType<typeof useCalendarContext>);
-		rerender(<MobileMonthGrid />);
-
-		const cellsAfterRerender = screen.getAllByTestId('mobile-day-cell');
-
-		expect(cellsAfterRerender[19].getAttribute('bg')).toBe('ember.0');
-	});
-
-	it('renders out-of-month day numbers muted', () => {
+	it('mutes out-of-month day numbers', () => {
 		renderGrid({ selectedDate: DateTime.local(2024, 3, 15) });
 
 		const cells = screen.getAllByTestId('mobile-day-cell');
 
-		expect(cells[0].querySelector('p')?.getAttribute('data-c')).toBe('navy.2');
-		expect(cells[5].querySelector('p')?.getAttribute('data-c')).not.toBe(
-			'navy.2',
-		);
+		expect(
+			cells[0].querySelector('[data-muted]')?.getAttribute('data-muted'),
+		).toBe('true');
+		expect(
+			cells[5].querySelector('[data-muted]')?.getAttribute('data-muted'),
+		).toBe('false');
 	});
 
 	it('renders up to 3 colored dots for days that have meals', () => {

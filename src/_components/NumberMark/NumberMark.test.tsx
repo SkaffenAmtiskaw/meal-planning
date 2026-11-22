@@ -2,6 +2,7 @@ import { render, screen } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
 
 import { NumberMark } from './NumberMark';
+import classes from './NumberMark.module.css';
 
 vi.mock('@mantine/core', async () => await import('#mocks/@mantine/core'));
 
@@ -16,6 +17,24 @@ describe('NumberMark', () => {
 		render(<NumberMark>24</NumberMark>);
 
 		expect(screen.getByText('24').getAttribute('fw')).toBeNull();
+	});
+
+	it('fills the circle behind a filled number', () => {
+		render(<NumberMark filled>18</NumberMark>);
+
+		expect(screen.getByText('18').className).toContain(classes.filled);
+	});
+
+	it('does not fill the circle behind a plain number', () => {
+		render(<NumberMark>18</NumberMark>);
+
+		expect(screen.getByText('18').className).not.toContain(classes.filled);
+	});
+
+	it('bolds a filled number', () => {
+		render(<NumberMark filled>18</NumberMark>);
+
+		expect(screen.getByText('18').getAttribute('fw')).toBe('700');
 	});
 
 	it('shows a muted number in pale navy', () => {

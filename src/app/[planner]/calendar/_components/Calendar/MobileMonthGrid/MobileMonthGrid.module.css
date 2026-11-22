@@ -3,6 +3,11 @@
 	height: 52px;
 }
 
+/* A day with no meals keeps the dot row's height, so its number lines up with the rest of its week. */
+.dots {
+	min-height: 6px;
+}
+
 /* Mantine has no component that accepts an arbitrary tag-color hex and renders only a small dot; the tag palette is a domain token, so the dot background uses it directly. */
 .dot {
 	width: 6px;
