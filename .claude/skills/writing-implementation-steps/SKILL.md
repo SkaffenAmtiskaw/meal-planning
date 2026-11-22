@@ -5,21 +5,27 @@ user-invocable: false
 ---
 
 # Writing Implementation Steps
-Each step carries one idea and ends in checks that show its progress, because the user reviews each step's diff, and checks what it changes in the running app, before the next one is built.
+Each step builds one area of the work and ends in checks that show its progress. Before the next step is built, the user reviews the step's diff and checks what it changes in the running app.
 
-## One Idea per Step
-- **The idea sentence.** A step opens with one sentence saying what it does. If it needs "and", or "and" in disguise such as "with" or "plus", it's two steps.
-- **Size.** Steps are sized by idea, not file count: eighteen files serving one new context provider are one step, and six files making unrelated changes aren't. In a sweep, unrelated items get separate steps, however small. In a pattern, places that migrate to one rule in the same way can share a step, since they're one idea.
-- **A pattern's Docs item.** If the checklist has an Enforcement item, the Docs item goes in the step that builds it, since both keep future code to the Convention. Otherwise, it's a step of its own.
-- **Files.** Each file the step creates or changes is listed with a reason tied to the idea. A file whose reason doesn't serve the idea belongs in another step. The list is the planner's best guess, which the build can change, as "What the Builder Decides" describes.
+## One Area per Step
+A step holds every behavior and new piece one area of the work needs, however small each one is. An area is a part of the work the user checks as one, such as the form's save rules, the dish row or one column of a screen. Each step costs the user a build session and a diff review, so a step smaller than its area costs them more than it saves.
+- **Size.** File count doesn't size a step: eighteen files serving one new context provider are one step, and six files making unrelated changes aren't. The cases with a rule of their own:
+  - **If the story is a sweep:** each unrelated item is its own area, however small.
+  - **If the story is a pattern:** places that migrate to one rule in the same way are one area.
+  - **If a pattern's checklist has an Enforcement item:** the Docs item goes in the step that builds it, since both keep future code to the Convention. Otherwise, the Docs item is a step of its own.
+- **Refactors.** A refactor, replacement or extraction in the approach goes in a step chosen by what builds on it:
+  - **If only one step builds on it, and the refactor is small,** such as a moved file or a new options argument: it goes in that step, ahead of the code that uses it, since it adds little to that step's diff.
+  - **Otherwise:** it goes in one step with the other refactors that serve the same area, such as all the refactors the dish state needs. The user then reviews related refactors in one diff. That step comes before the first step that builds on them, so the diff holds no new behavior and the user can check that existing flows still work.
+- **The idea sentence.** A step opens with one sentence saying what its area does once the step is built, such as "Saving drops blank dish rows, refuses a dish that has content but no name, and closes the modal once the save succeeds." If the sentence covers two areas, it's two steps.
+- **Files.** Each file the step creates or changes is listed with a reason tied to the step's area. A file whose reason doesn't serve that area belongs in another step. The list is the planner's best guess, which the build can change, as "What the Builder Decides" describes.
 
 ## Something to See in Every Step
-- **Slices, not layers.** A step that builds one layer, such as the types or the hook, has nothing to see. The first step of new UI puts something on screen, even hardcoded or unstyled, and each later step makes one fake part real or adds one behavior.
+- **Slices, not layers.** A step that builds one layer, such as the types or the hook, has nothing to see. The first step of new UI puts something on screen, even hardcoded or unstyled, and each later step makes fake parts real or gets another area working.
 - **Order.** Each step's checks work with only the code built through that step. If one needs a later step, the steps are out of order or split wrong.
 - **Scaffolding.** A temporary page or hardcoded value is fine if it shows progress, as long as a later step removes it.
 
 ## Existing Code
-- **Refactors.** Each refactor, replacement or extraction in the approach gets its own step, before the step that builds on it. The existing flows that use the changed code should look and work exactly as before, and `checks.md` says who checks them.
+- **Existing flows.** The existing flows that use code a step refactors should look and work exactly as before, and `checks.md` says who checks them.
 - **No second job.** If a step adds behavior to an existing module, check that it's the job the module already does. If it's a different job, it needs a piece of its own, as Single Concern in `docs/project_conventions.md` requires.
 
 ## What the Builder Decides
@@ -38,7 +44,7 @@ The approach can miss things, so the steps' Source lines also claim every part o
 ## Format
 ```
 ## Step N: <short title>
-**Idea:** <one sentence, no "and">
+**Idea:** <one sentence, about one area>
 
 **Source:** <the parts of the note it builds or fixes, e.g. "Handoff: Day cell states", "Requirement 3" or "Item: forbidden @tabler/icons-react mocks">
 
