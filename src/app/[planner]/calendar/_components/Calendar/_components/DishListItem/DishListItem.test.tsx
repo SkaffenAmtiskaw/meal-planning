@@ -9,13 +9,6 @@ import type { CalendarDish } from '../../types';
 
 vi.mock('@mantine/core', async () => await import('#mocks/@mantine/core'));
 
-vi.mock('./DishListItem.module.css', () => ({
-	default: {
-		dishName: 'dishName',
-		dishNote: 'dishNote',
-	},
-}));
-
 describe('DishListItem', () => {
 	beforeEach(() => {
 		vi.resetAllMocks();
@@ -124,7 +117,6 @@ describe('DishListItem', () => {
 				c: 'navy',
 				lh: 1.5,
 				maw: '60ch',
-				className: 'dishNote',
 			}),
 			undefined,
 		);
@@ -157,7 +149,6 @@ describe('DishListItem', () => {
 		expect(vi.mocked(Text)).toHaveBeenCalledWith(
 			expect.objectContaining({
 				children: 'Start at 6:15\nKeep it mild',
-				className: 'dishNote',
 			}),
 			undefined,
 		);
@@ -176,7 +167,6 @@ describe('DishListItem', () => {
 		expect(vi.mocked(Text)).toHaveBeenCalledWith(
 			expect.objectContaining({
 				children: longNote,
-				className: 'dishNote',
 			}),
 			undefined,
 		);

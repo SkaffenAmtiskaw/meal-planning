@@ -55,13 +55,6 @@ vi.mock('./_components/DayRow', () => ({
 	),
 }));
 
-vi.mock('./ListView.module.css', () => ({
-	default: {
-		scrollRegion: 'scrollRegion',
-		innerColumn: 'innerColumn',
-	},
-}));
-
 vi.mock('../Calendar', async () => ({
 	...(await vi.importActual('../Calendar')),
 	useCalendarContext: vi.fn(),

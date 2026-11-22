@@ -18,13 +18,6 @@ vi.mock('../CalendarContext', async () => ({
 vi.mock('../MealCard/MealCard', () => ({
 	MealCard: vi.fn(() => <div data-testid="meal-card" />),
 }));
-vi.mock('./MobileAgenda.module.css', () => ({
-	default: {
-		emptyCard: 'emptyCard',
-		stack: 'stack',
-	},
-}));
-
 interface RenderOptions {
 	selectedDate?: DateTime;
 	meals?: CalendarMeal[];

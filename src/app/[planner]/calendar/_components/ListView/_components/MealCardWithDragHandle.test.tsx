@@ -15,14 +15,6 @@ vi.mock('../../Calendar/MealCard/MealCard', () => ({
 	)),
 }));
 
-vi.mock('./MealCardWithDragHandle.module.css', () => ({
-	default: {
-		dragHandle: 'dragHandle',
-		dragHandleGrid: 'dragHandleGrid',
-		dragHandleDot: 'dragHandleDot',
-	},
-}));
-
 describe('MealCardWithDragHandle', () => {
 	beforeEach(() => {
 		vi.resetAllMocks();

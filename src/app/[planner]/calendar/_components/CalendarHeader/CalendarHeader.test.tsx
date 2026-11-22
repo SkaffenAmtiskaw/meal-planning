@@ -18,10 +18,6 @@ import { formatWeekRange } from './_utils/formatWeekRange';
 
 vi.mock('@mantine/core', async () => await import('#mocks/@mantine/core'));
 
-vi.mock('./CalendarHeader.module.css', () => ({
-	default: { header: 'header' },
-}));
-
 vi.mock('@mantine/dates', () => ({
 	DatePickerInput: vi.fn(({ value, onChange, 'data-testid': testId }) => (
 		<input
@@ -238,12 +234,11 @@ describe('CalendarHeader', () => {
 			expect(mockNavigateToDate).not.toHaveBeenCalled();
 		});
 
-		it('applies sticky positioning and bottom border class to the root group', () => {
+		it('applies sticky positioning to the root group', () => {
 			renderDesktop();
 
 			expect(vi.mocked(Group)).toHaveBeenCalledWith(
 				expect.objectContaining({
-					className: 'header',
 					pos: 'sticky',
 					top: 0,
 				}),
@@ -253,12 +248,11 @@ describe('CalendarHeader', () => {
 	});
 
 	describe('CalendarHeaderMobile', () => {
-		it('renders the sticky header root with the bottom-border class', () => {
+		it('renders the sticky header root', () => {
 			renderMobile();
 
 			expect(vi.mocked(Stack)).toHaveBeenCalledWith(
 				expect.objectContaining({
-					className: 'header',
 					pos: 'sticky',
 					top: 0,
 					gap: 'xs',

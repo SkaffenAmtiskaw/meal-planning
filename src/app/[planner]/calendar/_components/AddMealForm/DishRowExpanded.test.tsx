@@ -17,13 +17,6 @@ vi.mock(
 		await import('#mocks/@app/[planner]/calendar/_hooks/usePlannerSavedItems'),
 );
 
-vi.mock('./DishRow.module.css', () => ({
-	default: {
-		expandedContent: 'expandedContent',
-		expandedGrid: 'expandedGrid',
-	},
-}));
-
 const mockUsePlannerSavedItems = vi.mocked(usePlannerSavedItems);
 
 const defaultProps = {

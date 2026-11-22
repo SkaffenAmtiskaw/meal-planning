@@ -23,22 +23,6 @@ vi.mock('./_utils/formatSourceChip', () => ({
 	formatSourceChip: vi.fn((value: string) => value),
 }));
 
-vi.mock('./DishRow.module.css', () => ({
-	default: {
-		root: 'root',
-		expanded: 'expanded',
-		rowLayout: 'rowLayout',
-		rowLayoutMobile: 'rowLayoutMobile',
-		label: 'label',
-		expandedContent: 'expandedContent',
-		helperHint: 'helperHint',
-		noteColumn: 'noteColumn',
-		noteTextareaWrapper: 'noteTextareaWrapper',
-		noteTextareaInput: 'noteTextareaInput',
-		nameInput: 'nameInput',
-	},
-}));
-
 const mockUsePlannerSavedItems = vi.mocked(usePlannerSavedItems);
 const mockUseIsMobile = vi.mocked(useIsMobile);
 const mockFormatSourceChip = vi.mocked(formatSourceChip);
