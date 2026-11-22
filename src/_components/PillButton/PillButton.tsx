@@ -2,6 +2,8 @@ import { forwardRef } from 'react';
 
 import { UnstyledButton } from '@mantine/core';
 
+import clsx from 'clsx';
+
 import type { PillButtonProps } from './types';
 import classes from './PillButton.module.css';
 
@@ -10,7 +12,12 @@ export const PillButton = forwardRef<HTMLButtonElement, PillButtonProps>(
 		return (
 			<UnstyledButton
 				ref={ref}
-				className={`${classes.root} ${classes[size]} ${classes[variant]} ${className ?? ''}`}
+				className={clsx(
+					classes.root,
+					classes[size],
+					classes[variant],
+					className,
+				)}
 				{...rest}
 			>
 				{children}
