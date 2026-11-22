@@ -1,11 +1,15 @@
 'use client';
 
-import type { ReactElement } from 'react';
+import { type ReactElement, useState } from 'react';
 
 import { DatePicker } from '@mantine/dates';
 import { IconChevronLeft, IconChevronRight } from '@tabler/icons-react';
 
 import { DateTime } from 'luxon';
+
+import classes from './DatePickerGrid.module.css';
+
+import { NumberMark } from '../NumberMark';
 
 type DatePickerGridProps = {
 	// The selected date as an ISO date, or null when none is selected.
@@ -22,17 +26,44 @@ export function DatePickerGrid({
 	value,
 	onChange,
 }: DatePickerGridProps): ReactElement {
+	const today = DateTime.now();
+	// The month on screen, which the grid needs to tell which days are outside it.
+	const [shownMonth, setShownMonth] = useState(
+		() => value ?? today.toISODate(),
+	);
+
+	const isToday = (date: string) =>
+		DateTime.fromISO(date).hasSame(today, 'day');
+
 	return (
 		<DatePicker
 			value={value}
-			// Mantine's DatePicker opens on today's month unless it's given a month to open on.
-			defaultDate={value ?? undefined}
+			date={shownMonth}
+			onDateChange={setShownMonth}
+			classNames={{ day: classes.day }}
 			previousIcon={<IconChevronLeft size={16} />}
 			nextIcon={<IconChevronRight size={16} />}
 			previousLabel="Previous month"
 			nextLabel="Next month"
 			// A single letter per weekday, like "S", which none of Mantine's format strings give.
 			weekdayFormat={(date) => DateTime.fromISO(date).toFormat('ccccc')}
+			// The day button is what takes focus, so it carries aria-current rather than the number inside it.
+			getDayProps={(date) => ({
+				'aria-current': isToday(date) ? 'date' : undefined,
+			})}
+			renderDay={(date) => {
+				const day = DateTime.fromISO(date);
+				return (
+					<NumberMark
+						size="sm"
+						ring={isToday(date)}
+						filled={date === value}
+						muted={!day.hasSame(DateTime.fromISO(shownMonth), 'month')}
+					>
+						{day.day}
+					</NumberMark>
+				);
+			}}
 			onChange={(date) => {
 				if (date) {
 					onChange(date);

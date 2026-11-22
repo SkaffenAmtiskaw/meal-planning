@@ -1,0 +1,11 @@
+/* Mantine's DatePicker has no prop to turn off its own selected fill, so this clears it, on hover and press too, and leaves the selected mark to NumberMark's sage circle. */
+.day[data-selected],
+.day[data-selected]:hover,
+.day[data-selected]:active {
+	background-color: transparent;
+}
+
+/* Mantine fades outside-month days to half opacity, which would pale NumberMark's muted navy further; NumberMark sets the muted colour itself. */
+.day[data-outside] {
+	opacity: 1;
+}
