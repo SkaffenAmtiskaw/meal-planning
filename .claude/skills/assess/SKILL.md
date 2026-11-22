@@ -51,12 +51,12 @@ Some failures may need the user's call on an E2E test. "Failures the User Sees" 
 Show the list and wait for the user to confirm it before going on.
 
 ### Check whether it's several stories
-If Open Decisions records that the user kept the story whole, and the story hasn't taken on any work that the decision didn't cover, skip this check, because the work has already been checked for hidden stories. Rewording or splitting up behaviors it already held isn't new work.
+If the user's scope decisions under Open Decisions cover all the story's work, skip this check, because the user has already placed that work. A scope decision records that the user kept the story whole, or kept a piece of work in it. Rewording or splitting up behaviors a decision covered leaves them covered.
 
-Otherwise, send the `hidden-story-checker` subagent the notes repo's path, the note path, the confirmed behaviors as the **Behaviors** checkpoint and, if Open Decisions records that the user kept the story whole, the behaviors the story took on since. Then, depending on its verdict:
+Otherwise, send the `hidden-story-checker` subagent the notes repo's path, the note path, the confirmed behaviors as the **Behaviors** checkpoint and, if Open Decisions records any scope decisions, the behaviors for the work none of them covers. Then, depending on its verdict:
 - **One story:** tell the user in one line, and go on to step 3.
 - **Hidden stories:**
-  1. Put each one whose Shared design is "none" on the out-of-scope list with its behaviors, and triage it right away. The rest of this run works from the behavior list. If the user doesn't pull it in, take its behaviors out of the list.
+  1. Put each one whose Shared design is "none" on the out-of-scope list with its behaviors, and triage it right away. The rest of this run works from the behavior list. When you put one to the user, its case for leaving this story is that a smaller story is easier to review and test properly. If the user doesn't pull it in, take its behaviors out of the list.
   2. If no hidden story shares design, go on to step 3. Otherwise, they need a hub to keep the shared design whole, so send `split-checker` the notes repo's path, the note path, the confirmed behaviors as the **Behaviors** checkpoint, the path of `hidden-story-checker`'s report and the hidden stories that share design. Then go through the split with the user as the `splitting-a-story` skill describes.
   3. If they don't split the story, go on to step 3. If they split it:
      1. Triage the out-of-scope list. An item the user pulls in becomes one or more behaviors in the `# From the Split` section of each child they belong to.

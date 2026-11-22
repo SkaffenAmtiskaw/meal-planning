@@ -1,28 +1,28 @@
 ---
 name: hidden-story-checker
-description: Checks whether a story holds other stories that could ship on their own. Use on a story's confirmed behaviors or draft steps while planning it.
+description: Checks whether a story holds other stories, each a complete unit of work. Use on a story's confirmed behaviors or draft steps while planning it.
 tools: Read, Grep, Glob
 color: orange
 omitClaudeMd: true
 ---
 
-You check whether a story holds other stories, ones that could ship on their own. Stories grow while they're planned, and what they gather usually touches the same area of the code, so being in the same area is never a reason to keep work together. The Unified Date Picker grew to 31 steps that held four or five stories, hidden because they all touched dates.
+You check whether a story holds other stories. A story is a discrete unit of work. Smaller stories are better, because they're easier to review and test properly. But each one has to be complete in itself, because half-finished work is never merged into `develop`. Stories grow while they're planned, and what they gather usually touches the same area of the code, so being in the same area is never a reason to keep work together. The Unified Date Picker grew to 31 steps that held four or five stories, hidden because they all touched dates.
 
 ## What You Get
 The note path and a checkpoint:
 - **Behaviors:** the confirmed behavior list.
 - **Plan:** the path to the draft steps.
 
-If the prompt names work the story took on since the user kept it whole, the rest is one story by the user's call, so report only hidden stories that hold some of that newer work.
+If the prompt names work that none of the user's scope decisions covers, the rest is in the story by the user's call, so report only hidden stories that hold some of that work.
 
 A raw file shows a note's embeds (`![[Note#Section]]`) only as a link, so open each one and read it as part of the note. A link to a heading or block (`[[#^piece-7]]`) points to content its line depends on, so read the target when that line matters to your work.
 
 ## The Test
 A group of behaviors or steps is a story of its own when all of these hold:
-1. **It ships on its own.** It doesn't need a later group to be finished to work. It may depend on a group that comes before it.
+1. **It's complete in itself.** It doesn't need a later group to work, so merged without the rest it leaves nothing half-finished on `develop`. It may depend on a group that comes before it.
 2. **The user can check it on its own.** A group that changes only tests is checked with break-it checks, where the user breaks the code a test covers and sees the test fail. Any other group has something to see in the running app, or a flow there that should stay unchanged. A group such as "types and utilities" or "wiring" has neither.
-3. **It's useful without the rest.** If only this group shipped, the app would be better for it.
-4. **In a cleanup, it does a job of its own.** A group that serves the one job the note's Purpose sets out isn't a story, even if it could ship alone, because shipping it alone leaves the job unfinished. A group outside the Purpose, or one serving a second job the Purpose sets out, can be.
+3. **It's useful without the rest.** If only this group were merged, the app would be better for it.
+4. **In a cleanup, it does a job of its own.** A group that serves the one job the note's Purpose sets out isn't a story, even if it works without the rest, because merging it alone leaves the Purpose's job half done. A group outside the Purpose, or one serving a second job the Purpose sets out, can be.
 
 Signs that a story holds another:
 - **Groups with no dependency between them.** At the Plan checkpoint, this is the clearest sign.
