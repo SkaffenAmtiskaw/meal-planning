@@ -36,7 +36,7 @@ export function MobileAgenda({
 		viewportRef.current?.scrollTo?.({ top: 0 });
 	}, [isoDate]);
 
-	const dateLabel = formatDate(isoDate, 'weekdayMonthDay');
+	const dateLabel = formatDate(selectedDate, 'weekdayMonthDay');
 	const headerLabel = isToday ? `Today · ${dateLabel}` : dateLabel;
 	const mealCountLabel =
 		dayMeals.length === 1 ? '1 MEAL' : `${dayMeals.length} MEALS`;

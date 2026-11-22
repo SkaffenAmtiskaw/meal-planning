@@ -11,15 +11,25 @@ const DATE_STYLES = {
 	shortWeekdayNumericDate: 'ccc M/d',
 	// "Dec 29"
 	shortMonthDay: 'MMM d',
+	// "October 27"
+	monthDay: 'MMMM d',
+	// "November 2026"
+	monthYear: 'MMMM yyyy',
+	// "Sat"
+	shortWeekday: 'ccc',
+	// "Jun"
+	shortMonth: 'MMM',
 } as const;
 
 type DateStyle = keyof typeof DATE_STYLES;
 
 /**
- * Formats an ISO date string (`yyyy-MM-dd`) in a named style, reading it as a
- * date in the local time zone. Text such as month names follows luxon's
- * default locale, which is the browser's.
+ * Formats a luxon `DateTime` or an ISO date string (`yyyy-MM-dd`) in a named
+ * style. An ISO string is read as a date in the local time zone. Text such as
+ * month names follows luxon's default locale, which is the browser's.
  */
-export function formatDate(iso: string, style: DateStyle): string {
-	return DateTime.fromISO(iso).toFormat(DATE_STYLES[style]);
+export function formatDate(date: DateTime | string, style: DateStyle): string {
+	const dateTime = typeof date === 'string' ? DateTime.fromISO(date) : date;
+
+	return dateTime.toFormat(DATE_STYLES[style]);
 }

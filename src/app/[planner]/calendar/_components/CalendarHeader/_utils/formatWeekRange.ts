@@ -11,8 +11,8 @@ export function formatWeekRange(date: DateTime): string {
 	const start = getWeekStart(date);
 	const end = start.plus({ days: 6 });
 
-	const startLabel = formatDate(start.toISODate() as string, 'shortMonthDay');
-	const endLabel = formatDate(end.toISODate() as string, 'shortMonthDay');
+	const startLabel = formatDate(start, 'shortMonthDay');
+	const endLabel = formatDate(end, 'shortMonthDay');
 
 	if (start.year === end.year) {
 		return `${startLabel} – ${endLabel}, ${start.year}`;

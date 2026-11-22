@@ -6,6 +6,7 @@ import type { DateTime } from 'luxon';
 
 import { NumberMark } from '@/_components';
 import focusClasses from '@/_theme/focus.module.css';
+import { formatDate } from '@/_utils/formatDate';
 
 import type { MobileMonthGridMeal } from './types';
 import styles from './MobileMonthGridDayCell.module.css';
@@ -37,7 +38,7 @@ export function MobileMonthGridDayCell({
 		<UnstyledButton
 			data-testid="mobile-day-cell"
 			className={`${focusClasses.focusRing} ${styles.dayCell}`}
-			aria-label={`${day.toFormat('MMMM d')}, ${meals.length} meals`}
+			aria-label={`${formatDate(day, 'monthDay')}, ${meals.length} meals`}
 			aria-pressed={isSelected}
 			aria-current={isToday ? 'date' : undefined}
 			{...dayProps}

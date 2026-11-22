@@ -51,7 +51,7 @@ export function WeekView({
 				{days.map((day, index) => {
 					const isoDate = day.toISODate() as string;
 					const isToday = day.hasSame(today, 'day');
-					const label = formatDate(isoDate, 'shortWeekdayNumericDate');
+					const label = formatDate(day, 'shortWeekdayNumericDate');
 					const dayMeals = mealsByDate.get(isoDate) ?? [];
 					const ariaLabel =
 						dayMeals.length > 0
