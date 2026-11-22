@@ -22,7 +22,11 @@ Before step 2, search the notes repo for each item, including notes that word it
 
 ## 2. Triage With the User
 The choices, and when each applies. If your skill offers only some of them, only those can apply:
-- **Pull it in,** if your skill has a story to pull into: your skill says how it enters this story.
+- **Pull it in,** if your skill has a story to pull into: your skill says how it enters this story. If the story's steps aren't planned yet, meaning it hasn't reached `ready`, also record the choice under the note's `# Open Decisions`, because a later check for hidden stories would otherwise put the work to the user again:
+  ```
+  - Keep <the work> in this story?
+     - **Decided YYYY-MM-DD:** yes. <their name>'s call<: their reason, if they gave one>.
+  ```
 - **Route it,** for any item: if the user names where, put it there now, written as the `filing-work` skill describes for that kind of home.
 - **Drop it,** unless the user raised the item: take it off the list and don't record it anywhere. If the user raised it, such as their feedback on a skill or a problem they pointed out, they've already said it matters.
 
