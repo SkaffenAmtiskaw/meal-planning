@@ -17,9 +17,6 @@ vi.mock('@/_theme/colors', () => ({
 		tangerine: { bg: '#FDEBD6', text: '#7A3410', border: '#F5B47A' },
 	},
 }));
-vi.mock('@/_theme/focus.module.css', () => ({
-	default: { focusRing: 'focus-ring-mock' },
-}));
 vi.mock('../DishLink/DishLink', () => ({
 	DishLink: vi.fn(({ dish, tabIndex }) => (
 		<span data-testid="dish-link" data-tab-index={tabIndex}>

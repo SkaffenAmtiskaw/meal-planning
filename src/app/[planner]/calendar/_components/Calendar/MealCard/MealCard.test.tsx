@@ -13,13 +13,6 @@ vi.mock('../_components/DishListItem/DishListItem', () => ({
 	)),
 }));
 
-vi.mock('./MealCard.module.css', () => ({
-	default: {
-		mealCard: 'mealCard',
-		dishList: 'dishList',
-	},
-}));
-
 describe('MealCard', () => {
 	beforeEach(() => {
 		vi.resetAllMocks();
