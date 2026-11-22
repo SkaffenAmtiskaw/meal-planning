@@ -4,6 +4,7 @@ import { type ReactElement, useMemo } from 'react';
 
 import { Box, Divider, Flex, Paper, Stack } from '@mantine/core';
 
+import clsx from 'clsx';
 import { DateTime } from 'luxon';
 
 import focusClasses from '@/_theme/focus.module.css';
@@ -64,7 +65,7 @@ export function WeekView({
 							key={isoDate}
 							role="gridcell"
 							p="xs"
-							className={`${styles.dayColumn} ${focusClasses.focusRing}`}
+							className={clsx(styles.dayColumn, focusClasses.focusRing)}
 							data-testid="week-day-column"
 							aria-label={ariaLabel}
 							aria-current={isToday ? 'date' : undefined}

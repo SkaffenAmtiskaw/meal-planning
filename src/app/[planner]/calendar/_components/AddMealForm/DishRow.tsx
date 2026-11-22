@@ -11,6 +11,8 @@ import {
 } from '@mantine/core';
 import { IconChevronDown, IconChevronUp, IconTrash } from '@tabler/icons-react';
 
+import clsx from 'clsx';
+
 import { useIsMobile } from '@/_hooks';
 
 import { DishNoteChip } from './DishNoteChip';
@@ -53,7 +55,7 @@ export const DishRowLayout = ({
 	if (isMobile) {
 		return (
 			<Flex
-				className={`${classes.rowLayout} ${classes.rowLayoutMobile}`}
+				className={clsx(classes.rowLayout, classes.rowLayoutMobile)}
 				data-testid={`dish-row-layout-${index}`}
 				direction="column"
 				gap="xs"
@@ -203,9 +205,7 @@ export const DishRow = ({
 	return (
 		<Box
 			data-testid={`dish-row-${index}`}
-			className={
-				dish.expanded ? `${classes.root} ${classes.expanded}` : classes.root
-			}
+			className={clsx(classes.root, dish.expanded && classes.expanded)}
 		>
 			<DishRowLayout
 				index={index}

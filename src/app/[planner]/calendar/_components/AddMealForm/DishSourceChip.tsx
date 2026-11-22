@@ -1,5 +1,7 @@
 'use client';
 
+import clsx from 'clsx';
+
 import { BaseDishChip } from './BaseDishChip';
 import type { SourceType } from './types';
 import classes from './DishSourceChip.module.css';
@@ -36,7 +38,7 @@ export const DishSourceChip = ({
 			title={title}
 			className={classes.root}
 		>
-			<span className={`${classes.dot} ${dotClass}`} aria-hidden="true" />
+			<span className={clsx(classes.dot, dotClass)} aria-hidden="true" />
 			<span className={classes.label}>{label}</span>
 		</BaseDishChip>
 	);

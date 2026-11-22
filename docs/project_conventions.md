@@ -16,6 +16,9 @@ A comment longer than one line is a `/** */` block, because an editor can fold t
 # Imports
 When a path alias is shorter than the relative path, import through it, such as `@/_components` rather than `../../../../_components`. The aliases are in `tsconfig.json`, such as `@/` for `src/` and `#mocks/` for `test/mocks/`. An alias reads the same from any file, and doesn't break when the importing file moves.
 
+# Combining Class Names
+When an element takes more than one CSS class, combine them with `clsx`, as in `className={clsx(classes.root, classes[size], className)}`, rather than joining them in a template string. `clsx` leaves out any value that's `undefined`, `null` or `false`, so an optional class, such as a `className` prop the caller may not pass, adds nothing when it's missing. In a template string, each optional class needs its own `?? ''` guard, and a missed guard puts the class `undefined` on the element. Use `clsx` even when every class is always present. An optional class added later tends to be appended to the existing ones, and in a template string that's one more guard to miss.
+
 # Barrel Files
 A barrel file only re-exports. Coverage leaves barrel files out (see `docs/unit_tests.md`), so logic in one has no tests.
 
