@@ -59,16 +59,6 @@ vi.mock('./AddMealRow', () => ({
 	)),
 }));
 
-vi.mock('./DayRow.module.css', () => ({
-	default: {
-		row: 'row',
-		gutter: 'gutter',
-		gutterContent: 'gutterContent',
-		gutterText: 'gutterText',
-		dateLine: 'dateLine',
-	},
-}));
-
 const open = vi.fn();
 
 function createMeal(id: string): CalendarMeal {
@@ -91,16 +81,7 @@ describe('DayRow', () => {
 		});
 	});
 
-	it('renders the day number for a non-today day', () => {
-		const date = DateTime.local(2024, 6, 15);
-		const today = DateTime.local(2024, 6, 10);
-
-		render(<DayRow date={date} today={today} />);
-
-		expect(screen.getByText('15')).toBeDefined();
-	});
-
-	it('renders the ember badge content for today', () => {
+	it('marks the day number as today when date is today', () => {
 		const date = DateTime.local(2024, 6, 15);
 
 		render(<DayRow date={date} today={date} />);
@@ -108,22 +89,13 @@ describe('DayRow', () => {
 		expect(screen.getByTestId('badge').textContent).toBe('15');
 	});
 
-	it('shows the month abbreviation on the first of the month', () => {
-		const date = DateTime.local(2024, 6, 1);
-		const today = DateTime.local(2024, 6, 10);
-
-		render(<DayRow date={date} today={today} />);
-
-		expect(screen.getByText('JUN')).toBeDefined();
-	});
-
-	it('does not show the month abbreviation on other days', () => {
+	it('does not mark the day number as today for other days', () => {
 		const date = DateTime.local(2024, 6, 15);
 		const today = DateTime.local(2024, 6, 10);
 
 		render(<DayRow date={date} today={today} />);
 
-		expect(screen.queryByText('JUN')).toBeNull();
+		expect(screen.queryByTestId('badge')).toBeNull();
 	});
 
 	it('has data-iso with the correct ISO date', () => {

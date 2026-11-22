@@ -1,0 +1,38 @@
+/* Mantine does not expose sticky positioning or a single-edge border prop for this fixed-width gutter. */
+.gutter {
+	flex: 0 0 82px;
+	width: 82px;
+	min-width: 82px;
+	max-width: 82px;
+	box-sizing: border-box;
+	padding-right: 12px;
+	border-right: 1px solid var(--mantine-color-chalk-3);
+	position: sticky;
+	top: 8px;
+}
+
+/* A two-column grid puts the date right-aligned in the first column and the add button in a fixed 22px second column, which Mantine's layout props cannot express. */
+.gutterContent {
+	display: grid;
+	grid-template-columns: 1fr 22px;
+	column-gap: 4px;
+	row-gap: 2px;
+	align-items: center;
+	width: 100%;
+	padding-right: 30px;
+}
+
+/* Keeps the weekday and month labels in the date column, right-aligned under the number. */
+.gutterText {
+	grid-column: 1;
+	text-align: right;
+}
+
+/* Keeps the day number in the date column, right-aligned. */
+.dateLine {
+	grid-column: 1;
+	display: flex;
+	justify-content: flex-end;
+	align-items: center;
+	width: 100%;
+}

@@ -1,43 +1,7 @@
-/* Mantine layout props cannot express the required fixed 82px sticky gutter with right border, so the row layout is controlled here. */
+/* Mantine has no single-edge border prop, so the row's divider and spacing are set here. */
 .row {
 	display: flex;
 	gap: 14px;
 	border-top: 1px solid var(--mantine-color-chalk-3);
 	padding: 14px 0;
-}
-
-/* Mantine does not expose sticky positioning or a single-edge border prop for this fixed-width gutter. */
-.gutter {
-	flex: 0 0 82px;
-	width: 82px;
-	min-width: 82px;
-	max-width: 82px;
-	box-sizing: border-box;
-	padding-right: 12px;
-	border-right: 1px solid var(--mantine-color-chalk-3);
-	position: sticky;
-	top: 8px;
-}
-
-.gutterContent {
-	display: grid;
-	grid-template-columns: 1fr 22px;
-	column-gap: 4px;
-	row-gap: 2px;
-	align-items: center;
-	width: 100%;
-	padding-right: 30px;
-}
-
-.gutterText {
-	grid-column: 1;
-	text-align: right;
-}
-
-.dateLine {
-	grid-column: 1;
-	display: flex;
-	justify-content: flex-end;
-	align-items: center;
-	width: 100%;
 }
