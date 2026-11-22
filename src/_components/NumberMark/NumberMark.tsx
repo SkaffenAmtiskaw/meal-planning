@@ -2,6 +2,8 @@ import type { AriaAttributes, ReactNode } from 'react';
 
 import { type MantineSize, Text } from '@mantine/core';
 
+import clsx from 'clsx';
+
 import classes from './NumberMark.module.css';
 
 interface NumberMarkProps extends AriaAttributes {
@@ -20,21 +22,17 @@ export function NumberMark({
 	size = 'sm',
 	...ariaProps
 }: NumberMarkProps) {
-	const className = [
-		classes.mark,
-		ring && classes.ring,
-		filled && classes.filled,
-	]
-		.filter(Boolean)
-		.join(' ');
-
 	return (
 		<Text
 			span
 			size={size}
 			fw={ring || filled ? 700 : undefined}
 			c={muted ? 'navy.3' : 'navy.5'}
-			className={className}
+			className={clsx(
+				classes.mark,
+				ring && classes.ring,
+				filled && classes.filled,
+			)}
 			{...ariaProps}
 		>
 			{children}
