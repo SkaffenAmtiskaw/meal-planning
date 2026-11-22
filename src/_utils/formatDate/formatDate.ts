@@ -1,10 +1,12 @@
 import { DateTime } from 'luxon';
 
+import type { DateStyle } from './types';
+
 /**
  * Each named style's luxon format. A style is named for its format, not for
  * the label that uses it, so any label with the same format can share it.
  */
-const DATE_STYLES = {
+export const DATE_STYLES = {
 	// "Friday, March 15"
 	weekdayMonthDay: 'EEEE, MMMM d',
 	// "Sun 10/27"
@@ -19,9 +21,9 @@ const DATE_STYLES = {
 	shortWeekday: 'ccc',
 	// "Jun"
 	shortMonth: 'MMM',
+	// "9/24/2026"
+	numericDate: 'M/d/yyyy',
 } as const;
-
-type DateStyle = keyof typeof DATE_STYLES;
 
 /**
  * Formats a luxon `DateTime` or an ISO date string (`yyyy-MM-dd`) in a named

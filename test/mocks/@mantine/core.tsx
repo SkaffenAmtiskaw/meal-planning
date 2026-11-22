@@ -196,13 +196,22 @@ export const Paper = vi.fn(
 	),
 );
 
+// Tells the mock dropdown whether its popover is open.
+const PopoverOpenedContext = React.createContext(false);
+
 export const Popover = Object.assign(
-	vi.fn(({ children }: WithChildren) => <>{children}</>),
+	vi.fn(({ children, opened }: WithChildren & { opened?: boolean }) => (
+		<PopoverOpenedContext.Provider value={opened ?? false}>
+			{children}
+		</PopoverOpenedContext.Provider>
+	)),
 	{
 		Target: vi.fn(({ children }: WithChildren) => <>{children}</>),
-		Dropdown: vi.fn(({ children }: WithChildren) => (
-			<div data-testid="popover-dropdown">{children}</div>
-		)),
+		Dropdown: vi.fn(({ children }: WithChildren) =>
+			React.useContext(PopoverOpenedContext) ? (
+				<div data-testid="popover-dropdown">{children}</div>
+			) : null,
+		),
 	},
 );
 
@@ -793,6 +802,36 @@ export const Input = Object.assign(
 		<div data-testid={testId}>{children}</div>
 	)),
 	{ Label: InputLabel },
+);
+
+export const InputBase = vi.fn(
+	({
+		children,
+		label,
+		rightSection,
+		component = 'input',
+		pointer,
+		rightSectionPointerEvents,
+		classNames,
+		...props
+	}: WithChildren & {
+		label?: React.ReactNode;
+		rightSection?: React.ReactNode;
+		component?: React.ElementType;
+		pointer?: boolean;
+		rightSectionPointerEvents?: string;
+		classNames?: Record<string, string>;
+		[key: string]: unknown;
+	}) => {
+		const Element = component;
+		return (
+			<div>
+				<span>{label}</span>
+				<Element {...props}>{children}</Element>
+				{rightSection}
+			</div>
+		);
+	},
 );
 
 // ─── Modal ────────────────────────────────────────────────────────────────────

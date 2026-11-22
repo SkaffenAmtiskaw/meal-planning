@@ -1,5 +1,7 @@
 export * from './ConfirmButton';
 export * from './ConfirmModal';
+export * from './DateFieldTrigger';
+export * from './DatePickerGrid';
 export * from './FormFeedbackAlert';
 export * from './FullWidthListItem';
 export * from './GoogleLogoSVG';

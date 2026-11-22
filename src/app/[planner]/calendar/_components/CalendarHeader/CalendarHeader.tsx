@@ -1,26 +1,11 @@
 'use client';
 
-import { useState } from 'react';
 import type { ReactElement } from 'react';
 
-import {
-	Button,
-	Group,
-	Popover,
-	SegmentedControl,
-	Stack,
-	Text,
-} from '@mantine/core';
-import { DatePicker, DatePickerInput } from '@mantine/dates';
-import {
-	IconChevronDown,
-	IconChevronLeft,
-	IconChevronRight,
-} from '@tabler/icons-react';
+import { Button, Group, SegmentedControl, Stack, Text } from '@mantine/core';
+import { IconChevronDown } from '@tabler/icons-react';
 
-import { DateTime } from 'luxon';
-
-import { AddMealButton } from '@/app/[planner]/calendar/_components/AddMealButton';
+import { DateFieldTrigger } from '@/_components';
 
 import {
 	CalendarNextButton,
@@ -30,7 +15,9 @@ import {
 } from './CalendarNavButtons';
 import styles from './CalendarHeader.module.css';
 
+import { AddMealButton } from '../AddMealButton';
 import { type CalendarViewType, useCalendarContext } from '../Calendar';
+import { JumpToDate } from '../JumpToDate';
 import {
 	DEFAULT_VIEWS,
 	LABEL_FORMATTERS,
@@ -40,8 +27,7 @@ import {
 const MOBILE_VIEWS: CalendarViewType[] = ['month', 'list'];
 
 export function CalendarHeaderDesktop(): ReactElement {
-	const { selectedDate, viewType, setViewType, navigateToDate } =
-		useCalendarContext();
+	const { selectedDate, viewType, setViewType } = useCalendarContext();
 
 	const viewData = DEFAULT_VIEWS.map((view) => ({
 		value: view,
@@ -60,6 +46,7 @@ export function CalendarHeaderDesktop(): ReactElement {
 			align="center"
 			wrap="wrap"
 			p="md"
+			// Mantine has no z-index prop on Group, and the sticky header has to stay above the calendar scrolling under it.
 			style={{ zIndex: 100 }}
 		>
 			<Group>
@@ -82,17 +69,16 @@ export function CalendarHeaderDesktop(): ReactElement {
 					onChange={(value) => setViewType(value as CalendarViewType)}
 					data={viewData}
 				/>
-				<DatePickerInput
-					label="Date"
-					valueFormat="M/D/YYYY"
-					previousIcon={<IconChevronLeft />}
-					nextIcon={<IconChevronRight />}
-					value={selectedDate.toISODate()}
-					onChange={(value) => {
-						if (value) {
-							navigateToDate(DateTime.fromISO(value as string));
-						}
-					}}
+				<JumpToDate
+					renderTrigger={({ opened, onClick }) => (
+						<DateFieldTrigger
+							label="Date"
+							date={selectedDate}
+							dateStyle="numericDate"
+							opened={opened}
+							onClick={onClick}
+						/>
+					)}
 				/>
 			</Group>
 		</Group>
@@ -100,9 +86,7 @@ export function CalendarHeaderDesktop(): ReactElement {
 }
 
 export function CalendarHeaderMobile(): ReactElement {
-	const { selectedDate, viewType, setViewType, navigateToDate } =
-		useCalendarContext();
-	const [opened, setOpened] = useState(false);
+	const { selectedDate, viewType, setViewType } = useCalendarContext();
 
 	const label = LABEL_FORMATTERS[viewType](selectedDate);
 
@@ -119,42 +103,30 @@ export function CalendarHeaderMobile(): ReactElement {
 			pos="sticky"
 			top={0}
 			bg="var(--mantine-color-body)"
+			// Mantine has no z-index prop on Stack, and the sticky header has to stay above the calendar scrolling under it.
 			style={{ zIndex: 100 }}
 		>
 			<Group justify="space-between" align="center" wrap="nowrap" w="100%">
 				<Group gap="xs" align="center" wrap="nowrap" justify="center">
 					{viewType !== 'list' && <CalendarPreviousButton size="lg" />}
 
-					<Popover opened={opened} onChange={setOpened}>
-						<Popover.Target>
+					<JumpToDate
+						renderTrigger={({ onClick }) => (
 							<Button
 								variant="subtle"
 								size="compact-sm"
 								rightSection={<IconChevronDown size={14} />}
-								onClick={() => setOpened((o) => !o)}
+								onClick={onClick}
 							>
 								{label}
 							</Button>
-						</Popover.Target>
-						<Popover.Dropdown>
-							<DatePicker
-								value={selectedDate.toISODate()}
-								previousIcon={<IconChevronLeft size={16} />}
-								nextIcon={<IconChevronRight size={16} />}
-								onChange={(value) => {
-									if (value) {
-										navigateToDate(DateTime.fromISO(value as string));
-										setOpened(false);
-									}
-								}}
-							/>
-						</Popover.Dropdown>
-					</Popover>
+						)}
+					/>
 
 					{viewType !== 'list' && <CalendarNextButton size="lg" />}
 				</Group>
 
-				<CalendarTodayPillButton data-testid="today-button" />
+				<CalendarTodayPillButton />
 			</Group>
 
 			<SegmentedControl
