@@ -29,7 +29,7 @@ If a step needs a piece the approach doesn't have:
 - **If the piece adds no new work and only moves work the approach already holds into a piece of its own,** such as to keep an existing module to its one job, add it to the note's approach once the user agrees.
 - **Otherwise,** it's new design for the skill that settled the approach, such as `/assess` for a feature: once the user agrees, send the note to that skill, triage and route the out-of-scope list, and stop.
 
-Then triage the out-of-scope list. An item the user pulls in becomes its own step, and a piece it needs is handled as above. If it needs a decision the user leaves for `/decide`, send the note to `/decide`, route the out-of-scope list, and stop.
+Then triage the out-of-scope list. An item the user pulls in goes in the step for its area, as the `writing-implementation-steps` skill describes. A piece the item needs is handled as above. If it needs a decision the user leaves for `/decide`, send the note to `/decide`, route the out-of-scope list, and stop.
 
 Write the draft to a file for the checkers.
 
