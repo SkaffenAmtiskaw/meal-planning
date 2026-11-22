@@ -2,6 +2,7 @@ import type { ReactElement } from 'react';
 
 import { Box, Center, Group, Stack, UnstyledButton } from '@mantine/core';
 
+import clsx from 'clsx';
 import type { DateTime } from 'luxon';
 
 import { NumberMark } from '@/_components';
@@ -37,7 +38,7 @@ export function MobileMonthGridDayCell({
 	return (
 		<UnstyledButton
 			data-testid="mobile-day-cell"
-			className={`${focusClasses.focusRing} ${styles.dayCell}`}
+			className={clsx(focusClasses.focusRing, styles.dayCell)}
 			aria-label={`${formatDate(day, 'monthDay')}, ${meals.length} meals`}
 			aria-pressed={isSelected}
 			aria-current={isToday ? 'date' : undefined}

@@ -5,6 +5,8 @@ import Link from 'next/link';
 import { Menu, Text, UnstyledButton } from '@mantine/core';
 import { IconChevronDown } from '@tabler/icons-react';
 
+import clsx from 'clsx';
+
 import type { PlannerItem } from './types';
 import styles from './PlannerContextSection.module.css';
 
@@ -25,7 +27,7 @@ export const PlannerContextSection = ({
 			<Text
 				size="sm"
 				truncate
-				className={`${styles.row} ${styles.plannerName}`}
+				className={clsx(styles.row, styles.plannerName)}
 				data-testid="planner-context-static"
 			>
 				{currentPlannerName}
@@ -37,7 +39,7 @@ export const PlannerContextSection = ({
 		<Menu width="target">
 			<Menu.Target>
 				<UnstyledButton
-					className={`${styles.row} ${styles.trigger}`}
+					className={clsx(styles.row, styles.trigger)}
 					data-testid="planner-context-trigger"
 				>
 					<Text size="sm" span truncate className={styles.plannerName}>

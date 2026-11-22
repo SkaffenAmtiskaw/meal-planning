@@ -4,6 +4,8 @@ import type { ReactNode } from 'react';
 import { MantineProvider, mantineHtmlProps } from '@mantine/core';
 import { DatesProvider } from '@mantine/dates';
 
+import clsx from 'clsx';
+
 import { cssVariablesResolver, theme } from '@/_theme';
 import { WEEK_START } from '@/_utils/weekStart';
 
@@ -39,7 +41,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
 				/>
 			</head>
 			<body
-				className={`${inter.className} ${roboto.variable}`}
+				className={clsx(inter.className, roboto.variable)}
 				style={{ height: '100vh' }}
 			>
 				<MantineProvider
