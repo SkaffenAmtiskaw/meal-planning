@@ -8,7 +8,7 @@ Dev tooling typically has no unit tests. That covers the seed in `seed/`, the sc
 # Test Logic, Not Rendering
 Every test covers a branch or a piece of logic: a conditional, a calculation, a state change, or what an interaction causes. If a test would still pass after the code it claims to cover is deleted, it doesn't count.
 
-Never test that JSX renders to spec: that a class is applied, that a prop is passed to a child, or that text from a prop shows up. Those tests check React, not this code, and they break whenever the markup changes. In a component, what's worth testing is what it decides: an empty or error state that depends on props, what appears or goes away after a state change, what an interaction causes, and its business logic, such as a date calculation or a permission check.
+Never test that JSX renders to spec: that a class is always applied, that a prop is passed to a child, or that text from a prop shows up. Those tests check React, not this code, and they break whenever the markup changes. In a component, what's worth testing is what it decides: an empty or error state that depends on props, what appears or goes away after a state change, what an interaction causes, and its business logic, such as a date calculation or a permission check.
 
 A component with no branches still needs coverage. Give it one test named `renders (coverage only, no logic)` that renders it and asserts nothing about the JSX. The name tells a reviewer the missing assertion is deliberate.
 
@@ -75,7 +75,7 @@ it('shows the loading state', async () => {
 ```
 
 # Mocks
-Nearly every dependency of the module under test is mocked with `vi.mock`, so a test checks only that module and fails only when it breaks. Three libraries are the exception:
+Nearly every dependency of the module under test is mocked with `vi.mock`, so a test checks only that module and fails only when it breaks. The exceptions are three libraries and CSS modules. These are the libraries:
 
 | Library | Why it isn't mocked |
 |---------|---------------------|
@@ -84,6 +84,17 @@ Nearly every dependency of the module under test is mocked with `vi.mock`, so a 
 | `zod` | Schemas are part of the code under test, so mocking `zod` would leave validation untested. It's synchronous and has no side effects, so it costs a test nothing. |
 
 Modules that use these libraries are still mocked, such as `@/_models` or a form's validation helpers, so a test doesn't break when a schema changes. Only the library itself is the exception.
+
+A CSS module, such as `WeekDay.module.css`, isn't mocked because Vitest already stands in for it. Each class a component reads from it comes back as a name built from the class and the file, such as `_today_4ee6c3`, and the name is the same on every run. A mock would only swap one made-up name for another. If a component applies a class only under some condition, its test imports the CSS module and checks for the class through it:
+
+```tsx
+import styles from './WeekDay.module.css';
+
+it('marks today', () => {
+  render(<WeekDay date={today} today={today} />);
+  expect(screen.getByTestId('week-day').classList.contains(styles.today)).toBe(true);
+});
+```
 
 Two modules are swapped for their mocks in every test through aliases in `vitest.config.ts`: `@/env` resolves to `test/mocks/env.ts`, and `server-only` to `test/mocks/server-only.ts`. So a test file doesn't need to mock them, and the app's real environment never reaches a test. A test that needs a different env value mocks `@/env` with its own object, as `src/_reporting/errorReporting/errorReporting.test.ts` does.
 

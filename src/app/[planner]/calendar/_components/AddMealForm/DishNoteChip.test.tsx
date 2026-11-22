@@ -5,14 +5,6 @@ import { DishNoteChip } from './DishNoteChip';
 
 vi.mock('@mantine/core', async () => await import('#mocks/@mantine/core'));
 
-vi.mock('./DishNoteChip.module.css', () => ({
-	default: {
-		root: 'root',
-		empty: 'empty',
-		set: 'set',
-	},
-}));
-
 const defaultProps = {
 	note: '',
 	onClick: vi.fn(),
