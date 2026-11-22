@@ -5,16 +5,6 @@ import { PillButton } from './PillButton';
 
 vi.mock('@mantine/core', async () => await import('#mocks/@mantine/core'));
 
-vi.mock('./PillButton.module.css', () => ({
-	default: {
-		root: 'pill-root',
-		sm: 'sm',
-		md: 'md',
-		dashed: 'dashed',
-		outline: 'outline',
-	},
-}));
-
 const defaultProps = {
 	children: 'Pill label',
 	onClick: vi.fn(),

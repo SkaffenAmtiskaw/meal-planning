@@ -9,15 +9,6 @@ import { DishNoteField } from './DishNoteField';
 
 vi.mock('@mantine/core', async () => await import('#mocks/@mantine/core'));
 
-vi.mock('./DishRow.module.css', () => ({
-	default: {
-		label: 'label',
-		noteColumn: 'noteColumn',
-		noteTextareaWrapper: 'noteTextareaWrapper',
-		noteTextareaInput: 'noteTextareaInput',
-	},
-}));
-
 const defaultProps = {
 	dish: makeDish(),
 	index: 0,

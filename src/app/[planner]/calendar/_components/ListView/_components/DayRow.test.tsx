@@ -59,16 +59,6 @@ vi.mock('./AddMealRow', () => ({
 	)),
 }));
 
-vi.mock('./DayRow.module.css', () => ({
-	default: {
-		row: 'row',
-		gutter: 'gutter',
-		gutterContent: 'gutterContent',
-		gutterText: 'gutterText',
-		dateLine: 'dateLine',
-	},
-}));
-
 const open = vi.fn();
 
 function createMeal(id: string): CalendarMeal {
