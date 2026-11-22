@@ -65,9 +65,13 @@ Otherwise, send the `hidden-story-checker` subagent the notes repo's path, the n
      4. Stop, and tell the user the split is done. Give `/assess <child name>` for each child, to run in a new session, since this one has read the whole design and the split report, and carrying them into a child's assessment bloats it.
 
 ## 3. Design the target
-Send the `target-designer` subagent the confirmed behaviors, numbered, the notes repo's path and the paths to the note's Meta-Instructions, its Design Handoff sections, its images and its artboards. Give it nothing else, and don't describe the existing code or an old approach to it, so its design isn't anchored to what's already there.
+Send the `target-designer` subagent the confirmed behaviors, numbered, the notes repo's path and the paths to the note's Meta-Instructions, its Design Handoff sections, its images and its artboards.
 
-When its design comes back, show the user its Assumptions and ask about each one the note doesn't settle, since each fills a gap that step 2 leaves to the user. If an answer adds or changes a behavior, update the list and run this step again.
+Also send it the behaviors of each later story that will build on this story's pieces, with the story's name. A later story is one whose `blocked-by` names this story and whose design or behaviors add to what this story builds, as another child of the same split often does. Take its behaviors from its `# From the Split` section or its Suggested Approach. Without them, the target fits this story alone, and the later story has to rework pieces this one has just built.
+
+Give it nothing else, and don't describe the existing code or an old approach to it, so its design isn't anchored to what's already there.
+
+When its design comes back, show the user its Assumptions and ask about each one the note doesn't settle, since each fills a gap that step 2 leaves to the user. If an answer adds or changes a behavior, update the list and run this step again. If it lists pieces cut for later stories, give each one's reason in the Why of its row in step 5, so `/plan-steps` keeps the cut.
 
 ## 4. Find overlapping code and have it reviewed
 For each target piece, search for existing code that does the same job in whole or in part. Search by pattern, not just by name: another modal, another form with a list of rows, another list grouped by day. Also list existing modules the story will have to change even though no target piece replaces them, such as callers, providers and contexts, because that's where new behavior tends to get piled in, and each module a drift finding from step 1 was kept for.
