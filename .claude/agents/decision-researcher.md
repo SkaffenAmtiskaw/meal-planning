@@ -23,6 +23,8 @@ Then what you do depends on whether the caller sent the user's answer:
 - **Otherwise,** research the options: follow What to research and Report format.
 
 ## What to research
+You find the options yourself. Options named in the question or by the caller are candidates to weigh, not the set, because an agent may have written them without research. First read `.claude/skills/settling-a-decision/real-options.md`, which holds the tests the set of options passes, and research what those tests need.
+
 Research only what it takes to tell the options apart. Designing the story, writing steps or tracing a whole call chain is a later step's job.
 
 - **The vault:** notes in `features/` and `archive/` in the notes repo, and the hubs, that already decide part of this, constrain it, or would have to change depending on the answer. Name each one. A story whose line in `Roadmap.md` in the notes repo sits in Uncommitted without 📌 may never be built, so don't count a conflict with it against an option.
@@ -31,7 +33,7 @@ Research only what it takes to tell the options apart. Designing the story, writ
 - **Libraries and services:** only when an option depends on what a library or service can do.
   - **A library:** check `package.json` first for an installed one that already does what the option needs (Mantine often does). Never judge what a library can do from memory, because the libraries here are newer than your training data. For Mantine, read the component's page, found through https://mantine.dev/llms.txt, because the types don't show how it's meant to be used. Otherwise, read the installed version's docs or type definitions. Next.js's docs are in `node_modules/next/dist/docs/`.
   - **A service:** read its current docs, because what it offers changes and can depend on the plan or tier.
-- **Best practice:** search the web when an established practice bears on the question, such as clean architecture, UX guidance for touch devices, or accessibility. Say where it comes from.
+- **Best practice:** search the web for how this is usually done, and for any established practice that bears on the question, such as clean architecture, UX guidance for touch devices, or accessibility. Say where it comes from.
 
 ## Report format
 
@@ -45,7 +47,7 @@ Limits no decision can change, such as what the code, a library or a service can
 The user's decisions, comments and earlier answers that bear on the question, one line each, with where each comes from. A comment is a line tagged or signed with their name, such as `[Sarah] I want X instead.`
 
 ### Options
-Two to four. For each one:
+The options that pass the tests in `real-options.md`. For each option:
 - **What it means:** one or two sentences.
 - **Trade-offs:** for and against, one line each. Base each on the work itself. Unless the user's comments raise timing, never base one on when something ships, lands or gets fixed, or on where it sits on the Roadmap, because the user owns the release schedule and the order of work.
 - **What it touches:** notes (and their sections) and code that would change.
