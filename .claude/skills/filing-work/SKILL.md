@@ -7,9 +7,9 @@ user-invocable: false
 # Filing Work
 Each piece of work gets one home in the vault, so it's found when that home is worked and isn't done twice. Two cases decide which homes are open:
 - **If a story waits on the work,** its home is a note of its own, existing or new, as Note Conventions describes under `blocked-by`.
-- **If the collecting note the work fits has an open dated copy,** which of the two is open depends on what the work is about:
-  - **If it's about something not working as the user expected:** the dated copy is open, ranking ahead of the note it was copied from. The user counts this work as part of what was kicked off, even when no item says so.
-  - **Otherwise:** the dated copy isn't open, so the items it was kicked off with stay a set it can finish. The note it was copied from is open instead.
+- **If the work fits a collecting note,** whether the note or a dated copy of it is open depends on where the problem came from:
+  - **If this release's work caused it:** the note's newest dated copy is open, and the note itself isn't. A sweep's copy is open only while it's `spec`, because once its steps are planned, a new item would send it back to re-plan them. If no copy is open, a new copy is open instead. This release's work is what's been merged into `develop` since the last release, so production doesn't have it yet. The user wants a release to fix what it broke before it ships.
+  - **Otherwise:** the note itself is open, and its dated copy isn't, so the items the copy was kicked off with stay a set it can finish.
 
 Unless a story waits on the work, take the first open home that fits:
 1. **A note or Roadmap line that already covers it.** Nothing needs adding.
@@ -19,8 +19,14 @@ Unless a story waits on the work, take the first open home that fits:
    - **Otherwise:** add it to the note's Inbox. If the note has none, add one right after Where It Stands, or at the top if it has no Where It Stands either. Leave the note's other sections as they are, because the note's own skills decide what the work changes there.
 
    If the work isn't design material, the note is `ready`, and none of its remaining steps covers the work, its approved plan no longer covers what it has to build, so it goes back to `spec`. Set its `^status` line to its next skill, and say in its Inbox that it went back for this work.
-3. **A sweep whose What Belongs Here rule fits it,** if the work is small, with no ambiguity and no open decision. Add it in the format the note's template gives. If only one action makes sense, that isn't an open decision, so write that action into the item. For example, if an item's fix leaves a test file empty, the item says to delete the file. If the note is `ready`, check its steps as item 2 describes.
-4. **A workflow note,** if the work changes how the app is built, as Note Conventions' Workflow type describes. It goes in a collecting workflow note whose What Belongs Here rule fits it, written as that rule describes. If none fits, it's a new workflow note from `.claude/note-templates/Workflow.md`, with a Roadmap line that links to it. Either way:
+3. **A sweep whose What Belongs Here rule fits it,** if the work is small, with no ambiguity and no open decision. Write it in the format the note's template gives. If only one action makes sense, that isn't an open decision, so write that action into the item. For example, if an item's fix leaves a test file empty, the item says to delete the file. If the open home is a new dated copy, freeze one for this item, as `.claude/skills/filing-work/freezing-a-copy.md` describes. Otherwise, add it to the open home.
+
+   A new copy's Roadmap line goes in Next and ends with 🔁. Where in Next depends on whether a release is under way, meaning the building goal's line under Goals includes ` · releasing`:
+   - **If one is:** put the line below the 🔥 lines and the lines for notes the goal note's `# Release` section already links, and above every other line. Then add a bullet to that section that links the copy, so the release freeze lets it be built.
+   - **Otherwise:** ask where in Next it goes, as "Placing a Line in Next or Planning" in the `roadmap-placement` skill describes.
+
+   If the goal's line ends with ` · Next: /finish-goal` or ` · Next: /ship-goal`, remove that part, because the new copy is open work in the release.
+4. **A workflow note,** if the work changes how the app is built, as Note Conventions' Workflow type describes. It goes in a collecting workflow note whose What Belongs Here rule fits it, or in that note's dated copy if that's the open home, written as the rule describes. If it's a new copy, freeze one as item 3 describes. If no collecting workflow note fits, it's a new workflow note from `.claude/note-templates/Workflow.md`, with a Roadmap line that links to it. Either way:
    - **If it asks for a workflow behavior for one case,** as opposed to a pattern's Convention, which covers only the cases the code has: write it as the general capability that would let this case, and the next one like it, be set up without changing the skill again, with this case as its first use. A skill full of one-off cases is harder to maintain than one mechanism that each note configures.
    - **If it's the user's feedback** on a skill, subagent or the workflow: quote their words.
 5. **A new Roadmap line,** if the work fits within the line length the `roadmap-rules` skill sets.
