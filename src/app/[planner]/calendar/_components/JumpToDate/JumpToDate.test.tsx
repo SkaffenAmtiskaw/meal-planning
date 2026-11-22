@@ -7,6 +7,7 @@ import { DatePickerGrid } from '@/_components';
 
 import { JumpToDate } from './JumpToDate';
 
+import { useMealDates } from '../../_hooks/useCalendarMeals';
 import { useCalendarContext } from '../Calendar/CalendarContext';
 import type { CalendarContextValue } from '../Calendar/types';
 
@@ -53,6 +54,12 @@ vi.mock('@/_components', () => ({
 		),
 	),
 }));
+
+vi.mock(
+	'../../_hooks/useCalendarMeals',
+	async () =>
+		await import('#mocks/@app/[planner]/calendar/_hooks/useCalendarMeals'),
+);
 
 vi.mock('../Calendar/CalendarContext', () => ({
 	useCalendarContext: vi.fn(),
@@ -119,6 +126,17 @@ describe('JumpToDate', () => {
 
 		expect(vi.mocked(DatePickerGrid)).toHaveBeenCalledWith(
 			expect.objectContaining({ value: '2024-06-15' }),
+			undefined,
+		);
+	});
+
+	it('marks the days with meals', () => {
+		vi.mocked(useMealDates).mockReturnValue(['2024-06-12', '2024-06-14']);
+		renderJumpToDate();
+		fireEvent.click(screen.getByRole('button', { name: 'Jump' }));
+
+		expect(vi.mocked(DatePickerGrid)).toHaveBeenCalledWith(
+			expect.objectContaining({ markedDates: ['2024-06-12', '2024-06-14'] }),
 			undefined,
 		);
 	});

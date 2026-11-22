@@ -133,6 +133,45 @@ describe('DatePickerGrid', () => {
 		});
 	});
 
+	it('marks the marked dates', () => {
+		render(
+			<DatePickerGrid
+				value="2024-06-15"
+				onChange={vi.fn()}
+				markedDates={['2024-06-12', '2024-07-02']}
+			/>,
+		);
+
+		expect(lastProps().getDayProps?.('2024-06-12')).toMatchObject({
+			'data-marked': true,
+		});
+		expect(lastProps().getDayProps?.('2024-07-02')).toMatchObject({
+			'data-marked': true,
+		});
+	});
+
+	it('does not mark other dates', () => {
+		render(
+			<DatePickerGrid
+				value="2024-06-15"
+				onChange={vi.fn()}
+				markedDates={['2024-06-12']}
+			/>,
+		);
+
+		expect(
+			lastProps().getDayProps?.('2024-06-13')?.['data-marked' as never],
+		).toBeUndefined();
+	});
+
+	it('marks no dates by default', () => {
+		render(<DatePickerGrid value="2024-06-15" onChange={vi.fn()} />);
+
+		expect(
+			lastProps().getDayProps?.('2024-06-12')?.['data-marked' as never],
+		).toBeUndefined();
+	});
+
 	it('reports the picked date', () => {
 		const onChange = vi.fn();
 		render(<DatePickerGrid value="2024-06-15" onChange={onChange} />);

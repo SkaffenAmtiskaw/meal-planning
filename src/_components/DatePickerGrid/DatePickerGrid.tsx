@@ -16,6 +16,8 @@ type DatePickerGridProps = {
 	value: string | null;
 	// Called with the ISO date of the day picked.
 	onChange: (date: string) => void;
+	// ISO dates that get a dot under their number, such as the days with meals.
+	markedDates?: string[];
 };
 
 /**
@@ -25,8 +27,10 @@ type DatePickerGridProps = {
 export function DatePickerGrid({
 	value,
 	onChange,
+	markedDates = [],
 }: DatePickerGridProps): ReactElement {
 	const today = DateTime.now();
+	const marked = new Set(markedDates);
 	// The month on screen, which the grid needs to tell which days are outside it.
 	const [shownMonth, setShownMonth] = useState(
 		() => value ?? today.toISODate(),
@@ -48,8 +52,10 @@ export function DatePickerGrid({
 			// A single letter per weekday, like "S", which none of Mantine's format strings give.
 			weekdayFormat={(date) => DateTime.fromISO(date).toFormat('ccccc')}
 			// The day button is what takes focus, so it carries aria-current rather than the number inside it.
+			// data-marked lets the stylesheet draw the dot under the number.
 			getDayProps={(date) => ({
 				'aria-current': isToday(date) ? 'date' : undefined,
+				...(marked.has(date) && { 'data-marked': true }),
 			})}
 			renderDay={(date) => {
 				const day = DateTime.fromISO(date);

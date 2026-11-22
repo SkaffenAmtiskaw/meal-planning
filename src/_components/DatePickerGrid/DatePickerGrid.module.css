@@ -5,6 +5,25 @@
 	background-color: transparent;
 }
 
+/* Mantine's DatePicker has no meal-dot state, so a marked day gets a small forest dot centred under its number, below the Day marks ring. */
+.day[data-marked]::after {
+	content: "";
+	position: absolute;
+	bottom: 1px;
+	left: 50%;
+	width: 4px;
+	height: 4px;
+	border-radius: 50%;
+	background-color: var(--mantine-color-forest-5);
+	transform: translateX(-50%);
+}
+
+/* The meal dot is placed against the day button, which Mantine leaves unpositioned. Mantine centres the number in the cell, which leaves too little room under the Day marks ring for the dot, so the bottom padding lifts every day's number and centres the number and dot as a group. */
+.day {
+	position: relative;
+	padding-bottom: 6px;
+}
+
 /* Mantine fades outside-month days to half opacity, which would pale NumberMark's muted navy further; NumberMark sets the muted colour itself. */
 .day[data-outside] {
 	opacity: 1;

@@ -8,6 +8,7 @@ import { DateTime } from 'luxon';
 import { AdaptivePopover, DatePickerGrid } from '@/_components';
 
 import { useCalendarContext } from '../Calendar';
+import { useMealDates } from '../../_hooks/useCalendarMeals';
 
 type JumpToDateProps = {
 	/**
@@ -23,11 +24,12 @@ type JumpToDateProps = {
 
 /**
  * Opens a date picker from the trigger it renders, with the date in view
- * selected, and moves the calendar to the date picked. The picker is a
+ * selected and a dot on each day with meals, and moves the calendar to the date picked. The picker is a
  * popover on desktop and a bottom sheet on phones.
  */
 export function JumpToDate({ renderTrigger }: JumpToDateProps): ReactElement {
 	const { selectedDate, navigateToDate } = useCalendarContext();
+	const mealDates = useMealDates();
 	const [opened, setOpened] = useState(false);
 	const close = () => setOpened(false);
 
@@ -40,6 +42,7 @@ export function JumpToDate({ renderTrigger }: JumpToDateProps): ReactElement {
 		>
 			<DatePickerGrid
 				value={selectedDate.toISODate()}
+				markedDates={mealDates}
 				onChange={(date) => {
 					navigateToDate(DateTime.fromISO(date));
 					close();
