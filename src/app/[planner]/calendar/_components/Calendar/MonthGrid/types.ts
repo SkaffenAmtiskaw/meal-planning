@@ -1,3 +1,10 @@
+export interface DayKeyboardProps {
+	tabIndex: 0 | -1;
+	onClick: () => void;
+	onKeyDown: (e: React.KeyboardEvent<HTMLElement>) => void;
+	ref: (el: HTMLElement | null) => void;
+}
+
 export interface MealKeyboardProps {
 	tabIndex: 0 | -1;
 	ref: React.RefCallback<HTMLElement>;
