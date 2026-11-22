@@ -1,12 +1,12 @@
-/* Mantine does not expose sticky positioning or a single-edge border prop for this fixed-width gutter. */
+/* Mantine does not expose sticky positioning for this fixed-width gutter. It sits at the top of its row instead of stretching, so it has room to stay in view while a tall day scrolls. */
 .gutter {
 	flex: 0 0 82px;
+	align-self: flex-start;
 	width: 82px;
 	min-width: 82px;
 	max-width: 82px;
 	box-sizing: border-box;
 	padding-right: 12px;
-	border-right: 1px solid var(--mantine-color-chalk-3);
 	position: sticky;
 	top: 8px;
 }

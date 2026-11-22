@@ -16,19 +16,18 @@ describe('ListDayGutter', () => {
 		expect(screen.getByText('SAT')).toBeDefined();
 	});
 
-	it('renders the day number for a non-today day', () => {
+	it('does not mark another day as the current date', () => {
 		render(
 			<ListDayGutter date={DateTime.local(2024, 6, 15)} isToday={false} />,
 		);
 
-		expect(screen.getByText('15')).toBeDefined();
-		expect(screen.queryByTestId('badge')).toBeNull();
+		expect(screen.getByText('15').getAttribute('aria-current')).toBeNull();
 	});
 
-	it('renders the ember badge content for today', () => {
+	it('marks today as the current date', () => {
 		render(<ListDayGutter date={DateTime.local(2024, 6, 15)} isToday />);
 
-		expect(screen.getByTestId('badge').textContent).toBe('15');
+		expect(screen.getByText('15').getAttribute('aria-current')).toBe('date');
 	});
 
 	it('shows the month abbreviation on the first of the month', () => {

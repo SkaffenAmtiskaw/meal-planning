@@ -1,8 +1,10 @@
 import type { ReactElement, ReactNode } from 'react';
 
-import { Badge, Box, Flex, Text } from '@mantine/core';
+import { Box, Flex, Text } from '@mantine/core';
 
 import type { DateTime } from 'luxon';
+
+import { NumberMark } from '@/_components';
 
 import styles from './ListDayGutter.module.css';
 
@@ -33,22 +35,20 @@ export function ListDayGutter({
 					{date.toFormat('ccc').toUpperCase()}
 				</Text>
 				<Flex className={styles.dateLine} align="center" gap={4}>
-					{isToday ? (
-						<Badge circle color="ember" size="lg">
-							{date.day}
-						</Badge>
-					) : (
-						<Text size="xl" fw={500}>
-							{date.day}
-						</Text>
-					)}
+					<NumberMark
+						size="xl"
+						ring={isToday}
+						aria-current={isToday ? 'date' : undefined}
+					>
+						{date.day}
+					</NumberMark>
 				</Flex>
 				{isFirstOfMonth && (
 					<Text
 						className={styles.gutterText}
 						size="xs"
-						fw={600}
-						c="ember.5"
+						fw={700}
+						c="navy.4"
 						tt="uppercase"
 					>
 						{date.toFormat('MMM').toUpperCase()}

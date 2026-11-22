@@ -1,7 +1,12 @@
 /* Mantine has no single-edge border prop, so the row's divider and spacing are set here. */
 .row {
 	display: flex;
-	gap: 14px;
 	border-top: 1px solid var(--mantine-color-chalk-3);
 	padding: 14px 0;
+}
+
+/* Mantine has no single-edge border prop. The divider between the date and the meals runs the row's full height here, because the sticky gutter beside it no longer stretches. */
+.meals {
+	border-left: 1px solid var(--mantine-color-chalk-3);
+	padding-left: 14px;
 }

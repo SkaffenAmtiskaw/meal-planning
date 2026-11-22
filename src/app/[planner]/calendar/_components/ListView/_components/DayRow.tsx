@@ -2,7 +2,7 @@
 
 import type { ReactElement } from 'react';
 
-import { Box, Flex, rgba, Stack } from '@mantine/core';
+import { Box, Flex, Stack } from '@mantine/core';
 
 import type { DateTime } from 'luxon';
 
@@ -46,7 +46,6 @@ export function DayRow({
 			data-iso={date.toISODate()}
 			// AddMealGutterButton's stylesheet shows the button while this row is hovered or focused.
 			data-day-row
-			bg={isToday ? rgba('var(--mantine-color-ember-0)', 0.5) : undefined}
 		>
 			<ListDayGutter
 				date={date}
@@ -55,7 +54,7 @@ export function DayRow({
 					canWrite && <AddMealGutterButton onClick={handleAddMeal} />
 				}
 			/>
-			<Box flex={1} miw={0} mih={40}>
+			<Box className={styles.meals} flex={1} miw={0} mih={40}>
 				{hasMeals || canWrite ? (
 					<Stack gap="xs">
 						{hasMeals

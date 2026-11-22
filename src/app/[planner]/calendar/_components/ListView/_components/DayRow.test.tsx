@@ -3,8 +3,6 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import type { ReactNode } from 'react';
 
-import { Flex } from '@mantine/core';
-
 import { DateTime } from 'luxon';
 
 import { useCanWrite } from '@/app/[planner]/_components';
@@ -86,7 +84,7 @@ describe('DayRow', () => {
 
 		render(<DayRow date={date} today={date} />);
 
-		expect(screen.getByTestId('badge').textContent).toBe('15');
+		expect(screen.getByText('15').getAttribute('aria-current')).toBe('date');
 	});
 
 	it('does not mark the day number as today for other days', () => {
@@ -95,7 +93,7 @@ describe('DayRow', () => {
 
 		render(<DayRow date={date} today={today} />);
 
-		expect(screen.queryByTestId('badge')).toBeNull();
+		expect(screen.getByText('15').getAttribute('aria-current')).toBeNull();
 	});
 
 	it('has data-iso with the correct ISO date', () => {
@@ -105,31 +103,6 @@ describe('DayRow', () => {
 		const { container } = render(<DayRow date={date} today={today} />);
 
 		expect(container.querySelector('[data-iso="2024-06-15"]')).not.toBeNull();
-	});
-
-	it('applies the today-row tint when date is today', () => {
-		const date = DateTime.local(2024, 6, 15);
-
-		render(<DayRow date={date} today={date} />);
-
-		expect(vi.mocked(Flex)).toHaveBeenCalledWith(
-			expect.objectContaining({
-				bg: 'rgba(var(--mantine-color-ember-0), 0.5)',
-			}),
-			undefined,
-		);
-	});
-
-	it('does not apply the today-row tint for other days', () => {
-		const date = DateTime.local(2024, 6, 15);
-		const today = DateTime.local(2024, 6, 10);
-
-		render(<DayRow date={date} today={today} />);
-
-		expect(vi.mocked(Flex)).toHaveBeenCalledWith(
-			expect.objectContaining({ bg: undefined }),
-			undefined,
-		);
 	});
 
 	it('renders MealCardWithDragHandles when meals are provided', () => {
