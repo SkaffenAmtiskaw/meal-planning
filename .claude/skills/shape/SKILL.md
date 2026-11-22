@@ -46,7 +46,7 @@ Look just enough to tell the directions apart:
 - **Whether it's a pattern:** this depends on where the problem comes from, not on how many places it's in. The cases:
   - **If code written separately has already gone wrong the same way more than once, or every new file of some kind, such as a new mutation, faces the same choice:** it's a pattern, because the problem comes from how code keeps getting written.
   - **Otherwise:** it's a local bug or cleanup, because changing today's code ends the problem, even if later code could bring it back. For example, clock calls that only go wrong once another story moves rendering to the server.
-- **Story count:** whether this is one story or several. Signs of several: parts with different types (e.g. a bug for the symptoms and a pattern for the systemic cause), parts that could ship and be reviewed on their own, or parts that already belong to other stories.
+- **Story count:** whether this is one story or several. Signs of several: parts with different types (e.g. a bug for the symptoms and a pattern for the systemic cause), parts that could each be merged and reviewed alone because each is complete in itself, or parts that already belong to other stories.
 - **Installed libraries:** only if the idea could be a feature, a pattern or infra. Check `package.json` for something already installed that covers it (Mantine often does), since that can make the story smaller or unneeded. Read a library's docs only if the idea depends on what it can do, and then only enough to know whether it's possible.
 
 ### Give the user an overview

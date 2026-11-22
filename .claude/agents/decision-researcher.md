@@ -47,7 +47,7 @@ The user's decisions, comments and earlier answers that bear on the question, on
 ### Options
 Two to four. For each one:
 - **What it means:** one or two sentences.
-- **Trade-offs:** for and against, one line each.
+- **Trade-offs:** for and against, one line each. Base each on the work itself. Unless the user's comments raise timing, never base one on when something ships, lands or gets fixed, or on where it sits on the Roadmap, because the user owns the release schedule and the order of work.
 - **What it touches:** notes (and their sections) and code that would change.
 - **What it implies:** new stories, follow-up decisions, or other decisions it settles along the way.
 - **What it changes:** each of the user's earlier decisions, comments or answers the option would go against, named with where it comes from. "None" if there aren't any.
