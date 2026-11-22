@@ -74,7 +74,7 @@ describe('WeekView', () => {
 		expect(screen.getByText('Sat 9/21')).toBeDefined();
 	});
 
-	it('highlights today with an ember badge', () => {
+	it('marks today with a navy outline badge', () => {
 		const today = DateTime.local(2024, 9, 18);
 		vi.useFakeTimers();
 		vi.setSystemTime(today.toJSDate());
@@ -96,9 +96,13 @@ describe('WeekView', () => {
 		);
 
 		const todayBadge = screen.getByTestId('week-day-today');
-		expect(todayBadge).toBeDefined();
-		expect(todayBadge.getAttribute('data-color')).toBe('ember');
+		expect(todayBadge.getAttribute('data-variant')).toBe('outline');
+		expect(todayBadge.getAttribute('aria-current')).toBe('date');
 		expect(todayBadge.textContent).toBe('Wed 9/18');
+		expect(screen.getAllByTestId('week-day-label')).toHaveLength(6);
+		for (const label of screen.getAllByTestId('week-day-label')) {
+			expect(label.getAttribute('aria-current')).toBeNull();
+		}
 
 		vi.useRealTimers();
 	});

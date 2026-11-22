@@ -347,16 +347,22 @@ export const Badge = vi.fn(
 		children,
 		'data-testid': testId,
 		color,
+		variant,
 		style,
 		className,
+		'aria-current': ariaCurrent,
 	}: WithChildren & {
 		color?: string;
+		variant?: string;
 		style?: React.CSSProperties;
 		className?: string;
+		'aria-current'?: React.AriaAttributes['aria-current'];
 	}) => (
 		<span
 			data-testid={testId ?? 'badge'}
 			data-color={color}
+			data-variant={variant}
+			aria-current={ariaCurrent}
 			className={className}
 			style={style}
 		>

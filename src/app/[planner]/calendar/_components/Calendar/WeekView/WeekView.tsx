@@ -7,6 +7,7 @@ import { Badge, Box, Divider, Flex, Paper, Stack, Text } from '@mantine/core';
 import { DateTime } from 'luxon';
 
 import focusClasses from '@/_theme/focus.module.css';
+import ringClasses from '@/_theme/ring.module.css';
 
 import { useWeekViewKeyboard } from './useWeekViewKeyboard';
 import type { WeekViewMeal, WeekViewProps } from './types';
@@ -70,7 +71,13 @@ export function WeekView({
 						>
 							<Box className={styles.dayHeader}>
 								{isToday ? (
-									<Badge color="ember" data-testid="week-day-today">
+									<Badge
+										variant="outline"
+										color="navy"
+										className={ringClasses.ring}
+										aria-current="date"
+										data-testid="week-day-today"
+									>
 										{label}
 									</Badge>
 								) : (
