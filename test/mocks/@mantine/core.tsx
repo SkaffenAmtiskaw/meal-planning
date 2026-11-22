@@ -992,6 +992,47 @@ export const Modal = Object.assign(
 	},
 );
 
+// ─── Drawer ───────────────────────────────────────────────────────────────────
+
+// A Drawer part that renders its children in a div with its own test id.
+const drawerPart = (defaultTestId: string) =>
+	vi.fn(
+		({
+			children,
+			'data-testid': testId,
+		}: {
+			children?: React.ReactNode;
+			'data-testid'?: string;
+			[key: string]: unknown;
+		}) => <div data-testid={testId ?? defaultTestId}>{children}</div>,
+	);
+
+export const Drawer = {
+	Root: vi.fn(
+		({
+			children,
+			opened,
+		}: {
+			children?: React.ReactNode;
+			opened?: boolean;
+			onClose?: () => void;
+			[key: string]: unknown;
+		}) => (opened ? <div role="dialog">{children}</div> : null),
+	),
+	Overlay: vi.fn(() => <div data-testid="drawer-overlay" />),
+	Content: drawerPart('drawer-content'),
+	Header: drawerPart('drawer-header'),
+	Title: drawerPart('drawer-title'),
+	Body: drawerPart('drawer-body'),
+	CloseButton: vi.fn(
+		({ onClick }: { onClick?: () => void; [key: string]: unknown }) => (
+			<button type="button" aria-label="close" onClick={onClick}>
+				×
+			</button>
+		),
+	),
+};
+
 // ─── Navigation ───────────────────────────────────────────────────────────────
 
 export const Avatar = vi.fn(

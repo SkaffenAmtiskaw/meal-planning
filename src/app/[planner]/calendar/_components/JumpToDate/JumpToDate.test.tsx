@@ -1,7 +1,5 @@
-import { act, fireEvent, render, screen } from '@testing-library/react';
+import { fireEvent, render, screen } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-
-import { Popover } from '@mantine/core';
 
 import { DateTime } from 'luxon';
 
@@ -12,9 +10,32 @@ import { JumpToDate } from './JumpToDate';
 import { useCalendarContext } from '../Calendar/CalendarContext';
 import type { CalendarContextValue } from '../Calendar/types';
 
-vi.mock('@mantine/core', async () => await import('#mocks/@mantine/core'));
-
 vi.mock('@/_components', () => ({
+	AdaptivePopover: vi.fn(
+		({
+			opened,
+			onClose,
+			target,
+			children,
+		}: {
+			opened: boolean;
+			onClose: () => void;
+			target: React.ReactNode;
+			children: React.ReactNode;
+		}) => (
+			<>
+				{target}
+				{opened && (
+					<div>
+						<button type="button" onClick={onClose}>
+							Dismiss
+						</button>
+						{children}
+					</div>
+				)}
+			</>
+		),
+	),
 	DatePickerGrid: vi.fn(
 		({
 			value,
@@ -83,14 +104,11 @@ describe('JumpToDate', () => {
 		expect(screen.queryByTestId('date-picker-grid')).toBeNull();
 	});
 
-	it('closes when the popover asks to, such as on Esc or a click outside', () => {
+	it('closes when the popover or sheet asks to, such as on Esc or a click outside', () => {
 		renderJumpToDate();
 		fireEvent.click(screen.getByRole('button', { name: 'Jump' }));
 
-		const { onChange } = vi.mocked(Popover).mock.lastCall?.[0] as {
-			onChange: (opened: boolean) => void;
-		};
-		act(() => onChange(false));
+		fireEvent.click(screen.getByRole('button', { name: 'Dismiss' }));
 
 		expect(screen.queryByTestId('date-picker-grid')).toBeNull();
 	});

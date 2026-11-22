@@ -1,0 +1,23 @@
+.content {
+	/* Drawer's `radius` rounds every corner, and a bottom sheet rounds only the two at the top. */
+	border-top-left-radius: var(--mantine-radius-lg);
+	border-top-right-radius: var(--mantine-radius-lg);
+	/* Drawer's `size` gives a bottom drawer a fixed height, and this sheet fits its content instead. */
+	height: auto;
+	/* Drawer caps a sheet at the full screen height, and this one stops at 90% so the page shows above it. */
+	max-height: 90dvh;
+}
+
+.body {
+	/* Drawer has no safe-area setting, so the content clears the phone's home indicator here. */
+	padding-bottom: calc(var(--mantine-spacing-md) + env(safe-area-inset-bottom));
+}
+
+/* Drawer has no handle part, so the sheet draws its own bar above the title. */
+.handle {
+	width: 36px;
+	height: 4px;
+	margin: var(--mantine-spacing-xs) auto 0;
+	border-radius: var(--mantine-radius-xl);
+	background-color: var(--mantine-color-gray-3);
+}
