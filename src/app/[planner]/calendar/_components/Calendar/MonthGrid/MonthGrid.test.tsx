@@ -54,7 +54,7 @@ describe('MonthGrid', () => {
 		expect(dayCells[0].textContent).toBe('25');
 	});
 
-	it('highlights today with an ember badge', () => {
+	it('marks today as the current date', () => {
 		const today = DateTime.local(2024, 3, 15);
 		vi.useFakeTimers();
 		vi.setSystemTime(today.toJSDate());
@@ -88,10 +88,8 @@ describe('MonthGrid', () => {
 		);
 
 		expect(getMonthGridDates).toHaveBeenCalledWith(today);
-		const dayText = screen.getByText('15');
-		const badge = dayText.closest('[data-testid="badge"]');
-		expect(badge).not.toBeNull();
-		expect(badge?.getAttribute('data-color')).toBe('ember');
+		expect(screen.getByText('15').getAttribute('aria-current')).toBe('date');
+		expect(screen.getByText('14').getAttribute('aria-current')).toBeNull();
 	});
 
 	it('dims overflow days from adjacent months', () => {
@@ -118,19 +116,19 @@ describe('MonthGrid', () => {
 		const dayCells = screen.getAllByTestId('day-cell');
 
 		expect(dayCells[0].querySelector('p')?.getAttribute('data-c')).toBe(
-			'gray.5',
+			'navy.3',
 		);
 		expect(dayCells[1].querySelector('p')?.getAttribute('data-c')).toBe(
-			'gray.5',
+			'navy.3',
 		);
 		expect(dayCells[2].querySelector('p')?.getAttribute('data-c')).toBe(
-			'gray.5',
+			'navy.3',
 		);
 		expect(dayCells[3].querySelector('p')?.getAttribute('data-c')).toBe(
-			'gray.5',
+			'navy.3',
 		);
-		expect(dayCells[4].querySelector('p')?.getAttribute('data-c')).not.toBe(
-			'gray.5',
+		expect(dayCells[4].querySelector('p')?.getAttribute('data-c')).toBe(
+			'navy.5',
 		);
 	});
 

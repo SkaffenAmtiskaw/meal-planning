@@ -47,23 +47,16 @@ function meals(count: number): MonthGridMeal[] {
 }
 
 describe('MonthGridDayCell', () => {
-	it('highlights today with an ember badge', () => {
+	it('marks today as the current date', () => {
 		renderCell({ isToday: true });
 
-		const badge = screen.getByText('15').closest('[data-testid="badge"]');
-		expect(badge?.getAttribute('data-color')).toBe('ember');
+		expect(screen.getByText('15').getAttribute('aria-current')).toBe('date');
 	});
 
-	it('dims a day from an adjacent month', () => {
-		renderCell({ isCurrentMonth: false });
-
-		expect(screen.getByText('15').getAttribute('data-c')).toBe('gray.5');
-	});
-
-	it('does not dim a day in the current month', () => {
+	it('does not mark another day as the current date', () => {
 		renderCell();
 
-		expect(screen.getByText('15').getAttribute('data-c')).toBeNull();
+		expect(screen.getByText('15').getAttribute('aria-current')).toBeNull();
 	});
 
 	it('limits visible meals to 2 and shows +N more', () => {

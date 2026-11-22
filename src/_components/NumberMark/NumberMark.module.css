@@ -1,0 +1,10 @@
+/* Mantine has no circle sized to its text, and a Badge circle cuts off two-digit numbers. Sizing in em fits two digits at any text size, and every number gets the same box so a ring doesn't shift its row. */
+.mark {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	box-sizing: border-box;
+	width: 2em;
+	height: 2em;
+	border-radius: 50%;
+}

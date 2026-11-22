@@ -1,9 +1,10 @@
 'use client';
 
-import { Badge, Center, Paper, Stack, Text } from '@mantine/core';
+import { Center, Paper, Stack, Text } from '@mantine/core';
 
 import type { DateTime } from 'luxon';
 
+import { NumberMark } from '@/_components';
 import focusClasses from '@/_theme/focus.module.css';
 
 import type {
@@ -54,15 +55,13 @@ export function MonthGridDayCell({
 			{...dayProps}
 		>
 			<Center>
-				{isToday ? (
-					<Badge circle color="ember">
-						{day.day}
-					</Badge>
-				) : (
-					<Text size="sm" c={isCurrentMonth ? undefined : 'gray.5'} ta="center">
-						{day.day}
-					</Text>
-				)}
+				<NumberMark
+					ring={isToday}
+					muted={!isCurrentMonth}
+					aria-current={isToday ? 'date' : undefined}
+				>
+					{day.day}
+				</NumberMark>
 			</Center>
 			{meals.length > 0 && (
 				<Stack gap="xs" mt="xs">

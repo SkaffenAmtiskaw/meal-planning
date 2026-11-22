@@ -1,0 +1,8 @@
+/**
+ * The navy ring that marks today, shared by NumberMark and the week header's today badge so
+ * the two match. Mantine has no border-width prop, and an outline Badge's border is 1px.
+ * The doubled class outranks a Mantine component's own border rule.
+ */
+.ring.ring {
+	border: 1.5px solid var(--mantine-color-navy-5);
+}
