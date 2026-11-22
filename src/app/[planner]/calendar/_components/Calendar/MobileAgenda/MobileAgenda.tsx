@@ -7,6 +7,8 @@ import { Group, Paper, ScrollArea, Stack, Text } from '@mantine/core';
 
 import { DateTime } from 'luxon';
 
+import { formatDate } from '@/_utils/formatDate';
+
 import type { MobileAgendaProps } from './types';
 import styles from './MobileAgenda.module.css';
 
@@ -34,9 +36,8 @@ export function MobileAgenda({
 		viewportRef.current?.scrollTo?.({ top: 0 });
 	}, [isoDate]);
 
-	const headerLabel = isToday
-		? `Today · ${selectedDate.toFormat('EEEE, MMMM d')}`
-		: selectedDate.toFormat('EEEE, MMMM d');
+	const dateLabel = formatDate(isoDate, 'weekdayMonthDay');
+	const headerLabel = isToday ? `Today · ${dateLabel}` : dateLabel;
 	const mealCountLabel =
 		dayMeals.length === 1 ? '1 MEAL' : `${dayMeals.length} MEALS`;
 
