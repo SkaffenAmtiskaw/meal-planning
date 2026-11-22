@@ -16,7 +16,13 @@ In either step, if `preview_start` says a port is taken by a process that isn't 
 
 If it's this checkout's, open its URL in a tab and use it: `BETTER_AUTH_URL` for `dev`, the sign-in URL for `sign-in`. The user has probably started it themselves. Otherwise, stop and tell the user what's on the port. If `preview_start` fails any other way, stop and show the user what `preview_logs` prints.
 
-When you're done, stop each server whose `preview_start` said `reused: false`, because the user starts their own server when they want one and doesn't want to hunt down one an agent left running. Leave every other server running.
-
 # Screen Sizes
 For phone-size checks, use the built-in browser's `mobile` preset, and set it back to `desktop` when you're done, because the tab keeps the size for later checks and for the user, who sees the same tab.
+
+# When You're Done
+Stop each server whose `preview_start` said `reused: false`, because the user doesn't want to hunt down a server an agent left running. Leave every other server running. When to stop depends on where you are:
+- **A subagent:** stop it when you're done with the app, because the user reviews the session's work, not a subagent's run.
+- **A session in a worktree:** the user reviews the work in a browser next to the code, and starting a worktree's app by hand is hard for them. The cases:
+  - **If the session will commit its work:** leave the server running until the commit, then stop it. When you leave it running, give the user the app's URL and the sign-in link you used, so they can also open it in another browser.
+  - **Otherwise:** stop it when you're done with the app.
+- **A session in the main checkout:** stop it when you're done with the app, because the user and every other session there use the same ports.
