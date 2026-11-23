@@ -31,13 +31,15 @@ interface UseMonthGridKeyboardResult {
 function computeInitialFocusIndex(
 	days: DateTime[],
 	selectedDate: DateTime,
-	today: DateTime,
+	today: DateTime | null,
 ): number {
 	if (days.length === 0) {
 		throw new Error('days array cannot be empty');
 	}
 
-	const todayIndex = days.findIndex((d) => d.hasSame(today, 'day'));
+	const todayIndex = today
+		? days.findIndex((d) => d.hasSame(today, 'day'))
+		: -1;
 	if (todayIndex !== -1) return todayIndex;
 
 	return days.findIndex((d) => d.hasSame(selectedDate, 'month'));
@@ -48,7 +50,7 @@ export function useMonthGridKeyboard(
 ): UseMonthGridKeyboardResult {
 	const { days, mealsByDate, onMealClick, selectedDate } = options;
 
-	const today = useToday();
+	const { today } = useToday();
 	const initialFocusIndex = computeInitialFocusIndex(days, selectedDate, today);
 	const {
 		getDayProps: getRovingDayProps,

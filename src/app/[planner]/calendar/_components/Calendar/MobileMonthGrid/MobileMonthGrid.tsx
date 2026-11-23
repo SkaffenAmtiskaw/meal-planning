@@ -23,7 +23,7 @@ export function MobileMonthGrid({
 }: MobileMonthGridProps): ReactElement {
 	const { selectedDate, setSelectedDate } = useCalendarContext();
 	const days = useMemo(() => getMonthGridDates(selectedDate), [selectedDate]);
-	const today = useToday();
+	const { today } = useToday();
 	const initialFocusIndex = useMemo(
 		() => days.findIndex((day) => day.hasSame(selectedDate, 'day')),
 		[days, selectedDate],
@@ -67,7 +67,7 @@ export function MobileMonthGrid({
 						<MobileMonthGridDayCell
 							key={isoDate}
 							day={day}
-							isToday={day.hasSame(today, 'day')}
+							isToday={today !== null && day.hasSame(today, 'day')}
 							isSelected={day.hasSame(selectedDate, 'day')}
 							isCurrentMonth={day.hasSame(selectedDate, 'month')}
 							meals={mealsByDate.get(isoDate) ?? []}

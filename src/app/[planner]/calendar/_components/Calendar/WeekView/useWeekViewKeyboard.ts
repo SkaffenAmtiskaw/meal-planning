@@ -32,13 +32,15 @@ interface UseWeekViewKeyboardResult {
 function computeInitialFocusIndex(
 	days: DateTime[],
 	selectedDate: DateTime,
-	today: DateTime,
+	today: DateTime | null,
 ): number {
 	if (days.length === 0) {
 		throw new Error('days array cannot be empty');
 	}
 
-	const todayIndex = days.findIndex((d) => d.hasSame(today, 'day'));
+	const todayIndex = today
+		? days.findIndex((d) => d.hasSame(today, 'day'))
+		: -1;
 	if (todayIndex !== -1) return todayIndex;
 
 	const selectedIndex = days.findIndex((d) => d.hasSame(selectedDate, 'day'));
@@ -50,7 +52,7 @@ export function useWeekViewKeyboard(
 ): UseWeekViewKeyboardResult {
 	const { days, mealsByDate, onMealClick, selectedDate } = options;
 
-	const today = useToday();
+	const { today } = useToday();
 	const [focusedDayIndex, setFocusedDayIndex] = useState(() =>
 		computeInitialFocusIndex(days, selectedDate, today),
 	);

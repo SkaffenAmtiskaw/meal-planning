@@ -5,7 +5,7 @@ import type { ReactNode } from 'react';
 
 import { DateTime } from 'luxon';
 
-import { useToday } from '@/_hooks';
+import { useKnownToday } from '@/_hooks';
 
 import { ListView } from './ListView';
 
@@ -128,7 +128,7 @@ describe('ListView', () => {
 			createMockContextValue({ rangeAnchor: DateTime.local(2024, 6, 13) }),
 		);
 
-		vi.mocked(useToday).mockReturnValue(today);
+		vi.mocked(useKnownToday).mockReturnValue(today);
 
 		render(<ListView />);
 
@@ -141,7 +141,7 @@ describe('ListView', () => {
 	it('builds the day range from rangeAnchor and today', () => {
 		const today = DateTime.local(2024, 6, 15);
 		const rangeAnchor = DateTime.local(2024, 6, 10);
-		vi.mocked(useToday).mockReturnValue(today);
+		vi.mocked(useKnownToday).mockReturnValue(today);
 		vi.mocked(getListDayRange).mockReturnValue([rangeAnchor]);
 		vi.mocked(useCalendarContext).mockReturnValue(
 			createMockContextValue({ rangeAnchor }),

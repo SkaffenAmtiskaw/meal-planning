@@ -4,7 +4,7 @@ import { type ReactElement, useEffect, useMemo, useRef } from 'react';
 
 import { Box } from '@mantine/core';
 
-import { useToday } from '@/_hooks';
+import { useKnownToday } from '@/_hooks';
 
 import styles from './ListView.module.css';
 
@@ -25,7 +25,7 @@ export function ListView({
 	renderDish,
 }: ListViewProps): ReactElement {
 	const { rangeAnchor, selectedDate, setSelectedDate } = useCalendarContext();
-	const today = useToday();
+	const today = useKnownToday();
 	const days = getListDayRange(rangeAnchor, today);
 
 	const mealsByDate = useMemo(() => {

@@ -3,6 +3,7 @@ import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import { DateTime } from 'luxon';
 
+import { makeKnownDay } from '#fixtures/viewerDay';
 import { useToday } from '@/_hooks';
 
 import { useMonthGridKeyboard } from './useMonthGridKeyboard';
@@ -11,7 +12,7 @@ import type { MonthGridMeal } from './types';
 vi.mock('@/_hooks', async () => await import('#mocks/@/_hooks'));
 
 const setToday = (date: Date) =>
-	vi.mocked(useToday).mockReturnValue(DateTime.fromJSDate(date));
+	vi.mocked(useToday).mockReturnValue(makeKnownDay(DateTime.fromJSDate(date)));
 
 function createDays(startDate: DateTime, count: number = 42): DateTime[] {
 	return Array.from({ length: count }, (_, i) => startDate.plus({ days: i }));

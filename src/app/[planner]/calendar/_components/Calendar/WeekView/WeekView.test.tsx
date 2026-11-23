@@ -3,6 +3,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { DateTime } from 'luxon';
 
+import { makeKnownDay, makeUnknownDay } from '#fixtures/viewerDay';
 import { useToday } from '@/_hooks';
 
 import { WeekView } from './WeekView';
@@ -86,7 +87,7 @@ describe('WeekView', () => {
 
 	it("marks today's column as the current date", () => {
 		const today = DateTime.local(2024, 9, 18);
-		vi.mocked(useToday).mockReturnValue(today);
+		vi.mocked(useToday).mockReturnValue(makeKnownDay(today));
 
 		vi.mocked(getWeekDates).mockReturnValue([
 			DateTime.local(2024, 9, 15),
@@ -111,6 +112,33 @@ describe('WeekView', () => {
 		for (const index of [0, 1, 2, 4, 5, 6]) {
 			expect(columns[index].getAttribute('aria-current')).toBeNull();
 			expect(labels[index].getAttribute('data-today')).toBe('false');
+		}
+	});
+
+	it('marks no column as the current date while the day is unknown', () => {
+		const utcDay = DateTime.local(2024, 9, 18);
+		vi.mocked(useToday).mockReturnValue(makeUnknownDay(utcDay));
+		vi.mocked(getWeekDates).mockReturnValue([
+			DateTime.local(2024, 9, 15),
+			DateTime.local(2024, 9, 16),
+			DateTime.local(2024, 9, 17),
+			DateTime.local(2024, 9, 18),
+			DateTime.local(2024, 9, 19),
+			DateTime.local(2024, 9, 20),
+			DateTime.local(2024, 9, 21),
+		]);
+
+		render(
+			<CalendarProvider initialDate={utcDay} initialView="week">
+				<WeekView />
+			</CalendarProvider>,
+		);
+
+		for (const column of screen.getAllByTestId('week-day-column')) {
+			expect(column.getAttribute('aria-current')).toBeNull();
+		}
+		for (const label of screen.getAllByTestId('week-day-label')) {
+			expect(label.getAttribute('data-today')).toBe('false');
 		}
 	});
 

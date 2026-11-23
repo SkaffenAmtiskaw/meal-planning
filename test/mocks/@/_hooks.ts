@@ -14,9 +14,11 @@ import { type ReactNode, useState } from 'react';
 
 import { DateTime } from 'luxon';
 
+import { makeKnownDay } from '#fixtures/viewerDay';
 import type { AsyncStatus } from '@/_hooks/useAsyncStatus';
 import type { Status } from '@/_hooks/useFormFeedback';
 import type { UseSwipeOptions } from '@/_hooks/useSwipe';
+import type { ViewerDay } from '@/_hooks/useToday';
 
 const idle: Status = 'idle';
 
@@ -116,4 +118,12 @@ export const TimeZoneProvider = vi.fn(
 
 export const useTimeZone = vi.fn((): string | null => 'UTC');
 
-export const useToday = vi.fn(() => DateTime.now().startOf('day'));
+/**
+ * A known day by default. A test sets another with the `#fixtures/viewerDay` builders:
+ *   vi.mocked(useToday).mockReturnValue(makeKnownDay(today));
+ */
+export const useToday = vi.fn(
+	(): ViewerDay => makeKnownDay(DateTime.now().startOf('day')),
+);
+
+export const useKnownToday = vi.fn(() => DateTime.now().startOf('day'));

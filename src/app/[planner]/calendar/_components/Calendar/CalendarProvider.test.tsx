@@ -5,7 +5,7 @@ import { type ReactNode, useContext } from 'react';
 
 import { DateTime } from 'luxon';
 
-import { useToday } from '@/_hooks';
+import { useKnownToday } from '@/_hooks';
 
 import { CalendarContext } from './CalendarContext';
 import {
@@ -43,7 +43,7 @@ describe('CalendarProvider', () => {
 
 	describe('initial state', () => {
 		it('should default selectedDate to today', () => {
-			vi.mocked(useToday).mockReturnValue(today);
+			vi.mocked(useKnownToday).mockReturnValue(today);
 
 			const { result } = renderHook(() => useTestContext(), {
 				wrapper: createTestWrapper(),
@@ -81,7 +81,7 @@ describe('CalendarProvider', () => {
 		});
 
 		it('should default rangeAnchor to today', () => {
-			vi.mocked(useToday).mockReturnValue(today);
+			vi.mocked(useKnownToday).mockReturnValue(today);
 
 			const { result } = renderHook(() => useTestContext(), {
 				wrapper: createTestWrapper(),
@@ -122,7 +122,7 @@ describe('CalendarProvider', () => {
 	describe('navigation', () => {
 		describe('goToToday', () => {
 			it('should set selectedDate and rangeAnchor to today', () => {
-				vi.mocked(useToday).mockReturnValue(today);
+				vi.mocked(useKnownToday).mockReturnValue(today);
 				const initialDate = DateTime.local(2020, 1, 1);
 
 				const { result } = renderHook(() => useTestContext(), {

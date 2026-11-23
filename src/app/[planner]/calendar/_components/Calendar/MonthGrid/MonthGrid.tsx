@@ -18,7 +18,7 @@ export function MonthGrid({ meals, renderMeal, onMealClick }: MonthGridProps) {
 	const { selectedDate } = useCalendarContext();
 
 	const days = useMemo(() => getMonthGridDates(selectedDate), [selectedDate]);
-	const today = useToday();
+	const { today } = useToday();
 
 	const mealsByDate = useMemo(() => {
 		const map = new Map<string, MonthGridMeal[]>();
@@ -56,7 +56,7 @@ export function MonthGrid({ meals, renderMeal, onMealClick }: MonthGridProps) {
 						<MonthGridDayCell
 							key={isoDate}
 							day={day}
-							isToday={day.hasSame(today, 'day')}
+							isToday={today !== null && day.hasSame(today, 'day')}
 							isCurrentMonth={day.hasSame(selectedDate, 'month')}
 							meals={mealsByDate.get(isoDate) ?? []}
 							dayProps={getDayProps(dayIndex)}

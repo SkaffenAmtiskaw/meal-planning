@@ -4,7 +4,7 @@ import { type ReactNode, useCallback, useState } from 'react';
 
 import type { DateTime, DurationLike } from 'luxon';
 
-import { useToday } from '@/_hooks';
+import { useKnownToday } from '@/_hooks';
 
 import { CalendarContext } from './CalendarContext';
 import type { CalendarViewType } from './types';
@@ -26,7 +26,7 @@ export function CalendarProvider({
 	initialDate,
 	initialView,
 }: CalendarProviderProps) {
-	const today = useToday();
+	const today = useKnownToday();
 	const [selectedDate, setSelectedDate] = useState<DateTime>(
 		initialDate ?? today,
 	);

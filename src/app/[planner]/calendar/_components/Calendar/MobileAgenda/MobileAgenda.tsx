@@ -21,8 +21,8 @@ export function MobileAgenda({
 	const { selectedDate } = useCalendarContext();
 	const viewportRef = useRef<HTMLDivElement>(null);
 
-	const today = useToday();
-	const isToday = selectedDate.hasSame(today, 'day');
+	const { today } = useToday();
+	const isToday = today !== null && selectedDate.hasSame(today, 'day');
 	const isoDate = selectedDate.toISODate() as string;
 
 	const dayMeals = useMemo(
