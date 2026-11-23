@@ -37,13 +37,13 @@ For each check that proves a Goal, keep its evidence, such as its output or a sc
 
 As you build, a change or addition to the Design or the Build Order can turn up, or come from the user's feedback. Sort where each one goes, so this step builds only the work that belongs in it. The cases, in the order to check them:
 - **If it's new work for a later step or another story, or new work unrelated to this step:** put it on the out-of-scope list.
-- **If a Piece can't work as designed, or the Design otherwise has to be reworked:** send the story back to `/infra-design`, as `sending-back.md` in the `building-code` skill's folder describes. The user approved the Design piece by piece, and `/infra-design` re-checks a changed Piece against its docs and gets it approved again.
-- **If a smaller part of the Design or the Build Order has to change,** such as the step a Piece is built in or a check's wording: change it in the note and keep building. A change like this leaves the Pieces as they were approved, so there's nothing to re-check.
+- **If a Piece or a Goal has to change:** settle it in this session or send the story back to `/infra-design`, as `sending-back.md` in the `building-code` skill's folder describes. The user approved the Design piece by piece, so a changed Piece needs the check that `/infra-design` runs on it.
+- **If another part of the Design or the Build Order has to change,** such as the step a Piece is built in or a check's wording: change it in the note and keep building. A change like this leaves the Pieces as they were approved, so there's nothing to re-check.
 - **Otherwise:** it goes in this step.
 
 ## 3. Report
 Triage the out-of-scope list first. For each item the user pulls in:
-- **If the Design has to be reworked:** send the story back, as step 2 describes.
+- **If it changes a Piece or a Goal:** settle it in this session or send the story back, as step 2 describes.
 - **If it belongs in a later step or needs a new one:** add it to the Build Order.
 - **Otherwise:** build it in this step before you report.
 

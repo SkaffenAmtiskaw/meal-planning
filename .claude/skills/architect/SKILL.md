@@ -74,18 +74,8 @@ Show the draft and wait for the user to approve or change it. Beside it, give th
 ## 4. Migration Checklist
 Build the full checklist from an audit of the approved Convention, then settle it with the user.
 
-### Audit
-Pattern notes usually arrive with a Migration Checklist that was written while the problem was found and is marked "not a full audit": the starting list. A migration planned from it leaves violations behind, and later code copies them. So send the `convention-auditor` subagent the approved Convention as written in the note. Don't send the note path or the starting list, so the audit isn't anchored to it.
-
-### Merge
-Every place the auditor listed as a violation goes in, with its `file:line`, unless it looks like a deliberate exception. That's a question for the user.
-
-For each place the auditor was unsure about, decide whether it breaks the Convention, as `unclear-places.md` in the `settling-a-decision` skill's folder describes. A place you still can't tell about is a question for the user.
-
-For each item only in the starting list, work out why:
-- **Forward-looking on purpose,** such as code another story is about to change: keep it, in its own group.
-- **Already fixed:** drop it, and name it when you show the checklist.
-- **Never broke the Convention:** a question for the user, because they may have meant the Convention to cover that place.
+### Audit and Merge
+Audit the Convention and merge what the audit finds, as `.claude/skills/building-code/auditing-a-convention.md` describes.
 
 Then add the items that don't come from violations:
 - **Infrastructure:** each piece the Convention needs built, with the requirements cut from the draft.

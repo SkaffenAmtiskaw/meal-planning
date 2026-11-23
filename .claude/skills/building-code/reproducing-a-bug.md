@@ -12,3 +12,5 @@ Find where the fault starts, not where the symptom shows. The diagnosis has to e
 - what that code does, and what it should do
 - the evidence, labeled "seen in the running app" or "reproduced in a unit test"
 - whether the fault is in one module or several
+
+If the cause depends on what the browser does, such as layout, timing or the data the page actually got, confirm it in the running app, however you reproduced the bug. Send `bug-reproducer` the repro steps with the values that would prove or disprove the cause, but not the cause itself.
