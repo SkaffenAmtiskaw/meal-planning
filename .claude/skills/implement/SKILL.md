@@ -46,11 +46,12 @@ Triage the out-of-scope list first. For each item the user pulls in:
 - **Otherwise:** build it in this step before you report.
 
 Then report, in these sections, in this order:
-1. **Files:** the table of changed files. Mark any file that isn't in the step's Files list.
-2. **Choices:** a table of each choice you made without asking: what you picked, and what settles it, with a link to its source where it has one.
-3. **Tests:** each test and the branch or logic it covers.
-4. **Acceptance checks:** each one, and what you saw or why you couldn't run it.
-5. **As built:** a draft of anything that differs from the step's plan.
+1. **Precedents:** each precedent you set that the plan didn't. Leave the section out if there are none. It comes first because it's what later code will copy.
+2. **Files:** the table of changed files. Mark any file that isn't in the step's Files list.
+3. **Choices:** a table of each other choice you made without asking: what you picked, and what settles it, with a link to its source where it has one.
+4. **Tests:** each test and the branch or logic it covers.
+5. **Acceptance checks:** each one, and what you saw or why you couldn't run it.
+6. **As built:** a draft of anything that differs from the step's plan.
 
 After the report:
 1. **Checks your runs already cover:** ask the user whether to drop each one.
