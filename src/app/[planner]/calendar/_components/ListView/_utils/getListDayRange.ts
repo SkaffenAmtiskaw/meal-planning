@@ -1,4 +1,4 @@
-import { DateTime } from 'luxon';
+import type { DateTime } from 'luxon';
 
 const WINDOW_SIZE = 35;
 const START_OFFSET = -14;
@@ -8,8 +8,10 @@ const END_OFFSET = 20;
  * Returns a fixed 35-day window of DateTime days around the range anchor,
  * guaranteeing that today is included in the returned range.
  */
-export function getListDayRange(rangeAnchor: DateTime): DateTime[] {
-	const today = DateTime.now().startOf('day');
+export function getListDayRange(
+	rangeAnchor: DateTime,
+	today: DateTime,
+): DateTime[] {
 	const anchorStart = rangeAnchor.startOf('day');
 
 	let start = anchorStart.plus({ days: START_OFFSET });

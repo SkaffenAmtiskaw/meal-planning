@@ -1,10 +1,17 @@
 import { act, renderHook } from '@testing-library/react';
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import { DateTime } from 'luxon';
 
+import { useToday } from '@/_hooks';
+
 import { useWeekViewKeyboard } from './useWeekViewKeyboard';
 import type { WeekViewMeal } from './types';
+
+vi.mock('@/_hooks', async () => await import('#mocks/@/_hooks'));
+
+const setToday = (date: Date) =>
+	vi.mocked(useToday).mockReturnValue(DateTime.fromJSDate(date));
 
 function createWeek(startDate: DateTime): DateTime[] {
 	return Array.from({ length: 7 }, (_, i) => startDate.plus({ days: i }));
@@ -21,18 +28,13 @@ function createKeyboardEvent(key: string): React.KeyboardEvent<HTMLElement> {
 const selectedDate = DateTime.local(2025, 9, 1);
 
 describe('useWeekViewKeyboard', () => {
-	beforeEach(() => {
-		vi.useFakeTimers();
-	});
-
 	afterEach(() => {
-		vi.useRealTimers();
 		vi.resetAllMocks();
 	});
 
 	describe('initial focus', () => {
 		it('focuses today when today is in the week', () => {
-			vi.setSystemTime(new Date(2025, 8, 3)); // Sep 3, 2025 (Wednesday)
+			setToday(new Date(2025, 8, 3)); // Sep 3, 2025 (Wednesday)
 
 			const days = createWeek(DateTime.local(2025, 8, 31)); // Aug 31 - Sep 6
 			const { result } = renderHook(() =>
@@ -52,7 +54,7 @@ describe('useWeekViewKeyboard', () => {
 		});
 
 		it('focuses selectedDate when today is not in the week', () => {
-			vi.setSystemTime(new Date(2025, 7, 15)); // Aug 15, 2025
+			setToday(new Date(2025, 7, 15)); // Aug 15, 2025
 
 			const days = createWeek(DateTime.local(2025, 8, 31)); // Aug 31 - Sep 6
 			const { result } = renderHook(() =>
@@ -72,7 +74,7 @@ describe('useWeekViewKeyboard', () => {
 		});
 
 		it('falls back to the first day when neither is in the week', () => {
-			vi.setSystemTime(new Date(2025, 7, 15)); // Aug 15, 2025
+			setToday(new Date(2025, 7, 15)); // Aug 15, 2025
 
 			const days = createWeek(DateTime.local(2025, 8, 31)); // Aug 31 - Sep 6
 			const outOfWeekSelectedDate = DateTime.local(2025, 9, 15);
@@ -105,7 +107,7 @@ describe('useWeekViewKeyboard', () => {
 
 	describe('day navigation', () => {
 		it('moves focus right with ArrowRight', () => {
-			vi.setSystemTime(new Date(2025, 8, 3)); // Sep 3, 2025
+			setToday(new Date(2025, 8, 3)); // Sep 3, 2025
 
 			const days = createWeek(DateTime.local(2025, 8, 31));
 			const { result } = renderHook(() =>
@@ -135,7 +137,7 @@ describe('useWeekViewKeyboard', () => {
 		});
 
 		it('stops at the right boundary with ArrowRight', () => {
-			vi.setSystemTime(new Date(2025, 8, 3)); // Sep 3, 2025
+			setToday(new Date(2025, 8, 3)); // Sep 3, 2025
 
 			const days = createWeek(DateTime.local(2025, 8, 31));
 			const { result } = renderHook(() =>
@@ -159,7 +161,7 @@ describe('useWeekViewKeyboard', () => {
 		});
 
 		it('moves focus left with ArrowLeft', () => {
-			vi.setSystemTime(new Date(2025, 8, 3)); // Sep 3, 2025
+			setToday(new Date(2025, 8, 3)); // Sep 3, 2025
 
 			const days = createWeek(DateTime.local(2025, 8, 31));
 			const { result } = renderHook(() =>
@@ -191,7 +193,7 @@ describe('useWeekViewKeyboard', () => {
 		});
 
 		it('stops at the left boundary with ArrowLeft', () => {
-			vi.setSystemTime(new Date(2025, 8, 3)); // Sep 3, 2025
+			setToday(new Date(2025, 8, 3)); // Sep 3, 2025
 
 			const days = createWeek(DateTime.local(2025, 8, 31));
 			const { result } = renderHook(() =>
@@ -217,7 +219,7 @@ describe('useWeekViewKeyboard', () => {
 
 	describe('entering meal mode', () => {
 		it('enters meal mode on ArrowDown for a day with meals', () => {
-			vi.setSystemTime(new Date(2025, 8, 3)); // Sep 3, 2025
+			setToday(new Date(2025, 8, 3)); // Sep 3, 2025
 
 			const days = createWeek(DateTime.local(2025, 8, 31));
 			const isoDate = days[3].toISODate() as string;
@@ -250,7 +252,7 @@ describe('useWeekViewKeyboard', () => {
 		});
 
 		it('enters meal mode on Enter for a day with meals', () => {
-			vi.setSystemTime(new Date(2025, 8, 3)); // Sep 3, 2025
+			setToday(new Date(2025, 8, 3)); // Sep 3, 2025
 
 			const days = createWeek(DateTime.local(2025, 8, 31));
 			const isoDate = days[3].toISODate() as string;
@@ -281,7 +283,7 @@ describe('useWeekViewKeyboard', () => {
 		});
 
 		it('does nothing on ArrowDown for an empty day', () => {
-			vi.setSystemTime(new Date(2025, 8, 3)); // Sep 3, 2025
+			setToday(new Date(2025, 8, 3)); // Sep 3, 2025
 
 			const days = createWeek(DateTime.local(2025, 8, 31));
 			const { result } = renderHook(() =>
@@ -302,7 +304,7 @@ describe('useWeekViewKeyboard', () => {
 		});
 
 		it('ignores unhandled keys when not in meal mode', () => {
-			vi.setSystemTime(new Date(2025, 8, 3)); // Sep 3, 2025
+			setToday(new Date(2025, 8, 3)); // Sep 3, 2025
 
 			const days = createWeek(DateTime.local(2025, 8, 31));
 			const isoDate = days[3].toISODate() as string;
@@ -338,7 +340,7 @@ describe('useWeekViewKeyboard', () => {
 
 	describe('meal mode navigation', () => {
 		it('navigates meals with ArrowDown', () => {
-			vi.setSystemTime(new Date(2025, 8, 3)); // Sep 3, 2025
+			setToday(new Date(2025, 8, 3)); // Sep 3, 2025
 
 			const days = createWeek(DateTime.local(2025, 8, 31));
 			const isoDate = days[3].toISODate() as string;
@@ -386,7 +388,7 @@ describe('useWeekViewKeyboard', () => {
 		});
 
 		it('navigates meals with ArrowUp', () => {
-			vi.setSystemTime(new Date(2025, 8, 3)); // Sep 3, 2025
+			setToday(new Date(2025, 8, 3)); // Sep 3, 2025
 
 			const days = createWeek(DateTime.local(2025, 8, 31));
 			const isoDate = days[3].toISODate() as string;
@@ -441,7 +443,7 @@ describe('useWeekViewKeyboard', () => {
 		});
 
 		it('stops at the first meal with ArrowUp', () => {
-			vi.setSystemTime(new Date(2025, 8, 3)); // Sep 3, 2025
+			setToday(new Date(2025, 8, 3)); // Sep 3, 2025
 
 			const days = createWeek(DateTime.local(2025, 8, 31));
 			const isoDate = days[3].toISODate() as string;
@@ -477,7 +479,7 @@ describe('useWeekViewKeyboard', () => {
 		});
 
 		it('stops at the last meal with ArrowDown', () => {
-			vi.setSystemTime(new Date(2025, 8, 3)); // Sep 3, 2025
+			setToday(new Date(2025, 8, 3)); // Sep 3, 2025
 
 			const days = createWeek(DateTime.local(2025, 8, 31));
 			const isoDate = days[3].toISODate() as string;
@@ -522,7 +524,7 @@ describe('useWeekViewKeyboard', () => {
 		});
 
 		it('calls onMealClick on Enter in meal mode', () => {
-			vi.setSystemTime(new Date(2025, 8, 3)); // Sep 3, 2025
+			setToday(new Date(2025, 8, 3)); // Sep 3, 2025
 
 			const days = createWeek(DateTime.local(2025, 8, 31));
 			const isoDate = days[3].toISODate() as string;
@@ -564,7 +566,7 @@ describe('useWeekViewKeyboard', () => {
 		});
 
 		it('does not call onMealClick when meals disappear while in meal mode', () => {
-			vi.setSystemTime(new Date(2025, 8, 3)); // Sep 3, 2025
+			setToday(new Date(2025, 8, 3)); // Sep 3, 2025
 
 			const days = createWeek(DateTime.local(2025, 8, 31));
 			const isoDate = days[3].toISODate() as string;
@@ -614,7 +616,7 @@ describe('useWeekViewKeyboard', () => {
 		});
 
 		it('only the focused meal is a tab stop in meal mode', () => {
-			vi.setSystemTime(new Date(2025, 8, 3)); // Sep 3, 2025
+			setToday(new Date(2025, 8, 3)); // Sep 3, 2025
 
 			const days = createWeek(DateTime.local(2025, 8, 31));
 			const activeIsoDate = days[3].toISODate() as string;
@@ -654,7 +656,7 @@ describe('useWeekViewKeyboard', () => {
 		});
 
 		it('ignores unhandled keys while in meal mode', () => {
-			vi.setSystemTime(new Date(2025, 8, 3)); // Sep 3, 2025
+			setToday(new Date(2025, 8, 3)); // Sep 3, 2025
 
 			const days = createWeek(DateTime.local(2025, 8, 31));
 			const isoDate = days[3].toISODate() as string;
@@ -705,7 +707,7 @@ describe('useWeekViewKeyboard', () => {
 
 	describe('exiting meal mode', () => {
 		it('exits meal mode on Escape and focuses the day', () => {
-			vi.setSystemTime(new Date(2025, 8, 3)); // Sep 3, 2025
+			setToday(new Date(2025, 8, 3)); // Sep 3, 2025
 
 			const days = createWeek(DateTime.local(2025, 8, 31));
 			const isoDate = days[3].toISODate() as string;
@@ -743,7 +745,7 @@ describe('useWeekViewKeyboard', () => {
 		});
 
 		it('exits meal mode when a different day is clicked', () => {
-			vi.setSystemTime(new Date(2025, 8, 3)); // Sep 3, 2025
+			setToday(new Date(2025, 8, 3)); // Sep 3, 2025
 
 			const days = createWeek(DateTime.local(2025, 8, 31));
 			const isoDate = days[3].toISODate() as string;
@@ -784,7 +786,7 @@ describe('useWeekViewKeyboard', () => {
 
 	describe('reset', () => {
 		it('resets focus when days change', () => {
-			vi.setSystemTime(new Date(2025, 8, 3)); // Sep 3, 2025
+			setToday(new Date(2025, 8, 3)); // Sep 3, 2025
 
 			const days1 = createWeek(DateTime.local(2025, 10, 5)); // Oct 5 - Oct 11
 			const { result, rerender } = renderHook(
@@ -820,7 +822,7 @@ describe('useWeekViewKeyboard', () => {
 		});
 
 		it('clears meal refs when days change', () => {
-			vi.setSystemTime(new Date(2025, 8, 3)); // Sep 3, 2025
+			setToday(new Date(2025, 8, 3)); // Sep 3, 2025
 
 			const days = createWeek(DateTime.local(2025, 8, 31)); // Aug 31 - Sep 6
 			const isoDate = days[3].toISODate() as string;
@@ -864,7 +866,7 @@ describe('useWeekViewKeyboard', () => {
 		});
 
 		it('exits meal mode when days change', () => {
-			vi.setSystemTime(new Date(2025, 8, 3)); // Sep 3, 2025
+			setToday(new Date(2025, 8, 3)); // Sep 3, 2025
 
 			const days = createWeek(DateTime.local(2025, 8, 31)); // Aug 31 - Sep 6
 			const isoDate = days[3].toISODate() as string;

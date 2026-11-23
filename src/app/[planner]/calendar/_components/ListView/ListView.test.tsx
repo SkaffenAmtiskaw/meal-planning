@@ -5,6 +5,8 @@ import type { ReactNode } from 'react';
 
 import { DateTime } from 'luxon';
 
+import { useToday } from '@/_hooks';
+
 import { ListView } from './ListView';
 
 import {
@@ -19,6 +21,7 @@ import { useScrollToDate } from './_hooks/useScrollToDate';
 import { getListDayRange } from './_utils/getListDayRange';
 
 vi.mock('@mantine/core', async () => await import('#mocks/@mantine/core'));
+vi.mock('@/_hooks', async () => await import('#mocks/@/_hooks'));
 
 vi.mock('./_utils/getListDayRange', () => ({
 	getListDayRange: vi.fn(),
@@ -125,34 +128,20 @@ describe('ListView', () => {
 			createMockContextValue({ rangeAnchor: DateTime.local(2024, 6, 13) }),
 		);
 
-		render(<ListView today={today} />);
-
-		expect(DayRow).toHaveBeenCalledTimes(3);
-		for (const call of vi.mocked(DayRow).mock.calls) {
-			expect(call[0].today).toEqual(today);
-		}
-	});
-
-	it('defaults today to the start of the current day when omitted', () => {
-		const now = DateTime.local(2024, 6, 20, 14, 30);
-		vi.useFakeTimers();
-		vi.setSystemTime(now.toJSDate());
-
-		const today = DateTime.local(2024, 6, 20).startOf('day');
-		const dates = [DateTime.local(2024, 6, 20)];
-		vi.mocked(getListDayRange).mockReturnValue(dates);
-		vi.mocked(useCalendarContext).mockReturnValue(
-			createMockContextValue({ rangeAnchor: DateTime.local(2024, 6, 20) }),
-		);
+		vi.mocked(useToday).mockReturnValue(today);
 
 		render(<ListView />);
 
-		expect(DayRow).toHaveBeenCalledTimes(1);
-		expect(vi.mocked(DayRow).mock.calls[0][0].today).toEqual(today);
+		expect(DayRow).toHaveBeenCalledTimes(3);
+		for (const call of vi.mocked(DayRow).mock.calls) {
+			expect(call[0].today).toBe(today);
+		}
 	});
 
-	it('uses rangeAnchor from CalendarContext to build the day range', () => {
+	it('builds the day range from rangeAnchor and today', () => {
+		const today = DateTime.local(2024, 6, 15);
 		const rangeAnchor = DateTime.local(2024, 6, 10);
+		vi.mocked(useToday).mockReturnValue(today);
 		vi.mocked(getListDayRange).mockReturnValue([rangeAnchor]);
 		vi.mocked(useCalendarContext).mockReturnValue(
 			createMockContextValue({ rangeAnchor }),
@@ -160,7 +149,7 @@ describe('ListView', () => {
 
 		render(<ListView />);
 
-		expect(getListDayRange).toHaveBeenCalledWith(rangeAnchor);
+		expect(getListDayRange).toHaveBeenCalledWith(rangeAnchor, today);
 	});
 
 	describe('scroll behavior', () => {

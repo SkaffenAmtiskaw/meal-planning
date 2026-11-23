@@ -2,8 +2,9 @@
 
 import { type ReactNode, useCallback, useState } from 'react';
 
-import type { DurationLike } from 'luxon';
-import { DateTime } from 'luxon';
+import type { DateTime, DurationLike } from 'luxon';
+
+import { useToday } from '@/_hooks';
 
 import { CalendarContext } from './CalendarContext';
 import type { CalendarViewType } from './types';
@@ -25,14 +26,15 @@ export function CalendarProvider({
 	initialDate,
 	initialView,
 }: CalendarProviderProps) {
+	const today = useToday();
 	const [selectedDate, setSelectedDate] = useState<DateTime>(
-		initialDate ?? DateTime.now(),
+		initialDate ?? today,
 	);
 	const [viewType, setViewType] = useState<CalendarViewType>(
 		initialView ?? 'month',
 	);
 	const [rangeAnchor, setRangeAnchor] = useState<DateTime>(
-		initialDate ?? DateTime.now(),
+		initialDate ?? today,
 	);
 
 	const handleSetSelectedDate = useCallback((date: DateTime) => {
@@ -49,8 +51,8 @@ export function CalendarProvider({
 	}, []);
 
 	const goToToday = useCallback(() => {
-		navigateToDate(DateTime.now());
-	}, [navigateToDate]);
+		navigateToDate(today);
+	}, [navigateToDate, today]);
 
 	const goToPrevious = useCallback(() => {
 		navigateToDate(selectedDate.minus(NAVIGATION_STEPS[viewType]));

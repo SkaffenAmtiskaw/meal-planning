@@ -3,7 +3,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { DateTime } from 'luxon';
 
-import { useIsMobile } from '@/_hooks';
+import { useIsMobile, useTimeZone } from '@/_hooks';
 import type { DayInterface } from '@/_models/types';
 
 import { CalendarView } from './CalendarView';
@@ -109,6 +109,14 @@ describe('CalendarView', () => {
 		vi.resetAllMocks();
 		mockUseCalendarContext.mockReturnValue(defaultCalendarContext);
 		mockUseIsMobile.mockReturnValue(false);
+	});
+
+	it('renders nothing while there is no time zone', () => {
+		vi.mocked(useTimeZone).mockReturnValue(null);
+
+		const { container } = render(<CalendarView {...defaultProps} />);
+
+		expect(container.innerHTML).toBe('');
 	});
 
 	it('renders CalendarHeaderDesktop and MealCalendar by default', () => {

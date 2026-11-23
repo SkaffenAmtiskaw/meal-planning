@@ -1,9 +1,11 @@
 import { act, renderHook } from '@testing-library/react';
-import { describe, expect, it } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { type ReactNode, useContext } from 'react';
 
 import { DateTime } from 'luxon';
+
+import { useToday } from '@/_hooks';
 
 import { CalendarContext } from './CalendarContext';
 import {
@@ -11,6 +13,10 @@ import {
 	type CalendarProviderProps,
 } from './CalendarProvider';
 import type { CalendarViewType } from './types';
+
+vi.mock('@/_hooks', async () => await import('#mocks/@/_hooks'));
+
+const today = DateTime.local(2024, 3, 15);
 
 // Wrapper component to capture context updates
 function createTestWrapper(
@@ -31,23 +37,19 @@ function useTestContext() {
 }
 
 describe('CalendarProvider', () => {
+	beforeEach(() => {
+		vi.resetAllMocks();
+	});
+
 	describe('initial state', () => {
-		it('should default selectedDate to now', () => {
-			const beforeTest = DateTime.now();
+		it('should default selectedDate to today', () => {
+			vi.mocked(useToday).mockReturnValue(today);
 
 			const { result } = renderHook(() => useTestContext(), {
 				wrapper: createTestWrapper(),
 			});
 
-			const afterTest = DateTime.now();
-
-			// The selectedDate should be between beforeTest and afterTest
-			expect(result.current.selectedDate.toMillis()).toBeGreaterThanOrEqual(
-				beforeTest.toMillis(),
-			);
-			expect(result.current.selectedDate.toMillis()).toBeLessThanOrEqual(
-				afterTest.toMillis(),
-			);
+			expect(result.current.selectedDate).toBe(today);
 		});
 
 		it('should accept initialDate prop', () => {
@@ -78,21 +80,14 @@ describe('CalendarProvider', () => {
 			expect(result.current.viewType).toBe('week');
 		});
 
-		it('should default rangeAnchor to now', () => {
-			const beforeTest = DateTime.now();
+		it('should default rangeAnchor to today', () => {
+			vi.mocked(useToday).mockReturnValue(today);
 
 			const { result } = renderHook(() => useTestContext(), {
 				wrapper: createTestWrapper(),
 			});
 
-			const afterTest = DateTime.now();
-
-			expect(result.current.rangeAnchor.toMillis()).toBeGreaterThanOrEqual(
-				beforeTest.toMillis(),
-			);
-			expect(result.current.rangeAnchor.toMillis()).toBeLessThanOrEqual(
-				afterTest.toMillis(),
-			);
+			expect(result.current.rangeAnchor).toBe(today);
 		});
 
 		it('should accept initialDate as rangeAnchor', () => {
@@ -126,7 +121,8 @@ describe('CalendarProvider', () => {
 
 	describe('navigation', () => {
 		describe('goToToday', () => {
-			it('should set selectedDate and rangeAnchor to now', () => {
+			it('should set selectedDate and rangeAnchor to today', () => {
+				vi.mocked(useToday).mockReturnValue(today);
 				const initialDate = DateTime.local(2020, 1, 1);
 
 				const { result } = renderHook(() => useTestContext(), {
@@ -136,23 +132,12 @@ describe('CalendarProvider', () => {
 				expect(result.current.selectedDate.toISODate()).toBe('2020-01-01');
 				expect(result.current.rangeAnchor.toISODate()).toBe('2020-01-01');
 
-				const beforeTest = DateTime.now();
-
 				act(() => {
 					result.current.goToToday();
 				});
 
-				const afterTest = DateTime.now();
-
-				expect(result.current.selectedDate.toMillis()).toBeGreaterThanOrEqual(
-					beforeTest.toMillis(),
-				);
-				expect(result.current.selectedDate.toMillis()).toBeLessThanOrEqual(
-					afterTest.toMillis(),
-				);
-				expect(result.current.rangeAnchor.toISODate()).toBe(
-					result.current.selectedDate.toISODate(),
-				);
+				expect(result.current.selectedDate).toBe(today);
+				expect(result.current.rangeAnchor).toBe(today);
 			});
 		});
 

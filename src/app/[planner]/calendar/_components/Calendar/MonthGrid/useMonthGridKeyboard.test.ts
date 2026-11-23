@@ -1,10 +1,17 @@
 import { act, renderHook } from '@testing-library/react';
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import { DateTime } from 'luxon';
 
+import { useToday } from '@/_hooks';
+
 import { useMonthGridKeyboard } from './useMonthGridKeyboard';
 import type { MonthGridMeal } from './types';
+
+vi.mock('@/_hooks', async () => await import('#mocks/@/_hooks'));
+
+const setToday = (date: Date) =>
+	vi.mocked(useToday).mockReturnValue(DateTime.fromJSDate(date));
 
 function createDays(startDate: DateTime, count: number = 42): DateTime[] {
 	return Array.from({ length: count }, (_, i) => startDate.plus({ days: i }));
@@ -19,12 +26,7 @@ function createKeyboardEvent(key: string): React.KeyboardEvent<HTMLElement> {
 }
 
 describe('useMonthGridKeyboard', () => {
-	beforeEach(() => {
-		vi.useFakeTimers();
-	});
-
 	afterEach(() => {
-		vi.useRealTimers();
 		vi.resetAllMocks();
 	});
 
@@ -44,7 +46,7 @@ describe('useMonthGridKeyboard', () => {
 	});
 
 	it('initially focuses today when today is in the grid', () => {
-		vi.setSystemTime(new Date(2025, 8, 15)); // Sep 15, 2025
+		setToday(new Date(2025, 8, 15)); // Sep 15, 2025
 
 		const days = createDays(DateTime.local(2025, 9, 1));
 		const { result } = renderHook(() =>
@@ -62,7 +64,7 @@ describe('useMonthGridKeyboard', () => {
 	});
 
 	it('calls day ref callback', () => {
-		vi.setSystemTime(new Date(2025, 8, 15)); // Sep 15, index 14
+		setToday(new Date(2025, 8, 15)); // Sep 15, index 14
 
 		const days = createDays(DateTime.local(2025, 9, 1));
 		const { result } = renderHook(() =>
@@ -86,7 +88,7 @@ describe('useMonthGridKeyboard', () => {
 	});
 
 	it('initially focuses first day of month when today is not in the grid', () => {
-		vi.setSystemTime(new Date(2025, 7, 15)); // Aug 15, 2025
+		setToday(new Date(2025, 7, 15)); // Aug 15, 2025
 
 		// October 2025 grid: Sep 29 - Nov 9 (starts Monday before Oct 1)
 		const days = createDays(DateTime.local(2025, 9, 29));
@@ -105,7 +107,7 @@ describe('useMonthGridKeyboard', () => {
 	});
 
 	it('resets focus to today when days change', () => {
-		vi.setSystemTime(new Date(2025, 8, 15)); // Sep 15, 2025
+		setToday(new Date(2025, 8, 15)); // Sep 15, 2025
 
 		const days1 = createDays(DateTime.local(2025, 10, 1));
 		const { result, rerender } = renderHook(
@@ -145,7 +147,7 @@ describe('useMonthGridKeyboard', () => {
 	});
 
 	it('exits meal mode when days change', () => {
-		vi.setSystemTime(new Date(2025, 9, 15)); // Oct 15, 2025
+		setToday(new Date(2025, 9, 15)); // Oct 15, 2025
 
 		const days1 = createDays(DateTime.local(2025, 9, 1));
 		const meals = new Map<string, MonthGridMeal[]>([
@@ -187,7 +189,7 @@ describe('useMonthGridKeyboard', () => {
 	});
 
 	it('clears meal refs when days change', () => {
-		vi.setSystemTime(new Date(2025, 9, 15)); // Oct 15, 2025
+		setToday(new Date(2025, 9, 15)); // Oct 15, 2025
 
 		const days1 = createDays(DateTime.local(2025, 9, 1));
 		const meals1 = new Map<string, MonthGridMeal[]>([
@@ -256,7 +258,7 @@ describe('useMonthGridKeyboard', () => {
 	});
 
 	it('returns tabIndex=0 for focused day and -1 for others', () => {
-		vi.setSystemTime(new Date(2025, 8, 15)); // Sep 15
+		setToday(new Date(2025, 8, 15)); // Sep 15
 
 		const days = createDays(DateTime.local(2025, 9, 1));
 		const { result } = renderHook(() =>
@@ -277,7 +279,7 @@ describe('useMonthGridKeyboard', () => {
 	});
 
 	it('moves focus right with ArrowRight', () => {
-		vi.setSystemTime(new Date(2025, 8, 15)); // Sep 15, index 14
+		setToday(new Date(2025, 8, 15)); // Sep 15, index 14
 
 		const days = createDays(DateTime.local(2025, 9, 1));
 		const { result } = renderHook(() =>
@@ -299,7 +301,7 @@ describe('useMonthGridKeyboard', () => {
 	});
 
 	it('stops at right boundary with ArrowRight', () => {
-		vi.setSystemTime(new Date(2025, 8, 15)); // Sep 15, index 14
+		setToday(new Date(2025, 8, 15)); // Sep 15, index 14
 
 		const days = createDays(DateTime.local(2025, 9, 1));
 		const { result } = renderHook(() =>
@@ -356,7 +358,7 @@ describe('useMonthGridKeyboard', () => {
 	});
 
 	it('moves focus left with ArrowLeft', () => {
-		vi.setSystemTime(new Date(2025, 8, 15)); // Sep 15, index 14
+		setToday(new Date(2025, 8, 15)); // Sep 15, index 14
 
 		const days = createDays(DateTime.local(2025, 9, 1));
 		const { result } = renderHook(() =>
@@ -386,7 +388,7 @@ describe('useMonthGridKeyboard', () => {
 	});
 
 	it('stops at left boundary with ArrowLeft', () => {
-		vi.setSystemTime(new Date(2025, 8, 15)); // Sep 15, index 14
+		setToday(new Date(2025, 8, 15)); // Sep 15, index 14
 
 		const days = createDays(DateTime.local(2025, 9, 1));
 		const { result } = renderHook(() =>
@@ -442,7 +444,7 @@ describe('useMonthGridKeyboard', () => {
 	});
 
 	it('moves focus down a week with ArrowDown', () => {
-		vi.setSystemTime(new Date(2025, 8, 15)); // Sep 15, index 14
+		setToday(new Date(2025, 8, 15)); // Sep 15, index 14
 
 		const days = createDays(DateTime.local(2025, 9, 1));
 		const { result } = renderHook(() =>
@@ -490,7 +492,7 @@ describe('useMonthGridKeyboard', () => {
 	});
 
 	it('moves focus up a week with ArrowUp', () => {
-		vi.setSystemTime(new Date(2025, 8, 22)); // Sep 22, index 21
+		setToday(new Date(2025, 8, 22)); // Sep 22, index 21
 
 		const days = createDays(DateTime.local(2025, 9, 1));
 		const { result } = renderHook(() =>
@@ -560,7 +562,7 @@ describe('useMonthGridKeyboard', () => {
 	});
 
 	it('does nothing on Enter for empty day', () => {
-		vi.setSystemTime(new Date(2025, 8, 15)); // Sep 15, index 14
+		setToday(new Date(2025, 8, 15)); // Sep 15, index 14
 
 		const days = createDays(DateTime.local(2025, 9, 1));
 		const { result } = renderHook(() =>
@@ -647,7 +649,7 @@ describe('useMonthGridKeyboard', () => {
 	});
 
 	it('does nothing on unhandled key in day mode', () => {
-		vi.setSystemTime(new Date(2025, 8, 15)); // Sep 15, index 14
+		setToday(new Date(2025, 8, 15)); // Sep 15, index 14
 
 		const days = createDays(DateTime.local(2025, 9, 1));
 		const { result } = renderHook(() =>
@@ -950,7 +952,7 @@ describe('useMonthGridKeyboard', () => {
 	});
 
 	it('exits meal mode on Escape', () => {
-		vi.setSystemTime(new Date(2025, 8, 15)); // Sep 15, index 14
+		setToday(new Date(2025, 8, 15)); // Sep 15, index 14
 
 		const meals = new Map<string, MonthGridMeal[]>([
 			[
@@ -988,7 +990,7 @@ describe('useMonthGridKeyboard', () => {
 	});
 
 	it('sets focused day on click', () => {
-		vi.setSystemTime(new Date(2025, 8, 15)); // Sep 15, index 14
+		setToday(new Date(2025, 8, 15)); // Sep 15, index 14
 
 		const days = createDays(DateTime.local(2025, 9, 1));
 		const { result } = renderHook(() =>
@@ -1113,7 +1115,7 @@ describe('useMonthGridKeyboard', () => {
 	});
 
 	it('exits meal mode on Escape after navigating meals', () => {
-		vi.setSystemTime(new Date(2025, 8, 15)); // Sep 15, index 14
+		setToday(new Date(2025, 8, 15)); // Sep 15, index 14
 
 		const meals = new Map<string, MonthGridMeal[]>([
 			[

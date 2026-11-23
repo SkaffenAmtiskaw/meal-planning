@@ -5,6 +5,8 @@ import type { ReactNode } from 'react';
 
 import { DateTime } from 'luxon';
 
+import { useToday } from '@/_hooks';
+
 import { MobileAgenda } from './MobileAgenda';
 
 import { useCalendarContext } from '../CalendarContext';
@@ -12,6 +14,7 @@ import type { CalendarDish, CalendarMeal } from '../types';
 import { MealCard } from '../MealCard/MealCard';
 
 vi.mock('@mantine/core', async () => await import('#mocks/@mantine/core'));
+vi.mock('@/_hooks', async () => await import('#mocks/@/_hooks'));
 vi.mock('../CalendarContext', async () => ({
 	useCalendarContext: vi.fn(),
 }));
@@ -58,27 +61,21 @@ describe('MobileAgenda', () => {
 	it('prefixes the header with "Today · " when the selected date is today', () => {
 		const today = DateTime.local(2024, 3, 15);
 
-		vi.useFakeTimers();
-		vi.setSystemTime(today.toJSDate());
+		vi.mocked(useToday).mockReturnValue(today);
 		renderAgenda({ selectedDate: today });
 
 		expect(screen.getByText('Today · Friday, March 15')).toBeDefined();
-
-		vi.useRealTimers();
 	});
 
 	it('does not prefix the header when the selected date is not today', () => {
 		const today = DateTime.local(2024, 3, 15);
 		const selectedDate = DateTime.local(2024, 3, 16);
 
-		vi.useFakeTimers();
-		vi.setSystemTime(today.toJSDate());
+		vi.mocked(useToday).mockReturnValue(today);
 		renderAgenda({ selectedDate });
 
 		expect(screen.queryByText('Today · Saturday, March 16')).toBeNull();
 		expect(screen.getByText('Saturday, March 16')).toBeDefined();
-
-		vi.useRealTimers();
 	});
 
 	it('renders the singular meal count', () => {

@@ -5,12 +5,14 @@ import { notFound, redirect } from 'next/navigation';
 import { z } from 'zod';
 
 import { checkAuth } from '@/_actions/auth/checkAuth';
+import { TimeZoneProvider } from '@/_hooks';
 import { zId } from '@/_utils/zId';
 import { Header } from '@/app/_components/Header';
 
 import { BurgerToggle, PlannerLayout, PlannerProvider } from './_components';
 
 import { NavbarServer } from './_components/NavbarServer';
+import { getCookieTimeZone } from './_utils/getCookieTimeZone';
 
 const zParams = z.object({
 	planner: zId,
@@ -35,9 +37,11 @@ const Layout = async ({ children, params }: LayoutProps<'/[planner]'>) => {
 			}
 			navbar={<NavbarServer id={id} />}
 		>
-			<PlannerProvider id={id} accessLevel={result.accessLevel}>
-				{children}
-			</PlannerProvider>
+			<TimeZoneProvider timeZone={await getCookieTimeZone()}>
+				<PlannerProvider id={id} accessLevel={result.accessLevel}>
+					{children}
+				</PlannerProvider>
+			</TimeZoneProvider>
 		</PlannerLayout>
 	);
 };

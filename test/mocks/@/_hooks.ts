@@ -10,7 +10,9 @@
 
 import { vi } from 'vitest';
 
-import { useState } from 'react';
+import { type ReactNode, useState } from 'react';
+
+import { DateTime } from 'luxon';
 
 import type { AsyncStatus } from '@/_hooks/useAsyncStatus';
 import type { Status } from '@/_hooks/useFormFeedback';
@@ -96,3 +98,11 @@ export const useAsyncButton = vi.fn(() => {
 });
 
 export const useIsMobile = vi.fn(() => false);
+
+export const TimeZoneProvider = vi.fn(
+	({ children }: { children: ReactNode }) => children,
+);
+
+export const useTimeZone = vi.fn((): string | null => 'UTC');
+
+export const useToday = vi.fn(() => DateTime.now().startOf('day'));

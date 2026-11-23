@@ -1,7 +1,9 @@
 import { fireEvent, render, screen } from '@testing-library/react';
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { DateTime } from 'luxon';
+
+import { useToday } from '@/_hooks';
 
 import { MobileMonthGrid } from './MobileMonthGrid';
 import type { MobileMonthGridMeal } from './types';
@@ -9,6 +11,7 @@ import type { MobileMonthGridMeal } from './types';
 import { useCalendarContext } from '../CalendarContext';
 
 vi.mock('@mantine/core', async () => await import('#mocks/@mantine/core'));
+vi.mock('@/_hooks', async () => await import('#mocks/@/_hooks'));
 vi.mock('./MobileMonthGridDayCell', () => ({
 	MobileMonthGridDayCell: ({
 		day,
@@ -75,10 +78,6 @@ describe('MobileMonthGrid', () => {
 		vi.resetAllMocks();
 	});
 
-	afterEach(() => {
-		vi.useRealTimers();
-	});
-
 	it('renders a 7-column weekday header with single-letter labels', () => {
 		renderGrid();
 
@@ -107,8 +106,7 @@ describe('MobileMonthGrid', () => {
 	});
 
 	it('tells only today’s cell that it is today', () => {
-		vi.useFakeTimers();
-		vi.setSystemTime(DateTime.local(2024, 3, 15).toJSDate());
+		vi.mocked(useToday).mockReturnValue(DateTime.local(2024, 3, 15));
 
 		renderGrid({ selectedDate: DateTime.local(2024, 3, 10) });
 
