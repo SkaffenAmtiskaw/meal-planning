@@ -32,10 +32,10 @@ At the start of every local session, the SessionStart hook runs four scripts, in
 # A Story
 These are the points where you act, from planning to cleanup:
 1. **Plan in the main checkout.** `/shape`, `/decide`, the design skills and `/plan-steps` all run there.
-2. **Start the first build session in a new worktree.** In the Code tab, pick the `meal-planning` folder with the project folder control under the prompt box, turn on **Worktree**, and run `/implement <note>`, or `/infra-build <note>` for an infra story. The app makes the branch and folder, and the hook sets the worktree up and prints its slot.
+2. **Start the first build session in a new worktree.** In the Code tab, pick the `meal-planning` folder with the project folder control under the prompt box, turn on **Worktree**, and run `/implement <note>`, or `/infra-build <note>` for an infra story. The app makes the branch, and puts it in a new folder or one an archived session handed on. The hook sets the worktree up and prints its slot.
 3. **Review and commit each step.** Each skill first merges `develop` into the branch. That way the branch picks up other merged work, including any hotfix, while conflicts are still small. If the merge is clean, the skill commits it. If it conflicts, the skill stops and resolves it with you. Then it builds the step, and you review the changes and commit them.
 4. **Run each later step in the same session.** When a step finishes and you've committed it, the session renames itself to show the next step, such as "Implement - Drop Mongoose (Step 5)", so its title in the sidebar tells you where the story stands. It gives you that step's command, such as the next `/implement` or `/final-review`, and clears its conversation. Type the command there when you're ready, now or after a break. "Resume previous session" brings back the step before's conversation. Keeping the story in one session stops its steps from nesting under each other in the sidebar. It also keeps every step in the session that made the worktree, which is the only session that can edit the worktree's `.claude/` folder.
-5. **Get the PR opened.** Tweaks and sweeps are kinds of story small enough to skip the review step. If the story is one of them, `/implement` opens the PR at its last step. Otherwise, run `/final-review` in the story's session, as step 4 describes. It reviews the branch's own changes. Once you've committed its fixes, it merges in the latest `develop`, pushes the branch and opens a PR into `develop`, titled with the story's name, with auto-merge on, and then offers to archive itself, which removes the worktree (see "Removing a Worktree"). GitHub squashes the PR into `develop` once its checks pass.
+5. **Get the PR opened.** Tweaks and sweeps are kinds of story small enough to skip the review step. If the story is one of them, `/implement` opens the PR at its last step. Otherwise, run `/final-review` in the story's session, as step 4 describes. It reviews the branch's own changes. Once you've committed its fixes, it merges in the latest `develop`, pushes the branch and opens a PR into `develop`, titled with the story's name, with auto-merge on. Then the session offers to archive itself, which frees its worktree for the next session (see "Freeing a Worktree"). GitHub squashes the PR into `develop` once its checks pass.
 6. **Run `/close` in the main checkout once the PR has merged.** It checks on GitHub that the PR merged, then marks the story done and closes its note.
 
 ## Opening an Existing Worktree
@@ -53,7 +53,7 @@ Several sessions can use one worktree, but only one at a time should edit code o
 The `running-the-app` skill opens the worktree's own URLs, on its own host and ports. In a worktree, you sign in through the seed's sign-in links, or through the sign-in form with an email and the dev password (see `docs/seed.md`). Google sign-in and One Tap work only on `localhost:3000` and production, since those are the only origins Google's OAuth client accepts.
 
 # Work Outside a Story: `/tooling` Changes, Quick Fixes and Other Work
-Work outside a story also gets its own worktree session, branch and PR. Start it as you would a story's first session, with **Worktree** on. Once you've committed the change, the session merges in the latest `develop`, pushes the branch and opens a PR into `develop` with auto-merge. Then, once it has nothing left to do, it offers to archive itself, which removes the worktree.
+Work outside a story also gets its own worktree session, branch and PR. Start it as you would a story's first session, with **Worktree** on. Once you've committed the change, the session merges in the latest `develop`, pushes the branch and opens a PR into `develop` with auto-merge. Then, once it has nothing left to do, it offers to archive itself, which frees its worktree for the next session.
 
 Some `/tooling` changes come with notes work that has to wait for the merge, such as a Roadmap edit. Notes aren't branched, so an edit made earlier would record the change as done before it reaches `develop`. The PR lists that work under "Held until the merge" and carries the `notes-pending` label. The session waits for the merge, does the work, takes the label off and then offers to archive itself.
 
@@ -83,12 +83,12 @@ A release ships one finished goal. While it's under way, the release freeze lets
 6. **Merge the PR,** which deploys, takes a backup of production's database (see `docs/backups.md`) and ends the freeze. If the release has tasks that run after the merge, the session waits for that backup and walks you through each one. Then it walks you through any After Deploy checks. Once the tasks have run, it puts up a **New session** card that deletes them, and the code that handled the data's old shape, through a PR.
 7. **Run `/roadmap` in a new session,** which makes the next goal the building goal.
 
-# Removing a Worktree
-A worktree lasts as long as its session. Archiving a session removes the worktree the app made for it and frees its slot. Each worktree session offers to archive itself once it has nothing left to do, since only the session knows when that is. For most, that's right after it opens its PR. A session that still has work once the PR merges, such as held notes work or an infra step's checks that need its code on `develop`, offers once that work is done. If a story's session is still open when `/close` runs, `/close` offers to archive it. You can also archive a session in the sidebar whenever you like.
+# Freeing a Worktree
+A worktree's folder outlives its session. When you archive a session, the app keeps the session's worktree, slot and all, and hands it to the next new session, which checks out its own branch there. So archiving is what frees a worktree and its slot for new work. Each worktree session offers to archive itself once it has nothing left to do, since only the session knows when that is. For most, that's right after it opens its PR. A session that still has work once the PR merges, such as held notes work or an infra step's checks that need its code on `develop`, offers once that work is done. If a story's session is still open when `/close` runs, `/close` offers to archive it. You can also archive a session in the sidebar whenever you like.
 
-If the worktree has uncommitted changes when you archive its session, the app keeps it on disk. To keep the changes, reopen the session and commit them: to its branch if its PR is still open, or to a new branch for a new PR if it has merged. Otherwise, ask a session to discard the worktree.
+If the worktree has uncommitted changes when you archive its session, the app keeps it for that session rather than handing it on. To keep the changes, reopen the session and commit them: to its branch if its PR is still open, or to a new branch for a new PR if it has merged. Otherwise, ask a session to discard the worktree.
 
-A hotfix's worktree is made with git rather than by the app, so archiving doesn't remove it. Once the hotfix's story is closed, `/close` removes it. If the hotfix's session is still open, `/close` asks whether to archive it first, and removes the worktree only if you agree.
+A hotfix's worktree is made with git rather than by the app, so archiving doesn't free it. Once the hotfix's story is closed, `/close` removes it. If the hotfix's session is still open, `/close` asks whether to archive it first, and removes the worktree only if you agree.
 
 # When Something Goes Wrong
 Each entry is a failure you might meet, grouped by when it comes up, with what happens and what you do.
@@ -96,7 +96,7 @@ Each entry is a failure you might meet, grouped by when it comes up, with what h
 ## Starting a Session
 **A worktree's install fails,** such as when a merge leaves the lockfile out of date. The hook prints the error into the session. Until it's fixed, the worktree has no dependencies, and commits skip the pre-commit checks. Once the lockfile is right, have the session run `pnpm install`.
 
-**All five slots are taken.** The hook says so, and the new worktree has no ports or database, so it can't run the app. Archive a session whose work is done to free its slot. The new worktree takes the slot at its next session start.
+**All five slots are taken.** The hook says so, and the new worktree has no ports or database, so it can't run the app. Archive a session whose work is done, then start the work in a new session. The app hands the new session the archived session's worktree, slot and all.
 
 **A story's worktree is missing or broken,** such as when its folder was deleted. Ask a session to rebuild it on the story's branch. It first checks the old worktree for uncommitted changes and tells you of any, since removing it loses them. Then it removes the old worktree, or clears git's record of one whose folder is gone, makes a new one on the same branch with `git worktree add .claude/worktrees/<name> <branch>`, and starts a session there. The branch, its commits and its PR carry over, since only the folder is new.
 
@@ -114,7 +114,7 @@ Each entry is a failure you might meet, grouped by when it comes up, with what h
 
 **A PR says it's out of date with `develop`.** Another PR merged since its checks ran, and the `develop` ruleset holds every PR to the latest `develop`. Click **Update branch** on the PR, or ask a session to run `gh pr update-branch <number>`. The checks run again, and auto-merge goes ahead once they pass.
 
-**An archived session's worktree has uncommitted changes.** The app keeps it on disk. What to do is in "Removing a Worktree".
+**An archived session's worktree has uncommitted changes.** The app keeps it for that session rather than handing it to the next one, so its slot stays held. What to do is in "Freeing a Worktree".
 
 ## After the Merge
 **`/close` says the PR hasn't merged.** Wait for the PR to merge, then run `/close` again. A failed check or an out-of-date branch can hold the merge up (see "The PR").
