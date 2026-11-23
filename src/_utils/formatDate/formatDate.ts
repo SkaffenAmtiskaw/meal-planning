@@ -23,6 +23,8 @@ export const DATE_STYLES = {
 	shortMonth: 'MMM',
 	// "9/24/2026"
 	numericDate: 'M/d/yyyy',
+	// "Jan 15, 2024"
+	shortMonthDayYear: 'MMM d, yyyy',
 } as const;
 
 /**

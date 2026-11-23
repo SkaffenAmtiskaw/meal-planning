@@ -2,8 +2,19 @@
 
 import { useRouter } from 'next/navigation';
 
-import { Alert, Badge, Button, Grid, Group, Stack, Text } from '@mantine/core';
+import {
+	Alert,
+	Badge,
+	Button,
+	Grid,
+	Group,
+	Skeleton,
+	Stack,
+	Text,
+} from '@mantine/core';
 import { IconCheck, IconClock, IconX } from '@tabler/icons-react';
+
+import { DateTime } from 'luxon';
 
 import type {
 	AcceptInviteInput,
@@ -11,9 +22,10 @@ import type {
 	DeclineInviteInput,
 	UserInvite,
 } from '@/_actions/sharing';
-import { useAsyncStatus } from '@/_hooks';
+import { useAsyncStatus, useTimeZone } from '@/_hooks';
 import type { ActionResult } from '@/_utils/actionResult';
-import { isPastDate, isWithinHours, toLocaleDateString } from '@/_utils/date';
+import { isPastDate, isWithinHours } from '@/_utils/date';
+import { formatDate } from '@/_utils/formatDate';
 
 import { getAccessLevelColor } from '../_utils/getAccessLevelColor';
 
@@ -32,6 +44,13 @@ export const InvitesSection = ({
 }: InvitesSectionProps) => {
 	const router = useRouter();
 	const { status, error, run } = useAsyncStatus();
+	const timeZone = useTimeZone();
+	// Draws the skeleton's hidden text at the date's width until the zone is known.
+	const formatInZone = (isoDateTime: string) =>
+		formatDate(
+			DateTime.fromISO(isoDateTime, { zone: timeZone ?? 'UTC' }),
+			'shortMonthDayYear',
+		);
 
 	const handleAccept = async (token: string) => {
 		const result = await run(() => onAccept({ token }));
@@ -72,9 +91,15 @@ export const InvitesSection = ({
 										Invited by {invite.invitedBy}
 									</Text>
 									<Group gap="xs" mt={4}>
-										<Text size="sm" c="dimmed">
-											Invited {toLocaleDateString(invite.invitedAt)}
-										</Text>
+										<Skeleton
+											visible={!timeZone}
+											width="auto"
+											data-testid="invited-date-skeleton"
+										>
+											<Text size="sm" c="dimmed">
+												Invited {formatInZone(invite.invitedAt)}
+											</Text>
+										</Skeleton>
 										{showWarning && (
 											<Group gap={4}>
 												<IconClock size={14} />

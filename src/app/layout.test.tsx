@@ -40,6 +40,10 @@ vi.mock('./_hooks/useSaveTimeZone/SaveTimeZoneWrapper', () => ({
 	),
 }));
 
+vi.mock('./_utils/getCookieTimeZone', () => ({
+	getCookieTimeZone: vi.fn(async () => null),
+}));
+
 vi.mock('@/_theme', () => ({
 	theme: {},
 	cssVariablesResolver: vi.fn(),

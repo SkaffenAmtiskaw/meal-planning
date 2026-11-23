@@ -34,12 +34,6 @@ vi.mock('./_components/NavbarServer', () => ({
 	NavbarServer: () => null,
 }));
 
-vi.mock('@/_hooks', async () => await import('#mocks/@/_hooks'));
-
-vi.mock('./_utils/getCookieTimeZone', () => ({
-	getCookieTimeZone: vi.fn(async () => null),
-}));
-
 import Layout from './layout';
 
 const plannerId = '507f1f77bcf86cd799439011';

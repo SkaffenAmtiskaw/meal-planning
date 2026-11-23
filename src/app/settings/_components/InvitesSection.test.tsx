@@ -4,6 +4,7 @@ import { beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
 import { useRouter } from 'next/navigation';
 
 import type { UserInvite } from '@/_actions/sharing';
+import { useTimeZone } from '@/_hooks';
 import type { AccessLevel } from '@/_models/user';
 
 import { InvitesSection } from './InvitesSection';
@@ -23,14 +24,6 @@ vi.mock('@tabler/icons-react', () => ({
 }));
 
 vi.mock('@/_utils/date', () => ({
-	toLocaleDateString: vi.fn((dateString: string) => {
-		const date = new Date(dateString);
-		return date.toLocaleDateString('en-US', {
-			year: 'numeric',
-			month: 'short',
-			day: 'numeric',
-		});
-	}),
 	isWithinHours: vi.fn((dateString: string, hoursThreshold = 24) => {
 		const targetDate = new Date(dateString);
 		const now = new Date();
@@ -86,6 +79,7 @@ describe('InvitesSection', () => {
 
 	beforeEach(() => {
 		vi.clearAllMocks();
+		vi.mocked(useTimeZone).mockReset();
 	});
 
 	it('should show empty message when no invites', () => {
@@ -116,6 +110,50 @@ describe('InvitesSection', () => {
 
 		expect(screen.getByText('Test Planner')).toBeDefined();
 		expect(screen.getByText('Second Planner')).toBeDefined();
+	});
+
+	it('shows the invited date in the viewer’s time zone', () => {
+		vi.mocked(useTimeZone).mockReturnValue('Pacific/Auckland');
+
+		render(
+			<InvitesSection
+				invites={[createMockInvite({ invitedAt: '2024-01-15T12:00:00.000Z' })]}
+				onAccept={mockOnAccept}
+				onDecline={mockOnDecline}
+			/>,
+		);
+
+		expect(screen.getByText('Invited Jan 16, 2024')).toBeDefined();
+	});
+
+	it('shows the invited date as a skeleton while the time zone is unknown', () => {
+		vi.mocked(useTimeZone).mockReturnValue(null);
+
+		render(
+			<InvitesSection
+				invites={[createMockInvite()]}
+				onAccept={mockOnAccept}
+				onDecline={mockOnDecline}
+			/>,
+		);
+
+		expect(
+			screen.getByTestId('invited-date-skeleton').getAttribute('data-visible'),
+		).toBe('true');
+	});
+
+	it('shows the invited date once the time zone is known', () => {
+		render(
+			<InvitesSection
+				invites={[createMockInvite()]}
+				onAccept={mockOnAccept}
+				onDecline={mockOnDecline}
+			/>,
+		);
+
+		expect(
+			screen.getByTestId('invited-date-skeleton').getAttribute('data-visible'),
+		).toBe('false');
 	});
 
 	it('should show expiration warning when near expiry', () => {

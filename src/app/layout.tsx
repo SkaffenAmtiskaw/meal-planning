@@ -8,12 +8,13 @@ import { DatesProvider } from '@mantine/dates';
 
 import clsx from 'clsx';
 
-import { MobileGuessProvider } from '@/_hooks';
+import { MobileGuessProvider, TimeZoneProvider } from '@/_hooks';
 import { cssVariablesResolver, theme } from '@/_theme';
 import { WEEK_START } from '@/_utils/weekStart';
 
 import { OneTapSignInWrapper } from './_hooks/useOneTap/OneTapSignInWrapper';
 import { SaveTimeZoneWrapper } from './_hooks/useSaveTimeZone/SaveTimeZoneWrapper';
+import { getCookieTimeZone } from './_utils/getCookieTimeZone';
 
 import '@mantine/core/styles.css';
 // Mantine requires the dates styles to load after the core styles.
@@ -68,9 +69,11 @@ export default async function RootLayout({
 						settings={{ firstDayOfWeek: WEEK_START, consistentWeeks: true }}
 					>
 						<MobileGuessProvider isMobile={isMobile}>
-							<SaveTimeZoneWrapper>
-								<OneTapSignInWrapper>{children}</OneTapSignInWrapper>
-							</SaveTimeZoneWrapper>
+							<TimeZoneProvider timeZone={await getCookieTimeZone()}>
+								<SaveTimeZoneWrapper>
+									<OneTapSignInWrapper>{children}</OneTapSignInWrapper>
+								</SaveTimeZoneWrapper>
+							</TimeZoneProvider>
 						</MobileGuessProvider>
 					</DatesProvider>
 				</MantineProvider>

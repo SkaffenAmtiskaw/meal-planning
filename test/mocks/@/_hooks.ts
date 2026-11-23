@@ -117,6 +117,12 @@ export const TimeZoneProvider = vi.fn(
 );
 
 /**
+ * A known zone by default. A test of the unknown zone sets null:
+ *   vi.mocked(useTimeZone).mockReturnValue(null);
+ */
+export const useTimeZone = vi.fn((): string | null => 'UTC');
+
+/**
  * A known day by default. A test sets another with the `#fixtures/viewerDay` builders:
  *   vi.mocked(useToday).mockReturnValue(makeKnownDay(today));
  */
