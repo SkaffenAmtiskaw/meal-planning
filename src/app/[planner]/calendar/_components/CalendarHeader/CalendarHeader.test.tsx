@@ -1,40 +1,39 @@
 import { fireEvent, render, screen } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-import React from 'react';
+import type { ReactElement } from 'react';
 
-import { Button, Group, Popover, SegmentedControl, Stack } from '@mantine/core';
-import { DatePicker } from '@mantine/dates';
+import { Button, Group, SegmentedControl, Stack } from '@mantine/core';
 
 import { DateTime } from 'luxon';
 
-import { AddMealButton } from '@/app/[planner]/calendar/_components/AddMealButton';
-
 import { CalendarHeaderDesktop, CalendarHeaderMobile } from './CalendarHeader';
 
+import { AddMealButton } from '../AddMealButton';
 import { useCalendarContext } from '../Calendar/CalendarContext';
 import type { CalendarContextValue, CalendarViewType } from '../Calendar/types';
 import { formatWeekRange } from './_utils/formatWeekRange';
 
+const mockSetViewType = vi.fn();
+
 vi.mock('@mantine/core', async () => await import('#mocks/@mantine/core'));
 
-vi.mock('@mantine/dates', () => ({
-	DatePickerInput: vi.fn(({ value, onChange, 'data-testid': testId }) => (
-		<input
-			type="date"
-			data-testid={testId}
-			value={value ?? ''}
-			onChange={(e) => onChange?.(e.target.value)}
-		/>
-	)),
-	DatePicker: vi.fn(({ value, onChange, 'data-testid': testId }) => (
-		<input
-			type="date"
-			data-testid={testId}
-			value={value ?? ''}
-			onChange={(e) => onChange?.(e.target.value)}
-		/>
-	)),
+vi.mock('@/_components', () => ({
+	DateFieldTrigger: vi.fn(() => <button type="button">Date</button>),
+}));
+
+// Renders the header's trigger closed, so the picker and its hooks stay out of the header's tests.
+vi.mock('../JumpToDate', () => ({
+	JumpToDate: vi.fn(
+		({
+			renderTrigger,
+		}: {
+			renderTrigger: (trigger: {
+				opened: boolean;
+				onClick: () => void;
+			}) => ReactElement;
+		}) => renderTrigger({ opened: false, onClick: () => {} }),
+	),
 }));
 
 vi.mock('./CalendarNavButtons', async () => ({
@@ -44,13 +43,7 @@ vi.mock('./CalendarNavButtons', async () => ({
 		</button>
 	)),
 	CalendarTodayPillButton: vi.fn(() => (
-		<button
-			data-testid="today-button"
-			data-size="md"
-			data-variant="outline"
-			aria-label="Today"
-			onClick={mockGoToToday}
-		>
+		<button data-testid="today-button" aria-label="Today">
 			Today
 		</button>
 	)),
@@ -70,7 +63,7 @@ vi.mock('./CalendarNavButtons', async () => ({
 	)),
 }));
 
-vi.mock('@/app/[planner]/calendar/_components/AddMealButton', () => ({
+vi.mock('../AddMealButton', () => ({
 	AddMealButton: vi.fn(() => (
 		<button data-testid="add-meal-button">Add Meal</button>
 	)),
@@ -79,12 +72,6 @@ vi.mock('@/app/[planner]/calendar/_components/AddMealButton', () => ({
 vi.mock('../Calendar/CalendarContext', () => ({
 	useCalendarContext: vi.fn(),
 }));
-
-const mockNavigateToDate = vi.fn();
-const mockGoToToday = vi.fn();
-const mockGoToPrevious = vi.fn();
-const mockGoToNext = vi.fn();
-const mockSetViewType = vi.fn();
 
 function createMockContextValue(
 	overrides: Partial<CalendarContextValue> = {},
@@ -95,10 +82,10 @@ function createMockContextValue(
 		rangeAnchor: DateTime.local(2024, 6, 15),
 		setSelectedDate: vi.fn(),
 		setViewType: mockSetViewType,
-		navigateToDate: mockNavigateToDate,
-		goToToday: mockGoToToday,
-		goToPrevious: mockGoToPrevious,
-		goToNext: mockGoToNext,
+		navigateToDate: vi.fn(),
+		goToToday: vi.fn(),
+		goToPrevious: vi.fn(),
+		goToNext: vi.fn(),
 		...overrides,
 	};
 }
@@ -140,12 +127,6 @@ function renderMobile({
 describe('CalendarHeader', () => {
 	beforeEach(() => {
 		vi.resetAllMocks();
-		vi.mocked(Popover).mockImplementation(({ children, opened }) => (
-			<>
-				{React.Children.toArray(children)[0]}
-				{opened ? React.Children.toArray(children)[1] : null}
-			</>
-		));
 	});
 
 	describe('CalendarHeaderDesktop', () => {
@@ -205,35 +186,6 @@ describe('CalendarHeader', () => {
 			expect(mockSetViewType).toHaveBeenCalledWith('week');
 		});
 
-		it('displays the selected date in the date picker', () => {
-			renderDesktop({ initialDate: DateTime.local(2024, 6, 15) });
-
-			expect(screen.getByDisplayValue('2024-06-15')).toBeDefined();
-		});
-
-		it('calls navigateToDate with the picked date', () => {
-			renderDesktop({ initialDate: DateTime.local(2024, 6, 15) });
-
-			fireEvent.change(screen.getByDisplayValue('2024-06-15'), {
-				target: { value: '2024-07-20' },
-			});
-
-			expect(mockNavigateToDate).toHaveBeenCalledTimes(1);
-			expect(mockNavigateToDate.mock.calls[0]?.[0].toISODate()).toBe(
-				'2024-07-20',
-			);
-		});
-
-		it('does not call navigateToDate when the desktop picker is cleared', () => {
-			renderDesktop({ initialDate: DateTime.local(2024, 6, 15) });
-
-			fireEvent.change(screen.getByDisplayValue('2024-06-15'), {
-				target: { value: '' },
-			});
-
-			expect(mockNavigateToDate).not.toHaveBeenCalled();
-		});
-
 		it('applies sticky positioning to the root group', () => {
 			renderDesktop();
 
@@ -282,22 +234,6 @@ describe('CalendarHeader', () => {
 			expect(buttons[3].getAttribute('data-testid')).toBe('today-button');
 		});
 
-		it('renders Today as a PillButton with the correct props', () => {
-			renderMobile();
-
-			const today = screen.getByTestId('today-button');
-			expect(today.getAttribute('data-size')).toBe('md');
-			expect(today.getAttribute('data-variant')).toBe('outline');
-			expect(today.textContent).toBe('Today');
-		});
-
-		it('calls goToToday when the Today pill is clicked', () => {
-			renderMobile();
-
-			fireEvent.click(screen.getByRole('button', { name: 'Today' }));
-			expect(mockGoToToday).toHaveBeenCalledTimes(1);
-		});
-
 		it('lays out the header row so Today is aligned to the far right', () => {
 			renderMobile();
 
@@ -319,9 +255,6 @@ describe('CalendarHeader', () => {
 			).toBe('lg');
 			expect(screen.getByTestId('next-button').getAttribute('data-size')).toBe(
 				'lg',
-			);
-			expect(screen.getByTestId('today-button').getAttribute('data-size')).toBe(
-				'md',
 			);
 		});
 
@@ -383,54 +316,6 @@ describe('CalendarHeader', () => {
 			fireEvent.click(screen.getByRole('button', { name: 'List' }));
 
 			expect(mockSetViewType).toHaveBeenCalledWith('list');
-		});
-
-		it('opens the date picker popover when the month label is clicked', () => {
-			renderMobile({ initialDate: DateTime.local(2024, 6, 15) });
-
-			expect(screen.queryByTestId('popover-dropdown')).toBeNull();
-
-			fireEvent.click(screen.getByText('June 2024'));
-
-			expect(screen.getByTestId('popover-dropdown')).toBeDefined();
-		});
-
-		it('passes an ISO date string to the mobile DatePicker', () => {
-			renderMobile({ initialDate: DateTime.local(2024, 6, 15) });
-
-			fireEvent.click(screen.getByText('June 2024'));
-
-			const datePickerProps = vi.mocked(DatePicker).mock.calls[0]?.[0];
-			expect(datePickerProps?.value).toBe('2024-06-15');
-		});
-
-		it('navigates to the picked date and closes the popover', () => {
-			renderMobile({ initialDate: DateTime.local(2024, 6, 15) });
-
-			fireEvent.click(screen.getByText('June 2024'));
-			expect(screen.getByTestId('popover-dropdown')).toBeDefined();
-
-			fireEvent.change(screen.getByDisplayValue('2024-06-15'), {
-				target: { value: '2024-07-20' },
-			});
-
-			expect(mockNavigateToDate).toHaveBeenCalledTimes(1);
-			expect(mockNavigateToDate.mock.calls[0]?.[0].toISODate()).toBe(
-				'2024-07-20',
-			);
-			expect(screen.queryByTestId('popover-dropdown')).toBeNull();
-		});
-
-		it('does not navigate when the mobile picker is cleared', () => {
-			renderMobile({ initialDate: DateTime.local(2024, 6, 15) });
-
-			fireEvent.click(screen.getByText('June 2024'));
-
-			fireEvent.change(screen.getByDisplayValue('2024-06-15'), {
-				target: { value: '' },
-			});
-
-			expect(mockNavigateToDate).not.toHaveBeenCalled();
 		});
 	});
 });

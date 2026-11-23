@@ -1,6 +1,6 @@
-import { useContext, useMemo } from 'react';
+import { useMemo } from 'react';
 
-import { CalendarDaysContext } from './CalendarDaysContext';
+import { useCalendarDays } from './useCalendarDays';
 
 import { usePlannerSavedItems } from '../usePlannerSavedItems';
 import { toCalendarMeals } from '../../_utils/toCalendarMeals';
@@ -11,19 +11,11 @@ import { toCalendarMeals } from '../../_utils/toCalendarMeals';
  * modal all read them here, so they all see the same meals.
  */
 export const useCalendarMeals = () => {
-	const calendar = useContext(CalendarDaysContext);
+	const calendar = useCalendarDays();
 	const savedItems = usePlannerSavedItems();
 
-	const meals = useMemo(
-		() => (calendar ? toCalendarMeals(calendar, savedItems) : null),
+	return useMemo(
+		() => toCalendarMeals(calendar, savedItems),
 		[calendar, savedItems],
 	);
-
-	if (!meals) {
-		throw new Error(
-			'useCalendarMeals must be used inside CalendarDaysProvider',
-		);
-	}
-
-	return meals;
 };

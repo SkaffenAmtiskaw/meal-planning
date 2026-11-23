@@ -1,3 +1,4 @@
+/* Mantine's Group and Stack have no border props, so the line under the sticky header is set here. */
 .header {
 	border-bottom: 1px solid var(--mantine-color-chalk-3);
 }

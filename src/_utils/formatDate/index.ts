@@ -1,1 +1,2 @@
-export * from './formatDate';
+export { formatDate } from './formatDate';
+export type { DateStyle } from './types';
