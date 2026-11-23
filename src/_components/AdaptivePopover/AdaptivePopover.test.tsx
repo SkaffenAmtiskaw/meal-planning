@@ -16,10 +16,10 @@ vi.mock('../BottomSheet', () => ({
 	),
 }));
 
-function renderAdaptivePopover() {
+function renderAdaptivePopover({ opened = true } = {}) {
 	return render(
 		<AdaptivePopover
-			opened
+			opened={opened}
 			onClose={vi.fn()}
 			title="Jump to date"
 			target={<button type="button">Open</button>}
@@ -48,5 +48,21 @@ describe('AdaptivePopover', () => {
 
 		expect(screen.getByTestId('bottom-sheet').textContent).toBe('Content');
 		expect(screen.queryByTestId('popover-dropdown')).toBeNull();
+	});
+
+	it.each([
+		{ opened: true, expanded: 'true' },
+		{ opened: false, expanded: 'false' },
+	])('tells screen readers on phones that its target opens a dialog, expanded $expanded', ({
+		opened,
+		expanded,
+	}) => {
+		vi.mocked(useIsMobile).mockReturnValueOnce(true);
+
+		renderAdaptivePopover({ opened });
+
+		const target = screen.getByRole('button', { name: 'Open' });
+		expect(target.getAttribute('aria-haspopup')).toBe('dialog');
+		expect(target.getAttribute('aria-expanded')).toBe(expanded);
 	});
 });

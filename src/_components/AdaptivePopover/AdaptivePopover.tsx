@@ -1,6 +1,11 @@
 'use client';
 
-import type { ReactElement, ReactNode } from 'react';
+import {
+	type AriaAttributes,
+	cloneElement,
+	type ReactElement,
+	type ReactNode,
+} from 'react';
 
 import { Popover } from '@mantine/core';
 
@@ -16,9 +21,10 @@ type AdaptivePopoverProps = {
 	title: string;
 	/**
 	 * The element that opens it. It has to take a ref, since the desktop
-	 * popover anchors to it.
+	 * popover anchors to it, and pass ARIA props on to its element, since
+	 * both the popover and the sheet add them.
 	 */
-	target: ReactElement;
+	target: ReactElement<AriaAttributes>;
 	children: ReactNode;
 };
 
@@ -38,7 +44,11 @@ export function AdaptivePopover({
 	if (isMobile) {
 		return (
 			<>
-				{target}
+				{/* The desktop popover's target gets these from Mantine; the sheet has no target to add them. */}
+				{cloneElement(target, {
+					'aria-haspopup': 'dialog',
+					'aria-expanded': opened,
+				})}
 				<BottomSheet opened={opened} onClose={onClose} title={title}>
 					{children}
 				</BottomSheet>

@@ -23,8 +23,10 @@ function endDrag(x: number, y = 0, state: Partial<UseDragState> = {}): void {
 	);
 }
 
-// Attaches the swipe to an element holding a button, and returns the button
-// with a spy on its clicks.
+/**
+ * Attaches the swipe to an element holding a button, and returns the button
+ * with a spy on its clicks.
+ */
 function attach(ref: (node: HTMLElement | null) => unknown): {
 	button: HTMLButtonElement;
 	onClick: ReturnType<typeof vi.fn>;

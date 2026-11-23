@@ -11,7 +11,7 @@ import { DateTime } from 'luxon';
 
 import { useIsMobile, useSwipe, useToday } from '@/_hooks';
 
-import { useDatePickerKeys } from './useDatePickerKeys';
+import { useDatePickerKeys } from './useDayKeys';
 import classes from './DatePickerGrid.module.css';
 
 import { NumberMark } from '../NumberMark';
@@ -90,8 +90,10 @@ export function DatePickerGrid({
 				nextLabel="Next month"
 				// A single letter per weekday, like "S", which none of Mantine's format strings give.
 				weekdayFormat={(date) => DateTime.fromISO(date).toFormat('ccccc')}
-				// The day button is what takes focus, so it carries aria-current rather than the number inside it.
-				// data-marked lets the stylesheet draw the dot under the number.
+				/**
+				 * The day button is what takes focus, so it carries aria-current rather than the number inside it.
+				 * data-marked lets the stylesheet draw the dot under the number.
+				 */
 				getDayProps={(date) => ({
 					...getDayKeyProps(date),
 					'aria-current': isToday(date) ? 'date' : undefined,

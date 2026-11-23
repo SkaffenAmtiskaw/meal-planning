@@ -14,10 +14,6 @@ import { useCalendarContext } from '../Calendar/CalendarContext';
 import type { CalendarContextValue, CalendarViewType } from '../Calendar/types';
 import { formatWeekRange } from './_utils/formatWeekRange';
 
-const mockNavigateToDate = vi.fn();
-const mockGoToToday = vi.fn();
-const mockGoToPrevious = vi.fn();
-const mockGoToNext = vi.fn();
 const mockSetViewType = vi.fn();
 
 vi.mock('@mantine/core', async () => await import('#mocks/@mantine/core'));
@@ -86,10 +82,10 @@ function createMockContextValue(
 		rangeAnchor: DateTime.local(2024, 6, 15),
 		setSelectedDate: vi.fn(),
 		setViewType: mockSetViewType,
-		navigateToDate: mockNavigateToDate,
-		goToToday: mockGoToToday,
-		goToPrevious: mockGoToPrevious,
-		goToNext: mockGoToNext,
+		navigateToDate: vi.fn(),
+		goToToday: vi.fn(),
+		goToPrevious: vi.fn(),
+		goToNext: vi.fn(),
 		...overrides,
 	};
 }

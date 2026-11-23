@@ -4,25 +4,18 @@ import { type RefCallback, useCallback, useRef } from 'react';
 
 import { useDrag } from '@mantine/hooks';
 
-export type SwipeDirection = 'left' | 'right' | 'down';
+import type { UseSwipeOptions } from './types';
 
-export type UseSwipeOptions = {
-	// Called with the direction of each finished swipe.
-	onSwipe: (direction: SwipeDirection) => void;
-	// Whether swipes are reported. On by default.
-	enabled?: boolean;
-};
-
-// How far a drag has to travel, in px, to count as a swipe, so taps and small
-// drags don't.
+// How far a drag has to travel, in px, to count as a swipe, so taps don't.
 const MIN_DISTANCE = 40;
 // How far a touch can move, in px, and still count as a tap.
 const TAP_DISTANCE = 10;
 
 /**
  * Reports a finished left, right or down swipe on each element the returned
- * ref is attached to, by whichever way the drag went further. The click any drag ends with is swallowed, so a swipe, or a drag
- * too short to be one, never presses what it ends on.
+ * ref is attached to, by whichever way the drag went further. The click any
+ * drag ends with is swallowed, so a swipe, or a drag too short to be one,
+ * never presses what it ends on.
  */
 export function useSwipe<T extends HTMLElement = HTMLElement>({
 	onSwipe,
@@ -53,8 +46,7 @@ export function useSwipe<T extends HTMLElement = HTMLElement>({
 			}
 			const cleanupDrag = dragRef(node);
 			const controller = new AbortController();
-			// A drag that ends off the element fires no click, so each new touch
-			// starts clear.
+			// A drag that ends off the element fires no click, so each touch starts clear.
 			node.addEventListener(
 				'pointerdown',
 				() => {

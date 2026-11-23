@@ -1,7 +1,8 @@
 'use client';
 
-import { useState } from 'react';
-import type { ReactElement } from 'react';
+import type { AriaAttributes, ReactElement } from 'react';
+
+import { useDisclosure } from '@mantine/hooks';
 
 import { DateTime } from 'luxon';
 
@@ -19,26 +20,25 @@ type JumpToDateProps = {
 	renderTrigger: (trigger: {
 		opened: boolean;
 		onClick: () => void;
-	}) => ReactElement;
+	}) => ReactElement<AriaAttributes>;
 };
 
 /**
  * Opens a date picker from the trigger it renders, with the date in view
- * selected and a dot on each day with meals, and moves the calendar to the date picked. The picker is a
- * popover on desktop and a bottom sheet on phones.
+ * selected and a dot on each day with meals, and moves the calendar to the
+ * date picked. The picker is a popover on desktop and a bottom sheet on phones.
  */
 export function JumpToDate({ renderTrigger }: JumpToDateProps): ReactElement {
 	const { selectedDate, navigateToDate } = useCalendarContext();
 	const mealDates = useMealDates();
-	const [opened, setOpened] = useState(false);
-	const close = () => setOpened(false);
+	const [opened, { toggle, close }] = useDisclosure(false);
 
 	return (
 		<AdaptivePopover
 			opened={opened}
 			onClose={close}
 			title="Jump to date"
-			target={renderTrigger({ opened, onClick: () => setOpened((o) => !o) })}
+			target={renderTrigger({ opened, onClick: toggle })}
 		>
 			<DatePickerGrid
 				value={selectedDate.toISODate()}

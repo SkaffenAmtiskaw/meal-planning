@@ -31,6 +31,7 @@
 	height: 6px;
 }
 
+/* Mantine centres the bigger touch number in the cell too, so touch sizes lift it further to leave room for the bigger dot. */
 .touch {
 	padding-bottom: 8px;
 }

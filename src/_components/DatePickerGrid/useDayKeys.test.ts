@@ -3,7 +3,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import type { KeyboardEvent } from 'react';
 
-import { useDatePickerKeys } from './useDatePickerKeys';
+import { useDatePickerKeys } from './useDayKeys';
 
 // A grid holding a day button for each date, as the picker's day props tag them.
 function gridOf(dates: string[]): HTMLDivElement {
