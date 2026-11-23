@@ -65,20 +65,6 @@ describe('Modal', () => {
 		expect(container.firstChild).toBeNull();
 	});
 
-	it('returns null when the edit item is not found', async () => {
-		vi.mocked(getSavedItem).mockResolvedValueOnce(null as never);
-
-		const { container } = render(
-			await Modal({
-				planner: makePlanner(),
-				status: 'edit',
-				type: 'bookmark',
-				item: itemId,
-			}),
-		);
-		expect(container.firstChild).toBeNull();
-	});
-
 	it.each([
 		'bookmark',
 		'recipe',

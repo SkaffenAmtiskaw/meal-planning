@@ -23,7 +23,6 @@ const getModal = async ({
 
 	if (status === 'edit' && itemId) {
 		const item = await getSavedItem(planner._id, itemId);
-		if (!item) return null;
 
 		if (type === 'bookmark' && 'url' in item) {
 			return { status, type, item };
