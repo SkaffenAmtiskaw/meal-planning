@@ -5,7 +5,7 @@ import type { ReactElement } from 'react';
 
 import { Group, Paper, ScrollArea, Stack, Text } from '@mantine/core';
 
-import { useToday } from '@/_hooks';
+import { useTodayOrThrow } from '@/_hooks';
 import { formatDate } from '@/_utils/formatDate';
 
 import type { MobileAgendaProps } from './types';
@@ -21,7 +21,7 @@ export function MobileAgenda({
 	const { selectedDate } = useCalendarContext();
 	const viewportRef = useRef<HTMLDivElement>(null);
 
-	const today = useToday();
+	const today = useTodayOrThrow();
 	const isToday = selectedDate.hasSame(today, 'day');
 	const isoDate = selectedDate.toISODate() as string;
 

@@ -7,6 +7,9 @@ import { Button, Group, SegmentedControl, Stack } from '@mantine/core';
 
 import { DateTime } from 'luxon';
 
+import { makeUnknownDay } from '#fixtures/viewerDay';
+import { useToday } from '@/_hooks';
+
 import { CalendarHeaderDesktop, CalendarHeaderMobile } from './CalendarHeader';
 
 import { AddMealButton } from '../AddMealButton';
@@ -17,6 +20,7 @@ import { formatWeekRange } from './_utils/formatWeekRange';
 const mockSetViewType = vi.fn();
 
 vi.mock('@mantine/core', async () => await import('#mocks/@mantine/core'));
+vi.mock('@/_hooks', async () => await import('#mocks/@/_hooks'));
 
 vi.mock('@/_components', () => ({
 	DateFieldTrigger: vi.fn(() => <button type="button">Date</button>),
@@ -159,6 +163,64 @@ describe('CalendarHeader', () => {
 			expect(screen.getByText(formatWeekRange(initialDate))).toBeDefined();
 		});
 
+		it('shows the label as a skeleton while today’s month is unknown', () => {
+			// June 1, the first of its month.
+			vi.mocked(useToday).mockReturnValue(
+				makeUnknownDay(DateTime.local(2024, 6, 1)),
+			);
+
+			renderDesktop();
+
+			expect(
+				screen.getByTestId('label-skeleton').getAttribute('data-visible'),
+			).toBe('true');
+		});
+
+		it('draws the month label on a week edge mid-month', () => {
+			// Sunday June 16, the first of its week but not of its month.
+			vi.mocked(useToday).mockReturnValue(
+				makeUnknownDay(DateTime.local(2024, 6, 16)),
+			);
+
+			renderDesktop();
+
+			expect(
+				screen.getByTestId('label-skeleton').getAttribute('data-visible'),
+			).toBe('false');
+		});
+
+		it('shows the week view’s label as a skeleton on a week edge mid-month', () => {
+			vi.mocked(useToday).mockReturnValue(
+				makeUnknownDay(DateTime.local(2024, 6, 16)),
+			);
+
+			renderDesktop({ initialView: 'week' });
+
+			expect(
+				screen.getByTestId('label-skeleton').getAttribute('data-visible'),
+			).toBe('true');
+		});
+
+		it('shows the date field as a skeleton while the day is unknown', () => {
+			vi.mocked(useToday).mockReturnValue(
+				makeUnknownDay(DateTime.local(2024, 6, 15)),
+			);
+
+			renderDesktop();
+
+			expect(
+				screen.getByTestId('date-field-skeleton').getAttribute('data-visible'),
+			).toBe('true');
+		});
+
+		it('draws the date field once the day is known', () => {
+			renderDesktop();
+
+			expect(
+				screen.getByTestId('date-field-skeleton').getAttribute('data-visible'),
+			).toBe('false');
+		});
+
 		it('hides Previous and Next buttons in list view', () => {
 			renderDesktop({
 				initialDate: DateTime.local(2024, 6, 15),
@@ -291,6 +353,27 @@ describe('CalendarHeader', () => {
 				}),
 				undefined,
 			);
+		});
+
+		it('shows the label as a skeleton while today’s month is unknown', () => {
+			// June 1, the first of its month.
+			vi.mocked(useToday).mockReturnValue(
+				makeUnknownDay(DateTime.local(2024, 6, 1)),
+			);
+
+			renderMobile();
+
+			expect(
+				screen.getByTestId('label-skeleton').getAttribute('data-visible'),
+			).toBe('true');
+		});
+
+		it('draws the label while today’s month is known', () => {
+			renderMobile();
+
+			expect(
+				screen.getByTestId('label-skeleton').getAttribute('data-visible'),
+			).toBe('false');
 		});
 
 		it('renders a full-width Month/List segmented control', () => {

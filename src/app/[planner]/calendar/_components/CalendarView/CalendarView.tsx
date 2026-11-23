@@ -4,7 +4,7 @@ import type { ReactElement } from 'react';
 
 import { Flex, Stack } from '@mantine/core';
 
-import { useIsMobile, useTimeZone } from '@/_hooks';
+import { useIsMobile } from '@/_hooks';
 import type { DayInterface } from '@/_models/types';
 
 import { CalendarProvider, useCalendarContext } from '../Calendar';
@@ -56,11 +56,7 @@ export function CalendarView({
 	plannerId,
 	calendar,
 	savedItems,
-}: Props): ReactElement | null {
-	// Today depends on the viewer's zone, so nothing below draws until it's known.
-	const timeZone = useTimeZone();
-	if (!timeZone) return null;
-
+}: Props): ReactElement {
 	return (
 		<PlannerSavedItemsProvider savedItems={savedItems}>
 			<CalendarDaysProvider calendar={calendar}>

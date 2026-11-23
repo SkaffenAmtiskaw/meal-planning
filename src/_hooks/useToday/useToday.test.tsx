@@ -18,27 +18,72 @@ describe('useToday', () => {
 		vi.useRealTimers();
 	});
 
-	it("returns the start of today in the viewer's zone", () => {
-		const { result } = renderHook(() => useToday());
+	describe('when the zone is known', () => {
+		it("gives the start of today in the viewer's zone", () => {
+			const { result } = renderHook(() => useToday());
 
-		expect(result.current.toISO()).toBe('2025-09-16T00:00:00.000+14:00');
+			expect(result.current.today?.toISO()).toBe(
+				'2025-09-16T00:00:00.000+14:00',
+			);
+		});
+
+		it('gives today as the only possible day', () => {
+			const { result } = renderHook(() => useToday());
+
+			expect(result.current.possibleDays).toEqual([result.current.today]);
+		});
+
+		it('knows the day', () => {
+			const { result } = renderHook(() => useToday());
+
+			expect(result.current.isKnown('day')).toBe(true);
+		});
+
+		it('returns the same object for the same day', () => {
+			const { result, rerender } = renderHook(() => useToday());
+			const first = result.current;
+
+			vi.setSystemTime(new Date('2025-09-15T21:00:00Z'));
+			rerender();
+
+			expect(result.current).toBe(first);
+		});
 	});
 
-	it('returns the same object for the same day', () => {
-		const { result, rerender } = renderHook(() => useToday());
-		const first = result.current;
+	describe('when the zone is unknown', () => {
+		beforeEach(() => {
+			vi.mocked(useTimeZone).mockReturnValue(null);
+		});
 
-		vi.setSystemTime(new Date('2025-09-15T21:00:00Z'));
-		rerender();
+		it('gives no today', () => {
+			const { result } = renderHook(() => useToday());
 
-		expect(result.current).toBe(first);
-	});
+			expect(result.current.today).toBeNull();
+		});
 
-	it('throws when there is no zone', () => {
-		vi.mocked(useTimeZone).mockReturnValue(null);
+		it('gives the UTC day and the day either side as the possible days', () => {
+			const { result } = renderHook(() => useToday());
 
-		expect(() => renderHook(() => useToday())).toThrow(
-			'Coding error: useToday() was called before the time zone is known.',
-		);
+			expect(result.current.possibleDays.map((day) => day.toISODate())).toEqual(
+				['2025-09-14', '2025-09-15', '2025-09-16'],
+			);
+		});
+
+		it('knows the month but not the day when the possible days share a month', () => {
+			const { result } = renderHook(() => useToday());
+
+			expect(result.current.isKnown('day')).toBe(false);
+			expect(result.current.isKnown('month')).toBe(true);
+		});
+
+		it('returns the same object for the same UTC day', () => {
+			const { result, rerender } = renderHook(() => useToday());
+			const first = result.current;
+
+			vi.setSystemTime(new Date('2025-09-15T21:00:00Z'));
+			rerender();
+
+			expect(result.current).toBe(first);
+		});
 	});
 });

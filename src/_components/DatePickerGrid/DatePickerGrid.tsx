@@ -9,7 +9,7 @@ import { IconChevronLeft, IconChevronRight } from '@tabler/icons-react';
 import clsx from 'clsx';
 import { DateTime } from 'luxon';
 
-import { useIsMobile, useSwipe, useToday } from '@/_hooks';
+import { useIsMobile, useSwipe, useTodayOrThrow } from '@/_hooks';
 
 import { useDatePickerKeys } from './useDayKeys';
 import classes from './DatePickerGrid.module.css';
@@ -34,7 +34,7 @@ export function DatePickerGrid({
 	onChange,
 	markedDates = [],
 }: DatePickerGridProps): ReactElement {
-	const today = useToday();
+	const today = useTodayOrThrow();
 	// Phones get touch sizes: Mantine's lg gives 48px day cells and month arrows.
 	const isMobile = useIsMobile();
 	const size = isMobile ? 'lg' : 'sm';

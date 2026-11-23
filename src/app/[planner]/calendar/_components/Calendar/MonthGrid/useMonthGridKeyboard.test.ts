@@ -3,6 +3,7 @@ import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import { DateTime } from 'luxon';
 
+import { makeKnownDay, makeUnknownDay } from '#fixtures/viewerDay';
 import { useToday } from '@/_hooks';
 
 import { useMonthGridKeyboard } from './useMonthGridKeyboard';
@@ -11,7 +12,7 @@ import type { MonthGridMeal } from './types';
 vi.mock('@/_hooks', async () => await import('#mocks/@/_hooks'));
 
 const setToday = (date: Date) =>
-	vi.mocked(useToday).mockReturnValue(DateTime.fromJSDate(date));
+	vi.mocked(useToday).mockReturnValue(makeKnownDay(DateTime.fromJSDate(date)));
 
 function createDays(startDate: DateTime, count: number = 42): DateTime[] {
 	return Array.from({ length: count }, (_, i) => startDate.plus({ days: i }));
@@ -104,6 +105,27 @@ describe('useMonthGridKeyboard', () => {
 		expect(result.current.getDayProps(2).tabIndex).toBe(0);
 		expect(result.current.getDayProps(0).tabIndex).toBe(-1);
 		expect(result.current.getDayProps(1).tabIndex).toBe(-1);
+	});
+
+	it('makes no day a tab stop while the day is unknown', () => {
+		vi.mocked(useToday).mockReturnValue(
+			makeUnknownDay(DateTime.local(2025, 9, 15)),
+		);
+
+		const days = createDays(DateTime.local(2025, 9, 1));
+		const { result } = renderHook(() =>
+			useMonthGridKeyboard({
+				days,
+				mealsByDate: new Map(),
+				selectedDate,
+			}),
+		);
+
+		expect(
+			days.filter(
+				(_, index) => result.current.getDayProps(index).tabIndex === 0,
+			),
+		).toHaveLength(0);
 	});
 
 	it('resets focus to today when days change', () => {

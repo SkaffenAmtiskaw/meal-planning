@@ -2,7 +2,7 @@
 
 import { type ReactElement, useMemo } from 'react';
 
-import { Box, Divider, Flex, Paper, Stack } from '@mantine/core';
+import { Box, Divider, Flex, Paper, Skeleton, Stack } from '@mantine/core';
 
 import clsx from 'clsx';
 
@@ -25,7 +25,7 @@ export function WeekView({
 }: WeekViewProps): ReactElement {
 	const { selectedDate } = useCalendarContext();
 	const days = useMemo(() => getWeekDates(selectedDate), [selectedDate]);
-	const today = useToday();
+	const { today, isKnown } = useToday();
 
 	const mealsByDate = useMemo(() => {
 		const grouped = new Map<string, WeekViewMeal[]>();
@@ -48,10 +48,10 @@ export function WeekView({
 
 	return (
 		<Flex direction="column" h="100%" p="md">
-			<Box className={styles.grid} role="grid">
+			<Skeleton visible={!isKnown('week')} className={styles.grid} role="grid">
 				{days.map((day, index) => {
 					const isoDate = day.toISODate() as string;
-					const isToday = day.hasSame(today, 'day');
+					const isToday = today !== null && day.hasSame(today, 'day');
 					const label = formatDate(day, 'shortWeekdayNumericDate');
 					const dayMeals = mealsByDate.get(isoDate) ?? [];
 					const ariaLabel =
@@ -102,7 +102,7 @@ export function WeekView({
 						</Box>
 					);
 				})}
-			</Box>
+			</Skeleton>
 		</Flex>
 	);
 }

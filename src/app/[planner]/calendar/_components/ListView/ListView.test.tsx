@@ -5,6 +5,7 @@ import type { ReactNode } from 'react';
 
 import { DateTime } from 'luxon';
 
+import { makeKnownDay, makeUnknownDay } from '#fixtures/viewerDay';
 import { useToday } from '@/_hooks';
 
 import { ListView } from './ListView';
@@ -128,7 +129,7 @@ describe('ListView', () => {
 			createMockContextValue({ rangeAnchor: DateTime.local(2024, 6, 13) }),
 		);
 
-		vi.mocked(useToday).mockReturnValue(today);
+		vi.mocked(useToday).mockReturnValue(makeKnownDay(today));
 
 		render(<ListView />);
 
@@ -141,7 +142,7 @@ describe('ListView', () => {
 	it('builds the day range from rangeAnchor and today', () => {
 		const today = DateTime.local(2024, 6, 15);
 		const rangeAnchor = DateTime.local(2024, 6, 10);
-		vi.mocked(useToday).mockReturnValue(today);
+		vi.mocked(useToday).mockReturnValue(makeKnownDay(today));
 		vi.mocked(getListDayRange).mockReturnValue([rangeAnchor]);
 		vi.mocked(useCalendarContext).mockReturnValue(
 			createMockContextValue({ rangeAnchor }),
@@ -150,6 +151,17 @@ describe('ListView', () => {
 		render(<ListView />);
 
 		expect(getListDayRange).toHaveBeenCalledWith(rangeAnchor, today);
+	});
+
+	it('renders nothing while the day is unknown', () => {
+		vi.mocked(useToday).mockReturnValue(
+			makeUnknownDay(DateTime.local(2024, 6, 15)),
+		);
+		vi.mocked(useCalendarContext).mockReturnValue(createMockContextValue());
+
+		const { container } = render(<ListView />);
+
+		expect(container.innerHTML).toBe('');
 	});
 
 	describe('scroll behavior', () => {

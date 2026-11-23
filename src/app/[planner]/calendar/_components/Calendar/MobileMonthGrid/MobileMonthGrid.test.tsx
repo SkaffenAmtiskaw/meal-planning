@@ -3,6 +3,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { DateTime } from 'luxon';
 
+import { makeKnownDay, makeUnknownDay } from '#fixtures/viewerDay';
 import { useToday } from '@/_hooks';
 
 import { MobileMonthGrid } from './MobileMonthGrid';
@@ -106,7 +107,8 @@ describe('MobileMonthGrid', () => {
 	});
 
 	it('tells only today’s cell that it is today', () => {
-		vi.mocked(useToday).mockReturnValue(DateTime.local(2024, 3, 15));
+		const today = DateTime.local(2024, 3, 15);
+		vi.mocked(useToday).mockReturnValue(makeKnownDay(today));
 
 		renderGrid({ selectedDate: DateTime.local(2024, 3, 10) });
 
@@ -116,6 +118,20 @@ describe('MobileMonthGrid', () => {
 		expect(cells[18].getAttribute('data-today')).toBe('false');
 	});
 
+	it('tells no cell that it is today while the day is unknown', () => {
+		vi.mocked(useToday).mockReturnValue(
+			makeUnknownDay(DateTime.local(2024, 3, 15)),
+		);
+
+		renderGrid({ selectedDate: DateTime.local(2024, 3, 10) });
+
+		const cells = screen.getAllByTestId('mobile-day-cell');
+
+		expect(
+			cells.filter((cell) => cell.getAttribute('data-today') === 'true'),
+		).toHaveLength(0);
+	});
+
 	it('tells only the selected day’s cell that it is selected', () => {
 		renderGrid({ selectedDate: DateTime.local(2024, 3, 10) });
 
@@ -123,6 +139,55 @@ describe('MobileMonthGrid', () => {
 
 		expect(cells[14].getAttribute('data-selected')).toBe('true');
 		expect(cells[19].getAttribute('data-selected')).toBe('false');
+	});
+
+	it('tells no cell that it is selected while the day is unknown', () => {
+		vi.mocked(useToday).mockReturnValue(
+			makeUnknownDay(DateTime.local(2024, 3, 10)),
+		);
+
+		renderGrid({ selectedDate: DateTime.local(2024, 3, 10) });
+
+		const cells = screen.getAllByTestId('mobile-day-cell');
+
+		expect(
+			cells.filter((cell) => cell.getAttribute('data-selected') === 'true'),
+		).toHaveLength(0);
+	});
+
+	it('makes no cell a tab stop while the day is unknown', () => {
+		vi.mocked(useToday).mockReturnValue(
+			makeUnknownDay(DateTime.local(2024, 3, 10)),
+		);
+
+		renderGrid({ selectedDate: DateTime.local(2024, 3, 10) });
+
+		const cells = screen.getAllByTestId('mobile-day-cell');
+
+		expect(
+			cells.filter((cell) => cell.getAttribute('tabindex') === '0'),
+		).toHaveLength(0);
+	});
+
+	it('shows the days as a skeleton while today’s month is unknown', () => {
+		// March 1, the first of its month.
+		vi.mocked(useToday).mockReturnValue(
+			makeUnknownDay(DateTime.local(2024, 3, 1)),
+		);
+
+		renderGrid();
+
+		expect(screen.getByTestId('skeleton').getAttribute('data-visible')).toBe(
+			'true',
+		);
+	});
+
+	it('draws the days while today’s month is known', () => {
+		renderGrid();
+
+		expect(screen.getByTestId('skeleton').getAttribute('data-visible')).toBe(
+			'false',
+		);
 	});
 
 	it('tells each cell whether it is in the selected month', () => {

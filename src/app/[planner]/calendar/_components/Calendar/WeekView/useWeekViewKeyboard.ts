@@ -32,11 +32,14 @@ interface UseWeekViewKeyboardResult {
 function computeInitialFocusIndex(
 	days: DateTime[],
 	selectedDate: DateTime,
-	today: DateTime,
-): number {
+	today: DateTime | null,
+): number | null {
 	if (days.length === 0) {
 		throw new Error('days array cannot be empty');
 	}
+
+	// The tab stop starts on today when it's in the week, so there's none until today is known.
+	if (!today) return null;
 
 	const todayIndex = days.findIndex((d) => d.hasSame(today, 'day'));
 	if (todayIndex !== -1) return todayIndex;
@@ -50,8 +53,8 @@ export function useWeekViewKeyboard(
 ): UseWeekViewKeyboardResult {
 	const { days, mealsByDate, onMealClick, selectedDate } = options;
 
-	const today = useToday();
-	const [focusedDayIndex, setFocusedDayIndex] = useState(() =>
+	const { today } = useToday();
+	const [focusedDayIndex, setFocusedDayIndex] = useState<number | null>(() =>
 		computeInitialFocusIndex(days, selectedDate, today),
 	);
 	const [mealMode, setMealMode] = useState<{
@@ -77,7 +80,7 @@ export function useWeekViewKeyboard(
 
 	// Programmatic focus for days
 	useEffect(() => {
-		if (focusDayFlag.current) {
+		if (focusDayFlag.current && focusedDayIndex !== null) {
 			focusDayFlag.current = false;
 			dayRefs.current[focusedDayIndex]?.focus();
 		}

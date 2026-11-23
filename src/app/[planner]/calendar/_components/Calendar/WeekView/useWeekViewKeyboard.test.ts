@@ -3,6 +3,7 @@ import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import { DateTime } from 'luxon';
 
+import { makeKnownDay, makeUnknownDay } from '#fixtures/viewerDay';
 import { useToday } from '@/_hooks';
 
 import { useWeekViewKeyboard } from './useWeekViewKeyboard';
@@ -11,7 +12,7 @@ import type { WeekViewMeal } from './types';
 vi.mock('@/_hooks', async () => await import('#mocks/@/_hooks'));
 
 const setToday = (date: Date) =>
-	vi.mocked(useToday).mockReturnValue(DateTime.fromJSDate(date));
+	vi.mocked(useToday).mockReturnValue(makeKnownDay(DateTime.fromJSDate(date)));
 
 function createWeek(startDate: DateTime): DateTime[] {
 	return Array.from({ length: 7 }, (_, i) => startDate.plus({ days: i }));
@@ -88,6 +89,25 @@ describe('useWeekViewKeyboard', () => {
 
 			expect(result.current.getDayProps(0).tabIndex).toBe(0); // Aug 31
 			for (let i = 1; i < 7; i++) {
+				expect(result.current.getDayProps(i).tabIndex).toBe(-1);
+			}
+		});
+
+		it('makes no day a tab stop while the day is unknown', () => {
+			vi.mocked(useToday).mockReturnValue(
+				makeUnknownDay(DateTime.local(2025, 9, 3)),
+			);
+
+			const days = createWeek(DateTime.local(2025, 8, 31)); // Aug 31 - Sep 6
+			const { result } = renderHook(() =>
+				useWeekViewKeyboard({
+					days,
+					mealsByDate: new Map(),
+					selectedDate,
+				}),
+			);
+
+			for (let i = 0; i < 7; i++) {
 				expect(result.current.getDayProps(i).tabIndex).toBe(-1);
 			}
 		});

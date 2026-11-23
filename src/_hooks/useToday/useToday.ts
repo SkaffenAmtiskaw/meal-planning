@@ -4,25 +4,30 @@ import { useMemo } from 'react';
 
 import { DateTime } from 'luxon';
 
+import { makeIsKnown } from './makeIsKnown';
+import { possibleDaysAround } from './possibleDaysAround';
 import { useTimeZone } from './useTimeZone';
+import type { ViewerDay } from './types';
 
 /**
- * The start of today in the viewer's time zone. The same object is returned
- * for the whole day, so effects that depend on it don't re-run on each render.
- * Throws while the zone isn't known, so a caller waits for `useTimeZone()`.
+ * The viewer's day, the days it could be while their time zone isn't known,
+ * and whether the day, week or month it falls in is known yet. The same
+ * object is returned for the whole day, so effects that depend on it don't
+ * re-run on each render.
  */
-export const useToday = (): DateTime => {
+export const useToday = (): ViewerDay => {
 	const timeZone = useTimeZone();
-	if (!timeZone) {
-		throw new Error(
-			'Coding error: useToday() was called before the time zone is known. Call it only below a component that renders nothing until useTimeZone() returns a zone.',
-		);
-	}
+	const zone = timeZone ?? 'UTC';
+	const isoDate = DateTime.now().setZone(zone).toISODate() as string;
 
-	const isoDate = DateTime.now().setZone(timeZone).toISODate() as string;
+	return useMemo(() => {
+		const day = DateTime.fromISO(isoDate, { zone });
+		const possibleDays = timeZone ? [day] : possibleDaysAround(day);
 
-	return useMemo(
-		() => DateTime.fromISO(isoDate, { zone: timeZone }),
-		[isoDate, timeZone],
-	);
+		return {
+			today: timeZone ? day : null,
+			possibleDays,
+			isKnown: makeIsKnown(possibleDays),
+		};
+	}, [isoDate, zone, timeZone]);
 };

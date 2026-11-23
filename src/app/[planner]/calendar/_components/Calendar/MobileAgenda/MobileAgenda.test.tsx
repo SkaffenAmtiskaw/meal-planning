@@ -5,6 +5,7 @@ import type { ReactNode } from 'react';
 
 import { DateTime } from 'luxon';
 
+import { makeKnownDay } from '#fixtures/viewerDay';
 import { useToday } from '@/_hooks';
 
 import { MobileAgenda } from './MobileAgenda';
@@ -61,7 +62,7 @@ describe('MobileAgenda', () => {
 	it('prefixes the header with "Today · " when the selected date is today', () => {
 		const today = DateTime.local(2024, 3, 15);
 
-		vi.mocked(useToday).mockReturnValue(today);
+		vi.mocked(useToday).mockReturnValue(makeKnownDay(today));
 		renderAgenda({ selectedDate: today });
 
 		expect(screen.getByText('Today · Friday, March 15')).toBeDefined();
@@ -71,7 +72,7 @@ describe('MobileAgenda', () => {
 		const today = DateTime.local(2024, 3, 15);
 		const selectedDate = DateTime.local(2024, 3, 16);
 
-		vi.mocked(useToday).mockReturnValue(today);
+		vi.mocked(useToday).mockReturnValue(makeKnownDay(today));
 		renderAgenda({ selectedDate });
 
 		expect(screen.queryByText('Today · Saturday, March 16')).toBeNull();
