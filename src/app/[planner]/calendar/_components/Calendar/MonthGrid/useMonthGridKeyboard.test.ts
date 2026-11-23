@@ -3,7 +3,7 @@ import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import { DateTime } from 'luxon';
 
-import { makeKnownDay } from '#fixtures/viewerDay';
+import { makeKnownDay, makeUnknownDay } from '#fixtures/viewerDay';
 import { useToday } from '@/_hooks';
 
 import { useMonthGridKeyboard } from './useMonthGridKeyboard';
@@ -105,6 +105,27 @@ describe('useMonthGridKeyboard', () => {
 		expect(result.current.getDayProps(2).tabIndex).toBe(0);
 		expect(result.current.getDayProps(0).tabIndex).toBe(-1);
 		expect(result.current.getDayProps(1).tabIndex).toBe(-1);
+	});
+
+	it('makes no day a tab stop while the day is unknown', () => {
+		vi.mocked(useToday).mockReturnValue(
+			makeUnknownDay(DateTime.local(2025, 9, 15)),
+		);
+
+		const days = createDays(DateTime.local(2025, 9, 1));
+		const { result } = renderHook(() =>
+			useMonthGridKeyboard({
+				days,
+				mealsByDate: new Map(),
+				selectedDate,
+			}),
+		);
+
+		expect(
+			days.filter(
+				(_, index) => result.current.getDayProps(index).tabIndex === 0,
+			),
+		).toHaveLength(0);
 	});
 
 	it('resets focus to today when days change', () => {

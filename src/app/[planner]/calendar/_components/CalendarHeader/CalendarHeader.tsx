@@ -2,10 +2,18 @@
 
 import type { ReactElement } from 'react';
 
-import { Button, Group, SegmentedControl, Stack, Text } from '@mantine/core';
+import {
+	Button,
+	Group,
+	SegmentedControl,
+	Skeleton,
+	Stack,
+	Text,
+} from '@mantine/core';
 import { IconChevronDown } from '@tabler/icons-react';
 
 import { DateFieldTrigger } from '@/_components';
+import { type TodayPeriod, useToday } from '@/_hooks';
 
 import {
 	CalendarNextButton,
@@ -26,8 +34,19 @@ import {
 
 const MOBILE_VIEWS: CalendarViewType[] = ['month', 'list'];
 
+/**
+ * The period each view's label shows. The label starts on the one today falls
+ * in, so it can be drawn once that period is known.
+ */
+const LABEL_PERIODS: Record<CalendarViewType, TodayPeriod> = {
+	month: 'month',
+	week: 'week',
+	list: 'month',
+};
+
 export function CalendarHeaderDesktop(): ReactElement {
 	const { selectedDate, viewType, setViewType } = useCalendarContext();
+	const { isKnown } = useToday();
 
 	const viewData = DEFAULT_VIEWS.map((view) => ({
 		value: view,
@@ -57,9 +76,15 @@ export function CalendarHeaderDesktop(): ReactElement {
 						<CalendarNextButton />
 					</>
 				)}
-				<Text size="lg" fw={500}>
-					{label}
-				</Text>
+				<Skeleton
+					visible={!isKnown(LABEL_PERIODS[viewType])}
+					width="auto"
+					data-testid="label-skeleton"
+				>
+					<Text size="lg" fw={500}>
+						{label}
+					</Text>
+				</Skeleton>
 			</Group>
 
 			<Group gap="sm" align="flex-end">
@@ -69,17 +94,24 @@ export function CalendarHeaderDesktop(): ReactElement {
 					onChange={(value) => setViewType(value as CalendarViewType)}
 					data={viewData}
 				/>
-				<JumpToDate
-					renderTrigger={({ opened, onClick }) => (
-						<DateFieldTrigger
-							label="Date"
-							date={selectedDate}
-							dateStyle="numericDate"
-							opened={opened}
-							onClick={onClick}
-						/>
-					)}
-				/>
+				{/* The field shows the selected day, which starts on today, so it waits for today. */}
+				<Skeleton
+					visible={!isKnown('day')}
+					width="auto"
+					data-testid="date-field-skeleton"
+				>
+					<JumpToDate
+						renderTrigger={({ opened, onClick }) => (
+							<DateFieldTrigger
+								label="Date"
+								date={selectedDate}
+								dateStyle="numericDate"
+								opened={opened}
+								onClick={onClick}
+							/>
+						)}
+					/>
+				</Skeleton>
 			</Group>
 		</Group>
 	);
@@ -87,6 +119,7 @@ export function CalendarHeaderDesktop(): ReactElement {
 
 export function CalendarHeaderMobile(): ReactElement {
 	const { selectedDate, viewType, setViewType } = useCalendarContext();
+	const { isKnown } = useToday();
 
 	const label = LABEL_FORMATTERS[viewType](selectedDate);
 
@@ -110,18 +143,24 @@ export function CalendarHeaderMobile(): ReactElement {
 				<Group gap="xs" align="center" wrap="nowrap" justify="center">
 					{viewType !== 'list' && <CalendarPreviousButton size="lg" />}
 
-					<JumpToDate
-						renderTrigger={({ onClick }) => (
-							<Button
-								variant="subtle"
-								size="compact-sm"
-								rightSection={<IconChevronDown size={14} />}
-								onClick={onClick}
-							>
-								{label}
-							</Button>
-						)}
-					/>
+					<Skeleton
+						visible={!isKnown(LABEL_PERIODS[viewType])}
+						width="auto"
+						data-testid="label-skeleton"
+					>
+						<JumpToDate
+							renderTrigger={({ onClick }) => (
+								<Button
+									variant="subtle"
+									size="compact-sm"
+									rightSection={<IconChevronDown size={14} />}
+									onClick={onClick}
+								>
+									{label}
+								</Button>
+							)}
+						/>
+					</Skeleton>
 
 					{viewType !== 'list' && <CalendarNextButton size="lg" />}
 				</Group>

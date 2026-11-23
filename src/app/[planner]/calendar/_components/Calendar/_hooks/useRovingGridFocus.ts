@@ -6,7 +6,8 @@ import type { RovingGridFocusDayProps } from './types';
 
 interface UseRovingGridFocusOptions {
 	days: DateTime[];
-	initialFocusIndex: number;
+	// The day that starts as the grid's tab stop, or null for none yet.
+	initialFocusIndex: number | null;
 }
 
 interface UseRovingGridFocusResult {
@@ -20,7 +21,9 @@ export function useRovingGridFocus(
 ): UseRovingGridFocusResult {
 	const { days, initialFocusIndex } = options;
 
-	const [focusedDayIndex, setFocusedDayIndex] = useState(initialFocusIndex);
+	const [focusedDayIndex, setFocusedDayIndex] = useState<number | null>(
+		initialFocusIndex,
+	);
 	const dayRefs = useRef<(HTMLElement | null)[]>([]);
 	const focusFlag = useRef(false);
 	const daysRef = useRef(days);
@@ -31,7 +34,7 @@ export function useRovingGridFocus(
 	}, [initialFocusIndex]);
 
 	useEffect(() => {
-		if (focusFlag.current) {
+		if (focusFlag.current && focusedDayIndex !== null) {
 			focusFlag.current = false;
 			dayRefs.current[focusedDayIndex]?.focus();
 		}

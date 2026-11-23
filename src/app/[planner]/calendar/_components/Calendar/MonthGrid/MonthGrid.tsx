@@ -2,7 +2,7 @@
 
 import { useMemo } from 'react';
 
-import { Box, Paper, SimpleGrid, Text } from '@mantine/core';
+import { Box, Paper, SimpleGrid, Skeleton, Text } from '@mantine/core';
 
 import { useToday } from '@/_hooks';
 
@@ -18,7 +18,7 @@ export function MonthGrid({ meals, renderMeal, onMealClick }: MonthGridProps) {
 	const { selectedDate } = useCalendarContext();
 
 	const days = useMemo(() => getMonthGridDates(selectedDate), [selectedDate]);
-	const { today } = useToday();
+	const { today, isKnown } = useToday();
 
 	const mealsByDate = useMemo(() => {
 		const map = new Map<string, MonthGridMeal[]>();
@@ -49,25 +49,27 @@ export function MonthGrid({ meals, renderMeal, onMealClick }: MonthGridProps) {
 				))}
 			</SimpleGrid>
 
-			<SimpleGrid cols={7} spacing="1px" role="grid">
-				{days.map((day, dayIndex) => {
-					const isoDate = day.toISODate() as string;
-					return (
-						<MonthGridDayCell
-							key={isoDate}
-							day={day}
-							isToday={today !== null && day.hasSame(today, 'day')}
-							isCurrentMonth={day.hasSame(selectedDate, 'month')}
-							meals={mealsByDate.get(isoDate) ?? []}
-							dayProps={getDayProps(dayIndex)}
-							getMealProps={(mealIndex) =>
-								getMealProps(dayIndex, mealIndex, isoDate)
-							}
-							renderMeal={renderMeal}
-						/>
-					);
-				})}
-			</SimpleGrid>
+			<Skeleton visible={!isKnown('month')} radius={0}>
+				<SimpleGrid cols={7} spacing="1px" role="grid">
+					{days.map((day, dayIndex) => {
+						const isoDate = day.toISODate() as string;
+						return (
+							<MonthGridDayCell
+								key={isoDate}
+								day={day}
+								isToday={today !== null && day.hasSame(today, 'day')}
+								isCurrentMonth={day.hasSame(selectedDate, 'month')}
+								meals={mealsByDate.get(isoDate) ?? []}
+								dayProps={getDayProps(dayIndex)}
+								getMealProps={(mealIndex) =>
+									getMealProps(dayIndex, mealIndex, isoDate)
+								}
+								renderMeal={renderMeal}
+							/>
+						);
+					})}
+				</SimpleGrid>
+			</Skeleton>
 		</Box>
 	);
 }

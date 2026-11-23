@@ -1104,6 +1104,20 @@ export const Loader = vi.fn(
 	}) => <span data-testid={testId ?? 'loader'} data-size={size} />,
 );
 
+// ─── Skeleton ─────────────────────────────────────────────────────────────────
+
+export const Skeleton = vi.fn(
+	({
+		children,
+		visible = true,
+		'data-testid': testId,
+	}: WithChildren & { visible?: boolean }) => (
+		<div data-testid={testId ?? 'skeleton'} data-visible={String(visible)}>
+			{children}
+		</div>
+	),
+);
+
 // ─── Menu (compound + standalone named exports) ───────────────────────────────
 
 export const MenuDivider = vi.fn(() => <hr />);

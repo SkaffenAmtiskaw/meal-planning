@@ -5,7 +5,8 @@ import { type ReactNode, useContext } from 'react';
 
 import { DateTime } from 'luxon';
 
-import { useKnownToday } from '@/_hooks';
+import { makeKnownDay, makeUnknownDay } from '#fixtures/viewerDay';
+import { useToday } from '@/_hooks';
 
 import { CalendarContext } from './CalendarContext';
 import {
@@ -43,7 +44,7 @@ describe('CalendarProvider', () => {
 
 	describe('initial state', () => {
 		it('should default selectedDate to today', () => {
-			vi.mocked(useKnownToday).mockReturnValue(today);
+			vi.mocked(useToday).mockReturnValue(makeKnownDay(today));
 
 			const { result } = renderHook(() => useTestContext(), {
 				wrapper: createTestWrapper(),
@@ -81,13 +82,24 @@ describe('CalendarProvider', () => {
 		});
 
 		it('should default rangeAnchor to today', () => {
-			vi.mocked(useKnownToday).mockReturnValue(today);
+			vi.mocked(useToday).mockReturnValue(makeKnownDay(today));
 
 			const { result } = renderHook(() => useTestContext(), {
 				wrapper: createTestWrapper(),
 			});
 
 			expect(result.current.rangeAnchor).toBe(today);
+		});
+
+		it("starts on the UTC day while the viewer's day is unknown", () => {
+			vi.mocked(useToday).mockReturnValue(makeUnknownDay(today));
+
+			const { result } = renderHook(() => useTestContext(), {
+				wrapper: createTestWrapper(),
+			});
+
+			expect(result.current.selectedDate.toISODate()).toBe('2024-03-15');
+			expect(result.current.rangeAnchor.toISODate()).toBe('2024-03-15');
 		});
 
 		it('should accept initialDate as rangeAnchor', () => {
@@ -98,6 +110,36 @@ describe('CalendarProvider', () => {
 			});
 
 			expect(result.current.rangeAnchor.toISODate()).toBe('2024-06-15');
+		});
+	});
+
+	describe("once the viewer's day is known", () => {
+		it('moves selectedDate and rangeAnchor to today', () => {
+			const knownToday = DateTime.local(2024, 3, 16);
+			vi.mocked(useToday).mockReturnValue(makeUnknownDay(today));
+			const { result, rerender } = renderHook(() => useTestContext(), {
+				wrapper: createTestWrapper(),
+			});
+
+			vi.mocked(useToday).mockReturnValue(makeKnownDay(knownToday));
+			rerender();
+
+			expect(result.current.selectedDate).toBe(knownToday);
+			expect(result.current.rangeAnchor).toBe(knownToday);
+		});
+
+		it('keeps initialDate', () => {
+			const initialDate = DateTime.local(2024, 6, 15);
+			vi.mocked(useToday).mockReturnValue(makeUnknownDay(today));
+			const { result, rerender } = renderHook(() => useTestContext(), {
+				wrapper: createTestWrapper({ initialDate }),
+			});
+
+			vi.mocked(useToday).mockReturnValue(makeKnownDay(today));
+			rerender();
+
+			expect(result.current.selectedDate).toBe(initialDate);
+			expect(result.current.rangeAnchor).toBe(initialDate);
 		});
 	});
 
@@ -122,7 +164,7 @@ describe('CalendarProvider', () => {
 	describe('navigation', () => {
 		describe('goToToday', () => {
 			it('should set selectedDate and rangeAnchor to today', () => {
-				vi.mocked(useKnownToday).mockReturnValue(today);
+				vi.mocked(useToday).mockReturnValue(makeKnownDay(today));
 				const initialDate = DateTime.local(2020, 1, 1);
 
 				const { result } = renderHook(() => useTestContext(), {
@@ -138,6 +180,21 @@ describe('CalendarProvider', () => {
 
 				expect(result.current.selectedDate).toBe(today);
 				expect(result.current.rangeAnchor).toBe(today);
+			});
+			it("does nothing while the viewer's day is unknown", () => {
+				vi.mocked(useToday).mockReturnValue(makeUnknownDay(today));
+				const initialDate = DateTime.local(2020, 1, 1);
+
+				const { result } = renderHook(() => useTestContext(), {
+					wrapper: createTestWrapper({ initialDate }),
+				});
+
+				act(() => {
+					result.current.goToToday();
+				});
+
+				expect(result.current.selectedDate).toBe(initialDate);
+				expect(result.current.rangeAnchor).toBe(initialDate);
 			});
 		});
 

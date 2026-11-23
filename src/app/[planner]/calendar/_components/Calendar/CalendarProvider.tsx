@@ -4,7 +4,7 @@ import { type ReactNode, useCallback, useState } from 'react';
 
 import type { DateTime, DurationLike } from 'luxon';
 
-import { useKnownToday } from '@/_hooks';
+import { useToday } from '@/_hooks';
 
 import { CalendarContext } from './CalendarContext';
 import type { CalendarViewType } from './types';
@@ -26,16 +26,28 @@ export function CalendarProvider({
 	initialDate,
 	initialView,
 }: CalendarProviderProps) {
-	const today = useKnownToday();
-	const [selectedDate, setSelectedDate] = useState<DateTime>(
-		initialDate ?? today,
-	);
+	const { today, possibleDays } = useToday();
+	// While the viewer's day is unknown, start on the UTC day, the middle of the days it could be.
+	const startDate = initialDate ?? today ?? possibleDays[1];
+	const [selectedDate, setSelectedDate] = useState<DateTime>(startDate);
 	const [viewType, setViewType] = useState<CalendarViewType>(
 		initialView ?? 'month',
 	);
-	const [rangeAnchor, setRangeAnchor] = useState<DateTime>(
-		initialDate ?? today,
+	const [rangeAnchor, setRangeAnchor] = useState<DateTime>(startDate);
+
+	/**
+	 * Once the viewer's day is known, move to it. No click can land before
+	 * then, so this never undoes the viewer's own navigation. Set during
+	 * render, so the calendar never paints the UTC day after today is known.
+	 */
+	const [waitingForToday, setWaitingForToday] = useState(
+		!initialDate && today === null,
 	);
+	if (waitingForToday && today) {
+		setWaitingForToday(false);
+		setSelectedDate(today);
+		setRangeAnchor(today);
+	}
 
 	const handleSetSelectedDate = useCallback((date: DateTime) => {
 		setSelectedDate(date);
@@ -51,7 +63,7 @@ export function CalendarProvider({
 	}, []);
 
 	const goToToday = useCallback(() => {
-		navigateToDate(today);
+		if (today) navigateToDate(today);
 	}, [navigateToDate, today]);
 
 	const goToPrevious = useCallback(() => {

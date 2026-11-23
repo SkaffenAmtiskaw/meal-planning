@@ -9,7 +9,7 @@ import { useRovingGridFocus } from './useRovingGridFocus';
 
 interface TestGridProps {
 	days: DateTime[];
-	initialFocusIndex: number;
+	initialFocusIndex: number | null;
 }
 
 function TestGrid({ days, initialFocusIndex }: TestGridProps) {
@@ -40,9 +40,18 @@ describe('useRovingGridFocus', () => {
 		vi.resetAllMocks();
 	});
 
-	function renderGrid(days: DateTime[], initialFocusIndex: number) {
+	function renderGrid(days: DateTime[], initialFocusIndex: number | null) {
 		return render(createElement(TestGrid, { days, initialFocusIndex }));
 	}
+
+	it('makes no day a tab stop while initialFocusIndex is null', () => {
+		const days = [DateTime.local(2024, 3, 14), DateTime.local(2024, 3, 15)];
+
+		renderGrid(days, null);
+
+		expect(screen.getByTestId('day-0').getAttribute('tabindex')).toBe('-1');
+		expect(screen.getByTestId('day-1').getAttribute('tabindex')).toBe('-1');
+	});
 
 	it('sets tabIndex=0 on the initially focused day and -1 on others', () => {
 		const days = [

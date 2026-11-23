@@ -4,7 +4,9 @@ import { type ReactElement, useEffect, useMemo, useRef } from 'react';
 
 import { Box } from '@mantine/core';
 
-import { useKnownToday } from '@/_hooks';
+import type { DateTime } from 'luxon';
+
+import { useToday } from '@/_hooks';
 
 import styles from './ListView.module.css';
 
@@ -20,12 +22,23 @@ interface ListViewProps {
 	renderDish?: MealCardProps['renderDish'];
 }
 
-export function ListView({
+/**
+ * The list's days run from today, so it waits for the viewer's day. It never
+ * shows at first paint, since the calendar opens on month view.
+ */
+export function ListView(props: ListViewProps): ReactElement | null {
+	const { today } = useToday();
+	if (!today) return null;
+
+	return <ListViewDays {...props} today={today} />;
+}
+
+function ListViewDays({
 	meals = [],
 	renderDish,
-}: ListViewProps): ReactElement {
+	today,
+}: ListViewProps & { today: DateTime }): ReactElement {
 	const { rangeAnchor, selectedDate, setSelectedDate } = useCalendarContext();
-	const today = useKnownToday();
 	const days = getListDayRange(rangeAnchor, today);
 
 	const mealsByDate = useMemo(() => {

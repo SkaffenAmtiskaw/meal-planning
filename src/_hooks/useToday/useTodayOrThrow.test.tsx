@@ -5,17 +5,17 @@ import { DateTime } from 'luxon';
 
 import { makeKnownDay, makeUnknownDay } from '#fixtures/viewerDay';
 
-import { useKnownToday } from './useKnownToday';
 import { useToday } from './useToday';
+import { useTodayOrThrow } from './useTodayOrThrow';
 
 vi.mock('./useToday', () => ({ useToday: vi.fn() }));
 
-describe('useKnownToday', () => {
+describe('useTodayOrThrow', () => {
 	it('returns today when the day is known', () => {
 		const today = DateTime.fromISO('2025-09-16');
 		vi.mocked(useToday).mockReturnValue(makeKnownDay(today));
 
-		const { result } = renderHook(() => useKnownToday());
+		const { result } = renderHook(() => useTodayOrThrow());
 
 		expect(result.current).toBe(today);
 	});
@@ -25,8 +25,8 @@ describe('useKnownToday', () => {
 			makeUnknownDay(DateTime.fromISO('2025-09-15')),
 		);
 
-		expect(() => renderHook(() => useKnownToday())).toThrow(
-			'Coding error: useKnownToday() was called before the time zone is known.',
+		expect(() => renderHook(() => useTodayOrThrow())).toThrow(
+			'Coding error: useTodayOrThrow() was called before the time zone is known.',
 		);
 	});
 });

@@ -10,8 +10,8 @@ import { DateTime } from 'luxon';
 import {
 	type SwipeDirection,
 	useIsMobile,
-	useKnownToday,
 	useSwipe,
+	useTodayOrThrow,
 } from '@/_hooks';
 
 import { DatePickerGrid } from './DatePickerGrid';
@@ -44,7 +44,7 @@ describe('DatePickerGrid', () => {
 
 	afterEach(() => {
 		vi.useRealTimers();
-		vi.mocked(useKnownToday).mockReset();
+		vi.mocked(useTodayOrThrow).mockReset();
 	});
 
 	it("shows the value's month first", () => {
@@ -85,14 +85,14 @@ describe('DatePickerGrid', () => {
 	});
 
 	it("rings today in the viewer's time zone, not the browser's", () => {
-		vi.mocked(useKnownToday).mockReturnValue(DateTime.fromISO('2024-06-11'));
+		vi.mocked(useTodayOrThrow).mockReturnValue(DateTime.fromISO('2024-06-11'));
 		render(<DatePickerGrid value="2024-06-15" onChange={vi.fn()} />);
 
 		expect(markFor('2024-06-11').dataset.ring).toBe('true');
 	});
 
 	it("shows the viewer's month first when there's no value and the browser is still a month behind", () => {
-		vi.mocked(useKnownToday).mockReturnValue(DateTime.fromISO('2024-07-01'));
+		vi.mocked(useTodayOrThrow).mockReturnValue(DateTime.fromISO('2024-07-01'));
 		render(<DatePickerGrid value={null} onChange={vi.fn()} />);
 
 		expect(lastProps().date).toBe('2024-07-01');

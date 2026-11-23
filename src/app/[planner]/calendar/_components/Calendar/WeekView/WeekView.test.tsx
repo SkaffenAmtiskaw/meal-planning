@@ -142,6 +142,38 @@ describe('WeekView', () => {
 		}
 	});
 
+	it('shows the days as a skeleton while today’s week is unknown', () => {
+		// Sunday September 15, the first of its week but not of its month.
+		vi.mocked(useToday).mockReturnValue(
+			makeUnknownDay(DateTime.local(2024, 9, 15)),
+		);
+		vi.mocked(getWeekDates).mockReturnValue([DateTime.local(2024, 9, 15)]);
+
+		render(
+			<CalendarProvider initialDate={DateTime.local(2024, 9, 15)}>
+				<WeekView />
+			</CalendarProvider>,
+		);
+
+		expect(screen.getByTestId('skeleton').getAttribute('data-visible')).toBe(
+			'true',
+		);
+	});
+
+	it('draws the days while today’s week is known', () => {
+		vi.mocked(getWeekDates).mockReturnValue([DateTime.local(2024, 9, 15)]);
+
+		render(
+			<CalendarProvider initialDate={DateTime.local(2024, 9, 15)}>
+				<WeekView />
+			</CalendarProvider>,
+		);
+
+		expect(screen.getByTestId('skeleton').getAttribute('data-visible')).toBe(
+			'false',
+		);
+	});
+
 	it('updates the week when selectedDate changes', () => {
 		const initialDate = DateTime.local(2024, 9, 18);
 		vi.mocked(getWeekDates)

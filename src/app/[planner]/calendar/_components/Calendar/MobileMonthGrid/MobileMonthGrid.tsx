@@ -2,7 +2,7 @@
 
 import { type ReactElement, useMemo } from 'react';
 
-import { Box, SimpleGrid, Text } from '@mantine/core';
+import { Box, SimpleGrid, Skeleton, Text } from '@mantine/core';
 
 import { useToday } from '@/_hooks';
 
@@ -23,10 +23,12 @@ export function MobileMonthGrid({
 }: MobileMonthGridProps): ReactElement {
 	const { selectedDate, setSelectedDate } = useCalendarContext();
 	const days = useMemo(() => getMonthGridDates(selectedDate), [selectedDate]);
-	const { today } = useToday();
+	const { today, isKnown } = useToday();
+	// The selected day starts on today, so it's marked, and is the tab stop, only once today is known.
 	const initialFocusIndex = useMemo(
-		() => days.findIndex((day) => day.hasSame(selectedDate, 'day')),
-		[days, selectedDate],
+		() =>
+			today ? days.findIndex((day) => day.hasSame(selectedDate, 'day')) : null,
+		[days, selectedDate, today],
 	);
 	const { getDayProps } = useRovingGridFocus({ days, initialFocusIndex });
 
@@ -59,24 +61,26 @@ export function MobileMonthGrid({
 				))}
 			</SimpleGrid>
 
-			<SimpleGrid cols={7} spacing="1px" role="grid">
-				{days.map((day, dayIndex) => {
-					const isoDate = day.toISODate() as string;
+			<Skeleton visible={!isKnown('month')}>
+				<SimpleGrid cols={7} spacing="1px" role="grid">
+					{days.map((day, dayIndex) => {
+						const isoDate = day.toISODate() as string;
 
-					return (
-						<MobileMonthGridDayCell
-							key={isoDate}
-							day={day}
-							isToday={today !== null && day.hasSame(today, 'day')}
-							isSelected={day.hasSame(selectedDate, 'day')}
-							isCurrentMonth={day.hasSame(selectedDate, 'month')}
-							meals={mealsByDate.get(isoDate) ?? []}
-							dayProps={getDayProps(dayIndex)}
-							onSelect={() => setSelectedDate(day)}
-						/>
-					);
-				})}
-			</SimpleGrid>
+						return (
+							<MobileMonthGridDayCell
+								key={isoDate}
+								day={day}
+								isToday={today !== null && day.hasSame(today, 'day')}
+								isSelected={today !== null && day.hasSame(selectedDate, 'day')}
+								isCurrentMonth={day.hasSame(selectedDate, 'month')}
+								meals={mealsByDate.get(isoDate) ?? []}
+								dayProps={getDayProps(dayIndex)}
+								onSelect={() => setSelectedDate(day)}
+							/>
+						);
+					})}
+				</SimpleGrid>
+			</Skeleton>
 		</Box>
 	);
 }

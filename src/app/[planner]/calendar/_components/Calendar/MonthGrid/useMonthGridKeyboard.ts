@@ -32,14 +32,15 @@ function computeInitialFocusIndex(
 	days: DateTime[],
 	selectedDate: DateTime,
 	today: DateTime | null,
-): number {
+): number | null {
 	if (days.length === 0) {
 		throw new Error('days array cannot be empty');
 	}
 
-	const todayIndex = today
-		? days.findIndex((d) => d.hasSame(today, 'day'))
-		: -1;
+	// The tab stop starts on today when it's in the grid, so there's none until today is known.
+	if (!today) return null;
+
+	const todayIndex = days.findIndex((d) => d.hasSame(today, 'day'));
 	if (todayIndex !== -1) return todayIndex;
 
 	return days.findIndex((d) => d.hasSame(selectedDate, 'month'));

@@ -97,6 +97,38 @@ describe('MonthGrid', () => {
 		}
 	});
 
+	it('shows the days as a skeleton while today’s month is unknown', () => {
+		// March 1, the first of its month.
+		vi.mocked(useToday).mockReturnValue(
+			makeUnknownDay(DateTime.local(2024, 3, 1)),
+		);
+		vi.mocked(getMonthGridDates).mockReturnValue([DateTime.local(2024, 3, 1)]);
+
+		render(
+			<CalendarProvider initialDate={DateTime.local(2024, 3, 1)}>
+				<MonthGrid />
+			</CalendarProvider>,
+		);
+
+		expect(screen.getByTestId('skeleton').getAttribute('data-visible')).toBe(
+			'true',
+		);
+	});
+
+	it('draws the days while today’s month is known', () => {
+		vi.mocked(getMonthGridDates).mockReturnValue([DateTime.local(2024, 3, 1)]);
+
+		render(
+			<CalendarProvider initialDate={DateTime.local(2024, 3, 1)}>
+				<MonthGrid />
+			</CalendarProvider>,
+		);
+
+		expect(screen.getByTestId('skeleton').getAttribute('data-visible')).toBe(
+			'false',
+		);
+	});
+
 	it('tells days from adjacent months that they are outside the month', () => {
 		const today = DateTime.local(2024, 6, 15);
 		vi.mocked(useToday).mockReturnValue(makeKnownDay(today));

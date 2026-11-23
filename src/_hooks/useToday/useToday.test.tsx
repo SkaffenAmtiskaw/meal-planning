@@ -33,6 +33,12 @@ describe('useToday', () => {
 			expect(result.current.possibleDays).toEqual([result.current.today]);
 		});
 
+		it('knows the day', () => {
+			const { result } = renderHook(() => useToday());
+
+			expect(result.current.isKnown('day')).toBe(true);
+		});
+
 		it('returns the same object for the same day', () => {
 			const { result, rerender } = renderHook(() => useToday());
 			const first = result.current;
@@ -61,6 +67,13 @@ describe('useToday', () => {
 			expect(result.current.possibleDays.map((day) => day.toISODate())).toEqual(
 				['2025-09-14', '2025-09-15', '2025-09-16'],
 			);
+		});
+
+		it('knows the month but not the day when the possible days share a month', () => {
+			const { result } = renderHook(() => useToday());
+
+			expect(result.current.isKnown('day')).toBe(false);
+			expect(result.current.isKnown('month')).toBe(true);
 		});
 
 		it('returns the same object for the same UTC day', () => {

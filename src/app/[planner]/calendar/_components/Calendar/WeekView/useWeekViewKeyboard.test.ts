@@ -3,7 +3,7 @@ import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import { DateTime } from 'luxon';
 
-import { makeKnownDay } from '#fixtures/viewerDay';
+import { makeKnownDay, makeUnknownDay } from '#fixtures/viewerDay';
 import { useToday } from '@/_hooks';
 
 import { useWeekViewKeyboard } from './useWeekViewKeyboard';
@@ -89,6 +89,25 @@ describe('useWeekViewKeyboard', () => {
 
 			expect(result.current.getDayProps(0).tabIndex).toBe(0); // Aug 31
 			for (let i = 1; i < 7; i++) {
+				expect(result.current.getDayProps(i).tabIndex).toBe(-1);
+			}
+		});
+
+		it('makes no day a tab stop while the day is unknown', () => {
+			vi.mocked(useToday).mockReturnValue(
+				makeUnknownDay(DateTime.local(2025, 9, 3)),
+			);
+
+			const days = createWeek(DateTime.local(2025, 8, 31)); // Aug 31 - Sep 6
+			const { result } = renderHook(() =>
+				useWeekViewKeyboard({
+					days,
+					mealsByDate: new Map(),
+					selectedDate,
+				}),
+			);
+
+			for (let i = 0; i < 7; i++) {
 				expect(result.current.getDayProps(i).tabIndex).toBe(-1);
 			}
 		});

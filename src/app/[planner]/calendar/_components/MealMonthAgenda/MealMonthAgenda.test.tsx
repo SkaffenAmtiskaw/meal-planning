@@ -5,6 +5,9 @@ import type { ReactElement } from 'react';
 
 import { DateTime } from 'luxon';
 
+import { makeUnknownDay } from '#fixtures/viewerDay';
+import { useToday } from '@/_hooks';
+
 import { MealMonthAgenda } from './MealMonthAgenda';
 
 import { useCalendarContext } from '../Calendar';
@@ -17,6 +20,7 @@ import type { MobileMonthGridMeal } from '../Calendar/MobileMonthGrid/types';
 import { DishLink } from '../DishLink/DishLink';
 
 vi.mock('@mantine/core', async () => await import('#mocks/@mantine/core'));
+vi.mock('@/_hooks', async () => await import('#mocks/@/_hooks'));
 
 vi.mock('../Calendar', async () => ({
 	useCalendarContext: vi.fn(),
@@ -131,6 +135,24 @@ describe('MealMonthAgenda', () => {
 			{ id: 'meal-1', date: '2024-06-15', color: '#111' },
 			{ id: 'meal-2', date: '2024-06-16', color: '#222' },
 		]);
+	});
+
+	it('shows the agenda’s skeleton while the day is unknown', () => {
+		vi.mocked(useToday).mockReturnValue(
+			makeUnknownDay(DateTime.local(2024, 6, 15)),
+		);
+
+		renderAgenda();
+
+		expect(screen.getByTestId('mobile-agenda-skeleton')).toBeDefined();
+		expect(screen.queryByTestId('mobile-agenda')).toBeNull();
+	});
+
+	it('shows the agenda once the day is known', () => {
+		renderAgenda();
+
+		expect(screen.getByTestId('mobile-agenda')).toBeDefined();
+		expect(screen.queryByTestId('mobile-agenda-skeleton')).toBeNull();
 	});
 
 	it('passes the meals to MobileAgenda', () => {

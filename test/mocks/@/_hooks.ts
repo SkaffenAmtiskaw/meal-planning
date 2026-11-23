@@ -126,4 +126,4 @@ export const useToday = vi.fn(
 	(): ViewerDay => makeKnownDay(DateTime.now().startOf('day')),
 );
 
-export const useKnownToday = vi.fn(() => DateTime.now().startOf('day'));
+export const useTodayOrThrow = vi.fn(() => DateTime.now().startOf('day'));
