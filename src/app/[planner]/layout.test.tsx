@@ -7,20 +7,12 @@ import { checkAuth } from '@/_actions/auth/checkAuth';
 
 import { PlannerProvider } from './_components';
 
-const { mockGetUser } = vi.hoisted(() => ({
-	mockGetUser: vi.fn(),
-}));
-
 const mockCheckAuth = vi.mocked(checkAuth);
 
 vi.mock(
 	'@/_actions/auth/checkAuth',
 	async () => await import('#mocks/@/_actions/auth/checkAuth'),
 );
-
-vi.mock('@/_actions/user', () => ({
-	getUser: () => mockGetUser(),
-}));
 
 vi.mock('next/navigation', async () => await import('#mocks/next/navigation'));
 
@@ -56,7 +48,6 @@ const params = Promise.resolve({ planner: plannerId });
 describe('planner layout', () => {
 	beforeEach(() => {
 		vi.clearAllMocks();
-		mockGetUser.mockResolvedValue({ email: 'test@example.com' });
 	});
 
 	test('redirects to / when unauthenticated', async () => {

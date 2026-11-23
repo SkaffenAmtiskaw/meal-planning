@@ -1,4 +1,6 @@
 import { Inter, Roboto } from 'next/font/google';
+import { headers } from 'next/headers';
+import { userAgent } from 'next/server';
 import type { ReactNode } from 'react';
 
 import { MantineProvider, mantineHtmlProps } from '@mantine/core';
@@ -6,6 +8,7 @@ import { DatesProvider } from '@mantine/dates';
 
 import clsx from 'clsx';
 
+import { MobileGuessProvider } from '@/_hooks';
 import { cssVariablesResolver, theme } from '@/_theme';
 import { WEEK_START } from '@/_utils/weekStart';
 
@@ -31,7 +34,18 @@ export const metadata = {
 	title: 'Meal Planner',
 };
 
-export default function RootLayout({ children }: { children: ReactNode }) {
+export default async function RootLayout({
+	children,
+}: {
+	children: ReactNode;
+}) {
+	/**
+	 * Reading the request's headers renders every route per request. A tablet
+	 * counts as desktop.
+	 */
+	const { device } = userAgent({ headers: await headers() });
+	const isMobile = device.type === 'mobile';
+
 	return (
 		<html lang="en" {...mantineHtmlProps}>
 			<head>
@@ -53,9 +67,11 @@ export default function RootLayout({ children }: { children: ReactNode }) {
 					<DatesProvider
 						settings={{ firstDayOfWeek: WEEK_START, consistentWeeks: true }}
 					>
-						<SaveTimeZoneWrapper>
-							<OneTapSignInWrapper>{children}</OneTapSignInWrapper>
-						</SaveTimeZoneWrapper>
+						<MobileGuessProvider isMobile={isMobile}>
+							<SaveTimeZoneWrapper>
+								<OneTapSignInWrapper>{children}</OneTapSignInWrapper>
+							</SaveTimeZoneWrapper>
+						</MobileGuessProvider>
 					</DatesProvider>
 				</MantineProvider>
 			</body>

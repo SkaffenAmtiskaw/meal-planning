@@ -16,10 +16,11 @@ export const KeepAwakeToggle = () => {
 		setMounted(true);
 	}, []);
 
-	/* v8 ignore start */
-	if (!mounted) return null;
-	/* v8 ignore stop */
-	if (!isSupported) return null;
+	/**
+	 * `isSupported` is false on the server, so until the browser has mounted,
+	 * draw the switch as if supported, and remove it only once we know.
+	 */
+	if (mounted && !isSupported) return null;
 
 	const enabled = released === false;
 

@@ -1,6 +1,8 @@
 import { fireEvent, render, screen } from '@testing-library/react';
 import { afterEach, describe, expect, test, vi } from 'vitest';
 
+import { renderToString } from 'react-dom/server';
+
 import { KeepAwakeToggle } from './KeepAwakeToggle';
 
 const mockRequest = vi.fn();
@@ -18,7 +20,18 @@ afterEach(() => {
 });
 
 describe('KeepAwakeToggle', () => {
-	test('renders nothing when wake lock is not supported', () => {
+	test('draws the switch before support is known, as the server does', () => {
+		mockUseWakeLock.mockReturnValue({
+			isSupported: false,
+			released: undefined,
+			request: mockRequest,
+			release: mockRelease,
+		});
+		const html = renderToString(<KeepAwakeToggle />);
+		expect(html).toContain('keep-awake-toggle');
+	});
+
+	test('removes the switch after load when wake lock is not supported', () => {
 		mockUseWakeLock.mockReturnValue({
 			isSupported: false,
 			released: undefined,

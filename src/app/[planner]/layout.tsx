@@ -38,7 +38,7 @@ const Layout = async ({ children, params }: LayoutProps<'/[planner]'>) => {
 			navbar={<NavbarServer id={id} />}
 		>
 			<TimeZoneProvider timeZone={await getCookieTimeZone()}>
-				<PlannerProvider id={id} accessLevel={result.accessLevel}>
+				<PlannerProvider accessLevel={result.accessLevel}>
 					{children}
 				</PlannerProvider>
 			</TimeZoneProvider>

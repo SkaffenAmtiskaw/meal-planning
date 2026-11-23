@@ -1,35 +1,18 @@
 'use client';
 
-import { useEffect, useState } from 'react';
 import type { ReactNode } from 'react';
 
-import { getPlanner } from '@/_actions/planner';
-import type { AccessLevel, PlannerInterface } from '@/_models/types';
+import type { AccessLevel } from '@/_models/types';
 
 import { PlannerContext } from './PlannerContext';
 
 type Props = {
-	id: string;
 	accessLevel: AccessLevel;
 	children: ReactNode;
 };
 
-export const PlannerProvider = ({ accessLevel, children, id }: Props) => {
-	const [planner, setPlanner] = useState<PlannerInterface | null>(null);
-
-	useEffect(() => {
-		getPlanner(id)
-			.then(setPlanner)
-			.catch((err: unknown) => {
-				throw err;
-			});
-	}, [id]);
-
-	if (!planner) return null;
-
-	return (
-		<PlannerContext.Provider value={{ ...planner, accessLevel }}>
-			{children}
-		</PlannerContext.Provider>
-	);
-};
+export const PlannerProvider = ({ accessLevel, children }: Props) => (
+	<PlannerContext.Provider value={{ accessLevel }}>
+		{children}
+	</PlannerContext.Provider>
+);
