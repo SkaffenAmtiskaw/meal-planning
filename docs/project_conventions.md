@@ -81,6 +81,20 @@ A component needs `'use client'` when it uses state, event handlers such as `onC
 
 **Keep the client boundary small:** add `'use client'` to the smallest component that needs it, not to a parent that only contains it, because everything a Client Component imports is sent to the browser too. For example, a mostly static layout with a search bar stays a Server Component, and only the search bar is a Client Component. (Next.js docs, Server and Client Components: "Reducing JS bundle size".)
 
+## What a Server-Rendered Page Draws First
+A page the server renders draws as much as it can at first paint. It guesses whether the viewer is on a phone or a desktop. For anything else it can't know, such as the viewer's day, it holds back only the parts the unknown would change. React expects the browser's first render to match what the server drew, but the server can't know some things for sure. A page that waits for the browser to learn them shows nothing at first, and one that guesses them wrong jumps when the browser corrects it.
+
+Rather than waiting for the browser, the server guesses phone or desktop from the request's user agent, and draws the whole page in that layout, including any parts it holds back. When the guess is wrong, such as for a narrowed desktop window or a phone held sideways, the layout jumps once after the page loads. That's acceptable because wrong guesses are rare and a wrong guess changes only the page's shape. A wrong day would show the viewer wrong content, such as another day's meals, so the day is held back instead.
+
+For any other unknown, a part of the page draws right away if the unknown wouldn't change it. Whether the unknown changes a part can depend on what it could be in that case. For example, the viewer's time zone is unknown on a device's first load. Until it's known, their day could be the UTC day or the day either side of it. The calendar's month grid comes out the same on all three unless the UTC day is the first or last of its month, so in every other case it draws right away. The week grid likewise draws right away unless the UTC day is the first or last day of its week.
+
+> [!NOTE]
+> The viewer's time zone comes from a cookie the browser saves on each load, so it's also unknown after cookies are cleared. Time zones run from UTC−12 to UTC+14, which is why the viewer's day is never more than one day from the UTC day.
+
+A part the unknown would change is held back until the browser knows the answer. While it's held back, it shows a skeleton shaped like that part, in the layout the server guessed, so the real content replaces the skeleton without moving the page. For example, the phone agenda under the month grid lists the selected day's meals. The selected day starts on today, so the agenda shows a skeleton while the day is unknown. So does the month grid when the UTC day is the first or last of its month. A mark on a part that's already drawn, such as the today ring, needs no skeleton, because adding it moves nothing. It appears once the day is known.
+
+Each unknown has one source, so that the server and the browser's first render get the same answer. Code that checks the screen size while rendering uses `useIsMobile()`, which starts from the server's guess and corrects itself once the browser measures the window. Code that needs the viewer's day gets it from `useToday()`. While the day is unknown, `useToday()` also gives the days it could be. Its `isKnown(period)` says whether today's day, week or month is known yet, so a part that shows only a week or month asks it rather than checking itself whether the UTC day is the first or last of that week or month. Code that runs its own media query, or reads the clock with `DateTime.now()`, gets a different answer on the server than in the browser, so the browser throws away the server's page and draws it again from scratch.
+
 ## Modals
 A modal splits into three parts with separate jobs: what owns its open state, what it's opened with, and a frame that draws the content inside it. Keeping them apart lets the same content show outside a modal, and lets a modal show the latest data after a save.
 
