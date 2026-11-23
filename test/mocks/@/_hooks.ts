@@ -116,8 +116,6 @@ export const TimeZoneProvider = vi.fn(
 	({ children }: { children: ReactNode }) => children,
 );
 
-export const useTimeZone = vi.fn((): string | null => 'UTC');
-
 /**
  * A known day by default. A test sets another with the `#fixtures/viewerDay` builders:
  *   vi.mocked(useToday).mockReturnValue(makeKnownDay(today));
@@ -126,4 +124,11 @@ export const useToday = vi.fn(
 	(): ViewerDay => makeKnownDay(DateTime.now().startOf('day')),
 );
 
-export const useTodayOrThrow = vi.fn(() => DateTime.now().startOf('day'));
+/** Gives the `useToday` mock's day, so a test sets the day once for both. */
+export const useTodayOrThrow = vi.fn((): DateTime => {
+	const { today } = useToday();
+	if (!today) {
+		throw new Error('useTodayOrThrow() was called while the day is unknown.');
+	}
+	return today;
+});

@@ -26,7 +26,7 @@ describe('useTodayOrThrow', () => {
 		);
 
 		expect(() => renderHook(() => useTodayOrThrow())).toThrow(
-			'Coding error: useTodayOrThrow() was called before the time zone is known.',
+			"Coding error: useTodayOrThrow() was called before the viewer's day is known.",
 		);
 	});
 });

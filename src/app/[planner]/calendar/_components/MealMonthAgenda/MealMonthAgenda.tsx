@@ -24,7 +24,7 @@ export function MealMonthAgenda({
 	plannerId,
 }: MealMonthAgendaProps): ReactElement {
 	const meals = useCalendarMeals();
-	const { today } = useToday();
+	const { isKnown } = useToday();
 
 	const dots = useMemo<MobileMonthGridMeal[]>(
 		() =>
@@ -47,7 +47,7 @@ export function MealMonthAgenda({
 		<Stack flex={1} mih={0} gap="md">
 			<MobileMonthGrid meals={dots} />
 			{/* The agenda lists the selected day, which starts on today, so it waits for today. */}
-			{today ? (
+			{isKnown('day') ? (
 				<MobileAgenda meals={meals} renderDish={renderDish} />
 			) : (
 				<MobileAgendaSkeleton />

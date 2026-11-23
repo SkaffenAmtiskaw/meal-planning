@@ -4,9 +4,7 @@ import { type ReactElement, useEffect, useMemo, useRef } from 'react';
 
 import { Box } from '@mantine/core';
 
-import type { DateTime } from 'luxon';
-
-import { useToday } from '@/_hooks';
+import { useToday, useTodayOrThrow } from '@/_hooks';
 
 import styles from './ListView.module.css';
 
@@ -27,18 +25,15 @@ interface ListViewProps {
  * shows at first paint, since the calendar opens on month view.
  */
 export function ListView(props: ListViewProps): ReactElement | null {
-	const { today } = useToday();
-	if (!today) return null;
+	const { isKnown } = useToday();
+	if (!isKnown('day')) return null;
 
-	return <ListViewDays {...props} today={today} />;
+	return <ListViewDays {...props} />;
 }
 
-function ListViewDays({
-	meals = [],
-	renderDish,
-	today,
-}: ListViewProps & { today: DateTime }): ReactElement {
+function ListViewDays({ meals = [], renderDish }: ListViewProps): ReactElement {
 	const { rangeAnchor, selectedDate, setSelectedDate } = useCalendarContext();
+	const today = useTodayOrThrow();
 	const days = getListDayRange(rangeAnchor, today);
 
 	const mealsByDate = useMemo(() => {
