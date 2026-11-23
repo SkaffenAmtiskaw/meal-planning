@@ -9,8 +9,13 @@
 #   BETTER_AUTH_URL and DB_URL into the worktree's .env.local and writes its launch.json, then
 #   empties test-<n>, since removing a worktree leaves its database as it was.
 # - A worktree that has a slot keeps it, and its launch.json is written only if it's missing.
-# On success it prints one line naming a new slot. On failure it prints what went wrong to stdout,
-# where the SessionStart hook passes it to the session, and still exits 0, so the session starts.
+# - Each slot records in SLOT_BRANCH the branch it was last set up for. The desktop app hands an
+#   archived session's worktree folder, slot and all, to a later session on a new branch. So when
+#   the branch differs from SLOT_BRANCH, it records the new branch and empties test-<n>. A slot
+#   with no SLOT_BRANCH yet records the branch without emptying, so work under way keeps its data.
+# On success it prints one line naming a new slot or an emptied one. On failure it prints what went
+# wrong to stdout, where the SessionStart hook passes it to the session, and still exits 0, so the
+# session starts.
 # Usage: sh scripts/worktree-slot.sh <checkout folder>
 
 [ "$CLAUDE_CODE_REMOTE" = "true" ] && exit 0
@@ -36,6 +41,15 @@ set_value() {
     { print }
     END { if (!done) print k "=" v }
   ' "$env_file" > "$env_file.tmp" && mv "$env_file.tmp" "$env_file"
+}
+
+# Empties the slot's database, since another worktree or session may have left data in it.
+empty_db() {
+  if ! out=$(cd "$top" && pnpm --silent db:empty-worktree 2>&1); then
+    echo "worktree-slot.sh: couldn't empty $1, so it may hold an earlier worktree's data. Run pnpm db:empty-worktree once the cause is fixed:"
+    echo "$out" | tail -n 20
+    return 1
+  fi
 }
 
 # $1: the dev port, $2: the sign-in port, $3: the host the preview opens.
@@ -78,10 +92,20 @@ if [ "$git_dir" = "$common_dir" ]; then
 fi
 
 host="$(basename "$top" | tr '[:upper:]' '[:lower:]').localhost"
+branch=$(git -C "$top" branch --show-current)
 
 port=$(value "$env_file" PORT)
 if [ -n "$port" ]; then
   [ -f "$launch" ] || write_launch "$port" "$(value "$env_file" SIGN_IN_PORT)" "$host"
+  slot_branch=$(value "$env_file" SLOT_BRANCH)
+  if [ -n "$branch" ] && [ "$branch" != "$slot_branch" ]; then
+    set_value SLOT_BRANCH "$branch"
+    if [ -n "$slot_branch" ]; then
+      db=$(value "$env_file" DB_URL | sed -E 's#^[^/]*//[^/]*/([^?]*).*#\1#')
+      empty_db "$db" &&
+        echo "worktree-slot.sh: this worktree's slot was last set up for $slot_branch, so its database $db was emptied for $branch."
+    fi
+  fi
   exit 0
 fi
 
@@ -126,12 +150,10 @@ set_value PORT "$dev_port"
 set_value SIGN_IN_PORT "$sign_in_port"
 set_value BETTER_AUTH_URL "http://$host:$dev_port"
 set_value DB_URL "$db_url"
+[ -n "$branch" ] && set_value SLOT_BRANCH "$branch"
 write_launch "$dev_port" "$sign_in_port" "$host"
 
 echo "worktree-slot.sh: this worktree has slot $slot: the app at http://$host:$dev_port, sign-in links at http://$host:$sign_in_port, database $db."
 
-if ! out=$(cd "$top" && pnpm --silent db:empty-worktree 2>&1); then
-  echo "worktree-slot.sh: couldn't empty $db, so it may hold an earlier worktree's data. Run pnpm db:empty-worktree once the cause is fixed:"
-  echo "$out" | tail -n 20
-fi
+empty_db "$db"
 exit 0

@@ -5,7 +5,7 @@ The risk in this work is fixing a one-off. A behavior that went wrong tempts a f
 
 1. **Start the search** in the background: send `transcript-searcher` the behavior in general terms, not one session's details, so it finds cases in other situations too.
 2. **Read what happened.** Transcripts run to megabytes, so search them and read around each hit, rather than reading whole files.
-   - **If you have a transcript:** find the stretch the account is about, and what led into it. If the account involves sessions started from the one in the transcript, `list_sessions` with `linked: true` lists them. Earlier transcripts of the same session, from before a `/clear`, sit in the same folder as the transcript you have.
+   - **If you have a transcript:** find the stretch the account is about, and what led into it. If the account involves sessions started from the one in the transcript, `list_sessions` with `linked: true` lists them. Earlier transcripts of the same session, from before a `/clear`, sit in the same folder as the transcript you have, and their `gitBranch` field matches its own. Go by the branch rather than the folder, because the app hands a worktree's folder to later sessions on other branches, and their transcripts land there too.
    - **Otherwise:** read the cases the account cites. If it cites none, the search's cases are where you start.
 
    Judge each agent by the instructions it had then, not today's. A transcript holds each skill body as it loaded. For AGENTS.md, the CLAUDE.md files and other files the agent relied on, use `git show` at the last commit on `origin/develop` before the session started.
