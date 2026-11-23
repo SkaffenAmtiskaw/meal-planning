@@ -1,4 +1,4 @@
-import { getSavedItem } from '@/_actions/library';
+import { getSavedItem } from '@/_actions/library/getSavedItem';
 import type { PlannerInterface } from '@/_models/types';
 
 import { ModalWrapper } from './ModalWrapper';

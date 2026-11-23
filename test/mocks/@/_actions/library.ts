@@ -45,11 +45,6 @@ export const editRecipe = vi.fn(async () => ({
 	data: { _id: '507f1f77bcf86cd799439012', name: 'Updated Recipe' },
 }));
 
-export const getSavedItem = vi.fn(async () => ({
-	_id: { toString: () => '507f1f77bcf86cd799439012' },
-	name: 'Test Item',
-}));
-
 export const updateRecipeNotes = vi.fn(async () => ({
 	ok: true as const,
 	data: undefined,

@@ -1,6 +1,6 @@
-'use server';
+import 'server-only';
 
-import { getPlanner } from '@/_actions/planner';
+import { getPlanner } from '@/_actions/planner/getPlanner';
 
 export const getSavedItem = async (plannerId: string, itemId: string) => {
 	const planner = await getPlanner(plannerId);

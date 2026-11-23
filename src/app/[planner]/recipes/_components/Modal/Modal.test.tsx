@@ -1,14 +1,14 @@
 import { render } from '@testing-library/react';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
-import { getSavedItem } from '@/_actions/library';
+import { getSavedItem } from '@/_actions/library/getSavedItem';
 
 import { Modal } from './Modal';
 import { ModalWrapper } from './ModalWrapper';
 
 vi.mock(
-	'@/_actions/library',
-	async () => await import('#mocks/@/_actions/library'),
+	'@/_actions/library/getSavedItem',
+	async () => await import('#mocks/@/_actions/library/getSavedItem'),
 );
 
 vi.mock('./ModalWrapper', async () => ({

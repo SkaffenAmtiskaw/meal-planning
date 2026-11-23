@@ -1,14 +1,14 @@
 import { render } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-import { getPlanner } from '@/_actions/planner';
+import { getPlanner } from '@/_actions/planner/getPlanner';
 
 import { Modal, SavedList } from './_components';
 import RecipesPage from './page';
 
 vi.mock(
-	'@/_actions/planner',
-	async () => await import('#mocks/@/_actions/planner'),
+	'@/_actions/planner/getPlanner',
+	async () => await import('#mocks/@/_actions/planner/getPlanner'),
 );
 
 vi.mock('./_components', () => ({
