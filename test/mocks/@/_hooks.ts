@@ -16,6 +16,7 @@ import { DateTime } from 'luxon';
 
 import type { AsyncStatus } from '@/_hooks/useAsyncStatus';
 import type { Status } from '@/_hooks/useFormFeedback';
+import type { UseSwipeOptions } from '@/_hooks/useSwipe';
 
 const idle: Status = 'idle';
 
@@ -98,6 +99,12 @@ export const useAsyncButton = vi.fn(() => {
 });
 
 export const useIsMobile = vi.fn(() => false);
+
+/**
+ * A test swipes by calling the `onSwipe` it was given:
+ *   act(() => vi.mocked(useSwipe).mock.lastCall?.[0].onSwipe('left'));
+ */
+export const useSwipe = vi.fn((_options: UseSwipeOptions) => vi.fn());
 
 export const TimeZoneProvider = vi.fn(
 	({ children }: { children: ReactNode }) => children,

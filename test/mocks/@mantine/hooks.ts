@@ -16,3 +16,5 @@ export const useDisclosure = vi.fn((initialState = false) => [
 ]);
 
 export const useMediaQuery = vi.fn(() => false);
+
+export const useDrag = vi.fn(() => ({ ref: vi.fn(), active: false }));

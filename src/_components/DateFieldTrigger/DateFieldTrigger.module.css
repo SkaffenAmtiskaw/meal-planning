@@ -1,0 +1,17 @@
+/* Mantine has no notched label, so the root anchors the label that sits on the field's top border. */
+.root {
+	position: relative;
+}
+
+/* Mantine has no notched label, so the label sits over the top border, with the field's background behind it to cut the notch. */
+.label {
+	position: absolute;
+	top: 0;
+	left: var(--mantine-spacing-xs);
+	z-index: 1;
+	padding-inline: 4px;
+	transform: translateY(-50%);
+	background-color: var(--mantine-color-white);
+	font-size: var(--mantine-font-size-xs);
+	line-height: 1;
+}

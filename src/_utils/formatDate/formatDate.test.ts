@@ -37,6 +37,10 @@ describe('formatDate', () => {
 		expect(formatDate('2024-06-01', 'shortMonth')).toBe('Jun');
 	});
 
+	it('formats numericDate as the numeric month, day and year', () => {
+		expect(formatDate('2026-09-04', 'numericDate')).toBe('9/4/2026');
+	});
+
 	it('formats a luxon DateTime as well as an ISO date', () => {
 		expect(formatDate(DateTime.local(2024, 10, 27), 'monthDay')).toBe(
 			'October 27',

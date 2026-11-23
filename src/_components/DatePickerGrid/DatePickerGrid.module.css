@@ -1,0 +1,52 @@
+/* Mantine's DatePicker has no prop to turn off its own selected fill, so this clears it, on hover and press too, and leaves the selected mark to NumberMark's sage circle. */
+.day[data-selected],
+.day[data-selected]:hover,
+.day[data-selected]:active {
+	background-color: transparent;
+}
+
+/* Mantine's DatePicker has no meal-dot state, so a marked day gets a small forest dot centred under its number, below the Day marks ring. */
+.day[data-marked]::after {
+	content: "";
+	position: absolute;
+	bottom: 1px;
+	left: 50%;
+	width: 4px;
+	height: 4px;
+	border-radius: 50%;
+	background-color: var(--mantine-color-forest-5);
+	transform: translateX(-50%);
+}
+
+/* The meal dot is placed against the day button, which Mantine leaves unpositioned. Mantine centres the number in the cell, which leaves too little room under the Day marks ring for the dot, so the bottom padding lifts every day's number and centres the number and dot as a group. */
+.day {
+	position: relative;
+	padding-bottom: 6px;
+}
+
+/* Mantine's DatePicker has no meal-dot state to size, so touch sizes on phones get a bigger dot, lifted with the bigger number. */
+.touch[data-marked]::after {
+	bottom: 2px;
+	width: 6px;
+	height: 6px;
+}
+
+/* Mantine centres the bigger touch number in the cell too, so touch sizes lift it further to leave room for the bigger dot. */
+.touch {
+	padding-bottom: 8px;
+}
+
+/* Mantine's DatePicker has no swipe to page months, so on phones the browser keeps vertical scrolling and leaves sideways drags to the grid's swipe, rather than cancelling them as a pan. */
+.swipeArea {
+	touch-action: pan-y;
+}
+
+/* Mantine's lg size also enlarges the weekday letters, which aren't tappable, so they stay at the desktop size and don't compete with the day numbers. */
+.touchWeekday {
+	font-size: var(--mantine-font-size-sm);
+}
+
+/* Mantine fades outside-month days to half opacity, which would pale NumberMark's muted navy further; NumberMark sets the muted colour itself. */
+.day[data-outside] {
+	opacity: 1;
+}

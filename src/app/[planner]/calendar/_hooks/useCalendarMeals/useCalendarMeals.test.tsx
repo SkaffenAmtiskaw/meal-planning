@@ -63,7 +63,7 @@ describe('useCalendarMeals', () => {
 
 	test('throws outside the provider', () => {
 		expect(() => renderHook(() => useCalendarMeals())).toThrow(
-			'useCalendarMeals must be used inside CalendarDaysProvider',
+			'useCalendarDays must be used inside CalendarDaysProvider',
 		);
 	});
 });

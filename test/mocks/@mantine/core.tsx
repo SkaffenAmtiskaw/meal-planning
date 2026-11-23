@@ -196,13 +196,22 @@ export const Paper = vi.fn(
 	),
 );
 
+// Tells the mock dropdown whether its popover is open.
+const PopoverOpenedContext = React.createContext(false);
+
 export const Popover = Object.assign(
-	vi.fn(({ children }: WithChildren) => <>{children}</>),
+	vi.fn(({ children, opened }: WithChildren & { opened?: boolean }) => (
+		<PopoverOpenedContext.Provider value={opened ?? false}>
+			{children}
+		</PopoverOpenedContext.Provider>
+	)),
 	{
 		Target: vi.fn(({ children }: WithChildren) => <>{children}</>),
-		Dropdown: vi.fn(({ children }: WithChildren) => (
-			<div data-testid="popover-dropdown">{children}</div>
-		)),
+		Dropdown: vi.fn(({ children }: WithChildren) =>
+			React.useContext(PopoverOpenedContext) ? (
+				<div data-testid="popover-dropdown">{children}</div>
+			) : null,
+		),
 	},
 );
 
@@ -795,6 +804,36 @@ export const Input = Object.assign(
 	{ Label: InputLabel },
 );
 
+export const InputBase = vi.fn(
+	({
+		children,
+		label,
+		rightSection,
+		component = 'input',
+		pointer,
+		rightSectionPointerEvents,
+		classNames,
+		...props
+	}: WithChildren & {
+		label?: React.ReactNode;
+		rightSection?: React.ReactNode;
+		component?: React.ElementType;
+		pointer?: boolean;
+		rightSectionPointerEvents?: string;
+		classNames?: Record<string, string>;
+		[key: string]: unknown;
+	}) => {
+		const Element = component;
+		return (
+			<div>
+				<span>{label}</span>
+				<Element {...props}>{children}</Element>
+				{rightSection}
+			</div>
+		);
+	},
+);
+
 // ─── Modal ────────────────────────────────────────────────────────────────────
 
 const ModalRoot = vi.fn(
@@ -952,6 +991,47 @@ export const Modal = Object.assign(
 		CloseButton: ModalCloseButton,
 	},
 );
+
+// ─── Drawer ───────────────────────────────────────────────────────────────────
+
+// A Drawer part that renders its children in a div with its own test id.
+const drawerPart = (defaultTestId: string) =>
+	vi.fn(
+		({
+			children,
+			'data-testid': testId,
+		}: {
+			children?: React.ReactNode;
+			'data-testid'?: string;
+			[key: string]: unknown;
+		}) => <div data-testid={testId ?? defaultTestId}>{children}</div>,
+	);
+
+export const Drawer = {
+	Root: vi.fn(
+		({
+			children,
+			opened,
+		}: {
+			children?: React.ReactNode;
+			opened?: boolean;
+			onClose?: () => void;
+			[key: string]: unknown;
+		}) => (opened ? <div role="dialog">{children}</div> : null),
+	),
+	Overlay: vi.fn(() => <div data-testid="drawer-overlay" />),
+	Content: drawerPart('drawer-content'),
+	Header: drawerPart('drawer-header'),
+	Title: drawerPart('drawer-title'),
+	Body: drawerPart('drawer-body'),
+	CloseButton: vi.fn(
+		({ onClick }: { onClick?: () => void; [key: string]: unknown }) => (
+			<button type="button" aria-label="close" onClick={onClick}>
+				×
+			</button>
+		),
+	),
+};
 
 // ─── Navigation ───────────────────────────────────────────────────────────────
 
