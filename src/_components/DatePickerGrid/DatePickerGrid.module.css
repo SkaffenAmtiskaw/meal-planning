@@ -35,6 +35,11 @@
 	padding-bottom: 8px;
 }
 
+/* Mantine's DatePicker has no swipe to page months, so on phones the browser keeps vertical scrolling and leaves sideways drags to the grid's swipe, rather than cancelling them as a pan. */
+.swipeArea {
+	touch-action: pan-y;
+}
+
 /* Mantine's lg size also enlarges the weekday letters, which aren't tappable, so they stay at the desktop size and don't compete with the day numbers. */
 .touchWeekday {
 	font-size: var(--mantine-font-size-sm);

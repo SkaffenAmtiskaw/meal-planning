@@ -5,7 +5,7 @@ import type { ReactNode } from 'react';
 
 import { DatePicker, type DatePickerProps } from '@mantine/dates';
 
-import { useIsMobile } from '@/_hooks';
+import { useIsMobile, useSwipe } from '@/_hooks';
 
 import { DatePickerGrid } from './DatePickerGrid';
 
@@ -191,6 +191,61 @@ describe('DatePickerGrid', () => {
 		expect(lastProps().size).toBe('sm');
 		expect(lastProps().fullWidth).toBe(false);
 		expect(markFor('2024-06-12').dataset.size).toBe('sm');
+	});
+
+	describe('swipes', () => {
+		// Swipes the grid the way the swipe hook reports it.
+		function swipe(direction: 'left' | 'right'): void {
+			act(() => vi.mocked(useSwipe).mock.lastCall?.[0].onSwipe(direction));
+		}
+
+		it('turn on on phones', () => {
+			vi.mocked(useIsMobile).mockReturnValue(true);
+			render(<DatePickerGrid value="2024-06-15" onChange={vi.fn()} />);
+
+			expect(vi.mocked(useSwipe).mock.lastCall?.[0].enabled).toBe(true);
+		});
+
+		it('stay off on desktop', () => {
+			vi.mocked(useIsMobile).mockReturnValue(false);
+			render(<DatePickerGrid value="2024-06-15" onChange={vi.fn()} />);
+
+			expect(vi.mocked(useSwipe).mock.lastCall?.[0].enabled).toBe(false);
+		});
+
+		it('show the next month on a left swipe', () => {
+			render(<DatePickerGrid value="2024-06-15" onChange={vi.fn()} />);
+
+			swipe('left');
+
+			expect(lastProps().date).toBe('2024-07-01');
+		});
+
+		it('show the previous month on a right swipe', () => {
+			render(<DatePickerGrid value="2024-06-15" onChange={vi.fn()} />);
+
+			swipe('right');
+
+			expect(lastProps().date).toBe('2024-05-01');
+		});
+
+		it('page from the month Mantine paged to', () => {
+			render(<DatePickerGrid value="2024-06-15" onChange={vi.fn()} />);
+
+			act(() => lastProps().onDateChange?.('2024-08-01'));
+			swipe('left');
+
+			expect(lastProps().date).toBe('2024-09-01');
+		});
+
+		it('pick no day', () => {
+			const onChange = vi.fn();
+			render(<DatePickerGrid value="2024-06-15" onChange={onChange} />);
+
+			swipe('left');
+
+			expect(onChange).not.toHaveBeenCalled();
+		});
 	});
 
 	it('reports the picked date', () => {

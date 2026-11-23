@@ -8,7 +8,7 @@ import { IconChevronLeft, IconChevronRight } from '@tabler/icons-react';
 import clsx from 'clsx';
 import { DateTime } from 'luxon';
 
-import { useIsMobile } from '@/_hooks';
+import { useIsMobile, useSwipe } from '@/_hooks';
 
 import classes from './DatePickerGrid.module.css';
 
@@ -42,51 +42,66 @@ export function DatePickerGrid({
 		() => value ?? today.toISODate(),
 	);
 
+	// On phones a swipe across the grid pages the month: left to the next, right to the previous.
+	const swipeRef = useSwipe<HTMLDivElement>({
+		enabled: isMobile,
+		onSwipe: (direction) =>
+			setShownMonth(
+				(month) =>
+					DateTime.fromISO(month)
+						.plus({ months: direction === 'left' ? 1 : -1 })
+						.startOf('month')
+						.toISODate() as string,
+			),
+	});
+
 	const isToday = (date: string) =>
 		DateTime.fromISO(date).hasSame(today, 'day');
 
 	return (
-		<DatePicker
-			value={value}
-			date={shownMonth}
-			onDateChange={setShownMonth}
-			size={size}
-			// On phones the grid spreads across the sheet, however wide the phone is.
-			fullWidth={isMobile}
-			classNames={{
-				day: clsx(classes.day, isMobile && classes.touch),
-				weekday: clsx(isMobile && classes.touchWeekday),
-			}}
-			previousIcon={<IconChevronLeft size={isMobile ? 20 : 16} />}
-			nextIcon={<IconChevronRight size={isMobile ? 20 : 16} />}
-			previousLabel="Previous month"
-			nextLabel="Next month"
-			// A single letter per weekday, like "S", which none of Mantine's format strings give.
-			weekdayFormat={(date) => DateTime.fromISO(date).toFormat('ccccc')}
-			// The day button is what takes focus, so it carries aria-current rather than the number inside it.
-			// data-marked lets the stylesheet draw the dot under the number.
-			getDayProps={(date) => ({
-				'aria-current': isToday(date) ? 'date' : undefined,
-				...(marked.has(date) && { 'data-marked': true }),
-			})}
-			renderDay={(date) => {
-				const day = DateTime.fromISO(date);
-				return (
-					<NumberMark
-						size={size}
-						ring={isToday(date)}
-						filled={date === value}
-						muted={!day.hasSame(DateTime.fromISO(shownMonth), 'month')}
-					>
-						{day.day}
-					</NumberMark>
-				);
-			}}
-			onChange={(date) => {
-				if (date) {
-					onChange(date);
-				}
-			}}
-		/>
+		<div ref={swipeRef} className={clsx(isMobile && classes.swipeArea)}>
+			<DatePicker
+				value={value}
+				date={shownMonth}
+				onDateChange={setShownMonth}
+				size={size}
+				// On phones the grid spreads across the sheet, however wide the phone is.
+				fullWidth={isMobile}
+				classNames={{
+					day: clsx(classes.day, isMobile && classes.touch),
+					weekday: clsx(isMobile && classes.touchWeekday),
+				}}
+				previousIcon={<IconChevronLeft size={isMobile ? 20 : 16} />}
+				nextIcon={<IconChevronRight size={isMobile ? 20 : 16} />}
+				previousLabel="Previous month"
+				nextLabel="Next month"
+				// A single letter per weekday, like "S", which none of Mantine's format strings give.
+				weekdayFormat={(date) => DateTime.fromISO(date).toFormat('ccccc')}
+				// The day button is what takes focus, so it carries aria-current rather than the number inside it.
+				// data-marked lets the stylesheet draw the dot under the number.
+				getDayProps={(date) => ({
+					'aria-current': isToday(date) ? 'date' : undefined,
+					...(marked.has(date) && { 'data-marked': true }),
+				})}
+				renderDay={(date) => {
+					const day = DateTime.fromISO(date);
+					return (
+						<NumberMark
+							size={size}
+							ring={isToday(date)}
+							filled={date === value}
+							muted={!day.hasSame(DateTime.fromISO(shownMonth), 'month')}
+						>
+							{day.day}
+						</NumberMark>
+					);
+				}}
+				onChange={(date) => {
+					if (date) {
+						onChange(date);
+					}
+				}}
+			/>
+		</div>
 	);
 }
