@@ -2,11 +2,14 @@ import { fireEvent, render, screen } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import type { PendingInvite } from '@/_actions/sharing';
+import { useViewerZoneFormat } from '@/_hooks';
 import { isPastDate, isWithinHours } from '@/_utils/date';
 
 import { PendingInvitesList } from './PendingInvitesList';
 
 vi.mock('@mantine/core', async () => await import('#mocks/@mantine/core'));
+
+vi.mock('@/_hooks', async () => await import('#mocks/@/_hooks'));
 
 vi.mock('../_utils/getAccessLevelColor', async () => ({
 	getAccessLevelColor: vi.fn(() => 'blue'),
@@ -15,7 +18,6 @@ vi.mock('../_utils/getAccessLevelColor', async () => ({
 vi.mock('@/_utils/date', async () => ({
 	isPastDate: vi.fn(),
 	isWithinHours: vi.fn(),
-	toLocaleDateString: vi.fn(() => 'mock-date'),
 }));
 
 describe('PendingInvitesList', () => {
@@ -33,8 +35,82 @@ describe('PendingInvitesList', () => {
 
 	beforeEach(() => {
 		vi.clearAllMocks();
+		vi.mocked(useViewerZoneFormat).mockReset();
 		mockIsPastDate.mockReturnValue(false);
 		mockIsWithinHours.mockReturnValue(false);
+	});
+
+	describe('invite dates', () => {
+		const invite: PendingInvite = {
+			...mockInvite,
+			invitedAt: '2024-01-15T12:00:00.000Z',
+			expiresAt: '2024-01-22T12:00:00.000Z',
+		};
+
+		const renderList = () =>
+			render(
+				<PendingInvitesList
+					invites={[invite]}
+					loading={false}
+					cancelStatus="idle"
+					cancelError={null}
+					onCancel={mockOnCancel}
+				/>,
+			);
+
+		const unknownZone = {
+			isKnown: false,
+			format: () => 'Jan 15, 2024',
+		};
+
+		it('shows the invited and expiry dates in the viewer’s time zone', () => {
+			renderList();
+
+			expect(screen.getByText('Invited Jan 15, 2024')).toBeDefined();
+			expect(screen.getByText('Expires Jan 22, 2024')).toBeDefined();
+		});
+
+		it('shows both dates as skeletons while the time zone is unknown', () => {
+			vi.mocked(useViewerZoneFormat).mockReturnValue(unknownZone);
+
+			renderList();
+
+			expect(
+				screen
+					.getByTestId('invited-date-skeleton')
+					.getAttribute('data-visible'),
+			).toBe('true');
+			expect(
+				screen
+					.getByTestId('expires-date-skeleton')
+					.getAttribute('data-visible'),
+			).toBe('true');
+		});
+
+		it('shows both dates once the time zone is known', () => {
+			renderList();
+
+			expect(
+				screen
+					.getByTestId('invited-date-skeleton')
+					.getAttribute('data-visible'),
+			).toBe('false');
+			expect(
+				screen
+					.getByTestId('expires-date-skeleton')
+					.getAttribute('data-visible'),
+			).toBe('false');
+		});
+
+		it('shows an expired invite’s label right away, with no date to hold back', () => {
+			vi.mocked(useViewerZoneFormat).mockReturnValue(unknownZone);
+			mockIsPastDate.mockReturnValue(true);
+
+			renderList();
+
+			expect(screen.queryByTestId('expires-date-skeleton')).toBeNull();
+			expect(screen.getByText('Expired')).toBeDefined();
+		});
 	});
 
 	it('shows loading state', () => {

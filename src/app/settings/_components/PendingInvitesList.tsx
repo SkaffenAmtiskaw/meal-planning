@@ -6,13 +6,15 @@ import {
 	Button,
 	Group,
 	Loader,
+	Skeleton,
 	Stack,
 	Text,
 } from '@mantine/core';
 import { IconClock, IconX } from '@tabler/icons-react';
 
 import type { PendingInvite } from '@/_actions/sharing';
-import { isPastDate, isWithinHours, toLocaleDateString } from '@/_utils/date';
+import { useViewerZoneFormat } from '@/_hooks';
+import { isPastDate, isWithinHours } from '@/_utils/date';
 
 import type { InviteStatus } from '../_hooks/types';
 import { getAccessLevelColor } from '../_utils/getAccessLevelColor';
@@ -32,6 +34,8 @@ export const PendingInvitesList = ({
 	cancelError,
 	onCancel,
 }: PendingInvitesListProps) => {
+	const { isKnown, format } = useViewerZoneFormat();
+
 	if (loading) {
 		return (
 			<Group>
@@ -55,21 +59,33 @@ export const PendingInvitesList = ({
 							<Badge size="sm" color={getAccessLevelColor(invite.accessLevel)}>
 								{invite.accessLevel}
 							</Badge>
-							<Text size="xs" c="dimmed">
-								Invited {toLocaleDateString(invite.invitedAt)}
-							</Text>
+							<Skeleton
+								visible={!isKnown}
+								width="auto"
+								data-testid="invited-date-skeleton"
+							>
+								<Text size="xs" c="dimmed">
+									Invited {format(invite.invitedAt, 'shortMonthDayYear')}
+								</Text>
+							</Skeleton>
 							<Group gap={4}>
 								{(isWithinHours(invite.expiresAt) ||
 									isPastDate(invite.expiresAt)) && <IconClock size={12} />}
-								<Text
-									size="xs"
-									component="span"
-									c={isPastDate(invite.expiresAt) ? 'red' : 'dimmed'}
-								>
-									{isPastDate(invite.expiresAt)
-										? 'Expired'
-										: `Expires ${toLocaleDateString(invite.expiresAt)}`}
-								</Text>
+								{isPastDate(invite.expiresAt) ? (
+									<Text size="xs" component="span" c="red">
+										Expired
+									</Text>
+								) : (
+									<Skeleton
+										visible={!isKnown}
+										width="auto"
+										data-testid="expires-date-skeleton"
+									>
+										<Text size="xs" component="span" c="dimmed">
+											Expires {format(invite.expiresAt, 'shortMonthDayYear')}
+										</Text>
+									</Skeleton>
+								)}
 							</Group>
 						</Group>
 					</Stack>

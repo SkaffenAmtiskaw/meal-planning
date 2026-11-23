@@ -1,27 +1,8 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
-import { isPastDate, isWithinHours, toLocaleDateString } from './date';
+import { isPastDate, isWithinHours } from './date';
 
 describe('date utilities', () => {
-	describe('toLocaleDateString', () => {
-		it('should format a valid date string to a readable format', () => {
-			const result = toLocaleDateString('2024-01-15T12:00:00.000Z');
-			// Result varies by timezone, so we verify structure
-			expect(result).toMatch(/[A-Za-z]+ \d{1,2}, \d{4}/);
-			expect(result).toContain('2024');
-		});
-
-		it('should format dates with year, month, and day', () => {
-			const result = toLocaleDateString('2024-06-15T00:00:00.000Z');
-			expect(result).toMatch(/[A-Za-z]+ \d{1,2}, 2024/);
-		});
-
-		it('should handle ISO date strings', () => {
-			const result = toLocaleDateString('2024-03-20T12:30:45.123Z');
-			expect(result).toMatch(/[A-Za-z]+ \d{1,2}, \d{4}/);
-		});
-	});
-
 	describe('isWithinHours', () => {
 		beforeEach(() => {
 			vi.useFakeTimers();

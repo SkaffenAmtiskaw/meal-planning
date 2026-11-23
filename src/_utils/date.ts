@@ -1,12 +1,3 @@
-export const toLocaleDateString = (dateString: string): string => {
-	const date = new Date(dateString);
-	return date.toLocaleDateString('en-US', {
-		year: 'numeric',
-		month: 'short',
-		day: 'numeric',
-	});
-};
-
 export const isWithinHours = (
 	dateString: string,
 	hoursThreshold = 24,

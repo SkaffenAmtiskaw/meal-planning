@@ -1,8 +1,8 @@
 import type { DateTime } from 'luxon';
 
-import type { ViewerDay } from '@/_hooks/useToday';
-import { makeIsKnown } from '@/_hooks/useToday/makeIsKnown';
-import { possibleDaysAround } from '@/_hooks/useToday/possibleDaysAround';
+import type { ViewerDay } from '@/_hooks/useTimeZone';
+import { makeIsKnown } from '@/_hooks/useTimeZone/makeIsKnown';
+import { possibleDaysAround } from '@/_hooks/useTimeZone/possibleDaysAround';
 
 /** What `useToday()` gives once the viewer's day is known. */
 export const makeKnownDay = (today: DateTime): ViewerDay => {

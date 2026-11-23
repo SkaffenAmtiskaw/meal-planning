@@ -4,4 +4,4 @@ export * from './useEditMode';
 export * from './useFormFeedback';
 export * from './useIsMobile';
 export * from './useSwipe';
-export * from './useToday';
+export * from './useTimeZone';

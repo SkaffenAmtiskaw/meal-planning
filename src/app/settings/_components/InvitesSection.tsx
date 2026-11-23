@@ -2,7 +2,16 @@
 
 import { useRouter } from 'next/navigation';
 
-import { Alert, Badge, Button, Grid, Group, Stack, Text } from '@mantine/core';
+import {
+	Alert,
+	Badge,
+	Button,
+	Grid,
+	Group,
+	Skeleton,
+	Stack,
+	Text,
+} from '@mantine/core';
 import { IconCheck, IconClock, IconX } from '@tabler/icons-react';
 
 import type {
@@ -11,9 +20,9 @@ import type {
 	DeclineInviteInput,
 	UserInvite,
 } from '@/_actions/sharing';
-import { useAsyncStatus } from '@/_hooks';
+import { useAsyncStatus, useViewerZoneFormat } from '@/_hooks';
 import type { ActionResult } from '@/_utils/actionResult';
-import { isPastDate, isWithinHours, toLocaleDateString } from '@/_utils/date';
+import { isPastDate, isWithinHours } from '@/_utils/date';
 
 import { getAccessLevelColor } from '../_utils/getAccessLevelColor';
 
@@ -32,6 +41,7 @@ export const InvitesSection = ({
 }: InvitesSectionProps) => {
 	const router = useRouter();
 	const { status, error, run } = useAsyncStatus();
+	const { isKnown, format } = useViewerZoneFormat();
 
 	const handleAccept = async (token: string) => {
 		const result = await run(() => onAccept({ token }));
@@ -72,9 +82,15 @@ export const InvitesSection = ({
 										Invited by {invite.invitedBy}
 									</Text>
 									<Group gap="xs" mt={4}>
-										<Text size="sm" c="dimmed">
-											Invited {toLocaleDateString(invite.invitedAt)}
-										</Text>
+										<Skeleton
+											visible={!isKnown}
+											width="auto"
+											data-testid="invited-date-skeleton"
+										>
+											<Text size="sm" c="dimmed">
+												Invited {format(invite.invitedAt, 'shortMonthDayYear')}
+											</Text>
+										</Skeleton>
 										{showWarning && (
 											<Group gap={4}>
 												<IconClock size={14} />
