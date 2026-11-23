@@ -4,8 +4,9 @@ import { beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
 import { useRouter } from 'next/navigation';
 
 import type { UserInvite } from '@/_actions/sharing';
-import { useTimeZone } from '@/_hooks';
+import { useViewerZoneFormat } from '@/_hooks';
 import type { AccessLevel } from '@/_models/user';
+import { isPastDate, isWithinHours } from '@/_utils/date';
 
 import { InvitesSection } from './InvitesSection';
 
@@ -23,19 +24,9 @@ vi.mock('@tabler/icons-react', () => ({
 	IconClock: () => <span data-testid="icon-clock">Clock</span>,
 }));
 
-vi.mock('@/_utils/date', () => ({
-	isWithinHours: vi.fn((dateString: string, hoursThreshold = 24) => {
-		const targetDate = new Date(dateString);
-		const now = new Date();
-		const diffMs = targetDate.getTime() - now.getTime();
-		const diffHours = diffMs / (1000 * 60 * 60);
-		return diffHours <= hoursThreshold && diffHours > 0;
-	}),
-	isPastDate: vi.fn((dateString: string) => {
-		const targetDate = new Date(dateString);
-		const now = new Date();
-		return targetDate.getTime() < now.getTime();
-	}),
+vi.mock('@/_utils/date', async () => ({
+	isPastDate: vi.fn(),
+	isWithinHours: vi.fn(),
 }));
 
 vi.mock('../_utils/getAccessLevelColor', () => ({
@@ -54,7 +45,9 @@ describe('InvitesSection', () => {
 	const mockOnAccept = vi.fn();
 	const mockOnDecline = vi.fn();
 
-	// Use a future date for expiresAt so it's not expired
+	const mockIsPastDate = vi.mocked(isPastDate);
+	const mockIsWithinHours = vi.mocked(isWithinHours);
+
 	const createMockInvite = (
 		overrides: Partial<UserInvite> = {},
 	): UserInvite => ({
@@ -63,8 +56,8 @@ describe('InvitesSection', () => {
 		plannerName: 'Test Planner',
 		invitedBy: 'John Doe',
 		accessLevel: 'write',
-		invitedAt: '2024-01-15T00:00:00.000Z',
-		expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(), // 7 days from now
+		invitedAt: '2024-01-15T12:00:00.000Z',
+		expiresAt: '2024-01-22T12:00:00.000Z',
 		token: 'test-token-123',
 		...overrides,
 	});
@@ -79,7 +72,9 @@ describe('InvitesSection', () => {
 
 	beforeEach(() => {
 		vi.clearAllMocks();
-		vi.mocked(useTimeZone).mockReset();
+		vi.mocked(useViewerZoneFormat).mockReset();
+		mockIsPastDate.mockReturnValue(false);
+		mockIsWithinHours.mockReturnValue(false);
 	});
 
 	it('should show empty message when no invites', () => {
@@ -113,21 +108,22 @@ describe('InvitesSection', () => {
 	});
 
 	it('shows the invited date in the viewer’s time zone', () => {
-		vi.mocked(useTimeZone).mockReturnValue('Pacific/Auckland');
-
 		render(
 			<InvitesSection
-				invites={[createMockInvite({ invitedAt: '2024-01-15T12:00:00.000Z' })]}
+				invites={[createMockInvite()]}
 				onAccept={mockOnAccept}
 				onDecline={mockOnDecline}
 			/>,
 		);
 
-		expect(screen.getByText('Invited Jan 16, 2024')).toBeDefined();
+		expect(screen.getByText('Invited Jan 15, 2024')).toBeDefined();
 	});
 
 	it('shows the invited date as a skeleton while the time zone is unknown', () => {
-		vi.mocked(useTimeZone).mockReturnValue(null);
+		vi.mocked(useViewerZoneFormat).mockReturnValue({
+			isKnown: false,
+			format: () => 'Jan 15, 2024',
+		});
 
 		render(
 			<InvitesSection
@@ -157,17 +153,11 @@ describe('InvitesSection', () => {
 	});
 
 	it('should show expiration warning when near expiry', () => {
-		// Create an invite that expires in 12 hours
-		const invites = [
-			createMockInvite({
-				id: 'invite-soon',
-				expiresAt: new Date(Date.now() + 12 * 60 * 60 * 1000).toISOString(),
-			}),
-		];
+		mockIsWithinHours.mockReturnValue(true);
 
 		render(
 			<InvitesSection
-				invites={invites}
+				invites={[createMockInvite()]}
 				onAccept={mockOnAccept}
 				onDecline={mockOnDecline}
 			/>,
@@ -177,17 +167,11 @@ describe('InvitesSection', () => {
 	});
 
 	it('should show expired message when expired', () => {
-		// Create an invite that expired yesterday
-		const invites = [
-			createMockInvite({
-				id: 'invite-expired',
-				expiresAt: new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString(),
-			}),
-		];
+		mockIsPastDate.mockReturnValue(true);
 
 		render(
 			<InvitesSection
-				invites={invites}
+				invites={[createMockInvite()]}
 				onAccept={mockOnAccept}
 				onDecline={mockOnDecline}
 			/>,

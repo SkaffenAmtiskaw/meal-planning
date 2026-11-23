@@ -14,18 +14,15 @@ import {
 } from '@mantine/core';
 import { IconCheck, IconClock, IconX } from '@tabler/icons-react';
 
-import { DateTime } from 'luxon';
-
 import type {
 	AcceptInviteInput,
 	AcceptInviteResult,
 	DeclineInviteInput,
 	UserInvite,
 } from '@/_actions/sharing';
-import { useAsyncStatus, useTimeZone } from '@/_hooks';
+import { useAsyncStatus, useViewerZoneFormat } from '@/_hooks';
 import type { ActionResult } from '@/_utils/actionResult';
 import { isPastDate, isWithinHours } from '@/_utils/date';
-import { formatDate } from '@/_utils/formatDate';
 
 import { getAccessLevelColor } from '../_utils/getAccessLevelColor';
 
@@ -44,13 +41,7 @@ export const InvitesSection = ({
 }: InvitesSectionProps) => {
 	const router = useRouter();
 	const { status, error, run } = useAsyncStatus();
-	const timeZone = useTimeZone();
-	// Draws the skeleton's hidden text at the date's width until the zone is known.
-	const formatInZone = (isoDateTime: string) =>
-		formatDate(
-			DateTime.fromISO(isoDateTime, { zone: timeZone ?? 'UTC' }),
-			'shortMonthDayYear',
-		);
+	const { isKnown, format } = useViewerZoneFormat();
 
 	const handleAccept = async (token: string) => {
 		const result = await run(() => onAccept({ token }));
@@ -92,12 +83,12 @@ export const InvitesSection = ({
 									</Text>
 									<Group gap="xs" mt={4}>
 										<Skeleton
-											visible={!timeZone}
+											visible={!isKnown}
 											width="auto"
 											data-testid="invited-date-skeleton"
 										>
 											<Text size="sm" c="dimmed">
-												Invited {formatInZone(invite.invitedAt)}
+												Invited {format(invite.invitedAt, 'shortMonthDayYear')}
 											</Text>
 										</Skeleton>
 										{showWarning && (

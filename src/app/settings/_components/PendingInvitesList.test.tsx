@@ -2,7 +2,7 @@ import { fireEvent, render, screen } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import type { PendingInvite } from '@/_actions/sharing';
-import { useTimeZone } from '@/_hooks';
+import { useViewerZoneFormat } from '@/_hooks';
 import { isPastDate, isWithinHours } from '@/_utils/date';
 
 import { PendingInvitesList } from './PendingInvitesList';
@@ -35,13 +35,12 @@ describe('PendingInvitesList', () => {
 
 	beforeEach(() => {
 		vi.clearAllMocks();
-		vi.mocked(useTimeZone).mockReset();
+		vi.mocked(useViewerZoneFormat).mockReset();
 		mockIsPastDate.mockReturnValue(false);
 		mockIsWithinHours.mockReturnValue(false);
 	});
 
 	describe('invite dates', () => {
-		// 12:00 UTC on Jan 15 is already Jan 16 in Auckland.
 		const invite: PendingInvite = {
 			...mockInvite,
 			invitedAt: '2024-01-15T12:00:00.000Z',
@@ -59,17 +58,20 @@ describe('PendingInvitesList', () => {
 				/>,
 			);
 
-		it('shows the invited and expiry dates in the viewer’s time zone', () => {
-			vi.mocked(useTimeZone).mockReturnValue('Pacific/Auckland');
+		const unknownZone = {
+			isKnown: false,
+			format: () => 'Jan 15, 2024',
+		};
 
+		it('shows the invited and expiry dates in the viewer’s time zone', () => {
 			renderList();
 
-			expect(screen.getByText('Invited Jan 16, 2024')).toBeDefined();
-			expect(screen.getByText('Expires Jan 23, 2024')).toBeDefined();
+			expect(screen.getByText('Invited Jan 15, 2024')).toBeDefined();
+			expect(screen.getByText('Expires Jan 22, 2024')).toBeDefined();
 		});
 
 		it('shows both dates as skeletons while the time zone is unknown', () => {
-			vi.mocked(useTimeZone).mockReturnValue(null);
+			vi.mocked(useViewerZoneFormat).mockReturnValue(unknownZone);
 
 			renderList();
 
@@ -101,7 +103,7 @@ describe('PendingInvitesList', () => {
 		});
 
 		it('shows an expired invite’s label right away, with no date to hold back', () => {
-			vi.mocked(useTimeZone).mockReturnValue(null);
+			vi.mocked(useViewerZoneFormat).mockReturnValue(unknownZone);
 			mockIsPastDate.mockReturnValue(true);
 
 			renderList();

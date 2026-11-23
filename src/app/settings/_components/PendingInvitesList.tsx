@@ -12,12 +12,9 @@ import {
 } from '@mantine/core';
 import { IconClock, IconX } from '@tabler/icons-react';
 
-import { DateTime } from 'luxon';
-
 import type { PendingInvite } from '@/_actions/sharing';
-import { useTimeZone } from '@/_hooks';
+import { useViewerZoneFormat } from '@/_hooks';
 import { isPastDate, isWithinHours } from '@/_utils/date';
-import { formatDate } from '@/_utils/formatDate';
 
 import type { InviteStatus } from '../_hooks/types';
 import { getAccessLevelColor } from '../_utils/getAccessLevelColor';
@@ -37,13 +34,7 @@ export const PendingInvitesList = ({
 	cancelError,
 	onCancel,
 }: PendingInvitesListProps) => {
-	const timeZone = useTimeZone();
-	// Draws the skeleton's hidden text at the date's width until the zone is known.
-	const formatInZone = (isoDateTime: string) =>
-		formatDate(
-			DateTime.fromISO(isoDateTime, { zone: timeZone ?? 'UTC' }),
-			'shortMonthDayYear',
-		);
+	const { isKnown, format } = useViewerZoneFormat();
 
 	if (loading) {
 		return (
@@ -69,12 +60,12 @@ export const PendingInvitesList = ({
 								{invite.accessLevel}
 							</Badge>
 							<Skeleton
-								visible={!timeZone}
+								visible={!isKnown}
 								width="auto"
 								data-testid="invited-date-skeleton"
 							>
 								<Text size="xs" c="dimmed">
-									Invited {formatInZone(invite.invitedAt)}
+									Invited {format(invite.invitedAt, 'shortMonthDayYear')}
 								</Text>
 							</Skeleton>
 							<Group gap={4}>
@@ -86,12 +77,12 @@ export const PendingInvitesList = ({
 									</Text>
 								) : (
 									<Skeleton
-										visible={!timeZone}
+										visible={!isKnown}
 										width="auto"
 										data-testid="expires-date-skeleton"
 									>
 										<Text size="xs" component="span" c="dimmed">
-											Expires {formatInZone(invite.expiresAt)}
+											Expires {format(invite.expiresAt, 'shortMonthDayYear')}
 										</Text>
 									</Skeleton>
 								)}

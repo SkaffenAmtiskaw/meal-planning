@@ -18,7 +18,8 @@ import { makeKnownDay } from '#fixtures/viewerDay';
 import type { AsyncStatus } from '@/_hooks/useAsyncStatus';
 import type { Status } from '@/_hooks/useFormFeedback';
 import type { UseSwipeOptions } from '@/_hooks/useSwipe';
-import type { ViewerDay } from '@/_hooks/useToday';
+import type { ViewerDay } from '@/_hooks/useTimeZone';
+import { type DateStyle, formatDate } from '@/_utils/formatDate';
 
 const idle: Status = 'idle';
 
@@ -117,10 +118,14 @@ export const TimeZoneProvider = vi.fn(
 );
 
 /**
- * A known zone by default. A test of the unknown zone sets null:
- *   vi.mocked(useTimeZone).mockReturnValue(null);
+ * A known zone by default, formatting in UTC. A test of the unknown zone sets:
+ *   vi.mocked(useViewerZoneFormat).mockReturnValue({ isKnown: false, format: ... });
  */
-export const useTimeZone = vi.fn((): string | null => 'UTC');
+export const useViewerZoneFormat = vi.fn(() => ({
+	isKnown: true,
+	format: (isoDateTime: string, style: DateStyle) =>
+		formatDate(DateTime.fromISO(isoDateTime, { zone: 'UTC' }), style),
+}));
 
 /**
  * A known day by default. A test sets another with the `#fixtures/viewerDay` builders:
