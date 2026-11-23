@@ -4,7 +4,7 @@ import { useMemo } from 'react';
 
 import { Box, Paper, SimpleGrid, Text } from '@mantine/core';
 
-import { DateTime } from 'luxon';
+import { useToday } from '@/_hooks';
 
 import { MonthGridDayCell } from './MonthGridDayCell';
 import { useMonthGridKeyboard } from './useMonthGridKeyboard';
@@ -18,7 +18,7 @@ export function MonthGrid({ meals, renderMeal, onMealClick }: MonthGridProps) {
 	const { selectedDate } = useCalendarContext();
 
 	const days = useMemo(() => getMonthGridDates(selectedDate), [selectedDate]);
-	const today = DateTime.now();
+	const today = useToday();
 
 	const mealsByDate = useMemo(() => {
 		const map = new Map<string, MonthGridMeal[]>();

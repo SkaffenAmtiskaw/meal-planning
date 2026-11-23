@@ -4,7 +4,7 @@ import { type ReactElement, useEffect, useMemo, useRef } from 'react';
 
 import { Box } from '@mantine/core';
 
-import { DateTime } from 'luxon';
+import { useToday } from '@/_hooks';
 
 import styles from './ListView.module.css';
 
@@ -16,19 +16,17 @@ import { useScrollToDate } from './_hooks/useScrollToDate';
 import { getListDayRange } from './_utils/getListDayRange';
 
 interface ListViewProps {
-	today?: DateTime;
 	meals?: CalendarMeal[];
 	renderDish?: MealCardProps['renderDish'];
 }
 
 export function ListView({
-	today,
 	meals = [],
 	renderDish,
 }: ListViewProps): ReactElement {
 	const { rangeAnchor, selectedDate, setSelectedDate } = useCalendarContext();
-	const days = getListDayRange(rangeAnchor);
-	const todayDate = today ?? DateTime.now().startOf('day');
+	const today = useToday();
+	const days = getListDayRange(rangeAnchor, today);
 
 	const mealsByDate = useMemo(() => {
 		const map = new Map<string, CalendarMeal[]>();
@@ -84,7 +82,7 @@ export function ListView({
 					<li key={date.toISODate() ?? ''}>
 						<DayRow
 							date={date}
-							today={todayDate}
+							today={today}
 							meals={mealsByDate.get(date.toISODate() ?? '') ?? []}
 							renderDish={renderDish}
 						/>

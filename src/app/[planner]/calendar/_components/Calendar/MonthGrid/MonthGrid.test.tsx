@@ -1,7 +1,9 @@
 import { fireEvent, render, screen } from '@testing-library/react';
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { DateTime } from 'luxon';
+
+import { useToday } from '@/_hooks';
 
 import { MonthGrid } from './MonthGrid';
 import type { MonthGridMeal, MonthGridMealRenderProps } from './types';
@@ -10,6 +12,7 @@ import { useCalendarContext } from '../CalendarContext';
 import { CalendarProvider } from '../CalendarProvider';
 
 vi.mock('@mantine/core', async () => await import('#mocks/@mantine/core'));
+vi.mock('@/_hooks', async () => await import('#mocks/@/_hooks'));
 vi.mock(
 	'@/_components',
 	async () => await import('#mocks/@/_components/NumberMark'),
@@ -30,14 +33,9 @@ describe('MonthGrid', () => {
 		vi.resetAllMocks();
 	});
 
-	afterEach(() => {
-		vi.useRealTimers();
-	});
-
 	it('tells only today’s cell that it is today', () => {
 		const today = DateTime.local(2024, 3, 15);
-		vi.useFakeTimers();
-		vi.setSystemTime(today.toJSDate());
+		vi.mocked(useToday).mockReturnValue(today);
 
 		vi.mocked(getMonthGridDates).mockReturnValue([
 			DateTime.local(2024, 2, 26),
@@ -77,8 +75,7 @@ describe('MonthGrid', () => {
 	});
 
 	it('tells days from adjacent months that they are outside the month', () => {
-		vi.useFakeTimers();
-		vi.setSystemTime(DateTime.local(2024, 6, 15, 12, 0, 0).toJSDate());
+		vi.mocked(useToday).mockReturnValue(DateTime.local(2024, 6, 15));
 
 		const initialDate = DateTime.local(2024, 3, 15);
 		vi.mocked(getMonthGridDates).mockReturnValue([
@@ -196,10 +193,6 @@ describe('MonthGrid keyboard navigation', () => {
 		vi.resetAllMocks();
 	});
 
-	afterEach(() => {
-		vi.useRealTimers();
-	});
-
 	function createRenderMealMock() {
 		return vi.fn(
 			(
@@ -220,8 +213,7 @@ describe('MonthGrid keyboard navigation', () => {
 
 	it('sets tabIndex=0 on today and -1 on other days initially', () => {
 		const today = DateTime.local(2024, 3, 15);
-		vi.useFakeTimers();
-		vi.setSystemTime(today.toJSDate());
+		vi.mocked(useToday).mockReturnValue(today);
 
 		vi.mocked(getMonthGridDates).mockReturnValue([
 			DateTime.local(2024, 3, 14),
@@ -243,8 +235,7 @@ describe('MonthGrid keyboard navigation', () => {
 
 	it('moves focus to next day with ArrowRight', () => {
 		const today = DateTime.local(2024, 3, 15);
-		vi.useFakeTimers();
-		vi.setSystemTime(today.toJSDate());
+		vi.mocked(useToday).mockReturnValue(today);
 
 		vi.mocked(getMonthGridDates).mockReturnValue([
 			DateTime.local(2024, 3, 14),
@@ -267,8 +258,7 @@ describe('MonthGrid keyboard navigation', () => {
 
 	it('calls onMealClick when Enter pressed on single-meal day', () => {
 		const today = DateTime.local(2024, 3, 15);
-		vi.useFakeTimers();
-		vi.setSystemTime(today.toJSDate());
+		vi.mocked(useToday).mockReturnValue(today);
 
 		vi.mocked(getMonthGridDates).mockReturnValue([
 			DateTime.local(2024, 3, 14),
@@ -296,8 +286,7 @@ describe('MonthGrid keyboard navigation', () => {
 
 	it('enters meal mode when Enter pressed on multi-meal day', () => {
 		const today = DateTime.local(2024, 3, 15);
-		vi.useFakeTimers();
-		vi.setSystemTime(today.toJSDate());
+		vi.mocked(useToday).mockReturnValue(today);
 
 		vi.mocked(getMonthGridDates).mockReturnValue([
 			DateTime.local(2024, 3, 14),
@@ -330,8 +319,7 @@ describe('MonthGrid keyboard navigation', () => {
 
 	it('navigates meals with ArrowDown/ArrowUp in meal mode', () => {
 		const today = DateTime.local(2024, 3, 15);
-		vi.useFakeTimers();
-		vi.setSystemTime(today.toJSDate());
+		vi.mocked(useToday).mockReturnValue(today);
 
 		vi.mocked(getMonthGridDates).mockReturnValue([
 			DateTime.local(2024, 3, 14),
@@ -369,8 +357,7 @@ describe('MonthGrid keyboard navigation', () => {
 
 	it('meal click does not exit meal mode', () => {
 		const today = DateTime.local(2024, 3, 15);
-		vi.useFakeTimers();
-		vi.setSystemTime(today.toJSDate());
+		vi.mocked(useToday).mockReturnValue(today);
 
 		vi.mocked(getMonthGridDates).mockReturnValue([
 			DateTime.local(2024, 3, 14),
@@ -404,8 +391,7 @@ describe('MonthGrid keyboard navigation', () => {
 
 	it('exits meal mode and returns focus to day cell on Escape', () => {
 		const today = DateTime.local(2024, 3, 15);
-		vi.useFakeTimers();
-		vi.setSystemTime(today.toJSDate());
+		vi.mocked(useToday).mockReturnValue(today);
 
 		vi.mocked(getMonthGridDates).mockReturnValue([
 			DateTime.local(2024, 3, 14),
@@ -439,8 +425,7 @@ describe('MonthGrid keyboard navigation', () => {
 
 	it('moves focus to the previous day with ArrowLeft', () => {
 		const today = DateTime.local(2024, 3, 15);
-		vi.useFakeTimers();
-		vi.setSystemTime(today.toJSDate());
+		vi.mocked(useToday).mockReturnValue(today);
 
 		vi.mocked(getMonthGridDates).mockReturnValue([
 			DateTime.local(2024, 3, 14),
@@ -463,8 +448,7 @@ describe('MonthGrid keyboard navigation', () => {
 
 	it('moves focus down one week with ArrowDown', () => {
 		const today = DateTime.local(2024, 3, 8);
-		vi.useFakeTimers();
-		vi.setSystemTime(today.toJSDate());
+		vi.mocked(useToday).mockReturnValue(today);
 
 		vi.mocked(getMonthGridDates).mockReturnValue(
 			Array.from({ length: 14 }, (_, i) => DateTime.local(2024, 3, 1 + i)),
@@ -485,8 +469,7 @@ describe('MonthGrid keyboard navigation', () => {
 
 	it('moves focus up one week with ArrowUp', () => {
 		const today = DateTime.local(2024, 3, 15);
-		vi.useFakeTimers();
-		vi.setSystemTime(today.toJSDate());
+		vi.mocked(useToday).mockReturnValue(today);
 
 		vi.mocked(getMonthGridDates).mockReturnValue(
 			Array.from({ length: 14 }, (_, i) => DateTime.local(2024, 3, 1 + i)),
@@ -507,8 +490,7 @@ describe('MonthGrid keyboard navigation', () => {
 
 	it('does not move focus right from the last column', () => {
 		const today = DateTime.local(2024, 3, 16);
-		vi.useFakeTimers();
-		vi.setSystemTime(today.toJSDate());
+		vi.mocked(useToday).mockReturnValue(today);
 
 		vi.mocked(getMonthGridDates).mockReturnValue(
 			Array.from({ length: 7 }, (_, i) => DateTime.local(2024, 3, 10 + i)),
@@ -528,8 +510,7 @@ describe('MonthGrid keyboard navigation', () => {
 
 	it('does not move focus down from the last row', () => {
 		const today = DateTime.local(2024, 3, 7);
-		vi.useFakeTimers();
-		vi.setSystemTime(today.toJSDate());
+		vi.mocked(useToday).mockReturnValue(today);
 
 		vi.mocked(getMonthGridDates).mockReturnValue(
 			Array.from({ length: 7 }, (_, i) => DateTime.local(2024, 3, 1 + i)),
@@ -549,8 +530,7 @@ describe('MonthGrid keyboard navigation', () => {
 
 	it('does not move focus up from the first row', () => {
 		const today = DateTime.local(2024, 3, 1);
-		vi.useFakeTimers();
-		vi.setSystemTime(today.toJSDate());
+		vi.mocked(useToday).mockReturnValue(today);
 
 		vi.mocked(getMonthGridDates).mockReturnValue(
 			Array.from({ length: 14 }, (_, i) => DateTime.local(2024, 3, 1 + i)),
@@ -570,8 +550,7 @@ describe('MonthGrid keyboard navigation', () => {
 
 	it('moves focus to the clicked day cell and exits meal mode', () => {
 		const today = DateTime.local(2024, 3, 15);
-		vi.useFakeTimers();
-		vi.setSystemTime(today.toJSDate());
+		vi.mocked(useToday).mockReturnValue(today);
 
 		vi.mocked(getMonthGridDates).mockReturnValue([
 			DateTime.local(2024, 3, 14),
@@ -608,8 +587,7 @@ describe('MonthGrid keyboard navigation', () => {
 
 	it('calls onMealClick when Enter is pressed on a meal in meal mode', () => {
 		const today = DateTime.local(2024, 3, 15);
-		vi.useFakeTimers();
-		vi.setSystemTime(today.toJSDate());
+		vi.mocked(useToday).mockReturnValue(today);
 
 		vi.mocked(getMonthGridDates).mockReturnValue([
 			DateTime.local(2024, 3, 14),
@@ -645,8 +623,7 @@ describe('MonthGrid keyboard navigation', () => {
 	});
 
 	it('throws when days array is empty', () => {
-		vi.useFakeTimers();
-		vi.setSystemTime(DateTime.local(2024, 3, 15).toJSDate());
+		vi.mocked(useToday).mockReturnValue(DateTime.local(2024, 3, 15));
 
 		vi.mocked(getMonthGridDates).mockReturnValue([]);
 

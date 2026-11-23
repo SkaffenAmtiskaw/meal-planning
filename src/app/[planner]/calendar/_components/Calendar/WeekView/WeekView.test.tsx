@@ -1,7 +1,9 @@
 import { fireEvent, render, screen, within } from '@testing-library/react';
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { DateTime } from 'luxon';
+
+import { useToday } from '@/_hooks';
 
 import { WeekView } from './WeekView';
 
@@ -10,6 +12,7 @@ import { CalendarProvider } from '../CalendarProvider';
 import { getWeekDates } from '../_utils/getWeekDates';
 
 vi.mock('@mantine/core', async () => await import('#mocks/@mantine/core'));
+vi.mock('@/_hooks', async () => await import('#mocks/@/_hooks'));
 
 vi.mock('./WeekDayLabel', () => ({
 	WeekDayLabel: ({ label, isToday }: { label: string; isToday: boolean }) => (
@@ -32,7 +35,6 @@ describe('WeekView', () => {
 	beforeEach(() => {
 		vi.resetAllMocks();
 	});
-	afterEach(() => vi.useRealTimers());
 
 	it('renders 7 day columns', () => {
 		const initialDate = DateTime.local(2024, 9, 18);
@@ -84,8 +86,7 @@ describe('WeekView', () => {
 
 	it("marks today's column as the current date", () => {
 		const today = DateTime.local(2024, 9, 18);
-		vi.useFakeTimers();
-		vi.setSystemTime(today.toJSDate());
+		vi.mocked(useToday).mockReturnValue(today);
 
 		vi.mocked(getWeekDates).mockReturnValue([
 			DateTime.local(2024, 9, 15),

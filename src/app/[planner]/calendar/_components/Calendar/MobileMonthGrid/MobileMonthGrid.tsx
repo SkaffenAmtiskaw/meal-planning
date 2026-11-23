@@ -4,7 +4,7 @@ import { type ReactElement, useMemo } from 'react';
 
 import { Box, SimpleGrid, Text } from '@mantine/core';
 
-import { DateTime } from 'luxon';
+import { useToday } from '@/_hooks';
 
 import { MobileMonthGridDayCell } from './MobileMonthGridDayCell';
 import type { MobileMonthGridMeal } from './types';
@@ -23,7 +23,7 @@ export function MobileMonthGrid({
 }: MobileMonthGridProps): ReactElement {
 	const { selectedDate, setSelectedDate } = useCalendarContext();
 	const days = useMemo(() => getMonthGridDates(selectedDate), [selectedDate]);
-	const today = DateTime.now();
+	const today = useToday();
 	const initialFocusIndex = useMemo(
 		() => days.findIndex((day) => day.hasSame(selectedDate, 'day')),
 		[days, selectedDate],
