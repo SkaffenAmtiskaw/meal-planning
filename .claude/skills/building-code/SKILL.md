@@ -25,7 +25,10 @@ How you build each part of the change depends on what it does:
   - **Otherwise:** write the code, and check it by running what you changed.
 - **If it only moves, removes or tidies code:** it has no new logic for a test to fail on, and its existing tests show the behavior didn't change.
 
-As you build, you'll make decisions the plan doesn't, such as a button's wording, what happens when a save fails or a new component's props. If one is an open choice, stop and ask the user, as step 1 describes, before writing the code it affects, rather than putting in a placeholder to fix later. Otherwise, make it, and name it in your report, so the user can catch one that was theirs to make.
+As you build, you'll make decisions the plan doesn't, such as a button's wording, what happens when a save fails or a new component's props. How you handle each depends on the decision:
+- **If it's about a piece other code will call or copy:** design and build it, even when it has more than one reasonable shape, and name it as a precedent at the top of your report.
+- **If it's any other open choice:** stop and ask the user, as step 1 describes, before writing the code it affects, rather than putting in a placeholder to fix later.
+- **Otherwise:** make it, and name it in your report, so the user can catch one that was theirs to make.
 
 Make your own edits to a file with Edit and Write, never with a shell command such as `sed`, because the hook that guards the project config and ignore comments sees only Edit and Write.
 

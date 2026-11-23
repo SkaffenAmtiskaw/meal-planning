@@ -42,7 +42,7 @@ Then read the Convention of every other `type: pattern` note in `features/` in t
 A convention says what code should do, not just what's wrong with it today. A note hasn't chosen one if it only describes the problem or asks for the right fix, such as "these are all bad the same way, help me find the right solution". If no **Decided** line or comment from the user says what code should do, settle it as the `settling-a-decision` skill describes.
 
 ## 3. Write the Convention
-The Convention is a short guide, written much as it will read in the docs, as `docs.md` in the `writing-standard` skill's folder describes. That way, the user approves the text that goes into the doc.
+The Convention is a short guide, written much as it will read in the docs, as `docs.md` in the `writing-standard` skill's folder describes.
 
 ### Draft
 Sources, in order of authority: the user's comments, **Decided** lines, then Purpose and Symptoms. Don't write for cases no story has asked for yet, because text stretched to them can bind later work in ways nobody chose.
@@ -60,6 +60,7 @@ The guide says:
 Be exact only where the aim itself is exact. "Only `src/_utils/today/` reads the clock" is exact because any other code that reads the clock breaks the aim. Where applying the Convention takes judgment, leave it to the reader, rather than adding a criterion or a definition to settle it.
 
 Cut the draft down to what has to be true for the convention to hold. For each requirement in it, ask what would go wrong in later code if it were broken:
+- **If later code would copy a different shape, because the requirement is how callers use a piece the Convention needs,** such as how a component asks the hook that gives today whether today is known yet: keep it for that piece's Infrastructure item. Design the piece as "Every New Piece Sets a Precedent" in `docs/project_conventions.md` describes, and add a sketch of how a caller uses it. The piece is written once, but every later caller uses and copies its shape.
 - **If nothing would, and it describes the workings of a piece of code that only gets written once:** keep it for the Migration Checklist's Infrastructure items, because no later code will have to match it.
 - **If nothing would, and it's anything else:** cut it. For example, if the current date has to have one source, that holds however a component gets the date, so the Convention doesn't need to list the ways.
 
@@ -69,7 +70,11 @@ Check the draft against the project docs and the other patterns' Conventions.
 Where the sources don't settle something the Convention needs, don't fill it in. Settle it with the user as the `settling-a-decision` skill describes.
 
 ### Approve
-Show the draft and wait for the user to approve or change it. Beside it, give the `file:line` of each example, so they can look at the code. Once they approve, write it under `# Convention` before the audit, replacing what was there, including an older note's `# Rules`, so it survives if the session ends.
+The steps, in order:
+1. Write the draft to a file and link it.
+2. Show the decisions the draft makes, one bullet each, rather than its text, even when the draft is short. A decision inside a doc's prose is easy to miss. Give each example's `file:line`, so the user can look at the code. Include each piece kept for an Infrastructure item in the cut above, with its sketch.
+3. Wait for the user to approve or change the decisions.
+4. Once they approve, update the draft to match, and write it under `# Convention` before the audit, replacing what was there, including an older note's `# Rules`, so it survives if the session ends.
 
 ## 4. Migration Checklist
 Build the full checklist from an audit of the approved Convention, then settle it with the user.
@@ -78,7 +83,7 @@ Build the full checklist from an audit of the approved Convention, then settle i
 Audit the Convention and merge what the audit finds, as `.claude/skills/building-code/auditing-a-convention.md` describes.
 
 Then add the items that don't come from violations:
-- **Infrastructure:** each piece the Convention needs built, with the requirements cut from the draft.
+- **Infrastructure:** each piece the Convention needs built, with the requirements cut from the draft. If the piece has an approved sketch of how a caller uses it, include the sketch.
 - **Docs:** the Convention, in the doc and section it lands in.
 
 ### Triage the Out-of-Scope List
@@ -93,7 +98,7 @@ If you think one earns its place, show the user what it is, which breaks of the 
 
 ### Approve
 What to go through with the user, in order:
-1. **The checklist as a whole.** Group the items by kind, as checkboxes, and show them with the number of items in each group. Nothing here needs an answer yet.
+1. **The checklist as a whole.** Group the items by kind, as checkboxes, and write them to a file. Show a table with one row per group: the group, its number of items and a one-line summary of what its items change. Link the file. Nothing here needs an answer yet.
 2. **Each question the merge turned up.** What each answer means for the place:
    - **It has to change:** it joins the checklist.
    - **It stays as it is:** list it under a group of places left as they are, with the reason, so a later audit doesn't add it back.

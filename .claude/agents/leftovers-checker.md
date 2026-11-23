@@ -43,7 +43,7 @@ The checks, for both modes unless marked:
    - **What the story added or changed that something else is meant to use,** such as an export, a prop, a branch, a test helper or a script a workflow is meant to run: find what uses it. Also flag props no caller passes, optional props every caller passes the same way, and branches no caller can reach. Include whole files nothing imports, such as a version a later step replaced.
    - **What lost its last user because of the story's changes,** such as a helper or shared mock whose callers the story moved elsewhere or deleted: flag it even when its own file isn't among the story's files.
 4. **Outgrown pieces.** Something an early step added that's still in use but no longer needed once later steps existed, such as a wrapper that now only passes things through.
-5. **Two ways (goal mode only).** The same kind of thing done two different ways by two stories, such as a save error shown as a notification in one story and inline in another. It isn't duplicated logic, since the code differs. Flag it anyway, so one way can be kept and a later story doesn't have to guess which to copy.
+5. **Two ways.** The same kind of thing done two different ways by two steps, or by the story and existing code, such as a save error shown as a notification in one place and inline in another. It isn't duplicated logic, since the code differs. Flag it anyway, so one way can be kept and later code doesn't have to guess which to copy.
 
 ## Report Format
 Group findings by the check above. For each:
