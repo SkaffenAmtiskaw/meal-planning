@@ -3,6 +3,7 @@
 import { type ReactElement, useState } from 'react';
 
 import { DatePicker } from '@mantine/dates';
+import { useMergedRef } from '@mantine/hooks';
 import { IconChevronLeft, IconChevronRight } from '@tabler/icons-react';
 
 import clsx from 'clsx';
@@ -10,6 +11,7 @@ import { DateTime } from 'luxon';
 
 import { useIsMobile, useSwipe, useToday } from '@/_hooks';
 
+import { useDatePickerKeys } from './useDatePickerKeys';
 import classes from './DatePickerGrid.module.css';
 
 import { NumberMark } from '../NumberMark';
@@ -59,11 +61,18 @@ export function DatePickerGrid({
 		},
 	});
 
+	// PageUp, PageDown, Home and End move focus between days, which Mantine leaves alone.
+	const { ref: keysRef, getDayKeyProps } = useDatePickerKeys({
+		shownMonth,
+		onShownMonthChange: setShownMonth,
+	});
+	const gridRef = useMergedRef(swipeRef, keysRef);
+
 	const isToday = (date: string) =>
 		DateTime.fromISO(date).hasSame(today, 'day');
 
 	return (
-		<div ref={swipeRef} className={clsx(isMobile && classes.swipeArea)}>
+		<div ref={gridRef} className={clsx(isMobile && classes.swipeArea)}>
 			<DatePicker
 				value={value}
 				date={shownMonth}
@@ -84,6 +93,7 @@ export function DatePickerGrid({
 				// The day button is what takes focus, so it carries aria-current rather than the number inside it.
 				// data-marked lets the stylesheet draw the dot under the number.
 				getDayProps={(date) => ({
+					...getDayKeyProps(date),
 					'aria-current': isToday(date) ? 'date' : undefined,
 					...(marked.has(date) && { 'data-marked': true }),
 				})}

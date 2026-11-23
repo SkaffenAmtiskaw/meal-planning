@@ -1,7 +1,7 @@
 import { act, fireEvent, render, screen } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
-import type { ReactNode } from 'react';
+import type { KeyboardEvent, ReactNode } from 'react';
 
 import { DatePicker, type DatePickerProps } from '@mantine/dates';
 
@@ -140,17 +140,32 @@ describe('DatePickerGrid', () => {
 	it("marks today's day button as the current date", () => {
 		render(<DatePickerGrid value="2024-06-15" onChange={vi.fn()} />);
 
-		expect(lastProps().getDayProps?.('2024-06-10')).toEqual({
-			'aria-current': 'date',
-		});
+		expect(lastProps().getDayProps?.('2024-06-10')?.['aria-current']).toBe(
+			'date',
+		);
 	});
 
 	it('does not mark other day buttons as the current date', () => {
 		render(<DatePickerGrid value="2024-06-15" onChange={vi.fn()} />);
 
-		expect(lastProps().getDayProps?.('2024-06-11')).toEqual({
-			'aria-current': undefined,
-		});
+		expect(
+			lastProps().getDayProps?.('2024-06-11')?.['aria-current'],
+		).toBeUndefined();
+	});
+
+	it("pages to the month a day's key press moves to", () => {
+		render(<DatePickerGrid value="2024-06-15" onChange={vi.fn()} />);
+
+		act(() =>
+			lastProps()
+				.getDayProps?.('2024-06-15')
+				?.onKeyDown?.({
+					key: 'PageDown',
+					preventDefault: vi.fn(),
+				} as unknown as KeyboardEvent<HTMLButtonElement>),
+		);
+
+		expect(lastProps().date).toBe('2024-07-01');
 	});
 
 	it('marks the marked dates', () => {
