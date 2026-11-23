@@ -97,7 +97,7 @@ The commands that need explaining:
 
 ## Git and Files
 - **Checkouts:** planning sessions run in the main checkout, which stays on `develop` and is never edited, so the SessionStart hook can keep it on the latest `develop`. Every change to the code repo is made in a worktree session on its own branch, and reaches `develop` through a PR, because `develop` accepts nothing else.
-- **Archiving:** archiving a session in the desktop app removes the worktree the app made for it, and until then the worktree holds one of the five slots. So once a worktree session has nothing left to do, offer to archive it with `archive_session`. If some of its work waits on its PR's merge, such as held notes work, offer once that work is done. Otherwise, offer without waiting for the merge.
+- **Archiving:** a worktree session holds its worktree, and that worktree's slot, until it's archived. Archiving hands both to the next new session, which checks out its own branch in that folder. So once a worktree session has nothing left to do, offer to archive it with `archive_session`. If some of its work waits on its PR's merge, such as held notes work, offer once that work is done. Otherwise, offer without waiting for the merge.
 - **Commits:** commit only this session's files, by path, since other sessions' changes may be staged too. Whether the user has to ask first depends on the branch:
   - **If it will be merged:** commit only when they ask.
   - **If it's a throwaway that will never be merged:** commit and push freely, since nothing on it reaches the app.
