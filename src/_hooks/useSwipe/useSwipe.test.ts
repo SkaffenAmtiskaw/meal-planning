@@ -69,10 +69,34 @@ describe('useSwipe', () => {
 		expect(onSwipe).not.toHaveBeenCalled();
 	});
 
-	it('ignores a drag that goes more down than across', () => {
+	it('reports a down swipe', () => {
+		renderHook(() => useSwipe({ onSwipe }));
+
+		endDrag(0, 60);
+
+		expect(onSwipe).toHaveBeenCalledWith('down');
+	});
+
+	it('reports a drag that goes more down than across as a down swipe', () => {
 		renderHook(() => useSwipe({ onSwipe }));
 
 		endDrag(-60, 80);
+
+		expect(onSwipe).toHaveBeenCalledExactlyOnceWith('down');
+	});
+
+	it('ignores a drag down too short to count', () => {
+		renderHook(() => useSwipe({ onSwipe }));
+
+		endDrag(0, 20);
+
+		expect(onSwipe).not.toHaveBeenCalled();
+	});
+
+	it('ignores an up swipe', () => {
+		renderHook(() => useSwipe({ onSwipe }));
+
+		endDrag(0, -60);
 
 		expect(onSwipe).not.toHaveBeenCalled();
 	});

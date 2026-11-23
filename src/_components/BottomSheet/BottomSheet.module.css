@@ -8,16 +8,29 @@
 	max-height: 90dvh;
 }
 
+/* Drawer has no swipe to close, so the browser leaves drags on the title to the sheet's swipe rather than taking them as a scroll. */
+.header {
+	touch-action: none;
+}
+
 .body {
 	/* Drawer has no safe-area setting, so the content clears the phone's home indicator here. */
 	padding-bottom: calc(var(--mantine-spacing-md) + env(safe-area-inset-bottom));
 }
 
-/* Drawer has no handle part, so the sheet draws its own bar above the title. */
+/* Drawer has no handle part, so the sheet draws its own strip above the title, full width so a finger near the bar still lands on it, and leaves drags there to the sheet's swipe. */
 .handle {
+	padding-top: var(--mantine-spacing-xs);
+	touch-action: none;
+}
+
+/* The handle's bar. */
+.handle::before {
+	content: "";
+	display: block;
 	width: 36px;
 	height: 4px;
-	margin: var(--mantine-spacing-xs) auto 0;
+	margin: 0 auto;
 	border-radius: var(--mantine-radius-xl);
 	background-color: var(--mantine-color-gray-3);
 }

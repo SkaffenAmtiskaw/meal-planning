@@ -4,7 +4,7 @@ import { type RefCallback, useCallback, useRef } from 'react';
 
 import { useDrag } from '@mantine/hooks';
 
-export type SwipeDirection = 'left' | 'right';
+export type SwipeDirection = 'left' | 'right' | 'down';
 
 export type UseSwipeOptions = {
 	// Called with the direction of each finished swipe.
@@ -13,15 +13,15 @@ export type UseSwipeOptions = {
 	enabled?: boolean;
 };
 
-// How far a drag has to travel across, in px, to count as a swipe, so taps and
-// small drags don't.
+// How far a drag has to travel, in px, to count as a swipe, so taps and small
+// drags don't.
 const MIN_DISTANCE = 40;
 // How far a touch can move, in px, and still count as a tap.
 const TAP_DISTANCE = 10;
 
 /**
- * Reports a finished left or right swipe on the element the returned ref is
- * attached to. The click any drag ends with is swallowed, so a swipe, or a drag
+ * Reports a finished left, right or down swipe on each element the returned
+ * ref is attached to, by whichever way the drag went further. The click any drag ends with is swallowed, so a swipe, or a drag
  * too short to be one, never presses what it ends on.
  */
 export function useSwipe<T extends HTMLElement = HTMLElement>({
@@ -32,13 +32,15 @@ export function useSwipe<T extends HTMLElement = HTMLElement>({
 	const dragged = useRef(false);
 
 	const { ref: dragRef } = useDrag<T>(
-		({ last, canceled, movement: [x], distance: [across, down] }) => {
+		({ last, canceled, movement: [x, y], distance: [across, vertical] }) => {
 			if (!last || canceled) {
 				return;
 			}
-			dragged.current = Math.max(across, down) > TAP_DISTANCE;
-			if (across >= MIN_DISTANCE && across > down) {
+			dragged.current = Math.max(across, vertical) > TAP_DISTANCE;
+			if (across >= MIN_DISTANCE && across > vertical) {
 				onSwipe(x < 0 ? 'left' : 'right');
+			} else if (vertical >= MIN_DISTANCE && vertical > across && y > 0) {
+				onSwipe('down');
 			}
 		},
 		{ enabled },

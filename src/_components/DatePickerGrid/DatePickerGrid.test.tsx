@@ -5,7 +5,9 @@ import type { ReactNode } from 'react';
 
 import { DatePicker, type DatePickerProps } from '@mantine/dates';
 
-import { useIsMobile, useSwipe } from '@/_hooks';
+import { DateTime } from 'luxon';
+
+import { type SwipeDirection, useIsMobile, useSwipe, useToday } from '@/_hooks';
 
 import { DatePickerGrid } from './DatePickerGrid';
 
@@ -25,7 +27,7 @@ function lastProps(): DatePickerProps {
 
 // Renders the number the grid draws for a day and returns its mark.
 function markFor(date: string): HTMLElement {
-	render(<>{lastProps().renderDay?.(date) as ReactNode}</>);
+	render(lastProps().renderDay?.(date) as ReactNode);
 	return screen.getByTestId(`number-mark-${Number(date.slice(8))}`);
 }
 
@@ -37,6 +39,7 @@ describe('DatePickerGrid', () => {
 
 	afterEach(() => {
 		vi.useRealTimers();
+		vi.mocked(useToday).mockReset();
 	});
 
 	it("shows the value's month first", () => {
@@ -74,6 +77,20 @@ describe('DatePickerGrid', () => {
 		render(<DatePickerGrid value="2024-06-15" onChange={vi.fn()} />);
 
 		expect(markFor('2024-06-10').dataset.ring).toBe('true');
+	});
+
+	it("rings today in the viewer's time zone, not the browser's", () => {
+		vi.mocked(useToday).mockReturnValue(DateTime.fromISO('2024-06-11'));
+		render(<DatePickerGrid value="2024-06-15" onChange={vi.fn()} />);
+
+		expect(markFor('2024-06-11').dataset.ring).toBe('true');
+	});
+
+	it("shows the viewer's month first when there's no value and the browser is still a month behind", () => {
+		vi.mocked(useToday).mockReturnValue(DateTime.fromISO('2024-07-01'));
+		render(<DatePickerGrid value={null} onChange={vi.fn()} />);
+
+		expect(lastProps().date).toBe('2024-07-01');
 	});
 
 	it('does not ring other days', () => {
@@ -195,7 +212,7 @@ describe('DatePickerGrid', () => {
 
 	describe('swipes', () => {
 		// Swipes the grid the way the swipe hook reports it.
-		function swipe(direction: 'left' | 'right'): void {
+		function swipe(direction: SwipeDirection): void {
 			act(() => vi.mocked(useSwipe).mock.lastCall?.[0].onSwipe(direction));
 		}
 
@@ -227,6 +244,14 @@ describe('DatePickerGrid', () => {
 			swipe('right');
 
 			expect(lastProps().date).toBe('2024-05-01');
+		});
+
+		it('leave the month on a down swipe', () => {
+			render(<DatePickerGrid value="2024-06-15" onChange={vi.fn()} />);
+
+			swipe('down');
+
+			expect(lastProps().date).toBe('2024-06-15');
 		});
 
 		it('page from the month Mantine paged to', () => {

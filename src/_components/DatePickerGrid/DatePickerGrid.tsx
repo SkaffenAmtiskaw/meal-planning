@@ -8,7 +8,7 @@ import { IconChevronLeft, IconChevronRight } from '@tabler/icons-react';
 import clsx from 'clsx';
 import { DateTime } from 'luxon';
 
-import { useIsMobile, useSwipe } from '@/_hooks';
+import { useIsMobile, useSwipe, useToday } from '@/_hooks';
 
 import classes from './DatePickerGrid.module.css';
 
@@ -32,27 +32,31 @@ export function DatePickerGrid({
 	onChange,
 	markedDates = [],
 }: DatePickerGridProps): ReactElement {
-	const today = DateTime.now();
+	const today = useToday();
 	// Phones get touch sizes: Mantine's lg gives 48px day cells and month arrows.
 	const isMobile = useIsMobile();
 	const size = isMobile ? 'lg' : 'sm';
 	const marked = new Set(markedDates);
 	// The month on screen, which the grid needs to tell which days are outside it.
 	const [shownMonth, setShownMonth] = useState(
-		() => value ?? today.toISODate(),
+		() => value ?? (today.toISODate() as string),
 	);
 
 	// On phones a swipe across the grid pages the month: left to the next, right to the previous.
 	const swipeRef = useSwipe<HTMLDivElement>({
 		enabled: isMobile,
-		onSwipe: (direction) =>
+		onSwipe: (direction) => {
+			if (direction === 'down') {
+				return;
+			}
 			setShownMonth(
 				(month) =>
 					DateTime.fromISO(month)
 						.plus({ months: direction === 'left' ? 1 : -1 })
 						.startOf('month')
 						.toISODate() as string,
-			),
+			);
+		},
 	});
 
 	const isToday = (date: string) =>
