@@ -4,7 +4,7 @@ import { Container } from '@mantine/core';
 
 import { z } from 'zod';
 
-import { getPlanner } from '@/_actions/planner';
+import { getPlanner } from '@/_actions/planner/getPlanner';
 import { zId } from '@/_utils/zId';
 
 import { RecipeDetail } from './_components/RecipeDetail';

@@ -1,15 +1,15 @@
 import { render } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-import { getPlanner } from '@/_actions/planner';
+import { getPlanner } from '@/_actions/planner/getPlanner';
 
 import CalendarPage from './page';
 
 import { CalendarView } from './_components/CalendarView/CalendarView';
 
 vi.mock(
-	'@/_actions/planner',
-	async () => await import('#mocks/@/_actions/planner'),
+	'@/_actions/planner/getPlanner',
+	async () => await import('#mocks/@/_actions/planner/getPlanner'),
 );
 
 vi.mock('./_components/CalendarView/CalendarView', async () => ({

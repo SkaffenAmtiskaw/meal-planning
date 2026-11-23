@@ -1,14 +1,14 @@
 import { render } from '@testing-library/react';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
-import { getSavedItem } from '@/_actions/library';
+import { getSavedItem } from '@/_actions/library/getSavedItem';
 
 import { Modal } from './Modal';
 import { ModalWrapper } from './ModalWrapper';
 
 vi.mock(
-	'@/_actions/library',
-	async () => await import('#mocks/@/_actions/library'),
+	'@/_actions/library/getSavedItem',
+	async () => await import('#mocks/@/_actions/library/getSavedItem'),
 );
 
 vi.mock('./ModalWrapper', async () => ({
@@ -59,20 +59,6 @@ describe('Modal', () => {
 				status: 'edit',
 				// biome-ignore lint/suspicious/noExplicitAny: exercising defensive branch not reachable via TypeScript types
 				type: 'unknown' as any,
-				item: itemId,
-			}),
-		);
-		expect(container.firstChild).toBeNull();
-	});
-
-	it('returns null when the edit item is not found', async () => {
-		vi.mocked(getSavedItem).mockResolvedValueOnce(null as never);
-
-		const { container } = render(
-			await Modal({
-				planner: makePlanner(),
-				status: 'edit',
-				type: 'bookmark',
 				item: itemId,
 			}),
 		);

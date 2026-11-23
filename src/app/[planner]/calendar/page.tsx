@@ -1,6 +1,6 @@
 import { z } from 'zod';
 
-import { getPlanner } from '@/_actions/planner';
+import { getPlanner } from '@/_actions/planner/getPlanner';
 import { zId } from '@/_utils/zId';
 
 import { CalendarView } from './_components/CalendarView/CalendarView';

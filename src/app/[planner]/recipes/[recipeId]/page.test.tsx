@@ -3,7 +3,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { notFound } from 'next/navigation';
 
-import { getPlanner } from '@/_actions/planner';
+import { getPlanner } from '@/_actions/planner/getPlanner';
 
 import RecipePage from './page';
 
@@ -11,8 +11,8 @@ import { RecipeDetail } from './_components/RecipeDetail';
 import { RecipeEditForm } from './_components/RecipeEditForm';
 
 vi.mock(
-	'@/_actions/planner',
-	async () => await import('#mocks/@/_actions/planner'),
+	'@/_actions/planner/getPlanner',
+	async () => await import('#mocks/@/_actions/planner/getPlanner'),
 );
 
 vi.mock('next/navigation', async () => await import('#mocks/next/navigation'));

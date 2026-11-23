@@ -1,3 +1,5 @@
+import { cache } from 'react';
+
 import { getUser } from '@/_actions/user';
 import { isNoSessionError } from '@/_actions/user/noSessionError';
 import type { AccessLevel } from '@/_models/user';
@@ -23,28 +25,27 @@ const ACCESS_LEVEL_ORDER: Record<AccessLevel, number> = {
 	owner: 3,
 };
 
-export const checkAuth = async (
-	id: string,
-	required: AccessLevel,
-): Promise<AuthResult> => {
-	const [user, error] = await catchify(getUser);
+export const checkAuth = cache(
+	async (id: string, required: AccessLevel): Promise<AuthResult> => {
+		const [user, error] = await catchify(getUser);
 
-	if (error) {
-		if (isNoSessionError(error)) return { type: 'unauthenticated' };
-		await reportError(error);
-		return { type: 'error', error };
-	}
+		if (error) {
+			if (isNoSessionError(error)) return { type: 'unauthenticated' };
+			await reportError(error);
+			return { type: 'error', error };
+		}
 
-	if (!user) return { type: 'unauthenticated' };
+		if (!user) return { type: 'unauthenticated' };
 
-	const membership = user.planners.find((p) => p.planner === id);
-	if (!membership) return { type: 'unauthorized' };
+		const membership = user.planners.find((p) => p.planner === id);
+		if (!membership) return { type: 'unauthorized' };
 
-	if (
-		ACCESS_LEVEL_ORDER[membership.accessLevel] < ACCESS_LEVEL_ORDER[required]
-	) {
-		return { type: 'unauthorized' };
-	}
+		if (
+			ACCESS_LEVEL_ORDER[membership.accessLevel] < ACCESS_LEVEL_ORDER[required]
+		) {
+			return { type: 'unauthorized' };
+		}
 
-	return { type: 'authorized', accessLevel: membership.accessLevel, user };
-};
+		return { type: 'authorized', accessLevel: membership.accessLevel, user };
+	},
+);
