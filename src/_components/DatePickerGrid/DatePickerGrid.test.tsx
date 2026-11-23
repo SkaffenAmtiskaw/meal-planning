@@ -5,8 +5,11 @@ import type { ReactNode } from 'react';
 
 import { DatePicker, type DatePickerProps } from '@mantine/dates';
 
+import { useIsMobile } from '@/_hooks';
+
 import { DatePickerGrid } from './DatePickerGrid';
 
+vi.mock('@/_hooks', async () => await import('#mocks/@/_hooks'));
 vi.mock('@mantine/dates', async () => await import('#mocks/@mantine/dates'));
 vi.mock(
 	'../NumberMark',
@@ -170,6 +173,24 @@ describe('DatePickerGrid', () => {
 		expect(
 			lastProps().getDayProps?.('2024-06-12')?.['data-marked' as never],
 		).toBeUndefined();
+	});
+
+	it('uses touch sizes on phones', () => {
+		vi.mocked(useIsMobile).mockReturnValue(true);
+		render(<DatePickerGrid value="2024-06-15" onChange={vi.fn()} />);
+
+		expect(lastProps().size).toBe('lg');
+		expect(lastProps().fullWidth).toBe(true);
+		expect(markFor('2024-06-12').dataset.size).toBe('lg');
+	});
+
+	it('uses compact sizes on desktop', () => {
+		vi.mocked(useIsMobile).mockReturnValue(false);
+		render(<DatePickerGrid value="2024-06-15" onChange={vi.fn()} />);
+
+		expect(lastProps().size).toBe('sm');
+		expect(lastProps().fullWidth).toBe(false);
+		expect(markFor('2024-06-12').dataset.size).toBe('sm');
 	});
 
 	it('reports the picked date', () => {

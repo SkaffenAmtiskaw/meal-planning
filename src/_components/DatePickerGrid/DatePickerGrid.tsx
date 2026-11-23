@@ -5,7 +5,10 @@ import { type ReactElement, useState } from 'react';
 import { DatePicker } from '@mantine/dates';
 import { IconChevronLeft, IconChevronRight } from '@tabler/icons-react';
 
+import clsx from 'clsx';
 import { DateTime } from 'luxon';
+
+import { useIsMobile } from '@/_hooks';
 
 import classes from './DatePickerGrid.module.css';
 
@@ -30,6 +33,9 @@ export function DatePickerGrid({
 	markedDates = [],
 }: DatePickerGridProps): ReactElement {
 	const today = DateTime.now();
+	// Phones get touch sizes: Mantine's lg gives 48px day cells and month arrows.
+	const isMobile = useIsMobile();
+	const size = isMobile ? 'lg' : 'sm';
 	const marked = new Set(markedDates);
 	// The month on screen, which the grid needs to tell which days are outside it.
 	const [shownMonth, setShownMonth] = useState(
@@ -44,9 +50,15 @@ export function DatePickerGrid({
 			value={value}
 			date={shownMonth}
 			onDateChange={setShownMonth}
-			classNames={{ day: classes.day }}
-			previousIcon={<IconChevronLeft size={16} />}
-			nextIcon={<IconChevronRight size={16} />}
+			size={size}
+			// On phones the grid spreads across the sheet, however wide the phone is.
+			fullWidth={isMobile}
+			classNames={{
+				day: clsx(classes.day, isMobile && classes.touch),
+				weekday: clsx(isMobile && classes.touchWeekday),
+			}}
+			previousIcon={<IconChevronLeft size={isMobile ? 20 : 16} />}
+			nextIcon={<IconChevronRight size={isMobile ? 20 : 16} />}
 			previousLabel="Previous month"
 			nextLabel="Next month"
 			// A single letter per weekday, like "S", which none of Mantine's format strings give.
@@ -61,7 +73,7 @@ export function DatePickerGrid({
 				const day = DateTime.fromISO(date);
 				return (
 					<NumberMark
-						size="sm"
+						size={size}
 						ring={isToday(date)}
 						filled={date === value}
 						muted={!day.hasSame(DateTime.fromISO(shownMonth), 'month')}

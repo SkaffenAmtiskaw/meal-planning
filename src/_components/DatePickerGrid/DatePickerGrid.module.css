@@ -24,6 +24,22 @@
 	padding-bottom: 6px;
 }
 
+/* Mantine's DatePicker has no meal-dot state to size, so touch sizes on phones get a bigger dot, lifted with the bigger number. */
+.touch[data-marked]::after {
+	bottom: 2px;
+	width: 6px;
+	height: 6px;
+}
+
+.touch {
+	padding-bottom: 8px;
+}
+
+/* Mantine's lg size also enlarges the weekday letters, which aren't tappable, so they stay at the desktop size and don't compete with the day numbers. */
+.touchWeekday {
+	font-size: var(--mantine-font-size-sm);
+}
+
 /* Mantine fades outside-month days to half opacity, which would pale NumberMark's muted navy further; NumberMark sets the muted colour itself. */
 .day[data-outside] {
 	opacity: 1;
