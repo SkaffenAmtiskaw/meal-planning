@@ -1,6 +1,8 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 
-import { DateTime } from 'luxon';
+import type { DateTime } from 'luxon';
+
+import { useToday } from '@/_hooks';
 
 import type {
 	DayKeyboardProps,
@@ -29,12 +31,12 @@ interface UseMonthGridKeyboardResult {
 function computeInitialFocusIndex(
 	days: DateTime[],
 	selectedDate: DateTime,
+	today: DateTime,
 ): number {
 	if (days.length === 0) {
 		throw new Error('days array cannot be empty');
 	}
 
-	const today = DateTime.now();
 	const todayIndex = days.findIndex((d) => d.hasSame(today, 'day'));
 	if (todayIndex !== -1) return todayIndex;
 
@@ -46,7 +48,8 @@ export function useMonthGridKeyboard(
 ): UseMonthGridKeyboardResult {
 	const { days, mealsByDate, onMealClick, selectedDate } = options;
 
-	const initialFocusIndex = computeInitialFocusIndex(days, selectedDate);
+	const today = useToday();
+	const initialFocusIndex = computeInitialFocusIndex(days, selectedDate, today);
 	const {
 		getDayProps: getRovingDayProps,
 		setFocusedDayIndex,

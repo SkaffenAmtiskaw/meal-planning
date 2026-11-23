@@ -10,6 +10,7 @@ import { cssVariablesResolver, theme } from '@/_theme';
 import { WEEK_START } from '@/_utils/weekStart';
 
 import { OneTapSignInWrapper } from './_hooks/useOneTap/OneTapSignInWrapper';
+import { SaveTimeZoneWrapper } from './_hooks/useSaveTimeZone/SaveTimeZoneWrapper';
 
 import '@mantine/core/styles.css';
 // Mantine requires the dates styles to load after the core styles.
@@ -52,7 +53,9 @@ export default function RootLayout({ children }: { children: ReactNode }) {
 					<DatesProvider
 						settings={{ firstDayOfWeek: WEEK_START, consistentWeeks: true }}
 					>
-						<OneTapSignInWrapper>{children}</OneTapSignInWrapper>
+						<SaveTimeZoneWrapper>
+							<OneTapSignInWrapper>{children}</OneTapSignInWrapper>
+						</SaveTimeZoneWrapper>
 					</DatesProvider>
 				</MantineProvider>
 			</body>

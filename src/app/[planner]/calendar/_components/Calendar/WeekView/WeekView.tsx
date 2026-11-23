@@ -5,8 +5,8 @@ import { type ReactElement, useMemo } from 'react';
 import { Box, Divider, Flex, Paper, Stack } from '@mantine/core';
 
 import clsx from 'clsx';
-import { DateTime } from 'luxon';
 
+import { useToday } from '@/_hooks';
 import focusClasses from '@/_theme/focus.module.css';
 import { formatDate } from '@/_utils/formatDate';
 
@@ -25,7 +25,7 @@ export function WeekView({
 }: WeekViewProps): ReactElement {
 	const { selectedDate } = useCalendarContext();
 	const days = useMemo(() => getWeekDates(selectedDate), [selectedDate]);
-	const today = DateTime.now();
+	const today = useToday();
 
 	const mealsByDate = useMemo(() => {
 		const grouped = new Map<string, WeekViewMeal[]>();

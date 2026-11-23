@@ -1,6 +1,8 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 
-import { DateTime } from 'luxon';
+import type { DateTime } from 'luxon';
+
+import { useToday } from '@/_hooks';
 
 import type { MealKeyboardProps, WeekViewMeal } from './types';
 
@@ -30,12 +32,12 @@ interface UseWeekViewKeyboardResult {
 function computeInitialFocusIndex(
 	days: DateTime[],
 	selectedDate: DateTime,
+	today: DateTime,
 ): number {
 	if (days.length === 0) {
 		throw new Error('days array cannot be empty');
 	}
 
-	const today = DateTime.now();
 	const todayIndex = days.findIndex((d) => d.hasSame(today, 'day'));
 	if (todayIndex !== -1) return todayIndex;
 
@@ -48,8 +50,9 @@ export function useWeekViewKeyboard(
 ): UseWeekViewKeyboardResult {
 	const { days, mealsByDate, onMealClick, selectedDate } = options;
 
+	const today = useToday();
 	const [focusedDayIndex, setFocusedDayIndex] = useState(() =>
-		computeInitialFocusIndex(days, selectedDate),
+		computeInitialFocusIndex(days, selectedDate, today),
 	);
 	const [mealMode, setMealMode] = useState<{
 		dayIndex: number;
@@ -67,10 +70,10 @@ export function useWeekViewKeyboard(
 
 	// Reset on days or selectedDate change
 	useEffect(() => {
-		setFocusedDayIndex(computeInitialFocusIndex(days, selectedDate));
+		setFocusedDayIndex(computeInitialFocusIndex(days, selectedDate, today));
 		setMealMode(null);
 		mealRefs.current = {};
-	}, [days, selectedDate]);
+	}, [days, selectedDate, today]);
 
 	// Programmatic focus for days
 	useEffect(() => {

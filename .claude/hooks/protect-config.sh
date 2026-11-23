@@ -1,7 +1,7 @@
 #!/bin/bash
 # PreToolUse and PostToolUse hook: asks the user before an edit touches lint,
 # type, coverage or git hook config, or adds a comment that switches off a lint,
-# type or coverage check.
+# type or coverage check to a code file.
 #
 # Once the user approves an edit to a config file, later edits to that file in
 # the same session go through, because a plan step that changes config usually
@@ -45,6 +45,13 @@ case "$(basename "$file_path")" in
     fi
     ask "Project config ($file_path). Only allowed if the user explicitly asked for this config change. Approving lets later edits to this file through for the rest of the session."
     ;;
+esac
+
+# Only code files can hold a comment that switches off a check. A note, report
+# or skill that names one, such as `biome-ignore`, is prose.
+case "$file_path" in
+  *.ts | *.tsx | *.mts | *.cts | *.js | *.jsx | *.mjs | *.cjs | *.css | *.json | *.jsonc) ;;
+  *) exit 0 ;;
 esac
 
 new_text=$(jq -r '[.tool_input.new_string, .tool_input.content, (.tool_input.edits // [] | .[].new_string)] | map(select(. != null)) | join("\n")' <<<"$input")
