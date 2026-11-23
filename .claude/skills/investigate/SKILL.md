@@ -33,8 +33,6 @@ Reproduce the bug and diagnose it as `.claude/skills/building-code/reproducing-a
 
 If it doesn't reproduce, stop and tell the user what happened instead. They decide what comes next: sharper repro steps, or the bug is already fixed and the note is dropped with `/close`.
 
-If the cause depends on what the browser does, such as layout, timing or the data the page actually got, confirm it in the running app, however you reproduced the bug. Send `bug-reproducer` the repro steps with the values that would prove or disprove the cause, but not the cause itself.
-
 How far this note's fix goes depends on where the mistake comes from, not on how many places it's in. The cases:
 - **If code written separately has already gone wrong the same way more than once, or every new file of some kind, such as a new mutation, faces the same choice:** the cause is systemic. Keep this note to this bug's own symptoms and fix, because changing the mistake everywhere is a Pattern's work. Add "a Pattern note for <the mistake>" to the out-of-scope list.
 - **Otherwise:** the fix covers every place the mistake is in, because changing today's code ends the problem, even if later code could bring it back. For example, clock calls that only go wrong once another story moves rendering to the server.

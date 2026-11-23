@@ -45,9 +45,7 @@ Then draft the whole Design, and check where Pieces overlap or should split. The
 - **Pieces:** each thing that gets built or changed, such as a workflow, a script, a config file, a skill or a service. For each: its path, or where it lives outside the repo, its one purpose, any requirement it has to meet, and a block ID (` ^piece-N`) that the Flow and the Build Order link to.
 - **The Flow:** only what no single Piece holds: what starts a run, the hand-offs between Pieces and failure paths that cross Pieces. It links each Piece it mentions, as in `[[#^piece-7|Piece 7]]`.
 
-Check each service, config key and Claude Code feature the Design uses against its current docs, because what a service offers changes. Check each Piece against the project docs, the other notes' Conventions and Rules, and the config it relies on, such as the repos a routine selects in its `routine.md`.
-
-Also check each service's docs for tooling of its own, such as an MCP server, a CLI, a setup wizard or a marketplace integration. Look for tooling that would do a Piece's work, or take over an item the user would otherwise set up by hand under Setup Outside the Repo. Use it, or say why not in the Piece it would replace, or in the Setup Outside the Repo item (step 5). A service's own tooling leaves less for the project to build and maintain, and the user wants as little setup by hand as possible.
+Check each Piece as `.claude/skills/building-code/checking-a-piece.md` describes.
 
 Where the note's decisions and the user's comments don't settle something the Design or Build Order needs, settle it with the user as the `settling-a-decision` skill describes.
 
