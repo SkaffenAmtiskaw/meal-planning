@@ -1,13 +1,24 @@
 import { renderHook } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
+import type { ReactNode } from 'react';
+
 import { useMantineTheme } from '@mantine/core';
 import { useMediaQuery } from '@mantine/hooks';
 
+import { MobileGuessContext } from './MobileGuessProvider';
 import { useIsMobile } from './useIsMobile';
 
 vi.mock('@mantine/core', async () => await import('#mocks/@mantine/core'));
 vi.mock('@mantine/hooks', async () => await import('#mocks/@mantine/hooks'));
+
+const guessing =
+	(isMobile: boolean) =>
+	({ children }: { children: ReactNode }) => (
+		<MobileGuessContext.Provider value={isMobile}>
+			{children}
+		</MobileGuessContext.Provider>
+	);
 
 describe('useIsMobile', () => {
 	beforeEach(() => {
@@ -17,16 +28,24 @@ describe('useIsMobile', () => {
 		} as ReturnType<typeof useMantineTheme>);
 	});
 
-	it('calls useMediaQuery with the theme sm breakpoint query', () => {
+	it("starts from the server's phone guess until the window is measured", () => {
+		renderHook(() => useIsMobile(), { wrapper: guessing(true) });
+
+		expect(useMediaQuery).toHaveBeenCalledWith('(max-width: 48em)', true);
+	});
+
+	it('starts from desktop when the server guessed nothing', () => {
 		renderHook(() => useIsMobile());
 
-		expect(useMediaQuery).toHaveBeenCalledWith('(max-width: 48em)');
+		expect(useMediaQuery).toHaveBeenCalledWith('(max-width: 48em)', false);
 	});
 
 	it('returns the value from useMediaQuery', () => {
 		vi.mocked(useMediaQuery).mockReturnValueOnce(true);
 
-		const { result } = renderHook(() => useIsMobile());
+		const { result } = renderHook(() => useIsMobile(), {
+			wrapper: guessing(false),
+		});
 
 		expect(result.current).toBe(true);
 	});

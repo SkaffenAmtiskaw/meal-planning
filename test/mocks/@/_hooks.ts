@@ -98,6 +98,10 @@ export const useAsyncButton = vi.fn(() => {
 	return { loading, error, run };
 });
 
+export const MobileGuessProvider = vi.fn(
+	({ children }: { children: ReactNode }) => children,
+);
+
 export const useIsMobile = vi.fn(() => false);
 
 /**

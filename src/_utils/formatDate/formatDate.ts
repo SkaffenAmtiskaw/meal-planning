@@ -27,8 +27,7 @@ export const DATE_STYLES = {
 
 /**
  * Formats a luxon `DateTime` or an ISO date string (`yyyy-MM-dd`) in a named
- * style. An ISO string is read as a date in the local time zone. Text such as
- * month names follows luxon's default locale, which is the browser's.
+ * style. An ISO string is read as a date in the local time zone.
  */
 export function formatDate(date: DateTime | string, style: DateStyle): string {
 	const dateTime = typeof date === 'string' ? DateTime.fromISO(date) : date;
