@@ -6,14 +6,7 @@ import type { ReactNode } from 'react';
 import { PlannerContext } from './PlannerContext';
 import { usePlannerContext } from './usePlannerContext';
 
-const mockValue = {
-	_id: '507f1f77bcf86cd799439011',
-	name: 'Test Planner',
-	calendar: [],
-	saved: [],
-	tags: [],
-	accessLevel: 'owner' as const,
-};
+const mockValue = { accessLevel: 'owner' as const };
 
 const wrapper = ({ children }: { children: ReactNode }) => (
 	<PlannerContext.Provider value={mockValue}>

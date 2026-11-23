@@ -14,14 +14,7 @@ describe('useCanWrite', () => {
 	});
 
 	test('returns false when accessLevel is read', () => {
-		vi.mocked(usePlannerContext).mockReturnValue({
-			accessLevel: 'read',
-			_id: '507f1f77bcf86cd799439011',
-			name: "Ursula's Planner",
-			calendar: [],
-			saved: [],
-			tags: [],
-		} as ReturnType<typeof usePlannerContext>);
+		vi.mocked(usePlannerContext).mockReturnValue({ accessLevel: 'read' });
 
 		const { result } = renderHook(() => useCanWrite());
 
@@ -29,14 +22,7 @@ describe('useCanWrite', () => {
 	});
 
 	test('returns true when accessLevel is write', () => {
-		vi.mocked(usePlannerContext).mockReturnValue({
-			accessLevel: 'write',
-			_id: '507f1f77bcf86cd799439011',
-			name: "Ursula's Planner",
-			calendar: [],
-			saved: [],
-			tags: [],
-		} as ReturnType<typeof usePlannerContext>);
+		vi.mocked(usePlannerContext).mockReturnValue({ accessLevel: 'write' });
 
 		const { result } = renderHook(() => useCanWrite());
 
@@ -44,14 +30,7 @@ describe('useCanWrite', () => {
 	});
 
 	test('returns true when accessLevel is admin', () => {
-		vi.mocked(usePlannerContext).mockReturnValue({
-			accessLevel: 'admin',
-			_id: '507f1f77bcf86cd799439011',
-			name: "Ursula's Planner",
-			calendar: [],
-			saved: [],
-			tags: [],
-		} as ReturnType<typeof usePlannerContext>);
+		vi.mocked(usePlannerContext).mockReturnValue({ accessLevel: 'admin' });
 
 		const { result } = renderHook(() => useCanWrite());
 
@@ -59,14 +38,7 @@ describe('useCanWrite', () => {
 	});
 
 	test('returns true when accessLevel is owner', () => {
-		vi.mocked(usePlannerContext).mockReturnValue({
-			accessLevel: 'owner',
-			_id: '507f1f77bcf86cd799439011',
-			name: "Ursula's Planner",
-			calendar: [],
-			saved: [],
-			tags: [],
-		} as ReturnType<typeof usePlannerContext>);
+		vi.mocked(usePlannerContext).mockReturnValue({ accessLevel: 'owner' });
 
 		const { result } = renderHook(() => useCanWrite());
 

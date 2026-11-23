@@ -4,7 +4,6 @@ import { beforeEach, describe, expect, test, vi } from 'vitest';
 import { notFound, redirect } from 'next/navigation';
 
 import { checkAuth } from '@/_actions/auth/checkAuth';
-import { getPlanner } from '@/_actions/planner';
 
 import { PlannerProvider } from './_components';
 
@@ -13,11 +12,6 @@ const mockCheckAuth = vi.mocked(checkAuth);
 vi.mock(
 	'@/_actions/auth/checkAuth',
 	async () => await import('#mocks/@/_actions/auth/checkAuth'),
-);
-
-vi.mock(
-	'@/_actions/planner',
-	async () => await import('#mocks/@/_actions/planner'),
 );
 
 vi.mock('next/navigation', async () => await import('#mocks/next/navigation'));
@@ -103,15 +97,7 @@ describe('planner layout', () => {
 		expect(mockCheckAuth).toHaveBeenCalledWith(plannerId, 'read');
 	});
 
-	test('passes the fetched planner and accessLevel to PlannerProvider when authorized', async () => {
-		const planner = {
-			_id: plannerId,
-			name: "Ursula's Planner",
-			calendar: [],
-			saved: [],
-			tags: [],
-		};
-		vi.mocked(getPlanner).mockResolvedValueOnce(planner);
+	test('passes accessLevel to PlannerProvider when authorized', async () => {
 		mockCheckAuth.mockResolvedValue({
 			type: 'authorized',
 			accessLevel: 'owner',
@@ -119,10 +105,9 @@ describe('planner layout', () => {
 
 		render(await Layout({ children: null, params }));
 
-		expect(getPlanner).toHaveBeenCalledWith(plannerId);
 		const calls = vi.mocked(PlannerProvider).mock.calls;
 		expect(calls[0][0]).toEqual(
-			expect.objectContaining({ planner, accessLevel: 'owner' }),
+			expect.objectContaining({ accessLevel: 'owner' }),
 		);
 	});
 });

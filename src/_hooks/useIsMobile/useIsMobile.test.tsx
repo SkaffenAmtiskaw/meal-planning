@@ -6,7 +6,7 @@ import type { ReactNode } from 'react';
 import { useMantineTheme } from '@mantine/core';
 import { useMediaQuery } from '@mantine/hooks';
 
-import { MobileGuessContext } from './MobileGuessProvider';
+import { MobileGuessProvider } from './MobileGuessProvider';
 import { useIsMobile } from './useIsMobile';
 
 vi.mock('@mantine/core', async () => await import('#mocks/@mantine/core'));
@@ -15,9 +15,7 @@ vi.mock('@mantine/hooks', async () => await import('#mocks/@mantine/hooks'));
 const guessing =
 	(isMobile: boolean) =>
 	({ children }: { children: ReactNode }) => (
-		<MobileGuessContext.Provider value={isMobile}>
-			{children}
-		</MobileGuessContext.Provider>
+		<MobileGuessProvider isMobile={isMobile}>{children}</MobileGuessProvider>
 	);
 
 describe('useIsMobile', () => {

@@ -5,7 +5,6 @@ import { notFound, redirect } from 'next/navigation';
 import { z } from 'zod';
 
 import { checkAuth } from '@/_actions/auth/checkAuth';
-import { getPlanner } from '@/_actions/planner';
 import { TimeZoneProvider } from '@/_hooks';
 import { zId } from '@/_utils/zId';
 import { Header } from '@/app/_components/Header';
@@ -28,8 +27,6 @@ const Layout = async ({ children, params }: LayoutProps<'/[planner]'>) => {
 	if (result.type === 'unauthorized') notFound();
 	if (result.type === 'error') throw result.error;
 
-	const planner = await getPlanner(id);
-
 	// TODO: Add suspense so the layout will still load while the auth is being checked
 	return (
 		<PlannerLayout
@@ -41,7 +38,7 @@ const Layout = async ({ children, params }: LayoutProps<'/[planner]'>) => {
 			navbar={<NavbarServer id={id} />}
 		>
 			<TimeZoneProvider timeZone={await getCookieTimeZone()}>
-				<PlannerProvider planner={planner} accessLevel={result.accessLevel}>
+				<PlannerProvider accessLevel={result.accessLevel}>
 					{children}
 				</PlannerProvider>
 			</TimeZoneProvider>
