@@ -63,9 +63,16 @@ Some components exist only to support a hook, such as a context provider or a Cl
 
 # Architecture
 ## Single Concern
-Single concern is a primary concern in this codebase. Each module (component, hook, utility, action) does one job. Two jobs are separate if each can be described without mentioning the other.
-- When new behavior is a different job from the one an existing module does, it should be built as a new component, hook or utility. It should never be added to the existing module, even when that module is where the behavior is used.
+Single concern is a primary concern in this codebase. Each module (component, hook, utility, action) does one job. Two jobs are separate if each can be described without mentioning the other. A job is what a module owns, such as a piece of state, a resource or a concept, not each thing callers ask of it.
+- When new behavior keeps an existing module's contract and only answers a question about what the module owns, such as whether a value it returns has loaded yet, it extends that module. A sibling module would be one more thing a developer has to know exists.
+- When new behavior is a different job, or changes the existing module's contract, such as failing where the module reports that the value hasn't loaded yet, it should be built as a new component, hook or utility, with a name that says how it differs. It should never be added to the existing module, even when that module is where the behavior is used.
 - Existing code shouldn't be kept simply because it exists. If a module does more than one job, it should be refactored before anything new is built on it.
+
+## Every New Piece Sets a Precedent
+A piece that other code calls or copies, such as a hook, a component's props, a utility's signature or a new folder, shows the next developer how this kind of thing is done here. They'll reach for it, copy its shape and name the next one to match. So design it for the codebase, not only for the change that needs it, by asking three questions:
+- **How does the codebase already solve this kind of problem?** Search by what the code does, not by its name, such as another skeleton or another hook that answers a question about today. If there's an existing way, follow it. If it doesn't fit, change the way on purpose, and move the code that follows the old way to the new one. Two ways of doing one thing leave the next developer to guess which to copy.
+- **If the next developer copied this, would that be what we want?** The first piece of its kind, such as the app's first skeleton, becomes the pattern whether or not anyone meant it to.
+- **Does it read clearly to someone who doesn't know its history?** Related pieces are read as a set that a developer picks from. So each name says when to reach for that piece, a word means the same thing in every name, and related pieces return the same kind of value. Where one part of the app hands off to another, the boundary goes where a reader would look for it, such as in a folder named for its job, because code that crosses a boundary somewhere unexpected gets missed when either side changes.
 
 ## Prefer Server Components
 A component is a Server Component unless it needs something only the browser can do. A Server Component sends no JavaScript to the browser and fetches its data on the server, so the page stays small and its data arrives with it.
