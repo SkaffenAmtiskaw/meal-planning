@@ -11,6 +11,8 @@ So a doc states something as a rule only when breaking it causes a real problem,
 
 A doc says where things live rather than listing them: a folder and what it holds, not each helper, file or signature in it. A reader finds those by looking, and a list of them goes wrong at the next rename.
 
+If a rule or the doc is about one piece of code, such as the one module allowed to read the clock, name it, because there the name is what the reader needs to know. Otherwise, an example uses a made-up case rather than naming a component, hook, type or file in the app. It can be told in prose or, where code makes it clearer, shown as a short made-up code sketch, as many library docs do. An example shows the reader a pattern, and the pattern stays true however the code that uses it is named. For instance, "an edit modal is the frame around its form" teaches what naming a real modal and form would, and stays true when they're renamed. If an example names real code and that code changes, rewrite it as a made-up case rather than putting in the new name.
+
 A doc leaves out how an outside service behaves, such as where GitHub sends a run's logs or a limit on its API, because the service can change without anyone noticing that the doc is out of date. What this project sets up in a service, such as a secret's name or a ruleset, is part of the repo's setup, so a doc records it.
 
 If what you're drafting is a rule only agents follow, such as when to use `pnpm test:agent`, place it as the `rule-placement` skill describes.
