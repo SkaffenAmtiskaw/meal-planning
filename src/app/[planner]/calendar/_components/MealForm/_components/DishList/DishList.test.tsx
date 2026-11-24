@@ -10,7 +10,6 @@ import { useIsMobile } from '@/_hooks';
 import { DishList } from './DishList';
 
 import { formatDishCount } from '../../_utils/formatDishCount';
-import { isBlankDish } from '../../_utils/isBlankDish';
 import { DishRow } from '../DishRow/DishRow';
 
 vi.mock('@mantine/core', async () => await import('#mocks/@mantine/core'));
@@ -18,13 +17,6 @@ vi.mock('@/_hooks', async () => await import('#mocks/@/_hooks'));
 vi.mock('../../_utils/formatDishCount', () => ({
 	formatDishCount: vi.fn(() => '1 dish'),
 }));
-vi.mock(
-	'../../_utils/isBlankDish',
-	async () =>
-		await import(
-			'#mocks/@app/[planner]/calendar/_components/MealForm/_utils/isBlankDish'
-		),
-);
 vi.mock('../DishRow/DishRow', () => ({
 	DishRow: vi.fn(() => null),
 }));
@@ -40,6 +32,7 @@ const pasta: SavedItem = {
 };
 
 const handlers = {
+	dishCount: 1,
 	onAddDish: vi.fn(),
 	onRenameDish: vi.fn(),
 	onRemoveDish: vi.fn(),
@@ -88,10 +81,8 @@ describe('DishList', () => {
 		);
 	});
 
-	it('leaves blank rows out of the count', () => {
-		// Soup, the first row, is blank.
-		vi.mocked(isBlankDish).mockReturnValueOnce(true);
-		render(<DishList dishes={[soup, bread]} {...handlers} />);
+	it('shows the count it was given', () => {
+		render(<DishList dishes={[soup, bread]} {...handlers} dishCount={1} />);
 
 		expect(vi.mocked(formatDishCount)).toHaveBeenLastCalledWith(1);
 	});

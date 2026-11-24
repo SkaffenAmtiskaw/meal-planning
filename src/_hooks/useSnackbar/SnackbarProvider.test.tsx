@@ -3,8 +3,8 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import type { ReactNode } from 'react';
 
-import { useSnackbar } from './SnackbarContext';
 import { SnackbarProvider } from './SnackbarProvider';
+import { useSnackbar } from './useSnackbar';
 
 vi.mock('@mantine/core', async () => await import('#mocks/@mantine/core'));
 

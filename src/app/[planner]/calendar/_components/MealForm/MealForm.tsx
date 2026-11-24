@@ -157,6 +157,8 @@ export const MealForm = ({
 	);
 
 	const linkedIds = linkedItemIds(draft.dishes);
+	// A blank row isn't saved, so it isn't counted.
+	const dishCount = draft.dishes.filter((dish) => !isBlankDish(dish)).length;
 
 	const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
 		event.preventDefault();
@@ -181,6 +183,7 @@ export const MealForm = ({
 				dishes={
 					<DishList
 						dishes={draft.dishes}
+						dishCount={dishCount}
 						namelessKeys={namelessKeys}
 						linkingKey={linkingKey}
 						linkedIds={linkedIds}
@@ -210,8 +213,7 @@ export const MealForm = ({
 				}
 				footer={
 					<MealFormFooter
-						// A blank row isn't saved, so it isn't counted.
-						dishCount={draft.dishes.filter((dish) => !isBlankDish(dish)).length}
+						dishCount={dishCount}
 						status={status}
 						countdown={countdown}
 						canSubmit={canSubmitMeal(draft)}

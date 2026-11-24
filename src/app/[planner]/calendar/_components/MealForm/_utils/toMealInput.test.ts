@@ -60,6 +60,23 @@ describe('toMealInput', () => {
 		});
 	});
 
+	it('leaves out a description or note of only spaces', () => {
+		const input = toMealInput(
+			makeMealDraft({
+				date: '2026-11-27',
+				mealName: 'Taco Night',
+				description: '   ',
+				dishes: [makeDishDraft({ name: 'Salsa', note: '  ' })],
+			}),
+		);
+
+		expect(input).toEqual({
+			date: '2026-11-27',
+			mealName: 'Taco Night',
+			dishes: [{ name: 'Salsa' }],
+		});
+	});
+
 	it('drops blank dishes', () => {
 		const blank = makeDishDraft({ key: 'blank' });
 		vi.mocked(isBlankDish).mockImplementation((dish) => dish === blank);

@@ -1,10 +1,9 @@
 'use client';
 
-import { createContext, useContext } from 'react';
+import { useContext } from 'react';
 
+import { SnackbarContext } from './SnackbarContext';
 import type { SnackbarContextValue } from './types';
-
-export const SnackbarContext = createContext<SnackbarContextValue | null>(null);
 
 /**
  * Shows a brief message in the confirmation bar at the bottom of the screen.

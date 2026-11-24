@@ -3,7 +3,8 @@ import { describe, expect, it, vi } from 'vitest';
 
 import type { ReactNode } from 'react';
 
-import { SnackbarContext, useSnackbar } from './SnackbarContext';
+import { SnackbarContext } from './SnackbarContext';
+import { useSnackbar } from './useSnackbar';
 
 describe('useSnackbar', () => {
 	it('returns the context value inside a SnackbarProvider', () => {

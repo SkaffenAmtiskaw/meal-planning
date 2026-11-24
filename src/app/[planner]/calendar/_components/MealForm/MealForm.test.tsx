@@ -161,7 +161,7 @@ describe('MealForm', () => {
 		);
 	});
 
-	it('leaves blank rows out of the footer count', () => {
+	it('leaves blank rows out of the dish list and footer counts', () => {
 		const blank = makeDishDraft({ key: 'blank' });
 		vi.mocked(isBlankDish).mockImplementation((dish) => dish === blank);
 		render(
@@ -176,6 +176,7 @@ describe('MealForm', () => {
 		);
 
 		expect(vi.mocked(MealFormFooter).mock.lastCall?.[0].dishCount).toBe(1);
+		expect(vi.mocked(DishList).mock.lastCall?.[0].dishCount).toBe(1);
 	});
 
 	it('closes at once after a save, with no countdown', () => {

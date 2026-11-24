@@ -49,6 +49,19 @@ describe('zAddMealInput', () => {
 		);
 	});
 
+	test('rejects an empty note, which is left out instead', () => {
+		expect(parses({ name: 'Rice', note: '' })).toBe(false);
+	});
+
+	test('rejects an empty description, which is left out instead', () => {
+		expect(
+			zAddMealInput.safeParse({
+				...withDish({ name: 'Rice' }),
+				description: '',
+			}).success,
+		).toBe(false);
+	});
+
 	test('rejects a dish with no name, saying the name is required', () => {
 		const result = zAddMealInput.safeParse(withDish({ name: '' }));
 

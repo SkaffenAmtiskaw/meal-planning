@@ -7,13 +7,14 @@ import type { SavedItem } from '@/_actions/library/types';
 import { useIsMobile } from '@/_hooks';
 
 import { formatDishCount } from '../../_utils/formatDishCount';
-import { isBlankDish } from '../../_utils/isBlankDish';
 import type { DishDraft } from '../../types';
 import { DishRow } from '../DishRow/DishRow';
 import { SectionLabel } from '../SectionLabel/SectionLabel';
 
 type Props = {
 	dishes: DishDraft[];
+	// How many dishes will be saved, so blank rows aren't counted.
+	dishCount: number;
 	// The dishes whose rows show the nameless error.
 	namelessKeys?: ReadonlySet<string>;
 	// The dish being linked to a saved recipe, if any.
@@ -37,6 +38,7 @@ type Props = {
 // DISHES with its count, a row for each dish, then Add dish.
 export const DishList = ({
 	dishes,
+	dishCount,
 	namelessKeys = new Set(),
 	linkingKey = null,
 	onAddDish,
@@ -53,8 +55,6 @@ export const DishList = ({
 	onChooseRecipe,
 }: Props) => {
 	const isMobile = useIsMobile();
-	// A blank row isn't saved, so it isn't counted.
-	const dishCount = dishes.filter((dish) => !isBlankDish(dish)).length;
 
 	return (
 		<Stack gap="xs">

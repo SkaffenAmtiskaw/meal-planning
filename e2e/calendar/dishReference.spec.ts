@@ -23,7 +23,6 @@ test('saves a dish with a URL reference', { tag: '@desktop-only' }, async ({
 		description: 'Served on the return voyage',
 	});
 	const form = page.getByRole('dialog');
-	// The dish is named, so the blank-row bug doesn't stop the save.
 	await form.getByRole('textbox', { name: 'Dish name' }).fill(DISH_NAME);
 	await form.getByRole('button', { name: 'Expand dish' }).click();
 	await form.getByRole('textbox', { name: 'Reference' }).fill(REFERENCE_URL);
