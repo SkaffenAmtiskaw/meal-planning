@@ -71,15 +71,29 @@ describe('RecipeDetail', () => {
 		render(<RecipeDetail {...defaultProps} />);
 
 		const call = vi.mocked(ConfirmButton).mock.calls[0][0];
-		await call.onConfirm();
+		const result = await call.onConfirm();
 
 		expect(deleteRecipe).toHaveBeenCalledWith({
 			plannerId: 'planner-1',
 			recipeId: 'recipe-1',
 		});
+		expect(result).toEqual({ ok: true, data: undefined });
 
 		call.onSuccess?.();
 		expect(mockPush).toHaveBeenCalledWith('/planner-1/recipes');
+	});
+
+	it('returns the failed result when deleteRecipe fails', async () => {
+		vi.mocked(deleteRecipe).mockResolvedValueOnce({
+			ok: false,
+			error: 'Unauthorized',
+		});
+		render(<RecipeDetail {...defaultProps} />);
+
+		const call = vi.mocked(ConfirmButton).mock.calls[0][0];
+		const result = await call.onConfirm();
+
+		expect(result).toEqual({ ok: false, error: 'Unauthorized' });
 	});
 
 	it('renders source section when source and url are present', () => {
