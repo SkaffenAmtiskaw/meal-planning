@@ -17,7 +17,8 @@ describe('SavedResultRow', () => {
 			<SavedResultRow
 				item={{ _id: 'saved-1', name: 'Tacos', kind: 'recipe', tags: [] }}
 				added={false}
-				onAdd={vi.fn()}
+				linking={false}
+				onPick={vi.fn()}
 			/>,
 		);
 	});

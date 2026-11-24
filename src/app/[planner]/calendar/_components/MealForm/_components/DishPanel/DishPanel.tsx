@@ -17,6 +17,7 @@ type Props = {
 	onUnlink: () => void;
 	onReferenceChange: (text: string) => void;
 	onNoteChange: (note: string) => void;
+	onStartLinking: () => void;
 };
 
 // A dish's expand panel: its recipe and its note, side by side on desktop and stacked on a phone.
@@ -26,12 +27,14 @@ export const DishPanel = ({
 	onUnlink,
 	onReferenceChange,
 	onNoteChange,
+	onStartLinking,
 }: Props) => (
 	<SimpleGrid cols={{ base: 1, sm: 2 }} className={classes.root}>
 		<DishRecipeSection
 			source={dish.source}
 			onUnlink={onUnlink}
 			onReferenceChange={onReferenceChange}
+			onStartLinking={onStartLinking}
 		/>
 		<Stack gap={6}>
 			<SectionLabel>Note</SectionLabel>

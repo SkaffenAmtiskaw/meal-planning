@@ -1,5 +1,5 @@
 import { fireEvent, render, screen } from '@testing-library/react';
-import { describe, expect, it, vi } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import type { ButtonHTMLAttributes } from 'react';
 
@@ -19,13 +19,25 @@ vi.mock(
 );
 
 const onTogglePanel = vi.fn();
+const onStartLinking = vi.fn();
 
 describe('RecipeChip', () => {
-	it('reads "Link recipe" while nothing is linked, and leaves the panel alone', () => {
-		render(<RecipeChip source={null} onTogglePanel={onTogglePanel} />);
+	beforeEach(() => {
+		vi.clearAllMocks();
+	});
+
+	it('reads "Link recipe" while nothing is linked, and starts linking rather than opening the panel', () => {
+		render(
+			<RecipeChip
+				source={null}
+				onTogglePanel={onTogglePanel}
+				onStartLinking={onStartLinking}
+			/>,
+		);
 
 		fireEvent.click(screen.getByRole('button', { name: 'Link recipe' }));
 
+		expect(onStartLinking).toHaveBeenCalledTimes(1);
 		expect(onTogglePanel).not.toHaveBeenCalled();
 	});
 
@@ -37,6 +49,7 @@ describe('RecipeChip', () => {
 			<RecipeChip
 				source={{ kind: 'saved', savedId: 'saved-1' }}
 				onTogglePanel={onTogglePanel}
+				onStartLinking={onStartLinking}
 			/>,
 		);
 
@@ -49,6 +62,7 @@ describe('RecipeChip', () => {
 			<RecipeChip
 				source={{ kind: 'reference', text: 'https://example.com/soup' }}
 				onTogglePanel={onTogglePanel}
+				onStartLinking={onStartLinking}
 			/>,
 		);
 
@@ -61,11 +75,13 @@ describe('RecipeChip', () => {
 			<RecipeChip
 				source={{ kind: 'reference', text: 'p. 12' }}
 				onTogglePanel={onTogglePanel}
+				onStartLinking={onStartLinking}
 			/>,
 		);
 
 		fireEvent.click(screen.getByRole('button', { name: 'p. 12' }));
 
 		expect(onTogglePanel).toHaveBeenCalledTimes(1);
+		expect(onStartLinking).not.toHaveBeenCalled();
 	});
 });

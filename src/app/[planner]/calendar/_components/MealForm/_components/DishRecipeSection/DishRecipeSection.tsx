@@ -13,16 +13,19 @@ type Props = {
 	source: DishSource | null;
 	onUnlink: () => void;
 	onReferenceChange: (text: string) => void;
+	onStartLinking: () => void;
 };
 
 /**
  * The RECIPE part of a dish's panel. With a saved recipe linked, its name with
  * Change and Remove. Otherwise, "Link a saved recipe" and the reference field.
+ * Change and "Link a saved recipe" both start linking.
  */
 export const DishRecipeSection = ({
 	source,
 	onUnlink,
 	onReferenceChange,
+	onStartLinking,
 }: Props) => {
 	const savedItems = usePlannerSavedItems();
 
@@ -38,7 +41,7 @@ export const DishRecipeSection = ({
 						</Group>
 					</Paper>
 					<Group gap={4}>
-						<Button variant="subtle" size="compact-sm">
+						<Button variant="subtle" size="compact-sm" onClick={onStartLinking}>
 							Change
 						</Button>
 						<Button
@@ -53,7 +56,9 @@ export const DishRecipeSection = ({
 				</>
 			) : (
 				<>
-					<Button fullWidth>Link a saved recipe</Button>
+					<Button fullWidth onClick={onStartLinking}>
+						Link a saved recipe
+					</Button>
 					<Text size="xs" c="var(--text-muted)">
 						or add a reference
 					</Text>

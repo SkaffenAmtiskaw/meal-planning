@@ -60,6 +60,24 @@ export const useMealDraft = (initialDraft: MealDraft) => {
 	// The dish keeps its name.
 	const unlinkDish = (key: string) => updateDish(key, { source: null });
 
+	/**
+	 * Links a saved recipe to an existing dish, replacing any reference. The dish
+	 * keeps its name, or takes the recipe's if it has none.
+	 */
+	const linkDish = (key: string, item: SavedItem) =>
+		setDraft((prev) => ({
+			...prev,
+			dishes: prev.dishes.map((dish) =>
+				dish.key === key
+					? {
+							...dish,
+							name: dish.name.trim() ? dish.name : item.name,
+							source: { kind: 'saved', savedId: item._id },
+						}
+					: dish,
+			),
+		}));
+
 	return {
 		draft,
 		setField,
@@ -70,5 +88,6 @@ export const useMealDraft = (initialDraft: MealDraft) => {
 		setReference,
 		setNote,
 		unlinkDish,
+		linkDish,
 	};
 };

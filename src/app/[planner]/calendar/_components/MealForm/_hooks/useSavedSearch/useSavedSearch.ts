@@ -9,5 +9,11 @@ import { useState } from 'react';
 export const useSavedSearch = () => {
 	const [search, setSearch] = useState('');
 
-	return { search, setSearch };
+	/**
+	 * Starts the search over for a dish being linked, filled with its name. The
+	 * tag filter clears its tags here too, so linking needs only this one call.
+	 */
+	const resetForLinking = (dishName: string) => setSearch(dishName);
+
+	return { search, setSearch, resetForLinking };
 };

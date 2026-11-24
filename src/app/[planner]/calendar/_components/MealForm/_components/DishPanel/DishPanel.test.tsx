@@ -20,6 +20,7 @@ describe('DishPanel', () => {
 				onUnlink={vi.fn()}
 				onReferenceChange={vi.fn()}
 				onNoteChange={onNoteChange}
+				onStartLinking={vi.fn()}
 			/>,
 		);
 

@@ -13,7 +13,9 @@ type Props = {
 	hasSavedItems: boolean;
 	// The saved recipes already on the meal.
 	linkedIds: ReadonlySet<string>;
-	onAdd: (item: SavedItem) => void;
+	// A dish is being linked, so picking a result links it rather than adding a dish.
+	linking: boolean;
+	onPick: (item: SavedItem) => void;
 };
 
 /**
@@ -25,7 +27,8 @@ export const SavedResultList = ({
 	results,
 	hasSavedItems,
 	linkedIds,
-	onAdd,
+	linking,
+	onPick,
 }: Props) => {
 	if (results.length === 0) {
 		return (
@@ -44,7 +47,8 @@ export const SavedResultList = ({
 					key={item._id}
 					item={item}
 					added={linkedIds.has(item._id)}
-					onAdd={() => onAdd(item)}
+					linking={linking}
+					onPick={() => onPick(item)}
 				/>
 			))}
 		</Stack>

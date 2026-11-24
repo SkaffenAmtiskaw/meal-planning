@@ -18,10 +18,6 @@
 
 /* The selected day's soft sage circle, clipped to the content box so it sits inside the border and padding. */
 .filled {
-	background-color: color-mix(
-		in srgb,
-		var(--mantine-color-sage-5) 45%,
-		transparent
-	);
+	background-color: var(--selected-fill);
 	background-clip: content-box;
 }

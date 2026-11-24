@@ -18,3 +18,6 @@ export const useDisclosure = vi.fn((initialState = false) => [
 export const useMediaQuery = vi.fn(() => false);
 
 export const useDrag = vi.fn(() => ({ ref: vi.fn(), active: false }));
+
+// A test runs the listener itself, from the mock's last call.
+export const useWindowEvent = vi.fn();

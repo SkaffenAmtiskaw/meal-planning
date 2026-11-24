@@ -38,6 +38,7 @@ const handlers = {
 	onUnlinkDish: vi.fn(),
 	onSetReference: vi.fn(),
 	onSetNote: vi.fn(),
+	onStartLinking: vi.fn(),
 };
 
 const rowProps = (index: number) => vi.mocked(DishRow).mock.calls[index][0];
@@ -96,6 +97,14 @@ describe('DishList', () => {
 		expect(rowProps(1).nameless).toBe(true);
 	});
 
+	it('marks only the row being linked', () => {
+		vi.mocked(DishRow).mockClear();
+		render(<DishList dishes={[soup, bread]} linkingKey="b" {...handlers} />);
+
+		expect(rowProps(0).linking).toBe(false);
+		expect(rowProps(1).linking).toBe(true);
+	});
+
 	it('changes the dish whose row asked', () => {
 		vi.mocked(DishRow).mockClear();
 		render(<DishList dishes={[soup, bread]} {...handlers} />);
@@ -105,7 +114,9 @@ describe('DishList', () => {
 		rowProps(1).onUnlink();
 		rowProps(1).onReferenceChange('p. 12');
 		rowProps(1).onNoteChange('Toast it');
+		rowProps(1).onStartLinking();
 
+		expect(handlers.onStartLinking).toHaveBeenCalledWith(bread);
 		expect(handlers.onRenameDish).toHaveBeenCalledWith('b', 'Rye Bread');
 		expect(handlers.onRemoveDish).toHaveBeenCalledWith('b');
 		expect(handlers.onUnlinkDish).toHaveBeenCalledWith('b');

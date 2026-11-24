@@ -13,7 +13,13 @@
 	container-type: inline-size;
 }
 
-/* Paper has no error state, and its light-scheme rule outranks a class setting its border variable, so this sets the color itself. */
+/* Paper has no selected state, so the dish being linked gets the theme's fill for a current row and a navy border here. As with .nameless, the color is set itself. */
+.linking {
+	border-color: var(--mantine-color-navy-5);
+	background-color: var(--selected-fill);
+}
+
+/* Paper has no error state, and its light-scheme rule outranks a class setting its border variable, so this sets the color itself. Coming after .linking, its red wins on a dish that is both. */
 .nameless {
 	border-color: var(--mantine-color-error);
 }

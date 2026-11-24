@@ -31,6 +31,9 @@ vi.mock('../SavedSearchInput/SavedSearchInput', () => ({
 vi.mock('../SavedResultList/SavedResultList', () => ({
 	SavedResultList: vi.fn(() => <div data-testid="results" />),
 }));
+vi.mock('../LinkModeBanner/LinkModeBanner', () => ({
+	LinkModeBanner: vi.fn(() => <div data-testid="banner" />),
+}));
 
 const tacos: SavedItem = {
 	_id: 'tacos',
@@ -39,13 +42,15 @@ const tacos: SavedItem = {
 	tags: [],
 };
 
-const renderColumn = (search = '') =>
+const renderColumn = (search = '', linkingDishName: string | null = null) =>
 	render(
 		<SavedRecipesColumn
 			search={search}
 			onSearchChange={vi.fn()}
 			linkedIds={new Set()}
-			onAdd={vi.fn()}
+			linkingDishName={linkingDishName}
+			onCancelLinking={vi.fn()}
+			onPick={vi.fn()}
 		/>,
 	);
 
@@ -54,11 +59,24 @@ describe('SavedRecipesColumn', () => {
 		vi.clearAllMocks();
 	});
 
-	// The DOM order is the Tab order, so the search comes before the results.
-	it('orders the column its label, the search, then the results', () => {
+	it('shows no banner, and has its results add, outside link mode', () => {
 		renderColumn();
 
-		const nodes = ['label', 'search', 'results'].map((id) =>
+		expect(screen.queryByTestId('banner')).toBeNull();
+		expect(vi.mocked(SavedResultList).mock.lastCall?.[0].linking).toBe(false);
+	});
+
+	it('has its results link while a dish is being linked, even one with no name', () => {
+		renderColumn('', '');
+
+		expect(vi.mocked(SavedResultList).mock.lastCall?.[0].linking).toBe(true);
+	});
+
+	// The DOM order is the Tab order, so the banner's Cancel and the search come before the results.
+	it('orders the column its label, the banner, the search, then the results', () => {
+		renderColumn('', 'chicken');
+
+		const nodes = ['label', 'banner', 'search', 'results'].map((id) =>
 			screen.getByTestId(id),
 		);
 		for (let i = 1; i < nodes.length; i++) {

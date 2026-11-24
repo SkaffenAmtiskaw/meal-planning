@@ -1,5 +1,5 @@
 import { fireEvent, render, screen } from '@testing-library/react';
-import { describe, expect, it, vi } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { DishRecipeSection } from './DishRecipeSection';
 
@@ -10,9 +10,40 @@ vi.mock(
 		await import('#mocks/@app/[planner]/calendar/_hooks/usePlannerSavedItems'),
 );
 
-const handlers = { onUnlink: vi.fn(), onReferenceChange: vi.fn() };
+const handlers = {
+	onUnlink: vi.fn(),
+	onReferenceChange: vi.fn(),
+	onStartLinking: vi.fn(),
+};
 
 describe('DishRecipeSection', () => {
+	beforeEach(() => {
+		vi.clearAllMocks();
+	});
+
+	it('starts linking from Change', () => {
+		render(
+			<DishRecipeSection
+				source={{ kind: 'saved', savedId: 'saved-1' }}
+				{...handlers}
+			/>,
+		);
+
+		fireEvent.click(screen.getByRole('button', { name: 'Change' }));
+
+		expect(handlers.onStartLinking).toHaveBeenCalledTimes(1);
+	});
+
+	it('starts linking from "Link a saved recipe"', () => {
+		render(<DishRecipeSection source={null} {...handlers} />);
+
+		fireEvent.click(
+			screen.getByRole('button', { name: 'Link a saved recipe' }),
+		);
+
+		expect(handlers.onStartLinking).toHaveBeenCalledTimes(1);
+	});
+
 	it('unlinks a saved recipe from Remove', () => {
 		render(
 			<DishRecipeSection

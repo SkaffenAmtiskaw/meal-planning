@@ -10,11 +10,12 @@ import { SavedItemSummary } from '../SavedItemSummary/SavedItemSummary';
 type Props = {
 	item: SavedItem;
 	added: boolean;
-	onAdd: () => void;
+	linking: boolean;
+	onPick: () => void;
 };
 
 // One saved recipe in the column: what it is, then its action.
-export const SavedResultRow = ({ item, added, onAdd }: Props) => (
+export const SavedResultRow = ({ item, added, linking, onPick }: Props) => (
 	<Group
 		justify="space-between"
 		align="center"
@@ -24,6 +25,11 @@ export const SavedResultRow = ({ item, added, onAdd }: Props) => (
 		data-testid="saved-result"
 	>
 		<SavedItemSummary item={item} />
-		<SavedItemAction itemName={item.name} added={added} onAdd={onAdd} />
+		<SavedItemAction
+			itemName={item.name}
+			added={added}
+			linking={linking}
+			onPick={onPick}
+		/>
 	</Group>
 );

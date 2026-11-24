@@ -32,7 +32,8 @@ describe('SavedResultList', () => {
 				results={[]}
 				hasSavedItems={false}
 				linkedIds={new Set()}
-				onAdd={vi.fn()}
+				linking={false}
+				onPick={vi.fn()}
 			/>,
 		);
 
@@ -47,28 +48,30 @@ describe('SavedResultList', () => {
 				results={[]}
 				hasSavedItems
 				linkedIds={new Set()}
-				onAdd={vi.fn()}
+				linking={false}
+				onPick={vi.fn()}
 			/>,
 		);
 
 		expect(screen.getByText('No saved recipes match.')).toBeTruthy();
 	});
 
-	it('marks the recipes already on the meal as added, and adds the one picked', () => {
-		const onAdd = vi.fn();
+	it('marks the recipes already on the meal as added, and passes on the one picked', () => {
+		const onPick = vi.fn();
 		render(
 			<SavedResultList
 				results={[tacos, oats]}
 				hasSavedItems
 				linkedIds={new Set(['tacos'])}
-				onAdd={onAdd}
+				linking={false}
+				onPick={onPick}
 			/>,
 		);
 
 		const rows = vi.mocked(SavedResultRow).mock.calls.map(([props]) => props);
 		expect(rows.map((row) => row.added)).toEqual([true, false]);
 
-		rows[1].onAdd();
-		expect(onAdd).toHaveBeenCalledWith(oats);
+		rows[1].onPick();
+		expect(onPick).toHaveBeenCalledWith(oats);
 	});
 });

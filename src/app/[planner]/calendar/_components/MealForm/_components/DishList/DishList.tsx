@@ -15,24 +15,29 @@ type Props = {
 	dishes: DishDraft[];
 	// The dishes whose rows show the nameless error.
 	namelessKeys?: ReadonlySet<string>;
+	// The dish being linked to a saved recipe, if any.
+	linkingKey?: string | null;
 	onAddDish: () => void;
 	onRenameDish: (key: string, name: string) => void;
 	onRemoveDish: (key: string) => void;
 	onUnlinkDish: (key: string) => void;
 	onSetReference: (key: string, text: string) => void;
 	onSetNote: (key: string, note: string) => void;
+	onStartLinking: (dish: DishDraft) => void;
 };
 
 // DISHES with its count, a row for each dish, then Add dish.
 export const DishList = ({
 	dishes,
 	namelessKeys = new Set(),
+	linkingKey = null,
 	onAddDish,
 	onRenameDish,
 	onRemoveDish,
 	onUnlinkDish,
 	onSetReference,
 	onSetNote,
+	onStartLinking,
 }: Props) => {
 	const isMobile = useIsMobile();
 	// A blank row isn't saved, so it isn't counted.
@@ -53,11 +58,13 @@ export const DishList = ({
 					dish={dish}
 					canDelete={dishes.length > 1}
 					nameless={namelessKeys.has(dish.key)}
+					linking={dish.key === linkingKey}
 					onRename={(name) => onRenameDish(dish.key, name)}
 					onDelete={() => onRemoveDish(dish.key)}
 					onUnlink={() => onUnlinkDish(dish.key)}
 					onReferenceChange={(text) => onSetReference(dish.key, text)}
 					onNoteChange={(note) => onSetNote(dish.key, note)}
+					onStartLinking={() => onStartLinking(dish)}
 				/>
 			))}
 			<Button

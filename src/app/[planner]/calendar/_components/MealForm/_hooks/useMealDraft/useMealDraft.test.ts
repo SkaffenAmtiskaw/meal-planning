@@ -140,4 +140,53 @@ describe('useMealDraft', () => {
 			linked.dishes[1],
 		]);
 	});
+
+	describe('linkDish', () => {
+		const chicken = {
+			_id: 'saved-1',
+			name: 'Lemon Herb Chicken',
+			kind: 'recipe' as const,
+			tags: [],
+		};
+
+		it("links the saved recipe and keeps the dish's name, replacing its reference", () => {
+			const { result } = renderHook(() =>
+				useMealDraft(
+					makeMealDraft({
+						dishes: [
+							makeDishDraft({
+								key: 'a',
+								name: 'chicken',
+								source: { kind: 'reference', text: 'p. 12' },
+							}),
+							makeDishDraft({ key: 'b', name: 'Bread' }),
+						],
+					}),
+				),
+			);
+
+			act(() => result.current.linkDish('a', chicken));
+
+			expect(result.current.draft.dishes).toEqual([
+				makeDishDraft({
+					key: 'a',
+					name: 'chicken',
+					source: { kind: 'saved', savedId: 'saved-1' },
+				}),
+				makeDishDraft({ key: 'b', name: 'Bread' }),
+			]);
+		});
+
+		it('names a dish with no name, or only spaces, after the recipe', () => {
+			const { result } = renderHook(() =>
+				useMealDraft(
+					makeMealDraft({ dishes: [makeDishDraft({ key: 'a', name: '  ' })] }),
+				),
+			);
+
+			act(() => result.current.linkDish('a', chicken));
+
+			expect(result.current.draft.dishes[0].name).toBe('Lemon Herb Chicken');
+		});
+	});
 });

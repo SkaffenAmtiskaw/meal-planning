@@ -27,11 +27,14 @@ type Props = {
 	canDelete: boolean;
 	// True once a save was stopped because this dish has something in it but no name.
 	nameless?: boolean;
+	// True while this dish is the one being linked to a saved recipe.
+	linking?: boolean;
 	onRename: (name: string) => void;
 	onDelete: () => void;
 	onUnlink: () => void;
 	onReferenceChange: (text: string) => void;
 	onNoteChange: (note: string) => void;
+	onStartLinking: () => void;
 };
 
 /**
@@ -43,11 +46,13 @@ export const DishRow = ({
 	dish,
 	canDelete,
 	nameless = false,
+	linking = false,
 	onRename,
 	onDelete,
 	onUnlink,
 	onReferenceChange,
 	onNoteChange,
+	onStartLinking,
 }: Props) => {
 	const [open, setOpen] = useState(false);
 	const { ref: noteRef, requestFocus: focusNote } =
@@ -66,7 +71,11 @@ export const DishRow = ({
 		<Paper
 			withBorder
 			p="xs"
-			className={clsx(classes.row, nameless && classes.nameless)}
+			className={clsx(
+				classes.row,
+				linking && classes.linking,
+				nameless && classes.nameless,
+			)}
 			data-testid="dish-row"
 		>
 			<div className={classes.line}>
@@ -78,7 +87,11 @@ export const DishRow = ({
 					/>
 				</div>
 				<Group gap="xs" wrap="nowrap" className={classes.chips}>
-					<RecipeChip source={dish.source} onTogglePanel={togglePanel} />
+					<RecipeChip
+						source={dish.source}
+						onTogglePanel={togglePanel}
+						onStartLinking={onStartLinking}
+					/>
 					<NoteChip hasNote={dish.note !== ''} onTogglePanel={toggleFromNote} />
 				</Group>
 				<ActionIcon
@@ -121,6 +134,7 @@ export const DishRow = ({
 					onUnlink={onUnlink}
 					onReferenceChange={onReferenceChange}
 					onNoteChange={onNoteChange}
+					onStartLinking={onStartLinking}
 				/>
 			</Collapse>
 		</Paper>

@@ -7,20 +7,53 @@ vi.mock('@mantine/core', async () => await import('#mocks/@mantine/core'));
 
 describe('SavedItemAction', () => {
 	it('adds the recipe', () => {
-		const onAdd = vi.fn();
-		render(<SavedItemAction itemName="Tacos" added={false} onAdd={onAdd} />);
+		const onPick = vi.fn();
+		render(
+			<SavedItemAction
+				itemName="Tacos"
+				added={false}
+				linking={false}
+				onPick={onPick}
+			/>,
+		);
 
 		fireEvent.click(screen.getByRole('button', { name: 'Add Tacos' }));
 
-		expect(onAdd).toHaveBeenCalled();
+		expect(onPick).toHaveBeenCalled();
 	});
 
-	it('does nothing once the recipe is on the meal', () => {
-		const onAdd = vi.fn();
-		render(<SavedItemAction itemName="Tacos" added onAdd={onAdd} />);
+	it('links the recipe while a dish is being linked', () => {
+		const onPick = vi.fn();
+		render(
+			<SavedItemAction
+				itemName="Tacos"
+				added={false}
+				linking
+				onPick={onPick}
+			/>,
+		);
+
+		fireEvent.click(screen.getByRole('button', { name: 'Link Tacos' }));
+
+		expect(onPick).toHaveBeenCalled();
+	});
+
+	it.each([
+		false,
+		true,
+	])('does nothing once the recipe is on the meal (linking: %s)', (linking) => {
+		const onPick = vi.fn();
+		render(
+			<SavedItemAction
+				itemName="Tacos"
+				added
+				linking={linking}
+				onPick={onPick}
+			/>,
+		);
 
 		fireEvent.click(screen.getByRole('button', { name: 'Tacos, added' }));
 
-		expect(onAdd).not.toHaveBeenCalled();
+		expect(onPick).not.toHaveBeenCalled();
 	});
 });

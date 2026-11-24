@@ -43,6 +43,7 @@ const props = {
 	onUnlink: vi.fn(),
 	onReferenceChange: vi.fn(),
 	onNoteChange: vi.fn(),
+	onStartLinking: vi.fn(),
 };
 
 const panel = () => screen.queryByTestId('dish-panel');
@@ -137,5 +138,18 @@ describe('DishRow', () => {
 			undefined,
 		);
 		expect(screen.queryByText('Name this dish, or delete it.')).toBeNull();
+	});
+
+	it('marks the dish being linked, and no other', () => {
+		const { rerender } = render(<DishRow {...props} linking />);
+		expect(
+			screen.getByTestId('dish-row').classList.contains(classes.linking),
+		).toBe(true);
+
+		rerender(<DishRow {...props} />);
+
+		expect(
+			screen.getByTestId('dish-row').classList.contains(classes.linking),
+		).toBe(false);
 	});
 });

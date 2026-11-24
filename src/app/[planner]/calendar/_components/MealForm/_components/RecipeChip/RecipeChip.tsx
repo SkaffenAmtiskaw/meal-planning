@@ -13,20 +13,29 @@ import { SourceMark } from '../SourceMark/SourceMark';
 type Props = {
 	source: DishSource | null;
 	onTogglePanel: () => void;
+	onStartLinking: () => void;
 };
 
 /**
  * Where a dish's recipe comes from: "Link recipe" while nothing is linked, the
  * saved recipe's name, or the reference without its protocol. A long label is
- * cut off, and shows in full on hover. Tapping a filled chip opens or closes the
- * row's panel.
+ * cut off, and shows in full on hover. Tapping "Link recipe" starts linking, and
+ * tapping a filled chip opens or closes the row's panel.
  */
-export const RecipeChip = ({ source, onTogglePanel }: Props) => {
+export const RecipeChip = ({
+	source,
+	onTogglePanel,
+	onStartLinking,
+}: Props) => {
 	const savedItems = usePlannerSavedItems();
 
 	if (!source) {
 		return (
-			<PillButton variant="dashed" className={classes.root}>
+			<PillButton
+				variant="dashed"
+				className={classes.root}
+				onClick={onStartLinking}
+			>
 				<SourceMark kind="none" />
 				<span className={classes.label}>Link recipe</span>
 			</PillButton>
