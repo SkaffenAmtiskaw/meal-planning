@@ -1,6 +1,6 @@
 'use client';
 
-import { type FormEvent, useEffect, useEffectEvent } from 'react';
+import { type FormEvent, useEffect, useEffectEvent, useState } from 'react';
 
 import type { MealInput } from '@/_actions/calendar/types';
 import { FormFeedbackAlert } from '@/_components';
@@ -16,6 +16,8 @@ import { MealFormFooter } from './_components/MealFormFooter/MealFormFooter';
 import { MealFormLayout } from './_components/MealFormLayout/MealFormLayout';
 import { useMealDraft } from './_hooks/useMealDraft';
 import { canSubmitMeal } from './_utils/canSubmitMeal';
+import { findNamelessDishes } from './_utils/findNamelessDishes';
+import { isBlankDish } from './_utils/isBlankDish';
 import { toMealInput } from './_utils/toMealInput';
 
 type MealFormProps = {
@@ -65,8 +67,27 @@ export const MealForm = ({
 		});
 	}, [draft.date, draft.mealName]);
 
+	/**
+	 * The dishes a stopped save found with no name. A row shows the error only
+	 * while its dish is still nameless, so naming it clears the error at once,
+	 * and a dish that loses its name later isn't marked until the next save.
+	 */
+	const [flaggedKeys, setFlaggedKeys] = useState<ReadonlySet<string>>(
+		() => new Set(),
+	);
+	const namelessDishes = findNamelessDishes(draft.dishes);
+	const namelessKeys = new Set(
+		namelessDishes
+			.map((dish) => dish.key)
+			.filter((key) => flaggedKeys.has(key)),
+	);
+
 	const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
 		event.preventDefault();
+		if (namelessDishes.length > 0) {
+			setFlaggedKeys(new Set(namelessDishes.map((dish) => dish.key)));
+			return;
+		}
 		const input = toMealInput(draft);
 		void wrap(
 			() => save(input),
@@ -84,6 +105,7 @@ export const MealForm = ({
 				dishes={
 					<DishList
 						dishes={draft.dishes}
+						namelessKeys={namelessKeys}
 						onAddDish={addDish}
 						onRenameDish={renameDish}
 						onRemoveDish={removeDish}
@@ -94,7 +116,8 @@ export const MealForm = ({
 				}
 				footer={
 					<MealFormFooter
-						dishCount={draft.dishes.length}
+						// A blank row isn't saved, so it isn't counted.
+						dishCount={draft.dishes.filter((dish) => !isBlankDish(dish)).length}
 						status={status}
 						countdown={countdown}
 						canSubmit={canSubmitMeal(draft)}

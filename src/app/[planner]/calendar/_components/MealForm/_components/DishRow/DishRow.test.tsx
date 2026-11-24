@@ -5,6 +5,9 @@ import { makeDishDraft } from '#fixtures/dish';
 import { useFocusOnExpand } from '@/_hooks';
 
 import { DishRow } from './DishRow';
+import classes from './DishRow.module.css';
+
+import { DishNameInput } from '../DishNameInput/DishNameInput';
 
 vi.mock('@mantine/core', async () => await import('#mocks/@mantine/core'));
 vi.mock('@/_hooks', async () => await import('#mocks/@/_hooks'));
@@ -108,5 +111,31 @@ describe('DishRow', () => {
 		const { container } = render(<DishRow {...props} />);
 
 		expect(container.querySelector('p')).toBeNull();
+	});
+
+	it('marks a nameless dish with a red border, a red name field and its message', () => {
+		render(<DishRow {...props} nameless />);
+
+		expect(
+			screen.getByTestId('dish-row').classList.contains(classes.nameless),
+		).toBe(true);
+		expect(vi.mocked(DishNameInput)).toHaveBeenLastCalledWith(
+			expect.objectContaining({ error: true }),
+			undefined,
+		);
+		expect(screen.queryByText('Name this dish, or delete it.')).not.toBeNull();
+	});
+
+	it('shows no error on a dish that has a name or is blank', () => {
+		render(<DishRow {...props} />);
+
+		expect(
+			screen.getByTestId('dish-row').classList.contains(classes.nameless),
+		).toBe(false);
+		expect(vi.mocked(DishNameInput)).toHaveBeenLastCalledWith(
+			expect.objectContaining({ error: false }),
+			undefined,
+		);
+		expect(screen.queryByText('Name this dish, or delete it.')).toBeNull();
 	});
 });

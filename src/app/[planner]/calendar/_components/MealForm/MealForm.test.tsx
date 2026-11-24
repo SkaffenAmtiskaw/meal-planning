@@ -6,17 +6,21 @@ import { useFormFeedback } from '@/_hooks';
 
 import { MealForm } from './MealForm';
 
+import { DishList } from './_components/DishList/DishList';
 import { MealFields } from './_components/MealFields/MealFields';
 import { MealFormFooter } from './_components/MealFormFooter/MealFormFooter';
+import { findNamelessDishes } from './_utils/findNamelessDishes';
+import { isBlankDish } from './_utils/isBlankDish';
 
 vi.mock('@/_hooks', async () => await import('#mocks/@/_hooks'));
 vi.mock('@/_components', () => ({
 	FormFeedbackAlert: vi.fn(() => null),
 }));
 vi.mock('./_components/MealFormLayout/MealFormLayout', () => ({
-	MealFormLayout: vi.fn(({ meal, footer }) => (
+	MealFormLayout: vi.fn(({ meal, dishes, footer }) => (
 		<>
 			{meal}
+			{dishes}
 			{footer}
 			<button type="submit">Add Meal</button>
 		</>
@@ -30,6 +34,16 @@ vi.mock('./_components/DishList/DishList', () => ({
 }));
 vi.mock('./_components/MealFormFooter/MealFormFooter', () => ({
 	MealFormFooter: vi.fn(() => null),
+}));
+vi.mock(
+	'./_utils/isBlankDish',
+	async () =>
+		await import(
+			'#mocks/@app/[planner]/calendar/_components/MealForm/_utils/isBlankDish'
+		),
+);
+vi.mock('./_utils/findNamelessDishes', () => ({
+	findNamelessDishes: vi.fn(() => []),
 }));
 
 const draft = makeMealDraft({
@@ -56,6 +70,8 @@ const setField = (field: string, value: string) =>
 describe('MealForm', () => {
 	beforeEach(() => {
 		vi.clearAllMocks();
+		vi.mocked(findNamelessDishes).mockReturnValue([]);
+		vi.mocked(isBlankDish).mockReturnValue(false);
 	});
 
 	it('saves the draft through the save it was given, then reports the saved meal', async () => {
@@ -76,6 +92,72 @@ describe('MealForm', () => {
 
 		expect(save).toHaveBeenCalledWith(savedInput);
 		expect(onSuccess).toHaveBeenCalledWith(savedInput);
+	});
+
+	it("stops the save while a dish has something in it but no name, and marks that dish's row", async () => {
+		const nameless = makeDishDraft({ key: 'nameless', note: 'Buy rolls' });
+		vi.mocked(findNamelessDishes).mockReturnValue([nameless]);
+		const save = vi.fn(async () => ok);
+		render(
+			<MealForm
+				initialDraft={draft}
+				save={save}
+				onSuccess={vi.fn()}
+				onCancel={vi.fn()}
+			/>,
+		);
+		expect(vi.mocked(DishList).mock.lastCall?.[0].namelessKeys).toEqual(
+			new Set(),
+		);
+
+		await act(async () => {
+			fireEvent.click(screen.getByRole('button', { name: 'Add Meal' }));
+		});
+
+		expect(save).not.toHaveBeenCalled();
+		expect(vi.mocked(DishList).mock.lastCall?.[0].namelessKeys).toEqual(
+			new Set(['nameless']),
+		);
+	});
+
+	it("clears a row's mark once its dish has a name", async () => {
+		const nameless = makeDishDraft({ key: 'nameless', note: 'Buy rolls' });
+		vi.mocked(findNamelessDishes).mockReturnValue([nameless]);
+		render(
+			<MealForm
+				initialDraft={draft}
+				save={vi.fn()}
+				onSuccess={vi.fn()}
+				onCancel={vi.fn()}
+			/>,
+		);
+		await act(async () => {
+			fireEvent.click(screen.getByRole('button', { name: 'Add Meal' }));
+		});
+
+		vi.mocked(findNamelessDishes).mockReturnValue([]);
+		setField('mealName', 'Lunch');
+
+		expect(vi.mocked(DishList).mock.lastCall?.[0].namelessKeys).toEqual(
+			new Set(),
+		);
+	});
+
+	it('leaves blank rows out of the footer count', () => {
+		const blank = makeDishDraft({ key: 'blank' });
+		vi.mocked(isBlankDish).mockImplementation((dish) => dish === blank);
+		render(
+			<MealForm
+				initialDraft={makeMealDraft({
+					dishes: [blank, makeDishDraft({ key: 'b', name: 'Soup' })],
+				})}
+				save={vi.fn()}
+				onSuccess={vi.fn()}
+				onCancel={vi.fn()}
+			/>,
+		);
+
+		expect(vi.mocked(MealFormFooter).mock.lastCall?.[0].dishCount).toBe(1);
 	});
 
 	it('closes at once after a save, with no countdown', () => {

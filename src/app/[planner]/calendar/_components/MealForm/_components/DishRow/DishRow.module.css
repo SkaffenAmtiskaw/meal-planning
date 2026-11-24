@@ -13,6 +13,11 @@
 	container-type: inline-size;
 }
 
+/* Paper has no error state, and its light-scheme rule outranks a class setting its border variable, so this sets the color itself. */
+.nameless {
+	border-color: var(--mantine-color-error);
+}
+
 .name {
 	grid-area: name;
 }

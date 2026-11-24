@@ -3,7 +3,13 @@
 import { useState } from 'react';
 
 import { ActionIcon, Collapse, Group, Paper, Text } from '@mantine/core';
-import { IconChevronDown, IconChevronUp } from '@tabler/icons-react';
+import {
+	IconAlertCircle,
+	IconChevronDown,
+	IconChevronUp,
+} from '@tabler/icons-react';
+
+import clsx from 'clsx';
 
 import { useFocusOnExpand } from '@/_hooks';
 
@@ -19,6 +25,8 @@ import { RecipeChip } from '../RecipeChip/RecipeChip';
 type Props = {
 	dish: DishDraft;
 	canDelete: boolean;
+	// True once a save was stopped because this dish has something in it but no name.
+	nameless?: boolean;
 	onRename: (name: string) => void;
 	onDelete: () => void;
 	onUnlink: () => void;
@@ -34,6 +42,7 @@ type Props = {
 export const DishRow = ({
 	dish,
 	canDelete,
+	nameless = false,
 	onRename,
 	onDelete,
 	onUnlink,
@@ -54,10 +63,19 @@ export const DishRow = ({
 	};
 
 	return (
-		<Paper withBorder p="xs" data-testid="dish-row">
+		<Paper
+			withBorder
+			p="xs"
+			className={clsx(nameless && classes.nameless)}
+			data-testid="dish-row"
+		>
 			<div className={classes.line}>
 				<div className={classes.name}>
-					<DishNameInput name={dish.name} onRename={onRename} />
+					<DishNameInput
+						name={dish.name}
+						error={nameless}
+						onRename={onRename}
+					/>
 				</div>
 				<Group gap="xs" wrap="nowrap" className={classes.chips}>
 					<RecipeChip source={dish.source} onTogglePanel={togglePanel} />
@@ -83,6 +101,18 @@ export const DishRow = ({
 				<Text size="sm" c="var(--text-muted)" className={classes.note}>
 					{dish.note}
 				</Text>
+			)}
+			{nameless && (
+				<Group gap={6} mt="xs" wrap="nowrap" role="alert">
+					<IconAlertCircle
+						size={14}
+						color="var(--mantine-color-error)"
+						aria-hidden
+					/>
+					<Text size="sm" fw={500} c="var(--mantine-color-error)">
+						Name this dish, or delete it.
+					</Text>
+				</Group>
 			)}
 			<Collapse expanded={open}>
 				<DishPanel

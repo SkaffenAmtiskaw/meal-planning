@@ -1,5 +1,7 @@
 import type { MealInput } from '@/_actions/calendar/types';
 
+import { isBlankDish } from './isBlankDish';
+
 import type { DishDraft, MealDraft } from '../types';
 
 // An empty optional field is left out, as the stored data never holds one.
@@ -18,5 +20,6 @@ export const toMealInput = ({
 	date,
 	mealName,
 	...(description && { description }),
-	dishes: dishes.map(toDishInput),
+	// A blank row is left for the user to fill in, not a dish, so it isn't saved.
+	dishes: dishes.filter((dish) => !isBlankDish(dish)).map(toDishInput),
 });

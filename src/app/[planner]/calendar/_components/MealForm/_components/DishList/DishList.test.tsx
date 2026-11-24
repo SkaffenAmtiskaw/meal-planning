@@ -8,10 +8,22 @@ import { useIsMobile } from '@/_hooks';
 
 import { DishList } from './DishList';
 
+import { formatDishCount } from '../../_utils/formatDishCount';
+import { isBlankDish } from '../../_utils/isBlankDish';
 import { DishRow } from '../DishRow/DishRow';
 
 vi.mock('@mantine/core', async () => await import('#mocks/@mantine/core'));
 vi.mock('@/_hooks', async () => await import('#mocks/@/_hooks'));
+vi.mock('../../_utils/formatDishCount', () => ({
+	formatDishCount: vi.fn(() => '1 dish'),
+}));
+vi.mock(
+	'../../_utils/isBlankDish',
+	async () =>
+		await import(
+			'#mocks/@app/[planner]/calendar/_components/MealForm/_utils/isBlankDish'
+		),
+);
 vi.mock('../DishRow/DishRow', () => ({
 	DishRow: vi.fn(() => null),
 }));
@@ -60,6 +72,28 @@ describe('DishList', () => {
 			expect.objectContaining({ justify }),
 			undefined,
 		);
+	});
+
+	it('leaves blank rows out of the count', () => {
+		// Soup, the first row, is blank.
+		vi.mocked(isBlankDish).mockReturnValueOnce(true);
+		render(<DishList dishes={[soup, bread]} {...handlers} />);
+
+		expect(vi.mocked(formatDishCount)).toHaveBeenLastCalledWith(1);
+	});
+
+	it('marks only the rows it was told are nameless', () => {
+		vi.mocked(DishRow).mockClear();
+		render(
+			<DishList
+				dishes={[soup, bread]}
+				namelessKeys={new Set(['b'])}
+				{...handlers}
+			/>,
+		);
+
+		expect(rowProps(0).nameless).toBe(false);
+		expect(rowProps(1).nameless).toBe(true);
 	});
 
 	it('changes the dish whose row asked', () => {

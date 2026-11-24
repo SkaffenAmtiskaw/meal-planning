@@ -6,7 +6,6 @@ import { weekCellName } from './_helpers/calendarLabels';
 import { fillMealForm, saveMealForm } from './_helpers/mealForm';
 
 const MEAL_NAME = "Rapunzel's Tower Supper";
-const DISH_NAME = 'Golden Braid Loaf';
 
 test('a meal added in month view shows in week view', {
 	tag: '@desktop-only',
@@ -21,8 +20,6 @@ test('a meal added in month view shows in week view', {
 		description: 'Eaten at the window',
 	});
 	const form = page.getByRole('dialog');
-	// A blank first dish row blocks saving, so the dish is named.
-	await form.getByRole('textbox', { name: 'Dish name' }).fill(DISH_NAME);
 	await saveMealForm(page);
 
 	// The modal closes as soon as the save works.

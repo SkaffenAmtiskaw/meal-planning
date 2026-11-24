@@ -1,8 +1,17 @@
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 
 import { makeDishDraft, makeMealDraft } from '#fixtures/dish';
 
+import { isBlankDish } from './isBlankDish';
 import { toMealInput } from './toMealInput';
+
+vi.mock(
+	'./isBlankDish',
+	async () =>
+		await import(
+			'#mocks/@app/[planner]/calendar/_components/MealForm/_utils/isBlankDish'
+		),
+);
 
 describe('toMealInput', () => {
 	it("sends the meal's fields and each dish's name, source and note", () => {
@@ -49,5 +58,20 @@ describe('toMealInput', () => {
 			mealName: 'Taco Night',
 			dishes: [{ name: 'Salsa' }],
 		});
+	});
+
+	it('drops blank dishes', () => {
+		const blank = makeDishDraft({ key: 'blank' });
+		vi.mocked(isBlankDish).mockImplementation((dish) => dish === blank);
+
+		const input = toMealInput(
+			makeMealDraft({
+				date: '2026-11-27',
+				mealName: 'Picnic',
+				dishes: [blank, makeDishDraft({ key: 'b', name: 'Salsa' })],
+			}),
+		);
+
+		expect(input.dishes).toEqual([{ name: 'Salsa' }]);
 	});
 });
