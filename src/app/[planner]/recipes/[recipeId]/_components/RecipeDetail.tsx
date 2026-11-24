@@ -47,13 +47,12 @@ export const RecipeDetail = ({ plannerId, recipe, tags }: Props) => {
 							Edit
 						</Button>
 						<ConfirmButton
-							onConfirm={async () => {
-								await deleteRecipe({
+							onConfirm={() =>
+								deleteRecipe({
 									plannerId,
 									recipeId: recipe._id,
-								});
-								return { ok: true, data: undefined };
-							}}
+								})
+							}
 							onSuccess={() => router.push(`/${plannerId}/recipes`)}
 							title="Delete Recipe"
 							message="Are you sure you want to delete this recipe? This cannot be undone."
