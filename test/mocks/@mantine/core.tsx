@@ -389,6 +389,9 @@ export const Affix = vi.fn(
 	),
 );
 
+// Renders its children in place rather than at the end of the body.
+export const Portal = vi.fn(({ children }: WithChildren) => <>{children}</>);
+
 export const Divider = vi.fn(
 	({
 		label,

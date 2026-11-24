@@ -4,7 +4,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { Modal } from '@mantine/core';
 
 import { addMeal } from '@/_actions/calendar';
-import { useIsMobile } from '@/_hooks';
+import { useIsMobile, useSnackbar } from '@/_hooks';
 
 import { AddMealModal } from './AddMealModal';
 
@@ -80,6 +80,32 @@ describe('AddMealModal', () => {
 		act(() => call());
 
 		expect(props.close).toHaveBeenCalledTimes(1);
+	});
+
+	it('confirms a save with the date the meal was saved on, with no Undo', () => {
+		const show = vi.fn();
+		vi.mocked(useSnackbar).mockReturnValue({ show });
+		render(<AddMealModal {...props} data={{ initialDate: '2026-11-20' }} />);
+
+		act(() =>
+			formProps()?.onSuccess({
+				date: '2026-11-27',
+				mealName: 'Taco Night',
+				dishes: [],
+			}),
+		);
+
+		expect(show).toHaveBeenCalledWith({ message: 'Added to Fri, Nov 27' });
+	});
+
+	it('shows no confirmation after Cancel', () => {
+		const show = vi.fn();
+		vi.mocked(useSnackbar).mockReturnValue({ show });
+		render(<AddMealModal {...props} />);
+
+		act(() => formProps()?.onCancel());
+
+		expect(show).not.toHaveBeenCalled();
 	});
 
 	it('shows the date and meal name the form reports under the title on desktop', () => {

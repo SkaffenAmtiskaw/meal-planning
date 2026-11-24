@@ -20,7 +20,7 @@ export type CalendarModalState =
 	  }[CalendarModalType];
 
 /**
- * Props the provider gives each type's frame. The frame stays mounted, so its
+ * Props `CalendarModals` gives each type's frame. The frame stays mounted, so its
  * modal can animate open, and is open while `data` isn't null.
  */
 export interface CalendarModalFrameProps<K extends CalendarModalType> {

@@ -5,7 +5,8 @@ type AppButtonVariant =
 	| 'cta'
 	| 'dashed'
 	| 'white-outline'
-	| 'muted';
+	| 'muted'
+	| 'on-dark';
 type AppBadgeVariant = BadgeVariant | 'ring' | 'tag' | 'tag-plain';
 
 declare module '@mantine/core' {

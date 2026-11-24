@@ -79,5 +79,16 @@ export const variantColorResolver: VariantColorsResolver = (input) => {
 		};
 	}
 
+	// A quiet text button on a navy fill, such as the confirmation bar's Undo: sage text, no fill.
+	if (input.variant === 'on-dark') {
+		return {
+			...defaultResolvedColors,
+			background: 'transparent',
+			hover: input.theme.colors.navy[6],
+			color: input.theme.colors.sage[5],
+			border: 'none',
+		};
+	}
+
 	return defaultResolvedColors;
 };

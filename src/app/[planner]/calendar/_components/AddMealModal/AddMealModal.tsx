@@ -5,7 +5,9 @@ import { useState } from 'react';
 import { Button, Modal, Stack, Text } from '@mantine/core';
 
 import { addMeal } from '@/_actions/calendar';
-import { useIsMobile } from '@/_hooks';
+import type { MealInput } from '@/_actions/calendar/types';
+import { useIsMobile, useSnackbar } from '@/_hooks';
+import { formatDate } from '@/_utils/formatDate';
 
 import classes from './AddMealModal.module.css';
 
@@ -15,8 +17,8 @@ import { formatMealSubtitle } from './_utils/formatMealSubtitle';
 
 /**
  * The Add Meal frame: a wide modal on desktop, and a full-screen sheet with
- * Cancel in its top bar on a phone. It closes on success, and on cancel or
- * close with no prompt.
+ * Cancel in its top bar on a phone. On success it closes and confirms the
+ * save in the confirmation bar. It closes on cancel or close with no prompt.
  */
 export function AddMealModal({
 	data,
@@ -24,12 +26,21 @@ export function AddMealModal({
 	plannerId,
 }: CalendarModalFrameProps<'add_meal'>) {
 	const isMobile = useIsMobile();
+	const { show } = useSnackbar();
 	// What the open form last reported. Cleared on close, so the next open starts with no subtitle.
 	const [status, setStatus] = useState<MealFormStatus | null>(null);
 
 	const handleClose = () => {
 		setStatus(null);
 		close();
+	};
+
+	// The date that went to the server, so the message matches where the meal now shows.
+	const handleSuccess = (saved: MealInput) => {
+		handleClose();
+		show({
+			message: `Added to ${formatDate(saved.date, 'shortWeekdayMonthDay')}`,
+		});
 	};
 
 	const subtitle = status ? formatMealSubtitle(status) : '';
@@ -84,7 +95,7 @@ export function AddMealModal({
 						<MealForm
 							initialDraft={newMealDraft(data.initialDate)}
 							save={(input) => addMeal({ plannerId, ...input })}
-							onSuccess={handleClose}
+							onSuccess={handleSuccess}
 							onCancel={handleClose}
 							onStatusChange={setStatus}
 						/>

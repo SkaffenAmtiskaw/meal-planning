@@ -13,11 +13,17 @@ import {
 	EMBER_RAMPS,
 	MUTED_TEXT,
 	NAVY_RAMPS,
+	SAGE_RAMPS,
 	TAG_COLORS,
 } from '../colors';
 
 const theme = mergeMantineTheme(DEFAULT_THEME, {
-	colors: { chalk: CHALK_RAMPS, ember: EMBER_RAMPS, navy: NAVY_RAMPS },
+	colors: {
+		chalk: CHALK_RAMPS,
+		ember: EMBER_RAMPS,
+		navy: NAVY_RAMPS,
+		sage: SAGE_RAMPS,
+	},
 });
 
 describe('variantColorResolver', () => {
@@ -122,6 +128,19 @@ describe('variantColorResolver', () => {
 				background: 'transparent',
 				hover: 'transparent',
 				color: MUTED_TEXT,
+				border: 'none',
+			}),
+		);
+	});
+
+	it('resolves the on-dark variant to sage text with no fill, hovering to the filled navy hover', () => {
+		expect(
+			variantColorResolver({ color: 'navy', theme, variant: 'on-dark' }),
+		).toEqual(
+			expect.objectContaining({
+				background: 'transparent',
+				hover: NAVY_RAMPS[6],
+				color: SAGE_RAMPS[5],
 				border: 'none',
 			}),
 		);

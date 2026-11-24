@@ -4,5 +4,6 @@ export * from './useEditMode';
 export * from './useFocusOnExpand';
 export * from './useFormFeedback';
 export * from './useIsMobile';
+export * from './useSnackbar';
 export * from './useSwipe';
 export * from './useTimeZone';
