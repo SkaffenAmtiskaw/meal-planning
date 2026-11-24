@@ -89,7 +89,7 @@ describe('DishSourceFields', () => {
 
 	it('renders saved select and helper hint for saved source type', () => {
 		mockUsePlannerSavedItems.mockReturnValue([
-			{ _id: '1', name: 'Pasta', url: '/pasta' },
+			{ _id: '1', name: 'Pasta', kind: 'recipe', tags: [] },
 		]);
 		render(
 			<DishSourceFields
@@ -123,7 +123,7 @@ describe('DishSourceFields', () => {
 	it('calls onUpdate with savedId when saved select changes', () => {
 		const onUpdate = vi.fn();
 		mockUsePlannerSavedItems.mockReturnValue([
-			{ _id: '1', name: 'Pasta', url: '/pasta' },
+			{ _id: '1', name: 'Pasta', kind: 'recipe', tags: [] },
 		]);
 		render(
 			<DishSourceFields
@@ -141,7 +141,7 @@ describe('DishSourceFields', () => {
 	it('calls onUpdate with empty savedId when saved select is cleared', () => {
 		const onUpdate = vi.fn();
 		mockUsePlannerSavedItems.mockReturnValue([
-			{ _id: '1', name: 'Pasta', url: '/pasta' },
+			{ _id: '1', name: 'Pasta', kind: 'recipe', tags: [] },
 		]);
 		render(
 			<DishSourceFields

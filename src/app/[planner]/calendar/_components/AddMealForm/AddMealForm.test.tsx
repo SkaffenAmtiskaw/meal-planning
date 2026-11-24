@@ -108,15 +108,50 @@ describe('AddMealForm', () => {
 				plannerId: 'planner-1',
 				date: '',
 				mealName: '',
-				dishes: [
-					{
-						name: '',
-						sourceType: 'none',
-						savedId: undefined,
-						sourceText: undefined,
-						note: undefined,
-					},
-				],
+				dishes: [{ name: '', source: undefined, note: undefined }],
+			}),
+		);
+	});
+
+	it.each([
+		{
+			picked: 'a saved item',
+			dish: { sourceType: 'saved' as const, savedId: 'saved-1' },
+			source: { kind: 'saved', savedId: 'saved-1' },
+		},
+		{
+			picked: 'Saved with no item chosen',
+			dish: { sourceType: 'saved' as const, savedId: '' },
+			source: undefined,
+		},
+		{
+			picked: 'a reference',
+			dish: { sourceType: 'text' as const, sourceText: 'p. 12' },
+			source: { kind: 'reference', text: 'p. 12' },
+		},
+		{
+			picked: 'Reference with no text',
+			dish: { sourceType: 'text' as const, sourceText: '' },
+			source: undefined,
+		},
+	])("sends the dish's source when the picker has $picked", async ({
+		dish,
+		source,
+	}) => {
+		vi.mocked(useDishes).mockReturnValue({
+			dishes: [makeDish({ name: 'Tacos', ...dish })],
+			addDish: mockAddDish,
+			removeDish: mockRemoveDish,
+			updateDish: mockUpdateDish,
+		});
+		render(<AddMealForm {...defaultProps} />);
+		await act(async () => {
+			fireEvent.submit(screen.getByTestId('add-meal-form'));
+		});
+
+		expect(addMeal).toHaveBeenCalledWith(
+			expect.objectContaining({
+				dishes: [{ name: 'Tacos', source, note: undefined }],
 			}),
 		);
 	});

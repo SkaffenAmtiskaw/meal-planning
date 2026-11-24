@@ -3,6 +3,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { DateTime } from 'luxon';
 
+import type { SavedItem } from '@/_actions/library/types';
 import { useIsMobile } from '@/_hooks';
 import type { DayInterface } from '@/_models/types';
 
@@ -12,7 +13,6 @@ import { useCalendarContext } from '../Calendar';
 import { CalendarModalProvider } from '../CalendarModal';
 import { CalendarDaysProvider } from '../../_hooks/useCalendarMeals';
 import { PlannerSavedItemsProvider } from '../../_hooks/usePlannerSavedItems';
-import type { SavedItem } from '../../types';
 import { MealCalendar } from '../MealCalendar/MealCalendar';
 import { MealListView } from '../MealListView/MealListView';
 import { MealMonthAgenda } from '../MealMonthAgenda/MealMonthAgenda';
@@ -89,7 +89,9 @@ const mockMealMonthAgenda = vi.mocked(MealMonthAgenda);
 const defaultProps = {
 	plannerId: 'planner-1',
 	calendar: [{ date: '2024-01-01', meals: [] }] as DayInterface[],
-	savedItems: [{ _id: 'item-1', name: 'Item 1' }] as SavedItem[],
+	savedItems: [
+		{ _id: 'item-1', name: 'Item 1', kind: 'recipe', tags: [] },
+	] as SavedItem[],
 };
 
 const defaultCalendarContext: ReturnType<typeof useCalendarContext> = {

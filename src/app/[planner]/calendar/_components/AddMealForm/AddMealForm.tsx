@@ -17,13 +17,14 @@ import { DateTime } from 'luxon';
 import { z } from 'zod';
 
 import { addMeal } from '@/_actions/calendar';
+import type { DishSource } from '@/_actions/calendar/types';
 import { FormFeedbackAlert, SubmitButton } from '@/_components';
 import { useFormFeedback, useIsMobile } from '@/_hooks';
 
 import { DishList } from './DishList';
 import { MealFields } from './MealFields';
 import { useDishes } from './useDishes';
-import type { MealFormValues } from './types';
+import type { DishState, MealFormValues } from './types';
 import classes from './AddMealForm.module.css';
 
 const zFormFields = z.object({
@@ -40,6 +41,15 @@ const formatSubtitle = (values: Pick<MealFormValues, 'date' | 'mealName'>) => {
 	return values.mealName
 		? `${dateText}${dateText ? ' · ' : ''}${values.mealName}`
 		: dateText;
+};
+
+// The picker's choice as addMeal's one source. A choice left empty sends no source.
+const toDishSource = (dish: DishState): DishSource | undefined => {
+	if (dish.sourceType === 'saved' && dish.savedId)
+		return { kind: 'saved', savedId: dish.savedId };
+	if (dish.sourceType === 'text' && dish.sourceText)
+		return { kind: 'reference', text: dish.sourceText };
+	return undefined;
 };
 
 type Props = {
@@ -92,9 +102,7 @@ export const AddMealForm = ({
 					plannerId,
 					dishes: dishes.map((d) => ({
 						name: d.name,
-						sourceType: d.sourceType,
-						savedId: d.savedId || undefined,
-						sourceText: d.sourceText || undefined,
+						source: toDishSource(d),
 						note: d.note || undefined,
 					})),
 				}),

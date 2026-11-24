@@ -4,6 +4,7 @@ import type { ReactElement } from 'react';
 
 import { Flex, Stack } from '@mantine/core';
 
+import type { SavedItem } from '@/_actions/library/types';
 import { useIsMobile } from '@/_hooks';
 import type { DayInterface } from '@/_models/types';
 
@@ -11,7 +12,6 @@ import { CalendarProvider, useCalendarContext } from '../Calendar';
 import { CalendarModalProvider } from '../CalendarModal';
 import { CalendarDaysProvider } from '../../_hooks/useCalendarMeals';
 import { PlannerSavedItemsProvider } from '../../_hooks/usePlannerSavedItems';
-import type { SavedItem } from '../../types';
 import {
 	CalendarHeaderDesktop,
 	CalendarHeaderMobile,

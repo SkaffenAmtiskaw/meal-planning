@@ -21,7 +21,7 @@ scripts that the git hooks, the workflows and the SessionStart hook run, such as
 # src/
 project source code
 ## _actions/
-Next.js server functions
+Next.js server actions, and the server-only reads that pages call. They're in folders by the kind of data they read or change, rather than by the page that calls them, so the actions and reads for one kind of data sit together whichever pages use them. Each data folder shares its name with the `_models/` folder that holds that data's schemas, such as `calendar/` for days and meals, so a reader finds an action's schemas under the same name. Beside them, `auth/` holds the sign-in actions and the access checks, and `_utils/` what the actions and reads share
 ## _auth/
 better-auth's server setup, and the browser client the app signs users in with
 ## _components/

@@ -1,11 +1,15 @@
 import { render, screen } from '@testing-library/react';
-import { describe, expect, test, vi } from 'vitest';
+import { beforeEach, describe, expect, test, vi } from 'vitest';
 
+import { resolveTags } from '@/_actions/library/resolveTags';
 import type { TagColor } from '@/_theme/types';
 
 import { SavedList } from './SavedList';
 
 vi.mock('@mantine/core', async () => await import('#mocks/@mantine/core'));
+vi.mock('@/_actions/library/resolveTags', () => ({
+	resolveTags: vi.fn(() => []),
+}));
 
 vi.mock('./Tag/Tag', () => ({
 	Tag: ({ children, color }: { children: React.ReactNode; color: string }) => (
@@ -81,6 +85,10 @@ const makeTag = (id: string, name: string, color: TagColor) => ({
 });
 
 describe('SavedList', () => {
+	beforeEach(() => {
+		vi.clearAllMocks();
+	});
+
 	test('renders empty list without crashing', () => {
 		const { container } = render(
 			<SavedList items={[]} plannerId={plannerId} tags={[]} />,
@@ -183,55 +191,23 @@ describe('SavedList', () => {
 		).toBeDefined();
 	});
 
-	test('renders badges for matching tags on a recipe', () => {
-		const tagId = '507f1f77bcf86cd799439020';
-		const tag = makeTag(tagId, 'Vegetarian', 'fern');
-		const recipe = makeRecipe('507f1f77bcf86cd799439012', 'Salad', [tagId]);
+	test('renders a badge for each tag the lookup resolves for the item', () => {
+		const tag = makeTag('507f1f77bcf86cd799439020', 'Vegetarian', 'fern');
+		const recipe = makeRecipe('507f1f77bcf86cd799439012', 'Salad', [tag._id]);
+		vi.mocked(resolveTags).mockReturnValueOnce([tag]);
 		render(<SavedList items={[recipe]} plannerId={plannerId} tags={[tag]} />);
 
+		expect(resolveTags).toHaveBeenCalledWith(recipe.tags, [tag]);
 		const badge = screen.getByTestId('badge');
 		expect(badge.textContent).toBe('Vegetarian');
 		expect(badge.getAttribute('data-color')).toBe('fern');
 	});
 
-	test('renders no badges when item has no matching tags', () => {
-		const tag = makeTag('507f1f77bcf86cd799439020', 'Vegetarian', 'fern');
+	test('renders no badges when the lookup resolves no tags', () => {
 		const recipe = makeRecipe('507f1f77bcf86cd799439012', 'Salad');
-		render(<SavedList items={[recipe]} plannerId={plannerId} tags={[tag]} />);
+		render(<SavedList items={[recipe]} plannerId={plannerId} tags={[]} />);
 
 		expect(screen.queryByTestId('badge')).toBeNull();
-	});
-
-	test('renders no badges when item tags is undefined', () => {
-		const tag = makeTag('507f1f77bcf86cd799439020', 'Vegetarian', 'fern');
-		const recipe = {
-			...makeRecipe('507f1f77bcf86cd799439012', 'Salad'),
-			tags: undefined,
-		};
-		render(
-			<SavedList
-				items={[recipe as never]}
-				plannerId={plannerId}
-				tags={[tag]}
-			/>,
-		);
-
-		expect(screen.queryByTestId('badge')).toBeNull();
-	});
-
-	test('renders multiple badges when item has multiple matching tags', () => {
-		const tag1 = makeTag('507f1f77bcf86cd799439020', 'Vegetarian', 'fern');
-		const tag2 = makeTag('507f1f77bcf86cd799439021', 'Quick', 'steel');
-		const recipe = makeRecipe('507f1f77bcf86cd799439012', 'Salad', [
-			'507f1f77bcf86cd799439020',
-			'507f1f77bcf86cd799439021',
-		]);
-		render(
-			<SavedList items={[recipe]} plannerId={plannerId} tags={[tag1, tag2]} />,
-		);
-
-		const badges = screen.getAllByTestId('badge');
-		expect(badges).toHaveLength(2);
 	});
 
 	test('renders no divider when there is only one item', () => {

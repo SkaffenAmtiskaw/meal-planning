@@ -3,21 +3,13 @@ import { describe, expect, test } from 'vitest';
 
 import type { ReactNode } from 'react';
 
+import type { SavedItem } from '@/_actions/library/types';
+
 import { PlannerSavedItemsProvider } from './PlannerSavedItemsProvider';
 import { usePlannerSavedItems } from './usePlannerSavedItems';
 
-const savedItems = [
-	{
-		_id: '001',
-		name: 'Boiled Water',
-		ingredients: ['4 c water'],
-		instructions: ['Boil.'],
-	},
-	{
-		_id: '002',
-		name: 'Fish Tacos',
-		url: 'https://www.americastestkitchen.com/recipes/7559-california-fish-tacos',
-	},
+const savedItems: SavedItem[] = [
+	{ _id: '001', name: 'Boiled Water', kind: 'recipe', tags: [] },
 ];
 
 const wrapper = ({ children }: { children: ReactNode }) => (
@@ -27,26 +19,10 @@ const wrapper = ({ children }: { children: ReactNode }) => (
 );
 
 describe('usePlannerSavedItems', () => {
-	test('maps the saved items the provider is given', () => {
+	test('returns the saved items the provider is given', () => {
 		const { result } = renderHook(() => usePlannerSavedItems(), { wrapper });
 
-		expect(result.current).toEqual([
-			{
-				_id: '001',
-				name: 'Boiled Water',
-			},
-			{
-				_id: '002',
-				name: 'Fish Tacos',
-				url: 'https://www.americastestkitchen.com/recipes/7559-california-fish-tacos',
-			},
-		]);
-	});
-
-	test('gives a recipe no url, so it still reads as a recipe', () => {
-		const { result } = renderHook(() => usePlannerSavedItems(), { wrapper });
-
-		expect(result.current[0]).not.toHaveProperty('url');
+		expect(result.current).toBe(savedItems);
 	});
 
 	test('throws outside the provider', () => {

@@ -308,7 +308,7 @@ describe('DishRow', () => {
 
 	it('shows saved item name in chip when sourceType is saved and item exists', () => {
 		mockUsePlannerSavedItems.mockReturnValue([
-			{ _id: '1', name: 'Pasta Primavera', url: '/pasta' },
+			{ _id: '1', name: 'Pasta Primavera', kind: 'recipe', tags: [] },
 		]);
 		render(
 			<DishRow
@@ -323,7 +323,7 @@ describe('DishRow', () => {
 
 	it('shows Choose a saved item fallback when saved item is not found', () => {
 		mockUsePlannerSavedItems.mockReturnValue([
-			{ _id: '2', name: 'Other Saved Item', url: '/other' },
+			{ _id: '2', name: 'Other Saved Item', kind: 'recipe', tags: [] },
 		]);
 		render(
 			<DishRow
@@ -478,7 +478,7 @@ describe('DishRow', () => {
 	it('calls onUpdate with savedId when saved select changes', () => {
 		const onUpdate = vi.fn();
 		mockUsePlannerSavedItems.mockReturnValue([
-			{ _id: '1', name: 'Pasta', url: '/pasta' },
+			{ _id: '1', name: 'Pasta', kind: 'recipe', tags: [] },
 		]);
 		render(
 			<DishRow
@@ -496,7 +496,7 @@ describe('DishRow', () => {
 	it('calls onUpdate with empty savedId when saved select is cleared', () => {
 		const onUpdate = vi.fn();
 		mockUsePlannerSavedItems.mockReturnValue([
-			{ _id: '1', name: 'Pasta', url: '/pasta' },
+			{ _id: '1', name: 'Pasta', kind: 'recipe', tags: [] },
 		]);
 		render(
 			<DishRow
