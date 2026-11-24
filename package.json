@@ -33,7 +33,7 @@
   },
   "dependencies": {
     "@mantine/core": "9.8.2",
-    "@mantine/dates": "9.8.1",
+    "@mantine/dates": "9.8.2",
     "@mantine/form": "9.8.1",
     "@mantine/hooks": "9.8.1",
     "@posthog/next": "0.11.0",
