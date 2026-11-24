@@ -36,7 +36,7 @@
     "@mantine/dates": "9.8.2",
     "@mantine/form": "9.8.2",
     "@mantine/hooks": "9.8.2",
-    "@posthog/next": "0.11.0",
+    "@posthog/next": "0.11.1",
     "@posthog/nextjs-config": "1.12.2",
     "@t3-oss/env-nextjs": "0.13.11",
     "@tabler/icons-react": "3.52.0",
