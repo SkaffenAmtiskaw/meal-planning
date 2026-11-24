@@ -25,8 +25,12 @@ export const useMealDraft = (initialDraft: MealDraft) => {
 	const setField = (field: MealField, value: string) =>
 		setDraft((prev) => ({ ...prev, [field]: value }));
 
-	const addDish = () =>
-		setDraft((prev) => ({ ...prev, dishes: [...prev.dishes, newDishDraft()] }));
+	// Gives back the new dish's key, so a phone can open its saved list.
+	const addDish = () => {
+		const dish = newDishDraft();
+		setDraft((prev) => ({ ...prev, dishes: [...prev.dishes, dish] }));
+		return dish.key;
+	};
 
 	// The Saved recipes column's Add: a new dish at the end, named after the recipe and linked to it.
 	const addLinkedDish = (item: SavedItem) =>
@@ -78,6 +82,13 @@ export const useMealDraft = (initialDraft: MealDraft) => {
 			),
 		}));
 
+	// The phone list's Use: the dish takes the recipe's name and links to it, replacing any reference.
+	const chooseRecipe = (key: string, item: SavedItem) =>
+		updateDish(key, {
+			name: item.name,
+			source: { kind: 'saved', savedId: item._id },
+		});
+
 	return {
 		draft,
 		setField,
@@ -89,5 +100,6 @@ export const useMealDraft = (initialDraft: MealDraft) => {
 		setNote,
 		unlinkDish,
 		linkDish,
+		chooseRecipe,
 	};
 };

@@ -76,3 +76,9 @@
 		white-space: normal;
 	}
 }
+
+/* While a phone row's saved list is open, the list takes the chips' line, so the row's line holds only the name and delete. Mantine has no prop for grid areas. */
+.listOpen .line {
+	grid-template-columns: minmax(0, 1fr) auto;
+	grid-template-areas: "name delete";
+}

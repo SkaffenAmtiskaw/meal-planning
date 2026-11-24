@@ -21,3 +21,6 @@ export const useDrag = vi.fn(() => ({ ref: vi.fn(), active: false }));
 
 // A test runs the listener itself, from the mock's last call.
 export const useWindowEvent = vi.fn();
+
+// A test runs the callback itself, from the mock's last call.
+export const useClickOutside = vi.fn();

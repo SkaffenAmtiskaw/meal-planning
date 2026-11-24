@@ -27,17 +27,57 @@ describe('useMealDraft', () => {
 		expect(result.current.draft.mealName).toBe('Taco Night');
 	});
 
-	it('adds an empty dish at the end', () => {
+	it('adds an empty dish at the end, and gives back its key', () => {
 		const { result } = renderHook(() => useMealDraft(twoDishes));
 
-		act(() => result.current.addDish());
+		let key = '';
+		act(() => {
+			key = result.current.addDish();
+		});
 
 		expect(result.current.draft.dishes).toHaveLength(3);
 		expect(result.current.draft.dishes[2]).toMatchObject({
+			key,
 			name: '',
 			source: null,
 			note: '',
 		});
+	});
+
+	it('names a dish after the chosen recipe and links it, replacing what it had', () => {
+		const { result } = renderHook(() =>
+			useMealDraft(
+				makeMealDraft({
+					dishes: [
+						makeDishDraft({
+							key: 'a',
+							name: 'pas',
+							source: { kind: 'reference', text: 'p. 12' },
+						}),
+						makeDishDraft({ key: 'b', name: 'Bread' }),
+					],
+				}),
+			),
+		);
+
+		act(() =>
+			result.current.chooseRecipe('a', {
+				_id: 'saved-2',
+				name: 'Weeknight Pasta Ideas',
+				kind: 'bookmark',
+				url: 'https://example.com/pasta',
+				tags: [],
+			}),
+		);
+
+		expect(result.current.draft.dishes).toEqual([
+			makeDishDraft({
+				key: 'a',
+				name: 'Weeknight Pasta Ideas',
+				source: { kind: 'saved', savedId: 'saved-2' },
+			}),
+			makeDishDraft({ key: 'b', name: 'Bread' }),
+		]);
 	});
 
 	it('adds a dish at the end, named after the saved recipe and linked to it', () => {

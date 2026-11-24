@@ -1,7 +1,6 @@
 import type { SavedItem } from '@/_actions/library/types';
 
-// What a saved recipe has to match to be listed. The tag filter adds the selected tags.
-type SavedItemCriteria = { search: string };
+import type { SavedItemCriteria } from './types';
 
 /**
  * The saved recipes that match the criteria: those whose name holds the search

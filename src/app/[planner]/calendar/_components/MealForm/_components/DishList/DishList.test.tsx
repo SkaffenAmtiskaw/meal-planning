@@ -4,6 +4,7 @@ import { describe, expect, it, vi } from 'vitest';
 import { Group } from '@mantine/core';
 
 import { makeDishDraft } from '#fixtures/dish';
+import type { SavedItem } from '@/_actions/library/types';
 import { useIsMobile } from '@/_hooks';
 
 import { DishList } from './DishList';
@@ -30,6 +31,13 @@ vi.mock('../DishRow/DishRow', () => ({
 
 const soup = makeDishDraft({ key: 'a', name: 'Soup' });
 const bread = makeDishDraft({ key: 'b', name: 'Bread' });
+const pasta: SavedItem = {
+	_id: 'pasta',
+	name: 'Weeknight Pasta Ideas',
+	kind: 'bookmark',
+	url: 'https://example.com/pasta',
+	tags: [],
+};
 
 const handlers = {
 	onAddDish: vi.fn(),
@@ -39,6 +47,11 @@ const handlers = {
 	onSetReference: vi.fn(),
 	onSetNote: vi.fn(),
 	onStartLinking: vi.fn(),
+	linkedIds: new Set<string>(),
+	openListKey: null,
+	onOpenList: vi.fn(),
+	onCloseList: vi.fn(),
+	onChooseRecipe: vi.fn(),
 };
 
 const rowProps = (index: number) => vi.mocked(DishRow).mock.calls[index][0];
@@ -105,6 +118,14 @@ describe('DishList', () => {
 		expect(rowProps(1).linking).toBe(true);
 	});
 
+	it("opens only that dish's list", () => {
+		vi.mocked(DishRow).mockClear();
+		render(<DishList dishes={[soup, bread]} {...handlers} openListKey="b" />);
+
+		expect(rowProps(0).listOpen).toBe(false);
+		expect(rowProps(1).listOpen).toBe(true);
+	});
+
 	it('changes the dish whose row asked', () => {
 		vi.mocked(DishRow).mockClear();
 		render(<DishList dishes={[soup, bread]} {...handlers} />);
@@ -115,6 +136,8 @@ describe('DishList', () => {
 		rowProps(1).onReferenceChange('p. 12');
 		rowProps(1).onNoteChange('Toast it');
 		rowProps(1).onStartLinking();
+		rowProps(1).onOpenList();
+		rowProps(1).onChooseRecipe(pasta);
 
 		expect(handlers.onStartLinking).toHaveBeenCalledWith(bread);
 		expect(handlers.onRenameDish).toHaveBeenCalledWith('b', 'Rye Bread');
@@ -122,5 +145,7 @@ describe('DishList', () => {
 		expect(handlers.onUnlinkDish).toHaveBeenCalledWith('b');
 		expect(handlers.onSetReference).toHaveBeenCalledWith('b', 'p. 12');
 		expect(handlers.onSetNote).toHaveBeenCalledWith('b', 'Toast it');
+		expect(handlers.onOpenList).toHaveBeenCalledWith('b');
+		expect(handlers.onChooseRecipe).toHaveBeenCalledWith('b', pasta);
 	});
 });

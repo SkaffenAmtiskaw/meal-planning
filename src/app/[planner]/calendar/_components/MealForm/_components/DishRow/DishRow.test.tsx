@@ -2,17 +2,30 @@ import { fireEvent, render, screen } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
 
 import { makeDishDraft } from '#fixtures/dish';
-import { useFocusOnExpand } from '@/_hooks';
+import { useFocusOnExpand, useIsMobile } from '@/_hooks';
 
 import { DishRow } from './DishRow';
 import classes from './DishRow.module.css';
 
+import { usePlannerSavedItems } from '../../../../_hooks/usePlannerSavedItems';
 import { DishNameInput } from '../DishNameInput/DishNameInput';
+import { DishNameSearch } from '../DishNameSearch/DishNameSearch';
 
 vi.mock('@mantine/core', async () => await import('#mocks/@mantine/core'));
 vi.mock('@/_hooks', async () => await import('#mocks/@/_hooks'));
+vi.mock(
+	'../../../../_hooks/usePlannerSavedItems',
+	async () =>
+		await import('#mocks/@app/[planner]/calendar/_hooks/usePlannerSavedItems'),
+);
 vi.mock('../DishNameInput/DishNameInput', () => ({
 	DishNameInput: vi.fn(() => null),
+}));
+vi.mock('../DishNameSearch/DishNameSearch', () => ({
+	DishNameSearch: vi.fn(() => null),
+}));
+vi.mock('../PhoneSavedList/PhoneSavedList', () => ({
+	PhoneSavedList: vi.fn(() => <div data-testid="phone-list" />),
 }));
 vi.mock('../DeleteDishButton/DeleteDishButton', () => ({
 	DeleteDishButton: vi.fn(() => <button type="button">Delete dish</button>),
@@ -44,9 +57,16 @@ const props = {
 	onReferenceChange: vi.fn(),
 	onNoteChange: vi.fn(),
 	onStartLinking: vi.fn(),
+	linkedIds: new Set<string>(),
+	listOpen: false,
+	onOpenList: vi.fn(),
+	onCloseList: vi.fn(),
+	onChooseRecipe: vi.fn(),
 };
 
 const panel = () => screen.queryByTestId('dish-panel');
+const phoneList = () => screen.queryByTestId('phone-list');
+const recipeChip = () => screen.queryByRole('button', { name: 'Recipe chip' });
 
 describe('DishRow', () => {
 	it('shows the delete button when the dish can be deleted', () => {
@@ -151,5 +171,78 @@ describe('DishRow', () => {
 		expect(
 			screen.getByTestId('dish-row').classList.contains(classes.linking),
 		).toBe(false);
+	});
+
+	describe('on a phone', () => {
+		it('searches saved recipes from the name field instead of the desktop field', () => {
+			vi.mocked(useIsMobile).mockReturnValue(true);
+			vi.mocked(DishNameInput).mockClear();
+			render(<DishRow {...props} />);
+			vi.mocked(useIsMobile).mockReturnValue(false);
+
+			expect(vi.mocked(DishNameSearch)).toHaveBeenCalled();
+			expect(vi.mocked(DishNameInput)).not.toHaveBeenCalled();
+		});
+
+		it.each([
+			{ source: { kind: 'saved' as const, savedId: 's1' }, linked: true },
+			{ source: { kind: 'reference' as const, text: 'p. 12' }, linked: false },
+			{ source: null, linked: false },
+		])('treats the dish as linked only to a saved recipe ($source.kind)', ({
+			source,
+			linked,
+		}) => {
+			vi.mocked(useIsMobile).mockReturnValue(true);
+			render(<DishRow {...props} dish={makeDishDraft({ source })} />);
+			vi.mocked(useIsMobile).mockReturnValue(false);
+
+			expect(vi.mocked(DishNameSearch)).toHaveBeenLastCalledWith(
+				expect.objectContaining({ linked }),
+				undefined,
+			);
+		});
+
+		it('shows its open list in place of the chips', () => {
+			vi.mocked(useIsMobile).mockReturnValue(true);
+			vi.mocked(usePlannerSavedItems).mockReturnValue([
+				{ _id: 'oats', name: 'Overnight Oats', kind: 'recipe', tags: [] },
+			]);
+			const { rerender } = render(<DishRow {...props} />);
+			expect(phoneList()).toBeNull();
+			expect(recipeChip()).not.toBeNull();
+
+			rerender(<DishRow {...props} listOpen />);
+			vi.mocked(useIsMobile).mockReturnValue(false);
+
+			vi.mocked(usePlannerSavedItems).mockReturnValue([]);
+
+			expect(phoneList()).not.toBeNull();
+			expect(recipeChip()).toBeNull();
+			expect(screen.queryByRole('button', { name: 'Expand dish' })).toBeNull();
+		});
+
+		it('keeps an open list hidden, and the chips showing, in a planner with no saved recipes until something is typed', () => {
+			vi.mocked(useIsMobile).mockReturnValue(true);
+			const { rerender } = render(
+				<DishRow {...props} dish={makeDishDraft({ name: ' ' })} listOpen />,
+			);
+			expect(phoneList()).toBeNull();
+			expect(recipeChip()).not.toBeNull();
+
+			rerender(
+				<DishRow {...props} dish={makeDishDraft({ name: 'Soup' })} listOpen />,
+			);
+			vi.mocked(useIsMobile).mockReturnValue(false);
+
+			expect(phoneList()).not.toBeNull();
+			expect(recipeChip()).toBeNull();
+		});
+	});
+
+	it('never shows the phone list on desktop', () => {
+		render(<DishRow {...props} listOpen />);
+
+		expect(phoneList()).toBeNull();
+		expect(recipeChip()).not.toBeNull();
 	});
 });

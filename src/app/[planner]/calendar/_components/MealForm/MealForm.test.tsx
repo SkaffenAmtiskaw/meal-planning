@@ -334,13 +334,14 @@ describe('MealForm', () => {
 			);
 		});
 
-		it('does nothing on a phone, which has no column to link from', () => {
+		it("opens the dish's saved list on a phone, which has no column to link from", () => {
 			vi.mocked(useIsMobile).mockReturnValue(true);
 			renderForm();
 
 			startLinking();
 
 			expect(dishListProps()?.linkingKey).toBeNull();
+			expect(dishListProps()?.openListKey).toBe('soup');
 		});
 
 		it('links the picked recipe to the dish, then leaves link mode and clears the search', () => {
@@ -396,6 +397,65 @@ describe('MealForm', () => {
 			);
 
 			expect(columnProps()?.search).toBe('Bread');
+		});
+	});
+
+	describe("a phone's saved lists", () => {
+		const renderForm = () =>
+			render(
+				<MealForm
+					initialDraft={makeMealDraft({
+						dishes: [makeDishDraft({ key: 'soup', name: 'pas' })],
+					})}
+					save={vi.fn()}
+					onSuccess={vi.fn()}
+					onCancel={vi.fn()}
+				/>,
+			);
+		const addDish = () => act(() => dishListProps()?.onAddDish());
+
+		it("opens the new dish's list from Add dish", () => {
+			vi.mocked(useIsMobile).mockReturnValue(true);
+			renderForm();
+
+			addDish();
+
+			const dishes = dishListProps()?.dishes ?? [];
+			expect(dishes).toHaveLength(2);
+			expect(dishListProps()?.openListKey).toBe(dishes[1].key);
+		});
+
+		it('opens no list from Add dish on desktop', () => {
+			renderForm();
+
+			addDish();
+
+			expect(dishListProps()?.openListKey).toBeNull();
+		});
+
+		it('names and links the dish from the recipe chosen in its list, then closes the list', () => {
+			vi.mocked(useIsMobile).mockReturnValue(true);
+			renderForm();
+			act(() => dishListProps()?.onOpenList('soup'));
+
+			act(() => dishListProps()?.onChooseRecipe('soup', chicken));
+
+			expect(dishListProps()?.dishes[0]).toMatchObject({
+				name: 'Lemon Herb Chicken',
+				source: { kind: 'saved', savedId: 'saved-1' },
+			});
+			expect(dishListProps()?.openListKey).toBeNull();
+			expect(dishListProps()?.linkedIds).toEqual(new Set(['saved-1']));
+		});
+
+		it('closes the open list', () => {
+			vi.mocked(useIsMobile).mockReturnValue(true);
+			renderForm();
+			act(() => dishListProps()?.onOpenList('soup'));
+
+			act(() => dishListProps()?.onCloseList());
+
+			expect(dishListProps()?.openListKey).toBeNull();
 		});
 	});
 });

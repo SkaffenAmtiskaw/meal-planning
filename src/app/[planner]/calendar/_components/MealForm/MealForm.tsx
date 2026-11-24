@@ -24,6 +24,7 @@ import { MealFormLayout } from './_components/MealFormLayout/MealFormLayout';
 import { SavedRecipesColumn } from './_components/SavedRecipesColumn/SavedRecipesColumn';
 import { useLinkMode } from './_hooks/useLinkMode';
 import { useMealDraft } from './_hooks/useMealDraft';
+import { useOpenDishList } from './_hooks/useOpenDishList';
 import { useSavedSearch } from './_hooks/useSavedSearch';
 import { canSubmitMeal } from './_utils/canSubmitMeal';
 import { findNamelessDishes } from './_utils/findNamelessDishes';
@@ -63,9 +64,11 @@ export const MealForm = ({
 		setNote,
 		unlinkDish,
 		linkDish,
+		chooseRecipe,
 	} = useMealDraft(initialDraft);
 	const { search, setSearch, resetForLinking } = useSavedSearch();
 	const [linkingKey, { enterLinking, exitLinking }] = useLinkMode(draft.dishes);
+	const [openListKey, { openList, closeList }] = useOpenDishList();
 	const linkingDish =
 		draft.dishes.find((dish) => dish.key === linkingKey) ?? null;
 	const searchRef = useRef<HTMLInputElement>(null);
@@ -88,15 +91,31 @@ export const MealForm = ({
 
 	/**
 	 * Links a dish from the Saved recipes column, with the search filled with its
-	 * name and the cursor in it. A phone has no column to link from.
+	 * name and the cursor in it. A phone has no column, so it opens the dish's
+	 * saved list instead.
 	 */
 	const startLinking = (dish: DishDraft) => {
 		if (isMobile) {
+			openList(dish.key);
 			return;
 		}
 		enterLinking(dish.key);
 		resetForLinking(dish.name);
 		searchRef.current?.focus();
+	};
+
+	// On a phone, a new dish opens its saved list, so a saved recipe is the first thing offered.
+	const addDishWithList = () => {
+		const key = addDish();
+		if (isMobile) {
+			openList(key);
+		}
+	};
+
+	// The phone list's Use: the dish takes the recipe, and its list closes.
+	const chooseFromList = (key: string, item: SavedItem) => {
+		chooseRecipe(key, item);
+		closeList();
 	};
 
 	// The column's action: links the recipe to the dish being linked, or adds it as a new dish.
@@ -137,6 +156,8 @@ export const MealForm = ({
 			.filter((key) => flaggedKeys.has(key)),
 	);
 
+	const linkedIds = linkedItemIds(draft.dishes);
+
 	const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
 		event.preventDefault();
 		if (namelessDishes.length > 0) {
@@ -162,13 +183,18 @@ export const MealForm = ({
 						dishes={draft.dishes}
 						namelessKeys={namelessKeys}
 						linkingKey={linkingKey}
-						onAddDish={addDish}
+						linkedIds={linkedIds}
+						openListKey={openListKey}
+						onAddDish={addDishWithList}
 						onRenameDish={renameDish}
 						onRemoveDish={removeDish}
 						onUnlinkDish={unlinkDish}
 						onSetReference={setReference}
 						onSetNote={setNote}
 						onStartLinking={startLinking}
+						onOpenList={openList}
+						onCloseList={closeList}
+						onChooseRecipe={chooseFromList}
 					/>
 				}
 				saved={
@@ -176,7 +202,7 @@ export const MealForm = ({
 						search={search}
 						onSearchChange={setSearch}
 						searchRef={searchRef}
-						linkedIds={linkedItemIds(draft.dishes)}
+						linkedIds={linkedIds}
 						linkingDishName={linkingDish?.name ?? null}
 						onCancelLinking={exitLinking}
 						onPick={pickSavedItem}

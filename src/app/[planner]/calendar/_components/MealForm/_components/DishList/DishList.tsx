@@ -3,6 +3,7 @@
 import { Button, Group, Stack, Text } from '@mantine/core';
 import { IconPlus } from '@tabler/icons-react';
 
+import type { SavedItem } from '@/_actions/library/types';
 import { useIsMobile } from '@/_hooks';
 
 import { formatDishCount } from '../../_utils/formatDishCount';
@@ -17,6 +18,10 @@ type Props = {
 	namelessKeys?: ReadonlySet<string>;
 	// The dish being linked to a saved recipe, if any.
 	linkingKey?: string | null;
+	// The saved recipes already on the meal.
+	linkedIds: ReadonlySet<string>;
+	// The dish whose saved list is open on a phone, if any.
+	openListKey: string | null;
 	onAddDish: () => void;
 	onRenameDish: (key: string, name: string) => void;
 	onRemoveDish: (key: string) => void;
@@ -24,6 +29,9 @@ type Props = {
 	onSetReference: (key: string, text: string) => void;
 	onSetNote: (key: string, note: string) => void;
 	onStartLinking: (dish: DishDraft) => void;
+	onOpenList: (key: string) => void;
+	onCloseList: () => void;
+	onChooseRecipe: (key: string, item: SavedItem) => void;
 };
 
 // DISHES with its count, a row for each dish, then Add dish.
@@ -38,6 +46,11 @@ export const DishList = ({
 	onSetReference,
 	onSetNote,
 	onStartLinking,
+	linkedIds,
+	openListKey,
+	onOpenList,
+	onCloseList,
+	onChooseRecipe,
 }: Props) => {
 	const isMobile = useIsMobile();
 	// A blank row isn't saved, so it isn't counted.
@@ -65,6 +78,11 @@ export const DishList = ({
 					onReferenceChange={(text) => onSetReference(dish.key, text)}
 					onNoteChange={(note) => onSetNote(dish.key, note)}
 					onStartLinking={() => onStartLinking(dish)}
+					linkedIds={linkedIds}
+					listOpen={dish.key === openListKey}
+					onOpenList={() => onOpenList(dish.key)}
+					onCloseList={onCloseList}
+					onChooseRecipe={(item) => onChooseRecipe(dish.key, item)}
 				/>
 			))}
 			<Button
