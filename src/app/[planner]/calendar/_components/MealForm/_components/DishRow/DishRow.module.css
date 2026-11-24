@@ -1,6 +1,6 @@
 /*
- * Mantine's Group and Flex can't move the delete button up to the name's line on
- * a phone while the chips wrap below, so the row's line is a grid. The DOM
+ * Mantine's Group and Flex can't move the delete button up to the name's line in
+ * a narrow row while the chips wrap below, so the row's line is a grid. The DOM
  * order stays name, chips, arrow, delete, which is the desktop Tab order.
  */
 .line {
@@ -44,15 +44,28 @@
 	white-space: nowrap;
 }
 
-/* The phone layout switches at Mantine's sm breakpoint, the same width as useIsMobile. */
-@media (max-width: 48em) {
+/* The row's width decides its layout, so the Dishes column's width, not the window's, sets when it goes to two lines. */
+.row {
+	container-type: inline-size;
+	container-name: dish-row;
+}
+
+/*
+ * A row too narrow for the name beside the chips, as on a phone or a narrow
+ * desktop window, puts the name and delete on one line and the chips and arrow
+ * below, so the name stays readable.
+ */
+@container dish-row (max-width: 28em) {
 	.line {
 		grid-template-columns: minmax(0, 1fr) auto;
 		grid-template-areas:
 			"name delete"
 			"chips arrow";
 	}
+}
 
+/* A phone wraps a closed row's note. It switches at Mantine's sm breakpoint, the same width as useIsMobile. */
+@media (max-width: 48em) {
 	.note {
 		white-space: normal;
 	}

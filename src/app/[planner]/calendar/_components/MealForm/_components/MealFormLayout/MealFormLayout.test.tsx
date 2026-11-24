@@ -12,6 +12,7 @@ const parts = {
 	alert: <div data-testid="alert" />,
 	meal: <div data-testid="meal" />,
 	dishes: <div data-testid="dishes" />,
+	saved: <div data-testid="saved" />,
 	footer: <div data-testid="footer-content" />,
 };
 
@@ -39,5 +40,6 @@ describe('MealFormLayout', () => {
 
 		expectInOrder(['alert', 'meal-column', 'dishes-column', 'footer']);
 		expect(screen.queryByTestId('saved-column')).toBeNull();
+		expect(screen.queryByTestId('saved')).toBeNull();
 	});
 });

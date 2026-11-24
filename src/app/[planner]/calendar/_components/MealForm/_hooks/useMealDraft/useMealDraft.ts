@@ -2,6 +2,8 @@
 
 import { useState } from 'react';
 
+import type { SavedItem } from '@/_actions/library/types';
+
 import { newDishDraft } from '../../_utils/newDishDraft';
 import type { DishDraft, MealDraft, MealField } from '../../types';
 
@@ -26,6 +28,20 @@ export const useMealDraft = (initialDraft: MealDraft) => {
 	const addDish = () =>
 		setDraft((prev) => ({ ...prev, dishes: [...prev.dishes, newDishDraft()] }));
 
+	// The Saved recipes column's Add: a new dish at the end, named after the recipe and linked to it.
+	const addLinkedDish = (item: SavedItem) =>
+		setDraft((prev) => ({
+			...prev,
+			dishes: [
+				...prev.dishes,
+				{
+					...newDishDraft(),
+					name: item.name,
+					source: { kind: 'saved', savedId: item._id },
+				},
+			],
+		}));
+
 	const removeDish = (key: string) =>
 		setDraft((prev) => ({
 			...prev,
@@ -48,6 +64,7 @@ export const useMealDraft = (initialDraft: MealDraft) => {
 		draft,
 		setField,
 		addDish,
+		addLinkedDish,
 		removeDish,
 		renameDish,
 		setReference,

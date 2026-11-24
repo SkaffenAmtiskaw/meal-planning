@@ -14,6 +14,8 @@ type Props = {
 	alert: ReactNode;
 	meal: ReactNode;
 	dishes: ReactNode;
+	// The desktop Saved recipes column's content. A phone has no column, so it isn't shown there.
+	saved: ReactNode;
 	footer: ReactNode;
 };
 
@@ -23,7 +25,13 @@ type Props = {
  * column, with the footer stuck to the bottom. The alert sits above the dishes on
  * both. The DOM order is the Tab order.
  */
-export const MealFormLayout = ({ alert, meal, dishes, footer }: Props) => {
+export const MealFormLayout = ({
+	alert,
+	meal,
+	dishes,
+	saved,
+	footer,
+}: Props) => {
 	const isMobile = useIsMobile();
 
 	if (isMobile) {
@@ -70,7 +78,7 @@ export const MealFormLayout = ({ alert, meal, dishes, footer }: Props) => {
 					p="lg"
 					data-testid="saved-column"
 				>
-					<SectionLabel>Saved recipes</SectionLabel>
+					{saved}
 				</Stack>
 			</Box>
 			<Box className={classes.footer} px="lg" py="md" data-testid="footer">

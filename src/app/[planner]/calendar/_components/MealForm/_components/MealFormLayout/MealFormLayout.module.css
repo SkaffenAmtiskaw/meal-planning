@@ -31,6 +31,13 @@
 	overflow: hidden;
 }
 
+/* Below Mantine's lg breakpoint, the Meal column gives up 40px so a dish row's chips and arrow fit on one line. */
+@media (max-width: 75em) {
+	.mealColumn {
+		flex-basis: 240px;
+	}
+}
+
 .savedColumn {
 	/* The design's fixed width for the Saved recipes column; Mantine props can't keep a flex child from shrinking. */
 	flex: 0 0 340px;

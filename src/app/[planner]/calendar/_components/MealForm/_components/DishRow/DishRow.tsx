@@ -66,7 +66,7 @@ export const DishRow = ({
 		<Paper
 			withBorder
 			p="xs"
-			className={clsx(nameless && classes.nameless)}
+			className={clsx(classes.row, nameless && classes.nameless)}
 			data-testid="dish-row"
 		>
 			<div className={classes.line}>

@@ -14,10 +14,13 @@ import { DishList } from './_components/DishList/DishList';
 import { MealFields } from './_components/MealFields/MealFields';
 import { MealFormFooter } from './_components/MealFormFooter/MealFormFooter';
 import { MealFormLayout } from './_components/MealFormLayout/MealFormLayout';
+import { SavedRecipesColumn } from './_components/SavedRecipesColumn/SavedRecipesColumn';
 import { useMealDraft } from './_hooks/useMealDraft';
+import { useSavedSearch } from './_hooks/useSavedSearch';
 import { canSubmitMeal } from './_utils/canSubmitMeal';
 import { findNamelessDishes } from './_utils/findNamelessDishes';
 import { isBlankDish } from './_utils/isBlankDish';
+import { linkedItemIds } from './_utils/linkedItemIds';
 import { toMealInput } from './_utils/toMealInput';
 
 type MealFormProps = {
@@ -45,12 +48,14 @@ export const MealForm = ({
 		draft,
 		setField,
 		addDish,
+		addLinkedDish,
 		removeDish,
 		renameDish,
 		setReference,
 		setNote,
 		unlinkDish,
 	} = useMealDraft(initialDraft);
+	const { search, setSearch } = useSavedSearch();
 	// Calls onSuccess as soon as the save works, so the frame can close at once.
 	const { status, countdown, errorMessage, wrap } = useFormFeedback({
 		successDuration: 0,
@@ -112,6 +117,14 @@ export const MealForm = ({
 						onUnlinkDish={unlinkDish}
 						onSetReference={setReference}
 						onSetNote={setNote}
+					/>
+				}
+				saved={
+					<SavedRecipesColumn
+						search={search}
+						onSearchChange={setSearch}
+						linkedIds={linkedItemIds(draft.dishes)}
+						onAdd={addLinkedDish}
 					/>
 				}
 				footer={

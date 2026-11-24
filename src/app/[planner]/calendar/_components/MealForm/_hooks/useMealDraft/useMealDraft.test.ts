@@ -40,6 +40,26 @@ describe('useMealDraft', () => {
 		});
 	});
 
+	it('adds a dish at the end, named after the saved recipe and linked to it', () => {
+		const { result } = renderHook(() => useMealDraft(twoDishes));
+
+		act(() =>
+			result.current.addLinkedDish({
+				_id: 'saved-1',
+				name: 'Lemon Herb Chicken',
+				kind: 'recipe',
+				tags: [],
+			}),
+		);
+
+		expect(result.current.draft.dishes).toHaveLength(3);
+		expect(result.current.draft.dishes[2]).toMatchObject({
+			name: 'Lemon Herb Chicken',
+			source: { kind: 'saved', savedId: 'saved-1' },
+			note: '',
+		});
+	});
+
 	it('removes only the dish with that key', () => {
 		const { result } = renderHook(() => useMealDraft(twoDishes));
 

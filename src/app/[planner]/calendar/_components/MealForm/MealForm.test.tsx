@@ -9,6 +9,7 @@ import { MealForm } from './MealForm';
 import { DishList } from './_components/DishList/DishList';
 import { MealFields } from './_components/MealFields/MealFields';
 import { MealFormFooter } from './_components/MealFormFooter/MealFormFooter';
+import { SavedRecipesColumn } from './_components/SavedRecipesColumn/SavedRecipesColumn';
 import { findNamelessDishes } from './_utils/findNamelessDishes';
 import { isBlankDish } from './_utils/isBlankDish';
 
@@ -17,10 +18,11 @@ vi.mock('@/_components', () => ({
 	FormFeedbackAlert: vi.fn(() => null),
 }));
 vi.mock('./_components/MealFormLayout/MealFormLayout', () => ({
-	MealFormLayout: vi.fn(({ meal, dishes, footer }) => (
+	MealFormLayout: vi.fn(({ meal, dishes, saved, footer }) => (
 		<>
 			{meal}
 			{dishes}
+			{saved}
 			{footer}
 			<button type="submit">Add Meal</button>
 		</>
@@ -34,6 +36,9 @@ vi.mock('./_components/DishList/DishList', () => ({
 }));
 vi.mock('./_components/MealFormFooter/MealFormFooter', () => ({
 	MealFormFooter: vi.fn(() => null),
+}));
+vi.mock('./_components/SavedRecipesColumn/SavedRecipesColumn', () => ({
+	SavedRecipesColumn: vi.fn(() => null),
 }));
 vi.mock(
 	'./_utils/isBlankDish',
@@ -228,5 +233,54 @@ describe('MealForm', () => {
 		);
 
 		setField('mealName', 'Burrito Night');
+	});
+	it("adds the saved recipe picked in the column, and tells the column it's on the meal", () => {
+		render(
+			<MealForm
+				initialDraft={draft}
+				save={vi.fn()}
+				onSuccess={vi.fn()}
+				onCancel={vi.fn()}
+			/>,
+		);
+		expect(vi.mocked(SavedRecipesColumn).mock.lastCall?.[0].linkedIds).toEqual(
+			new Set(),
+		);
+
+		act(() =>
+			vi.mocked(SavedRecipesColumn).mock.lastCall?.[0].onAdd({
+				_id: 'saved-1',
+				name: 'Lemon Herb Chicken',
+				kind: 'recipe',
+				tags: [],
+			}),
+		);
+
+		expect(vi.mocked(DishList).mock.lastCall?.[0].dishes[1]).toMatchObject({
+			name: 'Lemon Herb Chicken',
+			source: { kind: 'saved', savedId: 'saved-1' },
+		});
+		expect(vi.mocked(SavedRecipesColumn).mock.lastCall?.[0].linkedIds).toEqual(
+			new Set(['saved-1']),
+		);
+	});
+
+	it("keeps the column's search as the user types", () => {
+		render(
+			<MealForm
+				initialDraft={draft}
+				save={vi.fn()}
+				onSuccess={vi.fn()}
+				onCancel={vi.fn()}
+			/>,
+		);
+
+		act(() =>
+			vi.mocked(SavedRecipesColumn).mock.lastCall?.[0].onSearchChange('taco'),
+		);
+
+		expect(vi.mocked(SavedRecipesColumn).mock.lastCall?.[0].search).toBe(
+			'taco',
+		);
 	});
 });

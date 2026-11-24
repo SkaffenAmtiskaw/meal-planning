@@ -11,13 +11,10 @@ vi.mock('@/_actions/library/resolveTags', () => ({
 	resolveTags: vi.fn(() => []),
 }));
 
-vi.mock('./Tag/Tag', () => ({
-	Tag: ({ children, color }: { children: React.ReactNode; color: string }) => (
-		<span data-testid="badge" data-color={color}>
-			{children}
-		</span>
-	),
-}));
+vi.mock(
+	'@/app/[planner]/_components/Tag/Tag',
+	async () => await import('#mocks/@/app/[planner]/_components/Tag/Tag'),
+);
 
 vi.mock('./DeleteBookmarkButton', () => ({
 	DeleteBookmarkButton: ({
