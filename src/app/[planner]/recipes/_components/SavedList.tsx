@@ -1,5 +1,6 @@
 import { Anchor, Divider, Group, Stack } from '@mantine/core';
 
+import { resolveTags } from '@/_actions/library/resolveTags';
 import { LinkAnchor } from '@/_components';
 import type {
 	BookmarkInterface,
@@ -7,13 +8,12 @@ import type {
 	TagInterface,
 } from '@/_models/types';
 import type { TagColor } from '@/_theme/types';
+import { Tag } from '@/app/[planner]/_components/Tag/Tag';
 
 import { DeleteBookmarkButton } from './DeleteBookmarkButton';
 import { DeleteRecipeButton } from './DeleteRecipeButton';
 import { EditRecipeButton } from './EditRecipeButton';
 import classes from './SavedList.module.css';
-
-import { Tag } from './Tag/Tag';
 
 type Props = {
 	items: Array<RecipeInterface | BookmarkInterface>;
@@ -28,9 +28,7 @@ const isBookmark = (
 const SavedList = ({ items, plannerId, tags }: Props) => (
 	<Stack gap={0}>
 		{items.map((item, index) => {
-			const itemTags = (item.tags ?? [])
-				.map((id) => tags.find((t) => t._id === id))
-				.filter((t): t is TagInterface => t !== undefined);
+			const itemTags = resolveTags(item.tags, tags);
 
 			return (
 				<div key={`${item._id}`}>

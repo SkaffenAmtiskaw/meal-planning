@@ -1,0 +1,17 @@
+.root {
+	/* Mantine props can't make the column fill its parent's height and still shrink, so its results can scroll. */
+	flex: 1;
+	min-height: 0;
+}
+
+.results {
+	/* A ScrollArea only scrolls on its own when it fills what's left of its flex parent and can shrink. */
+	flex: 1;
+	min-height: 0;
+	/* The scroll area clips what it holds, so it reaches 4px past the column's padding, and its content is padded back in, to leave room for a button's focus ring. */
+	margin-inline: -4px;
+}
+
+.resultsContent {
+	padding-inline: 4px;
+}

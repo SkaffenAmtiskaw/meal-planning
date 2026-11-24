@@ -1,0 +1,25 @@
+/* On desktop the Description box reaches the bottom of the Meal column, which Mantine props can't make a Stack or Textarea do. */
+.fill {
+	flex: 1;
+	min-height: 0;
+}
+
+.descriptionRoot {
+	flex: 1;
+	min-height: 0;
+	display: flex;
+	flex-direction: column;
+}
+
+.descriptionWrapper {
+	flex: 1;
+	min-height: 0;
+	display: flex;
+	flex-direction: column;
+}
+
+/* The box fills its wrapper, so dragging to resize it does nothing and its handle is hidden. */
+.descriptionInput {
+	flex: 1;
+	resize: none;
+}

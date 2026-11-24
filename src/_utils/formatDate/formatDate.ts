@@ -13,6 +13,8 @@ export const DATE_STYLES = {
 	shortWeekdayNumericDate: 'ccc M/d',
 	// "Dec 29"
 	shortMonthDay: 'MMM d',
+	// "Fri, Nov 27"
+	shortWeekdayMonthDay: 'ccc, MMM d',
 	// "October 27"
 	monthDay: 'MMMM d',
 	// "November 2026"

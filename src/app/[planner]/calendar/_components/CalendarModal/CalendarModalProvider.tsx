@@ -5,50 +5,12 @@ import { type ReactNode, useCallback, useState } from 'react';
 import { CalendarModalContext } from './CalendarModalContext';
 import type {
 	CalendarModalData,
-	CalendarModalFrame,
-	CalendarModalFrames,
 	CalendarModalState,
 	CalendarModalType,
 } from './types';
 
-import { AddMealModal } from '../AddMealForm/AddMealModal';
-import { MealDetailModal } from '../MealDetailModal/MealDetailModal';
-import { dataIfOpen } from './_utils/dataIfOpen';
-
-interface CalendarModalProviderProps {
-	plannerId: string;
-	children: ReactNode;
-}
-
-const MODAL_FRAMES: CalendarModalFrames = {
-	add_meal: AddMealModal,
-	meal_detail: MealDetailModal,
-};
-
-const MODAL_TYPES = Object.keys(MODAL_FRAMES) as CalendarModalType[];
-
-function ModalFrame<K extends CalendarModalType>({
-	type,
-	state,
-	close,
-	plannerId,
-}: {
-	type: K;
-	state: CalendarModalState;
-	close: () => void;
-	plannerId: string;
-}) {
-	const Frame: CalendarModalFrame<K> = MODAL_FRAMES[type];
-
-	return (
-		<Frame data={dataIfOpen(state, type)} close={close} plannerId={plannerId} />
-	);
-}
-
-export function CalendarModalProvider({
-	plannerId,
-	children,
-}: CalendarModalProviderProps) {
+/** Holds which calendar modal is open and what it opened with. `CalendarModals` draws them. */
+export function CalendarModalProvider({ children }: { children: ReactNode }) {
 	const [state, setState] = useState<CalendarModalState>({
 		type: null,
 		data: null,
@@ -68,15 +30,6 @@ export function CalendarModalProvider({
 	return (
 		<CalendarModalContext.Provider value={{ state, open, close }}>
 			{children}
-			{MODAL_TYPES.map((type) => (
-				<ModalFrame
-					key={type}
-					type={type}
-					state={state}
-					close={close}
-					plannerId={plannerId}
-				/>
-			))}
 		</CalendarModalContext.Provider>
 	);
 }

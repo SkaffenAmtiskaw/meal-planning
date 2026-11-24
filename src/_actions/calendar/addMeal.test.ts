@@ -3,11 +3,11 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { plannerCache } from '@/_actions/_utils/caches';
 import { invalidate } from '@/_actions/_utils/invalidate';
 import { checkAuth } from '@/_actions/auth/checkAuth';
-import { zMealFormSchema } from '@/_models/calendar';
 import { newId } from '@/_models/database/newId';
 import { planners } from '@/_models/database/planners';
 
 import { addMeal } from './addMeal';
+import { zAddMealInput } from './mealInput';
 
 vi.mock(
 	'@/_actions/_utils/invalidate',
@@ -18,8 +18,8 @@ vi.mock(
 	async () => await import('#mocks/@/_actions/auth/checkAuth'),
 );
 vi.mock(
-	'@/_models/calendar',
-	async () => await import('#mocks/@/_models/calendar'),
+	'@/_actions/calendar/mealInput',
+	async () => await import('#mocks/@/_actions/calendar/mealInput'),
 );
 vi.mock(
 	'@/_models/database/planners',
@@ -37,12 +37,12 @@ const validData = {
 	plannerId,
 	date: '2024-06-15',
 	mealName: 'Lunch',
-	dishes: [{ name: 'Soup', sourceType: 'none' as const }],
+	dishes: [{ name: 'Soup' }],
 };
 
 const parsesTo = (data: unknown) =>
 	vi
-		.mocked(zMealFormSchema.safeParse)
+		.mocked(zAddMealInput.safeParse)
 		.mockReturnValue({ success: true, data } as never);
 
 const callAddMeal = (data: unknown) => {
@@ -127,10 +127,7 @@ describe('addMeal', () => {
 
 				await callAddMeal({
 					...validData,
-					dishes: [
-						{ name: 'Toast', sourceType: 'none' },
-						{ name: 'Tea', sourceType: 'none' },
-					],
+					dishes: [{ name: 'Toast' }, { name: 'Tea' }],
 				});
 
 				expect(pushedMeal()).toMatchObject({
@@ -144,25 +141,24 @@ describe('addMeal', () => {
 		});
 
 		describe('dish source mapping', () => {
-			it('maps saved source type to the saved item id', async () => {
+			it("stores a saved source as the saved item's id", async () => {
 				await callAddMeal({
 					...validData,
 					dishes: [
-						{ name: 'Pasta', sourceType: 'saved', savedId: savedItemId },
+						{ name: 'Pasta', source: { kind: 'saved', savedId: savedItemId } },
 					],
 				});
 
 				expect(pushedDish().source).toBe(savedItemId);
 			});
 
-			it('maps text source type to url object when a URL is provided', async () => {
+			it('stores a reference that is a URL as a url object', async () => {
 				await callAddMeal({
 					...validData,
 					dishes: [
 						{
 							name: 'Pasta',
-							sourceType: 'text',
-							sourceText: 'https://example.com',
+							source: { kind: 'reference', text: 'https://example.com' },
 						},
 					],
 				});
@@ -170,14 +166,13 @@ describe('addMeal', () => {
 				expect(pushedDish().source).toEqual({ url: 'https://example.com' });
 			});
 
-			it('maps text source type to ref object when a plain string is provided', async () => {
+			it('stores any other reference as a ref object', async () => {
 				await callAddMeal({
 					...validData,
 					dishes: [
 						{
 							name: 'Pasta',
-							sourceType: 'text',
-							sourceText: 'The Flavor Bible',
+							source: { kind: 'reference', text: 'The Flavor Bible' },
 						},
 					],
 				});
@@ -185,26 +180,8 @@ describe('addMeal', () => {
 				expect(pushedDish().source).toEqual({ ref: 'The Flavor Bible' });
 			});
 
-			it('leaves out source when sourceType is none', async () => {
+			it('leaves out source when the dish has none', async () => {
 				await addMeal(validData);
-
-				expect(pushedDish()).not.toHaveProperty('source');
-			});
-
-			it('leaves out source when saved sourceType has no savedId', async () => {
-				await callAddMeal({
-					...validData,
-					dishes: [{ name: 'Pasta', sourceType: 'saved' }],
-				});
-
-				expect(pushedDish()).not.toHaveProperty('source');
-			});
-
-			it('leaves out source when text sourceType has empty sourceText', async () => {
-				await callAddMeal({
-					...validData,
-					dishes: [{ name: 'Pasta', sourceType: 'text', sourceText: '' }],
-				});
 
 				expect(pushedDish()).not.toHaveProperty('source');
 			});
@@ -226,7 +203,7 @@ describe('addMeal', () => {
 			it('includes dish note when provided', async () => {
 				await callAddMeal({
 					...validData,
-					dishes: [{ name: 'Pasta', sourceType: 'none', note: 'Extra cheese' }],
+					dishes: [{ name: 'Pasta', note: 'Extra cheese' }],
 				});
 
 				expect(pushedDish().note).toBe('Extra cheese');
@@ -235,7 +212,7 @@ describe('addMeal', () => {
 			it('leaves out dish note when it is empty', async () => {
 				await callAddMeal({
 					...validData,
-					dishes: [{ name: 'Pasta', sourceType: 'none', note: '' }],
+					dishes: [{ name: 'Pasta', note: '' }],
 				});
 
 				expect(pushedDish()).not.toHaveProperty('note');

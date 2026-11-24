@@ -389,6 +389,9 @@ export const Affix = vi.fn(
 	),
 );
 
+// Renders its children in place rather than at the end of the body.
+export const Portal = vi.fn(({ children }: WithChildren) => <>{children}</>);
+
 export const Divider = vi.fn(
 	({
 		label,
@@ -728,6 +731,10 @@ export const TextInput = vi.fn(
 		placeholder,
 		disabled,
 		'data-testid': testId,
+		'aria-label': ariaLabel,
+		ref,
+		onFocus,
+		onClick,
 	}: {
 		value?: string;
 		onChange?: React.ChangeEventHandler<HTMLInputElement>;
@@ -738,16 +745,24 @@ export const TextInput = vi.fn(
 		placeholder?: string;
 		disabled?: boolean;
 		'data-testid'?: string;
+		'aria-label'?: string;
+		ref?: React.Ref<HTMLInputElement>;
+		onFocus?: React.FocusEventHandler<HTMLInputElement>;
+		onClick?: React.MouseEventHandler<HTMLInputElement>;
 		[key: string]: unknown;
 	}) => (
 		<input
 			data-testid={testId ?? `input-${name ?? label}`}
+			ref={ref}
 			type={type}
 			value={value ?? ''}
 			placeholder={placeholder}
 			disabled={disabled}
+			aria-label={ariaLabel}
 			onChange={onChange ?? (() => {})}
 			onKeyDown={onKeyDown}
+			onFocus={onFocus}
+			onClick={onClick}
 		/>
 	),
 );

@@ -1,8 +1,8 @@
-import { useContext, useMemo } from 'react';
+import { useContext } from 'react';
+
+import type { SavedItem } from '@/_actions/library/types';
 
 import { PlannerSavedItemsContext } from './PlannerSavedItemsContext';
-
-import type { SavedItem } from '../../types';
 
 export const usePlannerSavedItems = (): SavedItem[] => {
 	const saved = useContext(PlannerSavedItemsContext);
@@ -11,15 +11,5 @@ export const usePlannerSavedItems = (): SavedItem[] => {
 			'usePlannerSavedItems must be used inside PlannerSavedItemsProvider',
 		);
 	}
-
-	return useMemo(
-		() =>
-			// Only a bookmark has a url, which is how toCalendarMeals tells it from a recipe.
-			saved.map((item) =>
-				'url' in item
-					? { _id: item._id, name: item.name, url: item.url }
-					: { _id: item._id, name: item.name },
-			),
-		[saved],
-	);
+	return saved;
 };

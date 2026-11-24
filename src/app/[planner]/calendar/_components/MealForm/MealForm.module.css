@@ -1,0 +1,7 @@
+.form {
+	/* Mantine props can't make the form fill the modal's body and still let its columns scroll on their own. */
+	flex: 1;
+	min-height: 0;
+	display: flex;
+	flex-direction: column;
+}

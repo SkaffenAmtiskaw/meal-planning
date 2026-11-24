@@ -5,12 +5,13 @@ import { z } from 'zod';
 import { plannerCache } from '@/_actions/_utils/caches';
 import { defineMutation } from '@/_actions/_utils/defineMutation';
 import type { DishInterface, MealInterface } from '@/_models/calendar';
-import { zMealFormSchema } from '@/_models/calendar';
 import { newId } from '@/_models/database/newId';
 import { planners } from '@/_models/database/planners';
 
+import { zAddMealInput } from './mealInput';
+
 export const addMeal = defineMutation({
-	schema: zMealFormSchema,
+	schema: zAddMealInput,
 	access: { planner: (input) => input.plannerId, level: 'write' },
 	invalidates: (input) => [plannerCache.calendar(input.plannerId)],
 	handler: async ({ plannerId, date, mealName, description, dishes }) => {
@@ -18,11 +19,13 @@ export const addMeal = defineMutation({
 		// gets no key at all.
 		const mealDishes = dishes.map((dish): DishInterface => {
 			let source: DishInterface['source'];
-			if (dish.sourceType === 'saved' && dish.savedId) {
-				source = dish.savedId;
-			} else if (dish.sourceType === 'text' && dish.sourceText) {
-				const isUrl = z.url().safeParse(dish.sourceText).success;
-				source = isUrl ? { url: dish.sourceText } : { ref: dish.sourceText };
+			if (dish.source?.kind === 'saved') {
+				source = dish.source.savedId;
+			} else if (dish.source?.kind === 'reference') {
+				const { text } = dish.source;
+				source = z.url().safeParse(text).success
+					? { url: text }
+					: { ref: text };
 			}
 			return {
 				_id: newId(),

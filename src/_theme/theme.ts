@@ -48,10 +48,11 @@ export const theme = createTheme({
 			}),
 		},
 		Input: {
-			styles: (theme: MantineTheme) => ({
+			// The border color is inline, so it's left off while the input shows an error, or it would hide Mantine's red border.
+			styles: (theme: MantineTheme, props: { error?: unknown }) => ({
 				input: {
 					backgroundColor: theme.white,
-					borderColor: INPUT_BORDER,
+					...(!props.error && { borderColor: INPUT_BORDER }),
 					color: theme.colors.navy[5],
 				},
 			}),

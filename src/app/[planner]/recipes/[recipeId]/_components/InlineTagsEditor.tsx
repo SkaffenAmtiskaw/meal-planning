@@ -9,8 +9,8 @@ import { updateRecipeTags } from '@/_actions/library';
 import { useEditMode } from '@/_hooks/useEditMode';
 import type { TagColor } from '@/_theme/types';
 import { catchify } from '@/_utils/catchify';
+import { Tag } from '@/app/[planner]/_components/Tag/Tag';
 
-import { Tag } from '../../_components/Tag/Tag';
 import { TagCombobox } from '../../_components/TagCombobox';
 import type { TagOption } from '../../_components/types';
 

@@ -1,6 +1,8 @@
 import { render } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
+import { getSavedItems } from '@/_actions/library/getSavedItems';
+import type { SavedItem } from '@/_actions/library/types';
 import { getPlanner } from '@/_actions/planner/getPlanner';
 
 import CalendarPage from './page';
@@ -11,6 +13,9 @@ vi.mock(
 	'@/_actions/planner/getPlanner',
 	async () => await import('#mocks/@/_actions/planner/getPlanner'),
 );
+vi.mock('@/_actions/library/getSavedItems', () => ({
+	getSavedItems: vi.fn(async () => []),
+}));
 
 vi.mock('./_components/CalendarView/CalendarView', async () => ({
 	CalendarView: vi.fn(() => null),
@@ -34,36 +39,27 @@ describe('CalendarPage', () => {
 		);
 	});
 
-	it('fetches planner data and passes calendar and savedItems to CalendarView', async () => {
+	it("passes the planner's calendar and its saved item summaries to CalendarView", async () => {
 		const calendar = [{ date: '2026-03-27', meals: [] }];
-		const saved = [
-			{ _id: 'bookmark-1', name: 'Bookmark One', url: 'https://example.com/1' },
-			{
-				_id: 'recipe-1',
-				name: 'Recipe One',
-				ingredients: [],
-				instructions: [],
-			},
+		const savedItems: SavedItem[] = [
+			{ _id: 'recipe-1', name: 'Recipe One', kind: 'recipe', tags: [] },
 		];
 
 		vi.mocked(getPlanner).mockResolvedValueOnce({
 			_id: plannerId,
 			name: "Test User's Planner",
 			calendar,
-			saved,
+			saved: [],
 			tags: [],
 		} as unknown as Awaited<ReturnType<typeof getPlanner>>);
+		vi.mocked(getSavedItems).mockResolvedValueOnce(savedItems);
 
 		render(await CalendarPage({ params, searchParams }));
 
 		expect(getPlanner).toHaveBeenCalledWith(plannerId);
-
+		expect(getSavedItems).toHaveBeenCalledWith(plannerId);
 		expect(vi.mocked(CalendarView)).toHaveBeenCalledWith(
-			expect.objectContaining({
-				plannerId,
-				calendar,
-				savedItems: saved,
-			}),
+			expect.objectContaining({ plannerId, calendar, savedItems }),
 			undefined,
 		);
 	});

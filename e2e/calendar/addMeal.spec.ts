@@ -12,9 +12,6 @@ test('adds a meal from the Add Meal form', { tag: '@desktop-only' }, async ({
 	context,
 	page,
 }) => {
-	// Expected to fail until "Blank Dish Row Blocks Saving a Meal" is fixed: the form's blank starting dish row makes the save throw.
-	test.fail();
-
 	const now = DateTime.now();
 	await openPlannerCalendar(page, context);
 

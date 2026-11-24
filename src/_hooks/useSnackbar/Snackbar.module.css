@@ -1,0 +1,24 @@
+/* Affix can't center the bar on desktop or change its place on a phone, so the module places it. Above modals and the phone's floating buttons. */
+.root {
+	position: fixed;
+	z-index: var(--mantine-z-index-popover);
+	bottom: 28px;
+	left: 50%;
+	transform: translateX(-50%);
+	width: 400px;
+}
+
+/*
+ * A phone's bar spans the screen and sits above the floating buttons, such as the calendar's Add Meal,
+ * which Affix places 20px up at Mantine's lg button height of 50px. It switches at Mantine's sm
+ * breakpoint, the same width as useIsMobile.
+ */
+@media (max-width: 48em) {
+	.root {
+		bottom: calc(20px + 50px + 16px);
+		left: 12px;
+		right: 12px;
+		width: auto;
+		transform: none;
+	}
+}

@@ -21,6 +21,12 @@ export const TAG_COLORS: Record<
 /** The navbar's background. No forest shade matches it. */
 export const SAGE = '#B1BA95';
 
+/**
+ * Muted text, such as a section label or a count beside it. No navy shade fits: shade 4 is
+ * too light to read on a white or chalk surface.
+ */
+export const MUTED_TEXT = '#5A6B7B';
+
 /** The border of text inputs. No chalk shade matches it. */
 export const INPUT_BORDER = '#C8C0C3';
 

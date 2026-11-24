@@ -25,9 +25,10 @@ vi.mock('@/_hooks/useEditMode', async () => {
 
 let capturedOnChange: ((value: string[]) => void) | undefined;
 
-vi.mock('../../_components/Tag/Tag', () => ({
-	Tag: vi.fn(({ children }) => <span>{children}</span>),
-}));
+vi.mock(
+	'@/app/[planner]/_components/Tag/Tag',
+	async () => await import('#mocks/@/app/[planner]/_components/Tag/Tag'),
+);
 
 vi.mock('../../_components/TagCombobox', () => ({
 	TagCombobox: vi.fn(({ value, onChange, plannerId, tags }) => {

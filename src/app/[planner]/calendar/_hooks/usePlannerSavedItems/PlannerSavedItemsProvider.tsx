@@ -2,9 +2,9 @@
 
 import type { ReactNode } from 'react';
 
-import { PlannerSavedItemsContext } from './PlannerSavedItemsContext';
+import type { SavedItem } from '@/_actions/library/types';
 
-import type { SavedItem } from '../../types';
+import { PlannerSavedItemsContext } from './PlannerSavedItemsContext';
 
 type Props = {
 	savedItems: SavedItem[];
@@ -12,8 +12,8 @@ type Props = {
 };
 
 /**
- * Passes the saved items the calendar page renders on the server down to Add
- * Meal's saved-item dropdown, a client component several levels below
+ * Passes the saved items the calendar page reads on the server down to the
+ * client components that show or link them, several levels below
  * CalendarView, without passing them as props through every component between.
  * When the server re-renders the page with new saved items, this passes them on.
  */
