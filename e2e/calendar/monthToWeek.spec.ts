@@ -25,11 +25,7 @@ test('a meal added in month view shows in week view', {
 	await form.getByRole('textbox', { name: 'Dish name' }).fill(DISH_NAME);
 	await saveMealForm(page);
 
-	// Closed before the success countdown ends, so nothing the modal does afterwards can refresh the page.
-	await expect(
-		form.getByRole('button', { name: /Saved! Closing in/ }),
-	).toBeVisible();
-	await form.getByRole('button', { name: 'Close' }).click();
+	// The modal closes as soon as the save works.
 	await expect(form).toBeHidden();
 
 	await page.getByText('Week', { exact: true }).click();

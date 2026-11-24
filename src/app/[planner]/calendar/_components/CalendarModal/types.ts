@@ -1,6 +1,6 @@
 import type { ComponentType } from 'react';
 
-import type { AddMealModalData } from '../AddMealForm/types';
+import type { AddMealModalData } from '../AddMealModal/types';
 import type { MealDetailModalData } from '../MealDetailModal/types';
 
 export interface CalendarModalData {

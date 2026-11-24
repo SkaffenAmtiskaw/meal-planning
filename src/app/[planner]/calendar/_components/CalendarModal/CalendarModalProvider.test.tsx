@@ -6,10 +6,10 @@ import type { ReactNode } from 'react';
 import { useCalendarModal } from './CalendarModalContext';
 import { CalendarModalProvider } from './CalendarModalProvider';
 
-import { AddMealModal } from '../AddMealForm/AddMealModal';
+import { AddMealModal } from '../AddMealModal/AddMealModal';
 import { MealDetailModal } from '../MealDetailModal/MealDetailModal';
 
-vi.mock('../AddMealForm/AddMealModal', () => ({
+vi.mock('../AddMealModal/AddMealModal', () => ({
 	AddMealModal: vi.fn(() => null),
 }));
 

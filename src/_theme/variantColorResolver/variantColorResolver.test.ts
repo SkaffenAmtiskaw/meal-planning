@@ -8,10 +8,10 @@ import {
 
 import { variantColorResolver } from './variantColorResolver';
 
-import { EMBER_RAMPS, NAVY_RAMPS } from '../colors';
+import { CHALK_RAMPS, EMBER_RAMPS, NAVY_RAMPS } from '../colors';
 
 const theme = mergeMantineTheme(DEFAULT_THEME, {
-	colors: { ember: EMBER_RAMPS, navy: NAVY_RAMPS },
+	colors: { chalk: CHALK_RAMPS, ember: EMBER_RAMPS, navy: NAVY_RAMPS },
 });
 
 describe('variantColorResolver', () => {
@@ -38,6 +38,21 @@ describe('variantColorResolver', () => {
 				border: `var(--ring-width) solid ${NAVY_RAMPS[5]}`,
 			}),
 		);
+	});
+
+	it("resolves the dashed variant to the subtle variant's colors inside a dashed chalk border", () => {
+		const subtle = defaultVariantColorsResolver({
+			color: 'navy',
+			theme,
+			variant: 'subtle',
+		});
+
+		expect(
+			variantColorResolver({ color: 'navy', theme, variant: 'dashed' }),
+		).toEqual({
+			...subtle,
+			border: `1px dashed ${CHALK_RAMPS[8]}`,
+		});
 	});
 
 	it("gives other variants Mantine's default colors", () => {

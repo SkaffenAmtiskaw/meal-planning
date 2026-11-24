@@ -26,5 +26,13 @@ export const variantColorResolver: VariantColorsResolver = (input) => {
 		};
 	}
 
+	// A button that adds a row to a list, such as Add dish: subtle, inside a dashed outline.
+	if (input.variant === 'dashed') {
+		return {
+			...defaultVariantColorsResolver({ ...input, variant: 'subtle' }),
+			border: `1px dashed ${input.theme.colors.chalk[8]}`,
+		};
+	}
+
 	return defaultResolvedColors;
 };

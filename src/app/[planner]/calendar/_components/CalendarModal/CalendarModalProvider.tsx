@@ -11,7 +11,7 @@ import type {
 	CalendarModalType,
 } from './types';
 
-import { AddMealModal } from '../AddMealForm/AddMealModal';
+import { AddMealModal } from '../AddMealModal/AddMealModal';
 import { MealDetailModal } from '../MealDetailModal/MealDetailModal';
 import { dataIfOpen } from './_utils/dataIfOpen';
 

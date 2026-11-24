@@ -1,0 +1,46 @@
+.root {
+	/* Mantine props can't make a flex child fill its parent's height and still shrink below its content. */
+	flex: 1;
+	min-height: 0;
+	display: flex;
+	flex-direction: column;
+}
+
+.columns {
+	/* Mantine props can't make the columns fill the height left between the alert and the footer. */
+	flex: 1;
+	min-height: 0;
+	display: flex;
+	/* Mantine has no prop for a border on one side. */
+	border-top: 1px solid var(--mantine-color-chalk-3);
+}
+
+.fill {
+	/* A ScrollArea only scrolls on its own when it fills what's left of its flex parent and can shrink. */
+	flex: 1;
+	min-height: 0;
+	min-width: 0;
+}
+
+.mealColumn {
+	/* The design's fixed width for the Meal column; Mantine props can't keep a flex child from shrinking. */
+	flex: 0 0 280px;
+	/* Mantine has no prop for a border on one side. */
+	border-right: 1px solid var(--mantine-color-chalk-3);
+	/* The Meal column doesn't scroll, so content taller than the modal is clipped. */
+	overflow: hidden;
+}
+
+.savedColumn {
+	/* The design's fixed width for the Saved recipes column; Mantine props can't keep a flex child from shrinking. */
+	flex: 0 0 340px;
+	/* Mantine has no prop for a border on one side. */
+	border-left: 1px solid var(--mantine-color-chalk-3);
+}
+
+.footer {
+	/* The footer stays put below the scrolling content, so it mustn't shrink. */
+	flex-shrink: 0;
+	/* Mantine has no prop for a border on one side. */
+	border-top: 1px solid var(--mantine-color-chalk-3);
+}

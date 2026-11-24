@@ -20,6 +20,14 @@ describe('SubmitButton', () => {
 		expect(button.hasAttribute('disabled')).toBe(false);
 	});
 
+	test('is disabled while the form says it cannot be sent', () => {
+		render(
+			<SubmitButton status="idle" countdown={0} label="Add Meal" disabled />,
+		);
+		const button = screen.getByRole('button', { name: 'Add Meal' });
+		expect(button.hasAttribute('disabled')).toBe(true);
+	});
+
 	test('renders loading indicator and is disabled in submitting state', () => {
 		render(
 			<SubmitButton status="submitting" countdown={0} label="Save Recipe" />,

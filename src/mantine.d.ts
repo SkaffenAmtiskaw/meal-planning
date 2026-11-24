@@ -1,11 +1,11 @@
 import type { BadgeVariant, ButtonVariant } from '@mantine/core';
 
-type CtaButtonVariant = ButtonVariant | 'cta';
+type AppButtonVariant = ButtonVariant | 'cta' | 'dashed';
 type RingBadgeVariant = BadgeVariant | 'ring';
 
 declare module '@mantine/core' {
 	export interface ButtonProps {
-		variant?: CtaButtonVariant;
+		variant?: AppButtonVariant;
 	}
 
 	export interface BadgeProps {
