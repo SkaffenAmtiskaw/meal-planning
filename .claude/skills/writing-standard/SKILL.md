@@ -34,6 +34,8 @@ Write nothing in shorthand that only its writer understands, such as "Asks the u
 ## Explain Why
 Give each rule or convention its reason, in a sentence or so. A reader who knows why can apply it to a case the text didn't foresee, and can tell when it no longer fits.
 
+If the rule records a choice the user made, its reason is the one they gave. A reason you gave when you recommended the option they picked isn't theirs, because picking an option doesn't say why they picked it. So if they gave none, ask them why before you write one.
+
 ## Use Lists Only for Separate Items
 Write connected ideas as prose, and keep lists for items that truly stand apart, such as the steps of a sequence or the cases of one rule. A run of short bullets drops the words that link ideas, like "because", "so" and "unless", and leaves the reader to rebuild them.
 
