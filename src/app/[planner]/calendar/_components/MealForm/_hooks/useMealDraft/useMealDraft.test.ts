@@ -48,6 +48,58 @@ describe('useMealDraft', () => {
 		expect(result.current.draft.dishes.map((d) => d.key)).toEqual(['b']);
 	});
 
+	it("sets a dish's reference", () => {
+		const { result } = renderHook(() => useMealDraft(twoDishes));
+
+		act(() => result.current.setReference('a', 'p. 12'));
+
+		expect(result.current.draft.dishes[0].source).toEqual({
+			kind: 'reference',
+			text: 'p. 12',
+		});
+		expect(result.current.draft.dishes[1].source).toBeNull();
+	});
+
+	it('leaves a dish with nothing linked once its reference is cleared', () => {
+		const { result } = renderHook(() => useMealDraft(twoDishes));
+
+		act(() => result.current.setReference('a', 'p. 12'));
+		act(() => result.current.setReference('a', ''));
+
+		expect(result.current.draft.dishes[0].source).toBeNull();
+	});
+
+	it("sets only that dish's note", () => {
+		const { result } = renderHook(() => useMealDraft(twoDishes));
+
+		act(() => result.current.setNote('b', 'Buy rolls'));
+
+		expect(result.current.draft.dishes.map((d) => d.note)).toEqual([
+			'',
+			'Buy rolls',
+		]);
+	});
+
+	it('unlinks a dish, keeping its name', () => {
+		const linked = makeMealDraft({
+			dishes: [
+				makeDishDraft({
+					key: 'a',
+					name: 'Soup',
+					source: { kind: 'saved', savedId: 'saved-1' },
+				}),
+			],
+		});
+		const { result } = renderHook(() => useMealDraft(linked));
+
+		act(() => result.current.unlinkDish('a'));
+
+		expect(result.current.draft.dishes[0]).toEqual({
+			...linked.dishes[0],
+			source: null,
+		});
+	});
+
 	it('renames only the dish with that key, keeping its link', () => {
 		const linked = makeMealDraft({
 			dishes: [

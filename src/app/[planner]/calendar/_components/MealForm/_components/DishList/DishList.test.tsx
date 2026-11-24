@@ -23,6 +23,9 @@ const handlers = {
 	onAddDish: vi.fn(),
 	onRenameDish: vi.fn(),
 	onRemoveDish: vi.fn(),
+	onUnlinkDish: vi.fn(),
+	onSetReference: vi.fn(),
+	onSetNote: vi.fn(),
 };
 
 const rowProps = (index: number) => vi.mocked(DishRow).mock.calls[index][0];
@@ -59,14 +62,20 @@ describe('DishList', () => {
 		);
 	});
 
-	it('renames and removes the dish whose row asked', () => {
+	it('changes the dish whose row asked', () => {
 		vi.mocked(DishRow).mockClear();
 		render(<DishList dishes={[soup, bread]} {...handlers} />);
 
 		rowProps(1).onRename('Rye Bread');
 		rowProps(1).onDelete();
+		rowProps(1).onUnlink();
+		rowProps(1).onReferenceChange('p. 12');
+		rowProps(1).onNoteChange('Toast it');
 
 		expect(handlers.onRenameDish).toHaveBeenCalledWith('b', 'Rye Bread');
 		expect(handlers.onRemoveDish).toHaveBeenCalledWith('b');
+		expect(handlers.onUnlinkDish).toHaveBeenCalledWith('b');
+		expect(handlers.onSetReference).toHaveBeenCalledWith('b', 'p. 12');
+		expect(handlers.onSetNote).toHaveBeenCalledWith('b', 'Toast it');
 	});
 });

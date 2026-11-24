@@ -107,6 +107,11 @@ export const MobileGuessProvider = vi.fn(
 
 export const useIsMobile = vi.fn(() => false);
 
+export const useFocusOnExpand = vi.fn(() => ({
+	ref: { current: null },
+	requestFocus: vi.fn(),
+}));
+
 /**
  * A test swipes by calling the `onSwipe` it was given:
  *   act(() => vi.mocked(useSwipe).mock.lastCall?.[0].onSwipe('left'));

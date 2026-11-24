@@ -39,8 +39,16 @@ export const MealForm = ({
 	onCancel,
 	onStatusChange,
 }: MealFormProps) => {
-	const { draft, setField, addDish, removeDish, renameDish } =
-		useMealDraft(initialDraft);
+	const {
+		draft,
+		setField,
+		addDish,
+		removeDish,
+		renameDish,
+		setReference,
+		setNote,
+		unlinkDish,
+	} = useMealDraft(initialDraft);
 	// Calls onSuccess as soon as the save works, so the frame can close at once.
 	const { status, countdown, errorMessage, wrap } = useFormFeedback({
 		successDuration: 0,
@@ -79,6 +87,9 @@ export const MealForm = ({
 						onAddDish={addDish}
 						onRenameDish={renameDish}
 						onRemoveDish={removeDish}
+						onUnlinkDish={unlinkDish}
+						onSetReference={setReference}
+						onSetNote={setNote}
 					/>
 				}
 				footer={

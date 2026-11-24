@@ -1,4 +1,5 @@
-export const formatSourceChip = (value: string): string => {
+// A URL without its http://, https:// or // prefix, for showing it in a small space.
+export const withoutProtocol = (value: string): string => {
 	if (value.startsWith('https://')) {
 		return value.slice('https://'.length);
 	}

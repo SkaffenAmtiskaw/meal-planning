@@ -15,6 +15,9 @@ type Props = {
 	onAddDish: () => void;
 	onRenameDish: (key: string, name: string) => void;
 	onRemoveDish: (key: string) => void;
+	onUnlinkDish: (key: string) => void;
+	onSetReference: (key: string, text: string) => void;
+	onSetNote: (key: string, note: string) => void;
 };
 
 // DISHES with its count, a row for each dish, then Add dish.
@@ -23,6 +26,9 @@ export const DishList = ({
 	onAddDish,
 	onRenameDish,
 	onRemoveDish,
+	onUnlinkDish,
+	onSetReference,
+	onSetNote,
 }: Props) => {
 	const isMobile = useIsMobile();
 
@@ -42,6 +48,9 @@ export const DishList = ({
 					canDelete={dishes.length > 1}
 					onRename={(name) => onRenameDish(dish.key, name)}
 					onDelete={() => onRemoveDish(dish.key)}
+					onUnlink={() => onUnlinkDish(dish.key)}
+					onReferenceChange={(text) => onSetReference(dish.key, text)}
+					onNoteChange={(note) => onSetNote(dish.key, note)}
 				/>
 			))}
 			<Button

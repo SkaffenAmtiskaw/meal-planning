@@ -35,5 +35,23 @@ export const useMealDraft = (initialDraft: MealDraft) => {
 	// Renaming never unlinks: whether it should is the name field's rule.
 	const renameDish = (key: string, name: string) => updateDish(key, { name });
 
-	return { draft, setField, addDish, removeDish, renameDish };
+	// An empty reference leaves the dish with nothing linked.
+	const setReference = (key: string, text: string) =>
+		updateDish(key, { source: text ? { kind: 'reference', text } : null });
+
+	const setNote = (key: string, note: string) => updateDish(key, { note });
+
+	// The dish keeps its name.
+	const unlinkDish = (key: string) => updateDish(key, { source: null });
+
+	return {
+		draft,
+		setField,
+		addDish,
+		removeDish,
+		renameDish,
+		setReference,
+		setNote,
+		unlinkDish,
+	};
 };

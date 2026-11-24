@@ -1,0 +1,54 @@
+/*
+ * Mantine's Group and Flex can't move the delete button up to the name's line on
+ * a phone while the chips wrap below, so the row's line is a grid. The DOM
+ * order stays name, chips, arrow, delete, which is the desktop Tab order.
+ */
+.line {
+	display: grid;
+	grid-template-columns: minmax(0, 1fr) auto auto auto;
+	grid-template-areas: "name chips arrow delete";
+	align-items: center;
+	gap: var(--mantine-spacing-xs);
+	/* The recipe chip caps its width at half of this line, in cqi units. */
+	container-type: inline-size;
+}
+
+.name {
+	grid-area: name;
+}
+
+.chips {
+	grid-area: chips;
+	/* Lets a long recipe chip shrink inside its grid cell rather than widen it. */
+	min-width: 0;
+}
+
+.arrow {
+	grid-area: arrow;
+}
+
+.delete {
+	grid-area: delete;
+}
+
+/* A closed row's note: one line, cut off with an ellipsis. Mantine's Text truncate can't switch to wrapping on a phone. */
+.note {
+	margin-top: var(--mantine-spacing-xs);
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+/* The phone layout switches at Mantine's sm breakpoint, the same width as useIsMobile. */
+@media (max-width: 48em) {
+	.line {
+		grid-template-columns: minmax(0, 1fr) auto;
+		grid-template-areas:
+			"name delete"
+			"chips arrow";
+	}
+
+	.note {
+		white-space: normal;
+	}
+}
