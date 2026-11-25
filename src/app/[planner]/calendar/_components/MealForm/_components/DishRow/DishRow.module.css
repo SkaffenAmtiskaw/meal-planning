@@ -1,0 +1,84 @@
+/*
+ * Mantine's Group and Flex can't move the delete button up to the name's line in
+ * a narrow row while the chips wrap below, so the row's line is a grid. The DOM
+ * order stays name, chips, arrow, delete, which is the desktop Tab order.
+ */
+.line {
+	display: grid;
+	grid-template-columns: minmax(0, 1fr) auto auto auto;
+	grid-template-areas: "name chips arrow delete";
+	align-items: center;
+	gap: var(--mantine-spacing-xs);
+	/* The recipe chip caps its width at half of this line, in cqi units. */
+	container-type: inline-size;
+}
+
+/* Paper has no selected state, so the dish being linked gets the theme's fill for a current row and a navy border here. As with .nameless, the color is set itself. */
+.linking {
+	border-color: var(--mantine-color-navy-5);
+	background-color: var(--selected-fill);
+}
+
+/* Paper has no error state, and its light-scheme rule outranks a class setting its border variable, so this sets the color itself. Coming after .linking, its red wins on a dish that is both. */
+.nameless {
+	border-color: var(--mantine-color-error);
+}
+
+.name {
+	grid-area: name;
+}
+
+.chips {
+	grid-area: chips;
+	/* Lets a long recipe chip shrink inside its grid cell rather than widen it. */
+	min-width: 0;
+}
+
+.arrow {
+	grid-area: arrow;
+}
+
+.delete {
+	grid-area: delete;
+}
+
+/* A closed row's note: one line, cut off with an ellipsis. Mantine's Text truncate can't switch to wrapping on a phone. */
+.note {
+	margin-top: var(--mantine-spacing-xs);
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+/* The row's width decides its layout, so the Dishes column's width, not the window's, sets when it goes to two lines. */
+.row {
+	container-type: inline-size;
+	container-name: dish-row;
+}
+
+/*
+ * A row too narrow for the name beside the chips, as on a phone or a narrow
+ * desktop window, puts the name and delete on one line and the chips and arrow
+ * below, so the name stays readable.
+ */
+@container dish-row (max-width: 28em) {
+	.line {
+		grid-template-columns: minmax(0, 1fr) auto;
+		grid-template-areas:
+			"name delete"
+			"chips arrow";
+	}
+}
+
+/* A phone wraps a closed row's note. It switches at Mantine's sm breakpoint, the same width as useIsMobile. */
+@media (max-width: 48em) {
+	.note {
+		white-space: normal;
+	}
+}
+
+/* While a phone row's saved list is open, the list takes the chips' line, so the row's line holds only the name and delete. Mantine has no prop for grid areas. */
+.listOpen .line {
+	grid-template-columns: minmax(0, 1fr) auto;
+	grid-template-areas: "name delete";
+}

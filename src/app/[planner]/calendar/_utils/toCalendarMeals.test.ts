@@ -1,5 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
+import type { SavedItem } from '@/_actions/library/types';
 import type { DayInterface } from '@/_models/types';
 import { getMealColor, TAG_COLORS } from '@/_theme/colors';
 
@@ -104,10 +105,12 @@ describe('toCalendarMeals', () => {
 				meals: [{ _id: 'meal-1', name: 'Dinner', dishes }],
 			},
 		];
-		const savedItem = {
+		const savedItem: SavedItem = {
 			_id: 'saved-1',
 			name: 'My Bookmark',
+			kind: 'bookmark',
 			url: 'https://example.com',
+			tags: [],
 		};
 
 		toCalendarMeals(calendar, [savedItem]);

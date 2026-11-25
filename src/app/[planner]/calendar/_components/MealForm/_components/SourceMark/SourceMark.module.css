@@ -1,0 +1,23 @@
+/* The source mark is a custom visual element with no Mantine equivalent. */
+.mark {
+	display: inline-block;
+	width: 8px;
+	height: 8px;
+	border-radius: 50%;
+	flex-shrink: 0;
+}
+
+/* A filled forest dot: a saved recipe. */
+.saved {
+	background-color: var(--mantine-color-forest-5);
+}
+
+/* A hollow forest ring: a reference. */
+.reference {
+	border: 1.5px solid var(--mantine-color-forest-5);
+}
+
+/* A hollow grey ring: nothing linked. */
+.none {
+	border: 1.5px solid var(--mantine-color-chalk-8);
+}

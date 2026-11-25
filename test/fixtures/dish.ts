@@ -1,11 +1,24 @@
-import type { DishState } from '@/app/[planner]/calendar/_components/AddMealForm/types';
+import type {
+	DishDraft,
+	MealDraft,
+} from '@/app/[planner]/calendar/_components/MealForm/types';
 
-export const makeDish = (overrides: Partial<DishState> = {}): DishState => ({
-	id: overrides.id ?? 'dish-1',
-	name: overrides.name ?? '',
-	sourceType: overrides.sourceType ?? 'none',
-	savedId: overrides.savedId ?? '',
-	sourceText: overrides.sourceText ?? '',
-	note: overrides.note ?? '',
-	expanded: overrides.expanded ?? false,
+export const makeDishDraft = (
+	overrides: Partial<DishDraft> = {},
+): DishDraft => ({
+	key: 'dish-1',
+	name: '',
+	source: null,
+	note: '',
+	...overrides,
+});
+
+export const makeMealDraft = (
+	overrides: Partial<MealDraft> = {},
+): MealDraft => ({
+	date: '',
+	mealName: '',
+	description: '',
+	dishes: [makeDishDraft()],
+	...overrides,
 });

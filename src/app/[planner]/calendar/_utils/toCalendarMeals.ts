@@ -1,9 +1,9 @@
+import type { SavedItem } from '@/_actions/library/types';
 import type { DayInterface } from '@/_models/types';
 import { getMealColor, TAG_COLORS } from '@/_theme/colors';
 
 import { resolveDishSource } from './resolveDishSource';
 
-import type { SavedItem } from '../types';
 import type { CalendarMeal } from '../_components/Calendar';
 
 export function toCalendarMeals(

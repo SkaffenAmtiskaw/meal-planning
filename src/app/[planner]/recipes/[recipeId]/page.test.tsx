@@ -1,14 +1,20 @@
 import { render } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-import { notFound } from 'next/navigation';
+import { notFound, redirect } from 'next/navigation';
 
+import { checkAuth } from '@/_actions/auth/checkAuth';
 import { getPlanner } from '@/_actions/planner/getPlanner';
 
 import RecipePage from './page';
 
 import { RecipeDetail } from './_components/RecipeDetail';
 import { RecipeEditForm } from './_components/RecipeEditForm';
+
+vi.mock(
+	'@/_actions/auth/checkAuth',
+	async () => await import('#mocks/@/_actions/auth/checkAuth'),
+);
 
 vi.mock(
 	'@/_actions/planner/getPlanner',
@@ -129,6 +135,34 @@ describe('RecipePage', () => {
 			undefined,
 		);
 		expect(vi.mocked(RecipeDetail)).not.toHaveBeenCalled();
+	});
+
+	it('checks write access only when status is edit', async () => {
+		vi.mocked(getPlanner).mockResolvedValueOnce(
+			makePlanner([makeRecipe()]) as never,
+		);
+
+		render(await RecipePage({ params, searchParams }));
+
+		expect(vi.mocked(checkAuth)).not.toHaveBeenCalled();
+	});
+
+	it("redirects to the recipe's page when status is edit without write access", async () => {
+		vi.mocked(getPlanner).mockResolvedValueOnce(
+			makePlanner([makeRecipe()]) as never,
+		);
+		vi.mocked(checkAuth).mockResolvedValueOnce({ type: 'unauthorized' });
+
+		await RecipePage({
+			params,
+			searchParams: Promise.resolve({ status: 'edit' }),
+		});
+
+		expect(vi.mocked(checkAuth)).toHaveBeenCalledWith(plannerId, 'write');
+		expect(vi.mocked(redirect)).toHaveBeenCalledWith(
+			`/${plannerId}/recipes/${recipeId}`,
+		);
+		expect(vi.mocked(RecipeEditForm)).not.toHaveBeenCalled();
 	});
 
 	it("passes the planner's tags to RecipeEditForm in edit mode", async () => {

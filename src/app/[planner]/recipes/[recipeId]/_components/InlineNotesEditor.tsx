@@ -8,6 +8,7 @@ import { IconCheck, IconPencil, IconX } from '@tabler/icons-react';
 import { updateRecipeNotes } from '@/_actions/library';
 import { useEditMode } from '@/_hooks/useEditMode';
 import { catchify } from '@/_utils/catchify';
+import { useCanWrite } from '@/app/[planner]/_components';
 
 type Props = {
 	plannerId: string;
@@ -16,6 +17,7 @@ type Props = {
 };
 
 export const InlineNotesEditor = ({ plannerId, recipeId, notes }: Props) => {
+	const canWrite = useCanWrite();
 	const [editing, { enterEditing, exitEditing }] = useEditMode();
 	// The edit in progress. View mode draws from `notes`, so a server refresh
 	// shows there, and each edit starts from the notes as they are then.
@@ -57,7 +59,7 @@ export const InlineNotesEditor = ({ plannerId, recipeId, notes }: Props) => {
 				<Text fw={600} size="sm">
 					Notes
 				</Text>
-				{!editing && (
+				{canWrite && !editing && (
 					<ActionIcon
 						data-testid="notes-edit-button"
 						onClick={handleEdit}

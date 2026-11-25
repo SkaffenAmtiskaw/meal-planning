@@ -3,6 +3,7 @@ import { beforeEach, describe, expect, test, vi } from 'vitest';
 
 import type { ReactNode } from 'react';
 
+import type { SavedItem } from '@/_actions/library/types';
 import type { DayInterface } from '@/_models/types';
 
 import { CalendarDaysProvider } from './CalendarDaysProvider';
@@ -11,7 +12,6 @@ import { useCalendarMeals } from './useCalendarMeals';
 import { usePlannerSavedItems } from '../usePlannerSavedItems';
 import type { CalendarMeal } from '../../_components/Calendar';
 import { toCalendarMeals } from '../../_utils/toCalendarMeals';
-import type { SavedItem } from '../../types';
 
 vi.mock(
 	'../usePlannerSavedItems',
@@ -31,7 +31,9 @@ const calendar: DayInterface[] = [
 	},
 ];
 
-const savedItems: SavedItem[] = [{ _id: 'item-1', name: 'Pancakes' }];
+const savedItems: SavedItem[] = [
+	{ _id: 'item-1', name: 'Pancakes', kind: 'recipe', tags: [] },
+];
 
 const meals: CalendarMeal[] = [
 	{

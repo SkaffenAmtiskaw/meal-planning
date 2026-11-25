@@ -1,0 +1,18 @@
+.root {
+	/*
+	 * Caps the chip so a long reference is cut off before it squeezes the dish name
+	 * field. 50cqi is half the dish row's line, its nearest size container. A
+	 * percentage would be half of the chips' own group, which sizes to the chip.
+	 */
+	max-width: min(240px, 50cqi);
+	/* PillButton has no prop for the space between the mark and the label. */
+	gap: 8px;
+}
+
+/* PillButton has no prop that cuts its label off with an ellipsis. */
+.label {
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	min-width: 0;
+}

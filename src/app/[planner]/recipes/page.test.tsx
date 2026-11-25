@@ -1,10 +1,20 @@
 import { render } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
+import { redirect } from 'next/navigation';
+
+import { checkAuth } from '@/_actions/auth/checkAuth';
 import { getPlanner } from '@/_actions/planner/getPlanner';
 
 import { Modal, SavedList } from './_components';
 import RecipesPage from './page';
+
+vi.mock(
+	'@/_actions/auth/checkAuth',
+	async () => await import('#mocks/@/_actions/auth/checkAuth'),
+);
+
+vi.mock('next/navigation', async () => await import('#mocks/next/navigation'));
 
 vi.mock(
 	'@/_actions/planner/getPlanner',
@@ -72,6 +82,31 @@ describe('recipes page', () => {
 			}),
 			undefined,
 		);
+	});
+
+	it('checks write access only when the URL has a status', async () => {
+		vi.mocked(getPlanner).mockResolvedValueOnce(makePlanner() as never);
+
+		render(await RecipesPage({ params, searchParams }));
+
+		expect(vi.mocked(checkAuth)).not.toHaveBeenCalled();
+	});
+
+	it('redirects to the plain list when the URL has a status without write access', async () => {
+		vi.mocked(getPlanner).mockResolvedValueOnce(makePlanner() as never);
+		vi.mocked(checkAuth).mockResolvedValueOnce({ type: 'unauthorized' });
+
+		await RecipesPage({
+			params,
+			searchParams: Promise.resolve({
+				status: 'add' as const,
+				type: 'bookmark' as const,
+			}),
+		});
+
+		expect(vi.mocked(checkAuth)).toHaveBeenCalledWith(plannerId, 'write');
+		expect(vi.mocked(redirect)).toHaveBeenCalledWith(`/${plannerId}/recipes`);
+		expect(vi.mocked(Modal)).not.toHaveBeenCalled();
 	});
 
 	it('passes saved items, plannerId, and tags to SavedList', async () => {

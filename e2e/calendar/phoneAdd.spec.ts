@@ -11,9 +11,6 @@ test('adds a meal from the phone add button', { tag: '@phone-only' }, async ({
 	context,
 	page,
 }) => {
-	// Expected to fail until "Blank Dish Row Blocks Saving a Meal" is fixed: the form's blank starting dish row makes the save throw.
-	test.fail();
-
 	await openPlannerCalendar(page, context);
 
 	await page.getByRole('button', { name: 'Add Meal' }).click();

@@ -3,22 +3,6 @@ import { z } from 'zod';
 import { zId } from '@/_utils/zId';
 import { zOptionalNonEmptyString } from '@/_utils/zOptionalNonEmptyString';
 
-export const zDishFormInput = z.object({
-	name: z.string().min(1, { error: 'Dish name is required' }),
-	sourceType: z.enum(['none', 'saved', 'text']),
-	savedId: zId.optional(),
-	sourceText: z.string().optional(),
-	note: z.string().optional(),
-});
-
-export const zMealFormSchema = z.object({
-	plannerId: z.string(),
-	date: z.iso.date(),
-	mealName: z.string().min(1, { error: 'Meal name is required' }),
-	description: z.string().optional(),
-	dishes: z.array(zDishFormInput),
-});
-
 const zDishInterface = z.object({
 	_id: zId,
 	name: z.string(),

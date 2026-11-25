@@ -10,8 +10,6 @@ test("read-only member sees no edit or delete controls on a recipe's page", asyn
 	context,
 	page,
 }) => {
-	// Expected to fail until "Recipe Detail Read-Only Controls" is fixed.
-	test.fail();
 	const { tags, recipe } = recipesSeed();
 	await openRecipeDetail(page, context, recipe, {
 		accessLevel: 'read',

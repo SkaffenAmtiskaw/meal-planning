@@ -18,6 +18,7 @@ import {
 import { deleteRecipe } from '@/_actions/library';
 import { ConfirmButton } from '@/_components';
 import type { RecipeInterface, TagInterface } from '@/_models/types';
+import { useCanWrite } from '@/app/[planner]/_components';
 
 import { InlineNotesEditor } from './InlineNotesEditor';
 import { InlineTagsEditor } from './InlineTagsEditor';
@@ -31,6 +32,7 @@ type Props = {
 
 export const RecipeDetail = ({ plannerId, recipe, tags }: Props) => {
 	const router = useRouter();
+	const canWrite = useCanWrite();
 
 	return (
 		<Container data-testid="recipe-detail" size="md" py={16}>
@@ -39,35 +41,38 @@ export const RecipeDetail = ({ plannerId, recipe, tags }: Props) => {
 					<Title order={2}>{recipe.name}</Title>
 					<Group align="center" gap="sm">
 						<KeepAwakeToggle />
-						<Button
-							data-testid="edit-button"
-							onClick={() => router.push('?status=edit')}
-							variant="default"
-						>
-							Edit
-						</Button>
-						<ConfirmButton
-							onConfirm={async () => {
-								await deleteRecipe({
-									plannerId,
-									recipeId: recipe._id,
-								});
-								return { ok: true, data: undefined };
-							}}
-							onSuccess={() => router.push(`/${plannerId}/recipes`)}
-							title="Delete Recipe"
-							message="Are you sure you want to delete this recipe? This cannot be undone."
-							confirmButtonText="Delete"
-							renderTrigger={(onOpen) => (
+						{canWrite && (
+							<>
 								<Button
-									color="red"
-									data-testid="delete-button"
-									onClick={onOpen}
+									data-testid="edit-button"
+									onClick={() => router.push('?status=edit')}
+									variant="default"
 								>
-									Delete
+									Edit
 								</Button>
-							)}
-						/>
+								<ConfirmButton
+									onConfirm={() =>
+										deleteRecipe({
+											plannerId,
+											recipeId: recipe._id,
+										})
+									}
+									onSuccess={() => router.push(`/${plannerId}/recipes`)}
+									title="Delete Recipe"
+									message="Are you sure you want to delete this recipe? This cannot be undone."
+									confirmButtonText="Delete"
+									renderTrigger={(onOpen) => (
+										<Button
+											color="red"
+											data-testid="delete-button"
+											onClick={onOpen}
+										>
+											Delete
+										</Button>
+									)}
+								/>
+							</>
+						)}
 					</Group>
 				</Group>
 

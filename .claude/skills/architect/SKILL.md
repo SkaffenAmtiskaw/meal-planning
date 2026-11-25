@@ -54,7 +54,7 @@ Text already under the section is one of these:
 
 The guide says:
 - **What code should do, and why.** A reader who knows the aim can apply it to a case the text doesn't name.
-- **What that looks like here.** One or two examples from this codebase: code that follows it and code that doesn't, when both exist.
+- **What that looks like.** One or two examples of code that follows it, and of code that doesn't when that helps, written as `docs.md` describes for a doc's examples.
 - **Where it lands.** The doc and section in `docs/` it goes into once the story is built.
 
 Be exact only where the aim itself is exact. "Only `src/_utils/today/` reads the clock" is exact because any other code that reads the clock breaks the aim. Where applying the Convention takes judgment, leave it to the reader, rather than adding a criterion or a definition to settle it.
@@ -72,7 +72,7 @@ Where the sources don't settle something the Convention needs, don't fill it in.
 ### Approve
 The steps, in order:
 1. Write the draft to a file and link it.
-2. Show the decisions the draft makes, one bullet each, rather than its text, even when the draft is short. A decision inside a doc's prose is easy to miss. Give each example's `file:line`, so the user can look at the code. Include each piece kept for an Infrastructure item in the cut above, with its sketch.
+2. Show the decisions the draft makes, one bullet each, rather than its text, even when the draft is short. A decision inside a doc's prose is easy to miss. For each decision, give the `file:line` of real code that follows it and of code that breaks it, where each exists, so the user can see the decision in the code. Include each piece kept for an Infrastructure item in the cut above, with its sketch.
 3. Wait for the user to approve or change the decisions.
 4. Once they approve, update the draft to match, and write it under `# Convention` before the audit, replacing what was there, including an older note's `# Rules`, so it survives if the session ends.
 

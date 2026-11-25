@@ -10,7 +10,7 @@
  * that checks what's opened gives the hook its own `open`:
  *   vi.mocked(useCalendarModal).mockReturnValue({ ...value, open })
  *
- * The provider only renders its children.
+ * The provider only renders its children, and `CalendarModals` renders nothing.
  */
 
 import { vi } from 'vitest';
@@ -28,5 +28,7 @@ export const useCalendarModal = vi.fn(
 );
 
 export const CalendarModalProvider = vi.fn(
-	({ children }: { children: ReactNode; plannerId: string }) => children,
+	({ children }: { children: ReactNode }) => children,
 );
+
+export const CalendarModals = vi.fn((_props: { plannerId: string }) => null);

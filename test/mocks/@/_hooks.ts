@@ -108,6 +108,22 @@ export const MobileGuessProvider = vi.fn(
 export const useIsMobile = vi.fn(() => false);
 
 /**
+ * A test checks a message through the hook's `show`:
+ *   expect(vi.mocked(useSnackbar).mock.results[0].value.show).toHaveBeenCalledWith(...)
+ * or gives the hook its own: vi.mocked(useSnackbar).mockReturnValue({ show })
+ */
+export const useSnackbar = vi.fn(() => ({ show: vi.fn() }));
+
+export const SnackbarProvider = vi.fn(
+	({ children }: { children: ReactNode }) => children,
+);
+
+export const useFocusOnExpand = vi.fn(() => ({
+	ref: { current: null },
+	requestFocus: vi.fn(),
+}));
+
+/**
  * A test swipes by calling the `onSwipe` it was given:
  *   act(() => vi.mocked(useSwipe).mock.lastCall?.[0].onSwipe('left'));
  */

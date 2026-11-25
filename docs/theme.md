@@ -8,10 +8,10 @@ The app has five main colors, each kept for the uses below. Navy is the primary 
 
 | Color | What it's for |
 |---|---|
-| Navy | Every control that isn't a main action or one that deletes or removes something (see "Status Colors"), such as links, tabs, selected controls and focus rings. Also the header's background, and text, such as body text and headings |
+| Navy | Every control, such as links, tabs, selected controls and focus rings, but three: a main action, a control that deletes or removes something (see "Status Colors"), and a quiet button beside a message on a dark fill (see "Content on Fills"). Also the header's background, and text, such as body text and headings |
 | Ember | Main actions only |
 | Forest green | The navbar, and small marks that describe a piece of content but aren't controls |
-| Sage | The navbar's background, and a soft fill behind a selected or current piece of content |
+| Sage | The navbar's background, a soft fill behind a selected or current piece of content, and the label of a quiet button beside a message on a dark fill |
 | Chalk | Light surfaces that need a tint, such as the sign-in card, and icons on a dark fill |
 
 # Links Are Always Underlined
@@ -34,10 +34,14 @@ Forest green and sage mark the navbar and content, and controls take navy. In th
 > [!NOTE]
 > The today ring is already drawn for you, so every today ring matches. The theme's `ring` badge variant draws it around a label, such as the week view's today pill, and the `NumberMark` component draws it around a day number. Both take their width from the theme's `--ring-width` CSS variable.
 
-Controls stay navy even where green would look natural, such as a selected tab, switch, checkbox or segmented option, or navigation within a page. Forest green next to the ember buttons reads as red and green, so a screen where green does more than mark the navbar and content starts to look like a holiday card.
+Controls stay navy even where green would look natural, such as a selected tab, switch, checkbox or segmented option, or navigation within a page. Forest green next to the ember buttons reads as red and green, so a screen where green does more than mark the navbar and content starts to look like a holiday card. The one control that takes sage is a quiet button beside a message on a dark fill, for the reason "Content on Fills" gives.
 
 # Content on Fills
-Content takes a tone that contrasts with its fill, so it can be read. On a dark fill, such as the navy header or the active navbar item, text is white and icons are chalk, because the primary color would disappear there. A badge or button on a dark fill takes Mantine's `white` variant: a white background with its number or label in the component's color, which is navy unless it sets one.
+Content takes a tone that contrasts with its fill, so it can be read. On a dark fill, such as the navy header or the active navbar item, text is white and icons are chalk, because the primary color would disappear there.
+
+A badge or button on a dark fill takes one of two looks. Which one depends on whether it has to catch the eye or is a quiet button beside a message:
+- **One that has to catch the eye,** such as a count of unread items, takes Mantine's `white` variant: a white background with its number or label in the component's color, which is navy unless it sets one.
+- **A quiet button beside a message,** such as Undo on a confirmation bar, takes the theme's `on-dark` button variant: a sage label with no fill. Sage contrasts enough with the dark fill to read easily, but without a fill the button doesn't look like something people have to click.
 
 > [!NOTE]
 > Mantine's `Indicator`, the count badge that sits on an icon, has no `white` variant, so the theme adds one in `src/_theme/components/Indicator/`.
