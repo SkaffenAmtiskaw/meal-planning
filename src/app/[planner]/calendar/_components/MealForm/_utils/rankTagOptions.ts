@@ -26,8 +26,8 @@ const tally = (items: SavedItem[]) => {
 };
 
 /**
- * The tag filter's chips, in order. The selected tags come first, in pick order
- * and with no count, kept even when nothing carries them; an id no saved item
+ * The tag filter's chips, in order. The selected tags come first, in pick order,
+ * kept even when nothing carries them; an id no saved item
  * carries any more is dropped. Then the unselected tags that a counted item
  * carries, most carried first, then by how many of the planner's saved items
  * carry them, then by name, ignoring case.
@@ -39,9 +39,9 @@ export const rankTagOptions = ({
 }: Input): TagFilterOption[] => {
 	const plannerCounts = tally(savedItems);
 
-	const selected = selectedIds.flatMap((id) => {
+	const selected = selectedIds.flatMap((id): TagFilterOption[] => {
 		const entry = plannerCounts.get(id);
-		return entry ? [{ tag: entry.tag, selected: true, count: null }] : [];
+		return entry ? [{ tag: entry.tag, selected: true }] : [];
 	});
 
 	const unselected = [...tally(countOver).values()]
@@ -55,7 +55,9 @@ export const rankTagOptions = ({
 					sensitivity: 'base',
 				}),
 		)
-		.map(({ tag, count }) => ({ tag, selected: false, count }));
+		.map(
+			({ tag, count }): TagFilterOption => ({ tag, selected: false, count }),
+		);
 
 	return [...selected, ...unselected];
 };

@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import type { SavedItem } from '@/_actions/library/types';
+import { makeSavedItem } from '#fixtures/savedItem';
 import type { TagInterface } from '@/_models/types';
 
 import { filterSavedItems } from './filterSavedItems';
@@ -12,16 +12,12 @@ const vegetarian: TagInterface = {
 	color: 'steel',
 };
 
-const item = (name: string, tags: TagInterface[] = []): SavedItem => ({
-	_id: name,
-	name,
-	kind: 'recipe',
-	tags,
+const tacos = makeSavedItem({
+	name: 'Black Bean Tacos',
+	tags: [quick, vegetarian],
 });
-
-const tacos = item('Black Bean Tacos', [quick, vegetarian]);
-const risotto = item('Mushroom Risotto', [vegetarian]);
-const chicken = item('Lemon Herb Chicken');
+const risotto = makeSavedItem({ name: 'Mushroom Risotto', tags: [vegetarian] });
+const chicken = makeSavedItem({ name: 'Lemon Herb Chicken' });
 const savedItems = [tacos, risotto, chicken];
 
 describe('filterSavedItems', () => {

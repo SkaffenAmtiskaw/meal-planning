@@ -10,8 +10,11 @@ type Handlers = {
 	setTagIds: (tagIds: string[]) => void;
 };
 
+// The dish being linked, of which the hook reads only its key and name.
+type LinkingDish = Pick<DishDraft, 'key' | 'name'> | null;
+
 // The search filled with the dish's name, or empty with no dish, and no tags selected.
-const startFor = (dish: DishDraft | null): SavedItemCriteria => ({
+const startFor = (dish: LinkingDish): SavedItemCriteria => ({
 	search: dish?.name ?? '',
 	tagIds: [],
 });
@@ -24,7 +27,7 @@ const startFor = (dish: DishDraft | null): SavedItemCriteria => ({
  * key rather than its name, since the name stays editable while linking.
  */
 export const useSavedItemCriteria = (
-	linkingDish: DishDraft | null,
+	linkingDish: LinkingDish,
 ): [SavedItemCriteria, Handlers] => {
 	const linkingKey = linkingDish?.key ?? null;
 	const [criteria, setCriteria] = useState(() => startFor(linkingDish));

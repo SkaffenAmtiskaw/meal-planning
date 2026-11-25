@@ -1,13 +1,8 @@
 import { describe, expect, it } from 'vitest';
 
-import { limitTagChips } from './limitTagChips';
-import type { TagFilterOption } from './types';
+import { makeTagFilterOption as option } from '#fixtures/tagFilterOption';
 
-const option = (name: string, selected = false): TagFilterOption => ({
-	tag: { _id: name, name, color: 'fern' },
-	selected,
-	count: selected ? null : 1,
-});
+import { limitTagChips } from './limitTagChips';
 
 const unselected = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'].map((name) =>
 	option(name),

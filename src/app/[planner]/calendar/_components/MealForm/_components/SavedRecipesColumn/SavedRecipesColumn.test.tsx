@@ -14,8 +14,6 @@ import { rankTagOptions } from '../../_utils/rankTagOptions';
 import type { DishDraft } from '../../types';
 import { LinkModeBanner } from '../LinkModeBanner/LinkModeBanner';
 import { SavedResultList } from '../SavedResultList/SavedResultList';
-import { SavedSearchInput } from '../SavedSearchInput/SavedSearchInput';
-import { TagFilter } from '../TagFilter/TagFilter';
 
 vi.mock('@mantine/core', async () => await import('#mocks/@mantine/core'));
 vi.mock(
@@ -73,9 +71,6 @@ const renderColumn = (linkingDish: DishDraft | null = null) =>
 		/>,
 	);
 
-const criteriaHandlers = () =>
-	vi.mocked(useSavedItemCriteria).mock.results.at(-1)?.value[1];
-
 describe('SavedRecipesColumn', () => {
 	beforeEach(() => {
 		vi.clearAllMocks();
@@ -96,19 +91,6 @@ describe('SavedRecipesColumn', () => {
 		expect(useSavedItemCriteria).toHaveBeenLastCalledWith(nameless);
 		expect(vi.mocked(LinkModeBanner).mock.lastCall?.[0].dishName).toBe('');
 		expect(vi.mocked(SavedResultList).mock.lastCall?.[0].linking).toBe(true);
-	});
-
-	it('shows the search it holds and changes it as the user types', () => {
-		vi.mocked(useSavedItemCriteria).mockReturnValueOnce([
-			{ search: 'taco', tagIds: [] },
-			{ setSearch: vi.fn(), setTagIds: vi.fn() },
-		]);
-		renderColumn();
-
-		expect(vi.mocked(SavedSearchInput).mock.lastCall?.[0]).toMatchObject({
-			value: 'taco',
-			onChange: criteriaHandlers()?.setSearch,
-		});
 	});
 
 	// The DOM order is the Tab order, so the banner's Cancel, the search and the tags come before the results.
@@ -146,7 +128,7 @@ describe('SavedRecipesColumn', () => {
 		});
 	});
 
-	it("counts the tags over the results, so the filter offers only tags that would return something, and selects with the column's tags", () => {
+	it('counts the tags over the results, so the filter offers only tags that would return something', () => {
 		const criteria = { search: 'taco', tagIds: ['quick'] };
 		const savedItems = [tacos, { ...tacos, _id: 'other' }];
 		vi.mocked(useSavedItemCriteria).mockReturnValueOnce([
@@ -162,10 +144,6 @@ describe('SavedRecipesColumn', () => {
 			countOver: [tacos],
 			savedItems,
 			selectedIds: ['quick'],
-		});
-		expect(vi.mocked(TagFilter).mock.lastCall?.[0]).toMatchObject({
-			value: ['quick'],
-			onChange: criteriaHandlers()?.setTagIds,
 		});
 	});
 

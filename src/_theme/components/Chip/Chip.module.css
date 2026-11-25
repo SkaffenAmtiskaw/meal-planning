@@ -6,7 +6,7 @@
 	font-weight: 500;
 }
 
-/* The tag variant has no Mantine hover, so an unselected chip takes the light navy hover of the theme's white-outline button. */
+/* The tag variant has no Mantine hover, so an unselected chip gets its own light navy one here. */
 @media (hover: hover) {
 	.root[data-variant="tag"] .label:not([data-checked]):hover {
 		background-color: var(--mantine-color-navy-0);

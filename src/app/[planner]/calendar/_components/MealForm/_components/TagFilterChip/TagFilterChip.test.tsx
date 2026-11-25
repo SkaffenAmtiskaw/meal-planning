@@ -17,9 +17,7 @@ describe('TagFilterChip', () => {
 	});
 
 	it('shows no count on a selected tag', () => {
-		render(
-			<TagFilterChip option={{ tag: quick, selected: true, count: null }} />,
-		);
+		render(<TagFilterChip option={{ tag: quick, selected: true }} />);
 
 		expect(screen.queryByTestId('tag-count')).toBeNull();
 	});

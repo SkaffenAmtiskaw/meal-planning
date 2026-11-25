@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import type { SavedItem } from '@/_actions/library/types';
+import { makeSavedItem } from '#fixtures/savedItem';
 import type { TagInterface } from '@/_models/types';
 
 import { rankTagOptions } from './rankTagOptions';
@@ -16,17 +16,10 @@ const vegetarian = tag('Vegetarian');
 const family = tag('Family Favorite');
 const spicy = tag('spicy');
 
-const item = (name: string, tags: TagInterface[]): SavedItem => ({
-	_id: name,
-	name,
-	kind: 'recipe',
-	tags,
-});
-
 describe('rankTagOptions', () => {
 	it('lists the unselected tags the counted items carry, most carried first, with their counts', () => {
-		const tacos = item('Tacos', [quick, vegetarian]);
-		const risotto = item('Risotto', [vegetarian]);
+		const tacos = makeSavedItem({ name: 'Tacos', tags: [quick, vegetarian] });
+		const risotto = makeSavedItem({ name: 'Risotto', tags: [vegetarian] });
 
 		expect(
 			rankTagOptions({
@@ -41,8 +34,8 @@ describe('rankTagOptions', () => {
 	});
 
 	it('leaves out tags no counted item carries, even when other saved items carry them', () => {
-		const tacos = item('Tacos', [quick]);
-		const chicken = item('Chicken', [family]);
+		const tacos = makeSavedItem({ name: 'Tacos', tags: [quick] });
+		const chicken = makeSavedItem({ name: 'Chicken', tags: [family] });
 
 		expect(
 			rankTagOptions({
@@ -54,8 +47,8 @@ describe('rankTagOptions', () => {
 	});
 
 	it("breaks a tie by how many of the planner's saved items carry the tag", () => {
-		const tacos = item('Tacos', [quick, vegetarian]);
-		const risotto = item('Risotto', [vegetarian]);
+		const tacos = makeSavedItem({ name: 'Tacos', tags: [quick, vegetarian] });
+		const risotto = makeSavedItem({ name: 'Risotto', tags: [vegetarian] });
 
 		expect(
 			rankTagOptions({
@@ -67,7 +60,10 @@ describe('rankTagOptions', () => {
 	});
 
 	it('breaks a remaining tie by name, ignoring case', () => {
-		const tacos = item('Tacos', [vegetarian, spicy, quick]);
+		const tacos = makeSavedItem({
+			name: 'Tacos',
+			tags: [vegetarian, spicy, quick],
+		});
 
 		expect(
 			rankTagOptions({
@@ -78,9 +74,9 @@ describe('rankTagOptions', () => {
 		).toEqual([quick, spicy, vegetarian]);
 	});
 
-	it('puts the selected tags first, in pick order, with no count, even when no counted item carries them', () => {
-		const tacos = item('Tacos', [quick, vegetarian]);
-		const chicken = item('Chicken', [family]);
+	it('puts the selected tags first, in pick order, even when no counted item carries them', () => {
+		const tacos = makeSavedItem({ name: 'Tacos', tags: [quick, vegetarian] });
+		const chicken = makeSavedItem({ name: 'Chicken', tags: [family] });
 
 		expect(
 			rankTagOptions({
@@ -89,13 +85,13 @@ describe('rankTagOptions', () => {
 				selectedIds: ['vegetarian', 'family favorite'],
 			}),
 		).toEqual([
-			{ tag: vegetarian, selected: true, count: null },
-			{ tag: family, selected: true, count: null },
+			{ tag: vegetarian, selected: true },
+			{ tag: family, selected: true },
 		]);
 	});
 
 	it('drops a selected id that no saved item carries any more', () => {
-		const tacos = item('Tacos', [quick]);
+		const tacos = makeSavedItem({ name: 'Tacos', tags: [quick] });
 
 		expect(
 			rankTagOptions({
@@ -103,6 +99,6 @@ describe('rankTagOptions', () => {
 				savedItems: [tacos],
 				selectedIds: ['gone', 'quick'],
 			}),
-		).toEqual([{ tag: quick, selected: true, count: null }]);
+		).toEqual([{ tag: quick, selected: true }]);
 	});
 });

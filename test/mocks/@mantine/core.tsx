@@ -1275,20 +1275,18 @@ export const Pill = Object.assign(
 const ChipGroup = vi.fn(({ children }: WithChildren) => <>{children}</>);
 
 export const Chip = Object.assign(
-	vi.fn(
-		({
-			children,
-			value,
-			'data-testid': testId,
-		}: WithChildren & { value?: string }) => (
-			<label data-testid={testId}>
-				<input type="checkbox" value={value} />
-				{children}
-			</label>
-		),
-	),
+	vi.fn(({ children, value }: WithChildren & { value?: string }) => (
+		<label>
+			<input type="checkbox" value={value} />
+			{children}
+		</label>
+	)),
 	{ Group: ChipGroup },
 );
+
+// ─── ColorSwatch ──────────────────────────────────────────────────────────────
+
+export const ColorSwatch = vi.fn(() => <span />);
 
 // ─── PillsInput (compound) ────────────────────────────────────────────────────
 

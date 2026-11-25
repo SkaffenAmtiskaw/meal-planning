@@ -4,12 +4,10 @@ import type { TagInterface } from '@/_models/types';
 export type SavedItemCriteria = { search: string; tagIds: string[] };
 
 /**
- * One chip in the tag filter. `count` is how many current results carry the tag,
- * or null for a selected tag, which shows no count. Named apart from the recipes
- * page's TagOption, a combobox option whose color is a plain string.
+ * One chip in the tag filter. An unselected tag has a `count`, how many current
+ * results carry it; a selected one shows no count, so it has none. Named apart
+ * from the recipes page's TagOption, a combobox option whose color is a plain string.
  */
-export type TagFilterOption = {
-	tag: TagInterface;
-	selected: boolean;
-	count: number | null;
-};
+export type TagFilterOption =
+	| { tag: TagInterface; selected: true }
+	| { tag: TagInterface; selected: false; count: number };

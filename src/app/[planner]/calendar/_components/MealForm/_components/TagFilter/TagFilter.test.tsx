@@ -1,10 +1,11 @@
 import { fireEvent, render, screen } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
+import { makeTagFilterOption as option } from '#fixtures/tagFilterOption';
+
 import { TagFilter } from './TagFilter';
 
 import { limitTagChips } from '../../_utils/limitTagChips';
-import type { TagFilterOption } from '../../_utils/types';
 import { TagFilterChip } from '../TagFilterChip/TagFilterChip';
 
 vi.mock('@mantine/core', async () => await import('#mocks/@mantine/core'));
@@ -14,12 +15,6 @@ vi.mock('../../_utils/limitTagChips', () => ({
 vi.mock('../TagFilterChip/TagFilterChip', () => ({
 	TagFilterChip: vi.fn(() => <div data-testid="chip" />),
 }));
-
-const option = (name: string, selected = false): TagFilterOption => ({
-	tag: { _id: name, name, color: 'fern' },
-	selected,
-	count: selected ? null : 1,
-});
 
 const onChange = vi.fn();
 
