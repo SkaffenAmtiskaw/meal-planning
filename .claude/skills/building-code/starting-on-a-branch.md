@@ -1,7 +1,7 @@
 # Starting on a Branch
 A story's code is built and reviewed only on its own branch, when the release freeze allows it, and on top of its base's latest work. These are the checks a skill runs before it builds or reviews, in order:
 
-1. **The main checkout:** run `git rev-parse --path-format=absolute --git-dir --git-common-dir`. If the two paths are the same, this is the main checkout. Stop, and tell the user to start a Code-tab session with the worktree option and run the skill there.
+1. **The main checkout:** run `git rev-parse --path-format=absolute --git-dir --git-common-dir`. If the two paths are the same, this is the main checkout, which is never edited. Start a session in its own worktree with `start_session`, with `initiation` "user_asked", `context` "fresh", `use_worktree` true and `prompt` the command this skill was run with, such as `/implement <note name>`. Put anything this run has already settled with the user, such as which item they picked, in `background`, so the new session doesn't ask again. It's "user_asked" because the user asked for this skill to run, so the new session starts rather than waiting on a card. If the call is refused, stop, and tell the user to start a Code-tab session with the worktree option and run the command there. Otherwise, stop, and tell them the new session has the work, with a link to it.
 2. **A hotfix's branch:** if the story's line on `Roadmap.md` in the notes repo has `🔥 Hotfix:`, run `git fetch origin`, then check both:
    - `git branch --show-current` starts with `hotfix/`.
    - `git rev-list --count origin/main..origin/develop` and `git rev-list --count origin/main..origin/develop ^HEAD` print the same number, which means the branch holds no commit from `develop` that isn't on `main`.
