@@ -1,9 +1,10 @@
-import { notFound } from 'next/navigation';
+import { notFound, redirect } from 'next/navigation';
 
 import { Container } from '@mantine/core';
 
 import { z } from 'zod';
 
+import { checkAuth } from '@/_actions/auth/checkAuth';
 import { getPlanner } from '@/_actions/planner/getPlanner';
 import { zId } from '@/_utils/zId';
 
@@ -35,6 +36,11 @@ const RecipePage = async ({
 	}
 
 	if (status === 'edit') {
+		// The edit form needs write access, so anyone else gets the recipe's page.
+		if ((await checkAuth(plannerId, 'write')).type !== 'authorized') {
+			return redirect(`/${plannerId}/recipes/${recipeId}`);
+		}
+
 		return (
 			<Container size="md" py={16}>
 				<RecipeEditForm

@@ -1,7 +1,10 @@
+import { redirect } from 'next/navigation';
+
 import { Container, Group } from '@mantine/core';
 
 import { z } from 'zod';
 
+import { checkAuth } from '@/_actions/auth/checkAuth';
 import { getPlanner } from '@/_actions/planner/getPlanner';
 import { zId } from '@/_utils/zId';
 
@@ -25,6 +28,11 @@ const RecipesPage = async ({
 	const { item, status, type } = zSearchParams.parse(await searchParams);
 
 	const planner = await getPlanner(id);
+
+	// The add and edit forms need write access, so anyone else gets the plain list.
+	if (status && (await checkAuth(id, 'write')).type !== 'authorized') {
+		return redirect(`/${id}/recipes`);
+	}
 
 	return (
 		<>

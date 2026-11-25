@@ -1,14 +1,21 @@
 import { fireEvent, render, screen } from '@testing-library/react';
-import { beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
+import { beforeAll, beforeEach, describe, expect, vi } from 'vitest';
 
 import { useRouter } from 'next/navigation';
 
+import { it } from '#test';
 import { deleteRecipe } from '@/_actions/library';
 import { ConfirmButton } from '@/_components';
+import { useCanWrite } from '@/app/[planner]/_components';
 
 import { RecipeDetail } from './RecipeDetail';
 
 vi.mock('next/navigation', async () => await import('#mocks/next/navigation'));
+
+vi.mock(
+	'@/app/[planner]/_components',
+	async () => await import('#mocks/@/app/[planner]/_components'),
+);
 
 vi.mock(
 	'@/_actions/library',
@@ -59,7 +66,23 @@ describe('RecipeDetail', () => {
 
 	beforeEach(() => {
 		vi.clearAllMocks();
+		vi.mocked(useCanWrite).mockReturnValue(true);
 	});
+
+	it.byAccessLevels(
+		'shows the Edit and Delete buttons to members who can write',
+		({ accessLevel, expect }) => {
+			vi.mocked(useCanWrite).mockReturnValue(accessLevel !== 'read');
+			render(<RecipeDetail {...defaultProps} />);
+
+			expect(screen.queryByTestId('edit-button'))
+				.atMinLevel('write')
+				.toBeTruthy();
+			expect(screen.queryByTestId('delete-button'))
+				.atMinLevel('write')
+				.toBeTruthy();
+		},
+	);
 
 	it('navigates to edit page when edit button is clicked', () => {
 		render(<RecipeDetail {...defaultProps} />);
