@@ -5,13 +5,20 @@ import {
 	screen,
 	waitFor,
 } from '@testing-library/react';
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { beforeEach, describe, expect, vi } from 'vitest';
 
+import { it } from '#test';
 import { updateRecipeTags } from '@/_actions/library';
+import { useCanWrite } from '@/app/[planner]/_components';
 
 import { InlineTagsEditor } from './InlineTagsEditor';
 
 vi.mock('@mantine/core', async () => await import('#mocks/@mantine/core'));
+
+vi.mock(
+	'@/app/[planner]/_components',
+	async () => await import('#mocks/@/app/[planner]/_components'),
+);
 
 vi.mock(
 	'@/_actions/library',
@@ -58,6 +65,25 @@ describe('InlineTagsEditor', () => {
 	beforeEach(() => {
 		vi.clearAllMocks();
 		capturedOnChange = undefined;
+		vi.mocked(useCanWrite).mockReturnValue(true);
+	});
+
+	it.byAccessLevels(
+		'shows the edit button to members who can write',
+		({ accessLevel, expect }) => {
+			vi.mocked(useCanWrite).mockReturnValue(accessLevel !== 'read');
+			render(<InlineTagsEditor {...defaultProps} />);
+
+			expect(screen.queryByTestId('tags-edit-button'))
+				.atMinLevel('write')
+				.toBeTruthy();
+		},
+	);
+
+	it('shows the tag pills to a member who cannot write', () => {
+		vi.mocked(useCanWrite).mockReturnValue(false);
+		render(<InlineTagsEditor {...defaultProps} />);
+		expect(screen.getByText('Spicy')).toBeDefined();
 	});
 
 	it('renders tag pills and edit button in read mode', () => {
