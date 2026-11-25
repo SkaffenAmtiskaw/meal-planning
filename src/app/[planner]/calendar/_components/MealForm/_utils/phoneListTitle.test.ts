@@ -9,6 +9,8 @@ describe('phoneListTitle', () => {
 	])('titles the list from the saved recipes with $typed typed', ({
 		search,
 	}) => {
-		expect(phoneListTitle({ search })).toBe('From your saved recipes');
+		expect(phoneListTitle({ search, tagIds: [] })).toBe(
+			'From your saved recipes',
+		);
 	});
 });

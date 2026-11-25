@@ -25,7 +25,6 @@ import { SavedRecipesColumn } from './_components/SavedRecipesColumn/SavedRecipe
 import { useLinkMode } from './_hooks/useLinkMode';
 import { useMealDraft } from './_hooks/useMealDraft';
 import { useOpenDishList } from './_hooks/useOpenDishList';
-import { useSavedSearch } from './_hooks/useSavedSearch';
 import { canSubmitMeal } from './_utils/canSubmitMeal';
 import { findNamelessDishes } from './_utils/findNamelessDishes';
 import { isBlankDish } from './_utils/isBlankDish';
@@ -66,7 +65,6 @@ export const MealForm = ({
 		linkDish,
 		chooseRecipe,
 	} = useMealDraft(initialDraft);
-	const { search, setSearch, resetForLinking } = useSavedSearch();
 	const [linkingKey, { enterLinking, exitLinking }] = useLinkMode(draft.dishes);
 	const [openListKey, { openList, closeList }] = useOpenDishList();
 	const linkingDish =
@@ -90,9 +88,9 @@ export const MealForm = ({
 	}, [draft.date, draft.mealName, linkingKey]);
 
 	/**
-	 * Links a dish from the Saved recipes column, with the search filled with its
-	 * name and the cursor in it. A phone has no column, so it opens the dish's
-	 * saved list instead.
+	 * Links a dish from the Saved recipes column, with the cursor in its search,
+	 * which the column fills with the dish's name. A phone has no column, so it
+	 * opens the dish's saved list instead.
 	 */
 	const startLinking = (dish: DishDraft) => {
 		if (isMobile) {
@@ -100,7 +98,6 @@ export const MealForm = ({
 			return;
 		}
 		enterLinking(dish.key);
-		resetForLinking(dish.name);
 		searchRef.current?.focus();
 	};
 
@@ -127,19 +124,6 @@ export const MealForm = ({
 		linkDish(linkingKey, item);
 		exitLinking();
 	};
-
-	/**
-	 * Leaving link mode, whether by a pick, Cancel, Esc or deleting the dish,
-	 * empties the search the form filled, so the column shows every recipe again.
-	 * Set while rendering, as React's docs advise for state that follows a change.
-	 */
-	const [prevLinkingKey, setPrevLinkingKey] = useState(linkingKey);
-	if (linkingKey !== prevLinkingKey) {
-		setPrevLinkingKey(linkingKey);
-		if (linkingKey === null) {
-			setSearch('');
-		}
-	}
 
 	/**
 	 * The dishes a stopped save found with no name. A row shows the error only
@@ -202,11 +186,9 @@ export const MealForm = ({
 				}
 				saved={
 					<SavedRecipesColumn
-						search={search}
-						onSearchChange={setSearch}
+						linkingDish={linkingDish}
 						searchRef={searchRef}
 						linkedIds={linkedIds}
-						linkingDishName={linkingDish?.name ?? null}
 						onCancelLinking={exitLinking}
 						onPick={pickSavedItem}
 					/>

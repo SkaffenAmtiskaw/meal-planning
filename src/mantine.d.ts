@@ -1,4 +1,4 @@
-import type { BadgeVariant, ButtonVariant } from '@mantine/core';
+import type { BadgeVariant, ButtonVariant, ChipVariant } from '@mantine/core';
 
 type AppButtonVariant =
 	| ButtonVariant
@@ -8,6 +8,7 @@ type AppButtonVariant =
 	| 'muted'
 	| 'on-dark';
 type AppBadgeVariant = BadgeVariant | 'ring' | 'tag' | 'tag-plain';
+type AppChipVariant = ChipVariant | 'tag';
 
 declare module '@mantine/core' {
 	export interface ButtonProps {
@@ -16,5 +17,9 @@ declare module '@mantine/core' {
 
 	export interface BadgeProps {
 		variant?: AppBadgeVariant;
+	}
+
+	export interface ChipProps {
+		variant?: AppChipVariant;
 	}
 }

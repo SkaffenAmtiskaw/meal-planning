@@ -1,6 +1,6 @@
 import { describe, expect, it, vi } from 'vitest';
 
-import type { SavedItem } from '@/_actions/library/types';
+import { makeSavedItem } from '#fixtures/savedItem';
 
 import { filterSavedItems } from './filterSavedItems';
 import { orderSavedItems } from './orderSavedItems';
@@ -13,20 +13,15 @@ vi.mock('./filterSavedItems', () => ({
 	filterSavedItems: vi.fn(() => []),
 }));
 
-const item = (name: string): SavedItem => ({
-	_id: name,
-	name,
-	kind: 'recipe',
-	tags: [],
-});
-
-const ordered = ['A', 'B', 'C', 'D', 'E', 'F'].map(item);
+const ordered = ['A', 'B', 'C', 'D', 'E', 'F'].map((name) =>
+	makeSavedItem({ name }),
+);
 
 describe('phoneListRows', () => {
 	it('lists the first 5 in order before anything is typed', () => {
 		vi.mocked(orderSavedItems).mockReturnValueOnce(ordered);
 
-		expect(phoneListRows(ordered, { search: ' ' })).toEqual(
+		expect(phoneListRows(ordered, { search: ' ', tagIds: [] })).toEqual(
 			ordered.slice(0, 5),
 		);
 	});
@@ -35,9 +30,12 @@ describe('phoneListRows', () => {
 		vi.mocked(orderSavedItems).mockReturnValueOnce(ordered);
 		vi.mocked(filterSavedItems).mockReturnValueOnce(ordered);
 
-		expect(phoneListRows(ordered, { search: 'pas' })).toEqual(ordered);
+		expect(phoneListRows(ordered, { search: 'pas', tagIds: [] })).toEqual(
+			ordered,
+		);
 		expect(filterSavedItems).toHaveBeenLastCalledWith(ordered, {
 			search: 'pas',
+			tagIds: [],
 		});
 	});
 });
