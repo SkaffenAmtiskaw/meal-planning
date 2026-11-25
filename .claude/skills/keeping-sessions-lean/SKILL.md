@@ -18,7 +18,7 @@ The ways to keep a session to the instructions it uses each fit a different shap
 - A skill or agent reads only the files its steps need, since each one loads whole, as "What a Skill Reads" describes.
 - A step that reads a lot to reach a short answer goes to a subagent, as "When to Hand Work to a Subagent" describes.
 - A skill whose modes share little splits into separate commands, as "When to Split a Skill" describes.
-- If a skill's command goes in a `start_session` prompt, the skill leaves `disable-model-invocation: true` off. Otherwise, it can set the flag. The prompt reaches the new session as text, so the command doesn't expand, and the Skill tool refuses a flagged skill.
+- If a skill's command goes in a `start_session` prompt, the skill leaves `disable-model-invocation: true` off. Otherwise, it can set the flag. On 2026-11-10, a `start_session` prompt reached the new session as text, so the command didn't expand, and the Skill tool refused the flagged skill.
 
 ## What a Skill Reads
 A skill or agent reads a file only if one of its steps needs it, because each file it says to read loads in every run of it.

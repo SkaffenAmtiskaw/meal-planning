@@ -1,5 +1,5 @@
 # Moving to a Hotfix Worktree
-How a session moves a 🔥 story's work into a `hotfix/` worktree cut from `main`, when check 2 in `starting-on-a-branch.md` fails. The session makes the worktree itself because the desktop app only cuts worktrees from `develop`. The steps, in order:
+How a session moves a 🔥 story's work into a `hotfix/` worktree cut from `main`, when check 2 in `starting-on-a-branch.md` fails. The session makes the worktree itself because the desktop app names a new worktree's branch with the user's branch prefix and a suffix, and a hotfix's branch has to be `hotfix/<slug>`. The steps, in order:
 
 1. **The worktree:** `<slug>` is the note's name in lowercase, with hyphens for spaces. The cases, in the order to check them:
    - **If this session is on `hotfix/<slug>`:** stop, and tell the user the branch holds commits from `develop` that aren't on `main`. Only they can decide what happens to that work, and a new session there would fail the same check.
