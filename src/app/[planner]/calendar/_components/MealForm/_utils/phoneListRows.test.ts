@@ -26,7 +26,7 @@ describe('phoneListRows', () => {
 	it('lists the first 5 in order before anything is typed', () => {
 		vi.mocked(orderSavedItems).mockReturnValueOnce(ordered);
 
-		expect(phoneListRows(ordered, { search: ' ' })).toEqual(
+		expect(phoneListRows(ordered, { search: ' ', tagIds: [] })).toEqual(
 			ordered.slice(0, 5),
 		);
 	});
@@ -35,9 +35,12 @@ describe('phoneListRows', () => {
 		vi.mocked(orderSavedItems).mockReturnValueOnce(ordered);
 		vi.mocked(filterSavedItems).mockReturnValueOnce(ordered);
 
-		expect(phoneListRows(ordered, { search: 'pas' })).toEqual(ordered);
+		expect(phoneListRows(ordered, { search: 'pas', tagIds: [] })).toEqual(
+			ordered,
+		);
 		expect(filterSavedItems).toHaveBeenLastCalledWith(ordered, {
 			search: 'pas',
+			tagIds: [],
 		});
 	});
 });

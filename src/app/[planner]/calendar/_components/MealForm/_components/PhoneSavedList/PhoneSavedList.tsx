@@ -41,7 +41,7 @@ export const PhoneSavedList = ({
 	const [listNode, setListNode] = useState<HTMLDivElement | null>(null);
 	useClickOutside(onClose, null, [fieldNode, listNode]);
 
-	const criteria = { search };
+	const criteria = { search, tagIds: [] };
 	const rows = phoneListRows(savedItems, criteria);
 
 	return (
