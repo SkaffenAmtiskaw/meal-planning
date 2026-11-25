@@ -2,11 +2,10 @@
 
 import { useState } from 'react';
 
-import { Button, Chip, Group } from '@mantine/core';
+import { Button, Group } from '@mantine/core';
 
-import { limitTagChips } from '../../_utils/limitTagChips';
 import type { TagFilterOption } from '../../_utils/types';
-import { TagFilterChip } from '../TagFilterChip/TagFilterChip';
+import { TagChips } from '../TagChips/TagChips';
 
 type Props = {
 	// The chips in order, as rankTagOptions gives them.
@@ -17,15 +16,13 @@ type Props = {
 };
 
 /**
- * The tag filter's row of chips, which wraps: six at a time behind "+N more",
- * which shows them all and turns into "Fewer", and a Clear while any tag is
- * selected. Once expanded, it stays expanded until "Fewer", however the tags
- * change. Chip.Group adds each pick to the end of the value, so it keeps pick
- * order. Shows nothing when no tag would return anything.
+ * The desktop tag filter: the tag chips in a row that wraps, and a Clear while
+ * any tag is selected. Once expanded, it stays expanded until "Fewer", however
+ * the tags change. Shows nothing when no tag would return anything.
  */
 export const TagFilter = ({ options, value, onChange }: Props) => {
+	// Above the early return, so the row stays expanded while it has nothing to show.
 	const [expanded, setExpanded] = useState(false);
-	const { shown, hiddenCount } = limitTagChips(options, expanded);
 
 	if (options.length === 0) {
 		return null;
@@ -33,21 +30,13 @@ export const TagFilter = ({ options, value, onChange }: Props) => {
 
 	return (
 		<Group gap={6} role="group" aria-label="Filter by tag">
-			<Chip.Group multiple value={value} onChange={onChange}>
-				{shown.map((option) => (
-					<TagFilterChip key={option.tag._id} option={option} />
-				))}
-			</Chip.Group>
-			{(hiddenCount > 0 || expanded) && (
-				<Button
-					variant="dashed"
-					size="compact-sm"
-					radius="xl"
-					onClick={() => setExpanded(!expanded)}
-				>
-					{expanded ? 'Fewer' : `+${hiddenCount} more`}
-				</Button>
-			)}
+			<TagChips
+				options={options}
+				value={value}
+				onChange={onChange}
+				expanded={expanded}
+				onToggleExpanded={() => setExpanded(!expanded)}
+			/>
 			{options.some((option) => option.selected) && (
 				<Button variant="subtle" size="compact-sm" onClick={() => onChange([])}>
 					Clear

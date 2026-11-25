@@ -66,7 +66,8 @@ export const MealForm = ({
 		chooseRecipe,
 	} = useMealDraft(initialDraft);
 	const [linkingKey, { enterLinking, exitLinking }] = useLinkMode(draft.dishes);
-	const [openListKey, { openList, closeList }] = useOpenDishList();
+	const [openDishList, { openList, restartList, closeList }] =
+		useOpenDishList();
 	const linkingDish =
 		draft.dishes.find((dish) => dish.key === linkingKey) ?? null;
 	const searchRef = useRef<HTMLInputElement>(null);
@@ -90,11 +91,12 @@ export const MealForm = ({
 	/**
 	 * Links a dish from the Saved recipes column, with the cursor in its search,
 	 * which the column fills with the dish's name. A phone has no column, so it
-	 * opens the dish's saved list instead.
+	 * opens the dish's saved list instead, as a new open even if it's already
+	 * open.
 	 */
 	const startLinking = (dish: DishDraft) => {
 		if (isMobile) {
-			openList(dish.key);
+			restartList(dish.key);
 			return;
 		}
 		enterLinking(dish.key);
@@ -171,7 +173,7 @@ export const MealForm = ({
 						namelessKeys={namelessKeys}
 						linkingKey={linkingKey}
 						linkedIds={linkedIds}
-						openListKey={openListKey}
+						openDishList={openDishList}
 						onAddDish={addDishWithList}
 						onRenameDish={renameDish}
 						onRemoveDish={removeDish}

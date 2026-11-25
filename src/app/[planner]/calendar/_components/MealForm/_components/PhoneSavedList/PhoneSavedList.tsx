@@ -8,11 +8,12 @@ import { useClickOutside } from '@mantine/hooks';
 import type { SavedItem } from '@/_actions/library/types';
 
 import { usePlannerSavedItems } from '../../../../_hooks/usePlannerSavedItems';
-import { phoneListRows } from '../../_utils/phoneListRows';
-import { phoneListTitle } from '../../_utils/phoneListTitle';
+import { narrowSavedItems } from '../../_utils/narrowSavedItems';
 import { AddAsNewDishRow } from '../AddAsNewDishRow/AddAsNewDishRow';
 import { PhoneSavedResultRow } from '../PhoneSavedResultRow/PhoneSavedResultRow';
 import { SectionLabel } from '../SectionLabel/SectionLabel';
+import { phoneListRows } from './_utils/phoneListRows';
+import { phoneListTitle } from './_utils/phoneListTitle';
 
 type Props = {
 	// What's typed in the dish's name field.
@@ -42,7 +43,8 @@ export const PhoneSavedList = ({
 	useClickOutside(onClose, null, [fieldNode, listNode]);
 
 	const criteria = { search, tagIds: [] };
-	const rows = phoneListRows(savedItems, criteria);
+	const { results } = narrowSavedItems(savedItems, criteria);
+	const rows = phoneListRows(results, criteria);
 
 	return (
 		<Paper ref={setListNode} withBorder mt="xs" px="sm" py="xs" bg="chalk.0">
@@ -50,7 +52,9 @@ export const PhoneSavedList = ({
 				{rows.length > 0 && (
 					<>
 						<Box py="xs">
-							<SectionLabel>{phoneListTitle(criteria)}</SectionLabel>
+							<SectionLabel>
+								{phoneListTitle({ selectedTagNames: [] })}
+							</SectionLabel>
 						</Box>
 						{/* A line above each result and above the last row, as the design separates them. */}
 						{rows.map((item) => (

@@ -6,9 +6,10 @@ import { makeSavedItem } from '#fixtures/savedItem';
 import { PhoneSavedList } from './PhoneSavedList';
 
 import { usePlannerSavedItems } from '../../../../_hooks/usePlannerSavedItems';
-import { phoneListRows } from '../../_utils/phoneListRows';
+import { narrowSavedItems } from '../../_utils/narrowSavedItems';
 import { AddAsNewDishRow } from '../AddAsNewDishRow/AddAsNewDishRow';
 import { PhoneSavedResultRow } from '../PhoneSavedResultRow/PhoneSavedResultRow';
+import { phoneListRows } from './_utils/phoneListRows';
 
 vi.mock('@mantine/core', async () => await import('#mocks/@mantine/core'));
 vi.mock('@mantine/hooks', async () => await import('#mocks/@mantine/hooks'));
@@ -17,10 +18,13 @@ vi.mock(
 	async () =>
 		await import('#mocks/@app/[planner]/calendar/_hooks/usePlannerSavedItems'),
 );
-vi.mock('../../_utils/phoneListRows', () => ({
+vi.mock('../../_utils/narrowSavedItems', () => ({
+	narrowSavedItems: vi.fn(() => ({ results: [], tagOptions: [] })),
+}));
+vi.mock('./_utils/phoneListRows', () => ({
 	phoneListRows: vi.fn(() => []),
 }));
-vi.mock('../../_utils/phoneListTitle', () => ({
+vi.mock('./_utils/phoneListTitle', () => ({
 	phoneListTitle: vi.fn(() => 'From your saved recipes'),
 }));
 vi.mock('../SectionLabel/SectionLabel', () => ({
@@ -70,6 +74,19 @@ describe('PhoneSavedList', () => {
 			expect.objectContaining({ item: oats, added: true }),
 			undefined,
 		);
+	});
+
+	it("picks its rows from the planner's saved recipes narrowed by what's typed", () => {
+		vi.mocked(usePlannerSavedItems).mockReturnValue([tacos, oats]);
+		vi.mocked(narrowSavedItems).mockReturnValue({
+			results: [tacos],
+			tagOptions: [],
+		});
+		render(<PhoneSavedList {...props} search="taco" />);
+
+		const criteria = { search: 'taco', tagIds: [] };
+		expect(narrowSavedItems).toHaveBeenLastCalledWith([tacos, oats], criteria);
+		expect(phoneListRows).toHaveBeenLastCalledWith([tacos], criteria);
 	});
 
 	it('uses the tapped recipe', () => {

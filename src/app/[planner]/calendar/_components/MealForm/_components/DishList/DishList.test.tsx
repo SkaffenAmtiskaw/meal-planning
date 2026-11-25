@@ -41,7 +41,7 @@ const handlers = {
 	onSetNote: vi.fn(),
 	onStartLinking: vi.fn(),
 	linkedIds: new Set<string>(),
-	openListKey: null,
+	openDishList: null,
 	onOpenList: vi.fn(),
 	onCloseList: vi.fn(),
 	onChooseRecipe: vi.fn(),
@@ -109,12 +109,18 @@ describe('DishList', () => {
 		expect(rowProps(1).linking).toBe(true);
 	});
 
-	it("opens only that dish's list", () => {
+	it("opens only that dish's list, with the open's id", () => {
 		vi.mocked(DishRow).mockClear();
-		render(<DishList dishes={[soup, bread]} {...handlers} openListKey="b" />);
+		render(
+			<DishList
+				dishes={[soup, bread]}
+				{...handlers}
+				openDishList={{ key: 'b', id: 3 }}
+			/>,
+		);
 
-		expect(rowProps(0).listOpen).toBe(false);
-		expect(rowProps(1).listOpen).toBe(true);
+		expect(rowProps(0).listOpenId).toBeNull();
+		expect(rowProps(1).listOpenId).toBe(3);
 	});
 
 	it('changes the dish whose row asked', () => {

@@ -320,7 +320,19 @@ describe('MealForm', () => {
 			startLinking();
 
 			expect(dishListProps()?.linkingKey).toBeNull();
-			expect(dishListProps()?.openListKey).toBe('soup');
+			expect(dishListProps()?.openDishList?.key).toBe('soup');
+		});
+
+		it("starts the dish's list afresh on a phone, even while it's open", () => {
+			vi.mocked(useIsMobile).mockReturnValue(true);
+			renderForm();
+			act(() => dishListProps()?.onOpenList('soup'));
+			const open = dishListProps()?.openDishList;
+
+			startLinking();
+
+			expect(dishListProps()?.openDishList?.key).toBe('soup');
+			expect(dishListProps()?.openDishList?.id).not.toBe(open?.id);
 		});
 
 		it('links the picked recipe to the dish, then leaves link mode', () => {
@@ -376,7 +388,7 @@ describe('MealForm', () => {
 
 			const dishes = dishListProps()?.dishes ?? [];
 			expect(dishes).toHaveLength(2);
-			expect(dishListProps()?.openListKey).toBe(dishes[1].key);
+			expect(dishListProps()?.openDishList?.key).toBe(dishes[1].key);
 		});
 
 		it('opens no list from Add dish on desktop', () => {
@@ -384,7 +396,7 @@ describe('MealForm', () => {
 
 			addDish();
 
-			expect(dishListProps()?.openListKey).toBeNull();
+			expect(dishListProps()?.openDishList).toBeNull();
 		});
 
 		it('names and links the dish from the recipe chosen in its list, then closes the list', () => {
@@ -398,7 +410,7 @@ describe('MealForm', () => {
 				name: 'Lemon Herb Chicken',
 				source: { kind: 'saved', savedId: 'saved-1' },
 			});
-			expect(dishListProps()?.openListKey).toBeNull();
+			expect(dishListProps()?.openDishList).toBeNull();
 			expect(dishListProps()?.linkedIds).toEqual(new Set(['saved-1']));
 		});
 
@@ -409,7 +421,7 @@ describe('MealForm', () => {
 
 			act(() => dishListProps()?.onCloseList());
 
-			expect(dishListProps()?.openListKey).toBeNull();
+			expect(dishListProps()?.openDishList).toBeNull();
 		});
 	});
 });
