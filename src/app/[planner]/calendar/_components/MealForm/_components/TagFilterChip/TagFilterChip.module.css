@@ -1,0 +1,14 @@
+/* A Chip's label holds its children inline, and Mantine has no prop to lay them out with a gap. */
+.content {
+	display: inline-flex;
+	align-items: center;
+	gap: 6px;
+}
+
+/* The tag's color dot is a custom visual element with no Mantine equivalent, like SourceMark's dot. */
+.dot {
+	width: 6px;
+	height: 6px;
+	border-radius: 50%;
+	flex-shrink: 0;
+}

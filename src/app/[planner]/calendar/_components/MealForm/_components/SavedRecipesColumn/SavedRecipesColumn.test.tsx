@@ -10,10 +10,12 @@ import { usePlannerSavedItems } from '../../../../_hooks/usePlannerSavedItems';
 import { useSavedItemCriteria } from '../../_hooks/useSavedItemCriteria';
 import { filterSavedItems } from '../../_utils/filterSavedItems';
 import { orderSavedItems } from '../../_utils/orderSavedItems';
+import { rankTagOptions } from '../../_utils/rankTagOptions';
 import type { DishDraft } from '../../types';
 import { LinkModeBanner } from '../LinkModeBanner/LinkModeBanner';
 import { SavedResultList } from '../SavedResultList/SavedResultList';
 import { SavedSearchInput } from '../SavedSearchInput/SavedSearchInput';
+import { TagFilter } from '../TagFilter/TagFilter';
 
 vi.mock('@mantine/core', async () => await import('#mocks/@mantine/core'));
 vi.mock(
@@ -32,6 +34,12 @@ vi.mock('../../_utils/orderSavedItems', () => ({
 }));
 vi.mock('../../_utils/filterSavedItems', () => ({
 	filterSavedItems: vi.fn(() => []),
+}));
+vi.mock('../../_utils/rankTagOptions', () => ({
+	rankTagOptions: vi.fn(() => []),
+}));
+vi.mock('../TagFilter/TagFilter', () => ({
+	TagFilter: vi.fn(() => <div data-testid="tags" />),
 }));
 vi.mock('../SectionLabel/SectionLabel', () => ({
 	SectionLabel: vi.fn(() => <div data-testid="label" />),
@@ -103,11 +111,11 @@ describe('SavedRecipesColumn', () => {
 		});
 	});
 
-	// The DOM order is the Tab order, so the banner's Cancel and the search come before the results.
-	it('orders the column its label, the banner, the search, then the results', () => {
+	// The DOM order is the Tab order, so the banner's Cancel, the search and the tags come before the results.
+	it('orders the column its label, the banner, the search, the tags, then the results', () => {
 		renderColumn(soup);
 
-		const nodes = ['label', 'banner', 'search', 'results'].map((id) =>
+		const nodes = ['label', 'banner', 'search', 'tags', 'results'].map((id) =>
 			screen.getByTestId(id),
 		);
 		for (let i = 1; i < nodes.length; i++) {
@@ -135,6 +143,29 @@ describe('SavedRecipesColumn', () => {
 		expect(vi.mocked(SavedResultList).mock.lastCall?.[0]).toMatchObject({
 			results: [tacos],
 			hasSavedItems: true,
+		});
+	});
+
+	it("counts the tags over the results, so the filter offers only tags that would return something, and selects with the column's tags", () => {
+		const criteria = { search: 'taco', tagIds: ['quick'] };
+		const savedItems = [tacos, { ...tacos, _id: 'other' }];
+		vi.mocked(useSavedItemCriteria).mockReturnValueOnce([
+			criteria,
+			{ setSearch: vi.fn(), setTagIds: vi.fn() },
+		]);
+		vi.mocked(usePlannerSavedItems).mockReturnValue(savedItems);
+		vi.mocked(filterSavedItems).mockReturnValueOnce([tacos]);
+
+		renderColumn();
+
+		expect(rankTagOptions).toHaveBeenCalledWith({
+			countOver: [tacos],
+			savedItems,
+			selectedIds: ['quick'],
+		});
+		expect(vi.mocked(TagFilter).mock.lastCall?.[0]).toMatchObject({
+			value: ['quick'],
+			onChange: criteriaHandlers()?.setTagIds,
 		});
 	});
 

@@ -12,11 +12,13 @@ import { usePlannerSavedItems } from '../../../../_hooks/usePlannerSavedItems';
 import { useSavedItemCriteria } from '../../_hooks/useSavedItemCriteria';
 import { filterSavedItems } from '../../_utils/filterSavedItems';
 import { orderSavedItems } from '../../_utils/orderSavedItems';
+import { rankTagOptions } from '../../_utils/rankTagOptions';
 import type { DishDraft } from '../../types';
 import { LinkModeBanner } from '../LinkModeBanner/LinkModeBanner';
 import { SavedResultList } from '../SavedResultList/SavedResultList';
 import { SavedSearchInput } from '../SavedSearchInput/SavedSearchInput';
 import { SectionLabel } from '../SectionLabel/SectionLabel';
+import { TagFilter } from '../TagFilter/TagFilter';
 
 type Props = {
 	// The dish being linked, or null outside link mode. The search starts over whenever it changes.
@@ -31,8 +33,10 @@ type Props = {
 
 /**
  * The desktop Saved recipes column: its label, the link-mode banner while a
- * dish is being linked, the search, then the planner's saved recipes that match
- * it, which scroll on their own. The DOM order is the Tab order.
+ * dish is being linked, the search, the tag filter, then the planner's saved
+ * recipes that match both, which scroll on their own. The DOM order is the Tab
+ * order. The tag filter stays mounted as linking starts and ends, so an
+ * expanded row stays expanded.
  */
 export const SavedRecipesColumn = ({
 	linkingDish,
@@ -42,8 +46,14 @@ export const SavedRecipesColumn = ({
 	onPick,
 }: Props) => {
 	const savedItems = usePlannerSavedItems();
-	const [criteria, { setSearch }] = useSavedItemCriteria(linkingDish);
+	const [criteria, { setSearch, setTagIds }] =
+		useSavedItemCriteria(linkingDish);
 	const results = filterSavedItems(orderSavedItems(savedItems), criteria);
+	const tagOptions = rankTagOptions({
+		countOver: results,
+		savedItems,
+		selectedIds: criteria.tagIds,
+	});
 	const linking = linkingDish !== null;
 
 	return (
@@ -59,6 +69,11 @@ export const SavedRecipesColumn = ({
 				ref={searchRef}
 				value={criteria.search}
 				onChange={setSearch}
+			/>
+			<TagFilter
+				options={tagOptions}
+				value={criteria.tagIds}
+				onChange={setTagIds}
 			/>
 			<ScrollArea className={classes.results} data-testid="saved-results">
 				<div className={classes.resultsContent}>

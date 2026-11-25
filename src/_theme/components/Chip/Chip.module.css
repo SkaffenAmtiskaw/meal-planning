@@ -1,0 +1,21 @@
+/* Mantine draws a Chip's label only for its own variants, so the tag variant's unselected look, white with a light border and navy text, is set here. */
+.root[data-variant="tag"] .label {
+	background-color: var(--mantine-color-white);
+	border: 1px solid var(--mantine-color-chalk-8);
+	color: var(--mantine-color-navy-5);
+	font-weight: 500;
+}
+
+/* The tag variant has no Mantine hover, so an unselected chip takes the light navy hover of the theme's white-outline button. */
+@media (hover: hover) {
+	.root[data-variant="tag"] .label:not([data-checked]):hover {
+		background-color: var(--mantine-color-navy-0);
+	}
+}
+
+/* Mantine reads the resolved colors only for its own variants, so a selected tag chip takes the tag palette's colors from the chip's vars here. */
+.root[data-variant="tag"] .label[data-checked] {
+	background-color: var(--chip-bg);
+	border: var(--chip-bd);
+	color: var(--chip-color);
+}

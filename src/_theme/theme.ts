@@ -16,6 +16,7 @@ import {
 	SAGE_RAMPS,
 } from './colors';
 
+import { chipDefaults } from './components/Chip/Chip';
 import { indicatorDefaults } from './components/Indicator/Indicator';
 import { navLinkDefaults } from './components/NavLink/NavLink';
 import { variantColorResolver } from './variantColorResolver/variantColorResolver';
@@ -57,6 +58,7 @@ export const theme = createTheme({
 				},
 			}),
 		},
+		Chip: chipDefaults,
 		Indicator: indicatorDefaults,
 		Modal: {
 			defaultProps: {
