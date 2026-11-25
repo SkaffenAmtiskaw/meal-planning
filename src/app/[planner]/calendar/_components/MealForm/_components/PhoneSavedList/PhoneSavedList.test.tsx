@@ -1,7 +1,7 @@
 import { render, screen } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-import type { SavedItem } from '@/_actions/library/types';
+import { makeSavedItem } from '#fixtures/savedItem';
 
 import { PhoneSavedList } from './PhoneSavedList';
 
@@ -33,14 +33,8 @@ vi.mock('../AddAsNewDishRow/AddAsNewDishRow', () => ({
 	AddAsNewDishRow: vi.fn(() => <div data-testid="add-as-new" />),
 }));
 
-const item = (name: string): SavedItem => ({
-	_id: name,
-	name,
-	kind: 'recipe',
-	tags: [],
-});
-const tacos = item('Black Bean Tacos');
-const oats = item('Overnight Oats');
+const tacos = makeSavedItem({ name: 'Black Bean Tacos' });
+const oats = makeSavedItem({ name: 'Overnight Oats' });
 
 const props = {
 	search: '',

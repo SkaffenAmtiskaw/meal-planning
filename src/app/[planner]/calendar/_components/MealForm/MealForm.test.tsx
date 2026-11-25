@@ -272,25 +272,6 @@ describe('MealForm', () => {
 		);
 	});
 
-	it("keeps the column's search as the user types", () => {
-		render(
-			<MealForm
-				initialDraft={draft}
-				save={vi.fn()}
-				onSuccess={vi.fn()}
-				onCancel={vi.fn()}
-			/>,
-		);
-
-		act(() =>
-			vi.mocked(SavedRecipesColumn).mock.lastCall?.[0].onSearchChange('taco'),
-		);
-
-		expect(vi.mocked(SavedRecipesColumn).mock.lastCall?.[0].search).toBe(
-			'taco',
-		);
-	});
-
 	describe('linking a dish', () => {
 		const soup = makeDishDraft({
 			key: 'soup',
@@ -315,7 +296,7 @@ describe('MealForm', () => {
 			);
 		const startLinking = () => act(() => dishListProps()?.onStartLinking(soup));
 
-		it('marks the dish, fills and focuses the search with its name, and tells the column and the frame', () => {
+		it('marks the dish, focuses the search, and tells the column and the frame', () => {
 			vi.mocked(SavedRecipesColumn).mockImplementation(({ searchRef }) => (
 				<input aria-label="Search" ref={searchRef} />
 			));
@@ -325,10 +306,7 @@ describe('MealForm', () => {
 			startLinking();
 
 			expect(dishListProps()?.linkingKey).toBe('soup');
-			expect(columnProps()).toMatchObject({
-				linkingDishName: 'chicken',
-				search: 'chicken',
-			});
+			expect(columnProps()?.linkingDish).toEqual(soup);
 			expect(document.activeElement).toBe(screen.getByLabelText('Search'));
 			expect(onStatusChange).toHaveBeenLastCalledWith(
 				expect.objectContaining({ linking: true }),
@@ -345,7 +323,7 @@ describe('MealForm', () => {
 			expect(dishListProps()?.openListKey).toBe('soup');
 		});
 
-		it('links the picked recipe to the dish, then leaves link mode and clears the search', () => {
+		it('links the picked recipe to the dish, then leaves link mode', () => {
 			const onStatusChange = vi.fn();
 			renderForm(onStatusChange);
 			startLinking();
@@ -358,16 +336,13 @@ describe('MealForm', () => {
 				source: { kind: 'saved', savedId: 'saved-1' },
 			});
 			expect(dishListProps()?.linkingKey).toBeNull();
-			expect(columnProps()).toMatchObject({
-				linkingDishName: null,
-				search: '',
-			});
+			expect(columnProps()?.linkingDish).toBeNull();
 			expect(onStatusChange).toHaveBeenLastCalledWith(
 				expect.objectContaining({ linking: false }),
 			);
 		});
 
-		it('leaves link mode on Cancel with the dish unchanged and the search empty', () => {
+		it('leaves link mode on Cancel with the dish unchanged', () => {
 			renderForm();
 			startLinking();
 
@@ -375,29 +350,7 @@ describe('MealForm', () => {
 
 			expect(dishListProps()?.linkingKey).toBeNull();
 			expect(dishListProps()?.dishes[0]).toEqual(soup);
-			expect(columnProps()?.search).toBe('');
-		});
-
-		it('keeps the search the user typed outside link mode', () => {
-			renderForm();
-
-			act(() => columnProps()?.onSearchChange('taco'));
-			act(() => dishListProps()?.onRenameDish('bread', 'Rye'));
-
-			expect(columnProps()?.search).toBe('taco');
-		});
-
-		it("fills the search with the next dish's name when linking moves to it", () => {
-			renderForm();
-			startLinking();
-
-			act(() =>
-				dishListProps()?.onStartLinking(
-					makeDishDraft({ key: 'bread', name: 'Bread' }),
-				),
-			);
-
-			expect(columnProps()?.search).toBe('Bread');
+			expect(columnProps()?.linkingDish).toBeNull();
 		});
 	});
 
