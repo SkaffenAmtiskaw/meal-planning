@@ -80,29 +80,47 @@ Send the list to the `code-critic` subagent: each target piece with its job, and
 
 Then triage the out-of-scope list. An item the user pulls in becomes one or more behaviors. Show them the new lines for the behavior list, then run step 3 again with the updated list. A piece is new or changed if its job or its behaviors differ from those in the design you mapped the code against. Map and review the overlapping code for those pieces before you present the approach.
 
-Once you have the verdicts for every piece, including any the triage added, design each target piece other code will call or copy, as "Every New Piece Sets a Precedent" in `docs/project_conventions.md` describes. Start from the code your search found and the critic's verdicts.
+Once you have the verdicts for every piece, including any the triage added, design each target piece other code will call or copy, as "Every New Piece Sets a Precedent" in `docs/project_conventions.md` describes. Start from the code your search found and the critic's verdicts. Follow each verdict unless you disagree with it.
 
 ## 5. Present the approach
-Present the approach as the parts of the feature, so the user sees how each part works and what it sets up for later code. A part is a group of behaviors the user would check together, such as saving the form, or what a read-only viewer sees. For each part, show:
-- **How it works,** in plain words, with the numbers of the behaviors it covers.
-- **The code it needs,** shown as code rather than described. For each piece, sketch its API, such as its signature, props or context shape, with where it sits and a call site. A comment on the sketch gives the piece's number, its job and its decision: built new, or used as-is, refactored first, replaced or extracted as a shared piece, with the existing code it applies to. For a piece you designed in step 4, the comment also says which parts of it later code will copy, such as its shape or names, and the existing code it follows. If it departs from that code, the comment says why and names the code that moves over to the new way. Later code copies these pieces, so the user settles them here, before any code is written. A piece used as-is needs only the call it's used through. If an earlier part already showed a piece, name it. For example:
-  ```tsx
-  // Piece 4, new: holds foo for every page under Bar. Shape matches OtherProvider.
-  <FooProvider>{children}</FooProvider>   // in Bar's layout
-  const [foo, setFoo] = useFoo();         // any component under Bar
-  ```
-  If you disagree with one of the critic's verdicts, say so and explain why, rather than quietly overriding it. Otherwise, follow it. Say which pieces are client components, and why. If `target-designer` cut a piece for a later story, show it in the part whose behaviors it touches, with the later story and the reason, so `/plan-steps` keeps the cut.
+Present the approach in a message that maps the feature's parts, then one message for each part. A part is a group of behaviors the user would check together, such as saving the form, or what a read-only viewer sees. The user settles each part's pieces here, before any code is written, because later code copies them. A reviewer spends most of their effort working out what a change is, so each message holds what the user needs to approve it, in the order they'll follow it.
 
-If a refactor looks out of proportion to the story, such as moving a lot of code over to a new way, ask the user whether to do it in this story or move it out, rather than deferring it yourself. Otherwise, refactors are part of the story.
+The messages, in order:
+1. **The map:** what changes for a person using the app, in a few sentences. Then a small tree of how the pieces connect, giving each piece its decision and a few words on what it is. For example:
+   ```
+   RecipeCard: the card in the recipe list, changed
+   ├─ CookTimeBadge: built new, the "25 min" pill, styled like DishTagPill
+   └─ formatMinutes: used as-is, from the meal form
+   ```
+   Then the list of parts, with the behaviors each covers. Order the parts so the part that shows a piece comes before the parts whose code calls it, so the user meets each name before it's used. Move whole parts, not single behaviors.
 
-Write a table of every piece, with its job, decision, existing code and reason, to a scratch file. Link it in the chat alongside the critic's report, so the user can look up the detail behind a part.
+   Write a table of every piece to a scratch file, with its number, name, job, decision, existing code and reason. Link the table and the critic's report, so the user can look up the detail behind a piece.
 
-When the user pushes back, revise and show the changed parts again. Wait for their approval.
+   If a refactor in the tree looks out of proportion to the story, such as moving a lot of code over to a new way, ask in this message whether to do it in this story or move it out, rather than deferring it yourself. Otherwise, refactors are part of the story. Ask whether the shape looks right.
+2. **Each part,** once the user approves the message before it, holding:
+   - **The case:** a real case from this project, with what happens today and what happens after. If a piece's decision could go another way than this case shows, give that decision a case of its own.
+   - **Each piece it needs:** if an earlier part already showed the piece, name that part instead of showing the piece again. Otherwise, give its decision in words, with the existing code the decision applies to. The decision is one of built new, used as-is, refactored first, replaced, extracted as a shared piece, or changed, for an existing module the story changes that no target piece replaces. If the decision goes against the critic's verdict, say so and why, rather than quietly overriding it. Then its code: the whole piece if it's new, a diff if it changes existing code, and only the call it's used through if it's used as-is. For a piece you designed in step 4, say what later code will copy from it, such as its shape or names, and which existing code it follows. If it departs from that code, say why and name the code that moves over to the new way.
+   - **Client components:** which of its pieces are client components, and why.
+   - **Cut pieces:** if `target-designer` cut a piece for a later story and it touches this part's behaviors, show it with the later story and the reason, so the user can confirm the cut before it's written to the note.
+
+   Ask whether the user approves the part.
+
+Once the user has approved every part, go on to step 6.
 
 ## 6. Write it to the note
 Once the user approves, if this is a re-assessment, first show them what changed compared with the old approach, and replace it only once they approve that too.
 
-Then write the behavior list and the approach under `# Suggested Approach`, with the approach in the parts you presented. If that section holds a list of questions for this step, replace it. If the note has a `# From the Split` section, delete it, since the approved behaviors now live in the Suggested Approach.
+Then write the behavior list and the approach under `# Suggested Approach`. If that section holds a list of questions for this step, replace it. The approach is written for `/plan-steps`, which turns it into steps, so it's a reference rather than the messages you showed. Keep the parts, and give each one:
+- the behaviors it covers
+- its case, as a check the build has to pass
+- for each piece, an entry with its number and name, its file, its decision, the existing code it follows or moves over to the new way, what later code copies from it, and the code the user approved, copied unchanged along with the code around it that showed where it runs
+- which of its pieces are client components, and why
+- each disagreement with the critic, as settled, with its reason
+- each cut piece, with its later story and the reason
+
+Keep a fact about today's code only if a step depends on it, such as a function that today sorts as well as filters.
+
+If the note has a `# From the Split` section, delete it, since the approved behaviors now live in the Suggested Approach.
 
 Then:
 - Leave `status` at `spec`, since the note isn't ready until it has implementation steps.
