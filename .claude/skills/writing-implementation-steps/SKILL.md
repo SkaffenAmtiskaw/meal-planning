@@ -29,7 +29,7 @@ A step holds every behavior and new piece one area of the work needs, however sm
 - **No second job.** If a step adds behavior to an existing module, check that it's the job the module already does. If it's a different job, it needs a piece of its own, as Single Concern in `docs/project_conventions.md` requires.
 
 ## What the Builder Decides
-A step says what to build and any choice that changes what the app or the tooling does. It also carries each precedent the user approved in the approach, such as a hook's API, with its sketch of how a caller uses it, so the builder builds the shape the user approved. How the rest of the code inside it is organised, such as its helper functions, their names and which file each sits in, is left to whoever builds the step. Those are low-level details, and a plan that fixes them holds the builder to guesses made before the code existed.
+A step says what to build and any choice that changes what the app or the tooling does. It also carries each precedent the user approved in the approach, such as a hook's API, with the code the user approved for it, including the code around it, as the approach holds it, so the builder builds the shape the user approved. How the rest of the code inside it is organised, such as its helper functions, their names and which file each sits in, is left to whoever builds the step. Those are low-level details, and a plan that fixes them holds the builder to guesses made before the code existed.
 
 ## Checks
 Write each step's checks as `checks.md` in this skill's folder describes.
