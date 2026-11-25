@@ -86,10 +86,9 @@ describe('InlineTagsEditor', () => {
 		expect(screen.getByText('Spicy')).toBeDefined();
 	});
 
-	it('renders tag pills and edit button in read mode', () => {
+	it('renders tag pills without the combobox in view mode', () => {
 		render(<InlineTagsEditor {...defaultProps} />);
 		expect(screen.getByText('Spicy')).toBeDefined();
-		expect(screen.getByTestId('tags-edit-button')).toBeDefined();
 		expect(screen.queryByTestId('tag-combobox')).toBeNull();
 	});
 

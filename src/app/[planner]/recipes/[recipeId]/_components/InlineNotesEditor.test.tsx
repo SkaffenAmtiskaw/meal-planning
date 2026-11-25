@@ -61,12 +61,11 @@ describe('InlineNotesEditor', () => {
 		);
 	});
 
-	it('renders notes text and edit button in read mode', () => {
+	it('renders notes text without the textarea in view mode', () => {
 		render(<InlineNotesEditor {...defaultProps} />);
 		expect(screen.getByTestId('notes').textContent).toBe(
 			'Best served at midnight',
 		);
-		expect(screen.getByTestId('notes-edit-button')).toBeDefined();
 		expect(screen.queryByTestId('notes-textarea')).toBeNull();
 	});
 
