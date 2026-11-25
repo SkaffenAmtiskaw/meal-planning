@@ -9,6 +9,7 @@ import { updateRecipeTags } from '@/_actions/library';
 import { useEditMode } from '@/_hooks/useEditMode';
 import type { TagColor } from '@/_theme/types';
 import { catchify } from '@/_utils/catchify';
+import { useCanWrite } from '@/app/[planner]/_components';
 import { Tag } from '@/app/[planner]/_components/Tag/Tag';
 
 import { TagCombobox } from '../../_components/TagCombobox';
@@ -27,6 +28,7 @@ export const InlineTagsEditor = ({
 	tagIds,
 	availableTags,
 }: Props) => {
+	const canWrite = useCanWrite();
 	const [editing, { enterEditing, exitEditing }] = useEditMode();
 	// The edit in progress. View mode draws from `tagIds`, so a server refresh
 	// shows there, and each edit starts from the tags as they are then.
@@ -72,7 +74,7 @@ export const InlineTagsEditor = ({
 				<Text fw={600} size="sm">
 					Tags
 				</Text>
-				{!editing && (
+				{canWrite && !editing && (
 					<ActionIcon
 						data-testid="tags-edit-button"
 						onClick={handleEdit}
