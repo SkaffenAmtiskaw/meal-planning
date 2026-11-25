@@ -1,10 +1,11 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
+import { removePlanner } from '@/_actions/_utils/removePlanner';
 import { auth } from '@/_auth';
 import { deleteAuthUser } from '@/_auth/users';
 import { sendAccountDeletionEmail } from '@/_email';
-import { planners } from '@/_models/database/planners';
 import { users } from '@/_models/database/users';
+import type { PlannerMembership } from '@/_models/user';
 
 import { deleteAccount } from './deleteAccount';
 
@@ -15,10 +16,9 @@ vi.mock(
 	async () => await import('#mocks/@/_models/database/users'),
 );
 
-vi.mock(
-	'@/_models/database/planners',
-	async () => await import('#mocks/@/_models/database/planners'),
-);
+vi.mock('@/_actions/_utils/removePlanner', () => ({
+	removePlanner: vi.fn(),
+}));
 
 vi.mock('@/_auth', () => ({
 	auth: {
@@ -38,16 +38,14 @@ const mockSession = {
 	user: { id: 'ba-user-id', email: 'user@example.com' },
 };
 
-const makeAppUser = (plannerIds: string[] = []) => ({
-	email: 'user@example.com',
-	planners: plannerIds.map((planner) => ({ planner, accessLevel: 'owner' })),
-});
+type Membership = Pick<PlannerMembership, 'planner' | 'accessLevel'>;
 
-const setupSuccess = (plannerIds: string[] = []) => {
+const setupSuccess = (memberships: Membership[] = []) => {
 	vi.mocked(auth.api.getSession).mockResolvedValueOnce(mockSession as never);
-	vi.mocked(users.findOne).mockResolvedValueOnce(
-		makeAppUser(plannerIds) as never,
-	);
+	vi.mocked(users.findOne).mockResolvedValueOnce({
+		email: 'user@example.com',
+		planners: memberships,
+	} as never);
 };
 
 describe('deleteAccount', () => {
@@ -80,55 +78,74 @@ describe('deleteAccount', () => {
 
 	describe("the deleted user's planners", () => {
 		/**
-		 * Sets up the deleting user and every other stored user by their planner memberships. The count of a
-		 * planner's members is worked out from them, as the database would, so each test reads as who belongs where.
+		 * Sets up the deleting user's memberships and every other stored user's planners. The count of a planner's
+		 * members is worked out from them, as the database would, so each test reads as who belongs where.
 		 */
 		const givenMembers = ({
 			deletingUser,
 			otherUsers = [],
 		}: {
-			deletingUser: string[];
+			deletingUser: Membership[];
 			otherUsers?: string[][];
 		}) => {
 			setupSuccess(deletingUser);
-			const everyone = [deletingUser, ...otherUsers];
+			const everyone = [
+				deletingUser.map(({ planner }) => planner),
+				...otherUsers,
+			];
 			vi.mocked(users.countDocuments).mockImplementation(
 				(async (filter: { 'planners.planner': string }) =>
-					everyone.filter((memberships) =>
-						memberships.includes(filter['planners.planner']),
+					everyone.filter((plannerIds) =>
+						plannerIds.includes(filter['planners.planner']),
 					).length) as never,
 			);
 		};
 
-		it('deletes a planner the user was the only member of', async () => {
-			givenMembers({ deletingUser: ['solo-planner'] });
+		it('removes a planner the user owns, even when others are members of it', async () => {
+			givenMembers({
+				deletingUser: [{ planner: 'owned-planner', accessLevel: 'owner' }],
+				otherUsers: [['owned-planner']],
+			});
 
 			await deleteAccount();
 
-			expect(planners.deleteOne).toHaveBeenCalledWith({ _id: 'solo-planner' });
+			expect(removePlanner).toHaveBeenCalledWith('owned-planner');
 		});
 
-		it('keeps a planner that another user is also a member of', async () => {
+		it("keeps a shared planner the user doesn't own", async () => {
 			givenMembers({
-				deletingUser: ['shared-planner'],
+				deletingUser: [{ planner: 'shared-planner', accessLevel: 'write' }],
 				otherUsers: [['shared-planner']],
 			});
 
 			await deleteAccount();
 
-			expect(planners.deleteOne).not.toHaveBeenCalled();
+			expect(removePlanner).not.toHaveBeenCalled();
 		});
 
-		it('deletes only the planners no one else is a member of', async () => {
+		it("removes a planner the user was the only member of, even when they don't own it", async () => {
 			givenMembers({
-				deletingUser: ['solo-planner', 'shared-planner'],
-				otherUsers: [['shared-planner'], ['unrelated-planner']],
+				deletingUser: [{ planner: 'solo-planner', accessLevel: 'admin' }],
 			});
 
 			await deleteAccount();
 
-			expect(planners.deleteOne).toHaveBeenCalledTimes(1);
-			expect(planners.deleteOne).toHaveBeenCalledWith({ _id: 'solo-planner' });
+			expect(removePlanner).toHaveBeenCalledWith('solo-planner');
+		});
+
+		it('removes only the planners the user owns or was the only member of', async () => {
+			givenMembers({
+				deletingUser: [
+					{ planner: 'owned-planner', accessLevel: 'owner' },
+					{ planner: 'shared-planner', accessLevel: 'read' },
+				],
+				otherUsers: [['owned-planner', 'shared-planner']],
+			});
+
+			await deleteAccount();
+
+			expect(removePlanner).toHaveBeenCalledTimes(1);
+			expect(removePlanner).toHaveBeenCalledWith('owned-planner');
 		});
 	});
 
