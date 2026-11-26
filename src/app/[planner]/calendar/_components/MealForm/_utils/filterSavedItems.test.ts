@@ -27,6 +27,12 @@ describe('filterSavedItems', () => {
 		).toEqual([tacos]);
 	});
 
+	it('keeps the items in the order it was given them', () => {
+		expect(
+			filterSavedItems([chicken, risotto, tacos], { search: 'c', tagIds: [] }),
+		).toEqual([chicken, tacos]);
+	});
+
 	it('keeps every item while the search is empty or only spaces and no tags are selected', () => {
 		expect(filterSavedItems(savedItems, { search: '  ', tagIds: [] })).toEqual(
 			savedItems,

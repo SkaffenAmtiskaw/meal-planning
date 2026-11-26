@@ -1,13 +1,17 @@
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { plannerCache } from '@/_actions/_utils/caches';
 import { invalidate } from '@/_actions/_utils/invalidate';
 import { checkAuth } from '@/_actions/auth/checkAuth';
 import { newId } from '@/_models/database/newId';
 import { planners } from '@/_models/database/planners';
+import { reportError } from '@/_reporting/reportError';
 
 import { addMeal } from './addMeal';
+import { linkedSavedIds } from './linkedSavedIds';
 import { zAddMealInput } from './mealInput';
+
+import { markSavedItemsUsed } from './_utils/markSavedItemsUsed';
 
 vi.mock(
 	'@/_actions/_utils/invalidate',
@@ -29,6 +33,16 @@ vi.mock(
 	'@/_models/database/newId',
 	async () => await import('#mocks/@/_models/database/newId'),
 );
+vi.mock(
+	'@/_reporting/reportError',
+	async () => await import('#mocks/@/_reporting/reportError'),
+);
+vi.mock('./_utils/markSavedItemsUsed', () => ({
+	markSavedItemsUsed: vi.fn(async () => {}),
+}));
+vi.mock('./linkedSavedIds', () => ({
+	linkedSavedIds: vi.fn(() => []),
+}));
 
 const plannerId = '507f1f77bcf86cd799439011';
 const savedItemId = '507f1f77bcf86cd799439012';
@@ -219,11 +233,66 @@ describe('addMeal', () => {
 			});
 		});
 
-		it("invalidates the planner's calendar and returns no data", async () => {
+		describe('marking linked saved items used', () => {
+			const savedAt = new Date('2026-11-26T10:00:00Z');
+
+			beforeEach(() => {
+				vi.useFakeTimers({ now: savedAt });
+			});
+
+			afterEach(() => {
+				vi.useRealTimers();
+			});
+
+			it("stamps the saved items the meal's dishes link with the time of the save, not the meal's date", async () => {
+				const dishes = [
+					{ name: 'Pasta', source: { kind: 'saved', savedId: savedItemId } },
+				];
+				vi.mocked(linkedSavedIds).mockReturnValueOnce([savedItemId]);
+
+				await callAddMeal({ ...validData, date: '2026-12-20', dishes });
+
+				expect(linkedSavedIds).toHaveBeenCalledWith(dishes);
+				expect(markSavedItemsUsed).toHaveBeenCalledWith(
+					plannerId,
+					[savedItemId],
+					savedAt,
+				);
+			});
+
+			it('marks nothing when the planner is not found', async () => {
+				vi.mocked(planners.updateOne)
+					.mockResolvedValueOnce(noMatch)
+					.mockResolvedValueOnce(noMatch);
+
+				await addMeal(validData);
+
+				expect(markSavedItemsUsed).not.toHaveBeenCalled();
+			});
+
+			it('reports a failed stamp and still saves the meal', async () => {
+				const error = new Error('write failed');
+				vi.mocked(markSavedItemsUsed).mockRejectedValueOnce(error);
+
+				const result = await addMeal(validData);
+
+				expect(reportError).toHaveBeenCalledWith(error);
+				expect(result).toEqual({ ok: true, data: undefined });
+			});
+
+			it('reports nothing when the stamp succeeds', async () => {
+				await addMeal(validData);
+
+				expect(reportError).not.toHaveBeenCalled();
+			});
+		});
+
+		it("invalidates the planner's calendar and saved items and returns no data", async () => {
 			const result = await addMeal(validData);
 
 			expect(invalidate).toHaveBeenCalledWith([
 				plannerCache.calendar(plannerId),
+				plannerCache.saved(plannerId),
 			]);
 			expect(result).toEqual({ ok: true, data: undefined });
 		});

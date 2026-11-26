@@ -5,12 +5,13 @@ import { defineMutation } from '@/_actions/_utils/defineMutation';
 import { newId } from '@/_models/database/newId';
 import { planners } from '@/_models/database/planners';
 import type { RecipeInterface } from '@/_models/library';
-import { zRecipeFormSchema } from '@/_models/library';
+
+import { zRecipeInput } from './recipeInput';
 
 import { transformRecipeForm } from './_utils/transformRecipeForm';
 
 export const addRecipe = defineMutation({
-	schema: zRecipeFormSchema,
+	schema: zRecipeInput,
 	access: { planner: (input) => input.plannerId, level: 'write' },
 	invalidates: (input) => [plannerCache.saved(input.plannerId)],
 	handler: async (input) => {

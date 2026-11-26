@@ -5,9 +5,10 @@ import { z } from 'zod';
 import { plannerCache } from '@/_actions/_utils/caches';
 import { defineMutation } from '@/_actions/_utils/defineMutation';
 import { planners } from '@/_models/database/planners';
-import { zBookmarkFormSchema } from '@/_models/library';
 
-const zEditBookmarkSchema = zBookmarkFormSchema.extend({ _id: z.string() });
+import { zBookmarkInput } from './bookmarkInput';
+
+const zEditBookmarkSchema = zBookmarkInput.extend({ _id: z.string() });
 
 export const editBookmark = defineMutation({
 	schema: zEditBookmarkSchema,

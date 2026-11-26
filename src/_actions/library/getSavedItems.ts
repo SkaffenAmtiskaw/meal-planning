@@ -16,6 +16,7 @@ export const getSavedItems = async (
 			_id: item._id,
 			name: item.name,
 			tags: resolveTags(item.tags, planner.tags),
+			...(item.lastUsedAt && { lastUsedAt: item.lastUsedAt.toISOString() }),
 		};
 		// Only a bookmark has a url, so stored items need no kind of their own.
 		return 'url' in item

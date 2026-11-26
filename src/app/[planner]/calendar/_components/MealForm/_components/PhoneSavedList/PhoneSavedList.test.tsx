@@ -164,8 +164,9 @@ describe('PhoneSavedList', () => {
 		expect(phoneListRows).toHaveBeenLastCalledWith([], criteria);
 	});
 
-	it('titles the list with the selected tags, in the order the chips give them', () => {
+	it('titles the list from the search, the rows and the selected tags, in the order the chips give them', () => {
 		vi.mocked(phoneListRows).mockReturnValue([tacos]);
+		withDish({ search: 'ta' });
 		vi.mocked(narrowSavedItems).mockReturnValue({
 			results: [tacos],
 			tagOptions: [
@@ -177,7 +178,9 @@ describe('PhoneSavedList', () => {
 		render(<PhoneSavedList fieldNode={null} />);
 
 		expect(phoneListTitle).toHaveBeenLastCalledWith({
+			search: 'ta',
 			selectedTagNames: ['Quick', 'Thai'],
+			rows: [tacos],
 		});
 	});
 

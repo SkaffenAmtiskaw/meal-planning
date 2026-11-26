@@ -1,8 +1,10 @@
 import type { z } from 'zod';
 
-import type { RecipeInterface, zRecipeFormSchema } from '@/_models/library';
+import type { RecipeInterface } from '@/_models/library';
 
-type RecipeFormData = z.infer<typeof zRecipeFormSchema>;
+import type { zRecipeInput } from '../recipeInput';
+
+type RecipeFormData = z.infer<typeof zRecipeInput>;
 
 type StoredOptionalFields = Pick<
 	RecipeInterface,

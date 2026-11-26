@@ -87,6 +87,7 @@ describe('checkedCollection', () => {
 		expect(collection.updateOne).toHaveBeenCalledWith(
 			{ _id: 'doc-1' },
 			{ $set: { name: 'Named' } },
+			undefined,
 		);
 	});
 
@@ -103,7 +104,58 @@ describe('checkedCollection', () => {
 		expect(collection.updateMany).toHaveBeenCalledWith(
 			{ name: 'Unnamed' },
 			{ $set: { name: 'Named' } },
+			undefined,
 		);
+	});
+
+	it('passes arrayFilters on with a checked update', () => {
+		const options = { arrayFilters: [{ 'item._id': 'doc-1' }] };
+
+		documents.updateOne({ _id: 'doc-1' }, { $set: { name: 'Named' } }, options);
+
+		expect(collection.updateOne).toHaveBeenCalledWith(
+			{ _id: 'doc-1' },
+			{ $set: { name: 'Named' } },
+			options,
+		);
+	});
+
+	it('still checks an update sent with arrayFilters', () => {
+		expect(() =>
+			documents.updateOne({ _id: 'doc-1' }, { $set: { name: 1 } } as never, {
+				arrayFilters: [],
+			}),
+		).toThrow('The update to name fails its schema');
+		expect(collection.updateOne).not.toHaveBeenCalled();
+	});
+
+	it('passes arrayFilters on when updating many with a checked update', () => {
+		const options = { arrayFilters: [{ 'item._id': 'doc-1' }] };
+
+		documents.updateMany(
+			{ name: 'Unnamed' },
+			{ $set: { name: 'Named' } },
+			options,
+		);
+
+		expect(collection.updateMany).toHaveBeenCalledWith(
+			{ name: 'Unnamed' },
+			{ $set: { name: 'Named' } },
+			options,
+		);
+	});
+
+	it('still checks an update of many sent with arrayFilters', () => {
+		expect(() =>
+			documents.updateMany(
+				{ name: 'Unnamed' },
+				{ $set: { name: 1 } } as never,
+				{
+					arrayFilters: [],
+				},
+			),
+		).toThrow('The update to name fails its schema');
+		expect(collection.updateMany).not.toHaveBeenCalled();
 	});
 
 	it('throws before an update of many that breaks the schema reaches the collection', () => {
