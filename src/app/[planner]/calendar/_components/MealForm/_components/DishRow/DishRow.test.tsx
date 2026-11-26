@@ -1,5 +1,5 @@
 import { fireEvent, render, screen } from '@testing-library/react';
-import { describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { makeDishDraft } from '#fixtures/dish';
 import { useFocusOnExpand, useIsMobile } from '@/_hooks';
@@ -58,7 +58,7 @@ const props = {
 	onNoteChange: vi.fn(),
 	onStartLinking: vi.fn(),
 	linkedIds: new Set<string>(),
-	listOpen: false,
+	listOpenId: null,
 	onOpenList: vi.fn(),
 	onCloseList: vi.fn(),
 	onChooseRecipe: vi.fn(),
@@ -174,11 +174,18 @@ describe('DishRow', () => {
 	});
 
 	describe('on a phone', () => {
-		it('searches saved recipes from the name field instead of the desktop field', () => {
+		beforeEach(() => {
 			vi.mocked(useIsMobile).mockReturnValue(true);
+		});
+
+		afterEach(() => {
+			vi.mocked(useIsMobile).mockReturnValue(false);
+			vi.mocked(usePlannerSavedItems).mockReturnValue([]);
+		});
+
+		it('searches saved recipes from the name field instead of the desktop field', () => {
 			vi.mocked(DishNameInput).mockClear();
 			render(<DishRow {...props} />);
-			vi.mocked(useIsMobile).mockReturnValue(false);
 
 			expect(vi.mocked(DishNameSearch)).toHaveBeenCalled();
 			expect(vi.mocked(DishNameInput)).not.toHaveBeenCalled();
@@ -192,9 +199,7 @@ describe('DishRow', () => {
 			source,
 			linked,
 		}) => {
-			vi.mocked(useIsMobile).mockReturnValue(true);
 			render(<DishRow {...props} dish={makeDishDraft({ source })} />);
-			vi.mocked(useIsMobile).mockReturnValue(false);
 
 			expect(vi.mocked(DishNameSearch)).toHaveBeenLastCalledWith(
 				expect.objectContaining({ linked }),
@@ -203,7 +208,6 @@ describe('DishRow', () => {
 		});
 
 		it('shows its open list in place of the chips', () => {
-			vi.mocked(useIsMobile).mockReturnValue(true);
 			vi.mocked(usePlannerSavedItems).mockReturnValue([
 				{ _id: 'oats', name: 'Overnight Oats', kind: 'recipe', tags: [] },
 			]);
@@ -211,10 +215,7 @@ describe('DishRow', () => {
 			expect(phoneList()).toBeNull();
 			expect(recipeChip()).not.toBeNull();
 
-			rerender(<DishRow {...props} listOpen />);
-			vi.mocked(useIsMobile).mockReturnValue(false);
-
-			vi.mocked(usePlannerSavedItems).mockReturnValue([]);
+			rerender(<DishRow {...props} listOpenId={1} />);
 
 			expect(phoneList()).not.toBeNull();
 			expect(recipeChip()).toBeNull();
@@ -222,25 +223,44 @@ describe('DishRow', () => {
 		});
 
 		it('keeps an open list hidden, and the chips showing, in a planner with no saved recipes until something is typed', () => {
-			vi.mocked(useIsMobile).mockReturnValue(true);
 			const { rerender } = render(
-				<DishRow {...props} dish={makeDishDraft({ name: ' ' })} listOpen />,
+				<DishRow
+					{...props}
+					dish={makeDishDraft({ name: ' ' })}
+					listOpenId={1}
+				/>,
 			);
 			expect(phoneList()).toBeNull();
 			expect(recipeChip()).not.toBeNull();
 
 			rerender(
-				<DishRow {...props} dish={makeDishDraft({ name: 'Soup' })} listOpen />,
+				<DishRow
+					{...props}
+					dish={makeDishDraft({ name: 'Soup' })}
+					listOpenId={1}
+				/>,
 			);
-			vi.mocked(useIsMobile).mockReturnValue(false);
 
 			expect(phoneList()).not.toBeNull();
 			expect(recipeChip()).toBeNull();
 		});
+
+		it('keeps the list through the same open, and starts it afresh on a new one', () => {
+			const { rerender } = render(<DishRow {...props} listOpenId={1} />);
+			const first = phoneList();
+
+			rerender(<DishRow {...props} listOpenId={1} />);
+			expect(phoneList()).toBe(first);
+
+			rerender(<DishRow {...props} listOpenId={2} />);
+
+			expect(phoneList()).not.toBeNull();
+			expect(phoneList()).not.toBe(first);
+		});
 	});
 
 	it('never shows the phone list on desktop', () => {
-		render(<DishRow {...props} listOpen />);
+		render(<DishRow {...props} listOpenId={1} />);
 
 		expect(phoneList()).toBeNull();
 		expect(recipeChip()).not.toBeNull();

@@ -2,18 +2,18 @@ import { render, screen } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { makeDishDraft } from '#fixtures/dish';
+import { makeTagFilterOption } from '#fixtures/tagFilterOption';
 import type { SavedItem } from '@/_actions/library/types';
 
 import { SavedRecipesColumn } from './SavedRecipesColumn';
 
 import { usePlannerSavedItems } from '../../../../_hooks/usePlannerSavedItems';
 import { useSavedItemCriteria } from '../../_hooks/useSavedItemCriteria';
-import { filterSavedItems } from '../../_utils/filterSavedItems';
-import { orderSavedItems } from '../../_utils/orderSavedItems';
-import { rankTagOptions } from '../../_utils/rankTagOptions';
+import { narrowSavedItems } from '../../_utils/narrowSavedItems';
 import type { DishDraft } from '../../types';
 import { LinkModeBanner } from '../LinkModeBanner/LinkModeBanner';
 import { SavedResultList } from '../SavedResultList/SavedResultList';
+import { TagFilter } from '../TagFilter/TagFilter';
 
 vi.mock('@mantine/core', async () => await import('#mocks/@mantine/core'));
 vi.mock(
@@ -27,14 +27,8 @@ vi.mock('../../_hooks/useSavedItemCriteria', () => ({
 		{ setSearch: vi.fn(), setTagIds: vi.fn() },
 	]),
 }));
-vi.mock('../../_utils/orderSavedItems', () => ({
-	orderSavedItems: vi.fn(() => []),
-}));
-vi.mock('../../_utils/filterSavedItems', () => ({
-	filterSavedItems: vi.fn(() => []),
-}));
-vi.mock('../../_utils/rankTagOptions', () => ({
-	rankTagOptions: vi.fn(() => []),
+vi.mock('../../_utils/narrowSavedItems', () => ({
+	narrowSavedItems: vi.fn(() => ({ results: [], tagOptions: [] })),
 }));
 vi.mock('../TagFilter/TagFilter', () => ({
 	TagFilter: vi.fn(() => <div data-testid="tags" />),
@@ -108,43 +102,27 @@ describe('SavedRecipesColumn', () => {
 		}
 	});
 
-	it("lists the planner's saved recipes in order, narrowed by what it holds", () => {
+	it("lists the planner's saved recipes narrowed by what it holds, with the chips counted over them", () => {
 		const criteria = { search: 'taco', tagIds: ['quick'] };
+		const tagOptions = [makeTagFilterOption('quick', true)];
 		vi.mocked(useSavedItemCriteria).mockReturnValueOnce([
 			criteria,
 			{ setSearch: vi.fn(), setTagIds: vi.fn() },
 		]);
 		vi.mocked(usePlannerSavedItems).mockReturnValue([tacos]);
-		vi.mocked(orderSavedItems).mockReturnValueOnce([tacos]);
-		vi.mocked(filterSavedItems).mockReturnValueOnce([tacos]);
+		vi.mocked(narrowSavedItems).mockReturnValueOnce({
+			results: [tacos],
+			tagOptions,
+		});
 
 		renderColumn();
 
-		expect(orderSavedItems).toHaveBeenCalledWith([tacos]);
-		expect(filterSavedItems).toHaveBeenCalledWith([tacos], criteria);
+		expect(narrowSavedItems).toHaveBeenCalledWith([tacos], criteria);
 		expect(vi.mocked(SavedResultList).mock.lastCall?.[0]).toMatchObject({
 			results: [tacos],
 			hasSavedItems: true,
 		});
-	});
-
-	it('counts the tags over the results, so the filter offers only tags that would return something', () => {
-		const criteria = { search: 'taco', tagIds: ['quick'] };
-		const savedItems = [tacos, { ...tacos, _id: 'other' }];
-		vi.mocked(useSavedItemCriteria).mockReturnValueOnce([
-			criteria,
-			{ setSearch: vi.fn(), setTagIds: vi.fn() },
-		]);
-		vi.mocked(usePlannerSavedItems).mockReturnValue(savedItems);
-		vi.mocked(filterSavedItems).mockReturnValueOnce([tacos]);
-
-		renderColumn();
-
-		expect(rankTagOptions).toHaveBeenCalledWith({
-			countOver: [tacos],
-			savedItems,
-			selectedIds: ['quick'],
-		});
+		expect(vi.mocked(TagFilter).mock.lastCall?.[0].options).toBe(tagOptions);
 	});
 
 	it('tells the list when the planner has no saved recipes at all', () => {

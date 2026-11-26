@@ -1,25 +1,23 @@
-import { fireEvent, render, screen } from '@testing-library/react';
+import { act, fireEvent, render, screen } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { makeTagFilterOption as option } from '#fixtures/tagFilterOption';
 
 import { TagFilter } from './TagFilter';
 
-import { limitTagChips } from '../../_utils/limitTagChips';
-import { TagFilterChip } from '../TagFilterChip/TagFilterChip';
+import { TagChips } from '../TagChips/TagChips';
 
 vi.mock('@mantine/core', async () => await import('#mocks/@mantine/core'));
-vi.mock('../../_utils/limitTagChips', () => ({
-	limitTagChips: vi.fn(() => ({ shown: [], hiddenCount: 0 })),
-}));
-vi.mock('../TagFilterChip/TagFilterChip', () => ({
-	TagFilterChip: vi.fn(() => <div data-testid="chip" />),
+vi.mock('../TagChips/TagChips', () => ({
+	TagChips: vi.fn(() => <div data-testid="chips" />),
 }));
 
 const onChange = vi.fn();
 
-const renderFilter = (options = [option('quick')]) =>
-	render(<TagFilter options={options} value={[]} onChange={onChange} />);
+const renderFilter = (options = [option('quick')], value: string[] = []) =>
+	render(<TagFilter options={options} value={value} onChange={onChange} />);
+
+const chipsProps = () => vi.mocked(TagChips).mock.lastCall?.[0];
 
 describe('TagFilter', () => {
 	beforeEach(() => {
@@ -32,48 +30,31 @@ describe('TagFilter', () => {
 		expect(container.firstChild).toBeNull();
 	});
 
-	it('shows a chip for each option the limit lets through', () => {
-		const shown = [option('quick'), option('vegetarian')];
-		vi.mocked(limitTagChips).mockReturnValue({ shown, hiddenCount: 0 });
-
-		renderFilter(shown);
-
-		expect(limitTagChips).toHaveBeenLastCalledWith(shown, false);
-		expect(screen.getAllByTestId('chip')).toHaveLength(2);
-		expect(
-			vi.mocked(TagFilterChip).mock.calls.map(([props]) => props.option),
-		).toEqual(shown);
-	});
-
 	it('shows Clear only while a tag is selected, and clears every tag', () => {
 		renderFilter([option('quick')]);
 		expect(screen.queryByRole('button', { name: 'Clear' })).toBeNull();
 
-		renderFilter([option('vegetarian', true)]);
+		renderFilter([option('vegetarian', true)], ['vegetarian']);
 		fireEvent.click(screen.getByRole('button', { name: 'Clear' }));
 
 		expect(onChange).toHaveBeenCalledWith([]);
 	});
 
-	it('shows "+N more" only while tags are hidden', () => {
-		vi.mocked(limitTagChips).mockReturnValue({ shown: [], hiddenCount: 0 });
-		renderFilter();
-		expect(screen.queryByRole('button', { name: /more/ })).toBeNull();
+	it('shows Clear for a selected tag that no saved recipe carries any more, which still narrows the results', () => {
+		renderFilter([option('quick')], ['gone']);
 
-		vi.mocked(limitTagChips).mockReturnValue({ shown: [], hiddenCount: 3 });
-		renderFilter();
-		expect(screen.getByRole('button', { name: '+3 more' })).toBeDefined();
+		expect(screen.getByRole('button', { name: 'Clear' })).not.toBeNull();
 	});
 
-	it('expands on "+N more" and stays expanded, showing "Fewer", until "Fewer" collapses it', () => {
-		vi.mocked(limitTagChips).mockReturnValue({ shown: [], hiddenCount: 3 });
+	it('starts collapsed, and stays expanded as the options change, until toggled back', () => {
 		const { rerender } = renderFilter();
+		expect(chipsProps()?.expanded).toBe(false);
 
-		fireEvent.click(screen.getByRole('button', { name: '+3 more' }));
-		expect(limitTagChips).toHaveBeenLastCalledWith(expect.any(Array), true);
+		act(() => chipsProps()?.onToggleExpanded());
+		expect(chipsProps()?.expanded).toBe(true);
 
-		// Nothing is hidden once expanded, and new options keep it expanded.
-		vi.mocked(limitTagChips).mockReturnValue({ shown: [], hiddenCount: 0 });
+		// With no options it shows nothing, and the flag outlives that.
+		rerender(<TagFilter options={[]} value={[]} onChange={onChange} />);
 		rerender(
 			<TagFilter
 				options={[option('quick', true)]}
@@ -81,10 +62,9 @@ describe('TagFilter', () => {
 				onChange={onChange}
 			/>,
 		);
-		expect(limitTagChips).toHaveBeenLastCalledWith(expect.any(Array), true);
+		expect(chipsProps()?.expanded).toBe(true);
 
-		fireEvent.click(screen.getByRole('button', { name: 'Fewer' }));
-		expect(limitTagChips).toHaveBeenLastCalledWith(expect.any(Array), false);
-		expect(screen.queryByRole('button', { name: 'Fewer' })).toBeNull();
+		act(() => chipsProps()?.onToggleExpanded());
+		expect(chipsProps()?.expanded).toBe(false);
 	});
 });

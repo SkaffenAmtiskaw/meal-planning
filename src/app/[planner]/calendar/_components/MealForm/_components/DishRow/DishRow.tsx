@@ -35,8 +35,8 @@ type Props = {
 	linking?: boolean;
 	// The saved recipes already on the meal, which the phone list shows as added.
 	linkedIds: ReadonlySet<string>;
-	// True while this dish's saved list is open on a phone.
-	listOpen: boolean;
+	// The id of this open of the dish's saved list on a phone, or null while it's closed.
+	listOpenId: number | null;
 	onRename: (name: string) => void;
 	onDelete: () => void;
 	onUnlink: () => void;
@@ -68,7 +68,7 @@ export const DishRow = ({
 	onNoteChange,
 	onStartLinking,
 	linkedIds,
-	listOpen,
+	listOpenId,
 	onOpenList,
 	onCloseList,
 	onChooseRecipe,
@@ -78,6 +78,7 @@ export const DishRow = ({
 	const [open, setOpen] = useState(false);
 	// The name's area, where a tap leaves the phone list open.
 	const [nameNode, setNameNode] = useState<HTMLDivElement | null>(null);
+	const listOpen = listOpenId !== null;
 	/**
 	 * In a planner with no saved recipes, an open list stays hidden until
 	 * something is typed, and the row keeps its chips until then.
@@ -163,8 +164,10 @@ export const DishRow = ({
 					</div>
 				)}
 			</div>
+			{/* Keyed on the open, so each new open starts the list afresh. */}
 			{showList && (
 				<PhoneSavedList
+					key={listOpenId}
 					search={dish.name}
 					linkedIds={linkedIds}
 					fieldNode={nameNode}

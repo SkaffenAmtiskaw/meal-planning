@@ -6,6 +6,7 @@ import { IconPlus } from '@tabler/icons-react';
 import type { SavedItem } from '@/_actions/library/types';
 import { useIsMobile } from '@/_hooks';
 
+import type { OpenDishList } from '../../_hooks/useOpenDishList';
 import { formatDishCount } from '../../_utils/formatDishCount';
 import type { DishDraft } from '../../types';
 import { DishRow } from '../DishRow/DishRow';
@@ -21,8 +22,8 @@ type Props = {
 	linkingKey?: string | null;
 	// The saved recipes already on the meal.
 	linkedIds: ReadonlySet<string>;
-	// The dish whose saved list is open on a phone, if any.
-	openListKey: string | null;
+	// The saved list open on a phone, if any.
+	openDishList: OpenDishList | null;
 	onAddDish: () => void;
 	onRenameDish: (key: string, name: string) => void;
 	onRemoveDish: (key: string) => void;
@@ -49,7 +50,7 @@ export const DishList = ({
 	onSetNote,
 	onStartLinking,
 	linkedIds,
-	openListKey,
+	openDishList,
 	onOpenList,
 	onCloseList,
 	onChooseRecipe,
@@ -79,7 +80,7 @@ export const DishList = ({
 					onNoteChange={(note) => onSetNote(dish.key, note)}
 					onStartLinking={() => onStartLinking(dish)}
 					linkedIds={linkedIds}
-					listOpen={dish.key === openListKey}
+					listOpenId={openDishList?.key === dish.key ? openDishList.id : null}
 					onOpenList={() => onOpenList(dish.key)}
 					onCloseList={onCloseList}
 					onChooseRecipe={(item) => onChooseRecipe(dish.key, item)}
