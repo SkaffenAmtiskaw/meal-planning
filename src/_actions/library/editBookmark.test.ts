@@ -5,7 +5,6 @@ import { invalidate } from '@/_actions/_utils/invalidate';
 import { checkAuth } from '@/_actions/auth/checkAuth';
 import { newId } from '@/_models/database/newId';
 import { planners } from '@/_models/database/planners';
-import { zBookmarkFormSchema } from '@/_models/library';
 
 import { editBookmark } from './editBookmark';
 
@@ -16,10 +15,6 @@ vi.mock(
 vi.mock(
 	'@/_actions/auth/checkAuth',
 	async () => await import('#mocks/@/_actions/auth/checkAuth'),
-);
-vi.mock(
-	'@/_models/library',
-	async () => await import('#mocks/@/_models/library'),
 );
 vi.mock(
 	'@/_models/database/planners',
@@ -37,20 +32,9 @@ const validData = {
 	tags: [],
 };
 
-const parsesTo = (data: unknown) =>
-	vi
-		.mocked(zBookmarkFormSchema.safeParse)
-		.mockReturnValue({ success: true, data } as never);
-
-const callEditBookmark = (data: unknown) => {
-	parsesTo(data);
-	return editBookmark(data);
-};
-
 describe('editBookmark', () => {
 	beforeEach(() => {
 		vi.resetAllMocks();
-		parsesTo(validData);
 	});
 
 	test("checks write access to the bookmark's planner", async () => {
@@ -71,7 +55,7 @@ describe('editBookmark', () => {
 
 	test('$sets name, url and tags on the matched bookmark', async () => {
 		const tagId = newId();
-		await callEditBookmark({ ...validData, tags: [tagId] });
+		await editBookmark({ ...validData, tags: [tagId] });
 
 		expect(planners.updateOne).toHaveBeenCalledWith(
 			{ _id: plannerId, 'saved._id': bookmarkId },
@@ -86,7 +70,7 @@ describe('editBookmark', () => {
 	});
 
 	test('$sets notes when notes is provided', async () => {
-		await callEditBookmark({ ...validData, notes: 'Great source' });
+		await editBookmark({ ...validData, notes: 'Great source' });
 
 		expect(planners.updateOne).toHaveBeenCalledWith(
 			expect.anything(),
@@ -100,7 +84,7 @@ describe('editBookmark', () => {
 		['absent', undefined],
 		['an empty string', ''],
 	])('$unsets notes when notes is %s', async (_, notes) => {
-		await callEditBookmark({ ...validData, notes });
+		await editBookmark({ ...validData, notes });
 
 		expect(planners.updateOne).toHaveBeenCalledWith(
 			expect.anything(),

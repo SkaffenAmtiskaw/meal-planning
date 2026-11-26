@@ -9,14 +9,8 @@ export const zBookmarkInterface = z.object({
 	url: z.url({ error: 'URL is required' }),
 	tags: z.array(zId),
 	notes: zOptionalNonEmptyString,
+	// Set by the server when a saved meal links the bookmark; left out until then.
+	lastUsed: z.date().optional(),
 });
-
-// The form starts notes at '', and the action leaves it out before it writes.
-export const zBookmarkFormSchema = zBookmarkInterface
-	.omit({ _id: true })
-	.extend({
-		plannerId: z.string(),
-		notes: z.string().optional(),
-	});
 
 export type BookmarkInterface = z.infer<typeof zBookmarkInterface>;

@@ -4,7 +4,6 @@ import { plannerCache } from '@/_actions/_utils/caches';
 import { invalidate } from '@/_actions/_utils/invalidate';
 import { checkAuth } from '@/_actions/auth/checkAuth';
 import { planners } from '@/_models/database/planners';
-import { zBookmarkFormSchema } from '@/_models/library';
 
 import { addBookmark } from './addBookmark';
 
@@ -15,10 +14,6 @@ vi.mock(
 vi.mock(
 	'@/_actions/auth/checkAuth',
 	async () => await import('#mocks/@/_actions/auth/checkAuth'),
-);
-vi.mock(
-	'@/_models/library',
-	async () => await import('#mocks/@/_models/library'),
 );
 vi.mock(
 	'@/_models/database/planners',
@@ -38,23 +33,12 @@ const validData = {
 	tags: [],
 };
 
-const parsesTo = (data: unknown) =>
-	vi
-		.mocked(zBookmarkFormSchema.safeParse)
-		.mockReturnValue({ success: true, data } as never);
-
-const callAddBookmark = (data: unknown) => {
-	parsesTo(data);
-	return addBookmark(data);
-};
-
 const pushedBookmark = () =>
 	vi.mocked(planners.updateOne).mock.calls[0][1].$push?.saved;
 
 describe('addBookmark', () => {
 	beforeEach(() => {
 		vi.resetAllMocks();
-		parsesTo(validData);
 	});
 
 	test("checks write access to the bookmark's planner", async () => {
@@ -96,15 +80,21 @@ describe('addBookmark', () => {
 	});
 
 	test('leaves out notes when they are empty', async () => {
-		await callAddBookmark({ ...validData, notes: '' });
+		await addBookmark({ ...validData, notes: '' });
 
 		expect(pushedBookmark()).not.toHaveProperty('notes');
 	});
 
 	test('keeps notes when they are filled in', async () => {
-		await callAddBookmark({ ...validData, notes: 'Read later' });
+		await addBookmark({ ...validData, notes: 'Read later' });
 
 		expect(pushedBookmark()).toHaveProperty('notes', 'Read later');
+	});
+
+	test('does not store a lastUsed sent with the bookmark, since only the server sets it', async () => {
+		await addBookmark({ ...validData, lastUsed: new Date() } as never);
+
+		expect(pushedBookmark()).not.toHaveProperty('lastUsed');
 	});
 
 	test("invalidates the planner's saved items", async () => {

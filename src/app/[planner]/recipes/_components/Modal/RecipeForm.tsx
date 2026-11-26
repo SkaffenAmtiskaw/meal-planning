@@ -17,6 +17,7 @@ import { schemaResolver, useForm } from '@mantine/form';
 import { z } from 'zod';
 
 import { addRecipe, editRecipe } from '@/_actions/library';
+import { zRecipeInput } from '@/_actions/library/recipeInput';
 import {
 	FormFeedbackAlert,
 	StringArrayInput,
@@ -24,7 +25,6 @@ import {
 } from '@/_components';
 import { useFormFeedback } from '@/_hooks';
 import type { RecipeInterface } from '@/_models/types';
-import { zRecipeFormSchema } from '@/_models/types';
 
 import { TagCombobox } from '../TagCombobox';
 import type { TagOption } from '../types';
@@ -33,7 +33,7 @@ import type { TagOption } from '../types';
 // are controlled via useState and merged in handleSubmit.
 // source.url uses z.string() (not z.url()) to allow empty strings — the action
 // transforms empty strings to undefined before saving.
-const zFormFields = zRecipeFormSchema
+const zFormFields = zRecipeInput
 	.omit({
 		ingredients: true,
 		instructions: true,

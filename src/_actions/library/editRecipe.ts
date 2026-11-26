@@ -5,11 +5,12 @@ import { z } from 'zod';
 import { plannerCache } from '@/_actions/_utils/caches';
 import { defineMutation } from '@/_actions/_utils/defineMutation';
 import { planners } from '@/_models/database/planners';
-import { zRecipeFormSchema } from '@/_models/library';
+
+import { zRecipeInput } from './recipeInput';
 
 import { transformRecipeForm } from './_utils/transformRecipeForm';
 
-const zEditRecipeSchema = zRecipeFormSchema.extend({ _id: z.string() });
+const zEditRecipeSchema = zRecipeInput.extend({ _id: z.string() });
 
 export const editRecipe = defineMutation({
 	schema: zEditRecipeSchema,

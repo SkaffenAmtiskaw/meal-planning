@@ -1,6 +1,7 @@
 import type {
 	Collection,
 	Document,
+	UpdateOptions as DriverUpdateOptions,
 	Filter,
 	OptionalUnlessRequiredId,
 	UpdateFilter,
@@ -8,6 +9,9 @@ import type {
 import type { z } from 'zod';
 
 import { checkInsert, checkUpdate } from './checkWrite';
+
+// Only arrayFilters: upsert would create a document that skips the insert check.
+type UpdateOptions = Pick<DriverUpdateOptions, 'arrayFilters'>;
 
 /**
  * A collection whose inserts and updates are checked against its schema, so no caller can write unchecked data.
@@ -33,9 +37,11 @@ export const checkedCollection = <Schema extends z.ZodType<Document>>(
 	updateMany: (
 		filter: Filter<z.output<Schema>>,
 		update: UpdateFilter<z.output<Schema>>,
-	) => collection.updateMany(filter, checkUpdate(schema, update)),
+		options?: UpdateOptions,
+	) => collection.updateMany(filter, checkUpdate(schema, update), options),
 	updateOne: (
 		filter: Filter<z.output<Schema>>,
 		update: UpdateFilter<z.output<Schema>>,
-	) => collection.updateOne(filter, checkUpdate(schema, update)),
+		options?: UpdateOptions,
+	) => collection.updateOne(filter, checkUpdate(schema, update), options),
 });
