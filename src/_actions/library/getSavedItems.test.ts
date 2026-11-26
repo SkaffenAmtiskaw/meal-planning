@@ -80,6 +80,29 @@ describe('getSavedItems', () => {
 		]);
 	});
 
+	test('gives a used item its last-used date as an ISO string', async () => {
+		const lastUsedAt = new Date('2026-11-25T18:30:00.000Z');
+		plannerWith([
+			{ ...recipe, lastUsedAt },
+			{ ...bookmark, lastUsedAt },
+		]);
+
+		const items = await getSavedItems(plannerId);
+
+		expect(items.map((item) => item.lastUsedAt)).toEqual([
+			'2026-11-25T18:30:00.000Z',
+			'2026-11-25T18:30:00.000Z',
+		]);
+	});
+
+	test('leaves the last-used date out of an item that has never been used', async () => {
+		plannerWith([recipe, bookmark]);
+
+		const items = await getSavedItems(plannerId);
+
+		for (const item of items) expect(item).not.toHaveProperty('lastUsedAt');
+	});
+
 	test("resolves each item's tags against the planner's tags", async () => {
 		plannerWith([recipe]);
 		vi.mocked(resolveTags).mockReturnValueOnce([quick]);

@@ -5,7 +5,6 @@ import { invalidate } from '@/_actions/_utils/invalidate';
 import { checkAuth } from '@/_actions/auth/checkAuth';
 import { newId } from '@/_models/database/newId';
 import { planners } from '@/_models/database/planners';
-import { zRecipeFormSchema } from '@/_models/library';
 
 import { editRecipe } from './editRecipe';
 
@@ -16,10 +15,6 @@ vi.mock(
 vi.mock(
 	'@/_actions/auth/checkAuth',
 	async () => await import('#mocks/@/_actions/auth/checkAuth'),
-);
-vi.mock(
-	'@/_models/library',
-	async () => await import('#mocks/@/_models/library'),
 );
 vi.mock(
 	'@/_models/database/planners',
@@ -40,20 +35,9 @@ const validData = {
 	instructions: ['Mix ingredients', 'Bake at 400°F'],
 };
 
-const parsesTo = (data: unknown) =>
-	vi
-		.mocked(zRecipeFormSchema.safeParse)
-		.mockReturnValue({ success: true, data } as never);
-
-const callEditRecipe = (data: unknown) => {
-	parsesTo(data);
-	return editRecipe(data);
-};
-
 describe('editRecipe', () => {
 	beforeEach(() => {
 		vi.resetAllMocks();
-		parsesTo(validData);
 	});
 
 	it("checks write access to the recipe's planner", async () => {
@@ -111,7 +95,7 @@ describe('editRecipe', () => {
 
 		it('sets optional fields when they are present', async () => {
 			const tagId = newId();
-			await callEditRecipe({
+			await editRecipe({
 				...validData,
 				source: { name: 'Bakery Blog', url: 'https://example.com' },
 				time: { prep: '30m', cook: '20m', total: '50m', actual: '55m' },
@@ -145,7 +129,7 @@ describe('editRecipe', () => {
 		});
 
 		it('only unsets optional fields that are absent', async () => {
-			await callEditRecipe({
+			await editRecipe({
 				...validData,
 				source: { name: 'Bakery Blog' },
 				notes: 'Best served warm',
@@ -168,7 +152,7 @@ describe('editRecipe', () => {
 		});
 
 		it('omits $unset when all optional fields are present', async () => {
-			await callEditRecipe({
+			await editRecipe({
 				...validData,
 				source: { name: 'Blog' },
 				time: { prep: '10m' },
@@ -182,6 +166,33 @@ describe('editRecipe', () => {
 				unknown
 			>;
 			expect(call.$unset).toBeUndefined();
+		});
+
+		it('writes only the fields the form edits, so the last-used date stays as it was', async () => {
+			await editRecipe(validData);
+
+			const update = vi.mocked(planners.updateOne).mock.calls[0][1] as {
+				$set: Record<string, unknown>;
+				$unset?: Record<string, unknown>;
+			};
+			expect(
+				[
+					...Object.keys(update.$set),
+					...Object.keys(update.$unset ?? {}),
+				].sort(),
+			).toEqual(
+				[
+					'saved.$.name',
+					'saved.$.ingredients',
+					'saved.$.instructions',
+					'saved.$.tags',
+					'saved.$.source',
+					'saved.$.time',
+					'saved.$.servings',
+					'saved.$.notes',
+					'saved.$.storage',
+				].sort(),
+			);
 		});
 	});
 

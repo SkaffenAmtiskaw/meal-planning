@@ -4,7 +4,6 @@ import { plannerCache } from '@/_actions/_utils/caches';
 import { invalidate } from '@/_actions/_utils/invalidate';
 import { checkAuth } from '@/_actions/auth/checkAuth';
 import { planners } from '@/_models/database/planners';
-import { zRecipeFormSchema } from '@/_models/library';
 
 import { addRecipe } from './addRecipe';
 
@@ -15,10 +14,6 @@ vi.mock(
 vi.mock(
 	'@/_actions/auth/checkAuth',
 	async () => await import('#mocks/@/_actions/auth/checkAuth'),
-);
-vi.mock(
-	'@/_models/library',
-	async () => await import('#mocks/@/_models/library'),
 );
 vi.mock('./_utils/transformRecipeForm', () => ({
 	transformRecipeForm: vi.fn((data) => data),
@@ -44,10 +39,6 @@ const validData = {
 describe('addRecipe', () => {
 	beforeEach(() => {
 		vi.resetAllMocks();
-		vi.mocked(zRecipeFormSchema.safeParse).mockReturnValue({
-			success: true,
-			data: validData,
-		} as never);
 	});
 
 	test("checks write access to the recipe's planner", async () => {
@@ -79,6 +70,13 @@ describe('addRecipe', () => {
 			ok: true,
 			data: { _id: 'new-id', name: 'Croissant' },
 		});
+	});
+
+	test('does not store a lastUsedAt sent with the recipe, since only the server sets it', async () => {
+		await addRecipe({ ...validData, lastUsedAt: new Date() } as never);
+
+		const pushed = vi.mocked(planners.updateOne).mock.calls[0][1].$push?.saved;
+		expect(pushed).not.toHaveProperty('lastUsedAt');
 	});
 
 	test("invalidates the planner's saved items", async () => {

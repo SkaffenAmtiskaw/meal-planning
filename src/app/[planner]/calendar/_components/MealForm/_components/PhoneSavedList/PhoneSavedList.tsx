@@ -50,7 +50,7 @@ export const PhoneSavedList = ({ fieldNode }: Props) => {
 				{showHeader && (
 					<>
 						<PhoneSavedListHeader
-							title={phoneListTitle({ selectedTagNames })}
+							title={phoneListTitle({ search, selectedTagNames, rows })}
 							onClearTags={tagIds.length > 0 ? () => setTagIds([]) : undefined}
 						/>
 						<PhoneTagRow

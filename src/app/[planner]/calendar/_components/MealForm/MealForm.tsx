@@ -8,6 +8,7 @@ import {
 	useState,
 } from 'react';
 
+import { linkedSavedIds } from '@/_actions/calendar/linkedSavedIds';
 import type { MealInput } from '@/_actions/calendar/types';
 import type { SavedItem } from '@/_actions/library/types';
 import { FormFeedbackAlert } from '@/_components';
@@ -29,7 +30,6 @@ import { useOpenDishList } from './_hooks/useOpenDishList';
 import { canSubmitMeal } from './_utils/canSubmitMeal';
 import { findNamelessDishes } from './_utils/findNamelessDishes';
 import { isBlankDish } from './_utils/isBlankDish';
-import { linkedItemIds } from './_utils/linkedItemIds';
 import { toMealInput } from './_utils/toMealInput';
 
 type MealFormProps = {
@@ -143,7 +143,8 @@ export const MealForm = ({
 			.filter((key) => flaggedKeys.has(key)),
 	);
 
-	const linkedIds = linkedItemIds(draft.dishes);
+	// The saved recipes already on the meal, which the form shows as added.
+	const linkedIds = new Set(linkedSavedIds(draft.dishes));
 	// A blank row isn't saved, so it isn't counted.
 	const dishCount = draft.dishes.filter((dish) => !isBlankDish(dish)).length;
 

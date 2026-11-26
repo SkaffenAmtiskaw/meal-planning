@@ -1,7 +1,7 @@
 import type { SavedItem } from '@/_actions/library/types';
 
 import { filterSavedItems } from './filterSavedItems';
-import { orderSavedItems } from './orderSavedItems';
+import { orderByRecentUse } from './orderByRecentUse';
 import { rankTagOptions } from './rankTagOptions';
 import type { SavedItemCriteria, TagFilterOption } from './types';
 
@@ -14,7 +14,7 @@ export const narrowSavedItems = (
 	savedItems: SavedItem[],
 	criteria: SavedItemCriteria,
 ): { results: SavedItem[]; tagOptions: TagFilterOption[] } => {
-	const results = filterSavedItems(orderSavedItems(savedItems), criteria);
+	const results = filterSavedItems(orderByRecentUse(savedItems), criteria);
 	const tagOptions = rankTagOptions({
 		countOver: results,
 		savedItems,

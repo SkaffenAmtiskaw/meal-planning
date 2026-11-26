@@ -1,6 +1,6 @@
 import { describe, expect, test } from 'vitest';
 
-import { zBookmarkFormSchema, zBookmarkInterface } from './bookmark.types';
+import { zBookmarkInterface } from './bookmark.types';
 
 import { newId } from '../database/newId';
 
@@ -69,59 +69,20 @@ describe('bookmark interface', () => {
 	test('accepts a bookmark without notes', () => {
 		expect(zBookmarkInterface.safeParse(validBookmark).success).toBe(true);
 	});
-});
 
-describe('zBookmarkFormSchema', () => {
-	const plannerId = newId();
-
-	const validForm = {
-		name: "Ursula's Sea Spell Collection",
-		url: 'https://undersea.example.com/spells',
-		tags: [tagId],
-		plannerId,
-	};
-
-	test('accepts a valid form payload', () => {
-		expect(zBookmarkFormSchema.safeParse(validForm).success).toBe(true);
-	});
-
-	test('accepts an empty tags array', () => {
+	test('accepts a bookmark with a last-used date', () => {
 		expect(
-			zBookmarkFormSchema.safeParse({ ...validForm, tags: [] }).success,
-		).toBe(true);
-	});
-
-	test('rejects an empty name', () => {
-		expect(
-			zBookmarkFormSchema.safeParse({ ...validForm, name: '' }).success,
-		).toBe(false);
-	});
-
-	test('rejects an invalid URL', () => {
-		expect(
-			zBookmarkFormSchema.safeParse({ ...validForm, url: 'not-a-url' }).success,
-		).toBe(false);
-	});
-
-	test('rejects a missing plannerId', () => {
-		const { plannerId: _, ...rest } = validForm;
-		expect(zBookmarkFormSchema.safeParse(rest).success).toBe(false);
-	});
-
-	test('accepts an optional notes field', () => {
-		expect(
-			zBookmarkFormSchema.safeParse({ ...validForm, notes: 'Some notes' })
+			zBookmarkInterface.safeParse({ ...validBookmark, lastUsedAt: new Date() })
 				.success,
 		).toBe(true);
 	});
 
-	test('accepts form without notes', () => {
-		expect(zBookmarkFormSchema.safeParse(validForm).success).toBe(true);
-	});
-
-	test('accepts notes set to an empty string, which the form starts at', () => {
+	test('rejects a last-used date that is not a date', () => {
 		expect(
-			zBookmarkFormSchema.safeParse({ ...validForm, notes: '' }).success,
-		).toBe(true);
+			zBookmarkInterface.safeParse({
+				...validBookmark,
+				lastUsedAt: '2026-11-26T00:00:00.000Z',
+			}).success,
+		).toBe(false);
 	});
 });

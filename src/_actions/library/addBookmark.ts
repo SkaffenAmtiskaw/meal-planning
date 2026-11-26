@@ -5,10 +5,11 @@ import { defineMutation } from '@/_actions/_utils/defineMutation';
 import { newId } from '@/_models/database/newId';
 import { planners } from '@/_models/database/planners';
 import type { BookmarkInterface } from '@/_models/library';
-import { zBookmarkFormSchema } from '@/_models/library';
+
+import { zBookmarkInput } from './bookmarkInput';
 
 export const addBookmark = defineMutation({
-	schema: zBookmarkFormSchema,
+	schema: zBookmarkInput,
 	access: { planner: (input) => input.plannerId, level: 'write' },
 	invalidates: (input) => [plannerCache.saved(input.plannerId)],
 	handler: async ({ plannerId, notes, ...requiredFields }) => {

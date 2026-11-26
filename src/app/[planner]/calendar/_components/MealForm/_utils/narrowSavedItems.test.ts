@@ -5,11 +5,11 @@ import { makeTagFilterOption } from '#fixtures/tagFilterOption';
 
 import { filterSavedItems } from './filterSavedItems';
 import { narrowSavedItems } from './narrowSavedItems';
-import { orderSavedItems } from './orderSavedItems';
+import { orderByRecentUse } from './orderByRecentUse';
 import { rankTagOptions } from './rankTagOptions';
 
-vi.mock('./orderSavedItems', () => ({
-	orderSavedItems: vi.fn(() => []),
+vi.mock('./orderByRecentUse', () => ({
+	orderByRecentUse: vi.fn(() => []),
 }));
 vi.mock('./filterSavedItems', () => ({
 	filterSavedItems: vi.fn(() => []),
@@ -25,13 +25,13 @@ describe('narrowSavedItems', () => {
 	it('filters the ordered saved recipes, and ranks the chips over the results', () => {
 		const criteria = { search: 'taco', tagIds: ['quick'] };
 		const chips = [makeTagFilterOption('quick', true)];
-		vi.mocked(orderSavedItems).mockReturnValueOnce([oats, tacos]);
+		vi.mocked(orderByRecentUse).mockReturnValueOnce([oats, tacos]);
 		vi.mocked(filterSavedItems).mockReturnValueOnce([tacos]);
 		vi.mocked(rankTagOptions).mockReturnValueOnce(chips);
 
 		const narrowed = narrowSavedItems([tacos, oats], criteria);
 
-		expect(orderSavedItems).toHaveBeenCalledWith([tacos, oats]);
+		expect(orderByRecentUse).toHaveBeenCalledWith([tacos, oats]);
 		expect(filterSavedItems).toHaveBeenCalledWith([oats, tacos], criteria);
 		expect(rankTagOptions).toHaveBeenCalledWith({
 			countOver: [tacos],

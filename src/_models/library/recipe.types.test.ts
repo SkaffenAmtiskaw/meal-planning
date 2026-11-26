@@ -1,12 +1,11 @@
 import { describe, expect, test } from 'vitest';
 
-import { zRecipeFormSchema, zRecipeInterface } from './recipe.types';
+import { zRecipeInterface } from './recipe.types';
 
 import { newId } from '../database/newId';
 
 const recipeId = newId();
 const tagId = newId();
-const plannerId = newId();
 
 const validRecipe = {
 	_id: recipeId,
@@ -96,31 +95,20 @@ describe('recipe interface', () => {
 			zRecipeInterface.safeParse({ ...validRecipe, servings: 'four' }).success,
 		).toBe(false);
 	});
-});
 
-describe('recipe form schema', () => {
-	const { _id: _, ...recipeWithoutId } = validRecipe;
-
-	test('accepts a valid recipe form submission', () => {
+	test('accepts a recipe with a last-used date', () => {
 		expect(
-			zRecipeFormSchema.safeParse({ ...recipeWithoutId, plannerId }).success,
+			zRecipeInterface.safeParse({ ...validRecipe, lastUsedAt: new Date() })
+				.success,
 		).toBe(true);
 	});
 
-	test('rejects a form submission missing plannerId', () => {
-		expect(zRecipeFormSchema.safeParse(recipeWithoutId).success).toBe(false);
-	});
-
-	test('accepts optional fields set to empty strings, which the form starts at', () => {
+	test('rejects a last-used date that is not a date', () => {
 		expect(
-			zRecipeFormSchema.safeParse({
-				...recipeWithoutId,
-				plannerId,
-				notes: '',
-				storage: '',
-				source: { name: '', url: '' },
-				time: { prep: '', cook: '', total: '', actual: '' },
+			zRecipeInterface.safeParse({
+				...validRecipe,
+				lastUsedAt: '2026-11-26T00:00:00.000Z',
 			}).success,
-		).toBe(true);
+		).toBe(false);
 	});
 });
