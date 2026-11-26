@@ -15,7 +15,7 @@ import { FormFeedbackAlert } from '@/_components';
 import { useEscapeLayer, useFormFeedback, useIsMobile } from '@/_hooks';
 import type { ActionResult } from '@/_utils/actionResult';
 
-import type { MealDraft, MealFormStatus } from './types';
+import type { MealDraft } from './types';
 import classes from './MealForm.module.css';
 
 import { DishList } from './_components/DishList/DishList';
@@ -39,7 +39,8 @@ type MealFormProps = {
 	// Gets the meal as it was saved, so the frame's message uses what went to the server.
 	onSuccess: (saved: MealInput) => void;
 	onCancel: () => void;
-	onStatusChange?: (status: MealFormStatus) => void;
+	// Tells the frame the meal's date as it changes, starting with the first one, so it can show it in its header.
+	onDateChange?: (date: string) => void;
 };
 
 /**
@@ -51,7 +52,7 @@ export const MealForm = ({
 	save,
 	onSuccess,
 	onCancel,
-	onStatusChange,
+	onDateChange,
 }: MealFormProps) => {
 	const {
 		draft,
@@ -80,15 +81,10 @@ export const MealForm = ({
 		successDuration: 0,
 	});
 
-	const reportStatus = useEffectEvent((next: MealFormStatus) =>
-		onStatusChange?.(next),
-	);
+	const reportDate = useEffectEvent((date: string) => onDateChange?.(date));
 	useEffect(() => {
-		reportStatus({
-			date: draft.date,
-			mealName: draft.mealName,
-		});
-	}, [draft.date, draft.mealName]);
+		reportDate(draft.date);
+	}, [draft.date]);
 
 	/**
 	 * Links a dish from the Saved recipes column, with the cursor in its search,

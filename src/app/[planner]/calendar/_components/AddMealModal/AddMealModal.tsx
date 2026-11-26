@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 
-import { Button, Modal, Stack, Text } from '@mantine/core';
+import { Button, Modal, Stack } from '@mantine/core';
 
 import { addMeal } from '@/_actions/calendar';
 import type { MealInput } from '@/_actions/calendar/types';
@@ -16,9 +16,9 @@ import { formatDate } from '@/_utils/formatDate';
 
 import classes from './AddMealModal.module.css';
 
-import { MealForm, type MealFormStatus, newMealDraft } from '../MealForm';
+import { MealForm, newMealDraft } from '../MealForm';
 import type { CalendarModalFrameProps } from '../CalendarModal/types';
-import { formatMealSubtitle } from './_utils/formatMealSubtitle';
+import { MealDateSubtitle } from '../MealDateSubtitle/MealDateSubtitle';
 
 /**
  * The Add Meal frame: a wide modal on desktop, and a full-screen sheet with
@@ -33,11 +33,11 @@ export function AddMealModal({
 	const isMobile = useIsMobile();
 	const { show } = useSnackbar();
 	const escapeLayers = useEscapeLayers();
-	// What the open form last reported. Cleared on close, so the next open starts with no subtitle.
-	const [status, setStatus] = useState<MealFormStatus | null>(null);
+	// The open form's date. Cleared on close, so the next open starts from its own date.
+	const [date, setDate] = useState('');
 
 	const handleClose = () => {
-		setStatus(null);
+		setDate('');
 		close();
 	};
 
@@ -48,8 +48,6 @@ export function AddMealModal({
 			message: `Added to ${formatDate(saved.date, 'shortWeekdayMonthDay')}`,
 		});
 	};
-
-	const subtitle = status ? formatMealSubtitle(status) : '';
 
 	return (
 		<Modal.Root
@@ -86,15 +84,7 @@ export function AddMealModal({
 									<Modal.Title fw={700} fz="xl">
 										Add Meal
 									</Modal.Title>
-									{subtitle && (
-										<Text
-											size="sm"
-											c="var(--text-muted)"
-											data-testid="modal-subtitle"
-										>
-											{subtitle}
-										</Text>
-									)}
+									<MealDateSubtitle date={date} />
 								</Stack>
 								<Modal.CloseButton aria-label="Close" />
 							</Modal.Header>
@@ -105,7 +95,7 @@ export function AddMealModal({
 								save={(input) => addMeal({ plannerId, ...input })}
 								onSuccess={handleSuccess}
 								onCancel={handleClose}
-								onStatusChange={setStatus}
+								onDateChange={setDate}
 							/>
 						</Modal.Body>
 					</Modal.Content>

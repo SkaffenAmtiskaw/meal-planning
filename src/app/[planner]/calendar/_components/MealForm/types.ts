@@ -16,11 +16,5 @@ export type MealDraft = {
 	dishes: DishDraft[];
 };
 
-/** What the form tells its frame as the user edits, so the frame can draw its header. */
-export type MealFormStatus = {
-	date: string;
-	mealName: string;
-};
-
 // The meal's own fields, which the form edits in place.
 export type MealField = 'date' | 'mealName' | 'description';

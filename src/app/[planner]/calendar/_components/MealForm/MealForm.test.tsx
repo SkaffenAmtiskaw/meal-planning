@@ -214,31 +214,27 @@ describe('MealForm', () => {
 		expect(vi.mocked(MealFormFooter).mock.lastCall?.[0].canSubmit).toBe(true);
 	});
 
-	it('reports the date and meal name to its frame as they change', () => {
-		const onStatusChange = vi.fn();
+	it('reports its date to its frame, starting with the first one', () => {
+		const onDateChange = vi.fn();
 		render(
 			<MealForm
 				initialDraft={draft}
 				save={vi.fn()}
 				onSuccess={vi.fn()}
 				onCancel={vi.fn()}
-				onStatusChange={onStatusChange}
+				onDateChange={onDateChange}
 			/>,
 		);
-		expect(onStatusChange).toHaveBeenLastCalledWith({
-			date: '2026-11-27',
-			mealName: 'Taco Night',
-		});
+		expect(onDateChange).toHaveBeenLastCalledWith('2026-11-27');
 
 		setField('mealName', 'Burrito Night');
+		expect(onDateChange).toHaveBeenCalledTimes(1);
 
-		expect(onStatusChange).toHaveBeenLastCalledWith({
-			date: '2026-11-27',
-			mealName: 'Burrito Night',
-		});
+		setField('date', '2026-12-10');
+		expect(onDateChange).toHaveBeenLastCalledWith('2026-12-10');
 	});
 
-	it('works without a frame listening for its status', () => {
+	it('works without a frame listening for its date', () => {
 		render(
 			<MealForm
 				initialDraft={draft}
@@ -286,14 +282,13 @@ describe('MealForm', () => {
 			dishes: [soup, makeDishDraft({ key: 'bread', name: 'Bread' })],
 		});
 
-		const renderForm = (onStatusChange = vi.fn()) =>
+		const renderForm = () =>
 			render(
 				<MealForm
 					initialDraft={linkingDraft}
 					save={vi.fn()}
 					onSuccess={vi.fn()}
 					onCancel={vi.fn()}
-					onStatusChange={onStatusChange}
 				/>,
 			);
 		const startLinking = () => act(() => mealDishes()?.startLinking('soup'));
