@@ -14,7 +14,7 @@ import { FormFeedbackAlert } from '@/_components';
 import { useFormFeedback, useIsMobile } from '@/_hooks';
 import type { ActionResult } from '@/_utils/actionResult';
 
-import type { DishDraft, MealDraft, MealFormStatus } from './types';
+import type { MealDraft, MealFormStatus } from './types';
 import classes from './MealForm.module.css';
 
 import { DishList } from './_components/DishList/DishList';
@@ -22,6 +22,7 @@ import { MealFields } from './_components/MealFields/MealFields';
 import { MealFormFooter } from './_components/MealFormFooter/MealFormFooter';
 import { MealFormLayout } from './_components/MealFormLayout/MealFormLayout';
 import { SavedRecipesColumn } from './_components/SavedRecipesColumn/SavedRecipesColumn';
+import { MealDishesProvider } from './_hooks/useDish';
 import { useLinkMode } from './_hooks/useLinkMode';
 import { useMealDraft } from './_hooks/useMealDraft';
 import { useOpenDishList } from './_hooks/useOpenDishList';
@@ -94,12 +95,12 @@ export const MealForm = ({
 	 * opens the dish's saved list instead, as a new open even if it's already
 	 * open.
 	 */
-	const startLinking = (dish: DishDraft) => {
+	const startLinking = (key: string) => {
 		if (isMobile) {
-			restartList(dish.key);
+			restartList(key);
 			return;
 		}
-		enterLinking(dish.key);
+		enterLinking(key);
 		searchRef.current?.focus();
 	};
 
@@ -167,24 +168,29 @@ export const MealForm = ({
 				}
 				meal={<MealFields values={draft} onFieldChange={setField} />}
 				dishes={
-					<DishList
-						dishes={draft.dishes}
-						dishCount={dishCount}
-						namelessKeys={namelessKeys}
-						linkingKey={linkingKey}
-						linkedIds={linkedIds}
-						openDishList={openDishList}
-						onAddDish={addDishWithList}
-						onRenameDish={renameDish}
-						onRemoveDish={removeDish}
-						onUnlinkDish={unlinkDish}
-						onSetReference={setReference}
-						onSetNote={setNote}
-						onStartLinking={startLinking}
-						onOpenList={openList}
-						onCloseList={closeList}
-						onChooseRecipe={chooseFromList}
-					/>
+					<MealDishesProvider
+						value={{
+							namelessKeys,
+							linkingKey,
+							linkedIds,
+							openDishList,
+							renameDish,
+							removeDish,
+							unlinkDish,
+							setReference,
+							setNote,
+							startLinking,
+							openList,
+							closeList,
+							chooseRecipe: chooseFromList,
+						}}
+					>
+						<DishList
+							dishes={draft.dishes}
+							dishCount={dishCount}
+							onAddDish={addDishWithList}
+						/>
+					</MealDishesProvider>
 				}
 				saved={
 					<SavedRecipesColumn

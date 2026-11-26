@@ -11,13 +11,12 @@ import {
 
 import clsx from 'clsx';
 
-import type { SavedItem } from '@/_actions/library/types';
 import { useFocusOnExpand, useIsMobile } from '@/_hooks';
 
 import classes from './DishRow.module.css';
 
 import { usePlannerSavedItems } from '../../../../_hooks/usePlannerSavedItems';
-import type { DishDraft } from '../../types';
+import { useDish } from '../../_hooks/useDish';
 import { DeleteDishButton } from '../DeleteDishButton/DeleteDishButton';
 import { DishNameInput } from '../DishNameInput/DishNameInput';
 import { DishNameSearch } from '../DishNameSearch/DishNameSearch';
@@ -27,26 +26,7 @@ import { PhoneSavedList } from '../PhoneSavedList/PhoneSavedList';
 import { RecipeChip } from '../RecipeChip/RecipeChip';
 
 type Props = {
-	dish: DishDraft;
 	canDelete: boolean;
-	// True once a save was stopped because this dish has something in it but no name.
-	nameless?: boolean;
-	// True while this dish is the one being linked to a saved recipe.
-	linking?: boolean;
-	// The saved recipes already on the meal, which the phone list shows as added.
-	linkedIds: ReadonlySet<string>;
-	// The id of this open of the dish's saved list on a phone, or null while it's closed.
-	listOpenId: number | null;
-	onRename: (name: string) => void;
-	onDelete: () => void;
-	onUnlink: () => void;
-	onReferenceChange: (text: string) => void;
-	onNoteChange: (note: string) => void;
-	onStartLinking: () => void;
-	onOpenList: () => void;
-	onCloseList: () => void;
-	// The phone list's Use: the dish takes the recipe's name and links to it.
-	onChooseRecipe: (item: SavedItem) => void;
 };
 
 /**
@@ -54,25 +34,11 @@ type Props = {
  * panel. Whether the panel is open isn't part of the draft, so each row keeps
  * its own, and several can be open at once. A closed row shows its note under it.
  * On a phone, the name field searches saved recipes, and while its list is open
- * the list takes the chips' line, as the design shows.
+ * the list takes the chips' line, as the design shows. The dish and the form's
+ * actions on it come from useDish().
  */
-export const DishRow = ({
-	dish,
-	canDelete,
-	nameless = false,
-	linking = false,
-	onRename,
-	onDelete,
-	onUnlink,
-	onReferenceChange,
-	onNoteChange,
-	onStartLinking,
-	linkedIds,
-	listOpenId,
-	onOpenList,
-	onCloseList,
-	onChooseRecipe,
-}: Props) => {
+export const DishRow = ({ canDelete }: Props) => {
+	const { dish, nameless, linking, listOpenId } = useDish();
 	const isMobile = useIsMobile();
 	const savedItems = usePlannerSavedItems();
 	const [open, setOpen] = useState(false);
@@ -111,32 +77,12 @@ export const DishRow = ({
 		>
 			<div className={classes.line}>
 				<div className={classes.name} ref={setNameNode}>
-					{isMobile ? (
-						<DishNameSearch
-							name={dish.name}
-							error={nameless}
-							linked={dish.source?.kind === 'saved'}
-							listOpen={listOpen}
-							onRename={onRename}
-							onUnlink={onUnlink}
-							onOpenList={onOpenList}
-						/>
-					) : (
-						<DishNameInput
-							name={dish.name}
-							error={nameless}
-							onRename={onRename}
-						/>
-					)}
+					{isMobile ? <DishNameSearch /> : <DishNameInput />}
 				</div>
 				{!showList && (
 					<>
 						<Group gap="xs" wrap="nowrap" className={classes.chips}>
-							<RecipeChip
-								source={dish.source}
-								onTogglePanel={togglePanel}
-								onStartLinking={onStartLinking}
-							/>
+							<RecipeChip onTogglePanel={togglePanel} />
 							<NoteChip
 								hasNote={dish.note !== ''}
 								onTogglePanel={toggleFromNote}
@@ -160,21 +106,12 @@ export const DishRow = ({
 				)}
 				{canDelete && (
 					<div className={classes.delete}>
-						<DeleteDishButton dishName={dish.name} onDelete={onDelete} />
+						<DeleteDishButton />
 					</div>
 				)}
 			</div>
 			{/* Keyed on the open, so each new open starts the list afresh. */}
-			{showList && (
-				<PhoneSavedList
-					key={listOpenId}
-					search={dish.name}
-					linkedIds={linkedIds}
-					fieldNode={nameNode}
-					onUse={onChooseRecipe}
-					onClose={onCloseList}
-				/>
-			)}
+			{showList && <PhoneSavedList key={listOpenId} fieldNode={nameNode} />}
 			{!open && dish.note !== '' && (
 				<Text size="sm" c="var(--text-muted)" className={classes.note}>
 					{dish.note}
@@ -193,14 +130,7 @@ export const DishRow = ({
 				</Group>
 			)}
 			<Collapse expanded={open}>
-				<DishPanel
-					dish={dish}
-					noteRef={noteRef}
-					onUnlink={onUnlink}
-					onReferenceChange={onReferenceChange}
-					onNoteChange={onNoteChange}
-					onStartLinking={onStartLinking}
-				/>
+				<DishPanel noteRef={noteRef} />
 			</Collapse>
 		</Paper>
 	);
