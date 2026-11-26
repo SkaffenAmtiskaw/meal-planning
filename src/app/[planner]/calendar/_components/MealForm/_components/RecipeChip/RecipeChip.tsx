@@ -1,19 +1,17 @@
 'use client';
 
-import type { DishSource } from '@/_actions/calendar/types';
 import { PillButton } from '@/_components';
 import { withoutProtocol } from '@/_utils/withoutProtocol';
 
 import classes from './RecipeChip.module.css';
 
 import { usePlannerSavedItems } from '../../../../_hooks/usePlannerSavedItems';
+import { useDish } from '../../_hooks/useDish';
 import { savedItemName } from '../../_utils/savedItemName';
 import { SourceMark } from '../SourceMark/SourceMark';
 
 type Props = {
-	source: DishSource | null;
 	onTogglePanel: () => void;
-	onStartLinking: () => void;
 };
 
 /**
@@ -22,11 +20,9 @@ type Props = {
  * cut off, and shows in full on hover. Tapping "Link recipe" starts linking, and
  * tapping a filled chip opens or closes the row's panel.
  */
-export const RecipeChip = ({
-	source,
-	onTogglePanel,
-	onStartLinking,
-}: Props) => {
+export const RecipeChip = ({ onTogglePanel }: Props) => {
+	const { dish, startLinking } = useDish();
+	const { source } = dish;
 	const savedItems = usePlannerSavedItems();
 
 	if (!source) {
@@ -34,7 +30,7 @@ export const RecipeChip = ({
 			<PillButton
 				variant="dashed"
 				className={classes.root}
-				onClick={onStartLinking}
+				onClick={() => startLinking(dish.key)}
 			>
 				<SourceMark kind="none" />
 				<span className={classes.label}>Link recipe</span>

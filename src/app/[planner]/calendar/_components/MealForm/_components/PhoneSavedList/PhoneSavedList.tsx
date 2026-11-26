@@ -5,9 +5,8 @@ import { Fragment, useState } from 'react';
 import { Divider, Paper, Stack } from '@mantine/core';
 import { useClickOutside } from '@mantine/hooks';
 
-import type { SavedItem } from '@/_actions/library/types';
-
 import { usePlannerSavedItems } from '../../../../_hooks/usePlannerSavedItems';
+import { useDish } from '../../_hooks/useDish';
 import { narrowSavedItems } from '../../_utils/narrowSavedItems';
 import { AddAsNewDishRow } from '../AddAsNewDishRow/AddAsNewDishRow';
 import { PhoneSavedResultRow } from '../PhoneSavedResultRow/PhoneSavedResultRow';
@@ -17,33 +16,24 @@ import { phoneListRows } from './_utils/phoneListRows';
 import { phoneListTitle } from './_utils/phoneListTitle';
 
 type Props = {
-	// What's typed in the dish's name field.
-	search: string;
-	// The saved recipes already on the meal.
-	linkedIds: ReadonlySet<string>;
 	// The name field's area. A tap there leaves the list open, as a tap in the list does.
 	fieldNode: HTMLElement | null;
-	onUse: (item: SavedItem) => void;
-	onClose: () => void;
 };
 
 /**
  * The saved recipes under a dish's name field on a phone, narrowed by what's
- * typed and the selected tags, then a last row that keeps what's typed as a
- * new dish. It closes on a tap outside both the field and the list.
+ * typed in it and the selected tags, then a last row that keeps what's typed as
+ * a new dish. It closes on a tap outside both the field and the list. Using a
+ * recipe gives the dish its name and links to it.
  */
-export const PhoneSavedList = ({
-	search,
-	linkedIds,
-	fieldNode,
-	onUse,
-	onClose,
-}: Props) => {
+export const PhoneSavedList = ({ fieldNode }: Props) => {
+	const { dish, linkedIds, chooseRecipe, closeList } = useDish();
+	const search = dish.name;
 	const savedItems = usePlannerSavedItems();
 	// The selected tags' ids, in pick order. DishRow keys this list on each open, so every open starts with none.
 	const [tagIds, setTagIds] = useState<string[]>([]);
 	const [listNode, setListNode] = useState<HTMLDivElement | null>(null);
-	useClickOutside(onClose, null, [fieldNode, listNode]);
+	useClickOutside(closeList, null, [fieldNode, listNode]);
 
 	const criteria = { search, tagIds };
 	const { results, tagOptions } = narrowSavedItems(savedItems, criteria);
@@ -75,14 +65,14 @@ export const PhoneSavedList = ({
 								<PhoneSavedResultRow
 									item={item}
 									added={linkedIds.has(item._id)}
-									onUse={() => onUse(item)}
+									onUse={() => chooseRecipe(dish.key, item)}
 								/>
 							</Fragment>
 						))}
 						<Divider />
 					</>
 				)}
-				<AddAsNewDishRow text={search} onAdd={onClose} />
+				<AddAsNewDishRow text={search} onAdd={closeList} />
 			</Stack>
 		</Paper>
 	);
