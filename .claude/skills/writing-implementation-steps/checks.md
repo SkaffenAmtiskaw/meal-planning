@@ -10,13 +10,14 @@ Which kind of check a step gets depends on what it changes:
 Some steps also need a particular check, on top of the kind above:
 - **If its Source names a Symptom:** follow the Symptom's repro steps, which should no longer show the bug.
 - **If it builds a failure, empty or read-only behavior:** check that behavior.
-- **If it builds an Enforcement item:** break what it enforces. "Temporarily add `<code>` to `<file>`, run `<command>`, see it fail with `<the error or rule it reports>`. Revert. Proves: <what the item catches>."
+- **If it builds an Enforcement item:** break what it enforces. "The implementer temporarily adds `<code>` to `<file>`, runs `<command>` and shows you it failing with `<the error or rule it reports>`, then reverts. Proves: <what the item catches>."
 - **If it writes a Convention into a doc:** open the doc at its section and read it there.
 
 Each check:
 - **Proves what the step built.** "Tests pass" and "types compile" aren't checks, since they hold for every step, and neither is a library's default behavior, such as a Mantine Popover flipping above its trigger, which the user trusts without checking.
 - **Ends with "Proves: <what it shows>",** so the user knows what it will teach them before spending time on it.
 - **Is usable as written.** It spells out the command the user runs, the text they paste or the screen they open, or, if that's only known at build time, such as a token, says the implementer gives it to them. It never sends them elsewhere in the note, such as to "Step 1's token".
+- **Keeps the user out of the worktree.** The step is built in a worktree, and the user never opens or edits a file there, because working in a worktree is a pain for them. So if a check needs a temporary edit, such as a break-it check, the implementer makes it and shows them the output.
 
 ## The User's Checks and the Implementer's
 Each check costs the user time, so the user's checks stay within the limits below, and anything else the step needs verified goes in its Approach, for the implementer:

@@ -34,7 +34,11 @@ The user wants instructions followed for what they're for, not to the letter. If
   - **If it needs something only the user has,** such as knowledge of their own setup, their sign-in or their judgment: if they might know it offhand, such as how a GitHub setting is set, ask them. If they wouldn't, or don't, walk them through the check as "What only the user can do" describes, and run the parts that don't need them yourself.
   - **If nothing can show it until a later step builds something:** leave it to that step's check, and say why it can't be settled sooner.
   - **Otherwise:** find it out yourself, by reading the code, the built output or the docs, or by running a command or the app. A check you hand the user waits until they get to it, so the work stalls.
-- **What only the user can do.** If work needs setup outside the repo or a check only they can do, walk them through it at the point it's needed, one step at a time, and wait for them before the next. For a check, say what they should see and what it proves. A list of setup at the end of a summary reads as reference, not as a prompt to act.
+- **What only the user can do.** If work needs setup outside the repo or a check only they can do, walk them through it at the point it's needed, one step at a time, and wait for them before the next. A list of setup at the end of a summary reads as reference, not as a prompt to act. How you hand over each step:
+  - **Its actions:** give each one its own list item with a bold header, such as "1. **Merge the PR:** ..." then "2. **Run this command:** ...". On 2026-11-07 the user missed an action buried in a paragraph and ran the next command too early.
+  - **What it proves:** for a check, say after its actions what they should see and what that proves.
+
+  Whether you hand them a step now or draft one into a note for a later session, never send them to a file in a worktree, because working in a worktree is a pain for them. If a worktree needs a value they supply, such as a key in `.env.local`, have them add it to the main checkout's copy. Then copy it over yourself.
 - **New-session cards.** Whether you put up a new-session card with `start_session` or give the user a command to type depends on what the card would bring:
   - **If your skill says to put up a card:** do as it says.
   - **If the new session needs something the typed command can't give it,** such as the user's complaint in their own words: put up the card.
