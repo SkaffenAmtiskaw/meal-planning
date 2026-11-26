@@ -55,16 +55,16 @@ Then report, in these sections, in this order:
 
 After the report:
 1. **Checks your runs already cover:** ask the user whether to drop each one.
-2. **Checks only the user can do:** if one needs this step committed and pushed, first ask the user to review its changes and then to commit and push it. Then walk them through each check.
-3. **End by handing the step to the user:** ask them to do the acceptance checks they haven't done yet, and to review the step's changes if they haven't.
+2. **Checks only the user can do:** if one needs this step committed and pushed, first ask the user to review its changes, and say that approving them commits and pushes the step. Once they approve, commit and push it. Then walk them through each check.
+3. **End by handing the step to the user:** ask them to do the acceptance checks they haven't done yet, and to review the step's changes if they haven't. Then ask for the step's final approval.
 
 ## 4. Handle the User's Feedback
 1. **If a piece of feedback is a change or addition,** sort where it goes, as step 2 describes.
-2. **Handle the feedback that stays in this step** as the `building-code` skill describes under "Handle the User's Feedback", and report each change again in step 3's form, covering only what changed. Repeat items 1 and 2 until the user confirms the step is done.
-3. **Triage the items added to the out-of-scope list since step 3's triage.** Handle each item the user pulls in as step 3 describes. If one goes in this step, report it as item 2 describes, then wait for the user to confirm the step again.
+2. **Handle the feedback that stays in this step** as the `building-code` skill describes under "Handle the User's Feedback", and report each change again in step 3's form, covering only what changed. Repeat items 1 and 2 until the user gives the step its final approval. Then commit the step's changes.
+3. **Triage the items added to the out-of-scope list since step 3's triage.** Handle each item the user pulls in as step 3 describes. If one goes in this step, report it as item 2 describes. Then ask for the final approval of its changes, and commit them once the user gives it.
 
 ## 5. Update the Note
-1. If the story is a pattern, confirm in the code that each Migration Checklist item this step took on is done, because the acceptance checks cover a place or two, not every place the step migrated. If an item isn't done, build it, report it as step 4's item 2 describes, and wait for the user to confirm the step again. Once every item is done, check each item's box.
+1. If the story is a pattern, confirm in the code that each Migration Checklist item this step took on is done, because the acceptance checks cover a place or two, not every place the step migrated. If an item isn't done, build it and report it as step 4's item 2 describes. Then ask for the final approval of its changes, and commit them once the user gives it. Once every item is done, check each item's box.
 2. Check the step's acceptance boxes, remove any check the user dropped, and add `**Status:** ✅ Complete`.
 3. If anything differs from the plan, was added at review or dropped, add an **As built:** note under the step. For a dropped check, it says which of your runs covered it.
 4. If this was the last step of a tweak or sweep, open its PR as `opening-the-pr.md`, in the `building-code` skill's folder, describes, because a tweak or sweep has no `/final-review` to open one.

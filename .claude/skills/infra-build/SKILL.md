@@ -50,13 +50,13 @@ Triage the out-of-scope list first. For each item the user pulls in:
 Then show the evidence from each check that proved a Goal, so the user sees each Goal proved without opening anything. Below it, show the table of changed files, with a column for any choice you made in that file without asking and what settles it. If anything differs from the step as written, such as a Sarah check you took over, say so in a line or two under the table, as the draft of its As built note. Then open the Code tab's diff pane, so the full diff is at hand. Don't ask the user to review the diff, since for an infra story they care more that it works than how it's built.
 
 After the report:
-1. **Walk the user through their Sarah checks:** if one needs this step committed and pushed to a branch that will be merged, first ask the user to commit and push it. Then take over each check whose result you can now see, as step 2 describes, and walk them through the rest.
-2. **End by handing the step to the user:** if it has Sarah checks the user hasn't done, ask the user to do those checks. Otherwise, ask whether the step is done.
+1. **Walk the user through their Sarah checks:** if one needs this step committed and pushed to a branch that will be merged, first ask the user to approve the step so far, and say that approving commits and pushes it. Once they approve, commit and push it. Then take over each check whose result you can now see, as step 2 describes, and walk them through the rest.
+2. **End by handing the step to the user:** if it has Sarah checks the user hasn't done, ask the user to do those checks, and then to give the step its final approval. Otherwise, ask for the step's final approval.
 
 ## 4. Handle the User's Feedback
 1. **If a piece of feedback is a change or addition,** sort where it goes, as step 2 describes.
-2. **Handle the feedback that stays in this step** as the `building-code` skill describes under "Handle the User's Feedback", and report each change again in step 3's form, covering only what changed. Repeat items 1 and 2 until the user confirms the step is done.
-3. **Triage the items added to the out-of-scope list since step 3's triage.** Handle each item the user pulls in as step 3 describes. If one goes in this step, report it as item 2 describes, then wait for the user to confirm the step again.
+2. **Handle the feedback that stays in this step** as the `building-code` skill describes under "Handle the User's Feedback", and report each change again in step 3's form, covering only what changed. Repeat items 1 and 2 until the user gives the step its final approval. Then commit the step's changes.
+3. **Triage the items added to the out-of-scope list since step 3's triage.** Handle each item the user pulls in as step 3 describes. If one goes in this step, report it as item 2 describes. Then ask for the final approval of its changes, and commit them once the user gives it.
 
 ## 5. Update the Note
 1. Check the step's Sarah check boxes, including the ones you took over, remove any check the user dropped, and add `**Status:** ✅ Complete`.

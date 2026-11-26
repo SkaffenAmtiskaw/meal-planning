@@ -100,8 +100,8 @@ The commands that need explaining:
 ## Git and Files
 - **Checkouts:** planning sessions run in the main checkout, which stays on `develop` and is never edited, so the SessionStart hook can keep it on the latest `develop`. Every change to the code repo is made in a worktree session on its own branch, and reaches `develop` through a PR, because `develop` accepts nothing else.
 - **Archiving:** a worktree session holds its worktree, and that worktree's slot, until it's archived. Archiving hands both to the next new session, which checks out its own branch in that folder. So once a worktree session has nothing left to do, offer to archive it with `archive_session`. If some of its work waits on its PR's merge, such as held notes work, offer once that work is done. Otherwise, offer without waiting for the merge.
-- **Commits:** commit only this session's files, by path, since other sessions' changes may be staged too. Whether the user has to ask first depends on the branch:
-  - **If it will be merged:** commit only when they ask.
+- **Commits:** commit only this session's files, by path, since other sessions' changes may be staged too. When you commit depends on the branch:
+  - **If it will be merged:** commit when they ask, or when they give an approval that a skill's steps say commits, usually its final approval of the work. When you ask for that approval, say that approving commits, and if it's the final approval, say so, such as "Final approval: is Step 3 done? Approving commits it." Label its reply button "Approve and commit". The user often approves a draft or part of a change that isn't ready to commit, so any other approval commits nothing.
   - **If it's a throwaway that will never be merged:** commit and push freely, since nothing on it reaches the app.
 - **Changes you didn't make:** the user often runs several sessions at once and edits notes by hand. What you do depends on when you find one:
   - **When you commit:** if it doesn't look like another session's work, ask about it.
