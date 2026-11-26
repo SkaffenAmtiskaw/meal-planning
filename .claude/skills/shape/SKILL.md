@@ -54,6 +54,7 @@ The idea is often a line or two, and a wrong guess about its scope would carry i
 - **Scope:** what you think is in and what's out.
 - **The work:** what you tentatively think it will look like, such as the likely type and the areas it touches. It's a first guess, not a direction or a design. Step 5 offers the directions.
 - **Assumptions,** only if the scope or the work depends on one: each assumption, and what depends on it. Don't go looking for them, because a listed assumption starts to read as settled.
+- **Words you read differently,** only if the idea has any: each word or phrase that seems not to say what the user meant, and how you read it. The notes record what they meant, so only their answer settles it.
 
 Ask whether it matches what they have in mind, and wait for the answer. Work their corrections into your understanding. If one changes where you'd look, look again briefly. Everything after this builds on the corrected picture.
 
@@ -118,7 +119,7 @@ What you draft depends on the direction the user picked, or on step 3 if the ide
 A story's note:
 - **Where It Stands:** the `^status` line and the summary. At this stage, the summary is the chosen direction in a sentence or two.
 - **Open Decisions:** each blocking decision from step 3 on its own line, written as a question, not a proposal, with the lines step 3 recorded under it. Delete the section if step 3 found no blocking decisions.
-- **The user's content:** move everything from the idea into the template's sections. Keep their wording. If something fits no section, put it in the Inbox rather than dropping it.
+- **The user's content:** move everything from the idea into the template's sections. Keep what they meant. If something fits no section, put it in the Inbox rather than dropping it.
 - **Scope:** the scope from the overview, with the user's corrections, goes in the template's sections that say what the story covers.
 - **Frontmatter:** set `type`, set `confirmed` to today, and fill `blocked-by` as Note Conventions describes. Then set `status`:
   - **A tweak with no open decision:** `status: ready`, because a tweak has no steps to plan.
