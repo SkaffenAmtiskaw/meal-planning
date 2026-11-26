@@ -2,6 +2,8 @@
 
 import { Button } from '@mantine/core';
 
+import { savedItemAction } from '../../_utils/savedItemAction';
+
 type Props = {
 	itemName: string;
 	// The recipe is already on the meal, so the action does nothing.
@@ -23,7 +25,9 @@ export const SavedItemAction = ({
 	linking,
 	onPick,
 }: Props) => {
-	if (added) {
+	const action = savedItemAction({ added, linking });
+
+	if (action === 'added') {
 		return (
 			<Button
 				variant="muted"
@@ -37,7 +41,7 @@ export const SavedItemAction = ({
 		);
 	}
 
-	return linking ? (
+	return action === 'link' ? (
 		<Button
 			size="compact-sm"
 			radius="xl"
