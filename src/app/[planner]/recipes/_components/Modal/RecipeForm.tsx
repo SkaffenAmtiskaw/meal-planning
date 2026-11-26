@@ -29,10 +29,12 @@ import type { RecipeInterface } from '@/_models/types';
 import { TagCombobox } from '../TagCombobox';
 import type { TagOption } from '../types';
 
-// Resolver only validates fields Mantine manages; ingredients/instructions/tags
-// are controlled via useState and merged in handleSubmit.
-// source.url uses z.string() (not z.url()) to allow empty strings — the action
-// transforms empty strings to undefined before saving.
+/**
+ * Resolver only validates fields Mantine manages; ingredients/instructions/tags
+ * are controlled via useState and merged in handleSubmit.
+ * source.url uses z.string() (not z.url()) to allow empty strings — the action
+ * transforms empty strings to undefined before saving.
+ */
 const zFormFields = zRecipeInput
 	.omit({
 		ingredients: true,

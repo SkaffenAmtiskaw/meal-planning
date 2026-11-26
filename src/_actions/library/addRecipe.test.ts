@@ -72,11 +72,11 @@ describe('addRecipe', () => {
 		});
 	});
 
-	test('does not store a lastUsed sent with the recipe, since only the server sets it', async () => {
-		await addRecipe({ ...validData, lastUsed: new Date() } as never);
+	test('does not store a lastUsedAt sent with the recipe, since only the server sets it', async () => {
+		await addRecipe({ ...validData, lastUsedAt: new Date() } as never);
 
 		const pushed = vi.mocked(planners.updateOne).mock.calls[0][1].$push?.saved;
-		expect(pushed).not.toHaveProperty('lastUsed');
+		expect(pushed).not.toHaveProperty('lastUsedAt');
 	});
 
 	test("invalidates the planner's saved items", async () => {

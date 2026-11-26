@@ -91,10 +91,10 @@ describe('addBookmark', () => {
 		expect(pushedBookmark()).toHaveProperty('notes', 'Read later');
 	});
 
-	test('does not store a lastUsed sent with the bookmark, since only the server sets it', async () => {
-		await addBookmark({ ...validData, lastUsed: new Date() } as never);
+	test('does not store a lastUsedAt sent with the bookmark, since only the server sets it', async () => {
+		await addBookmark({ ...validData, lastUsedAt: new Date() } as never);
 
-		expect(pushedBookmark()).not.toHaveProperty('lastUsed');
+		expect(pushedBookmark()).not.toHaveProperty('lastUsedAt');
 	});
 
 	test("invalidates the planner's saved items", async () => {

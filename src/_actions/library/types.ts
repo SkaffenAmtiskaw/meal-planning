@@ -5,7 +5,7 @@ type SavedItemSummary = {
 	name: string;
 	tags: TagInterface[];
 	/** ISO date of the last saved meal that linked it; left out until one does. */
-	lastUsed?: string;
+	lastUsedAt?: string;
 };
 
 /**

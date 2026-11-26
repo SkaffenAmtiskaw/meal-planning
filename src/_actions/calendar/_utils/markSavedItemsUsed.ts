@@ -14,7 +14,7 @@ export const markSavedItemsUsed = async (
 	if (savedIds.length === 0) return;
 	await planners.updateOne(
 		{ _id: plannerId },
-		{ $set: { 'saved.$[item].lastUsed': usedAt } },
+		{ $set: { 'saved.$[item].lastUsedAt': usedAt } },
 		{ arrayFilters: [{ 'item._id': { $in: savedIds } }] },
 	);
 };

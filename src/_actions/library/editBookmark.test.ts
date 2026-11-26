@@ -94,6 +94,20 @@ describe('editBookmark', () => {
 		);
 	});
 
+	test('writes only the fields the form edits, so the last-used date stays as it was', async () => {
+		await editBookmark(validData);
+
+		const update = vi.mocked(planners.updateOne).mock.calls[0][1] as {
+			$set: Record<string, unknown>;
+			$unset?: Record<string, unknown>;
+		};
+		expect(
+			[...Object.keys(update.$set), ...Object.keys(update.$unset ?? {})].sort(),
+		).toEqual(
+			['saved.$.name', 'saved.$.url', 'saved.$.tags', 'saved.$.notes'].sort(),
+		);
+	});
+
 	test('returns _id and name on success', async () => {
 		const result = await editBookmark(validData);
 

@@ -2,8 +2,10 @@ import { z } from 'zod';
 
 import { zRecipeInterface } from '@/_models/library';
 
-// Only the fields the form edits, so a field the server sets never comes from the browser.
-// The form starts its optional fields at '', and the action leaves them out before it writes.
+/**
+ * Only the fields the form edits, so a field the server sets never comes from the browser.
+ * The form starts its optional fields at '', and the action leaves them out before it writes.
+ */
 export const zRecipeInput = zRecipeInterface
 	.pick({
 		ingredients: true,

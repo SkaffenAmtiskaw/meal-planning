@@ -49,14 +49,14 @@ describe('zRecipeInput', () => {
 		expect(zRecipeInput.parse(filled)).toEqual(filled);
 	});
 
-	test('drops fields the form does not edit, such as lastUsed', () => {
+	test('drops fields the form does not edit, such as lastUsedAt', () => {
 		const parsed = zRecipeInput.parse({
 			...validInput,
 			_id: newId(),
-			lastUsed: new Date(),
+			lastUsedAt: new Date(),
 		});
 
 		expect(parsed).not.toHaveProperty('_id');
-		expect(parsed).not.toHaveProperty('lastUsed');
+		expect(parsed).not.toHaveProperty('lastUsedAt');
 	});
 });

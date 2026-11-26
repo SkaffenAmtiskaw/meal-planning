@@ -17,13 +17,13 @@ describe('markSavedItemsUsed', () => {
 		vi.resetAllMocks();
 	});
 
-	it('sets lastUsed on each named saved item in one write', async () => {
+	it('sets lastUsedAt on each named saved item in one write', async () => {
 		await markSavedItemsUsed(plannerId, ['saved-1', 'saved-2'], usedAt);
 
 		expect(planners.updateOne).toHaveBeenCalledOnce();
 		expect(planners.updateOne).toHaveBeenCalledWith(
 			{ _id: plannerId },
-			{ $set: { 'saved.$[item].lastUsed': usedAt } },
+			{ $set: { 'saved.$[item].lastUsedAt': usedAt } },
 			{ arrayFilters: [{ 'item._id': { $in: ['saved-1', 'saved-2'] } }] },
 		);
 	});

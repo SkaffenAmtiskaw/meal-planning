@@ -98,7 +98,7 @@ describe('recipe interface', () => {
 
 	test('accepts a recipe with a last-used date', () => {
 		expect(
-			zRecipeInterface.safeParse({ ...validRecipe, lastUsed: new Date() })
+			zRecipeInterface.safeParse({ ...validRecipe, lastUsedAt: new Date() })
 				.success,
 		).toBe(true);
 	});
@@ -107,7 +107,7 @@ describe('recipe interface', () => {
 		expect(
 			zRecipeInterface.safeParse({
 				...validRecipe,
-				lastUsed: '2026-11-26T00:00:00.000Z',
+				lastUsedAt: '2026-11-26T00:00:00.000Z',
 			}).success,
 		).toBe(false);
 	});

@@ -10,7 +10,7 @@ export const zBookmarkInterface = z.object({
 	tags: z.array(zId),
 	notes: zOptionalNonEmptyString,
 	// Set by the server when a saved meal links the bookmark; left out until then.
-	lastUsed: z.date().optional(),
+	lastUsedAt: z.date().optional(),
 });
 
 export type BookmarkInterface = z.infer<typeof zBookmarkInterface>;

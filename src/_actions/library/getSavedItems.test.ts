@@ -81,15 +81,15 @@ describe('getSavedItems', () => {
 	});
 
 	test('gives a used item its last-used date as an ISO string', async () => {
-		const lastUsed = new Date('2026-11-25T18:30:00.000Z');
+		const lastUsedAt = new Date('2026-11-25T18:30:00.000Z');
 		plannerWith([
-			{ ...recipe, lastUsed },
-			{ ...bookmark, lastUsed },
+			{ ...recipe, lastUsedAt },
+			{ ...bookmark, lastUsedAt },
 		]);
 
 		const items = await getSavedItems(plannerId);
 
-		expect(items.map((item) => item.lastUsed)).toEqual([
+		expect(items.map((item) => item.lastUsedAt)).toEqual([
 			'2026-11-25T18:30:00.000Z',
 			'2026-11-25T18:30:00.000Z',
 		]);
@@ -100,7 +100,7 @@ describe('getSavedItems', () => {
 
 		const items = await getSavedItems(plannerId);
 
-		for (const item of items) expect(item).not.toHaveProperty('lastUsed');
+		for (const item of items) expect(item).not.toHaveProperty('lastUsedAt');
 	});
 
 	test("resolves each item's tags against the planner's tags", async () => {

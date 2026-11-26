@@ -1,6 +1,6 @@
 import type { SavedItem } from '@/_actions/library/types';
 import type { TagInterface } from '@/_models/types';
-import { compareIgnoringCase } from '@/_utils/compareIgnoringCase';
+import { compareIgnoringCaseAndAccents } from '@/_utils/compareIgnoringCaseAndAccents';
 
 import type { TagFilterOption } from './types';
 
@@ -52,7 +52,7 @@ export const rankTagOptions = ({
 				b.count - a.count ||
 				(plannerCounts.get(b.tag._id)?.count ?? 0) -
 					(plannerCounts.get(a.tag._id)?.count ?? 0) ||
-				compareIgnoringCase(a.tag.name, b.tag.name),
+				compareIgnoringCaseAndAccents(a.tag.name, b.tag.name),
 		)
 		.map(
 			({ tag, count }): TagFilterOption => ({ tag, selected: false, count }),

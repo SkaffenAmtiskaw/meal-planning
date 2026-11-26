@@ -8,7 +8,7 @@ export const zRecipeInterface = z.object({
 	ingredients: z.array(z.string()),
 	instructions: z.array(z.string()),
 	// Set by the server when a saved meal links the recipe; left out until then.
-	lastUsed: z.date().optional(),
+	lastUsedAt: z.date().optional(),
 	name: z.string().min(1, { error: 'Name is required' }),
 	notes: zOptionalNonEmptyString,
 	servings: z.number().optional(),

@@ -12,11 +12,11 @@ describe('orderByRecentUse', () => {
 			makeSavedItem({ name: 'Apple Crumble' }),
 			makeSavedItem({
 				name: 'Overnight Oats',
-				lastUsed: '2026-11-20T09:00:00.000Z',
+				lastUsedAt: '2026-11-20T09:00:00.000Z',
 			}),
 			makeSavedItem({
 				name: 'Mushroom Risotto',
-				lastUsed: '2026-11-24T18:30:00.000Z',
+				lastUsedAt: '2026-11-24T18:30:00.000Z',
 			}),
 		]);
 
@@ -31,8 +31,8 @@ describe('orderByRecentUse', () => {
 		const usedAt = '2026-11-23T12:00:00.000Z';
 
 		const ordered = orderByRecentUse([
-			makeSavedItem({ name: 'Lemon Herb Chicken', lastUsed: usedAt }),
-			makeSavedItem({ name: 'black Bean Tacos', lastUsed: usedAt }),
+			makeSavedItem({ name: 'Lemon Herb Chicken', lastUsedAt: usedAt }),
+			makeSavedItem({ name: 'black Bean Tacos', lastUsedAt: usedAt }),
 		]);
 
 		expect(names(ordered)).toEqual(['black Bean Tacos', 'Lemon Herb Chicken']);

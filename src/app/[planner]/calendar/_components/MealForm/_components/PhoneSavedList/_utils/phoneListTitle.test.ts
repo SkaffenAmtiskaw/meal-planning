@@ -2,10 +2,11 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { makeSavedItem } from '#fixtures/savedItem';
 
-import { hasBeenUsed } from './hasBeenUsed';
 import { phoneListTitle } from './phoneListTitle';
 
-vi.mock('./hasBeenUsed', () => ({
+import { hasBeenUsed } from '../../../_utils/hasBeenUsed';
+
+vi.mock('../../../_utils/hasBeenUsed', () => ({
 	hasBeenUsed: vi.fn(() => false),
 }));
 

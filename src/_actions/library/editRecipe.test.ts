@@ -167,6 +167,33 @@ describe('editRecipe', () => {
 			>;
 			expect(call.$unset).toBeUndefined();
 		});
+
+		it('writes only the fields the form edits, so the last-used date stays as it was', async () => {
+			await editRecipe(validData);
+
+			const update = vi.mocked(planners.updateOne).mock.calls[0][1] as {
+				$set: Record<string, unknown>;
+				$unset?: Record<string, unknown>;
+			};
+			expect(
+				[
+					...Object.keys(update.$set),
+					...Object.keys(update.$unset ?? {}),
+				].sort(),
+			).toEqual(
+				[
+					'saved.$.name',
+					'saved.$.ingredients',
+					'saved.$.instructions',
+					'saved.$.tags',
+					'saved.$.source',
+					'saved.$.time',
+					'saved.$.servings',
+					'saved.$.notes',
+					'saved.$.storage',
+				].sort(),
+			);
+		});
 	});
 
 	describe('success', () => {

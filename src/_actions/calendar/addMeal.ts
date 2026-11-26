@@ -23,8 +23,10 @@ export const addMeal = defineMutation({
 		plannerCache.saved(input.plannerId),
 	],
 	handler: async ({ plannerId, date, mealName, description, dishes }) => {
-		// The driver stores an undefined field as null, so an empty optional field
-		// gets no key at all.
+		/**
+		 * The driver stores an undefined field as null, so an empty optional field
+		 * gets no key at all.
+		 */
 		const mealDishes = dishes.map((dish): DishInterface => {
 			let source: DishInterface['source'];
 			if (dish.source?.kind === 'saved') {

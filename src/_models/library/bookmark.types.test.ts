@@ -72,7 +72,7 @@ describe('bookmark interface', () => {
 
 	test('accepts a bookmark with a last-used date', () => {
 		expect(
-			zBookmarkInterface.safeParse({ ...validBookmark, lastUsed: new Date() })
+			zBookmarkInterface.safeParse({ ...validBookmark, lastUsedAt: new Date() })
 				.success,
 		).toBe(true);
 	});
@@ -81,7 +81,7 @@ describe('bookmark interface', () => {
 		expect(
 			zBookmarkInterface.safeParse({
 				...validBookmark,
-				lastUsed: '2026-11-26T00:00:00.000Z',
+				lastUsedAt: '2026-11-26T00:00:00.000Z',
 			}).success,
 		).toBe(false);
 	});

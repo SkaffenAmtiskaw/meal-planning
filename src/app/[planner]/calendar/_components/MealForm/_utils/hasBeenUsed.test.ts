@@ -7,7 +7,7 @@ import { hasBeenUsed } from './hasBeenUsed';
 describe('hasBeenUsed', () => {
 	it('is true for an item with a last-used date', () => {
 		expect(
-			hasBeenUsed(makeSavedItem({ lastUsed: '2026-11-24T18:30:00.000Z' })),
+			hasBeenUsed(makeSavedItem({ lastUsedAt: '2026-11-24T18:30:00.000Z' })),
 		).toBe(true);
 	});
 
