@@ -37,7 +37,7 @@ export const TagFilter = ({ options, value, onChange }: Props) => {
 				expanded={expanded}
 				onToggleExpanded={() => setExpanded(!expanded)}
 			/>
-			{options.some((option) => option.selected) && (
+			{value.length > 0 && (
 				<Button variant="subtle" size="compact-sm" onClick={() => onChange([])}>
 					Clear
 				</Button>

@@ -14,8 +14,8 @@ vi.mock('../TagChips/TagChips', () => ({
 
 const onChange = vi.fn();
 
-const renderFilter = (options = [option('quick')]) =>
-	render(<TagFilter options={options} value={[]} onChange={onChange} />);
+const renderFilter = (options = [option('quick')], value: string[] = []) =>
+	render(<TagFilter options={options} value={value} onChange={onChange} />);
 
 const chipsProps = () => vi.mocked(TagChips).mock.lastCall?.[0];
 
@@ -34,10 +34,16 @@ describe('TagFilter', () => {
 		renderFilter([option('quick')]);
 		expect(screen.queryByRole('button', { name: 'Clear' })).toBeNull();
 
-		renderFilter([option('vegetarian', true)]);
+		renderFilter([option('vegetarian', true)], ['vegetarian']);
 		fireEvent.click(screen.getByRole('button', { name: 'Clear' }));
 
 		expect(onChange).toHaveBeenCalledWith([]);
+	});
+
+	it('shows Clear for a selected tag that no saved recipe carries any more, which still narrows the results', () => {
+		renderFilter([option('quick')], ['gone']);
+
+		expect(screen.getByRole('button', { name: 'Clear' })).not.toBeNull();
 	});
 
 	it('starts collapsed, and stays expanded as the options change, until toggled back', () => {
