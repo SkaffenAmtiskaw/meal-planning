@@ -13,6 +13,6 @@ A story's code is built and reviewed only on its own branch, when the release fr
    - **If the base is `develop` and the session has the Claude desktop app's `sync_with_base_branch` tool:** bring the branch up to date with it, choosing a merge, not a rebase. The tool merges the branch the app cut the worktree from, and a hotfix worktree is made from `main` with git rather than by the app, so it isn't used there.
    - **Otherwise:** run `git fetch origin`, then `git merge --no-edit origin/<base>`.
 
-   Then the cases, by how the merge went. Committing the merge without being asked is an exception to AGENTS.md's "commit only when they ask", because it holds only work already reviewed on the base:
+   Then the cases, by how the merge went. Committing the merge without being asked is an exception to AGENTS.md's rule on when to commit, because it holds only work already reviewed on the base:
    - **If it was clean:** if the merge isn't committed yet, commit it with `git commit --no-edit`.
    - **If it conflicts:** resolve the conflict with the user. Once they approve the resolution, commit the merge, then carry on with the skill.

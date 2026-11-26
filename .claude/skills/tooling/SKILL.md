@@ -55,7 +55,7 @@ What the change needs depends on what it touches:
 - **An existing Roadmap line or section,** such as a section's name: hold the edit until the change's PR merges, as step 7 describes. Other sessions run the new skills only once they're on `develop`, so until then the edited Roadmap wouldn't match the workflow they follow.
 
 ## 4. Get the Change Approved
-Triage the out-of-scope list. An item the user pulls in becomes part of this change. Then show the table of changed files and ask the user whether they approve.
+Triage the out-of-scope list. An item the user pulls in becomes part of this change. Then show the table of changed files and ask for the change's final approval. Once the user gives it, commit the change.
 
 ## 5. Clean Up the Notes
 Once the user approves, search the whole notes repo for:
