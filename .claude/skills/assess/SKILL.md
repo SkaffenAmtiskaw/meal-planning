@@ -65,7 +65,7 @@ Otherwise, send the `hidden-story-checker` subagent the notes repo's path, the n
      4. Stop, and tell the user the split is done. Give `/assess <child name>` for each child, to run in a new session, since this one has read the whole design and the split report, and carrying them into a child's assessment bloats it.
 
 ## 3. Design the target
-Send the `target-designer` subagent the confirmed behaviors, numbered, the notes repo's path and the paths to the note's Meta-Instructions, its Design Handoff sections, its images and its artboards.
+Send the `target-designer` subagent the confirmed behaviors, numbered, the notes repo's path and the paths to the note's Meta-Instructions, its Design Handoff sections, its images and its artboards. If the story builds less than its behaviors depend on, such as only E2E tests for app code outside its scope, also tell it what kind of code the story builds, as the note's Purpose says. Without it, the designer designs everything the behaviors depend on, because a behavior doesn't show whether a story builds the feature or only tests it.
 
 Also send it the behaviors of each later story that will build on this story's pieces, with the story's name. A later story is one whose `blocked-by` names this story and whose design or behaviors add to what this story builds, as another child of the same split often does. Take its behaviors from its `# From the Split` section or its Suggested Approach. Without them, the target fits this story alone, and the later story has to rework pieces this one has just built.
 
