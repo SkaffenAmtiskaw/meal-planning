@@ -47,4 +47,10 @@ describe('MealDateField', () => {
 		expect(screen.getByRole('button').textContent).toBe('');
 		expect(popoverProps()?.value).toBeNull();
 	});
+
+	it('shows the Today footer in the picker', () => {
+		render(<MealDateField value="" onChange={vi.fn()} />);
+
+		expect(popoverProps()?.withTodayFooter).toBe(true);
+	});
 });

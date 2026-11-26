@@ -17,7 +17,7 @@ type Props = {
 
 /**
  * The meal's Date field: a button showing the short date, which opens the
- * date picker with meal dots.
+ * date picker with meal dots and a Today button.
  */
 export function MealDateField({ value, onChange }: Props): ReactElement {
 	const mealDates = useMealDates();
@@ -27,6 +27,7 @@ export function MealDateField({ value, onChange }: Props): ReactElement {
 			value={value === '' ? null : value}
 			onChange={onChange}
 			markedDates={mealDates}
+			withTodayFooter
 			sheetTitle="Choose day"
 			renderTrigger={({ onClick }) => (
 				<DateFieldTrigger

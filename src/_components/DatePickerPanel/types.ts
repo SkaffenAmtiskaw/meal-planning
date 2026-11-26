@@ -5,4 +5,6 @@ export type DatePickerPanelProps = {
 	onChange: (date: string) => void;
 	// ISO dates that get a dot under their number, such as the days with meals.
 	markedDates?: string[];
+	// Whether a Today button under the days picks today.
+	withTodayFooter?: boolean;
 };

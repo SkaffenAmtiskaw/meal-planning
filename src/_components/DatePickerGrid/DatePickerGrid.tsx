@@ -2,6 +2,7 @@
 
 import { type ReactElement, useState } from 'react';
 
+import { Skeleton } from '@mantine/core';
 import { DatePicker } from '@mantine/dates';
 import { useMergedRef } from '@mantine/hooks';
 import { IconChevronLeft, IconChevronRight } from '@tabler/icons-react';
@@ -9,7 +10,7 @@ import { IconChevronLeft, IconChevronRight } from '@tabler/icons-react';
 import clsx from 'clsx';
 import { DateTime } from 'luxon';
 
-import { useIsMobile, useSwipe, useTodayOrThrow } from '@/_hooks';
+import { useIsMobile, useSwipe, useToday } from '@/_hooks';
 
 import { useDatePickerKeys } from './useDayKeys';
 import classes from './DatePickerGrid.module.css';
@@ -34,15 +35,27 @@ export function DatePickerGrid({
 	onChange,
 	markedDates = [],
 }: DatePickerGridProps): ReactElement {
-	const today = useTodayOrThrow();
+	// Today is null until the viewer's day is known. The ring appears once it is.
+	const { today, possibleDays, isKnown } = useToday();
 	// Phones get touch sizes: Mantine's lg gives 48px day cells and month arrows.
 	const isMobile = useIsMobile();
 	const size = isMobile ? 'lg' : 'sm';
 	const marked = new Set(markedDates);
+	// The month the user paged to, if they have.
+	const [pagedMonth, setPagedMonth] = useState<string | null>(null);
+	// With no date selected the grid opens on today's month, which isn't known yet on the first
+	// or last day of a month, so until then it draws a stand-in month under skeletons.
+	const monthKnown = value !== null || isKnown('month');
 	// The month on screen, which the grid needs to tell which days are outside it.
-	const [shownMonth, setShownMonth] = useState(
-		() => value ?? (today.toISODate() as string),
-	);
+	const shownMonth =
+		pagedMonth ?? value ?? (possibleDays[0].toISODate() as string);
+
+	// Paging waits for the month, since it pages from the month on screen.
+	const pageTo = (month: string) => {
+		if (monthKnown) {
+			setPagedMonth(month);
+		}
+	};
 
 	// On phones a swipe across the grid pages the month: left to the next, right to the previous.
 	const swipeRef = useSwipe<HTMLDivElement>({
@@ -51,12 +64,11 @@ export function DatePickerGrid({
 			if (direction === 'down') {
 				return;
 			}
-			setShownMonth(
-				(month) =>
-					DateTime.fromISO(month)
-						.plus({ months: direction === 'left' ? 1 : -1 })
-						.startOf('month')
-						.toISODate() as string,
+			pageTo(
+				DateTime.fromISO(shownMonth)
+					.plus({ months: direction === 'left' ? 1 : -1 })
+					.startOf('month')
+					.toISODate() as string,
 			);
 		},
 	});
@@ -64,19 +76,19 @@ export function DatePickerGrid({
 	// PageUp, PageDown, Home and End move focus between days, which Mantine leaves alone.
 	const { ref: keysRef, getDayKeyProps } = useDatePickerKeys({
 		shownMonth,
-		onShownMonthChange: setShownMonth,
+		onShownMonthChange: pageTo,
 	});
 	const gridRef = useMergedRef(swipeRef, keysRef);
 
 	const isToday = (date: string) =>
-		DateTime.fromISO(date).hasSame(today, 'day');
+		today !== null && DateTime.fromISO(date).hasSame(today, 'day');
 
 	return (
 		<div ref={gridRef} className={clsx(isMobile && classes.swipeArea)}>
 			<DatePicker
 				value={value}
 				date={shownMonth}
-				onDateChange={setShownMonth}
+				onDateChange={pageTo}
 				size={size}
 				// On phones the grid spreads across the sheet, however wide the phone is.
 				fullWidth={isMobile}
@@ -88,6 +100,11 @@ export function DatePickerGrid({
 				nextIcon={<IconChevronRight size={isMobile ? 20 : 16} />}
 				previousLabel="Previous month"
 				nextLabel="Next month"
+				monthLabelFormat={(month) => (
+					<Skeleton visible={!monthKnown}>
+						{DateTime.fromISO(month).toFormat('MMMM yyyy')}
+					</Skeleton>
+				)}
 				// A single letter per weekday, like "S", which none of Mantine's format strings give.
 				weekdayFormat={(date) => DateTime.fromISO(date).toFormat('ccccc')}
 				/**
@@ -96,20 +113,23 @@ export function DatePickerGrid({
 				 */
 				getDayProps={(date) => ({
 					...getDayKeyProps(date),
+					disabled: !monthKnown,
 					'aria-current': isToday(date) ? 'date' : undefined,
 					...(marked.has(date) && { 'data-marked': true }),
 				})}
 				renderDay={(date) => {
 					const day = DateTime.fromISO(date);
 					return (
-						<NumberMark
-							size={size}
-							ring={isToday(date)}
-							filled={date === value}
-							muted={!day.hasSame(DateTime.fromISO(shownMonth), 'month')}
-						>
-							{day.day}
-						</NumberMark>
+						<Skeleton visible={!monthKnown} circle>
+							<NumberMark
+								size={size}
+								ring={isToday(date)}
+								filled={date === value}
+								muted={!day.hasSame(DateTime.fromISO(shownMonth), 'month')}
+							>
+								{day.day}
+							</NumberMark>
+						</Skeleton>
 					);
 				}}
 				onChange={(date) => {
