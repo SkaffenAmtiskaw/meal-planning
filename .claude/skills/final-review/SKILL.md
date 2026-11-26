@@ -93,10 +93,10 @@ Put the fixes in dependency order, and build them one at a time. Don't ask the u
    - **Otherwise:** if the fix changes anything the user could see in the app, the story's acceptance checks that cover it.
 
 ## 7. Show the Fixes
-Show a table with one row per fix: its files as markdown links the user can click, a one-line summary, the tests it added or changed, and any checks redone in step 6, with what you saw. Ask whether they want any fix changed, and handle their feedback as `building-code` describes in step 5, "Handle the User's Feedback".
+Show a table with one row per fix: its files as markdown links the user can click, a one-line summary, the tests it added or changed, and any checks redone in step 6, with what you saw. Ask for the fixes' final approval. Until the user gives it, handle their feedback as `building-code` describes in step 5, "Handle the User's Feedback". Then commit the fixes.
 
 ## 8. Triage the Late Out-of-Scope Items
-Triage the out-of-scope items that turned up after step 5. Build each one the user pulls in as step 6 describes, and show it as step 7 does.
+Triage the out-of-scope items that turned up after step 5. Build each one the user pulls in as step 6 describes, then show it, get its final approval and commit it, as step 7 does.
 
 ## 9. Open the PR
 Open the story's PR as `opening-the-pr.md`, in the `building-code` skill's folder, describes.
