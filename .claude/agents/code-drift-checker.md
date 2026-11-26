@@ -47,7 +47,7 @@ One block per finding:
 **Where in the note:** section, behavior, approach row or step
 **What changed:** for code, `file:line` evidence, plus the commit if it changed since `confirmed`. For a service, the docs page. For a place a cleanup's Current State doesn't list, `file:line` and the search that found it.
 **For conventions:** what the plan says, and what each source says: recent code (with the example files), any pattern or infra note, and the docs
-**Unverified:** include this line only if the finding depends on how the app behaves or on what's set up outside the repo, and the code and docs don't settle it. Give a quick check the user can do in the app or where the thing is set up.
+**Unverified:** include this line only if the finding depends on how the app behaves or on what's set up outside the repo, and the code and docs don't settle it. Say what would settle it, such as a page to open in the app, a command to run or a setting to look at. The session that runs you settles it, because it can run the app and commands.
 
 After the findings, add:
 - **Checked, no drift:** the named code, kinds of things and services you checked that still match, and the cleanup searches that found no new place, one line each, so the caller knows they were checked.

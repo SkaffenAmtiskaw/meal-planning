@@ -44,6 +44,8 @@ Then run the `code-drift-checker` and `note-drift-checker` subagents in parallel
 If the note is a pattern, also run the `convention-auditor` subagent alongside them, as `pattern.md` in this skill's folder describes.
 
 ## 4. Sort the checkers' findings
+First, for each finding with an **Unverified** line, settle the fact it names, using what it says would settle it, because the answer can drop the finding or change how it's sorted.
+
 If one of the user's comments already settles a checker's finding, merge it into the finding from that comment. It needs no decision. Drop any finding that an earlier ⚠️ Check Drift callout already settled.
 
 If a checker's finding has one obvious fix, and the fix keeps what the text is for, correct the text without asking and write no callout. For example, a name or path that moved, or a check whose search would also match unrelated code. The user approved what each line is for, not its exact wording, so a correction like this needs no decision.
@@ -52,7 +54,7 @@ Write each callout directly above the text it's about, in this form:
 
 `> ⚠️ **Check Drift YYYY-MM-DD:** what no longer matches, and what it means for this note. How it was found, and anything it wasn't verified against.`
 
-For example, "From Sarah's comment" or "Found by reading GitHub's docs, not verified in the repo's settings."
+For example, "From Sarah's comment" or "Found by reading GitHub's docs."
 
 **If the note is a sweep,** sort its findings and triage the out-of-scope list as `sweep.md` in this skill's folder describes, then go on to step 5.
 
@@ -66,7 +68,7 @@ For example, "From Sarah's comment" or "Found by reading GitHub's docs, not veri
 ## 5. Settle the findings and write the callouts
 What you do with each finding depends on where it came from:
 - **The user's comments:** add a callout at each place a comment affects, pointing back to it, e.g. "Sarah's comment under Behaviors (2026-09-24) drops the week view, so this step's week toggle no longer applies."
-- **Findings that need a decision:** go through them with the user, each with its evidence and the options. If one depends on how the app behaves or on what's set up outside the repo, and reading didn't settle it, give the user a quick check they can do in the app or where the thing is set up, rather than checking it yourself. If the finding has an **Unverified** line, use that. Write a callout recording each answer, such as "Sarah decided 2026-09-25 that the ring replaces the tint here". Write one even when the plan holds, because otherwise a later session raises the finding again.
+- **Findings that need a decision:** go through them with the user, each with its evidence and the options. Write a callout recording each answer, such as "Sarah decided 2026-09-25 that the ring replaces the tint here". Write one even when the plan holds, because otherwise a later session raises the finding again.
 
 Some answers need more than a callout:
 - **Recent code wins over the project docs,** or follows a convention they don't cover: it's a doc gap.
