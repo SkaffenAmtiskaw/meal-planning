@@ -12,14 +12,17 @@ Design the code a story should have, as if you were building it in a clean codeb
 - the story's confirmed behaviors, numbered
 - the paths to its Meta-Instructions, Design Handoff sections, images and artboards, if it has any
 - the behaviors of later stories that will build on this story's pieces, if there are any
+- what kind of code the story builds, if it builds less than its behaviors depend on, such as only E2E tests for app code outside its scope
 
 A raw file shows an embed (`![[Note#Section]]`) only as a link. If one of those sections holds an embed, open it and read the section it points to.
 
 ## What Not to Read
-Don't open anything under `src/` or `test/`, and don't search them. Don't read the story's note beyond the Meta-Instructions and Design Handoff sections you're given, because its Suggested Approach, steps and As built notes all describe the code or a plan for it, and would anchor your design.
+Don't open anything under `src/`, `test/` or `e2e/`, and don't search them. Don't read the story's note beyond the Meta-Instructions and Design Handoff sections you're given, because its Suggested Approach, steps and As built notes all describe the code or a plan for it, and would anchor your design.
 
 ## How to Design It
 A piece is something a behavior depends on. Helpers that live inside a piece aren't pieces of their own, because whoever builds the piece decides them.
+
+If you're told what kind of code the story builds, design only the pieces that are that kind of code, and treat everything else the behaviors depend on as outside the story. Follow the doc for that kind of code too, such as `docs/e2e_tests.md` for E2E tests. A behavior describes what a person sees, so without being told, you can't tell a story that builds a feature from one that only tests it.
 
 Follow Single Concern in `docs/project_conventions.md`. For each piece, give:
 - **Kind:** component, hook, utility, server action, model or test spec.
