@@ -1,18 +1,21 @@
-import { render, screen } from '@testing-library/react';
+import { act, render, screen } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { makeDishDraft } from '#fixtures/dish';
 import { makeTagFilterOption } from '#fixtures/tagFilterOption';
 import type { SavedItem } from '@/_actions/library/types';
+import { useListHighlight } from '@/_hooks';
 
 import { SavedRecipesColumn } from './SavedRecipesColumn';
 
 import { usePlannerSavedItems } from '../../../../_hooks/usePlannerSavedItems';
 import { useSavedItemCriteria } from '../../_hooks/useSavedItemCriteria';
 import { narrowSavedItems } from '../../_utils/narrowSavedItems';
+import { savedItemAction } from '../../_utils/savedItemAction';
 import type { DishDraft } from '../../types';
 import { LinkModeBanner } from '../LinkModeBanner/LinkModeBanner';
 import { SavedResultList } from '../SavedResultList/SavedResultList';
+import { SavedSearchInput } from '../SavedSearchInput/SavedSearchInput';
 import { TagFilter } from '../TagFilter/TagFilter';
 
 vi.mock('@mantine/core', async () => await import('#mocks/@mantine/core'));
@@ -45,6 +48,13 @@ vi.mock('../SavedResultList/SavedResultList', () => ({
 vi.mock('../LinkModeBanner/LinkModeBanner', () => ({
 	LinkModeBanner: vi.fn(() => <div data-testid="banner" />),
 }));
+vi.mock('../SavedKeyHint/SavedKeyHint', () => ({
+	SavedKeyHint: vi.fn(() => <div data-testid="hint" />),
+}));
+vi.mock('@/_hooks', async () => await import('#mocks/@/_hooks'));
+vi.mock('../../_utils/savedItemAction', () => ({
+	savedItemAction: vi.fn(() => 'add'),
+}));
 
 const tacos: SavedItem = {
 	_id: 'tacos',
@@ -53,21 +63,52 @@ const tacos: SavedItem = {
 	tags: [],
 };
 
+const oats: SavedItem = {
+	_id: 'oats',
+	name: 'Overnight Oats',
+	kind: 'recipe',
+	tags: [],
+};
+
 const soup = makeDishDraft({ key: 'soup', name: 'chicken' });
 
-const renderColumn = (linkingDish: DishDraft | null = null) =>
+const renderColumn = (
+	linkingDish: DishDraft | null = null,
+	{
+		linkedIds = new Set<string>(),
+		onPick = vi.fn(),
+	}: { linkedIds?: ReadonlySet<string>; onPick?: () => void } = {},
+) =>
 	render(
 		<SavedRecipesColumn
 			linkingDish={linkingDish}
-			linkedIds={new Set()}
+			linkedIds={linkedIds}
 			onCancelLinking={vi.fn()}
-			onPick={vi.fn()}
+			onPick={onPick}
 		/>,
 	);
+
+const highlightHandlers = () => ({
+	moveNext: vi.fn(),
+	movePrevious: vi.fn(),
+	highlight: vi.fn(),
+	itemRef: vi.fn(() => vi.fn()),
+});
+
+// Presses Enter in the search, which runs the highlighted result.
+const pressEnter = () =>
+	act(() => vi.mocked(SavedSearchInput).mock.lastCall?.[0].onRun());
+
+const showResults = (results: SavedItem[]) =>
+	vi.mocked(narrowSavedItems).mockReturnValue({ results, tagOptions: [] });
 
 describe('SavedRecipesColumn', () => {
 	beforeEach(() => {
 		vi.clearAllMocks();
+		vi.mocked(narrowSavedItems).mockReturnValue({
+			results: [],
+			tagOptions: [],
+		});
 	});
 
 	it('shows no banner, and has its results add, outside link mode', () => {
@@ -91,8 +132,8 @@ describe('SavedRecipesColumn', () => {
 	it('orders the column its label, the banner, the search, the tags, then the results', () => {
 		renderColumn(soup);
 
-		const nodes = ['label', 'banner', 'search', 'tags', 'results'].map((id) =>
-			screen.getByTestId(id),
+		const nodes = ['label', 'banner', 'search', 'tags', 'hint', 'results'].map(
+			(id) => screen.getByTestId(id),
 		);
 		for (let i = 1; i < nodes.length; i++) {
 			expect(
@@ -123,6 +164,92 @@ describe('SavedRecipesColumn', () => {
 			hasSavedItems: true,
 		});
 		expect(vi.mocked(TagFilter).mock.lastCall?.[0].options).toBe(tagOptions);
+	});
+
+	it('highlights over the results, and goes back to the first whenever the search or the tags change', () => {
+		showResults([tacos, oats]);
+		const criteria = (search: string, tagIds: string[]) =>
+			vi.mocked(useSavedItemCriteria).mockReturnValueOnce([
+				{ search, tagIds },
+				{ setSearch: vi.fn(), setTagIds: vi.fn() },
+			]);
+
+		criteria('taco', ['quick']);
+		const { rerender } = renderColumn();
+		const resetKey = () =>
+			vi.mocked(useListHighlight).mock.lastCall?.[0].resetKey;
+		const first = resetKey();
+		expect(vi.mocked(useListHighlight).mock.lastCall?.[0].count).toBe(2);
+
+		criteria('taco', ['quick']);
+		rerender(
+			<SavedRecipesColumn
+				linkingDish={null}
+				linkedIds={new Set()}
+				onCancelLinking={vi.fn()}
+				onPick={vi.fn()}
+			/>,
+		);
+		expect(resetKey()).toBe(first);
+
+		for (const [search, tagIds] of [
+			['tacos', ['quick']],
+			['taco', ['quick', 'vegetarian']],
+		] as const) {
+			criteria(search, [...tagIds]);
+			rerender(
+				<SavedRecipesColumn
+					linkingDish={null}
+					linkedIds={new Set()}
+					onCancelLinking={vi.fn()}
+					onPick={vi.fn()}
+				/>,
+			);
+			expect(resetKey()).not.toBe(first);
+		}
+	});
+
+	it('runs the highlighted result on Enter', () => {
+		showResults([tacos, oats]);
+		vi.mocked(useListHighlight).mockReturnValueOnce([1, highlightHandlers()]);
+		const onPick = vi.fn();
+		renderColumn(null, { linkedIds: new Set(['tacos']), onPick });
+
+		pressEnter();
+
+		expect(savedItemAction).toHaveBeenCalledWith({
+			added: false,
+			linking: false,
+		});
+		expect(onPick).toHaveBeenCalledWith(oats);
+	});
+
+	it('does nothing on Enter when the highlighted result is already on the meal', () => {
+		showResults([tacos]);
+		vi.mocked(savedItemAction).mockReturnValueOnce('added');
+		const onPick = vi.fn();
+		renderColumn(soup, { linkedIds: new Set(['tacos']), onPick });
+
+		pressEnter();
+
+		expect(savedItemAction).toHaveBeenCalledWith({
+			added: true,
+			linking: true,
+		});
+		expect(onPick).not.toHaveBeenCalled();
+	});
+
+	it('does nothing on Enter with nothing highlighted', () => {
+		vi.mocked(useListHighlight).mockReturnValueOnce([
+			null,
+			highlightHandlers(),
+		]);
+		const onPick = vi.fn();
+		renderColumn(null, { onPick });
+
+		pressEnter();
+
+		expect(onPick).not.toHaveBeenCalled();
 	});
 
 	it('tells the list when the planner has no saved recipes at all', () => {

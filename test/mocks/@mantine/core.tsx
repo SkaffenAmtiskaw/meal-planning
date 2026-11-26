@@ -731,6 +731,7 @@ export const TextInput = vi.fn(
 		placeholder,
 		disabled,
 		'data-testid': testId,
+		'data-mantine-stop-propagation': stopPropagation,
 		'aria-label': ariaLabel,
 		ref,
 		onFocus,
@@ -745,6 +746,7 @@ export const TextInput = vi.fn(
 		placeholder?: string;
 		disabled?: boolean;
 		'data-testid'?: string;
+		'data-mantine-stop-propagation'?: boolean;
 		'aria-label'?: string;
 		ref?: React.Ref<HTMLInputElement>;
 		onFocus?: React.FocusEventHandler<HTMLInputElement>;
@@ -758,6 +760,7 @@ export const TextInput = vi.fn(
 			value={value ?? ''}
 			placeholder={placeholder}
 			disabled={disabled}
+			data-mantine-stop-propagation={stopPropagation}
 			aria-label={ariaLabel}
 			onChange={onChange ?? (() => {})}
 			onKeyDown={onKeyDown}

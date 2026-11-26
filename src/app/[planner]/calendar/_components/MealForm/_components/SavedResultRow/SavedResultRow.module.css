@@ -1,0 +1,13 @@
+.root {
+	/* The highlight's box reaches into the results' 8px gutter, so the row's content stays lined up with the search and tags. No Mantine prop sets a negative margin with its matching padding. */
+	margin-inline: -8px;
+	padding-inline: 8px;
+	border-radius: var(--mantine-radius-md);
+}
+
+/* No Mantine variant draws a row highlight that follows the keys while focus stays in the search. The outline sits inside the row, so the results' clipping can't cut it off. */
+.highlighted {
+	background-color: var(--mantine-color-white);
+	outline: 1px solid var(--mantine-color-navy-5);
+	outline-offset: -1px;
+}

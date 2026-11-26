@@ -15,7 +15,12 @@ type Props = {
 	linkedIds: ReadonlySet<string>;
 	// A dish is being linked, so picking a result links it rather than adding a dish.
 	linking: boolean;
+	// The result the keys and the mouse point at, or null with none.
+	highlightedIndex: number | null;
 	onPick: (item: SavedItem) => void;
+	onHover: (index: number) => void;
+	// The ref for each result's row, so it can be scrolled into view.
+	itemRef: (index: number) => (element: HTMLElement | null) => void;
 };
 
 /**
@@ -28,7 +33,10 @@ export const SavedResultList = ({
 	hasSavedItems,
 	linkedIds,
 	linking,
+	highlightedIndex,
 	onPick,
+	onHover,
+	itemRef,
 }: Props) => {
 	if (results.length === 0) {
 		return (
@@ -42,13 +50,16 @@ export const SavedResultList = ({
 
 	return (
 		<Stack gap={0}>
-			{results.map((item) => (
+			{results.map((item, index) => (
 				<SavedResultRow
 					key={item._id}
+					ref={itemRef(index)}
 					item={item}
 					added={linkedIds.has(item._id)}
 					linking={linking}
+					highlighted={index === highlightedIndex}
 					onPick={() => onPick(item)}
+					onHover={() => onHover(index)}
 				/>
 			))}
 		</Stack>
