@@ -10,6 +10,7 @@ import { DishList } from './_components/DishList/DishList';
 import { MealFields } from './_components/MealFields/MealFields';
 import { MealFormFooter } from './_components/MealFormFooter/MealFormFooter';
 import { SavedRecipesColumn } from './_components/SavedRecipesColumn/SavedRecipesColumn';
+import { MealDishesProvider } from './_hooks/useDish';
 import { findNamelessDishes } from './_utils/findNamelessDishes';
 import { isBlankDish } from './_utils/isBlankDish';
 
@@ -31,6 +32,13 @@ vi.mock('./_components/MealFormLayout/MealFormLayout', () => ({
 vi.mock('./_components/MealFields/MealFields', () => ({
 	MealFields: vi.fn(() => null),
 }));
+vi.mock(
+	'./_hooks/useDish',
+	async () =>
+		await import(
+			'#mocks/@app/[planner]/calendar/_components/MealForm/_hooks/useDish'
+		),
+);
 vi.mock('./_components/DishList/DishList', () => ({
 	DishList: vi.fn(() => null),
 }));
@@ -73,6 +81,8 @@ const chicken = {
 };
 
 const dishListProps = () => vi.mocked(DishList).mock.lastCall?.[0];
+// What the form gives the rows of its dish list.
+const mealDishes = () => vi.mocked(MealDishesProvider).mock.lastCall?.[0].value;
 const columnProps = () => vi.mocked(SavedRecipesColumn).mock.lastCall?.[0];
 
 const setField = (field: string, value: string) =>
@@ -124,18 +134,14 @@ describe('MealForm', () => {
 				onCancel={vi.fn()}
 			/>,
 		);
-		expect(vi.mocked(DishList).mock.lastCall?.[0].namelessKeys).toEqual(
-			new Set(),
-		);
+		expect(mealDishes()?.namelessKeys).toEqual(new Set());
 
 		await act(async () => {
 			fireEvent.click(screen.getByRole('button', { name: 'Add Meal' }));
 		});
 
 		expect(save).not.toHaveBeenCalled();
-		expect(vi.mocked(DishList).mock.lastCall?.[0].namelessKeys).toEqual(
-			new Set(['nameless']),
-		);
+		expect(mealDishes()?.namelessKeys).toEqual(new Set(['nameless']));
 	});
 
 	it("clears a row's mark once its dish has a name", async () => {
@@ -156,9 +162,7 @@ describe('MealForm', () => {
 		vi.mocked(findNamelessDishes).mockReturnValue([]);
 		setField('mealName', 'Lunch');
 
-		expect(vi.mocked(DishList).mock.lastCall?.[0].namelessKeys).toEqual(
-			new Set(),
-		);
+		expect(mealDishes()?.namelessKeys).toEqual(new Set());
 	});
 
 	it('leaves blank rows out of the dish list and footer counts', () => {
@@ -294,7 +298,7 @@ describe('MealForm', () => {
 					onStatusChange={onStatusChange}
 				/>,
 			);
-		const startLinking = () => act(() => dishListProps()?.onStartLinking(soup));
+		const startLinking = () => act(() => mealDishes()?.startLinking('soup'));
 
 		it('marks the dish, focuses the search, and tells the column and the frame', () => {
 			vi.mocked(SavedRecipesColumn).mockImplementation(({ searchRef }) => (
@@ -305,7 +309,7 @@ describe('MealForm', () => {
 
 			startLinking();
 
-			expect(dishListProps()?.linkingKey).toBe('soup');
+			expect(mealDishes()?.linkingKey).toBe('soup');
 			expect(columnProps()?.linkingDish).toEqual(soup);
 			expect(document.activeElement).toBe(screen.getByLabelText('Search'));
 			expect(onStatusChange).toHaveBeenLastCalledWith(
@@ -319,20 +323,20 @@ describe('MealForm', () => {
 
 			startLinking();
 
-			expect(dishListProps()?.linkingKey).toBeNull();
-			expect(dishListProps()?.openDishList?.key).toBe('soup');
+			expect(mealDishes()?.linkingKey).toBeNull();
+			expect(mealDishes()?.openDishList?.key).toBe('soup');
 		});
 
 		it("starts the dish's list afresh on a phone, even while it's open", () => {
 			vi.mocked(useIsMobile).mockReturnValue(true);
 			renderForm();
-			act(() => dishListProps()?.onOpenList('soup'));
-			const open = dishListProps()?.openDishList;
+			act(() => mealDishes()?.openList('soup'));
+			const open = mealDishes()?.openDishList;
 
 			startLinking();
 
-			expect(dishListProps()?.openDishList?.key).toBe('soup');
-			expect(dishListProps()?.openDishList?.id).not.toBe(open?.id);
+			expect(mealDishes()?.openDishList?.key).toBe('soup');
+			expect(mealDishes()?.openDishList?.id).not.toBe(open?.id);
 		});
 
 		it('links the picked recipe to the dish, then leaves link mode', () => {
@@ -347,7 +351,7 @@ describe('MealForm', () => {
 				name: 'chicken',
 				source: { kind: 'saved', savedId: 'saved-1' },
 			});
-			expect(dishListProps()?.linkingKey).toBeNull();
+			expect(mealDishes()?.linkingKey).toBeNull();
 			expect(columnProps()?.linkingDish).toBeNull();
 			expect(onStatusChange).toHaveBeenLastCalledWith(
 				expect.objectContaining({ linking: false }),
@@ -360,7 +364,7 @@ describe('MealForm', () => {
 
 			act(() => columnProps()?.onCancelLinking());
 
-			expect(dishListProps()?.linkingKey).toBeNull();
+			expect(mealDishes()?.linkingKey).toBeNull();
 			expect(dishListProps()?.dishes[0]).toEqual(soup);
 			expect(columnProps()?.linkingDish).toBeNull();
 		});
@@ -388,7 +392,7 @@ describe('MealForm', () => {
 
 			const dishes = dishListProps()?.dishes ?? [];
 			expect(dishes).toHaveLength(2);
-			expect(dishListProps()?.openDishList?.key).toBe(dishes[1].key);
+			expect(mealDishes()?.openDishList?.key).toBe(dishes[1].key);
 		});
 
 		it('opens no list from Add dish on desktop', () => {
@@ -396,32 +400,32 @@ describe('MealForm', () => {
 
 			addDish();
 
-			expect(dishListProps()?.openDishList).toBeNull();
+			expect(mealDishes()?.openDishList).toBeNull();
 		});
 
 		it('names and links the dish from the recipe chosen in its list, then closes the list', () => {
 			vi.mocked(useIsMobile).mockReturnValue(true);
 			renderForm();
-			act(() => dishListProps()?.onOpenList('soup'));
+			act(() => mealDishes()?.openList('soup'));
 
-			act(() => dishListProps()?.onChooseRecipe('soup', chicken));
+			act(() => mealDishes()?.chooseRecipe('soup', chicken));
 
 			expect(dishListProps()?.dishes[0]).toMatchObject({
 				name: 'Lemon Herb Chicken',
 				source: { kind: 'saved', savedId: 'saved-1' },
 			});
-			expect(dishListProps()?.openDishList).toBeNull();
-			expect(dishListProps()?.linkedIds).toEqual(new Set(['saved-1']));
+			expect(mealDishes()?.openDishList).toBeNull();
+			expect(mealDishes()?.linkedIds).toEqual(new Set(['saved-1']));
 		});
 
 		it('closes the open list', () => {
 			vi.mocked(useIsMobile).mockReturnValue(true);
 			renderForm();
-			act(() => dishListProps()?.onOpenList('soup'));
+			act(() => mealDishes()?.openList('soup'));
 
-			act(() => dishListProps()?.onCloseList());
+			act(() => mealDishes()?.closeList());
 
-			expect(dishListProps()?.openDishList).toBeNull();
+			expect(mealDishes()?.openDishList).toBeNull();
 		});
 	});
 });

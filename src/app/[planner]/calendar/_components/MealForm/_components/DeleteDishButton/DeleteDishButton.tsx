@@ -6,22 +6,20 @@ import { IconTrash } from '@tabler/icons-react';
 
 import { ConfirmModal } from '@/_components';
 
-type Props = {
-	dishName: string;
-	onDelete: () => void;
-};
+import { useDish } from '../../_hooks/useDish';
 
 /**
  * The trash icon, which asks before it removes the dish. Removing a dish only
  * changes the draft, so it uses ConfirmModal directly rather than ConfirmButton,
  * which runs an action.
  */
-export const DeleteDishButton = ({ dishName, onDelete }: Props) => {
+export const DeleteDishButton = () => {
+	const { dish, removeDish } = useDish();
 	const [opened, { open, close }] = useDisclosure(false);
 
 	const confirm = () => {
 		close();
-		onDelete();
+		removeDish(dish.key);
 	};
 
 	return (
@@ -42,8 +40,8 @@ export const DeleteDishButton = ({ dishName, onDelete }: Props) => {
 				loading={false}
 				title="Delete Dish"
 				message={
-					dishName
-						? `Remove "${dishName}" from this meal?`
+					dish.name
+						? `Remove "${dish.name}" from this meal?`
 						: 'Remove this dish from this meal?'
 				}
 				confirmButtonText="Delete"

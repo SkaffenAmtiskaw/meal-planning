@@ -1,3 +1,6 @@
+import { vi } from 'vitest';
+
+import type { Dish } from '@/app/[planner]/calendar/_components/MealForm/_hooks/useDish';
 import type {
 	DishDraft,
 	MealDraft,
@@ -20,5 +23,24 @@ export const makeMealDraft = (
 	mealName: '',
 	description: '',
 	dishes: [makeDishDraft()],
+	...overrides,
+});
+
+// What useDish() gives a row piece: a dish with no flags set, and a spy for each of the form's actions.
+export const makeDish = (overrides: Partial<Dish> = {}): Dish => ({
+	dish: makeDishDraft(),
+	nameless: false,
+	linking: false,
+	listOpenId: null,
+	linkedIds: new Set(),
+	renameDish: vi.fn(),
+	removeDish: vi.fn(),
+	unlinkDish: vi.fn(),
+	setReference: vi.fn(),
+	setNote: vi.fn(),
+	startLinking: vi.fn(),
+	openList: vi.fn(),
+	closeList: vi.fn(),
+	chooseRecipe: vi.fn(),
 	...overrides,
 });
