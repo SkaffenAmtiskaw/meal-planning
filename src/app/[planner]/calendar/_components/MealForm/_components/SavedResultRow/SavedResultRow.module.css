@@ -1,7 +1,7 @@
 .root {
-	/* The highlight's box reaches into the results' 8px gutter, so the row's content stays lined up with the search and tags. No Mantine prop sets a negative margin with its matching padding. */
-	margin-inline: -8px;
-	padding-inline: 8px;
+	/* The highlight's box reaches into the gutter SavedRecipesColumn sets around its results, so the row's content stays lined up with the search and tags. No Mantine prop sets a negative margin with its matching padding. */
+	margin-inline: calc(-1 * var(--results-gutter));
+	padding-inline: var(--results-gutter);
 	border-radius: var(--mantine-radius-md);
 }
 

@@ -22,7 +22,7 @@ type Props = {
 	onPick: () => void;
 	onHover: () => void;
 	// So the row can be scrolled into view when the keys move to it.
-	ref?: Ref<HTMLDivElement>;
+	ref: Ref<HTMLDivElement>;
 };
 
 /**

@@ -2,6 +2,7 @@ import { act, renderHook } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
 
 import { useListHighlight } from './useListHighlight';
+import type { ListHighlightHandlers } from './types';
 
 const renderHighlight = (count: number, resetKey = '') =>
 	renderHook(({ count, resetKey }) => useListHighlight({ count, resetKey }), {
@@ -140,6 +141,27 @@ describe('useListHighlight', () => {
 
 		rerender({ count: 2, resetKey: 'b' });
 		expect(result.current[0]).toBe(0);
+	});
+
+	// Hover reports every mouse move, so a highlight that stays put mustn't re-render the list each time. React may render once more before it sees nothing changed, so the test repeats each call.
+	it.each<[string, (handlers: ListHighlightHandlers) => void]>([
+		['hovering the highlighted item', (handlers) => handlers.highlight(1)],
+		['a move past the end', (handlers) => handlers.moveNext()],
+	])('renders at most once more for repeated %s', (_, call) => {
+		let renders = 0;
+		const { result } = renderHook(() => {
+			renders += 1;
+			return useListHighlight({ count: 2, resetKey: '' });
+		});
+		act(() => result.current[1].highlight(1));
+		const rendersBefore = renders;
+
+		for (let repeat = 0; repeat < 3; repeat += 1) {
+			act(() => call(result.current[1]));
+		}
+
+		expect(renders - rendersBefore).toBeLessThanOrEqual(1);
+		expect(result.current[0]).toBe(1);
 	});
 
 	it('forgets an item once its element is gone', () => {

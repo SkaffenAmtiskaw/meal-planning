@@ -16,9 +16,10 @@ vi.mock('../SavedItemSummary/SavedItemSummary', () => ({
 	SavedItemSummary: vi.fn(() => null),
 }));
 
-const renderRow = (highlighted: boolean, onHover = vi.fn()) =>
+const renderRow = (highlighted: boolean, onHover = vi.fn(), ref = vi.fn()) =>
 	render(
 		<SavedResultRow
+			ref={ref}
 			item={{ _id: 'saved-1', name: 'Tacos', kind: 'recipe', tags: [] }}
 			added={false}
 			linking={false}
@@ -53,5 +54,12 @@ describe('SavedResultRow', () => {
 		rowProps().onMouseMove?.({} as MouseEvent<HTMLDivElement>);
 
 		expect(onHover).toHaveBeenCalled();
+	});
+
+	it('puts its ref on the row, so the row can be scrolled into view', () => {
+		const ref = vi.fn();
+		renderRow(false, vi.fn(), ref);
+
+		expect(rowProps().ref).toBe(ref);
 	});
 });

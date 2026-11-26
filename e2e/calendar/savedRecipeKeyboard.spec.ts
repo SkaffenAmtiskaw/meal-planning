@@ -50,6 +50,14 @@ test('adds a meal with a dish picked from the Saved recipes column with the keyb
 	const form = page.getByRole('dialog');
 	const search = form.getByRole('textbox', { name: 'Search saved recipes' });
 	await search.fill('cove');
+	await search.press('Escape');
+
+	// Esc emptied the search rather than closing the modal and losing the meal.
+	await expect(search).toHaveValue('');
+	await expect(form.getByRole('textbox', { name: 'Meal name' })).toHaveValue(
+		MEAL_NAME,
+	);
+	await search.fill('cove');
 	await search.press('ArrowDown');
 	await search.press('Enter');
 

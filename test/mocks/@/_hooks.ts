@@ -108,21 +108,21 @@ export const MobileGuessProvider = vi.fn(
 
 export const useIsMobile = vi.fn(() => false);
 
+// Handlers a test can spy on, for useListHighlight's mock or a test's own return value.
+export const listHighlightHandlers = (): ListHighlightHandlers => ({
+	moveNext: vi.fn(),
+	movePrevious: vi.fn(),
+	highlight: vi.fn(),
+	itemRef: vi.fn(() => vi.fn()),
+});
+
 /**
  * The first item highlighted. A test moves it by calling the handlers it was given:
  *   vi.mocked(useListHighlight).mock.results[0].value[1].moveNext
- * or sets another index: vi.mocked(useListHighlight).mockReturnValue([2, handlers])
+ * or sets another index: vi.mocked(useListHighlight).mockReturnValue([2, listHighlightHandlers()])
  */
 export const useListHighlight = vi.fn(
-	(): [number | null, ListHighlightHandlers] => [
-		0,
-		{
-			moveNext: vi.fn(),
-			movePrevious: vi.fn(),
-			highlight: vi.fn(),
-			itemRef: vi.fn(() => vi.fn()),
-		},
-	],
+	(): [number | null, ListHighlightHandlers] => [0, listHighlightHandlers()],
 );
 
 /**

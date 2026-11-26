@@ -3,6 +3,7 @@
 import { Stack, Text } from '@mantine/core';
 
 import type { SavedItem } from '@/_actions/library/types';
+import type { ListHighlightHandlers } from '@/_hooks';
 
 import { SavedResultRow } from '../SavedResultRow/SavedResultRow';
 
@@ -20,7 +21,7 @@ type Props = {
 	onPick: (item: SavedItem) => void;
 	onHover: (index: number) => void;
 	// The ref for each result's row, so it can be scrolled into view.
-	itemRef: (index: number) => (element: HTMLElement | null) => void;
+	itemRef: ListHighlightHandlers['itemRef'];
 };
 
 /**

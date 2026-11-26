@@ -48,8 +48,12 @@ export const useListHighlight = ({
 		}
 	}, [state.scrolls]);
 
-	const moveTo = (next: number) =>
-		setState((current) => ({ index: next, scrolls: current.scrolls + 1 }));
+	// A move that stays put leaves the state as it is, so nothing re-renders, as ↓ on the last item does.
+	const moveTo = (next: number) => {
+		if (next !== index) {
+			setState((current) => ({ index: next, scrolls: current.scrolls + 1 }));
+		}
+	};
 
 	const moveNext = () => {
 		if (index !== null) {
@@ -61,8 +65,11 @@ export const useListHighlight = ({
 			moveTo(Math.max(index - 1, 0));
 		}
 	};
+	// Hover calls this on every mouse move, so the same index leaves the state as it is.
 	const highlight = (next: number) =>
-		setState((current) => ({ ...current, index: next }));
+		setState((current) =>
+			current.index === next ? current : { ...current, index: next },
+		);
 	const itemRef = (itemIndex: number) => (element: HTMLElement | null) => {
 		if (element) {
 			items.current.set(itemIndex, element);

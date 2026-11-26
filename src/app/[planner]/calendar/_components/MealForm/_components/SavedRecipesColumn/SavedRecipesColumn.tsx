@@ -38,9 +38,8 @@ type Props = {
  * planner's saved recipes that match both, which scroll on their own. One
  * result is highlighted, moved by the search's ↓/↑ and by the mouse, and run
  * by Enter. It goes back to the first result whenever the search or the tags
- * change. The DOM order is the Tab
- * order. The tag filter stays mounted as linking starts and ends, so an
- * expanded row stays expanded.
+ * change. The DOM order is the Tab order. The tag filter stays mounted as
+ * linking starts and ends, so an expanded row stays expanded.
  */
 export const SavedRecipesColumn = ({
 	linkingDish,

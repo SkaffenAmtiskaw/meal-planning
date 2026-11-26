@@ -3,6 +3,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { makeDishDraft } from '#fixtures/dish';
 import { makeTagFilterOption } from '#fixtures/tagFilterOption';
+import { listHighlightHandlers } from '#mocks/@/_hooks';
 import type { SavedItem } from '@/_actions/library/types';
 import { useListHighlight } from '@/_hooks';
 
@@ -14,6 +15,7 @@ import { narrowSavedItems } from '../../_utils/narrowSavedItems';
 import { savedItemAction } from '../../_utils/savedItemAction';
 import type { DishDraft } from '../../types';
 import { LinkModeBanner } from '../LinkModeBanner/LinkModeBanner';
+import { SavedKeyHint } from '../SavedKeyHint/SavedKeyHint';
 import { SavedResultList } from '../SavedResultList/SavedResultList';
 import { SavedSearchInput } from '../SavedSearchInput/SavedSearchInput';
 import { TagFilter } from '../TagFilter/TagFilter';
@@ -88,13 +90,6 @@ const renderColumn = (
 		/>,
 	);
 
-const highlightHandlers = () => ({
-	moveNext: vi.fn(),
-	movePrevious: vi.fn(),
-	highlight: vi.fn(),
-	itemRef: vi.fn(() => vi.fn()),
-});
-
 // Presses Enter in the search, which runs the highlighted result.
 const pressEnter = () =>
 	act(() => vi.mocked(SavedSearchInput).mock.lastCall?.[0].onRun());
@@ -129,7 +124,7 @@ describe('SavedRecipesColumn', () => {
 	});
 
 	// The DOM order is the Tab order, so the banner's Cancel, the search and the tags come before the results.
-	it('orders the column its label, the banner, the search, the tags, then the results', () => {
+	it('orders the column its label, the banner, the search, the tags, the key hint, then the results', () => {
 		renderColumn(soup);
 
 		const nodes = ['label', 'banner', 'search', 'tags', 'hint', 'results'].map(
@@ -209,9 +204,37 @@ describe('SavedRecipesColumn', () => {
 		}
 	});
 
+	it.each([
+		['outside link mode', null, false],
+		['while linking', soup, true],
+	])('tells the key hint whether a dish is being linked, %s', (_, dish, linking) => {
+		renderColumn(dish);
+
+		expect(vi.mocked(SavedKeyHint).mock.lastCall?.[0].linking).toBe(linking);
+	});
+
+	it("moves the highlight with the search's ↓ and ↑, and shows it on the results", () => {
+		const handlers = listHighlightHandlers();
+		vi.mocked(useListHighlight).mockReturnValueOnce([1, handlers]);
+		renderColumn();
+
+		expect(vi.mocked(SavedSearchInput).mock.lastCall?.[0]).toMatchObject({
+			onMoveDown: handlers.moveNext,
+			onMoveUp: handlers.movePrevious,
+		});
+		expect(vi.mocked(SavedResultList).mock.lastCall?.[0]).toMatchObject({
+			highlightedIndex: 1,
+			onHover: handlers.highlight,
+			itemRef: handlers.itemRef,
+		});
+	});
+
 	it('runs the highlighted result on Enter', () => {
 		showResults([tacos, oats]);
-		vi.mocked(useListHighlight).mockReturnValueOnce([1, highlightHandlers()]);
+		vi.mocked(useListHighlight).mockReturnValueOnce([
+			1,
+			listHighlightHandlers(),
+		]);
 		const onPick = vi.fn();
 		renderColumn(null, { linkedIds: new Set(['tacos']), onPick });
 
@@ -242,7 +265,7 @@ describe('SavedRecipesColumn', () => {
 	it('does nothing on Enter with nothing highlighted', () => {
 		vi.mocked(useListHighlight).mockReturnValueOnce([
 			null,
-			highlightHandlers(),
+			listHighlightHandlers(),
 		]);
 		const onPick = vi.fn();
 		renderColumn(null, { onPick });
