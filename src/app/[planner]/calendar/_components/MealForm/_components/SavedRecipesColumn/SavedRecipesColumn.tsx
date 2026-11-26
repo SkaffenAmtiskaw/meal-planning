@@ -10,9 +10,7 @@ import classes from './SavedRecipesColumn.module.css';
 
 import { usePlannerSavedItems } from '../../../../_hooks/usePlannerSavedItems';
 import { useSavedItemCriteria } from '../../_hooks/useSavedItemCriteria';
-import { filterSavedItems } from '../../_utils/filterSavedItems';
-import { orderSavedItems } from '../../_utils/orderSavedItems';
-import { rankTagOptions } from '../../_utils/rankTagOptions';
+import { narrowSavedItems } from '../../_utils/narrowSavedItems';
 import type { DishDraft } from '../../types';
 import { LinkModeBanner } from '../LinkModeBanner/LinkModeBanner';
 import { SavedResultList } from '../SavedResultList/SavedResultList';
@@ -48,12 +46,7 @@ export const SavedRecipesColumn = ({
 	const savedItems = usePlannerSavedItems();
 	const [criteria, { setSearch, setTagIds }] =
 		useSavedItemCriteria(linkingDish);
-	const results = filterSavedItems(orderSavedItems(savedItems), criteria);
-	const tagOptions = rankTagOptions({
-		countOver: results,
-		savedItems,
-		selectedIds: criteria.tagIds,
-	});
+	const { results, tagOptions } = narrowSavedItems(savedItems, criteria);
 	const linking = linkingDish !== null;
 
 	return (

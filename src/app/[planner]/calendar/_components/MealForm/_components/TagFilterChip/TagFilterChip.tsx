@@ -11,7 +11,7 @@ type Props = { option: TagFilterOption };
 /**
  * One tag in the tag filter: a dot in the tag's color, its name, and how many
  * results carry it while it's unselected. Selected, it's filled with the tag's
- * own colors. It sits in TagFilter's Chip.Group, which decides whether it's
+ * own colors. It sits in TagChips's Chip.Group, which decides whether it's
  * checked from its value, so it's a Client Component.
  */
 export const TagFilterChip = ({ option }: Props) => {
