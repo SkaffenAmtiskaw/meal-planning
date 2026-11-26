@@ -20,7 +20,7 @@ A raw file shows a note's embeds (`![[Note#Section]]`) only as a link, so open e
 ## The Test
 A group of behaviors or steps is a story of its own when all of these hold:
 1. **It's complete in itself.** It doesn't need a later group to work, so merged without the rest it leaves nothing half-finished on `develop`. It may depend on a group that comes before it.
-2. **The user can check it on its own.** A group that changes only tests is checked with break-it checks, where the user breaks the code a test covers and sees the test fail. Any other group has something to see in the running app, or a flow there that should stay unchanged. A group such as "types and utilities" or "wiring" has neither.
+2. **The user can check it on its own.** A group that changes only tests is checked with break-it checks, where the implementer breaks the code a test covers and shows the user the test failing. Any other group has something to see in the running app, or a flow there that should stay unchanged. A group such as "types and utilities" or "wiring" has neither.
 3. **It's useful without the rest.** If only this group were merged, the app would be better for it.
 4. **In a cleanup, it does a job of its own.** A group that serves the one job the note's Purpose sets out isn't a story, even if it works without the rest, because merging it alone leaves the Purpose's job half done. A group outside the Purpose, or one serving a second job the Purpose sets out, can be.
 

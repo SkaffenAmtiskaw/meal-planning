@@ -1,7 +1,7 @@
 # Test-Only Checks
 
 ## Break-It Checks
-Do each one exactly as it's written, and record which tests failed. After you revert the edit, check with `git diff` that the file is back to how it was.
+Do each one exactly as it's written. In your report, show the run's output, because reading it is the user's check. After you revert the edit, check with `git diff` that the file is back to how it was.
 
 If the tests that failed aren't exactly the ones the check names, don't change the tests or the check yourself. A different set means the check or a test is wrong. Which one is wrong is the user's call, so show the user both lists, the tests that failed and the ones the check names, and ask what to do.
 
