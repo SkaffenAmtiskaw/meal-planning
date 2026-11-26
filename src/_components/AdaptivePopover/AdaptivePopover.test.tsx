@@ -1,7 +1,7 @@
 import { render, screen } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-import { useIsMobile } from '@/_hooks';
+import { useEscapeLayer, useIsMobile } from '@/_hooks';
 
 import { AdaptivePopover } from './AdaptivePopover';
 
@@ -21,7 +21,7 @@ function renderAdaptivePopover({ opened = true } = {}) {
 		<AdaptivePopover
 			opened={opened}
 			onClose={vi.fn()}
-			title="Jump to date"
+			sheetTitle="Jump to date"
 			target={<button type="button">Open</button>}
 		>
 			Content
@@ -48,6 +48,15 @@ describe('AdaptivePopover', () => {
 
 		expect(screen.getByTestId('bottom-sheet').textContent).toBe('Content');
 		expect(screen.queryByTestId('popover-dropdown')).toBeNull();
+	});
+
+	it.each([
+		true,
+		false,
+	])('takes Esc from a modal it sits in only while open (open: %s)', (opened) => {
+		renderAdaptivePopover({ opened });
+
+		expect(useEscapeLayer).toHaveBeenLastCalledWith(opened);
 	});
 
 	it.each([

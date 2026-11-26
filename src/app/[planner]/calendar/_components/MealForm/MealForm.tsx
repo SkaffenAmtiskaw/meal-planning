@@ -12,7 +12,7 @@ import { linkedSavedIds } from '@/_actions/calendar/linkedSavedIds';
 import type { MealInput } from '@/_actions/calendar/types';
 import type { SavedItem } from '@/_actions/library/types';
 import { FormFeedbackAlert } from '@/_components';
-import { useFormFeedback, useIsMobile } from '@/_hooks';
+import { useEscapeLayer, useFormFeedback, useIsMobile } from '@/_hooks';
 import type { ActionResult } from '@/_utils/actionResult';
 
 import type { MealDraft, MealFormStatus } from './types';
@@ -67,6 +67,8 @@ export const MealForm = ({
 		chooseRecipe,
 	} = useMealDraft(initialDraft);
 	const [linkingKey, { enterLinking, exitLinking }] = useLinkMode(draft.dishes);
+	// Esc leaves link mode, not the whole form.
+	useEscapeLayer(linkingKey !== null);
 	const [openDishList, { openList, restartList, closeList }] =
 		useOpenDishList();
 	const linkingDish =
@@ -85,9 +87,8 @@ export const MealForm = ({
 		reportStatus({
 			date: draft.date,
 			mealName: draft.mealName,
-			linking: linkingKey !== null,
 		});
-	}, [draft.date, draft.mealName, linkingKey]);
+	}, [draft.date, draft.mealName]);
 
 	/**
 	 * Links a dish from the Saved recipes column, with the cursor in its search,

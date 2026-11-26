@@ -2,7 +2,7 @@ import { act, fireEvent, render, screen } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { makeDishDraft, makeMealDraft } from '#fixtures/dish';
-import { useFormFeedback, useIsMobile } from '@/_hooks';
+import { useEscapeLayer, useFormFeedback, useIsMobile } from '@/_hooks';
 
 import { MealForm } from './MealForm';
 
@@ -228,7 +228,6 @@ describe('MealForm', () => {
 		expect(onStatusChange).toHaveBeenLastCalledWith({
 			date: '2026-11-27',
 			mealName: 'Taco Night',
-			linking: false,
 		});
 
 		setField('mealName', 'Burrito Night');
@@ -236,7 +235,6 @@ describe('MealForm', () => {
 		expect(onStatusChange).toHaveBeenLastCalledWith({
 			date: '2026-11-27',
 			mealName: 'Burrito Night',
-			linking: false,
 		});
 	});
 
@@ -300,21 +298,19 @@ describe('MealForm', () => {
 			);
 		const startLinking = () => act(() => mealDishes()?.startLinking('soup'));
 
-		it('marks the dish, focuses the search, and tells the column and the frame', () => {
+		it('marks the dish, focuses the search, tells the column, and takes Esc from the frame', () => {
 			vi.mocked(SavedRecipesColumn).mockImplementation(({ searchRef }) => (
 				<input aria-label="Search" ref={searchRef} />
 			));
-			const onStatusChange = vi.fn();
-			renderForm(onStatusChange);
+			renderForm();
+			expect(useEscapeLayer).toHaveBeenLastCalledWith(false);
 
 			startLinking();
 
 			expect(mealDishes()?.linkingKey).toBe('soup');
 			expect(columnProps()?.linkingDish).toEqual(soup);
 			expect(document.activeElement).toBe(screen.getByLabelText('Search'));
-			expect(onStatusChange).toHaveBeenLastCalledWith(
-				expect.objectContaining({ linking: true }),
-			);
+			expect(useEscapeLayer).toHaveBeenLastCalledWith(true);
 		});
 
 		it("opens the dish's saved list on a phone, which has no column to link from", () => {
@@ -340,8 +336,7 @@ describe('MealForm', () => {
 		});
 
 		it('links the picked recipe to the dish, then leaves link mode', () => {
-			const onStatusChange = vi.fn();
-			renderForm(onStatusChange);
+			renderForm();
 			startLinking();
 
 			act(() => columnProps()?.onPick(chicken));
@@ -353,9 +348,7 @@ describe('MealForm', () => {
 			});
 			expect(mealDishes()?.linkingKey).toBeNull();
 			expect(columnProps()?.linkingDish).toBeNull();
-			expect(onStatusChange).toHaveBeenLastCalledWith(
-				expect.objectContaining({ linking: false }),
-			);
+			expect(useEscapeLayer).toHaveBeenLastCalledWith(false);
 		});
 
 		it('leaves link mode on Cancel with the dish unchanged', () => {

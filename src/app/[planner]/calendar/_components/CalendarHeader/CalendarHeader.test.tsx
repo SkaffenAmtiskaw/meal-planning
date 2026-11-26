@@ -23,10 +23,17 @@ vi.mock('@mantine/core', async () => await import('#mocks/@mantine/core'));
 vi.mock('@/_hooks', async () => await import('#mocks/@/_hooks'));
 
 vi.mock('@/_components', () => ({
-	DateFieldTrigger: vi.fn(() => <button type="button">Date</button>),
+	DateFieldTrigger: vi.fn(
+		({ rightSection }: { rightSection?: React.ReactNode }) => (
+			<button type="button">Date{rightSection}</button>
+		),
+	),
 }));
 
-// Renders the header's trigger closed, so the picker and its hooks stay out of the header's tests.
+// Whether the mock picker reports itself open to the trigger it renders.
+let pickerOpened = false;
+
+// Renders only the header's trigger, so the picker and its hooks stay out of the header's tests.
 vi.mock('../JumpToDate', () => ({
 	JumpToDate: vi.fn(
 		({
@@ -36,7 +43,7 @@ vi.mock('../JumpToDate', () => ({
 				opened: boolean;
 				onClick: () => void;
 			}) => ReactElement;
-		}) => renderTrigger({ opened: false, onClick: () => {} }),
+		}) => renderTrigger({ opened: pickerOpened, onClick: () => {} }),
 	),
 }));
 
@@ -131,6 +138,7 @@ function renderMobile({
 describe('CalendarHeader', () => {
 	beforeEach(() => {
 		vi.resetAllMocks();
+		pickerOpened = false;
 	});
 
 	describe('CalendarHeaderDesktop', () => {
@@ -219,6 +227,24 @@ describe('CalendarHeader', () => {
 			expect(
 				screen.getByTestId('date-field-skeleton').getAttribute('data-visible'),
 			).toBe('false');
+		});
+
+		it("points the date field's chevron down while its picker is closed", () => {
+			const { container } = renderDesktop();
+
+			expect(
+				container.querySelector('.tabler-icon-chevron-down'),
+			).not.toBeNull();
+			expect(container.querySelector('.tabler-icon-chevron-up')).toBeNull();
+		});
+
+		it("points the date field's chevron up while its picker is open", () => {
+			pickerOpened = true;
+
+			const { container } = renderDesktop();
+
+			expect(container.querySelector('.tabler-icon-chevron-up')).not.toBeNull();
+			expect(container.querySelector('.tabler-icon-chevron-down')).toBeNull();
 		});
 
 		it('hides Previous and Next buttons in list view', () => {

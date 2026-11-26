@@ -2,7 +2,7 @@
 
 import type { ReactElement, ReactNode } from 'react';
 
-import { Drawer } from '@mantine/core';
+import { Drawer, getDefaultZIndex } from '@mantine/core';
 
 import { useSwipe } from '@/_hooks';
 
@@ -40,6 +40,8 @@ export function BottomSheet({
 			opened={opened}
 			onClose={onClose}
 			position="bottom"
+			// Above a modal it opens over, such as the full-screen Add Meal form, whatever order they mount in.
+			zIndex={getDefaultZIndex('modal') + 1}
 			classNames={{
 				content: classes.content,
 				header: classes.header,

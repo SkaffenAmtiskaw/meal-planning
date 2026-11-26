@@ -10,10 +10,11 @@ import {
 	Stack,
 	Text,
 } from '@mantine/core';
-import { IconChevronDown } from '@tabler/icons-react';
+import { IconChevronDown, IconChevronUp } from '@tabler/icons-react';
 
 import { DateFieldTrigger } from '@/_components';
 import { type TodayPeriod, useToday } from '@/_hooks';
+import { formatDate } from '@/_utils/formatDate';
 
 import {
 	CalendarNextButton,
@@ -104,11 +105,18 @@ export function CalendarHeaderDesktop(): ReactElement {
 						renderTrigger={({ opened, onClick }) => (
 							<DateFieldTrigger
 								label="Date"
-								date={selectedDate}
-								dateStyle="numericDate"
-								opened={opened}
+								variant="notched"
+								rightSection={
+									opened ? (
+										<IconChevronUp size={16} />
+									) : (
+										<IconChevronDown size={16} />
+									)
+								}
 								onClick={onClick}
-							/>
+							>
+								{formatDate(selectedDate, 'numericDate')}
+							</DateFieldTrigger>
 						)}
 					/>
 				</Skeleton>

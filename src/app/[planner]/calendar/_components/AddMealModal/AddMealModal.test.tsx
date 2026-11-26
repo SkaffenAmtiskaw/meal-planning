@@ -4,7 +4,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { Modal } from '@mantine/core';
 
 import { addMeal } from '@/_actions/calendar';
-import { useIsMobile, useSnackbar } from '@/_hooks';
+import { useEscapeLayers, useIsMobile, useSnackbar } from '@/_hooks';
 
 import { AddMealModal } from './AddMealModal';
 
@@ -24,7 +24,7 @@ vi.mock('../MealForm', () => ({
 const formProps = () => vi.mocked(MealForm).mock.lastCall?.[0];
 const rootProps = () => vi.mocked(Modal.Root).mock.lastCall?.[0];
 
-const status = { date: '2026-11-27', mealName: 'Taco Night', linking: false };
+const status = { date: '2026-11-27', mealName: 'Taco Night' };
 
 const props = { data: {}, close: vi.fn(), plannerId: 'planner-1' };
 
@@ -129,11 +129,19 @@ describe('AddMealModal', () => {
 		expect(screen.queryByTestId('modal-subtitle')).toBeNull();
 	});
 
-	it('keeps the modal open on Esc while a dish is being linked', () => {
+	it('closes on Esc while no layer inside is open', () => {
 		render(<AddMealModal {...props} />);
-		expect(rootProps()?.closeOnEscape).toBe(true);
 
-		act(() => formProps()?.onStatusChange?.({ ...status, linking: true }));
+		expect(rootProps()?.closeOnEscape).toBe(true);
+	});
+
+	it('leaves Esc to a layer open inside it, such as a picker or link mode', () => {
+		vi.mocked(useEscapeLayers).mockReturnValueOnce({
+			anyOpen: true,
+			register: vi.fn(),
+		});
+
+		render(<AddMealModal {...props} />);
 
 		expect(rootProps()?.closeOnEscape).toBe(false);
 	});

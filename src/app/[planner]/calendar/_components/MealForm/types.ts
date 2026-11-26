@@ -20,8 +20,6 @@ export type MealDraft = {
 export type MealFormStatus = {
 	date: string;
 	mealName: string;
-	// True while a dish is being linked to a saved recipe, when Esc shouldn't close the frame.
-	linking: boolean;
 };
 
 // The meal's own fields, which the form edits in place.
