@@ -17,6 +17,7 @@ import classes from './DishRow.module.css';
 
 import { usePlannerSavedItems } from '../../../../_hooks/usePlannerSavedItems';
 import { useDish } from '../../_hooks/useDish';
+import { useDishLinkingContext } from '../../_hooks/useDishLinking';
 import { DeleteDishButton } from '../DeleteDishButton/DeleteDishButton';
 import { DishNameInput } from '../DishNameInput/DishNameInput';
 import { DishNameSearch } from '../DishNameSearch/DishNameSearch';
@@ -31,14 +32,18 @@ type Props = {
 
 /**
  * One dish: its name, recipe chip, note chip, expand arrow and delete, then its
- * panel. Whether the panel is open isn't part of the draft, so each row keeps
- * its own, and several can be open at once. A closed row shows its note under it.
- * On a phone, the name field searches saved recipes, and while its list is open
- * the list takes the chips' line, as the design shows. The dish and the form's
- * actions on it come from useDish().
+ * panel. Whether the panel is open isn't part of the meal's values, so each row
+ * keeps its own, and several can be open at once. A closed row shows its note
+ * under it. On a phone, the name field searches saved recipes, and while its
+ * list is open the list takes the chips' line, as the design shows. The dish
+ * comes from useDish(), and whether it's being linked from useDishLinkingContext().
  */
 export const DishRow = ({ canDelete }: Props) => {
-	const { dish, nameless, linking, listOpenId } = useDish();
+	const { dish, nameError } = useDish();
+	const { linkingKey, openDishList } = useDishLinkingContext();
+	const nameless = nameError !== null;
+	const linking = linkingKey === dish.key;
+	const listOpenId = openDishList?.key === dish.key ? openDishList.id : null;
 	const isMobile = useIsMobile();
 	const savedItems = usePlannerSavedItems();
 	const [open, setOpen] = useState(false);
@@ -125,7 +130,7 @@ export const DishRow = ({ canDelete }: Props) => {
 						aria-hidden
 					/>
 					<Text size="sm" fw={500} c="var(--mantine-color-error)">
-						Name this dish, or delete it.
+						{nameError}
 					</Text>
 				</Group>
 			)}

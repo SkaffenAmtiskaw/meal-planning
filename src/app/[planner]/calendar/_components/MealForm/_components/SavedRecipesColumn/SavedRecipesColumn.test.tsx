@@ -1,7 +1,7 @@
 import { act, render, screen } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-import { makeDishDraft } from '#fixtures/dish';
+import { makeDishValues } from '#fixtures/dish';
 import { makeTagFilterOption } from '#fixtures/tagFilterOption';
 import { listHighlightHandlers } from '#mocks/@/_hooks';
 import type { SavedItem } from '@/_actions/library/types';
@@ -10,10 +10,10 @@ import { useListHighlight } from '@/_hooks';
 import { SavedRecipesColumn } from './SavedRecipesColumn';
 
 import { usePlannerSavedItems } from '../../../../_hooks/usePlannerSavedItems';
+import type { DishValues } from '../../../_hooks/useMealForm';
 import { useSavedItemCriteria } from '../../_hooks/useSavedItemCriteria';
 import { narrowSavedItems } from '../../_utils/narrowSavedItems';
 import { savedItemAction } from '../../_utils/savedItemAction';
-import type { DishDraft } from '../../types';
 import { LinkModeBanner } from '../LinkModeBanner/LinkModeBanner';
 import { SavedKeyHint } from '../SavedKeyHint/SavedKeyHint';
 import { SavedResultList } from '../SavedResultList/SavedResultList';
@@ -72,10 +72,10 @@ const oats: SavedItem = {
 	tags: [],
 };
 
-const soup = makeDishDraft({ key: 'soup', name: 'chicken' });
+const soup = makeDishValues({ key: 'soup', name: 'chicken' });
 
 const renderColumn = (
-	linkingDish: DishDraft | null = null,
+	linkingDish: DishValues | null = null,
 	{
 		linkedIds = new Set<string>(),
 		onPick = vi.fn(),
@@ -115,7 +115,7 @@ describe('SavedRecipesColumn', () => {
 	});
 
 	it('follows the dish being linked, naming it in the banner and having its results link, even with no name', () => {
-		const nameless = makeDishDraft({ key: 'nameless', name: '' });
+		const nameless = makeDishValues({ key: 'nameless', name: '' });
 		renderColumn(nameless);
 
 		expect(useSavedItemCriteria).toHaveBeenLastCalledWith(nameless);

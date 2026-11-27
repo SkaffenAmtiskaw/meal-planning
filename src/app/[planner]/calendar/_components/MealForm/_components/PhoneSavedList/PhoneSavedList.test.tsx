@@ -1,15 +1,21 @@
 import { act, render, screen } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-import { makeDish, makeDishDraft } from '#fixtures/dish';
+import {
+	makeDish,
+	makeDishLinking,
+	makeDishValues,
+	makeMealDishes,
+} from '#fixtures/dish';
 import { makeSavedItem } from '#fixtures/savedItem';
 import { makeTagFilterOption as option } from '#fixtures/tagFilterOption';
 
 import { PhoneSavedList } from './PhoneSavedList';
 
 import { usePlannerSavedItems } from '../../../../_hooks/usePlannerSavedItems';
-import type { Dish } from '../../_hooks/useDish';
+import { useMealDishes } from '../../../_hooks/useMealForm';
 import { useDish } from '../../_hooks/useDish';
+import { useDishLinkingContext } from '../../_hooks/useDishLinking';
 import { narrowSavedItems } from '../../_utils/narrowSavedItems';
 import { AddAsNewDishRow } from '../AddAsNewDishRow/AddAsNewDishRow';
 import { PhoneSavedResultRow } from '../PhoneSavedResultRow/PhoneSavedResultRow';
@@ -26,10 +32,24 @@ vi.mock(
 		await import('#mocks/@app/[planner]/calendar/_hooks/usePlannerSavedItems'),
 );
 vi.mock(
+	'../../../_hooks/useMealForm',
+	async () =>
+		await import(
+			'#mocks/@app/[planner]/calendar/_components/_hooks/useMealForm'
+		),
+);
+vi.mock(
 	'../../_hooks/useDish',
 	async () =>
 		await import(
 			'#mocks/@app/[planner]/calendar/_components/MealForm/_hooks/useDish'
+		),
+);
+vi.mock(
+	'../../_hooks/useDishLinking',
+	async () =>
+		await import(
+			'#mocks/@app/[planner]/calendar/_components/MealForm/_hooks/useDishLinking'
 		),
 );
 vi.mock('../../_utils/narrowSavedItems', () => ({
@@ -60,14 +80,18 @@ const oats = makeSavedItem({ name: 'Overnight Oats' });
 // The dish's name is what's typed in its field, so it's the list's search.
 const withDish = ({
 	search = '',
-	...overrides
-}: Partial<Dish> & { search?: string } = {}) => {
-	const dish = makeDish({
-		dish: makeDishDraft({ key: 'soup', name: search }),
-		...overrides,
-	});
-	vi.mocked(useDish).mockReturnValue(dish);
-	return dish;
+	linkedIds = new Set<string>(),
+}: {
+	search?: string;
+	linkedIds?: Set<string>;
+} = {}) => {
+	vi.mocked(useDish).mockReturnValue(
+		makeDish({ dish: makeDishValues({ key: 'soup', name: search }) }),
+	);
+	vi.mocked(useMealDishes).mockReturnValue(makeMealDishes({ linkedIds }));
+	const linking = makeDishLinking();
+	vi.mocked(useDishLinkingContext).mockReturnValue(linking);
+	return linking;
 };
 
 const title = () => screen.queryByText('From your saved recipes');
@@ -124,22 +148,22 @@ describe('PhoneSavedList', () => {
 	it('uses the tapped recipe', () => {
 		vi.mocked(usePlannerSavedItems).mockReturnValue([tacos]);
 		vi.mocked(phoneListRows).mockReturnValue([tacos]);
-		const dish = withDish();
+		const linking = withDish();
 		render(<PhoneSavedList fieldNode={null} />);
 
 		vi.mocked(PhoneSavedResultRow).mock.calls[0][0].onUse();
 
-		expect(dish.chooseRecipe).toHaveBeenCalledWith('soup', tacos);
+		expect(linking.chooseFromList).toHaveBeenCalledWith('soup', tacos);
 	});
 
 	it('closes the list from its last row, keeping what was typed', () => {
 		vi.mocked(usePlannerSavedItems).mockReturnValue([tacos]);
-		const dish = withDish({ search: 'Soup' });
+		const linking = withDish({ search: 'Soup' });
 		render(<PhoneSavedList fieldNode={null} />);
 
 		vi.mocked(AddAsNewDishRow).mock.lastCall?.[0].onAdd();
 
-		expect(dish.closeList).toHaveBeenCalled();
+		expect(linking.closeList).toHaveBeenCalled();
 	});
 
 	it('shows only the last row, untitled, when nothing matches', () => {

@@ -1,113 +1,79 @@
 import { renderHook } from '@testing-library/react';
-import { describe, expect, it, vi } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import type { ReactNode } from 'react';
 
-import { makeDishDraft } from '#fixtures/dish';
+import { makeDishValues } from '#fixtures/dish';
 
 import { DishProvider } from './DishProvider';
-import { MealDishesProvider } from './MealDishesProvider';
 import { useDish } from './useDish';
-import type { MealDishes } from './types';
 
-const soup = makeDishDraft({ key: 'soup', name: 'Soup' });
+import {
+	isNamelessDish,
+	useMealFormContext,
+} from '../../../_hooks/useMealForm';
 
-const mealDishes = (overrides: Partial<MealDishes> = {}): MealDishes => ({
-	namelessKeys: new Set(),
-	linkingKey: null,
-	linkedIds: new Set(),
-	openDishList: null,
-	renameDish: vi.fn(),
-	removeDish: vi.fn(),
-	unlinkDish: vi.fn(),
-	setReference: vi.fn(),
-	setNote: vi.fn(),
-	startLinking: vi.fn(),
-	openList: vi.fn(),
-	closeList: vi.fn(),
-	chooseRecipe: vi.fn(),
-	...overrides,
-});
+vi.mock(
+	'../../../_hooks/useMealForm',
+	async () =>
+		await import(
+			'#mocks/@app/[planner]/calendar/_components/_hooks/useMealForm'
+		),
+);
 
-const renderDish = (value: MealDishes) =>
+const garlic = makeDishValues({ key: 'garlic', note: 'double the garlic' });
+
+// A form holding these errors, as a stopped save leaves them.
+const withErrors = (errors: Record<string, string>) => {
+	const form = useMealFormContext();
+	vi.mocked(useMealFormContext).mockReturnValue({ ...form, errors });
+};
+
+const renderDish = (index = 1) =>
 	renderHook(() => useDish(), {
 		wrapper: ({ children }: { children: ReactNode }) => (
-			<MealDishesProvider value={value}>
-				<DishProvider dish={soup}>{children}</DishProvider>
-			</MealDishesProvider>
+			<DishProvider dish={garlic} index={index}>
+				{children}
+			</DishProvider>
 		),
 	}).result.current;
 
 describe('useDish', () => {
-	it('gives the dish its provider holds', () => {
-		expect(renderDish(mealDishes()).dish).toBe(soup);
+	beforeEach(() => {
+		vi.mocked(isNamelessDish).mockReturnValue(true);
+		withErrors({});
 	});
 
-	it.each([
-		{ keys: ['soup'], nameless: true },
-		{ keys: ['bread'], nameless: false },
-	])('marks the dish nameless only when its key is flagged ($keys)', ({
-		keys,
-		nameless,
-	}) => {
-		const dish = renderDish(mealDishes({ namelessKeys: new Set(keys) }));
+	it('gives the dish and its place that its provider holds', () => {
+		const dish = renderDish(1);
 
-		expect(dish.nameless).toBe(nameless);
+		expect(dish.dish).toBe(garlic);
+		expect(dish.index).toBe(1);
 	});
 
-	it.each([
-		{ linkingKey: 'soup', linking: true },
-		{ linkingKey: 'bread', linking: false },
-		{ linkingKey: null, linking: false },
-	])('marks the dish linking only while it is the one being linked ($linkingKey)', ({
-		linkingKey,
-		linking,
-	}) => {
-		expect(renderDish(mealDishes({ linkingKey })).linking).toBe(linking);
+	it("gives the message a stopped save left on the dish's name", () => {
+		withErrors({ 'dishes.1.name': 'Name this dish, or delete it.' });
+
+		expect(renderDish(1).nameError).toBe('Name this dish, or delete it.');
 	});
 
-	it.each([
-		{ openDishList: { key: 'soup', id: 3 }, listOpenId: 3 },
-		{ openDishList: { key: 'bread', id: 3 }, listOpenId: null },
-		{ openDishList: null, listOpenId: null },
-	])("gives the open's id only while the dish's own list is open ($openDishList.key)", ({
-		openDishList,
-		listOpenId,
-	}) => {
-		expect(renderDish(mealDishes({ openDishList })).listOpenId).toBe(
-			listOpenId,
-		);
+	it("gives no message from another dish's name", () => {
+		withErrors({ 'dishes.0.name': 'Name this dish, or delete it.' });
+
+		expect(renderDish(1).nameError).toBeNull();
 	});
 
-	it("passes the form's actions on, called with the key they're given", () => {
-		const value = mealDishes();
-		const dish = renderDish(value);
+	it('hides the message once the dish has a name, so clearing the name brings it back', () => {
+		withErrors({ 'dishes.1.name': 'Name this dish, or delete it.' });
+		vi.mocked(isNamelessDish).mockReturnValue(false);
 
-		dish.renameDish('soup', 'Tomato Soup');
-
-		expect(value.renameDish).toHaveBeenCalledWith('soup', 'Tomato Soup');
-		expect(dish.linkedIds).toBe(value.linkedIds);
+		expect(renderDish(1).nameError).toBeNull();
+		expect(isNamelessDish).toHaveBeenCalledWith(garlic);
 	});
 
 	it('throws outside DishProvider', () => {
-		expect(() =>
-			renderHook(() => useDish(), {
-				wrapper: ({ children }: { children: ReactNode }) => (
-					<MealDishesProvider value={mealDishes()}>
-						{children}
-					</MealDishesProvider>
-				),
-			}),
-		).toThrow('useDish must be used inside DishProvider');
-	});
-
-	it('throws outside MealDishesProvider', () => {
-		expect(() =>
-			renderHook(() => useDish(), {
-				wrapper: ({ children }: { children: ReactNode }) => (
-					<DishProvider dish={soup}>{children}</DishProvider>
-				),
-			}),
-		).toThrow('useDish must be used inside MealDishesProvider');
+		expect(() => renderHook(() => useDish())).toThrow(
+			'useDish must be used inside DishProvider',
+		);
 	});
 });

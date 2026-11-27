@@ -1,13 +1,21 @@
-import { fireEvent, render, screen } from '@testing-library/react';
+import { render } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
 
-import { makeDish, makeDishDraft } from '#fixtures/dish';
+import { makeDish } from '#fixtures/dish';
 
 import { DishPanel } from './DishPanel';
 
+import { useMealFormContext } from '../../../_hooks/useMealForm';
 import { useDish } from '../../_hooks/useDish';
 
 vi.mock('@mantine/core', async () => await import('#mocks/@mantine/core'));
+vi.mock(
+	'../../../_hooks/useMealForm',
+	async () =>
+		await import(
+			'#mocks/@app/[planner]/calendar/_components/_hooks/useMealForm'
+		),
+);
 vi.mock(
 	'../../_hooks/useDish',
 	async () =>
@@ -20,15 +28,12 @@ vi.mock('../DishRecipeSection/DishRecipeSection', () => ({
 }));
 
 describe('DishPanel', () => {
-	it("sets the dish's note to what is typed", () => {
-		const dish = makeDish({ dish: makeDishDraft({ key: 'soup' }) });
-		vi.mocked(useDish).mockReturnValue(dish);
+	it("binds the note field to its dish's note", () => {
+		const form = useMealFormContext();
+		vi.mocked(useMealFormContext).mockReturnValue(form);
+		vi.mocked(useDish).mockReturnValue(makeDish({ index: 1 }));
 		render(<DishPanel noteRef={{ current: null }} />);
 
-		fireEvent.change(screen.getByPlaceholderText(/Prep reminders/), {
-			target: { value: 'Buy bread' },
-		});
-
-		expect(dish.setNote).toHaveBeenCalledWith('soup', 'Buy bread');
+		expect(form.getInputProps).toHaveBeenCalledWith('dishes.1.note');
 	});
 });

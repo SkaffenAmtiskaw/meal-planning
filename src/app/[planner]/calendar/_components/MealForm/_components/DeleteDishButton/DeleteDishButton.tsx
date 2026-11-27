@@ -6,20 +6,22 @@ import { IconTrash } from '@tabler/icons-react';
 
 import { ConfirmModal } from '@/_components';
 
+import { useMealDishes } from '../../../_hooks/useMealForm';
 import { useDish } from '../../_hooks/useDish';
 
 /**
- * The trash icon, which asks before it removes the dish. Removing a dish only
- * changes the draft, so it uses ConfirmModal directly rather than ConfirmButton,
- * which runs an action.
+ * The trash icon, which asks before it deletes the dish. Deleting a dish only
+ * changes the form's values, so it uses ConfirmModal directly rather than
+ * ConfirmButton, which runs an action.
  */
 export const DeleteDishButton = () => {
-	const { dish, removeDish } = useDish();
+	const { dish } = useDish();
+	const { deleteDish } = useMealDishes();
 	const [opened, { open, close }] = useDisclosure(false);
 
 	const confirm = () => {
 		close();
-		removeDish(dish.key);
+		deleteDish(dish.key);
 	};
 
 	return (

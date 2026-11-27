@@ -1,9 +1,9 @@
 /**
- * Shared mock for MealForm's _utils/isBlankDish.
+ * Shared mock for the calendar's _components/_utils/isBlankDish.
  *
  * Usage in a test file:
- *   vi.mock('./isBlankDish', async () =>
- *     await import('#mocks/@app/[planner]/calendar/_components/MealForm/_utils/isBlankDish')
+ *   vi.mock('../../_utils/isBlankDish', async () =>
+ *     await import('#mocks/@app/[planner]/calendar/_components/_utils/isBlankDish')
  *   );
  *
  * By default no dish is blank. Override in specific tests with:

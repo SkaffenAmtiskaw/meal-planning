@@ -2,8 +2,8 @@
 
 import { useState } from 'react';
 
+import type { DishValues } from '../../../_hooks/useMealForm';
 import type { SavedItemCriteria } from '../../_utils/types';
-import type { DishDraft } from '../../types';
 
 type Handlers = {
 	setSearch: (search: string) => void;
@@ -11,7 +11,7 @@ type Handlers = {
 };
 
 // The dish being linked, of which the hook reads only its key and name.
-type LinkingDish = Pick<DishDraft, 'key' | 'name'> | null;
+type LinkingDish = Pick<DishValues, 'key' | 'name'> | null;
 
 // The search filled with the dish's name, or empty with no dish, and no tags selected.
 const startFor = (dish: LinkingDish): SavedItemCriteria => ({

@@ -3,7 +3,9 @@
 import { Button, Group, Paper, Stack, Text, TextInput } from '@mantine/core';
 
 import { usePlannerSavedItems } from '../../../../_hooks/usePlannerSavedItems';
+import { useMealDishes } from '../../../_hooks/useMealForm';
 import { useDish } from '../../_hooks/useDish';
+import { useDishLinkingContext } from '../../_hooks/useDishLinking';
 import { savedItemName } from '../../_utils/savedItemName';
 import { SectionLabel } from '../SectionLabel/SectionLabel';
 import { SourceMark } from '../SourceMark/SourceMark';
@@ -14,7 +16,9 @@ import { SourceMark } from '../SourceMark/SourceMark';
  * Change and "Link a saved recipe" both start linking.
  */
 export const DishRecipeSection = () => {
-	const { dish, unlinkDish, setReference, startLinking } = useDish();
+	const { dish } = useDish();
+	const { unlinkDish, setReference } = useMealDishes();
+	const { startLinking } = useDishLinkingContext();
 	const { source } = dish;
 	const savedItems = usePlannerSavedItems();
 	const startLinkingDish = () => startLinking(dish.key);

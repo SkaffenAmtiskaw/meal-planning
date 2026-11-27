@@ -1,23 +1,35 @@
 import { act, fireEvent, render, screen } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-import { makeDishDraft, makeMealDraft } from '#fixtures/dish';
-import { useEscapeLayer, useFormFeedback, useIsMobile } from '@/_hooks';
+import { useForm } from '@mantine/form';
+
+import { makeDishValues, makeMealValues } from '#fixtures/dish';
+import { useFormFeedback } from '@/_hooks';
 
 import { MealForm } from './MealForm';
 
-import { DishList } from './_components/DishList/DishList';
-import { MealFields } from './_components/MealFields/MealFields';
+import { hasRequiredFields, useMealFormContext } from '../_hooks/useMealForm';
 import { MealFormFooter } from './_components/MealFormFooter/MealFormFooter';
-import { SavedRecipesColumn } from './_components/SavedRecipesColumn/SavedRecipesColumn';
-import { MealDishesProvider } from './_hooks/useDish';
-import { findNamelessDishes } from './_utils/findNamelessDishes';
-import { isBlankDish } from './_utils/isBlankDish';
 
+vi.mock('@mantine/form', async () => await import('#mocks/@mantine/form'));
 vi.mock('@/_hooks', async () => await import('#mocks/@/_hooks'));
 vi.mock('@/_components', () => ({
 	FormFeedbackAlert: vi.fn(() => null),
 }));
+vi.mock(
+	'../_hooks/useMealForm',
+	async () =>
+		await import(
+			'#mocks/@app/[planner]/calendar/_components/_hooks/useMealForm'
+		),
+);
+vi.mock(
+	'./_hooks/useDishLinking',
+	async () =>
+		await import(
+			'#mocks/@app/[planner]/calendar/_components/MealForm/_hooks/useDishLinking'
+		),
+);
 vi.mock('./_components/MealFormLayout/MealFormLayout', () => ({
 	MealFormLayout: vi.fn(({ meal, dishes, saved, footer }) => (
 		<>
@@ -32,13 +44,6 @@ vi.mock('./_components/MealFormLayout/MealFormLayout', () => ({
 vi.mock('./_components/MealFields/MealFields', () => ({
 	MealFields: vi.fn(() => null),
 }));
-vi.mock(
-	'./_hooks/useDish',
-	async () =>
-		await import(
-			'#mocks/@app/[planner]/calendar/_components/MealForm/_hooks/useDish'
-		),
-);
 vi.mock('./_components/DishList/DishList', () => ({
 	DishList: vi.fn(() => null),
 }));
@@ -48,21 +53,11 @@ vi.mock('./_components/MealFormFooter/MealFormFooter', () => ({
 vi.mock('./_components/SavedRecipesColumn/SavedRecipesColumn', () => ({
 	SavedRecipesColumn: vi.fn(() => null),
 }));
-vi.mock(
-	'./_utils/isBlankDish',
-	async () =>
-		await import(
-			'#mocks/@app/[planner]/calendar/_components/MealForm/_utils/isBlankDish'
-		),
-);
-vi.mock('./_utils/findNamelessDishes', () => ({
-	findNamelessDishes: vi.fn(() => []),
-}));
 
-const draft = makeMealDraft({
+const values = makeMealValues({
 	date: '2026-11-27',
 	mealName: 'Taco Night',
-	dishes: [makeDishDraft({ name: 'Tacos' })],
+	dishes: [makeDishValues({ name: 'Tacos' })],
 });
 
 const savedInput = {
@@ -73,351 +68,73 @@ const savedInput = {
 
 const ok = { ok: true as const, data: undefined };
 
-const chicken = {
-	_id: 'saved-1',
-	name: 'Lemon Herb Chicken',
-	kind: 'recipe' as const,
-	tags: [],
-};
-
-const dishListProps = () => vi.mocked(DishList).mock.lastCall?.[0];
-// What the form gives the rows of its dish list.
-const mealDishes = () => vi.mocked(MealDishesProvider).mock.lastCall?.[0].value;
-const columnProps = () => vi.mocked(SavedRecipesColumn).mock.lastCall?.[0];
-
-const setField = (field: string, value: string) =>
-	act(() =>
-		vi
-			.mocked(MealFields)
-			.mock.lastCall?.[0].onFieldChange(field as 'mealName', value),
+const renderForm = (props: Partial<Parameters<typeof MealForm>[0]> = {}) =>
+	render(
+		<MealForm
+			save={vi.fn(async () => ok)}
+			onSuccess={vi.fn()}
+			onCancel={vi.fn()}
+			{...props}
+		/>,
 	);
+
+const submit = () =>
+	act(async () => {
+		fireEvent.click(screen.getByRole('button', { name: 'Add Meal' }));
+	});
 
 describe('MealForm', () => {
 	beforeEach(() => {
 		vi.clearAllMocks();
-		vi.mocked(findNamelessDishes).mockReturnValue([]);
-		vi.mocked(isBlankDish).mockReturnValue(false);
-		vi.mocked(useIsMobile).mockReturnValue(false);
-		// Back to the factory's empty column, after a test that draws the search.
-		vi.mocked(SavedRecipesColumn).mockReset();
 	});
 
-	it('saves the draft through the save it was given, then reports the saved meal', async () => {
+	it('saves the values through the save it was given, then reports the saved meal', async () => {
+		vi.mocked(useMealFormContext).mockReturnValue(
+			useForm({ initialValues: values }) as unknown as ReturnType<
+				typeof useMealFormContext
+			>,
+		);
 		const save = vi.fn(async () => ok);
 		const onSuccess = vi.fn();
-		render(
-			<MealForm
-				initialDraft={draft}
-				save={save}
-				onSuccess={onSuccess}
-				onCancel={vi.fn()}
-			/>,
-		);
+		renderForm({ save, onSuccess });
 
-		await act(async () => {
-			fireEvent.click(screen.getByRole('button', { name: 'Add Meal' }));
-		});
+		await submit();
 
 		expect(save).toHaveBeenCalledWith(savedInput);
 		expect(onSuccess).toHaveBeenCalledWith(savedInput);
 	});
 
-	it("stops the save while a dish has something in it but no name, and marks that dish's row", async () => {
-		const nameless = makeDishDraft({ key: 'nameless', note: 'Buy rolls' });
-		vi.mocked(findNamelessDishes).mockReturnValue([nameless]);
+	it("submits through the form, so a save waits on the form's checks", async () => {
+		const form = useMealFormContext();
+		const onSubmit = vi.fn(() => vi.fn());
+		vi.mocked(useMealFormContext).mockReturnValue({ ...form, onSubmit });
 		const save = vi.fn(async () => ok);
-		render(
-			<MealForm
-				initialDraft={draft}
-				save={save}
-				onSuccess={vi.fn()}
-				onCancel={vi.fn()}
-			/>,
-		);
-		expect(mealDishes()?.namelessKeys).toEqual(new Set());
+		renderForm({ save });
 
-		await act(async () => {
-			fireEvent.click(screen.getByRole('button', { name: 'Add Meal' }));
-		});
+		await submit();
 
+		expect(onSubmit).toHaveBeenCalledTimes(1);
 		expect(save).not.toHaveBeenCalled();
-		expect(mealDishes()?.namelessKeys).toEqual(new Set(['nameless']));
-	});
-
-	it("clears a row's mark once its dish has a name", async () => {
-		const nameless = makeDishDraft({ key: 'nameless', note: 'Buy rolls' });
-		vi.mocked(findNamelessDishes).mockReturnValue([nameless]);
-		render(
-			<MealForm
-				initialDraft={draft}
-				save={vi.fn()}
-				onSuccess={vi.fn()}
-				onCancel={vi.fn()}
-			/>,
-		);
-		await act(async () => {
-			fireEvent.click(screen.getByRole('button', { name: 'Add Meal' }));
-		});
-
-		vi.mocked(findNamelessDishes).mockReturnValue([]);
-		setField('mealName', 'Lunch');
-
-		expect(mealDishes()?.namelessKeys).toEqual(new Set());
-	});
-
-	it('leaves blank rows out of the dish list and footer counts', () => {
-		const blank = makeDishDraft({ key: 'blank' });
-		vi.mocked(isBlankDish).mockImplementation((dish) => dish === blank);
-		render(
-			<MealForm
-				initialDraft={makeMealDraft({
-					dishes: [blank, makeDishDraft({ key: 'b', name: 'Soup' })],
-				})}
-				save={vi.fn()}
-				onSuccess={vi.fn()}
-				onCancel={vi.fn()}
-			/>,
-		);
-
-		expect(vi.mocked(MealFormFooter).mock.lastCall?.[0].dishCount).toBe(1);
-		expect(vi.mocked(DishList).mock.lastCall?.[0].dishCount).toBe(1);
 	});
 
 	it('closes at once after a save, with no countdown', () => {
-		render(
-			<MealForm
-				initialDraft={draft}
-				save={vi.fn()}
-				onSuccess={vi.fn()}
-				onCancel={vi.fn()}
-			/>,
-		);
+		renderForm();
 
 		expect(vi.mocked(useFormFeedback)).toHaveBeenCalledWith({
 			successDuration: 0,
 		});
 	});
 
-	it('lets Add Meal be pressed only once Date and Meal name are filled', () => {
-		render(
-			<MealForm
-				initialDraft={makeMealDraft({ date: '2026-11-27' })}
-				save={vi.fn()}
-				onSuccess={vi.fn()}
-				onCancel={vi.fn()}
-			/>,
+	it.each([
+		true,
+		false,
+	])('lets Add Meal be pressed only once the required fields are filled (%s)', (filled) => {
+		vi.mocked(hasRequiredFields).mockReturnValue(filled);
+		renderForm();
+
+		expect(vi.mocked(MealFormFooter).mock.lastCall?.[0].canSubmit).toBe(filled);
+		expect(hasRequiredFields).toHaveBeenCalledWith(
+			vi.mocked(useMealFormContext).mock.results[0].value.values,
 		);
-		expect(vi.mocked(MealFormFooter).mock.lastCall?.[0].canSubmit).toBe(false);
-
-		setField('mealName', 'Supper');
-
-		expect(vi.mocked(MealFormFooter).mock.lastCall?.[0].canSubmit).toBe(true);
-	});
-
-	it('tells its frame each date picked, and nothing else', () => {
-		const onDateChange = vi.fn();
-		render(
-			<MealForm
-				initialDraft={draft}
-				save={vi.fn()}
-				onSuccess={vi.fn()}
-				onCancel={vi.fn()}
-				onDateChange={onDateChange}
-			/>,
-		);
-		expect(onDateChange).not.toHaveBeenCalled();
-
-		setField('mealName', 'Burrito Night');
-		expect(onDateChange).not.toHaveBeenCalled();
-
-		setField('date', '2026-12-10');
-		expect(onDateChange).toHaveBeenCalledExactlyOnceWith('2026-12-10');
-	});
-
-	it('works without a frame listening for its date', () => {
-		render(
-			<MealForm
-				initialDraft={draft}
-				save={vi.fn()}
-				onSuccess={vi.fn()}
-				onCancel={vi.fn()}
-			/>,
-		);
-
-		setField('date', '2026-12-10');
-
-		expect(vi.mocked(MealFields).mock.lastCall?.[0].values.date).toBe(
-			'2026-12-10',
-		);
-	});
-	it("adds the saved recipe picked in the column, and tells the column it's on the meal", () => {
-		render(
-			<MealForm
-				initialDraft={draft}
-				save={vi.fn()}
-				onSuccess={vi.fn()}
-				onCancel={vi.fn()}
-			/>,
-		);
-		expect(vi.mocked(SavedRecipesColumn).mock.lastCall?.[0].linkedIds).toEqual(
-			new Set(),
-		);
-
-		act(() => columnProps()?.onPick(chicken));
-
-		expect(vi.mocked(DishList).mock.lastCall?.[0].dishes[1]).toMatchObject({
-			name: 'Lemon Herb Chicken',
-			source: { kind: 'saved', savedId: 'saved-1' },
-		});
-		expect(vi.mocked(SavedRecipesColumn).mock.lastCall?.[0].linkedIds).toEqual(
-			new Set(['saved-1']),
-		);
-	});
-
-	describe('linking a dish', () => {
-		const soup = makeDishDraft({
-			key: 'soup',
-			name: 'chicken',
-			source: { kind: 'reference', text: 'p. 12' },
-		});
-		const linkingDraft = makeMealDraft({
-			date: '2026-11-27',
-			mealName: 'Supper',
-			dishes: [soup, makeDishDraft({ key: 'bread', name: 'Bread' })],
-		});
-
-		const renderForm = () =>
-			render(
-				<MealForm
-					initialDraft={linkingDraft}
-					save={vi.fn()}
-					onSuccess={vi.fn()}
-					onCancel={vi.fn()}
-				/>,
-			);
-		const startLinking = () => act(() => mealDishes()?.startLinking('soup'));
-
-		it('marks the dish, focuses the search, tells the column, and takes Esc from the frame', () => {
-			vi.mocked(SavedRecipesColumn).mockImplementation(({ searchRef }) => (
-				<input aria-label="Search" ref={searchRef} />
-			));
-			renderForm();
-			expect(useEscapeLayer).toHaveBeenLastCalledWith(false);
-
-			startLinking();
-
-			expect(mealDishes()?.linkingKey).toBe('soup');
-			expect(columnProps()?.linkingDish).toEqual(soup);
-			expect(document.activeElement).toBe(screen.getByLabelText('Search'));
-			expect(useEscapeLayer).toHaveBeenLastCalledWith(true);
-		});
-
-		it("opens the dish's saved list on a phone, which has no column to link from", () => {
-			vi.mocked(useIsMobile).mockReturnValue(true);
-			renderForm();
-
-			startLinking();
-
-			expect(mealDishes()?.linkingKey).toBeNull();
-			expect(mealDishes()?.openDishList?.key).toBe('soup');
-		});
-
-		it("starts the dish's list afresh on a phone, even while it's open", () => {
-			vi.mocked(useIsMobile).mockReturnValue(true);
-			renderForm();
-			act(() => mealDishes()?.openList('soup'));
-			const open = mealDishes()?.openDishList;
-
-			startLinking();
-
-			expect(mealDishes()?.openDishList?.key).toBe('soup');
-			expect(mealDishes()?.openDishList?.id).not.toBe(open?.id);
-		});
-
-		it('links the picked recipe to the dish, then leaves link mode', () => {
-			renderForm();
-			startLinking();
-
-			act(() => columnProps()?.onPick(chicken));
-
-			expect(dishListProps()?.dishes).toHaveLength(2);
-			expect(dishListProps()?.dishes[0]).toMatchObject({
-				name: 'chicken',
-				source: { kind: 'saved', savedId: 'saved-1' },
-			});
-			expect(mealDishes()?.linkingKey).toBeNull();
-			expect(columnProps()?.linkingDish).toBeNull();
-			expect(useEscapeLayer).toHaveBeenLastCalledWith(false);
-		});
-
-		it('leaves link mode on Cancel with the dish unchanged', () => {
-			renderForm();
-			startLinking();
-
-			act(() => columnProps()?.onCancelLinking());
-
-			expect(mealDishes()?.linkingKey).toBeNull();
-			expect(dishListProps()?.dishes[0]).toEqual(soup);
-			expect(columnProps()?.linkingDish).toBeNull();
-		});
-	});
-
-	describe("a phone's saved lists", () => {
-		const renderForm = () =>
-			render(
-				<MealForm
-					initialDraft={makeMealDraft({
-						dishes: [makeDishDraft({ key: 'soup', name: 'pas' })],
-					})}
-					save={vi.fn()}
-					onSuccess={vi.fn()}
-					onCancel={vi.fn()}
-				/>,
-			);
-		const addDish = () => act(() => dishListProps()?.onAddDish());
-
-		it("opens the new dish's list from Add dish", () => {
-			vi.mocked(useIsMobile).mockReturnValue(true);
-			renderForm();
-
-			addDish();
-
-			const dishes = dishListProps()?.dishes ?? [];
-			expect(dishes).toHaveLength(2);
-			expect(mealDishes()?.openDishList?.key).toBe(dishes[1].key);
-		});
-
-		it('opens no list from Add dish on desktop', () => {
-			renderForm();
-
-			addDish();
-
-			expect(mealDishes()?.openDishList).toBeNull();
-		});
-
-		it('names and links the dish from the recipe chosen in its list, then closes the list', () => {
-			vi.mocked(useIsMobile).mockReturnValue(true);
-			renderForm();
-			act(() => mealDishes()?.openList('soup'));
-
-			act(() => mealDishes()?.chooseRecipe('soup', chicken));
-
-			expect(dishListProps()?.dishes[0]).toMatchObject({
-				name: 'Lemon Herb Chicken',
-				source: { kind: 'saved', savedId: 'saved-1' },
-			});
-			expect(mealDishes()?.openDishList).toBeNull();
-			expect(mealDishes()?.linkedIds).toEqual(new Set(['saved-1']));
-		});
-
-		it('closes the open list', () => {
-			vi.mocked(useIsMobile).mockReturnValue(true);
-			renderForm();
-			act(() => mealDishes()?.openList('soup'));
-
-			act(() => mealDishes()?.closeList());
-
-			expect(mealDishes()?.openDishList).toBeNull();
-		});
 	});
 });

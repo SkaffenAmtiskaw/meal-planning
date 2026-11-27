@@ -2,23 +2,25 @@
 
 import { TextInput } from '@mantine/core';
 
+import { useMealFormContext } from '../../../_hooks/useMealForm';
 import { useDish } from '../../_hooks/useDish';
 
 /**
- * The desktop dish name field. Renaming a dish never changes what it links to.
- * A nameless dish draws the field red; its row shows the message.
+ * The desktop dish name field, bound to the form, since renaming a dish never
+ * changes what it links to. A nameless dish draws the field red; its row shows
+ * the message, so the field shows none of its own.
  */
 export const DishNameInput = () => {
-	const { dish, nameless, renameDish } = useDish();
+	const { index, nameError } = useDish();
+	const form = useMealFormContext();
 
 	return (
 		<TextInput
 			aria-label="Dish name"
 			placeholder="Dish name"
 			flex={1}
-			error={nameless}
-			value={dish.name}
-			onChange={(e) => renameDish(dish.key, e.currentTarget.value)}
+			{...form.getInputProps(`dishes.${index}.name`, { withError: false })}
+			error={nameError !== null}
 		/>
 	);
 };
