@@ -20,7 +20,7 @@ Read each file in full, plus enough of its callers to see how it's used. If the 
 - **Would the story give it another job?**
   - **If the story isn't built yet:** for each file the story has to change, compare the target piece's job with the job the module already does. If they differ, adding the new behavior here creates a god component. Say so.
   - **If it's built:** check whether the module now does any job other than its target piece's job.
-- **Project conventions.** Read `docs/project_conventions.md` and `docs/style_guidelines.md`, and check the module against each rule in them.
+- **Project conventions.** Read `docs/project_conventions.md` and `docs/style_guidelines.md`, and check the module against each rule in them. A path that one of their rules about something else names only records where the code was when the line was written, so it's no reason the module is in the right place.
 - **Fit.** Does the module's interface match the target piece's job as it is? Or would it have to be bent with extra flags, modes, or optional props that only one caller uses?
 - **Duplication.** Note any case of two or more existing modules doing the same thing.
 

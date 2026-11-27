@@ -95,6 +95,8 @@ Read a doc in `docs/` when the task needs it, not all of them up front. Each is 
 - `release_tasks.md`: before planning or writing a change that needs production's stored data changed, such as a model's new or changed fields
 - `branching.md`: before work that touches branches, worktrees, PRs, releases or hotfixes
 
+A doc's rule is judged by what it's for, not by every word in it. So a path that a rule about something else names only records where the code was when the line was written, and it's no reason the code belongs there. For example, the rule on reporting errors names the import path for `reportError`, which says how to import it, not where it belongs. If the code should move, change the doc's line with it.
+
 Before you plan, draft or change a file in `docs/`, `README.md`, AGENTS.md, a skill or an agent, read the `writing-standard` skill.
 
 ## Library APIs
