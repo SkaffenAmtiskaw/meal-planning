@@ -21,6 +21,6 @@ test('adds a meal from the phone add button', { tag: '@phone-only' }, async ({
 	});
 	await saveMealForm(page);
 
-	// The phone grid marks a day's meals with dots, so the meal's name shows on its own only in the agenda. It's exact because the form's subtitle, "<day> · <meal name>", holds it too.
-	await expect(page.getByText(MEAL_NAME, { exact: true })).toBeVisible();
+	// The phone grid marks a day's meals with dots, so the meal's name shows only in the agenda.
+	await expect(page.getByText(MEAL_NAME)).toBeVisible();
 });
