@@ -207,6 +207,19 @@ expect(button).onlyAtLevel('owner').toBeTruthy();
 expect(button).onlyAtLevel('owner').not.toBeTruthy();
 ```
 
+# Testing a Planner Access Check
+A server action or read that touches a planner's data checks the signed-in user's access, as "Planner Access in Server Actions and Reads" in `docs/project_conventions.md` describes. Its tests check which level it asks `checkAuth` for. The shared `checkAuth` mock reports every user as an authorized owner, so an action or read that asks for the wrong level, such as `'read'` for a change to a meal, still reaches every branch. Coverage alone would let that through, and in production a `read` member could then change the planner.
+
+```typescript
+it("checks write access to the meal's planner", async () => {
+  await archiveMeal(input);
+
+  expect(checkAuth).toHaveBeenCalledWith(plannerId, 'write');
+});
+```
+
+An action built with `defineMutation` needs only that test, because `defineMutation`'s own tests show that it stops when `checkAuth` refuses. If an action or read calls `checkAuth` directly, its tests also check that it stops when the result's `type` isn't `'authorized'`, reading and writing nothing.
+
 # Where Test Code Lives
 A unit test sits beside the module it tests, in a file named `<module>.test.ts` or `<module>.test.tsx`. Vitest runs every `*.test.ts[x]` file outside `e2e/`.
 
