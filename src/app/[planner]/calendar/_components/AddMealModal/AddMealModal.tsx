@@ -2,18 +2,23 @@
 
 import { useState } from 'react';
 
-import { Button, Modal, Stack, Text } from '@mantine/core';
+import { Button, Modal, Stack } from '@mantine/core';
 
 import { addMeal } from '@/_actions/calendar';
 import type { MealInput } from '@/_actions/calendar/types';
-import { useIsMobile, useSnackbar } from '@/_hooks';
+import {
+	EscapeLayersProvider,
+	useEscapeLayers,
+	useIsMobile,
+	useSnackbar,
+} from '@/_hooks';
 import { formatDate } from '@/_utils/formatDate';
 
 import classes from './AddMealModal.module.css';
 
-import { MealForm, type MealFormStatus, newMealDraft } from '../MealForm';
+import { MealForm, newMealDraft } from '../MealForm';
 import type { CalendarModalFrameProps } from '../CalendarModal/types';
-import { formatMealSubtitle } from './_utils/formatMealSubtitle';
+import { MealDateSubtitle } from '../MealDateSubtitle/MealDateSubtitle';
 
 /**
  * The Add Meal frame: a wide modal on desktop, and a full-screen sheet with
@@ -27,11 +32,12 @@ export function AddMealModal({
 }: CalendarModalFrameProps<'add_meal'>) {
 	const isMobile = useIsMobile();
 	const { show } = useSnackbar();
-	// What the open form last reported. Cleared on close, so the next open starts with no subtitle.
-	const [status, setStatus] = useState<MealFormStatus | null>(null);
+	const escapeLayers = useEscapeLayers();
+	// The date last picked in the open form. Cleared on close, so the next open starts from its own date.
+	const [pickedDate, setPickedDate] = useState<string | null>(null);
 
 	const handleClose = () => {
-		setStatus(null);
+		setPickedDate(null);
 		close();
 	};
 
@@ -43,8 +49,6 @@ export function AddMealModal({
 		});
 	};
 
-	const subtitle = status ? formatMealSubtitle(status) : '';
-
 	return (
 		<Modal.Root
 			opened={data !== null}
@@ -52,56 +56,53 @@ export function AddMealModal({
 			size={1180}
 			fullScreen={isMobile}
 			radius={isMobile ? 0 : undefined}
-			closeOnEscape={!status?.linking}
+			// A picker or link mode inside takes Esc first, so one Esc closes only that layer.
+			closeOnEscape={!escapeLayers.anyOpen}
 			transitionProps={
 				isMobile ? { transition: 'fade', duration: 200 } : undefined
 			}
 		>
-			<Modal.Overlay />
-			{data !== null && (
-				<Modal.Content className={classes.content}>
-					{isMobile ? (
-						<Modal.Header className={classes.phoneHeader}>
-							<Button
-								variant="subtle"
-								px={0}
-								justify="flex-start"
-								onClick={handleClose}
-							>
-								Cancel
-							</Button>
-							<Modal.Title fw={700}>Add Meal</Modal.Title>
-						</Modal.Header>
-					) : (
-						<Modal.Header>
-							<Stack gap={0}>
-								<Modal.Title fw={700} fz="xl">
-									Add Meal
-								</Modal.Title>
-								{subtitle && (
-									<Text
-										size="sm"
-										c="var(--text-muted)"
-										data-testid="modal-subtitle"
-									>
-										{subtitle}
-									</Text>
-								)}
-							</Stack>
-							<Modal.CloseButton aria-label="Close" />
-						</Modal.Header>
-					)}
-					<Modal.Body className={classes.body} p={0}>
-						<MealForm
-							initialDraft={newMealDraft(data.initialDate)}
-							save={(input) => addMeal({ plannerId, ...input })}
-							onSuccess={handleSuccess}
-							onCancel={handleClose}
-							onStatusChange={setStatus}
-						/>
-					</Modal.Body>
-				</Modal.Content>
-			)}
+			<EscapeLayersProvider value={escapeLayers.register}>
+				<Modal.Overlay />
+				{data !== null && (
+					<Modal.Content className={classes.content}>
+						{isMobile ? (
+							<Modal.Header className={classes.phoneHeader}>
+								<Button
+									variant="subtle"
+									px={0}
+									justify="flex-start"
+									onClick={handleClose}
+								>
+									Cancel
+								</Button>
+								<Modal.Title fw={700}>Add Meal</Modal.Title>
+							</Modal.Header>
+						) : (
+							<Modal.Header>
+								<Stack gap={0}>
+									<Modal.Title fw={700} fz="xl">
+										Add Meal
+									</Modal.Title>
+									<MealDateSubtitle
+										date={pickedDate ?? data.initialDate ?? ''}
+									/>
+								</Stack>
+								<Modal.CloseButton aria-label="Close" />
+							</Modal.Header>
+						)}
+						<Modal.Body className={classes.body} p={0}>
+							<MealForm
+								initialDraft={newMealDraft(data.initialDate)}
+								save={(input) => addMeal({ plannerId, ...input })}
+								onSuccess={handleSuccess}
+								onCancel={handleClose}
+								onDateChange={setPickedDate}
+							/>
+						</Modal.Body>
+					</Modal.Content>
+				)}
+			</EscapeLayersProvider>
 		</Modal.Root>
 	);
 }

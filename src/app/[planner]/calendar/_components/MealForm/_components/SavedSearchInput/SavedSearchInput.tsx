@@ -1,9 +1,11 @@
 'use client';
 
-import type { KeyboardEvent, Ref } from 'react';
+import { type KeyboardEvent, type Ref, useState } from 'react';
 
 import { TextInput } from '@mantine/core';
 import { IconSearch } from '@tabler/icons-react';
+
+import { useEscapeLayer } from '@/_hooks';
 
 import { searchKeyIntent } from '../../_utils/searchKeyIntent';
 
@@ -35,6 +37,9 @@ export const SavedSearchInput = ({
 	ref,
 }: Props) => {
 	const hasText = value !== '';
+	const [focused, setFocused] = useState(false);
+	// While it has text and focus, Esc clears the search rather than closing the modal.
+	useEscapeLayer(hasText && focused);
 
 	const handleKeyDown = (event: KeyboardEvent<HTMLInputElement>) => {
 		const intent = searchKeyIntent(
@@ -71,8 +76,8 @@ export const SavedSearchInput = ({
 			value={value}
 			onChange={(event) => onChange(event.currentTarget.value)}
 			onKeyDown={handleKeyDown}
-			// Mantine's modal hears Esc first and skips a target marked this way, so Esc clears the search rather than closing it.
-			data-mantine-stop-propagation={hasText || undefined}
+			onFocus={() => setFocused(true)}
+			onBlur={() => setFocused(false)}
 		/>
 	);
 };

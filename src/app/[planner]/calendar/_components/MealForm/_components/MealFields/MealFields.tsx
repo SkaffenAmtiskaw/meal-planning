@@ -5,6 +5,7 @@ import { Stack, Textarea, TextInput } from '@mantine/core';
 import classes from './MealFields.module.css';
 
 import type { MealDraft, MealField } from '../../types';
+import { MealDateField } from '../MealDateField/MealDateField';
 
 type Props = {
 	values: Pick<MealDraft, MealField>;
@@ -18,12 +19,9 @@ type Props = {
  */
 export const MealFields = ({ values, onFieldChange }: Props) => (
 	<Stack gap="sm" className={classes.fill}>
-		<TextInput
-			label="Date"
-			type="date"
-			withAsterisk
+		<MealDateField
 			value={values.date}
-			onChange={(e) => onFieldChange('date', e.currentTarget.value)}
+			onChange={(date) => onFieldChange('date', date)}
 		/>
 		<TextInput
 			label="Meal name"

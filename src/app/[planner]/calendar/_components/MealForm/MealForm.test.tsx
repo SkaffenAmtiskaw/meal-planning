@@ -2,7 +2,7 @@ import { act, fireEvent, render, screen } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { makeDishDraft, makeMealDraft } from '#fixtures/dish';
-import { useFormFeedback, useIsMobile } from '@/_hooks';
+import { useEscapeLayer, useFormFeedback, useIsMobile } from '@/_hooks';
 
 import { MealForm } from './MealForm';
 
@@ -214,33 +214,27 @@ describe('MealForm', () => {
 		expect(vi.mocked(MealFormFooter).mock.lastCall?.[0].canSubmit).toBe(true);
 	});
 
-	it('reports the date and meal name to its frame as they change', () => {
-		const onStatusChange = vi.fn();
+	it('tells its frame each date picked, and nothing else', () => {
+		const onDateChange = vi.fn();
 		render(
 			<MealForm
 				initialDraft={draft}
 				save={vi.fn()}
 				onSuccess={vi.fn()}
 				onCancel={vi.fn()}
-				onStatusChange={onStatusChange}
+				onDateChange={onDateChange}
 			/>,
 		);
-		expect(onStatusChange).toHaveBeenLastCalledWith({
-			date: '2026-11-27',
-			mealName: 'Taco Night',
-			linking: false,
-		});
+		expect(onDateChange).not.toHaveBeenCalled();
 
 		setField('mealName', 'Burrito Night');
+		expect(onDateChange).not.toHaveBeenCalled();
 
-		expect(onStatusChange).toHaveBeenLastCalledWith({
-			date: '2026-11-27',
-			mealName: 'Burrito Night',
-			linking: false,
-		});
+		setField('date', '2026-12-10');
+		expect(onDateChange).toHaveBeenCalledExactlyOnceWith('2026-12-10');
 	});
 
-	it('works without a frame listening for its status', () => {
+	it('works without a frame listening for its date', () => {
 		render(
 			<MealForm
 				initialDraft={draft}
@@ -250,7 +244,11 @@ describe('MealForm', () => {
 			/>,
 		);
 
-		setField('mealName', 'Burrito Night');
+		setField('date', '2026-12-10');
+
+		expect(vi.mocked(MealFields).mock.lastCall?.[0].values.date).toBe(
+			'2026-12-10',
+		);
 	});
 	it("adds the saved recipe picked in the column, and tells the column it's on the meal", () => {
 		render(
@@ -288,33 +286,30 @@ describe('MealForm', () => {
 			dishes: [soup, makeDishDraft({ key: 'bread', name: 'Bread' })],
 		});
 
-		const renderForm = (onStatusChange = vi.fn()) =>
+		const renderForm = () =>
 			render(
 				<MealForm
 					initialDraft={linkingDraft}
 					save={vi.fn()}
 					onSuccess={vi.fn()}
 					onCancel={vi.fn()}
-					onStatusChange={onStatusChange}
 				/>,
 			);
 		const startLinking = () => act(() => mealDishes()?.startLinking('soup'));
 
-		it('marks the dish, focuses the search, and tells the column and the frame', () => {
+		it('marks the dish, focuses the search, tells the column, and takes Esc from the frame', () => {
 			vi.mocked(SavedRecipesColumn).mockImplementation(({ searchRef }) => (
 				<input aria-label="Search" ref={searchRef} />
 			));
-			const onStatusChange = vi.fn();
-			renderForm(onStatusChange);
+			renderForm();
+			expect(useEscapeLayer).toHaveBeenLastCalledWith(false);
 
 			startLinking();
 
 			expect(mealDishes()?.linkingKey).toBe('soup');
 			expect(columnProps()?.linkingDish).toEqual(soup);
 			expect(document.activeElement).toBe(screen.getByLabelText('Search'));
-			expect(onStatusChange).toHaveBeenLastCalledWith(
-				expect.objectContaining({ linking: true }),
-			);
+			expect(useEscapeLayer).toHaveBeenLastCalledWith(true);
 		});
 
 		it("opens the dish's saved list on a phone, which has no column to link from", () => {
@@ -340,8 +335,7 @@ describe('MealForm', () => {
 		});
 
 		it('links the picked recipe to the dish, then leaves link mode', () => {
-			const onStatusChange = vi.fn();
-			renderForm(onStatusChange);
+			renderForm();
 			startLinking();
 
 			act(() => columnProps()?.onPick(chicken));
@@ -353,9 +347,7 @@ describe('MealForm', () => {
 			});
 			expect(mealDishes()?.linkingKey).toBeNull();
 			expect(columnProps()?.linkingDish).toBeNull();
-			expect(onStatusChange).toHaveBeenLastCalledWith(
-				expect.objectContaining({ linking: false }),
-			);
+			expect(useEscapeLayer).toHaveBeenLastCalledWith(false);
 		});
 
 		it('leaves link mode on Cancel with the dish unchanged', () => {

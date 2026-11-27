@@ -4,6 +4,8 @@ export * from './ConfirmButton';
 export * from './ConfirmModal';
 export * from './DateFieldTrigger';
 export * from './DatePickerGrid';
+export * from './DatePickerPanel';
+export * from './DatePickerPopover';
 export * from './FormFeedbackAlert';
 export * from './FullWidthListItem';
 export * from './GoogleLogoSVG';

@@ -4,11 +4,12 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { Modal } from '@mantine/core';
 
 import { addMeal } from '@/_actions/calendar';
-import { useIsMobile, useSnackbar } from '@/_hooks';
+import { useEscapeLayers, useIsMobile, useSnackbar } from '@/_hooks';
 
 import { AddMealModal } from './AddMealModal';
 
 import { MealForm } from '../MealForm';
+import { MealDateSubtitle } from '../MealDateSubtitle/MealDateSubtitle';
 
 vi.mock('@mantine/core', async () => await import('#mocks/@mantine/core'));
 vi.mock('@/_hooks', async () => await import('#mocks/@/_hooks'));
@@ -20,11 +21,12 @@ vi.mock('../MealForm', () => ({
 	MealForm: vi.fn(() => <div data-testid="meal-form" />),
 	newMealDraft: vi.fn((initialDate?: string) => ({ date: initialDate ?? '' })),
 }));
+vi.mock('../MealDateSubtitle/MealDateSubtitle', () => ({
+	MealDateSubtitle: vi.fn(() => null),
+}));
 
 const formProps = () => vi.mocked(MealForm).mock.lastCall?.[0];
 const rootProps = () => vi.mocked(Modal.Root).mock.lastCall?.[0];
-
-const status = { date: '2026-11-27', mealName: 'Taco Night', linking: false };
 
 const props = { data: {}, close: vi.fn(), plannerId: 'planner-1' };
 
@@ -108,32 +110,60 @@ describe('AddMealModal', () => {
 		expect(show).not.toHaveBeenCalled();
 	});
 
-	it('shows the date and meal name the form reports under the title on desktop', () => {
-		render(<AddMealModal {...props} />);
+	it('shows the date it opened with under the title on desktop, from the first draw', () => {
+		render(<AddMealModal {...props} data={{ initialDate: '2026-11-27' }} />);
 
-		act(() => formProps()?.onStatusChange?.(status));
-
-		expect(screen.getByTestId('modal-subtitle').textContent).toBe(
-			'Friday, November 27 · Taco Night',
+		expect(MealDateSubtitle).toHaveBeenCalledTimes(1);
+		expect(MealDateSubtitle).toHaveBeenLastCalledWith(
+			{ date: '2026-11-27' },
+			undefined,
 		);
 	});
 
-	it('starts the next open with no subtitle', () => {
+	it('shows an empty date line when it opened with no date', () => {
+		render(<AddMealModal {...props} />);
+
+		expect(MealDateSubtitle).toHaveBeenLastCalledWith({ date: '' }, undefined);
+	});
+
+	it('shows the date picked in the form under the title', () => {
+		render(<AddMealModal {...props} data={{ initialDate: '2026-11-27' }} />);
+
+		act(() => formProps()?.onDateChange?.('2026-12-05'));
+
+		expect(MealDateSubtitle).toHaveBeenLastCalledWith(
+			{ date: '2026-12-05' },
+			undefined,
+		);
+	});
+
+	it('starts the next open from its own date, not the last one picked', () => {
 		const { rerender } = render(<AddMealModal {...props} />);
-		act(() => formProps()?.onStatusChange?.(status));
+		act(() => formProps()?.onDateChange?.('2026-12-05'));
 
 		act(() => rootProps()?.onClose());
 		rerender(<AddMealModal {...props} data={null} />);
-		rerender(<AddMealModal {...props} />);
+		rerender(<AddMealModal {...props} data={{ initialDate: '2026-11-29' }} />);
 
-		expect(screen.queryByTestId('modal-subtitle')).toBeNull();
+		expect(MealDateSubtitle).toHaveBeenLastCalledWith(
+			{ date: '2026-11-29' },
+			undefined,
+		);
 	});
 
-	it('keeps the modal open on Esc while a dish is being linked', () => {
+	it('closes on Esc while no layer inside is open', () => {
 		render(<AddMealModal {...props} />);
-		expect(rootProps()?.closeOnEscape).toBe(true);
 
-		act(() => formProps()?.onStatusChange?.({ ...status, linking: true }));
+		expect(rootProps()?.closeOnEscape).toBe(true);
+	});
+
+	it('leaves Esc to a layer open inside it, such as a picker or link mode', () => {
+		vi.mocked(useEscapeLayers).mockReturnValueOnce({
+			anyOpen: true,
+			register: vi.fn(),
+		});
+
+		render(<AddMealModal {...props} />);
 
 		expect(rootProps()?.closeOnEscape).toBe(false);
 	});
@@ -143,12 +173,12 @@ describe('AddMealModal', () => {
 			vi.mocked(useIsMobile).mockReturnValue(true);
 		});
 
-		it('fills the screen, with Cancel in its top bar and no subtitle', () => {
+		it('fills the screen, with Cancel in its top bar and no date line', () => {
 			render(<AddMealModal {...props} />);
-			act(() => formProps()?.onStatusChange?.(status));
+			act(() => formProps()?.onDateChange?.('2026-11-27'));
 
 			expect(rootProps()?.fullScreen).toBe(true);
-			expect(screen.queryByTestId('modal-subtitle')).toBeNull();
+			expect(MealDateSubtitle).not.toHaveBeenCalled();
 
 			fireEvent.click(screen.getByRole('button', { name: 'Cancel' }));
 			expect(props.close).toHaveBeenCalledTimes(1);

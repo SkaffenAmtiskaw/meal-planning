@@ -1,21 +1,15 @@
 'use client';
 
-import {
-	type FormEvent,
-	useEffect,
-	useEffectEvent,
-	useRef,
-	useState,
-} from 'react';
+import { type FormEvent, useRef, useState } from 'react';
 
 import { linkedSavedIds } from '@/_actions/calendar/linkedSavedIds';
 import type { MealInput } from '@/_actions/calendar/types';
 import type { SavedItem } from '@/_actions/library/types';
 import { FormFeedbackAlert } from '@/_components';
-import { useFormFeedback, useIsMobile } from '@/_hooks';
+import { useEscapeLayer, useFormFeedback, useIsMobile } from '@/_hooks';
 import type { ActionResult } from '@/_utils/actionResult';
 
-import type { MealDraft, MealFormStatus } from './types';
+import type { MealDraft, MealField } from './types';
 import classes from './MealForm.module.css';
 
 import { DishList } from './_components/DishList/DishList';
@@ -39,7 +33,8 @@ type MealFormProps = {
 	// Gets the meal as it was saved, so the frame's message uses what went to the server.
 	onSuccess: (saved: MealInput) => void;
 	onCancel: () => void;
-	onStatusChange?: (status: MealFormStatus) => void;
+	// Tells the frame each date the user picks, so it can show it in its header.
+	onDateChange?: (date: string) => void;
 };
 
 /**
@@ -51,7 +46,7 @@ export const MealForm = ({
 	save,
 	onSuccess,
 	onCancel,
-	onStatusChange,
+	onDateChange,
 }: MealFormProps) => {
 	const {
 		draft,
@@ -67,6 +62,8 @@ export const MealForm = ({
 		chooseRecipe,
 	} = useMealDraft(initialDraft);
 	const [linkingKey, { enterLinking, exitLinking }] = useLinkMode(draft.dishes);
+	// Esc leaves link mode, not the whole form.
+	useEscapeLayer(linkingKey !== null);
 	const [openDishList, { openList, restartList, closeList }] =
 		useOpenDishList();
 	const linkingDish =
@@ -78,16 +75,12 @@ export const MealForm = ({
 		successDuration: 0,
 	});
 
-	const reportStatus = useEffectEvent((next: MealFormStatus) =>
-		onStatusChange?.(next),
-	);
-	useEffect(() => {
-		reportStatus({
-			date: draft.date,
-			mealName: draft.mealName,
-			linking: linkingKey !== null,
-		});
-	}, [draft.date, draft.mealName, linkingKey]);
+	const changeField = (field: MealField, value: string) => {
+		setField(field, value);
+		if (field === 'date') {
+			onDateChange?.(value);
+		}
+	};
 
 	/**
 	 * Links a dish from the Saved recipes column, with the cursor in its search,
@@ -167,7 +160,7 @@ export const MealForm = ({
 				alert={
 					<FormFeedbackAlert status={status} errorMessage={errorMessage} />
 				}
-				meal={<MealFields values={draft} onFieldChange={setField} />}
+				meal={<MealFields values={draft} onFieldChange={changeField} />}
 				dishes={
 					<MealDishesProvider
 						value={{

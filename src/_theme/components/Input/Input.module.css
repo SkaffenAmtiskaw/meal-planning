@@ -1,10 +1,10 @@
 /* Mantine has no notched label, so the root anchors the label that sits on the field's top border. */
-.root {
+.root[data-variant="notched"] {
 	position: relative;
 }
 
 /* Mantine has no notched label, so the label sits over the top border, with the field's background behind it to cut the notch. */
-.label {
+.root[data-variant="notched"] .label {
 	position: absolute;
 	top: 0;
 	left: var(--mantine-spacing-xs);
@@ -14,4 +14,9 @@
 	background-color: var(--mantine-color-white);
 	font-size: var(--mantine-font-size-xs);
 	line-height: 1;
+}
+
+/* Mantine sets an input's border variable only for its own variants, and draws no border without it. The theme's inline border color then colors it. */
+.wrapper[data-variant="notched"] {
+	--input-bd: var(--mantine-color-gray-4);
 }
