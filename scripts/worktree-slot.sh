@@ -8,7 +8,8 @@
 #   <worktree folder>.localhost and the database test-<n>. It writes PORT, SIGN_IN_PORT,
 #   BETTER_AUTH_URL and DB_URL into the worktree's .env.local and writes its launch.json, then
 #   empties test-<n>, since removing a worktree leaves its database as it was.
-# - A worktree that has a slot keeps it, and its launch.json is written only if it's missing.
+# - A worktree that has a slot keeps it, and its launch.json is rewritten from the slot, since
+#   the desktop app can leave the main checkout's copy in a reused worktree folder.
 # - Each slot records in SLOT_BRANCH the branch it was last set up for. The desktop app hands an
 #   archived session's worktree folder, slot and all, to a later session on a new branch. So when
 #   the branch differs from SLOT_BRANCH, it records the new branch and empties test-<n>. A slot
@@ -96,7 +97,7 @@ branch=$(git -C "$top" branch --show-current)
 
 port=$(value "$env_file" PORT)
 if [ -n "$port" ]; then
-  [ -f "$launch" ] || write_launch "$port" "$(value "$env_file" SIGN_IN_PORT)" "$host"
+  write_launch "$port" "$(value "$env_file" SIGN_IN_PORT)" "$host"
   slot_branch=$(value "$env_file" SLOT_BRANCH)
   if [ -n "$branch" ] && [ "$branch" != "$slot_branch" ]; then
     set_value SLOT_BRANCH "$branch"
