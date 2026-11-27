@@ -15,8 +15,8 @@ Read `docs/project_conventions.md` and `docs/project_structure.md`, so you know 
 For each thing the Convention asks of code:
 1. **Work out what breaking it looks like** in code: an import shape, a directive, a file location, a call pattern. List every form it can take, not just the one in the Convention's example. A re-export, a type-only import, a dynamic import and a relative path can all break an import convention.
 2. **Search for each form.** If the Convention says where it applies, search only there. Otherwise, search every directory that holds code it can reach, as `docs/project_structure.md` lays out.
-3. **Read every hit and judge it by the Convention's aim, not its wording.** A place that matches the words but doesn't touch the aim isn't a violation. If you weigh it against the aim and still can't tell, report it under **Unsure**, because the caller takes it to the user.
-4. **Follow what a fix would touch.** For each violation, list the files that must change with it, such as callers of a moved export, tests that cover it and shared mocks in `test/mocks/` that mirror it.
+3. **Read every hit and judge it by the Convention's aim, not its wording.** A place that matches the words but doesn't touch the aim isn't a violation. If you weigh it against the aim and still can't tell, report it under **Unsure**, because the caller takes it to the user. A path that a doc's rule about something else names only records where the code was when the line was written, so it's no reason the place is right. For example, the rule on reporting errors names the import path for `reportError`, which says how to import it, not where it belongs.
+4. **Follow what a fix would touch.** For each violation, list the files that must change with it, such as callers of a moved export, tests that cover it, shared mocks in `test/mocks/` that mirror it and lines in `docs/` that name its path. Give each doc line its `file:line`.
 
 If you find no code the Convention covers at all, your search has likely missed it, so search again before reporting that.
 
