@@ -87,7 +87,7 @@ function renderAgenda(
 	mockUseCalendarContext.mockReturnValue({
 		selectedDate,
 		viewType: 'month',
-		rangeAnchor: DateTime.fromObject({ year: 2024, month: 6, day: 15 }),
+		jump: null,
 		setSelectedDate: vi.fn(),
 		setViewType: vi.fn(),
 		navigateToDate: vi.fn(),
@@ -144,7 +144,7 @@ describe('MealMonthAgenda', () => {
 		mockUseCalendarContext.mockReturnValue({
 			selectedDate: DateTime.fromObject({ year: 2024, month: 6, day: 16 }),
 			viewType: 'month',
-			rangeAnchor: DateTime.fromObject({ year: 2024, month: 6, day: 15 }),
+			jump: null,
 			setSelectedDate: vi.fn(),
 			setViewType: vi.fn(),
 			navigateToDate: vi.fn(),
@@ -164,7 +164,7 @@ describe('MealMonthAgenda', () => {
 		mockUseCalendarContext.mockReturnValue({
 			selectedDate: DateTime.fromObject({ year: 2024, month: 6, day: 15 }),
 			viewType: 'month',
-			rangeAnchor: DateTime.fromObject({ year: 2024, month: 6, day: 15 }),
+			jump: null,
 			setSelectedDate: vi.fn(),
 			setViewType: vi.fn(),
 			navigateToDate: vi.fn(),

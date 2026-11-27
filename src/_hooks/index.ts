@@ -6,6 +6,7 @@ export * from './useFocusOnExpand';
 export * from './useFormFeedback';
 export * from './useIsMobile';
 export * from './useListHighlight';
+export * from './useScrollItems';
 export * from './useSnackbar';
 export * from './useSwipe';
 export * from './useTimeZone';

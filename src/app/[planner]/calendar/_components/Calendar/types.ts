@@ -2,6 +2,15 @@ import type { DateTime } from 'luxon';
 
 export type CalendarViewType = 'month' | 'week' | 'list';
 
+/**
+ * The viewer's latest explicit navigation to a date. Each one gets a new id,
+ * so a second jump to the same date is still a new jump.
+ */
+export interface CalendarJump {
+	date: DateTime;
+	id: number;
+}
+
 export interface CalendarContextValue {
 	// Selected date being viewed (single source of truth)
 	selectedDate: DateTime;
@@ -9,14 +18,14 @@ export interface CalendarContextValue {
 	// Currently selected view type
 	viewType: CalendarViewType;
 
-	// Anchor for the fixed list-view day window; updates only on explicit navigation
-	rangeAnchor: DateTime;
+	// The latest explicit navigation, or null before the first one
+	jump: CalendarJump | null;
 
 	// Setters
 	setSelectedDate: (date: DateTime) => void;
 	setViewType: (view: CalendarViewType) => void;
 
-	// Explicit navigation: updates both selectedDate and rangeAnchor
+	// Explicit navigation: selects the date and records a jump to it
 	navigateToDate: (date: DateTime) => void;
 
 	// Navigation actions

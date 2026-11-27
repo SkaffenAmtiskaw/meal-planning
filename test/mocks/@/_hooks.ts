@@ -10,7 +10,7 @@
 
 import { vi } from 'vitest';
 
-import { type ReactNode, useState } from 'react';
+import { type ReactNode, type RefObject, useState } from 'react';
 
 import { DateTime } from 'luxon';
 
@@ -18,6 +18,10 @@ import { makeKnownDay } from '#fixtures/viewerDay';
 import type { AsyncStatus } from '@/_hooks/useAsyncStatus';
 import type { Status } from '@/_hooks/useFormFeedback';
 import type { ListHighlightHandlers } from '@/_hooks/useListHighlight';
+import type {
+	ScrollItems,
+	UseScrollItemsOptions,
+} from '@/_hooks/useScrollItems';
 import type { UseSwipeOptions } from '@/_hooks/useSwipe';
 import type { ViewerDay } from '@/_hooks/useTimeZone';
 import { type DateStyle, formatDate } from '@/_utils/formatDate';
@@ -162,6 +166,21 @@ export const useFocusOnExpand = vi.fn(() => ({
  *   act(() => vi.mocked(useSwipe).mock.lastCall?.[0].onSwipe('left'));
  */
 export const useSwipe = vi.fn((_options: UseSwipeOptions) => vi.fn());
+
+/**
+ * Every item is found by default. A test reports the topmost item by calling the
+ * `onTopmostChange` it was given:
+ *   act(() => vi.mocked(useScrollItems).mock.lastCall?.[1]?.onTopmostChange?.('2024-06-15'));
+ */
+export const useScrollItems = vi.fn(
+	<K>(
+		_regionRef: RefObject<HTMLElement | null>,
+		_options?: UseScrollItemsOptions<K>,
+	): ScrollItems<K> => ({
+		itemRef: vi.fn(() => vi.fn()),
+		scrollTo: vi.fn(() => true),
+	}),
+);
 
 export const TimeZoneProvider = vi.fn(
 	({ children }: { children: ReactNode }) => children,

@@ -81,14 +81,12 @@ describe('CalendarProvider', () => {
 			expect(result.current.viewType).toBe('week');
 		});
 
-		it('should default rangeAnchor to today', () => {
-			vi.mocked(useToday).mockReturnValue(makeKnownDay(today));
-
+		it('has no jump', () => {
 			const { result } = renderHook(() => useTestContext(), {
 				wrapper: createTestWrapper(),
 			});
 
-			expect(result.current.rangeAnchor).toBe(today);
+			expect(result.current.jump).toBeNull();
 		});
 
 		it("starts on the UTC day while the viewer's day is unknown", () => {
@@ -99,22 +97,11 @@ describe('CalendarProvider', () => {
 			});
 
 			expect(result.current.selectedDate.toISODate()).toBe('2024-03-15');
-			expect(result.current.rangeAnchor.toISODate()).toBe('2024-03-15');
-		});
-
-		it('should accept initialDate as rangeAnchor', () => {
-			const initialDate = DateTime.local(2024, 6, 15);
-
-			const { result } = renderHook(() => useTestContext(), {
-				wrapper: createTestWrapper({ initialDate }),
-			});
-
-			expect(result.current.rangeAnchor.toISODate()).toBe('2024-06-15');
 		});
 	});
 
 	describe("once the viewer's day is known", () => {
-		it('moves selectedDate and rangeAnchor to today', () => {
+		it('moves selectedDate to today without recording a jump', () => {
 			const knownToday = DateTime.local(2024, 3, 16);
 			vi.mocked(useToday).mockReturnValue(makeUnknownDay(today));
 			const { result, rerender } = renderHook(() => useTestContext(), {
@@ -125,7 +112,7 @@ describe('CalendarProvider', () => {
 			rerender();
 
 			expect(result.current.selectedDate).toBe(knownToday);
-			expect(result.current.rangeAnchor).toBe(knownToday);
+			expect(result.current.jump).toBeNull();
 		});
 
 		it('keeps initialDate', () => {
@@ -139,48 +126,62 @@ describe('CalendarProvider', () => {
 			rerender();
 
 			expect(result.current.selectedDate).toBe(initialDate);
-			expect(result.current.rangeAnchor).toBe(initialDate);
 		});
 	});
 
 	describe('navigateToDate', () => {
-		it('updates both selectedDate and rangeAnchor', () => {
-			const initialDate = DateTime.local(2024, 6, 15);
+		it('selects the date and records a jump to it', () => {
 			const newDate = DateTime.local(2024, 9, 20);
-
 			const { result } = renderHook(() => useTestContext(), {
-				wrapper: createTestWrapper({ initialDate }),
+				wrapper: createTestWrapper({
+					initialDate: DateTime.local(2024, 6, 15),
+				}),
 			});
 
 			act(() => {
 				result.current.navigateToDate(newDate);
 			});
 
-			expect(result.current.selectedDate.toISODate()).toBe('2024-09-20');
-			expect(result.current.rangeAnchor.toISODate()).toBe('2024-09-20');
+			expect(result.current.selectedDate).toBe(newDate);
+			expect(result.current.jump).toEqual({ date: newDate, id: 1 });
+		});
+
+		it('records a new jump each time, even to the same date', () => {
+			const newDate = DateTime.local(2024, 9, 20);
+			const { result } = renderHook(() => useTestContext(), {
+				wrapper: createTestWrapper(),
+			});
+
+			act(() => {
+				result.current.navigateToDate(newDate);
+			});
+			act(() => {
+				result.current.navigateToDate(newDate);
+			});
+
+			expect(result.current.jump).toEqual({ date: newDate, id: 2 });
 		});
 	});
 
 	describe('navigation', () => {
 		describe('goToToday', () => {
-			it('should set selectedDate and rangeAnchor to today', () => {
+			it('jumps to today', () => {
 				vi.mocked(useToday).mockReturnValue(makeKnownDay(today));
-				const initialDate = DateTime.local(2020, 1, 1);
 
 				const { result } = renderHook(() => useTestContext(), {
-					wrapper: createTestWrapper({ initialDate }),
+					wrapper: createTestWrapper({
+						initialDate: DateTime.local(2020, 1, 1),
+					}),
 				});
-
-				expect(result.current.selectedDate.toISODate()).toBe('2020-01-01');
-				expect(result.current.rangeAnchor.toISODate()).toBe('2020-01-01');
 
 				act(() => {
 					result.current.goToToday();
 				});
 
 				expect(result.current.selectedDate).toBe(today);
-				expect(result.current.rangeAnchor).toBe(today);
+				expect(result.current.jump?.date).toBe(today);
 			});
+
 			it("does nothing while the viewer's day is unknown", () => {
 				vi.mocked(useToday).mockReturnValue(makeUnknownDay(today));
 				const initialDate = DateTime.local(2020, 1, 1);
@@ -194,12 +195,12 @@ describe('CalendarProvider', () => {
 				});
 
 				expect(result.current.selectedDate).toBe(initialDate);
-				expect(result.current.rangeAnchor).toBe(initialDate);
+				expect(result.current.jump).toBeNull();
 			});
 		});
 
 		describe('goToPrevious', () => {
-			it('should subtract 1 month in month view', () => {
+			it('jumps back 1 month in month view', () => {
 				const initialDate = DateTime.local(2024, 6, 15);
 
 				const { result } = renderHook(() => useTestContext(), {
@@ -211,10 +212,10 @@ describe('CalendarProvider', () => {
 				});
 
 				expect(result.current.selectedDate.toISODate()).toBe('2024-05-15');
-				expect(result.current.rangeAnchor.toISODate()).toBe('2024-05-15');
+				expect(result.current.jump?.date.toISODate()).toBe('2024-05-15');
 			});
 
-			it('should subtract 7 days in week view', () => {
+			it('jumps back 7 days in week view', () => {
 				const initialDate = DateTime.local(2024, 6, 15);
 
 				const { result } = renderHook(() => useTestContext(), {
@@ -226,10 +227,9 @@ describe('CalendarProvider', () => {
 				});
 
 				expect(result.current.selectedDate.toISODate()).toBe('2024-06-08');
-				expect(result.current.rangeAnchor.toISODate()).toBe('2024-06-08');
 			});
 
-			it('should subtract 1 day in list view', () => {
+			it('does nothing in list view', () => {
 				const initialDate = DateTime.local(2024, 6, 15);
 
 				const { result } = renderHook(() => useTestContext(), {
@@ -240,13 +240,13 @@ describe('CalendarProvider', () => {
 					result.current.goToPrevious();
 				});
 
-				expect(result.current.selectedDate.toISODate()).toBe('2024-06-14');
-				expect(result.current.rangeAnchor.toISODate()).toBe('2024-06-14');
+				expect(result.current.selectedDate).toBe(initialDate);
+				expect(result.current.jump).toBeNull();
 			});
 		});
 
 		describe('goToNext', () => {
-			it('should add 1 month in month view', () => {
+			it('jumps ahead 1 month in month view', () => {
 				const initialDate = DateTime.local(2024, 6, 15);
 
 				const { result } = renderHook(() => useTestContext(), {
@@ -258,10 +258,10 @@ describe('CalendarProvider', () => {
 				});
 
 				expect(result.current.selectedDate.toISODate()).toBe('2024-07-15');
-				expect(result.current.rangeAnchor.toISODate()).toBe('2024-07-15');
+				expect(result.current.jump?.date.toISODate()).toBe('2024-07-15');
 			});
 
-			it('should add 7 days in week view', () => {
+			it('jumps ahead 7 days in week view', () => {
 				const initialDate = DateTime.local(2024, 6, 15);
 
 				const { result } = renderHook(() => useTestContext(), {
@@ -273,10 +273,9 @@ describe('CalendarProvider', () => {
 				});
 
 				expect(result.current.selectedDate.toISODate()).toBe('2024-06-22');
-				expect(result.current.rangeAnchor.toISODate()).toBe('2024-06-22');
 			});
 
-			it('should add 1 day in list view', () => {
+			it('does nothing in list view', () => {
 				const initialDate = DateTime.local(2024, 6, 15);
 
 				const { result } = renderHook(() => useTestContext(), {
@@ -287,8 +286,8 @@ describe('CalendarProvider', () => {
 					result.current.goToNext();
 				});
 
-				expect(result.current.selectedDate.toISODate()).toBe('2024-06-16');
-				expect(result.current.rangeAnchor.toISODate()).toBe('2024-06-16');
+				expect(result.current.selectedDate).toBe(initialDate);
+				expect(result.current.jump).toBeNull();
 			});
 		});
 	});
@@ -314,58 +313,38 @@ describe('CalendarProvider', () => {
 			expect(result.current.viewType).toBe('list');
 		});
 
-		it('does not update selectedDate or rangeAnchor when view changes', () => {
+		it('keeps the selected date and records no jump when the view changes', () => {
 			const initialDate = DateTime.local(2020, 1, 1);
 
 			const { result } = renderHook(() => useTestContext(), {
 				wrapper: createTestWrapper({ initialDate, initialView: 'month' }),
 			});
 
-			expect(result.current.selectedDate.toISODate()).toBe('2020-01-01');
-			expect(result.current.rangeAnchor.toISODate()).toBe('2020-01-01');
-
 			act(() => {
 				result.current.setViewType('week');
 			});
 
-			expect(result.current.selectedDate.toISODate()).toBe('2020-01-01');
-			expect(result.current.rangeAnchor.toISODate()).toBe('2020-01-01');
+			expect(result.current.selectedDate).toBe(initialDate);
+			expect(result.current.jump).toBeNull();
 		});
 	});
 
 	describe('setSelectedDate', () => {
-		it('should update selectedDate', () => {
-			const initialDate = DateTime.local(2024, 6, 15);
+		it('selects the date without recording a jump', () => {
 			const newDate = DateTime.local(2024, 8, 25);
 
 			const { result } = renderHook(() => useTestContext(), {
-				wrapper: createTestWrapper({ initialDate }),
+				wrapper: createTestWrapper({
+					initialDate: DateTime.local(2024, 6, 15),
+				}),
 			});
-
-			expect(result.current.selectedDate.toISODate()).toBe('2024-06-15');
 
 			act(() => {
 				result.current.setSelectedDate(newDate);
 			});
 
-			expect(result.current.selectedDate.toISODate()).toBe('2024-08-25');
-		});
-
-		it('should not update rangeAnchor', () => {
-			const initialDate = DateTime.local(2024, 6, 15);
-			const newDate = DateTime.local(2024, 8, 25);
-
-			const { result } = renderHook(() => useTestContext(), {
-				wrapper: createTestWrapper({ initialDate }),
-			});
-
-			expect(result.current.rangeAnchor.toISODate()).toBe('2024-06-15');
-
-			act(() => {
-				result.current.setSelectedDate(newDate);
-			});
-
-			expect(result.current.rangeAnchor.toISODate()).toBe('2024-06-15');
+			expect(result.current.selectedDate).toBe(newDate);
+			expect(result.current.jump).toBeNull();
 		});
 	});
 });

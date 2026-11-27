@@ -39,7 +39,7 @@ function renderAgenda({
 	vi.mocked(useCalendarContext).mockReturnValue({
 		selectedDate,
 		viewType: 'month',
-		rangeAnchor: selectedDate,
+		jump: null,
 		setSelectedDate: vi.fn(),
 		setViewType: vi.fn(),
 		navigateToDate: vi.fn(),
@@ -182,7 +182,7 @@ describe('MobileAgenda', () => {
 			vi.mocked(useCalendarContext).mockReturnValue({
 				selectedDate: DateTime.local(2024, 3, 16),
 				viewType: 'month',
-				rangeAnchor: DateTime.local(2024, 3, 16),
+				jump: null,
 				setSelectedDate: vi.fn(),
 				setViewType: vi.fn(),
 				navigateToDate: vi.fn(),
