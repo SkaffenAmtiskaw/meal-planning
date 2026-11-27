@@ -55,7 +55,8 @@ The approach can miss things, so the steps' Source lines also claim every part o
 - `path/to/other.ts` - reason
 
 **Acceptance:**
-- [ ] Go to ..., press ..., see .... Proves: ...
+- [ ] Implementer: Go to ..., press ..., see .... Proves: ...
+- [ ] Go to ..., see .... Proves: ...
 ```
 
 An item the user pulled in has the Source "Pulled in by <their name> YYYY-MM-DD: <the item>", plus "<their name> decided: <answer>" if they decided something for it.

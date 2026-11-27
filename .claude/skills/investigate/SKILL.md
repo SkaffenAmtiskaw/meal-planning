@@ -54,7 +54,7 @@ The parts of the note to update:
 - **Who Can Hit This:** fill it in, or correct it from what you found.
 - **Root Cause:** the diagnosis from step 3, with file paths. If you wrote a unit test to reproduce the bug, say what it runs and what it gets, then remove the test. The pre-commit hook's test run picks up a failing test anywhere in the repo, `.scratch/` included, and blocks commits.
 - **Fix:** the chosen fix, where it goes and why. If there were other reasonable options, add one line on why this one won. If the choice was left for `/decide`, say here which Open Decision it waits on.
-- **Acceptance Criteria:** a check that the symptom is gone, then any nearby flows the fix could break, named so the user can click through them. Where the symptom check runs depends on the repro:
+- **Acceptance Criteria:** a check that the symptom is gone, then any nearby flows the fix could break, named so they can be clicked through. Where the symptom check runs depends on the repro:
   - **If reproducing it meant sending a request the app's own screens never send:** a unit test that calls the code the same way and gets the right result. `/plan-steps` plans it as one of the fix's tests.
   - **Otherwise:** the repro steps in the running app, ending in the symptom being gone.
 - **Check Drift callouts:** in a re-investigation, remove the ones on the sections you replaced, since the new sections answer them.
