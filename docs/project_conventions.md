@@ -4,14 +4,22 @@ This doc is for anyone writing code in `src/`. It explains how the code is organ
 # Naming Conventions
 Files that Next.js names, such as `page.tsx` and `global-error.tsx`, keep the names Next.js gives them. Every other file name is camelCase, or UpperCamelCase for a React component's file, as is usual in JavaScript and TypeScript.
 
-Except in the two kinds of file below, a file's name leaves out what its directory already says, such as `users.ts` rather than `authUsers.ts` for the better-auth functions in `src/_auth/`. The directory already shows what area a file belongs to, so repeating it only makes the name longer. The two kinds of file that keep their directory's name:
+Except in the two kinds of file below, a file's name leaves out what its directory already says, such as `send.ts` rather than `sendInvite.ts` for the function that sends an invite, in an `invites/` directory. The directory already shows what area a file belongs to, so repeating it only makes the name longer. The two kinds of file that keep their directory's name:
 - **A module's main file in a directory of its own,** such as `src/_hooks/useEditMode/useEditMode.ts`, because the directory exists to hold that one module with its tests and parts.
 - **A React component's file,** such as `AuthLayout/AuthLayoutHeader.tsx`, because it shares its component's name. A component's name has to say what it is wherever the component is rendered, where its directory isn't shown.
 
 The names a file exports are a separate choice. They're read at the call site, without the path. So an export such as `findAuthUser` keeps "Auth", which tells better-auth's users apart from the app's own.
 
+# One Export per File
+Except in the three kinds of file below, each file exports one piece of code and is named for it, as "Naming Conventions" describes. The piece can be a function, a component, a hook, a constant or a schema. Types aren't pieces. They go where "Where Types Live" puts them, so a type that only the module's own test imports stays exported from the module's file. A reader then finds a piece by its file name, and a code review is easier when each file holds one piece. So a new piece gets a file of its own, even when it's closely tied to an existing one, such as a check on the value another function returns.
+
+The three kinds of file that export more than one piece, because Next.js or another section of this doc gives them that job:
+- **A file whose exports Next.js names,** such as a route's `GET` and `POST`, or a page's `metadata` beside the page, because Next.js looks for them there.
+- **A directory's `types.ts`,** which holds the types other files import, as "Where Types Live" describes.
+- **A barrel file,** which only re-exports, as "Barrel Files" describes.
+
 # Named Checks
-A condition that stands for an idea in the app, such as whether a task is overdue, gets a name of its own, a named check, unless it already reads as that idea. A reader of `isOverdue(task)` sees the question being asked. A reader of `task.dueAt !== undefined && task.dueAt < now && !task.doneAt` has to know the data's shape to work it out. A condition that's written out at each call site can also drift, when one caller leaves out a part the others check. If code in more than one file asks the question, the check is a small function in the module that decides the data's shape, as "Where Types Live" describes, so a change to the shape finds the check beside it. If only one file asks, it can be a `const` there. A condition such as `items.length === 0` for an empty list needs no name, because a name would only repeat it.
+A condition that stands for an idea in the app, such as whether a task is overdue, gets a name of its own, a named check, unless it already reads as that idea. A reader of `isOverdue(task)` sees the question being asked. A reader of `task.dueAt !== undefined && task.dueAt < now && !task.doneAt` has to know the data's shape to work it out. A condition that's written out at each call site can also drift, when one caller leaves out a part the others check. If code in more than one file asks the question, the check is a small function in a file of its own. That file sits beside the module that decides the data's shape, as "Where Types Live" describes, so a change to the shape finds the check nearby. If only one file asks, it can be a `const` there. A condition such as `items.length === 0` for an empty list needs no name, because a name would only repeat it.
 
 When a change reshapes the data a named check reads, such as by merging several fields into one, what happens to the check depends on its question. If the question still makes sense, the check keeps its name and its body is rewritten for the new shape. If it doesn't, its callers move to a named check for the question they now ask, not to the condition written out. Deleting a check because its body no longer fits loses the name, and its callers get harder to read.
 
@@ -71,7 +79,7 @@ Some components exist only to support a hook, such as a context provider or a Cl
 # Architecture
 ## Single Concern
 Single concern is a primary concern in this codebase. Each module (component, hook, utility, action) does one job. Two jobs are separate if each can be described without mentioning the other. A job is what a module owns, such as a piece of state, a resource or a concept, not each thing callers ask of it.
-- When new behavior keeps an existing module's contract and only answers a question about what the module owns, such as whether a value it returns has loaded yet, it extends that module. A sibling module would be one more thing a developer has to know exists.
+- Some new behavior keeps an existing module's contract and only answers a question about what the module owns, such as whether a value it returns has loaded yet. If it fits in what the module already exports, such as a field in the value a hook returns, it extends that module, because a sibling module would be one more thing a developer has to know exists. Otherwise, such as a check on the value a function returns, it goes in a file of its own beside the module, as "One Export per File" describes.
 - When new behavior is a different job, or changes the existing module's contract, such as failing where the module reports that the value hasn't loaded yet, it should be built as a new component, hook or utility, with a name that says how it differs. It should never be added to the existing module, even when that module is where the behavior is used.
 - Existing code shouldn't be kept simply because it exists. If a module does more than one job, it should be refactored before anything new is built on it.
 
@@ -157,7 +165,7 @@ The app stores its data in MongoDB. Each stored document's shape is defined once
 > [!NOTE]
 > better-auth's setup gets the raw handle rather than a client of its own, so the app keeps one connection. Without a client, better-auth runs no transactions, which the E2E tests' standalone MongoDB server can't run.
 
-**better-auth's data goes through one file in `src/_auth/`.** better-auth owns its collections (`user`, `account`, `session` and `verification`) and their shape. App code reaches them only through that file's functions, which wrap better-auth's internal adapter, so better-auth stays the only code that knows how its data is stored. Its collections keep the ObjectIds better-auth gives them. The app never handles those ids, because it links each of its users to a better-auth user by email.
+**better-auth's data goes through `src/_auth/`.** better-auth owns its collections (`user`, `account`, `session` and `verification`) and their shape, and they keep the ObjectIds it gives them. The app never handles those ids, because it links each of its users to a better-auth user by email. App code reaches the collections only through the functions in `src/_auth/` that reach better-auth's data, so better-auth stays the only code that knows how its data is stored. Those functions use better-auth's internal adapter only through one file there, which exports a layer holding the few operations the app needs.
 
 > [!NOTE]
 > The internal adapter, `auth.$context.internalAdapter`, isn't part of better-auth's public API, so an upgrade may change it. Keeping every use in that one file means an upgrade touches only that file.
