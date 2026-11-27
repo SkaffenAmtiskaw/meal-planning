@@ -1,8 +1,11 @@
-onlyBuiltDependencies:
-  - '@parcel/watcher'
-  - esbuild
-  - lefthook
-  - mongodb-memory-server
-  - sharp
+allowBuilds:
+  '@parcel/watcher': true
+  '@posthog/cli': false
+  core-js: false
+  esbuild: true
+  lefthook: true
+  mongodb-memory-server: true
+  sharp: true
 overrides:
   'vite@>=7.0.0 <7.3.7': '^7.3.7'
+savePrefix: ''
