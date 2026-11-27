@@ -10,6 +10,11 @@ Except in the two kinds of file below, a file's name leaves out what its directo
 
 The names a file exports are a separate choice. They're read at the call site, without the path. So an export such as `findAuthUser` keeps "Auth", which tells better-auth's users apart from the app's own.
 
+# Named Checks
+A condition that stands for an idea in the app, such as whether a task is overdue, gets a name of its own, a named check, unless it already reads as that idea. A reader of `isOverdue(task)` sees the question being asked. A reader of `task.dueAt !== undefined && task.dueAt < now && !task.doneAt` has to know the data's shape to work it out. A condition that's written out at each call site can also drift, when one caller leaves out a part the others check. If code in more than one file asks the question, the check is a small function in the module that decides the data's shape, as "Where Types Live" describes, so a change to the shape finds the check beside it. If only one file asks, it can be a `const` there. A condition such as `items.length === 0` for an empty list needs no name, because a name would only repeat it.
+
+When a change reshapes the data a named check reads, such as by merging several fields into one, what happens to the check depends on its question. If the question still makes sense, the check keeps its name and its body is rewritten for the new shape. If it doesn't, its callers move to a named check for the question they now ask, not to the condition written out. Deleting a check because its body no longer fits loses the name, and its callers get harder to read.
+
 # Comments
 A comment longer than one line is a `/** */` block, because an editor can fold the block away. A one-line comment uses `//`.
 
