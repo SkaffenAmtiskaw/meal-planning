@@ -1,7 +1,13 @@
 #!/bin/bash
 # PreToolUse and PostToolUse hook: asks the user before an edit touches lint,
-# type, coverage or git hook config, or adds a comment that switches off a lint,
-# type or coverage check to a code file.
+# type, coverage or git hook config, and blocks an edit that adds a comment that
+# switches off a lint, type or coverage check to a code file.
+#
+# The permission prompt shows the user only which file is being edited, not this
+# hook's reason, so a prompt for a file the plan edits gives them no sign that it
+# holds an ignore comment. So a new comment is blocked, and the block's reason
+# sends the agent to fix the code or ask the user in chat. A retry of the same
+# comment lines in the session comes after the user agreed, so it asks.
 #
 # Once the user approves an edit to a config file, later edits to that file in
 # the same session go through, because a plan step that changes config usually
@@ -31,6 +37,12 @@ fi
 ask() {
   jq -n --arg reason "$1" \
     '{hookSpecificOutput: {hookEventName: "PreToolUse", permissionDecision: "ask", permissionDecisionReason: $reason}}'
+  exit 0
+}
+
+deny() {
+  jq -n --arg reason "$1" \
+    '{hookSpecificOutput: {hookEventName: "PreToolUse", permissionDecision: "deny", permissionDecisionReason: $reason}}'
   exit 0
 }
 
@@ -69,16 +81,47 @@ lines() { grep -E "$pattern" <<<"$1" | sed -E 's/^[[:space:]]+|[[:space:]]+$//g'
 # copies of the same line.
 added=$(comm -23 <(lines "$new_text") <(lines "$old_text"))
 
-# A comment line already in committed code is being moved, such as when code
-# moves into a new file, and was reviewed when it was committed. Only a line
-# with a reason after a colon counts, because a bare directive such as
-# `@ts-expect-error` matches lines that suppress something else.
+repo="${cwd:-$CLAUDE_PROJECT_DIR}"
+
+# How many lines hold the text, in HEAD or in the files as they are now,
+# including new files not yet committed. git grep -c prints `path:count`, or
+# `HEAD:path:count`.
+count_in_head() {
+  git -C "$repo" grep -c -F -e "$1" HEAD -- 2>/dev/null | awk -F: '{ n += $NF } END { print n + 0 }'
+}
+count_now() {
+  git -C "$repo" grep -c -F --untracked -e "$1" -- 2>/dev/null | awk -F: '{ n += $NF } END { print n + 0 }'
+}
+
+# A comment line is being moved, such as when code moves into a new file, when
+# committed code holds it and the files now hold fewer copies than HEAD, because
+# the old copy is gone. It was reviewed when it was committed. A copy of the
+# same wording into new code leaves the count where it was, so it counts as
+# added. Only a line with a reason after a colon counts as moved, because a
+# bare directive such as `@ts-expect-error` matches lines that suppress
+# something else.
+denied="$state_dir/denied"
+retry=true
+new=()
 while IFS= read -r line; do
   [[ -z "$line" ]] && continue
-  if [[ "$line" == *:* ]] && git -C "${cwd:-$CLAUDE_PROJECT_DIR}" grep -qF -e "$line" HEAD -- 2>/dev/null; then
+  if [[ "$line" == *:* ]] && (($(count_now "$line") < $(count_in_head "$line"))); then
     continue
   fi
-  ask "Adds a comment that switches off a lint, type or coverage check ($file_path). Only allowed if the user explicitly asked for it."
+  new+=("$line")
+  if [[ -z "$session" || ! -f "$denied" ]] || ! grep -qxF -- "$line" "$denied"; then
+    retry=false
+  fi
 done <<<"$added"
 
-exit 0
+[[ ${#new[@]} -eq 0 ]] && exit 0
+
+if $retry; then
+  ask "Adds a comment that switches off a lint, type or coverage check ($file_path). Approve only if you agreed to this comment in chat."
+fi
+
+if [[ -n "$session" ]]; then
+  mkdir -p "$state_dir"
+  printf '%s\n' "${new[@]}" >>"$denied"
+fi
+deny "Blocked: this edit adds a comment that switches off a lint, type or coverage check ($file_path). AGENTS.md's Checks rule allows one only when the user asks for it. If you're moving the comment from another file, remove it there first, then make this edit again. Otherwise, change the code so the check passes without it. If it can't, ask the user in chat, saying why the comment is needed and that approving means a permission prompt to edit $(basename "$file_path"), because the prompt names only the file. If they agree, make the same edit again."
