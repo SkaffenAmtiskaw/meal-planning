@@ -27,6 +27,10 @@ describe('formatDate', () => {
 		);
 	});
 
+	it('formats shortWeekdayDayMonth as the short weekday, day and short month', () => {
+		expect(formatDate('2026-11-21', 'shortWeekdayDayMonth')).toBe('Sat 21 Nov');
+	});
+
 	it('formats monthDay as the full month and day', () => {
 		expect(formatDate('2024-10-27', 'monthDay')).toBe('October 27');
 	});

@@ -1,0 +1,11 @@
+/* Mantine Box does not expose an overflow-y style prop, so the scroll region rules are controlled here. */
+.scrollRegion {
+	overflow-y: auto;
+}
+
+/* Mantine's List wraps each item's content in a box sized to that content, so the days would not fill the width. */
+.days {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+}
