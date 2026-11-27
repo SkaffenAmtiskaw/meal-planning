@@ -1,19 +1,18 @@
 import type { ReactElement } from 'react';
 
-import { Divider, Group, Skeleton, Stack } from '@mantine/core';
+import { Skeleton, Stack } from '@mantine/core';
 
-import styles from './PhoneDaySection.module.css';
+import { PhoneDayFrame } from './PhoneDayFrame';
+import { PhoneDayHeader } from './PhoneDayHeader';
 
-// One placeholder day: a header line and one card-height block, in a real section's frame.
-function SkeletonSection(): ReactElement {
+// One placeholder day: a header line and one card-height block, in a real day's frame and header.
+function SkeletonDay(): ReactElement {
 	return (
-		<Stack className={styles.section} gap="xs" p="sm">
-			<Group gap="xs" wrap="nowrap" mih={28}>
-				<Skeleton height={16} width={90} />
-				<Divider flex={1} color="chalk.2" />
-			</Group>
+		<PhoneDayFrame
+			header={<PhoneDayHeader label={<Skeleton height={16} width={90} />} />}
+		>
 			<Skeleton height={64} radius="md" />
-		</Stack>
+		</PhoneDayFrame>
 	);
 }
 
@@ -24,11 +23,11 @@ function SkeletonSection(): ReactElement {
 export function PhoneDayListSkeleton(): ReactElement {
 	return (
 		<Stack gap={0} data-testid="phone-day-list-skeleton">
-			<SkeletonSection />
-			<SkeletonSection />
-			<SkeletonSection />
-			<SkeletonSection />
-			<SkeletonSection />
+			<SkeletonDay />
+			<SkeletonDay />
+			<SkeletonDay />
+			<SkeletonDay />
+			<SkeletonDay />
 		</Stack>
 	);
 }

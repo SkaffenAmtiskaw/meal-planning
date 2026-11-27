@@ -1,6 +1,6 @@
 import type { ReactElement } from 'react';
 
-import { Badge, VisuallyHidden } from '@mantine/core';
+import { Badge } from '@mantine/core';
 
 import type { DateTime } from 'luxon';
 
@@ -13,9 +13,9 @@ interface PhoneDayLabelProps {
 
 /**
  * A phone list day's short label, such as "SAT 21 NOV". Today's is navy inside
- * the today ring and says "Today" to screen readers. Every other day's is a
- * muted badge with no fill, so its text has today's type and sits where
- * today's does inside the ring.
+ * the today ring and marked as the current date, as every calendar view marks
+ * today. Every other day's is a muted badge with no fill, so its text has
+ * today's type and sits where today's does inside the ring.
  */
 export function PhoneDayLabel({
 	date,
@@ -25,8 +25,12 @@ export function PhoneDayLabel({
 
 	if (isToday) {
 		return (
-			<Badge variant="ring" size="lg" data-testid="phone-day-today">
-				<VisuallyHidden>Today, </VisuallyHidden>
+			<Badge
+				variant="ring"
+				size="lg"
+				aria-current="date"
+				data-testid="phone-day-today"
+			>
 				{label}
 			</Badge>
 		);

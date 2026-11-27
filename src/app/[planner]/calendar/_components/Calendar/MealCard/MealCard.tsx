@@ -18,7 +18,6 @@ export function MealCard({
 			pt={9}
 			pb={11}
 			px="sm"
-			flex={1}
 			data-testid="meal-card"
 			// The rail's color comes from the meal, which no theme value or Paper prop can set.
 			style={{ borderLeft: `4px solid ${meal.borderColor}` }}

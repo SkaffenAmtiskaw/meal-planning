@@ -1,10 +1,6 @@
-/*
- * Mantine Box does not expose an overflow-y style prop, so the scroll region rules are controlled here.
- * Its position keeps absolutely positioned content, such as VisuallyHidden text, inside the region, or the page grows and scrolls with it.
- */
-.scrollRegion {
-	position: relative;
-	overflow-y: auto;
+/* Mantine Box does not expose an overflow style prop. The skeleton never scrolls, so days past the screen are cut off. */
+.skeleton {
+	overflow: hidden;
 }
 
 /*

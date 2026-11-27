@@ -23,7 +23,7 @@ function GutterLabel({ children }: { children: ReactNode }): ReactElement {
 			ta="right"
 			size="xs"
 			fw={700}
-			c="navy.4"
+			c="var(--text-muted)"
 			tt="uppercase"
 		>
 			{children}

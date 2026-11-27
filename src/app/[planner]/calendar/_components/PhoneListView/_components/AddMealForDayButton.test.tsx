@@ -5,7 +5,7 @@ import { DateTime } from 'luxon';
 
 import { useCanWrite } from '@/app/[planner]/_components';
 
-import { DayAddButton } from './DayAddButton';
+import { AddMealForDayButton } from './AddMealForDayButton';
 
 import { useCalendarModal } from '../../CalendarModal';
 
@@ -25,7 +25,7 @@ vi.mock(
 const mockOpen = vi.fn();
 const date = DateTime.local(2026, 11, 21);
 
-describe('DayAddButton', () => {
+describe('AddMealForDayButton', () => {
 	beforeEach(() => {
 		vi.clearAllMocks();
 		vi.mocked(useCalendarModal).mockReturnValue({
@@ -36,7 +36,7 @@ describe('DayAddButton', () => {
 	});
 
 	it('opens Add Meal with its day filled in', () => {
-		render(<DayAddButton date={date} />);
+		render(<AddMealForDayButton date={date} />);
 
 		fireEvent.click(
 			screen.getByRole('button', {
@@ -53,7 +53,7 @@ describe('DayAddButton', () => {
 		const noIsoDate = DateTime.local(2026, 11, 21);
 		vi.spyOn(noIsoDate, 'toISODate').mockReturnValue(null);
 
-		render(<DayAddButton date={noIsoDate} />);
+		render(<AddMealForDayButton date={noIsoDate} />);
 
 		fireEvent.click(screen.getByRole('button'));
 
@@ -65,7 +65,7 @@ describe('DayAddButton', () => {
 	it('does not render for read-only users', () => {
 		vi.mocked(useCanWrite).mockReturnValueOnce(false);
 
-		render(<DayAddButton date={date} />);
+		render(<AddMealForDayButton date={date} />);
 
 		expect(screen.queryByRole('button')).toBeNull();
 	});

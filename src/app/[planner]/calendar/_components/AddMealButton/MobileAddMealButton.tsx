@@ -24,10 +24,12 @@ export function MobileAddMealButton(): ReactElement | null {
 	if (!canWrite) {
 		return null;
 	}
-	// The mobile full-screen modal does not cover this fixed-position FAB, so the
-	// button must be removed from the DOM while any modal is open. If this overlap
-	// appears elsewhere in the app, pursue a root-cause fix (e.g., z-index or
-	// stacking context) rather than copying this guard.
+	/**
+	 * The mobile full-screen modal does not cover this fixed-position FAB, so the
+	 * button must be removed from the DOM while any modal is open. If this overlap
+	 * appears elsewhere in the app, pursue a root-cause fix (e.g., z-index or
+	 * stacking context) rather than copying this guard.
+	 */
 	if (state.type !== null) {
 		return null;
 	}
@@ -35,7 +37,7 @@ export function MobileAddMealButton(): ReactElement | null {
 	return (
 		<Affix position={{ bottom: 20, right: 20 }}>
 			<Button
-				color="ember"
+				variant="cta"
 				size="lg"
 				radius="xl"
 				leftSection={<IconPlus />}

@@ -2,6 +2,7 @@ import { DateTime } from 'luxon';
 
 import { expect, test } from '../_fixtures';
 import { openPlannerCalendar } from '../_helpers/openPlannerCalendar';
+import { dayFullName } from './_helpers/calendarLabels';
 import { mealOn } from './_helpers/mealOn';
 
 const SEEDED_MEAL = "Demeter's Harvest Bread";
@@ -17,8 +18,7 @@ test("adds a meal from a day's add button in the phone list", {
 	// The switcher's radio inputs are hidden, so a user clicks, and the spec finds, each option's text.
 	await page.getByText('List', { exact: true }).click();
 
-	// Each day's section is labelled with its full date, like "Friday, December 4".
-	const fullDate = day.toFormat('EEEE, MMMM d', { locale: 'en-US' });
+	const fullDate = dayFullName(day);
 	const section = page.getByRole('region', { name: fullDate });
 	await expect(section).toContainText(SEEDED_MEAL);
 

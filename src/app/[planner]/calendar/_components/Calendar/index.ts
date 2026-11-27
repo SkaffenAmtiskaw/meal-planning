@@ -1,10 +1,6 @@
 export { useCalendarContext } from './CalendarContext';
 export { CalendarProvider } from './CalendarProvider';
-export type {
-	CalendarDish,
-	CalendarMeal,
-	CalendarViewType,
-} from './types';
+export type { CalendarMeal, CalendarViewType } from './types';
 
 export { MonthGrid } from './MonthGrid/MonthGrid';
 export type {

@@ -35,6 +35,7 @@ export function WeekMealCard({
 			ta="left"
 			data-testid="week-meal-card"
 			className={focusClasses.focusRing}
+			// The card's colors come from the meal's tag, which no theme value or Paper prop can set.
 			style={{
 				backgroundColor: bg,
 				color: text,
@@ -45,6 +46,7 @@ export function WeekMealCard({
 			tabIndex={tabIndex}
 			ref={ref}
 		>
+			{/* The theme gives Text its own navy, so each line takes the tag's text color again. */}
 			<Text fw={700} size="sm" style={{ color: text }}>
 				{meal.name}
 			</Text>

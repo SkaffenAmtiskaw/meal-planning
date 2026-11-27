@@ -10,16 +10,18 @@ import type { DateTime } from 'luxon';
 import { formatDate } from '@/_utils/formatDate';
 import { useCanWrite } from '@/app/[planner]/_components';
 
-import styles from './DayAddButton.module.css';
+import styles from './AddMealForDayButton.module.css';
 
 import { useCalendarModal } from '../../CalendarModal';
 
-interface DayAddButtonProps {
+interface AddMealForDayButtonProps {
 	date: DateTime;
 }
 
 // A phone list day's + button, which opens Add Meal with its day filled in. Hidden from read-only users.
-export function DayAddButton({ date }: DayAddButtonProps): ReactElement | null {
+export function AddMealForDayButton({
+	date,
+}: AddMealForDayButtonProps): ReactElement | null {
 	const canWrite = useCanWrite();
 	const { open } = useCalendarModal();
 

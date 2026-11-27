@@ -134,6 +134,27 @@ describe('useScrollItems', () => {
 		expect(hook.result.current.itemRef('a')).toBe(first);
 	});
 
+	it("lets go of an item's ref once the item is detached", () => {
+		const { hook, cleanups } = setUp({ a: 0 });
+		const first = hook.result.current.itemRef('a');
+
+		(cleanups.get('a') as () => void)();
+
+		expect(hook.result.current.itemRef('a')).not.toBe(first);
+	});
+
+	it("keeps an item's new element when its old ref detaches after the new one attaches", () => {
+		const { region, hook, cleanups } = setUp({ a: 0, b: 300 });
+		(cleanups.get('b') as () => void)();
+		const newRef = hook.result.current.itemRef('b') as RefCallback<HTMLElement>;
+
+		newRef(createItem(region, 300));
+		(cleanups.get('b') as () => void)();
+
+		expect(hook.result.current.scrollTo('b')).toBe(true);
+		expect(hook.result.current.itemRef('b')).toBe(newRef);
+	});
+
 	describe('the topmost item', () => {
 		it('is reported once scrolling pauses', () => {
 			const { region, onTopmostChange } = setUp({ a: 0, b: 300, c: 600 });

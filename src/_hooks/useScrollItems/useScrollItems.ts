@@ -32,17 +32,21 @@ export function useScrollItems<K>(
 	onTopmostChangeRef.current = onTopmostChange;
 
 	const itemRef = useCallback((key: K): RefCallback<HTMLElement> => {
-		let ref = refs.current.get(key);
-		if (!ref) {
-			ref = (node: HTMLElement | null) => {
-				if (!node) return;
-				items.current.set(key, node);
-				return () => {
-					items.current.delete(key);
-				};
+		const cached = refs.current.get(key);
+		if (cached) return cached;
+		const ref: RefCallback<HTMLElement> = (node) => {
+			if (!node) return;
+			items.current.set(key, node);
+			/**
+			 * Lets go of the item and its ref, so neither outlives the item. Each
+			 * check skips a newer element or ref the key has gained since.
+			 */
+			return () => {
+				if (items.current.get(key) === node) items.current.delete(key);
+				if (refs.current.get(key) === ref) refs.current.delete(key);
 			};
-			refs.current.set(key, ref);
-		}
+		};
+		refs.current.set(key, ref);
 		return ref;
 	}, []);
 

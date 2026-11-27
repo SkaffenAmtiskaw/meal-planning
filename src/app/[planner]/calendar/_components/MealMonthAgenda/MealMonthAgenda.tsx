@@ -6,8 +6,8 @@ import type { ReactElement } from 'react';
 import { Stack } from '@mantine/core';
 
 import { useToday } from '@/_hooks';
-import { MobileAddMealButton } from '@/app/[planner]/calendar/_components/AddMealButton';
 
+import { MobileAddMealButton } from '../AddMealButton';
 import { useCalendarMeals } from '../../_hooks/useCalendarMeals';
 import { MobileAgenda } from '../Calendar/MobileAgenda/MobileAgenda';
 import { MobileAgendaSkeleton } from '../Calendar/MobileAgenda/MobileAgendaSkeleton';

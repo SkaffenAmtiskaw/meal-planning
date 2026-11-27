@@ -5,12 +5,12 @@ import { IconExternalLink } from '@tabler/icons-react';
 
 import styles from './MealDishList.module.css';
 
+import type { ResolvedDish } from '../../../../_utils/types';
 import { isRefSource, isUrlSource } from '../../../_utils/dishSource';
 import { DishLink } from '../../../DishLink/DishLink';
-import type { CalendarDish } from '../../types';
 
 interface MealDishListProps {
-	dishes: CalendarDish[];
+	dishes: ResolvedDish[];
 	plannerId: string;
 }
 

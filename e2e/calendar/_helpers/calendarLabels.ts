@@ -8,6 +8,10 @@ export const monthCellName = (date: DateTime, meals: number) =>
 export const weekCellName = (date: DateTime, meals: number) =>
 	`${date.toFormat('ccc', { locale: 'en-US' })} ${date.month}/${date.day}, ${meals} meals`;
 
+// A list day's full date, like "Friday, December 4", which names the phone list's day sections and add buttons.
+export const dayFullName = (date: DateTime) =>
+	date.toFormat('EEEE, MMMM d', { locale: 'en-US' });
+
 // The header's label in month view, like "November 2026".
 export const monthLabel = (date: DateTime) =>
 	date.toFormat('MMMM yyyy', { locale: 'en-US' });

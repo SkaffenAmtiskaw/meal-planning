@@ -45,7 +45,7 @@ export function MobileAgenda({ plannerId }: MobileAgendaProps): ReactElement {
 						<Text aria-live="polite" fw={700}>
 							{headerLabel}
 						</Text>
-						<Text c="navy.4" tt="uppercase">
+						<Text c="var(--text-muted)" tt="uppercase">
 							{mealCountLabel}
 						</Text>
 					</Group>
@@ -56,7 +56,7 @@ export function MobileAgenda({ plannerId }: MobileAgendaProps): ReactElement {
 						))
 					) : (
 						<Paper bg="white" radius="md" p="md" className={styles.emptyCard}>
-							<Text c="navy.4" ta="center">
+							<Text c="var(--text-muted)" ta="center">
 								Nothing planned yet
 							</Text>
 						</Paper>

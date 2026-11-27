@@ -1,14 +1,15 @@
 import type { ReactElement, Ref } from 'react';
 
-import { Stack, Text } from '@mantine/core';
+import { Text } from '@mantine/core';
 
 import type { DateTime } from 'luxon';
 
 import { formatDate } from '@/_utils/formatDate';
 
-import { DayAddButton } from './DayAddButton';
+import { AddMealForDayButton } from './AddMealForDayButton';
+import { PhoneDayFrame } from './PhoneDayFrame';
 import { PhoneDayHeader } from './PhoneDayHeader';
-import styles from './PhoneDaySection.module.css';
+import { PhoneDayLabel } from './PhoneDayLabel';
 
 import { useDayMeals } from '../../../_hooks/useCalendarMeals';
 import { MealCard } from '../../Calendar/MealCard/MealCard';
@@ -30,19 +31,18 @@ export function PhoneDaySection({
 	const meals = useDayMeals(date);
 
 	return (
-		<Stack
+		<PhoneDayFrame
 			ref={ref}
-			component="section"
-			aria-label={formatDate(date, 'weekdayMonthDay')}
-			className={styles.section}
-			gap="xs"
-			p="sm"
+			ariaLabel={formatDate(date, 'weekdayMonthDay')}
+			header={
+				<PhoneDayHeader
+					label={
+						<PhoneDayLabel date={date} isToday={date.hasSame(today, 'day')} />
+					}
+					addMealButton={<AddMealForDayButton date={date} />}
+				/>
+			}
 		>
-			<PhoneDayHeader
-				date={date}
-				isToday={date.hasSame(today, 'day')}
-				addMealButton={<DayAddButton date={date} />}
-			/>
 			{meals.length > 0 ? (
 				meals.map((meal) => (
 					<MealCard key={meal.id} meal={meal} plannerId={plannerId} />
@@ -52,6 +52,6 @@ export function PhoneDaySection({
 					No meals planned
 				</Text>
 			)}
-		</Stack>
+		</PhoneDayFrame>
 	);
 }

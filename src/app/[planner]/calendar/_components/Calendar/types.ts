@@ -1,5 +1,7 @@
 import type { DateTime } from 'luxon';
 
+import type { ResolvedDish } from '../../_utils/types';
+
 export type CalendarViewType = 'month' | 'week' | 'list';
 
 /**
@@ -34,18 +36,11 @@ export interface CalendarContextValue {
 	goToNext: () => void;
 }
 
-export interface CalendarDish {
-	_id: string;
-	name: string;
-	source?: string | { url: string } | { ref: string } | { _id: string };
-	note?: string;
-}
-
 export interface CalendarMeal {
 	id: string;
 	date: string;
 	name: string;
 	description?: string;
 	borderColor: string;
-	dishes: CalendarDish[];
+	dishes: ResolvedDish[];
 }

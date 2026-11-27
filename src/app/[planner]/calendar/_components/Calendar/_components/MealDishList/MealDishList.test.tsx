@@ -3,17 +3,17 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { MealDishList } from './MealDishList';
 
+import type { ResolvedDish } from '../../../../_utils/types';
 import { DishLink } from '../../../DishLink/DishLink';
-import type { CalendarDish } from '../../types';
 
 vi.mock('@mantine/core', async () => await import('#mocks/@mantine/core'));
 vi.mock('../../../DishLink/DishLink', () => ({
 	DishLink: vi.fn(({ dish }) => <span>{dish.name}</span>),
 }));
 
-const dish: CalendarDish = { _id: 'dish-1', name: 'Grilled Salmon' };
+const dish: ResolvedDish = { _id: 'dish-1', name: 'Grilled Salmon' };
 
-function renderList(dishes: CalendarDish[]) {
+function renderList(dishes: ResolvedDish[]) {
 	return render(<MealDishList dishes={dishes} plannerId="planner-1" />);
 }
 

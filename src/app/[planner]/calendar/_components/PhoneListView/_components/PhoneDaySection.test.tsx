@@ -3,7 +3,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { DateTime } from 'luxon';
 
-import { PhoneDayHeader } from './PhoneDayHeader';
+import { PhoneDayLabel } from './PhoneDayLabel';
 import { PhoneDaySection } from './PhoneDaySection';
 
 import { useDayMeals } from '../../../_hooks/useCalendarMeals';
@@ -23,8 +23,12 @@ vi.mock('../../Calendar/MealCard/MealCard', () => ({
 	)),
 }));
 
-vi.mock('./PhoneDayHeader', () => ({
-	PhoneDayHeader: vi.fn(() => <div data-testid="day-header" />),
+vi.mock('./PhoneDayLabel', () => ({
+	PhoneDayLabel: vi.fn(() => <span data-testid="day-label" />),
+}));
+
+vi.mock('./AddMealForDayButton', () => ({
+	AddMealForDayButton: vi.fn(() => <button type="button" />),
 }));
 
 const date = DateTime.local(2026, 11, 21);
@@ -73,10 +77,10 @@ describe('PhoneDaySection', () => {
 		expect(screen.queryByTestId('meal-card')).toBeNull();
 	});
 
-	it('marks the header as today on today', () => {
+	it('marks the label as today on today', () => {
 		render(<PhoneDaySection date={date} today={date} plannerId="p1" />);
 
-		expect(vi.mocked(PhoneDayHeader).mock.lastCall?.[0].isToday).toBe(true);
+		expect(vi.mocked(PhoneDayLabel).mock.lastCall?.[0].isToday).toBe(true);
 	});
 
 	it('does not mark any other day as today', () => {
@@ -88,6 +92,6 @@ describe('PhoneDaySection', () => {
 			/>,
 		);
 
-		expect(vi.mocked(PhoneDayHeader).mock.lastCall?.[0].isToday).toBe(false);
+		expect(vi.mocked(PhoneDayLabel).mock.lastCall?.[0].isToday).toBe(false);
 	});
 });
