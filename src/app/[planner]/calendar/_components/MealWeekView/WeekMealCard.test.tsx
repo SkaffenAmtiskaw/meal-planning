@@ -63,8 +63,12 @@ describe('WeekMealCard', () => {
 		const meal: CalendarMeal = {
 			...baseMeal,
 			dishes: [
-				{ name: 'Soup', source: { url: 'https://example.com/soup' } },
-				{ name: 'Pasta', source: { _id: 'recipe-1' } },
+				{
+					_id: 'dish-1',
+					name: 'Soup',
+					source: { url: 'https://example.com/soup' },
+				},
+				{ _id: 'dish-2', name: 'Pasta', source: { _id: 'recipe-1' } },
 			],
 		};
 		render(<WeekMealCard meal={meal} plannerId="planner-1" />);
@@ -77,7 +81,13 @@ describe('WeekMealCard', () => {
 	it('removes dish links from the tab order', () => {
 		const meal: CalendarMeal = {
 			...baseMeal,
-			dishes: [{ name: 'Soup', source: { url: 'https://example.com/soup' } }],
+			dishes: [
+				{
+					_id: 'dish-3',
+					name: 'Soup',
+					source: { url: 'https://example.com/soup' },
+				},
+			],
 		};
 		render(<WeekMealCard meal={meal} plannerId="planner-1" />);
 		expect(screen.getByTestId('dish-link').getAttribute('data-tab-index')).toBe(

@@ -123,6 +123,7 @@ describe('toCalendarMeals', () => {
 
 	it('returns the resolved dishes on the meal', () => {
 		const resolvedDish = {
+			_id: 'dish-1',
 			name: 'Pasta',
 			source: { url: 'https://example.com' },
 		};

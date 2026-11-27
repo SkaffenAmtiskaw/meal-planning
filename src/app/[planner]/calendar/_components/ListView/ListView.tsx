@@ -1,6 +1,6 @@
 'use client';
 
-import { type ReactElement, useEffect, useMemo, useRef } from 'react';
+import { type ReactElement, useEffect, useRef } from 'react';
 
 import { Box } from '@mantine/core';
 
@@ -8,16 +8,14 @@ import { useToday, useTodayOrThrow } from '@/_hooks';
 
 import styles from './ListView.module.css';
 
-import { type CalendarMeal, useCalendarContext } from '../Calendar';
-import type { MealCardProps } from '../Calendar/MealCard/types';
+import { useCalendarContext } from '../Calendar';
 import { DayRow } from './_components/DayRow';
 import { useScrolledDate } from './_hooks/useScrolledDate';
 import { useScrollToDate } from './_hooks/useScrollToDate';
 import { getListDayRange } from './_utils/getListDayRange';
 
 interface ListViewProps {
-	meals?: CalendarMeal[];
-	renderDish?: MealCardProps['renderDish'];
+	plannerId: string;
 }
 
 /**
@@ -31,23 +29,10 @@ export function ListView(props: ListViewProps): ReactElement | null {
 	return <ListViewDays {...props} />;
 }
 
-function ListViewDays({ meals = [], renderDish }: ListViewProps): ReactElement {
+function ListViewDays({ plannerId }: ListViewProps): ReactElement {
 	const { rangeAnchor, selectedDate, setSelectedDate } = useCalendarContext();
 	const today = useTodayOrThrow();
 	const days = getListDayRange(rangeAnchor, today);
-
-	const mealsByDate = useMemo(() => {
-		const map = new Map<string, CalendarMeal[]>();
-		for (const meal of meals) {
-			const list = map.get(meal.date);
-			if (list) {
-				list.push(meal);
-			} else {
-				map.set(meal.date, [meal]);
-			}
-		}
-		return map;
-	}, [meals]);
 
 	const scrollRef = useRef<HTMLDivElement>(null);
 	const scrollToDate = useScrollToDate(scrollRef);
@@ -88,12 +73,7 @@ function ListViewDays({ meals = [], renderDish }: ListViewProps): ReactElement {
 			<ul className={styles.innerColumn}>
 				{days.map((date) => (
 					<li key={date.toISODate() ?? ''}>
-						<DayRow
-							date={date}
-							today={today}
-							meals={mealsByDate.get(date.toISODate() ?? '') ?? []}
-							renderDish={renderDish}
-						/>
+						<DayRow date={date} today={today} plannerId={plannerId} />
 					</li>
 				))}
 			</ul>

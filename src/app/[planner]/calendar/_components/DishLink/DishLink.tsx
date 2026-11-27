@@ -1,6 +1,6 @@
 import type { ReactElement } from 'react';
 
-import { Anchor, Text } from '@mantine/core';
+import { Anchor, Text, VisuallyHidden } from '@mantine/core';
 
 import { LinkAnchor } from '@/_components';
 
@@ -30,6 +30,7 @@ export function DishLink({
 				tabIndex={tabIndex}
 			>
 				{dish.name}
+				<VisuallyHidden> (opens in a new tab)</VisuallyHidden>
 			</Anchor>
 		);
 	}

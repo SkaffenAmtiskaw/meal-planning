@@ -1,6 +1,13 @@
+/* Mantine List props cannot set the thin line the dishes sit indented behind, or its indent and top margin. */
+.dishList {
+	margin-top: 7px;
+	padding-inline-start: 10px;
+	border-left: 1px solid var(--mantine-color-chalk-2);
+}
+
 /* The theme's Anchor default underlines dish links, but Mantine props cannot set the underline's color, thickness and offset, so those live here. */
 .dishName a {
-	font-weight: 600;
+	font-weight: var(--mantine-font-weight-medium);
 	text-decoration-color: var(--mantine-primary-color-4);
 	text-decoration-thickness: 1px;
 	text-underline-offset: 3px;

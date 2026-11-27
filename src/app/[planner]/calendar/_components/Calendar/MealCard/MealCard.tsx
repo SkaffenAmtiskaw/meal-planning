@@ -1,48 +1,40 @@
 import type { ReactElement } from 'react';
 
-import { Box, Stack, Text } from '@mantine/core';
+import { Paper, Text } from '@mantine/core';
 
 import type { MealCardProps } from './types';
-import styles from './MealCard.module.css';
 
-import type { CalendarDish } from '../types';
-import { DishListItem } from '../_components/DishListItem/DishListItem';
+import { MealDishList } from '../_components/MealDishList/MealDishList';
 
 export function MealCard({
 	meal,
-	renderDish,
-	renderActions,
+	plannerId,
+	actions,
 }: MealCardProps): ReactElement {
-	const defaultRenderDish = (dish: CalendarDish) => (
-		<Text size="sm">{dish.name}</Text>
-	);
-
 	return (
-		<Box
-			className={styles.mealCard}
+		<Paper
+			withBorder
+			radius="md"
+			pt={9}
+			pb={11}
+			px="sm"
+			flex={1}
 			data-testid="meal-card"
+			// The rail's color comes from the meal, which no theme value or Paper prop can set.
 			style={{ borderLeft: `4px solid ${meal.borderColor}` }}
 		>
 			<Text size="sm" fw={600} c="navy">
 				{meal.name}
 			</Text>
 			{meal.description && (
-				<Text size="xs" c="navy.4">
+				<Text size="xs" c="var(--text-muted)">
 					{meal.description}
 				</Text>
 			)}
 			{meal.dishes.length > 0 && (
-				<Stack className={styles.dishList} gap="5px">
-					{meal.dishes.map((dish) => (
-						<DishListItem
-							key={dish.name}
-							dish={dish}
-							renderName={renderDish ?? defaultRenderDish}
-						/>
-					))}
-				</Stack>
+				<MealDishList dishes={meal.dishes} plannerId={plannerId} />
 			)}
-			{renderActions}
-		</Box>
+			{actions}
+		</Paper>
 	);
 }

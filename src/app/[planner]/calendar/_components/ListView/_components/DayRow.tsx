@@ -14,23 +14,17 @@ import { ListDayGutter } from './ListDayGutter';
 import { MealCardWithDragHandle } from './MealCardWithDragHandle';
 import styles from './DayRow.module.css';
 
-import type { CalendarMeal } from '../../Calendar';
-import type { MealCardProps } from '../../Calendar/MealCard/types';
+import { useDayMeals } from '../../../_hooks/useCalendarMeals';
 import { useCalendarModal } from '../../CalendarModal';
 
 interface DayRowProps {
 	date: DateTime;
 	today: DateTime;
-	meals?: CalendarMeal[];
-	renderDish?: MealCardProps['renderDish'];
+	plannerId: string;
 }
 
-export function DayRow({
-	date,
-	today,
-	meals = [],
-	renderDish,
-}: DayRowProps): ReactElement {
+export function DayRow({ date, today, plannerId }: DayRowProps): ReactElement {
+	const meals = useDayMeals(date);
 	const canWrite = useCanWrite();
 	const { open } = useCalendarModal();
 	const isToday = date.hasSame(today, 'day');
@@ -63,7 +57,7 @@ export function DayRow({
 								<MealCardWithDragHandle
 									key={meal.id}
 									meal={meal}
-									renderDish={renderDish}
+									plannerId={plannerId}
 								/>
 							))
 						) : (

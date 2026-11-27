@@ -26,6 +26,7 @@ export interface CalendarContextValue {
 }
 
 export interface CalendarDish {
+	_id: string;
 	name: string;
 	source?: string | { url: string } | { ref: string } | { _id: string };
 	note?: string;

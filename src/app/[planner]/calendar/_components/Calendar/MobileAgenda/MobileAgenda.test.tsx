@@ -1,8 +1,6 @@
 import { render, screen } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-import type { ReactNode } from 'react';
-
 import { DateTime } from 'luxon';
 
 import { makeKnownDay } from '#fixtures/viewerDay';
@@ -11,28 +9,33 @@ import { useToday } from '@/_hooks';
 import { MobileAgenda } from './MobileAgenda';
 
 import { useCalendarContext } from '../CalendarContext';
-import type { CalendarDish, CalendarMeal } from '../types';
-import { MealCard } from '../MealCard/MealCard';
+import type { CalendarMeal } from '../types';
+import { useDayMeals } from '../../../_hooks/useCalendarMeals';
 
 vi.mock('@mantine/core', async () => await import('#mocks/@mantine/core'));
 vi.mock('@/_hooks', async () => await import('#mocks/@/_hooks'));
 vi.mock('../CalendarContext', async () => ({
 	useCalendarContext: vi.fn(),
 }));
+vi.mock(
+	'../../../_hooks/useCalendarMeals',
+	async () =>
+		await import('#mocks/@app/[planner]/calendar/_hooks/useCalendarMeals'),
+);
 vi.mock('../MealCard/MealCard', () => ({
 	MealCard: vi.fn(() => <div data-testid="meal-card" />),
 }));
+
 interface RenderOptions {
 	selectedDate?: DateTime;
 	meals?: CalendarMeal[];
-	renderDish?: (dish: CalendarDish) => ReactNode;
 }
 
 function renderAgenda({
 	selectedDate = DateTime.local(2024, 3, 15),
 	meals = [],
-	renderDish,
 }: RenderOptions = {}) {
+	vi.mocked(useDayMeals).mockReturnValue(meals);
 	vi.mocked(useCalendarContext).mockReturnValue({
 		selectedDate,
 		viewType: 'month',
@@ -45,7 +48,7 @@ function renderAgenda({
 		goToNext: vi.fn(),
 	} as ReturnType<typeof useCalendarContext>);
 
-	return render(<MobileAgenda meals={meals} renderDish={renderDish} />);
+	return render(<MobileAgenda plannerId="planner-1" />);
 }
 
 describe('MobileAgenda', () => {
@@ -141,63 +144,12 @@ describe('MobileAgenda', () => {
 		expect(screen.getAllByTestId('meal-card')).toHaveLength(2);
 	});
 
-	it('passes renderDish to each MealCard', () => {
-		const meals: CalendarMeal[] = [
-			{
-				id: '1',
-				date: '2024-03-15',
-				name: 'Meal 1',
-				borderColor: '#000000',
-				dishes: [],
-			},
-			{
-				id: '2',
-				date: '2024-03-15',
-				name: 'Meal 2',
-				borderColor: '#000000',
-				dishes: [],
-			},
-		];
-		const renderDish = vi.fn(() => <span>Custom dish</span>);
+	it("reads the selected day's meals", () => {
+		const selectedDate = DateTime.local(2024, 3, 15);
 
-		renderAgenda({
-			selectedDate: DateTime.local(2024, 3, 15),
-			meals,
-			renderDish,
-		});
+		renderAgenda({ selectedDate });
 
-		expect(vi.mocked(MealCard)).toHaveBeenCalledTimes(2);
-		expect(vi.mocked(MealCard)).toHaveBeenCalledWith(
-			expect.objectContaining({ meal: meals[0], renderDish }),
-			undefined,
-		);
-		expect(vi.mocked(MealCard)).toHaveBeenCalledWith(
-			expect.objectContaining({ meal: meals[1], renderDish }),
-			undefined,
-		);
-	});
-
-	it('does not render meals from other dates', () => {
-		const meals: CalendarMeal[] = [
-			{
-				id: '1',
-				date: '2024-03-14',
-				name: 'Meal 1',
-				borderColor: '#000000',
-				dishes: [],
-			},
-			{
-				id: '2',
-				date: '2024-03-16',
-				name: 'Meal 2',
-				borderColor: '#000000',
-				dishes: [],
-			},
-		];
-
-		renderAgenda({ selectedDate: DateTime.local(2024, 3, 15), meals });
-
-		expect(screen.queryByTestId('meal-card')).toBeNull();
+		expect(useDayMeals).toHaveBeenCalledWith(selectedDate);
 	});
 
 	it('renders the empty placeholder when the selected day has no meals', () => {
@@ -239,7 +191,7 @@ describe('MobileAgenda', () => {
 				goToNext: vi.fn(),
 			} as ReturnType<typeof useCalendarContext>);
 
-			rerender(<MobileAgenda meals={[]} />);
+			rerender(<MobileAgenda plannerId="planner-1" />);
 
 			expect(scrollTo).toHaveBeenCalledWith({ top: 0 });
 		} finally {

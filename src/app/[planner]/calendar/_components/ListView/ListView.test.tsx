@@ -1,8 +1,6 @@
 import { act, render, screen } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
-import type { ReactNode } from 'react';
-
 import { DateTime } from 'luxon';
 
 import { makeKnownDay, makeUnknownDay } from '#fixtures/viewerDay';
@@ -10,11 +8,7 @@ import { useToday } from '@/_hooks';
 
 import { ListView } from './ListView';
 
-import {
-	type CalendarDish,
-	type CalendarMeal,
-	useCalendarContext,
-} from '../Calendar';
+import { useCalendarContext } from '../Calendar';
 import type { CalendarContextValue } from '../Calendar/types';
 import { DayRow } from './_components/DayRow';
 import { useScrolledDate } from './_hooks/useScrolledDate';
@@ -29,34 +23,9 @@ vi.mock('./_utils/getListDayRange', () => ({
 }));
 
 vi.mock('./_components/DayRow', () => ({
-	DayRow: vi.fn(
-		({
-			date,
-			meals,
-			renderDish,
-		}: {
-			date: DateTime;
-			meals?: CalendarMeal[];
-			renderDish?: (dish: CalendarDish) => ReactNode;
-		}) => (
-			<div
-				data-testid="day-row"
-				data-iso={date.toISODate()}
-				data-meals-count={meals?.length ?? 0}
-				data-meal-ids={meals?.map((meal) => meal.id).join(',')}
-			>
-				{meals?.map((meal) => (
-					<div key={meal.id} data-testid="meal">
-						{meal.dishes.map((dish) => (
-							<span key={dish.name} data-testid="dish-name">
-								{renderDish?.(dish)}
-							</span>
-						))}
-					</div>
-				))}
-			</div>
-		),
-	),
+	DayRow: vi.fn(({ date }: { date: DateTime }) => (
+		<div data-testid="day-row" data-iso={date.toISODate()} />
+	)),
 }));
 
 vi.mock('../Calendar', async () => ({
@@ -112,7 +81,7 @@ describe('ListView', () => {
 			createMockContextValue({ rangeAnchor: DateTime.local(2024, 6, 11) }),
 		);
 
-		render(<ListView />);
+		render(<ListView plannerId="planner-1" />);
 
 		expect(screen.getAllByTestId('day-row')).toHaveLength(3);
 	});
@@ -131,7 +100,7 @@ describe('ListView', () => {
 
 		vi.mocked(useToday).mockReturnValue(makeKnownDay(today));
 
-		render(<ListView />);
+		render(<ListView plannerId="planner-1" />);
 
 		expect(DayRow).toHaveBeenCalledTimes(3);
 		for (const call of vi.mocked(DayRow).mock.calls) {
@@ -148,7 +117,7 @@ describe('ListView', () => {
 			createMockContextValue({ rangeAnchor }),
 		);
 
-		render(<ListView />);
+		render(<ListView plannerId="planner-1" />);
 
 		expect(getListDayRange).toHaveBeenCalledWith(rangeAnchor, today);
 	});
@@ -159,7 +128,7 @@ describe('ListView', () => {
 		);
 		vi.mocked(useCalendarContext).mockReturnValue(createMockContextValue());
 
-		const { container } = render(<ListView />);
+		const { container } = render(<ListView plannerId="planner-1" />);
 
 		expect(container.innerHTML).toBe('');
 	});
@@ -182,7 +151,7 @@ describe('ListView', () => {
 				}),
 			);
 
-			render(<ListView />);
+			render(<ListView plannerId="planner-1" />);
 
 			act(() => {
 				vi.advanceTimersByTime(32);
@@ -210,7 +179,7 @@ describe('ListView', () => {
 				}),
 			);
 
-			const { rerender } = render(<ListView />);
+			const { rerender } = render(<ListView plannerId="planner-1" />);
 			mockScrollToDate.mockClear();
 
 			vi.mocked(useCalendarContext).mockReturnValue(
@@ -221,7 +190,7 @@ describe('ListView', () => {
 			);
 
 			act(() => {
-				rerender(<ListView />);
+				rerender(<ListView plannerId="planner-1" />);
 			});
 
 			expect(mockScrollToDate).toHaveBeenCalledWith(newSelectedDate, 'smooth');
@@ -241,7 +210,7 @@ describe('ListView', () => {
 				createMockContextValue({ rangeAnchor, selectedDate, setSelectedDate }),
 			);
 
-			render(<ListView />);
+			render(<ListView plannerId="planner-1" />);
 
 			expect(useScrolledDate).toHaveBeenCalledWith(
 				expect.objectContaining({
@@ -261,7 +230,7 @@ describe('ListView', () => {
 			createMockContextValue({ rangeAnchor: DateTime.local(2024, 6, 11) }),
 		);
 
-		expect(() => render(<ListView />)).not.toThrow();
+		expect(() => render(<ListView plannerId="planner-1" />)).not.toThrow();
 		expect(screen.getAllByTestId('day-row')).toHaveLength(1);
 	});
 
@@ -276,7 +245,7 @@ describe('ListView', () => {
 			}),
 		);
 
-		render(<ListView />);
+		render(<ListView plannerId="planner-1" />);
 
 		expect(useScrolledDate).toHaveBeenCalledWith(
 			expect.objectContaining({
@@ -286,115 +255,5 @@ describe('ListView', () => {
 			DateTime.local(2024, 6, 15),
 			setSelectedDate,
 		);
-	});
-
-	it('passes renderDish to each DayRow', () => {
-		const dates = [
-			DateTime.local(2024, 6, 10),
-			DateTime.local(2024, 6, 11),
-			DateTime.local(2024, 6, 12),
-		];
-		vi.mocked(getListDayRange).mockReturnValue(dates);
-		vi.mocked(useCalendarContext).mockReturnValue(
-			createMockContextValue({ rangeAnchor: DateTime.local(2024, 6, 11) }),
-		);
-
-		const mockRenderDish = vi.fn((dish: CalendarDish) => dish.name);
-
-		render(<ListView renderDish={mockRenderDish} />);
-
-		expect(DayRow).toHaveBeenCalledTimes(3);
-		for (const call of vi.mocked(DayRow).mock.calls) {
-			expect(call[0].renderDish).toBe(mockRenderDish);
-		}
-	});
-
-	it('calls renderDish when a dish name is rendered through the day row', () => {
-		const dates = [DateTime.local(2024, 6, 10)];
-		const dishes: CalendarDish[] = [
-			{ name: 'Pasta Primavera' },
-			{ name: 'Caesar Salad' },
-		];
-		const meals: CalendarMeal[] = [
-			{
-				id: 'lunch',
-				date: '2024-06-10',
-				name: 'Lunch',
-				borderColor: 'green',
-				dishes,
-			},
-		];
-		vi.mocked(getListDayRange).mockReturnValue(dates);
-		vi.mocked(useCalendarContext).mockReturnValue(
-			createMockContextValue({ rangeAnchor: dates[0] }),
-		);
-
-		const mockRenderDish = vi.fn((dish: CalendarDish) => dish.name);
-
-		render(<ListView meals={meals} renderDish={mockRenderDish} />);
-
-		expect(mockRenderDish).toHaveBeenCalledTimes(2);
-		expect(mockRenderDish).toHaveBeenCalledWith(dishes[0]);
-		expect(mockRenderDish).toHaveBeenCalledWith(dishes[1]);
-		expect(screen.getByText('Pasta Primavera')).toBeDefined();
-		expect(screen.getByText('Caesar Salad')).toBeDefined();
-	});
-
-	it('passes meals grouped by ISO date to each DayRow', () => {
-		const dates = [
-			DateTime.local(2024, 6, 10),
-			DateTime.local(2024, 6, 11),
-			DateTime.local(2024, 6, 12),
-		];
-		const meals: CalendarMeal[] = [
-			{
-				id: 'a',
-				date: '2024-06-10',
-				name: 'A',
-				borderColor: 'red',
-				dishes: [],
-			},
-			{
-				id: 'b',
-				date: '2024-06-10',
-				name: 'B',
-				borderColor: 'red',
-				dishes: [],
-			},
-			{
-				id: 'c',
-				date: '2024-06-12',
-				name: 'C',
-				borderColor: 'red',
-				dishes: [],
-			},
-		];
-		vi.mocked(getListDayRange).mockReturnValue(dates);
-		vi.mocked(useCalendarContext).mockReturnValue(
-			createMockContextValue({ rangeAnchor: DateTime.local(2024, 6, 11) }),
-		);
-
-		render(<ListView meals={meals} />);
-
-		const rows = screen.getAllByTestId('day-row');
-		expect(rows[0].getAttribute('data-meals-count')).toBe('2');
-		expect(rows[0].getAttribute('data-meal-ids')).toBe('a,b');
-		expect(rows[1].getAttribute('data-meals-count')).toBe('0');
-		expect(rows[2].getAttribute('data-meals-count')).toBe('1');
-		expect(rows[2].getAttribute('data-meal-ids')).toBe('c');
-	});
-
-	it('passes an empty meals array to DayRow for dates with no meals', () => {
-		const dates = [DateTime.local(2024, 6, 10), DateTime.local(2024, 6, 11)];
-		vi.mocked(getListDayRange).mockReturnValue(dates);
-		vi.mocked(useCalendarContext).mockReturnValue(
-			createMockContextValue({ rangeAnchor: DateTime.local(2024, 6, 10) }),
-		);
-
-		render(<ListView meals={[]} />);
-
-		for (const call of vi.mocked(DayRow).mock.calls) {
-			expect(call[0].meals).toEqual([]);
-		}
 	});
 });

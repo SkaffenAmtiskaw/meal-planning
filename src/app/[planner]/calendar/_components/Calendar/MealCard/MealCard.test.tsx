@@ -3,120 +3,71 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { MealCard } from './MealCard';
 
+import type { CalendarMeal } from '../types';
+
 vi.mock('@mantine/core', async () => await import('#mocks/@mantine/core'));
 
-vi.mock('../_components/DishListItem/DishListItem', () => ({
-	DishListItem: vi.fn(({ dish, renderName }) => (
-		<div data-testid="dish-list-item" data-dish-name={dish.name}>
-			{renderName(dish)}
-		</div>
-	)),
+vi.mock('../_components/MealDishList/MealDishList', () => ({
+	MealDishList: vi.fn(() => <ul data-testid="meal-dish-list" />),
 }));
+
+const baseMeal: CalendarMeal = {
+	id: 'meal-1',
+	date: '2024-06-15',
+	name: 'Grilled Salmon',
+	borderColor: '#F5B47A',
+	dishes: [],
+};
+
+function renderCard(meal: CalendarMeal = baseMeal) {
+	return render(<MealCard meal={meal} plannerId="planner-1" />);
+}
 
 describe('MealCard', () => {
 	beforeEach(() => {
 		vi.resetAllMocks();
 	});
 
-	const baseMeal = {
-		id: 'meal-1',
-		date: '2024-06-15',
-		name: 'Grilled Salmon',
-		borderColor: '#F5B47A',
-		dishes: [],
-	};
-
-	it('renders the description when provided', () => {
-		const meal = { ...baseMeal, description: 'With lemon and herbs' };
-
-		render(<MealCard meal={meal} />);
+	it('shows the description when the meal has one', () => {
+		renderCard({ ...baseMeal, description: 'With lemon and herbs' });
 
 		expect(screen.getByText('With lemon and herbs')).toBeDefined();
 	});
 
-	it('does not render a description when omitted', () => {
-		render(<MealCard meal={baseMeal} />);
+	it('shows no description when the meal has none', () => {
+		renderCard();
 
-		expect(screen.queryByText('With lemon and herbs')).toBeNull();
+		expect(screen.getByTestId('meal-card').textContent).toBe('Grilled Salmon');
 	});
 
-	it('applies the correct left rail border color from the meal', () => {
-		render(<MealCard meal={baseMeal} />);
+	it("draws the rail in the meal's tag color", () => {
+		renderCard();
 
 		const card = screen.getByTestId('meal-card');
-
-		expect((card as HTMLElement).style.borderLeftWidth).toBe('4px');
-		expect((card as HTMLElement).style.borderLeftStyle).toBe('solid');
-		expect((card as HTMLElement).style.borderLeftColor).toBe(
-			'rgb(245, 180, 122)',
-		);
+		expect(card.style.borderLeft).toBe('4px solid rgb(245, 180, 122)');
 	});
 
-	it('renders a DishListItem for each dish', () => {
-		const meal = {
-			...baseMeal,
-			dishes: [{ name: 'Salmon' }, { name: 'Asparagus' }],
-		};
+	it('draws the dish list when the meal has dishes', () => {
+		renderCard({ ...baseMeal, dishes: [{ _id: 'dish-1', name: 'Salmon' }] });
 
-		render(<MealCard meal={meal} />);
-
-		const items = screen.getAllByTestId('dish-list-item');
-
-		expect(items).toHaveLength(2);
-		expect(items[0]?.getAttribute('data-dish-name')).toBe('Salmon');
-		expect(items[1]?.getAttribute('data-dish-name')).toBe('Asparagus');
+		expect(screen.getByTestId('meal-dish-list')).toBeDefined();
 	});
 
-	it('passes renderDish to DishListItem as renderName', () => {
-		const meal = {
-			...baseMeal,
-			dishes: [{ name: 'Salmon' }],
-		};
-		const renderDish = vi.fn(() => <span>Custom rendered salmon</span>);
+	it('draws no dish list when the meal has no dishes', () => {
+		renderCard();
 
-		render(<MealCard meal={meal} renderDish={renderDish} />);
-
-		expect(renderDish).toHaveBeenCalledWith(meal.dishes[0]);
-		expect(screen.getByText('Custom rendered salmon')).toBeDefined();
+		expect(screen.queryByTestId('meal-dish-list')).toBeNull();
 	});
 
-	it('defaults to rendering dish names as plain Text when renderDish is omitted', () => {
-		const meal = {
-			...baseMeal,
-			dishes: [{ name: 'Salmon' }],
-		};
-
-		render(<MealCard meal={meal} />);
-
-		expect(screen.getByText('Salmon')).toBeDefined();
-	});
-
-	it('does not render the dish list when there are no dishes', () => {
-		render(<MealCard meal={baseMeal} />);
-
-		expect(screen.queryByTestId('dish-list-item')).toBeNull();
-	});
-
-	it('renders renderActions when provided', () => {
+	it('shows the actions it is given', () => {
 		render(
 			<MealCard
 				meal={baseMeal}
-				renderActions={<button type="button">Edit</button>}
+				plannerId="planner-1"
+				actions={<button type="button">Edit</button>}
 			/>,
 		);
 
-		expect(screen.getByText('Edit')).toBeDefined();
-	});
-
-	it('does not render renderActions when omitted', () => {
-		render(<MealCard meal={baseMeal} />);
-
-		expect(screen.queryByText('Edit')).toBeNull();
-	});
-
-	it('contains no drag-handle markup', () => {
-		render(<MealCard meal={baseMeal} />);
-
-		expect(screen.queryByTestId('drag-handle-dot')).toBeNull();
+		expect(screen.getByRole('button', { name: 'Edit' })).toBeDefined();
 	});
 });

@@ -327,6 +327,10 @@ export const Typography = vi.fn(
 	),
 );
 
+export const VisuallyHidden = vi.fn(({ children }: WithChildren) => (
+	<span>{children}</span>
+));
+
 export const Anchor = vi.fn(
 	({
 		children,

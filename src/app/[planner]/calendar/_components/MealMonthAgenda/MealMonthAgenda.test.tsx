@@ -1,8 +1,6 @@
 import { render, screen } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-import type { ReactElement } from 'react';
-
 import { DateTime } from 'luxon';
 
 import { makeUnknownDay } from '#fixtures/viewerDay';
@@ -11,13 +9,11 @@ import { useToday } from '@/_hooks';
 import { MealMonthAgenda } from './MealMonthAgenda';
 
 import { useCalendarContext } from '../Calendar';
-import type { CalendarDish, CalendarMeal } from '../Calendar';
+import type { CalendarMeal } from '../Calendar';
 import { useCalendarMeals } from '../../_hooks/useCalendarMeals';
 import { MobileAgenda } from '../Calendar/MobileAgenda/MobileAgenda';
-import type { MobileAgendaProps } from '../Calendar/MobileAgenda/types';
 import { MobileMonthGrid } from '../Calendar/MobileMonthGrid/MobileMonthGrid';
 import type { MobileMonthGridMeal } from '../Calendar/MobileMonthGrid/types';
-import { DishLink } from '../DishLink/DishLink';
 
 vi.mock('@mantine/core', async () => await import('#mocks/@mantine/core'));
 vi.mock('@/_hooks', async () => await import('#mocks/@/_hooks'));
@@ -50,24 +46,7 @@ vi.mock('../Calendar/MobileMonthGrid/MobileMonthGrid', async () => ({
 }));
 
 vi.mock('../Calendar/MobileAgenda/MobileAgenda', async () => ({
-	MobileAgenda: vi.fn(({ meals }: MobileAgendaProps) => (
-		<div data-testid="mobile-agenda">
-			{(meals ?? []).map((meal) => (
-				<span
-					key={meal.id}
-					data-testid="mobile-agenda-meal"
-					data-date={meal.date}
-					data-border-color={meal.borderColor}
-				>
-					{meal.name}
-				</span>
-			))}
-		</div>
-	)),
-}));
-
-vi.mock('../DishLink/DishLink', async () => ({
-	DishLink: vi.fn(() => <span data-testid="dish-link" />),
+	MobileAgenda: vi.fn(() => <div data-testid="mobile-agenda" />),
 }));
 
 vi.mock('../AddMealButton/MobileAddMealButton', () => ({
@@ -79,7 +58,6 @@ vi.mock('../AddMealButton/MobileAddMealButton', () => ({
 const mockUseCalendarContext = vi.mocked(useCalendarContext);
 const mockMobileMonthGrid = vi.mocked(MobileMonthGrid);
 const mockMobileAgenda = vi.mocked(MobileAgenda);
-const mockDishLink = vi.mocked(DishLink);
 const mockUseCalendarMeals = vi.mocked(useCalendarMeals);
 
 const defaultProps = {
@@ -155,36 +133,6 @@ describe('MealMonthAgenda', () => {
 		expect(screen.queryByTestId('mobile-agenda-skeleton')).toBeNull();
 	});
 
-	it('passes the meals to MobileAgenda', () => {
-		renderAgenda();
-
-		const calls = mockMobileAgenda.mock.calls;
-		expect(calls[calls.length - 1][0].meals).toEqual(calendarMeals);
-	});
-
-	it('passes a renderDish function that uses DishLink', () => {
-		renderAgenda();
-
-		const calls = mockMobileAgenda.mock.calls;
-		const renderDish = calls[calls.length - 1][0].renderDish as
-			| ((dish: CalendarDish) => ReactElement)
-			| undefined;
-
-		expect(renderDish).toBeDefined();
-
-		const dish: CalendarDish = { name: 'Test Dish' };
-		render(renderDish?.(dish) ?? null);
-
-		expect(mockDishLink).toHaveBeenCalledTimes(1);
-		expect(mockDishLink.mock.calls[0][0]).toEqual(
-			expect.objectContaining({
-				dish,
-				plannerId: defaultProps.plannerId,
-				size: 'sm',
-			}),
-		);
-	});
-
 	it('updates MobileAgenda when the selected date changes', () => {
 		const { rerender } = renderAgenda(
 			DateTime.fromObject({ year: 2024, month: 6, day: 15 }),
@@ -231,6 +179,5 @@ describe('MealMonthAgenda', () => {
 
 		expect(screen.queryAllByTestId('mobile-month-grid-meal')).toHaveLength(0);
 		expect(screen.getByTestId('mobile-agenda')).toBeDefined();
-		expect(screen.queryAllByTestId('mobile-agenda-meal')).toHaveLength(0);
 	});
 });

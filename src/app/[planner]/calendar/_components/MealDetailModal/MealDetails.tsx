@@ -10,9 +10,8 @@ type Props = {
 
 export const MealDetails = ({ meal, plannerId }: Props) => (
 	<Stack gap="xs">
-		{meal.dishes.map((dish, i) => (
-			// biome-ignore lint/suspicious/noArrayIndexKey: dishes have no stable id
-			<div key={i}>
+		{meal.dishes.map((dish) => (
+			<div key={dish._id}>
 				<DishLink dish={dish} plannerId={plannerId} />
 				{typeof dish.source === 'object' &&
 					dish.source !== null &&

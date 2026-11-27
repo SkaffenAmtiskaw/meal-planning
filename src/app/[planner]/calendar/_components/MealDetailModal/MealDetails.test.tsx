@@ -29,7 +29,10 @@ describe('MealDetails', () => {
 	test('shows dish names', () => {
 		const meal = {
 			...baseMeal,
-			dishes: [{ name: 'Eggs' }, { name: 'Toast' }],
+			dishes: [
+				{ _id: 'dish-1', name: 'Eggs' },
+				{ _id: 'dish-2', name: 'Toast' },
+			],
 		};
 		render(<MealDetails meal={meal} plannerId="planner-1" />);
 		expect(screen.getByText('Eggs')).toBeDefined();
@@ -39,14 +42,14 @@ describe('MealDetails', () => {
 	test('shows dish note when present', () => {
 		const meal = {
 			...baseMeal,
-			dishes: [{ name: 'Pasta', note: 'al dente' }],
+			dishes: [{ _id: 'dish-3', name: 'Pasta', note: 'al dente' }],
 		};
 		render(<MealDetails meal={meal} plannerId="planner-1" />);
 		expect(screen.getByText('al dente')).toBeDefined();
 	});
 
 	test('does not show note section when note is absent', () => {
-		const meal = { ...baseMeal, dishes: [{ name: 'Salad' }] };
+		const meal = { ...baseMeal, dishes: [{ _id: 'dish-4', name: 'Salad' }] };
 		render(<MealDetails meal={meal} plannerId="planner-1" />);
 		expect(screen.queryByText('al dente')).toBeNull();
 	});
@@ -54,20 +57,23 @@ describe('MealDetails', () => {
 	test('renders a DishLink for each dish', () => {
 		const meal = {
 			...baseMeal,
-			dishes: [{ name: 'Eggs' }, { name: 'Toast' }],
+			dishes: [
+				{ _id: 'dish-5', name: 'Eggs' },
+				{ _id: 'dish-6', name: 'Toast' },
+			],
 		};
 		render(<MealDetails meal={meal} plannerId="planner-1" />);
 		expect(screen.getAllByTestId('dish-link')).toHaveLength(2);
 		expect(vi.mocked(DishLink)).toHaveBeenCalledTimes(2);
 		expect(vi.mocked(DishLink).mock.calls[0][0]).toEqual(
 			expect.objectContaining({
-				dish: { name: 'Eggs' },
+				dish: { _id: 'dish-5', name: 'Eggs' },
 				plannerId: 'planner-1',
 			}),
 		);
 		expect(vi.mocked(DishLink).mock.calls[1][0]).toEqual(
 			expect.objectContaining({
-				dish: { name: 'Toast' },
+				dish: { _id: 'dish-6', name: 'Toast' },
 				plannerId: 'planner-1',
 			}),
 		);
@@ -76,7 +82,13 @@ describe('MealDetails', () => {
 	test('shows ref text below dish name when source has a ref', () => {
 		const meal = {
 			...baseMeal,
-			dishes: [{ name: 'Roast Chicken', source: { ref: 'The Flavor Bible' } }],
+			dishes: [
+				{
+					_id: 'dish-9',
+					name: 'Roast Chicken',
+					source: { ref: 'The Flavor Bible' },
+				},
+			],
 		};
 		render(<MealDetails meal={meal} plannerId="planner-1" />);
 		expect(screen.getByText('The Flavor Bible')).toBeDefined();

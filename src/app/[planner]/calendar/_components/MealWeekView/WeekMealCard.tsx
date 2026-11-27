@@ -53,9 +53,8 @@ export function WeekMealCard({
 					{meal.description}
 				</Text>
 			)}
-			{meal.dishes.map((dish, index) => (
-				// biome-ignore lint/suspicious/noArrayIndexKey: dishes have no stable id
-				<Box key={index} style={{ color: text }}>
+			{meal.dishes.map((dish) => (
+				<Box key={dish._id} style={{ color: text }}>
 					<DishLink dish={dish} plannerId={plannerId} tabIndex={-1} />
 				</Box>
 			))}
