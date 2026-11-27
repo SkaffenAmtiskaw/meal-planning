@@ -8,14 +8,14 @@ import { isBlankDish } from '../../_utils/isBlankDish';
 export const isNamelessDish = (dish: DishValues): boolean =>
 	dish.name.trim() === '' && !isBlankDish(dish);
 
-// Date and Meal name, which Add Meal waits for.
+// Date and Meal name, which the save button waits for.
 export const zRequiredMealFields = z.object({
 	date: z.string().min(1),
 	mealName: z.string().trim().min(1),
 });
 
 /**
- * What a save checks. Add Meal stays off until the required fields are filled,
+ * What a save checks. The save button stays off until the required fields are filled,
  * so only a nameless dish ever stops a save, with its error on its name.
  */
 export const zMealValues = zRequiredMealFields.extend({

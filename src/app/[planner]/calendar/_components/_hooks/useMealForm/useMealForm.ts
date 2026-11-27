@@ -5,8 +5,11 @@ import { createFormContext, schemaResolver } from '@mantine/form';
 import { zMealValues } from './mealValues';
 import type { MealValues } from './types';
 
-export const [MealFormProvider, useMealFormContext, useMealFormBase] =
+const [MealFormProvider, useMealFormContext, useMealFormBase] =
 	createFormContext<MealValues>();
+
+// Only the provider and the context hook leave this file, so the form is always made through useMealForm.
+export { MealFormProvider, useMealFormContext };
 
 /**
  * The meal form's values in Mantine Form. The frame that shows the form creates
