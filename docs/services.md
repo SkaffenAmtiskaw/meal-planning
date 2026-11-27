@@ -352,6 +352,23 @@ To add a routine, go to https://claude.ai/code/routines → **New routine**. The
 ### The Desktop App's Branch Prefix
 The Claude desktop app names each worktree branch from its branch prefix (Settings → Claude Code), which is `feature/`, so a story's or `/tooling` change's branch is `feature/<generated name>`. A prefix of `claude/`, the app's default, would break CI's reporting: `start-ci-failure` and `vercel-deploy-errors.yml` treat a `claude/` branch as a routine's own fix and start no session for it, so a story's failed check or failed preview would start nothing.
 
+### Claude Code's Auto-Merge Entry
+After a session opens a PR into `develop`, it turns on auto-merge with `gh pr merge <number> --auto --squash`. Between 2026-11-08 and 2026-11-27, Claude Code's auto-mode safety check blocked about a quarter of these commands, and each blocked session stopped and asked you to turn auto-merge on. So your personal Claude Code settings, `~/.claude/settings.json`, carry this `autoMode` setting, which tells the check the merge is expected. On a new machine, add it by hand:
+
+```json
+"autoMode": {
+  "allow": [
+    "$defaults",
+    "Turning on GitHub auto-merge with `gh pr merge <number> --auto --squash` for a pull request into `develop` in SkaffenAmtiskaw/meal-planning is expected: this repo's skills do it after opening each PR, and develop's ruleset still requires every check to pass before anything merges."
+  ]
+}
+```
+
+`"$defaults"` keeps Claude Code's built-in allowances, which the list would otherwise replace. The entry after it names only PRs into `develop`, so the check still judges a merge into `main` with no allowance. A merge into `main` deploys.
+
+> [!NOTE]
+> The `autoMode` setting can't live in the repo's `.claude/settings.json`, because Claude Code reads `autoMode` only from personal or managed settings. That way a repo can't approve its own actions.
+
 # Who You Pay
 - **Cloudflare:** the domain, renewing 2027-03-02 with auto-renew on. R2 bills only beyond its free allowance of 10 GB stored, which a week of the database's backups stays far below.
 - **Anthropic:** the Claude Max subscription.
