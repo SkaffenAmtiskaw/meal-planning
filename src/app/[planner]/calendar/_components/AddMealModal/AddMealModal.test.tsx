@@ -110,26 +110,45 @@ describe('AddMealModal', () => {
 		expect(show).not.toHaveBeenCalled();
 	});
 
-	it('shows the date the form reports under the title on desktop', () => {
-		render(<AddMealModal {...props} />);
+	it('shows the date it opened with under the title on desktop, from the first draw', () => {
+		render(<AddMealModal {...props} data={{ initialDate: '2026-11-27' }} />);
 
-		act(() => formProps()?.onDateChange?.('2026-11-27'));
-
+		expect(MealDateSubtitle).toHaveBeenCalledTimes(1);
 		expect(MealDateSubtitle).toHaveBeenLastCalledWith(
 			{ date: '2026-11-27' },
 			undefined,
 		);
 	});
 
-	it('starts the next open with no date', () => {
+	it('shows an empty date line when it opened with no date', () => {
+		render(<AddMealModal {...props} />);
+
+		expect(MealDateSubtitle).toHaveBeenLastCalledWith({ date: '' }, undefined);
+	});
+
+	it('shows the date picked in the form under the title', () => {
+		render(<AddMealModal {...props} data={{ initialDate: '2026-11-27' }} />);
+
+		act(() => formProps()?.onDateChange?.('2026-12-05'));
+
+		expect(MealDateSubtitle).toHaveBeenLastCalledWith(
+			{ date: '2026-12-05' },
+			undefined,
+		);
+	});
+
+	it('starts the next open from its own date, not the last one picked', () => {
 		const { rerender } = render(<AddMealModal {...props} />);
-		act(() => formProps()?.onDateChange?.('2026-11-27'));
+		act(() => formProps()?.onDateChange?.('2026-12-05'));
 
 		act(() => rootProps()?.onClose());
 		rerender(<AddMealModal {...props} data={null} />);
-		rerender(<AddMealModal {...props} />);
+		rerender(<AddMealModal {...props} data={{ initialDate: '2026-11-29' }} />);
 
-		expect(MealDateSubtitle).toHaveBeenLastCalledWith({ date: '' }, undefined);
+		expect(MealDateSubtitle).toHaveBeenLastCalledWith(
+			{ date: '2026-11-29' },
+			undefined,
+		);
 	});
 
 	it('closes on Esc while no layer inside is open', () => {

@@ -214,7 +214,7 @@ describe('MealForm', () => {
 		expect(vi.mocked(MealFormFooter).mock.lastCall?.[0].canSubmit).toBe(true);
 	});
 
-	it('reports its date to its frame, starting with the first one', () => {
+	it('tells its frame each date picked, and nothing else', () => {
 		const onDateChange = vi.fn();
 		render(
 			<MealForm
@@ -225,13 +225,13 @@ describe('MealForm', () => {
 				onDateChange={onDateChange}
 			/>,
 		);
-		expect(onDateChange).toHaveBeenLastCalledWith('2026-11-27');
+		expect(onDateChange).not.toHaveBeenCalled();
 
 		setField('mealName', 'Burrito Night');
-		expect(onDateChange).toHaveBeenCalledTimes(1);
+		expect(onDateChange).not.toHaveBeenCalled();
 
 		setField('date', '2026-12-10');
-		expect(onDateChange).toHaveBeenLastCalledWith('2026-12-10');
+		expect(onDateChange).toHaveBeenCalledExactlyOnceWith('2026-12-10');
 	});
 
 	it('works without a frame listening for its date', () => {
@@ -244,7 +244,11 @@ describe('MealForm', () => {
 			/>,
 		);
 
-		setField('mealName', 'Burrito Night');
+		setField('date', '2026-12-10');
+
+		expect(vi.mocked(MealFields).mock.lastCall?.[0].values.date).toBe(
+			'2026-12-10',
+		);
 	});
 	it("adds the saved recipe picked in the column, and tells the column it's on the meal", () => {
 		render(

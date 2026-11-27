@@ -33,11 +33,11 @@ export function AddMealModal({
 	const isMobile = useIsMobile();
 	const { show } = useSnackbar();
 	const escapeLayers = useEscapeLayers();
-	// The open form's date. Cleared on close, so the next open starts from its own date.
-	const [date, setDate] = useState('');
+	// The date last picked in the open form. Cleared on close, so the next open starts from its own date.
+	const [pickedDate, setPickedDate] = useState<string | null>(null);
 
 	const handleClose = () => {
-		setDate('');
+		setPickedDate(null);
 		close();
 	};
 
@@ -84,7 +84,9 @@ export function AddMealModal({
 									<Modal.Title fw={700} fz="xl">
 										Add Meal
 									</Modal.Title>
-									<MealDateSubtitle date={date} />
+									<MealDateSubtitle
+										date={pickedDate ?? data.initialDate ?? ''}
+									/>
 								</Stack>
 								<Modal.CloseButton aria-label="Close" />
 							</Modal.Header>
@@ -95,7 +97,7 @@ export function AddMealModal({
 								save={(input) => addMeal({ plannerId, ...input })}
 								onSuccess={handleSuccess}
 								onCancel={handleClose}
-								onDateChange={setDate}
+								onDateChange={setPickedDate}
 							/>
 						</Modal.Body>
 					</Modal.Content>

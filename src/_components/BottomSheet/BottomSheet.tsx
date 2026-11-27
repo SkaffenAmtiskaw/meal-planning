@@ -4,7 +4,7 @@ import type { ReactElement, ReactNode } from 'react';
 
 import { Drawer, getDefaultZIndex } from '@mantine/core';
 
-import { useSwipe } from '@/_hooks';
+import { useEscapeLayer, useSwipe } from '@/_hooks';
 
 import classes from './BottomSheet.module.css';
 
@@ -27,6 +27,8 @@ export function BottomSheet({
 	title,
 	children,
 }: BottomSheetProps): ReactElement {
+	// Inside a modal, Esc closes the sheet first.
+	useEscapeLayer(opened);
 	const swipeRef = useSwipe<HTMLDivElement>({
 		onSwipe: (direction) => {
 			if (direction === 'down') {
@@ -40,7 +42,7 @@ export function BottomSheet({
 			opened={opened}
 			onClose={onClose}
 			position="bottom"
-			// Above a modal it opens over, such as the full-screen Add Meal form, whatever order they mount in.
+			// Above any modal it opens over, whatever order they mount in.
 			zIndex={getDefaultZIndex('modal') + 1}
 			classNames={{
 				content: classes.content,

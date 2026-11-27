@@ -53,10 +53,18 @@ describe('AdaptivePopover', () => {
 	it.each([
 		true,
 		false,
-	])('takes Esc from a modal it sits in only while open (open: %s)', (opened) => {
+	])('takes Esc from a modal it sits in only while open on desktop (open: %s)', (opened) => {
 		renderAdaptivePopover({ opened });
 
 		expect(useEscapeLayer).toHaveBeenLastCalledWith(opened);
+	});
+
+	it('leaves Esc to the sheet on phones, which takes it itself', () => {
+		vi.mocked(useIsMobile).mockReturnValueOnce(true);
+
+		renderAdaptivePopover({ opened: true });
+
+		expect(useEscapeLayer).toHaveBeenLastCalledWith(false);
 	});
 
 	it.each([

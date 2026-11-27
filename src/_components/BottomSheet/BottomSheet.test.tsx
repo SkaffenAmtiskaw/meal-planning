@@ -1,7 +1,7 @@
 import { act, render } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
 
-import { type SwipeDirection, useSwipe } from '@/_hooks';
+import { type SwipeDirection, useEscapeLayer, useSwipe } from '@/_hooks';
 
 import { BottomSheet } from './BottomSheet';
 
@@ -41,5 +41,18 @@ describe('BottomSheet', () => {
 		swipe(direction);
 
 		expect(onClose).not.toHaveBeenCalled();
+	});
+
+	it.each([
+		true,
+		false,
+	])('takes Esc from a modal it sits in only while open (open: %s)', (opened) => {
+		render(
+			<BottomSheet opened={opened} onClose={vi.fn()} title="Jump to date">
+				Content
+			</BottomSheet>,
+		);
+
+		expect(useEscapeLayer).toHaveBeenLastCalledWith(opened);
 	});
 });

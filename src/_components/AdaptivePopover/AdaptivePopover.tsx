@@ -40,8 +40,8 @@ export function AdaptivePopover({
 	children,
 }: AdaptivePopoverProps): ReactElement {
 	const isMobile = useIsMobile();
-	// Inside a modal, Esc closes this layer first.
-	useEscapeLayer(opened);
+	// Inside a modal, Esc closes the desktop popover first. The phone sheet registers itself.
+	useEscapeLayer(opened && !isMobile);
 
 	if (isMobile) {
 		return (

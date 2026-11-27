@@ -11,6 +11,7 @@ import clsx from 'clsx';
 import { DateTime } from 'luxon';
 
 import { useIsMobile, useSwipe, useToday } from '@/_hooks';
+import { formatDate } from '@/_utils/formatDate';
 
 import { useDatePickerKeys } from './useDayKeys';
 import classes from './DatePickerGrid.module.css';
@@ -101,8 +102,9 @@ export function DatePickerGrid({
 				previousLabel="Previous month"
 				nextLabel="Next month"
 				monthLabelFormat={(month) => (
-					<Skeleton visible={!monthKnown}>
-						{DateTime.fromISO(month).toFormat('MMMM yyyy')}
+					// A skeleton is full width by default, which would push the title off center.
+					<Skeleton visible={!monthKnown} width="fit-content">
+						{formatDate(month, 'monthYear')}
 					</Skeleton>
 				)}
 				// A single letter per weekday, like "S", which none of Mantine's format strings give.
@@ -120,7 +122,8 @@ export function DatePickerGrid({
 				renderDay={(date) => {
 					const day = DateTime.fromISO(date);
 					return (
-						<Skeleton visible={!monthKnown} circle>
+						// Sized to the number rather than the cell, so the number stays centered over its dot. The xl radius rounds it into a circle.
+						<Skeleton visible={!monthKnown} width="fit-content" radius="xl">
 							<NumberMark
 								size={size}
 								ring={isToday(date)}

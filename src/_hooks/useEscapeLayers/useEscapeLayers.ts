@@ -17,7 +17,7 @@ export const EscapeLayersProvider = EscapeLayersContext.Provider;
 
 /**
  * For a modal frame: tracks the layers open inside it that close on Esc
- * themselves, such as a picker's popover or link mode. While any is open the
+ * themselves, such as a picker's popover. While any is open the
  * frame turns off its own Esc close, so one Esc closes only the top layer.
  */
 export function useEscapeLayers(): {
