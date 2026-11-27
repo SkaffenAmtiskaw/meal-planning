@@ -5,21 +5,19 @@ import { IconPlus } from '@tabler/icons-react';
 
 import { useIsMobile } from '@/_hooks';
 
+import { useMealDishes } from '../../../_hooks/useMealForm';
 import { DishProvider } from '../../_hooks/useDish';
 import { formatDishCount } from '../../_utils/formatDishCount';
-import type { DishDraft } from '../../types';
 import { DishRow } from '../DishRow/DishRow';
 import { SectionLabel } from '../SectionLabel/SectionLabel';
 
 type Props = {
-	dishes: DishDraft[];
-	// How many dishes will be saved, so blank rows aren't counted.
-	dishCount: number;
 	onAddDish: () => void;
 };
 
 // DISHES with its count, a row for each dish, then Add dish.
-export const DishList = ({ dishes, dishCount, onAddDish }: Props) => {
+export const DishList = ({ onAddDish }: Props) => {
+	const { dishes, dishCount } = useMealDishes();
 	const isMobile = useIsMobile();
 
 	return (
@@ -31,8 +29,8 @@ export const DishList = ({ dishes, dishCount, onAddDish }: Props) => {
 					{formatDishCount(dishCount)}
 				</Text>
 			</Group>
-			{dishes.map((dish) => (
-				<DishProvider key={dish.key} dish={dish}>
+			{dishes.map((dish, index) => (
+				<DishProvider key={dish.key} dish={dish} index={index}>
 					<DishRow canDelete={dishes.length > 1} />
 				</DishProvider>
 			))}

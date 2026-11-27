@@ -6,7 +6,9 @@ import { Divider, Paper, Stack } from '@mantine/core';
 import { useClickOutside } from '@mantine/hooks';
 
 import { usePlannerSavedItems } from '../../../../_hooks/usePlannerSavedItems';
+import { useMealDishes } from '../../../_hooks/useMealForm';
 import { useDish } from '../../_hooks/useDish';
+import { useDishLinkingContext } from '../../_hooks/useDishLinking';
 import { narrowSavedItems } from '../../_utils/narrowSavedItems';
 import { AddAsNewDishRow } from '../AddAsNewDishRow/AddAsNewDishRow';
 import { PhoneSavedResultRow } from '../PhoneSavedResultRow/PhoneSavedResultRow';
@@ -27,7 +29,9 @@ type Props = {
  * recipe gives the dish its name and links to it.
  */
 export const PhoneSavedList = ({ fieldNode }: Props) => {
-	const { dish, linkedIds, chooseRecipe, closeList } = useDish();
+	const { dish } = useDish();
+	const { linkedIds } = useMealDishes();
+	const { chooseFromList, closeList } = useDishLinkingContext();
 	const search = dish.name;
 	const savedItems = usePlannerSavedItems();
 	// The selected tags' ids, in pick order. DishRow keys this list on each open, so every open starts with none.
@@ -65,7 +69,7 @@ export const PhoneSavedList = ({ fieldNode }: Props) => {
 								<PhoneSavedResultRow
 									item={item}
 									added={linkedIds.has(item._id)}
-									onUse={() => chooseRecipe(dish.key, item)}
+									onUse={() => chooseFromList(dish.key, item)}
 								/>
 							</Fragment>
 						))}

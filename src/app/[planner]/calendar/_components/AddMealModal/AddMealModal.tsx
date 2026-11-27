@@ -1,29 +1,16 @@
 'use client';
 
-import { useState } from 'react';
+import { Modal } from '@mantine/core';
 
-import { Button, Modal, Stack } from '@mantine/core';
+import { EscapeLayersProvider, useEscapeLayers, useIsMobile } from '@/_hooks';
 
-import { addMeal } from '@/_actions/calendar';
-import type { MealInput } from '@/_actions/calendar/types';
-import {
-	EscapeLayersProvider,
-	useEscapeLayers,
-	useIsMobile,
-	useSnackbar,
-} from '@/_hooks';
-import { formatDate } from '@/_utils/formatDate';
-
-import classes from './AddMealModal.module.css';
-
-import { MealForm, newMealDraft } from '../MealForm';
 import type { CalendarModalFrameProps } from '../CalendarModal/types';
-import { MealDateSubtitle } from '../MealDateSubtitle/MealDateSubtitle';
+import { AddMealModalContent } from './_components/AddMealModalContent/AddMealModalContent';
 
 /**
- * The Add Meal frame: a wide modal on desktop, and a full-screen sheet with
- * Cancel in its top bar on a phone. On success it closes and confirms the
- * save in the confirmation bar. It closes on cancel or close with no prompt.
+ * The Add Meal frame: a wide modal on desktop, and a full-screen sheet on a
+ * phone. It stays on the page so it can animate open. What it shows while
+ * open is AddMealModalContent, which starts afresh on each open.
  */
 export function AddMealModal({
 	data,
@@ -31,28 +18,12 @@ export function AddMealModal({
 	plannerId,
 }: CalendarModalFrameProps<'add_meal'>) {
 	const isMobile = useIsMobile();
-	const { show } = useSnackbar();
 	const escapeLayers = useEscapeLayers();
-	// The date last picked in the open form. Cleared on close, so the next open starts from its own date.
-	const [pickedDate, setPickedDate] = useState<string | null>(null);
-
-	const handleClose = () => {
-		setPickedDate(null);
-		close();
-	};
-
-	// The date that went to the server, so the message matches where the meal now shows.
-	const handleSuccess = (saved: MealInput) => {
-		handleClose();
-		show({
-			message: `Added to ${formatDate(saved.date, 'shortWeekdayMonthDay')}`,
-		});
-	};
 
 	return (
 		<Modal.Root
 			opened={data !== null}
-			onClose={handleClose}
+			onClose={close}
 			size={1180}
 			fullScreen={isMobile}
 			radius={isMobile ? 0 : undefined}
@@ -65,42 +36,11 @@ export function AddMealModal({
 			<EscapeLayersProvider value={escapeLayers.register}>
 				<Modal.Overlay />
 				{data !== null && (
-					<Modal.Content className={classes.content}>
-						{isMobile ? (
-							<Modal.Header className={classes.phoneHeader}>
-								<Button
-									variant="subtle"
-									px={0}
-									justify="flex-start"
-									onClick={handleClose}
-								>
-									Cancel
-								</Button>
-								<Modal.Title fw={700}>Add Meal</Modal.Title>
-							</Modal.Header>
-						) : (
-							<Modal.Header>
-								<Stack gap={0}>
-									<Modal.Title fw={700} fz="xl">
-										Add Meal
-									</Modal.Title>
-									<MealDateSubtitle
-										date={pickedDate ?? data.initialDate ?? ''}
-									/>
-								</Stack>
-								<Modal.CloseButton aria-label="Close" />
-							</Modal.Header>
-						)}
-						<Modal.Body className={classes.body} p={0}>
-							<MealForm
-								initialDraft={newMealDraft(data.initialDate)}
-								save={(input) => addMeal({ plannerId, ...input })}
-								onSuccess={handleSuccess}
-								onCancel={handleClose}
-								onDateChange={setPickedDate}
-							/>
-						</Modal.Body>
-					</Modal.Content>
+					<AddMealModalContent
+						initialDate={data.initialDate}
+						plannerId={plannerId}
+						close={close}
+					/>
 				)}
 			</EscapeLayersProvider>
 		</Modal.Root>

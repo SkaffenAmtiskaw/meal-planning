@@ -4,7 +4,9 @@ import { useEffect, useRef } from 'react';
 
 import { TextInput } from '@mantine/core';
 
+import { useMealDishes } from '../../../_hooks/useMealForm';
 import { useDish } from '../../_hooks/useDish';
+import { useDishLinkingContext } from '../../_hooks/useDishLinking';
 
 /**
  * The phone dish name field, which also searches saved recipes. Tapping it or
@@ -14,11 +16,11 @@ import { useDish } from '../../_hooks/useDish';
  * dish draws the field red; its row shows the message.
  */
 export const DishNameSearch = () => {
-	const { dish, nameless, listOpenId, renameDish, unlinkDish, openList } =
-		useDish();
+	const { dish, nameError } = useDish();
+	const { renameAndUnlinkDish } = useMealDishes();
+	const { openDishList, openList } = useDishLinkingContext();
 	const ref = useRef<HTMLInputElement>(null);
-	const listOpen = listOpenId !== null;
-	const linked = dish.source?.kind === 'saved';
+	const listOpen = openDishList?.key === dish.key;
 	const openThisList = () => openList(dish.key);
 
 	useEffect(() => {
@@ -33,15 +35,12 @@ export const DishNameSearch = () => {
 			aria-label="Dish name"
 			placeholder="Dish name or search saved recipes"
 			flex={1}
-			error={nameless}
+			error={nameError !== null}
 			value={dish.name}
 			onFocus={openThisList}
 			onClick={openThisList}
 			onChange={(e) => {
-				renameDish(dish.key, e.currentTarget.value);
-				if (linked) {
-					unlinkDish(dish.key);
-				}
+				renameAndUnlinkDish(dish.key, e.currentTarget.value);
 				openThisList();
 			}}
 		/>

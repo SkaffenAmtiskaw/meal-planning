@@ -1,29 +1,28 @@
 import { useContext } from 'react';
 
 import { DishContext } from './DishContext';
-import { MealDishesContext } from './MealDishesContext';
 import type { Dish } from './types';
 
+import {
+	isNamelessDish,
+	useMealFormContext,
+} from '../../../_hooks/useMealForm';
+
 /**
- * The dish a row shows, its flags, and the meal form's actions on its dishes.
- * The actions are the form's own, so a piece calls them with `dish.key`.
+ * The dish a row shows, where it sits in the form's values, and the message a
+ * stopped save left on it. The message shows only while the dish is still
+ * nameless, so naming the dish hides it and clearing the name brings it back.
  */
 export const useDish = (): Dish => {
-	const dish = useContext(DishContext);
-	const mealDishes = useContext(MealDishesContext);
-	if (!dish) {
+	const row = useContext(DishContext);
+	const form = useMealFormContext();
+	if (!row) {
 		throw new Error('useDish must be used inside DishProvider');
 	}
-	if (!mealDishes) {
-		throw new Error('useDish must be used inside MealDishesProvider');
-	}
-	const { namelessKeys, linkingKey, openDishList, ...actions } = mealDishes;
+	const error = form.errors[`dishes.${row.index}.name`];
 
 	return {
-		...actions,
-		dish,
-		nameless: namelessKeys.has(dish.key),
-		linking: linkingKey === dish.key,
-		listOpenId: openDishList?.key === dish.key ? openDishList.id : null,
+		...row,
+		nameError: error && isNamelessDish(row.dish) ? error : null,
 	};
 };

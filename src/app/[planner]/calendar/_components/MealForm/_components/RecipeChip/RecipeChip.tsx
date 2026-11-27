@@ -7,6 +7,7 @@ import classes from './RecipeChip.module.css';
 
 import { usePlannerSavedItems } from '../../../../_hooks/usePlannerSavedItems';
 import { useDish } from '../../_hooks/useDish';
+import { useDishLinkingContext } from '../../_hooks/useDishLinking';
 import { savedItemName } from '../../_utils/savedItemName';
 import { SourceMark } from '../SourceMark/SourceMark';
 
@@ -21,7 +22,8 @@ type Props = {
  * tapping a filled chip opens or closes the row's panel.
  */
 export const RecipeChip = ({ onTogglePanel }: Props) => {
-	const { dish, startLinking } = useDish();
+	const { dish } = useDish();
+	const { startLinking } = useDishLinkingContext();
 	const { source } = dish;
 	const savedItems = usePlannerSavedItems();
 

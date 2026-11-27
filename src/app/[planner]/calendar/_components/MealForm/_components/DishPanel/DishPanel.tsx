@@ -6,6 +6,7 @@ import { SimpleGrid, Stack, Textarea } from '@mantine/core';
 
 import classes from './DishPanel.module.css';
 
+import { useMealFormContext } from '../../../_hooks/useMealForm';
 import { useDish } from '../../_hooks/useDish';
 import { DishRecipeSection } from '../DishRecipeSection/DishRecipeSection';
 import { SectionLabel } from '../SectionLabel/SectionLabel';
@@ -17,7 +18,8 @@ type Props = {
 
 // A dish's expand panel: its recipe and its note, side by side on desktop and stacked on a phone.
 export const DishPanel = ({ noteRef }: Props) => {
-	const { dish, setNote } = useDish();
+	const { index } = useDish();
+	const form = useMealFormContext();
 
 	return (
 		<SimpleGrid cols={{ base: 1, sm: 2 }} className={classes.root}>
@@ -30,8 +32,7 @@ export const DishPanel = ({ noteRef }: Props) => {
 					placeholder="Prep reminders, swaps, what to buy…"
 					autosize
 					minRows={3}
-					value={dish.note}
-					onChange={(e) => setNote(dish.key, e.currentTarget.value)}
+					{...form.getInputProps(`dishes.${index}.note`)}
 				/>
 			</Stack>
 		</SimpleGrid>

@@ -1,7 +1,7 @@
 import { fireEvent, render, screen } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
-import { makeDish, makeDishDraft } from '#fixtures/dish';
+import { makeDish, makeDishLinking, makeDishValues } from '#fixtures/dish';
 import { useFocusOnExpand, useIsMobile } from '@/_hooks';
 
 import { DishRow } from './DishRow';
@@ -10,6 +10,7 @@ import classes from './DishRow.module.css';
 import { usePlannerSavedItems } from '../../../../_hooks/usePlannerSavedItems';
 import type { Dish } from '../../_hooks/useDish';
 import { useDish } from '../../_hooks/useDish';
+import { useDishLinkingContext } from '../../_hooks/useDishLinking';
 import { DishNameInput } from '../DishNameInput/DishNameInput';
 import { DishNameSearch } from '../DishNameSearch/DishNameSearch';
 
@@ -25,6 +26,13 @@ vi.mock(
 	async () =>
 		await import(
 			'#mocks/@app/[planner]/calendar/_components/MealForm/_hooks/useDish'
+		),
+);
+vi.mock(
+	'../../_hooks/useDishLinking',
+	async () =>
+		await import(
+			'#mocks/@app/[planner]/calendar/_components/MealForm/_hooks/useDishLinking'
 		),
 );
 vi.mock('../DishNameInput/DishNameInput', () => ({
@@ -57,10 +65,27 @@ vi.mock('../DishPanel/DishPanel', () => ({
 	DishPanel: vi.fn(() => <div data-testid="dish-panel" />),
 }));
 
-const soup = makeDishDraft({ name: 'Soup' });
+const soup = makeDishValues({ key: 'soup', name: 'Soup' });
 
-const withDish = (overrides: Partial<Dish> = {}) =>
-	vi.mocked(useDish).mockReturnValue(makeDish({ dish: soup, ...overrides }));
+/**
+ * The row's dish, with what the linking context says about it: whether it's
+ * the one being linked, and the id of its open saved list, if any.
+ */
+const withDish = ({
+	linking = false,
+	listOpenId = null,
+	...overrides
+}: Partial<Dish> & { linking?: boolean; listOpenId?: number | null } = {}) => {
+	const dish = makeDish({ dish: soup, ...overrides });
+	vi.mocked(useDish).mockReturnValue(dish);
+	vi.mocked(useDishLinkingContext).mockReturnValue(
+		makeDishLinking({
+			linkingKey: linking ? dish.dish.key : 'another-dish',
+			openDishList:
+				listOpenId === null ? null : { key: dish.dish.key, id: listOpenId },
+		}),
+	);
+};
 
 const panel = () => screen.queryByTestId('dish-panel');
 const phoneList = () => screen.queryByTestId('phone-list');
@@ -124,7 +149,7 @@ describe('DishRow', () => {
 	});
 
 	it('shows the note under the row only while the panel is closed', () => {
-		withDish({ dish: makeDishDraft({ note: 'Buy bread' }) });
+		withDish({ dish: makeDishValues({ note: 'Buy bread' }) });
 		render(<DishRow canDelete />);
 		expect(screen.queryByText('Buy bread')).not.toBeNull();
 
@@ -139,12 +164,28 @@ describe('DishRow', () => {
 		expect(container.querySelector('p')).toBeNull();
 	});
 
-	it('marks a nameless dish with a red border and its message', () => {
-		withDish({ nameless: true });
+	it('marks a dish with a message with a red border and the message', () => {
+		withDish({ nameError: 'Name this dish, or delete it.' });
 		render(<DishRow canDelete />);
 
 		expect(rowHasClass(classes.nameless)).toBe(true);
 		expect(screen.queryByText('Name this dish, or delete it.')).not.toBeNull();
+	});
+
+	it("shows no phone list for another dish's open list", () => {
+		vi.mocked(useIsMobile).mockReturnValue(true);
+		vi.mocked(usePlannerSavedItems).mockReturnValue([
+			{ _id: 'oats', name: 'Overnight Oats', kind: 'recipe', tags: [] },
+		]);
+		withDish();
+		vi.mocked(useDishLinkingContext).mockReturnValue(
+			makeDishLinking({ openDishList: { key: 'bread', id: 1 } }),
+		);
+		render(<DishRow canDelete />);
+
+		expect(phoneList()).toBeNull();
+		vi.mocked(useIsMobile).mockReturnValue(false);
+		vi.mocked(usePlannerSavedItems).mockReturnValue([]);
 	});
 
 	it('shows no error on a dish that has a name or is blank', () => {
@@ -200,12 +241,12 @@ describe('DishRow', () => {
 		});
 
 		it('keeps an open list hidden, and the chips showing, in a planner with no saved recipes until something is typed', () => {
-			withDish({ dish: makeDishDraft({ name: ' ' }), listOpenId: 1 });
+			withDish({ dish: makeDishValues({ name: ' ' }), listOpenId: 1 });
 			const { rerender } = render(<DishRow canDelete />);
 			expect(phoneList()).toBeNull();
 			expect(recipeChip()).not.toBeNull();
 
-			withDish({ dish: makeDishDraft({ name: 'Soup' }), listOpenId: 1 });
+			withDish({ dish: makeDishValues({ name: 'Soup' }), listOpenId: 1 });
 			rerender(<DishRow canDelete />);
 
 			expect(phoneList()).not.toBeNull();

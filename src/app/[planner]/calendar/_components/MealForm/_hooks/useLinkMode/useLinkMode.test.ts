@@ -3,13 +3,14 @@ import { describe, expect, it, vi } from 'vitest';
 
 import { useWindowEvent } from '@mantine/hooks';
 
-import { makeDishDraft } from '#fixtures/dish';
+import { useEscapeLayer } from '@/_hooks';
 
 import { useLinkMode } from './useLinkMode';
 
 vi.mock('@mantine/hooks', async () => await import('#mocks/@mantine/hooks'));
+vi.mock('@/_hooks', async () => await import('#mocks/@/_hooks'));
 
-const dishes = [makeDishDraft({ key: 'a' }), makeDishDraft({ key: 'b' })];
+const dishes = [{ key: 'a' }, { key: 'b' }];
 
 // Runs the hook's keydown listener, as the window would.
 const pressKey = (key: string) =>
@@ -57,6 +58,17 @@ describe('useLinkMode', () => {
 		pressKey('Escape');
 
 		expect(result.current[0]).toBeNull();
+	});
+
+	it('takes Esc from the frame only while a dish is being linked', () => {
+		const { result } = renderHook(() => useLinkMode(dishes));
+		expect(useEscapeLayer).toHaveBeenLastCalledWith(false);
+
+		act(() => result.current[1].enterLinking('a'));
+		expect(useEscapeLayer).toHaveBeenLastCalledWith(true);
+
+		act(() => result.current[1].exitLinking());
+		expect(useEscapeLayer).toHaveBeenLastCalledWith(false);
 	});
 
 	it('stays in link mode on other keys', () => {

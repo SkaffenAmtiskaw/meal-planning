@@ -3,14 +3,22 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import type { ButtonHTMLAttributes } from 'react';
 
-import { makeDish, makeDishDraft } from '#fixtures/dish';
+import { makeDish, makeDishLinking, makeDishValues } from '#fixtures/dish';
 import type { DishSource } from '@/_actions/calendar/types';
 
 import { RecipeChip } from './RecipeChip';
 
 import { usePlannerSavedItems } from '../../../../_hooks/usePlannerSavedItems';
 import { useDish } from '../../_hooks/useDish';
+import { useDishLinkingContext } from '../../_hooks/useDishLinking';
 
+vi.mock(
+	'../../_hooks/useDishLinking',
+	async () =>
+		await import(
+			'#mocks/@app/[planner]/calendar/_components/MealForm/_hooks/useDishLinking'
+		),
+);
 vi.mock('@/_components', () => ({
 	PillButton: vi.fn((props: ButtonHTMLAttributes<HTMLButtonElement>) => (
 		<button type="button" {...props} />
@@ -32,10 +40,13 @@ vi.mock(
 const onTogglePanel = vi.fn();
 
 const renderChip = (source: DishSource | null) => {
-	const dish = makeDish({ dish: makeDishDraft({ key: 'soup', source }) });
-	vi.mocked(useDish).mockReturnValue(dish);
+	vi.mocked(useDish).mockReturnValue(
+		makeDish({ dish: makeDishValues({ key: 'soup', source }) }),
+	);
+	const linking = makeDishLinking();
+	vi.mocked(useDishLinkingContext).mockReturnValue(linking);
 	render(<RecipeChip onTogglePanel={onTogglePanel} />);
-	return dish;
+	return linking;
 };
 
 describe('RecipeChip', () => {
@@ -44,11 +55,11 @@ describe('RecipeChip', () => {
 	});
 
 	it('reads "Link recipe" while nothing is linked, and starts linking the dish rather than opening the panel', () => {
-		const dish = renderChip(null);
+		const linking = renderChip(null);
 
 		fireEvent.click(screen.getByRole('button', { name: 'Link recipe' }));
 
-		expect(dish.startLinking).toHaveBeenCalledWith('soup');
+		expect(linking.startLinking).toHaveBeenCalledWith('soup');
 		expect(onTogglePanel).not.toHaveBeenCalled();
 	});
 
@@ -70,11 +81,11 @@ describe('RecipeChip', () => {
 	});
 
 	it('opens or closes the panel once something is linked', () => {
-		const dish = renderChip({ kind: 'reference', text: 'p. 12' });
+		const linking = renderChip({ kind: 'reference', text: 'p. 12' });
 
 		fireEvent.click(screen.getByRole('button', { name: 'p. 12' }));
 
 		expect(onTogglePanel).toHaveBeenCalledTimes(1);
-		expect(dish.startLinking).not.toHaveBeenCalled();
+		expect(linking.startLinking).not.toHaveBeenCalled();
 	});
 });

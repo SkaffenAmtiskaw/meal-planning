@@ -3,11 +3,12 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { useDisclosure } from '@mantine/hooks';
 
-import { makeDish, makeDishDraft } from '#fixtures/dish';
+import { makeDish, makeDishValues, makeMealDishes } from '#fixtures/dish';
 import { ConfirmModal } from '@/_components';
 
 import { DeleteDishButton } from './DeleteDishButton';
 
+import { useMealDishes } from '../../../_hooks/useMealForm';
 import { useDish } from '../../_hooks/useDish';
 
 vi.mock('@mantine/core', async () => await import('#mocks/@mantine/core'));
@@ -15,6 +16,13 @@ vi.mock('@mantine/hooks', async () => await import('#mocks/@mantine/hooks'));
 vi.mock('@/_components', () => ({
 	ConfirmModal: vi.fn(() => null),
 }));
+vi.mock(
+	'../../../_hooks/useMealForm',
+	async () =>
+		await import(
+			'#mocks/@app/[planner]/calendar/_components/_hooks/useMealForm'
+		),
+);
 vi.mock(
 	'../../_hooks/useDish',
 	async () =>
@@ -33,9 +41,12 @@ const disclosure = {
 const confirmProps = () => vi.mocked(ConfirmModal).mock.lastCall?.[0];
 
 const withDish = (name: string) => {
-	const dish = makeDish({ dish: makeDishDraft({ key: 'soup', name }) });
-	vi.mocked(useDish).mockReturnValue(dish);
-	return dish;
+	vi.mocked(useDish).mockReturnValue(
+		makeDish({ dish: makeDishValues({ key: 'soup', name }) }),
+	);
+	const mealDishes = makeMealDishes();
+	vi.mocked(useMealDishes).mockReturnValue(mealDishes);
+	return mealDishes;
 };
 
 describe('DeleteDishButton', () => {
@@ -45,23 +56,23 @@ describe('DeleteDishButton', () => {
 	});
 
 	it('asks before deleting', () => {
-		const dish = withDish('Soup');
+		const mealDishes = withDish('Soup');
 		render(<DeleteDishButton />);
 
 		fireEvent.click(screen.getByRole('button', { name: 'Delete dish' }));
 
 		expect(disclosure.open).toHaveBeenCalledTimes(1);
-		expect(dish.removeDish).not.toHaveBeenCalled();
+		expect(mealDishes.deleteDish).not.toHaveBeenCalled();
 	});
 
 	it('closes the question and deletes the dish once confirmed', () => {
-		const dish = withDish('Soup');
+		const mealDishes = withDish('Soup');
 		render(<DeleteDishButton />);
 
 		confirmProps()?.onConfirm();
 
 		expect(disclosure.close).toHaveBeenCalledTimes(1);
-		expect(dish.removeDish).toHaveBeenCalledWith('soup');
+		expect(mealDishes.deleteDish).toHaveBeenCalledWith('soup');
 	});
 
 	it.each([

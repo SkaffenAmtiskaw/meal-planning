@@ -10,10 +10,10 @@ import { useListHighlight } from '@/_hooks';
 import classes from './SavedRecipesColumn.module.css';
 
 import { usePlannerSavedItems } from '../../../../_hooks/usePlannerSavedItems';
+import type { DishValues } from '../../../_hooks/useMealForm';
 import { useSavedItemCriteria } from '../../_hooks/useSavedItemCriteria';
 import { narrowSavedItems } from '../../_utils/narrowSavedItems';
 import { savedItemAction } from '../../_utils/savedItemAction';
-import type { DishDraft } from '../../types';
 import { LinkModeBanner } from '../LinkModeBanner/LinkModeBanner';
 import { SavedKeyHint } from '../SavedKeyHint/SavedKeyHint';
 import { SavedResultList } from '../SavedResultList/SavedResultList';
@@ -23,7 +23,7 @@ import { TagFilter } from '../TagFilter/TagFilter';
 
 type Props = {
 	// The dish being linked, or null outside link mode. The search starts over whenever it changes.
-	linkingDish: DishDraft | null;
+	linkingDish: DishValues | null;
 	searchRef?: Ref<HTMLInputElement>;
 	// The saved recipes already on the meal.
 	linkedIds: ReadonlySet<string>;

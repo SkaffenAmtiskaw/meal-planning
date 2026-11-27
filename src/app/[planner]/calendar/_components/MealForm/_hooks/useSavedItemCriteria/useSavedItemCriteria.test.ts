@@ -1,16 +1,16 @@
 import { act, renderHook } from '@testing-library/react';
 import { describe, expect, it } from 'vitest';
 
-import { makeDishDraft } from '#fixtures/dish';
+import { makeDishValues } from '#fixtures/dish';
 
 import { useSavedItemCriteria } from './useSavedItemCriteria';
 
-import type { DishDraft } from '../../types';
+import type { DishValues } from '../../../_hooks/useMealForm';
 
-const soup = makeDishDraft({ key: 'soup', name: 'chicken' });
-const bread = makeDishDraft({ key: 'bread', name: 'Bread' });
+const soup = makeDishValues({ key: 'soup', name: 'chicken' });
+const bread = makeDishValues({ key: 'bread', name: 'Bread' });
 
-const renderCriteria = (linkingDish: DishDraft | null = null) =>
+const renderCriteria = (linkingDish: DishValues | null = null) =>
 	renderHook(({ dish }) => useSavedItemCriteria(dish), {
 		initialProps: { dish: linkingDish },
 	});

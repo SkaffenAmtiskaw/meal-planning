@@ -3,8 +3,16 @@ import { describe, expect, it, vi } from 'vitest';
 
 import { MealFields } from './MealFields';
 
-vi.mock('@mantine/core', async () => await import('#mocks/@mantine/core'));
+import { useMealFormContext } from '../../../_hooks/useMealForm';
 
+vi.mock('@mantine/core', async () => await import('#mocks/@mantine/core'));
+vi.mock(
+	'../../../_hooks/useMealForm',
+	async () =>
+		await import(
+			'#mocks/@app/[planner]/calendar/_components/_hooks/useMealForm'
+		),
+);
 vi.mock('../MealDateField/MealDateField', () => ({
 	MealDateField: vi.fn(({ onChange }: { onChange: (date: string) => void }) => (
 		<button type="button" onClick={() => onChange('2026-11-27')}>
@@ -13,27 +21,31 @@ vi.mock('../MealDateField/MealDateField', () => ({
 	)),
 }));
 
-const values = { date: '', mealName: '', description: '' };
+const withForm = () => {
+	const form = useMealFormContext();
+	vi.mocked(useMealFormContext).mockReturnValue(form);
+	return form;
+};
 
 describe('MealFields', () => {
-	it('reports a picked date', () => {
-		const onFieldChange = vi.fn();
-		render(<MealFields values={values} onFieldChange={onFieldChange} />);
+	it('sets the picked date in the form', () => {
+		const form = withForm();
+		render(<MealFields />);
 
 		fireEvent.click(screen.getByRole('button', { name: 'Date' }));
 
-		expect(onFieldChange).toHaveBeenCalledWith('date', '2026-11-27');
+		expect(form.setFieldValue).toHaveBeenCalledWith('date', '2026-11-27');
 	});
 
 	it.each([
 		{ field: 'mealName', testId: 'input-Meal name', value: 'Taco Night' },
 		{ field: 'description', testId: 'textarea-Description', value: 'Fridays' },
-	])('reports a change to $field', ({ field, testId, value }) => {
-		const onFieldChange = vi.fn();
-		render(<MealFields values={values} onFieldChange={onFieldChange} />);
+	] as const)('binds $field to the form', ({ field, testId, value }) => {
+		const form = withForm();
+		render(<MealFields />);
 
 		fireEvent.change(screen.getByTestId(testId), { target: { value } });
 
-		expect(onFieldChange).toHaveBeenCalledWith(field, value);
+		expect(form.values[field]).toBe(value);
 	});
 });

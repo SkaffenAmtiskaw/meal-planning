@@ -1,14 +1,16 @@
 import { vi } from 'vitest';
 
-import type { Dish } from '@/app/[planner]/calendar/_components/MealForm/_hooks/useDish';
 import type {
-	DishDraft,
-	MealDraft,
-} from '@/app/[planner]/calendar/_components/MealForm/types';
+	DishValues,
+	MealDishes,
+	MealValues,
+} from '@/app/[planner]/calendar/_components/_hooks/useMealForm';
+import type { Dish } from '@/app/[planner]/calendar/_components/MealForm/_hooks/useDish';
+import type { DishLinking } from '@/app/[planner]/calendar/_components/MealForm/_hooks/useDishLinking';
 
-export const makeDishDraft = (
-	overrides: Partial<DishDraft> = {},
-): DishDraft => ({
+export const makeDishValues = (
+	overrides: Partial<DishValues> = {},
+): DishValues => ({
 	key: 'dish-1',
 	name: '',
 	source: null,
@@ -16,31 +18,56 @@ export const makeDishDraft = (
 	...overrides,
 });
 
-export const makeMealDraft = (
-	overrides: Partial<MealDraft> = {},
-): MealDraft => ({
+export const makeMealValues = (
+	overrides: Partial<MealValues> = {},
+): MealValues => ({
 	date: '',
 	mealName: '',
 	description: '',
-	dishes: [makeDishDraft()],
+	dishes: [makeDishValues()],
 	...overrides,
 });
 
-// What useDish() gives a row piece: a dish with no flags set, and a spy for each of the form's actions.
+// What useDish() gives a row piece: the first dish, with no message on it.
 export const makeDish = (overrides: Partial<Dish> = {}): Dish => ({
-	dish: makeDishDraft(),
-	nameless: false,
-	linking: false,
-	listOpenId: null,
+	dish: makeDishValues(),
+	index: 0,
+	nameError: null,
+	...overrides,
+});
+
+// What useMealDishes() gives: one empty dish, and a spy for each change.
+export const makeMealDishes = (
+	overrides: Partial<MealDishes> = {},
+): MealDishes => ({
+	dishes: [makeDishValues()],
 	linkedIds: new Set(),
-	renameDish: vi.fn(),
-	removeDish: vi.fn(),
+	dishCount: 0,
+	addDish: vi.fn(() => 'dish-2'),
+	addLinkedDish: vi.fn(),
+	linkDish: vi.fn(),
+	chooseRecipe: vi.fn(),
 	unlinkDish: vi.fn(),
+	renameAndUnlinkDish: vi.fn(),
 	setReference: vi.fn(),
-	setNote: vi.fn(),
+	deleteDish: vi.fn(),
+	...overrides,
+});
+
+// What useDishLinkingContext() gives: nothing being linked, no list open, and a spy for each action.
+export const makeDishLinking = (
+	overrides: Partial<DishLinking> = {},
+): DishLinking => ({
+	linkingKey: null,
+	linkingDish: null,
+	openDishList: null,
+	searchRef: { current: null },
 	startLinking: vi.fn(),
+	addDishWithList: vi.fn(),
+	chooseFromList: vi.fn(),
+	pickSavedItem: vi.fn(),
 	openList: vi.fn(),
 	closeList: vi.fn(),
-	chooseRecipe: vi.fn(),
+	exitLinking: vi.fn(),
 	...overrides,
 });
