@@ -90,7 +90,7 @@ function createMockContextValue(
 	return {
 		selectedDate: DateTime.local(2024, 6, 15),
 		viewType: 'month',
-		rangeAnchor: DateTime.local(2024, 6, 15),
+		jump: null,
 		setSelectedDate: vi.fn(),
 		setViewType: mockSetViewType,
 		navigateToDate: vi.fn(),

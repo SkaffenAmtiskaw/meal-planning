@@ -3,6 +3,8 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { DateTime } from 'luxon';
 
+import { makeUnknownDay } from '#fixtures/viewerDay';
+import { useToday } from '@/_hooks';
 import { useCanWrite } from '@/app/[planner]/_components';
 
 import { MobileAddMealButton } from './MobileAddMealButton';
@@ -11,6 +13,7 @@ import { useCalendarContext } from '../Calendar';
 import { useCalendarModal } from '../CalendarModal';
 
 vi.mock('@mantine/core', async () => await import('#mocks/@mantine/core'));
+vi.mock('@/_hooks', async () => await import('#mocks/@/_hooks'));
 
 const mockOpen = vi.fn();
 
@@ -48,11 +51,22 @@ describe('MobileAddMealButton', () => {
 		vi.resetAllMocks();
 	});
 
-	it('renders an ember Add Meal FAB for users with write access', () => {
+	it('renders an ember Add Meal FAB named for the selected date', () => {
 		render(<MobileAddMealButton />);
 
-		expect(screen.getByTestId('mobile-add-meal-button')).toBeDefined();
+		expect(
+			screen.getByRole('button', { name: 'Add meal for Saturday, June 15' }),
+		).toBeDefined();
 		expect(screen.getByText('Add Meal')).toBeDefined();
+	});
+
+	it("is disabled, with no date in its name, until the viewer's day is known", () => {
+		vi.mocked(useToday).mockReturnValue(makeUnknownDay(selectedDate));
+
+		render(<MobileAddMealButton />);
+
+		const button = screen.getByRole('button', { name: 'Add Meal' });
+		expect(button.hasAttribute('disabled')).toBe(true);
 	});
 
 	it('opens the add_meal modal with the selected date when clicked', () => {
@@ -66,16 +80,17 @@ describe('MobileAddMealButton', () => {
 		});
 	});
 
-	it('opens the add_meal modal without an initial date when selectedDate is invalid', () => {
+	it('falls back to undefined when the selected date has no ISO representation', () => {
+		const noIsoDate = DateTime.local(2024, 6, 15);
+		vi.spyOn(noIsoDate, 'toISODate').mockReturnValue(null);
 		vi.mocked(useCalendarContext).mockReturnValue({
-			selectedDate: DateTime.invalid('invalid'),
+			selectedDate: noIsoDate,
 		} as ReturnType<typeof useCalendarContext>);
 
 		render(<MobileAddMealButton />);
 
 		fireEvent.click(screen.getByTestId('mobile-add-meal-button'));
 
-		expect(mockOpen).toHaveBeenCalledTimes(1);
 		expect(mockOpen).toHaveBeenCalledWith('add_meal', {
 			initialDate: undefined,
 		});

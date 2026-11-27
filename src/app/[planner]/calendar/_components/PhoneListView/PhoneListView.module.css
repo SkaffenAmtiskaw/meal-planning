@@ -1,0 +1,15 @@
+/* Mantine Box does not expose an overflow style prop. The skeleton never scrolls, so days past the screen are cut off. */
+.skeleton {
+	overflow: hidden;
+}
+
+/*
+ * Mantine's List wraps each item's content in a box sized to that content, so the days would not fill the width.
+ * The bottom space clears the floating Add Meal button, which Affix places 20px up at Mantine's lg button height
+ * of 50px, so it never covers the last day's card.
+ */
+.days {
+	list-style: none;
+	margin: 0;
+	padding: 0 0 calc(20px + 50px + 16px);
+}

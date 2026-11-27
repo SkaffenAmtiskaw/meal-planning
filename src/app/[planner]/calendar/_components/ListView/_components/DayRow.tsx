@@ -1,6 +1,6 @@
 'use client';
 
-import type { ReactElement } from 'react';
+import type { ReactElement, Ref } from 'react';
 
 import { Box, Flex, Stack } from '@mantine/core';
 
@@ -14,23 +14,23 @@ import { ListDayGutter } from './ListDayGutter';
 import { MealCardWithDragHandle } from './MealCardWithDragHandle';
 import styles from './DayRow.module.css';
 
-import type { CalendarMeal } from '../../Calendar';
-import type { MealCardProps } from '../../Calendar/MealCard/types';
+import { useDayMeals } from '../../../_hooks/useCalendarMeals';
 import { useCalendarModal } from '../../CalendarModal';
 
 interface DayRowProps {
+	ref?: Ref<HTMLDivElement>;
 	date: DateTime;
 	today: DateTime;
-	meals?: CalendarMeal[];
-	renderDish?: MealCardProps['renderDish'];
+	plannerId: string;
 }
 
 export function DayRow({
+	ref,
 	date,
 	today,
-	meals = [],
-	renderDish,
+	plannerId,
 }: DayRowProps): ReactElement {
+	const meals = useDayMeals(date);
 	const canWrite = useCanWrite();
 	const { open } = useCalendarModal();
 	const isToday = date.hasSame(today, 'day');
@@ -42,9 +42,9 @@ export function DayRow({
 
 	return (
 		<Flex
+			ref={ref}
 			className={styles.row}
 			py={14}
-			data-iso={date.toISODate()}
 			// AddMealGutterButton's stylesheet shows the button while this row is hovered or focused.
 			data-day-row
 		>
@@ -63,7 +63,7 @@ export function DayRow({
 								<MealCardWithDragHandle
 									key={meal.id}
 									meal={meal}
-									renderDish={renderDish}
+									plannerId={plannerId}
 								/>
 							))
 						) : (

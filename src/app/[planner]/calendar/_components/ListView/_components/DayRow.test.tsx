@@ -9,7 +9,8 @@ import { useCanWrite } from '@/app/[planner]/_components';
 
 import { DayRow } from './DayRow';
 
-import type { CalendarDish, CalendarMeal } from '../../Calendar';
+import { useDayMeals } from '../../../_hooks/useCalendarMeals';
+import type { CalendarMeal } from '../../Calendar';
 import { useCalendarModal } from '../../CalendarModal';
 
 vi.mock('@mantine/core', async () => await import('#mocks/@mantine/core'));
@@ -25,22 +26,16 @@ vi.mock(
 		await import('#mocks/@app/[planner]/calendar/_components/CalendarModal'),
 );
 
+vi.mock(
+	'../../../_hooks/useCalendarMeals',
+	async () =>
+		await import('#mocks/@app/[planner]/calendar/_hooks/useCalendarMeals'),
+);
+
 vi.mock('./MealCardWithDragHandle', () => ({
-	MealCardWithDragHandle: vi.fn(
-		({
-			meal,
-			renderDish,
-		}: {
-			meal: CalendarMeal;
-			renderDish?: (dish: CalendarDish) => ReactNode;
-		}) => (
-			<div
-				data-testid="meal-card"
-				data-meal-id={meal.id}
-				data-render-dish={renderDish ? 'provided' : 'omitted'}
-			/>
-		),
-	),
+	MealCardWithDragHandle: vi.fn(({ meal }: { meal: CalendarMeal }) => (
+		<div data-testid="meal-card" data-meal-id={meal.id} />
+	)),
 }));
 
 vi.mock('./ListDayGutter', () => ({
@@ -74,6 +69,8 @@ vi.mock('./AddMealRow', () => ({
 }));
 
 const open = vi.fn();
+const date = DateTime.local(2024, 6, 15);
+const otherDay = DateTime.local(2024, 6, 10);
 
 function createMeal(id: string): CalendarMeal {
 	return {
@@ -83,6 +80,10 @@ function createMeal(id: string): CalendarMeal {
 		borderColor: 'red',
 		dishes: [],
 	};
+}
+
+function renderRow(today: DateTime = otherDay, rowDate: DateTime = date) {
+	return render(<DayRow date={rowDate} today={today} plannerId="planner-1" />);
 }
 
 describe('DayRow', () => {
@@ -96,9 +97,7 @@ describe('DayRow', () => {
 	});
 
 	it('tells the gutter the day is today when date is today', () => {
-		const date = DateTime.local(2024, 6, 15);
-
-		render(<DayRow date={date} today={date} />);
+		renderRow(date);
 
 		expect(screen.getByTestId('day-gutter').getAttribute('data-today')).toBe(
 			'true',
@@ -106,77 +105,43 @@ describe('DayRow', () => {
 	});
 
 	it('tells the gutter the day is not today for other days', () => {
-		const date = DateTime.local(2024, 6, 15);
-		const today = DateTime.local(2024, 6, 10);
-
-		render(<DayRow date={date} today={today} />);
+		renderRow();
 
 		expect(screen.getByTestId('day-gutter').getAttribute('data-today')).toBe(
 			'false',
 		);
 	});
 
-	it('renders MealCardWithDragHandles when meals are provided', () => {
-		const date = DateTime.local(2024, 6, 15);
-		const today = DateTime.local(2024, 6, 10);
-		const meals = [createMeal('meal-1'), createMeal('meal-2')];
+	it("reads its own day's meals", () => {
+		renderRow();
 
-		render(<DayRow date={date} today={today} meals={meals} />);
-
-		const cards = screen.getAllByTestId('meal-card');
-		expect(cards).toHaveLength(2);
-		expect(cards[0].getAttribute('data-meal-id')).toBe('meal-1');
-		expect(cards[1].getAttribute('data-meal-id')).toBe('meal-2');
+		expect(useDayMeals).toHaveBeenCalledWith(date);
 	});
 
-	it('does not render MealCards when no meals are provided', () => {
-		const date = DateTime.local(2024, 6, 15);
-		const today = DateTime.local(2024, 6, 10);
+	it("renders a card for each of the day's meals", () => {
+		vi.mocked(useDayMeals).mockReturnValue([
+			createMeal('meal-1'),
+			createMeal('meal-2'),
+		]);
 
-		render(<DayRow date={date} today={today} />);
+		renderRow();
+
+		const cards = screen.getAllByTestId('meal-card');
+		expect(cards.map((card) => card.getAttribute('data-meal-id'))).toEqual([
+			'meal-1',
+			'meal-2',
+		]);
+	});
+
+	it('renders no cards for a day with no meals', () => {
+		renderRow();
 
 		expect(screen.queryByTestId('meal-card')).toBeNull();
 	});
 
-	it('passes renderDish to MealCardWithDragHandle when provided', () => {
-		const date = DateTime.local(2024, 6, 15);
-		const today = DateTime.local(2024, 6, 10);
-		const meals = [createMeal('meal-1'), createMeal('meal-2')];
-		const renderDish = (dish: CalendarDish) => <span>{dish.name}</span>;
-
-		render(
-			<DayRow
-				date={date}
-				today={today}
-				meals={meals}
-				renderDish={renderDish}
-			/>,
-		);
-
-		const cards = screen.getAllByTestId('meal-card');
-		expect(cards).toHaveLength(2);
-		expect(cards[0].getAttribute('data-render-dish')).toBe('provided');
-		expect(cards[1].getAttribute('data-render-dish')).toBe('provided');
-	});
-
-	it('does not pass renderDish to MealCardWithDragHandle when omitted', () => {
-		const date = DateTime.local(2024, 6, 15);
-		const today = DateTime.local(2024, 6, 10);
-		const meals = [createMeal('meal-1')];
-
-		render(<DayRow date={date} today={today} meals={meals} />);
-
-		expect(
-			screen.getByTestId('meal-card').getAttribute('data-render-dish'),
-		).toBe('omitted');
-	});
-
 	describe('add meal triggers', () => {
 		it('calls open with add_meal and the ISO date when the gutter trigger is clicked', () => {
-			const date = DateTime.local(2024, 6, 15);
-			const today = DateTime.local(2024, 6, 10);
-
-			render(<DayRow date={date} today={today} />);
+			renderRow();
 
 			screen.getByTestId('gutter-trigger').click();
 
@@ -186,11 +151,10 @@ describe('DayRow', () => {
 		});
 
 		it('falls back to undefined when the date has no ISO representation', () => {
-			const date = DateTime.local(2024, 6, 15);
-			vi.spyOn(date, 'toISODate').mockReturnValue(null);
-			const today = DateTime.local(2024, 6, 10);
+			const noIsoDate = DateTime.local(2024, 6, 15);
+			vi.spyOn(noIsoDate, 'toISODate').mockReturnValue(null);
 
-			render(<DayRow date={date} today={today} />);
+			renderRow(otherDay, noIsoDate);
 
 			screen.getByTestId('gutter-trigger').click();
 
@@ -200,10 +164,7 @@ describe('DayRow', () => {
 		});
 
 		it('calls open with add_meal and the ISO date when the ghost trigger is clicked', () => {
-			const date = DateTime.local(2024, 6, 15);
-			const today = DateTime.local(2024, 6, 10);
-
-			render(<DayRow date={date} today={today} />);
+			renderRow();
 
 			screen.getByTestId('ghost-trigger').click();
 
@@ -213,10 +174,7 @@ describe('DayRow', () => {
 		});
 
 		it('renders both triggers when user has write access and there are no meals', () => {
-			const date = DateTime.local(2024, 6, 15);
-			const today = DateTime.local(2024, 6, 10);
-
-			render(<DayRow date={date} today={today} />);
+			renderRow();
 
 			expect(screen.getByTestId('gutter-trigger')).toBeDefined();
 			expect(screen.getByTestId('ghost-trigger')).toBeDefined();
@@ -225,21 +183,16 @@ describe('DayRow', () => {
 		it('does not render add affordances when user has read-only access', () => {
 			vi.mocked(useCanWrite).mockReturnValue(false);
 
-			const date = DateTime.local(2024, 6, 15);
-			const today = DateTime.local(2024, 6, 10);
-
-			render(<DayRow date={date} today={today} />);
+			renderRow();
 
 			expect(screen.queryByText('Add meal')).toBeNull();
 			expect(screen.queryByRole('button')).toBeNull();
 		});
 
-		it('does not render the ghost trigger when meals are provided', () => {
-			const date = DateTime.local(2024, 6, 15);
-			const today = DateTime.local(2024, 6, 10);
-			const meals = [createMeal('meal-1')];
+		it('does not render the ghost trigger when the day has meals', () => {
+			vi.mocked(useDayMeals).mockReturnValue([createMeal('meal-1')]);
 
-			render(<DayRow date={date} today={today} meals={meals} />);
+			renderRow();
 
 			expect(screen.getByTestId('meal-card')).toBeDefined();
 			expect(screen.queryByTestId('ghost-trigger')).toBeNull();

@@ -21,7 +21,7 @@ vi.mock('../Calendar', async () => ({
 	useCalendarContext: vi.fn(() => ({
 		selectedDate: DateTime.now(),
 		viewType: 'month',
-		rangeAnchor: DateTime.now(),
+		jump: null,
 		setSelectedDate: vi.fn(),
 		setViewType: vi.fn(),
 		navigateToDate: vi.fn(),
@@ -65,7 +65,7 @@ const defaultProps = { plannerId: 'planner-1' };
 const defaultCalendarContext: ReturnType<typeof useCalendarContext> = {
 	selectedDate: DateTime.now(),
 	viewType: 'month',
-	rangeAnchor: DateTime.now(),
+	jump: null,
 	setSelectedDate: vi.fn(),
 	setViewType: vi.fn(),
 	navigateToDate: vi.fn(),

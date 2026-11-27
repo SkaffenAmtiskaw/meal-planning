@@ -1,0 +1,4 @@
+/* Mantine has no single-edge border prop. */
+.section {
+	border-bottom: 1px solid var(--mantine-color-chalk-2);
+}

@@ -52,7 +52,7 @@ export function MobileMonthGrid({
 						key={label}
 						size="xs"
 						fw={500}
-						c="navy.4"
+						c="var(--text-muted)"
 						ta="center"
 						tt="uppercase"
 					>

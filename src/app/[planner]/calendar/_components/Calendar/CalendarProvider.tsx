@@ -7,12 +7,15 @@ import type { DateTime, DurationLike } from 'luxon';
 import { useToday } from '@/_hooks';
 
 import { CalendarContext } from './CalendarContext';
-import type { CalendarViewType } from './types';
+import type { CalendarJump, CalendarViewType } from './types';
 
-const NAVIGATION_STEPS: Record<CalendarViewType, DurationLike> = {
+// The list view has no previous and next arrows, so it has no step.
+const NAVIGATION_STEPS: Record<
+	Exclude<CalendarViewType, 'list'>,
+	DurationLike
+> = {
 	month: { months: 1 },
 	week: { days: 7 },
-	list: { days: 1 },
 };
 
 export interface CalendarProviderProps {
@@ -33,7 +36,7 @@ export function CalendarProvider({
 	const [viewType, setViewType] = useState<CalendarViewType>(
 		initialView ?? 'month',
 	);
-	const [rangeAnchor, setRangeAnchor] = useState<DateTime>(startDate);
+	const [jump, setJump] = useState<CalendarJump | null>(null);
 
 	/**
 	 * Once the viewer's day is known, move to it. No click can land before
@@ -46,7 +49,6 @@ export function CalendarProvider({
 	if (waitingForToday && today) {
 		setWaitingForToday(false);
 		setSelectedDate(today);
-		setRangeAnchor(today);
 	}
 
 	const handleSetSelectedDate = useCallback((date: DateTime) => {
@@ -59,7 +61,7 @@ export function CalendarProvider({
 
 	const navigateToDate = useCallback((date: DateTime) => {
 		setSelectedDate(date);
-		setRangeAnchor(date);
+		setJump((previous) => ({ date, id: (previous?.id ?? 0) + 1 }));
 	}, []);
 
 	const goToToday = useCallback(() => {
@@ -67,17 +69,19 @@ export function CalendarProvider({
 	}, [navigateToDate, today]);
 
 	const goToPrevious = useCallback(() => {
+		if (viewType === 'list') return;
 		navigateToDate(selectedDate.minus(NAVIGATION_STEPS[viewType]));
 	}, [navigateToDate, selectedDate, viewType]);
 
 	const goToNext = useCallback(() => {
+		if (viewType === 'list') return;
 		navigateToDate(selectedDate.plus(NAVIGATION_STEPS[viewType]));
 	}, [navigateToDate, selectedDate, viewType]);
 
 	const contextValue = {
 		selectedDate,
 		viewType,
-		rangeAnchor,
+		jump,
 		setSelectedDate: handleSetSelectedDate,
 		setViewType: handleSetViewType,
 		navigateToDate,

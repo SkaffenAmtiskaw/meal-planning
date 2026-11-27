@@ -62,7 +62,7 @@ function renderGrid({
 	vi.mocked(useCalendarContext).mockReturnValue({
 		selectedDate,
 		viewType: 'month',
-		rangeAnchor: selectedDate,
+		jump: null,
 		setSelectedDate,
 		setViewType: vi.fn(),
 		navigateToDate: vi.fn(),

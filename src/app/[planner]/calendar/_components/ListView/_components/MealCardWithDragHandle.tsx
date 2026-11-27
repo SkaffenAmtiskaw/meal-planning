@@ -34,7 +34,9 @@ export function MealCardWithDragHandle(
 					))}
 				</Box>
 			</Box>
-			<MealCard {...props} />
+			<Box flex={1}>
+				<MealCard {...props} />
+			</Box>
 		</Flex>
 	);
 }
