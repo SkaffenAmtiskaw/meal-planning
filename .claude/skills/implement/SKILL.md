@@ -50,13 +50,13 @@ Then report, in these sections, in this order:
 2. **Files:** the table of changed files. Mark any file that isn't in the step's Files list.
 3. **Choices:** a table of each other choice you made without asking: what you picked, and what settles it, with a link to its source where it has one.
 4. **Tests:** each test and the branch or logic it covers.
-5. **Acceptance checks:** each one, and what you saw or why you couldn't run it.
+5. **Acceptance checks:** each one, and what you saw or why you couldn't run it. For each `Implementer:` check, show what you found, such as the screenshot you took.
 6. **As built:** a draft of anything that differs from the step's plan.
 
 After the report:
-1. **Checks your runs already cover:** ask the user whether to drop each one.
+1. **Checks your runs already cover:** for each one without the `Implementer:` prefix, ask the user whether to drop it.
 2. **Checks only the user can do:** if one needs this step committed and pushed, first ask the user to review its changes, and say that approving them commits and pushes the step. Once they approve, commit and push it. Then walk them through each check.
-3. **End by handing the step to the user:** ask them to do the acceptance checks they haven't done yet, and to review the step's changes if they haven't. Then ask for the step's final approval.
+3. **End by handing the step to the user:** ask them to do the acceptance checks without the `Implementer:` prefix that they haven't done yet, and to review the step's changes if they haven't. Then ask for the step's final approval.
 
 ## 4. Handle the User's Feedback
 1. **If a piece of feedback is a change or addition,** sort where it goes, as step 2 describes.

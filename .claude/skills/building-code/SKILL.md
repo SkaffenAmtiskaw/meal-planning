@@ -52,7 +52,7 @@ How you do the checks depends on the change:
      When you report the check, say how you made its data. If you loaded it with the command, name the command and the email of each story user it printed, so the user can sign in as them. If you made it through the screens, say what you made, and if that's because the command failed, say so.
   2. If a check needs the running app, start it and sign in as the `running-the-app` skill describes.
   3. Go through each check, in one of these two ways:
-     - **If you can run it:** do it as it's written, including the signed-in user, the screen size and the data it names. Record what you saw in concrete terms: "the modal closed and the meal appeared on Tuesday", not "works".
+     - **If you can run it:** do it as it's written, including the signed-in user, the screen size and the data it names. Record what you saw in concrete terms: "the modal closed and the meal appeared on Tuesday", not "works". If it's an `Implementer:` check whose result shows on screen, also take a screenshot of it, because the user sees that result only through your report.
      - **If you can't,** such as one only the user can do, or one that needs a commit or a push you can't make yet:
        - **If another run of yours already shows everything it would prove:** report which run covers it. For example, a check might break a CI job's secret on GitHub to see the job fail. Running the job's script against a local server that returns 401 shows the same failure, so it covers the check.
        - **Otherwise:** report it as not run, with the reason.

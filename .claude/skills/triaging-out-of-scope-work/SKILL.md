@@ -8,7 +8,7 @@ user-invocable: false
 The user decides what's out of scope. Each item costs them a decision, so sort the list first and bring them only what's really theirs to decide.
 
 ## 1. Sort the List
-Before step 2, search the notes repo for each item, including notes that word it differently. If a note or Roadmap line covers it, take it off the list. Then check each remaining item against these cases, which say what to do with it. An item they don't take off stays on the list for step 2:
+Before step 2, search the notes repo for each item, including notes that word it differently. If a note or Roadmap line covers it, take it off the list. Then check each remaining item against these cases, which say what to do with it:
 - **The story can't meet its own Purpose without it,** such as gitignoring the output of a tool the story adds: it's part of the story, even when a subagent reports it as outside its rules. If the steps are written, add it to the step that needs it. Otherwise, add it to the section that lists what the story changes, such as its Suggested Approach. Name it in your summary.
 - **It's small, needs no decision and sits in a file this story already edits:** it's a Boy Scout fix, which joins the story without asking the user, so each story leaves its files a little cleaner. Where it goes depends on how far the story has got:
   - **Its steps are written, and the step that edits the file isn't built:** add "Boy Scout fix: <the problem>" to that step's **Source:** line, or its **Builds:** line in a Build Order.
@@ -19,6 +19,8 @@ Before step 2, search the notes repo for each item, including notes that word it
 - **Your change affects another story:**
   - **If it changes what that story should say now,** such as a built change to code its plan relies on, or a decision that moves work out of its scope or changes its design: take the item off the list and handle that story's note as the `editing-notes` skill's "The Inbox" describes. Name the story in your summary.
   - **Otherwise:** work out whether one story has to wait on the other. A story that could ship on the existing code, with the other story correcting that code later, doesn't have to wait. If one has to wait, ask the user whether to add a `blocked-by` entry, then take the item off the list. Otherwise, take it off the list, because the other story's own checks, such as `/check-drift`, catch the effect once the change is built.
+
+An item these cases don't take off stays on the list for step 2. So does an item the user raised, unless it went somewhere they can find it, such as a note that covers it or another story's Inbox. If it did, tell them where, because otherwise it vanishes without a word and they can't tell it was handled rather than lost.
 
 ## 2. Triage With the User
 The choices, and when each applies. If your skill offers only some of them, only those can apply:

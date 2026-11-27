@@ -48,7 +48,7 @@ Then send `plan-checker` the notes repo's path, the note path, the draft path, w
 The user approves the plan as a whole, from its outline. The note has already settled the approach, so most of a plan holds no choice for them.
 
 Show these in one message, ending with the approval:
-1. **The outline.** Show each step's title, idea sentence and a one-line summary of its checks: a regression check ("everything looks the same as before"), the new behavior it tests, or that it has no check for the user. In a re-plan, show what changed from the old steps. Name any place you added to the Migration Checklist or Current State in step 2.
+1. **The outline.** Show each step's title, idea sentence and a one-line summary of its checks: a regression check ("everything looks the same as before"), the new behavior it tests, or that it has no check for the user. Mark which checks are the implementer's. In a re-plan, show what changed from the old steps. Name any place you added to the Migration Checklist or Current State in step 2.
 2. **The user's choices.** If a step makes a choice that's the user's call and the user hasn't settled it yet, show that part of the step in full and say what it picks. If the order or size of the steps makes a difference to the user, such as which behavior they can try first, raise it too. If neither applies, say so in one line.
 3. **Findings you disagree with.** Raise each one with why you disagree.
 4. **The approval.** Ask whether the user approves the plan. If they change a step, update any other step the change affects.
