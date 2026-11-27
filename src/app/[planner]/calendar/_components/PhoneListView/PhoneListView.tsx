@@ -8,6 +8,7 @@ import { useToday, useTodayOrThrow } from '@/_hooks';
 
 import styles from './PhoneListView.module.css';
 
+import { MobileAddMealButton } from '../AddMealButton';
 import { useListScroll } from '../../_hooks/useListScroll';
 import { getListDayRange } from '../_utils/getListDayRange';
 import { PhoneDayListSkeleton } from './_components/PhoneDayListSkeleton';
@@ -34,6 +35,7 @@ export function PhoneListView(props: PhoneListViewProps): ReactElement {
 					<PhoneDayListSkeleton />
 				</Box>
 			)}
+			<MobileAddMealButton />
 		</Box>
 	);
 }

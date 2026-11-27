@@ -1,0 +1,14 @@
+/*
+ * Mantine has no prop that makes a button's touch area bigger than it looks, so an invisible 44px square around
+ * the 28px circle takes the taps. ActionIcon clips its content, which would clip the square too.
+ */
+.button {
+	overflow: visible;
+}
+
+/* Measured from inside the button's 1px border, so 9px a side makes 44px. */
+.button::before {
+	content: "";
+	position: absolute;
+	inset: -9px;
+}

@@ -28,6 +28,12 @@ vi.mock('./_components/PhoneDaySection', () => ({
 	)),
 }));
 
+vi.mock('../AddMealButton', () => ({
+	MobileAddMealButton: vi.fn(() => (
+		<div data-testid="mobile-add-meal-button" />
+	)),
+}));
+
 vi.mock('./_components/PhoneDayListSkeleton', () => ({
 	PhoneDayListSkeleton: vi.fn(() => <div data-testid="day-list-skeleton" />),
 }));

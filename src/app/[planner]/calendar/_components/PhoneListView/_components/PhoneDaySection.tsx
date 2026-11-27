@@ -6,6 +6,7 @@ import type { DateTime } from 'luxon';
 
 import { formatDate } from '@/_utils/formatDate';
 
+import { DayAddButton } from './DayAddButton';
 import { PhoneDayHeader } from './PhoneDayHeader';
 import styles from './PhoneDaySection.module.css';
 
@@ -37,7 +38,11 @@ export function PhoneDaySection({
 			gap="xs"
 			p="sm"
 		>
-			<PhoneDayHeader date={date} isToday={date.hasSame(today, 'day')} />
+			<PhoneDayHeader
+				date={date}
+				isToday={date.hasSame(today, 'day')}
+				addMealButton={<DayAddButton date={date} />}
+			/>
 			{meals.length > 0 ? (
 				meals.map((meal) => (
 					<MealCard key={meal.id} meal={meal} plannerId={plannerId} />
