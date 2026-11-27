@@ -159,7 +159,7 @@ Playwright code stays in `e2e/`, apart from `playwright.config.ts`, so the app a
 The factories and the test-only auth instance sit in `test/`, not `e2e/`, because they don't use Playwright. They're plain functions, so the dev seed in `seed/` reuses them too (see `docs/seed.md`).
 
 ## Factories Stay Out of Next.js
-Factories run in Playwright's worker, outside Next.js, where `server-only` throws, so they never import `@/_actions`, any of `@/_auth` but `@/_auth/users`, or any other module that imports `server-only`. The modules they use don't import it. They write the app's data through the data module's collection wrappers in `@/_models/database/`, and reach better-auth through the test-only auth instance in `test/auth.ts` and the better-auth functions in `@/_auth/users`.
+Factories run in Playwright's worker, outside Next.js, where `server-only` throws, so they never import `@/_actions`, any other module that imports `server-only`, or anything in `@/_auth` except the functions that reach better-auth's data. The modules they use don't import it. They write the app's data through the data module's collection wrappers in `@/_models/database/`, and reach better-auth through the test-only auth instance in `test/auth.ts` and the functions in `@/_auth/` that reach better-auth's data, as "Stored Data" in `docs/project_conventions.md` describes.
 
 Writing through the wrappers gives test data the same checks and defaults as the app's data, so a test can't pass on data the app would refuse to store (see `docs/project_conventions.md`, "Stored Data").
 
