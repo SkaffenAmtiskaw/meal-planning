@@ -1,11 +1,14 @@
 import { fireEvent, render, screen } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
+import { useEscapeLayer } from '@/_hooks';
+
 import { SavedSearchInput } from './SavedSearchInput';
 
 import { searchKeyIntent } from '../../_utils/searchKeyIntent';
 
 vi.mock('@mantine/core', async () => await import('#mocks/@mantine/core'));
+vi.mock('@/_hooks', async () => await import('#mocks/@/_hooks'));
 vi.mock('../../_utils/searchKeyIntent', () => ({
 	searchKeyIntent: vi.fn(() => 'ignore'),
 }));
@@ -86,16 +89,29 @@ describe('SavedSearchInput', () => {
 		expect(handlers.onChange).not.toHaveBeenCalled();
 	});
 
-	// Mantine's modal hears Esc before the field does, and skips a target with this attribute.
-	it('keeps the modal from closing on Esc only while the search has text', () => {
-		const { rerender } = renderSearch('taco');
-		expect(
-			screen.getByRole('textbox').getAttribute('data-mantine-stop-propagation'),
-		).toBe('true');
+	it('takes Esc from the modal while the search has text and focus', () => {
+		renderSearch('taco');
+		expect(useEscapeLayer).toHaveBeenLastCalledWith(false);
 
-		rerender(<SavedSearchInput value="" linking={false} {...handlers} />);
-		expect(
-			screen.getByRole('textbox').hasAttribute('data-mantine-stop-propagation'),
-		).toBe(false);
+		fireEvent.focus(screen.getByRole('textbox'));
+
+		expect(useEscapeLayer).toHaveBeenLastCalledWith(true);
+	});
+
+	it('leaves Esc to the modal once focus moves away', () => {
+		renderSearch('taco');
+		fireEvent.focus(screen.getByRole('textbox'));
+
+		fireEvent.blur(screen.getByRole('textbox'));
+
+		expect(useEscapeLayer).toHaveBeenLastCalledWith(false);
+	});
+
+	it('leaves Esc to the modal while the focused search is empty', () => {
+		renderSearch('');
+
+		fireEvent.focus(screen.getByRole('textbox'));
+
+		expect(useEscapeLayer).toHaveBeenLastCalledWith(false);
 	});
 });

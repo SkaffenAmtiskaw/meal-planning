@@ -731,10 +731,10 @@ export const TextInput = vi.fn(
 		placeholder,
 		disabled,
 		'data-testid': testId,
-		'data-mantine-stop-propagation': stopPropagation,
 		'aria-label': ariaLabel,
 		ref,
 		onFocus,
+		onBlur,
 		onClick,
 	}: {
 		value?: string;
@@ -746,10 +746,10 @@ export const TextInput = vi.fn(
 		placeholder?: string;
 		disabled?: boolean;
 		'data-testid'?: string;
-		'data-mantine-stop-propagation'?: boolean;
 		'aria-label'?: string;
 		ref?: React.Ref<HTMLInputElement>;
 		onFocus?: React.FocusEventHandler<HTMLInputElement>;
+		onBlur?: React.FocusEventHandler<HTMLInputElement>;
 		onClick?: React.MouseEventHandler<HTMLInputElement>;
 		[key: string]: unknown;
 	}) => (
@@ -760,11 +760,11 @@ export const TextInput = vi.fn(
 			value={value ?? ''}
 			placeholder={placeholder}
 			disabled={disabled}
-			data-mantine-stop-propagation={stopPropagation}
 			aria-label={ariaLabel}
 			onChange={onChange ?? (() => {})}
 			onKeyDown={onKeyDown}
 			onFocus={onFocus}
+			onBlur={onBlur}
 			onClick={onClick}
 		/>
 	),
@@ -1424,6 +1424,8 @@ export const rgba = vi.fn(
 	(color: string, alpha: number) => `rgba(${color}, ${alpha})`,
 );
 
+// Mantine's modal layer, the one level the app reads.
+export const getDefaultZIndex = vi.fn(() => 200);
 export const createTheme = vi.fn((theme: Record<string, unknown>) => theme);
 export const isLightColor = vi.fn(() => false);
 export const mantineHtmlProps = {};

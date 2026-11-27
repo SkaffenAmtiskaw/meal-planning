@@ -9,7 +9,7 @@ import {
 
 import { Popover } from '@mantine/core';
 
-import { useIsMobile } from '@/_hooks';
+import { useEscapeLayer, useIsMobile } from '@/_hooks';
 
 import { BottomSheet } from '../BottomSheet';
 
@@ -18,7 +18,7 @@ type AdaptivePopoverProps = {
 	// Called when the popover or sheet asks to close, such as on Esc or a click outside it.
 	onClose: () => void;
 	// The sheet's title on phones. The desktop popover has no title.
-	title: string;
+	sheetTitle: string;
 	/**
 	 * The element that opens it. It has to take a ref, since the desktop
 	 * popover anchors to it, and pass ARIA props on to its element, since
@@ -35,11 +35,13 @@ type AdaptivePopoverProps = {
 export function AdaptivePopover({
 	opened,
 	onClose,
-	title,
+	sheetTitle,
 	target,
 	children,
 }: AdaptivePopoverProps): ReactElement {
 	const isMobile = useIsMobile();
+	// Inside a modal, Esc closes the desktop popover first. The phone sheet registers itself.
+	useEscapeLayer(opened && !isMobile);
 
 	if (isMobile) {
 		return (
@@ -49,7 +51,7 @@ export function AdaptivePopover({
 					'aria-haspopup': 'dialog',
 					'aria-expanded': opened,
 				})}
-				<BottomSheet opened={opened} onClose={onClose} title={title}>
+				<BottomSheet opened={opened} onClose={onClose} title={sheetTitle}>
 					{children}
 				</BottomSheet>
 			</>

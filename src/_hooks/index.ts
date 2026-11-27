@@ -1,6 +1,7 @@
 export * from './useAsyncButton';
 export * from './useAsyncStatus';
 export * from './useEditMode';
+export * from './useEscapeLayers';
 export * from './useFocusOnExpand';
 export * from './useFormFeedback';
 export * from './useIsMobile';

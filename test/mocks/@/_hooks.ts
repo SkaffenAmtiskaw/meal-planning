@@ -102,6 +102,22 @@ export const useAsyncButton = vi.fn(() => {
 	return { loading, error, run };
 });
 
+/**
+ * No layer open by default. A test of a frame with one open sets:
+ *   vi.mocked(useEscapeLayers).mockReturnValue({ anyOpen: true, register: vi.fn() });
+ */
+export const useEscapeLayers = vi.fn(() => ({
+	anyOpen: false,
+	register: vi.fn(() => vi.fn()),
+}));
+
+// A test checks what a layer reports with: expect(useEscapeLayer).toHaveBeenLastCalledWith(true)
+export const useEscapeLayer = vi.fn((_open: boolean) => {});
+
+export const EscapeLayersProvider = vi.fn(
+	({ children }: { children: ReactNode; value: unknown }) => children,
+);
+
 export const MobileGuessProvider = vi.fn(
 	({ children }: { children: ReactNode }) => children,
 );

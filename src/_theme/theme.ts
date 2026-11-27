@@ -10,7 +10,6 @@ import {
 	CHALK_RAMPS,
 	EMBER_RAMPS,
 	FOREST_RAMPS,
-	INPUT_BORDER,
 	NAVY_RAMPS,
 	SAGE,
 	SAGE_RAMPS,
@@ -18,6 +17,7 @@ import {
 
 import { chipDefaults } from './components/Chip/Chip';
 import { indicatorDefaults } from './components/Indicator/Indicator';
+import { inputDefaults, inputWrapperDefaults } from './components/Input/Input';
 import { navLinkDefaults } from './components/NavLink/NavLink';
 import { variantColorResolver } from './variantColorResolver/variantColorResolver';
 
@@ -48,16 +48,8 @@ export const theme = createTheme({
 				},
 			}),
 		},
-		Input: {
-			// The border color is inline, so it's left off while the input shows an error, or it would hide Mantine's red border.
-			styles: (theme: MantineTheme, props: { error?: unknown }) => ({
-				input: {
-					backgroundColor: theme.white,
-					...(!props.error && { borderColor: INPUT_BORDER }),
-					color: theme.colors.navy[5],
-				},
-			}),
-		},
+		Input: inputDefaults,
+		InputWrapper: inputWrapperDefaults,
 		Chip: chipDefaults,
 		Indicator: indicatorDefaults,
 		Modal: {
